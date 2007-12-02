@@ -75,7 +75,9 @@ const std::vector<std::string>& MD5Model::getActiveMaterials() const {
 }
 
 void MD5Model::render(RenderStateFlags state) const {
-	// TODO
+	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
+		(*i)->render(state);
+	}
 }
 
 void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
