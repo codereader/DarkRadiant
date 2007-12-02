@@ -64,6 +64,11 @@ SkinChooser::SkinChooser()
 	
 }
 
+SkinChooser& SkinChooser::Instance() {
+	static SkinChooser _instance;
+	return _instance;
+}
+
 // Create the TreeView
 GtkWidget* SkinChooser::createTreeView(gint width) {
 	
@@ -239,11 +244,8 @@ void SkinChooser::populateSkins() {
 std::string SkinChooser::chooseSkin(const std::string& model,
 									const std::string& prev) 
 {
-	// The static instance
-	static SkinChooser _instance;
-	
 	// Show and block the instance, returning the selected skin
-	return _instance.showAndBlock(model, prev);	
+	return Instance().showAndBlock(model, prev);	
 }
 
 /* GTK CALLBACKS */
