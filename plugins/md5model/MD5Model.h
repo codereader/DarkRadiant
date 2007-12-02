@@ -23,8 +23,8 @@ class MD5Model :
 	AABB _aabb_local;
 
 	// Gets initialised during parsing
-	int _polyCount;
-	int _vertexCount;
+	std::size_t _polyCount;
+	std::size_t _vertexCount;
 
 public:
 	MD5Model();
