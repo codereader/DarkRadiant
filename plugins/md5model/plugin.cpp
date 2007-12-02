@@ -1,5 +1,6 @@
 #include "imodule.h"
 
+#include "itextstream.h"
 #include "MD5ModelLoader.h"
 
 // DarkRadiant module entry point
