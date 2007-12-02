@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "MD5Surface.h"
 #include "md5.h"
-#include "md5model.h"
+#include "MD5ModelLoader.h"
 
 #include "math/FloatTools.h"
 #include "imodel.h"
@@ -240,7 +240,7 @@ public:
 /**
  * Main parse function for an MD5MESH file.
  */
-bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
+bool MD5Model_parse(md5::MD5Model& model, parser::DefTokeniser& tok)
 {
 	using boost::lexical_cast;
 	
@@ -447,7 +447,7 @@ bool MD5Model_parse(MD5Model& model, parser::DefTokeniser& tok)
 	return true;
 }
 
-void MD5Model_construct(MD5Model& model, TextInputStream& inputStream)
+void MD5Model_construct(md5::MD5Model& model, TextInputStream& inputStream)
 {
 	// Construct a DefTokeniser and start parsing
 	try {
