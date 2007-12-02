@@ -222,19 +222,47 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\md5model\md5.cpp"
+				RelativePath="..\..\plugins\md5model\MD5DataStructures.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\md5model\md5.h"
+				RelativePath="..\..\plugins\md5model\MD5Model.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\md5model\md5model.cpp"
+				RelativePath="..\..\plugins\md5model\MD5Model.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\md5model\md5model.h"
+				RelativePath="..\..\plugins\md5model\MD5ModelInstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\MD5ModelInstance.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\MD5ModelLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\MD5ModelLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\MD5ModelNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\MD5ModelNode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\MD5Parser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\MD5Parser.h"
 				>
 			</File>
 			<File
@@ -243,6 +271,14 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\md5model\MD5Surface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\plugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\md5model\VectorLightList.h"
 				>
 			</File>
 		</Filter>
