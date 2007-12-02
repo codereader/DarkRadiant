@@ -231,8 +231,11 @@ public:
  * greebo: A ModelDef contains the information of a model {} block 
  *         as defined in a Doom3 .def file.
  */
-struct ModelDef {
+class IModelDef {
+public:
 	bool resolved;
+	
+	std::string name;
 	
 	std::string mesh;
 	std::string skin;
@@ -242,11 +245,11 @@ struct ModelDef {
 	typedef std::map<std::string, std::string> Anims;
 	Anims anims;
 	
-	ModelDef() : 
+	IModelDef() : 
 		resolved(false)
 	{}
 };
-typedef boost::shared_ptr<ModelDef> ModelDefPtr;
+typedef boost::shared_ptr<IModelDef> IModelDefPtr;
 
 /** EntityClass visitor interface.
  */
@@ -292,6 +295,10 @@ public:
 	virtual void detach(ModuleObserver& observer) = 0;
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;
+	
+	/** greebo: Finds the model def with the given name. Might return NULL if not found.
+	 */
+	virtual IModelDefPtr findModel(const std::string& name) const = 0;
 };
 
 inline IEntityClassManager& GlobalEntityClassManager() {

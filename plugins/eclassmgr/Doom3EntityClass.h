@@ -7,7 +7,8 @@
 #include "math/Vector3.h"
 #include "math/aabb.h"
 
-#include <string>
+#include "parser/DefTokeniser.h"
+
 #include <vector>
 #include <map>
 
@@ -271,6 +272,9 @@ public:
 	void setModName(const std::string& mn) {
 	    _modName = mn;
 	}
+	
+	// Initialises this class from the given tokens
+	void parseFromTokens(parser::DefTokeniser& tokeniser);
 };
 
 /**
