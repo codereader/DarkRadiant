@@ -70,7 +70,9 @@ void MD5ModelInstance::constructRemaps() {
 			j->shader = ShaderPtr();
 		}
 	}
-	SceneChangeNotify();
+
+	// Refresh the scene
+	GlobalSceneGraph().sceneChanged();
 }
 
 void MD5ModelInstance::destroyRemaps() {

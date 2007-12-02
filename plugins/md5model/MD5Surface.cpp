@@ -13,6 +13,7 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 // Constructor
 MD5Surface::MD5Surface()
 : _shaderName(""),
+  _originalShaderName(""),
   _normalList(0),
   _lightingList(0)
 {}
@@ -81,10 +82,13 @@ void MD5Surface::createDisplayLists()
 		ArbitraryMeshVertex& v = _vertices[*i];
 
 		// Submit the vertex attributes and coordinate
-		glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
-		glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
-		glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
-		glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);		
+		if (GLEW_ARB_vertex_program) {
+			// Submit the vertex attributes and coordinate
+			glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
+			glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
+			glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
+			glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);		
+		}
 		glVertex3dv(v.vertex);	
 	}
 	glEnd();
@@ -146,6 +150,7 @@ MD5Surface::indices_t& MD5Surface::indices() {
 
 void MD5Surface::setShader(const std::string& name) {
 	_shaderName = name;
+	_originalShaderName = name;
 	captureShader();
 }
 
@@ -161,6 +166,23 @@ VolumeIntersectionValue MD5Surface::intersectVolume(
 		const VolumeTest& test, const Matrix4& localToWorld) const
 {
 	return test.TestAABB(_aabb_local, localToWorld);
+}
+
+void MD5Surface::applySkin(const ModelSkin& skin) {
+	// Look up the remap for this surface's material name. If there is a remap
+	// change the Shader* to point to the new shader.
+	std::string remap = skin.getRemap(_originalShaderName);
+
+	if (!remap.empty()) {
+		// Save the remapped shader name
+		_shaderName = remap; 
+	}
+	else {
+		// No remap, so reset our shader to the original unskinned shader	
+		_shaderName = _originalShaderName; 
+	}
+
+	captureShader();
 }
 
 const AABB& MD5Surface::localAABB() const {

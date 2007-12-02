@@ -1,5 +1,8 @@
 #include "MD5Model.h"
 
+#include "ishaders.h"
+#include "texturelib.h"
+#include "ifilter.h"
 #include "string/string.h"
 #include "MD5DataStructures.h"
 
@@ -53,19 +56,21 @@ void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4
 }
 
 void MD5Model::applySkin(const ModelSkin& skin) {
-	// TODO
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
+		(*i)->applySkin(skin);
+	}
 }
 
 int MD5Model::getSurfaceCount() const {
-	return size();
+	return static_cast<int>(size());
 }
 
 int MD5Model::getVertexCount() const {
-	return _vertexCount;
+	return static_cast<int>(_vertexCount);
 }
 
 int MD5Model::getPolyCount() const {
-	return _polyCount;
+	return static_cast<int>(_polyCount);
 }
 
 const std::vector<std::string>& MD5Model::getActiveMaterials() const {
@@ -75,8 +80,21 @@ const std::vector<std::string>& MD5Model::getActiveMaterials() const {
 }
 
 void MD5Model::render(RenderStateFlags state) const {
+	// Render options
+	if (state & RENDER_TEXTURE)
+		glEnable(GL_TEXTURE_2D);
+	if (state & RENDER_SMOOTH)
+		glShadeModel(GL_SMOOTH);
+
 	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
-		(*i)->render(state);
+		// Get the IShader to test the shader name against the filter system
+		IShaderPtr surfaceShader = (*i)->getState()->getIShader();
+		if (GlobalFilterSystem().isVisible("texture", surfaceShader->getName())) {
+			// Bind the OpenGL texture and render the surface geometry
+			TexturePtr tex = surfaceShader->getTexture();
+			glBindTexture(GL_TEXTURE_2D, tex->texture_number);
+			(*i)->render(state);
+		}
 	}
 }
 

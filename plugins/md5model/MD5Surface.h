@@ -8,6 +8,7 @@
 #include "math/frustum.h"
 #include "cullable.h"
 #include "selectable.h"
+#include "modelskin.h"
 
 namespace md5
 {
@@ -24,6 +25,7 @@ private:
   
 	// Shader name
 	std::string _shaderName;
+	std::string _originalShaderName;
 	
 	// Shader object
 	ShaderPtr _shader;
@@ -71,6 +73,9 @@ public:
 	 * Calculate the AABB and build the display lists for rendering.
 	 */ 
 	void updateGeometry();
+
+	// Applies the given Skin to this surface.
+	void applySkin(const ModelSkin& skin);
 
     // Back-end render function
     void render(RenderStateFlags state) const;
