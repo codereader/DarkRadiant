@@ -41,37 +41,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "traverselib.h"
 #include "render.h"
 
-class VectorLightList : public LightList
-{
-  typedef std::vector<const RendererLight*> Lights;
-  Lights m_lights;
-public:
-  void addLight(const RendererLight& light)
-  {
-    m_lights.push_back(&light);
-  }
-  void clear()
-  {
-    m_lights.clear();
-  }
-  void evaluateLights() const
-  {
-  }
-  void lightsChanged() const
-  {
-  }
-  void forEachLight(const RendererLightCallback& callback) const
-  {
-    for(Lights::const_iterator i = m_lights.begin(); i != m_lights.end(); ++i)
-    {
-      callback(*(*i));
-    }
-  }
-};
-
+#include "VectorLightList.h"
 #include "MD5Model.h"
 
-inline void Surface_addLight(const md5::MD5Surface& surface, VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
+inline void Surface_addLight(const md5::MD5Surface& surface, md5::VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
 {
   if(light.testAABB(aabb_for_oriented_aabb(surface.localAABB(), localToWorld)))
   {
@@ -91,7 +64,7 @@ class ModelInstance :
   md5::MD5Model& m_model;
 
   const LightList* m_lightList;
-  typedef Array<VectorLightList> SurfaceLightLists;
+  typedef Array<md5::VectorLightList> SurfaceLightLists;
   SurfaceLightLists m_surfaceLightLists;
 
   class Remap
