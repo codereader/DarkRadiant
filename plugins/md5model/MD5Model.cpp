@@ -79,6 +79,9 @@ void MD5Model::render(RenderStateFlags state) const {
 }
 
 void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
+	_vertexCount = 0;
+	_polyCount = 0;
+
 	// Check the version number
 	tok.assertNextToken("MD5Version");
 	tok.assertNextToken("10");
@@ -158,7 +161,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 		MD5Verts verts(numVerts);
 
 		// Update the vertexcount
-		_vertexCount = numVerts;
+		_vertexCount += numVerts;
 
 		// Populate each vertex struct with parsed values
 		for (MD5Verts::iterator vt = verts.begin(); vt != verts.end(); ++vt) {
@@ -187,7 +190,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 		std::size_t numTris = strToSizet(tok.nextToken());
 
 		// Update the polycount
-		_polyCount = numTris;
+		_polyCount += numTris;
 
 		// Initialise the triangle vector
 		MD5Tris tris(numTris);

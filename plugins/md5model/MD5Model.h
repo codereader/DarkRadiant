@@ -88,6 +88,7 @@ private:
 	MD5Surface& newSurface();
 
 }; // class MD5Model
+typedef boost::shared_ptr<MD5Model> MD5ModelPtr;
 
 } // namespace md5
 
