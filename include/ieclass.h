@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector3.h"
 
 #include <vector>
+#include <map>
 
 /* FORWARD DECLS */
 
@@ -225,6 +226,27 @@ public:
 	 */
 	virtual const std::string& getSkin() const = 0;
 };
+
+/**
+ * greebo: A ModelDef contains the information of a model {} block 
+ *         as defined in a Doom3 .def file.
+ */
+struct ModelDef {
+	bool resolved;
+	
+	std::string mesh;
+	std::string skin;
+	
+	std::string parent;
+	
+	typedef std::map<std::string, std::string> Anims;
+	Anims anims;
+	
+	ModelDef() : 
+		resolved(false)
+	{}
+};
+typedef boost::shared_ptr<ModelDef> ModelDefPtr;
 
 /** EntityClass visitor interface.
  */
