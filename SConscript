@@ -244,6 +244,7 @@ md5model_env = module_env.Copy()
 md5model_lst=build_list('plugins/md5model', 
 						'md5.cpp \
 						 MD5Model.cpp \
+						 MD5ModelInstance.cpp \
 						 MD5ModelLoader.cpp \
 						 MD5Surface.cpp')
 md5model_env.Append(LIBS = ['math'])
