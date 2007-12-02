@@ -15,11 +15,10 @@ MD5Surface::MD5Surface()
 : _shaderName(""),
   _normalList(0),
   _lightingList(0)
-{ }
+{}
 
 // Destructor
 MD5Surface::~MD5Surface() {
-	
 	// Release GL display lists
 	glDeleteLists(_normalList, 1);
 	glDeleteLists(_lightingList, 1);	
