@@ -164,7 +164,8 @@ void EClassManager::detach(ModuleObserver & observer)
 }
 
 IModelDefPtr EClassManager::findModel(const std::string& name) const {
-	
+	Models::const_iterator found = _models.find(name);
+	return (found != _models.end()) ? found->second : IModelDefPtr();
 }
 
 // RegisterableModule implementation
