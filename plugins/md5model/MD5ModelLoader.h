@@ -42,46 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "render.h"
 
 #include "VectorLightList.h"
-#include "MD5ModelInstance.h"
-
-class ModelNode : 
-	public scene::Node, 
-	public scene::Instantiable,
-	public Nameable
-{
-  InstanceSet m_instances;
-  md5::MD5Model m_model;
-public:
-  ModelNode()
-  {}
-
-  md5::MD5Model& model()
-  {
-    return m_model;
-  }
-
-  scene::Instance* create(const scene::Path& path, scene::Instance* parent)
-  {
-    return new md5::MD5ModelInstance(path, parent, m_model);
-  }
-  void forEachInstance(const scene::Instantiable::Visitor& visitor)
-  {
-    m_instances.forEachInstance(visitor);
-  }
-  void insert(const scene::Path& path, scene::Instance* instance)
-  {
-    m_instances.insert(path, instance);
-  }
-  scene::Instance* erase(const scene::Path& path)
-  {
-    return m_instances.erase(path);
-  }
-  
-  virtual std::string name() const {
-  	return "MD5Model";
-  }
-};
-
+#include "MD5ModelNode.h"
 
 inline void Surface_constructQuad(md5::MD5Surface& surface, const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& d, const Vector3& normal)
 {
