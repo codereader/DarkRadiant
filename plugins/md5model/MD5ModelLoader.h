@@ -69,60 +69,7 @@ public:
   }
 };
 
-// generic model node
-class MD5Model :
-public Cullable,
-public Bounded
-{
-	typedef std::vector<md5::MD5SurfacePtr> SurfaceList;
-	SurfaceList m_surfaces;
-
-	AABB m_aabb_local;
-public:
-	Callback m_lightsChanged;
-
-	typedef SurfaceList::const_iterator const_iterator;
-
-	const_iterator begin() const {
-		return m_surfaces.begin();
-	}
-
-	const_iterator end() const {
-		return m_surfaces.end();
-	}
-
-	std::size_t size() const {
-		return m_surfaces.size();
-	}
-
-	md5::MD5Surface& newSurface() {
-		m_surfaces.push_back(md5::MD5SurfacePtr(new md5::MD5Surface));
-		return *m_surfaces.back();
-	}
-
-	void updateAABB() {
-		m_aabb_local = AABB();
-		for(SurfaceList::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i) {
-			m_aabb_local.includeAABB((*i)->localAABB());
-		}
-	}
-
-	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const {
-		return test.TestAABB(m_aabb_local, localToWorld);
-	}
-
-	virtual const AABB& localAABB() const {
-		return m_aabb_local;
-	}
-
-	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {
-		for (SurfaceList::iterator i = m_surfaces.begin(); i != m_surfaces.end(); ++i) {
-			if ((*i)->intersectVolume(test.getVolume(), localToWorld) != c_volumeOutside) {
-				(*i)->testSelect(selector, test, localToWorld);
-			}
-		}
-	}
-}; // class MD5Model
+#include "MD5Model.h"
 
 inline void Surface_addLight(const md5::MD5Surface& surface, VectorLightList& lights, const Matrix4& localToWorld, const RendererLight& light)
 {
@@ -141,7 +88,7 @@ class ModelInstance :
   public Bounded,
   public Cullable
 {
-  MD5Model& m_model;
+  md5::MD5Model& m_model;
 
   const LightList* m_lightList;
   typedef Array<VectorLightList> SurfaceLightLists;
@@ -186,7 +133,7 @@ public:
 	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
 
     SurfaceRemaps::iterator j = _surfaceRemaps.begin();
-    for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)
+    for(md5::MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j)
     {
       std::string remap = skin.getRemap((*i)->getShader());
       if(!remap.empty())
@@ -229,14 +176,14 @@ public:
     constructRemaps();
   }
 
-  ModelInstance(const scene::Path& path, scene::Instance* parent, MD5Model& model) :
+  ModelInstance(const scene::Path& path, scene::Instance* parent, md5::MD5Model& model) :
     Instance(path, parent), 
     m_model(model),
     m_surfaceLightLists(m_model.size()),
     _surfaceRemaps(m_model.size())
   {
     m_lightList = &GlobalShaderCache().attach(*this);
-    m_model.m_lightsChanged = LightsChangedCaller(*this);
+    m_model._lightsChanged = LightsChangedCaller(*this);
 
     Instance::setTransformChangedCallback(LightsChangedCaller(*this));
 
@@ -248,7 +195,7 @@ public:
 
     Instance::setTransformChangedCallback(Callback());
 
-    m_model.m_lightsChanged = Callback();
+    m_model._lightsChanged = Callback();
     GlobalShaderCache().detach(*this);
   }
 
@@ -256,7 +203,7 @@ public:
   {
     SurfaceLightLists::const_iterator j = m_surfaceLightLists.begin();
     SurfaceRemaps::const_iterator k = _surfaceRemaps.begin();
-    for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j, ++k)
+    for(md5::MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i, ++j, ++k)
     {
       if((*i)->intersectVolume(volume, localToWorld) != c_volumeOutside)
       {
@@ -290,7 +237,7 @@ public:
   {
     const Matrix4& localToWorld = Instance::localToWorld();
     SurfaceLightLists::iterator j = m_surfaceLightLists.begin();
-    for(MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i)
+    for(md5::MD5Model::const_iterator i = m_model.begin(); i != m_model.end(); ++i)
     {
       Surface_addLight(*(*i), *j++, localToWorld, light);
     }
@@ -310,12 +257,12 @@ class ModelNode :
 	public Nameable
 {
   InstanceSet m_instances;
-  MD5Model m_model;
+  md5::MD5Model m_model;
 public:
   ModelNode()
   {}
 
-  MD5Model& model()
+  md5::MD5Model& model()
   {
     return m_model;
   }
@@ -375,7 +322,7 @@ inline void Surface_constructQuad(md5::MD5Surface& surface, const Vector3& a, co
   );
 }
 
-inline void Model_constructNull(MD5Model& model)
+inline void Model_constructNull(md5::MD5Model& model)
 {
   md5::MD5Surface& surface = model.newSurface();
 
