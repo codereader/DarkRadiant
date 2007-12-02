@@ -59,6 +59,8 @@ void MD5Model::applySkin(const ModelSkin& skin) {
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
 		(*i)->applySkin(skin);
 	}
+
+	updateMaterialList();
 }
 
 int MD5Model::getSurfaceCount() const {
@@ -73,10 +75,19 @@ int MD5Model::getPolyCount() const {
 	return static_cast<int>(_polyCount);
 }
 
+void MD5Model::updateMaterialList() {
+	_surfaceNames.clear();
+
+	for (SurfaceList::const_iterator i = _surfaces.begin();
+		 i != _surfaces.end();
+		 ++i)
+	{
+		_surfaceNames.push_back((*i)->getShader());
+	}
+}
+
 const std::vector<std::string>& MD5Model::getActiveMaterials() const {
-	// TODO
-	static std::vector<std::string> _list;
-	return _list;
+	return _surfaceNames;
 }
 
 void MD5Model::render(RenderStateFlags state) const {
@@ -301,6 +312,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	} // for each mesh
 
 	updateAABB();
+	updateMaterialList();
 }
 
 Vector3 MD5Model::parseVector3(parser::DefTokeniser& tok) {
