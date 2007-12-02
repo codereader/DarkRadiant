@@ -2,7 +2,7 @@
 #define MD5MODEL_H_
 
 #include "imodel.h"
-#include "Cullable.h"
+#include "cullable.h"
 #include "math/aabb.h"
 #include <vector>
 #include "generic/callbackfwd.h"
