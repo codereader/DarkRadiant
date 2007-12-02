@@ -50,53 +50,47 @@ IEntityClassPtr EntityClassDoom3_insertUnique(IEntityClassPtr entityClass)
   return (*_entityClasses.insert(EntityClasses::value_type(entityClass->getName(), entityClass)).first).second;
 }
 
-class Model
-{
-public:
-  bool m_resolved;
-  std::string m_mesh;
-  std::string m_skin;
-  std::string m_parent;
-  typedef std::map<std::string, std::string> Anims;
-  Anims m_anims;
-  Model() : m_resolved(false)
-  {
-  }
-};
-
-typedef std::map<std::string, Model> Models;
-
+typedef std::map<std::string, ModelDefPtr> Models;
 Models g_models;
 
-void Model_resolveInheritance(const char* name, Model& model)
-{
-  if(model.m_resolved == false)
-  {
-    model.m_resolved = true;
+void Model_resolveInheritance(const std::string& name, ModelDefPtr& model) {
+	if (model->resolved == false) {
+		model->resolved = true;
 
-    if(!string_empty(model.m_parent.c_str()))
-    {
-      Models::iterator i = g_models.find(model.m_parent);
-      if(i == g_models.end())
-      {
-        globalErrorStream() << "model " << name << " inherits unknown model " << model.m_parent.c_str() << "\n";
-      }
-      else
-      {
-        Model_resolveInheritance((*i).first.c_str(), (*i).second);
-        model.m_mesh = (*i).second.m_mesh;
-        model.m_skin = (*i).second.m_skin;
-      }
-    }
-  }
+		if (!model->parent.empty()) {
+			Models::iterator i = g_models.find(model->parent);
+			
+			if (i == g_models.end()) {
+				globalErrorStream() << "model " << name.c_str()
+						<< " inherits unknown model " << model->parent.c_str()
+						<< "\n";
+			} 
+			else {
+				Model_resolveInheritance(i->first, i->second);
+				model->mesh = i->second->mesh;
+				model->skin = i->second->skin;
+			}
+		}
+	}
 }
 
 void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
 {
     // Add the named model to the global list
-    const std::string name = tokeniser.nextToken(); 
-    Model& model = g_models[name];
-
+    const std::string name = tokeniser.nextToken();
+    
+    ModelDefPtr model;
+    
+    if (g_models.find(name) == g_models.end()) {
+    	// Not yet defined, insert new modeldef
+    	model = ModelDefPtr(new ModelDef);
+    }
+    else {
+    	std::cout << "[eclassmgr]: Model " << name << " redefined.\n";
+    	model = g_models[name];
+    }
+    
+    g_models.insert(Models::value_type(name, model));
     tokeniser.assertNextToken("{");
 
     // State enum
@@ -106,20 +100,20 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
     } state = NONE;
 
     while (true) {
-
         const std::string parameter = tokeniser.nextToken();
 
-        if (parameter == "}")
+        if (parameter == "}") {
             break;
+        }
             
         if (parameter == "inherit") {
-            model.m_parent = tokeniser.nextToken().c_str();
+            model->parent = tokeniser.nextToken().c_str();
         }
         else if (parameter == "mesh") {
-            model.m_mesh = tokeniser.nextToken().c_str();
+            model->mesh = tokeniser.nextToken().c_str();
         }
         else if (parameter == "skin") {
-            model.m_skin = tokeniser.nextToken().c_str();
+            model->skin = tokeniser.nextToken().c_str();
         }
         else if (parameter == "offset") {
             tokeniser.skipTokens(5);
@@ -133,7 +127,7 @@ void EntityClassDoom3_parseModel(parser::DefTokeniser& tokeniser)
             // SYNTAX: "anim" <name> <md5file> [ "{" <blah> [ <blah> ... ] "}" ]
             std::string name = tokeniser.nextToken();
             std::string file = tokeniser.nextToken();
-            model.m_anims.insert(Model::Anims::value_type(name.c_str(), file.c_str()));
+            model->anims.insert(ModelDef::Anims::value_type(name, file));
             state = ANIM; // check for the braces on the next iteration
         }
         else if (state == ANIM && parameter == "{") { // anim braces
@@ -361,7 +355,7 @@ public:
     
         // Resolve inheritance on the model classes
         for (Models::iterator i = g_models.begin(); i != g_models.end(); ++i) {
-            Model_resolveInheritance((*i).first.c_str(), (*i).second);
+            Model_resolveInheritance(i->first, i->second);
         }
             
         // Resolve inheritance for the entities. At this stage the classes
@@ -383,8 +377,8 @@ public:
             if (i->second->getModelPath().size() > 0) {
                 Models::iterator j = g_models.find(i->second->getModelPath());
                 if (j != g_models.end()) {
-                    i->second->setModelPath(j->second.m_mesh);
-                    i->second->setSkin(j->second.m_skin);
+                    i->second->setModelPath(j->second->mesh);
+                    i->second->setSkin(j->second->skin);
                 }
             }
         
