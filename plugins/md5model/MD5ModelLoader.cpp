@@ -7,7 +7,6 @@
 #include "stream/textstream.h"
 
 #include "MD5ModelNode.h"
-#include "MD5Parser.h"
 
 namespace md5 {
 
@@ -18,13 +17,14 @@ scene::INodePtr MD5ModelLoader::loadModel(ArchiveFile& file) {
 	// Construct a new Node
 	MD5ModelNodePtr modelNode(new MD5ModelNode);
 	
-	// Construct a Parser object and start reading the file
+	// Construct a Tokeniser object and start reading the file
 	try {
 		std::istream is(&inputStream);
-		MD5Parser parser(is);
-		
-		// Invoke the parser routine
-		parser.parseToModel(modelNode->model());
+		parser::BasicDefTokeniser<std::istream> tokeniser(is);
+				
+		// Invoke the parser routine (might throw)
+		MD5Model& md5model(modelNode->model());
+		md5model.parseFromTokens(tokeniser);
 	}
 	catch (parser::ParseException e) {
 		globalErrorStream() << "[md5model] Parse failure. Exception was:\n"

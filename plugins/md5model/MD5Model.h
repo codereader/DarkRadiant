@@ -1,11 +1,12 @@
 #ifndef MD5MODEL_H_
 #define MD5MODEL_H_
 
+#include "imodel.h"
 #include "Cullable.h"
-#include "Bounded.h"
 #include "math/aabb.h"
 #include <vector>
 #include "generic/callbackfwd.h"
+#include "parser/DefTokeniser.h"
 
 #include "MD5Surface.h"
 
@@ -14,7 +15,7 @@ namespace md5 {
 // generic model node
 class MD5Model :
 	public Cullable,
-	public Bounded
+	public model::IModel
 {
 	typedef std::vector<MD5SurfacePtr> SurfaceList;
 	SurfaceList _surfaces;
@@ -31,7 +32,11 @@ public:
 	std::size_t size() const;
 
 	// Creates a new MD5Surface, adds it to the local list and returns the reference  
-	md5::MD5Surface& newSurface();
+	MD5Surface& newSurface();
+
+	/** greebo: Reads the model data from the given tokeniser.
+	 */
+	void parseFromTokens(parser::DefTokeniser& tok);
 
 	void updateAABB();
 
@@ -41,6 +46,40 @@ public:
 	virtual const AABB& localAABB() const;
 
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
+
+	// IModel implementation
+	virtual void applySkin(const ModelSkin& skin);
+
+	/** Return the number of material surfaces on this model. Each material
+	 * surface consists of a set of polygons sharing the same material.
+	 */
+	virtual int getSurfaceCount() const;
+	
+	/** Return the number of vertices in this model, equal to the sum of the
+	 * vertex count from each surface.
+	 */
+	virtual int getVertexCount() const;
+
+	/** Return the number of triangles in this model, equal to the sum of the
+	 * triangle count from each surface.
+	 */
+	virtual int getPolyCount() const;
+	
+	/** Return a vector of strings listing the active materials used in this
+	 * model, after any skin remaps. The list is owned by the model instance.
+	 */
+	virtual const std::vector<std::string>& getActiveMaterials() const;
+
+	// OpenGLRenderable implementation
+	virtual void render(RenderStateFlags state) const;
+
+private:
+	/**
+	 * Helper: Parse an MD5 vector, which consists of three separated numbers 
+	 * enclosed with parentheses.
+	 */
+	Vector3 parseVector3(parser::DefTokeniser& tok);
+
 }; // class MD5Model
 
 } // namespace md5
