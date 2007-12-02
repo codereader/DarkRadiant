@@ -59,9 +59,9 @@
 		<shortcut command="ExpandSelectionToEntities" key="E" modifiers="CONTROL+ALT" />
 		<shortcut command="Preferences" key="P" />
 		<shortcut command="ToggleConsole" key="O" />
-		<shortcut command="EntityList" key="L" />
+		<shortcut command="EntityList" key="J" />
 		<shortcut command="ToggleEntityInspector" key="N" />
-		<shortcut command="ToggleLightInspector" key="J" />
+		<shortcut command="ToggleLightInspector" key="L" />
 		<shortcut command="ShowHidden" key="H" modifiers="SHIFT" />
 		<shortcut command="HideSelected" key="H" />
 		<shortcut command="MapInfo" key="M" />
