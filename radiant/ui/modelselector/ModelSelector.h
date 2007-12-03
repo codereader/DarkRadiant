@@ -80,10 +80,19 @@ private:
 	std::string _lastModel;
 	std::string _lastSkin;
 	
+	// TRUE if the treeview has been populated
+	bool _populated;
+	
+	// TRUE once the column header is set to ascending sorted
+	bool _sorted;
+
 private:
 	
 	// Private constructor, creates GTK widgets
 	ModelSelector();
+	
+	// Home of the static instance
+	static ModelSelector& Instance();
 
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
 	ModelSelectorResult showAndBlock(bool showOptions = false);
@@ -125,6 +134,9 @@ public:
 	 * @showOptions: whether to show the advanced options tab
 	 */
 	static ModelSelectorResult chooseModel(bool showOptions=true);
+	
+	// greebo: Lets the modelselector repopulate its treeview next time the dialog is shown.
+	static void refresh();
 };
 
 }

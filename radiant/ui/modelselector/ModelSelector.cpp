@@ -37,7 +37,9 @@ ModelSelector::ModelSelector()
   								GDK_TYPE_PIXBUF)),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _lastModel(""),
-  _lastSkin("")
+  _lastSkin(""),
+  _populated(false),
+  _sorted(false)
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
@@ -93,15 +95,32 @@ ModelSelector::ModelSelector()
 	gtk_box_pack_end(GTK_BOX(vbx), createAdvancedButtons(), FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+}
+
+ModelSelector& ModelSelector::Instance() {
+	// Static instance pointer
+	typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
+	static ModelSelectorPtr _selector(new ModelSelector);
 	
-	// Populate the tree of models
-	populateModels();
+	return *_selector;
 }
 
 // Show the dialog and enter recursive main loop
-
 ModelSelectorResult ModelSelector::showAndBlock(bool showOptions) {
 
+	if (!_populated) {
+		// Attempt to construct the static instance. This could throw an 
+		// exception if the population of models is aborted by the user.
+		try {
+			// Populate the tree of models
+			populateModels();
+		}
+		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+			// Return a blank model and skin
+			return ModelSelectorResult("", "", false);
+		}
+	}
+	
 	// Show the dialog
 	gtk_widget_show_all(_widget);
 
@@ -126,29 +145,14 @@ ModelSelectorResult ModelSelector::showAndBlock(bool showOptions) {
 // Static function to display the instance, and return the selected model to the 
 // calling function
 ModelSelectorResult ModelSelector::chooseModel(bool showOptions) {
-	
-	// Static instance pointer
-	typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
-	static ModelSelectorPtr _selector;
-	
-	// Create the ModelSelector if it is not valid
-	if (!_selector) {
-
-		// Attempt to construct the static instance. This could throw an 
-		// exception if the population of models is aborted by the user.
-		try {
-			_selector = ModelSelectorPtr(new ModelSelector());
-		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-			// Return a blank model and skin
-			return ModelSelectorResult("", "", false);
-		}
-	}
-	
 	// Use the instance to select a model.
-	return _selector->showAndBlock(showOptions);
+	return Instance().showAndBlock(showOptions);
 }
 
+void ModelSelector::refresh() {
+	// Clear the flag, this triggers a new population next time the dialog is shown
+	Instance()._populated = false;
+}
 
 // Helper function to create the TreeView
 GtkWidget* ModelSelector::createTreeView() {
@@ -181,12 +185,13 @@ GtkWidget* ModelSelector::createTreeView() {
 	gtk_container_add(GTK_CONTAINER(fr), scrollWin);
 	
 	return fr;
-	
 }
 
 // Populate the tree view with models
 void ModelSelector::populateModels() {
-
+	// Clear the treestore first
+	gtk_tree_store_clear(_treeStore);
+	
 	// Create a VFSTreePopulator for the treestore
 	gtkutil::VFSTreePopulator pop(_treeStore);
 	
@@ -201,9 +206,14 @@ void ModelSelector::populateModels() {
 	ModelDataInserter inserter;
 	pop.forEachNode(inserter);
 	
-	gtk_tree_view_column_set_sort_column_id(_modelCol, NAME_COLUMN);
-	gtk_tree_view_column_clicked(_modelCol);
+	if (!_sorted) {
+		gtk_tree_view_column_set_sort_column_id(_modelCol, NAME_COLUMN);
+		gtk_tree_view_column_clicked(_modelCol);
+		_sorted = true;
+	}
 	
+	// Set the flag, we're done	
+	_populated = true;
 }
 
 // Create the buttons panel at bottom of dialog
@@ -236,7 +246,6 @@ GtkWidget* ModelSelector::createAdvancedButtons() {
 GtkWidget* ModelSelector::createInfoPanel() {
 
 	// Info table. Has key and value columns.
-	
 	GtkWidget* infTreeView = 
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(infTreeView), FALSE);
@@ -264,9 +273,7 @@ GtkWidget* ModelSelector::createInfoPanel() {
 }
 
 // Get the value from the selected column
-
 std::string ModelSelector::getSelectedValue(gint colNum) {
-
 	// Get the selection
 	GtkTreeIter iter;
 	GtkTreeModel* model;
@@ -278,7 +285,6 @@ std::string ModelSelector::getSelectedValue(gint colNum) {
 		// Nothing selected, return empty string
 		return "";
 	}
-	
 }
 
 // Update the info table and model preview based on the current selection
