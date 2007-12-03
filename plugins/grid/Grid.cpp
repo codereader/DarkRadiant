@@ -50,6 +50,9 @@ public:
 		
 		// Load the default value from the registry
 		keyChanged();
+		
+		// Update the Toggle item status
+		gridChanged();
 	}
 
 private:
