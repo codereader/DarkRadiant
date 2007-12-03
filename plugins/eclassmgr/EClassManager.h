@@ -10,12 +10,12 @@ namespace eclass {
 /** EClassManager - master entity loader
  * 
  * This class is the master loader for the entity classes. It ensures that the
- * EntityClassDoom3_loadFile() function is called for every .def file in the
- * def/ directory, which in turn kicks off the parse process (including the
- * resolution of inheritance.
+ * loadFile() function is called for every .def file in the def/ directory, 
+ * which in turn kicks off the parse process (including the resolution of 
+ * inheritance).
  * 
- * It also accomodates ModuleObservers, presumably to allow plugins to be
- * notified when entity classes are added or modified.
+ * It also accomodates ModuleObservers, presumably to be notified when the
+ * dependency modules are realised. This one depends on the VFS.
  */
 class EClassManager :
     public IEntityClassManager,
