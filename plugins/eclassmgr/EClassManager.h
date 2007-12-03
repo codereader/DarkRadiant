@@ -63,6 +63,10 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);	
 	virtual void shutdownModule();
 	
+	// Functor loading the DEF files (gets called by GlobalFilesystem().foreach()).
+	void loadFile(const std::string& filename);
+	typedef MemberCaller1<EClassManager, const std::string&, &EClassManager::loadFile> LoadFileCaller;
+
 private:
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned 
@@ -70,10 +74,6 @@ private:
 	
 	// Parses the given inputstream for DEFs.
 	void parse(TextInputStream& inStr, const std::string& modDir);
-	
-	// Functor loading the DEF files (gets called by GlobalFilesystem().foreach()).
-	void loadFile(const std::string& filename);
-	typedef MemberCaller1<EClassManager, const std::string&, &EClassManager::loadFile> LoadFileCaller;
 	
 	// Recursively resolves the inheritance of the model defs
 	void resolveModelInheritance(const std::string& name, IModelDefPtr& model);
