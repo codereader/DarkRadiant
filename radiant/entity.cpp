@@ -77,6 +77,9 @@ public:
 void ReloadSkins() {
 	GlobalModelSkinCache().refresh();
 	GlobalSceneGraph().traverse(RefreshSkinWalker());
+	
+	// Refresh the ModelSelector too
+	ui::ModelSelector::refresh();
 }
 
 class EntitySetKeyValueSelected : public scene::Graph::Walker

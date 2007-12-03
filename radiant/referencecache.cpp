@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "moduleobservers.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "ui/modelselector/ModelSelector.h"
 
 #include "map/RootNode.h"
 #include "mainframe.h"
@@ -867,6 +868,8 @@ void RefreshReferences()
 {
   ScopeDisableScreenUpdates disableScreenUpdates("Refreshing models");
   GetReferenceCache().refresh();
+  // greebo: Reload the modelselector too
+  ui::ModelSelector::refresh();
 }
 
 void FlushReferences()
