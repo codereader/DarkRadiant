@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 
 // Forward declaration
-struct GraphTreeModel;
+//struct GraphTreeModel;
 
 /** greebo: This is the actual implementation of the scene::Graph
  * 			defined in iscenegraph.h. This keeps track of all
@@ -45,7 +45,7 @@ class CompiledGraph :
 	ObserverList _sceneObservers;
 
 	// This is the associated graph tree model (used for the EntityList)
-	GraphTreeModel* _treeModel;
+	//GraphTreeModel* _treeModel;
 	
 	Signal0 m_boundsChanged;
 	scene::Path m_rootpath;
@@ -60,7 +60,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 	
-	GraphTreeModel* getTreeModel();
+	//GraphTreeModel* getTreeModel();
   
 	/** greebo: Adds/removes an observer from the scenegraph,
 	 * 			to get notified upon insertions/deletions

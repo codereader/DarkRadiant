@@ -74,11 +74,11 @@ namespace scene
     	// Gets called when anything in the scenegraph changes
     	virtual void onSceneGraphChange() {}
     	
-    	// Gets called when a new <node> is inserted into the scenegraph
-    	virtual void onSceneNodeInsert(const scene::INodePtr& node) {}
+    	// Gets called when a new <instance> is inserted into the scenegraph
+    	virtual void onSceneNodeInsert(const scene::Instance& instance) {}
     	
-    	// Gets called when <node> is removed from the scenegraph
-    	virtual void onSceneNodeErase(const scene::INodePtr& node) {} 
+    	// Gets called when <instance> is removed from the scenegraph
+    	virtual void onSceneNodeErase(const scene::Instance& instance) {} 
     };
 
     /// \brief Returns the root-node of the graph.

@@ -28,9 +28,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtktreednd.h>
 #include <gtk/gtkmain.h>
 
+#include "imodule.h"
 #include "nameable.h"
 #include "iscenegraph.h"
 #include "nameable.h"
+#include "modulesystem/StaticModule.h"
 
 #include "generic/callback.h"
 #include "scenelib.h"
@@ -114,12 +116,36 @@ public:
   typedef MemberCaller<GraphTreeNode, &GraphTreeNode::rowChanged> RowChangedCaller;
 };
 
-struct GraphTreeModel
+class GraphTreeModel :
+	public scene::Graph::Observer,
+	public RegisterableModule
 {
-  GObject parent;
+public:
+	// The class holds an instance of itself
+	static GraphTreeModel* _treeModel;
+	
+	GObject parent;
 
-  GraphTreeNode* m_graph;
+	GraphTreeNode* m_graph;
+	
+	// Gets called when a new <instance> is inserted into the scenegraph
+	virtual void onSceneNodeInsert(const scene::Instance& instance);
+	
+	// Gets called when <instance> is removed from the scenegraph
+	virtual void onSceneNodeErase(const scene::Instance& instance);
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
 };
+
+// Define the static member
+GraphTreeModel* GraphTreeModel::_treeModel = NULL;
+
+// Define the static module
+module::StaticModule<GraphTreeModel> graphTreeModelModule;
 
 struct GraphTreeModelClass
 {
@@ -592,4 +618,46 @@ void graph_tree_model_erase(GraphTreeModel* model, const scene::Instance& instan
   GraphTreeNode* node((*i).second);
   parent->erase(i);
   delete node;
+}
+
+// Gets called when a new <instance> is inserted into the scenegraph
+void GraphTreeModel::onSceneNodeInsert(const scene::Instance& instance) {
+	graph_tree_model_insert(_treeModel, instance);
+}
+
+// Gets called when <instance> is removed from the scenegraph
+void GraphTreeModel::onSceneNodeErase(const scene::Instance& instance) {
+	graph_tree_model_erase(_treeModel, instance);
+}
+
+// RegisterableModule implementation
+const std::string& GraphTreeModel::getName() const {
+	static std::string _name("GraphTreeModel");
+	return _name;
+}
+
+const StringSet& GraphTreeModel::getDependencies() const {
+	static StringSet _dependencies;
+	
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_SCENEGRAPH);
+	}
+	
+	return _dependencies;
+}
+
+void GraphTreeModel::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "GraphTreeModel::initialiseModule called\n";
+	
+	_treeModel = graph_tree_model_new();
+	GlobalSceneGraph().addSceneObserver(this);
+}
+
+void GraphTreeModel::shutdownModule() {
+	GlobalSceneGraph().removeSceneObserver(this);
+	graph_tree_model_delete(_treeModel);
+}
+
+GraphTreeModel* scene_graph_get_tree_model() {
+	return GraphTreeModel::_treeModel;
 }

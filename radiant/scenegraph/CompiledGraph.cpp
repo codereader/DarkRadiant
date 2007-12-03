@@ -28,14 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "SceneGraphModule.h"
 #include "modulesystem/StaticModule.h"
 
-CompiledGraph::CompiledGraph() :
-	_treeModel(NULL)
+CompiledGraph::CompiledGraph()
 {}
 
-GraphTreeModel* CompiledGraph::getTreeModel() {
-	return _treeModel;
-}
-  
 void CompiledGraph::addSceneObserver(scene::Graph::Observer* observer) {
 	if (observer != NULL) {
 		// Add the passed observer to the list
@@ -112,13 +107,21 @@ void CompiledGraph::insert(scene::Instance* instance) {
 
 	// Notify the graph tree model about the change
 	sceneChanged();
-	graph_tree_model_insert(getTreeModel(), *instance);
+	
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+		(*i)->onSceneNodeInsert(*instance);
+	}
+	//graph_tree_model_insert(getTreeModel(), *instance);
 }
 
 void CompiledGraph::erase(scene::Instance* instance) {
   	// Notify the graph tree model about the change
 	sceneChanged();
-	graph_tree_model_erase(scene_graph_get_tree_model(), *instance);
+	
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+		(*i)->onSceneNodeErase(*instance);
+	}
+	//graph_tree_model_erase(scene_graph_get_tree_model(), *instance);
 
     m_instances.erase(PathConstReference(instance->path()));
 }
@@ -182,11 +185,11 @@ const StringSet& CompiledGraph::getDependencies() const {
 void CompiledGraph::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "CompiledGraph::initialiseModule called\n";
 	
-	_treeModel = graph_tree_model_new();
+	//_treeModel = graph_tree_model_new();
 }
 
 void CompiledGraph::shutdownModule() {
-	graph_tree_model_delete(_treeModel);
+	//graph_tree_model_delete(_treeModel);
 }
 
 // Define the static SceneGraph module
