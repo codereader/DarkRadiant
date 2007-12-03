@@ -10,6 +10,7 @@
 #include "SoundPropertyEditor.h"
 #include "FloatPropertyEditor.h"
 #include "ModelPropertyEditor.h"
+#include "EClassPropertyEditor.h"
 
 namespace ui
 {
@@ -28,6 +29,7 @@ void PropertyEditorFactory::registerClasses() {
 	_peMap["sound"] = PropertyEditorPtr(new SoundPropertyEditor());
 	_peMap["float"] = PropertyEditorPtr(new FloatPropertyEditor());
 	_peMap["model"] = PropertyEditorPtr(new ModelPropertyEditor());
+	_peMap["eclass"] = PropertyEditorPtr(new EClassPropertyEditor());
 }
 
 // Create a PropertyEditor from the given name.

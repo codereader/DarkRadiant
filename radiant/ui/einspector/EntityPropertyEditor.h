@@ -32,7 +32,7 @@ public:
 
 private:
     // Populate the combo box by traversing the scenegraph for Entities
-    virtual void populateComboBox();
+    void populateComboBox();
 };
 
 }

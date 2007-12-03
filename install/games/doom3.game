@@ -137,7 +137,7 @@
 	</entityChooser>
 	<entityInspector>
 		<property name="origin" category="Basic" type="vector3">The origin of this object in 3D space</property>
-		<property name="classname" category="Basic" type="text">The classname of this entity. This must be a recognised class defined in one of the DEF files, and governs the overall behaviour of the entity</property>
+		<property name="classname" category="Basic" type="eclass">The classname of this entity. This must be a recognised class defined in one of the DEF files, and governs the overall behaviour of the entity</property>
 		<property name="name" category="Basic" type="text">The displayed name of this entity. This can be arbitrary, but must be unique across the entire map</property>
 		<property name="rotation" category="Basic" type="text" />
 		<property name="_color" category="Basic" type="colour" />
