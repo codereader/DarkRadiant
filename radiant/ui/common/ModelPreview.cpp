@@ -3,6 +3,7 @@
 
 #include "gtkutil/GLWidgetSentry.h"
 #include "iradiant.h"
+#include "ieclass.h"
 #include "os/path.h"
 #include "referencecache.h"
 #include "math/aabb.h"
@@ -124,14 +125,26 @@ void ModelPreview::setModel(const std::string& model) {
 		return;
 	}
 
+	// Copy the model string to a local variable
+	std::string modelToLoad = model;
+
 	// Load the model, using a lowercase version of the file extension to
 	// identify the loader module to use
-	std::string ldrName = os::getExtension(model);
+	std::string ldrName = os::getExtension(modelToLoad);
 	boost::algorithm::to_lower(ldrName);
+
+	// greebo: If the extension is empty, this might be a modeldef
+	IModelDefPtr modelDef = GlobalEntityClassManager().findModel(modelToLoad);
+	if (modelDef != NULL) {
+		// Model def found, let's try to get the extension of the "mesh" key
+		ldrName = os::getExtension(modelDef->mesh);
+		modelToLoad = modelDef->mesh;
+		boost::algorithm::to_lower(ldrName);
+	}
 	
 	ModelLoader* loader = ModelLoader_forType(ldrName.c_str());
 	if (loader != NULL) {
-		_model = loader->loadModelFromPath(model);
+		_model = loader->loadModelFromPath(modelToLoad);
 	}
 	else {
 		_model = model::IModelPtr();
@@ -139,14 +152,14 @@ void ModelPreview::setModel(const std::string& model) {
 	}
 
 	// Reset camera if the model has changed
-	if (_model && model != _lastModel) {
+	if (_model && modelToLoad != _lastModel) {
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
 		
 		// Calculate camera distance so model is appropriately zoomed
 		_camDist = -(_model->localAABB().getRadius() * 2.0); 
 
-		_lastModel = model;
+		_lastModel = modelToLoad;
 	}
 
 	// Redraw
