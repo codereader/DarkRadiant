@@ -38,13 +38,6 @@ namespace scene
   {
     return *nullInstancePointer;
   }
-
-  class Node;
-  const Node* const nullNodePointer = 0;
-  inline const Node& nullNode()
-  {
-    return *nullNodePointer;
-  }
 }
 
 // String identifier for the registry module
@@ -78,7 +71,14 @@ namespace scene
     class Observer 
     {
     public:
-    	virtual void sceneChanged() = 0;
+    	// Gets called when anything in the scenegraph changes
+    	virtual void onSceneGraphChange() {}
+    	
+    	// Gets called when a new <node> is inserted into the scenegraph
+    	virtual void onSceneNodeInsert(const scene::INodePtr& node) {}
+    	
+    	// Gets called when <node> is removed from the scenegraph
+    	virtual void onSceneNodeErase(const scene::INodePtr& node) {} 
     };
 
     /// \brief Returns the root-node of the graph.

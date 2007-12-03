@@ -58,7 +58,7 @@ void CompiledGraph::removeSceneObserver(scene::Graph::Observer* observer) {
 void CompiledGraph::sceneChanged() {
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
 		scene::Graph::Observer* observer = *i;
-		observer->sceneChanged();
+		observer->onSceneGraphChange();
 	}
 }
 

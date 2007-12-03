@@ -69,7 +69,7 @@ public:
 	void update();
 	
 	// The callback when the scene gets changed
-	void sceneChanged();
+	void onSceneGraphChange();
 
 	static void captureStates();
 	static void releaseStates();
