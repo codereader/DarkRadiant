@@ -30,7 +30,7 @@ public:
 
 private:
     // Populate the combo box by traversing the available EClasses
-    virtual void populateComboBox();
+    void populateComboBox();
 };
 
 } // namespace ui

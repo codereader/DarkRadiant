@@ -332,6 +332,40 @@ class idEnvironment(Environment):
 			self.RES(['radiant/darkradiant.rc'])
 
 g_env = idEnvironment()
+
+# greebo: Fix for problems with long command lines in Windows/MinGW
+if g_env['PLATFORM'] == 'win32':
+    import win32file
+    import win32event
+    import win32process
+    import win32security
+    import string
+
+    def my_spawn(sh, escape, cmd, args, spawnenv):
+        for var in spawnenv:
+            spawnenv[var] = spawnenv[var].encode('ascii', 'replace')
+
+        sAttrs = win32security.SECURITY_ATTRIBUTES()
+        StartupInfo = win32process.STARTUPINFO()
+        newargs = string.join(map(escape, args[1:]), ' ')
+        cmdline = cmd + " " + newargs
+
+        # check for any special operating system commands
+        if cmd == 'del':
+            for arg in args[1:]:
+                win32file.DeleteFile(arg)
+            exit_code = 0
+        else:
+            # otherwise execute the command.
+            hProcess, hThread, dwPid, dwTid = win32process.CreateProcess(None, cmdline, None, None, 1, 0, spawnenv, None, StartupInfo)
+            win32event.WaitForSingleObject(hProcess, win32event.INFINITE)
+            exit_code = win32process.GetExitCodeProcess(hProcess)
+            win32file.CloseHandle(hProcess);
+            win32file.CloseHandle(hThread);
+        return exit_code
+
+    g_env['SPAWN'] = my_spawn
+
 g_env.useBoost()
 
 # export the globals
@@ -370,4 +404,3 @@ if packageType == 'deb':
     os.system('cp -R tools/linux/DEBIAN %s' % tempDir)
     os.system('dpkg-deb -b %s darkradiant.deb' % tempDir)
     os.system('rm -rf %s' % tempDir)
-
