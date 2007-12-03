@@ -601,7 +601,7 @@ void CamWnd::benchmark() {
 	globalOutputStream() << FloatFormat(dEnd - dStart, 5, 2) << " seconds\n";
 }
 
-void CamWnd::sceneChanged() {
+void CamWnd::onSceneGraphChange() {
 	// Just pass the call to the update method
 	update();
 }

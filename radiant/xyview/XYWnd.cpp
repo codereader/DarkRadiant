@@ -228,7 +228,7 @@ void XYWnd::queueDraw() {
 	m_deferredDraw.draw();
 }
 
-void XYWnd::sceneChanged() {
+void XYWnd::onSceneGraphChange() {
 	// Pass the call to queueDraw.
 	queueDraw();
 }

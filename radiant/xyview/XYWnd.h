@@ -210,7 +210,7 @@ public:
 	void cameraMoved();
 	
 	// greebo: This gets called upon scene change
-	void sceneChanged();
+	void onSceneGraphChange();
 	
 	void saveStateToNode(xml::Node& rootNode);
 	void readStateFromNode(const xml::Node& rootNode);
