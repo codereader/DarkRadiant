@@ -21,47 +21,36 @@ EClassPropertyEditor::EClassPropertyEditor(Entity* entity, const std::string& na
 	populateComboBox();
 }
 
-// Traverse the scenegraph to populate the combo box
-void EClassPropertyEditor::populateComboBox() {
-    // Create a scenegraph walker to traverse the graph
-    /*struct EntityFinder: public scene::Graph::Walker {
-        
-        // List store to add to
-        GtkTreeModel* _store;
-        
-        // Constructor
-        EntityFinder(GtkWidget* box) {
+namespace {
+	
+	class EClassPopulator :
+		public EntityClassVisitor
+	{
+		// List store to add to
+		GtkTreeModel* _store;
+		
+	public:
+		// Constructor
+		EClassPopulator(GtkWidget* box) {
             _store = gtk_combo_box_get_model(GTK_COMBO_BOX(box));
         }
-            
-        // Visit function
-        virtual bool pre(const scene::Path& path, 
-        				 scene::Instance& instance) const 
-		{
-            Entity* entity = Node_getEntity(path.top());
-            if (entity != NULL) {
-
-				// Get the entity name
-                std::string entName = entity->getKeyValue("name");
-
-				// Append the name to the list store
-                GtkTreeIter iter;
-                gtk_list_store_append(GTK_LIST_STORE(_store), &iter);
-                gtk_list_store_set(GTK_LIST_STORE(_store), &iter, 
-                				   0, entName.c_str(), 
-                				   -1);
-
-                return false; // don't traverse children if entity found
-                
-            }
-            
-            return true; // traverse children otherwise
-        }
-            
-    } finder(_comboBox);
-
-    GlobalSceneGraph().traverse(finder); */ 
+		
+		virtual void visit(IEntityClassPtr eclass) {
+			// Append the name to the list store
+            GtkTreeIter iter;
+            gtk_list_store_append(GTK_LIST_STORE(_store), &iter);
+            gtk_list_store_set(GTK_LIST_STORE(_store), &iter, 
+            				   0, eclass->getName().c_str(), 
+            				   -1);
+		}
+	};
 }
 
+// Traverse the scenegraph to populate the combo box
+void EClassPropertyEditor::populateComboBox() {
+	// Construct an eclass visitor and traverse the eclasses
+	EClassPopulator populator(_comboBox);
+	GlobalEntityClassManager().forEach(populator);
+}
 
 } // namespace ui
