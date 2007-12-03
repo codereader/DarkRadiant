@@ -448,6 +448,8 @@ radiant_src = \
          'windowobservers.cpp',
          'ui/einspector/EntityInspector.cpp',
          'ui/einspector/AddPropertyDialog.cpp',
+         'ui/einspector/ComboBoxPropertyEditor.cpp',
+         'ui/einspector/EClassPropertyEditor.cpp',
          'ui/einspector/PropertyEditorFactory.cpp',
          'ui/einspector/Vector3PropertyEditor.cpp',
          'ui/einspector/BooleanPropertyEditor.cpp',
