@@ -44,23 +44,14 @@ class CompiledGraph :
 	typedef std::list<scene::Graph::Observer*> ObserverList;
 	ObserverList _sceneObservers;
 
-	// This is the associated graph tree model (used for the EntityList)
-	//GraphTreeModel* _treeModel;
-	
 	Signal0 m_boundsChanged;
 	scene::Path m_rootpath;
 
-public:
-	// Constructor
-	CompiledGraph();
-	
+public:	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
-	
-	//GraphTreeModel* getTreeModel();
   
 	/** greebo: Adds/removes an observer from the scenegraph,
 	 * 			to get notified upon insertions/deletions
