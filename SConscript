@@ -573,7 +573,6 @@ radiant_src = \
          'settings/Win32Registry.cpp',
          'settings/PreferenceSystem.cpp',
          'scenegraph/CompiledGraph.cpp',
-         'scenegraph/SceneGraphModule.cpp',
          'clipper/Clipper.cpp',
          'clipper/ClipPoint.cpp',
          'modulesystem/ApplicationContextImpl.cpp',

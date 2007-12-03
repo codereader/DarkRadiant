@@ -12,7 +12,6 @@
 #include "mainframe.h"
 #include "map/Map.h"
 #include "scenelib.h"
-#include "scenegraph/SceneGraphModule.h"
 #include "camera/Camera.h"
 #include "treemodel.h"
 

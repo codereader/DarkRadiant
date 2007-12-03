@@ -24,12 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 #include "scenelib.h"
 #include "instancelib.h"
-#include "treemodel.h"
-#include "SceneGraphModule.h"
 #include "modulesystem/StaticModule.h"
-
-CompiledGraph::CompiledGraph()
-{}
 
 void CompiledGraph::addSceneObserver(scene::Graph::Observer* observer) {
 	if (observer != NULL) {
@@ -184,12 +179,6 @@ const StringSet& CompiledGraph::getDependencies() const {
 
 void CompiledGraph::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "CompiledGraph::initialiseModule called\n";
-	
-	//_treeModel = graph_tree_model_new();
-}
-
-void CompiledGraph::shutdownModule() {
-	//graph_tree_model_delete(_treeModel);
 }
 
 // Define the static SceneGraph module
