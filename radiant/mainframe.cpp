@@ -198,12 +198,12 @@ void Radiant_Initialise()
 	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage("Settings");
 	settingsPage->setTitle("");
 	
-	ui::Splash::Instance().setProgressAndText("Loading Colour Schemes", 0.6f);
+	ui::Splash::Instance().setProgressAndText("Loading Colour Schemes", 0.8f);
 	
 	// Load the ColourSchemes from the registry
 	ColourSchemes().loadColourSchemes();
 	
-	ui::Splash::Instance().setProgressAndText("Constructing Menu", 0.7f);
+	ui::Splash::Instance().setProgressAndText("Constructing Menu", 0.85f);
 	
 	// Construct the MRU commands and menu structure
 	GlobalMRU().constructMenu();

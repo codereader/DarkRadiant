@@ -312,13 +312,13 @@ int main (int argc, char* argv[]) {
 	// The VFS is setup at this point, we can load the modules
 	Radiant_Initialise();
 	
-	ui::Splash::Instance().setProgressAndText("Starting Virtual File System", 0.8f);
+	ui::Splash::Instance().setProgressAndText("Starting Virtual File System", 0.9f);
 
 	// Call the initalise methods to trigger the realisation avalanche
     // FileSystem > ShadersModule >> Renderstate etc.
     GlobalFileSystem().initialise();
     
-    ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.9f);
+    ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.92f);
 	
 	g_pParentWnd = 0;
   g_pParentWnd = new MainFrame();
