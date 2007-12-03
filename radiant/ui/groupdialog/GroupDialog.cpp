@@ -24,7 +24,10 @@ GroupDialog::GroupDialog(GtkWindow* parent)
 	populateWindow();
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	
+	// greebo: Disabled this, because the EntityInspector was propagating keystrokes back to the main
+	//         main window, even when the cursor was focused on entry fields.
+	//GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -130,7 +133,7 @@ void GroupDialog::onRadiantShutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	//GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 
 	// Call the PersistentTransientWindow::destroy chain
 	destroy();
