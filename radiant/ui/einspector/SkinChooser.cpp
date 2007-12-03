@@ -19,6 +19,8 @@ namespace {
 	
 	const char* FOLDER_ICON = "folder16.png";
 	const char* SKIN_ICON = "skin16.png";
+
+	const std::string WINDOW_TITLE("Choose Skin");
 	
 	// Tree column enum
 	enum {
@@ -39,7 +41,7 @@ SkinChooser::SkinChooser()
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_title(GTK_WINDOW(_widget), "Choose skin");
+	gtk_window_set_title(GTK_WINDOW(_widget), WINDOW_TITLE.c_str());
 	g_signal_connect(G_OBJECT(_widget), 
 					 "delete-event", 
 					 G_CALLBACK(_onCloseButton),
@@ -128,11 +130,13 @@ GtkWidget* SkinChooser::createButtons() {
 std::string SkinChooser::showAndBlock(const std::string& model,
 									  const std::string& prev)
 {
-	
 	// Set the model and previous skin, then populate the skins
 	_model = model;
 	_prevSkin = prev;
 	populateSkins();
+
+	// Display the model in the window title
+	gtk_window_set_title(GTK_WINDOW(_widget), (WINDOW_TITLE + ": " + _model).c_str());
 	
 	// Show the dialog
 	gtk_widget_show_all(_widget);
