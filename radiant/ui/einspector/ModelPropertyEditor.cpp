@@ -65,7 +65,9 @@ void ModelPropertyEditor::_onModelButton(GtkWidget* w,
 										  ModelPropertyEditor* self)
 {
 	// Use the ModelSelector to choose a model
-	ModelSelectorResult result = ModelSelector::chooseModel();
+	ModelSelectorResult result = ModelSelector::chooseModel(
+		self->_entity->getKeyValue(self->_key) // pass the current model
+	);
 	if (!result.model.empty())
 		self->_entity->setKeyValue(self->_key, result.model);
 }

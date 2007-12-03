@@ -106,7 +106,7 @@ ModelSelector& ModelSelector::Instance() {
 }
 
 // Show the dialog and enter recursive main loop
-ModelSelectorResult ModelSelector::showAndBlock(bool showOptions) {
+ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, bool showOptions) {
 
 	if (!_populated) {
 		// Attempt to construct the static instance. This could throw an 
@@ -125,8 +125,28 @@ ModelSelectorResult ModelSelector::showAndBlock(bool showOptions) {
 	gtk_widget_show_all(_widget);
 
 	// conditionally hide the options
-	if (!showOptions)
+	if (!showOptions) {
 		gtk_widget_hide(GTK_WIDGET(_advancedOptions));
+	}
+	
+	if (!curModel.empty()) {
+		// Lookup the model path in the treemodel
+		gtkutil::TreeModel::SelectionFinder finder(curModel, FULLNAME_COLUMN);
+		
+		GtkTreeModel* model = GTK_TREE_MODEL(_treeStore);
+		gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
+		
+		// Get the found TreePath (may be NULL)
+		GtkTreePath* path = finder.getPath();
+		if (path != NULL) {
+			// Expand the treeview to display the target row
+			gtk_tree_view_expand_to_path(_treeView, path);
+			// Highlight the target row
+			gtk_tree_view_set_cursor(_treeView, path, NULL, false);
+			// Make the selected row visible 
+			gtk_tree_view_scroll_to_cell(_treeView, path, NULL, true, 0.3f, 0.0f);
+		}
+	}
 
 	// Update the model preview widget, forcing an update of the selected model
 	// since the preview model is deleted on dialog hide
@@ -144,9 +164,9 @@ ModelSelectorResult ModelSelector::showAndBlock(bool showOptions) {
 
 // Static function to display the instance, and return the selected model to the 
 // calling function
-ModelSelectorResult ModelSelector::chooseModel(bool showOptions) {
+ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel, bool showOptions) {
 	// Use the instance to select a model.
-	return Instance().showAndBlock(showOptions);
+	return Instance().showAndBlock(curModel, showOptions);
 }
 
 void ModelSelector::refresh() {
@@ -158,19 +178,18 @@ void ModelSelector::refresh() {
 GtkWidget* ModelSelector::createTreeView() {
 
 	// Create the treeview
-	GtkWidget* treeView = 
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeView), TRUE);
+	_treeView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore)));
+	gtk_tree_view_set_headers_visible(_treeView, TRUE);
 
 	// Single visible column, containing the directory/model name and the icon
 	_modelCol = gtkutil::IconTextColumn(
 		"Model Path", NAME_COLUMN, IMAGE_COLUMN
 	);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(treeView), _modelCol);				
+	gtk_tree_view_append_column(_treeView, _modelCol);				
 
 	// Get the selection object and connect to its changed signal
 
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeView));
+	_selection = gtk_tree_view_get_selection(_treeView);
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
 
 	// Pack treeview into a scrolled window and frame, and return
@@ -179,7 +198,7 @@ GtkWidget* ModelSelector::createTreeView() {
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin),
 								   GTK_POLICY_AUTOMATIC,
 								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scrollWin), treeView);
+	gtk_container_add(GTK_CONTAINER(scrollWin), GTK_WIDGET(_treeView));
 	
 	GtkWidget* fr = gtk_frame_new(NULL);
 	gtk_container_add(GTK_CONTAINER(fr), scrollWin);
