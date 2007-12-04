@@ -81,6 +81,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclasstree", "eclasstree.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.d3hook", "dm.d3hook.vcproj", "{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenegraph", "scenegraph.vcproj", "{89043465-96F4-4E90-A351-18ECEBD7E6F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -207,6 +209,10 @@ Global
 		{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}.Debug|Win32.Build.0 = Debug|Win32
 		{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}.Release|Win32.ActiveCfg = Release|Win32
 		{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}.Release|Win32.Build.0 = Release|Win32
+		{89043465-96F4-4E90-A351-18ECEBD7E6F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{89043465-96F4-4E90-A351-18ECEBD7E6F2}.Debug|Win32.Build.0 = Debug|Win32
+		{89043465-96F4-4E90-A351-18ECEBD7E6F2}.Release|Win32.ActiveCfg = Release|Win32
+		{89043465-96F4-4E90-A351-18ECEBD7E6F2}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
