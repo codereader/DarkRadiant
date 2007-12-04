@@ -196,6 +196,12 @@ shaders_lib = shaders_env.SharedLibrary(target='shaders', source=shaders_lst, no
 shaders_env.Depends(shaders_lib, xmlutil)
 shaders_env.Install(INSTALL + '/modules', shaders_lib)
 
+# Scenegraph module
+scenegraphEnv = module_env.Copy()
+scenegraphList = build_list('plugins/scenegraph', 'CompiledGraph.cpp')
+scenegraphLib = scenegraphEnv.SharedLibrary(target='scenegraph', source=scenegraphList, no_import_lib=1)
+scenegraphEnv.Install(INSTALL + '/modules', scenegraphLib)
+
 # Skins module
 skinsEnv = module_env.Copy()
 skinsList = build_list('plugins/skins', 'skincache.cpp Doom3SkinCache.cpp')
@@ -572,7 +578,6 @@ radiant_src = \
          'settings/Game.cpp',
          'settings/Win32Registry.cpp',
          'settings/PreferenceSystem.cpp',
-         'scenegraph/CompiledGraph.cpp',
          'clipper/Clipper.cpp',
          'clipper/ClipPoint.cpp',
          'modulesystem/ApplicationContextImpl.cpp',

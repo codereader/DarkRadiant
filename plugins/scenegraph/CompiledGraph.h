@@ -28,9 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "imodule.h"
 
-// Forward declaration
-//struct GraphTreeModel;
-
 /** greebo: This is the actual implementation of the scene::Graph
  * 			defined in iscenegraph.h. This keeps track of all
  * 			the instances.
@@ -87,6 +84,7 @@ private:
 	void post(const Walker& walker, const InstanceMap::iterator& i);
 
 	void traverse_subgraph(const Walker& walker, InstanceMap::iterator i);
-}; // class CompiledGraph
+};
+typedef boost::shared_ptr<CompiledGraph> CompiledGraphPtr;
 
 #endif
