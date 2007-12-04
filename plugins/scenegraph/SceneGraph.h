@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 			defined in iscenegraph.h. This keeps track of all
  * 			the instances.
  */
-class CompiledGraph : 
+class SceneGraph : 
 	public scene::Graph
 {
 	typedef std::map<PathConstReference, scene::Instance*> InstanceMap;
@@ -85,6 +85,6 @@ private:
 
 	void traverse_subgraph(const Walker& walker, InstanceMap::iterator i);
 };
-typedef boost::shared_ptr<CompiledGraph> CompiledGraphPtr;
+typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
 
 #endif
