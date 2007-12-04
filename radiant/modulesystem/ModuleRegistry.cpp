@@ -42,7 +42,9 @@ void ModuleRegistry::unloadModules() {
 	_uninitialisedModules.clear();
 	_initialisedModules.clear();
 	
-	Loader::unloadModules();
+	// greebo: Unloading the modules before the main binary 
+	// shut down caused crashes > disabled this.
+	//Loader::unloadModules();
 }
 
 void ModuleRegistry::registerModule(RegisterableModulePtr module) {
