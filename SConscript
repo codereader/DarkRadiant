@@ -588,6 +588,10 @@ radiant_src = \
          ]
     ]
 
+# greebo: Only compile the Profiling code in profile builds
+if (radiant_env['BUILD'] == 'profile'):
+	radiant_src.append('radiant/Profile.cpp')
+
 radiant_env.Prepend(LIBS = ['math', 'gtkutil', 'xmlutil'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
