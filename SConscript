@@ -198,7 +198,7 @@ shaders_env.Install(INSTALL + '/modules', shaders_lib)
 
 # Scenegraph module
 scenegraphEnv = module_env.Copy()
-scenegraphList = build_list('plugins/scenegraph', 'CompiledGraph.cpp')
+scenegraphList = build_list('plugins/scenegraph', 'SceneGraph.cpp')
 scenegraphLib = scenegraphEnv.SharedLibrary(target='scenegraph', source=scenegraphList, no_import_lib=1)
 scenegraphEnv.Install(INSTALL + '/modules', scenegraphLib)
 
