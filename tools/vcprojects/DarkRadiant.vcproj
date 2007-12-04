@@ -1039,26 +1039,6 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="scenegraph"
-				>
-				<File
-					RelativePath="..\..\radiant\scenegraph\CompiledGraph.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\scenegraph\CompiledGraph.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\scenegraph\SceneGraphModule.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\scenegraph\SceneGraphModule.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="selection"
 				>
 				<File
@@ -1518,6 +1498,22 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\einspector\ColourPropertyEditor.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\einspector\EClassPropertyEditor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\einspector\EClassPropertyEditor.h"
 						>
 					</File>
 					<File
