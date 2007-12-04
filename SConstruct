@@ -188,8 +188,8 @@ elif (BUILD == 'profile'):
 	# with basic optimisations to get a better picture of what is happening
 	# in "real life". Inlining will confuse the call information however, so
 	# this is turned off.
-    CXXFLAGS += '-g -pg -O1 -fno-inline '
-    CCFLAGS += '-g -pg -O1 -fno-inline '
+    CXXFLAGS += '-g -pg -O1 -fno-inline -D_PROFILE '
+    CCFLAGS += '-g -pg -O1 -fno-inline -D_PROFILE '
     LINKFLAGS += '-pg '
 elif (BUILD == 'release' or BUILD == 'final'):
 	CXXFLAGS += '-O2 '
@@ -226,6 +226,7 @@ class idEnvironment(Environment):
 			CXXFLAGS = CXXFLAGS,
 			CPPPATH = CPPPATH,
 			LINKFLAGS = LINKFLAGS,
+			BUILD = BUILD,
 			TOOLS = toolList) # don't want Scons to choose MSVC on Win32
 
 	# Use Boost includes.

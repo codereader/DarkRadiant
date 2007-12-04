@@ -91,6 +91,10 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
 
+#ifdef _PROFILE
+#include "Profile.h"
+#endif
+
 #include <iostream>
 
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
@@ -343,13 +347,20 @@ int main (int argc, char* argv[]) {
 	// Remove the radiant.pid file again after loading all the settings
 	removePIDFile("radiant.pid");
 
+#ifdef _PROFILE
+	// greebo: In profile builds, check if we should run an automated test
+	if (!profile::CheckAutomatedTestRun()) {
+		// Start the GTK main loop. This will run until a quit command is given by
+		// the user
+		gtk_main();
+	}
+#else 
 	// Start the GTK main loop. This will run until a quit command is given by
 	// the user
 	gtk_main();
+#endif
 	
-	/* EXIT */
-
-  	GlobalMap().free();
+	GlobalMap().free();
 
   delete g_pParentWnd;
 
