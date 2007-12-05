@@ -92,12 +92,13 @@ typedef boost::shared_ptr<Registry> RegistryPtr;
 
 // This is the accessor for the registry
 inline Registry& GlobalRegistry() {
-	RegistryPtr _registry(
-		boost::static_pointer_cast<Registry>(
+	// Cache the reference locally
+	static Registry& _registry(
+		*boost::static_pointer_cast<Registry>(
 			module::GlobalModuleRegistry().getModule(MODULE_XMLREGISTRY)
 		)
 	);
-	return *_registry;
+	return _registry;
 }
 
 #endif /*IREGISTRY_H_*/

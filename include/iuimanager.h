@@ -103,12 +103,13 @@ public:
 
 // This is the accessor for the UI manager
 inline IUIManager& GlobalUIManager() {
-	boost::shared_ptr<IUIManager> _uiManager(
-		boost::static_pointer_cast<IUIManager>(
+	// Cache the reference locally
+	static IUIManager& _uiManager(
+		*boost::static_pointer_cast<IUIManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_UIMANAGER)
 		)
 	);
-	return *_uiManager;
+	return _uiManager;
 }
 
 #endif /*INCLUDE_UIMANAGER_H_*/

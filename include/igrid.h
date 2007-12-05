@@ -45,12 +45,13 @@ public:
 
 // This is the accessor for the grid module
 inline IGridManager& GlobalGrid() {
-	boost::shared_ptr<IGridManager> _grid(
-		boost::static_pointer_cast<IGridManager>(
+	// Cache the reference locally
+	static IGridManager& _grid(
+		*boost::static_pointer_cast<IGridManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_GRID)
 		)
 	);
-	return *_grid;
+	return _grid;
 }
 
 #endif /*IGRID_H_*/

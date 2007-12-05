@@ -135,12 +135,13 @@ public:
 };
 
 inline IRadiant& GlobalRadiant() {
-	boost::shared_ptr<IRadiant> _radiant(
-		boost::static_pointer_cast<IRadiant>(
+	// Cache the reference locally
+	static IRadiant& _radiant(
+		*boost::static_pointer_cast<IRadiant>(
 			module::GlobalModuleRegistry().getModule(MODULE_RADIANT)
 		)
 	);
-	return *_radiant;
+	return _radiant;
 }
 
 #endif

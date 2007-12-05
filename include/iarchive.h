@@ -164,12 +164,13 @@ public:
 };
 
 inline _QERArchiveTable& GlobalArchive(const std::string& fileType) {
-	boost::shared_ptr<_QERArchiveTable> _archive(
-		boost::static_pointer_cast<_QERArchiveTable>(
+	// Cache the reference locally
+	static _QERArchiveTable& _archive(
+		*boost::static_pointer_cast<_QERArchiveTable>(
 			module::GlobalModuleRegistry().getModule(MODULE_ARCHIVE + fileType) // e.g. ArchivePK4
 		)
 	);
-	return *_archive;
+	return _archive;
 }
 
 #endif

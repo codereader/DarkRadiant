@@ -127,12 +127,13 @@ namespace scene
 }
 
 inline scene::Graph& GlobalSceneGraph() {
-	boost::shared_ptr<scene::Graph> _sceneGraph(
-		boost::static_pointer_cast<scene::Graph>(
+	// Cache the reference locally
+	static scene::Graph& _sceneGraph(
+		*boost::static_pointer_cast<scene::Graph>(
 			module::GlobalModuleRegistry().getModule(MODULE_SCENEGRAPH)
 		)
 	);
-	return *_sceneGraph;
+	return _sceneGraph;
 }
 
 inline void SceneChangeNotify()

@@ -42,12 +42,13 @@ typedef boost::shared_ptr<IGameManager> IGameManagerPtr;
 
 // This is the accessor for the game manager
 inline game::IGameManager& GlobalGameManager() {
-	game::IGameManagerPtr _gameManager(
-		boost::static_pointer_cast<game::IGameManager>(
+	// Cache the reference locally
+	static game::IGameManager& _gameManager(
+		*boost::static_pointer_cast<game::IGameManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_GAMEMANAGER)
 		)
 	);
-	return *_gameManager;
+	return _gameManager;
 }
 
 #endif /*IGAMEMANAGER_H_*/

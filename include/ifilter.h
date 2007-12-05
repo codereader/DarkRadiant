@@ -94,12 +94,13 @@ public:
 };
 
 inline FilterSystem& GlobalFilterSystem() {
-	boost::shared_ptr<FilterSystem> _filterSystem(
-		boost::static_pointer_cast<FilterSystem>(
+	// Cache the reference locally
+	static FilterSystem& _filterSystem(
+		*boost::static_pointer_cast<FilterSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_FILTERSYSTEM)
 		)
 	);
-	return *_filterSystem;
+	return _filterSystem;
 }
 
 #endif

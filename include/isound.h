@@ -95,12 +95,13 @@ public:
 
 // Accessor method
 inline ISoundManager& GlobalSoundManager() {
-	boost::shared_ptr<ISoundManager> _soundManager(
-		boost::static_pointer_cast<ISoundManager>(
+	// Cache the reference locally
+	static ISoundManager& _soundManager(
+		*boost::static_pointer_cast<ISoundManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_SOUNDMANAGER)
 		)
 	);
-	return *_soundManager;	
+	return _soundManager;	
 }
 
 #endif /*ISOUND_H_*/

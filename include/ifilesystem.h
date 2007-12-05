@@ -89,12 +89,13 @@ public:
 };
 
 inline VirtualFileSystem& GlobalFileSystem() {
-	boost::shared_ptr<VirtualFileSystem> _vfs(
-		boost::static_pointer_cast<VirtualFileSystem>(
+	// Cache the reference locally
+	static VirtualFileSystem& _vfs(
+		*boost::static_pointer_cast<VirtualFileSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_VIRTUALFILESYSTEM)
 		)
 	);
-	return *_vfs;
+	return _vfs;
 }
 
 

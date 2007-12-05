@@ -62,11 +62,12 @@ public:
 typedef boost::shared_ptr<Namespaced> NamespacedPtr;
 
 inline INamespace& GlobalNamespace() {
-	boost::shared_ptr<INamespace> _namespace(
-		boost::static_pointer_cast<INamespace>(
+	// Cache the reference locally
+	static INamespace& _namespace(
+		*boost::static_pointer_cast<INamespace>(
 			module::GlobalModuleRegistry().getModule(MODULE_NAMESPACE)
 		)
 	);
-	return *_namespace;
+	return _namespace;
 }
 #endif

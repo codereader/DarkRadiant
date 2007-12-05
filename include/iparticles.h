@@ -39,12 +39,13 @@ public:
 
 // Accessor
 inline IParticlesManager& GlobalParticlesManager() {
-	boost::shared_ptr<IParticlesManager> _particlesManager(
-		boost::static_pointer_cast<IParticlesManager>(
+	// Cache the reference locally
+	static IParticlesManager& _particlesManager(
+		*boost::static_pointer_cast<IParticlesManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_PARTICLESMANAGER)
 		)
 	);
-	return *_particlesManager;
+	return _particlesManager;
 }
 
 #endif /*IPARTICLES_H_*/

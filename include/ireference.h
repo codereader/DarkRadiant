@@ -60,12 +60,13 @@ public:
 };
 
 inline ReferenceCache& GlobalReferenceCache() {
-	boost::shared_ptr<ReferenceCache> _refCache(
-		boost::static_pointer_cast<ReferenceCache>(
+	// Cache the reference locally
+	static ReferenceCache& _refCache(
+		*boost::static_pointer_cast<ReferenceCache>(
 			module::GlobalModuleRegistry().getModule(MODULE_REFERENCECACHE)
 		)
 	);
-	return *_refCache;
+	return _refCache;
 }
 
 #endif

@@ -107,12 +107,13 @@ public:
 };
 
 inline IPreferenceSystem& GlobalPreferenceSystem() {
-	boost::shared_ptr<IPreferenceSystem> _prefSystem(
-		boost::static_pointer_cast<IPreferenceSystem>(
+	// Cache the reference locally
+	static IPreferenceSystem& _prefSystem(
+		*boost::static_pointer_cast<IPreferenceSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_PREFERENCESYSTEM)
 		)
 	);
-	return *_prefSystem;
+	return _prefSystem;
 }
 
 #endif

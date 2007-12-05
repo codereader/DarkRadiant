@@ -161,12 +161,13 @@ public:
 };
 
 inline SelectionSystem& GlobalSelectionSystem() {
-	boost::shared_ptr<SelectionSystem> _selectionSystem(
-		boost::static_pointer_cast<SelectionSystem>(
+	// Cache the reference locally
+	static SelectionSystem& _selectionSystem(
+		*boost::static_pointer_cast<SelectionSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_SELECTIONSYSTEM)
 		)
 	);
-	return *_selectionSystem;
+	return _selectionSystem;
 }
 
 #endif

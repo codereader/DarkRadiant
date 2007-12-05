@@ -100,12 +100,13 @@ public:
 
 // The accessor function
 inline UndoSystem& GlobalUndoSystem() {
-	boost::shared_ptr<UndoSystem> _undoSystem(
-		boost::static_pointer_cast<UndoSystem>(
+	// Cache the reference locally
+	static UndoSystem& _undoSystem(
+		*boost::static_pointer_cast<UndoSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_UNDOSYSTEM)
 		)
 	);
-	return *_undoSystem;
+	return _undoSystem;
 }
 
 class UndoableCommand
