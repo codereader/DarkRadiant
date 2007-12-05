@@ -8,6 +8,7 @@
 #include "signal/signal.h"
 #include "Manipulators.h"
 #include "Selectors.h"
+#include "SelectedInstanceList.h"
 
 /* greebo: This can be tricky to understand (and I don't know if I do :D), but I'll try: 
  * 
@@ -79,7 +80,7 @@ private:
 	ClipManipulator _clipManipulator;
 
 	// The internal list to keep track of the selected instances (components and primitives)
-	typedef SelectionList<scene::Instance> SelectionListType;
+	typedef SelectedInstanceList SelectionListType;
 	SelectionListType _selection;
 	SelectionListType _componentSelection;
 

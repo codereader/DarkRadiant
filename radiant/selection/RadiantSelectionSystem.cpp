@@ -4,6 +4,7 @@
 
 #include "iundo.h"
 #include "igrid.h"
+#include "iradiant.h"
 #include "ieventmanager.h"
 #include "renderer.h"
 #include "scenelib.h"
@@ -250,7 +251,7 @@ void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const 
 	else {
 		_selection.erase(instance);
 	}
-
+	
 	// Notify observers, FALSE = primitive selection change
 	notifyObservers(instance, false);
 
@@ -274,24 +275,25 @@ void RadiantSelectionSystem::onComponentSelection(scene::Instance& instance, con
     else {
 		_componentSelection.erase(instance);
 	}
-
+	
 	// Notify observers, TRUE => this is a component selection change
 	notifyObservers(instance, true);
 
 	// Check if the number of selected components in the list matches the value of the selection counter 
-	ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "selection-tracking error");
+	ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "component selection-tracking error");
 }
 
 // Returns the last instance in the list (if the list is not empty)
 scene::Instance& RadiantSelectionSystem::ultimateSelected() const {
 	ASSERT_MESSAGE(_selection.size() > 0, "no instance selected");
-	return _selection.back();
+	return _selection.ultimate();
 }
 
 // Returns the instance before the last instance in the list (second from the end)
 scene::Instance& RadiantSelectionSystem::penultimateSelected() const {
 	ASSERT_MESSAGE(_selection.size() > 1, "only one instance selected");
-	return *(*(--(--_selection.end())));
+	//return *(*(--(--_selection.end())));
+	return _selection.penultimate();
 }
 
 // Deselect or select all the instances in the scenegraph and notify the manipulator class as well
@@ -314,7 +316,8 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
 void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
 	SelectionListType::const_iterator i = _selection.begin();
 	while(i != _selection.end()) {
-		visitor.visit(*(*(i++)));
+		scene::Instance& instance = *(i++)->first; 
+		visitor.visit(instance);
 	}
 }
 
@@ -322,7 +325,8 @@ void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
 void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor) const {
 	SelectionListType::const_iterator i = _componentSelection.begin();
 	while(i != _componentSelection.end()) {
-		visitor.visit(*(*(i++)));
+		scene::Instance& instance = *(i++)->first; 
+		visitor.visit(instance);
 	}
 }
 
@@ -583,12 +587,12 @@ void RadiantSelectionSystem::rotate(const Quaternion& rotation) {
 		if (Mode() == eComponent) {
 			Scene_Rotate_Component_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
 
-			matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.back());
+			matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
 		}
 		else {
 			Scene_Rotate_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
 
-			matrix4_assign_rotation_for_pivot(_pivot2world, _selection.back());
+			matrix4_assign_rotation_for_pivot(_pivot2world, _selection.ultimate());
 		}
 
 		// Update the views
@@ -872,18 +876,18 @@ void RadiantSelectionSystem::ConstructPivot() const {
 				break;
 			case eRotate:
 				if (Mode() == eComponent) {
-					matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.back());
+					matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
 				}
 				else {
-					matrix4_assign_rotation_for_pivot(_pivot2world, _selection.back());
+					matrix4_assign_rotation_for_pivot(_pivot2world, _selection.ultimate());
 				}
 				break;
 		    case eScale:
 				if (Mode() == eComponent) {
-					matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.back());
+					matrix4_assign_rotation_for_pivot(_pivot2world, _componentSelection.ultimate());
 				}
 				else {
-					matrix4_assign_rotation_for_pivot(_pivot2world, _selection.back());
+					matrix4_assign_rotation_for_pivot(_pivot2world, _selection.ultimate());
 				}
 				break;
 			default:
