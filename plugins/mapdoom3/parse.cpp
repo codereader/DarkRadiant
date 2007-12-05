@@ -270,9 +270,6 @@ void Map_Read(scene::INodePtr root,
 	gtkutil::ModalProgressDialog dialog(GlobalRadiant().getMainWindow(),
 										"Loading map");
 
-	// Disable texture window updates for performance
-	GlobalShaderSystem().setActiveShaderUpdates(false);
-	
 	// Read each entity in the map, until EOF is reached
 	for (int entCount = 0; ; entCount++) {
 
@@ -309,12 +306,6 @@ void Map_Read(scene::INodePtr root,
 				GlobalRadiant().getMainWindow()
 			);
 			return;			
-		}
-		
+		}	
 	}
-	
-	// Re-enable texture window updates
-	GlobalShaderSystem().setActiveShaderUpdates(true);
-	
-	
 }
