@@ -292,6 +292,13 @@ void TextureBrowser::setOriginY(int newOriginY) {
 	queueDraw();
 }
 
+void TextureBrowser::activeShadersChanged() {
+	// greebo: Don't call heightChanged(), this also calls queueDraw() 
+	//heightChanged();
+	m_heightChanged = true;
+	m_originInvalid = true;
+}
+
 // Static command target
 void TextureBrowser::toggle() {
 	ui::GroupDialog::Instance().setPage("textures");
@@ -731,6 +738,10 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	
 	m_parent = parent;
 	
+	GlobalShaderSystem().setActiveShadersChangedNotify(
+		MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(*this)
+	);
+
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
 
 	{
@@ -816,6 +827,8 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 }
 
 void TextureBrowser::destroyWindow() {
+	GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
+
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
 

@@ -23,6 +23,12 @@ class Doom3ShaderSystem :
 	// The manager that handles the texture caching. 
 	GLTextureManagerPtr _textureManager;
 	
+	// greebo: Legacy callback (points to the TextureBrowser)
+	Callback _activeShadersChangedNotify;
+	
+	// Flag to indicate whether the active shaders callback should be invoked
+	bool _enableActiveUpdates;
+	
 	// greebo: Legacy "unrealised" counter, gets 0 as soon as the
 	// global filesystem calls the realise() method of this class,
 	// (This ShaderSystem acts as ModuleObserver)
@@ -64,6 +70,13 @@ public:
 	IShaderPtr dereferenceActiveShadersIterator();
 	void incrementActiveShadersIterator();
 	
+	void setActiveShadersChangedNotify(const Callback& notify);
+	
+	// Enable or disable the active shaders callback
+	void setActiveShaderUpdates(bool v) {
+		_enableActiveUpdates = v;
+	}
+	
 	void attach(ModuleObserver& observer);
 	void detach(ModuleObserver& observer);
 
@@ -88,6 +101,9 @@ public:
 	// Unloads all the existing shaders and calls activeShadersChangedNotify()
 	void freeShaders();
 	
+	// greebo: Legacy method, don't know what this is exactly used for
+	void activeShadersChangedNotify();
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;

@@ -209,6 +209,10 @@ private:
 	int getOriginY();
 	void setOriginY(int newOriginY);
 
+public:
+	// This gets called by the ShaderSystem
+	void activeShadersChanged();
+
 private:
 	/** greebo: Returns the shader at the given coords.
 	 * 
