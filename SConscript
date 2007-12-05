@@ -520,6 +520,7 @@ radiant_src = \
          'selection/Planes.cpp',
          'selection/RadiantWindowObserver.cpp',
          'selection/RadiantSelectionSystem.cpp',
+         'selection/SelectedInstanceList.cpp',
          'selection/algorithm/Primitives.cpp',
          'selection/algorithm/Curves.cpp',
          'selection/algorithm/ModelFinder.cpp',
