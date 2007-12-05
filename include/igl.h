@@ -65,12 +65,13 @@ public:
 };
 
 inline OpenGLBinding& GlobalOpenGL() {
-	boost::shared_ptr<OpenGLBinding> _openGL(
-		boost::static_pointer_cast<OpenGLBinding>(
+	// Cache the reference locally
+	static OpenGLBinding& _openGL(
+		*boost::static_pointer_cast<OpenGLBinding>(
 			module::GlobalModuleRegistry().getModule(MODULE_OPENGL)
 		)
 	);
-	return *_openGL;
+	return _openGL;
 }
 
 #if defined(_DEBUG)

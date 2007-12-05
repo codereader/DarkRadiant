@@ -187,12 +187,13 @@ public:
 };
 
 inline OpenGLStateLibrary& GlobalOpenGLStateLibrary() {
-	boost::shared_ptr<OpenGLStateLibrary> _openGLStateLib(
-		boost::static_pointer_cast<OpenGLStateLibrary>(
+	// Cache the reference locally
+	static OpenGLStateLibrary& _openGLStateLib(
+		*boost::static_pointer_cast<OpenGLStateLibrary>(
 			module::GlobalModuleRegistry().getModule(MODULE_OPENGL_STATE_LIBRARY)
 		)
 	);
-	return *_openGLStateLib;
+	return _openGLStateLib;
 }
 
 #endif

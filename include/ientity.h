@@ -187,12 +187,13 @@ public:
 };
 
 inline EntityCreator& GlobalEntityCreator() {
-	boost::shared_ptr<EntityCreator> _entityCreator(
-		boost::static_pointer_cast<EntityCreator>(
+	// Cache the reference locally
+	static EntityCreator& _entityCreator(
+		*boost::static_pointer_cast<EntityCreator>(
 			module::GlobalModuleRegistry().getModule(MODULE_ENTITYCREATOR)
 		)
 	);
-	return *_entityCreator;
+	return _entityCreator;
 }
 
 #endif

@@ -91,12 +91,13 @@ public:
 
 // This is the accessor for the registry
 inline IClipper& GlobalClipper() {
-	boost::shared_ptr<IClipper> _clipper(
-		boost::static_pointer_cast<IClipper>(
+	// Cache the reference locally
+	static IClipper&  _clipper(
+		*boost::static_pointer_cast<IClipper>(
 			module::GlobalModuleRegistry().getModule(MODULE_CLIPPER)
 		)
 	);
-	return *_clipper;
+	return _clipper;
 }
 
 #endif /*ICLIPPER_H_*/

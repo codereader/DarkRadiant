@@ -116,12 +116,13 @@ inline Brush* Node_getBrush(scene::INodePtr node) {
 }
 
 inline BrushCreator& GlobalBrushCreator() {
-	boost::shared_ptr<BrushCreator> _brushCreator(
-		boost::static_pointer_cast<BrushCreator>(
+	// Cache the reference locally
+	static BrushCreator& _brushCreator(
+		*boost::static_pointer_cast<BrushCreator>(
 			module::GlobalModuleRegistry().getModule(MODULE_BRUSHCREATOR)
 		)
 	);
-	return *_brushCreator;
+	return _brushCreator;
 }
 
 #endif

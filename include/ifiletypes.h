@@ -108,12 +108,13 @@ public:
 };
 
 inline IFileTypeRegistry& GlobalFiletypes() {
-	boost::shared_ptr<IFileTypeRegistry> _fileTypes(
-		boost::static_pointer_cast<IFileTypeRegistry>(
+	// Cache the reference locally
+	static IFileTypeRegistry& _fileTypes(
+		*boost::static_pointer_cast<IFileTypeRegistry>(
 			module::GlobalModuleRegistry().getModule(MODULE_FILETYPES)
 		)
 	);
-	return *_fileTypes;
+	return _fileTypes;
 }
 
 #endif

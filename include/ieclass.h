@@ -302,12 +302,13 @@ public:
 };
 
 inline IEntityClassManager& GlobalEntityClassManager() {
-	boost::shared_ptr<IEntityClassManager> _eclassMgr(
-		boost::static_pointer_cast<IEntityClassManager>(
+	// Cache the reference locally
+	static IEntityClassManager& _eclassMgr(
+		*boost::static_pointer_cast<IEntityClassManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_ECLASSMANAGER)
 		)
 	);
-	return *_eclassMgr;
+	return _eclassMgr;
 }
 
 #endif

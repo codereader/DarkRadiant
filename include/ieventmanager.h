@@ -240,12 +240,13 @@ typedef boost::shared_ptr<IEventManager> IEventManagerPtr;
 
 // This is the accessor for the event manager
 inline IEventManager& GlobalEventManager() {
-	IEventManagerPtr _eventManager(
-		boost::static_pointer_cast<IEventManager>(
+	// Cache the reference locally
+	static IEventManager& _eventManager(
+		*boost::static_pointer_cast<IEventManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_EVENTMANAGER)
 		)
 	);
-	return *_eventManager;
+	return _eventManager;
 } 
 
 #endif /*IEVENTMANAGER_H_*/

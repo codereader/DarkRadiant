@@ -227,12 +227,13 @@ public:
 };
 
 inline ShaderCache& GlobalShaderCache() {
-	boost::shared_ptr<ShaderCache> _shaderCache(
-		boost::static_pointer_cast<ShaderCache>(
+	// Cache the reference locally
+	static ShaderCache& _shaderCache(
+		*boost::static_pointer_cast<ShaderCache>(
 			module::GlobalModuleRegistry().getModule(MODULE_SHADERCACHE)
 		)
 	);
-	return *_shaderCache;
+	return _shaderCache;
 }
 
 #endif

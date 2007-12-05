@@ -300,14 +300,14 @@ public:
 };
 
 inline ShaderSystem& GlobalShaderSystem() {
-	boost::shared_ptr<ShaderSystem> _shaderSystem(
-		boost::static_pointer_cast<ShaderSystem>(
+	// Cache the reference locally
+	static ShaderSystem& _shaderSystem(
+		*boost::static_pointer_cast<ShaderSystem>(
 			module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM)
 		)
 	);
-	return *_shaderSystem;
+	return _shaderSystem;
 }
-
 
 #define QERApp_Shader_ForName GlobalShaderSystem().getShaderForName
 #define QERApp_ActiveShaders_IteratorBegin GlobalShaderSystem().beginActiveShadersIterator
