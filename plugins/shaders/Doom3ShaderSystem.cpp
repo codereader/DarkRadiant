@@ -28,7 +28,6 @@ namespace shaders {
 
 // Constructor
 Doom3ShaderSystem::Doom3ShaderSystem() :
-	_enableActiveUpdates(true),
 	_shadersUnrealised(1),
 	_observers(getName())
 {}
@@ -98,7 +97,6 @@ void Doom3ShaderSystem::unrealise() {
 void Doom3ShaderSystem::freeShaders() {
 	_library->clear();
 	_textureManager->checkBindings();
-	activeShadersChangedNotify();
 }
 
 void Doom3ShaderSystem::refresh() {
@@ -113,9 +111,7 @@ bool Doom3ShaderSystem::isRealised() {
 
 // Return a shader by name
 IShaderPtr Doom3ShaderSystem::getShaderForName(const std::string& name) {
-	ShaderPtr shader = _library->findShader(name);
-	activeShadersChangedNotify();
-	return shader;
+	return _library->findShader(name);
 }
 
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
@@ -134,9 +130,6 @@ IShaderPtr Doom3ShaderSystem::dereferenceActiveShadersIterator() {
 }
 void Doom3ShaderSystem::incrementActiveShadersIterator() {
 	_library->incrementIterator();
-}
-void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
-	_activeShadersChangedNotify = notify;
 }
 
 void Doom3ShaderSystem::attach(ModuleObserver& observer) {
@@ -179,11 +172,6 @@ ShaderLibrary& Doom3ShaderSystem::getLibrary() {
 
 GLTextureManager& Doom3ShaderSystem::getTextureManager() {
 	return *_textureManager;
-}
-
-void Doom3ShaderSystem::activeShadersChangedNotify() {
-	if (_enableActiveUpdates)
-		_activeShadersChangedNotify();
 }
 
 TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,

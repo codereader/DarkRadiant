@@ -268,14 +268,6 @@ public:
   virtual IShaderPtr dereferenceActiveShadersIterator() = 0;
   virtual void incrementActiveShadersIterator() = 0;
 
-    // Set the callback to be invoked when the active shaders list has changed
-    virtual void setActiveShadersChangedNotify(const Callback& notify) = 0;
-
-    /**
-     * Enable or disable active shaders updates (for performance).
-     */
-    virtual void setActiveShaderUpdates(bool val) = 0;
-
   virtual void attach(ModuleObserver& observer) = 0;
   virtual void detach(ModuleObserver& observer) = 0;
 
