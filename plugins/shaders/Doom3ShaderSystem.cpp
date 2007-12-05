@@ -114,7 +114,7 @@ bool Doom3ShaderSystem::isRealised() {
 // Return a shader by name
 IShaderPtr Doom3ShaderSystem::getShaderForName(const std::string& name) {
 	ShaderPtr shader = _library->findShader(name);
-	activeShadersChangedNotify();
+	//activeShadersChangedNotify();
 	return shader;
 }
 
