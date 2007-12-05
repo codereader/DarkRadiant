@@ -3,6 +3,8 @@
 
 #include <sys/time.h>
 #include <string>
+#include "stream/textfilestream.h"
+#include "stream/stringstream.h"
 
 namespace {
 	
@@ -76,8 +78,11 @@ public:
 		
 		std::cout << "[ScopedDebugTimer] \"" << _op 
 				  << "\" in " << duration;
+		globalOutputStream() << "[ScopedDebugTimer] \"" << _op.c_str() 
+		  					 << "\" in " << duration;
 		if (_fps) {
 			std::cout << " (" << (1.0 / duration) << " FPS)";
+			globalOutputStream() << " (" << (1.0 / duration) << " FPS)";
 		}
 		std::cout << std::endl;
 	}
