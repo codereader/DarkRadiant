@@ -293,9 +293,7 @@ void TextureBrowser::setOriginY(int newOriginY) {
 }
 
 void TextureBrowser::activeShadersChanged() {
-	// greebo: Don't call heightChanged(), this also calls queueDraw() 
-	//heightChanged();
-	m_heightChanged = true;
+	heightChanged();
 	m_originInvalid = true;
 }
 
