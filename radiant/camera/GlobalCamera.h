@@ -22,8 +22,9 @@ namespace gtkutil {
  * 
  * The active CamWnd class is referenced by the _camWnd member pointer. */
 
-class GlobalCameraManager {
-	
+class GlobalCameraManager :
+	public ICamera
+{
 	// The currently active camera window
 	CamWndPtr _camWnd;
 	
@@ -35,8 +36,6 @@ class GlobalCameraManager {
 	// The parent widget for the camera window (this should be the main frame)
 	GtkWindow* _parent;
 	
-	CameraModel* _cameraModel;
-		
 	// The connected callbacks (get invoked when movedNotify() is called)	
 	CameraObserverList _cameraObservers;
 	
@@ -93,13 +92,6 @@ public:
 	void changeFloorUp();
 	void changeFloorDown();
 
-	/* greebo: Tries to get a CameraModel from the most recently selected instance
-	 * Note: Currently NO instances are supporting the dynamic_cast<> onto a
-	 * CameraModel, so actually these functions don't do anything. I'll leave them
-	 * where they are, they should work in principle... */
-	void lookThroughSelected();
-	void lookThroughCamera();
-	
 	// angua: increases and decreases the movement speed of the camera
 	void increaseCameraSpeed();
 	void decreaseCameraSpeed();
@@ -147,6 +139,11 @@ public:
 	
 	void freelookMoveDownKeyUp();
 	void freelookMoveDownKeyDown();
+	
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 	
 }; // class GlobalCameraManager
 

@@ -9,7 +9,6 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "entitylib.h"
-#include "mainframe.h"
 #include "map/Map.h"
 #include "scenelib.h"
 #include "camera/Camera.h"
@@ -156,19 +155,18 @@ void EntityList::onRadiantShutdown() {
 
 EntityListPtr& EntityList::InstancePtr() {
 	static EntityListPtr _instancePtr;
-	
-	if (_instancePtr == NULL) {
-		// Not yet instantiated, do it now
-		_instancePtr = EntityListPtr(new EntityList);
-		
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
-	}
-	
 	return _instancePtr;
 }
 
 EntityList& EntityList::Instance() {
+	if (InstancePtr() == NULL) {
+		// Not yet instantiated, do it now
+		InstancePtr() = EntityListPtr(new EntityList);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(InstancePtr());
+	}
+	
 	return *InstancePtr();
 }
 
