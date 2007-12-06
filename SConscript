@@ -448,7 +448,6 @@ radiant_src = \
          'renderstate.cpp',
          'select.cpp',
          'timer.cpp',
-         'treemodel.cpp',
          'view.cpp',
          'winding.cpp',
          'windowobservers.cpp',
