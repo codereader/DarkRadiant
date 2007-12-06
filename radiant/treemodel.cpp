@@ -145,7 +145,7 @@ public:
 GraphTreeModel* GraphTreeModel::_treeModel = NULL;
 
 // Define the static module
-module::StaticModule<GraphTreeModel> graphTreeModelModule;
+//module::StaticModule<GraphTreeModel> graphTreeModelModule;
 
 struct GraphTreeModelClass
 {

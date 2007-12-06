@@ -2,9 +2,12 @@
 #define ENTITYLIST_H_
 
 #include "iselection.h"
+#include "iscenegraph.h"
 #include "iradiant.h"
+#include "imodule.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
+#include "GraphTreeModel.h"
 
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
@@ -20,7 +23,8 @@ typedef boost::shared_ptr<EntityList> EntityListPtr;
 class EntityList
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public RadiantEventListener
+  public RadiantEventListener,
+  public scene::Graph::Observer
 {
 	// The main tree view
 	GtkTreeView* _treeView;
@@ -28,6 +32,8 @@ class EntityList
 	
 	// The treemodel (is hosted externally in scenegraph - legacy)
 	GtkTreeModel* _treeModel;
+	
+	ui::GraphTreeModel _model; 
 
 	gtkutil::WindowPosition _windowPosition;
 
@@ -66,9 +72,11 @@ private:
 	static gboolean modelUpdater(GtkTreeModel* model, GtkTreePath* path, 
 								 GtkTreeIter* iter, gpointer data);
 
-public:
-	// Constructor, creates all the widgets
+	// (private) Constructor, creates all the widgets
 	EntityList();
+		
+public:
+	~EntityList();
 	
 	/** greebo: Shuts down this dialog, safely disconnects it
 	 * 			from the EventManager and the SelectionSystem.
@@ -85,6 +93,14 @@ public:
 	 */
 	static EntityList& Instance();
 	
+	// Destroys the singleton instance
+	static void destroyInstance();
+	
+	// Gets called when a new <instance> is inserted into the scenegraph
+	virtual void onSceneNodeInsert(const scene::Instance& instance);
+	
+	// Gets called when <instance> is removed from the scenegraph
+	virtual void onSceneNodeErase(const scene::Instance& instance);
 };
 
 } // namespace ui

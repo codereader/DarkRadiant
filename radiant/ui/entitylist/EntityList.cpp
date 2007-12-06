@@ -30,7 +30,7 @@ namespace ui {
 	}
 
 EntityList::EntityList() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
   _callbackActive(false)
 {
 	// Set the default border width in accordance to the HIG
@@ -45,6 +45,9 @@ EntityList::EntityList()
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
+	// Also register to the scenegraph to get notified about insertions/deletions
+	// TODO: Move this to the GraphTreeModel
+	GlobalSceneGraph().addSceneObserver(this);
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -55,6 +58,14 @@ EntityList::EntityList()
 	
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
+}
+
+EntityList::~EntityList() {
+	GlobalSceneGraph().removeSceneObserver(this);
+}
+
+void EntityList::destroyInstance() {
+	InstancePtr() = EntityListPtr();
 }
 
 namespace {
@@ -111,13 +122,14 @@ void EntityList::populateWindow() {
 	_treeView = GTK_TREE_VIEW(gtk_tree_view_new());
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 	
-	_treeModel = GTK_TREE_MODEL(scene_graph_get_tree_model());
+	_treeModel = _model;
 	gtk_tree_view_set_model(_treeView, _treeModel);
 	
-	GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-	GtkTreeViewColumn* column = gtk_tree_view_column_new();
-	gtk_tree_view_column_pack_start(column, renderer, TRUE);
-	gtk_tree_view_column_set_cell_data_func(column, renderer, cellDataFunc, _treeView, NULL);
+	GtkTreeViewColumn* column = gtkutil::TextColumn("Name", GraphTreeModel::COL_NAME);
+	/*GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
+	GtkTreeViewColumn* column = gtk_tree_view_column_new();*/
+	gtk_tree_view_column_pack_start(column, gtk_cell_renderer_text_new(), TRUE);
+	//gtk_tree_view_column_set_cell_data_func(column, renderer, cellDataFunc, _treeView, NULL);
 	
 	_selection = gtk_tree_view_get_selection(_treeView);
 	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_MULTIPLE);
@@ -137,6 +149,11 @@ gboolean EntityList::modelUpdater(GtkTreeModel* model, GtkTreePath* path,
 								  GtkTreeIter* iter, gpointer data)
 {
 	GtkTreeView* treeView = reinterpret_cast<GtkTreeView*>(data);
+	
+	// greebo: TODO:
+	// Don't traverse the entire tree, instead:
+	// -- deselect all nodes
+	// -- traverse the SelectionSystem's list and update these only
 	
 	// Load the pointers from the columns
 	scene::Instance* instance = reinterpret_cast<scene::Instance*>(
@@ -160,22 +177,29 @@ gboolean EntityList::modelUpdater(GtkTreeModel* model, GtkTreePath* path,
 void EntityList::update() {
 	// Disable callbacks and traverse the treemodel
 	_callbackActive = true;
-	gtk_tree_model_foreach(_treeModel, modelUpdater, _treeView);
+	
+	//gtk_tree_model_foreach(_treeModel, modelUpdater, _treeView);
+	
 	_callbackActive = false;
 }
 
 // Gets notified upon selection change
 void EntityList::selectionChanged(scene::Instance& instance, bool isComponent) {
-	if (_callbackActive) return; // avoid loops
+	if (_callbackActive || !isVisible()) {
+		// Don't update if not shown or already updating
+		return; 
+	}
 	
 	update();
 }
 
 void EntityList::toggleWindow() {
-	if (isVisible())
+	if (isVisible()) {
 		hide();
-	else
+	}
+	else {
 		show();
+	}
 }
 
 // Pre-hide callback
@@ -249,7 +273,7 @@ gboolean EntityList::onSelection(GtkTreeSelection *selection,
 	
 	if (self->_callbackActive) return TRUE; // avoid loops
 	
-	GtkTreeIter iter;
+	/*GtkTreeIter iter;
 	gtk_tree_model_get_iter(model, &iter, path);
 	
 	// Load the pointers from the columns
@@ -303,9 +327,19 @@ gboolean EntityList::onSelection(GtkTreeSelection *selection,
 		self->_callbackActive = false;
 		
 		return TRUE;
-	}
+	}*/
 
 	return FALSE;
+}
+
+// Gets called when a new <instance> is inserted into the scenegraph
+void EntityList::onSceneNodeInsert(const scene::Instance& instance) {
+	_model.insert(instance);
+}
+
+// Gets called when <instance> is removed from the scenegraph
+void EntityList::onSceneNodeErase(const scene::Instance& instance) {
+	_model.erase(instance);
 }
 
 } // namespace ui

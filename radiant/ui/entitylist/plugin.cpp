@@ -1,0 +1,54 @@
+#include "EntityList.h"
+
+#include "imodule.h"
+#include "ieventmanager.h"
+#include "iradiant.h"
+#include "stream/stringstream.h"
+#include "stream/textstream.h"
+#include "generic/callback.h"
+#include "modulesystem/StaticModule.h"
+
+class EntityListModule :
+	public RegisterableModule
+{
+public:
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
+};
+
+// RegisterableModule implementation
+const std::string& EntityListModule::getName() const {
+	static std::string _name("EntityList");
+	return _name;
+}
+
+const StringSet& EntityListModule::getDependencies() const {
+	static StringSet _dependencies;
+	
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_RADIANT);
+	}
+	
+	return _dependencies;
+}
+
+void EntityListModule::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "EntityListModule::initialiseModule called\n";
+	
+	GlobalEventManager().addCommand(
+		"EntityList", 
+		FreeCaller<ui::EntityList::toggle>()
+	);
+}
+
+void EntityListModule::shutdownModule() {
+	ui::EntityList::destroyInstance();
+}
+
+module::StaticModule<EntityListModule> entityListModule;
