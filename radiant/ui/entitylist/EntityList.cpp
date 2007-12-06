@@ -13,7 +13,6 @@
 #include "map/Map.h"
 #include "scenelib.h"
 #include "camera/Camera.h"
-#include "treemodel.h"
 
 namespace ui {
 
@@ -21,17 +20,11 @@ namespace ui {
 		const std::string WINDOW_TITLE = "Entity List";
 		const std::string RKEY_ROOT = "user/ui/entityList/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-		
-		enum {
-			NODE_COL,
-			INSTANCE_COL,
-			NUM_COLS
-		};
 	}
 
-EntityList::EntityList() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
-  _callbackActive(false)
+EntityList::EntityList() : 
+	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+	_callbackActive(false)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -45,9 +38,6 @@ EntityList::EntityList()
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
-	// Also register to the scenegraph to get notified about insertions/deletions
-	// TODO: Move this to the GraphTreeModel
-	GlobalSceneGraph().addSceneObserver(this);
 	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -60,76 +50,18 @@ EntityList::EntityList()
 	_windowPosition.applyPosition();
 }
 
-EntityList::~EntityList() {
-	GlobalSceneGraph().removeSceneObserver(this);
-}
-
 void EntityList::destroyInstance() {
 	InstancePtr() = EntityListPtr();
 }
-
-namespace {
-
-inline Nameable* Node_getNameable(scene::Node& node) {
-	return dynamic_cast<Nameable*>(&node);
-}
-
-std::string getNodeName(scene::Node& node) {
-	Nameable* nameable = Node_getNameable(node);
-	return (nameable != NULL) ? nameable->name() : "node";
-}
-
-void cellDataFunc(GtkTreeViewColumn* column, GtkCellRenderer* renderer, 
-				  GtkTreeModel* model, GtkTreeIter* iter, gpointer data)
-{
-	// Load the pointers from the columns
-	scene::Node* node = reinterpret_cast<scene::Node*>(
-		gtkutil::TreeModel::getPointer(model, iter, NODE_COL));
-	
-	scene::Instance* instance = reinterpret_cast<scene::Instance*>(
-		gtkutil::TreeModel::getPointer(model, iter, INSTANCE_COL));
-	
-	if (node != NULL) {
-		gtk_cell_renderer_set_fixed_size(renderer, -1, -1);
-		std::string name = getNodeName(*node);
-		g_object_set(G_OBJECT(renderer), 
-					 "text", name.c_str(), 
-					 "visible", TRUE, 
-					 NULL);
-
-		GtkWidget* treeView = reinterpret_cast<GtkWidget*>(data);
-
-		//globalOutputStream() << "rendering cell " << makeQuoted(name) << "\n";
-		GtkStyle* style = gtk_widget_get_style(treeView);
-		if (instance->childSelected()) {
-			g_object_set(G_OBJECT(renderer), 
-				"cell-background-gdk", &style->base[GTK_STATE_ACTIVE], NULL);
-		}
-		else {
-			g_object_set(G_OBJECT(renderer), 
-				"cell-background-gdk", &style->base[GTK_STATE_NORMAL], NULL);
-		}
-	}
-	else {
-		gtk_cell_renderer_set_fixed_size(renderer, -1, 0);
-		g_object_set(G_OBJECT(renderer), "text", "", "visible", FALSE, NULL);
-	}
-}
-
-} // namespace
 
 void EntityList::populateWindow() {
 	_treeView = GTK_TREE_VIEW(gtk_tree_view_new());
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 	
-	_treeModel = _model;
 	gtk_tree_view_set_model(_treeView, _treeModel);
 	
 	GtkTreeViewColumn* column = gtkutil::TextColumn("Name", GraphTreeModel::COL_NAME);
-	/*GtkCellRenderer* renderer = gtk_cell_renderer_text_new();
-	GtkTreeViewColumn* column = gtk_tree_view_column_new();*/
 	gtk_tree_view_column_pack_start(column, gtk_cell_renderer_text_new(), TRUE);
-	//gtk_tree_view_column_set_cell_data_func(column, renderer, cellDataFunc, _treeView, NULL);
 	
 	_selection = gtk_tree_view_get_selection(_treeView);
 	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_MULTIPLE);
@@ -145,41 +77,12 @@ void EntityList::populateWindow() {
 	);
 }
 
-gboolean EntityList::modelUpdater(GtkTreeModel* model, GtkTreePath* path, 
-								  GtkTreeIter* iter, gpointer data)
-{
-	GtkTreeView* treeView = reinterpret_cast<GtkTreeView*>(data);
-	
-	// greebo: TODO:
-	// Don't traverse the entire tree, instead:
-	// -- deselect all nodes
-	// -- traverse the SelectionSystem's list and update these only
-	
-	// Load the pointers from the columns
-	scene::Instance* instance = reinterpret_cast<scene::Instance*>(
-		gtkutil::TreeModel::getPointer(model, iter, INSTANCE_COL));
-
-	Selectable* selectable = Instance_getSelectable(*instance);
-	
-	if (selectable != NULL) {
-		GtkTreeSelection* selection = gtk_tree_view_get_selection(treeView);
-		if (selectable->isSelected()) {
-			gtk_tree_selection_select_path(selection, path);
-		}
-		else {
-			gtk_tree_selection_unselect_path(selection, path);
-		}
-	}
-
-	return FALSE;
-}
-
 void EntityList::update() {
 	// Disable callbacks and traverse the treemodel
 	_callbackActive = true;
 	
-	//gtk_tree_model_foreach(_treeModel, modelUpdater, _treeView);
-	_model.updateSelectionStatus(_selection);
+	// Traverse the entire tree, updating the selection
+	_treeModel.updateSelectionStatus(_selection);
 	
 	_callbackActive = false;
 }
@@ -193,7 +96,7 @@ void EntityList::selectionChanged(scene::Instance& instance, bool isComponent) {
 	
 	_callbackActive = true;
 	
-	_model.updateSelectionStatus(_selection, instance);
+	_treeModel.updateSelectionStatus(_selection, instance);
 	
 	_callbackActive = false;
 }
@@ -221,7 +124,7 @@ void EntityList::_preShow() {
 	_callbackActive = true;
 	
 	// Repopulate the model before showing the dialog
-	_model.refresh();
+	_treeModel.refresh();
 	
 	_callbackActive = false;
 	
@@ -325,16 +228,6 @@ gboolean EntityList::onSelection(GtkTreeSelection* selection,
 	}
 
 	return FALSE;
-}
-
-// Gets called when a new <instance> is inserted into the scenegraph
-void EntityList::onSceneNodeInsert(const scene::Instance& instance) {
-	_model.insert(instance);
-}
-
-// Gets called when <instance> is removed from the scenegraph
-void EntityList::onSceneNodeErase(const scene::Instance& instance) {
-	_model.erase(instance);
 }
 
 } // namespace ui

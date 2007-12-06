@@ -28,9 +28,14 @@ namespace ui {
 
 GraphTreeModel::GraphTreeModel() :
 	_model(gtk_tree_store_new(NUM_COLS, G_TYPE_POINTER, G_TYPE_STRING))
-{}
+{
+	// Subscribe to the scenegraph to get notified about insertions/deletions
+	GlobalSceneGraph().addSceneObserver(this);
+}
 
 GraphTreeModel::~GraphTreeModel() {
+	GlobalSceneGraph().removeSceneObserver(this);
+	
 	// Remove everything before shutting down
 	clear();
 }
@@ -134,6 +139,16 @@ std::string GraphTreeModel::getNodeCaption(const scene::INodePtr& node) {
 
 GraphTreeModel::operator GtkTreeModel*() {
 	return GTK_TREE_MODEL(_model);
+}
+
+// Gets called when a new <instance> is inserted into the scenegraph
+void GraphTreeModel::onSceneNodeInsert(const scene::Instance& instance) {
+	insert(instance); // wrap to the actual insert() method
+}
+
+// Gets called when <instance> is removed from the scenegraph
+void GraphTreeModel::onSceneNodeErase(const scene::Instance& instance) {
+	erase(instance); // wrap to the actual erase() method
 }
 
 } // namespace ui
