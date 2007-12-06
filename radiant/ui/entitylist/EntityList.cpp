@@ -218,10 +218,12 @@ void EntityList::_preShow() {
 	// Restore the position
 	_windowPosition.applyPosition();
 	
+	_callbackActive = true;
+	
 	// Repopulate the model before showing the dialog
 	_model.refresh();
 	
-	gtk_tree_view_expand_all(_treeView);
+	_callbackActive = false;
 	
 	// Update the widgets
 	update();
