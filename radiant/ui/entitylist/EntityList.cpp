@@ -187,7 +187,7 @@ void EntityList::update() {
 // Gets notified upon selection change
 void EntityList::selectionChanged(scene::Instance& instance, bool isComponent) {
 	if (_callbackActive || !isVisible() || isComponent) {
-		// Don't update if not shown or already updating
+		// Don't update if not shown or already updating, also ignore components
 		return;
 	}
 	
@@ -272,12 +272,14 @@ EntityList& EntityList::Instance() {
 void EntityList::onRowExpand(GtkTreeView* view, GtkTreeIter* iter, GtkTreePath* path, EntityList* self) {
 	if (self->_callbackActive) return; // avoid loops
 
+	// greebo: This is a possible optimisation point. Don't update the entire tree,
+	// but only the expanded subtree.
 	self->update();
 }
 
-gboolean EntityList::onSelection(GtkTreeSelection *selection, 
-								GtkTreeModel *model, 
-								GtkTreePath *path, 
+gboolean EntityList::onSelection(GtkTreeSelection* selection, 
+								GtkTreeModel* model, 
+								GtkTreePath* path, 
 								gboolean path_currently_selected, 
 								gpointer data)
 {
@@ -286,61 +288,41 @@ gboolean EntityList::onSelection(GtkTreeSelection *selection,
 	
 	if (self->_callbackActive) return TRUE; // avoid loops
 	
-	/*GtkTreeIter iter;
+	GtkTreeIter iter;
 	gtk_tree_model_get_iter(model, &iter, path);
 	
-	// Load the pointers from the columns
-	scene::Node* node = reinterpret_cast<scene::Node*>(
-		gtkutil::TreeModel::getPointer(model, &iter, NODE_COL));
+	// Load the instance pointer from the columns
+	scene::Instance& instance = *reinterpret_cast<scene::Instance*>(
+		gtkutil::TreeModel::getPointer(model, &iter, GraphTreeModel::COL_INSTANCE_POINTER));
 	
-	scene::Instance* instance = reinterpret_cast<scene::Instance*>(
-		gtkutil::TreeModel::getPointer(model, &iter, INSTANCE_COL));
-	
-	Selectable* selectable = Instance_getSelectable(*instance);
+	Selectable* selectable = Instance_getSelectable(instance);
 
-	if (node == NULL) {
-		if (path_currently_selected != FALSE) {
-			// Disable callbacks
-			self->_callbackActive = true;
-			
-			// Deselect all
-			GlobalSelectionSystem().setSelectedAll(false);
-			
-			// Now reactivate the callbacks
-			self->_callbackActive = false;
-		}
-	}
-	else if (selectable != NULL) {
+	if (selectable != NULL) {
 		// We've found a selectable instance
 		
-		// Disable callbacks
+		// Disable update to avoid loopbacks
 		self->_callbackActive = true;
 		
 		// Select the instance
 		selectable->setSelected(path_currently_selected == FALSE);
 
-		// greebo: Grab the origin keyvalue from the entity and focus the view on it
-		EntityNode* entityNode = dynamic_cast<EntityNode*>(node);
-		if (entityNode != NULL) {
-			Entity& entity = entityNode->getEntity();
-			
-			Vector3 entityOrigin(entity.getKeyValue("origin"));
+		const AABB& aabb = instance.worldAABB();
+		Vector3 origin(aabb.origin);
+		
+		// Move the camera a bit off the AABB origin
+		origin += Vector3(-50, 0, 50);
 
-			// Move the camera a bit off the entity origin
-			entityOrigin += Vector3(-50, 0, 50);
+		// Rotate the camera a bit towards the "ground"
+		Vector3 angles(0, 0, 0);
+		angles[CAMERA_PITCH] = -30;
 
-			// Rotate the camera a bit towards the "ground"
-			Vector3 angles(0, 0, 0);
-			angles[CAMERA_PITCH] = -30;
-
-			map::Map::focusViews(entityOrigin, angles);
-		}
+		map::Map::focusViews(origin, angles);
 
 		// Now reactivate the callbacks
 		self->_callbackActive = false;
 		
-		return TRUE;
-	}*/
+		return TRUE; // don't propagate
+	}
 
 	return FALSE;
 }
