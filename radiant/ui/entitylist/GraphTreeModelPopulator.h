@@ -2,6 +2,7 @@
 #define GRAPHTREEMODELPOPULATOR_H_
 
 #include "iscenegraph.h"
+#include "scenelib.h"
 #include "GraphTreeModel.h"
 
 namespace ui {
@@ -17,6 +18,7 @@ class GraphTreeModelPopulator :
 {
 	// The model to be populated
 	GraphTreeModel& _model;
+
 public:
 	GraphTreeModelPopulator(GraphTreeModel& model) :
 		_model(model)

@@ -4,7 +4,9 @@
 #include "scenelib.h"
 #include <iostream>
 #include "nameable.h"
+
 #include "GraphTreeModelPopulator.h"
+#include "GraphTreeModelSelectionUpdater.h"
 
 namespace ui {
 
@@ -33,7 +35,7 @@ GraphTreeModel::~GraphTreeModel() {
 	clear();
 }
 
-void GraphTreeModel::insert(const scene::Instance& instance) {
+const GraphTreeNodePtr& GraphTreeModel::insert(const scene::Instance& instance) {
 	// Create a new GraphTreeNode
 	GraphTreeNodePtr node(new GraphTreeNode(instance));
 	
@@ -48,7 +50,12 @@ void GraphTreeModel::insert(const scene::Instance& instance) {
 	);
 	
 	// Insert this iterator into the node map to facilitate lookups
-	_nodemap.insert(NodeMap::value_type(instance.path().top(), node));
+	std::pair<NodeMap::iterator, bool> result = _nodemap.insert(
+		NodeMap::value_type(instance.path().top(), node)
+	);
+	
+	// Return the GraphTreeNode reference
+	return result.first->second;
 }
 
 void GraphTreeModel::erase(const scene::Instance& instance) {
@@ -63,6 +70,11 @@ void GraphTreeModel::erase(const scene::Instance& instance) {
 	}
 }
 
+const GraphTreeNodePtr& GraphTreeModel::find(const scene::Instance& instance) const {
+	NodeMap::const_iterator found = _nodemap.find(instance.path().top());
+	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
+}
+
 void GraphTreeModel::clear() {
 	// Remove everything, GTK plus nodemap
 	gtk_tree_store_clear(_model);
@@ -74,6 +86,11 @@ void GraphTreeModel::refresh() {
 	// The walker also clears the graph in its constructor
 	GraphTreeModelPopulator populator(*this);
 	GlobalSceneGraph().traverse(populator);
+}
+
+void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection) {
+	GraphTreeModelSelectionUpdater updater(*this, selection);
+	GlobalSceneGraph().traverse(updater);
 }
 
 const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::Instance& instance) const {

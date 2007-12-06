@@ -179,6 +179,7 @@ void EntityList::update() {
 	_callbackActive = true;
 	
 	//gtk_tree_model_foreach(_treeModel, modelUpdater, _treeView);
+	_model.updateSelectionStatus(_selection);
 	
 	_callbackActive = false;
 }
@@ -215,6 +216,8 @@ void EntityList::_preShow() {
 	
 	// Repopulate the model before showing the dialog
 	_model.refresh();
+	
+	gtk_tree_view_expand_all(_treeView);
 	
 	// Update the widgets
 	update();

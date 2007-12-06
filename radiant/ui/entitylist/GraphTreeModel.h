@@ -2,6 +2,7 @@
 #define GRAPHTREEMODEL_H_
 
 #include <gtk/gtktreestore.h>
+#include <gtk/gtktreeselection.h>
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include "iscenegraph.h"
@@ -36,21 +37,28 @@ private:
 	
 	// The actual GTK model
 	GtkTreeStore* _model;
+	
 public:
 	GraphTreeModel();
 	
 	~GraphTreeModel();
 	
-	// Inserts the instance into the tree
-	void insert(const scene::Instance& instance);
+	// Inserts the instance into the tree, returns the GtkTreeIter*
+	const GraphTreeNodePtr& insert(const scene::Instance& instance);
 	// Removes the given instance from the tree
 	void erase(const scene::Instance& instance);
+	
+	// Tries to lookup the given instance in the tree, can return the NULL node
+	const GraphTreeNodePtr& find(const scene::Instance& instance) const;
 	
 	// Remove everything from the TreeModel
 	void clear();
 	
 	// Rebuilds the entire tree using a scene::Graph::Walker
 	void refresh();
+	
+	// Updates the selection status of the entire tree
+	void updateSelectionStatus(GtkTreeSelection* selection);
 	
 	// Operator-cast to GtkTreeModel to allow for implicit conversion
 	operator GtkTreeModel*();
