@@ -186,12 +186,16 @@ void EntityList::update() {
 
 // Gets notified upon selection change
 void EntityList::selectionChanged(scene::Instance& instance, bool isComponent) {
-	if (_callbackActive || !isVisible()) {
+	if (_callbackActive || !isVisible() || isComponent) {
 		// Don't update if not shown or already updating
-		return; 
+		return;
 	}
 	
-	update();
+	_callbackActive = true;
+	
+	_model.updateSelectionStatus(_selection, instance);
+	
+	_callbackActive = false;
 }
 
 void EntityList::toggleWindow() {
