@@ -79,9 +79,6 @@
 			<menuSeparator />
 			<menuItem name="cameraNextLeak" caption="Next leak spot" command="NextLeakSpot" />
 			<menuItem name="cameraPreviousLeak" caption="Previous leak spot" command="PrevLeakSpot" />
-			<menuSeparator />
-			<menuItem name="lookThroughSelected" caption="Look through selected" command="LookThroughSelected" />
-			<menuItem name="lookThroughCamera" caption="Look through camera" command="LookThroughCamera" />
 		</subMenu>
 
 		<subMenu name="orthographic" caption="Orthographic">

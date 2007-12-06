@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iselection.h"
+#include "iregistry.h"
 #include "gdk/gdkkeysyms.h"
 #include "xmlutil/Node.h"
 
@@ -10,12 +11,12 @@
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
+#include "modulesystem/StaticModule.h"
 
 // Constructor
-GlobalCameraManager::GlobalCameraManager() 
-: _camWnd(),
-  _parent(NULL),
-  _cameraModel(NULL)
+GlobalCameraManager::GlobalCameraManager() :
+	_camWnd(),
+	_parent(NULL)
 {}
 
 void GlobalCameraManager::construct() {
@@ -33,9 +34,6 @@ void GlobalCameraManager::construct() {
 
 	GlobalEventManager().addWidgetToggle("ToggleCamera");
 	GlobalEventManager().setToggled("ToggleCamera", true);
-
-	GlobalEventManager().addCommand("LookThroughSelected", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughSelected>(*this));
-	GlobalEventManager().addCommand("LookThroughCamera", MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(*this));
 
 	// angua: increases and decreases the movement speed of the camera
 	GlobalEventManager().addCommand("CamIncreaseMoveSpeed", MemberCaller<GlobalCameraManager, &GlobalCameraManager::increaseCameraSpeed>(*this));
@@ -149,38 +147,6 @@ void GlobalCameraManager::resetCameraAngles() {
 		angles[CAMERA_ROLL] = angles[CAMERA_PITCH] = 0;
 		angles[CAMERA_YAW] = static_cast<float>(22.5 * floor((_camWnd->getCameraAngles()[CAMERA_YAW]+11)/22.5));
 		_camWnd->setCameraAngles(angles);
-	}
-}
-
-void GlobalCameraManager::lookThroughCamera() {
-	if (_cameraModel != 0) {
-		_camWnd->addHandlersMove();
-		
-		_cameraModel->setCameraView(NULL, Callback());
-		_cameraModel = NULL;
-		
-		_camWnd->getCamera().updateModelview();
-		_camWnd->getCamera().updateProjection();
-		_camWnd->update();
-	}
-}
-
-void GlobalCameraManager::lookThroughSelected() {
-	if (_cameraModel != 0) {
-		lookThroughCamera();
-	}
-
-	if (GlobalSelectionSystem().countSelected() != 0) {
-		// Get the instance that was most recently selected
-		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
-		
-		CameraModel* cameraModel = Instance_getCameraModel(instance);
-		
-		if (cameraModel != 0) {
-			_camWnd->removeHandlersMove();
-			_cameraModel = cameraModel;
-			_cameraModel->setCameraView(_camWnd->getCameraView(), MemberCaller<GlobalCameraManager, &GlobalCameraManager::lookThroughCamera>(*this));
-		}
 	}
 }
 
@@ -382,10 +348,34 @@ void GlobalCameraManager::pitchDownDiscrete() {
 	_camWnd->getCamera().pitchDownDiscrete();
 }
 
+// RegisterableModule implementation
+const std::string& GlobalCameraManager::getName() const {
+	static std::string _name(MODULE_CAMERA);
+	return _name;
+}
+
+const StringSet& GlobalCameraManager::getDependencies() const {
+	static StringSet _dependencies;
+	
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_SHADERCACHE);
+	}
+	
+	return _dependencies;
+}
+
+void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "GlobalCameraManager::initialiseModule called.\n";
+}
+
+// Define the static SelectionSystem module
+module::StaticModule<GlobalCameraManager> cameraModule;
+
 // ------------------------------------------------------------------------------------
 
 // The accessor function to the GlobalCameraManager instance 
 GlobalCameraManager& GlobalCamera() {
-	static GlobalCameraManager _cameraManager;
-	return _cameraManager;
+	return *cameraModule.getModule();
 }

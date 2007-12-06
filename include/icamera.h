@@ -28,8 +28,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ICAMERA_H)
 #define INCLUDED_ICAMERA_H
 
-#include "generic/callbackfwd.h"
-#include "scenelib.h"
+#include "imodule.h"
+#include "math/Vector3.h"
+
+/**
+ * The "global" interface of DarkRadiant's camera module.
+ */
+class ICamera :
+	public RegisterableModule
+{
+public:
+	/**
+	 * greebo: Sets the camera origin to the given <point> using the given <angles>.
+	 */
+	virtual void focusCamera(const Vector3& point, const Vector3& angles) = 0;
+};
+
+const std::string MODULE_CAMERA("Camera");
+
+// Accessor 
+// (this is named CameraView to avoid name conflicts with the existing GlobalCamera() accessor)
+inline ICamera& GlobalCameraView() {
+	// Cache the reference locally
+	static ICamera& _camera(
+		*boost::static_pointer_cast<ICamera>(
+			module::GlobalModuleRegistry().getModule(MODULE_CAMERA)
+		)
+	);
+	return _camera;
+}
 
 class Matrix4;
 
@@ -39,15 +66,5 @@ public:
   virtual void setModelview(const Matrix4& modelview) = 0;
   virtual void setFieldOfView(float fieldOfView) = 0;
 };
-
-class CameraModel
-{
-public:
-	virtual void setCameraView(CameraView* view, const Callback& disconnect) = 0;
-};
-
-inline CameraModel* Instance_getCameraModel(scene::Instance& instance) {
-	return dynamic_cast<CameraModel*>(&instance);
-}
 
 #endif
