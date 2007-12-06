@@ -330,6 +330,15 @@ entity_env.Depends(entity_lib, math)
 entity_env.Depends(entity_lib, xmlutil)
 entity_env.Install(INSTALL + '/modules', entity_lib)
 
+entitylistEnv = module_env.Copy()
+entitylistSrc=build_list('plugins/entitylist', 'EntityList.cpp EntityListModule.cpp GraphTreeModel.cpp')
+entitylistEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
+entitylistEnv.useGtk2()
+entitylistEnv.useGlib2()
+entitylistLib = eventmanager_env.SharedLibrary(target='entitylist', source=entitylistSrc, no_import_lib=1, WIN32_INSERT_DEF=0)
+entitylistEnv.Depends(entitylistLib, gtkutil_lib)
+entitylistEnv.Install(INSTALL + '/modules', entitylistLib)
+
 # Optional plugins
 
 objEnv = module_env.Copy()
@@ -497,9 +506,6 @@ radiant_src = \
          'ui/groupdialog/GroupDialog.cpp',
          'ui/prefdialog/PrefPage.cpp',
          'ui/prefdialog/PrefDialog.cpp',
-         'ui/entitylist/EntityList.cpp',
-         'ui/entitylist/GraphTreeModel.cpp',
-         'ui/entitylist/EntityListModule.cpp',
          'ui/about/AboutDialog.cpp',
          'ui/texturebrowser/TextureBrowser.cpp',
          'ui/mapinfo/MapInfoDialog.cpp',
