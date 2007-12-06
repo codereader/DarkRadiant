@@ -9,12 +9,6 @@
 #include "generic/callback.h"
 #include "view.h"
 
-enum {
-    CAMERA_PITCH = 0, // up / down
-    CAMERA_YAW = 1, // left / right
-    CAMERA_ROLL = 2, // fall over
-};
-
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
 
