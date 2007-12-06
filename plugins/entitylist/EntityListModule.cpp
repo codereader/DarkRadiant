@@ -18,6 +18,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 };
+typedef boost::shared_ptr<EntityListModule> EntityListModulePtr;
 
 // RegisterableModule implementation
 const std::string& EntityListModule::getName() const {
@@ -51,4 +52,14 @@ void EntityListModule::shutdownModule() {
 	ui::EntityList::destroyInstance();
 }
 
-module::StaticModule<EntityListModule> entityListModule;
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+	registry.registerModule(EntityListModulePtr(new EntityListModule));
+	
+	// Initialise the streams
+	const ApplicationContext& ctx = registry.getApplicationContext();
+	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
+	GlobalErrorStream::instance().setOutputStream(ctx.getErrorStream());
+	
+	// Remember the reference to the ModuleRegistry
+	module::RegistryReference::Instance().setRegistry(registry);
+}
