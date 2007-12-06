@@ -60,6 +60,9 @@ public:
 	// Updates the selection status of the entire tree
 	void updateSelectionStatus(GtkTreeSelection* selection);
 	
+	// Updates the selection status of the given instance only
+	void updateSelectionStatus(GtkTreeSelection* selection, scene::Instance& instance);
+	
 	// Operator-cast to GtkTreeModel to allow for implicit conversion
 	operator GtkTreeModel*();
 	

@@ -93,6 +93,19 @@ void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection) {
 	GlobalSceneGraph().traverse(updater);
 }
 
+void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection, scene::Instance& instance) {
+	NodeMap::const_iterator found = _nodemap.find(instance.path().top());
+	
+	if (found != _nodemap.end()) {
+		if (Instance_isSelected(instance)) {
+			gtk_tree_selection_select_iter(selection, found->second->getIter());
+		}
+		else {
+			gtk_tree_selection_unselect_iter(selection, found->second->getIter());
+		}
+	}
+}
+
 const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::Instance& instance) const {
 	const scene::Path& path = instance.path();
 	
