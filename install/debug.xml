@@ -8,9 +8,13 @@
 	</ui>
 	<automatedTest>
 		<runTest value="1" />
-		<testMap value="/media/HDD/Games/Doom3/darkmod/maps/84.map" />
+		<testMap value="/media/HDD/Games/Doom3/darkmod/maps/bonehoard.map" />
 		<testCommands>
-			<testCommand value="InvertSelection" count="5" />
+			<testCommand value="InvertSelection" count="6" />
+			<testCommand value="EntityList" count="1" />
+			<testCommand value="InvertSelection" count="6" />
+			<testCommand value="EntityList" count="1" />
+			<testCommand value="InvertSelection" count="6" />
 		</testCommands>
 	</automatedTest>
 </debug>

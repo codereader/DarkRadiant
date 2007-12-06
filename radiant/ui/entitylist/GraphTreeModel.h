@@ -17,13 +17,14 @@ namespace ui {
  * The class provides basic routines to insert/remove scene::Instances
  * into the model (the lookup should be performed fast).
  */
-class GraphTreeModel
+class GraphTreeModel :
+	public scene::Graph::Observer
 {
 public:
 	// The enumeration of GTK column names
 	enum {
-		COL_INSTANCE_POINTER,
-		COL_NAME,
+		COL_INSTANCE_POINTER, // this is scene::Instance*
+		COL_NAME,             // the name (caption)
 		NUM_COLS
 	};
 
@@ -66,6 +67,13 @@ public:
 	// Operator-cast to GtkTreeModel to allow for implicit conversion
 	operator GtkTreeModel*();
 	
+	// scene::Graph::Observer implementation
+
+	// Gets called when a new <instance> is inserted into the scenegraph
+	virtual void onSceneNodeInsert(const scene::Instance& instance);
+	// Gets called when <instance> is removed from the scenegraph
+	virtual void onSceneNodeErase(const scene::Instance& instance);
+		
 private:
 	// Looks up the parent of the given instance, can return NULL (empty shared_ptr)
 	const GraphTreeNodePtr& findParentNode(const scene::Instance& instance) const;

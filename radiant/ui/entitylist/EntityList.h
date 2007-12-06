@@ -20,20 +20,17 @@ namespace ui {
 class EntityList;
 typedef boost::shared_ptr<EntityList> EntityListPtr;
 
-class EntityList
-: public gtkutil::PersistentTransientWindow,
-  public SelectionSystem::Observer,
-  public RadiantEventListener,
-  public scene::Graph::Observer
+class EntityList : 
+	public gtkutil::PersistentTransientWindow,
+	public SelectionSystem::Observer,
+	public RadiantEventListener
 {
 	// The main tree view
 	GtkTreeView* _treeView;
 	GtkTreeSelection* _selection;
 	
-	// The treemodel (is hosted externally in scenegraph - legacy)
-	GtkTreeModel* _treeModel;
-	
-	ui::GraphTreeModel _model; 
+	// The GraphTreeModel instance
+	GraphTreeModel _treeModel; 
 
 	gtkutil::WindowPosition _windowPosition;
 
@@ -69,15 +66,10 @@ private:
 	static gboolean onSelection(GtkTreeSelection *selection, GtkTreeModel *model, 
 								GtkTreePath *path, gboolean path_currently_selected, gpointer data);
 
-	static gboolean modelUpdater(GtkTreeModel* model, GtkTreePath* path, 
-								 GtkTreeIter* iter, gpointer data);
-
 	// (private) Constructor, creates all the widgets
 	EntityList();
 		
 public:
-	~EntityList();
-	
 	/** greebo: Shuts down this dialog, safely disconnects it
 	 * 			from the EventManager and the SelectionSystem.
 	 * 			Saves the window information to the Registry.
@@ -95,12 +87,6 @@ public:
 	
 	// Destroys the singleton instance
 	static void destroyInstance();
-	
-	// Gets called when a new <instance> is inserted into the scenegraph
-	virtual void onSceneNodeInsert(const scene::Instance& instance);
-	
-	// Gets called when <instance> is removed from the scenegraph
-	virtual void onSceneNodeErase(const scene::Instance& instance);
 };
 
 } // namespace ui
