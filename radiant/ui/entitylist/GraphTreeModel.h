@@ -39,10 +39,18 @@ private:
 public:
 	GraphTreeModel();
 	
+	~GraphTreeModel();
+	
 	// Inserts the instance into the tree
 	void insert(const scene::Instance& instance);
 	// Removes the given instance from the tree
 	void erase(const scene::Instance& instance);
+	
+	// Remove everything from the TreeModel
+	void clear();
+	
+	// Rebuilds the entire tree using a scene::Graph::Walker
+	void refresh();
 	
 	// Operator-cast to GtkTreeModel to allow for implicit conversion
 	operator GtkTreeModel*();

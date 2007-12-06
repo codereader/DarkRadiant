@@ -212,6 +212,10 @@ void EntityList::_preHide() {
 void EntityList::_preShow() {
 	// Restore the position
 	_windowPosition.applyPosition();
+	
+	// Repopulate the model before showing the dialog
+	_model.refresh();
+	
 	// Update the widgets
 	update();
 }

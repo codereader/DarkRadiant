@@ -4,6 +4,7 @@
 #include "scenelib.h"
 #include <iostream>
 #include "nameable.h"
+#include "GraphTreeModelPopulator.h"
 
 namespace ui {
 
@@ -26,6 +27,11 @@ namespace ui {
 GraphTreeModel::GraphTreeModel() :
 	_model(gtk_tree_store_new(NUM_COLS, G_TYPE_POINTER, G_TYPE_STRING))
 {}
+
+GraphTreeModel::~GraphTreeModel() {
+	// Remove everything before shutting down
+	clear();
+}
 
 void GraphTreeModel::insert(const scene::Instance& instance) {
 	// Allocate a new GtkTreeIter and acquire a new tree row from GTK
@@ -55,6 +61,19 @@ void GraphTreeModel::erase(const scene::Instance& instance) {
 		// ...and from our lookup table
 		_nodemap.erase(found);
 	}
+}
+
+void GraphTreeModel::clear() {
+	// Remove everything, GTK plus nodemap
+	gtk_tree_store_clear(_model);
+	_nodemap.clear();
+}
+
+void GraphTreeModel::refresh() {
+	// Instantiate a scenegraph walker and visit every node in the graph
+	// The walker also clears the graph in its constructor
+	GraphTreeModelPopulator populator(*this);
+	GlobalSceneGraph().traverse(populator);
 }
 
 const GraphTreeModel::GtkTreeIterPtr& GraphTreeModel::findParent(const scene::Instance& instance) const {
