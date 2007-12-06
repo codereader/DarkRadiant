@@ -34,21 +34,21 @@ GraphTreeModel::~GraphTreeModel() {
 }
 
 void GraphTreeModel::insert(const scene::Instance& instance) {
-	// Allocate a new GtkTreeIter and acquire a new tree row from GTK
-	GtkTreeIterPtr iter(new GtkTreeIter);
+	// Create a new GraphTreeNode
+	GraphTreeNodePtr node(new GraphTreeNode(instance));
 	
 	// Insert this iterator below a possible parent iterator
-	gtk_tree_store_insert(_model, iter.get(), findParent(instance).get(), 0);
+	gtk_tree_store_insert(_model, node->getIter(), findParentIter(instance), 0);
 	
 	// Fill in the values
-	gtk_tree_store_set(_model, iter.get(), 
+	gtk_tree_store_set(_model, node->getIter(), 
 		COL_INSTANCE_POINTER, &instance,
-		COL_NAME, node_get_name_safe(instance.path().top()).c_str(),
+		COL_NAME, getNodeCaption(instance.path().top()).c_str(),
 		-1
 	);
 	
 	// Insert this iterator into the node map to facilitate lookups
-	_nodemap.insert(NodeMap::value_type(instance.path().top(), iter));
+	_nodemap.insert(NodeMap::value_type(instance.path().top(), node));
 }
 
 void GraphTreeModel::erase(const scene::Instance& instance) {
@@ -56,7 +56,7 @@ void GraphTreeModel::erase(const scene::Instance& instance) {
 	
 	if (found != _nodemap.end()) {
 		// Remove this from the GtkTreeStore...
-		gtk_tree_store_remove(_model, found->second.get());
+		gtk_tree_store_remove(_model, found->second->getIter());
 		
 		// ...and from our lookup table
 		_nodemap.erase(found);
@@ -76,19 +76,30 @@ void GraphTreeModel::refresh() {
 	GlobalSceneGraph().traverse(populator);
 }
 
-const GraphTreeModel::GtkTreeIterPtr& GraphTreeModel::findParent(const scene::Instance& instance) const {
+const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::Instance& instance) const {
 	const scene::Path& path = instance.path();
 	
 	if (path.size() <= 1) {
 		// No parent, return the NULL pointer
-		return _nullGtkTreeIter;
+		return _nullTreeNode;
 	}
 	
 	// Try to find the node
 	NodeMap::const_iterator found = _nodemap.find(path.parent());
 	
 	// Return NULL (empty shared_ptr) if not found
-	return (found != _nodemap.end()) ? found->second : _nullGtkTreeIter;
+	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
+}
+
+GtkTreeIter* GraphTreeModel::findParentIter(const scene::Instance& instance) const {
+	// Find the parent's GraphTreeNode
+	const GraphTreeNodePtr& nodePtr = findParentNode(instance);
+	// Return a NULL nodeptr if not found
+	return (nodePtr != NULL) ? nodePtr->getIter() : NULL;
+}
+
+std::string GraphTreeModel::getNodeCaption(const scene::INodePtr& node) {
+	return node_get_name_safe(node);
 }
 
 GraphTreeModel::operator GtkTreeModel*() {
