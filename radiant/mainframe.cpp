@@ -1665,7 +1665,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("Preferences", FreeCaller<ui::PrefDialog::toggle>());
 	
 	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<Console_ToggleShow>());
-	GlobalEventManager().addCommand("EntityList", FreeCaller<ui::EntityList::toggle>());
 	
 	// Entity inspector (part of Group Dialog)
 	GlobalEventManager().addCommand("ToggleEntityInspector",

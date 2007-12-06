@@ -499,6 +499,8 @@ radiant_src = \
          'ui/prefdialog/PrefPage.cpp',
          'ui/prefdialog/PrefDialog.cpp',
          'ui/entitylist/EntityList.cpp',
+         'ui/entitylist/GraphTreeModel.cpp',
+         'ui/entitylist/plugin.cpp',
          'ui/about/AboutDialog.cpp',
          'ui/texturebrowser/TextureBrowser.cpp',
          'ui/mapinfo/MapInfoDialog.cpp',
