@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include "iscenegraph.h"
+#include "GraphTreeNode.h"
 
 namespace ui {
 
@@ -26,13 +27,12 @@ public:
 	};
 
 private:
-	// Smart pointer containing a GtkTreeIter
-	typedef boost::shared_ptr<GtkTreeIter> GtkTreeIterPtr;
-	GtkTreeIterPtr _nullGtkTreeIter;
-	
-	// This maps scene::Nodes to GtkTreeIters to allow fast lookups in the tree
-	typedef std::map<scene::INodePtr, GtkTreeIterPtr> NodeMap;
+	// This maps scene::Nodes to TreeNode structures to allow fast lookups in the tree
+	typedef std::map<scene::INodePtr, GraphTreeNodePtr> NodeMap;
 	NodeMap _nodemap;
+	
+	// The NULL treenode, must always be empty
+	const GraphTreeNodePtr _nullTreeNode;
 	
 	// The actual GTK model
 	GtkTreeStore* _model;
@@ -57,7 +57,14 @@ public:
 	
 private:
 	// Looks up the parent of the given instance, can return NULL (empty shared_ptr)
-	const GtkTreeIterPtr& findParent(const scene::Instance& instance) const;
+	const GraphTreeNodePtr& findParentNode(const scene::Instance& instance) const;
+	
+	// Tries to lookup the iterator to the parent item of the given instance, 
+	// returns NULL if not found
+	GtkTreeIter* findParentIter(const scene::Instance& instance) const;
+	
+	// Get the caption string used to display the node in the tree
+	std::string getNodeCaption(const scene::INodePtr& node);
 };
 
 } // namespace ui
