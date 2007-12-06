@@ -55,6 +55,14 @@ void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4
 	}
 }
 
+std::string MD5Model::getFilename() const {
+	return _filename;
+}
+
+void MD5Model::setFilename(const std::string& name) {
+	_filename = name;
+}
+
 void MD5Model::applySkin(const ModelSkin& skin) {
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
 		(*i)->applySkin(skin);

@@ -5,6 +5,7 @@
 #include "ifiletypes.h"
 #include "archivelib.h"
 #include "stream/textstream.h"
+#include "os/path.h"
 
 #include "MD5ModelNode.h"
 
@@ -21,6 +22,9 @@ void MD5ModelLoader::loadModelFromFile(MD5Model& model, ArchiveFile& file) {
 				
 		// Invoke the parser routine (might throw)
 		model.parseFromTokens(tokeniser);
+		
+		// Set the filename this model was loaded from
+		model.setFilename(os::getFilename(file.getName()));
 	}
 	catch (parser::ParseException e) {
 		globalErrorStream() << "[md5model] Parse failure. Exception was:\n"

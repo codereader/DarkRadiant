@@ -46,6 +46,10 @@ namespace model {
 	  public Bounded
 	{
 	public:
+		/**
+		 * greebo: The filename (without path) of this model.
+		 */
+		virtual std::string getFilename() const = 0;
 		
 		/** Apply the given skin to this model.
 		 * 
