@@ -328,6 +328,22 @@ namespace os {
     }
     
     /**
+     * greebo: Get the filename contained in the given path (the part after the last slash). 
+     * If there is no extension, an empty string is returned.
+     * 
+     * Note: The input string is expected to be standardised (forward slashes).
+     */
+    inline std::string getFilename(const std::string& path) {
+        std::size_t slashPos = path.rfind('/');
+        if (slashPos == std::string::npos) {
+            return "";
+        }
+        else {
+            return path.substr(slashPos + 1);
+        }
+    }
+    
+    /**
      * Get the extension of the given filename. If there is no extension, an
      * empty string is returned.
      */

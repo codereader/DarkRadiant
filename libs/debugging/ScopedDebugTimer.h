@@ -77,9 +77,9 @@ public:
 		double duration = end - _s;
 		
 		std::cout << "[ScopedDebugTimer] \"" << _op 
-				  << "\" in " << duration;
+				  << "\" in " << duration << " seconds.";
 		globalOutputStream() << "[ScopedDebugTimer] \"" << _op.c_str() 
-		  					 << "\" in " << duration;
+		  					 << "\" in " << duration << " seconds.";
 		if (_fps) {
 			std::cout << " (" << (1.0 / duration) << " FPS)";
 			globalOutputStream() << " (" << (1.0 / duration) << " FPS)";

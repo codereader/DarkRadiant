@@ -25,7 +25,7 @@ scene::Instance* MD5ModelNode::erase(const scene::Path& path) {
 }
 
 std::string MD5ModelNode::name() const {
-	return "MD5Model";
+	return _model.getFilename();
 }
 
 } // namespace md5

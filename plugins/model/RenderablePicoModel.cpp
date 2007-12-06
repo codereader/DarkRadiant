@@ -84,6 +84,14 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 		}
 	}
 }
+
+std::string RenderablePicoModel::getFilename() const {
+	return _filename;
+}
+
+void RenderablePicoModel::setFilename(const std::string& name) {
+	_filename = name;
+}
 	
 // Return vertex count of this model
 int RenderablePicoModel::getVertexCount() const {

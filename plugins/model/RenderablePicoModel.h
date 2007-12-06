@@ -43,6 +43,9 @@ class RenderablePicoModel
 	// Vector of materials used by this model (one for each surface)
 	mutable std::vector<std::string> _materialList;
 	
+	// The filename this model was loaded from
+	std::string _filename;
+	
 private:
 
 	// Update the list of materials by querying each surface for its current
@@ -106,6 +109,12 @@ public:
 	/** Return the list of active materials for this model.
 	 */
 	const std::vector<std::string>& getActiveMaterials() const;
+	
+	// Sets the filename this model was loaded from
+	void setFilename(const std::string& name);
+	
+	// Returns the filename this model was loaded from
+	virtual std::string getFilename() const;
 	
 	/** Apply the given skin to this model.
 	 */

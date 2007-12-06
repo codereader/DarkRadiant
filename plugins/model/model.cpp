@@ -83,9 +83,14 @@ public:
   }
   
   virtual std::string name() const {
-  	return _name;
+  	return _picoModel.getFilename();
+  }
+  
+  model::RenderablePicoModel& getModel() {
+	  return _picoModel;
   }
 };
+typedef boost::shared_ptr<PicoModelNode> PicoModelNodePtr;
 
 
 size_t picoInputStreamReam(void* inputStream, unsigned char* buffer, size_t length)
@@ -105,7 +110,11 @@ scene::INodePtr loadPicoModel(const picoModule_t* module, ArchiveFile& file) {
 	std::string fExt = fName.substr(fName.size() - 3, 3);
 
 	picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
-	scene::INodePtr modelNode(new PicoModelNode(model, fExt));
+	PicoModelNodePtr modelNode(new PicoModelNode(model, fExt));
+	
+	// Set the filename of the model
+	modelNode->getModel().setFilename(os::getFilename(file.getName()));
+	
 	PicoFreeModel(model);
 	return modelNode;
 }
@@ -123,7 +132,12 @@ model::IModelPtr loadIModel(const picoModule_t* module, ArchiveFile& file) {
 
 	picoModel_t* model = PicoModuleLoadModelStream(module, &file.getInputStream(), picoInputStreamReam, file.size(), 0);
 	
-	model::IModelPtr modelObj(new model::RenderablePicoModel(model, fExt));
+	boost::shared_ptr<model::RenderablePicoModel> modelObj(
+		new model::RenderablePicoModel(model, fExt)
+	);
+	// Set the filename
+	modelObj->setFilename(os::getFilename(file.getName()));
+	
 	PicoFreeModel(model);
 	return modelObj;
 	

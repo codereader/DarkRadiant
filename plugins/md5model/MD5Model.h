@@ -28,6 +28,9 @@ class MD5Model :
 
 	// The list of shader names for this model (for ModelSelector)
 	std::vector<std::string> _surfaceNames;
+	
+	// The filename of this model
+	std::string _filename;
 
 public:
 	MD5Model();
@@ -54,7 +57,12 @@ public:
 
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
+	// Sets the filename this model was loaded from
+	void setFilename(const std::string& name);
+	
 	// IModel implementation
+	virtual std::string getFilename() const;
+	
 	virtual void applySkin(const ModelSkin& skin);
 
 	/** Return the number of material surfaces on this model. Each material
