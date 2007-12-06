@@ -11,7 +11,7 @@
 #include "entitylib.h"
 #include "map/Map.h"
 #include "scenelib.h"
-#include "camera/Camera.h"
+#include "icamera.h"
 
 namespace ui {
 
@@ -217,7 +217,7 @@ gboolean EntityList::onSelection(GtkTreeSelection* selection,
 		Vector3 angles(0, 0, 0);
 		angles[CAMERA_PITCH] = -30;
 
-		map::Map::focusViews(origin, angles);
+		GlobalCameraView().focusCamera(origin, angles);
 
 		// Now reactivate the callbacks
 		self->_callbackActive = false;
