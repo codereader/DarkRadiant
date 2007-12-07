@@ -52,7 +52,7 @@ public:
 	void initialise();
 	void shutdown();
 
-	int getFileCount(const char *filename, int flags);
+	int getFileCount(const std::string& filename);
 	ArchiveFile* openFile(const char* filename);
 	ArchiveTextFile* openTextFile(const std::string& filename);
 	std::size_t loadFile(const char *filename, void **buffer);
