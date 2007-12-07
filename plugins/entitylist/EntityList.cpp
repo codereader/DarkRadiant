@@ -68,6 +68,8 @@ void EntityList::populateWindow() {
 	g_signal_connect(G_OBJECT(_treeView), "row-expanded", G_CALLBACK(onRowExpand), this);
 	
 	gtk_tree_view_append_column (_treeView, column);
+	gtk_tree_view_column_set_sort_column_id(column, GraphTreeModel::COL_NAME);
+	gtk_tree_view_column_clicked(column);
 	
 	gtk_container_add(
 		GTK_CONTAINER(getWindow()), 
