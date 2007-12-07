@@ -179,7 +179,7 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 		g_dir_close(dir);
 
 		// Shortcut reference to the ArchiveModule
-		_QERArchiveTable& archiveModule = GlobalArchive("PK4");  
+		ArchiveLoader& archiveModule = GlobalArchive("PK4");  
 			
 		// add the entries to the vfs
 		for (Archives::iterator i = archivesOverride.begin(); i != archivesOverride.end(); ++i) {
@@ -332,7 +332,7 @@ const char* Quake3FileSystem::findRoot(const char* name) {
 	return "";
 }
 
-void Quake3FileSystem::initPakFile(_QERArchiveTable& archiveModule, const std::string& filename) {
+void Quake3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename) {
 	std::string fileExt(os::getExtension(filename));
 	boost::to_upper(fileExt);
 	
@@ -341,7 +341,7 @@ void Quake3FileSystem::initPakFile(_QERArchiveTable& archiveModule, const std::s
 		ArchiveDescriptor entry;
 		
 		entry.name = filename;
-		entry.archive = archiveModule.m_pfnOpenArchive(filename.c_str());
+		entry.archive = archiveModule.openArchive(filename);
 		entry.is_pakfile = true;
 		_archives.push_back(entry);
 		

@@ -148,25 +148,23 @@ public:
   }
 };
 
-typedef Archive* (*PFN_OPENARCHIVE) (const char* name);
-
 const std::string MODULE_ARCHIVE("Archive");
 
-// greebo: TODO! Anything starting with _QER can't be good enough.
-class _QERArchiveTable :
+class ArchiveLoader :
 	public RegisterableModule
 {
 public:
-	PFN_OPENARCHIVE              m_pfnOpenArchive;
+	// greebo: Returns the opened file or NULL if failed.
+	virtual Archive* openArchive(const std::string& name) = 0;
 
     // get the supported file extension
     virtual const std::string& getExtension() = 0;
 };
 
-inline _QERArchiveTable& GlobalArchive(const std::string& fileType) {
+inline ArchiveLoader& GlobalArchive(const std::string& fileType) {
 	// Cache the reference locally
-	static _QERArchiveTable& _archive(
-		*boost::static_pointer_cast<_QERArchiveTable>(
+	static ArchiveLoader& _archive(
+		*boost::static_pointer_cast<ArchiveLoader>(
 			module::GlobalModuleRegistry().getModule(MODULE_ARCHIVE + fileType) // e.g. ArchivePK4
 		)
 	);

@@ -29,14 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <iostream>
 
 class ArchivePK4API :
-	public _QERArchiveTable
+	public ArchiveLoader
 {
 public:
-	ArchivePK4API() {
-		// Initialise the function pointer
-		_QERArchiveTable::m_pfnOpenArchive = &OpenArchive;
+	// greebo: Returns the opened file or NULL if failed.
+	virtual Archive* openArchive(const std::string& name) {
+		return OpenArchive(name.c_str());
 	}
-	
+		
 	virtual const std::string& getExtension() {
 		static std::string _ext("PK4");
 		return _ext;
