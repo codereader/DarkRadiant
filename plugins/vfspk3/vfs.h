@@ -64,7 +64,7 @@ public:
 	void forEachFile(const char* basedir, const char* extension,
 		const FileNameCallback& callback, std::size_t depth);
 
-	const char* findFile(const char *name);
+	const char* findFile(const std::string& name);
 	const char* findRoot(const char *name);
 
 	void attach(ModuleObserver& observer);
