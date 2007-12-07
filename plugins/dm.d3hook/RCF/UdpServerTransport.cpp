@@ -152,7 +152,7 @@ namespace RCF {
         // poll the UDP socket for messages, and read a message if one is available
 
         //RCF_UNUSED_VARIABLE(stopFlag);
-    	(void)stopFlag == stopFlag;
+    	(void)(stopFlag == stopFlag);
         fd_set fdSet;
         FD_ZERO(&fdSet);
         FD_SET( static_cast<SOCKET>(mFd), &fdSet);
