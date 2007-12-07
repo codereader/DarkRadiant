@@ -62,8 +62,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-#define VFS_MAXDIRS 8
-
 #if defined(WIN32) && !defined(PATH_MAX)
 #define PATH_MAX 260
 #endif
@@ -85,10 +83,6 @@ struct archive_entry_t
 typedef std::list<archive_entry_t> archives_t;
 
 static archives_t g_archives;
-std::string g_strDirs[VFS_MAXDIRS];
-
-//static char    g_strDirs[VFS_MAXDIRS][PATH_MAX+1];
-static int     g_numDirs;
 static bool    g_bUsePak = true;
 
 // =============================================================================
@@ -199,8 +193,6 @@ void Shutdown()
     (*i).archive->release();
   }
   g_archives.clear();
-
-  g_numDirs = 0;
 }
 
 #define VFS_SEARCH_PAK 0x1
@@ -318,26 +310,21 @@ const char* FindPath(const char* absolute)
 }
 
 Quake3FileSystem::Quake3FileSystem() :
-	_moduleObservers(getName())
+	_moduleObservers(getName()),
+	_numDirectories(0)
 {}
 
 void Quake3FileSystem::initDirectory(const std::string& inputPath) {
-    if (g_numDirs == (VFS_MAXDIRS-1)) {
+    if (_numDirectories == (VFS_MAXDIRS-1)) {
 		return;
     }
 
     // greebo: Normalise path: Replace backslashes and ensure trailing slash
-    g_strDirs[g_numDirs] = os::standardPathWithSlash(inputPath);
-	//strncpy(g_strDirs[g_numDirs], directory, PATH_MAX);
-	//g_strDirs[g_numDirs][PATH_MAX] = '\0';
-    
-    
-	//FixDOSName(g_strDirs[g_numDirs]);
-	//AddSlash(g_strDirs[g_numDirs]);
+    _directories[_numDirectories] = os::standardPathWithSlash(inputPath);
 
-	const char* path = g_strDirs[g_numDirs].c_str();
+	const char* path = _directories[_numDirectories].c_str();
 
-	g_numDirs++;
+	_numDirectories++;
 	
 	// Shortcut reference to the ArchiveModule
 	_QERArchiveTable& archiveModule = GlobalArchive("PK4");  
@@ -416,12 +403,12 @@ void Quake3FileSystem::initialise() {
     _moduleObservers.realise();
 }
 
-void Quake3FileSystem::shutdown()
-  {
+void Quake3FileSystem::shutdown() {
 	_moduleObservers.unrealise();
-    globalOutputStream() << "filesystem shutdown\n";
-    Shutdown();
-  }
+	globalOutputStream() << "filesystem shutdown\n";
+	Shutdown();
+	_numDirectories = 0;
+}
 
   int Quake3FileSystem::getFileCount(const char *filename, int flags)
   {

@@ -34,10 +34,16 @@
 #include "ifilesystem.h"
 #include "moduleobservers.h"
 
+#define VFS_MAXDIRS 8
+
 class Quake3FileSystem : 
 	public VirtualFileSystem
 {
 	ModuleObservers _moduleObservers;
+	
+	std::string _directories[VFS_MAXDIRS];
+	int _numDirectories;
+
 public:
 	// Constructor
 	Quake3FileSystem();
