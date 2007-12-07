@@ -1,7 +1,7 @@
 #include "DirectoryArchive.h"
 
 #include "archivelib.h"
-#include "fs_path.h"
+#include "UnixPath.h"
 #include "os/file.h"
 #include "os/dir.h"
 
@@ -54,13 +54,15 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const char* root) {
 			directory_close(dirs.back());
 			dirs.pop_back();
 			path.pop();
-		} else if (!string_equal(name, ".") && !string_equal(name, "..")) {
+		}
+		else if (!string_equal(name, ".") && !string_equal(name, "..")) {
 			path.push_filename(name);
 
 			bool is_directory = file_is_directory(path.c_str());
 
-			if (!is_directory)
+			if (!is_directory) {
 				visitor.file(path_make_relative(path.c_str(), _root.c_str()));
+			}
 
 			path.pop();
 
@@ -69,9 +71,12 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const char* root) {
 
 				if (!visitor.directory(path_make_relative(path.c_str(),
 						_root.c_str()), dirs.size()))
+				{
 					dirs.push_back(directory_open(path.c_str()));
-				else
+				}
+				else {
 					path.pop();
+				}
 			}
 		}
 	}
