@@ -63,13 +63,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include "DirectoryArchive.h"
 #include "SortedFilenames.h"
-
-#if defined(WIN32) && !defined(PATH_MAX)
-#define PATH_MAX 260
-#endif
-
-Archive* OpenArchive(const char* name);
 
 Quake3FileSystem::Quake3FileSystem() :
 	_moduleObservers(getName()),
@@ -92,7 +87,7 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 	{
 		ArchiveDescriptor entry;
 		entry.name = path;
-		entry.archive = OpenArchive(path.c_str());
+		entry.archive = new DirectoryArchive(path);
 		entry.is_pakfile = false;
 		_archives.push_back(entry);
 	}

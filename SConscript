@@ -162,7 +162,7 @@ sndEnv.Depends(sndLib, gtkutil_lib)
 sndEnv.Install(INSTALL + '/modules', sndLib)
 
 vfspk3_env = module_env.Copy()
-vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp archive.cpp')
+vfspk3_lst = build_list('plugins/vfspk3', 'vfspk3.cpp vfs.cpp DirectoryArchive.cpp')
 vfspk3_env.useGlib2()
 vfspk3_lib = vfspk3_env.SharedLibrary(target='vfspk3', source=vfspk3_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 vfspk3_env.Install(INSTALL + '/modules', vfspk3_lib)
