@@ -53,6 +53,9 @@ public:
 	
 	/// \brief Shuts down the filesystem.
 	virtual void shutdown() = 0;
+	
+	// Returns the number of files in the VFS matching the given filename
+	virtual int getFileCount(const std::string& filename) = 0;
 
   /// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
   /// The caller must \c release() the file returned if it is not 0.

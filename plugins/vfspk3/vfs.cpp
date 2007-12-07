@@ -83,7 +83,6 @@ struct archive_entry_t
 typedef std::list<archive_entry_t> archives_t;
 
 static archives_t g_archives;
-static bool    g_bUsePak = true;
 
 // =============================================================================
 // Static functions
@@ -197,31 +196,6 @@ void Shutdown()
 
 #define VFS_SEARCH_PAK 0x1
 #define VFS_SEARCH_DIR 0x2
-
-int GetFileCount (const char *filename, int flag)
-{
-  int count = 0;
-  char fixed[PATH_MAX+1];
-
-  strncpy(fixed, filename, PATH_MAX);
-  fixed[PATH_MAX] = '\0';
-  FixDOSName (fixed);
-
-  if(!flag)
-    flag = VFS_SEARCH_PAK | VFS_SEARCH_DIR;
-
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    if((*i).is_pakfile && (flag & VFS_SEARCH_PAK) != 0
-      || !(*i).is_pakfile && (flag & VFS_SEARCH_DIR) != 0)
-    {
-      if((*i).archive->containsFile(fixed))
-        ++count;
-    }
-  }
-
-  return count;
-}
 
 ArchiveFile* OpenFile(const char* filename)
 {
@@ -337,64 +311,63 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 		g_archives.push_back(entry);
 	}
 
-	if (g_bUsePak) {
-		GDir* dir= g_dir_open (path, 0, 0);
+	GDir* dir= g_dir_open (path, 0, 0);
 
-		if (dir != 0) {
-			globalOutputStream() << "vfs directory: " << path << "\n";
+	if (dir != 0) {
+		globalOutputStream() << "vfs directory: " << path << "\n";
 
-			const char* ignore_prefix = "";
-			const char* override_prefix = "";
+		const char* ignore_prefix = "";
+		const char* override_prefix = "";
 
-			// greebo: hardcoded these after removing of gamemode_get stuff
-			// can probably be removed but I haven't checked if that is safe
-			ignore_prefix = "mp_";
-			override_prefix = "sp_";
+		// greebo: hardcoded these after removing of gamemode_get stuff
+		// can probably be removed but I haven't checked if that is safe
+		ignore_prefix = "mp_";
+		override_prefix = "sp_";
 
-			Archives archives;
-			Archives archivesOverride;
-			for (;;) {
-				const char* name= g_dir_read_name(dir);
-				if (name == 0)
-					break;
+		Archives archives;
+		Archives archivesOverride;
+		for (;;) {
+			const char* name= g_dir_read_name(dir);
+			if (name == 0)
+				break;
 
-				const char *ext = strrchr(name, '.');
-				if ((ext == 0) || *(++ext) == '\0' /*|| GetArchiveTable(archiveModule, ext) == 0*/)
-					continue;
+			const char *ext = strrchr(name, '.');
+			if ((ext == 0) || *(++ext) == '\0' /*|| GetArchiveTable(archiveModule, ext) == 0*/)
+				continue;
 
-				// using the same kludge as in engine to ensure consistency
-				if (!string_empty(ignore_prefix) && strncmp(name,
-						ignore_prefix, strlen(ignore_prefix)) == 0) {
-					continue;
-				}
-				if (!string_empty(override_prefix) && strncmp(name,
-						override_prefix, strlen(override_prefix)) == 0) {
-					archivesOverride.insert(name);
-					continue;
-				}
-
-				archives.insert(name);
+			// using the same kludge as in engine to ensure consistency
+			if (!string_empty(ignore_prefix) && strncmp(name,
+					ignore_prefix, strlen(ignore_prefix)) == 0) {
+				continue;
+			}
+			if (!string_empty(override_prefix) && strncmp(name,
+					override_prefix, strlen(override_prefix)) == 0) {
+				archivesOverride.insert(name);
+				continue;
 			}
 
-			g_dir_close(dir);
-
-			// add the entries to the vfs
-			for (Archives::iterator i = archivesOverride.begin(); i
-					!= archivesOverride.end(); ++i) {
-				char filename[PATH_MAX];
-				strcpy(filename, path);
-				strcat(filename, (*i).c_str());
-				InitPakFile(archiveModule, filename);
-			}
-			for (Archives::iterator i = archives.begin(); i != archives.end(); ++i) {
-				char filename[PATH_MAX];
-				strcpy(filename, path);
-				strcat(filename, (*i).c_str());
-				InitPakFile(archiveModule, filename);
-			}
-		} else {
-			globalErrorStream() << "vfs directory not found: " << path << "\n";
+			archives.insert(name);
 		}
+
+		g_dir_close(dir);
+
+		// add the entries to the vfs
+		for (Archives::iterator i = archivesOverride.begin(); i
+				!= archivesOverride.end(); ++i) {
+			char filename[PATH_MAX];
+			strcpy(filename, path);
+			strcat(filename, (*i).c_str());
+			InitPakFile(archiveModule, filename);
+		}
+		for (Archives::iterator i = archives.begin(); i != archives.end(); ++i) {
+			char filename[PATH_MAX];
+			strcpy(filename, path);
+			strcat(filename, (*i).c_str());
+			InitPakFile(archiveModule, filename);
+		}
+	} 
+	else {
+		globalErrorStream() << "vfs directory not found: " << path << "\n";
 	}
 }
 
@@ -410,10 +383,20 @@ void Quake3FileSystem::shutdown() {
 	_numDirectories = 0;
 }
 
-  int Quake3FileSystem::getFileCount(const char *filename, int flags)
-  {
-    return GetFileCount(filename, flags);
-  }
+
+int Quake3FileSystem::getFileCount(const std::string& filename) {
+	int count = 0;
+	std::string fixedFilename(os::standardPathWithSlash(filename));
+
+	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+		if (i->archive->containsFile(fixedFilename.c_str())) {
+			++count;
+		}
+	}
+
+	return count;
+}
+
   ArchiveFile* Quake3FileSystem::openFile(const char* filename)
   {
     return OpenFile(filename);
