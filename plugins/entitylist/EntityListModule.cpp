@@ -6,7 +6,6 @@
 #include "stream/stringstream.h"
 #include "stream/textstream.h"
 #include "generic/callback.h"
-#include "modulesystem/StaticModule.h"
 
 class EntityListModule :
 	public RegisterableModule

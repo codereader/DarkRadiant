@@ -4,6 +4,7 @@
 #include "math/Vector3.h"
 #include <glib/gslist.h>
 #include "container/array.h"
+#include <limits>
 
 struct BezierCurve {
   Vector3 crd;
@@ -11,7 +12,7 @@ struct BezierCurve {
   Vector3 right;
 };
 
-const std::size_t BEZIERCURVETREE_MAX_INDEX = 1 << ((sizeof(std::size_t) * 8) - 1);
+const std::size_t BEZIERCURVETREE_MAX_INDEX = std::numeric_limits<std::size_t>::max();
 
 struct BezierCurveTree {
   std::size_t index;

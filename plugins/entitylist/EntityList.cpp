@@ -9,7 +9,6 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "entitylib.h"
-#include "map/Map.h"
 #include "scenelib.h"
 #include "icamera.h"
 
