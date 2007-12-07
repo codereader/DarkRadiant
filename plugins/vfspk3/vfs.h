@@ -87,7 +87,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	
 private:
-	void initPakFile(_QERArchiveTable& archiveModule, const std::string& filename);
+	void initPakFile(ArchiveLoader& archiveModule, const std::string& filename);
 };
 typedef boost::shared_ptr<Quake3FileSystem> Quake3FileSystemPtr;
 
