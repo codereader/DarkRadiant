@@ -81,7 +81,7 @@ public:
   virtual void forEachFile(const char* basedir, const char* extension, const FileNameCallback& callback, std::size_t depth = 1) = 0;
 
   /// \brief Returns the absolute filename for a relative \p name, or "" if not found.
-  virtual const char* findFile(const char* name) = 0;
+  virtual const char* findFile(const std::string& name) = 0;
   /// \brief Returns the filesystem root for an absolute \p name, or "" if not found.
   /// This can be used to convert an absolute name to a relative name.
   virtual const char* findRoot(const char* name) = 0;

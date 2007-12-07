@@ -217,32 +217,6 @@ void FreeFile (void *p)
   free(p);
 }
 
-const char* FindFile(const char* relative)
-{
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    if(!(*i).is_pakfile && (*i).archive->containsFile(relative))
-    {
-      return (*i).name.c_str();
-    }
-  }
-
-  return "";
-}
-
-const char* FindPath(const char* absolute)
-{
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    if(!(*i).is_pakfile && path_equal_n(absolute, (*i).name.c_str(), string_length((*i).name.c_str())))
-    {
-      return (*i).name.c_str();
-    }
-  }
-
-  return "";
-}
-
 Quake3FileSystem::Quake3FileSystem() :
 	_moduleObservers(getName()),
 	_numDirectories(0)
@@ -430,12 +404,24 @@ std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffe
 	    }
     }
 
-const char* Quake3FileSystem::findFile(const char *name) {
-	return FindFile(name);
+const char* Quake3FileSystem::findFile(const std::string& name) {
+	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+		if (!i->is_pakfile && i->archive->containsFile(name.c_str())) {
+			return i->name.c_str();
+		}
+	}
+
+	return "";
 }
 
-const char* Quake3FileSystem::findRoot(const char *name) {
-	return FindPath(name);
+const char* Quake3FileSystem::findRoot(const char* name) {
+	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+		if (!i->is_pakfile && path_equal_n(name, i->name.c_str(), i->name.size())) {
+			return i->name.c_str();
+		}
+	}
+
+	return "";
 }
 
 void Quake3FileSystem::attach(ModuleObserver& observer) {
