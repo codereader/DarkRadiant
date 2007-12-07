@@ -36,8 +36,6 @@ class Archive;
 
 class ModuleObserver;
 
-typedef struct _GSList GSList;
-
 const std::string MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
 
 /// The Virtual File System.
@@ -45,14 +43,16 @@ class VirtualFileSystem :
 	public RegisterableModule
 {
 public:
-  /// \brief Adds a root search \p path.
-  /// Called before \c initialise.
-  virtual void initDirectory(const std::string& path) = 0;
-  /// \brief Initialises the filesystem.
-  /// Called after all root search paths have been added.
-  virtual void initialise() = 0;
-  /// \brief Shuts down the filesystem.
-  virtual void shutdown() = 0;
+	/// \brief Adds a root search \p path.
+	/// Called before \c initialise.
+	virtual void initDirectory(const std::string& path) = 0;
+	
+	/// \brief Initialises the filesystem.
+	/// Called after all root search paths have been added.
+	virtual void initialise() = 0;
+	
+	/// \brief Shuts down the filesystem.
+	virtual void shutdown() = 0;
 
   /// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
   /// The caller must \c release() the file returned if it is not 0.
