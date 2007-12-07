@@ -332,10 +332,10 @@ entity_env.Install(INSTALL + '/modules', entity_lib)
 
 entitylistEnv = module_env.Copy()
 entitylistSrc=build_list('plugins/entitylist', 'EntityList.cpp EntityListModule.cpp GraphTreeModel.cpp')
-entitylistEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
+entitylistEnv.Append(LIBS = ['gtkutil', 'xmlutil', 'math'])
 entitylistEnv.useGtk2()
 entitylistEnv.useGlib2()
-entitylistLib = eventmanager_env.SharedLibrary(target='entitylist', source=entitylistSrc, no_import_lib=1, WIN32_INSERT_DEF=0)
+entitylistLib = entitylistEnv.SharedLibrary(target='entitylist', source=entitylistSrc, no_import_lib=1, WIN32_INSERT_DEF=0)
 entitylistEnv.Depends(entitylistLib, gtkutil_lib)
 entitylistEnv.Install(INSTALL + '/modules', entitylistLib)
 
