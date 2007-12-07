@@ -84,7 +84,6 @@ void SceneGraph::insert(scene::Instance* instance) {
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
 		(*i)->onSceneNodeInsert(*instance);
 	}
-	//graph_tree_model_insert(getTreeModel(), *instance);
 }
 
 void SceneGraph::erase(scene::Instance* instance) {
@@ -94,7 +93,6 @@ void SceneGraph::erase(scene::Instance* instance) {
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
 		(*i)->onSceneNodeErase(*instance);
 	}
-	//graph_tree_model_erase(scene_graph_get_tree_model(), *instance);
 
     m_instances.erase(PathConstReference(instance->path()));
 }
