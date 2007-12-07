@@ -4,6 +4,7 @@
 #include "UnixPath.h"
 #include "os/file.h"
 #include "os/dir.h"
+#include <vector>
 
 DirectoryArchive::DirectoryArchive(const std::string& root) : 
 	_root(root)
