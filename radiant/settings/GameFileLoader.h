@@ -18,7 +18,7 @@ public:
 	GameFileLoader(Manager::GameMap& games, const std::string& path);
 
 	// Main functor () function, gets called with the file (without path)
-	void operator() (const char *name) const;
+	void operator() (const std::string& name);
 };
 
 } // namespace game

@@ -52,25 +52,21 @@ inline const char* directory_read_and_increment(Directory* directory)
 }
 
 template<typename Functor>
-void Directory_forEach(const std::string& path, const Functor& functor)
-{
-  Directory* dir = directory_open(path);
+void Directory_forEach(const std::string& path, Functor& functor) {
+	Directory* dir = directory_open(path);
 
-  if(directory_good(dir))
-  {
-    for(;;)
-    {
-      const char* name = directory_read_and_increment(dir);
-      if(name == 0)
-      {
-        break;
-      }
+	if (directory_good(dir)) {
+		for (;;) {
+			const char* name = directory_read_and_increment(dir);
+			if (name == 0) {
+				break;
+			}
 
-      functor(name);
-    }
+			functor(name);
+		}
 
-    directory_close(dir);
-  }
+		directory_close(dir);
+	}
 }
 
 

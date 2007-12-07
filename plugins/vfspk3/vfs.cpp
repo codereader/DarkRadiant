@@ -57,6 +57,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "string/string.h"
 #include "stream/stringstream.h"
 #include "os/path.h"
+#include "os/dir.h"
 #include "moduleobservers.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -83,51 +84,38 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
     // greebo: Normalise path: Replace backslashes and ensure trailing slash
     _directories[_numDirectories] = os::standardPathWithSlash(inputPath);
 
-	const char* path = _directories[_numDirectories].c_str();
+    // Shortcut
+	const std::string& path = _directories[_numDirectories];
 
 	_numDirectories++;
 	
 	{
 		ArchiveDescriptor entry;
 		entry.name = path;
-		entry.archive = OpenArchive(path);
+		entry.archive = OpenArchive(path.c_str());
 		entry.is_pakfile = false;
 		_archives.push_back(entry);
 	}
-
-	GDir* dir= g_dir_open (path, 0, 0);
-
-	if (dir != 0) {
-		globalOutputStream() << "vfs directory: " << path << "\n";
-
-		SortedFilenames archives;
-		
-		for (;;) {
-			const char* name= g_dir_read_name(dir);
-			if (name == 0)
-				break;
-
-			const char *ext = strrchr(name, '.');
-			// Skip filenames without extension (greebo: why? they get filtered out later on anyway)
-			if (ext == 0 || *(++ext) == '\0')
-				continue;
-
-			archives.insert(name);
-		}
-
-		g_dir_close(dir);
-
-		// Shortcut reference to the ArchiveModule
-		ArchiveLoader& archiveModule = GlobalArchive("PK4");  
-			
-		// add the entries to the vfs
-		for (SortedFilenames::iterator i = archives.begin(); i != archives.end(); ++i) {
-			// Assemble the filename and try to load the archive
-			initPakFile(archiveModule, path + *i);
-		}
+	
+	// Instantiate a new sorting container for the filenames
+	SortedFilenames filenameList;
+	
+	// Traverse the directory using the filename list as functor
+	Directory_forEach(path, filenameList);
+	
+	if (filenameList.size() == 0) {
+		return; // nothing found
 	}
-	else {
-		globalErrorStream() << "vfs directory not found: " << path << "\n";
+	
+	globalOutputStream() << "[vfs] searched directory: " << path.c_str() << "\n";
+	
+	// Get the ArchiveLoader and try to load each file
+	ArchiveLoader& archiveModule = GlobalArchive("PK4");  
+	
+	// add the entries to the vfs
+	for (SortedFilenames::iterator i = filenameList.begin(); i != filenameList.end(); ++i) {
+		// Assemble the filename and try to load the archive
+		initPakFile(archiveModule, path + *i);
 	}
 }
 

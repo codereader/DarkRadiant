@@ -5,7 +5,8 @@
  * greebo: SortedFilenames is based on a std::set 
  *         container with special sorting.
  * 
- *         The list is filled with filenames from a VFS directory.
+ * The list fills itself with filenames while traversing a directory.
+ * The class acts as File functor for the Directory_Foreach method.
  */
 
 // Arnout: note - sort pakfiles in reverse order. This ensures that
@@ -53,6 +54,22 @@ public:
 	}
 };
 
-typedef std::set<std::string, PakLess> SortedFilenames;
+/**
+ * greebo: A container providing a File functor method to populate
+ *         itself with the visited filenames.
+ * 
+ *         The inserted filenames get correctly sorted on insert, as
+ *         this class is using the PakLess comparator.
+ */
+class SortedFilenames :
+	public std::set<std::string, PakLess>
+{
+public:
+	// This gets called by Directory_Foreach visiting each filename.
+	void operator()(const std::string& filename) {
+		// Just insert the name into <self>, it will get sorted correctly.
+		insert(filename);
+	}
+};
 
 #endif /*SORTEDFILENAMES_H_*/
