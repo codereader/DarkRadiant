@@ -361,7 +361,8 @@ void Manager::loadGameFiles(const std::string& appPath) {
 	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath.c_str() << '\n';
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
-	Directory_forEach(gamePath.c_str(), GameFileLoader(_games, gamePath.c_str()));
+	GameFileLoader gameFileLoader(_games, gamePath.c_str());
+	Directory_forEach(gamePath.c_str(), gameFileLoader);
 	
 	globalOutputStream() << "GameManager: Found game definitions: ";
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) {

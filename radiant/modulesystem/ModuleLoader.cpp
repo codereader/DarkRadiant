@@ -50,8 +50,11 @@ void Loader::operator() (const std::string& fileName) const {
  * @root: The root directory to search.
  */
 void Loader::loadModules(const std::string& root) {
-	Directory_forEach(root + MODULES_DIR, Loader(root + MODULES_DIR));
-	Directory_forEach(root + PLUGINS_DIR, Loader(root + PLUGINS_DIR));
+	Loader modulesLoader(root + MODULES_DIR);
+	Loader pluginsLoader(root + PLUGINS_DIR);
+	
+	Directory_forEach(root + MODULES_DIR, modulesLoader);
+	Directory_forEach(root + PLUGINS_DIR, pluginsLoader);
 }
 
 void Loader::unloadModules() {
