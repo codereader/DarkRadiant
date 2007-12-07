@@ -419,14 +419,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\treemodel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\treemodel.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\view.cpp"
 				>
 			</File>
@@ -1122,6 +1114,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\selection\SelectedInstanceList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\SelectedInstanceList.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\selection\SelectionBox.h"
 					>
 				</File>
@@ -1638,18 +1638,6 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="entitylist"
-					>
-					<File
-						RelativePath="..\..\radiant\ui\entitylist\EntityList.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\entitylist\EntityList.h"
 						>
 					</File>
 				</Filter>
