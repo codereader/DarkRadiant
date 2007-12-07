@@ -141,6 +141,9 @@ OpenGLState& OpenGLShader::appendDefaultPass() {
 
 void OpenGLShader::construct(const char* name)
 {
+	// Retrieve the highlight colour from the colourschemes (once)
+	static Vector3 highLightColour = GlobalRadiant().getColour("selected_brush_camera");
+	
   OpenGLState& state = appendDefaultPass();
   switch(name[0])
   {
@@ -223,9 +226,9 @@ void OpenGLShader::construct(const char* name)
     }
     else if(string_equal(name+1, "CAM_HIGHLIGHT"))
     {
-      state.m_colour[0] = 1;
-      state.m_colour[1] = 0;
-      state.m_colour[2] = 0;
+      state.m_colour[0] = highLightColour[0];
+      state.m_colour[1] = highLightColour[1];
+      state.m_colour[2] = highLightColour[2];
       state.m_colour[3] = 0.3f;
       state.m_state = RENDER_FILL|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
       state.m_sort = OpenGLState::eSortHighlight;
