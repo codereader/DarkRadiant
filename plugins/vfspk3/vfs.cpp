@@ -51,7 +51,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "iradiant.h"
 #include "idatastream.h"
-#include "iarchive.h"
 #include "ifilesystem.h"
 
 #include "generic/callback.h"
@@ -87,37 +86,6 @@ static archives_t g_archives;
 
 // =============================================================================
 // Static functions
-
-static void FixDOSName (char *src)
-{
-  if (src == 0 || strchr(src, '\\') == 0)
-    return;
-
-  globalErrorStream() << "WARNING: invalid path separator '\\': " << src << "\n";
-
-  while (*src)
-  {
-    if (*src == '\\')
-      *src = '/';
-    src++;
-  }
-}
-
-static void InitPakFile (_QERArchiveTable& archiveModule, const char *filename)
-{
-	std::string fileExt(path_get_extension(filename));
-	boost::to_upper(fileExt);
-	
-	// matching extension?
-	if (fileExt == archiveModule.getExtension()) {
-		archive_entry_t entry;
-		entry.name = filename;
-		entry.archive = archiveModule.m_pfnOpenArchive(filename);
-		entry.is_pakfile = true;
-		g_archives.push_back(entry);
-		globalOutputStream() << "  pak file: " << filename << "\n";
-	}
-}
 
 inline int ascii_to_upper(int c)
 {
@@ -174,49 +142,6 @@ public:
 
 typedef std::set<std::string, PakLess> Archives;
 
-// =============================================================================
-// Global functions
-
-// reads all pak files from a dir
-void InitDirectory(const char* directory, _QERArchiveTable& archiveModule)
-{
-  
-}
-
-// frees all memory that we allocated
-// FIXME TTimo this should be improved so that we can shutdown and restart the VFS without exiting Radiant?
-//   (for instance when modifying the project settings)
-void Shutdown()
-{
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    (*i).archive->release();
-  }
-  g_archives.clear();
-}
-
-#define VFS_SEARCH_PAK 0x1
-#define VFS_SEARCH_DIR 0x2
-
-ArchiveTextFile* OpenTextFile(const std::string& filename)
-{
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    ArchiveTextFile* file = (*i).archive->openTextFile(filename.c_str());
-    if(file != 0)
-    {
-      return file;
-    }
-  }
-
-  return 0;
-}
-
-void FreeFile (void *p)
-{
-  free(p);
-}
-
 Quake3FileSystem::Quake3FileSystem() :
 	_moduleObservers(getName()),
 	_numDirectories(0)
@@ -234,9 +159,6 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 
 	_numDirectories++;
 	
-	// Shortcut reference to the ArchiveModule
-	_QERArchiveTable& archiveModule = GlobalArchive("PK4");  
-
 	{
 		archive_entry_t entry;
 		entry.name = path;
@@ -270,12 +192,10 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 				continue;
 
 			// using the same kludge as in engine to ensure consistency
-			if (!string_empty(ignore_prefix) && strncmp(name,
-					ignore_prefix, strlen(ignore_prefix)) == 0) {
+			if (!string_empty(ignore_prefix) && strncmp(name, ignore_prefix, strlen(ignore_prefix)) == 0) {
 				continue;
 			}
-			if (!string_empty(override_prefix) && strncmp(name,
-					override_prefix, strlen(override_prefix)) == 0) {
+			if (!string_empty(override_prefix) && strncmp(name,	override_prefix, strlen(override_prefix)) == 0) {
 				archivesOverride.insert(name);
 				continue;
 			}
@@ -285,21 +205,24 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 
 		g_dir_close(dir);
 
+		// Shortcut reference to the ArchiveModule
+		_QERArchiveTable& archiveModule = GlobalArchive("PK4");  
+			
 		// add the entries to the vfs
-		for (Archives::iterator i = archivesOverride.begin(); i
-				!= archivesOverride.end(); ++i) {
+		for (Archives::iterator i = archivesOverride.begin(); i != archivesOverride.end(); ++i) {
 			char filename[PATH_MAX];
 			strcpy(filename, path);
-			strcat(filename, (*i).c_str());
-			InitPakFile(archiveModule, filename);
+			strcat(filename, i->c_str());
+			initPakFile(archiveModule, filename);
 		}
+		
 		for (Archives::iterator i = archives.begin(); i != archives.end(); ++i) {
 			char filename[PATH_MAX];
 			strcpy(filename, path);
 			strcat(filename, (*i).c_str());
-			InitPakFile(archiveModule, filename);
+			initPakFile(archiveModule, filename);
 		}
-	} 
+	}
 	else {
 		globalErrorStream() << "vfs directory not found: " << path << "\n";
 	}
@@ -313,7 +236,13 @@ void Quake3FileSystem::initialise() {
 void Quake3FileSystem::shutdown() {
 	_moduleObservers.unrealise();
 	globalOutputStream() << "filesystem shutdown\n";
-	Shutdown();
+	
+	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+		i->archive->release();
+	}
+	
+	g_archives.clear();
+	
 	_numDirectories = 0;
 }
 
@@ -344,11 +273,18 @@ ArchiveFile* Quake3FileSystem::openFile(const std::string& filename) {
 		}
 	}
 
-	return 0;
+	return NULL;
 }
 
 ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename) {
-	return OpenTextFile(filename);
+	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+		ArchiveTextFile* file = i->archive->openTextFile(filename.c_str());
+		if (file != NULL) {
+			return file;
+		}
+	}
+
+	return NULL;
 }
 
 std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffer) {
@@ -376,10 +312,9 @@ std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffe
 	return 0;
 }
 
-  void Quake3FileSystem::freeFile(void *p)
-  {
-    FreeFile(p);
-  }
+void Quake3FileSystem::freeFile(void *p) {
+	free(p);
+}
 
     // Call the specified callback function for each file matching extension
     // inside basedir.
@@ -422,6 +357,22 @@ const char* Quake3FileSystem::findRoot(const char* name) {
 	}
 
 	return "";
+}
+
+void Quake3FileSystem::initPakFile(_QERArchiveTable& archiveModule, const std::string& filename) {
+	std::string fileExt(os::getExtension(filename));
+	boost::to_upper(fileExt);
+	
+	// matching extension?
+	if (fileExt == archiveModule.getExtension()) {
+		archive_entry_t entry;
+		entry.name = filename;
+		entry.archive = archiveModule.m_pfnOpenArchive(filename.c_str());
+		entry.is_pakfile = true;
+		g_archives.push_back(entry);
+		
+		globalOutputStream() << "[vfs] pak file: " << filename.c_str() << "\n";
+	}
 }
 
 void Quake3FileSystem::attach(ModuleObserver& observer) {
