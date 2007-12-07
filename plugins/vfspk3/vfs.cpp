@@ -66,23 +66,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PATH_MAX 260
 #endif
 
-// =============================================================================
-// Global variables
-
 Archive* OpenArchive(const char* name);
-
-struct archive_entry_t
-{
-  std::string name;
-  Archive* archive;
-  bool is_pakfile;
-};
-
-#include <list>
-
-typedef std::list<archive_entry_t> archives_t;
-
-static archives_t g_archives;
 
 // =============================================================================
 // Static functions
@@ -160,11 +144,11 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 	_numDirectories++;
 	
 	{
-		archive_entry_t entry;
+		ArchiveDescriptor entry;
 		entry.name = path;
 		entry.archive = OpenArchive(path);
 		entry.is_pakfile = false;
-		g_archives.push_back(entry);
+		_archives.push_back(entry);
 	}
 
 	GDir* dir= g_dir_open (path, 0, 0);
@@ -237,11 +221,11 @@ void Quake3FileSystem::shutdown() {
 	_moduleObservers.unrealise();
 	globalOutputStream() << "filesystem shutdown\n";
 	
-	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		i->archive->release();
 	}
 	
-	g_archives.clear();
+	_archives.clear();
 	
 	_numDirectories = 0;
 }
@@ -251,7 +235,7 @@ int Quake3FileSystem::getFileCount(const std::string& filename) {
 	int count = 0;
 	std::string fixedFilename(os::standardPathWithSlash(filename));
 
-	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		if (i->archive->containsFile(fixedFilename.c_str())) {
 			++count;
 		}
@@ -266,7 +250,7 @@ ArchiveFile* Quake3FileSystem::openFile(const std::string& filename) {
 		return NULL;
 	}
 	
-	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		ArchiveFile* file = i->archive->openFile(filename.c_str());
 		if (file != NULL) {
 			return file;
@@ -277,7 +261,7 @@ ArchiveFile* Quake3FileSystem::openFile(const std::string& filename) {
 }
 
 ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename) {
-	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		ArchiveTextFile* file = i->archive->openTextFile(filename.c_str());
 		if (file != NULL) {
 			return file;
@@ -316,31 +300,31 @@ void Quake3FileSystem::freeFile(void *p) {
 	free(p);
 }
 
-    // Call the specified callback function for each file matching extension
-    // inside basedir.
-    void Quake3FileSystem::forEachFile(const char* basedir, 
-    				 const char* extension, 
-    				 const FileNameCallback& callback, 
-    				 std::size_t depth)
+// Call the specified callback function for each file matching extension
+// inside basedir.
+void Quake3FileSystem::forEachFile(const char* basedir, 
+				 const char* extension, 
+				 const FileNameCallback& callback, 
+				 std::size_t depth)
+{
+	// Set of visited files, to avoid name conflicts
+	std::set<std::string> visitedFiles;
+	
+	// Visit each Archive, applying the FileVisitor to each one (which in
+	// turn calls the callback for each matching file.
+	for (ArchiveList::iterator i = _archives.begin(); 
+		 i != _archives.end(); 
+		 ++i)
     {
-    	// Set of visited files, to avoid name conflicts
-    	std::set<std::string> visitedFiles;
-    	
-    	// Visit each Archive, applying the FileVisitor to each one (which in
-    	// turn calls the callback for each matching file.
-    	for (archives_t::iterator i = g_archives.begin(); 
-    		 i != g_archives.end(); 
-    		 ++i)
-	    {
-    		FileVisitor visitor(callback, basedir, extension, visitedFiles);
-    		i->archive->forEachFile(
-    						Archive::VisitorFunc(
-    								visitor, Archive::eFiles, depth), basedir);
-	    }
+		FileVisitor visitor(callback, basedir, extension, visitedFiles);
+		i->archive->forEachFile(
+						Archive::VisitorFunc(
+								visitor, Archive::eFiles, depth), basedir);
     }
+}
 
 const char* Quake3FileSystem::findFile(const std::string& name) {
-	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		if (!i->is_pakfile && i->archive->containsFile(name.c_str())) {
 			return i->name.c_str();
 		}
@@ -350,7 +334,7 @@ const char* Quake3FileSystem::findFile(const std::string& name) {
 }
 
 const char* Quake3FileSystem::findRoot(const char* name) {
-	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		if (!i->is_pakfile && path_equal_n(name, i->name.c_str(), i->name.size())) {
 			return i->name.c_str();
 		}
@@ -365,11 +349,12 @@ void Quake3FileSystem::initPakFile(_QERArchiveTable& archiveModule, const std::s
 	
 	// matching extension?
 	if (fileExt == archiveModule.getExtension()) {
-		archive_entry_t entry;
+		ArchiveDescriptor entry;
+		
 		entry.name = filename;
 		entry.archive = archiveModule.m_pfnOpenArchive(filename.c_str());
 		entry.is_pakfile = true;
-		g_archives.push_back(entry);
+		_archives.push_back(entry);
 		
 		globalOutputStream() << "[vfs] pak file: " << filename.c_str() << "\n";
 	}

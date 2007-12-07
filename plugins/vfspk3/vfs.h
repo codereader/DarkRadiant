@@ -31,6 +31,7 @@
 #if !defined(INCLUDED_VFS_H)
 #define INCLUDED_VFS_H
 
+#include <list>
 #include "iarchive.h"
 #include "ifilesystem.h"
 #include "moduleobservers.h"
@@ -44,6 +45,15 @@ class Quake3FileSystem :
 	
 	std::string _directories[VFS_MAXDIRS];
 	int _numDirectories;
+	
+	struct ArchiveDescriptor {
+		std::string name;
+		Archive* archive;
+		bool is_pakfile;
+	};
+	
+	typedef std::list<ArchiveDescriptor> ArchiveList;
+	ArchiveList _archives;
 
 public:
 	// Constructor
