@@ -53,9 +53,10 @@ public:
 	void shutdown();
 
 	int getFileCount(const std::string& filename);
-	ArchiveFile* openFile(const char* filename);
+	ArchiveFile* openFile(const std::string& filename);
 	ArchiveTextFile* openTextFile(const std::string& filename);
-	std::size_t loadFile(const char *filename, void **buffer);
+	
+	std::size_t loadFile(const std::string& filename, void **buffer);
 	void freeFile(void *p);
 
 	// Call the specified callback function for each file matching extension

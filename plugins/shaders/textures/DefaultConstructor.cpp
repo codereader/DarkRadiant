@@ -66,7 +66,7 @@ ImagePtr DefaultConstructor::construct() {
 							   + ldr->getExtension();
 		
 		// Try to open the file (will fail if the extension does not fit)
-		ArchiveFile* file = GlobalFileSystem().openFile(fullName.c_str());
+		ArchiveFile* file = GlobalFileSystem().openFile(fullName);
 		
 		// Has the file been loaded?
 		if (file != NULL) {

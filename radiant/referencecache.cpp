@@ -243,7 +243,7 @@ scene::INodePtr ModelResource_load(ModelLoader* loader, const std::string& name)
   scene::INodePtr model(g_nullModel);
 
   {
-    ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
+    ArchiveFile* file = GlobalFileSystem().openFile(name);
 
     if(file != 0)
     {
