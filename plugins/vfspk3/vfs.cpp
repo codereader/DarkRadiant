@@ -100,33 +100,17 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 	if (dir != 0) {
 		globalOutputStream() << "vfs directory: " << path << "\n";
 
-		const char* ignore_prefix = "";
-		const char* override_prefix = "";
-
-		// greebo: hardcoded these after removing of gamemode_get stuff
-		// can probably be removed but I haven't checked if that is safe
-		ignore_prefix = "mp_";
-		override_prefix = "sp_";
-
 		SortedFilenames archives;
-		SortedFilenames archivesOverride;
+		
 		for (;;) {
 			const char* name= g_dir_read_name(dir);
 			if (name == 0)
 				break;
 
 			const char *ext = strrchr(name, '.');
-			if ((ext == 0) || *(++ext) == '\0' /*|| GetArchiveTable(archiveModule, ext) == 0*/)
+			// Skip filenames without extension (greebo: why? they get filtered out later on anyway)
+			if (ext == 0 || *(++ext) == '\0')
 				continue;
-
-			// using the same kludge as in engine to ensure consistency
-			if (!string_empty(ignore_prefix) && strncmp(name, ignore_prefix, strlen(ignore_prefix)) == 0) {
-				continue;
-			}
-			if (!string_empty(override_prefix) && strncmp(name,	override_prefix, strlen(override_prefix)) == 0) {
-				archivesOverride.insert(name);
-				continue;
-			}
 
 			archives.insert(name);
 		}
@@ -137,20 +121,9 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 		ArchiveLoader& archiveModule = GlobalArchive("PK4");  
 			
 		// add the entries to the vfs
-		for (SortedFilenames::iterator i = archivesOverride.begin(); i != archivesOverride.end(); ++i) {
-			char filename[PATH_MAX];
-			strcpy(filename, path);
-			strcat(filename, i->c_str());
-			std::cout << "Filename: " << filename << "\n";
-			initPakFile(archiveModule, filename);
-		}
-		
 		for (SortedFilenames::iterator i = archives.begin(); i != archives.end(); ++i) {
-			char filename[PATH_MAX];
-			strcpy(filename, path);
-			strcat(filename, (*i).c_str());
-			std::cout << "archives Filename: " << filename << "\n";
-			initPakFile(archiveModule, filename);
+			// Assemble the filename and try to load the archive
+			initPakFile(archiveModule, path + *i);
 		}
 	}
 	else {
