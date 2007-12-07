@@ -85,25 +85,14 @@ struct archive_entry_t
 typedef std::list<archive_entry_t> archives_t;
 
 static archives_t g_archives;
-static char    g_strDirs[VFS_MAXDIRS][PATH_MAX+1];
+std::string g_strDirs[VFS_MAXDIRS];
+
+//static char    g_strDirs[VFS_MAXDIRS][PATH_MAX+1];
 static int     g_numDirs;
 static bool    g_bUsePak = true;
 
 // =============================================================================
 // Static functions
-
-static void AddSlash (char *str)
-{
-  std::size_t n = strlen (str);
-  if (n > 0)
-  {
-    if (str[n-1] != '\\' && str[n-1] != '/')
-    {
-      globalErrorStream() << "WARNING: directory path does not end with separator: " << str << "\n";
-      strcat (str, "/");
-    }
-  }
-}
 
 static void FixDOSName (char *src)
 {
@@ -197,91 +186,7 @@ typedef std::set<std::string, PakLess> Archives;
 // reads all pak files from a dir
 void InitDirectory(const char* directory, _QERArchiveTable& archiveModule)
 {
-  if (g_numDirs == (VFS_MAXDIRS-1))
-    return;
-
-  strncpy(g_strDirs[g_numDirs], directory, PATH_MAX);
-  g_strDirs[g_numDirs][PATH_MAX] = '\0';
-  FixDOSName (g_strDirs[g_numDirs]);
-  AddSlash (g_strDirs[g_numDirs]);
-
-  const char* path = g_strDirs[g_numDirs];
   
-  g_numDirs++;
-
-  {
-    archive_entry_t entry;
-    entry.name = path;
-    entry.archive = OpenArchive(path);
-    entry.is_pakfile = false;
-    g_archives.push_back(entry);
-  }
-
-  if (g_bUsePak)
-  {
-    GDir* dir = g_dir_open (path, 0, 0);
-
-    if (dir != 0)
-    {
-			globalOutputStream() << "vfs directory: " << path << "\n";
-
-      const char* ignore_prefix = "";
-      const char* override_prefix = "";
-
-		// greebo: hardcoded these after removing of gamemode_get stuff
-		// can probably be removed but I haven't checked if that is safe
-      ignore_prefix = "mp_";
-      override_prefix = "sp_";
-
-      Archives archives;
-      Archives archivesOverride;
-      for(;;)
-      {
-        const char* name = g_dir_read_name(dir);
-        if(name == 0)
-          break;
-
-        const char *ext = strrchr (name, '.');
-        if ((ext == 0) || *(++ext) == '\0' /*|| GetArchiveTable(archiveModule, ext) == 0*/)
-          continue;
-
-        // using the same kludge as in engine to ensure consistency
-				if(!string_empty(ignore_prefix) && strncmp(name, ignore_prefix, strlen(ignore_prefix)) == 0)
-				{
-					continue;
-				}
-				if(!string_empty(override_prefix) && strncmp(name, override_prefix, strlen(override_prefix)) == 0)
-        {
-          archivesOverride.insert(name);
-					continue;
-        }
-
-        archives.insert(name);
-      }
-
-      g_dir_close (dir);
-
-			// add the entries to the vfs
-      for(Archives::iterator i = archivesOverride.begin(); i != archivesOverride.end(); ++i)
-			{
-        char filename[PATH_MAX];
-        strcpy(filename, path);
-        strcat(filename, (*i).c_str());
-        InitPakFile(archiveModule, filename);
-			}
-      for(Archives::iterator i = archives.begin(); i != archives.end(); ++i)
-			{
-        char filename[PATH_MAX];
-        strcpy(filename, path);
-        strcat(filename, (*i).c_str());
-        InitPakFile(archiveModule, filename);
-			}
-    }
-    else
-    {
-      globalErrorStream() << "vfs directory not found: " << path << "\n";
-    }
-  }
 }
 
 // frees all memory that we allocated
@@ -416,8 +321,94 @@ Quake3FileSystem::Quake3FileSystem() :
 	_moduleObservers(getName())
 {}
 
-void Quake3FileSystem::initDirectory(const std::string& path) {
-    InitDirectory(path.c_str(), GlobalArchive("PK4"));
+void Quake3FileSystem::initDirectory(const std::string& inputPath) {
+    if (g_numDirs == (VFS_MAXDIRS-1)) {
+		return;
+    }
+
+    // greebo: Normalise path: Replace backslashes and ensure trailing slash
+    g_strDirs[g_numDirs] = os::standardPathWithSlash(inputPath);
+	//strncpy(g_strDirs[g_numDirs], directory, PATH_MAX);
+	//g_strDirs[g_numDirs][PATH_MAX] = '\0';
+    
+    
+	//FixDOSName(g_strDirs[g_numDirs]);
+	//AddSlash(g_strDirs[g_numDirs]);
+
+	const char* path = g_strDirs[g_numDirs].c_str();
+
+	g_numDirs++;
+	
+	// Shortcut reference to the ArchiveModule
+	_QERArchiveTable& archiveModule = GlobalArchive("PK4");  
+
+	{
+		archive_entry_t entry;
+		entry.name = path;
+		entry.archive = OpenArchive(path);
+		entry.is_pakfile = false;
+		g_archives.push_back(entry);
+	}
+
+	if (g_bUsePak) {
+		GDir* dir= g_dir_open (path, 0, 0);
+
+		if (dir != 0) {
+			globalOutputStream() << "vfs directory: " << path << "\n";
+
+			const char* ignore_prefix = "";
+			const char* override_prefix = "";
+
+			// greebo: hardcoded these after removing of gamemode_get stuff
+			// can probably be removed but I haven't checked if that is safe
+			ignore_prefix = "mp_";
+			override_prefix = "sp_";
+
+			Archives archives;
+			Archives archivesOverride;
+			for (;;) {
+				const char* name= g_dir_read_name(dir);
+				if (name == 0)
+					break;
+
+				const char *ext = strrchr(name, '.');
+				if ((ext == 0) || *(++ext) == '\0' /*|| GetArchiveTable(archiveModule, ext) == 0*/)
+					continue;
+
+				// using the same kludge as in engine to ensure consistency
+				if (!string_empty(ignore_prefix) && strncmp(name,
+						ignore_prefix, strlen(ignore_prefix)) == 0) {
+					continue;
+				}
+				if (!string_empty(override_prefix) && strncmp(name,
+						override_prefix, strlen(override_prefix)) == 0) {
+					archivesOverride.insert(name);
+					continue;
+				}
+
+				archives.insert(name);
+			}
+
+			g_dir_close(dir);
+
+			// add the entries to the vfs
+			for (Archives::iterator i = archivesOverride.begin(); i
+					!= archivesOverride.end(); ++i) {
+				char filename[PATH_MAX];
+				strcpy(filename, path);
+				strcat(filename, (*i).c_str());
+				InitPakFile(archiveModule, filename);
+			}
+			for (Archives::iterator i = archives.begin(); i != archives.end(); ++i) {
+				char filename[PATH_MAX];
+				strcpy(filename, path);
+				strcat(filename, (*i).c_str());
+				InitPakFile(archiveModule, filename);
+			}
+		} else {
+			globalErrorStream() << "vfs directory not found: " << path << "\n";
+		}
+	}
 }
 
 void Quake3FileSystem::initialise() {
