@@ -143,7 +143,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../boost.w32/include&quot;;&quot;$(SolutionDir)/../../libxml2.w32/include&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/cairo&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../gtk2.w32/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32/glew/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../boost.w32/include&quot;;&quot;$(SolutionDir)/../../libxml2.w32/include&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/cairo&quot;;&quot;$(SolutionDir)/../../gtk2.w32/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../gtk2.w32/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../gtk2.w32/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32/glew/include&quot;;&quot;$(SolutionDir)/../../plugins/$(ProjectName)/&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -168,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib"
+				AdditionalDependencies="ws2_32.lib gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib Psapi.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
