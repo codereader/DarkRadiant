@@ -31,6 +31,7 @@
 #if !defined(INCLUDED_VFS_H)
 #define INCLUDED_VFS_H
 
+#include "iarchive.h"
 #include "ifilesystem.h"
 #include "moduleobservers.h"
 
@@ -74,6 +75,9 @@ public:
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
+	
+private:
+	void initPakFile(_QERArchiveTable& archiveModule, const std::string& filename);
 };
 typedef boost::shared_ptr<Quake3FileSystem> Quake3FileSystemPtr;
 
