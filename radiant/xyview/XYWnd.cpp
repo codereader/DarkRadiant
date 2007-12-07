@@ -1417,8 +1417,16 @@ void XYWnd::draw() {
 		glEnd();
 	}
 
-	if (GlobalClipper().clipMode()) {
-		GlobalClipper().draw(m_fScale);
+	// greebo: Draw the clipper's control points
+	{
+		glColor3dv(GlobalRadiant().getColour("clipper"));
+		glPointSize(4);
+		
+		if (GlobalClipper().clipMode()) {
+			GlobalClipper().draw(m_fScale);
+		}
+		
+		glPointSize(1);
 	}
 
 	GlobalOpenGL_debugAssertNoErrors();

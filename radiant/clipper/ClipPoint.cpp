@@ -37,12 +37,9 @@ void ClipPoint::Draw(int num, float scale) {
 
 void ClipPoint::Draw(const std::string& label, float scale) {
 	// draw point
-	glPointSize (4);
-	glColor3dv(GlobalRadiant().getColour("clipper"));
 	glBegin (GL_POINTS);
 	glVertex3dv(_coords);
 	glEnd();
-	glPointSize (1);
 
 	float offset = 2.0f / scale;
 
