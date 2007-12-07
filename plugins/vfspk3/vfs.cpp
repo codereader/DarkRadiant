@@ -61,6 +61,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "moduleobservers.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 #if defined(WIN32) && !defined(PATH_MAX)
 #define PATH_MAX 260
@@ -197,21 +198,6 @@ void Shutdown()
 #define VFS_SEARCH_PAK 0x1
 #define VFS_SEARCH_DIR 0x2
 
-ArchiveFile* OpenFile(const char* filename)
-{
-  ASSERT_MESSAGE(strchr(filename, '\\') == 0, "path contains invalid separator '\\': \"" << filename << "\""); 
-  for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
-  {
-    ArchiveFile* file = (*i).archive->openFile(filename);
-    if(file != 0)
-    {
-      return file;
-    }
-  }
-
-  return 0;
-}
-
 ArchiveTextFile* OpenTextFile(const std::string& filename)
 {
   for(archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i)
@@ -223,32 +209,6 @@ ArchiveTextFile* OpenTextFile(const std::string& filename)
     }
   }
 
-  return 0;
-}
-
-// NOTE: when loading a file, you have to allocate one extra byte and set it to \0
-std::size_t LoadFile (const char *filename, void **bufferptr, int index)
-{
-  char fixed[PATH_MAX+1];
-
-  strncpy (fixed, filename, PATH_MAX);
-  fixed[PATH_MAX] = '\0';
-  FixDOSName (fixed);
-
-  ArchiveFile* file = OpenFile(fixed);
-  
-  if(file != 0)
-  {
-    *bufferptr = malloc (file->size()+1);
-    // we need to end the buffer with a 0
-    ((char*) (*bufferptr))[file->size()] = 0;
-
-    std::size_t length = file->getInputStream().read((InputStream::byte_type*)*bufferptr, file->size());
-    file->release();
-    return length;
-  }
-
-  *bufferptr = 0;
   return 0;
 }
 
@@ -397,18 +357,51 @@ int Quake3FileSystem::getFileCount(const std::string& filename) {
 	return count;
 }
 
-  ArchiveFile* Quake3FileSystem::openFile(const char* filename)
-  {
-    return OpenFile(filename);
-  }
-  ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename)
-  {
-    return OpenTextFile(filename);
-  }
-  std::size_t Quake3FileSystem::loadFile(const char *filename, void **buffer)
-  {
-    return LoadFile(filename, buffer, 0);
-  }
+ArchiveFile* Quake3FileSystem::openFile(const std::string& filename) {
+	if (filename.find("\\") != std::string::npos) {
+		globalErrorStream() << "Filename contains backslash: " << filename.c_str() << "\n";
+		return NULL;
+	}
+	
+	for (archives_t::iterator i = g_archives.begin(); i != g_archives.end(); ++i) {
+		ArchiveFile* file = i->archive->openFile(filename.c_str());
+		if (file != NULL) {
+			return file;
+		}
+	}
+
+	return 0;
+}
+
+ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename) {
+	return OpenTextFile(filename);
+}
+
+std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffer) {
+	std::string fixedFilename(os::standardPathWithSlash(filename));
+
+	ArchiveFile* file = openFile(fixedFilename);
+
+	if (file != NULL) {
+		// Allocate one byte more for the trailing zero
+		*buffer = malloc(file->size()+1);
+		
+		// we need to end the buffer with a 0
+		((char*) (*buffer))[file->size()] = 0;
+
+		std::size_t length = file->getInputStream().read(
+			reinterpret_cast<InputStream::byte_type*>(*buffer), 
+			file->size()
+		);
+		
+		file->release();
+		return length;
+	}
+
+	*buffer = NULL;
+	return 0;
+}
+
   void Quake3FileSystem::freeFile(void *p)
   {
     FreeFile(p);

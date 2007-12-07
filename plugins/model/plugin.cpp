@@ -74,9 +74,9 @@ void PicoPrintFunc( int level, const char *str )
 	}
 }
 
-void PicoLoadFileFunc( char *name, byte **buffer, int *bufSize )
-{
-	*bufSize = vfsLoadFile( (const char*) name, (void**) buffer);
+void PicoLoadFileFunc(char *name, byte **buffer, int *bufSize) {
+	std::string filename(name);
+	*bufSize = vfsLoadFile(filename, (void**) buffer);
 }
 
 void PicoFreeFileFunc( void* file )
@@ -120,7 +120,7 @@ public:
 	model::IModelPtr loadModelFromPath(const std::string& name) {
 		
 		// Open an ArchiveFile to load
-		ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
+		ArchiveFile* file = GlobalFileSystem().openFile(name);
 
 		model::IModelPtr model;
 		if (file != NULL) {

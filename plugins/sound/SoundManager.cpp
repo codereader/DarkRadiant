@@ -33,7 +33,7 @@ bool SoundManager::playSound(const std::string& fileName) {
 	std::string name = fileName; 
 	
 	// Try to open the file as it is
-	ArchiveFile* file = GlobalFileSystem().openFile(name.c_str());
+	ArchiveFile* file = GlobalFileSystem().openFile(name);
 	std::cout << "Trying: " << name << "\n";
 	if (file != NULL) {
 		// File found, play it
