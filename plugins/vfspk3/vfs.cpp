@@ -44,6 +44,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vfs.h"
 #include "FileVisitor.h"
 
+#ifdef _PROFILE
+#include "ieventmanager.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <glib/gdir.h>
@@ -269,6 +273,32 @@ void Quake3FileSystem::attach(ModuleObserver& observer) {
 void Quake3FileSystem::detach(ModuleObserver& observer) {
 	_moduleObservers.detach(observer);
 }
+
+#ifdef _PROFILE
+
+class FileCounter {
+public:
+	mutable int count;
+	
+	FileCounter() : 
+		count(0) 
+	{}
+	
+	void foreach(const std::string& filename) {		
+		count++;
+	}
+	typedef MemberCaller1<FileCounter, const std::string&, &FileCounter::foreach> ForeachFileCaller;
+};
+
+void Quake3FileSystem::testTraversal() {
+	
+	FileCounter counter;
+	// Traverse the filesystem
+	forEachFile("./", "*", FileCounter::ForeachFileCaller(counter), 50);
+	globalOutputStream() << "Traversed " << counter.count << " files\n";
+	std::cout << "Traversed " << counter.count << " files\n";
+}
+#endif
   
 // RegisterableModule implementation
 const std::string& Quake3FileSystem::getName() const {
@@ -281,6 +311,9 @@ const StringSet& Quake3FileSystem::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert("ArchivePK4");
+#ifdef _PROFILE
+		_dependencies.insert(MODULE_EVENTMANAGER);
+#endif
 	}
 
 	return _dependencies;
@@ -288,4 +321,8 @@ const StringSet& Quake3FileSystem::getDependencies() const {
 
 void Quake3FileSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "VFS::initialiseModule called\n";
+	
+#ifdef _PROFILE
+	GlobalEventManager().addCommand("TestVFS", MemberCaller<Quake3FileSystem, &Quake3FileSystem::testTraversal>(*this));
+#endif
 }

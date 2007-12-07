@@ -86,6 +86,10 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	
+#ifdef _PROFILE
+	void testTraversal();
+#endif
+	
 private:
 	void initPakFile(ArchiveLoader& archiveModule, const std::string& filename);
 };
