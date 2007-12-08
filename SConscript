@@ -168,7 +168,7 @@ vfspk3_lib = vfspk3_env.SharedLibrary(target='vfspk3', source=vfspk3_lst, no_imp
 vfspk3_env.Install(INSTALL + '/modules', vfspk3_lib)
 
 archivezip_env = module_env.Copy()
-archivezip_lst = build_list('plugins/archivezip', 'plugin.cpp archive.cpp pkzip.cpp zlibstream.cpp')
+archivezip_lst = build_list('plugins/archivezip', 'plugin.cpp archive.cpp pkzip.cpp zlibstream.cpp ZipArchive.cpp')
 archivezip_env.useZLib()
 archivezip_env.Append(LIBPATH = ['libs'])
 archivezip_lib = archivezip_env.SharedLibrary(target='archivezip', source=archivezip_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
