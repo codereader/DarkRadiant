@@ -34,15 +34,12 @@
 #include <list>
 #include "iarchive.h"
 #include "ifilesystem.h"
-#include "moduleobservers.h"
 
 #define VFS_MAXDIRS 8
 
 class Quake3FileSystem : 
 	public VirtualFileSystem
 {
-	ModuleObservers _moduleObservers;
-	
 	std::string _directories[VFS_MAXDIRS];
 	int _numDirectories;
 	
@@ -83,9 +80,6 @@ public:
 
 	virtual void addObserver(Observer& observer);
 	virtual void removeObserver(Observer& observer);
-	
-	void attach(ModuleObserver& observer);
-	void detach(ModuleObserver& observer);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

@@ -15,8 +15,8 @@ namespace eclass {
 
 // Constructor
 EClassManager::EClassManager() :
-    m_unrealised(2)
-{} 
+    _realised(false)
+{}
 
 // Get a named entity class, creating if necessary
 IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_brushes) {
@@ -78,16 +78,13 @@ void EClassManager::resolveModelInheritance(const std::string& name, IModelDefPt
 }
 
 void EClassManager::realise() {
-    // Count the number of times this function is called, it is activated
-    // for real on the second call (why?)
-    // greebo: This is some sort of wait timer for the VFS to initialise
-    // the second realise() call is coming from GlobalFileSystem().initialise()
-    if (--m_unrealised != 0)
-    	return;
+	if (_realised) {
+		return; // nothing to do anymore
+	}
 
-    globalOutputStream() << "searching vfs directory " <<
-        makeQuoted("def") << " for *.def\n";
-    GlobalFileSystem().forEachFile("def/", "def", LoadFileCaller(*this));
+	globalOutputStream() << "searching vfs directory " << 
+							makeQuoted("def") << " for *.def\n";
+	GlobalFileSystem().forEachFile("def/", "def", LoadFileCaller(*this));
 
     // Resolve inheritance on the model classes
     for (Models::iterator i = _models.begin(); i != _models.end(); ++i) {
@@ -101,8 +98,8 @@ void EClassManager::realise() {
          i != _entityClasses.end(); ++i) 
 	{
 		// Get a Doom3EntityClass pointer
-		boost::shared_ptr<eclass::Doom3EntityClass> d3c =
-			boost::static_pointer_cast<eclass::Doom3EntityClass>(i->second);
+		boost::shared_ptr<Doom3EntityClass> d3c =
+			boost::static_pointer_cast<Doom3EntityClass>(i->second);
 			
 		// Tell the class to resolve its own inheritance using the given
 		// map as a source for parent lookup
@@ -121,8 +118,9 @@ void EClassManager::realise() {
 
     // Prod the observers (also on the first call)
     m_observers.realise();
-
-} // end func
+    
+	_realised = true;
+}
 
 // Find an entity class
 IEntityClassPtr EClassManager::findClass(const std::string& className) const {
@@ -145,11 +143,11 @@ void EClassManager::forEach(EntityClassVisitor& visitor) {
 	}
 }
 
-void EClassManager::unrealise()
-{
-    if (++m_unrealised == 1) {
+void EClassManager::unrealise() {
+    if (_realised) {
         m_observers.unrealise();
        	_entityClasses.clear();
+       	_realised = false;
     }
 }
 
@@ -190,14 +188,23 @@ const StringSet& EClassManager::getDependencies() const {
 void EClassManager::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "EntityClassDoom3::initialiseModule called.\n";
 	
-	GlobalFileSystem().attach(*this);
-	realise();
+	GlobalFileSystem().addObserver(*this);
 }
 
 void EClassManager::shutdownModule() {
 	globalOutputStream() << "EntityClassDoom3::shutdownModule called.\n";
 	unrealise();
-	GlobalFileSystem().detach(*this);
+	GlobalFileSystem().removeObserver(*this);
+}
+
+// Gets called on VFS initialise
+void EClassManager::onFileSystemInitialise() {
+	realise();
+}
+
+// Gets called on VFS shutdown
+void EClassManager::onFileSystemShutdown() {
+	unrealise();
 }
 
 // Parse the provided stream containing the contents of a single .def file.

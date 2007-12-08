@@ -648,7 +648,7 @@ struct ModelResource
 
 class HashtableReferenceCache 
 : public ReferenceCache, 
-  public ModuleObserver
+  public VirtualFileSystem::Observer
 {
 	// Resource pointer types
 	typedef boost::shared_ptr<ModelResource> ModelResourcePtr;
@@ -658,7 +658,7 @@ class HashtableReferenceCache
 	typedef std::map<std::string, ModelResourceWeakPtr> ModelReferences;
 	ModelReferences m_references;
   
-	std::size_t m_unrealised;
+	bool _realised;
 
 public:
 
@@ -689,20 +689,20 @@ public:
 		
 		g_nullModel = NewNullModel();
 
-		GlobalFileSystem().attach(*this);
+		GlobalFileSystem().addObserver(*this);
 	}
 	
 	virtual void shutdownModule() {
-		GlobalFileSystem().detach(*this);
+		GlobalFileSystem().removeObserver(*this);
 
 		g_nullModel = g_nullNode;
 	}
 	
   typedef ModelReferences::iterator iterator;
 
-  HashtableReferenceCache() : m_unrealised(1)
-  {
-  }
+	HashtableReferenceCache() : 
+		_realised(false)
+	{}
 
   iterator begin()
   {
@@ -752,49 +752,59 @@ public:
 		// Does nothing. TODO: remove this or implement weak pointer references
 	}
 
-  bool realised() const
-  {
-    return m_unrealised == 0;
-  }
-  void realise()
-  {
-    ASSERT_MESSAGE(m_unrealised != 0, "HashtableReferenceCache::realise: already realised");
-    if(--m_unrealised == 0)
-    {
-      	g_realised = true;
-		
-		// Realise ModelResources
-		for (ModelReferences::iterator i = m_references.begin();
-	  	     i != m_references.end();
-	  	     ++i)
-		{
-			ModelResourcePtr res = i->second.lock();
-			if (res)
-				res->realise();
-		}
-    }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
-    {
-      g_realised = false;
+	bool realised() const {
+		return _realised;
+	}
+	
+	void realise() {
+		ASSERT_MESSAGE(!_realised, "HashtableReferenceCache::realise: already realised");
+		if (!_realised) {
+			g_realised = true;
+			_realised = true;
 
-		// Unrealise ModelResources
-		for (ModelReferences::iterator i = m_references.begin();
-	  	     i != m_references.end();
-	  	     ++i)
-		{
-			ModelResourcePtr res = i->second.lock();
-			if (res)
-				res->unrealise();
+			// Realise ModelResources
+			for (ModelReferences::iterator i = m_references.begin(); 
+				 i != m_references.end(); 
+				 ++i)
+			{
+				ModelResourcePtr res = i->second.lock();
+				if (res)
+					res->realise();
+			}
 		}
+	}
+	
+	void unrealise() {
+		if (_realised) {
+			g_realised = false;
+			_realised = false;
 
-      g_modelCache.clear();
-    }
-  }
-  void refresh()
-  {
+			// Unrealise ModelResources
+			for (ModelReferences::iterator i = m_references.begin(); 
+				 i != m_references.end(); 
+				 ++i)
+			{
+				ModelResourcePtr res = i->second.lock();
+				if (res) {
+					res->unrealise();
+				}
+			}
+
+			g_modelCache.clear();
+		}
+	}
+
+	// Gets called on VFS initialise
+  	virtual void onFileSystemInitialise() {
+  		realise();
+  	}
+  	
+  	// Gets called on VFS shutdown
+  	virtual void onFileSystemShutdown() {
+  		unrealise();
+  	}
+  
+	void refresh() {
 		for (ModelReferences::iterator i = m_references.begin();
 	  	     i != m_references.end();
 	  	     ++i)
@@ -804,7 +814,7 @@ public:
         		resource->refresh();
       		}
     	}
-  }
+	}
 };
 
 // Define the ReferenceCache registerable module

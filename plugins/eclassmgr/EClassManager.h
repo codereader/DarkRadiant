@@ -2,6 +2,7 @@
 #define ECLASSMANAGER_H_
 
 #include "ieclass.h"
+#include "ifilesystem.h"
 #include "moduleobservers.h"
 #include "generic/callback.h"
 
@@ -19,10 +20,10 @@ namespace eclass {
  */
 class EClassManager :
     public IEntityClassManager,
-    public ModuleObserver
+    public VirtualFileSystem::Observer
 {
     // Whether the entity classes have been realised
-    std::size_t m_unrealised;
+    bool _realised;
 
     // Set of ModuleObservers to notify on realise/unrealise
     ModuleObservers m_observers;
@@ -50,6 +51,10 @@ public:
     
 	void realise();
     void unrealise();
+    
+    // VFS::Observer implementation
+    virtual void onFileSystemInitialise();
+    virtual void onFileSystemShutdown();
 
     void attach(ModuleObserver & observer);
     void detach(ModuleObserver & observer);
