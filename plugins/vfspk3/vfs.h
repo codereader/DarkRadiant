@@ -65,7 +65,7 @@ public:
 
 	int getFileCount(const std::string& filename);
 	ArchiveFilePtr openFile(const std::string& filename);
-	ArchiveTextFile* openTextFile(const std::string& filename);
+	ArchiveTextFilePtr openTextFile(const std::string& filename);
 	
 	std::size_t loadFile(const std::string& filename, void **buffer);
 	void freeFile(void *p);

@@ -42,7 +42,7 @@ public:
 	void operator() (const std::string& fileName) {
 
 		// Open the .sndshd file and get its contents as a std::string
-		ArchiveTextFile* file = 
+		ArchiveTextFilePtr file = 
 			GlobalFileSystem().openTextFile(SOUND_FOLDER + fileName);
 		
 		// Parse contents of file if it was opened successfully
@@ -51,8 +51,6 @@ public:
 	
 			// Pass the contents back to the SkinCache module for parsing
 			_manager.parseShadersFrom(is);
-
-			file->release();
 		}
 		else {
 			std::cerr << "[sound] Warning: unable to open \"" 

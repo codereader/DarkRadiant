@@ -23,15 +23,17 @@ ArchiveFilePtr DirectoryArchive::openFile(const std::string& name) {
 	return ArchiveFilePtr();
 }
 
-ArchiveTextFile* DirectoryArchive::openTextFile(const char* name) {
+ArchiveTextFilePtr DirectoryArchive::openTextFile(const std::string& name) {
 	UnixPath path(_root);
 	path.push_filename(name);
-	DirectoryArchiveTextFile* file = new DirectoryArchiveTextFile(name, _root, path.c_str());
+	
+	DirectoryArchiveTextFilePtr file(new DirectoryArchiveTextFile(name, _root, path));
+	
 	if (!file->failed()) {
 		return file;
 	}
-	file->release();
-	return 0;
+	
+	return ArchiveTextFilePtr();
 }
 
 bool DirectoryArchive::containsFile(const char* name) {

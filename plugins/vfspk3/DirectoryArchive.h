@@ -20,7 +20,7 @@ public:
 
 	virtual ArchiveFilePtr openFile(const std::string& name);
 	
-	virtual ArchiveTextFile* openTextFile(const char* name);
+	virtual ArchiveTextFilePtr openTextFile(const std::string& name);
 	
 	virtual bool containsFile(const char* name);
 	

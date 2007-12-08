@@ -38,7 +38,7 @@ public:
 	void operator() (const std::string& fileName) {
 
 		// Open the .skin file and get its contents as a std::string
-		ArchiveTextFile* file = 
+		ArchiveTextFilePtr file = 
 			GlobalFileSystem().openTextFile(SKINS_FOLDER + fileName);
 		assert(file);
 		std::istream is(&(file->getInputStream()));
@@ -50,8 +50,6 @@ public:
 		catch (parser::ParseException e) {
 			std::cout << "[skins]: in " << fileName << ": " << e.what() << "\n";
 		}
-
-		file->release();
 	}
 }; 
 

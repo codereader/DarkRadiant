@@ -72,22 +72,22 @@ public:
 /**
  * ArchiveFile stored in a ZIP in DEFLATE format.
  */
-class DeflatedArchiveTextFile 
-: public ArchiveTextFile
+class DeflatedArchiveTextFile :
+	public ArchiveTextFile
 {
-  std::string m_name;
-  FileInputStream m_istream;
-  SubFileInputStream m_substream;
-  DeflatedInputStream m_zipstream;
-  BinaryToTextInputStream<DeflatedInputStream> m_textStream;
+	std::string m_name;
+	FileInputStream m_istream;
+	SubFileInputStream m_substream;
+	DeflatedInputStream m_zipstream;
+	BinaryToTextInputStream<DeflatedInputStream> m_textStream;
   
     // Mod directory containing this file
     const std::string _modDir;
     
 public:
-    
-  typedef FileInputStream::size_type size_type;
-  typedef FileInputStream::position_type position_type;
+	    
+	typedef FileInputStream::size_type size_type;
+	typedef FileInputStream::position_type position_type;
 
     /**
      * Constructor.
@@ -95,27 +95,26 @@ public:
      * @param modDir
      * The name of the mod directory this file's archive is located in.
      */
-    DeflatedArchiveTextFile(const char* name, 
-                            const char* archiveName,
+    DeflatedArchiveTextFile(const std::string& name, 
+                            const std::string& archiveName,
                             const std::string& modDir,
                             position_type position, 
                             size_type stream_size)
     : m_name(name), 
-      m_istream(archiveName), 
+      m_istream(archiveName.c_str()), 
       m_substream(m_istream, position, stream_size), 
       m_zipstream(m_substream), 
       m_textStream(m_zipstream),
       _modDir(os::getContainingDir(modDir))
-    { }
+    {}
 
-  void release()
-  {
-    delete this;
-  }
-  TextInputStream& getInputStream()
-  {
-    return m_textStream;
-  }
+	TextInputStream& getInputStream() {
+		return m_textStream;
+	}
+	
+	const std::string& getName() const {
+		return m_name;
+	}
   
     /**
      * Return mod directory of this file.
@@ -304,10 +303,9 @@ public:
     }
     return ArchiveFilePtr();
   }
-  ArchiveTextFile* openTextFile(const char* name)
+  ArchiveTextFilePtr openTextFile(const std::string& name)
   {
-	  std::string nameStr(name); // temporary! remove when migrated to std::string
-    ZipFileSystem::iterator i = m_filesystem.find(nameStr);
+    ZipFileSystem::iterator i = m_filesystem.find(name);
     if(i != m_filesystem.end() && !i->second.is_directory())
     {
       ZipRecord* file = i->second.file();
@@ -318,26 +316,26 @@ public:
       if(file_header.z_magic != zip_file_header_magic)
       {
         globalErrorStream() << "error reading zip file " << makeQuoted(m_name.c_str());
-        return 0;
+        return ArchiveTextFilePtr();
       }
 
       switch(file->m_mode)
       {
       case ZipRecord::eStored:
-        return new StoredArchiveTextFile(name, 
+        return ArchiveTextFilePtr(new StoredArchiveTextFile(name, 
                                          m_name.c_str(),
                                          m_name,
                                          m_istream.tell(), 
-                                         file->m_stream_size);
+                                         file->m_stream_size));
       case ZipRecord::eDeflated:
-        return new DeflatedArchiveTextFile(name, 
-                                           m_name.c_str(), 
+        return ArchiveTextFilePtr(new DeflatedArchiveTextFile(name, 
+                                           m_name, 
                                            m_name,
                                            m_istream.tell(), 
-                                           file->m_stream_size);
+                                           file->m_stream_size));
       }
     }
-    return 0;
+    return ArchiveTextFilePtr();
   }
   bool containsFile(const char* name)
   {

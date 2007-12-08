@@ -240,7 +240,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir) {
 void EClassManager::loadFile(const std::string& filename) {
     const std::string fullname = "def/" + filename;
 
-	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullname.c_str());
+	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullname);
 	
 	if (file != NULL) {
         try {
@@ -251,8 +251,6 @@ void EClassManager::loadFile(const std::string& filename) {
             std::cerr << "[eclassmgr] failed to parse " << filename 
             		  << " (" << e.what() << ")" << std::endl;
         }
-        
-        file->release();
 	}
 }
 
