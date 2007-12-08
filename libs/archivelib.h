@@ -140,19 +140,19 @@ public:
 };
 
 /// \brief An ArchiveTextFile which is stored uncompressed as part of a larger archive file.
-class StoredArchiveTextFile : public ArchiveTextFile
+class StoredArchiveTextFile : 
+	public ArchiveTextFile
 {
-  std::string m_name;
-  FileInputStream m_filestream;
-  SubFileInputStream m_substream;
-  BinaryToTextInputStream<SubFileInputStream> m_textStream;
+	std::string m_name;
+	FileInputStream m_filestream;
+	SubFileInputStream m_substream;
+	BinaryToTextInputStream<SubFileInputStream> m_textStream;
   
     // Mod directory
-    std::string _modDir;
-    
+    std::string _modDir; 
 public:
-  typedef FileInputStream::size_type size_type;
-  typedef FileInputStream::position_type position_type;
+	typedef FileInputStream::size_type size_type;
+	typedef FileInputStream::position_type position_type;
 
     /**
      * Constructor.
@@ -160,30 +160,25 @@ public:
      * @param modDir
      * Name of the mod directory containing this file.
      */
-    StoredArchiveTextFile(const char* name, 
-                          const char* archiveName,
+    StoredArchiveTextFile(const std::string& name, 
+                          const std::string& archiveName,
                           const std::string& modDir,
                           position_type position, 
                           size_type stream_size)
     : m_name(name), 
-      m_filestream(archiveName), 
+      m_filestream(archiveName.c_str()), 
       m_substream(m_filestream, position, stream_size), 
       m_textStream(m_substream),
       _modDir(os::getContainingDir(modDir))
-    { }
+    {}
 
-  void release()
-  {
-    delete this;
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  TextInputStream& getInputStream()
-  {
-    return m_textStream;
-  }
+ 	const std::string& getName() const {
+		return m_name;
+	}
+ 	
+	TextInputStream& getInputStream() {
+		return m_textStream;
+	}
   
     /**
      * Return mod directory.
@@ -192,6 +187,7 @@ public:
         return _modDir;
     }
 };
+typedef boost::shared_ptr<StoredArchiveTextFile> StoredArchiveTextFilePtr;
 
 /// \brief An ArchiveFile which is stored as a single file on disk.
 class DirectoryArchiveFile : 
@@ -206,74 +202,65 @@ public:
 	DirectoryArchiveFile(const std::string& name, const std::string& filename) :
 		m_name(name), 
 		m_istream(filename.c_str())
-  {
-    if(!failed())
-    {
-      m_istream.seek(0, FileInputStream::end);
-      m_size = m_istream.tell();
-      m_istream.seek(0);
-    }
-    else
-    {
-      m_size = 0;
-    }
-  }
-  bool failed() const
-  {
-    return m_istream.failed();
-  }
+	{
+		if (!failed()) {
+			m_istream.seek(0, FileInputStream::end);
+  			m_size = m_istream.tell();
+  			m_istream.seek(0);
+      	}
+		else {
+			m_size = 0;
+		}
+	}
+	
+	bool failed() const {
+		return m_istream.failed();
+	}
 
-  size_type size() const
-  {
-    return m_size;
-  }
-  const std::string& getName() const
-  {
-    return m_name;
-  }
-  InputStream& getInputStream()
-  {
-    return m_istream;
-  }
+	size_type size() const {
+		return m_size;
+	}
+	
+	const std::string& getName() const {
+		return m_name;
+	}
+	
+	InputStream& getInputStream() {
+		return m_istream;
+	}
 };
 typedef boost::shared_ptr<DirectoryArchiveFile> DirectoryArchiveFilePtr;
 
 /// \brief An ArchiveTextFile which is stored as a single file on disk.
-class DirectoryArchiveTextFile : public ArchiveTextFile
+class DirectoryArchiveTextFile : 
+	public ArchiveTextFile
 {
-  std::string m_name;
-  TextFileInputStream m_inputStream;
-  
+	std::string m_name;
+	TextFileInputStream m_inputStream;
+
     // Mod directory
-    std::string _modDir;
-    
+    std::string _modDir;   
 public:
 
-    DirectoryArchiveTextFile(const char* name, 
+    DirectoryArchiveTextFile(const std::string& name, 
                              const std::string& modDir,
-                             const char* filename)
+                             const std::string& filename)
     : m_name(name), 
-      m_inputStream(filename), 
+      m_inputStream(filename.c_str()), 
       _modDir(os::getContainingDir(modDir))
-    { }
+    {}
 
-  bool failed() const
-  {
-    return m_inputStream.failed();
-  }
+	bool failed() const {
+		return m_inputStream.failed();
+	}
 
-  void release()
-  {
-    delete this;
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  TextInputStream& getInputStream()
-  {
-    return m_inputStream;
-  }
+	const std::string& getName() const {
+		return m_name;
+	}
+	
+	TextInputStream& getInputStream() {
+		return m_inputStream;
+	}
   
     /**
      * Get mod directory.
@@ -282,6 +269,6 @@ public:
         return _modDir;
     }
 };
-
+typedef boost::shared_ptr<DirectoryArchiveTextFile> DirectoryArchiveTextFilePtr;
 
 #endif

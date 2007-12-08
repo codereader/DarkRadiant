@@ -162,15 +162,15 @@ ArchiveFilePtr Quake3FileSystem::openFile(const std::string& filename) {
 	return ArchiveFilePtr();
 }
 
-ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename) {
+ArchiveTextFilePtr Quake3FileSystem::openTextFile(const std::string& filename) {
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-		ArchiveTextFile* file = i->archive->openTextFile(filename.c_str());
+		ArchiveTextFilePtr file = i->archive->openTextFile(filename);
 		if (file != NULL) {
 			return file;
 		}
 	}
 
-	return NULL;
+	return ArchiveTextFilePtr();
 }
 
 std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffer) {

@@ -36,11 +36,10 @@ public:
 	void operator() (const std::string& filename) {
 		
 		// Attempt to open the file in text mode
-		ArchiveTextFile* file = 
+		ArchiveTextFilePtr file = 
 			GlobalFileSystem().openTextFile(PARTICLES_DIR + filename);
 		
-		if (file) {
-			
+		if (file != NULL) {		
 			// File is open, so parse the tokens
 			try {
 				std::istream is(&(file->getInputStream()));
@@ -50,8 +49,6 @@ public:
 				std::cerr << "[particles] Failed to parse " << filename
 						  << ": " << e.what() << std::endl;
 			}
-			
-			file->release();
 		}
 		else {
 			std::cerr << "[particles] Unable to open " << filename << std::endl;

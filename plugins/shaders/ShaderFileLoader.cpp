@@ -150,12 +150,11 @@ void ShaderFileLoader::operator() (const std::string& fileName)
 	std::string fullPath = _basePath + fileName;
 	
 	// Open the file
-	ArchiveTextFile* file = GlobalFileSystem().openTextFile(fullPath);
+	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullPath);
 
-	if (file != 0) {
+	if (file != NULL) {
 		std::istream is(&(file->getInputStream()));
-		parseShaderFile(is, fullPath);           
-		file->release();
+		parseShaderFile(is, fullPath);
 	} 
 	else {
 		throw std::runtime_error("Unable to read shaderfile: " + fullPath);  	

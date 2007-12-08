@@ -50,18 +50,20 @@ public:
 typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
 
 /// \brief A file opened in text mode.
-class ArchiveTextFile
-: public ModResource
+class ArchiveTextFile : 
+	public ModResource
 {
 public:
-  /// \brief Destroys the file object.
-  virtual void release() = 0;
-  /// \brief Returns the stream associated with this file.
-  /// Subsequent calls return the same stream.
-  /// The stream may be read forwards until it is exhausted.
-  /// The stream remains valid for the lifetime of the file.
-  virtual TextInputStream& getInputStream() = 0;
+	/// \brief Returns the path to this file (relative to the filesystem root)
+	virtual const std::string& getName() const = 0;
+		
+	/// \brief Returns the stream associated with this file.
+	/// Subsequent calls return the same stream.
+	/// The stream may be read forwards until it is exhausted.
+	/// The stream remains valid for the lifetime of the file.
+	virtual TextInputStream& getInputStream() = 0;
 };
+typedef boost::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
 
 class CustomArchiveVisitor;
 
@@ -89,9 +91,10 @@ public:
 	/// Name comparisons are case-insensitive.
 	virtual ArchiveFilePtr openFile(const std::string& name) = 0;
 	
-  /// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
-  /// Name comparisons are case-insensitive.
-  virtual ArchiveTextFile* openTextFile(const char* name) = 0;
+	/// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
+	/// Name comparisons are case-insensitive.
+	virtual ArchiveTextFilePtr openTextFile(const std::string& name) = 0;
+	
   /// Returns true if the file identified by \p name can be opened.
   /// Name comparisons are case-insensitive.
   virtual bool containsFile(const char* name) = 0;

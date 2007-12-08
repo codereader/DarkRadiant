@@ -33,6 +33,7 @@ typedef Callback1<const std::string&> FileNameCallback;
 class ArchiveFile;
 typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
 class ArchiveTextFile;
+typedef boost::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
 class Archive;
 
 class ModuleObserver;
@@ -63,9 +64,9 @@ public:
 	// greebo: Note: expects the filename to be normalised (forward slashes, trailing slash).
 	virtual ArchiveFilePtr openFile(const std::string& filename) = 0;
   
-  /// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
-  /// The caller must \c release() the file returned if it is not 0.
-  virtual ArchiveTextFile* openTextFile(const std::string& filename) = 0;
+	/// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
+	/// The caller must \c release() the file returned if it is not 0.
+	virtual ArchiveTextFilePtr openTextFile(const std::string& filename) = 0;
 
   /// \brief Opens the file identified by \p filename and reads it into \p buffer, or sets *\p buffer to 0 if not found.
   /// Returns the size of the buffer allocated, or undefined value if *\p buffer is 0;
