@@ -42,11 +42,11 @@ bool DirectoryArchive::containsFile(const char* name) {
 	return file_readable(path.c_str());
 }
 
-void DirectoryArchive::forEachFile(VisitorFunc visitor, const char* root) {
+void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
 	std::vector<Directory*> dirs;
 	UnixPath path(_root);
 	path.push(root);
-	dirs.push_back(directory_open(path.c_str()));
+	dirs.push_back(directory_open(path));
 
 	while (!dirs.empty() && directory_good(dirs.back())) {
 		const char* name = directory_read_and_increment(dirs.back());

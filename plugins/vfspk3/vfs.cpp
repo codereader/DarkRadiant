@@ -203,10 +203,10 @@ void Quake3FileSystem::freeFile(void *p) {
 
 // Call the specified callback function for each file matching extension
 // inside basedir.
-void Quake3FileSystem::forEachFile(const char* basedir, 
-				 const char* extension, 
-				 const FileNameCallback& callback, 
-				 std::size_t depth)
+void Quake3FileSystem::forEachFile(const std::string& basedir, 
+				const std::string& extension,
+				const FileNameCallback& callback, 
+				std::size_t depth)
 {
 	// Set of visited files, to avoid name conflicts
 	std::set<std::string> visitedFiles;

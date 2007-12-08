@@ -105,7 +105,7 @@ public:
   /// Skips the directory if \c visitor.directory returned true.
   /// Root comparisons are case-insensitive.
   /// Names are mixed-case.
-  virtual void forEachFile(VisitorFunc visitor, const char* root) = 0;
+  virtual void forEachFile(VisitorFunc visitor, const std::string& root) = 0;
 };
 typedef boost::shared_ptr<Archive> ArchivePtr;
 

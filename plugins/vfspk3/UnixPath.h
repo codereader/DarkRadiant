@@ -62,7 +62,7 @@ public:
 	}
 
 	/// \brief Appends the directory \p name.
-	void push(const char* name) {
+	void push(const std::string& name) {
 		_string += name;
 		update();
 	}

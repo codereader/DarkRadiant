@@ -75,8 +75,8 @@ void Doom3ShaderSystem::loadMaterialFiles() {
 	
 	// Load each file from the global filesystem
 	ShaderFileLoader ldr(sPath);
-	GlobalFileSystem().forEachFile(sPath.c_str(), 
-								   extension.c_str(), 
+	GlobalFileSystem().forEachFile(sPath, 
+								   extension, 
 								   makeCallback1(ldr), 
 								   0);
 }

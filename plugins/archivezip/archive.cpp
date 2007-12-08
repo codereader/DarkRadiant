@@ -131,7 +131,8 @@ public:
 #include "fs_filesystem.h"
 
 
-class ZipArchive : public Archive
+class ZipArchive : 
+	public Archive
 {
   class ZipRecord
   {
@@ -342,7 +343,7 @@ public:
     ZipFileSystem::iterator i = m_filesystem.find(std::string(name));
     return i != m_filesystem.end() && !i->second.is_directory();
   }
-  void forEachFile(VisitorFunc visitor, const char* root)
+  void forEachFile(VisitorFunc visitor, const std::string& root)
   {
     m_filesystem.traverse(visitor, root);
   }

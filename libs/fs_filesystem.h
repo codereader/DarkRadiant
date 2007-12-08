@@ -161,9 +161,9 @@ public:
   /// Calls \p visitor.file() with the path to each file relative to the filesystem root.
   /// Calls \p visitor.directory() with the path to each directory relative to the filesystem root.
   template<typename visitor_type>
-  void traverse(visitor_type visitor, const char* root)
+  void traverse(visitor_type visitor, const std::string& root)
   {
-    unsigned int start_depth = path_get_depth(root);
+    unsigned int start_depth = path_get_depth(root.c_str());
     unsigned int skip_depth = 0;
     for(iterator i = begin(root); i != end() && i->first.depth() > start_depth; ++i)
     {
