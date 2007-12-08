@@ -54,6 +54,9 @@ class Quake3FileSystem :
 	
 	typedef std::list<ArchiveDescriptor> ArchiveList;
 	ArchiveList _archives;
+	
+	typedef std::set<Observer*> ObserverList;
+	ObserverList _observers;
 
 public:
 	// Constructor
@@ -78,6 +81,9 @@ public:
 	const char* findFile(const std::string& name);
 	const char* findRoot(const char *name);
 
+	virtual void addObserver(Observer* observer);
+	virtual void removeObserver(Observer* observer);
+	
 	void attach(ModuleObserver& observer);
 	void detach(ModuleObserver& observer);
 
