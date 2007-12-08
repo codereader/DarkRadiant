@@ -45,6 +45,17 @@ class VirtualFileSystem :
 	public RegisterableModule
 {
 public:
+	
+	// greebo: Derive from VirtualFileSystem::Observer to get notified 
+	// about the VFS init/shutdown events.
+	class Observer {
+	public:
+		// Gets called on initialise
+		virtual void onFileSystemInitialise() {}
+		// Gets called on shutdown
+		virtual void onFileSystemShutdown() {}
+	};
+	
 	/// \brief Adds a root search \p path.
 	/// Called before \c initialise.
 	virtual void initDirectory(const std::string& path) = 0;
@@ -55,6 +66,10 @@ public:
 	
 	/// \brief Shuts down the filesystem.
 	virtual void shutdown() = 0;
+	
+	// greebo: Adds/removes observers to/from the VFS
+	virtual void addObserver(Observer* observer) = 0;
+	virtual void removeObserver(Observer* observer) = 0;
 	
 	// Returns the number of files in the VFS matching the given filename
 	virtual int getFileCount(const std::string& filename) = 0;

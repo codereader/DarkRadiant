@@ -117,15 +117,31 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 void Quake3FileSystem::initialise() {
     globalOutputStream() << "filesystem initialised\n";
     _moduleObservers.realise();
+    
+    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+    	(*i)->onFileSystemInitialise();
+    }
 }
 
 void Quake3FileSystem::shutdown() {
+	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+    	(*i)->onFileSystemShutdown();
+    }
+	
 	_moduleObservers.unrealise();
 	globalOutputStream() << "filesystem shutdown\n";
 	
 	_archives.clear();
 	
 	_numDirectories = 0;
+}
+
+void Quake3FileSystem::addObserver(Observer* observer) {
+	_observers.insert(observer);
+}
+
+void Quake3FileSystem::removeObserver(Observer* observer) {
+	_observers.erase(observer);
 }
 
 int Quake3FileSystem::getFileCount(const std::string& filename) {
