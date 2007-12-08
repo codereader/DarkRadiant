@@ -29,7 +29,7 @@ namespace shaders {
 // Constructor
 Doom3ShaderSystem::Doom3ShaderSystem() :
 	_enableActiveUpdates(true),
-	_shadersUnrealised(1),
+	_realised(false),
 	_observers(getName())
 {}
 
@@ -37,16 +37,16 @@ void Doom3ShaderSystem::construct() {
 	_library = ShaderLibraryPtr(new ShaderLibrary());
 	_textureManager = GLTextureManagerPtr(new GLTextureManager());
 	
-	// Register this class as moduleobserver 
-	GlobalFileSystem().attach(*this);
+	// Register this class as VFS observer 
+	GlobalFileSystem().addObserver(*this);
 }
 
 void Doom3ShaderSystem::destroy() {
-	// De-register this class
-	GlobalFileSystem().detach(*this);
+	// De-register this class as VFS Observer
+	GlobalFileSystem().removeObserver(*this);
 	
 	// Free the shaders if we're in realised state
-	if (_shadersUnrealised == 0) {
+	if (_realised) {
 		freeShaders();
 	}
 	
@@ -82,17 +82,27 @@ void Doom3ShaderSystem::loadMaterialFiles() {
 }
 
 void Doom3ShaderSystem::realise() {
-	if (--_shadersUnrealised == 0) {
+	if (!_realised) {
 		loadMaterialFiles();
 		_observers.realise();
+		_realised = true;
 	}
 }
 
 void Doom3ShaderSystem::unrealise() {
-	if (++_shadersUnrealised == 1) {
+	if (_realised) {
 		_observers.unrealise();
 		freeShaders();
+		_realised = false;
 	}
+}
+
+void Doom3ShaderSystem::onFileSystemInitialise() {
+	realise();
+}
+	
+void Doom3ShaderSystem::onFileSystemShutdown() {
+	unrealise();
 }
 
 void Doom3ShaderSystem::freeShaders() {
@@ -108,7 +118,7 @@ void Doom3ShaderSystem::refresh() {
 
 // Is the shader system realised
 bool Doom3ShaderSystem::isRealised() {
-	return _shadersUnrealised == 0;
+	return _realised;
 }
 
 // Return a shader by name

@@ -2,6 +2,7 @@
 #define DOOM3SHADERSYSTEM_H_
 
 #include "ishaders.h"
+#include "ifilesystem.h"
 #include "moduleobserver.h"
 
 #include "generic/callback.h"
@@ -14,7 +15,7 @@ namespace shaders {
 
 class Doom3ShaderSystem : 
 	public ShaderSystem, 
-	public ModuleObserver
+	public VirtualFileSystem::Observer
 {
 	// The shaderlibrary stores all the known shaderdefinitions 
 	// as well as the active shaders
@@ -29,10 +30,8 @@ class Doom3ShaderSystem :
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
 	
-	// greebo: Legacy "unrealised" counter, gets 0 as soon as the
-	// global filesystem calls the realise() method of this class,
-	// (This ShaderSystem acts as ModuleObserver)
-	std::size_t _shadersUnrealised;
+	// TRUE if the material files have been parsed
+	bool _realised;
 	
 	// The observers that are attached to this system. These get
 	// notified upon realisation of this class.
@@ -47,6 +46,12 @@ public:
 	void construct();
 	void destroy();
 
+	// Gets called on initialise
+	virtual void onFileSystemInitialise();
+	
+	// Gets called on shutdown
+	virtual void onFileSystemShutdown();
+	
 	// greebo: This parses the material files and calls realise() on any 
 	// attached moduleobservers
 	void realise();
