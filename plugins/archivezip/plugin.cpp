@@ -25,8 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iarchive.h"
 #include "stream/textstream.h"
 
-#include "archive.h"
 #include <iostream>
+
+#include "ZipArchive.h"
 
 class ArchivePK4API :
 	public ArchiveLoader
@@ -34,7 +35,7 @@ class ArchivePK4API :
 public:
 	// greebo: Returns the opened file or NULL if failed.
 	virtual ArchivePtr openArchive(const std::string& name) {
-		return OpenArchive(name.c_str());
+		return ZipArchivePtr(new ZipArchive(name));
 	}
 		
 	virtual const std::string& getExtension() {
