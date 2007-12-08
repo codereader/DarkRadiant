@@ -24,7 +24,7 @@ public:
 	
 	virtual bool containsFile(const char* name);
 	
-	virtual void forEachFile(VisitorFunc visitor, const char* root);
+	virtual void forEachFile(VisitorFunc visitor, const std::string& root);
 };
 typedef boost::shared_ptr<DirectoryArchive> DirectoryArchivePtr;
 

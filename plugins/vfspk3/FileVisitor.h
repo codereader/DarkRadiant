@@ -26,10 +26,10 @@ class FileVisitor
 
 public:
 	
-	/* Constructor */
+	// Constructor
 	FileVisitor(const FileNameCallback& cb, 
-				const char* dir, 
-				const char* ext,
+				const std::string& dir, 
+				const std::string& ext,
 				std::set<std::string>& visitedFiles)
     : _callback(cb), 
       _visitedFiles(visitedFiles),
@@ -37,7 +37,7 @@ public:
       _extension(ext)
     {}
 	
-	/* Required visit function */
+	// Required visit function 
 	void visit(const std::string& name)
 	{
 		std::string subname = os::getRelativePath(name, _directory);

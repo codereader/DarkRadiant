@@ -84,7 +84,7 @@ namespace {
 	const std::string DOOM_PROCESS_NAME("doom.x86"); 
 }
 
-void ForeachFileFunctor(const char* name) {
+void ForeachFileFunctor(const std::string& name) {
 	// Try to cast the filename to an integer number (=PID)
 	try {
 		unsigned long pid = boost::lexical_cast<unsigned long>(name);

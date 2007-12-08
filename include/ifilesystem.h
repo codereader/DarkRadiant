@@ -79,7 +79,7 @@ public:
 
   /// \brief Calls \p callback for each file under \p basedir matching \p extension.
   /// Use "*" as \p extension to match all file extensions.
-  virtual void forEachFile(const char* basedir, const char* extension, const FileNameCallback& callback, std::size_t depth = 1) = 0;
+  virtual void forEachFile(const std::string& basedir, const std::string& extension, const FileNameCallback& callback, std::size_t depth = 1) = 0;
 
   /// \brief Returns the absolute filename for a relative \p name, or "" if not found.
   virtual const char* findFile(const std::string& name) = 0;
