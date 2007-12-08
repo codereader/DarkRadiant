@@ -15,6 +15,9 @@ namespace ui
 class Vector3PropertyEditor:
     public PropertyEditor
 {
+    // Main widget
+    GtkWidget* _widget;
+    
 	// The 3 component fields.
 	GtkWidget* _xValue;
     GtkWidget* _yValue;
@@ -34,6 +37,13 @@ private:
 	/* GTK CALLBACKS */
 	static void _onApply(GtkWidget*, Vector3PropertyEditor*);
 
+protected:
+	
+	// Return main widget to parent class
+	GtkWidget* _getInternalWidget() {
+		return _widget;
+	}
+	
 public:
 
 	// Construct a TextPropertyEditor with an entity and key to edit

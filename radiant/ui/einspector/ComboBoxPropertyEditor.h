@@ -16,7 +16,11 @@ namespace ui {
 class ComboBoxPropertyEditor:
     public PropertyEditor
 {
+    // Main widget
+    GtkWidget* _widget;
+    
 protected:
+	
 	// The combo box
     GtkWidget* _comboBox;
     
@@ -33,8 +37,14 @@ protected:
     // PropertyEditorFactory
 	ComboBoxPropertyEditor();
 
+	// Return main widget to parent class
+	GtkWidget* _getInternalWidget() {
+		return _widget;
+	}
+
 private:
-    // GTK Callback for combo box selection changes
+	
+	// GTK Callback for combo box selection changes
     static void onSelectionChange(GtkComboBox* widget, ComboBoxPropertyEditor* self);
 };
 

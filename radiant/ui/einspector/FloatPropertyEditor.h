@@ -16,6 +16,9 @@ namespace ui
 class FloatPropertyEditor
 : public PropertyEditor
 {
+	// Main widget
+	GtkWidget* _widget;
+	
 	// Slider widget
 	GtkWidget* _scale;
 	
@@ -29,6 +32,13 @@ private:
 
 	/* GTK CALLBACKS */
 	static void _onApply(GtkWidget*, FloatPropertyEditor*);
+	
+protected:
+	
+	// Return main widget to parent class
+	GtkWidget* _getInternalWidget() {
+		return _widget;
+	}
 	
 public:
 

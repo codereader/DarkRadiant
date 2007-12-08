@@ -22,20 +22,25 @@ typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
  */
 class PropertyEditor
 {
-	// The quit callback handle
-	guint _quitHandle;
-
 protected:
-	// The variable that should hold the main widget 
-	GtkWidget* _widget;
+	
+	/**
+	 * Return the derived class' main widget to the parent class, so it can
+	 * be shown and returned to the EntityInspector. 
+	 * 
+	 * This separates interface from implementation by allowing child classes to 
+	 * return their main widget any way they wish (create-on-demand, private 
+	 * member, etc).
+	 */
+	virtual GtkWidget* _getInternalWidget() = 0;
 	
 public:
-
+	
 	/**
 	 * Return the GtkWidget which is packed into the EntityInspector to display
 	 * the PropertyEditor.
 	 */
-	virtual GtkWidget* getWidget();
+	GtkWidget* getWidget();
     
 	/**
 	 * Clone method for virtual construction. This method must create a new

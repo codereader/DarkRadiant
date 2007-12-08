@@ -13,6 +13,9 @@ namespace ui
 class ModelPropertyEditor
 : public PropertyEditor
 {
+	// Main widget
+	GtkWidget* _widget;
+	
 	// Entity to edit
 	Entity* _entity;
 	
@@ -24,6 +27,13 @@ private:
 	/* GTK CALLBACKS */
 	static void _onModelButton(GtkWidget*, ModelPropertyEditor*);
 	static void _onParticleButton(GtkWidget*, ModelPropertyEditor*);
+	
+protected:
+	
+	// Return main widget to parent class
+	GtkWidget* _getInternalWidget() {
+		return _widget;
+	}
 	
 public:
 
