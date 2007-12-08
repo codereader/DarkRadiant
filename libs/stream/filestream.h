@@ -52,19 +52,20 @@ class FileInputStream : public SeekableInputStream
 {
   std::FILE* m_file;
 public:
-  FileInputStream(const char* name)
-  {
-    m_file = name[0] == '\0' ? 0 : fopen(name, "rb");
-  }
+  FileInputStream(const std::string& name) :
+	  m_file(!name.empty() ? fopen(name.c_str(), "rb") : NULL)
+  {}
+  
   ~FileInputStream()
   {
-    if(!failed())
+    if (!failed()) {
       fclose(m_file);
+    }
   }
 
   bool failed() const
   {
-    return m_file == 0;
+    return m_file == NULL;
   }
 
   size_type read(byte_type* buffer, size_type length)

@@ -30,10 +30,10 @@ class TextFileInputStream : public TextInputStream
 {
   FILE* m_file;
 public:
-  TextFileInputStream(const char* name)
-  {
-    m_file = name[0] == '\0' ? 0 : fopen(name, "rt");
-  }
+	TextFileInputStream(const std::string& name) :
+		m_file(!name.empty() ? fopen(name.c_str(), "rt") : NULL)
+	{}
+  
   ~TextFileInputStream()
   {
     if(!failed())
@@ -56,10 +56,10 @@ class TextFileOutputStream : public TextOutputStream
 {
   FILE* m_file;
 public:
-  TextFileOutputStream(const char* name)
-  {
-    m_file = name[0] == '\0' ? 0 : fopen(name, "wt");
-  }
+  TextFileOutputStream(const std::string& name) :
+	  m_file(!name.empty() ? fopen(name.c_str(), "wt") : NULL)
+  {}
+  
   ~TextFileOutputStream()
   {
     if(!failed())

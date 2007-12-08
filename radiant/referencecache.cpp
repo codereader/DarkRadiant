@@ -68,7 +68,7 @@ void MapChanged()
 bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename)
 {
   globalOutputStream() << "Open file " << filename.c_str() << " for read...";
-  TextFileInputStream file(filename.c_str());
+  TextFileInputStream file(filename);
   if(!file.failed())
   {
     globalOutputStream() << "success\n";

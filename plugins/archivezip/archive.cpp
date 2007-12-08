@@ -51,7 +51,7 @@ public:
 						size_type stream_size, 
 						size_type file_size) : 
 		m_name(name), 
-		m_istream(archiveName.c_str()), 
+		m_istream(archiveName), 
 		m_substream(m_istream, position, stream_size), 
 		m_zipstream(m_substream), m_size(file_size)
 	{}
@@ -101,7 +101,7 @@ public:
                             position_type position, 
                             size_type stream_size)
     : m_name(name), 
-      m_istream(archiveName.c_str()), 
+      m_istream(archiveName), 
       m_substream(m_istream, position, stream_size), 
       m_zipstream(m_substream), 
       m_textStream(m_zipstream),
