@@ -16,6 +16,9 @@ namespace ui
 class ColourPropertyEditor
 : public PropertyEditor
 {
+	// Containing widget
+	GtkWidget* _widget;
+	
 	// The GtkColorButton
 	GtkWidget* _colorButton;
 	
@@ -35,6 +38,13 @@ private:
 	
 	/* GTK CALLBACKS */
 	static void _onColorSet(GtkWidget*, ColourPropertyEditor* self);
+	
+protected:
+	
+	// Return main widget to parent class
+	GtkWidget* _getInternalWidget() {
+		return _widget;
+	}
 	
 public:
 

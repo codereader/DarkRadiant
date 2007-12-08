@@ -6,8 +6,10 @@
 namespace ui {
 
 GtkWidget* PropertyEditor::getWidget() {
-	gtk_widget_show_all(_widget);
-	return _widget;
+	// Get the subclass-private widget, show it and return it
+	GtkWidget* childWidget = _getInternalWidget();
+	gtk_widget_show_all(childWidget);
+	return childWidget;
 }
 
 } // namespace ui

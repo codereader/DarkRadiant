@@ -15,6 +15,9 @@ namespace ui
 class SkinPropertyEditor
 : public PropertyEditor
 {
+	// Main widget
+	GtkWidget* _widget;
+	
 	// Entity to edit
 	Entity* _entity;
 
@@ -25,6 +28,13 @@ private:
 
 	/* GTK CALLBACKS */
 	static void _onBrowseButton(GtkWidget* w, SkinPropertyEditor* self);
+	
+protected:
+	
+	// Return main widget to parent class
+	GtkWidget* _getInternalWidget() {
+		return _widget;
+	}
 	
 public:
 

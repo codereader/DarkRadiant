@@ -14,6 +14,9 @@ namespace ui
 class BooleanPropertyEditor:
     public PropertyEditor
 {
+    // Containing widget
+    GtkWidget* _widget;
+    
 	// The checkbox
 	GtkWidget* _checkBox;
 	
@@ -28,6 +31,13 @@ private:
 	/* GTK CALLBACKS */
 	static void _onToggle(GtkWidget*, BooleanPropertyEditor*);
 
+protected:
+	
+	// Return main widget to parent class
+	GtkWidget* _getInternalWidget() {
+		return _widget;
+	}
+	
 public:
 
 	// Construct a BooleanPropertyEditor with an entity and key to edit
