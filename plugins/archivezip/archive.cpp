@@ -268,10 +268,6 @@ public:
     return m_istream.failed();
   }
 
-  void release()
-  {
-    delete this;
-  }
   ArchiveFile* openFile(const char* name)
   {
     ZipFileSystem::iterator i = m_filesystem.find(name);
@@ -343,9 +339,9 @@ public:
   }
 };
 
-Archive* OpenArchive(const char* name)
+ArchivePtr OpenArchive(const char* name)
 {
-  return new ZipArchive(name);
+  return ArchivePtr(new ZipArchive(name));
 }
 
 #if 0

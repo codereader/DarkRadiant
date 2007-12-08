@@ -82,7 +82,6 @@ class CustomArchiveVisitor;
 class Archive
 {
 public:
-
 	/**
 	 * Visitor class for traversing files within an Archive.
 	 */
@@ -92,18 +91,14 @@ public:
 		virtual void visit(const std::string& name) = 0;
 	};
 
-  typedef CustomArchiveVisitor VisitorFunc;
+	typedef CustomArchiveVisitor VisitorFunc;
 
-  enum EMode
-  {
-    eFiles = 0x01,
-    eDirectories = 0x02,
-    eFilesAndDirectories = 0x03,
-  };
+	enum EMode {
+		eFiles = 0x01,
+		eDirectories = 0x02,
+		eFilesAndDirectories = 0x03,
+	};
 
-  /// \brief Destroys the archive object.
-  /// Any unreleased file object associated with the archive remains valid. */
-  virtual void release() = 0;
   /// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
   /// Name comparisons are case-insensitive.
   virtual ArchiveFile* openFile(const char* name) = 0;
@@ -122,6 +117,7 @@ public:
   /// Names are mixed-case.
   virtual void forEachFile(VisitorFunc visitor, const char* root) = 0;
 };
+typedef boost::shared_ptr<Archive> ArchivePtr;
 
 class CustomArchiveVisitor
 {
@@ -155,7 +151,7 @@ class ArchiveLoader :
 {
 public:
 	// greebo: Returns the opened file or NULL if failed.
-	virtual Archive* openArchive(const std::string& name) = 0;
+	virtual ArchivePtr openArchive(const std::string& name) = 0;
 
     // get the supported file extension
     virtual const std::string& getExtension() = 0;

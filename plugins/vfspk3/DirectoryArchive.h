@@ -18,8 +18,6 @@ public:
 	// Pass the root path to the constructor
 	DirectoryArchive(const std::string& root);
 
-	void release();
-	
 	virtual ArchiveFile* openFile(const char* name);
 	
 	virtual ArchiveTextFile* openTextFile(const char* name);
@@ -28,5 +26,6 @@ public:
 	
 	virtual void forEachFile(VisitorFunc visitor, const char* root);
 };
+typedef boost::shared_ptr<DirectoryArchive> DirectoryArchivePtr;
 
 #endif /*DIRECTORYARCHIVE_H_*/

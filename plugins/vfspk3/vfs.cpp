@@ -91,7 +91,7 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 	{
 		ArchiveDescriptor entry;
 		entry.name = path;
-		entry.archive = new DirectoryArchive(path);
+		entry.archive = DirectoryArchivePtr(new DirectoryArchive(path));
 		entry.is_pakfile = false;
 		_archives.push_back(entry);
 	}
@@ -127,15 +127,10 @@ void Quake3FileSystem::shutdown() {
 	_moduleObservers.unrealise();
 	globalOutputStream() << "filesystem shutdown\n";
 	
-	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-		i->archive->release();
-	}
-	
 	_archives.clear();
 	
 	_numDirectories = 0;
 }
-
 
 int Quake3FileSystem::getFileCount(const std::string& filename) {
 	int count = 0;

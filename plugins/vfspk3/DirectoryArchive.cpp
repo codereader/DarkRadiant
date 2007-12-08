@@ -10,10 +10,6 @@ DirectoryArchive::DirectoryArchive(const std::string& root) :
 	_root(root)
 {}
 
-void DirectoryArchive::release() {
-	delete this;
-}
-
 ArchiveFile* DirectoryArchive::openFile(const char* name) {
 	UnixPath path(_root.c_str());
 	path.push_filename(name);
