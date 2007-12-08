@@ -67,7 +67,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "SortedFilenames.h"
 
 Quake3FileSystem::Quake3FileSystem() :
-	_moduleObservers(getName()),
 	_numDirectories(0)
 {}
 
@@ -116,7 +115,6 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 
 void Quake3FileSystem::initialise() {
     globalOutputStream() << "filesystem initialised\n";
-    _moduleObservers.realise();
     
     for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
     	(*i)->onFileSystemInitialise();
@@ -128,11 +126,9 @@ void Quake3FileSystem::shutdown() {
     	(*i)->onFileSystemShutdown();
     }
 	
-	_moduleObservers.unrealise();
 	globalOutputStream() << "filesystem shutdown\n";
 	
 	_archives.clear();
-	
 	_numDirectories = 0;
 }
 
@@ -271,14 +267,6 @@ void Quake3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::stri
 		
 		globalOutputStream() << "[vfs] pak file: " << filename.c_str() << "\n";
 	}
-}
-
-void Quake3FileSystem::attach(ModuleObserver& observer) {
-	_moduleObservers.attach(observer);
-}
-
-void Quake3FileSystem::detach(ModuleObserver& observer) {
-	_moduleObservers.detach(observer);
 }
 
 // RegisterableModule implementation

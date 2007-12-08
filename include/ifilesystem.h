@@ -101,12 +101,6 @@ public:
   /// \brief Returns the filesystem root for an absolute \p name, or "" if not found.
   /// This can be used to convert an absolute name to a relative name.
   virtual const char* findRoot(const char* name) = 0;
-
-  /// \brief Attach an \p observer whose realise() and unrealise() methods will be called when the filesystem is initialised or shut down.
-  virtual void attach(ModuleObserver& observer) = 0;
-  /// \brief Detach an \p observer previously-attached by calling \c attach.
-  virtual void detach(ModuleObserver& observer) = 0;
-
 };
 
 inline VirtualFileSystem& GlobalFileSystem() {
