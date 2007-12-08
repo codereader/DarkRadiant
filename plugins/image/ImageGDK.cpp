@@ -16,7 +16,7 @@
 ImagePtr LoadImageGDK(ArchiveFile& file) {
 	
 	// Allocate a new GdkPixBuf and create an alpha-channel with alpha=1.0
-	GdkPixbuf* rawPixbuf = gdk_pixbuf_new_from_file(file.getName(), NULL);
+	GdkPixbuf* rawPixbuf = gdk_pixbuf_new_from_file(file.getName().c_str(), NULL);
 	
 	// Only create an alpha channel if the other rawPixbuf could be loaded
 	GdkPixbuf* img = (rawPixbuf != NULL) ? gdk_pixbuf_add_alpha(rawPixbuf, TRUE, 255, 0, 255) : NULL;

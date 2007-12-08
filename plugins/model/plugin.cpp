@@ -120,7 +120,7 @@ public:
 	model::IModelPtr loadModelFromPath(const std::string& name) {
 		
 		// Open an ArchiveFile to load
-		ArchiveFile* file = GlobalFileSystem().openFile(name);
+		ArchiveFilePtr file = GlobalFileSystem().openFile(name);
 
 		model::IModelPtr model;
 		if (file != NULL) {
@@ -131,9 +131,6 @@ public:
 								<< "\n";
 			model = model::IModelPtr();
 		}
-		
-		// Release the ArchiveFile and return the IModelPtr
-		file->release();
 		
 		return model;
 	}

@@ -10,19 +10,21 @@ DirectoryArchive::DirectoryArchive(const std::string& root) :
 	_root(root)
 {}
 
-ArchiveFile* DirectoryArchive::openFile(const char* name) {
-	UnixPath path(_root.c_str());
+ArchiveFilePtr DirectoryArchive::openFile(const std::string& name) {
+	UnixPath path(_root);
 	path.push_filename(name);
-	DirectoryArchiveFile* file = new DirectoryArchiveFile(name, path.c_str());
+	
+	DirectoryArchiveFilePtr file(new DirectoryArchiveFile(name, path));
+	
 	if (!file->failed()) {
 		return file;
 	}
-	file->release();
-	return 0;
+	
+	return ArchiveFilePtr();
 }
 
 ArchiveTextFile* DirectoryArchive::openTextFile(const char* name) {
-	UnixPath path(_root.c_str());
+	UnixPath path(_root);
 	path.push_filename(name);
 	DirectoryArchiveTextFile* file = new DirectoryArchiveTextFile(name, _root, path.c_str());
 	if (!file->failed()) {
@@ -33,14 +35,14 @@ ArchiveTextFile* DirectoryArchive::openTextFile(const char* name) {
 }
 
 bool DirectoryArchive::containsFile(const char* name) {
-	UnixPath path(_root.c_str());
+	UnixPath path(_root);
 	path.push_filename(name);
 	return file_readable(path.c_str());
 }
 
 void DirectoryArchive::forEachFile(VisitorFunc visitor, const char* root) {
 	std::vector<Directory*> dirs;
-	UnixPath path(_root.c_str());
+	UnixPath path(_root);
 	path.push(root);
 	dirs.push_back(directory_open(path.c_str()));
 

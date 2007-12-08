@@ -104,42 +104,39 @@ public:
 };
 
 /// \brief An ArchiveFile which is stored uncompressed as part of a larger archive file.
-class StoredArchiveFile : public ArchiveFile
+class StoredArchiveFile : 
+	public ArchiveFile
 {
-  std::string m_name;
-  FileInputStream m_filestream;
-  SubFileInputStream m_substream;
-  FileInputStream::size_type m_size;
+	std::string m_name;
+	FileInputStream m_filestream;
+	SubFileInputStream m_substream;
+	FileInputStream::size_type m_size;
 public:
-  typedef FileInputStream::size_type size_type;
-  typedef FileInputStream::position_type position_type;
+	typedef FileInputStream::size_type size_type;
+	typedef FileInputStream::position_type position_type;
 
-  StoredArchiveFile(const char* name, const char* archiveName, position_type position, size_type stream_size, size_type file_size)
-    : m_name(name), m_filestream(archiveName), m_substream(m_filestream, position, stream_size), m_size(file_size)
-  {
-  }
+	StoredArchiveFile(const std::string& name, 
+	  				const std::string& archiveName, 
+	  				position_type position, 
+	  				size_type stream_size, 
+	  				size_type file_size)
+	  	: m_name(name),
+	  	  m_filestream(archiveName.c_str()), 
+	  	  m_substream(m_filestream, position, stream_size), 
+	  	  m_size(file_size)
+	{}
 
-  static StoredArchiveFile* create(const char* name, const char* archiveName, position_type position, size_type stream_size, size_type file_size)
-  {
-    return New<StoredArchiveFile>().scalar(name, archiveName, position, stream_size, file_size);
-  }
-
-  void release()
-  {
-    Delete<StoredArchiveFile>().scalar(this);
-  }
-  size_type size() const
-  {
-    return m_size;
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  InputStream& getInputStream()
-  {
-    return m_substream;
-  }
+	size_type size() const {
+		return m_size;
+	}
+	
+	const std::string& getName() const {
+		return m_name;
+	}
+	
+	InputStream& getInputStream() {
+		return m_substream;
+	}
 };
 
 /// \brief An ArchiveTextFile which is stored uncompressed as part of a larger archive file.
@@ -197,16 +194,18 @@ public:
 };
 
 /// \brief An ArchiveFile which is stored as a single file on disk.
-class DirectoryArchiveFile : public ArchiveFile
+class DirectoryArchiveFile : 
+	public ArchiveFile
 {
-  std::string m_name;
-  FileInputStream m_istream;
-  FileInputStream::size_type m_size;
+	std::string m_name;
+	FileInputStream m_istream;
+	FileInputStream::size_type m_size;
 public:
-  typedef FileInputStream::size_type size_type;
+	typedef FileInputStream::size_type size_type;
 
-  DirectoryArchiveFile(const char* name, const char* filename)
-    : m_name(name), m_istream(filename)
+	DirectoryArchiveFile(const std::string& name, const std::string& filename) :
+		m_name(name), 
+		m_istream(filename.c_str())
   {
     if(!failed())
     {
@@ -224,23 +223,20 @@ public:
     return m_istream.failed();
   }
 
-  void release()
-  {
-    delete this;
-  }
   size_type size() const
   {
     return m_size;
   }
-  const char* getName() const
+  const std::string& getName() const
   {
-    return m_name.c_str();
+    return m_name;
   }
   InputStream& getInputStream()
   {
     return m_istream;
   }
 };
+typedef boost::shared_ptr<DirectoryArchiveFile> DirectoryArchiveFilePtr;
 
 /// \brief An ArchiveTextFile which is stored as a single file on disk.
 class DirectoryArchiveTextFile : public ArchiveTextFile
