@@ -46,11 +46,16 @@ bool DirectoryArchive::containsFile(const char* name) {
 
 void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
 	std::vector<Directory*> dirs;
+	
+	// Initialise the search's starting point
 	UnixPath path(_root);
 	path.push(root);
+	
+	// Open the starting directory and enter the recursion
 	dirs.push_back(directory_open(path));
 
 	while (!dirs.empty() && directory_good(dirs.back())) {
+		// Get a new filename
 		const char* name = directory_read_and_increment(dirs.back());
 
 		if (name == 0) {
@@ -63,29 +68,32 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		
 		// Non-NULL filename
 		std::string filename(name);
-		if (filename != "." && filename != "..") {
-			// Assemble the full filename
-			path.push_filename(name);
+		if (filename == "." || filename == "..") {
+			continue;
+		}
+		
+		// Assemble the full filename
+		path.push_filename(filename);
 
-			bool is_directory = file_is_directory(path.c_str());
+		bool is_directory = file_is_directory(path.c_str());
 
-			if (!is_directory) {
-				visitor.file(os::getRelativePath(path, _root));
-			}
-
+		if (!is_directory) {
+			visitor.file(os::getRelativePath(path, _root));
+			
+			// Remove the filename again, continue to search the dir
 			path.pop();
+		}
+		else {
+			// We've got a folder, push a slash and attempt to traverse
+			path.push("/");
 
-			if (is_directory) {
-				path.push(name);
-
-				if (!visitor.directory(path_make_relative(path.c_str(),
-						_root.c_str()), dirs.size()))
-				{
-					dirs.push_back(directory_open(path.c_str()));
-				}
-				else {
-					path.pop();
-				}
+			if (!visitor.directory(os::getRelativePath(path, _root), dirs.size())) {
+				// Open this new directory and push the handle
+				dirs.push_back(directory_open(path));
+			}
+			else {
+				// Visitor says: don't traverse, pop the path and continue
+				path.pop();
 			}
 		}
 	}

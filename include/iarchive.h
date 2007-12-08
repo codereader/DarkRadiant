@@ -124,12 +124,14 @@ public:
     if((m_mode & Archive::eFiles) != 0)
       m_visitor->visit(name);
   }
-  bool directory(const char* name, std::size_t depth)
+  bool directory(const std::string& name, std::size_t depth)
   {
-    if((m_mode & Archive::eDirectories) != 0)
+    if ((m_mode & Archive::eDirectories) != 0) {
       m_visitor->visit(name);
-    if(depth == m_depth)
+    }
+    if (depth == m_depth) {
       return true;
+    }
     return false;
   }
 };

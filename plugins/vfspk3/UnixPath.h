@@ -60,7 +60,7 @@ public:
 	operator const std::string& () const {
 		return _string;
 	}
-
+	
 	/// \brief Appends the directory \p name.
 	void push(const std::string& name) {
 		_string += name;
