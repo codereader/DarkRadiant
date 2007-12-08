@@ -81,8 +81,8 @@ public:
 	const char* findFile(const std::string& name);
 	const char* findRoot(const char *name);
 
-	virtual void addObserver(Observer* observer);
-	virtual void removeObserver(Observer* observer);
+	virtual void addObserver(Observer& observer);
+	virtual void removeObserver(Observer& observer);
 	
 	void attach(ModuleObserver& observer);
 	void detach(ModuleObserver& observer);

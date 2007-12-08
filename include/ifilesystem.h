@@ -68,8 +68,8 @@ public:
 	virtual void shutdown() = 0;
 	
 	// greebo: Adds/removes observers to/from the VFS
-	virtual void addObserver(Observer* observer) = 0;
-	virtual void removeObserver(Observer* observer) = 0;
+	virtual void addObserver(Observer& observer) = 0;
+	virtual void removeObserver(Observer& observer) = 0;
 	
 	// Returns the number of files in the VFS matching the given filename
 	virtual int getFileCount(const std::string& filename) = 0;

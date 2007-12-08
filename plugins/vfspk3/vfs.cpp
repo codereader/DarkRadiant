@@ -136,12 +136,12 @@ void Quake3FileSystem::shutdown() {
 	_numDirectories = 0;
 }
 
-void Quake3FileSystem::addObserver(Observer* observer) {
-	_observers.insert(observer);
+void Quake3FileSystem::addObserver(Observer& observer) {
+	_observers.insert(&observer);
 }
 
-void Quake3FileSystem::removeObserver(Observer* observer) {
-	_observers.erase(observer);
+void Quake3FileSystem::removeObserver(Observer& observer) {
+	_observers.erase(&observer);
 }
 
 int Quake3FileSystem::getFileCount(const std::string& filename) {
