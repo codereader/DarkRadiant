@@ -143,47 +143,6 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 	}
 
-//! Make COLOR_BRUSHES override worldspawn eclass colour.
-void SetWorldspawnColour(const Vector3& colour)
-{
-	IEntityClassPtr worldspawn = GlobalEntityClassManager().findOrInsert(
-										"worldspawn", true);
-	worldspawn->setColour(colour);
-}
-
-//! Make colourscheme definition override light volume eclass colour.
-void SetLightVolumeColour(const Vector3& colour)
-{
-	IEntityClassPtr light = GlobalEntityClassManager().findOrInsert("light", 
-																	true);
-	light->setColour(colour);
-}
-
-class WorldspawnColourEntityClassObserver : public ModuleObserver
-{
-  std::size_t m_unrealised;
-public:
-  WorldspawnColourEntityClassObserver() : m_unrealised(1)
-  {
-  }
-  void realise()
-  {
-    if(--m_unrealised == 0)
-    {
-      SetWorldspawnColour(ColourSchemes().getColourVector3("default_brush"));
-      SetLightVolumeColour(ColourSchemes().getColourVector3("light_volumes"));
-    }
-  }
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
-    {
-    }
-  }
-};
-
-WorldspawnColourEntityClassObserver g_WorldspawnColourEntityClassObserver;
-
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
@@ -887,10 +846,6 @@ void XY_UpdateAllWindows()
   if(g_pParentWnd != 0)
   {
     GlobalXYWnd().updateAllViews();
-    
-    // Set the World Spawn Colour
-	SetWorldspawnColour(ColourSchemes().getColourVector3("default_brush"));
-	SetLightVolumeColour(ColourSchemes().getColourVector3("light_volumes"));
   }
 }
 
@@ -1800,11 +1755,4 @@ void MainFrame_Construct()
   /*
   GLWidget_sharedContextCreated = GlobalGL_sharedContextCreated;
   GLWidget_sharedContextDestroyed = GlobalGL_sharedContextDestroyed;*/
-
-  GlobalEntityClassManager().attach(g_WorldspawnColourEntityClassObserver);
-}
-
-void MainFrame_Destroy()
-{
-  GlobalEntityClassManager().detach(g_WorldspawnColourEntityClassObserver);
 }

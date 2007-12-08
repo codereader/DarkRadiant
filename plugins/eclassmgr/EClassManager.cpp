@@ -115,6 +115,16 @@ void EClassManager::realise() {
             }
         }
     }
+    
+    // greebo: Override the eclass colours of two special entityclasses
+    Vector3 worlspawnColour = GlobalRadiant().getColour("default_brush");
+    Vector3 lightColour = GlobalRadiant().getColour("light_volumes");
+    
+    IEntityClassPtr light = findOrInsert("light", true);
+	light->setColour(lightColour);
+	
+	IEntityClassPtr worldspawn = findOrInsert("worldspawn", true);
+	worldspawn->setColour(worlspawnColour);
 
     // Prod the observers (also on the first call)
     m_observers.realise();
