@@ -182,7 +182,6 @@ void VFS_Construct();
 void VFS_Destroy();
 
 void MainFrame_Construct();
-void MainFrame_Destroy();
 
 void GlobalGL_sharedContextCreated();
 void GlobalGL_sharedContextDestroyed();
