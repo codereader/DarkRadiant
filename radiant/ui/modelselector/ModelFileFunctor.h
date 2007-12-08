@@ -29,6 +29,7 @@ class ModelFileFunctor
 	// Progress dialog and model count
 	gtkutil::ModalProgressDialog _progress;
 	int _count;
+	int _guiUpdateInterleave;
 	
 public:
 	
@@ -38,7 +39,8 @@ public:
 	ModelFileFunctor(gtkutil::VFSTreePopulator& pop)
 	: _populator(pop),
 	  _progress(MainFrame_getWindow(), "Loading models"),
-	  _count(0)
+	  _count(0),
+	  _guiUpdateInterleave(50)
 	{
 		_progress.setText("Searching");
 	}
@@ -52,9 +54,13 @@ public:
 			boost::algorithm::iends_with(file, ASE_EXTENSION) || 
 			boost::algorithm::iends_with(file, MD5MESH_EXTENSION)) 
 		{
-			_progress.setText(boost::lexical_cast<std::string>(++_count)
-							  + " models loaded");
+			_count++;
 			_populator.addPath(file);
+			
+			if (_count % _guiUpdateInterleave == 0) {
+				_progress.setText(boost::lexical_cast<std::string>(_count)
+								  + " models loaded");
+			}
 		}
 	}
 };
