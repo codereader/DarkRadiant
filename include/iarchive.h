@@ -119,7 +119,7 @@ public:
     : m_visitor(&visitor), m_mode(mode), m_depth(depth)
   {
   }
-  void file(const char* name)
+  void file(const std::string& name)
   {
     if((m_mode & Archive::eFiles) != 0)
       m_visitor->visit(name);
