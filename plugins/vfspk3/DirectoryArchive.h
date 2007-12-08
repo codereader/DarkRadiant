@@ -18,7 +18,7 @@ public:
 	// Pass the root path to the constructor
 	DirectoryArchive(const std::string& root);
 
-	virtual ArchiveFile* openFile(const char* name);
+	virtual ArchiveFilePtr openFile(const std::string& name);
 	
 	virtual ArchiveTextFile* openTextFile(const char* name);
 	

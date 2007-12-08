@@ -54,9 +54,10 @@ class GenericFileSystem
     std::string m_path;
     unsigned int m_depth;
   public:
-    Path(const char* path)
-      : m_path(path), m_depth(path_get_depth(c_str()))
-    {}
+	Path(const std::string& path) : 
+		m_path(path),
+		m_depth(path_get_depth(m_path.c_str()))
+	{}
     
     Path(StringRange range) {
     	// Take the full string range
@@ -141,7 +142,7 @@ public:
     return m_entries.find(path);
   }
 
-  iterator begin(const char* root)
+  iterator begin(const std::string& root)
   {
     if(root[0] == '\0')
     {

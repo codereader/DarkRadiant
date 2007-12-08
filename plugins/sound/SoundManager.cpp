@@ -33,13 +33,12 @@ bool SoundManager::playSound(const std::string& fileName) {
 	std::string name = fileName; 
 	
 	// Try to open the file as it is
-	ArchiveFile* file = GlobalFileSystem().openFile(name);
+	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
 	std::cout << "Trying: " << name << "\n";
 	if (file != NULL) {
 		// File found, play it
 		std::cout << "Found file: " << name << "\n";
 		_soundPlayer.play(*file);
-		file->release();
 		return true;
 	}
 	
@@ -52,22 +51,20 @@ bool SoundManager::playSound(const std::string& fileName) {
 	// Try to open the .ogg variant
 	name = root + ".ogg";
 	std::cout << "Trying: " << name << "\n";
-	file = GlobalFileSystem().openFile(name.c_str());
+	file = GlobalFileSystem().openFile(name);
 	if (file != NULL) {
 		std::cout << "Found file: " << name << "\n";
 		_soundPlayer.play(*file);
-		file->release();
 		return true;
 	}
 	
 	// Try to open the file with .wav extension
 	name = root + ".wav";
 	std::cout << "Trying: " << name << "\n";
-	file = GlobalFileSystem().openFile(name.c_str());
+	file = GlobalFileSystem().openFile(name);
 	if (file != NULL) {
 		std::cout << "Found file: " << name << "\n";
 		_soundPlayer.play(*file);
-		file->release();
 		return true;
 	}
 	

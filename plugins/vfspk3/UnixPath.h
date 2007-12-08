@@ -56,6 +56,10 @@ public:
 	const char* c_str() const {
 		return _string.c_str();
 	}
+	
+	operator const std::string& () const {
+		return _string;
+	}
 
 	/// \brief Appends the directory \p name.
 	void push(const char* name) {
@@ -72,7 +76,7 @@ public:
 	}
 	
 	/// \brief Appends the filename \p name.
-	void push_filename(const char* name) {
+	void push_filename(const std::string& name) {
 		_string += name;
 		_size = _string.size();
 	}

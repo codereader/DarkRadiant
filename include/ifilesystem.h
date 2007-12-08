@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef Callback1<const std::string&> FileNameCallback;
 
 class ArchiveFile;
+typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
 class ArchiveTextFile;
 class Archive;
 
@@ -60,8 +61,7 @@ public:
 	/// \brief Returns the file identified by \p filename opened in binary mode, or 0 if not found.
 	/// The caller must \c release() the file returned if it is not 0.
 	// greebo: Note: expects the filename to be normalised (forward slashes, trailing slash).
-	// greebo: TODO: Migrate to return shared_ptrs
-	virtual ArchiveFile* openFile(const std::string& filename) = 0;
+	virtual ArchiveFilePtr openFile(const std::string& filename) = 0;
   
   /// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
   /// The caller must \c release() the file returned if it is not 0.

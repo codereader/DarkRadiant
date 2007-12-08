@@ -46,7 +46,7 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name) {
 	MD5ModelPtr model(new MD5Model);
 
 	// Open an ArchiveFile to load
-	ArchiveFile* file = GlobalFileSystem().openFile(name);
+	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
 
 	if (file != NULL) {
 		loadModelFromFile(*model, *file);
@@ -56,9 +56,6 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name) {
 		model = MD5ModelPtr(); // delete the model
 	}
 	
-	// Release the ArchiveFile and return the IModelPtr
-	file->release();
-
 	return model;
 }
 

@@ -33,39 +33,40 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "os/path.h"
 
-class DeflatedArchiveFile 
-: public ArchiveFile
+class DeflatedArchiveFile : 
+	public ArchiveFile
 {
-  std::string m_name;
-  FileInputStream m_istream;
-  SubFileInputStream m_substream;
-  DeflatedInputStream m_zipstream;
-  FileInputStream::size_type m_size;
+	std::string m_name;
+	FileInputStream m_istream;
+	SubFileInputStream m_substream;
+	DeflatedInputStream m_zipstream;
+	FileInputStream::size_type m_size;
 public:
-  typedef FileInputStream::size_type size_type;
-  typedef FileInputStream::position_type position_type;
+	typedef FileInputStream::size_type size_type;
+	typedef FileInputStream::position_type position_type;
 
-  DeflatedArchiveFile(const char* name, const char* archiveName, position_type position, size_type stream_size, size_type file_size)
-    : m_name(name), m_istream(archiveName), m_substream(m_istream, position, stream_size), m_zipstream(m_substream), m_size(file_size)
-  {
-  }
+	DeflatedArchiveFile(const std::string& name, 
+						const std::string& archiveName, 
+						position_type position, 
+						size_type stream_size, 
+						size_type file_size) : 
+		m_name(name), 
+		m_istream(archiveName.c_str()), 
+		m_substream(m_istream, position, stream_size), 
+		m_zipstream(m_substream), m_size(file_size)
+	{}
 
-  void release()
-  {
-    delete this;
-  }
-  size_type size() const
-  {
-    return m_size;
-  }
-  const char* getName() const
-  {
-    return m_name.c_str();
-  }
-  InputStream& getInputStream()
-  {
-    return m_zipstream;
-  }
+	size_type size() const {
+		return m_size;
+	}
+	
+	const std::string& getName() const {
+		return m_name;
+	}
+	
+	InputStream& getInputStream() {
+		return m_zipstream;
+	}
 };
 
 /**
@@ -171,40 +172,49 @@ class ZipArchive : public Archive
     //unsigned short flags = 
     istream_read_int16_le(m_istream);
     unsigned short compression_mode = istream_read_int16_le(m_istream);
+    
     if(compression_mode != Z_DEFLATED && compression_mode != 0)
     {
       return false;
     }
+    
     zip_dostime dostime;
     istream_read_zip_dostime(m_istream, dostime);
+    
     //unsigned int crc32 = 
     istream_read_int32_le(m_istream);
+    
     unsigned int compressed_size = istream_read_uint32_le(m_istream);
     unsigned int uncompressed_size = istream_read_uint32_le(m_istream);
     unsigned int namelength = istream_read_uint16_le(m_istream);
     unsigned short extras = istream_read_uint16_le(m_istream);
     unsigned short comment = istream_read_uint16_le(m_istream);
+    
     //unsigned short diskstart =
     istream_read_int16_le(m_istream);
     //unsigned short filetype = 
     istream_read_int16_le(m_istream);
     //unsigned int filemode =
     istream_read_int32_le(m_istream);
+    
     unsigned int position = istream_read_int32_le(m_istream);
 
     Array<char> filename(namelength+1);
+    
     m_istream.read(reinterpret_cast<FileInputStream::byte_type*>(filename.data()), namelength);
+    
     filename[namelength] = '\0';
 
     m_istream.seek(extras + comment, FileInputStream::cur);
 
+    std::string path(filename.data());
     if(path_is_directory(filename.data()))
     {
-      m_filesystem[filename.data()] = 0;
+      m_filesystem[path] = 0;
     }
     else
     {
-      ZipFileSystem::entry_type& file = m_filesystem[filename.data()];
+      ZipFileSystem::entry_type& file = m_filesystem[path];
       if(!file.is_directory())
       {
         globalOutputStream() << "Warning: zip archive " << makeQuoted(m_name.c_str()) << " contains duplicated file: " << makeQuoted(filename.data()) << "\n";
@@ -268,7 +278,7 @@ public:
     return m_istream.failed();
   }
 
-  ArchiveFile* openFile(const char* name)
+  virtual ArchiveFilePtr openFile(const std::string& name)
   {
     ZipFileSystem::iterator i = m_filesystem.find(name);
     if(i != m_filesystem.end() && !i->second.is_directory())
@@ -281,22 +291,23 @@ public:
       if(file_header.z_magic != zip_file_header_magic)
       {
         globalErrorStream() << "error reading zip file " << makeQuoted(m_name.c_str());
-        return 0;
+        return ArchiveFilePtr();
       }
 
       switch(file->m_mode)
       {
       case ZipRecord::eStored:
-        return StoredArchiveFile::create(name, m_name.c_str(), m_istream.tell(), file->m_stream_size, file->m_file_size);
+        return ArchiveFilePtr(new StoredArchiveFile(name, m_name, m_istream.tell(), file->m_stream_size, file->m_file_size));
       case ZipRecord::eDeflated:
-        return new DeflatedArchiveFile(name, m_name.c_str(), m_istream.tell(), file->m_stream_size, file->m_file_size);
+        return ArchiveFilePtr(new DeflatedArchiveFile(name, m_name, m_istream.tell(), file->m_stream_size, file->m_file_size));
       }
     }
-    return 0;
+    return ArchiveFilePtr();
   }
   ArchiveTextFile* openTextFile(const char* name)
   {
-    ZipFileSystem::iterator i = m_filesystem.find(name);
+	  std::string nameStr(name); // temporary! remove when migrated to std::string
+    ZipFileSystem::iterator i = m_filesystem.find(nameStr);
     if(i != m_filesystem.end() && !i->second.is_directory())
     {
       ZipRecord* file = i->second.file();
@@ -330,7 +341,7 @@ public:
   }
   bool containsFile(const char* name)
   {
-    ZipFileSystem::iterator i = m_filesystem.find(name);
+    ZipFileSystem::iterator i = m_filesystem.find(std::string(name));
     return i != m_filesystem.end() && !i->second.is_directory();
   }
   void forEachFile(VisitorFunc visitor, const char* root)

@@ -37,18 +37,17 @@ class InputStream;
 class ArchiveFile
 {
 public:
-  /// \brief Destroys the file object.
-  virtual void release() = 0;
-  /// \brief Returns the size of the file data in bytes.
-  virtual std::size_t size() const = 0;
-  /// \brief Returns the path to this file (relative to the filesystem root)
-  virtual const char* getName() const = 0;
-  /// \brief Returns the stream associated with this file.
-  /// Subsequent calls return the same stream.
-  /// The stream may be read forwards until it is exhausted.
-  /// The stream remains valid for the lifetime of the file.
-  virtual InputStream& getInputStream() = 0;
+	/// \brief Returns the size of the file data in bytes.
+	virtual std::size_t size() const = 0;
+	/// \brief Returns the path to this file (relative to the filesystem root)
+	virtual const std::string& getName() const = 0;
+	/// \brief Returns the stream associated with this file.
+	/// Subsequent calls return the same stream.
+	/// The stream may be read forwards until it is exhausted.
+	/// The stream remains valid for the lifetime of the file.
+	virtual InputStream& getInputStream() = 0;
 };
+typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
 
 /// \brief A file opened in text mode.
 class ArchiveTextFile
@@ -62,19 +61,6 @@ public:
   /// The stream may be read forwards until it is exhausted.
   /// The stream remains valid for the lifetime of the file.
   virtual TextInputStream& getInputStream() = 0;
-};
-
-class ScopedArchiveFile
-{
-  ArchiveFile& m_file;
-public:
-  ScopedArchiveFile(ArchiveFile& file) : m_file(file)
-  {
-  }
-  ~ScopedArchiveFile()
-  {
-    m_file.release();
-  }
 };
 
 class CustomArchiveVisitor;
@@ -99,9 +85,10 @@ public:
 		eFilesAndDirectories = 0x03,
 	};
 
-  /// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
-  /// Name comparisons are case-insensitive.
-  virtual ArchiveFile* openFile(const char* name) = 0;
+	/// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
+	/// Name comparisons are case-insensitive.
+	virtual ArchiveFilePtr openFile(const std::string& name) = 0;
+	
   /// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
   /// Name comparisons are case-insensitive.
   virtual ArchiveTextFile* openTextFile(const char* name) = 0;

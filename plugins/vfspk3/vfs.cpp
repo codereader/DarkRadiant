@@ -145,20 +145,21 @@ int Quake3FileSystem::getFileCount(const std::string& filename) {
 	return count;
 }
 
-ArchiveFile* Quake3FileSystem::openFile(const std::string& filename) {
+ArchiveFilePtr Quake3FileSystem::openFile(const std::string& filename) {
 	if (filename.find("\\") != std::string::npos) {
 		globalErrorStream() << "Filename contains backslash: " << filename.c_str() << "\n";
-		return NULL;
+		return ArchiveFilePtr();
 	}
 	
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-		ArchiveFile* file = i->archive->openFile(filename.c_str());
+		ArchiveFilePtr file = i->archive->openFile(filename);
 		if (file != NULL) {
 			return file;
 		}
 	}
-
-	return NULL;
+	
+	// not found
+	return ArchiveFilePtr();
 }
 
 ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename) {
@@ -175,7 +176,7 @@ ArchiveTextFile* Quake3FileSystem::openTextFile(const std::string& filename) {
 std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffer) {
 	std::string fixedFilename(os::standardPathWithSlash(filename));
 
-	ArchiveFile* file = openFile(fixedFilename);
+	ArchiveFilePtr file = openFile(fixedFilename);
 
 	if (file != NULL) {
 		// Allocate one byte more for the trailing zero
@@ -189,7 +190,6 @@ std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffe
 			file->size()
 		);
 		
-		file->release();
 		return length;
 	}
 
