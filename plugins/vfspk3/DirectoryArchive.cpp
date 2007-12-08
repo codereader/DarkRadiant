@@ -42,6 +42,8 @@ bool DirectoryArchive::containsFile(const char* name) {
 	return file_readable(path.c_str());
 }
 
+#include <iostream>
+
 void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
 	std::vector<Directory*> dirs;
 	UnixPath path(_root);
@@ -52,17 +54,23 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		const char* name = directory_read_and_increment(dirs.back());
 
 		if (name == 0) {
+			// Finished traversing this directory
 			directory_close(dirs.back());
 			dirs.pop_back();
 			path.pop();
+			continue;
 		}
-		else if (!string_equal(name, ".") && !string_equal(name, "..")) {
+		
+		// Non-NULL filename
+		std::string filename(name);
+		if (filename != "." && filename != "..") {
+			// Assemble the full filename
 			path.push_filename(name);
 
 			bool is_directory = file_is_directory(path.c_str());
 
 			if (!is_directory) {
-				visitor.file(path_make_relative(path.c_str(), _root.c_str()));
+				visitor.file(os::getRelativePath(path, _root));
 			}
 
 			path.pop();
