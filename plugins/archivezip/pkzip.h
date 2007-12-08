@@ -29,6 +29,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class zip_magic
 {
 public:
+	zip_magic()
+	{}
+	
+	zip_magic(char c0, char c1, char c2, char c3) {
+		m_value[0] = c0;
+		m_value[1] = c1;
+		m_value[2] = c2;
+		m_value[3] = c3;
+	}
+	
   bool operator==(const zip_magic& other) const
   {
     return m_value[0] == other.m_value[0]
@@ -72,7 +82,7 @@ inline void istream_read_zip_dostime(InputStream& istream, zip_dostime& dostime)
   dostime.date = istream_read_int16_le(istream); 
 }
 
-const zip_magic zip_file_header_magic = { 'P', 'K', 0x03, 0x04, };
+const zip_magic zip_file_header_magic('P', 'K', 0x03, 0x04);
 
 /* A. Local file header */
 struct zip_file_header
@@ -111,7 +121,7 @@ inline void istream_read_zip_file_header(SeekableInputStream& istream, zip_file_
  * and immediately follows the last byte of compressed data. It is only used if
  * the output media of the compressor was not seekable, eg. standard output.
  */
-const zip_magic zip_file_trailer_magic = { 'P', 'K', 0x07, 0x08, };
+const zip_magic zip_file_trailer_magic('P', 'K', 0x07, 0x08);
 
 struct zip_file_trailer
 {
@@ -138,7 +148,7 @@ inline void istream_read_zip_file_trailer(InputStream& istream, zip_file_trailer
  * - a single entry including filename, extras and comment may not exceed 64k.
  */
 
-const zip_magic zip_root_dirent_magic = { 'P', 'K', 0x01, 0x02, };
+const zip_magic zip_root_dirent_magic('P', 'K', 0x01, 0x02);
 
 struct zip_root_dirent
 {
@@ -185,7 +195,7 @@ inline void istream_read_zip_root_dirent(SeekableInputStream& istream, zip_root_
 }
 
   /* end of central dir record */
-const zip_magic zip_disk_trailer_magic = { 'P', 'K', 0x05, 0x06, };
+const zip_magic zip_disk_trailer_magic('P', 'K', 0x05, 0x06);
 const unsigned int disk_trailer_length = 22;
 struct zip_disk_trailer
 {
