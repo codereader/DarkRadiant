@@ -48,7 +48,7 @@ class Quake3FileSystem :
 	
 	struct ArchiveDescriptor {
 		std::string name;
-		Archive* archive;
+		ArchivePtr archive;
 		bool is_pakfile;
 	};
 	

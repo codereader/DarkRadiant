@@ -33,7 +33,7 @@ class ArchivePK4API :
 {
 public:
 	// greebo: Returns the opened file or NULL if failed.
-	virtual Archive* openArchive(const std::string& name) {
+	virtual ArchivePtr openArchive(const std::string& name) {
 		return OpenArchive(name.c_str());
 	}
 		
