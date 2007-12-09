@@ -2,6 +2,7 @@
 #define ECLASSPROPERTYEDITOR_H_
 
 #include "ComboBoxPropertyEditor.h"
+#include "gtkutil/event/SingleIdleCallback.h"
 
 namespace ui {
 
@@ -10,8 +11,15 @@ namespace ui {
  * the available entity class names.
  */
 class EClassPropertyEditor:
-    public ComboBoxPropertyEditor
+    public ComboBoxPropertyEditor,
+    public gtkutil::SingleIdleCallback
 {
+protected:
+	
+    // Populate the combo box by traversing the available EClasses, during GTK
+	// idle period
+    void onGtkIdle();
+    
 public:
     // Construct a EntityPropertyEditor with an entity and key to edit
 	EClassPropertyEditor(Entity* entity, const std::string& name);
@@ -28,9 +36,6 @@ public:
         return PropertyEditorPtr(new EClassPropertyEditor(entity, name));
     }
 
-private:
-    // Populate the combo box by traversing the available EClasses
-    void populateComboBox();
 };
 
 } // namespace ui
