@@ -5,6 +5,7 @@
 
 #include "iselection.h"
 #include "gtkutil/idledraw.h"
+#include "gtkutil/menu/PopupMenu.h"
 
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkwidget.h>
@@ -61,10 +62,11 @@ private:
 	GtkWidget* _keyEntry;
 	GtkWidget* _valEntry;
 
-	// Context menu main widget and items
-	GtkWidget* _contextMenu;
-	GtkWidget* _addKeyMenuItem;
-	GtkWidget* _delKeyMenuItem;
+	// Context menu
+	gtkutil::PopupMenu _contextMenu;
+	friend class AddKeyFunctor;
+	friend class DelKeyFunctor;
+	friend class DelKeyTest;
 	
 	// Currently displayed PropertyEditor
 	PropertyEditorPtr _currentPropertyEditor;
@@ -99,9 +101,7 @@ private:
 	static void _onSetProperty(GtkWidget*, EntityInspector*);    
 
 	static bool _onPopupMenu(GtkWidget*, GdkEventButton*, EntityInspector*);
-	static void _onDeleteProperty(GtkMenuItem*, EntityInspector*);
-	static void _onAddProperty(GtkMenuItem*, EntityInspector*);
-
+	
 	static void _onToggleShowInherited(GtkToggleButton*, EntityInspector*);
 
     // Routines to populate the TreeStore with the keyvals attached to the

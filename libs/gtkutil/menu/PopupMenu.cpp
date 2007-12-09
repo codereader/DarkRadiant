@@ -6,17 +6,16 @@ namespace gtkutil {
 // Default constructor
 PopupMenu::PopupMenu()
 : _menu(gtk_menu_new())
-{ }
+{
+	// Take ownership of the menu
+	g_object_ref_sink(_menu);
+}
 
 // Add a named menu item
-void PopupMenu::addItem(GdkPixbuf* icon, 
-			 			const std::string& text,
+void PopupMenu::addItem(GtkWidget* widget,
 			 			Callback callback,
 			 			SensitivityTest test)
 {
-	// Pack the icon and text into a widget
-	GtkWidget* widget = IconTextMenuItem(icon, text);
-	
 	// Create a MenuItem and add it to the list
 	MenuItem item(widget, callback, test);
 	_menuItems.push_back(item);

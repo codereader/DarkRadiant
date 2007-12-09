@@ -75,23 +75,81 @@ EntityInspector::EntityInspector()
 	GlobalSelectionSystem().addObserver(this);
 }
 
-// Create the context menu
+/* Popup menu functors (see gtkutil::PopupMenu) */
 
+// Add property functor
+class AddKeyFunctor {
+	EntityInspector* self;
+public:
+	AddKeyFunctor(EntityInspector* s)
+	: self(s)
+	{ }
+	
+	void operator() () 
+	{
+		// Obtain the entity class to provide to the AddPropertyDialog
+		IEntityClassConstPtr ec = self->_selectedEntity->getEntityClass();
+		
+		// Choose a property, and add to entity with a default value
+		std::string property = AddPropertyDialog::chooseProperty(ec);
+	    if (!property.empty()) {
+	        
+	        // Save last key, so that it will be automatically selected
+	        self->_lastKey = property;
+	        
+	        // Add the keyvalue on the entity (triggering the refresh)
+			self->_selectedEntity->setKeyValue(property, "-");
+	    }
+	}
+};
+
+// Delete property functor
+class DelKeyFunctor {
+	EntityInspector* self;
+public:
+	DelKeyFunctor(EntityInspector* s)
+	: self(s)
+	{ }
+	
+	void operator() () {
+		std::string property = self->getListSelection(PROPERTY_NAME_COLUMN);
+		if (!property.empty())
+			self->_selectedEntity->setKeyValue(property, "");
+	}
+};
+
+// Delete property sensitivity callback
+class DelKeyTest {
+	EntityInspector* self;
+public:
+	DelKeyTest(EntityInspector* s)
+	: self(s)
+	{ }
+	
+	bool operator() () {
+		// Make sure the Delete item is only available for explicit 
+		// (non-inherited) properties
+		if (self->getListSelection(INHERITED_FLAG_COLUMN) != "1")
+			return true;
+		else
+			return false;
+	}
+};
+
+// Create the context menu
 void EntityInspector::createContextMenu() {
-	// Menu widget
-	_contextMenu = gtk_menu_new();
-	
+
 	// Menu items
-	_addKeyMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property...");
-	_delKeyMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property");
-	
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), _addKeyMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu), _delKeyMenuItem);
-	
-	g_signal_connect(G_OBJECT(_delKeyMenuItem), "activate", G_CALLBACK(_onDeleteProperty), this);
-	g_signal_connect(G_OBJECT(_addKeyMenuItem), "activate", G_CALLBACK(_onAddProperty), this);
-	
-	gtk_widget_show_all(_contextMenu); // won't actually display until popped up
+	GtkWidget* addKey = gtkutil::StockIconMenuItem(
+		GTK_STOCK_ADD, "Add property..."
+	);
+	GtkWidget* delKey = gtkutil::StockIconMenuItem(
+		GTK_STOCK_DELETE, "Delete property"
+	);
+
+	// Add the menu items to the PopupMenu
+	_contextMenu.addItem(addKey, AddKeyFunctor(this));
+	_contextMenu.addItem(delKey, DelKeyFunctor(this), DelKeyTest(this));
 }
 
 // Return the singleton EntityInspector instance, creating it if it is not yet
@@ -364,48 +422,10 @@ bool EntityInspector::_onPopupMenu(
 {
 	// Popup on right-click events only
 	if (ev->button == 3) {
-
-		// Make sure the Delete item is only available for explicit (non-inherited)
-		// properties
-		if (self->getListSelection(INHERITED_FLAG_COLUMN) != "1")
-			gtk_widget_set_sensitive(self->_delKeyMenuItem, TRUE);
-		else
-			gtk_widget_set_sensitive(self->_delKeyMenuItem, FALSE);
-
-		// Display the menu
-		gtk_menu_popup(GTK_MENU(self->_contextMenu), NULL, NULL, NULL, NULL, 
-					   1, GDK_CURRENT_TIME);
+		self->_contextMenu.show();
 	}
 
 	return FALSE;
-}
-
-// Callback for Delete property command
-void EntityInspector::_onDeleteProperty(GtkMenuItem* item, 
-										EntityInspector* self) 
-{
-	std::string property = self->getListSelection(PROPERTY_NAME_COLUMN);
-	if (!property.empty())
-		self->_selectedEntity->setKeyValue(property, "");
-}
-
-// Callback for Add Property command
-void EntityInspector::_onAddProperty(GtkMenuItem* item, 
-									 EntityInspector* self) 
-{
-	// Obtain the entity class to provide to the AddPropertyDialog
-	IEntityClassConstPtr ec = self->_selectedEntity->getEntityClass();
-	
-	// Choose a property, and add to entity with a default value
-	std::string property = AddPropertyDialog::chooseProperty(ec);
-    if (!property.empty()) {
-        
-        // Save last key, so that it will be automatically selected
-        self->_lastKey = property;
-        
-        // Add the keyvalue on the entity (triggering the refresh)
-		self->_selectedEntity->setKeyValue(property, "-");
-    }
 }
 
 void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) {

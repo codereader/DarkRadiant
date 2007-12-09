@@ -3,7 +3,6 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkmenuitem.h>
-#include <gdk/gdkpixbuf.h>
 #include <boost/function.hpp>
 #include <list>
 
@@ -76,13 +75,18 @@ public:
 	PopupMenu();
 	
 	/**
-	 * Add an item to this menu using a custom icon, name and callback function.
+	 * Destructor.
+	 */
+	~PopupMenu() {
+		g_object_unref(_menu);
+	}
+	
+	/**
+	 * Add an item to this menu using a widget and callback function.
 	 * 
-	 * @param icon
-	 * Icon image to use.
-	 * 
-	 * @param text
-	 * The text to be displayed in the menu item.
+	 * @param widget
+	 * The GtkWidget containing the displayed menu elements (i.e. icon and
+	 * text).
 	 * 
 	 * @param callback
 	 * A callback function to be invoked when this menu item is activated.
@@ -91,8 +95,7 @@ public:
 	 * SensitivityTest function object to determine whether this menu item is
 	 * currently visible.
 	 */
-	void addItem(GdkPixbuf* icon, 
-				 const std::string& text,
+	void addItem(GtkWidget* widget,
 				 Callback callback,
 				 SensitivityTest test = SensitivityTest(_alwaysVisible));
 	
