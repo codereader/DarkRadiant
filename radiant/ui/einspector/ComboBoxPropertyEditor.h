@@ -44,8 +44,8 @@ protected:
 
 private:
 	
-	// GTK Callback for combo box selection changes
-    static void onSelectionChange(GtkComboBox* widget, ComboBoxPropertyEditor* self);
+	// GTK Callback for Apply button
+    static void onApply(GtkWidget* widget, ComboBoxPropertyEditor* self);
 };
 
 } // namespace ui
