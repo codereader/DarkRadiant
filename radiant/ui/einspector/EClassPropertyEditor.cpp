@@ -15,9 +15,13 @@ EClassPropertyEditor::EClassPropertyEditor() :
 { }
 
 // Constructor. Create the GTK widgets here
-EClassPropertyEditor::EClassPropertyEditor(Entity* entity, const std::string& name) :
-	ComboBoxPropertyEditor(entity, name)
-{ }
+EClassPropertyEditor::EClassPropertyEditor(Entity* entity, 
+										   const std::string& name) 
+: ComboBoxPropertyEditor(entity, name)
+{
+	// Enable the GTK idle callback to populate the list
+	enableIdleCallback();
+}
 
 namespace {
 	
