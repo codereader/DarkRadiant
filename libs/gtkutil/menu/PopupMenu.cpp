@@ -4,11 +4,18 @@
 namespace gtkutil {
 
 // Default constructor
-PopupMenu::PopupMenu()
+PopupMenu::PopupMenu(GtkWidget* widget)
 : _menu(gtk_menu_new())
 {
 	// Take ownership of the menu
 	g_object_ref_sink(_menu);
+	
+	// If widget is non-NULL, connect to button-release-event
+	if (widget != NULL) {
+		g_signal_connect(
+			G_OBJECT(widget), "button-release-event", G_CALLBACK(_onClick), this
+		);
+	}
 }
 
 // Add a named menu item
@@ -52,6 +59,14 @@ void PopupMenu::show()
 	gtk_menu_popup(
 		GTK_MENU(_menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME
 	);
+}
+
+// Mouse click callback
+gboolean PopupMenu::_onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self) {
+	if (e->button == 3) { // right-click only
+		self->show();
+	}
+	return FALSE;
 }
 
 }
