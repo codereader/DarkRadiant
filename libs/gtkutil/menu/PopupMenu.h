@@ -67,12 +67,21 @@ private:
 		menuItem->callback();
 	}
 	
+	// Mouse click callback (if required)
+	static gboolean _onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self);
+	
 public:
 	
 	/**
 	 * Default constructor.
+	 * 
+	 * @param widget
+	 * Optional widget for which this menu should be a right-click popup menu.
+	 * If not set to NULL, the PopupMenu will connect to the 
+	 * button-release-event on this widget and automatically display itself
+	 * when a right-click is detected.
 	 */
-	PopupMenu();
+	PopupMenu(GtkWidget* widget = NULL);
 	
 	/**
 	 * Destructor.

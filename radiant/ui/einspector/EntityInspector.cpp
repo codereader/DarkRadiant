@@ -46,7 +46,15 @@ namespace {
 // Constructor creates UI components for the EntityInspector dialog
 
 EntityInspector::EntityInspector()
-: _idleDraw(MemberCaller<EntityInspector, &EntityInspector::callbackRedraw>(*this)), // Set the IdleDraw
+: _listStore(gtk_list_store_new(N_COLUMNS, 
+	    						G_TYPE_STRING, // property
+	    						G_TYPE_STRING, // value
+	    						G_TYPE_STRING, // text colour
+	    						GDK_TYPE_PIXBUF, // value icon
+	    						G_TYPE_STRING)),
+  _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore))),
+  _contextMenu(gtkutil::PopupMenu(_treeView)),
+  _idleDraw(MemberCaller<EntityInspector, &EntityInspector::callbackRedraw>(*this)), // Set the IdleDraw
   _showInherited(false)
 {
     _widget = gtk_vbox_new(FALSE, 0);
@@ -183,19 +191,6 @@ GtkWidget* EntityInspector::createDialogPane() {
 GtkWidget* EntityInspector::createTreeViewPane() {
     
     GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
-
-    // Initialise the instance TreeStore
-    _listStore = gtk_list_store_new(N_COLUMNS, 
-    							    G_TYPE_STRING, // property
-    							    G_TYPE_STRING, // value
-                                    G_TYPE_STRING, // text colour
-    							    GDK_TYPE_PIXBUF, // value icon
-    							    G_TYPE_STRING); // inherited flag
-    
-    // Create the TreeView widget and link it to the model
-    _treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
-	g_signal_connect(G_OBJECT(_treeView), "button-release-event", 
-					 G_CALLBACK(_onPopupMenu), this);
 
     // Create the Property column
     GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
@@ -415,17 +410,6 @@ void EntityInspector::_onEntryActivate(GtkWidget* w, EntityInspector* self) {
 	// Set property and move back to key entry
 	self->setPropertyFromEntries();
 	gtk_widget_grab_focus(self->_keyEntry);
-}
-
-bool EntityInspector::_onPopupMenu(
-	GtkWidget* w, GdkEventButton* ev, EntityInspector* self) 
-{
-	// Popup on right-click events only
-	if (ev->button == 3) {
-		self->_contextMenu.show();
-	}
-
-	return FALSE;
 }
 
 void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) {

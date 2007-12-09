@@ -96,12 +96,8 @@ private:
     /* GTK CALLBACKS */
 
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
-
 	static void _onEntryActivate(GtkWidget*, EntityInspector*);
 	static void _onSetProperty(GtkWidget*, EntityInspector*);    
-
-	static bool _onPopupMenu(GtkWidget*, GdkEventButton*, EntityInspector*);
-	
 	static void _onToggleShowInherited(GtkToggleButton*, EntityInspector*);
 
     // Routines to populate the TreeStore with the keyvals attached to the
