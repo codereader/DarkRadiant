@@ -79,6 +79,7 @@ gtkutil_src = '\
   MenuItemAccelerator.cpp\
   Timer.cpp\
   WindowPosition.cpp\
+  menu/PopupMenu.cpp\
 '
 
 gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list('libs/gtkutil', gtkutil_src))
