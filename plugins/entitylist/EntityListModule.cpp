@@ -29,10 +29,7 @@ const StringSet& EntityListModule::getDependencies() const {
 	static StringSet _dependencies;
 	
 	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_RADIANT);
 	}
 	
 	return _dependencies;
