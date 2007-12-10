@@ -91,7 +91,6 @@ public:
 		static StringSet _dependencies;
 
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_RADIANT);
 			_dependencies.insert(MODULE_XMLREGISTRY);
 		}
 
