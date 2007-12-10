@@ -145,13 +145,8 @@ public:
 
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-			_dependencies.insert(MODULE_OPENGL);
-			_dependencies.insert(MODULE_UNDOSYSTEM);
-			_dependencies.insert(MODULE_SCENEGRAPH);
 			_dependencies.insert(MODULE_SHADERCACHE);
-			_dependencies.insert(MODULE_SELECTIONSYSTEM);
 			_dependencies.insert(MODULE_FILETYPES);
-			_dependencies.insert(MODULE_FILTERSYSTEM);
 		}
 
 		return _dependencies;
