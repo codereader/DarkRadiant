@@ -16,8 +16,7 @@
 	}
 
 class GridManager :
-	public IGridManager,
-	public RegistryKeyObserver
+	public IGridManager
 {
 public:
 	// RegisterableModule implementation
@@ -30,7 +29,6 @@ public:
 		static StringSet _dependencies;
 
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_RADIANT);
 			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
@@ -45,20 +43,19 @@ public:
 		populateGridItems();
 		registerCommands();
 		
-		// Connect self to the according registry keys
-		GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_GRID_SIZE);
+		constructPreferences();
 		
 		// Load the default value from the registry
-		keyChanged();
+		loadDefaultValue();
 		
 		// Update the Toggle item status
 		gridChanged();
 	}
 
 private:
-	typedef std::map<const std::string, GridItem> GridItemMap;
+	typedef std::list< std::pair<const std::string, GridItem> > GridItems;
 	
-	GridItemMap _gridItems;
+	GridItems _gridItems;
 	
 	// The currently active grid size
 	GridSize _activeGridSize;
@@ -70,43 +67,46 @@ public:
 		_activeGridSize(GRID_8) 
 	{}
 	
-	void keyChanged() {
+	void loadDefaultValue() {
 		// Get the registry value
 		int registryValue = GlobalRegistry().getInt(RKEY_DEFAULT_GRID_SIZE);
 		
-		// Constrain the values to the allowed ones 
-		if (registryValue < GRID_0125) {
-			registryValue = static_cast<int>(GRID_0125);
+		// Map the [0..N] values to [GRID_0125...GRID_256]
+		switch (registryValue) {
+			case 0: _activeGridSize = GRID_0125; break;
+			case 1: _activeGridSize = GRID_025; break;
+			case 2: _activeGridSize = GRID_05; break;
+			case 3: _activeGridSize = GRID_1; break;
+			case 4: _activeGridSize = GRID_2; break;
+			case 5: _activeGridSize = GRID_4; break;
+			case 6: _activeGridSize = GRID_8; break;
+			case 7: _activeGridSize = GRID_16; break;
+			case 8: _activeGridSize = GRID_32; break;
+			case 9: _activeGridSize = GRID_64; break;
+			case 10: _activeGridSize = GRID_128; break;
+			case 11: _activeGridSize = GRID_256; break;
+			default: _activeGridSize = GRID_8; break;
 		}
-		
-		if (registryValue > GRID_256) {
-			registryValue = static_cast<int>(GRID_256);
-		}
-		
-		_activeGridSize = static_cast<GridSize>(registryValue);
-		
-		// Notify the world about the grid change
-		gridChangeNotify();
 	}
 	
 	void populateGridItems() {
 		// Populate the GridItem map
-		_gridItems.insert(GridItemMap::value_type("0.125", GridItem(GRID_0125, *this)));
-		_gridItems.insert(GridItemMap::value_type("0.25", GridItem(GRID_025, *this)));
-		_gridItems.insert(GridItemMap::value_type("0.5", GridItem(GRID_05, *this)));
-		_gridItems.insert(GridItemMap::value_type("1", GridItem(GRID_1, *this)));
-		_gridItems.insert(GridItemMap::value_type("2", GridItem(GRID_2, *this)));
-		_gridItems.insert(GridItemMap::value_type("4", GridItem(GRID_4, *this)));
-		_gridItems.insert(GridItemMap::value_type("8", GridItem(GRID_8, *this)));
-		_gridItems.insert(GridItemMap::value_type("16", GridItem(GRID_16, *this)));
-		_gridItems.insert(GridItemMap::value_type("32", GridItem(GRID_32, *this)));
-		_gridItems.insert(GridItemMap::value_type("64", GridItem(GRID_64, *this)));
-		_gridItems.insert(GridItemMap::value_type("128", GridItem(GRID_128, *this)));
-		_gridItems.insert(GridItemMap::value_type("256", GridItem(GRID_256, *this)));
+		_gridItems.push_back(GridItems::value_type("0.125", GridItem(GRID_0125, *this)));
+		_gridItems.push_back(GridItems::value_type("0.25", GridItem(GRID_025, *this)));
+		_gridItems.push_back(GridItems::value_type("0.5", GridItem(GRID_05, *this)));
+		_gridItems.push_back(GridItems::value_type("1", GridItem(GRID_1, *this)));
+		_gridItems.push_back(GridItems::value_type("2", GridItem(GRID_2, *this)));
+		_gridItems.push_back(GridItems::value_type("4", GridItem(GRID_4, *this)));
+		_gridItems.push_back(GridItems::value_type("8", GridItem(GRID_8, *this)));
+		_gridItems.push_back(GridItems::value_type("16", GridItem(GRID_16, *this)));
+		_gridItems.push_back(GridItems::value_type("32", GridItem(GRID_32, *this)));
+		_gridItems.push_back(GridItems::value_type("64", GridItem(GRID_64, *this)));
+		_gridItems.push_back(GridItems::value_type("128", GridItem(GRID_128, *this)));
+		_gridItems.push_back(GridItems::value_type("256", GridItem(GRID_256, *this)));
 	}
 	
 	void registerCommands() {
-		for (GridItemMap::iterator i = _gridItems.begin(); i != _gridItems.end(); i++) {
+		for (GridItems::iterator i = _gridItems.begin(); i != _gridItems.end(); i++) {
 			std::string toggleName = "SetGrid";
 			toggleName += i->first; // Makes "SetGrid" to "SetGrid64", for example
 			GridItem& gridItem = i->second;
@@ -121,7 +121,7 @@ public:
 	ComboBoxValueList getGridList() {
 		ComboBoxValueList returnValue;
 		
-		for (GridItemMap::iterator i = _gridItems.begin(); i != _gridItems.end(); i++) {
+		for (GridItems::iterator i = _gridItems.begin(); i != _gridItems.end(); i++) {
 			returnValue.push_back(i->first);
 		}
 		
@@ -129,9 +129,9 @@ public:
 	}
 	
 	void constructPreferences() {
-		/*PreferencesPage* page(group.createPage("Grid", "Default Grid Settings"));
-	
-		page->appendCombo("Default Grid Size", RKEY_DEFAULT_GRID_SIZE, getGridList());*/
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Grid");
+		
+		page->appendCombo("Default Grid Size", RKEY_DEFAULT_GRID_SIZE, getGridList());
 	}
 	
 	void addGridChangeCallback(const SignalHandler& handler) {
@@ -174,7 +174,7 @@ public:
 	}
 	
 	void gridChanged() {
-		for (GridItemMap::iterator i = _gridItems.begin(); i != _gridItems.end(); i++) {
+		for (GridItems::iterator i = _gridItems.begin(); i != _gridItems.end(); i++) {
 			std::string toggleName = "SetGrid";
 			toggleName += i->first; // Makes "SetGrid" to "SetGrid64", for example
 			GridItem& gridItem = i->second;
