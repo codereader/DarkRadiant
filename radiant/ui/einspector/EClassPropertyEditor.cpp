@@ -20,7 +20,7 @@ EClassPropertyEditor::EClassPropertyEditor(Entity* entity,
 : ComboBoxPropertyEditor(entity, name)
 {
 	// Enable the GTK idle callback to populate the list
-	enableIdleCallback();
+	requestIdleCallback();
 }
 
 namespace {

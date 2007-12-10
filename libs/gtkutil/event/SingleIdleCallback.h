@@ -12,9 +12,9 @@ namespace gtkutil
  * Base class for classes which wish to receive a single callback when GTK is
  * idle, to perform processing that does not block the GUI. 
  * 
- * A class which derives from this must invoke the enableIdleCallback() method
- * when it is ready to receive an idle callback. Subsequently, it will have its 
- * onGtkIdle() method invoked once during the GTK idle period. 
+ * A class which derives from this must invoke the requestIdleCallback() method
+ * whenever it is ready to receive an idle callback. Subsequently, it will have 
+ * its onGtkIdle() method invoked once during the GTK idle period. 
  */
 class SingleIdleCallback
 {
@@ -28,7 +28,6 @@ private:
 	static gboolean _onIdle(gpointer self) {
 		SingleIdleCallback* cb = reinterpret_cast<SingleIdleCallback*>(self);
 		cb->onGtkIdle();
-		cb->deregisterCallback();
 		return FALSE; // automatically deregister callback 
 	}
 	
@@ -40,16 +39,16 @@ private:
 protected:
 	
 	/**
-	 * Enable the callback. Until this method is invoked, no GTK idle callback
-	 * will take place.
+	 * Request an idle callback. The onGtkIdle() method will be invoked during
+	 * the next GTK idle period.
 	 */
-	void enableIdleCallback() {
+	void requestIdleCallback() {
 		_id = g_idle_add(_onIdle, this);
 	}
 	
 	/**
 	 * Implementing method for the idle callback. Code in this method will
-	 * be executed once when GTK is idle.
+	 * be executed only when GTK is idle.
 	 */
 	virtual void onGtkIdle() { }
 	
