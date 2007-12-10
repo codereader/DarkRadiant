@@ -49,7 +49,7 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 	{
 		// Initialise the XMLFilter object
 		std::string filterName = iter->getAttributeValue("name");
-		filters::XMLFilter filter(filterName);
+		XMLFilter filter(filterName);
 
 		// Get all of the filterCriterion children of this node
 		xml::NodeList critNodes = iter->getNamedChildren("filterCriterion");
@@ -72,7 +72,7 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 		// Add the according toggle command to the eventmanager
 		IEventPtr fEvent = GlobalEventManager().addToggle(
 			filter.getEventName(),
-			MemberCaller<filters::XMLFilter, &filters::XMLFilter::toggle>(inserted) 
+			MemberCaller<XMLFilter, &XMLFilter::toggle>(inserted) 
 		);
 		
 		// If this filter is in our active set, enable it
@@ -206,11 +206,9 @@ const StringSet& BasicFilterSystem::getDependencies() const {
 	static StringSet _dependencies;
 
 	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_RADIANT);
-		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_GAMEMANAGER);
+		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
 
 	return _dependencies;
