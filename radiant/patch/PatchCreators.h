@@ -81,13 +81,8 @@ public:
 		static StringSet _dependencies;
 		
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_RADIANT);
-			_dependencies.insert(MODULE_SCENEGRAPH);
 			_dependencies.insert(MODULE_SHADERCACHE);
-			_dependencies.insert(MODULE_SELECTIONSYSTEM);
-			_dependencies.insert(MODULE_OPENGL);
-			_dependencies.insert(MODULE_UNDOSYSTEM);
-			_dependencies.insert(MODULE_FILTERSYSTEM);
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		}
 		
 		return _dependencies;
@@ -134,13 +129,8 @@ public:
 		static StringSet _dependencies;
 		
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_RADIANT);
-			_dependencies.insert(MODULE_SCENEGRAPH);
 			_dependencies.insert(MODULE_SHADERCACHE);
-			_dependencies.insert(MODULE_SELECTIONSYSTEM);
-			_dependencies.insert(MODULE_OPENGL);
-			_dependencies.insert(MODULE_UNDOSYSTEM);
-			_dependencies.insert(MODULE_FILTERSYSTEM);
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		}
 		
 		return _dependencies;
