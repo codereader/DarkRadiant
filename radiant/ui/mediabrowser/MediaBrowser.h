@@ -30,10 +30,6 @@ class MediaBrowser
 	
 	// Context menu
 	gtkutil::PopupMenu _popupMenu;
-	friend class LoadTexFunctor;
-	friend class LoadTexTest;
-	friend class ApplyToSelectionFunctor;
-	friend class ApplyToSelectionTest;
 	
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo _preview;
@@ -43,6 +39,12 @@ class MediaBrowser
 	
 private:
 
+	/* gtkutil::PopupMenu callbacks */
+	bool _testApplyToSel();
+	bool _testLoadInTexView();
+	void _onApplyToSel();
+	void _onLoadInTexView();
+	
 	/* GTK CALLBACKS */
 	
 	static gboolean _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
