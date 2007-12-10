@@ -216,7 +216,6 @@ const StringSet& Doom3ShaderSystem::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 	}
