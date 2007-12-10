@@ -177,33 +177,15 @@ const std::string& RadiantCoreAPI::getName() const {
 const StringSet& RadiantCoreAPI::getDependencies() const {
 	static StringSet _dependencies;
 	
-	// greebo: TODO: This list can probably be made smaller,
-	// not all modules are necessary during initialisation
 	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_ENTITYCREATOR);
-		_dependencies.insert(MODULE_SHADERSYSTEM);
-		_dependencies.insert(MODULE_BRUSHCREATOR);
-		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_SHADERCACHE);
 		_dependencies.insert(MODULE_FILETYPES);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
-		_dependencies.insert(MODULE_REFERENCECACHE);
-		_dependencies.insert(MODULE_OPENGL);
+		_dependencies.insert(MODULE_SCENEGRAPH);
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_ECLASSMANAGER);
-		_dependencies.insert(MODULE_UNDOSYSTEM);
-		_dependencies.insert(MODULE_NAMESPACE);
-		_dependencies.insert(MODULE_CLIPPER);
-		_dependencies.insert(MODULE_GRID);
-		_dependencies.insert(MODULE_SOUNDMANAGER);
-		_dependencies.insert(MODULE_PARTICLESMANAGER);
-		_dependencies.insert(MODULE_GAMEMANAGER);
-		_dependencies.insert("Doom3MapLoader");
-		_dependencies.insert("ImageLoaderTGA");
-		_dependencies.insert("ImageLoaderJPG");
-		_dependencies.insert("ImageLoaderDDS");
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
+		_dependencies.insert(MODULE_SHADERCACHE);
 	}
 	
 	return _dependencies;
