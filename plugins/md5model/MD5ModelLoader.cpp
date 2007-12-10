@@ -1,6 +1,7 @@
 #include "MD5ModelLoader.h"
 
 #include "imodule.h"
+#include "ishaders.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "archivelib.h"
@@ -71,6 +72,7 @@ const StringSet& MD5ModelLoader::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_FILETYPES);
+		_dependencies.insert(MODULE_SHADERCACHE);
 	}
 
 	return _dependencies;
