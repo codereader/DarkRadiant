@@ -4,8 +4,8 @@
 #include "PropertyEditor.h"
 
 #include "iselection.h"
-#include "gtkutil/idledraw.h"
 #include "gtkutil/menu/PopupMenu.h"
+#include "gtkutil/event/SingleIdleCallback.h"
 
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkwidget.h>
@@ -41,10 +41,9 @@ namespace {
  */
 
 class EntityInspector :
- 	public SelectionSystem::Observer
+ 	public SelectionSystem::Observer,
+ 	public gtkutil::SingleIdleCallback
 {
-private:
-
 	// Currently selected entity
 	Entity* _selectedEntity;
 
@@ -68,10 +67,6 @@ private:
 	// Currently displayed PropertyEditor
 	PropertyEditorPtr _currentPropertyEditor;
 
-    // GtkUtil IdleDraw class. This allows redraw calls to be scheduled for
-    // when GTK is idle.
-    IdleDraw _idleDraw;
-    
     // Whether to show inherited properties or not
     bool _showInherited;
     
@@ -120,6 +115,11 @@ private:
 	// Static map of property names to PropertyParms objects
 	const PropertyParmMap& getPropertyMap();
 
+protected:
+	
+	// GTK idle callback, used for refreshing display
+	void onGtkIdle();
+
 public:
 
     // Constructor
@@ -131,13 +131,6 @@ public:
     // Get the Gtk Widget for display in the main application
     GtkWidget* getWidget();
 
-    // Inform the IdleDraw to invoke a redraw when idle
-    void queueDraw();
-    
-    // Redraw the GUI elements. Called by the IdleDraw object when GTK is idle
-    // and a queueDraw request has been passed.
-    void callbackRedraw();
-    
 	// Callback used by the EntityCreator when a key value changes on an entity
     static void keyValueChanged();
 
