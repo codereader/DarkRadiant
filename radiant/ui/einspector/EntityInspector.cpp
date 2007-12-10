@@ -19,6 +19,8 @@
 
 #include <gtk/gtk.h>
 
+#include <boost/bind.hpp>
+
 namespace ui {
 
 /* CONSTANTS */
@@ -83,81 +85,17 @@ EntityInspector::EntityInspector()
 	GlobalSelectionSystem().addObserver(this);
 }
 
-/* Popup menu functors (see gtkutil::PopupMenu) */
-
-// Add property functor
-class AddKeyFunctor {
-	EntityInspector* self;
-public:
-	AddKeyFunctor(EntityInspector* s)
-	: self(s)
-	{ }
-	
-	void operator() () 
-	{
-		// Obtain the entity class to provide to the AddPropertyDialog
-		IEntityClassConstPtr ec = self->_selectedEntity->getEntityClass();
-		
-		// Choose a property, and add to entity with a default value
-		std::string property = AddPropertyDialog::chooseProperty(ec);
-	    if (!property.empty()) {
-	        
-	        // Save last key, so that it will be automatically selected
-	        self->_lastKey = property;
-	        
-	        // Add the keyvalue on the entity (triggering the refresh)
-			self->_selectedEntity->setKeyValue(property, "-");
-	    }
-	}
-};
-
-// Delete property functor
-class DelKeyFunctor {
-	EntityInspector* self;
-public:
-	DelKeyFunctor(EntityInspector* s)
-	: self(s)
-	{ }
-	
-	void operator() () {
-		std::string property = self->getListSelection(PROPERTY_NAME_COLUMN);
-		if (!property.empty())
-			self->_selectedEntity->setKeyValue(property, "");
-	}
-};
-
-// Delete property sensitivity callback
-class DelKeyTest {
-	EntityInspector* self;
-public:
-	DelKeyTest(EntityInspector* s)
-	: self(s)
-	{ }
-	
-	bool operator() () {
-		// Make sure the Delete item is only available for explicit 
-		// (non-inherited) properties
-		if (self->getListSelection(INHERITED_FLAG_COLUMN) != "1")
-			return true;
-		else
-			return false;
-	}
-};
-
 // Create the context menu
 void EntityInspector::createContextMenu() {
-
-	// Menu items
-	GtkWidget* addKey = gtkutil::StockIconMenuItem(
-		GTK_STOCK_ADD, "Add property..."
+	_contextMenu.addItem(
+		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property..."), 
+		boost::bind(&EntityInspector::_onAddKey, this)
 	);
-	GtkWidget* delKey = gtkutil::StockIconMenuItem(
-		GTK_STOCK_DELETE, "Delete property"
+	_contextMenu.addItem(
+		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property"), 
+		boost::bind(&EntityInspector::_onDeleteKey, this), 
+		boost::bind(&EntityInspector::_testDeleteKey, this)
 	);
-
-	// Add the menu items to the PopupMenu
-	_contextMenu.addItem(addKey, AddKeyFunctor(this));
-	_contextMenu.addItem(delKey, DelKeyFunctor(this), DelKeyTest(this));
 }
 
 // Return the singleton EntityInspector instance, creating it if it is not yet
@@ -392,6 +330,40 @@ const PropertyParmMap& EntityInspector::getPropertyMap() {
 	
 	// Return the constructed map
 	return _propMap._map;
+}
+
+/* Popup menu callbacks (see gtkutil::PopupMenu) */
+
+void EntityInspector::_onAddKey() 
+{
+	// Obtain the entity class to provide to the AddPropertyDialog
+	IEntityClassConstPtr ec = _selectedEntity->getEntityClass();
+	
+	// Choose a property, and add to entity with a default value
+	std::string property = AddPropertyDialog::chooseProperty(ec);
+    if (!property.empty()) {
+        
+        // Save last key, so that it will be automatically selected
+        _lastKey = property;
+        
+        // Add the keyvalue on the entity (triggering the refresh)
+		_selectedEntity->setKeyValue(property, "-");
+    }
+}
+
+void EntityInspector::_onDeleteKey() {
+	std::string property = getListSelection(PROPERTY_NAME_COLUMN);
+	if (!property.empty())
+		_selectedEntity->setKeyValue(property, "");
+}
+
+bool EntityInspector::_testDeleteKey() {
+	// Make sure the Delete item is only available for explicit 
+	// (non-inherited) properties
+	if (getListSelection(INHERITED_FLAG_COLUMN) != "1")
+		return true;
+	else
+		return false;
 }
 
 /* GTK CALLBACKS */

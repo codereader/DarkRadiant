@@ -64,9 +64,6 @@ private:
 
 	// Context menu
 	gtkutil::PopupMenu _contextMenu;
-	friend class AddKeyFunctor;
-	friend class DelKeyFunctor;
-	friend class DelKeyTest;
 	
 	// Currently displayed PropertyEditor
 	PropertyEditorPtr _currentPropertyEditor;
@@ -93,8 +90,12 @@ private:
 	// list store
 	std::string getListSelection(int col);
 
+	/* gtkutil::PopupMenu callbacks */
+	void _onAddKey();
+	void _onDeleteKey();
+	bool _testDeleteKey();
+	
     /* GTK CALLBACKS */
-
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
 	static void _onEntryActivate(GtkWidget*, EntityInspector*);
 	static void _onSetProperty(GtkWidget*, EntityInspector*);    
