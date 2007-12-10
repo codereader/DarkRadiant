@@ -926,9 +926,9 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
 	static StringSet _dependencies;
 	
 	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_SHADERCACHE);
-		_dependencies.insert(MODULE_OPENGL);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_GRID);
 	}
 	
