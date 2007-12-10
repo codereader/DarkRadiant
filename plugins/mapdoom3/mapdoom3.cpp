@@ -56,15 +56,12 @@ public:
 		static StringSet _dependencies;
 
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_RADIANT);
 			_dependencies.insert(MODULE_FILETYPES);
 			_dependencies.insert(MODULE_ECLASSMANAGER);
-			_dependencies.insert(MODULE_SCENEGRAPH);
 			_dependencies.insert(MODULE_BRUSHCREATOR);
 			_dependencies.insert(MODULE_PATCH + DEF2);
 			_dependencies.insert(MODULE_PATCH + DEF3);
 			_dependencies.insert(MODULE_XMLREGISTRY);
-			_dependencies.insert(MODULE_SHADERSYSTEM);
 		}
 
 		return _dependencies;
