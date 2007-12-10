@@ -23,6 +23,7 @@
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
+#include <boost/bind.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
 
@@ -52,65 +53,6 @@ namespace {
 	};
 	
 }
-
-/* Context menu functors */
-
-class LoadTexFunctor {
-	MediaBrowser* self;
-public:
-	LoadTexFunctor(MediaBrowser* s): self(s) { }
-	
-	void operator() () {
-		// Use a TextureDirectoryLoader functor to search the directory. This 
-		// may throw an exception if cancelled by user.
-		TextureDirectoryLoader loader(self->getSelectedName());
-		try {
-			GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
-		}
-		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-			// Ignore the error and return from the function normally	
-		}
-	}
-};
-
-class LoadTexTest {
-	MediaBrowser* self;
-public:
-	LoadTexTest(MediaBrowser* s): self(s) { }
-	
-	bool operator() () {
-		// "Load in textures view" requires a directory selection
-		if (self->isDirectorySelected())
-			return true;
-		else
-			return false;
-	}
-};
-
-class ApplyToSelectionFunctor {
-	MediaBrowser* self;
-public:
-	ApplyToSelectionFunctor(MediaBrowser* s): self(s) { }
-	
-	void operator() () {
-		// Pass shader name to the selection system
-		selection::algorithm::applyShaderToSelection(self->getSelectedName());
-	}
-};
-
-class ApplyToSelectionTest {
-	MediaBrowser* self;
-public:
-	ApplyToSelectionTest(MediaBrowser* s): self(s) { }
-	
-	bool operator() () {
-		// Apply to selection requires a non-directory, valid selection
-		if (!self->isDirectorySelected() && self->getSelectedName() != "")
-			return true;
-		else
-			return false;
-	}
-};
 
 // Constructor
 MediaBrowser::MediaBrowser()
@@ -167,9 +109,15 @@ MediaBrowser::MediaBrowser()
 		APPLY_TEXTURE_TEXT
 	);
 	
-	_popupMenu.addItem(loadInTex, LoadTexFunctor(this), LoadTexTest(this));
 	_popupMenu.addItem(
-		applyToSel, ApplyToSelectionFunctor(this), ApplyToSelectionTest(this)
+		loadInTex, 
+		boost::bind(&MediaBrowser::_onLoadInTexView, this), 
+		boost::bind(&MediaBrowser::_testLoadInTexView, this)
+	);
+	_popupMenu.addItem(
+		applyToSel, 
+		boost::bind(&MediaBrowser::_onApplyToSel, this), 
+		boost::bind(&MediaBrowser::_testApplyToSel, this)
 	);
 
 	// Pack in the TexturePreviewCombo widgets
@@ -372,6 +320,40 @@ void MediaBrowser::populate() {
 	_isPopulated = true;	
 }
 
+/* gtkutil::PopupMenu callbacks */
+
+void MediaBrowser::_onLoadInTexView() {
+	// Use a TextureDirectoryLoader functor to search the directory. This 
+	// may throw an exception if cancelled by user.
+	TextureDirectoryLoader loader(getSelectedName());
+	try {
+		GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
+	}
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+		// Ignore the error and return from the function normally	
+	}
+}
+
+bool MediaBrowser::_testLoadInTexView() {
+	// "Load in textures view" requires a directory selection
+	if (isDirectorySelected())
+		return true;
+	else
+		return false;
+}
+
+void MediaBrowser::_onApplyToSel() {
+	// Pass shader name to the selection system
+	selection::algorithm::applyShaderToSelection(getSelectedName());
+}
+
+bool MediaBrowser::_testApplyToSel() {
+	// Apply to selection requires a non-directory, valid selection
+	if (!isDirectorySelected() && getSelectedName() != "")
+		return true;
+	else
+		return false;
+}
 
 /* GTK CALLBACKS */
 
