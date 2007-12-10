@@ -671,14 +671,13 @@ public:
 	virtual const StringSet& getDependencies() const {
 		static StringSet _dependencies;
 		
-		// greebo: TODO: This list can probably be made smaller,
-		// not all modules are necessary during initialisation
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_RADIANT);
 			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 			_dependencies.insert(MODULE_FILETYPES);
 			_dependencies.insert("Doom3MapLoader");
-			// Model Loaders?
+			_dependencies.insert(MODULE_MODELLOADER + "ASE");
+			_dependencies.insert(MODULE_MODELLOADER + "MD5MESH");
+			_dependencies.insert(MODULE_MODELLOADER + "LWO");
 		}
 		
 		return _dependencies;
