@@ -58,7 +58,12 @@ public:
 	}
 
 	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies; // no dependencies
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_XMLREGISTRY);
+		}
+		
 		return _dependencies;
 	}
 
