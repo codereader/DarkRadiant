@@ -190,6 +190,19 @@ void ModuleRegistry::initialiseContext(int argc, char* argv[]) {
 	_context.initialise(argc, argv);
 }
 
+std::string ModuleRegistry::getModuleList(const std::string& separator) {
+	std::string returnValue;
+	
+	for (ModulesMap::const_iterator i = _initialisedModules.begin(); 
+		 i != _initialisedModules.end(); i++)
+	{
+		returnValue += (returnValue.empty()) ? "" : separator;
+		returnValue += i->first;
+	}
+	
+	return returnValue;
+}
+
 ModuleRegistry& ModuleRegistry::Instance() {
 	static ModuleRegistry _registry;
 	return _registry;

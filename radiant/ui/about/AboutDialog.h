@@ -2,7 +2,7 @@
 #define ABOUTDIALOG_H_
 #include <string>
 #include "gtk/gtkwidget.h"
-#include "gtkutil/DialogWindow.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 /** greebo: The AboutDialog displays information about DarkRadiant and
  * 			the subsystems OpenGL and GTK+ 
@@ -14,7 +14,7 @@
 namespace ui {
 
 class AboutDialog :
-	public gtkutil::DialogWindow
+	public gtkutil::BlockingTransientWindow
 {
 	// The treeview containing the above liststore
 	GtkWidget* _treeView;
