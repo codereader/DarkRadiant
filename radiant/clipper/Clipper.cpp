@@ -179,7 +179,6 @@ void Clipper::clip() {
 		
 		reset();
 		update();
-		GlobalRadiant().updateAllWindows();
 	}
 }
 
@@ -193,7 +192,6 @@ void Clipper::splitClip() {
 		
 		reset();
 		update();
-		GlobalRadiant().updateAllWindows();
 	}
 }
 
@@ -211,7 +209,6 @@ void Clipper::onClipMode(bool enabled) {
 	}
 	
 	update();
-	GlobalRadiant().updateAllWindows();
 }
 
 void Clipper::newClipPoint(const Vector3& point) {
@@ -235,7 +232,6 @@ void Clipper::newClipPoint(const Vector3& point) {
 	}
 
 	update();
-	GlobalRadiant().updateAllWindows();
 }
 
 // RegisterableModule implementation
@@ -250,7 +246,6 @@ const StringSet& Clipper::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_RADIANT);
 	}
 
 	return _dependencies;
