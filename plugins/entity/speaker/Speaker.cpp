@@ -191,8 +191,8 @@ void Speaker::construct() {
 	m_keyObservers.insert("angle", AngleKey::AngleChangedCaller(m_angleKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 	m_keyObservers.insert("s_shader", Speaker::sShaderChangedCaller(*this));
-	m_keyObservers.insert("s_minDistance", Speaker::sMinChangedCaller(*this));
-	m_keyObservers.insert("s_maxDistance", Speaker::sMaxChangedCaller(*this));
+	m_keyObservers.insert("s_mindistance", Speaker::sMinChangedCaller(*this));
+	m_keyObservers.insert("s_maxdistance", Speaker::sMaxChangedCaller(*this));
 }
 
 void Speaker::updateAABB() {
