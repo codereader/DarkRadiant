@@ -53,6 +53,65 @@ namespace {
 	
 }
 
+/* Context menu functors */
+
+class LoadTexFunctor {
+	MediaBrowser* self;
+public:
+	LoadTexFunctor(MediaBrowser* s): self(s) { }
+	
+	void operator() () {
+		// Use a TextureDirectoryLoader functor to search the directory. This 
+		// may throw an exception if cancelled by user.
+		TextureDirectoryLoader loader(self->getSelectedName());
+		try {
+			GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
+		}
+		catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+			// Ignore the error and return from the function normally	
+		}
+	}
+};
+
+class LoadTexTest {
+	MediaBrowser* self;
+public:
+	LoadTexTest(MediaBrowser* s): self(s) { }
+	
+	bool operator() () {
+		// "Load in textures view" requires a directory selection
+		if (self->isDirectorySelected())
+			return true;
+		else
+			return false;
+	}
+};
+
+class ApplyToSelectionFunctor {
+	MediaBrowser* self;
+public:
+	ApplyToSelectionFunctor(MediaBrowser* s): self(s) { }
+	
+	void operator() () {
+		// Pass shader name to the selection system
+		selection::algorithm::applyShaderToSelection(self->getSelectedName());
+	}
+};
+
+class ApplyToSelectionTest {
+	MediaBrowser* self;
+public:
+	ApplyToSelectionTest(MediaBrowser* s): self(s) { }
+	
+	bool operator() () {
+		// Apply to selection requires a non-directory, valid selection
+		if (!self->isDirectorySelected() && self->getSelectedName() != "")
+			return true;
+		else
+			return false;
+	}
+};
+
 // Constructor
 MediaBrowser::MediaBrowser()
 : _widget(gtk_vbox_new(FALSE, 0)),
@@ -63,13 +122,12 @@ MediaBrowser::MediaBrowser()
   								G_TYPE_BOOLEAN)),
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
   _selection(gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView))),
-  _popupMenu(gtk_menu_new()),
+  _popupMenu(gtkutil::PopupMenu(_treeView)),
   _isPopulated(false)
 {
 	// Create the treeview
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
 	g_signal_connect(G_OBJECT(_treeView), "expose-event", G_CALLBACK(_onExpose), this);
-	g_signal_connect(G_OBJECT(_treeView), "button-release-event", G_CALLBACK(_onRightClick), this);
 	
 	// Single text column with packed icon
 	GtkTreeViewColumn* col = gtk_tree_view_column_new();
@@ -100,23 +158,20 @@ MediaBrowser::MediaBrowser()
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
 	
 	// Construct the popup context menu
-	_loadInTexturesView = gtkutil::IconTextMenuItem(
+	GtkWidget* loadInTex = gtkutil::IconTextMenuItem(
 		GlobalRadiant().getLocalPixbuf(LOAD_TEXTURE_ICON), 
 		LOAD_TEXTURE_TEXT
 	);
-	_applyToSelection = gtkutil::IconTextMenuItem(
+	GtkWidget* applyToSel = gtkutil::IconTextMenuItem(
 		GlobalRadiant().getLocalPixbuf(APPLY_TEXTURE_ICON), 
 		APPLY_TEXTURE_TEXT
 	);
-
-	g_signal_connect(G_OBJECT(_loadInTexturesView), "activate", G_CALLBACK(_onActivateLoadContained), this);
-	g_signal_connect(G_OBJECT(_applyToSelection), "activate", G_CALLBACK(_onActivateApplyTexture), this);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _loadInTexturesView);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _applyToSelection);
 	
-	gtk_widget_show_all(_popupMenu);
-	
+	_popupMenu.addItem(loadInTex, LoadTexFunctor(this), LoadTexTest(this));
+	_popupMenu.addItem(
+		applyToSel, ApplyToSelectionFunctor(this), ApplyToSelectionTest(this)
+	);
+
 	// Pack in the TexturePreviewCombo widgets
 	gtk_box_pack_end(GTK_BOX(_widget), _preview, FALSE, FALSE, 0);
 
@@ -126,103 +181,103 @@ MediaBrowser::MediaBrowser()
 
 namespace {
 	
-	struct ShaderNameFunctor {
-		
-		typedef const char* first_argument_type;
-		
-		// TreeStore to populate
-		GtkTreeStore* _store;
-		
-		// Constructor
-		ShaderNameFunctor(GtkTreeStore* store)
-		: _store(store) {}
-		
-		// Destructor. Free all the heap-allocated GtkTreeIters in the
-		// map
-		~ShaderNameFunctor() {
-			for (DirIterMap::iterator i = _dirIterMap.begin();
-					i != _dirIterMap.end();
-						++i) 
-			{
-				gtk_tree_iter_free(i->second);
-			}
+struct ShaderNameFunctor {
+	
+	typedef const char* first_argument_type;
+	
+	// TreeStore to populate
+	GtkTreeStore* _store;
+	
+	// Constructor
+	ShaderNameFunctor(GtkTreeStore* store)
+	: _store(store) {}
+	
+	// Destructor. Free all the heap-allocated GtkTreeIters in the
+	// map
+	~ShaderNameFunctor() {
+		for (DirIterMap::iterator i = _dirIterMap.begin();
+				i != _dirIterMap.end();
+					++i) 
+		{
+			gtk_tree_iter_free(i->second);
+		}
+	}
+	
+	// Map between string directory names and their corresponding Iters
+	typedef std::map<std::string, GtkTreeIter*> DirIterMap;
+	DirIterMap _dirIterMap;
+
+	// Recursive function to add a folder (e.g. "textures/common/something") to the
+	// tree, returning the GtkTreeIter* pointing to the newly-added folder. All 
+	// parent folders ("textures/common", "textures/") will be added automatically
+	// and their iters cached for fast lookup.
+	GtkTreeIter* addFolder(const std::string& pathName) {
+
+		// Lookup pathname in map, and return the GtkTreeIter* if it is
+		// found
+		DirIterMap::iterator iTemp = _dirIterMap.find(pathName);
+		if (iTemp != _dirIterMap.end()) { // found in map
+			return iTemp->second;
 		}
 		
-		// Map between string directory names and their corresponding Iters
-		typedef std::map<std::string, GtkTreeIter*> DirIterMap;
-		DirIterMap _dirIterMap;
+		// Split the path into "this directory" and the parent path
+		std::size_t slashPos = pathName.rfind("/");
+		const std::string parentPath = pathName.substr(0, slashPos);
+		const std::string thisDir = pathName.substr(slashPos + 1);
 
-		// Recursive function to add a folder (e.g. "textures/common/something") to the
-		// tree, returning the GtkTreeIter* pointing to the newly-added folder. All 
-		// parent folders ("textures/common", "textures/") will be added automatically
-		// and their iters cached for fast lookup.
-		GtkTreeIter* addFolder(const std::string& pathName) {
+		// Recursively add parent path
+		GtkTreeIter* parIter = NULL;
+		if (slashPos != std::string::npos)
+			parIter = addFolder(parentPath);
 
-			// Lookup pathname in map, and return the GtkTreeIter* if it is
-			// found
-			DirIterMap::iterator iTemp = _dirIterMap.find(pathName);
-			if (iTemp != _dirIterMap.end()) { // found in map
-				return iTemp->second;
-			}
+		// Now add "this directory" as a child, saving the iter in the map
+		// and returning it.
+		GtkTreeIter iter;
+		gtk_tree_store_append(_store, &iter, parIter);
+		gtk_tree_store_set(_store, &iter, 
+						   DISPLAYNAME_COLUMN, thisDir.c_str(), 
+						   FULLNAME_COLUMN, pathName.c_str(),
+						   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(FOLDER_ICON),
+						   DIR_FLAG_COLUMN, TRUE,
+						   -1);
+		GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
+		
+		// Cache the dynamic iter and return it
+		_dirIterMap[pathName] = dynIter;
+		return dynIter;
+	}
+	
+	// Functor operator
+	
+	void operator() (const char* name) {
+		std::string rawName(name);
+		
+		// If the name starts with "textures/", add it to the treestore.
+		if (!boost::algorithm::istarts_with(rawName, "textures/")) {
+			rawName = "Other Materials/" + rawName;
+		}
+		
+		{
+			// Separate path into the directory path and texture name
+			std::size_t slashPos = rawName.rfind("/");
+			const std::string dirPath = rawName.substr(0, slashPos);
+			const std::string texName = rawName.substr(slashPos + 1);
+
+			// Recursively add the directory path
+			GtkTreeIter* parentIter = addFolder(dirPath);
 			
-			// Split the path into "this directory" and the parent path
-			std::size_t slashPos = pathName.rfind("/");
-			const std::string parentPath = pathName.substr(0, slashPos);
-			const std::string thisDir = pathName.substr(slashPos + 1);
-
-			// Recursively add parent path
-			GtkTreeIter* parIter = NULL;
-			if (slashPos != std::string::npos)
-				parIter = addFolder(parentPath);
-
-			// Now add "this directory" as a child, saving the iter in the map
-			// and returning it.
 			GtkTreeIter iter;
-			gtk_tree_store_append(_store, &iter, parIter);
+			gtk_tree_store_append(_store, &iter, parentIter);
 			gtk_tree_store_set(_store, &iter, 
-							   DISPLAYNAME_COLUMN, thisDir.c_str(), 
-							   FULLNAME_COLUMN, pathName.c_str(),
-							   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(FOLDER_ICON),
-							   DIR_FLAG_COLUMN, TRUE,
+							   DISPLAYNAME_COLUMN, texName.c_str(), 
+							   FULLNAME_COLUMN, name,
+							   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(TEXTURE_ICON),
+							   DIR_FLAG_COLUMN, FALSE,
 							   -1);
-			GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
-			
-			// Cache the dynamic iter and return it
-			_dirIterMap[pathName] = dynIter;
-			return dynIter;
 		}
-		
-		// Functor operator
-		
-		void operator() (const char* name) {
-			std::string rawName(name);
-			
-			// If the name starts with "textures/", add it to the treestore.
-			if (!boost::algorithm::istarts_with(rawName, "textures/")) {
-				rawName = "Other Materials/" + rawName;
-			}
-			
-			{
-				// Separate path into the directory path and texture name
-				std::size_t slashPos = rawName.rfind("/");
-				const std::string dirPath = rawName.substr(0, slashPos);
-				const std::string texName = rawName.substr(slashPos + 1);
-
-				// Recursively add the directory path
-				GtkTreeIter* parentIter = addFolder(dirPath);
-				
-				GtkTreeIter iter;
-				gtk_tree_store_append(_store, &iter, parentIter);
-				gtk_tree_store_set(_store, &iter, 
-								   DISPLAYNAME_COLUMN, texName.c_str(), 
-								   FULLNAME_COLUMN, name,
-								   ICON_COLUMN, GlobalRadiant().getLocalPixbuf(TEXTURE_ICON),
-								   DIR_FLAG_COLUMN, FALSE,
-								   -1);
-			}
-		}
-		
-	};
+	}
+	
+};
 	
 } // namespace
 
@@ -258,24 +313,6 @@ std::string MediaBrowser::getSelectedName() {
 		// Error condition if there is no selection
 		return "";
 	}
-}
-
-// Update available menu items based on selection
-
-void MediaBrowser::updateAvailableMenuItems() {
-	// Apply to selection available only for individual textures
-	if (!isDirectorySelected() && getSelectedName() != "")
-		gtk_widget_set_sensitive(_applyToSelection, TRUE);
-	else
-		gtk_widget_set_sensitive(_applyToSelection, FALSE);
-	
-	// Load in texture view available for directories only (individual
-	// textures are loaded anyway due to the preview).
-	if (isDirectorySelected())
-		gtk_widget_set_sensitive(_loadInTexturesView, TRUE);
-	else
-		gtk_widget_set_sensitive(_loadInTexturesView, FALSE);
-	
 }
 
 /** Return the singleton instance.
@@ -344,34 +381,6 @@ gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBro
 		self->populate();
 	}
 	return FALSE; // progapagate event
-}
-
-bool MediaBrowser::_onRightClick(GtkWidget* widget, GdkEventButton* ev, MediaBrowser* self) {
-	// Popup on right-click events only
-	if (ev->button == 3) {
-		self->updateAvailableMenuItems();
-		gtk_menu_popup(GTK_MENU(self->_popupMenu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
-	}
-	return FALSE;
-}
-
-void MediaBrowser::_onActivateLoadContained(GtkMenuItem* item, 
-											MediaBrowser* self) 
-{
-	// Use a TextureDirectoryLoader functor to search the directory. This may
-	// throw an exception if cancelled by user.
-	TextureDirectoryLoader loader(self->getSelectedName());
-	try {
-		GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
-	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-		// Ignore the error and return from the function normally	
-	}
-}
-
-void MediaBrowser::_onActivateApplyTexture(GtkMenuItem* item, MediaBrowser* self) {
-	// Pass shader name to the selection system
-	selection::algorithm::applyShaderToSelection(self->getSelectedName());
 }
 
 void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {

@@ -3,6 +3,8 @@
 
 #include "ui/common/TexturePreviewCombo.h"
 
+#include "gtkutil/menu/PopupMenu.h"
+
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkmenuitem.h>
@@ -26,10 +28,12 @@ class MediaBrowser
 	GtkWidget* _treeView;
 	GtkTreeSelection* _selection;
 	
-	// Context menu widget and items
-	GtkWidget* _popupMenu;
-	GtkWidget* _loadInTexturesView;
-	GtkWidget* _applyToSelection;
+	// Context menu
+	gtkutil::PopupMenu _popupMenu;
+	friend class LoadTexFunctor;
+	friend class LoadTexTest;
+	friend class ApplyToSelectionFunctor;
+	friend class ApplyToSelectionTest;
 	
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo _preview;
@@ -42,19 +46,12 @@ private:
 	/* GTK CALLBACKS */
 	
 	static gboolean _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
-	static bool _onRightClick(GtkWidget*, GdkEventButton*, MediaBrowser*);
-	static void _onActivateLoadContained(GtkMenuItem*, MediaBrowser*);
-	static void _onActivateApplyTexture(GtkMenuItem*, MediaBrowser*);
 	static void _onSelectionChanged(GtkWidget*, MediaBrowser*);
 	
 	/* Tree selection query functions */
 	
 	bool isDirectorySelected(); // is a directory selected
 	std::string getSelectedName(); // return name of selection
-	
-	/* Function to update status of menu items based on selection
-	 */
-	void updateAvailableMenuItems();
 	
 	// Populates the treeview
 	void populate();
