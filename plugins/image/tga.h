@@ -63,12 +63,7 @@ public:
 	}
   	
   	virtual const StringSet& getDependencies() const {
-  		static StringSet _dependencies;
-
-  		if (_dependencies.empty()) {
-  			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-  		}
-
+  		static StringSet _dependencies; // no dependencies
   		return _dependencies;
   	}
   	
