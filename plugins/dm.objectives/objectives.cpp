@@ -31,11 +31,7 @@ public:
 		static StringSet _dependencies;
 
 		if (_dependencies.empty()) {
-		  	_dependencies.insert(MODULE_ECLASSMANAGER);
-			_dependencies.insert(MODULE_ENTITYCREATOR);
-			_dependencies.insert(MODULE_SCENEGRAPH);
 			_dependencies.insert(MODULE_EVENTMANAGER);
-			_dependencies.insert(MODULE_RADIANT);
 			_dependencies.insert(MODULE_UIMANAGER);
 		}
 
