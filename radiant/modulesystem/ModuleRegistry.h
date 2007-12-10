@@ -61,6 +61,9 @@ public:
 	// Contains the singleton instance
 	static ModuleRegistry& Instance();
 	
+	// Returns a list of modules
+	std::string getModuleList(const std::string& separator = "\n");
+	
 private:
 
 	// greebo: Frees all the allocated RegisterableModules. This MUST happen before
