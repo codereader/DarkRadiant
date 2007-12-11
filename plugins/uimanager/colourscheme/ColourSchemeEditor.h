@@ -1,12 +1,16 @@
 #ifndef COLOURSCHEMEEDITOR_H_
 #define COLOURSCHEMEEDITOR_H_
 
-#include <gtk/gtk.h>
+#include "gtkutil/window/BlockingTransientWindow.h"
 #include <string>
 #include "ColourScheme.h"
+#include <gdk/gdkevents.h>
 
-namespace ui
-{
+typedef struct _GtkWidget GtkWidget; 
+typedef struct _GtkTreeSelection GtkTreeSelection;
+typedef struct _GtkListStore GtkListStore;
+
+namespace ui {
 
 // Constants
 namespace {
@@ -19,12 +23,10 @@ namespace {
     const std::string EDITOR_WINDOW_TITLE = "Edit Colour Schemes";
 }
 	
-class ColourSchemeEditor
+class ColourSchemeEditor :
+	public gtkutil::BlockingTransientWindow
 {
 private:
-	// The widget representing the actual editor window
-	GtkWidget* _editorWidget;
-	
 	// The treeview and its selection pointer
 	GtkWidget* _treeView;
 	GtkTreeSelection* _selection;
