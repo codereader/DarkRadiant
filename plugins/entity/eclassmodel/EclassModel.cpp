@@ -53,6 +53,7 @@ void EclassModel::construct() {
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
+	m_keyObservers.insert("model", ModelChangedCaller(*this));
 }
 
 void EclassModel::updateTransform() {
@@ -180,6 +181,11 @@ void EclassModel::transformChanged() {
 	revertTransform();
 	m_evaluateTransform();
 	updateTransform();
+}
+
+void EclassModel::modelChanged(const std::string& value) {
+	globalOutputStream() << "Model has changed to " << value.c_str() << "\n";
+	m_model.modelChanged(value);
 }
 
 } // namespace entity

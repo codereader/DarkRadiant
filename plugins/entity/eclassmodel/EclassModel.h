@@ -98,6 +98,9 @@ public:
 	
 	void rotationChanged();
 	typedef MemberCaller<EclassModel, &EclassModel::rotationChanged> RotationChangedCaller;
+	
+	void modelChanged(const std::string& value);
+	typedef MemberCaller1<EclassModel, const std::string&, &EclassModel::modelChanged> ModelChangedCaller;
 };
 
 } // namespace entity
