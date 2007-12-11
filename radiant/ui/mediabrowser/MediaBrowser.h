@@ -40,10 +40,11 @@ class MediaBrowser
 private:
 
 	/* gtkutil::PopupMenu callbacks */
-	bool _testApplyToSel();
+	bool _testSingleTexSel();
 	bool _testLoadInTexView();
 	void _onApplyToSel();
 	void _onLoadInTexView();
+	void _onCopyShaderName();
 	
 	/* GTK CALLBACKS */
 	

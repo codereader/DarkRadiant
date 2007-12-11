@@ -5,17 +5,10 @@
 #include "select.h"
 #include "generic/callback.h"
 #include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/TreeModel.h"
 
-#include <gtk/gtkvbox.h>
-#include <gtk/gtktreeview.h>
-#include <gtk/gtkframe.h>
-#include <gtk/gtkcellrenderertext.h>
-#include <gtk/gtkcellrendererpixbuf.h>
-#include <gtk/gtkscrolledwindow.h>
-#include <gtk/gtklabel.h>
-#include <gtk/gtkmenu.h>
-#include <gtk/gtktreeselection.h>
+#include <gtk/gtk.h>
 
 #include <iostream>
 #include <map>
@@ -100,24 +93,26 @@ MediaBrowser::MediaBrowser()
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
 	
 	// Construct the popup context menu
-	GtkWidget* loadInTex = gtkutil::IconTextMenuItem(
-		GlobalRadiant().getLocalPixbuf(LOAD_TEXTURE_ICON), 
-		LOAD_TEXTURE_TEXT
-	);
-	GtkWidget* applyToSel = gtkutil::IconTextMenuItem(
-		GlobalRadiant().getLocalPixbuf(APPLY_TEXTURE_ICON), 
-		APPLY_TEXTURE_TEXT
-	);
-	
 	_popupMenu.addItem(
-		loadInTex, 
+		gtkutil::IconTextMenuItem(
+			GlobalRadiant().getLocalPixbuf(LOAD_TEXTURE_ICON), 
+			LOAD_TEXTURE_TEXT
+		), 
 		boost::bind(&MediaBrowser::_onLoadInTexView, this), 
 		boost::bind(&MediaBrowser::_testLoadInTexView, this)
 	);
 	_popupMenu.addItem(
-		applyToSel, 
+		gtkutil::IconTextMenuItem(
+			GlobalRadiant().getLocalPixbuf(APPLY_TEXTURE_ICON), 
+			APPLY_TEXTURE_TEXT
+		), 
 		boost::bind(&MediaBrowser::_onApplyToSel, this), 
-		boost::bind(&MediaBrowser::_testApplyToSel, this)
+		boost::bind(&MediaBrowser::_testSingleTexSel, this)
+	);
+	_popupMenu.addItem(
+		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy shader name"),
+		boost::bind(&MediaBrowser::_onCopyShaderName, this),
+		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 
 	// Pack in the TexturePreviewCombo widgets
@@ -347,12 +342,23 @@ void MediaBrowser::_onApplyToSel() {
 	selection::algorithm::applyShaderToSelection(getSelectedName());
 }
 
-bool MediaBrowser::_testApplyToSel() {
-	// Apply to selection requires a non-directory, valid selection
+// Check if a single non-directory texture is selected (used by multiple menu
+// options).
+bool MediaBrowser::_testSingleTexSel() {
 	if (!isDirectorySelected() && getSelectedName() != "")
 		return true;
 	else
 		return false;
+}
+
+void MediaBrowser::_onCopyShaderName() {
+	
+	// Get the selected texture
+	std::string tex = getSelectedName();
+	
+	// Store it on the GTK clipboard
+	GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text(clipboard, tex.c_str(), tex.size());
 }
 
 /* GTK CALLBACKS */
