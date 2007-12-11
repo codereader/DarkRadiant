@@ -22,12 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_PLUGIN_H)
 #define INCLUDED_PLUGIN_H
 
-#include "ui/colourscheme/ColourSchemeManager.h"
 #include "map/CounterManager.h"
-
 #include "iradiant.h"
-
-ui::ColourSchemeManager& ColourSchemes();
 
 /**
  * IRadiant implementation class.
@@ -41,8 +37,6 @@ class RadiantCoreAPI :
 	EventListenerList _eventListeners;
 
 public:
-	
-	
 	RadiantCoreAPI();
 	
 	virtual GtkWindow* getMainWindow();
@@ -55,8 +49,6 @@ public:
 	
 	virtual void setStatusText(const std::string& statusText);
 	
-	virtual Vector3 getColour(const std::string& colourName);
-  
 	virtual void updateAllWindows();
 	
 	virtual void addEventListener(RadiantEventListenerPtr listener);

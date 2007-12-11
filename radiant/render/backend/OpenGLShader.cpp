@@ -4,7 +4,7 @@
 #include "OpenGLStateMap.h"
 #include "renderstate.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "ishaders.h"
 #include "irender.h"
 #include "generic/callback.h"
@@ -142,7 +142,7 @@ OpenGLState& OpenGLShader::appendDefaultPass() {
 void OpenGLShader::construct(const char* name)
 {
 	// Retrieve the highlight colour from the colourschemes (once)
-	static Vector3 highLightColour = GlobalRadiant().getColour("selected_brush_camera");
+	static Vector3 highLightColour = ColourSchemes().getColour("selected_brush_camera");
 	
   OpenGLState& state = appendDefaultPass();
   switch(name[0])
@@ -257,7 +257,7 @@ void OpenGLShader::construct(const char* name)
     }
     else if(string_equal(name+1, "XY_OVERLAY"))
     {
-      Vector3 colorSelBrushes = GlobalRadiant().getColour("selected_brush");
+      Vector3 colorSelBrushes = ColourSchemes().getColour("selected_brush");
       state.m_colour[0] = colorSelBrushes[0];
       state.m_colour[1] = colorSelBrushes[1];
       state.m_colour[2] = colorSelBrushes[2];
@@ -333,7 +333,7 @@ void OpenGLShader::construct(const char* name)
     }
     else if(string_equal(name+1, "CLIPPER_OVERLAY"))
     {
-      Vector3 colorClipper = GlobalRadiant().getColour("clipper");
+      Vector3 colorClipper = ColourSchemes().getColour("clipper");
       state.m_colour[0] = colorClipper[0];
       state.m_colour[1] = colorClipper[1];
       state.m_colour[2] = colorClipper[2];

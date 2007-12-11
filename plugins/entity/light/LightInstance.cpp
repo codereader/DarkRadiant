@@ -1,5 +1,5 @@
 #include "LightInstance.h"
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "math/pi.h"
 
 namespace entity {
@@ -51,8 +51,8 @@ void LightInstance::renderInactiveComponents(Renderer& renderer, const VolumeTes
 	{
 		if (_light.isProjected()) {
 			// Cache registry values to reduce number of queries
-			Vector3 colourStartEndInactive = GlobalRadiant().getColour("light_startend_deselected");
-			Vector3 colourVertexInactive = GlobalRadiant().getColour("light_vertex_normal");
+			Vector3 colourStartEndInactive = ColourSchemes().getColour("light_startend_deselected");
+			Vector3 colourVertexInactive = ColourSchemes().getColour("light_vertex_normal");
 			
 			_light.colourLightStart() = colourStartEndInactive;
 			_light.colourLightEnd() = colourStartEndInactive;
@@ -64,7 +64,7 @@ void LightInstance::renderInactiveComponents(Renderer& renderer, const VolumeTes
 			_light.renderProjectionPoints(renderer, volume, Instance::localToWorld());
 		} 
 		else {
-			_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_vertex_normal"));
+			_light.getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_normal"));
 			_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 		}
 	}
@@ -95,10 +95,10 @@ void LightInstance::renderComponents(Renderer& renderer, const VolumeTest& volum
 		if (_light.isProjected()) {
 			// A projected light
 			// Cache registry values to reduce number of queries
-			Vector3 colourStartEndSelected = GlobalRadiant().getColour("light_startend_selected");
-			Vector3 colourStartEndDeselected = GlobalRadiant().getColour("light_startend_deselected");
-			Vector3 colourVertexSelected = GlobalRadiant().getColour("light_vertex_selected");
-			Vector3 colourVertexDeselected = GlobalRadiant().getColour("light_vertex_deselected");
+			Vector3 colourStartEndSelected = ColourSchemes().getColour("light_startend_selected");
+			Vector3 colourStartEndDeselected = ColourSchemes().getColour("light_startend_deselected");
+			Vector3 colourVertexSelected = ColourSchemes().getColour("light_vertex_selected");
+			Vector3 colourVertexDeselected = ColourSchemes().getColour("light_vertex_deselected");
 			
 			// Update the colour of the light center dot
 			_light.colourLightTarget() = (_lightTargetInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
@@ -116,11 +116,11 @@ void LightInstance::renderComponents(Renderer& renderer, const VolumeTest& volum
 			
 			// Update the colour of the light center dot 
 			if (_lightCenterInstance.isSelected()) {
-				_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_vertex_selected"));
+				_light.getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_selected"));
 				_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 			}
 			else {
-				_light.getDoom3Radius().setCenterColour(GlobalRadiant().getColour("light_vertex_deselected"));
+				_light.getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_deselected"));
 				_light.renderLightCentre(renderer, volume, Instance::localToWorld());
 			}
 		}

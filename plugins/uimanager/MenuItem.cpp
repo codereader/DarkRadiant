@@ -14,6 +14,8 @@
 #include <gtk/gtkseparatormenuitem.h>
 #include <gtk/gtkwidget.h>
 
+#include <iostream>
+
 namespace ui {
 	
 	namespace {

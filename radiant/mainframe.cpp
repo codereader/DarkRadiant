@@ -42,8 +42,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/einspector/EntityInspector.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
-#include "ui/colourscheme/ColourSchemeManager.h"
-#include "ui/colourscheme/ColourSchemeEditor.h"
 #include "ui/menu/FiltersMenu.h"
 #include "ui/transform/TransformDialog.h"
 #include "ui/overlay/Overlay.h"
@@ -155,11 +153,6 @@ void Radiant_Initialise()
 	ui::PrefDialog::Instance().createOrFindPage("Interface");
 	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage("Settings");
 	settingsPage->setTitle("");
-	
-	ui::Splash::Instance().setProgressAndText("Loading Colour Schemes", 0.8f);
-	
-	// Load the ColourSchemes from the registry
-	ColourSchemes().loadColourSchemes();
 	
 	ui::Splash::Instance().setProgressAndText("Constructing Menu", 0.85f);
 	
@@ -1588,10 +1581,6 @@ void Layout_registerPreferencesPage() {
 	page->appendLabel("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect.");
 }
 
-void EditColourScheme() {
-	new ui::ColourSchemeEditor(); // self-destructs in GTK callback
-}
-
 #include "stringio.h"
 
 void MainFrame_Construct()
@@ -1730,7 +1719,6 @@ void MainFrame_Construct()
 		FreeCaller<selection::algorithm::convertCurveTypes>()
 	);
 	
-	GlobalEventManager().addCommand("EditColourScheme", FreeCaller<EditColourScheme>());
 	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
 	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::algorithm::createCMFromSelection>());
 	

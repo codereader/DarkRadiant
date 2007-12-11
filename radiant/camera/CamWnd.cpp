@@ -1,6 +1,7 @@
 #include "CamWnd.h"
 
 #include "iclipper.h"
+#include "iuimanager.h"
 #include "ieventmanager.h"
 
 #include "gdk/gdkkeysyms.h"
@@ -394,7 +395,7 @@ void CamWnd::Cam_Draw() {
 	Vector3 clearColour(0, 0, 0);
 
 	if (getCameraSettings()->getMode() != drawLighting) {
-		clearColour = ColourSchemes().getColourVector3("camera_background");
+		clearColour = ColourSchemes().getColour("camera_background");
 	}
 
 	glClearColor(clearColour[0], clearColour[1], clearColour[2], 0);

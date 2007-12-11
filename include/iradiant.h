@@ -29,8 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define IRADIANT_H_
 
 #include "imodule.h"
-#include "math/Vector3.h"
-#include "math/Plane3.h"
 
 // ========================================
 // GTK+ helper functions
@@ -125,8 +123,6 @@ public:
 	 */
 	virtual void setStatusText(const std::string& statusText) = 0;
 	
-	virtual Vector3 getColour(const std::string& colourName) = 0;
-  
 	virtual void updateAllWindows() = 0;
 	
 	// Registers/de-registers an event listener class

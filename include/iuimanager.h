@@ -1,11 +1,18 @@
 #ifndef INCLUDE_UIMANAGER_H_
 #define INCLUDE_UIMANAGER_H_
 
+#include "math/Vector3.h"
 #include "imodule.h"
 
 // Forward declarations
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkToolbar GtkToolbar;
+
+class IColourSchemeManager {
+public:
+	// greebo: Returns the named colour, returns <0,0,0> if not found
+	virtual Vector3 getColour(const std::string& colourName) = 0;
+};
 
 namespace ui {
 	/** greebo: The possible menu item types, one of these
@@ -99,6 +106,7 @@ class IUIManager :
 public:
 	virtual IMenuManager& getMenuManager() = 0;
 	virtual IToolbarManager& getToolbarManager() = 0;
+	virtual IColourSchemeManager& getColourSchemeManager() = 0;
 };
 
 // This is the accessor for the UI manager
@@ -110,6 +118,11 @@ inline IUIManager& GlobalUIManager() {
 		)
 	);
 	return _uiManager;
+}
+
+// Shortcut accessor
+inline IColourSchemeManager& ColourSchemes() {
+	return GlobalUIManager().getColourSchemeManager();
 }
 
 #endif /*INCLUDE_UIMANAGER_H_*/

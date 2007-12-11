@@ -24,6 +24,7 @@
 
 #include <map>
 #include <iostream>
+#include <stdexcept>
 
 #include <boost/lexical_cast.hpp>
 

@@ -4,6 +4,8 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "stream/textstream.h"
+#include "generic/callback.h"
+#include "colourscheme/ColourSchemeEditor.h"
 
 namespace ui {
 
@@ -13,6 +15,10 @@ IMenuManager& UIManager::getMenuManager() {
 
 IToolbarManager& UIManager::getToolbarManager() {
 	return _toolbarManager;
+}
+
+IColourSchemeManager& UIManager::getColourSchemeManager() {
+	return ColourSchemeManager::Instance();
 }
 
 const std::string& UIManager::getName() const {
@@ -36,7 +42,12 @@ void UIManager::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "UIManager::initialiseModule called\n";
 	_menuManager.loadFromRegistry();
 	_toolbarManager.initialise();
-	globalOutputStream() << "MenuManager: Finished loading default menu from registry.\n";
+	ColourSchemeManager::Instance().loadColourSchemes();
+	
+	GlobalEventManager().addCommand(
+		"EditColourScheme", 
+		FreeCaller<ColourSchemeEditor::editColourSchemes>()
+	);
 }
 
 } // namespace ui
