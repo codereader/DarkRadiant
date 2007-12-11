@@ -6,6 +6,7 @@
 
 #include "MenuManager.h"
 #include "ToolbarManager.h"
+#include "colourscheme/ColourSchemeManager.h"
 #include <iostream>
 
 namespace ui {
@@ -17,7 +18,6 @@ class UIManager :
 	MenuManager _menuManager;
 	
 	ToolbarManager _toolbarManager;
-
 public:
 
 	/** greebo: Retrieves the helper class to manipulate the menu.
@@ -25,6 +25,8 @@ public:
 	IMenuManager& getMenuManager();
 	
 	IToolbarManager& getToolbarManager();
+	
+	IColourSchemeManager& getColourSchemeManager();
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

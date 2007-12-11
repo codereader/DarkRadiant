@@ -273,7 +273,14 @@ eventmanager_env.Depends(eventmanager_lib, gtkutil_lib)
 eventmanager_env.Install(INSTALL + '/modules', eventmanager_lib)
 
 uiManagerEnv = module_env.Copy()
-uiManagerLst=build_list('plugins/uimanager', 'UIManager.cpp MenuManager.cpp MenuItem.cpp ToolbarManager.cpp')
+uiManagerLst=build_list('plugins/uimanager', 
+						'UIManager.cpp \
+						 MenuManager.cpp \
+						 MenuItem.cpp \
+						 ToolbarManager.cpp \
+						 colourscheme/ColourScheme.cpp \
+						 colourscheme/ColourSchemeManager.cpp \
+						 colourscheme/ColourSchemeEditor.cpp')
 uiManagerEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
 uiManagerEnv.useGtk2()
 uiManagerEnv.useGlib2()
@@ -494,9 +501,6 @@ radiant_src = \
          'ui/common/SoundShaderPreview.cpp',
          'ui/mediabrowser/MediaBrowser.cpp',
          'ui/menu/FiltersMenu.cpp',
-         'ui/colourscheme/ColourScheme.cpp',
-         'ui/colourscheme/ColourSchemeManager.cpp',
-         'ui/colourscheme/ColourSchemeEditor.cpp',
          'ui/particles/ParticlesChooser.cpp',
          'ui/patch/PatchInspector.cpp',
          'ui/patch/PatchCreateDialog.cpp',

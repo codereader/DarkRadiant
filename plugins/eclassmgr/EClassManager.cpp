@@ -2,7 +2,7 @@
 
 #include "iregistry.h"
 #include "irender.h"
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "ifilesystem.h"
 #include "archivelib.h"
 #include "parser/DefTokeniser.h"
@@ -117,8 +117,8 @@ void EClassManager::realise() {
     }
     
     // greebo: Override the eclass colours of two special entityclasses
-    Vector3 worlspawnColour = GlobalRadiant().getColour("default_brush");
-    Vector3 lightColour = GlobalRadiant().getColour("light_volumes");
+    Vector3 worlspawnColour = ColourSchemes().getColour("default_brush");
+    Vector3 lightColour = ColourSchemes().getColour("light_volumes");
     
     IEntityClassPtr light = findOrInsert("light", true);
 	light->setColour(lightColour);
@@ -189,7 +189,7 @@ const StringSet& EClassManager::getDependencies() const {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_SHADERCACHE);
-		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_UIMANAGER);
 	}
 
 	return _dependencies;

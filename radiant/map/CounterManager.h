@@ -4,6 +4,7 @@
 #include "icounter.h"
 #include "iradiant.h"
 #include "mainframe.h"
+#include <map>
 #include "string/string.h"
 
 #include <boost/shared_ptr.hpp>

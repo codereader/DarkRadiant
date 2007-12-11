@@ -2,7 +2,7 @@
 #define VERTEXINSTANCE_H_
 
 #include "irender.h"
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "iregistry.h"
 #include "iselection.h"
 #include "math/Vector3.h"
@@ -27,7 +27,7 @@ public:
 	VertexInstance(Vector3& vertex, const SelectionChangeCallback& observer) : 
 		_vertex(vertex), 
 		_selectable(observer),
-		_colour(GlobalRadiant().getColour("light_vertex_deselected")),
+		_colour(ColourSchemes().getColour("light_vertex_deselected")),
 		_shader(GlobalShaderCache().capture("$BIGPOINT"))
 	{}
   
@@ -48,8 +48,8 @@ public:
 		_selectable.setSelected(select);
 		// Change the colour according to the selection
 		_colour = (select) ? 
-			GlobalRadiant().getColour("light_vertex_selected") : 
-			GlobalRadiant().getColour("light_vertex_deselected");
+			ColourSchemes().getColour("light_vertex_selected") : 
+			ColourSchemes().getColour("light_vertex_deselected");
 	}
   
 	bool isSelected() const {

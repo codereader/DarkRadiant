@@ -421,7 +421,7 @@ this allows a plugin to completely override the texture system
 void TextureBrowser::draw() {
   int originy = getOriginY();
 
-  Vector3 colorBackground = ColourSchemes().getColourVector3("texture_background");
+  Vector3 colorBackground = ColourSchemes().getColour("texture_background");
   glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
   glViewport(0, 0, width, height);
   glMatrixMode(GL_PROJECTION);

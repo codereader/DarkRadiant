@@ -8,6 +8,8 @@
 #include "iradiant.h"
 #include "stream/textstream.h"
 
+#include <iostream>
+
 namespace ui {
 
 /* Load the definitions from the XMLRegistry

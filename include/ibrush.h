@@ -90,6 +90,9 @@ public:
 	virtual scene::INodePtr createBrush() = 0;
 	virtual void Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) = 0;
 	virtual bool Brush_addFace(scene::INodePtr brush, const _QERFaceData& faceData) = 0;
+	
+	// Call this when the clip plane colours should be updated.
+	virtual void clipperColourChanged() = 0;
 };
 
 class Brush;

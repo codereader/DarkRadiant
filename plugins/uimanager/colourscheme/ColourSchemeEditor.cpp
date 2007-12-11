@@ -1,9 +1,8 @@
 #include "ColourSchemeEditor.h"
 #include "ColourSchemeManager.h"
-#include "plugin.h"
 #include "iregistry.h"
-#include "mainframe.h"
-#include "brush/BrushModule.h"
+#include "iradiant.h"
+#include "ibrush.h"
 #include "iscenegraph.h"
 
 #include "gtkutil/RightAlignment.h"
@@ -20,7 +19,7 @@ namespace ui {
 void ColourSchemeEditor::populateTree() {
   GtkTreeIter iter;
   
-  ColourSchemeMap allSchemes = ColourSchemes().getSchemeList();
+  ColourSchemeMap allSchemes = ColourSchemeManager::Instance().getSchemeList();
   
   for (ColourSchemeMap::iterator scheme = allSchemes.begin(); scheme != allSchemes.end(); scheme++) {
   	gtk_list_store_append(_listStore, &iter);
@@ -133,11 +132,11 @@ void ColourSchemeEditor::selectActiveScheme() {
 			// Get the string
 			std::string name = g_value_get_string(&val);
 			
-			if (ColourSchemes().isActive(name)) {
+			if (ColourSchemeManager::Instance().isActive(name)) {
 				gtk_tree_selection_select_iter(_selection, &iter);
 				
 				// Set the button sensitivity correctly for read-only schemes
-				gtk_widget_set_sensitive(_deleteButton, (!ColourSchemes().getScheme(name).isReadOnly()));
+				gtk_widget_set_sensitive(_deleteButton, (!ColourSchemeManager::Instance().getScheme(name).isReadOnly()));
 				
 				return;
 			}
@@ -148,7 +147,7 @@ void ColourSchemeEditor::selectActiveScheme() {
 ColourSchemeEditor::ColourSchemeEditor()
  :	_editorWidget(gtk_window_new(GTK_WINDOW_TOPLEVEL))
 {	
-	gtk_window_set_transient_for(GTK_WINDOW(_editorWidget), MainFrame_getWindow());
+	gtk_window_set_transient_for(GTK_WINDOW(_editorWidget), GlobalRadiant().getMainWindow());
     gtk_window_set_modal(GTK_WINDOW(_editorWidget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_editorWidget), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_default_size(GTK_WINDOW(_editorWidget), EDITOR_DEFAULT_SIZE_X, EDITOR_DEFAULT_SIZE_Y);
@@ -261,7 +260,7 @@ void ColourSchemeEditor::updateColourSelectors() {
 	gtk_container_add(GTK_CONTAINER(_colourFrame), _colourBox);
 		
 	// Get the selected scheme
-	ColourScheme& scheme = ColourSchemes().getScheme( getSelectedScheme() );
+	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme( getSelectedScheme() );
 	
 	// Retrieve the list with all the ColourItems of this scheme
 	ColourItemMap& colourMap = scheme.getColourMap();
@@ -290,9 +289,8 @@ void ColourSchemeEditor::updateColourSelectors() {
 
 void ColourSchemeEditor::updateWindows() {
 	// Call the update, so all colours can be previewed
-	XY_UpdateAllWindows();
-	GlobalCamera_UpdateWindow();
-	GlobalBrush()->clipperColourChanged();
+	GlobalRadiant().updateAllWindows();
+	GlobalBrushCreator().clipperColourChanged();
 	SceneChangeNotify();
 }
 
@@ -303,11 +301,11 @@ void ColourSchemeEditor::selectionChanged() {
 	updateColourSelectors();
 	
 	// Check, if the currently selected scheme is read-only
-	ColourScheme& scheme = ColourSchemes().getScheme(activeScheme);
+	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(activeScheme);
 	gtk_widget_set_sensitive(_deleteButton, (!scheme.isReadOnly()));
 	
 	// Set the active Scheme, so that the views are updated accordingly
-	ColourSchemes().setActive(activeScheme);
+	ColourSchemeManager::Instance().setActive(activeScheme);
 	
 	updateWindows();
 }
@@ -315,11 +313,11 @@ void ColourSchemeEditor::selectionChanged() {
 void ColourSchemeEditor::deleteScheme() {
 	std::string name = getSelectedScheme();
 	// Get the selected scheme
-	ColourScheme& scheme = ColourSchemes().getScheme(name);
+	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(name);
 	
 	if (!scheme.isReadOnly()) {
 		// Remove the actual scheme from the ColourSchemeManager 
-		ColourSchemes().deleteScheme(name);
+		ColourSchemeManager::Instance().deleteScheme(name);
 		
 		// Remove the selected item from the GtkListStore
 		deleteSchemeFromList();
@@ -366,8 +364,8 @@ void ColourSchemeEditor::copyScheme() {
 	
 	if (newName != "") {
 		// Copy the scheme
-		ColourSchemes().copyScheme(name, newName);
-		ColourSchemes().setActive(newName);
+		ColourSchemeManager::Instance().copyScheme(name, newName);
+		ColourSchemeManager::Instance().setActive(newName);
 		
 		// Add the new list item to the ListStore
 		gtk_list_store_append(_listStore, &iter);
@@ -407,8 +405,8 @@ void ColourSchemeEditor::callbackSelChanged(GtkWidget* widget, ColourSchemeEdito
 }
 
 void ColourSchemeEditor::callbackOK(GtkWidget* widget, ColourSchemeEditor* self) {
-	ColourSchemes().setActive(self->getSelectedScheme());
-	ColourSchemes().saveColourSchemes();
+	ColourSchemeManager::Instance().setActive(self->getSelectedScheme());
+	ColourSchemeManager::Instance().saveColourSchemes();
 	
 	if (GTK_IS_WIDGET(self->_editorWidget)) {
 		gtk_widget_hide(GTK_WIDGET(self->_editorWidget));
@@ -421,7 +419,7 @@ void ColourSchemeEditor::callbackOK(GtkWidget* widget, ColourSchemeEditor* self)
 void ColourSchemeEditor::doCancel() {
 
 	// Restore all the colour settings from the XMLRegistry, changes get lost
-	ColourSchemes().restoreColourSchemes();
+	ColourSchemeManager::Instance().restoreColourSchemes();
 	
 	// Call the update, so all restored colours are displayed
 	updateWindows();
@@ -443,6 +441,10 @@ void ColourSchemeEditor::_onDeleteEvent(GtkWidget* w,
 										ColourSchemeEditor* self)
 {
 	self->doCancel();
+}
+
+void ColourSchemeEditor::editColourSchemes() {
+	new ColourSchemeEditor;
 }
 
 

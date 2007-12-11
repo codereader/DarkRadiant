@@ -79,12 +79,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/shared_ptr.hpp>
 
-// TODO: Move this elsewhere
-ui::ColourSchemeManager& ColourSchemes() {
-	static ui::ColourSchemeManager _manager;
-	return _manager;
-}
-
 RadiantCoreAPI::RadiantCoreAPI() {
 	globalOutputStream() << "RadiantCore initialised.\n";
 }
@@ -124,10 +118,6 @@ void RadiantCoreAPI::setStatusText(const std::string& statusText) {
 	Sys_Status(statusText);
 }
 	
-Vector3 RadiantCoreAPI::getColour(const std::string& colourName) {
-	return ColourSchemes().getColourVector3(colourName);
-}
-  
 void RadiantCoreAPI::updateAllWindows() {
 	UpdateAllWindows();
 }

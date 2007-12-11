@@ -2,7 +2,7 @@
 #include "AttributeCopyingVisitor.h"
 #include "AttributeSuffixComparator.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "os/path.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -29,7 +29,7 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
 {
 	// Set the entity colour to default, if none was specified
 	if (_colour == Vector3(-1, -1, -1)) {
-		_colour = GlobalRadiant().getColour("default_entity");
+		_colour = ColourSchemes().getColour("default_entity");
 	}
 	// Capture the shaders
 	captureColour();		
