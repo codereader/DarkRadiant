@@ -174,7 +174,7 @@
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\boost.w32\lib&quot;;&quot;$(SolutionDir)\..\..\libxml2.w32\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\boost.w32\lib&quot;;&quot;$(SolutionDir)\..\..\libxml2.w32\lib&quot;;&quot;$(SolutionDir)\..\..\w32\glew\lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
