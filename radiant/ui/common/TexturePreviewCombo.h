@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "gtkutil/menu/PopupMenu.h"
+
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
 
@@ -24,13 +26,19 @@ class TexturePreviewCombo
 	// The texture to preview
 	std::string _texName;
 	
-	// Info table list store
+	// Info table list store and view
 	GtkListStore* _infoStore;
+	GtkWidget* _infoView;
+	
+	// Context menu
+	gtkutil::PopupMenu _contextMenu;
 	
 private:
 
-	/* GTK CALLBACKS */
+	/* gtkutil::PopupMenu callbacks */
+	void _onCopyTexName();
 	
+	/* GTK CALLBACKS */
 	static void  _onExpose(GtkWidget*, GdkEventExpose*, TexturePreviewCombo*);
 	
 	// Refresh info table utility function

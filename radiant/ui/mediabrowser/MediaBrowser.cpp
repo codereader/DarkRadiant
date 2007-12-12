@@ -109,11 +109,6 @@ MediaBrowser::MediaBrowser()
 		boost::bind(&MediaBrowser::_onApplyToSel, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
-	_popupMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy shader name"),
-		boost::bind(&MediaBrowser::_onCopyShaderName, this),
-		boost::bind(&MediaBrowser::_testSingleTexSel, this)
-	);
 
 	// Pack in the TexturePreviewCombo widgets
 	gtk_box_pack_end(GTK_BOX(_widget), _preview, FALSE, FALSE, 0);
@@ -349,16 +344,6 @@ bool MediaBrowser::_testSingleTexSel() {
 		return true;
 	else
 		return false;
-}
-
-void MediaBrowser::_onCopyShaderName() {
-	
-	// Get the selected texture
-	std::string tex = getSelectedName();
-	
-	// Store it on the GTK clipboard
-	GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-	gtk_clipboard_set_text(clipboard, tex.c_str(), tex.size());
 }
 
 /* GTK CALLBACKS */

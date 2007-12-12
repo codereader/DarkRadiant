@@ -2,19 +2,15 @@
 
 #include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
+#include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/StockIconMenuItem.h"
 
 #include "ishaders.h"
 #include "texturelib.h"
 
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkframe.h>
-#include <gtk/gtkcontainer.h>
-#include <gtk/gtkliststore.h>
-#include <gtk/gtktreeview.h>
-#include <gtk/gtkcellrenderertext.h>
-#include <gtk/gtkscrolledwindow.h>
-
+#include <gtk/gtk.h>
 #include <GL/glew.h>
+#include <boost/bind.hpp>
 
 namespace ui
 {
@@ -25,7 +21,9 @@ TexturePreviewCombo::TexturePreviewCombo()
 : _widget(gtk_hbox_new(FALSE, 0)),
   _glWidget(glwidget_new(false)),
   _texName(""),
-  _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING))
+  _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
+  _infoView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore))),
+  _contextMenu(_infoView)
 {
 	// Set up the GL preview widget
 	gtk_widget_set_size_request(_glWidget, 128, 128);
@@ -35,8 +33,7 @@ TexturePreviewCombo::TexturePreviewCombo()
 	gtk_box_pack_start(GTK_BOX(_widget), glFrame, FALSE, FALSE, 0);
 	
 	// Set up the info table
-	GtkWidget* view = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(view), FALSE);
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_infoView), FALSE);
 	
 	GtkCellRenderer* rend;
 	GtkTreeViewColumn* col;
@@ -47,26 +44,25 @@ TexturePreviewCombo::TexturePreviewCombo()
 												   "text", 0,
 												   NULL);
 	g_object_set(G_OBJECT(rend), "weight", 700, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView), col);
 	
 	rend = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes("Value",
 												   rend,
 												   "text", 1,
 												   NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(view), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView), col);
 
-	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), view);
-
-	GtkWidget* attFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(attFrame), scroll);
-
-	gtk_box_pack_start(GTK_BOX(_widget), attFrame, TRUE, TRUE, 0);
+	// Pack into main widget
+	gtk_box_pack_start(
+		GTK_BOX(_widget), gtkutil::ScrolledFrame(_infoView), TRUE, TRUE, 0
+	);
 	
+	// Construct the context menu
+	_contextMenu.addItem(
+		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy shader name"),
+		boost::bind(&TexturePreviewCombo::_onCopyTexName, this)
+	);	
 }
 
 // Update the selected texture
@@ -112,6 +108,13 @@ void TexturePreviewCombo::refreshInfoTable() {
 					   -1);
 }
 
+// Popup menu callbacks
+
+void TexturePreviewCombo::_onCopyTexName() {
+	// Store texture on the clipboard
+	GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+	gtk_clipboard_set_text(clipboard, _texName.c_str(), _texName.size());
+}
 
 // GTK CALLBACKS
 
