@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib"
+				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib gtkglext-win32-1.0.lib gdkglext-win32-1.0.lib opengl32.lib libxml2.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="true"
@@ -1362,34 +1362,6 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\about\AboutDialog.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="colourscheme"
-					>
-					<File
-						RelativePath="..\..\radiant\ui\colourscheme\ColourScheme.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\colourscheme\ColourScheme.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\colourscheme\ColourSchemeEditor.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\colourscheme\ColourSchemeEditor.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\colourscheme\ColourSchemeManager.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\colourscheme\ColourSchemeManager.h"
 						>
 					</File>
 				</Filter>

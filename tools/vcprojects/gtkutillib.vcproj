@@ -154,6 +154,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="menu"
+			>
+			<File
+				RelativePath="..\..\libs\gtkutil\menu\PopupMenu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libs\gtkutil\menu\PopupMenu.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="event"
+			>
+			<File
+				RelativePath="..\..\libs\gtkutil\event\SingleIdleCallback.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\libs\gtkutil\button.cpp"
 			>

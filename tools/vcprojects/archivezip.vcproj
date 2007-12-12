@@ -220,11 +220,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\archivezip\archive.cpp"
+				RelativePath="..\..\plugins\archivezip\DeflatedArchiveFile.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\archivezip\archive.h"
+				RelativePath="..\..\plugins\archivezip\DeflatedArchiveTextFile.h"
 				>
 			</File>
 			<File
@@ -241,6 +241,14 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\archivezip\plugin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\archivezip\ZipArchive.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\archivezip\ZipArchive.h"
 				>
 			</File>
 			<File
