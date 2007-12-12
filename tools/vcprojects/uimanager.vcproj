@@ -251,6 +251,34 @@
 				RelativePath="..\..\plugins\uimanager\UIManager.h"
 				>
 			</File>
+			<Filter
+				Name="colourscheme"
+				>
+				<File
+					RelativePath="..\..\plugins\uimanager\colourscheme\ColourScheme.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\uimanager\colourscheme\ColourScheme.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\uimanager\uimanager.def"
