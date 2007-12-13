@@ -635,6 +635,24 @@ if radiant_env['PLATFORM'] == 'win32':
 		'#w32/vorbis/lib/vorbisfile.dll',
 		'#w32/openal/lib/alut.dll',
 		'#w32/openal/lib/OpenAL32.dll',
-		'#w32/openal/lib/wrap_oal.dll'])
+		'#w32/openal/lib/wrap_oal.dll',
+		'#gtk2.w32/bin/etc',
+		'#gtk2.w32/bin/lib',
+		'#gtk2.w32/bin/iconv.dll',
+		'#gtk2.w32/bin/intl.dll',
+		'#gtk2.w32/bin/jpeg62.dll',
+		'#gtk2.w32/bin/libatk-1.0-0.dll',
+		'#gtk2.w32/bin/libcairo-2.dll',
+		'#gtk2.w32/bin/libgdk_pixbuf-2.0-0.dll',
+		'#gtk2.w32/bin/libgdk-win32-2.0-0.dll',
+		'#gtk2.w32/bin/libglib-2.0-0.dll',
+		'#gtk2.w32/bin/libgmodule-2.0-0.dll',
+		'#gtk2.w32/bin/libgobject-2.0-0.dll',
+		'#gtk2.w32/bin/libgthread-2.0-0.dll',
+		'#gtk2.w32/bin/libgtk-win32-2.0-0.dll',
+		'#gtk2.w32/bin/libpango-1.0-0.dll',
+		'#gtk2.w32/bin/libpangocairo-1.0-0.dll',
+		'#gtk2.w32/bin/libpangoft2-1.0-0.dll',
+		'#gtk2.w32/bin/libpangowin32-1.0-0.dll'])
 
 # end setup ---------------------------------------------------------------------------------------
