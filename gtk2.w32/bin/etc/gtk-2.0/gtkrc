@@ -1,8 +1,0 @@
-gtk-theme-name = "MS-Windows"
-
-style "use-wimp" {
-	engine "wimp" {
-	
-	}
-}
-widget "*" style "use-wimp"
