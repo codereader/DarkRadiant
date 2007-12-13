@@ -323,8 +323,8 @@ class idEnvironment(Environment):
 
 	def useZLib(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/zlib.w32/include'])
-			self.Append(LIBPATH = ['#/zlib.w32/lib'])
+			self.Append(CPPPATH = ['#/w32deps/zlib/include'])
+			self.Append(LIBPATH = ['#/w32deps/zlib/lib'])
 		self.Append(LIBS = ['z'])
     
 	def buildIconResource(self):

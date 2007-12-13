@@ -630,7 +630,7 @@ radiant_env.Install(INSTALL, radiant_prog)
 
 if radiant_env['PLATFORM'] == 'win32':
     radiant_env.Install(INSTALL, 
-       ['#libxml2.w32/lib/libxml2.dll', 
+       ['#w32deps/libxml2/lib/libxml2.dll', 
 		'#w32/vorbis/lib/ogg.dll',
 		'#w32/vorbis/lib/vorbis.dll',
 		'#w32/vorbis/lib/vorbisfile.dll',
