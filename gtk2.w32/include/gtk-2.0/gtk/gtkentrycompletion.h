@@ -65,11 +65,13 @@ struct _GtkEntryCompletionClass
                                  gint                index_);
   gboolean (* insert_prefix)    (GtkEntryCompletion *completion,
 				 const gchar        *prefix); 
+  gboolean (* cursor_on_match)  (GtkEntryCompletion *completion,
+				 GtkTreeModel       *model,
+				 GtkTreeIter        *iter);
 
   /* Padding for future expansion */
   void (*_gtk_reserved0) (void);
   void (*_gtk_reserved1) (void);
-  void (*_gtk_reserved2) (void);
 };
 
 /* core */
@@ -104,6 +106,9 @@ void                gtk_entry_completion_delete_action          (GtkEntryComplet
 void                gtk_entry_completion_set_inline_completion  (GtkEntryCompletion          *completion,
                                                                  gboolean                     inline_completion);
 gboolean            gtk_entry_completion_get_inline_completion  (GtkEntryCompletion          *completion);
+void                gtk_entry_completion_set_inline_selection  (GtkEntryCompletion          *completion,
+                                                                 gboolean                     inline_selection);
+gboolean            gtk_entry_completion_get_inline_selection  (GtkEntryCompletion          *completion);
 void                gtk_entry_completion_set_popup_completion   (GtkEntryCompletion          *completion,
                                                                  gboolean                     popup_completion);
 gboolean            gtk_entry_completion_get_popup_completion   (GtkEntryCompletion          *completion);
@@ -114,7 +119,7 @@ void                gtk_entry_completion_set_popup_single_match (GtkEntryComplet
                                                                  gboolean                     popup_single_match);
 gboolean            gtk_entry_completion_get_popup_single_match (GtkEntryCompletion          *completion);
 
-
+const gchar         *gtk_entry_completion_get_completion_prefix (GtkEntryCompletion *completion);
 /* convenience */
 void                gtk_entry_completion_set_text_column        (GtkEntryCompletion          *completion,
                                                                  gint                         column);

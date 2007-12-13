@@ -99,44 +99,44 @@ extern "C" {
  *@ATK_ROLE_TABLE_COLUMN_HEADER: The header for a column of a table
  *@ATK_ROLE_TABLE_ROW_HEADER: The header for a row of a table
  *@ATK_ROLE_TEAR_OFF_MENU_ITEM: A menu item used to tear off and reattach its menu
- *@ATK_ROLE_TERMINAL: An object that represents an accessible terminal
+ *@ATK_ROLE_TERMINAL: An object that represents an accessible terminal.  @Since: ATK-0.6
  *@ATK_ROLE_TEXT: An object that presents text to the user
  *@ATK_ROLE_TOGGLE_BUTTON: A specialized push button that can be checked or unchecked, but does not provide a separate indicator for the current state
  *@ATK_ROLE_TOOL_BAR: A bar or palette usually composed of push buttons or toggle buttons
  *@ATK_ROLE_TOOL_TIP: An object that provides information about another object
  *@ATK_ROLE_TREE: An object used to represent hierarchical information to the user
- *@ATK_ROLE_TREE_TABLE: An object capable of expanding and collapsing rows as well as showing multiple columns of data
+ *@ATK_ROLE_TREE_TABLE: An object capable of expanding and collapsing rows as well as showing multiple columns of data.   @Since: ATK-0.7
  *@ATK_ROLE_UNKNOWN: The object contains some Accessible information, but its role is not known
  *@ATK_ROLE_VIEWPORT: An object usually used in a scroll pane
  *@ATK_ROLE_WINDOW: A top level window with no title or border.
- *@ATK_ROLE_HEADER: An object that serves as a document header.
- *@ATK_ROLE_FOOTER: An object that serves as a document footer.
- *@ATK_ROLE_PARAGRAPH: An object which is contains a paragraph of text content.
- *@ATK_ROLE_RULER: An object which describes margins and tab stops, etc. for text objects which it controls (should have CONTROLLER_FOR relation to such).
- *@ATK_ROLE_APPLICATION: The object is an application object, which may contain @ATK_ROLE_FRAME objects or other types of accessibles.  The root accessible of any application's ATK hierarchy should have ATK_ROLE_APPLICATION.
- *@ATK_ROLE_AUTOCOMPLETE: The object is a dialog or list containing items for insertion into an entry widget, for instance a list of words for completion of a text entry.
- *@ATK_ROLE_EDITBAR: The object is an editable text object in a toolbar
- *@ATK_ROLE_EMBEDDED: The object is an embedded container within a document or panel.  This role is a grouping "hint" indicating that the contained objects share a context.
- *@ATK_ROLE_ENTRY: The object is a component whose textual content may be entered or modified by the user, provided @ATK_STATE_EDITABLE is present.
- *@ATK_ROLE_CHART: The object is a graphical depiction of quantitative data. It may contain multiple subelements whose attributes and/or description may be queried to obtain both the quantitative data and information about how the data is being presented. The LABELLED_BY relation is particularly important in interpreting objects of this type, as is the accessible-description property.
- *@ATK_ROLE_CAPTION: The object contains descriptive information, usually textual, about another user interface element such as a table, chart, or image.
- *@ATK_ROLE_DOCUMENT_FRAME: The object is a visual frame or container which contains a view of document content. Document frames may occur within another Document instance, in which case the second document may be said to be embedded in the containing instance. HTML frames are often ROLE_DOCUMENT_FRAME. Either this object, or a singleton descendant, should implement the Document interface.
+ *@ATK_ROLE_HEADER: An object that serves as a document header. @Since:ATK 1.1.1
+ *@ATK_ROLE_FOOTER: An object that serves as a document footer.  @Since: ATK-1.1.1
+ *@ATK_ROLE_PARAGRAPH: An object which is contains a paragraph of text content.   @Since: ATK-1.1.1
+ *@ATK_ROLE_RULER: An object which describes margins and tab stops, etc. for text objects which it controls (should have CONTROLLER_FOR relation to such).   @Since: ATK-1.1.1
+ *@ATK_ROLE_APPLICATION: The object is an application object, which may contain @ATK_ROLE_FRAME objects or other types of accessibles.  The root accessible of any application's ATK hierarchy should have ATK_ROLE_APPLICATION.   @Since: ATK-1.1.4
+ *@ATK_ROLE_AUTOCOMPLETE: The object is a dialog or list containing items for insertion into an entry widget, for instance a list of words for completion of a text entry.   @Since: ATK-1.3
+ *@ATK_ROLE_EDITBAR: The object is an editable text object in a toolbar.  @Since: ATK-1.5
+ *@ATK_ROLE_EMBEDDED: The object is an embedded container within a document or panel.  This role is a grouping "hint" indicating that the contained objects share a context.  @Since: ATK-1.7.2
+ *@ATK_ROLE_ENTRY: The object is a component whose textual content may be entered or modified by the user, provided @ATK_STATE_EDITABLE is present.   @Since: ATK-1.11
+ *@ATK_ROLE_CHART: The object is a graphical depiction of quantitative data. It may contain multiple subelements whose attributes and/or description may be queried to obtain both the quantitative data and information about how the data is being presented. The LABELLED_BY relation is particularly important in interpreting objects of this type, as is the accessible-description property.  @Since: ATK-1.11
+ *@ATK_ROLE_CAPTION: The object contains descriptive information, usually textual, about another user interface element such as a table, chart, or image.  @Since: ATK-1.11
+ *@ATK_ROLE_DOCUMENT_FRAME: The object is a visual frame or container which contains a view of document content. Document frames may occur within another Document instance, in which case the second document may be said to be embedded in the containing instance. HTML frames are often ROLE_DOCUMENT_FRAME. Either this object, or a singleton descendant, should implement the Document interface.  @Since: ATK-1.11
  *@ATK_ROLE_HEADING: The object serves as a heading for content which follows it in a document. The 'heading level' of the heading, if availabe, may be obtained by querying the object's attributes.
- *@ATK_ROLE_PAGE: The object is a containing instance which encapsulates a page of information. @ATK_ROLE_PAGE is used in documents and content which support a paginated navigation model.
- *@ATK_ROLE_SECTION: The object is a containing instance of document content which constitutes a particular 'logical' section of the document. The type of content within a section, and the nature of the section division itself, may be obtained by querying the object's attributes. Sections may be nested.
- *@ATK_ROLE_REDUNDANT_OBJECT: The object is redundant with another object in the hierarchy, and is exposed for purely technical reasons.  Objects of this role should normally be ignored by clients. 
+ *@ATK_ROLE_PAGE: The object is a containing instance which encapsulates a page of information. @ATK_ROLE_PAGE is used in documents and content which support a paginated navigation model.  @Since: ATK-1.11
+ *@ATK_ROLE_SECTION: The object is a containing instance of document content which constitutes a particular 'logical' section of the document. The type of content within a section, and the nature of the section division itself, may be obtained by querying the object's attributes. Sections may be nested. @Since: ATK-1.11
+ *@ATK_ROLE_REDUNDANT_OBJECT: The object is redundant with another object in the hierarchy, and is exposed for purely technical reasons.  Objects of this role should normally be ignored by clients. @Since: ATK-1.11
  *@ATK_ROLE_FORM: The object is a container for form controls, for instance as part of a 
  * web form or user-input form within a document.  This role is primarily a tag/convenience for 
  * clients when navigating complex documents, it is not expected that ordinary GUI containers will 
- * always have ATK_ROLE_FORM.
+ * always have ATK_ROLE_FORM. @Since: ATK-1.12.0
  *@ATK_ROLE_LINK: The object is a hypertext anchor, i.e. a "link" in a
  * hypertext document.  Such objects are distinct from 'inline'
  * content which may also use the Hypertext/Hyperlink interfaces
  * to indicate the range/location within a text object where
- * an inline or embedded object lies.
+ * an inline or embedded object lies.  @Since: ATK-1.12.1
  *@ATK_ROLE_INPUT_METHOD_WINDOW: The object is a window or similar viewport 
  * which is used to allow composition or input of a 'complex character',
- * in other words it is an "input method window."
+ * in other words it is an "input method window." @Since: ATK-1.12.1
  *@ATK_ROLE_LAST_DEFINED: not a valid role, used for finding end of the enumeration
  * 
  * Describes the role of an object

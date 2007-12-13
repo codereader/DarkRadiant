@@ -64,8 +64,13 @@ void                   gtk_show_about_dialog                   (GtkWindow       
 								const gchar     *first_property_name,
 								...) G_GNUC_NULL_TERMINATED;
 
+#ifndef GTK_DISABLE_DEPRECATED
 G_CONST_RETURN gchar  *gtk_about_dialog_get_name               (GtkAboutDialog  *about);
 void                   gtk_about_dialog_set_name               (GtkAboutDialog  *about,
+								const gchar     *name);
+#endif /* GTK_DISABLE_DEPRECATED */
+G_CONST_RETURN gchar  *gtk_about_dialog_get_program_name       (GtkAboutDialog  *about);
+void                   gtk_about_dialog_set_program_name       (GtkAboutDialog  *about,
 								const gchar     *name);
 G_CONST_RETURN gchar  *gtk_about_dialog_get_version            (GtkAboutDialog  *about);
 void                   gtk_about_dialog_set_version            (GtkAboutDialog  *about,
@@ -110,7 +115,7 @@ void                   gtk_about_dialog_set_logo_icon_name     (GtkAboutDialog  
 								const gchar     *icon_name);
 
 typedef void (* GtkAboutDialogActivateLinkFunc) (GtkAboutDialog *about,
-						 const gchar    *link,
+						 const gchar    *link_,
 						 gpointer        data);
 
 GtkAboutDialogActivateLinkFunc gtk_about_dialog_set_email_hook (GtkAboutDialogActivateLinkFunc func,

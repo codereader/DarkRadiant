@@ -41,7 +41,7 @@ G_BEGIN_DECLS
 typedef struct _PangoFT2FontMap      PangoFT2FontMap;
 
 typedef void (*PangoFT2SubstituteFunc) (FcPattern *pattern,
-                                        gpointer   data);
+					gpointer   data);
 
 /* Calls for applications */
 
@@ -74,7 +74,7 @@ void pango_ft2_render_layout_subpixel      (FT_Bitmap        *bitmap,
 					    int               x,
 					    int               y);
 
-GType pango_ft2_font_map_get_type (void);
+GType pango_ft2_font_map_get_type (void) G_GNUC_CONST;
 
 PangoFontMap *pango_ft2_font_map_new                    (void);
 void          pango_ft2_font_map_set_resolution         (PangoFT2FontMap        *fontmap,

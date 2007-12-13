@@ -73,8 +73,9 @@ struct _GtkActionClass
   void       (* disconnect_proxy)   (GtkAction *action,
 				     GtkWidget *proxy);
 
+  GtkWidget *(* create_menu)        (GtkAction *action);
+
   /* Padding for future expansion */
-  void (*_gtk_reserved1) (void);
   void (*_gtk_reserved2) (void);
   void (*_gtk_reserved3) (void);
   void (*_gtk_reserved4) (void);
@@ -95,16 +96,17 @@ gboolean     gtk_action_get_visible            (GtkAction     *action);
 void         gtk_action_set_visible            (GtkAction     *action,
 						gboolean       visible);
 void         gtk_action_activate               (GtkAction     *action);
-GtkWidget*   gtk_action_create_icon            (GtkAction     *action,
+GtkWidget *  gtk_action_create_icon            (GtkAction     *action,
 						GtkIconSize    icon_size);
-GtkWidget*   gtk_action_create_menu_item       (GtkAction     *action);
-GtkWidget*   gtk_action_create_tool_item       (GtkAction     *action);
+GtkWidget *  gtk_action_create_menu_item       (GtkAction     *action);
+GtkWidget *  gtk_action_create_tool_item       (GtkAction     *action);
+GtkWidget *  gtk_action_create_menu            (GtkAction     *action);
 void         gtk_action_connect_proxy          (GtkAction     *action,
 						GtkWidget     *proxy);
 void         gtk_action_disconnect_proxy       (GtkAction     *action,
 						GtkWidget     *proxy);
-GSList*      gtk_action_get_proxies            (GtkAction     *action);
-GtkAction   *gtk_widget_get_action             (GtkWidget     *widget);
+GSList *     gtk_action_get_proxies            (GtkAction     *action);
+GtkAction *  gtk_widget_get_action             (GtkWidget     *widget);
 void         gtk_action_connect_accelerator    (GtkAction     *action);
 void         gtk_action_disconnect_accelerator (GtkAction     *action);
 G_CONST_RETURN gchar *gtk_action_get_accel_path (GtkAction     *action);

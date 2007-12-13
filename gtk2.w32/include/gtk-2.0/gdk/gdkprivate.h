@@ -35,6 +35,9 @@
 #include <gdk/gdkregion.h>
 #include <gdk/gdkvisual.h>
 #include <gdk/gdkwindow.h>
+#ifdef USE_MEDIALIB
+#include <gdk/gdkmedialib.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -49,6 +52,16 @@ void gdk_window_destroy_notify	     (GdkWindow *window);
 void gdk_synthesize_window_state (GdkWindow     *window,
                                   GdkWindowState unset_flags,
                                   GdkWindowState set_flags);
+
+/* Tests whether a pair of x,y may cause overflows when converted to Pango
+ * units (multiplied by PANGO_SCALE).  We don't allow the entire range, leave
+ * some space for additions afterwards, to be safe...
+ */
+#define GDK_PANGO_UNITS_OVERFLOWS(x,y) (G_UNLIKELY ( \
+	(y) >= PANGO_PIXELS (G_MAXINT-PANGO_SCALE)/2 || \
+	(x) >= PANGO_PIXELS (G_MAXINT-PANGO_SCALE)/2 || \
+	(y) <=-PANGO_PIXELS (G_MAXINT-PANGO_SCALE)/2 || \
+	(x) <=-PANGO_PIXELS (G_MAXINT-PANGO_SCALE)/2))
 
 G_END_DECLS
 

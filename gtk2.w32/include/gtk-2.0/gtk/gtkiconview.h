@@ -23,6 +23,7 @@
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtkcellrenderer.h>
 #include <gtk/gtkselection.h>
+#include <gtk/gtktooltip.h>
 
 G_BEGIN_DECLS
 
@@ -194,6 +195,31 @@ gboolean               gtk_icon_view_get_dest_item_at_pos     (GtkIconView      
 							       GtkIconViewDropPosition  *pos);
 GdkPixmap             *gtk_icon_view_create_drag_icon         (GtkIconView              *icon_view,
 							       GtkTreePath              *path);
+
+void    gtk_icon_view_convert_widget_to_bin_window_coords     (GtkIconView *icon_view,
+                                                               gint         wx,
+                                                               gint         wy,
+                                                               gint        *bx,
+                                                               gint        *by);
+
+
+void    gtk_icon_view_set_tooltip_item                        (GtkIconView     *icon_view,
+                                                               GtkTooltip      *tooltip,
+                                                               GtkTreePath     *path);
+void    gtk_icon_view_set_tooltip_cell                        (GtkIconView     *icon_view,
+                                                               GtkTooltip      *tooltip,
+                                                               GtkTreePath     *path,
+                                                               GtkCellRenderer *cell);
+gboolean gtk_icon_view_get_tooltip_context                    (GtkIconView       *icon_view,
+                                                               gint              *x,
+                                                               gint              *y,
+                                                               gboolean           keyboard_tip,
+                                                               GtkTreeModel     **model,
+                                                               GtkTreePath      **path,
+                                                               GtkTreeIter       *iter);
+void     gtk_icon_view_set_tooltip_column                     (GtkIconView       *icon_view,
+                                                               gint               column);
+gint     gtk_icon_view_get_tooltip_column                     (GtkIconView       *icon_view);
 
 
 G_END_DECLS

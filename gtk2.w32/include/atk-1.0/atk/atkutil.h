@@ -234,6 +234,11 @@ G_CONST_RETURN gchar *atk_get_toolkit_name (void);
  */
 G_CONST_RETURN gchar *atk_get_toolkit_version (void);
 
+/*
+ * Gets the current version of ATK
+ */
+G_CONST_RETURN gchar *atk_get_version (void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

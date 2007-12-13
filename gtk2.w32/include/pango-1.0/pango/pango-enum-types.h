@@ -26,6 +26,11 @@ GType pango_stretch_get_type (void);
 #define PANGO_TYPE_STRETCH (pango_stretch_get_type())
 GType pango_font_mask_get_type (void);
 #define PANGO_TYPE_FONT_MASK (pango_font_mask_get_type())
+/* enumerations from "pango-gravity.h" */
+GType pango_gravity_get_type (void);
+#define PANGO_TYPE_GRAVITY (pango_gravity_get_type())
+GType pango_gravity_hint_get_type (void);
+#define PANGO_TYPE_GRAVITY_HINT (pango_gravity_hint_get_type())
 /* enumerations from "pango-layout.h" */
 GType pango_alignment_get_type (void);
 #define PANGO_TYPE_ALIGNMENT (pango_alignment_get_type())

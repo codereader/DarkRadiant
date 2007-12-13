@@ -42,7 +42,7 @@ typedef struct _PangoFcFontClass PangoFcFontClass;
 
 /**
  * PANGO_RENDER_TYPE_FC:
- * 
+ *
  * A string constant used to identify shape engines that work
  * with the fontconfig based backends. See the @engine_type field
  * of #PangoEngineInfo.
@@ -57,9 +57,9 @@ typedef struct _PangoFcFontClass PangoFcFontClass;
 
 /**
  * PangoFcFont:
- * 
+ *
  * #PangoFcFont is a base class for font implementations
- * using the FontConfig and FreeType libraries and is used in
+ * using the Fontconfig and FreeType libraries and is used in
  * conjunction with #PangoFcFontMap. When deriving from this
  * class, you need to implement all of its virtual functions
  * other than shutdown() along with the get_glyph_extents()
@@ -74,7 +74,7 @@ struct _PangoFcFont
   gpointer priv;		    /* used internally */
   PangoMatrix matrix;		    /* used internally */
   PangoFontDescription *description;
-  
+
   GSList *metrics_by_lang;
 
   guint is_hinted : 1;
@@ -142,7 +142,7 @@ void       pango_fc_font_kern_glyphs       (PangoFcFont      *font,
 
 #endif /* PANGO_ENABLE_ENGINE || PANGO_ENABLE_BACKEND */
 
-GType      pango_fc_font_get_type (void);
+GType      pango_fc_font_get_type (void) G_GNUC_CONST;
 
 FT_Face    pango_fc_font_lock_face         (PangoFcFont      *font);
 void       pango_fc_font_unlock_face       (PangoFcFont      *font);

@@ -37,19 +37,19 @@ struct _PangoLogAttr
   guint is_mandatory_break : 1; /* Must break line in front of character */
 
   guint is_char_break : 1;      /* Can break here when doing char wrap */
-  
+
   guint is_white : 1;           /* Whitespace character */
 
-  /* cursor can appear in front of character (i.e. this is a grapheme
-   * boundary, or the first character in the text)
+  /* Cursor can appear in front of character (i.e. this is a grapheme
+   * boundary, or the first character in the text).
    */
   guint is_cursor_position : 1;
-  
+
   /* Note that in degenerate cases, you could have both start/end set on
    * some text, most likely for sentences (e.g. no space after a period, so
-   * the next sentence starts right away)
+   * the next sentence starts right away).
    */
-  
+
   guint is_word_start : 1;      /* first character in a word */
   guint is_word_end   : 1;      /* is first non-word char after a word */
 
@@ -65,32 +65,37 @@ struct _PangoLogAttr
   guint is_sentence_start : 1;  /* first character in a sentence */
   guint is_sentence_end : 1;    /* first non-sentence char after a sentence */
 
-  /* if set, backspace deletes one character rather than
-   * the entire grapheme cluster  
+  /* If set, backspace deletes one character rather than
+   * the entire grapheme cluster.
    */
-  guint backspace_deletes_character : 1; 
+  guint backspace_deletes_character : 1;
+
+  /* Only few space variants (U+0020 and U+00A0) have variable
+   * width during justification.
+   */
+  guint is_expandable_space : 1;
 };
 
 /* Determine information about cluster/word/line breaks in a string
  * of Unicode text.
  */
-void pango_break (const gchar   *text, 
-		  int            length, 
-		  PangoAnalysis *analysis, 
+void pango_break (const gchar   *text,
+		  int            length,
+		  PangoAnalysis *analysis,
 		  PangoLogAttr  *attrs,
-                  int            attrs_len);
+		  int            attrs_len);
 
 void pango_find_paragraph_boundary (const gchar *text,
-                                    gint         length,
-                                    gint        *paragraph_delimiter_index,
-                                    gint        *next_paragraph_start);
+				    gint         length,
+				    gint        *paragraph_delimiter_index,
+				    gint        *next_paragraph_start);
 
 void pango_get_log_attrs (const char    *text,
-                          int            length,
-                          int            level,
-                          PangoLanguage *language,
-                          PangoLogAttr  *log_attrs,
-                          int            attrs_len);
+			  int            length,
+			  int            level,
+			  PangoLanguage *language,
+			  PangoLogAttr  *log_attrs,
+			  int            attrs_len);
 
 #ifdef PANGO_ENABLE_ENGINE
 
@@ -100,10 +105,10 @@ void pango_get_log_attrs (const char    *text,
  * from a language engine override.
  */
 void pango_default_break (const gchar   *text,
-                          int            length,
-                          PangoAnalysis *analysis,
-                          PangoLogAttr  *attrs,
-                          int            attrs_len);
+			  int            length,
+			  PangoAnalysis *analysis,
+			  PangoLogAttr  *attrs,
+			  int            attrs_len);
 
 #endif /* PANGO_ENABLE_ENGINE */
 

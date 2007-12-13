@@ -45,9 +45,9 @@ typedef struct _PangoFcFontMapPrivate PangoFcFontMapPrivate;
 
 /**
  * PangoFcFontMap:
- * 
+ *
  * #PangoFcFontMap is a base class for font map implementations
- * using the FontConfig and FreeType libraries. To create a new
+ * using the Fontconfig and FreeType libraries. To create a new
  * backend using Fontconfig and FreeType, you derive from this class
  * and implement a new_font() virtual function that creates an
  * instance deriving from #PangoFcFont.
@@ -107,14 +107,14 @@ struct _PangoFcFontMapClass
   /*< public >*/
   /* Deprecated in favor of context_substitute */
   void         (*default_substitute) (PangoFcFontMap   *fontmap,
-			              FcPattern        *pattern);
+				      FcPattern        *pattern);
   /* Deprecated in favor of create_font */
   PangoFcFont  *(*new_font)          (PangoFcFontMap  *fontmap,
-			              FcPattern       *pattern);
+				      FcPattern       *pattern);
 
   double       (*get_resolution)     (PangoFcFontMap             *fcfontmap,
 				      PangoContext               *context);
-  
+
   gconstpointer (*context_key_get)   (PangoFcFontMap             *fcfontmap,
 				      PangoContext               *context);
   gpointer     (*context_key_copy)   (PangoFcFontMap             *fcfontmap,
@@ -126,14 +126,14 @@ struct _PangoFcFontMapClass
   gboolean     (*context_key_equal)  (PangoFcFontMap             *fcfontmap,
 				      gconstpointer               key_a,
 				      gconstpointer               key_b);
-  
+
   void         (*context_substitute) (PangoFcFontMap             *fontmap,
 				      PangoContext               *context,
-			              FcPattern                  *pattern);
+				      FcPattern                  *pattern);
   PangoFcFont  *(*create_font)       (PangoFcFontMap             *fontmap,
 				      PangoContext               *context,
 				      const PangoFontDescription *desc,
-			              FcPattern                  *pattern);
+				      FcPattern                  *pattern);
   /*< private >*/
 
   /* Padding for future expansion */
@@ -149,15 +149,15 @@ void           pango_fc_font_map_shutdown       (PangoFcFontMap *fcfontmap);
 
 #endif
 
-GType pango_fc_font_map_get_type (void);
+GType pango_fc_font_map_get_type (void) G_GNUC_CONST;
 
 /**
  * PangoFcDecoderFindFunc:
  * @pattern: a fully resolved #FcPattern specifying the font on the system
  * @user_data: user data passed to pango_fc_font_map_add_decoder_find_func()
- * 
+ *
  * Callback function passed to pango_fc_font_map_add_decoder_find_func().
- * 
+ *
  * Return value: a new reference to a custom decoder for this pattern,
  *  or %NULL if the default decoder handling should be used.
  **/

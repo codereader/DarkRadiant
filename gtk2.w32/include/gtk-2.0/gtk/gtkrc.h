@@ -102,7 +102,7 @@ struct _GtkRcStyleClass
 		       GtkSettings  *settings,
 		       GScanner     *scanner);
   
-  /* Combine RC style data from src into dest. If overriden, this
+  /* Combine RC style data from src into dest. If overridden, this
    * function should chain to the parent.
    */
   void      (*merge)  (GtkRcStyle *dest,
@@ -168,8 +168,11 @@ void	  gtk_rc_add_class_style	(GtkRcStyle   *rc_style,
 GType       gtk_rc_style_get_type   (void) G_GNUC_CONST;
 GtkRcStyle* gtk_rc_style_new        (void);
 GtkRcStyle* gtk_rc_style_copy       (GtkRcStyle *orig);
+
+#ifndef GTK_DISABLE_DEPRECATED
 void        gtk_rc_style_ref        (GtkRcStyle *rc_style);
 void        gtk_rc_style_unref      (GtkRcStyle *rc_style);
+#endif
 
 gchar*		gtk_rc_find_module_in_path	(const gchar 	*module_file);
 gchar*		gtk_rc_get_theme_dir		(void);
@@ -217,12 +220,16 @@ typedef enum {
   GTK_RC_TOKEN_LTR,
   GTK_RC_TOKEN_RTL,
   GTK_RC_TOKEN_COLOR,
+  GTK_RC_TOKEN_UNBIND,
   GTK_RC_TOKEN_LAST
 } GtkRcTokenType;
 
 GScanner* gtk_rc_scanner_new	(void);
 guint	  gtk_rc_parse_color	(GScanner	     *scanner,
 				 GdkColor	     *color);
+guint	  gtk_rc_parse_color_full (GScanner	     *scanner,
+                                   GtkRcStyle        *style,
+				   GdkColor	     *color);
 guint	  gtk_rc_parse_state	(GScanner	     *scanner,
 				 GtkStateType	     *state);
 guint	  gtk_rc_parse_priority	(GScanner	     *scanner,
@@ -242,6 +249,11 @@ struct _GtkRcProperty
   GValue value;
 };
 const GtkRcProperty* _gtk_rc_style_lookup_rc_property (GtkRcStyle *rc_style,
+						       GQuark      type_name,
+						       GQuark      property_name);
+void	      _gtk_rc_style_set_rc_property	      (GtkRcStyle *rc_style,
+						       GtkRcProperty *property);
+void	      _gtk_rc_style_unset_rc_property	      (GtkRcStyle *rc_style,
 						       GQuark      type_name,
 						       GQuark      property_name);
 

@@ -44,6 +44,7 @@
 #include <atk/atktable.h>
 #include <atk/atktext.h>
 #include <atk/atkutil.h>
+#include <atk/atkmisc.h>
 #include <atk/atkvalue.h>
 
 #endif /* __ATK_H__ */

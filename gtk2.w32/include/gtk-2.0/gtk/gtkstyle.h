@@ -427,7 +427,7 @@ GType     gtk_style_get_type                 (void) G_GNUC_CONST;
 GtkStyle* gtk_style_new			     (void);
 GtkStyle* gtk_style_copy		     (GtkStyle	   *style);
 GtkStyle* gtk_style_attach		     (GtkStyle	   *style,
-					      GdkWindow	   *window);
+					      GdkWindow	   *window) G_GNUC_WARN_UNUSED_RESULT;
 void	  gtk_style_detach		     (GtkStyle	   *style);
 
 #ifndef GTK_DISABLE_DEPRECATED
@@ -899,6 +899,9 @@ void   gtk_draw_insertion_cursor (GtkWidget        *widget,
 				  gboolean          is_primary,
 				  GtkTextDirection  direction,
 				  gboolean          draw_arrow);
+GdkGC *_gtk_widget_get_cursor_gc    (GtkWidget *widget);
+void   _gtk_widget_get_cursor_color (GtkWidget *widget,
+				     GdkColor  *color);
 
 G_END_DECLS
 

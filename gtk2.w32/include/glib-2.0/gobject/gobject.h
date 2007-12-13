@@ -87,10 +87,11 @@ struct  _GObjectClass
   GSList      *construct_properties;
 
   /*< public >*/
-  /* overridable methods */
+  /* seldomly overidden */
   GObject*   (*constructor)     (GType                  type,
                                  guint                  n_construct_properties,
                                  GObjectConstructParam *construct_properties);
+  /* overridable methods */
   void       (*set_property)		(GObject        *object,
                                          guint           property_id,
                                          const GValue   *value,
@@ -101,18 +102,20 @@ struct  _GObjectClass
                                          GParamSpec     *pspec);
   void       (*dispose)			(GObject        *object);
   void       (*finalize)		(GObject        *object);
-  
   /* seldomly overidden */
   void       (*dispatch_properties_changed) (GObject      *object,
 					     guint	   n_pspecs,
 					     GParamSpec  **pspecs);
-
   /* signals */
   void	     (*notify)			(GObject	*object,
 					 GParamSpec	*pspec);
+
+  /* called when done constructing */
+  void	     (*constructed)		(GObject	*object);
+
   /*< private >*/
   /* padding */
-  gpointer	pdummy[8];
+  gpointer	pdummy[7];
 };
 struct _GObjectConstructParam
 {
@@ -237,7 +240,7 @@ GClosure*   g_closure_new_object              (guint           sizeof_closure,
 void        g_value_set_object                (GValue         *value,
 					       gpointer        v_object);
 gpointer    g_value_get_object                (const GValue   *value);
-GObject*    g_value_dup_object                (const GValue   *value);
+gpointer    g_value_dup_object                (const GValue   *value);
 gulong	    g_signal_connect_object           (gpointer	       instance,
 					       const gchar    *detailed_signal,
 					       GCallback       c_handler,

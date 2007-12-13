@@ -32,7 +32,7 @@ typedef struct _PangoGlyphVisAttr PangoGlyphVisAttr;
 typedef struct _PangoGlyphInfo PangoGlyphInfo;
 typedef struct _PangoGlyphString PangoGlyphString;
 
-/* 1000ths of a device unit */
+/* 1024ths of a device unit */
 typedef gint32 PangoGlyphUnit;
 
 /* Positioning information about a glyph
@@ -40,7 +40,7 @@ typedef gint32 PangoGlyphUnit;
 struct _PangoGlyphGeometry
 {
   PangoGlyphUnit width;
-  PangoGlyphUnit x_offset;  
+  PangoGlyphUnit x_offset;
   PangoGlyphUnit y_offset;
 };
 
@@ -51,7 +51,7 @@ struct _PangoGlyphVisAttr
   guint is_cluster_start : 1;
 };
 
-/* A single glyph 
+/* A single glyph
  */
 struct _PangoGlyphInfo
 {
@@ -84,21 +84,21 @@ struct _PangoGlyphString {
 PangoGlyphString *pango_glyph_string_new      (void);
 void              pango_glyph_string_set_size (PangoGlyphString *string,
 					       gint              new_len);
-GType             pango_glyph_string_get_type (void);
+GType             pango_glyph_string_get_type (void) G_GNUC_CONST;
 PangoGlyphString *pango_glyph_string_copy     (PangoGlyphString *string);
 void              pango_glyph_string_free     (PangoGlyphString *string);
 void              pango_glyph_string_extents  (PangoGlyphString *glyphs,
 					       PangoFont        *font,
 					       PangoRectangle   *ink_rect,
 					       PangoRectangle   *logical_rect);
-int               pango_glyph_string_get_width(PangoGlyphString *glyphs);
+int               pango_glyph_string_get_width(PangoGlyphString *glyphs) G_GNUC_PURE;
 
 void              pango_glyph_string_extents_range  (PangoGlyphString *glyphs,
-                                                     int               start,
-                                                     int               end,
-                                                     PangoFont        *font,
-                                                     PangoRectangle   *ink_rect,
-                                                     PangoRectangle   *logical_rect);
+						     int               start,
+						     int               end,
+						     PangoFont        *font,
+						     PangoRectangle   *ink_rect,
+						     PangoRectangle   *logical_rect);
 
 void pango_glyph_string_get_logical_widths (PangoGlyphString *glyphs,
 					    const char       *text,
