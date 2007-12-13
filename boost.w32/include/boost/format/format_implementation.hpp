@@ -135,7 +135,7 @@ namespace boost {
 
         for(unsigned long i=0; i<items_.size(); ++i) {
             // clear converted strings only if the corresponding argument is not  bound :
-            if( bound_.size()==0 || !bound_[ items_[i].argN_ ] )
+            if( bound_.size()==0 || items_[i].argN_<0 || !bound_[ items_[i].argN_ ] )
                 items_[i].res_.resize(0);
         }
         cur_arg_=0; dumped_=false;

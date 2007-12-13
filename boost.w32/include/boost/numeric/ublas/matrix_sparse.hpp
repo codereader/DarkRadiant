@@ -20,6 +20,9 @@
 #include <boost/numeric/ublas/vector_sparse.hpp>
 #include <boost/numeric/ublas/matrix_expression.hpp>
 #include <boost/numeric/ublas/detail/matrix_assign.hpp>
+#if BOOST_UBLAS_TYPE_CHECK
+#include <boost/numeric/ublas/matrix.hpp>
+#endif
 
 // Iterators based on ideas of Jeremy Siek
 
@@ -140,10 +143,11 @@ namespace boost { namespace numeric { namespace ublas {
         // Conversion to reference - may be invalidated
         BOOST_UBLAS_INLINE
         value_type& ref () const {
-            pointer p = (*this) ().find_element (i_, i_);
+            const pointer p = (*this) ().find_element (i_, j_);
             if (!p)
-                (*this) ().insert_element (i_, j_, value_type/*zero*/());
-            return *p;
+                return (*this) ().insert_element (i_, j_, value_type/*zero*/());
+            else
+                return *p;
         }
 
     private:
@@ -198,13 +202,13 @@ namespace boost { namespace numeric { namespace ublas {
 
         static
         BOOST_UBLAS_INLINE
-        real_type abs (const_reference t) {
-            return type_traits<element_type>::abs (t);
+        real_type type_abs (const_reference t) {
+            return type_traits<element_type>::type_abs (t);
         }
         static
         BOOST_UBLAS_INLINE
-        value_type sqrt (const_reference t) {
-            return type_traits<element_type>::sqrt (t);
+        value_type type_sqrt (const_reference t) {
+            return type_traits<element_type>::type_sqrt (t);
         }
 
         static

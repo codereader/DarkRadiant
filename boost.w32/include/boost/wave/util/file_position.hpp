@@ -5,7 +5,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -16,14 +16,53 @@
 #include <string>
 #include <ostream>
 
+#include <boost/assert.hpp>
 #include <boost/spirit/version.hpp>
 #include <boost/spirit/iterator/position_iterator.hpp>
 #include <boost/wave/wave_config.hpp>
+#if BOOST_WAVE_SERIALIZATION != 0
+#include <boost/serialization/serialization.hpp>
+#endif
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
 namespace wave {
 namespace util {
+
+///////////////////////////////////////////////////////////////////////////////
+namespace debug {
+
+    //  Used only when BOOST_ASSERT expands to something
+    //  make sure the string literal does not contain any escapes ('\\' just 
+    //  before '\\', '\"' or '?')
+    template <typename StringT>
+    inline bool
+    is_escaped_lit(StringT const &value)
+    {
+        typename StringT::size_type pos = value.find_first_of ("\\", 0);
+        if (StringT::npos != pos) {
+            do {
+                if ('\\' == value[pos+1] || 
+                    '\"' == value[pos+1] || 
+                    '?' == value[pos+1])
+                {
+                    return true;
+                }
+                else {
+                    pos = value.find_first_of ("\\", pos+1);
+                }
+            } while (pos != StringT::npos);
+        }
+        return false;
+    }
+
+///////////////////////////////////////////////////////////////////////////////
+}   // namespace debug
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -46,18 +85,35 @@ public:
     explicit file_position(string_type const& file_, int line_ = 1, 
             int column_ = 1)
     :   file(file_), line(line_), column(column_)
-    {}
+    {
+        BOOST_ASSERT(!debug::is_escaped_lit(file));
+    }
 
 // accessors
     string_type const &get_file() const { return file; }
     unsigned int get_line() const { return line; }
     unsigned int get_column() const { return column; }
     
-    void set_file(string_type const &file_) { file = file_; }
+    void set_file(string_type const &file_) 
+    { 
+        file = file_; 
+        BOOST_ASSERT(!debug::is_escaped_lit(file));
+    }
     void set_line(unsigned int line_) { line = line_; }
     void set_column(unsigned int column_) { column = column_; }
     
 private:
+#if BOOST_WAVE_SERIALIZATION != 0
+    friend class boost::serialization::access;
+    template<typename Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar & file;
+        ar & line;
+        ar & column;
+    }
+#endif
+
     string_type file;
     unsigned int line;
     unsigned int column;
@@ -75,7 +131,7 @@ template <typename StringT>
 inline std::ostream &
 operator<< (std::ostream &o, file_position<StringT> const &pos)
 {
-    o << pos.get_file() << "(" << pos.get_line() << ")";
+    o << pos.get_file() << ":" << pos.get_line() << ":"  << pos.get_column();
     return o;
 }
 
@@ -166,5 +222,10 @@ namespace spirit {
 #endif // SPIRIT_VERSION >= 0x1700
 
 }   // namespace boost 
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(FILE_POSITION_H_52BDEDF7_DAD3_4F24_802F_E66BB8098F68_INCLUDED)

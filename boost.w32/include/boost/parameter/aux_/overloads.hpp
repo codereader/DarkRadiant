@@ -6,20 +6,25 @@
 // This file generates overloads in this format:
 //
 //     template<class A0, class A1>
-//     typename aux::make_arg_list<
-//         PS0,A0
-//       , aux::make_arg_list<
-//             PS1,A1
-//           , mpl::identity<aux::empty_arg_list>
-//         >
-//     >::type
-//     operator()(A0 const& a0, A1 const& a1) const
-//     {
-//         typedef typename aux::make_arg_list<
+//     typename mpl::apply_wrap1<
+//         aux::make_arg_list<
 //             PS0,A0
 //           , aux::make_arg_list<
 //                 PS1,A1
 //               , mpl::identity<aux::empty_arg_list>
+//             >
+//         >
+//      , unnamed_list
+//     >::type
+//     operator()(A0 const& a0, A1 const& a1) const
+//     {
+//         typedef typename mpl::apply_wrap1<
+//             aux::make_arg_list<
+//                 PS0,A0
+//               , aux::make_arg_list<
+//                     PS1,A1
+//                   , mpl::identity<aux::empty_arg_list>
+//                 >
 //             >
 //         >::type arg_tuple;
 //
@@ -39,27 +44,40 @@
 #define N BOOST_PP_ITERATION()
 
 #define BOOST_PARAMETER_open_list(z, n, text) \
-    aux::make_arg_list< \
-        BOOST_PP_CAT(PS, n), BOOST_PP_CAT(A, n) \
+    aux::item< \
+        BOOST_PP_CAT(PS, n), BOOST_PP_CAT(A, n)
 
 #define BOOST_PARAMETER_close_list(z, n, text) > 
 
 #define BOOST_PARAMETER_arg_list(n) \
-    BOOST_PP_ENUM(N, BOOST_PARAMETER_open_list, _) \
-  , mpl::identity<aux::empty_arg_list> \
-    BOOST_PP_REPEAT(N, BOOST_PARAMETER_close_list, _) 
+    aux::make_arg_list< \
+        BOOST_PP_ENUM(N, BOOST_PARAMETER_open_list, _) \
+      , void_ \
+        BOOST_PP_REPEAT(N, BOOST_PARAMETER_close_list, _) \
+      , deduced_list \
+      , aux::tag_keyword_arg \
+    >
+
+#define BOOST_PARAMETER_arg_pack_init(z, n, limit) \
+    BOOST_PP_CAT(a, BOOST_PP_SUB(limit,n))
 
 template<BOOST_PP_ENUM_PARAMS(N, class A)>
-typename BOOST_PARAMETER_arg_list(N)::type
-operator()(BOOST_PP_ENUM_BINARY_PARAMS(N, A, const& a)) const
+typename mpl::first<
+    typename BOOST_PARAMETER_arg_list(N)::type
+>::type
+operator()(BOOST_PP_ENUM_BINARY_PARAMS(N, A, & a)) const
 {
-    typedef typename BOOST_PARAMETER_arg_list(N)::type arg_tuple;
+    typedef typename BOOST_PARAMETER_arg_list(N)::type result;
 
-    return arg_tuple(
-        BOOST_PP_ENUM_PARAMS(N, a)
+    typedef typename mpl::first<result>::type result_type;
+    typedef typename mpl::second<result>::type error;
+    error();
+
+    return result_type(
+        BOOST_PP_ENUM(N, BOOST_PARAMETER_arg_pack_init, BOOST_PP_DEC(N))
         BOOST_PP_ENUM_TRAILING_PARAMS(
             BOOST_PP_SUB(BOOST_PARAMETER_MAX_ARITY, N)
-          , aux::void_() BOOST_PP_INTERCEPT
+          , aux::void_reference() BOOST_PP_INTERCEPT
         ));
 }
 

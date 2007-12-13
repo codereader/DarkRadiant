@@ -5,54 +5,59 @@
  * Subject to the Boost Software License, Version 1.0. 
  * (See accompanying file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/05/03 14:14:11 $
+ * $Date: 2005/10/23 20:15:06 $
  */
 
 #include "boost/date_time/time_zone_base.hpp"
 #include "boost/date_time/time_zone_names.hpp"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/date_time/local_time/dst_transition_day_rules.hpp"
+#include "boost/date_time/string_convert.hpp"
 //#include "boost/date_time/special_defs.hpp"
 #include "boost/shared_ptr.hpp"
 
 namespace boost {
 namespace local_time {
 
-  typedef boost::date_time::time_zone_names time_zone_names;
+  //typedef boost::date_time::time_zone_names time_zone_names;
   typedef boost::date_time::dst_adjustment_offsets<boost::posix_time::time_duration> dst_adjustment_offsets;
-  typedef boost::date_time::time_zone_base<boost::posix_time::ptime> time_zone;
+  //typedef boost::date_time::time_zone_base<boost::posix_time::ptime> time_zone;
   typedef boost::shared_ptr<dst_calc_rule> dst_calc_rule_ptr;
 
   //! A real time zone
-  class custom_time_zone : public time_zone {
+  template<class CharT>
+  class custom_time_zone_base : public date_time::time_zone_base<posix_time::ptime,CharT> {
   public:
     typedef boost::posix_time::time_duration time_duration_type;
-    typedef time_zone base_type;
-    typedef base_type::string_type string_type;
-    typedef base_type::stringstream_type stringstream_type;
-    custom_time_zone(const time_zone_names& zone_names,   
-                     const time_duration_type& base_utc_offset,
-                     const dst_adjustment_offsets& dst_offset,
+    typedef date_time::time_zone_base<posix_time::ptime,CharT> base_type;
+    typedef typename base_type::string_type string_type;
+    typedef typename base_type::stringstream_type stringstream_type;
+    typedef date_time::time_zone_names_base<CharT> time_zone_names;
+    typedef CharT char_type;
+    
+    custom_time_zone_base(const time_zone_names& zone_names,   
+                     const time_duration_type& utc_offset,
+                     const dst_adjustment_offsets& dst_shift,
                      boost::shared_ptr<dst_calc_rule> calc_rule) :
       zone_names_(zone_names),
-      base_utc_offset_(base_utc_offset),
-      dst_offsets_(dst_offset),
+      base_utc_offset_(utc_offset),
+      dst_offsets_(dst_shift),
       dst_calc_rules_(calc_rule)
     {};
-    virtual ~custom_time_zone() {};
-    virtual std::string dst_zone_abbrev() const
+    virtual ~custom_time_zone_base() {};
+    virtual string_type dst_zone_abbrev() const
     {
       return zone_names_.dst_zone_abbrev();
     }
-    virtual std::string std_zone_abbrev() const
+    virtual string_type std_zone_abbrev() const
     {
       return zone_names_.std_zone_abbrev();
     }
-    virtual std::string dst_zone_name() const
+    virtual string_type dst_zone_name() const
     {
       return zone_names_.dst_zone_name();
     }
-    virtual std::string std_zone_name() const
+    virtual string_type std_zone_name() const
     {
       return zone_names_.std_zone_name();
     }
@@ -130,14 +135,14 @@ namespace local_time {
           }
         }
         // start/time
-        ss << ',' << dst_calc_rules_->start_rule_as_string() << '/'
+        ss << ',' << date_time::convert_string_type<char, char_type>(dst_calc_rules_->start_rule_as_string()) << '/'
            << std::setw(2) << dst_offsets_.dst_start_offset_.hours() << ':'
            << std::setw(2) << dst_offsets_.dst_start_offset_.minutes();
         if(dst_offsets_.dst_start_offset_.seconds() != 0) {
           ss << ':' << std::setw(2) << dst_offsets_.dst_start_offset_.seconds();
         }
         // end/time
-        ss << ',' << dst_calc_rules_->end_rule_as_string() << '/'
+        ss << ',' << date_time::convert_string_type<char, char_type>(dst_calc_rules_->end_rule_as_string()) << '/'
            << std::setw(2) << dst_offsets_.dst_end_offset_.hours() << ':'
            << std::setw(2) << dst_offsets_.dst_end_offset_.minutes();
         if(dst_offsets_.dst_end_offset_.seconds() != 0) {
@@ -154,6 +159,8 @@ namespace local_time {
     dst_adjustment_offsets dst_offsets_;
     boost::shared_ptr<dst_calc_rule> dst_calc_rules_;
   };
+
+  typedef custom_time_zone_base<char> custom_time_zone;
 
 } }//namespace
 

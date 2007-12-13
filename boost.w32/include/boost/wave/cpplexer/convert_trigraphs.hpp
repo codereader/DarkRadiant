@@ -5,14 +5,20 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 #if !defined(CONVERT_TRIGRAPHS_HK050403_INCLUDED)
 #define CONVERT_TRIGRAPHS_HK050403_INCLUDED
 
+#include <boost/wave/wave_config.hpp>
 #include <boost/wave/cpplexer/cpplexer_exceptions.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -22,7 +28,7 @@ namespace impl {
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//
+//  Test, whether the given string represents a valid trigraph sequence
 //
 ///////////////////////////////////////////////////////////////////////////////
 template <typename StringT>
@@ -58,8 +64,7 @@ is_trigraph(StringT const& trigraph)
 ///////////////////////////////////////////////////////////////////////////////
 template <typename StringT>
 inline StringT
-convert_trigraph(StringT const &trigraph, int line, int column, 
-    StringT const &file_name)
+convert_trigraph(StringT const &trigraph)
 {
 StringT result (trigraph);
 
@@ -92,8 +97,7 @@ StringT result (trigraph);
 ///////////////////////////////////////////////////////////////////////////////
 template <typename StringT>
 inline StringT
-convert_trigraphs(StringT const &value, int line, int column, 
-    StringT const &file_name)
+convert_trigraphs(StringT const &value)
 {
     StringT result;
     typename StringT::size_type pos = 0;
@@ -103,7 +107,7 @@ convert_trigraphs(StringT const &value, int line, int column,
             result += value.substr(pos, pos1-pos);
             StringT trigraph (value.substr(pos1)); 
             if (is_trigraph(trigraph)) {
-                result += convert_trigraph(trigraph, line, column, file_name);
+                result += convert_trigraph(trigraph);
                 pos1 = value.find_first_of ("?", pos = pos1+3);
             }
             else {
@@ -124,6 +128,11 @@ convert_trigraphs(StringT const &value, int line, int column,
 }   // namespace cpplexer
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(CONVERT_TRIGRAPHS_HK050403_INCLUDED)
 

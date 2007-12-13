@@ -166,7 +166,7 @@ public:
    {
       return ::boost::re_detail::w32_tolower(c, this->m_locale);
    }
-   bool isctype(boost::uint32_t mask, charT c)
+   bool isctype(boost::uint32_t mask, charT c)const
    {
       return ::boost::re_detail::w32_is(this->m_locale, mask, c);
    }
@@ -263,7 +263,7 @@ public:
    {
       return m_lower_map[static_cast<unsigned char>(c)];
    }
-   bool isctype(boost::uint32_t mask, char c)
+   bool isctype(boost::uint32_t mask, char c)const
    {
       return m_type_map[static_cast<unsigned char>(c)] & mask;
    }
@@ -533,13 +533,14 @@ typename w32_regex_traits_implementation<charT>::char_class_type
          return pos->second;
    }
    std::size_t id = 1 + re_detail::get_default_class_id(p1, p2);
-   BOOST_ASSERT(id < sizeof(masks) / sizeof(masks[0]));
-   return masks[id];
+   if(id < sizeof(masks) / sizeof(masks[0]))
+      return masks[id];
+   return masks[0];
 }
 
 
 template <class charT>
-boost::shared_ptr<w32_regex_traits_implementation<charT> > create_w32_regex_traits(::boost::re_detail::lcid_type l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
+boost::shared_ptr<const w32_regex_traits_implementation<charT> > create_w32_regex_traits(::boost::re_detail::lcid_type l BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(charT))
 {
    // TODO: create a cache for previously constructed objects.
    return boost::object_cache< ::boost::re_detail::lcid_type, w32_regex_traits_implementation<charT> >::get(l, 5);
@@ -653,7 +654,7 @@ public:
    static std::string get_catalog_name();
 
 private:
-   boost::shared_ptr<re_detail::w32_regex_traits_implementation<charT> > m_pimpl;
+   boost::shared_ptr<const re_detail::w32_regex_traits_implementation<charT> > m_pimpl;
    //
    // catalog name handler:
    //

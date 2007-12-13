@@ -209,6 +209,11 @@ namespace boost {
     { return this->m_g[x]; }
 #endif // BOOST_GRAPH_NO_BUNDLED_PROPERTIES
 
+    static vertex_descriptor null_vertex()
+    {
+       return Graph::null_vertex();
+    }
+
     //private:
     EdgePredicate m_edge_pred;
     VertexPredicate m_vertex_pred;
@@ -239,6 +244,17 @@ namespace boost {
   inline filtered_graph<Graph, EdgePredicate, VertexPredicate>
   make_filtered_graph(Graph& g, EdgePredicate ep, VertexPredicate vp) {
     return filtered_graph<Graph, EdgePredicate, VertexPredicate>(g, ep, vp);
+  }
+
+  template <typename Graph, typename EdgePredicate>
+  inline filtered_graph<const Graph, EdgePredicate>
+  make_filtered_graph(const Graph& g, EdgePredicate ep) {
+    return filtered_graph<const Graph, EdgePredicate>(g, ep);
+  }
+  template <typename Graph, typename EdgePredicate, typename VertexPredicate>
+  inline filtered_graph<const Graph, EdgePredicate, VertexPredicate>
+  make_filtered_graph(const Graph& g, EdgePredicate ep, VertexPredicate vp) {
+    return filtered_graph<const Graph, EdgePredicate, VertexPredicate>(g, ep, vp);
   }
 
   template <typename G, typename EP, typename VP>

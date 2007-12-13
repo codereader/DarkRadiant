@@ -175,7 +175,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
         BOOST_UBLAS_INLINE
         void erase_element (size_type i, size_type j) {
-            return (operator () (i, j) = value_type/*zero*/());
+            operator () (i, j) = value_type/*zero*/();
         }
         
         // Zeroing
@@ -358,6 +358,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return (*this) () (it1_, it2_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -491,6 +495,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             reference operator * () const {
                 return (*this) () (it1_, it2_);
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -632,6 +640,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return (*this) () (it1_, it2_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -766,6 +778,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             reference operator * () const {
                 return (*this) () (it1_, it2_);
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1339,10 +1355,10 @@ namespace boost { namespace numeric { namespace ublas {
                     } else /* if (end_ == 0 && it.end_ == 0) */ {
                         return (it2_ - it.it2_end_) + (it.it1_begin_ - it.it1_);
                     }
-                } else /* if (current_ == 1 && it.current_ == 1) */ {
+                }
+                /* current_ == 1 && it.current_ == 1 */ {
                     return it2_ - it.it2_;
                 }
-                return 0; /* avoid compiler warnings */
             }
 
             // Dereference
@@ -1356,6 +1372,10 @@ namespace boost { namespace numeric { namespace ublas {
                     BOOST_UBLAS_CHECK (it2_ != it2_end_, internal_logic ());
                     return *it2_;
                 }
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1521,6 +1541,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             reference operator * () const {
                 return *it1_;
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1778,10 +1802,10 @@ namespace boost { namespace numeric { namespace ublas {
                     } else /* if (end_ == 0 && it.end_ == 0) */ {
                         return (it2_ - it.it2_end_) + (it.it1_begin_ - it.it1_);
                     }
-                } else /* if (current_ == 1 && it.current_ == 1) */ {
+                }
+                /* current_ == 1 && it.current_ == 1 */ {
                     return it2_ - it.it2_;
                 }
-                return 0; /* avoid compiler warnings */
             }
 
             // Dereference
@@ -1795,6 +1819,10 @@ namespace boost { namespace numeric { namespace ublas {
                     BOOST_UBLAS_CHECK (it2_ != it2_end_, internal_logic ());
                     return *it2_;
                 }
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1961,6 +1989,10 @@ namespace boost { namespace numeric { namespace ublas {
             reference operator * () const {
                 return *it2_;
             }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -2085,9 +2117,15 @@ namespace boost { namespace numeric { namespace ublas {
     template <class M, class TRI>
     struct vector_temporary_traits< symmetric_adaptor<M, TRI> >
     : vector_temporary_traits< M > {} ;
+    template <class M, class TRI>
+    struct vector_temporary_traits< const symmetric_adaptor<M, TRI> >
+    : vector_temporary_traits< M > {} ;
 
     template <class M, class TRI>
     struct matrix_temporary_traits< symmetric_adaptor<M, TRI> >
+    : matrix_temporary_traits< M > {} ;
+    template <class M, class TRI>
+    struct matrix_temporary_traits< const symmetric_adaptor<M, TRI> >
     : matrix_temporary_traits< M > {} ;
 
 }}}

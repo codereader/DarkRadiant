@@ -234,7 +234,7 @@ BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 basic_xml_oarchive<Archive>::~basic_xml_oarchive(){
     if(0 == (this->get_flags() & no_header)){
         BOOST_TRY{
-                this->This()->put("</boost_serialization>\n");
+                this->This()->put("</boost_serialization>");
         }
         BOOST_CATCH(...){}
         BOOST_CATCH_END

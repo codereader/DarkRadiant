@@ -4,7 +4,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -22,6 +22,11 @@
 #include <boost/wave/cpp_exceptions.hpp>
 #include <boost/wave/language_support.hpp>
 #include <boost/wave/util/file_position.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -131,7 +136,7 @@ namespace iteration_context_policies {
         };
     };
     
-}   // namespace iterattion_context_policies
+}   // namespace iteration_context_policies
 
 ///////////////////////////////////////////////////////////////////////////////
 //  
@@ -164,8 +169,7 @@ public:
 //  
 template <
     typename IteratorT, 
-    typename InputPolicyT = 
-        iteration_context_policies::load_file_to_string 
+    typename InputPolicyT = iteration_context_policies::load_file_to_string 
 >
 struct iteration_context
 :   public base_iteration_context<IteratorT>,
@@ -192,5 +196,10 @@ struct iteration_context
 ///////////////////////////////////////////////////////////////////////////////
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(CPP_ITERATION_CONTEXT_HPP_00312288_9DDB_4668_AFE5_25D3994FD095_INCLUDED)

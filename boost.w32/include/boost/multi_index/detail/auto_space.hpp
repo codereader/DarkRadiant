@@ -53,6 +53,8 @@ struct auto_space:private noncopyable
     if(n_)al_.deallocate(data_,n_);
   }
 
+  Allocator get_allocator()const{return al_;}
+
   T* data()const{return data_;}
 
   void swap(auto_space& x)

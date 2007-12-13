@@ -28,10 +28,6 @@
 
 #include <boost/archive/archive_exception.hpp>
 
-// no extended type info system has been selected, use the typeid based one
-#ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO
-    #include <boost/serialization/extended_type_info_typeid.hpp>
-#endif
 #include <boost/serialization/type_info_implementation.hpp>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/nvp.hpp>

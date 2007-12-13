@@ -1,12 +1,15 @@
 #ifndef DATE_TIME_PERIOD_HPP___
 #define DATE_TIME_PERIOD_HPP___
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
- * Use, modification and distribution is subject to the 
- * Boost Software License, Version 1.0. (See accompanying
- * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
+/*    Copyright (c) 2002,2003 CrystalClear Software, Inc.
+ *
+ * Distributed under the Boost Software License, Version 1.0.
+ *     (See accompanying file LICENSE_1_0.txt or copy at
+ *           http://www.boost.org/LICENSE_1_0.txt)
+ *
+ *
  * Author: Jeff Garland, Bart Garst 
- * $Date: 2005/07/24 23:47:50 $
+ * $Date: 2006/07/17 03:56:05 $
  */
 
 /*! \file period.hpp
@@ -322,8 +325,8 @@ namespace date_time {
 
   //! Combine two periods with earliest start and latest end.
   /*! Combines two periods and any gap between them such that 
-   *  start = min(p1.start, p2.start)
-   *  end   = max(p1.end  , p2.end)
+   *  start = minimum(p1.start, p2.start)
+   *  end   = maximum(p1.end  , p2.end)
    *@code
    *        [---p1---)
    *                       [---p2---)

@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/10/24 01:32:08 $
+ * $Date: 2005/10/25 12:42:20 $
  */
 
 
@@ -92,8 +92,8 @@ template<typename int_type_, int_type_ wrap_min, int_type_ wrap_max>
 class wrapping_int2 {
 public:
   typedef int_type_ int_type;
-  static unsigned long wrap_value() {return wrap_max;}
-  static unsigned long min_value()  {return wrap_min;}
+  static int_type wrap_value() {return wrap_max;}
+  static int_type min_value()  {return wrap_min;}
   /*! If initializing value is out of range of [wrap_min, wrap_max],
    * value will be initialized to closest of min or max */
   wrapping_int2(int_type v) : value_(v) {

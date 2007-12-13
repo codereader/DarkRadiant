@@ -45,7 +45,7 @@ OutputIterator regex_replace(OutputIterator out,
    }
    else
    {
-      BidirectionalIterator last_m = first;
+      BidirectionalIterator last_m(first);
       while(i != j)
       {
          if(!(flags & regex_constants::format_no_copy))

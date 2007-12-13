@@ -46,12 +46,12 @@ struct index_applier
 #else
 struct index_applier
 {
-  template<typename IndexSpecifierMeta,typename Super>
+  template<typename IndexSpecifierMeta,typename SuperMeta>
   struct apply
   {
-    typedef typename IndexSpecifierMeta::type        index_specifier;
+    typedef typename IndexSpecifierMeta::type            index_specifier;
     typedef typename index_specifier::
-      BOOST_NESTED_TEMPLATE index_class<Super>::type type;
+      BOOST_NESTED_TEMPLATE index_class<SuperMeta>::type type;
   }; 
 };
 #endif

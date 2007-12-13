@@ -78,7 +78,7 @@
 #define BOOST_PARAMETER_FUN(ret, name, lo, hi, parameters)                          \
                                                                                     \
     template<class Params>                                                          \
-    ret BOOST_PP_CAT(name, _with_named_params)(Params const&);                      \
+    ret BOOST_PP_CAT(name, _with_named_params)(Params const& p);                    \
                                                                                     \
     BOOST_PP_REPEAT_FROM_TO(                                                        \
         lo, BOOST_PP_INC(hi), BOOST_PARAMETER_FUN_DECL, (ret, name, parameters))    \

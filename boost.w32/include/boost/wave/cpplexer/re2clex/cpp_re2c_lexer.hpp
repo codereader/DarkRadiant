@@ -5,7 +5,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -37,6 +37,14 @@
 #include <boost/wave/cpplexer/cpp_lex_interface.hpp>
 #include <boost/wave/cpplexer/re2clex/scanner.hpp>
 #include <boost/wave/cpplexer/re2clex/cpp_re.hpp>
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+#include <boost/wave/cpplexer/detect_include_guards.hpp>
+#endif
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -54,10 +62,7 @@ template <typename IteratorT, typename PositionT = boost::wave::util::file_posit
 class lexer 
 {
 public:
-
-    typedef char                        char_t;
-    typedef Scanner                     base_t;
-    typedef lex_token<PositionT>        token_type;
+    typedef lex_token<PositionT>              token_type;
     typedef typename token_type::string_type  string_type;
     
     lexer(IteratorT const &first, IteratorT const &last, 
@@ -73,7 +78,13 @@ public:
 //        scanner.column = scanner.curr_column = pos.get_column();
         scanner.file_name = filename.c_str();
     }
-
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+    bool has_include_guards(std::string& guard_name) const 
+    { 
+        return guards.detected(guard_name); 
+    }
+#endif
+    
 // error reporting from the re2c generated lexer
     static int report_error(Scanner const* s, char const *, ...);
 
@@ -85,7 +96,10 @@ private:
     string_type value;
     bool at_eof;
     boost::wave::language_support language;
-    
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+    include_guards<token_type> guards;
+#endif
+        
     static token_cache<string_type> const cache;
 };
 
@@ -95,36 +109,46 @@ template <typename IteratorT, typename PositionT>
 inline
 lexer<IteratorT, PositionT>::lexer(IteratorT const &first, 
         IteratorT const &last, PositionT const &pos, 
-        boost::wave::language_support language) 
-:   filename(pos.get_file()), at_eof(false), language(language)
+        boost::wave::language_support language_) 
+:   filename(pos.get_file()), at_eof(false), language(language_)
 {
     using namespace std;        // some systems have memset in std
     memset(&scanner, '\0', sizeof(Scanner));
-    scanner.fd = -1;
     scanner.eol_offsets = aq_create();
-    scanner.first = scanner.act = (uchar *)&(*first);
-    scanner.last = scanner.first + std::distance(first, last);  
+    if (first != last) {
+        scanner.first = scanner.act = (uchar *)&(*first);
+        scanner.last = scanner.first + std::distance(first, last);  
+    }
     scanner.line = pos.get_line();
     scanner.column = scanner.curr_column = pos.get_column();
     scanner.error_proc = report_error;
     scanner.file_name = filename.c_str();
     
 #if BOOST_WAVE_SUPPORT_MS_EXTENSIONS != 0
-    scanner.enable_ms_extensions = 1;
+    scanner.enable_ms_extensions = true;
 #else
-    scanner.enable_ms_extensions = 0;
+    scanner.enable_ms_extensions = false;
 #endif
 
 #if BOOST_WAVE_SUPPORT_VARIADICS_PLACEMARKERS != 0
     scanner.act_in_c99_mode = boost::wave::need_c99(language);
 #endif
+
+#if BOOST_WAVE_SUPPORT_IMPORT_KEYWORD != 0
+    scanner.enable_import_keyword = !boost::wave::need_c99(language);
+#else
+    scanner.enable_import_keyword = false;
+#endif
+
+    scanner.detect_pp_numbers = boost::wave::need_prefer_pp_numbers(language);
+    scanner.single_line_only = boost::wave::need_single_line(language);
 }
 
 template <typename IteratorT, typename PositionT>
 inline
 lexer<IteratorT, PositionT>::~lexer() 
 {
-    using namespace std;        // some systems have memset in std
+    using namespace std;        // some systems have free in std
     aq_terminate(scanner.eol_offsets);
     free(scanner.bot);
 }
@@ -156,7 +180,7 @@ lexer<IteratorT, PositionT>::get()
         value = string_type((char const *)scanner.tok, 
             scanner.cur-scanner.tok);
         if (language & support_option_convert_trigraphs)
-            value = impl::convert_trigraphs(value, actline, scanner.column, filename); 
+            value = impl::convert_trigraphs(value); 
         if (!(language & support_option_no_character_validation))
             impl::validate_literal(value, actline, scanner.column, filename); 
         break;
@@ -199,6 +223,7 @@ lexer<IteratorT, PositionT>::get()
     case T_SPACE:
     case T_SPACE2:
     case T_ANY:
+    case T_PP_NUMBER:
         value = string_type((char const *)scanner.tok, 
             scanner.cur-scanner.tok);
         break;
@@ -230,9 +255,7 @@ lexer<IteratorT, PositionT>::get()
     case T_ANY_TRIGRAPH:
         if (language & support_option_convert_trigraphs) {
             value = impl::convert_trigraph(
-                string_type((char const *)scanner.tok, 
-                    scanner.cur-scanner.tok), 
-                actline, scanner.column, filename); 
+                string_type((char const *)scanner.tok)); 
         }
         else {
             value = string_type((char const *)scanner.tok, 
@@ -253,9 +276,16 @@ lexer<IteratorT, PositionT>::get()
         break;
     }
     
+//     std::cerr << boost::wave::get_token_name(id) << ": " << value << std::endl;
+
     // the re2c lexer reports the new line number for newline tokens
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+    return guards.detect_guard(lex_token<PositionT>(id, value, 
+        PositionT(filename, actline, scanner.column)));
+#else
     return lex_token<PositionT>(id, value, 
         PositionT(filename, actline, scanner.column));
+#endif
 }
 
 template <typename IteratorT, typename PositionT>
@@ -275,7 +305,8 @@ lexer<IteratorT, PositionT>::report_error(Scanner const *s, char const *msg, ...
     
     BOOST_WAVE_LEXER_THROW(lexing_exception, generic_lexing_error, buffer, 
         s->line, s->column, s->file_name);
-    BOOST_UNREACHABLE_RETURN(0);
+//    BOOST_UNREACHABLE_RETURN(0);
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -294,17 +325,20 @@ public:
     
     lex_functor(IteratorT const &first, IteratorT const &last, 
             PositionT const &pos, boost::wave::language_support language)
-    :   lexer(first, last, pos, language)
+    :   re2c_lexer(first, last, pos, language)
     {}
     virtual ~lex_functor() {}
     
 // get the next token from the input stream
-    token_type get() { return lexer.get(); }
-    void set_position(PositionT const &pos) 
-    { lexer.set_position(pos); }
+    token_type get() { return re2c_lexer.get(); }
+    void set_position(PositionT const &pos) { re2c_lexer.set_position(pos); }
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+    bool has_include_guards(std::string& guard_name) const 
+        { return re2c_lexer.has_include_guards(guard_name); }
+#endif    
 
 private:
-    lexer<IteratorT, PositionT> lexer;
+    lexer<IteratorT, PositionT> re2c_lexer;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -337,7 +371,7 @@ token_cache<typename lexer<IteratorT, PositionT>::string_type> const
 //  It is coupled to the iterator type to allow to decouple the lexer/iterator 
 //  configurations at compile time.
 //
-//  This function is declared inside the cpp_slex_token.hpp file, which is 
+//  This function is declared inside the cpp_lex_token.hpp file, which is 
 //  referenced by the source file calling the lexer and the source file, which
 //  instantiates the lex_functor. But is is defined here, so it will be 
 //  instantiated only while compiling the source file, which instantiates the 
@@ -355,8 +389,8 @@ new_lexer_gen<IteratorT, PositionT>::new_lexer(IteratorT const &first,
     IteratorT const &last, PositionT const &pos, 
     boost::wave::language_support language)
 {
-    return new re2clex::lex_functor<IteratorT, PositionT>(first, last, pos,
-        language);
+    using re2clex::lex_functor;
+    return new lex_functor<IteratorT, PositionT>(first, last, pos, language);
 }
 
 #undef BOOST_WAVE_RE2C_NEW_LEXER_INLINE
@@ -366,4 +400,9 @@ new_lexer_gen<IteratorT, PositionT>::new_lexer(IteratorT const &first,
 }   // namespace wave
 }   // namespace boost 
      
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
+
 #endif // !defined(CPP_RE2C_LEXER_HPP_B81A2629_D5B1_4944_A97D_60254182B9A8_INCLUDED)

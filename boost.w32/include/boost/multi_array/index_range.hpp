@@ -35,6 +35,15 @@ namespace multi_array {
     typedef Index index;
     typedef SizeType size_type;
 
+  private:
+    static index from_start()
+      { return (std::numeric_limits<index>::min)(); }
+
+    static index to_end()
+      { return (std::numeric_limits<index>::max)(); }
+
+  public:
+
     index_range()
     {
       start_ = from_start();
@@ -46,7 +55,7 @@ namespace multi_array {
     explicit index_range(index pos)
     {
       start_ = pos;
-      finish_ = pos;
+      finish_ = pos+1;
       stride_ = 1;
       degenerate_ = true;
     }
@@ -60,13 +69,13 @@ namespace multi_array {
     // These are for chaining assignments to an index_range
     index_range& start(index s) {
       start_ = s;
-      degenerate_ = (start_ == finish_);
+      degenerate_ = false;
       return *this;
     }
 
     index_range& finish(index f) {
       finish_ = f;
-      degenerate_ = (start_ == finish_);
+      degenerate_ = false;
       return *this;
     }
 
@@ -77,7 +86,7 @@ namespace multi_array {
       return start_; 
     }
 
-    index get_start(index low_index_range = 0) const
+    index get_start(index low_index_range = index_range::from_start()) const
     { 
       if (start_ == from_start())
         return low_index_range;
@@ -89,27 +98,14 @@ namespace multi_array {
       return finish_;
     }
 
-    index get_finish(index high_index_range = 0) const
+    index get_finish(index high_index_range = index_range::to_end()) const
     {
       if (finish_ == to_end())
         return high_index_range;
       return finish_;
     }
 
-    size_type size(index recommended_length = 0) const
-    {
-      if ((start_ == from_start()) || (finish_ == to_end()))
-        return recommended_length;
-      else 
-        return (finish_ - start_) / stride_;
-    }
-
     index stride() const { return stride_; }
-
-    bool is_ascending_contiguous() const
-    {
-      return (start_ < finish_) && is_unit_stride();
-    }
 
     void set_index_range(index start, index finish, index stride=1)
     {
@@ -120,9 +116,6 @@ namespace multi_array {
 
     static index_range all() 
     { return index_range(from_start(), to_end(), 1); }
-
-    bool is_unit_stride() const
-    { return stride_ == 1; }
 
     bool is_degenerate() const { return degenerate_; }
 
@@ -148,12 +141,6 @@ namespace multi_array {
 
     // add conversion to std::slice?
 
-  private:
-    static index from_start()
-      { return (std::numeric_limits<index>::min)(); }
-
-    static index to_end()
-      { return (std::numeric_limits<index>::max)(); }
   public:
     index start_, finish_, stride_;
     bool degenerate_;

@@ -32,6 +32,7 @@ namespace boost {
   struct DijkstraVisitorConcept {
     void constraints() {
       function_requires< CopyConstructibleConcept<Visitor> >();
+      vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_vertex(u, g);
       vis.examine_edge(e, g);
@@ -108,8 +109,7 @@ namespace boost {
       }
 
       template <class Vertex, class Graph>
-      void initialize_vertex(Vertex u, Graph& g)
-        { m_vis.initialize_vertex(u, g); }
+      void initialize_vertex(Vertex u, Graph& g) { }
       template <class Edge, class Graph>
       void non_tree_edge(Edge, Graph&) { }
       template <class Vertex, class Graph>
@@ -247,6 +247,7 @@ namespace boost {
     typedef color_traits<ColorValue> Color;
     typename graph_traits<VertexListGraph>::vertex_iterator ui, ui_end;
     for (tie(ui, ui_end) = vertices(g); ui != ui_end; ++ui) {
+      vis.initialize_vertex(*ui, g);
       put(distance, *ui, inf);
       put(predecessor, *ui, *ui);
       put(color, *ui, Color::white());

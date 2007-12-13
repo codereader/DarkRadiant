@@ -73,7 +73,7 @@ interval<T, Policies> division_part1(const interval<T, Policies>& x,
   b = false;
   if (detail::test_input(x, y))
     return I::empty();
-  if (in_zero(y))
+  if (zero_in(y))
     if (!user::is_zero(y.lower()))
       if (!user::is_zero(y.upper()))
         return detail::div_zero_part1(x, y, b);
@@ -104,7 +104,7 @@ interval<T, Policies> multiplicative_inverse(const interval<T, Policies>& x)
     return I::empty();
   T one = static_cast<T>(1);
   typename Policies::rounding rnd;
-  if (in_zero(x)) {
+  if (zero_in(x)) {
     typedef typename Policies::checking checking;
     if (!user::is_zero(x.lower()))
       if (!user::is_zero(x.upper()))
@@ -123,7 +123,21 @@ interval<T, Policies> multiplicative_inverse(const interval<T, Policies>& x)
 namespace detail {
 
 template<class T, class Rounding> inline
-T pow_aux(const T& x_, int pwr, Rounding& rnd) // x and pwr are positive
+T pow_dn(const T& x_, int pwr, Rounding& rnd) // x and pwr are positive
+{
+  T x = x_;
+  T y = (pwr & 1) ? x_ : static_cast<T>(1);
+  pwr >>= 1;
+  while (pwr > 0) {
+    x = rnd.mul_down(x, x);
+    if (pwr & 1) y = rnd.mul_down(x, y);
+    pwr >>= 1;
+  }
+  return y;
+}
+
+template<class T, class Rounding> inline
+T pow_up(const T& x_, int pwr, Rounding& rnd) // x and pwr are positive
 {
   T x = x_;
   T y = (pwr & 1) ? x_ : static_cast<T>(1);
@@ -143,7 +157,8 @@ template<class T, class Policies> inline
 interval<T, Policies> pow(const interval<T, Policies>& x, int pwr)
 {
   BOOST_USING_STD_MAX();
-  using interval_lib::detail::pow_aux;
+  using interval_lib::detail::pow_dn;
+  using interval_lib::detail::pow_up;
   typedef interval<T, Policies> I;
 
   if (interval_lib::detail::test_input(x))
@@ -161,20 +176,20 @@ interval<T, Policies> pow(const interval<T, Policies>& x, int pwr)
   typename Policies::rounding rnd;
   
   if (interval_lib::user::is_neg(x.upper())) {        // [-2,-1]
-    T yl = pow_aux(-x.upper(), pwr, rnd);
-    T yu = pow_aux(-x.lower(), pwr, rnd);
+    T yl = pow_dn(static_cast<T>(-x.upper()), pwr, rnd);
+    T yu = pow_up(static_cast<T>(-x.lower()), pwr, rnd);
     if (pwr & 1)     // [-2,-1]^1
       return I(-yu, -yl, true);
     else             // [-2,-1]^2
       return I(yl, yu, true);
   } else if (interval_lib::user::is_neg(x.lower())) { // [-1,1]
     if (pwr & 1) {   // [-1,1]^1
-      return I(-pow_aux(-x.lower(), pwr, rnd), pow_aux(x.upper(), pwr, rnd), true);
+      return I(-pow_up(-x.lower(), pwr, rnd), pow_up(x.upper(), pwr, rnd), true);
     } else {         // [-1,1]^2
-      return I(static_cast<T>(0), pow_aux(max BOOST_PREVENT_MACRO_SUBSTITUTION(-x.lower(), x.upper()), pwr, rnd), true);
+      return I(static_cast<T>(0), pow_up(max BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<T>(-x.lower()), x.upper()), pwr, rnd), true);
     }
   } else {                                // [1,2]
-    return I(pow_aux(x.lower(), pwr, rnd), pow_aux(x.upper(), pwr, rnd), true);
+    return I(pow_dn(x.lower(), pwr, rnd), pow_up(x.upper(), pwr, rnd), true);
   }
 }
 

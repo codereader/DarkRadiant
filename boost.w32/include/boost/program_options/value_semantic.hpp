@@ -14,9 +14,9 @@
 #include <boost/lexical_cast.hpp>
 
 
-
 #include <string>
 #include <vector>
+#include <typeinfo>
 
 namespace boost { namespace program_options {
 
@@ -74,6 +74,13 @@ namespace boost { namespace program_options {
         // Nothing here. Specializations to follow.
     };
 
+    /** Helper conversion class for values that accept ascii
+        strings as input.
+        Overrides the 'parse' method and defines new 'xparse'
+        method taking std::string. Depending on whether input
+        to parse is ascii or UTF8, will pass it to xparse unmodified,
+        or with UTF8->ascii conversion.
+    */
     template<>
     class BOOST_PROGRAM_OPTIONS_DECL 
     value_semantic_codecvt_helper<char> : public value_semantic {
@@ -87,6 +94,13 @@ namespace boost { namespace program_options {
             const = 0;
     };
 
+    /** Helper conversion class for values that accept ascii
+        strings as input.
+        Overrides the 'parse' method and defines new 'xparse'
+        method taking std::wstring. Depending on whether input
+        to parse is ascii or UTF8, will recode input to Unicode, or
+        pass it unmodified.
+    */
     template<>
     class BOOST_PROGRAM_OPTIONS_DECL
     value_semantic_codecvt_helper<wchar_t> : public value_semantic {
@@ -101,6 +115,7 @@ namespace boost { namespace program_options {
             const = 0;
 #endif
     };
+
     /** Class which specifies a simple handling of a value: the value will
         have string type and only one token is allowed. */    
     class BOOST_PROGRAM_OPTIONS_DECL 
@@ -134,9 +149,29 @@ namespace boost { namespace program_options {
         bool m_zero_tokens;
     };
 
+    /** Base class for all option that have a fixed type, and are
+        willing to announce this type to the outside world.
+        Any 'value_semantics' for which you want to find out the
+        type can be dynamic_cast-ed to typed_value_base. If conversion
+        succeeds, the 'type' method can be called.
+    */
+    class typed_value_base 
+    {
+    public:
+        // Returns the type of the value described by this
+        // object.
+        virtual const std::type_info& value_type() const = 0;
+        // Not really needed, since deletion from this
+        // class is silly, but just in case.
+        virtual ~typed_value_base() {}
+    };
+
+
     /** Class which handles value of a specific type. */
     template<class T, class charT = char>
-    class typed_value : public value_semantic_codecvt_helper<charT>  {
+    class typed_value : public value_semantic_codecvt_helper<charT>,
+                        public typed_value_base
+    {
     public:
         /** Ctor. The 'store_to' parameter tells where to store
             the value when it's known. The parameter can be NULL. */
@@ -227,7 +262,7 @@ namespace boost { namespace program_options {
 
 
         /** Creates an instance of the 'validator' class and calls
-            its operator() to perform athe ctual conversion. */
+            its operator() to perform the actual conversion. */
         void xparse(boost::any& value_store, 
                     const std::vector< std::basic_string<charT> >& new_tokens) 
             const;
@@ -250,6 +285,13 @@ namespace boost { namespace program_options {
             when creating *this, stores the value there. Otherwise,
             does nothing. */
         void notify(const boost::any& value_store) const;
+
+    public: // typed_value_base overrides
+        
+        const std::type_info& value_type() const
+        {
+            return typeid(T);
+        }
         
 
     private:

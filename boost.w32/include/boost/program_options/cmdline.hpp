@@ -12,13 +12,13 @@ namespace boost { namespace program_options { namespace command_line_style {
     There are "long" options, which start with "--" and "short",
     which start with either "-" or "/". Both kinds can be allowed or
     disallowed, see allow_long and allow_short. The allowed character
-    for short option is also configurable.
+    for short options is also configurable.
 
-    Option's value can be specified in the same token as value
+    Option's value can be specified in the same token as name
     ("--foo=bar"), or in the next token.
 
-    It's possible to introduce long option by the same character as
-    long option, see allow_long_disguise.
+    It's possible to introduce long options by the same character as
+    short options, see allow_long_disguise.
 
     Finally, guessing (specifying only prefix of option) and case
     insensitive processing are supported.
@@ -39,7 +39,7 @@ namespace boost { namespace program_options { namespace command_line_style {
             @endverbatim
         */
         long_allow_adjacent = allow_slash_for_short << 1,
-        /** Allow option parameter in the same token for
+        /** Allow option parameter in the next token for
             long options. */
         long_allow_next = long_allow_adjacent << 1,
         /** Allow option parameter in the same token for
@@ -59,7 +59,7 @@ namespace boost { namespace program_options { namespace command_line_style {
         /** Allow abbreviated spellings for long options,
             if they unambiguously identify long option. 
             No long option name should be prefix of other 
-            long option name is guessing is in effect.
+            long option name if guessing is in effect.
         */
         allow_guessing = allow_sticky << 1,
         /** Ignore the difference in case for options. 

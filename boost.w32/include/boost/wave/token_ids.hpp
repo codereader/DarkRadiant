@@ -5,7 +5,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -14,9 +14,13 @@
 #define TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED
 
 #include <string>
-#include <boost/assert.hpp>
 
 #include <boost/wave/wave_config.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //  Allow external redefinition of the token identifiers to use
@@ -73,6 +77,7 @@ enum token_category {
 ///////////////////////////////////////////////////////////////////////////////
 //  the token_id assigns unique numbers to the different C++ lexemes
 enum token_id {
+    T_UNKNOWN      = 0,
     T_FIRST_TOKEN  = 256,
     T_AND          = TOKEN_FROM_ID(T_FIRST_TOKEN, OperatorTokenType),
     T_AND_ALT      = TOKEN_FROM_ID(T_FIRST_TOKEN, OperatorTokenType|AltExtTokenType),
@@ -232,14 +237,15 @@ enum token_id {
     T_LONGINTLIT   = TOKEN_FROM_ID(386, IntegerLiteralTokenType),
     T_FLOATLIT     = TOKEN_FROM_ID(387, FloatingLiteralTokenType),
     T_FIXEDPOINTLIT = TOKEN_FROM_ID(387, FloatingLiteralTokenType|AltTokenType),  // IDL specific
-    T_CCOMMENT     = TOKEN_FROM_ID(388, WhiteSpaceTokenType),
-    T_CPPCOMMENT   = TOKEN_FROM_ID(389, WhiteSpaceTokenType),
+    T_CCOMMENT     = TOKEN_FROM_ID(388, WhiteSpaceTokenType|AltTokenType),
+    T_CPPCOMMENT   = TOKEN_FROM_ID(389, WhiteSpaceTokenType|AltTokenType),
     T_CHARLIT      = TOKEN_FROM_ID(390, CharacterLiteralTokenType),
     T_STRINGLIT    = TOKEN_FROM_ID(391, StringLiteralTokenType),
     T_CONTLINE     = TOKEN_FROM_ID(392, EOLTokenType),
     T_SPACE        = TOKEN_FROM_ID(393, WhiteSpaceTokenType),
     T_SPACE2       = TOKEN_FROM_ID(394, WhiteSpaceTokenType),
     T_NEWLINE      = TOKEN_FROM_ID(395, EOLTokenType),
+    T_GENERATEDNEWLINE      = TOKEN_FROM_ID(395, EOLTokenType|AltTokenType),
     T_POUND_POUND           = TOKEN_FROM_ID(396, OperatorTokenType),
     T_POUND_POUND_ALT       = TOKEN_FROM_ID(396, OperatorTokenType|AltTokenType),
     T_POUND_POUND_TRIGRAPH  = TOKEN_FROM_ID(396, OperatorTokenType|TriGraphTokenType),
@@ -256,26 +262,27 @@ enum token_id {
     T_PP_HHEADER_NEXT   = TOKEN_FROM_ID(401, PPTokenType|AltTokenType),
     T_EOF          = TOKEN_FROM_ID(402, EOFTokenType),      // end of file reached
     T_EOI          = TOKEN_FROM_ID(403, EOFTokenType),      // end of input reached
+    T_PP_NUMBER    = TOKEN_FROM_ID(404, InternalTokenType),
     
 // MS extensions
-    T_MSEXT_INT8   = TOKEN_FROM_ID(404, KeywordTokenType),
-    T_MSEXT_INT16  = TOKEN_FROM_ID(405, KeywordTokenType),
-    T_MSEXT_INT32  = TOKEN_FROM_ID(406, KeywordTokenType),
-    T_MSEXT_INT64  = TOKEN_FROM_ID(407, KeywordTokenType),
-    T_MSEXT_BASED  = TOKEN_FROM_ID(408, KeywordTokenType),
-    T_MSEXT_DECLSPEC = TOKEN_FROM_ID(409, KeywordTokenType),
-    T_MSEXT_CDECL  = TOKEN_FROM_ID(410, KeywordTokenType),
-    T_MSEXT_FASTCALL = TOKEN_FROM_ID(411, KeywordTokenType),
-    T_MSEXT_STDCALL = TOKEN_FROM_ID(412, KeywordTokenType),
-    T_MSEXT_TRY    = TOKEN_FROM_ID(413, KeywordTokenType),
-    T_MSEXT_EXCEPT = TOKEN_FROM_ID(414, KeywordTokenType),
-    T_MSEXT_FINALLY = TOKEN_FROM_ID(415, KeywordTokenType),
-    T_MSEXT_LEAVE  = TOKEN_FROM_ID(416, KeywordTokenType),
-    T_MSEXT_INLINE = TOKEN_FROM_ID(417, KeywordTokenType),
-    T_MSEXT_ASM    = TOKEN_FROM_ID(418, KeywordTokenType),
+    T_MSEXT_INT8   = TOKEN_FROM_ID(405, KeywordTokenType),
+    T_MSEXT_INT16  = TOKEN_FROM_ID(406, KeywordTokenType),
+    T_MSEXT_INT32  = TOKEN_FROM_ID(407, KeywordTokenType),
+    T_MSEXT_INT64  = TOKEN_FROM_ID(408, KeywordTokenType),
+    T_MSEXT_BASED  = TOKEN_FROM_ID(409, KeywordTokenType),
+    T_MSEXT_DECLSPEC = TOKEN_FROM_ID(410, KeywordTokenType),
+    T_MSEXT_CDECL  = TOKEN_FROM_ID(411, KeywordTokenType),
+    T_MSEXT_FASTCALL = TOKEN_FROM_ID(412, KeywordTokenType),
+    T_MSEXT_STDCALL = TOKEN_FROM_ID(413, KeywordTokenType),
+    T_MSEXT_TRY    = TOKEN_FROM_ID(414, KeywordTokenType),
+    T_MSEXT_EXCEPT = TOKEN_FROM_ID(415, KeywordTokenType),
+    T_MSEXT_FINALLY = TOKEN_FROM_ID(416, KeywordTokenType),
+    T_MSEXT_LEAVE  = TOKEN_FROM_ID(417, KeywordTokenType),
+    T_MSEXT_INLINE = TOKEN_FROM_ID(418, KeywordTokenType),
+    T_MSEXT_ASM    = TOKEN_FROM_ID(419, KeywordTokenType),
 
-    T_MSEXT_PP_REGION    = TOKEN_FROM_ID(419, PPTokenType),
-    T_MSEXT_PP_ENDREGION = TOKEN_FROM_ID(420, PPTokenType),
+    T_MSEXT_PP_REGION    = TOKEN_FROM_ID(420, PPTokenType),
+    T_MSEXT_PP_ENDREGION = TOKEN_FROM_ID(421, PPTokenType),
     
     T_LAST_TOKEN_ID,
     T_LAST_TOKEN = ID_FROM_TOKEN(T_LAST_TOKEN_ID),
@@ -300,394 +307,39 @@ enum token_id {
 #undef BASEID_FROM_TOKEN
 #define BASEID_FROM_TOKEN(tok)                                                \
     boost::wave::token_id(((tok) & ~boost::wave::ExtTokenTypeMask))           \
-  /**/
+    /**/
 #define BASE_TOKEN(tok)                                                       \
     boost::wave::token_id((tok) & boost::wave::MainTokenMask)                 \
-  /**/
+    /**/
 #define CATEGORY_FROM_TOKEN(tok) ((tok) & boost::wave::TokenTypeMask)
 #define EXTCATEGORY_FROM_TOKEN(tok) ((tok) & boost::wave::ExtTokenTypeMask)
-#define IS_CATEGORY(tok, cat)    \
-    ((CATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false) \
+#define IS_CATEGORY(tok, cat)                                                 \
+    ((CATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false)                      \
     /**/
-#define IS_EXTCATEGORY(tok, cat)    \
-    ((EXTCATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false) \
+#define IS_EXTCATEGORY(tok, cat)                                              \
+    ((EXTCATEGORY_FROM_TOKEN(tok) == (cat)) ? true : false)                   \
     /**/
 
 ///////////////////////////////////////////////////////////////////////////////
 //  return a token name
-inline BOOST_WAVE_STRINGTYPE
-get_token_name(token_id tokid)
-{
-//  Table of token names
-//
-//      Please note that the sequence of token names must match the sequence of
-//      token id's defined in then enum token_id above.
-static char const *tok_names[] = {
-    /* 256 */   "AND",
-    /* 257 */   "ANDAND",
-    /* 258 */   "ASSIGN",
-    /* 259 */   "ANDASSIGN",
-    /* 260 */   "OR",
-    /* 261 */   "ORASSIGN",
-    /* 262 */   "XOR",
-    /* 263 */   "XORASSIGN",
-    /* 264 */   "COMMA",
-    /* 265 */   "COLON",
-    /* 266 */   "DIVIDE",
-    /* 267 */   "DIVIDEASSIGN",
-    /* 268 */   "DOT",
-    /* 269 */   "DOTSTAR",
-    /* 270 */   "ELLIPSIS",
-    /* 271 */   "EQUAL",
-    /* 272 */   "GREATER",
-    /* 273 */   "GREATEREQUAL",
-    /* 274 */   "LEFTBRACE",
-    /* 275 */   "LESS",
-    /* 276 */   "LESSEQUAL",
-    /* 277 */   "LEFTPAREN",
-    /* 278 */   "LEFTBRACKET",
-    /* 279 */   "MINUS",
-    /* 280 */   "MINUSASSIGN",
-    /* 281 */   "MINUSMINUS",
-    /* 282 */   "PERCENT",
-    /* 283 */   "PERCENTASSIGN",
-    /* 284 */   "NOT",
-    /* 285 */   "NOTEQUAL",
-    /* 286 */   "OROR",
-    /* 287 */   "PLUS",
-    /* 288 */   "PLUSASSIGN",
-    /* 289 */   "PLUSPLUS",
-    /* 290 */   "ARROW",
-    /* 291 */   "ARROWSTAR",
-    /* 292 */   "QUESTION_MARK",
-    /* 293 */   "RIGHTBRACE",
-    /* 294 */   "RIGHTPAREN",
-    /* 295 */   "RIGHTBRACKET",
-    /* 296 */   "COLON_COLON",
-    /* 297 */   "SEMICOLON",
-    /* 298 */   "SHIFTLEFT",
-    /* 299 */   "SHIFTLEFTASSIGN",
-    /* 300 */   "SHIFTRIGHT",
-    /* 301 */   "SHIFTRIGHTASSIGN",
-    /* 302 */   "STAR",
-    /* 303 */   "COMPL",
-    /* 304 */   "STARASSIGN",
-    /* 305 */   "ASM",
-    /* 306 */   "AUTO",
-    /* 307 */   "BOOL",
-    /* 308 */   "FALSE",
-    /* 309 */   "TRUE",
-    /* 310 */   "BREAK",
-    /* 311 */   "CASE",
-    /* 312 */   "CATCH",
-    /* 313 */   "CHAR",
-    /* 314 */   "CLASS",
-    /* 315 */   "CONST",
-    /* 316 */   "CONSTCAST",
-    /* 317 */   "CONTINUE",
-    /* 318 */   "DEFAULT",
-    /* 319 */   "DEFINED",
-    /* 320 */   "DELETE",
-    /* 321 */   "DO",
-    /* 322 */   "DOUBLE",
-    /* 323 */   "DYNAMICCAST",
-    /* 324 */   "ELSE",
-    /* 325 */   "ENUM",
-    /* 326 */   "EXPLICIT",
-    /* 327 */   "EXPORT",
-    /* 328 */   "EXTERN",
-    /* 329 */   "FLOAT",
-    /* 330 */   "FOR",
-    /* 331 */   "FRIEND",
-    /* 332 */   "GOTO",
-    /* 333 */   "IF",
-    /* 334 */   "INLINE",
-    /* 335 */   "INT",
-    /* 336 */   "LONG",
-    /* 337 */   "MUTABLE",
-    /* 338 */   "NAMESPACE",
-    /* 339 */   "NEW",
-    /* 340 */   "OPERATOR",
-    /* 341 */   "PRIVATE",
-    /* 342 */   "PROTECTED",
-    /* 343 */   "PUBLIC",
-    /* 344 */   "REGISTER",
-    /* 345 */   "REINTERPRETCAST",
-    /* 346 */   "RETURN",
-    /* 347 */   "SHORT",
-    /* 348 */   "SIGNED",
-    /* 349 */   "SIZEOF",
-    /* 350 */   "STATIC",
-    /* 351 */   "STATICCAST",
-    /* 352 */   "STRUCT",
-    /* 353 */   "SWITCH",
-    /* 354 */   "TEMPLATE",
-    /* 355 */   "THIS",
-    /* 356 */   "THROW",
-    /* 357 */   "TRY",
-    /* 358 */   "TYPEDEF",
-    /* 359 */   "TYPEID",
-    /* 360 */   "TYPENAME",
-    /* 361 */   "UNION",
-    /* 362 */   "UNSIGNED",
-    /* 363 */   "USING",
-    /* 364 */   "VIRTUAL",
-    /* 365 */   "VOID",
-    /* 366 */   "VOLATILE",
-    /* 367 */   "WCHART",
-    /* 368 */   "WHILE",
-    /* 369 */   "PP_DEFINE",
-    /* 370 */   "PP_IF",
-    /* 371 */   "PP_IFDEF",
-    /* 372 */   "PP_IFNDEF",
-    /* 373 */   "PP_ELSE",
-    /* 374 */   "PP_ELIF",
-    /* 375 */   "PP_ENDIF",
-    /* 376 */   "PP_ERROR",
-    /* 377 */   "PP_LINE",
-    /* 378 */   "PP_PRAGMA",
-    /* 379 */   "PP_UNDEF",
-    /* 380 */   "PP_WARNING",
-    /* 381 */   "IDENTIFIER",
-    /* 382 */   "OCTALINT",
-    /* 383 */   "DECIMALINT",
-    /* 384 */   "HEXAINT",
-    /* 385 */   "INTLIT",
-    /* 386 */   "LONGINTLIT",
-    /* 387 */   "FLOATLIT",
-    /* 388 */   "CCOMMENT",
-    /* 389 */   "CPPCOMMENT",
-    /* 390 */   "CHARLIT",
-    /* 391 */   "STRINGLIT",
-    /* 392 */   "CONTLINE",
-    /* 393 */   "SPACE",
-    /* 394 */   "SPACE2",
-    /* 395 */   "NEWLINE",
-    /* 396 */   "POUND_POUND",
-    /* 397 */   "POUND",
-    /* 398 */   "ANY",
-    /* 399 */   "PP_INCLUDE",
-    /* 400 */   "PP_QHEADER",
-    /* 401 */   "PP_HHEADER",
-    /* 402 */   "EOF",
-    /* 403 */   "EOI",
-
-              // MS extensions
-    /* 404 */   "MSEXT_INT8",
-    /* 405 */   "MSEXT_INT16",
-    /* 406 */   "MSEXT_INT32",
-    /* 407 */   "MSEXT_INT64",
-    /* 408 */   "MSEXT_BASED",
-    /* 409 */   "MSEXT_DECLSPEC",
-    /* 410 */   "MSEXT_CDECL",
-    /* 411 */   "MSEXT_FASTCALL",
-    /* 412 */   "MSEXT_STDCALL",
-    /* 413 */   "MSEXT_TRY",
-    /* 414 */   "MSEXT_EXCEPT",
-    /* 415 */   "MSEXT_FINALLY",
-    /* 416 */   "MSEXT_LEAVE",
-    /* 417 */   "MSEXT_INLINE",
-    /* 418 */   "MSEXT_ASM",
-    /* 419 */   "MSEXT_REGION",
-    /* 420 */   "MSEXT_ENDREGION",
-    };   
-     
-    unsigned int id = BASEID_FROM_TOKEN(tokid)-T_FIRST_TOKEN;
-
-    BOOST_ASSERT(id < T_LAST_TOKEN-T_FIRST_TOKEN);
-    return tok_names[id];
-}
+BOOST_WAVE_DECL 
+BOOST_WAVE_STRINGTYPE get_token_name(token_id tokid);
 
 ///////////////////////////////////////////////////////////////////////////////
 //  return a token name
-inline char const *
-get_token_value(token_id tokid)
-{
-//  Table of token values
-//
-//      Please note that the sequence of token names must match the sequence of
-//      token id's defined in then enum token_id above.
-static char const *tok_names[] = {
-    /* 256 */   "&",
-    /* 257 */   "&&",
-    /* 258 */   "=",
-    /* 259 */   "&=",
-    /* 260 */   "|",
-    /* 261 */   "|=",
-    /* 262 */   "^",
-    /* 263 */   "^=",
-    /* 264 */   ",",
-    /* 265 */   ":",
-    /* 266 */   "/",
-    /* 267 */   "/=",
-    /* 268 */   ".",
-    /* 269 */   ".*",
-    /* 270 */   "...",
-    /* 271 */   "==",
-    /* 272 */   ">",
-    /* 273 */   ">=",
-    /* 274 */   "{",
-    /* 275 */   "<",
-    /* 276 */   "<=",
-    /* 277 */   "(",
-    /* 278 */   "[",
-    /* 279 */   "-",
-    /* 280 */   "-=",
-    /* 281 */   "--",
-    /* 282 */   "%",
-    /* 283 */   "%=",
-    /* 284 */   "!",
-    /* 285 */   "!=",
-    /* 286 */   "||",
-    /* 287 */   "+",
-    /* 288 */   "+=",
-    /* 289 */   "++",
-    /* 290 */   "->",
-    /* 291 */   "->*",
-    /* 292 */   "?",
-    /* 293 */   "}",
-    /* 294 */   ")",
-    /* 295 */   "]",
-    /* 296 */   "::",
-    /* 297 */   ";",
-    /* 298 */   "<<",
-    /* 299 */   "<<=",
-    /* 300 */   ">>",
-    /* 301 */   ">>=",
-    /* 302 */   "*",
-    /* 303 */   "~",
-    /* 304 */   "*=",
-    /* 305 */   "asm",
-    /* 306 */   "auto",
-    /* 307 */   "bool",
-    /* 308 */   "false",
-    /* 309 */   "true",
-    /* 310 */   "break",
-    /* 311 */   "case",
-    /* 312 */   "catch",
-    /* 313 */   "char",
-    /* 314 */   "class",
-    /* 315 */   "const",
-    /* 316 */   "const_cast",
-    /* 317 */   "continue",
-    /* 318 */   "default",
-    /* 319 */   "defined",
-    /* 320 */   "delete",
-    /* 321 */   "do",
-    /* 322 */   "double",
-    /* 323 */   "dynamic_cast",
-    /* 324 */   "else",
-    /* 325 */   "enum",
-    /* 326 */   "explicit",
-    /* 327 */   "export",
-    /* 328 */   "extern",
-    /* 329 */   "float",
-    /* 330 */   "for",
-    /* 331 */   "friend",
-    /* 332 */   "goto",
-    /* 333 */   "if",
-    /* 334 */   "inline",
-    /* 335 */   "int",
-    /* 336 */   "long",
-    /* 337 */   "mutable",
-    /* 338 */   "namespace",
-    /* 339 */   "new",
-    /* 340 */   "operator",
-    /* 341 */   "private",
-    /* 342 */   "protected",
-    /* 343 */   "public",
-    /* 344 */   "register",
-    /* 345 */   "reinterpret_cast",
-    /* 346 */   "return",
-    /* 347 */   "short",
-    /* 348 */   "signed",
-    /* 349 */   "sizeof",
-    /* 350 */   "static",
-    /* 351 */   "static_cast",
-    /* 352 */   "struct",
-    /* 353 */   "switch",
-    /* 354 */   "template",
-    /* 355 */   "this",
-    /* 356 */   "throw",
-    /* 357 */   "try",
-    /* 358 */   "typedef",
-    /* 359 */   "typeid",
-    /* 360 */   "typename",
-    /* 361 */   "union",
-    /* 362 */   "unsigned",
-    /* 363 */   "using",
-    /* 364 */   "virtual",
-    /* 365 */   "void",
-    /* 366 */   "volatile",
-    /* 367 */   "wchar_t",
-    /* 368 */   "while",
-    /* 369 */   "#define",
-    /* 370 */   "#if",
-    /* 371 */   "#ifdef",
-    /* 372 */   "#ifndef",
-    /* 373 */   "#else",
-    /* 374 */   "#elif",
-    /* 375 */   "#endif",
-    /* 376 */   "#error",
-    /* 377 */   "#line",
-    /* 378 */   "#pragma ",
-    /* 379 */   "#undef ",
-    /* 380 */   "#warning",
-    /* 381 */   "",   // identifier
-    /* 382 */   "",   // octalint
-    /* 383 */   "",   // decimalint
-    /* 384 */   "",   // hexlit
-    /* 385 */   "",   // intlit
-    /* 386 */   "",   // longintlit
-    /* 387 */   "",   // floatlit
-    /* 388 */   "",   // ccomment
-    /* 389 */   "",   // cppcomment
-    /* 390 */   "",   // charlit
-    /* 391 */   "",   // stringlit
-    /* 392 */   "",   // contline
-    /* 393 */   "",   // space
-    /* 394 */   "",   // space2
-    /* 395 */   "\n",
-    /* 396 */   "##",
-    /* 397 */   "#",
-    /* 398 */   "",   // any
-    /* 399 */   "#include",
-    /* 400 */   "#include",
-    /* 401 */   "#include",
-    /* 402 */   "",   // eof
-    /* 403 */   "",   // eoi
-
-              // MS extensions
-    /* 404 */   "__int8",
-    /* 405 */   "__int16",
-    /* 406 */   "__int32",
-    /* 407 */   "__int64",
-    /* 408 */   "__based",
-    /* 409 */   "__declspec",
-    /* 410 */   "__cdecl",
-    /* 411 */   "__fastcall",
-    /* 412 */   "__stdcall",
-    /* 413 */   "__try",
-    /* 414 */   "__except",
-    /* 415 */   "__finally",
-    /* 416 */   "__leave",
-    /* 417 */   "__inline",
-    /* 418 */   "__asm",
-    /* 419 */   "#region",
-    /* 420 */   "#endregion",
-    };   
-     
-    unsigned int id = BASEID_FROM_TOKEN(tokid)-T_FIRST_TOKEN;
-
-    BOOST_ASSERT(id < T_LAST_TOKEN-T_FIRST_TOKEN);
-    return tok_names[id];
-}
+BOOST_WAVE_DECL 
+char const *get_token_value(token_id tokid);
 
 ///////////////////////////////////////////////////////////////////////////////
 }   // namespace wave
 }   // namespace boost
 
 #endif // #if !defined(BOOST_WAVE_TOKEN_IDS_DEFINED)
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(TOKEN_IDS_HPP_414E9A58_F079_4789_8AFF_513815CE475B_INCLUDED)
 

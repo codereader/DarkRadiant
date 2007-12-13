@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2007 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -26,6 +26,7 @@
 #include <boost/multi_index/detail/bucket_array.hpp>
 #include <boost/multi_index/detail/hash_index_iterator.hpp>
 #include <boost/multi_index/detail/modify_key_adaptor.hpp>
+#include <boost/multi_index/detail/safe_ctr_proxy.hpp>
 #include <boost/multi_index/detail/safe_mode.hpp>
 #include <boost/multi_index/detail/scope_guard.hpp>
 #include <boost/multi_index/hashed_index_fwd.hpp>
@@ -67,23 +68,20 @@ template<
   typename KeyFromValue,typename Hash,typename Pred,
   typename SuperMeta,typename TagList,typename Category
 >
+class hashed_index:
+  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #if BOOST_WORKAROUND(BOOST_MSVC,<1300)
-class hashed_index:
-  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type,
-  public hashed_index_proxy<
-    hashed_index_node<SuperMeta::type::node_type>,
-    bucket_array<SuperMeta::type::final_allocator_type> >
+  ,public safe_ctr_proxy_impl<
+    hashed_index_iterator<
+      hashed_index_node<typename SuperMeta::type::node_type>,
+      bucket_array<typename SuperMeta::type::final_allocator_type> >,
+    hashed_index<KeyFromValue,Hash,Pred,SuperMeta,TagList,Category> >
 #else
-class hashed_index:
-  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type,
-  public safe_container<
+  ,public safe_mode::safe_container<
     hashed_index<KeyFromValue,Hash,Pred,SuperMeta,TagList,Category> >
 #endif
-#else
-class hashed_index:
-  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type
 #endif
 
 { 
@@ -125,22 +123,24 @@ public:
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #if BOOST_WORKAROUND(BOOST_MSVC,<1300)
-  typedef hashed_index_iterator<
-    node_type,bucket_array_type>                     iterator;
-  typedef hashed_index_iterator<
-    node_type,bucket_array_type>                     const_iterator;
+  typedef safe_mode::safe_iterator<
+    hashed_index_iterator<
+      node_type,bucket_array_type>,
+    safe_ctr_proxy<
+      hashed_index_iterator<
+        node_type,bucket_array_type> > >             iterator;
 #else
-  typedef hashed_index_iterator<
-    node_type,bucket_array_type,hashed_index>        iterator;
-  typedef hashed_index_iterator<
-    node_type,bucket_array_type,hashed_index>        const_iterator;
+  typedef safe_mode::safe_iterator<
+    hashed_index_iterator<
+      node_type,bucket_array_type>,
+    hashed_index>                                    iterator;
 #endif
 #else
   typedef hashed_index_iterator<
     node_type,bucket_array_type>                     iterator;
-  typedef hashed_index_iterator<
-    node_type,bucket_array_type>                     const_iterator;
 #endif
+
+  typedef iterator                                   const_iterator;
 
   typedef iterator                                   local_iterator;
   typedef const_iterator                             const_local_iterator;
@@ -170,10 +170,14 @@ protected:
 private:
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #if BOOST_WORKAROUND(BOOST_MSVC,<1300)
-  typedef hashed_index_proxy<
-    node_type,bucket_array_type>          safe_super;
+  typedef safe_ctr_proxy_impl<
+    hashed_index_iterator<
+      node_type,
+      bucket_array_type>,
+    hashed_index>                             safe_super;
 #else
-  typedef safe_container<hashed_index>    safe_super;
+  typedef safe_mode::safe_container<
+    hashed_index>                             safe_super;
 #endif
 #endif
 
@@ -259,20 +263,32 @@ public:
     this->final_erase_(static_cast<final_node_type*>(position++.get_node()));
     return position;
   }
-  
-  size_type erase(key_param_type x)
+
+  size_type erase(key_param_type k)
   {
     BOOST_MULTI_INDEX_HASHED_INDEX_CHECK_INVARIANT;
 
-    size_type s=0;
-    iterator it=find(x); /* caveat: relies on find() returning */
-    if(it!=end()){       /* the first element                  */
-      do{
-        it=erase(it);
-        ++s;
-      }while(it!=end()&&eq(x,key(*it)));
+    size_type               s=0;
+    std::size_t             buc=buckets.position(hash(k));
+    hashed_index_node_impl* x=buckets.at(buc);
+    hashed_index_node_impl* y=x->next();
+    while(y!=x){
+      if(eq(k,key(node_type::from_impl(y)->value()))){
+        bool b;
+        do{
+          hashed_index_node_impl* z=y->next();
+          b=z!=x&&eq(
+            key(node_type::from_impl(y)->value()),
+            key(node_type::from_impl(z)->value()));
+          this->final_erase_(
+            static_cast<final_node_type*>(node_type::from_impl(y)));
+          y=z;
+          ++s;
+        }while(b);
+        break;
+      }
+      y=y->next();
     }
-
     return s;
   }
 
@@ -373,7 +389,7 @@ public:
     hashed_index_node_impl* x=buckets.at(buc);
     hashed_index_node_impl* y=x->next();
     while(y!=x){
-      if(eq(k,key(node_type::from_impl(y)->value))){
+      if(eq(k,key(node_type::from_impl(y)->value()))){
         return make_iterator(node_type::from_impl(y));
       }
       y=y->next();
@@ -399,11 +415,11 @@ public:
     hashed_index_node_impl* x=buckets.at(buc);
     hashed_index_node_impl* y=x->next();
     while(y!=x){
-      if(eq(k,key(node_type::from_impl(y)->value))){
+      if(eq(k,key(node_type::from_impl(y)->value()))){
         do{
           ++res;
           y=y->next();
-        }while(y!=x&&eq(k,key(node_type::from_impl(y)->value)));
+        }while(y!=x&&eq(k,key(node_type::from_impl(y)->value())));
         break;
       }
       y=y->next();
@@ -428,11 +444,11 @@ public:
     hashed_index_node_impl* x=buckets.at(buc);
     hashed_index_node_impl* y=x->next();
     while(y!=x){
-      if(eq(k,key(node_type::from_impl(y)->value))){
+      if(eq(k,key(node_type::from_impl(y)->value()))){
         hashed_index_node_impl* y0=y;
         do{
           y=y->next();
-        }while(y!=x&&eq(k,key(node_type::from_impl(y)->value)));
+        }while(y!=x&&eq(k,key(node_type::from_impl(y)->value())));
         if(y==x){
           do{
             ++y;
@@ -521,12 +537,6 @@ public:
 BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
   hashed_index(const ctor_args_list& args_list,const allocator_type& al):
     super(args_list.get_tail(),al),
-
-#if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)&&\
-    BOOST_WORKAROUND(BOOST_MSVC,<1300)
-    safe_super(final_header(),buckets),
-#endif
-
     key(tuples::get<1>(args_list.get_head())),
     hash(tuples::get<2>(args_list.get_head())),
     eq(tuples::get<3>(args_list.get_head())),
@@ -541,9 +551,8 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     const hashed_index<KeyFromValue,Hash,Pred,SuperMeta,TagList,Category>& x):
     super(x),
 
-#if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)&&\
-    BOOST_WORKAROUND(BOOST_MSVC,<1300)
-    safe_super(final_header(),buckets),
+#if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
+    safe_super(),
 #endif
 
     key(x.key),
@@ -567,25 +576,25 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
   iterator make_iterator(node_type* node)
   {
-    return iterator(node,buckets,this);
+    return iterator(node,&buckets,this);
   }
 
   const_iterator make_iterator(node_type* node)const
   {
     return const_iterator(
       node,
-      const_cast<bucket_array_type&>(buckets),
+      &const_cast<bucket_array_type&>(buckets),
       const_cast<hashed_index*>(this));
   }
 #else
   iterator make_iterator(node_type* node)
   {
-    return iterator(node,buckets);
+    return iterator(node,&buckets);
   }
 
   const_iterator make_iterator(node_type* node)const
   {
-    return const_iterator(node,const_cast<bucket_array_type&>(buckets));
+    return const_iterator(node,&const_cast<bucket_array_type&>(buckets));
   }
 #endif
 
@@ -679,7 +688,7 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     first_bucket=buckets.size();
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
-    safe_super::detach_all_iterators();
+    safe_super::detach_dereferenceable_iterators();
 #endif
   }
 
@@ -703,7 +712,7 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
 
   bool replace_(value_param_type v,node_type* x)
   {
-    if(eq(key(v),key(x->value))){
+    if(eq(key(v),key(x->value()))){
       return super::replace_(v,x);
     }
 
@@ -741,9 +750,9 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     hashed_index_node_impl* pos;
     BOOST_TRY
     {
-      buc=find_bucket(x->value);
+      buc=find_bucket(x->value());
       pos=buckets.at(buc);
-      if(!link_point(x->value,pos,Category())){
+      if(!link_point(x->value(),pos,Category())){
         first_bucket=buckets.first_nonempty(first_bucket);
         super::erase_(x);
 
@@ -867,7 +876,7 @@ private:
   {
     hashed_index_node_impl* x=pos->next();
     while(x!=pos){
-      if(eq(key(v),key(node_type::from_impl(x)->value))){
+      if(eq(key(v),key(node_type::from_impl(x)->value()))){
         pos=x;
         return false;
       }
@@ -882,7 +891,7 @@ private:
     hashed_index_node_impl* prev=pos;
     hashed_index_node_impl* x=pos->next();
     while(x!=pos){
-      if(eq(key(v),key(node_type::from_impl(x)->value))){
+      if(eq(key(v),key(node_type::from_impl(x)->value()))){
         pos=prev;
         return true;
       }
@@ -945,7 +954,7 @@ private:
     for(;x!=x_end;++x){
       hashed_index_node_impl* y=x->next();
       while(y!=x){
-        hashes.data()[i++]=hash(key(node_type::from_impl(y)->value));
+        hashes.data()[i++]=hash(key(node_type::from_impl(y)->value()));
         y=y->next();
       }
     }

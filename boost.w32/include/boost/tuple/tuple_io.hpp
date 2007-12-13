@@ -349,7 +349,7 @@ extract_and_check_delimiter(
   char c;
   if (is_delimiter) { 
     is >> c; 
-    if (c!=d) {
+    if (is.good() && c!=d) {
       is.setstate(std::ios::failbit);
     } 
   }
@@ -443,7 +443,7 @@ extract_and_check_delimiter(
   CharType c;
   if (is_delimiter) { 
     is >> c;
-    if (c!=d) { 
+    if (is.good() && c!=d) { 
       is.setstate(std::ios::failbit);
     }
   }

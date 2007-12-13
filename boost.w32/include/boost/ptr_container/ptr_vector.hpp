@@ -46,14 +46,27 @@ namespace boost
                                                           base_class,
                                                           this_type );
 
-        ptr_vector( BOOST_DEDUCED_TYPENAME base_class::size_type n,
+        ptr_vector( size_type n,
                     const allocator_type& alloc = allocator_type() )
           : base_class(alloc)
         {
             this->c_private().reserve( n );
         }
 
+    public: // serialization
 
+        template< class Archive >
+        void load( Archive& ar, unsigned )
+        {
+            size_type n;
+            ar & n;
+            
+            this->reserve( n );
+            this->load_helper( ar, n );
+        }
+  
+        BOOST_SERIALIZATION_SPLIT_MEMBER()
+        
     };
 
     //////////////////////////////////////////////////////////////////////////////

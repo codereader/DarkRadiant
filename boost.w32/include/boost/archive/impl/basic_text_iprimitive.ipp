@@ -116,6 +116,7 @@ basic_text_iprimitive<IStream>::basic_text_iprimitive(
 template<class IStream>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
 basic_text_iprimitive<IStream>::~basic_text_iprimitive(){
+    is.sync();
 }
 
 } // namespace archive

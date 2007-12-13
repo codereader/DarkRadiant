@@ -1,11 +1,11 @@
 #ifndef LOCAL_TIME_LOCAL_DATE_TIME_HPP__
 #define LOCAL_TIME_LOCAL_DATE_TIME_HPP__
 
-/* Copyright (c) 2003-2004 CrystalClear Software, Inc.
+/* Copyright (c) 2003-2005 CrystalClear Software, Inc.
  * Subject to the Boost Software License, Version 1.0. 
  * (See accompanying file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/05/15 21:21:00 $
+ * $Date: 2005/10/23 20:15:06 $
  */
 
 
@@ -57,7 +57,7 @@ namespace local_time {
    * required to be in the form of a boost::shared_ptr<time_zone_base>.
    */
   template<class utc_time_=posix_time::ptime, 
-           class tz_type=date_time::time_zone_base<utc_time_> >
+           class tz_type=date_time::time_zone_base<utc_time_,char> >
   class local_date_time_base :  public date_time::base_time<utc_time_, 
                                                             boost::posix_time::posix_time_system> { 
   public:
@@ -480,14 +480,14 @@ namespace local_time {
     /*! Adjust the passed in time to UTC?
      */
     utc_time_type construction_adjustment(utc_time_type t, 
-                                          boost::shared_ptr<tz_type> zone,
-                                          bool is_dst)
+                                          boost::shared_ptr<tz_type> z,
+                                          bool dst_flag)
     {
-      if(zone != boost::shared_ptr<tz_type>()) {
-        if(is_dst && zone->has_dst()) {
-          t -= zone->dst_offset();
+      if(z != boost::shared_ptr<tz_type>()) {
+        if(dst_flag && z->has_dst()) {
+          t -= z->dst_offset();
         } // else no adjust
-        t -= zone->base_utc_offset();
+        t -= z->base_utc_offset();
       }
       return t;
     }

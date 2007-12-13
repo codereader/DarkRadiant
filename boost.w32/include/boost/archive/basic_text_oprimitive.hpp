@@ -24,15 +24,17 @@
 // in such cases.   So we can't use basic_ostream<OStream::char_type> but rather
 // use two template parameters
 
+#include <iomanip>
+#include <locale>
+#include <cstddef> // size_t
+#include <cmath> // isnan
+#include <cassert>
+
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 #if BOOST_WORKAROUND(BOOST_DINKUMWARE_STDLIB, == 1)
 #include <boost/archive/dinkumware.hpp>
 #endif
-
-#include <iomanip>
-#include <locale>
-#include <cstddef> // size_t
 
 #if defined(BOOST_NO_STDC_NAMESPACE)
 namespace std{ 
@@ -84,6 +86,17 @@ public:
 
     /////////////////////////////////////////////////////////
     // fundamental types that need special treatment
+    void save(const bool t){
+        // trap usage of invalid uninitialized boolean which would
+        // otherwise crash on load.
+#ifndef NDEBUG
+        int i = t;
+        assert(0 == i || 1 == i);
+#endif
+        if(os.fail())
+            boost::throw_exception(archive_exception(archive_exception::stream_error));
+        os << t;
+    }
     void save(const signed char t)
     {
         if(os.fail())
@@ -112,6 +125,7 @@ public:
     #endif
     void save(const float t)
     {
+        // must be a user mistake - can't serialize un-initialized data
         if(os.fail())
             boost::throw_exception(archive_exception(archive_exception::stream_error));
         os << std::setprecision(std::numeric_limits<float>::digits10 + 2);
@@ -119,6 +133,7 @@ public:
     }
     void save(const double t)
     {
+        // must be a user mistake - can't serialize un-initialized data
         if(os.fail())
             boost::throw_exception(archive_exception(archive_exception::stream_error));
         os << std::setprecision(std::numeric_limits<double>::digits10 + 2);

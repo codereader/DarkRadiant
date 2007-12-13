@@ -859,7 +859,7 @@ struct return_type_2<other_action<subscript_action>, A, B> {
 
 
 // Forward declarations are incompatible with the libstdc++ debug mode.
-#if BOOST_WORKAROUND(__GNUC__, >= 3) && _GLIBCXX_DEBUG
+#if BOOST_WORKAROUND(__GNUC__, >= 3) && defined(_GLIBCXX_DEBUG)
 #include <string>
 #include <vector>
 #include <map>

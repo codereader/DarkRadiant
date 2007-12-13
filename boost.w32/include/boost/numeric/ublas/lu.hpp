@@ -18,9 +18,10 @@
 #define _BOOST_UBLAS_LU_
 
 #include <boost/numeric/ublas/operation.hpp>
-#include <boost/numeric/ublas/matrix_expression.hpp>
+#include <boost/numeric/ublas/vector_proxy.hpp>
+#include <boost/numeric/ublas/matrix_proxy.hpp>
 #include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/detail/matrix_assign.hpp>
+#include <boost/numeric/ublas/triangular.hpp>
 
 // LU factorizations in the spirit of LAPACK and Golub & van Loan
 

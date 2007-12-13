@@ -18,8 +18,6 @@
 
 #include <boost/ptr_container/detail/associative_ptr_container.hpp>
 #include <boost/ptr_container/detail/void_ptr_iterator.hpp>
-#include <boost/range/reverse_iterator.hpp>
-#include <boost/range/const_reverse_iterator.hpp>
 #include <boost/range/iterator_range.hpp>
 
 namespace boost
@@ -58,16 +56,6 @@ namespace ptr_container_detail
                         BOOST_DEDUCED_TYPENAME VoidPtrSet::const_iterator, const Key >
                     const_iterator;
 
-       typedef void_ptr_iterator<
-                       BOOST_DEDUCED_TYPENAME VoidPtrSet::reverse_iterator, Key >
-                   reverse_iterator;
-        
-       typedef void_ptr_iterator<
-                       BOOST_DEDUCED_TYPENAME VoidPtrSet::const_reverse_iterator, const Key >
-                   const_reverse_iterator;
-
-       typedef Key object_type;
-
        template< class Iter >
        static Key* get_pointer( Iter i )
        {
@@ -103,12 +91,18 @@ namespace ptr_container_detail
                       iterator;
         typedef BOOST_DEDUCED_TYPENAME base_type::const_iterator 
                       const_iterator;
-        typedef BOOST_DEDUCED_TYPENAME base_type::object_type 
-                      key_type;
+        typedef Key   key_type;
         typedef BOOST_DEDUCED_TYPENAME base_type::size_type
                       size_type;
-        
+
+    private:
+        ptr_set_adapter_base() 
+          : base_type( BOOST_DEDUCED_TYPENAME VoidPtrSet::key_compare(),
+                       BOOST_DEDUCED_TYPENAME VoidPtrSet::allocator_type() )
+        { }
+
     public:
+        
        template< class Compare, class Allocator >
        ptr_set_adapter_base( const Compare& comp,
                              const Allocator& a ) 
@@ -132,46 +126,46 @@ namespace ptr_container_detail
         {
             base_type::operator=( clone );
         }
-                                                                                                             
+                 
         iterator find( const key_type& x )                                                
         {                                                                            
             return iterator( this->c_private().
-                             find( const_cast<key_type*>(&x) ) );                                
+                             find( const_cast<key_type*>(&x) ) );            
         }                                                                            
 
         const_iterator find( const key_type& x ) const                                    
         {                                                                            
             return const_iterator( this->c_private().
-                                   find( const_cast<key_type*>(&x) ) );                          
+                                   find( const_cast<key_type*>(&x) ) );                  
         }                                                                            
 
         size_type count( const key_type& x ) const                                        
         {                                                                            
-            return this->c_private().count( const_cast<key_type*>(&x) );                                           
+            return this->c_private().count( const_cast<key_type*>(&x) );                      
         }                                                                            
                                                                                      
         iterator lower_bound( const key_type& x )                                         
         {                                                                            
             return iterator( this->c_private().
-                             lower_bound( const_cast<key_type*>(&x) ) );                         
+                             lower_bound( const_cast<key_type*>(&x) ) );                   
         }                                                                            
                                                                                      
         const_iterator lower_bound( const key_type& x ) const                             
         {                                                                            
             return const_iterator( this->c_private().
-                                   lower_bound( const_cast<key_type*>(&x) ) );                   
+                                   lower_bound( const_cast<key_type*>(&x) ) );       
         }                                                                            
                                                                                      
         iterator upper_bound( const key_type& x )                                         
         {                                                                            
             return iterator( this->c_private().
-                             upper_bound( const_cast<key_type*>(&x) ) );                         
+                             upper_bound( const_cast<key_type*>(&x) ) );           
         }                                                                            
                                                                                      
         const_iterator upper_bound( const key_type& x ) const                             
         {                                                                            
             return const_iterator( this->c_private().
-                                   upper_bound( const_cast<key_type*>(&x) ) );                   
+                                   upper_bound( const_cast<key_type*>(&x) ) );             
         }                                                                            
                                                                                      
         iterator_range<iterator> equal_range( const key_type& x )                    
@@ -193,7 +187,7 @@ namespace ptr_container_detail
             return make_iterator_range( const_iterator( p.first ), 
                                         const_iterator( p.second ) );    
         }                                                                            
-                                                                                     
+
     };
 
 } // ptr_container_detail
@@ -222,8 +216,7 @@ namespace ptr_container_detail
                      const_iterator;                 
         typedef BOOST_DEDUCED_TYPENAME base_type::size_type
                      size_type;    
-        typedef BOOST_DEDUCED_TYPENAME base_type::object_type
-                     key_type;
+        typedef Key  key_type;
         typedef BOOST_DEDUCED_TYPENAME base_type::auto_type
                      auto_type;
         typedef BOOST_DEDUCED_TYPENAME VoidPtrSet::key_compare
@@ -284,6 +277,12 @@ namespace ptr_container_detail
             return std::make_pair( iterator( res.first ), res.second );     
         }
 
+        template< class U >
+        std::pair<iterator,bool> insert( std::auto_ptr<U> x )
+        {
+            return insert( x.release() );
+        }
+
         
         iterator insert( iterator where, key_type* x ) // strong
         {
@@ -296,6 +295,12 @@ namespace ptr_container_detail
                 ptr.release();                                                  
             return iterator( res);
         }
+
+        template< class U >
+        iterator insert( iterator where, std::auto_ptr<U> x )
+        {
+            return insert( where, x.release() );
+        }
         
         template< typename InputIterator >
         void insert( InputIterator first, InputIterator last ) // basic
@@ -303,7 +308,7 @@ namespace ptr_container_detail
             set_basic_clone_and_insert( first, last );
         }
 
-#ifdef BOOST_NO_SFINAE
+#if defined(BOOST_NO_SFINAE) || BOOST_WORKAROUND(__SUNPRO_CC, <= 0x580)
 #else    
         
         template< class Range >
@@ -311,39 +316,43 @@ namespace ptr_container_detail
         boost::disable_if< ptr_container_detail::is_pointer_or_integral<Range> >::type
         insert( const Range& r )
         {
-            insert( this->adl_begin(r), this->adl_end(r) );
+            insert( boost::begin(r), boost::end(r) );
         }
 
 #endif        
-        
-        bool transfer( iterator object, 
-                       ptr_set_adapter& from ) // strong
+
+        template< class PtrSetAdapter >
+        bool transfer( BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator object, 
+                       PtrSetAdapter& from ) // strong
         {
             return this->single_transfer( object, from );
         }
 
-        size_type transfer( iterator first, 
-                            iterator last, 
-                            ptr_set_adapter& from ) // basic
+        template< class PtrSetAdapter >
+        size_type 
+        transfer( BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator first, 
+                  BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator last, 
+                  PtrSetAdapter& from ) // basic
         {
             return this->single_transfer( first, last, from );
         }
 
-#ifdef BOOST_NO_SFINAE
+#if defined(BOOST_NO_SFINAE) || BOOST_WORKAROUND(__SUNPRO_CC, <= 0x580)
 #else    
 
-        template< class Range >
+        template< class PtrSetAdapter, class Range >
         BOOST_DEDUCED_TYPENAME boost::disable_if< boost::is_same< Range,
-                                                                  iterator >,
+                            BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator >,
                                                             size_type >::type
-        transfer( const Range& r, ptr_set_adapter& from ) // basic
+        transfer( const Range& r, PtrSetAdapter& from ) // basic
         {
-            return transfer( this->adl_begin(r), this->adl_end(r), from );
+            return transfer( boost::begin(r), boost::end(r), from );
         }
 
 #endif
 
-        size_type transfer( ptr_set_adapter& from ) // basic
+        template< class PtrSetAdapter >
+        size_type transfer( PtrSetAdapter& from ) // basic
         {
             return transfer( from.begin(), from.end(), from );
         }
@@ -371,21 +380,17 @@ namespace ptr_container_detail
                        iterator;          
         typedef BOOST_DEDUCED_TYPENAME base_type::size_type
                        size_type;
-        typedef BOOST_DEDUCED_TYPENAME base_type::object_type
-                      key_type;
+        typedef Key    key_type;
         typedef BOOST_DEDUCED_TYPENAME base_type::auto_type
-                      auto_type;
+                       auto_type;
         typedef BOOST_DEDUCED_TYPENAME VoidPtrMultiSet::key_compare
-                      key_compare;
+                       key_compare;
         typedef BOOST_DEDUCED_TYPENAME VoidPtrMultiSet::allocator_type
-                      allocator_type;        
+                       allocator_type;        
     private:
         template< typename II >                                               
         void set_basic_clone_and_insert( II first, II last ) // basic                 
         {               
-            //BOOST_ASSERT( first != this->begin() );
-            //BOOST_ASSERT( last != this->end() );
-                                                                  
             while( first != last )                                            
             {           
                 insert( CloneAllocator::allocate_clone( *first ) ); // strong, commit                              
@@ -423,6 +428,12 @@ namespace ptr_container_detail
         {
             return base_type::insert( before, x ); 
         } 
+
+        template< class U >
+        iterator insert( iterator before, std::auto_ptr<U> x )
+        {
+            return insert( before, x.release() );
+        }
     
         iterator insert( key_type* x ) // strong                                      
         {   
@@ -434,6 +445,12 @@ namespace ptr_container_detail
             ptr.release();                                                      
             return iterator( res );                                             
         }
+
+        template< class U >
+        iterator insert( std::auto_ptr<U> x )
+        {
+            return insert( x.release() );
+        }
     
         template< typename InputIterator >
         void insert( InputIterator first, InputIterator last ) // basic
@@ -441,7 +458,7 @@ namespace ptr_container_detail
             set_basic_clone_and_insert( first, last );
         }
 
-#ifdef BOOST_NO_SFINAE
+#if defined(BOOST_NO_SFINAE) || BOOST_WORKAROUND(__SUNPRO_CC, <= 0x580)
 #else    
         
         template< class Range >
@@ -449,42 +466,46 @@ namespace ptr_container_detail
         boost::disable_if< ptr_container_detail::is_pointer_or_integral<Range> >::type
         insert( const Range& r )
         {
-            insert( this->adl_begin(r), this->adl_end(r) );
+            insert( boost::begin(r), boost::end(r) );
         }
 
 #endif
 
-        void transfer( iterator object, 
-                       ptr_multiset_adapter& from ) // strong
+        template< class PtrSetAdapter >
+        void transfer( BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator object, 
+                       PtrSetAdapter& from ) // strong
         {
             this->multi_transfer( object, from );
         }
 
-        size_type transfer( iterator first, 
-                            iterator last, 
-                            ptr_multiset_adapter& from ) // basic
+        template< class PtrSetAdapter >
+        size_type transfer( BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator first, 
+                            BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator last, 
+                            PtrSetAdapter& from ) // basic
         {
             return this->multi_transfer( first, last, from );
         }
 
-#ifdef BOOST_NO_SFINAE
+#if defined(BOOST_NO_SFINAE) || BOOST_WORKAROUND(__SUNPRO_CC, <= 0x580)
 #else    
         
-        template< class Range >
+        template< class PtrSetAdapter, class Range >
         BOOST_DEDUCED_TYPENAME boost::disable_if< boost::is_same< Range,
-                                           iterator >, size_type >::type
-        transfer(  const Range& r, ptr_multiset_adapter& from ) // basic
+                       BOOST_DEDUCED_TYPENAME PtrSetAdapter::iterator >, size_type >::type
+        transfer(  const Range& r, PtrSetAdapter& from ) // basic
         {
-            return transfer( this->adl_begin(r), this->adl_end(r), from );
+            return transfer( boost::begin(r), boost::end(r), from );
         }
 
 #endif        
 
-        void transfer( ptr_multiset_adapter& from ) // basic
+        template< class PtrSetAdapter >
+        void transfer( PtrSetAdapter& from ) // basic
         {
             transfer( from.begin(), from.end(), from );
             BOOST_ASSERT( from.empty() );
         }
+        
     };
 
 } // namespace 'boost'  

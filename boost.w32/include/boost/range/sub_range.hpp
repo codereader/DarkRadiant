@@ -35,25 +35,23 @@ namespace boost
         typedef BOOST_DEDUCED_TYPENAME range_const_iterator<ForwardRange>::type   const_iterator;
         typedef BOOST_DEDUCED_TYPENAME range_difference<ForwardRange>::type       difference_type;
         typedef BOOST_DEDUCED_TYPENAME range_size<ForwardRange>::type             size_type;
+        typedef BOOST_DEDUCED_TYPENAME base::reference                            reference;
+        typedef BOOST_DEDUCED_TYPENAME iterator_reference<const_iterator>::type   const_reference;
 
     public:
         sub_range() : base() 
         { }
-/*
-#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))  
-        typedef sub_range<ForwardRange> this_type;
-        
-        sub_range( this_type r ) :
-        : base( r )
-        { }
 
-        this_type& operator=( this_type r )
-        {
-            base::operator=( r );
-            return *this;
-        }
-#endif
-*/
+/*        
+        template< class ForwardRange2 >
+        sub_range( sub_range<ForwardRange2> r ) :
+
+#if BOOST_WORKAROUND(BOOST_INTEL_CXX_VERSION, <= 800 )
+            base( impl::adl_begin( r ), impl::adl_end( r ) )
+#else
+            base( r )
+#endif */
+
         template< class ForwardRange2 >
         sub_range( ForwardRange2& r ) : 
             
@@ -92,6 +90,16 @@ namespace boost
             base::operator=( r );
             return *this;
         }
+
+        sub_range& operator=( sub_range r )
+        {
+            //
+            // argument passed by value to avoid 
+            // const_iterator to iterator conversion
+            //
+            base::operator=( r );
+            return *this;            
+        }
         
     public:
         
@@ -103,32 +111,32 @@ namespace boost
 
         
     public: // convenience
-        value_type& front()
+        reference front()
         {
             return base::front();
         }
 
-        const value_type& front() const
+        const_reference front() const
         {
             return base::front();
         }
 
-        value_type& back()
+        reference back()
         {
             return base::back();
         }
 
-        const value_type& back() const
+        const_reference back() const
         {
             return base::back();
         }
 
-        value_type& operator[]( size_type sz )
+        reference operator[]( size_type sz )
         {
             return base::operator[](sz);
         }
 
-        const value_type& operator[]( size_type sz ) const
+        const_reference operator[]( size_type sz ) const
         {
             return base::operator[](sz);
         }

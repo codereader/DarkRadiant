@@ -19,6 +19,7 @@
 #include <set>
 
 #include <boost/config.hpp>
+#include <boost/utility.hpp>
 #include <boost/archive/detail/auto_link_archive.hpp>
 
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
@@ -40,7 +41,8 @@ struct BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) type_info_pointer_compare
     ) const ;
 };
 
-class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_serializer_map
+class BOOST_ARCHIVE_DECL(BOOST_PP_EMPTY()) basic_serializer_map : public
+    boost::noncopyable
 {
     typedef std::set<const basic_serializer *, type_info_pointer_compare> map_type;
     map_type m_map;
@@ -53,6 +55,9 @@ public:
     void erase(basic_serializer * bs);
     basic_serializer_map(bool & deleted);
     ~basic_serializer_map();
+private:
+    // cw 8.3 requires this
+    basic_serializer_map& operator=(basic_serializer_map const&);
 };
 
 } // namespace detail

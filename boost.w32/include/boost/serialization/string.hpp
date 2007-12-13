@@ -34,14 +34,6 @@ BOOST_CLASS_IMPLEMENTATION(std::wstring, boost::serialization::primitive_type)
 #include <boost/serialization/collections_load_imp.hpp>
 #include <boost/serialization/split_free.hpp>
 
-// function specializations must be defined in the appropriate
-// namespace - boost::serialization
-#if defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
-#define STD _STLP_STD
-#else
-#define STD std
-#endif
-
 namespace boost { 
 namespace serialization {
 
@@ -49,29 +41,29 @@ namespace serialization {
 template<class Archive, class U, class Allocator>
 inline void save(
     Archive & ar,
-    const STD::basic_string<U, Allocator> &t,
+    const std::basic_string<U, Allocator> &t,
     const unsigned int file_version
 ){
     boost::serialization::stl::save_collection<
-        Archive, STD::basic_string<U, Allocator> 
+        Archive, std::basic_string<U, Allocator> 
     >(ar, t);
 }
 
 template<class Archive, class U, class Allocator>
 inline void load(
     Archive & ar,
-    STD::basic_string<U, Allocator> &t,
+    std::basic_string<U, Allocator> &t,
     const unsigned int file_version
 ){
     boost::serialization::stl::load_collection<
         Archive,
-        STD::basic_string<U, Allocator>,
+        std::basic_string<U, Allocator>,
         boost::serialization::stl::archive_input_seq<
             Archive, 
-            STD::basic_string<U, Allocator> 
+            std::basic_string<U, Allocator> 
         >,
         boost::serialization::stl::reserve_imp<
-            STD::basic_string<U, Allocator> 
+            std::basic_string<U, Allocator> 
         >
     >(ar, t);
 }
@@ -81,7 +73,7 @@ inline void load(
 template<class Archive, class U, class Allocator>
 inline void serialize(
     Archive & ar,
-    STD::basic_string<U, Allocator> & t,
+    std::basic_string<U, Allocator> & t,
     const unsigned int file_version
 ){
     boost::serialization::split_free(ar, t, file_version);
@@ -92,8 +84,7 @@ inline void serialize(
 
 #include <boost/serialization/collection_traits.hpp>
 
-BOOST_SERIALIZATION_COLLECTION_TRAITS(STD::vector)
-#undef STD
+BOOST_SERIALIZATION_COLLECTION_TRAITS(std::vector)
 
 #endif
 

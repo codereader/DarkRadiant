@@ -29,7 +29,7 @@ namespace std {
 namespace boost {
 namespace archive {
 
-char * tmpdir(){
+inline char * tmpdir(){
     char *dirname;
     dirname = std::getenv("TMP");
     if(NULL == dirname)

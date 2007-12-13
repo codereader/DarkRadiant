@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2006 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -25,27 +25,15 @@ namespace detail{
 
 struct sequenced_index_node_impl
 {
-  sequenced_index_node_impl*&       prior(){return prior_;}
-  sequenced_index_node_impl*const & prior()const{return prior_;}
-  sequenced_index_node_impl*&       next(){return next_;}
-  sequenced_index_node_impl*const & next()const{return next_;}
+  sequenced_index_node_impl*& prior(){return prior_;}
+  sequenced_index_node_impl*  prior()const{return prior_;}
+  sequenced_index_node_impl*& next(){return next_;}
+  sequenced_index_node_impl*  next()const{return next_;}
 
-  /* interoperability with index_iterator */
+  /* interoperability with bidir_node_iterator */
 
   static void increment(sequenced_index_node_impl*& x){x=x->next();}
   static void decrement(sequenced_index_node_impl*& x){x=x->prior();}
-
-  /* interoperability with index_proxy */
-
-  static sequenced_index_node_impl* begin(sequenced_index_node_impl* header)
-  {
-    return header->next();
-  }
-
-  static sequenced_index_node_impl* end(sequenced_index_node_impl* header)
-  {
-    return header;
-  }
 
   /* algorithmic stuff */
 
@@ -129,8 +117,6 @@ struct sequenced_index_node_impl
   }
 
 private:
-  sequenced_index_node_impl();
-
   sequenced_index_node_impl* prior_;
   sequenced_index_node_impl* next_;
 };
@@ -141,10 +127,10 @@ struct sequenced_index_node_trampoline:sequenced_index_node_impl{};
 template<typename Super>
 struct sequenced_index_node:Super,sequenced_index_node_trampoline<Super>
 {
-  sequenced_index_node_impl*&       prior(){return impl_type::prior();}
-  sequenced_index_node_impl*const & prior()const{return impl_type::prior();}
-  sequenced_index_node_impl*&       next(){return impl_type::next();}
-  sequenced_index_node_impl*const & next()const{return impl_type::next();}
+  sequenced_index_node_impl*& prior(){return impl_type::prior();}
+  sequenced_index_node_impl*  prior()const{return impl_type::prior();}
+  sequenced_index_node_impl*& next(){return impl_type::next();}
+  sequenced_index_node_impl*  next()const{return impl_type::next();}
 
   sequenced_index_node_impl*       impl()
     {return static_cast<impl_type*>(this);}
@@ -160,7 +146,7 @@ struct sequenced_index_node:Super,sequenced_index_node_trampoline<Super>
       static_cast<const impl_type*>(x));
   }
 
-  /* interoperability with index_iterator */
+  /* interoperability with bidir_node_iterator */
 
   static void increment(sequenced_index_node*& x)
   {
@@ -174,18 +160,6 @@ struct sequenced_index_node:Super,sequenced_index_node_trampoline<Super>
     sequenced_index_node_impl* xi=x->impl();
     impl_type::decrement(xi);
     x=from_impl(xi);
-  }
-
-  /* interoperability with index_proxy */
-
-  static sequenced_index_node* begin(sequenced_index_node* header)
-  {
-    return from_impl(impl_type::begin(header->impl()));
-  }
-
-  static sequenced_index_node* end(sequenced_index_node* header)
-  {
-    return from_impl(impl_type::end(header->impl()));
   }
 
 private:

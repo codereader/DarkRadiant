@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2006 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -16,6 +16,11 @@
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#include <boost/utility/enable_if.hpp>
+
+#if !defined(BOOST_NO_SFINAE)
+#include <boost/type_traits/is_convertible.hpp>
+#endif
 
 namespace boost{
 
@@ -50,7 +55,15 @@ struct const_mem_fun
   typedef typename remove_reference<Type>::type result_type;
 
   template<typename ChainedPtr>
-  Type operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const Class&>,Type>::type
+#else
+  Type
+#endif
+
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -77,7 +90,15 @@ struct mem_fun
   typedef typename remove_reference<Type>::type result_type;
 
   template<typename ChainedPtr>
-  Type operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<ChainedPtr&,Class&>,Type>::type
+#else
+  Type
+#endif
+
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -111,7 +132,15 @@ struct const_mem_fun_explicit
   typedef typename remove_reference<Type>::type result_type;
 
   template<typename ChainedPtr>
-  Type operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const Class&>,Type>::type
+#else
+  Type
+#endif
+
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -140,7 +169,15 @@ struct mem_fun_explicit
   typedef typename remove_reference<Type>::type result_type;
 
   template<typename ChainedPtr>
-  Type operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<ChainedPtr&,Class&>,Type>::type
+#else
+  Type
+#endif
+
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -164,17 +201,17 @@ struct mem_fun_explicit
 
 #define BOOST_MULTI_INDEX_CONST_MEM_FUN(Class,Type,MemberFunName) \
 ::boost::multi_index::const_mem_fun_explicit<\
-  Class,Type,Type (Class::*)()const,&Class::MemberFunName>
+  Class,Type,Type (Class::*)()const,&Class::MemberFunName >
 #define BOOST_MULTI_INDEX_MEM_FUN(Class,Type,MemberFunName) \
 ::boost::multi_index::mem_fun_explicit<\
-  Class,Type,Type (Class::*)(),&Class::MemberFunName>
+  Class,Type,Type (Class::*)(),&Class::MemberFunName >
 
 #else
 
 #define BOOST_MULTI_INDEX_CONST_MEM_FUN(Class,Type,MemberFunName) \
-::boost::multi_index::const_mem_fun<Class,Type,&Class::MemberFunName>
+::boost::multi_index::const_mem_fun< Class,Type,&Class::MemberFunName >
 #define BOOST_MULTI_INDEX_MEM_FUN(Class,Type,MemberFunName) \
-::boost::multi_index::mem_fun<Class,Type,&Class::MemberFunName>
+::boost::multi_index::mem_fun< Class,Type,&Class::MemberFunName >
 
 #endif
 

@@ -79,9 +79,11 @@ public:
   
   template <typename IndexList>
   const element& operator()(const IndexList& indices) const {
+    boost::function_requires<
+      detail::multi_array::CollectionConcept<IndexList> >();
     return super_type::access_element(boost::type<const element&>(),
-                                      origin(),
-                                      indices,strides());
+                                      indices,origin(),
+                                      shape(),strides(),index_bases());
   }
 
   // see generate_array_view in base.hpp
@@ -284,9 +286,12 @@ public:
 
   template <class IndexList>
   element& operator()(const IndexList& indices) {
+    boost::function_requires<
+      detail::multi_array::CollectionConcept<IndexList> >();
     return super_type::access_element(boost::type<element&>(),
-                                      origin(),
-                                      indices,this->strides());
+                                      indices,origin(),
+                                      this->shape(),this->strides(),
+                                      this->index_bases());
   }
 
   iterator begin() {
@@ -316,6 +321,8 @@ public:
 
   template <class IndexList>
   const element& operator()(const IndexList& indices) const {
+    boost::function_requires<
+      detail::multi_array::CollectionConcept<IndexList> >();
     return super_type::operator()(indices);
   }
 

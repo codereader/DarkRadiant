@@ -20,6 +20,7 @@
 #include <boost/mpl/bool.hpp>
 
 #include <boost/archive/detail/auto_link_archive.hpp>
+#include <boost/archive/detail/oserializer.hpp>
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost { 

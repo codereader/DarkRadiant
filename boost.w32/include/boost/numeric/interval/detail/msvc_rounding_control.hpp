@@ -17,6 +17,9 @@
 
 #include <float.h>      // MSVC rounding control
 
+// Although the function is called _control87, it seems to work for
+// other FPUs too, so it does not have to be changed to _controlfp.
+
 namespace boost {
 namespace numeric {
 namespace interval_lib {

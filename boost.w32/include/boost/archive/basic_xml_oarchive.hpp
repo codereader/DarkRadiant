@@ -18,8 +18,6 @@
 
 #include <boost/config.hpp>
 
-#include <boost/archive/detail/oserializer.hpp>
-#include <boost/archive/detail/interface_oarchive.hpp>
 #include <boost/archive/detail/common_oarchive.hpp>
 
 #include <boost/serialization/nvp.hpp>
@@ -32,21 +30,20 @@ namespace boost {
 namespace archive {
         
 //////////////////////////////////////////////////////////////////////
-// class xml_oarchive - write serialized objects to a xml output stream
+// class basic_xml_oarchive - write serialized objects to a xml output stream
 template<class Archive>
 class basic_xml_oarchive : 
     public detail::common_oarchive<Archive>
 {
+protected:
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
 public:
 #elif defined(BOOST_MSVC)
     // for some inexplicable reason insertion of "class" generates compile erro
     // on msvc 7.1
     friend detail::interface_oarchive<Archive>;
-protected:
 #else
     friend class detail::interface_oarchive<Archive>;
-protected:
 #endif
     // special stuff for xml output
     unsigned int depth;
@@ -87,17 +84,18 @@ protected:
     }
 
    // special treatment for name-value pairs.
+    typedef detail::common_oarchive<Archive> detail_common_oarchive;
     template<class T>
     void save_override(
-                #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-                const
-                #endif
-                ::boost::serialization::nvp<T> & t, 
-                int
-        ){
-        this->This()->save_start(t.name());
-        archive::save(* this->This(), t.const_value()); 
-        this->This()->save_end(t.name());
+        #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+        const
+        #endif
+        ::boost::serialization::nvp<T> & t, 
+        int
+    ){
+        save_start(t.name());
+        this->detail_common_oarchive::save_override(t.const_value(), 0);
+        save_end(t.name());
     }
 
     // specific overrides for attributes - not name value pairs so we

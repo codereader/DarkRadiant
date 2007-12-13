@@ -251,7 +251,7 @@ class pool: protected simple_segregated_storage<
       const size_type partition_size = alloc_size();
       const size_type total_req_size = n * requested_size;
       const size_type num_chunks = total_req_size / partition_size +
-          static_cast<bool>(total_req_size % partition_size);
+          ((total_req_size % partition_size) ? true : false);
 
       store().free_n(chunks, num_chunks, partition_size);
     }
@@ -263,7 +263,7 @@ class pool: protected simple_segregated_storage<
       const size_type partition_size = alloc_size();
       const size_type total_req_size = n * requested_size;
       const size_type num_chunks = total_req_size / partition_size +
-          static_cast<bool>(total_req_size % partition_size);
+          ((total_req_size % partition_size) ? true : false);
 
       store().ordered_free_n(chunks, num_chunks, partition_size);
     }
@@ -502,7 +502,7 @@ void * pool<UserAllocator>::ordered_malloc(const size_type n)
   const size_type partition_size = alloc_size();
   const size_type total_req_size = n * requested_size;
   const size_type num_chunks = total_req_size / partition_size +
-      static_cast<bool>(total_req_size % partition_size);
+      ((total_req_size % partition_size) ? true : false);
 
   void * ret = store().malloc_n(num_chunks, partition_size);
 

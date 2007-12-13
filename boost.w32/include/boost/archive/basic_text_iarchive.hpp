@@ -28,10 +28,7 @@
 #include <boost/pfto.hpp>
 #include <boost/detail/workaround.hpp>
 
-#include <boost/archive/detail/iserializer.hpp>
-#include <boost/archive/detail/interface_iarchive.hpp>
 #include <boost/archive/detail/common_iarchive.hpp>
-
 #include <boost/serialization/string.hpp>
 
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
@@ -45,24 +42,35 @@ template<class Archive>
 class basic_text_iarchive : 
     public detail::common_iarchive<Archive>
 {
+protected:
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
 public:
 #elif defined(BOOST_MSVC)
     // for some inexplicable reason insertion of "class" generates compile erro
     // on msvc 7.1
     friend detail::interface_iarchive<Archive>;
-protected:
 #else
     friend class detail::interface_iarchive<Archive>;
-protected:
 #endif
     // intermediate level to support override of operators
     // fot templates in the absence of partial function 
     // template ordering
+    typedef detail::common_iarchive<Archive> detail_common_iarchive;
     template<class T>
-    void load_override(T & t, BOOST_PFTO int){
-        archive::load(* this->This(), t);
+    void load_override(T & t, BOOST_PFTO int)
+    {
+        this->detail_common_iarchive::load_override(t, 0);
     }
+
+    // Borland compilers has a problem with strong type.  Try to fix this here
+    #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
+    void load_override(version_type & t, int){ 
+        unsigned int x;
+        * this->This() >> x;
+        t.t = version_type(x);
+    }
+    #endif
+
     // text file don't include the optional information 
     void load_override(class_id_optional_type & /*t*/, int){}
 
@@ -75,7 +83,6 @@ protected:
     basic_text_iarchive(unsigned int flags) : 
         detail::common_iarchive<Archive>(flags)
     {}
-
     ~basic_text_iarchive(){}
 };
 

@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: suppress_warnings.hpp,v $
 //
-//  Version     : $Revision: 1.4 $
+//  Version     : $Revision: 1.6 $
 //
 //  Description : suppress some warnings 
 // ***************************************************************************
@@ -20,12 +20,22 @@
 # pragma warning(disable: 4996) // <symbol> was declared deprecated 
 # pragma warning(disable: 4355) // 'this' : used in base member initializer list
 # pragma warning(disable: 4706) // assignment within conditional expression
+# pragma warning(disable: 4251) // class 'A<T>' needs to have dll-interface to be used by clients of class 'B'
+# pragma warning(disable: 4127) // conditional expression is constant
+# pragma warning(disable: 4290) // C++ exception specification ignored except to ...
+# pragma warning(disable: 4180) // qualifier applied to function type has no meaning; ignored
 #endif
 
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log: suppress_warnings.hpp,v $
+//  Revision 1.6  2006/01/28 07:09:08  rogeeff
+//  4180 suppressed
+//
+//  Revision 1.5  2005/12/14 04:57:50  rogeeff
+//  extra warnings suppressed
+//
 //  Revision 1.4  2005/02/20 08:27:06  rogeeff
 //  This a major update for Boost.Test framework. See release docs for complete list of fixes/updates
 //

@@ -7,13 +7,15 @@
 //
 //  File        : $RCSfile: wrap_io_saver.hpp,v $
 //
-//  Version     : $Revision: 1.1 $
+//  Version     : $Revision: 1.2 $
 //
 //  Description : wraps io savers staff to be provide workaround for classic iostreams
 // ***************************************************************************
 
 #ifndef BOOST_WRAP_IO_SAVER_HPP_011605GER
 #define BOOST_WRAP_IO_SAVER_HPP_011605GER
+
+#include <boost/test/detail/suppress_warnings.hpp>
 
 #if defined(BOOST_STANDARD_IOSTREAMS)
 #include <boost/io/ios_state.hpp>
@@ -40,10 +42,15 @@ struct io_saver_type {
 
 } // namespace boost
 
+#include <boost/test/detail/enable_warnings.hpp>
+
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log: wrap_io_saver.hpp,v $
+//  Revision 1.2  2005/12/14 04:59:11  rogeeff
+//  *** empty log message ***
+//
 //  Revision 1.1  2005/04/30 16:48:21  rogeeff
 //  io saver warkaround for classic io is shared
 //

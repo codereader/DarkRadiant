@@ -23,7 +23,7 @@
 #include "boost/type_traits/add_reference.hpp"
 #include "boost/type_traits/add_pointer.hpp"
 
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 #   include "boost/mpl/bool.hpp"
 #   include "boost/mpl/or.hpp"
 #   include "boost/type_traits/is_same.hpp"
@@ -77,7 +77,7 @@ public: // visitor typedefs
 
 public: // visitor interfaces
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 
     pointer operator()(reference operand) const
     {

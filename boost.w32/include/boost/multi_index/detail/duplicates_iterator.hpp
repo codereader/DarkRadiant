@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2006 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -37,25 +37,25 @@ public:
   typedef const typename Node::value_type& reference;
   typedef std::forward_iterator_tag        iterator_category;
 
-  duplicates_iterator(Node* node,Node* end,Predicate pred):
-    node(node),begin_chunk(0),end(end),pred(pred)
+  duplicates_iterator(Node* node_,Node* end_,Predicate pred_):
+    node(node_),begin_chunk(0),end(end_),pred(pred_)
   {
     advance();
   }
 
-  duplicates_iterator(Node* end,Predicate pred):
-    node(end),begin_chunk(end),end(end),pred(pred)
+  duplicates_iterator(Node* end_,Predicate pred_):
+    node(end_),begin_chunk(end_),end(end_),pred(pred_)
   {
   }
 
   reference operator*()const
   {
-    return node->value;
+    return node->value();
   }
 
   pointer operator->()const
   {
-    return node->value;
+    return &node->value();
   }
 
   duplicates_iterator& operator++()
@@ -77,15 +77,14 @@ public:
 private:
   void sync()
   {
-    if(pred(begin_chunk->value,node->value))advance();
+    if(node!=end&&pred(begin_chunk->value(),node->value()))advance();
   }
 
   void advance()
   {
     for(Node* node2=node;node!=end;node=node2){
       Node::increment(node2);
-      if(node2!=end&&!pred(node->value,node2->value))break;
-      node=node2;
+      if(node2!=end&&!pred(node->value(),node2->value()))break;
     }
     begin_chunk=node;
   }

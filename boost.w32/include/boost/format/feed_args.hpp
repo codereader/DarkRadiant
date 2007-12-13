@@ -45,7 +45,8 @@ namespace detail {
             res.reserve(size + !!prefix_space);
             if(prefix_space) 
               res.append(1, prefix_space);
-            res.append(beg, size);
+            if (size)
+              res.append(beg, size);
         }
         else { 
             std::streamsize n=static_cast<std::streamsize>(w-size-!!prefix_space);
@@ -62,7 +63,8 @@ namespace detail {
             if(n_before) res.append(n_before, fill_char);
             if(prefix_space) 
               res.append(1, prefix_space);
-            res.append(beg, size);
+            if (size)  
+              res.append(beg, size);
             if(n_after) res.append(n_after, fill_char);
         }
     } // -mk_str(..) 

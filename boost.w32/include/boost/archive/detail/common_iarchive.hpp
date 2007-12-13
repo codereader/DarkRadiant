@@ -18,6 +18,8 @@
 
 #include <boost/archive/detail/basic_iarchive.hpp>
 #include <boost/archive/detail/interface_iarchive.hpp>
+#include <boost/archive/detail/iserializer.hpp>
+#include <boost/pfto.hpp>
 
 namespace boost {
 namespace archive {
@@ -49,6 +51,11 @@ private:
         * this->This() >> s;
     }
 protected:
+    // default processing - invoke serialization library
+    template<class T>
+    void load_override(T & t, BOOST_PFTO int){
+        archive::load(* this->This(), t);
+    }
     // default implementations of functions which emit start/end tags for
     // archive types that require them.
     void load_start(const char *name){}

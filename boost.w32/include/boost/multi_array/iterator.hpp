@@ -21,6 +21,7 @@
 #include "boost/multi_array/base.hpp"
 #include "boost/iterator/iterator_facade.hpp"
 #include "boost/mpl/aux_/msvc_eti_base.hpp"
+#include <algorithm>
 #include <cstddef>
 #include <iterator>
 
@@ -56,11 +57,11 @@ class array_iterator
       , Reference
     >
     , private
-#if BOOST_WORKAROUND(BOOST_MSVC,==1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
       mpl::aux::msvc_eti_base<typename 
 #endif 
           value_accessor_generator<T,NumDims>::type
-#if BOOST_WORKAROUND(BOOST_MSVC,==1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
       >::type
 #endif 
 {
@@ -137,11 +138,15 @@ public:
 
   template <class IteratorAdaptor>
   bool equal(IteratorAdaptor& rhs) const {
+    const std::size_t N = NumDims::value;
     return (idx_ == rhs.idx_) &&
       (base_ == rhs.base_) &&
-      (extents_ == rhs.extents_) &&
-      (strides_ == rhs.strides_) &&
-      (index_base_ == rhs.index_base_);
+      ( (extents_ == rhs.extents_) ||
+        std::equal(extents_,extents_+N,rhs.extents_) ) &&
+      ( (strides_ == rhs.strides_) ||
+        std::equal(strides_,strides_+N,rhs.strides_) ) &&
+      ( (index_base_ == rhs.index_base_) ||
+        std::equal(index_base_,index_base_+N,rhs.index_base_) );
   }
 
   template <class DifferenceType>

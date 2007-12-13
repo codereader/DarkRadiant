@@ -205,7 +205,7 @@
  ****************************************************************************/
 
 #if defined(BOOST_MSVC) && (BOOST_MSVC >= 1200) && defined(_MSC_EXTENSIONS)
-#if defined(_DEBUG) || defined(__MSVC_RUNTIME_CHECKS)
+#if defined(_DEBUG) || defined(__MSVC_RUNTIME_CHECKS) || defined(_MANAGED)
 #  define BOOST_REGEX_CALL __cdecl
 #else
 #  define BOOST_REGEX_CALL __fastcall

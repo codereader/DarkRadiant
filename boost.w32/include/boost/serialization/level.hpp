@@ -29,12 +29,14 @@
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/integral_c.hpp>
 #include <boost/mpl/integral_c_tag.hpp>
+#include <boost/mpl/aux_/nttp_decl.hpp>
 
 #include <boost/serialization/level_enum.hpp>
-#include <boost/serialization/traits.hpp>
 
 namespace boost {
 namespace serialization {
+
+struct basic_traits;
 
 // default serialization implementation level
 template<class T>
@@ -45,9 +47,11 @@ struct implementation_level {
     };
 
     typedef mpl::integral_c_tag tag;
+    // note: at least one compiler complained w/o the full qualification
+    // on basic traits below
     typedef
         BOOST_DEDUCED_TYPENAME mpl::eval_if<
-            is_base_and_derived<basic_traits, T>,
+            is_base_and_derived<boost::serialization::basic_traits, T>,
             traits_class_level<T>,
         //else
         BOOST_DEDUCED_TYPENAME mpl::eval_if<
@@ -85,7 +89,7 @@ struct implementation_level {
 };
 
 
-template<class T, enum level_type L>
+template<class T, BOOST_MPL_AUX_NTTP_DECL(int, L) >
 inline bool operator>=(implementation_level<T> t, enum level_type l)
 {
     return t.value >= (int)l;

@@ -12,17 +12,17 @@
 #include <boost/spirit/tree/common.hpp>
 #include <boost/spirit/core/scanner/scanner.hpp>
 
+#include <boost/spirit/tree/parse_tree_fwd.hpp>
+
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost { namespace spirit {
 
-template <typename MatchPolicyT, typename NodeFactoryT>
-struct pt_tree_policy;
 
 //////////////////////////////////
 // pt_match_policy is simply an id so the correct specialization of tree_policy can be found.
 template <
     typename IteratorT,
-    typename NodeFactoryT = node_val_data_factory<nil_t>
+    typename NodeFactoryT 
 >
 struct pt_match_policy :
     public common_tree_match_policy<
@@ -35,6 +35,27 @@ struct pt_match_policy :
         >
     >
 {
+    typedef
+        common_tree_match_policy<
+            pt_match_policy<IteratorT, NodeFactoryT>,
+            IteratorT,
+            NodeFactoryT,
+            pt_tree_policy<
+                pt_match_policy<IteratorT, NodeFactoryT>,
+                NodeFactoryT
+            >
+        >
+    common_tree_match_policy_;
+
+    pt_match_policy()
+    {
+    }
+
+    template <typename PolicyT>
+    pt_match_policy(PolicyT const & policies)
+        : common_tree_match_policy_(policies)
+    {
+    }
 };
 
 //////////////////////////////////
@@ -194,7 +215,6 @@ pt_parse(
     IteratorT first = first_;
     scanner_t scan(first, last, policies);
     tree_match<IteratorT, NodeFactoryT> hit = p.derived().parse(scan);
-    scan.skip(scan);
     return tree_parse_info<IteratorT, NodeFactoryT>(
         first, hit, hit && (first == last), hit.length(), hit.trees);
 }

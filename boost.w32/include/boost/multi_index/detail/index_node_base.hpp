@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2006 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -13,8 +13,11 @@
 #pragma once
 #endif
 
-#if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
+#include <boost/type_traits/aligned_storage.hpp>
+#include <boost/type_traits/alignment_of.hpp> 
+
+#if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
 #include <boost/archive/archive_exception.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/throw_exception.hpp> 
@@ -31,16 +34,40 @@ namespace detail{
  */
 
 template<typename Value>
-struct index_node_base
+struct pod_value_holder
+{
+  typename aligned_storage<
+    sizeof(Value),
+    alignment_of<Value>::value
+  >::type                      space;
+};
+
+template<typename Value>
+struct index_node_base:private pod_value_holder<Value>
 {
   typedef index_node_base base_type; /* used for serialization purposes */
   typedef Value           value_type;
-  value_type              value;
+
+  value_type& value()
+  {
+    return *static_cast<value_type*>(
+      static_cast<void*>(&this->space));
+  }
+
+  const value_type& value()const
+  {
+    return *static_cast<const value_type*>(
+      static_cast<const void*>(&this->space));
+  }
+
+  static index_node_base* from_value(const value_type* p)
+  {
+    return static_cast<index_node_base *>(
+      reinterpret_cast<pod_value_holder<Value>*>( /* std 9.2.17 */
+        const_cast<value_type*>(p))); 
+  }
 
 private:
-  index_node_base();
-  /* this class is not intended to be cted, merely allocated */
-
 #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
   friend class boost::serialization::access;
   
@@ -54,8 +81,15 @@ private:
   {
   }
 #endif
-
 };
+
+template<typename Node,typename Value>
+Node* node_from_value(
+  const Value* p
+  BOOST_APPEND_EXPLICIT_TEMPLATE_TYPE(Node))
+{
+  return static_cast<Node*>(index_node_base<Value>::from_value(p));
+}
 
 } /* namespace multi_index::detail */
 

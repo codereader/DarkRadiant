@@ -27,6 +27,8 @@
 #include <cassert>
 #include <locale>
 #include <cstddef> // size_t
+#include <streambuf> // basic_streambuf
+#include <string>
 
 #include <boost/config.hpp>
 #if defined(BOOST_NO_STDC_NAMESPACE)
@@ -36,12 +38,15 @@ namespace std{
 #endif
 
 #include <boost/cstdint.hpp>
-#include <boost/limits.hpp>
-#include <boost/io/ios_state.hpp>
+//#include <boost/limits.hpp>
+//#include <boost/io/ios_state.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/throw_exception.hpp>
 
+#include <boost/archive/basic_streambuf_locale_saver.hpp>
 #include <boost/archive/archive_exception.hpp>
+#include <boost/archive/detail/auto_link_archive.hpp>
+#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost {
 namespace archive {
@@ -49,7 +54,7 @@ namespace archive {
 /////////////////////////////////////////////////////////////////////////
 // class basic_binary_oprimitive - binary output of prmitives
 
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 class basic_binary_oprimitive
 {
 #ifndef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
@@ -58,17 +63,13 @@ protected:
 #else
 public:
 #endif
+    std::basic_streambuf<Elem, Tr> & m_sb;
     // return a pointer to the most derived class
     Archive * This(){
         return static_cast<Archive *>(this);
     }
-    // native binary streams are handled as bytes
-    OStream &os;
     boost::scoped_ptr<std::locale> archive_locale;
-    io::basic_ios_locale_saver<
-        BOOST_DEDUCED_TYPENAME OStream::char_type, 
-        BOOST_DEDUCED_TYPENAME OStream::traits_type
-    > locale_saver;
+    basic_streambuf_locale_saver<Elem, Tr> locale_saver;
 
     // default saving of primitives.
     template<class T>
@@ -77,6 +78,16 @@ public:
         save_binary(& t, sizeof(T));
     }
 
+    /////////////////////////////////////////////////////////
+    // fundamental types that need special treatment
+    
+    // trap usage of invalid uninitialized boolean which would
+    // otherwise crash on load.
+    void save(const bool t){
+        int i = t;
+        assert(0 == i || 1 == i);
+        save_binary(& t, sizeof(t));
+    }
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
     save(const std::string &s);
     #ifndef BOOST_NO_STD_WSTRING
@@ -91,39 +102,50 @@ public:
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
     init();
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
-    basic_binary_oprimitive(OStream & os, bool no_codecvt);
+    basic_binary_oprimitive(
+        std::basic_streambuf<Elem, Tr> & sb, 
+        bool no_codecvt
+    );
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY()) 
     ~basic_binary_oprimitive();
 public:
     void save_binary(const void *address, std::size_t count);
 };
 
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 inline void 
-basic_binary_oprimitive<Archive, OStream>::save_binary(
+basic_binary_oprimitive<Archive, Elem, Tr>::save_binary(
     const void *address, 
     std::size_t count
 ){
-    assert(
-        static_cast<std::size_t>((std::numeric_limits<std::streamsize>::max)()) >= count
-    );
+    //assert(
+    //    static_cast<std::size_t>((std::numeric_limits<std::streamsize>::max)()) >= count
+    //);
     // note: if the following assertions fail
     // a likely cause is that the output stream is set to "text"
     // mode where by cr characters recieve special treatment.
     // be sure that the output stream is opened with ios::binary
-    if(os.fail())
-        boost::throw_exception(archive_exception(archive_exception::stream_error));
+    //if(os.fail())
+    //    boost::throw_exception(archive_exception(archive_exception::stream_error));
     // figure number of elements to output - round up
-    count = ( count + sizeof(BOOST_DEDUCED_TYPENAME OStream::char_type) - 1) 
-        / sizeof(BOOST_DEDUCED_TYPENAME OStream::char_type);
-    os.write(
-        static_cast<const BOOST_DEDUCED_TYPENAME OStream::char_type *>(address), 
+    count = ( count + sizeof(Elem) - 1) 
+        / sizeof(Elem);
+    std::streamsize scount = m_sb.sputn(
+        static_cast<const Elem *>(address), 
         count
     );
-    assert(os.good());
+    if(count != static_cast<std::size_t>(scount))
+        boost::throw_exception(archive_exception(archive_exception::stream_error));
+    //os.write(
+    //    static_cast<const BOOST_DEDUCED_TYPENAME OStream::char_type *>(address), 
+    //    count
+    //);
+    //assert(os.good());
 }
 
 } //namespace boost 
 } //namespace archive 
+
+#include <boost/archive/detail/abi_suffix.hpp> // pop pragams
 
 #endif // BOOST_ARCHIVE_BASIC_BINARY_OPRIMITIVE_HPP

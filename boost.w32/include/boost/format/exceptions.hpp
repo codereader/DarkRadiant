@@ -2,11 +2,14 @@
 // boost/format/exceptions.hpp 
 // ----------------------------------------------------------------------------
 
-//  Copyright Samuel Krempp 2003. Use, modification, and distribution are
-//  subject to the Boost Software License, Version 1.0. (See accompanying
-//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-
-//  See http://www.boost.org/libs/format for library home page
+//  Copyright Samuel Krempp 2003.
+//
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+//
+//
+//  See http://www.boost.org/libs/format/ for library home page
 
 // ----------------------------------------------------------------------------
 
@@ -56,7 +59,7 @@ namespace boost {
             std::size_t get_expected() const { return expected_; }
             virtual const char *what() const throw() {
                 return "boost::too_few_args: "
-                    "format-string refered to more arguments than were passed";
+                    "format-string referred to more arguments than were passed";
             }
         };
 
@@ -70,7 +73,7 @@ namespace boost {
             std::size_t get_expected() const { return expected_; }
             virtual const char *what() const throw() {
                 return "boost::too_many_args: "
-                    "format-string refered to less arguments than were passed";
+                    "format-string referred to less arguments than were passed";
             }
         };
 
@@ -87,7 +90,7 @@ namespace boost {
             virtual const char *what() const throw() {
                 return "boost::out_of_range: "
                     "tried to refer to an argument (or item) number which"
-                    " is out of range, according to the format string.";
+                    " is out of range, according to the format string";
             }
         };
 

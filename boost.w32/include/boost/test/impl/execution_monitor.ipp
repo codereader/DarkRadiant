@@ -8,7 +8,7 @@
 //
 //  File        : $RCSfile: execution_monitor.ipp,v $
 //
-//  Version     : $Revision: 1.9 $
+//  Version     : $Revision: 1.13 $
 //
 //  Description : provides execution monitor implementation for all supported
 //  configurations, including Microsoft structured exception based, unix signals
@@ -230,8 +230,6 @@ execution_monitor::execute( unit_test::callback0<int> const& F, bool catch_syste
     //  required.  Programmers ask for const anyhow, so we supply it.  That's
     //  easier than answering questions about non-const usage.
 
-    catch( execution_aborted const& )
-      { return 0; }
     catch( char const* ex )
       { detail::report_error( execution_exception::cpp_exception_error, "C string: ", ex ); }
     catch( std::string const& ex )
@@ -285,7 +283,11 @@ execution_monitor::execute( unit_test::callback0<int> const& F, bool catch_syste
       { detail::report_error( ex.error_code(), ex.error_message() ); }
 #endif  // BOOST_SIGACTION_BASED_SIGNAL_HANDLING
 
-    catch( execution_exception const& ) { throw; }
+    catch( execution_aborted const& )
+      { return 0; }
+
+    catch( execution_exception const& ) 
+      { throw; }
 
     catch( ... )
       { detail::report_error( execution_exception::cpp_exception_error, "unknown type" ); }
@@ -338,7 +340,7 @@ private:
     bool                    m_set_timeout;
 };
 
-signal_handler* signal_handler::s_active_handler = NULL; //!! need to be placed in thread specific storage
+signal_handler* signal_handler::s_active_handler = NULL; // !! need to be placed in thread specific storage
 
 //____________________________________________________________________________//
 
@@ -416,14 +418,16 @@ int
 execution_monitor::catch_signals( unit_test::callback0<int> const& F, bool catch_system_errors, int timeout )
 {
     using namespace detail;
-    typedef execution_exception::error_code ec_type;
 
     signal_handler local_signal_handler( catch_system_errors, timeout );
+
+    volatile int   sigtype = sigsetjmp( signal_handler::jump_buffer(), 1 );
+
+    typedef execution_exception::error_code ec_type;
     int            result = 0;
     ec_type        ec     = execution_exception::no_error;
     const_string   em;
 
-    volatile int   sigtype = sigsetjmp( signal_handler::jump_buffer(), 1 );
     if( sigtype == 0 ) {
         result = m_custom_translators ? (*m_custom_translators)( F ) : F();
     }
@@ -448,11 +452,11 @@ execution_monitor::catch_signals( unit_test::callback0<int> const& F, bool catch
         case SIGSEGV:
         case SIGBUS:
             ec = execution_exception::system_fatal_error;
-            em = BOOST_TEST_L( "signal: memory access violation" );
+            em = BOOST_TEST_L( "memory access violation" );
             break;
         default:
             ec = execution_exception::system_error;
-            em = BOOST_TEST_L( "signal: unrecognized signal" );
+            em = BOOST_TEST_L( "unrecognized signal" );
         }
     }
 
@@ -612,21 +616,38 @@ static void report_error( execution_exception::error_code ec, const_string msg1,
 } // namespace detail
 
 // ************************************************************************** //
-// **************             detect_memory_leak              ************** //
+// **************              detect_memory_leaks             ************** //
 // ************************************************************************** //
 
 void
-detect_memory_leak( long mem_leak_alloc_num )
+detect_memory_leaks( bool on_off )
 {
-    unit_test::ut_detail::ignore_unused_variable_warning( mem_leak_alloc_num );
+    unit_test::ut_detail::ignore_unused_variable_warning( on_off );
 
 #ifdef BOOST_MS_CRT_DEBUG_HOOKS
-    _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
-    
-    if( mem_leak_alloc_num > 1 )
-        _CrtSetBreakAlloc( mem_leak_alloc_num );
+    int flags = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
+
+    if( !on_off )
+        flags &= ~_CRTDBG_LEAK_CHECK_DF;
+    else  {
+        flags |= _CRTDBG_LEAK_CHECK_DF;
+        _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+        _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
+    }
+
+    _CrtSetDbgFlag ( flags );
+#endif // BOOST_MS_CRT_DEBUG_HOOKS
+}
+
+//____________________________________________________________________________//
+
+void
+break_memory_alloc( long mem_alloc_order_num )
+{
+    unit_test::ut_detail::ignore_unused_variable_warning( mem_alloc_order_num );
+
+#ifdef BOOST_MS_CRT_DEBUG_HOOKS
+    _CrtSetBreakAlloc( mem_alloc_order_num );
 #endif // BOOST_MS_CRT_DEBUG_HOOKS
 }
 
@@ -640,6 +661,18 @@ detect_memory_leak( long mem_leak_alloc_num )
 //  Revision History :
 //
 //  $Log: execution_monitor.ipp,v $
+//  Revision 1.13  2006/02/22 16:14:45  rogeeff
+//  reagance to eliminate warning
+//
+//  Revision 1.12  2006/01/30 07:29:49  rogeeff
+//  split memory leaks detection API in two to get more functions with better defined roles
+//
+//  Revision 1.11  2006/01/15 09:47:43  rogeeff
+//  make common message
+//
+//  Revision 1.10  2005/12/14 05:52:49  rogeeff
+//  *** empty log message ***
+//
 //  Revision 1.9  2005/04/30 17:07:22  rogeeff
 //  ignore_warning included
 //

@@ -1,16 +1,13 @@
-/**
- * Pointer Container Library
- * (C) Thorsten Ottosen 2003-2005
- * 
- * Permission to copy, use, modify,
- * sell and distribute this software is granted provided this
- * copyright notice appears in all copies. This software is provided
- * "as is" without express or implied warranty, and with no claim as
- * to its suitability for any purpose.
- *
- * See http://www.boost.org/libs/ptr_container for documentation.
- *
- */
+//
+// Boost.Pointer Container
+//
+//  Copyright Thorsten Ottosen 2003-2005. Use, modification and
+//  distribution is subject to the Boost Software License, Version
+//  1.0. (See accompanying file LICENSE_1_0.txt or copy at
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+// For more information, see http://www.boost.org/libs/ptr_container/
+//
  
 #ifndef BOOST_PTR_CONTAINER_HPP
 #define BOOST_PTR_CONTAINER_HPP

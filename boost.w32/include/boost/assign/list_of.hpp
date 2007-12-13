@@ -157,7 +157,12 @@ namespace assign_detail
         Array convert( const Array*, array_type_tag ) const
         {
             typedef BOOST_DEDUCED_TYPENAME Array::value_type value_type;
+
+#if BOOST_WORKAROUND(BOOST_INTEL, <= 910 ) || BOOST_WORKAROUND(__SUNPRO_CC, <= 0x580 )
+            BOOST_DEDUCED_TYPENAME remove_const<Array>::type ar;
+#else
             Array ar;
+#endif            
             const std::size_t sz = ar.size();
             if( sz < static_cast<const DerivedTAssign*>(this)->size() )
                 throw assign::assignment_exception( "array initialized with too many elements" );
@@ -261,12 +266,18 @@ namespace assign_detail
         void push_back( value_type r ) { values_.push_back( r ); }
         
     public:
+        generic_list& operator,( const Ty& u )
+        {
+            this->push_back( u ); 
+            return *this;
+        }
+
         generic_list& operator()()
         {
             this->push_back( Ty() );
             return *this;
         }
-        
+
         generic_list& operator()( const Ty& u )
         {
             this->push_back( u );
@@ -456,6 +467,12 @@ namespace assign_detail
         }
 
         template< class ForwardRange >
+        static_generic_list& range( ForwardRange& r )
+        {
+            return range( boost::begin(r), boost::end(r) );
+        }
+
+        template< class ForwardRange >
         static_generic_list& range( const ForwardRange& r )
         {
             return range( boost::begin(r), boost::end(r) );
@@ -488,7 +505,7 @@ namespace assign
     inline assign_detail::generic_list<T>
     list_of()
     {
-        return assign_detail::generic_list<T>(T());
+        return assign_detail::generic_list<T>()( T() );
     }
     
     template< class T >

@@ -27,10 +27,7 @@
 #include <boost/pfto.hpp>
 
 #include <boost/detail/workaround.hpp>
-#include <boost/archive/detail/oserializer.hpp>
-#include <boost/archive/detail/interface_oarchive.hpp>
 #include <boost/archive/detail/common_oarchive.hpp>
-
 #include <boost/serialization/string.hpp>
 
 namespace boost {
@@ -51,23 +48,21 @@ template<class Archive>
 class basic_binary_oarchive : 
     public detail::common_oarchive<Archive>
 {
+protected:
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
 public:
 #elif defined(BOOST_MSVC)
     // for some inexplicable reason insertion of "class" generates compile erro
     // on msvc 7.1
     friend detail::interface_oarchive<Archive>;
-protected:
 #else
     friend class detail::interface_oarchive<Archive>;
-protected:
 #endif
-    // any datatype not specifed below will be handled
-    // by this function
+    // any datatype not specifed below will be handled by base class
+    typedef detail::common_oarchive<Archive> detail_common_oarchive;
     template<class T>
-    void save_override(T & t, BOOST_PFTO int)
-    {
-        archive::save(* this->This(), t);
+    void save_override(T & t, BOOST_PFTO int){
+        this->detail_common_oarchive::save_override(t, 0);
     }
     // binary files don't include the optional information 
     void save_override(const class_id_optional_type & /* t */, int){}
@@ -105,8 +100,8 @@ protected:
 
     // explicitly convert to char * to avoid compile ambiguities
     void save_override(const class_name_type & t, int){
-                const std::string s(t);
-                * this->This() << s;
+        const std::string s(t);
+        * this->This() << s;
     }
 
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)

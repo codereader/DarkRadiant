@@ -85,24 +85,24 @@ protected:
 
   node_type* insert_(value_param_type v,node_type* x)
   {
-    boost::detail::allocator::construct(&x->value,v);
+    boost::detail::allocator::construct(&x->value(),v);
     return x;
   }
 
   node_type* insert_(value_param_type v,node_type*,node_type* x)
   {
-    boost::detail::allocator::construct(&x->value,v);
+    boost::detail::allocator::construct(&x->value(),v);
     return x;
   }
 
   void erase_(node_type* x)
   {
-    boost::detail::allocator::destroy(&x->value);
+    boost::detail::allocator::destroy(&x->value());
   }
 
   void delete_node_(node_type* x)
   {
-    boost::detail::allocator::destroy(&x->value);
+    boost::detail::allocator::destroy(&x->value());
   }
 
   void clear_(){}
@@ -111,7 +111,7 @@ protected:
 
   bool replace_(value_param_type v,node_type* x)
   {
-    x->value=v;
+    x->value()=v;
     return true;
   }
 

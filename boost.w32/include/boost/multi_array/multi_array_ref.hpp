@@ -25,6 +25,7 @@
 #include "boost/multi_array/subarray.hpp"
 #include "boost/multi_array/view.hpp"
 #include "boost/multi_array/algorithm.hpp"
+#include "boost/type_traits/is_integral.hpp"
 #include "boost/array.hpp"
 #include "boost/concept_check.hpp"
 #include "boost/functional.hpp"
@@ -137,7 +138,13 @@ public:
   }
 
   template <class BaseList>
-  void reindex(const BaseList& values) {
+#ifdef BOOST_NO_SFINAE
+  void
+#else
+  typename
+  disable_if<typename boost::is_integral<BaseList>::type,void >::type
+#endif // BOOST_NO_SFINAE
+  reindex(const BaseList& values) {
     boost::function_requires<
       detail::multi_array::CollectionConcept<BaseList> >();
     boost::detail::multi_array::
@@ -206,8 +213,8 @@ public:
     boost::function_requires<
       detail::multi_array::CollectionConcept<IndexList> >();
     return super_type::access_element(boost::type<const element&>(),
-                                      origin(),
-                                      indices,strides());
+                                      indices,origin(),
+                                      shape(),strides(),index_bases());
   }
 
   // Only allow const element access
@@ -503,11 +510,12 @@ public:
 
   template <class IndexList>
   element& operator()(const IndexList& indices) {
-  boost::function_requires<
-    detail::multi_array::CollectionConcept<IndexList> >();
-  return super_type::access_element(boost::type<element&>(),
-                                      origin(),
-                                      indices,this->strides());
+    boost::function_requires<
+      detail::multi_array::CollectionConcept<IndexList> >();
+    return super_type::access_element(boost::type<element&>(),
+                                      indices,origin(),
+                                      this->shape(),this->strides(),
+                                      this->index_bases());
   }
 
 

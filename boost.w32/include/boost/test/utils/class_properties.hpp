@@ -1,4 +1,4 @@
-//  (C) Copyright Gennadiy Rozental 2001-2005.
+//  (C) Copyright Gennadiy Rozental 2001-2006.
 //  Distributed under the Boost Software License, Version 1.0.
 //  (See accompanying file LICENSE_1_0.txt or copy at 
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: class_properties.hpp,v $
 //
-//  Version     : $Revision: 1.7 $
+//  Version     : $Revision: 1.10 $
 //
 //  Description : simple facility that mimmic notion of read-only read-write 
 //  properties in C++ classes. Original idea by Henrik Ravn.
@@ -120,7 +120,7 @@ DEFINE_PROPERTY_FREE_BINARY_OPERATOR( != )
 
 #undef DEFINE_PROPERTY_FREE_BINARY_OPERATOR
 
-#if BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 
 #define DEFINE_PROPERTY_LOGICAL_OPERATOR( op )                                  \
 template<class PropertyType>                                                    \
@@ -226,6 +226,15 @@ public:
 //  Revision History :
 //  
 //  $Log: class_properties.hpp,v $
+//  Revision 1.10  2006/02/21 04:24:46  rogeeff
+//  rev back
+//
+//  Revision 1.9  2006/01/28 08:57:05  rogeeff
+//  VC6.0 workaround removed
+//
+//  Revision 1.8  2005/08/25 16:27:26  johnmaddock
+//  Large patch from Ulrich Eckhardt to fix support for EVC++ 4.
+//
 //  Revision 1.7  2005/05/11 05:04:58  rogeeff
 //  borland portability fix
 //

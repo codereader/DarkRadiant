@@ -64,22 +64,28 @@ namespace boost { namespace numeric { namespace ublas {
     template<class E>
     class matrix_reference;
 
-    template<class E>
+    template<class V>
     class vector_range;
-    template<class E>
+    template<class V>
     class vector_slice;
-    template<class E, class IA = indirect_array<> >
+    template<class V, class IA = indirect_array<> >
     class vector_indirect;
 
-    template<class E>
+    template<class M>
     class matrix_row;
-    template<class E>
+    template<class M>
     class matrix_column;
-    template<class E>
+    template<class M>
+    class matrix_vector_range;
+    template<class M>
+    class matrix_vector_slice;
+    template<class M, class IA = indirect_array<> >
+    class matrix_vector_indirect;
+    template<class M>
     class matrix_range;
-    template<class E>
+    template<class M>
     class matrix_slice;
-    template<class E, class IA = indirect_array<> >
+    template<class M, class IA = indirect_array<> >
     class matrix_indirect;
 
     template<class T, class A = unbounded_array<T> >

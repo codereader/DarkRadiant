@@ -18,111 +18,149 @@
 
 #include <boost/config.hpp>
 #ifdef BOOST_HAS_HASH
+#include BOOST_HASH_SET_HEADER
 
-#ifdef __GLIBCPP__
-#include <ext/hash_set>
-#else
-#include <hash_set>
-#endif
-
-#include <boost/serialization/collections_save_imp.hpp>
-#include <boost/serialization/collections_load_imp.hpp>
+#include <boost/serialization/hash_collections_save_imp.hpp>
+#include <boost/serialization/hash_collections_load_imp.hpp>
 #include <boost/serialization/split_free.hpp>
-
-// function specializations must be defined in the appropriate
-// namespace - boost::serialization
-#if defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
-#define STD _STLP_STD
-#else
-#define STD BOOST_STD_EXTENSION_NAMESPACE
-#endif
 
 namespace boost { 
 namespace serialization {
 
-template<class Archive, class Key, class Compare, class Allocator >
+template<
+    class Archive, 
+    class Key, 
+    class HashFcn, 
+    class EqualKey,
+    class Allocator
+>
 inline void save(
     Archive & ar,
-    const STD::hash_set<Key, Compare, Allocator> &t,
+    const BOOST_STD_EXTENSION_NAMESPACE::hash_set<
+        Key, HashFcn, EqualKey, Allocator
+    > &t,
     const unsigned int file_version
 ){
-    boost::serialization::stl::save_collection<
+    boost::serialization::stl::save_hash_collection<
         Archive, 
-        STD::hash_set<Key, Compare, Allocator> 
+        BOOST_STD_EXTENSION_NAMESPACE::hash_set<
+            Key, HashFcn, EqualKey, Allocator
+        > 
     >(ar, t);
 }
 
-template<class Archive, class Key, class Compare, class Allocator >
+template<
+    class Archive, 
+    class Key, 
+    class HashFcn, 
+    class EqualKey,
+    class Allocator
+>
 inline void load(
     Archive & ar,
-    STD::hash_set<Key, Compare, Allocator> &t,
+    BOOST_STD_EXTENSION_NAMESPACE::hash_set<
+        Key, HashFcn, EqualKey, Allocator
+    > &t,
     const unsigned int file_version
 ){
-    boost::serialization::stl::load_collection<
+    boost::serialization::stl::load_hash_collection<
         Archive,
-        BOOST_STD_EXTENSION_NAMESPACE::hash_set<Key, Compare, Allocator>,
-        boost::serialization::stl::archive_input_set<
-            Archive, 
-            STD::hash_set<Key, Compare, Allocator> 
+        BOOST_STD_EXTENSION_NAMESPACE::hash_set<
+            Key, HashFcn, EqualKey, Allocator
         >,
-        boost::serialization::stl::no_reserve_imp<
-            STD::hash_set<Key, Compare, Allocator> 
+        boost::serialization::stl::archive_input_unique<
+            Archive, 
+            BOOST_STD_EXTENSION_NAMESPACE::hash_set<
+                Key, HashFcn, EqualKey, Allocator
+            >
         >
     >(ar, t);
 }
 
 // split non-intrusive serialization function member into separate
 // non intrusive save/load member functions
-template<class Archive, class Key, class Compare, class Allocator >
+template<
+    class Archive, 
+    class Key, 
+    class HashFcn, 
+    class EqualKey,
+    class Allocator
+>
 inline void serialize(
     Archive & ar,
-    STD::hash_set<Key, Compare, Allocator> & t,
+    BOOST_STD_EXTENSION_NAMESPACE::hash_set<
+        Key, HashFcn, EqualKey, Allocator
+    > &t,
     const unsigned int file_version
 ){
     boost::serialization::split_free(ar, t, file_version);
 }
 
 // hash_multiset
-template<class Archive, class Key, class Compare, class Allocator >
+template<
+    class Archive, 
+    class Key, 
+    class HashFcn, 
+    class EqualKey,
+    class Allocator
+>
 inline void save(
     Archive & ar,
-    const STD::hash_multiset<Key, Compare, Allocator> &t,
+    const BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<
+        Key, HashFcn, EqualKey, Allocator
+    > &t,
     const unsigned int file_version
 ){
-    boost::serialization::stl::save_collection<
+    boost::serialization::stl::save_hash_collection<
         Archive, 
-        STD::hash_multiset<Key, Compare, Allocator> 
+        BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<
+            Key, HashFcn, EqualKey, Allocator
+        > 
     >(ar, t);
 }
 
-template<class Archive, class Key, class Compare, class Allocator >
+template<
+    class Archive, 
+    class Key, 
+    class HashFcn, 
+    class EqualKey,
+    class Allocator
+>
 inline void load(
     Archive & ar,
-    STD::hash_multiset<Key, Compare, Allocator> &t,
+    BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<
+        Key, HashFcn, EqualKey, Allocator
+    > &t,
     const unsigned int file_version
 ){
-    boost::serialization::stl::load_collection<
+    boost::serialization::stl::load_hash_collection<
         Archive,
-        BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<Key, Compare, Allocator>,
-        boost::serialization::stl::archive_input_multiset<
-            Archive, STD::hash_multiset<
-                Key, 
-                Compare, 
-                Allocator
-            > 
+        BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<
+            Key, HashFcn, EqualKey, Allocator
         >,
-        boost::serialization::stl::no_reserve_imp<
-            STD::hash_multiset<Key, Compare, Allocator> 
+        boost::serialization::stl::archive_input_multi<
+            Archive,
+            BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<
+                Key, HashFcn, EqualKey, Allocator
+            > 
         >
     >(ar, t);
 }
 
 // split non-intrusive serialization function member into separate
 // non intrusive save/load member functions
-template<class Archive, class Key, class Compare, class Allocator >
+template<
+    class Archive, 
+    class Key, 
+    class HashFcn, 
+    class EqualKey,
+    class Allocator
+>
 inline void serialize(
     Archive & ar,
-    STD::hash_multiset<Key, Compare, Allocator> & t,
+    BOOST_STD_EXTENSION_NAMESPACE::hash_multiset<
+        Key, HashFcn, EqualKey, Allocator
+    > & t,
     const unsigned int file_version
 ){
     boost::serialization::split_free(ar, t, file_version);
@@ -133,10 +171,8 @@ inline void serialize(
 
 #include <boost/serialization/collection_traits.hpp>
 
-BOOST_SERIALIZATION_COLLECTION_TRAITS(STD::hash_set)
-BOOST_SERIALIZATION_COLLECTION_TRAITS(STD::hash_multiset)
-
-#undef STD
+BOOST_SERIALIZATION_COLLECTION_TRAITS(BOOST_STD_EXTENSION_NAMESPACE::hash_set)
+BOOST_SERIALIZATION_COLLECTION_TRAITS(BOOST_STD_EXTENSION_NAMESPACE::hash_multiset)
 
 #endif // BOOST_HAS_HASH
 #endif // BOOST_SERIALIZATION_HASH_SET_HPP

@@ -1,6 +1,6 @@
-//  Boost string_algo library find.hpp header file  ---------------------------//
+//  Boost string_algo library split.hpp header file  ---------------------------//
 
-//  Copyright Pavol Droba 2002-2003. Use, modification and
+//  Copyright Pavol Droba 2002-2006. Use, modification and
 //  distribution is subject to the Boost Software License, Version
 //  1.0. (See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -55,7 +55,7 @@ namespace boost {
 
             \note Prior content of the result will be overwritten.
 
-               \note This function provides the strong exception-safety guarantee
+            \note This function provides the strong exception-safety guarantee
         */
         template< typename SequenceSequenceT, typename Range1T, typename Range2T >
         inline SequenceSequenceT& find_all(
@@ -90,7 +90,7 @@ namespace boost {
 
             \note Prior content of the result will be overwritten.
 
-              \note This function provides the strong exception-safety guarantee
+            \note This function provides the strong exception-safety guarantee
         */
         template< typename SequenceSequenceT, typename Range1T, typename Range2T >
         inline SequenceSequenceT& ifind_all(

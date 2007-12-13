@@ -1,21 +1,30 @@
 // Copyright (C) 2001-2003
 // William E. Kempf
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee,
-// provided that the above copyright notice appear in all copies and
-// that both that copyright notice and this permission notice appear
-// in supporting documentation.  William E. Kempf makes no representations
-// about the suitability of this software for any purpose.
-// It is provided "as is" without express or implied warranty.
+//  Distributed under the Boost Software License, Version 1.0. (See accompanying 
+//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_THREAD_CONFIG_WEK01032003_HPP
 #define BOOST_THREAD_CONFIG_WEK01032003_HPP
 
 #include <boost/config.hpp>
+#include <boost/detail/workaround.hpp>
+
+#if BOOST_WORKAROUND(__BORLANDC__, < 0x600)
+#  pragma warn -8008 // Condition always true/false
+#  pragma warn -8080 // Identifier declared but never used
+#  pragma warn -8057 // Parameter never used
+#  pragma warn -8066 // Unreachable code
+#endif
 
 // insist on threading support being available:
 #include <boost/config/requires_threads.hpp>
+
+// compatibility with the rest of Boost's auto-linking code:
+#if defined(BOOST_THREAD_DYN_DLL) || defined(BOOST_ALL_DYN_LINK)
+# undef  BOOST_THREAD_USE_LIB
+# define BOOST_THREAD_USE_DLL
+#endif
 
 #if defined(BOOST_THREAD_BUILD_DLL)   //Build dll
 #elif defined(BOOST_THREAD_BUILD_LIB) //Build lib

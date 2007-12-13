@@ -23,14 +23,6 @@
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/serialization/nvp.hpp>
 
-// function specializations must be defined in the appropriate
-// namespace - boost::serialization
-#if defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
-#define STD _STLP_STD
-#else
-#define STD std
-#endif
-
 namespace boost { 
 namespace serialization {
 
@@ -38,7 +30,7 @@ namespace serialization {
 template<class Archive, class F, class S>
 inline void serialize(
     Archive & ar,
-    STD::pair<F, S> & p,
+    std::pair<F, S> & p,
     const unsigned int /* file_version */
 ){
     // note: we remove any const-ness on the first argument.  The reason is that 
@@ -51,6 +43,5 @@ inline void serialize(
 
 } // serialization
 } // namespace boost
-#undef STD
 
 #endif // BOOST_SERIALIZATION_UTILITY_HPP

@@ -20,19 +20,21 @@
 #include <boost/ptr_container/detail/reversible_ptr_container.hpp>
 #include <boost/ptr_container/indirect_fun.hpp>
 #include <boost/ptr_container/detail/void_ptr_iterator.hpp>
-#include <boost/range/reverse_iterator.hpp>
-#include <boost/range/const_reverse_iterator.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_pointer.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/iterator/iterator_categories.hpp>
 
+
 namespace boost
 {   
 namespace ptr_container_detail
 {
-        
+
+
+    
+    
     template
     < 
         class T, 
@@ -57,17 +59,6 @@ namespace ptr_container_detail
         typedef void_ptr_iterator<
                         BOOST_DEDUCED_TYPENAME VoidPtrSeq::const_iterator, const U >
                     const_iterator;
-        
-        typedef void_ptr_iterator<
-                       BOOST_DEDUCED_TYPENAME VoidPtrSeq::reverse_iterator, U >
-                   reverse_iterator;
-        
-        typedef void_ptr_iterator<
-                       BOOST_DEDUCED_TYPENAME VoidPtrSeq::const_reverse_iterator, const U >
-                   const_reverse_iterator;
-        
-        typedef value_type 
-                   object_type;
 
 #ifdef BOOST_NO_SFINAE
 
@@ -152,7 +143,8 @@ namespace ptr_container_detail
         
         typedef BOOST_DEDUCED_TYPENAME base_type::scoped_deleter scoped_deleter;
 
-        typedef ptr_sequence_adapter<T,VoidPtrSeq,CloneAllocator> this_type;
+        typedef ptr_sequence_adapter<T,VoidPtrSeq,CloneAllocator>                         
+            this_type;
          
     public:
         typedef BOOST_DEDUCED_TYPENAME base_type::value_type  value_type; 
@@ -186,6 +178,12 @@ namespace ptr_container_detail
             ptr.release();                     // nothrow
         }
 
+        template< class U >
+        void push_back( std::auto_ptr<U> x )
+        {
+            push_back( x.release() );
+        }
+        
         void push_front( value_type x )                
         {
             this->enforce_null_policy( x, "Null pointer in 'push_front()'" );
@@ -193,58 +191,68 @@ namespace ptr_container_detail
             auto_type ptr( x );                // nothrow
             this->c_private().push_front( x ); // strong, commit
             ptr.release();                     // nothrow
-        } 
+        }
+
+        template< class U >
+        void push_front( std::auto_ptr<U> x )
+        {
+            push_front( x.release() );
+        }
 
         auto_type pop_back()
         {
-            if( this->empty() ) 
-                throw bad_ptr_container_operation( "'pop_back()' "
-                                                     " on empty container" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( this->empty(), 
+                                                 bad_ptr_container_operation,
+                                          "'pop_back()' on empty container" );
             auto_type ptr( static_cast<value_type>( 
                          this->c_private().back() ) ); // nothrow
             this->c_private().pop_back();              // nothrow
-            return ptr_container_detail::move( ptr );                        // nothrow
+            return ptr_container_detail::move( ptr );  // nothrow
         }
 
         auto_type pop_front()
         {
-            if( this->empty() ) 
-                throw bad_ptr_container_operation( "'pop_front()' on" 
-                                                     " empty container" ); 
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( this->empty(),
+                                                 bad_ptr_container_operation,
+                                         "'pop_front()' on empty container" ); 
             auto_type ptr( static_cast<value_type>(
                         this->c_private().front() ) ); // nothrow 
-            this->c_private().pop_front();              // nothrow
+            this->c_private().pop_front();             // nothrow
             return ptr_container_detail::move( ptr ); 
         }
         
         reference front()        
         { 
-            if( this->empty() )
-                throw bad_ptr_container_operation( "accessing 'front()' on empty container" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( this->empty(), 
+                                                 bad_ptr_container_operation,
+                                    "accessing 'front()' on empty container" );
             BOOST_ASSERT( !::boost::is_null( this->begin() ) );
             return *this->begin(); 
         }
 
         const_reference front() const  
         {
-            if( this->empty() )
-                throw bad_ptr_container_operation( "accessing 'front()' on empty container" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( this->empty(), 
+                                                 bad_ptr_container_operation, 
+                                   "accessing 'front()' on empty container" );
             BOOST_ASSERT( !::boost::is_null( this->begin() ) );
             return *this->begin(); 
         }
 
         reference back()
         {
-            if( this->empty() )
-                throw bad_ptr_container_operation( "accessing 'back()' on empty container" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( this->empty(),
+                                                 bad_ptr_container_operation,
+                                    "accessing 'back()' on empty container" );
             BOOST_ASSERT( !::boost::is_null( --this->end() ) );
             return *--this->end(); 
         }
 
         const_reference back() const
         {
-            if( this->empty() )
-                throw bad_ptr_container_operation( "accessing 'back()' on empty container" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( this->empty(),
+                                                 bad_ptr_container_operation,
+                                    "accessing 'back()' on empty container" );
             BOOST_ASSERT( !::boost::is_null( --this->end() ) );
             return *--this->end(); 
         }
@@ -267,16 +275,16 @@ namespace ptr_container_detail
         
         reference at( size_type n )
         {
-            if( n >= this->size() )
-                throw bad_index( "'at()' out of bounds" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( n >= this->size(), bad_index, 
+                                                 "'at()' out of bounds" );
             BOOST_ASSERT( !this->is_null( n ) );
             return (*this)[n];
         }
         
         const_reference at( size_type n ) const
         {
-            if( n >= this->size() )
-                throw bad_index( "'at()' out of bounds" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( n >= this->size(), bad_index, 
+                                                 "'at()' out of bounds" );
             BOOST_ASSERT( !this->is_null( n ) );
             return (*this)[n]; 
         }
@@ -304,11 +312,6 @@ namespace ptr_container_detail
         template< class InputIterator >
         void assign( InputIterator first, InputIterator last ) // strong
         { 
-//#ifdef BOOST_NO_SFINAE
-//#else
-//            BOOST_STATIC_ASSERT(( boost::is_convertible< typename iterator_reference<InputIterator>::type,
-//                                                         reference_type >::value ));
-//#endif            
             base_type temp( first, last );
             this->swap( temp );
         }
@@ -316,7 +319,7 @@ namespace ptr_container_detail
         template< class Range >
         void assign( const Range& r )
         {
-            assign( this->adl_begin(r), this->adl_end(r ) );
+            assign( boost::begin(r), boost::end(r ) );
         }
 
     private:
@@ -347,24 +350,25 @@ namespace ptr_container_detail
                          iterator_category<InputIterator>::type() );
         } 
 
-#ifdef BOOST_NO_SFINAE
+#if defined(BOOST_NO_SFINAE) || BOOST_WORKAROUND(__SUNPRO_CC, <= 0x580)
 #else
         template< class Range >
         BOOST_DEDUCED_TYPENAME
         boost::disable_if< ptr_container_detail::is_pointer_or_integral<Range> >::type
-        insert( iterator before, const Range& r )// ptr_container_detail::is_range_tag )
+        insert( iterator before, const Range& r )
         {
-            insert( before, this->adl_begin(r), this->adl_end(r) );
+            insert( before, boost::begin(r), boost::end(r) );
         }
 
 #endif
 
+        template< class PtrSeqAdapter >
         void transfer( iterator before, 
-                       iterator first, 
-                       iterator last, 
-                       ptr_sequence_adapter& from ) // strong
+                       BOOST_DEDUCED_TYPENAME PtrSeqAdapter::iterator first, 
+                       BOOST_DEDUCED_TYPENAME PtrSeqAdapter::iterator last, 
+                       PtrSeqAdapter& from ) // strong
         {
-            BOOST_ASSERT( &from != this );
+            BOOST_ASSERT( (void*)&from != (void*)this );
             if( from.empty() )
                 return;
             this->c_private().
@@ -374,11 +378,12 @@ namespace ptr_container_detail
                                     last.base() );   // nothrow
         }
 
+        template< class PtrSeqAdapter >
         void transfer( iterator before, 
-                       iterator object, 
-                       ptr_sequence_adapter& from ) // strong
+                       BOOST_DEDUCED_TYPENAME PtrSeqAdapter::iterator object, 
+                       PtrSeqAdapter& from ) // strong
         {
-            BOOST_ASSERT( &from != this );
+            BOOST_ASSERT( (void*)&from != (void*)this );
             if( from.empty() )
                 return;
             this->c_private().
@@ -387,28 +392,28 @@ namespace ptr_container_detail
             from.c_private().erase( object.base() );      // nothrow
         }
 
-#ifdef BOOST_NO_SFINAE
+#if defined(BOOST_NO_SFINAE) || BOOST_WORKAROUND(__SUNPRO_CC, <= 0x580)
 #else
         
-        template< class Range >
+        template< class PtrSeqAdapter, class Range >
         BOOST_DEDUCED_TYPENAME boost::disable_if< boost::is_same< Range,
-                                                                  iterator > >::type
-        transfer( iterator before, const Range& r, ptr_sequence_adapter& from ) // strong
+                      BOOST_DEDUCED_TYPENAME PtrSeqAdapter::iterator > >::type
+        transfer( iterator before, const Range& r, PtrSeqAdapter& from ) // strong
         {
-            transfer( before, this->adl_begin(r), this->adl_end(r), from );
+            transfer( before, boost::begin(r), boost::end(r), from );
         }
 
 #endif
-        
-        void transfer( iterator before, ptr_sequence_adapter& from ) // strong
+        template< class PtrSeqAdapter >
+        void transfer( iterator before, PtrSeqAdapter& from ) // strong
         {
-            BOOST_ASSERT( &from != this );
+            BOOST_ASSERT( (void*)&from != (void*)this );
             if( from.empty() )
                 return;
             this->c_private().
                 insert( before.base(),
                         from.begin().base(), from.end().base() ); // strong
-            from.c_private().clear();                       // nothrow
+            from.c_private().clear();                             // nothrow
         }
 
     public: // null functions
@@ -591,7 +596,7 @@ namespace ptr_container_detail
             merge( r.begin(), r.end(), r, pred );
             BOOST_ASSERT( r.empty() );    
         }
-
+        
     };
 
 

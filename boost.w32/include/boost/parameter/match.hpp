@@ -29,7 +29,7 @@
                 BOOST_PARAMETER_MAX_ARITY                       \
               , BOOST_PP_SEQ_SIZE(ArgTypes)                     \
             )                                                   \
-          , ::boost::parameter::aux::void_ BOOST_PP_INTERCEPT   \
+          , ::boost::parameter::void_ BOOST_PP_INTERCEPT   \
         )
 
 # else

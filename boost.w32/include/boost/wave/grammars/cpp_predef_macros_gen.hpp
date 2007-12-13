@@ -3,7 +3,7 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -15,22 +15,30 @@
 
 #include <boost/wave/wave_config.hpp>
 
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
+
+// suppress warnings about dependent classes not being exported from the dll
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4251 4231 4660)
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
 namespace wave {
 namespace grammars {
 
 ///////////////////////////////////////////////////////////////////////////////
-//  
-//  store parser_id's of all rules of the predefined_macros_grammar here 
-//  for later access
+//
+//  Here are the node id's of the different node of the cpp_grammar
 //
 ///////////////////////////////////////////////////////////////////////////////
-struct predefined_macros_grammar_rule_ids {
-    std::size_t plain_define_id;       // #define
-    std::size_t macro_parameters_id;
-    std::size_t macro_definition_id;
-};
+#define BOOST_WAVE_PLAIN_DEFINE_ID      5
+#define BOOST_WAVE_MACRO_PARAMETERS_ID  6
+#define BOOST_WAVE_MACRO_DEFINITION_ID  7
 
 ///////////////////////////////////////////////////////////////////////////////
 //  
@@ -46,13 +54,9 @@ struct predefined_macros_grammar_rule_ids {
 ///////////////////////////////////////////////////////////////////////////////
 
 template <typename LexIteratorT>
-struct predefined_macros_grammar_gen
+struct BOOST_WAVE_DECL predefined_macros_grammar_gen
 {
     typedef LexIteratorT iterator_type;
-
-//  the parser_id's of all rules of the cpp_grammar are stored here
-//  note: these are valid only after the first call to parse_cpp_grammar
-    static predefined_macros_grammar_rule_ids rule_ids;
 
 //  parse the cpp_grammar and return the resulting parse tree    
     static boost::spirit::tree_parse_info<iterator_type> 
@@ -60,14 +64,17 @@ struct predefined_macros_grammar_gen
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-//  definitions of the static members
-template <typename LexIteratorT>
-predefined_macros_grammar_rule_ids 
-    predefined_macros_grammar_gen<LexIteratorT>::rule_ids;
-
-///////////////////////////////////////////////////////////////////////////////
 }   // namespace grammars
 }   // namespace wave
 }   // namespace boost
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(CPP_PREDEF_MACROS_GEN_HPP_CADB6D2C_76A4_4988_83E1_EFFC6902B9A2_INCLUDED)

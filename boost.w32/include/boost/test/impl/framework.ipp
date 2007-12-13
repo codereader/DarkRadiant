@@ -7,9 +7,9 @@
 //
 //  File        : $RCSfile: framework.ipp,v $
 //
-//  Version     : $Revision: 1.6 $
+//  Version     : $Revision: 1.10 $
 //
-//  Description : implements framework songleton - main driver for the test
+//  Description : implements framework API - main driver for the test
 // ***************************************************************************
 
 #ifndef BOOST_TEST_FRAMEWORK_IPP_021005GER
@@ -17,7 +17,8 @@
 
 // Boost.Test
 #include <boost/test/framework.hpp>
-#include <boost/test/unit_test_suite.hpp>
+#include <boost/test/execution_monitor.hpp>
+#include <boost/test/unit_test_suite_impl.hpp>
 #include <boost/test/unit_test_log.hpp>
 #include <boost/test/unit_test_monitor.hpp>
 #include <boost/test/test_observer.hpp>
@@ -36,7 +37,7 @@
 
 // STL
 #include <map>
-#include <stdexcept>
+#include <set>
 #include <cstdlib>
 #include <ctime>
 
@@ -48,12 +49,46 @@ namespace std { using ::time; using ::srand; }
 
 //____________________________________________________________________________//
 
-// prototype for user's test suite init function
+#ifndef BOOST_TEST_DYN_LINK
+
+// prototype for user's unit test init function
+#ifdef BOOST_TEST_ALTERNATIVE_INIT_API
+extern bool init_unit_test();
+#else
 extern boost::unit_test::test_suite* init_unit_test_suite( int argc, char* argv[] );
+#endif
+
+#endif
 
 namespace boost {
 
 namespace unit_test {
+
+// ************************************************************************** //
+// **************            test_start calls wrapper          ************** //
+// ************************************************************************** //
+
+namespace ut_detail {
+
+struct test_start_caller {
+    test_start_caller( test_observer* to, counter_t tc_amount )
+    : m_to( to )
+    , m_tc_amount( tc_amount )
+    {}
+
+    int operator()()
+    {
+        m_to->test_start( m_tc_amount );
+        return 0;
+    }
+
+private:
+    // Data members
+    test_observer*  m_to;
+    counter_t       m_tc_amount;
+};
+
+}
 
 // ************************************************************************** //
 // **************                   framework                  ************** //
@@ -62,7 +97,7 @@ namespace unit_test {
 class framework_impl : public test_tree_visitor {
 public:
     framework_impl()
-    : m_master_test_suite( INV_TEST_UNIT_ID )
+    : m_master_test_suite( 0 )
     , m_curr_test_case( INV_TEST_UNIT_ID )
     , m_next_test_case_id( MIN_TEST_CASE_ID )
     , m_next_test_suite_id( MIN_TEST_SUITE_ID )
@@ -112,7 +147,7 @@ public:
         m_curr_test_case = bkup;
 
         if( unit_test_monitor.is_critical_error( run_result ) )
-            throw test_aborted();
+            throw test_being_aborted();
     }
 
     bool            test_suite_start( test_suite const& ts )
@@ -137,11 +172,17 @@ public:
     }
 
     //////////////////////////////////////////////////////////////////
+    struct priority_order {
+        bool operator()( test_observer* lhs, test_observer* rhs ) const
+        {
+            return (lhs->priority() < rhs->priority()) || (lhs->priority() == rhs->priority()) && (lhs < rhs);
+        }
+    };
 
     typedef std::map<test_unit_id,test_unit const*> test_unit_store;
-    typedef std::list<test_observer*>               observer_store;
+    typedef std::set<test_observer*,priority_order> observer_store;
 
-    test_unit_id    m_master_test_suite;
+    master_test_suite_t* m_master_test_suite;
     test_unit_id    m_curr_test_case;
     test_unit_store m_test_units;
 
@@ -151,7 +192,6 @@ public:
     bool            m_test_in_progress;
 
     observer_store  m_observers;
-
 };
 
 //____________________________________________________________________________//
@@ -185,15 +225,28 @@ init( int argc, char* argv[] )
     if( runtime_config::show_progress() )
         register_observer( progress_monitor );
 
-    if( runtime_config::detect_memory_leak() > 0 )
-        detect_memory_leak( runtime_config::detect_memory_leak() );
+    if( runtime_config::detect_memory_leaks() > 0 ) {
+        detect_memory_leaks( true );
+        break_memory_alloc( runtime_config::detect_memory_leaks() );
+    }
 
     // init master unit test suite
-    test_suite const* master_suite = init_unit_test_suite( argc, argv );
-    if( !master_suite )
-        throw std::logic_error( "Fail to initialize test suite" );
+    master_test_suite().argc = argc;
+    master_test_suite().argv = argv;
 
-    s_frk_impl().m_master_test_suite = master_suite->p_id;
+#ifndef BOOST_TEST_DYN_LINK
+
+#ifdef BOOST_TEST_ALTERNATIVE_INIT_API
+    if( !init_unit_test() )
+        throw setup_error( BOOST_TEST_L("test tree initialization error" ) );
+#else
+    test_suite* s = init_unit_test_suite( argc, argv );
+    if( s )
+        master_test_suite().add( s );
+#endif
+
+#endif
+
 }
 
 //____________________________________________________________________________//
@@ -202,12 +255,12 @@ void
 register_test_unit( test_case* tc )
 {
     if( tc->p_id != INV_TEST_UNIT_ID )
-        throw std::logic_error( "Test case already registered" );
+        throw setup_error( BOOST_TEST_L( "test case already registered" ) );
 
     test_unit_id new_id = s_frk_impl().m_next_test_case_id;
 
     if( new_id == MAX_TEST_CASE_ID )
-        throw std::logic_error( "Too many test cases" );
+        throw setup_error( BOOST_TEST_L( "too many test cases" ) );
 
     typedef framework_impl::test_unit_store::value_type map_value_type;
 
@@ -223,12 +276,12 @@ void
 register_test_unit( test_suite* ts )
 {
     if( ts->p_id != INV_TEST_UNIT_ID )
-        throw std::logic_error( "Test suite already registered" );
+        throw setup_error( BOOST_TEST_L( "test suite already registered" ) );
 
     test_unit_id new_id = s_frk_impl().m_next_test_suite_id;
 
     if( new_id == MAX_TEST_SUITE_ID )
-        throw std::logic_error( "Too many test suites" );
+        throw setup_error( BOOST_TEST_L( "too many test suites" ) );
 
     typedef framework_impl::test_unit_store::value_type map_value_type;
     s_frk_impl().m_test_units.insert( map_value_type( new_id, ts ) );
@@ -242,7 +295,15 @@ register_test_unit( test_suite* ts )
 void
 register_observer( test_observer& to )
 {
-    s_frk_impl().m_observers.push_back( &to );
+    s_frk_impl().m_observers.insert( &to );
+}
+
+//____________________________________________________________________________//
+
+void
+deregister_observer( test_observer& to )
+{
+    s_frk_impl().m_observers.erase( &to );
 }
 
 //____________________________________________________________________________//
@@ -255,10 +316,13 @@ reset_observers()
 
 //____________________________________________________________________________//
 
-test_suite const&
+master_test_suite_t&
 master_test_suite()
 {
-    return get<test_suite>( s_frk_impl().m_master_test_suite );
+    if( !s_frk_impl().m_master_test_suite )
+        s_frk_impl().m_master_test_suite = new master_test_suite_t;
+
+    return *s_frk_impl().m_master_test_suite;
 }
 
 //____________________________________________________________________________//
@@ -277,7 +341,7 @@ get( test_unit_id id, test_unit_type t )
     test_unit const* res = s_frk_impl().m_test_units[id];
 
     if( (res->p_type & t) == 0 )
-        throw std::logic_error( "Invalid test unit type" );
+        throw internal_error( "Invalid test unit type" );
 
     return *res;
 }
@@ -288,42 +352,50 @@ void
 run( test_unit_id id, bool continue_test )
 {
     if( id == INV_TEST_UNIT_ID )
-        id = s_frk_impl().m_master_test_suite;
-
-    if( id == INV_TEST_UNIT_ID )
-        throw std::logic_error( "Test unit is initialized" );
+        id = master_test_suite().p_id;
 
     test_case_counter tcc;
     traverse_test_tree( id, tcc );
 
-    bool call_start_finish = !continue_test || !s_frk_impl().m_test_in_progress;
-    bool was_in_progress = s_frk_impl().m_test_in_progress;
+    if( tcc.m_count == 0 )
+        throw setup_error( BOOST_TEST_L( "test tree is empty" ) );
+
+    bool    call_start_finish   = !continue_test || !s_frk_impl().m_test_in_progress;
+    bool    was_in_progress     = s_frk_impl().m_test_in_progress;
 
     s_frk_impl().m_test_in_progress = true;
 
     if( call_start_finish ) {
-        BOOST_TEST_FOREACH( test_observer*, to, s_frk_impl().m_observers )
-            to->test_start( tcc.m_count );
+        BOOST_TEST_FOREACH( test_observer*, to, s_frk_impl().m_observers ) {
+            boost::execution_monitor em;
+
+            try {
+                em.execute( ut_detail::test_start_caller( to, tcc.m_count ) );
+            }
+            catch( execution_exception const& ex )  {
+                throw setup_error( ex.what() );
+            }
+        }
     }
 
     switch( runtime_config::random_seed() ) {
     case 0:
         break;
     case 1: {
-        unsigned int seed = std::time( 0 );
-        BOOST_MESSAGE( "Test cases order is shuffled using seed: " << seed );
+        unsigned int seed = (unsigned int)std::time( 0 );
+        BOOST_TEST_MESSAGE( "Test cases order is shuffled using seed: " << seed );
         std::srand( seed );
         break;
     }
     default:
-        BOOST_MESSAGE( "Test cases order is shuffled using seed: " << runtime_config::random_seed() );
+        BOOST_TEST_MESSAGE( "Test cases order is shuffled using seed: " << runtime_config::random_seed() );
         std::srand( runtime_config::random_seed() );
     }
 
     try {
         traverse_test_tree( id, s_frk_impl() );
     }
-    catch( test_aborted const& ) {
+    catch( test_being_aborted const& ) {
         // abort already reported
     }
 
@@ -364,10 +436,8 @@ exception_caught( execution_exception const& ex )
 //____________________________________________________________________________//
 
 void
-test_unit_aborted()
+test_unit_aborted( test_unit const& tu )
 {
-    test_unit const& tu = current_test_case();
-
     BOOST_TEST_FOREACH( test_observer*, to, s_frk_impl().m_observers )
         to->test_unit_aborted( tu );
 }
@@ -388,6 +458,19 @@ test_unit_aborted()
 //  Revision History :
 //
 //  $Log: framework.ipp,v $
+//  Revision 1.10  2006/03/19 07:27:52  rogeeff
+//  streamline test setup error message
+//
+//  Revision 1.9  2006/01/30 07:29:49  rogeeff
+//  split memory leaks detection API in two to get more functions with better defined roles
+//
+//  Revision 1.8  2005/12/17 02:34:11  rogeeff
+//  *** empty log message ***
+//
+//  Revision 1.7  2005/12/14 05:35:57  rogeeff
+//  DLL support implemented
+//  Alternative init API introduced
+//
 //  Revision 1.6  2005/05/08 08:55:09  rogeeff
 //  typos and missing descriptions fixed
 //

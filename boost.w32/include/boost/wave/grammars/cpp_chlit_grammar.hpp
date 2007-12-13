@@ -3,7 +3,7 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -28,6 +28,11 @@
 #include <boost/wave/wave_config.hpp>   
 #include <boost/wave/cpp_exceptions.hpp>   
 #include <boost/wave/grammars/cpp_literal_grammar_gen.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -85,8 +90,8 @@ namespace impl {
                 else {
                 // calculate the new value (avoiding a warning regarding 
                 // shifting count >= size of the type)
-                    value <<= 8 * (sizeof(wchar_t)-1);
-                    value <<= 8;  
+                    value <<= CHAR_BIT * (sizeof(wchar_t)-1);
+                    value <<= CHAR_BIT;  
                     value |= character & masks[sizeof(wchar_t)-1];
                 }
             }
@@ -97,7 +102,7 @@ namespace impl {
                 }
                 else {
                 // calculate the new value
-                    value <<= 8 * sizeof(char);
+                    value <<= CHAR_BIT * sizeof(char);
                     value |= character & masks[sizeof(char)-1];
                 }
             }
@@ -123,6 +128,10 @@ struct chlit_grammar :
         BOOST_SPIRIT_DEBUG_TRACE_GRAMMAR_NAME(*this, "chlit_grammar", 
             TRACE_CHLIT_GRAMMAR);
     }
+    
+    // no need for copy constructor/assignment operator
+    chlit_grammar(chlit_grammar const&);
+    chlit_grammar& operator=(chlit_grammar const&);
     
     template <typename ScannerT>
     struct definition
@@ -283,7 +292,7 @@ struct chlit_grammar :
 template <typename TokenT>
 BOOST_WAVE_CHLITGRAMMAR_GEN_INLINE 
 unsigned int
-chlit_grammar_gen<TokenT>::evaluate(TokenT const &token)
+chlit_grammar_gen<TokenT>::evaluate(TokenT const &token, value_error &status)
 {
     using namespace boost::spirit;
     
@@ -300,25 +309,21 @@ parse_info<typename TokenT::string_type::const_iterator> hit =
     else {
     // range check
         if ('L' == token_val[0]) {
-        // recognised wide character
+        // recognized wide character
             if (g.overflow || 
                 result > (unsigned long)(std::numeric_limits<wchar_t>::max)()) 
             {
             // out of range
-                BOOST_WAVE_THROW(preprocess_exception, 
-                    character_literal_out_of_range, 
-                    token_val.c_str(), token.get_position());
+                status = error_character_overflow;
             }
         }
         else {
-        // recognised narrow ('normal') character
+        // recognized narrow ('normal') character
             if (g.overflow || 
                 result > (unsigned long)(std::numeric_limits<unsigned char>::max)()) 
             {
             // out of range
-                BOOST_WAVE_THROW(preprocess_exception, 
-                    character_literal_out_of_range, 
-                    token_val.c_str(), token.get_position());
+                status = error_character_overflow;
             }
         }
     }
@@ -331,5 +336,10 @@ parse_info<typename TokenT::string_type::const_iterator> hit =
 }   // namespace grammars
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(CPP_CHLIT_GRAMMAR_HPP_9527D349_6592_449A_A409_42A001E6C64C_INCLUDED)

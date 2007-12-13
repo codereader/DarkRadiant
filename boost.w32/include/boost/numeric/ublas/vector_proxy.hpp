@@ -274,7 +274,7 @@ namespace boost { namespace numeric { namespace ublas {
             const_iterator (const self_type &vr, const const_subiterator_type &it):
                 container_const_reference<self_type> (vr), it_ (it) {}
             BOOST_UBLAS_INLINE
-            const_iterator (const iterator &it):
+            const_iterator (const typename self_type::iterator &it):  // ISSUE self_type:: stops VC8 using std::iterator here
                 container_const_reference<self_type> (it ()), it_ (it.it_) {}
 
             // Arithmetic
@@ -309,6 +309,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return *it_;
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
             // Index
@@ -402,6 +406,10 @@ namespace boost { namespace numeric { namespace ublas {
             reference operator * () const {
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return *it_;
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
             // Index
@@ -512,6 +520,9 @@ namespace boost { namespace numeric { namespace ublas {
     // Specialization of temporary_traits
     template <class V>
     struct vector_temporary_traits< vector_range<V> >
+    : vector_temporary_traits< V > {} ;
+    template <class V>
+    struct vector_temporary_traits< const vector_range<V> >
     : vector_temporary_traits< V > {} ;
 
 
@@ -770,7 +781,7 @@ namespace boost { namespace numeric { namespace ublas {
             const_iterator (const self_type &vs, const const_subiterator_type &it):
                 container_const_reference<self_type> (vs), it_ (it) {}
             BOOST_UBLAS_INLINE
-            const_iterator (const iterator &it):
+            const_iterator (const typename self_type::iterator &it):  // ISSUE self_type:: stops VC8 using std::iterator here
                 container_const_reference<self_type> (it ()), it_ (it.it_) {}
 
             // Arithmetic
@@ -806,6 +817,10 @@ namespace boost { namespace numeric { namespace ublas {
                 // FIXME replace find with at_element
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
             // Index
@@ -901,6 +916,11 @@ namespace boost { namespace numeric { namespace ublas {
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
             }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
+
 
             // Index
             BOOST_UBLAS_INLINE
@@ -1021,6 +1041,9 @@ namespace boost { namespace numeric { namespace ublas {
     // Specialization of temporary_traits
     template <class V>
     struct vector_temporary_traits< vector_slice<V> >
+    : vector_temporary_traits< V > {} ;
+    template <class V>
+    struct vector_temporary_traits< const vector_slice<V> >
     : vector_temporary_traits< V > {} ;
 
 
@@ -1283,7 +1306,7 @@ return true;
             const_iterator (const self_type &vi, const const_subiterator_type &it):
                 container_const_reference<self_type> (vi), it_ (it) {}
             BOOST_UBLAS_INLINE
-            const_iterator (const iterator &it):
+            const_iterator (const typename self_type::iterator &it):  // ISSUE self_type:: stops VC8 using std::iterator here
                 container_const_reference<self_type> (it ()), it_ (it.it_) {}
 
             // Arithmetic
@@ -1319,6 +1342,10 @@ return true;
                 // FIXME replace find with at_element
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
             // Index
@@ -1413,6 +1440,10 @@ return true;
                 // FIXME replace find with at_element
                 BOOST_UBLAS_CHECK (index () < (*this) ().size (), bad_index ());
                 return (*this) ().data_ (*it_);
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
             // Index
@@ -1529,6 +1560,9 @@ return true;
     // Specialization of temporary_traits
     template <class V>
     struct vector_temporary_traits< vector_indirect<V> >
+    : vector_temporary_traits< V > {} ;
+    template <class V>
+    struct vector_temporary_traits< const vector_indirect<V> >
     : vector_temporary_traits< V > {} ;
 
 }}}

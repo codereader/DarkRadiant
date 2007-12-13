@@ -1,18 +1,41 @@
 #ifndef DATE_TIME_TIME_ZONE_NAMES_HPP__
 #define DATE_TIME_TIME_ZONE_NAMES_HPP__
 
-/* Copyright (c) 2002,2003 CrystalClear Software, Inc.
+/* Copyright (c) 2002-2003,2005 CrystalClear Software, Inc.
  * Use, modification and distribution is subject to the 
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland
- * $Date: 2004/09/02 04:16:18 $
+ * $Date: 2005/10/23 20:15:06 $
  */
 
 #include <string>
 
 namespace boost {
 namespace date_time {
+
+  template<class CharT>
+  struct default_zone_names {
+    public:
+      typedef CharT char_type;
+      static const char_type standard_name[9];
+      static const char_type standard_abbrev[11];
+      static const char_type non_dst_identifier[7];
+  };
+  template <class CharT>
+  const typename default_zone_names<CharT>::char_type
+  default_zone_names<CharT>::standard_name[9] = 
+    {'s','t','d','_','n','a','m','e'};
+
+  template <class CharT>
+  const typename default_zone_names<CharT>::char_type
+  default_zone_names<CharT>::standard_abbrev[11] = 
+    {'s','t','d','_','a','b','b','r','e','v'};
+
+  template <class CharT>
+  const typename default_zone_names<CharT>::char_type
+  default_zone_names<CharT>::non_dst_identifier[7] = 
+    {'n','o','-','d','s','t'};
 
   //! Base type that holds various string names for timezone output.
   /*! Class that holds various types of strings used for timezones.
@@ -22,19 +45,25 @@ namespace date_time {
    *  Pacific Daylight Time and PDT. 
    *@parm CharT Allows class to support different character types
    */
-  template<class CharT = char>
+  template<class CharT>
   class time_zone_names_base
   {
   public:
     typedef std::basic_string<CharT> string_type;
-    time_zone_names_base(const string_type& std_zone_name,
-                         const string_type& std_zone_abbrev,
-                         const string_type& dst_zone_name,
-                         const string_type& dst_zone_abbrev) :
-      std_zone_name_(std_zone_name),
-      std_zone_abbrev_(std_zone_abbrev),
-      dst_zone_name_(dst_zone_name),
-      dst_zone_abbrev_(dst_zone_abbrev)
+    time_zone_names_base() :
+      std_zone_name_(default_zone_names<CharT>::standard_name),
+      std_zone_abbrev_(default_zone_names<CharT>::standard_abbrev),
+      dst_zone_name_(default_zone_names<CharT>::non_dst_identifier),
+      dst_zone_abbrev_(default_zone_names<CharT>::non_dst_identifier)
+    {}
+    time_zone_names_base(const string_type& std_zone_name_str,
+                         const string_type& std_zone_abbrev_str,
+                         const string_type& dst_zone_name_str,
+                         const string_type& dst_zone_abbrev_str) :
+      std_zone_name_(std_zone_name_str),
+      std_zone_abbrev_(std_zone_abbrev_str),
+      dst_zone_name_(dst_zone_name_str),
+      dst_zone_abbrev_(dst_zone_abbrev_str)
     {}
     string_type dst_zone_abbrev() const
     {
@@ -61,7 +90,7 @@ namespace date_time {
   };
   
   //! Specialization of timezone names for standard char.
-  typedef time_zone_names_base<char> time_zone_names;
+  //typedef time_zone_names_base<char> time_zone_names;
 
 } } //namespace
 

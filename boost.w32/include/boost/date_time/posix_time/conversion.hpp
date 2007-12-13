@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/11/01 04:26:55 $
+ * $Date: 2005/11/01 04:27:29 $
  */
 
 #include "boost/date_time/posix_time/ptime.hpp"

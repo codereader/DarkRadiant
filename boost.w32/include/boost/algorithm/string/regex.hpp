@@ -474,6 +474,147 @@ namespace boost {
                 regex_finder(Rx,Flags) );         
         }
 
+//  join_if ------------------------------------------------------------------//
+
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+
+        //! Conditional join algorithm
+        /*!
+            This algorithm joins all strings in a 'list' into one long string.
+            Segments are concatenated by given separator. Only segments that
+            match the given regular expression will be added to the result
+
+            This is a specialization of join_if algorithm.
+
+            \param Input A container that holds the input strings. It must be a container-of-containers.
+            \param Separator A string that will separate the joined segments.
+            \param Rx A regular expression
+            \param Flags Regex options
+            \return Concatenated string.
+
+            \note This function provides the strong exception-safety guarantee
+        */
+        template< 
+            typename SequenceSequenceT, 
+            typename Range1T,             
+            typename CharT, 
+            typename RegexTraitsT >
+        inline typename range_value<SequenceSequenceT>::type 
+        join_if(
+            const SequenceSequenceT& Input,
+            Range1T& Separator,
+            const basic_regex<CharT, RegexTraitsT>& Rx,
+            match_flag_type Flags=match_default )
+        {
+            // Define working types
+            typedef typename range_value<SequenceSequenceT>::type ResultT;
+            typedef typename range_const_iterator<SequenceSequenceT>::type InputIteratorT;
+
+            // Parse input
+            InputIteratorT itBegin=begin(Input);
+            InputIteratorT itEnd=end(Input);
+
+            // Construct container to hold the result
+            ResultT Result;
+
+
+            // Roll to the first element that will be added
+            while(
+                itBegin!=itEnd && 
+                !regex_match(begin(*itBegin), end(*itBegin), Rx, Flags)) ++itBegin;
+
+            // Add this element
+            if(itBegin!=itEnd)
+            {
+                detail::insert(Result, end(Result), *itBegin);
+                ++itBegin;
+            }
+
+            for(;itBegin!=itEnd; ++itBegin)
+            {
+                if(regex_match(begin(*itBegin), end(*itBegin), Rx, Flags))
+                {
+                    // Add separator
+                    detail::insert(Result, end(Result), Separator);
+                    // Add element
+                    detail::insert(Result, end(Result), *itBegin);
+                }
+            }
+
+            return Result;
+        }
+
+#else  // BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+
+                //! Conditional join algorithm
+        /*!
+            This algorithm joins all strings in a 'list' into one long string.
+            Segments are concatenated by given separator. Only segments that
+            match the given regular expression will be added to the result
+
+            This is a specialization of join_if algorithm.
+
+            \param Input A container that holds the input strings. It must be a container-of-containers.
+            \param Separator A string that will separate the joined segments.
+            \param Rx A regular expression
+            \param Flags Regex options
+            \return Concatenated string.
+
+            \note This function provides the strong exception-safety guarantee
+        */
+        template< 
+            typename SequenceSequenceT, 
+            typename Range1T,             
+            typename CharT, 
+            typename RegexTraitsT >
+        inline typename range_value<SequenceSequenceT>::type 
+        join_if_regex(
+            const SequenceSequenceT& Input,
+            Range1T& Separator,
+            const basic_regex<CharT, RegexTraitsT>& Rx,
+            match_flag_type Flags=match_default )
+        {
+            // Define working types
+            typedef typename range_value<SequenceSequenceT>::type ResultT;
+            typedef typename range_const_iterator<SequenceSequenceT>::type InputIteratorT;
+
+            // Parse input
+            InputIteratorT itBegin=begin(Input);
+            InputIteratorT itEnd=end(Input);
+
+            // Construct container to hold the result
+            ResultT Result;
+                               
+
+            // Roll to the first element that will be added
+            while(
+                itBegin!=itEnd && 
+                !regex_match(begin(*itBegin), end(*itBegin), Rx, Flags)) ++itBegin;
+
+            // Add this element
+            if(itBegin!=itEnd)
+            {
+                detail::insert(Result, end(Result), *itBegin);
+                ++itBegin;
+            }
+
+            for(;itBegin!=itEnd; ++itBegin)
+            {
+                if(regex_match(begin(*itBegin), end(*itBegin), Rx, Flags))
+                {
+                    // Add separator
+                    detail::insert(Result, end(Result), Separator);
+                    // Add element
+                    detail::insert(Result, end(Result), *itBegin);
+                }
+            }
+
+            return Result;
+        }
+
+
+#endif // BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+
     } // namespace algorithm
 
     // pull names into the boost namespace
@@ -488,6 +629,14 @@ namespace boost {
     using algorithm::erase_all_regex_copy;
     using algorithm::find_all_regex;
     using algorithm::split_regex;
+
+#ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+    using algorithm::join_if;
+#else  // BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+    using algorithm::join_if_regex;
+#endif // BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+
+
 
 } // namespace boost
 
