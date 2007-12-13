@@ -264,8 +264,8 @@ class idEnvironment(Environment):
 	# On Win32 we need to add the local paths, since there is no
 	# global include/lib path.
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/gtk2.w32/include/glib-2.0', '#/gtk2.w32/lib/glib-2.0/include', '#/gtk2.w32/include/cairo'])
-			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+			self.Append(CPPPATH = ['#/w32deps/gtk2/include/glib-2.0', '#/w32deps/gtk2/lib/glib-2.0/include', '#/w32deps/gtk2/include/cairo'])
+			self.Append(LIBPATH = ['#/w32deps/gtk2/lib'])
 			self.Append(LIBS = ['glib-2.0', 'gobject-2.0'])
 		else: # Assume Linux
 			self.Append(CXXFLAGS = '`pkg-config glib-2.0 --cflags` ')
@@ -293,8 +293,8 @@ class idEnvironment(Environment):
 
 	def useGtk2(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/gtk2.w32/include/gtk-2.0', '#/gtk2.w32/lib/gtk-2.0/include', '#/gtk2.w32/include/pango-1.0', '#/gtk2.w32/include/atk-1.0'])
-			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+			self.Append(CPPPATH = ['#/w32deps/gtk2/include/gtk-2.0', '#/w32deps/gtk2/lib/gtk-2.0/include', '#/w32deps/gtk2/include/pango-1.0', '#/w32deps/gtk2/include/atk-1.0'])
+			self.Append(LIBPATH = ['#/w32deps/gtk2/lib'])
 			self.Append(LIBS = ['gtk-win32-2.0', 'gdk-win32-2.0', 'atk-1.0', 'pango-1.0', 'pangowin32-1.0', 'gdk_pixbuf-2.0'])
 			self.Append(CXXFLAGS = '-mms-bitfields ')
 			self.Append(CFLAGS = '-mms-bitfields ')
@@ -305,8 +305,8 @@ class idEnvironment(Environment):
    
 	def useGtkGLExt(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/gtk2.w32/include/gtkglext-1.0', '#/gtk2.w32/lib/gtkglext-1.0/include'])
-			self.Append(LIBPATH = ['#/gtk2.w32/lib'])
+			self.Append(CPPPATH = ['#/w32deps/gtk2/include/gtkglext-1.0', '#/w32deps/gtk2/lib/gtkglext-1.0/include'])
+			self.Append(LIBPATH = ['#/w32deps/gtk2/lib'])
 			self.Append(LIBS = ['gtkglext-win32-1.0', 'gdkglext-win32-1.0'])
 		else: # Assume X11
 			self.Append(CXXFLAGS = '`pkg-config gtkglext-1.0 --cflags` ')
