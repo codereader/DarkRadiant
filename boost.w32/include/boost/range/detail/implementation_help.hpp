@@ -43,7 +43,7 @@ namespace boost
 #else
         inline const wchar_t* str_end( const wchar_t* s, const wchar_t* )
         {
-            if( s == 0 && s[0] == 0 )
+            if( s == 0 || s[0] == 0 )
                 return s;
             while( *++s != 0 )
                 ;
@@ -54,7 +54,7 @@ namespace boost
         template< class Char >
         inline Char* str_end( Char* s )
         {
-            return (Char*)str_end( s, s );
+            return const_cast<Char*>( str_end( s, s ) );
         }
 
         template< class T, std::size_t sz >

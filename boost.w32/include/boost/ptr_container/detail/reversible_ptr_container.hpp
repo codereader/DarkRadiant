@@ -17,6 +17,7 @@
 # pragma once
 #endif
 
+#include <boost/ptr_container/detail/throw_exception.hpp>
 #include <boost/ptr_container/detail/scoped_deleter.hpp>
 #include <boost/ptr_container/detail/static_move_ptr.hpp>
 #include <boost/ptr_container/exception.hpp>
@@ -28,21 +29,29 @@
 #include <boost/range/functions.hpp>
 #endif
 
-#include <boost/assert.hpp>
 #include <boost/config.hpp>
-#include <boost/range/result_iterator.hpp>
+#include <boost/iterator/reverse_iterator.hpp>
+#include <boost/range/iterator.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_pointer.hpp>
 #include <boost/type_traits/is_integral.hpp>
+#include <boost/serialization/split_member.hpp>
 #include <algorithm>
 #include <exception>
 #include <memory>
+#include <typeinfo>
 
 namespace boost
 {
     
 namespace ptr_container_detail
 {
+
+    template< class T >
+    inline T const& serialize_as_const( T const& r )
+    {
+        return r;
+    }
 
     template< class CloneAllocator >
     struct clone_deleter
@@ -73,7 +82,11 @@ namespace ptr_container_detail
     class reversible_ptr_container 
     {
     private:
+#ifdef  __MWERKS__
+        enum { allow_null = Config::allow_null };
+#else
         BOOST_STATIC_CONSTANT( bool, allow_null = Config::allow_null );
+#endif        
         
         typedef BOOST_DEDUCED_TYPENAME Config::value_type Ty_;
 
@@ -98,7 +111,12 @@ namespace ptr_container_detail
                     BOOST_ASSERT( x != 0 && "Cannot insert clone of null!" );
                 }
 
-                return CloneAllocator::allocate_clone( *x );
+                Ty_* res = CloneAllocator::allocate_clone( *x );
+                BOOST_ASSERT( typeid(*res) == typeid(*x) &&
+                              "CloneAllocator::allocate_clone() does not clone the "
+                              "object properly. Check that new_clone() is implemented"
+                              " correctly" );
+                return res;
             }
             
             static void deallocate_clone( const Ty_* x )
@@ -124,13 +142,11 @@ namespace ptr_container_detail
 
         Cont      c_;
 
-    protected:
+    public:
         Cont& c_private()                { return c_; }
         const Cont& c_private() const    { return c_; }
 
     public: // typedefs
-        typedef  BOOST_DEDUCED_TYPENAME Config::object_type  
-                               object_type;
         typedef  Ty_*          value_type;
         typedef  Ty_*          pointer;
         typedef  Ty_&          reference;
@@ -140,9 +156,9 @@ namespace ptr_container_detail
                                    iterator;
         typedef  BOOST_DEDUCED_TYPENAME Config::const_iterator
                                    const_iterator;
-        typedef  BOOST_DEDUCED_TYPENAME Config::reverse_iterator
-                                   reverse_iterator;
-        typedef  BOOST_DEDUCED_TYPENAME Config::const_reverse_iterator     
+        typedef  boost::reverse_iterator< iterator > 
+                                   reverse_iterator;  
+        typedef  boost::reverse_iterator< const_iterator >     
                                    const_reverse_iterator;
         typedef  BOOST_DEDUCED_TYPENAME Cont::difference_type
                                    difference_type; 
@@ -238,36 +254,12 @@ namespace ptr_container_detail
                 remove( first );
         }
 
-        template< class Range >
-        BOOST_DEDUCED_TYPENAME range_result_iterator<Range>::type
-        adl_begin( Range& r )
-        {
-            #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))  
-            return begin( r );
-            #else
-            using boost::begin;
-            return begin( r );
-            #endif
-        }
-
-        template< class Range >
-        BOOST_DEDUCED_TYPENAME range_result_iterator<Range>::type
-        adl_end( Range& r )
-        {
-            #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x564))  
-            return end( r );
-            #else
-            using boost::end;
-            return end( r );
-            #endif
-        }
-        
         static void enforce_null_policy( Ty_* x, const char* msg )
         {
             if( !allow_null )
             {
-                if( 0 == x )
-                    throw bad_pointer( msg );
+                BOOST_PTR_CONTAINER_THROW_EXCEPTION( 0 == x && "null not allowed", 
+                                                     bad_pointer, msg );
             }
         }
 
@@ -376,16 +368,25 @@ namespace ptr_container_detail
         }
  
     public: // container requirements
-        iterator                   begin()            { return iterator( c_.begin() ); }
-        const_iterator             begin() const      { return const_iterator( c_.begin() ); }
-        iterator                   end()              { return iterator( c_.end() ); }
-        const_iterator             end() const        { return const_iterator( c_.end() ); }
-        reverse_iterator           rbegin()           { return reverse_iterator( c_.rbegin() ); } 
-        const_reverse_iterator     rbegin() const     { return const_reverse_iterator( c_.rbegin() ); } 
-        reverse_iterator           rend()             { return reverse_iterator( c_.rend() ); } 
-        const_reverse_iterator     rend() const       { return const_reverse_iterator( c_.rend() ); } 
+        iterator begin()            
+            { return iterator( c_.begin() ); }
+        const_iterator begin() const      
+            { return const_iterator( c_.begin() ); }
+        iterator end()              
+            { return iterator( c_.end() ); }
+        const_iterator end() const        
+            { return const_iterator( c_.end() ); }
+        
+        reverse_iterator rbegin()           
+            { return reverse_iterator( this->end() ); } 
+        const_reverse_iterator rbegin() const     
+            { return const_reverse_iterator( this->end() ); } 
+        reverse_iterator rend()             
+            { return reverse_iterator( this->begin() ); } 
+        const_reverse_iterator rend() const       
+            { return const_reverse_iterator( this->begin() ); } 
  
-        void swap( reversible_ptr_container& r ) // notrow
+        void swap( reversible_ptr_container& r ) // nothrow
         { 
             c_.swap( r.c_ );
         }
@@ -452,32 +453,38 @@ namespace ptr_container_detail
             return res;
         }
 
-        iterator erase( iterator x ) // nothrow 
-        { 
-            BOOST_ASSERT( !empty() );
-            BOOST_ASSERT( x != end() );
-            
-            remove( x ); 
-            return iterator( c_.erase( x.base() ) );
+        template< class U >
+        iterator insert( iterator before, std::auto_ptr<U> x )
+        {
+            return insert( before, x.release() );
         }
-        
-        iterator erase( iterator first, iterator last ) // nothrow 
+
+        iterator erase( iterator x ) // nothrow
         {
             BOOST_ASSERT( !empty() );
-            remove( first, last ); 
-            return iterator( c_.erase( first.base(), 
+            BOOST_ASSERT( x != end() );
+
+            remove( x );
+            return iterator( c_.erase( x.base() ) );
+        }
+
+        iterator erase( iterator first, iterator last ) // nothrow
+        {
+            //BOOST_ASSERT( !empty() );
+            remove( first, last );
+            return iterator( c_.erase( first.base(),
                                        last.base() ) );
         }
 
         template< class Range >
         iterator erase( const Range& r )
         {
-            return erase( adl_begin(r), adl_end(r) );
+            return erase( boost::begin(r), boost::end(r) );
         }
-        
-        void clear()                               
-        { 
-            remove_all(); 
+
+        void clear()
+        {
+            remove_all();
             c_.clear();
         }
         
@@ -486,8 +493,9 @@ namespace ptr_container_detail
         auto_type release( iterator where )
         { 
             BOOST_ASSERT( where != end() );
-            if( empty() )
-                throw bad_ptr_container_operation( "'release()' on empty container" ); 
+            
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( empty(), bad_ptr_container_operation,
+                                                 "'release()' on empty container" ); 
             
             auto_type ptr( Config::get_pointer( where ) );  // nothrow
             c_.erase( where.base() );                       // nothrow
@@ -502,8 +510,8 @@ namespace ptr_container_detail
             
             auto_type ptr( x );
             
-            if( empty() )
-                throw bad_ptr_container_operation( "'replace()' on empty container" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( empty(), bad_ptr_container_operation,
+                                                 "'replace()' on empty container" );
 
             auto_type old( Config::get_pointer( where ) );  // nothrow
             
@@ -515,19 +523,89 @@ namespace ptr_container_detail
             return boost::ptr_container_detail::move( old );
         }
 
+        template< class U >
+        auto_type replace( iterator where, std::auto_ptr<U> x )
+        {
+            return replace( where, x.release() ); 
+        }
+
         auto_type replace( size_type idx, Ty_* x ) // strong
         {
             enforce_null_policy( x, "Null pointer in 'replace()'" );
             
             auto_type ptr( x ); 
             
-            if( idx >= size() ) 
-                throw bad_index( "'replace()' out of bounds" );
+            BOOST_PTR_CONTAINER_THROW_EXCEPTION( idx >= size(), bad_index, 
+                                                 "'replace()' out of bounds" );
             
             auto_type old( static_cast<Ty_*>( c_[idx] ) ); // nothrow
             c_[idx] = ptr.release();                       // nothrow, commit
             return boost::ptr_container_detail::move( old );
         } 
+
+        template< class U >
+        auto_type replace( size_type idx, std::auto_ptr<U> x )
+        {
+            return replace( idx, x.release() );
+        }
+
+    //
+    // serialization
+    //
+    
+    protected:
+
+        template< class Archive >
+        void save_helper( Archive& ar ) const
+        {
+            const_iterator i = this->begin(), e = this->end();
+            for( ; i != e; ++i )
+                ar & ptr_container_detail::serialize_as_const( 
+                                 static_cast<value_type>( *i.base() ) );
+        }
+
+    public: 
+
+        template< class Archive >
+        void save( Archive& ar, const unsigned ) const
+        {
+            ar & ptr_container_detail::serialize_as_const( this->size() );
+            this->save_helper( ar );
+        }
+
+    protected:
+
+        template< class Archive >
+        void load_helper( Archive& ar, size_type n )
+        {   
+            //
+            // Called after an appropriate reserve on c.
+            //
+
+            this->clear();            
+            for( size_type i = 0u; i != n; ++i )
+            {
+                //
+                // Remark: pointers are not tracked,
+                // so we need not call ar.reset_object_address(v, u)
+                //
+                value_type ptr;
+                ar & ptr;
+                this->insert( this->end(), ptr );
+            }
+        }
+
+    public:
+        
+        template< class Archive >
+        void load( Archive& ar, const unsigned ) 
+        {
+            size_type n;
+            ar & n;
+            this->load_helper( ar, n ); 
+        }
+        
+        BOOST_SERIALIZATION_SPLIT_MEMBER()
         
     }; // 'reversible_ptr_container'
 

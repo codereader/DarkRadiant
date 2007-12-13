@@ -14,6 +14,7 @@
 # pragma once
 #endif
 
+#include <boost/config.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/integer_traits.hpp>
 #include <boost/iostreams/detail/config/codecvt.hpp> // mbstate_t.
@@ -21,6 +22,10 @@
 
 // Must come last.
 #include <boost/iostreams/detail/config/disable_warnings.hpp> 
+
+#ifdef BOOST_NO_STDC_NAMESPACE
+namespace std { using ::fpos_t; }
+#endif
 
 namespace boost { namespace iostreams {
 
@@ -46,7 +51,7 @@ inline std::streampos offset_to_position(stream_offset off)
     return std::streampos(std::mbstate_t(), off);
 }
 
-inline stream_offset fpos_t_to_offset(fpos_t pos)
+inline stream_offset fpos_t_to_offset(std::fpos_t pos)
 { // Helper function.
 #if defined(_POSIX_) || (_INTEGRAL_MAX_BITS >= 64)
     return pos;

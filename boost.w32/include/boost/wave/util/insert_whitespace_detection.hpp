@@ -5,7 +5,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -14,6 +14,11 @@
 
 #include <boost/wave/wave_config.hpp>   
 #include <boost/wave/token_ids.hpp>   
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -68,6 +73,7 @@ namespace impl {
 
         case T_FLOATLIT:
         case T_INTLIT:
+        case T_PP_NUMBER:
             return (value.size() > 1 || (value[0] != 'e' && value[0] != 'E'));
             
          // avoid constructing universal characters (\u1234)
@@ -87,6 +93,7 @@ namespace impl {
         case T_INTLIT:
         case T_FLOATLIT:
         case T_FIXEDPOINTLIT:
+        case T_PP_NUMBER:
             return true;
         }
         return false;
@@ -103,6 +110,7 @@ namespace impl {
         case T_INTLIT:
         case T_FLOATLIT:
         case T_FIXEDPOINTLIT:
+        case T_PP_NUMBER:
             return true;
         }
         return false;
@@ -145,6 +153,7 @@ namespace impl {
         case T_INTLIT:
         case T_FLOATLIT:
         case T_FIXEDPOINTLIT:
+        case T_PP_NUMBER:
             return true;
         }
         return false;
@@ -204,16 +213,17 @@ public:
     bool must_insert(boost::wave::token_id current, StringT const &value)
     {
         using namespace boost::wave;
-        switch (current) {
+        switch (static_cast<unsigned int>(current)) {
         case T_NONREPLACABLE_IDENTIFIER:
         case T_IDENTIFIER: 
             return impl::handle_identifier(prev, beforeprev, value); 
+        case T_PP_NUMBER:
         case T_INTLIT:
             return impl::handle_intlit(prev, beforeprev); 
         case T_FLOATLIT:
             return impl::handle_floatlit(prev, beforeprev); 
         case T_STRINGLIT:
-            if (TOKEN_FROM_ID('L', UnknownTokenType) == prev)       // 'L'
+            if (TOKEN_FROM_ID('L', IdentifierTokenType) == prev)       // 'L'
                 return true;
             break;
         case T_LEFTBRACE_ALT:
@@ -303,6 +313,11 @@ public:
                 IS_CATEGORY(prev, KeywordTokenType))
                 return true;
             break;
+            
+        case T_STAR:
+            if (T_STAR == prev)
+                return false;     // '*****' do not need to be separated
+            break;
         }
 
     // else, handle operators separately
@@ -328,5 +343,10 @@ private:
 }   //  namespace util
 }   //  namespace wave 
 }   //  namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(INSERT_WHITESPACE_DETECTION_HPP_765EF77B_0513_4967_BDD6_6A38148C4C96_INCLUDED)

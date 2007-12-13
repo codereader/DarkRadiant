@@ -190,7 +190,7 @@ namespace boost
     inline BOOST_DEDUCED_TYPENAME range_const_iterator<T>::type
     const_begin( const T& r )
     {
-        return begin( r );
+        return boost::begin( r );
     }
 }
 

@@ -30,21 +30,22 @@
 #include <boost/mpl/int.hpp>
 #include <boost/serialization/level_enum.hpp>
 #include <boost/serialization/tracking_enum.hpp>
-#include <boost/serialization/type_info_implementation.hpp>
 
 namespace boost {
 namespace serialization {
 
 // common base class used to detect appended traits class
-struct basic_traits {
-};
+struct basic_traits {};
+
+template <class T>
+struct extended_type_info_impl;
 
 template<
     class T, 
     int Level, 
     int Tracking,
     unsigned int Version = 0,
-    class ETII = BOOST_SERIALIZATION_EXTENDED_TYPE_INFO_STUB(T)
+    class ETII = extended_type_info_impl< T >
 >
 struct traits : public basic_traits {
     BOOST_STATIC_ASSERT(Version == 0 || Level >= object_class_info);

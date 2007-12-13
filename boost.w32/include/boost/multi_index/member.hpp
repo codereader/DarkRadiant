@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2006 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -16,7 +16,12 @@
 #include <boost/config.hpp> /* keep it first to prevent nasty warns in MSVC */
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/is_const.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <cstddef>
+
+#if !defined(BOOST_NO_SFINAE)
+#include <boost/type_traits/is_convertible.hpp>
+#endif
 
 namespace boost{
 
@@ -52,7 +57,15 @@ struct const_member_base
   typedef Type result_type;
 
   template<typename ChainedPtr>
-  Type& operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const Class&>,Type&>::type
+#else
+  Type&
+#endif
+  
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -67,7 +80,7 @@ struct const_member_base
     return operator()(x.get());
   }
 
-  Type& operator()(const reference_wrapper<Class> x,int=0)const
+  Type& operator()(const reference_wrapper<Class>& x,int=0)const
   { 
     return operator()(x.get());
   }
@@ -79,7 +92,15 @@ struct non_const_member_base
   typedef Type result_type;
 
   template<typename ChainedPtr>
-  Type& operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const Class&>,Type&>::type
+#else
+  Type&
+#endif
+
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -139,7 +160,15 @@ struct const_member_offset_base
   typedef Type result_type;
 
   template<typename ChainedPtr>
-  Type& operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const Class&>,Type&>::type
+#else
+  Type&
+#endif 
+    
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -169,7 +198,15 @@ struct non_const_member_offset_base
   typedef Type result_type;
 
   template<typename ChainedPtr>
-  Type& operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const Class&>,Type&>::type
+#else
+  Type&
+#endif 
+  
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -219,10 +256,10 @@ struct member_offset:
 
 #if defined(BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS)
 #define BOOST_MULTI_INDEX_MEMBER(Class,Type,MemberName) \
-::boost::multi_index::member_offset<Class,Type,offsetof(Class,MemberName)>
+::boost::multi_index::member_offset< Class,Type,offsetof(Class,MemberName) >
 #else
 #define BOOST_MULTI_INDEX_MEMBER(Class,Type,MemberName) \
-::boost::multi_index::member<Class,Type,&Class::MemberName>
+::boost::multi_index::member< Class,Type,&Class::MemberName >
 #endif
 
 } /* namespace multi_index */

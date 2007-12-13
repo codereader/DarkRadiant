@@ -29,7 +29,7 @@ BOOST_REGEX_DECL void BOOST_REGEX_CALL verify_options(boost::regex_constants::sy
 // function can_start:
 //
 template <class charT>
-bool can_start(charT c, const unsigned char* map, unsigned char mask)
+inline bool can_start(charT c, const unsigned char* map, unsigned char mask)
 {
    return ((c < static_cast<charT>(0)) ? true : ((c >= static_cast<charT>(1 << CHAR_BIT)) ? true : map[c] & mask));
 }
@@ -49,7 +49,7 @@ inline bool can_start(unsigned short c, const unsigned char* map, unsigned char 
 {
    return ((c >= (1 << CHAR_BIT)) ? true : map[c] & mask);
 }
-#if !defined(__HP_aCC)
+#if !defined(__hpux) // can't use WCHAR_MIN in pp-directive
 #if defined(WCHAR_MIN) && (WCHAR_MIN == 0) && !defined(BOOST_NO_INTRINSIC_WCHAR_T)
 inline bool can_start(wchar_t c, const unsigned char* map, unsigned char mask)
 {
@@ -327,7 +327,13 @@ public:
       match_results<BidiIterator, Allocator>& what, 
       const basic_regex<char_type, traits>& e,
       match_flag_type f,
-      BidiIterator base);
+      BidiIterator l_base)
+      :  m_result(what), base(first), last(end), 
+         position(first), backstop(l_base), re(e), traits_inst(e.get_traits()), 
+         m_independent(false), next_count(&rep_obj), rep_obj(&next_count)
+   {
+      construct_init(e, f);
+   }
 
    bool match();
    bool find();
@@ -339,6 +345,7 @@ public:
 
 private:
    void construct_init(const basic_regex<char_type, traits>& e, match_flag_type f);
+
    bool find_imp();
    bool match_imp();
 #ifdef BOOST_REGEX_HAS_MS_STACK_GUARD
@@ -420,9 +427,9 @@ private:
    // matching flags in use:
    match_flag_type m_match_flags;
    // how many states we have examined so far:
-   difference_type state_count;
+   boost::uintmax_t state_count;
    // max number of states to examine before giving up:
-   difference_type max_state_count;
+   boost::uintmax_t max_state_count;
    // whether we should ignore case or not:
    bool icase;
    // set to true when (position == last), indicates that we may have a partial match:

@@ -17,66 +17,31 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <istream>
-#include <boost/archive/detail/auto_link_archive.hpp>
-#include <boost/archive/basic_binary_iarchive.hpp>
-#include <boost/archive/basic_binary_iprimitive.hpp>
-
-#include <boost/archive/detail/abi_prefix.hpp> // must be the last header
+#include <boost/archive/binary_iarchive_impl.hpp>
 
 namespace boost { 
 namespace archive {
-
-template<class Archive>
-class binary_iarchive_impl : 
-    public basic_binary_iprimitive<Archive, std::istream>,
-    public basic_binary_iarchive<Archive>
-{
-#ifdef BOOST_NO_MEMBER_TEMPLATE_FRIENDS
-public:
-#else
-    friend class detail::interface_iarchive<Archive>;
-    friend class basic_binary_iarchive<Archive>;
-    friend class load_access;
-protected:
-#endif
-    // note: the following should not needed - but one compiler (vc 7.1)
-    // fails to compile one test (test_shared_ptr) without it !!!
-    // make this protected so it can be called from a derived archive
-    template<class T>
-    void load_override(T & t, BOOST_PFTO int){
-        basic_binary_iarchive<Archive>::load_override(t, 0);
-    }
-    void init(){
-        #if ! defined(__MWERKS__)
-            this->basic_binary_iarchive<Archive>::init();
-            this->basic_binary_iprimitive<Archive, std::istream>::init();
-        #else
-            basic_binary_iarchive<Archive>::init();
-            basic_binary_iprimitive<Archive, std::istream>::init();
-        #endif
-    }
-    binary_iarchive_impl(std::istream & is, unsigned int flags) :
-        basic_binary_iprimitive<Archive, std::istream>(
-            is, 
-            0 != (flags & no_codecvt)
-        ),
-        basic_binary_iarchive<Archive>(flags)
-    {
-        if(0 == (flags & no_header)){
-            init();
-        }
-    }
-};
 
 // do not derive from this class.  If you want to extend this functionality
 // via inhertance, derived from binary_iarchive_impl instead.  This will
 // preserve correct static polymorphism.
 class binary_iarchive : 
-    public binary_iarchive_impl<binary_iarchive>
+    public binary_iarchive_impl<
+        boost::archive::binary_iarchive, 
+        std::istream::char_type, 
+        std::istream::traits_type
+    >
 {
 public:
     binary_iarchive(std::istream & is, unsigned int flags = 0) :
-        binary_iarchive_impl<binary_iarchive>(is, flags)
+        binary_iarchive_impl<
+            binary_iarchive, std::istream::char_type, std::istream::traits_type
+        >(is, flags)
+    {}
+    binary_iarchive(std::streambuf & bsb, unsigned int flags = 0) :
+        binary_iarchive_impl<
+            binary_iarchive, std::istream::char_type, std::istream::traits_type
+        >(bsb, flags)
     {}
 };
 
@@ -86,7 +51,5 @@ public:
 // required by smart_cast for compilers not implementing 
 // partial template specialization
 BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(boost::archive::binary_iarchive)
-
-#include <boost/archive/detail/abi_suffix.hpp> // pops abi_suffix.hpp pragmas
 
 #endif // BOOST_ARCHIVE_BINARY_IARCHIVE_HPP

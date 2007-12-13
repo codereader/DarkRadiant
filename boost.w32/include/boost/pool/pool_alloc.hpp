@@ -19,9 +19,11 @@
 // boost::singleton_pool
 #include <boost/pool/singleton_pool.hpp>
 
+#include <boost/detail/workaround.hpp>
+
 // The following code will be put into Boost.Config in a later revision
-#if defined(_RWSTD_VER) || defined(__SGI_STL_PORT)
- // Needed, as of bcc 5.5 and STLPort 4.5b8
+#if defined(_RWSTD_VER) || defined(__SGI_STL_PORT) || \
+    BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
  #define BOOST_NO_PROPER_STL_DEALLOCATE
 #endif
 

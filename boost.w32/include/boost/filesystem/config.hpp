@@ -1,6 +1,6 @@
 //  boost/filesystem/config.hpp  ---------------------------------------------//
 
-//  © Copyright Beman Dawes 2003
+//  Copyright Beman Dawes 2003
 //  Use, modification, and distribution is subject to the Boost Software
 //  License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
@@ -12,10 +12,56 @@
 #ifndef BOOST_FILESYSTEM_CONFIG_HPP
 #define BOOST_FILESYSTEM_CONFIG_HPP
 
+#define BOOST_FILESYSTEM_I18N  // aid users wishing to compile several versions
+
+//  ability to change namespace aids path_table.cpp  ------------------------// 
+#ifndef BOOST_FILESYSTEM_NAMESPACE
+# define BOOST_FILESYSTEM_NAMESPACE filesystem
+#endif
+
 // This header implements separate compilation features as described in
 // http://www.boost.org/more/separate_compilation.html
 
 #include <boost/config.hpp>
+
+//  determine platform  ------------------------------------------------------//
+
+//  BOOST_CYGWIN_PATH implies BOOST_WINDOWS_PATH and BOOST_POSIX_API
+
+# if defined(BOOST_CYGWIN_PATH)
+#   if defined(BOOST_POSIX_PATH)
+#     error BOOST_POSIX_PATH is invalid when BOOST_CYGWIN_PATH is defined
+#   endif
+#   if defined(BOOST_WINDOWS_API)
+#     error BOOST_WINDOWS_API is invalid when BOOST_CYGWIN_PATH is defined
+#   endif
+#   define BOOST_WINDOWS_PATH
+#   define BOOST_POSIX_API
+# endif
+
+//  BOOST_POSIX_API or BOOST_WINDOWS_API specify which API to use
+
+# if defined( BOOST_WINDOWS_API ) && defined( BOOST_POSIX_API )
+#   error both BOOST_WINDOWS_API and BOOST_POSIX_API are defined
+# elif !defined( BOOST_WINDOWS_API ) && !defined( BOOST_POSIX_API )
+#   if defined(_WIN32) || defined(__WIN32__) || defined(WIN32) || defined(__CYGWIN__)
+#     define BOOST_WINDOWS_API
+#   else
+#     define BOOST_POSIX_API 
+#   endif
+# endif
+
+//  BOOST_WINDOWS_PATH enables Windows path syntax recognition
+
+# if !defined(BOOST_POSIX_PATH) && (defined(_WIN32) || defined(__WIN32__) || defined(WIN32) || defined(__CYGWIN__))
+#   define BOOST_WINDOWS_PATH
+# endif
+
+//  narrow support only for badly broken compilers or libraries  -------------//
+
+# if defined(BOOST_NO_STD_WSTRING) || defined(BOOST_NO_SFINAE) || defined(BOOST_NO_STD_LOCALE)
+#   define BOOST_FILESYSTEM_NARROW_ONLY
+# endif
 
 //  enable dynamic linking on Windows  ---------------------------------------//
 

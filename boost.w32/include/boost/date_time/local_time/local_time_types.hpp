@@ -5,7 +5,7 @@
  * Subject to the Boost Software License, Version 1.0. 
  * (See accompanying file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/05/11 13:01:53 $
+ * $Date: 2005/10/23 20:15:07 $
  */
 
 #include "boost/date_time/local_time/local_date_time.hpp"
@@ -27,9 +27,17 @@ namespace local_time {
 
   typedef date_time::second_clock<local_date_time> local_sec_clock; 
   typedef date_time::microsec_clock<local_date_time> local_microsec_clock;
-  //! Shared Pointer for time_zone and posix_time_zone objects
-  typedef boost::shared_ptr<time_zone> time_zone_ptr;
   
+  typedef date_time::time_zone_base<posix_time::ptime, char> time_zone;
+  typedef date_time::time_zone_base<posix_time::ptime, wchar_t> wtime_zone;
+
+  //! Shared Pointer for custom_time_zone and posix_time_zone objects
+  typedef boost::shared_ptr<time_zone> time_zone_ptr;
+  typedef boost::shared_ptr<wtime_zone> wtime_zone_ptr;
+ 
+  typedef date_time::time_zone_names_base<char> time_zone_names;
+  typedef date_time::time_zone_names_base<wchar_t> wtime_zone_names;
+
   //bring special enum values into the namespace
   using date_time::special_values;
   using date_time::not_special;

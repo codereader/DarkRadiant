@@ -33,7 +33,7 @@ namespace boost {
                     #if defined(__BORLANDC__) && (__BORLANDC__ >= 0x560) && (__BORLANDC__ <= 0x564) && !defined(_USE_OLD_RW_STL)
                         return std::tolower( Ch);
                     #else
-                        return std::tolower( Ch, m_Loc );
+                        return std::tolower<CharT>( Ch, m_Loc );
                     #endif
                 }
             private:
@@ -53,7 +53,7 @@ namespace boost {
                     #if defined(__BORLANDC__) && (__BORLANDC__ >= 0x560) && (__BORLANDC__ <= 0x564) && !defined(_USE_OLD_RW_STL)
                         return std::toupper( Ch);
                     #else
-                        return std::toupper( Ch, m_Loc );
+                        return std::toupper<CharT>( Ch, m_Loc );
                     #endif
                 }
             private:

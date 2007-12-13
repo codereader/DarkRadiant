@@ -53,9 +53,13 @@ private:
 template<class Archive, class T>
 struct stack_construct : public stack_allocate<T>
 {
-    stack_construct(Archive & ar){
+    stack_construct(Archive & ar, const unsigned int version){
         // note borland emits a no-op without the explicit namespace
-        boost::serialization::load_construct_data_adl(ar, this->address(), 0U);
+        boost::serialization::load_construct_data_adl(
+            ar, 
+            this->address(), 
+            version
+        );
     }
     ~stack_construct(){
         this->address()->~T(); // undo load_construct_data above

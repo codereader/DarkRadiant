@@ -23,8 +23,10 @@
 #   include "boost/type.hpp"
 #endif
 
-#include "boost/type_traits/detail/bool_trait_def.hpp"
 #include "boost/mpl/aux_/lambda_support.hpp"
+
+// should be the last #include
+#include "boost/type_traits/detail/bool_trait_def.hpp"
 
 namespace boost {
 
@@ -139,5 +141,7 @@ struct unwrap_recursive
 #endif // BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION workaround
 
 } // namespace boost
+
+#include "boost/type_traits/detail/bool_trait_undef.hpp"
 
 #endif // BOOST_VARIANT_RECURSIVE_WRAPPER_FWD_HPP

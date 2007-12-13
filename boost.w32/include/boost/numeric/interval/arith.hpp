@@ -250,7 +250,7 @@ interval<T, Policies> operator/(const interval<T, Policies>& x,
 {
   if (interval_lib::detail::test_input(x, y))
     return interval<T, Policies>::empty();
-  if (in_zero(y))
+  if (zero_in(y))
     if (!interval_lib::user::is_zero(y.lower()))
       if (!interval_lib::user::is_zero(y.upper()))
         return interval_lib::detail::div_zero(x);
@@ -270,7 +270,7 @@ interval<T, Policies> operator/(const T& x, const interval<T, Policies>& y)
 {
   if (interval_lib::detail::test_input(x, y))
     return interval<T, Policies>::empty();
-  if (in_zero(y))
+  if (zero_in(y))
     if (!interval_lib::user::is_zero(y.lower()))
       if (!interval_lib::user::is_zero(y.upper()))
         return interval_lib::detail::div_zero<T, Policies>(x);

@@ -176,6 +176,7 @@ namespace boost {
             \param Input A string which will be searched.
             \param Search A substring to be searched for.
             \param Nth An index (zero-indexed) of the match to be found.
+                For negative N, the matches are counted from the end of string.
             \return 
                 An \c iterator_range delimiting the match. 
                 Returned iterator is either \c Range1T::iterator or 
@@ -188,7 +189,7 @@ namespace boost {
         find_nth( 
             Range1T& Input, 
             const Range2T& Search,
-            unsigned int Nth)
+            int Nth)
         {
             return nth_finder(Search,Nth)(
                 begin(Input),end(Input));
@@ -196,12 +197,13 @@ namespace boost {
 
         //! Find n-th algorithm ( case insensitive ).
         /*!
-            Search for the n-th (zero-indexed) occurence of the substring in the 
+            Search for the n-th (zero-indexed) occurrence of the substring in the 
             input. Searching is case insensitive.
             
             \param Input A string which will be searched.
             \param Search A substring to be searched for.
-            \param Nth An index (zero-indexed) of the match to be found.
+            \param Nth An index (zero-indexed) of the match to be found. 
+                For negative N, the matches are counted from the end of string.
             \param Loc A locale used for case insensitive comparison
             \return 
                 An \c iterator_range delimiting the match. 
@@ -218,7 +220,7 @@ namespace boost {
         ifind_nth( 
             Range1T& Input, 
             const Range2T& Search,
-            unsigned int Nth,
+            int Nth,
             const std::locale& Loc=std::locale())
         {
             return nth_finder(Search,Nth,is_iequal(Loc))(
@@ -235,6 +237,8 @@ namespace boost {
 
             \param Input An input string
             \param N Length of the head
+                For N>=0, at most N characters are extracted.
+                For N<0, size(Input)-|N| characters are extracted.
             \return 
                 An \c iterator_range delimiting the match. 
                 Returned iterator is either \c Range1T::iterator or 
@@ -248,7 +252,7 @@ namespace boost {
             BOOST_STRING_TYPENAME range_result_iterator<RangeT>::type>
         find_head( 
             RangeT& Input, 
-            unsigned int N)
+            int N)
         {
             return head_finder(N)(
                 begin(Input),end(Input));      
@@ -263,7 +267,9 @@ namespace boost {
             to be the tail.
 
             \param Input An input string
-            \param N Length of the tail
+            \param N Length of the tail. 
+                For N>=0, at most N characters are extracted.
+                For N<0, size(Input)-|N| characters are extracted.
             \return 
                 An \c iterator_range delimiting the match. 
                 Returned iterator is either \c RangeT::iterator or 
@@ -278,7 +284,7 @@ namespace boost {
             BOOST_STRING_TYPENAME range_result_iterator<RangeT>::type>
         find_tail( 
             RangeT& Input, 
-            unsigned int N)
+            int N)
         {
             return tail_finder(N)(
                 begin(Input),end(Input));      

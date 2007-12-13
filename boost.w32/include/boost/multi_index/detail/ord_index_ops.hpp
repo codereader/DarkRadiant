@@ -62,14 +62,14 @@ inline Node* ordered_index_find(
   Node* z=Node::from_impl(header->parent());
     
   while (z){
-    if(!comp(key(z->value),x)){
+    if(!comp(key(z->value()),x)){
       y=z;
       z=Node::from_impl(z->left());
     }
     else z=Node::from_impl(z->right());
   }
     
-  return (y==header||comp(x,key(y->value)))?header:y;
+  return (y==header||comp(x,key(y->value())))?header:y;
 }
 
 template<
@@ -84,7 +84,7 @@ inline Node* ordered_index_lower_bound(
   Node* z=Node::from_impl(header->parent());
 
   while(z){
-    if(!comp(key(z->value),x)){
+    if(!comp(key(z->value()),x)){
       y=z;
       z=Node::from_impl(z->left());
     }
@@ -106,7 +106,7 @@ inline Node* ordered_index_upper_bound(
   Node* z=Node::from_impl(header->parent());
 
   while(z){
-    if(comp(x,key(z->value))){
+    if(comp(x,key(z->value()))){
       y=z;
       z=Node::from_impl(z->left());
     }

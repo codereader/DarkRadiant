@@ -71,7 +71,6 @@ namespace boost {
             return detail::find_format_copy_impl(
                 Output,
                 Input,
-                Finder,
                 Formatter,
                 Finder( begin(Input), end(Input) ) );
         }
@@ -100,7 +99,6 @@ namespace boost {
 
             return detail::find_format_copy_impl(
                 Input,
-                Finder,
                 Formatter,
                 Finder(begin(Input), end(Input)));
         }
@@ -134,7 +132,6 @@ namespace boost {
 
             detail::find_format_impl(
                 Input,
-                Finder,
                 Formatter,
                 Finder(begin(Input), end(Input)));
         }

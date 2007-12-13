@@ -117,11 +117,17 @@ class extended_type_info_typeid :
 // If no other implementation has been designated as default, 
 // use this one.  To use this implementation as the default, specify it
 // before any of the other headers.
-
 #ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO
-#define BOOST_SERIALIZATION_DEFAULT_TYPE_INFO(T) \
-    extended_type_info_typeid<const T>
-/**/
+    #define BOOST_SERIALIZATION_DEFAULT_TYPE_INFO
+    namespace boost {
+    namespace serialization {
+    template<class T>
+    struct extended_type_info_impl {
+        typedef BOOST_DEDUCED_TYPENAME 
+            boost::serialization::extended_type_info_typeid<T> type;
+    };
+    } // namespace serialization
+    } // namespace boost
 #endif
 
 #ifdef BOOST_MSVC

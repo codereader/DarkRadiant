@@ -7,7 +7,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/06/06 10:36:46 $
+ * $Date: 2006/03/20 13:29:16 $
  */
 
 
@@ -49,12 +49,12 @@ namespace boost { namespace date_time {
     enum range_display_options { AS_OPEN_RANGE, AS_CLOSED_RANGE };
 
     //! Constructor that sets up period formatter options -- default should suffice most cases.
-    period_formatter(range_display_options range_option = AS_CLOSED_RANGE, 
+    period_formatter(range_display_options range_option_in = AS_CLOSED_RANGE, 
                      const char_type* const period_separator = default_period_separator, 
                      const char_type* const period_start_delimeter = default_period_start_delimeter,
                      const char_type* const period_open_range_end_delimeter = default_period_open_range_end_delimeter,
                      const char_type* const period_closed_range_end_delimeter = default_period_closed_range_end_delimeter) :
-      m_range_option(range_option),
+      m_range_option(range_option_in),
       m_period_separator(period_separator),
       m_period_start_delimeter(period_start_delimeter),
       m_open_range_end_delimeter(period_open_range_end_delimeter),

@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author:  Martin Andrian, Jeff Garland, Bart Garst
- * $Date: 2005/05/25 11:52:24 $
+ * $Date: 2005/09/05 21:10:50 $
  */
 
 
@@ -86,32 +86,32 @@ namespace boost { namespace date_time {
         m_weekday_format(short_weekday_format)
     {}
 
-    explicit date_facet(const char_type* format,
-                        const input_collection_type& short_month_names,
+    explicit date_facet(const char_type* format_str,
+                        const input_collection_type& short_names,
                         ::size_t ref_count = 0) 
       : std::locale::facet(ref_count), 
-        m_format(format),
+        m_format(format_str),
         m_month_format(short_month_format),
         m_weekday_format(short_weekday_format),
-        m_month_short_names(short_month_names) 
+        m_month_short_names(short_names) 
     {}
 
      
-    explicit date_facet(const char_type* format, 
-                        period_formatter_type period_formatter = period_formatter_type(), 
-                        special_values_formatter_type special_values_formatter = special_values_formatter_type(),
+    explicit date_facet(const char_type* format_str, 
+                        period_formatter_type per_formatter = period_formatter_type(), 
+                        special_values_formatter_type sv_formatter = special_values_formatter_type(),
                         date_gen_formatter_type dg_formatter = date_gen_formatter_type(),
                         ::size_t ref_count = 0)
       : std::locale::facet(ref_count), 
-        m_format(format), 
+        m_format(format_str), 
         m_month_format(short_month_format),
         m_weekday_format(short_weekday_format),
-        m_period_formatter(period_formatter),
+        m_period_formatter(per_formatter),
         m_date_gen_formatter(dg_formatter),
-        m_special_values_formatter(special_values_formatter)
+        m_special_values_formatter(sv_formatter)
      {}
-    void format(const char_type* const format) {
-      m_format = format;
+    void format(const char_type* const format_str) {
+      m_format = format_str;
     }
     virtual void set_iso_format()
     {
@@ -121,37 +121,37 @@ namespace boost { namespace date_time {
     {
       m_format = iso_format_extended_specifier;
     }
-    void month_format(const char_type* const format) {
-      m_month_format = format;
+    void month_format(const char_type* const format_str) {
+      m_month_format = format_str;
     }
-    void weekday_format(const char_type* const format) {
-      m_weekday_format = format;
+    void weekday_format(const char_type* const format_str) {
+      m_weekday_format = format_str;
     }
     
-    void period_formatter(period_formatter_type period_formatter) {
-      m_period_formatter= period_formatter;
+    void period_formatter(period_formatter_type per_formatter) {
+      m_period_formatter= per_formatter;
     }
     void special_values_formatter(const special_values_formatter_type& svf) 
     {
       m_special_values_formatter = svf;
     }
-    void short_weekday_names(const input_collection_type& short_weekday_names)
+    void short_weekday_names(const input_collection_type& short_names)
     {
-      m_weekday_short_names = short_weekday_names;
+      m_weekday_short_names = short_names;
     }
-    void long_weekday_names(const input_collection_type& long_weekday_names)
+    void long_weekday_names(const input_collection_type& long_names)
     {
-      m_weekday_long_names = long_weekday_names;
-    }
-
-    void short_month_names(const input_collection_type& short_month_names)
-    {
-      m_month_short_names = short_month_names;
+      m_weekday_long_names = long_names;
     }
 
-    void long_month_names(const input_collection_type& long_month_names)
+    void short_month_names(const input_collection_type& short_names)
     {
-      m_month_long_names = long_month_names;
+      m_month_short_names = short_names;
+    }
+
+    void long_month_names(const input_collection_type& long_names)
+    {
+      m_month_long_names = long_names;
     }
 
     void date_gen_phrase_strings(const input_collection_type& new_strings,
@@ -464,10 +464,10 @@ namespace boost { namespace date_time {
         // default period_parser & special_values_parser used
     {}
 
-    explicit date_input_facet(const string_type& format,
+    explicit date_input_facet(const string_type& format_str,
                               ::size_t a_ref = 0) 
       : std::locale::facet(a_ref), 
-        m_format(format),
+        m_format(format_str),
         m_month_format(short_month_format),
         m_weekday_format(short_weekday_format),
         m_year_format(four_digit_year_format),
@@ -475,14 +475,14 @@ namespace boost { namespace date_time {
         // default period_parser & special_values_parser used
     {}
 
-    explicit date_input_facet(const string_type& format,
+    explicit date_input_facet(const string_type& format_str,
                               const format_date_parser_type& date_parser,
                               const special_values_parser_type& sv_parser,
                               const period_parser_type& per_parser,
                               const date_gen_parser_type& date_gen_parser,
                               ::size_t ref_count = 0)
       : std::locale::facet(ref_count),
-        m_format(format),
+        m_format(format_str),
         m_month_format(short_month_format),
         m_weekday_format(short_weekday_format),
         m_year_format(four_digit_year_format),
@@ -493,8 +493,8 @@ namespace boost { namespace date_time {
     {}
 
 
-    void format(const char_type* const format) {
-      m_format = format;
+    void format(const char_type* const format_str) {
+      m_format = format_str;
     }
     virtual void set_iso_format()
     {
@@ -504,18 +504,18 @@ namespace boost { namespace date_time {
     {
       m_format = iso_format_extended_specifier;
     }
-    void month_format(const char_type* const format) {
-      m_month_format = format;
+    void month_format(const char_type* const format_str) {
+      m_month_format = format_str;
     }
-    void weekday_format(const char_type* const format) {
-      m_weekday_format = format;
+    void weekday_format(const char_type* const format_str) {
+      m_weekday_format = format_str;
     }
-    void year_format(const char_type* const format) {
-      m_year_format = format;
+    void year_format(const char_type* const format_str) {
+      m_year_format = format_str;
     }
     
-    void period_parser(period_parser_type period_parser) {
-      m_period_parser= period_parser;
+    void period_parser(period_parser_type per_parser) {
+      m_period_parser = per_parser;
     }
     void short_weekday_names(const input_collection_type& weekday_names)
     {
@@ -583,12 +583,13 @@ namespace boost { namespace date_time {
       wd = m_parser.parse_weekday(from, to, m_weekday_format);
       return from;
     }
+    //! Expects 1 or 2 digit day range: 1-31
     InItrT get(InItrT& from, 
                InItrT& to, 
                std::ios_base& /*a_ios*/, 
                day_type& d) const
     {
-      d = m_parser.parse_day_of_month(from, to);
+      d = m_parser.parse_var_day_of_month(from, to);
       return from;
     }
     InItrT get(InItrT& from, 

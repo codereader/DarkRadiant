@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2006 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -18,6 +18,11 @@
 #include <boost/multi_index/identity_fwd.hpp>
 #include <boost/type_traits/is_const.hpp>
 #include <boost/type_traits/remove_const.hpp>
+#include <boost/utility/enable_if.hpp>
+
+#if !defined(BOOST_NO_SFINAE)
+#include <boost/type_traits/is_convertible.hpp>
+#endif
 
 namespace boost{
 
@@ -53,7 +58,14 @@ struct const_identity_base
   typedef Type result_type;
 
   template<typename ChainedPtr>
-  Type& operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<is_convertible<const ChainedPtr&,Type&>,Type&>::type
+#else
+  Type&
+#endif 
+  
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -83,7 +95,15 @@ struct non_const_identity_base
   /* templatized for pointer-like types */
   
   template<typename ChainedPtr>
-  Type& operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const Type&>,Type&>::type
+#else
+  Type&
+#endif 
+    
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }

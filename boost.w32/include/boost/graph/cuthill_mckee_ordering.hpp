@@ -1,30 +1,13 @@
-//
 //=======================================================================
 // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+// Copyright 2004, 2005 Trustees of Indiana University
 // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek,
 //          Doug Gregor, D. Kevin McGrath
 //
-// This file is part of the Boost Graph Library
-//
-// You should have received a copy of the License Agreement for the
-// Boost Graph Library along with the software; see the file LICENSE.
-// If not, contact Office of Research, University of Notre Dame, Notre
-// Dame, IN 46556.
-//
-// Permission to modify the code and to distribute modified code is
-// granted, provided the text of this NOTICE is retained, a notice that
-// the code was modified is included with the above COPYRIGHT NOTICE and
-// with the COPYRIGHT NOTICE in the LICENSE file, and that the LICENSE
-// file is distributed with the modified code.
-//
-// LICENSOR MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.
-// By way of example, but not limitation, Licensor MAKES NO
-// REPRESENTATIONS OR WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
-// PARTICULAR PURPOSE OR THAT THE USE OF THE LICENSED SOFTWARE COMPONENTS
-// OR DOCUMENTATION WILL NOT INFRINGE ANY PATENTS, COPYRIGHTS, TRADEMARKS
-// OR OTHER RIGHTS.
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
-//
 #ifndef BOOST_GRAPH_CUTHILL_MCKEE_HPP
 #define BOOST_GRAPH_CUTHILL_MCKEE_HPP
 
@@ -58,9 +41,9 @@ namespace boost {
       void finish_vertex(Vertex, Graph&) {
         using std::sort;
 
-        typedef typename property_traits<DegreeMap>::value_type DS;
+        typedef typename property_traits<DegreeMap>::value_type ds_type;
 
-        typedef indirect_cmp<DegreeMap, std::less<DS> > Compare;
+        typedef indirect_cmp<DegreeMap, std::less<ds_type> > Compare;
         Compare comp(degree);
                 
         sort(Qptr->begin()+index_begin, Qptr->end(), comp);
@@ -91,7 +74,7 @@ namespace boost {
   {
 
     //create queue, visitor...don't forget namespaces!
-    typedef typename property_traits<DegreeMap>::value_type DS;
+    typedef typename property_traits<DegreeMap>::value_type ds_type;
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
     typedef typename boost::sparse::sparse_ordering_queue<Vertex> queue;
     typedef typename detail::bfs_rcm_visitor<OutputIterator, queue, DegreeMap> Visitor;

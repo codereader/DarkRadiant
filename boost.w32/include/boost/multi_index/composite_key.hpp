@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2006 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -29,7 +29,16 @@
 #include <boost/static_assert.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/utility/enable_if.hpp>
 #include <functional>
+
+#if !defined(BOOST_NO_FUNCTION_TEMPLATE_ORDERING)
+#include <boost/ref.hpp>
+#endif
+
+#if !defined(BOOST_NO_SFINAE)
+#include <boost/type_traits/is_convertible.hpp>
+#endif
 
 /* A composite key stores n key extractors and "computes" the
  * result on a given value as a packed reference to the value and
@@ -607,7 +616,15 @@ public:
   key_extractor_tuple&       key_extractors(){return *this;}
 
   template<typename ChainedPtr>
-  result_type operator()(const ChainedPtr& x)const
+
+#if !defined(BOOST_NO_SFINAE)
+  typename disable_if<
+    is_convertible<const ChainedPtr&,const value_type&>,result_type>::type
+#else
+  result_type
+#endif
+
+  operator()(const ChainedPtr& x)const
   {
     return operator()(*x);
   }
@@ -966,6 +983,16 @@ public:
       key_comps());
   }
   
+#if !defined(BOOST_NO_FUNCTION_TEMPLATE_ORDERING)
+  template<typename CompositeKey,typename Value>
+  bool operator()(
+    const composite_key_result<CompositeKey>& x,
+    const Value& y)const
+  {
+    return operator()(x,make_tuple(cref(y)));
+  }
+#endif
+
   template
   <
     typename CompositeKey,
@@ -990,6 +1017,16 @@ public:
       key_tuple,key_comp_tuple
     >::compare(x.composite_key.key_extractors(),x.value,y,key_comps());
   }
+
+#if !defined(BOOST_NO_FUNCTION_TEMPLATE_ORDERING)
+  template<typename Value,typename CompositeKey>
+  bool operator()(
+    const Value& x,
+    const composite_key_result<CompositeKey>& y)const
+  {
+    return operator()(make_tuple(cref(x)),y);
+  }
+#endif
 
   template
   <

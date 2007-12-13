@@ -9,28 +9,31 @@
 //  See http://www.boost.org for updates, documentation, and revision history.
 
 #include <ostream>
-
-#include <boost/config.hpp> // for BOOST_DEDUCED_TYPENAME
-
 #include <cstring>
+
+#include <boost/config.hpp>
+
 #if defined(BOOST_NO_STDC_NAMESPACE) && ! defined(__LIBCOMO__)
 namespace std{ 
     using ::strlen; 
 } // namespace std
 #endif
 
-#include <boost/scoped_ptr.hpp>
 
 #ifndef BOOST_NO_CWCHAR
 #include <cwchar>
 #ifdef BOOST_NO_STDC_NAMESPACE
 namespace std{ using ::wcslen; }
 #endif
-
 #endif
-#include <boost/archive/codecvt_null.hpp>
+
+#include <boost/detail/workaround.hpp>
+
+#include <boost/throw_exception.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/archive/archive_exception.hpp>
 #include <boost/archive/add_facet.hpp>
-#include <boost/detail/no_exceptions_support.hpp>
+#include <boost/archive/codecvt_null.hpp>
 
 namespace boost {
 namespace archive {
@@ -38,9 +41,9 @@ namespace archive {
 //////////////////////////////////////////////////////////////////////
 // implementation of basic_binary_oprimitive
 
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_oprimitive<Archive, OStream>::init()
+basic_binary_oprimitive<Archive, Elem, Tr>::init()
 {
     // record native sizes of fundamental types
     // this is to permit detection of attempts to pass
@@ -54,18 +57,18 @@ basic_binary_oprimitive<Archive, OStream>::init()
     this->This()->save(int(1));
 }
 
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_oprimitive<Archive, OStream>::save(const char * s)
+basic_binary_oprimitive<Archive, Elem, Tr>::save(const char * s)
 {
     std::size_t l = std::strlen(s);
     this->This()->save(l);
     save_binary(s, l);
 }
 
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_oprimitive<Archive, OStream>::save(const std::string &s)
+basic_binary_oprimitive<Archive, Elem, Tr>::save(const std::string &s)
 {
     std::size_t l = static_cast<unsigned int>(s.size());
     this->This()->save(l);
@@ -73,9 +76,9 @@ basic_binary_oprimitive<Archive, OStream>::save(const std::string &s)
 }
 
 #ifndef BOOST_NO_CWCHAR
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_oprimitive<Archive, OStream>::save(const wchar_t * ws)
+basic_binary_oprimitive<Archive, Elem, Tr>::save(const wchar_t * ws)
 {
     std::size_t l = std::wcslen(ws);
     this->This()->save(l);
@@ -83,9 +86,9 @@ basic_binary_oprimitive<Archive, OStream>::save(const wchar_t * ws)
 }
 
 #ifndef BOOST_NO_STD_WSTRING
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_oprimitive<Archive, OStream>::save(const std::wstring &ws)
+basic_binary_oprimitive<Archive, Elem, Tr>::save(const std::wstring &ws)
 {
     std::size_t l = ws.size();
     this->This()->save(l);
@@ -94,37 +97,63 @@ basic_binary_oprimitive<Archive, OStream>::save(const std::wstring &ws)
 #endif
 #endif
 
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
-basic_binary_oprimitive<Archive, OStream>::basic_binary_oprimitive(
-    OStream &os_, 
+basic_binary_oprimitive<Archive, Elem, Tr>::basic_binary_oprimitive(
+    std::basic_streambuf<Elem, Tr> & sb, 
     bool no_codecvt
 ) : 
-    os(os_),
+    m_sb(sb),
     archive_locale(NULL),
-    locale_saver(os)
+    locale_saver(m_sb)
 {
     if(! no_codecvt){
         archive_locale.reset(
             add_facet(
                 std::locale::classic(), 
-                new codecvt_null<BOOST_DEDUCED_TYPENAME OStream::char_type>
+                new codecvt_null<Elem>
             )
         );
-        os.imbue(* archive_locale);
+        m_sb.pubimbue(* archive_locale);
     }
 }
 
+// some libraries including stl and libcomo fail if the
+// buffer isn't flushed before the code_cvt facet is changed.
+// I think this is a bug.  We explicity invoke sync to when
+// we're done with the streambuf to work around this problem.
+// Note that sync is a protected member of stream buff so we
+// have to invoke it through a contrived derived class.
+namespace detail {
+// note: use "using" to get past msvc bug
+using namespace std;
+template<class Elem, class Tr>
+class output_streambuf_access : public std::basic_streambuf<Elem, Tr> {
+    public:
+        virtual int sync(){
+#if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))
+            return this->basic_streambuf::sync();
+#else
+            return this->basic_streambuf<Elem, Tr>::sync();
+#endif
+        }
+};
+} // detail
+
 // scoped_ptr requires that g be a complete type at time of
 // destruction so define destructor here rather than in the header
-template<class Archive, class OStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
-basic_binary_oprimitive<Archive, OStream>::~basic_binary_oprimitive(){
-    BOOST_TRY {
-        os.flush();
-        }
-    BOOST_CATCH(...){}
-        BOOST_CATCH_END
+basic_binary_oprimitive<Archive, Elem, Tr>::~basic_binary_oprimitive(){
+    // flush buffer
+    int result = static_cast<detail::output_streambuf_access<Elem, Tr> &>(
+        m_sb
+    ).sync();
+    if(0 != result){ 
+        boost::throw_exception(
+            archive_exception(archive_exception::stream_error)
+        );
+    }
 }
 
 } // namespace archive

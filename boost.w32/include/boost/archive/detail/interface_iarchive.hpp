@@ -19,6 +19,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/mpl/bool.hpp>
 #include <boost/archive/detail/auto_link_archive.hpp>
+#include <boost/archive/detail/iserializer.hpp>
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
 
 namespace boost {
@@ -51,7 +52,7 @@ public:
     template<class T>
     const basic_pointer_iserializer * register_type(T * = NULL){
         const basic_pointer_iserializer & bpis =
-            archive::detail::instantiate_pointer_iserializer(
+            instantiate_pointer_iserializer(
                 static_cast<Archive *>(NULL),
                 static_cast<T *>(NULL)
             );

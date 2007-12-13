@@ -57,7 +57,7 @@ basic_xml_iarchive<Archive>::load_end(const char *name){
     if(0 == --depth)
         return;
         
-    if(0 != (this->get_flags() & no_xml_tag_checking)){
+    if(0 == (this->get_flags() & no_xml_tag_checking)){
         // double check that the tag matches what is expected - useful for debug
         if(0 != name[this->This()->gimpl->rv.object_name.size()]
         || ! std::equal(

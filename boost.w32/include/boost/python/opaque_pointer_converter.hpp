@@ -1,4 +1,4 @@
-// Copyright Gottfried Ganﬂauge 2003.
+// Copyright Gottfried Ganﬂauge 2003..2006
 // Distributed under the Boost Software License, Version 1.0. (See
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
@@ -11,17 +11,25 @@
 # include <boost/python/detail/prefix.hpp>
 # include <boost/python/lvalue_from_pytype.hpp>
 # include <boost/python/to_python_converter.hpp>
+# include <boost/python/converter/registrations.hpp>
 # include <boost/python/detail/dealloc.hpp>
 # include <boost/python/detail/none.hpp>
+# include <boost/python/type_id.hpp>
+# include <boost/python/errors.hpp>
+
 # include <boost/type_traits/remove_pointer.hpp>
 # include <boost/type_traits/is_pointer.hpp>
+# include <boost/type_traits/is_void.hpp>
 
-// opaque_pointer_converter --
+# include <boost/implicit_cast.hpp>
+
+# include <boost/mpl/eval_if.hpp>
+# include <boost/mpl/identity.hpp>
+# include <boost/mpl/assert.hpp>
+
+// opaque --
 //
-// usage: opaque_pointer_converter<Pointer>("name")
-//
-// registers to- and from- python conversions for a type Pointer,
-// and a corresponding Python type called "name".
+// registers to- and from- python conversions for a type Pointee.
 //
 // Note:
 // In addition you need to define specializations for type_id
@@ -31,92 +39,139 @@
 // For an example see libs/python/test/opaque.cpp
 //
 namespace boost { namespace python {
-    namespace detail {
-        template <class R>
-        struct opaque_pointer_converter_requires_a_pointer_type
-# if defined(__GNUC__) && __GNUC__ >= 3 || defined(__EDG__)
-        {}
-# endif
-        ;
-    }
 
-template <class Pointer>
-struct opaque_pointer_converter
-    : to_python_converter<
-          Pointer, opaque_pointer_converter<Pointer> >
+template <class Pointee>
+struct opaque
 {
-    BOOST_STATIC_CONSTANT(
-        bool, ok = is_pointer<Pointer>::value);
-        
-    typedef typename mpl::if_c<
-        ok
-        , Pointer
-        , detail::opaque_pointer_converter_requires_a_pointer_type<Pointer>
-    >::type ptr_type;
-
-private:
-    struct instance;
-
-public:
-    explicit opaque_pointer_converter(char const* name)
+    opaque()
     {
-        type_object.tp_name = const_cast<char *> (name);
+        if (type_object.tp_name == 0)
+        {
+            type_object.tp_name = const_cast<char*>(type_id<Pointee*>().name());
+            if (PyType_Ready (&type_object) < 0)
+            {
+                throw error_already_set();
+            }
 
-        lvalue_from_pytype<
-            opaque_pointer_converter<ptr_type>,
-            &opaque_pointer_converter<ptr_type>::type_object
-        >();
-    }
-
-    static PyObject* convert(ptr_type x)
-    {
-        PyObject *result = 0;
-        
-        if (x != 0) {
-            instance *o = PyObject_New (instance, &type_object);
-
-            o->x   = x;
-            result = &o->base_;
-        } else {
-            result = detail::none();
+            this->register_self();
         }
-        
-        return (result);
     }
-
-    static typename ::boost::remove_pointer<ptr_type>::type&
-    execute(instance &p_)
-    {
-        return *p_.x;
-    }
-
+    
+    static opaque instance;
 private:
-    static PyTypeObject type_object;
-
-    // This is a POD so we can use PyObject_Del on it, for example.
-    struct instance
+    
+    static void* extract(PyObject* op)
     {
-        PyObject base_;
-        ptr_type x;
+        return PyObject_TypeCheck(op, &type_object)
+            ? static_cast<python_instance*>(implicit_cast<void*>(op))->x
+            : 0
+            ;
+    }
+
+    static PyObject* wrap(void const* px)
+    {
+        Pointee* x = *static_cast<Pointee*const*>(px);
+        
+        if (x == 0)
+            return detail::none();
+
+        if ( python_instance *o = PyObject_New(python_instance, &type_object) )
+        {
+            o->x = x;
+            return static_cast<PyObject*>(implicit_cast<void*>(o));
+        }
+        else
+        {
+            throw error_already_set();
+        }
+    }
+
+    void register_self()
+    {
+        converter::registration const *existing =
+            converter::registry::query (type_id<Pointee*>());
+
+        if ((existing == 0) || (existing->m_to_python == 0))
+        {
+            converter::registry::insert(&extract, type_id<Pointee>());
+            converter::registry::insert(&wrap, type_id<Pointee*>());
+        }
+    }
+
+    struct python_instance
+    {
+        PyObject_HEAD
+        Pointee* x;
     };
+    
+    static PyTypeObject type_object;
 };
 
-template <class Pointer>
-PyTypeObject opaque_pointer_converter<Pointer>::type_object =
+template <class Pointee>
+opaque<Pointee> opaque<Pointee>::instance;
+
+template <class Pointee>
+PyTypeObject opaque<Pointee>::type_object =
 {
-    PyObject_HEAD_INIT(NULL)
+    PyObject_HEAD_INIT(0)
     0,
     0,
-    sizeof(typename opaque_pointer_converter<Pointer>::instance),
+    sizeof( BOOST_DEDUCED_TYPENAME opaque<Pointee>::python_instance ),
     0,
-    ::boost::python::detail::dealloc
+    ::boost::python::detail::dealloc,
+    0,          /* tp_print */
+    0,          /* tp_getattr */
+    0,          /* tp_setattr */
+    0,          /* tp_compare */
+    0,          /* tp_repr */
+    0,          /* tp_as_number */
+    0,          /* tp_as_sequence */
+    0,          /* tp_as_mapping */
+    0,          /* tp_hash */
+    0,          /* tp_call */
+    0,          /* tp_str */
+    0,          /* tp_getattro */
+    0,          /* tp_setattro */
+    0,          /* tp_as_buffer */
+    0,          /* tp_flags */
+    0,          /* tp_doc */
+    0,          /* tp_traverse */
+    0,          /* tp_clear */
+    0,          /* tp_richcompare */
+    0,          /* tp_weaklistoffset */
+    0,          /* tp_iter */
+    0,          /* tp_iternext */
+    0,          /* tp_methods */
+    0,          /* tp_members */
+    0,          /* tp_getset */
+    0,          /* tp_base */
+    0,          /* tp_dict */
+    0,          /* tp_descr_get */
+    0,          /* tp_descr_set */
+    0,          /* tp_dictoffset */
+    0,          /* tp_init */
+    0,          /* tp_alloc */
+    0,          /* tp_new */
+    0,          /* tp_free */
+    0,          /* tp_is_gc */
+    0,          /* tp_bases */
+    0,          /* tp_mro */
+    0,          /* tp_cache */
+    0,          /* tp_subclasses */
+    0,          /* tp_weaklist */
+#if PYTHON_API_VERSION >= 1012
+    0           /* tp_del */
+#endif
 };
 }} // namespace boost::python
-#  ifdef BOOST_MSVC
-// MSC works without this workaround, but needs another one ...
-#  define BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(Pointee)      \
-     BOOST_BROKEN_COMPILER_TYPE_TRAITS_SPECIALIZATION(Pointee)
+
+#  if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
+
+#  define BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(Pointee)
+
 #  else
+
+// If you change the below, don't forget to alter the end of type_id.hpp
 #   define BOOST_PYTHON_OPAQUE_SPECIALIZED_TYPE_ID(Pointee)                     \
     namespace boost { namespace python {                                        \
     template<>                                                                  \
@@ -130,6 +185,8 @@ PyTypeObject opaque_pointer_converter<Pointer>::type_object =
     {                                                                           \
         return type_info (typeid (Pointee *));                                  \
     }                                                                           \
-}}
+    }}
+
 #  endif
+
 # endif    // OPAQUE_POINTER_CONVERTER_HPP_

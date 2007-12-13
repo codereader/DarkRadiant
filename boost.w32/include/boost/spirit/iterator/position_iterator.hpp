@@ -1,6 +1,6 @@
 /*=============================================================================
     Copyright (c) 2002 Juan Carlos Arevalo-Baeza
-    Copyright (c) 2002-2003 Hartmut Kaiser
+    Copyright (c) 2002-2006 Hartmut Kaiser
     Copyright (c) 2003 Giovanni Bajo
     http://spirit.sourceforge.net/
 
@@ -15,6 +15,8 @@
 #include <boost/config.hpp>
 #include <boost/concept_check.hpp>
 
+#include <boost/spirit/iterator/position_iterator_fwd.hpp>
+
 namespace boost { namespace spirit {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,17 +27,18 @@ namespace boost { namespace spirit {
 //  and the line number
 //
 ///////////////////////////////////////////////////////////////////////////////
-struct file_position_without_column {
-    std::string file;
+template <typename String>
+struct file_position_without_column_base {
+    String file;
     int line;
 
-    file_position_without_column(std::string const& file_ = std::string(),
+    file_position_without_column_base(String const& file_ = String(),
                   int line_ = 1):
         file    (file_),
         line    (line_)
     {}
 
-    bool operator==(const file_position_without_column& fp) const
+    bool operator==(const file_position_without_column_base& fp) const
     { return line == fp.line && file == fp.file; }
 };
 
@@ -47,19 +50,19 @@ struct file_position_without_column {
 //  line and column number
 //
 ///////////////////////////////////////////////////////////////////////////////
-struct file_position : public file_position_without_column {
+template <typename String>
+struct file_position_base : public file_position_without_column_base<String> {
     int column;
 
-    file_position(std::string const& file_ = std::string(),
-                  int line_ = 1, int column_ = 1):
-        file_position_without_column (file_, line_),
+    file_position_base(String const& file_ = String(),
+                       int line_ = 1, int column_ = 1):
+        file_position_without_column_base<String> (file_, line_),
         column                       (column_)
     {}
 
-    bool operator==(const file_position& fp) const
-    { return column == fp.column && line == fp.line && file == fp.file; }
+    bool operator==(const file_position_base& fp) const
+    { return column == fp.column && this->line == fp.line && this->file == fp.file; }
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -81,13 +84,7 @@ struct file_position : public file_position_without_column {
 //      been reached.
 //
 ///////////////////////////////////////////////////////////////////////////////
-template <typename PositionT>
-class position_policy;
-
-
-// Forward declaration
-template <typename ForwardIteratorT, typename PositionT, typename SelfT>
-class position_iterator;
+template <typename PositionT> class position_policy;
 
 ///////////////////////////////////////////////////////////////////////////////
 }} /* namespace boost::spirit */
@@ -142,8 +139,8 @@ namespace boost { namespace spirit {
 ///////////////////////////////////////////////////////////////////////////////
 template <
     typename ForwardIteratorT,
-    typename PositionT = file_position,
-    typename SelfT = nil_t
+    typename PositionT,
+    typename SelfT
 >
 class position_iterator
 :   public iterator_::impl::position_iterator_base_generator<
@@ -318,7 +315,7 @@ protected:
 template
 <
     typename ForwardIteratorT,
-    typename PositionT = file_position
+    typename PositionT 
 >
 class position_iterator2
     : public position_iterator

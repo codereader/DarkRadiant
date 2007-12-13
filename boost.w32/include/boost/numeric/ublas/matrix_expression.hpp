@@ -42,15 +42,15 @@ namespace boost { namespace numeric { namespace ublas {
         typedef typename boost::mpl::if_<boost::is_const<E>,
                                           typename E::const_reference,
                                           typename E::reference>::type reference;
-        typedef E refered_type;
+        typedef E referred_type;
         typedef const self_type const_closure_type;
-        typedef const_closure_type closure_type;
+        typedef self_type closure_type;
         typedef typename E::orientation_category orientation_category;
         typedef typename E::storage_category storage_category;
 
         // Construction and destruction
         BOOST_UBLAS_INLINE
-        explicit matrix_reference (refered_type &e):
+        explicit matrix_reference (referred_type &e):
               e_ (e) {}
 
         // Accessors
@@ -66,11 +66,11 @@ namespace boost { namespace numeric { namespace ublas {
     public:
         // Expression accessors - const correct
         BOOST_UBLAS_INLINE
-        const refered_type &expression () const {
+        const referred_type &expression () const {
             return e_;
         }
         BOOST_UBLAS_INLINE
-        refered_type &expression () {
+        referred_type &expression () {
             return e_;
         }
 
@@ -269,7 +269,7 @@ namespace boost { namespace numeric { namespace ublas {
         }
 
     private:
-        refered_type &e_;
+        referred_type &e_;
     };
 
 
@@ -478,6 +478,10 @@ namespace boost { namespace numeric { namespace ublas {
                 return functor_type::apply (*it1_, *it2_);
 #endif
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -638,6 +642,10 @@ namespace boost { namespace numeric { namespace ublas {
 #else
                 return functor_type::apply (*it1_, *it2_);
 #endif
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -934,6 +942,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return functor_type::apply (*it_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -1064,6 +1076,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return functor_type::apply (*it_);
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1239,7 +1255,6 @@ namespace boost { namespace numeric { namespace ublas {
 
         typedef const self_type const_closure_type;
         typedef self_type closure_type;
-        // typedef typename E::orientation_category orientation_category;
         typedef typename boost::mpl::if_<boost::is_same<typename E::orientation_category,
                                                          row_major_tag>,
                                           column_major_tag,
@@ -1247,13 +1262,12 @@ namespace boost { namespace numeric { namespace ublas {
                                                          column_major_tag>,
                                           row_major_tag,
                                           typename E::orientation_category>::type>::type orientation_category;
-        // typedef unknown_storage_tag storage_category;
         typedef typename E::storage_category storage_category;
 
         // Construction and destruction
         BOOST_UBLAS_INLINE
-        // ISSUE may be used as mutable expression.
-        // matrix_unary2 (const expression_type &e):
+        // matrix_unary2 may be used as mutable expression -
+        // this is the only non const expression constructor
         explicit matrix_unary2 (expression_type &e):
             e_ (e) {}
 
@@ -1391,6 +1405,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return functor_type::apply (*it_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -1521,6 +1539,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return functor_type::apply (*it_);
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1814,14 +1836,23 @@ namespace boost { namespace numeric { namespace ublas {
                              const const_iterator21_type &it2, const const_iterator21_type &it2_end):
                 container_const_reference<self_type> (mb), i_ (i), j_ (j), it1_ (it1), it1_end_ (it1_end), it2_ (it2), it2_end_ (it2_end) {}
 
+        private:
             // Dense specializations
             BOOST_UBLAS_INLINE
             void increment (dense_random_access_iterator_tag) {
-                ++ i_, ++ it1_, ++ it2_;
+                ++ i_; ++ it1_; ++ it2_;
             }
             BOOST_UBLAS_INLINE
             void decrement (dense_random_access_iterator_tag) {
-                -- i_, -- it1_, -- it2_;
+                -- i_; -- it1_; -- it2_;
+            }
+            BOOST_UBLAS_INLINE
+            void increment (dense_random_access_iterator_tag, difference_type n) {
+                 i_ += n; it1_ += n; it2_ += n;
+            }
+            BOOST_UBLAS_INLINE
+            void decrement (dense_random_access_iterator_tag, difference_type n) {
+                i_ -= n; it1_ -= n; it2_ -= n;
             }
             BOOST_UBLAS_INLINE
             value_type dereference (dense_random_access_iterator_tag) const {
@@ -1848,6 +1879,28 @@ namespace boost { namespace numeric { namespace ublas {
                     if (i_ <= it2_.index1 ())
                         -- it2_;
                 -- i_;
+            }
+            BOOST_UBLAS_INLINE
+            void increment (packed_random_access_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    increment (packed_random_access_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    decrement (packed_random_access_iterator_tag ());
+                    ++n;
+                }
+            }
+            BOOST_UBLAS_INLINE
+            void decrement (packed_random_access_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    decrement (packed_random_access_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    increment (packed_random_access_iterator_tag ());
+                    ++n;
+                }
             }
             BOOST_UBLAS_INLINE
             value_type dereference (packed_random_access_iterator_tag) const {
@@ -1904,6 +1957,28 @@ namespace boost { namespace numeric { namespace ublas {
                 i_ = (std::max) (index1, index2);
             }
             BOOST_UBLAS_INLINE
+            void increment (sparse_bidirectional_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    increment (sparse_bidirectional_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    decrement (sparse_bidirectional_iterator_tag ());
+                    ++n;
+                }
+            }
+            BOOST_UBLAS_INLINE
+            void decrement (sparse_bidirectional_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    decrement (sparse_bidirectional_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    increment (sparse_bidirectional_iterator_tag ());
+                    ++n;
+                }
+            }
+            BOOST_UBLAS_INLINE
             value_type dereference (sparse_bidirectional_iterator_tag) const {
                 value_type t1 = value_type/*zero*/();
                 if (it1_ != it1_end_) {
@@ -1920,6 +1995,7 @@ namespace boost { namespace numeric { namespace ublas {
                 return functor_type::apply (t1, t2);
             }
 
+        public:
             // Arithmetic
             BOOST_UBLAS_INLINE
             const_iterator1 &operator ++ () {
@@ -1933,12 +2009,12 @@ namespace boost { namespace numeric { namespace ublas {
             }
             BOOST_UBLAS_INLINE
             const_iterator1 &operator += (difference_type n) {
-                i_ += n, it1_ += n, it2_ += n;
+                increment (iterator_category (), n);
                 return *this;
             }
             BOOST_UBLAS_INLINE
             const_iterator1 &operator -= (difference_type n) {
-                i_ -= n, it1_ -= n, it2_ -= n;
+                decrement (iterator_category (), n);
                 return *this;
             }
             BOOST_UBLAS_INLINE
@@ -1952,6 +2028,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return dereference (iterator_category ());
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -2071,14 +2151,23 @@ namespace boost { namespace numeric { namespace ublas {
                              const const_iterator22_type &it2, const const_iterator22_type &it2_end):
                 container_const_reference<self_type> (mb), i_ (i), j_ (j), it1_ (it1), it1_end_ (it1_end), it2_ (it2), it2_end_ (it2_end) {}
 
+        private:
             // Dense access specializations
             BOOST_UBLAS_INLINE
             void increment (dense_random_access_iterator_tag) {
-                ++ j_, ++ it1_, ++ it2_;
+                ++ j_; ++ it1_; ++ it2_;
             }
             BOOST_UBLAS_INLINE
             void decrement (dense_random_access_iterator_tag) {
-                -- j_, -- it1_, -- it2_;
+                -- j_; -- it1_; -- it2_;
+            }
+            BOOST_UBLAS_INLINE
+            void increment (dense_random_access_iterator_tag, difference_type n) {
+                j_ += n; it1_ += n; it2_ += n;
+            }
+            BOOST_UBLAS_INLINE
+            void decrement (dense_random_access_iterator_tag, difference_type n) {
+                j_ -= n; it1_ -= n; it2_ -= n;
             }
             BOOST_UBLAS_INLINE
             value_type dereference (dense_random_access_iterator_tag) const {
@@ -2105,6 +2194,28 @@ namespace boost { namespace numeric { namespace ublas {
                     if (j_ <= it2_.index2 ())
                         -- it2_;
                 -- j_;
+            }
+            BOOST_UBLAS_INLINE
+            void increment (packed_random_access_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    increment (packed_random_access_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    decrement (packed_random_access_iterator_tag ());
+                    ++n;
+                }
+            }
+            BOOST_UBLAS_INLINE
+            void decrement (packed_random_access_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    decrement (packed_random_access_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    increment (packed_random_access_iterator_tag ());
+                    ++n;
+                }
             }
             BOOST_UBLAS_INLINE
             value_type dereference (packed_random_access_iterator_tag) const {
@@ -2161,6 +2272,28 @@ namespace boost { namespace numeric { namespace ublas {
                 j_ = (std::max) (index1, index2);
             }
             BOOST_UBLAS_INLINE
+            void increment (sparse_bidirectional_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    increment (sparse_bidirectional_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    decrement (sparse_bidirectional_iterator_tag ());
+                    ++n;
+                }
+            }
+            BOOST_UBLAS_INLINE
+            void decrement (sparse_bidirectional_iterator_tag, difference_type n) {
+                while (n > 0) {
+                    decrement (sparse_bidirectional_iterator_tag ());
+                    --n;
+                }
+                while (n < 0) {
+                    increment (sparse_bidirectional_iterator_tag ());
+                    ++n;
+                }
+            }
+            BOOST_UBLAS_INLINE
             value_type dereference (sparse_bidirectional_iterator_tag) const {
                 value_type t1 = value_type/*zero*/();
                 if (it1_ != it1_end_) {
@@ -2177,6 +2310,7 @@ namespace boost { namespace numeric { namespace ublas {
                 return functor_type::apply (t1, t2);
             }
 
+        public:
             // Arithmetic
             BOOST_UBLAS_INLINE
             const_iterator2 &operator ++ () {
@@ -2190,12 +2324,12 @@ namespace boost { namespace numeric { namespace ublas {
             }
             BOOST_UBLAS_INLINE
             const_iterator2 &operator += (difference_type n) {
-                j_ += n, it1_ += n, it2_ += n;
+                increment (iterator_category (), n);
                 return *this;
             }
             BOOST_UBLAS_INLINE
             const_iterator2 &operator -= (difference_type n) {
-                j_ -= n, it1_ -= n, it2_ -= n;
+                decrement (iterator_category (), n);
                 return *this;
             }
             BOOST_UBLAS_INLINE
@@ -2209,6 +2343,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return dereference (iterator_category ());
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -2539,6 +2677,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return functor_type::apply (it1_, *it2_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -2677,6 +2819,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return functor_type::apply (it1_, *it2_);
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -2964,6 +3110,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return functor_type::apply (*it1_, it2_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -3102,6 +3252,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return functor_type::apply (*it1_, it2_);
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -3363,6 +3517,7 @@ namespace boost { namespace numeric { namespace ublas {
                 container_const_reference<self_type> (mvb), it1_ (it1) {}
 #endif
 
+        private:
             // Dense random access specialization
             BOOST_UBLAS_INLINE
             value_type dereference (dense_random_access_iterator_tag) const {
@@ -3425,6 +3580,7 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
             }
 
+        public:
             // Arithmetic
             BOOST_UBLAS_INLINE
             const_iterator &operator ++ () {
@@ -3456,6 +3612,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return dereference (iterator_category ());
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
             // Index
@@ -3747,6 +3907,7 @@ namespace boost { namespace numeric { namespace ublas {
                 container_const_reference<self_type> (mvb), it2_ (it2) {}
 #endif
 
+        private:
             // Dense random access specialization
             BOOST_UBLAS_INLINE
             value_type dereference (dense_random_access_iterator_tag) const {
@@ -3809,6 +3970,7 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
             }
 
+        public:
             // Arithmetic
             BOOST_UBLAS_INLINE
             const_iterator &operator ++ () {
@@ -3840,6 +4002,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return dereference (iterator_category ());
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
             // Index
@@ -4170,6 +4336,7 @@ namespace boost { namespace numeric { namespace ublas {
                 container_const_reference<self_type> (mmb), it1_ (it1), it2_ (it2) {}
 #endif
 
+        private:
             // Random access specialization
             BOOST_UBLAS_INLINE
             value_type dereference (dense_random_access_iterator_tag) const {
@@ -4234,6 +4401,7 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
             }
 
+        public:
             // Arithmetic
             BOOST_UBLAS_INLINE
             const_iterator1 &operator ++ () {
@@ -4266,6 +4434,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return dereference (iterator_category ());
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -4390,6 +4562,7 @@ namespace boost { namespace numeric { namespace ublas {
                 container_const_reference<self_type> (mmb), it1_ (it1), it2_ (it2) {}
 #endif
 
+        private:
             // Random access specialization
             BOOST_UBLAS_INLINE
             value_type dereference (dense_random_access_iterator_tag) const {
@@ -4454,6 +4627,7 @@ namespace boost { namespace numeric { namespace ublas {
 #endif
             }
 
+        public:
             // Arithmetic
             BOOST_UBLAS_INLINE
             const_iterator2 &operator ++ () {
@@ -4486,6 +4660,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
                 return dereference (iterator_category ());
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION

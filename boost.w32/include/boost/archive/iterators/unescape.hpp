@@ -82,7 +82,8 @@ public:
 
     unescape(Base base) : 
         super_t(base),
-        m_full(false)    {}
+        m_full(false)
+    {}
 
 };
 

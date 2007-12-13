@@ -1,4 +1,4 @@
-/* Copyright 2003-2005 Joaquín M López Muñoz.
+/* Copyright 2003-2007 Joaquín M López Muñoz.
  * Distributed under the Boost Software License, Version 1.0.
  * (See accompanying file LICENSE_1_0.txt or copy at
  * http://www.boost.org/LICENSE_1_0.txt)
@@ -20,11 +20,13 @@
 #include <boost/iterator/reverse_iterator.hpp>
 #include <boost/mpl/push_front.hpp>
 #include <boost/multi_index/detail/access_specifier.hpp>
-#include <boost/multi_index/detail/index_iterator.hpp>
-#include <boost/multi_index/detail/seq_index_node.hpp>
-#include <boost/multi_index/detail/seq_index_ops.hpp>
+#include <boost/multi_index/detail/bidir_node_iterator.hpp>
+#include <boost/multi_index/detail/index_node_base.hpp>
+#include <boost/multi_index/detail/safe_ctr_proxy.hpp>
 #include <boost/multi_index/detail/safe_mode.hpp>
 #include <boost/multi_index/detail/scope_guard.hpp>
+#include <boost/multi_index/detail/seq_index_node.hpp>
+#include <boost/multi_index/detail/seq_index_ops.hpp>
 #include <boost/multi_index/sequenced_index_fwd.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <cstddef>
@@ -53,20 +55,19 @@ namespace detail{
 /* sequenced_index adds a layer of sequenced indexing to a given Super */
 
 template<typename SuperMeta,typename TagList>
+class sequenced_index:
+  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #if BOOST_WORKAROUND(BOOST_MSVC,<1300)
-class sequenced_index:
-  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type,
-  public index_proxy<sequenced_index_node<SuperMeta::type::node_type> >
+  ,public safe_ctr_proxy_impl<
+    bidir_node_iterator<
+      sequenced_index_node<typename SuperMeta::type::node_type> >,
+    sequenced_index<SuperMeta,TagList> >
 #else
-class sequenced_index:
-  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type,
-  public safe_container<sequenced_index<SuperMeta,TagList> >
+  ,public safe_mode::safe_container<
+    sequenced_index<SuperMeta,TagList> >
 #endif
-#else
-class sequenced_index:
-  BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS SuperMeta::type
 #endif
 
 { 
@@ -97,16 +98,20 @@ public:
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #if BOOST_WORKAROUND(BOOST_MSVC,<1300)
-  typedef index_iterator<node_type>                  iterator;
-  typedef index_iterator<node_type>                  const_iterator;
+  typedef safe_mode::safe_iterator<
+    bidir_node_iterator<node_type>,
+    safe_ctr_proxy<
+      bidir_node_iterator<node_type> > >             iterator;
 #else
-  typedef index_iterator<node_type,sequenced_index>  iterator;
-  typedef index_iterator<node_type,sequenced_index>  const_iterator;
+  typedef safe_mode::safe_iterator<
+    bidir_node_iterator<node_type>,
+    sequenced_index>                                 iterator;
 #endif
 #else
-  typedef index_iterator<node_type>                  iterator;
-  typedef index_iterator<node_type>                  const_iterator;
+  typedef bidir_node_iterator<node_type>             iterator;
 #endif
+
+  typedef iterator                                   const_iterator;
 
   typedef std::size_t                                size_type;      
   typedef std::ptrdiff_t                             difference_type;
@@ -142,10 +147,12 @@ protected:
 private:
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
 #if BOOST_WORKAROUND(BOOST_MSVC,<1300)
-  typedef index_proxy<sequenced_index_node<
-      typename super::node_type> >           safe_super;
+  typedef safe_ctr_proxy_impl<
+    bidir_node_iterator<node_type>,
+    sequenced_index>                          safe_super;
 #else
-  typedef safe_container<sequenced_index>    safe_super;
+  typedef safe_mode::safe_container<
+    sequenced_index>                          safe_super;
 #endif
 #endif
 
@@ -237,7 +244,9 @@ public:
     BOOST_MULTI_INDEX_CHECK_IS_OWNER(position,*this);
     BOOST_MULTI_INDEX_SEQ_INDEX_CHECK_INVARIANT;
     std::pair<final_node_type*,bool> p=this->final_insert_(x);
-    if(p.second)relink(position.get_node(),p.first);
+    if(p.second&&position.get_node()!=header()){
+      relink(position.get_node(),p.first);
+    }
     return std::pair<iterator,bool>(make_iterator(p.first),p.second);
   }
 
@@ -333,7 +342,7 @@ public:
     BOOST_MULTI_INDEX_SEQ_INDEX_CHECK_INVARIANT;
     iterator first=x.begin(),last=x.end();
     while(first!=last){
-      if(insert(position,*first).second)x.erase(first++);
+      if(insert(position,*first).second)first=x.erase(first);
       else ++first;
     }
   }
@@ -346,7 +355,7 @@ public:
     BOOST_MULTI_INDEX_CHECK_DEREFERENCEABLE_ITERATOR(i);
     BOOST_MULTI_INDEX_CHECK_IS_OWNER(i,x);
     BOOST_MULTI_INDEX_SEQ_INDEX_CHECK_INVARIANT;
-    if(x==*this){
+    if(&x==this){
       if(position!=i)relink(position.get_node(),i.get_node());
     }
     else{
@@ -379,14 +388,14 @@ public:
     BOOST_MULTI_INDEX_CHECK_IS_OWNER(last,x);
     BOOST_MULTI_INDEX_CHECK_VALID_RANGE(first,last);
     BOOST_MULTI_INDEX_SEQ_INDEX_CHECK_INVARIANT;
-    if(x==*this){
+    if(&x==this){
       BOOST_MULTI_INDEX_CHECK_OUTSIDE_RANGE(position,first,last);
       if(position!=last)relink(
         position.get_node(),first.get_node(),last.get_node());
     }
     else{
       while(first!=last){
-        if(insert(position,*first).second)x.erase(first++);
+        if(insert(position,*first).second)first=x.erase(first);
         else ++first;
       }
     }
@@ -445,7 +454,7 @@ public:
     sequenced_index_node_impl::reverse(header()->impl());
   }
 
-  /* relocate operations */
+  /* rearrange operations */
 
   void relocate(iterator position,iterator i)
   {
@@ -473,15 +482,20 @@ public:
       position.get_node(),first.get_node(),last.get_node());
   }
     
+  template<typename InputIterator>
+  void rearrange(InputIterator first)
+  {
+    BOOST_MULTI_INDEX_SEQ_INDEX_CHECK_INVARIANT;
+    node_type* pos=header();
+    for(size_type s=size();s--;){
+      const value_type& v=*first++;
+      relink(pos,node_from_value<node_type>(&v));
+    }
+  }
+
 BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
   sequenced_index(const ctor_args_list& args_list,const allocator_type& al):
     super(args_list.get_tail(),al)
-
-#if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)&&\
-    BOOST_WORKAROUND(BOOST_MSVC,<1300)
-    ,safe_super(final_header())
-#endif
-
   {
     empty_initialize();
   }
@@ -489,9 +503,8 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
   sequenced_index(const sequenced_index<SuperMeta,TagList>& x):
     super(x)
 
-#if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)&&\
-    BOOST_WORKAROUND(BOOST_MSVC,<1300)
-    ,safe_super(final_header())
+#if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
+    ,safe_super()
 #endif
 
   {
@@ -570,7 +583,7 @@ BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
     empty_initialize();
 
 #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
-    safe_super::detach_all_iterators();
+    safe_super::detach_dereferenceable_iterators();
 #endif
   }
 

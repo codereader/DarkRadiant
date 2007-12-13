@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/06/21 03:33:15 $
+ * $Date: 2007/03/02 02:45:57 $
  */
 
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -35,7 +35,7 @@ namespace serialization {
 template<class Archive>
 void save(Archive & ar, 
           const posix_time::time_duration& td, 
-          unsigned int version)
+          unsigned int /*version*/)
 {
   // serialize a bool so we know how to read this back in later
   bool is_special = td.is_special();
@@ -64,7 +64,7 @@ void save(Archive & ar,
 template<class Archive>
 void load(Archive & ar, 
           posix_time::time_duration & td, 
-          unsigned int version)
+          unsigned int /*version*/)
 {
   bool is_special = false;
   ar & make_nvp("is_special", is_special);
@@ -99,7 +99,7 @@ void load(Archive & ar,
 template<class Archive>
 void save(Archive & ar, 
           const posix_time::ptime& pt, 
-          unsigned int version)
+          unsigned int /*version*/)
 {
   // from_iso_string does not include fractional seconds
   // therefore date and time_duration are used
@@ -118,7 +118,7 @@ void save(Archive & ar,
 template<class Archive>
 void load(Archive & ar, 
           posix_time::ptime & pt, 
-          unsigned int version)
+          unsigned int /*version*/)
 {
   // from_iso_string does not include fractional seconds
   // therefore date and time_duration are used
@@ -139,7 +139,7 @@ void load(Archive & ar,
 template<class Archive>
 inline void load_construct_data(Archive & ar, 
                                 posix_time::ptime* pt, 
-                                const unsigned int file_version)
+                                const unsigned int /*file_version*/)
 {
   // retrieve data from archive required to construct new 
   // invoke inplace constructor to initialize instance of date
@@ -155,7 +155,7 @@ inline void load_construct_data(Archive & ar,
 template<class Archive>
 void save(Archive & ar, 
           const posix_time::time_period& tp, 
-          unsigned int version)
+          unsigned int /*version*/)
 {
   posix_time::ptime beg(tp.begin().date(), tp.begin().time_of_day());
   posix_time::ptime end(tp.end().date(), tp.end().time_of_day());
@@ -170,7 +170,7 @@ void save(Archive & ar,
 template<class Archive>
 void load(Archive & ar, 
           boost::posix_time::time_period & tp, 
-          unsigned int version)
+          unsigned int /*version*/)
 {
   posix_time::time_duration td(1,0,0);
   gregorian::date d(gregorian::not_a_date_time);
@@ -185,7 +185,7 @@ void load(Archive & ar,
 template<class Archive>
 inline void load_construct_data(Archive & ar, 
                                 boost::posix_time::time_period* tp, 
-                                const unsigned int file_version)
+                                const unsigned int /*file_version*/)
 {
   posix_time::time_duration td(1,0,0);
   gregorian::date d(gregorian::not_a_date_time);

@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: results_collector.ipp,v $
 //
-//  Version     : $Revision: 1.2 $
+//  Version     : $Revision: 1.5 $
 //
 //  Description : implements Unit Test results collecting facility.
 // ***************************************************************************
@@ -16,8 +16,8 @@
 #define BOOST_TEST_RESULTS_COLLECTOR_IPP_021105GER
 
 // Boost.Test
-#include <boost/test/unit_test_suite.hpp>
-#include <boost/test/test_tools.hpp>
+#include <boost/test/unit_test_suite_impl.hpp>
+#include <boost/test/unit_test_log.hpp>
 #include <boost/test/results_collector.hpp>
 #include <boost/test/framework.hpp>
 
@@ -76,6 +76,7 @@ test_results::operator+=( test_results const& tr )
     p_test_cases_passed.value   += tr.p_test_cases_passed;
     p_test_cases_failed.value   += tr.p_test_cases_failed;
     p_test_cases_skipped.value  += tr.p_test_cases_skipped;
+    p_test_cases_aborted.value  += tr.p_test_cases_aborted;
 }
 
 //____________________________________________________________________________//
@@ -89,6 +90,7 @@ test_results::clear()
     p_test_cases_passed.value    = 0;
     p_test_cases_failed.value    = 0;
     p_test_cases_skipped.value   = 0;
+    p_test_cases_aborted.value   = 0;
     p_aborted.value              = false;
     p_skipped.value              = true;
 }
@@ -99,6 +101,8 @@ test_results::clear()
 // **************               results_collector              ************** //
 // ************************************************************************** //
 
+#if !BOOST_WORKAROUND(BOOST_MSVC, <1300)
+
 namespace {
 
 struct results_collector_impl {
@@ -108,6 +112,16 @@ struct results_collector_impl {
 results_collector_impl& s_rc_impl() { static results_collector_impl the_inst; return the_inst; }
 
 } // local namespace
+
+#else
+
+struct results_collector_impl {
+    std::map<test_unit_id,test_results> m_results_store;
+};
+
+static results_collector_impl& s_rc_impl() { static results_collector_impl the_inst; return the_inst; }
+
+#endif
 
 //____________________________________________________________________________//
 
@@ -162,8 +176,11 @@ public:
             m_tr.p_test_cases_passed.value++;
         else if( tr.p_skipped )
             m_tr.p_test_cases_skipped.value++;
-        else
+        else {
+            if( tr.p_aborted )
+                m_tr.p_test_cases_aborted.value++;
             m_tr.p_test_cases_failed.value++;
+        }
     }
     bool    test_suite_start( test_suite const& ts )
     {
@@ -194,7 +211,9 @@ results_collector_t::test_unit_finish( test_unit const& tu, unsigned long )
     else {
         test_results const& tr = s_rc_impl().m_results_store[tu.p_id];
         
-        BOOST_WARN_MESSAGE( tr.p_aborted || tr.p_assertions_failed >= tr.p_expected_failures, "Test case has less failures then expected" );
+        bool num_failures_match = tr.p_aborted || tr.p_assertions_failed >= tr.p_expected_failures;
+        if( !num_failures_match )
+            BOOST_TEST_MESSAGE( "Test case has less failures then expected" );
     }
 }
 
@@ -237,7 +256,9 @@ results_collector_t::assertion_result( bool passed )
 void
 results_collector_t::exception_caught( execution_exception const& )
 {
-    // do nothing
+    test_results& tr = s_rc_impl().m_results_store[framework::current_test_case().p_id];
+
+    tr.p_assertions_failed.value++;
 }
 
 //____________________________________________________________________________//
@@ -270,6 +291,15 @@ results_collector_t::results( test_unit_id id ) const
 //  Revision History :
 //
 //  $Log: results_collector.ipp,v $
+//  Revision 1.5  2006/02/26 15:24:00  rogeeff
+//  vc65 workaround
+//
+//  Revision 1.4  2006/01/28 08:55:52  rogeeff
+//  results collection bug fixed
+//
+//  Revision 1.3  2005/12/14 05:53:22  rogeeff
+//  collect amount of aborted test cases
+//
 //  Revision 1.2  2005/03/24 04:02:33  rogeeff
 //  portability fixes
 //

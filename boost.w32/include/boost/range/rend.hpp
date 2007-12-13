@@ -29,7 +29,7 @@ template< class C >
 inline BOOST_DEDUCED_TYPENAME range_reverse_result_iterator<C>::type
 rend( C& c )
 {
-    return BOOST_DEDUCED_TYPENAME range_reverse_result_iterator<C>::type( begin( c ) );
+    return BOOST_DEDUCED_TYPENAME range_reverse_result_iterator<C>::type( boost::begin( c ) );
 }
 
 #else
@@ -42,7 +42,7 @@ rend( C& c )
         typedef BOOST_DEDUCED_TYPENAME range_reverse_iterator<
                                                                 typename remove_const<C>::type >::type
                iter_type;
-    return iter_type( begin( c ) );
+    return iter_type( boost::begin( c ) );
 }
 
 template< class C >
@@ -51,7 +51,7 @@ rend( const C& c )
 {
     typedef BOOST_DEDUCED_TYPENAME range_const_reverse_iterator<C>::type
         iter_type;
-    return iter_type( begin( c ) );
+    return iter_type( boost::begin( c ) );
 }
 
 #endif
@@ -60,7 +60,7 @@ template< class T >
 inline BOOST_DEDUCED_TYPENAME range_const_reverse_iterator<T>::type
 const_rend( const T& r )
 {
-    return rend( r );
+    return boost::rend( r );
 }
 
 } // namespace 'boost'

@@ -88,13 +88,13 @@ public:
          return m_subs[sub].length();
       return 0;
    }
-   difference_type position(unsigned int sub = 0) const
+   difference_type position(size_type sub = 0) const
    {
       sub += 2;
       if(sub < m_subs.size())
       {
          const sub_match<BidiIterator>& s = m_subs[sub];
-         if(s.matched)
+         if(s.matched || (sub == 2))
          {
             return ::boost::re_detail::distance((BidiIterator)(m_base), (BidiIterator)(s.first));
          }
@@ -310,8 +310,8 @@ void BOOST_REGEX_CALL match_results<BidiIterator, Allocator>::maybe_assign(const
    // whether a sub-expression is a valid match, because partial matches set this
    // to false for sub-expression 0.
    //
-   BidiIterator end = this->suffix().second;
-   BidiIterator base = (p1->first == end) ? this->prefix().first : (*this)[0].first;
+   BidiIterator l_end = this->suffix().second;
+   BidiIterator l_base = (p1->first == l_end) ? this->prefix().first : (*this)[0].first;
    difference_type len1 = 0;
    difference_type len2 = 0;
    difference_type base1 = 0;
@@ -326,9 +326,9 @@ void BOOST_REGEX_CALL match_results<BidiIterator, Allocator>::maybe_assign(const
       // compute the length of the whole sequence, as this can be really
       // expensive).
       //
-      if(p1->first == end)
+      if(p1->first == l_end)
       {
-         if(p2->first != end)
+         if(p2->first != l_end)
          {
             // p2 must be better than p1, and no need to calculate
             // actual distances:
@@ -347,13 +347,13 @@ void BOOST_REGEX_CALL match_results<BidiIterator, Allocator>::maybe_assign(const
             continue;
          }
       }
-      else if(p2->first == end)
+      else if(p2->first == l_end)
       {
          // p1 better than p2, and no need to calculate distances:
          return;
       }
-      base1 = ::boost::re_detail::distance(base, p1->first);
-      base2 = ::boost::re_detail::distance(base, p2->first);
+      base1 = ::boost::re_detail::distance(l_base, p1->first);
+      base2 = ::boost::re_detail::distance(l_base, p2->first);
       BOOST_ASSERT(base1 >= 0);
       BOOST_ASSERT(base2 >= 0);
       if(base1 < base2) return;
@@ -409,4 +409,5 @@ std::ostream& operator << (std::ostream& os,
 #endif
 
 #endif
+
 

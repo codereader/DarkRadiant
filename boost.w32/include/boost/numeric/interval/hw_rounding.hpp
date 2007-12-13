@@ -17,12 +17,16 @@
 #define BOOST_NUMERIC_INTERVAL_NO_HARDWARE
 
 // define appropriate specialization of rounding_control for built-in types
-#if defined(__i386__) || defined(_M_IX86) || defined(__BORLANDC__)
+#if defined(__i386__) || defined(_M_IX86) || defined(__BORLANDC__) || defined(_M_X64)
 #  include <boost/numeric/interval/detail/x86_rounding_control.hpp>
 #elif defined(powerpc) || defined(__powerpc__) || defined(__ppc__)
 #  include <boost/numeric/interval/detail/ppc_rounding_control.hpp>
 #elif defined(sparc) || defined(__sparc__)
 #  include <boost/numeric/interval/detail/sparc_rounding_control.hpp>
+#elif defined(alpha) || defined(__alpha__)
+#  include <boost/numeric/interval/detail/alpha_rounding_control.hpp>
+#elif defined(ia64) || defined(__ia64) || defined(__ia64__)
+#  include <boost/numeric/interval/detail/ia64_rounding_control.hpp>
 #endif
 
 #if defined(BOOST_NUMERIC_INTERVAL_NO_HARDWARE) && (defined(__USE_ISOC99) || defined(__MSL__))

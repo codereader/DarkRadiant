@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: parser.hpp,v $
 //
-//  Version     : $Revision: 1.1 $
+//  Version     : $Revision: 1.2 $
 //
 //  Description : defines parser - public interface for CLA parsing and accessing
 // ***************************************************************************
@@ -132,7 +132,7 @@ private:
     // Data members
     argv_traverser              m_traverser;
     std::list<parameter_ptr>    m_parameters;
-    dstring                  m_program_name;
+    dstring                     m_program_name;
 };
 
 //____________________________________________________________________________//
@@ -154,6 +154,9 @@ private:
 //   Revision History:
 //
 //   $Log: parser.hpp,v $
+//   Revision 1.2  2005/12/14 05:01:14  rogeeff
+//   *** empty log message ***
+//
 //   Revision 1.1  2005/04/12 06:42:43  rogeeff
 //   Runtime.Param library initial commit
 //

@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/06/28 13:11:45 $
+ * $Date: 2006/03/26 21:29:10 $
  */
 
 #include "boost/date_time/date_facet.hpp"
@@ -41,9 +41,9 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::date& d) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), d);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), d);
     else {
       //instantiate a custom facet for dealing with dates since the user
       //has not put one in the stream so far.  This is for efficiency 
@@ -52,11 +52,10 @@ namespace gregorian {
       //if the user imbues at some later point.  With the default settings
       //for the facet the resulting format will be the same as the
       //std::time_facet settings.
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), d);
+      f->put(output_itr, os, os.fill(), d);
     }
     return os;
   }
@@ -109,15 +108,14 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::date_duration& dd) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), dd);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), dd);
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), dd);
+      f->put(output_itr, os, os.fill(), dd);
 
     }
     return os;
@@ -167,9 +165,9 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::date_period& dp) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), dp);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), dp);
     else {
       //instantiate a custom facet for dealing with date periods since the user
       //has not put one in the stream so far.  This is for efficiency 
@@ -178,11 +176,10 @@ namespace gregorian {
       //if the user imbues at some later point.  With the default settings
       //for the facet the resulting format will be the same as the
       //std::time_facet settings.
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), dp);
+      f->put(output_itr, os, os.fill(), dp);
 
     }
     return os;
@@ -234,16 +231,15 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::greg_month& gm) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), gm);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), gm);
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();//-> 10/1074199752/32 because year & day not initialized in put(...)
       //custom_date_facet* f = new custom_date_facet("%B");
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), gm);
+      f->put(output_itr, os, os.fill(), gm);
     }
     return os;
   }
@@ -293,15 +289,14 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::greg_weekday& gw) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), gw);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), gw);
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), gw);
+      f->put(output_itr, os, os.fill(), gw);
     }
     return os;
   }
@@ -434,15 +429,14 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::partial_date& pd) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), pd);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), pd);
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), pd);
+      f->put(output_itr, os, os.fill(), pd);
     }
     return os;
   }
@@ -491,15 +485,14 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::nth_day_of_the_week_in_month& nkd) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), nkd);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), nkd);
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), nkd);
+      f->put(output_itr, os, os.fill(), nkd);
     }
     return os;
   }
@@ -550,15 +543,14 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::first_day_of_the_week_in_month& fkd) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), fkd);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), fkd);
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), fkd);
+      f->put(output_itr, os, os.fill(), fkd);
     }
     return os;
   }
@@ -609,15 +601,14 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::last_day_of_the_week_in_month& lkd) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc()))
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), lkd);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), lkd);
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), lkd);
+      f->put(output_itr, os, os.fill(), lkd);
     }
     return os;
   }
@@ -668,16 +659,15 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::first_day_of_the_week_after& fda) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc())) {
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), fda);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), fda);
     } 
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), fda);
+      f->put(output_itr, os, os.fill(), fda);
     }
     return os;
   }
@@ -728,16 +718,15 @@ namespace gregorian {
   operator<<(std::basic_ostream<CharT, TraitsT>& os, const boost::gregorian::first_day_of_the_week_before& fdb) {
     boost::io::ios_flags_saver iflags(os);
     typedef boost::date_time::date_facet<date, CharT> custom_date_facet;
-    std::ostreambuf_iterator<CharT> oitr(os);
+    std::ostreambuf_iterator<CharT> output_itr(os);
     if (std::has_facet<custom_date_facet>(os.getloc())) {
-      std::use_facet<custom_date_facet>(os.getloc()).put(oitr, os, os.fill(), fdb);
+      std::use_facet<custom_date_facet>(os.getloc()).put(output_itr, os, os.fill(), fdb);
     }
     else {
-      std::ostreambuf_iterator<CharT> oitr(os);
       custom_date_facet* f = new custom_date_facet();
       std::locale l = std::locale(os.getloc(), f);
       os.imbue(l);
-      f->put(oitr, os, os.fill(), fdb);
+      f->put(output_itr, os, os.fill(), fdb);
     }
     return os;
   }

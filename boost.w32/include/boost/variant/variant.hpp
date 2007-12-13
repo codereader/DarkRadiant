@@ -311,7 +311,7 @@ class known_get
     : public static_visitor<T&>
 {
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 
 public: // visitor interface
 
@@ -486,7 +486,7 @@ public: // structors
     {
     }
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, <= 1200)
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 
 public: // visitor interface
 

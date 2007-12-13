@@ -29,10 +29,7 @@
 #include <boost/pfto.hpp>
 #include <boost/detail/workaround.hpp>
 
-#include <boost/archive/detail/oserializer.hpp>
-#include <boost/archive/detail/interface_oarchive.hpp>
 #include <boost/archive/detail/common_oarchive.hpp>
-
 #include <boost/serialization/string.hpp>
 
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
@@ -46,6 +43,7 @@ template<class Archive>
 class basic_text_oarchive : 
     public detail::common_oarchive<Archive>
 {
+protected:
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300) \
 || BOOST_WORKAROUND(__BORLANDC__,BOOST_TESTED_AT(0x560))
 public:
@@ -53,10 +51,8 @@ public:
     // for some inexplicable reason insertion of "class" generates compile erro
     // on msvc 7.1
     friend detail::interface_oarchive<Archive>;
-protected:
 #else
     friend class detail::interface_oarchive<Archive>;
-protected:
 #endif
     enum {
         none,
@@ -64,18 +60,19 @@ protected:
         space
     } delimiter;
 
+    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
+    newtoken();
+
     void newline(){
         delimiter = eol;
     }
 
-    BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-    newtoken();
-
-    // default processing - invoke serialization library
+    // default processing - kick back to base class.  Note the
+    // extra stuff to get it passed borland compilers
+    typedef detail::common_oarchive<Archive> detail_common_oarchive;
     template<class T>
-    void save_override(T & t, BOOST_PFTO int)
-    {
-        archive::save(* this->This(), t);
+    void save_override(T & t, BOOST_PFTO int){
+        this->detail_common_oarchive::save_override(t, 0);
     }
 
     // start new objects on a new line
@@ -94,9 +91,26 @@ protected:
     // text file don't include the optional information 
     void save_override(const class_id_optional_type & /* t */, int){}
 
+    // note the following four overrides are necessary for some borland
+    // compilers which don't handle BOOST_STRONG_TYPE properly.
+    void save_override(const version_type & t, int){
+        // note:t.t resolves borland ambguity
+        unsigned int x = t.t;
+        * this->This() << x;
+    }
+    void save_override(const class_id_type & t, int){
+        // note:t.t resolves borland ambguity
+        int x = t.t;
+        * this->This() << x;
+    }
+    void save_override(const class_id_reference_type & t, int){
+        // note:t.t resolves borland ambguity
+        int x = t.t;
+        * this->This() << x;
+    }
     void save_override(const class_name_type & t, int){
-                const std::string s(t);
-                * this->This() << s;
+        const std::string s(t);
+        * this->This() << s;
     }
 
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
@@ -106,7 +120,6 @@ protected:
         detail::common_oarchive<Archive>(flags),
         delimiter(none)
     {}
-
     ~basic_text_oarchive(){}
 };
 

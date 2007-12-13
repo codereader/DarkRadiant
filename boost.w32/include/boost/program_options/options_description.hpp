@@ -78,10 +78,12 @@ namespace program_options {
 
         virtual ~option_description();
 
+        enum match_result { no_match, full_match, approximate_match };
+
         /** Given 'option', specified in the input source,
             return 'true' is 'option' specifies *this.
         */
-        bool match(const std::string& option, bool approx) const;
+        match_result match(const std::string& option, bool approx) const;
 
         /** Return the key that should identify the option, in
             particular in the variables_map class.

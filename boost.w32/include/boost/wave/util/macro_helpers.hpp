@@ -3,7 +3,7 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -11,10 +11,17 @@
 #if !defined(MACRO_HELPERS_HPP_931BBC99_EBFA_4692_8FBE_B555998C2C39_INCLUDED)
 #define MACRO_HELPERS_HPP_931BBC99_EBFA_4692_8FBE_B555998C2C39_INCLUDED
 
+#include <vector>
+
 #include <boost/assert.hpp>
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/token_ids.hpp>
 #include <boost/wave/cpplexer/validate_universal_char.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -191,7 +198,7 @@ namespace impl {
     // return the string representation of a token sequence
     template <typename StringT, typename IteratorT>
     inline StringT
-    as_string(IteratorT it, IteratorT end)
+    as_string(IteratorT it, IteratorT const& end)
     {
         StringT result;
         for (/**/; it != end; ++it) 
@@ -244,5 +251,10 @@ namespace impl {
 }   // namespace util
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(MACRO_HELPERS_HPP_931BBC99_EBFA_4692_8FBE_B555998C2C39_INCLUDED)

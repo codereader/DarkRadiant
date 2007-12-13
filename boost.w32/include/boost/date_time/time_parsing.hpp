@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2005/07/19 11:17:32 $
+ * $Date: 2005/10/23 20:15:06 $
  */
 
 #include "boost/tokenizer.hpp"
@@ -42,20 +42,30 @@ namespace date_time {
    * string is a '-', all other '-' will be treated as delimiters.
    * Accepted delimiters are "-:,.". 
    */
-  template<class time_duration>
+  template<class time_duration, class char_type>
   inline
   time_duration
-  parse_delimited_time_duration(const std::string& s)
+  str_from_delimited_time_duration(const std::basic_string<char_type>& s)
   {
     unsigned short min=0, sec =0;
     int hour =0; 
     bool is_neg = (s.at(0) == '-');
     boost::int64_t fs=0;
     int pos = 0;
-    
-    char_separator<char> sep("-:,.");
-    tokenizer<char_separator<char> > tok(s,sep);
-    for(tokenizer<char_separator<char> >::iterator beg=tok.begin(); beg!=tok.end();++beg){
+      
+    typedef typename std::basic_string<char_type>::traits_type traits_type;
+    typedef boost::char_separator<char_type, traits_type> char_separator_type;
+    typedef boost::tokenizer<char_separator_type,
+                             typename std::basic_string<char_type>::const_iterator,
+                             std::basic_string<char_type> > tokenizer;
+    typedef typename boost::tokenizer<char_separator_type,
+                             typename std::basic_string<char_type>::const_iterator,
+                             typename std::basic_string<char_type> >::iterator tokenizer_iterator;
+   
+    char_type sep_chars[5] = {'-',':',',','.'};
+    char_separator_type sep(sep_chars);
+    tokenizer tok(s,sep);
+    for(tokenizer_iterator beg=tok.begin(); beg!=tok.end();++beg){
       switch(pos) {
       case 0: {
         hour = boost::lexical_cast<int>(*beg);
@@ -73,7 +83,7 @@ namespace date_time {
         int digits = static_cast<int>(beg->length());
         //Works around a bug in MSVC 6 library that does not support
         //operator>> thus meaning lexical_cast will fail to compile.
-#if (defined(BOOST_MSVC) && (_MSC_VER <= 1200))  // 1200 == VC++ 6.0
+#if (defined(BOOST_MSVC) && (_MSC_VER < 1300))
         // msvc wouldn't compile 'time_duration::num_fractional_digits()' 
         // (required template argument list) as a workaround a temp 
         // time_duration object was used
@@ -115,6 +125,24 @@ namespace date_time {
     else {
       return time_duration(hour, min, sec, fs);
     }
+  }
+  
+  //! Creates a time_duration object from a delimited string
+  /*! Expected format for string is "[-]h[h][:mm][:ss][.fff]".
+   * If the number of fractional digits provided is greater than the 
+   * precision of the time duration type then the extra digits are 
+   * truncated.
+   *
+   * A negative duration will be created if the first character in
+   * string is a '-', all other '-' will be treated as delimiters.
+   * Accepted delimiters are "-:,.". 
+   */
+  template<class time_duration>
+  inline
+  time_duration
+  parse_delimited_time_duration(const std::string& s)
+  {
+    return str_from_delimited_time_duration<time_duration,char>(s);
   }
 
   //! Utility function to split appart string
@@ -188,8 +216,14 @@ namespace date_time {
     bool wrap_off = false;
     bool ret_part = true;
     boost::offset_separator osf(offsets, offsets+4, wrap_off, ret_part); 
-    boost::tokenizer<boost::offset_separator> tok(remain, osf);
-    for(boost::tokenizer<boost::offset_separator>::iterator ti=tok.begin(); ti!=tok.end();++ti){
+    typedef boost::tokenizer<boost::offset_separator,
+                             std::basic_string<char>::const_iterator,
+                             std::basic_string<char> > tokenizer;
+    typedef boost::tokenizer<boost::offset_separator,
+                             std::basic_string<char>::const_iterator,
+                             std::basic_string<char> >::iterator tokenizer_iterator;
+    tokenizer tok(remain, osf);
+    for(tokenizer_iterator ti=tok.begin(); ti!=tok.end();++ti){
       switch(pos) {
         case 0: 
           {

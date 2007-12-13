@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: config.hpp,v $
 //
-//  Version     : $Revision: 1.2 $
+//  Version     : $Revision: 1.5 $
 //
 //  Description : as a central place for global configuration switches
 // ***************************************************************************
@@ -20,9 +20,9 @@
 #include <boost/detail/workaround.hpp>
 
 #if BOOST_WORKAROUND(__GNUC__, < 3) && !defined(__SGI_STL_PORT) && !defined(_STLPORT_VERSION)
-#define BOOST_CLASSIC_IOSTREAMS
+#  define BOOST_CLASSIC_IOSTREAMS
 #else
-#define BOOST_STANDARD_IOSTREAMS
+#  define BOOST_STANDARD_IOSTREAMS
 #endif
 
 //____________________________________________________________________________//
@@ -30,21 +30,21 @@
 #if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x570)) || \
     BOOST_WORKAROUND(__IBMCPP__, BOOST_TESTED_AT(600))     || \
     (defined __sgi && BOOST_WORKAROUND(_COMPILER_VERSION, BOOST_TESTED_AT(730)))
-#define BOOST_TEST_SHIFTED_LINE
+#  define BOOST_TEST_SHIFTED_LINE
 #endif
 
 //____________________________________________________________________________//
 
 #if defined(BOOST_MSVC) || (defined(__BORLANDC__) && !defined(BOOST_DISABLE_WIN32))
-#   define BOOST_TEST_CALL_DECL __cdecl
+#  define BOOST_TEST_CALL_DECL __cdecl
 #else
-#   define BOOST_TEST_CALL_DECL /**/
+#  define BOOST_TEST_CALL_DECL /**/
 #endif
 
 //____________________________________________________________________________//
 
 #if defined(BOOST_HAS_SIGACTION)
-#define BOOST_TEST_SUPPORT_TIMEOUT
+#  define BOOST_TEST_SUPPORT_TIMEOUT
 #endif
 
 //____________________________________________________________________________//
@@ -57,19 +57,65 @@
     BOOST_WORKAROUND(__IBMCPP__, BOOST_TESTED_AT(600)) || \
     defined(__DECCXX) || \
     defined(__DMC__)
-#define BOOST_TEST_NO_PROTECTED_USING
+#  define BOOST_TEST_NO_PROTECTED_USING
 #endif
 
 //____________________________________________________________________________//
 
+#ifdef __GNUC__
 #define BOOST_TEST_PROTECTED_VIRTUAL virtual
+#else
+#define BOOST_TEST_PROTECTED_VIRTUAL
+#endif
 
 //____________________________________________________________________________//
+
+#if defined(BOOST_ALL_DYN_LINK) && !defined(BOOST_TEST_DYN_LINK)
+#  define BOOST_TEST_DYN_LINK
+#endif
+
+#if defined(BOOST_TEST_INCLUDED)
+#  undef BOOST_TEST_DYN_LINK
+#endif
+
+#if defined(BOOST_TEST_DYN_LINK)
+#  define BOOST_TEST_ALTERNATIVE_INIT_API
+
+#  if defined(BOOST_HAS_DECLSPEC) && defined(BOOST_TEST_DYN_LINK)
+#    ifdef BOOST_TEST_SOURCE
+#      define BOOST_TEST_DECL __declspec(dllexport)
+#    else
+#      define BOOST_TEST_DECL __declspec(dllimport)
+#    endif  // BOOST_TEST_SOURCE
+#  endif  // BOOST_HAS_DECLSPEC
+#endif  // BOOST_TEST_DYN_LINK
+
+
+#ifndef BOOST_TEST_DECL
+#  define BOOST_TEST_DECL
+#endif
+
+#if !defined(BOOST_TEST_MAIN) && defined(BOOST_AUTO_TEST_MAIN)
+#define BOOST_TEST_MAIN BOOST_AUTO_TEST_MAIN
+#endif
+
+#if !defined(BOOST_TEST_MAIN) && defined(BOOST_TEST_MODULE)
+#define BOOST_TEST_MAIN BOOST_TEST_MODULE
+#endif
 
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log: config.hpp,v $
+//  Revision 1.5  2006/02/06 10:03:54  rogeeff
+//  BOOST_TEST_MODULE - master test suite name
+//
+//  Revision 1.4  2006/01/15 06:17:18  rogeeff
+//  make config working properly for non-windows dll
+//
+//  Revision 1.3  2005/12/14 04:56:31  rogeeff
+//  dll support introduced
+//
 //  Revision 1.2  2005/07/13 21:49:46  danieljames
 //  Boost.Test workarounds for Digital Mars bugs.
 //

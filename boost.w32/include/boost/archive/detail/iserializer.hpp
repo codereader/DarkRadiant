@@ -42,7 +42,6 @@ namespace std{
 #include <boost/type_traits/is_pointer.hpp>
 #include <boost/type_traits/is_fundamental.hpp>
 #include <boost/type_traits/is_enum.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_const.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/serialization/is_abstract.hpp>
@@ -59,10 +58,9 @@ namespace std{
 #include <boost/mpl/empty.hpp>
 #include <boost/mpl/not.hpp>
 
-#ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO
-    #include <boost/serialization/extended_type_info_typeid.hpp>
-#endif
-
+ #ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO   
+     #include <boost/serialization/extended_type_info_typeid.hpp>   
+ #endif 
 // the following is need only for dynamic cast of polymorphic pointers
 #include <boost/archive/detail/basic_iarchive.hpp>
 #include <boost/archive/detail/basic_iserializer.hpp>
@@ -123,7 +121,7 @@ public:
         return boost::serialization::implementation_level<T>::value 
             >= boost::serialization::object_class_info;
     }
-    virtual bool tracking(const unsigned int flags) const {
+    virtual bool tracking(const unsigned int /* flags */) const {
 //        if(0 != (flags & no_tracking))
 //            return false;
         return boost::serialization::tracking_level<T>::value 
@@ -189,7 +187,7 @@ public:
 public:
     // at least one compiler (CW) seems to require that serialize_adl
     // be explicitly instantiated. Still under investigation. 
-    #if !defined(__BORLANDC__)
+    #if ! BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
     void (* const m)(Archive &, T &, const unsigned);
     boost::serialization::extended_type_info * (* e)();
     #endif
@@ -323,7 +321,7 @@ BOOST_DLLEXPORT void pointer_iserializer<T, Archive>::load_object_ptr(
 }
 
 template<class T, class Archive>
-#if !defined(__BORLANDC__)
+#if ! BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
 BOOST_DLLEXPORT pointer_iserializer<T, Archive>::pointer_iserializer() :
     archive_pointer_iserializer<Archive>(
         * boost::serialization::type_info_implementation<T>::type::get_instance()

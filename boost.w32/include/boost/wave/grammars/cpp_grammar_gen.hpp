@@ -3,7 +3,7 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -11,10 +11,24 @@
 #if !defined(CPP_GRAMMAR_GEN_HPP_80CB8A59_5411_4E45_B406_62531A12FB99_INCLUDED)
 #define CPP_GRAMMAR_GEN_HPP_80CB8A59_5411_4E45_B406_62531A12FB99_INCLUDED
 
-#include <boost/spirit/tree/parse_tree.hpp>
-
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/language_support.hpp>
+
+#include <boost/spirit/core/nil.hpp>
+#include <boost/spirit/tree/parse_tree.hpp>
+
+#include <boost/pool/pool_alloc.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
+
+// suppress warnings about dependent classes not being exported from the dll
+#ifdef BOOST_MSVC
+#pragma warning(push)
+#pragma warning(disable : 4251 4231 4660)
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -22,37 +36,33 @@ namespace wave {
 namespace grammars {
 
 ///////////////////////////////////////////////////////////////////////////////
-//  
-//  store parser_id's of all rules of the cpp_grammar here for later access
+//
+//  Here are the node id's of the different node of the cpp_grammar
 //
 ///////////////////////////////////////////////////////////////////////////////
-struct cpp_grammar_rule_ids {
-    std::size_t pp_statement_id;
-    std::size_t include_file_id;       // #include "..."
-    std::size_t sysinclude_file_id;    // #include <...>
-    std::size_t macroinclude_file_id;  // #include ...
-    std::size_t plain_define_id;       // #define
-    std::size_t macro_parameters_id;
-    std::size_t macro_definition_id;
-    std::size_t undefine_id;           // #undef
-    std::size_t ifdef_id;              // #ifdef
-    std::size_t ifndef_id;             // #ifndef
-    std::size_t if_id;                 // #if
-    std::size_t elif_id;               // #elif
-    std::size_t else_id;               // #else
-    std::size_t endif_id;              // #endif
-    std::size_t line_id;               // #line
-    std::size_t error_id;              // #error
-    std::size_t warning_id;            // #warning
-    std::size_t pragma_id;             // #pragma
-    std::size_t illformed_id;
-    std::size_t ppspace_id;
-    std::size_t ppqualifiedname_id;
-#if BOOST_WAVE_SUPPORT_MS_EXTENSIONS != 0
-    std::size_t region_id;             // #region
-    std::size_t endregion_id;          // #endregion
-#endif
-};
+#define BOOST_WAVE_PP_STATEMENT_ID        1
+#define BOOST_WAVE_INCLUDE_FILE_ID        2
+#define BOOST_WAVE_SYSINCLUDE_FILE_ID     3
+#define BOOST_WAVE_MACROINCLUDE_FILE_ID   4
+#define BOOST_WAVE_PLAIN_DEFINE_ID        5
+#define BOOST_WAVE_MACRO_PARAMETERS_ID    6
+#define BOOST_WAVE_MACRO_DEFINITION_ID    7
+#define BOOST_WAVE_UNDEFINE_ID            8
+#define BOOST_WAVE_IFDEF_ID               9
+#define BOOST_WAVE_IFNDEF_ID             10
+#define BOOST_WAVE_IF_ID                 11
+#define BOOST_WAVE_ELIF_ID               12
+#define BOOST_WAVE_ELSE_ID               13
+#define BOOST_WAVE_ENDIF_ID              14
+#define BOOST_WAVE_LINE_ID               15
+#define BOOST_WAVE_ERROR_ID              16
+#define BOOST_WAVE_WARNING_ID            17
+#define BOOST_WAVE_PRAGMA_ID             18
+#define BOOST_WAVE_ILLFORMED_ID          19
+#define BOOST_WAVE_PPSPACE_ID            20
+#define BOOST_WAVE_PPQUALIFIEDNAME_ID    21
+#define BOOST_WAVE_REGION_ID             22
+#define BOOST_WAVE_ENDREGION_ID          23
 
 ///////////////////////////////////////////////////////////////////////////////
 //  
@@ -64,54 +74,37 @@ struct cpp_grammar_rule_ids {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-template <typename LexIteratorT>
-struct cpp_grammar_gen
+template <typename LexIteratorT, typename TokenContainerT>
+struct BOOST_WAVE_DECL cpp_grammar_gen
 {
     typedef LexIteratorT                          iterator_type;
     typedef typename LexIteratorT::token_type     token_type;
+    typedef TokenContainerT                       token_container_type;
     typedef typename token_type::position_type    position_type;
+    typedef boost::spirit::node_val_data_factory<
+//             boost::spirit::nil_t,
+//             boost::pool_allocator<boost::spirit::nil_t> 
+        > node_factory_type;
     
-//  the parser_id's of all rules of the cpp_grammar are stored here
-//  note: these are valid only after the first call to parse_cpp_grammar
-    static cpp_grammar_rule_ids rule_ids;
-
-//  the actual position of the last matched T_NEWLINE is stored here into the
-//  member 'pos_of_newline'
-    static position_type pos_of_newline;
-
-//  the found_eof flag is set to true during the parsing, if the directive 
-//  under inspection terminates with a T__EOF token
-    static bool found_eof;
-
-//  the found_directive contains the token_id of the recognized pp directive
-    static boost::wave::token_id found_directive;
-        
 //  parse the cpp_grammar and return the resulting parse tree    
-    static boost::spirit::tree_parse_info<iterator_type> 
+    static boost::spirit::tree_parse_info<iterator_type, node_factory_type> 
     parse_cpp_grammar (iterator_type const &first, iterator_type const &last,
-        bool &found_eof_, position_type const &act_pos);
+        position_type const &act_pos, bool &found_eof, 
+        token_type &found_directive, token_container_type &found_eoltokens);
 };
-
-///////////////////////////////////////////////////////////////////////////////
-//  definitions of the static members
-template <typename LexIteratorT>
-cpp_grammar_rule_ids 
-    cpp_grammar_gen<LexIteratorT>::rule_ids;
-
-template <typename LexIteratorT>
-typename LexIteratorT::token_type::position_type 
-    cpp_grammar_gen<LexIteratorT>::pos_of_newline;
-
-template <typename LexIteratorT>
-bool cpp_grammar_gen<LexIteratorT>::found_eof = false;
-
-template <typename LexIteratorT>
-boost::wave::token_id cpp_grammar_gen<LexIteratorT>::found_directive = 
-    boost::wave::T_EOF;
 
 ///////////////////////////////////////////////////////////////////////////////
 }   // namespace grammars
 }   // namespace wave
 }   // namespace boost
+
+#ifdef BOOST_MSVC
+#pragma warning(pop)
+#endif
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(CPP_GRAMMAR_GEN_HPP_80CB8A59_5411_4E45_B406_62531A12FB99_INCLUDED)

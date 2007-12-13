@@ -35,9 +35,9 @@ namespace archive {
 //////////////////////////////////////////////////////////////////////
 // implementation of basic_binary_iprimitive
 
-template<class Archive, class IStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_iprimitive<Archive, IStream>::init()
+basic_binary_iprimitive<Archive, Elem, Tr>::init()
 {
     // Detect  attempts to pass native binary archives across
     // incompatible platforms. This is not fool proof but its
@@ -73,9 +73,9 @@ basic_binary_iprimitive<Archive, IStream>::init()
         );
 }
 
-template<class Archive, class IStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_iprimitive<Archive, IStream>::load(wchar_t * ws)
+basic_binary_iprimitive<Archive, Elem, Tr>::load(wchar_t * ws)
 {
     std::size_t l;
     this->This()->load(l);
@@ -83,9 +83,9 @@ basic_binary_iprimitive<Archive, IStream>::load(wchar_t * ws)
     ws[l / sizeof(wchar_t)] = L'\0';
 }
 
-template<class Archive, class IStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_iprimitive<Archive, IStream>::load(std::string & s)
+basic_binary_iprimitive<Archive, Elem, Tr>::load(std::string & s)
 {
     std::size_t l;
     this->This()->load(l);
@@ -99,9 +99,9 @@ basic_binary_iprimitive<Archive, IStream>::load(std::string & s)
 }
 
 #ifndef BOOST_NO_CWCHAR
-template<class Archive, class IStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_iprimitive<Archive, IStream>::load(char * s)
+basic_binary_iprimitive<Archive, Elem, Tr>::load(char * s)
 {
     std::size_t l;
     this->This()->load(l);
@@ -111,9 +111,9 @@ basic_binary_iprimitive<Archive, IStream>::load(char * s)
 #endif
 
 #ifndef BOOST_NO_STD_WSTRING
-template<class Archive, class IStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
-basic_binary_iprimitive<Archive, IStream>::load(std::wstring & ws)
+basic_binary_iprimitive<Archive, Elem, Tr>::load(std::wstring & ws)
 {
     std::size_t l;
     this->This()->load(l);
@@ -127,32 +127,63 @@ basic_binary_iprimitive<Archive, IStream>::load(std::wstring & ws)
 }
 #endif
 
-template<class Archive, class IStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
-basic_binary_iprimitive<Archive, IStream>::basic_binary_iprimitive(
-    IStream &is_, 
+basic_binary_iprimitive<Archive, Elem, Tr>::basic_binary_iprimitive(
+    std::basic_streambuf<Elem, Tr> & sb, 
     bool no_codecvt
 ) :
-    is(is_),
+    m_sb(sb),
     archive_locale(NULL),
-    locale_saver(is)
+    locale_saver(m_sb)
 {
     if(! no_codecvt){
         archive_locale.reset(
             boost::archive::add_facet(
                 std::locale::classic(),
-                new codecvt_null<BOOST_DEDUCED_TYPENAME IStream::char_type>
+                new codecvt_null<Elem>
             )
         );
-        is.imbue(* archive_locale);
+        m_sb.pubimbue(* archive_locale);
     }
 }
 
+// some libraries including stl and libcomo fail if the
+// buffer isn't flushed before the code_cvt facet is changed.
+// I think this is a bug.  We explicity invoke sync to when
+// we're done with the streambuf to work around this problem.
+// Note that sync is a protected member of stream buff so we
+// have to invoke it through a contrived derived class.
+namespace detail {
+// note: use "using" to get past msvc bug
+using namespace std;
+template<class Elem, class Tr>
+class input_streambuf_access : public std::basic_streambuf<Elem, Tr> {
+    public:
+        virtual int sync(){
+#if BOOST_WORKAROUND(__MWERKS__, BOOST_TESTED_AT(0x3206))
+            return this->basic_streambuf::sync();
+#else
+            return this->basic_streambuf<Elem, Tr>::sync();
+#endif
+        }
+};
+} // detail
+
 // scoped_ptr requires that archive_locale be a complete type at time of
 // destruction so define destructor here rather than in the header
-template<class Archive, class IStream>
+template<class Archive, class Elem, class Tr>
 BOOST_ARCHIVE_OR_WARCHIVE_DECL(BOOST_PP_EMPTY())
-basic_binary_iprimitive<Archive, IStream>::~basic_binary_iprimitive(){
+basic_binary_iprimitive<Archive, Elem, Tr>::~basic_binary_iprimitive(){
+    // push back unread characters
+    int result = static_cast<detail::input_streambuf_access<Elem, Tr> &>(
+        m_sb
+    ).sync();
+    if(0 != result){ 
+        boost::throw_exception(
+            archive_exception(archive_exception::stream_error)
+        );
+    }
 }
 
 } // namespace archive

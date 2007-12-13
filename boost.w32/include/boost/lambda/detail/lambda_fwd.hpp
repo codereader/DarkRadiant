@@ -65,7 +65,7 @@ void do_nothing(A1&, A2&, A3&, A4&) {}
 } // lambda
 } // boost
 
-// prevent the warnings from unused argumetns
+// prevent the warnings from unused arguments
 #define CALL_USE_ARGS \
 ::boost::lambda::detail::do_nothing(a, b, c, env)
 

@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: unit_test_monitor.hpp,v $
 //
-//  Version     : $Revision: 1.1 $
+//  Version     : $Revision: 1.2 $
 //
 //  Description : defines specific version of execution monitor used to managed 
 //  run unit of test cases. Translates execution exception into error level
@@ -34,7 +34,7 @@ namespace unit_test {
 // **************               unit_test_monitor              ************** //
 // ************************************************************************** //
 
-class unit_test_monitor_t : public singleton<unit_test_monitor_t>, public execution_monitor {
+class BOOST_TEST_DECL unit_test_monitor_t : public singleton<unit_test_monitor_t>, public execution_monitor {
 public:
     enum error_level { 
         test_fail               =  1,
@@ -70,6 +70,9 @@ BOOST_TEST_SINGLETON_INST( unit_test_monitor )
 //  Revision History :
 //  
 //  $Log: unit_test_monitor.hpp,v $
+//  Revision 1.2  2005/12/14 05:55:35  rogeeff
+//  dll support introduced
+//
 //  Revision 1.1  2005/02/20 08:27:06  rogeeff
 //  This a major update for Boost.Test framework. See release docs for complete list of fixes/updates
 //

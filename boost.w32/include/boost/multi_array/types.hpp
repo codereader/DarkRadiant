@@ -26,7 +26,7 @@ namespace multi_array{
 
 // needed typedefs
 typedef std::size_t size_type;
-typedef int index;
+typedef std::ptrdiff_t index;
 
 } // namespace multi_array
 } // namespace detail

@@ -20,8 +20,6 @@
 #include <boost/pfto.hpp>
 #include <boost/detail/workaround.hpp>
 
-#include <boost/archive/detail/iserializer.hpp>
-#include <boost/archive/detail/interface_iarchive.hpp>
 #include <boost/archive/detail/common_iarchive.hpp>
 
 #include <boost/serialization/nvp.hpp>
@@ -38,16 +36,15 @@ template<class Archive>
 class basic_xml_iarchive : 
     public detail::common_iarchive<Archive>
 {
+protected:
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
 public:
 #elif defined(BOOST_MSVC)
     // for some inexplicable reason insertion of "class" generates compile erro
     // on msvc 7.1
-    friend detail::interface_iarchive<Archive>;
-protected:
+    friend detail::interface_oarchive<Archive>;
 #else
-    friend class detail::interface_iarchive<Archive>;
-protected:
+    friend class detail::interface_oarchive<Archive>;
 #endif
     unsigned int depth;
     BOOST_ARCHIVE_OR_WARCHIVE_DECL(void)
@@ -68,16 +65,17 @@ protected:
 
     // Anything not an attribute - see below - should be a name value
     // pair and be processed here
+    typedef detail::common_iarchive<Archive> detail_common_iarchive;
     template<class T>
     void load_override(
-                #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-                const
-                #endif
-                boost::serialization::nvp<T> & t, 
-                int
-        ){
+        #ifndef BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+        const
+        #endif
+        boost::serialization::nvp<T> & t, 
+        int
+    ){
         load_start(t.name());
-        archive::load(* this->This(), t.value());
+        this->detail_common_iarchive::load_override(t.value(), 0);
         load_end(t.name());
     }
 

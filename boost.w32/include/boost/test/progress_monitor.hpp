@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: progress_monitor.hpp,v $
 //
-//  Version     : $Revision: 1.2 $
+//  Version     : $Revision: 1.4 $
 //
 //  Description : defines simple text based progress monitor
 // ***************************************************************************
@@ -34,7 +34,7 @@ namespace unit_test {
 // **************                progress_monitor              ************** //
 // ************************************************************************** //
 
-class progress_monitor_t : public test_observer, public singleton<progress_monitor_t> {
+class BOOST_TEST_DECL progress_monitor_t : public test_observer, public singleton<progress_monitor_t> {
 public:
     // test observer interface
     void    test_start( counter_t test_cases_amount );
@@ -46,7 +46,7 @@ public:
     void    test_unit_skipped( test_unit const& );
     void    test_unit_aborted( test_unit const& ) {}
 
-    void    assertion_result( bool passed ) {}
+    void    assertion_result( bool ) {}
     void    exception_caught( execution_exception const& ) {}
 
     // configuration
@@ -70,6 +70,12 @@ BOOST_TEST_SINGLETON_INST( progress_monitor )
 //  Revision History :
 //  
 //  $Log: progress_monitor.hpp,v $
+//  Revision 1.4  2006/02/22 16:22:37  rogeeff
+//  eliminate warning
+//
+//  Revision 1.3  2005/12/14 05:11:07  rogeeff
+//  dll support introduced
+//
 //  Revision 1.2  2005/06/24 04:09:34  rogeeff
 //  added missing iosfwd
 //

@@ -27,12 +27,14 @@
 
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/type_traits/is_pointer.hpp>
-#include <boost/serialization/traits.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/tracking_enum.hpp>
+//#include <boost/serialization/traits.hpp>
 
 namespace boost {
 namespace serialization {
+
+struct basic_traits;
 
 // default tracking level
 template<class T>
@@ -42,9 +44,11 @@ struct tracking_level {
         typedef BOOST_DEDUCED_TYPENAME U::tracking type;
     };
     typedef mpl::integral_c_tag tag;
+    // note: at least one compiler complained w/o the full qualification
+    // on basic traits below
     typedef
         BOOST_DEDUCED_TYPENAME mpl::eval_if<
-            is_base_and_derived<basic_traits, T>,
+            is_base_and_derived<boost::serialization::basic_traits, T>,
             traits_class_tracking<T>,
         //else
         BOOST_DEDUCED_TYPENAME mpl::eval_if<

@@ -3,28 +3,109 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 
-#if !defined(CPP_include_paths_HPP_AF620DA4_B3D2_4221_AD91_8A1ABFFB6944_INCLUDED)
-#define CPP_include_paths_HPP_AF620DA4_B3D2_4221_AD91_8A1ABFFB6944_INCLUDED
+#if !defined(CPP_INCLUDE_PATHS_HPP_AF620DA4_B3D2_4221_AD91_8A1ABFFB6944_INCLUDED)
+#define CPP_INCLUDE_PATHS_HPP_AF620DA4_B3D2_4221_AD91_8A1ABFFB6944_INCLUDED
 
 #include <string>
 #include <list>
-#include <set>
 #include <utility>
+
+#include <boost/wave/wave_config.hpp>
+
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#endif
+
+#if BOOST_WAVE_SERIALIZATION != 0
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/collections_save_imp.hpp>
+#include <boost/serialization/collections_load_imp.hpp>
+#include <boost/serialization/split_free.hpp>
+#endif
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include <boost/wave/wave_config.hpp>
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
-namespace boost {
-namespace wave {
-namespace util {
+namespace boost { namespace wave { namespace util {
+
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+///////////////////////////////////////////////////////////////////////////////
+//  Tags for accessing both sides of a bidirectional map
+struct from {};
+struct to {};
+
+///////////////////////////////////////////////////////////////////////////////
+//  The class template bidirectional_map wraps the specification
+//  of a bidirectional map based on multi_index_container.
+template<typename FromType, typename ToType>
+struct bidirectional_map
+{
+    typedef std::pair<FromType, ToType> value_type;
+
+#if defined(BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS) ||\
+    defined(BOOST_MSVC)&&(BOOST_MSVC<1300) ||\
+    defined(BOOST_INTEL_CXX_VERSION)&&defined(_MSC_VER)&&\
+           (BOOST_INTEL_CXX_VERSION<=700)
+
+    BOOST_STATIC_CONSTANT(unsigned, from_offset = offsetof(value_type, first));
+    BOOST_STATIC_CONSTANT(unsigned, to_offset   = offsetof(value_type, second));
+
+    typedef boost::multi_index::multi_index_container<
+        value_type,
+        boost::multi_index::indexed_by<
+            boost::multi_index::ordered_unique<
+                boost::multi_index::tag<from>, 
+                boost::multi_index::member_offset<value_type, FromType, from_offset> 
+            >,
+            boost::multi_index::ordered_non_unique<
+                boost::multi_index::tag<to>, 
+                boost::multi_index::member_offset<value_type, ToType, to_offset> 
+            >
+        >
+    > type;
+
+#else
+
+  typedef boost::multi_index::multi_index_container<
+      value_type,
+      boost::multi_index::indexed_by<
+          boost::multi_index::ordered_unique<
+              boost::multi_index::tag<from>,
+              boost::multi_index::member<value_type, FromType, &value_type::first> 
+          >,
+          boost::multi_index::ordered_non_unique<
+              boost::multi_index::tag<to>,  
+              boost::multi_index::member<value_type, ToType, &value_type::second> 
+          >
+      >
+  > type;
+
+#endif
+};
+#endif // BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+
+#if BOOST_WAVE_SERIALIZATION != 0
+struct load_filepos
+{
+    static unsigned int get_line() { return 0; }
+    static unsigned int get_column() { return 0; }
+    static std::string get_file() { return "<loading-state>"; }
+};
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -54,12 +135,14 @@ namespace util {
 ///////////////////////////////////////////////////////////////////////////////
 class include_paths
 {
+private:
     typedef std::list<std::pair<boost::filesystem::path, std::string> > 
         include_list_type;
     typedef include_list_type::value_type include_value_type;
     
 #if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
-    typedef std::set<std::string> pragma_once_set_t;
+    typedef bidirectional_map<std::string, std::string>::type 
+        pragma_once_set_type;
 #endif
 
 public:
@@ -78,6 +161,8 @@ public:
     bool find_include_file (std::string &s, std::string &dir, bool is_system, 
         char const *current_file) const;
     void set_current_directory(char const *path_);
+    boost::filesystem::path get_current_directory() const 
+        { return current_dir; }
 
     void init_initial_path() { boost::filesystem::initial_path(); }
     
@@ -97,15 +182,80 @@ private:
 public:
     bool has_pragma_once(std::string const &filename)
     {
-        return pragma_once_files.find(filename) != pragma_once_files.end();
+        using namespace boost::multi_index;
+        return get<from>(pragma_once_files).find(filename) != pragma_once_files.end();
     }
-    bool add_pragma_once_header(std::string const &filename)
+    bool add_pragma_once_header(std::string const &filename, 
+        std::string const& guard_name)
     {
-        return pragma_once_files.insert(filename).second;
+        typedef pragma_once_set_type::value_type value_type;
+        return pragma_once_files.insert(value_type(filename, guard_name)).second;
+    }
+    bool remove_pragma_once_header(std::string const& guard_name)
+    {
+        typedef pragma_once_set_type::index_iterator<to>::type to_iterator;
+        typedef std::pair<to_iterator, to_iterator> range_type;
+        
+        range_type r = pragma_once_files.get<to>().equal_range(guard_name);
+        if (r.first != r.second) {
+            using namespace boost::multi_index;
+            get<to>(pragma_once_files).erase(r.first, r.second);
+            return true;
+        }
+        return false;
     }
 
 private:
-    pragma_once_set_t pragma_once_files;
+    pragma_once_set_type pragma_once_files;
+#endif
+
+#if BOOST_WAVE_SERIALIZATION != 0
+public:
+    BOOST_STATIC_CONSTANT(unsigned int, version = 0x10);
+    BOOST_STATIC_CONSTANT(unsigned int, version_mask = 0x0f);
+
+private:
+    friend class boost::serialization::access;
+    template<typename Archive>
+    void save(Archive & ar, const unsigned int version) const
+    {
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+        ar & pragma_once_files;
+#endif
+        ar & user_include_paths;
+        ar & system_include_paths;
+        ar & was_sys_include_path;
+    }
+    template<typename Archive>
+    void load(Archive & ar, const unsigned int loaded_version)
+    {
+        if (version != (loaded_version & ~version_mask)) {
+            BOOST_WAVE_THROW(preprocess_exception, incompatible_config, 
+                "cpp_include_path state version", load_filepos());
+        }
+
+#if BOOST_WAVE_SUPPORT_PRAGMA_ONCE != 0
+        ar & pragma_once_files;
+#endif
+        // verify that the old include paths match the current ones
+        include_list_type user_paths, system_paths;
+        ar & user_paths;
+        ar & system_paths;
+
+        if (user_paths != user_include_paths)
+        {
+            BOOST_WAVE_THROW(preprocess_exception, incompatible_config, 
+                "user include paths", load_filepos());
+        }
+        if (system_paths != system_include_paths)
+        {
+            BOOST_WAVE_THROW(preprocess_exception, incompatible_config, 
+                "system include paths", load_filepos());
+        }
+
+        ar & was_sys_include_path;
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 #endif
 };
 
@@ -167,12 +317,18 @@ bool include_paths::find_include_file (std::string &s, std::string &dir,
 #endif
 
     for (/**/; it != include_paths_end; ++it) {
-        fs::path currpath ((*it).first.string(), fs::native);
-        currpath /= fs::path(s, fs::native);      // append filename
-
+        fs::path currpath (s, fs::native);
+        if (!currpath.has_root_directory()) {
+            currpath = fs::path((*it).first.string(), fs::native);
+            currpath /= fs::path(s, fs::native);      // append filename
+        }
+        
         if (fs::exists(currpath)) {
-            fs::path dirpath ((*it).second, fs::native);
-            dirpath /= fs::path(s, fs::native);
+            fs::path dirpath (s, fs::native);
+            if (!dirpath.has_root_name()) {
+                dirpath = fs::path((*it).second, fs::native);
+                dirpath /= fs::path(s, fs::native);
+            }
             
             dir = dirpath.string();
             s = currpath.normalize().string();    // found the required file
@@ -195,15 +351,21 @@ include_paths::find_include_file (std::string &s, std::string &dir,
     if (!is_system) {
         if (!was_sys_include_path) {  // set_sys_include_delimiter() not called
         // first have a look at the current directory
-            fs::path currpath (current_dir.string(), fs::native);
-            currpath /= fs::path(s, fs::native);
+            fs::path currpath (s, fs::native);
+            if (!currpath.has_root_directory()) {
+                currpath = fs::path(current_dir.string(), fs::native);
+                currpath /= fs::path(s, fs::native);
+            }
             
             if (fs::exists(currpath) && 0 == current_file) {
             // if 0 != current_path (#include_next handling) it can't be
             // the file in the current directory
-                fs::path dirpath (current_rel_dir.string(), fs::native);
-                dirpath /= fs::path(s, fs::native);
-
+                fs::path dirpath (s, fs::native);
+                if (!dirpath.has_root_name()) {
+                    dirpath = fs::path(current_rel_dir.string(), fs::native);
+                    dirpath /= fs::path(s, fs::native);
+                }
+                
                 dir = dirpath.string();
                 s = currpath.normalize().string();    // found in local directory
                 return true;
@@ -250,8 +412,95 @@ void include_paths::set_current_directory(char const *path_)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}   // namespace util
-}   // namespace wave
-}   // namespace boost
+}}}   // namespace boost::wave::util
 
-#endif // !defined(CPP_include_paths_HPP_AF620DA4_B3D2_4221_AD91_8A1ABFFB6944_INCLUDED)
+#if BOOST_WAVE_SERIALIZATION != 0
+///////////////////////////////////////////////////////////////////////////////
+namespace boost { namespace serialization {
+
+///////////////////////////////////////////////////////////////////////////////
+//  Serialization support for boost::filesystem::path
+template<class Archive>
+inline void save (Archive & ar, boost::filesystem::path const& p, 
+    const unsigned int /* file_version */)
+{
+    std::string path_str(p.native_file_string());
+    ar & path_str;
+}
+
+template<class Archive>
+inline void load (Archive & ar, boost::filesystem::path &p,
+    const unsigned int /* file_version */)
+{
+    std::string path_str;
+    ar & path_str;
+    p = boost::filesystem::path(path_str, boost::filesystem::native);
+}
+
+// split non-intrusive serialization function member into separate
+// non intrusive save/load member functions
+template<class Archive>
+inline void serialize (Archive & ar, boost::filesystem::path &p,
+    const unsigned int file_version)
+{
+    boost::serialization::split_free(ar, p, file_version);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//  Serialization support for the used multi_index
+template<class Archive>
+inline void save (Archive & ar,
+    const typename boost::wave::util::bidirectional_map<
+        std::string, std::string
+    >::type &t,
+    const unsigned int /* file_version */)
+{
+    boost::serialization::stl::save_collection<
+        Archive, 
+        typename boost::wave::util::bidirectional_map<
+            std::string, std::string
+        >::type
+    >(ar, t);
+}
+
+template<class Archive>
+inline void load (Archive & ar,
+    typename boost::wave::util::bidirectional_map<std::string, std::string>::type &t,
+    const unsigned int /* file_version */)
+{
+    typedef typename boost::wave::util::bidirectional_map<
+            std::string, std::string
+        >::type map_type;
+    boost::serialization::stl::load_collection<
+        Archive, map_type,
+        boost::serialization::stl::archive_input_unique<Archive, map_type>,
+        boost::serialization::stl::no_reserve_imp<map_type>
+    >(ar, t);
+}
+
+// split non-intrusive serialization function member into separate
+// non intrusive save/load member functions
+template<class Archive>
+inline void serialize (Archive & ar, 
+    typename boost::wave::util::bidirectional_map<
+        std::string, std::string
+    >::type &t,
+    const unsigned int file_version)
+{
+    boost::serialization::split_free(ar, t, file_version);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+}}  // namespace boost::serialization
+
+BOOST_CLASS_VERSION(boost::wave::util::include_paths, 
+    boost::wave::util::include_paths::version);
+
+#endif  // BOOST_WAVE_SERIALIZATION != 0
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
+
+#endif // !defined(CPP_INCLUDE_PATHS_HPP_AF620DA4_B3D2_4221_AD91_8A1ABFFB6944_INCLUDED)

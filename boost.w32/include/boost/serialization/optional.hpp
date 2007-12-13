@@ -33,10 +33,15 @@ void save(
     const boost::optional<T> & t, 
     const unsigned int /*version*/
 ){
-    const bool tflag = t;
+    const bool tflag = t.is_initialized();
     ar << boost::serialization::make_nvp("initialized", tflag);
-    if (tflag)
+    if (tflag){
+        if(3 < ar.get_library_version()){
+            const int v = version<T>::value;
+            ar << make_nvp("item_version", v);
+        }
         ar << boost::serialization::make_nvp("value", *t);
+    }
 }
 
 template<class Archive, class T>
@@ -48,7 +53,11 @@ void load(
     bool tflag;
     ar >> boost::serialization::make_nvp("initialized", tflag);
     if (tflag){
-        detail::stack_construct<Archive, T> aux(ar);
+        unsigned int v;
+        if(3 < ar.get_library_version()){
+            ar >> make_nvp("item_version", v);
+        }
+        detail::stack_construct<Archive, T> aux(ar, v);
         ar >> boost::serialization::make_nvp("value", aux.reference());
         t.reset(aux.reference());
     }

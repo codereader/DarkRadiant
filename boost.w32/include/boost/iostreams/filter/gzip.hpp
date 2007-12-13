@@ -238,8 +238,8 @@ public:
 
         if (m & BOOST_IOS::out) {
 
-                // Close zlib compressor.
-                base_type::close(snk, BOOST_IOS::out);
+            // Close zlib compressor.
+            base_type::close(snk, BOOST_IOS::out);
 
             if (flags_ & f_header_done) {
 

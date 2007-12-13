@@ -22,21 +22,13 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 
 //  See http://www.boost.org for updates, documentation, and revision history.
-#include <cstring>
+//#include <cstring>
 
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
-#if defined(BOOST_NO_STDC_NAMESPACE)
-    namespace std{ using ::memcpy; }
-#endif
-
-#include <boost/throw_exception.hpp>
 #include <boost/pfto.hpp>
 
-#include <boost/archive/detail/iserializer.hpp>
-#include <boost/archive/detail/interface_iarchive.hpp>
 #include <boost/archive/detail/common_iarchive.hpp>
-
 #include <boost/serialization/string.hpp>
 
 #include <boost/archive/detail/abi_prefix.hpp> // must be the last header
@@ -50,24 +42,25 @@ template<class Archive>
 class basic_binary_iarchive : 
     public detail::common_iarchive<Archive>
 {
+protected:
 #if BOOST_WORKAROUND(BOOST_MSVC, <= 1300)
 public:
 #elif defined(BOOST_MSVC)
     // for some inexplicable reason insertion of "class" generates compile erro
     // on msvc 7.1
     friend detail::interface_iarchive<Archive>;
-protected:
 #else
     friend class detail::interface_iarchive<Archive>;
-protected:
 #endif
     // intermediate level to support override of operators
     // fot templates in the absence of partial function 
-    // template ordering
+    // template ordering. If we get here pass to base class
+    // note extra nonsense to sneak it pass the borland compiers
+    typedef detail::common_iarchive<Archive> detail_common_iarchive;
     template<class T>
     void load_override(T & t, BOOST_PFTO int)
     {
-        archive::load(* this->This(), t);
+        this->detail_common_iarchive::load_override(t, 0);
     }
     // binary files don't include the optional information 
     void load_override(class_id_optional_type & /* t */, int){}

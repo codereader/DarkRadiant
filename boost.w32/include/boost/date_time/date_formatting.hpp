@@ -6,7 +6,7 @@
  * Boost Software License, Version 1.0. (See accompanying
  * file LICENSE-1.0 or http://www.boost.org/LICENSE-1.0)
  * Author: Jeff Garland, Bart Garst
- * $Date: 2004/08/29 19:31:11 $
+ * $Date: 2005/12/06 03:49:15 $
  */
 
 #include "boost/date_time/iso_format.hpp"
@@ -27,14 +27,15 @@ namespace date_time {
   template<class month_type, class format_type, class charT=char>
   class month_formatter
   {
+    typedef std::basic_ostream<charT> ostream_type;
   public:
     //! Formats a month as as string into an ostream
     /*! This function demands that month_type provide
      *  functions for converting to short and long strings
      *  if that capability is used.
      */
-    static std::basic_ostream<charT>& format_month(const month_type& month,
-                                      std::basic_ostream<charT>& os)
+    static ostream_type& format_month(const month_type& month,
+                                      ostream_type &os)
     {
       switch (format_type::month_format()) 
       {

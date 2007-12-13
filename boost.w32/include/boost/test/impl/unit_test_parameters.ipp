@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: unit_test_parameters.ipp,v $
 //
-//  Version     : $Revision: 1.8 $
+//  Version     : $Revision: 1.10 $
 //
 //  Description : simple implementation for Unit Test Framework parameter
 //  handling routines. May be rewritten in future to use some kind of
@@ -27,7 +27,9 @@
 
 // Boost
 #include <boost/config.hpp>
+#include <boost/test/detail/suppress_warnings.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/test/detail/enable_warnings.hpp>
 
 // STL
 #include <map>
@@ -61,11 +63,13 @@ literal_string LOG_FORMAT        = "BOOST_TEST_LOG_FORMAT";
 literal_string OUTPUT_FORMAT     = "BOOST_TEST_OUTPUT_FORMAT";
 literal_string DETECT_MEM_LEAK   = "BOOST_TEST_DETECT_MEMORY_LEAK";
 literal_string RANDOM_SEED       = "BOOST_TEST_RANDOM";
+literal_string BREAK_EXEC_PATH   = "BOOST_TEST_BREAK_EXEC_PATH";
 
 unit_test::log_level     s_log_level;
 bool                     s_no_result_code;
 unit_test::report_level  s_report_level;
 const_string             s_tests_to_run;
+const_string             s_exec_path_to_break;
 bool                     s_save_pattern;
 bool                     s_show_build_info;
 bool                     s_show_progress;
@@ -94,8 +98,9 @@ retrieve_framework_parameter( const_string parameter_name, int* argc, char** arg
         REPORT_FORMAT     , "--report_format",
         LOG_FORMAT        , "--log_format",
         OUTPUT_FORMAT     , "--output_format",
-        DETECT_MEM_LEAK   , "--detect_memory_leak",
+        DETECT_MEM_LEAK   , "--detect_memory_leaks",
         RANDOM_SEED       , "--random",
+        BREAK_EXEC_PATH   , "--break_exec_path",
         
         ""
     );
@@ -194,6 +199,7 @@ init( int* argc, char** argv )
     s_show_progress     = retrieve_framework_parameter( SHOW_PROGRESS, argc, argv ) == "yes";
     s_catch_sys_errors  = retrieve_framework_parameter( CATCH_SYS_ERRORS, argc, argv ) != "no";
     s_tests_to_run      = retrieve_framework_parameter( TESTS_TO_RUN, argc, argv );
+    s_exec_path_to_break= retrieve_framework_parameter( BREAK_EXEC_PATH, argc, argv );
 
     const_string rs_str = retrieve_framework_parameter( RANDOM_SEED, argc, argv );
     s_random_seed       = rs_str.is_empty() ? 0 : lexical_cast<unsigned int>( rs_str );
@@ -248,6 +254,14 @@ test_to_run()
 
 //____________________________________________________________________________//
 
+const_string
+break_exec_path()
+{
+    return s_exec_path_to_break;
+}
+
+//____________________________________________________________________________//
+
 bool
 save_pattern()
 {
@@ -297,7 +311,7 @@ log_format()
 //____________________________________________________________________________//
 
 long
-detect_memory_leak()
+detect_memory_leaks()
 {
     return s_detect_mem_leaks;
 }
@@ -309,6 +323,8 @@ random_seed()
 {
     return s_random_seed;
 }
+
+//____________________________________________________________________________//
 
 } // namespace runtime_config
 
@@ -324,6 +340,12 @@ random_seed()
 //  Revision History :
 //
 //  $Log: unit_test_parameters.ipp,v $
+//  Revision 1.10  2006/01/30 07:29:49  rogeeff
+//  split memory leaks detection API in two to get more functions with better defined roles
+//
+//  Revision 1.9  2005/12/14 05:38:47  rogeeff
+//  new parameter break_exec_path() is introduced
+//
 //  Revision 1.8  2005/05/08 08:55:09  rogeeff
 //  typos and missing descriptions fixed
 //

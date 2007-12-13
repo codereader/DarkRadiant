@@ -33,7 +33,7 @@ struct value_comparison:std::binary_function<Value,Value,bool>
 
   bool operator()(
     typename call_traits<Value>::param_type x,
-    typename call_traits<Value>::param_type y)
+    typename call_traits<Value>::param_type y)const
   {
     return comp(key(x),key(y));
   }

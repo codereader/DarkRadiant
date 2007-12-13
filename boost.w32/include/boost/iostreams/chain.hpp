@@ -162,26 +162,6 @@ public:
     std::streamsize write(const char_type* s, std::streamsize n);
     std::streampos seek(stream_offset off, BOOST_IOS::seekdir way);
 
-    //----------Additional i/o functions--------------------------------------//
-
-    // Returns true if this chain is non-empty and its final link
-    // is a source or sink, i.e., if it is ready to perform i/o.
-    bool is_complete() const;
-    bool auto_close() const;
-    void set_auto_close(bool close);
-    bool sync() { return front().BOOST_IOSTREAMS_PUBSYNC() != -1; }
-    bool strict_sync();
-
-    //----------Container-like interface--------------------------------------//
-
-    typedef typename list_type::size_type size_type;
-    streambuf_type& front() { return *list().front(); }
-    BOOST_IOSTREAMS_DEFINE_PUSH(push, mode, char_type, push_impl)
-    void pop();
-    bool empty() const { return list().empty(); }
-    size_type size() const { return list().size(); }
-    void reset();
-
     //----------Direct component access---------------------------------------//
 
     const std::type_info& component_type(int n) const
@@ -218,6 +198,27 @@ public:
         else
             return 0;
     }
+public:
+
+    //----------Container-like interface--------------------------------------//
+
+    typedef typename list_type::size_type size_type;
+    streambuf_type& front() { return *list().front(); }
+    BOOST_IOSTREAMS_DEFINE_PUSH(push, mode, char_type, push_impl)
+    void pop();
+    bool empty() const { return list().empty(); }
+    size_type size() const { return list().size(); }
+    void reset();
+
+    //----------Additional i/o functions--------------------------------------//
+
+    // Returns true if this chain is non-empty and its final link
+    // is a source or sink, i.e., if it is ready to perform i/o.
+    bool is_complete() const;
+    bool auto_close() const;
+    void set_auto_close(bool close);
+    bool sync() { return front().BOOST_IOSTREAMS_PUBSYNC() != -1; }
+    bool strict_sync();
 private:
     template<typename T>
     void push_impl(const T& t, int buffer_size = -1, int pback_size = -1)
@@ -420,44 +421,24 @@ public:
     const std::type_info& component_type(int n) const
     { return chain_->component_type(n); }
 
-//#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-//    // Deprecated.
-//    template<int N>
-//    const std::type_info& component_type() const
-//    { return chain_->component_type(N); }
-//
-//    template<typename T>
-//    T* component(int n) const   // Tru64 needs boost::type.
-//    { return chain_->component(n, boost::type<T>()); } 
-//
-//    // Deprecated.
-//    template<int N, typename T>
-//    T* component() const        // Tru64 needs boost::type.
-//    { return chain_->component(N, boost::type<T>()); }
-//#else
-//    template<typename T>
-//    T* component(int n, boost::type<T> t) const
-//    { return chain_->component(n, t); }
-//#endif
+#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
+    // Deprecated.
+    template<int N>
+    const std::type_info& component_type() const
+    { return chain_->BOOST_NESTED_TEMPLATE component_type<N>(); }
 
-#if !BOOST_WORKAROUND(BOOST_MSVC, < 1310)
-    // Deprecated.
-    template<int N>
-    const std::type_info& component_type() const
-    { return chain_->BOOST_NESTED_TEMPLATE component_type<N>(); }
-
-    template<typename T>
-    T* component(int n) const
-    { return chain_->BOOST_NESTED_TEMPLATE component<T>(n); }
-
-    // Deprecated.
-    template<int N, typename T>
-    T* component() const
-    { return chain_->BOOST_NESTED_TEMPLATE component<N, T>(); }
-#else
-    template<typename T>
-    T* component(int n, boost::type<T> t) const
-    { return chain_->component(n, t); }
+    template<typename T>
+    T* component(int n) const
+    { return chain_->BOOST_NESTED_TEMPLATE component<T>(n); }
+
+    // Deprecated.
+    template<int N, typename T>
+    T* component() const
+    { return chain_->BOOST_NESTED_TEMPLATE component<N, T>(); }
+#else
+    template<typename T>
+    T* component(int n, boost::type<T> t) const
+    { return chain_->component(n, t); }
 #endif
 
     bool is_complete() const { return chain_->is_complete(); }

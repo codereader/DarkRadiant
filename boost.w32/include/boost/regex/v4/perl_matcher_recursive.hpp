@@ -275,13 +275,11 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_rep()
 #pragma warning(disable:4127 4244)
 #endif
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
-   if(next_count->get_id() != rep->id)
-   {
-      // we're moving to a different repeat from the last
-      // one, so set up a counter object and recurse:
-      repeater_count<BidiIterator> r(rep->id, &next_count, position);
-      return match_rep();
-   }
+   //
+   // Always copy the repeat count, so that the state is restored
+   // when we exit this scope:
+   //
+   repeater_count<BidiIterator> r(rep->id, &next_count, position);
    //
    // If we've had at least one repeat already, and the last one 
    // matched the NULL string then set the repeat count to
@@ -478,7 +476,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_dot_repeat_fast()
          return true;
       if(count >= rep->max)
          return false;
-      if(position == last)
+      if(save_pos == last)
          return false;
       position = ++save_pos;
       ++count;
@@ -494,6 +492,7 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
 #ifdef BOOST_MSVC
 #pragma warning(push)
 #pragma warning(disable:4127)
+#pragma warning(disable:4267)
 #endif
 #ifdef __BORLANDC__
 #pragma option push -w-8008 -w-8066 -w-8004
@@ -501,25 +500,39 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
    const re_repeat* rep = static_cast<const re_repeat*>(pstate);
    BOOST_ASSERT(1 == static_cast<const re_literal*>(rep->next.p)->length);
    const char_type what = *reinterpret_cast<const char_type*>(static_cast<const re_literal*>(rep->next.p) + 1);
-   unsigned count = 0;
    //
    // start by working out how much we can skip:
    //
    bool greedy = (rep->greedy) && (!(m_match_flags & regex_constants::match_any) || m_independent);   
-   std::size_t desired = greedy ? rep->max : rep->min;
+   std::size_t count, desired;
    if(::boost::is_random_access_iterator<BidiIterator>::value)
    {
-      BidiIterator end = position;
-      std::advance(end, (std::min)((std::size_t)::boost::re_detail::distance(position, last), desired));
-      BidiIterator origin(position);
-      while((position != end) && (traits_inst.translate(*position, icase) == what))
+      desired = 
+         (std::min)(
+            (std::size_t)(greedy ? rep->max : rep->min),
+            (std::size_t)::boost::re_detail::distance(position, last));
+      count = desired;
+      ++desired;
+      if(icase)
       {
-         ++position;
+         while(--desired && (traits_inst.translate_nocase(*position) == what))
+         {
+            ++position;
+         }
       }
-      count = (unsigned)::boost::re_detail::distance(origin, position);
+      else
+      {
+         while(--desired && (traits_inst.translate(*position) == what))
+         {
+            ++position;
+         }
+      }
+      count = count - desired;
    }
    else
    {
+      count = 0;
+      desired = greedy ? rep->max : rep->min;
       while((count < desired) && (position != last) && (traits_inst.translate(*position, icase) == what))
       {
          ++position;
@@ -557,9 +570,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_char_repeat()
          return true;
       if(count >= rep->max)
          return false;
+      position = save_pos;
       if(position == last)
          return false;
-      position = save_pos;
       if(traits_inst.translate(*position, icase) == what)
       {
          ++position;
@@ -646,9 +659,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_set_repeat()
          return true;
       if(count >= rep->max)
          return false;
+      position = save_pos;
       if(position == last)
          return false;
-      position = save_pos;
       if(map[static_cast<unsigned char>(traits_inst.translate(*position, icase))])
       {
          ++position;
@@ -736,9 +749,9 @@ bool perl_matcher<BidiIterator, Allocator, traits>::match_long_set_repeat()
          return true;
       if(count >= rep->max)
          return false;
+      position = save_pos;
       if(position == last)
          return false;
-      position = save_pos;
       if(position != re_is_set_member(position, last, set, re.get_data(), icase))
       {
          ++position;

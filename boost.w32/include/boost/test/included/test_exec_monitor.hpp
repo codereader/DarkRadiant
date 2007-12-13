@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: test_exec_monitor.hpp,v $
 //
-//  Version     : $Revision: 1.13 $
+//  Version     : $Revision: 1.15 $
 //
 //  Description : included (vs. linked) version of Test Execution Monitor
 // ***************************************************************************
@@ -32,10 +32,19 @@
 #include <boost/test/impl/xml_log_formatter.ipp>
 #include <boost/test/impl/xml_report_formatter.ipp>
 
+#define BOOST_TEST_INCLUDED
+#include <boost/test/test_exec_monitor.hpp>
+
 // ***************************************************************************
 //  Revision History :
 //  
 //  $Log: test_exec_monitor.hpp,v $
+//  Revision 1.15  2006/02/06 10:01:55  rogeeff
+//  m,ake name similar to the primary header name
+//
+//  Revision 1.14  2006/02/01 07:57:49  rogeeff
+//  included components entry points
+//
 //  Revision 1.13  2005/02/20 08:27:08  rogeeff
 //  This a major update for Boost.Test framework. See release docs for complete list of fixes/updates
 //

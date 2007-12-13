@@ -82,11 +82,12 @@ namespace boost { namespace program_options {
         validation_error(const std::string& what) : error(what) {}
         ~validation_error() throw() {}
         void set_option_name(const std::string& option);
+
+        const char* what() const throw();
     private:
         mutable std::string m_message; // For on-demand formatting in 'what'
         std::string m_option_name; // The name of the option which
                                    // caused the exception.
-        const char* what() const throw();  
     };
 
     class BOOST_PROGRAM_OPTIONS_DECL invalid_option_value 

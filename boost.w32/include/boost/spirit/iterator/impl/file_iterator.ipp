@@ -38,8 +38,6 @@ namespace boost { namespace spirit {
 ///////////////////////////////////////////////////////////////////////////////
 namespace fileiter_impl {
 
-using namespace std;
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 //  std_file_iterator
@@ -66,6 +64,7 @@ public:
 
     explicit std_file_iterator(std::string fileName)
     {
+        using namespace std;
         FILE* f = fopen(fileName.c_str(), "rb");
 
         // If the file was opened, store it into
@@ -122,30 +121,32 @@ public:
 
     void seek_end(void)
     {
+        using namespace std;
         fseek(m_file.get(), 0, SEEK_END);
         m_pos = ftell(m_file.get()) / sizeof(CharT);
         m_eof = true;
     }
 
-    void advance(signed long n)
+    void advance(std::ptrdiff_t n)
     {
         m_pos += n * sizeof(CharT);
         update_char();
     }
 
-    long distance(const std_file_iterator& iter) const
+    std::ptrdiff_t distance(const std_file_iterator& iter) const
     {
-        return (long)(m_pos - iter.m_pos) / sizeof(CharT);
+        return (std::ptrdiff_t)(m_pos - iter.m_pos) / sizeof(CharT);
     }
 
 private:
-    boost::shared_ptr<FILE> m_file;
+    boost::shared_ptr<std::FILE> m_file;
     std::size_t m_pos;
     CharT m_curChar;
     bool m_eof;
 
     void update_char(void)
     {
+        using namespace std;
         if ((std::size_t)ftell(m_file.get()) != m_pos)
             fseek(m_file.get(), m_pos, SEEK_SET);
 
@@ -268,10 +269,10 @@ public:
     void prev_char(void)
     { m_curChar--; }
 
-    void advance(signed long n)
+    void advance(std::ptrdiff_t n)
     { m_curChar += n; }
 
-    long distance(const mmap_file_iterator& iter) const
+    std::ptrdiff_t distance(const mmap_file_iterator& iter) const
     { return m_curChar - iter.m_curChar; }
 
     void seek_end(void)

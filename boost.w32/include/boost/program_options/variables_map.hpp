@@ -24,6 +24,27 @@ namespace boost { namespace program_options {
     class value_semantic;
     class variables_map;
 
+    // forward declaration
+
+    /** Stores in 'm' all options that are defined in 'options'. 
+        If 'm' already has a non-defaulted value of an option, that value
+        is not changed, even if 'options' specify some value.        
+    */
+    BOOST_PROGRAM_OPTIONS_DECL void store(const basic_parsed_options<char>& options, variables_map& m,
+                    bool utf8 = false);
+
+    /** Stores in 'm' all options that are defined in 'options'. 
+        If 'm' already has a non-defaulted value of an option, that value
+        is not changed, even if 'options' specify some value.        
+        This is wide character variant.
+    */
+    BOOST_PROGRAM_OPTIONS_DECL void store(const basic_parsed_options<wchar_t>& options, 
+                    variables_map& m);
+
+
+    /** Runs all 'notify' function for options in 'm'. */
+    BOOST_PROGRAM_OPTIONS_DECL void notify(variables_map& m);
+
     /** Class holding value of option. Contains details about how the 
         value is set and allows to conveniently obtain the value.
     */
@@ -36,10 +57,15 @@ namespace boost { namespace program_options {
 
         /** If stored value if of type T, returns that value. Otherwise,
             throws boost::bad_any_cast exception. */
-        template<class T> const T& as() const;
-
-        /** @overload */
-        template<class T> T& as();
+       template<class T>
+       const T& as() const {
+           return boost::any_cast<const T&>(v);
+       }
+       /** @overload */
+       template<class T>
+       T& as() {
+           return boost::any_cast<T&>(v);
+       }
 
         /// Returns true if no value is stored.
         bool empty() const;
@@ -61,10 +87,9 @@ namespace boost { namespace program_options {
         // be easily accessible, so we need to store semantic here.
         shared_ptr<const value_semantic> m_value_semantic;
 
-        friend void BOOST_PROGRAM_OPTIONS_DECL 
-        store(const basic_parsed_options<char>& options, 
+        friend void store(const basic_parsed_options<char>& options, 
               variables_map& m, bool);
-        friend void BOOST_PROGRAM_OPTIONS_DECL notify(variables_map& m);
+        friend void notify(variables_map& m);
     };
 
     /** Implements string->string mapping with convenient value casting
@@ -104,7 +129,11 @@ namespace boost { namespace program_options {
         const abstract_variables_map* m_next;
     };
 
-    /** Concrete variables map which store variables in real map. */
+    /** Concrete variables map which store variables in real map. 
+        
+        This class is derived from std::map<std::string, variable_value>,
+        so you can use all map operators to examine its content.
+    */
     class BOOST_PROGRAM_OPTIONS_DECL variables_map : public abstract_variables_map,
                                public std::map<std::string, variable_value>
     {
@@ -129,25 +158,6 @@ namespace boost { namespace program_options {
                           variables_map& xm,
                           bool utf8);
     };
-
-    /** Stores in 'm' all options that are defined in 'options'. 
-        If 'm' already has a non-defaulted value of an option, that value
-        is not changed, even if 'options' specify some value.        
-    */
-    BOOST_PROGRAM_OPTIONS_DECL void store(const basic_parsed_options<char>& options, variables_map& m,
-                    bool utf8 = false);
-
-    /** Stores in 'm' all options that are defined in 'options'. 
-        If 'm' already has a non-defaulted value of an option, that value
-        is not changed, even if 'options' specify some value.        
-        This is wide character variant.
-    */
-    BOOST_PROGRAM_OPTIONS_DECL void store(const basic_parsed_options<wchar_t>& options, 
-                    variables_map& m);
-
-
-    /** Runs all 'notify' function for options in 'm'. */
-    BOOST_PROGRAM_OPTIONS_DECL void notify(variables_map& m);
 
 
     /*
@@ -180,18 +190,6 @@ namespace boost { namespace program_options {
         return v;
     }
 
-
-    template<class T>
-    const T&
-    variable_value::as() const {
-        return boost::any_cast<const T&>(v);
-    }
-
-    template<class T>
-    T&
-    variable_value::as() {
-        return boost::any_cast<T&>(v);
-    }
 }}
 
 #endif

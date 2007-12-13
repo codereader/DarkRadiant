@@ -14,14 +14,14 @@ class override;
 
 namespace detail
 {
-  class BOOST_PYTHON_DECL wrapper_base;
+  class BOOST_PYTHON_DECL_FORWARD wrapper_base;
   
   namespace wrapper_base_ // ADL disabler
   {
     inline PyObject* get_owner(wrapper_base const volatile& w);
 
     inline PyObject*
-    owner_impl(void const volatile* x, mpl::false_)
+    owner_impl(void const volatile* /*x*/, mpl::false_)
     {
         return 0;
     }
@@ -79,7 +79,7 @@ namespace detail
       w->m_self = self;
   }
 
-  inline void initialize_wrapper(PyObject* self, ...) {}
+  inline void initialize_wrapper(PyObject* /*self*/, ...) {}
 
   
   

@@ -347,6 +347,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return (*this) () (it1_, it2_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -481,6 +485,10 @@ namespace boost { namespace numeric { namespace ublas {
             BOOST_UBLAS_INLINE
             reference operator * () const {
                 return (*this) () (it1_, it2_);
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -622,6 +630,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 return (*this) () (it1_, it2_);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -757,6 +769,10 @@ namespace boost { namespace numeric { namespace ublas {
             reference operator * () const {
                 return (*this) () (it1_, it2_);
             }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -889,17 +905,6 @@ namespace boost { namespace numeric { namespace ublas {
     const typename triangular_matrix<T, TRI, L, A>::value_type triangular_matrix<T, TRI, L, A>::zero_ = value_type/*zero*/();
     template<class T, class TRI, class L, class A>
     const typename triangular_matrix<T, TRI, L, A>::value_type triangular_matrix<T, TRI, L, A>::one_ (1);
-
-    // TODO These traits overloads seem to do no more then generic defition
-    template <class T, class TRI, class L, class A>
-    struct vector_temporary_traits< triangular_matrix<T, TRI, L, A> > {
-       typedef typename triangular_matrix<T, TRI, L, A>::vector_temporary_type type ;
-    };
-
-    template <class T, class TRI, class L, class A>
-    struct matrix_temporary_traits< triangular_matrix<T, TRI, L, A> > {
-       typedef typename triangular_matrix<T, TRI, L, A>::matrix_temporary_type type ;
-    };
 
 
     // Triangular matrix adaptor class
@@ -1211,6 +1216,10 @@ namespace boost { namespace numeric { namespace ublas {
                 else
                     return (*this) () (i, j);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -1348,6 +1357,10 @@ namespace boost { namespace numeric { namespace ublas {
                     return *it1_;
                 else
                     return (*this) () (i, j);
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
             }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
@@ -1492,6 +1505,10 @@ namespace boost { namespace numeric { namespace ublas {
                 else
                     return (*this) () (i, j);
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -1630,6 +1647,10 @@ namespace boost { namespace numeric { namespace ublas {
                 else
                     return (*this) () (i, j);
             }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
 #ifndef BOOST_UBLAS_NO_NESTED_CLASS_RELATION
             BOOST_UBLAS_INLINE
@@ -1760,9 +1781,15 @@ namespace boost { namespace numeric { namespace ublas {
     template <class M, class TRI>
     struct vector_temporary_traits< triangular_adaptor<M, TRI> >
     : vector_temporary_traits< typename boost::remove_const<M>::type > {} ;
+    template <class M, class TRI>
+    struct vector_temporary_traits< const triangular_adaptor<M, TRI> >
+    : vector_temporary_traits< typename boost::remove_const<M>::type > {} ;
 
     template <class M, class TRI>
     struct matrix_temporary_traits< triangular_adaptor<M, TRI> >
+    : matrix_temporary_traits< typename boost::remove_const<M>::type > {};
+    template <class M, class TRI>
+    struct matrix_temporary_traits< const triangular_adaptor<M, TRI> >
     : matrix_temporary_traits< typename boost::remove_const<M>::type > {};
 
 

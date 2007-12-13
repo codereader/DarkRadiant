@@ -1066,6 +1066,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_slow_dot_repeat(bool 
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
+      if((m_match_flags & match_partial) && (position == last) && (position != search_base))
+         m_has_partial_match = true;
       if(0 == (rep->can_be_null & mask_skip))
          return true;
    }
@@ -1118,6 +1120,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_fast_dot_repeat(bool 
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
+      if((m_match_flags & match_partial) && (position == last) && (position != search_base))
+         m_has_partial_match = true;
       if(0 == (rep->can_be_null & mask_skip))
          return true;
    }
@@ -1182,6 +1186,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_char_repeat(bool r)
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
+      if((m_match_flags & match_partial) && (position == last) && (position != search_base))
+         m_has_partial_match = true;
       if(0 == (rep->can_be_null & mask_skip))
          return true;
    }
@@ -1246,6 +1252,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_short_set_repeat(bool
    {
       // can't repeat any more, remove the pushed state: 
       destroy_single_repeat();
+      if((m_match_flags & match_partial) && (position == last) && (position != search_base))
+         m_has_partial_match = true;
       if(0 == (rep->can_be_null & mask_skip))
          return true;
    }
@@ -1311,6 +1319,8 @@ bool perl_matcher<BidiIterator, Allocator, traits>::unwind_long_set_repeat(bool 
    {
       // can't repeat any more, remove the pushed state:
       destroy_single_repeat();
+      if((m_match_flags & match_partial) && (position == last) && (position != search_base))
+         m_has_partial_match = true;
       if(0 == (rep->can_be_null & mask_skip))
          return true;
    }

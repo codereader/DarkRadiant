@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: floating_point_comparison.hpp,v $
 //
-//  Version     : $Revision: 1.23 $
+//  Version     : $Revision: 1.26.2.2 $
 //
 //  Description : defines algoirthms for comparing 2 floating point values
 // ***************************************************************************
@@ -33,7 +33,11 @@ using unit_test::readonly_property;
 // **************        floating_point_comparison_type        ************** //
 // ************************************************************************** //
 
-enum floating_point_comparison_type { FPC_STRONG, FPC_WEAK };
+enum floating_point_comparison_type {
+    FPC_STRONG, // "Very close"   - equation 1' in docs, the default
+    FPC_WEAK    // "Close enough" - equation 2' in docs.
+
+};
 
 // ************************************************************************** //
 // **************                    details                   ************** //
@@ -41,11 +45,13 @@ enum floating_point_comparison_type { FPC_STRONG, FPC_WEAK };
 
 namespace tt_detail {
 
+// FPT is Floating-Point type, float, double, long double or User-Defined.
+
 template<typename FPT>
 inline FPT
 fpt_abs( FPT arg ) 
 {
-    return arg < 0 ? -arg : arg;
+    return arg < static_cast<FPT>(0) ? -arg : arg;
 }
 
 //____________________________________________________________________________//
@@ -55,9 +61,16 @@ template<typename FPT>
 inline FPT 
 safe_fpt_division( FPT f1, FPT f2 )
 {
-    return  (f2 < 1 && f1 > f2 * (std::numeric_limits<FPT>::max)())               ? (std::numeric_limits<FPT>::max)()
-            : ((f2 > 1 && f1 < f2 * (std::numeric_limits<FPT>::min)() || f1 == 0) ? 0
-                                                                                  : f1/f2 );
+    // Avoid overflow.
+    if( f2 < static_cast<FPT>(1)  && f1 > f2 * (std::numeric_limits<FPT>::max)() )
+        return (std::numeric_limits<FPT>::max)();
+
+    // Avoid underflow.
+    if( f1 == static_cast<FPT>(0) || 
+        f2 > static_cast<FPT>(1) && f1 < f2 * (std::numeric_limits<FPT>::min)() )
+        return static_cast<FPT>(0);
+
+    return f1/f2;
 }
 
 //____________________________________________________________________________//
@@ -65,18 +78,84 @@ safe_fpt_division( FPT f1, FPT f2 )
 } // namespace tt_detail
 
 // ************************************************************************** //
+// **************         tolerance presentation types         ************** //
+// ************************************************************************** //
+
+template<typename FPT>
+struct percent_tolerance_t {
+    explicit    percent_tolerance_t( FPT v ) : m_value( v ) {}
+
+    FPT m_value;
+};
+
+//____________________________________________________________________________//
+
+template<typename Out,typename FPT>
+Out& operator<<( Out& out, percent_tolerance_t<FPT> t )
+{
+    return out << t.m_value;
+}
+
+//____________________________________________________________________________//
+
+template<typename FPT>
+inline percent_tolerance_t<FPT>
+percent_tolerance( FPT v )
+{
+    return percent_tolerance_t<FPT>( v );
+}
+
+//____________________________________________________________________________//
+
+template<typename FPT>
+struct fraction_tolerance_t {
+    explicit fraction_tolerance_t( FPT v ) : m_value( v ) {}
+
+    FPT m_value;
+};
+
+//____________________________________________________________________________//
+
+template<typename Out,typename FPT>
+Out& operator<<( Out& out, fraction_tolerance_t<FPT> t )
+{
+    return out << t.m_value;
+}
+
+//____________________________________________________________________________//
+
+template<typename FPT>
+inline fraction_tolerance_t<FPT>
+fraction_tolerance( FPT v )
+{
+    return fraction_tolerance_t<FPT>( v );
+}
+
+//____________________________________________________________________________//
+
+// ************************************************************************** //
 // **************             close_at_tolerance               ************** //
 // ************************************************************************** //
 
-template<typename FPT, typename PersentType = FPT >
+template<typename FPT>
 class close_at_tolerance {
 public:
     // Public typedefs
     typedef bool result_type;
 
     // Constructor
-    explicit    close_at_tolerance( PersentType percentage_tolerance, floating_point_comparison_type fpc_type = FPC_STRONG ) 
-    : p_fraction_tolerance( static_cast<FPT>(0.01)*percentage_tolerance ), p_strong_or_weak( fpc_type ==  FPC_STRONG ) {}
+    template<typename ToleranceBaseType>
+    explicit    close_at_tolerance( percent_tolerance_t<ToleranceBaseType>  tolerance, 
+                                    floating_point_comparison_type          fpc_type = FPC_STRONG ) 
+    : p_fraction_tolerance( tt_detail::fpt_abs( static_cast<FPT>(0.01)*tolerance.m_value ) )
+    , p_strong_or_weak( fpc_type ==  FPC_STRONG )
+    {}
+    template<typename ToleranceBaseType>
+    explicit    close_at_tolerance( fraction_tolerance_t<ToleranceBaseType> tolerance, 
+                                    floating_point_comparison_type          fpc_type = FPC_STRONG ) 
+    : p_fraction_tolerance( tt_detail::fpt_abs( tolerance.m_value ) )
+    , p_strong_or_weak( fpc_type ==  FPC_STRONG )
+    {}
 
     bool        operator()( FPT left, FPT right ) const
     {
@@ -84,8 +163,9 @@ public:
         FPT d1   = tt_detail::safe_fpt_division( diff, tt_detail::fpt_abs( right ) );
         FPT d2   = tt_detail::safe_fpt_division( diff, tt_detail::fpt_abs( left ) );
         
-        return p_strong_or_weak ? (d1 <= p_fraction_tolerance.get() && d2 <= p_fraction_tolerance.get()) 
-                                : (d1 <= p_fraction_tolerance.get() || d2 <= p_fraction_tolerance.get());
+        return p_strong_or_weak 
+                   ? (d1 <= p_fraction_tolerance && d2 <= p_fraction_tolerance) 
+                   : (d1 <= p_fraction_tolerance || d2 <= p_fraction_tolerance);
     }
 
     // Public properties
@@ -99,15 +179,25 @@ public:
 // **************               check_is_close                 ************** //
 // ************************************************************************** //
 
-struct check_is_close_t {
+struct BOOST_TEST_DECL check_is_close_t {
     // Public typedefs
     typedef bool result_type;
 
-    template<typename FPT, typename PersentType>
+    template<typename FPT, typename ToleranceBaseType>
     bool
-    operator()( FPT left, FPT right, PersentType percentage_tolerance, floating_point_comparison_type fpc_type = FPC_STRONG )
+    operator()( FPT left, FPT right, percent_tolerance_t<ToleranceBaseType> tolerance, 
+                floating_point_comparison_type fpc_type = FPC_STRONG )
     {
-        close_at_tolerance<FPT,PersentType> pred( percentage_tolerance, fpc_type );
+        close_at_tolerance<FPT> pred( tolerance, fpc_type );
+
+        return pred( left, right );
+    }
+    template<typename FPT, typename ToleranceBaseType>
+    bool
+    operator()( FPT left, FPT right, fraction_tolerance_t<ToleranceBaseType> tolerance, 
+                floating_point_comparison_type fpc_type = FPC_STRONG )
+    {
+        close_at_tolerance<FPT> pred( tolerance, fpc_type );
 
         return pred( left, right );
     }
@@ -123,7 +213,7 @@ check_is_close_t check_is_close;
 // **************               check_is_small                 ************** //
 // ************************************************************************** //
 
-struct check_is_small_t {
+struct BOOST_TEST_DECL check_is_small_t {
     // Public typedefs
     typedef bool result_type;
 
@@ -131,7 +221,7 @@ struct check_is_small_t {
     bool
     operator()( FPT fpv, FPT tolerance )
     {
-        return tt_detail::fpt_abs( fpv ) < tolerance;
+        return tt_detail::fpt_abs( fpv ) < tt_detail::fpt_abs( tolerance );
     }
 };
 
@@ -153,6 +243,21 @@ check_is_small_t check_is_small;
 //  Revision History :
 //  
 //  $Log: floating_point_comparison.hpp,v $
+//  Revision 1.26.2.2  2006/11/30 14:41:21  jhunold
+//  Merge from HEAD: Remove unnecessary export makro.
+//
+//  Revision 1.26.2.1  2006/05/22 17:39:12  johnmaddock
+//  Fix min/max guidelines violation.
+//
+//  Revision 1.26  2006/03/16 07:31:06  vladimir_prus
+//  Fix compile error on MSVC due to max and min being defined as macros.
+//
+//  Revision 1.25  2006/03/13 18:28:25  rogeeff
+//  warnings eliminated
+//
+//  Revision 1.24  2005/12/14 05:07:28  rogeeff
+//  introduced an ability to test on closeness based on either percentage dirven tolerance or fraction driven one
+//
 //  Revision 1.23  2005/05/29 08:54:57  rogeeff
 //  allow bind usage
 //
@@ -175,3 +280,4 @@ check_is_small_t check_is_small;
 // ***************************************************************************
 
 #endif // BOOST_FLOATING_POINT_COMAPARISON_HPP_071894GER
+

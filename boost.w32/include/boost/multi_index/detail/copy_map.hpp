@@ -69,7 +69,7 @@ public:
   {
     if(!released){
       for(std::size_t i=0;i<n;++i){
-        boost::detail::allocator::destroy(&spc.data()[i].second->value);
+        boost::detail::allocator::destroy(&spc.data()[i].second->value());
         deallocate(spc.data()[i].second);
       }
     }
@@ -84,7 +84,7 @@ public:
     spc.data()[n].second=al_.allocate(1);
     BOOST_TRY{
       boost::detail::allocator::construct(
-        &spc.data()[n].second->value,node->value);
+        &spc.data()[n].second->value(),node->value());
     }
     BOOST_CATCH(...){
       deallocate(spc.data()[n].second);

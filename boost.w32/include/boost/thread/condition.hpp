@@ -1,13 +1,8 @@
 // Copyright (C) 2001-2003
 // William E. Kempf
 //
-// Permission to use, copy, modify, distribute and sell this software
-// and its documentation for any purpose is hereby granted without fee,
-// provided that the above copyright notice appear in all copies and
-// that both that copyright notice and this permission notice appear
-// in supporting documentation.  William E. Kempf makes no representations
-// about the suitability of this software for any purpose.
-// It is provided "as is" without express or implied warranty.
+//  Distributed under the Boost Software License, Version 1.0. (See accompanying 
+//  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef BOOST_CONDITION_WEK070601_HPP
 #define BOOST_CONDITION_WEK070601_HPP
@@ -27,6 +22,12 @@
 namespace boost {
 
 struct xtime;
+// disable warnings about non dll import
+// see: http://www.boost.org/more/separate_compilation.html#dlls
+#ifdef BOOST_MSVC
+#   pragma warning(push)
+#   pragma warning(disable: 4251 4231 4660 4275)
+#endif
 
 namespace detail {
 
@@ -185,7 +186,9 @@ private:
         return ret;
     }
 };
-
+#ifdef BOOST_MSVC
+#   pragma warning(pop)
+#endif
 } // namespace boost
 
 // Change Log:

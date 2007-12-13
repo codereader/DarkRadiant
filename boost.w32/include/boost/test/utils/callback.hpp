@@ -7,7 +7,7 @@
 //
 //  File        : $RCSfile: callback.hpp,v $
 //
-//  Version     : $Revision: 1.5 $
+//  Version     : $Revision: 1.7 $
 //
 //  Description : 
 // ***************************************************************************
@@ -311,6 +311,12 @@ private:
 //   Revision History:
 //
 //   $Log: callback.hpp,v $
+//   Revision 1.7  2006/02/21 04:27:16  rogeeff
+//   rev back
+//
+//   Revision 1.6  2006/01/28 08:57:03  rogeeff
+//   VC6.0 workaround removed
+//
 //   Revision 1.5  2005/04/13 05:09:00  rogeeff
 //   Intel 7.1 bug fix
 //

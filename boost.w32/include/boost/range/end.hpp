@@ -194,7 +194,7 @@ namespace boost
     inline BOOST_DEDUCED_TYPENAME range_const_iterator<T>::type
     const_end( const T& r )
     {
-        return end( r );
+        return boost::end( r );
     }
 }
 

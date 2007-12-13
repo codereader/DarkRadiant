@@ -140,7 +140,7 @@ xml_woarchive_impl<Archive>::xml_woarchive_impl(
     // gets destroyed.
     if(0 == (flags & no_codecvt)){
         detail::utf8_codecvt_facet *pfacet;
-        #if defined(__SGI_STL_PORT) || defined(_STLPORT_VERSION)
+        #if defined(__SGI_STL_PORT)
             static detail::utf8_codecvt_facet facet(static_cast<size_t>(1));
             pfacet = & facet;
         #else

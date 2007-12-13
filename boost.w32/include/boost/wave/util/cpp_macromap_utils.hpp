@@ -5,7 +5,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -17,6 +17,11 @@
 
 #include <boost/wave/wave_config.hpp>
 #include <boost/wave/token_ids.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -201,7 +206,8 @@ token_equals(TokenT const &left, TokenT const &right)
      
         return (T_IDENTIFIER == id || 
                 IS_CATEGORY(id, KeywordTokenType) ||
-                IS_EXTCATEGORY(id, OperatorTokenType|AltExtTokenType)) && 
+                IS_EXTCATEGORY(id, OperatorTokenType|AltExtTokenType) ||
+                IS_CATEGORY(id, BoolLiteralTokenType)) && 
             left.get_value() == right.get_value();
     }
 
@@ -229,7 +235,8 @@ const_iterator_type last1 = definition.end();
 const_iterator_type first2 = new_definition.begin();
 const_iterator_type last2 = new_definition.end();
     
-    while (first1 != last1 && token_equals(*first1, *first2)) {
+    while (first1 != last1 && first2 != last2 && token_equals(*first1, *first2)) 
+    {
     // skip whitespace, if both sequences have a whitespace next
     token_id id1 = next_token<const_iterator_type>::peek(first1, last1, false);
     token_id id2 = next_token<const_iterator_type>::peek(first2, last2, false);
@@ -273,8 +280,9 @@ parameters_equal(ContainerT const &parameters, ContainerT const &new_parameters)
 const_iterator_type first1 = parameters.begin();
 const_iterator_type last1 = parameters.end();
 const_iterator_type first2 = new_parameters.begin();
+const_iterator_type last2 = new_parameters.end();
 
-    while (first1 != last1) {
+    while (first1 != last1 && first2 != last2) {
     // parameters are different, if the corresponding tokens are different
         using namespace boost::wave;
         if (token_id(*first1) != token_id(*first2) ||
@@ -285,7 +293,7 @@ const_iterator_type first2 = new_parameters.begin();
         ++first1;
         ++first2;
     }
-    return (first1 == last1) ? true : false;
+    return (first1 == last1 && first2 == last2) ? true : false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -382,7 +390,7 @@ remove_placeholders (ContainerT &replacement_list)
 ///////////////////////////////////////////////////////////////////////////////
 template <typename ContainerT>
 inline void
-trim_argument_left (ContainerT &argument)
+trim_sequence_left (ContainerT &argument)
 {
     using namespace boost::wave;
     
@@ -401,7 +409,7 @@ trim_argument_left (ContainerT &argument)
 ///////////////////////////////////////////////////////////////////////////////
 template <typename ContainerT>
 inline void
-trim_argument_right (ContainerT &argument)
+trim_sequence_right (ContainerT &argument)
 {
     using namespace boost::wave;
     
@@ -415,16 +423,16 @@ trim_argument_right (ContainerT &argument)
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-//  Remove all whitespace tokens on the keft and right sides of the given token 
+//  Remove all whitespace tokens on the left and right sides of the given token 
 //  sequence
 //
 ///////////////////////////////////////////////////////////////////////////////
 template <typename ContainerT>
 inline void
-trim_argument (ContainerT &argument)
+trim_sequence (ContainerT &argument)
 {
-    trim_argument_left(argument);
-    trim_argument_right(argument);
+    trim_sequence_left(argument);
+    trim_sequence_right(argument);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -520,5 +528,10 @@ private:
 }   // namespace util
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(CPP_MACROMAP_UTIL_HPP_HK041119)

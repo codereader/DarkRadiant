@@ -12,7 +12,9 @@
 #ifndef BOOST_PTR_CONTAINER_CLONE_ALLOCATOR_HPP
 #define BOOST_PTR_CONTAINER_CLONE_ALLOCATOR_HPP
 
+#include <boost/assert.hpp>
 #include <boost/checked_delete.hpp>
+#include <typeinfo>
 
 namespace boost
 {
@@ -23,7 +25,10 @@ namespace boost
     template< class T >
     inline T* new_clone( const T& r )
     {
-        return new T( r );
+        T* res = new T( r );
+        BOOST_ASSERT( typeid(r) == typeid(*res) &&
+                      "Default new_clone() sliced object!" );
+        return res;
     }
 
     template< class T >
@@ -69,26 +74,6 @@ namespace boost
         }
     };
 
-    /////////////////////////////////////////////////////////////////////////
-    // MapCloneAllocator concept
-    /////////////////////////////////////////////////////////////////////////
-
-    template< class T >
-    inline T* new_default_clone( const T* )
-    {
-        return new T();
-    }
-        
-    struct map_heap_clone_allocator : heap_clone_allocator
-    {   
-        template< class U >
-        static U* allocate_default_clone()
-        {
-            static const U* ptr = 0;
-            return new_default_clone(ptr);
-        }
-    };
-    
 } // namespace 'boost'
 
 #endif

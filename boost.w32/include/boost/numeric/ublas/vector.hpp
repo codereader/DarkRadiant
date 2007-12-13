@@ -32,8 +32,6 @@ namespace boost { namespace numeric { namespace ublas {
 
         typedef vector<T, A> self_type;
     public:
-        typedef T *pointer;
-        typedef const T *const_pointer;
 #ifdef BOOST_UBLAS_ENABLE_PROXY_SHORTCUTS
         using vector_container<self_type>::operator ();
 #endif
@@ -42,6 +40,8 @@ namespace boost { namespace numeric { namespace ublas {
         typedef T value_type;
         typedef typename type_traits<T>::const_reference const_reference;
         typedef T &reference;
+        typedef T *pointer;
+        typedef const T *const_pointer;
         typedef A array_type;
         typedef const vector_reference<const self_type> const_closure_type;
         typedef vector_reference<self_type> closure_type;
@@ -74,6 +74,16 @@ namespace boost { namespace numeric { namespace ublas {
             vector_assign<scalar_assign> (*this, ae);
         }
 
+        // Random Access Container
+        BOOST_UBLAS_INLINE
+        size_type max_size () const {
+            return data_.max_size ();
+        }
+        
+        BOOST_UBLAS_INLINE
+        bool empty () const {
+            return data_.size () == 0;
+        }
         // Accessors
         BOOST_UBLAS_INLINE
         size_type size () const {
@@ -289,7 +299,7 @@ namespace boost { namespace numeric { namespace ublas {
             const_iterator (const self_type &v, const const_subiterator_type &it):
                 container_const_reference<self_type> (v), it_ (it) {}
             BOOST_UBLAS_INLINE
-            const_iterator (const iterator &it):
+            const_iterator (const typename vector::iterator &it):  // ISSUE vector:: stops VC8 using std::iterator here
                 container_const_reference<self_type> (it ()), it_ (it.it_) {}
 
             // Arithmetic
@@ -324,6 +334,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 BOOST_UBLAS_CHECK (it_ >= (*this) ().begin ().it_ && it_ < (*this) ().end ().it_, bad_index ());
                 return *it_;
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(it_ + n);
             }
 
             // Index
@@ -421,6 +435,10 @@ namespace boost { namespace numeric { namespace ublas {
             reference operator * () const {
                 BOOST_UBLAS_CHECK (it_ >= (*this) ().begin ().it_ && it_ < (*this) ().end ().it_ , bad_index ());
                 return *it_;
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(it_ + n);
             }
 
             // Index
@@ -668,26 +686,26 @@ namespace boost { namespace numeric { namespace ublas {
             // Arithmetic
             BOOST_UBLAS_INLINE
             const_iterator &operator ++ () {
-                BOOST_UBLAS_CHECK (false, bad_index ());
+                BOOST_UBLAS_CHECK_FALSE (bad_index ());
                 return *this;
             }
             BOOST_UBLAS_INLINE
             const_iterator &operator -- () {
-                BOOST_UBLAS_CHECK (false, bad_index ());
+                BOOST_UBLAS_CHECK_FALSE (bad_index ());
                 return *this;
             }
 
             // Dereference
             BOOST_UBLAS_INLINE
             const_reference operator * () const {
-                BOOST_UBLAS_CHECK (false, bad_index ());
+                BOOST_UBLAS_CHECK_FALSE (bad_index ());
                 return zero_;   // arbitary return value
             }
 
             // Index
             BOOST_UBLAS_INLINE
             size_type index () const {
-                BOOST_UBLAS_CHECK (false, bad_index ());
+                BOOST_UBLAS_CHECK_FALSE (bad_index ());
                 return 0;   // arbitary return value
             }
 
@@ -1113,6 +1131,10 @@ namespace boost { namespace numeric { namespace ublas {
                 BOOST_UBLAS_CHECK (it_ < (*this) ().size (), bad_index ());
                 return (*this) () (index ());
             }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(*this + n);
+            }
 
             // Index
             BOOST_UBLAS_INLINE
@@ -1443,7 +1465,7 @@ namespace boost { namespace numeric { namespace ublas {
             const_iterator (const self_type &v, const const_subiterator_type &it):
                 container_const_reference<self_type> (v), it_ (it) {}
             BOOST_UBLAS_INLINE
-            const_iterator (const iterator &it):
+            const_iterator (const typename self_type::iterator &it):  // ISSUE self_type:: stops VC8 using std::iterator here
                 container_const_reference<self_type> (it ()), it_ (it.it_) {}
 
             // Arithmetic
@@ -1478,6 +1500,10 @@ namespace boost { namespace numeric { namespace ublas {
             const_reference operator * () const {
                 BOOST_UBLAS_CHECK (it_ >= (*this) ().begin ().it_ && it_ < (*this) ().end ().it_, bad_index ());
                 return *it_;
+            }
+            BOOST_UBLAS_INLINE
+            const_reference operator [] (difference_type n) const {
+                return *(it_ + n);
             }
 
             // Index
@@ -1575,6 +1601,10 @@ namespace boost { namespace numeric { namespace ublas {
             reference operator * () const {
                 BOOST_UBLAS_CHECK (it_ >= (*this) ().begin ().it_ && it_ < (*this) ().end ().it_, bad_index ());
                 return *it_;
+            }
+            BOOST_UBLAS_INLINE
+            reference operator [] (difference_type n) const {
+                return *(it_ + n);
             }
 
             // Index

@@ -24,8 +24,10 @@ namespace boost {
 namespace archive {
 
 typedef detail::polymorphic_oarchive_impl<
-        binary_oarchive_impl<binary_oarchive> 
-> polymorphic_binary_oarchive;
+    binary_oarchive_impl<
+        binary_oarchive, std::ostream::char_type, std::ostream::traits_type
+    >
+ > polymorphic_binary_oarchive;
 
 } // namespace archive
 } // namespace boost

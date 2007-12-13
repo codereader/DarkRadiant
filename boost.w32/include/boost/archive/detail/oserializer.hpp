@@ -50,10 +50,9 @@
 #include <boost/mpl/empty.hpp>
 #include <boost/mpl/not.hpp>
 
-#ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO
-    #include <boost/serialization/extended_type_info_typeid.hpp>
-#endif
-
+ #ifndef BOOST_SERIALIZATION_DEFAULT_TYPE_INFO   
+     #include <boost/serialization/extended_type_info_typeid.hpp>   
+ #endif 
 // the following is need only for dynamic cast of polymorphic pointers
 #include <boost/archive/detail/basic_oarchive.hpp>
 #include <boost/archive/detail/basic_oserializer.hpp>
@@ -115,7 +114,7 @@ public:
         return boost::serialization::implementation_level<T>::value 
             >= boost::serialization::object_class_info;
     }
-    virtual bool tracking(const unsigned int flags) const {
+    virtual bool tracking(const unsigned int /* flags */) const {
 //        if(0 != (flags &  no_tracking))
 //            return false;
         return boost::serialization::tracking_level<T>::value == boost::serialization::track_always
@@ -174,7 +173,7 @@ public:
     explicit BOOST_DLLEXPORT pointer_oserializer() BOOST_USED;
     static const pointer_oserializer instance;
 public:
-    #if !defined(__BORLANDC__)
+    #if ! BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
     // at least one compiler (CW) seems to require that serialize_adl
     // be explicitly instantiated. Still under investigation. 
     void (* const m)(Archive &, T &, const unsigned);
@@ -217,7 +216,7 @@ BOOST_DLLEXPORT void pointer_oserializer<T, Archive>::save_object_ptr(
 }
 
 template<class T, class Archive>
-#if !defined(__BORLANDC__)
+#if ! BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
 BOOST_DLLEXPORT pointer_oserializer<T, Archive>::pointer_oserializer() :
     archive_pointer_oserializer<Archive>(
         * boost::serialization::type_info_implementation<T>::type::get_instance()

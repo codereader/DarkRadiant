@@ -26,7 +26,7 @@ namespace boost { namespace python {
     }
 
     // The map_indexing_suite class is a predefined indexing_suite derived
-    // class for wrapping std::vector (and std::vector like) classes. It provides
+    // class for wrapping std::map (and std::map like) classes. It provides
     // all the policies required by the indexing_suite (see indexing_suite).
     // Example usage:
     //
@@ -78,7 +78,7 @@ namespace boost { namespace python {
             elem_name += "_entry";
 
             typedef typename mpl::if_<
-                is_class<data_type>
+                mpl::and_<is_class<data_type>, mpl::bool_<!NoProxy> >
               , return_internal_reference<>
               , default_call_policies
             >::type get_data_return_policy;
@@ -98,7 +98,7 @@ namespace boost { namespace python {
 
         static
         typename mpl::if_<
-            is_class<data_type>
+            mpl::and_<is_class<data_type>, mpl::bool_<!NoProxy> >
           , data_type&
           , data_type
         >::type
@@ -156,7 +156,7 @@ namespace boost { namespace python {
         }
 
         static index_type
-        convert_index(Container& container, PyObject* i_)
+        convert_index(Container& /*container*/, PyObject* i_)
         {
             extract<key_type const&> i(i_);
             if (i.check())

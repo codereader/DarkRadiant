@@ -77,7 +77,7 @@ inline bool is_combining<unsigned char>(unsigned char)
 {
    return false;
 }
-#ifndef __HP_aCC
+#ifndef __hpux // can't use WCHAR_MIN/MAX in pp-directives.
 #ifdef _MSC_VER 
 template<>
 inline bool is_combining<wchar_t>(wchar_t c)
@@ -142,7 +142,11 @@ struct character_pointer_range
    }
    bool operator == (const character_pointer_range& r)const
    {
-      return ((p2 - p1) == (r.p2 - r.p1)) && std::equal(p1, p2, r.p1);
+      // Not only do we check that the ranges are of equal size before
+      // calling std::equal, but there is no other algorithm available:
+      // not even a non-standard MS one.  So forward to unchecked_equal
+      // in the MS case.
+      return ((p2 - p1) == (r.p2 - r.p1)) && re_detail::equal(p1, p2, r.p1);
    }
 };
 template <class charT>

@@ -62,7 +62,7 @@ struct remove_whitespace_predicate;
 template<>
 struct remove_whitespace_predicate<char>
 {
-    bool operator()(char t){
+    bool operator()(unsigned char t){
         return ! std::isspace(t);
     }
 };

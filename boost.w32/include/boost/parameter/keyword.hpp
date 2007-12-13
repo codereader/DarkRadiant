@@ -9,7 +9,6 @@
 #include <boost/parameter/aux_/unwrap_cv_reference.hpp>
 #include <boost/parameter/aux_/tag.hpp>
 #include <boost/parameter/aux_/default.hpp>
-#include <boost/noncopyable.hpp>
 
 namespace boost { namespace parameter {
 
@@ -29,10 +28,10 @@ namespace boost { namespace parameter {
 //    f(rate = 1, skew = 2.4);
 //
 template <class Tag>
-struct keyword : noncopyable
+struct keyword
 {
     template <class T>
-    typename aux::tag<Tag, T>::type
+    typename aux::tag<Tag, T>::type const
     operator=(T& x) const
     {
         typedef typename aux::tag<Tag, T>::type result;
@@ -55,7 +54,7 @@ struct keyword : noncopyable
 
 #if !BOOST_WORKAROUND(BOOST_MSVC, < 1300)  // avoid partial ordering bugs
     template <class T>
-    typename aux::tag<Tag, T const>::type
+    typename aux::tag<Tag, T const>::type const
     operator=(T const& x) const
     {
         typedef typename aux::tag<Tag, T const>::type result;
@@ -98,9 +97,6 @@ struct keyword : noncopyable
         static keyword<Tag> result;
         return result;
     }
-    
- private:
-    keyword() {}
 };
 
 // Reduces boilerplate required to declare and initialize keywords
@@ -112,14 +108,32 @@ struct keyword : noncopyable
 #if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 
 # define BOOST_PARAMETER_KEYWORD(tag_namespace,name)                \
-    namespace tag_namespace { struct name; }                        \
+    namespace tag_namespace                                         \
+    {                                                               \
+      struct name                                                   \
+      {                                                             \
+          static char const* keyword_name()                         \
+          {                                                         \
+              return #name;                                         \
+          }                                                         \
+      };                                                            \
+    }                                                               \
     static ::boost::parameter::keyword<tag_namespace::name>& name   \
        = ::boost::parameter::keyword<tag_namespace::name>::get();
 
 #else
 
 #define BOOST_PARAMETER_KEYWORD(tag_namespace,name)                 \
-    namespace tag_namespace { struct name; }                        \
+    namespace tag_namespace                                         \
+    {                                                               \
+      struct name                                                   \
+      {                                                             \
+          static char const* keyword_name()                         \
+          {                                                         \
+              return #name;                                         \
+          }                                                         \
+      };                                                            \
+    }                                                               \
     namespace                                                       \
     {                                                               \
        ::boost::parameter::keyword<tag_namespace::name>& name       \

@@ -6,7 +6,7 @@
 //  See library home page at http://www.boost.org/libs/numeric/conversion
 //
 // Contact the author at: fernando_cacciola@hotmail.com
-// 
+//
 #ifndef BOOST_NUMERIC_CONVERSION_DETAIL_CONVERTER_FLC_12NOV2002_HPP
 #define BOOST_NUMERIC_CONVERSION_DETAIL_CONVERTER_FLC_12NOV2002_HPP
 
@@ -230,12 +230,12 @@ namespace boost { namespace numeric { namespace convdetail
     struct combine
     {
       typedef applyBoth<PredA,PredB> Both ;
-      typedef void                   None ;
+      typedef void                   NNone ; // 'None' is defined as a macro in (/usr/X11R6/include/X11/X.h)
 
       typedef typename PredA::do_apply do_applyA ;
       typedef typename PredB::do_apply do_applyB ;
 
-      typedef typename for_both<do_applyA, do_applyB, Both, PredA, PredB, None>::type type ;
+      typedef typename for_both<do_applyA, do_applyB, Both, PredA, PredB, NNone>::type type ;
     } ;
 
 
@@ -263,7 +263,7 @@ namespace boost { namespace numeric { namespace convdetail
   struct dummy_range_checker
   {
     typedef typename Traits::argument_type argument_type ;
-    
+
     static range_check_result out_of_range ( argument_type ) { return cInRange ; }
     static void validate_range ( argument_type ) {}
   } ;
@@ -279,10 +279,10 @@ namespace boost { namespace numeric { namespace convdetail
   template<class Traits, class IsNegOverflow, class IsPosOverflow, class OverflowHandler>
   struct generic_range_checker
   {
-    typedef OverflowHandler overflow_handler ; 
+    typedef OverflowHandler overflow_handler ;
 
     typedef typename Traits::argument_type argument_type ;
-    
+
     static range_check_result out_of_range ( argument_type s )
     {
       typedef typename combine<IsNegOverflow,IsPosOverflow>::type Predicate ;

@@ -22,11 +22,13 @@
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/integral_c_tag.hpp>
 
-#include <boost/serialization/traits.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
+//#include <boost/serialization/traits.hpp>
 
 namespace boost { 
 namespace serialization {
+
+struct basic_traits;
 
 // default version number is 0. Override with higher version
 // when class definition changes.
@@ -39,9 +41,11 @@ struct version
     };
 
     typedef mpl::integral_c_tag tag;
+    // note: at least one compiler complained w/o the full qualification
+    // on basic traits below
     typedef
         BOOST_DEDUCED_TYPENAME mpl::eval_if<
-            is_base_and_derived<basic_traits,T>,
+            is_base_and_derived<boost::serialization::basic_traits,T>,
             traits_class_version<T>,
             mpl::int_<0>
         >::type type;

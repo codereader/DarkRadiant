@@ -3,7 +3,7 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -15,7 +15,18 @@
 #include <list>
 
 #include <boost/wave/wave_config.hpp>
+#if BOOST_WAVE_SERIALIZATION != 0
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/vector.hpp>
+#endif
+
 #include <boost/wave/token_ids.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -32,12 +43,12 @@ namespace util {
 template <typename TokenT, typename ContainerT>
 struct macro_definition {
 
-    typedef std::vector<TokenT> parameter_container_t;
-    typedef ContainerT          definition_container_t;
+    typedef std::vector<TokenT> parameter_container_type;
+    typedef ContainerT          definition_container_type;
     
-    typedef typename parameter_container_t::const_iterator 
+    typedef typename parameter_container_type::const_iterator 
         const_parameter_iterator_t;
-    typedef typename definition_container_t::const_iterator 
+    typedef typename definition_container_type::const_iterator 
         const_definition_iterator_t;
 
     macro_definition(TokenT const &token_, bool has_parameters, 
@@ -63,20 +74,21 @@ struct macro_definition {
         using namespace boost::wave;
         
         if (!replaced_parameters) {
-        typename definition_container_t::iterator end = macrodefinition.end();
-        typename definition_container_t::iterator it = macrodefinition.begin(); 
+        typename definition_container_type::iterator end = macrodefinition.end();
+        typename definition_container_type::iterator it = macrodefinition.begin(); 
 
             for (/**/; it != end; ++it) {
             token_id id = *it;
             
                 if (T_IDENTIFIER == id || 
                     IS_CATEGORY(id, KeywordTokenType) ||
-                    IS_EXTCATEGORY(id, OperatorTokenType|AltExtTokenType)) 
+                    IS_EXTCATEGORY(id, OperatorTokenType|AltExtTokenType) ||
+                    IS_CATEGORY(id, OperatorTokenType)) 
                 {
                 // may be a parameter to replace
                     const_parameter_iterator_t cend = macroparameters.end();
                     const_parameter_iterator_t cit = macroparameters.begin();
-                    for (typename parameter_container_t::size_type i = 0; 
+                    for (typename parameter_container_type::size_type i = 0; 
                         cit != cend; ++cit, ++i) 
                     {
                         if ((*it).get_value() == (*cit).get_value()) {
@@ -109,8 +121,8 @@ struct macro_definition {
     }
 
     TokenT macroname;                       // macro name
-    parameter_container_t macroparameters;  // formal parameters
-    definition_container_t macrodefinition; // macro definition token sequence
+    parameter_container_type macroparameters;  // formal parameters
+    definition_container_type macrodefinition; // macro definition token sequence
     long uid;                               // unique id of this macro
     bool is_functionlike;
     bool replaced_parameters;
@@ -119,11 +131,45 @@ struct macro_definition {
 #if BOOST_WAVE_SUPPORT_VARIADICS_PLACEMARKERS != 0
     bool has_ellipsis;
 #endif
+
+#if BOOST_WAVE_SERIALIZATION != 0
+    // default constructor is needed for serialization only
+    macro_definition() 
+    :   uid(0), is_functionlike(false), replaced_parameters(false),
+        is_available_for_replacement(false), is_predefined(false)
+#if BOOST_WAVE_SUPPORT_VARIADICS_PLACEMARKERS != 0
+      , has_ellipsis(false)
+#endif
+    {}
+
+private:
+    friend class boost::serialization::access;
+    template<typename Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar & macroname;
+        ar & macroparameters;
+        ar & macrodefinition;
+        ar & uid;
+        ar & is_functionlike;
+        ar & replaced_parameters;
+        ar & is_available_for_replacement;
+        ar & is_predefined;
+#if BOOST_WAVE_SUPPORT_VARIADICS_PLACEMARKERS != 0
+        ar & has_ellipsis;
+#endif
+    }
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 }   // namespace util
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(MACRO_DEFINITION_HPP_D68A639E_2DA5_4E9C_8ACD_CFE6B903831E_INCLUDED)

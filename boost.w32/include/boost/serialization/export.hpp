@@ -47,7 +47,6 @@
 #include <boost/serialization/is_abstract.hpp>
 
 namespace boost {
-
 namespace archive {
 namespace detail {
 

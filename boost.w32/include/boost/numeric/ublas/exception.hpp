@@ -34,16 +34,16 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::runtime_error {
-        explicit
-        divide_by_zero (const char *s = "divide by zero") :
+        explicit divide_by_zero (const char *s = "divide by zero") :
             std::runtime_error (s) {}
         void raise () {
             throw *this;
         }
 #else
     {
-        explicit
-        divide_by_zero (const char *s = 0)
+        divide_by_zero ()
+            {}
+        explicit divide_by_zero (const char *)
             {}
         void raise () {
             std::abort ();
@@ -55,16 +55,16 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::logic_error {
-        explicit
-        internal_logic (const char *s = "internal logic") :
+        explicit internal_logic (const char *s = "internal logic") :
             std::logic_error (s) {}
         void raise () {
             throw *this;
         }
 #else
     {
-        explicit
-        internal_logic (const char *s = 0)
+        internal_logic ()
+            {}
+        explicit internal_logic (const char *)
             {}
         void raise () {
             std::abort ();
@@ -76,8 +76,7 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::logic_error {
-        explicit
-        external_logic (const char *s = "external logic") :
+        explicit external_logic (const char *s = "external logic") :
             std::logic_error (s) {}
         // virtual const char *what () const throw () {
         //     return "exception: external logic";
@@ -87,8 +86,9 @@ namespace boost { namespace numeric { namespace ublas {
         }
 #else
     {
-        explicit
-        external_logic (const char *s = 0)
+        external_logic ()
+            {}
+        explicit external_logic (const char *)
             {}
         void raise () {
             std::abort ();
@@ -100,19 +100,18 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::invalid_argument {
-        explicit
-        bad_argument (const char *s = "bad argument") :
+        explicit bad_argument (const char *s = "bad argument") :
             std::invalid_argument (s) {}
         void raise () {
             throw *this;
         }
 #else
     {
-        explicit
-        bad_argument (const char *s = 0)
+        bad_argument ()
+            {}
+        explicit bad_argument (const char *)
             {}
         void raise () {
-            throw *this;
             std::abort ();
         }
 #endif
@@ -122,23 +121,19 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::domain_error {
-        explicit
-        bad_size (const char *s = "bad size") :
+        explicit bad_size (const char *s = "bad size") :
             std::domain_error (s) {}
         void raise () {
             throw *this;
         }
 #else
     {
-        explicit
-        bad_size (const char *s = 0)
+        bad_size ()
+            {}
+        explicit bad_size (const char *)
             {}
         void raise () {
-#ifdef BOOST_NO_STDC_NAMESPACE
-            ::abort ();
-#else
             std::abort ();
-#endif
         }
 #endif
     };
@@ -147,16 +142,16 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::out_of_range {
-        explicit
-        bad_index (const char *s = "bad index") :
+        explicit bad_index (const char *s = "bad index") :
             std::out_of_range (s) {}
         void raise () {
             throw *this;
         }
 #else
     {
-        explicit
-        bad_index (const char *s = 0)
+        bad_index ()
+            {}
+        explicit bad_index (const char *)
             {}
         void raise () {
             std::abort ();
@@ -168,16 +163,16 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::runtime_error {
-        explicit
-        singular (const char *s = "singular") :
+        explicit singular (const char *s = "singular") :
             std::runtime_error (s) {}
         void raise () {
             throw *this;
         }
 #else
     {
-        explicit
-        singular (const char *s = 0)
+        singular ()
+            {}
+        explicit singular (const char *)
             {}
         void raise () {
             throw *this;
@@ -190,16 +185,16 @@ namespace boost { namespace numeric { namespace ublas {
 #if ! defined (BOOST_NO_EXCEPTIONS) && ! defined (BOOST_UBLAS_NO_EXCEPTIONS)
         // Inherit from standard exceptions as requested during review.
         : public std::domain_error {
-        explicit
-        non_real (const char *s = "exception: non real") :
+        explicit non_real (const char *s = "exception: non real") :
             std::domain_error (s) {}
         void raise () {
             throw *this;
         }
 #else
      {
-        explicit
-        non_real (const char *s = 0)
+        non_real ()
+            {}
+        explicit non_real (const char *)
             {}
         void raise () {
             std::abort ();
@@ -208,7 +203,7 @@ namespace boost { namespace numeric { namespace ublas {
     };
 
 #if BOOST_UBLAS_CHECK_ENABLE
-// FIXME for performance reasons we better use macros
+// Macros are equivilent to 
 //    template<class E>
 //    BOOST_UBLAS_INLINE
 //    void check (bool expression, const E &e) {
@@ -221,22 +216,25 @@ namespace boost { namespace numeric { namespace ublas {
 //        if (! expression)
 //            e.raise ();
 //    }
-// Dan Muller reported problems with COMO in GUI applications
-// So we need a new preprocessor symbol:
 #ifndef BOOST_UBLAS_NO_STD_CERR
+#define BOOST_UBLAS_CHECK_FALSE(e) \
+    std::cerr << "Check failed in file " << __FILE__ << " at line " << __LINE__ << ":" << std::endl; \
+    e.raise ();
 #define BOOST_UBLAS_CHECK(expression, e) \
     if (! (expression)) { \
-        std::cerr << "Assertion failed in file " << __FILE__ << " at line " << __LINE__ << ":" << std::endl; \
+        std::cerr << "Check failed in file " << __FILE__ << " at line " << __LINE__ << ":" << std::endl; \
         std::cerr << #expression << std::endl; \
         e.raise (); \
     }
 #define BOOST_UBLAS_CHECK_EX(expression, file, line, e) \
     if (! (expression)) { \
-        std::cerr << "Assertion failed in file " << (file) << " at line " << (line) << ":" << std::endl; \
+        std::cerr << "Check failed in file " << (file) << " at line " << (line) << ":" << std::endl; \
         std::cerr << #expression << std::endl; \
         e.raise (); \
     }
 #else
+#define BOOST_UBLAS_CHECK_FALSE(e) \
+    e.raise ();
 #define BOOST_UBLAS_CHECK(expression, e) \
     if (! (expression)) { \
         e.raise (); \
@@ -247,20 +245,21 @@ namespace boost { namespace numeric { namespace ublas {
     }
 #endif
 #else
-// FIXME for performance reasons we better use macros
+// Macros are equivilent to 
 //    template<class E>
 //    BOOST_UBLAS_INLINE
 //    void check (bool expression, const E &e) {}
 //    template<class E>
 //    BOOST_UBLAS_INLINE
 //    void check_ex (bool expression, const char *file, int line, const E &e) {}
+#define BOOST_UBLAS_CHECK_FALSE(e)
 #define BOOST_UBLAS_CHECK(expression, e)
 #define BOOST_UBLAS_CHECK_EX(expression, file, line, e)
 #endif
 
 
 #ifndef BOOST_UBLAS_USE_FAST_SAME
-// FIXME for performance reasons we better use macros
+// Macro is equivilent to 
 //    template<class T>
 //    BOOST_UBLAS_INLINE
 //    const T &same_impl (const T &size1, const T &size2) {
@@ -279,7 +278,7 @@ namespace boost { namespace numeric { namespace ublas {
     }
 #define BOOST_UBLAS_SAME(size1, size2) same_impl_ex ((size1), (size2), __FILE__, __LINE__)
 #else
-// FIXME for performance reasons we better use macros
+// Macros are equivilent to 
 //    template<class T>
 //    BOOST_UBLAS_INLINE
 //    const T &same_impl (const T &size1, const T &size2) {

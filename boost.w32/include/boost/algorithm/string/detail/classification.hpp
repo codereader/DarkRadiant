@@ -46,7 +46,7 @@ namespace boost {
                     return std::use_facet< std::ctype<CharT> >(m_Locale).is( m_Type, Ch );
                 }
 
-                #if defined(__BORLANDC__) && (__BORLANDC__ >= 0x560) && (__BORLANDC__ <= 0x564) && !defined(_USE_OLD_RW_STL)
+                #if defined(__BORLANDC__) && (__BORLANDC__ >= 0x560) && (__BORLANDC__ <= 0x582) && !defined(_USE_OLD_RW_STL)
                     template<>
                     bool operator()( char const Ch ) const
                     {

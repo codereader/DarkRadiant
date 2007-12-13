@@ -25,6 +25,7 @@
 #include "boost/multi_array/storage_order.hpp"
 #include "boost/multi_array/types.hpp"
 #include "boost/config.hpp"
+#include "boost/multi_array/concept_checks.hpp" //for ignore_unused_...
 #include "boost/mpl/eval_if.hpp"
 #include "boost/mpl/if.hpp"
 #include "boost/mpl/size_t.hpp"
@@ -32,7 +33,7 @@
 #include "boost/iterator/reverse_iterator.hpp"
 #include "boost/static_assert.hpp"
 #include "boost/type.hpp"
-#include <cassert>
+#include "boost/assert.hpp"
 #include <cstddef>
 #include <memory>
 
@@ -129,11 +130,13 @@ protected:
   Reference access(boost::type<Reference>,index idx,TPtr base,
                    const size_type* extents,
                    const index* strides,
-                   const index* index_base) const {
+                   const index* index_bases) const {
 
+    BOOST_ASSERT(idx - index_bases[0] >= 0);
+    BOOST_ASSERT(size_type(idx - index_bases[0]) < extents[0]);
     // return a sub_array<T,NDims-1> proxy object
     TPtr newbase = base + idx * strides[0];
-    return Reference(newbase,extents+1,strides+1,index_base+1);
+    return Reference(newbase,extents+1,strides+1,index_bases+1);
 
   }
 
@@ -165,9 +168,14 @@ protected:
   // used by array operator[] and iterators to get reference types.
   template <typename Reference, typename TPtr>
   Reference access(boost::type<Reference>,index idx,TPtr base,
-                   const size_type*,
+                   const size_type* extents,
                    const index* strides,
-                   const index*) const {
+                   const index* index_bases) const {
+
+    ignore_unused_variable_warning(index_bases);
+    ignore_unused_variable_warning(extents);
+    BOOST_ASSERT(idx - index_bases[0] >= 0);
+    BOOST_ASSERT(size_type(idx - index_bases[0]) < extents[0]);
     return *(base + idx * strides[0]);
   }
 
@@ -201,7 +209,7 @@ struct value_accessor_generator {
   >::type type;
 };
 
-#if BOOST_WORKAROUND(BOOST_MSVC, == 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
 
 struct eti_value_accessor
 {
@@ -251,7 +259,7 @@ struct associated_types
 template <typename T, std::size_t NumDims>
 class multi_array_impl_base
   :
-#if BOOST_WORKAROUND(BOOST_MSVC, == 1200)
+#if BOOST_WORKAROUND(BOOST_MSVC, < 1300)
       public mpl::aux::msvc_eti_base<
           typename value_accessor_generator<T,mpl::size_t<NumDims> >::type
        >::type
@@ -307,9 +315,22 @@ protected:
 
   // Used by operator() in our array classes
   template <typename Reference, typename IndexList, typename TPtr>
-  Reference access_element(boost::type<Reference>, TPtr base,
+  Reference access_element(boost::type<Reference>,
                            const IndexList& indices,
-                           const index* strides) const {
+                           TPtr base,
+                           const size_type* extents,
+                           const index* strides,
+                           const index* index_bases) const {
+
+    ignore_unused_variable_warning(index_bases);
+    ignore_unused_variable_warning(extents);
+#if !defined(NDEBUG) && !defined(BOOST_DISABLE_ASSERTS)
+    for (size_type i = 0; i != NumDims; ++i) {
+      BOOST_ASSERT(indices[i] - index_bases[i] >= 0);
+      BOOST_ASSERT(size_type(indices[i] - index_bases[i]) < extents[i]);
+    }
+#endif
+
     index offset = 0;
     for (size_type n = 0; n != NumDims; ++n) 
       offset += indices[n] * strides[n];
@@ -418,6 +439,12 @@ protected:
       index index_factor = current_range.stride();
       index len = (finish - start + (index_factor - 1)) / index_factor;
 
+      BOOST_ASSERT(index_bases[n] <= start &&
+                   start <= index_bases[n]+index(extents[n]));
+      BOOST_ASSERT(index_bases[n] <= finish &&
+                   finish <= index_bases[n]+index(extents[n]));
+      BOOST_ASSERT(index_factor > 0);
+
       // the array data pointer is modified to account for non-zero
       // bases during slicing (see [Garcia] for the math involved)
       offset += start * strides[n];
@@ -433,7 +460,7 @@ protected:
         ++dim;
       }
     }
-    assert (dim == NDims);
+    BOOST_ASSERT(dim == NDims);
 
     return
       ArrayRef(base+offset,

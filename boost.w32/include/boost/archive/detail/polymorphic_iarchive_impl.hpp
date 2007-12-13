@@ -174,6 +174,10 @@ private:
                 ArchiveImplementation::insert_basic_helper(eti, sph);
         }
 public:
+    // this can't be inherited because they appear in mulitple
+    // parents
+    typedef mpl::bool_<true> is_loading;
+    typedef mpl::bool_<false> is_saving;
     // the >> operator
     template<class T>
     polymorphic_iarchive & operator>>(T & t){

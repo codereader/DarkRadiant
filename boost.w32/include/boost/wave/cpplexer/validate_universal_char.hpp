@@ -5,7 +5,7 @@
     
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -14,8 +14,14 @@
 
 #include <boost/assert.hpp>
 
+#include <boost/wave/wave_config.hpp>
 #include <boost/wave/util/file_position.hpp>
 #include <boost/wave/cpplexer/cpplexer_exceptions.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -30,19 +36,16 @@ enum universal_char_type {
     universal_char_type_not_allowed_for_identifiers = 3
 };
 
-namespace {
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 
-    //  is_range is a helper function for the classification by brute force 
-    //  below
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    inline bool 
-    in_range(unsigned long ch, unsigned long l, unsigned long u)
-    {
-        return (l <= ch && ch <= u);
-    }
+///////////////////////////////////////////////////////////////////////////
+// 
+//  is_range is a helper function for the classification by brute force 
+//  below
+//
+///////////////////////////////////////////////////////////////////////////
+inline bool 
+in_range(unsigned long ch, unsigned long l, unsigned long u)
+{
+    return (l <= ch && ch <= u);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -310,5 +313,10 @@ typename StringT::size_type pos = name.find_first_of('\\');
 }   // namespace cpplexer
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(VALIDATE_UNIVERSAL_CHAR_HPP_55F1B811_CD76_4C72_8344_CBC69CF3B339_INCLUDED)

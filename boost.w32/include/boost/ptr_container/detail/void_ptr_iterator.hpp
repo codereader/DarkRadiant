@@ -21,8 +21,6 @@
 
 namespace boost
 {
-    //namespace ptr_container_detail
-    //{
         template
         < 
             class VoidIter, 

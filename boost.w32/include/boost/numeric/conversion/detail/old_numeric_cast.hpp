@@ -60,7 +60,7 @@
 //  TODO: Add this to config.hpp?
 //  FLC: This macro is repeated in boost/cast.hpp but only locally (is undefined at the bottom)
 //       so is OK to reproduce it here.
-# if defined(BOOST_MSVC) && BOOST_MSVC <= 1200 // 1200 = VC6
+# if defined(BOOST_MSVC) && BOOST_MSVC < 1300
 #  define BOOST_EXPLICIT_DEFAULT_TARGET , ::boost::type<Target>* = 0
 # else
 #  define BOOST_EXPLICIT_DEFAULT_TARGET
@@ -215,7 +215,7 @@ namespace boost
         static inline bool check(X x, Y)
             { return x >= 0 && static_cast<X>(static_cast<Y>(x)) != x; }
 
-# if defined(BOOST_MSVC) && BOOST_MSVC <= 1200
+# if defined(BOOST_MSVC) && BOOST_MSVC < 1300
         // MSVC6 can't static_cast  unsigned __int64 -> floating types
 #  define BOOST_UINT64_CAST(src_type)                                   \
         static inline bool check(src_type x, unsigned __int64)          \

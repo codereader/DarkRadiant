@@ -3,7 +3,7 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -12,6 +12,12 @@
 #define CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED
 
 #include <stack>
+#include <boost/wave/wave_config.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -50,7 +56,7 @@ public:
 
 private:
    bool status;             // Current block is true
-   bool some_part_status;   // One of the preceeding or current #if/#elif was true
+   bool some_part_status;   // One of the preceding or current #if/#elif was true
    bool enclosing_status;   // Enclosing #if block is true
    bool is_in_else;         // Inside the #else part
 };
@@ -115,27 +121,30 @@ public:
         return true;
     }
 
-// return, wether the top (innermost) condition is true or false
+// return, whether the top (innermost) condition is true or false
     bool get_status() const
     { 
         return 0 == this->size() || this->top().get_status(); 
+    }
+    bool get_some_part_status() const
+    { 
+        return 0 == this->size() || this->top().get_some_part_status(); 
+    }
+    bool get_enclosing_status() const
+    {
+        return 0 == this->size() || this->top().get_enclosing_status();
     }
 
     size_type get_if_block_depth() const { return this->size(); }
     
 protected:
-    bool get_enclosing_status() const
-    {
-       return 0 == this->size() || this->top().get_enclosing_status();
-    }
-
     bool is_inside_ifpart() const
     {
-       return 0 != this->size() && !this->top().get_in_else();
+        return 0 != this->size() && !this->top().get_in_else();
     }
     bool is_inside_elsepart() const
     {
-       return 0 != this->size() && this->top().get_in_else();
+        return 0 != this->size() && this->top().get_in_else();
     }
 };
 
@@ -143,5 +152,10 @@ protected:
 }   // namespace util
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(CPP_IFBLOCK_HPP_D4676B36_00C5_41F4_BC9F_9CBBAE3B8006_INCLUDED)

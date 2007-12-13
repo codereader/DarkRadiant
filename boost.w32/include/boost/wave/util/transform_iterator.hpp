@@ -3,7 +3,7 @@
 
     http://www.boost.org/
 
-    Copyright (c) 2001-2005 Hartmut Kaiser. Distributed under the Boost
+    Copyright (c) 2001-2007 Hartmut Kaiser. Distributed under the Boost
     Software License, Version 1.0. (See accompanying file
     LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
@@ -11,12 +11,18 @@
 #if !defined(TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED)
 #define TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED
 
+#include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
 #if BOOST_ITERATOR_ADAPTORS_VERSION >= 0x0200
 #include <boost/iterator/transform_iterator.hpp>
 #endif // BOOST_ITERATOR_ADAPTORS_VERSION >= 0x0200
 
 #include <boost/assert.hpp>
+
+// this must occur after all of the includes and before any code appears
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_PREFIX
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace boost {
@@ -154,5 +160,10 @@ namespace impl {
 }   // namespace impl
 }   // namespace wave
 }   // namespace boost
+
+// the suffix header occurs after all of the code
+#ifdef BOOST_HAS_ABI_HEADERS
+#include BOOST_ABI_SUFFIX
+#endif
 
 #endif // !defined(TRANSFORM_ITERATOR_HPP_D492C659_88C7_4258_8C42_192F9AE80EC0_INCLUDED)

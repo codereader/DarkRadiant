@@ -18,6 +18,7 @@
 # include <boost/python/other.hpp>
 # include <boost/lexical_cast.hpp>
 # include <boost/python/refcount.hpp>
+# include <boost/python/detail/unwrap_wrapper.hpp>
 # include <string>
 # include <complex>
 
@@ -169,7 +170,9 @@ namespace detail                                            \
       template <class L, class R>                           \
       struct apply                                          \
       {                                                     \
-          static inline PyObject* execute(L& l, R const& r) \
+          typedef typename unwrap_wrapper_<L>::type lhs;    \
+          typedef typename unwrap_wrapper_<R>::type rhs;    \
+          static PyObject* execute(lhs& l, rhs const& r)    \
           {                                                 \
               return detail::convert_result(expr);          \
           }                                                 \
@@ -183,7 +186,9 @@ namespace detail                                            \
       template <class L, class R>                           \
       struct apply                                          \
       {                                                     \
-          static inline PyObject* execute(R& r, L const& l) \
+          typedef typename unwrap_wrapper_<L>::type lhs;    \
+          typedef typename unwrap_wrapper_<R>::type rhs;    \
+          static PyObject* execute(rhs& r, lhs const& l)    \
           {                                                 \
               return detail::convert_result(expr);          \
           }                                                 \
@@ -271,8 +276,10 @@ namespace detail                                                \
       template <class L, class R>                               \
       struct apply                                              \
       {                                                         \
-          static inline PyObject*                               \
-          execute(back_reference<L&> l, R const& r)             \
+          typedef typename unwrap_wrapper_<L>::type lhs;        \
+          typedef typename unwrap_wrapper_<R>::type rhs;        \
+          static PyObject*                                      \
+          execute(back_reference<lhs&> l, rhs const& r)         \
           {                                                     \
               l.get() op r;                                     \
               return python::incref(l.source().ptr());          \
@@ -311,7 +318,8 @@ namespace detail                                                \
       template <class T>                                        \
       struct apply                                              \
       {                                                         \
-          static PyObject* execute(T& x)                        \
+          typedef typename unwrap_wrapper_<T>::type self_t;     \
+          static PyObject* execute(self_t& x)                   \
           {                                                     \
               return detail::convert_result(op(x));             \
           }                                                     \

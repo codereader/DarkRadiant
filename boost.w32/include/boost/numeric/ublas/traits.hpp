@@ -85,29 +85,30 @@ namespace boost { namespace numeric { namespace ublas {
 
         static
         BOOST_UBLAS_INLINE
-        real_type abs (const_reference t) {
-            return std::abs (t);
+        real_type type_abs (const_reference t) {
+            return std::abs (t);    // must use explict std:: as bultin types are not in std namespace
         }
         static
         BOOST_UBLAS_INLINE
-        value_type sqrt (const_reference t) {
-            return std::sqrt (t);
+        value_type type_sqrt (const_reference t) {
+               // force a type conversion back to value_type for intgral types
+            return value_type (std::sqrt (t));   // must use explict std:: as bultin types are not in std namespace
         }
 
         static
         BOOST_UBLAS_INLINE
         real_type norm_1 (const_reference t) {
-            return self_type::abs (t);
+            return self_type::type_abs (t);
         }
         static
         BOOST_UBLAS_INLINE
         real_type norm_2 (const_reference t) {
-            return self_type::abs (t);
+            return self_type::type_abs (t);
         }
         static
         BOOST_UBLAS_INLINE
         real_type norm_inf (const_reference t) {
-            return self_type::abs (t);
+            return self_type::type_abs (t);
         }
 
         static
@@ -119,7 +120,7 @@ namespace boost { namespace numeric { namespace ublas {
                              BOOST_UBLAS_TYPE_CHECK_MIN);
         }
     };
-    
+
     // Define default type traits, assume T is a scalar type
     template<class T>
     struct type_traits : scalar_traits <T> {
@@ -195,31 +196,31 @@ namespace boost { namespace numeric { namespace ublas {
 
         static
         BOOST_UBLAS_INLINE
-        real_type abs (const_reference t) {
-                return std::abs (t);
+        real_type type_abs (const_reference t) {
+                return abs (t);
         }
         static
         BOOST_UBLAS_INLINE
-        value_type sqrt (const_reference t) {
-                return std::sqrt (t);
+        value_type type_sqrt (const_reference t) {
+                return sqrt (t);
         }
 
         static
         BOOST_UBLAS_INLINE
         real_type norm_1 (const_reference t) {
-            return type_traits<real_type>::abs (self_type::real (t)) +
-                   type_traits<real_type>::abs (self_type::imag (t));
+            return type_traits<real_type>::type_abs (self_type::real (t)) +
+                   type_traits<real_type>::type_abs (self_type::imag (t));
         }
         static
         BOOST_UBLAS_INLINE
         real_type norm_2 (const_reference t) {
-            return self_type::abs (t);
+            return self_type::type_abs (t);
         }
         static
         BOOST_UBLAS_INLINE
         real_type norm_inf (const_reference t) {
-            return (std::max) (type_traits<real_type>::abs (self_type::real (t)),
-                             type_traits<real_type>::abs (self_type::imag (t)));
+            return (std::max) (type_traits<real_type>::type_abs (self_type::real (t)),
+                             type_traits<real_type>::type_abs (self_type::imag (t)));
         }
 
         static
@@ -278,29 +279,29 @@ namespace boost { namespace numeric { namespace ublas {
 
         static
         BOOST_UBLAS_INLINE
-        real_type abs (const_reference t) {
-            return boost::numeric::abs (t);
+        real_type type_abs (const_reference t) {
+            return abs (t);
         }
         static
         BOOST_UBLAS_INLINE
-        value_type sqrt (const_reference t) {
-            return boost::numeric::sqrt (t);
+        value_type type_sqrt (const_reference t) {
+            return sqrt (t);
         }
 
         static
         BOOST_UBLAS_INLINE
         real_type norm_1 (const_reference t) {
-            return self_type::abs (t);
+            return self_type::type_abs (t);
         }
         static
         BOOST_UBLAS_INLINE
         real_type norm_2 (const_reference t) {
-            return self_type::abs (t);
+            return self_type::type_abs (t);
         }
         static
         BOOST_UBLAS_INLINE
         real_type norm_inf (const_reference t) {
-            return self_type::abs (t);
+            return self_type::type_abs (t);
         }
 
         static
