@@ -254,8 +254,8 @@ class idEnvironment(Environment):
 	# Link with the OpenAL library
 	def useOpenAL(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/w32/openal/include', '#/w32/vorbis/include'])
-			self.Append(LIBPATH = ['#/w32/openal/lib', '#/w32/vorbis/lib'])
+			self.Append(CPPPATH = ['#/w32deps/openal/include', '#/w32deps/vorbis/include'])
+			self.Append(LIBPATH = ['#/w32deps/openal/lib', '#/w32deps/vorbis/lib'])
 			self.Append(LIBS = ['OpenAL32', 'alut', 'libvorbis', 'vorbisfile'])
 		else:
 			self.Append(LIBS = ['openal', 'alut', 'vorbisfile'])
@@ -315,8 +315,8 @@ class idEnvironment(Environment):
  
 	def useOpenGL(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/w32/glew/include'])
-			self.Append(LIBPATH = ['#/w32/glew/lib'])
+			self.Append(CPPPATH = ['#/w32deps/glew/include'])
+			self.Append(LIBPATH = ['#/w32deps/glew/lib'])
 			self.Append(LIBS = ['glew32', 'glu32', 'opengl32', 'gdi32' ]) # MinGW libs
 		else:
 			self.Append(LIBS = ['GLEW', 'GL'])
