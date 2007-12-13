@@ -37,7 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\Temp\DarkRadiantVC\include;C:\Temp\DarkRadiantVC\libs;C:\Temp\DarkRadiantVC\boost.w32\include;C:\Temp\DarkRadiantVC\libxml2.w32\include"
+				AdditionalIncludeDirectories="C:\Temp\DarkRadiantVC\include;C:\Temp\DarkRadiantVC\libs;C:\Temp\DarkRadiantVC\w32deps/boost\include;C:\Temp\DarkRadiantVC\w32deps/libxml2\include"
 				PreprocessorDefinitions="WIN32"
 			/>
 			<Tool
@@ -91,7 +91,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="C:\Temp\DarkRadiantVC\include;C:\Temp\DarkRadiantVC\libs;C:\Temp\DarkRadiantVC\boost.w32\include;C:\Temp\DarkRadiantVC\libxml2.w32\include"
+				AdditionalIncludeDirectories="C:\Temp\DarkRadiantVC\include;C:\Temp\DarkRadiantVC\libs;C:\Temp\DarkRadiantVC\w32deps/boost\include;C:\Temp\DarkRadiantVC\w32deps/libxml2\include"
 				PreprocessorDefinitions="WIN32"
 				RuntimeLibrary="2"
 				WarningLevel="3"
