@@ -214,6 +214,15 @@ if (getOS() == 'win32'):
 else:
 	toolList = ['default']
 
+# greebo: For win32 builds, check for the existence of the w32deps/
+if (getOS() == 'win32'):
+	if (not os.path.isdir('w32deps')):
+		print 'Win32 dependencies missing.'
+		print 'Please checkout the w32deps/ folder:'
+		print 'svn co https://darkradiant.svn.sourceforge.net/svnroot/trunk/w32deps/ ./w32deps/\n'
+		print 'The w32deps folder has to be in the same directory as this Sconscript file.' 
+		sys.exit( 0 )
+
 class idEnvironment(Environment):
 
 	def __init__(self):
