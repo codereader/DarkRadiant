@@ -109,7 +109,9 @@ void Doom3GroupInstance::renderComponents(Renderer& renderer, const VolumeTest& 
 		m_curveCatmullRom.renderComponents(renderer, volume, localToWorld());
 		
 		// Register the renderable with OpenGL
-		_originInstance.render(renderer, volume, Instance::localToWorld());
+		if (!m_contained.isModel()) {
+			_originInstance.render(renderer, volume, Instance::localToWorld());
+		}
 	}
 }
 
@@ -127,7 +129,7 @@ void Doom3GroupInstance::testSelect(Selector& selector, SelectionTest& test) {
 }
 
 bool Doom3GroupInstance::isSelectedComponents() const {
-	return m_curveNURBS.isSelected() || m_curveCatmullRom.isSelected() || _originInstance.isSelected();
+	return m_curveNURBS.isSelected() || m_curveCatmullRom.isSelected() || (m_contained.isModel() && _originInstance.isSelected());
 }
 
 void Doom3GroupInstance::setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode) {
