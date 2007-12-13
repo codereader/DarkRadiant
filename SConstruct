@@ -232,8 +232,8 @@ class idEnvironment(Environment):
 	# Use Boost includes.
 	def useBoost(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/boost.w32/include'])
-			self.Append(LIBPATH = ['#/boost.w32/lib'])
+			self.Append(CPPPATH = ['#/w32deps/boost/include'])
+			self.Append(LIBPATH = ['#/w32deps/boost/lib'])
 			
 	# Link with the boost_regex library
 	def useBoostRegex(self):
