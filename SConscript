@@ -637,6 +637,8 @@ if radiant_env['PLATFORM'] == 'win32':
 		'#w32deps/openal/lib/alut.dll',
 		'#w32deps/openal/lib/OpenAL32.dll',
 		'#w32deps/openal/lib/wrap_oal.dll',
+		'#w32deps/libpng/bin/libpng13.dll',
+		'#w32deps/zlib/bin/zlib1.dll',
 		'#w32deps/gtk2/bin/etc',
 		'#w32deps/gtk2/bin/lib',
 		'#w32deps/gtk2/bin/iconv.dll',
@@ -652,6 +654,7 @@ if radiant_env['PLATFORM'] == 'win32':
 		'#w32deps/gtk2/bin/libgthread-2.0-0.dll',
 		'#w32deps/gtk2/bin/libgtk-win32-2.0-0.dll',
 		'#w32deps/gtk2/bin/libpango-1.0-0.dll',
+		'#w32deps/gtk2/bin/libtiff3.dll',
 		'#w32deps/gtk2/bin/libpangocairo-1.0-0.dll',
 		'#w32deps/gtk2/bin/libpangoft2-1.0-0.dll',
 		'#w32deps/gtk2/bin/libpangowin32-1.0-0.dll'])

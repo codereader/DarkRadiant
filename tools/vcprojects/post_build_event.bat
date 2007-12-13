@@ -5,12 +5,16 @@ copy ..\..\w32deps\vorbis\lib\vorbisfile.dll ..\..\install
 copy ..\..\w32deps\openal\lib\alut.dll ..\..\install
 copy ..\..\w32deps\openal\lib\OpenAL32.dll ..\..\install
 copy ..\..\w32deps\openal\lib\wrap_oal.dll ..\..\install
+copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install
+copy ..\..\w32deps\libpng\bin\libpng13.dll ..\..\install
+copy ..\..\w32deps\zlib\bin\zlib1.dll ..\..\install
 md ..\..\install\etc
 xcopy ..\..\w32deps\gtk2\bin\etc\* ..\..\install\etc\. /S /Y
 md ..\..\install\lib
 xcopy ..\..\w32deps\gtk2\bin\lib\* ..\..\install\lib\. /S /Y
 copy ..\..\w32deps\gtk2\bin\iconv.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\intl.dll ..\..\install
+copy ..\..\w32deps\gtk2\bin\libtiff3.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\jpeg62.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\libatk-1.0-0.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\libcairo-2.dll ..\..\install
