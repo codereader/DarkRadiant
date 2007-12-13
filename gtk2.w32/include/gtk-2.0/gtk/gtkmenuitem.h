@@ -99,7 +99,6 @@ GtkWidget* gtk_menu_item_new_with_mnemonic    (const gchar         *label);
 void       gtk_menu_item_set_submenu          (GtkMenuItem         *menu_item,
 					       GtkWidget           *submenu);
 GtkWidget* gtk_menu_item_get_submenu          (GtkMenuItem         *menu_item);
-void       gtk_menu_item_remove_submenu       (GtkMenuItem         *menu_item);
 void       gtk_menu_item_select               (GtkMenuItem         *menu_item);
 void       gtk_menu_item_deselect             (GtkMenuItem         *menu_item);
 void       gtk_menu_item_activate             (GtkMenuItem         *menu_item);
@@ -119,9 +118,12 @@ void	  _gtk_menu_item_refresh_accel_path   (GtkMenuItem	   *menu_item,
 					       GtkAccelGroup	   *accel_group,
 					       gboolean		    group_changed);
 gboolean  _gtk_menu_item_is_selectable        (GtkWidget           *menu_item);
-void      _gtk_menu_item_popup_submenu        (GtkWidget           *menu_item);
+void      _gtk_menu_item_popup_submenu        (GtkWidget           *menu_item,
+                                               gboolean             with_delay);
+void      _gtk_menu_item_popdown_submenu      (GtkWidget           *menu_item);
 
 #ifndef GTK_DISABLE_DEPRECATED
+void       gtk_menu_item_remove_submenu       (GtkMenuItem         *menu_item);
 #define gtk_menu_item_right_justify(menu_item) gtk_menu_item_set_right_justified ((menu_item), TRUE)
 #endif /* GTK_DISABLE_DEPRECATED */
 

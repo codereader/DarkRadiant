@@ -13,6 +13,9 @@ GType gtk_accel_flags_get_type (void) G_GNUC_CONST;
 /* enumerations from "gtkassistant.h" */
 GType gtk_assistant_page_type_get_type (void) G_GNUC_CONST;
 #define GTK_TYPE_ASSISTANT_PAGE_TYPE (gtk_assistant_page_type_get_type())
+/* enumerations from "gtkbuilder.h" */
+GType gtk_builder_error_get_type (void) G_GNUC_CONST;
+#define GTK_TYPE_BUILDER_ERROR (gtk_builder_error_get_type())
 /* enumerations from "gtkcalendar.h" */
 GType gtk_calendar_display_options_get_type (void) G_GNUC_CONST;
 #define GTK_TYPE_CALENDAR_DISPLAY_OPTIONS (gtk_calendar_display_options_get_type())
@@ -158,6 +161,8 @@ GType gtk_unit_get_type (void) G_GNUC_CONST;
 #define GTK_TYPE_UNIT (gtk_unit_get_type())
 GType gtk_tree_view_grid_lines_get_type (void) G_GNUC_CONST;
 #define GTK_TYPE_TREE_VIEW_GRID_LINES (gtk_tree_view_grid_lines_get_type())
+GType gtk_drag_result_get_type (void) G_GNUC_CONST;
+#define GTK_TYPE_DRAG_RESULT (gtk_drag_result_get_type())
 /* enumerations from "gtkfilechooser.h" */
 GType gtk_file_chooser_action_get_type (void) G_GNUC_CONST;
 #define GTK_TYPE_FILE_CHOOSER_ACTION (gtk_file_chooser_action_get_type())

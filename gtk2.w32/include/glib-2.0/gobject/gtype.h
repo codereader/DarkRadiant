@@ -88,10 +88,10 @@ G_BEGIN_DECLS
 
 /* Typedefs
  */
-#if	GLIB_SIZEOF_LONG == GLIB_SIZEOF_SIZE_T
-typedef gulong                          GType;
-#else	/* hm, shouldn't happen? */
+#if     GLIB_SIZEOF_SIZE_T != GLIB_SIZEOF_LONG || !defined __cplusplus
 typedef gsize                           GType;
+#else   /* for historic reasons, C++ links against gulong GTypes */
+typedef gulong                          GType;
 #endif
 typedef struct _GValue                  GValue;
 typedef union  _GTypeCValue             GTypeCValue;
@@ -368,23 +368,24 @@ static void     type_name##_class_intern_init (gpointer klass) \
 GType \
 type_name##_get_type (void) \
 { \
-  static GType g_define_type_id = 0; \
-  if (G_UNLIKELY (g_define_type_id == 0)) \
+  static volatile gsize g_define_type_id__volatile = 0; \
+  if (g_once_init_enter (&g_define_type_id__volatile))  \
     { \
-      g_define_type_id = \
+      GType g_define_type_id = \
         g_type_register_static_simple (TYPE_PARENT, \
                                        g_intern_static_string (#TypeName), \
                                        sizeof (TypeName##Class), \
-                                       (GClassInitFunc)type_name##_class_intern_init, \
+                                       (GClassInitFunc) type_name##_class_intern_init, \
                                        sizeof (TypeName), \
-                                       (GInstanceInitFunc)type_name##_init, \
+                                       (GInstanceInitFunc) type_name##_init, \
                                        (GTypeFlags) flags); \
       { /* custom code follows */
 #define _G_DEFINE_TYPE_EXTENDED_END()	\
         /* following custom code */	\
       }					\
+      g_once_init_leave (&g_define_type_id__volatile, g_define_type_id); \
     }					\
-  return g_define_type_id;		\
+  return g_define_type_id__volatile;	\
 } /* closes type_name##_get_type() */
 
 
@@ -412,21 +413,21 @@ GTypeValueTable* g_type_value_table_peek        (GType		     type);
 
 
 /*< private >*/
-gboolean	 g_type_check_instance          (GTypeInstance      *instance);
+gboolean	 g_type_check_instance          (GTypeInstance      *instance) G_GNUC_PURE;
 GTypeInstance*   g_type_check_instance_cast     (GTypeInstance      *instance,
 						 GType               iface_type);
 gboolean         g_type_check_instance_is_a	(GTypeInstance      *instance,
-						 GType               iface_type);
+						 GType               iface_type) G_GNUC_PURE;
 GTypeClass*      g_type_check_class_cast        (GTypeClass         *g_class,
 						 GType               is_a_type);
 gboolean         g_type_check_class_is_a        (GTypeClass         *g_class,
-						 GType               is_a_type);
-gboolean	 g_type_check_is_value_type     (GType		     type);
-gboolean	 g_type_check_value             (GValue		    *value);
+						 GType               is_a_type) G_GNUC_PURE;
+gboolean	 g_type_check_is_value_type     (GType		     type) G_GNUC_CONST;
+gboolean	 g_type_check_value             (GValue		    *value) G_GNUC_PURE;
 gboolean	 g_type_check_value_holds	(GValue		    *value,
-						 GType		     type);
+						 GType		     type) G_GNUC_PURE;
 gboolean         g_type_test_flags              (GType               type,
-						 guint               flags);
+						 guint               flags) G_GNUC_CONST;
 
 
 /* --- debugging functions --- */
@@ -435,15 +436,15 @@ G_CONST_RETURN gchar* g_type_name_from_class	(GTypeClass	*g_class);
 
 
 /* --- internal functions --- */
-void    g_value_c_init          (void) G_GNUC_INTERNAL; /* sync with gvalue.c */
-void    g_value_types_init      (void) G_GNUC_INTERNAL; /* sync with gvaluetypes.c */
-void    g_enum_types_init       (void) G_GNUC_INTERNAL; /* sync with genums.c */
-void    g_param_type_init       (void) G_GNUC_INTERNAL; /* sync with gparam.c */
-void    g_boxed_type_init       (void) G_GNUC_INTERNAL; /* sync with gboxed.c */
-void    g_object_type_init      (void) G_GNUC_INTERNAL; /* sync with gobject.c */
-void    g_param_spec_types_init (void) G_GNUC_INTERNAL; /* sync with gparamspecs.c */
-void    g_value_transforms_init (void) G_GNUC_INTERNAL; /* sync with gvaluetransform.c */
-void    g_signal_init           (void) G_GNUC_INTERNAL; /* sync with gsignal.c */
+G_GNUC_INTERNAL void    g_value_c_init          (void); /* sync with gvalue.c */
+G_GNUC_INTERNAL void    g_value_types_init      (void); /* sync with gvaluetypes.c */
+G_GNUC_INTERNAL void    g_enum_types_init       (void); /* sync with genums.c */
+G_GNUC_INTERNAL void    g_param_type_init       (void); /* sync with gparam.c */
+G_GNUC_INTERNAL void    g_boxed_type_init       (void); /* sync with gboxed.c */
+G_GNUC_INTERNAL void    g_object_type_init      (void); /* sync with gobject.c */
+G_GNUC_INTERNAL void    g_param_spec_types_init (void); /* sync with gparamspecs.c */
+G_GNUC_INTERNAL void    g_value_transforms_init (void); /* sync with gvaluetransform.c */
+G_GNUC_INTERNAL void    g_signal_init           (void); /* sync with gsignal.c */
 
 
 /* --- implementation bits --- */

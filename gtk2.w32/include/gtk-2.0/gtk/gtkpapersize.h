@@ -56,6 +56,7 @@ void          gtk_paper_size_free         (GtkPaperSize *size);
 gboolean      gtk_paper_size_is_equal     (GtkPaperSize *size1,
 					   GtkPaperSize *size2);
 
+GList        *gtk_paper_size_get_paper_sizes (gboolean include_custom);
 
 /* The width is always the shortest side, measure in mm */
 G_CONST_RETURN gchar *gtk_paper_size_get_name         (GtkPaperSize *size);
@@ -82,6 +83,13 @@ gdouble gtk_paper_size_get_default_right_margin  (GtkPaperSize *size,
 						  GtkUnit       unit);
 
 G_CONST_RETURN gchar *gtk_paper_size_get_default (void);
+
+GtkPaperSize *gtk_paper_size_new_from_key_file (GKeyFile    *key_file,
+					        const gchar *group_name,
+					        GError     **error);
+void     gtk_paper_size_to_key_file            (GtkPaperSize *size,
+					        GKeyFile     *key_file,
+					        const gchar  *group_name);
 
 G_END_DECLS
 

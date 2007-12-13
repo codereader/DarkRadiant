@@ -145,6 +145,43 @@ G_CONST_RETURN gchar* G_CONST_RETURN * g_get_system_config_dirs (void);
 
 G_CONST_RETURN gchar* G_CONST_RETURN * g_get_language_names (void);
 
+/**
+ * GUserDirectory:
+ * @G_USER_DIRECTORY_DESKTOP: the user's Desktop directory
+ * @G_USER_DIRECTORY_DOCUMENTS: the user's Documents directory
+ * @G_USER_DIRECTORY_DOWNLOAD: the user's Downloads directory
+ * @G_USER_DIRECTORY_MUSIC: the user's Music directory
+ * @G_USER_DIRECTORY_PICTURES: the user's Pictures directory
+ * @G_USER_DIRECTORY_PUBLIC_SHARE: the user's shared directory
+ * @G_USER_DIRECTORY_TEMPLATES: the user's Templates directory
+ * @G_USER_DIRECTORY_VIDEOS: the user's Movies directory
+ * @G_USER_N_DIRECTORIES: the number of enum values
+ *
+ * These are logical ids for special directories which are defined
+ * depending on the platform used. You should use g_get_user_special_dir()
+ * to retrieve the full path associated to the logical id.
+ *
+ * The #GUserDirectory enumeration can be extended at later date. Not
+ * every platform has a directory for every logical id in this
+ * enumeration.
+ *
+ * Since: 2.14
+ */
+typedef enum {
+  G_USER_DIRECTORY_DESKTOP,
+  G_USER_DIRECTORY_DOCUMENTS,
+  G_USER_DIRECTORY_DOWNLOAD,
+  G_USER_DIRECTORY_MUSIC,
+  G_USER_DIRECTORY_PICTURES,
+  G_USER_DIRECTORY_PUBLIC_SHARE,
+  G_USER_DIRECTORY_TEMPLATES,
+  G_USER_DIRECTORY_VIDEOS,
+
+  G_USER_N_DIRECTORIES
+} GUserDirectory;
+
+G_CONST_RETURN gchar* g_get_user_special_dir (GUserDirectory directory);
+
 typedef struct _GDebugKey	GDebugKey;
 struct _GDebugKey
 {
@@ -211,10 +248,12 @@ gboolean              g_setenv             (const gchar *variable,
 					    gboolean     overwrite);
 void                  g_unsetenv           (const gchar *variable);
 gchar**               g_listenv            (void);
+
+/* private */
 const gchar*	     _g_getenv_nomalloc	   (const gchar	*variable,
 					    gchar        buffer[1024]);
 
-/* we try to provide a usefull equivalent for ATEXIT if it is
+/* we try to provide a useful equivalent for ATEXIT if it is
  * not defined, but use is actually abandoned. people should
  * use g_atexit() instead.
  */
@@ -248,10 +287,10 @@ gchar*  g_find_program_in_path  (const gchar *program);
 /* Bit tests
  */
 G_INLINE_FUNC gint	g_bit_nth_lsf (gulong  mask,
-				       gint    nth_bit);
+				       gint    nth_bit) G_GNUC_CONST;
 G_INLINE_FUNC gint	g_bit_nth_msf (gulong  mask,
-				       gint    nth_bit);
-G_INLINE_FUNC guint	g_bit_storage (gulong  number);
+				       gint    nth_bit) G_GNUC_CONST;
+G_INLINE_FUNC guint	g_bit_storage (gulong  number) G_GNUC_CONST;
 
 /* Trash Stacks
  * elements need to be >= sizeof (gpointer)
@@ -275,33 +314,37 @@ G_INLINE_FUNC gint
 g_bit_nth_lsf (gulong mask,
 	       gint   nth_bit)
 {
-  do
+  if (G_UNLIKELY (nth_bit < -1))
+    nth_bit = -1;
+  while (nth_bit < ((GLIB_SIZEOF_LONG * 8) - 1))
     {
       nth_bit++;
       if (mask & (1UL << nth_bit))
 	return nth_bit;
     }
-  while (nth_bit < ((GLIB_SIZEOF_LONG * 8) - 1));
   return -1;
 }
 G_INLINE_FUNC gint
 g_bit_nth_msf (gulong mask,
 	       gint   nth_bit)
 {
-  if (nth_bit < 0)
+  if (nth_bit < 0 || G_UNLIKELY (nth_bit > GLIB_SIZEOF_LONG * 8))
     nth_bit = GLIB_SIZEOF_LONG * 8;
-  do
+  while (nth_bit > 0)
     {
       nth_bit--;
       if (mask & (1UL << nth_bit))
 	return nth_bit;
     }
-  while (nth_bit > 0);
   return -1;
 }
 G_INLINE_FUNC guint
 g_bit_storage (gulong number)
 {
+#if defined(__GNUC__) && (__GNUC__ >= 4) && defined(__OPTIMIZE__)
+  return G_LIKELY (number) ?
+	   ((GLIB_SIZEOF_LONG * 8 - 1) ^ __builtin_clzl(number)) + 1 : 1;
+#else
   register guint n_bits = 0;
   
   do
@@ -311,6 +354,7 @@ g_bit_storage (gulong number)
     }
   while (number);
   return n_bits;
+#endif
 }
 G_INLINE_FUNC void
 g_trash_stack_push (GTrashStack **stack_p,
@@ -405,25 +449,14 @@ DllMain (HINSTANCE hinstDLL,						\
 	 LPVOID    lpvReserved)						\
 {									\
   wchar_t wcbfr[1000];							\
-  char cpbfr[1000];							\
   char *tem;								\
   switch (fdwReason)							\
     {									\
     case DLL_PROCESS_ATTACH:						\
-      if (GetVersion () < 0x80000000)					\
-	{								\
-	  GetModuleFileNameW ((HMODULE) hinstDLL, wcbfr, G_N_ELEMENTS (wcbfr));	\
-	  tem = g_utf16_to_utf8 (wcbfr, -1, NULL, NULL, NULL);		\
-	  dll_name = g_path_get_basename (tem);				\
-	  g_free (tem);							\
-	}								\
-      else								\
-	{								\
-	  GetModuleFileNameA ((HMODULE) hinstDLL, cpbfr, G_N_ELEMENTS (cpbfr));	\
-	  tem = g_locale_to_utf8 (cpbfr, -1, NULL, NULL, NULL);		\
-	  dll_name = g_path_get_basename (tem);				\
-	  g_free (tem);							\
-	}								\
+      GetModuleFileNameW ((HMODULE) hinstDLL, wcbfr, G_N_ELEMENTS (wcbfr)); \
+      tem = g_utf16_to_utf8 (wcbfr, -1, NULL, NULL, NULL);		\
+      dll_name = g_path_get_basename (tem);				\
+      g_free (tem);							\
       break;								\
     }									\
 									\

@@ -1,4 +1,3 @@
-/* -*- mode: C; c-file-style: "gnu" -*- */
 /* Pango
  * pango-script.h: Script tag handling
  *
@@ -25,13 +24,13 @@
 
 #include <glib.h>
 
-#include <pango/pango-types.h>
+#include <pango/pango-language.h>
 
 G_BEGIN_DECLS
 
 /**
  * PangoScriptIter:
-
+ *
  * A #PangoScriptIter is used to iterate through a string
  * and identify ranges in different scripts.
  **/
@@ -95,7 +94,7 @@ typedef enum {                         /* ISO 15924 code */
       PANGO_SCRIPT_LINEAR_B,           /* Linb */
       PANGO_SCRIPT_TAI_LE,             /* Tale */
       PANGO_SCRIPT_UGARITIC,           /* Ugar */
-      
+
       /* Unicode-4.1 additions */
       PANGO_SCRIPT_NEW_TAI_LUE,        /* Talu */
       PANGO_SCRIPT_BUGINESE,           /* Bugi */
@@ -114,7 +113,7 @@ typedef enum {                         /* ISO 15924 code */
       PANGO_SCRIPT_NKO                 /* Nkoo */
 } PangoScript;
 
-PangoScript pango_script_for_unichar         (gunichar             ch);
+PangoScript pango_script_for_unichar         (gunichar             ch) G_GNUC_CONST;
 
 PangoScriptIter *pango_script_iter_new       (const char          *text,
 					      int                  length);
@@ -125,9 +124,9 @@ void             pango_script_iter_get_range (PangoScriptIter      *iter,
 gboolean         pango_script_iter_next      (PangoScriptIter      *iter);
 void             pango_script_iter_free      (PangoScriptIter      *iter);
 
-PangoLanguage *pango_script_get_sample_language (PangoScript    script);
+PangoLanguage *pango_script_get_sample_language (PangoScript    script) G_GNUC_PURE;
 gboolean       pango_language_includes_script   (PangoLanguage *language,
-						 PangoScript    script);
+						 PangoScript    script) G_GNUC_PURE;
 
 G_END_DECLS
 

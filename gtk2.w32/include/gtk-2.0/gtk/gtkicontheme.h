@@ -66,6 +66,9 @@ struct _GtkIconThemeClass
  *   gtk_icon_theme_lookup_icon() includes builtin icons
  *   as well as files. For a builtin icon, gtk_icon_info_get_filename()
  *   returns %NULL and you need to call gtk_icon_info_get_builtin_pixbuf().
+ * @GTK_ICON_LOOKUP_GENERIC_FALLBACK: Try to shorten icon name at '-'
+ *   characters before looking at inherited themes. For more general
+ *   fallback, see gtk_icon_theme_choose_icon(). Since 2.12.
  * 
  * Used to specify options for gtk_icon_theme_lookup_icon()
  **/
@@ -73,7 +76,8 @@ typedef enum
 {
   GTK_ICON_LOOKUP_NO_SVG = 1 << 0,
   GTK_ICON_LOOKUP_FORCE_SVG = 1 << 1,
-  GTK_ICON_LOOKUP_USE_BUILTIN = 1 << 2
+  GTK_ICON_LOOKUP_USE_BUILTIN = 1 << 2,
+  GTK_ICON_LOOKUP_GENERIC_FALLBACK = 1 << 3
 } GtkIconLookupFlags;
 
 #define GTK_ICON_THEME_ERROR gtk_icon_theme_error_quark ()
@@ -131,6 +135,10 @@ GtkIconInfo * gtk_icon_theme_lookup_icon           (GtkIconTheme                
 						    const gchar                 *icon_name,
 						    gint                         size,
 						    GtkIconLookupFlags           flags);
+GtkIconInfo * gtk_icon_theme_choose_icon           (GtkIconTheme                *icon_theme,
+						    const gchar                 *icon_names[],
+						    gint                         size,
+						    GtkIconLookupFlags           flags);
 GdkPixbuf *   gtk_icon_theme_load_icon             (GtkIconTheme                *icon_theme,
 						    const gchar                 *icon_name,
 						    gint                         size,
@@ -139,6 +147,7 @@ GdkPixbuf *   gtk_icon_theme_load_icon             (GtkIconTheme                
 
 GList *       gtk_icon_theme_list_icons            (GtkIconTheme                *icon_theme,
 						    const gchar                 *context);
+GList *       gtk_icon_theme_list_contexts         (GtkIconTheme                *icon_theme);
 char *        gtk_icon_theme_get_example_icon_name (GtkIconTheme                *icon_theme);
 
 gboolean      gtk_icon_theme_rescan_if_needed      (GtkIconTheme                *icon_theme);

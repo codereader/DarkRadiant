@@ -85,14 +85,15 @@ typedef enum
  */
 typedef enum
 {
-  GDK_WA_TITLE	  = 1 << 1,
-  GDK_WA_X	  = 1 << 2,
-  GDK_WA_Y	  = 1 << 3,
-  GDK_WA_CURSOR	  = 1 << 4,
-  GDK_WA_COLORMAP = 1 << 5,
-  GDK_WA_VISUAL	  = 1 << 6,
-  GDK_WA_WMCLASS  = 1 << 7,
-  GDK_WA_NOREDIR  = 1 << 8
+  GDK_WA_TITLE	   = 1 << 1,
+  GDK_WA_X	   = 1 << 2,
+  GDK_WA_Y	   = 1 << 3,
+  GDK_WA_CURSOR	   = 1 << 4,
+  GDK_WA_COLORMAP  = 1 << 5,
+  GDK_WA_VISUAL	   = 1 << 6,
+  GDK_WA_WMCLASS   = 1 << 7,
+  GDK_WA_NOREDIR   = 1 << 8,
+  GDK_WA_TYPE_HINT = 1 << 9
 } GdkWindowAttributesType;
 
 /* Size restriction enumeration.
@@ -213,6 +214,7 @@ struct _GdkWindowAttr
   gchar *wmclass_name;
   gchar *wmclass_class;
   gboolean override_redirect;
+  GdkWindowTypeHint type_hint;
 };
 
 struct _GdkGeometry
@@ -287,6 +289,7 @@ struct _GdkWindowObject
   guint guffaw_gravity : 1;
   guint input_only : 1;
   guint modal_hint : 1;
+  guint composited : 1;
   
   guint destroyed : 2;
 
@@ -295,6 +298,8 @@ struct _GdkWindowObject
   guint shaped : 1;
   
   GdkEventMask event_mask;
+
+  guint update_and_descendants_freeze_count;
 };
 
 struct _GdkWindowObjectClass
@@ -392,6 +397,9 @@ void gdk_window_shape_combine_region (GdkWindow	    *window,
  */
 void gdk_window_set_child_shapes (GdkWindow *window);
 
+void gdk_window_set_composited   (GdkWindow *window,
+                                  gboolean composited);
+
 /*
  * This routine allows you to merge (ie ADD) child shapes to your
  * own window's shape keeping its current shape and ADDING the child
@@ -482,6 +490,8 @@ void	      gdk_window_set_title	   (GdkWindow	  *window,
 					    const gchar	  *title);
 void          gdk_window_set_role          (GdkWindow       *window,
 					    const gchar     *role);
+void          gdk_window_set_startup_id    (GdkWindow       *window,
+					    const gchar     *startup_id);					  
 void          gdk_window_set_transient_for (GdkWindow       *window, 
 					    GdkWindow       *parent);
 void	      gdk_window_set_background	 (GdkWindow	  *window,
@@ -552,6 +562,7 @@ void	      gdk_window_set_functions	 (GdkWindow	  *window,
 GList *       gdk_window_get_toplevels   (void);
 #endif
 
+void          gdk_window_beep            (GdkWindow       *window);
 void          gdk_window_iconify         (GdkWindow       *window);
 void          gdk_window_deiconify       (GdkWindow       *window);
 void          gdk_window_stick           (GdkWindow       *window);
@@ -564,7 +575,8 @@ void          gdk_window_set_keep_above  (GdkWindow       *window,
                                           gboolean         setting);
 void          gdk_window_set_keep_below  (GdkWindow       *window,
                                           gboolean         setting);
-
+void          gdk_window_set_opacity     (GdkWindow       *window,
+                                          gdouble          opacity);
 void          gdk_window_register_dnd    (GdkWindow       *window);
 
 void gdk_window_begin_resize_drag (GdkWindow     *window,
@@ -594,6 +606,9 @@ GdkRegion *gdk_window_get_update_area     (GdkWindow    *window);
 
 void       gdk_window_freeze_updates      (GdkWindow    *window);
 void       gdk_window_thaw_updates        (GdkWindow    *window);
+
+void       gdk_window_freeze_toplevel_updates_libgtk_only (GdkWindow *window);
+void       gdk_window_thaw_toplevel_updates_libgtk_only   (GdkWindow *window);
 
 void       gdk_window_process_all_updates (void);
 void       gdk_window_process_updates     (GdkWindow    *window,

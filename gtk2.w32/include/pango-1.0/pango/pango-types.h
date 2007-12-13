@@ -35,15 +35,36 @@ typedef struct _PangoEngineShape PangoEngineShape;
 typedef struct _PangoFont    PangoFont;
 typedef struct _PangoFontMap PangoFontMap;
 
-typedef struct _PangoMatrix    PangoMatrix;
 typedef struct _PangoRectangle PangoRectangle;
 
-/* Dummy typedef - internally it's a 'const char *' */
-typedef struct _PangoLanguage PangoLanguage;
 
-/* A index of a glyph into a font. Rendering system dependent
- */
+
+/* A index of a glyph into a font. Rendering system dependent */
 typedef guint32 PangoGlyph;
+
+
+
+#define PANGO_SCALE 1024
+#define PANGO_PIXELS(d) (((int)(d) + 512) >> 10)
+#define PANGO_PIXELS_FLOOR(d) (((int)(d)) >> 10)
+#define PANGO_PIXELS_CEIL(d) (((int)(d) + 1023) >> 10)
+/* The above expressions are just slightly wrong for floating point d;
+ * For example we'd expect PANGO_PIXELS(-512.5) => -1 but instead we get 0.
+ * That's unlikely to matter for practical use and the expression is much
+ * more compact and faster than alternatives that work exactly for both
+ * integers and floating point.
+ *
+ * PANGO_PIXELS also behaves differently for +512 and -512.
+ */
+
+#define PANGO_UNITS_ROUND(d)				\
+  (((d) + (PANGO_SCALE >> 1)) & ~(PANGO_SCALE - 1))
+
+
+int    pango_units_from_double (double d) G_GNUC_CONST;
+double pango_units_to_double (int i) G_GNUC_CONST;
+
+
 
 /* A rectangle. Used to store logical and physical extents of glyphs,
  * runs, strings, etc.
@@ -56,92 +77,15 @@ struct _PangoRectangle
   int height;
 };
 
-/**
- * PangoMatrix:
- * @xx: 1st component of the transformation matrix
- * @xy: 2nd component of the transformation matrix
- * @yx: 3rd component of the transformation matrix
- * @yy: 4th component of the transformation matrix
- * @x0: x translation
- * @y0: y translation
- *
- * A structure specifying a transformation between user-space
- * coordinates and device coordinates. The transformation
- * is given by
- *
- * <programlisting>
- * x_device = x_user * matrix->xx + y_user * matrix->xy + matrix->x0;
- * y_device = x_user * matrix->yx + y_user * matrix->yy + matrix->y0;
- * </programlisting>
- *
- * Since: 1.6
- **/
-struct _PangoMatrix
-{
-  double xx;
-  double xy;
-  double yx;
-  double yy;
-  double x0;
-  double y0;
-};
-
-/**
- * PANGO_TYPE_MATRIX
- *
- * The GObject type for #PangoMatrix
- **/
-#define PANGO_TYPE_MATRIX (pango_matrix_get_type ())
-
-/**
- * PANGO_MATRIX_INIT
- *
- * Constant that can be used to initialize a PangoMatrix to
- * the identity transform.
- *
- * <informalexample><programlisting>
- * PangoMatrix matrix = PANGO_MATRIX_INIT;
- * pango_matrix_rotate (&amp;matrix, 45.);
- * </programlisting></informalexample>
- *
- * Since: 1.6
- **/
-#define PANGO_MATRIX_INIT { 1., 0., 0., 1., 0., 0. }
-
-GType pango_matrix_get_type (void);
-
-PangoMatrix *pango_matrix_copy   (const PangoMatrix *matrix);
-void         pango_matrix_free   (PangoMatrix *matrix);
-
-void pango_matrix_translate (PangoMatrix *matrix,
-			     double       tx,
-			     double       ty);
-void pango_matrix_scale     (PangoMatrix *matrix,
-			     double       scale_x,
-			     double       scale_y);
-void pango_matrix_rotate    (PangoMatrix *matrix,
-			     double       degrees);
-void pango_matrix_concat    (PangoMatrix       *matrix,
-			     const PangoMatrix *new_matrix);
-double pango_matrix_get_font_scale_factor (const PangoMatrix *matrix);
-
-#define PANGO_SCALE 1024
-#define PANGO_PIXELS(d) (((int)(d) + 512) >> 10)
-#define PANGO_PIXELS_FLOOR(d) (((int)(d)) >> 10)
-#define PANGO_PIXELS_CEIL(d) (((int)(d) + 1023) >> 10)
-/* The above expressions are just slightly wrong for floating point d;
- * For example we'd expect PANGO_PIXELS(-512.5) => -1 but instead we get 0.
- * That's unlikely to matter for practical use and the expression is much
- * more compact and faster than alternatives that work exactly for both
- * integers and floating point.
- */
-
 /* Macros to translate from extents rectangles to ascent/descent/lbearing/rbearing
  */
 #define PANGO_ASCENT(rect) (-(rect).y)
 #define PANGO_DESCENT(rect) ((rect).y + (rect).height)
 #define PANGO_LBEARING(rect) ((rect).x)
 #define PANGO_RBEARING(rect) ((rect).x + (rect).width)
+
+void pango_extents_to_pixels (PangoRectangle *ink_rect,
+			      PangoRectangle *logical_rect);
 
 /**
  * PangoDirection:
@@ -154,7 +98,7 @@ double pango_matrix_get_font_scale_factor (const PangoMatrix *matrix);
  * @PANGO_DIRECTION_WEAK_LTR: A weak left-to-right direction
  * @PANGO_DIRECTION_WEAK_RTL: A weak right-to-left direction
  * @PANGO_DIRECTION_NEUTRAL: No direction specified
- * 
+ *
  * The #PangoDirection type represents a direction in the
  * Unicode bidirectional algorithm; not every value in this
  * enumeration makes sense for every usage of #PangoDirection;
@@ -168,12 +112,9 @@ double pango_matrix_get_font_scale_factor (const PangoMatrix *matrix);
  * The %PANGO_DIRECTION_TTB_LTR, %PANGO_DIRECTION_TTB_RTL
  * values come from an earlier interpretation of this
  * enumeration as the writing direction of a block of
- * text and are no longer used; See the Text module of the
- * CSS3 spec for how vertical text is planned to be handled
- * in a future version of Pango. The explanation of why
- * %PANGO_DIRECTION_TTB_LTR is treated as %PANGO_DIRECTION_RTL
- * can be found there as well.
- **/			  
+ * text and are no longer used; See #PangoGravity for how
+ * vertical text is handled in Pango.
+ **/
 typedef enum {
   PANGO_DIRECTION_LTR,
   PANGO_DIRECTION_RTL,
@@ -184,14 +125,9 @@ typedef enum {
   PANGO_DIRECTION_NEUTRAL
 } PangoDirection;
 
-#define PANGO_TYPE_LANGUAGE (pango_language_get_type ())
-
-GType          pango_language_get_type    (void);
-PangoLanguage *pango_language_from_string (const char *language);
-#define pango_language_to_string(language) ((const char *)language)
-
-gboolean      pango_language_matches  (PangoLanguage *language,
-				       const char *range_list);
+PangoDirection pango_unichar_direction      (gunichar     ch) G_GNUC_CONST;
+PangoDirection pango_find_base_dir          (const gchar *text,
+					     gint         length);
 
 #ifndef PANGO_DISABLE_DEPRECATED
 gboolean       pango_get_mirror_char        (gunichar     ch,
@@ -199,11 +135,12 @@ gboolean       pango_get_mirror_char        (gunichar     ch,
 #endif
 
 
-PangoDirection pango_unichar_direction      (gunichar     ch);
-PangoDirection pango_find_base_dir          (const gchar *text,
-					     gint         length);
+#include <pango/pango-gravity.h>
+#include <pango/pango-language.h>
+#include <pango/pango-matrix.h>
+#include <pango/pango-script.h>
+
 
 G_END_DECLS
 
 #endif /* __PANGO_TYPES_H__ */
-

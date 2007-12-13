@@ -24,6 +24,8 @@
 
 #include <gtk/gtkcellrenderer.h>
 #include <gtk/gtktreeviewcolumn.h>
+#include <gtk/gtkbuildable.h>
+#include <gtk/gtkbuilder.h>
 
 G_BEGIN_DECLS
 
@@ -68,6 +70,7 @@ struct _GtkCellLayoutIface
   void (* reorder)            (GtkCellLayout         *cell_layout,
                                GtkCellRenderer       *cell,
                                gint                   position);
+  GList* (* get_cells)        (GtkCellLayout         *cell_layout);
 };
 
 GType gtk_cell_layout_get_type           (void) G_GNUC_CONST;
@@ -77,6 +80,7 @@ void  gtk_cell_layout_pack_start         (GtkCellLayout         *cell_layout,
 void  gtk_cell_layout_pack_end           (GtkCellLayout         *cell_layout,
                                           GtkCellRenderer       *cell,
                                           gboolean               expand);
+GList *gtk_cell_layout_get_cells         (GtkCellLayout         *cell_layout);
 void  gtk_cell_layout_clear              (GtkCellLayout         *cell_layout);
 void  gtk_cell_layout_set_attributes     (GtkCellLayout         *cell_layout,
                                           GtkCellRenderer       *cell,
@@ -95,7 +99,21 @@ void  gtk_cell_layout_clear_attributes   (GtkCellLayout         *cell_layout,
 void  gtk_cell_layout_reorder            (GtkCellLayout         *cell_layout,
                                           GtkCellRenderer       *cell,
                                           gint                   position);
-
+gboolean _gtk_cell_layout_buildable_custom_tag_start (GtkBuildable  *buildable,
+						      GtkBuilder    *builder,
+						      GObject       *child,
+						      const gchar   *tagname,
+						      GMarkupParser *parser,
+						      gpointer      *data);
+void _gtk_cell_layout_buildable_custom_tag_end       (GtkBuildable  *buildable,
+						      GtkBuilder    *builder,
+						      GObject       *child,
+						      const gchar   *tagname,
+						      gpointer      *data);
+void _gtk_cell_layout_buildable_add_child            (GtkBuildable  *buildable,
+						      GtkBuilder    *builder,
+						      GObject       *child,
+						      const gchar   *type);
 
 G_END_DECLS
 

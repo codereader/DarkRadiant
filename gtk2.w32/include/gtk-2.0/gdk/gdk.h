@@ -177,6 +177,8 @@ gboolean gdk_event_send_client_message_for_display (GdkDisplay *display,
 
 void gdk_notify_startup_complete (void);
 
+void gdk_notify_startup_complete_with_id (const gchar* startup_id);
+
 /* Threading
  */
 
@@ -192,6 +194,21 @@ void     gdk_threads_leave                (void);
 void     gdk_threads_init                 (void);
 void     gdk_threads_set_lock_functions   (GCallback enter_fn,
 					   GCallback leave_fn);
+
+guint    gdk_threads_add_idle_full        (gint           priority,
+		                           GSourceFunc    function,
+		                           gpointer       data,
+		                           GDestroyNotify notify);
+guint    gdk_threads_add_idle             (GSourceFunc    function,
+		                           gpointer       data);
+guint    gdk_threads_add_timeout_full     (gint           priority,
+                                           guint          interval,
+                                           GSourceFunc    function,
+                                           gpointer       data,
+                                           GDestroyNotify notify);
+guint    gdk_threads_add_timeout          (guint          interval,
+                                           GSourceFunc    function,
+                                           gpointer       data);
 
 #ifdef	G_THREADS_ENABLED
 #  define GDK_THREADS_ENTER()	G_STMT_START {	\

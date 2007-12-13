@@ -99,7 +99,11 @@ struct _GtkToolbar
   GtkToolbarStyle  style;
   GtkIconSize      icon_size;
   
+#ifndef GTK_DISABLE_DEPRECATED
   GtkTooltips     *tooltips;
+#else
+  gpointer         _tooltips;
+#endif
   
   /*< private >*/
   gint             button_maxw;		/* maximum width of homogeneous children */
@@ -174,12 +178,11 @@ gint            _gtk_toolbar_get_default_space_size (void);
 void            _gtk_toolbar_rebuild_menu           (GtkToolbar      *toolbar);
 
 
-/* deprecated */
-#ifndef GTK_DISABLE_DEPRECATED
 void       gtk_toolbar_set_icon_size   (GtkToolbar      *toolbar,
 				        GtkIconSize      icon_size);
 void       gtk_toolbar_unset_icon_size (GtkToolbar      *toolbar);
 
+#ifndef GTK_DISABLE_DEPRECATED
 /* Simple button items */
 GtkWidget* gtk_toolbar_append_item   (GtkToolbar      *toolbar,
 				      const char      *text,

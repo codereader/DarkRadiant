@@ -52,9 +52,12 @@ typedef unsigned __int64 guint64;
 
 #ifndef _MSC_VER
 #define G_GINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##LL))
-#define G_GUINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##ULL))
 #else /* _MSC_VER */
 #define G_GINT64_CONSTANT(val)	(val##i64)
+#endif /* _MSC_VER */
+#ifndef _MSC_VER
+#define G_GUINT64_CONSTANT(val)	(G_GNUC_EXTENSION (val##ULL))
+#else /* _MSC_VER */
 #define G_GUINT64_CONSTANT(val)	(val##Ui64)
 #endif /* _MSC_VER */
 #define G_GINT64_MODIFIER "I64"
@@ -72,6 +75,13 @@ typedef unsigned int gsize;
 #define G_GSIZE_FORMAT "u"
 
 #define G_MAXSIZE	G_MAXUINT
+#define G_MINSSIZE	G_MININT
+#define G_MAXSSIZE	G_MAXINT
+
+typedef gint64 goffset;
+#define G_MINOFFSET	G_MININT64
+#define G_MAXOFFSET	G_MAXINT64
+
 
 #define GPOINTER_TO_INT(p)	((gint)   (p))
 #define GPOINTER_TO_UINT(p)	((guint)  (p))
@@ -88,7 +98,7 @@ typedef unsigned int gsize;
 #define g_memmove(dest,src,len) G_STMT_START { memmove ((dest), (src), (len)); } G_STMT_END
 
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 12
+#define GLIB_MINOR_VERSION 14
 #define GLIB_MICRO_VERSION 4
 
 #define G_OS_WIN32
@@ -105,26 +115,15 @@ typedef unsigned int gsize;
 #define G_HAVE_INLINE 1
 #endif /* _MSC_VER */
 #define G_HAVE___INLINE 1
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__DMC__)
 #define G_HAVE___INLINE__ 1
-#endif /* not _MSC_VER */
+#endif /* !_MSC_VER and !__DMC__ */
 #endif	/* !__cplusplus */
 
-#ifdef	__cplusplus
 #define G_CAN_INLINE	1
-#else	/* !__cplusplus */
-#ifndef _MSC_VER
-#define G_CAN_INLINE	1
-#endif
-#endif
 
 #ifndef _MSC_VER
-#ifndef __cplusplus
-# define G_HAVE_ISO_VARARGS 1
-#endif
-#ifdef __cplusplus
-# define G_HAVE_ISO_VARARGS 1
-#endif
+#define G_HAVE_ISO_VARARGS 1
 
 /* gcc-2.95.x supports both gnu style and ISO varargs, but if -ansi
  * is passed ISO vararg support is turned off, and there is no work

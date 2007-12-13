@@ -130,10 +130,9 @@ void            g_option_context_add_group      (GOptionContext *context,
 void          g_option_context_set_main_group (GOptionContext *context,
 					       GOptionGroup   *group);
 GOptionGroup *g_option_context_get_main_group (GOptionContext *context);
-
-void          g_option_context_set_input_is_utf8 (GOptionContext *context,
-						  gboolean is_utf8);
-gboolean      g_option_context_get_input_is_utf8 (GOptionContext *context);
+gchar        *g_option_context_get_help       (GOptionContext *context,
+                                               gboolean        main_help,
+                                               GOptionGroup   *group);
 
 GOptionGroup *g_option_group_new                    (const gchar        *name,
 						     const gchar        *description,

@@ -49,9 +49,9 @@ G_BEGIN_DECLS
  */
 typedef enum
 {
-  GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS = G_MAXUINT - 0,
-  GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT       = G_MAXUINT - 1,
-  GTK_TEXT_BUFFER_TARGET_INFO_TEXT            = G_MAXUINT - 2
+  GTK_TEXT_BUFFER_TARGET_INFO_BUFFER_CONTENTS = - 1,
+  GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT       = - 2,
+  GTK_TEXT_BUFFER_TARGET_INFO_TEXT            = - 3
 } GtkTextBufferTargetInfo;
 
 typedef struct _GtkTextBTree GtkTextBTree;
@@ -247,6 +247,9 @@ GtkTextChildAnchor *gtk_text_buffer_create_child_anchor (GtkTextBuffer *buffer,
                                                          GtkTextIter   *iter);
 
 /* Mark manipulation */
+void           gtk_text_buffer_add_mark    (GtkTextBuffer     *buffer,
+                                            GtkTextMark       *mark,
+                                            const GtkTextIter *where);
 GtkTextMark   *gtk_text_buffer_create_mark (GtkTextBuffer     *buffer,
                                             const gchar       *mark_name,
                                             const GtkTextIter *where,

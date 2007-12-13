@@ -29,13 +29,22 @@ G_BEGIN_DECLS
 typedef struct _PangoAnalysis PangoAnalysis;
 typedef struct _PangoItem PangoItem;
 
+/* TODO: if more flags are needed, turn this into a real PangoAnalysisFlags enum */
+#define PANGO_ANALYSIS_FLAG_CENTERED_BASELINE (1 << 0)
+
 struct _PangoAnalysis
 {
   PangoEngineShape *shape_engine;
   PangoEngineLang  *lang_engine;
   PangoFont *font;
+
   guint8 level;
+  guint8 gravity; /* PangoGravity */
+  guint8 flags;
+
+  guint8 script; /* PangoScript */
   PangoLanguage *language;
+
   GSList *extra_attrs;
 };
 
@@ -55,8 +64,8 @@ PangoItem *pango_item_new   (void);
 PangoItem *pango_item_copy  (PangoItem  *item);
 void       pango_item_free  (PangoItem  *item);
 PangoItem *pango_item_split (PangoItem  *orig,
-                             int         split_index,
-                             int         split_offset);
+			     int         split_index,
+			     int         split_offset);
 
 G_END_DECLS
 

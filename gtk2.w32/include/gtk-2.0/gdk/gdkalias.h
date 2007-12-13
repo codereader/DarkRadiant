@@ -66,6 +66,9 @@ extern __typeof (gdk_event_peek) IA__gdk_event_peek __attribute((visibility("hid
 extern __typeof (gdk_event_put) IA__gdk_event_put __attribute((visibility("hidden")));
 #define gdk_event_put IA__gdk_event_put
 
+extern __typeof (gdk_event_request_motions) IA__gdk_event_request_motions __attribute((visibility("hidden")));
+#define gdk_event_request_motions IA__gdk_event_request_motions
+
 extern __typeof (gdk_event_set_screen) IA__gdk_event_set_screen __attribute((visibility("hidden")));
 #define gdk_event_set_screen IA__gdk_event_set_screen
 
@@ -168,6 +171,9 @@ extern __typeof (gdk_flush) IA__gdk_flush __attribute((visibility("hidden")));
 extern __typeof (gdk_notify_startup_complete) IA__gdk_notify_startup_complete __attribute((visibility("hidden")));
 #define gdk_notify_startup_complete IA__gdk_notify_startup_complete
 
+extern __typeof (gdk_notify_startup_complete_with_id) IA__gdk_notify_startup_complete_with_id __attribute((visibility("hidden")));
+#define gdk_notify_startup_complete_with_id IA__gdk_notify_startup_complete_with_id
+
 #endif
 #endif
 #if IN_HEADER(__GDK_H__)
@@ -232,6 +238,18 @@ extern __typeof (gdk_threads_leave) IA__gdk_threads_leave __attribute((visibilit
 
 extern __typeof (gdk_threads_set_lock_functions) IA__gdk_threads_set_lock_functions __attribute((visibility("hidden")));
 #define gdk_threads_set_lock_functions IA__gdk_threads_set_lock_functions
+
+extern __typeof (gdk_threads_add_idle) IA__gdk_threads_add_idle __attribute((visibility("hidden")));
+#define gdk_threads_add_idle IA__gdk_threads_add_idle
+
+extern __typeof (gdk_threads_add_idle_full) IA__gdk_threads_add_idle_full __attribute((visibility("hidden")));
+#define gdk_threads_add_idle_full IA__gdk_threads_add_idle_full
+
+extern __typeof (gdk_threads_add_timeout) IA__gdk_threads_add_timeout __attribute((visibility("hidden")));
+#define gdk_threads_add_timeout IA__gdk_threads_add_timeout
+
+extern __typeof (gdk_threads_add_timeout_full) IA__gdk_threads_add_timeout_full __attribute((visibility("hidden")));
+#define gdk_threads_add_timeout_full IA__gdk_threads_add_timeout_full
 
 #endif
 #endif
@@ -643,6 +661,9 @@ extern __typeof (gdk_colormap_unref) IA__gdk_colormap_unref __attribute((visibil
 extern __typeof (gdk_color_parse) IA__gdk_color_parse __attribute((visibility("hidden")));
 #define gdk_color_parse IA__gdk_color_parse
 
+extern __typeof (gdk_color_to_string) IA__gdk_color_to_string __attribute((visibility("hidden")));
+#define gdk_color_to_string IA__gdk_color_to_string
+
 #endif
 #endif
 #if IN_HEADER(__GDK_COLOR_H__)
@@ -907,6 +928,9 @@ extern __typeof (gdk_display_supports_shapes) IA__gdk_display_supports_shapes __
 
 extern __typeof (gdk_display_supports_input_shapes) IA__gdk_display_supports_input_shapes __attribute((visibility("hidden")));
 #define gdk_display_supports_input_shapes IA__gdk_display_supports_input_shapes
+
+extern __typeof (gdk_display_supports_composite) IA__gdk_display_supports_composite __attribute((visibility("hidden")));
+#define gdk_display_supports_composite IA__gdk_display_supports_composite
 
 #endif
 #endif
@@ -1291,6 +1315,9 @@ extern __typeof (gdk_window_end_paint) IA__gdk_window_end_paint __attribute((vis
 extern __typeof (gdk_window_foreign_new) IA__gdk_window_foreign_new __attribute((visibility("hidden")));
 #define gdk_window_foreign_new IA__gdk_window_foreign_new
 
+extern __typeof (gdk_window_freeze_toplevel_updates_libgtk_only) IA__gdk_window_freeze_toplevel_updates_libgtk_only __attribute((visibility("hidden")));
+#define gdk_window_freeze_toplevel_updates_libgtk_only IA__gdk_window_freeze_toplevel_updates_libgtk_only
+
 extern __typeof (gdk_window_freeze_updates) IA__gdk_window_freeze_updates __attribute((visibility("hidden")));
 #define gdk_window_freeze_updates IA__gdk_window_freeze_updates
 
@@ -1363,8 +1390,14 @@ extern __typeof (gdk_window_set_debug_updates) IA__gdk_window_set_debug_updates 
 extern __typeof (gdk_window_set_user_data) IA__gdk_window_set_user_data __attribute((visibility("hidden")));
 #define gdk_window_set_user_data IA__gdk_window_set_user_data
 
+extern __typeof (gdk_window_thaw_toplevel_updates_libgtk_only) IA__gdk_window_thaw_toplevel_updates_libgtk_only __attribute((visibility("hidden")));
+#define gdk_window_thaw_toplevel_updates_libgtk_only IA__gdk_window_thaw_toplevel_updates_libgtk_only
+
 extern __typeof (gdk_window_thaw_updates) IA__gdk_window_thaw_updates __attribute((visibility("hidden")));
 #define gdk_window_thaw_updates IA__gdk_window_thaw_updates
+
+extern __typeof (gdk_window_set_composited) IA__gdk_window_set_composited __attribute((visibility("hidden")));
+#define gdk_window_set_composited IA__gdk_window_set_composited
 
 #endif
 #endif
@@ -1467,6 +1500,9 @@ extern __typeof (gdk_window_set_title) IA__gdk_window_set_title __attribute((vis
 extern __typeof (gdk_window_set_role) IA__gdk_window_set_role __attribute((visibility("hidden")));
 #define gdk_window_set_role IA__gdk_window_set_role
 
+extern __typeof (gdk_window_set_startup_id) IA__gdk_window_set_startup_id __attribute((visibility("hidden")));
+#define gdk_window_set_startup_id IA__gdk_window_set_startup_id
+
 extern __typeof (gdk_window_set_transient_for) IA__gdk_window_set_transient_for __attribute((visibility("hidden")));
 #define gdk_window_set_transient_for IA__gdk_window_set_transient_for
 
@@ -1526,6 +1562,12 @@ extern __typeof (gdk_window_set_icon) IA__gdk_window_set_icon __attribute((visib
 
 extern __typeof (gdk_window_set_icon_name) IA__gdk_window_set_icon_name __attribute((visibility("hidden")));
 #define gdk_window_set_icon_name IA__gdk_window_set_icon_name
+
+extern __typeof (gdk_window_beep) IA__gdk_window_beep __attribute((visibility("hidden")));
+#define gdk_window_beep IA__gdk_window_beep
+
+extern __typeof (gdk_window_set_opacity) IA__gdk_window_set_opacity __attribute((visibility("hidden")));
+#define gdk_window_set_opacity IA__gdk_window_set_opacity
 
 extern __typeof (gdk_window_iconify) IA__gdk_window_iconify __attribute((visibility("hidden")));
 #define gdk_window_iconify IA__gdk_window_iconify
@@ -1689,6 +1731,9 @@ extern __typeof (gdk_keymap_get_entries_for_keyval) IA__gdk_keymap_get_entries_f
 extern __typeof (gdk_keymap_get_for_display) IA__gdk_keymap_get_for_display __attribute((visibility("hidden")));
 #define gdk_keymap_get_for_display IA__gdk_keymap_get_for_display
 
+extern __typeof (gdk_keymap_have_bidi_layouts) IA__gdk_keymap_have_bidi_layouts __attribute((visibility("hidden")));
+#define gdk_keymap_have_bidi_layouts IA__gdk_keymap_have_bidi_layouts
+
 extern __typeof (gdk_keymap_lookup_key) IA__gdk_keymap_lookup_key __attribute((visibility("hidden")));
 #define gdk_keymap_lookup_key IA__gdk_keymap_lookup_key
 
@@ -1787,6 +1832,9 @@ extern __typeof (gdk_net_wm_supports) IA__gdk_net_wm_supports __attribute((visib
 #endif
 #if IN_HEADER(__GDK_PANGO_H__)
 #if IN_FILE(__GDK_PANGO_C__)
+extern __typeof (gdk_pango_attr_emboss_color_new) IA__gdk_pango_attr_emboss_color_new __attribute((visibility("hidden")));
+#define gdk_pango_attr_emboss_color_new IA__gdk_pango_attr_emboss_color_new
+
 extern __typeof (gdk_pango_attr_embossed_new) IA__gdk_pango_attr_embossed_new __attribute((visibility("hidden")));
 #define gdk_pango_attr_embossed_new IA__gdk_pango_attr_embossed_new
 
@@ -2356,6 +2404,12 @@ extern __typeof (gdk_x11_display_ungrab) IA__gdk_x11_display_ungrab __attribute(
 
 extern __typeof (gdk_x11_lookup_xdisplay) IA__gdk_x11_lookup_xdisplay __attribute((visibility("hidden")));
 #define gdk_x11_lookup_xdisplay IA__gdk_x11_lookup_xdisplay
+
+extern __typeof (gdk_x11_display_broadcast_startup_message) IA__gdk_x11_display_broadcast_startup_message __attribute((visibility("hidden")));
+#define gdk_x11_display_broadcast_startup_message IA__gdk_x11_display_broadcast_startup_message
+
+extern __typeof (gdk_x11_display_get_startup_notification_id) IA__gdk_x11_display_get_startup_notification_id __attribute((visibility("hidden")));
+#define gdk_x11_display_get_startup_notification_id IA__gdk_x11_display_get_startup_notification_id
 
 #endif
 #if IN_FILE(__GDK_DRAWABLE_X11_C__)

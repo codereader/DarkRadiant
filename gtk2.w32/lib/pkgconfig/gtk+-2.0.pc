@@ -1,15 +1,15 @@
-prefix=/target
+prefix=c:/devel/target/5acf545be633e26dcf39ce42e159bafc
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 target=win32
 
 gtk_binary_version=2.10.0
-gtk_host=i386-pc-mingw32
+gtk_host=i686-pc-mingw32
 
 Name: GTK+
 Description: GIMP Tool Kit (${target} target)
-Version: 2.10.6
+Version: 2.12.3
 Requires: gdk-${target}-2.0 atk cairo
 Libs: -L${libdir} -lgtk-${target}-2.0 
 Cflags: -I${includedir}/gtk-2.0 -mms-bitfields
