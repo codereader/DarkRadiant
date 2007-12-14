@@ -163,7 +163,9 @@ public:
 	}
 	
 	// greebo: Moved the array of normals from the draw() method to here
-	// I figured that 256 faces per brush should be enough. This is still FIXME!
+	// I figured that 256 vertices per winding should be enough. This is still FIXME!
+	// TODO: Make this a regular member (std::vector) and resize along with the Winding 
+	// (hook into erase, resize and push_back).
 	mutable Vector3 normals[256];
 	
 	// Submits this winding to OpenGL
