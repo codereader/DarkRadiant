@@ -285,11 +285,9 @@ BindArguments2<Caller> bindArguments(const Caller& caller, FirstBound firstBound
 
 inline bool Face_testPlane(const Face& face, const Plane3& plane, bool flipped)
 {
-  return face.contributes() && !Winding_TestPlane(face.getWinding(), plane, flipped);
+	return face.contributes() && !face.getWinding().testPlane(plane, flipped);
 }
 typedef Function3<const Face&, const Plane3&, bool, bool, Face_testPlane> FaceTestPlane;
-
-
 
 /// \brief Returns true if
 /// \li !flipped && brush is BACK or ON

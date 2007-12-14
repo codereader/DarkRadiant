@@ -222,36 +222,25 @@ public:
 		return split;
 	}
 	
+	/// \brief Returns true if
+	/// !flipped && winding is completely BACK or ON
+	/// or flipped && winding is completely FRONT or ON
+	bool testPlane(const Plane3& plane, bool flipped) const;
+	
 	// Return the centroid of the polygon defined by this winding lying on the given plane.
 	Vector3 centroid(const Plane3& plane) const;
+	
+	// For debugging purposes: prints the vertices and their adjacents to the console
+	void printConnectivity();
 };
 
 class Plane3;
 
-/// \brief Returns true if edge (\p x, \p y) is smaller than the epsilon used to classify winding points against a plane.
-inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y)
-{
-  return (y - x).getLengthSquared() < (ON_EPSILON * ON_EPSILON);
-}
-
-class FixedWinding;
-void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped);
-
 bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
-bool Winding_TestPlane(const Winding& w, const Plane3& plane, bool flipped);
 
 std::size_t Winding_FindAdjacent(const Winding& w, std::size_t face);
 
 std::size_t Winding_Opposite(const Winding& w, const std::size_t index, const std::size_t other);
 std::size_t Winding_Opposite(const Winding& w, std::size_t index);
-
-inline void Winding_printConnectivity(Winding& winding)
-{
-  for(Winding::iterator i = winding.begin(); i != winding.end(); ++i)
-  {
-    std::size_t vertexIndex = std::distance(winding.begin(), i);
-    globalOutputStream() << "vertex: " << Unsigned(vertexIndex) << " adjacent: " << Unsigned((*i).adjacent) << "\n";
-  }
-}
 
 #endif
