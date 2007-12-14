@@ -291,7 +291,8 @@ const Vector3& Face::centroid() const {
 }
 
 void Face::construct_centroid() {
-	Winding_Centroid(m_winding, plane3(), m_centroid);
+	// Take the plane and let the winding calculate the centroid
+	m_centroid = m_winding.centroid(plane3());
 }
 
 const Winding& Face::getWinding() const {

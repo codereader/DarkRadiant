@@ -101,27 +101,33 @@ std::size_t Winding_Opposite(const Winding& winding, const std::size_t index)
   return Winding_Opposite(winding, index, winding.next(index));
 }
 
-/// \brief Calculate the \p centroid of the polygon defined by \p winding which lies on plane \p plane.
-void Winding_Centroid(const Winding& winding, const Plane3& plane, Vector3& centroid)
-{
-  double area2 = 0, x_sum = 0, y_sum = 0;
-  const ProjectionAxis axis = projectionaxis_for_normal(plane.normal());
-  const indexremap_t remap = indexremap_for_projectionaxis(axis);
-  for(std::size_t i = winding.numpoints-1, j = 0; j < winding.numpoints; i = j, ++j)
-  {
-    const double ai = winding[i].vertex[remap.x] * winding[j].vertex[remap.y] - winding[j].vertex[remap.x] * winding[i].vertex[remap.y];
-    area2 += ai;
-    x_sum += (winding[j].vertex[remap.x] + winding[i].vertex[remap.x]) * ai;
-    y_sum += (winding[j].vertex[remap.y] + winding[i].vertex[remap.y]) * ai;
-  }
+Vector3 Winding::centroid(const Plane3& plane) const {
+	Vector3 centroid(0,0,0);
+	
+	double area2 = 0, x_sum = 0, y_sum = 0;
+	const ProjectionAxis axis = projectionaxis_for_normal(plane.normal());
+	const indexremap_t remap = indexremap_for_projectionaxis(axis);
+	
+	for (std::size_t i = numpoints - 1, j = 0; j < numpoints; i	= j, ++j) {
+		const double ai = (*this)[i].vertex[remap.x]
+				* (*this)[j].vertex[remap.y] - (*this)[j].vertex[remap.x]
+				* (*this)[i].vertex[remap.y];
+		
+		area2 += ai;
+		
+		x_sum += ((*this)[j].vertex[remap.x] + (*this)[i].vertex[remap.x]) * ai;
+		y_sum += ((*this)[j].vertex[remap.y] + (*this)[i].vertex[remap.y]) * ai;
+	}
 
-  centroid[remap.x] = x_sum / (3 * area2);
-  centroid[remap.y] = y_sum / (3 * area2);
-  {
-    Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 0));
-    ray.origin[remap.x] = centroid[remap.x];
-    ray.origin[remap.y] = centroid[remap.y];
-    ray.direction[remap.z] = 1;
-    centroid[remap.z] = ray_distance_to_plane(ray, plane);
-  }
+	centroid[remap.x] = x_sum / (3 * area2);
+	centroid[remap.y] = y_sum / (3 * area2);
+	{
+		Ray ray(Vector3(0, 0, 0), Vector3(0, 0, 0));
+		ray.origin[remap.x] = centroid[remap.x];
+		ray.origin[remap.y] = centroid[remap.y];
+		ray.direction[remap.z] = 1;
+		centroid[remap.z] = ray_distance_to_plane(ray, plane);
+	}
+	
+	return centroid;
 }
