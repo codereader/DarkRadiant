@@ -10,6 +10,13 @@
 #include "plugin.h"
 #include "FixedWinding.h"
 
+namespace {
+	/// \brief Returns true if edge (\p x, \p y) is smaller than the epsilon used to classify winding points against a plane.
+	inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y) {
+		return (y - x).getLengthSquared() < (ON_EPSILON * ON_EPSILON);
+	}
+}
+
 Brush::Brush(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	m_node(&node),
 	m_undoable_observer(0),

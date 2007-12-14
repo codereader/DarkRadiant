@@ -27,26 +27,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/line.h"
 #include "math/Plane3.h"
 
-/// \brief Returns true if
-/// !flipped && winding is completely BACK or ON
-/// or flipped && winding is completely FRONT or ON
-bool Winding_TestPlane(const Winding& winding, const Plane3& plane, bool flipped) 
-{
-  const int test = (flipped) ? ePlaneBack : ePlaneFront;
-  for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
-  {
-    if(test == Winding_classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON))
-    {
-      return false;
-    }
-  }
-  return true;
+bool Winding::testPlane(const Plane3& plane, bool flipped) const {
+	const int test = (flipped) ? ePlaneBack : ePlaneFront;
+	
+	for (const_iterator i = begin(); i != end(); ++i) {
+		if (test == Winding_classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 /// \brief Returns true if any point in \p w1 is in front of plane2, or any point in \p w2 is in front of plane1
 bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2)
 {
-  return !Winding_TestPlane(w1, plane2, false) || !Winding_TestPlane(w2, plane1, false);
+	return !w1.testPlane(plane2, false) || !w2.testPlane(plane1, false);
 }
 
 #define DEBUG_EPSILON ON_EPSILON
@@ -130,4 +126,12 @@ Vector3 Winding::centroid(const Plane3& plane) const {
 	}
 	
 	return centroid;
+}
+
+void Winding::printConnectivity() {
+	for (iterator i = begin(); i != end(); ++i) {
+		std::size_t vertexIndex = std::distance(begin(), i);
+		globalOutputStream() << "vertex: " << Unsigned(vertexIndex)
+			<< " adjacent: " << Unsigned(i->adjacent) << "\n";
+	}
 }
