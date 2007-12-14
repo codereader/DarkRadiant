@@ -221,6 +221,9 @@ public:
 		
 		return split;
 	}
+	
+	// Return the centroid of the polygon defined by this winding lying on the given plane.
+	Vector3 centroid(const Plane3& plane) const;
 };
 
 class Plane3;
@@ -241,9 +244,6 @@ std::size_t Winding_FindAdjacent(const Winding& w, std::size_t face);
 
 std::size_t Winding_Opposite(const Winding& w, const std::size_t index, const std::size_t other);
 std::size_t Winding_Opposite(const Winding& w, std::size_t index);
-
-void Winding_Centroid(const Winding& w, const Plane3& plane, Vector3& centroid);
-
 
 inline void Winding_printConnectivity(Winding& winding)
 {
