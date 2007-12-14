@@ -39,30 +39,19 @@ bool Winding::testPlane(const Plane3& plane, bool flipped) const {
 	return true;
 }
 
-/// \brief Returns true if any point in \p w1 is in front of plane2, or any point in \p w2 is in front of plane1
-bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2)
-{
+bool Winding::planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2) {
 	return !w1.testPlane(plane2, false) || !w2.testPlane(plane1, false);
 }
 
-#define DEBUG_EPSILON ON_EPSILON
-const double DEBUG_EPSILON_SQUARED = DEBUG_EPSILON * DEBUG_EPSILON;
-
-#define WINDING_DEBUG 0
-
-
-
-std::size_t Winding_FindAdjacent(const Winding& winding, std::size_t face)
-{
-  for(std::size_t i=0; i<winding.numpoints; ++i)
-  {
-    ASSERT_MESSAGE(winding[i].adjacent != c_brush_maxFaces, "edge connectivity data is invalid");
-    if(winding[i].adjacent == face)
-    {
-      return i;
-    }
-  }
-  return c_brush_maxFaces;
+std::size_t Winding::findAdjacent(std::size_t face) const {
+	for (std::size_t i = 0; i < numpoints; ++i) {
+		ASSERT_MESSAGE((*this)[i].adjacent != c_brush_maxFaces, "edge connectivity data is invalid");
+		if ((*this)[i].adjacent == face) {
+			return i;
+		}
+	}
+	
+	return c_brush_maxFaces;
 }
 
 std::size_t Winding_Opposite(const Winding& winding, const std::size_t index, const std::size_t other)

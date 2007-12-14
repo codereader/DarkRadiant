@@ -28,7 +28,7 @@ inline bool plane3_inside(const Plane3& self, const Plane3& other) {
 /// \brief Returns the unique-id of the edge adjacent to \p faceVertex in the edge-pair for the set of \p faces.
 inline FaceVertexId next_edge(const Faces& faces, FaceVertexId faceVertex) {
 	std::size_t adjacent_face = faces[faceVertex.getFace()]->getWinding()[faceVertex.getVertex()].adjacent;
-	std::size_t adjacent_vertex = Winding_FindAdjacent(faces[adjacent_face]->getWinding(), faceVertex.getFace());
+	std::size_t adjacent_vertex = faces[adjacent_face]->getWinding().findAdjacent(faceVertex.getFace());
 
 	ASSERT_MESSAGE(adjacent_vertex != c_brush_maxFaces, "connectivity data invalid");
 	

@@ -692,7 +692,7 @@ bool Brush_merge(Brush& brush, const BrushVector& in, bool onlyshape)
           }
 
           // face1 plane intersects face2 winding or vice versa
-          if (Winding_PlanesConcave(face1.getWinding(), face2.getWinding(), face1.plane3(), face2.plane3()))
+          if (Winding::planesConcave(face1.getWinding(), face2.getWinding(), face1.plane3(), face2.plane3()))
           {
             // result would not be convex
             return false;
