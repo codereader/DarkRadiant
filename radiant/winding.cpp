@@ -25,17 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "brush/FixedWinding.h"
 #include "math/line.h"
-
-inline double plane3_distance_to_point(const Plane3& plane, const Vector3& point)
-{
-  return point.dot(plane.normal()) - plane.dist();
-}
+#include "math/Plane3.h"
 
 /// \brief Returns the point at which \p line intersects \p plane, or an undefined value if there is no intersection.
 inline Vector3 line_intersect_plane(const DoubleLine& line, const Plane3& plane)
 {
   return line.origin + 
-    line.direction * (-plane3_distance_to_point(plane, line.origin) / line.direction.dot(plane.normal()));
+    line.direction * (-plane.distanceToPoint(line.origin) / line.direction.dot(plane.normal()));
 }
 
 inline bool float_is_largest_absolute(double axis, double other)
@@ -167,7 +163,7 @@ bool Winding_TestPlane(const Winding& winding, const Plane3& plane, bool flipped
   const int test = (flipped) ? ePlaneBack : ePlaneFront;
   for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
   {
-    if(test == Winding_ClassifyDistance(plane3_distance_to_point(plane, (*i).vertex), ON_EPSILON))
+    if(test == Winding_ClassifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON))
     {
       return false;
     }
@@ -186,7 +182,7 @@ BrushSplitType Winding_ClassifyPlane(const Winding& winding, const Plane3& plane
   BrushSplitType split;
   for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
   {
-    ++split.counts[Winding_ClassifyDistance(plane3_distance_to_point(plane, (*i).vertex), ON_EPSILON)];
+    ++split.counts[Winding_ClassifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)];
   }
   return split;
 }
@@ -203,12 +199,12 @@ const double DEBUG_EPSILON_SQUARED = DEBUG_EPSILON * DEBUG_EPSILON;
 /// If \p winding intersects the plane, the edge of \p clipped which lies on \p clipPlane will store the value of \p adjacent.
 void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped)
 {
-  PlaneClassification classification = Winding_ClassifyDistance(plane3_distance_to_point(clipPlane, winding.back().vertex), ON_EPSILON);
+  PlaneClassification classification = Winding_ClassifyDistance(clipPlane.distanceToPoint(winding.back().vertex), ON_EPSILON);
   PlaneClassification nextClassification;
   // for each edge
   for(std::size_t next = 0, i = winding.size()-1; next != winding.size(); i = next, ++next, classification = nextClassification)
   {
-    nextClassification = Winding_ClassifyDistance(plane3_distance_to_point(clipPlane, winding[next].vertex), ON_EPSILON);
+    nextClassification = Winding_ClassifyDistance(clipPlane.distanceToPoint(winding[next].vertex), ON_EPSILON);
     const FixedWindingVertex& vertex = winding[i];
 
     // if first vertex of edge is ON

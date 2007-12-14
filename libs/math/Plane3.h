@@ -128,6 +128,12 @@ public:
   		return pointToProject + planePoint - n*pointToProject.dot(n);
   	}
   	
+  	/** greebo: Returns the distance to the given point.
+  	 */
+  	double distanceToPoint(const Vector3& point) const {
+  		return point.dot(normal()) - dist();
+  	}
+  	
   	/* greebo: This calculates the intersection point of three planes. 
 	 * Returns <0,0,0> if no intersection point could be found, otherwise returns the coordinates of the intersection point 
 	 * (this may also be 0,0,0) */
