@@ -422,7 +422,7 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
 	bool swap = false;
 
 	// get a poly that covers an effectively infinite area
-	Winding_createInfinite(buffer[swap], plane, m_maxWorldCoord + 1);
+	buffer[swap].createInfinite(plane, m_maxWorldCoord + 1);
 
 	// chop the poly by all of the other faces
 	{
