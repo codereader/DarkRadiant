@@ -316,10 +316,10 @@ public:
 	 * Normalise this vector in-place by scaling by the inverse of its size.
 	 */
 	void normalise() {
-		double l = getLength();
-		_v[0] /= l;
-		_v[1] /= l;
-		_v[2] /= l; 		
+		double inverseLength = 1/getLength();
+		_v[0] *= inverseLength;
+		_v[1] *= inverseLength;
+		_v[2] *= inverseLength;
 	}
 	
 	// Returns a vector with the reciprocal values of each component
