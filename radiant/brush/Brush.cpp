@@ -8,6 +8,7 @@
 #include "BrushModule.h"
 #include "Face.h"
 #include "plugin.h"
+#include "FixedWinding.h"
 
 Brush::Brush(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	m_node(&node),
@@ -447,7 +448,7 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
 		}
 	}
 
-	Winding_forFixedWinding(winding, buffer[swap]);
+	buffer[swap].writeToWinding(winding);
 }
 
 void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const {
