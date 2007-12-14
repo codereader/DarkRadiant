@@ -55,11 +55,7 @@ inline indexremap_t indexremap_for_projectionaxis(const ProjectionAxis axis)
   }
 }
 
-
-
-#define MAX_POINTS_ON_WINDING 64
 const std::size_t c_brush_maxFaces = 1024;
-
 
 class WindingVertex
 {
@@ -155,94 +151,6 @@ public:
 	}
 };
 
-class DoubleLine
-{
-public:
-  Vector3 origin;
-  Vector3 direction;
-};
-
-class FixedWindingVertex
-{
-public:
-  Vector3 vertex;
-  DoubleLine edge;
-  std::size_t adjacent;
-
-  FixedWindingVertex(const Vector3& vertex_, const DoubleLine& edge_, std::size_t adjacent_)
-    : vertex(vertex_), edge(edge_), adjacent(adjacent_)
-  {
-  }
-};
-
-struct FixedWinding
-{
-  typedef std::vector<FixedWindingVertex> Points;
-  Points points;
-
-  FixedWinding()
-  {
-    points.reserve(MAX_POINTS_ON_WINDING);
-  }
-
-  FixedWindingVertex& front()
-  {
-    return points.front();
-  }
-  const FixedWindingVertex& front() const
-  {
-    return points.front();
-  }
-  FixedWindingVertex& back()
-  {
-    return points.back();
-  }
-  const FixedWindingVertex& back() const
-  {
-    return points.back();
-  }
-
-  void clear()
-  {
-    points.clear();
-  }
-
-  void push_back(const FixedWindingVertex& point)
-  {
-    points.push_back(point);
-  }
-  std::size_t size() const
-  {
-    return points.size();
-  }
-
-  FixedWindingVertex& operator[](std::size_t index)
-  {
-    //ASSERT_MESSAGE(index < MAX_POINTS_ON_WINDING, "winding: index out of bounds");
-    return points[index];
-  }
-  const FixedWindingVertex& operator[](std::size_t index) const
-  {
-    //ASSERT_MESSAGE(index < MAX_POINTS_ON_WINDING, "winding: index out of bounds");
-    return points[index];
-  }
-
-};
-
-
-inline void Winding_forFixedWinding(Winding& winding, const FixedWinding& fixed)
-{
-  winding.resize(fixed.size());
-  winding.numpoints = fixed.size();
-  for(std::size_t i = 0; i < fixed.size(); ++i)
-  {
-    winding[i].vertex[0] = fixed[i].vertex[0];
-    winding[i].vertex[1] = fixed[i].vertex[1];
-    winding[i].vertex[2] = fixed[i].vertex[2];
-    winding[i].adjacent = fixed[i].adjacent;
-  }
-}
-
 inline std::size_t Winding_wrap(const Winding& winding, std::size_t i)
 {
   ASSERT_MESSAGE(winding.numpoints != 0, "Winding_wrap: empty winding");
@@ -256,6 +164,8 @@ inline std::size_t Winding_next(const Winding& winding, std::size_t i)
 
 
 class Plane3;
+
+class FixedWinding;
 
 void Winding_createInfinite(FixedWinding& w, const Plane3& plane, double infinity);
 

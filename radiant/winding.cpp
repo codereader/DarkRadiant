@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <algorithm>
 
+#include "brush/FixedWinding.h"
 #include "math/line.h"
 
 inline double plane3_distance_to_point(const Plane3& plane, const Vector3& point)
