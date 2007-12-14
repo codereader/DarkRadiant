@@ -162,14 +162,16 @@ public:
 		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.data()->vertex), sizeof(WindingVertex)), numpoints, best);
 	}
 	
+	// greebo: Moved the array of normals from the draw() method to here
+	// I figured that 256 faces per brush should be enough. This is still FIXME!
+	mutable Vector3 normals[256];
+	
 	// Submits this winding to OpenGL
 	inline void draw(const Vector3& normal, RenderStateFlags state) const {
 		// Set the vertex pointer first
 		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.data()->vertex);
 
 		if ((state & RENDER_BUMP) != 0) {
-			// greebo: TODO: Fix this - allocation of 1024 normals! 
-			Vector3 normals[c_brush_maxFaces];
 			typedef Vector3* Vector3Iter;
 			
 			for (Vector3Iter i = normals, end = normals + numpoints; i != end; ++i) {
@@ -183,7 +185,6 @@ public:
 		} 
 		else {
 			if (state & RENDER_LIGHTING) {
-				Vector3 normals[c_brush_maxFaces];
 				typedef Vector3* Vector3Iter;
 				
 				for (Vector3Iter i = normals, last = normals + numpoints; i != last; ++i) {
