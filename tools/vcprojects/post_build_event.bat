@@ -2,6 +2,7 @@ copy ..\..\w32deps\libxml2\lib\libxml2.dll ..\..\install
 copy ..\..\w32deps\vorbis\lib\ogg.dll ..\..\install
 copy ..\..\w32deps\vorbis\lib\vorbis.dll ..\..\install
 copy ..\..\w32deps\vorbis\lib\vorbisfile.dll ..\..\install
+copy ..\..\w32deps\vorbis\lib\libogg.dll ..\..\install
 copy ..\..\w32deps\openal\lib\alut.dll ..\..\install
 copy ..\..\w32deps\openal\lib\OpenAL32.dll ..\..\install
 copy ..\..\w32deps\openal\lib\wrap_oal.dll ..\..\install
