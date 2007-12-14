@@ -29,3 +29,5 @@ copy ..\..\w32deps\gtk2\bin\libpango-1.0-0.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\libpangocairo-1.0-0.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\libpangoft2-1.0-0.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\libpangowin32-1.0-0.dll ..\..\install
+copy ..\..\w32deps\gtk2\bin\libgdkglext-win32-1.0-0.dll ..\..\install
+copy ..\..\w32deps\gtk2\bin\libgtkglext-win32-1.0-0.dll ..\..\install

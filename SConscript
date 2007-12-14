@@ -657,6 +657,8 @@ if radiant_env['PLATFORM'] == 'win32':
 		'#w32deps/gtk2/bin/libtiff3.dll',
 		'#w32deps/gtk2/bin/libpangocairo-1.0-0.dll',
 		'#w32deps/gtk2/bin/libpangoft2-1.0-0.dll',
+		'#w32deps/gtk2/bin/libgdkglext-win32-1.0-0.dll',
+		'#w32deps/gtk2/bin/libgtkglext-win32-1.0-0.dll',
 		'#w32deps/gtk2/bin/libpangowin32-1.0-0.dll'])
 
 # end setup ---------------------------------------------------------------------------------------
