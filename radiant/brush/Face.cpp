@@ -90,7 +90,7 @@ void Face::instanceDetach(MapFile* map) {
 }
 
 void Face::render(RenderStateFlags state) const {
-	Winding_Draw(m_winding, m_planeTransformed.plane3().normal(), state);
+	m_winding.draw(m_planeTransformed.plane3().normal(), state);
 }
 
 void Face::undoSave() {

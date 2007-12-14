@@ -35,7 +35,7 @@ public:
 
 	void render(RenderStateFlags state) const {
 		if ((state & RENDER_FILL) != 0) {
-			Winding_Draw(m_winding, m_plane.normal(), state);
+			m_winding.draw(m_plane.normal(), state);
 		}
 		else {
 			Winding_DrawWireframe(m_winding);

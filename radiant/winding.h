@@ -149,6 +149,44 @@ public:
 	void testSelect(SelectionTest& test, SelectionIntersection& best) {
 		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.data()->vertex), sizeof(WindingVertex)), numpoints, best);
 	}
+	
+	// Submits this winding to OpenGL
+	inline void draw(const Vector3& normal, RenderStateFlags state) const {
+		// Set the vertex pointer first
+		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.data()->vertex);
+
+		if ((state & RENDER_BUMP) != 0) {
+			// greebo: TODO: Fix this - allocation of 1024 normals! 
+			Vector3 normals[c_brush_maxFaces];
+			typedef Vector3* Vector3Iter;
+			
+			for (Vector3Iter i = normals, end = normals + numpoints; i != end; ++i) {
+				*i = normal;
+			}
+			
+			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(Vector3), normals);
+			glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->texcoord);
+			glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->tangent);
+			glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->bitangent);
+		} 
+		else {
+			if (state & RENDER_LIGHTING) {
+				Vector3 normals[c_brush_maxFaces];
+				typedef Vector3* Vector3Iter;
+				
+				for (Vector3Iter i = normals, last = normals + numpoints; i != last; ++i) {
+					*i = normal;
+				}
+				glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
+			}
+
+			if (state & RENDER_TEXTURE) {
+				glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &points.data()->texcoord);
+			}
+		}
+		
+		glDrawArrays(GL_POLYGON, 0, GLsizei(numpoints));
+	}
 };
 
 inline std::size_t Winding_wrap(const Winding& winding, std::size_t i)
@@ -199,89 +237,6 @@ inline void Winding_printConnectivity(Winding& winding)
     std::size_t vertexIndex = std::distance(winding.begin(), i);
     globalOutputStream() << "vertex: " << Unsigned(vertexIndex) << " adjacent: " << Unsigned((*i).adjacent) << "\n";
   }
-}
-
-inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderStateFlags state)
-{
-  glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &winding.points.data()->vertex);
-
-  if((state & RENDER_BUMP) != 0)
-  {
-    Vector3 normals[c_brush_maxFaces];
-    typedef Vector3* Vector3Iter;
-    for(Vector3Iter i = normals, end = normals + winding.numpoints; i != end; ++i)
-    {
-      *i = normal;
-    }
-    /*if(GlobalShaderCache().useShaderLanguage())
-    {
-      glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
-      glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
-      glVertexAttribPointerARB(c_attr_Tangent, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->tangent);
-      glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
-    }
-    else
-    {*/
-      glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(Vector3), normals);
-      glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->texcoord);
-      glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->tangent);
-      glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &winding.points.data()->bitangent);
-    /*}*/
-  }
-  else
-  {
-    if (state & RENDER_LIGHTING)
-    {
-      Vector3 normals[c_brush_maxFaces];
-      typedef Vector3* Vector3Iter;
-      for(Vector3Iter i = normals, last = normals + winding.numpoints; i != last; ++i)
-      {
-        *i = normal;
-      }
-      glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
-    }
-
-    if (state & RENDER_TEXTURE)
-    {
-      glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &winding.points.data()->texcoord);
-    }
-  }
-/*#if 0
-  if (state & RENDER_FILL)
-  {
-    glDrawArrays(GL_TRIANGLE_FAN, 0, GLsizei(winding.numpoints));
-  }
-  else
-  {
-    glDrawArrays(GL_LINE_LOOP, 0, GLsizei(winding.numpoints));
-  }
-#else*/
-  glDrawArrays(GL_POLYGON, 0, GLsizei(winding.numpoints));
-//#endif
-
-/*#if 0
-  const Winding& winding = winding;
-
-  if(state & RENDER_FILL)
-  {
-    glBegin(GL_POLYGON);
-  }
-  else
-  {
-    glBegin(GL_LINE_LOOP);
-  }
-
-  if (state & RENDER_LIGHTING)
-    glNormal3fv(normal);
-
-  for(int i = 0; i < winding.numpoints; ++i)
-  {
-    if (state & RENDER_TEXTURE)
-      glTexCoord2fv(&winding.points[i][3]);
-    glVertex3fv(winding.points[i]);
-  }
-  glEnd();
-#endif*/
 }
 
 #endif
