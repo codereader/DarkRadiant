@@ -547,7 +547,7 @@ void Brush::removeDegenerateEdges() {
 			
 			if (Edge_isDegenerate(winding[index].vertex, winding[next].vertex)) {
 				Winding& other = m_faces[winding[index].adjacent]->getWinding();
-				std::size_t adjacent = Winding_FindAdjacent(other, i);
+				std::size_t adjacent = other.findAdjacent(i);
 				if (adjacent != c_brush_maxFaces) {
 					other.erase(other.begin() + adjacent);
 				}
@@ -574,7 +574,7 @@ void Brush::removeDegenerateFaces() {
 			// this is an "edge" face, where the plane touches the edge of the brush
 			{
 				Winding& winding = m_faces[degen[0].adjacent]->getWinding();
-				std::size_t index = Winding_FindAdjacent(winding, i);
+				std::size_t index = winding.findAdjacent(i);
 				if(index != c_brush_maxFaces) {
 						winding[index].adjacent = degen[1].adjacent;
 				}
@@ -582,7 +582,7 @@ void Brush::removeDegenerateFaces() {
 
 			{
 				Winding& winding = m_faces[degen[1].adjacent]->getWinding();
-				std::size_t index = Winding_FindAdjacent(winding, i);
+				std::size_t index = winding.findAdjacent(i);
 				
 				if (index != c_brush_maxFaces) {
 					winding[index].adjacent = degen[0].adjacent;
@@ -624,7 +624,7 @@ void Brush::verifyConnectivityGraph() {
 			for (Winding::iterator j = winding.begin(); j != winding.end();) {
 				// remove unidirectional graph edges
 				if (j->adjacent == c_brush_maxFaces
-					|| Winding_FindAdjacent(m_faces[j->adjacent]->getWinding(), i) == c_brush_maxFaces)
+					|| m_faces[j->adjacent]->getWinding().findAdjacent(i) == c_brush_maxFaces)
 				{
 					winding.erase(j);
 				}

@@ -211,6 +211,8 @@ public:
 		return wrap(++i);
 	}
 	
+	std::size_t findAdjacent(std::size_t face) const;
+	
 	// Returns the classification for the given plane
 	BrushSplitType classifyPlane(const Plane3& plane) const {
 		BrushSplitType split;
@@ -232,13 +234,12 @@ public:
 	
 	// For debugging purposes: prints the vertices and their adjacents to the console
 	void printConnectivity();
+	
+	/// \brief Returns true if any point in \p w1 is in front of plane2, or any point in \p w2 is in front of plane1
+	static bool planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
 };
 
 class Plane3;
-
-bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
-
-std::size_t Winding_FindAdjacent(const Winding& w, std::size_t face);
 
 std::size_t Winding_Opposite(const Winding& w, const std::size_t index, const std::size_t other);
 std::size_t Winding_Opposite(const Winding& w, std::size_t index);

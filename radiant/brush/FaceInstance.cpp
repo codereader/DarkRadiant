@@ -298,15 +298,15 @@ void FaceInstance::update_selection_vertex() {
 		m_selectableVertices.setSelected(true);
 
 		if (m_vertexSelection.size() == 1) {
-				std::size_t index = Winding_FindAdjacent(getFace().getWinding(), *m_vertexSelection.begin());
+				std::size_t index = getFace().getWinding().findAdjacent(*m_vertexSelection.begin());
 
 				if (index != c_brush_maxFaces) {
 						update_move_planepts_vertex(index);
 					}
 			}
 		else if (m_vertexSelection.size() == 2) {
-				std::size_t index = Winding_FindAdjacent(getFace().getWinding(), *m_vertexSelection.begin());
-				std::size_t other = Winding_FindAdjacent(getFace().getWinding(), *(++m_vertexSelection.begin()));
+				std::size_t index = getFace().getWinding().findAdjacent(*m_vertexSelection.begin());
+				std::size_t other = getFace().getWinding().findAdjacent(*(++m_vertexSelection.begin()));
 
 				if (index != c_brush_maxFaces
 						&& other != c_brush_maxFaces) {
@@ -352,7 +352,7 @@ void FaceInstance::update_selection_edge() {
 		m_selectableEdges.setSelected(true);
 
 		if (m_edgeSelection.size() == 1) {
-				std::size_t index = Winding_FindAdjacent(getFace().getWinding(), *m_edgeSelection.begin());
+				std::size_t index = getFace().getWinding().findAdjacent(*m_edgeSelection.begin());
 
 				if (index != c_brush_maxFaces) {
 						update_move_planepts_edge(index);
