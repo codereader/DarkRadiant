@@ -266,7 +266,7 @@ void FaceInstance::update_move_planepts_vertex2(std::size_t index, std::size_t o
 	const std::size_t numpoints = m_face->getWinding().numpoints;
 	ASSERT_MESSAGE(index < numpoints, "select_vertex: invalid index");
 
-	const std::size_t opposite = Winding_Opposite(m_face->getWinding(), index, other);
+	const std::size_t opposite = m_face->getWinding().opposite(index, other);
 
 	if (triangle_reversed(index, other, opposite)) {
 		std::swap(index, other);
@@ -337,7 +337,7 @@ void FaceInstance::update_move_planepts_edge(std::size_t index) {
 	ASSERT_MESSAGE(index < numpoints, "select_edge: invalid index");
 
 	std::size_t adjacent = m_face->getWinding().next(index);
-	std::size_t opposite = Winding_Opposite(m_face->getWinding(), index);
+	std::size_t opposite = m_face->getWinding().opposite(index);
 	m_face->m_move_planepts[0] = m_face->getWinding()[index].vertex;
 	m_face->m_move_planepts[1] = m_face->getWinding()[adjacent].vertex;
 	m_face->m_move_planepts[2] = m_face->getWinding()[opposite].vertex;

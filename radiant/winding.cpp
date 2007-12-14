@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "winding.h"
 
 #include <algorithm>
-
 #include "brush/FixedWinding.h"
 #include "math/line.h"
 #include "math/Plane3.h"
@@ -54,38 +53,34 @@ std::size_t Winding::findAdjacent(std::size_t face) const {
 	return c_brush_maxFaces;
 }
 
-std::size_t Winding_Opposite(const Winding& winding, const std::size_t index, const std::size_t other)
-{
-  ASSERT_MESSAGE(index < winding.numpoints && other < winding.numpoints, "Winding_Opposite: index out of range");
+std::size_t Winding::opposite(const std::size_t index, const std::size_t other) const {
+	ASSERT_MESSAGE(index < numpoints && other < numpoints, "Winding::opposite: index out of range");
+	
+	double dist_best = 0;
+	std::size_t index_best = c_brush_maxFaces;
 
-  double dist_best = 0;
-  std::size_t index_best = c_brush_maxFaces;
+	Ray edge(ray_for_points((*this)[index].vertex, (*this)[other].vertex));
 
-  Ray edge(ray_for_points(winding[index].vertex, winding[other].vertex));
+	for (std::size_t i=0; i < numpoints; ++i) {
+		if (i == index || i == other) {
+			continue;
+		}
 
-  for(std::size_t i=0; i<winding.numpoints; ++i)
-  {
-    if(i == index || i == other)
-    {
-      continue;
-    }
+		double dist_squared = ray_squared_distance_to_point(edge, (*this)[i].vertex);
 
-    double dist_squared = ray_squared_distance_to_point(edge, winding[i].vertex);
-
-    if(dist_squared > dist_best)
-    {
-      dist_best = dist_squared;
-      index_best = i;
-    }
-  }
-  return index_best;
+		if (dist_squared > dist_best) {
+			dist_best = dist_squared;
+			index_best = i;
+		}
+	}
+	
+	return index_best;
 }
 
-std::size_t Winding_Opposite(const Winding& winding, const std::size_t index)
-{
-  return Winding_Opposite(winding, index, winding.next(index));
+std::size_t Winding::opposite(std::size_t index) const {
+	return opposite(index, next(index));
 }
-
+	
 Vector3 Winding::centroid(const Plane3& plane) const {
 	Vector3 centroid(0,0,0);
 	
