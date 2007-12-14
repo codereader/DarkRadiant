@@ -212,6 +212,8 @@ public:
 	}
 	
 	std::size_t findAdjacent(std::size_t face) const;
+	std::size_t opposite(const std::size_t index, const std::size_t other) const;
+	std::size_t opposite(std::size_t index) const;
 	
 	// Returns the classification for the given plane
 	BrushSplitType classifyPlane(const Plane3& plane) const {
@@ -238,10 +240,5 @@ public:
 	/// \brief Returns true if any point in \p w1 is in front of plane2, or any point in \p w2 is in front of plane1
 	static bool planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
 };
-
-class Plane3;
-
-std::size_t Winding_Opposite(const Winding& w, const std::size_t index, const std::size_t other);
-std::size_t Winding_Opposite(const Winding& w, std::size_t index);
 
 #endif
