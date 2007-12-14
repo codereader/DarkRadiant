@@ -550,6 +550,7 @@ radiant_src = \
          'brushexport/BrushExportOBJ.cpp',
          'brush/BrushNode.cpp',
          'brush/BrushPrimitTexDef.cpp',
+         'brush/FixedWinding.cpp',
          'brush/TexDef.cpp',
          'brush/TextureProjection.cpp',
          'brush/FaceShader.cpp',
