@@ -319,7 +319,7 @@ BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane)
   {
     if((*i)->contributes())
     {
-      split += Winding_ClassifyPlane((*i)->getWinding(), plane);
+      split += (*i)->getWinding().classifyPlane(plane);
     }
   }
   return split;

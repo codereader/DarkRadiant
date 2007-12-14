@@ -441,7 +441,7 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
 			{
 				// flip the plane, because we want to keep the back side
 				Plane3 clipPlane(-clip.plane3().normal(), -clip.plane3().dist());
-				Winding_Clip(buffer[swap], plane, clipPlane, i, buffer[!swap]);
+				buffer[swap].clip(plane, clipPlane, i, buffer[!swap]);
 			}
 
 			swap = !swap;

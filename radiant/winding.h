@@ -67,7 +67,19 @@ public:
   std::size_t adjacent;
 };
 
+const double ON_EPSILON	= 1.0 / (1 << 8);
 
+inline PlaneClassification Winding_classifyDistance(const double distance, const double epsilon) {
+	if (distance > epsilon) {
+		return ePlaneFront;
+	}
+	
+	if (distance < -epsilon) {
+		return ePlaneBack;
+	}
+	
+	return ePlaneOn;
+}
 
 class Winding
 {
@@ -198,11 +210,20 @@ public:
 	inline std::size_t next(std::size_t i) const {
 		return wrap(++i);
 	}
+	
+	// Returns the classification for the given plane
+	BrushSplitType classifyPlane(const Plane3& plane) const {
+		BrushSplitType split;
+		
+		for (const_iterator i = begin(); i != end(); ++i) {
+			++split.counts[Winding_classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)];
+		}
+		
+		return split;
+	}
 };
 
 class Plane3;
-
-const double ON_EPSILON	= 1.0 / (1 << 8);
 
 /// \brief Returns true if edge (\p x, \p y) is smaller than the epsilon used to classify winding points against a plane.
 inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y)
@@ -212,8 +233,6 @@ inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y)
 
 class FixedWinding;
 void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped);
-
-BrushSplitType Winding_ClassifyPlane(const Winding& w, const Plane3& plane);
 
 bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
 bool Winding_TestPlane(const Winding& w, const Plane3& plane, bool flipped);

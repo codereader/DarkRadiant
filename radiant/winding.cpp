@@ -27,72 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/line.h"
 #include "math/Plane3.h"
 
-/// \brief Returns the point at which \p line intersects \p plane, or an undefined value if there is no intersection.
-inline Vector3 line_intersect_plane(const DoubleLine& line, const Plane3& plane)
-{
-  return line.origin + 
-    line.direction * (-plane.distanceToPoint(line.origin) / line.direction.dot(plane.normal()));
-}
-
-inline bool float_is_largest_absolute(double axis, double other)
-{
-  return fabs(axis) > fabs(other);
-}
-
-/// \brief Returns the index of the component of \p v that has the largest absolute value.
-inline int vector3_largest_absolute_component_index(const Vector3& v)
-{
-  return (float_is_largest_absolute(v[1], v[0]))
-    ? (float_is_largest_absolute(v[1], v[2]))
-      ? 1
-      : 2
-    : (float_is_largest_absolute(v[0], v[2]))
-      ? 0
-      : 2;
-}
-
-/// \brief Returns the infinite line that is the intersection of \p plane and \p other.
-inline DoubleLine plane3_intersect_plane3(const Plane3& plane, const Plane3& other)
-{
-  DoubleLine line;
-  line.direction = plane.normal().crossProduct(other.normal());
-  switch(vector3_largest_absolute_component_index(line.direction))
-  {
-  case 0:
-    line.origin.x() = 0;
-    line.origin.y() = (-other.dist() * plane.normal().z() - -plane.dist() * other.normal().z()) / line.direction.x();
-    line.origin.z() = (-plane.dist() * other.normal().y() - -other.dist() * plane.normal().y()) / line.direction.x();
-    break;
-  case 1:
-    line.origin.x() = (-plane.dist() * other.normal().z() - -other.dist() * plane.normal().z()) / line.direction.y();
-    line.origin.y() = 0;
-    line.origin.z() = (-other.dist() * plane.normal().x() - -plane.dist() * other.normal().x()) / line.direction.y();
-    break;
-  case 2:
-    line.origin.x() = (-other.dist() * plane.normal().y() - -plane.dist() * other.normal().y()) / line.direction.z();
-    line.origin.y() = (-plane.dist() * other.normal().x() - -other.dist() * plane.normal().x()) / line.direction.z();
-    line.origin.z() = 0;
-    break;
-  default:
-    break;
-  }
-
-  return line;
-}
-
-inline PlaneClassification Winding_ClassifyDistance(const double distance, const double epsilon)
-{
-  if(distance > epsilon)
-  {
-    return ePlaneFront;
-  }
-  if(distance < -epsilon)
-  {
-    return ePlaneBack;
-  }
-  return ePlaneOn;
-}
-
 /// \brief Returns true if
 /// !flipped && winding is completely BACK or ON
 /// or flipped && winding is completely FRONT or ON
@@ -101,7 +35,7 @@ bool Winding_TestPlane(const Winding& winding, const Plane3& plane, bool flipped
   const int test = (flipped) ? ePlaneBack : ePlaneFront;
   for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
   {
-    if(test == Winding_ClassifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON))
+    if(test == Winding_classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON))
     {
       return false;
     }
@@ -115,91 +49,12 @@ bool Winding_PlanesConcave(const Winding& w1, const Winding& w2, const Plane3& p
   return !Winding_TestPlane(w1, plane2, false) || !Winding_TestPlane(w2, plane1, false);
 }
 
-BrushSplitType Winding_ClassifyPlane(const Winding& winding, const Plane3& plane) 
-{
-  BrushSplitType split;
-  for(Winding::const_iterator i = winding.begin(); i != winding.end(); ++i)
-  {
-    ++split.counts[Winding_ClassifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)];
-  }
-  return split;
-}
-
-
 #define DEBUG_EPSILON ON_EPSILON
 const double DEBUG_EPSILON_SQUARED = DEBUG_EPSILON * DEBUG_EPSILON;
 
 #define WINDING_DEBUG 0
 
-/// \brief Clip \p winding which lies on \p plane by \p clipPlane, resulting in \p clipped.
-/// If \p winding is completely in front of the plane, \p clipped will be identical to \p winding.  
-/// If \p winding is completely in back of the plane, \p clipped will be empty.  
-/// If \p winding intersects the plane, the edge of \p clipped which lies on \p clipPlane will store the value of \p adjacent.
-void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped)
-{
-  PlaneClassification classification = Winding_ClassifyDistance(clipPlane.distanceToPoint(winding.back().vertex), ON_EPSILON);
-  PlaneClassification nextClassification;
-  // for each edge
-  for(std::size_t next = 0, i = winding.size()-1; next != winding.size(); i = next, ++next, classification = nextClassification)
-  {
-    nextClassification = Winding_ClassifyDistance(clipPlane.distanceToPoint(winding[next].vertex), ON_EPSILON);
-    const FixedWindingVertex& vertex = winding[i];
 
-    // if first vertex of edge is ON
-    if(classification == ePlaneOn)
-    {
-      // append first vertex to output winding
-      if(nextClassification == ePlaneBack)
-      {
-        // this edge lies on the clip plane
-        clipped.push_back(FixedWindingVertex(vertex.vertex, plane3_intersect_plane3(plane, clipPlane), adjacent));
-      }
-      else
-      {
-        clipped.push_back(vertex);
-      }
-      continue;
-    }
-  
-    // if first vertex of edge is FRONT
-    if(classification == ePlaneFront)
-    {
-      // add first vertex to output winding
-      clipped.push_back(vertex);
-    }
-    // if second vertex of edge is ON
-    if(nextClassification == ePlaneOn)
-    {
-      continue;
-    }
-    // else if second vertex of edge is same as first
-    else if(nextClassification == classification)
-    {
-      continue;
-    }
-    // else if first vertex of edge is FRONT and there are only two edges
-    else if(classification == ePlaneFront && winding.size() == 2)
-    {
-      continue;
-    }
-    // else first vertex is FRONT and second is BACK or vice versa
-    else
-    {
-      // append intersection point of line and plane to output winding
-      Vector3 mid(line_intersect_plane(vertex.edge, clipPlane));
-
-      if(classification == ePlaneFront)
-      {
-        // this edge lies on the clip plane
-        clipped.push_back(FixedWindingVertex(mid, plane3_intersect_plane3(plane, clipPlane), adjacent));
-      }
-      else
-      {
-        clipped.push_back(FixedWindingVertex(mid, vertex.edge, vertex.adjacent));
-      }
-    }
-  }
-}
 
 std::size_t Winding_FindAdjacent(const Winding& winding, std::size_t face)
 {
