@@ -634,6 +634,7 @@ if radiant_env['PLATFORM'] == 'win32':
 		'#w32deps/vorbis/lib/ogg.dll',
 		'#w32deps/vorbis/lib/vorbis.dll',
 		'#w32deps/vorbis/lib/vorbisfile.dll',
+		'#w32deps/vorbis/lib/libogg.dll',
 		'#w32deps/openal/lib/alut.dll',
 		'#w32deps/openal/lib/OpenAL32.dll',
 		'#w32deps/openal/lib/wrap_oal.dll',
