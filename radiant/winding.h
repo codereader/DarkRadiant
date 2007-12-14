@@ -187,25 +187,20 @@ public:
 		
 		glDrawArrays(GL_POLYGON, 0, GLsizei(numpoints));
 	}
+	
+	// Wraps the given index around if it's larger than the size of this winding
+	inline std::size_t wrap(std::size_t i) const {
+		ASSERT_MESSAGE(numpoints != 0, "Winding_wrap: empty winding");
+		return i % numpoints;
+	}
+	
+	// Returns the next winding index (wraps around)
+	inline std::size_t next(std::size_t i) const {
+		return wrap(++i);
+	}
 };
 
-inline std::size_t Winding_wrap(const Winding& winding, std::size_t i)
-{
-  ASSERT_MESSAGE(winding.numpoints != 0, "Winding_wrap: empty winding");
-  return i % winding.numpoints;
-}
-
-inline std::size_t Winding_next(const Winding& winding, std::size_t i)
-{
-  return Winding_wrap(winding, ++i);
-}
-
-
 class Plane3;
-
-class FixedWinding;
-
-void Winding_createInfinite(FixedWinding& w, const Plane3& plane, double infinity);
 
 const double ON_EPSILON	= 1.0 / (1 << 8);
 
@@ -215,6 +210,7 @@ inline bool Edge_isDegenerate(const Vector3& x, const Vector3& y)
   return (y - x).getLengthSquared() < (ON_EPSILON * ON_EPSILON);
 }
 
+class FixedWinding;
 void Winding_Clip(const FixedWinding& winding, const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped);
 
 BrushSplitType Winding_ClassifyPlane(const Winding& w, const Plane3& plane);

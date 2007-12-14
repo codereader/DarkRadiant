@@ -243,7 +243,7 @@ std::size_t Winding_Opposite(const Winding& winding, const std::size_t index, co
 
 std::size_t Winding_Opposite(const Winding& winding, const std::size_t index)
 {
-  return Winding_Opposite(winding, index, Winding_next(winding, index));
+  return Winding_Opposite(winding, index, winding.next(index));
 }
 
 /// \brief Calculate the \p centroid of the polygon defined by \p winding which lies on plane \p plane.

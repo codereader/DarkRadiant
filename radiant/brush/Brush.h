@@ -42,7 +42,7 @@ inline FaceVertexId next_edge(const Faces& faces, FaceVertexId faceVertex) {
 /// \brief Returns the unique-id of the vertex adjacent to \p faceVertex in the vertex-ring for the set of \p faces.
 inline FaceVertexId next_vertex(const Faces& faces, FaceVertexId faceVertex) {
 	FaceVertexId nextEdge = next_edge(faces, faceVertex);
-	return FaceVertexId(nextEdge.getFace(), Winding_next(faces[nextEdge.getFace()]->getWinding(), nextEdge.getVertex()));
+	return FaceVertexId(nextEdge.getFace(), faces[nextEdge.getFace()]->getWinding().next(nextEdge.getVertex()));
 }
 
 struct EdgeFaces {
