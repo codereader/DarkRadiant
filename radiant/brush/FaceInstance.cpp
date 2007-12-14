@@ -336,7 +336,7 @@ void FaceInstance::update_move_planepts_edge(std::size_t index) {
 	std::size_t numpoints = m_face->getWinding().numpoints;
 	ASSERT_MESSAGE(index < numpoints, "select_edge: invalid index");
 
-	std::size_t adjacent = Winding_next(m_face->getWinding(), index);
+	std::size_t adjacent = m_face->getWinding().next(index);
 	std::size_t opposite = Winding_Opposite(m_face->getWinding(), index);
 	m_face->m_move_planepts[0] = m_face->getWinding()[index].vertex;
 	m_face->m_move_planepts[1] = m_face->getWinding()[adjacent].vertex;

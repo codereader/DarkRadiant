@@ -66,7 +66,7 @@ public:
 			std::size_t index = Winding_FindAdjacent(getFace().getWinding(), *i);
 			if (index != c_brush_maxFaces) {
 					const Winding& winding = getFace().getWinding();
-					std::size_t adjacent = Winding_next(winding, index);
+					std::size_t adjacent = winding.next(index);
 					functor(vector3_mid(winding[index].vertex, winding[adjacent].vertex));
 				}
 		}

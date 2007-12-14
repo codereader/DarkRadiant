@@ -536,7 +536,7 @@ void Brush::removeDegenerateEdges() {
 		
 		for (Winding::iterator j = winding.begin(); j != winding.end();) {
 			std::size_t index = std::distance(winding.begin(), j);
-			std::size_t next = Winding_next(winding, index);
+			std::size_t next = winding.next(index);
 			
 			if (Edge_isDegenerate(winding[index].vertex, winding[next].vertex)) {
 				Winding& other = m_faces[winding[index].adjacent]->getWinding();
@@ -595,7 +595,7 @@ void Brush::removeDuplicateEdges() {
 			{
 				Winding& winding = m_faces[i]->getWinding();
 				for (std::size_t j = 0; j != winding.numpoints;) {
-					std::size_t next = Winding_next(winding, j);
+					std::size_t next = winding.next(j);
 					if (winding[j].adjacent == winding[next].adjacent) {
 						winding.erase(winding.begin() + next);
 					}
@@ -827,7 +827,7 @@ void Brush::buildBRep() {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(edgePairs, uniqueEdges[i])];
 
             const Winding& w = m_faces[faceVertex.getFace()]->getWinding();
-            Vector3 edge = vector3_mid(w[faceVertex.getVertex()].vertex, w[Winding_next(w, faceVertex.getVertex())].vertex);
+            Vector3 edge = vector3_mid(w[faceVertex.getVertex()].vertex, w[w.next(faceVertex.getVertex())].vertex);
             m_uniqueEdgePoints[i] = PointVertex(edge, colour_vertex);
           }
         }
@@ -899,7 +899,7 @@ void Brush::buildBRep() {
             const RenderIndex edge_index = uniqueEdgeIndices[count+j];
 
             m_edge_indices[edge_index].first = uniqueVertexIndices[count + j];
-            m_edge_indices[edge_index].second = uniqueVertexIndices[count + Winding_next(winding, j)];
+            m_edge_indices[edge_index].second = uniqueVertexIndices[count + winding.next(j)];
           }
           count += winding.numpoints;
         }

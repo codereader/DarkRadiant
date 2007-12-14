@@ -170,7 +170,7 @@ void Face::update_move_planepts_vertex(std::size_t index, PlanePoints planePoint
 	ASSERT_MESSAGE(index < numpoints, "update_move_planepts_vertex: invalid index");
 	
 	std::size_t opposite = Winding_Opposite(getWinding(), index);
-	std::size_t adjacent = Winding_wrap(getWinding(), opposite+numpoints-1);
+	std::size_t adjacent = getWinding().wrap(opposite + numpoints - 1);
 	planePoints[0] = getWinding()[opposite].vertex;
 	planePoints[1] = getWinding()[index].vertex;
 	planePoints[2] = getWinding()[adjacent].vertex;
