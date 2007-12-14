@@ -149,6 +149,10 @@ public:
 		
 		return returnValue;
 	}
+	
+	void testSelect(SelectionTest& test, SelectionIntersection& best) {
+		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.data()->vertex), sizeof(WindingVertex)), numpoints, best);
+	}
 };
 
 class DoubleLine
@@ -368,10 +372,6 @@ inline void Winding_Draw(const Winding& winding, const Vector3& normal, RenderSt
   }
   glEnd();
 #endif*/
-}
-
-inline void Winding_testSelect(Winding& winding, SelectionTest& test, SelectionIntersection& best) {
-	test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&winding.points.data()->vertex), sizeof(WindingVertex)), winding.numpoints, best);
 }
 
 #endif

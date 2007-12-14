@@ -195,7 +195,7 @@ void Face::snapto(float snap) {
 }
 
 void Face::testSelect(SelectionTest& test, SelectionIntersection& best) {
-	Winding_testSelect(m_winding, test, best);
+	m_winding.testSelect(test, best);
 }
 
 void Face::testSelect_centroid(SelectionTest& test, SelectionIntersection& best) {
