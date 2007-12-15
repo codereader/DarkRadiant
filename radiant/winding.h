@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Vector2.h"
 #include "math/Vector3.h"
-#include "container/array.h"
 #include "texturelib.h"
 
 struct indexremap_t
@@ -85,67 +84,59 @@ inline PlaneClassification Winding_classifyDistance(const double distance, const
 class Winding
 {
 public:
-  typedef Array<WindingVertex> container_type;
+	typedef std::vector<WindingVertex> container_type;
 
-  std::size_t numpoints;
-  container_type points;
+	std::size_t numpoints;
+	container_type points;
 
-  typedef container_type::iterator iterator;
-  typedef container_type::const_iterator const_iterator;
+	typedef container_type::iterator iterator;
+	typedef container_type::const_iterator const_iterator;
 
-  Winding() : numpoints(0)
-  {
-  }
-  Winding(std::size_t size) : numpoints(0), points(size)
-  {
-  }
-  void resize(std::size_t size)
-  {
-    points.resize(size);
-    numpoints = 0;
-  }
+	Winding() :
+		numpoints(0)
+	{}
+	
+	Winding(std::size_t size) :
+		numpoints(0), points(size)
+	{}
+	
+	void resize(std::size_t size) {
+		points.resize(size);
+		numpoints = 0;
+	}
 
-  iterator begin()
-  {
-    return points.begin();
-  }
-  const_iterator begin() const
-  {
-    return points.begin();
-  }
-  iterator end()
-  {
-    return points.begin() + numpoints;
-  }
-  const_iterator end() const
-  {
-    return points.begin() + numpoints;
-  }
+	iterator begin() {
+		return points.begin();
+	}
+	const_iterator begin() const {
+		return points.begin();
+	}
+	iterator end() {
+		return points.begin() + numpoints;
+	}
+	const_iterator end() const {
+		return points.begin() + numpoints;
+	}
 
-  WindingVertex& operator[](std::size_t index)
-  {
-    ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
-    return points[index];
-  }
-  const WindingVertex& operator[](std::size_t index) const
-  {
-    ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
-    return points[index];
-  }
+	WindingVertex& operator[](std::size_t index) {
+		ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
+		return points[index];
+	}
+	
+	const WindingVertex& operator[](std::size_t index) const {
+		ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
+		return points[index];
+	}
 
-  void push_back(const WindingVertex& point)
-  {
-    points[numpoints] = point;
-    ++numpoints;
-  }
-  void erase(iterator point)
-  {
-    for(iterator i = point + 1; i != end(); point = i, ++i)
-    {
-      *point = *i;
-    }
-    --numpoints;
-  }
+	void push_back(const WindingVertex& point) {
+		points[numpoints] = point;
+		++numpoints;
+	}
+	
+	void erase(iterator point) {
+		points.erase(point);
+		--numpoints;
+	}
   
 	/** greebo: Calculates the AABB of this winding
 	 */
@@ -160,7 +151,7 @@ public:
 	}
 	
 	void testSelect(SelectionTest& test, SelectionIntersection& best) {
-		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.data()->vertex), sizeof(WindingVertex)), numpoints, best);
+		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.front().vertex), sizeof(WindingVertex)), numpoints, best);
 	}
 	
 	// greebo: Updates the array containing the normal vectors of this winding
@@ -175,21 +166,21 @@ public:
 	// Submits this winding to OpenGL
 	inline void draw(RenderStateFlags state) const {
 		// Set the vertex pointer first
-		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.data()->vertex);
+		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.front().vertex);
 
 		if ((state & RENDER_BUMP) != 0) {
-			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->normal);
-			glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->texcoord);
-			glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->tangent);
-			glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->bitangent);
+			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().normal);
+			glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().texcoord);
+			glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().tangent);
+			glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().bitangent);
 		} 
 		else {
 			if (state & RENDER_LIGHTING) {
-				glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &points.data()->normal);
+				glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &points.front().normal);
 			}
 
 			if (state & RENDER_TEXTURE) {
-				glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &points.data()->texcoord);
+				glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &points.front().texcoord);
 			}
 		}
 		
