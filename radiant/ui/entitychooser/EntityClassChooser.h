@@ -29,15 +29,12 @@ namespace {
 namespace ui
 {
 
-/** Dialog window displaying a tree of Entity Classes, allowing the selection
- * of a class to create at the current location. This widget is displayed
- * by the OrthoContextMenu.
+/** 
+ * Dialog window displaying a tree of Entity Classes, allowing the selection
+ * of a class to create at the current location. 
  */
-
 class EntityClassChooser
 {
-private:
-
 	// Main dialog window
 	GtkWidget* _widget;
 	
@@ -51,12 +48,12 @@ private:
 	// Usage information textview
 	GtkWidget* _usageTextView;
 
-	// Add button. Needs to be a member since we enable/disable it in the
+	// OK button. Needs to be a member since we enable/disable it in the
 	// selectionchanged callback.
-	GtkWidget* _addButton;
-
-	// The 3D coordinates of the point where the entity must be created.
-	Vector3 _lastPoint;
+	GtkWidget* _okButton;
+	
+	// Last selected classname
+	std::string _selectedName;
 
 private:
 
@@ -77,33 +74,26 @@ private:
 
 	// Button callbacks
 	static void callbackCancel(GtkWidget*, EntityClassChooser*);
-	static void callbackAdd(GtkWidget*, EntityClassChooser*);
+	static void callbackOK(GtkWidget*, EntityClassChooser*);
 
 	// Check when the selection changes, disable the add button if there
 	// is nothing selected.
 	static void callbackSelectionChanged(GtkWidget*, EntityClassChooser*);
 
-public:
-
 	/// Constructor. Creates the GTK widgets.
 	EntityClassChooser();
 	
-	/* Show the dialog and choose an entity class.
-	 * 
-	 * @param point
-	 * The point at which the new entity should be created
+	// Show the dialog and choose an entity class.
+	std::string showAndBlock();
+	
+public:
+	
+	/** 
+	 * Display the dialog and block awaiting the selection of an entity class,
+	 * which is returned to the caller. If the dialog is cancelled or no
+	 * selection is made, and empty string will be returned.
 	 */
-	
-	void show(const Vector3& point);
-	
-	/** Obtain the singleton instance and show it, passing in the
-	 * required entity creation coordinates.
-	 * 
-	 * @param point
-	 * The point at which the new entity should be created
-	 */
-	
-	static void displayInstance(const Vector3& point);
+	static std::string chooseEntityClass();
 	
 };
 

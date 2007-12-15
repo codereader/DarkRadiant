@@ -198,8 +198,22 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 
 /* GTK CALLBACKS */
 
-void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self) {
-	EntityClassChooser::displayInstance(self->_lastPoint);
+void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, 
+										 OrthoContextMenu* self) 
+{
+	// Display the chooser to select an entity classname
+	std::string cName = EntityClassChooser::chooseEntityClass();
+	
+	if (!cName.empty()) {
+		// Create the entity. We might get an EntityCreationException if the 
+		// wrong number of brushes is selected.
+		try {
+			Entity_createFromSelection(cName.c_str(), self->_lastPoint);
+		}
+		catch (EntityCreationException e) {
+			gtkutil::errorDialog(e.what(), MainFrame_getWindow());
+		}
+	}
 }
 
 void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {

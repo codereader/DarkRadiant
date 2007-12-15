@@ -16,20 +16,24 @@
 namespace ui
 {
 
-// Obtain and display the singleton instance
-void EntityClassChooser::displayInstance(const Vector3& point) {
+// Display the singleton instance
+std::string EntityClassChooser::chooseEntityClass() {
 	static EntityClassChooser instance;
-	instance.show(point);
+	return instance.showAndBlock();
 }
 
 // Show the dialog
 
-void EntityClassChooser::show(const Vector3& point) {
-	_lastPoint = point;
-	
+std::string EntityClassChooser::showAndBlock() {
 	// Show the widget and set keyboard focus to the tree view
 	gtk_widget_show_all(_widget);
 	gtk_widget_grab_focus(_treeView);
+	
+	// Enter recursive main loop
+	gtk_main();
+	
+	// Return the last selection (may be "" if dialog was cancelled)
+	return _selectedName;
 }
 
 // Constructor. Creates GTK widgets.
@@ -38,7 +42,8 @@ EntityClassChooser::EntityClassChooser()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
   _treeStore(NULL),
   _selection(NULL),
-  _addButton(NULL)
+  _okButton(NULL),
+  _selectedName("")
 {
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
@@ -50,7 +55,9 @@ EntityClassChooser::EntityClassChooser()
 	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w*0.4f, h*0.6f);
+	gtk_window_set_default_size(
+		GTK_WINDOW(_widget), gint(w * 0.4f), gint(h * 0.6f)
+	);
 
 	// Create GUI elements and pack into main VBox
 	
@@ -117,12 +124,16 @@ GtkWidget* EntityClassChooser::createButtonPanel() {
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	_addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	_okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
-	g_signal_connect(G_OBJECT(_addButton), "clicked", G_CALLBACK(callbackAdd), this);
+	g_signal_connect(
+		G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this
+	);
+	g_signal_connect(
+		G_OBJECT(_okButton), "clicked", G_CALLBACK(callbackOK), this
+	);
 
-	gtk_box_pack_end(GTK_BOX(hbx), _addButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), _okButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 	return gtkutil::RightAlignment(hbx);
 }
@@ -157,39 +168,31 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass) {
 
 /* GTK CALLBACKS */
 
-void EntityClassChooser::callbackHide(GtkWidget* widget, GdkEvent* ev, EntityClassChooser* self) {
+void EntityClassChooser::callbackHide(GtkWidget* widget, 
+									  GdkEvent* ev, 
+									  EntityClassChooser* self) 
+{
 	gtk_widget_hide(self->_widget);
+	gtk_main_quit();
 }
 
-void EntityClassChooser::callbackCancel(GtkWidget* widget, EntityClassChooser* self) {
+void EntityClassChooser::callbackCancel(GtkWidget* widget, 
+										EntityClassChooser* self) 
+{
+	self->_selectedName = "";
 	gtk_widget_hide(self->_widget);
+	gtk_main_quit();
 }
 
-void EntityClassChooser::callbackAdd(GtkWidget* widget, EntityClassChooser* self) {
-
-	// Get the selection. There must be a selection because the add button is
-	// insensitive if there is not.
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	gtk_tree_selection_get_selected(self->_selection, &model, &iter);
-
-	// Create the entity and hide the dialog. We might get an 
-	// EntityCreationException if the wrong number of brushes is selected.
-	try {
-		// Get the entity classname
-		std::string cName = 
-			gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN);
-		// Create the entity and hide the dialog
-		Entity_createFromSelection(cName.c_str(), self->_lastPoint);
-		gtk_widget_hide(self->_widget);
-	}
-	catch (EntityCreationException e) {
-		gtkutil::errorDialog(e.what(), MainFrame_getWindow());
-	}
+void EntityClassChooser::callbackOK(GtkWidget* widget, EntityClassChooser* self) 
+{
+	gtk_widget_hide(self->_widget);
+	gtk_main_quit();
 }
 
-void EntityClassChooser::callbackSelectionChanged(GtkWidget* widget, EntityClassChooser* self) {
-
+void EntityClassChooser::callbackSelectionChanged(GtkWidget* widget, 
+												  EntityClassChooser* self) 
+{
 	// Prepare to check for a selection
 	GtkTreeIter iter;
 	GtkTreeModel* model;
@@ -198,16 +201,22 @@ void EntityClassChooser::callbackSelectionChanged(GtkWidget* widget, EntityClass
 	if (gtk_tree_selection_get_selected(self->_selection, &model, &iter)
 		&& !gtkutil::TreeModel::getBoolean(model, &iter, DIR_FLAG_COLUMN)) 
 	{
-		// Make the Add button active 
-		gtk_widget_set_sensitive(self->_addButton, TRUE);
+		// Make the OK button active 
+		gtk_widget_set_sensitive(self->_okButton, TRUE);
 
 		// Set the panel text with the usage information
-		self->updateUsageInfo(
-			gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN));
+		std::string selName = gtkutil::TreeModel::getString(
+			model, &iter, NAME_COLUMN
+		); 
+		self->updateUsageInfo(selName);
+
+		// Update the _selectionName field
+		self->_selectedName = selName;
 	}
 	else {
-		gtk_widget_set_sensitive(self->_addButton, FALSE);
+		gtk_widget_set_sensitive(self->_okButton, FALSE);
 	}
+	
 }
 
 } // namespace ui
