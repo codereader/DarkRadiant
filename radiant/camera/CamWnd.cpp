@@ -8,6 +8,7 @@
 
 #include "gtkutil/glwidget.h"
 #include "gtkutil/widget.h"
+#include "gtkutil/GLWidgetSentry.h"
 #include "cmdlib.h"
 
 #include "selectable.h"
@@ -582,19 +583,15 @@ void CamWnd::Cam_Draw() {
 void CamWnd::draw() {
 	m_drawing = true;
 
-	//globalOutputStream() << "draw...\n";
+	// Scoped object handling the GL context switching
+	gtkutil::GLWidgetSentry sentry(m_gl_widget);
 
-	if (glwidget_make_current(m_gl_widget) != FALSE) {
-		if (GlobalMap().isValid() && ScreenUpdates_Enabled()) {
-			GlobalOpenGL_debugAssertNoErrors();
-			Cam_Draw();
-			GlobalOpenGL_debugAssertNoErrors();
-			//qglFinish();
+	if (GlobalMap().isValid() && ScreenUpdates_Enabled()) {
+		GlobalOpenGL_debugAssertNoErrors();
+		Cam_Draw();
+		GlobalOpenGL_debugAssertNoErrors();
 
-			m_XORRectangle.set(rectangle_t());
-		}
-
-		glwidget_swap_buffers(m_gl_widget);
+		m_XORRectangle.set(rectangle_t());
 	}
 
 	m_drawing = false;
