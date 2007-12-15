@@ -8,13 +8,58 @@
 	</ui>
 	<automatedTest>
 		<runTest value="1" />
-		<testMap value="/media/HDD/Games/Doom3/darkmod/maps/bonehoard.map" />
+		<testMap value="/home/greebo/.doom3/darkmod/maps/brush_test.map" />
 		<testCommands>
-			<testCommand value="InvertSelection" count="6" />
-			<testCommand value="EntityList" count="1" />
-			<testCommand value="InvertSelection" count="6" />
-			<testCommand value="EntityList" count="1" />
-			<testCommand value="InvertSelection" count="6" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
+			<testCommand value="CameraRight" count="1" />
+			<testCommand value="CameraLeft" count="1" />
 		</testCommands>
 	</automatedTest>
 </debug>

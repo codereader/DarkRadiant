@@ -1,7 +1,7 @@
 #ifndef GLWIDGETSENTRY_H_
 #define GLWIDGETSENTRY_H_
 
-#include "glwidget.h"
+#include "GLWidget.h"
 
 namespace gtkutil
 {

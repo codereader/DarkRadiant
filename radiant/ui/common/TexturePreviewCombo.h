@@ -5,7 +5,7 @@
 
 #include "gtkutil/menu/PopupMenu.h"
 
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidget.h"
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
 

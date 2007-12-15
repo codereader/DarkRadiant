@@ -8,7 +8,7 @@
 #include "igrid.h"
 #include "iuimanager.h"
 
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include "stream/stringstream.h"
 

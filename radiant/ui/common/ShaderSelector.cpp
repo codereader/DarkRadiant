@@ -1,7 +1,6 @@
 #include "ShaderSelector.h"
 
 #include "iradiant.h"
-#include "gtkutil/glwidget.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"

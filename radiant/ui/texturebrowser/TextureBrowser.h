@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
 #include "gtkutil/nonmodal.h"
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidget.h"
 #include "gtkutil/cursor.h"
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"

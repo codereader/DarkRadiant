@@ -2,7 +2,7 @@
 #define TEXTOOL_H_
 
 #include "gtk/gtkwidget.h"
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidget.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "math/Vector3.h"
