@@ -188,7 +188,7 @@ namespace
   GtkWidget* g_shared = 0;
 }
 
-gint glwidget_context_created(GtkWidget* widget, gpointer data)
+/*gint glwidget_context_created(GtkWidget* widget, gpointer data)
 {
   if(++g_context_count == 1)
   {
@@ -215,9 +215,9 @@ gint glwidget_context_destroyed(GtkWidget* widget, gpointer data)
     g_shared = 0;
   }
   return FALSE;
-}
+}*/
 
-gboolean glwidget_enable_gl(GtkWidget* widget, GtkWidget* widget2, gpointer data)
+/*gboolean glwidget_enable_gl(GtkWidget* widget, GtkWidget* widget2, gpointer data)
 {
   if(widget2 == 0 && !gtk_widget_is_gl_capable(widget))
   {
@@ -235,9 +235,9 @@ gboolean glwidget_enable_gl(GtkWidget* widget, GtkWidget* widget2, gpointer data
     // free glconfig?
   }
   return FALSE;
-}
+}*/
 
-GtkWidget* glwidget_new(gboolean zbuffer)
+/*GtkWidget* glwidget_new(gboolean zbuffer)
 {
   GtkWidget* widget = gtk_drawing_area_new();
 
@@ -257,7 +257,7 @@ void glwidget_destroy_context (GtkWidget *widget)
 
 void glwidget_create_context (GtkWidget *widget)
 {
-}
+}*/
 
 void glwidget_swap_buffers (GtkWidget *widget)
 {
@@ -375,7 +375,7 @@ gint GLWidget::onUnRealise(GtkWidget* widget, GLWidget* self) {
 	return FALSE;
 }
 
-//GtkWidget* GLWidget::_shared = NULL;
-//int GLWidget::_realisedWidgets = 0;
+GtkWidget* GLWidget::_shared = NULL;
+int GLWidget::_realisedWidgets = 0;
 
 } // namespace gtkutil
