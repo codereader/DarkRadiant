@@ -19,17 +19,18 @@ namespace ui
 
 TexturePreviewCombo::TexturePreviewCombo()
 : _widget(gtk_hbox_new(FALSE, 0)),
-  _glWidget(glwidget_new(false)),
+  _glWidget(false),
   _texName(""),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _infoView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore))),
   _contextMenu(_infoView)
 {
 	// Set up the GL preview widget
-	gtk_widget_set_size_request(_glWidget, 128, 128);
-	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(_onExpose), this);
+	GtkWidget* glWidget = _glWidget; // cast to GtkWidget
+	gtk_widget_set_size_request(glWidget, 128, 128);
+	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(_onExpose), this);
 	GtkWidget* glFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
+	gtk_container_add(GTK_CONTAINER(glFrame), glWidget);
 	gtk_box_pack_start(GTK_BOX(_widget), glFrame, FALSE, FALSE, 0);
 	
 	// Set up the info table
