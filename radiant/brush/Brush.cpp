@@ -670,6 +670,9 @@ bool Brush::buildWindings() {
 				// update texture coordinates
 				f.EmitTextureCoordinates();
 			}
+			
+			// greebo: Update the winding, now that it's constructed
+			f.updateWinding();
 		}
 	}
 

@@ -168,18 +168,24 @@ public:
 	// (hook into erase, resize and push_back).
 	mutable Vector3 normals[256];
 	
+	// greebo: Updates the array containing the normal vectors of this winding
+	// The normal is the same for each vertex, so this basically resizes
+	// the array and fills it with the same normal vector (TODO)
+	// Note: should be called each time the winding plane gets transformed 
+	void updateNormals(const Vector3& normal) {
+		typedef Vector3* Vector3Iter;
+					
+		for (Vector3Iter i = normals, end = normals + numpoints; i != end; ++i) {
+			*i = normal;
+		}
+	}
+	
 	// Submits this winding to OpenGL
-	inline void draw(const Vector3& normal, RenderStateFlags state) const {
+	inline void draw(RenderStateFlags state) const {
 		// Set the vertex pointer first
 		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.data()->vertex);
 
 		if ((state & RENDER_BUMP) != 0) {
-			typedef Vector3* Vector3Iter;
-			
-			for (Vector3Iter i = normals, end = normals + numpoints; i != end; ++i) {
-				*i = normal;
-			}
-			
 			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(Vector3), normals);
 			glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->texcoord);
 			glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->tangent);
@@ -187,11 +193,6 @@ public:
 		} 
 		else {
 			if (state & RENDER_LIGHTING) {
-				typedef Vector3* Vector3Iter;
-				
-				for (Vector3Iter i = normals, last = normals + numpoints; i != last; ++i) {
-					*i = normal;
-				}
 				glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
 			}
 

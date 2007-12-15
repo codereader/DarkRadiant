@@ -90,7 +90,7 @@ void Face::instanceDetach(MapFile* map) {
 }
 
 void Face::render(RenderStateFlags state) const {
-	m_winding.draw(m_planeTransformed.plane3().normal(), state);
+	m_winding.draw(state);
 }
 
 void Face::undoSave() {
@@ -144,11 +144,13 @@ void Face::transform(const Matrix4& matrix, bool mirror) {
 	// Transform the FacePlane using the given matrix
 	m_planeTransformed.transform(matrix, mirror);
 	m_observer->planeChanged();
+	updateWinding();
 }
 
 void Face::assign_planepts(const PlanePoints planepts) {
 	m_planeTransformed.copy(planepts[0], planepts[1], planepts[2]);
 	m_observer->planeChanged();
+	updateWinding();
 }
 
 /// \brief Reverts the transformable state of the brush to identity. 
@@ -156,6 +158,7 @@ void Face::revertTransform() {
 	m_planeTransformed = m_plane;
 	planepts_assign(m_move_planeptsTransformed, m_move_planepts);
 	m_texdefTransformed = m_texdef.m_projection;
+	updateWinding();
 }
 
 void Face::freezeTransform() {
@@ -163,6 +166,11 @@ void Face::freezeTransform() {
 	m_plane = m_planeTransformed;
 	planepts_assign(m_move_planepts, m_move_planeptsTransformed);
 	m_texdef.m_projection = m_texdefTransformed;
+	updateWinding();
+}
+
+void Face::updateWinding() {
+	m_winding.updateNormals(m_plane.plane3().normal());
 }
 
 void Face::update_move_planepts_vertex(std::size_t index, PlanePoints planePoints) {

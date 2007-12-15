@@ -97,6 +97,9 @@ public:
 
 	void planeChanged();
 	
+	// greebo: Emits the updated normals to the Winding class.
+	void updateWinding();
+	
 	void realiseShader();
 	void unrealiseShader();
 	
