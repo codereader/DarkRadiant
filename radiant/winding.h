@@ -112,19 +112,19 @@ public:
 		return points.begin();
 	}
 	iterator end() {
-		return points.begin() + numpoints;
+		return points.end();
 	}
 	const_iterator end() const {
-		return points.begin() + numpoints;
+		return points.end();
 	}
 
 	WindingVertex& operator[](std::size_t index) {
-		ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
+		//ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
 		return points[index];
 	}
 	
 	const WindingVertex& operator[](std::size_t index) const {
-		ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
+		//ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
 		return points[index];
 	}
 
@@ -165,22 +165,26 @@ public:
 	
 	// Submits this winding to OpenGL
 	inline void draw(RenderStateFlags state) const {
+		// A shortcut pointer to the first array element to avoid
+		// massive calls to std::vector<>::begin()
+		const WindingVertex& firstElement = points.front();
+			
 		// Set the vertex pointer first
-		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.front().vertex);
+		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
 
 		if ((state & RENDER_BUMP) != 0) {
-			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().normal);
-			glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().texcoord);
-			glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().tangent);
-			glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.front().bitangent);
+			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.normal);
+			glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.texcoord);
+			glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.tangent);
+			glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.bitangent);
 		} 
 		else {
 			if (state & RENDER_LIGHTING) {
-				glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &points.front().normal);
+				glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
 			}
 
 			if (state & RENDER_TEXTURE) {
-				glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &points.front().texcoord);
+				glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord);
 			}
 		}
 		
