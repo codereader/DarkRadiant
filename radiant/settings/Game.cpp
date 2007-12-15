@@ -5,7 +5,6 @@
 #include "xmlutil/Document.h"
 #include <iostream>
 #include "stream/textstream.h"
-#include "error.h"
 
 namespace game {
 
@@ -24,7 +23,9 @@ Game::Game(const std::string& path, const std::string& filename) {
 		// Check for a toplevel game node
 		xml::NodeList list = doc.findXPath("/game");
 	    if (list.size() == 0) {
-			Error("Couldn't find <game> node in the game description file '%s'\n", fullPath.c_str());
+	    	globalErrorStream() 
+	    		<< "Couldn't find <game> node in the game description file "
+	    		<< fullPath.c_str() << "\n";
 		}
 		else {
 			xml::Node node = list[0];
