@@ -125,7 +125,7 @@ void FixedWinding::createInfinite(const Plane3& plane, double infinity) {
 /// If \p winding intersects the plane, the edge of \p clipped which lies on \p clipPlane will store the value of \p adjacent.
 void FixedWinding::clip(const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped)
 {
-	PlaneClassification classification = Winding_classifyDistance(clipPlane.distanceToPoint(back().vertex), ON_EPSILON);
+	PlaneClassification classification = Winding::classifyDistance(clipPlane.distanceToPoint(back().vertex), ON_EPSILON);
 	PlaneClassification nextClassification;
 	
 	// for each edge
@@ -133,7 +133,7 @@ void FixedWinding::clip(const Plane3& plane, const Plane3& clipPlane, std::size_
 		 next != size(); 
 		 i = next, ++next, classification = nextClassification)
 	{
-		nextClassification = Winding_classifyDistance(clipPlane.distanceToPoint((*this)[next].vertex), ON_EPSILON);
+		nextClassification = Winding::classifyDistance(clipPlane.distanceToPoint((*this)[next].vertex), ON_EPSILON);
 		const FixedWindingVertex& vertex = (*this)[i];
 
 		// if first vertex of edge is ON

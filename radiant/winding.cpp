@@ -20,22 +20,110 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "winding.h"
-
+#include "igl.h"
 #include <algorithm>
 #include "brush/FixedWinding.h"
 #include "math/line.h"
 #include "math/Plane3.h"
+#include "texturelib.h"
+
+namespace {
+	struct indexremap_t {
+		indexremap_t(std::size_t _x, std::size_t _y, std::size_t _z) :
+			x(_x), y(_y), z(_z)
+		{}
+		
+		std::size_t x, y, z;
+	};
+	
+	inline indexremap_t indexremap_for_projectionaxis(const ProjectionAxis axis) {
+		switch (axis) {
+			case eProjectionAxisX:
+				return indexremap_t(1, 2, 0);
+			case eProjectionAxisY:
+				return indexremap_t(2, 0, 1);
+			default:
+				return indexremap_t(0, 1, 2);
+		}
+	}
+}
+
+void Winding::draw(RenderStateFlags state) const {
+	// A shortcut pointer to the first array element to avoid
+	// massive calls to std::vector<>::begin()
+	const WindingVertex& firstElement = points.front();
+		
+	// Set the vertex pointer first
+	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
+
+	if ((state & RENDER_BUMP) != 0) {
+		glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.normal);
+		glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.texcoord);
+		glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.tangent);
+		glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.bitangent);
+	} 
+	else {
+		if (state & RENDER_LIGHTING) {
+			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
+		}
+
+		if (state & RENDER_TEXTURE) {
+			glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord);
+		}
+	}
+	
+	glDrawArrays(GL_POLYGON, 0, GLsizei(numpoints));
+}
+
+void Winding::updateNormals(const Vector3& normal) {
+	// Copy all normals into the winding vertices
+	for (iterator i = begin(); i != end(); i++) {
+		i->normal = normal;
+	}
+}
+
+AABB Winding::aabb() const {
+	AABB returnValue;
+	
+	for (const_iterator i = begin(); i != end(); i++) {
+		returnValue.includePoint(i->vertex);
+	}
+	
+	return returnValue;
+}
 
 bool Winding::testPlane(const Plane3& plane, bool flipped) const {
 	const int test = (flipped) ? ePlaneBack : ePlaneFront;
 	
 	for (const_iterator i = begin(); i != end(); ++i) {
-		if (test == Winding_classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)) {
+		if (test == classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)) {
 			return false;
 		}
 	}
 
 	return true;
+}
+
+BrushSplitType Winding::classifyPlane(const Plane3& plane) const {
+	BrushSplitType split;
+	
+	for (const_iterator i = begin(); i != end(); ++i) {
+		++split.counts[classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)];
+	}
+	
+	return split;
+}
+
+PlaneClassification Winding::classifyDistance(const double distance, const double epsilon) {
+	if (distance > epsilon) {
+		return ePlaneFront;
+	}
+	
+	if (distance < -epsilon) {
+		return ePlaneBack;
+	}
+	
+	return ePlaneOn;
 }
 
 bool Winding::planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2) {
