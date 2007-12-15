@@ -484,6 +484,7 @@ radiant_src = \
          'ui/einspector/LightTextureChooser.cpp',
          'ui/einspector/FloatPropertyEditor.cpp',
          'ui/einspector/ModelPropertyEditor.cpp',
+         'ui/einspector/ClassnamePropertyEditor.cpp',
          'ui/einspector/PropertyEditor.cpp',
          'ui/entitychooser/EntityClassChooser.cpp',
          'ui/entitychooser/EntityClassTreePopulator.cpp',
