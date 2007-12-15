@@ -60,11 +60,12 @@ const std::size_t c_brush_maxFaces = 1024;
 class WindingVertex
 {
 public:
-  Vector3 vertex;
-  Vector2 texcoord;
-  Vector3 tangent;
-  Vector3 bitangent;
-  std::size_t adjacent;
+	Vector3 vertex;
+	Vector2 texcoord;
+	Vector3 tangent;
+	Vector3 bitangent;
+	Vector3 normal;
+	std::size_t adjacent;
 };
 
 const double ON_EPSILON	= 1.0 / (1 << 8);
@@ -162,21 +163,12 @@ public:
 		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.data()->vertex), sizeof(WindingVertex)), numpoints, best);
 	}
 	
-	// greebo: Moved the array of normals from the draw() method to here
-	// I figured that 256 vertices per winding should be enough. This is still FIXME!
-	// TODO: Make this a regular member (std::vector) and resize along with the Winding 
-	// (hook into erase, resize and push_back).
-	mutable Vector3 normals[256];
-	
 	// greebo: Updates the array containing the normal vectors of this winding
-	// The normal is the same for each vertex, so this basically resizes
-	// the array and fills it with the same normal vector (TODO)
-	// Note: should be called each time the winding plane gets transformed 
+	// The normal is the same for each vertex, so this just copies the values 
 	void updateNormals(const Vector3& normal) {
-		typedef Vector3* Vector3Iter;
-					
-		for (Vector3Iter i = normals, end = normals + numpoints; i != end; ++i) {
-			*i = normal;
+		// Copy all normals into the winding vertices
+		for (iterator i = begin(); i != end(); i++) {
+			i->normal = normal;
 		}
 	}
 	
@@ -186,14 +178,14 @@ public:
 		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.data()->vertex);
 
 		if ((state & RENDER_BUMP) != 0) {
-			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(Vector3), normals);
+			glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->normal);
 			glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->texcoord);
 			glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->tangent);
 			glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &points.data()->bitangent);
 		} 
 		else {
 			if (state & RENDER_LIGHTING) {
-				glNormalPointer(GL_DOUBLE, sizeof(Vector3), normals);
+				glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &points.data()->normal);
 			}
 
 			if (state & RENDER_TEXTURE) {
