@@ -3,7 +3,7 @@
 
 #include "iscenegraph.h"
 #include "irender.h"
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidget.h"
 #include "gtkutil/xorrectangle.h"
 #include "gtkutil/WindowPosition.h"
 #include "selection/RadiantWindowObserver.h"

@@ -7,7 +7,7 @@
 #include <gtk/gtk.h>
 #include <GL/glew.h>
 #include <string>
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidget.h"
 #include "ui/menu/FiltersMenu.h"
 
 namespace ui

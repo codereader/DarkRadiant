@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidget.h"
 
 /* FORWARD DECLS */
 typedef struct _GtkListStore GtkListStore;

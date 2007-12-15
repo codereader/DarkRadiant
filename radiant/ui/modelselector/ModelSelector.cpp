@@ -3,7 +3,6 @@
 #include "ModelDataInserter.h"
 
 #include "mainframe.h"
-#include "gtkutil/glwidget.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/RightAlignment.h"

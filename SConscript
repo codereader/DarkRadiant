@@ -62,7 +62,7 @@ gtkutil_src = '\
   frame.cpp\
   filechooser.cpp\
   glfont.cpp\
-  glwidget.cpp\
+  GLWidget.cpp\
   idledraw.cpp\
   messagebox.cpp\
   nonmodal.cpp\

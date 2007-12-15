@@ -1,6 +1,5 @@
 #include "TexturePreviewCombo.h"
 
-#include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/StockIconMenuItem.h"
