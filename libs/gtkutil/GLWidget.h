@@ -22,9 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_GLWIDGET_H)
 #define INCLUDED_GTKUTIL_GLWIDGET_H
 
-extern void (*GLWidget_sharedContextCreated)();
-extern void (*GLWidget_sharedContextDestroyed)();
-
 // Forward declarations
 typedef struct _GdkGLConfig GdkGLConfig;
 typedef struct _GtkWidget GtkWidget;

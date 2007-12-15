@@ -45,6 +45,13 @@ public:
 
 	/// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
 	virtual void assertNoErrors() = 0;
+	
+	// This is called by the gtkutil::GLWidget class, when at least one shared
+	// widget carrying the context exists
+	virtual void sharedContextCreated() = 0;
+	
+	// The counterpart of the above call
+	virtual void sharedContextDestroyed() = 0;
 
 	GLuint m_font;
 	int m_fontHeight;
