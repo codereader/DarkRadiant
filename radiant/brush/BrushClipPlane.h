@@ -31,11 +31,12 @@ public:
 		else {
 			m_winding.resize(0);
 		}
+		m_winding.updateNormals(m_plane.normal());
 	}
 
 	void render(RenderStateFlags state) const {
 		if ((state & RENDER_FILL) != 0) {
-			m_winding.draw(m_plane.normal(), state);
+			m_winding.draw(state);
 		}
 		else {
 			Winding_DrawWireframe(m_winding);

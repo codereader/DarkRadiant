@@ -114,7 +114,7 @@ public:
 
     m_face.getTexdef().m_projectionInitialised = true;
     m_face.getTexdef().m_scaleApplied = true;
-
+    
     return true;
   }
 };
