@@ -44,6 +44,7 @@ namespace {
 
 // Constructor creates GTK elements
 ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture) :
+	_glWidget(true),
 	_infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
 	_client(client),
 	_isLightTexture(isLightTexture)
@@ -228,15 +229,15 @@ GtkWidget* ShaderSelector::createPreview() {
 	// pane.
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 
-	// GtkGLExt widget
-	_glWidget = glwidget_new(false);
-	gtk_widget_set_size_request(_glWidget, 128, 128);
-	g_signal_connect(G_OBJECT(_glWidget), 
+	// Cast the GLWidget object to GtkWidget
+	GtkWidget* glWidget = _glWidget;
+	gtk_widget_set_size_request(glWidget, 128, 128);
+	g_signal_connect(G_OBJECT(glWidget), 
 					 "expose-event", 
 					 G_CALLBACK(_onExpose), 
 					 this);
 	GtkWidget* glFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(glFrame), _glWidget);
+	gtk_container_add(GTK_CONTAINER(glFrame), glWidget);
 	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
 	
 	// Attributes table
@@ -253,10 +254,8 @@ GtkWidget* ShaderSelector::createPreview() {
 	gtk_box_pack_start(GTK_BOX(hbx), 
 					   gtkutil::ScrolledFrame(tree), 
 					   TRUE, TRUE, 0);
-
 	return hbx;
-	
-} 
+}
 
 // Get the selected shader
 IShaderPtr ShaderSelector::getSelectedShader() {

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include "gtkutil/glwidget.h"
 
 /* FORWARD DECLS */
 typedef struct _GtkListStore GtkListStore;
@@ -59,7 +60,7 @@ private:
 	GtkTreeSelection* _selection;
 	
 	// GL preview widget
-	GtkWidget* _glWidget;
+	gtkutil::GLWidget _glWidget;
 	
 	// List store for info table
 	GtkListStore* _infoStore;
