@@ -9,6 +9,7 @@
 #include "iuimanager.h"
 
 #include "gtkutil/glwidget.h"
+#include "gtkutil/GLWidgetSentry.h"
 #include "stream/stringstream.h"
 
 #include "brush/TexDef.h"
@@ -1627,17 +1628,16 @@ gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocatio
 }
 
 gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) {
+	gtkutil::GLWidgetSentry sentry(self->getWidget());
+	
+	if (GlobalMap().isValid() && ScreenUpdates_Enabled()) {
+		GlobalOpenGL_debugAssertNoErrors();
+		self->draw();
+		GlobalOpenGL_debugAssertNoErrors();
 
-	if (glwidget_make_current(self->getWidget()) != FALSE) {
-		if (GlobalMap().isValid() && ScreenUpdates_Enabled()) {
-			GlobalOpenGL_debugAssertNoErrors();
-			self->draw();
-			GlobalOpenGL_debugAssertNoErrors();
-
-			self->m_XORRectangle.set(rectangle_t());
-		}
-		glwidget_swap_buffers(self->getWidget());
+		self->m_XORRectangle.set(rectangle_t());
 	}
+
 	return FALSE;
 }
 
