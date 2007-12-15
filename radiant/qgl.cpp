@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modulesystem/StaticModule.h"
 #include <iostream>
 
-class QglAPI :
+class OpenGLModule :
 	public OpenGLBinding
 {
 	typedef std::map<GLenum, std::string> GLErrorList;
@@ -41,12 +41,12 @@ class QglAPI :
 	
 	const std::string _unknownError;
 		
-	GLFont g_font;
+	GLFont _font;
 	
 public:
-	QglAPI() :
+	OpenGLModule() :
 		_unknownError("Unknown error."),
-		g_font(0, 0)
+		_font(0, 0)
 	{
 		// Populate the error list
 		_errorList[GL_NO_ERROR] = "GL_NO_ERROR - no error";
@@ -97,9 +97,9 @@ public:
 		GlobalShaderCache().extensionsInitialised();
 		GlobalShaderCache().realise();
 
-		g_font = glfont_create("courier 8");
-		m_font = g_font.getDisplayList();
-		m_fontHeight = g_font.getPixelHeight();
+		_font = glfont_create("courier 8");
+		m_font = _font.getDisplayList();
+		m_fontHeight = _font.getPixelHeight();
 	}
 		
 	virtual void sharedContextDestroyed() {
@@ -144,5 +144,5 @@ private:
 	}
 };
 
-// Define the static Radiant module
-module::StaticModule<QglAPI> openGLModule;
+// Define the static OpenGLModule module
+module::StaticModule<OpenGLModule> openGLModule;
