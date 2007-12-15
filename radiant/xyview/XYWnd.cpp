@@ -54,7 +54,8 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 // Constructors
 XYWnd::XYWnd(int id) :
 	_id(id),
-	m_gl_widget(glwidget_new(FALSE)),
+	_glWidget(false),
+	m_gl_widget(static_cast<GtkWidget*>(_glWidget)),
 	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
 	m_deferred_motion(callbackMouseMotion, this),
 	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),

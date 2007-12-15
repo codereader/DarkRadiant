@@ -34,6 +34,7 @@ class XYWnd :
 	// Unique ID of this XYWnd
 	int _id;
 	
+	gtkutil::GLWidget _glWidget;
 	GtkWidget* m_gl_widget;
 	guint m_sizeHandler;
 	guint m_exposeHandler;
