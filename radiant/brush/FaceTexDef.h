@@ -1,7 +1,7 @@
 #ifndef FACETEXDEF_H_
 #define FACETEXDEF_H_
 
-#include "winding.h"
+#include "Winding.h"
 #include "math/matrix.h"
 #include "math/Vector3.h"
 #include "math/Plane3.h"

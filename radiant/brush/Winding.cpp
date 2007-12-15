@@ -19,13 +19,14 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "winding.h"
+#include "Winding.h"
 #include "igl.h"
 #include <algorithm>
-#include "brush/FixedWinding.h"
+#include "FixedWinding.h"
 #include "math/line.h"
 #include "math/Plane3.h"
 #include "texturelib.h"
+#include "Brush.h"
 
 namespace {
 	struct indexremap_t {

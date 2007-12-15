@@ -4,7 +4,7 @@
 #include "math/Plane3.h"
 #include "irender.h"
 #include "renderable.h"
-#include "winding.h"
+#include "Winding.h"
 
 inline void Winding_DrawWireframe(const Winding& winding) {
 	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &winding.points.data()->vertex);

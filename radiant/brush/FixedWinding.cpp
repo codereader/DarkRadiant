@@ -1,6 +1,7 @@
 #include "FixedWinding.h"
 
-#include "winding.h"
+#include "Brush.h"
+#include "Winding.h"
 
 namespace {
 	inline bool float_is_largest_absolute(double axis, double other) {

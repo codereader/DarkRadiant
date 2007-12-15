@@ -9,6 +9,7 @@
 #include "SelectableComponents.h"
 #include "VertexSelection.h"
 #include "Face.h"
+#include "Brush.h"
 #include "VectorLightList.h"
 
 typedef const Plane3* PlanePointer;

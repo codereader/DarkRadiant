@@ -18,7 +18,7 @@
 #include "mainframe.h"
 #include "brush/Face.h"
 #include "patch/Patch.h"
-#include "winding.h"
+#include "brush/Winding.h"
 #include "camera/GlobalCamera.h"
 
 #include "textool/Selectable.h"

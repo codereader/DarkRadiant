@@ -1,7 +1,7 @@
 #ifndef SELECTABLECOMPONENTS_H_
 #define SELECTABLECOMPONENTS_H_
 
-#include "winding.h"
+#include "Winding.h"
 #include "Face.h"
 
 class FaceVertexId {
