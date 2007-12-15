@@ -7,7 +7,7 @@
 #include <gtk/gtk.h>
 #include <GL/glew.h>
 #include <string>
-
+#include "gtkutil/glwidget.h"
 #include "ui/menu/FiltersMenu.h"
 
 namespace ui
@@ -26,7 +26,7 @@ class ModelPreview
 	GtkWidget* _widget;
 	
 	// GL widget
-	GtkWidget* _glWidget;
+	gtkutil::GLWidget _glWidget;
 	
 	// Toolbar buttons
 	GtkToolItem* _drawBBox;

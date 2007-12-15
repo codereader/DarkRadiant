@@ -26,22 +26,23 @@ namespace {
 
 // Construct the widgets
 
-ModelPreview::ModelPreview()
-: _widget(gtk_frame_new(NULL)),
-  _lastModel("")
+ModelPreview::ModelPreview() :
+	_widget(gtk_frame_new(NULL)),
+	_glWidget(true),
+	_lastModel("")
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
 	
-	// Create the GL widget
-	_glWidget = glwidget_new(TRUE);
-	gtk_box_pack_start(GTK_BOX(vbx), _glWidget, TRUE, TRUE, 0);
+	// Cast the GLWidget object to GtkWidget for further use
+	GtkWidget* glWidget = _glWidget;
+	gtk_box_pack_start(GTK_BOX(vbx), glWidget, TRUE, TRUE, 0);
 	
 	// Connect up the signals
-	gtk_widget_set_events(_glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
-	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
-	g_signal_connect(G_OBJECT(_glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
+	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
+	g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
+	g_signal_connect(G_OBJECT(glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
 	
 	// The HBox containing the toolbar and the menubar
 	GtkWidget* toolHBox = gtk_hbox_new(FALSE, 0);
@@ -65,7 +66,7 @@ ModelPreview::ModelPreview()
 	gtk_box_pack_end(GTK_BOX(toolHBox), _filtersMenu, FALSE, FALSE, 0);
 
 	// Pack into a frame and return
-	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+	gtk_container_add(GTK_CONTAINER(glWidget), vbx);
 }
 
 // Set the size request for the widget
