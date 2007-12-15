@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "qgl.h"
 
+#include <map>
 #include <GL/glew.h>
 
 #include "imodule.h"
@@ -32,70 +33,44 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "modulesystem/StaticModule.h"
 #include <iostream>
 
-//****************************** Error handling ********************************
-
-typedef struct glu_error_struct
-{
-    GLenum     errnum;
-    const char *errstr;
-} GLU_ERROR_STRUCT;
-
-GLU_ERROR_STRUCT glu_errlist[] = {
-  {GL_NO_ERROR, "GL_NO_ERROR - no error"},
-  {GL_INVALID_ENUM, "GL_INVALID_ENUM - An unacceptable value is specified for an enumerated argument."},
-  {GL_INVALID_VALUE, "GL_INVALID_VALUE - A numeric argument is out of range."},
-  {GL_INVALID_OPERATION, "GL_INVALID_OPERATION - The specified operation is not allowed in the current state."},
-  {GL_STACK_OVERFLOW, "GL_STACK_OVERFLOW - Function would cause a stack overflow."},
-  {GL_STACK_UNDERFLOW, "GL_STACK_UNDERFLOW - Function would cause a stack underflow."},
-  {GL_OUT_OF_MEMORY, "GL_OUT_OF_MEMORY - There is not enough memory left to execute the function."},
-  {0, 0}
-};
-
-const GLubyte* qgluErrorString(GLenum errCode )
-{
-  int search = 0;
-  for (search = 0; glu_errlist[search].errstr; search++)
-  {
-    if (errCode == glu_errlist[search].errnum)
-      return (const GLubyte *)glu_errlist[search].errstr;
-  } //end for
-  return (const GLubyte *)"Unknown error";
-}
-
-//************************************ Loading *************************************
-
-int QGL_Init(OpenGLBinding& table) {
-  return 1;
-}
-
-void QGL_Shutdown(OpenGLBinding& table) {
-  return;
-}
-
-//************************************ Module ***************************************
-
 class QglAPI :
 	public OpenGLBinding
 {
+	typedef std::map<GLenum, std::string> GLErrorList;
+	GLErrorList _errorList;
+	
+	const std::string _unknownError;
+		
 	GLFont g_font;
 	
 public:
 	QglAPI() :
+		_unknownError("Unknown error."),
 		g_font(0, 0)
-	{}
+	{
+		// Populate the error list
+		_errorList[GL_NO_ERROR] = "GL_NO_ERROR - no error";
+		_errorList[GL_INVALID_ENUM] = "GL_INVALID_ENUM - An unacceptable value is specified for an enumerated argument.";
+		_errorList[GL_INVALID_VALUE] = "GL_INVALID_VALUE - A numeric argument is out of range.";
+		_errorList[GL_INVALID_OPERATION] = "GL_INVALID_OPERATION - The specified operation is not allowed in the current state.";
+		_errorList[GL_STACK_OVERFLOW] = "GL_STACK_OVERFLOW - Function would cause a stack overflow.";
+		_errorList[GL_STACK_UNDERFLOW] = "GL_STACK_UNDERFLOW - Function would cause a stack underflow.";
+		_errorList[GL_OUT_OF_MEMORY] = "GL_OUT_OF_MEMORY - There is not enough memory left to execute the function.";
+	}
 	
 	virtual void assertNoErrors() {
 #ifdef _DEBUG
 		GLenum error = glGetError();
 		while (error != GL_NO_ERROR) {
-			const char* errorString = reinterpret_cast<const char*>(qgluErrorString(error));
+			const std::string& errorString = getGLErrorString(error);
 			
 			if (error == GL_OUT_OF_MEMORY) {
-				ERROR_MESSAGE("OpenGL out of memory error: " << errorString);
+				ERROR_MESSAGE("OpenGL out of memory error: " << errorString.c_str());
 			}
 			else {
-				ERROR_MESSAGE("OpenGL error: " << errorString);
+				ERROR_MESSAGE("OpenGL error: " << errorString.c_str());
 			}
+
 			error = glGetError();
 		}
 #endif
@@ -154,6 +129,18 @@ public:
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
 		globalOutputStream() << "OpenGL::initialiseModule called.\n";
+	}
+
+private:
+	const std::string& getGLErrorString(GLenum errorCode) const {
+		GLErrorList::const_iterator found = _errorList.find(errorCode);
+		
+		if (found != _errorList.end()) {
+			return found->second;
+		}
+		
+		// Not found
+		return _unknownError;
 	}
 };
 
