@@ -11,6 +11,8 @@
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
 
+const std::size_t c_brush_maxFaces = 1024;
+
 typedef std::size_t faceIndex_t;
 
 inline double quantiseFloating(double f) {

@@ -4,9 +4,10 @@
 #include "renderable.h"
 
 #include "shaderlib.h"
-#include "winding.h"
+#include "Winding.h"
 #include "cullable.h"
 
+#include "Brush.h"
 #include "BrushModule.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 

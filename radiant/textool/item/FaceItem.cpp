@@ -2,7 +2,7 @@
 
 #include "math/FloatTools.h"
 #include "brush/Face.h"
-#include "winding.h"
+#include "brush/Winding.h"
 
 namespace selection {
 	namespace textool {

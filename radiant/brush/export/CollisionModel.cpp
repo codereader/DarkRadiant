@@ -7,7 +7,7 @@
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "brush/Brush.h"
-#include "winding.h"
+#include "brush/Winding.h"
 
 namespace cmutil {
 

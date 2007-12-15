@@ -2,7 +2,7 @@
 #define TEXTUREPROJECTION_H_
 
 #include "texturelib.h"
-#include "winding.h"
+#include "Winding.h"
 #include "math/aabb.h"
 #include "iregistry.h"
 #include "BrushPrimitTexDef.h"

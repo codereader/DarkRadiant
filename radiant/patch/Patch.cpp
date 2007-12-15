@@ -10,7 +10,7 @@
 #include "plugin.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
-#include "winding.h"
+#include "brush/Winding.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
