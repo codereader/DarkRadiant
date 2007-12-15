@@ -3,6 +3,7 @@
 
 #include "iscenegraph.h"
 #include "irender.h"
+#include "gtkutil/glwidget.h"
 #include "gtkutil/xorrectangle.h"
 #include "gtkutil/WindowPosition.h"
 #include "selection/RadiantWindowObserver.h"
@@ -40,7 +41,7 @@ class CamWnd :
 
 	bool m_bFreeMove;
 
-	GtkWidget* m_gl_widget;
+	gtkutil::GLWidget m_gl_widget;
 	GtkWindow* _parentWidget;
 
 public:
