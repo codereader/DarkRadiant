@@ -39,7 +39,9 @@ ModelPreview::ModelPreview() :
 	gtk_box_pack_start(GTK_BOX(vbx), glWidget, TRUE, TRUE, 0);
 	
 	// Connect up the signals
-	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | 
+									GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | 
+									GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
 	g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
 	g_signal_connect(G_OBJECT(glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
@@ -66,7 +68,7 @@ ModelPreview::ModelPreview() :
 	gtk_box_pack_end(GTK_BOX(toolHBox), _filtersMenu, FALSE, FALSE, 0);
 
 	// Pack into a frame and return
-	gtk_container_add(GTK_CONTAINER(glWidget), vbx);
+	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
 
 // Set the size request for the widget
@@ -247,7 +249,7 @@ void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Model
 		
 		// Grab the GL widget, and update the modelview matrix with the 
 		// additional rotation
-		if (glwidget_make_current(widget) != FALSE) {
+		if (gtkutil::GLWidget::makeCurrent(widget)) {
 
 			// Premultiply the current modelview matrix with the rotation,
 			// in order to achieve rotations in eye space rather than object

@@ -17,20 +17,28 @@ class GLWidgetSentry
 	// The GL widget
 	GtkWidget* _widget;
 	
+	// Whether the context could be successfully switched
+	bool _success;
+	
 public:
 
 	/** Constructor calls glwidget_make_current().
 	 */
-	GLWidgetSentry(GtkWidget* w)
-	: _widget(w)
+	GLWidgetSentry(GtkWidget* widget) : 
+		_widget(widget)
 	{
-		glwidget_make_current(_widget);
+		_success = GLWidget::makeCurrent(_widget);
+	}
+	
+	// Returns TRUE if the context could not be switched
+	bool failed() const {
+		return !_success;
 	}
 		
 	/* Destructor swaps the buffers with glwidget_swap_buffers().
 	 */
 	~GLWidgetSentry() {
-		glwidget_swap_buffers(_widget);
+		 GLWidget::swapBuffers(_widget);
 	}
 };
 

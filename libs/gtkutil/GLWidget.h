@@ -22,18 +22,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_GLWIDGET_H)
 #define INCLUDED_GTKUTIL_GLWIDGET_H
 
-typedef struct _GtkWidget GtkWidget;
-typedef int    gint;
-typedef gint   gboolean;
-
-void glwidget_swap_buffers(GtkWidget* widget);
-gboolean glwidget_make_current(GtkWidget* widget);
-
 extern void (*GLWidget_sharedContextCreated)();
 extern void (*GLWidget_sharedContextDestroyed)();
 
-// Forward declaration
+// Forward declarations
 typedef struct _GdkGLConfig GdkGLConfig;
+typedef struct _GtkWidget GtkWidget;
+typedef int    gint;
+typedef gint   gboolean;
 
 namespace gtkutil {
 
@@ -58,6 +54,11 @@ public:
 	// Operator cast to GtkWidget*, for packing into parent containers
 	operator GtkWidget*() const;
 	
+	// Switches the GL context to the given widget
+	static bool makeCurrent(GtkWidget* widget);
+	static void swapBuffers(GtkWidget* widget);
+	
+private:
 	// As soon as the widget is packed into a parent, this callback is invoked
 	// and enables the GL drawing for this widget
 	static gboolean onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_toplevel, GLWidget* self);

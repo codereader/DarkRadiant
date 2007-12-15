@@ -23,9 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "GLWidget.h"
 
-#include "debugging/debugging.h"
-
 #include "igl.h"
+#include "stream/textstream.h"
+#include "stream/stringstream.h"
 
 #include <gtk/gtkdrawingarea.h>
 #include <gtk/gtkglwidget.h>
@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void (*GLWidget_sharedContextCreated)() = 0;
 void (*GLWidget_sharedContextDestroyed)() = 0;
 
+namespace gtkutil {
 
 typedef int* attribs_t;
 struct config_t
@@ -145,21 +146,6 @@ const config_t configs_with_depth[] =
   },
 };
 
-void glwidget_swap_buffers (GtkWidget *widget)
-{
-  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
-  gdk_gl_drawable_swap_buffers (gldrawable);
-}
-
-gboolean glwidget_make_current (GtkWidget *widget)
-{
-  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
-  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
-  return gdk_gl_drawable_gl_begin (gldrawable, glcontext);
-}
-
-namespace gtkutil {
-
 // Constructor, pass TRUE to enable depth-buffering
 GLWidget::GLWidget(bool zBuffer) :
 	_widget(gtk_drawing_area_new()),
@@ -209,11 +195,22 @@ GdkGLConfig* GLWidget::createGLConfig() {
 	return gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGBA | GDK_GL_MODE_DOUBLE));
 }
 
+bool GLWidget::makeCurrent(GtkWidget* widget) {
+	 GdkGLContext* glcontext = gtk_widget_get_gl_context(widget);
+	 GdkGLDrawable* gldrawable = gtk_widget_get_gl_drawable(widget);
+	 return static_cast<bool>(gdk_gl_drawable_gl_begin(gldrawable, glcontext));
+}
+
+void GLWidget::swapBuffers(GtkWidget* widget) {
+	GdkGLDrawable* gldrawable = gtk_widget_get_gl_drawable(widget);
+	gdk_gl_drawable_swap_buffers(gldrawable);
+}
+
 gboolean GLWidget::onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_toplevel, GLWidget* self) {
 	if (previous_toplevel == NULL && !gtk_widget_is_gl_capable(widget)) {
 		// Create a new GL config structure
 		GdkGLConfig* glconfig = (self->_zBuffer) ? createGLConfigWithDepth() : createGLConfig();
-		ASSERT_MESSAGE(glconfig != NULL, "failed to create OpenGL config");
+		assert(glconfig != NULL);
 
 		gtk_widget_set_gl_capability(
 			widget, 
@@ -239,7 +236,7 @@ gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) {
 		_shared = widget;
 		gtk_widget_ref(_shared);
 
-		glwidget_make_current(_shared);
+		makeCurrent(_shared);
 		GlobalOpenGL().contextValid = true;
 
 		GLWidget_sharedContextCreated();
