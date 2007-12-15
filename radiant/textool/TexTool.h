@@ -2,6 +2,7 @@
 #define TEXTOOL_H_
 
 #include "gtk/gtkwidget.h"
+#include "gtkutil/glwidget.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "math/Vector3.h"
@@ -31,7 +32,7 @@ class TexTool
 	gtkutil::WindowPosition _windowPosition;
 
 	// GL widget
-	GtkWidget* _glWidget;
+	gtkutil::GLWidget _glWidget;
 	
 	// The shader we're working with (shared ptr)
 	IShaderPtr _shader;

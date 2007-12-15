@@ -49,17 +49,17 @@ class GLWidget {
 	bool _zBuffer;
 	
 	// The (singleton) widget holding the context
-	static GtkWidget* _shared;
+	//static GtkWidget* _shared;
 	
 	// Holds the number of realised GL widgets
-	static int _realisedWidgets;
+	//static int _realisedWidgets;
 
 public:
 	// Constructor, pass TRUE to enable depth-buffering
 	GLWidget(bool zBuffer);
 	
 	// Operator cast to GtkWidget*, for packing into parent containers
-	operator GtkWidget*();
+	operator GtkWidget*() const;
 	
 	// As soon as the widget is packed into a parent, this callback is invoked
 	// and enables the GL drawing for this widget

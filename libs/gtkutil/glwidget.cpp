@@ -285,7 +285,7 @@ GLWidget::GLWidget(bool zBuffer) :
 }
 	
 // Operator cast to GtkWidget*, for packing into parent containers
-GLWidget::operator GtkWidget*() {
+GLWidget::operator GtkWidget*() const {
 	return _widget;
 }
 
@@ -332,7 +332,7 @@ gboolean GLWidget::onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_top
 		gtk_widget_set_gl_capability(
 			widget, 
 			glconfig, 
-			_shared != NULL ? gtk_widget_get_gl_context(_shared) : NULL, 
+			g_shared != NULL ? gtk_widget_get_gl_context(g_shared) : NULL, 
 			TRUE, 
 			GDK_GL_RGBA_TYPE
 		);
@@ -340,8 +340,8 @@ gboolean GLWidget::onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_top
 		gtk_widget_realize(widget);
 		
 		// Shared not set yet?
-		if (_shared == 0) {
-			_shared = widget;
+		if (g_shared == 0) {
+			g_shared = widget;
 		}
 	}
 
@@ -349,11 +349,11 @@ gboolean GLWidget::onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_top
 }
 
 gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) {
-	if (++_realisedWidgets == 1) {
-		_shared = widget;
-		gtk_widget_ref(_shared);
+	if (++g_context_count == 1) {
+		g_shared = widget;
+		gtk_widget_ref(g_shared);
 
-		glwidget_make_current(_shared);
+		glwidget_make_current(g_shared);
 		GlobalOpenGL().contextValid = true;
 
 		GLWidget_sharedContextCreated();
@@ -363,19 +363,19 @@ gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) {
 }
 
 gint GLWidget::onUnRealise(GtkWidget* widget, GLWidget* self) {
-	if (--_realisedWidgets == 0) {
+	if (--g_context_count == 0) {
 		GlobalOpenGL().contextValid = false;
 
 		GLWidget_sharedContextDestroyed();
 
-		gtk_widget_unref(_shared);
-		_shared = 0;
+		gtk_widget_unref(g_shared);
+		g_shared = NULL;
 	}
 
 	return FALSE;
 }
 
-GtkWidget* GLWidget::_shared = NULL;
-int GLWidget::_realisedWidgets = 0;
+//GtkWidget* GLWidget::_shared = NULL;
+//int GLWidget::_realisedWidgets = 0;
 
 } // namespace gtkutil

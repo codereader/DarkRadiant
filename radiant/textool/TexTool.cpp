@@ -13,7 +13,6 @@
 #include "selectionlib.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
-#include "gtkutil/glwidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include "mainframe.h"
 #include "brush/Face.h"
@@ -50,6 +49,7 @@ namespace ui {
 
 TexTool::TexTool() 
 : gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+  _glWidget(true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _zoomFactor(DEFAULT_ZOOM_FACTOR),
   _dragRectangle(false),
@@ -111,21 +111,21 @@ void TexTool::populateWindow() {
     GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(textoolbar), GTK_CAN_FOCUS);
     
 	// Create the GL widget
-	_glWidget = glwidget_new(TRUE);
-	GtkWidget* frame = gtkutil::FramedWidget(_glWidget);
+	GtkWidget* glWidget = _glWidget; // cast to GtkWidget*
+	GtkWidget* frame = gtkutil::FramedWidget(glWidget);
 	
 	// Connect the events
-	gtk_widget_set_events(_glWidget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-	g_signal_connect(G_OBJECT(_glWidget), "expose-event", G_CALLBACK(onExpose), this);
-	g_signal_connect(G_OBJECT(_glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
-	g_signal_connect(G_OBJECT(_glWidget), "button-press-event", G_CALLBACK(onMouseDown), this);
-	g_signal_connect(G_OBJECT(_glWidget), "button-release-event", G_CALLBACK(onMouseUp), this);
-	g_signal_connect(G_OBJECT(_glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
-	g_signal_connect(G_OBJECT(_glWidget), "key_press_event", G_CALLBACK(onKeyPress), this);
-	g_signal_connect(G_OBJECT(_glWidget), "scroll_event", G_CALLBACK(onMouseScroll), this);
+	gtk_widget_set_events(glWidget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onExpose), this);
+	g_signal_connect(G_OBJECT(glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
+	g_signal_connect(G_OBJECT(glWidget), "button-press-event", G_CALLBACK(onMouseDown), this);
+	g_signal_connect(G_OBJECT(glWidget), "button-release-event", G_CALLBACK(onMouseUp), this);
+	g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
+	g_signal_connect(G_OBJECT(glWidget), "key_press_event", G_CALLBACK(onKeyPress), this);
+	g_signal_connect(G_OBJECT(glWidget), "scroll_event", G_CALLBACK(onMouseScroll), this);
 	
 	// Make the GL widget accept the global shortcuts
-	GlobalEventManager().connect(GTK_OBJECT(_glWidget));
+	GlobalEventManager().connect(GTK_OBJECT(glWidget));
 	
 	// Create a top-level vbox, pack it and add it to the window 
 	GtkWidget* vbox = gtk_vbox_new(false, 0);
@@ -190,7 +190,7 @@ void TexTool::onRadiantShutdown() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
 	
-	GlobalEventManager().disconnect(GTK_OBJECT(_glWidget));
+	GlobalEventManager().disconnect(GTK_OBJECT(static_cast<GtkWidget*>(_glWidget)));
 	GlobalEventManager().disconnect(GTK_OBJECT(getWindow()));
 
 	// Destroy the window
