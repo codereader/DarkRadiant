@@ -7,7 +7,6 @@
 
 #include "BrushModule.h"
 #include "Face.h"
-#include "plugin.h"
 #include "FixedWinding.h"
 
 namespace {

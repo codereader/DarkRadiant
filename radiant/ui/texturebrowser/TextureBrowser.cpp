@@ -11,7 +11,6 @@
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
-#include "plugin.h"
 #include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
 #include "ui/groupdialog/GroupDialog.h"

@@ -459,7 +459,7 @@ radiant_src = \
          'map.cpp',
          'nullmodel.cpp',
          'patchmanip.cpp',
-         'plugin.cpp',
+         'RadiantModule.cpp',
          'qgl.cpp',
          'referencecache.cpp',
          'renderstate.cpp',

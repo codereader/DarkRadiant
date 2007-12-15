@@ -13,7 +13,6 @@
 #include "selectable.h"
 #include "selectionlib.h"
 #include "windowobservers.h"
-#include "plugin.h"
 #include "mainframe.h"
 #include "renderstate.h"
 

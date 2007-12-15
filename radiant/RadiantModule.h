@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /**
  * IRadiant implementation class.
  */
-class RadiantCoreAPI :
+class RadiantModule :
 	public IRadiant
 {
 	map::CounterManager _counters;
@@ -37,7 +37,7 @@ class RadiantCoreAPI :
 	EventListenerList _eventListeners;
 
 public:
-	RadiantCoreAPI();
+	RadiantModule();
 	
 	virtual GtkWindow* getMainWindow();
 	
@@ -70,6 +70,7 @@ public:
 	
 	virtual void shutdownModule();
 };
+typedef boost::shared_ptr<RadiantModule> RadiantModulePtr;
 
 namespace radiant {
 	
@@ -77,7 +78,7 @@ namespace radiant {
 	 * Return the global Radiant module (for use internally, not by other 
 	 * modules).
 	 */
-	boost::shared_ptr<RadiantCoreAPI> getGlobalRadiant();
+	RadiantModulePtr getGlobalRadiant();
 
 }
 

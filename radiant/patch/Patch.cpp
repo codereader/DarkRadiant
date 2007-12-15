@@ -7,7 +7,6 @@
 #include "selectable.h"
 #include "math/frustum.h"
 #include "stringio.h"
-#include "plugin.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
