@@ -26,11 +26,8 @@ typedef struct _GtkWidget GtkWidget;
 typedef int    gint;
 typedef gint   gboolean;
 
-GtkWidget* glwidget_new(gboolean zbuffer);
 void glwidget_swap_buffers(GtkWidget* widget);
 gboolean glwidget_make_current(GtkWidget* widget);
-void glwidget_destroy_context(GtkWidget* widget);
-void glwidget_create_context(GtkWidget* widget);
 
 extern void (*GLWidget_sharedContextCreated)();
 extern void (*GLWidget_sharedContextDestroyed)();
@@ -49,10 +46,10 @@ class GLWidget {
 	bool _zBuffer;
 	
 	// The (singleton) widget holding the context
-	//static GtkWidget* _shared;
+	static GtkWidget* _shared;
 	
 	// Holds the number of realised GL widgets
-	//static int _realisedWidgets;
+	static int _realisedWidgets;
 
 public:
 	// Constructor, pass TRUE to enable depth-buffering
@@ -74,6 +71,6 @@ public:
 	static GdkGLConfig* createGLConfig();
 };
 
-} // gtkutil
+} // namespace gtkutil
 
 #endif
