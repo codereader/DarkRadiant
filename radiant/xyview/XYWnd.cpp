@@ -13,7 +13,6 @@
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
-#include "plugin.h"
 #include "brushmanip.h"
 #include "mainframe.h"
 #include "select.h"

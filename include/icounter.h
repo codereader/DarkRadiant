@@ -1,6 +1,8 @@
 #ifndef ICOUNTER_H_
 #define ICOUNTER_H_
 
+#include <cstddef>
+
 class ICounter {
 public:
 	class Observer

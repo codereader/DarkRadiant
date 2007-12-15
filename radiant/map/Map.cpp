@@ -21,7 +21,6 @@
 
 #include "mainframe.h"
 #include "referencecache.h"
-#include "plugin.h"
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"

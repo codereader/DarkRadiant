@@ -18,82 +18,45 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include "RadiantModule.h"
 
 #include <iostream>
 #include <gtk/gtkimage.h>
-#include "plugin.h"
 
-#include "debugging/debugging.h"
-
-#include "brush/TexDef.h"
-#include "iradiant.h"
-#include "ifilesystem.h"
-#include "ishaders.h"
-#include "iclipper.h"
-#include "igrid.h"
-#include "ieventmanager.h"
-#include "ientity.h"
-#include "ieclass.h"
-#include "igame.h"
-#include "irender.h"
-#include "iscenegraph.h"
-#include "iselection.h"
-#include "ifilter.h"
-#include "isound.h"
-#include "igl.h"
-#include "iundo.h"
-#include "ireference.h"
 #include "ifiletypes.h"
+#include "iregistry.h"
+#include "ifilesystem.h"
+#include "ieclass.h"
 #include "ipreferencesystem.h"
-#include "ibrush.h"
-#include "iuimanager.h"
-#include "ipatch.h"
-#include "iimage.h"
-#include "itoolbar.h"
-#include "imap.h"
-#include "iparticles.h"
-#include "inamespace.h"
+#include "ieventmanager.h"
 
-#include "gtkutil/messagebox.h"
-#include "gtkutil/filechooser.h"
-
-#include "error.h"
-#include "map.h"
-#include "modulesystem/ApplicationContextImpl.h"
-#include "gtkmisc.h"
-#include "ui/texturebrowser/TextureBrowser.h"
-#include "mainframe.h"
-#include "multimon.h"
-#include "camera/GlobalCamera.h"
 #include "entity.h"
+#include "map.h"
 #include "select.h"
-#include "nullmodel.h"
-#include "xyview/GlobalXYWnd.h"
+#include "multimon.h"
 #include "map/AutoSaver.h"
 #include "map/PointFile.h"
-#include "map/CounterManager.h"
+#include "camera/GlobalCamera.h"
+#include "xyview/GlobalXYWnd.h"
+#include "ui/texturebrowser/TextureBrowser.h"
 
 #include "modulesystem/StaticModule.h"
 
-#include "settings/GameManager.h"
-
-#include <boost/shared_ptr.hpp>
-
-RadiantCoreAPI::RadiantCoreAPI() {
+RadiantModule::RadiantModule() {
 	globalOutputStream() << "RadiantCore initialised.\n";
 }
 	
-GtkWindow* RadiantCoreAPI::getMainWindow() {
+GtkWindow* RadiantModule::getMainWindow() {
 	return MainFrame_getWindow();
 }
 	
-GdkPixbuf* RadiantCoreAPI::getLocalPixbuf(const std::string& fileName) {
+GdkPixbuf* RadiantModule::getLocalPixbuf(const std::string& fileName) {
 	// Construct the full filename using the Bitmaps path
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 	return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
 }
 
-GdkPixbuf* RadiantCoreAPI::getLocalPixbufWithMask(const std::string& fileName) {
+GdkPixbuf* RadiantModule::getLocalPixbufWithMask(const std::string& fileName) {
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 	
 	GdkPixbuf* rgb = gdk_pixbuf_new_from_file(fullFileName.c_str(), 0);
@@ -109,24 +72,24 @@ GdkPixbuf* RadiantCoreAPI::getLocalPixbufWithMask(const std::string& fileName) {
 	}
 }
 
-ICounter& RadiantCoreAPI::getCounter(CounterType counter) {
+ICounter& RadiantModule::getCounter(CounterType counter) {
 	// Pass the call to the helper class
 	return _counters.get(counter);
 }
 	
-void RadiantCoreAPI::setStatusText(const std::string& statusText) {
+void RadiantModule::setStatusText(const std::string& statusText) {
 	Sys_Status(statusText);
 }
 	
-void RadiantCoreAPI::updateAllWindows() {
+void RadiantModule::updateAllWindows() {
 	UpdateAllWindows();
 }
 	
-void RadiantCoreAPI::addEventListener(RadiantEventListenerPtr listener) {
+void RadiantModule::addEventListener(RadiantEventListenerPtr listener) {
 	_eventListeners.insert(listener);
 }
 	
-void RadiantCoreAPI::removeEventListener(RadiantEventListenerPtr listener) {
+void RadiantModule::removeEventListener(RadiantEventListenerPtr listener) {
 	EventListenerList::iterator found = _eventListeners.find(listener);
 	if (found != _eventListeners.end()) {
 		_eventListeners.erase(found);
@@ -134,7 +97,7 @@ void RadiantCoreAPI::removeEventListener(RadiantEventListenerPtr listener) {
 }
 	
 // Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
-void RadiantCoreAPI::broadcastShutdownEvent() {
+void RadiantModule::broadcastShutdownEvent() {
 	for (EventListenerList::iterator i = _eventListeners.begin();
 	     i != _eventListeners.end(); /* in-loop increment */)
 	{
@@ -148,7 +111,7 @@ void RadiantCoreAPI::broadcastShutdownEvent() {
 }
 
 // Broadcasts a "startup" event to all the listeners
-void RadiantCoreAPI::broadcastStartupEvent() {
+void RadiantModule::broadcastStartupEvent() {
 	for (EventListenerList::iterator i = _eventListeners.begin();
 	     i != _eventListeners.end(); /* in-loop increment */)
 	{
@@ -159,12 +122,12 @@ void RadiantCoreAPI::broadcastStartupEvent() {
 }
 
 // RegisterableModule implementation
-const std::string& RadiantCoreAPI::getName() const {
+const std::string& RadiantModule::getName() const {
 	static std::string _name(MODULE_RADIANT);
 	return _name;
 }
 
-const StringSet& RadiantCoreAPI::getDependencies() const {
+const StringSet& RadiantModule::getDependencies() const {
 	static StringSet _dependencies;
 	
 	if (_dependencies.empty()) {
@@ -181,7 +144,7 @@ const StringSet& RadiantCoreAPI::getDependencies() const {
 	return _dependencies;
 }
 
-void RadiantCoreAPI::initialiseModule(const ApplicationContext& ctx) {
+void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "RadiantAPI::initialiseModule called.\n";
 	
 	// Reset the node id count
@@ -202,8 +165,8 @@ void RadiantCoreAPI::initialiseModule(const ApplicationContext& ctx) {
     map::AutoSaver().init();
 }
 
-void RadiantCoreAPI::shutdownModule() {
-	globalOutputStream() << "RadiantCoreAPI::shutdownModule called.\n";
+void RadiantModule::shutdownModule() {
+	globalOutputStream() << "RadiantModule::shutdownModule called.\n";
 	
 	GlobalFileSystem().shutdown();
 
@@ -220,12 +183,12 @@ void RadiantCoreAPI::shutdownModule() {
 }
 
 // Define the static Radiant module
-module::StaticModule<RadiantCoreAPI> radiantCoreModule;
+module::StaticModule<RadiantModule> radiantCoreModule;
 
 namespace radiant {
 	
 	// Return the static Radiant module to other code within the main binary
-	boost::shared_ptr<RadiantCoreAPI> getGlobalRadiant() {
+	RadiantModulePtr getGlobalRadiant() {
 		return radiantCoreModule.getModule();
 	}
 

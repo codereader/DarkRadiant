@@ -115,7 +115,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkmisc.h"
 #include "multimon.h"
 #include "patchmanip.h"
-#include "plugin.h"
 #include "qgl.h"
 #include "select.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -133,6 +132,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/FaceInstance.h"
 #include "settings/GameManager.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "RadiantModule.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
