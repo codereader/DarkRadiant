@@ -60,26 +60,6 @@ const GLubyte* qgluErrorString(GLenum errCode )
   return (const GLubyte *)"Unknown error";
 }
 
-void QGL_assertNoErrors()
-{
-#ifdef _DEBUG
-  GLenum error = glGetError();
-  while (error != GL_NO_ERROR)
-  {
-    const char* errorString = reinterpret_cast<const char*>(qgluErrorString(error));
-    if (error == GL_OUT_OF_MEMORY)
-    {
-      ERROR_MESSAGE("OpenGL out of memory error: " << errorString);
-    }
-    else
-    {
-      ERROR_MESSAGE("OpenGL error: " << errorString);
-    }
-    error = glGetError();
-  }
-#endif
-}
-
 //************************************ Loading *************************************
 
 void QGL_sharedContextCreated(OpenGLBinding& table)
@@ -112,17 +92,33 @@ class QglAPI :
 	public OpenGLBinding
 {
 public:
-	typedef OpenGLBinding Type;
-
-	QglAPI() {
-		assertNoErrors = &QGL_assertNoErrors;
+	virtual void assertNoErrors() {
+#ifdef _DEBUG
+		GLenum error = glGetError();
+		while (error != GL_NO_ERROR) {
+			const char* errorString = reinterpret_cast<const char*>(qgluErrorString(error));
+			
+			if (error == GL_OUT_OF_MEMORY) {
+				ERROR_MESSAGE("OpenGL out of memory error: " << errorString);
+			}
+			else {
+				ERROR_MESSAGE("OpenGL error: " << errorString);
+			}
+			error = glGetError();
+		}
+#endif
 	}
 	
-	OpenGLBinding* getTable()
-  {
-    return this;
-  }
-  
+	virtual void drawString(const char* string) const {
+		glListBase(m_font);
+		glCallLists(GLsizei(strlen(string)), GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(string));
+	}
+	
+	virtual void drawChar(char character) const {
+		glListBase(m_font);
+		glCallLists(1, GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(&character));
+	}
+	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const {
 		static std::string _name(MODULE_OPENGL);
