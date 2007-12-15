@@ -272,3 +272,110 @@ gboolean glwidget_make_current (GtkWidget *widget)
   return gdk_gl_drawable_gl_begin (gldrawable, glcontext);
 }
 
+namespace gtkutil {
+
+// Constructor, pass TRUE to enable depth-buffering
+GLWidget::GLWidget(bool zBuffer) :
+	_widget(gtk_drawing_area_new()),
+	_zBuffer(zBuffer)
+{
+	g_signal_connect(G_OBJECT(_widget), "hierarchy-changed", G_CALLBACK(onHierarchyChanged), this);
+	g_signal_connect(G_OBJECT(_widget), "realize", G_CALLBACK(onRealise), this);
+	g_signal_connect(G_OBJECT(_widget), "unrealize", G_CALLBACK(onUnRealise), this);
+}
+	
+// Operator cast to GtkWidget*, for packing into parent containers
+GLWidget::operator GtkWidget*() {
+	return _widget;
+}
+
+GdkGLConfig* GLWidget::createGLConfigWithDepth() {
+	GdkGLConfig* glconfig(NULL);
+
+	for (configs_iterator i = configs_with_depth, end = configs_with_depth + 6; 
+		 i != end; ++i)
+	{
+		glconfig = gdk_gl_config_new(i->attribs);
+		
+		if (glconfig != NULL) {
+			globalOutputStream() << "OpenGL window configuration: " << i->name << "\n";
+			return glconfig;
+		}
+	}
+
+	globalOutputStream() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = auto (fallback)\n";
+	return gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGBA | GDK_GL_MODE_DOUBLE | GDK_GL_MODE_DEPTH));
+}
+
+GdkGLConfig* GLWidget::createGLConfig() {
+	GdkGLConfig* glconfig(NULL);
+
+	for (configs_iterator i = configs, end = configs + 2; i != end; ++i) {
+		glconfig = gdk_gl_config_new(i->attribs);
+		
+		if (glconfig != NULL) {
+			globalOutputStream() << "OpenGL window configuration: " << i->name << "\n";
+			return glconfig;
+		}
+	}
+
+	globalOutputStream() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = none\n";
+	return gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGBA | GDK_GL_MODE_DOUBLE));
+}
+
+gboolean GLWidget::onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_toplevel, GLWidget* self) {
+	if (previous_toplevel == NULL && !gtk_widget_is_gl_capable(widget)) {
+		// Create a new GL config structure
+		GdkGLConfig* glconfig = (self->_zBuffer) ? createGLConfigWithDepth() : createGLConfig();
+		ASSERT_MESSAGE(glconfig != NULL, "failed to create OpenGL config");
+
+		gtk_widget_set_gl_capability(
+			widget, 
+			glconfig, 
+			_shared != NULL ? gtk_widget_get_gl_context(_shared) : NULL, 
+			TRUE, 
+			GDK_GL_RGBA_TYPE
+		);
+
+		gtk_widget_realize(widget);
+		
+		// Shared not set yet?
+		if (_shared == 0) {
+			_shared = widget;
+		}
+	}
+
+	return FALSE;
+}
+
+gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) {
+	if (++_realisedWidgets == 1) {
+		_shared = widget;
+		gtk_widget_ref(_shared);
+
+		glwidget_make_current(_shared);
+		GlobalOpenGL().contextValid = true;
+
+		GLWidget_sharedContextCreated();
+	}
+
+	return FALSE;
+}
+
+gint GLWidget::onUnRealise(GtkWidget* widget, GLWidget* self) {
+	if (--_realisedWidgets == 0) {
+		GlobalOpenGL().contextValid = false;
+
+		GLWidget_sharedContextDestroyed();
+
+		gtk_widget_unref(_shared);
+		_shared = 0;
+	}
+
+	return FALSE;
+}
+
+GtkWidget* GLWidget::_shared = NULL;
+int GLWidget::_realisedWidgets = 0;
+
+} // namespace gtkutil
