@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
 #include "gtkutil/nonmodal.h"
+#include "gtkutil/glwidget.h"
 #include "gtkutil/cursor.h"
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
@@ -75,7 +76,7 @@ class TextureBrowser :
   NonModalEntry m_filterEntry;
 
   GtkWindow* m_parent;
-  GtkWidget* m_gl_widget;
+  gtkutil::GLWidget m_gl_widget;
 
   guint m_sizeHandler;
   guint m_exposeHandler;

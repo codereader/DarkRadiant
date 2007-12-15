@@ -40,6 +40,7 @@ TextureBrowser::TextureBrowser() :
 	_popupMenu(gtk_menu_new()),
 	m_filter(0),
 	m_filterEntry(TextureBrowserQueueDrawCaller(*this), ClearFilterCaller(*this)),
+	m_gl_widget(false), // no z-buffer
 	m_texture_scroll(0),
 	m_heightChanged(true),
 	m_originInvalid(true),
@@ -798,22 +799,23 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 		}
 
 		{
-			m_gl_widget = glwidget_new(FALSE);
-			gtk_widget_ref(m_gl_widget);
+			// Cast gtkutil::GLWidget to GtkWidget*
+			GtkWidget* glWidget = m_gl_widget;
+			gtk_widget_ref(glWidget);
 
-			gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-			GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
+			gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+			GTK_WIDGET_SET_FLAGS(glWidget, GTK_CAN_FOCUS);
 
-			gtk_box_pack_start(GTK_BOX(texbox), m_gl_widget, TRUE, TRUE, 0);
-			gtk_widget_show(m_gl_widget);
+			gtk_box_pack_start(GTK_BOX(texbox), glWidget, TRUE, TRUE, 0);
+			gtk_widget_show(glWidget);
 
-			m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
-			m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose-event", G_CALLBACK(onExpose), this);
+			m_sizeHandler = g_signal_connect(G_OBJECT(glWidget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
+			m_exposeHandler = g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onExpose), this);
 
-			g_signal_connect(G_OBJECT(m_gl_widget), "button-press-event", G_CALLBACK(onButtonPress), this);
-			g_signal_connect(G_OBJECT(m_gl_widget), "button-release-event", G_CALLBACK(onButtonRelease), this);
-			g_signal_connect(G_OBJECT(m_gl_widget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
-			g_signal_connect(G_OBJECT(m_gl_widget), "scroll-event", G_CALLBACK(onMouseScroll), this);
+			g_signal_connect(G_OBJECT(glWidget), "button-press-event", G_CALLBACK(onButtonPress), this);
+			g_signal_connect(G_OBJECT(glWidget), "button-release-event", G_CALLBACK(onButtonRelease), this);
+			g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
+			g_signal_connect(G_OBJECT(glWidget), "scroll-event", G_CALLBACK(onMouseScroll), this);
 		}
 	}
 	
@@ -826,10 +828,11 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 void TextureBrowser::destroyWindow() {
 	GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
 
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
+	GtkWidget* glWidget = m_gl_widget;
+	g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
+	g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
 
-	gtk_widget_unref(m_gl_widget);
+	gtk_widget_unref(glWidget);
 }
 
 void TextureBrowser::registerPreferencesPage() {
