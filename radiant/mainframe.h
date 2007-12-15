@@ -183,9 +183,6 @@ void VFS_Destroy();
 
 void MainFrame_Construct();
 
-void GlobalGL_sharedContextCreated();
-void GlobalGL_sharedContextDestroyed();
-
 extern float (*GridStatus_getGridSize)();
 extern int (*GridStatus_getFarClipDistance)();
 

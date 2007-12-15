@@ -144,10 +144,6 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 // This is called from main() to start up the Radiant stuff.
 void Radiant_Initialise() 
 {
-	// greebo: Set gtkutil's GLWidget callbacks (TODO, this must be solved in another way).
-	GLWidget_sharedContextCreated = GlobalGL_sharedContextCreated;
-	GLWidget_sharedContextDestroyed = GlobalGL_sharedContextDestroyed;
-	
 	// Create the empty Settings node and set the title to empty.
 	ui::PrefDialog::Instance().createOrFindPage("Game");
 	ui::PrefDialog::Instance().createOrFindPage("Interface");
@@ -1533,37 +1529,6 @@ void GridStatus_onTextureLockEnabledChanged()
   {
     g_pParentWnd->SetGridStatus();
   }
-}
-
-namespace
-{
-  GLFont g_font(0, 0);
-}
-
-void GlobalGL_sharedContextCreated()
-{
-  // report OpenGL information
-  globalOutputStream() << "GL_VENDOR: " << reinterpret_cast<const char*>(glGetString (GL_VENDOR)) << "\n";
-  globalOutputStream() << "GL_RENDERER: " << reinterpret_cast<const char*>(glGetString (GL_RENDERER)) << "\n";
-  globalOutputStream() << "GL_VERSION: " << reinterpret_cast<const char*>(glGetString (GL_VERSION)) << "\n";
-  globalOutputStream() << "GL_EXTENSIONS: " << reinterpret_cast<const char*>(glGetString (GL_EXTENSIONS)) << "\n";
-
-  QGL_sharedContextCreated(GlobalOpenGL());
-
-  GlobalShaderCache().extensionsInitialised();
-
-  GlobalShaderCache().realise();
-
-  g_font = glfont_create("courier 8");
-  GlobalOpenGL().m_font = g_font.getDisplayList();
-  GlobalOpenGL().m_fontHeight = g_font.getPixelHeight();
-}
-
-void GlobalGL_sharedContextDestroyed()
-{
-  GlobalShaderCache().unrealise();
-
-  QGL_sharedContextDestroyed(GlobalOpenGL());
 }
 
 void Layout_registerPreferencesPage() {

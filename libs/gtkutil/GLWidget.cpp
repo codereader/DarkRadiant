@@ -32,9 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "pointer.h"
 
-void (*GLWidget_sharedContextCreated)() = 0;
-void (*GLWidget_sharedContextDestroyed)() = 0;
-
 namespace gtkutil {
 
 typedef int* attribs_t;
@@ -239,7 +236,7 @@ gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) {
 		makeCurrent(_shared);
 		GlobalOpenGL().contextValid = true;
 
-		GLWidget_sharedContextCreated();
+		GlobalOpenGL().sharedContextCreated();
 	}
 
 	return FALSE;
@@ -249,7 +246,7 @@ gint GLWidget::onUnRealise(GtkWidget* widget, GLWidget* self) {
 	if (--_realisedWidgets == 0) {
 		GlobalOpenGL().contextValid = false;
 
-		GLWidget_sharedContextDestroyed();
+		GlobalOpenGL().sharedContextDestroyed();
 
 		gtk_widget_unref(_shared);
 		_shared = NULL;

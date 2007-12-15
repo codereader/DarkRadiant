@@ -18,16 +18,18 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include "qgl.h"
 
 #include <GL/glew.h>
 
 #include "imodule.h"
-#include "qgl.h"
+#include "irender.h"
+#include "igl.h"
 
+#include "gtkutil/glfont.h"
 #include "debugging/debugging.h"
 
 #include "modulesystem/StaticModule.h"
-#include "igl.h"
 #include <iostream>
 
 //****************************** Error handling ********************************
@@ -62,24 +64,8 @@ const GLubyte* qgluErrorString(GLenum errCode )
 
 //************************************ Loading *************************************
 
-void QGL_sharedContextCreated(OpenGLBinding& table)
-{
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		// glewInit failed
-		globalErrorStream() << "GLEW error: " << (const char*)glewGetErrorString(err);
-	}
-}
-
 int QGL_Init(OpenGLBinding& table) {
   return 1;
-}
-
-//*********************************** Destroying ************************************
-
-void QGL_sharedContextDestroyed(OpenGLBinding& table)
-{
 }
 
 void QGL_Shutdown(OpenGLBinding& table) {
@@ -91,7 +77,13 @@ void QGL_Shutdown(OpenGLBinding& table) {
 class QglAPI :
 	public OpenGLBinding
 {
+	GLFont g_font;
+	
 public:
+	QglAPI() :
+		g_font(0, 0)
+	{}
+	
 	virtual void assertNoErrors() {
 #ifdef _DEBUG
 		GLenum error = glGetError();
@@ -107,6 +99,36 @@ public:
 			error = glGetError();
 		}
 #endif
+	}
+	
+	virtual void sharedContextCreated() {
+		// report OpenGL information
+		globalOutputStream() << "GL_VENDOR: "
+			<< reinterpret_cast<const char*>(glGetString(GL_VENDOR)) << "\n";
+		globalOutputStream() << "GL_RENDERER: "
+			<< reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << "\n";
+		globalOutputStream() << "GL_VERSION: "
+			<< reinterpret_cast<const char*>(glGetString(GL_VERSION)) << "\n";
+		globalOutputStream() << "GL_EXTENSIONS: "
+			<< reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)) << "\n";
+
+		GLenum err = glewInit();
+		if (err != GLEW_OK)	{
+			// glewInit failed
+			globalErrorStream() << "GLEW error: " << 
+				reinterpret_cast<const char*>(glewGetErrorString(err));
+		}
+
+		GlobalShaderCache().extensionsInitialised();
+		GlobalShaderCache().realise();
+
+		g_font = glfont_create("courier 8");
+		m_font = g_font.getDisplayList();
+		m_fontHeight = g_font.getPixelHeight();
+	}
+		
+	virtual void sharedContextDestroyed() {
+		GlobalShaderCache().unrealise();
 	}
 	
 	virtual void drawString(const char* string) const {
