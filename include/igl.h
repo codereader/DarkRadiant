@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IGL_H)
 #define INCLUDED_IGL_H
 
-#include <string.h>
+#include <string>
 #include <GL/glew.h>
 
 #include "imodule.h"
@@ -33,35 +33,27 @@ class OpenGLBinding :
 	public RegisterableModule
 {
 public:
-  /// \brief OpenGL version, extracted from the GL_VERSION string.
-  int major_version, minor_version;
+	/// \brief OpenGL version, extracted from the GL_VERSION string.
+	int major_version, minor_version;
 
-  /// \brief Is true if the global shared OpenGL context is valid.
-  bool contextValid;
+	/// \brief Is true if the global shared OpenGL context is valid.
+	bool contextValid;
 
-  OpenGLBinding() : contextValid(false)
-  {
-  }
+	OpenGLBinding() : 
+		contextValid(false)
+	{}
 
-  /// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
-  void (*assertNoErrors)();
+	/// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
+	virtual void assertNoErrors() = 0;
 
-  GLuint m_font;
-  int m_fontHeight;
+	GLuint m_font;
+	int m_fontHeight;
 
-  /// \brief Renders \p string at the current raster-position of the current context.
-  void drawString(const char* string) const
-  {
-    glListBase(m_font);
-    glCallLists(GLsizei(strlen(string)), GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(string));
-  }
+	/// \brief Renders \p string at the current raster-position of the current context.
+	virtual void drawString(const char* string) const = 0;
 
-  /// \brief Renders \p character at the current raster-position of the current context.
-  void drawChar(char character) const
-  {
-    glListBase(m_font);
-    glCallLists(1, GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(&character));
-  }
+	/// \brief Renders \p character at the current raster-position of the current context.
+	virtual void drawChar(char character) const = 0;
 };
 
 inline OpenGLBinding& GlobalOpenGL() {
