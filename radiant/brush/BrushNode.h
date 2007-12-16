@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "instancelib.h"
 #include "TexDef.h"
 #include "ibrush.h"
+#include "BrushTokenImporter.h"
 #include "brushtokens.h"
 #include "nameable.h"
 
@@ -36,7 +37,7 @@ class BrushNode :
 	public Snappable,
 	public TransformNode,
 	public BrushDoom3,
-	public MapImporter,
+	public BrushTokenImporter, // implements MapImporter
 	public MapExporter,
 	public IBrushNode
 {
@@ -47,17 +48,11 @@ class BrushNode :
 	Brush m_brush;
 	
 	// The map importer/exporters
-	BrushTokenImporter m_mapImporter;
 	BrushTokenExporter m_mapExporter;
 
 public:
-
 	// Constructor
 	BrushNode();
-	
-	~BrushNode() {
-		//std::cout << "BrushNode destructed.";
-	}
 	
 	// Copy Constructor
 	BrushNode(const BrushNode& other);
@@ -69,9 +64,6 @@ public:
 		return "Brush";
 	}
 	
-	// MapImporter implementation
-	virtual bool importTokens(parser::DefTokeniser& tokeniser);
-
 	// MapExporter implementation
 	virtual void exportTokens(std::ostream& os) const;
 	
