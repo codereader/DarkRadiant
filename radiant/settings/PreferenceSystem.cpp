@@ -62,6 +62,7 @@ public:
 
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_RADIANT);
 		}
 		
 		return _dependencies;

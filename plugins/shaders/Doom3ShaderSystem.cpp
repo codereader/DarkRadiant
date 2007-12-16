@@ -227,12 +227,14 @@ void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3ShaderSystem::initialiseModule called\n";
 	
 	construct();
+	realise();
 }
 
 void Doom3ShaderSystem::shutdownModule() {
 	globalOutputStream() << "Doom3ShaderSystem::shutdownModule called\n";
 	
 	destroy();
+	unrealise();
 }
 
 } // namespace shaders

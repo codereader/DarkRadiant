@@ -37,6 +37,9 @@ private:
 	// this is ~/.doom3/<fs_game> in linux, and <enginepath>/<fs_game> in Win32
 	std::string _modPath;
 	
+	// The sorted list of VFS search paths (valid after module initialisation) 
+	PathList _vfsSearchPaths;
+	
 	bool _enginePathInitialised;
 	
 public:
@@ -95,6 +98,9 @@ public:
 	/** greebo: Scans the "games/" subfolder for .game description foles.
 	 */
 	void loadGameFiles(const std::string& appPath);
+
+	// Returns the sorted game path list
+	virtual const PathList& getVFSSearchPaths() const;
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

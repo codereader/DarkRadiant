@@ -27,25 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "string/string.h"
 
 #include <list>
+#include <GL/glew.h>
 
 void ShaderCache_extensionsInitialised();
-
-class OpenGLState;
-class OpenGLStateBucket;
-
-/* Sorted state map */
-
-#include "render/backend/OpenGLStateLess.h"
-#include "generic/reference.h"
-#include <map>
-
-typedef ConstReference<OpenGLState> OpenGLStateReference;
-typedef std::map<OpenGLStateReference, 
-				 OpenGLStateBucket*, 
-				 OpenGLStateLess> OpenGLStates;
-
-void insertSortedState(const OpenGLStates::value_type& val);
-void eraseSortedState(const OpenGLStates::key_type& key);
 
 /**
  * Load a GL Program from the given filename and load directly into OpenGL.

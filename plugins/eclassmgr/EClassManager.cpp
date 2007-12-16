@@ -199,6 +199,7 @@ void EClassManager::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "EntityClassDoom3::initialiseModule called.\n";
 	
 	GlobalFileSystem().addObserver(*this);
+	realise();
 }
 
 void EClassManager::shutdownModule() {
