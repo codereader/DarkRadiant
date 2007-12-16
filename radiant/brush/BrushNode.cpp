@@ -5,8 +5,8 @@
 // Constructor
 BrushNode::BrushNode() :
 	BrushTokenImporter(m_brush),
-	m_brush(*this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
-	m_mapExporter(m_brush)
+	BrushTokenExporter(m_brush),
+	m_brush(*this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances))
 {}
 
 // Copy Constructor
@@ -19,15 +19,10 @@ BrushNode::BrushNode(const BrushNode& other) :
 	TransformNode(other),
 	BrushDoom3(other),
 	BrushTokenImporter(other),
-	MapExporter(other),
+	BrushTokenExporter(other),
 	IBrushNode(other),
-	m_brush(other.m_brush, *this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
-	m_mapExporter(m_brush)
+	m_brush(other.m_brush, *this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances))
 {}
-
-void BrushNode::exportTokens(std::ostream& os) const {
-	m_mapExporter.exportTokens(os);
-}
 
 // Snappable implementation
 void BrushNode::snapto(float snap) {
