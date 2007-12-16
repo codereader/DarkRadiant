@@ -4,8 +4,8 @@
 
 // Constructor
 BrushNode::BrushNode() :
+	BrushTokenImporter(m_brush),
 	m_brush(*this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
-	m_mapImporter(m_brush),
 	m_mapExporter(m_brush)
 {}
 
@@ -18,18 +18,12 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Snappable(other),
 	TransformNode(other),
 	BrushDoom3(other),
-	MapImporter(other),
+	BrushTokenImporter(other),
 	MapExporter(other),
 	IBrushNode(other),
 	m_brush(other.m_brush, *this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances)),
-	m_mapImporter(m_brush),
 	m_mapExporter(m_brush)
 {}
-
-// MapImporter implementation
-bool BrushNode::importTokens(parser::DefTokeniser& tokeniser) {
-	return m_mapImporter.importTokens(tokeniser);
-}
 
 void BrushNode::exportTokens(std::ostream& os) const {
 	m_mapExporter.exportTokens(os);
