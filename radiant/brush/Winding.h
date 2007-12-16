@@ -118,6 +118,9 @@ public:
 	// Submits this winding to OpenGL
 	void draw(RenderStateFlags state) const;
 	
+	// Submits the wireframe render commands to OpenGL
+	void drawWireframe() const;
+	
 	// Wraps the given index around if it's larger than the size of this winding
 	inline std::size_t wrap(std::size_t i) const {
 		ASSERT_MESSAGE(numpoints != 0, "Winding_wrap: empty winding");
