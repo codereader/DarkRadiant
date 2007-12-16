@@ -2,6 +2,7 @@
 #define IGAMEMANAGER_H_
 
 #include "imodule.h"
+#include <list>
 
 // String identifier for the game manager module
 const std::string MODULE_GAMEMANAGER("GameManager");
@@ -35,6 +36,13 @@ public:
 	/** greebo: Returns the current Game (shared_ptr).
 	 */
 	virtual IGamePtr currentGame() = 0;
+	
+	// A sorted list of engine paths (queried by the VFS)
+	typedef std::list<std::string> PathList;
+	
+	// Returns the list of ordered engine paths, which should 
+	// be initialised by the Virtual Filesystem (in this exact order) 
+	virtual const PathList& getVFSSearchPaths() const = 0;  
 };
 typedef boost::shared_ptr<IGameManager> IGameManagerPtr;
 

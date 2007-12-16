@@ -588,6 +588,7 @@ radiant_src = \
          'render/backend/OpenGLShader.cpp',
          'render/backend/GLProgramFactory.cpp',
          'render/OpenGLModule.cpp',
+         'render/OpenGLShaderCache.cpp',
          'settings/GameFileLoader.cpp',
          'settings/GameManager.cpp',
          'settings/Game.cpp',

@@ -689,9 +689,11 @@ public:
 		g_nullModel = NewNullModel();
 
 		GlobalFileSystem().addObserver(*this);
+		realise();
 	}
 	
 	virtual void shutdownModule() {
+		unrealise();
 		GlobalFileSystem().removeObserver(*this);
 
 		g_nullModel = g_nullNode;

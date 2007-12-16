@@ -16,6 +16,7 @@
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
 #include <gtk/gtkmain.h>
+#include <iostream>
 
 namespace game {
 
@@ -42,7 +43,6 @@ const StringSet& Manager::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 	}
 
 	return _dependencies;
@@ -270,11 +270,15 @@ void Manager::updateEnginePath(bool forced) {
 	);
 	std::string newFSGame = GlobalRegistry().get(RKEY_FS_GAME);
 	
+	// Only update if any settings were changed, or if this is a "forced" update
 	if (newPath != _enginePath || newFSGame != _fsGame || forced) {
+		// Check, if the engine path was already initialised in this session
+		// If yes, shutdown the virtual filesystem.
 		if (_enginePathInitialised) {
 			GlobalFileSystem().shutdown();
 			GlobalRegistry().set(RKEY_MAP_PATH, "");
 			_enginePathInitialised = false;
+			_vfsSearchPaths.clear();
 		}
 		
 		// Set the new fs_game and engine paths
@@ -287,12 +291,12 @@ void Manager::updateEnginePath(bool forced) {
 		if (!_enginePathInitialised) {
 			if (!_fsGame.empty()) {
 				// We have a MOD, register this directory first
-				GlobalFileSystem().initDirectory(_modPath);
+				_vfsSearchPaths.push_back(_modPath);
 				
 #if defined(POSIX)
 				// On Linux, the above was in ~/.doom3/, search the engine mod path as well
 				std::string baseModPath = os::standardPathWithSlash(_enginePath + _fsGame);
-				GlobalFileSystem().initDirectory(baseModPath);
+				_vfsSearchPaths.push_back(baseModPath);
 #endif
 			}
 			
@@ -301,7 +305,7 @@ void Manager::updateEnginePath(bool forced) {
 			std::string userBasePath = os::standardPathWithSlash(
 				getUserEnginePath() + _enginePath + currentGame()->getRequiredKeyValue("basegame")
 			);
-			GlobalFileSystem().initDirectory(userBasePath);
+			_vfsSearchPaths.push_back(userBasePath);
 #endif
 			
 			// Register the base game folder (/usr/local/games/doom3/<basegame>) last
@@ -309,7 +313,7 @@ void Manager::updateEnginePath(bool forced) {
 			std::string baseGame = os::standardPathWithSlash(
 				_enginePath + currentGame()->getRequiredKeyValue("basegame")
 			);
-			GlobalFileSystem().initDirectory(baseGame);
+			_vfsSearchPaths.push_back(baseGame);
 			
 			// Construct the map path and make sure the folder exists
 			std::string mapPath;
@@ -342,8 +346,21 @@ void Manager::updateEnginePath(bool forced) {
 			GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);
 
 			_enginePathInitialised = true;
+			
+			globalOutputStream() << "VFS Search Path priority is: \n"; 
+			for (PathList::iterator i = _vfsSearchPaths.begin(); i != _vfsSearchPaths.end(); i++) {
+				globalOutputStream() << "- " << i->c_str() << "\n";
+			}
 		}
 	}
+}
+
+const Manager::PathList& Manager::getVFSSearchPaths() const {
+	// Should not be called before the list is initialised
+	if (_vfsSearchPaths.empty()) {
+		std::cout << "GameManager: Warning, VFS search paths not yet initialised.";
+	}
+	return _vfsSearchPaths;
 }
 
 const std::string& Manager::getEnginePath() const {

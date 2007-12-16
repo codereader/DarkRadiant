@@ -52,6 +52,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "iradiant.h"
 #include "idatastream.h"
 #include "ifilesystem.h"
+#include "igame.h"
 
 #include "generic/callback.h"
 #include "string/string.h"
@@ -280,6 +281,7 @@ const StringSet& Quake3FileSystem::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert("ArchivePK4");
+		_dependencies.insert(MODULE_GAMEMANAGER);
 	}
 
 	return _dependencies;
@@ -287,4 +289,17 @@ const StringSet& Quake3FileSystem::getDependencies() const {
 
 void Quake3FileSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "VFS::initialiseModule called\n";
+	
+	// Get the VFS search paths from the game manager
+	const game::IGameManager::PathList& paths = 
+		GlobalGameManager().getVFSSearchPaths();
+	
+	// Initialise the paths, in the given order
+	for (game::IGameManager::PathList::const_iterator i = paths.begin();
+		 i != paths.end(); i++)
+	{
+		initDirectory(*i);
+	}
+	
+	initialise();
 }
