@@ -261,14 +261,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\error.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\error.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\gtkdlgs.cpp"
 				>
 			</File>
@@ -351,19 +343,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\plugin.cpp"
+				RelativePath="..\..\radiant\RadiantModule.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\plugin.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\qgl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\qgl.h"
+				RelativePath="..\..\radiant\RadiantModule.h"
 				>
 			</File>
 			<File
@@ -427,14 +411,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\winding.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\winding.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\windowobservers.cpp"
 				>
 			</File>
@@ -490,6 +466,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\brush\BrushTokenExporter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\brush\BrushTokenExporter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\brush\BrushTokenImporter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\brush\BrushTokenImporter.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\brush\BrushVisit.h"
 					>
 				</File>
@@ -542,6 +534,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\brush\FixedWinding.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\brush\FixedWinding.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\brush\PlanePoints.h"
 					>
 				</File>
@@ -579,6 +579,14 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\brush\VertexSelection.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\brush\Winding.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\brush\Winding.h"
 					>
 				</File>
 				<Filter
@@ -961,6 +969,26 @@
 			<Filter
 				Name="render"
 				>
+				<File
+					RelativePath="..\..\radiant\render\LinearLightList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\render\OpenGLModule.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\render\OpenGLModule.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\render\OpenGLShaderCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\render\OpenGLShaderCache.h"
+					>
+				</File>
 				<Filter
 					Name="backend"
 					>
@@ -1465,6 +1493,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\einspector\ClassnamePropertyEditor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\einspector\ClassnamePropertyEditor.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\einspector\ColourPropertyEditor.cpp"
 						>
 					</File>
@@ -1478,14 +1514,6 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\einspector\EClassPropertyEditor.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\einspector\EClassPropertyEditor.h"
 						>
 					</File>
 					<File
