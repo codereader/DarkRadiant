@@ -61,15 +61,15 @@ public:
 	
 	/** greebo: Gets the engine path (e.g. /usr/local/doom3/).
 	 */
-	std::string getEnginePath() const;
+	const std::string& getEnginePath() const;
 	
 	/** greebo: Gets the mod path (e.g. ~/.doom3/darkmod/).
 	 */
-	std::string getModPath() const;
+	const std::string& getModPath() const;
 
 	/** greebo: Accessor method for the fs_game parameter
 	 */
-	std::string getFSGame() const;
+	const std::string& getFSGame() const;
 
 	/** greebo: Initialises the engine path from the settings in the registry.
 	 * 			If nothing is found, the game file is queried.
@@ -84,7 +84,7 @@ public:
 	 * 			This is a convenience method to be used when loading
 	 * 			modules that require a game type like "doom3".
 	 */
-	const char* getCurrentGameType();
+	const std::string& getCurrentGameType() const;
 	
 	/** greebo: Loads the game files and the saved settings.
 	 * 			If no saved game setting is found, the user
