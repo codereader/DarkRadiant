@@ -546,6 +546,7 @@ radiant_src = \
          'patch/PatchNode.cpp',
          'brushexport/BrushExportOBJ.cpp',
          'brush/BrushNode.cpp',
+         'brush/BrushTokenExporter.cpp',
          'brush/BrushTokenImporter.cpp',
          'brush/BrushPrimitTexDef.cpp',
          'brush/FixedWinding.cpp',
