@@ -30,7 +30,7 @@ class IGameManager :
 public:
 	/** greebo: Gets the mod path (e.g. ~/.doom3/darkmod/).
 	 */
-	virtual std::string getModPath() const = 0;
+	virtual const std::string& getModPath() const = 0;
 	
 	/** greebo: Returns the current Game (shared_ptr).
 	 */

@@ -51,15 +51,16 @@ const StringSet& Manager::getDependencies() const {
 void Manager::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "GameManager::initialiseModule called.\n";
 	
+	// Load the game settings and select the game type
 	initialise(ctx.getApplicationPath());
 	initEnginePath();
 }
 
-std::string Manager::getFSGame() const {
+const std::string& Manager::getFSGame() const {
 	return _fsGame;
 }
 
-std::string Manager::getModPath() const {
+const std::string& Manager::getModPath() const {
 	return _modPath;
 }
 
@@ -105,16 +106,13 @@ void Manager::initialise(const std::string& appPath) {
 	if (gameType.empty() || i == _games.end()) {
 		// Check the number of available games
 		if (_games.size() == 0) {
-			// No game type selected, bail out, the program will crash anyway on module load
+			// No game type selected, bail out, the program would crash anyway on module load
 			gtkutil::fatalErrorDialog("GameManager: No valid game files found, can't continue\n", NULL);
 		}
-		else if (_games.size() >= 1) {
-			// We have exacty one game type available, auto-select it
-			// Store the name of the only game into the Registry 
-			GlobalRegistry().set(RKEY_GAME_TYPE, _games.begin()->first);
-		}
-		// If more than one game is available, the dialog 
-		// is most probably shown as soon as the engine path is initialised. 
+		
+		// We have at least one game type available, select the first
+		// Store the name of the only game into the Registry 
+		GlobalRegistry().set(RKEY_GAME_TYPE, _games.begin()->first); 
 	}
 	
 	// Load the value from the registry, there should be one selected at this point
@@ -125,7 +123,7 @@ void Manager::initialise(const std::string& appPath) {
 		globalOutputStream() << "GameManager: Selected game type: " << _currentGameType.c_str() << "\n";
 	}
 	else {
-		// No game type selected, bail out, the program will crash anyway on module load
+		// No game type selected, bail out, the program would crash anyway on module load
 		gtkutil::fatalErrorDialog("No game type selected\n", NULL);
 	}
 }
@@ -170,6 +168,8 @@ void Manager::initEnginePath() {
 	xml::NodeList gameNodeList = GlobalRegistry().findXPath("game");
 	
 	if (enginePath.empty() && gameNodeList.size() > 0) {
+		// No engine path known, but we have a valid game description
+		// Try to deduce the engine path from the Registry settings (Win32 only)
 		std::string regKey = gameNodeList[0].getAttributeValue("registryKey");
 		std::string regValue = gameNodeList[0].getAttributeValue("registryValue");
 		
@@ -179,7 +179,7 @@ void Manager::initEnginePath() {
 		  
 		// Query the Windows Registry for a default installation path
 		// This will return "" for non-Windows environments
-		enginePath = Win32Registry::getKeyValue("SOFTWARE\\id\\Doom 3","InstallPath");
+		enginePath = Win32Registry::getKeyValue(regKey, regValue);
 		
 		globalOutputStream() << "GameManager: Windows Registry returned result: "
 							 << enginePath.c_str() << "\n";  	
@@ -188,7 +188,7 @@ void Manager::initEnginePath() {
 	// If the engine path is still empty, consult the .game file for a fallback value
 	if (enginePath.empty()) {
 		// No engine path set so far, search the game file for default values
-		const char* ENGINEPATH_ATTRIBUTE =
+		const std::string ENGINEPATH_ATTRIBUTE =
 #if defined(WIN32)
 		    "enginepath_win32"
 #elif defined(__linux__) || defined (__FreeBSD__)
@@ -346,12 +346,12 @@ void Manager::updateEnginePath(bool forced) {
 	}
 }
 
-std::string Manager::getEnginePath() const {
+const std::string& Manager::getEnginePath() const {
 	return _enginePath;
 }
 
-const char* Manager::getCurrentGameType() {
-	return _currentGameType.c_str();
+const std::string& Manager::getCurrentGameType() const {
+	return _currentGameType;
 }
 
 /** greebo: Scans the "games/" subfolder for .game description foles.
@@ -361,7 +361,7 @@ void Manager::loadGameFiles(const std::string& appPath) {
 	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath.c_str() << '\n';
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
-	GameFileLoader gameFileLoader(_games, gamePath.c_str());
+	GameFileLoader gameFileLoader(_games, gamePath);
 	Directory_forEach(gamePath.c_str(), gameFileLoader);
 	
 	globalOutputStream() << "GameManager: Found game definitions: ";
