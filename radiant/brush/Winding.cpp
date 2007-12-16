@@ -49,6 +49,11 @@ namespace {
 	}
 }
 
+void Winding::drawWireframe() const {
+	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.front().vertex);
+	glDrawArrays(GL_LINE_LOOP, 0, GLsizei(numpoints));
+}
+
 void Winding::draw(RenderStateFlags state) const {
 	// A shortcut pointer to the first array element to avoid
 	// massive calls to std::vector<>::begin()

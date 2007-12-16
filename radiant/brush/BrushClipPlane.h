@@ -6,11 +6,6 @@
 #include "renderable.h"
 #include "Winding.h"
 
-inline void Winding_DrawWireframe(const Winding& winding) {
-	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &winding.points.data()->vertex);
-	glDrawArrays(GL_LINE_LOOP, 0, GLsizei(winding.numpoints));
-}
-
 class BrushClipPlane : public OpenGLRenderable {
 	Plane3 m_plane;
 	Winding m_winding;
@@ -39,7 +34,7 @@ public:
 			m_winding.draw(state);
 		}
 		else {
-			Winding_DrawWireframe(m_winding);
+			m_winding.drawWireframe();
 		}
 	}
 
