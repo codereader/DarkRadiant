@@ -60,51 +60,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/weak_ptr.hpp>
 
-#define DEBUG_RENDER 0
-
-#include "timer.h"
-
-StringOutputStream g_renderer_stats;
-std::size_t g_count_prims;
-std::size_t g_count_states;
-std::size_t g_count_transforms;
-Timer g_timer;
-
-inline void count_prim()
-{
-  ++g_count_prims;
-}
-
-inline void count_state()
-{
-  ++g_count_states;
-}
-
-inline void count_transform()
-{
-  ++g_count_transforms;
-}
-
-void Renderer_ResetStats()
-{
-  g_count_prims = 0;
-  g_count_states = 0;
-  g_count_transforms = 0;
-  g_timer.start();
-}
-
-const char* Renderer_GetStats()
-{
-  g_renderer_stats.clear();
-  g_renderer_stats << "prims: " << Unsigned(g_count_prims)
-    << " | states: " << Unsigned(g_count_states)
-    << " | transforms: " << Unsigned(g_count_transforms)
-    << " | msec: " << g_timer.elapsed_msec();
-  return g_renderer_stats.c_str();
-}
-
-
-void printShaderLog(GLhandleARB object)
+/*void printShaderLog(GLhandleARB object)
 {
   GLint log_length = 0;
   glGetObjectParameterivARB(object, GL_OBJECT_INFO_LOG_LENGTH_ARB, &log_length);
@@ -113,9 +69,9 @@ void printShaderLog(GLhandleARB object)
   glGetInfoLogARB(object, log_length, &log_length, log.data());
   
   globalErrorStream() << StringRange(log.begin(), log.begin() + log_length) << "\n";
-}
+}*/
 
-void createShader(GLhandleARB program, const char* filename, GLenum type)
+/*void createShader(GLhandleARB program, const char* filename, GLenum type)
 {
   GLhandleARB shader = glCreateShaderObjectARB(type);
   GlobalOpenGL_debugAssertNoErrors();
@@ -154,7 +110,7 @@ void createShader(GLhandleARB program, const char* filename, GLenum type)
   glDeleteObjectARB(shader);
 
   GlobalOpenGL_debugAssertNoErrors();
-}
+}*/
 
 #define LIGHT_SHADER_DEBUG 0
 

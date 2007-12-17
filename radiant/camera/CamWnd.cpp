@@ -18,6 +18,7 @@
 #include "CamRenderer.h"
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
+#include "render/RenderStatistics.h"
 
 class ObjectFinder :
 	public scene::Graph::Walker
@@ -404,9 +405,7 @@ void CamWnd::Cam_Draw() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	extern void Renderer_ResetStats();
-
-	Renderer_ResetStats();
+	render::RenderStatistics::Instance().resetStats();
 
 	extern void Cull_ResetStats();
 
@@ -567,9 +566,7 @@ void CamWnd::Cam_Draw() {
 
 	glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 1.0f, 0.0f);
 
-	extern const char* Renderer_GetStats();
-
-	GlobalOpenGL().drawString(Renderer_GetStats());
+	GlobalOpenGL().drawString(render::RenderStatistics::Instance().getStatString().c_str());
 
 	glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 11.0f, 0.0f);
 
