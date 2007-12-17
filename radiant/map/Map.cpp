@@ -234,7 +234,6 @@ void Map::free() {
 	GlobalShaderClipboard().clear();
 
 	m_resource->removeObserver(*this);
-	GlobalReferenceCache().release(m_name.c_str());
 
 	// Reset the resource pointer
 	m_resource = ReferenceCache::ResourcePtr();
@@ -504,8 +503,6 @@ bool Map::import(const std::string& filename) {
 			MergeMap(clone);
 			success = true;
 		}
-		
-		GlobalReferenceCache().release(filename);
 	}
 
 	SceneChangeNotify();
@@ -727,8 +724,8 @@ void Map::renameAbsolute(const std::string& absolute) {
 	Node_getTraversable(GlobalSceneGraph().root())->traverse(CloneAll(clone));
 
 	m_resource->removeObserver(*this);
-	GlobalReferenceCache().release(m_name);
-
+	
+	// Apply the new resource pointer
 	m_resource = resource;
 
 	setName(absolute);

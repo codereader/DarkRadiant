@@ -667,13 +667,6 @@ public:
 		return newResource;
 	}
 	
-	/*
-	 * Release a named resource.
-	 */
-	void release(const std::string& path) {
-		// Does nothing. TODO: remove this or implement weak pointer references
-	}
-
 	bool realised() const {
 		return _realised;
 	}
