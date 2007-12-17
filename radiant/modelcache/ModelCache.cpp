@@ -10,6 +10,14 @@
 
 namespace model {
 
+scene::INodePtr ModelCache::find(const std::string& path) {
+	return scene::INodePtr();
+}
+	
+void ModelCache::insert(const scene::INodePtr& modelNode) {
+	
+}
+
 const std::string& ModelCache::getName() const {
 	static std::string _name(MODULE_MODELCACHE);
 	return _name;

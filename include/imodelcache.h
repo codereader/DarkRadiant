@@ -10,7 +10,17 @@ class IModelCache :
 	public RegisterableModule
 {
 public:
+	/**
+	 * greebo: Looks up the model with the given path in the cache.
+	 * 
+	 * @returns: The singleton model NodePtr or NULL if not found.
+	 */
+	virtual scene::INodePtr find(const std::string& path) = 0;
 	
+	/**
+	 * greebo: Inserts the given node into the modelcache. 
+	 */
+	virtual void insert(const scene::INodePtr& modelNode) = 0;
 };
 
 } // namespace model
