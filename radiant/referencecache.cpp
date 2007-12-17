@@ -317,8 +317,6 @@ scene::INodePtr Model_load(ModelLoader* loader, const std::string& path, const s
 
 namespace
 {
-  bool g_realised = false;
-
   // name may be absolute or relative
   const char* rootPath(const char* name)
   {
@@ -365,12 +363,6 @@ struct ModelResource
 	{
 		// Get the model loader for this resource type
 		m_loader = ModelLoader_forType(_type.c_str());
-					  
-		// Realise self if the ReferenceCache is itself realised. TODO: evil
-		// global variable, remove this
-		if(g_realised) {
-      		realise();
-		}
 	}
 	
   ~ModelResource()
@@ -663,6 +655,12 @@ public:
 		// In this case we create a new ModelResource, add it to the map and
 		// return it.
 		ModelResourcePtr newResource(new ModelResource(path));
+		
+		// Realise the new resource if the ReferenceCache itself is realised
+		if (realised()) {
+			newResource->realise();
+		}
+		
 		m_references[path] = ModelResourceWeakPtr(newResource);
 		return newResource;
 	}
@@ -674,7 +672,6 @@ public:
 	void realise() {
 		ASSERT_MESSAGE(!_realised, "HashtableReferenceCache::realise: already realised");
 		if (!_realised) {
-			g_realised = true;
 			_realised = true;
 
 			// Realise ModelResources
@@ -691,7 +688,6 @@ public:
 	
 	void unrealise() {
 		if (_realised) {
-			g_realised = false;
 			_realised = false;
 
 			// Unrealise ModelResources

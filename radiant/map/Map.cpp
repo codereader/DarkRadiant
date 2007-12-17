@@ -378,6 +378,7 @@ void Map::load(const std::string& filename) {
 		ScopeTimer timer("map load");
 
 		m_resource = GlobalReferenceCache().capture(m_name);
+		// greebo: Add the observer, this usually triggers a onResourceRealise() call.
 		m_resource->addObserver(*this);
 
 		// Get the traversable root
