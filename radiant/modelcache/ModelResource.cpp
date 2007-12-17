@@ -34,7 +34,7 @@ ModelResource::ModelResource(const std::string& name) :
 	_type(name.substr(name.rfind(".") + 1)), 
 	m_loader(NULL),
 	m_modified(0),
-	m_unrealised(1)
+	_realised(false)
 {
 	// Get the model loader for this resource type
 	m_loader = getModelLoaderForType(_type);
@@ -146,37 +146,45 @@ void ModelResource::removeObserver(Observer& observer) {
 }
 		
 bool ModelResource::realised() {
-	return m_unrealised == 0;
+	return _realised;
 }
   
 // Realise this ModelResource
 void ModelResource::realise() {
-    if(--m_unrealised == 0) {
+	if (_realised) {
+		return; // nothing to do
+	}
+	
+	_realised = true;
+	
+	// Initialise the paths, this is all needed for realisation
+    m_path = rootPath(m_originalName.c_str());
+	m_name = os::getRelativePath(m_originalName, m_path);
 
-		m_path = rootPath(m_originalName.c_str());
-		m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
-
-		// Realise the observers
-		for (ResourceObserverList::iterator i = _observers.begin();
-			 i != _observers.end(); i++)
-		{
-			(*i)->onResourceRealise();
-		}
+	// Realise the observers
+	for (ResourceObserverList::iterator i = _observers.begin();
+		 i != _observers.end(); i++)
+	{
+		(*i)->onResourceRealise();
 	}
 }
 	
 void ModelResource::unrealise() {
-	if (++m_unrealised == 1) {
-		// Realise the observers
-		for (ResourceObserverList::iterator i = _observers.begin(); 
-			 i != _observers.end(); i++)
-		{
-			(*i)->onResourceUnrealise();
-		}
-
-		//globalOutputStream() << "ModelResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
-		clearModel();
+	if (!_realised) {
+		return; // nothing to do
 	}
+	
+	_realised = false;
+	
+	// Realise the observers
+	for (ResourceObserverList::iterator i = _observers.begin(); 
+		 i != _observers.end(); i++)
+	{
+		(*i)->onResourceUnrealise();
+	}
+
+	//globalOutputStream() << "ModelResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
+	clearModel();
 }
 
 bool ModelResource::isMap() const {
