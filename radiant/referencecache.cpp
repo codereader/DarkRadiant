@@ -58,8 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
-
-bool References_Saved();
+#include "modelcache/ModelResource.h"
 
 void MapChanged()
 {
@@ -174,13 +173,10 @@ bool MapResource_save(const MapFormat& format,
 	}
 }
 
-namespace
-{
-  scene::INodePtr g_nullNode(NewNullNode());
-  scene::INodePtr g_nullModel(g_nullNode);
-}
+scene::INodePtr g_nullNode(NewNullNode());
+scene::INodePtr g_nullModel(g_nullNode);
 
-class NullModelLoader : 
+/*class NullModelLoader : 
 	public ModelLoader
 {
 public:
@@ -212,10 +208,10 @@ public:
 namespace
 {
   NullModelLoader g_NullModelLoader;
-}
+}*/
 
 /// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
-ModelLoader* ModelLoader_forType(const char* type)
+/*ModelLoader* ModelLoader_forType(const char* type)
 {
   std::string moduleName = GlobalFiletypes().findModuleName("model", type);
   if(!moduleName.empty())
@@ -236,9 +232,9 @@ ModelLoader* ModelLoader_forType(const char* type)
     }
   }
   return 0;
-}
+}*/
 
-scene::INodePtr ModelResource_load(ModelLoader* loader, const std::string& name)
+/*scene::INodePtr ModelResource_load(ModelLoader* loader, const std::string& name)
 {
   scene::INodePtr model(g_nullModel);
 
@@ -258,317 +254,14 @@ scene::INodePtr ModelResource_load(ModelLoader* loader, const std::string& name)
   model->setIsRoot(true);
 
   return model;
-}
-
-scene::INodePtr Model_load(ModelLoader* loader, const std::string& path, const std::string& name, const std::string& type)
-{
-	// greebo: Check if we have a NULL model loader and an empty path ("func_static_637")
-	if (loader == NULL && path.empty()) {
-		return g_nullModel;
-	}
-
-	// Model types should have a loader, so use this to load. Map types do not
-	// have a loader		  
-	if (loader != 0) {
-		return ModelResource_load(loader, name);
-	}
-	else if (name.empty() && type.empty()) {
-		// Loader is NULL (map) and no valid name and type, return NULLmodel
-		return g_nullModel;
-	}
-	else {
-		// Get a loader module name for this type, if possible. If none is 
-		// found, try again with the "map" type, since we might be loading a 
-		// map with a different extension
-	    std::string moduleName = GlobalFiletypes().findModuleName("map", type);
-		// Empty, try again with "map" type
-		if (moduleName.empty()) {
-			moduleName = GlobalFiletypes().findModuleName("map", "map"); 
-		}
-	
-		// If we have a module, use it to load the map if possible, otherwise 
-		// return an error
-	    if (!moduleName.empty()) {
-	      
-			const MapFormat* format = boost::static_pointer_cast<MapFormat>(
-				module::GlobalModuleRegistry().getModule(moduleName)
-			).get();
-										
-	      if(format != NULL)
-	      {
-	        return MapResource_load(*format, path, name);
-	      }
-	      else
-	      {
-	        globalErrorStream() << "ERROR: Map type incorrectly registered: \"" << moduleName.c_str() << "\"\n";
-	        return g_nullModel;
-	      }
-	    }
-	    else
-	    {
-	      if (!type.empty())
-	      {
-	        globalErrorStream() << "Model type not supported: \"" << name.c_str() << "\"\n";
-	      }
-	      return g_nullModel;
-	    }
-	}
-}
-
-namespace
-{
-  // name may be absolute or relative
-  const char* rootPath(const char* name)
-  {
-    return GlobalFileSystem().findRoot(
-      path_is_absolute(name)
-        ? name
-        : GlobalFileSystem().findFile(name)
-    );
-  }
-}
-
-struct ModelResource 
-: public Resource,
-  public boost::noncopyable
-{
-  scene::INodePtr m_model;
-  
-	// Name given during construction
-	const std::string m_originalName;
-	
-  std::string m_path;
-  std::string m_name;
-  
-	// Type of resource (map, lwo etc)
-	std::string _type;
-	
-	// ModelLoader for this resource type
-	ModelLoader* m_loader;
-	
-	typedef std::set<Resource::Observer*> ResourceObserverList;
-	ResourceObserverList _observers;
-	
-  std::time_t m_modified;
-  std::size_t m_unrealised;
-
-	// Constructor
-	ModelResource(const std::string& name) 
-	: m_model(g_nullModel),
-	  m_originalName(name),
-	  _type(name.substr(name.rfind(".") + 1)),
-	  m_loader(0),
-	  m_modified(0),
-	  m_unrealised(1)
-	{
-		// Get the model loader for this resource type
-		m_loader = ModelLoader_forType(_type.c_str());
-	}
-	
-  ~ModelResource()
-  {
-    if(realised())
-    {
-      unrealise();
-    }
-    ASSERT_MESSAGE(!realised(), "ModelResource::~ModelResource: resource reference still realised: " << makeQuoted(m_name.c_str()));
-  }
-
-  void setModel(scene::INodePtr model)
-  {
-    m_model = model;
-  }
-  void clearModel()
-  {
-    m_model = g_nullModel;
-  }
-
-  void loadCached()
-  {
-   	  //std::cout << "looking up model: " << m_name << "\n";
-	  scene::INodePtr cached = model::ModelCache::Instance().find(m_name);
-	  
-	  if (cached != NULL) {
-		  // found a cached model
-		  //std::cout << "Model found, inserting: " << m_name << "\n";
-		  setModel(cached);
-		  return;
-	  }
-	  
-	  //std::cout << "Model NOT found, inserting: " << m_name << "\n";
-	  // Model was not found yet
-	  scene::INodePtr loaded = Model_load(m_loader, m_path, m_name, _type);
-	  model::ModelCache::Instance().insert(m_name, loaded);
-	  setModel(loaded);
-  }
-
-  void loadModel()
-  {
-    loadCached();
-    connectMap();
-    mapSave();
-  }
-
-  bool load()
-  {
-    ASSERT_MESSAGE(realised(), "resource not realised");
-    if(m_model == g_nullModel)
-    {
-      loadModel();
-    }
-
-    return m_model != g_nullModel;
-  }
-  
-	/**
-	 * Save this resource (only for map resources).
-	 * 
-	 * @returns
-	 * true if the resource was saved, false otherwise.
-	 */
-	bool save() {
-		std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
-  									
-		if(!moduleName.empty()) {
-			const MapFormat* format = boost::static_pointer_cast<MapFormat>(
-				module::GlobalModuleRegistry().getModule(moduleName)
-			).get();
-			
-			if (format != NULL && MapResource_save(*format, m_model, m_path, m_name)) {
-      			mapSave();
-      			return true;
-    		}
-  		}
-  		
-  		return false;
-	}
-	
-	void flush() {
-		if (realised()) {
-			model::ModelCache::Instance().erase(m_name);
-		}
-	}
-	
-	scene::INodePtr getNode() {
-		return m_model;
-	}
-
-	void setNode(scene::INodePtr node) {
-		// Erase the mapping in the modelcache
-		model::ModelCache::Instance().erase(m_name);
-		
-		// Re-insert the model with the new node
-		model::ModelCache::Instance().insert(m_name, node);
-		
-		setModel(node);
-		connectMap();
-	}
-	
-	virtual void addObserver(Observer& observer) {
-		if (realised()) {
-			observer.onResourceRealise();
-		}
-		_observers.insert(&observer);
-	}
-	
-	virtual void removeObserver(Observer& observer) {
-		if (realised()) {
-			observer.onResourceUnrealise();
-		}
-		_observers.erase(&observer);
-	}
-		
-  bool realised()
-  {
-    return m_unrealised == 0;
-  }
-  
-	// Realise this ModelResource
-	void realise() {
-	    if(--m_unrealised == 0) {
-
-    		m_path = rootPath(m_originalName.c_str());
-    		m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
-
-			// Realise the observers
-    		for (ResourceObserverList::iterator i = _observers.begin();
-    			 i != _observers.end(); i++)
-    		{
-    			(*i)->onResourceRealise();
-    		}
-		}
-	}
-	
-  void unrealise()
-  {
-    if(++m_unrealised == 1)
-    {
-    	// Realise the observers
-		for (ResourceObserverList::iterator i = _observers.begin();
-			 i != _observers.end(); i++)
-		{
-			(*i)->onResourceUnrealise();
-		}
-
-      //globalOutputStream() << "ModelResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
-      clearModel();
-    }
-  }
-  bool isMap() const
-  {
-    return Node_getMapFile(m_model) != 0;
-  }
-  void connectMap()
-  {
-    MapFilePtr map = Node_getMapFile(m_model);
-    if(map != NULL)
-    {
-      map->setChangedCallback(FreeCaller<MapChanged>());
-    }
-  }
-  std::time_t modified() const
-  {
-    StringOutputStream fullpath(256);
-    fullpath << m_path.c_str() << m_name.c_str();
-    return file_modified(fullpath.c_str());
-  }
-  void mapSave()
-  {
-    m_modified = modified();
-    MapFilePtr map = Node_getMapFile(m_model);
-    if(map != NULL)
-    {
-      map->save();
-    }
-  }
-
-  bool isModified() const
-  {
-    return ((!string_empty(m_path.c_str()) // had or has an absolute path
-        && m_modified != modified()) // AND disk timestamp changed
-      || !path_equal(rootPath(m_originalName.c_str()), m_path.c_str())); // OR absolute vfs-root changed
-  }
-  void refresh()
-  {
-    if(isModified())
-    {
-      flush();
-      unrealise();
-      realise();
-    }
-  }
-};
+}*/
 
 class HashtableReferenceCache 
 : public ReferenceCache, 
   public VirtualFileSystem::Observer
 {
-	// Resource pointer types
-	typedef boost::shared_ptr<ModelResource> ModelResourcePtr;
-	typedef boost::weak_ptr<ModelResource> ModelResourceWeakPtr;
-	
 	// Map of named ModelResource objects
-	typedef std::map<std::string, ModelResourceWeakPtr> ModelReferences;
+	typedef std::map<std::string, model::ModelResourceWeakPtr> ModelReferences;
 	ModelReferences m_references;
   
 	bool _realised;
@@ -645,7 +338,7 @@ public:
 		ModelReferences::iterator i = m_references.find(path);
 		if (i != m_references.end()) {
 			// Found. Try to lock the pointer. If it is valid, return it.
-			ModelResourcePtr candidate = i->second.lock();
+			model::ModelResourcePtr candidate = i->second.lock();
 			if (candidate) {
 				return candidate;
 			}
@@ -654,14 +347,16 @@ public:
 		// Either we did not find the resource, or the pointer was not valid.
 		// In this case we create a new ModelResource, add it to the map and
 		// return it.
-		ModelResourcePtr newResource(new ModelResource(path));
+		model::ModelResourcePtr newResource(new model::ModelResource(path));
 		
 		// Realise the new resource if the ReferenceCache itself is realised
 		if (realised()) {
 			newResource->realise();
 		}
 		
-		m_references[path] = ModelResourceWeakPtr(newResource);
+		// Insert the weak pointer reference into the map
+		m_references[path] = model::ModelResourceWeakPtr(newResource);
+		
 		return newResource;
 	}
 	
@@ -679,7 +374,7 @@ public:
 				 i != m_references.end(); 
 				 ++i)
 			{
-				ModelResourcePtr res = i->second.lock();
+				model::ModelResourcePtr res = i->second.lock();
 				if (res)
 					res->realise();
 			}
@@ -695,7 +390,7 @@ public:
 				 i != m_references.end(); 
 				 ++i)
 			{
-				ModelResourcePtr res = i->second.lock();
+				model::ModelResourcePtr res = i->second.lock();
 				if (res) {
 					res->unrealise();
 				}
@@ -720,7 +415,7 @@ public:
 	  	     i != m_references.end();
 	  	     ++i)
 		{
-			ModelResourcePtr resource = i->second.lock();
+			model::ModelResourcePtr resource = i->second.lock();
       		if(resource && !resource->isMap()) {
         		resource->refresh();
       		}
@@ -754,7 +449,7 @@ void SaveReferences()
 		 i != GetReferenceCache().end(); 
 		 ++i)
 	{
-    	boost::shared_ptr<ModelResource> res = i->second.lock();
+    	model::ModelResourcePtr res = i->second.lock();
     	if (res)
     		res->save();
 	}
@@ -768,7 +463,7 @@ bool References_Saved()
   {
     scene::INodePtr node;
     
-    boost::shared_ptr<ModelResource> res = i->second.lock();
+    model::ModelResourcePtr res = i->second.lock();
     if (res)
     	node = res->getNode();
     	

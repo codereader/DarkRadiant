@@ -601,7 +601,8 @@ radiant_src = \
          'modulesystem/DynamicLibrary.cpp',
          'modulesystem/DynamicLibraryLoader.cpp',
          'modulesystem/ModuleRegistry.cpp',
-         'modelcache/ModelCache.cpp'
+         'modelcache/ModelCache.cpp',
+         'modelcache/ModelResource.cpp'
          ]
     ]
 
