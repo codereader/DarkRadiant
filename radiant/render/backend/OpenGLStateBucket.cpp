@@ -1,7 +1,6 @@
 #include "OpenGLStateBucket.h"
 #include "OpenGLShader.h"
 
-#include "renderstate.h"
 #include "math/matrix.h"
 #include "math/aabb.h"
 #include "irender.h"

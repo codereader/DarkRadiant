@@ -14,8 +14,6 @@
 #include "selectionlib.h"
 #include "windowobservers.h"
 #include "mainframe.h"
-#include "renderstate.h"
-
 #include "map/Map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"

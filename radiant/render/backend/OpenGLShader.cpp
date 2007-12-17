@@ -3,7 +3,6 @@
 #include "OpenGLStateBucketAdd.h"
 #include "OpenGLStateMap.h"
 #include "render/OpenGLShaderCache.h"
-#include "renderstate.h"
 
 #include "iuimanager.h"
 #include "ishaders.h"

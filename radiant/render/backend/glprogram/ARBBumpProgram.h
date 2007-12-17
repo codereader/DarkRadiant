@@ -2,12 +2,14 @@
 #define ARBBUMPPROGRAM_H_
 
 #include "GLProgramAttributes.h"
-#include "renderstate.h"
 #include "iglrender.h"
 #include "iregistry.h"
 #include "iradiant.h"
 #include "xmlutil/Document.h"
 #include "math/matrix.h"
+#include "render/backend/GLProgramFactory.h" 
+
+namespace render {
 
 class ARBBumpProgram 
 : public GLProgram
@@ -42,14 +44,14 @@ public:
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
       std::string filename = GlobalRegistry().get("user/paths/appPath")
       						 + "gl/lighting_DBS_omni_vp.glp";
-      createARBProgram(filename.c_str(), GL_VERTEX_PROGRAM_ARB);
+      GLProgramFactory::createARBProgram(filename, GL_VERTEX_PROGRAM_ARB);
 
       glGenProgramsARB(1, &m_fragment_program);
       glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
 
       filename = GlobalRegistry().get("user/paths/appPath")
       			 + "gl/interaction_fp.arb";
-      createARBProgram(filename.c_str(), GL_FRAGMENT_PROGRAM_ARB);
+      GLProgramFactory::createARBProgram(filename, GL_FRAGMENT_PROGRAM_ARB);
     }
 
     glDisable(GL_VERTEX_PROGRAM_ARB);
@@ -144,6 +146,6 @@ public:
   }
 };
 
-
+} // namespace render
 
 #endif /*ARBBUMPPROGRAM_H_*/

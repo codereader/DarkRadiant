@@ -1,7 +1,12 @@
 #ifndef ARBDEPTHFILLPROGRAM_H_
 #define ARBDEPTHFILLPROGRAM_H_
 
-class ARBDepthFillProgram : public GLProgram
+#include "render/backend/GLProgramFactory.h"
+
+namespace render {
+
+class ARBDepthFillProgram : 
+	public GLProgram
 {
 public:
   GLuint m_vertex_program;
@@ -17,14 +22,14 @@ public:
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
       std::string filename = GlobalRegistry().get("user/paths/appPath")
       						 + "gl/zfill_vp.glp";
-      createARBProgram(filename.c_str(), GL_VERTEX_PROGRAM_ARB);
+      GLProgramFactory::createARBProgram(filename, GL_VERTEX_PROGRAM_ARB);
 
       glGenProgramsARB(1, &m_fragment_program);
       glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
       
       filename = GlobalRegistry().get("user/paths/appPath")
       			 + "gl/zfill_fp.glp";
-      createARBProgram(filename.c_str(), GL_FRAGMENT_PROGRAM_ARB);
+      GLProgramFactory::createARBProgram(filename, GL_FRAGMENT_PROGRAM_ARB);
     }
 
     glDisable(GL_VERTEX_PROGRAM_ARB);
@@ -63,6 +68,6 @@ public:
   }
 };
 
-
+} // namespace render
 
 #endif /*ARBDEPTHFILLPROGRAM_H_*/

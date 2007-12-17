@@ -19,7 +19,6 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "renderstate.h"
 #include "render/backend/OpenGLStateBucket.h"
 #include "render/backend/OpenGLStateBucketAdd.h"
 #include "render/backend/OpenGLShader.h"
@@ -155,30 +154,6 @@ void createShader(GLhandleARB program, const char* filename, GLenum type)
   glDeleteObjectARB(shader);
 
   GlobalOpenGL_debugAssertNoErrors();
-}
-
-// Create an ARB GL Program by calling glProgramStringARB with the contents of
-// a file.
-void createARBProgram(const char* filename, GLenum type)
-{
-  std::size_t size = file_size(filename);
-  FileInputStream file(filename);
-  ASSERT_MESSAGE(!file.failed(), "failed to open " << makeQuoted(filename));
-  Array<GLcharARB> buffer(size);
-  size = file.read(reinterpret_cast<StreamBase::byte_type*>(buffer.data()), size);
-
-  glProgramStringARB(type, GL_PROGRAM_FORMAT_ASCII_ARB, GLsizei(size), buffer.data());
-
-  if(GL_INVALID_OPERATION == glGetError())
-  {
-    GLint errPos;
-    glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errPos);
-    const GLubyte* errString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
-
-    globalErrorStream() << reinterpret_cast<const char*>(filename) << ":" <<  errPos << "\n" << reinterpret_cast<const char*>(errString);
-
-    ERROR_MESSAGE("error in gl program");
-  }
 }
 
 #define LIGHT_SHADER_DEBUG 0

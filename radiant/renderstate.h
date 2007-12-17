@@ -22,18 +22,4 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_RENDERSTATE_H)
 #define INCLUDED_RENDERSTATE_H
 
-#include "irender.h"
-#include "moduleobservers.h"
-#include "string/string.h"
-
-#include <list>
-#include <GL/glew.h>
-
-void ShaderCache_extensionsInitialised();
-
-/**
- * Load a GL Program from the given filename and load directly into OpenGL.
- */
-void createARBProgram(const char* filename, GLenum type);
-
 #endif

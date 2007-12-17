@@ -49,6 +49,10 @@ public:
 	 * Static unrealise method, called when the GLPrograms should be destroyed.
 	 */
 	static void unrealise();
+	
+	// Create an ARB GL Program by calling glProgramStringARB with the contents of
+	// a file.
+	static void createARBProgram(const std::string& filename, GLenum type);
 };
 
 }
