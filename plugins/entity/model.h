@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "moduleobserver.h"
 
 class SingletonModel :
-	public ModuleObserver
+	public Resource::Observer
 {
 	ReferenceCache::ResourcePtr _resource;
 	scene::INodePtr _node;
@@ -42,9 +42,9 @@ public:
 	SingletonModel(scene::Traversable& traversable);
 	~SingletonModel();
 	
-	// ModuleObserver implementation
-	void realise();
-	void unrealise();
+	// Resource::Observer implementation
+	void onResourceRealise();
+	void onResourceUnrealise();
 
 	// Update the model to the provided keyvalue
 	void modelChanged(const std::string& value);

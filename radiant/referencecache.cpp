@@ -348,7 +348,9 @@ struct ModelResource
 	// ModelLoader for this resource type
 	ModelLoader* m_loader;
 	
-  ModuleObservers m_observers;
+	typedef std::set<Resource::Observer*> ResourceObserverList;
+	ResourceObserverList _observers;
+	
   std::time_t m_modified;
   std::size_t m_unrealised;
 
@@ -470,22 +472,20 @@ struct ModelResource
 		connectMap();
 	}
 	
-  void attach(ModuleObserver& observer)
-  {
-    if(realised())
-    {
-      observer.realise();
-    }
-    m_observers.attach(observer);
-  }
-  void detach(ModuleObserver& observer)
-  {
-    if(realised())
-    {
-      observer.unrealise();
-    }
-    m_observers.detach(observer);
-  }
+	virtual void addObserver(Observer& observer) {
+		if (realised()) {
+			observer.onResourceRealise();
+		}
+		_observers.insert(&observer);
+	}
+	
+	virtual void removeObserver(Observer& observer) {
+		if (realised()) {
+			observer.onResourceUnrealise();
+		}
+		_observers.erase(&observer);
+	}
+		
   bool realised()
   {
     return m_unrealised == 0;
@@ -499,7 +499,11 @@ struct ModelResource
     		m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
 
 			// Realise the observers
-			m_observers.realise();
+    		for (ResourceObserverList::iterator i = _observers.begin();
+    			 i != _observers.end(); i++)
+    		{
+    			(*i)->onResourceRealise();
+    		}
 		}
 	}
 	
@@ -507,7 +511,12 @@ struct ModelResource
   {
     if(++m_unrealised == 1)
     {
-      m_observers.unrealise();
+    	// Realise the observers
+		for (ResourceObserverList::iterator i = _observers.begin();
+			 i != _observers.end(); i++)
+		{
+			(*i)->onResourceUnrealise();
+		}
 
       //globalOutputStream() << "ModelResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
       clearModel();

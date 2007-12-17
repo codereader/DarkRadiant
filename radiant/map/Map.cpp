@@ -131,7 +131,7 @@ void Map::unrealiseResource() {
 	}
 }
 
-void Map::realise() {
+void Map::onResourceRealise() {
     if(m_resource != 0)
     {
       if (isUnnamed()) {
@@ -154,7 +154,7 @@ void Map::realise() {
     }
 }
 
-void Map::unrealise() {
+void Map::onResourceUnrealise() {
     if(m_resource != 0)
     {
       setValid(false);
@@ -233,7 +233,7 @@ void Map::free() {
 
 	GlobalShaderClipboard().clear();
 
-	m_resource->detach(*this);
+	m_resource->removeObserver(*this);
 	GlobalReferenceCache().release(m_name.c_str());
 
 	// Reset the resource pointer
@@ -379,7 +379,7 @@ void Map::load(const std::string& filename) {
 		ScopeTimer timer("map load");
 
 		m_resource = GlobalReferenceCache().capture(m_name);
-		m_resource->attach(*this);
+		m_resource->addObserver(*this);
 
 		// Get the traversable root
 		scene::TraversablePtr rt = Node_getTraversable(GlobalSceneGraph().root());
@@ -463,7 +463,7 @@ void Map::createNew() {
 	setName(MAP_UNNAMED_STRING);
 
 	m_resource = GlobalReferenceCache().capture(m_name.c_str());
-	m_resource->attach(*this);
+	m_resource->addObserver(*this);
 	
 	SceneChangeNotify();
 	
@@ -726,14 +726,14 @@ void Map::renameAbsolute(const std::string& absolute) {
 
 	Node_getTraversable(GlobalSceneGraph().root())->traverse(CloneAll(clone));
 
-	m_resource->detach(*this);
+	m_resource->removeObserver(*this);
 	GlobalReferenceCache().release(m_name);
 
 	m_resource = resource;
 
 	setName(absolute);
 
-	m_resource->attach(*this);
+	m_resource->addObserver(*this);
 
 	// greebo: Somehow the filter settings get lost after a rename, trigger an update.
 	GlobalFilterSystem().update();
