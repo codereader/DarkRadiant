@@ -2,6 +2,11 @@
 #include "glprogram/ARBBumpProgram.h"
 #include "glprogram/ARBDepthFillProgram.h"
 
+#include "os/file.h"
+#include "debugging/debugging.h"
+#include "container/array.h"
+#include "stream/filestream.h"
+
 namespace render
 {
 
@@ -63,4 +68,27 @@ void GLProgramFactory::unrealise() {
 	}
 }
 
+void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type) {
+	std::size_t size = file_size(filename.c_str());
+	FileInputStream file(filename);
+	
+	ASSERT_MESSAGE(!file.failed(), "failed to open " << makeQuoted(filename.c_str()));
+	
+	Array<GLcharARB> buffer(size);
+	size = file.read(reinterpret_cast<StreamBase::byte_type*>(buffer.data()), size);
+
+	glProgramStringARB(type, GL_PROGRAM_FORMAT_ASCII_ARB, GLsizei(size), buffer.data());
+
+	if (GL_INVALID_OPERATION == glGetError()) {
+		GLint errPos;
+		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errPos);
+		const GLubyte* errString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
+
+		globalErrorStream() << reinterpret_cast<const char*>(filename.c_str()) << ":"
+			<< errPos << "\n"<< reinterpret_cast<const char*>(errString);
+
+		ERROR_MESSAGE("error in gl program");
+	}
 }
+
+} // namespace render

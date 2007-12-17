@@ -1,7 +1,6 @@
 #ifndef OPENGLSTATEMAP_H_
 #define OPENGLSTATEMAP_H_
 
-#include "renderstate.h"
 #include "iglrender.h"
 
 #include <map>

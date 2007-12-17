@@ -4,7 +4,6 @@
 #include "ipreferencesystem.h"
 
 #include "GlobalCamera.h"
-#include "renderstate.h"
 
 #include <boost/lexical_cast.hpp>
 
