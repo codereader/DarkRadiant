@@ -8,6 +8,7 @@
 #include "referencecache.h"
 #include "math/aabb.h"
 #include "modelskin.h"
+#include "modelcache/ModelResource.h"
 
 #include <gtk/gtk.h>
 
@@ -145,7 +146,7 @@ void ModelPreview::setModel(const std::string& model) {
 		boost::algorithm::to_lower(ldrName);
 	}
 	
-	ModelLoader* loader = ModelLoader_forType(ldrName.c_str());
+	ModelLoader* loader = model::ModelResource::getModelLoaderForType(ldrName);
 	if (loader != NULL) {
 		_model = loader->loadModelFromPath(modelToLoad);
 	}
