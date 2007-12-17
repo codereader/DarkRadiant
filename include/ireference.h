@@ -63,8 +63,6 @@ public:
 	 * Capture a named model resource, and return a pointer to it.
 	 */
 	virtual ResourcePtr capture(const std::string& path) = 0;
-	
-  virtual void release(const std::string& path) = 0;
 };
 
 inline ReferenceCache& GlobalReferenceCache() {

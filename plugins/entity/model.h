@@ -43,10 +43,15 @@ public:
 	~SingletonModel();
 	
 	// Resource::Observer implementation
+	
+	// This gets called, when the ModelResource is loaded and the scene::INodePtr
+	// can be inserted into the scene::Traversable (which is what this method does).
 	void onResourceRealise();
+	// The counter-part of the above
 	void onResourceUnrealise();
 
-	// Update the model to the provided keyvalue
+	// Update the model to the provided keyvalue, this removes the old scene::Node
+	// and inserts the new one after acquiring the ModelResource from the ReferenceCache.
 	void modelChanged(const std::string& value);
 	typedef MemberCaller1<SingletonModel, const std::string&, &SingletonModel::modelChanged> ModelChangedCaller;
 
