@@ -3,8 +3,7 @@
 
 #include "imodel.h"
 #include "stream/textstream.h"
-
-extern scene::INodePtr g_nullModel; // temporary
+#include "nullmodel.h"
 
 namespace model {
 
@@ -13,7 +12,7 @@ class NullModelLoader :
 {
 public:
 	scene::INodePtr loadModel(ArchiveFile& file) {
-		return g_nullModel;
+		return SingletonNullModel();
 	}
   
   	// Required function, not implemented.
