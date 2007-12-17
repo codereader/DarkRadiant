@@ -18,9 +18,20 @@ public:
 	virtual scene::INodePtr find(const std::string& path) = 0;
 	
 	/**
-	 * greebo: Inserts the given node into the modelcache. 
+	 * greebo: Inserts the given model path (associated with the given node) 
+	 *         into the modelcache. 
 	 */
-	virtual void insert(const scene::INodePtr& modelNode) = 0;
+	virtual void insert(const std::string& path, const scene::INodePtr& modelNode) = 0;
+	
+	/**
+	 * greebo: Removes the given path from the cache.
+	 */
+	virtual void erase(const std::string& path) = 0;
+	
+	/**
+	 * greebo: Clears out all mappings.
+	 */
+	virtual void clear() = 0;
 };
 
 } // namespace model
