@@ -30,7 +30,7 @@ class ModelResource :
 	ResourceObserverList _observers;
 	
 	std::time_t m_modified;
-	std::size_t m_unrealised;
+	bool _realised;
 
 public:
 	// Constructor
