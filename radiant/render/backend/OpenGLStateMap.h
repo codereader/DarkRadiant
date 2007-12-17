@@ -59,7 +59,7 @@ public:
 	}
 
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "OpenGLStateLibrary::initialiseModule called.\n";
+		//globalOutputStream() << "OpenGLStateLibrary::initialiseModule called.\n";
 	}
 };
 
