@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include "iradiant.h"
 #include "imodule.h"
-#include "imodelcache.h"
 
 #include <list>
 #include <fstream>
@@ -55,6 +54,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "map/Map.h"
 #include "map/algorithm/Traverse.h"
+#include "modelcache/ModelCache.h"
 
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
@@ -391,20 +391,20 @@ struct ModelResource
 
   void loadCached()
   {
-   	  std::cout << "looking up model: " << m_name << "\n";
-	  scene::INodePtr cached = GlobalModelCache().find(m_name);
+   	  //std::cout << "looking up model: " << m_name << "\n";
+	  scene::INodePtr cached = model::ModelCache::Instance().find(m_name);
 	  
 	  if (cached != NULL) {
 		  // found a cached model
-		  std::cout << "Model found, inserting: " << m_name << "\n";
+		  //std::cout << "Model found, inserting: " << m_name << "\n";
 		  setModel(cached);
 		  return;
 	  }
 	  
-	  std::cout << "Model NOT found, inserting: " << m_name << "\n";
+	  //std::cout << "Model NOT found, inserting: " << m_name << "\n";
 	  // Model was not found yet
 	  scene::INodePtr loaded = Model_load(m_loader, m_path, m_name, _type);
-	  GlobalModelCache().insert(m_name, loaded);
+	  model::ModelCache::Instance().insert(m_name, loaded);
 	  setModel(loaded);
   }
 
@@ -451,7 +451,7 @@ struct ModelResource
 	
 	void flush() {
 		if (realised()) {
-			GlobalModelCache().erase(m_name);
+			model::ModelCache::Instance().erase(m_name);
 		}
 	}
 	
@@ -461,10 +461,10 @@ struct ModelResource
 
 	void setNode(scene::INodePtr node) {
 		// Erase the mapping in the modelcache
-		GlobalModelCache().erase(m_name);
+		model::ModelCache::Instance().erase(m_name);
 		
 		// Re-insert the model with the new node
-		GlobalModelCache().insert(m_name, node);
+		model::ModelCache::Instance().insert(m_name, node);
 		
 		setModel(node);
 		connectMap();
@@ -703,7 +703,7 @@ public:
 				}
 			}
 
-			GlobalModelCache().clear();
+			model::ModelCache::Instance().clear();
 		}
 	}
 
@@ -795,6 +795,6 @@ void RefreshReferences()
 
 void FlushReferences()
 {
-	GlobalModelCache().clear();
+	model::ModelCache::Instance().clear();
   GetReferenceCache().clear();
 }

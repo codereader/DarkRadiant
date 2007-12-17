@@ -36,32 +36,9 @@ void ModelCache::clear() {
 	_modelNodeMap.clear();
 }
 
-const std::string& ModelCache::getName() const {
-	static std::string _name(MODULE_MODELCACHE);
-	return _name;
+ModelCache& ModelCache::Instance() {
+	static ModelCache _instance;
+	return _instance;
 }
-
-const StringSet& ModelCache::getDependencies() const {
-	static StringSet _dependencies;
-	
-	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_FILETYPES);
-		_dependencies.insert(MODULE_MODELLOADER + "ASE");
-		_dependencies.insert(MODULE_MODELLOADER + "MD5MESH");
-		_dependencies.insert(MODULE_MODELLOADER + "LWO");
-	}
-	
-	return _dependencies;
-}
-
-void ModelCache::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "ModelCache::initialiseModule called.\n";
-	
-	//g_nullModel = NewNullModel();
-}
-
-// Define the ModelCache registerable module
-module::StaticModule<ModelCache> modelCacheModule;
 
 } // namespace model

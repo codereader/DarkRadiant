@@ -1,13 +1,13 @@
 #ifndef MODELCACHE_H_
 #define MODELCACHE_H_
 
-#include "imodelcache.h"
 #include <map>
+#include <string>
+#include "inode.h"
 
 namespace model {
 
-class ModelCache :
-	public IModelCache
+class ModelCache
 {
 	typedef std::map<std::string, scene::INodePtr> ModelNodeMap;
 	ModelNodeMap _modelNodeMap;
@@ -33,10 +33,7 @@ public:
 	// Clears the cache
 	virtual void clear();
 	
-	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	static ModelCache& Instance();
 };
 
 } // namespace model
