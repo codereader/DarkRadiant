@@ -173,89 +173,6 @@ bool MapResource_save(const MapFormat& format,
 	}
 }
 
-scene::INodePtr g_nullNode(NewNullNode());
-scene::INodePtr g_nullModel(g_nullNode);
-
-/*class NullModelLoader : 
-	public ModelLoader
-{
-public:
-	scene::INodePtr loadModel(ArchiveFile& file) {
-		return g_nullModel;
-	}
-  
-  	// Required function, not implemented.
-	model::IModelPtr loadModelFromPath(const std::string& name) {
-		return model::IModelPtr();
-	}
-  
-	// RegisterableModule implementation
-	virtual const std::string& getName() const {
-		static std::string _name(MODULE_MODELLOADER + "NULL");
-		return _name;
-	}
-	
-	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies; // no dependencies
-		return _dependencies;
-	}
-	
-	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
-	}
-};
-
-namespace
-{
-  NullModelLoader g_NullModelLoader;
-}*/
-
-/// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
-/*ModelLoader* ModelLoader_forType(const char* type)
-{
-  std::string moduleName = GlobalFiletypes().findModuleName("model", type);
-  if(!moduleName.empty())
-  {
-    ModelLoader* table = boost::static_pointer_cast<ModelLoader>(
-    	module::GlobalModuleRegistry().getModule(moduleName)
-    ).get();
-    
-    if(table != 0)
-    {
-      return table;
-    }
-    else
-    {
-      globalErrorStream() << "ERROR: Model type incorrectly registered: \"" 
-      					  << moduleName.c_str() << "\"\n";
-      return &g_NullModelLoader;
-    }
-  }
-  return 0;
-}*/
-
-/*scene::INodePtr ModelResource_load(ModelLoader* loader, const std::string& name)
-{
-  scene::INodePtr model(g_nullModel);
-
-  {
-    ArchiveFilePtr file = GlobalFileSystem().openFile(name);
-
-    if (file != NULL) {
-      globalOutputStream() << "Loaded Model: \"" << name.c_str() << "\"\n";
-      model = loader->loadModel(*file);
-    }
-    else
-    {
-      globalErrorStream() << "Model load failed: \"" << name.c_str() << "\"\n";
-    }
-  }
-
-  model->setIsRoot(true);
-
-  return model;
-}*/
-
 class HashtableReferenceCache 
 : public ReferenceCache, 
   public VirtualFileSystem::Observer
@@ -292,8 +209,6 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx) {
 		globalOutputStream() << "ReferenceCache::initialiseModule called.\n";
 		
-		g_nullModel = NewNullModel();
-
 		GlobalFileSystem().addObserver(*this);
 		realise();
 	}
@@ -301,8 +216,6 @@ public:
 	virtual void shutdownModule() {
 		unrealise();
 		GlobalFileSystem().removeObserver(*this);
-
-		g_nullModel = g_nullNode;
 	}
 	
   typedef ModelReferences::iterator iterator;

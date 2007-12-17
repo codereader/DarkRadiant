@@ -11,7 +11,6 @@
 #include "os/path.h"
 #include "os/file.h"
 #include "stream/stringstream.h"
-extern scene::INodePtr g_nullModel;
 
 namespace model {
 
@@ -30,7 +29,7 @@ namespace {
 
 // Constructor
 ModelResource::ModelResource(const std::string& name) :
-	m_model(g_nullModel), 
+	m_model(SingletonNullModel()),
 	m_originalName(name),
 	_type(name.substr(name.rfind(".") + 1)), 
 	m_loader(NULL),
@@ -52,7 +51,7 @@ void ModelResource::setModel(scene::INodePtr model) {
 }
 
 void ModelResource::clearModel() {
-	m_model = g_nullModel;
+	m_model = SingletonNullModel();
 }
 
 void ModelResource::loadCached() {
@@ -81,11 +80,11 @@ void ModelResource::loadModel() {
 
 bool ModelResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
-	if (m_model == g_nullModel) {
+	if (m_model == SingletonNullModel()) {
 		loadModel();
 	}
 
-	return m_model != g_nullModel;
+	return m_model != SingletonNullModel();
 }
   
 /**
@@ -244,7 +243,7 @@ ModelLoader* ModelResource::getModelLoaderForType(const std::string& type) {
 scene::INodePtr ModelResource::loadModelNode() {
 	// greebo: Check if we have a NULL model loader and an empty path ("func_static_637")
 	if (m_loader == NULL && m_path.empty()) {
-		return g_nullModel;
+		return SingletonNullModel();
 	}
 
 	// Model types should have a loader, so use this to load. Map types do not
@@ -254,7 +253,7 @@ scene::INodePtr ModelResource::loadModelNode() {
 	}
 	else if (m_name.empty() && _type.empty()) {
 		// Loader is NULL (map) and no valid name and type, return NULLmodel
-		return g_nullModel;
+		return SingletonNullModel();
 	}
 	else {
 		// Get a loader module name for this type, if possible. If none is 
@@ -281,7 +280,7 @@ scene::INodePtr ModelResource::loadModelNode() {
 	      else
 	      {
 	        globalErrorStream() << "ERROR: Map type incorrectly registered: \"" << moduleName.c_str() << "\"\n";
-	        return g_nullModel;
+	        return SingletonNullModel();
 	      }
 	    }
 	    else
@@ -290,13 +289,13 @@ scene::INodePtr ModelResource::loadModelNode() {
 	      {
 	        globalErrorStream() << "Model type not supported: \"" << m_name.c_str() << "\"\n";
 	      }
-	      return g_nullModel;
+	      return SingletonNullModel();
 	    }
 	}
 }
 
 scene::INodePtr ModelResource::loadModelResource() {
-	scene::INodePtr model(g_nullModel);
+	scene::INodePtr model(SingletonNullModel());
 
 	ArchiveFilePtr file = GlobalFileSystem().openFile(m_name);
 

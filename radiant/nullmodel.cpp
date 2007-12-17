@@ -161,6 +161,7 @@ public:
   }
 };
 
-scene::INodePtr NewNullModel() {
-	return scene::INodePtr(new NullModelNode);
+scene::INodePtr SingletonNullModel() {
+	static scene::INodePtr _nullModel(new NullModelNode);
+	return _nullModel;
 }
