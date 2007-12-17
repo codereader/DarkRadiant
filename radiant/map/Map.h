@@ -13,7 +13,7 @@ class TextInputStream;
 namespace map {
 
 class Map : 
-	public ModuleObserver
+	public Resource::Observer
 {
 	// The map name
 	std::string m_name;
@@ -100,8 +100,9 @@ public:
 	// free all map elements, reinitialize the structures that depend on them
 	void free();
 	
-	void realise();
-	void unrealise();
+	// Resource::Observer implementation
+	void onResourceRealise();
+	void onResourceUnrealise();
   
 	// Accessor methods for the "valid" flag
 	void setValid(bool valid);

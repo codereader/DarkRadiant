@@ -30,16 +30,24 @@ class ModuleObserver;
 class Resource
 {
 public:
-  virtual bool load() = 0;
-  virtual bool save() = 0;
-  virtual void flush() = 0;
-  virtual void refresh() = 0;
-  virtual scene::INodePtr getNode() = 0;
-  virtual void setNode(scene::INodePtr node) = 0;
-  virtual void attach(ModuleObserver& observer) = 0;
-  virtual void detach(ModuleObserver& observer) = 0;
-  virtual void realise() = 0;
-  virtual void unrealise() = 0;
+	class Observer {
+	public:
+		virtual void onResourceRealise() = 0;
+		virtual void onResourceUnrealise() = 0;
+	};
+	
+	virtual bool load() = 0;
+	virtual bool save() = 0;
+	virtual void flush() = 0;
+	virtual void refresh() = 0;
+	virtual scene::INodePtr getNode() = 0;
+	virtual void setNode(scene::INodePtr node) = 0;
+	
+	virtual void addObserver(Observer& observer) = 0;
+	virtual void removeObserver(Observer& observer) = 0;
+	
+	virtual void realise() = 0;
+	virtual void unrealise() = 0;
 };
 
 const std::string MODULE_REFERENCECACHE("ReferenceCache");

@@ -26,12 +26,12 @@ SingletonModel::SingletonModel(scene::Traversable& traversable) :
 	_resource(GlobalReferenceCache().capture("")),
 	_traversable(traversable)
 {
-	// Attach this class as ModuleObserver to the Resource
-	_resource->attach(*this);
+	// Attach this class as Observer to the Resource
+	_resource->addObserver(*this);
 }
 
 SingletonModel::~SingletonModel() {
-	_resource->detach(*this);
+	_resource->removeObserver(*this);
 }
 
 scene::INodePtr SingletonModel::getNode() const {
@@ -39,7 +39,7 @@ scene::INodePtr SingletonModel::getNode() const {
 	return _node;
 }
 
-void SingletonModel::realise() {
+void SingletonModel::onResourceRealise() {
 	_resource->load();
 	
 	_node = _resource->getNode();
@@ -51,7 +51,7 @@ void SingletonModel::realise() {
 	}
 }
 
-void SingletonModel::unrealise() {
+void SingletonModel::onResourceUnrealise() {
 	if (_node != NULL && !_modelPath.empty()) {
 		// Remove the master model node from the attached Traversable
 		_traversable.erase(_node);
@@ -63,13 +63,13 @@ void SingletonModel::unrealise() {
 
 // Update the contained model from the provided keyvalues
 void SingletonModel::modelChanged(const std::string& value) {
-	// Release the old model
-	_resource->detach(*this);
+	// Release the old model, this usually triggers an onResourceUnrealise call
+	_resource->removeObserver(*this);
 	
 	// Now store the new modelpath
     // Sanitise the keyvalue - must use forward slashes
 	_modelPath = boost::algorithm::replace_all_copy(value, "\\", "/");
     
     _resource = GlobalReferenceCache().capture(_modelPath);
-    _resource->attach(*this);  
+    _resource->addObserver(*this);  
 }
