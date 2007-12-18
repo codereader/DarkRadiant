@@ -55,20 +55,17 @@ void ModelResource::clearModel() {
 }
 
 void ModelResource::loadCached() {
-   	//std::cout << "looking up model: " << m_name << "\n";
-	scene::INodePtr cached = ModelCache::Instance().find(m_name);
+	scene::INodePtr cached = ModelCache::Instance().find(m_path, m_name);
 	  
 	if (cached != NULL) {
 		// found a cached model
-		//std::cout << "Model found, inserting: " << m_name << "\n";
 		setModel(cached);
 		return;
 	}
 	  
-	//std::cout << "Model NOT found, inserting: " << m_name << "\n";
 	// Model was not found yet
 	scene::INodePtr loaded = loadModelNode();
-	ModelCache::Instance().insert(m_name, loaded);
+	ModelCache::Instance().insert(m_path, m_name, loaded);
 	setModel(loaded);
 }
 
@@ -112,7 +109,7 @@ bool ModelResource::save() {
 	
 void ModelResource::flush() {
 	if (realised()) {
-		ModelCache::Instance().erase(m_name);
+		ModelCache::Instance().erase(m_path, m_name);
 	}
 }
 
@@ -122,10 +119,10 @@ scene::INodePtr ModelResource::getNode() {
 
 void ModelResource::setNode(scene::INodePtr node) {
 	// Erase the mapping in the modelcache
-	ModelCache::Instance().erase(m_name);
+	ModelCache::Instance().erase(m_path, m_name);
 	
 	// Re-insert the model with the new node
-	ModelCache::Instance().insert(m_name, node);
+	ModelCache::Instance().insert(m_path, m_name, node);
 	
 	setModel(node);
 	connectMap();
@@ -159,7 +156,7 @@ void ModelResource::realise() {
 	
 	// Initialise the paths, this is all needed for realisation
     m_path = rootPath(m_originalName.c_str());
-	m_name = os::getRelativePath(m_originalName, m_path);
+	m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
 
 	// Realise the observers
 	for (ResourceObserverList::iterator i = _observers.begin();
@@ -200,8 +197,7 @@ void ModelResource::connectMap() {
 }
 
 std::time_t ModelResource::modified() const {
-	StringOutputStream fullpath(256);
-	fullpath << m_path.c_str() << m_name.c_str();
+	std::string fullpath = m_path + m_name;
 	return file_modified(fullpath.c_str());
 }
 

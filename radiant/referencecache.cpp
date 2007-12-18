@@ -242,13 +242,13 @@ public:
 	 * Capture a named resource.
 	 */
 	ResourcePtr capture(const std::string& path) {
-		
 		// First lookup the reference in the map. If it is found, we need to
 		// lock the weak_ptr to get a shared_ptr, which may fail. If we cannot
 		// get a shared_ptr (because the object as already been deleted) or the
 		// item is not found at all, we create a new ModelResource and add it
 		// into the map before returning.
 		ModelReferences::iterator i = m_references.find(path);
+		
 		if (i != m_references.end()) {
 			// Found. Try to lock the pointer. If it is valid, return it.
 			model::ModelResourcePtr candidate = i->second.lock();
