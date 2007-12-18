@@ -41,9 +41,7 @@ ModelResource::ModelResource(const std::string& name) :
 }
 	
 ModelResource::~ModelResource() {
-    if (realised()) {
-		unrealise();
-	}
+    unrealise(); // unrealise - does nothing if not realised
 }
 
 void ModelResource::setModel(scene::INodePtr model) {
@@ -71,7 +69,6 @@ void ModelResource::loadCached() {
 
 void ModelResource::loadModel() {
 	loadCached();
-	connectMap();
 	mapSave();
 }
 
@@ -125,7 +122,6 @@ void ModelResource::setNode(scene::INodePtr node) {
 	ModelCache::Instance().insert(m_path, m_name, node);
 	
 	setModel(node);
-	connectMap();
 }
 	
 void ModelResource::addObserver(Observer& observer) {
@@ -182,18 +178,6 @@ void ModelResource::unrealise() {
 
 	//globalOutputStream() << "ModelResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
 	clearModel();
-}
-
-bool ModelResource::isMap() const {
-	return Node_getMapFile(m_model) != 0;
-}
-
-void ModelResource::connectMap() {
-    MapFilePtr map = Node_getMapFile(m_model);
-    if(map != NULL)
-    {
-      map->setChangedCallback(FreeCaller<MapChanged>());
-    }
 }
 
 std::time_t ModelResource::modified() const {

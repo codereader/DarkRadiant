@@ -68,9 +68,7 @@ public:
 	// Realise this ModelResource
 	void realise();
 	void unrealise();
-	
-  bool isMap() const;
-  void connectMap();
+
   std::time_t modified() const;
   void mapSave();
 
