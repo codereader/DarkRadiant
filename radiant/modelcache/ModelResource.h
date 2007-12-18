@@ -46,14 +46,8 @@ public:
 	void loadModel();
 
 	bool load();
-  
-	/**
-	 * Save this resource (only for map resources).
-	 * 
-	 * @returns
-	 * true if the resource was saved, false otherwise.
-	 */
-	bool save();
+	
+	bool save() { return false; } // is empty for ModelResources
 	
 	void flush();
 	
@@ -70,7 +64,6 @@ public:
 	void unrealise();
 
   std::time_t modified() const;
-  void mapSave();
 
   bool isModified() const;
   void refresh();

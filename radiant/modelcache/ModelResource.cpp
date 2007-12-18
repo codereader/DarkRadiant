@@ -69,7 +69,6 @@ void ModelResource::loadCached() {
 
 void ModelResource::loadModel() {
 	loadCached();
-	mapSave();
 }
 
 bool ModelResource::load() {
@@ -81,29 +80,6 @@ bool ModelResource::load() {
 	return m_model != SingletonNullModel();
 }
   
-/**
- * Save this resource (only for map resources).
- * 
- * @returns
- * true if the resource was saved, false otherwise.
- */
-bool ModelResource::save() {
-	std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
-								
-	if(!moduleName.empty()) {
-		const MapFormat* format = boost::static_pointer_cast<MapFormat>(
-			module::GlobalModuleRegistry().getModule(moduleName)
-		).get();
-		
-		if (format != NULL && MapResource_save(*format, m_model, m_path, m_name)) {
-  			mapSave();
-  			return true;
-		}
-	}
-	
-	return false;
-}
-	
 void ModelResource::flush() {
 	if (realised()) {
 		ModelCache::Instance().erase(m_path, m_name);
@@ -152,7 +128,7 @@ void ModelResource::realise() {
 	
 	// Initialise the paths, this is all needed for realisation
     m_path = rootPath(m_originalName.c_str());
-	m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
+	m_name = os::getRelativePath(m_originalName, m_path);
 
 	// Realise the observers
 	for (ResourceObserverList::iterator i = _observers.begin();
@@ -176,21 +152,12 @@ void ModelResource::unrealise() {
 		(*i)->onResourceUnrealise();
 	}
 
-	//globalOutputStream() << "ModelResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
 	clearModel();
 }
 
 std::time_t ModelResource::modified() const {
 	std::string fullpath = m_path + m_name;
 	return file_modified(fullpath.c_str());
-}
-
-void ModelResource::mapSave() {
-	m_modified = modified();
-	MapFilePtr map = Node_getMapFile(m_model);
-	if (map != NULL) {
-		map->save();
-	}
 }
 
 bool ModelResource::isModified() const {
