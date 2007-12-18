@@ -385,7 +385,7 @@ public:
 	  	     ++i)
 		{
 			model::ModelResourcePtr resource = i->second.lock();
-      		if(resource && !resource->isMap()) {
+      		if (resource != NULL) {
         		resource->refresh();
       		}
     	}
