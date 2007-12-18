@@ -59,6 +59,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
 #include "modelcache/ModelResource.h"
+#include "map/MapResource.h"
 
 void MapChanged()
 {
@@ -177,13 +178,16 @@ class HashtableReferenceCache
 : public ReferenceCache, 
   public VirtualFileSystem::Observer
 {
+public:
 	// Map of named ModelResource objects
 	typedef std::map<std::string, model::ModelResourceWeakPtr> ModelReferences;
-	ModelReferences m_references;
+	ModelReferences _modelReferences;
+	
+	// Map of named MapResource objects
+	typedef std::map<std::string, map::MapResourceWeakPtr> MapReferences;
+	MapReferences _mapReferences;
   
 	bool _realised;
-
-public:
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const {
@@ -218,38 +222,25 @@ public:
 		GlobalFileSystem().removeObserver(*this);
 	}
 	
-  typedef ModelReferences::iterator iterator;
-
 	HashtableReferenceCache() : 
 		_realised(false)
 	{}
 
-  iterator begin()
-  {
-    return m_references.begin();
-  }
-  iterator end()
-  {
-    return m_references.end();
-  }
-
   void clear()
   {
-    m_references.clear();
+	  _modelReferences.clear();
+	  _mapReferences.clear();
   }
 
-	/*
-	 * Capture a named resource.
-	 */
-	ResourcePtr capture(const std::string& path) {
-		// First lookup the reference in the map. If it is found, we need to
+    // Branch for capturing model resources
+  	ResourcePtr captureModel(const std::string& path) {
+  		// First lookup the reference in the map. If it is found, we need to
 		// lock the weak_ptr to get a shared_ptr, which may fail. If we cannot
 		// get a shared_ptr (because the object as already been deleted) or the
 		// item is not found at all, we create a new ModelResource and add it
 		// into the map before returning.
-		ModelReferences::iterator i = m_references.find(path);
-		
-		if (i != m_references.end()) {
+		ModelReferences::iterator i = _modelReferences.find(path);
+		if (i != _modelReferences.end()) {
 			// Found. Try to lock the pointer. If it is valid, return it.
 			model::ModelResourcePtr candidate = i->second.lock();
 			if (candidate) {
@@ -268,9 +259,54 @@ public:
 		}
 		
 		// Insert the weak pointer reference into the map
-		m_references[path] = model::ModelResourceWeakPtr(newResource);
+		_modelReferences[path] = model::ModelResourceWeakPtr(newResource);
 		
 		return newResource;
+  	}
+  	
+  	// Branch for capturing mapfile resources
+  	ResourcePtr captureMap(const std::string& path) {
+  		// First lookup the reference in the map. If it is found, we need to
+		// lock the weak_ptr to get a shared_ptr, which may fail. If we cannot
+		// get a shared_ptr (because the object as already been deleted) or the
+		// item is not found at all, we create a new ModelResource and add it
+		// into the map before returning.
+		MapReferences::iterator i = _mapReferences.find(path);
+		if (i != _mapReferences.end()) {
+			// Found. Try to lock the pointer. If it is valid, return it.
+			map::MapResourcePtr candidate = i->second.lock();
+			if (candidate) {
+				return candidate;
+			}
+		}
+		
+		// Either we did not find the resource, or the pointer was not valid.
+		// In this case we create a new ModelResource, add it to the map and
+		// return it.
+		map::MapResourcePtr newResource(new map::MapResource(path));
+		
+		// Realise the new resource if the ReferenceCache itself is realised
+		if (realised()) {
+			newResource->realise();
+		}
+		
+		// Insert the weak pointer reference into the map
+		_mapReferences[path] = map::MapResourceWeakPtr(newResource);
+		
+		return newResource;
+  	}
+  
+	/*
+	 * Capture a named resource.
+	 */
+	ResourcePtr capture(const std::string& path) {
+		// Branch off to the map/model capture routines
+		if (boost::algorithm::iends_with(path, "map")) {
+			return captureMap(path);
+		}
+		else {
+			return captureModel(path);
+		}
 	}
 	
 	bool realised() const {
@@ -283,14 +319,24 @@ public:
 			_realised = true;
 
 			// Realise ModelResources
-			for (ModelReferences::iterator i = m_references.begin(); 
-				 i != m_references.end(); 
+			for (ModelReferences::iterator i = _modelReferences.begin(); 
+				 i != _modelReferences.end(); 
 				 ++i)
 			{
 				model::ModelResourcePtr res = i->second.lock();
 				if (res)
 					res->realise();
 			}
+			
+			for (MapReferences::iterator i = _mapReferences.begin();
+		  	     i != _mapReferences.end();
+		  	     ++i)
+			{
+				map::MapResourcePtr resource = i->second.lock();
+	      		if (resource) {
+	        		resource->realise();
+	      		}
+	    	}
 		}
 	}
 	
@@ -299,8 +345,8 @@ public:
 			_realised = false;
 
 			// Unrealise ModelResources
-			for (ModelReferences::iterator i = m_references.begin(); 
-				 i != m_references.end(); 
+			for (ModelReferences::iterator i = _modelReferences.begin(); 
+				 i != _modelReferences.end(); 
 				 ++i)
 			{
 				model::ModelResourcePtr res = i->second.lock();
@@ -308,6 +354,16 @@ public:
 					res->unrealise();
 				}
 			}
+			
+			for (MapReferences::iterator i = _mapReferences.begin();
+		  	     i != _mapReferences.end();
+		  	     ++i)
+			{
+				map::MapResourcePtr resource = i->second.lock();
+	      		if (resource) {
+	        		resource->unrealise();
+	      		}
+	    	}
 
 			model::ModelCache::Instance().clear();
 		}
@@ -324,12 +380,22 @@ public:
   	}
   
 	void refresh() {
-		for (ModelReferences::iterator i = m_references.begin();
-	  	     i != m_references.end();
+		for (ModelReferences::iterator i = _modelReferences.begin();
+	  	     i != _modelReferences.end();
 	  	     ++i)
 		{
 			model::ModelResourcePtr resource = i->second.lock();
       		if(resource && !resource->isMap()) {
+        		resource->refresh();
+      		}
+    	}
+		
+		for (MapReferences::iterator i = _mapReferences.begin();
+	  	     i != _mapReferences.end();
+	  	     ++i)
+		{
+			map::MapResourcePtr resource = i->second.lock();
+      		if (resource && !resource->isMap()) {
         		resource->refresh();
       		}
     	}
@@ -348,21 +414,22 @@ namespace
 	}
 }
 
-#if 0
-class ResourceVisitor
-{
-public:
-  virtual void visit(const char* name, const char* path, const
-};
-#endif
-
 void SaveReferences()
 {
-	for (HashtableReferenceCache::iterator i = GetReferenceCache().begin(); 
-		 i != GetReferenceCache().end(); 
+	for (HashtableReferenceCache::ModelReferences::iterator i = GetReferenceCache()._modelReferences.begin(); 
+		 i != GetReferenceCache()._modelReferences.end(); 
 		 ++i)
 	{
     	model::ModelResourcePtr res = i->second.lock();
+    	if (res)
+    		res->save();
+	}
+	
+	for (HashtableReferenceCache::MapReferences::iterator i = GetReferenceCache()._mapReferences.begin(); 
+		 i != GetReferenceCache()._mapReferences.end(); 
+		 ++i)
+	{
+    	map::MapResourcePtr res = i->second.lock();
     	if (res)
     		res->save();
 	}
@@ -372,23 +439,45 @@ void SaveReferences()
 
 bool References_Saved()
 {
-  for(HashtableReferenceCache::iterator i = GetReferenceCache().begin(); i != GetReferenceCache().end(); ++i)
-  {
-    scene::INodePtr node;
-    
-    model::ModelResourcePtr res = i->second.lock();
-    if (res)
-    	node = res->getNode();
-    	
-    if (node != NULL) {
-      MapFilePtr map = Node_getMapFile(node);
-      if(map != NULL && !map->saved())
-      {
-        return false;
-      }
-    }
-  }
-  return true;
+	for (HashtableReferenceCache::ModelReferences::iterator i = GetReferenceCache()._modelReferences.begin(); 
+		 i != GetReferenceCache()._modelReferences.end(); 
+		 ++i)
+	{
+		scene::INodePtr node;
+		    
+	    model::ModelResourcePtr res = i->second.lock();
+	    if (res)
+	    	node = res->getNode();
+	    	
+	    if (node != NULL) {
+	      MapFilePtr map = Node_getMapFile(node);
+	      if(map != NULL && !map->saved())
+	      {
+	        return false;
+	      }
+	    }
+	}
+	
+	for (HashtableReferenceCache::MapReferences::iterator i = GetReferenceCache()._mapReferences.begin(); 
+		 i != GetReferenceCache()._mapReferences.end(); 
+		 ++i)
+	{
+		scene::INodePtr node;
+		    
+	    map::MapResourcePtr res = i->second.lock();
+	    if (res)
+	    	node = res->getNode();
+	    	
+	    if (node != NULL) {
+	      MapFilePtr map = Node_getMapFile(node);
+	      if(map != NULL && !map->saved())
+	      {
+	        return false;
+	      }
+	    }
+	}
+
+	return true;
 }
 
 void RefreshReferences()

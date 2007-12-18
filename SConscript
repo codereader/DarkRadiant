@@ -580,6 +580,7 @@ radiant_src = \
          'map/RootNode.cpp',
          'map/PointFile.cpp',
          'map/FindMapElements.cpp',
+         'map/MapResource.cpp',
          'map/algorithm/Traverse.cpp',
          'namespace/Namespace.cpp',
          'namespace/NameObserver.cpp',
