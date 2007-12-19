@@ -27,14 +27,14 @@ namespace {
 // Constructor
 MapResource::MapResource(const std::string& name) :
 	_mapRoot(SingletonNullModel()),
-	m_originalName(name),
+	_originalName(name),
 	_type(name.substr(name.rfind(".") + 1)), 
-	m_modified(0),
+	_modified(0),
 	_realised(false)
 {
 	// Initialise the paths, this is all needed for realisation
-    m_path = rootPath(m_originalName);
-	m_name = os::getRelativePath(m_originalName, m_path);
+    _path = rootPath(_originalName);
+	_name = os::getRelativePath(_originalName, _path);
 }
 	
 MapResource::~MapResource() {
@@ -78,7 +78,7 @@ bool MapResource::save() {
 		// Save a backup of the existing file (rename it to .bak)
 		saveBackup();
 		
-		std::string fullpath = m_path + m_name;
+		std::string fullpath = _path + _name;
 		
 		bool success = false;
 		
@@ -101,7 +101,7 @@ bool MapResource::save() {
 }
 
 bool MapResource::saveBackup() {
-	std::string fullpath = m_path + m_name;
+	std::string fullpath = _path + _name;
 	
 	if (path_is_absolute(fullpath.c_str())) {
 		// Save a backup if possible. This is done by renaming the original,
@@ -189,7 +189,7 @@ void MapResource::unrealise() {
 		(*i)->onResourceUnrealise();
 	}
 
-	//globalOutputStream() << "MapResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
+	//globalOutputStream() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
 	_mapRoot = SingletonNullModel();
 }
 
@@ -209,12 +209,12 @@ void MapResource::connectMap() {
 }
 
 std::time_t MapResource::modified() const {
-	std::string fullpath = m_path + m_name;
+	std::string fullpath = _path + _name;
 	return file_modified(fullpath.c_str());
 }
 
 void MapResource::mapSave() {
-	m_modified = modified();
+	_modified = modified();
 	MapFilePtr map = Node_getMapFile(_mapRoot);
 	if (map != NULL) {
 		map->save();
@@ -223,8 +223,8 @@ void MapResource::mapSave() {
 
 bool MapResource::isModified() const {
 	// had or has an absolute path // AND disk timestamp changed
-	return (!m_path.empty() && m_modified != modified()) 
-			|| !path_equal(rootPath(m_originalName).c_str(), m_path.c_str()); // OR absolute vfs-root changed
+	return (!_path.empty() && _modified != modified()) 
+			|| !path_equal(rootPath(_originalName).c_str(), _path.c_str()); // OR absolute vfs-root changed
 }
 
 void MapResource::refresh() {
@@ -267,7 +267,7 @@ MapFormatPtr MapResource::getMapFormat() {
     	globalErrorStream() << "Map loader module not found.\n";
 		if (!_type.empty()) {
 			globalErrorStream() << "Type is not supported: \""
-				<< m_name.c_str() << "\"\n";
+				<< _name.c_str() << "\"\n";
 		}
 		return MapFormatPtr();
 	}
@@ -275,7 +275,7 @@ MapFormatPtr MapResource::getMapFormat() {
 
 scene::INodePtr MapResource::loadMapNode() {
 	// greebo: Check if we have valid settings
-	if (m_path.empty() || (m_name.empty() && _type.empty())) {
+	if (_path.empty() || (_name.empty() && _type.empty())) {
 		return SingletonNullModel();
 	}
 	
@@ -289,9 +289,9 @@ scene::INodePtr MapResource::loadMapNode() {
 	
 	// At this point, we have a valid mapformat
 	// Ccreate a new map root node
-	scene::INodePtr root(NewMapRoot(m_name));
+	scene::INodePtr root(NewMapRoot(_name));
 
-  	std::string fullpath = m_path + m_name;
+  	std::string fullpath = _path + _name;
 
 	if (path_is_absolute(fullpath.c_str())) {
 		MapResource_loadFile(*format, root, fullpath);

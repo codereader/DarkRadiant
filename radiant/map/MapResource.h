@@ -17,10 +17,10 @@ class MapResource :
 	scene::INodePtr _mapRoot;
   
 	// Name given during construction
-	const std::string m_originalName;
+	const std::string _originalName;
 	
-	std::string m_path;
-	std::string m_name;
+	std::string _path;
+	std::string _name;
   
 	// Type of resource (map, lwo etc)
 	std::string _type;
@@ -28,7 +28,7 @@ class MapResource :
 	typedef std::set<Resource::Observer*> ResourceObserverList;
 	ResourceObserverList _observers;
 	
-	std::time_t m_modified;
+	std::time_t _modified;
 	bool _realised;
 
 public:
