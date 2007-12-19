@@ -21,10 +21,6 @@ namespace {
 			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
 		);
 	}
-	
-	void MapChanged() {
-		GlobalMap().setModified(!References_Saved());
-	}
 }
 
 // Constructor
@@ -69,16 +65,12 @@ void MapResource::loadCached() {
 	setModel(loaded);
 }
 
-void MapResource::loadModel() {
-	loadCached();
-	connectMap();
-	mapSave();
-}
-
 bool MapResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
 	if (m_model == SingletonNullModel()) {
-		loadModel();
+		loadCached();
+		connectMap();
+		mapSave();
 	}
 
 	return m_model != SingletonNullModel();
@@ -93,10 +85,10 @@ bool MapResource::load() {
 bool MapResource::save() {
 	std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
 								
-	if(!moduleName.empty()) {
-		const MapFormat* format = boost::static_pointer_cast<MapFormat>(
+	if (!moduleName.empty()) {
+		MapFormatPtr format = boost::dynamic_pointer_cast<MapFormat>(
 			module::GlobalModuleRegistry().getModule(moduleName)
-		).get();
+		);
 		
 		if (format != NULL && MapResource_save(*format, m_model, m_path, m_name)) {
   			mapSave();
@@ -180,15 +172,18 @@ void MapResource::unrealise() {
 	clearModel();
 }
 
-bool MapResource::isMap() const {
-	return Node_getMapFile(m_model) != 0;
+void MapResource::onMapChanged() {
+	GlobalMap().setModified(!References_Saved());
 }
 
 void MapResource::connectMap() {
     MapFilePtr map = Node_getMapFile(m_model);
-    if(map != NULL)
-    {
-      map->setChangedCallback(FreeCaller<MapChanged>());
+    if (map != NULL) {
+    	// Reroute the changed callback to the onMapChanged() call.
+    	map->setChangedCallback(MapChangedCaller(*this));
+    }
+    else {
+    	map->setChangedCallback(Callback());
     }
 }
 

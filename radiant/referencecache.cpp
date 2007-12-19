@@ -389,16 +389,6 @@ public:
         		resource->refresh();
       		}
     	}
-		
-		for (MapReferences::iterator i = _mapReferences.begin();
-	  	     i != _mapReferences.end();
-	  	     ++i)
-		{
-			map::MapResourcePtr resource = i->second.lock();
-      		if (resource && !resource->isMap()) {
-        		resource->refresh();
-      		}
-    	}
 	}
 };
 
