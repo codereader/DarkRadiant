@@ -9,6 +9,7 @@
 #include "referencecache.h"
 #include "os/path.h"
 #include "os/file.h"
+#include "map/algorithm/Traverse.h"
 #include "stream/stringstream.h"
 
 namespace map {
@@ -68,7 +69,28 @@ bool MapResource::save() {
 			module::GlobalModuleRegistry().getModule(moduleName)
 		);
 		
-		if (format != NULL && MapResource_save(*format, _mapRoot, m_path, m_name)) {
+		if (format == NULL) {
+			globalErrorStream() << "Could not locate map loader module.\n";
+			return false;
+		}
+		
+		// Save a backup of the existing file (rename it to .bak)
+		saveBackup();
+		
+		std::string fullpath = m_path + m_name;
+		
+		bool success = false;
+		
+		if (path_is_absolute(fullpath.c_str())) {
+			// Save the actual file
+			success = MapResource_saveFile(*format, _mapRoot, map::traverse, fullpath.c_str());
+		}
+		else {
+			globalErrorStream() << "Map path is not absolute: " << makeQuoted(fullpath.c_str()) << "\n";
+			success = false;
+		}
+		
+		if (success) {
   			mapSave();
   			return true;
 		}
@@ -76,7 +98,35 @@ bool MapResource::save() {
 	
 	return false;
 }
+
+bool MapResource::saveBackup() {
+	std::string fullpath = m_path + m_name;
 	
+	if (path_is_absolute(fullpath.c_str())) {
+		// Save a backup if possible. This is done by renaming the original,
+		// which won't work if the existing map is currently open by Doom 3
+		// in the background.
+		if (!file_exists(fullpath.c_str())) {
+			globalErrorStream() << "WARNING: Could not rename " 
+				<< makeQuoted(fullpath.c_str()) << " to backup.\n";
+			return false;
+		}
+		
+		if (file_writeable(fullpath.c_str())) {
+			StringOutputStream backup(256);
+			backup << StringRange(fullpath.c_str(), path_get_extension(fullpath.c_str())) << "bak";
+
+			return (!file_exists(backup.c_str()) || file_remove(backup.c_str())) // remove backup
+				&& file_move(fullpath.c_str(), backup.c_str()); // rename current to backup
+		}
+		else {
+			globalErrorStream() << "map path is not writeable: " << makeQuoted(fullpath.c_str()) << "\n";
+			return false;
+		}
+	}
+	return false;
+}
+
 void MapResource::flush() {
 	// greebo: Nothing to do, no cache is used for MapResources
 }
@@ -185,7 +235,7 @@ void MapResource::refresh() {
 }
 
 scene::INodePtr MapResource::loadMapNode() {
-	// greebo: Check if we have an empty path (is true for m_name=="func_static_637")
+	// greebo: Check if we have an empty path
 	if (m_path.empty()) {
 		return SingletonNullModel();
 	}

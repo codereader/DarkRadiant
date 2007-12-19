@@ -2,6 +2,7 @@
 #define MAPRESOURCE_H_
 
 #include "ireference.h"
+#include "imap.h"
 #include "imodel.h"
 #include "generic/callback.h"
 #include <set>
@@ -70,6 +71,9 @@ public:
 	typedef MemberCaller<MapResource, &MapResource::onMapChanged> MapChangedCaller;
 	
 private:
+	// Create a backup copy of the map (used before saving)
+	bool saveBackup();
+	
 	scene::INodePtr loadMapNode();
 	
 	void connectMap();
