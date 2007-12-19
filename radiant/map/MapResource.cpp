@@ -108,15 +108,13 @@ bool MapResource::saveBackup() {
 		// which won't work if the existing map is currently open by Doom 3
 		// in the background.
 		if (!file_exists(fullpath.c_str())) {
-			globalErrorStream() << "WARNING: Could not rename " 
-				<< makeQuoted(fullpath.c_str()) << " to backup.\n";
 			return false;
 		}
 		
 		if (file_writeable(fullpath.c_str())) {
-			StringOutputStream backup(256);
-			backup << StringRange(fullpath.c_str(), path_get_extension(fullpath.c_str())) << "bak";
-
+			std::string pathWithoutExtension = fullpath.substr(0, fullpath.rfind('.'));
+			std::string backup = pathWithoutExtension + ".bak";
+			
 			return (!file_exists(backup.c_str()) || file_remove(backup.c_str())) // remove backup
 				&& file_move(fullpath.c_str(), backup.c_str()); // rename current to backup
 		}
