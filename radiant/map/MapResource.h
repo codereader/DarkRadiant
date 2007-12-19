@@ -73,14 +73,9 @@ public:
 
   bool isModified() const;
   void refresh();
-  
-	/// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
-	static ModelLoader* getModelLoaderForType(const std::string& type);
 	
 private:
-	scene::INodePtr loadModelNode();
-	
-	scene::INodePtr loadModelResource();
+	scene::INodePtr loadMapNode();
 };
 // Resource pointer types
 typedef boost::shared_ptr<MapResource> MapResourcePtr;
