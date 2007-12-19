@@ -34,10 +34,7 @@ ModelResource::ModelResource(const std::string& name) :
 	_type(name.substr(name.rfind(".") + 1)), 
 	m_modified(0),
 	_realised(false)
-{
-	// Get the model loader for this resource type
-	m_loader = getModelLoaderForType(_type);
-}
+{}
 	
 ModelResource::~ModelResource() {
     unrealise(); // unrealise - does nothing if not realised
@@ -170,7 +167,7 @@ void ModelResource::refresh() {
 	}
 }
 
-ModelLoaderWeakPtr ModelResource::getModelLoaderForType(const std::string& type) {
+ModelLoaderPtr ModelResource::getModelLoaderForType(const std::string& type) {
 	// Get the module name from the Filetype registry
 	std::string moduleName = GlobalFiletypes().findModuleName("model", type);
 	  
@@ -180,19 +177,21 @@ ModelLoaderWeakPtr ModelResource::getModelLoaderForType(const std::string& type)
 		);
 
 		if (modelLoader != NULL) {
-			return ModelLoaderWeakPtr(modelLoader);
+			return modelLoader;
 		}
 		else {
 			globalErrorStream()	<< "ERROR: Model type incorrectly registered: \""
 								<< moduleName.c_str() << "\"\n";
-			return ModelLoaderWeakPtr(NullModelLoader::InstancePtr());
+			return NullModelLoader::InstancePtr();
 		}
 	}
-	return ModelLoaderWeakPtr();
+	return ModelLoaderPtr();
 }
 
 scene::INodePtr ModelResource::loadModelNode() {
-	ModelLoaderPtr modelLoader = m_loader.lock();
+	// Get the model loader for this resource type
+	// and try to lock the weak ptr
+	ModelLoaderPtr modelLoader = getModelLoaderForType(_type);
 	
 	// greebo: Check if we have a NULL model loader and an empty path ("func_static_637")
 	if (modelLoader == NULL && m_path.empty()) {
@@ -202,7 +201,7 @@ scene::INodePtr ModelResource::loadModelNode() {
 	// Model types should have a loader, so use this to load. Map types do not
 	// have a loader		  
 	if (modelLoader != NULL) {
-		return loadModelResource();
+		return loadModelResource(modelLoader);
 	}
 	else if (m_name.empty() && _type.empty()) {
 		// Loader is NULL (map) and no valid name and type, return NULLmodel
@@ -247,16 +246,16 @@ scene::INodePtr ModelResource::loadModelNode() {
 	}
 }
 
-scene::INodePtr ModelResource::loadModelResource() {
+scene::INodePtr ModelResource::loadModelResource(const ModelLoaderPtr& loader) {
+	assert(loader != NULL);
+	
 	scene::INodePtr model(SingletonNullModel());
 
-	ModelLoaderPtr modelLoader = m_loader.lock();
-	
 	ArchiveFilePtr file = GlobalFileSystem().openFile(m_name);
 
 	if (file != NULL) {
 		globalOutputStream() << "Loaded Model: \""<< m_name.c_str() << "\"\n";
-		model = modelLoader->loadModel(*file);
+		model = loader->loadModel(*file);
 	}
 	else {
 		globalErrorStream() << "Model load failed: \""<< m_name.c_str() << "\"\n";

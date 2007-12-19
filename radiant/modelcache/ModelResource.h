@@ -21,11 +21,8 @@ class ModelResource :
 	std::string m_path;
 	std::string m_name;
   
-	// Type of resource (map, lwo etc)
+	// Type of resource (ase, lwo etc)
 	std::string _type;
-	
-	// Weak reference to the ModelLoader for this resource type
-	ModelLoaderWeakPtr m_loader;
 	
 	typedef std::set<Resource::Observer*> ResourceObserverList;
 	ResourceObserverList _observers;
@@ -68,12 +65,12 @@ public:
   void refresh();
   
 	/// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
-	static ModelLoaderWeakPtr getModelLoaderForType(const std::string& type);
+	static ModelLoaderPtr getModelLoaderForType(const std::string& type);
 	
 private:
 	scene::INodePtr loadModelNode();
 	
-	scene::INodePtr loadModelResource();
+	scene::INodePtr loadModelResource(const ModelLoaderPtr& loader);
 };
 // Resource pointer types
 typedef boost::shared_ptr<ModelResource> ModelResourcePtr;
