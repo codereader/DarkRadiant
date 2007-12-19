@@ -126,54 +126,6 @@ bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTr
 	}
 }
 
-bool file_saveBackup(const char* path)
-{
-  if(file_writeable(path))
-  {
-	  StringOutputStream backup(256);
-    backup << StringRange(path, path_get_extension(path)) << "bak";
-
-    return (!file_exists(backup.c_str()) || file_remove(backup.c_str())) // remove backup
-      && file_move(path, backup.c_str()); // rename current to backup
-  }
-
-  globalErrorStream() << "map path is not writeable: " << makeQuoted(path) << "\n";
-  return false;
-}
-
-/** 
- * Save a map file (outer function). This function tries to backup the map
- * file before calling MapResource_saveFile() to do the actual saving of
- * data.
- */
-
-bool MapResource_save(const MapFormat& format, 
-					  scene::INodePtr root, 
-					  const std::string& path, const std::string& name)
-{
-	std::string fullpath = path + name;
-	
-	if(path_is_absolute(fullpath.c_str())) {
-
-		// Save a backup if possible. This is done by renaming the original,
-		// which won't work if the existing map is currently open by Doom 3
-		// in the background.
-		if (file_exists(fullpath.c_str()) 
-		    	&& !file_saveBackup(fullpath.c_str())) {
-			globalErrorStream() << "WARNING: could not rename " 
-								   << makeQuoted(fullpath.c_str())
-								   << " to backup.\n";
-		}
-	
-		// Save the actual file
-		return MapResource_saveFile(format, root, map::traverse, fullpath.c_str());
-	}
-	else {
-		globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";
-		return false;
-	}
-}
-
 class HashtableReferenceCache 
 : public ReferenceCache, 
   public VirtualFileSystem::Observer
