@@ -39,8 +39,6 @@ public:
 	void setModel(scene::INodePtr model);
 	void clearModel();
 
-	void loadCached();
-
 	bool load();
   
 	/**

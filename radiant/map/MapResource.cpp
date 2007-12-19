@@ -5,7 +5,6 @@
 #include "map/Map.h"
 #include "mapfile.h"
 #include "modelcache/NullModelLoader.h"
-#include "modelcache/ModelCache.h"
 #include "debugging/debugging.h"
 #include "referencecache.h"
 #include "os/path.h"
@@ -50,25 +49,13 @@ void MapResource::clearModel() {
 	m_model = SingletonNullModel();
 }
 
-void MapResource::loadCached() {
-	scene::INodePtr cached = model::ModelCache::Instance().find(m_path, m_name);
-	  
-	if (cached != NULL) {
-		// found a cached model
-		setModel(cached);
-		return;
-	}
-	  
-	// Map not found in cache, acquire map root node from loader
-	scene::INodePtr loaded = loadMapNode();
-	model::ModelCache::Instance().insert(m_path, m_name, loaded);
-	setModel(loaded);
-}
-
 bool MapResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
 	if (m_model == SingletonNullModel()) {
-		loadCached();
+		// Map not loaded yet, acquire map root node from loader
+		scene::INodePtr loaded = loadMapNode();
+		setModel(loaded);
+		
 		connectMap();
 		mapSave();
 	}
@@ -100,9 +87,7 @@ bool MapResource::save() {
 }
 	
 void MapResource::flush() {
-	if (realised()) {
-		model::ModelCache::Instance().erase(m_path, m_name);
-	}
+	// greebo: Nothing to do, no cache is used for MapResources
 }
 
 scene::INodePtr MapResource::getNode() {
@@ -110,12 +95,6 @@ scene::INodePtr MapResource::getNode() {
 }
 
 void MapResource::setNode(scene::INodePtr node) {
-	// Erase the mapping in the modelcache
-	model::ModelCache::Instance().erase(m_path, m_name);
-	
-	// Re-insert the model with the new node
-	model::ModelCache::Instance().insert(m_path, m_name, node);
-	
 	setModel(node);
 	connectMap();
 }
