@@ -15,10 +15,10 @@
 namespace map {
 
 namespace {
-  // name may be absolute or relative
-	inline const char* rootPath(const char* name) {
+	// name may be absolute or relative
+	inline std::string rootPath(const std::string& name) {
 		return GlobalFileSystem().findRoot(
-			path_is_absolute(name) ? name : GlobalFileSystem().findFile(name)
+			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
 		);
 	}
 	
@@ -212,7 +212,7 @@ void MapResource::mapSave() {
 bool MapResource::isModified() const {
 	return ((!string_empty(m_path.c_str()) // had or has an absolute path
 			&& m_modified != modified()) // AND disk timestamp changed
-			|| !path_equal(rootPath(m_originalName.c_str()), m_path.c_str())); // OR absolute vfs-root changed
+			|| !path_equal(rootPath(m_originalName).c_str(), m_path.c_str())); // OR absolute vfs-root changed
 }
 
 void MapResource::refresh() {

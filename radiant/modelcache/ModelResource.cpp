@@ -12,20 +12,19 @@
 namespace model {
 
 namespace {
-  // name may be absolute or relative
-	inline const char* rootPath(const char* name) {
+	// name may be absolute or relative
+	inline std::string rootPath(const std::string& name) {
 		return GlobalFileSystem().findRoot(
-			path_is_absolute(name) ? name : GlobalFileSystem().findFile(name)
+			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
 		);
 	}
 }
 
 // Constructor
 ModelResource::ModelResource(const std::string& name) :
-	m_model(SingletonNullModel()),
-	m_originalName(name),
-	_type(name.substr(name.rfind(".") + 1)), 
-	m_modified(0),
+	_model(SingletonNullModel()),
+	_originalName(name),
+	_type(name.substr(name.rfind(".") + 1)), // extension
 	_realised(false)
 {}
 	
@@ -34,19 +33,19 @@ ModelResource::~ModelResource() {
 }
 
 void ModelResource::setModel(scene::INodePtr model) {
-	m_model = model;
+	_model = model;
 }
 
 void ModelResource::clearModel() {
-	m_model = SingletonNullModel();
+	_model = SingletonNullModel();
 }
 
 bool ModelResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
 	
-	if (m_model == SingletonNullModel()) {
+	if (_model == SingletonNullModel()) {
 		// Try to lookup the model from the cache
-		scene::INodePtr cached = ModelCache::Instance().find(m_path, m_name);
+		scene::INodePtr cached = ModelCache::Instance().find(_path, _name);
 		
 		if (cached != NULL) {
 			// found a cached model, take this one
@@ -57,31 +56,31 @@ bool ModelResource::load() {
 			scene::INodePtr loaded = loadModelNode();
 			
 			// Insert the newly loaded model into the cache
-			ModelCache::Instance().insert(m_path, m_name, loaded);
+			ModelCache::Instance().insert(_path, _name, loaded);
 			
 			setModel(loaded);
 		}
 	}
 
-	return m_model != SingletonNullModel();
+	return _model != SingletonNullModel();
 }
   
 void ModelResource::flush() {
 	if (realised()) {
-		ModelCache::Instance().erase(m_path, m_name);
+		ModelCache::Instance().erase(_path, _name);
 	}
 }
 
 scene::INodePtr ModelResource::getNode() {
-	return m_model;
+	return _model;
 }
 
 void ModelResource::setNode(scene::INodePtr node) {
 	// Erase the mapping in the modelcache
-	ModelCache::Instance().erase(m_path, m_name);
+	ModelCache::Instance().erase(_path, _name);
 	
 	// Re-insert the model with the new node
-	ModelCache::Instance().insert(m_path, m_name, node);
+	ModelCache::Instance().insert(_path, _name, node);
 	
 	setModel(node);
 }
@@ -113,8 +112,8 @@ void ModelResource::realise() {
 	_realised = true;
 	
 	// Initialise the paths, this is all needed for realisation
-    m_path = rootPath(m_originalName.c_str());
-	m_name = os::getRelativePath(m_originalName, m_path);
+    _path = rootPath(_originalName.c_str());
+	_name = os::getRelativePath(_originalName, _path);
 
 	// Realise the observers
 	for (ResourceObserverList::iterator i = _observers.begin();
@@ -174,7 +173,7 @@ scene::INodePtr ModelResource::loadModelNode() {
 	
 	// greebo: Check if we have a NULL model loader and an empty path 
 	// (name is something like "func_static_637" then)
-	if (loader == NULL && m_path.empty()) {
+	if (loader == NULL && _path.empty()) {
 		return SingletonNullModel();
 	}
 
@@ -184,14 +183,14 @@ scene::INodePtr ModelResource::loadModelNode() {
 		// Construct a NullModel as return value
 		scene::INodePtr model(SingletonNullModel());
 
-		ArchiveFilePtr file = GlobalFileSystem().openFile(m_name);
+		ArchiveFilePtr file = GlobalFileSystem().openFile(_name);
 
 		if (file != NULL) {
-			globalOutputStream() << "Loaded Model: \""<< m_name.c_str() << "\"\n";
+			globalOutputStream() << "Loaded Model: \""<< _name.c_str() << "\"\n";
 			model = loader->loadModel(*file);
 		}
 		else {
-			globalErrorStream() << "Model load failed: \""<< m_name.c_str() << "\"\n";
+			globalErrorStream() << "Model load failed: \""<< _name.c_str() << "\"\n";
 		}
 
 		model->setIsRoot(true);

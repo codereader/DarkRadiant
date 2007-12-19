@@ -13,13 +13,13 @@ class ModelResource :
 	public Resource,
 	public boost::noncopyable
 {
-	scene::INodePtr m_model;
+	scene::INodePtr _model;
   
 	// Name given during construction
-	const std::string m_originalName;
+	const std::string _originalName;
 	
-	std::string m_path;
-	std::string m_name;
+	std::string _path;
+	std::string _name;
   
 	// Type of resource (ase, lwo etc)
 	std::string _type;
@@ -27,7 +27,6 @@ class ModelResource :
 	typedef std::set<Resource::Observer*> ResourceObserverList;
 	ResourceObserverList _observers;
 	
-	std::time_t m_modified;
 	bool _realised;
 
 public:

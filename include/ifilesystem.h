@@ -96,11 +96,12 @@ public:
   /// Use "*" as \p extension to match all file extensions.
   virtual void forEachFile(const std::string& basedir, const std::string& extension, const FileNameCallback& callback, std::size_t depth = 1) = 0;
 
-  /// \brief Returns the absolute filename for a relative \p name, or "" if not found.
-  virtual const char* findFile(const std::string& name) = 0;
-  /// \brief Returns the filesystem root for an absolute \p name, or "" if not found.
-  /// This can be used to convert an absolute name to a relative name.
-  virtual const char* findRoot(const char* name) = 0;
+	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.
+	virtual std::string findFile(const std::string& name) = 0;
+
+	/// \brief Returns the filesystem root for an absolute \p name, or "" if not found.
+	/// This can be used to convert an absolute name to a relative name.
+	virtual std::string findRoot(const std::string& name) = 0;
 };
 
 inline VirtualFileSystem& GlobalFileSystem() {
