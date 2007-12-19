@@ -23,9 +23,6 @@ class MapResource :
 	// Type of resource (map, lwo etc)
 	std::string _type;
 	
-	// ModelLoader for this resource type
-	ModelLoader* m_loader;
-	
 	typedef std::set<Resource::Observer*> ResourceObserverList;
 	ResourceObserverList _observers;
 	

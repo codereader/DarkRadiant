@@ -32,12 +32,12 @@ MapResource::MapResource(const std::string& name) :
 	m_model(SingletonNullModel()),
 	m_originalName(name),
 	_type(name.substr(name.rfind(".") + 1)), 
-	m_loader(NULL),
 	m_modified(0),
 	_realised(false)
 {
-	// Get the model loader for this resource type
-	m_loader = getModelLoaderForType(_type);
+	// Initialise the paths, this is all needed for realisation
+    m_path = rootPath(m_originalName);
+	m_name = os::getRelativePath(m_originalName, m_path);
 }
 	
 MapResource::~MapResource() {
@@ -153,10 +153,6 @@ void MapResource::realise() {
 	}
 	
 	_realised = true;
-	
-	// Initialise the paths, this is all needed for realisation
-    m_path = rootPath(m_originalName.c_str());
-	m_name = path_make_relative(m_originalName.c_str(), m_path.c_str());
 
 	// Realise the observers
 	for (ResourceObserverList::iterator i = _observers.begin();
@@ -210,9 +206,9 @@ void MapResource::mapSave() {
 }
 
 bool MapResource::isModified() const {
-	return ((!string_empty(m_path.c_str()) // had or has an absolute path
-			&& m_modified != modified()) // AND disk timestamp changed
-			|| !path_equal(rootPath(m_originalName).c_str(), m_path.c_str())); // OR absolute vfs-root changed
+	// had or has an absolute path // AND disk timestamp changed
+	return (!m_path.empty() && m_modified != modified()) 
+			|| !path_equal(rootPath(m_originalName).c_str(), m_path.c_str()); // OR absolute vfs-root changed
 }
 
 void MapResource::refresh() {
@@ -223,39 +219,13 @@ void MapResource::refresh() {
 	}
 }
 
-ModelLoader* MapResource::getModelLoaderForType(const std::string& type) {
-	// Get the module name from the Filetype registry
-	std::string moduleName = GlobalFiletypes().findModuleName("model", type);
-	  
-	if (!moduleName.empty()) {
-		ModelLoader* table = boost::static_pointer_cast<ModelLoader>(
-			module::GlobalModuleRegistry().getModule(moduleName)
-		).get();
-
-		if (table != NULL) {
-			return table;
-		}
-		else {
-			globalErrorStream()	<< "ERROR: Model type incorrectly registered: \""
-								<< moduleName.c_str() << "\"\n";
-			return &model::NullModelLoader::Instance();
-		}
-	}
-	return NULL;
-}
-
 scene::INodePtr MapResource::loadModelNode() {
-	// greebo: Check if we have a NULL model loader and an empty path ("func_static_637")
-	if (m_loader == NULL && m_path.empty()) {
+	// greebo: Check if we have an empty path (is true for m_name=="func_static_637")
+	if (m_path.empty()) {
 		return SingletonNullModel();
 	}
 
-	// Model types should have a loader, so use this to load. Map types do not
-	// have a loader		  
-	if (m_loader != NULL) {
-		return loadModelResource();
-	}
-	else if (m_name.empty() && _type.empty()) {
+	if (m_name.empty() && _type.empty()) {
 		// Loader is NULL (map) and no valid name and type, return NULLmodel
 		return SingletonNullModel();
 	}
@@ -296,24 +266,6 @@ scene::INodePtr MapResource::loadModelNode() {
 	      return SingletonNullModel();
 	    }
 	}
-}
-
-scene::INodePtr MapResource::loadModelResource() {
-	scene::INodePtr model(SingletonNullModel());
-
-	ArchiveFilePtr file = GlobalFileSystem().openFile(m_name);
-
-	if (file != NULL) {
-		globalOutputStream() << "Loaded Model: \""<< m_name.c_str() << "\"\n";
-		model = m_loader->loadModel(*file);
-	}
-	else {
-		globalErrorStream() << "Model load failed: \""<< m_name.c_str() << "\"\n";
-	}
-
-	model->setIsRoot(true);
-
-	return model;
 }
 
 } // namespace map
