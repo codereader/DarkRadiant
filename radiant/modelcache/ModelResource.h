@@ -36,15 +36,8 @@ public:
 	
 	virtual ~ModelResource();
 
-	void setModel(scene::INodePtr model);
-	void clearModel();
-
-	void loadModel();
-
 	bool load();
-	
 	bool save() { return false; } // is empty for ModelResources
-	
 	void flush();
 	
 	scene::INodePtr getNode();
@@ -52,22 +45,21 @@ public:
 	
 	virtual void addObserver(Observer& observer);
 	virtual void removeObserver(Observer& observer);
-		
-	bool realised();
-  
+	
 	// Realise this ModelResource
 	void realise();
 	void unrealise();
+	bool realised();
 
-  std::time_t modified() const;
-
-  bool isModified() const;
-  void refresh();
+	void refresh();
   
 	/// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
 	static ModelLoaderPtr getModelLoaderForType(const std::string& type);
 	
 private:
+	void setModel(scene::INodePtr model);
+	void clearModel();
+		
 	scene::INodePtr loadModelNode();
 };
 // Resource pointer types
