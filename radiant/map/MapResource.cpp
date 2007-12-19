@@ -63,8 +63,8 @@ void MapResource::loadCached() {
 		return;
 	}
 	  
-	// Model was not found yet
-	scene::INodePtr loaded = loadModelNode();
+	// Map not found in cache, acquire map root node from loader
+	scene::INodePtr loaded = loadMapNode();
 	model::ModelCache::Instance().insert(m_path, m_name, loaded);
 	setModel(loaded);
 }
@@ -219,52 +219,50 @@ void MapResource::refresh() {
 	}
 }
 
-scene::INodePtr MapResource::loadModelNode() {
+scene::INodePtr MapResource::loadMapNode() {
 	// greebo: Check if we have an empty path (is true for m_name=="func_static_637")
 	if (m_path.empty()) {
 		return SingletonNullModel();
 	}
 
 	if (m_name.empty() && _type.empty()) {
-		// Loader is NULL (map) and no valid name and type, return NULLmodel
+		// no valid name and type, return NULLmodel
 		return SingletonNullModel();
 	}
-	else {
-		// Get a loader module name for this type, if possible. If none is 
-		// found, try again with the "map" type, since we might be loading a 
-		// map with a different extension
-	    std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
-		// Empty, try again with "map" type
-		if (moduleName.empty()) {
-			moduleName = GlobalFiletypes().findModuleName("map", "map"); 
-		}
 	
-		// If we have a module, use it to load the map if possible, otherwise 
-		// return an error
-	    if (!moduleName.empty()) {
-	      
-			const MapFormat* format = boost::static_pointer_cast<MapFormat>(
-				module::GlobalModuleRegistry().getModule(moduleName)
-			).get();
-										
-	      if (format != NULL)
-	      {
-	        return MapResource_load(*format, m_path, m_name);
-	      }
-	      else
-	      {
-	        globalErrorStream() << "ERROR: Map type incorrectly registered: \"" << moduleName.c_str() << "\"\n";
-	        return SingletonNullModel();
-	      }
-	    }
-	    else
-	    {
-	      if (!_type.empty())
-	      {
-	        globalErrorStream() << "Model type not supported: \"" << m_name.c_str() << "\"\n";
-	      }
-	      return SingletonNullModel();
-	    }
+	// Get a loader module name for this type, if possible. If none is 
+	// found, try again with the "map" type, since we might be loading a 
+	// map with a different extension
+    std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
+    
+	// If empty, try again with "map" type
+	if (moduleName.empty()) {
+		moduleName = GlobalFiletypes().findModuleName("map", "map"); 
+	}
+
+	// If we have a module, use it to load the map if possible, otherwise 
+	// return an error
+    if (!moduleName.empty()) {
+		MapFormatPtr format = boost::dynamic_pointer_cast<MapFormat>(
+			module::GlobalModuleRegistry().getModule(moduleName)
+		);
+
+		if (format != NULL) {
+			return MapResource_load(*format, m_path, m_name);
+		} 
+		else {
+			globalErrorStream() << "ERROR: Map type incorrectly registered: \""
+				<< moduleName.c_str() << "\"\n";
+			return SingletonNullModel();
+		}
+	} 
+    else {
+    	globalErrorStream() << "Map loader module not found.\n";
+		if (!_type.empty()) {
+			globalErrorStream() << "Type is not supported: \""
+				<< m_name.c_str() << "\"\n";
+		}
+		return SingletonNullModel();
 	}
 }
 

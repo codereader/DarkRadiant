@@ -83,5 +83,6 @@ public:
 	 */
 	virtual void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& oStream) const = 0;
 };
+typedef boost::shared_ptr<MapFormat> MapFormatPtr;
 
 #endif
