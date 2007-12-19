@@ -75,8 +75,8 @@ public:
 	void forEachFile(const std::string& basedir, const std::string& extension,
 		const FileNameCallback& callback, std::size_t depth);
 
-	const char* findFile(const std::string& name);
-	const char* findRoot(const char *name);
+	std::string findFile(const std::string& name);
+	std::string findRoot(const std::string& name);
 
 	virtual void addObserver(Observer& observer);
 	virtual void removeObserver(Observer& observer);

@@ -233,20 +233,20 @@ void Quake3FileSystem::forEachFile(const std::string& basedir,
     }
 }
 
-const char* Quake3FileSystem::findFile(const std::string& name) {
+std::string Quake3FileSystem::findFile(const std::string& name) {
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		if (!i->is_pakfile && i->archive->containsFile(name.c_str())) {
-			return i->name.c_str();
+			return i->name;
 		}
 	}
 
 	return "";
 }
 
-const char* Quake3FileSystem::findRoot(const char* name) {
+std::string Quake3FileSystem::findRoot(const std::string& name) {
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
-		if (!i->is_pakfile && path_equal_n(name, i->name.c_str(), i->name.size())) {
-			return i->name.c_str();
+		if (!i->is_pakfile && path_equal_n(name.c_str(), i->name.c_str(), i->name.size())) {
+			return i->name;
 		}
 	}
 

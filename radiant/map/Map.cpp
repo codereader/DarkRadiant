@@ -717,7 +717,7 @@ void Map::renameAbsolute(const std::string& absolute) {
 		
 	scene::INodePtr clone(
 		NewMapRoot(
-			path_make_relative(absolute.c_str(), GlobalFileSystem().findRoot(absolute.c_str()))
+			os::getRelativePath(absolute, GlobalFileSystem().findRoot(absolute))
 		)
 	);
 	resource->setNode(clone);
