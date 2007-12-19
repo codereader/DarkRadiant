@@ -239,7 +239,7 @@ void Map::free() {
 	// Reset the resource pointer
 	m_resource = ReferenceCache::ResourcePtr();
 
-	FlushReferences();
+	GlobalReferenceCache().clear();
 }
 
 bool Map::isModified() const {
@@ -442,8 +442,8 @@ void Map::save() {
 	selection::algorithm::removeOriginFromChildPrimitives();
 	
 	// Save the actual map, by iterating through the reference cache and saving
-	// each ModelResource.
-	SaveReferences();
+	// each MapResource.
+	GlobalReferenceCache().saveReferences();
 	
 	// Re-add the origins to the child primitives (of entities like func_static)
 	selection::algorithm::addOriginToChildPrimitives();
@@ -751,7 +751,7 @@ void Map::rename(const std::string& filename) {
     	SceneChangeNotify();
 	}
 	else {
-    	SaveReferences();
+    	GlobalReferenceCache().saveReferences();
   	}
 }
 
