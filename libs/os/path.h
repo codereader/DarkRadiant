@@ -329,7 +329,7 @@ namespace os {
     
     /**
      * greebo: Get the filename contained in the given path (the part after the last slash). 
-     * If there is no extension, an empty string is returned.
+     * If there is no filename, an empty string is returned.
      * 
      * Note: The input string is expected to be standardised (forward slashes).
      */
