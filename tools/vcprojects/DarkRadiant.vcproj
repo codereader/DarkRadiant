@@ -1025,6 +1025,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\render\backend\OpenGLStateMap.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\render\backend\OpenGLStateMap.h"
 						>
 					</File>
