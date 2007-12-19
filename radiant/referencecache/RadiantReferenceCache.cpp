@@ -5,6 +5,7 @@
 #include "ifiletypes.h"
 #include "ieventmanager.h"
 #include "imap.h"
+#include "os/path.h"
 #include "ModelCache.h"
 #include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
@@ -89,8 +90,9 @@ ReferenceCache::ResourcePtr RadiantReferenceCache::captureMap(const std::string&
 }
 
 ReferenceCache::ResourcePtr RadiantReferenceCache::capture(const std::string& path) {
-	// Branch off to the map/model capture routines
-	if (boost::algorithm::iends_with(path, "map")) {
+	// The path is recognised as map if the FileTypeRegistry has associated  
+	// the extension with the "map" moduletype.
+	if (!GlobalFiletypes().findModuleName("map", os::getExtension(path)).empty()) {
 		return captureMap(path);
 	}
 	else {
