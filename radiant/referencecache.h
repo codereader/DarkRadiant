@@ -36,12 +36,7 @@ bool References_Saved();
 class MapFormat;
 typedef void(*GraphTraversalFunc)(scene::INodePtr root, const scene::Traversable::Walker& walker);
 
-scene::INodePtr MapResource_load(const MapFormat& format, const std::string& path, const std::string& name);
+bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename);
 bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTraversalFunc traverse, const char* filename);
-
-// Get the ModelLoader class for the given model type
-
-class ModelLoader;
-ModelLoader* ModelLoader_forType(const char* type);
 
 #endif

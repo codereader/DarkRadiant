@@ -83,7 +83,7 @@ bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const s
   }
 }
 
-scene::INodePtr MapResource_load(const MapFormat& format, const std::string& path, const std::string& name)
+/*scene::INodePtr MapResource_load(const MapFormat& format, const std::string& path, const std::string& name)
 {
   scene::INodePtr root(NewMapRoot(name));
 
@@ -99,7 +99,7 @@ scene::INodePtr MapResource_load(const MapFormat& format, const std::string& pat
   }
 
   return root;
-}
+}*/
 
 /** Save the map contents to the given filename using the given MapFormat export module
  */
