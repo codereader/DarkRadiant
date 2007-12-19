@@ -24,7 +24,7 @@ namespace {
 
 // Constructor
 MapResource::MapResource(const std::string& name) :
-	m_model(SingletonNullModel()),
+	_mapRoot(SingletonNullModel()),
 	m_originalName(name),
 	_type(name.substr(name.rfind(".") + 1)), 
 	m_modified(0),
@@ -41,26 +41,17 @@ MapResource::~MapResource() {
 	}
 }
 
-void MapResource::setModel(scene::INodePtr model) {
-	m_model = model;
-}
-
-void MapResource::clearModel() {
-	m_model = SingletonNullModel();
-}
-
 bool MapResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
-	if (m_model == SingletonNullModel()) {
+	if (_mapRoot == SingletonNullModel()) {
 		// Map not loaded yet, acquire map root node from loader
-		scene::INodePtr loaded = loadMapNode();
-		setModel(loaded);
+		_mapRoot = loadMapNode();
 		
 		connectMap();
 		mapSave();
 	}
 
-	return m_model != SingletonNullModel();
+	return _mapRoot != SingletonNullModel();
 }
   
 /**
@@ -77,7 +68,7 @@ bool MapResource::save() {
 			module::GlobalModuleRegistry().getModule(moduleName)
 		);
 		
-		if (format != NULL && MapResource_save(*format, m_model, m_path, m_name)) {
+		if (format != NULL && MapResource_save(*format, _mapRoot, m_path, m_name)) {
   			mapSave();
   			return true;
 		}
@@ -91,11 +82,11 @@ void MapResource::flush() {
 }
 
 scene::INodePtr MapResource::getNode() {
-	return m_model;
+	return _mapRoot;
 }
 
 void MapResource::setNode(scene::INodePtr node) {
-	setModel(node);
+	_mapRoot = node;
 	connectMap();
 }
 	
@@ -148,7 +139,7 @@ void MapResource::unrealise() {
 	}
 
 	//globalOutputStream() << "MapResource::unrealise: " << m_path.c_str() << m_name.c_str() << "\n";
-	clearModel();
+	_mapRoot = SingletonNullModel();
 }
 
 void MapResource::onMapChanged() {
@@ -156,7 +147,7 @@ void MapResource::onMapChanged() {
 }
 
 void MapResource::connectMap() {
-    MapFilePtr map = Node_getMapFile(m_model);
+    MapFilePtr map = Node_getMapFile(_mapRoot);
     if (map != NULL) {
     	// Reroute the changed callback to the onMapChanged() call.
     	map->setChangedCallback(MapChangedCaller(*this));
@@ -173,7 +164,7 @@ std::time_t MapResource::modified() const {
 
 void MapResource::mapSave() {
 	m_modified = modified();
-	MapFilePtr map = Node_getMapFile(m_model);
+	MapFilePtr map = Node_getMapFile(_mapRoot);
 	if (map != NULL) {
 		map->save();
 	}

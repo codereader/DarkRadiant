@@ -146,6 +146,7 @@ void Map::onResourceRealise() {
         m_resource->load();
       }
 
+      // Take the new node and insert it as map root
       GlobalSceneGraph().insert_root(m_resource->getNode());
 
       map::AutoSaver().clearChanges();
@@ -481,6 +482,10 @@ bool Map::import(const std::string& filename) {
 		resource->refresh(); 
 		
 		if (resource->load()) {
+			// load() returned TRUE, this means that the resource node 
+			// is not the NULL node
+			
+			// Create a new maproot
 			scene::INodePtr clone(NewMapRoot(""));
 
 			{
