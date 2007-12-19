@@ -3,6 +3,7 @@
 
 #include "ireference.h"
 #include "imodel.h"
+#include "generic/callback.h"
 #include <set>
 #include <boost/utility.hpp>
 
@@ -40,8 +41,6 @@ public:
 
 	void loadCached();
 
-	void loadModel();
-
 	bool load();
   
 	/**
@@ -66,16 +65,19 @@ public:
 	void realise();
 	void unrealise();
 	
-  bool isMap() const;
-  void connectMap();
   std::time_t modified() const;
   void mapSave();
 
   bool isModified() const;
   void refresh();
+  
+	void onMapChanged();
+	typedef MemberCaller<MapResource, &MapResource::onMapChanged> MapChangedCaller;
 	
 private:
 	scene::INodePtr loadMapNode();
+	
+	void connectMap();
 };
 // Resource pointer types
 typedef boost::shared_ptr<MapResource> MapResourcePtr;
