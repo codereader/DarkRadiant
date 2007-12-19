@@ -41,26 +41,26 @@ void ModelResource::clearModel() {
 	m_model = SingletonNullModel();
 }
 
-void ModelResource::loadModel() {
-	// Try to lookup the model from the cache
-	scene::INodePtr cached = ModelCache::Instance().find(m_path, m_name);
-		  
-	if (cached != NULL) {
-		// found a cached model
-		setModel(cached);
-		return;
-	}
-	  
-	// Model was not found yet
-	scene::INodePtr loaded = loadModelNode();
-	ModelCache::Instance().insert(m_path, m_name, loaded);
-	setModel(loaded);
-}
-
 bool ModelResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
+	
 	if (m_model == SingletonNullModel()) {
-		loadModel();
+		// Try to lookup the model from the cache
+		scene::INodePtr cached = ModelCache::Instance().find(m_path, m_name);
+		
+		if (cached != NULL) {
+			// found a cached model, take this one
+			setModel(cached);
+		}
+		else {
+			// Model was not found yet
+			scene::INodePtr loaded = loadModelNode();
+			
+			// Insert the newly loaded model into the cache
+			ModelCache::Instance().insert(m_path, m_name, loaded);
+			
+			setModel(loaded);
+		}
 	}
 
 	return m_model != SingletonNullModel();
@@ -85,7 +85,7 @@ void ModelResource::setNode(scene::INodePtr node) {
 	
 	setModel(node);
 }
-	
+
 void ModelResource::addObserver(Observer& observer) {
 	if (realised()) {
 		observer.onResourceRealise();
@@ -141,23 +141,10 @@ void ModelResource::unrealise() {
 	clearModel();
 }
 
-std::time_t ModelResource::modified() const {
-	std::string fullpath = m_path + m_name;
-	return file_modified(fullpath.c_str());
-}
-
-bool ModelResource::isModified() const {
-	// had or has an absolute path AND disk timestamp changed
-	return (!m_path.empty() && m_modified != modified()) 
-			|| !path_equal(rootPath(m_originalName.c_str()), m_path.c_str()); // OR absolute vfs-root changed
-}
-
 void ModelResource::refresh() {
-    if (isModified()) {
-		flush();
-		unrealise();
-		realise();
-	}
+    flush();
+	unrealise();
+	realise();
 }
 
 ModelLoaderPtr ModelResource::getModelLoaderForType(const std::string& type) {
