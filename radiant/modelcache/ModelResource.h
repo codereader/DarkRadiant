@@ -69,8 +69,6 @@ public:
 	
 private:
 	scene::INodePtr loadModelNode();
-	
-	scene::INodePtr loadModelResource(const ModelLoaderPtr& loader);
 };
 // Resource pointer types
 typedef boost::shared_ptr<ModelResource> ModelResourcePtr;
