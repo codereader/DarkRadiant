@@ -363,14 +363,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\renderstate.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\renderstate.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\resource.h"
 				>
 			</File>
@@ -759,6 +751,14 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\map\MapPositionManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapResource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapResource.h"
 					>
 				</File>
 				<File
@@ -1939,6 +1939,38 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\xyview\XYWnd.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="referencecache"
+				>
+				<File
+					RelativePath="..\..\radiant\referencecache\ModelCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\referencecache\ModelCache.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\referencecache\ModelResource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\referencecache\ModelResource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\referencecache\NullModelLoader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\referencecache\RadiantReferenceCache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\referencecache\RadiantReferenceCache.h"
 					>
 				</File>
 			</Filter>
