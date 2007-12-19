@@ -13,7 +13,7 @@ class MapResource :
 	public Resource,
 	public boost::noncopyable
 {
-	scene::INodePtr m_model;
+	scene::INodePtr _mapRoot;
   
 	// Name given during construction
 	const std::string m_originalName;
@@ -35,9 +35,6 @@ public:
 	MapResource(const std::string& name);
 	
 	virtual ~MapResource();
-
-	void setModel(scene::INodePtr model);
-	void clearModel();
 
 	bool load();
   
