@@ -104,10 +104,12 @@ public:
 	 */	 
 	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
 };
+typedef boost::shared_ptr<ModelLoader> ModelLoaderPtr;
+typedef boost::weak_ptr<ModelLoader> ModelLoaderWeakPtr;
 
 // Acquires the PatchCreator of the given type ("ASE", "NULL", "3DS", etc.)
 inline ModelLoader& GlobalModelLoader(const std::string& fileType) {
-	boost::shared_ptr<ModelLoader> _modelLoader(
+	ModelLoaderPtr _modelLoader(
 		boost::static_pointer_cast<ModelLoader>(
 			module::GlobalModuleRegistry().getModule(MODULE_MODELLOADER + fileType) // e.g. "ModuleLoaderTGA"
 		)

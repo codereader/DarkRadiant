@@ -7,6 +7,9 @@
 
 namespace model {
 
+class NullModelLoader;
+typedef boost::shared_ptr<NullModelLoader> NullModelLoaderPtr;
+
 class NullModelLoader : 
 	public ModelLoader
 {
@@ -36,8 +39,12 @@ public:
 	}
 	
 	static NullModelLoader& Instance() {
-		static NullModelLoader _instance;
-		return _instance;
+		return *InstancePtr();
+	}
+	
+	static NullModelLoaderPtr& InstancePtr() {
+		static NullModelLoaderPtr _instancePtr(new NullModelLoader);
+		return _instancePtr;
 	}
 };
 
