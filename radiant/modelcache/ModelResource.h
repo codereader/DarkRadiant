@@ -5,6 +5,7 @@
 #include "imodel.h"
 #include <set>
 #include <boost/utility.hpp>
+#include <boost/weak_ptr.hpp>
 
 namespace model {
 
@@ -23,8 +24,8 @@ class ModelResource :
 	// Type of resource (map, lwo etc)
 	std::string _type;
 	
-	// ModelLoader for this resource type
-	ModelLoader* m_loader;
+	// Weak reference to the ModelLoader for this resource type
+	ModelLoaderWeakPtr m_loader;
 	
 	typedef std::set<Resource::Observer*> ResourceObserverList;
 	ResourceObserverList _observers;
@@ -40,8 +41,6 @@ public:
 
 	void setModel(scene::INodePtr model);
 	void clearModel();
-
-	void loadCached();
 
 	void loadModel();
 
@@ -69,7 +68,7 @@ public:
   void refresh();
   
 	/// \brief Returns the model loader for the model \p type or 0 if the model \p type has no loader module
-	static ModelLoader* getModelLoaderForType(const std::string& type);
+	static ModelLoaderWeakPtr getModelLoaderForType(const std::string& type);
 	
 private:
 	scene::INodePtr loadModelNode();

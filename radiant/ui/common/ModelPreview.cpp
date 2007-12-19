@@ -146,7 +146,8 @@ void ModelPreview::setModel(const std::string& model) {
 		boost::algorithm::to_lower(ldrName);
 	}
 	
-	ModelLoader* loader = model::ModelResource::getModelLoaderForType(ldrName);
+	ModelLoaderPtr loader = model::ModelResource::getModelLoaderForType(ldrName).lock();
+	
 	if (loader != NULL) {
 		_model = loader->loadModelFromPath(modelToLoad);
 	}
