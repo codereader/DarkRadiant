@@ -26,7 +26,11 @@ ModelResource::ModelResource(const std::string& name) :
 	_originalName(name),
 	_type(name.substr(name.rfind(".") + 1)), // extension
 	_realised(false)
-{}
+{
+	// Initialise the paths, this is all needed for realisation
+    _path = rootPath(_originalName.c_str());
+	_name = os::getRelativePath(_originalName, _path);
+}
 	
 ModelResource::~ModelResource() {
     unrealise(); // unrealise - does nothing if not realised
@@ -110,10 +114,6 @@ void ModelResource::realise() {
 	}
 	
 	_realised = true;
-	
-	// Initialise the paths, this is all needed for realisation
-    _path = rootPath(_originalName.c_str());
-	_name = os::getRelativePath(_originalName, _path);
 
 	// Realise the observers
 	for (ResourceObserverList::iterator i = _observers.begin();
