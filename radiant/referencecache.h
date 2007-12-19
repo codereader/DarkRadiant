@@ -22,15 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_REFERENCECACHE_H)
 #define INCLUDED_REFERENCECACHE_H
 
-/// \brief Saves all open resource references if they differ from the version on disk.
-void SaveReferences();
-/// \brief Flushes the cache of resource references. All resource references must be released before calling this.
-void FlushReferences();
-/// \brief Reloads all resource references that differ from the version on disk.
-void RefreshReferences();
-
-bool References_Saved();
-
 #include "iscenegraph.h"
 
 class MapFormat;

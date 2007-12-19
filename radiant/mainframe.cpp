@@ -1548,7 +1548,6 @@ void Layout_registerPreferencesPage() {
 
 void MainFrame_Construct()
 {
-	GlobalEventManager().addCommand("RefreshReferences", FreeCaller<RefreshReferences>());
 	GlobalEventManager().addCommand("ReloadSkins", FreeCaller<ReloadSkins>());
 	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<ui::PrefDialog::showProjectSettings>());
 	GlobalEventManager().addCommand("Exit", FreeCaller<Exit>());
