@@ -2,12 +2,9 @@
 
 #include "ifiletypes.h"
 #include "ifilesystem.h"
-#include "map/Map.h"
-#include "mapfile.h"
 #include "NullModelLoader.h"
 #include "ModelCache.h"
 #include "debugging/debugging.h"
-#include "referencecache.h"
 #include "os/path.h"
 #include "os/file.h"
 #include "stream/stringstream.h"
@@ -20,10 +17,6 @@ namespace {
 		return GlobalFileSystem().findRoot(
 			path_is_absolute(name) ? name : GlobalFileSystem().findFile(name)
 		);
-	}
-	
-	void MapChanged() {
-		GlobalMap().setModified(!References_Saved());
 	}
 }
 
@@ -190,10 +183,10 @@ ModelLoaderPtr ModelResource::getModelLoaderForType(const std::string& type) {
 
 scene::INodePtr ModelResource::loadModelNode() {
 	// Get the model loader for this resource type
-	// and try to lock the weak ptr
 	ModelLoaderPtr modelLoader = getModelLoaderForType(_type);
 	
-	// greebo: Check if we have a NULL model loader and an empty path ("func_static_637")
+	// greebo: Check if we have a NULL model loader and an empty path 
+	// (name is something like "func_static_637" then)
 	if (modelLoader == NULL && m_path.empty()) {
 		return SingletonNullModel();
 	}
@@ -203,47 +196,8 @@ scene::INodePtr ModelResource::loadModelNode() {
 	if (modelLoader != NULL) {
 		return loadModelResource(modelLoader);
 	}
-	else if (m_name.empty() && _type.empty()) {
-		// Loader is NULL (map) and no valid name and type, return NULLmodel
-		return SingletonNullModel();
-	}
-	else {
-		// Get a loader module name for this type, if possible. If none is 
-		// found, try again with the "map" type, since we might be loading a 
-		// map with a different extension
-	    std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
-		// Empty, try again with "map" type
-		if (moduleName.empty()) {
-			moduleName = GlobalFiletypes().findModuleName("map", "map"); 
-		}
 	
-		// If we have a module, use it to load the map if possible, otherwise 
-		// return an error
-	    if (!moduleName.empty()) {
-	      
-			const MapFormat* format = boost::static_pointer_cast<MapFormat>(
-				module::GlobalModuleRegistry().getModule(moduleName)
-			).get();
-										
-	      if (format != NULL)
-	      {
-	        return MapResource_load(*format, m_path, m_name);
-	      }
-	      else
-	      {
-	        globalErrorStream() << "ERROR: Map type incorrectly registered: \"" << moduleName.c_str() << "\"\n";
-	        return SingletonNullModel();
-	      }
-	    }
-	    else
-	    {
-	      if (!_type.empty())
-	      {
-	        globalErrorStream() << "Model type not supported: \"" << m_name.c_str() << "\"\n";
-	      }
-	      return SingletonNullModel();
-	    }
-	}
+	return SingletonNullModel();
 }
 
 scene::INodePtr ModelResource::loadModelResource(const ModelLoaderPtr& loader) {
