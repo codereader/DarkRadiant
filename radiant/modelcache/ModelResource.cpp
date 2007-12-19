@@ -183,41 +183,36 @@ ModelLoaderPtr ModelResource::getModelLoaderForType(const std::string& type) {
 
 scene::INodePtr ModelResource::loadModelNode() {
 	// Get the model loader for this resource type
-	ModelLoaderPtr modelLoader = getModelLoaderForType(_type);
+	ModelLoaderPtr loader = getModelLoaderForType(_type);
 	
 	// greebo: Check if we have a NULL model loader and an empty path 
 	// (name is something like "func_static_637" then)
-	if (modelLoader == NULL && m_path.empty()) {
+	if (loader == NULL && m_path.empty()) {
 		return SingletonNullModel();
 	}
 
 	// Model types should have a loader, so use this to load. Map types do not
 	// have a loader		  
-	if (modelLoader != NULL) {
-		return loadModelResource(modelLoader);
+	if (loader != NULL) {
+		// Construct a NullModel as return value
+		scene::INodePtr model(SingletonNullModel());
+
+		ArchiveFilePtr file = GlobalFileSystem().openFile(m_name);
+
+		if (file != NULL) {
+			globalOutputStream() << "Loaded Model: \""<< m_name.c_str() << "\"\n";
+			model = loader->loadModel(*file);
+		}
+		else {
+			globalErrorStream() << "Model load failed: \""<< m_name.c_str() << "\"\n";
+		}
+
+		model->setIsRoot(true);
+
+		return model;
 	}
 	
 	return SingletonNullModel();
-}
-
-scene::INodePtr ModelResource::loadModelResource(const ModelLoaderPtr& loader) {
-	assert(loader != NULL);
-	
-	scene::INodePtr model(SingletonNullModel());
-
-	ArchiveFilePtr file = GlobalFileSystem().openFile(m_name);
-
-	if (file != NULL) {
-		globalOutputStream() << "Loaded Model: \""<< m_name.c_str() << "\"\n";
-		model = loader->loadModel(*file);
-	}
-	else {
-		globalErrorStream() << "Model load failed: \""<< m_name.c_str() << "\"\n";
-	}
-
-	model->setIsRoot(true);
-
-	return model;
 }
 
 } // namespace model
