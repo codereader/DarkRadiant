@@ -3,6 +3,7 @@
 #include "ifiletypes.h"
 #include "ifilesystem.h"
 #include "map/Map.h"
+#include "map/RootNode.h"
 #include "mapfile.h"
 #include "modelcache/NullModelLoader.h"
 #include "debugging/debugging.h"
@@ -234,17 +235,7 @@ void MapResource::refresh() {
 	}
 }
 
-scene::INodePtr MapResource::loadMapNode() {
-	// greebo: Check if we have an empty path
-	if (m_path.empty()) {
-		return SingletonNullModel();
-	}
-
-	if (m_name.empty() && _type.empty()) {
-		// no valid name and type, return NULLmodel
-		return SingletonNullModel();
-	}
-	
+MapFormatPtr MapResource::getMapFormat() {
 	// Get a loader module name for this type, if possible. If none is 
 	// found, try again with the "map" type, since we might be loading a 
 	// map with a different extension
@@ -263,12 +254,13 @@ scene::INodePtr MapResource::loadMapNode() {
 		);
 
 		if (format != NULL) {
-			return MapResource_load(*format, m_path, m_name);
+			// valid MapFormat, return
+			return format;
 		} 
 		else {
 			globalErrorStream() << "ERROR: Map type incorrectly registered: \""
 				<< moduleName.c_str() << "\"\n";
-			return SingletonNullModel();
+			return MapFormatPtr();
 		}
 	} 
     else {
@@ -277,8 +269,38 @@ scene::INodePtr MapResource::loadMapNode() {
 			globalErrorStream() << "Type is not supported: \""
 				<< m_name.c_str() << "\"\n";
 		}
+		return MapFormatPtr();
+	}
+}
+
+scene::INodePtr MapResource::loadMapNode() {
+	// greebo: Check if we have valid settings
+	if (m_path.empty() || (m_name.empty() && _type.empty())) {
 		return SingletonNullModel();
 	}
+	
+	// Get the mapformat
+	MapFormatPtr format = getMapFormat();
+	
+	if (format == NULL) {
+		return SingletonNullModel(); 
+		// error message already printed in getMapFormat();
+	}
+	
+	// At this point, we have a valid mapformat
+	// Ccreate a new map root node
+	scene::INodePtr root(NewMapRoot(m_name));
+
+  	std::string fullpath = m_path + m_name;
+
+	if (path_is_absolute(fullpath.c_str())) {
+		MapResource_loadFile(*format, root, fullpath);
+	}
+	else {
+		globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";
+	}
+
+	return root;
 }
 
 } // namespace map

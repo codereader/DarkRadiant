@@ -77,6 +77,8 @@ private:
 	scene::INodePtr loadMapNode();
 	
 	void connectMap();
+	
+	MapFormatPtr getMapFormat();
 };
 // Resource pointer types
 typedef boost::shared_ptr<MapResource> MapResourcePtr;
