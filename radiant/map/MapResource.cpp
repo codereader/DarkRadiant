@@ -5,7 +5,7 @@
 #include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
-#include "modelcache/NullModelLoader.h"
+#include "referencecache/NullModelLoader.h"
 #include "debugging/debugging.h"
 #include "referencecache.h"
 #include "os/path.h"

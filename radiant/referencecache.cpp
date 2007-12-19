@@ -54,11 +54,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "mainframe.h"
 #include "map/Map.h"
 #include "map/algorithm/Traverse.h"
-#include "modelcache/ModelCache.h"
+#include "referencecache/ModelCache.h"
 
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
-#include "modelcache/ModelResource.h"
+#include "referencecache/ModelResource.h"
 #include "map/MapResource.h"
 
 void MapChanged()
@@ -82,24 +82,6 @@ bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const s
     return false;
   }
 }
-
-/*scene::INodePtr MapResource_load(const MapFormat& format, const std::string& path, const std::string& name)
-{
-  scene::INodePtr root(NewMapRoot(name));
-
-  	std::string fullpath = path + name;
-  	
-  if(path_is_absolute(fullpath.c_str()))
-  {
-    MapResource_loadFile(format, root, fullpath);
-  }
-  else
-  {
-    globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";
-  }
-
-  return root;
-}*/
 
 /** Save the map contents to the given filename using the given MapFormat export module
  */

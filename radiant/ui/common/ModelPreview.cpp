@@ -8,7 +8,7 @@
 #include "referencecache.h"
 #include "math/aabb.h"
 #include "modelskin.h"
-#include "modelcache/ModelResource.h"
+#include "referencecache/ModelResource.h"
 
 #include <gtk/gtk.h>
 
