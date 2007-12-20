@@ -180,6 +180,11 @@ public:
 	static void importMap();
 	static void saveMap();
 	static void saveMapAs();
+
+	/** greebo: Queries a filename from the user and saves a copy 
+	 *          of the current map to the specified filename.
+	 */
+	static void saveMapCopyAs();
 	
 	/** greebo: Asks the user for the .pfb file and imports/exports the file/selection
 	 */

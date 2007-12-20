@@ -7,6 +7,7 @@
 		<menuItem name="import" caption="_Import" command="ImportMap" />
 		<menuItem name="save" caption="_Save" command="SaveMap" />
 		<menuItem name="saveas" caption="Save _as..." command="SaveMapAs" />
+		<menuItem name="saveCopyAs" caption="Save _Copy as..." command="SaveMapCopyAs" />
 		<menuSeparator />
 		<menuItem name="loadprefab" caption="Load _Prefab..." command="LoadPrefab" />
 		<menuItem name="saveSelected" caption="_Save selected as Prefab..." command="SaveSelectedAsPrefab" />

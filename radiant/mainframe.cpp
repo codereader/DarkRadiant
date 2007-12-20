@@ -1701,8 +1701,4 @@ void MainFrame_Construct()
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
 
   Layout_registerPreferencesPage();
-
-  /*
-  GLWidget_sharedContextCreated = GlobalGL_sharedContextCreated;
-  GLWidget_sharedContextDestroyed = GlobalGL_sharedContextDestroyed;*/
 }
