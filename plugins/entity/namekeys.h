@@ -159,10 +159,23 @@ public:
 	/** greebo: This should return TRUE for "target", "targetNNN", "name" and "bind"
 	 */
 	static bool keyIsNameDoom3(const std::string& key) {
-		return key == "target" || 
-				(key.substr(0,6) == "target" && 
-					boost::algorithm::all(key.substr(6), boost::algorithm::is_digit())) || 
-				key == "name" || key == "bind";
+
+		// Check for "target", "bind" and "name
+		if (key == "target" || key == "name" || key == "bind") {
+			return true;
+		}
+
+		// Check for "targetNNN"
+		if (key.length() > 6) {
+			std::string trunk = key.substr(0,6);
+			std::string num = key.substr(6);
+			
+			if (trunk == "target" && boost::algorithm::all(num, boost::algorithm::is_digit())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	static bool keyIsNameDoom3Doom3Group(const std::string& key) {

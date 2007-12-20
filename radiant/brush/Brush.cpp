@@ -540,8 +540,8 @@ void Brush::removeDegenerateEdges() {
 	for (std::size_t i = 0;  i < m_faces.size(); ++i) {
 		Winding& winding = m_faces[i]->getWinding();
 		
-		for (Winding::iterator j = winding.begin(); j != winding.end();) {
-			std::size_t index = std::distance(winding.begin(), j);
+		for (std::size_t index = 0; index < winding.size();) {
+			//std::size_t index = std::distance(winding.begin(), j);
 			std::size_t next = winding.next(index);
 			
 			if (Edge_isDegenerate(winding[index].vertex, winding[next].vertex)) {
@@ -551,10 +551,11 @@ void Brush::removeDegenerateEdges() {
 					other.erase(other.begin() + adjacent);
 				}
 				
-				winding.erase(j);
+				// Delete and leave index where it is
+				winding.erase(winding.begin() + index);
 			}
 			else {
-				++j;
+				++index;
 			}
 		}
 	}
@@ -574,8 +575,8 @@ void Brush::removeDegenerateFaces() {
 			{
 				Winding& winding = m_faces[degen[0].adjacent]->getWinding();
 				std::size_t index = winding.findAdjacent(i);
-				if(index != c_brush_maxFaces) {
-						winding[index].adjacent = degen[1].adjacent;
+				if (index != c_brush_maxFaces) {
+					winding[index].adjacent = degen[1].adjacent;
 				}
 			}
 
@@ -620,17 +621,34 @@ void Brush::verifyConnectivityGraph() {
 		//if(m_faces[i]->contributes())
 		{
 			Winding& winding = m_faces[i]->getWinding();
-			for (Winding::iterator j = winding.begin(); j != winding.end();) {
+
+			for (std::size_t j = 0; j < winding.size();) {
+				WindingVertex& vertex = winding[j];
+
 				// remove unidirectional graph edges
-				if (j->adjacent == c_brush_maxFaces
-					|| m_faces[j->adjacent]->getWinding().findAdjacent(i) == c_brush_maxFaces)
+				if (vertex.adjacent == c_brush_maxFaces
+					|| m_faces[vertex.adjacent]->getWinding().findAdjacent(i) == c_brush_maxFaces)
 				{
-					winding.erase(j);
+					// Delete the offending vertex and leave the index j where it is
+					winding.erase(winding.begin() + j);
 				}
 				else {
 					++j;
 				}
 			}
+
+			/*for (Winding::iterator j = winding.begin(); j != winding.end();) {
+				// remove unidirectional graph edges
+				if (j->adjacent == c_brush_maxFaces
+					|| m_faces[j->adjacent]->getWinding().findAdjacent(i) == c_brush_maxFaces)
+				{
+					// Delete and return the new iterator
+					j = winding.erase(j);
+				}
+				else {
+					++j;
+				}
+			}*/
 		}
 	}
 }
