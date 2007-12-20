@@ -84,7 +84,7 @@
 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
 				StripPrivateSymbols="$(OutDir)/$(ProjectName)_stripped.pdb"
 				GenerateMapFile="false"
-				SubSystem="2"
+				SubSystem="1"
 				EntryPointSymbol="mainCRTStartup"
 				TargetMachine="1"
 				FixedBaseAddress="1"
