@@ -632,6 +632,14 @@ void Map::loadPrefabAt(const Vector3& targetCoords) {
 	}
 }
 
+void Map::saveMapCopyAs() {
+	std::string filename = MapFileManager::getMapFilename(false, "Save Copy As...");
+
+	if (!filename.empty()) {
+	    GlobalMap().saveDirect(filename);
+  	}
+}
+
 void Map::registerCommands() {
 	GlobalEventManager().addCommand("NewMap", FreeCaller<Map::newMap>());
 	GlobalEventManager().addCommand("OpenMap", FreeCaller<Map::openMap>());
@@ -640,6 +648,7 @@ void Map::registerCommands() {
 	GlobalEventManager().addCommand("SaveSelectedAsPrefab", FreeCaller<Map::saveSelectedAsPrefab>());
 	GlobalEventManager().addCommand("SaveMap", FreeCaller<Map::saveMap>());
 	GlobalEventManager().addCommand("SaveMapAs", FreeCaller<Map::saveMapAs>());
+	GlobalEventManager().addCommand("SaveMapCopyAs", FreeCaller<Map::saveMapCopyAs>());
 	GlobalEventManager().addCommand("SaveSelected", FreeCaller<Map::exportMap>());
 }
 
