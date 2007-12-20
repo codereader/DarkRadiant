@@ -63,18 +63,32 @@ public:
 };
 
 // Traverses through the scenegraph and removes degenerated brushes from the selected.
+// greebo: The actual erasure is performed in the destructor to keep the scenegraph intact during traversal.
 class RemoveDegenerateBrushWalker : 
 	public scene::Graph::Walker 
 {
+	mutable std::list<scene::Path> _eraseList;
 public:
+	// Destructor removes marked paths
+	~RemoveDegenerateBrushWalker() {
+		for (std::list<scene::Path>::iterator i = _eraseList.begin(); i != _eraseList.end(); i++) {
+			Path_deleteTop(*i);
+		}
+	}
+
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		TransformNodePtr transformNode = Node_getTransformNode(path.top());
 		if (transformNode != 0) {
 			Brush* brush = Node_getBrush(path.top());
 			if (brush != NULL) {
 				if (!brush->hasContributingFaces()) {
+
+					// greebo: Mark this path for removal
+					_eraseList.push_back(path);
+
 					// Remove the degenerate brush
-					Path_deleteTop(path);
+					//Path_deleteTop(path);
+
 					globalErrorStream() << "Warning: removed degenerate brush!\n";
 					return false;
 				}
