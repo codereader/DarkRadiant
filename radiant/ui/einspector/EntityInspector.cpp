@@ -9,6 +9,7 @@
 
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/Paned.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "xmlutil/Document.h"
 #include "signal/signal.h"
@@ -66,8 +67,16 @@ EntityInspector::EntityInspector()
 	g_signal_connect(G_OBJECT(showInherited), "toggled", G_CALLBACK(_onToggleShowInherited), this);
 
 	gtk_box_pack_start(GTK_BOX(_widget), showInherited, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(_widget), createTreeViewPane(), TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
+
+	GtkWidget* paned = gtkutil::Paned(
+		createTreeViewPane(), // first child
+		createDialogPane(), // second child
+		false // is vertical
+	);
+	gtk_paned_set_position(GTK_PANED(paned), 400);
+
+    gtk_box_pack_start(GTK_BOX(_widget), paned, TRUE, TRUE, 0);
+    //gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
     
     // Create the context menu
     createContextMenu();
