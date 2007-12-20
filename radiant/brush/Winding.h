@@ -93,14 +93,20 @@ public:
 		return points[index];
 	}
 
+	std::size_t size() const {
+		return points.size();
+	}
+
 	void push_back(const WindingVertex& point) {
 		points[numpoints] = point;
 		++numpoints;
 	}
 	
-	void erase(iterator point) {
-		points.erase(point);
+	// The new (valid) iterator is returned after deletion
+	iterator erase(iterator point) {
+		points.erase(point++);
 		--numpoints;
+		return point;
 	}
   
 	/** greebo: Calculates the AABB of this winding

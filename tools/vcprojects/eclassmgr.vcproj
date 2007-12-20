@@ -45,7 +45,7 @@
 				AdditionalOptions="/EHs"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;"
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32"
+				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_HAS_ITERATOR_DEBUGGING=0"
 				StringPooling="true"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
