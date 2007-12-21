@@ -35,7 +35,6 @@
 #include "iradiant.h"
 #include "RegistryTree.h"
 
-
 class XMLRegistry : 
 	public Registry
 {
