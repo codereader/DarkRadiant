@@ -256,7 +256,7 @@ class idEnvironment(Environment):
 	def useBoostFilesystem(self):
 		self.useBoost()
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(LIBS = ['libboost_filesystem-gcc-1_33_1'])
+			self.Append(LIBS = ['libboost_filesystem-gcc'])
 		else:
 			self.Append(LIBS = ['boost_filesystem'])
 	
