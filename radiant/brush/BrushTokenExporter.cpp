@@ -96,11 +96,6 @@ BrushTokenExporter::BrushTokenExporter(const Brush& brush) :
 	_brush(brush)
 {}
 
-BrushTokenExporter::BrushTokenExporter(const BrushTokenExporter& other) :
-	MapExporter(other),
-	_brush(other._brush)
-{}
-
 // Required export function
 void BrushTokenExporter::exportTokens(std::ostream& os) const {
 	_brush.evaluateBRep(); // ensure b-rep is up-to-date, so that non-contributing faces can be identified.
