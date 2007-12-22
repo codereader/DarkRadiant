@@ -38,9 +38,6 @@ class BrushTokenImporter :
 public:
 	BrushTokenImporter(Brush& brush);
 	
-	// Copy constructor
-	BrushTokenImporter(const BrushTokenImporter& other);
-
     /**
      * Required token import method.
      */

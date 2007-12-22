@@ -18,8 +18,8 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Snappable(other),
 	TransformNode(other),
 	BrushDoom3(other),
-	BrushTokenImporter(other),
-	BrushTokenExporter(other),
+	BrushTokenImporter(m_brush),
+	BrushTokenExporter(m_brush),
 	IBrushNode(other),
 	m_brush(other.m_brush, *this, InstanceSetEvaluateTransform<BrushInstance>::Caller(m_instances), InstanceSet::BoundsChangedCaller(m_instances))
 {}

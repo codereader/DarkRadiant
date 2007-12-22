@@ -37,11 +37,9 @@ class BrushTokenExporter :
 	public MapExporter
 {
 	const Brush& _brush;
+
 public:
 	BrushTokenExporter(const Brush& brush);
-	
-	// Copy constructor
-	BrushTokenExporter(const BrushTokenExporter& other);
 
 	// Required export function
 	virtual void exportTokens(std::ostream& os) const;

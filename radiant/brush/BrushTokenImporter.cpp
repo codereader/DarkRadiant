@@ -92,11 +92,6 @@ BrushTokenImporter::BrushTokenImporter(Brush& brush) :
 	_brush(brush)
 {}
 
-BrushTokenImporter::BrushTokenImporter(const BrushTokenImporter& other) :
-	MapImporter(other),
-	_brush(other._brush)
-{}
-
 bool BrushTokenImporter::importTokens(parser::DefTokeniser& tokeniser) {
     tokeniser.assertNextToken("{");
 
