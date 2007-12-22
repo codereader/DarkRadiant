@@ -246,7 +246,7 @@
 			<stim id="20" name="STIM_GAS" caption="Gas" icon="sr_icon_gas.png" />
 			<stim id="21" name="STIM_TRIGGER" caption="Trigger" icon="sr_icon_trigger.png" />
 			<stim id="22" name="STIM_TARGET_REACHED" caption="Target Reached" icon="sr_icon_target_reached.png" />
-			<stim id="23" name="STIM_THIEF" caption="Thief" icon="sr_icon_thief.png" />
+			<stim id="23" name="STIM_PLAYER" caption="Player" icon="sr_icon_thief.png" />
 			<stim id="24" name="STIM_FLASH" caption="Flash" icon="sr_icon_flash.png" />
 			<stim id="25" name="STIM_BLIND" caption="Blind" icon="sr_icon_flash.png" />
 		</stims>
