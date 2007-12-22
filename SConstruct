@@ -282,14 +282,16 @@ class idEnvironment(Environment):
 			self.Append(LINKFLAGS = '`pkg-config glib-2.0 --libs` ')
 
 	def useW32Iconv(self):
-		self.Append(CPPPATH = ['#/w32deps/libiconv/include'])
 		self.Append(LIBPATH = ['#/w32deps/libiconv/lib'])
 		self.Append(LIBS = ['iconv'])
 
 	def useXML2(self):
 		if (self['PLATFORM'] == 'win32'):
-			self.Append(CPPPATH = ['#/w32deps/libxml2/include'])
-			self.Append(LIBS = ['xml2','wsock32']) # greebo: "xml2" will advise ld to look up "libxml2.a"
+			self.Append(CCFLAGS = '-DLIBXML_STATIC ')
+			self.Append(CXXFLAGS = '-DLIBXML_STATIC ')
+			self.Append(CPPPATH = ['#/w32deps/libxml2_mingw/include'])
+			self.Append(LIBPATH = ['#/w32deps/libxml2_mingw/lib'])
+			self.Append(LIBS = ['libxml2'])
 			self.useZLib()
 			self.useW32Iconv()
 			#self.useMSVC()

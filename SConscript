@@ -13,21 +13,6 @@ def build_list(s_prefix, s_string):
 
 # common code ------------------------------------------------------
 
-# greebo: For Win32 targets, we need to compile the libxml2 library
-if g_env['PLATFORM'] == 'win32' :
-	libxml2_env = g_env.Copy()
-	libxml2_env.Prepend(CPPPATH = 'w32deps/libxml2/include/')
-	libxml2_env.useW32Iconv()
-	libxml2_src = 'c14n.c catalog.c chvalid.c debugXML.c dict.c DOCBparser.c \
-	               encoding.c entities.c error.c globals.c hash.c HTMLparser.c \
-	               HTMLtree.c legacy.c list.c nanoftp.c nanohttp.c parser.c \
-	               parserInternals.c pattern.c relaxng.c SAX.c SAX2.c schematron.c \
-	               threads.c tree.c trio.c trionan.c triostr.c uri.c valid.c \
-	               xinclude.c xlink.c xmlcatalog.c xmlIO.c xmllint.c xmlmemory.c \
-	               xmlmodule.c xmlreader.c xmlregexp.c xmlsave.c xmlschemas.c \
-	               xmlschemastypes.c xmlstring.c xmlunicode.c xmlwriter.c xpath.c xpointer.c'
-	libxml2_lib = libxml2_env.StaticLibrary(target='libs/libxml2', source=build_list('w32deps/libxml2', libxml2_src))
-
 xmlutilEnv = g_env.Copy()
 xmlutilEnv.useXML2()
 xmlutilSource = 'Document.cpp Node.cpp'
@@ -646,16 +631,14 @@ radiant_prog = radiant_env.Program(target='darkradiant',
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, xmlutil)
 radiant_env.Depends(radiant_prog, math)
-if radiant_env['PLATFORM'] == 'win32':
-	radiant_env.Depends(radiant_prog, libxml2_lib)
-
 radiant_env.Install(INSTALL, radiant_prog)
 
 # Radiant post-install
 
 if radiant_env['PLATFORM'] == 'win32':
     radiant_env.Install(INSTALL, 
-       ['#w32deps/vorbis/lib/ogg.dll',
+       ['#w32deps/libxml2_mingw/lib/libxml2.dll', 
+		'#w32deps/vorbis/lib/ogg.dll',
 		'#w32deps/vorbis/lib/vorbis.dll',
 		'#w32deps/vorbis/lib/vorbisfile.dll',
 		'#w32deps/vorbis/lib/libogg.dll',
