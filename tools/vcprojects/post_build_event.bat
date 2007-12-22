@@ -8,6 +8,7 @@ copy ..\..\w32deps\openal\lib\OpenAL32.dll ..\..\install
 copy ..\..\w32deps\openal\lib\wrap_oal.dll ..\..\install
 copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install
 copy ..\..\w32deps\libpng\bin\libpng13.dll ..\..\install
+copy ..\..\w32deps\libiconv\lib\libiconv2.dll ..\..\install
 copy ..\..\w32deps\zlib\bin\zlib1.dll ..\..\install
 md ..\..\install\etc
 xcopy ..\..\w32deps\gtk2\bin\etc\* ..\..\install\etc\. /S /Y
