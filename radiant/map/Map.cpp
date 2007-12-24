@@ -176,8 +176,12 @@ bool Map::isValid() const {
 	return m_valid;
 }
 
-void Map::addValidCallback(const SignalHandler& handler) {
-	m_mapValidCallbacks.connectLast(handler);
+SignalHandlerId Map::addValidCallback(const SignalHandler& handler) {
+	return m_mapValidCallbacks.connectLast(handler);
+}
+
+void Map::removeValidCallback(SignalHandlerId id) {
+	m_mapValidCallbacks.disconnect(id);
 }
 
 void Map::updateTitle() {

@@ -104,6 +104,9 @@ class XYWnd :
 	int _dragZoom;
 	
 	GtkWindow* _parent;
+
+	// The handle returned from the Map valid callback signal
+	SignalHandlerId _validCallbackHandle;
 	
 public:
 	// Constructor, this allocates the GL widget

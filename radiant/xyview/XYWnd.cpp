@@ -104,7 +104,9 @@ XYWnd::XYWnd(int id) :
 
 	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
 
-	GlobalMap().addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+	_validCallbackHandle = GlobalMap().addValidCallback(
+		DeferredDrawOnMapValidChangedCaller(m_deferredDraw)
+	);
 
 	updateProjection();
 	updateModelview();
@@ -124,13 +126,15 @@ XYWnd::~XYWnd() {
 	// which calls destroyXYView() in their _preDestroy event.
 	// Double-calls don't harm, so this is safe to do.
 	destroyXYView();
+
+	GlobalMap().removeValidCallback(_validCallbackHandle);
 }
 
 void XYWnd::destroyXYView() {
 	// Remove <self> from the scene change callback list
 	GlobalSceneGraph().removeSceneObserver(this);
 	
-	// greebo: Remove <self> as CameraObserver to the CamWindow.
+	// greebo: Remove <self> as CameraObserver from the CamWindow.
 	GlobalCamera().removeCameraObserver(this);
 	
 	if (m_gl_widget != NULL) {
@@ -977,12 +981,7 @@ void XYWnd::drawBlockGrid() {
 
 	// Parse and set the custom blocksize if found
 	if (!sizeVal.empty()) {
-		try {
-			blockSize = boost::lexical_cast<unsigned int>(sizeVal);
-		}
-		catch (boost::bad_lexical_cast e) {
-			// Leave the value alone
-		}
+		blockSize = strToInt(sizeVal);
 	}
 
 	float	x, y, xb, xe, yb, ye;
