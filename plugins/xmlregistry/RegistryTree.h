@@ -17,6 +17,9 @@ class RegistryTree
 public:
 	// Constructor, pass the name of the toplevel node to it
 	RegistryTree(const std::string& topLevelNode);
+
+	// Frees the XML structures
+	~RegistryTree();
 	
 	// Returns a list of nodes matching the given <xpath>
 	xml::NodeList findXPath(const std::string& xPath);
