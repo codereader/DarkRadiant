@@ -115,7 +115,8 @@ public:
 	// Sets the modified status of this map
 	void setModified(bool modifiedFlag);
 	
-	void addValidCallback(const SignalHandler& handler);
+	SignalHandlerId addValidCallback(const SignalHandler& handler);
+	void removeValidCallback(SignalHandlerId id);
 	
 	// Updates the window title of the mainframe
 	void updateTitle();
