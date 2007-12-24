@@ -31,6 +31,10 @@ RegistryTree::RegistryTree(const std::string& topLevelNode) :
 	_importNode = _origXmlDocPtr->children;
 }
 
+RegistryTree::~RegistryTree() {
+	xmlFreeDoc(_origXmlDocPtr);
+}
+
 std::string RegistryTree::prepareKey(const std::string& key) {
 	std::string returnValue = key;
 	
