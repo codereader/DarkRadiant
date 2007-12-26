@@ -114,7 +114,9 @@ public:
 	AABB aabb() const;
 	
 	void testSelect(SelectionTest& test, SelectionIntersection& best) {
-		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.front().vertex), sizeof(WindingVertex)), numpoints, best);
+		if (numpoints > 0) {
+			test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.front().vertex), sizeof(WindingVertex)), numpoints, best);
+		}
 	}
 	
 	// greebo: Updates the array containing the normal vectors of this winding
