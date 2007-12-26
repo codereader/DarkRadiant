@@ -352,7 +352,7 @@ int main (int argc, char* argv[]) {
 	gtk_main();
 #endif
 	
-	GlobalMap().free();
+	GlobalMap().freeMap();
 
   delete g_pParentWnd;
 
