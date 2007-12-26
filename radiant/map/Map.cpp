@@ -233,7 +233,7 @@ const MapFormat& Map::getFormat() {
 }
 
 // free all map elements, reinitialize the structures that depend on them
-void Map::free() {
+void Map::freeMap() {
 	map::PointFile::Instance().clear();
 
 	GlobalShaderClipboard().clear();
@@ -662,7 +662,7 @@ void Map::newMap() {
 		// Turn regioning off when starting a new map
 		GlobalRegion().disable();
 
-		GlobalMap().free();
+		GlobalMap().freeMap();
 		GlobalMap().createNew();
 	}
 }
@@ -678,7 +678,7 @@ void Map::openMap() {
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
 	    
-	    GlobalMap().free();
+	    GlobalMap().freeMap();
 	    GlobalMap().load(filename);
 	}
 }

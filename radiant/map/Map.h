@@ -98,7 +98,7 @@ public:
 	void exportSelected(std::ostream& out);
 	
 	// free all map elements, reinitialize the structures that depend on them
-	void free();
+	void freeMap();
 	
 	// Resource::Observer implementation
 	void onResourceRealise();
