@@ -43,85 +43,6 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
    // Calculate the light vertices of this bounding box and store them into <points>
   light_vertices(tempAABB, points);
 
-  if(state & RENDER_LIGHTING)
-  {
-    const float f = 0.70710678f;
-    // North, East, South, West
-    const Vector3 normals[8] = {
-      Vector3( 0, f, f ),
-      Vector3( f, 0, f ),
-      Vector3( 0,-f, f ),
-      Vector3(-f, 0, f ),
-      Vector3( 0, f,-f ),
-      Vector3( f, 0,-f ),
-      Vector3( 0,-f,-f ),
-      Vector3(-f, 0,-f ),
-    };
-
-#if !defined(USE_TRIANGLE_FAN)
-    glBegin(GL_TRIANGLES);
-#else
-    glBegin(GL_TRIANGLE_FAN);
-#endif
-    glVertex3dv(points[0]);
-    glVertex3dv(points[2]);
-    glNormal3dv(normals[0]);
-    glVertex3dv(points[3]);
-
-#if !defined(USE_TRIANGLE_FAN)
-    glVertex3dv(points[0]);
-    glVertex3dv(points[3]);
-#endif
-    glNormal3dv(normals[1]);
-    glVertex3dv(points[4]);
-
-#if !defined(USE_TRIANGLE_FAN)
-    glVertex3dv(points[0]);
-    glVertex3dv(points[4]);
-#endif
-    glNormal3dv(normals[2]);
-    glVertex3dv(points[5]);
-#if !defined(USE_TRIANGLE_FAN)
-    glVertex3dv(points[0]);
-    glVertex3dv(points[5]);
-#endif
-    glNormal3dv(normals[3]);
-    glVertex3dv(points[2]);
-#if defined(USE_TRIANGLE_FAN)
-    glEnd();
-    glBegin(GL_TRIANGLE_FAN);
-#endif
-
-    glVertex3dv(points[1]);
-    glVertex3dv(points[2]);
-    glNormal3dv(normals[7]);
-    glVertex3dv(points[5]);
-
-#if !defined(USE_TRIANGLE_FAN)
-    glVertex3dv(points[1]);
-    glVertex3dv(points[5]);
-#endif
-    glNormal3dv(normals[6]);
-    glVertex3dv(points[4]);
-
-#if !defined(USE_TRIANGLE_FAN)
-    glVertex3dv(points[1]);
-    glVertex3dv(points[4]);
-#endif
-    glNormal3dv(normals[5]);
-    glVertex3dv(points[3]);
-
-#if !defined(USE_TRIANGLE_FAN)
-    glVertex3dv(points[1]);
-    glVertex3dv(points[3]);
-#endif
-    glNormal3dv(normals[4]);
-    glVertex3dv(points[2]);
-
-    glEnd();
-  }
-  else
-  {
   	// greebo: Draw the small cube representing the light origin.
     typedef unsigned int index_t;
     const index_t indices[24] = {
@@ -134,18 +55,8 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
       1, 4, 3,
       1, 3, 2
     };
-#if 1
     glVertexPointer(3, GL_DOUBLE, 0, points);
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(index_t), RenderIndexTypeID, indices);
-#else
-    glBegin(GL_TRIANGLES);
-    for(unsigned int i = 0; i < sizeof(indices)/sizeof(index_t); ++i)
-    {
-      glVertex3dv(points[indices[i]]);
-    }
-    glEnd();
-#endif
-  }
 }
 
 // ----- Light Class Implementation -------------------------------------------------
@@ -571,18 +482,6 @@ void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume,
 	}
 }
 
-// greebo: Note that this function has to be const according to the abstract base class definition
-void Light::renderSolid(Renderer& renderer, 
-						const VolumeTest& volume, 
-						const Matrix4& localToWorld) const 
-{
-	// Submit the renderable light diamond
-	renderer.SetState(m_entity.getEntityClass()->getWireShader(), 
-					  Renderer::eWireframeOnly);
-	renderer.SetState(m_colour.state(), Renderer::eFullMaterials);
-	renderer.addRenderable(*this, localToWorld);
-}
-
 // Adds the light centre renderable to the given renderer
 void Light::renderLightCentre(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
 	renderer.Highlight(Renderer::ePrimitive, false);
@@ -599,13 +498,16 @@ void Light::renderWireframe(Renderer& renderer,
 							bool selected) const 
 {
 	// Main render, submit the diamond that represents the light entity
-	renderSolid(renderer, volume, localToWorld);
+	renderer.SetState(
+		m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly
+	);
+	renderer.SetState(
+		m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials
+	);
+	renderer.addRenderable(*this, localToWorld);
 
 	// Render bounding box if selected or the showAllLighRadii flag is set
 	if (selected || LightSettings().showAllLightRadii()) {
-
-		renderer.SetState(m_entity.getEntityClass()->getWireShader(), 
-						  Renderer::eWireframeOnly);
 
 		if (isProjected()) {
 			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.

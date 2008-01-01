@@ -36,12 +36,7 @@ namespace entity
 
 void RenderLightRadiiBox::render(RenderStateFlags state) const {
 	//draw the bounding box of light based on light_radius key
-	if((state & RENDER_FILL) != 0) {
-		aabb_draw_flatshade(m_points);
-	}
-	else {
-		aabb_draw_wire(m_points);
-	}
+	aabb_draw_wire(m_points);
 
   #if 1    //disable if you dont want lines going from the center of the light bbox to the corners
 	light_draw_box_lines(m_origin, m_points);

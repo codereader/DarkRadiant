@@ -221,9 +221,6 @@ public:
 	mutable Matrix4 m_projectionOrientation;
 
 	// Renderable submission functions
-	void renderSolid(Renderer& renderer, 
-					 const VolumeTest& volume, 
-					 const Matrix4& localToWorld) const;
 	void renderWireframe(Renderer& renderer, 
 						 const VolumeTest& volume, 
 						 const Matrix4& localToWorld, 

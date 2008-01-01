@@ -148,7 +148,7 @@ void OpenGLShader::construct(const char* name)
   OpenGLState& state = appendDefaultPass();
   switch(name[0])
   {
-  case '(':
+  case '(': // fill shader
     sscanf(name, "(%lf %lf %lf)", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
     state.m_colour[3] = 1.0f;
     state.m_state = RENDER_FILL|RENDER_LIGHTING|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
@@ -162,7 +162,7 @@ void OpenGLShader::construct(const char* name)
     state.m_sort = OpenGLState::eSortTranslucent;
     break;
 
-  case '<':
+  case '<': // wireframe shader
     sscanf(name, "<%lf %lf %lf>", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
     state.m_colour[3] = 1;
     state.m_state = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
