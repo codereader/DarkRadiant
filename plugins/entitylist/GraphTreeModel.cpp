@@ -103,7 +103,19 @@ void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection, scene::I
 	
 	if (found != _nodemap.end()) {
 		if (Instance_isSelected(instance)) {
+
+			// Select the row in the TreeView
 			gtk_tree_selection_select_iter(selection, found->second->getIter());
+		
+			// Scroll to the row
+			GtkTreeView* tv = gtk_tree_selection_get_tree_view(selection);
+			GtkTreeModel* model = gtk_tree_view_get_model(tv);
+			GtkTreePath* selectedPath = gtk_tree_model_get_path(
+				model, found->second->getIter()
+			);
+			gtk_tree_view_expand_to_path(tv, selectedPath);
+			gtk_tree_view_scroll_to_cell(tv, selectedPath, NULL, FALSE, 0, 0);
+			gtk_tree_path_free(selectedPath);
 		}
 		else {
 			gtk_tree_selection_unselect_iter(selection, found->second->getIter());
