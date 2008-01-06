@@ -33,19 +33,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "iradiant.h"
 
-EMessageBoxReturn DoLightIntensityDlg (int *intensity);
-void DoTextEditor (const char* filename, int cursorpos);
-
 void DoSides(int type, int axis);
-
-// greebo: Commented this out (03/2007)
-#if 0
-#ifdef WIN32
-extern bool g_TextEditor_useWin32Editor;
-#else
-extern bool g_TextEditor_useCustomEditor;
-extern std::string g_TextEditor_editorCommand;
-#endif
-#endif
 
 #endif
