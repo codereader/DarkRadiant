@@ -12,6 +12,7 @@
 #include "os/file.h"
 #include "map/algorithm/Traverse.h"
 #include "stream/stringstream.h"
+#include "stream/textfilestream.h"
 
 namespace map {
 
@@ -289,13 +290,29 @@ scene::INodePtr MapResource::loadMapNode() {
   	std::string fullpath = _path + _name;
 
 	if (path_is_absolute(fullpath.c_str())) {
-		MapResource_loadFile(*format, root, fullpath);
+		loadFile(*format, root, fullpath);
 	}
 	else {
 		globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";
 	}
 
 	return root;
+}
+
+bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename) {
+	globalOutputStream() << "Open file " << filename.c_str() << " for read...";
+
+	TextFileInputStream file(filename);
+	if (!file.failed()) {
+		globalOutputStream() << "success\n";
+		format.readGraph(root, file);
+		return true;
+	}
+	else
+	{
+		globalErrorStream() << "failure\n";
+		return false;
+	}
 }
 
 } // namespace map

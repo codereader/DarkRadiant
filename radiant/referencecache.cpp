@@ -61,23 +61,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "referencecache/ModelResource.h"
 #include "map/MapResource.h"
 
-bool MapResource_loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename)
-{
-  globalOutputStream() << "Open file " << filename.c_str() << " for read...";
-  TextFileInputStream file(filename);
-  if(!file.failed())
-  {
-    globalOutputStream() << "success\n";
-    format.readGraph(root, file);
-    return true;
-  }
-  else
-  {
-    globalErrorStream() << "failure\n";
-    return false;
-  }
-}
-
 /** Save the map contents to the given filename using the given MapFormat export module
  */
 bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTraversalFunc traverse, const char* filename)
