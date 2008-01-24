@@ -201,9 +201,6 @@ void MapResource::connectMap() {
     	// Reroute the changed callback to the onMapChanged() call.
     	map->setChangedCallback(MapChangedCaller(*this));
     }
-    else {
-    	map->setChangedCallback(Callback());
-    }
 }
 
 std::time_t MapResource::modified() const {
