@@ -31,7 +31,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/signalfwd.h"
 
 /**
+ * \defgroup scenegraph Scenegraph
+ * 
  * \namespace scene
+ * \ingroup scenegraph
  * Interfaces and types relating to the scene-graph.
  */
 

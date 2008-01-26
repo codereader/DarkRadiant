@@ -8,6 +8,10 @@
 
 class TextOutputStream;
 
+/**
+ * \defgroup module Module system
+ */
+
 /** greebo: These registry keys can be used application-wide during runtime
  *          to retrieve the various paths.
  */
@@ -24,6 +28,8 @@ namespace {
 /**
  * Provider for various information that may be required by modules during
  * initialisation.
+ * 
+ * \ingroup module
  */
 class ApplicationContext {
 public:
@@ -68,6 +74,8 @@ typedef std::set<std::string> StringSet;
  * of each individual module; it is up to the GlobalBlah() accessor function
  * associated with each module to perform the required downcast to the known
  * type.
+ * 
+ * \ingroup module
  */
 class RegisterableModule {
 public:
@@ -127,6 +135,8 @@ typedef boost::shared_ptr<RegisterableModule> RegisterableModulePtr;
  * For obvious reasons, the ModuleRegistry itself is not a module, but a static
  * object owned by the main binary and returned through a globally-accessible
  * method.
+ * 
+ * \ingroup module
  */
 class IModuleRegistry {
 public:
@@ -182,6 +192,13 @@ public:
 namespace module {
 
 	/**
+	 * \namespace module
+	 * Types and functions implementing the module registry system.
+	 * 
+	 * \ingroup module
+	 */
+
+	/**
 	 * Global ModuleRegistry accessor function exported by the main binary.
 	 * Note: Don't use this from within modules (entity, shaders, etc.),
 	 * this only works from within the DarkRadiant core binary (Win32).
@@ -218,7 +235,9 @@ namespace module {
 		}
 	};
 	
-	// Global accessor method for the ModuleRegistry (module scope)
+	/**
+	 * Global accessor method for the ModuleRegistry.
+	 */
 	inline IModuleRegistry& GlobalModuleRegistry() {
 		return RegistryReference::Instance().getRegistry();
 	}
