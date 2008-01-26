@@ -30,6 +30,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iinstantiable.h"
 #include "signal/signalfwd.h"
 
+/**
+ * \namespace scene
+ * Interfaces and types relating to the scene-graph.
+ */
+
 namespace scene
 {
   class Instance;
@@ -45,25 +50,46 @@ const std::string MODULE_SCENEGRAPH("SceneGraph");
 
 namespace scene
 {
-  /// \brief A scene-graph - a Directed Acyclic Graph (DAG).
-  ///
-  /// - Each node may refer to zero or more 'child' nodes (directed).
-  /// - A node may never have itself as one of its ancestors (acyclic).
-  /// - Each node may have more than one 'parent', thus having more than one 'instance' in the graph.
-  /// - Each instance is uniquely identified by the list of its ancestors plus itself, known as a 'path'.
+  /** 
+   * A scene-graph - a Directed Acyclic Graph (DAG).
+   *
+   * Each node may refer to zero or more 'child' nodes (directed).
+   * A node may never have itself as one of its ancestors (acyclic).
+   * Each node may have more than one 'parent', thus having more than one 
+   * 'instance' in the graph.
+   * Each instance is uniquely identified by the list of its ancestors plus 
+   * itself, known as a 'path'.
+   */
   class Graph :
 	public RegisterableModule
   {
   public:
+	  
+	/**
+	 * Interface for a visitor class which will be passed each node in the
+	 * scenegraph in turn.
+	 */
     class Walker
     {
     public:
-      /// \brief Called before traversing the first child-instance of 'instance'. If the return value is false, the children of the current instance are not traversed.
+      
+      /**
+       * Called before traversing the first child-instance of 'instance'. This
+       * method must be overridden by Walker subclasses. 
+       * 
+       * @return
+       * false to abort the traversal and prevent visiting children of the
+       * current instance, true to continue.
+       */
       virtual bool pre(const Path& path, Instance& instance) const = 0;
-      /// \brief Called after traversing the last child-instance of 'instance'.
+      
+      /** 
+       * Called after traversing the last child-instance of 'instance'. This
+       * method has an empty default implementation and need not be overridden
+       * by subclasses.
+       */
       virtual void post(const Path& path, Instance& instance) const
-      {
-      }
+      { }
     };
     
     /* greebo: Derive from this class to get notified on scene changes 
