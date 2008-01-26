@@ -51,6 +51,22 @@ public:
 	virtual void detach(const KeyObserver& observer) = 0;
 };
 
+/**
+ * Interface for a map entity. The Entity is the main building block of a
+ * map, and the uppermost layer in the scenegraph under the root node. Each
+ * entity contains a arbitrary dictionary of strings ("properties" or 
+ * "spawnargs") containing information about this entity which is used by the
+ * game engine to modify its behaviour, and may additionally contain child
+ * primitives (brushes and patches) depending on its type.
+ * 
+ * At the minimum, each Entity must contain three properties: "name" which 
+ * contains a map-unique string identifier, "classname" which identifies the
+ * entity class to the game, and "origin" which stores the location of the 
+ * entity in 3-dimensional world space.
+ * 
+ * A valid <b>Id Tech 4</b> map must contain at least one entity: the
+ * "worldspawn" which is the parent of all map geometry primitives. 
+ */
 class Entity
 {
 public:
