@@ -15,6 +15,14 @@
 #include <iostream>
 
 /**
+ * \file objectives.cpp
+ * Main plugin file for the Objectives Editor.
+ * 
+ * \namespace objectives
+ * Classes and types comprising the Objectives Editor.
+ */
+
+/**
  * API module to register the menu commands for the ObjectivesEditor class.
  */
 class ObjectivesEditorModule : 

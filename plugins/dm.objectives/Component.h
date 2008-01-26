@@ -11,7 +11,6 @@ namespace objectives
  * which are combined using boolean operations to determine whether the
  * objective is satisfied or not.
  */
-
 class Component
 {
 public:

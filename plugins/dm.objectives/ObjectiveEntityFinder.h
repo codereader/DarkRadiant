@@ -9,10 +9,19 @@ namespace objectives
 {
 
 /**
- * Visitor class to locate and list any target_addobjectives entities in the
- * current map. Also keeps a reference to the worldspawn entity so that the
- * "activate at start" status can be determined (the worldspawn targets any
- * objective entities that should be active at start).
+ * Visitor class to locate and list any <b>target_addobjectives</b> entities in 
+ * the current map.
+ *
+ * The ObjectiveEntityFinder will visit each scenegraph node in turn, as per the
+ * behaviour of a scenegraph walker. The classname of each entity visited is
+ * tested against a given value (passed in during construction) which identifies
+ * it as an Objectives entity, and if the test is successful, the entity's
+ * details are added to the target ObjectiveEntityMap and GtkListStore objects
+ * to be populated. 
+ * 
+ * The ObjectiveEntityFinder also keeps a reference to the worldspawn entity so 
+ * that the "activate at start" status can be determined (the worldspawn targets 
+ * any objective entities that should be active at start).
  */
 class ObjectiveEntityFinder
 : public scene::Graph::Walker
@@ -32,7 +41,24 @@ class ObjectiveEntityFinder
 public:
 
 	/**
-	 * Construct a visitor to populate the given store and ObjectiveEntity map.
+	 * Construct a visitor to populate the given store and ObjectiveEntityMap.
+	 * 
+	 * The GtkListStore provided must contain three columns. The first column
+	 * is a G_TYPE_STRING containing the display name of the Objectives entity, 
+	 * which is constructed from the real entity name plus the origin in 
+	 * brackets for convenience purposes. The second column is a G_TYPE_BOOL 
+	 * which is set to TRUE if the entity is activated at start, and FALSE 
+	 * otherwise. The third column is a G_TYPE_STRING containing the raw entity
+	 * name in the map.
+	 * 
+	 * @param st
+	 * The GtkListStore to populate.
+	 * 
+	 * @param map
+	 * The ObjectiveEntityMap to populate.
+	 * 
+	 * @param classname
+	 * The text classname used to identify an Objectives entity.
 	 */
 	ObjectiveEntityFinder(GtkListStore* st, 
 						  ObjectiveEntityMap& map,
@@ -44,14 +70,15 @@ public:
 	{ }
 	
 	/**
-	 * Return a pointer to the worldspawn entity.
+	 * Return a pointer to the worldspawn entity. This could potentially be
+	 * NULL if a worldspawn entity was not found during visitation.
 	 */
 	Entity* getWorldSpawn() {
 		return _worldSpawn;
 	}
 	
 	/**
-	 * Required pre-descent function.
+	 * @see scene::Graph::Walker::pre()
 	 */
 	bool pre(const scene::Path& path, scene::Instance& instance) const {
 		
