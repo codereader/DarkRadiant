@@ -37,7 +37,7 @@ public:
 	/**
 	 * Return a GtkWidget* for packing into the parent dialog.
 	 */
-	virtual operator GtkWidget* () const = 0;
+	virtual GtkWidget* getWidget() const = 0;
 	
 	/**
 	 * Create another ComponentEditor of the same subclass type as this one.

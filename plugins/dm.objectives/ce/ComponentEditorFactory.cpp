@@ -22,7 +22,7 @@ ComponentEditorPtr ComponentEditorFactory::create(const std::string& type)
 	if (i != getMap().end())
 		return i->second->clone();
 	else
-		throw std::logic_error("Invalid component type: " + type);
+		return ComponentEditorPtr();
 }
 
 // Register a new type

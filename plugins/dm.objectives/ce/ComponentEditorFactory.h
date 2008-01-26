@@ -32,13 +32,8 @@ public:
 	 * The string type of the ComponentEditor which should be returned.
 	 * 
 	 * @return
-	 * A shared pointer to a ComponentEditor of the requested type.
-	 * 
-	 * @exception std::logic_error
-	 * Thrown if the named type is not recognised. Since this method is only
-	 * intended to be invoked by the ComponentsDialog, this indicates a logic
-	 * error.
-	 * 
+	 * A shared pointer to a ComponentEditor of the requested type. If the
+	 * requested type does not exist, a NULL shared pointer is returned.
 	 */
 	static ComponentEditorPtr create(const std::string& type);
 	
