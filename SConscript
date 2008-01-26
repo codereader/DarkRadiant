@@ -360,7 +360,8 @@ objList = build_list('plugins/dm.objectives',
 					 ObjectiveEntity.cpp \
 					 ObjectiveKeyExtractor.cpp \
 					 ComponentsDialog.cpp \
-					 ce/ComponentEditorFactory.cpp')
+					 ce/ComponentEditorFactory.cpp \
+					 ce/KillComponentEditor.cpp')
 objLib = objEnv.SharedLibrary(target='dm_objectives',
 							  source=objList,
 							  no_import_lib=1)

@@ -357,11 +357,18 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 		// Change the ComponentEditor
 		self->_componentEditor = 
 			ce::ComponentEditorFactory::create(selectedText);
-		if (self->_componentEditor)
+		if (self->_componentEditor) 
+		{
+			// Get the widget from the ComponentEditor and show it
+			GtkWidget* editor = self->_componentEditor->getWidget();
+			gtk_widget_show_all(editor);
+			
+			// Pack the widget into the containing frame
 			gtk_container_add(
 				GTK_CONTAINER(self->_widgets[WIDGET_COMPEDITOR_PANEL]),
-				GTK_WIDGET(self->_componentEditor->getWidget())
+				editor
 			);
+		}
 	}
 
 	// Refresh the components
