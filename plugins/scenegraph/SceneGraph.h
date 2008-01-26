@@ -28,9 +28,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "imodule.h"
 
-/** greebo: This is the actual implementation of the scene::Graph
- * 			defined in iscenegraph.h. This keeps track of all
- * 			the instances.
+/** 
+ * Implementing class for the scenegraph.
+ * 
+ * \ingroup scenegraph
+ * \see scene::Graph
  */
 class SceneGraph : 
 	public scene::Graph
