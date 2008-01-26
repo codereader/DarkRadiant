@@ -15,10 +15,20 @@ namespace objectives
 {
 
 /**
- * Representation of a single objective entity (target_tdm_addobjectives). This
- * is a wrapper which contains an Entity*, and provides additional methods to
- * accept and query Objectives, and to save and load the set of Objectives
- * from the entity's key values.
+ * Representation of a single objective entity (target_tdm_addobjectives). 
+ * 
+ * In the Dark Mod, objectives are stored as numbered spawnargs on an objective
+ * entity, e.g. <b>obj3_desc</b>. Each objective entity can contain any number
+ * of objectives described in this way.
+ * 
+ * The ObjectiveEntity class provides an object-oriented view of the objective
+ * information, by wrapping a pointer to an Entity and providing methods to
+ * retrieve and manipulate objective information without seeing the spawnargs
+ * directly. When changes are completed, the ObjectiveEntity::writeToEntity()
+ * method is invoked to save all changes in the form of spawnargs.
+ * 
+ * @see Entity
+ * @see objectives::Objective
  */
 class ObjectiveEntity
 {
@@ -38,6 +48,14 @@ public:
 	
 	/**
 	 * Return an Objective reference by numeric index.
+	 * 
+	 * @param iIndex
+	 * The numberic index of the objective to retrieve.
+	 * 
+	 * @return
+	 * A non-const reference to an Objective object, corresponding to the 
+	 * given index. If the provided index did not previously exist, a new
+	 * Objective object will be created and returned.
 	 */
 	Objective& getObjective(int iIndex) {
 		return _objectives[iIndex];
