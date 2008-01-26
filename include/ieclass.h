@@ -96,8 +96,8 @@ struct EntityClassAttributeVisitor {
 class IEntityClass;
 typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
 
-/*
- * * Entity class interface. An entity class represents a single type
+/**
+ * Entity class interface. An entity class represents a single type
  * of entity that can be created by the EntityCreator.
  */
 class IEntityClass 

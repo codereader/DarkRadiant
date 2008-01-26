@@ -94,11 +94,22 @@ public:
 	};
 
 	/**
-	 * Visitor class for keyvalues on an entity.
+	 * Visitor class for keyvalues on an entity. An Entity::Visitor is provided
+	 * to an Entity via the Entity::forEachKeyValue() method, after which the
+	 * visitor's visit() method will be invoked for each keyvalue on the
+	 * Entity.
 	 */
 	struct Visitor 
 	{
-		// Visit function called for each key/value pair
+		/**
+		 * The visit function which must be implemented by subclasses.
+		 * 
+		 * @param key
+		 * The current key being visited.
+		 * 
+		 * @param value
+		 * The value associated with the current key.
+		 */
     	virtual void visit(const std::string& key, 
     					   const std::string& value) = 0;
 	};
