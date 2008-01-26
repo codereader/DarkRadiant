@@ -1,5 +1,6 @@
 #include "ComponentsDialog.h"
 #include "Objective.h"
+#include "ce/ComponentEditorFactory.h"
 
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -26,7 +27,8 @@ namespace {
 		WIDGET_TYPE_COMBO,
 		WIDGET_STATE_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
-		WIDGET_INVERTED_FLAG		
+		WIDGET_INVERTED_FLAG,
+		WIDGET_COMPEDITOR_PANEL
 	};
 	
 }
@@ -41,6 +43,9 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective)
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), createListView(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createEditPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_start(
+		GTK_BOX(vbx), createComponentEditorPanel(), TRUE, TRUE, 0
+	);
 	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	
@@ -146,6 +151,13 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	return table;
 }
 
+// ComponentEditor panel
+GtkWidget* ComponentsDialog::createComponentEditorPanel()
+{
+	_widgets[WIDGET_COMPEDITOR_PANEL] = gtk_frame_new(NULL);
+	return _widgets[WIDGET_COMPEDITOR_PANEL];
+}
+
 // Create buttons
 GtkWidget* ComponentsDialog::createButtons() {
 	
@@ -208,14 +220,13 @@ void ComponentsDialog::populateEditPanel(int index) {
 	// GtkComboBox.
 	const StringList& list = getTypeStrings();
 	int listIdx = 0;
-	for (StringList::const_iterator i = list.begin(); i != list.end(); ++i) {
-		
+	for (StringList::const_iterator i = list.begin(); i != list.end(); ++i) 
+	{
 		// If there is a match, set the combo box		
 		if (boost::algorithm::iequals(comp.type, *i)) {
 			gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]),
 									 listIdx);
 		}
-		
 		listIdx++;
 	}
 	
@@ -334,13 +345,23 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 	gchar* selectedText = 
 		gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
 	
-	if (selectedText != NULL) {
-		
-		// Identify the selected component, and update it
+	// Identify the selected component, and update it
+	if (selectedText != NULL) 
+	{
+		// Update the Objective object
 		int idx = self->getSelectedIndex();
 		if (idx != -1) {
 			self->_objective.components[idx].type = selectedText;
 		}
+		
+		// Change the ComponentEditor
+		self->_componentEditor = 
+			ce::ComponentEditorFactory::create(selectedText);
+		if (self->_componentEditor)
+			gtk_container_add(
+				GTK_CONTAINER(self->_widgets[WIDGET_COMPEDITOR_PANEL]),
+				GTK_WIDGET(self->_componentEditor->getWidget())
+			);
 	}
 
 	// Refresh the components

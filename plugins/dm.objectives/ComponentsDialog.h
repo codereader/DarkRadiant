@@ -1,6 +1,8 @@
 #ifndef COMPONENTSDIALOG_H_
 #define COMPONENTSDIALOG_H_
 
+#include "ce/ComponentEditor.h"
+
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtktreeselection.h>
@@ -34,11 +36,15 @@ class ComponentsDialog
 	GtkListStore* _componentList;
 	GtkTreeSelection* _componentSel;
 	
+	// Currently-active ComponentEditor (if any)
+	ce::ComponentEditorPtr _componentEditor;
+	
 private:
 
 	// Construction helpers
 	GtkWidget* createListView();
 	GtkWidget* createEditPanel();
+	GtkWidget* createComponentEditorPanel();
 	GtkWidget* createButtons();
 
 	// Static list of component type strings, in order
