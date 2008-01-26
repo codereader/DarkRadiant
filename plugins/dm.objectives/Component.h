@@ -15,19 +15,31 @@ class Component
 {
 public:
 
-	// Is this component satisfied?
+	/**
+	 * Flag to indicate that this component has been satisfied.
+	 */
 	bool state;
 	
-	// Invert the sense of this component
+	/**
+	 * Flag to indicate that the sense of this component is inverted.
+	 */
 	bool inverted;
 	
-	// Component changes state once then latches
+	/**
+	 * Flag to indicate that this component changes state once then latches,
+	 * even if its in-game condition is no longer satisfied.
+	 */
 	bool irreversible;
 	
-	// The type of this component ("kill", "ko" etc)
+	/**
+	 * The type of this component ("kill", "ko" etc).
+	 */
 	std::string type;
 	
-	// Default constructor
+	/**
+	 * Construct a Component with default settings. All flags are set to false,
+	 * and the type is set to the empty string.
+	 */
 	Component()
 	: state(false), inverted(false), irreversible(false), type("")
 	{ }
