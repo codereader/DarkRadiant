@@ -15,10 +15,13 @@
 #include <iostream>
 
 /**
+ * \defgroup objectives Objectives Editor (Dark Mod only)
+ * 
  * \file objectives.cpp
  * Main plugin file for the Objectives Editor.
  * 
  * \namespace objectives
+ * \ingroup objectives
  * Classes and types comprising the Objectives Editor.
  */
 

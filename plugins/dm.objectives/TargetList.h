@@ -29,7 +29,12 @@ class TargetList
 public:
 
 	/**
-	 * Constructor. Accepts a pointer to the source entity.
+	 * Construct a TargetList with the given source entity. The source entity
+	 * is immediately scanned for <b>target</b> keyvalues that refer to other
+	 * entities.
+	 * 
+	 * @param src
+	 * The source Entity to query for targets.
 	 */
 	TargetList(const Entity* src)
 	: _src(src)
@@ -39,7 +44,7 @@ public:
 	}
 
 	/**
-	 * Entity visit function.
+	 * @see Entity::Visitor::visit()
 	 */
 	void visit(const std::string& key, const std::string& value) {
 		// If the key starts with "target", add the value to the set
@@ -49,6 +54,13 @@ public:
 		
 	/**
 	 * Query whether the supplied entity is targeted by the source entity.
+	 * 
+	 * @param qtarget
+	 * The destination entity.
+	 * 
+	 * @return
+	 * true if the destination Entity appears in the list of targets for the
+	 * source Entity, false otherwise.
 	 */
 	bool isTargeted(const Entity* qtarget) const {
 
