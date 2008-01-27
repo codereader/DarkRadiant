@@ -12,6 +12,9 @@ namespace ce
 
 /**
  * ComponentEditor subclass for KILL component type.
+ * 
+ * A KILL component requires that an AI must be killed. It can use all
+ * specifiers except SPEC_GROUP.
  */
 class KillComponentEditor 
 : public ComponentEditor
@@ -26,6 +29,9 @@ class KillComponentEditor
 		}
 	} regHelper;
 	
+	// Main widget
+	GtkWidget* _widget;
+	
 	// Component to edit
 	Component* _component;	
 	
@@ -34,9 +40,12 @@ public:
 	/**
 	 * Construct a default KillComponentEditor.
 	 */
-	KillComponentEditor()
-	: _component(NULL)
-	{ }
+	KillComponentEditor();
+	
+	/**
+	 * Destructor.
+	 */
+	~KillComponentEditor();
 	
 	/* ComponentEditor implementation */
 	

@@ -1,6 +1,8 @@
 #ifndef COMPONENT_H_
 #define COMPONENT_H_
 
+#include "Specifier.h"
+
 #include <string>
 
 namespace objectives
@@ -16,34 +18,6 @@ namespace objectives
  */
 class Component
 {
-public:
-
-	/**
-	 * Enumeration of valid specifier types.
-	 * 
-	 * Each Component can have up to 2 <b>specifiers</b>, which provide
-	 * information about the target of the component depending on the component
-	 * type. For example, a KILL component must specify an AI or group of AI
-	 * to be killed.
-	 * 
-	 * Each specifier consists of two parts, a specifier <b>type</b> and a 
-	 * specifier <b>value</b>. This enumeration provides the available specifier
-	 * types, which are used by the game to determine the meaning of the 
-	 * associated specifier value.
-	 */
-	enum Specifier
-	{
-		SPEC_NONE, /**< No specifier. */
-		SPEC_NAME, /**< Name of a specific entity. */
-		SPEC_OVERALL, /**< Overall loot or AI specifier. */
-		SPEC_GROUP, /**< Type-dependent group specifier. */
-		SPEC_CLASSNAME, /**< Name of an DEF-based entity class. */
-		SPEC_SPAWNCLASS, /**< Name of an SDK-level spawn class. */
-		SPEC_AI_TYPE, /**< Name of AI type, such as "human". */
-		SPEC_AI_TEAM, /**< Integer AI team number. */
-		SPEC_AI_INNOCENCE /**< Value is 1 for combat, 0 for non-combat AI. */
-	};
-	
 public:
 	
 	/**
@@ -107,7 +81,9 @@ public:
 	 * and the type is set to the empty string.
 	 */
 	Component()
-	: state(false), inverted(false), irreversible(false), type("")
+	: state(false), inverted(false), irreversible(false), type(""),
+	  spec1_type(Specifier::SPEC_NONE),
+	  spec2_type(Specifier::SPEC_NONE)
 	{ }
 };
 

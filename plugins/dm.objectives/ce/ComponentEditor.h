@@ -39,6 +39,12 @@ public:
 	
 	/**
 	 * Return a GtkWidget* for packing into the parent dialog.
+	 * 
+	 * The top-level widget returned by getWidget() is owned by the
+	 * ComponentEditor, and will be destroyed via gtk_widget_destroy() when the
+	 * the ComponentEditor's destructor is invoked. The widget is <b>not</b>
+	 * guaranteed to be visible when it is returned, and should be shown by
+	 * the parent dialog using gtk_widget_show_all().
 	 */
 	virtual GtkWidget* getWidget() const = 0;
 	
