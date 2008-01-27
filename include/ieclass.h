@@ -19,9 +19,12 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/// \file ieclass.h
-/// \brief Entity Class definition loader API.
-
+/**
+ * \defgroup eclass Entity class manager
+ * \file ieclass.h
+ * \brief Entity Class definition loader API.
+ * \ingroup eclass
+ */
 
 #if !defined(INCLUDED_IECLASS_H)
 #define INCLUDED_IECLASS_H
@@ -40,27 +43,42 @@ class Shader;
 class ListAttributeType;
 class AABB;
 
-/** Data structure representing a single attribute on an entity class.
+/** 
+ * Data structure representing a single attribute on an entity class.
+ * 
+ * \ingroup eclass
  */
-
 struct EntityClassAttribute
 {
-	// The key type (string, bool etc.)
+	/**
+	 * The key type (string, bool etc.).
+	 */
 	std::string type;
 	
-	// The attribute key name
+	/**
+	 * The attribute key name.
+	 */
 	std::string name;
 	
-	// Current attribute value
+	/**
+	 * Current attribute value.
+	 */
 	std::string value;
 	
-	// The help text associated with the key (in the DEF file)
+	/**
+	 * The help text associated with the key (in the DEF file).
+	 */
 	std::string description;
 
-	// Is TRUE for inherited keyvalues.
+	/**
+	 * Is TRUE for inherited keyvalues.
+	 */
 	bool inherited;
 
-	// Main constructor
+	/**
+	 * Construct an EntityClassAttribute with empty strings and a false
+	 * inherited flag.
+	 */
 	EntityClassAttribute(const std::string& t = "", 
 						 const std::string& n = "", 
 						 const std::string& v = "", 
@@ -78,11 +96,15 @@ struct EntityClassAttribute
  */
 typedef std::vector<EntityClassAttribute> EntityClassAttributeList;
 
-/** Visitor class for EntityClassAttributes.
+/** 
+ * Visitor class for EntityClassAttributes.
+ * 
+ * \ingroup eclass
  */
 struct EntityClassAttributeVisitor {
 	
-	/** Visit function.
+	/** 
+	 * Visit function.
 	 * 
 	 * @param attr
 	 * The current EntityClassAttribute to visit.
@@ -98,7 +120,10 @@ typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
 
 /**
  * Entity class interface. An entity class represents a single type
- * of entity that can be created by the EntityCreator.
+ * of entity that can be created by the EntityCreator. Entity classes are parsed
+ * from .DEF files during startup.
+ * 
+ * \ingroup eclass
  */
 class IEntityClass 
 : public ModResource
@@ -110,21 +135,25 @@ public:
 	 */
 	virtual const std::string& getName() const = 0;
 
-	/** Query whether this entity class represents a light.
+	/** 
+	 * Query whether this entity class represents a light.
 	 */
 	virtual bool isLight() const = 0;
 	
-	/** Set whether this entity class represents a light.
+	/** 
+	 * Set whether this entity class represents a light.
 	 */
 	virtual void setIsLight(bool isLight) = 0;
 
 	/* ENTITY CLASS SIZE */
 
-	/** Query whether this entity has a fixed size.
+	/** 
+	 * Query whether this entity has a fixed size.
 	 */
 	virtual bool isFixedSize() const = 0;
 
-	/** Return an AABB representing the declared size of this entity. This is
+	/** 
+	 * Return an AABB representing the declared size of this entity. This is
 	 * only valid for fixed size entities.
 	 * 
 	 * @returns
@@ -133,29 +162,32 @@ public:
 	 */
 	virtual AABB getBounds() const = 0;
 	
-
 	/* ENTITY CLASS COLOURS */		
 
-	/** Set this entity class' display colour.
+	/** 
+	 * Set this entity class' display colour.
 	 * 
 	 * @param col
 	 * Vector3 containing the R,G,B values to use.
 	 */
 	virtual void setColour(const Vector3& col) = 0;
 	
-	/** Return this entity class' display colour.
+	/** 
+	 * Return this entity class' display colour.
 	 * 
 	 * @returns
 	 * Vector3 reference containing the colour.
 	 */
 	virtual const Vector3& getColour() const = 0;
 	
-	/** Get the Shader used for rendering this entity class in
+	/** 
+	 * Get the Shader used for rendering this entity class in
 	 * wireframe mode.
 	 */
 	virtual boost::shared_ptr<Shader> getWireShader() const = 0;
 	
-	/** Get the Shader used for rendering this entity class in
+	/** 
+	 * Get the Shader used for rendering this entity class in
 	 * filled mode.
 	 */
 	virtual boost::shared_ptr<Shader> getFillShader() const = 0;
@@ -170,20 +202,36 @@ public:
 	virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
 
 	/**
-	 * Return a single named EntityClassAttribute from this EntityClass. If the
-	 * named attribute is not found, an empty EntityClassAttribute is returned.
+	 * Return a single named EntityClassAttribute from this EntityClass. 
+	 * 
+	 * @param name
+	 * The name of the EntityClassAttribute to find.
+	 * 
+	 * @return
+	 * A reference to the named EntityClassAttribute. If the named attribute is 
+	 * not found, an empty EntityClassAttribute is returned.
 	 */
 	virtual EntityClassAttribute& getAttribute(const std::string& name) = 0;
 	virtual const EntityClassAttribute& getAttribute(const std::string& name) const = 0;
 	
 	/**
-	 * Return the list of EntityClassAttributes matching the given name,
-	 * including numbered suffixes (e.g. "target", "target1", "target2" etc).
-	 * This list will be empty if no matching attributes were found.
+	 * Return the list of EntityClassAttributes matching the given prefix.
+	 * 
+	 * This method performs a search for all EntityClassAttributes whose name
+	 * matches the given prefix, with a suffix consisting of zero or more 
+	 * arbitrary characters. For example, if "target" were specified as the
+	 * prefix, the list would include "target", "target0", "target127" etc.
 	 * 
 	 * This operation may not have high performance, due to the need to scan
 	 * for matching names, therefore should not be used in performance-critical
 	 * code.
+	 * 
+	 * @param name
+	 * The prefix to search for.
+	 * 
+	 * @return
+	 * A list of EntityClassAttribute objects matching the provided prefix. This
+	 * list will be empty if there were no matches.
 	 */
 	virtual EntityClassAttributeList getAttributeList(const std::string& name) 
 	const = 0;
@@ -228,8 +276,10 @@ public:
 };
 
 /**
- * greebo: A ModelDef contains the information of a model {} block 
- *         as defined in a Doom3 .def file.
+ * Structure ontains the information of a model {} block as defined in a 
+ * Doom3 .def file.
+ * 
+ * \ingroup eclass
  */
 class IModelDef {
 public:
@@ -251,9 +301,11 @@ public:
 };
 typedef boost::shared_ptr<IModelDef> IModelDefPtr;
 
-/** EntityClass visitor interface.
+/** 
+ * EntityClass visitor interface.
+ * 
+ * \ingroup eclass
  */
-
 class EntityClassVisitor
 {
 public:
@@ -268,6 +320,8 @@ const std::string MODULE_ECLASSMANAGER("EntityClassManager");
  * EntityClassManager interface. The entity class manager is responsible for 
  * maintaining a list of available entity classes which the EntityCreator can 
  * insert into a map.
+ * 
+ * \ingroup eclass
  */
 class IEntityClassManager :
 	public RegisterableModule
@@ -301,6 +355,11 @@ public:
 	virtual IModelDefPtr findModel(const std::string& name) const = 0;
 };
 
+/**
+ * Return the global EntityClassManager to the application.
+ * 
+ * \ingroup eclass
+ */
 inline IEntityClassManager& GlobalEntityClassManager() {
 	// Cache the reference locally
 	static IEntityClassManager& _eclassMgr(

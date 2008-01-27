@@ -22,6 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IFILESYSTEM_H)
 #define INCLUDED_IFILESYSTEM_H
 
+/**
+ * \defgroup vfs Virtual filesystem
+ * \file ifilesystem.h
+ * Interface types for the VFS module.
+ */
+
 #include <cstddef>
 #include <string>
 
@@ -40,19 +46,44 @@ class ModuleObserver;
 
 const std::string MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
 
-/// The Virtual File System.
+/**
+ * Main interface for the virtual filesystem. 
+ * 
+ * The virtual filesystem provides a unified view of the contents of Doom 3's 
+ * base and mod subdirectories, including the contents of PK4 files. Assets can
+ * be retrieved using a single unique path, without needing to know whereabouts
+ * in the physical filesystem the asset is located.
+ * 
+ * \ingroup vfs
+ */
 class VirtualFileSystem :
 	public RegisterableModule
 {
 public:
 	
-	// greebo: Derive from VirtualFileSystem::Observer to get notified 
-	// about the VFS init/shutdown events.
+	/**
+	 * Interface for VFS observers.
+	 * 
+	 * A VFS observer is automatically notified of events relating to the
+	 * VFS, including startup and shutdown.
+	 */ 
 	class Observer {
 	public:
-		// Gets called on initialise
+		
+		/**
+		 * Notification of VFS initialisation.
+		 * 
+		 * This method is invoked for all VFS observers when the VFS is
+		 * initialised. An empty default implementation is provided.
+		 */
 		virtual void onFileSystemInitialise() {}
-		// Gets called on shutdown
+		
+		/**
+		 * Notification of VFS shutdown.
+		 * 
+		 * This method is invoked for all VFS observers when the VFS is shut
+		 * down. An empty default implementation is provided.
+		 */
 		virtual void onFileSystemShutdown() {}
 	};
 	

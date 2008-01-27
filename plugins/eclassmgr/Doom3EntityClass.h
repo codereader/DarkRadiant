@@ -73,7 +73,8 @@ private:
 
 public:
 
-	/** Static function to create a default entity class.
+	/** 
+	 * Static function to create a default entity class.
 	 * 
 	 * @param name
 	 * The name of the entity class to create.
@@ -83,7 +84,8 @@ public:
 	 */
 	static IEntityClassPtr create(const std::string& name, bool brushes);
 	
-    /** Default constructor.
+    /** 
+     * Default constructor.
      * 
      * @param name
      * Entity class name.

@@ -8,7 +8,14 @@
 
 namespace eclass {
 
-/** EClassManager - master entity loader
+/**
+ * \namespace eclass
+ * Implementing classes for the Entity Class manager module.
+ * \ingroup eclass
+ */
+
+/** 
+ * EClassManager - master entity loader
  * 
  * This class is the master loader for the entity classes. It ensures that the
  * loadFile() function is called for every .def file in the def/ directory, 
