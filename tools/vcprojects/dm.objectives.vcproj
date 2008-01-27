@@ -275,6 +275,30 @@
 				RelativePath="..\..\plugins\dm.objectives\TargetList.h"
 				>
 			</File>
+			<Filter
+				Name="ce"
+				>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ComponentEditor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ComponentEditorFactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ComponentEditorFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\KillComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\KillComponentEditor.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\dm.objectives\dm.objectives.def"
