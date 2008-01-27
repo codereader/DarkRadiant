@@ -17,24 +17,36 @@ class KillComponentEditor
 : public ComponentEditor
 {
 	// Registration class
-	static struct RegistrationHelper 
+	static struct RegHelper 
 	{
-		RegistrationHelper() {
+		RegHelper() {
 			ComponentEditorFactory::registerType(
 				"KILL", ComponentEditorPtr(new KillComponentEditor())
 			);
 		}
-	} registrationHelper;
+	} regHelper;
+	
+	// Component to edit
+	Component* _component;	
 	
 public:
 
-	// ComponentEditor implementation
+	/**
+	 * Construct a default KillComponentEditor.
+	 */
+	KillComponentEditor()
+	: _component(NULL)
+	{ }
+	
+	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone() const {
 		return ComponentEditorPtr(new KillComponentEditor());
 	}
 	
 	GtkWidget* getWidget() const; 
+	
+	void setComponent(Component* component);
 };
 
 }
