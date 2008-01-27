@@ -40,7 +40,18 @@ public:
 	/**
 	 * Construct a default KillComponentEditor.
 	 */
-	KillComponentEditor();
+	KillComponentEditor()
+	: _component(NULL)
+	{ }
+	
+	/**
+	 * Construct a KillComponentEditor with a Component object to display and
+	 * edit.
+	 * 
+	 * @param component
+	 * The Component to edit.
+	 */
+	KillComponentEditor(Component& component);
 	
 	/**
 	 * Destructor.
@@ -49,13 +60,12 @@ public:
 	
 	/* ComponentEditor implementation */
 	
-	ComponentEditorPtr clone() const {
-		return ComponentEditorPtr(new KillComponentEditor());
+	ComponentEditorPtr clone(Component& component) const {
+		return ComponentEditorPtr(new KillComponentEditor(component));
 	}
 	
 	GtkWidget* getWidget() const; 
-	
-	void setComponent(Component* component);
+
 };
 
 }

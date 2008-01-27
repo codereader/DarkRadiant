@@ -24,6 +24,9 @@ namespace objectives
  * are defined, each of which can provide its ID and its name. Additionally the
  * instances are registered in a map so that Specifier objects can be obtained
  * for a given string name (as provided by a spawnarg).
+ * 
+ * Since the enumeration values are static instances, they must <b>NOT</b> be
+ * referenced during the static initialisation phase by other code.
  */
 class Specifier
 {

@@ -356,7 +356,10 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 		
 		// Change the ComponentEditor
 		self->_componentEditor = 
-			ce::ComponentEditorFactory::create(selectedText);
+			ce::ComponentEditorFactory::create(
+				selectedText,
+				self->_objective.components[idx]
+			);
 		if (self->_componentEditor) 
 		{
 			// Get the widget from the ComponentEditor and show it

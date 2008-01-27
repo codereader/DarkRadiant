@@ -9,6 +9,8 @@
 namespace objectives
 {
 
+class Component;
+
 namespace ce
 {
 
@@ -21,6 +23,7 @@ typedef std::map<std::string, ComponentEditorPtr> ComponentEditorMap;
  */
 class ComponentEditorFactory
 {
+	// Map instance
 	static ComponentEditorMap& getMap();
 	
 public:
@@ -31,11 +34,15 @@ public:
 	 * @param type
 	 * The string type of the ComponentEditor which should be returned.
 	 * 
+	 * @param component
+	 * A reference to the Component that the new ComponentEditor will edit.
+	 * 
 	 * @return
 	 * A shared pointer to a ComponentEditor of the requested type. If the
 	 * requested type does not exist, a NULL shared pointer is returned.
 	 */
-	static ComponentEditorPtr create(const std::string& type);
+	static ComponentEditorPtr create(const std::string& type,
+									 objectives::Component& component);
 	
 	/**
 	 * Register a named ComponentEditor subclass. This is intended for use by
