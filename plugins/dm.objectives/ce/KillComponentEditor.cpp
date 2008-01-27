@@ -9,11 +9,16 @@ namespace ce
 {
 
 // Registration helper
-KillComponentEditor::RegistrationHelper KillComponentEditor::registrationHelper;
+KillComponentEditor::RegHelper KillComponentEditor::regHelper;
 
 GtkWidget* KillComponentEditor::getWidget() const
 {
 	return gtk_label_new("Kill component");
+}
+
+void KillComponentEditor::setComponent(Component* component)
+{
+	_component = component;
 }
 
 }
