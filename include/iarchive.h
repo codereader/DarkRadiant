@@ -22,6 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IARCHIVE_H)
 #define INCLUDED_IARCHIVE_H
 
+/**
+ * \file iarchive.h
+ * Types relating to the use of ZIP archives (PK4 files) and their contents.
+ * \ingroup vfs
+ */
+
 #include "ModResource.h"
 
 #include "imodule.h"
@@ -33,7 +39,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class InputStream;
 
-/// \brief A file opened in binary mode.
+/**
+ * A file opened in binary mode.
+ * \ingroup vfs
+ */
 class ArchiveFile
 {
 public:
@@ -49,7 +58,10 @@ public:
 };
 typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
 
-/// \brief A file opened in text mode.
+/**
+ * A file opened in text mode.
+ * \ingroup vfs
+ */
 class ArchiveTextFile : 
 	public ModResource
 {
@@ -67,6 +79,11 @@ typedef boost::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
 
 class CustomArchiveVisitor;
 
+/**
+ * Representation of a ZIP archive.
+ * 
+ * \ingroup vfs
+ */
 class Archive
 {
 public:
@@ -138,6 +155,11 @@ public:
 
 const std::string MODULE_ARCHIVE("Archive");
 
+/**
+ * Loader module for ZIP archives.
+ * 
+ * \ingroup vfs
+ */
 class ArchiveLoader :
 	public RegisterableModule
 {
@@ -149,6 +171,11 @@ public:
     virtual const std::string& getExtension() = 0;
 };
 
+/**
+ * Return an ArchiveLoader module for the specified filetype.
+ * 
+ * \ingroup vfs
+ */
 inline ArchiveLoader& GlobalArchive(const std::string& fileType) {
 	// Cache the reference locally
 	static ArchiveLoader& _archive(
