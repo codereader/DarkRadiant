@@ -4,8 +4,6 @@
 #include <glib/gtypes.h>
 typedef struct _GtkAdjustment GtkAdjustment;
 
-/** greebo: This is legacy stuff I found in texwindow.cpp, I moved it here.
- */
 namespace gtkutil {
 
 class DeferredAdjustment

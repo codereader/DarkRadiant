@@ -6,10 +6,6 @@
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkvbox.h>
 
-/** greebo: A ControlButton is a button containing a single icon
- * that keeps periodically calling the "clicked" event as long as the user
- * keeps the mouse button pressed. (Used for Surface Inspector controls, for ex.)
- */
 namespace gtkutil {
 	
 	namespace {
@@ -19,6 +15,11 @@ namespace gtkutil {
 		const int DELAY_PERIODIC = 20;
 	}
 
+/** 
+ * A button containing a single icon that keeps periodically emitting the 
+ * "clicked" event as long as the user keeps the mouse button pressed. 
+ * Used for Surface Inspector controls, for example.
+ */
 class ControlButton
 {
 	// Icon pixbuf
