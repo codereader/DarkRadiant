@@ -9,7 +9,12 @@ namespace gtkutil {
  * A heap-allocated subclass of PersistentTransientWindow which self-destructs
  * when the underlying window is destroyed.
  * 
- * TODO: Deprecated, do not use in new code.
+ * @deprecated
+ * Use PersistentTransientWindow or BlockingTransientWindow instead.
+ * 
+ * @todo 
+ * Remove this class and rewrite the two classes which depend on it
+ * (ui::FindAndReplaceShader and ui::MapInfoDialog).
  */
 class DialogWindow :
 	public PersistentTransientWindow

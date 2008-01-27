@@ -5,11 +5,20 @@
 
 namespace gtkutil
 {
-	
-/** Container that left-aligns a child widget, with configurable indentation
- * and fill ratio.
+
+/**
+ * \addtogroup gtkutil GTK utility library
+ * 
+ * \namespace gtkutil
+ * Helper classes and functions to achieve common GTK-related tasks, including
+ * many useful compound widgets with C++-style interfaces.
+ * \ingroup gtkutil
  */
 
+/** 
+ * Container that left-aligns a child widget, with configurable indentation
+ * and fill ratio.
+ */
 class LeftAlignment
 {
 	// The alignment widget
@@ -17,7 +26,9 @@ class LeftAlignment
 	
 public:
 
-	/** Constructor. Accepts the child widget to align.
+	/** 
+	 * Construct a LeftAlignment displaying the given widget with the given
+	 * indentation parameters.
 	 * 
 	 * @param w
 	 * The child widget.
@@ -37,7 +48,8 @@ public:
 		gtk_container_add(GTK_CONTAINER(_widget), w);
 	}
 	
-	/** Operator cast to GtkWidget*. 
+	/** 
+	 * Operator cast to GtkWidget*. 
 	 */
 	operator GtkWidget* () {
 		return _widget;
