@@ -1,21 +1,27 @@
-#ifndef DIFFICULTY_EDITOR_H_
-#define DIFFICULTY_EDITOR_H_
+#ifndef DIFFICULTY_DIALOG_H_
+#define DIFFICULTY_DIALOG_H_
 
 #include "ientity.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
+// Forward decl.
+typedef struct _GtkNotebook GtkNotebook;
+
 namespace ui {
 
-class DifficultyEditor;
-typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
+class DifficultyDialog;
+typedef boost::shared_ptr<DifficultyDialog> DifficultyDialogPtr;
 
-class DifficultyEditor :
+class DifficultyDialog :
 	public gtkutil::BlockingTransientWindow
 {
 	// The overall dialog vbox (used to quickly disable the whole dialog)
 	GtkWidget* _dialogVBox;
+
+	GtkNotebook* _notebook;
+	std::vector<GtkWidget*> _difficultyLabels;
 	
 	// The close button to toggle the view
 	GtkWidget* _closeButton;
@@ -24,7 +30,7 @@ class DifficultyEditor :
 	gtkutil::WindowPosition _windowPosition;
 	
 public:
-	DifficultyEditor();
+	DifficultyDialog();
 	
 	// Command target to toggle the dialog
 	static void showDialog();
@@ -41,15 +47,15 @@ private:
 	GtkWidget* createButtons(); 	// Dialog buttons
 	
 	// Button callbacks
-	static void onSave(GtkWidget* button, DifficultyEditor* self);
-	static void onClose(GtkWidget* button, DifficultyEditor* self);
+	static void onSave(GtkWidget* button, DifficultyDialog* self);
+	static void onClose(GtkWidget* button, DifficultyDialog* self);
 
 	// The keypress handler for catching the keys in the treeview
 	static gboolean onWindowKeyPress(
-		GtkWidget* dialog, GdkEventKey* event, DifficultyEditor* self);
+		GtkWidget* dialog, GdkEventKey* event, DifficultyDialog* self);
 
-}; // class DifficultyEditor
+}; // class DifficultyDialog
 
 } // namespace ui
 
-#endif /*DIFFICULTY_EDITOR_H_*/
+#endif /*DIFFICULTY_DIALOG_H_*/

@@ -11,7 +11,7 @@
 #include "stream/textstream.h"
 #include "generic/callback.h"
 
-#include "DifficultyEditor.h"
+#include "DifficultyDialog.h"
 
 /**
  * Module to register the menu commands for the Difficulty Editor class.
@@ -43,7 +43,7 @@ public:
 		// Add the callback event
 		GlobalEventManager().addCommand(
 			"DifficultyEditor", 
-			FreeCaller<ui::DifficultyEditor::showDialog>()
+			FreeCaller<ui::DifficultyDialog::showDialog>()
 		);
 	
 		// Add the menu item
