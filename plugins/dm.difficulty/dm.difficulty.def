@@ -1,0 +1,7 @@
+; dm.difficulty.def : Declares the module parameters for the DLL.
+
+LIBRARY      "dm.difficulty"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1
