@@ -6,6 +6,8 @@
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
+#include "DifficultyEditor.h"
+
 // Forward decl.
 typedef struct _GtkNotebook GtkNotebook;
 
@@ -14,6 +16,13 @@ namespace ui {
 class DifficultyDialog;
 typedef boost::shared_ptr<DifficultyDialog> DifficultyDialogPtr;
 
+/**
+ * greebo: A difficulty dialog is a modal top-level window which provides
+ *         views and controls facilitating the editing of difficulty settings.
+ *
+ * Maintains a certain number of DifficultyEditors which get packed into the
+ * notebook tabs.
+ */
 class DifficultyDialog :
 	public gtkutil::BlockingTransientWindow
 {
