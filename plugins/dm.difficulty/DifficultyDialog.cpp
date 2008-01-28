@@ -70,6 +70,22 @@ void DifficultyDialog::_preShow() {
 
 }
 
+void DifficultyDialog::createDifficultyEditors() {
+	_editors.push_back(DifficultyEditorPtr(new DifficultyEditor("Easy")));
+	_editors.push_back(DifficultyEditorPtr(new DifficultyEditor("Medium")));
+	_editors.push_back(DifficultyEditorPtr(new DifficultyEditor("Hard")));
+
+	for (std::size_t i = 0; i < _editors.size(); i++) {
+		DifficultyEditor& editor = *_editors[i];
+
+		GtkWidget* label = editor.getNotebookLabel();
+		// Show the widgets before using them as label, they won't appear otherwise	
+		gtk_widget_show_all(label);
+
+		gtk_notebook_append_page(_notebook, editor.getEditor(), label);
+	}
+}
+
 void DifficultyDialog::populateWindow() {
 	// Create the overall vbox
 	_dialogVBox = gtk_vbox_new(FALSE, 12);
@@ -79,44 +95,8 @@ void DifficultyDialog::populateWindow() {
 	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
 	
-	_difficultyLabels.push_back(gtk_label_new("Easy"));
-	_difficultyLabels.push_back(gtk_label_new("Medium"));
-	_difficultyLabels.push_back(gtk_label_new("Hard"));
-
-	// The tab label items (icon + label)
-	GtkWidget* diff0LabelHBox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(
-    	GTK_BOX(diff0LabelHBox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(DIFF_0_ICON)), 
-    	FALSE, FALSE, 3
-    );
-	gtk_box_pack_start(GTK_BOX(diff0LabelHBox), _difficultyLabels[0], FALSE, FALSE, 3);
-	
-	GtkWidget* diff1LabelHBox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(
-    	GTK_BOX(diff1LabelHBox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(DIFF_1_ICON)), 
-    	FALSE, FALSE, 0
-    );
-	gtk_box_pack_start(GTK_BOX(diff1LabelHBox), _difficultyLabels[1], FALSE, FALSE, 3);
-	
-	GtkWidget* diff2LabelHBox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(
-    	GTK_BOX(diff2LabelHBox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(DIFF_2_ICON)), 
-    	FALSE, FALSE, 0
-    );
-	gtk_box_pack_start(GTK_BOX(diff2LabelHBox), _difficultyLabels[2], FALSE, FALSE, 3);
-	
-	// Show the widgets before using them as label, they won't appear otherwise
-	gtk_widget_show_all(diff0LabelHBox);
-	gtk_widget_show_all(diff1LabelHBox);
-	gtk_widget_show_all(diff2LabelHBox);
-	
-	// Cast the helper class to a widget and add it to the notebook page
-	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), diff0LabelHBox);
-	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), diff1LabelHBox);
-	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), diff2LabelHBox);
+	// Create and pack the editors
+	createDifficultyEditors();
 
 	// Pack in dialog buttons
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
