@@ -220,11 +220,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\dm.difficulty\DifficultyEditor.cpp"
+				RelativePath="..\..\plugins\dm.difficulty\DifficultyDialog.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\dm.difficulty\DifficultyEditor.h"
+				RelativePath="..\..\plugins\dm.difficulty\DifficultyDialog.h"
 				>
 			</File>
 			<File

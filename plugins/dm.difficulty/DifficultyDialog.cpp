@@ -1,4 +1,4 @@
-#include "DifficultyEditor.h"
+#include "DifficultyDialog.h"
 
 #include "iregistry.h"
 #include "iundo.h"
@@ -15,11 +15,15 @@ namespace ui {
 namespace {
 	const std::string WINDOW_TITLE = "Difficulty Editor";
 	
-	const std::string RKEY_ROOT = "user/ui/difficultyEditor/";
+	const std::string RKEY_ROOT = "user/ui/difficultyDialog/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+
+	const std::string DIFF_0_ICON = "sr_icon_custom.png";
+	const std::string DIFF_1_ICON = "sr_icon_custom.png";
+	const std::string DIFF_2_ICON = "sr_icon_custom.png";
 }
 
-DifficultyEditor::DifficultyEditor() :
+DifficultyDialog::DifficultyDialog() :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow())
 {
 	// Set the default border width in accordance to the HIG
@@ -47,7 +51,7 @@ DifficultyEditor::DifficultyEditor() :
 	show();
 }
 
-void DifficultyEditor::_preHide() {
+void DifficultyDialog::_preHide() {
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -58,22 +62,68 @@ void DifficultyEditor::_preHide() {
 	_windowPosition.saveToNode(node);
 }
 
-void DifficultyEditor::_preShow() {
+void DifficultyDialog::_preShow() {
 	// Restore the position
 	_windowPosition.applyPosition();
+
+	// TODO: Load difficulty settings here
+
 }
 
-void DifficultyEditor::populateWindow() {
+void DifficultyDialog::populateWindow() {
 	// Create the overall vbox
 	_dialogVBox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
 	
+	// Create the notebook and add it to the vbox
+	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
+	
+	_difficultyLabels.push_back(gtk_label_new("Easy"));
+	_difficultyLabels.push_back(gtk_label_new("Medium"));
+	_difficultyLabels.push_back(gtk_label_new("Hard"));
+
+	// The tab label items (icon + label)
+	GtkWidget* diff0LabelHBox = gtk_hbox_new(FALSE, 3);
+	gtk_box_pack_start(
+    	GTK_BOX(diff0LabelHBox), 
+    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(DIFF_0_ICON)), 
+    	FALSE, FALSE, 3
+    );
+	gtk_box_pack_start(GTK_BOX(diff0LabelHBox), _difficultyLabels[0], FALSE, FALSE, 3);
+	
+	GtkWidget* diff1LabelHBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(
+    	GTK_BOX(diff1LabelHBox), 
+    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(DIFF_1_ICON)), 
+    	FALSE, FALSE, 0
+    );
+	gtk_box_pack_start(GTK_BOX(diff1LabelHBox), _difficultyLabels[1], FALSE, FALSE, 3);
+	
+	GtkWidget* diff2LabelHBox = gtk_hbox_new(FALSE, 0);
+	gtk_box_pack_start(
+    	GTK_BOX(diff2LabelHBox), 
+    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(DIFF_2_ICON)), 
+    	FALSE, FALSE, 0
+    );
+	gtk_box_pack_start(GTK_BOX(diff2LabelHBox), _difficultyLabels[2], FALSE, FALSE, 3);
+	
+	// Show the widgets before using them as label, they won't appear otherwise
+	gtk_widget_show_all(diff0LabelHBox);
+	gtk_widget_show_all(diff1LabelHBox);
+	gtk_widget_show_all(diff2LabelHBox);
+	
+	// Cast the helper class to a widget and add it to the notebook page
+	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), diff0LabelHBox);
+	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), diff1LabelHBox);
+	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), diff2LabelHBox);
+
 	// Pack in dialog buttons
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
 }
 
 // Lower dialog buttons
-GtkWidget* DifficultyEditor::createButtons() {
+GtkWidget* DifficultyDialog::createButtons() {
 
 	GtkWidget* buttonHBox = gtk_hbox_new(TRUE, 12);
 	
@@ -91,7 +141,7 @@ GtkWidget* DifficultyEditor::createButtons() {
 	return gtkutil::RightAlignment(buttonHBox);	
 }
 
-void DifficultyEditor::save() {
+void DifficultyDialog::save() {
 	// Consistency check can go here
 	
 	// Scoped undo object
@@ -101,17 +151,17 @@ void DifficultyEditor::save() {
 	// TODO
 }
 
-void DifficultyEditor::onSave(GtkWidget* button, DifficultyEditor* self) {
+void DifficultyDialog::onSave(GtkWidget* button, DifficultyDialog* self) {
 	self->save();
 	self->destroy();
 }
 
-void DifficultyEditor::onClose(GtkWidget* button, DifficultyEditor* self) {
+void DifficultyDialog::onClose(GtkWidget* button, DifficultyDialog* self) {
 	self->destroy();
 }
 
-gboolean DifficultyEditor::onWindowKeyPress(
-	GtkWidget* dialog, GdkEventKey* event, DifficultyEditor* self)
+gboolean DifficultyDialog::onWindowKeyPress(
+	GtkWidget* dialog, GdkEventKey* event, DifficultyDialog* self)
 {
 	if (event->keyval == GDK_Escape) {
 		self->destroy();
@@ -124,9 +174,9 @@ gboolean DifficultyEditor::onWindowKeyPress(
 }
 
 // Static command target
-void DifficultyEditor::showDialog() {
+void DifficultyDialog::showDialog() {
 	// Construct a new instance, this enters the main loop
-	DifficultyEditor _editor;
+	DifficultyDialog _editor;
 }
 
 } // namespace ui
