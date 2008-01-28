@@ -1,6 +1,7 @@
 #ifndef DIFFICULTY_EDITOR_H_
 #define DIFFICULTY_EDITOR_H_
 
+#include <string>
 #include <boost/shared_ptr.hpp>
 
 typedef struct _GtkWidget GtkWidget;
@@ -18,14 +19,22 @@ class DifficultyEditor
 	// TODO DifficultySettings& _settings;
 
 	GtkWidget* _editor;
-	GtkWidget* _label;
+
+	GtkWidget* _labelHBox;
+	GtkWidget* _label; // the actual label
 
 public:
+	// Constructor, pass the label
+	DifficultyEditor(const std::string& label);
+
 	// Returns the actual editor widget (contains all controls and views)
-	GtkWidget* GetEditor();
+	GtkWidget* getEditor();
 
 	// Returns the label for packing into a GtkNotebook tab.
-	GtkWidget* GetNotebookLabel();
+	GtkWidget* getNotebookLabel();
+
+	// Set the title label of this editor pane
+	void setLabel(const std::string& label);
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 

@@ -30,7 +30,7 @@ class DifficultyDialog :
 	GtkWidget* _dialogVBox;
 
 	GtkNotebook* _notebook;
-	std::vector<GtkWidget*> _difficultyLabels;
+	std::vector<DifficultyEditorPtr> _editors;
 	
 	// The close button to toggle the view
 	GtkWidget* _closeButton;
@@ -53,6 +53,7 @@ private:
 
 	/* WIDGET POPULATION */
 	void populateWindow(); 			// Main window
+	void createDifficultyEditors();
 	GtkWidget* createButtons(); 	// Dialog buttons
 	
 	// Button callbacks
