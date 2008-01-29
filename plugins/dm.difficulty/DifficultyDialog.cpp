@@ -17,10 +17,6 @@ namespace {
 	
 	const std::string RKEY_ROOT = "user/ui/difficultyDialog/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-
-	const std::string DIFF_0_ICON = "sr_icon_custom.png";
-	const std::string DIFF_1_ICON = "sr_icon_custom.png";
-	const std::string DIFF_2_ICON = "sr_icon_custom.png";
 }
 
 DifficultyDialog::DifficultyDialog() :
