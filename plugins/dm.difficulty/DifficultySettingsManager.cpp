@@ -7,7 +7,7 @@
 namespace difficulty {
 
 DifficultySettingsPtr DifficultySettingsManager::getSettings(int level) {
-	for (int i = 0; i < _settings.size(); i++) {
+	for (std::size_t i = 0; i < _settings.size(); i++) {
 		if (_settings[i]->getLevel() == level) {
 			return _settings[i];
 		}
