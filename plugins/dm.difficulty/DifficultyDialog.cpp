@@ -62,14 +62,15 @@ void DifficultyDialog::_preShow() {
 	// Restore the position
 	_windowPosition.applyPosition();
 
-	// TODO: Load difficulty settings here
-
+	// Load the settings
+	_settingsManager.loadSettings();
 }
 
 void DifficultyDialog::createDifficultyEditors() {
-	_editors.push_back(DifficultyEditorPtr(new DifficultyEditor("Easy")));
-	_editors.push_back(DifficultyEditorPtr(new DifficultyEditor("Medium")));
-	_editors.push_back(DifficultyEditorPtr(new DifficultyEditor("Hard")));
+	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
+	for (int i = 0; i < numLevels; i++) {
+		_editors.push_back(DifficultyEditorPtr(new DifficultyEditor(intToStr(i))));
+	}
 
 	for (std::size_t i = 0; i < _editors.size(); i++) {
 		DifficultyEditor& editor = *_editors[i];

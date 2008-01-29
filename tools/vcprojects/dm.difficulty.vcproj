@@ -263,6 +263,22 @@
 				RelativePath="..\..\plugins\dm.difficulty\plugin.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\plugins\dm.difficulty\Setting.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.difficulty\Setting.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.difficulty\SettingsLoaderEClass.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.difficulty\SettingsLoaderEClass.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\dm.difficulty\dm.difficulty.def"

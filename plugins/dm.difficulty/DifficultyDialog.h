@@ -7,6 +7,7 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 
 #include "DifficultyEditor.h"
+#include "DifficultySettingsManager.h"
 
 // Forward decl.
 typedef struct _GtkNotebook GtkNotebook;
@@ -30,6 +31,10 @@ class DifficultyDialog :
 	GtkWidget* _dialogVBox;
 
 	GtkNotebook* _notebook;
+
+	// The difficulty settings manager
+	difficulty::DifficultySettingsManager _settingsManager;
+
 	std::vector<DifficultyEditorPtr> _editors;
 	
 	// The close button to toggle the view

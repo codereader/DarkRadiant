@@ -1,5 +1,7 @@
 #include "DifficultySettings.h"
 
+#include "SettingsLoaderEClass.h"
+
 namespace difficulty {
 
 DifficultySettings::DifficultySettings(int level) :
@@ -11,11 +13,13 @@ int DifficultySettings::getLevel() const {
 }
 
 void DifficultySettings::clear() {
-
+	_settings.clear();
 }
 
 void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
-	// TODO (copy from darkmod_src)
+	// Instantiate a helper class and traverse the eclass
+	SettingsLoaderEClass visitor(def, *this);
+	def->forEachClassAttribute(visitor);
 }
 
 } // namespace difficulty
