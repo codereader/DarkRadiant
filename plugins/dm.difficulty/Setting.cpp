@@ -9,6 +9,8 @@ namespace difficulty {
 	}
 
 void Setting::parseAppType() {
+	appType = EAssign;
+
 	if (!argument.empty())
 	{
 		// Check for ignore argument
