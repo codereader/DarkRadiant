@@ -1,5 +1,6 @@
 #include "DifficultySettings.h"
 
+#include <gtk/gtktreestore.h>
 #include "string/string.h"
 
 namespace difficulty {
@@ -14,6 +15,19 @@ int DifficultySettings::getLevel() const {
 
 void DifficultySettings::clear() {
 	_settings.clear();
+}
+
+void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
+	gtk_tree_store_clear(store);
+
+	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
+		const std::string& className = i->first;
+		const Setting& setting = *i->second;
+
+		GtkTreeIter iter;
+		gtk_tree_store_append(store, &iter, NULL);
+		gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);
+	}
 }
 
 void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {

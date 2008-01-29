@@ -7,6 +7,8 @@
 
 #include "Setting.h"
 
+typedef struct _GtkTreeStore GtkTreeStore;
+
 namespace difficulty {
 
 class DifficultySettings
@@ -28,6 +30,9 @@ public:
 
 	// Empties the internal structures
 	void clear();
+
+	// Loads the data into the given treestore
+	void updateTreeModel(GtkTreeStore* store);
 
 	// Loads all settings (matching the internal _level) from the given entityDef.
 	void parseFromEntityDef(const IEntityClassPtr& def);

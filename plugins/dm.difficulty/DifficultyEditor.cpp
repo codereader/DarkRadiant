@@ -3,6 +3,7 @@
 #include "iradiant.h"
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/TextColumn.h"
 
 namespace ui {
 
@@ -49,7 +50,7 @@ void DifficultyEditor::setLabel(const std::string& label) {
 }
 
 void DifficultyEditor::updateTreeModel() {
-	
+	_settings->updateTreeModel(_settingsStore);
 }
 
 void DifficultyEditor::populateWindow() {
@@ -58,6 +59,9 @@ void DifficultyEditor::populateWindow() {
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_settingsStore))
 	);
 	gtk_widget_set_size_request(GTK_WIDGET(_settingsView), TREE_VIEW_MIN_WIDTH, -1);
+
+	// Add columns to this view
+	gtk_tree_view_append_column(_settingsView, gtkutil::TextColumn("Classname", 0));
 
 	// Second, create the editing widgets
 
