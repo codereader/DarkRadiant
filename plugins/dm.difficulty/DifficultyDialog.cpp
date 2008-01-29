@@ -22,6 +22,9 @@ namespace {
 DifficultyDialog::DifficultyDialog() :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow())
 {
+	// Load the settings
+	_settingsManager.loadSettings();
+
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -61,9 +64,6 @@ void DifficultyDialog::_preHide() {
 void DifficultyDialog::_preShow() {
 	// Restore the position
 	_windowPosition.applyPosition();
-
-	// Load the settings
-	_settingsManager.loadSettings();
 }
 
 void DifficultyDialog::createDifficultyEditors() {

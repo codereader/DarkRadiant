@@ -7,6 +7,8 @@
 #include "DifficultySettings.h"
 
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeView GtkTreeView;
 
 namespace ui {
 
@@ -25,8 +27,14 @@ class DifficultyEditor
 	GtkWidget* _labelHBox;
 	GtkWidget* _label; // the actual label
 
+	GtkTreeStore* _settingsStore;
+	GtkTreeView* _settingsView;
+
 public:
-	// Constructor, pass the label
+	/**
+	 * greebo: Pass the label string and the difficulty settings object to the
+	 *         constructor. The DifficultySettings should be populated first.
+	 */
 	DifficultyEditor(const std::string& label, const difficulty::DifficultySettingsPtr& settings);
 
 	// Returns the actual editor widget (contains all controls and views)
@@ -37,6 +45,13 @@ public:
 
 	// Set the title label of this editor pane
 	void setLabel(const std::string& label);
+
+private:
+	// Reloads the treedata from the difficulty settings
+	void updateTreeModel();
+
+	// Creates the widgets
+	void populateWindow();
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 
