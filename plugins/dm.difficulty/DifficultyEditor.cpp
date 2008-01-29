@@ -1,19 +1,20 @@
 #include "DifficultyEditor.h"
 
 #include "iradiant.h"
-#include <gtk/gtkhbox.h>
-#include <gtk/gtklabel.h>
-#include <gtk/gtkimage.h>
+#include <gtk/gtk.h>
+#include "gtkutil/ScrolledFrame.h"
 
 namespace ui {
 
 	namespace {
 		const std::string DIFF_ICON("sr_icon_custom.png");
+		const int TREE_VIEW_MIN_WIDTH = 400;
 	}
 
 DifficultyEditor::DifficultyEditor(const std::string& label, 
 								   const difficulty::DifficultySettingsPtr& settings) :
-	_settings(settings)
+	_settings(settings),
+	_settingsStore(gtk_tree_store_new(1, G_TYPE_STRING, -1))
 {
 	// The tab label items (icon + label)
 	_labelHBox = gtk_hbox_new(FALSE, 3);
@@ -27,7 +28,11 @@ DifficultyEditor::DifficultyEditor(const std::string& label,
 	gtk_box_pack_start(GTK_BOX(_labelHBox), _label, FALSE, FALSE, 3);
 
 	// The actual editor pane
-	_editor = gtk_hbox_new(FALSE, 3);
+	_editor = gtk_vbox_new(FALSE, 12);
+
+	updateTreeModel();
+
+	populateWindow();
 }
 
 GtkWidget* DifficultyEditor::getEditor() {
@@ -41,6 +46,27 @@ GtkWidget* DifficultyEditor::getNotebookLabel() {
 
 void DifficultyEditor::setLabel(const std::string& label) {
 	gtk_label_set_markup(GTK_LABEL(_label), label.c_str());
+}
+
+void DifficultyEditor::updateTreeModel() {
+	
+}
+
+void DifficultyEditor::populateWindow() {
+	// First, create the treeview
+	_settingsView = GTK_TREE_VIEW(
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_settingsStore))
+	);
+	gtk_widget_set_size_request(GTK_WIDGET(_settingsView), TREE_VIEW_MIN_WIDTH, -1);
+
+	// Second, create the editing widgets
+
+	// Pack these two into a paned view
+	GtkWidget* paned = gtk_hpaned_new();
+	gtk_paned_add1(GTK_PANED(paned), gtkutil::ScrolledFrame(GTK_WIDGET(_settingsView)));
+	gtk_paned_add2(GTK_PANED(paned), gtk_hbox_new(FALSE, 0));
+
+	gtk_box_pack_start(GTK_BOX(_editor), paned, TRUE, TRUE, 0);
 }
 
 } // namespace ui
