@@ -6,12 +6,6 @@
 
 namespace difficulty {
 
-	namespace {
-		const std::string RKEY_DIFFICULTY_LEVELS("game/difficulty/numLevels");
-		const std::string RKEY_DIFFICULTY_ENTITYDEF_DEFAULT("game/difficulty/defaultSettingsEclass");
-		const std::string RKEY_DIFFICULTY_ENTITYDEF_MAP("game/difficulty/mapSettingsEclass");
-	}
-
 void DifficultySettingsManager::loadSettings() {
 	loadDefaultSettings();
 	loadMapSettings();
@@ -19,7 +13,9 @@ void DifficultySettingsManager::loadSettings() {
 
 void DifficultySettingsManager::loadDefaultSettings() {
 	// Try to lookup the given entityDef
-	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(RKEY_DIFFICULTY_ENTITYDEF_DEFAULT);
+	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(
+		GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_DEFAULT)
+	);
 
 	if (eclass == NULL) {
 		globalErrorStream() << "Could not find default difficulty settings entityDef.\n";
