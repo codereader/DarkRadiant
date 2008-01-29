@@ -236,6 +236,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.difficulty\DifficultyEntity.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.difficulty\DifficultyEntity.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.difficulty\DifficultySettings.cpp"
 				>
 			</File>
