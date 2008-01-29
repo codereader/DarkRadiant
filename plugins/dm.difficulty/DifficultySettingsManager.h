@@ -26,6 +26,9 @@ public:
 	// Loads all settings from the entityDefs and the currently loaded map.
 	void loadSettings();
 
+	// Get the settings object for the given difficulty <level>
+	DifficultySettingsPtr getSettings(int level);
+
 private:
 	void loadDefaultSettings();
 	void loadMapSettings();

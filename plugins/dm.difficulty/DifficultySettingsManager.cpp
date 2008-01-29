@@ -6,6 +6,15 @@
 
 namespace difficulty {
 
+DifficultySettingsPtr DifficultySettingsManager::getSettings(int level) {
+	for (int i = 0; i < _settings.size(); i++) {
+		if (_settings[i]->getLevel() == level) {
+			return _settings[i];
+		}
+	}
+	return DifficultySettingsPtr();
+}
+
 void DifficultySettingsManager::loadSettings() {
 	loadDefaultSettings();
 	loadMapSettings();
