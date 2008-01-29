@@ -279,4 +279,9 @@
 		<responseEffectPrefix value="effect_" />
 		<selfEntity value="_SELF" />
 	</stimResponseSystem>
+	<difficulty>
+		<numLevels value="3" />
+		<defaultSettingsEclass value="atdm:difficulty_settings_default" />
+		<mapSettingsEclass value="atdm:difficulty_settings" />
+	</difficulty>
 </game>
