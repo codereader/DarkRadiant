@@ -4,6 +4,8 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+#include "DifficultySettings.h"
+
 typedef struct _GtkWidget GtkWidget;
 
 namespace ui {
@@ -16,7 +18,7 @@ namespace ui {
 class DifficultyEditor
 {
 	// The actual settings we're working with
-	// TODO DifficultySettings& _settings;
+	difficulty::DifficultySettingsPtr _settings;
 
 	GtkWidget* _editor;
 
@@ -25,7 +27,7 @@ class DifficultyEditor
 
 public:
 	// Constructor, pass the label
-	DifficultyEditor(const std::string& label);
+	DifficultyEditor(const std::string& label, const difficulty::DifficultySettingsPtr& settings);
 
 	// Returns the actual editor widget (contains all controls and views)
 	GtkWidget* getEditor();

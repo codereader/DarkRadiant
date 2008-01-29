@@ -11,7 +11,10 @@ namespace ui {
 		const std::string DIFF_ICON("sr_icon_custom.png");
 	}
 
-DifficultyEditor::DifficultyEditor(const std::string& label) {
+DifficultyEditor::DifficultyEditor(const std::string& label, 
+								   const difficulty::DifficultySettingsPtr& settings) :
+	_settings(settings)
+{
 	// The tab label items (icon + label)
 	_labelHBox = gtk_hbox_new(FALSE, 3);
 	_label = gtk_label_new(label.c_str());

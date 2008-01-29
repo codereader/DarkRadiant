@@ -69,7 +69,14 @@ void DifficultyDialog::_preShow() {
 void DifficultyDialog::createDifficultyEditors() {
 	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
 	for (int i = 0; i < numLevels; i++) {
-		_editors.push_back(DifficultyEditorPtr(new DifficultyEditor(intToStr(i))));
+		// Acquire the settings object
+		difficulty::DifficultySettingsPtr settings = _settingsManager.getSettings(i);
+
+		if (settings != NULL) {
+			_editors.push_back(
+				DifficultyEditorPtr(new DifficultyEditor(intToStr(i), settings))
+			);
+		}
 	}
 
 	for (std::size_t i = 0; i < _editors.size(); i++) {
