@@ -137,7 +137,36 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 	std::string diffPrefix = "diff_" + intToStr(_level) + "_";
 	std::string prefix = diffPrefix + "change_";
 
+	Entity::KeyValuePairs spawnargs = entity->getKeyValuePairs(prefix);
 
+	for (Entity::KeyValuePairs::iterator i = spawnargs.begin();
+		 i != spawnargs.end(); i++)
+	{
+		const std::string& key = i->first;
+		const std::string& value = i->second;
+
+		if (value.empty()) {
+			continue; // empty spawnarg attribute => invalid
+		}
+
+		// Get the index from the string's tail
+		std::string indexStr = key.substr(prefix.length());
+		int index = strToInt(indexStr);
+
+		SettingPtr setting(new Setting);
+		setting->className = entity->getKeyValue(diffPrefix + "class_" + indexStr);
+		setting->spawnArg = value;
+		setting->argument = entity->getKeyValue(diffPrefix + "arg_" + indexStr);
+
+		// This has been parsed from the default entityDef
+		setting->isDefault = false;
+
+		// Interpret/parse the argument string
+		setting->parseAppType();
+
+		// Insert the parsed setting into our local map
+		_settings.insert(SettingsMap::value_type(setting->className, setting));
+	}
 }
 
 } // namespace difficulty
