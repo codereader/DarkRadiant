@@ -2,6 +2,7 @@
 
 #include <gtk/gtktreestore.h>
 #include "string/string.h"
+#include "gtkutil/TreeModel.h"
 
 namespace difficulty {
 
@@ -15,6 +16,7 @@ int DifficultySettings::getLevel() const {
 
 void DifficultySettings::clear() {
 	_settings.clear();
+	_iterMap.clear();
 }
 
 void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
@@ -24,10 +26,40 @@ void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 		const std::string& className = i->first;
 		const Setting& setting = *i->second;
 
-		GtkTreeIter iter;
+		// Try to look up the classname in the tree
+		TreeIterMap::iterator found = _iterMap.find(className);
+		if (found != _iterMap.end()) {
+			// Classname already exists in the tree, sort this below it
+			GtkTreeIter iter;
+			gtk_tree_store_append(store, &iter, found->second);
+			gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);
+		}
+		else {
+			// Classname doesn't exist yet, create it
+			GtkTreeIter* iter = insertClassNameIntoTree(store, className);
+		}
+
+		/*GtkTreeIter iter;
 		gtk_tree_store_append(store, &iter, NULL);
-		gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);
+		gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);*/
 	}
+}
+
+GtkTreeIter* DifficultySettings::insertClassNameIntoTree(
+	GtkTreeStore* store, const std::string& className)
+{
+	gtkutil::TreeModel::SelectionFinder finder(className, 0);
+
+	gtk_tree_model_foreach(GTK_TREE_MODEL(store), 
+						   gtkutil::TreeModel::SelectionFinder::forEach,
+						   &finder);
+
+	if (finder.getPath() != NULL)
+	{
+		
+	}
+
+	return NULL;
 }
 
 void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
