@@ -15,7 +15,10 @@ namespace ui {
 DifficultyEditor::DifficultyEditor(const std::string& label, 
 								   const difficulty::DifficultySettingsPtr& settings) :
 	_settings(settings),
-	_settingsStore(gtk_tree_store_new(1, G_TYPE_STRING, -1))
+	_settingsStore(gtk_tree_store_new(NUM_SETTINGS_COLS, 
+									  G_TYPE_STRING, // description
+									  G_TYPE_STRING, // text colour
+									  -1))
 {
 	// The tab label items (icon + label)
 	_labelHBox = gtk_hbox_new(FALSE, 3);
@@ -61,7 +64,21 @@ void DifficultyEditor::populateWindow() {
 	gtk_widget_set_size_request(GTK_WIDGET(_settingsView), TREE_VIEW_MIN_WIDTH, -1);
 
 	// Add columns to this view
-	gtk_tree_view_append_column(_settingsView, gtkutil::TextColumn("Classname", 0));
+	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
+
+	GtkTreeViewColumn* settingCol = gtk_tree_view_column_new();
+	gtk_tree_view_column_pack_start(settingCol, textRenderer, FALSE);
+
+    gtk_tree_view_column_set_title(settingCol, "Setting");
+	gtk_tree_view_column_set_sizing(settingCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_column_set_spacing(settingCol, 3);
+
+	gtk_tree_view_append_column(_settingsView, settingCol);
+
+	gtk_tree_view_column_set_attributes(settingCol, textRenderer,
+                                        "text", COL_DESCRIPTION,
+                                        "foreground", COL_TEXTCOLOUR,
+                                        NULL);
 
 	// Second, create the editing widgets
 

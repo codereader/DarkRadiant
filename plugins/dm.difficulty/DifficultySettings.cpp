@@ -30,7 +30,10 @@ void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 		// Now insert the settings description into the map
 		GtkTreeIter iter;
 		gtk_tree_store_append(store, &iter, &classIter);
-		gtk_tree_store_set(store, &iter, 0, setting.getDescString().c_str(), -1);
+		gtk_tree_store_set(store, &iter, 
+			COL_DESCRIPTION, setting.getDescString().c_str(), 
+			COL_TEXTCOLOUR, setting.isDefault ? "#707070" : "black", 
+			-1);
 	}
 }
 
@@ -88,7 +91,10 @@ GtkTreeIter DifficultySettings::insertClassName(
 {
 	GtkTreeIter iter;
 	gtk_tree_store_append(store, &iter, parent);
-	gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);
+	gtk_tree_store_set(store, &iter, 
+		COL_DESCRIPTION, className.c_str(), 
+		COL_TEXTCOLOUR, "black", 
+		-1);
 
 	return iter;
 }
