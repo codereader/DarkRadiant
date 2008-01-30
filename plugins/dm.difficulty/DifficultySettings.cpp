@@ -25,12 +25,12 @@ void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 		const std::string& className = i->first;
 		const Setting& setting = *i->second;
 
-		GtkTreeIter iter = findOrInsertClassname(store, className);
+		GtkTreeIter classIter = findOrInsertClassname(store, className);
 
-		// Now insert all the settings values into the map
-		/*GtkTreeIter iter;
-		gtk_tree_store_append(store, &iter, NULL);
-		gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);*/
+		// Now insert the settings description into the map
+		GtkTreeIter iter;
+		gtk_tree_store_append(store, &iter, &classIter);
+		gtk_tree_store_set(store, &iter, 0, setting.getDescString().c_str(), -1);
 	}
 }
 
