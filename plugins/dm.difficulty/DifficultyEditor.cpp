@@ -57,6 +57,16 @@ void DifficultyEditor::updateTreeModel() {
 }
 
 void DifficultyEditor::populateWindow() {
+	// Pack the treeview and the editor pane into a GtkPaned
+	GtkWidget* paned = gtk_hpaned_new();
+	gtk_paned_add1(GTK_PANED(paned), createTreeView());
+	gtk_paned_add2(GTK_PANED(paned), createEditingWidgets());
+
+	// Pack the pane into the topmost editor container
+	gtk_box_pack_start(GTK_BOX(_editor), paned, TRUE, TRUE, 0);
+}
+
+GtkWidget* DifficultyEditor::createTreeView() {
 	// First, create the treeview
 	_settingsView = GTK_TREE_VIEW(
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_settingsStore))
@@ -80,14 +90,11 @@ void DifficultyEditor::populateWindow() {
                                         "foreground", COL_TEXTCOLOUR,
                                         NULL);
 
-	// Second, create the editing widgets
+	return gtkutil::ScrolledFrame(GTK_WIDGET(_settingsView));
+}
 
-	// Pack these two into a paned view
-	GtkWidget* paned = gtk_hpaned_new();
-	gtk_paned_add1(GTK_PANED(paned), gtkutil::ScrolledFrame(GTK_WIDGET(_settingsView)));
-	gtk_paned_add2(GTK_PANED(paned), gtk_hbox_new(FALSE, 0));
-
-	gtk_box_pack_start(GTK_BOX(_editor), paned, TRUE, TRUE, 0);
+GtkWidget* DifficultyEditor::createEditingWidgets() {
+	return gtk_hbox_new(FALSE, 0);
 }
 
 } // namespace ui
