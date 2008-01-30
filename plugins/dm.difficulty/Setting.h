@@ -34,6 +34,9 @@ public:
 
 	// Interprets the argument string
 	void parseAppType();
+
+	// Assemble a description string for the contained spawnArg/argument combo.
+	std::string getDescString() const;
 };
 typedef boost::shared_ptr<Setting> SettingPtr;
 
