@@ -52,6 +52,8 @@ private:
 
 	// Creates the widgets
 	void populateWindow();
+	GtkWidget* createTreeView();
+	GtkWidget* createEditingWidgets();
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 
