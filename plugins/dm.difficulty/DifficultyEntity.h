@@ -16,6 +16,7 @@ class DifficultyEntity
 
 public:
 	DifficultyEntity(Entity* source);
+
 };
 typedef boost::shared_ptr<DifficultyEntity> DifficultyEntityPtr;
 

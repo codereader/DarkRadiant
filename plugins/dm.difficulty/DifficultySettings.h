@@ -4,11 +4,9 @@
 #include "ieclass.h"
 #include <map>
 #include <boost/shared_ptr.hpp>
+#include <gtk/gtktreestore.h>
 
 #include "Setting.h"
-
-typedef struct _GtkTreeStore GtkTreeStore;
-typedef struct _GtkTreeIter GtkTreeIter;
 
 namespace difficulty {
 
@@ -23,7 +21,7 @@ class DifficultySettings
 	SettingsMap _settings;
 
 	// This maps classnames to GtkTreeIters, for faster lookup
-	typedef std::map<std::string, GtkTreeIter*> TreeIterMap;
+	typedef std::map<std::string, GtkTreeIter> TreeIterMap;
 	TreeIterMap _iterMap;
 
 public:
@@ -43,8 +41,24 @@ public:
 	void parseFromEntityDef(const IEntityClassPtr& def);
 
 private:
-	// Inserts the given classname into the given TreeModel, according to its inheritance
-	GtkTreeIter* insertClassNameIntoTree(GtkTreeStore* store, const std::string& className);
+	/**
+	 * greebo: Returns the TreeIter pointing to the tree element <className> in <store>.
+	 * If the item is not yet existing, it gets inserted into the tree, according
+	 * to its inheritance tree.
+	 */
+	GtkTreeIter findOrInsertClassname(GtkTreeStore* store, const std::string& className);
+
+	/**
+	 * greebo: Inserts the given classname into the treestore, using the
+	 *         given <parent> iter as insertion point. If <parent> is NULL,
+	 *         the entry is inserted at root level.
+	 */
+	GtkTreeIter insertClassName(GtkTreeStore* store, 
+							 const std::string& className, 
+							 GtkTreeIter* parent = NULL);
+
+	// returns the parent eclass name for the given <className> or "" if no parent
+	std::string getParentClass(const std::string& className);
 };
 typedef boost::shared_ptr<DifficultySettings> DifficultySettingsPtr;
 
