@@ -433,6 +433,26 @@ ectLib = ectEnv.SharedLibrary(target='eclasstree',
 							no_import_lib=1)
 ectEnv.Install(INSTALL + '/plugins', ectLib)
 
+# Difficulty plugin
+difficultySrc = ['plugins/dm.difficulty/' + f for f in [
+	'plugin.cpp',
+	'DifficultyDialog.cpp',
+	'DifficultyEditor.cpp',
+	'DifficultyEntity.cpp',
+	'DifficultySettings.cpp',
+	'DifficultySettingsManager.cpp',
+	'Setting.cpp'
+	]
+]
+difficultyEnv = module_env.Copy()
+difficultyEnv.useGtk2()
+difficultyLib = difficultyEnv.SharedLibrary(
+	target='dm_difficulty',
+	source=difficultySrc,
+	no_import_lib=1
+)
+difficultyEnv.Install(INSTALL + '/plugins', difficultyLib)
+
 # Main Radiant binary
 
 radiant_env = g_env.Copy()
