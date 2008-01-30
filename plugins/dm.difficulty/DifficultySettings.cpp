@@ -133,7 +133,11 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 }
 
 void DifficultySettings::parseFromMapEntity(Entity* entity) {
-	// TODO
+	// Construct the prefix for the desired difficulty level
+	std::string diffPrefix = "diff_" + intToStr(_level) + "_";
+	std::string prefix = diffPrefix + "change_";
+
+
 }
 
 } // namespace difficulty

@@ -81,6 +81,9 @@ public:
 	 */
 	std::string getKeyValue(const std::string& key) const;
 
+	// Get all KeyValues matching the given prefix.
+	KeyValuePairs getKeyValuePairs(const std::string& prefix) const;
+
 	bool isContainer() const;
 	void setIsContainer(bool isContainer);
 	

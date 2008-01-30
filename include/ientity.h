@@ -70,6 +70,9 @@ public:
 class Entity
 {
 public:
+	// A container with key => value pairs
+	typedef std::vector< std::pair<std::string, std::string> > KeyValuePairs;
+
 	/** greebo: An Entity::Observer gets notified about key insertions and removals
 	 * 			as well as (optionally) about Entity destruction.
 	 */
@@ -146,6 +149,27 @@ public:
 	 * exist.
 	 */
 	virtual std::string getKeyValue(const std::string& key) const = 0;
+
+	/**
+	 * Return the list of Key/Value pairs matching the given prefix.
+	 * 
+	 * This method performs a search for all spawnargs whose key
+	 * matches the given prefix, with a suffix consisting of zero or more 
+	 * arbitrary characters. For example, if "target" were specified as the
+	 * prefix, the list would include "target", "target0", "target127" etc.
+	 * 
+	 * This operation may not have high performance, due to the need to scan
+	 * for matching names, therefore should not be used in performance-critical
+	 * code.
+	 * 
+	 * @param prefix
+	 * The prefix to search for.
+	 * 
+	 * @return
+	 * A list of KeyValue pairs matching the provided prefix. This
+	 * list will be empty if there were no matches.
+	 */
+	virtual KeyValuePairs getKeyValuePairs(const std::string& prefix) const = 0;
 	
 	/** greebo: Returns true if the entity is a model. For Doom3, this is 
 	 * 			usually true when the classname == "func_static" and
