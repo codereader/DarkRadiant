@@ -3,6 +3,8 @@
 #include "iradiant.h"
 #include "icounter.h"
 #include "ieclass.h"
+#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace entity {
 
@@ -167,6 +169,21 @@ std::string Doom3Entity::getKeyValue(const std::string& key) const {
 	else {
 		return _eclass->getAttribute(key).value;
 	}
+}
+
+Entity::KeyValuePairs Doom3Entity::getKeyValuePairs(const std::string& prefix) const {
+	KeyValuePairs list;
+
+	for (KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); i++) {
+		// If the prefix matches, add to list
+		if (boost::algorithm::istarts_with(i->first, prefix)) {
+			list.push_back(
+				std::pair<std::string, std::string>(i->first, i->second->get())
+			);
+		}
+	}
+
+	return list;
 }
 
 bool Doom3Entity::isContainer() const {
