@@ -2,7 +2,6 @@
 
 #include <gtk/gtktreestore.h>
 #include "string/string.h"
-#include "gtkutil/TreeModel.h"
 
 namespace difficulty {
 
@@ -26,40 +25,72 @@ void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 		const std::string& className = i->first;
 		const Setting& setting = *i->second;
 
-		// Try to look up the classname in the tree
-		TreeIterMap::iterator found = _iterMap.find(className);
-		if (found != _iterMap.end()) {
-			// Classname already exists in the tree, sort this below it
-			GtkTreeIter iter;
-			gtk_tree_store_append(store, &iter, found->second);
-			gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);
-		}
-		else {
-			// Classname doesn't exist yet, create it
-			GtkTreeIter* iter = insertClassNameIntoTree(store, className);
-		}
+		GtkTreeIter iter = findOrInsertClassname(store, className);
 
+		// Now insert all the settings values into the map
 		/*GtkTreeIter iter;
 		gtk_tree_store_append(store, &iter, NULL);
 		gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);*/
 	}
 }
 
-GtkTreeIter* DifficultySettings::insertClassNameIntoTree(
-	GtkTreeStore* store, const std::string& className)
-{
-	gtkutil::TreeModel::SelectionFinder finder(className, 0);
+std::string DifficultySettings::getParentClass(const std::string& className) {
+	// Get the parent eclass
+	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(className);
 
-	gtk_tree_model_foreach(GTK_TREE_MODEL(store), 
-						   gtkutil::TreeModel::SelectionFinder::forEach,
-						   &finder);
-
-	if (finder.getPath() != NULL)
-	{
-		
+	if (eclass == NULL) { 
+		return ""; // Invalid!
 	}
 
-	return NULL;
+	EntityClassAttribute inheritAttr = eclass->getAttribute("inherit");
+	return inheritAttr.value;
+}
+
+GtkTreeIter DifficultySettings::findOrInsertClassname(
+	GtkTreeStore* store, const std::string& className)
+{
+	// Try to look up the classname in the tree
+	TreeIterMap::iterator found = _iterMap.find(className);
+
+	if (found != _iterMap.end()) {
+		// Name exists, return this
+		return found->second;
+	}
+
+	// This iter will hold the parent element, if such is found
+	GtkTreeIter* parentIter(NULL);
+
+	// Classname is not yet registered, walk up the inheritance tree
+	std::string parentClassName = getParentClass(className);
+	while (!parentClassName.empty()) {
+		// Try to look up the classname in the tree
+		TreeIterMap::iterator found = _iterMap.find(parentClassName);
+
+		if (found != _iterMap.end()) {
+			parentIter = &found->second;
+			break;
+		}
+
+		parentClassName = getParentClass(parentClassName);
+	}
+
+	// Insert the map, using the found iter (or NULL, if nothing was found)
+	GtkTreeIter inserted = insertClassName(store, className, parentIter);
+
+	// Remember the iter
+	_iterMap.insert(TreeIterMap::value_type(className, inserted));
+
+	return inserted;
+}
+
+GtkTreeIter DifficultySettings::insertClassName(
+	GtkTreeStore* store, const std::string& className, GtkTreeIter* parent)
+{
+	GtkTreeIter iter;
+	gtk_tree_store_append(store, &iter, parent);
+	gtk_tree_store_set(store, &iter, 0, className.c_str(), -1);
+
+	return iter;
 }
 
 void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
