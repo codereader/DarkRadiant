@@ -32,6 +32,12 @@ public:
 	// How the argument should be applied
 	EApplicationType appType;
 
+	// Whether this setting is a default setting or map-specific
+	bool isDefault;
+
+	// Default constructor
+	Setting();
+
 	// Interprets the argument string
 	void parseAppType();
 

@@ -120,12 +120,20 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 		setting->className = classAttr.value;
 		setting->spawnArg = attr.value;
 		setting->argument = argAttr.value;
+
+		// This has been parsed from the default entityDef
+		setting->isDefault = true;
+
 		// Interpret/parse the argument string
 		setting->parseAppType();
 
 		// Insert the parsed setting into our local map
 		_settings.insert(SettingsMap::value_type(setting->className, setting));
 	}
+}
+
+void DifficultySettings::parseFromMapEntity(Entity* entity) {
+	// TODO
 }
 
 } // namespace difficulty

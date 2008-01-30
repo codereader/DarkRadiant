@@ -3,6 +3,7 @@
 #include "ieclass.h"
 #include "iregistry.h"
 #include "stream/textstream.h"
+#include "DifficultyEntityFinder.h"
 
 namespace difficulty {
 
@@ -46,7 +47,20 @@ void DifficultySettingsManager::loadDefaultSettings() {
 }
 
 void DifficultySettingsManager::loadMapSettings() {
-	// TODO
+	// Construct a helper walker
+	DifficultyEntityFinder finder;
+	GlobalSceneGraph().traverse(finder);
+
+	const DifficultyEntityFinder::EntityList& found = finder.getEntities();
+
+	// Pop all entities into each difficulty setting
+	for (DifficultyEntityFinder::EntityList::const_iterator ent = found.begin(); 
+		 ent != found.end(); ent++)
+	{
+		for (std::size_t i = 0; i < _settings.size(); i++) {
+			_settings[i]->parseFromMapEntity(*ent);
+		}
+	}
 }
 
 } // namespace difficulty
