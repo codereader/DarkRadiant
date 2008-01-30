@@ -8,6 +8,7 @@
 #include "Setting.h"
 
 typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeIter GtkTreeIter;
 
 namespace difficulty {
 
@@ -20,6 +21,10 @@ class DifficultySettings
 	// Multiple settings can be made for a single classname.
 	typedef std::multimap<std::string, SettingPtr> SettingsMap;
 	SettingsMap _settings;
+
+	// This maps classnames to GtkTreeIters, for faster lookup
+	typedef std::map<std::string, GtkTreeIter*> TreeIterMap;
+	TreeIterMap _iterMap;
 
 public:
 	// Define the difficulty level in the constructor
@@ -36,6 +41,10 @@ public:
 
 	// Loads all settings (matching the internal _level) from the given entityDef.
 	void parseFromEntityDef(const IEntityClassPtr& def);
+
+private:
+	// Inserts the given classname into the given TreeModel, according to its inheritance
+	GtkTreeIter* insertClassNameIntoTree(GtkTreeStore* store, const std::string& className);
 };
 typedef boost::shared_ptr<DifficultySettings> DifficultySettingsPtr;
 
