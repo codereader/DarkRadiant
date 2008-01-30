@@ -8,6 +8,10 @@ namespace difficulty {
 		const std::string RKEY_APPTYPE_IGNORE("game/difficulty/appTypeIgnore");
 	}
 
+Setting::Setting() :
+	isDefault(false)
+{}
+
 std::string Setting::getDescString() const {
 	std::string returnValue(argument);
 

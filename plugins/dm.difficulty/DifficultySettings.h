@@ -2,11 +2,18 @@
 #define DIFFICULTY_SETTINGS_H_
 
 #include "ieclass.h"
+#include "entitylib.h"
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <gtk/gtktreestore.h>
 
 #include "Setting.h"
+
+namespace {
+	const std::string RKEY_DIFFICULTY_LEVELS("game/difficulty/numLevels");
+	const std::string RKEY_DIFFICULTY_ENTITYDEF_DEFAULT("game/difficulty/defaultSettingsEclass");
+	const std::string RKEY_DIFFICULTY_ENTITYDEF_MAP("game/difficulty/mapSettingsEclass");
+}
 
 namespace difficulty {
 
@@ -39,6 +46,9 @@ public:
 
 	// Loads all settings (matching the internal _level) from the given entityDef.
 	void parseFromEntityDef(const IEntityClassPtr& def);
+
+	// Loads all settings (matching the internal _level) from the given entity.
+	void parseFromMapEntity(Entity* entity);
 
 private:
 	/**

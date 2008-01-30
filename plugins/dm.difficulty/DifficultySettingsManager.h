@@ -3,12 +3,6 @@
 
 #include "DifficultySettings.h"
 
-namespace {
-	const std::string RKEY_DIFFICULTY_LEVELS("game/difficulty/numLevels");
-	const std::string RKEY_DIFFICULTY_ENTITYDEF_DEFAULT("game/difficulty/defaultSettingsEclass");
-	const std::string RKEY_DIFFICULTY_ENTITYDEF_MAP("game/difficulty/mapSettingsEclass");
-}
-
 namespace difficulty {
 
 /**
