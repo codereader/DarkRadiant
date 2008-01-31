@@ -5,6 +5,8 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
 
+#include "ClassNameStore.h"
+
 namespace ui {
 
 	namespace {
@@ -94,7 +96,14 @@ GtkWidget* DifficultyEditor::createTreeView() {
 }
 
 GtkWidget* DifficultyEditor::createEditingWidgets() {
-	return gtk_hbox_new(FALSE, 0);
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+
+	// Add classname widget
+	GtkWidget* classCombo = gtk_combo_box_new_with_model(
+		ClassNameStore::getModel()
+	);
+
+	return vbox;
 }
 
 } // namespace ui
