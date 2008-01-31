@@ -4,7 +4,8 @@
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
-
+#include "gtkutil/LeftalignedLabel.h"
+#include "gtkutil/LeftAlignment.h"
 #include "ClassNameStore.h"
 
 namespace ui {
@@ -97,9 +98,27 @@ GtkWidget* DifficultyEditor::createTreeView() {
 
 GtkWidget* DifficultyEditor::createEditingWidgets() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
+
+	// The "Settings" label
+	GtkWidget* settingsLabel = gtkutil::LeftAlignedLabel("<b>Setting</b>");
+	gtk_box_pack_start(GTK_BOX(vbox), settingsLabel, FALSE, FALSE, 0);
+
+	// The table aligning the editing widgets
+	GtkTable* table = GTK_TABLE(gtk_table_new(3, 2, false));
+    gtk_table_set_col_spacings(table, 12);
+    gtk_table_set_row_spacings(table, 6);
+
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::LeftAlignment(GTK_WIDGET(table), 18, 1.0), 
+		FALSE, FALSE, 0);
+
+	// ===== CLASSNAME ======
+
+	GtkWidget* classNameLabel = gtkutil::LeftAlignedLabel("Classname:");
 
 	// Add classname widget
-	GtkWidget* classCombo = gtk_combo_box_entry_new_with_model(
+	_classCombo = gtk_combo_box_entry_new_with_model(
 		ClassNameStore::getModel(),
 		ClassNameStore::CLASSNAME_COL
 	); 
@@ -108,7 +127,7 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	GtkEntryCompletion* completion = gtk_entry_completion_new();
 	gtk_entry_completion_set_model(completion, ClassNameStore::getModel());
 	gtk_entry_completion_set_text_column(completion, ClassNameStore::CLASSNAME_COL);
-	gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(classCombo))), 
+	gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(_classCombo))), 
 							 completion);
 
 	// Sort the list alphabetically
@@ -117,7 +136,22 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 		ClassNameStore::CLASSNAME_COL, GTK_SORT_ASCENDING
 	);
 
-	gtk_box_pack_start(GTK_BOX(vbox), classCombo, FALSE, FALSE, 0);
+	gtk_table_attach(table, classNameLabel, 0, 1, 0, 1, GTK_FILL, (GtkAttachOptions)0, 0, 0);
+	gtk_table_attach_defaults(table, _classCombo, 1, 2, 0, 1);
+
+	// ===== SPAWNARG ======
+	_spawnArgEntry = gtk_entry_new();
+	GtkWidget* spawnArgLabel = gtkutil::LeftAlignedLabel("Spawnarg:");
+
+	gtk_table_attach(table, spawnArgLabel, 0, 1, 1, 2, GTK_FILL, (GtkAttachOptions)0, 0, 0);
+	gtk_table_attach_defaults(table, _spawnArgEntry, 1, 2, 1, 2);
+
+	// ===== VALUE ======
+	_argumentEntry = gtk_entry_new();
+	GtkWidget* argumentLabel = gtkutil::LeftAlignedLabel("Argument:");
+
+	gtk_table_attach(table, argumentLabel, 0, 1, 2, 3, GTK_FILL, (GtkAttachOptions)0, 0, 0);
+	gtk_table_attach_defaults(table, _argumentEntry, 1, 2, 2, 3);
 
 	return vbox;
 }
