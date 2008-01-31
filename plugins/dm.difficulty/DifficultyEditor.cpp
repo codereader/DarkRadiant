@@ -99,9 +99,25 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Add classname widget
-	GtkWidget* classCombo = gtk_combo_box_new_with_model(
-		ClassNameStore::getModel()
+	GtkWidget* classCombo = gtk_combo_box_entry_new_with_model(
+		ClassNameStore::getModel(),
+		ClassNameStore::CLASSNAME_COL
+	); 
+
+	// Add completion functionality to the combobox entry
+	GtkEntryCompletion* completion = gtk_entry_completion_new();
+	gtk_entry_completion_set_model(completion, ClassNameStore::getModel());
+	gtk_entry_completion_set_text_column(completion, ClassNameStore::CLASSNAME_COL);
+	gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(classCombo))), 
+							 completion);
+
+	// Sort the list alphabetically
+	gtk_tree_sortable_set_sort_column_id(
+		GTK_TREE_SORTABLE(ClassNameStore::getModel()), 
+		ClassNameStore::CLASSNAME_COL, GTK_SORT_ASCENDING
 	);
+
+	gtk_box_pack_start(GTK_BOX(vbox), classCombo, FALSE, FALSE, 0);
 
 	return vbox;
 }
