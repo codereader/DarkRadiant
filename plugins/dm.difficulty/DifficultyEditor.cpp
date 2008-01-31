@@ -101,7 +101,9 @@ GtkWidget* DifficultyEditor::createTreeView() {
                                         "foreground", COL_TEXTCOLOUR,
                                         NULL);
 
-	return gtkutil::ScrolledFrame(GTK_WIDGET(_settingsView));
+	GtkWidget* frame = gtkutil::ScrolledFrame(GTK_WIDGET(_settingsView));
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
+	return frame;
 }
 
 GtkWidget* DifficultyEditor::createEditingWidgets() {
@@ -170,6 +172,8 @@ void DifficultyEditor::updateEditorWidgets() {
 	GtkTreeModel* model;
 	gboolean anythingSelected = gtk_tree_selection_get_selected(
 		_selection, &model, &iter);
+
+	gboolean widgetSensitive = FALSE;
 	
 	if (anythingSelected) {
 		std::string className = gtkutil::TreeModel::getString(model, &iter, COL_CLASSNAME);
@@ -180,7 +184,7 @@ void DifficultyEditor::updateEditorWidgets() {
 
 		if (setting != NULL) {
 			// Activate editing pane
-			gtk_widget_set_sensitive(_editorPane, TRUE);
+			widgetSensitive = TRUE;
 
 			gtk_entry_set_text(GTK_ENTRY(_spawnArgEntry), setting->spawnArg.c_str());
 			gtk_entry_set_text(GTK_ENTRY(_argumentEntry), setting->argument.c_str());
@@ -203,15 +207,10 @@ void DifficultyEditor::updateEditorWidgets() {
 				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_classCombo), &iter);
 			}	
 		}
-		else {
-			// Deactivate editing pane
-			gtk_widget_set_sensitive(_editorPane, FALSE);
-		}
 	}
-	else {
-		// Deactivate editing pane
-		gtk_widget_set_sensitive(_editorPane, FALSE);
-	}
+	
+	// Set editing pane sensitivity
+	gtk_widget_set_sensitive(_editorPane, widgetSensitive);
 }
 
 void DifficultyEditor::onSettingSelectionChange(
