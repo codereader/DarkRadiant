@@ -6,7 +6,8 @@
 namespace difficulty {
 
 DifficultySettings::DifficultySettings(int level) :
-	_level(level)
+	_level(level),
+	_highestId(0)
 {}
 
 int DifficultySettings::getLevel() const {
@@ -16,6 +17,20 @@ int DifficultySettings::getLevel() const {
 void DifficultySettings::clear() {
 	_settings.clear();
 	_iterMap.clear();
+}
+
+SettingPtr DifficultySettings::getSettingById(const std::string& className, int id) const {
+	// Search all stored settings matching this classname
+	for (SettingsMap::const_iterator found = _settings.find(className);
+		 found != _settings.upper_bound(className) && found != _settings.end();
+		 found++)
+	{
+		if (found->second->id == id) {
+			return found->second;
+		}
+	}
+
+	return SettingPtr(); // not found
 }
 
 void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
@@ -33,6 +48,8 @@ void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 		gtk_tree_store_set(store, &iter, 
 			COL_DESCRIPTION, setting.getDescString().c_str(), 
 			COL_TEXTCOLOUR, setting.isDefault ? "#707070" : "black", 
+			COL_CLASSNAME, setting.className.c_str(), 
+			COL_SETTING_ID, setting.id,
 			-1);
 	}
 }
@@ -94,6 +111,8 @@ GtkTreeIter DifficultySettings::insertClassName(
 	gtk_tree_store_set(store, &iter, 
 		COL_DESCRIPTION, className.c_str(), 
 		COL_TEXTCOLOUR, "black", 
+		COL_CLASSNAME, className.c_str(),
+		COL_SETTING_ID, -1,
 		-1);
 
 	return iter;
@@ -122,7 +141,7 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 		const EntityClassAttribute& classAttr = def->getAttribute(diffPrefix + "class_" + indexStr);
 		const EntityClassAttribute& argAttr = def->getAttribute(diffPrefix + "arg_" + indexStr);
 		
-		SettingPtr setting(new Setting);
+		SettingPtr setting(new Setting(++_highestId));
 		setting->className = classAttr.value;
 		setting->spawnArg = attr.value;
 		setting->argument = argAttr.value;
@@ -159,7 +178,7 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 		std::string indexStr = key.substr(prefix.length());
 		int index = strToInt(indexStr);
 
-		SettingPtr setting(new Setting);
+		SettingPtr setting(new Setting(++_highestId));
 		setting->className = entity->getKeyValue(diffPrefix + "class_" + indexStr);
 		setting->spawnArg = value;
 		setting->argument = entity->getKeyValue(diffPrefix + "arg_" + indexStr);

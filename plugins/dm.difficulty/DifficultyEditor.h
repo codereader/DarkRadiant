@@ -9,6 +9,7 @@
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeStore GtkTreeStore;
 typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
@@ -28,12 +29,14 @@ class DifficultyEditor
 	GtkWidget* _label; // the actual label
 
 	// The classname dropdown entry field
+	GtkWidget* _editorPane;
 	GtkWidget* _classCombo;
 	GtkWidget* _spawnArgEntry;
 	GtkWidget* _argumentEntry;
 
 	GtkTreeStore* _settingsStore;
 	GtkTreeView* _settingsView;
+	GtkTreeSelection* _selection;
 
 public:
 	/**
@@ -59,6 +62,12 @@ private:
 	void populateWindow();
 	GtkWidget* createTreeView();
 	GtkWidget* createEditingWidgets();
+
+	// Loads the data from the treeview selection into the editor widgets
+	void updateEditorWidgets();
+
+	// GTK Callback for treeview selection changes
+	static void onSettingSelectionChange(GtkTreeSelection* treeView, DifficultyEditor* self);
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 
