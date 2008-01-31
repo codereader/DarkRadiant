@@ -20,6 +20,9 @@ public:
 		EIgnore,
 	};
 
+	// ID of this setting (unique for each difficulty level)
+	int id;
+
 	// The classname this setting applies to
 	std::string className;
 
@@ -35,8 +38,8 @@ public:
 	// Whether this setting is a default setting or map-specific
 	bool isDefault;
 
-	// Default constructor
-	Setting();
+	// Constructor (needs to be given a unique ID)
+	Setting(int settingId);
 
 	// Interprets the argument string
 	void parseAppType();

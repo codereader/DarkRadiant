@@ -17,6 +17,8 @@ namespace {
 	enum {
 		COL_DESCRIPTION,
 		COL_TEXTCOLOUR,
+		COL_CLASSNAME,
+		COL_SETTING_ID,
 		NUM_SETTINGS_COLS,
 	};
 }
@@ -27,6 +29,9 @@ class DifficultySettings
 {
 	// the difficulty level, these settings are referring to
 	int _level;
+
+	// Unique ID assigned to each new Setting object
+	int _highestId;
 
 	// The settings map associates classnames with spawnarg change records.
 	// Multiple settings can be made for a single classname.
@@ -40,6 +45,10 @@ class DifficultySettings
 public:
 	// Define the difficulty level in the constructor
 	DifficultySettings(int level);
+
+	// Returns the Setting associated with the given className 
+	// and carrying the given ID (returned pointer might be NULL)
+	SettingPtr getSettingById(const std::string& className, int id) const;
 
 	// Returns the level these settings are referring to
 	int getLevel() const;
