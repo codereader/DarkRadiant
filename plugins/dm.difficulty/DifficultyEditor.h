@@ -22,10 +22,15 @@ class DifficultyEditor
 	// The actual settings we're working with
 	difficulty::DifficultySettingsPtr _settings;
 
+	// GtkNotebook-related widgets
 	GtkWidget* _editor;
-
 	GtkWidget* _labelHBox;
 	GtkWidget* _label; // the actual label
+
+	// The classname dropdown entry field
+	GtkWidget* _classCombo;
+	GtkWidget* _spawnArgEntry;
+	GtkWidget* _argumentEntry;
 
 	GtkTreeStore* _settingsStore;
 	GtkTreeView* _settingsView;
