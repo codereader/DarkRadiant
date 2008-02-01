@@ -53,6 +53,17 @@ std::string Setting::getDescString() const {
 	return returnValue;
 }
 
+bool Setting::operator==(const Setting& rhs) const {
+	return className == rhs.className && 
+			spawnArg == rhs.spawnArg &&
+			argument == rhs.argument &&
+			appType == rhs.appType;
+}
+
+bool Setting::operator!=(const Setting& rhs) const {
+	return !operator==(rhs);
+}
+
 Setting& Setting::operator=(const Setting& rhs) {
 	className = rhs.className;
 	spawnArg = rhs.spawnArg;
