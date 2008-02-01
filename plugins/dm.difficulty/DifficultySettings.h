@@ -38,6 +38,10 @@ class DifficultySettings
 	typedef std::multimap<std::string, SettingPtr> SettingsMap;
 	SettingsMap _settings;
 
+	// A mapping between Setting ID and Setting (for faster lookup on GTK selection)
+	typedef std::map<int, SettingPtr> SettingIdMap;
+	SettingIdMap _settingIds;
+
 	// This maps classnames to GtkTreeIters, for faster lookup
 	typedef std::map<std::string, GtkTreeIter> TreeIterMap;
 	TreeIterMap _iterMap;
@@ -48,7 +52,7 @@ public:
 
 	// Returns the Setting associated with the given className 
 	// and carrying the given ID (returned pointer might be NULL)
-	SettingPtr getSettingById(const std::string& className, int id) const;
+	SettingPtr getSettingById(int id) const;
 
 	// Returns the level these settings are referring to
 	int getLevel() const;

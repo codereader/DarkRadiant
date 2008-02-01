@@ -6,6 +6,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftalignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "ClassNameStore.h"
 
@@ -43,6 +44,7 @@ DifficultyEditor::DifficultyEditor(const std::string& label,
 	updateTreeModel();
 
 	populateWindow();
+	updateEditorWidgets();
 }
 
 GtkWidget* DifficultyEditor::getEditor() {
@@ -164,23 +166,36 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	gtk_table_attach(table, argumentLabel, 0, 1, 2, 3, GTK_FILL, (GtkAttachOptions)0, 0, 0);
 	gtk_table_attach_defaults(table, _argumentEntry, 1, 2, 2, 3);
 
+	// Save button
+	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSettingSave), this);
+
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::RightAlignment(saveButton), FALSE, FALSE, 0);
+
 	return vbox;
 }
 
-void DifficultyEditor::updateEditorWidgets() {
+int DifficultyEditor::getSelectedSettingId() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
-	gboolean anythingSelected = gtk_tree_selection_get_selected(
-		_selection, &model, &iter);
+	gboolean anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter);
+
+	if (anythingSelected) {
+		int settingId = gtkutil::TreeModel::getInt(model, &iter, COL_SETTING_ID);
+	}
+	else {
+		return -1;
+	}
+}
+
+void DifficultyEditor::updateEditorWidgets() {
+	int id = getSelectedSettingId();
 
 	gboolean widgetSensitive = FALSE;
 	
-	if (anythingSelected) {
-		std::string className = gtkutil::TreeModel::getString(model, &iter, COL_CLASSNAME);
-		int settingId = gtkutil::TreeModel::getInt(model, &iter, COL_SETTING_ID);
-
+	if (id != -1) {
 		// Lookup the setting using className/id combo
-		difficulty::SettingPtr setting = _settings->getSettingById(className, settingId);
+		difficulty::SettingPtr setting = _settings->getSettingById(id);
 
 		if (setting != NULL) {
 			// Activate editing pane
@@ -192,7 +207,7 @@ void DifficultyEditor::updateEditorWidgets() {
 			// Now select the eclass passed in the argument
 			// Find the entity using a TreeModel traversor
 			gtkutil::TreeModel::SelectionFinder finder(
-				className, ClassNameStore::CLASSNAME_COL
+				setting->className, ClassNameStore::CLASSNAME_COL
 			);
 
 			gtk_tree_model_foreach(
@@ -213,11 +228,19 @@ void DifficultyEditor::updateEditorWidgets() {
 	gtk_widget_set_sensitive(_editorPane, widgetSensitive);
 }
 
+void DifficultyEditor::saveSetting() {
+	// TODO
+}
+
 void DifficultyEditor::onSettingSelectionChange(
 	GtkTreeSelection* treeView, DifficultyEditor* self)
 {
 	// Update editor widgets
 	self->updateEditorWidgets();
+}
+
+void DifficultyEditor::onSettingSave(GtkWidget* button, DifficultyEditor* self) {
+	self->saveSetting();
 }
 
 } // namespace ui
