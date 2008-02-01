@@ -56,6 +56,9 @@ void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 
 		GtkTreeIter classIter = findOrInsertClassname(store, className);
 
+		// Whether this setting is overridden
+		gboolean overridden = isOverridden(i->second) ? TRUE : FALSE;
+
 		// Now insert the settings description into the map
 		GtkTreeIter iter;
 		gtk_tree_store_append(store, &iter, &classIter);
@@ -64,8 +67,32 @@ void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 			COL_TEXTCOLOUR, setting.isDefault ? "#707070" : "black", 
 			COL_CLASSNAME, setting.className.c_str(), 
 			COL_SETTING_ID, setting.id,
+			COL_IS_OVERRIDDEN, overridden,
 			-1);
 	}
+}
+
+bool DifficultySettings::isOverridden(const SettingPtr& setting) {
+	if (!setting->isDefault) {
+		return false; // not a default setting, return false
+	}
+
+	// Search all other settings to 
+	for (SettingsMap::iterator i = _settings.find(setting->className);
+		 i != _settings.upper_bound(setting->className) && i != _settings.end();
+		 i++)
+	{
+		// Avoid self==self comparisons
+		if (i->second != setting && i->second->spawnArg == setting->spawnArg) {
+			// spawnarg is set on a different setting, check if it is non-default
+			if (!i->second->isDefault) {
+				// non-default, overriding setting, return true
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 std::string DifficultySettings::getParentClass(const std::string& className) {
@@ -127,6 +154,7 @@ GtkTreeIter DifficultySettings::insertClassName(
 		COL_TEXTCOLOUR, "black", 
 		COL_CLASSNAME, className.c_str(),
 		COL_SETTING_ID, -1,
+		COL_IS_OVERRIDDEN, FALSE,
 		-1);
 
 	return iter;
@@ -206,6 +234,7 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 
 		// Insert the parsed setting into our local map
 		_settings.insert(SettingsMap::value_type(setting->className, setting));
+		_settingIds.insert(SettingIdMap::value_type(setting->id, setting));
 	}
 }
 

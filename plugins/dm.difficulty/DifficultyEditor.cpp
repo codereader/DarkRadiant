@@ -25,6 +25,7 @@ DifficultyEditor::DifficultyEditor(const std::string& label,
 									  G_TYPE_STRING, // text colour
 									  G_TYPE_STRING, // classname
 									  G_TYPE_INT,    // setting id
+									  G_TYPE_BOOLEAN,// overridden?
 									  -1))
 {
 	// The tab label items (icon + label)
@@ -101,6 +102,7 @@ GtkWidget* DifficultyEditor::createTreeView() {
 	gtk_tree_view_column_set_attributes(settingCol, textRenderer,
                                         "text", COL_DESCRIPTION,
                                         "foreground", COL_TEXTCOLOUR,
+										"strikethrough", COL_IS_OVERRIDDEN,
                                         NULL);
 
 	GtkWidget* frame = gtkutil::ScrolledFrame(GTK_WIDGET(_settingsView));

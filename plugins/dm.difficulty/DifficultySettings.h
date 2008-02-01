@@ -19,6 +19,7 @@ namespace {
 		COL_TEXTCOLOUR,
 		COL_CLASSNAME,
 		COL_SETTING_ID,
+		COL_IS_OVERRIDDEN,
 		NUM_SETTINGS_COLS,
 	};
 }
@@ -75,6 +76,9 @@ public:
 	void parseFromMapEntity(Entity* entity);
 
 private:
+	// Returns true if the given setting is overridden by map-specific settings
+	bool isOverridden(const SettingPtr& setting);
+
 	/**
 	 * greebo: Returns the TreeIter pointing to the tree element <className> in <store>.
 	 * If the item is not yet existing, it gets inserted into the tree, according
