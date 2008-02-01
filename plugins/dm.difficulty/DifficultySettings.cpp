@@ -66,6 +66,10 @@ int DifficultySettings::save(int id, const SettingPtr& setting) {
 
 		if (existing->isDefault) {
 			// We're trying to save a default setting, go into override mode
+
+			// TODO: Check if the saved spawnarg is actually different to the overridden one
+
+			// Create a new setting
 			SettingPtr overrule = findOrCreateOverrule(existing);
 			// Transfer the argument/appType into the new setting
 			overrule->argument = setting->argument;
@@ -285,7 +289,18 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 }
 
 void DifficultySettings::saveToEntity(DifficultyEntity& target) {
-	// TODO
+	// Cycle through all settings
+	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
+		const SettingPtr& setting = i->second;
+
+		if (setting->isDefault) {
+			// Don't save default settings
+			continue;
+		}
+
+		// Write the setting to the entity
+		target.writeSetting(setting, _level);
+	}
 }
 
 } // namespace difficulty

@@ -50,6 +50,9 @@ public:
 	// Interprets the argument string
 	void parseAppType();
 
+	// Get the string suitable for saving to a spawnarg (e.g. "+50")
+	std::string getArgumentKeyValue() const;
+
 	// Assemble a description string for the contained spawnArg/argument combo.
 	std::string getDescString() const;
 
