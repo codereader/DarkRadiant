@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
-#include "gtkutil/LeftalignedLabel.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
