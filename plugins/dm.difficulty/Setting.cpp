@@ -14,6 +14,25 @@ Setting::Setting() :
 	isDefault(false)
 {}
 
+std::string Setting::getArgumentKeyValue() const {
+	std::string returnValue(argument);
+
+	switch (appType) {
+		case EAssign: break;
+		case EAdd: 
+			returnValue = "+" + returnValue; 
+			break;
+		case EMultiply: 
+			returnValue = "*" + returnValue;
+			break;
+		case EIgnore:
+			returnValue = GlobalRegistry().get(RKEY_APPTYPE_IGNORE);
+			break;
+	};
+
+	return returnValue;
+}
+
 std::string Setting::getDescString() const {
 	std::string returnValue(argument);
 
