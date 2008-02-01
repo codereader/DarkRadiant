@@ -181,7 +181,7 @@ int DifficultyEditor::getSelectedSettingId() {
 	gboolean anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter);
 
 	if (anythingSelected) {
-		int settingId = gtkutil::TreeModel::getInt(model, &iter, COL_SETTING_ID);
+		return gtkutil::TreeModel::getInt(model, &iter, COL_SETTING_ID);
 	}
 	else {
 		return -1;
@@ -220,7 +220,10 @@ void DifficultyEditor::updateEditorWidgets() {
 			if (finder.getPath() != NULL) {
 				GtkTreeIter iter = finder.getIter();
 				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_classCombo), &iter);
-			}	
+			}
+
+			// We have a treeview selection, lock the classname
+			gtk_widget_set_sensitive(_classCombo, FALSE);
 		}
 	}
 	
@@ -229,7 +232,19 @@ void DifficultyEditor::updateEditorWidgets() {
 }
 
 void DifficultyEditor::saveSetting() {
-	// TODO
+	// Get the ID of the currently selected item (might be -1 if no selection)
+	int id = getSelectedSettingId();
+
+	// Instantiate a new setting and fill the data in
+	difficulty::SettingPtr setting(new difficulty::Setting);
+
+	// Load the widget contents
+	setting->className = gtk_combo_box_get_active_text(GTK_COMBO_BOX(_classCombo));
+	setting->spawnArg = gtk_entry_get_text(GTK_ENTRY(_spawnArgEntry));
+	setting->argument = gtk_entry_get_text(GTK_ENTRY(_argumentEntry));
+
+	// Pass the data to the DifficultySettings class to handle it
+	_settings->save(id, setting);
 }
 
 void DifficultyEditor::onSettingSelectionChange(

@@ -38,14 +38,17 @@ public:
 	// Whether this setting is a default setting or map-specific
 	bool isDefault;
 
-	// Constructor (needs to be given a unique ID)
-	Setting(int settingId);
+	// Constructor (assigns a unique ID automatically)
+	Setting();
 
 	// Interprets the argument string
 	void parseAppType();
 
 	// Assemble a description string for the contained spawnArg/argument combo.
 	std::string getDescString() const;
+
+private:
+	static int _highestId;
 };
 typedef boost::shared_ptr<Setting> SettingPtr;
 

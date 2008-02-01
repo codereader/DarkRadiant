@@ -6,8 +6,7 @@
 namespace difficulty {
 
 DifficultySettings::DifficultySettings(int level) :
-	_level(level),
-	_highestId(0)
+	_level(level)
 {}
 
 int DifficultySettings::getLevel() const {
@@ -29,6 +28,23 @@ SettingPtr DifficultySettings::getSettingById(int id) const {
 	}
 
 	return SettingPtr(); // not found
+}
+
+bool DifficultySettings::save(int id, const SettingPtr& setting) {
+	if (id != -1) {
+		// We're dealing with an existing setting, fetch it
+		SettingPtr existing = getSettingById(id);
+
+		if (existing == NULL) {
+			return false;
+		}
+
+
+
+		return true;
+	}
+
+	return true;
 }
 
 void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
@@ -139,7 +155,7 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 		const EntityClassAttribute& classAttr = def->getAttribute(diffPrefix + "class_" + indexStr);
 		const EntityClassAttribute& argAttr = def->getAttribute(diffPrefix + "arg_" + indexStr);
 		
-		SettingPtr setting(new Setting(++_highestId));
+		SettingPtr setting(new Setting);
 		setting->className = classAttr.value;
 		setting->spawnArg = attr.value;
 		setting->argument = argAttr.value;
@@ -177,7 +193,7 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 		std::string indexStr = key.substr(prefix.length());
 		int index = strToInt(indexStr);
 
-		SettingPtr setting(new Setting(++_highestId));
+		SettingPtr setting(new Setting);
 		setting->className = entity->getKeyValue(diffPrefix + "class_" + indexStr);
 		setting->spawnArg = value;
 		setting->argument = entity->getKeyValue(diffPrefix + "arg_" + indexStr);

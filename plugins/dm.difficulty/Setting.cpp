@@ -8,8 +8,8 @@ namespace difficulty {
 		const std::string RKEY_APPTYPE_IGNORE("game/difficulty/appTypeIgnore");
 	}
 
-Setting::Setting(int settingId) :
-	id(settingId),
+Setting::Setting() :
+	id(++_highestId),
 	isDefault(false)
 {}
 
@@ -64,5 +64,8 @@ void Setting::parseAppType() {
 		}
 	}
 }
+
+// Initialise the static member
+int Setting::_highestId = 0;
 
 } // namespace difficulty

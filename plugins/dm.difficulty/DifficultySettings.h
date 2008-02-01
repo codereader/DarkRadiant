@@ -30,9 +30,6 @@ class DifficultySettings
 	// the difficulty level, these settings are referring to
 	int _level;
 
-	// Unique ID assigned to each new Setting object
-	int _highestId;
-
 	// The settings map associates classnames with spawnarg change records.
 	// Multiple settings can be made for a single classname.
 	typedef std::multimap<std::string, SettingPtr> SettingsMap;
@@ -59,6 +56,14 @@ public:
 
 	// Empties the internal structures
 	void clear();
+
+	/**
+	 * greebo: Saves the given setting. The ID specifices the setting currently 
+	 *         highlighted in the editor (pass -1 if nothing is selected).
+	 *
+	 * @returns: TRUE if successful, FALSE otherwise.
+	 */
+	bool save(int id, const SettingPtr& setting);
 
 	// Loads the data into the given treestore
 	void updateTreeModel(GtkTreeStore* store);
