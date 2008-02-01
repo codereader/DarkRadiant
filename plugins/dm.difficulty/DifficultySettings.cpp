@@ -67,7 +67,10 @@ int DifficultySettings::save(int id, const SettingPtr& setting) {
 		if (existing->isDefault) {
 			// We're trying to save a default setting, go into override mode
 
-			// TODO: Check if the saved spawnarg is actually different to the overridden one
+			if (*setting == *existing) {
+				// New settings are identical to the existing ones, skip
+				return existing->id;
+			}
 
 			// Create a new setting
 			SettingPtr overrule = findOrCreateOverrule(existing);

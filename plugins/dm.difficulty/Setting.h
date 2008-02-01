@@ -44,6 +44,10 @@ public:
 	// Constructor (assigns a unique ID automatically)
 	Setting();
 
+	// Comparison operators, return true if spawnarg/classname/appType are the same
+	bool operator==(const Setting& rhs) const;
+	bool operator!=(const Setting& rhs) const;
+
 	// Assignment operator (leaves the ID untouched)
 	Setting& operator=(const Setting& rhs);
 
