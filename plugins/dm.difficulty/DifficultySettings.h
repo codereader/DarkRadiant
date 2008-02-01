@@ -75,9 +75,18 @@ public:
 	// Loads all settings (matching the internal _level) from the given entity.
 	void parseFromMapEntity(Entity* entity);
 
-private:
 	// Returns true if the given setting is overridden by map-specific settings
 	bool isOverridden(const SettingPtr& setting);
+
+private:
+	// Creates a new setting (and updates the internal structures)
+	// This needs the classname as argument (for the internal mapping)
+	SettingPtr createSetting(const std::string& className);
+
+	/**
+	 * greebo: Finds or creates a setting overruling the given <existing> one.
+	 */
+	SettingPtr findOrCreateOverrule(const SettingPtr& existing);
 
 	/**
 	 * greebo: Returns the TreeIter pointing to the tree element <className> in <store>.

@@ -33,6 +33,16 @@ std::string Setting::getDescString() const {
 	return returnValue;
 }
 
+Setting& Setting::operator=(const Setting& rhs) {
+	className = rhs.className;
+	spawnArg = rhs.spawnArg;
+	argument = rhs.argument;
+	appType = rhs.appType;
+	isDefault = rhs.isDefault;
+
+	return *this;
+}
+
 void Setting::parseAppType() {
 	appType = EAssign;
 

@@ -41,6 +41,9 @@ public:
 	// Constructor (assigns a unique ID automatically)
 	Setting();
 
+	// Assignment operator (leaves the ID untouched)
+	Setting& operator=(const Setting& rhs);
+
 	// Interprets the argument string
 	void parseAppType();
 

@@ -30,6 +30,31 @@ SettingPtr DifficultySettings::getSettingById(int id) const {
 	return SettingPtr(); // not found
 }
 
+SettingPtr DifficultySettings::findOrCreateOverrule(const SettingPtr& existing) {
+	// Check if there is already an override active for the <existing> setting
+	for (SettingsMap::iterator i = _settings.find(existing->className);
+		 i != _settings.upper_bound(existing->className) && i != _settings.end();
+		 i++)
+	{
+		// Avoid self==self comparisons
+		if (i->second != existing && i->second->spawnArg == existing->spawnArg) {
+			// spawnarg is set on a different setting, check if it is non-default
+			if (!i->second->isDefault) {
+				// non-default, overriding setting, return it
+				return i->second;
+			}
+		}
+	}
+
+	// No overriding setting found, create a new one
+	SettingPtr setting = createSetting(existing->className);
+	setting->spawnArg = existing->spawnArg;
+	setting->isDefault = false;
+	setting->appType = Setting::EAssign;
+
+	return setting;
+}
+
 bool DifficultySettings::save(int id, const SettingPtr& setting) {
 	if (id != -1) {
 		// We're dealing with an existing setting, fetch it
@@ -39,9 +64,24 @@ bool DifficultySettings::save(int id, const SettingPtr& setting) {
 			return false;
 		}
 
-
-
-		return true;
+		if (existing->isDefault) {
+			// We're trying to save a default setting, go into override mode
+			SettingPtr overrule = findOrCreateOverrule(existing);
+			// Transfer the argument/appType into the new setting
+			overrule->argument = setting->argument;
+			overrule->appType = setting->appType;
+		}
+		else {
+			// Copy the settings over to the existing setting
+			*existing = *setting;
+		}
+	}
+	else {
+		// No setting highlighted, create a new one
+		SettingPtr newSetting = createSetting(setting->className);
+		// Copy the settings over
+		*newSetting = *setting;
+		newSetting->isDefault = false;
 	}
 
 	return true;
@@ -49,6 +89,7 @@ bool DifficultySettings::save(int id, const SettingPtr& setting) {
 
 void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
 	gtk_tree_store_clear(store);
+	_iterMap.clear();
 
 	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
 		const std::string& className = i->first;
@@ -77,7 +118,7 @@ bool DifficultySettings::isOverridden(const SettingPtr& setting) {
 		return false; // not a default setting, return false
 	}
 
-	// Search all other settings to 
+	// Search all other settings for the same className/spawnArg combination
 	for (SettingsMap::iterator i = _settings.find(setting->className);
 		 i != _settings.upper_bound(setting->className) && i != _settings.end();
 		 i++)
@@ -160,6 +201,17 @@ GtkTreeIter DifficultySettings::insertClassName(
 	return iter;
 }
 
+SettingPtr DifficultySettings::createSetting(const std::string& className) {
+	SettingPtr setting(new Setting);
+	setting->className = className;
+	
+	// Insert the parsed setting into our local map
+	_settings.insert(SettingsMap::value_type(setting->className, setting));
+	_settingIds.insert(SettingIdMap::value_type(setting->id, setting));
+
+	return setting;
+}
+
 void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 	// Construct the prefix for the desired difficulty level
 	std::string diffPrefix = "diff_" + intToStr(_level) + "_";
@@ -183,8 +235,7 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 		const EntityClassAttribute& classAttr = def->getAttribute(diffPrefix + "class_" + indexStr);
 		const EntityClassAttribute& argAttr = def->getAttribute(diffPrefix + "arg_" + indexStr);
 		
-		SettingPtr setting(new Setting);
-		setting->className = classAttr.value;
+		SettingPtr setting = createSetting(classAttr.value);
 		setting->spawnArg = attr.value;
 		setting->argument = argAttr.value;
 
@@ -193,10 +244,6 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 
 		// Interpret/parse the argument string
 		setting->parseAppType();
-
-		// Insert the parsed setting into our local maps
-		_settings.insert(SettingsMap::value_type(setting->className, setting));
-		_settingIds.insert(SettingIdMap::value_type(setting->id, setting));
 	}
 }
 
@@ -221,8 +268,8 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 		std::string indexStr = key.substr(prefix.length());
 		int index = strToInt(indexStr);
 
-		SettingPtr setting(new Setting);
-		setting->className = entity->getKeyValue(diffPrefix + "class_" + indexStr);
+		std::string className = entity->getKeyValue(diffPrefix + "class_" + indexStr);
+		SettingPtr setting = createSetting(className);
 		setting->spawnArg = value;
 		setting->argument = entity->getKeyValue(diffPrefix + "arg_" + indexStr);
 
@@ -231,10 +278,6 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 
 		// Interpret/parse the argument string
 		setting->parseAppType();
-
-		// Insert the parsed setting into our local map
-		_settings.insert(SettingsMap::value_type(setting->className, setting));
-		_settingIds.insert(SettingIdMap::value_type(setting->id, setting));
 	}
 }
 
