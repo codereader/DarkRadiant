@@ -174,6 +174,11 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::RightAlignment(saveButton), FALSE, FALSE, 0);
 
+	// The "note" text
+	_noteText = gtk_label_new("");
+	gtk_label_set_line_wrap(GTK_LABEL(_noteText), TRUE);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_noteText), FALSE, FALSE, 6);
+
 	return vbox;
 }
 
@@ -194,7 +199,9 @@ void DifficultyEditor::updateEditorWidgets() {
 	int id = getSelectedSettingId();
 
 	gboolean widgetSensitive = FALSE;
-	
+
+	std::string noteText;
+
 	if (id != -1) {
 		// Lookup the setting using className/id combo
 		difficulty::SettingPtr setting = _settings->getSettingById(id);
@@ -202,6 +209,11 @@ void DifficultyEditor::updateEditorWidgets() {
 		if (setting != NULL) {
 			// Activate editing pane
 			widgetSensitive = TRUE;
+
+			if (_settings->isOverridden(setting)) {
+				widgetSensitive = FALSE;
+				noteText += "This default setting is overridden, cannot edit.";
+			}
 
 			gtk_entry_set_text(GTK_ENTRY(_spawnArgEntry), setting->spawnArg.c_str());
 			gtk_entry_set_text(GTK_ENTRY(_argumentEntry), setting->argument.c_str());
@@ -228,9 +240,12 @@ void DifficultyEditor::updateEditorWidgets() {
 			gtk_widget_set_sensitive(_classCombo, FALSE);
 		}
 	}
-	
+
 	// Set editing pane sensitivity
 	gtk_widget_set_sensitive(_editorPane, widgetSensitive);
+
+	gtk_label_set_markup(GTK_LABEL(_noteText), noteText.c_str());
+	gtk_widget_set_sensitive(_noteText, TRUE);
 }
 
 void DifficultyEditor::saveSetting() {
@@ -245,8 +260,16 @@ void DifficultyEditor::saveSetting() {
 	setting->spawnArg = gtk_entry_get_text(GTK_ENTRY(_spawnArgEntry));
 	setting->argument = gtk_entry_get_text(GTK_ENTRY(_argumentEntry));
 
+	setting->appType = difficulty::Setting::EAssign;
+	// TODO: set appType
+
 	// Pass the data to the DifficultySettings class to handle it
 	_settings->save(id, setting);
+
+	// Update the treemodel
+	updateTreeModel();
+
+	// TODO: Select the edited setting
 }
 
 void DifficultyEditor::onSettingSelectionChange(

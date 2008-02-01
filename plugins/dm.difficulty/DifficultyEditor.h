@@ -34,6 +34,9 @@ class DifficultyEditor
 	GtkWidget* _spawnArgEntry;
 	GtkWidget* _argumentEntry;
 
+	// A label containing notes to the user
+	GtkWidget* _noteText;
+
 	GtkTreeStore* _settingsStore;
 	GtkTreeView* _settingsView;
 	GtkTreeSelection* _selection;
