@@ -436,6 +436,7 @@ ectEnv.Install(INSTALL + '/plugins', ectLib)
 # Difficulty plugin
 difficultySrc = ['plugins/dm.difficulty/' + f for f in [
 	'plugin.cpp',
+	'ClassNameStore.cpp',
 	'DifficultyDialog.cpp',
 	'DifficultyEditor.cpp',
 	'DifficultyEntity.cpp',
