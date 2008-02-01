@@ -7,6 +7,7 @@
 #include <boost/shared_ptr.hpp>
 #include <gtk/gtktreestore.h>
 
+#include "DifficultyEntity.h"
 #include "Setting.h"
 
 namespace {
@@ -74,6 +75,9 @@ public:
 
 	// Loads all settings (matching the internal _level) from the given entity.
 	void parseFromMapEntity(Entity* entity);
+
+	// Save the relevant settings to the given difficulty entity
+	void saveToEntity(DifficultyEntity& target);
 
 	// Returns true if the given setting is overridden by map-specific settings
 	bool isOverridden(const SettingPtr& setting);

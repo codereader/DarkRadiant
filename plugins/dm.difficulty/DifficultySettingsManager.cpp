@@ -1,8 +1,11 @@
 #include "DifficultySettingsManager.h"
 
 #include "ieclass.h"
+#include "ientity.h"
+#include "scenelib.h"
 #include "iregistry.h"
 #include "stream/textstream.h"
+#include "DifficultyEntity.h"
 #include "DifficultyEntityFinder.h"
 
 namespace difficulty {
@@ -60,6 +63,59 @@ void DifficultySettingsManager::loadMapSettings() {
 		for (std::size_t i = 0; i < _settings.size(); i++) {
 			_settings[i]->parseFromMapEntity(*ent);
 		}
+	}
+}
+
+void DifficultySettingsManager::saveSettings() {
+	// Locates all difficulty entities
+	DifficultyEntityFinder finder;
+	GlobalSceneGraph().traverse(finder);
+
+	// Copy the list from the finder to a local list
+	DifficultyEntityFinder::EntityList entities = finder.getEntities();
+
+	if (entities.empty()) {
+		// Create a new difficulty entity
+		std::string eclassName = GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_MAP);
+		IEntityClassPtr diffEclass = GlobalEntityClassManager().findClass(eclassName);
+
+		if (diffEclass == NULL) {
+			globalErrorStream() << "[Diff]: Cannot create difficulty entity!\n";
+			return;
+		}
+
+		// Create and insert a new entity node into the scenegraph root 
+		scene::INodePtr entNode = GlobalEntityCreator().createEntity(diffEclass);
+		Node_getTraversable(GlobalSceneGraph().root())->insert(entNode);
+
+		// Get the entity of this node
+		Entity* entity = Node_getEntity(entNode);
+
+		if (entity == NULL) {
+			globalErrorStream() << "[Diff]: Cannot cast node to entity!\n";
+			return;
+		}
+
+		// Add the entity to the list
+		entities.push_back(entity);
+	}
+
+	// Clear all difficulty-spawnargs from existing entities
+	for (DifficultyEntityFinder::EntityList::const_iterator i = entities.begin();
+		 i != entities.end(); i++)
+	{
+		// Construct a difficulty entity using the raw Entity* pointer
+		DifficultyEntity diffEnt(*i);
+		// Clear the difficulty-related spawnargs from the entity
+		diffEnt.clear();
+	}
+	
+	// Take the first entity
+	DifficultyEntity diffEnt(*entities.begin());
+
+	// Cycle through all settings objects and issue save call
+	for (std::size_t i = 0; i < _settings.size(); i++) {
+		_settings[i]->saveToEntity(diffEnt);
 	}
 }
 

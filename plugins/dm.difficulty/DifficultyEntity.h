@@ -17,6 +17,10 @@ class DifficultyEntity
 public:
 	DifficultyEntity(Entity* source);
 
+	// Removes all difficulty settings from the entity
+	void clear();
+
+
 };
 typedef boost::shared_ptr<DifficultyEntity> DifficultyEntityPtr;
 
