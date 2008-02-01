@@ -16,18 +16,16 @@ int DifficultySettings::getLevel() const {
 
 void DifficultySettings::clear() {
 	_settings.clear();
+	_settingIds.clear();
 	_iterMap.clear();
 }
 
-SettingPtr DifficultySettings::getSettingById(const std::string& className, int id) const {
+SettingPtr DifficultySettings::getSettingById(int id) const {
 	// Search all stored settings matching this classname
-	for (SettingsMap::const_iterator found = _settings.find(className);
-		 found != _settings.upper_bound(className) && found != _settings.end();
-		 found++)
-	{
-		if (found->second->id == id) {
-			return found->second;
-		}
+	SettingIdMap::const_iterator found = _settingIds.find(id);
+
+	if (found != _settingIds.end()) {
+		return found->second;
 	}
 
 	return SettingPtr(); // not found
@@ -152,8 +150,9 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 		// Interpret/parse the argument string
 		setting->parseAppType();
 
-		// Insert the parsed setting into our local map
+		// Insert the parsed setting into our local maps
 		_settings.insert(SettingsMap::value_type(setting->className, setting));
+		_settingIds.insert(SettingIdMap::value_type(setting->id, setting));
 	}
 }
 

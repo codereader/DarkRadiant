@@ -63,11 +63,17 @@ private:
 	GtkWidget* createTreeView();
 	GtkWidget* createEditingWidgets();
 
+	// Returns the ID of the selected setting (or -1) if no valid setting is selected
+	int getSelectedSettingId();
+
 	// Loads the data from the treeview selection into the editor widgets
 	void updateEditorWidgets();
+	// Saves the setting data from the widgets to the DifficultySettings object
+	void saveSetting();
 
 	// GTK Callback for treeview selection changes
 	static void onSettingSelectionChange(GtkTreeSelection* treeView, DifficultyEditor* self);
+	static void onSettingSave(GtkWidget* button, DifficultyEditor* self);
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 
