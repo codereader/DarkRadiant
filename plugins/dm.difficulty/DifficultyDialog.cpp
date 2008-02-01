@@ -132,7 +132,7 @@ void DifficultyDialog::save() {
 	UndoableCommand command("editDifficulty");
 	
 	// Save the working set to the entity
-	// TODO
+	_settingsManager.saveSettings();
 }
 
 void DifficultyDialog::onSave(GtkWidget* button, DifficultyDialog* self) {

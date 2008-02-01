@@ -284,4 +284,8 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 	}
 }
 
+void DifficultySettings::saveToEntity(DifficultyEntity& target) {
+	// TODO
+}
+
 } // namespace difficulty

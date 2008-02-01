@@ -1,5 +1,5 @@
-#ifndef DIFFICULTY_ENTITY_H_
-#define DIFFICULTY_ENTITY_H_
+#ifndef DIFFICULTY_ENTITY_FINDER_H_
+#define DIFFICULTY_ENTITY_FINDER_H_
 
 #include "ientity.h"
 #include "scenelib.h"
@@ -55,4 +55,4 @@ public:
 
 } // namespace difficulty
 
-#endif /* DIFFICULTY_ENTITY_H_ */
+#endif /* DIFFICULTY_ENTITY_FINDER_H_ */
