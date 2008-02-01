@@ -4,6 +4,8 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
+typedef struct _GtkListStore GtkListStore;
+
 namespace difficulty {
 
 /**
@@ -18,6 +20,7 @@ public:
 		EAdd,
 		EMultiply,
 		EIgnore,
+		ENumAppTypes,
 	};
 
 	// ID of this setting (unique for each difficulty level)
@@ -49,6 +52,9 @@ public:
 
 	// Assemble a description string for the contained spawnArg/argument combo.
 	std::string getDescString() const;
+
+	// Creates a new GtkListStore instance for packing into a treeview
+	static GtkListStore* getAppTypeStore();
 
 private:
 	static int _highestId;

@@ -1,6 +1,7 @@
 #include "Setting.h"
 
 #include "iregistry.h"
+#include <gtk/gtkliststore.h>
 
 namespace difficulty {
 
@@ -73,6 +74,28 @@ void Setting::parseAppType() {
 			// Leave the "-" sign, it will be the sign of the parsed int
 		}
 	}
+}
+
+GtkListStore* Setting::getAppTypeStore() {
+	GtkListStore* store = gtk_list_store_new(2, 
+		G_TYPE_STRING, // the caption
+		G_TYPE_INT     // the enum int
+	);
+
+	GtkTreeIter iter;
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter, 0, "Assign", 1, EAssign, -1);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter, 0, "Add", 1, EAdd, -1);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter, 0, "Multiply", 1, EMultiply, -1);
+
+	gtk_list_store_append(store, &iter);
+	gtk_list_store_set(store, &iter, 0, "Ignore", 1, EIgnore, -1);
+
+	return store;
 }
 
 // Initialise the static member

@@ -14,7 +14,7 @@ namespace ui {
 
 	namespace {
 		const std::string DIFF_ICON("sr_icon_custom.png");
-		const int TREE_VIEW_MIN_WIDTH = 400;
+		const int TREE_VIEW_MIN_WIDTH = 320;
 	}
 
 DifficultyEditor::DifficultyEditor(const std::string& label, 
@@ -161,12 +161,27 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	gtk_table_attach(table, spawnArgLabel, 0, 1, 1, 2, GTK_FILL, (GtkAttachOptions)0, 0, 0);
 	gtk_table_attach_defaults(table, _spawnArgEntry, 1, 2, 1, 2);
 
-	// ===== VALUE ======
+	// ===== ARGUMENT ======
 	_argumentEntry = gtk_entry_new();
 	GtkWidget* argumentLabel = gtkutil::LeftAlignedLabel("Argument:");
 
+	// The appType chooser
+	GtkTreeModel* model = GTK_TREE_MODEL(difficulty::Setting::getAppTypeStore());
+	_appTypeCombo = gtk_combo_box_new_with_model(model);
+	g_object_unref(model);
+
+	// Add the cellrenderer for the apptype text
+	GtkCellRenderer* appTypeRenderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_appTypeCombo), appTypeRenderer, FALSE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_appTypeCombo), appTypeRenderer, "text", 0);
+
+	// Pack the argument entry and the appType dropdown field together
+	GtkWidget* argHBox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(argHBox), _argumentEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(argHBox), _appTypeCombo, FALSE, FALSE, 0);
+
 	gtk_table_attach(table, argumentLabel, 0, 1, 2, 3, GTK_FILL, (GtkAttachOptions)0, 0, 0);
-	gtk_table_attach_defaults(table, _argumentEntry, 1, 2, 2, 3);
+	gtk_table_attach_defaults(table, argHBox, 1, 2, 2, 3);
 
 	// Save button
 	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
@@ -236,6 +251,20 @@ void DifficultyEditor::updateEditorWidgets() {
 				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_classCombo), &iter);
 			}
 
+			// Select the appType in the dropdown combo box (search the second column)
+			gtkutil::TreeModel::SelectionFinder appTypeFinder(setting->appType, 1); 
+			gtk_tree_model_foreach(
+				gtk_combo_box_get_model(GTK_COMBO_BOX(_appTypeCombo)),
+				gtkutil::TreeModel::SelectionFinder::forEach,
+				&appTypeFinder
+			);
+
+			// Select the found treeiter, if the name was found in the liststore
+			if (appTypeFinder.getPath() != NULL) {
+				GtkTreeIter iter = appTypeFinder.getIter();
+				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_appTypeCombo), &iter);
+			}
+
 			// We have a treeview selection, lock the classname
 			gtk_widget_set_sensitive(_classCombo, FALSE);
 		}
@@ -260,8 +289,15 @@ void DifficultyEditor::saveSetting() {
 	setting->spawnArg = gtk_entry_get_text(GTK_ENTRY(_spawnArgEntry));
 	setting->argument = gtk_entry_get_text(GTK_ENTRY(_argumentEntry));
 
+	// Get the apptype from the dropdown list
 	setting->appType = difficulty::Setting::EAssign;
-	// TODO: set appType
+
+	GtkTreeIter iter;
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(_appTypeCombo), &iter)) {
+		setting->appType = static_cast<difficulty::Setting::EApplicationType>(
+			gtkutil::TreeModel::getInt(gtk_combo_box_get_model(GTK_COMBO_BOX(_appTypeCombo)), &iter, 1)
+		);
+	}
 
 	// Pass the data to the DifficultySettings class to handle it
 	id = _settings->save(id, setting);
