@@ -10,6 +10,7 @@ typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeStore GtkTreeStore;
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
+typedef struct _GtkComboBox GtkComboBox;
 
 namespace ui {
 
@@ -41,6 +42,9 @@ class DifficultyEditor
 	GtkTreeStore* _settingsStore;
 	GtkTreeView* _settingsView;
 	GtkTreeSelection* _selection;
+
+	// Mutex for avoiding loopbacks
+	bool _updateActive;
 
 public:
 	/**
@@ -78,6 +82,7 @@ private:
 	// GTK Callback for treeview selection changes
 	static void onSettingSelectionChange(GtkTreeSelection* treeView, DifficultyEditor* self);
 	static void onSettingSave(GtkWidget* button, DifficultyEditor* self);
+	static void onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self);
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 
