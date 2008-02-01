@@ -26,7 +26,8 @@ DifficultyEditor::DifficultyEditor(const std::string& label,
 									  G_TYPE_STRING, // classname
 									  G_TYPE_INT,    // setting id
 									  G_TYPE_BOOLEAN,// overridden?
-									  -1))
+									  -1)),
+	_updateActive(false)
 {
 	// The tab label items (icon + label)
 	_labelHBox = gtk_hbox_new(FALSE, 3);
@@ -169,6 +170,7 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	GtkTreeModel* model = GTK_TREE_MODEL(difficulty::Setting::getAppTypeStore());
 	_appTypeCombo = gtk_combo_box_new_with_model(model);
 	g_object_unref(model);
+	g_signal_connect(G_OBJECT(_appTypeCombo), "changed", G_CALLBACK(onAppTypeChange), this);
 
 	// Add the cellrenderer for the apptype text
 	GtkCellRenderer* appTypeRenderer = gtk_cell_renderer_text_new();
@@ -211,6 +213,8 @@ int DifficultyEditor::getSelectedSettingId() {
 }
 
 void DifficultyEditor::updateEditorWidgets() {
+	_updateActive = true;
+
 	int id = getSelectedSettingId();
 
 	gboolean widgetSensitive = FALSE;
@@ -265,6 +269,12 @@ void DifficultyEditor::updateEditorWidgets() {
 				gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_appTypeCombo), &iter);
 			}
 
+			// Set the sensitivity of the argument entry box		
+			gtk_widget_set_sensitive(
+				_argumentEntry, 
+				(setting->appType == difficulty::Setting::EIgnore) ? FALSE : TRUE
+			);
+
 			// We have a treeview selection, lock the classname
 			gtk_widget_set_sensitive(_classCombo, FALSE);
 		}
@@ -275,6 +285,8 @@ void DifficultyEditor::updateEditorWidgets() {
 
 	gtk_label_set_markup(GTK_LABEL(_noteText), noteText.c_str());
 	gtk_widget_set_sensitive(_noteText, TRUE);
+
+	_updateActive = false;
 }
 
 void DifficultyEditor::saveSetting() {
@@ -333,6 +345,26 @@ void DifficultyEditor::onSettingSelectionChange(
 
 void DifficultyEditor::onSettingSave(GtkWidget* button, DifficultyEditor* self) {
 	self->saveSetting();
+}
+
+void DifficultyEditor::onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self) {
+	if (self->_updateActive) return;
+
+	// Update the sensitivity of the argument entry widget
+	GtkTreeIter iter;
+	if (gtk_combo_box_get_active_iter(appTypeCombo, &iter)) {
+
+		typedef difficulty::Setting::EApplicationType AppType; // shortcut
+
+		AppType appType = static_cast<AppType>(gtkutil::TreeModel::getInt(
+			gtk_combo_box_get_model(GTK_COMBO_BOX(self->_appTypeCombo)), &iter, 1
+		));
+
+		gtk_widget_set_sensitive(
+			self->_argumentEntry, 
+			(appType == difficulty::Setting::EIgnore) ? FALSE : TRUE
+		);
+	}
 }
 
 } // namespace ui
