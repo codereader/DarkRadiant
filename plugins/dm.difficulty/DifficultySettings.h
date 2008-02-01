@@ -62,9 +62,9 @@ public:
 	 * greebo: Saves the given setting. The ID specifices the setting currently 
 	 *         highlighted in the editor (pass -1 if nothing is selected).
 	 *
-	 * @returns: TRUE if successful, FALSE otherwise.
+	 * @returns: the ID of the saved Setting, can be used to select it.
 	 */
-	bool save(int id, const SettingPtr& setting);
+	int save(int id, const SettingPtr& setting);
 
 	// Loads the data into the given treestore
 	void updateTreeModel(GtkTreeStore* store);

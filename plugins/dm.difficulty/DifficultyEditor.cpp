@@ -264,12 +264,28 @@ void DifficultyEditor::saveSetting() {
 	// TODO: set appType
 
 	// Pass the data to the DifficultySettings class to handle it
-	_settings->save(id, setting);
+	id = _settings->save(id, setting);
 
 	// Update the treemodel
 	updateTreeModel();
 
-	// TODO: Select the edited setting
+	// Use the local SelectionFinder class to walk the TreeModel
+	gtkutil::TreeModel::SelectionFinder finder(id, COL_SETTING_ID);
+	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_settingsView));
+	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
+	
+	// Get the found TreePath (may be NULL)
+	GtkTreePath* path = finder.getPath();
+	if (path != NULL) {
+		// Expand the treeview to display the target row
+		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(_settingsView), path);
+		// Highlight the target row
+		gtk_tree_view_set_cursor(GTK_TREE_VIEW(_settingsView), path, NULL, false);
+		// Make the selected row visible 
+		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(_settingsView), path, NULL, true, 0.3f, 0.0f);
+		// Select the item
+		gtk_tree_selection_select_path(_selection, path);
+	}
 }
 
 void DifficultyEditor::onSettingSelectionChange(

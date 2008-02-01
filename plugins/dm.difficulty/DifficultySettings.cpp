@@ -55,13 +55,13 @@ SettingPtr DifficultySettings::findOrCreateOverrule(const SettingPtr& existing) 
 	return setting;
 }
 
-bool DifficultySettings::save(int id, const SettingPtr& setting) {
+int DifficultySettings::save(int id, const SettingPtr& setting) {
 	if (id != -1) {
 		// We're dealing with an existing setting, fetch it
 		SettingPtr existing = getSettingById(id);
 
 		if (existing == NULL) {
-			return false;
+			return -1;
 		}
 
 		if (existing->isDefault) {
@@ -70,10 +70,12 @@ bool DifficultySettings::save(int id, const SettingPtr& setting) {
 			// Transfer the argument/appType into the new setting
 			overrule->argument = setting->argument;
 			overrule->appType = setting->appType;
+			return overrule->id;
 		}
 		else {
 			// Copy the settings over to the existing setting
 			*existing = *setting;
+			return existing->id;
 		}
 	}
 	else {
@@ -82,9 +84,10 @@ bool DifficultySettings::save(int id, const SettingPtr& setting) {
 		// Copy the settings over
 		*newSetting = *setting;
 		newSetting->isDefault = false;
+		return newSetting->id;
 	}
 
-	return true;
+	return -1;
 }
 
 void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
