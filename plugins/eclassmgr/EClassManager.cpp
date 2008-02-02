@@ -134,7 +134,10 @@ void EClassManager::realise() {
 
 // Find an entity class
 IEntityClassPtr EClassManager::findClass(const std::string& className) const {
-    EntityClasses::const_iterator i = _entityClasses.find(className);
+	// greebo: Convert the lookup className string to lowercase first
+	std::string classNameLower = boost::algorithm::to_lower_copy(className);
+
+    EntityClasses::const_iterator i = _entityClasses.find(classNameLower);
     if (i != _entityClasses.end()) {
         return i->second;
     }
