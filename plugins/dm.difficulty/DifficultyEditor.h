@@ -36,6 +36,9 @@ class DifficultyEditor
 	GtkWidget* _argumentEntry;
 	GtkWidget* _appTypeCombo;
 
+	GtkWidget* _saveSettingButton;
+	GtkWidget* _deleteSettingButton;
+
 	// A label containing notes to the user
 	GtkWidget* _noteText;
 
