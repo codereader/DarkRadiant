@@ -2,6 +2,7 @@
 #define COMPONENT_H_
 
 #include "Specifier.h"
+#include "ComponentType.h"
 
 #include <string>
 
@@ -54,7 +55,7 @@ public:
 	/**
 	 * The type of this component ("kill", "ko" etc).
 	 */
-	std::string type;
+	ComponentType type;
 	
 	/**
 	 * The first specifier type.
@@ -81,7 +82,8 @@ public:
 	 * and the type is set to the empty string.
 	 */
 	Component()
-	: state(false), inverted(false), irreversible(false), type(""),
+	: state(false), inverted(false), irreversible(false), 
+	  type(ComponentType::COMP_KILL()), // arbitrary choice, no NONE option
 	  spec1_type(Specifier::SPEC_NONE()),
 	  spec2_type(Specifier::SPEC_NONE())
 	{ }

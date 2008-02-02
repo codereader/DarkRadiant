@@ -38,7 +38,7 @@ class Specifier
 	// Static enum count
 	static int enumCount;
 	
-	// Static map of name Specifier instances
+	// Static map of named Specifier instances
 	typedef std::map<std::string, Specifier> SpecifierMap;
 	static SpecifierMap& getMap();
 	
