@@ -232,6 +232,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.objectives\ComponentType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.objectives\ComponentType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.objectives\Objective.h"
 				>
 			</File>
@@ -306,6 +314,38 @@
 					RelativePath="..\..\plugins\dm.objectives\ce\KillComponentEditor.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.h"
+					>
+				</File>
+				<Filter
+					Name="specpanel"
+					>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\NoneSpecifierPanel.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\NoneSpecifierPanel.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanel.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanelFactory.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanelFactory.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<File
