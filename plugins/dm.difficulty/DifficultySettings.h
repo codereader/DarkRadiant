@@ -67,8 +67,14 @@ public:
 	 */
 	int save(int id, const SettingPtr& setting);
 
+	// Removes the setting with the given ID
+	void deleteSetting(int id);
+
 	// Loads the data into the given treestore
 	void updateTreeModel(GtkTreeStore* store);
+
+	// Removes all data from the treemodel
+	void clearTreeModel(GtkTreeStore* store);
 
 	// Loads all settings (matching the internal _level) from the given entityDef.
 	void parseFromEntityDef(const IEntityClassPtr& def);
