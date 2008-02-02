@@ -92,6 +92,9 @@ public:
 	bool isOverridden(const SettingPtr& setting);
 
 private:
+	// Clears the tree data
+	void clearTreeModel();
+
 	// Creates a new setting (and updates the internal structures)
 	// This needs the classname as argument (for the internal mapping)
 	SettingPtr createSetting(const std::string& className);
@@ -106,15 +109,14 @@ private:
 	 * If the item is not yet existing, it gets inserted into the tree, according
 	 * to its inheritance tree.
 	 */
-	GtkTreeIter findOrInsertClassname(GtkTreeStore* store, const std::string& className);
+	GtkTreeIter findOrInsertClassname(const std::string& className);
 
 	/**
 	 * greebo: Inserts the given classname into the treestore, using the
 	 *         given <parent> iter as insertion point. If <parent> is NULL,
 	 *         the entry is inserted at root level.
 	 */
-	GtkTreeIter insertClassName(GtkTreeStore* store, 
-							 const std::string& className, 
+	GtkTreeIter insertClassName(const std::string& className, 
 							 GtkTreeIter* parent = NULL);
 
 	// returns the parent eclass name for the given <className> or "" if no parent

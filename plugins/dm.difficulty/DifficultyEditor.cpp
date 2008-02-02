@@ -315,7 +315,7 @@ void DifficultyEditor::saveSetting() {
 	// Update the treemodel
 	_settings->updateTreeModel();
 
-	// Highlight the setting
+	// Highlight the setting, it might have been newly created
 	selectSettingById(id);
 }
 
@@ -333,9 +333,6 @@ void DifficultyEditor::deleteSetting() {
 
 	// Remove the setting
 	_settings->deleteSetting(id);
-
-	// Update the treemodel
-	_settings->updateTreeModel();
 }
 
 void DifficultyEditor::selectSettingById(int id) {

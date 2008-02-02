@@ -114,32 +114,37 @@ int DifficultySettings::save(int id, const SettingPtr& setting) {
 void DifficultySettings::deleteSetting(int id) {
 	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
 		if (i->second->id == id) {
-			// Found it, remove it from all maps
+			// Found it, remove it from the tree and all maps
+			gtk_tree_store_remove(_store, &i->second->iter);
+
 			_settings.erase(i);
 			_settingIds.erase(id);
-
-			return;
+			break;;
 		}
 	}
+
+	// Override settings might have been changed, update the model
+	updateTreeModel();
 }
 
 void DifficultySettings::updateTreeModel() {
-	gtk_tree_store_clear(_store);
-	_iterMap.clear();
-
+	// Go through the settings and check the corresponding iters in the tree
 	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
 		const std::string& className = i->first;
-		const Setting& setting = *i->second;
+		Setting& setting = *i->second;
 
-		GtkTreeIter classIter = findOrInsertClassname(_store, className);
+		// Ensure that the classname is in the map
+		GtkTreeIter classIter = findOrInsertClassname(className);
+
+		if (!gtk_tree_store_iter_is_valid(_store, &setting.iter)) {
+			// No iter corresponding to this setting yet, insert it
+			gtk_tree_store_append(_store, &setting.iter, &classIter);
+		}
 
 		// Whether this setting is overridden
 		gboolean overridden = isOverridden(i->second) ? TRUE : FALSE;
 
-		// Now insert the settings description into the map
-		GtkTreeIter iter;
-		gtk_tree_store_append(_store, &iter, &classIter);
-		gtk_tree_store_set(_store, &iter, 
+		gtk_tree_store_set(_store, &setting.iter, 
 			COL_DESCRIPTION, setting.getDescString().c_str(), 
 			COL_TEXTCOLOUR, setting.isDefault ? "#707070" : "black", 
 			COL_CLASSNAME, setting.className.c_str(), 
@@ -147,6 +152,11 @@ void DifficultySettings::updateTreeModel() {
 			COL_IS_OVERRIDDEN, overridden,
 			-1);
 	}
+}
+
+void DifficultySettings::clearTreeModel() {
+	gtk_tree_store_clear(_store);
+	_iterMap.clear();
 }
 
 bool DifficultySettings::isOverridden(const SettingPtr& setting) {
@@ -184,9 +194,7 @@ std::string DifficultySettings::getParentClass(const std::string& className) {
 	return inheritAttr.value;
 }
 
-GtkTreeIter DifficultySettings::findOrInsertClassname(
-	GtkTreeStore* store, const std::string& className)
-{
+GtkTreeIter DifficultySettings::findOrInsertClassname(const std::string& className) {
 	// Try to look up the classname in the tree
 	TreeIterMap::iterator found = _iterMap.find(className);
 
@@ -213,7 +221,7 @@ GtkTreeIter DifficultySettings::findOrInsertClassname(
 	}
 
 	// Insert the map, using the found iter (or NULL, if nothing was found)
-	GtkTreeIter inserted = insertClassName(store, className, parentIter);
+	GtkTreeIter inserted = insertClassName(className, parentIter);
 
 	// Remember the iter
 	_iterMap.insert(TreeIterMap::value_type(className, inserted));
@@ -221,12 +229,10 @@ GtkTreeIter DifficultySettings::findOrInsertClassname(
 	return inserted;
 }
 
-GtkTreeIter DifficultySettings::insertClassName(
-	GtkTreeStore* store, const std::string& className, GtkTreeIter* parent)
-{
+GtkTreeIter DifficultySettings::insertClassName(const std::string& className, GtkTreeIter* parent) {
 	GtkTreeIter iter;
-	gtk_tree_store_append(store, &iter, parent);
-	gtk_tree_store_set(store, &iter, 
+	gtk_tree_store_append(_store, &iter, parent);
+	gtk_tree_store_set(_store, &iter, 
 		COL_DESCRIPTION, className.c_str(), 
 		COL_TEXTCOLOUR, "black", 
 		COL_CLASSNAME, className.c_str(),
@@ -281,6 +287,9 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 		// Interpret/parse the argument string
 		setting->parseAppType();
 	}
+
+	clearTreeModel();
+	updateTreeModel();
 }
 
 void DifficultySettings::parseFromMapEntity(Entity* entity) {
@@ -315,6 +324,9 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 		// Interpret/parse the argument string
 		setting->parseAppType();
 	}
+
+	clearTreeModel();
+	updateTreeModel();
 }
 
 void DifficultySettings::saveToEntity(DifficultyEntity& target) {

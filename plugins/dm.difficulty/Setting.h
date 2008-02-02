@@ -3,6 +3,7 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <gtk/gtktreestore.h>
 
 typedef struct _GtkListStore GtkListStore;
 
@@ -41,10 +42,13 @@ public:
 	// Whether this setting is a default setting or map-specific
 	bool isDefault;
 
+	// The tree iter this setting is stored at
+	GtkTreeIter iter;
+
 	// Constructor (assigns a unique ID automatically)
 	Setting();
 
-	// Comparison operators, return true if spawnarg/classname/appType are the same
+	// Comparison operators, return true if spawnarg/classname/argument/appType are the same
 	bool operator==(const Setting& rhs) const;
 	bool operator!=(const Setting& rhs) const;
 
