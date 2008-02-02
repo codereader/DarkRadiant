@@ -38,6 +38,7 @@ class DifficultyEditor
 
 	GtkWidget* _saveSettingButton;
 	GtkWidget* _deleteSettingButton;
+	GtkWidget* _createSettingButton;
 
 	// A label containing notes to the user
 	GtkWidget* _noteText;
@@ -76,6 +77,9 @@ private:
 	// Loads the data from the treeview selection into the editor widgets
 	void updateEditorWidgets();
 
+	// Prepares the widgets for addition of a new setting
+	void createSetting();
+
 	// Saves the setting data from the widgets to the DifficultySettings object
 	void saveSetting();
 
@@ -88,6 +92,7 @@ private:
 	// GTK Callback for treeview selection changes
 	static void onSettingSelectionChange(GtkTreeSelection* treeView, DifficultyEditor* self);
 
+	static void onSettingCreate(GtkWidget* button, DifficultyEditor* self);
 	static void onSettingSave(GtkWidget* button, DifficultyEditor* self);
 	static void onSettingDelete(GtkWidget* button, DifficultyEditor* self);
 
