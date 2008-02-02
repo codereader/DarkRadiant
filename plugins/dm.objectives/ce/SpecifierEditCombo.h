@@ -33,6 +33,11 @@ class SpecifierEditCombo
 	// Current SpecifierPanel
 	SpecifierPanelPtr _specPanel;
 	
+private:
+	
+	/* GTK CALLBACKS */
+	static void _onChange(GtkWidget* w, SpecifierEditCombo* self);
+	
 public:
 	
 	/**
