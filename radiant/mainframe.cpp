@@ -1557,7 +1557,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("Copy", FreeCaller<Copy>());
 	GlobalEventManager().addCommand("Paste", FreeCaller<Paste>());
 	GlobalEventManager().addCommand("PasteToCamera", FreeCaller<PasteToCamera>());
-	GlobalEventManager().addCommand("CloneSelection", FreeCaller<selection::algorithm::cloneSelected>());
+	GlobalEventManager().addCommand("CloneSelection", FreeCaller<selection::algorithm::cloneSelected>(), true); // react on keyUp
 	GlobalEventManager().addCommand("DeleteSelection", FreeCaller<deleteSelection>());
 	GlobalEventManager().addCommand("ParentSelection", FreeCaller<selection::algorithm::parentSelection>());
 	GlobalEventManager().addCommand("UnSelectSelection", FreeCaller<Selection_Deselect>());

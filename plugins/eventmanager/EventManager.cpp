@@ -255,12 +255,11 @@ public:
 	}
 	
 	// Add the given command to the internal list
-	IEventPtr addCommand(const std::string& name, const Callback& callback) {
+	IEventPtr addCommand(const std::string& name, const Callback& callback, bool reactOnKeyUp) {
 		
 		if (!alreadyRegistered(name)) {
-			// Add the command to the list (implicitly cast the pointer on Event&)
-			IEvent* event = new Command(callback);  
-			_events[name] = IEventPtr(event);
+			// Add the command to the list
+			_events[name] = IEventPtr(new Command(callback, reactOnKeyUp));
 			
 			// Return the pointer to the newly created event
 			return _events[name];
