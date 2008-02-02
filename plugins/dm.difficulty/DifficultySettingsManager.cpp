@@ -1,10 +1,11 @@
 #include "DifficultySettingsManager.h"
 
 #include "ieclass.h"
-#include "ientity.h"
+#include "entitylib.h"
 #include "scenelib.h"
 #include "iregistry.h"
 #include "stream/textstream.h"
+#include "string/string.h"
 #include "DifficultyEntity.h"
 #include "DifficultyEntityFinder.h"
 
@@ -22,6 +23,7 @@ DifficultySettingsPtr DifficultySettingsManager::getSettings(int level) {
 void DifficultySettingsManager::loadSettings() {
 	loadDefaultSettings();
 	loadMapSettings();
+	loadDifficultyNames();
 }
 
 void DifficultySettingsManager::loadDefaultSettings() {
@@ -63,6 +65,45 @@ void DifficultySettingsManager::loadMapSettings() {
 		for (std::size_t i = 0; i < _settings.size(); i++) {
 			_settings[i]->parseFromMapEntity(*ent);
 		}
+	}
+}
+
+void DifficultySettingsManager::loadDifficultyNames() {
+	// Locate the worldspawn entity
+	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
+
+	// Try to locate the difficulty menu entity, where the default names are defined
+	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(
+		GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_MENU)
+	);
+	
+	// greebo: Setup the default difficulty levels using the found entityDef
+	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
+	for (int i = 0; i < numLevels; i++) {
+		std::string nameKey = "diff" + intToStr(i) + "default";
+
+		// First, try to find a map-specific name
+		if (worldspawn != NULL) {
+			std::string name = worldspawn->getKeyValue(nameKey);
+			if (!name.empty()) {
+				// Found a setting on worldspawn, take it
+				_difficultyNames.push_back(name);
+				continue; // done for this level
+			}
+		}
+
+		// If the above failed, try to load the default setting
+		if (eclass != NULL) {
+			EntityClassAttribute attr = eclass->getAttribute(nameKey);
+
+			if (!attr.value.empty()) {
+				_difficultyNames.push_back(attr.value);
+				continue;
+			}
+		}
+
+		// Fall back to a non-empty default
+		_difficultyNames.push_back(intToStr(i));
 	}
 }
 
@@ -117,6 +158,14 @@ void DifficultySettingsManager::saveSettings() {
 	for (std::size_t i = 0; i < _settings.size(); i++) {
 		_settings[i]->saveToEntity(diffEnt);
 	}
+}
+
+std::string DifficultySettingsManager::getDifficultyName(int level) {
+	if (level < 0 || level >= static_cast<int>(_difficultyNames.size())) {
+		return "";
+	}
+
+	return _difficultyNames[level];
 }
 
 } // namespace difficulty

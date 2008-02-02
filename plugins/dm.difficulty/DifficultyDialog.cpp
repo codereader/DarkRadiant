@@ -74,7 +74,9 @@ void DifficultyDialog::createDifficultyEditors() {
 
 		if (settings != NULL) {
 			_editors.push_back(
-				DifficultyEditorPtr(new DifficultyEditor(intToStr(i), settings))
+				DifficultyEditorPtr(new DifficultyEditor(
+					_settingsManager.getDifficultyName(i), settings)
+				)
 			);
 		}
 	}

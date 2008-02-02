@@ -284,5 +284,6 @@
 		<defaultSettingsEclass value="atdm:difficulty_settings_default" />
 		<mapSettingsEclass value="atdm:difficulty_settings" />
 		<appTypeIgnore value="_IGNORE" />
+		<difficultyMenuEclass value="difficultyMenu" />
 	</difficulty>
 </game>
