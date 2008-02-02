@@ -8,16 +8,44 @@ namespace objectives
 // Static enum count
 int Specifier::enumCount = 0;
 
-// Static instances
-const Specifier Specifier::SPEC_NONE("none");
-const Specifier Specifier::SPEC_NAME("name");
-const Specifier Specifier::SPEC_OVERALL("overall");
-const Specifier Specifier::SPEC_GROUP("group");
-const Specifier Specifier::SPEC_CLASSNAME("classname");
-const Specifier Specifier::SPEC_SPAWNCLASS("spawnclass");
-const Specifier Specifier::SPEC_AI_TYPE("ai_type");
-const Specifier Specifier::SPEC_AI_TEAM("ai_team");
-const Specifier Specifier::SPEC_AI_INNOCENCE("ai_innocence");
+// Static instance owners
+
+const Specifier& Specifier::SPEC_NONE() { 
+	static Specifier _instance("none");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_NAME() {
+	static Specifier _instance("name");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_OVERALL() {
+	static Specifier _instance("overall");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_GROUP() {
+	static Specifier _instance("group");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_CLASSNAME() {
+	static Specifier _instance("classname");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_SPAWNCLASS() {
+	static Specifier _instance("spawnclass");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_AI_TYPE() {
+	static Specifier _instance("ai_type");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_AI_TEAM() {
+	static Specifier _instance("ai_team");
+	return _instance;
+}
+const Specifier& Specifier::SPEC_AI_INNOCENCE() {
+	static Specifier _instance("ai_innocence");
+	return _instance;
+}
 
 // Map instance owner
 Specifier::SpecifierMap& Specifier::getMap() {

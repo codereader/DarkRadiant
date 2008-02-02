@@ -24,9 +24,6 @@ namespace objectives
  * are defined, each of which can provide its ID and its name. Additionally the
  * instances are registered in a map so that Specifier objects can be obtained
  * for a given string name (as provided by a spawnarg).
- * 
- * Since the enumeration values are static instances, they must <b>NOT</b> be
- * referenced during the static initialisation phase by other code.
  */
 class Specifier
 {
@@ -85,35 +82,47 @@ public:
 	//@{
 
 	/** No specifier. */
-	static const Specifier SPEC_NONE;
+	static const Specifier& SPEC_NONE();
 	
 	/** Specify name of an entity. */
-	static const Specifier SPEC_NAME;
+	static const Specifier& SPEC_NAME();
 	
 	/** Overall specifier for AI, inventory etc. */
-	static const Specifier SPEC_OVERALL;
+	static const Specifier& SPEC_OVERALL();
 	
 	/** Type-specific group specifier. */
-	static const Specifier SPEC_GROUP;
+	static const Specifier& SPEC_GROUP();
 	
 	/** Specify a DEF-based class name. */
-	static const Specifier SPEC_CLASSNAME;
+	static const Specifier& SPEC_CLASSNAME();
 	
 	/** Specify an SDK-level spawnclass. */
-	static const Specifier SPEC_SPAWNCLASS;
+	static const Specifier& SPEC_SPAWNCLASS();
 	
 	/** Specify an AI type, such as "human". */
-	static const Specifier SPEC_AI_TYPE;
+	static const Specifier& SPEC_AI_TYPE();
 	
 	/** Specify a numeric AI team ID. */
-	static const Specifier SPEC_AI_TEAM;
+	static const Specifier& SPEC_AI_TEAM();
 	
 	/** Specify the combat/non-combat status of an AI. */
-	static const Specifier SPEC_AI_INNOCENCE;
+	static const Specifier& SPEC_AI_INNOCENCE();
 	
 	//@}
 	
 };
+
+/**
+ * Operator less function for Specifiers.
+ * 
+ * This function returns true if the first Specifier's ID is less than the
+ * second. It is required so that Specifier objects can be used as keys in a
+ * std::map.
+ */
+inline bool operator< (const Specifier& first, const Specifier& second)
+{
+	return first.getId() < second.getId();
+}
 
 }
 

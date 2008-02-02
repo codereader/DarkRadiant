@@ -354,15 +354,19 @@ objEnv.Append(LIBS = ['gtkutil'])
 objEnv.useGtk2()
 objEnv.useGlib2()
 objEnv.useBoostRegex()
-objList = build_list('plugins/dm.objectives', 
-					 'objectives.cpp \
-					 ObjectivesEditor.cpp \
-					 ObjectiveEntity.cpp \
-					 ObjectiveKeyExtractor.cpp \
-					 ComponentsDialog.cpp \
-					 Specifier.cpp \
-					 ce/ComponentEditorFactory.cpp \
-					 ce/KillComponentEditor.cpp')
+objList = ['plugins/dm.objectives/' + f for f in [
+	 'objectives.cpp',
+	 'ObjectivesEditor.cpp',
+	 'ObjectiveEntity.cpp',
+	 'ObjectiveKeyExtractor.cpp',
+	 'ComponentsDialog.cpp',
+	 'Specifier.cpp',
+	 'ce/ComponentEditorFactory.cpp',
+	 'ce/KillComponentEditor.cpp',
+	 'ce/specpanel/SpecifierPanelFactory.cpp',
+	 'ce/specpanel/NoneSpecifierPanel.cpp'
+	 ]
+]
 objLib = objEnv.SharedLibrary(target='dm_objectives',
 							  source=objList,
 							  no_import_lib=1)
