@@ -356,6 +356,7 @@ objEnv.useGlib2()
 objEnv.useBoostRegex()
 objList = ['plugins/dm.objectives/' + f for f in [
 	 'objectives.cpp',
+	 'ComponentType.cpp',
 	 'ObjectivesEditor.cpp',
 	 'ObjectiveEntity.cpp',
 	 'ObjectiveKeyExtractor.cpp',

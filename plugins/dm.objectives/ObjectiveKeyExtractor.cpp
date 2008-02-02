@@ -73,7 +73,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 			
 			// Switch on the key string
 			if (componentStr == "type") {
-				comp.type = boost::algorithm::to_upper_copy(value); 
+				comp.type = ComponentType::getComponentType(value); 
 			}
 			else if (componentStr == "state") {
 				comp.state = (value == "1");

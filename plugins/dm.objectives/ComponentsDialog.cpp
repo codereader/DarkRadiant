@@ -114,14 +114,14 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 							  _widgets[WIDGET_TYPE_COMBO],
 							  1, 2, 0, 1);
 							  
-	// Populate the combo box from the static list of type strings
-	const StringList& list = getTypeStrings();
-	for (StringList::const_iterator i = list.begin();
-		 i != list.end();
+	// Populate the combo box. The set is in ID order.
+	for (ComponentTypeSet::const_iterator i = ComponentType::SET_ALL().begin();
+		 i != ComponentType::SET_ALL().end();
 		 ++i)
 	{
-		gtk_combo_box_append_text(GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]),
-								  i->c_str());		
+		gtk_combo_box_append_text(
+			GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]), i->getName().c_str()
+		);		
 	}
 	
 	// Flags hbox
@@ -189,7 +189,7 @@ void ComponentsDialog::populateComponents() {
 		gtk_list_store_append(_componentList, &iter);
 		gtk_list_store_set(_componentList, &iter, 
 						   0, i->first, 
-						   1, i->second.type.c_str(),
+						   1, i->second.type.getName().c_str(),
 						   -1);	
 	}
 	
@@ -215,46 +215,11 @@ void ComponentsDialog::populateEditPanel(int index) {
 		comp.inverted ? TRUE : FALSE
 	);
 	
-	// Set the type combo. We need to find the item in the type string list
-	// which matches the type string on the component, and pass its index to the
-	// GtkComboBox.
-	const StringList& list = getTypeStrings();
-	int listIdx = 0;
-	for (StringList::const_iterator i = list.begin(); i != list.end(); ++i) 
-	{
-		// If there is a match, set the combo box		
-		if (boost::algorithm::iequals(comp.type, *i)) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]),
-									 listIdx);
-		}
-		listIdx++;
-	}
-	
-	
-}
-
-// Static list of component strings
-const ComponentsDialog::StringList& ComponentsDialog::getTypeStrings() {
-	
-	// The static stringlist
-	static StringList _list;
-	
-	if (_list.empty()) {
-		_list.push_back("KILL");
-		_list.push_back("KO");
-		_list.push_back("AI_FIND_ITEM");
-		_list.push_back("AI_FIND_BODY");
-		_list.push_back("AI_ALERT");
-		_list.push_back("ITEM");
-		_list.push_back("LOCATION");
-		_list.push_back("CUSTOM");
-		_list.push_back("CUSTOM_CLOCKED");
-		_list.push_back("INFO_LOCATION");
-		_list.push_back("DISTANCE");
-	}
-	
-	return _list;
-			
+	// Set the type combo. Since the combo box was populated in ID order, we
+	// can simply use our ComponentType's ID as an index.
+	gtk_combo_box_set_active(
+		GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]), comp.type.getId()
+	);
 }
 
 // Get selected component index
@@ -351,7 +316,8 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 		// Update the Objective object
 		int idx = self->getSelectedIndex();
 		if (idx != -1) {
-			self->_objective.components[idx].type = selectedText;
+			self->_objective.components[idx].type = 
+				ComponentType::getComponentType(selectedText);
 		}
 		
 		// Change the ComponentEditor

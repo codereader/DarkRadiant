@@ -47,10 +47,6 @@ private:
 	GtkWidget* createComponentEditorPanel();
 	GtkWidget* createButtons();
 
-	// Static list of component type strings, in order
-	typedef std::vector<std::string> StringList;
-	static const StringList& getTypeStrings();
-
 	// Populate the list of components from the Objective's component map
 	void populateComponents();
 	
