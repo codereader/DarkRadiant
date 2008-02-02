@@ -3,9 +3,17 @@
 
 #include <map>
 #include <string>
+#include <set>
 
 namespace objectives
 {
+
+class Specifier;
+
+/**
+ * Set of Specifiers type.
+ */
+typedef std::set<Specifier> SpecifierSet;
 
 /**
  * Type-safe enumeration of valid specifier types.
@@ -107,6 +115,20 @@ public:
 	
 	/** Specify the combat/non-combat status of an AI. */
 	static const Specifier& SPEC_AI_INNOCENCE();
+	
+	//@}
+	
+	/**
+	 * @name Static specifier sets
+	 */
+
+	//@{
+	
+	/** Set of all specifiers. */
+	static const SpecifierSet& SET_ALL();
+	
+	/** Set for standard AI specifiers (all except SPEC_GROUP). */
+	static const SpecifierSet& SET_STANDARD_AI();
 	
 	//@}
 	

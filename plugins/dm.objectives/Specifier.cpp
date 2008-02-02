@@ -8,7 +8,7 @@ namespace objectives
 // Static enum count
 int Specifier::enumCount = 0;
 
-// Static instance owners
+// Specifier types
 
 const Specifier& Specifier::SPEC_NONE() { 
 	static Specifier _instance("none");
@@ -44,6 +44,38 @@ const Specifier& Specifier::SPEC_AI_TEAM() {
 }
 const Specifier& Specifier::SPEC_AI_INNOCENCE() {
 	static Specifier _instance("ai_innocence");
+	return _instance;
+}
+
+// Specifier sets
+
+const SpecifierSet& Specifier::SET_ALL() {
+	static SpecifierSet _instance;
+	if (_instance.empty()) {
+		_instance.insert(SPEC_NONE());
+		_instance.insert(SPEC_NAME());
+		_instance.insert(SPEC_OVERALL());
+		_instance.insert(SPEC_GROUP());
+		_instance.insert(SPEC_CLASSNAME());
+		_instance.insert(SPEC_SPAWNCLASS());
+		_instance.insert(SPEC_AI_TYPE());
+		_instance.insert(SPEC_AI_TEAM());
+		_instance.insert(SPEC_AI_INNOCENCE());
+	}
+	return _instance;
+}
+const SpecifierSet& Specifier::SET_STANDARD_AI() {
+	static SpecifierSet _instance;
+	if (_instance.empty()) {
+		_instance.insert(SPEC_NONE());
+		_instance.insert(SPEC_NAME());
+		_instance.insert(SPEC_OVERALL());
+		_instance.insert(SPEC_CLASSNAME());
+		_instance.insert(SPEC_SPAWNCLASS());
+		_instance.insert(SPEC_AI_TYPE());
+		_instance.insert(SPEC_AI_TEAM());
+		_instance.insert(SPEC_AI_INNOCENCE());
+	}
 	return _instance;
 }
 
