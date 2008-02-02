@@ -37,19 +37,21 @@ std::string Setting::getDescString() const {
 	std::string returnValue(argument);
 
 	switch (appType) {
-		case EAssign: break;
+		case EAssign: 
+			returnValue = " = " + returnValue;
+			break;
 		case EAdd: 
-			returnValue = "+" + returnValue; 
+			returnValue = " += " + returnValue; 
 			break;
 		case EMultiply: 
-			returnValue = "*" + returnValue;
+			returnValue = " *= " + returnValue;
 			break;
 		case EIgnore:
-			returnValue = "IGNORE";
+			returnValue = " = [IGNORE]";
 			break;
 	};
 
-	returnValue = spawnArg + " = " + returnValue;
+	returnValue = spawnArg + returnValue;
 	return returnValue;
 }
 
