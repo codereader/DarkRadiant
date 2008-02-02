@@ -66,6 +66,10 @@ void DifficultyEditor::updateTreeModel() {
 	_settings->updateTreeModel(_settingsStore);
 }
 
+void DifficultyEditor::clearTreeModel() {
+	_settings->clearTreeModel(_settingsStore);
+}
+
 void DifficultyEditor::populateWindow() {
 	// Pack the treeview and the editor pane into a GtkPaned
 	GtkWidget* paned = gtk_hpaned_new();
@@ -186,10 +190,19 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	gtk_table_attach_defaults(table, argHBox, 1, 2, 2, 3);
 
 	// Save button
+	GtkWidget* buttonHbox = gtk_hbox_new(FALSE, 6);
+
 	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSettingSave), this);
 
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::RightAlignment(saveButton), FALSE, FALSE, 0);
+	// Delete button
+	GtkWidget* deleteButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	g_signal_connect(G_OBJECT(deleteButton), "clicked", G_CALLBACK(onSettingDelete), this);
+
+	gtk_box_pack_start(GTK_BOX(buttonHbox), deleteButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonHbox), saveButton, FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::RightAlignment(buttonHbox), FALSE, FALSE, 0);
 
 	// The "note" text
 	_noteText = gtk_label_new("");
@@ -317,6 +330,30 @@ void DifficultyEditor::saveSetting() {
 	// Update the treemodel
 	updateTreeModel();
 
+	// Highlight the setting
+	selectSettingById(id);
+}
+
+void DifficultyEditor::deleteSetting() {
+	// Get the ID of the currently selected item (might be -1 if no selection)
+	int id = getSelectedSettingId();
+
+	// Instantiate a new setting and fill the data in
+	difficulty::SettingPtr setting = _settings->getSettingById(id);
+
+	if (setting->isDefault) {
+		// Don't delete default settings
+		return;
+	}
+
+	// Remove the setting
+	_settings->deleteSetting(id);
+
+	// Update the treemodel
+	updateTreeModel();
+}
+
+void DifficultyEditor::selectSettingById(int id) {
 	// Use the local SelectionFinder class to walk the TreeModel
 	gtkutil::TreeModel::SelectionFinder finder(id, COL_SETTING_ID);
 	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_settingsView));
@@ -345,6 +382,10 @@ void DifficultyEditor::onSettingSelectionChange(
 
 void DifficultyEditor::onSettingSave(GtkWidget* button, DifficultyEditor* self) {
 	self->saveSetting();
+}
+
+void DifficultyEditor::onSettingDelete(GtkWidget* button, DifficultyEditor* self) {
+	self->deleteSetting();
 }
 
 void DifficultyEditor::onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self) {

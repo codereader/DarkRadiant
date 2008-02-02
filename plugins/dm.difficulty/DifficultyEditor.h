@@ -65,6 +65,7 @@ public:
 private:
 	// Reloads the treedata from the difficulty settings
 	void updateTreeModel();
+	void clearTreeModel();
 
 	// Creates the widgets
 	void populateWindow();
@@ -76,12 +77,22 @@ private:
 
 	// Loads the data from the treeview selection into the editor widgets
 	void updateEditorWidgets();
+
 	// Saves the setting data from the widgets to the DifficultySettings object
 	void saveSetting();
 
+	// Removes the setting selected in the treeview
+	void deleteSetting();
+
+	// Highlights the setting (according to the given <id>) in the treeview
+	void selectSettingById(int id);
+
 	// GTK Callback for treeview selection changes
 	static void onSettingSelectionChange(GtkTreeSelection* treeView, DifficultyEditor* self);
+
 	static void onSettingSave(GtkWidget* button, DifficultyEditor* self);
+	static void onSettingDelete(GtkWidget* button, DifficultyEditor* self);
+
 	static void onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self);
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;

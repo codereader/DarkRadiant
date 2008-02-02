@@ -80,6 +80,9 @@ int DifficultySettings::save(int id, const SettingPtr& setting) {
 			return overrule->id;
 		}
 		else {
+			// TODO: Check, if there is another, existing setting which we 
+			// override with this one and whether they are the same
+			
 			// Copy the settings over to the existing setting
 			*existing = *setting;
 			return existing->id;
@@ -97,9 +100,25 @@ int DifficultySettings::save(int id, const SettingPtr& setting) {
 	return -1;
 }
 
-void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
+void DifficultySettings::deleteSetting(int id) {
+	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
+		if (i->second->id == id) {
+			// Found it, remove it from all maps
+			_settings.erase(i);
+			_settingIds.erase(id);
+
+			return;
+		}
+	}
+}
+
+void DifficultySettings::clearTreeModel(GtkTreeStore* store) {
 	gtk_tree_store_clear(store);
 	_iterMap.clear();
+}
+
+void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
+	clearTreeModel(store);
 
 	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
 		const std::string& className = i->first;
