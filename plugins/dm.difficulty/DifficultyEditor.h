@@ -39,7 +39,6 @@ class DifficultyEditor
 	// A label containing notes to the user
 	GtkWidget* _noteText;
 
-	GtkTreeStore* _settingsStore;
 	GtkTreeView* _settingsView;
 	GtkTreeSelection* _selection;
 
@@ -63,10 +62,6 @@ public:
 	void setLabel(const std::string& label);
 
 private:
-	// Reloads the treedata from the difficulty settings
-	void updateTreeModel();
-	void clearTreeModel();
-
 	// Creates the widgets
 	void populateWindow();
 	GtkWidget* createTreeView();

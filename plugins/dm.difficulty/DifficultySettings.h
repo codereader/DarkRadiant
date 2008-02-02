@@ -45,9 +45,15 @@ class DifficultySettings
 	typedef std::map<std::string, GtkTreeIter> TreeIterMap;
 	TreeIterMap _iterMap;
 
+	// The treemodel
+	GtkTreeStore* _store;
+
 public:
 	// Define the difficulty level in the constructor
 	DifficultySettings(int level);
+
+	// Get the treestore pointer for packing into a treeview
+	GtkTreeStore* getTreeStore() const;
 
 	// Returns the Setting associated with the given className 
 	// and carrying the given ID (returned pointer might be NULL)
@@ -71,10 +77,7 @@ public:
 	void deleteSetting(int id);
 
 	// Loads the data into the given treestore
-	void updateTreeModel(GtkTreeStore* store);
-
-	// Removes all data from the treemodel
-	void clearTreeModel(GtkTreeStore* store);
+	void updateTreeModel();
 
 	// Loads all settings (matching the internal _level) from the given entityDef.
 	void parseFromEntityDef(const IEntityClassPtr& def);

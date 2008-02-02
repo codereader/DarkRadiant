@@ -20,13 +20,6 @@ namespace ui {
 DifficultyEditor::DifficultyEditor(const std::string& label, 
 								   const difficulty::DifficultySettingsPtr& settings) :
 	_settings(settings),
-	_settingsStore(gtk_tree_store_new(NUM_SETTINGS_COLS, 
-									  G_TYPE_STRING, // description
-									  G_TYPE_STRING, // text colour
-									  G_TYPE_STRING, // classname
-									  G_TYPE_INT,    // setting id
-									  G_TYPE_BOOLEAN,// overridden?
-									  -1)),
 	_updateActive(false)
 {
 	// The tab label items (icon + label)
@@ -43,7 +36,7 @@ DifficultyEditor::DifficultyEditor(const std::string& label,
 	// The actual editor pane
 	_editor = gtk_vbox_new(FALSE, 12);
 
-	updateTreeModel();
+	_settings->updateTreeModel();
 
 	populateWindow();
 	updateEditorWidgets();
@@ -62,14 +55,6 @@ void DifficultyEditor::setLabel(const std::string& label) {
 	gtk_label_set_markup(GTK_LABEL(_label), label.c_str());
 }
 
-void DifficultyEditor::updateTreeModel() {
-	_settings->updateTreeModel(_settingsStore);
-}
-
-void DifficultyEditor::clearTreeModel() {
-	_settings->clearTreeModel(_settingsStore);
-}
-
 void DifficultyEditor::populateWindow() {
 	// Pack the treeview and the editor pane into a GtkPaned
 	GtkWidget* paned = gtk_hpaned_new();
@@ -83,7 +68,7 @@ void DifficultyEditor::populateWindow() {
 GtkWidget* DifficultyEditor::createTreeView() {
 	// First, create the treeview
 	_settingsView = GTK_TREE_VIEW(
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_settingsStore))
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_settings->getTreeStore()))
 	);
 	gtk_widget_set_size_request(GTK_WIDGET(_settingsView), TREE_VIEW_MIN_WIDTH, -1);
 
@@ -328,7 +313,7 @@ void DifficultyEditor::saveSetting() {
 	id = _settings->save(id, setting);
 
 	// Update the treemodel
-	updateTreeModel();
+	_settings->updateTreeModel();
 
 	// Highlight the setting
 	selectSettingById(id);
@@ -350,7 +335,7 @@ void DifficultyEditor::deleteSetting() {
 	_settings->deleteSetting(id);
 
 	// Update the treemodel
-	updateTreeModel();
+	_settings->updateTreeModel();
 }
 
 void DifficultyEditor::selectSettingById(int id) {
