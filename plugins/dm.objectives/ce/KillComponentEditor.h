@@ -3,6 +3,7 @@
 
 #include "ComponentEditor.h"
 #include "ComponentEditorFactory.h"
+#include "SpecifierEditCombo.h"
 
 namespace objectives
 {
@@ -34,6 +35,9 @@ class KillComponentEditor
 	
 	// Component to edit
 	Component* _component;	
+	
+	// SpecifierEditCombo for the kill target
+	SpecifierEditCombo _targetCombo;
 	
 public:
 
