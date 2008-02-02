@@ -96,8 +96,28 @@ GtkWidget* DifficultyEditor::createTreeView() {
                                         NULL);
 
 	GtkWidget* frame = gtkutil::ScrolledFrame(GTK_WIDGET(_settingsView));
-	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
-	return frame;
+	
+	// Create the action buttons
+	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 6);
+	
+	// Create button
+	_createSettingButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	g_signal_connect(G_OBJECT(_createSettingButton), "clicked", G_CALLBACK(onSettingCreate), this);
+
+	// Delete button
+	_deleteSettingButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	g_signal_connect(G_OBJECT(_deleteSettingButton), "clicked", G_CALLBACK(onSettingDelete), this);
+
+	gtk_box_pack_start(GTK_BOX(buttonHBox), _createSettingButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonHBox), _deleteSettingButton, TRUE, TRUE, 0);
+
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), buttonHBox, FALSE, FALSE, 0);
+
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
+
+	return vbox;
 }
 
 GtkWidget* DifficultyEditor::createEditingWidgets() {
@@ -179,12 +199,6 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 
 	_saveSettingButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	g_signal_connect(G_OBJECT(_saveSettingButton), "clicked", G_CALLBACK(onSettingSave), this);
-
-	// Delete button
-	_deleteSettingButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	g_signal_connect(G_OBJECT(_deleteSettingButton), "clicked", G_CALLBACK(onSettingDelete), this);
-
-	gtk_box_pack_start(GTK_BOX(buttonHbox), _deleteSettingButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonHbox), _saveSettingButton, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::RightAlignment(buttonHbox), FALSE, FALSE, 0);
@@ -215,7 +229,7 @@ void DifficultyEditor::updateEditorWidgets() {
 
 	int id = getSelectedSettingId();
 
-	gboolean widgetSensitive = FALSE;
+	gboolean editWidgetsSensitive = FALSE;
 
 	std::string noteText;
 
@@ -225,10 +239,10 @@ void DifficultyEditor::updateEditorWidgets() {
 
 		if (setting != NULL) {
 			// Activate editing pane
-			widgetSensitive = TRUE;
+			editWidgetsSensitive = TRUE;
 
 			if (_settings->isOverridden(setting)) {
-				widgetSensitive = FALSE;
+				editWidgetsSensitive = FALSE;
 				noteText += "This default setting is overridden, cannot edit.";
 			}
 
@@ -278,16 +292,36 @@ void DifficultyEditor::updateEditorWidgets() {
 
 			// Disable the deletion of default settings
 			gtk_widget_set_sensitive(_deleteSettingButton, (setting->isDefault) ? FALSE : TRUE);
+			gtk_widget_set_sensitive(_saveSettingButton, TRUE);
 		}
+	}
+	else {
+		// Nothing selected, disable deletion 
+		gtk_widget_set_sensitive(_deleteSettingButton, FALSE);
+		gtk_widget_set_sensitive(_saveSettingButton, FALSE);
 	}
 
 	// Set editing pane sensitivity
-	gtk_widget_set_sensitive(_editorPane, widgetSensitive);
+	gtk_widget_set_sensitive(_editorPane, editWidgetsSensitive);
 
+	// Set the note text in any case
 	gtk_label_set_markup(GTK_LABEL(_noteText), noteText.c_str());
-	gtk_widget_set_sensitive(_noteText, TRUE);
 
 	_updateActive = false;
+}
+
+void DifficultyEditor::createSetting() {
+	// Unselect everything
+	gtk_tree_selection_unselect_all(_selection);
+
+	// Unlock editing widgets 
+	gtk_widget_set_sensitive(_editorPane, TRUE);
+	// Unlock class combo
+	gtk_widget_set_sensitive(_classCombo, TRUE);
+	gtk_widget_set_sensitive(_saveSettingButton, TRUE);
+
+	gtk_entry_set_text(GTK_ENTRY(_spawnArgEntry), "");
+	gtk_entry_set_text(GTK_ENTRY(_argumentEntry), "");
 }
 
 void DifficultyEditor::saveSetting() {
@@ -329,8 +363,8 @@ void DifficultyEditor::deleteSetting() {
 	// Instantiate a new setting and fill the data in
 	difficulty::SettingPtr setting = _settings->getSettingById(id);
 
-	if (setting->isDefault) {
-		// Don't delete default settings
+	if (setting == NULL || setting->isDefault) {
+		// Don't delete NULL or default settings
 		return;
 	}
 
@@ -371,6 +405,10 @@ void DifficultyEditor::onSettingSave(GtkWidget* button, DifficultyEditor* self) 
 
 void DifficultyEditor::onSettingDelete(GtkWidget* button, DifficultyEditor* self) {
 	self->deleteSetting();
+}
+
+void DifficultyEditor::onSettingCreate(GtkWidget* button, DifficultyEditor* self) {
+	self->createSetting();
 }
 
 void DifficultyEditor::onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self) {
