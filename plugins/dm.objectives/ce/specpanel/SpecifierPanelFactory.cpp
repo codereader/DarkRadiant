@@ -14,16 +14,16 @@ SpecifierPanelFactory::PanelMap& SpecifierPanelFactory::getMap()
 }
 
 // Register a panel map
-void SpecifierPanelFactory::registerType(const objectives::Specifier& type, 
+void SpecifierPanelFactory::registerType(const std::string& name, 
 										 SpecifierPanelPtr cls)
 {
-	getMap().insert(PanelMap::value_type(type, cls));
+	getMap().insert(PanelMap::value_type(name, cls));
 }
 
 // Create a panel type
-SpecifierPanelPtr SpecifierPanelFactory::create(objectives::Specifier& type)
+SpecifierPanelPtr SpecifierPanelFactory::create(const std::string& name)
 {
-	PanelMap::const_iterator i = getMap().find(type);
+	PanelMap::const_iterator i = getMap().find(name);
 	if (i != getMap().end())
 		return i->second->clone();
 	else

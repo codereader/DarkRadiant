@@ -24,7 +24,7 @@ class NoneSpecifierPanel
 	static struct RegHelper {
 		RegHelper() { 
 			SpecifierPanelFactory::registerType(
-				Specifier::SPEC_NONE(),
+				Specifier::SPEC_NONE().getName(),
 				SpecifierPanelPtr(new NoneSpecifierPanel())
 			);
 		}
@@ -40,9 +40,14 @@ public:
 	 */
 	NoneSpecifierPanel();
 	
+	/**
+	 * Destroy this NoneSpecifierPanel including all widgets.
+	 */
+	~NoneSpecifierPanel();
+	
 	/* SpecifierPanel implementation */
 	
-	GtkWidget* getWidget() const { return _widget; }
+	GtkWidget* getWidget() const;
 	
 	SpecifierPanelPtr clone() const {
 		return SpecifierPanelPtr(new NoneSpecifierPanel());

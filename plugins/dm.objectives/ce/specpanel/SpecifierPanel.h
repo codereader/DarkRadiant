@@ -29,6 +29,9 @@ typedef boost::shared_ptr<SpecifierPanel> SpecifierPanelPtr;
  * SpecifierPanel subclasses are created through the virtual constructor idiom,
  * based on the Specifier type that needs to be edited. They accept and return
  * a std::string containing the specifier value to be used.
+ * 
+ * All SpecifierPanel subclasses are responsible for destroying their GTK
+ * widgets in their own destructors.
  */
 class SpecifierPanel
 {
@@ -49,7 +52,8 @@ public:
 	 * Obtain the master GtkWidget for packing into the parent window.
 	 * 
 	 * @return
-	 * A GtkWidget containing all SpecifierPanel widgets.
+	 * A GtkWidget containing all SpecifierPanel widgets. This widget will have
+	 * been made visible with <b>gtk_widget_show_all()</b>.
 	 */
 	virtual GtkWidget* getWidget() const = 0;
 };
