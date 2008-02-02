@@ -6,8 +6,19 @@
 namespace difficulty {
 
 DifficultySettings::DifficultySettings(int level) :
-	_level(level)
+	_level(level),
+	_store(gtk_tree_store_new(NUM_SETTINGS_COLS, 
+							  G_TYPE_STRING, // description
+							  G_TYPE_STRING, // text colour
+							  G_TYPE_STRING, // classname
+							  G_TYPE_INT,    // setting id
+							  G_TYPE_BOOLEAN,// overridden?
+							  -1))
 {}
+
+GtkTreeStore* DifficultySettings::getTreeStore() const {
+	return _store;
+}
 
 int DifficultySettings::getLevel() const {
 	return _level;
@@ -112,27 +123,23 @@ void DifficultySettings::deleteSetting(int id) {
 	}
 }
 
-void DifficultySettings::clearTreeModel(GtkTreeStore* store) {
-	gtk_tree_store_clear(store);
+void DifficultySettings::updateTreeModel() {
+	gtk_tree_store_clear(_store);
 	_iterMap.clear();
-}
-
-void DifficultySettings::updateTreeModel(GtkTreeStore* store) {
-	clearTreeModel(store);
 
 	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
 		const std::string& className = i->first;
 		const Setting& setting = *i->second;
 
-		GtkTreeIter classIter = findOrInsertClassname(store, className);
+		GtkTreeIter classIter = findOrInsertClassname(_store, className);
 
 		// Whether this setting is overridden
 		gboolean overridden = isOverridden(i->second) ? TRUE : FALSE;
 
 		// Now insert the settings description into the map
 		GtkTreeIter iter;
-		gtk_tree_store_append(store, &iter, &classIter);
-		gtk_tree_store_set(store, &iter, 
+		gtk_tree_store_append(_store, &iter, &classIter);
+		gtk_tree_store_set(_store, &iter, 
 			COL_DESCRIPTION, setting.getDescString().c_str(), 
 			COL_TEXTCOLOUR, setting.isDefault ? "#707070" : "black", 
 			COL_CLASSNAME, setting.className.c_str(), 
