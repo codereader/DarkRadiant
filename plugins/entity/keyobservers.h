@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include <map>
 #include <string>
+#include <boost/algorithm/string/case_conv.hpp>
 
 class KeyObserverMap : 
 	public Entity::Observer
@@ -35,7 +36,8 @@ class KeyObserverMap :
 
 public:
 	void insert(const std::string& key, const KeyObserver& observer) {
-		_keyObservers.insert(KeyObservers::value_type(key, observer));
+		std::string lowercaseKey = boost::to_lower_copy(key);
+		_keyObservers.insert(KeyObservers::value_type(lowercaseKey, observer));
 	}
 
 	void erase(const std::string& key, const KeyObserver& observer) {
@@ -51,8 +53,9 @@ public:
 	
 	// Entity::Observer implementation, gets called on key insert
 	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
-		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
-			 i != _keyObservers.end() && i->first == key; 
+		std::string lowercaseKey = boost::to_lower_copy(key);
+		for (KeyObservers::const_iterator i = _keyObservers.find(lowercaseKey); 
+			 i != _keyObservers.end() && i->first == lowercaseKey; 
 			 ++i)
 		{
 			value.attach(i->second);
@@ -61,8 +64,9 @@ public:
 	
 	// Entity::Observer implementation, gets called on Key erase	
 	void onKeyErase(const std::string& key, EntityKeyValue& value) {
-		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
-			 i != _keyObservers.end() && i->first == key; 
+		std::string lowercaseKey = boost::to_lower_copy(key);
+		for (KeyObservers::const_iterator i = _keyObservers.find(lowercaseKey); 
+			 i != _keyObservers.end() && i->first == lowercaseKey; 
 			 ++i)
 		{
 			value.detach(i->second);
