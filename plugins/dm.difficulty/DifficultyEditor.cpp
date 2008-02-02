@@ -177,15 +177,15 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	// Save button
 	GtkWidget* buttonHbox = gtk_hbox_new(FALSE, 6);
 
-	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSettingSave), this);
+	_saveSettingButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	g_signal_connect(G_OBJECT(_saveSettingButton), "clicked", G_CALLBACK(onSettingSave), this);
 
 	// Delete button
-	GtkWidget* deleteButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	g_signal_connect(G_OBJECT(deleteButton), "clicked", G_CALLBACK(onSettingDelete), this);
+	_deleteSettingButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	g_signal_connect(G_OBJECT(_deleteSettingButton), "clicked", G_CALLBACK(onSettingDelete), this);
 
-	gtk_box_pack_start(GTK_BOX(buttonHbox), deleteButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonHbox), saveButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonHbox), _deleteSettingButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonHbox), _saveSettingButton, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::RightAlignment(buttonHbox), FALSE, FALSE, 0);
 
@@ -275,6 +275,9 @@ void DifficultyEditor::updateEditorWidgets() {
 
 			// We have a treeview selection, lock the classname
 			gtk_widget_set_sensitive(_classCombo, FALSE);
+
+			// Disable the deletion of default settings
+			gtk_widget_set_sensitive(_deleteSettingButton, (setting->isDefault) ? FALSE : TRUE);
 		}
 	}
 
