@@ -16,6 +16,9 @@ class DifficultySettingsManager
 	// This contains all the settings of all the difficulty levels
 	std::vector<DifficultySettingsPtr> _settings;
 
+	// The names of the difficulty levels
+	std::vector<std::string> _difficultyNames;
+
 public:
 	// Loads all settings from the entityDefs and the currently loaded map.
 	void loadSettings();
@@ -26,9 +29,13 @@ public:
 	// Get the settings object for the given difficulty <level>
 	DifficultySettingsPtr getSettings(int level);
 
+	// Get the display name of the given difficulty level
+	std::string getDifficultyName(int level);
+
 private:
 	void loadDefaultSettings();
 	void loadMapSettings();
+	void loadDifficultyNames();
 };
 
 } // namespace difficulty
