@@ -22,16 +22,20 @@ class Command :
 {
 	// The callback to be performed on execute()
 	Callback _callback;
+
+	// Whether this command reacts on keyup or keydown
+	bool _reactOnKeyUp;
 	
 public:
-	Command(const Callback& callback);
+	Command(const Callback& callback, bool reactOnKeyUp = false);
 	
 	virtual ~Command() {}
 
 	// Invoke the registered callback
 	virtual void execute();
 	
-	// Override the derived keyDown method
+	// Override the derived keyDown/keyUp method
+	virtual void keyUp();
 	virtual void keyDown();
 	
 	// Connect the given menuitem/toolbutton to this Command

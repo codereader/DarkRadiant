@@ -1,7 +1,8 @@
 #include "Command.h"
 
-Command::Command(const Callback& callback) :
-	_callback(callback)
+Command::Command(const Callback& callback, bool reactOnKeyUp) :
+	_callback(callback),
+	_reactOnKeyUp(reactOnKeyUp)
 {}
 
 bool Command::empty() const {
@@ -15,10 +16,20 @@ void Command::execute() {
 	}
 }
 
+// Override the derived keyUp method
+void Command::keyUp() {
+	if (_reactOnKeyUp) {
+		// Execute the command on key up event
+		execute();
+	}
+}
+
 // Override the derived keyDown method
 void Command::keyDown() {
-	// Execute the command on key down event
-	execute();
+	if (!_reactOnKeyUp) {
+		// Execute the command on key down event
+		execute();
+	}
 }
 
 // Connect the given menuitem or toolbutton to this Command
