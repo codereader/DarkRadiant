@@ -82,8 +82,8 @@ public:
 	 */
 	Component()
 	: state(false), inverted(false), irreversible(false), type(""),
-	  spec1_type(Specifier::SPEC_NONE),
-	  spec2_type(Specifier::SPEC_NONE)
+	  spec1_type(Specifier::SPEC_NONE()),
+	  spec2_type(Specifier::SPEC_NONE())
 	{ }
 };
 

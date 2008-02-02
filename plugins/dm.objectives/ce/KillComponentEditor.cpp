@@ -21,28 +21,28 @@ KillComponentEditor::KillComponentEditor(Component& component)
 	// Create a dropdown with available specifier types
 	GtkWidget* combo = gtk_combo_box_new_text();
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_NONE.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_NONE().getName().c_str()
 	);
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_NAME.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_NAME().getName().c_str()
 	);
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_OVERALL.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_OVERALL().getName().c_str()
 	);
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_CLASSNAME.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_CLASSNAME().getName().c_str()
 	);
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_SPAWNCLASS.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_SPAWNCLASS().getName().c_str()
 	);
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_AI_TYPE.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_AI_TYPE().getName().c_str()
 	);
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_AI_TEAM.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_AI_TEAM().getName().c_str()
 	);
 	gtk_combo_box_append_text(
-		GTK_COMBO_BOX(combo), Specifier::SPEC_AI_INNOCENCE.getName().c_str()
+		GTK_COMBO_BOX(combo), Specifier::SPEC_AI_INNOCENCE().getName().c_str()
 	);
 
 	
