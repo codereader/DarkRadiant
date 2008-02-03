@@ -328,18 +328,17 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 			1
 	); 
 	
-	// Update the Objective object
+	// Update the Objective object. The selected index must be valid, since the
+	// edit panel is only sensitive if a component is selected
 	int idx = self->getSelectedIndex();
-	if (idx != -1) {
-		self->_objective.components[idx].setType( 
-			ComponentType::getComponentType(selectedText)
-		);
-	}
+	assert(idx >= 0);
+	Component& comp(self->_objective.components[idx]);
+
+	comp.setType(ComponentType::getComponentType(selectedText));
 	
 	// Change the ComponentEditor
 	self->_componentEditor = ce::ComponentEditorFactory::create(
-			selectedText,
-			self->_objective.components[idx]
+			selectedText, comp
 	);
 	if (self->_componentEditor) 
 	{
@@ -354,8 +353,13 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 		);
 	}
 
-	// Refresh the components
-	self->populateComponents();
+	// Update the components list with the new display string
+	GtkTreeModel* model;
+	GtkTreeIter compIter;
+	gtk_tree_selection_get_selected(self->_componentSel, &model, &compIter);
+	gtk_list_store_set(
+		GTK_LIST_STORE(model), &compIter, 1, comp.getString().c_str(), -1
+	);
 }
 
 } // namespace objectives
