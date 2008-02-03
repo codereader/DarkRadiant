@@ -15,6 +15,8 @@ namespace ce
 /**
  * \namespace objectives::ce
  * ComponentEditor subclasses for the ComponentsDialog.
+ * 
+ * \ingroup objectives
  */
 
 /* FORWARD DECLS */

@@ -13,6 +13,13 @@ namespace util
 {
 
 /**
+ * \namespace objectives::util
+ * Helper classes for the Objectives Editor plugin.
+ * 
+ * \ingroup objectives
+ */
+
+/**
  * Helper class to create a GtkComboBox containing two text columns.
  * 
  * This class provides a convenient mechanism to create a GtkComboBox backed
