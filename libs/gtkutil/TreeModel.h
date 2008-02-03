@@ -9,16 +9,17 @@
 namespace gtkutil
 {
 
-/** Utility class for operation on GtkTreeModels. This class provides
+/** 
+ * Utility class for operation on GtkTreeModels. This class provides
  * methods to retrieve strings and other values from a tree model without
  * having to manually use GValues etc.
  */
-
 class TreeModel
 {
 public:
 
-	/** Extract a string from the given row of the provided TreeModel.
+	/** 
+	 * Extract a string from the given row of the provided TreeModel.
 	 * 
 	 * @param model
 	 * The TreeModel* to examine.

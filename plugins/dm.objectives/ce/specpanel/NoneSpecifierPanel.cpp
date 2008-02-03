@@ -20,7 +20,7 @@ NoneSpecifierPanel::NoneSpecifierPanel()
 // Destructor
 NoneSpecifierPanel::~NoneSpecifierPanel() 
 {
-	if (GTK_IS_WIDGET(_widget));
+	if (GTK_IS_WIDGET(_widget))
 		gtk_widget_destroy(_widget);
 }
 

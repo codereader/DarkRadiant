@@ -35,13 +35,16 @@ class ComponentType
 	// Integer ID of this ComponentType
 	int _id;
 	
-	// Name of this type
+	// Raw name of this type
 	std::string _name;
+	
+	// User-friendly display name
+	std::string _displayName;
 	
 private:
 	
 	// Construct a named ComponentType
-	ComponentType(const std::string& name);
+	ComponentType(const std::string& name, const std::string& displayName);
 	
 public:
 	
@@ -61,9 +64,22 @@ public:
 	
 	/**
 	 * Get the name of this ComponentType.
+	 * 
+	 * This returns the "raw" name of the ComponentType as used in the entity
+	 * spawnargs, such as "ai_alert" or "ko".
 	 */
 	const std::string& getName() const {
 		return _name;
+	}
+	
+	/**
+	 * Get the display name of this ComponentType.
+	 * 
+	 * This returns a user-friendly display name which is suitable for
+	 * identifying the ComponentType in a dialog, such as "AI is killed".
+	 */
+	const std::string& getDisplayName() const {
+		return _displayName;
 	}
 	
 	/**

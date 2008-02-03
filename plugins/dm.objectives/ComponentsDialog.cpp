@@ -1,11 +1,13 @@
 #include "ComponentsDialog.h"
 #include "Objective.h"
 #include "ce/ComponentEditorFactory.h"
+#include "util/TwoColumnTextCombo.h"
 
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtk/gtk.h>
 #include <boost/algorithm/string/predicate.hpp>
@@ -103,11 +105,13 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	gtk_widget_set_sensitive(table, FALSE); // disabled until selection
 	
 	// Component type dropdown
+	GtkWidget* cmb = util::TwoColumnTextCombo();
+	_widgets[WIDGET_TYPE_COMBO] = cmb;
+
+	// Pack dropdown into table
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Type</b>"),
 					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-
-	_widgets[WIDGET_TYPE_COMBO] = gtk_combo_box_new_text();
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_TYPE_COMBO]), "changed",
 					 G_CALLBACK(_onTypeChanged), this);
 	gtk_table_attach_defaults(GTK_TABLE(table),
@@ -119,9 +123,17 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 		 i != ComponentType::SET_ALL().end();
 		 ++i)
 	{
-		gtk_combo_box_append_text(
-			GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]), i->getName().c_str()
-		);		
+		GtkListStore* ls = GTK_LIST_STORE(
+				gtk_combo_box_get_model(GTK_COMBO_BOX(cmb))
+		);
+		GtkTreeIter iter;
+		gtk_list_store_append(ls, &iter);
+		gtk_list_store_set(
+			ls, &iter, 
+			0, i->getDisplayName().c_str(), 
+			1, i->getName().c_str(),
+			-1
+		);	
 	}
 	
 	// Flags hbox
@@ -307,42 +319,42 @@ void ComponentsDialog::_onDeleteComponent(GtkWidget* w, ComponentsDialog* self)
 // Type combo changed
 void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 
-	gchar* selectedText = 
-		gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
+	// Get the current selection
+	GtkTreeIter iter;
+	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter);
+	std::string selectedText = gtkutil::TreeModel::getString(
+			gtk_combo_box_get_model(GTK_COMBO_BOX(w)),
+			&iter,
+			1
+	); 
 	
-	// Identify the selected component, and update it
-	if (selectedText != NULL) 
+	// Update the Objective object
+	int idx = self->getSelectedIndex();
+	if (idx != -1) {
+		self->_objective.components[idx].type = 
+			ComponentType::getComponentType(selectedText);
+	}
+	
+	// Change the ComponentEditor
+	self->_componentEditor = ce::ComponentEditorFactory::create(
+			selectedText,
+			self->_objective.components[idx]
+	);
+	if (self->_componentEditor) 
 	{
-		// Update the Objective object
-		int idx = self->getSelectedIndex();
-		if (idx != -1) {
-			self->_objective.components[idx].type = 
-				ComponentType::getComponentType(selectedText);
-		}
+		// Get the widget from the ComponentEditor and show it
+		GtkWidget* editor = self->_componentEditor->getWidget();
+		gtk_widget_show_all(editor);
 		
-		// Change the ComponentEditor
-		self->_componentEditor = 
-			ce::ComponentEditorFactory::create(
-				selectedText,
-				self->_objective.components[idx]
-			);
-		if (self->_componentEditor) 
-		{
-			// Get the widget from the ComponentEditor and show it
-			GtkWidget* editor = self->_componentEditor->getWidget();
-			gtk_widget_show_all(editor);
-			
-			// Pack the widget into the containing frame
-			gtk_container_add(
-				GTK_CONTAINER(self->_widgets[WIDGET_COMPEDITOR_PANEL]),
-				editor
-			);
-		}
+		// Pack the widget into the containing frame
+		gtk_container_add(
+			GTK_CONTAINER(self->_widgets[WIDGET_COMPEDITOR_PANEL]),
+			editor
+		);
 	}
 
 	// Refresh the components
 	self->populateComponents();
-	
 }
 
 } // namespace objectives
