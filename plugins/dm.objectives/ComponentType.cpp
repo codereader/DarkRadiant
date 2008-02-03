@@ -17,51 +17,55 @@ ComponentType::ComponentTypeMap& ComponentType::getMap() {
 // Static instances
 
 const ComponentType& ComponentType::COMP_KILL() {
-	static ComponentType _instance("kill");
+	static ComponentType _instance("kill", "AI is killed");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_KO() {
-	static ComponentType _instance("ko");
+	static ComponentType _instance("ko", "AI is knocked out");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_AI_FIND_BODY() {
-	static ComponentType _instance("ai_find_body");
+	static ComponentType _instance("ai_find_body", "AI finds a body");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_AI_ALERT() {
-	static ComponentType _instance("alert"); // sic
+	static ComponentType _instance("alert", "AI is alerted"); // sic
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_DESTROY() {
-	static ComponentType _instance("destroy");
+	static ComponentType _instance("destroy", "Object is destroyed");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_ITEM() {
-	static ComponentType _instance("item");
+	static ComponentType _instance("item", "Player possesses item");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_PICKPOCKET() {
-	static ComponentType _instance("pickpocket");
+	static ComponentType _instance("pickpocket", "Player pickpockets AI");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_LOCATION() {
-	static ComponentType _instance("location");
+	static ComponentType _instance("location", "Item is in location");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_INFO_LOCATION() {
-	static ComponentType _instance("info_location");
+	static ComponentType _instance("info_location", "Item is in info_location");
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_CUSTOM_ASYNC() {
-	static ComponentType _instance("custom"); // sic
+	static ComponentType _instance("custom", "Custom script"); // sic
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_CUSTOM_CLOCKED() {
-	static ComponentType _instance("custom_clocked");
+	static ComponentType _instance(
+		"custom_clocked", "Custom script queried on a regular basis"
+	);
 	return _instance;
 }
 const ComponentType& ComponentType::COMP_DISTANCE() {
-	static ComponentType _instance("comp_distance"); // sic
+	static ComponentType _instance(
+		"comp_distance", "Two entities are within a radius of each other"
+	);
 	return _instance;
 }
 
@@ -86,9 +90,11 @@ const ComponentTypeSet& ComponentType::SET_ALL() {
 }
 
 // Construct a named ComponentType
-ComponentType::ComponentType(const std::string& name)
+ComponentType::ComponentType(const std::string& name, 
+							 const std::string& displayName)
 : _id(enumCount++),
-  _name(name)
+  _name(name),
+  _displayName(displayName)
 {
 	// Register self in map
 	getMap().insert(ComponentTypeMap::value_type(name, *this));
