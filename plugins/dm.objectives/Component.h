@@ -19,74 +19,116 @@ namespace objectives
  */
 class Component
 {
+	// Completion state flag
+	bool _satisfied;
+	
+	// Inverted flag
+	bool _inverted;
+	
+	// Irreversible (latched) flag
+	bool _irreversible;
+	
+	// Player responsible flag
+	bool _playerResponsible;
+	
+	// Component type
+	ComponentType _type;
+	
 public:
 	
 	/**
-	 * Flag to indicate that this component has been satisfied.
+	 * Construct a Component with default settings. 
+	 * 
+	 * All flags are set to false, and the type is set to an arbitrary value.
 	 */
-	bool state;
+	Component()
+	: _satisfied(false), 
+	  _inverted(false), 
+	  _irreversible(false), 
+	  _playerResponsible(false), 
+	  _type(ComponentType::COMP_KILL()) // arbitrary choice, no NONE option
+	{ }
+
+	/**
+	 * Set the flag to indicate that this component has been satisfied.
+	 */
+	void setSatisfied(bool satisfied) {
+		_satisfied = satisfied;
+	}
 	
 	/**
-	 * Flag to indicate that the sense of this component is inverted.
+	 * Get the satisfied status flag.
+	 */
+	bool isSatisfied() const {
+		return _satisfied;
+	}
+	
+	/**
+	 * Set the flag to indicate that the sense of this component is inverted.
 	 * 
 	 * If true, this component is logically <b>NOT</b>ed, so when the conditions 
 	 * described by the type and specifiers are not met, the component state is 
 	 * true, and when they are met, it is false.
 	 */
-	bool inverted;
+	void setInverted(bool inverted) {
+		_inverted = inverted;
+	}
 	
 	/**
-	 * Flag to indicate that this component changes state once then latches,
-	 * even if its in-game condition is no longer satisfied.
+	 * Get the inverted status.
 	 */
-	bool irreversible;
+	bool isInverted() const {
+		return _inverted;
+	}
 	
 	/**
-	 * Flag to indicate that the player must be responsible for satisfying this
-	 * component.
+	 * Set the flag to indicate that this component changes state once then 
+	 * latches, even if its in-game condition is no longer satisfied.
+	 */
+	void setIrreversible(bool irreversible) {
+		_irreversible = irreversible;
+	}
+	
+	/**
+	 * Get the irreversible status.
+	 */
+	bool isIrreversible() const {
+		return _irreversible;
+	}
+	
+	/**
+	 * Set the flag to indicate that the player must be responsible for 
+	 * satisfying this component.
 	 * 
 	 * If this flag is set, the component will not be satisfied by an event
 	 * which is not <i>directly</i> caused by the player. For example, if the
 	 * component requires the killing of an AI, it will not be satisfied if the
 	 * AI is killed by another AI rather than the player.
 	 */
-	bool playerResponsible;
+	void setPlayerResponsible(bool playerResponsible) {
+		_playerResponsible = playerResponsible;
+	}
 	
 	/**
-	 * The type of this component ("kill", "ko" etc).
+	 * Set the type of this component ("kill", "ko" etc).
 	 */
-	ComponentType type;
+	void setType(ComponentType type) {
+		_type = type;
+	}
 	
 	/**
-	 * The first specifier type.
+	 * Get the component type.
 	 */
-	Specifier spec1_type;
+	ComponentType getType() const {
+		return _type;
+	}
 	
 	/**
-	 * The first specifier value.
+	 * Return a string description of this Component.
 	 */
-	std::string spec1_val;
-	
-	/**
-	 * The second specifier type.
-	 */
-	Specifier spec2_type;
-	
-	/**
-	 * The second specifier value.
-	 */
-	std::string spec2_val;
-	
-	/**
-	 * Construct a Component with default settings. All flags are set to false,
-	 * and the type is set to the empty string.
-	 */
-	Component()
-	: state(false), inverted(false), irreversible(false), 
-	  type(ComponentType::COMP_KILL()), // arbitrary choice, no NONE option
-	  spec1_type(Specifier::SPEC_NONE()),
-	  spec2_type(Specifier::SPEC_NONE())
-	{ }
+	std::string getString() const {
+		return _type.getDisplayName();
+	}
 };
 
 }
