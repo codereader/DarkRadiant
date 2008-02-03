@@ -39,6 +39,7 @@ class DifficultyEditor
 	GtkWidget* _saveSettingButton;
 	GtkWidget* _deleteSettingButton;
 	GtkWidget* _createSettingButton;
+	GtkWidget* _refreshButton;
 
 	// A label containing notes to the user
 	GtkWidget* _noteText;
@@ -95,6 +96,7 @@ private:
 	static void onSettingCreate(GtkWidget* button, DifficultyEditor* self);
 	static void onSettingSave(GtkWidget* button, DifficultyEditor* self);
 	static void onSettingDelete(GtkWidget* button, DifficultyEditor* self);
+	static void onRefresh(GtkWidget* button, DifficultyEditor* self);
 
 	static void onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self);
 };

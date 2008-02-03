@@ -92,6 +92,9 @@ public:
 	// Returns true if the given setting is overridden by map-specific settings
 	bool isOverridden(const SettingPtr& setting);
 
+	// Clears and reloads the treemodel
+	void refreshTreeModel();
+
 private:
 	// Clears the tree data
 	void clearTreeModel();
