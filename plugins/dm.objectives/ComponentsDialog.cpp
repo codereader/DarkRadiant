@@ -201,7 +201,7 @@ void ComponentsDialog::populateComponents() {
 		gtk_list_store_append(_componentList, &iter);
 		gtk_list_store_set(_componentList, &iter, 
 						   0, i->first, 
-						   1, i->second.type.getName().c_str(),
+						   1, i->second.getString().c_str(),
 						   -1);	
 	}
 	
@@ -216,21 +216,21 @@ void ComponentsDialog::populateEditPanel(int index) {
 	// Set the flags
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_STATE_FLAG]), 
-		comp.state ? TRUE : FALSE
+		comp.isSatisfied() ? TRUE : FALSE
 	);
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]), 
-		comp.irreversible ? TRUE : FALSE
+		comp.isIrreversible() ? TRUE : FALSE
 	);
 	gtk_toggle_button_set_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_INVERTED_FLAG]), 
-		comp.inverted ? TRUE : FALSE
+		comp.isInverted() ? TRUE : FALSE
 	);
 	
 	// Set the type combo. Since the combo box was populated in ID order, we
 	// can simply use our ComponentType's ID as an index.
 	gtk_combo_box_set_active(
-		GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]), comp.type.getId()
+		GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]), comp.getType().getId()
 	);
 }
 
@@ -331,8 +331,9 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 	// Update the Objective object
 	int idx = self->getSelectedIndex();
 	if (idx != -1) {
-		self->_objective.components[idx].type = 
-			ComponentType::getComponentType(selectedText);
+		self->_objective.components[idx].setType( 
+			ComponentType::getComponentType(selectedText)
+		);
 	}
 	
 	// Change the ComponentEditor

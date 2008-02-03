@@ -73,16 +73,16 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 			
 			// Switch on the key string
 			if (componentStr == "type") {
-				comp.type = ComponentType::getComponentType(value); 
+				comp.setType(ComponentType::getComponentType(value)); 
 			}
 			else if (componentStr == "state") {
-				comp.state = (value == "1");
+				comp.setSatisfied(value == "1");
 			}
 			else if (componentStr == "not") {
-				comp.inverted = (value == "1");
+				comp.setInverted(value == "1");
 			}
 			else if (componentStr == "irreversible") {
-				comp.irreversible = (value == "1");
+				comp.setIrreversible(value == "1");
 			}
 		}
 			
