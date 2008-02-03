@@ -96,6 +96,9 @@ private:
 	// Clears the tree data
 	void clearTreeModel();
 
+	// Get the inheritance key of the given classname (for sorting in the map)
+	std::string getInheritanceKey(const std::string& className);
+
 	// Creates a new setting (and updates the internal structures)
 	// This needs the classname as argument (for the internal mapping)
 	SettingPtr createSetting(const std::string& className);

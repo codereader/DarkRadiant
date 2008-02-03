@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector3.h"
 
 #include <vector>
+#include <list>
 #include <map>
 
 /* FORWARD DECLS */
@@ -129,6 +130,13 @@ class IEntityClass
 : public ModResource
 {
 public:
+	/**
+	 * greebo: The inheritance chain, represented by a list of classnames, 
+	 *         starting with the topmost class.
+	 *
+	 * Example: "atdm:ai_base" | "atdm:ai_humanoid" | "atdm:ai_builder_guard"
+	 */ 
+	typedef std::list<std::string> InheritanceChain;
     
 	/** 
 	 * Get this entity class' name.
@@ -273,6 +281,12 @@ public:
 	/** Get the model skin, or the empty string if there is no skin.
 	 */
 	virtual const std::string& getSkin() const = 0;
+
+	/**
+	 * greebo: Returns the list of base classes this eclass is inheriting from
+	 *         including this eclass itself (as last element).
+	 */
+	virtual const InheritanceChain& getInheritanceChain() = 0;
 };
 
 /**
