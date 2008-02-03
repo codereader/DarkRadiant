@@ -118,6 +118,9 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 
 	// Set the resolved flag
 	_inheritanceResolved = true;
+
+	// Construct the inheritance list
+	buildInheritanceChain();
 }
 
 // Find a single attribute
@@ -249,6 +252,32 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
 		}
             
     } // while true
+}
+
+const IEntityClass::InheritanceChain& Doom3EntityClass::getInheritanceChain() {
+	return _inheritanceChain;
+}
+
+void Doom3EntityClass::buildInheritanceChain() {
+	_inheritanceChain.clear();
+
+	// We start with the name of this class
+	_inheritanceChain.push_back(_name);
+	
+	// Walk up the inheritance chain
+	std::string parentClassName = getAttribute("inherit").value;
+	while (!parentClassName.empty()) {
+		_inheritanceChain.push_front(parentClassName);
+
+		// Get the parent eclass
+		IEntityClassPtr parentClass = GlobalEntityClassManager().findClass(parentClassName);
+
+		if (parentClass == NULL) {
+			break;
+		}
+
+		parentClassName = parentClass->getAttribute("inherit").value;
+	}
 }
 
 } // namespace eclass

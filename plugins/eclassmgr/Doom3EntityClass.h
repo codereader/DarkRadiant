@@ -63,6 +63,9 @@ class Doom3EntityClass
 	// The empty attribute
 	EntityClassAttribute _emptyAttribute;
 
+	// The list of strings containing the ancestors and this eclass itself.
+	InheritanceChain _inheritanceChain;
+
 private:
 
 	// Capture the shaders corresponding to the current colour
@@ -250,6 +253,11 @@ public:
 	const std::string& getSkin() const {
 		return _skin;
 	}
+
+	/**
+	 * Returns the inheritance chain (including this eclass).
+	 */
+	virtual const InheritanceChain& getInheritanceChain();
 	
 	/**
 	 * Resolve inheritance for this class.
@@ -277,6 +285,10 @@ public:
 	
 	// Initialises this class from the given tokens
 	void parseFromTokens(parser::DefTokeniser& tokeniser);
+
+private:
+	// Rebuilds the inheritance chain (called after inheritance is resolved)
+	void buildInheritanceChain();
 };
 
 /**

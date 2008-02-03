@@ -42,9 +42,12 @@ SettingPtr DifficultySettings::getSettingById(int id) const {
 }
 
 SettingPtr DifficultySettings::findOrCreateOverrule(const SettingPtr& existing) {
+	// Get the inheritancekey needed to lookup the classname
+	std::string inheritanceKey = getInheritanceKey(existing->className);
+
 	// Check if there is already an override active for the <existing> setting
-	for (SettingsMap::iterator i = _settings.find(existing->className);
-		 i != _settings.upper_bound(existing->className) && i != _settings.end();
+	for (SettingsMap::iterator i = _settings.find(inheritanceKey);
+		 i != _settings.upper_bound(inheritanceKey) && i != _settings.end();
 		 i++)
 	{
 		// Avoid self==self comparisons
@@ -130,7 +133,7 @@ void DifficultySettings::deleteSetting(int id) {
 void DifficultySettings::updateTreeModel() {
 	// Go through the settings and check the corresponding iters in the tree
 	for (SettingsMap::iterator i = _settings.begin(); i != _settings.end(); i++) {
-		const std::string& className = i->first;
+		const std::string& className = i->second->className;
 		Setting& setting = *i->second;
 
 		// Ensure that the classname is in the map
@@ -164,9 +167,12 @@ bool DifficultySettings::isOverridden(const SettingPtr& setting) {
 		return false; // not a default setting, return false
 	}
 
+	// Get the inheritancekey needed to lookup the classname
+	std::string inheritanceKey = getInheritanceKey(setting->className);
+
 	// Search all other settings for the same className/spawnArg combination
-	for (SettingsMap::iterator i = _settings.find(setting->className);
-		 i != _settings.upper_bound(setting->className) && i != _settings.end();
+	for (SettingsMap::iterator i = _settings.find(inheritanceKey);
+		 i != _settings.upper_bound(inheritanceKey) && i != _settings.end();
 		 i++)
 	{
 		// Avoid self==self comparisons
@@ -243,12 +249,30 @@ GtkTreeIter DifficultySettings::insertClassName(const std::string& className, Gt
 	return iter;
 }
 
+std::string DifficultySettings::getInheritanceKey(const std::string& className) {
+	// Get the eclass
+	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(className);
+	// Get the inheritance chain of this class
+	const IEntityClass::InheritanceChain& chain = eclass->getInheritanceChain(); 
+
+	// Build the inheritance key
+	std::string inheritanceKey;
+	for (IEntityClass::InheritanceChain::const_iterator c = chain.begin();
+		 c != chain.end(); c++) 
+	{
+		inheritanceKey += (inheritanceKey.empty()) ? "" : "_";
+		inheritanceKey += *c;
+	}
+
+	return inheritanceKey;
+}
+
 SettingPtr DifficultySettings::createSetting(const std::string& className) {
 	SettingPtr setting(new Setting);
 	setting->className = className;
-	
+
 	// Insert the parsed setting into our local map
-	_settings.insert(SettingsMap::value_type(setting->className, setting));
+	_settings.insert(SettingsMap::value_type(getInheritanceKey(className), setting));
 	_settingIds.insert(SettingIdMap::value_type(setting->id, setting));
 
 	return setting;
