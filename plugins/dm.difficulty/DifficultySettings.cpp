@@ -162,6 +162,11 @@ void DifficultySettings::clearTreeModel() {
 	_iterMap.clear();
 }
 
+void DifficultySettings::refreshTreeModel() {
+	clearTreeModel();
+	updateTreeModel();
+}
+
 bool DifficultySettings::isOverridden(const SettingPtr& setting) {
 	if (!setting->isDefault) {
 		return false; // not a default setting, return false

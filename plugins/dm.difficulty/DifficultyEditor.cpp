@@ -108,8 +108,12 @@ GtkWidget* DifficultyEditor::createTreeView() {
 	_deleteSettingButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	g_signal_connect(G_OBJECT(_deleteSettingButton), "clicked", G_CALLBACK(onSettingDelete), this);
 
+	_refreshButton = gtk_button_new_from_stock(GTK_STOCK_REFRESH);
+	g_signal_connect(G_OBJECT(_refreshButton), "clicked", G_CALLBACK(onRefresh), this);
+
 	gtk_box_pack_start(GTK_BOX(buttonHBox), _createSettingButton, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonHBox), _deleteSettingButton, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonHBox), _refreshButton, TRUE, TRUE, 0);
 
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
@@ -409,6 +413,10 @@ void DifficultyEditor::onSettingDelete(GtkWidget* button, DifficultyEditor* self
 
 void DifficultyEditor::onSettingCreate(GtkWidget* button, DifficultyEditor* self) {
 	self->createSetting();
+}
+
+void DifficultyEditor::onRefresh(GtkWidget* button, DifficultyEditor* self) {
+	self->_settings->refreshTreeModel();
 }
 
 void DifficultyEditor::onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self) {
