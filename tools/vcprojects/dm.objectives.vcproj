@@ -347,6 +347,14 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="util"
+				>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\util\TwoColumnTextCombo.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\dm.objectives\dm.objectives.def"
