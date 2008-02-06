@@ -172,60 +172,23 @@ public:
 class TargetKeys : 
 	public Entity::Observer
 {
-  TargetingEntities m_targetingEntities;
-  Callback m_targetsChanged;
+	TargetingEntities m_targetingEntities;
+	Callback m_targetsChanged;
 
-  bool readTargetKey(const char* key, std::size_t& index)
-  {
-    if(string_equal_n(key, "target", 6))
-    {
-      index = 0;
-      if(string_empty(key + 6) || string_parse_size(key + 6, index))
-      {
-        return true;
-      }
-    }
-    return false;
-  }
 public:
-  void setTargetsChanged(const Callback& targetsChanged)
-  {
-    m_targetsChanged = targetsChanged;
-  }
-  void targetsChanged()
-  {
-    m_targetsChanged();
-  }
+	void setTargetsChanged(const Callback& targetsChanged);
 
-	// Entity::Observer implementation, gets called on key insert
-  void onKeyInsert(const std::string& key, EntityKeyValue& value) {
-    std::size_t index;
-    if(readTargetKey(key.c_str(), index))
-    {
-      TargetingEntities::iterator i = m_targetingEntities.insert(TargetingEntities::value_type(index, TargetingEntity())).first;
-      value.attach(TargetingEntity::TargetChangedCaller((*i).second));
-      targetsChanged();
-    }
-  }
+	// Entity::Observer implementation, gets called on key insert/erase
+	void onKeyInsert(const std::string& key, EntityKeyValue& value);
+	void onKeyErase(const std::string& key, EntityKeyValue& value);
 
-	// Entity::Observer implementation, gets called on key erase
-  void onKeyErase(const std::string& key, EntityKeyValue& value)
-  {
-    std::size_t index;
-    if(readTargetKey(key.c_str(), index))
-    {
-      TargetingEntities::iterator i = m_targetingEntities.find(index);
-      value.detach(TargetingEntity::TargetChangedCaller((*i).second));
-      m_targetingEntities.erase(i);
-      targetsChanged();
-    }
-  }
-  const TargetingEntities& get() const
-  {
-    return m_targetingEntities;
-  }
+	const TargetingEntities& get() const;
+
+	// Triggers a callback that the targets have been changed
+	void targetsChanged();
+private:
+	bool readTargetKey(const char* key, std::size_t& index);
 };
-
 
 
 class RenderableTargetingEntity

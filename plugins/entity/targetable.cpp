@@ -33,3 +33,48 @@ targetables_t* getTargetables(const std::string& targetname)
 }
 
 ShaderPtr RenderableTargetingEntity::m_state;
+
+// TargetKeys implementation
+bool TargetKeys::readTargetKey(const char* key, std::size_t& index) {
+	if(string_equal_n(key, "target", 6)) {
+		index = 0;
+
+		if (string_empty(key + 6) || string_parse_size(key + 6, index)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void TargetKeys::setTargetsChanged(const Callback& targetsChanged) {
+	m_targetsChanged = targetsChanged;
+}
+
+void TargetKeys::targetsChanged() {
+	m_targetsChanged();
+}
+
+// Entity::Observer implementation, gets called on key insert
+void TargetKeys::onKeyInsert(const std::string& key, EntityKeyValue& value) {
+	std::size_t index;
+	if (readTargetKey(key.c_str(), index)) {
+		TargetingEntities::iterator i = m_targetingEntities.insert(TargetingEntities::value_type(index, TargetingEntity())).first;
+		value.attach(TargetingEntity::TargetChangedCaller((*i).second));
+		targetsChanged();
+	}
+}
+
+// Entity::Observer implementation, gets called on key erase
+void TargetKeys::onKeyErase(const std::string& key, EntityKeyValue& value) {
+	std::size_t index;
+	if (readTargetKey(key.c_str(), index)) {
+		TargetingEntities::iterator i = m_targetingEntities.find(index);
+		value.detach(TargetingEntity::TargetChangedCaller((*i).second));
+		m_targetingEntities.erase(i);
+		targetsChanged();
+	}
+}
+
+const TargetingEntities& TargetKeys::get() const {
+	return m_targetingEntities;
+}
