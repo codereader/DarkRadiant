@@ -138,14 +138,15 @@ void TargetingEntity_forEach(const TargetingEntity& targets, const Functor& func
   }
 }
 
-typedef std::map<std::size_t, TargetingEntity> TargetingEntities;
+// greebo: A container mapping "targetN" keys to TargetingEntity objects
+typedef std::map<std::string, TargetingEntity> TargetingEntities;
 
 template<typename Functor>
 void TargetingEntities_forEach(const TargetingEntities& targetingEntities, const Functor& functor)
 {
   for(TargetingEntities::const_iterator i = targetingEntities.begin(); i != targetingEntities.end(); ++i)
   {
-    TargetingEntity_forEach((*i).second, functor);
+    TargetingEntity_forEach(i->second, functor);
   }
 }
 
@@ -172,8 +173,8 @@ public:
 class TargetKeys : 
 	public Entity::Observer
 {
-	TargetingEntities m_targetingEntities;
-	Callback m_targetsChanged;
+	TargetingEntities _targetingEntities;
+	Callback _targetsChanged;
 
 public:
 	void setTargetsChanged(const Callback& targetsChanged);
@@ -187,7 +188,7 @@ public:
 	// Triggers a callback that the targets have been changed
 	void targetsChanged();
 private:
-	bool readTargetKey(const char* key, std::size_t& index);
+	bool isTargetKey(const std::string& key);
 };
 
 
