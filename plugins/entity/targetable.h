@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class Targetable
 {
 public:
-  virtual const Vector3& world_position() const = 0;
+	virtual const Vector3& getWorldPosition() const = 0;
 };
 
 typedef std::set<Targetable*> targetables_t;
@@ -112,7 +112,7 @@ public:
 		}
 
 		for (targetables_t::const_iterator i = m_targets->begin(); i != m_targets->end(); ++i) {
-			functor((*i)->world_position());
+			functor((*i)->getWorldPosition());
 		}
 	}
 };
@@ -229,46 +229,51 @@ public:
 	}
 };
 
+/**
+ * greebo: Each targetable entity (D3Group, Speaker, Lights, etc.) derive from 
+ *         this class. This applies for the entity Instances only.
+ *
+ * This extends the SelectableInstance interface by the Targetable interface.
+ */
 class TargetableInstance :
-public SelectableInstance,
-public Targetable,
-public Entity::Observer
+	public SelectableInstance,
+	public Targetable,
+	public Entity::Observer
 {
-  mutable Vertex3f m_position;
-  entity::Doom3Entity& m_entity;
-  TargetKeys m_targeting;
-  TargetedEntity m_targeted;
-  RenderableTargetingEntities m_renderable;
+	mutable Vertex3f m_position;
+	entity::Doom3Entity& m_entity;
+	TargetKeys m_targeting;
+	TargetedEntity m_targeted;
+	RenderableTargetingEntities m_renderable;
+
 public:
+	TargetableInstance(
+		const scene::Path& path,
+		scene::Instance* parent,
+		entity::Doom3Entity& entity,
+		Targetable& targetable
+	) :
+		SelectableInstance(path, parent),
+		m_entity(entity),
+		m_targeted(targetable),
+		m_renderable(m_targeting)
+	{
+		m_entity.attach(*this);
+		m_entity.attach(m_targeting);
+	}
 
-  TargetableInstance(
-    const scene::Path& path,
-    scene::Instance* parent,
-    entity::Doom3Entity& entity,
-    Targetable& targetable
-  ) :
-    SelectableInstance(path, parent),
-    m_entity(entity),
-    m_targeted(targetable),
-    m_renderable(m_targeting)
-  {
-    m_entity.attach(*this);
-    m_entity.attach(m_targeting);
-  }
-  ~TargetableInstance()
-  {
-    m_entity.detach(m_targeting);
-    m_entity.detach(*this);
-  }
+	~TargetableInstance() {
+		m_entity.detach(m_targeting);
+		m_entity.detach(*this);
+	}
 
-  void setTargetsChanged(const Callback& targetsChanged)
-  {
-    m_targeting.setTargetsChanged(targetsChanged);
-  }
-  void targetsChanged()
-  {
-    m_targeting.targetsChanged();
-  }
+	void setTargetsChanged(const Callback& targetsChanged) {
+		m_targeting.setTargetsChanged(targetsChanged);
+	}
+
+	void targetsChanged() {
+		m_targeting.targetsChanged();
+	}
 
 	// Entity::Observer implementation, gets called on key insert
 	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
@@ -284,22 +289,20 @@ public:
 		}
 	}
 
-  const Vector3& world_position() const
-  {
-    const AABB& bounds = Instance::worldAABB();
-    if(bounds.isValid())
-    {
-      return bounds.getOrigin();
-    }
-    return localToWorld().t().getVector3();
-  }
-
-  void render(Renderer& renderer, const VolumeTest& volume) const
-  {
-    renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-    renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
-    m_renderable.render(renderer, volume, world_position());
-  }
+	// Targetable implementation
+	const Vector3& getWorldPosition() const {
+		const AABB& bounds = Instance::worldAABB();
+		if (bounds.isValid()) {
+			return bounds.getOrigin();
+		}
+		return localToWorld().t().getVector3();
+	}
+	
+	void render(Renderer& renderer, const VolumeTest& volume) const {
+		renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
+		renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
+		m_renderable.render(renderer, volume, getWorldPosition());
+	}
 };
 
 
