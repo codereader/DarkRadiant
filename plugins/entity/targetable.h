@@ -138,18 +138,6 @@ void TargetingEntity_forEach(const TargetingEntity& targets, const Functor& func
   }
 }
 
-// greebo: A container mapping "targetN" keys to TargetingEntity objects
-typedef std::map<std::string, TargetingEntity> TargetingEntities;
-
-template<typename Functor>
-void TargetingEntities_forEach(const TargetingEntities& targetingEntities, const Functor& functor)
-{
-  for(TargetingEntities::const_iterator i = targetingEntities.begin(); i != targetingEntities.end(); ++i)
-  {
-    TargetingEntity_forEach(i->second, functor);
-  }
-}
-
 class TargetLinesPushBack
 {
   RenderablePointVector& m_targetLines;
@@ -173,7 +161,10 @@ public:
 class TargetKeys : 
 	public Entity::Observer
 {
+	// greebo: A container mapping "targetN" keys to TargetingEntity objects
+	typedef std::map<std::string, TargetingEntity> TargetingEntities;
 	TargetingEntities _targetingEntities;
+
 	Callback _targetsChanged;
 
 public:
@@ -182,6 +173,15 @@ public:
 	// Entity::Observer implementation, gets called on key insert/erase
 	void onKeyInsert(const std::string& key, EntityKeyValue& value);
 	void onKeyErase(const std::string& key, EntityKeyValue& value);
+
+	template<typename Functor>
+	void forEachTargetingEntity(const Functor& functor) const {
+		for (TargetingEntities::const_iterator i = _targetingEntities.begin(); 
+			 i != _targetingEntities.end(); ++i)
+		{
+			TargetingEntity_forEach(i->second, functor);
+		}
+	}
 
 	const TargetingEntities& get() const;
 
@@ -224,33 +224,31 @@ public:
 
 class RenderableTargetingEntities
 {
-  const TargetingEntities& m_targets;
-  mutable RenderablePointVector m_target_lines;
+	const TargetKeys& m_targetKeys;
+	mutable RenderablePointVector m_target_lines;
+
 public:
-  static ShaderPtr m_state;
+	static ShaderPtr m_state;
 
-  RenderableTargetingEntities(const TargetingEntities& targets)
-    : m_targets(targets), m_target_lines(GL_LINES)
-  {
-  }
-  void compile(const VolumeTest& volume, const Vector3& world_position) const
-  {
-    m_target_lines.clear();
-    TargetingEntities_forEach(m_targets, TargetLinesPushBack(m_target_lines, world_position, volume));
-  }
-  void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) const
-  {
-    if(!m_targets.empty())
-    {
-      compile(volume, world_position);
-      if(!m_target_lines.empty())
-      {
-        renderer.addRenderable(m_target_lines, g_matrix4_identity);
-      }
-    }
-  }
+	RenderableTargetingEntities(const TargetKeys& targetKeys) : 
+		m_targetKeys(targetKeys), 
+		m_target_lines(GL_LINES)
+	{}
+
+	void compile(const VolumeTest& volume, const Vector3& world_position) const {
+		m_target_lines.clear();
+		m_targetKeys.forEachTargetingEntity(TargetLinesPushBack(m_target_lines, world_position, volume));
+	}
+
+	void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) const {
+		if (!m_targetKeys.get().empty()) {
+			compile(volume, world_position);
+			if (!m_target_lines.empty()) {
+				renderer.addRenderable(m_target_lines, g_matrix4_identity);
+			}
+		}
+	}
 };
-
 
 class TargetableInstance :
 public SelectableInstance,
@@ -273,7 +271,7 @@ public:
     SelectableInstance(path, parent),
     m_entity(entity),
     m_targeted(targetable),
-    m_renderable(m_targeting.get())
+    m_renderable(m_targeting)
   {
     m_entity.attach(*this);
     m_entity.attach(m_targeting);
@@ -322,11 +320,6 @@ public:
     renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
     renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
     m_renderable.render(renderer, volume, world_position());
-  }
-
-  const TargetingEntities& getTargeting() const
-  {
-    return m_targeting.get();
   }
 };
 
