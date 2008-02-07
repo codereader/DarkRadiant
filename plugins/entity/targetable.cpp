@@ -84,6 +84,6 @@ void TargetKeys::onKeyErase(const std::string& key, EntityKeyValue& value) {
 	targetsChanged();
 }
 
-const TargetingEntities& TargetKeys::get() const {
+const TargetKeys::TargetingEntities& TargetKeys::get() const {
 	return _targetingEntities;
 }
