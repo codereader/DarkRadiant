@@ -83,60 +83,39 @@ public:
 
 class TargetingEntity
 {
-  targetables_t* m_targets;
+	targetables_t* m_targets;
 public:
-  TargetingEntity() :
-    m_targets(getTargetables(""))
-  {
-  }
-  void targetChanged(const std::string& target)
-  {
-    m_targets = getTargetables(target);
-  }
-  typedef MemberCaller1<TargetingEntity, const std::string&, &TargetingEntity::targetChanged> TargetChangedCaller;
+	TargetingEntity() :
+		m_targets(getTargetables(""))
+	{}
 
-  typedef targetables_t::iterator iterator;
+	void targetChanged(const std::string& target) {
+		m_targets = getTargetables(target);
+	}
+	typedef MemberCaller1<TargetingEntity, const std::string&, &TargetingEntity::targetChanged> TargetChangedCaller;
 
-  iterator begin() const
-  {
-    if(m_targets == 0)
-    {
-      return iterator();
-    }
-    return m_targets->begin();
-  }
-  iterator end() const
-  {
-    if(m_targets == 0)
-    {
-      return iterator();
-    }
-    return m_targets->end();
-  }
-  size_t size() const
-  {
-    if(m_targets == 0)
-    {
-      return 0;
-    }
-    return m_targets->size();
-  }
-  bool empty() const
-  {
-    return m_targets == 0 || m_targets->empty();
-  }
+	size_t size() const {
+		if (m_targets == NULL) {
+			return 0;
+		}
+		return m_targets->size();
+	}
+
+	bool empty() const {
+		return m_targets == NULL || m_targets->empty();
+	}
+
+	template<typename Functor>
+	void forEachTarget(const Functor& functor) const {
+		if (m_targets == NULL) {
+			return;
+		}
+
+		for (targetables_t::const_iterator i = m_targets->begin(); i != m_targets->end(); ++i) {
+			functor((*i)->world_position());
+		}
+	}
 };
-
-
-
-template<typename Functor>
-void TargetingEntity_forEach(const TargetingEntity& targets, const Functor& functor)
-{
-  for(TargetingEntity::iterator i = targets.begin(); i != targets.end(); ++i)
-  {
-    functor((*i)->world_position());
-  }
-}
 
 class TargetLinesPushBack
 {
@@ -179,7 +158,7 @@ public:
 		for (TargetingEntities::const_iterator i = _targetingEntities.begin(); 
 			 i != _targetingEntities.end(); ++i)
 		{
-			TargetingEntity_forEach(i->second, functor);
+			i->second.forEachTarget(functor);
 		}
 	}
 
@@ -207,7 +186,7 @@ public:
   {
     m_target_lines.clear();
     m_target_lines.reserve(m_targets.size() * 2);
-    TargetingEntity_forEach(m_targets, TargetLinesPushBack(m_target_lines, world_position, volume));
+	m_targets.forEachTarget(TargetLinesPushBack(m_target_lines, world_position, volume));
   }
   void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) const
   {
