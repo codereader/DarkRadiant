@@ -6,7 +6,7 @@ SpeakerInstance::SpeakerInstance(
 		const scene::Path& path, 
 		scene::Instance* parent, 
 		Speaker& contained) :
-	TargetableInstance(path, parent, contained.getEntity(), *this),
+	TargetableInstance(path, parent, contained.getEntity()),
 	TransformModifier(Speaker::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained)
 {
