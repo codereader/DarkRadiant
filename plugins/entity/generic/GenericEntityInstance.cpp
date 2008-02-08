@@ -6,7 +6,7 @@ GenericEntityInstance::GenericEntityInstance(
 		const scene::Path& path, 
 		scene::Instance* parent, 
 		GenericEntity& contained) :
-	TargetableInstance(path, parent, contained.getEntity(), *this),
+	TargetableInstance(path, parent, contained.getEntity()),
 	TransformModifier(GenericEntity::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained)
 {

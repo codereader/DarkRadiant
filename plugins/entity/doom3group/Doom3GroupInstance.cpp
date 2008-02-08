@@ -8,7 +8,7 @@ namespace entity {
 Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path, 
 									   scene::Instance* parent, 
 									   Doom3Group& contained) :
-	TargetableInstance(path, parent, contained.getEntity(), *this),
+	TargetableInstance(path, parent, contained.getEntity()),
 	TransformModifier(Doom3Group::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	m_contained(contained),
 	m_curveNURBS(m_contained.m_curveNURBS,

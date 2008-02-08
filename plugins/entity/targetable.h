@@ -89,6 +89,7 @@ public:
 		m_targets(getTargetables(""))
 	{}
 
+	// This gets called as soon as the "target" key in the spawnargs changes
 	void targetChanged(const std::string& target) {
 		m_targets = getTargetables(target);
 	}
@@ -250,12 +251,11 @@ public:
 	TargetableInstance(
 		const scene::Path& path,
 		scene::Instance* parent,
-		entity::Doom3Entity& entity,
-		Targetable& targetable
+		entity::Doom3Entity& entity
 	) :
 		SelectableInstance(path, parent),
 		m_entity(entity),
-		m_targeted(targetable),
+		m_targeted(*this),
 		m_renderable(m_targeting)
 	{
 		m_entity.attach(*this);

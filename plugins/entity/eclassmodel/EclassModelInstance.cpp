@@ -5,7 +5,7 @@ namespace entity {
 EclassModelInstance::EclassModelInstance(const scene::Path& path, 
 										 scene::Instance* parent, 
 										 EclassModel& contained) :
-	TargetableInstance(path, parent, contained.getEntity(), *this),
+	TargetableInstance(path, parent, contained.getEntity()),
 	TransformModifier(EclassModel::TransformChangedCaller(contained), 
 					  ApplyTransformCaller(*this)),
 	m_contained(contained),

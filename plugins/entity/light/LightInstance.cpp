@@ -8,7 +8,7 @@ namespace entity {
 
 // Constructor
 LightInstance::LightInstance(const scene::Path& path, scene::Instance* parent, Light& contained) :
-	TargetableInstance(path, parent, contained.getEntity(), *this),
+	TargetableInstance(path, parent, contained.getEntity()),
 	TransformModifier(Light::TransformChangedCaller(contained), ApplyTransformCaller(*this)),
 	_light(contained),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
