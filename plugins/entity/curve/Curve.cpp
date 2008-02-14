@@ -30,13 +30,13 @@ std::string Curve::getEntityKeyValue() {
 	std::string value;
 	
 	if (!_controlPointsTransformed.empty()) {
-		value = intToStr(_controlPointsTransformed.size()) + " (";
+		value = sizetToStr(_controlPointsTransformed.size()) + " (";
 		for (ControlPoints::const_iterator i = _controlPointsTransformed.begin(); 
 			 i != _controlPointsTransformed.end(); 
 			 ++i)
 		{
-			value += " " + floatToStr(i->x()) + " " + 
-					 floatToStr(i->y()) + " " + floatToStr(i->z()) + " ";
+			value += " " + doubleToStr(i->x()) + " " + 
+					 doubleToStr(i->y()) + " " + doubleToStr(i->z()) + " ";
 		}
 		value += ")";
 	}
