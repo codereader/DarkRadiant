@@ -36,118 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 #include "Doom3Entity.h"
 
-#include "target/Target.h"
-#include "target/TargetManager.h"
-#include "target/TargetKey.h"
-#include "target/TargetKeyCollection.h"
-#include "target/RenderableTargetLines.h"
-
-class Targetable
-{
-public:
-	virtual const Vector3& getWorldPosition() const = 0;
-};
-
-/**
- * greebo: Each targetable entity (D3Group, Speaker, Lights, etc.) derives from 
- *         this class. This applies for the entity Instances only.
- *
- * This extends the SelectableInstance interface by the Targetable interface.
- */
-class TargetableInstance :
-	public SelectableInstance,
-	public Targetable,
-	public Entity::Observer
-{
-	mutable Vertex3f m_position;
-	entity::Doom3Entity& m_entity;
-	entity::TargetKeyCollection m_targeting;
-	mutable entity::RenderableTargetLines m_renderable;
-
-	// The current name of this entity (used for comparison in "targetNameChanged")
-	std::string _targetName;
-
-public:
-	TargetableInstance(
-		const scene::Path& path,
-		scene::Instance* parent,
-		entity::Doom3Entity& entity
-	) :
-		SelectableInstance(path, parent),
-		m_entity(entity),
-		//m_targeted(*this),
-		m_renderable(m_targeting)
-	{
-		m_entity.attach(*this);
-		m_entity.attach(m_targeting);
-	}
-
-	~TargetableInstance() {
-		m_entity.detach(m_targeting);
-		m_entity.detach(*this);
-	}
-
-	void setTargetsChanged(const Callback& targetsChanged) {
-		m_targeting.setTargetsChanged(targetsChanged);
-	}
-
-	void targetsChanged() {
-		m_targeting.targetsChanged();
-	}
-
-	// Gets called as soon as the "name" keyvalue changes
-	void targetnameChanged(const std::string& name) {
-		// Check if we were registered before
-		if (!_targetName.empty()) {
-			// Old name is not empty
-			// Tell the Manager to disassociate us from the target
-			entity::TargetManager::Instance().clearTarget(_targetName);
-		}
-		
-		// Store the new name, in any case
-		_targetName = name;
-
-		if (_targetName.empty()) {
-			// New name is empty, do not associate
-			return;
-		}
-
-		// Tell the TargetManager to associate the name with this Instance here
-		entity::TargetManager::Instance().associateTarget(_targetName, this);
-	}
-	typedef MemberCaller1<TargetableInstance, const std::string&, &TargetableInstance::targetnameChanged> TargetnameChangedCaller;
-
-	// Entity::Observer implementation, gets called on key insert
-	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
-		if (key == "name") {
-			// Subscribe to this keyvalue to get notified about "name" changes
-			value.attach(TargetnameChangedCaller(*this));
-		}
-	}
-	
-	// Entity::Observer implementation, gets called on key erase
-	void onKeyErase(const std::string& key, EntityKeyValue& value) {
-		if (key == "name") {
-			// Unsubscribe from this keyvalue
-			value.detach(TargetnameChangedCaller(*this));
-		}
-	}
-
-	// Targetable implementation
-	const Vector3& getWorldPosition() const {
-		const AABB& bounds = Instance::worldAABB();
-		if (bounds.isValid()) {
-			return bounds.getOrigin();
-		}
-		return localToWorld().t().getVector3();
-	}
-	
-	void render(Renderer& renderer, const VolumeTest& volume) const {
-		renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-		renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
-		m_renderable.render(renderer, volume, getWorldPosition());
-	}
-};
+#include "target/TargetableInstance.h"
 
 /**
  * greebo: This is a "container" for all TargetableInstances. These register
@@ -160,16 +49,16 @@ public:
 class RenderableConnectionLines : 
 	public Renderable
 {
-	typedef std::set<TargetableInstance*> TargetableInstances;
+	typedef std::set<entity::TargetableInstance*> TargetableInstances;
 	TargetableInstances m_instances;
 public:
 	// Add a TargetableInstance to this set
-	void attach(TargetableInstance& instance) {
+	void attach(entity::TargetableInstance& instance) {
 		ASSERT_MESSAGE(m_instances.find(&instance) == m_instances.end(), "cannot attach instance");
 		m_instances.insert(&instance);
 	}
 
-	void detach(TargetableInstance& instance) {
+	void detach(entity::TargetableInstance& instance) {
 		ASSERT_MESSAGE(m_instances.find(&instance) != m_instances.end(), "cannot detach instance");
 		m_instances.erase(&instance);
 	}
