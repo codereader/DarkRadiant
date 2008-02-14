@@ -613,6 +613,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\entity\target\TargetableInstance.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\target\TargetableInstance.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\entity\target\TargetKey.cpp"
 					>
 				</File>

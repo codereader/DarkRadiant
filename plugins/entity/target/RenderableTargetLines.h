@@ -3,13 +3,15 @@
 
 #include "TargetKeyCollection.h"
 #include "render.h"
+#include "renderable.h"
+#include "cullable.h"
+#include "math/line.h"
 
 namespace entity {
 
 /**
- * greebo: Small utility walker which populates the given 
- *         pointvector with the target coordinates while
- *         visiting each target.
+ * greebo: Small utility walker which populates the given pointvector 
+ *         with the target coordinates while visiting each target.
  */
 class TargetLinesPopulator :
 	public TargetKeyCollection::Visitor
