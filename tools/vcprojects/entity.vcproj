@@ -605,6 +605,10 @@
 				Name="target"
 				>
 				<File
+					RelativePath="..\..\plugins\entity\target\RenderableTargetLines.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\entity\target\Target.h"
 					>
 				</File>

@@ -40,66 +40,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "target/TargetManager.h"
 #include "target/TargetKey.h"
 #include "target/TargetKeyCollection.h"
+#include "target/RenderableTargetLines.h"
 
 class Targetable
 {
 public:
 	virtual const Vector3& getWorldPosition() const = 0;
-};
-
-class TargetLinesPushBack :
-	public entity::TargetKeyCollection::Visitor
-{
-	RenderablePointVector& m_targetLines;
-	const Vector3& m_worldPosition;
-	const VolumeTest& m_volume;
-public:
-	TargetLinesPushBack(RenderablePointVector& targetLines, 
-						const Vector3& worldPosition, 
-						const VolumeTest& volume) :
-		m_targetLines(targetLines), 
-		m_worldPosition(worldPosition), 
-		m_volume(volume)
-	{}
-
-	virtual void visit(const entity::TargetPtr& target) {
-		if (target->isEmpty()) {
-			return;
-		}
-
-		Vector3 worldPosition = target->getPosition();
-		if (m_volume.TestLine(segment_for_startend(m_worldPosition, worldPosition))) {
-			m_targetLines.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(m_worldPosition)));
-			m_targetLines.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(worldPosition)));
-		}
-	}
-};
-
-class RenderableTargetLines :
-	public RenderablePointVector
-{
-	const entity::TargetKeyCollection& m_targetKeys;
-
-public:
-	RenderableTargetLines(const entity::TargetKeyCollection& targetKeys) : 
-		RenderablePointVector(GL_LINES),
-		m_targetKeys(targetKeys)
-	{}
-
-	void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) {
-		if (!m_targetKeys.empty()) {
-			// Clear the vector
-			clear();
-
-			// Populate the RenderablePointVector
-			TargetLinesPushBack populator(*this, world_position, volume);
-			m_targetKeys.forEachTarget(populator);
-
-			if (!empty()) {
-				renderer.addRenderable(*this, g_matrix4_identity);
-			}
-		}
-	}
 };
 
 /**
@@ -116,7 +62,7 @@ class TargetableInstance :
 	mutable Vertex3f m_position;
 	entity::Doom3Entity& m_entity;
 	entity::TargetKeyCollection m_targeting;
-	mutable RenderableTargetLines m_renderable;
+	mutable entity::RenderableTargetLines m_renderable;
 
 	// The current name of this entity (used for comparison in "targetNameChanged")
 	std::string _targetName;
