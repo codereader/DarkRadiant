@@ -1,4 +1,5 @@
 #include "GenericEntityInstance.h"
+#include "../target/RenderableTargetInstances.h"
 
 namespace entity {
 
@@ -11,11 +12,11 @@ GenericEntityInstance::GenericEntityInstance(
 	m_contained(contained)
 {
 	m_contained.instanceAttach(Instance::path());
-	StaticRenderableConnectionLines::instance().attach(*this);
+	RenderableTargetInstances::Instance().attach(*this);
 }
 
 GenericEntityInstance::~GenericEntityInstance() {
-	StaticRenderableConnectionLines::instance().detach(*this);
+	RenderableTargetInstances::Instance().detach(*this);
 
 	m_contained.instanceDetach(Instance::path());
 }

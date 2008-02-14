@@ -5,7 +5,7 @@
 #include "transformlib.h"
 #include "generic/callbackfwd.h"
 
-#include "../targetable.h"
+#include "../target/TargetableInstance.h"
 #include "EclassModel.h"
 
 namespace entity {

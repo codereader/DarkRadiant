@@ -2,6 +2,7 @@
 
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveControlPointFunctors.h"
+#include "../target/RenderableTargetInstances.h"
 
 namespace entity {
 
@@ -26,7 +27,7 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 		CurveEditInstance::CurveChangedCaller(m_curveCatmullRom)
 	);
 
-	StaticRenderableConnectionLines::instance().attach(*this);
+	RenderableTargetInstances::Instance().attach(*this);
 
 	// Attach the callback as keyobserver for the skin key
 	m_contained.addKeyObserver("skin", SkinChangedCaller(*this));
@@ -35,7 +36,7 @@ Doom3GroupInstance::Doom3GroupInstance(const scene::Path& path,
 Doom3GroupInstance::~Doom3GroupInstance() {
 	m_contained.removeKeyObserver("skin", SkinChangedCaller(*this));
 
-	StaticRenderableConnectionLines::instance().detach(*this);
+	RenderableTargetInstances::Instance().detach(*this);
 
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
 	m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);

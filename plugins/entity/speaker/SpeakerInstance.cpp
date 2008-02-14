@@ -1,4 +1,5 @@
 #include "SpeakerInstance.h"
+#include "../target/RenderableTargetInstances.h"
 
 namespace entity {
 
@@ -11,11 +12,11 @@ SpeakerInstance::SpeakerInstance(
 	m_contained(contained)
 {
 	m_contained.instanceAttach(Instance::path());
-	StaticRenderableConnectionLines::instance().attach(*this);
+	RenderableTargetInstances::Instance().attach(*this);
 }
 
 SpeakerInstance::~SpeakerInstance() {
-	StaticRenderableConnectionLines::instance().detach(*this);
+	RenderableTargetInstances::Instance().detach(*this);
 
 	m_contained.instanceDetach(Instance::path());
 }

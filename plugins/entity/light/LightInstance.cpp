@@ -1,6 +1,7 @@
 #include "LightInstance.h"
 #include "iuimanager.h"
 #include "math/pi.h"
+#include "../target/RenderableTargetInstances.h"
 
 namespace entity {
 
@@ -25,12 +26,12 @@ LightInstance::LightInstance(const scene::Path& path, scene::Instance* parent, L
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
 
-	StaticRenderableConnectionLines::instance().attach(*this);
+	RenderableTargetInstances::Instance().attach(*this);
 }
 
 // Destructor
 LightInstance::~LightInstance() {
-	StaticRenderableConnectionLines::instance().detach(*this);
+	RenderableTargetInstances::Instance().detach(*this);
 
 	_light.setLightChangedCallback(Callback());
 	GlobalShaderCache().detach(*this);

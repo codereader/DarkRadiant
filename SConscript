@@ -330,7 +330,8 @@ entity_src = [
 	'target/TargetManager.cpp',
 	'target/TargetKey.cpp',
 	'target/TargetKeyCollection.cpp',
-	'target/TargetableInstance.cpp'
+	'target/TargetableInstance.cpp',
+	'target/RenderableTargetInstances.cpp'
 ]
 entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])

@@ -344,10 +344,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\targetable.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\entity\VertexInstance.h"
 				>
 			</File>
@@ -604,6 +600,14 @@
 			<Filter
 				Name="target"
 				>
+				<File
+					RelativePath="..\..\plugins\entity\target\RenderableTargetInstances.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\target\RenderableTargetInstances.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\plugins\entity\target\RenderableTargetLines.h"
 					>
