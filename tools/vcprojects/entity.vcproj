@@ -612,6 +612,14 @@
 					RelativePath="..\..\plugins\entity\target\Target.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\plugins\entity\target\TargetManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\target\TargetManager.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File

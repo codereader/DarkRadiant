@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Doom3Entity.h"
 
 #include "target/Target.h"
+#include "target/TargetManager.h"
 
 class Targetable
 {
@@ -45,42 +46,6 @@ public:
 };
 
 namespace entity {
-
-class TargetManager
-{
-	// The list of all named Target objects
-	typedef std::map<std::string, TargetPtr> TargetList;
-	TargetList _targets;
-
-	// An empty Target
-	TargetPtr _emptyTarget;
-
-	// Private constructor
-	TargetManager();
-public:
-	// Accessor to the singleton instance
-	static TargetManager& Instance();
-
-	/**
-	 * greebo: Returns the Target with the given name.
-	 *         
-	 * This never returns NULL, a Target is created if it doesn't exist yet.
-	 */
-	TargetPtr getTarget(const std::string name);
-
-	/**
-	 * greebo: Associates the Target with the given name
-	 *         to the given scene::Instance.
-	 *
-	 * The Target will be created if it doesn't exist yet.
-	 */
-	void associateTarget(const std::string& name, scene::Instance* instance);
-
-	/**
-	 * greebo: Disassociates the Target from the given name.
-	 */
-	void clearTarget(const std::string& name);
-};
 
 /**
  * greebo: A TargetingEntity encapsulates a "targetN" key of a given entity. 
