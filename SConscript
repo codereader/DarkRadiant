@@ -301,7 +301,6 @@ entity_src = [
 	'namedentity.cpp',
 	'origin.cpp',
 	'scale.cpp',
-	'targetable.cpp',
 	'rotation.cpp',
 	'Doom3Entity.cpp',
 	'KeyValue.cpp',
@@ -329,7 +328,8 @@ entity_src = [
 	'eclassmodel/EclassModelInstance.cpp',
 	'eclassmodel/EclassModelNode.cpp',
 	'target/TargetManager.cpp',
-	'target/TargetKey.cpp'
+	'target/TargetKey.cpp',
+	'target/TargetKeyCollection.cpp'
 ]
 entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])
