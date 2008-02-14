@@ -327,7 +327,8 @@ entity_src = [
 	'generic/GenericEntityNode.cpp',
 	'eclassmodel/EclassModel.cpp',
 	'eclassmodel/EclassModelInstance.cpp',
-	'eclassmodel/EclassModelNode.cpp'
+	'eclassmodel/EclassModelNode.cpp',
+	'target/TargetManager.cpp'
 ]
 entity_lst = build_list('plugins/entity', entity_src)
 entity_env.Append(LIBS = ['math', 'xmlutil'])
