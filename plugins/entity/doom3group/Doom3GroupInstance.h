@@ -5,7 +5,7 @@
 #include "Doom3Group.h"
 #include "../curve/CurveEditInstance.h"
 #include "../VertexInstance.h"
-#include "../targetable.h"
+#include "../target/TargetableInstance.h"
 
 namespace entity {
 

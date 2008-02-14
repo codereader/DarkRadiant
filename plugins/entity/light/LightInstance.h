@@ -9,7 +9,7 @@
 
 #include "Light.h"
 #include "../VertexInstance.h"
-#include "../targetable.h"
+#include "../target/TargetableInstance.h"
 
 namespace entity {
 

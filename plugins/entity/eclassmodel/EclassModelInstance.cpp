@@ -1,4 +1,5 @@
 #include "EclassModelInstance.h"
+#include "../target/RenderableTargetInstances.h"
 
 namespace entity {
 
@@ -13,7 +14,7 @@ EclassModelInstance::EclassModelInstance(const scene::Path& path,
 {
 	m_contained.instanceAttach(Instance::path());
 
-	StaticRenderableConnectionLines::instance().attach(*this);
+	RenderableTargetInstances::Instance().attach(*this);
 
 	m_contained.addKeyObserver("skin", SkinChangedCaller(*this));
 }
@@ -21,7 +22,7 @@ EclassModelInstance::EclassModelInstance(const scene::Path& path,
 EclassModelInstance::~EclassModelInstance() {
 	m_contained.removeKeyObserver("skin", SkinChangedCaller(*this));
 
-	StaticRenderableConnectionLines::instance().detach(*this);
+	RenderableTargetInstances::Instance().detach(*this);
 
 	m_contained.instanceDetach(Instance::path());
 }

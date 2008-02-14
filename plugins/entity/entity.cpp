@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entitylib.h"
 #include "pivot.h"
 
-#include "targetable.h"
 #include "uniquenames.h"
 #include "namekeys.h"
 #include "stream/stringstream.h"
@@ -39,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "doom3group/Doom3GroupNode.h"
 #include "light/LightShader.h"
 #include "curve/CurveEditInstance.h"
+#include "target/RenderableTargetInstances.h"
 
 // Initialise the static variables of the entitylibraries (we're in a module here)
 EntityCreator::KeyValueChangedFunc entity::Doom3Entity::_keyValueChangedNotify = 0;
@@ -57,11 +57,11 @@ void constructStatic() {
 
 	RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
 
-	GlobalShaderCache().attachRenderable(StaticRenderableConnectionLines::instance());
+	GlobalShaderCache().attachRenderable(RenderableTargetInstances::Instance());
 }
 
 void destroyStatic() {
-	GlobalShaderCache().detachRenderable(StaticRenderableConnectionLines::instance());
+	GlobalShaderCache().detachRenderable(RenderableTargetInstances::Instance());
 }
 
 } // namespace entity

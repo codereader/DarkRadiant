@@ -12,7 +12,7 @@
 #include "scenelib.h"
 #include "transformlib.h"
 
-#include "../targetable.h"
+#include "../target/TargetableInstance.h"
 
 #include "GenericEntity.h"
 
