@@ -24,10 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace entity {
 
-
-
-// --------------------------------------------------------------------
-
 const TargetPtr& TargetKey::getTarget() const {
 	return _target;
 }
@@ -51,23 +47,6 @@ void TargetKey::targetChanged(const std::string& target) {
 
 } // namespace entity
 
-// This maps names to Targetable pointers
-typedef std::map<std::string, Targetable*> TargetableMap;
-TargetableMap g_targetables;
-
-Targetable* getTargetable(const std::string& targetname) {
-	if (targetname.empty()) {
-		return NULL;
-	}
-
-	TargetableMap::iterator i = g_targetables.find(targetname);
-	if (i == g_targetables.end()) {
-		return NULL;
-	}
-	return i->second;
-}
-
-//ShaderPtr RenderableTargetLines::m_state;
 
 // TargetKeys implementation
 bool TargetKeys::isTargetKey(const std::string& key) {
@@ -120,6 +99,3 @@ void TargetKeys::onKeyErase(const std::string& key, EntityKeyValue& value) {
 	targetsChanged();
 }
 
-/*const TargetKeys::TargetingEntities& TargetKeys::get() const {
-	return _targetingEntities;
-}*/
