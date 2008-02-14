@@ -38,46 +38,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "target/Target.h"
 #include "target/TargetManager.h"
+#include "target/TargetKey.h"
 
 class Targetable
 {
 public:
 	virtual const Vector3& getWorldPosition() const = 0;
 };
-
-namespace entity {
-
-/**
- * greebo: A TargetingEntity encapsulates a "targetN" key of a given entity. 
- * It acts as Observer for this key and maintains a pointer to the named Target.
- *
- * Note: An Entity can have multiple "targetN" keys, hence it can hold multiple 
- * instances of this TargetingEntity class.
- *
- * At any rate, each TargetKey can only refer to one Target.
- */ 
-class TargetKey
-{
-	// The target of this key
-	TargetPtr _target;
-public:
-	// Accessor method for the contained TargetPtr
-	const TargetPtr& getTarget() const;
-
-	// Observes the given keyvalue
-	void attachToKeyValue(EntityKeyValue& value);
-
-	// Stops observing the given keyvalue
-	void detachFromKeyValue(EntityKeyValue& value);
-
-	// This gets called as soon as the "target" key in the spawnargs changes
-	void targetChanged(const std::string& target);
-	// Shortcut typedef
-	typedef MemberCaller1<TargetKey, const std::string&, &TargetKey::targetChanged> TargetChangedCaller;
-};
-
-} // namespace entity
-
 
 class TargetKeys : 
 	public Entity::Observer

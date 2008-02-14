@@ -22,32 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "targetable.h"
 #include <boost/algorithm/string/predicate.hpp>
 
-namespace entity {
-
-const TargetPtr& TargetKey::getTarget() const {
-	return _target;
-}
-
-// Observes the given keyvalue
-void TargetKey::attachToKeyValue(EntityKeyValue& value) {
-	// Observe this entity keyvalue
-	value.attach(TargetChangedCaller(*this));
-}
-
-// Stops observing the given keyvalue
-void TargetKey::detachFromKeyValue(EntityKeyValue& value) {
-	value.detach(TargetChangedCaller(*this));
-}
-
-// This gets called as soon as the "target" key in the spawnargs changes
-void TargetKey::targetChanged(const std::string& target) {
-	// Acquire the Target object (will be created if nonexistent)
-	_target = TargetManager::Instance().getTarget(target);
-}
-
-} // namespace entity
-
-
 // TargetKeys implementation
 bool TargetKeys::isTargetKey(const std::string& key) {
 	// A key is a target key if it starts with "target" (any case)
