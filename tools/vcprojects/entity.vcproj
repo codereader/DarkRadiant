@@ -344,10 +344,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\targetable.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\entity\targetable.h"
 				>
 			</File>
@@ -618,6 +614,14 @@
 				</File>
 				<File
 					RelativePath="..\..\plugins\entity\target\TargetKey.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\target\TargetKeyCollection.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\entity\target\TargetKeyCollection.h"
 					>
 				</File>
 				<File
