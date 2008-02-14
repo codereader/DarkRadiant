@@ -79,93 +79,6 @@ public:
 } // namespace entity
 
 
-// Looks up a named Targetable (returns NULL if not found)
-Targetable* getTargetable(const std::string& targetname);
-
-typedef std::map<std::string, Targetable*> TargetableMap;
-extern TargetableMap g_targetables;
-
-class TargetedEntity
-{
-	Targetable& m_targetable;
-	std::string _name;
-  
-	void construct() {
-		if (_name.empty()) return;
-
-		g_targetables.insert(
-			TargetableMap::value_type(_name, &m_targetable)
-		);
-	}
-
-	void destroy() {
-		if (_name.empty()) return;
-
-		TargetableMap::iterator i = g_targetables.find(_name);
-		if (i != g_targetables.end()) {
-			g_targetables.erase(i);
-		}
-	}
-
-public:
-	TargetedEntity(Targetable& targetable) : 
-		m_targetable(targetable)
-	{
-		construct();
-	}
-
-	~TargetedEntity() {
-		destroy();
-	}
-
-	void targetnameChanged(const std::string& name) {
-		// Change the mapping of this Targetable.
-		destroy();
-		_name = name;
-		construct();
-	}
-	typedef MemberCaller1<TargetedEntity, const std::string&, &TargetedEntity::targetnameChanged> TargetnameChangedCaller;
-};
-
-/**
- * greebo: A TargetingEntity encapsulates a "targetN" key of a given entity. 
- * It acts as Observer for this key and maintains a pointer to the named Targetable.
- *
- * Note: An Entity can have multiple "targetN" keys, hence it can hold multiple 
- * instances of this TargetingEntity class.
- *
- * At any rate, each TargetingEntity can only refer to one Targetable.
- */ 
-class TargetingEntity
-{
-	// The targetable the "targetN" key is pointing to (can be NULL)
-	Targetable* _targetable;
-
-public:
-	TargetingEntity() :
-		_targetable(NULL)
-	{}
-
-	// This gets called as soon as the "target" key in the spawnargs changes
-	void targetChanged(const std::string& target) {
-		_targetable = getTargetable(target);
-	}
-	typedef MemberCaller1<TargetingEntity, const std::string&, &TargetingEntity::targetChanged> TargetChangedCaller;
-
-	bool empty() const {
-		return _targetable == NULL;
-	}
-
-	template<typename Functor>
-	void forEachTarget(const Functor& functor) const {
-		if (_targetable == NULL) {
-			return;
-		}
-
-		functor(_targetable->getWorldPosition());
-	}
-};
-
 class TargetKeys : 
 	public Entity::Observer
 {
@@ -242,58 +155,16 @@ public:
 	}
 };
 
-/*class RenderableTargetingEntity
-{
-  TargetingEntity& m_targets;
-  mutable RenderablePointVector m_target_lines;
-public:
-  static ShaderPtr m_state;
-
-  RenderableTargetingEntity(TargetingEntity& targets)
-    : m_targets(targets), m_target_lines(GL_LINES)
-  {
-  }
-  void compile(const VolumeTest& volume, const Vector3& world_position) const
-  {
-    m_target_lines.clear();
-
-	if (m_targets.empty()) {
-		return;
-	}
-
-    m_target_lines.reserve(2);
-	m_targets.forEachTarget(TargetLinesPushBack(m_target_lines, world_position, volume));
-  }
-  void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) const
-  {
-    if (!m_targets.empty())
-    {
-      compile(volume, world_position);
-      if(!m_target_lines.empty())
-      {
-        renderer.addRenderable(m_target_lines, g_matrix4_identity);
-      }
-    }
-  }
-};*/
-
 class RenderableTargetLines :
 	public RenderablePointVector
 {
 	const TargetKeys& m_targetKeys;
 
 public:
-	//static ShaderPtr m_state;
-
 	RenderableTargetLines(const TargetKeys& targetKeys) : 
 		RenderablePointVector(GL_LINES),
 		m_targetKeys(targetKeys)
 	{}
-
-	/*void compile(const VolumeTest& volume, const Vector3& world_position) const {
-		m_target_lines.clear();
-		m_targetKeys.forEachTargetingEntity();
-	}*/
 
 	void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) {
 		if (!m_targetKeys.empty()) {
@@ -307,11 +178,6 @@ public:
 			if (!empty()) {
 				renderer.addRenderable(*this, g_matrix4_identity);
 			}
-			
-			/*compile(volume, world_position);
-			if (!m_target_lines.empty()) {
-				renderer.addRenderable(m_target_lines, g_matrix4_identity);
-			}*/
 		}
 	}
 };
@@ -330,7 +196,6 @@ class TargetableInstance :
 	mutable Vertex3f m_position;
 	entity::Doom3Entity& m_entity;
 	TargetKeys m_targeting;
-	//TargetedEntity m_targeted;
 	mutable RenderableTargetLines m_renderable;
 
 	// The current name of this entity (used for comparison in "targetNameChanged")
