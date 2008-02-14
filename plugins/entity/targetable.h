@@ -42,108 +42,223 @@ public:
 	virtual const Vector3& getWorldPosition() const = 0;
 };
 
-typedef std::set<Targetable*> targetables_t;
+namespace entity {
 
-targetables_t* getTargetables(const std::string& targetname);
+/**
+ * greebo: This is an abstract representation of a target.
+ *         In Doom3 maps, a Target can be any map entity, that's
+ *         why this object encapsulates a reference to an actual 
+ *         scene::Instance. 
+ *
+ * Note: Such a Target object can be empty. That's the case for 
+ *       entities referring to non-existing entities in their 
+ *       "target" spawnarg.
+ *
+ * All Targets are owned by the TargetManager class.
+ *
+ * A Target can be referenced by one ore more TargetingEntity objects.
+ */
+class Target
+{
+	// The actual instance this Target refers to (can be NULL)
+	scene::Instance* _instance;
+public:
+	scene::Instance* getInstance() const {
+		return _instance;
+	}
+
+	void setInstance(scene::Instance* instance) {
+		_instance = instance;
+	}
+
+	bool isEmpty() const {
+		return _instance == NULL;
+	}
+
+	void clear() {
+		_instance = NULL;
+	}
+
+	// greebo: Returns the position of this target or <0,0,0> if empty
+	Vector3 getPosition() const {
+		if (_instance == NULL) {
+			return Vector3(0,0,0);
+		}
+
+		return _instance->worldAABB().getOrigin();
+	}
+};
+typedef boost::shared_ptr<Target> TargetPtr;
+
+class TargetManager
+{
+	// The list of all named Target objects
+	typedef std::map<std::string, TargetPtr> TargetList;
+	TargetList _targets;
+
+	// An empty Target
+	TargetPtr _emptyTarget;
+
+	// Private constructor
+	TargetManager();
+public:
+	// Accessor to the singleton instance
+	static TargetManager& Instance();
+
+	/**
+	 * greebo: Returns the Target with the given name.
+	 *         
+	 * This never returns NULL, a Target is created if it doesn't exist yet.
+	 */
+	TargetPtr getTarget(const std::string name);
+
+	/**
+	 * greebo: Associates the Target with the given name
+	 *         to the given scene::Instance.
+	 *
+	 * The Target will be created if it doesn't exist yet.
+	 */
+	void associateTarget(const std::string& name, scene::Instance* instance);
+
+	/**
+	 * greebo: Disassociates the Target from the given name.
+	 */
+	void clearTarget(const std::string& name);
+};
+
+/**
+ * greebo: A TargetingEntity encapsulates a "targetN" key of a given entity. 
+ * It acts as Observer for this key and maintains a pointer to the named Target.
+ *
+ * Note: An Entity can have multiple "targetN" keys, hence it can hold multiple 
+ * instances of this TargetingEntity class.
+ *
+ * At any rate, each TargetKey can only refer to one Target.
+ */ 
+class TargetKey
+{
+	// The target of this key
+	TargetPtr _target;
+public:
+	// Accessor method for the contained TargetPtr
+	const TargetPtr& getTarget() const;
+
+	// Observes the given keyvalue
+	void attachToKeyValue(EntityKeyValue& value);
+
+	// Stops observing the given keyvalue
+	void detachFromKeyValue(EntityKeyValue& value);
+
+	// This gets called as soon as the "target" key in the spawnargs changes
+	void targetChanged(const std::string& target);
+	// Shortcut typedef
+	typedef MemberCaller1<TargetKey, const std::string&, &TargetKey::targetChanged> TargetChangedCaller;
+};
+
+} // namespace entity
+
+
+// Looks up a named Targetable (returns NULL if not found)
+Targetable* getTargetable(const std::string& targetname);
+
+typedef std::map<std::string, Targetable*> TargetableMap;
+extern TargetableMap g_targetables;
 
 class TargetedEntity
 {
-  Targetable& m_targetable;
-  targetables_t* m_targets;
+	Targetable& m_targetable;
+	std::string _name;
+  
+	void construct() {
+		if (_name.empty()) return;
 
-  void construct()
-  {
-    if(m_targets != 0)
-      m_targets->insert(&m_targetable);
-  }
-  void destroy()
-  {
-    if(m_targets != 0)
-      m_targets->erase(&m_targetable);
-  }
+		g_targetables.insert(
+			TargetableMap::value_type(_name, &m_targetable)
+		);
+	}
+
+	void destroy() {
+		if (_name.empty()) return;
+
+		TargetableMap::iterator i = g_targetables.find(_name);
+		if (i != g_targetables.end()) {
+			g_targetables.erase(i);
+		}
+	}
+
 public:
-  TargetedEntity(Targetable& targetable)
-    : m_targetable(targetable), m_targets(getTargetables(""))
-  {
-    construct();
-  }
-  ~TargetedEntity()
-  {
-    destroy();
-  }
-  void targetnameChanged(const std::string& name)
-  {
-    destroy();
-    m_targets = getTargetables(name);
-    construct();
-  }
-  typedef MemberCaller1<TargetedEntity, const std::string&, &TargetedEntity::targetnameChanged> TargetnameChangedCaller;
+	TargetedEntity(Targetable& targetable) : 
+		m_targetable(targetable)
+	{
+		construct();
+	}
+
+	~TargetedEntity() {
+		destroy();
+	}
+
+	void targetnameChanged(const std::string& name) {
+		// Change the mapping of this Targetable.
+		destroy();
+		_name = name;
+		construct();
+	}
+	typedef MemberCaller1<TargetedEntity, const std::string&, &TargetedEntity::targetnameChanged> TargetnameChangedCaller;
 };
 
-
+/**
+ * greebo: A TargetingEntity encapsulates a "targetN" key of a given entity. 
+ * It acts as Observer for this key and maintains a pointer to the named Targetable.
+ *
+ * Note: An Entity can have multiple "targetN" keys, hence it can hold multiple 
+ * instances of this TargetingEntity class.
+ *
+ * At any rate, each TargetingEntity can only refer to one Targetable.
+ */ 
 class TargetingEntity
 {
-	targetables_t* m_targets;
+	// The targetable the "targetN" key is pointing to (can be NULL)
+	Targetable* _targetable;
+
 public:
 	TargetingEntity() :
-		m_targets(getTargetables(""))
+		_targetable(NULL)
 	{}
 
 	// This gets called as soon as the "target" key in the spawnargs changes
 	void targetChanged(const std::string& target) {
-		m_targets = getTargetables(target);
+		_targetable = getTargetable(target);
 	}
 	typedef MemberCaller1<TargetingEntity, const std::string&, &TargetingEntity::targetChanged> TargetChangedCaller;
 
-	size_t size() const {
-		if (m_targets == NULL) {
-			return 0;
-		}
-		return m_targets->size();
-	}
-
 	bool empty() const {
-		return m_targets == NULL || m_targets->empty();
+		return _targetable == NULL;
 	}
 
 	template<typename Functor>
 	void forEachTarget(const Functor& functor) const {
-		if (m_targets == NULL) {
+		if (_targetable == NULL) {
 			return;
 		}
 
-		for (targetables_t::const_iterator i = m_targets->begin(); i != m_targets->end(); ++i) {
-			functor((*i)->getWorldPosition());
-		}
+		functor(_targetable->getWorldPosition());
 	}
-};
-
-class TargetLinesPushBack
-{
-  RenderablePointVector& m_targetLines;
-  const Vector3& m_worldPosition;
-  const VolumeTest& m_volume;
-public:
-  TargetLinesPushBack(RenderablePointVector& targetLines, const Vector3& worldPosition, const VolumeTest& volume) :
-    m_targetLines(targetLines), m_worldPosition(worldPosition), m_volume(volume)
-  {
-  }
-  void operator()(const Vector3& worldPosition) const
-  {
-    if(m_volume.TestLine(segment_for_startend(m_worldPosition, worldPosition)))
-    {
-      m_targetLines.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(m_worldPosition)));
-      m_targetLines.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(worldPosition)));
-    }
-  }
 };
 
 class TargetKeys : 
 	public Entity::Observer
 {
-	// greebo: A container mapping "targetN" keys to TargetingEntity objects
-	typedef std::map<std::string, TargetingEntity> TargetingEntities;
-	TargetingEntities _targetingEntities;
+public:
+	class Visitor {
+	public:
+		// Gets called with each Target contained in the TargetKeys object
+		virtual void visit(const entity::TargetPtr& target) = 0;
+	};
+
+private:
+	// greebo: A container mapping "targetN" keys to TargetKey objects
+	typedef std::map<std::string, entity::TargetKey> TargetKeyMap;
+	TargetKeyMap _targetKeys;
 
 	Callback _targetsChanged;
 
@@ -154,16 +269,22 @@ public:
 	void onKeyInsert(const std::string& key, EntityKeyValue& value);
 	void onKeyErase(const std::string& key, EntityKeyValue& value);
 
-	template<typename Functor>
-	void forEachTargetingEntity(const Functor& functor) const {
-		for (TargetingEntities::const_iterator i = _targetingEntities.begin(); 
-			 i != _targetingEntities.end(); ++i)
-		{
-			i->second.forEachTarget(functor);
+	/**
+	 * greebo: Walker function, calls visit() for each target
+	 *         contained in this structure.
+	 */
+	void forEachTarget(Visitor& visitor) const {
+		for (TargetKeyMap::const_iterator i = _targetKeys.begin(); i != _targetKeys.end(); i++) {
+			visitor.visit(i->second.getTarget());
 		}
 	}
 
-	const TargetingEntities& get() const;
+	// Returns TRUE if there are no "target" keys observed
+	bool empty() const {
+		return _targetKeys.empty();
+	}
+
+	//const TargetKeyMap& get() const;
 
 	// Triggers a callback that the targets have been changed
 	void targetsChanged();
@@ -172,7 +293,35 @@ private:
 };
 
 
-class RenderableTargetingEntity
+class TargetLinesPushBack :
+	public TargetKeys::Visitor
+{
+	RenderablePointVector& m_targetLines;
+	const Vector3& m_worldPosition;
+	const VolumeTest& m_volume;
+public:
+	TargetLinesPushBack(RenderablePointVector& targetLines, 
+						const Vector3& worldPosition, 
+						const VolumeTest& volume) :
+		m_targetLines(targetLines), 
+		m_worldPosition(worldPosition), 
+		m_volume(volume)
+	{}
+
+	virtual void visit(const entity::TargetPtr& target) {
+		if (target->isEmpty()) {
+			return;
+		}
+
+		Vector3 worldPosition = target->getPosition();
+		if (m_volume.TestLine(segment_for_startend(m_worldPosition, worldPosition))) {
+			m_targetLines.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(m_worldPosition)));
+			m_targetLines.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(worldPosition)));
+		}
+	}
+};
+
+/*class RenderableTargetingEntity
 {
   TargetingEntity& m_targets;
   mutable RenderablePointVector m_target_lines;
@@ -186,12 +335,17 @@ public:
   void compile(const VolumeTest& volume, const Vector3& world_position) const
   {
     m_target_lines.clear();
-    m_target_lines.reserve(m_targets.size() * 2);
+
+	if (m_targets.empty()) {
+		return;
+	}
+
+    m_target_lines.reserve(2);
 	m_targets.forEachTarget(TargetLinesPushBack(m_target_lines, world_position, volume));
   }
   void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) const
   {
-    if(!m_targets.empty())
+    if (!m_targets.empty())
     {
       compile(volume, world_position);
       if(!m_target_lines.empty())
@@ -200,38 +354,49 @@ public:
       }
     }
   }
-};
+};*/
 
-class RenderableTargetingEntities
+class RenderableTargetLines :
+	public RenderablePointVector
 {
 	const TargetKeys& m_targetKeys;
-	mutable RenderablePointVector m_target_lines;
 
 public:
-	static ShaderPtr m_state;
+	//static ShaderPtr m_state;
 
-	RenderableTargetingEntities(const TargetKeys& targetKeys) : 
-		m_targetKeys(targetKeys), 
-		m_target_lines(GL_LINES)
+	RenderableTargetLines(const TargetKeys& targetKeys) : 
+		RenderablePointVector(GL_LINES),
+		m_targetKeys(targetKeys)
 	{}
 
-	void compile(const VolumeTest& volume, const Vector3& world_position) const {
+	/*void compile(const VolumeTest& volume, const Vector3& world_position) const {
 		m_target_lines.clear();
-		m_targetKeys.forEachTargetingEntity(TargetLinesPushBack(m_target_lines, world_position, volume));
-	}
+		m_targetKeys.forEachTargetingEntity();
+	}*/
 
-	void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) const {
-		if (!m_targetKeys.get().empty()) {
-			compile(volume, world_position);
+	void render(Renderer& renderer, const VolumeTest& volume, const Vector3& world_position) {
+		if (!m_targetKeys.empty()) {
+			// Clear the vector
+			clear();
+
+			// Populate the RenderablePointVector
+			TargetLinesPushBack populator(*this, world_position, volume);
+			m_targetKeys.forEachTarget(populator);
+
+			if (!empty()) {
+				renderer.addRenderable(*this, g_matrix4_identity);
+			}
+			
+			/*compile(volume, world_position);
 			if (!m_target_lines.empty()) {
 				renderer.addRenderable(m_target_lines, g_matrix4_identity);
-			}
+			}*/
 		}
 	}
 };
 
 /**
- * greebo: Each targetable entity (D3Group, Speaker, Lights, etc.) derive from 
+ * greebo: Each targetable entity (D3Group, Speaker, Lights, etc.) derives from 
  *         this class. This applies for the entity Instances only.
  *
  * This extends the SelectableInstance interface by the Targetable interface.
@@ -244,8 +409,11 @@ class TargetableInstance :
 	mutable Vertex3f m_position;
 	entity::Doom3Entity& m_entity;
 	TargetKeys m_targeting;
-	TargetedEntity m_targeted;
-	RenderableTargetingEntities m_renderable;
+	//TargetedEntity m_targeted;
+	mutable RenderableTargetLines m_renderable;
+
+	// The current name of this entity (used for comparison in "targetNameChanged")
+	std::string _targetName;
 
 public:
 	TargetableInstance(
@@ -255,7 +423,7 @@ public:
 	) :
 		SelectableInstance(path, parent),
 		m_entity(entity),
-		m_targeted(*this),
+		//m_targeted(*this),
 		m_renderable(m_targeting)
 	{
 		m_entity.attach(*this);
@@ -275,17 +443,41 @@ public:
 		m_targeting.targetsChanged();
 	}
 
+	// Gets called as soon as the "name" keyvalue changes
+	void targetnameChanged(const std::string& name) {
+		// Check if we were registered before
+		if (!_targetName.empty()) {
+			// Old name is not empty
+			// Tell the Manager to disassociate us from the target
+			entity::TargetManager::Instance().clearTarget(_targetName);
+		}
+		
+		// Store the new name, in any case
+		_targetName = name;
+
+		if (_targetName.empty()) {
+			// New name is empty, do not associate
+			return;
+		}
+
+		// Tell the TargetManager to associate the name with this Instance here
+		entity::TargetManager::Instance().associateTarget(_targetName, this);
+	}
+	typedef MemberCaller1<TargetableInstance, const std::string&, &TargetableInstance::targetnameChanged> TargetnameChangedCaller;
+
 	// Entity::Observer implementation, gets called on key insert
 	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
 		if (key == "name") {
-			value.attach(TargetedEntity::TargetnameChangedCaller(m_targeted));
+			// Subscribe to this keyvalue to get notified about "name" changes
+			value.attach(TargetnameChangedCaller(*this));
 		}
 	}
 	
 	// Entity::Observer implementation, gets called on key erase
 	void onKeyErase(const std::string& key, EntityKeyValue& value) {
 		if (key == "name") {
-			value.detach(TargetedEntity::TargetnameChangedCaller(m_targeted));
+			// Unsubscribe from this keyvalue
+			value.detach(TargetnameChangedCaller(*this));
 		}
 	}
 
@@ -305,38 +497,43 @@ public:
 	}
 };
 
-
+/**
+ * greebo: This is a "container" for all TargetableInstances. These register
+ *         themselves at construction time and will get invoked during
+ *         the frontend render pass.
+ *
+ * This object is also a Renderable which is always attached to the GlobalShaderCache()
+ * during the entire module lifetime.
+ */
 class RenderableConnectionLines : 
 	public Renderable
 {
-  typedef std::set<TargetableInstance*> TargetableInstances;
-  TargetableInstances m_instances;
+	typedef std::set<TargetableInstance*> TargetableInstances;
+	TargetableInstances m_instances;
 public:
-  void attach(TargetableInstance& instance)
-  {
-    ASSERT_MESSAGE(m_instances.find(&instance) == m_instances.end(), "cannot attach instance");
-    m_instances.insert(&instance);
-  }
-  void detach(TargetableInstance& instance)
-  {
-    ASSERT_MESSAGE(m_instances.find(&instance) != m_instances.end(), "cannot detach instance");
-    m_instances.erase(&instance);
-  }
+	// Add a TargetableInstance to this set
+	void attach(TargetableInstance& instance) {
+		ASSERT_MESSAGE(m_instances.find(&instance) == m_instances.end(), "cannot attach instance");
+		m_instances.insert(&instance);
+	}
 
-  void renderSolid(Renderer& renderer, const VolumeTest& volume) const
-  {
-    for(TargetableInstances::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-    {
-      if((*i)->path().top()->visible())
-      {
-        (*i)->render(renderer, volume);
-      }
-    }
-  }
-  void renderWireframe(Renderer& renderer, const VolumeTest& volume) const
-  {
-    renderSolid(renderer, volume);
-  }
+	void detach(TargetableInstance& instance) {
+		ASSERT_MESSAGE(m_instances.find(&instance) != m_instances.end(), "cannot detach instance");
+		m_instances.erase(&instance);
+	}
+
+	void renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+		for (TargetableInstances::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i) {
+			if((*i)->path().top()->visible())
+			{
+				(*i)->render(renderer, volume);
+			}
+		}
+	}
+
+	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
+		renderSolid(renderer, volume);
+	}
 };
 
 typedef Static<RenderableConnectionLines> StaticRenderableConnectionLines;
