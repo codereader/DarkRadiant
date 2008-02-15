@@ -732,28 +732,19 @@ public:
 	virtual void visit(Face& face) {
 		face.ShiftTexdef(_shift[0], _shift[1]);
 	}
-
-	// Face functor
-	void operator()(Face& face) const {
-		face.ShiftTexdef(_shift[0], _shift[1]);
-	}
 };
 
 void shiftTexture(const Vector2& shift) {
 	std::string command("shiftTexture: ");
 	command += "s=" + floatToStr(shift[0]) + ", t=" + floatToStr(shift[1]);
 	
-	UndoableCommand undo(command.c_str());
+	UndoableCommand undo(command);
 
 	TextureShifter shifter(shift);
 	
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		// Visit each selected primitive instance using the TextureShifter object
-		forEachSelectedPrimitive(shifter);
-	}
-	// Translate the face textures
-	Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), shifter);
-	
+	// Visit each selected primitive instance using the TextureShifter object
+	forEachSelectedPrimitive(shifter);
+		
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().update();
@@ -780,44 +771,33 @@ public:
 	virtual void visit(Face& face) {
 		face.ScaleTexdef(_scale[0], _scale[1]);
 	}
-
-	void operator()(Face& face) const {
-		face.ScaleTexdef(_scale[0], _scale[1]);
-	}
 };
 
 void scaleTexture(const Vector2& scale) {
 	std::string command("scaleTexture: ");
 	command += "sScale=" + floatToStr(scale[0]) + ", tScale=" + floatToStr(scale[1]);
 
-	UndoableCommand undo(command.c_str());
+	UndoableCommand undo(command);
 	
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		// Prepare the according patch scale value (they are relatively scaled)
-		Vector2 patchScale;
-		
-		// We need to have 1.05 for a +0.05 scale
-		// and a 1/1.05 for a -0.05 scale
-		for (int i = 0; i < 2; i++) {
-			if (scale[i] >= 0.0f) {
-				patchScale[i] = 1.0f + scale[i];
-			}
-			else {
-				patchScale[i] = 1/(1.0f + fabs(scale[i]));
-			}
+	// Prepare the according patch scale value (they are relatively scaled)
+	Vector2 patchScale;
+	
+	// We need to have 1.05 for a +0.05 scale
+	// and a 1/1.05 for a -0.05 scale
+	for (int i = 0; i < 2; i++) {
+		if (scale[i] >= 0.0f) {
+			patchScale[i] = 1.0f + scale[i];
 		}
-
-		// Instantiate the texture scaler
-		TextureScaler scaler(scale, patchScale);
-
-		// traverse the selection
-		forEachSelectedPrimitive(scaler);
+		else {
+			patchScale[i] = 1/(1.0f + fabs(scale[i]));
+		}
 	}
-	// Scale the face textures
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		TextureScaler(scale, scale)
-	);
+
+	// Instantiate the texture scaler
+	TextureScaler scaler(scale, patchScale);
+
+	// traverse the selection
+	forEachSelectedPrimitive(scaler);
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -843,30 +823,18 @@ public:
 	virtual void visit(Face& face) {
 		face.RotateTexdef(_angle);
 	}
-
-	void operator()(Face& face) const {
-		face.RotateTexdef(_angle);
-	}
 };
 
 void rotateTexture(const float& angle) {
 	std::string command("rotateTexture: ");
 	command += "angle=" + floatToStr(angle);
 	
-	UndoableCommand undo(command.c_str());
+	UndoableCommand undo(command);
 	
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		// Instantiate a rotator class and traverse the selection
-		TextureRotator rotator(angle);
-		forEachSelectedPrimitive(rotator);
-	}
+	// Instantiate a rotator class and traverse the selection
+	TextureRotator rotator(angle);
+	forEachSelectedPrimitive(rotator);
 	
-	// Rotate the face textures
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		TextureRotator(angle)
-	);
-
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().update();
