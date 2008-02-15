@@ -375,10 +375,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\selection.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\stacktrace.cpp"
 				>
 			</File>

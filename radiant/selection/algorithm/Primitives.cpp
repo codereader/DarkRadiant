@@ -40,6 +40,87 @@ namespace selection {
 		typedef boost::filesystem::path Path;
 	}
 
+/** 
+ * greebo: Traverses the selection and invokes the PrimitiveVisitor on
+ *         each encountered primitive. This class implements several 
+ *         interfaces to avoid having multiple walker classes.
+ *
+ * The SelectionWalker traverses the currently selected instances and
+ * passes Brushes and Patches right to the PrimitiveVisitor. When
+ * GroupNodes are encountered, the GroupNode itself is traversed 
+ * and all child primitives are passed to the PrimitiveVisitor as well.
+ */
+class SelectionWalker :
+	public SelectionSystem::Visitor,
+	public scene::Traversable::Walker,
+	public BrushVisitor
+{
+	PrimitiveVisitor& _visitor;
+public:
+	SelectionWalker(PrimitiveVisitor& visitor) : 
+		_visitor(visitor) 
+	{}
+	
+	// SelectionSystem::Visitor implementation
+	virtual void visit(scene::Instance& instance) const {
+		// Check if we have an entity
+		scene::GroupNodePtr groupNode = Node_getGroupNode(instance.path().top());
+
+		if (groupNode != NULL) {
+			// We have a selected groupnode, traverse it using self as walker
+			scene::TraversablePtr traversable = Node_getTraversable(instance.path().top());
+			if (traversable != NULL) {
+				traversable->traverse(*this);
+			}
+			return;
+		}
+
+		Brush* brush = Node_getBrush(instance.path().top());
+
+		if (brush != NULL) {
+			// We have a brush, visit and traverse each face
+			_visitor.visit(*brush);
+			brush->forEachFace(*this);
+			return;
+		}
+
+		Patch* patch = Node_getPatch(instance.path().top());
+		if (patch != NULL) {
+			_visitor.visit(*patch);
+		}
+	}
+
+	// BrushVisitor implemenatation
+	virtual void visit(Face& face) const {
+		_visitor.visit(face);
+	}
+
+	// scene::Traversable::Walker implemenatation
+	virtual bool pre(scene::INodePtr node) const {
+		Brush* brush = Node_getBrush(node);
+
+		if (brush != NULL) {
+			// We have a brush, visit and traverse each face
+			_visitor.visit(*brush);
+			brush->forEachFace(*this);
+			return false;
+		}
+
+		Patch* patch = Node_getPatch(node);
+		if (patch != NULL) {
+			_visitor.visit(*patch);
+			return false;
+		}
+
+		return true; // traverse further
+	}
+};
+
+void forEachSelectedPrimitive(PrimitiveVisitor& visitor) {
+	SelectionWalker walker(visitor);
+	GlobalSelectionSystem().foreachSelected(walker);
+}
+
 int selectedFaceCount() {
 	return static_cast<int>(g_SelectedFaceInstances.size());
 }
