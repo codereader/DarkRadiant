@@ -114,11 +114,25 @@ public:
 
 		return true; // traverse further
 	}
+
+	// Functor for the selected face instances
+	void operator() (FaceInstance& faceInstance) {
+		// Pass the call to the visit function
+		visit(faceInstance.getFace());
+	}
 };
 
 void forEachSelectedPrimitive(PrimitiveVisitor& visitor) {
+	// First walk all selected instances
 	SelectionWalker walker(visitor);
-	GlobalSelectionSystem().foreachSelected(walker);
+
+	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
+		// We are not in component mode, so let's walk the actual scene::Instances
+		GlobalSelectionSystem().foreachSelected(walker);
+	}
+
+	// Now traverse the selected face instances
+	g_SelectedFaceInstances.foreach(walker);
 }
 
 int selectedFaceCount() {
