@@ -519,9 +519,11 @@ void SurfaceInspector::update() {
 	bool flipSensitivity = (_selectionInfo.totalCount > 0);
 	bool applySensitivity = (_selectionInfo.totalCount > 0);
 	
-	// If patches are selected, the value entry fields have no meaning
-	valueSensitivity = (_selectionInfo.patchCount == 0 && _selectionInfo.totalCount > 0
-						&& selection::algorithm::selectedFaceCount() == 1);
+	// If patches or entities are selected, the value entry fields have no meaning
+	valueSensitivity = (_selectionInfo.patchCount == 0 && 
+						_selectionInfo.totalCount > 0 &&
+						_selectionInfo.entityCount == 0 && 
+						selection::algorithm::selectedFaceCount() == 1);
 	
 	gtk_widget_set_sensitive(_manipulators[HSHIFT].value, valueSensitivity);
 	gtk_widget_set_sensitive(_manipulators[VSHIFT].value, valueSensitivity);
