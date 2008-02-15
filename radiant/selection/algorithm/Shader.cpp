@@ -555,37 +555,30 @@ Vector2 getSelectedFaceShaderSize() {
 
 /** greebo: Applies the given texture repeat to the visited patch/face
  */
-class TextureFitter
+class TextureFitter :
+	public PrimitiveVisitor
 {
 	float _repeatS, _repeatT;
 public:
 	TextureFitter(float repeatS, float repeatT) : 
 		_repeatS(repeatS), _repeatT(repeatT) 
 	{}
-	
-	void operator()(Face& face) const {
-		face.FitTexture(_repeatS, _repeatT);
-	}
-	
-	void operator()(Patch& patch) const {
+
+	virtual void visit(Patch& patch) {
 		patch.SetTextureRepeat(_repeatS, _repeatT);
+	}
+
+	virtual void visit(Face& face) {
+		face.FitTexture(_repeatS, _repeatT);
 	}
 };
 
 void fitTexture(const float& repeatS, const float& repeatT) {
 	UndoableCommand command("fitTexture");
 	
-	// Cycle through all selected brushes
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(
-			GlobalSceneGraph(), TextureFitter(repeatS, repeatT));
-	}
-	
-	// Cycle through all selected components
-	Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), TextureFitter(repeatS, repeatT));
-	
-	// Cycle through all the selected patches
-	Scene_forEachVisibleSelectedPatch(TextureFitter(repeatS, repeatT));
+	// Instantiate a walker and traverse the selection
+	TextureFitter fitter(repeatS, repeatT);
+	forEachSelectedPrimitive(fitter);
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -594,42 +587,32 @@ void fitTexture(const float& repeatS, const float& repeatT) {
 
 /** greebo: Flips the visited object about the axis given to the constructor.
  */
-class TextureFlipper
+class TextureFlipper :
+	public PrimitiveVisitor
 {
 	unsigned int _flipAxis;
 public:
 	TextureFlipper(unsigned int flipAxis) : 
 		_flipAxis(flipAxis) 
 	{}
-	
-	void operator()(Face& face) const {
-		face.flipTexture(_flipAxis);
-	}
-	
-	void operator()(Patch& patch) const {
+
+	virtual void visit(Patch& patch) {
 		patch.FlipTexture(_flipAxis);
+	}
+
+	virtual void visit(Face& face) {
+		face.flipTexture(_flipAxis);
 	}
 };
 
 void flipTexture(unsigned int flipAxis) {
 	UndoableCommand undo("flipTexture");
 	
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		// Flip the texture of all the brushes (selected as a whole)
-		Scene_ForEachSelectedBrush_ForEachFace(
-			GlobalSceneGraph(), 
-			TextureFlipper(flipAxis)
-		);
-		// Flip the texture coordinates of the selected patches
-		Scene_forEachVisibleSelectedPatch(
-			TextureFlipper(flipAxis)
-		);
-	}
-	// Now flip all the seperately selected faces
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		TextureFlipper(flipAxis)
-	);
+	// Instantiate the visitor class
+	TextureFlipper flipper(flipAxis);
+	// traverse the selection
+	forEachSelectedPrimitive(flipper);
+	
 	SceneChangeNotify();
 }
 
@@ -644,7 +627,8 @@ void flipTextureT() {
 /** greebo: Applies the default texture projection to all
  * the visited faces.
  */
-class FaceTextureProjectionSetter
+class FaceTextureProjectionSetter :
+	public PrimitiveVisitor
 {
 	TextureProjection& _projection;
 public:
@@ -652,7 +636,7 @@ public:
 		_projection(projection) 
 	{}
 	
-	void operator()(Face& face) const {
+	virtual void visit(Face& face) {
 		face.SetTexdef(_projection);
 	}
 };
@@ -674,18 +658,9 @@ void naturalTexture() {
 	TextureProjection projection;
 	projection.constructDefault();
 	
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(
-			GlobalSceneGraph(), 
-			FaceTextureProjectionSetter(projection)
-		);
-	}
-	
-	// Faces
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		FaceTextureProjectionSetter(projection)
-	);
+	// Instantiate a visitor and walk the selection
+	FaceTextureProjectionSetter projectionSetter(projection);
+	forEachSelectedPrimitive(projectionSetter);
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -695,19 +670,10 @@ void naturalTexture() {
 void applyTextureProjectionToFaces(TextureProjection& projection) {
 	UndoableCommand undo("textureProjectionSetSelected");
 	
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(
-			GlobalSceneGraph(), 
-			FaceTextureProjectionSetter(projection)
-		);
-	}
-	
-	// Faces
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		FaceTextureProjectionSetter(projection)
-	);
-	
+	// Instantiate a visitor and walk the selection
+	FaceTextureProjectionSetter projectionSetter(projection);
+	forEachSelectedPrimitive(projectionSetter);
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().update();
