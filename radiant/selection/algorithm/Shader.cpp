@@ -147,64 +147,20 @@ std::string getShaderFromSelection() {
 /** greebo: Applies the given shader to the visited face/patch
  */
 class ShaderApplicator :
-	public SelectionSystem::Visitor,
-	public scene::Graph::Walker
+	public PrimitiveVisitor
 {
 	std::string _shader;
-	mutable scene::INodePtr _ignoreNode;
+
 public:
 	ShaderApplicator(const std::string& shader) : 
 		_shader(shader)
 	{}
 	
-	void visit(scene::Instance& instance) const {
-		if (!instance.path().top()->visible()) {
-			return;
-		}
-		
-		if (Instance_isSelected(instance)) {
-			processInstance(instance);
-		}
+	virtual void visit(Patch& patch) {
+		patch.SetShader(_shader);
 	}
-	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		// Don't process starting point node or invisible nodes
-		if (instance.path().top()->visible() && path.top() != _ignoreNode) {
-			processInstance(instance);
-		}
-		
-		return true;
-	}
-	
-	void processInstance(scene::Instance& instance) const {
-		// Is this a brush?
-		BrushInstance* brush = Instance_getBrush(instance);
-		if (brush != NULL) {
-			// Visit each face with the operator(Face&) method below
-			Brush_forEachFace(brush->getBrush(), *this);
-			return;
-		}
-		
-		// Is this a patch?
-		PatchInstance* patch = Instance_getPatch(instance);
-		if (patch != NULL) {
-			patch->getPatch().SetShader(_shader);
-			return;
-		}
-		
-		scene::INodePtr node = instance.path().top();
-		
-		// Is this a groupnode?
-		scene::GroupNodePtr groupNode =	Node_getGroupNode(node);
-		if (groupNode != NULL) {
-			_ignoreNode = node;
-			// Traverse the groupnode using self as visitor
-			GlobalSceneGraph().traverse_subgraph(*this, instance.path());
-			_ignoreNode = scene::INodePtr();
-		}
-	}
-	
-	void operator()(Face& face) const {
+
+	virtual void visit(Face& face) {
 		face.SetShader(_shader);
 	}
 };
@@ -212,15 +168,11 @@ public:
 void applyShaderToSelection(const std::string& shaderName) {
 	UndoableCommand undo("setShader");
 	
-	// Apply the shader to each primitive/group entity
-	GlobalSelectionSystem().foreachSelected(ShaderApplicator(shaderName));
-	
-	// Faces
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		ShaderApplicator(shaderName)
-	);
-	
+	// Construct an applicator class
+	ShaderApplicator applicator(shaderName);
+	// and traverse the selection using the applicator as walker
+	forEachSelectedPrimitive(applicator);
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().update();
@@ -440,22 +392,23 @@ void pickShaderFromSelection() {
 
 /** greebo: This applies the clipboard to the visited faces/patches.
  */
-class ClipboardShaderApplicator
+class ClipboardShaderApplicator :
+	public PrimitiveVisitor
 {
 	bool _natural;
 public:
 	ClipboardShaderApplicator(bool natural = false) :
 		_natural(natural)
 	{}
-	
-	void operator()(Patch& patch) const {
+
+	virtual void visit(Patch& patch) {
 		Texturable target;
 		target.patch = &patch;
 		// Apply the shader (projected, not to the entire brush)
 		applyClipboardToTexturable(target, !_natural, false);
 	}
-	
-	void operator()(Face& face) const {
+
+	virtual void visit(Face& face) {
 		Texturable target;
 		target.face = &face;
 		// Apply the shader (projected, not to the entire brush)
@@ -471,24 +424,8 @@ void pasteShaderToSelection() {
 	// Start a new command
 	UndoableCommand command("pasteShaderToSelection");
 	
-	// Cycle through all selected brushes
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(
-			GlobalSceneGraph(), 
-			ClipboardShaderApplicator()
-		);
-	}
-	
-	// Cycle through all selected components
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		ClipboardShaderApplicator()
-	);
-	
-	// Cycle through all the selected patches
-	Scene_forEachVisibleSelectedPatch(
-		ClipboardShaderApplicator()
-	);
+	ClipboardShaderApplicator applicator;
+	forEachSelectedPrimitive(applicator);
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -503,25 +440,10 @@ void pasteShaderNaturalToSelection() {
 	// Start a new command
 	UndoableCommand command("pasteShaderNaturalToSelection");
 	
-	// Cycle through all selected brushes
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
-		Scene_ForEachSelectedBrush_ForEachFace(
-			GlobalSceneGraph(), 
-			ClipboardShaderApplicator(true)
-		);
-	}
-	
-	// Cycle through all selected components
-	Scene_ForEachSelectedBrushFace(
-		GlobalSceneGraph(), 
-		ClipboardShaderApplicator(true)
-	);
-	
-	// Cycle through all the selected patches
-	Scene_forEachVisibleSelectedPatch(
-		ClipboardShaderApplicator(true)
-	);
-	
+	// greebo: Construct a visitor and traverse the selection
+	ClipboardShaderApplicator applicator(true); // true == paste natural
+	forEachSelectedPrimitive(applicator);
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().update();
