@@ -566,6 +566,7 @@ radiant_src = \
          'selection/SelectedInstanceList.cpp',
          'selection/algorithm/Primitives.cpp',
          'selection/algorithm/Curves.cpp',
+		 'selection/algorithm/Entity.cpp',
          'selection/algorithm/ModelFinder.cpp',
          'selection/algorithm/Shader.cpp',
          'selection/algorithm/Group.cpp',

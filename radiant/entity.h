@@ -60,7 +60,11 @@ public:
 scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& origin);
 
 void Scene_EntitySetKeyValue_Selected(const char* key, const char* value);
-void Scene_EntitySetClassname_Selected(const std::string& classname);
+
+/**
+ * greebo: Changes the classname of the given entity instance.
+ */
+void changeEntityClassname(scene::Instance& instance, const std::string& classname);
 
 void Entity_Construct();
 void Entity_Destroy();

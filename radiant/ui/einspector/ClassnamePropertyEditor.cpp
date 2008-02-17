@@ -2,7 +2,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "ientity.h"
-#include "entity.h"
+#include "selection/algorithm/Entity.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
 namespace ui
@@ -54,8 +54,7 @@ void ClassnamePropertyEditor::_onBrowseButton(GtkWidget* w,
 	// Only apply non-empty selections if the classname has actually changed
 	if (!selection.empty() && selection != self->_entity->getKeyValue(self->_key)) {
 		// Apply the classname change to the entity, this requires some algorithm
-		//self->_entity->setKeyValue(self->_key, selection);
-		Scene_EntitySetClassname_Selected(selection.c_str());
+		selection::algorithm::setEntityClassname(selection);
 	}
 }
 
