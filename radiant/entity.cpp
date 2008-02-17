@@ -106,52 +106,91 @@ public:
   }
 };
 
-class EntitySetClassnameSelected : public scene::Graph::Walker
+/**
+ * greebo: Changes the classname of the given instance. This is a nontrivial
+ *         operation, as the Entity needs to be created afresh and all the
+ *         spawnargs need to be copied over. Child primitives need to be 
+ *         considered as well.
+ * 
+ * @instance: The scene::Instance to change the classname of.
+ * @classname: The new classname
+ */
+void changeEntityClassname(scene::Instance& instance, const std::string& classname) {
+	// greebo: First, get the eclass
+	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
+		classname, 
+		node_is_group(instance.path().top()) // whether this entity has child primitives
+	);
+
+	// must not fail, findOrInsert always returns non-NULL
+	assert(eclass != NULL); 
+
+	// Create a new entity with the given class
+	scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
+
+	Entity* oldEntity = Node_getEntity(instance.path().top());
+	Entity* newEntity = Node_getEntity(node);
+	assert(newEntity != NULL); // must not be NULL
+
+	// Instantiate a visitor that copies all spawnargs to the new node
+	EntityCopyingVisitor visitor(*newEntity);
+	// Traverse the old entity with this walker
+	oldEntity->forEachKeyValue(visitor);
+
+	// The instance is the child to be relocated
+	scene::INodePtr child(instance.path().top());
+	// The child must not be the root node (size of path >= 2)
+	assert(instance.path().size() > 1);
+	scene::INodePtr parent(instance.path().parent());
+
+	// Remove the old entity from the parent
+	Node_getTraversable(parent)->erase(child);
+
+	if (Node_getTraversable(child) != NULL && Node_getTraversable(node) != NULL && 
+		node_is_group(node))
+	{
+		// Traverse the child and reparent all primitives to the new entity node
+		parentBrushes(child, node);
+	}
+
+	// Insert the new entity to the parent
+	Node_getTraversable(parent)->insert(node);
+}
+
+/**
+ * greebo: This walker traverses a subgraph and changes the classname
+ *         of all selected entities to the one passed to the constructor.
+ */
+class EntitySetClassnameSelected : 
+	public SelectionSystem::Visitor
 {
-  const char* m_classname;
+	std::string _classname;
 public:
-  EntitySetClassnameSelected(const char* classname)
-    : m_classname(classname)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    return true;
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    Entity* entity = Node_getEntity(path.top());
-    if(entity != 0
-      && (instance.childSelected() || Instance_getSelectable(instance)->isSelected()))
-    { 
-      scene::INodePtr node(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert(m_classname, node_is_group(path.top()))));
+	EntitySetClassnameSelected(const std::string& classname) :
+		_classname(classname)
+	{}
 
-      EntityCopyingVisitor visitor(*Node_getEntity(node));
+	virtual void visit(scene::Instance& instance) const {
+		// Check if we have an entity
+		Entity* entity = Node_getEntity(instance.path().top());
 
-      entity->forEachKeyValue(visitor);
-
-      scene::INodePtr child(path.top());
-      scene::INodePtr parent(path.parent());
-      Node_getTraversable(parent)->erase(child);
-      if(Node_getTraversable(child) != 0
-        && Node_getTraversable(node) != 0
-        && node_is_group(node))
-      {
-        parentBrushes(child, node);
-      }
-      Node_getTraversable(parent)->insert(node);
-    }
-  }
+		if (entity != NULL && !_classname.empty() &&
+			(instance.childSelected() || Instance_isSelected(instance)))
+		{ 
+			changeEntityClassname(instance, _classname);
+		}
+	}
 };
 
 void Scene_EntitySetKeyValue_Selected(const char* key, const char* value)
 {
-  GlobalSceneGraph().traverse(EntitySetKeyValueSelected(key, value));
+	GlobalSceneGraph().traverse(EntitySetKeyValueSelected(key, value));
 }
 
-void Scene_EntitySetClassname_Selected(const char* classname)
-{
-  GlobalSceneGraph().traverse(EntitySetClassnameSelected(classname));
+void Scene_EntitySetClassname_Selected(const std::string& classname) {
+	// greebo: instantiate a walker and traverse the current selection
+	EntitySetClassnameSelected classnameSetter(classname);
+	GlobalSelectionSystem().foreachSelected(classnameSetter);
 }
 
 

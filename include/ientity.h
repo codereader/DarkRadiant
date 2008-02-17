@@ -205,20 +205,25 @@ inline bool Node_isEntity(scene::INodePtr node) {
 	return boost::dynamic_pointer_cast<EntityNode>(node) != NULL;
 }
 
-class EntityCopyingVisitor : public Entity::Visitor
+/**
+ * greebo: This is a visitor class copying all visited spawnargs to
+ *         the target entity passed to the constructor (except classname).
+ */ 
+class EntityCopyingVisitor : 
+	public Entity::Visitor
 {
-  Entity& m_entity;
+	// the target entity
+	Entity& _entity; 
 public:
-  EntityCopyingVisitor(Entity& entity)
-    : m_entity(entity)
-  {
-  }
+	EntityCopyingVisitor(Entity& entity) : 
+		_entity(entity)
+	{}
 	
 	// Required visit function, copies keyvalues (except classname) between
 	// entities
 	void visit(const std::string& key, const std::string& value) {
-		if(key != "classname") {
-			m_entity.setKeyValue(key, value);
+		if (key != "classname") {
+			_entity.setKeyValue(key, value);
 		}
 	}
 };
