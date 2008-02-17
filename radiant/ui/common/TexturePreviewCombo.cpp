@@ -3,9 +3,12 @@
 #include "gtkutil/GLWidgetSentry.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include "gtkutil/TextColumn.h"
 
 #include "ishaders.h"
 #include "texturelib.h"
+
+#include "ShaderSelector.h"
 
 #include <gtk/gtk.h>
 #include <GL/glew.h>
@@ -35,23 +38,11 @@ TexturePreviewCombo::TexturePreviewCombo()
 	// Set up the info table
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_infoView), FALSE);
 	
-	GtkCellRenderer* rend;
-	GtkTreeViewColumn* col;
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView),
+								gtkutil::TextColumn("Attribute", 0));
 	
-	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Attribute",
-												   rend,
-												   "text", 0,
-												   NULL);
-	g_object_set(G_OBJECT(rend), "weight", 700, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView), col);
-	
-	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Value",
-												   rend,
-												   "text", 1,
-												   NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView), col);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView),
+								gtkutil::TextColumn("Value", 1));
 
 	// Pack into main widget
 	gtk_box_pack_start(
@@ -78,34 +69,13 @@ void TexturePreviewCombo::setTexture(const std::string& tex) {
 void TexturePreviewCombo::refreshInfoTable() {
 	// Prepare the list
 	gtk_list_store_clear(_infoStore);
-	GtkTreeIter iter;
-
-	// Texture name
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Shader",
-					   1, _texName.c_str(),
-					   -1);
 
 	// Other properties require a valid shader name	
 	if (_texName.empty())
 		return;
-		
+
 	IShaderPtr shader = GlobalShaderSystem().getShaderForName(_texName);
-
-	// Containing MTR	
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Defined in",
-					   1, shader->getShaderFileName(),
-					   -1);
-
-	// Description
-	gtk_list_store_append(_infoStore, &iter);
-	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Description",
-					   1, shader->getDescription().c_str(),
-					   -1);
+	ShaderSelector::displayShaderInfo(shader, _infoStore);
 }
 
 // Popup menu callbacks
@@ -113,7 +83,7 @@ void TexturePreviewCombo::refreshInfoTable() {
 void TexturePreviewCombo::_onCopyTexName() {
 	// Store texture on the clipboard
 	GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-	gtk_clipboard_set_text(clipboard, _texName.c_str(), _texName.size());
+	gtk_clipboard_set_text(clipboard, _texName.c_str(), static_cast<int>(_texName.size()));
 }
 
 // GTK CALLBACKS
@@ -128,7 +98,7 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	glViewport(0, 0, req.width, req.height);
 
 	// Initialise
-	glClearColor(0.3, 0.3, 0.3, 0);
+	glClearColor(0.3f, 0.3f, 0.3f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
