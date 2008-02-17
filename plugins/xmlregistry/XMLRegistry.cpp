@@ -34,6 +34,7 @@
 #include "ieventmanager.h"
 #include "iradiant.h"
 #include "RegistryTree.h"
+#include "gtkutil/IConv.h"
 
 class XMLRegistry : 
 	public Registry
@@ -134,7 +135,8 @@ public:
 		if (nodeList.size() > 0) {
 			// Load the first node and get the value
 			xml::Node node = nodeList[0];
-			return node.getAttributeValue("value");
+			// Convert the UTF-8 string back to locale and return
+			return gtkutil::IConv::localeFromUTF8(node.getAttributeValue("value"));
 		}
 		else {
 			//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
@@ -215,7 +217,8 @@ public:
 	void set(const std::string& key, const std::string& value) {
 		
 		// Create or set the value in the user tree, the default tree stays untouched
-		_userTree.set(key, value);
+		// Convert the string to UTF-8 before storing it into the RegistryTree
+		_userTree.set(key, gtkutil::IConv::localeToUTF8(value));
 		
 		// Notify the observers, but use the unprepared key as argument!
 		notifyKeyObservers(key);

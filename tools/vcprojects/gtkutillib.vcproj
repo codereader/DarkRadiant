@@ -299,6 +299,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\libs\gtkutil\IConv.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\libs\gtkutil\idledraw.cpp"
 			>
 		</File>

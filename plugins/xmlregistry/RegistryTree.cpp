@@ -6,6 +6,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
+#include "gtkutil/IConv.h"
+
 	namespace {
 		// Needed for boost::algorithm::split		
 		typedef std::vector<std::string> StringParts;
@@ -192,7 +194,8 @@ std::string RegistryTree::get(const std::string& key) {
 	if (nodeList.size() > 0) {
 		// Load the node and get the value
 		xml::Node node = nodeList[0];
-		return node.getAttributeValue("value");
+
+		return gtkutil::IConv::localeFromUTF8(node.getAttributeValue("value"));
 	}
 	else {
 		//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
@@ -217,6 +220,7 @@ void RegistryTree::set(const std::string& key, const std::string& value) {
 	if (nodeList.size() > 0) {
 		// Load the node and set the value
 		xml::Node node = nodeList[0];
+
 		node.setAttributeValue("value", value);
 	}
 	else {
