@@ -116,6 +116,7 @@ xmlRegistryEnv = module_env.Copy()
 xmlRegistrySrc = build_list('plugins/xmlregistry', 'RegistryTree.cpp XMLRegistry.cpp')
 xmlRegistryEnv.Append(LIBS = 'xmlutil')
 xmlRegistryEnv.useBoostRegex()
+xmlRegistryEnv.useGlib2()
 xmlRegistryLib = xmlRegistryEnv.SharedLibrary(target='xmlregistry', source=xmlRegistrySrc)
 xmlRegistryEnv.Install(INSTALL + '/modules', xmlRegistryLib)
 
