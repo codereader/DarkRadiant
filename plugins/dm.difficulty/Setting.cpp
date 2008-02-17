@@ -28,6 +28,8 @@ std::string Setting::getArgumentKeyValue() const {
 		case EIgnore:
 			returnValue = GlobalRegistry().get(RKEY_APPTYPE_IGNORE);
 			break;
+		default:
+			break;
 	};
 
 	return returnValue;
@@ -48,6 +50,8 @@ std::string Setting::getDescString() const {
 			break;
 		case EIgnore:
 			returnValue = " = [IGNORE]";
+			break;
+		default:
 			break;
 	};
 

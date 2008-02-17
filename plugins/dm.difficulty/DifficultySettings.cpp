@@ -301,7 +301,6 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def) {
 
 		// Get the index from the string's tail
 		std::string indexStr = attr.name.substr(prefix.length());
-		int index = strToInt(indexStr);
 
 		const EntityClassAttribute& classAttr = def->getAttribute(diffPrefix + "class_" + indexStr);
 		const EntityClassAttribute& argAttr = def->getAttribute(diffPrefix + "arg_" + indexStr);
@@ -340,7 +339,6 @@ void DifficultySettings::parseFromMapEntity(Entity* entity) {
 
 		// Get the index from the string's tail
 		std::string indexStr = key.substr(prefix.length());
-		int index = strToInt(indexStr);
 
 		std::string className = entity->getKeyValue(diffPrefix + "class_" + indexStr);
 		SettingPtr setting = createSetting(className);
