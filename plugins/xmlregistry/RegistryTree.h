@@ -38,12 +38,17 @@ public:
 	//	Adds a key <key> as child to <path> to the XMLRegistry (with the name attribute set to <name>)
 	xml::Node createKeyWithName(const std::string& path, const std::string& key, const std::string& name);
 	
-	/* Gets a key from the registry, /darkradiant is automatically added by prepareKey()
-	 * if relative paths are used */
+	/**
+	 * greebo: Gets a key from the registry, /darkradiant is automatically added by prepareKey()
+	 * if relative paths are used. 
+	 *
+	 * The returned value is properly converted from UTF-8 to the current locale using gtkutil::IConv.
+	 */
 	std::string get(const std::string& key);
 	
 	// Sets the value of a key from the registry, 
 	// "/darkradiant" is automatically added if relative paths are used
+	// Note that the given key is NOT processed in terms of UTF-8 <-> locale conversion.
 	void set(const std::string& key, const std::string& value);
 	
 	/* Appends a whole (external) XML file to the XMLRegistry. The toplevel nodes of this file
