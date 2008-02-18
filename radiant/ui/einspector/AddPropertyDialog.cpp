@@ -6,8 +6,8 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/IconTextColumn.h"
 
-#include "ui/groupdialog/GroupDialog.h"
 #include "iradiant.h"
+#include "iuimanager.h"
 #include "iregistry.h"
 #include "ieclass.h"
 #include "ientity.h"
@@ -47,7 +47,7 @@ AddPropertyDialog::AddPropertyDialog(IEntityClassConstPtr eclass)
   _eclass(eclass)
 {
 	// Window properties
-	GtkWidget* groupdialog = ui::GroupDialog::Instance().getWindow();
+	GtkWidget* groupdialog = GlobalGroupDialog().getDialogWindow();
 	
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GTK_WINDOW(groupdialog));
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);

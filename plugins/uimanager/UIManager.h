@@ -28,6 +28,8 @@ public:
 	
 	IColourSchemeManager& getColourSchemeManager();
 
+	IGroupDialog& getGroupDialog();
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;

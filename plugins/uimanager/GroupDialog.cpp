@@ -16,9 +16,9 @@ namespace ui {
 		const std::string WINDOW_TITLE = "Entity";
 	}
 
-GroupDialog::GroupDialog(GtkWindow* parent) 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, parent, true),
-  _currentPage(0)
+GroupDialog::GroupDialog() : 
+	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+	_currentPage(0)
 {
 	// Create all the widgets and pack them into the window
 	populateWindow();
@@ -41,9 +41,13 @@ GroupDialog::GroupDialog(GtkWindow* parent)
 	_windowPosition.applyPosition();
 }
 
+GtkWidget* GroupDialog::getDialogWindow() {
+	return getWindow();
+}
+
 // Public static method to construct the instance
-void GroupDialog::construct(GtkWindow* parent) {
-	InstancePtr() = GroupDialogPtr(new GroupDialog(parent));
+void GroupDialog::construct() {
+	InstancePtr() = GroupDialogPtr(new GroupDialog);
 	GlobalRadiant().addEventListener(InstancePtr());
 }
 
@@ -93,7 +97,9 @@ GroupDialogPtr& GroupDialog::InstancePtr() {
 
 // Public method to retrieve the instance
 GroupDialog& GroupDialog::Instance() {
-	assert(InstancePtr() != NULL);
+	if (InstancePtr() == NULL) {
+		construct();
+	}
 	return *InstancePtr();
 }
 
@@ -138,6 +144,10 @@ void GroupDialog::onRadiantShutdown() {
 
 	// Call the PersistentTransientWindow::destroy chain
 	destroy();
+}
+
+GtkWidget* GroupDialog::addPage(const IGroupDialogPagePtr& page) {
+	return NULL;
 }
 
 GtkWidget* GroupDialog::addPage(const std::string& name,
