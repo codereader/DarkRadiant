@@ -7,8 +7,7 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 
 /** greebo: The GroupDialog class creates the Window and the Notebook widget
- * 			as soon as construct() is called. This method takes a parent GtkWindow*
- * 			as argument, to set the "transient for" property. 
+ * 			as soon as construct() is called. 
  * 
  * 			Use the Instance() method to access the static instance of this dialog and 
  * 			the addPage method to add new notebook tabs. 
@@ -17,9 +16,6 @@
  * 
  * 			The name passed to the addPage() method can be used to directly toggle 
  * 			the notebook widgets via setPage(<name>).
- * 
- * 			Call the shutdown() method to save the window state to the registry and
- * 			disconnect the dialog from the EventManager before DarkRadiant's exit.
  */
  
 // Forward Declarations
@@ -70,11 +66,6 @@ public:
 	 * Static method to construct the GroupDialog instance.
 	 */
 	static void construct();
-	
-	/** 
-	 * Adds the given page to the GroupDialog. The passed pointer must not be NULL.
-	 */
-	virtual GtkWidget* addPage(const IGroupDialogPagePtr& page);
 
 	/** greebo: Adds a page to the group dialog.
 	 * 
