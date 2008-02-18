@@ -1,6 +1,7 @@
 #ifndef MEDIABROWSER_H_
 #define MEDIABROWSER_H_
 
+#include "iuimanager.h"
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "gtkutil/menu/PopupMenu.h"
@@ -9,6 +10,7 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtktreeselection.h>
+#include <boost/shared_ptr.hpp>
 
 namespace ui
 {
@@ -17,8 +19,11 @@ namespace ui
  * individual textures by name and loading them into the texture window
  * or applying directly to map geometry.
  */
+class MediaBrowser;
+typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
 
-class MediaBrowser
+class MediaBrowser :
+	public IGroupDialogPage
 {
 	// Main widget
 	GtkWidget* _widget;
@@ -62,15 +67,14 @@ public:
 	
 	/** Return the singleton instance.
 	 */
-	static MediaBrowser& getInstance();
+	static const MediaBrowserPtr& getInstancePtr();
 
-	/** Return the main widget for packing into
-	 * the groupdialog or other parent container.
-	 */
-	GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
-	}
+	// IGroupDialogPage implementation
+	virtual const std::string& getName() const;
+	virtual const std::string& getWindowLabel() const;
+	virtual const std::string& getTabLabel() const;
+	virtual const std::string& getTabIcon() const;
+	virtual GtkWidget* getWidget() const;
 	
 	/** Constructor creates GTK widgets.
 	 */

@@ -608,7 +608,7 @@ void TextureBrowser::onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* sel
 		if (shader != NULL) {
 			// Focus the MediaBrowser selection to the given shader
 			GlobalGroupDialog().setPage("mediabrowser");
-			MediaBrowser::getInstance().setSelection(shader->getName());
+			MediaBrowser::getInstancePtr()->setSelection(shader->getName());
 		}
 	}
 	

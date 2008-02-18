@@ -872,7 +872,7 @@ void RefreshShaders() {
 	// Now realise the OpenGLShader objects again
 	GlobalShaderCache().realise();
 	
-	ui::MediaBrowser::getInstance().reloadMedia();
+	ui::MediaBrowser::getInstancePtr()->reloadMedia();
 	UpdateAllWindows();
 }
 
@@ -1133,13 +1133,7 @@ void MainFrame::Create()
     GlobalGroupDialog().addPage(ui::EntityInspector::getInstancePtr());
 
 	// Add the Media Browser page
-	GlobalGroupDialog().addPage(
-    	"mediabrowser",	// name
-    	"Media", // tab title
-    	"folder16.png", // tab icon 
-    	ui::MediaBrowser::getInstance().getWidget(), // page widget
-    	"Media"
-    );
+	GlobalGroupDialog().addPage(ui::MediaBrowser::getInstancePtr());
 	
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
