@@ -33,6 +33,12 @@ namespace {
     const int PROPERTYEDITORPANE_MIN_HEIGHT = 90;
     
     const char* PROPERTY_NODES_XPATH = "game/entityInspector//property";
+
+	// GroupDialog-related constants
+	const std::string GROUPDIALOG_NAME = "entity";
+	const std::string GROUPDIALOG_TAB_LABEL = "Entity";
+	const std::string GROUPDIALOG_TAB_ICON = "cmenu_add_entity.png";
+	const std::string GROUPDIALOG_WINDOWLABEL = "Entity";
     
 	// TreeView column numbers
     enum {
@@ -109,16 +115,32 @@ void EntityInspector::createContextMenu() {
 // Return the singleton EntityInspector instance, creating it if it is not yet
 // created. Single-threaded design.
 
-EntityInspector& EntityInspector::getInstance() {
-    static EntityInspector _instance;
-    return _instance;
+const EntityInspectorPtr& EntityInspector::getInstancePtr() {
+    static EntityInspectorPtr _instancePtr(new EntityInspector);
+    return _instancePtr;
 }
 
 // Return the Gtk widget for the EntityInspector dialog. 
 
-GtkWidget* EntityInspector::getWidget() {
+GtkWidget* EntityInspector::getWidget() const {
 	gtk_widget_show_all(_widget);
     return _widget;
+}
+
+const std::string& EntityInspector::getName() const {
+	return GROUPDIALOG_NAME;
+}
+
+const std::string& EntityInspector::getWindowLabel() const {
+	return GROUPDIALOG_WINDOWLABEL;
+}
+
+const std::string& EntityInspector::getTabLabel() const {
+	return GROUPDIALOG_TAB_LABEL;
+}
+
+const std::string& EntityInspector::getTabIcon() const {
+	return GROUPDIALOG_TAB_ICON;
 }
 
 // Create the dialog pane
@@ -264,16 +286,16 @@ void EntityInspector::onGtkIdle() {
 void EntityInspector::keyValueChanged() {
     
     // Redraw the entity inspector GUI
-    getInstance().requestIdleCallback();
+    getInstancePtr()->requestIdleCallback();
     
     // Set the map modified flag
-    if (getInstance()._selectedEntity != NULL)
+    if (getInstancePtr()->_selectedEntity != NULL)
     	GlobalMap().setModified(true);
 }
 
 // Selection changed callback
 void EntityInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
-	getInstance().requestIdleCallback();
+	getInstancePtr()->requestIdleCallback();
 }
 
 // Set entity property from entry boxes

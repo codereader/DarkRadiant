@@ -103,6 +103,10 @@ GroupDialog& GroupDialog::Instance() {
 	return *InstancePtr();
 }
 
+void GroupDialog::showDialogWindow() {
+	show();
+}
+
 // Public static method to toggle the window visibility
 void GroupDialog::toggle() {
 	if (Instance().isVisible())
