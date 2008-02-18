@@ -41,7 +41,7 @@ void ShaderClipboard::updateMediaBrowsers() {
 	// Set the active shader in the Texture window as well
 	GlobalTextureBrowser().setSelectedShader(_source.getShader());
 	std::string sourceShader = _source.getShader();
-	ui::MediaBrowser::getInstancePtr()->setSelection(sourceShader);
+	ui::MediaBrowser::getInstance().setSelection(sourceShader);
 	
 	_updatesDisabled = false;
 	
