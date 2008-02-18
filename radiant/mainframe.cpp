@@ -872,7 +872,7 @@ void RefreshShaders() {
 	// Now realise the OpenGLShader objects again
 	GlobalShaderCache().realise();
 	
-	ui::MediaBrowser::getInstancePtr()->reloadMedia();
+	ui::MediaBrowser::getInstance().reloadMedia();
 	UpdateAllWindows();
 }
 
@@ -1129,11 +1129,28 @@ void MainFrame::Create()
     GtkWidget *main_statusbar = create_main_statusbar(m_pStatusLabel);
     gtk_box_pack_end(GTK_BOX(vbox), main_statusbar, FALSE, TRUE, 2);
 
-    // Add entity inspector to GroupDialog
-    GlobalGroupDialog().addPage(ui::EntityInspector::getInstancePtr());
+	/* Construct the Group Dialog. This is the tabbed window that contains
+     * a number of pages - usually Entities, Textures and possibly Console.
+     */
+	//GlobalGroupDialog().construct(window);
+
+    // Add entity inspector widget
+    GlobalGroupDialog().addPage(
+    	"entity",	// name
+    	"Entity", // tab title
+    	"cmenu_add_entity.png", // tab icon 
+    	ui::EntityInspector::getInstance().getWidget(), // page widget
+    	"Entity"
+    );
 
 	// Add the Media Browser page
-	GlobalGroupDialog().addPage(ui::MediaBrowser::getInstancePtr());
+	GlobalGroupDialog().addPage(
+    	"mediabrowser",	// name
+    	"Media", // tab title
+    	"folder16.png", // tab icon 
+    	ui::MediaBrowser::getInstance().getWidget(), // page widget
+    	"Media"
+    );
 	
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.

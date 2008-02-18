@@ -36,12 +36,6 @@ namespace {
 	const char* APPLY_TEXTURE_TEXT = "Apply to selection";
 	const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 
-	// GroupDialog-related constants
-	const std::string GROUPDIALOG_NAME = "mediabrowser";
-	const std::string GROUPDIALOG_TAB_LABEL = "Media";
-	const std::string GROUPDIALOG_TAB_ICON = "folder16.png";
-	const std::string GROUPDIALOG_WINDOWLABEL = "Media";
-
 	// TreeStore columns
 	enum {
 		DISPLAYNAME_COLUMN,
@@ -259,32 +253,11 @@ std::string MediaBrowser::getSelectedName() {
 	}
 }
 
-const std::string& MediaBrowser::getName() const {
-	return GROUPDIALOG_NAME;
-}
-
-const std::string& MediaBrowser::getWindowLabel() const {
-	return GROUPDIALOG_WINDOWLABEL;
-}
-
-const std::string& MediaBrowser::getTabLabel() const {
-	return GROUPDIALOG_TAB_LABEL;
-}
-
-const std::string& MediaBrowser::getTabIcon() const {
-	return GROUPDIALOG_TAB_ICON;
-}
-
-GtkWidget* MediaBrowser::getWidget() const {
-	gtk_widget_show_all(_widget);
-	return _widget;
-}
-
 /** Return the singleton instance.
  */
-const MediaBrowserPtr& MediaBrowser::getInstancePtr() {
-	static MediaBrowserPtr _instancePtr(new MediaBrowser);
-	return _instancePtr;
+MediaBrowser& MediaBrowser::getInstance() {
+	static MediaBrowser _instance;
+	return _instance;
 }
 
 // Set the selection in the treeview
