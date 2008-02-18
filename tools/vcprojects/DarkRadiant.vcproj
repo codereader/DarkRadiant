@@ -1680,18 +1680,6 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="groupdialog"
-					>
-					<File
-						RelativePath="..\..\radiant\ui\groupdialog\GroupDialog.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\groupdialog\GroupDialog.h"
-						>
-					</File>
-				</Filter>
-				<Filter
 					Name="lightinspector"
 					>
 					<File

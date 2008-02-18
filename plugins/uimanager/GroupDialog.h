@@ -2,6 +2,7 @@
 #define GROUPDIALOG_H_
 
 #include "iradiant.h"
+#include "iuimanager.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
@@ -32,7 +33,8 @@ typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
 
 class GroupDialog 
 : public gtkutil::PersistentTransientWindow,
-	public RadiantEventListener
+	public RadiantEventListener,
+	public IGroupDialog
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -56,7 +58,7 @@ class GroupDialog
 
 private:
 	// Private constructor creates GTK widgets etc.
-	GroupDialog(GtkWindow* parent);
+	GroupDialog();
 
 	// TransientWindow events. These deal with window position tracking.
 	virtual void _preShow();
@@ -65,11 +67,15 @@ private:
 	
 public:
 	/** 
-	 * Static method called by the MainFrame to construct the GroupDialog
-	 * instance.
+	 * Static method to construct the GroupDialog instance.
 	 */
-	static void construct(GtkWindow* parent);
+	static void construct();
 	
+	/** 
+	 * Adds the given page to the GroupDialog. The passed pointer must not be NULL.
+	 */
+	virtual GtkWidget* addPage(const IGroupDialogPagePtr& page);
+
 	/** greebo: Adds a page to the group dialog.
 	 * 
 	 * @name: The name of this window (unique, can be used to show the page)
@@ -100,6 +106,9 @@ public:
 	/** greebo: Returns the widget of the currently visible page.
 	 */
 	GtkWidget* getPage();
+
+	// Returns the window widget containing the GroupDialog.
+	GtkWidget* getDialogWindow();
 	
 	/** greebo: Safely disconnects this window from
 	 * 			the eventmanager and saves the window position.

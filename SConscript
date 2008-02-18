@@ -279,6 +279,7 @@ uiManagerLst=build_list('plugins/uimanager',
 						 MenuManager.cpp \
 						 MenuItem.cpp \
 						 ToolbarManager.cpp \
+						 GroupDialog.cpp \
 						 colourscheme/ColourScheme.cpp \
 						 colourscheme/ColourSchemeManager.cpp \
 						 colourscheme/ColourSchemeEditor.cpp')
@@ -539,7 +540,6 @@ radiant_src = \
          'ui/surfaceinspector/SurfaceInspector.cpp',
          'ui/findshader/FindShader.cpp',
          'ui/transform/TransformDialog.cpp',
-         'ui/groupdialog/GroupDialog.cpp',
          'ui/prefdialog/PrefPage.cpp',
          'ui/prefdialog/PrefDialog.cpp',
          'ui/about/AboutDialog.cpp',

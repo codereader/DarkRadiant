@@ -42,12 +42,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "modulesystem/StaticModule.h"
 
-RadiantModule::RadiantModule() {
+RadiantModule::RadiantModule() :
+	_mainWindow(NULL)
+{
 	globalOutputStream() << "RadiantCore initialised.\n";
 }
 	
 GtkWindow* RadiantModule::getMainWindow() {
-	return MainFrame_getWindow();
+	return _mainWindow;
+}
+
+void RadiantModule::setMainWindow(GtkWindow* mainWindow) {
+	_mainWindow = mainWindow;
 }
 	
 GdkPixbuf* RadiantModule::getLocalPixbuf(const std::string& fileName) {

@@ -93,6 +93,92 @@ public:
 	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
 };
 
+/**
+ * greebo: This is the abstract prototype of a GroupDialogPage.
+ *         Any class deriving from this page can be packed into the
+ *         GroupDialog using the addPage() interface.
+ */
+class IGroupDialogPage
+{
+public:
+	/**
+	 * Returns the unique name of this page.
+	 */ 
+	virtual const std::string& getName() const = 0;
+
+	/** 
+	 *  Returns the label that should be displayed when
+	 *  the GroupDialog is focused on this page. This can be
+	 *  a different string than the one returned by getName().
+	 */
+	virtual const std::string& getWindowLabel() const = 0;
+
+	/**
+	 * Returns the label that is displayed on the notebook tab.
+	 */ 
+	virtual const std::string& getTabLabel() const = 0;
+
+	/**
+	 * Returns the image name of the icon to be displayed on the tab.
+	 */ 
+	virtual const std::string& getTabIcon() const = 0;
+
+	/**
+	 * Returns the actual widget that is packed into the tab page.
+	 */
+	virtual GtkWidget* getWidget() const = 0;
+};
+typedef boost::shared_ptr<IGroupDialogPage> IGroupDialogPagePtr;
+
+/**
+ * greebo: This defines the interface for accessing the GroupDialog
+ *         (i.e. the window housing the Entity Inspector, the Media Browser et al).
+ *
+ * Use the addPage() method to add a new tab to the GroupDialog.
+ */
+class IGroupDialog 
+{
+public:
+	/** 
+	 * Adds the given page to the GroupDialog. The passed pointer must not be NULL.
+	 */
+	virtual GtkWidget* addPage(const IGroupDialogPagePtr& page) = 0;
+
+	/** Adds a page to the group dialog. (DEPRECATED, do not use in new code)
+	 * 
+	 * @name: The name of this window (unique, can be used to show the page)
+	 * @tabLabel: The label string to be displayed on the tab
+	 * @tabIcon: The image to be displayed in the tab
+	 * @page: the actual page to be added
+	 * @windowLabel: the title string for the groupdialog window 
+	 * 				 displayed when this tab is active
+	 * 
+	 * @returns: the notebook page widget
+	 */
+	virtual GtkWidget* addPage(const std::string& name, 
+							   const std::string& tabLabel, const std::string& tabIcon, 
+							   GtkWidget* page, const std::string& windowLabel) = 0;
+
+	/** greebo: Sets the active tab to the given widget.
+	 * 
+	 * @page: The widget that should be displayed, must have been added
+	 * 		  using addPage() beforehand.
+	 */
+	virtual void setPage(GtkWidget* page) = 0;
+	
+	/** greebo: Activated the named page. The <name> parameter
+	 * 			refers to the name string passed to the addPage() method.
+	 */
+	virtual void setPage(const std::string& name) = 0;
+	
+	/** greebo: Returns the widget of the currently visible page.
+	 */
+	virtual GtkWidget* getPage() = 0;
+
+	// Returns the window widget containing the GroupDialog.
+	virtual GtkWidget* getDialogWindow() = 0;
+};
+
 const std::string MODULE_UIMANAGER("UIManager");
 
 /** greebo: The UI Manager abstract base class.
@@ -107,6 +193,7 @@ public:
 	virtual IMenuManager& getMenuManager() = 0;
 	virtual IToolbarManager& getToolbarManager() = 0;
 	virtual IColourSchemeManager& getColourSchemeManager() = 0;
+	virtual IGroupDialog& getGroupDialog() = 0;
 };
 
 // This is the accessor for the UI manager
@@ -120,9 +207,13 @@ inline IUIManager& GlobalUIManager() {
 	return _uiManager;
 }
 
-// Shortcut accessor
+// Shortcut accessors
 inline IColourSchemeManager& ColourSchemes() {
 	return GlobalUIManager().getColourSchemeManager();
+}
+
+inline IGroupDialog& GlobalGroupDialog() {
+	return GlobalUIManager().getGroupDialog();
 }
 
 #endif /*INCLUDE_UIMANAGER_H_*/

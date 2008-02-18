@@ -13,7 +13,6 @@
 
 #include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
-#include "ui/groupdialog/GroupDialog.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 
 namespace ui {
@@ -299,7 +298,7 @@ void TextureBrowser::activeShadersChanged() {
 
 // Static command target
 void TextureBrowser::toggle() {
-	ui::GroupDialog::Instance().setPage("textures");
+	GlobalGroupDialog().setPage("textures");
 }
 
 //++timo NOTE: this is a mix of Shader module stuff and texture explorer
@@ -608,7 +607,7 @@ void TextureBrowser::onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* sel
 	
 		if (shader != NULL) {
 			// Focus the MediaBrowser selection to the given shader
-			GroupDialog::Instance().setPage("mediabrowser");
+			GlobalGroupDialog().setPage("mediabrowser");
 			MediaBrowser::getInstance().setSelection(shader->getName());
 		}
 	}

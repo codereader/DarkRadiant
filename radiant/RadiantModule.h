@@ -36,10 +36,14 @@ class RadiantModule :
 	typedef std::set<RadiantEventListenerPtr> EventListenerList;
 	EventListenerList _eventListeners;
 
+	GtkWindow* _mainWindow;
+
 public:
 	RadiantModule();
 	
 	virtual GtkWindow* getMainWindow();
+	// Sets the main window (may only be called by mainframe).
+	void setMainWindow(GtkWindow* mainWindow);
 	
 	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName);
 	

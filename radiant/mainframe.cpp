@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/FindMapElements.h"
 #include "ui/about/AboutDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
-#include "ui/groupdialog/GroupDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/patch/PatchInspector.h"
 #include "textool/TexTool.h"
@@ -252,11 +251,11 @@ void updateTextureBrowser() {
 }
 
 void Console_ToggleShow() {
-	ui::GroupDialog::Instance().setPage("console");  
+	GlobalGroupDialog().setPage("console");  
 }
 
 void EntityInspector_ToggleShow() {
-	ui::GroupDialog::Instance().setPage("entity");  
+	GlobalGroupDialog().setPage("entity");  
 }
 
 
@@ -1041,6 +1040,7 @@ void MainFrame::Create()
 	
   GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
   m_window = window;
+  radiant::getGlobalRadiant()->setMainWindow(window);
   
   // Tell the XYManager which window the xyviews should be transient for
   GlobalXYWnd().setGlobalParentWindow(window);
@@ -1132,10 +1132,10 @@ void MainFrame::Create()
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
-	ui::GroupDialog::construct(window);
+	//GlobalGroupDialog().construct(window);
 
     // Add entity inspector widget
-    ui::GroupDialog::Instance().addPage(
+    GlobalGroupDialog().addPage(
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
@@ -1144,7 +1144,7 @@ void MainFrame::Create()
     );
 
 	// Add the Media Browser page
-	ui::GroupDialog::Instance().addPage(
+	GlobalGroupDialog().addPage(
     	"mediabrowser",	// name
     	"Media", // tab title
     	"folder16.png", // tab icon 
@@ -1155,12 +1155,12 @@ void MainFrame::Create()
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
     if (FloatingGroupDialog()) {
-    	ui::GroupDialog::Instance().addPage(
+    	GlobalGroupDialog().addPage(
 	    	"console",	// name
 	    	"Console", // tab title
 	    	"iconConsole16.png", // tab icon 
 	    	Console_constructWindow(
-	    		GTK_WINDOW(ui::GroupDialog::Instance().getWindow())), // page widget
+	    		GTK_WINDOW(window)), // page widget
 	    	"Console"
 	    );
     }
@@ -1294,11 +1294,11 @@ void MainFrame::Create()
    	{
 		GtkFrame* frame = create_framed_widget(
 			GlobalTextureBrowser().constructWindow(
-				GTK_WINDOW(ui::GroupDialog::Instance().getWindow())
+				GTK_WINDOW(window)
 			)
 		);
 		// Add the Media Browser page
-		ui::GroupDialog::Instance().addPage(
+		GlobalGroupDialog().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
@@ -1306,10 +1306,10 @@ void MainFrame::Create()
 	    	"Texture Browser"
 	    );
 		
-		gtk_window_group_add_window(windowGroup, GTK_WINDOW(ui::GroupDialog::Instance().getWindow()));
+		gtk_window_group_add_window(windowGroup, GTK_WINDOW(window));
     }
 
-    ui::GroupDialog::Instance().show();
+    //ui::GroupDialog::Instance().show();
   }
   else // 4 way (aka Splitplane view)
   {
@@ -1374,7 +1374,7 @@ void MainFrame::Create()
     {      
       GtkFrame* frame = create_framed_widget(GlobalTextureBrowser().constructWindow(window));
 		// Add the Media Browser page
-		ui::GroupDialog::Instance().addPage(
+		GlobalGroupDialog().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 

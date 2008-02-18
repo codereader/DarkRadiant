@@ -6,6 +6,7 @@
 #include "stream/textstream.h"
 #include "generic/callback.h"
 #include "colourscheme/ColourSchemeEditor.h"
+#include "GroupDialog.h"
 
 namespace ui {
 
@@ -19,6 +20,10 @@ IToolbarManager& UIManager::getToolbarManager() {
 
 IColourSchemeManager& UIManager::getColourSchemeManager() {
 	return ColourSchemeManager::Instance();
+}
+
+IGroupDialog& UIManager::getGroupDialog() {
+	return GroupDialog::Instance();
 }
 
 const std::string& UIManager::getName() const {
