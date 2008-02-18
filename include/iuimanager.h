@@ -94,43 +94,6 @@ public:
 };
 
 /**
- * greebo: This is the abstract prototype of a GroupDialogPage.
- *         Any class deriving from this page can be packed into the
- *         GroupDialog using the addPage() interface.
- */
-class IGroupDialogPage
-{
-public:
-	/**
-	 * Returns the unique name of this page.
-	 */ 
-	virtual const std::string& getName() const = 0;
-
-	/** 
-	 *  Returns the label that should be displayed when
-	 *  the GroupDialog is focused on this page. This can be
-	 *  a different string than the one returned by getName().
-	 */
-	virtual const std::string& getWindowLabel() const = 0;
-
-	/**
-	 * Returns the label that is displayed on the notebook tab.
-	 */ 
-	virtual const std::string& getTabLabel() const = 0;
-
-	/**
-	 * Returns the image name of the icon to be displayed on the tab.
-	 */ 
-	virtual const std::string& getTabIcon() const = 0;
-
-	/**
-	 * Returns the actual widget that is packed into the tab page.
-	 */
-	virtual GtkWidget* getWidget() const = 0;
-};
-typedef boost::shared_ptr<IGroupDialogPage> IGroupDialogPagePtr;
-
-/**
  * greebo: This defines the interface for accessing the GroupDialog
  *         (i.e. the window housing the Entity Inspector, the Media Browser et al).
  *
@@ -139,11 +102,6 @@ typedef boost::shared_ptr<IGroupDialogPage> IGroupDialogPagePtr;
 class IGroupDialog 
 {
 public:
-	/** 
-	 * Adds the given page to the GroupDialog. The passed pointer must not be NULL.
-	 */
-	virtual GtkWidget* addPage(const IGroupDialogPagePtr& page) = 0;
-
 	/** Adds a page to the group dialog. (DEPRECATED, do not use in new code)
 	 * 
 	 * @name: The name of this window (unique, can be used to show the page)
