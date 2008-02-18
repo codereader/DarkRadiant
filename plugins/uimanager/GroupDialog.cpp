@@ -147,7 +147,11 @@ void GroupDialog::onRadiantShutdown() {
 }
 
 GtkWidget* GroupDialog::addPage(const IGroupDialogPagePtr& page) {
-	return NULL;
+	return addPage(page->getName(), 
+				   page->getTabLabel(), 
+				   page->getTabIcon(), 
+				   page->getWidget(), 
+				   page->getWindowLabel());
 }
 
 GtkWidget* GroupDialog::addPage(const std::string& name,
