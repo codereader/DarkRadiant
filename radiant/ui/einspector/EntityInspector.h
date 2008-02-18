@@ -4,6 +4,7 @@
 #include "PropertyEditor.h"
 
 #include "iselection.h"
+#include "iuimanager.h"
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 
@@ -33,14 +34,17 @@ namespace {
 	typedef std::map<std::string, PropertyParms> PropertyParmMap;
 	
 }
-	
 
-/* The EntityInspector class represents the GTK dialog for editing properties
+class EntityInspector;
+typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
+
+/**
+ * The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
  */
-
 class EntityInspector :
+	public IGroupDialogPage,
  	public SelectionSystem::Observer,
  	public gtkutil::SingleIdleCallback
 {
@@ -120,16 +124,19 @@ protected:
 	// GTK idle callback, used for refreshing display
 	void onGtkIdle();
 
-public:
-
-    // Constructor
+	// Constructor
     EntityInspector();
 
+public:
     // Return or create the singleton instance
-    static EntityInspector& getInstance();
+    static const EntityInspectorPtr& getInstancePtr();
 
-    // Get the Gtk Widget for display in the main application
-    GtkWidget* getWidget();
+	// IGroupDialogPage implementation
+	virtual const std::string& getName() const;
+	virtual const std::string& getWindowLabel() const;
+	virtual const std::string& getTabLabel() const;
+	virtual const std::string& getTabIcon() const;
+	virtual GtkWidget* getWidget() const;
 
 	// Callback used by the EntityCreator when a key value changes on an entity
     static void keyValueChanged();

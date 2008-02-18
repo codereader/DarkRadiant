@@ -109,6 +109,7 @@ public:
 
 	// Returns the window widget containing the GroupDialog.
 	GtkWidget* getDialogWindow();
+	void showDialogWindow();
 	
 	/** greebo: Safely disconnects this window from
 	 * 			the eventmanager and saves the window position.

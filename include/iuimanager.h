@@ -177,6 +177,9 @@ public:
 
 	// Returns the window widget containing the GroupDialog.
 	virtual GtkWidget* getDialogWindow() = 0;
+
+	// Shows the dialog
+	virtual void showDialogWindow() = 0;
 };
 
 const std::string MODULE_UIMANAGER("UIManager");

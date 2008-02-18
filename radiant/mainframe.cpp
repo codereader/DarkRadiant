@@ -1129,19 +1129,8 @@ void MainFrame::Create()
     GtkWidget *main_statusbar = create_main_statusbar(m_pStatusLabel);
     gtk_box_pack_end(GTK_BOX(vbox), main_statusbar, FALSE, TRUE, 2);
 
-	/* Construct the Group Dialog. This is the tabbed window that contains
-     * a number of pages - usually Entities, Textures and possibly Console.
-     */
-	//GlobalGroupDialog().construct(window);
-
-    // Add entity inspector widget
-    GlobalGroupDialog().addPage(
-    	"entity",	// name
-    	"Entity", // tab title
-    	"cmenu_add_entity.png", // tab icon 
-    	ui::EntityInspector::getInstance().getWidget(), // page widget
-    	"Entity"
-    );
+    // Add entity inspector to GroupDialog
+    GlobalGroupDialog().addPage(ui::EntityInspector::getInstancePtr());
 
 	// Add the Media Browser page
 	GlobalGroupDialog().addPage(
@@ -1309,7 +1298,7 @@ void MainFrame::Create()
 		gtk_window_group_add_window(windowGroup, GTK_WINDOW(window));
     }
 
-    //ui::GroupDialog::Instance().show();
+    GlobalGroupDialog().showDialogWindow();
   }
   else // 4 way (aka Splitplane view)
   {

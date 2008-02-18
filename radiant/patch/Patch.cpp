@@ -3686,8 +3686,8 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 	int cols = 0;
 	int rows = 3;
 	
-	int sourceWidth = sourcePatch.getWidth();
-	int sourceHeight = sourcePatch.getHeight();
+	int sourceWidth = static_cast<int>(sourcePatch.getWidth());
+	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
 	
 	// Determine which of the four edges have to be connected
 	// and calculate the start, end & stepsize for the following loop
