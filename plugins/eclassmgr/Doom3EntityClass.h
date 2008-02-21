@@ -104,111 +104,62 @@ public:
     				 
     /** Destructor.
      */
-	~Doom3EntityClass() {
-		// Release the shaders
-		releaseColour();
-	}		
+	virtual ~Doom3EntityClass();
     
     /** Return the name of this entity class.
      */
-	const std::string& getName() const {
-		return _name;
-	}
+	const std::string& getName() const;
 	
 	/** Query whether this entity has a fixed size.
 	 */
-	bool isFixedSize() const {
-        if (_fixedSize) {
-            return true;
-        }
-        else {
-            // Check for the existence of editor_mins/maxs attributes, and that
-            // they do not contain only a question mark
-    		return (getAttribute("editor_mins").value.size() > 1
-                    && getAttribute("editor_maxs").value.size() > 1);
-        }
-	}
+	bool isFixedSize() const;
     
 	/* Return the bounding AABB.
 	 */
-	AABB getBounds() const {
-        if (isFixedSize()) {
-            return AABB::createFromMinMax(
-            	getAttribute("editor_mins").value, 
-            	getAttribute("editor_maxs").value
-            );
-        }
-        else {
-            return AABB(); // null AABB
-        }
-	}
+	AABB getBounds() const;
 
     /** Get whether this entity type is a light entity
      * 
      * @returns
      * true if this is a light, false otherwise
      */
-    bool isLight() const {
-        return _isLight;
-    }
+    bool isLight() const;
     
     /** Set whether this entity type is a light entity
      * 
      * @param val
      * true to set this as a light entity, false to disable
      */
-    void setIsLight(bool val) {
-        _isLight = val;
-        if (_isLight)
-        	_fixedSize = true;
-    }
+    void setIsLight(bool val);
 
 	/** Set the display colour for this entity.
 	 * 
 	 * @param colour
 	 * The new colour to use.
 	 */
-	void setColour(const Vector3& colour) {
-		// Set the specified flag
-		_colourSpecified = true;
-		
-		// Release the current shaders, then capture the new ones
-		releaseColour();
-		_colour = colour;
-		captureColour();
-	}
+	void setColour(const Vector3& colour);
      
 	/** Get this entity's colour.
 	 * 
 	 * @returns
 	 * A Vector3 containing the current colour.
 	 */
-	const Vector3& getColour() const {
-		return _colour;
-	}
+	const Vector3& getColour() const;
 
 	/** Return this entity's wireframe shader.
 	 */
-	ShaderPtr getWireShader() const {
-		return _wireShader;
-	}
+	ShaderPtr getWireShader() const;
 
 	/** Return this entity's fill shader.
 	 */
-	ShaderPtr getFillShader() const {
-		return _fillShader;
-	}
+	ShaderPtr getFillShader() const;
 	
 	/* ATTRIBUTES */
 	
 	/** 
 	 * Insert an EntityClassAttribute, without overwriting previous values.
 	 */
-	void addAttribute(const EntityClassAttribute& attribute) {
-		_attributes.insert(
-			EntityAttributeMap::value_type(attribute.name, attribute)
-		);
-	}
+	void addAttribute(const EntityClassAttribute& attribute);
 	
 	/*
 	 * Find a single attribute.
