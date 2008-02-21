@@ -35,6 +35,119 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
 	captureColour();		
 }
 
+Doom3EntityClass::~Doom3EntityClass() {
+	// Release the shaders
+	releaseColour();
+}
+
+const std::string& Doom3EntityClass::getName() const {
+	return _name;
+}
+
+/** Query whether this entity has a fixed size.
+ */
+bool Doom3EntityClass::isFixedSize() const {
+    if (_fixedSize) {
+        return true;
+    }
+    else {
+        // Check for the existence of editor_mins/maxs attributes, and that
+        // they do not contain only a question mark
+		return (getAttribute("editor_mins").value.size() > 1
+                && getAttribute("editor_maxs").value.size() > 1);
+    }
+}
+
+AABB Doom3EntityClass::getBounds() const {
+    if (isFixedSize()) {
+        return AABB::createFromMinMax(
+        	getAttribute("editor_mins").value, 
+        	getAttribute("editor_maxs").value
+        );
+    }
+    else {
+        return AABB(); // null AABB
+    }
+}
+
+bool Doom3EntityClass::isLight() const {
+    return _isLight;
+}
+
+/** Set whether this entity type is a light entity
+ * 
+ * @param val
+ * true to set this as a light entity, false to disable
+ */
+void Doom3EntityClass::setIsLight(bool val) {
+    _isLight = val;
+    if (_isLight)
+    	_fixedSize = true;
+}
+
+/** Set the display colour for this entity.
+ * 
+ * @param colour
+ * The new colour to use.
+ */
+void Doom3EntityClass::setColour(const Vector3& colour) {
+	// Set the specified flag
+	_colourSpecified = true;
+	
+	// Release the current shaders, then capture the new ones
+	releaseColour();
+	_colour = colour;
+	captureColour();
+}
+ 
+/** Get this entity's colour.
+ * 
+ * @returns
+ * A Vector3 containing the current colour.
+ */
+const Vector3& Doom3EntityClass::getColour() const {
+	return _colour;
+}
+
+/** Return this entity's wireframe shader.
+ */
+ShaderPtr Doom3EntityClass::getWireShader() const {
+	return _wireShader;
+}
+
+/** Return this entity's fill shader.
+ */
+ShaderPtr Doom3EntityClass::getFillShader() const {
+	return _fillShader;
+}
+
+/* ATTRIBUTES */
+
+/** 
+ * Insert an EntityClassAttribute, without overwriting previous values.
+ */
+void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute) {
+	// Try to insert the class attribute
+	std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
+		EntityAttributeMap::value_type(attribute.name, attribute)
+	);
+
+	if (!result.second) {
+		EntityClassAttribute& existing = result.first->second;
+
+		// greebo: Attribute already existed, check if we have some 
+		// descriptive properties to be added to the existing one.
+		if (!attribute.description.empty() && existing.description.empty()) {
+			existing.description = attribute.description;
+		}
+
+		// Check if we have a more descriptive type than "text"
+		if (attribute.type != "text" && existing.type == "text") {
+			existing.type = attribute.type;
+		}
+	}
+}
+
 // Static function to create an EntityClass (named constructor idiom)
 IEntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes) {
 	if (!brushes) {
@@ -171,13 +284,13 @@ Doom3EntityClass::getAttributeList(const std::string& name) const {
 }
 
 void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
-	// Get the (lowercase) entity name and create the entity class for it
+	// Get the (lowercase) entity name
     const std::string sName = 
     	boost::algorithm::to_lower_copy(tokeniser.nextToken());
     
     // Store the name
     _name = sName;
-	
+
 	// Required open brace (the name has already been parsed by the EClassManager)
     tokeniser.assertNextToken("{");
 
