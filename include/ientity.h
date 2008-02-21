@@ -151,6 +151,14 @@ public:
 	virtual std::string getKeyValue(const std::string& key) const = 0;
 
 	/**
+	 * greebo: Checks whether the given key is inherited or not.
+	 *
+	 * @returns: TRUE if the value is inherited, 
+	 *           FALSE when it is not or when the key doesn't exist at all.
+	 */
+	virtual bool isInherited(const std::string& key) const = 0;
+
+	/**
 	 * Return the list of Key/Value pairs matching the given prefix.
 	 * 
 	 * This method performs a search for all spawnargs whose key
