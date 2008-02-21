@@ -339,7 +339,7 @@ void EntityInspector::_onAddKey()
 	IEntityClassConstPtr ec = _selectedEntity->getEntityClass();
 	
 	// Choose a property, and add to entity with a default value
-	std::string property = AddPropertyDialog::chooseProperty(ec);
+	std::string property = AddPropertyDialog::chooseProperty(_selectedEntity);
     if (!property.empty()) {
         
         // Save last key, so that it will be automatically selected

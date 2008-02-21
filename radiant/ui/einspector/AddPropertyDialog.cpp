@@ -13,6 +13,7 @@
 #include "ientity.h"
 
 #include <gtk/gtk.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 #include <map>
 
@@ -32,7 +33,7 @@ namespace {
 	
 	// CONSTANTS
 	const char* ADDPROPERTY_TITLE = "Add property";
-	const char* PROPERTIES_XPATH = "game/entityInspector//property";
+	const std::string PROPERTIES_XPATH = "game/entityInspector//property";
 	const char* FOLDER_ICON = "folder16.png";
 	
 	const char* CUSTOM_PROPERTY_TEXT = "Custom properties defined for this "
@@ -42,9 +43,9 @@ namespace {
 
 // Constructor creates GTK widgets
 
-AddPropertyDialog::AddPropertyDialog(IEntityClassConstPtr eclass)
+AddPropertyDialog::AddPropertyDialog(Entity* entity)
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _eclass(eclass)
+  _entity(entity)
 {
 	// Window properties
 	GtkWidget* groupdialog = GlobalGroupDialog().getDialogWindow();
@@ -156,36 +157,41 @@ class CustomPropertyAdder
 	
 	// Parent iter
 	GtkTreeIter* _parent;
-		
+
+	// The entity we're adding the properties to
+	Entity* _entity;
+
 public:
 
 	// Constructor sets tree stuff
-	CustomPropertyAdder(GtkTreeStore* store, GtkTreeIter* par)
-	: _store(store), _parent(par)
+	CustomPropertyAdder(Entity* entity, GtkTreeStore* store, GtkTreeIter* par) : 
+		_store(store), 
+		_parent(par), 
+		_entity(entity)
 	{ }
 
 	// Required visit function
 	void visit(const EntityClassAttribute& attr) {
-		
-		// Only add the property if its value is empty, this indicates a 
-		// *possible* key rather than one which is already set
-		if (attr.value.empty()) {
-			
-			// Escape any Pango markup in the attribute name (e.g. "<" or ">")
-			gchar* escName = g_markup_escape_text(attr.name.c_str(), -1);
-			
-			GtkTreeIter tmp;
-			gtk_tree_store_append(_store, &tmp, _parent);
-			gtk_tree_store_set(_store, &tmp,
-				DISPLAY_NAME_COLUMN, escName,
-				PROPERTY_NAME_COLUMN, attr.name.c_str(),
-				ICON_COLUMN, PropertyEditorFactory::getPixbufFor(attr.type),
-				DESCRIPTION_COLUMN, attr.description.c_str(),
-				-1);
-				
-			// Free the escaped string
-			g_free(escName);
+		// greebo: Only add the property if it hasn't been set on the entity itself.
+		// Also ignore all attributes with empty descriptions
+		if (!_entity->isInherited(attr.name) || attr.description.empty()) {
+			return; // not empty
 		}
+
+		// Escape any Pango markup in the attribute name (e.g. "<" or ">")
+		gchar* escName = g_markup_escape_text(attr.name.c_str(), -1);
+		
+		GtkTreeIter tmp;
+		gtk_tree_store_append(_store, &tmp, _parent);
+		gtk_tree_store_set(_store, &tmp,
+			DISPLAY_NAME_COLUMN, escName,
+			PROPERTY_NAME_COLUMN, attr.name.c_str(),
+			ICON_COLUMN, PropertyEditorFactory::getPixbufFor(attr.type),
+			DESCRIPTION_COLUMN, attr.description.c_str(),
+			-1);
+			
+		// Free the escaped string
+		g_free(escName);
 	}
 	
 };	
@@ -200,7 +206,7 @@ void AddPropertyDialog::populateTreeView() {
 	// First add a top-level category named after the entity class, and populate
 	// it with custom keyvals defined in the DEF for that class
 	std::string cName = "<b><span foreground=\"blue\">" 
-						+ _eclass->getName() + "</span></b>";
+						+ _entity->getEntityClass()->getName() + "</span></b>";
 	GtkTreeIter cnIter;
 	gtk_tree_store_append(_treeStore, &cnIter, NULL);
 	gtk_tree_store_set(_treeStore, &cnIter, 
@@ -212,8 +218,8 @@ void AddPropertyDialog::populateTreeView() {
 					   
 	// Use a CustomPropertyAdder class to visit the entityclass and add all
 	// custom properties from it
-	CustomPropertyAdder a(_treeStore, &cnIter);
-	_eclass->forEachClassAttribute(a);
+	CustomPropertyAdder adder(_entity, _treeStore, &cnIter);
+	_entity->getEntityClass()->forEachClassAttribute(adder);
 
 	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */
 
@@ -277,10 +283,10 @@ void AddPropertyDialog::populateTreeView() {
 
 // Static method to create and show an instance, and return the chosen
 // property to calling function.
-std::string AddPropertyDialog::chooseProperty(IEntityClassConstPtr eclass) {
+std::string AddPropertyDialog::chooseProperty(Entity* entity) {
 	
 	// Construct a dialog and show the main widget
-	AddPropertyDialog dialog(eclass);
+	AddPropertyDialog dialog(entity);
 	gtk_widget_show_all(dialog._widget);
 	
 	// Block for a selection
