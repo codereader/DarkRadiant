@@ -81,6 +81,9 @@ public:
 	 */
 	std::string getKeyValue(const std::string& key) const;
 
+	// Returns true if the given key is inherited
+	virtual bool isInherited(const std::string& key) const;
+
 	// Get all KeyValues matching the given prefix.
 	KeyValuePairs getKeyValuePairs(const std::string& prefix) const;
 

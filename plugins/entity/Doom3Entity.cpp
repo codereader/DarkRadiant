@@ -171,6 +171,11 @@ std::string Doom3Entity::getKeyValue(const std::string& key) const {
 	}
 }
 
+bool Doom3Entity::isInherited(const std::string& key) const {
+	// If the key is not found, it is inherited
+	return (find(key) == _keyValues.end());
+}
+
 Entity::KeyValuePairs Doom3Entity::getKeyValuePairs(const std::string& prefix) const {
 	KeyValuePairs list;
 
