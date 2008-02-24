@@ -1588,6 +1588,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("ShowHidden", FreeCaller<Select_ShowAllHidden>());
 	GlobalEventManager().addCommand("HideSelected", FreeCaller<HideSelected>());
+	GlobalEventManager().addCommand("HideDeselected", FreeCaller<HideDeselected>());
 	
 	GlobalEventManager().addToggle("DragVertices", FreeCaller<ToggleVertexMode>());
 	GlobalEventManager().addToggle("DragEdges", FreeCaller<ToggleEdgeMode>());

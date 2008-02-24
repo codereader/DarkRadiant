@@ -50,10 +50,11 @@ void Select_AllOfType();
 void DoRotateDlg();
 void DoScaleDlg();
 
-
-void Select_SetShader(const char* shader);
-
+// Hides all selected nodes
 void HideSelected();
+// Hides all de-selected nodes
+void HideDeselected();
+
 void Select_ShowAllHidden();
 
 // updating workzone to a given brush (depends on current view)
