@@ -110,6 +110,7 @@
 
 		<subMenu name="hideShow" caption="Hide/Show">
 			<menuItem name="hideSelected" caption="Hide Selected" command="HideSelected" />
+			<menuItem name="hideDeSelected" caption="Hide Deselected" command="HideDeselected" />
 			<menuItem name="showHidden" caption="Show hidden" command="ShowHidden" />
 		</subMenu>
 

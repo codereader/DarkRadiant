@@ -473,16 +473,6 @@ void UpdateWorkzone_ForSelectionChanged(const Selectable& selectable)
   }
 }
 
-void Select_SetShader(const char* shader)
-{
-  if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-  {
-    Scene_BrushSetShader_Selected(GlobalSceneGraph(), shader);
-    Scene_PatchSetShader_Selected(GlobalSceneGraph(), shader);
-  }
-  Scene_BrushSetShader_Component_Selected(GlobalSceneGraph(), shader);
-}
-
 void Select_GetBounds (Vector3& mins, Vector3& maxs)
 {
   AABB bounds;
@@ -736,43 +726,81 @@ inline void hide_node(scene::INodePtr node, bool hide) {
     : node->disable(scene::Node::eHidden);
 }
 
-class HideSelectedWalker : public scene::Graph::Walker
+// Hides all selected nodes
+class HideSelectedWalker : 
+	public scene::Graph::Walker
 {
-  bool m_hide;
+	bool _hide;
 public:
-  HideSelectedWalker(bool hide)
-    : m_hide(hide)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != 0
-      && selectable->isSelected())
-    {
-      hide_node(path.top(), m_hide);
-    }
-    return true;
-  }
+	HideSelectedWalker(bool hide) : 
+		_hide(hide)
+	{}
+
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		if (Instance_isSelected(instance)) {
+			hide_node(path.top(), _hide);
+		}
+		return true;
+	}
 };
 
-void Scene_Hide_Selected(bool hide)
+// Hides all nodes that are not selected
+class HideDeselectedWalker : 
+	public scene::Graph::Walker
 {
-  GlobalSceneGraph().traverse(HideSelectedWalker(hide));
+	bool _hide;
+
+	mutable std::stack<bool> _stack;
+public:
+	HideDeselectedWalker(bool hide) : 
+		_hide(hide)
+	{}
+
+	bool pre(const scene::Path& path, scene::Instance& instance) const {
+		// Check the selection status
+		bool isSelected = Instance_isSelected(instance);
+
+		// greebo: Don't check root nodes for selected state
+		if (!path.top()->isRoot() && isSelected) {
+			// We have a selected instance, "remember" this by setting the parent 
+			// stack element to TRUE
+			if (_stack.size() > 0) {
+				_stack.top() = true;
+			}
+		}
+
+		// We are going one level deeper, add a new stack element for this subtree
+		_stack.push(false);
+
+		// Try to go deeper, but don't do this for deselected instances
+		return !isSelected;
+	}
+
+	virtual void post(const scene::Path& path, scene::Instance& instance) const {
+		// greebo: We've traversed this subtree, now check if we had selected children
+		if (!path.top()->isRoot() && 
+			_stack.size() > 0 && _stack.top() == false && 
+			!Instance_isSelected(instance))
+		{
+			// No selected child instances, hide this node
+			hide_node(path.top(), _hide);
+		}
+
+		// Go upwards again, one level
+		_stack.pop();
+	}
+};
+
+void HideSelected() {
+	GlobalSceneGraph().traverse(HideSelectedWalker(true));
+	GlobalSelectionSystem().setSelectedAll(false);
+	SceneChangeNotify();
 }
 
-void Select_Hide()
-{
-  Scene_Hide_Selected(true);
-  SceneChangeNotify();
+void HideDeselected() {
+	GlobalSceneGraph().traverse(HideDeselectedWalker(true));
+	SceneChangeNotify();
 }
-
-void HideSelected()
-{
-  Select_Hide();
-  GlobalSelectionSystem().setSelectedAll(false);
-}
-
 
 class HideAllWalker : public scene::Graph::Walker
 {
