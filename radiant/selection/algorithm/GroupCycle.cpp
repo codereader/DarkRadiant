@@ -31,8 +31,8 @@ namespace algorithm {
 			
 			Selectable* selectable = Instance_getSelectable(instance);
 			
-			// If a selectable was found and the path depth is appropriate, add it
-			if (selectable != NULL && 
+			// If a visible selectable was found and the path depth is appropriate, add it
+			if (selectable != NULL && path.top()->visible() && !instance.getFiltered() &&
 				//!(path == _parentPath) && 
 				path.size() >= _minPathDepth) 
 			{
@@ -103,7 +103,7 @@ void GroupCycle::updateSelection() {
 void GroupCycle::doCycleForward() {
 	if (_list.size() > 1) {
 		// Increase the index and wrap around at the list end
-		_index = (_index+1) % _list.size();
+		_index = (_index+1) % static_cast<int>(_list.size());
 		
 		// Select the new candidate
 		updateSelection();
@@ -116,7 +116,7 @@ void GroupCycle::doCycleBackward() {
 		_index--;
 	
 		if (_index < 0) {
-			_index += _list.size();
+			_index += static_cast<int>(_list.size());
 		}
 	
 		// Select the new candidate
