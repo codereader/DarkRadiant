@@ -799,6 +799,8 @@ void HideSelected() {
 
 void HideDeselected() {
 	GlobalSceneGraph().traverse(HideDeselectedWalker(true));
+	// Hide all components, there might be faces selected
+	GlobalSelectionSystem().setSelectedAllComponents(false);
 	SceneChangeNotify();
 }
 
