@@ -48,10 +48,13 @@ class Specifier
 	// The string name of this Specifier (used as a spawnarg)
 	std::string _name;
 	
+	// User-friendly display name of this Specifier
+	std::string _displayName;
+	
 private:
 	
 	// Construct a named Specifier type
-	Specifier(const std::string& name);
+	Specifier(const std::string& name, const std::string& displayName);
 	
 public:
 	
@@ -74,6 +77,13 @@ public:
 	 */
 	std::string getName() const {
 		return _name;
+	}
+	
+	/**
+	 * Get the user-friendly display name of this Specifier type.
+	 */
+	std::string getDisplayName() const {
+		return _displayName;
 	}
 	
 	/**
