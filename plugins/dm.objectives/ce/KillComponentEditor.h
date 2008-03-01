@@ -4,6 +4,7 @@
 #include "ComponentEditor.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
+#include "../ComponentType.h"
 
 namespace objectives
 {
@@ -25,7 +26,8 @@ class KillComponentEditor
 	{
 		RegHelper() {
 			ComponentEditorFactory::registerType(
-				"KILL", ComponentEditorPtr(new KillComponentEditor())
+				objectives::ComponentType::COMP_KILL().getName(), 
+				ComponentEditorPtr(new KillComponentEditor())
 			);
 		}
 	} regHelper;
