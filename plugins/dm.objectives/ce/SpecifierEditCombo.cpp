@@ -1,5 +1,8 @@
 #include "SpecifierEditCombo.h"
 #include "specpanel/SpecifierPanelFactory.h"
+#include "../util/TwoColumnTextCombo.h"
+
+#include "gtkutil/TreeModel.h"
 
 #include <gtk/gtk.h>
 
@@ -13,14 +16,23 @@ namespace ce
 SpecifierEditCombo::SpecifierEditCombo(const SpecifierSet& set)
 {
 	// Create the dropdown containing specifier types
-	GtkWidget* dropDown = gtk_combo_box_new_text();
+	GtkWidget* dropDown = objectives::util::TwoColumnTextCombo();
+
+	GtkListStore* ls = GTK_LIST_STORE(
+		gtk_combo_box_get_model(GTK_COMBO_BOX(dropDown))
+	);
 	for (SpecifierSet::const_iterator i = set.begin();
 		 i != set.end();
 		 ++i)
 	{
-		gtk_combo_box_append_text(
-			GTK_COMBO_BOX(dropDown), i->getName().c_str()
-		);
+		GtkTreeIter iter;
+		gtk_list_store_append(ls, &iter);
+		gtk_list_store_set(
+			ls, &iter, 
+			0, i->getDisplayName().c_str(), 
+			1, i->getName().c_str(),
+			-1
+		);	
 	}
 	g_signal_connect(
 		G_OBJECT(dropDown), "changed", G_CALLBACK(_onChange), this
@@ -41,8 +53,16 @@ GtkWidget* SpecifierEditCombo::getWidget() const {
 
 void SpecifierEditCombo::_onChange(GtkWidget* w, SpecifierEditCombo* self)
 {
+	// Get the current selection
+	GtkTreeIter iter;
+	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter);
+	std::string selText = gtkutil::TreeModel::getString(
+			gtk_combo_box_get_model(GTK_COMBO_BOX(w)),
+			&iter,
+			1
+	); 
+
 	// Change the SpecifierPanel
-	std::string selText = gtk_combo_box_get_active_text(GTK_COMBO_BOX(w));
 	self->_specPanel = SpecifierPanelFactory::create(selText);
 	
 	// If the panel is valid, get its widget and pack into the hbox

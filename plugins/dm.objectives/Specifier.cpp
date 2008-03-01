@@ -11,39 +11,45 @@ int Specifier::enumCount = 0;
 // Specifier types
 
 const Specifier& Specifier::SPEC_NONE() { 
-	static Specifier _instance("none");
+	static Specifier _instance("none", "No specifier");
 	return _instance;
 }
 const Specifier& Specifier::SPEC_NAME() {
-	static Specifier _instance("name");
+	static Specifier _instance("name", "Name of single entity");
 	return _instance;
 }
 const Specifier& Specifier::SPEC_OVERALL() {
-	static Specifier _instance("overall");
+	static Specifier _instance("overall", "Overall (component-specific)");
 	return _instance;
 }
 const Specifier& Specifier::SPEC_GROUP() {
-	static Specifier _instance("group");
+	static Specifier _instance(
+		"group", "Group identifier (component-specific)"
+	);
 	return _instance;
 }
 const Specifier& Specifier::SPEC_CLASSNAME() {
-	static Specifier _instance("classname");
+	static Specifier _instance("classname", "Any entity of specified class");
 	return _instance;
 }
 const Specifier& Specifier::SPEC_SPAWNCLASS() {
-	static Specifier _instance("spawnclass");
+	static Specifier _instance(
+		"spawnclass", "Any entity with SDK-level spawnclass"
+	);
 	return _instance;
 }
 const Specifier& Specifier::SPEC_AI_TYPE() {
-	static Specifier _instance("ai_type");
+	static Specifier _instance("ai_type", "Any AI of specified type");
 	return _instance;
 }
 const Specifier& Specifier::SPEC_AI_TEAM() {
-	static Specifier _instance("ai_team");
+	static Specifier _instance("ai_team", "Any AI on specified team");
 	return _instance;
 }
 const Specifier& Specifier::SPEC_AI_INNOCENCE() {
-	static Specifier _instance("ai_innocence");
+	static Specifier _instance(
+		"ai_innocence", "Any AI with specified combat status"
+	);
 	return _instance;
 }
 
@@ -95,9 +101,10 @@ const Specifier& Specifier::getSpecifier(const std::string& name) {
 }
 
 // Construct a named Specifier object, incrementing the count
-Specifier::Specifier(const std::string& name)
+Specifier::Specifier(const std::string& name, const std::string& displayName)
 : _id(enumCount++),
-  _name(name)
+  _name(name),
+  _displayName(displayName)
 { 
 	// Register self in map
 	getMap().insert(SpecifierMap::value_type(name, *this));
