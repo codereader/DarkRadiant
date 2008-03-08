@@ -1,9 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Name=DarkRadiant
-Comment=3D level editor for Doom 3 and the Dark Mod
-Exec=/usr/local/darkradiant/darkradiant
-Terminal=0
-Type=Application
-Categories=Application;Games
-
