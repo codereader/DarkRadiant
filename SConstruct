@@ -89,7 +89,7 @@ CC='gcc'
 CXX='g++'
 JOBS='1'
 BUILD='debug'
-INSTALL='#install'
+INSTALL = '#' + ARGUMENTS.get('DESTDIR', '/install')
 g_build_root = 'build'
 
 # end default settings ---------------------------
