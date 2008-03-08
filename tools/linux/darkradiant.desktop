@@ -1,0 +1,22 @@
+[Desktop Entry]
+Encoding=UTF-8
+
+Name=DarkRadiant
+GenericName=Level editor
+
+Version=0.9.5
+
+Comment=3D level editor for Doom 3 and the Dark Mod
+Comment[de]=3D Level Editor für Doom 3 und The Dark Mod
+
+Icon=/usr/darkradiant/bitmaps/darkradiant_icon_64x64.png
+
+# The %f means a single, local, absolute file. Remote files will be
+# first copied in a local temp location and then given to the program:
+Exec=/usr/darkradiant/darkradiant %f
+
+Terminal=0
+
+Type=Application
+
+Categories=Application;Games

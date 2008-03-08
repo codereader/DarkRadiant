@@ -49,7 +49,7 @@ install: build
 	scons BUILD=release DESTDIR=debian/darkradiant/usr/darkradiant
 	cp -r install/* debian/darkradiant/usr/darkradiant
 	mkdir -p debian/darkradiant/usr/share/applications
-	cp darkradiant.desktop debian/darkradiant/usr/share/applications
+	cp tools/linux/darkradiant.desktop debian/darkradiant/usr/share/applications
 
 
 # Build architecture-independent files here.
