@@ -136,7 +136,7 @@ public:
 
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 };
 

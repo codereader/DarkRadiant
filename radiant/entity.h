@@ -64,7 +64,7 @@ void Scene_EntitySetKeyValue_Selected(const char* key, const char* value);
 /**
  * greebo: Changes the classname of the given entity instance.
  */
-void changeEntityClassname(scene::Instance& instance, const std::string& classname);
+void changeEntityClassname(const scene::INodePtr& node, const std::string& classname);
 
 void Entity_Construct();
 void Entity_Destroy();

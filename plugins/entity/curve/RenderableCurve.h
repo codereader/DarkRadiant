@@ -2,7 +2,7 @@
 #define RENDERABLECURVE_H_
 
 #include <vector>
-#include "renderable.h"
+#include "irenderable.h"
 #include "render.h"
 
 namespace entity {

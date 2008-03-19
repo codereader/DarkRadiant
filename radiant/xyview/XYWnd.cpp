@@ -497,12 +497,9 @@ void XYWnd::NewBrushDrag(int x, int y) {
 
 	if (m_NewBrushDrag == NULL) {
 		scene::INodePtr node(GlobalBrushCreator().createBrush());
-		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
+		GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
 
-		scene::Path brushpath(GlobalSceneGraph().root());
-		brushpath.push(GlobalMap().getWorldspawn());
-		brushpath.push(node);
-		selectPath(brushpath, true);
+		Node_setSelected(node, true);
 
 		m_NewBrushDrag = node;
 	}

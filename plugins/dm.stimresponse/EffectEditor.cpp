@@ -309,7 +309,7 @@ void EffectEditor::populateEntityListStore() {
 		{}
 
 		// Visit function
-		virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+		virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 			Entity* entity = Node_getEntity(path.top());
 			if (entity != NULL) {
 				// Get the entity name

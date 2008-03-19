@@ -34,20 +34,15 @@ public:
 	}
   
 	// Pre-descent walker function
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		
-		VolumeIntersectionValue visible = (path.top()->visible()) 
+		VolumeIntersectionValue visible = (node->visible()) 
 										   ? _visStack.back() 
 										   : c_volumeOutside;
 
-		// If the instance is filtered, use c_volumeOutside
-        if (instance.getFiltered()) {
-            visible = c_volumeOutside;
-        }
-
 		// Test for partial visibility
 	    if (visible == c_volumePartial) {
-			visible = m_volume.TestAABB(instance.worldAABB());
+			visible = m_volume.TestAABB(node->worldAABB());
 	    }
 
 		_visStack.push_back(visible);
@@ -58,16 +53,15 @@ public:
 			return false;
 		}
 		else {
-			return m_walker.pre(path, instance, visible);
+			return m_walker.pre(path, node, visible);
 		}
 	}
 	
 	// Post descent function
-	void post(const scene::Path& path, scene::Instance& instance) const {
-		
+	void post(const scene::Path& path, const scene::INodePtr& node) const {
 		// If instance was visible, call the contained walker's post-descent
 		if(_visStack.back() != c_volumeOutside) {
-			m_walker.post(path, instance, _visStack.back());
+			m_walker.post(path, node, _visStack.back());
 		}
 
     	_visStack.pop_back();

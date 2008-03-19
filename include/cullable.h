@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_CULLABLE_H)
 #define INCLUDED_CULLABLE_H
 
+#include <boost/shared_ptr.hpp>
+
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 class Plane3;
@@ -62,5 +64,6 @@ class Cullable
 public:
 	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const = 0;
 };
+typedef boost::shared_ptr<Cullable> CullablePtr;
 
 #endif

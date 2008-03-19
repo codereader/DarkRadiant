@@ -68,7 +68,9 @@ class Doom3PatchCreator :
 public:
 	scene::INodePtr createPatch() {
 		// Note the true as function argument: this means that patchDef3 = true in the PatchNode constructor.  
-		return scene::INodePtr(new PatchNode(true));
+		scene::INodePtr node(new PatchNode(true));
+		node->setSelf(node);
+		return node;
 	}
 	
 	// RegisterableModule implementation
@@ -95,15 +97,15 @@ public:
 		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Patch");
 		page->appendEntry("Patch Subdivide Threshold", RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 
-		// Initialise the static member variables of the Patch and PatchInstance classes
+		// Initialise the static member variables of the Patch and PatchNode classes
 		Patch::constructStatic(ePatchTypeDoom3);
-		PatchInstance::constructStatic();
+		PatchNode::constructStatic();
 	}
 	
 	virtual void shutdownModule() {
-		// Release the static member variables of the classes Patch and PatchInstance 
+		// Release the static member variables of the classes Patch and PatchNode 
 		Patch::destroyStatic();
-		PatchInstance::destroyStatic();
+		PatchNode::destroyStatic();
 	}
 };
 
@@ -116,7 +118,9 @@ public:
 	scene::INodePtr createPatch() {
 		// The PatchNodeDoom3 constructor normally expects a bool, which defaults to false.
 		// this means that the patch is node def3, but def2
-		return scene::INodePtr(new PatchNode());
+		scene::INodePtr node(new PatchNode());
+		node->setSelf(node);
+		return node;
 	}
 	
 	// RegisterableModule implementation

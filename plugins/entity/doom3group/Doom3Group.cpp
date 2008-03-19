@@ -5,6 +5,8 @@
 #include "render.h"
 #include "transformlib.h"
 
+#include "Doom3GroupNode.h"
+
 namespace entity {
 
 	namespace {
@@ -25,13 +27,13 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 }
 
 Doom3Group::Doom3Group(IEntityClassPtr eclass, 
-		TraversableNodeSet& traversable,
+		Doom3GroupNode& owner,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
 	_entity(eclass),
-	_traversable(traversable),
-	m_model(_traversable),
+	_owner(owner),
+	m_model(owner),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
@@ -45,17 +47,17 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
-	construct();
+	// construct() is called by the Doom3GroupNode
 }
 
 Doom3Group::Doom3Group(const Doom3Group& other, 
-		TraversableNodeSet& traversable,
+		Doom3GroupNode& owner,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
 	_entity(other._entity),
-	_traversable(traversable),
-	m_model(_traversable),
+	_owner(owner),
+	m_model(owner),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
@@ -69,7 +71,7 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
-	construct();
+	// construct() is called by the Doom3GroupNode
 }
 
 Doom3Group::~Doom3Group() {
@@ -83,13 +85,11 @@ Vector3& Doom3Group::getOrigin() {
 void Doom3Group::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
 		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		_traversable.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void Doom3Group::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		_traversable.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
@@ -135,18 +135,6 @@ const AABB& Doom3Group::localAABB() const {
 	}
 	
 	return m_curveBounds;
-}
-
-void Doom3Group::addOriginToChildren() {
-	if (!m_isModel) {
-		_traversable.traverse(Doom3BrushTranslator(m_origin));
-	}
-}
-
-void Doom3Group::removeOriginFromChildren() {
-	if (!m_isModel) {
-		_traversable.traverse(Doom3BrushTranslator(-m_origin));
-	}
 }
 
 void Doom3Group::renderSolid(Renderer& renderer, const VolumeTest& volume, 
@@ -219,7 +207,8 @@ void Doom3Group::translate(const Vector3& translation, bool rotation) {
 
 void Doom3Group::rotate(const Quaternion& rotation) {
 	if (!isModel()) {
-		_traversable.traverse(ChildRotator(rotation));
+		ChildRotator rotator(rotation);
+		_owner.traverse(rotator);
 	}
 	else {
 		rotation_rotate(m_rotation, rotation);
@@ -252,7 +241,8 @@ void Doom3Group::freezeTransform() {
 	m_originKey.write(&_entity);
 	
 	if (!isModel()) {
-		_traversable.traverse(ChildTransformFreezer());
+		ChildTransformFreezer freezer;
+		_owner.traverse(freezer);
 	}
 	else {
 		rotation_assign(m_rotationKey.m_rotation, m_rotation);
@@ -268,7 +258,8 @@ void Doom3Group::freezeTransform() {
 void Doom3Group::transformChanged() {
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!isModel()) {
-		_traversable.traverse(ChildTransformReverter());
+		ChildTransformReverter reverter;
+		_owner.traverse(reverter);
 		m_evaluateTransform();
 	}
 	else {
@@ -395,6 +386,10 @@ void Doom3Group::modelChanged(const std::string& value) {
 	m_renderOrigin.updatePivot();
 }
 
+void Doom3Group::setTransformChanged(Callback& callback) {
+	m_transformChanged = callback;
+}
+
 void Doom3Group::updateTransform() {
 	m_transform.localToParent() = g_matrix4_identity;
 	if (isModel()) {
@@ -402,13 +397,14 @@ void Doom3Group::updateTransform() {
 		matrix4_multiply_by_matrix4(m_transform.localToParent(), rotation_toMatrix(m_rotation));
 	}
 	
-	// Notify the InstanceSet of the Doom3GroupNode about this transformation change	 
+	// Notify the Node about this transformation change	to update the local2World matrix 
 	m_transformChanged();
 }
 
 void Doom3Group::translateChildren(const Vector3& childTranslation) {
 	if (m_instanceCounter.m_count > 0) {
-		_traversable.traverse(ChildTranslator(childTranslation));
+		ChildTranslator translator(childTranslation);
+		_owner.traverse(translator);
 	}
 }
 

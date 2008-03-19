@@ -5,7 +5,7 @@
 namespace entity {
 
 EclassModel::EclassModel(IEntityClassPtr eclass,
-						 scene::Traversable& traversable, 
+						 scene::INode& owner, 
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
 	m_entity(eclass),
@@ -14,7 +14,7 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_model(traversable),
+	m_model(owner),
 	m_named(m_entity),
 	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
@@ -26,7 +26,7 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 }
 
 EclassModel::EclassModel(const EclassModel& other, 
-						 scene::Traversable& traversable,
+						 scene::INode& owner,
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
 	m_entity(other.m_entity),
@@ -35,7 +35,7 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_model(traversable),
+	m_model(owner),
 	m_named(m_entity),
 	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
@@ -54,6 +54,11 @@ void EclassModel::construct() {
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 	m_keyObservers.insert("model", ModelChangedCaller(*this));
+}
+
+EclassModel::~EclassModel() {
+	m_model.modelChanged("");
+	m_entity.detach(m_keyObservers);
 }
 
 void EclassModel::updateTransform() {
@@ -184,7 +189,6 @@ void EclassModel::transformChanged() {
 }
 
 void EclassModel::modelChanged(const std::string& value) {
-	globalOutputStream() << "Model has changed to " << value.c_str() << "\n";
 	m_model.modelChanged(value);
 }
 

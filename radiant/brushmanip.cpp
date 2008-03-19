@@ -423,9 +423,9 @@ void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::siz
 {
   if(GlobalSelectionSystem().countSelected() != 0)
   {
-    const scene::Path& path = GlobalSelectionSystem().ultimateSelected().path();
+    const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 
-    Brush* brush = Node_getBrush(path.top());
+    Brush* brush = Node_getBrush(node);
     if(brush != 0)
     {
       AABB bounds = brush->localAABB(); // copy bounds because the brush will be modified
@@ -439,9 +439,9 @@ void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const s
 {
   if(GlobalSelectionSystem().countSelected() != 0)
   {
-    const scene::Path& path = GlobalSelectionSystem().ultimateSelected().path();
+    const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 
-    Brush* brush = Node_getBrush(path.top());
+    Brush* brush = Node_getBrush(node);
     if(brush != 0)
     {
       Brush_ConstructCuboid(*brush, bounds, shader, TextureTransform_getDefault());
@@ -477,14 +477,14 @@ public:
     : m_name(name)
   {
   }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const
   {
     if(path.top()->visible())
     {
       Brush* brush = Node_getBrush(path.top());
       if(brush != 0 && Brush_hasShader(*brush, m_name))
       {
-        Instance_getSelectable(instance)->setSelected(true);
+		  Node_getSelectable(node)->setSelected(true);
       }
     }
     return true;

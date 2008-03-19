@@ -22,6 +22,7 @@
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/General.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -40,9 +41,9 @@ namespace map {
 				_targetAABB(targetAABB)
 			{}
 			
-			bool pre(const scene::Path& path, scene::Instance& instance) const {
-				if (path.top()->visible()) {
-					_targetAABB.includeAABB(instance.worldAABB());
+			bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+				if (node->visible()) {
+					_targetAABB.includeAABB(node->worldAABB());
 				}
 				return true;
 			}
@@ -142,7 +143,7 @@ void RegionManager::addRegionBrushes() {
 		// Create a new brush
 		_brushes[i] = GlobalBrushCreator().createBrush();
 		// Insert it into worldspawn
-		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(_brushes[i]);
+		GlobalMap().findOrInsertWorldspawn()->addChildNode(_brushes[i]);
 	}
 	
 	// Obtain the size of the region (the corners)
@@ -182,20 +183,20 @@ void RegionManager::addRegionBrushes() {
 	}
 
   	// Insert the info_player_start into the scenegraph root
-	Node_getTraversable(GlobalSceneGraph().root())->insert(_playerStart);
+	GlobalSceneGraph().root()->addChildNode(_playerStart);
 }
 
 void RegionManager::removeRegionBrushes() {
 	for (int i = 0; i < 6; i++) {
 		// Remove the brushes from the scene
 		if (_brushes[i] != NULL) {
-			Node_getTraversable(GlobalMap().getWorldspawn())->erase(_brushes[i]);
+			GlobalMap().getWorldspawn()->removeChildNode(_brushes[i]);
 			_brushes[i] = scene::INodePtr();
 		}
 	}
 	
 	if (_playerStart != NULL) {
-		Node_getTraversable(GlobalSceneGraph().root())->erase(_playerStart);
+		GlobalSceneGraph().root()->removeChildNode(_playerStart);
 	}
 }
 
@@ -236,14 +237,14 @@ void RegionManager::setRegionFromBrush() {
 	
 	// Check, if exactly one brush is selected
 	if (info.brushCount == 1 && info.totalCount == 1) {
-		// Get the selected instance
-		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+		// Get the selected node
+		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 		
 		// Set the bounds of the region to the selection's extents
-		GlobalRegion().setRegion(instance.worldAABB());
+		GlobalRegion().setRegion(node->worldAABB());
 		
 		// Delete the currently selected brush (undoable command)
-		deleteSelection();
+		selection::algorithm::deleteSelectionCmd();
 		
 		SceneChangeNotify();
 	}
@@ -286,14 +287,11 @@ void RegionManager::setRegionFromSelection() {
 	}
 }
 
-void RegionManager::traverseRegion(scene::INodePtr root, const scene::Traversable::Walker& walker) {
-	scene::TraversablePtr traversable = Node_getTraversable(root);
-	
-	if (traversable != NULL) {
-		// Pass the given Walker on to the ExcludeWalker, 
-		// which calls the walker.pre() and .post() methods if the visited item is regioned.
-		traversable->traverse(ExcludeNonRegionedWalker(walker));
-	}
+void RegionManager::traverseRegion(scene::INodePtr root, scene::NodeVisitor& walker) {
+	// Pass the given Walker on to the ExcludeWalker, 
+	// which calls the walker.pre() and .post() methods if the visited item is regioned.
+	ExcludeNonRegionedWalker visitor(walker);
+	root->traverse(visitor);
 }
 
 void RegionManager::saveRegion() {

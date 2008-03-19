@@ -3,7 +3,7 @@
 
 #include "Selectable.h"
 #include "Transformable.h"
-#include "Renderable.h"
+#include "RenderableItem.h"
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
@@ -38,7 +38,7 @@ public:
  * have to be overridden in order to make a real TexToolItem. 
  */
 class TexToolItem :
-	public Renderable,
+	public RenderableItem,
 	public Transformable
 {
 protected:

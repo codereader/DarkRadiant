@@ -23,10 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MODELSKINKEY_H
 
 #include "modelskin.h"
-#include "traverselib.h"
 
 class SkinChangedWalker :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	std::string _newSkinName;
 public:
@@ -34,9 +33,9 @@ public:
 		_newSkinName(newSkinName)
 	{}
 
-	virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+	virtual bool pre(const scene::INodePtr& node) {
 		// Check if we have a skinnable model
-		SkinnedModel* skinned = dynamic_cast<SkinnedModel*>(&instance);
+		SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
 
 		if (skinned != NULL) {
 			skinned->skinChanged(_newSkinName);

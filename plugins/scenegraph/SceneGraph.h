@@ -37,14 +37,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class SceneGraph : 
 	public scene::Graph
 {
-	typedef std::map<PathConstReference, scene::Instance*> InstanceMap;
-	InstanceMap m_instances;
-
 	typedef std::list<scene::Graph::Observer*> ObserverList;
 	ObserverList _sceneObservers;
 
 	Signal0 m_boundsChanged;
-	scene::Path m_rootpath;
+	
+	// The root-element, the scenegraph starts here
+	scene::INodePtr _root;
 
 public:	
 	// RegisterableModule implementation
@@ -73,19 +72,11 @@ public:
 	void traverse(const Walker& walker);
 	void traverse_subgraph(const Walker& walker, const scene::Path& start);
 
-	scene::Instance* find(const scene::Path& path);
-
-	void insert(scene::Instance* instance);
-	void erase(scene::Instance* instance);
+	void insert(const scene::INodePtr& node);
+	void erase(const scene::INodePtr& node);
 
 	SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged);
 	void removeBoundsChangedCallback(SignalHandlerId id);
-
-private:
-	bool pre(const Walker& walker, const InstanceMap::iterator& i);
-	void post(const Walker& walker, const InstanceMap::iterator& i);
-
-	void traverse_subgraph(const Walker& walker, InstanceMap::iterator i);
 };
 typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
 

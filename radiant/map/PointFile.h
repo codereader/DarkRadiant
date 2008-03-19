@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "irender.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "math/Vector3.h"
 
 namespace map {

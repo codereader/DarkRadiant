@@ -121,7 +121,7 @@ public:
 	 * the SelectionSystem upon selection change to allow updating of the
 	 * widget sensitivity.
 	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	/** greebo: Safely disconnects this dialog from all systems 
 	 * 			(EventManager) also saves the window state to the registry.

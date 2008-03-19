@@ -2,11 +2,9 @@
 #define MAPROOTNODE_H_
 
 #include "nameable.h"
-#include "traverselib.h"
 #include "selectionlib.h"
 #include "UndoFileChangeTracker.h"
 #include "scenelib.h"
-#include "instancelib.h"
 
 namespace map {
 
@@ -22,15 +20,12 @@ namespace map {
  */
 class RootNode : 
 	public scene::Node, 
-	public scene::Instantiable, 
 	public Nameable,
 	public TransformNode,
-	public MapFile,
-	public TraversableNodeSet // implements scene::Traversable
+	public MapFile
 {
 	IdentityTransform m_transform;
-	InstanceSet m_instances;
-	
+
 	// The actual name of the map
 	std::string _name;
 	
@@ -61,16 +56,18 @@ public:
 	// Cloneable implementation
 	scene::INodePtr clone() const;
 
-	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
-	void forEachInstance(const scene::Instantiable::Visitor& visitor);
-	void insert(const scene::Path& path, scene::Instance* instance);
-	scene::Instance* erase(const scene::Path& path);
+	// scene::Instantiable implementation
+	virtual void instantiate(const scene::Path& path);
+	virtual void uninstantiate(const scene::Path& path);
+
 };
 
 } // namespace map
 
 inline scene::INodePtr NewMapRoot(const std::string& name) {
-	return scene::INodePtr(new map::RootNode(name));
+	scene::INodePtr root(new map::RootNode(name));
+	root->setSelf(root);
+	return root;
 }
 
 #endif /*MAPROOTNODE_H_*/

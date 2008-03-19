@@ -7,9 +7,9 @@ RootNode::RootNode(const std::string& name) :
 {
 	// Apply root status to this node
 	setIsRoot(true);
-	// Attach the InstanceSet as scene::Traversable::Observer 
-	// to the TraversableNodeset >> triggers instancing.
-	TraversableNodeSet::attach(&m_instances);
+	// Attach ourselves as scene::Traversable::Observer 
+	// to the TraversableNodeset >> triggers instantiate calls.
+	attachTraverseObserver(this);
 
 	GlobalUndoSystem().trackerAttach(m_changeTracker);
 }
@@ -18,8 +18,8 @@ RootNode::~RootNode() {
 	// Override the default release() method
 	GlobalUndoSystem().trackerDetach(m_changeTracker);
 	
-	// Remove the observer InstanceSet from the TraversableNodeSet
-	TraversableNodeSet::detach(&m_instances);
+	// Remove ourselves as observer from the TraversableNodeSet
+	detachTraverseObserver(this);
 }
 
 // TransformNode implementation
@@ -54,13 +54,13 @@ std::string RootNode::name() const {
 
 void RootNode::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
-		TraversableNodeSet::instanceAttach(path_find_mapfile(path.begin(), path.end()));
+		Node::instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void RootNode::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		TraversableNodeSet::instanceDetach(path_find_mapfile(path.begin(), path.end()));
+		Node::instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
@@ -68,22 +68,14 @@ scene::INodePtr RootNode::clone() const {
 	return scene::INodePtr(new RootNode(*this));
 }
 
-scene::Instance* RootNode::create(const scene::Path& path, scene::Instance* parent) {
-	return new SelectableInstance(path, parent);
-}
-
-void RootNode::forEachInstance(const scene::Instantiable::Visitor& visitor) {
-	m_instances.forEachInstance(visitor);
-}
-
-void RootNode::insert(const scene::Path& path, scene::Instance* instance) {
-	m_instances.insert(path, instance);
+void RootNode::instantiate(const scene::Path& path) {
+	Node::instantiate(path);
 	instanceAttach(path);
 }
 
-scene::Instance* RootNode::erase(const scene::Path& path) {
+void RootNode::uninstantiate(const scene::Path& path) {
 	instanceDetach(path);
-	return m_instances.erase(path);
+	Node::uninstantiate(path);
 }
 
 } // namespace map

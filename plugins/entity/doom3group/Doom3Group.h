@@ -4,11 +4,10 @@
 #include "Bounded.h"
 #include "editable.h"
 #include "entitylib.h"
-#include "traverselib.h"
 #include "pivot.h"
 
 #include "../keyobservers.h"
-#include "../model.h"
+#include "../ModelKey.h"
 #include "../origin.h"
 #include "../rotation.h"
 #include "../namedentity.h"
@@ -17,8 +16,12 @@
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
+#include "scene/TraversableNodeSet.h"
 
 namespace entity {
+
+// Forward declaration
+class Doom3GroupNode;
 
 class Doom3Group :
 	public Bounded,
@@ -27,11 +30,10 @@ class Doom3Group :
 	Doom3Entity _entity;
 	KeyObserverMap m_keyObservers;
 	
-	// A reference to the Traversable container of the parent Doom3GroupNode 
-	TraversableNodeSet& _traversable;
+	Doom3GroupNode& _owner;
 	MatrixTransform m_transform;
 
-	SingletonModel m_model;
+	ModelKey m_model;
 	OriginKey m_originKey;
 	Vector3 m_origin;
 	
@@ -74,25 +76,19 @@ public:
 	 * These callbacks point to and InstanceSet::transformChangedCaller(), for example.  
 	 */
 	Doom3Group(IEntityClassPtr eclass, 
-			   TraversableNodeSet& traversable,
+			   Doom3GroupNode& owner,
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
 			   const Callback& evaluateTransform);
 	
 	// Copy constructor
 	Doom3Group(const Doom3Group& other, 
-			   TraversableNodeSet& traversable,
+			   Doom3GroupNode& owner,
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
 			   const Callback& evaluateTransform);
 	
 	~Doom3Group();
-
-	/** greebo: Called right before map save to recalculate
-	 * the child brush position.
-	 */
-	void addOriginToChildren();
-	void removeOriginFromChildren();
 
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
@@ -150,8 +146,12 @@ public:
 	// Returns TRUE if this D3Group is a model
 	bool isModel() const;
 
-private:
+	void setTransformChanged(Callback& callback);
+
+	// Attaches keyobservers, etc.
 	void construct();
+
+private:
 	void destroy();
 
 	void setIsModel(bool newValue);

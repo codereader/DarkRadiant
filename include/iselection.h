@@ -24,30 +24,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <cstddef>
 #include "imodule.h"
+#include "inode.h"
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
 
 class Renderer;
 class View;
 
+/**
+ * greebo: A Selectable is everything that can be highlighted
+ *         by the user in the scene (e.g. by interaction with the mouse).
+ */
 class Selectable
 {
 public:
-  virtual void setSelected(bool select) = 0;
-  virtual bool isSelected() const = 0;
-  virtual void invertSelected() = 0;
-};
+	// Set the selection status of this object
+	virtual void setSelected(bool select) = 0;
 
-namespace scene
-{
-  class Instance;
-};
+	// Check the selection status of this object (TRUE == selected)
+	virtual bool isSelected() const = 0;
 
-class InstanceSelectionObserver
-{
-public:
-  virtual void onSelectedChanged(scene::Instance& instance) = 0;
+	// Toggle the selection status
+	virtual void invertSelected() = 0;
 };
+typedef boost::shared_ptr<Selectable> SelectablePtr;
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
@@ -109,7 +109,7 @@ public:
 		 * @instance: The instance that got affected (this may also be the parent brush of a FaceInstance).
 		 * @isComponent: is TRUE if the changed selectable is a component (like a FaceInstance, VertexInstance).
 		 */
-		virtual void selectionChanged(scene::Instance& instance, bool isComponent) = 0;
+		virtual void selectionChanged(const scene::INodePtr& node, bool isComponent) = 0;
 	};
 	
 	virtual void addObserver(Observer* observer) = 0;
@@ -126,18 +126,21 @@ public:
 
   virtual std::size_t countSelected() const = 0;
   virtual std::size_t countSelectedComponents() const = 0;
-  virtual void onSelectedChanged(scene::Instance& instance, const Selectable& selectable) = 0;
-  virtual void onComponentSelection(scene::Instance& instance, const Selectable& selectable) = 0;
-  virtual scene::Instance& ultimateSelected() const = 0;
-  virtual scene::Instance& penultimateSelected() const = 0;
+  virtual void onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable) = 0;
+  virtual void onComponentSelection(const scene::INodePtr& node, const Selectable& selectable) = 0;
+
+	virtual scene::INodePtr ultimateSelected() const = 0;
+	virtual scene::INodePtr penultimateSelected() const = 0;
+
   virtual void setSelectedAll(bool selected) = 0;
   virtual void setSelectedAllComponents(bool selected) = 0;
 
-  class Visitor
-  {
-  public:
-    virtual void visit(scene::Instance& instance) const = 0;
-  };
+	class Visitor
+	{
+	public:
+		virtual void visit(const scene::INodePtr& node) const = 0;
+	};
+
   virtual void foreachSelected(const Visitor& visitor) const = 0;
   virtual void foreachSelectedComponent(const Visitor& visitor) const = 0;
 

@@ -59,14 +59,14 @@ public:
 		_list(list)
 	{}
 
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		if (path.size() == 1) {
 			return true;
 		}
 
 		// Don't clone the root item
-		if (!path.top()->isRoot()) {
-			if (Instance_isSelected(instance)) {
+		if (!node->isRoot()) {
+			if (Node_isSelected(node)) {
 				return false;
 			}
 		}
@@ -74,56 +74,31 @@ public:
 		return true;
 	}
 
-	void post(const scene::Path& path, scene::Instance& instance) const {
+	void post(const scene::Path& path, const scene::INodePtr& node) const {
 		if (path.size() == 1) {
 			return;
 		}
 
-		if (!path.top()->isRoot()) {
-			if (Instance_isSelected(instance)) {
-				// Clone the current node
-				scene::INodePtr clone = map::Node_Clone(path.top());
-				//NodeSmartReference clone(clonedNode);
-				// Add this node to the list of namespaced items
-				GlobalNamespace().gatherNamespaced(clone);
-				
-				// Add the cloned node to the list 
-				_list.push_back(clone);
-				
-				// Insert the cloned item to the parent
-				Node_getTraversable(path.parent())->insert(clone);
-			}
+		if (!path.top()->isRoot() && Node_isSelected(node)) {
+			// Clone the current node
+			scene::INodePtr clone = map::Node_Clone(path.top());
+			
+			// Add this node to the list of namespaced items
+			GlobalNamespace().gatherNamespaced(clone);
+			
+			// Add the cloned node to the list 
+			_list.push_back(clone);
+			
+			// Insert the cloned item to the parent
+			path.parent()->addChildNode(clone);
 		}
-	}
-};
-
-/** greebo: Sets the selection status of the visited Instance to <selected>
- * 			as passed to the constructor.
- * 
- * 			Use this visitor to select nodes. 
- */
-class InstanceSelector :
-	public scene::Instantiable::Visitor
-{
-	bool _selected;
-public:
-	InstanceSelector(bool selected) :
-		_selected(selected)
-	{}
-	
-	void visit(scene::Instance& instance) const {
-		Instance_setSelected(instance, _selected);
 	}
 };
 
 /** greebo: Tries to select the given node.
  */
 void selectNode(scene::INodePtr node) {
-	// Try to get an instantiable out of this node
-	scene::InstantiablePtr instantiable = Node_getInstantiable(node);
-	if (instantiable != NULL) {
-		instantiable->forEachInstance(InstanceSelector(true));
-	}
+	Node_setSelected(node, true);
 }
 
 void cloneSelected() {

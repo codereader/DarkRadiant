@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 
 /* Forward decls */
-class ArchiveFile;
 class AABB;
 class ModelSkin;
 
@@ -50,7 +49,13 @@ namespace model {
 		 * greebo: The filename (without path) of this model.
 		 */
 		virtual std::string getFilename() const = 0;
-		
+
+		/**
+		 * greebo: Returns the VFS path which can be used to load
+		 *         this model from the modelcache.
+		 */
+		virtual std::string getModelPath() const = 0;
+
 		/** Apply the given skin to this model.
 		 * 
 		 * @param skin
@@ -80,8 +85,9 @@ namespace model {
 		
 	};
 	
-	// Smart pointer typedef
+	// Smart pointer typedefs
 	typedef boost::shared_ptr<model::IModel> IModelPtr;
+	typedef boost::weak_ptr<model::IModel> IModelWeakPtr;
 
 
 } // namespace model
@@ -94,24 +100,30 @@ class ModelLoader :
 	public RegisterableModule
 {
 public:
-	/** Load a model from the VFS and return a scene::Node that contains
-	 * it.
-	 */	
-	virtual scene::INodePtr loadModel(ArchiveFile& file) = 0;
+	/**
+	 * greebo: Returns a newly created model node for the given model name.
+	 * 
+	 * @modelName: This is usually the value of the "model" spawnarg of entities.
+	 *
+	 * @returns: the newly created modelnode (can be NULL if the model was not found).
+	 */
+	virtual scene::INodePtr loadModel(const std::string& modelName) = 0;
 	
-	/** Load a model from the VFS, and return the IModel
-	 * subclass for it.
+	/** 
+	 * Load a model from the VFS, and return the IModel subclass for it.
+	 *
+	 * @returns: the IModelPtr containing the renderable model or 
+	 *           NULL if the model loader could not load the file.
 	 */	 
 	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
 };
 typedef boost::shared_ptr<ModelLoader> ModelLoaderPtr;
-typedef boost::weak_ptr<ModelLoader> ModelLoaderWeakPtr;
 
 // Acquires the PatchCreator of the given type ("ASE", "NULL", "3DS", etc.)
 inline ModelLoader& GlobalModelLoader(const std::string& fileType) {
 	ModelLoaderPtr _modelLoader(
 		boost::static_pointer_cast<ModelLoader>(
-			module::GlobalModuleRegistry().getModule(MODULE_MODELLOADER + fileType) // e.g. "ModuleLoaderTGA"
+			module::GlobalModuleRegistry().getModule(MODULE_MODELLOADER + fileType) // e.g. "ModeLoaderASE"
 		)
 	);
 	return *_modelLoader;

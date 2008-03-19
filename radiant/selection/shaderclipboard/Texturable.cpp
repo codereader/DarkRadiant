@@ -2,8 +2,9 @@
 
 #include "ifilter.h"
 #include "nameable.h"
-#include "brush/BrushInstance.h"
+#include "selectionlib.h"
 #include "brush/Face.h"
+#include "brush/Brush.h"
 #include "patch/Patch.h"
 #include "patch/PatchSceneWalk.h"
 
@@ -60,28 +61,28 @@ ClosestTexturableFinder::ClosestTexturableFinder(SelectionTest& test, Texturable
 	_selectionTest(test)
 {}
 
-bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& instance) const {
+bool ClosestTexturableFinder::pre(const scene::Path& path, const scene::INodePtr& node) const {
 
 	// Check if this node is an entity	
-	bool isEntity = Node_isEntity(path.top());
+	bool isEntity = Node_isEntity(node);
 	
-	// Don't traverse filtered nodes and items
-	if (!path.top()->visible() || instance.getFiltered()) {
+	// Don't traverse invisible nodes and items
+	if (!node->visible()) {
 		return false;
 	}
 	
 	// Check if the node is an entity
 	if (!isEntity) {
 		// Test the instance for a brush
-		BrushInstance* brush = Instance_getBrush(instance);
+		Brush* brush = Node_getBrush(node);
 		
 		if (brush != NULL) {
 			// Construct the selectiontest
-			_selectionTest.BeginMesh(brush->localToWorld());
+			_selectionTest.BeginMesh(node->localToWorld());
 			
 			// Cycle through all the faces
-			for (Brush::const_iterator i = brush->getBrush().begin(); 
-				 i != brush->getBrush().end(); 
+			for (Brush::const_iterator i = brush->begin(); 
+				 i != brush->end(); 
 				 i++) 
 			{
 				// Check for filtered faces, don't select them
@@ -102,14 +103,14 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 					
 					// Save the face and the parent brush
 					_texturable.face = (*i).get();
-					_texturable.brush = &brush->getBrush();
+					_texturable.brush = brush;
 					_texturable.patch = NULL;
 				}
 			}
 		}
 		else {
 			// No brush, test for a patch
-			SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
+			SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
 			
 			if (selectionTestable != NULL) {
 				bool occluded;
@@ -119,7 +120,7 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 				if (occluded) {
 					_texturable = Texturable();
 					
-					Patch* patch = Node_getPatch(path.top());
+					Patch* patch = Node_getPatch(node);
 					if (patch != NULL) {
 						// Check for filtered patches
 						if (GlobalFilterSystem().isVisible("texture", patch->GetShader())) {
@@ -134,7 +135,7 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, scene::Instance& inst
 	}
 	else {
 		// Is an entity, don't traverse it, if it isn't a group node
-		return node_is_group(path.top());
+		return node_is_group(node);
 	}
 	
 	// Return TRUE, traverse this subgraph

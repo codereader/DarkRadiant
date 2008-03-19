@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "PatchNode.h"
 #include "PatchSceneWalk.h"
 #include "PatchCreators.h"
-#include "PatchInstance.h"
 
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ModuleRegistry.h"

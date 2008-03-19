@@ -66,27 +66,25 @@ class Shader;
 class RendererLight
 {
 public:
-  virtual boost::shared_ptr<Shader> getShader() const = 0;
-  virtual const AABB& aabb() const = 0;
-  virtual bool testAABB(const AABB& other) const = 0;
-  virtual const Matrix4& rotation() const = 0;
-  virtual const Vector3& offset() const = 0;
-  virtual const Vector3& colour() const = 0;
-  virtual bool isProjected() const = 0;
-  virtual const Matrix4& projection() const = 0;
+	virtual boost::shared_ptr<Shader> getShader() const = 0;
+	virtual const AABB& aabb() const = 0;
+	virtual bool testAABB(const AABB& other) const = 0;
+	virtual const Matrix4& rotation() const = 0;
+	virtual const Vector3& offset() const = 0;
+	virtual const Vector3& colour() const = 0;
+	virtual bool isProjected() const = 0;
+	virtual const Matrix4& projection() const = 0;
 };
+typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 
 class LightCullable
 {
 public:
-  virtual bool testLight(const RendererLight& light) const = 0;
-  virtual void insertLight(const RendererLight& light)
-  {
-  }
-  virtual void clearLights()
-  {
-  }
+	virtual bool testLight(const RendererLight& light) const = 0;
+	virtual void insertLight(const RendererLight& light) {}
+	virtual void clearLights() {}
 };
+typedef boost::shared_ptr<LightCullable> LightCullablePtr;
 
 class Renderable;
 typedef Callback1<const Renderable&> RenderableCallback;

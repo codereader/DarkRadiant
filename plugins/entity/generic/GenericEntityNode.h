@@ -6,30 +6,37 @@
 #include "inamespace.h"
 
 #include "scenelib.h"
-#include "instancelib.h"
+#include "selectionlib.h"
 #include "transformlib.h"
+#include "irenderable.h"
 
 #include "GenericEntity.h"
+#include "../target/TargetableNode.h"
 
 namespace entity {
 
 class GenericEntityNode :
-	public scene::Node,
-	public scene::Instantiable,
+	public SelectableNode,
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public EntityNode,
-	public Namespaced
+	public Namespaced,
+	public SelectionTestable,
+	public Renderable,
+	public Cullable,
+	public Bounded,
+	public TransformModifier,
+	public TargetableNode
 {
-	InstanceSet m_instances;
-
 	GenericEntity m_contained;
 
 public:
 	GenericEntityNode(IEntityClassPtr eclass);
 	GenericEntityNode(const GenericEntityNode& other);
+
+	virtual ~GenericEntityNode();
 
 	// Snappable implementation
 	virtual void snapto(float snap);
@@ -39,22 +46,41 @@ public:
 
 	// EntityNode implementation
 	virtual Entity& getEntity();
+	virtual void refreshModel();
+
+	// Bounded implementation
+	virtual const AABB& localAABB() const;
+
+	// Cullable implementation
+	virtual VolumeIntersectionValue intersectVolume(
+	    const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	// Namespaced implementation
 	virtual void setNamespace(INamespace& space);
 
+	// SelectionTestable implementation
+	void testSelect(Selector& selector, SelectionTest& test);
+
 	scene::INodePtr clone() const;
 
-	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
-	void forEachInstance(const scene::Instantiable::Visitor& visitor);
-	void insert(const scene::Path& path, scene::Instance* instance);
-	scene::Instance* erase(const scene::Path& path);
+	// scene::Instantiable implementation
+	virtual void instantiate(const scene::Path& path);
+	virtual void uninstantiate(const scene::Path& path);
 
 	// Nameable implementation
 	virtual std::string name() const;
 	
 	virtual void attach(const NameCallback& callback);
 	virtual void detach(const NameCallback& callback);
+
+	// Renderable implementation
+	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
+	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+
+	void evaluateTransform();
+	typedef MemberCaller<GenericEntityNode, &GenericEntityNode::evaluateTransform> EvaluateTransformCaller;
+	void applyTransform();
+	typedef MemberCaller<GenericEntityNode, &GenericEntityNode::applyTransform> ApplyTransformCaller;
 };
 
 } // namespace entity

@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ishaders.h"
 
 #include "scenelib.h"
-#include "traverselib.h"
 #include "string/string.h"
 #include "parser/DefTokeniser.h"
 
@@ -147,15 +146,14 @@ scene::INodePtr Entity_parseTokens(
 	        }
 	        
 	        // Now add the primitive as a child of the entity
-	        scene::TraversablePtr traversable = Node_getTraversable(entity);
-	        if(Node_getEntity(entity)->isContainer() 
-	           && traversable != 0) 
+	        //scene::TraversablePtr traversable = Node_getTraversable(entity);
+	        if (Node_getEntity(entity)->isContainer()) 
 	        {
 	            // Try to insert the primitive into the entity. This may throw 
 	            // an exception if the entity should not contain brushes 
 	            // (e.g. a func_static with a model key)
 	            try {
-	                traversable->insert(primitive);
+	                entity->addChildNode(primitive);
 	            }
 	            catch (std::runtime_error e) {
 	                // Warn, but just ignore the brush
@@ -254,7 +252,7 @@ void checkInsert(scene::INodePtr node, scene::INodePtr root, int count) {
 		return;
 	
 	// Insert the node into the scenegraph root
-	Node_getTraversable(root)->insert(node);
+	root->addChildNode(node);
 }
 		
 void Map_Read(scene::INodePtr root, 

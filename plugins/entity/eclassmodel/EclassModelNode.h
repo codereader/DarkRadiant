@@ -7,26 +7,30 @@
 #include "ientity.h"
 
 #include "scenelib.h"
+#include "scene/TraversableNodeSet.h"
 #include "transformlib.h"
-#include "instancelib.h"
+#include "selectionlib.h"
+#include "../target/TargetableNode.h"
 
 #include "EclassModel.h"
 
 namespace entity {
 
 class EclassModelNode :
-	public scene::Node,
-	public scene::Instantiable,
+	public SelectableNode,
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
 	public TransformNode,
-	public TraversableNodeSet, // implements scene::Traversable
 	public EntityNode,
-	public Namespaced
+	public Namespaced,
+	public Renderable,
+	public TransformModifier,
+	public TargetableNode
 {
-	InstanceSet m_instances;
 	EclassModel m_contained;
+
+	mutable bool _updateSkin;
 
 public:
 	// Constructor
@@ -44,21 +48,33 @@ public:
 
 	// EntityNode implementation
 	virtual Entity& getEntity();
+	virtual void refreshModel();
 
 	// Namespaced implementation
 	virtual void setNamespace(INamespace& space);
 
 	scene::INodePtr clone() const;
 
-	scene::Instance* create(const scene::Path& path, scene::Instance* parent);
-	void forEachInstance(const scene::Instantiable::Visitor& visitor);
-	void insert(const scene::Path& path, scene::Instance* instance);
-	scene::Instance* erase(const scene::Path& path);
+	// scene::Instantiable implementation
+	virtual void instantiate(const scene::Path& path);
+	virtual void uninstantiate(const scene::Path& path);
+
+	// Renderable implementation
+	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
+	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
 
 	// Nameable implementation
 	virtual std::string name() const;
 	virtual void attach(const NameCallback& callback);
 	virtual void detach(const NameCallback& callback);
+
+	void evaluateTransform();
+	typedef MemberCaller<EclassModelNode, &EclassModelNode::evaluateTransform> EvaluateTransformCaller;
+	void applyTransform();
+	typedef MemberCaller<EclassModelNode, &EclassModelNode::applyTransform> ApplyTransformCaller;
+
+	void skinChanged(const std::string& value);
+	typedef MemberCaller1<EclassModelNode, const std::string&, &EclassModelNode::skinChanged> SkinChangedCaller;
 
 private:
 	void construct();

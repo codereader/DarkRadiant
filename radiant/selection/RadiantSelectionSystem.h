@@ -8,7 +8,7 @@
 #include "signal/signal.h"
 #include "Manipulators.h"
 #include "Selectors.h"
-#include "SelectedInstanceList.h"
+#include "SelectedNodeList.h"
 
 /* greebo: This can be tricky to understand (and I don't know if I do :D), but I'll try: 
  * 
@@ -80,7 +80,7 @@ private:
 	ClipManipulator _clipManipulator;
 
 	// The internal list to keep track of the selected instances (components and primitives)
-	typedef SelectedInstanceList SelectionListType;
+	typedef SelectedNodeList SelectionListType;
 	SelectionListType _selection;
 	SelectionListType _componentSelection;
 
@@ -132,11 +132,11 @@ public:
 	std::size_t countSelected() const;
 	std::size_t countSelectedComponents() const;
 	  
-	void onSelectedChanged(scene::Instance& instance, const Selectable& selectable);
-	void onComponentSelection(scene::Instance& instance, const Selectable& selectable);
+	void onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable);
+	void onComponentSelection(const scene::INodePtr& node, const Selectable& selectable);
 	  
-	scene::Instance& ultimateSelected() const;
-	scene::Instance& penultimateSelected() const;
+	scene::INodePtr ultimateSelected() const;
+	scene::INodePtr penultimateSelected() const;
 	  
 	void setSelectedAll(bool selected);
 	void setSelectedAllComponents(bool selected);
@@ -193,7 +193,7 @@ public:
 	virtual void shutdownModule();
 	
 private:
-	void notifyObservers(scene::Instance& instance, bool isComponent);
+	void notifyObservers(const scene::INodePtr& node, bool isComponent);
 };
 
 #endif /*RADIANTSELECTIONSYSTEM_H_*/

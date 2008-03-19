@@ -4,7 +4,7 @@
 #include "igl.h"
 #include "PatchTesselation.h"
 
-/* greebo: These are the renderables that are used in the PatchInstance/Patch class to
+/* greebo: These are the renderables that are used in the PatchNode/Patch class to
  * draw the patch onto the screen. 
  */
 

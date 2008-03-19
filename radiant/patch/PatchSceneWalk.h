@@ -4,14 +4,6 @@
 #include "ipatch.h"
 #include "iscenegraph.h"
 #include "iselection.h"
-#include "PatchInstance.h"
-
-// Cast an instance onto a patch
-inline PatchInstance* Instance_getPatch(scene::Instance& instance) {
-	return dynamic_cast<PatchInstance*>(&instance);
-}
-
-// ------------------------------------------------------------------------------------
 
 template<typename Functor>
 class PatchForEachWalker : public scene::Graph::Walker {
@@ -21,10 +13,10 @@ public:
 	{
 	}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if(path.top()->visible()) {
-			Patch* patch = Node_getPatch(path.top());
-			if(patch != NULL) {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		if (node->visible()) {
+			Patch* patch = Node_getPatch(node);
+			if (patch != NULL) {
 				m_functor(*patch);
 			}
 		}
@@ -34,37 +26,18 @@ public:
 };
 
 template<typename Functor>
-class PatchForEachSelectedWalker : public scene::Graph::Walker {
+class PatchForEachSelectedWalker : 
+	public scene::Graph::Walker
+{
 	const Functor& m_functor;
 public:
 	PatchForEachSelectedWalker(const Functor& functor) : m_functor(functor) 
-	{
-	}
+	{}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if(path.top()->visible()) {
-			Patch* patch = Node_getPatch(path.top());
-			if(patch != 0 && Instance_getSelectable(instance)->isSelected()) {
-				m_functor(*patch);
-			}
-		}
-		
-		return true;
-	}
-};
-
-template<typename Functor>
-class PatchForEachInstanceWalker : public scene::Graph::Walker {
-	const Functor& m_functor;
-public:
-	PatchForEachInstanceWalker(const Functor& functor) : m_functor(functor)
-	{
-	}
-
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if(path.top()->visible()) {
-			PatchInstance* patch = Instance_getPatch(instance);
-			if(patch != 0) {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		if (node->visible()) {
+			Patch* patch = Node_getPatch(node);
+			if (patch != 0 && Node_isSelected(node)) {
 				m_functor(*patch);
 			}
 		}
@@ -83,9 +56,9 @@ public:
 	{
 	}
 
-	void visit(scene::Instance& instance) const {
-		PatchInstance* patch = Instance_getPatch(instance);
-		if(patch != 0) {
+	void visit(const scene::INodePtr& node) const {
+		Patch* patch = Node_getPatch(node);
+		if (patch != 0) {
 			m_functor(*patch);
 		}
 	}
@@ -99,9 +72,10 @@ public:
 	{
 	}
 
-	void visit(scene::Instance& instance) const {
-		PatchInstance* patch = Instance_getPatch(instance);
-		if(patch != 0 && instance.path().top()->visible()) {
+	void visit(const scene::INodePtr& node) const {
+		Patch* patch = Node_getPatch(node);
+
+		if (patch != NULL && node->visible()) {
 			m_functor(*patch);
 		}
 	}
@@ -119,20 +93,10 @@ inline void Scene_forEachVisibleSelectedPatch(const Functor& functor) {
   GlobalSceneGraph().traverse(PatchForEachSelectedWalker<Functor>(functor));
 }
 
-template<typename Functor>
-inline void Scene_forEachVisiblePatchInstance(const Functor& functor) {
-  GlobalSceneGraph().traverse(PatchForEachInstanceWalker<Functor>(functor));
-}
-
 // Selection traversors using the above visitor classes, selected patch and selected patch instance
 template<typename Functor>
 inline void Scene_forEachSelectedPatch(const Functor& functor) {
   GlobalSelectionSystem().foreachSelected(PatchSelectedVisitor<Functor>(functor));
-}
-
-template<typename Functor>
-inline void Scene_forEachVisibleSelectedPatchInstance(const Functor& functor) {
-  GlobalSelectionSystem().foreachSelected(PatchVisibleSelectedVisitor<Functor>(functor));
 }
 
 #endif /*PATCHSCENEWALKERS_H_*/

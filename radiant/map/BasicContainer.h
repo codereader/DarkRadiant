@@ -2,7 +2,6 @@
 #define BASICCONTAINER_H_
 
 #include "scenelib.h"
-#include "traverselib.h"
 
 namespace map {
 
@@ -10,8 +9,7 @@ namespace map {
  * 			It implements a Traversable, which allows to add child nodes.
  */
 class BasicContainer : 
-	public scene::Node,
-	public TraversableNodeSet // implements scene::Traversable
+	public scene::Node
 {
 public:
 	BasicContainer()

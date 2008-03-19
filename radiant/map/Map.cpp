@@ -13,7 +13,6 @@
 
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
-#include "traverselib.h"
 #include "entitylib.h"
 #include "convert.h"
 #include "os/path.h"
@@ -51,10 +50,10 @@ namespace map {
 		
 		// Traverse all entities and store the first worldspawn into the map
 		class MapWorldspawnFinder : 
-			public scene::Traversable::Walker
+			public scene::NodeVisitor
 		{
 		public:
-			bool pre(scene::INodePtr node) const {
+			virtual bool pre(const scene::INodePtr& node) {
 				if (node_is_worldspawn(node)) {
 					if (GlobalMap().getWorldspawn() == NULL) {
 						GlobalMap().setWorldspawn(node);
@@ -65,42 +64,53 @@ namespace map {
 		};
 		
 		class CollectAllWalker : 
-			public scene::Traversable::Walker
+			public scene::NodeVisitor
 		{
-		  scene::INodePtr m_root;
-		  std::vector<scene::INodePtr>& m_nodes;
+			scene::INodePtr _root;
+			std::vector<scene::INodePtr>& _nodes;
 		public:
-		  CollectAllWalker(scene::INodePtr root, std::vector<scene::INodePtr>& nodes) : 
-		  	m_root(root), 
-		  	m_nodes(nodes)
-		  {}
-		  
-		  bool pre(scene::INodePtr node) const {
-		  	m_nodes.push_back(node);
-		    Node_getTraversable(m_root)->erase(node);
-		    return false;
-		  }
+			CollectAllWalker(scene::INodePtr root, std::vector<scene::INodePtr>& nodes) : 
+				_root(root), 
+				_nodes(nodes)
+			{}
+
+			~CollectAllWalker() {
+				for (std::vector<scene::INodePtr>::iterator i = _nodes.begin(); 
+					 i != _nodes.end(); ++i)
+				{
+					_root->removeChildNode(*i);
+				}
+			}
+
+			virtual bool pre(const scene::INodePtr& node) {
+				// Add this to the list
+				_nodes.push_back(node);
+				// Don't traverse deeper than first level
+				return false;
+			}
 		};
 		
 		void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child) {
 			// Create a container to collect all the existing entities in the scenegraph
 			std::vector<scene::INodePtr> nodes;
 			
-			// The parent has to be a Traversable node
-			scene::TraversablePtr traversable = Node_getTraversable(parent);
-			assert(traversable);
-			
 			// Collect all the child nodes of <parent> and move them into the container
-			traversable->traverse(CollectAllWalker(parent, nodes));
+			{
+				CollectAllWalker visitor(parent, nodes);
+				parent->traverse(visitor);
+
+				// the CollectAllWalker removes the nodes from the parent on destruction
+			}
+
 			// Now that the <parent> is empty, insert the worldspawn as first child
-			traversable->insert(child);
+			parent->addChildNode(child);
 		
 			// Insert all the nodes again
 			for (std::vector<scene::INodePtr>::iterator i = nodes.begin(); 
 				 i != nodes.end(); 
 				 ++i)
 			{
-				Node_getTraversable(parent)->insert(*i);
+				parent->addChildNode(*i);
 			}
 		}
 		
@@ -236,6 +246,9 @@ const MapFormat& Map::getFormat() {
 void Map::freeMap() {
 	map::PointFile::Instance().clear();
 
+	GlobalSelectionSystem().setSelectedAll(false);
+	GlobalSelectionSystem().setSelectedAllComponents(false);
+
 	GlobalShaderClipboard().clear();
 
 	m_resource->removeObserver(*this);
@@ -358,7 +371,8 @@ scene::INodePtr Map::findWorldspawn() {
 	setWorldspawn(scene::INodePtr());
 
 	// Traverse the scenegraph and search for the worldspawn
-	Node_getTraversable(GlobalSceneGraph().root())->traverse(MapWorldspawnFinder());
+	MapWorldspawnFinder visitor;
+	GlobalSceneGraph().root()->traverse(visitor);
 
 	return getWorldspawn();
 }
@@ -386,12 +400,9 @@ void Map::load(const std::string& filename) {
 		// greebo: Add the observer, this usually triggers a onResourceRealise() call.
 		m_resource->addObserver(*this);
 
-		// Get the traversable root
-		scene::TraversablePtr rt = Node_getTraversable(GlobalSceneGraph().root());
-		assert(rt != NULL);
-	
 		// Traverse the scenegraph and find the worldspawn 
-		rt->traverse(MapWorldspawnFinder());
+		MapWorldspawnFinder finder;
+		GlobalSceneGraph().root()->traverse(finder);
 	}
 
 	globalOutputStream() << "--- LoadMapFile ---\n";
@@ -497,13 +508,11 @@ bool Map::import(const std::string& filename) {
 				GlobalBrush()->setTextureLock(false);
 				
 				// Add the origin to all the child brushes
-				Node_getTraversable(resource->getNode())->traverse(
-					selection::algorithm::OriginAdder()
-				);
+				selection::algorithm::OriginAdder adder;
+				resource->getNode()->traverse(adder);
         
-				Node_getTraversable(resource->getNode())->traverse(
-					CloneAll(clone)
-				);
+				CloneAll cloner(clone);
+				resource->getNode()->traverse(cloner);
 				
 				GlobalBrush()->setTextureLock(textureLockStatus);
 			}
@@ -740,7 +749,8 @@ void Map::renameAbsolute(const std::string& absolute) {
 	);
 	resource->setNode(clone);
 
-	Node_getTraversable(GlobalSceneGraph().root())->traverse(CloneAll(clone));
+	CloneAll cloner(clone);
+	GlobalSceneGraph().root()->traverse(cloner);
 
 	m_resource->removeObserver(*this);
 	

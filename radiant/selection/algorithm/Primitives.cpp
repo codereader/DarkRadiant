@@ -7,10 +7,9 @@
 #include "iundo.h"
 #include "itraversable.h"
 #include "brush/BrushModule.h"
-#include "brush/BrushInstance.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"
-#include "patch/Patch.h"
+#include "patch/PatchNode.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
 #include "gtkutil/dialog.h"
@@ -52,7 +51,7 @@ namespace selection {
  */
 class SelectionWalker :
 	public SelectionSystem::Visitor,
-	public scene::Traversable::Walker,
+	public scene::NodeVisitor,
 	public BrushVisitor
 {
 	PrimitiveVisitor& _visitor;
@@ -62,20 +61,18 @@ public:
 	{}
 	
 	// SelectionSystem::Visitor implementation
-	virtual void visit(scene::Instance& instance) const {
+	virtual void visit(const scene::INodePtr& node) const {
 		// Check if we have an entity
-		scene::GroupNodePtr groupNode = Node_getGroupNode(instance.path().top());
+		scene::GroupNodePtr groupNode = Node_getGroupNode(node);
 
 		if (groupNode != NULL) {
 			// We have a selected groupnode, traverse it using self as walker
-			scene::TraversablePtr traversable = Node_getTraversable(instance.path().top());
-			if (traversable != NULL) {
-				traversable->traverse(*this);
-			}
+			const scene::NodeVisitor& visitor = *this;
+			node->traverse(const_cast<scene::NodeVisitor&>(visitor));
 			return;
 		}
 
-		Brush* brush = Node_getBrush(instance.path().top());
+		Brush* brush = Node_getBrush(node);
 
 		if (brush != NULL) {
 			// We have a brush, visit and traverse each face
@@ -84,7 +81,7 @@ public:
 			return;
 		}
 
-		Patch* patch = Node_getPatch(instance.path().top());
+		Patch* patch = Node_getPatch(node);
 		if (patch != NULL) {
 			_visitor.visit(*patch);
 		}
@@ -95,8 +92,8 @@ public:
 		_visitor.visit(face);
 	}
 
-	// scene::Traversable::Walker implemenatation
-	virtual bool pre(scene::INodePtr node) const {
+	// NodeVisitor implemenatation
+	virtual bool pre(const scene::INodePtr& node) {
 		Brush* brush = Node_getBrush(node);
 
 		if (brush != NULL) {
@@ -144,13 +141,13 @@ Patch& getLastSelectedPatch() {
 		GlobalSelectionSystem().getSelectionInfo().patchCount > 0)
 	{
 		// Retrieve the last selected instance
-		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 		// Try to cast it onto a patch
-		PatchInstance* patchInstance = Instance_getPatch(instance);
-		
+		Patch* patch = Node_getPatch(node);
+				
 		// Return or throw
-		if (patchInstance != NULL) {
-			return patchInstance->getPatch();
+		if (patch != NULL) {
+			return *patch;
 		}
 		else {
 			throw selection::InvalidSelectionException("No patches selected.");
@@ -161,7 +158,8 @@ Patch& getLastSelectedPatch() {
 	}
 }
 
-class SelectedPatchFinder
+class SelectedPatchFinder :
+	public SelectionSystem::Visitor
 {
 	// The target list that gets populated
 	PatchPtrVector& _vector;
@@ -170,8 +168,11 @@ public:
 		_vector(targetVector)
 	{}
 	
-	void operator()(PatchInstance& patchInstance) const {
-		_vector.push_back(&patchInstance.getPatch());
+	void visit(const scene::INodePtr& node) const {
+		PatchNodePtr patchNode = boost::dynamic_pointer_cast<PatchNode>(node);
+		if (patchNode != NULL) {
+			_vector.push_back(patchNode);
+		}
 	}
 };
 
@@ -185,10 +186,10 @@ public:
 		_vector(targetVector)
 	{}
 	
-	void visit(scene::Instance& instance) const {
-		BrushInstance* brushInstance = Instance_getBrush(instance);
-		if (brushInstance != NULL) {
-			_vector.push_back(&brushInstance->getBrush());
+	void visit(const scene::INodePtr& node) const {
+		Brush* brush = Node_getBrush(node);
+		if (brush != NULL) {
+			_vector.push_back(brush);
 		}
 	}
 };
@@ -196,7 +197,7 @@ public:
 PatchPtrVector getSelectedPatches() {
 	PatchPtrVector returnVector;
 	
-	Scene_forEachSelectedPatch(
+	GlobalSelectionSystem().foreachSelected(
 		SelectedPatchFinder(returnVector)
 	);
 	
@@ -252,8 +253,7 @@ void createCMFromSelection() {
 	
 	if (info.totalCount == info.entityCount && info.totalCount == 1) {
 		// Retrieve the node, instance and entity
-		scene::Instance& entityInstance = GlobalSelectionSystem().ultimateSelected();
-		scene::INodePtr entityNode = entityInstance.path().top();
+		const scene::INodePtr& entityNode = GlobalSelectionSystem().ultimateSelected();
 		
 		// Try to retrieve the group node
 		scene::GroupNodePtr groupNode = Node_getGroupNode(entityNode);
@@ -262,13 +262,12 @@ void createCMFromSelection() {
 		if (groupNode != NULL) {
 			groupNode->removeOriginFromChildren();
 			
-			// Deselect the instance
-			Instance_setSelected(entityInstance, false);
+			// Deselect the node
+			Node_setSelected(entityNode, false);
 			
 			// Select all the child nodes
-			Node_getTraversable(entityNode)->traverse(
-				SelectChildren(entityInstance.path())
-			);
+			NodeSelector visitor;
+			entityNode->traverse(visitor);
 			
 			BrushPtrVector brushes = algorithm::getSelectedBrushes();
 		
@@ -276,7 +275,7 @@ void createCMFromSelection() {
 			cmutil::CollisionModelPtr cm(new cmutil::CollisionModel());
 		
 			// Add all the brushes to the collision model
-			for (unsigned int i = 0; i < brushes.size(); i++) {
+			for (std::size_t i = 0; i < brushes.size(); i++) {
 				cm->addBrush(*brushes[i]);
 			}
 			
@@ -323,8 +322,8 @@ void createCMFromSelection() {
 			// Re-add the origin to the brushes
 			groupNode->addOriginToChildren();
 		
-			// Re-select the instance
-			Instance_setSelected(entityInstance, true);
+			// Re-select the node
+			Node_setSelected(entityNode, true);
 		}
 	}
 	else {
@@ -347,22 +346,19 @@ namespace {
 	  {
 	    m_count = 0;
 	  }
-	  bool pre(const scene::Path& path, scene::Instance& instance) const
+	  bool pre(const scene::Path& path, const scene::INodePtr& node) const
 	  {
-	    if(++m_depth != 1 && path.top()->isRoot())
+	    if(++m_depth != 1 && node->isRoot())
 	    {
 	      return false;
 	    }
-	    Selectable* selectable = Instance_getSelectable(instance);
-	    if(selectable != 0
-	      && selectable->isSelected()
-	      && Node_isPrimitive(path.top()))
-	    {
-	      ++m_count;
+		
+	    if (Node_isSelected(node) && Node_isPrimitive(node)) {
+			++m_count;
 	    }
 	    return true;
 	  }
-	  void post(const scene::Path& path, scene::Instance& instance) const
+	  void post(const scene::Path& path, const scene::INodePtr& node) const
 	  {
 	    --m_depth;
 	  }
@@ -382,15 +378,13 @@ namespace {
 			_count = 0;
 		}
 		
-		bool pre(const scene::Path& path, scene::Instance& instance) const {
+		bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 			
 			if (++_depth != 1 && path.top()->isRoot()) {
 				return false;
 			}
 			
-			Selectable* selectable = Instance_getSelectable(instance);
-			if (selectable != NULL && selectable->isSelected()
-			        && Node_isBrush(path.top())) 
+			if (Node_isSelected(node) && Node_isBrush(node)) 
 			{
 				++_count;
 			}
@@ -398,7 +392,7 @@ namespace {
 			return true;
 		}
 		
-		void post(const scene::Path& path, scene::Instance& instance) const {
+		void post(const scene::Path& path, const scene::INodePtr& node) const {
 			--_depth;
 		}
 	};
@@ -427,7 +421,7 @@ class OriginRemover :
 	public scene::Graph::Walker 
 {
 public:
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		Entity* entity = Node_getEntity(path.top());
 		
 		// Check for an entity
@@ -448,7 +442,7 @@ public:
 };
 
 // Graph::Walker implementation
-bool OriginAdder::pre(const scene::Path& path, scene::Instance& instance) const {
+bool OriginAdder::pre(const scene::Path& path, const scene::INodePtr& node) const {
 	Entity* entity = Node_getEntity(path.top());
 	
 	// Check for an entity
@@ -467,8 +461,8 @@ bool OriginAdder::pre(const scene::Path& path, scene::Instance& instance) const 
 	return true;
 }
 	
-// Traversable::Walker implementation
-bool OriginAdder::pre(scene::INodePtr node) const {
+// NodeVisitor implementation
+bool OriginAdder::pre(const scene::INodePtr& node) {
 	Entity* entity = Node_getEntity(node);
 	
 	// Check for an entity
@@ -555,8 +549,7 @@ void createDecalsForSelectedFaces() {
 			scene::INodePtr worldSpawnNode = GlobalMap().getWorldspawn();
 			assert(worldSpawnNode != NULL); // This must be non-NULL, otherwise we won't have faces
 			
-			scene::TraversablePtr traversable = Node_getTraversable(worldSpawnNode);
-			traversable->insert(patchNode);
+			worldSpawnNode->addChildNode(patchNode);
 		}
 	}
 	
@@ -566,6 +559,38 @@ void createDecalsForSelectedFaces() {
 			GlobalRadiant().getMainWindow()
 		);
 	}
+}
+
+/**
+ * greebo: This walker traverses the entire scenegraph, 
+ *         searching for entities with selected child primitives.
+ *         If such an entity is found, it is traversed and all
+ *         child primitives are selected.
+ */
+class ExpandSelectionToEntitiesWalker : 
+	public scene::Graph::Walker
+{
+public:
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		Entity* entity = Node_getEntity(node);
+
+		if (entity != NULL) {
+			// We have an entity, traverse and select children if any child is selected
+			return entity->isContainer() && Node_selectedDescendant(node);
+		}
+		else if (Node_isPrimitive(node)) {
+			// We have a primitive, select it
+			Node_setSelected(node, true);
+			// Don't traverse any deeper
+			return false;
+		}
+
+		return true;
+	}
+};
+
+void expandSelectionToEntities() {
+	GlobalSceneGraph().traverse(ExpandSelectionToEntitiesWalker());
 }
 
 	} // namespace algorithm

@@ -6,7 +6,7 @@
 
 namespace selection {
 
-typedef std::vector<scene::Instance*> InstanceVector;
+typedef std::vector<scene::INodePtr> NodeVector;
 
 /** greebo: This class allows cycling through the child primitives of the
  * currently selected entity (like func_static).
@@ -15,7 +15,7 @@ class GroupCycle :
 	public SelectionSystem::Observer
 {
 	// The list of possible Selectable candidates
-	InstanceVector _list;
+	NodeVector _list;
 	
 	// The current index in the vector
 	int _index;
@@ -29,7 +29,7 @@ public:
 	/** greebo: The callback that gets invoked upon selectionChange
 	 * by the RadiantSelectionSystem
 	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 	
 	/** greebo: Rescans the current selection and populates the Vector of candidates
 	 */

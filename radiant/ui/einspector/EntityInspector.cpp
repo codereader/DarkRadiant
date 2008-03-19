@@ -272,7 +272,7 @@ void EntityInspector::keyValueChanged() {
 }
 
 // Selection changed callback
-void EntityInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
+void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	getInstance().requestIdleCallback();
 }
 
@@ -615,18 +615,24 @@ bool EntityInspector::updateSelectedEntity() {
 	_selectedEntity = NULL;
 
 	// A single entity must be selected
-	if (GlobalSelectionSystem().countSelected() != 1)
+	if (GlobalSelectionSystem().countSelected() != 1) {
 		return false;
+	}
+
+	scene::INodePtr selectedNode = GlobalSelectionSystem().ultimateSelected();
 
 	// The root node must not be selected (this can happen if Invert Selection is activated
 	// with an empty scene, or by direct selection in the entity list).
-	if (GlobalSelectionSystem().ultimateSelected().path().top()->isRoot())
+	if (selectedNode->isRoot()) {
 		return false;
+	}
 	
+	scene::INodePtr parent = selectedNode->getParent();
+
 	// Try both the selected node (if an entity is selected) or the parent node (if a brush is 
 	// selected. If neither of them convert to entities, return false.
-	if ((_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().top())) == 0
-		 && (_selectedEntity = Node_getEntity(GlobalSelectionSystem().ultimateSelected().path().parent())) == 0)
+	if ((_selectedEntity = Node_getEntity(selectedNode)) == 0
+		 && (_selectedEntity = Node_getEntity(parent)) == 0)
 	{
 		return false;
 	}

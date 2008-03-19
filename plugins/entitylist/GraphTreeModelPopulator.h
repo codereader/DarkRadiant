@@ -9,7 +9,7 @@ namespace ui {
 
 /**
  * greebo: The purpose of this class is to traverse the entire scenegraph and
- *         push all the found instances into the given GraphTreeModel.
+ *         push all the found nodes into the given GraphTreeModel.
  * 
  * This is used by the GraphTreeModel itself to update its status on show.
  */
@@ -28,9 +28,9 @@ public:
 	}
 	
 	// Graph::Walker implementation
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		// Insert this instance into the GraphTreeModel
-		_model.insert(instance);
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		// Insert this node into the GraphTreeModel
+		_model.insert(node);
 		
 		return true; // traverse children
 	}

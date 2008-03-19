@@ -18,7 +18,7 @@ namespace selection {
 		public SelectionSystem::Visitor
 	{
 	public:
-		typedef std::vector<scene::Path> ModelList;
+		typedef std::vector<scene::INodePtr> ModelList;
 		
 	private:
 		mutable ModelList _modelList;
@@ -30,7 +30,7 @@ namespace selection {
 		/** greebo: Visits every selected instance and adds all
 		 * 			models to the internal list
 		 */
-		void visit(scene::Instance& instance) const;
+		void visit(const scene::INodePtr& node) const;
 		
 		/** greebo: Retrieves the result of the search
 		 */

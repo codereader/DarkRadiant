@@ -2,6 +2,7 @@
 #define UNDOFILECHANGETRACKER_H_
 
 #include "mapfile.h"
+#include "undolib.h"
 
 class UndoFileChangeTracker : 
 	public UndoTracker, 

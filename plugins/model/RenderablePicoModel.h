@@ -45,6 +45,9 @@ class RenderablePicoModel
 	
 	// The filename this model was loaded from
 	std::string _filename;
+
+	// The VFS path to this model
+	std::string _modelPath;
 	
 private:
 
@@ -59,7 +62,6 @@ public:
 	 * loaded from picomodel, and a string filename extension to allow the
 	 * correct handling of material paths (which differs between ASE and LWO)
 	 */
-	
 	RenderablePicoModel(picoModel_t* mod, const std::string& fExt);
 		
 	/**
@@ -84,7 +86,7 @@ public:
 	 * Return the number of surfaces in this model.
 	 */
 	int getSurfaceCount() const {
-		return _surfVec.size();
+		return static_cast<int>(_surfVec.size());
 	}
 	
 	/** 
@@ -115,6 +117,11 @@ public:
 	
 	// Returns the filename this model was loaded from
 	virtual std::string getFilename() const;
+
+	// Returns the VFS path to the model file
+	virtual std::string getModelPath() const;
+
+	void setModelPath(const std::string& modelPath);
 	
 	/** Apply the given skin to this model.
 	 */
@@ -153,8 +160,8 @@ public:
 	const SurfaceList& getSurfaces() const {
 		return _surfVec;	
 	}	
-	
 };
+typedef boost::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
 
 }
 

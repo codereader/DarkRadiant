@@ -32,6 +32,9 @@ class MD5Model :
 	// The filename of this model
 	std::string _filename;
 
+	// The VFS path to this model
+	std::string _modelPath;
+
 public:
 	MD5Model();
 
@@ -62,6 +65,9 @@ public:
 	
 	// IModel implementation
 	virtual std::string getFilename() const;
+
+	virtual std::string getModelPath() const;
+	void setModelPath(const std::string& modelPath);
 	
 	virtual void applySkin(const ModelSkin& skin);
 

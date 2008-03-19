@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/overlay/Overlay.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "selection/algorithm/Shader.h"
+#include "selection/algorithm/General.h"
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/GroupCycle.h"
 #include "selection/algorithm/Primitives.h"
@@ -179,13 +180,6 @@ void Redo()
   ui::SurfaceInspector::Instance().update();
   ui::PatchInspector::Instance().update();
   ui::LightInspector::Instance().update();
-  GlobalShaderClipboard().clear();
-}
-
-void deleteSelection()
-{
-  UndoableCommand undo("deleteSelected");
-  Select_Delete();
   GlobalShaderClipboard().clear();
 }
 
@@ -623,10 +617,10 @@ public:
     : m_snap(snap)
   {}
   
-  bool pre(const scene::Path& path, scene::Instance& instance) const {
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 	if(path.top()->visible()) {
 		SnappablePtr snappable = Node_getSnappable(path.top());
-		if (snappable != NULL && Instance_getSelectable(instance)->isSelected()) {
+		if (snappable != NULL && Node_getSelectable(node)->isSelected()) {
 			snappable->snapto(m_snap);
 		}
 	}
@@ -642,20 +636,24 @@ void Scene_SnapToGrid_Selected(scene::Graph& graph, float snap)
 /* greebo: This is the visitor class to snap all components of a selected instance to the grid
  * While visiting all the instances, it checks if the instance derives from ComponentSnappable 
  */
-class ComponentSnappableSnapToGridSelected : public scene::Graph::Walker {
-	float m_snap;
+class ComponentSnappableSnapToGridSelected : 
+	public scene::Graph::Walker
+{
+	float _snap;
 public:
 	// Constructor: expects the grid size that should be snapped to
-	ComponentSnappableSnapToGridSelected(float snap): m_snap(snap) {}
+	ComponentSnappableSnapToGridSelected(float snap) : 
+		_snap(snap)
+	{}
   
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-	    if (path.top()->visible()) {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	    if (node->visible()) {
 	    	// Check if the visited instance is componentSnappable
-			ComponentSnappable* componentSnappable = Instance_getComponentSnappable(instance);
+			ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
 			
 			// Call the snapComponents() method if the instance is also a _selected_ Selectable 
-			if (componentSnappable != 0  && Instance_getSelectable(instance)->isSelected()) {
-				componentSnappable->snapComponents(m_snap);
+			if (componentSnappable != NULL  && Node_isSelected(node)) {
+				componentSnappable->snapComponents(_snap);
 			}
 	    }
 		return true;
@@ -1558,14 +1556,16 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("Paste", FreeCaller<Paste>());
 	GlobalEventManager().addCommand("PasteToCamera", FreeCaller<PasteToCamera>());
 	GlobalEventManager().addCommand("CloneSelection", FreeCaller<selection::algorithm::cloneSelected>(), true); // react on keyUp
-	GlobalEventManager().addCommand("DeleteSelection", FreeCaller<deleteSelection>());
+	GlobalEventManager().addCommand("DeleteSelection", FreeCaller<selection::algorithm::deleteSelectionCmd>());
 	GlobalEventManager().addCommand("ParentSelection", FreeCaller<selection::algorithm::parentSelection>());
 	GlobalEventManager().addCommand("UnSelectSelection", FreeCaller<Selection_Deselect>());
-	GlobalEventManager().addCommand("InvertSelection", FreeCaller<Select_Invert>());
-	GlobalEventManager().addCommand("SelectInside", FreeCaller<Select_Inside>());
-	GlobalEventManager().addCommand("SelectTouching", FreeCaller<Select_Touching>());
-	GlobalEventManager().addCommand("SelectCompleteTall", FreeCaller<Select_Complete_Tall>());
-	GlobalEventManager().addCommand("ExpandSelectionToEntities", FreeCaller<Scene_ExpandSelectionToEntities>());
+	GlobalEventManager().addCommand("InvertSelection", FreeCaller<selection::algorithm::invertSelection>());
+
+	GlobalEventManager().addCommand("SelectInside", FreeCaller<selection::algorithm::selectInside>());
+	GlobalEventManager().addCommand("SelectTouching", FreeCaller<selection::algorithm::selectTouching>());
+	GlobalEventManager().addCommand("SelectCompleteTall", FreeCaller<selection::algorithm::selectCompleteTall>());
+
+	GlobalEventManager().addCommand("ExpandSelectionToEntities", FreeCaller<selection::algorithm::expandSelectionToEntities>());
 	GlobalEventManager().addCommand("SelectChildren", FreeCaller<selection::algorithm::selectChildren>());
 	GlobalEventManager().addCommand("Preferences", FreeCaller<ui::PrefDialog::toggle>());
 	
@@ -1586,9 +1586,9 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("OverlayDialog",
 									FreeCaller<ui::OverlayDialog::display>());
 	
-	GlobalEventManager().addCommand("ShowHidden", FreeCaller<Select_ShowAllHidden>());
-	GlobalEventManager().addCommand("HideSelected", FreeCaller<HideSelected>());
-	GlobalEventManager().addCommand("HideDeselected", FreeCaller<HideDeselected>());
+	GlobalEventManager().addCommand("ShowHidden", FreeCaller<selection::algorithm::showAllHidden>());
+	GlobalEventManager().addCommand("HideSelected", FreeCaller<selection::algorithm::hideSelected>());
+	GlobalEventManager().addCommand("HideDeselected", FreeCaller<selection::algorithm::hideDeselected>());
 	
 	GlobalEventManager().addToggle("DragVertices", FreeCaller<ToggleVertexMode>());
 	GlobalEventManager().addToggle("DragEdges", FreeCaller<ToggleEdgeMode>());
@@ -1632,7 +1632,7 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("SnapToGrid", FreeCaller<Selection_SnapToGrid>());
 	
-	GlobalEventManager().addCommand("SelectAllOfType", FreeCaller<Select_AllOfType>());
+	GlobalEventManager().addCommand("SelectAllOfType", FreeCaller<selection::algorithm::selectAllOfType>());
 	GlobalEventManager().addCommand("GroupCycleForward", FreeCaller<selection::GroupCycle::cycleForward>());
 	GlobalEventManager().addCommand("GroupCycleBackward", FreeCaller<selection::GroupCycle::cycleBackward>());
 	

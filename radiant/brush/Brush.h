@@ -75,7 +75,7 @@ public:
 	virtual void vertex_clear() = 0;
 	virtual void vertex_push_back(SelectableVertex& vertex) = 0;
 	
-	virtual void DEBUG_verify() const = 0;
+	virtual void DEBUG_verify() = 0;
 };
 
 class BrushVisitor {

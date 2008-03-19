@@ -357,7 +357,16 @@ public:
 	Element angle(const BasicVector3<OtherT>& other) const {
 		BasicVector3<Element> aNormalised = getNormalised();
 		BasicVector3<OtherT> otherNormalised = other.getNormalised();
-		return acos( aNormalised.dot(otherNormalised) );
+
+		Element dot = aNormalised.dot(otherNormalised);
+
+		// greebo: Sanity correction: Make sure the dot product 
+		// of two normalised vectors is not greater than 1
+		if (dot > 1.0) {
+			dot = 1;
+		}
+
+		return acos( dot );
 	}
 
 	/* Cross-product this vector with another Vector3, returning the result

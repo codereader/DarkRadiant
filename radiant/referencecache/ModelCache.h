@@ -3,45 +3,40 @@
 
 #include <map>
 #include <string>
-#include "inode.h"
+#include "imodelcache.h"
 
 namespace model {
 
-class ModelCache
+class ModelCache :
+	public IModelCache
 {
-	// The left-hand value of the ModelCache map
-	typedef std::pair<std::string, std::string> ModelKey;
-	
-	typedef std::map<ModelKey, scene::INodePtr> ModelNodeMap;
-	ModelNodeMap _modelNodeMap;
+	// The container maps model names to weak references	
+	typedef std::map<std::string, IModelWeakPtr> ModelMap;
+	ModelMap _modelMap;
 
 	// Flag to disable the cache on demand (used during clear())
 	bool _enabled;
 	
 public:
 	ModelCache();
-	
-	/**
-	 * greebo: Looks up the model with the given path/name in the cache.
-	 * 
-	 * @returns: The singleton model NodePtr or NULL if not found.
-	 */
-	virtual scene::INodePtr find(const std::string& path, const std::string& name);
-	
-	/**
-	 * greebo: Inserts the given node into the modelcache. 
-	 */
-	virtual void insert(const std::string& path, const std::string& name, const scene::INodePtr& modelNode);
-	
-	/**
-	 * greebo: Removes the given path from the cache.
-	 */
-	virtual void erase(const std::string& path, const std::string& name);
-	
+
+	// greebo: For documentation, see the abstract base class.
+	virtual scene::INodePtr getModelNode(const std::string& modelPath);
+
+	// greebo: For documentation, see the abstract base class.
+	virtual IModelPtr getModel(const std::string& modelPath);
+
+	// greebo: Get a model loader for the given type (file extension).
+	// This returns never NULL, there is always the NullModelLoader available.
+	virtual ModelLoaderPtr getModelLoaderForType(const std::string& type);
+
 	// Clears the cache
 	virtual void clear();
-	
-	static ModelCache& Instance();
+
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
 };
 
 } // namespace model

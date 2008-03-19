@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include <list>
+#include <map>
 
+#include "ibrush.h"
 #include "math/Plane3.h"
 #include "brushmanip.h"
 #include "brush/BrushVisit.h"
@@ -92,24 +94,22 @@ public:
     	_makeRoom(makeRoom)
   {
   }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const
   {
     if(path.top()->visible())
     {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected()
-        && path.size() > 1)
+      Brush* brush = Node_getBrush(node);
+      if(brush != NULL && Node_getSelectable(node)->isSelected() && path.size() > 1)
       {
         BrushVector out;
         Brush_makeHollow(*brush, out, m_offset, _makeRoom);
         for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
         {
           (*i)->removeEmptyFaces();
-          scene::INodePtr node(new BrushNode());
+          scene::INodePtr node = GlobalBrushCreator().createBrush();
           Node_getBrush(node)->copy(*(*i));
           delete (*i);
-          Node_getTraversable(path.parent())->insert(node);
+          path.parent()->addChildNode(node);
         }
       }
     }
@@ -127,13 +127,12 @@ public:
     : m_brushlist(brushlist)
   {
   }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const
   {
     if(path.top()->visible())
     {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected())
+      Brush* brush = Node_getBrush(node);
+      if(brush != NULL && Node_getSelectable(node)->isSelected())
       {
         m_brushlist.push_back(brush);
       }
@@ -142,26 +141,29 @@ public:
   }
 };
 
-class BrushDeleteSelected : public scene::Graph::Walker
+class BrushDeleteSelected : 
+	public scene::Graph::Walker
 {
+	mutable std::list<scene::Path> _deleteList;
 public:
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    return true;
-  }
-  void post(const scene::Path& path, scene::Instance& instance) const
-  {
-    if(path.top()->visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && Instance_getSelectable(instance)->isSelected()
-        && path.size() > 1)
-      {
-        Path_deleteTop(path);
-      }
-    }
-  }
+	~BrushDeleteSelected() {
+		for (std::list<scene::Path>::iterator i = _deleteList.begin(); i != _deleteList.end(); i++) {
+			Path_deleteTop(*i);
+		}
+	}
+
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		return true;
+	}
+
+	void post(const scene::Path& path, const scene::INodePtr& node) const {
+		if (node->visible()) {
+			Brush* brush = Node_getBrush(node);
+			if (brush != NULL && Node_isSelected(node) && path.size() > 1) {
+				_deleteList.push_back(path);
+			}
+		}
+	}
 };
 
 void Scene_BrushMakeHollow_Selected(scene::Graph& graph)
@@ -194,95 +196,8 @@ void CSG_MakeRoom() {
 	SceneChangeNotify();
 }
 
-template<typename Type>
-class RemoveReference
-{
-public:
-  typedef Type type;
-};
-
-template<typename Type>
-class RemoveReference<Type&>
-{
-public:
-  typedef Type type;
-};
-
-template<typename Functor>
-class Dereference
-{
-  const Functor& functor;
-public:
-  typedef typename RemoveReference<typename Functor::first_argument_type>::type* first_argument_type;
-  typedef typename Functor::result_type result_type;
-  Dereference(const Functor& functor) : functor(functor)
-  {
-  }
-  result_type operator()(first_argument_type firstArgument) const
-  {
-    return functor(*firstArgument);
-  }
-};
-
-template<typename Functor>
-inline Dereference<Functor> makeDereference(const Functor& functor)
-{
-  return Dereference<Functor>(functor);
-}
-
 typedef Face* FacePointer;
 const FacePointer c_nullFacePointer = 0;
-
-/*template<typename Predicate>
-Face* Brush_findIf(const Brush& brush, const Predicate& predicate)
-{
-  Brush::const_iterator i = std::find_if(brush.begin(), brush.end(), makeDereference(predicate));
-  return i == brush.end() ? c_nullFacePointer : *i; // uses c_nullFacePointer instead of 0 because otherwise gcc 4.1 attempts conversion to int
-}*/
-
-template<typename Caller>
-class BindArguments1
-{
-  typedef typename Caller::second_argument_type FirstBound;
-  FirstBound firstBound;
-public:
-  typedef typename Caller::result_type result_type;
-  typedef typename Caller::first_argument_type first_argument_type;
-  BindArguments1(FirstBound firstBound)
-    : firstBound(firstBound)
-  {
-  }
-  result_type operator()(first_argument_type firstArgument) const
-  {
-    return Caller::call(firstArgument, firstBound);
-  }
-};
-
-template<typename Caller>
-class BindArguments2
-{
-  typedef typename Caller::second_argument_type FirstBound;
-  typedef typename Caller::third_argument_type SecondBound;
-  FirstBound firstBound;
-  SecondBound secondBound;
-public:
-  typedef typename Caller::result_type result_type;
-  typedef typename Caller::first_argument_type first_argument_type;
-  BindArguments2(FirstBound firstBound, SecondBound secondBound)
-    : firstBound(firstBound), secondBound(secondBound)
-  {
-  }
-  result_type operator()(first_argument_type firstArgument) const
-  {
-    return Caller::call(firstArgument, firstBound, secondBound);
-  }
-};
-
-template<typename Caller, typename FirstBound, typename SecondBound>
-BindArguments2<Caller> bindArguments(const Caller& caller, FirstBound firstBound, SecondBound secondBound)
-{
-  return BindArguments2<Caller>(firstBound, secondBound);
-}
 
 inline bool Face_testPlane(const Face& face, const Plane3& plane, bool flipped)
 {
@@ -374,17 +289,16 @@ public:
     : m_brushlist(brushlist), m_before(before), m_after(after)
   {
   }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const
   {
     return true;
   }
-  void post(const scene::Path& path, scene::Instance& instance) const
+  void post(const scene::Path& path, const scene::INodePtr& node) const
   {
     if(path.top()->visible())
     {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0
-        && !Instance_getSelectable(instance)->isSelected())
+      Brush* brush = Node_getBrush(node);
+      if(brush != NULL && !Node_getSelectable(node)->isSelected())
       {
         BrushVector buffer[2];
         bool swap = false;
@@ -422,12 +336,12 @@ public:
           for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
           {
             ++m_after;
-            scene::INodePtr node(new BrushNode());
+            scene::INodePtr node = GlobalBrushCreator().createBrush();
             (*i)->removeEmptyFaces();
             ASSERT_MESSAGE(!(*i)->empty(), "brush left with no faces after subtract");
             Node_getBrush(node)->copy(*(*i));
             delete (*i);
-            Node_getTraversable(path.parent())->insert(node);
+            path.parent()->addChildNode(node);
           }
           Path_deleteTop(path);
         }
@@ -485,21 +399,21 @@ public:
 		m_split(split)
 	{}
 
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		return true;
 	}
 
-	void post(const scene::Path& path, scene::Instance& instance) const {
-		// Don't clip invisible nodes or filtered instances
-		if (!path.top()->visible() || instance.getFiltered()) {
+	void post(const scene::Path& path, const scene::INodePtr& node) const {
+		// Don't clip invisible nodes
+		if (!node->visible()) {
 			return;
 		}
 
 		// Try to cast the instance onto a brush
-		Brush* brush = Node_getBrush(path.top());
+		Brush* brush = Node_getBrush(node);
 
 		// Return if not brush or not selected
-		if (brush == NULL || !Instance_getSelectable(instance)->isSelected()) {
+		if (brush == NULL || !Node_getSelectable(node)->isSelected()) {
 			return;
 		}
 
@@ -546,7 +460,7 @@ public:
 		if (split.counts[ePlaneBack] && split.counts[ePlaneFront]) {
 			// the plane intersects this brush
 			if (m_split == eFrontAndBack) {
-				scene::INodePtr node(new BrushNode());
+				scene::INodePtr node = GlobalBrushCreator().createBrush();
 
 				Brush* fragment = Node_getBrush(node);
 				fragment->copy(*brush);
@@ -560,12 +474,8 @@ public:
 				fragment->removeEmptyFaces();
 				ASSERT_MESSAGE(!fragment->empty(), "brush left with no faces after split");
 
-				Node_getTraversable(path.parent())->insert(node);
-				{
-					scene::Path fragmentPath = path;
-					fragmentPath.top() = node;
-					selectPath(fragmentPath, true);
-				}
+				path.parent()->addChildNode(node);
+				Node_setSelected(node, true);
 			}
 
 			FacePtr newFace = brush->addPlane(m_p0, m_p1, m_p2, mostUsedShader, mostUsedTextureProjection);
@@ -602,30 +512,27 @@ void Scene_BrushSplitByPlane(const Vector3 planePoints[3],
 	SceneChangeNotify();
 }
 
-class BrushInstanceSetClipPlane : public scene::Graph::Walker
+class BrushSetClipPlane : 
+	public scene::Graph::Walker
 {
-  Plane3 m_plane;
+	Plane3 _plane;
 public:
-  BrushInstanceSetClipPlane(const Plane3& plane)
-    : m_plane(plane)
-  {
-  }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
-  {
-    BrushInstance* brush = Instance_getBrush(instance);
-    if(brush != 0
-      && path.top()->visible()
-      && brush->isSelected())
-    {
-      BrushInstance& brushInstance = *brush;
-      brushInstance.setClipPlane(m_plane);
-    }
-    return true; 
-  }
+	BrushSetClipPlane(const Plane3& plane) : 
+		_plane(plane)
+	{}
+
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		BrushNodePtr brush = boost::dynamic_pointer_cast<BrushNode>(node);
+
+		if (brush != NULL && node->visible() && brush->isSelected()) {
+			brush->setClipPlane(_plane);
+		}
+		return true; 
+	}
 };
 
 void Scene_BrushSetClipPlane(const Plane3& plane) {
-  GlobalSceneGraph().traverse(BrushInstanceSetClipPlane(plane));
+	GlobalSceneGraph().traverse(BrushSetClipPlane(plane));
 }
 
 /*
@@ -744,29 +651,34 @@ void CSG_Merge(void)
 
   UndoableCommand undo("brushMerge");
 
-  scene::Path merged_path = GlobalSelectionSystem().ultimateSelected().path();
+  //scene::Path merged_path = GlobalSelectionSystem().ultimateSelected().path();
+	const scene::INodePtr& merged = GlobalSelectionSystem().ultimateSelected();
+	scene::Path mergedPath = findPath(merged);
 
-  scene::INodePtr node(new BrushNode());
-  Brush* brush = Node_getBrush(node);
-  // if the new brush would not be convex
-  if(!Brush_merge(*brush, selected_brushes, true))
-  {
-    globalOutputStream() << "CSG Merge: Failed - result would not be convex.\n";
-  }
-  else
-  {
-    ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after merge");
+	// Create a new BrushNode
+	scene::INodePtr node = GlobalBrushCreator().createBrush();
+	
+	// Get the contained brush
+	Brush* brush = Node_getBrush(node);
 
-    // free the original brushes
-    GlobalSceneGraph().traverse(BrushDeleteSelected());
+	// Attempt to merge the selected brushes into the new one 
+	if (!Brush_merge(*brush, selected_brushes, true)) {
+		globalOutputStream() << "CSG Merge: Failed - result would not be convex.\n";
+	}
+	else {
+		ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after merge");
 
-    merged_path.pop();
-    Node_getTraversable(merged_path.top())->insert(node);
-    merged_path.push(node);
+		// free the original brushes
+		GlobalSceneGraph().traverse(BrushDeleteSelected());
 
-    selectPath(merged_path, true);
+		// Insert the newly created brush into the (same) parent entity
+		mergedPath.pop();
+		mergedPath.top()->addChildNode(node);
+		mergedPath.push(node);
 
-    globalOutputStream() << "CSG Merge: Succeeded.\n";
-    SceneChangeNotify();
-  }
+		Node_setSelected(node, true);
+
+		globalOutputStream() << "CSG Merge: Succeeded.\n";
+		SceneChangeNotify();
+	}
 }

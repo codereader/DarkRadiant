@@ -10,10 +10,11 @@ ModelFinder::ModelFinder() :
 	_onlyModels(true)
 {}
 
-void ModelFinder::visit(scene::Instance& instance) const {
-	Entity* entity = Node_getEntity(instance.path().top());
+void ModelFinder::visit(const scene::INodePtr& node) const {
+	Entity* entity = Node_getEntity(node);
+
 	if (entity != NULL && entity->isModel()) {
-		_modelList.push_back(instance.path());
+		_modelList.push_back(node);
 	}
 	else {
 		_onlyModels = false;

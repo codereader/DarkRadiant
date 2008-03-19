@@ -197,13 +197,13 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
 
 // ==================================================================================
 
-bool testselect_entity_visible::pre(const scene::Path& path, scene::Instance& instance) const {
-    Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != 0 && Node_isEntity(path.top())) {
+bool testselect_entity_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+    SelectablePtr selectable = Node_getSelectable(node);
+    if(selectable != NULL && Node_isEntity(path.top())) {
     	_selector.pushSelectable(*selectable);
     }
 
-    SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
+    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
     if(selectionTestable) {
       selectionTestable->testSelect(_selector, _test);
     }
@@ -211,9 +211,9 @@ bool testselect_entity_visible::pre(const scene::Path& path, scene::Instance& in
     return true;
 }
 
-void testselect_entity_visible::post(const scene::Path& path, scene::Instance& instance) const {
-    Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != 0 && Node_isEntity(path.top())) {
+void testselect_entity_visible::post(const scene::Path& path, const scene::INodePtr& node) const {
+	SelectablePtr selectable = Node_getSelectable(node);
+    if (selectable != NULL && Node_isEntity(path.top())) {
     	// Get the Entity from this node
     	Entity* entity = Node_getEntity(path.top());
     	
@@ -224,23 +224,23 @@ void testselect_entity_visible::post(const scene::Path& path, scene::Instance& i
     }
 }
 
-bool testselect_primitive_visible::pre(const scene::Path& path, scene::Instance& instance) const {
-    Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != NULL && !Node_isEntity(path.top())) {
+bool testselect_primitive_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+    SelectablePtr selectable = Node_getSelectable(node);
+    if (selectable != NULL && !Node_isEntity(node)) {
     	_selector.pushSelectable(*selectable);
     }
 
-    SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
-    if(selectionTestable && !Node_isEntity(path.top())) {
+    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
+    if (selectionTestable && !Node_isEntity(node)) {
 		selectionTestable->testSelect(_selector, _test);
     }
     
     return true;
 }
 
-void testselect_primitive_visible::post(const scene::Path& path, scene::Instance& instance) const {
-    Selectable* selectable = Instance_getSelectable(instance);
-    if(selectable != NULL && !Node_isEntity(path.top())) {
+void testselect_primitive_visible::post(const scene::Path& path, const scene::INodePtr& node) const {
+	SelectablePtr selectable = Node_getSelectable(node);
+    if (selectable != NULL && !Node_isEntity(path.top())) {
     	// Don't test for parent if the path has only 1 element
     	if (path.size() > 1) {
     	  	// Get the parent entity of this object, if there is one
@@ -255,8 +255,8 @@ void testselect_primitive_visible::post(const scene::Path& path, scene::Instance
     }
 }
 
-bool testselect_any_visible::pre(const scene::Path& path, scene::Instance& instance) const {
-    Selectable* selectable = Instance_getSelectable(instance);
+bool testselect_any_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+    SelectablePtr selectable = Node_getSelectable(node);
     if (selectable != NULL) {
     	// Don't test for parent if the path has only 1 element
     	if (path.size() > 1) {
@@ -279,7 +279,7 @@ bool testselect_any_visible::pre(const scene::Path& path, scene::Instance& insta
     	}
     }
 
-    SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
+    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
     if (selectionTestable != NULL) {
 		selectionTestable->testSelect(_selector, _test);
     }
@@ -287,8 +287,8 @@ bool testselect_any_visible::pre(const scene::Path& path, scene::Instance& insta
     return true;
 }
 
-void testselect_any_visible::post(const scene::Path& path, scene::Instance& instance) const {
-    Selectable* selectable = Instance_getSelectable(instance);
+void testselect_any_visible::post(const scene::Path& path, const scene::INodePtr& node) const {
+	SelectablePtr selectable = Node_getSelectable(node);
     if (selectable != NULL) {
     	// Don't test for parent if the path has only 1 element
     	if (path.size() > 1) {
@@ -312,23 +312,23 @@ void testselect_any_visible::post(const scene::Path& path, scene::Instance& inst
     }
 }
 
-bool testselect_component_visible::pre(const scene::Path& path, scene::Instance& instance) const {
-    ComponentSelectionTestable* componentSelectionTestable = Instance_getComponentSelectionTestable(instance);
-	if (componentSelectionTestable) {
-      componentSelectionTestable->testSelectComponents(_selector, _test, _mode);
+bool testselect_component_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+	ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
+
+	if (componentSelectionTestable != NULL) {
+		componentSelectionTestable->testSelectComponents(_selector, _test, _mode);
     }
 
     return true;
 }
 
-bool testselect_component_visible_selected::pre(const scene::Path& path, scene::Instance& instance) const {
-    Selectable* selectable = Instance_getSelectable(instance);
-    if (selectable != 0 && selectable->isSelected()) {
-      ComponentSelectionTestable* componentSelectionTestable = Instance_getComponentSelectionTestable(instance);
-      if (componentSelectionTestable) {
-        componentSelectionTestable->testSelectComponents(_selector, _test, _mode);
-      }
-    }
+bool testselect_component_visible_selected::pre(const scene::Path& path, const scene::INodePtr& node) const {
+    if (Node_isSelected(node)) {
+		ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
+		if (componentSelectionTestable != NULL) {
+			componentSelectionTestable->testSelectComponents(_selector, _test, _mode);
+		}
+	}
 
     return true;
 }

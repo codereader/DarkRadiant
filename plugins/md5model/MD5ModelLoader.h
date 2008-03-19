@@ -4,6 +4,8 @@
 #include "imodel.h"
 #include "MD5Model.h"
 
+class ArchiveFile;
+
 namespace md5 {
 
 class MD5ModelLoader : 
@@ -11,23 +13,16 @@ class MD5ModelLoader :
 {
 public:
 	// ModelLoader implementation
-	scene::INodePtr loadModel(ArchiveFile& file);
+	// Returns a new ModelNode for the given model name
+	virtual scene::INodePtr loadModel(const std::string& modelName);
 
-	// Not yet implemented
+	// Documentation: See imodel.h
 	model::IModelPtr loadModelFromPath(const std::string& name);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
-
-private:
-	/** greebo: Parses the model data from the given ArchiveFile.
-	 *
-	 * @model: The target MD5Model object
-	 * @file: The archivefile containing the data.
-	 */
-	void loadModelFromFile(MD5Model& model, ArchiveFile& file);
 };
 typedef boost::shared_ptr<MD5ModelLoader> MD5ModelLoaderPtr;
 

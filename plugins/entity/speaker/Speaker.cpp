@@ -1,7 +1,7 @@
 #include "Speaker.h"
 
 #include "iregistry.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "isound.h"
 #include <stdlib.h>
 #include "SpeakerSettings.h"

@@ -3,19 +3,22 @@
 
 #include "iselection.h"
 #include "FaceInstance.h"
-#include "BrushInstance.h"
+#include "BrushNode.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
 template<typename Functor>
-class BrushSelectedVisitor : public SelectionSystem::Visitor {
+class BrushSelectedVisitor : 
+	public SelectionSystem::Visitor
+{
 	const Functor& m_functor;
 public:
 	BrushSelectedVisitor(const Functor& functor) : m_functor(functor) {}
-	void visit(scene::Instance& instance) const {
-		BrushInstance* brush = Instance_getBrush(instance);
+
+	void visit(const scene::INodePtr& node) const {
+		BrushNodePtr brush = boost::dynamic_pointer_cast<BrushNode>(node);
 		if (brush != 0) {
-			m_functor(*brush);
+			m_functor(brush);
 		}
 	}
 };
@@ -27,14 +30,19 @@ inline const Functor& Scene_forEachSelectedBrush(const Functor& functor) {
 }
 
 template<typename Functor>
-class BrushVisibleSelectedVisitor : public SelectionSystem::Visitor {
+class BrushVisibleSelectedVisitor : 
+	public SelectionSystem::Visitor
+{
 	const Functor& m_functor;
 public:
-	BrushVisibleSelectedVisitor(const Functor& functor) : m_functor(functor) {}
-	void visit(scene::Instance& instance) const {
-		BrushInstance* brush = Instance_getBrush(instance);
-		if (brush != 0
-			&& instance.path().top()->visible()) {
+	BrushVisibleSelectedVisitor(const Functor& functor) : 
+		m_functor(functor)
+	{}
+
+	void visit(const scene::INodePtr& node) const {
+		Brush* brush = Node_getBrush(node);
+
+		if (brush != NULL && node->visible()) {
 			m_functor(*brush);
 		}
 	}
@@ -49,9 +57,12 @@ inline const Functor& Scene_forEachVisibleSelectedBrush(const Functor& functor) 
 class BrushForEachFace {
 	const BrushInstanceVisitor& m_visitor;
 public:
-	BrushForEachFace(const BrushInstanceVisitor& visitor) : m_visitor(visitor) {}
-	void operator()(BrushInstance& brush) const {
-		brush.forEachFaceInstance(m_visitor);
+	BrushForEachFace(const BrushInstanceVisitor& visitor) : 
+		m_visitor(visitor)
+	{}
+
+	void operator()(const BrushNodePtr& brush) const {
+		brush->forEachFaceInstance(m_visitor);
 	}
 };
 
@@ -65,12 +76,6 @@ public:
 		functor(face.getFace());
 	}
 };
-
-template<typename Functor>
-inline const Functor& Brush_forEachFace(BrushInstance& brush, const Functor& functor) {
-	brush.forEachFaceInstance(FaceInstanceVisitFace<Functor>(functor));
-	return functor;
-}
 
 template<class Functor>
 class FaceVisitAll : public BrushVisitor {
@@ -106,48 +111,16 @@ public:
 	}
 };
 
-template<typename Functor>
+/*template<typename Functor>
 inline const Functor& Brush_ForEachFaceInstance(BrushInstance& brush, const Functor& functor) {
 	brush.forEachFaceInstance(FaceInstanceVisitAll<Functor>(functor));
 	return functor;
-}
+}*/
 
 template<typename Functor>
 inline const Functor& Scene_forEachBrush(scene::Graph& graph, const Functor& functor) {
-	graph.traverse(InstanceWalker< InstanceApply<BrushInstance, Functor> >(functor));
-	return functor;
-}
-
-template<typename Type, typename Functor>
-class InstanceIfVisible : public Functor {
-public:
-	InstanceIfVisible(const Functor& functor) : Functor(functor) {}
-	void operator()(scene::Instance& instance) {
-		if (instance.path().top()->visible()) {
-			Functor::operator()(instance);
-		}
-	}
-};
-
-template<typename Functor>
-class BrushVisibleWalker : public scene::Graph::Walker {
-	const Functor& m_functor;
-public:
-	BrushVisibleWalker(const Functor& functor) : m_functor(functor) {}
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top()->visible()) {
-			BrushInstance* brush = Instance_getBrush(instance);
-			if (brush != 0) {
-				m_functor(*brush);
-			}
-		}
-		return true;
-	}
-};
-
-template<typename Functor>
-inline const Functor& Scene_forEachVisibleBrush(scene::Graph& graph, const Functor& functor) {
-	graph.traverse(BrushVisibleWalker<Functor>(functor));
+	NodeWalker< InstanceApply<BrushNode, Functor> > walker(functor);
+	graph.traverse(walker);
 	return functor;
 }
 

@@ -3,12 +3,12 @@
 
 #include "gtkutil/GLWidgetSentry.h"
 #include "iradiant.h"
+#include "imodelcache.h"
 #include "ieclass.h"
 #include "os/path.h"
 #include "referencecache.h"
 #include "math/aabb.h"
 #include "modelskin.h"
-#include "referencecache/ModelResource.h"
 
 #include <gtk/gtk.h>
 
@@ -146,7 +146,7 @@ void ModelPreview::setModel(const std::string& model) {
 		boost::algorithm::to_lower(ldrName);
 	}
 	
-	ModelLoaderPtr loader = model::ModelResource::getModelLoaderForType(ldrName);
+	ModelLoaderPtr loader = GlobalModelCache().getModelLoaderForType(ldrName);
 	
 	if (loader != NULL) {
 		_model = loader->loadModelFromPath(modelToLoad);

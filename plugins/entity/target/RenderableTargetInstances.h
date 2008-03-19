@@ -3,12 +3,12 @@
 
 #include "Target.h"
 #include <set>
-#include "renderable.h"
+#include "irenderable.h"
 
 namespace entity {
 
 // Forward declaration
-class TargetableInstance;
+class TargetableNode;
 
 /**
  * greebo: This is a "container" for all TargetableInstances. These register
@@ -21,13 +21,13 @@ class TargetableInstance;
 class RenderableTargetInstances : 
 	public Renderable
 {
-	typedef std::set<TargetableInstance*> TargetableInstances;
-	TargetableInstances _instances;
+	typedef std::set<TargetableNode*> TargetableNodes;
+	TargetableNodes _nodes;
 
 public:
-	// Add/Remove a TargetableInstance to this set
-	void attach(TargetableInstance& instance);
-	void detach(TargetableInstance& instance);
+	// Add/Remove a TargetableNode to this set
+	void attach(TargetableNode& node);
+	void detach(TargetableNode& node);
 
 	// Renderable implementation
 	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;

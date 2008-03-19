@@ -6,9 +6,9 @@
 namespace map {
 
 class IncludeSelectedWalker :
-	public scene::Traversable::Walker
+	public scene::NodeVisitor
 {
-	const scene::Traversable::Walker& m_walker;
+	scene::NodeVisitor& m_walker;
 	mutable std::size_t m_selected;
 	mutable bool m_skip;
 
@@ -16,17 +16,17 @@ class IncludeSelectedWalker :
 		return m_selected != 0;
 	}
 public:
-	IncludeSelectedWalker(const scene::Traversable::Walker& walker) :
+	IncludeSelectedWalker(scene::NodeVisitor& walker) :
 		m_walker(walker),
 		m_selected(0),
 		m_skip(false)
 	{}
 
-	bool pre(scene::INodePtr node) const {
+	virtual bool pre(const scene::INodePtr& node) {
 		// include node if:
 		// node is not a 'root' AND ( node is selected OR any child of node is selected OR any parent of node is selected )
 		if (!node->isRoot() && (Node_selectedDescendant(node) || selectedParent())) {
-			if (Node_instanceSelected(node)) {
+			if (Node_isSelected(node)) {
 				++m_selected;
 			}
 			m_walker.pre(node);
@@ -38,12 +38,12 @@ public:
 		}
 	}
 
-	void post(scene::INodePtr node) const {
+	virtual void post(const scene::INodePtr& node) {
 		if (m_skip) {
 			m_skip = false;
 		}
 		else {
-			if (Node_instanceSelected(node)) {
+			if (Node_isSelected(node)) {
 				--m_selected;
 			}
 			m_walker.post(node);
@@ -51,18 +51,13 @@ public:
 	}
 };
 
-void traverseSelected(scene::INodePtr root, const scene::Traversable::Walker& walker) {
-	scene::TraversablePtr traversable = Node_getTraversable(root);
-	if (traversable != NULL) {
-		traversable->traverse(IncludeSelectedWalker(walker));
-	}
+void traverseSelected(scene::INodePtr root, scene::NodeVisitor& walker) {
+	IncludeSelectedWalker visitor(walker);
+	root->traverse(visitor);
 }
 
-void traverse(scene::INodePtr root, const scene::Traversable::Walker& walker) {
-	scene::TraversablePtr traversable = Node_getTraversable(root);
-	if (traversable != NULL) {
-		traversable->traverse(walker);
-	}
+void traverse(scene::INodePtr root, scene::NodeVisitor& walker) {
+	root->traverse(walker);
 }
 
 } // namespace map

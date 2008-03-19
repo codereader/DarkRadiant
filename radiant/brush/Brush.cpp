@@ -2,7 +2,7 @@
 
 #include "math/frustum.h"
 #include "signal/signal.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "iuimanager.h"
 
 #include "BrushModule.h"

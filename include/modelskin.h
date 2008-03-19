@@ -48,6 +48,7 @@ public:
 	// Returns the name of the currently active skin
 	virtual std::string getSkin() const = 0;
 };
+typedef boost::shared_ptr<SkinnedModel> SkinnedModelPtr;
 
 // Model skinlist typedef
 typedef std::vector<std::string> StringList;

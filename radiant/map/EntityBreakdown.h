@@ -27,7 +27,7 @@ public:
 		GlobalSceneGraph().traverse(*this);
 	}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		// Is this node an entity?
 		Entity* entity = Node_getEntity(path.top());
 		if (entity != NULL) {

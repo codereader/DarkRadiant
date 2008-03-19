@@ -1,9 +1,9 @@
 #ifndef ICURVE_H_
 #define ICURVE_H_
 
-#include "scenelib.h"
+#include "inode.h"
 
-class CurveInstance
+class CurveNode
 {
 public:
 	/** greebo: Returns true if the curve has 0 control points.
@@ -31,9 +31,10 @@ public:
 	 */
 	virtual void convertCurveType() = 0;
 };
+typedef boost::shared_ptr<CurveNode> CurveNodePtr;
 
-inline CurveInstance* Instance_getCurveInstance(scene::Instance& instance) {
-	return dynamic_cast<CurveInstance*>(&instance);
+inline CurveNodePtr Node_getCurve(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<CurveNode>(node);
 }
 
 #endif /*ICURVE_H_*/

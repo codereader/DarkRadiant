@@ -109,7 +109,7 @@ public:
 	 * the SelectionSystem upon selection change to allow updating of the
 	 * texture properties.
 	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 	
 	// Updates the widgets
 	void update();

@@ -54,7 +54,7 @@ public:
 	ClosestTexturableFinder(SelectionTest& test, Texturable& texturable);
 	
 	// The visitor function
-	bool pre(const scene::Path& path, scene::Instance& instance) const;
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const;
 };
 		
 } // namespace algorithm

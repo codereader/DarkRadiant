@@ -5,38 +5,25 @@
 namespace selection {
 
 namespace algorithm {
-			
-	class ChildInstanceFinder : 
-		public scene::Graph::Walker
+		
+	/** greebo: This helper visitor populates the given targetList with
+	 *          all found child selectables under the given node.
+	 */
+	class ChildNodeFinder : 
+		public scene::NodeVisitor
 	{
-		InstanceVector& _targetList;
-		scene::Path& _parentPath;
-		unsigned int _minPathDepth;
+		NodeVector& _targetList;
 	public:
-		/** greebo: This populates the given targetList with
-		 * all the child selectable Instances found under the parentPath.
-		 * 
-		 * Specify minPathDepth > 1 to choose the children only,
-		 * set minPathDepth to 1 to allow choosing the parent as well.
-		 */
-		ChildInstanceFinder(InstanceVector& targetList, 
-							scene::Path& parentPath,
-							unsigned int minPathDepth = 1) : 
-			_targetList(targetList),
-			_parentPath(parentPath),
-			_minPathDepth(minPathDepth)
+		ChildNodeFinder(NodeVector& targetList) : 
+			_targetList(targetList)
 		{}
 		
-		bool pre(const scene::Path& path, scene::Instance& instance) const {
-			
-			Selectable* selectable = Instance_getSelectable(instance);
+		bool pre(const scene::INodePtr& node) {
+			SelectablePtr selectable = Node_getSelectable(node);
 			
 			// If a visible selectable was found and the path depth is appropriate, add it
-			if (selectable != NULL && path.top()->visible() && !instance.getFiltered() &&
-				//!(path == _parentPath) && 
-				path.size() >= _minPathDepth) 
-			{
-				_targetList.push_back(&instance);
+			if (selectable != NULL && node->visible()) {
+				_targetList.push_back(node);
 			}
 			
 			return true;
@@ -53,7 +40,7 @@ GroupCycle::GroupCycle() :
 	rescanSelection();
 }
 
-void GroupCycle::selectionChanged(scene::Instance& instance, bool isComponent) {
+void GroupCycle::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	// greebo: Only rescan the selection for non-component changes, otherwise the list
 	// will get cleared as soon as the face dragresize manipulator gets active
 	if (!isComponent) {
@@ -72,12 +59,10 @@ void GroupCycle::rescanSelection() {
 	_index = 0;
 	
 	if (info.totalCount == 1 && info.entityCount == 1) {
-		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 		
-		scene::Path startingPath = instance.path();
-		algorithm::ChildInstanceFinder walker(_list, startingPath);
-		
-		GlobalSceneGraph().traverse_subgraph(walker, startingPath);
+		algorithm::ChildNodeFinder finder(_list);
+		Node_traverseSubgraph(node, finder);
 	}
 }
 
@@ -86,13 +71,11 @@ void GroupCycle::updateSelection() {
 	
 	// Do some sanity checking before we run into crashes
 	if (_index >= 0 && _index < static_cast<int>(_list.size())) {
-		for (unsigned int i = 0; i < _list.size(); i++) {
-			Selectable* selectable = Instance_getSelectable(*_list[i]);
-			selectable->setSelected(false);
+		for (std::size_t i = 0; i < _list.size(); i++) {
+			Node_setSelected(_list[i], false);
 		}
 		
-		Selectable* selectable = Instance_getSelectable(*_list[_index]);
-		selectable->setSelected(true);
+		Node_setSelected(_list[_index], true);
 	}
 	
 	SceneChangeNotify();

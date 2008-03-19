@@ -6,7 +6,8 @@
 
 namespace map {
 
-class MapMergeAll : public scene::Traversable::Walker
+class MapMergeAll : 
+	public scene::NodeVisitor
 {
   mutable scene::Path m_path;
 public:
@@ -14,21 +15,22 @@ public:
     : m_path(root)
   {
   }
-  bool pre(scene::INodePtr node) const
+  virtual bool pre(const scene::INodePtr& node)
   {
-    Node_getTraversable(m_path.top())->insert(node);
+    m_path.top()->addChildNode(node);
     m_path.push(node);
-    selectPath(m_path, true);
+    Node_setSelected(node, true);
     return false;
   }
-  void post(scene::INodePtr node) const
+
+  virtual void post(const scene::INodePtr& node) 
   {
     m_path.pop();
   }
 };
 
 class MapMergeEntities : 
-	public scene::Traversable::Walker
+	public scene::NodeVisitor
 {
 	// The target path (usually GlobalSceneGraph().root())
 	mutable scene::Path m_path;
@@ -38,7 +40,7 @@ public:
 		m_path(root) 
 	{}
 
-	bool pre(scene::INodePtr node) const {
+	virtual bool pre(const scene::INodePtr& node) {
 		// greebo: Check if the visited node is the worldspawn of the other map
 		if (node_is_worldspawn(node)) {
 			// Find the worldspawn of the target map
@@ -49,23 +51,25 @@ public:
 				GlobalMap().setWorldspawn(node);
 				
 				// Insert the visited node at the target path
-				Node_getTraversable(m_path.top())->insert(node);
+				m_path.top()->addChildNode(node);
 				
 				m_path.push(node);
 				
 				// Select all the children of the visited node (these are primitives)
-				Node_getTraversable(node)->traverse(SelectChildren(m_path));
+				NodeSelector visitor;
+				node->traverse(visitor);
 			}
 			else {
 				m_path.push(world_node);
-				Node_getTraversable(node)->traverse(MapMergeAll(m_path));
+				MapMergeAll visitor(m_path);
+				node->traverse(visitor);
 			}
 		}
 		else {
 			// This is an ordinary entity, not worldspawn
 			
 			// Insert this node at the target path 
-			Node_getTraversable(m_path.top())->insert(node);
+			m_path.top()->addChildNode(node);
 			m_path.push(node);
 			
 			// greebo: commented this out, we don't want the child brushes to be selected
@@ -76,15 +80,15 @@ public:
 				selectPath(m_path, true);
 			}*/
 			
-			// Select the visited instance
-			selectPath(m_path, true);
+			// Select the visited node
+			Node_setSelected(node, true);
 		}
 		
 		// Only traverse top-level entities, don't traverse the children
 		return false;
 	}
 
-  void post(scene::INodePtr node) const
+  virtual void post(const scene::INodePtr& node)
   {
     m_path.pop();
   }
@@ -92,9 +96,8 @@ public:
 
 /// Merges the map graph rooted at \p node into the global scene-graph.
 inline void MergeMap(scene::INodePtr node) {
-	Node_getTraversable(node)->traverse(
-		MapMergeEntities(scene::Path(GlobalSceneGraph().root()))
-	);
+	MapMergeEntities visitor(scene::Path(GlobalSceneGraph().root()));
+	node->traverse(visitor);
 }
 
 } // namespace map

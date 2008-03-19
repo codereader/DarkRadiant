@@ -4,17 +4,12 @@
 #include <map>
 #include "ireference.h"
 #include "ifilesystem.h"
-#include "ModelResource.h"
 #include "map/MapResource.h"
 
 class RadiantReferenceCache : 
 	public ReferenceCache, 
 	public VirtualFileSystem::Observer
 {
-	// Map of named ModelResource objects
-	typedef std::map<std::string, model::ModelResourceWeakPtr> ModelReferences;
-	ModelReferences _modelReferences;
-	
 	// Map of named MapResource objects
 	typedef std::map<std::string, map::MapResourceWeakPtr> MapReferences;
 	MapReferences _mapReferences;
@@ -44,8 +39,6 @@ public:
   	// Gets called on VFS shutdown
   	virtual void onFileSystemShutdown();
   
-	void refresh();
-	
 	// Command target: calls refresh() and resets the ModelPreview
 	void refreshReferences();
 	
@@ -56,9 +49,6 @@ public:
 	virtual void shutdownModule();
 
 private:
-    // Branch for capturing model resources
-  	ResourcePtr captureModel(const std::string& path);
-  	
   	// Branch for capturing mapfile resources
   	ResourcePtr captureMap(const std::string& path);
 };

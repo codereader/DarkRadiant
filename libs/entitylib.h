@@ -379,7 +379,7 @@ public:
 	}
 	
 	// Pre-descent callback
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		if (_entity == NULL) {
 			// Entity not found yet
 			

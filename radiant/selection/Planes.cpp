@@ -1,33 +1,25 @@
 #include "Planes.h"
 
-bool PlaneSelectableSelectPlanes::pre(const scene::Path& path, scene::Instance& instance) const {
-    if(path.top()->visible())
-    {
-      Selectable* selectable = Instance_getSelectable(instance);
-      if(selectable != 0 && selectable->isSelected())
-      {
-        PlaneSelectable* planeSelectable = Instance_getPlaneSelectable(instance);
-        if(planeSelectable != 0)
-        {
-          planeSelectable->selectPlanes(_selector, _test, _selectedPlaneCallback);
-        }
-      }
-    }
+bool PlaneSelectableSelectPlanes::pre(const scene::Path& path, const scene::INodePtr& node) const {
+	if (node->visible()) {
+		if (Node_isSelected(node)) {
+			PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
+			if (planeSelectable != NULL) {
+				planeSelectable->selectPlanes(_selector, _test, _selectedPlaneCallback);
+			}
+		}
+	}
     return true; 
 }
 
-bool PlaneSelectableSelectReversedPlanes::pre(const scene::Path& path, scene::Instance& instance) const {
-    if(path.top()->visible())
-    {
-      Selectable* selectable = Instance_getSelectable(instance);
-      if(selectable != 0 && selectable->isSelected())
-      {
-        PlaneSelectable* planeSelectable = Instance_getPlaneSelectable(instance);
-        if(planeSelectable != 0)
-        {
-          planeSelectable->selectReversedPlanes(_selector, _selectedPlanes);
-        }
-      }
+bool PlaneSelectableSelectReversedPlanes::pre(const scene::Path& path, const scene::INodePtr& node) const {
+	if (node->visible()) {
+		if (Node_isSelected(node)) {
+			PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
+			if (planeSelectable != NULL) {
+				planeSelectable->selectReversedPlanes(_selector, _selectedPlanes);
+			}
+		}
     }
     return true; 
 }

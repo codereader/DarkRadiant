@@ -72,7 +72,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mathlib.lib opengl32.lib"
+				AdditionalDependencies="mathlib.lib opengl32.lib scenelib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -168,7 +168,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mathlib.lib opengl32.lib"
+				AdditionalDependencies="mathlib.lib opengl32.lib scenelib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -284,11 +284,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\model.cpp"
+				RelativePath="..\..\plugins\entity\ModelKey.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\model.h"
+				RelativePath="..\..\plugins\entity\ModelKey.h"
 				>
 			</File>
 			<File
@@ -421,14 +421,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\plugins\entity\doom3group\Doom3GroupInstance.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\doom3group\Doom3GroupInstance.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\plugins\entity\doom3group\Doom3GroupNode.cpp"
 					>
 				</File>
@@ -450,14 +442,6 @@
 				</File>
 				<File
 					RelativePath="..\..\plugins\entity\light\Light.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\light\LightInstance.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\light\LightInstance.h"
 					>
 				</File>
 				<File
@@ -505,14 +489,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\plugins\entity\generic\GenericEntityInstance.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\generic\GenericEntityInstance.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\plugins\entity\generic\GenericEntityNode.cpp"
 					>
 				</File>
@@ -537,14 +513,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\plugins\entity\eclassmodel\EclassModelInstance.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\eclassmodel\EclassModelInstance.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp"
 					>
 				</File>
@@ -562,14 +530,6 @@
 				</File>
 				<File
 					RelativePath="..\..\plugins\entity\speaker\Speaker.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\speaker\SpeakerInstance.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\speaker\SpeakerInstance.h"
 					>
 				</File>
 				<File
@@ -617,11 +577,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\plugins\entity\target\TargetableInstance.cpp"
+					RelativePath="..\..\plugins\entity\target\TargetableNode.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\plugins\entity\target\TargetableInstance.h"
+					RelativePath="..\..\plugins\entity\target\TargetableNode.h"
 					>
 				</File>
 				<File

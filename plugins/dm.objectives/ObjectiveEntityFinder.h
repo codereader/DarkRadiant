@@ -80,7 +80,7 @@ public:
 	/**
 	 * @see scene::Graph::Walker::pre()
 	 */
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		
 		// Get the entity and check the classname
 		Entity* ePtr = Node_getEntity(path.top());

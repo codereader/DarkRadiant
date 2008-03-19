@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "igame.h"
 #include "ieventmanager.h"
 #include "brush/BrushNode.h"
-#include "brush/BrushInstance.h"
 #include "brush/BrushClipPlane.h"
 #include "brush/BrushVisit.h"
 #include "brushmanip.h"
@@ -56,7 +55,7 @@ void BrushModuleClass::construct() {
 	Brush_registerCommands();
 	
 	BrushClipPlane::constructStatic();
-	BrushInstance::constructStatic();
+	BrushNode::constructStatic();
 	Brush::constructStatic();
 	
 	Brush::m_maxWorldCoord = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
@@ -66,7 +65,7 @@ void BrushModuleClass::destroy() {
 	Brush::m_maxWorldCoord = 0;
 	
 	Brush::destroyStatic();
-	BrushInstance::destroyStatic();
+	BrushNode::destroyStatic();
 	BrushClipPlane::destroyStatic();
 }
 
@@ -114,7 +113,9 @@ typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFa
 typedef Callback1<Face&> FaceCallback;
 
 scene::INodePtr BrushModuleClass::createBrush() {
-	return scene::INodePtr(new BrushNode);
+	scene::INodePtr node(new BrushNode);
+	node->setSelf(node);
+	return node;
 }
 
 void BrushModuleClass::Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) {
@@ -170,6 +171,8 @@ void BrushModuleClass::shutdownModule() {
 
 // Define a static BrushModule 
 module::StaticModule<BrushModuleClass> staticBrushModule;
+
+ShaderPtr BrushClipPlane::m_state;
 
 // greebo: The accessor function for the brush module containing the static instance
 // TODO: Change this to return a reference instead of a raw pointer

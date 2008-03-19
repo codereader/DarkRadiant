@@ -127,7 +127,7 @@ void DifficultySettingsManager::saveSettings() {
 
 		// Create and insert a new entity node into the scenegraph root 
 		scene::INodePtr entNode = GlobalEntityCreator().createEntity(diffEclass);
-		Node_getTraversable(GlobalSceneGraph().root())->insert(entNode);
+		GlobalSceneGraph().root()->addChildNode(entNode);
 
 		// Get the entity of this node
 		Entity* entity = Node_getEntity(entNode);

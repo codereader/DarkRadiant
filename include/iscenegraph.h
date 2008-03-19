@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 #include "ipath.h"
 #include "itraversable.h"
-#include "iinstantiable.h"
 #include "signal/signalfwd.h"
 
 /**
@@ -37,16 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * \ingroup scenegraph
  * Interfaces and types relating to the scene-graph.
  */
-
-namespace scene
-{
-  class Instance;
-  const Instance* const nullInstancePointer = 0;
-  inline const Instance& nullInstance()
-  {
-    return *nullInstancePointer;
-  }
-}
 
 // String identifier for the registry module
 const std::string MODULE_SCENEGRAPH("SceneGraph");
@@ -77,21 +66,21 @@ namespace scene
     public:
       
       /**
-       * Called before traversing the first child-instance of 'instance'. This
+       * Called before traversing the first child node of 'node'. This
        * method must be overridden by Walker subclasses. 
        * 
        * @return
        * false to abort the traversal and prevent visiting children of the
-       * current instance, true to continue.
+       * current node, true to continue.
        */
-      virtual bool pre(const Path& path, Instance& instance) const = 0;
+      virtual bool pre(const Path& path, const INodePtr& node) const = 0;
       
       /** 
-       * Called after traversing the last child-instance of 'instance'. This
+       * Called after traversing the last child node of 'node'. This
        * method has an empty default implementation and need not be overridden
        * by subclasses.
        */
-      virtual void post(const Path& path, Instance& instance) const
+      virtual void post(const Path& path, const INodePtr& node) const
       { }
     };
     
@@ -103,11 +92,11 @@ namespace scene
     	// Gets called when anything in the scenegraph changes
     	virtual void onSceneGraphChange() {}
     	
-    	// Gets called when a new <instance> is inserted into the scenegraph
-    	virtual void onSceneNodeInsert(const scene::Instance& instance) {}
+    	// Gets called when a new <node> is inserted into the scenegraph
+    	virtual void onSceneNodeInsert(const scene::INodePtr& node) {}
     	
-    	// Gets called when <instance> is removed from the scenegraph
-    	virtual void onSceneNodeErase(const scene::Instance& instance) {} 
+    	// Gets called when <node> is removed from the scenegraph
+    	virtual void onSceneNodeErase(const scene::INodePtr& node) {} 
     };
 
     /// \brief Returns the root-node of the graph.
@@ -121,12 +110,12 @@ namespace scene
     /// \brief Traverses all nodes in the graph depth-first, starting from 'start'.
     virtual void traverse_subgraph(const Walker& walker, const Path& start) = 0;
     /// \brief Returns the instance at the location identified by 'path', or 0 if it does not exist.
-    virtual scene::Instance* find(const Path& path) = 0;
+    //virtual scene::Instance* find(const Path& path) = 0;
 
-	// greebo: Adds an instance to the scenegraph
-	virtual void insert(scene::Instance* instance) = 0;
-	// Removes an instance from the scenegraph
-	virtual void erase(scene::Instance* instance) = 0;
+	// greebo: Adds a node to the scenegraph
+	virtual void insert(const scene::INodePtr& node) = 0;
+	// Removes a node from the scenegraph
+	virtual void erase(const scene::INodePtr& node) = 0;
 
     /// \brief Invokes all scene-changed callbacks. Called when any part of the scene changes the way it will appear when the scene is rendered.
     /// \todo Move to a separate class.

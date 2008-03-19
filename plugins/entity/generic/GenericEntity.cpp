@@ -1,7 +1,7 @@
 #include "GenericEntity.h"
 
 #include "iregistry.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "math/frustum.h"
 
 namespace entity {

@@ -10,14 +10,14 @@ namespace ui {
  * This includes a valid instance and a valid GtkTreeIter.
  */
 class GraphTreeNode {
-	// A reference to the actual Instance
-	const scene::Instance& _instance;
+	// A reference to the actual node
+	const scene::INodePtr& _node;
 	
 	// The GTK iterator pointing to the row in a GtkTreeStore
 	GtkTreeIter _iter;
 public:
-	GraphTreeNode(const scene::Instance& instance) :
-		_instance(instance)
+	GraphTreeNode(const scene::INodePtr& node) :
+		_node(node)
 	{}
 	
 	// Convenience accessor for GTK methods (hence raw pointer)
@@ -25,8 +25,8 @@ public:
 		return &_iter;
 	}
 	
-	const scene::Instance& getInstance() const {
-		return _instance;
+	const scene::INodePtr& getNode() const {
+		return _node;
 	}
 };
 typedef boost::shared_ptr<GraphTreeNode> GraphTreeNodePtr;

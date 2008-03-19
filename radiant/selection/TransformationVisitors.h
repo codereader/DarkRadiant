@@ -41,7 +41,9 @@ void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& l
  * The constructor expects the according transformation vectors to be passed.
  * The visit function is called with the scene::instance to be modified. 
  */
-class TranslateSelected : public SelectionSystem::Visitor {
+class TranslateSelected : 
+	public SelectionSystem::Visitor
+{
 	// The translation vector3 (initialised in the constructor) 
   	const Vector3& m_translate;
   
@@ -50,7 +52,7 @@ public:
   	TranslateSelected(const Vector3& translate): m_translate(translate) {}
 
 	// The visitor function that applies the actual transformation to the instance  
-	void visit(scene::Instance& instance) const;
+	void visit(const scene::INodePtr& node) const;
 }; // class TranslateSelected
 
 // -------------------------------------------------------------------------------
@@ -64,8 +66,8 @@ public:
   RotateSelected(const Quaternion& rotation, const Vector3& world_pivot)
   	: m_rotate(rotation), m_world_pivot(world_pivot) {}
   
-  // This actually applies the rotation the the instance 
-  void visit(scene::Instance& instance) const;
+  // This actually applies the rotation to the node 
+  void visit(const scene::INodePtr& node) const;
 }; // class rotate_selected
 
 // -------------------------------------------------------------------------------
@@ -79,8 +81,8 @@ public:
   ScaleSelected(const Vector3& scaling, const Vector3& world_pivot)
     : m_scale(scaling), m_world_pivot(world_pivot) {}
     
-  // This actually applies the scale the the instance
-  void visit(scene::Instance& instance) const;
+  // This actually applies the scale to the node
+  void visit(const scene::INodePtr& node) const;
 };
 
 // =========== Translate, Rotate, Scale Component =====================================
@@ -96,8 +98,8 @@ public:
 	// Constructor
 	TranslateComponentSelected(const Vector3& translate): m_translate(translate) {}
   
-	// This actually applies the change the the instance
-	void visit(scene::Instance& instance) const;
+	// This actually applies the change to the node
+	void visit(const scene::INodePtr& node) const;
 };
 
 // -------------------------------------------------------------------------------
@@ -111,8 +113,8 @@ public:
 	RotateComponentSelected(const Quaternion& rotation, const Vector3& world_pivot)
 		: m_rotate(rotation), m_world_pivot(world_pivot) {}
     
-    // This actually applies the change the the instance
-	void visit(scene::Instance& instance) const;
+    // This actually applies the change to the node
+	void visit(const scene::INodePtr& node) const;
 };
 
 // -------------------------------------------------------------------------------
@@ -126,8 +128,8 @@ public:
 	ScaleComponentSelected(const Vector3& scaling, const Vector3& world_pivot)
     	: m_scale(scaling), m_world_pivot(world_pivot) {}
     	
-	// This actually applies the change the the instance
-  	void visit(scene::Instance& instance) const;
+	// This actually applies the change to the node
+  	void visit(const scene::INodePtr& node) const;
 };
 
 // =============================================================================

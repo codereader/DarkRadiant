@@ -50,14 +50,12 @@ public:
 };
 typedef boost::shared_ptr<MapExporter> MapExporterPtr;
 
-#include "iscenegraph.h"
-
 class TextInputStream;
 
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
  */
-typedef void (*GraphTraversalFunc) (scene::INodePtr root, const scene::Traversable::Walker& walker);
+typedef void (*GraphTraversalFunc) (scene::INodePtr root, scene::NodeVisitor& walker);
 
 /** Map Format interface. Each map format is able to traverse the scene graph and write
  * the contents into a mapfile, or to load a mapfile and populate a scene graph.

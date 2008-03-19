@@ -18,18 +18,18 @@ public:
 		_selection(selection)
 	{}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		const GraphTreeNodePtr& node = _model.find(instance);
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		const GraphTreeNodePtr& gtNode = _model.find(node);
 		
-		if (node == NULL) {
+		if (gtNode == NULL) {
 			return true;
 		}
 		
-		if (Instance_isSelected(instance)) {
-			gtk_tree_selection_select_iter(_selection, node->getIter());
+		if (Node_isSelected(node)) {
+			gtk_tree_selection_select_iter(_selection, gtNode->getIter());
 		}
 		else {
-			gtk_tree_selection_unselect_iter(_selection, node->getIter());
+			gtk_tree_selection_unselect_iter(_selection, gtNode->getIter());
 		}
 		
 		return true;

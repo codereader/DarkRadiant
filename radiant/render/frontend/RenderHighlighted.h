@@ -33,21 +33,20 @@ public:
 
 	// Pre-descent function called by ForEachVisible walker.
 	bool pre(const scene::Path& path, 
-			 scene::Instance& instance, 
+			 const scene::INodePtr& node, 
 			 VolumeIntersectionValue parentVisible) const
 	{
-    	m_renderer.PushState();
+		m_renderer.PushState();
 
-	    if (Cullable_testVisible(instance, m_volume, parentVisible) != c_volumeOutside)
+	    if (Cullable_testVisible(node, m_volume, parentVisible) != c_volumeOutside)
 	    {
-	      Renderable* renderable = Instance_getRenderable(instance);
+	      RenderablePtr renderable = Node_getRenderable(node);
 	      if(renderable)
 	      {
 	        renderable->viewChanged();
 	      }
 	
-	      Selectable* selectable = Instance_getSelectable(instance);
-	      if(selectable != 0 && selectable->isSelected())
+	      if (Node_isSelected(node))
 	      {
 	        if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
 	        {
@@ -71,7 +70,7 @@ public:
   
   	// Post-descent function, called from ForEachVisible
 	void post(const scene::Path& path, 
-			  scene::Instance& instance, 
+			  const scene::INodePtr& node, 
 			  VolumeIntersectionValue parentVisible) const
 	{
     	m_renderer.PopState();

@@ -92,6 +92,10 @@ void Doom3Entity::detach(Observer& observer) {
 	if (found != _observers.end()) {
 		_observers.erase(found);
 	}
+	else {
+		// greebo: Observer was not found, no need to call onKeyErase()
+		return;
+	}
 	
 	// Now, call onKeyErase() for every spawnarg, so that the observer gets cleanly shut down 
 	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
