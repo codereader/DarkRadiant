@@ -1,3 +1,12 @@
+19/03/2007
+greebo
+- Refactored scenegraph elements: removed scene::Instances,
+  all the objects are scene::INodes now.
+
+03/02/2007
+greebo
+- Added Difficulty Editor plugin (specific to Dark Mod).
+
 23/11/2007
 greebo
 - Added plugin for communication with the Doom3/DarkMod engine.
