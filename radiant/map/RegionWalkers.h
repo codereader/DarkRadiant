@@ -29,7 +29,7 @@ public:
 		_exclude(exclude) 
 	{}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		excludeNode(path.top(), _exclude);
 
 		return true;
@@ -53,22 +53,22 @@ public:
 		_regionAABB(regionAABB)
 	{}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		
 		// Check whether the instance is within the region
 		bool contained = aabb_intersects_aabb(
-			instance.worldAABB(),
+			node->worldAABB(),
 			_regionAABB
 		);
 		
 		if (contained) {
 			// The contained stuff is set according to the _exclude parameter
-			excludeNode(path.top(), _exclude);
+			excludeNode(node, _exclude);
 		}
 		else {
 			// This is an object outside the bounds, set it to !_exclude
 			// as the _exclude should apply to the objects within.
-			excludeNode(path.top(), !_exclude);
+			excludeNode(node, !_exclude);
 		}
 		
 		// Traverse the children as well
@@ -85,18 +85,18 @@ public:
  * visited items are regioned only, of course.
  */
 class ExcludeNonRegionedWalker : 
-	public scene::Traversable::Walker
+	public scene::NodeVisitor
 {
-	const scene::Traversable::Walker& _walker;
+	scene::NodeVisitor& _walker;
 	mutable bool _skip;
 
 public:
-	ExcludeNonRegionedWalker(const scene::Traversable::Walker& walker) : 
+	ExcludeNonRegionedWalker(scene::NodeVisitor& walker) : 
 		_walker(walker), 
 		_skip(false) 
 	{}
 	
-	bool pre(scene::INodePtr node) const {
+	virtual bool pre(const scene::INodePtr& node) {
 		// Don't save excluded nodes or the Scenegraph root
 		if (node->excluded() || node->isRoot()) {
 			_skip = true;
@@ -109,7 +109,7 @@ public:
 		return true;
 	}
 
-	void post(scene::INodePtr node) const {
+	virtual void post(const scene::INodePtr& node) {
 		if (_skip) {
 			// The node failed to pass the check in pre()
 			_skip = false;

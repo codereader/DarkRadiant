@@ -26,6 +26,11 @@ math = mathEnv.StaticLibrary(target='libs/math',
 
 md5lib_lib = g_env.StaticLibrary(target='libs/md5lib', source='libs/md5lib/md5lib.c')
 
+scenelibEnv = g_env.Copy()
+scenelibEnv.Prepend(CPPPATH = 'libs/scene')
+scenelibSrc = 'InstanceWalkers.cpp Node.cpp TraversableNodeSet.cpp ../UndoableObject.cpp'
+scenelib = scenelibEnv.StaticLibrary(target='libs/scenelib', source=build_list('libs/scene', scenelibSrc))
+
 ddslib_lib = g_env.StaticLibrary(target='libs/ddslib', source='libs/ddslib/ddslib.cpp')
 
 jpeg_env = g_env.Copy()
@@ -242,26 +247,29 @@ mapdoom3_env.Install(INSTALL + '/modules', mapdoom3_lib)
 
 model_env = module_env.Copy()
 model_lst = build_list('plugins/model', 
-					   'plugin.cpp model.cpp \
-					   RenderablePicoModel.cpp RenderablePicoSurface.cpp \
-					   PicoModelInstance.cpp')
-model_env.Append(LIBS = ['picomodel', 'math'])
+					   'plugin.cpp \
+					   RenderablePicoModel.cpp \
+					   RenderablePicoSurface.cpp \
+					   PicoModelLoader.cpp \
+					   PicoModelNode.cpp')
+model_env.Append(LIBS = ['picomodel', 'math', 'scenelib'])
 model_lib = model_env.SharedLibrary(target='model', source=model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 model_env.Depends(model_lib, picomodel_lib)
 model_env.Depends(model_lib, math)
+model_env.Depends(model_lib, scenelib)
 model_env.Install(INSTALL + '/modules', model_lib)
 
 md5model_env = module_env.Copy()
 md5model_lst=build_list('plugins/md5model', 
 						'plugin.cpp \
 						 MD5Model.cpp \
-						 MD5ModelInstance.cpp \
 						 MD5ModelNode.cpp \
 						 MD5ModelLoader.cpp \
 						 MD5Surface.cpp')
-md5model_env.Append(LIBS = ['math'])
+md5model_env.Append(LIBS = ['math', 'scenelib'])
 md5model_lib = md5model_env.SharedLibrary(target='md5model', source=md5model_lst, no_import_lib=1, WIN32_INSERT_DEF=0)
 md5model_env.Depends(md5model_lib, math)
+md5model_env.Depends(md5model_lib, scenelib)
 md5model_env.Install(INSTALL + '/modules', md5model_lib)
 
 eventmanager_env = module_env.Copy()
@@ -299,7 +307,7 @@ entity_src = [
 	'angle.cpp',
 	'angles.cpp',
 	'colour.cpp',
-	'model.cpp',
+	'ModelKey.cpp',
 	'namedentity.cpp',
 	'origin.cpp',
 	'scale.cpp',
@@ -312,36 +320,32 @@ entity_src = [
 	'curve/CurveEditInstance.cpp',
 	'light/Light.cpp',
 	'light/Renderables.cpp',
-	'light/LightInstance.cpp',
 	'light/LightNode.cpp',
 	'light/LightSettings.cpp',
 	'doom3group/Doom3Group.cpp',
-	'doom3group/Doom3GroupInstance.cpp',
 	'doom3group/Doom3GroupNode.cpp',
 	'speaker/Speaker.cpp',
 	'speaker/SpeakerRenderables.cpp',
-	'speaker/SpeakerInstance.cpp',
 	'speaker/SpeakerNode.cpp',
 	'speaker/SpeakerSettings.cpp',
 	'generic/GenericEntity.cpp',
-	'generic/GenericEntityInstance.cpp',
 	'generic/GenericEntityNode.cpp',
 	'eclassmodel/EclassModel.cpp',
-	'eclassmodel/EclassModelInstance.cpp',
 	'eclassmodel/EclassModelNode.cpp',
 	'target/TargetManager.cpp',
 	'target/TargetKey.cpp',
 	'target/TargetKeyCollection.cpp',
-	'target/TargetableInstance.cpp',
+	'target/TargetableNode.cpp',
 	'target/RenderableTargetInstances.cpp'
 ]
 entity_lst = build_list('plugins/entity', entity_src)
-entity_env.Append(LIBS = ['math', 'xmlutil'])
+entity_env.Append(LIBS = ['math', 'xmlutil', 'scenelib'])
 entity_lib = entity_env.SharedLibrary(target='entity', 
 									  source=entity_lst, 
 									  no_import_lib=1)
 entity_env.Depends(entity_lib, math)
 entity_env.Depends(entity_lib, xmlutil)
+entity_env.Depends(entity_lib, scenelib)
 entity_env.Install(INSTALL + '/modules', entity_lib)
 
 entitylistEnv = module_env.Copy()
@@ -492,7 +496,6 @@ radiant_src = \
 		 'main.cpp',
          'mainframe.cpp',
          'map.cpp',
-         'nullmodel.cpp',
          'patchmanip.cpp',
          'RadiantModule.cpp',
          'referencecache.cpp',
@@ -563,10 +566,11 @@ radiant_src = \
          'selection/Planes.cpp',
          'selection/RadiantWindowObserver.cpp',
          'selection/RadiantSelectionSystem.cpp',
-         'selection/SelectedInstanceList.cpp',
+         'selection/SelectedNodeList.cpp',
          'selection/algorithm/Primitives.cpp',
          'selection/algorithm/Curves.cpp',
 		 'selection/algorithm/Entity.cpp',
+		 'selection/algorithm/General.cpp',
          'selection/algorithm/ModelFinder.cpp',
          'selection/algorithm/Shader.cpp',
          'selection/algorithm/Group.cpp',
@@ -576,7 +580,6 @@ radiant_src = \
          'selection/shaderclipboard/Texturable.cpp',
          'patch/Patch.cpp',
          'patch/PatchBezier.cpp',
-         'patch/PatchInstance.cpp',
          'patch/PatchModule.cpp',
          'patch/PatchNode.cpp',
          'brushexport/BrushExportOBJ.cpp',
@@ -594,7 +597,6 @@ radiant_src = \
          'brush/Face.cpp',
          'brush/Brush.cpp',
          'brush/FaceInstance.cpp',
-         'brush/BrushInstance.cpp',
          'brush/BrushModule.cpp',
          'brush/export/CollisionModel.cpp',
          'camera/CameraSettings.cpp',
@@ -639,7 +641,8 @@ radiant_src = \
          'modulesystem/DynamicLibraryLoader.cpp',
          'modulesystem/ModuleRegistry.cpp',
          'referencecache/ModelCache.cpp',
-         'referencecache/ModelResource.cpp',
+	 'referencecache/NullModel.cpp',
+ 	 'referencecache/NullModelNode.cpp',
          'referencecache/RadiantReferenceCache.cpp'
          ]
     ]
@@ -648,7 +651,7 @@ radiant_src = \
 if (radiant_env['BUILD'] == 'profile'):
 	radiant_src.append('radiant/Profile.cpp')
 
-radiant_env.Prepend(LIBS = ['math', 'gtkutil', 'xmlutil'])
+radiant_env.Prepend(LIBS = ['math', 'gtkutil', 'xmlutil', 'scenelib'])
 radiant_env.Prepend(LIBPATH = ['libs'])
 
 # Win32 libs
@@ -667,6 +670,7 @@ radiant_prog = radiant_env.Program(target='darkradiant',
 radiant_env.Depends(radiant_prog, gtkutil_lib)
 radiant_env.Depends(radiant_prog, xmlutil)
 radiant_env.Depends(radiant_prog, math)
+radiant_env.Depends(radiant_prog, scenelib)
 radiant_env.Install(INSTALL, radiant_prog)
 
 # Radiant post-install

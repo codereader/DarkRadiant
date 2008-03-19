@@ -26,24 +26,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "irender.h"
 #include "ieclass.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "iselection.h"
 #include "cullable.h"
 #include "scenelib.h"
 #include "math/frustum.h"
 
-inline Renderable* Instance_getRenderable(scene::Instance& instance) {
-	return dynamic_cast<Renderable*>(&instance);
+inline RenderablePtr Node_getRenderable(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<Renderable>(node);
 }
 
 /**
- * Test the visibility of the given Instance by intersecting with the given
+ * Test the visibility of the given Node by intersecting with the given
  * VolumeTest, subject to the visibility of the parent. If the parent's
- * intersection is partial, this instance is tested, otherwise the parent's
+ * intersection is partial, this node is tested, otherwise the parent's
  * visibility is used instead.
  */
 inline 
-VolumeIntersectionValue Cullable_testVisible(scene::Instance& instance, 
+VolumeIntersectionValue Cullable_testVisible(const scene::INodePtr& node, 
 											 const VolumeTest& volume, 
 											 VolumeIntersectionValue parent)
 {
@@ -52,9 +52,9 @@ VolumeIntersectionValue Cullable_testVisible(scene::Instance& instance,
 		
 		// Parent has partial visibility, so test this Instance and return
 		// its result
-		Cullable* cullable = dynamic_cast<Cullable*>(&instance);
+		CullablePtr cullable = boost::dynamic_pointer_cast<Cullable>(node);
 		if (cullable != NULL) {
-			return cullable->intersectVolume(volume, instance.localToWorld());
+			return cullable->intersectVolume(volume, node->localToWorld());
 		}
 	}
 	

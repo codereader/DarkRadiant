@@ -198,6 +198,13 @@ public:
 	 * 			contained entity from a node.
 	 */
 	virtual Entity& getEntity() = 0;
+
+	/**
+	 * greebo: Tells the entity to reload the child model. This usually
+	 *         includes removal of the child model node and triggering
+	 *         a "skin changed" event.
+	 */
+	virtual void refreshModel() = 0;
 };
 typedef boost::shared_ptr<EntityNode> EntityNodePtr; 
 
@@ -247,7 +254,8 @@ public:
   typedef void (*KeyValueChangedFunc)();
   virtual void setKeyValueChangedFunc(KeyValueChangedFunc func) = 0;
 
-  virtual void connectEntities(const scene::Path& e1, const scene::Path& e2) = 0;
+	// Connects the two given entities (source will point to target)
+	virtual void connectEntities(const scene::INodePtr& source, const scene::INodePtr& target) = 0;
 };
 
 inline EntityCreator& GlobalEntityCreator() {

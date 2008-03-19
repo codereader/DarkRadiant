@@ -44,24 +44,29 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 	
 	// Otherwise create the correct entity subclass based on the entity class
 	// parameters.
+	scene::INodePtr node;
+
 	if (eclass->isLight()) {
-		return scene::INodePtr(new LightNode(eclass));
+		node = scene::INodePtr(new LightNode(eclass));
 	}
 	else if (!eclass->isFixedSize()) {
 		// Variable size entity
-		return scene::INodePtr(new entity::Doom3GroupNode(eclass));
+		node = scene::INodePtr(new entity::Doom3GroupNode(eclass));
 	}
 	else if (eclass->getModelPath().size() > 0) {
 		// Fixed size, has model path
-		return scene::INodePtr(new EclassModelNode(eclass));
+		node = scene::INodePtr(new EclassModelNode(eclass));
 	}
 	else if (eclass->getName() == "speaker") {
-		return scene::INodePtr(new SpeakerNode(eclass));
+		node = scene::INodePtr(new SpeakerNode(eclass));
 	}
 	else {
 		// Fixed size, no model path
-		return scene::INodePtr(new GenericEntityNode(eclass));
+		node = scene::INodePtr(new GenericEntityNode(eclass));
 	}
+
+	node->setSelf(node);
+	return node;
 }
 
 scene::INodePtr Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
@@ -102,11 +107,10 @@ void Doom3EntityCreator::setKeyValueChangedFunc(KeyValueChangedFunc func) {
 
 /* Connect two entities using a "target" key.
  */
-void Doom3EntityCreator::connectEntities(const scene::Path& path,
-                     const scene::Path& targetPath) {
+void Doom3EntityCreator::connectEntities(const scene::INodePtr& source, const scene::INodePtr& target) {
 	// Obtain both entities
-	Entity* e1 = Node_getEntity(path.top());
-	Entity* e2 = Node_getEntity(targetPath.top());
+	Entity* e1 = Node_getEntity(source);
+	Entity* e2 = Node_getEntity(target);
 
 	// Check entities are valid
 	if (e1 == NULL || e2 == NULL) {

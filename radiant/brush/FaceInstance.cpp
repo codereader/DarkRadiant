@@ -1,7 +1,7 @@
 #include "FaceInstance.h"
 
 #include "ifilter.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "math/frustum.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;

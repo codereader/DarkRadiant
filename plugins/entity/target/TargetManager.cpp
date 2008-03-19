@@ -1,5 +1,7 @@
 #include "TargetManager.h"
 
+#include "stream/textstream.h"
+
 namespace entity {
 
 // Constructor
@@ -37,7 +39,7 @@ TargetPtr TargetManager::getTarget(const std::string name) {
 	return target;
 }
 
-void TargetManager::associateTarget(const std::string& name, scene::Instance* instance) {
+void TargetManager::associateTarget(const std::string& name, const scene::INodePtr& node) {
 	if (name.empty()) {
 		return; // don't associate empty names
 	}
@@ -47,7 +49,7 @@ void TargetManager::associateTarget(const std::string& name, scene::Instance* in
 	if (found != _targets.end()) {
 		if (found->second->isEmpty()) {
 			// Already registered, but empty => associate it
-			found->second->setInstance(instance);
+			found->second->setNode(node);
 		}
 		else {
 			// Non-empty target!
@@ -61,7 +63,7 @@ void TargetManager::associateTarget(const std::string& name, scene::Instance* in
 	TargetPtr target(new Target);
 
 	// Associate the target
-	target->setInstance(instance);
+	target->setNode(node);
 
 	// Insert into the local map and return
 	_targets.insert(TargetList::value_type(name, target));

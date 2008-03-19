@@ -9,6 +9,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "patch/PatchNode.h"
 #include "texturelib.h"
 #include "selectionlib.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -16,7 +17,6 @@
 #include "gtkutil/GLWidgetSentry.h"
 #include "mainframe.h"
 #include "brush/Face.h"
-#include "patch/Patch.h"
 #include "brush/Winding.h"
 #include "camera/GlobalCamera.h"
 
@@ -221,7 +221,7 @@ void TexTool::rescanSelection() {
 			for (std::size_t i = 0; i < patchList.size(); i++) {
 				// Allocate a new PatchItem on the heap (shared_ptr)
 				selection::textool::TexToolItemPtr patchItem(
-					new selection::textool::PatchItem(*patchList[i])
+					new selection::textool::PatchItem(patchList[i]->getPatch())
 				);
 				
 				// Add it to the list
@@ -260,7 +260,7 @@ void TexTool::rescanSelection() {
 	recalculateVisibleTexSpace();
 }
 
-void TexTool::selectionChanged(scene::Instance& instance, bool isComponent) {
+void TexTool::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	rescanSelection();
 	draw();
 }

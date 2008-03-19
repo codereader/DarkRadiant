@@ -6,10 +6,6 @@
 #include "selectable.h"
 #include "scenelib.h"
 
-inline PlaneSelectable* Instance_getPlaneSelectable(scene::Instance& instance) {
-  return dynamic_cast<PlaneSelectable*>(&instance);
-}
-
 class PlaneSelectableSelectPlanes : public scene::Graph::Walker {
 	Selector& _selector;
 	SelectionTest& _test;
@@ -17,7 +13,7 @@ class PlaneSelectableSelectPlanes : public scene::Graph::Walker {
 public:
 	PlaneSelectableSelectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
     	: _selector(selector), _test(test), _selectedPlaneCallback(selectedPlaneCallback) {}
-	bool pre(const scene::Path& path, scene::Instance& instance) const;
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const;
 };
 
 class PlaneSelectableSelectReversedPlanes : public scene::Graph::Walker {
@@ -26,7 +22,7 @@ class PlaneSelectableSelectReversedPlanes : public scene::Graph::Walker {
 public:
 	PlaneSelectableSelectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
 		: _selector(selector), _selectedPlanes(selectedPlanes) {}
-	bool pre(const scene::Path& path, scene::Instance& instance) const;
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const;
 };
 
 class PlaneLess

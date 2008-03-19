@@ -46,13 +46,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/patch/PatchCreateDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/General.h"
 
 void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std::string& shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
 {
   GlobalSelectionSystem().setSelectedAll(false);
 
   scene::INodePtr node(GlobalPatchCreator(DEF2).createPatch());
-  Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
+  GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
 
   Patch* patch = Node_getPatch(node);
   patch->SetShader(shader);
@@ -64,12 +65,12 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
     scene::Path patchpath(GlobalSceneGraph().root());
     patchpath.push(GlobalMap().getWorldspawn());
     patchpath.push(node);
-    Instance_getSelectable(*graph.find(patchpath))->setSelected(true);
+    Node_getSelectable(node)->setSelected(true);
   }
 }
 
 
-void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, const std::string& shader)
+void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type, const std::string& shader)
 {
   if((type == eCapEndCap || type == eCapIEndCap)
     && patch.getWidth() != 5)
@@ -90,46 +91,45 @@ void Patch_makeCaps(Patch& patch, scene::Instance& instance, EPatchCap type, con
     return;
   }
 
+  assert(parent != NULL);
+
   {
     scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
-    Node_getTraversable(instance.path().parent())->insert(cap);
+	parent->addChildNode(cap);
 
     patch.MakeCap(Node_getPatch(cap), type, ROW, true);
     Node_getPatch(cap)->SetShader(shader);
 
-    scene::Path path(instance.path());
-    path.pop();
-    path.push(cap);
-    selectPath(path, true);
+	Node_setSelected(cap, true);
   }
 
   {
     scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
-    Node_getTraversable(instance.path().parent())->insert(cap);
+    parent->addChildNode(cap);
 
     patch.MakeCap(Node_getPatch(cap), type, ROW, false);
     Node_getPatch(cap)->SetShader(shader);
 
-    scene::Path path(instance.path());
-    path.pop();
-    path.push(cap);
-    selectPath(path, true);
+    Node_setSelected(cap, true);
   }
 }
 
-typedef std::vector<scene::Instance*> InstanceVector;
+typedef std::vector<scene::INodePtr> NodeVector;
 
-class PatchStoreInstance
+class PatchCollector :
+	public SelectionSystem::Visitor
 {
-  InstanceVector& m_instances;
+	mutable NodeVector _patches;
 public:
-  PatchStoreInstance(InstanceVector& instances) : m_instances(instances)
-  {
-  }
-  void operator()(PatchInstance& patch) const
-  {
-    m_instances.push_back(&patch);
-  }
+	NodeVector& getPatchNodes() {
+		return _patches;
+	}
+
+	virtual void visit(const scene::INodePtr& node) const {
+		if (Node_isPatch(node)) {
+			_patches.push_back(node);
+		}
+	}
 };
 
 enum ECapDialog {
@@ -171,11 +171,12 @@ void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
       return;
     }
   
-    InstanceVector instances;
-    Scene_forEachVisibleSelectedPatchInstance(PatchStoreInstance(instances));
-    for(InstanceVector::const_iterator i = instances.begin(); i != instances.end(); ++i)
-    {
-      Patch_makeCaps(* Node_getPatch((*i)->path().top()), *(*i), eType, shader);
+	PatchCollector collector;
+	GlobalSelectionSystem().foreachSelected(collector);
+	NodeVector& patchNodes = collector.getPatchNodes();
+
+    for (NodeVector::const_iterator i = patchNodes.begin(); i != patchNodes.end(); ++i) {
+		Patch_makeCaps(*Node_getPatch(*i), (*i)->getParent(), eType, shader);
     }
   }
 }
@@ -184,7 +185,7 @@ Patch* Scene_GetUltimateSelectedVisiblePatch()
 {
   if(GlobalSelectionSystem().countSelected() != 0)
   {
-    scene::INodePtr node = GlobalSelectionSystem().ultimateSelected().path().top();
+    const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
     if(node->visible()) {
       return Node_getPatch(node);
     }
@@ -275,26 +276,26 @@ void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name)
   SceneChangeNotify();
 }
 
-class PatchSelectByShader
+class PatchSelectByShader :
+	public scene::Graph::Walker
 {
-  std::string m_name;
+	std::string _name;
 public:
-  inline PatchSelectByShader(const std::string& name)
-    : m_name(name)
-  {
-  }
-  void operator()(PatchInstance& patch) const
-  {
-    if(shader_equal(patch.getPatch().GetShader(), m_name))
-    {
-      patch.setSelected(true);
-    }
-  }
+	PatchSelectByShader(const std::string& name) : 
+		_name(name)
+	{}
+
+	virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		Patch* patch = Node_getPatch(node);
+		if (patch != NULL && node->visible() && shader_equal(patch->GetShader(), _name)) {
+			Node_setSelected(node, true);
+		}
+		return true;
+	}
 };
 
-void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name)
-{
-  Scene_forEachVisiblePatchInstance(PatchSelectByShader(name));
+void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name) {
+	GlobalSceneGraph().traverse(PatchSelectByShader(name));
 }
 
 AABB PatchCreator_getBounds()
@@ -543,69 +544,57 @@ void appendRowsAtEnd() {
 	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(false, false));
 }
 
-void thickenPatches(PatchPtrVector patchList, 
-					const float& thickness, 
-					const bool& createSeams, 
-					const int& axis) 
+void thickenPatch(const PatchNodePtr& sourcePatch, 
+				  float thickness, bool createSeams, int axis)
 {
-	// Go through the list and thicken all the found ones
-	for (unsigned int i = 0; i < patchList.size(); i++) {
-		// Retrieve the reference from the pointer
-		Patch& sourcePatch = *patchList[i]; 
+	// Get a shortcut to the patchcreator
+	PatchCreator& patchCreator = GlobalPatchCreator(DEF2);
+
+	// Create a new patch node
+	scene::INodePtr node(patchCreator.createPatch());
+
+	scene::INodePtr parent = sourcePatch->getParent();
+	assert(parent != NULL);
+
+	// Insert the node into the same parent as the existing patch
+	parent->addChildNode(node);
+
+	// Retrieve the contained patch from the node
+	Patch* targetPatch = Node_getPatch(node);
+
+	// Create the opposite patch with the given thickness = distance
+	targetPatch->createThickenedOpposite(sourcePatch->getPatch(), thickness, axis);
+
+	// Select the newly created patch
+	Node_setSelected(node, true);
+	
+	if (createSeams && thickness > 0.0f) {
+		// Allocate four new patches
+		scene::INodePtr nodes[4] = {
+			patchCreator.createPatch(),
+			patchCreator.createPatch(),
+			patchCreator.createPatch(),
+			patchCreator.createPatch()
+		};
 		
-		// Create a new patch node
-		scene::INodePtr node(GlobalPatchCreator(DEF2).createPatch());
-		// Insert the node into worldspawn
-		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(node);
-	
-		// Retrieve the contained patch from the node
-		Patch* targetPatch = Node_getPatch(node);
-	
-		// Create the opposite patch with the given thickness = distance
-		targetPatch->createThickenedOpposite(sourcePatch, thickness, axis);
-	
-		// Now select the newly created patches
-		{
-			scene::Path patchpath(GlobalSceneGraph().root());
-			patchpath.push(GlobalMap().getWorldspawn());
-			patchpath.push(node);
-			Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
-		}
-		
-		if (createSeams && thickness > 0.0f) {
-			PatchCreator& patchCreator = GlobalPatchCreator(DEF2);
-			// Allocate four new patches
-			scene::INodePtr nodes[4] = {
-				scene::INodePtr(patchCreator.createPatch()),
-				scene::INodePtr(patchCreator.createPatch()),
-				scene::INodePtr(patchCreator.createPatch()),
-				scene::INodePtr(patchCreator.createPatch())
-			};
+		// Now create the four walls
+		for (int i = 0; i < 4; i++) {
+			// Insert each node into the same parent as the existing patch
+			parent->addChildNode(nodes[i]);
 			
-			// Now create the four walls
-			for (int i = 0; i < 4; i++) {
-				// Insert each node into worldspawn 
-				Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(nodes[i]);
-				
-				// Retrieve the contained patch from the node
-				Patch* wallPatch = Node_getPatch(nodes[i]);
-				
-				// Create the wall patch by passing i as wallIndex
-				wallPatch->createThickenedWall(sourcePatch, *targetPatch, i);
-				
-				// Now select the newly created patches
-				{
-					scene::Path patchpath(GlobalSceneGraph().root());
-					patchpath.push(GlobalMap().getWorldspawn());
-					patchpath.push(nodes[i]);
-					Instance_getSelectable(*GlobalSceneGraph().find(patchpath))->setSelected(true);
-				}
-			}
+			// Retrieve the contained patch from the node
+			Patch* wallPatch = Node_getPatch(nodes[i]);
+			
+			// Create the wall patch by passing i as wallIndex
+			wallPatch->createThickenedWall(sourcePatch->getPatch(), *targetPatch, i);
+			
+			// Now select the newly created patch
+			Node_setSelected(nodes[i], true);
 		}
-		
-		// Invert the target patch so that it faces the opposite direction
-		targetPatch->InvertMatrix();
 	}
+	
+	// Invert the target patch so that it faces the opposite direction
+	targetPatch->InvertMatrix();
 }
 
 /** greebo: This collects a list of all selected patches and thickens them
@@ -616,7 +605,6 @@ void thickenPatches(PatchPtrVector patchList,
  * and they are thickened as well, and again and again).  
  */
 void thickenSelectedPatches() {
-	
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 	
@@ -631,8 +619,10 @@ void thickenSelectedPatches() {
 		int axis = 3;
 		
 		if (dialog.queryPatchThickness(thickness, createSeams, axis)) {
-			// Thicken all the patches in the list
-			thickenPatches(patchList, thickness, createSeams, axis);
+			// Go through the list and thicken all the found ones
+			for (std::size_t i = 0; i < patchList.size(); i++) {
+				thickenPatch(patchList[i], thickness, createSeams, axis);
+			}
 		}
 	}
 	else {
@@ -661,7 +651,7 @@ void createSimplePatch() {
 		
 		if (removeSelectedBrush) {
 			// Delete the selection, the should be only one brush selected
-			Select_Delete();
+			selection::algorithm::deleteSelection();
 		}
 		
 		// Call the PatchConstruct routine (GtkRadiant legacy)
@@ -680,15 +670,15 @@ void stitchPatchTextures() {
 		UndoableCommand undo("patchStitchTexture");
 
 		// Fetch the instances from the selectionsystem		
-		scene::Instance& targetInstance = 
+		const scene::INodePtr& targetNode = 
 			GlobalSelectionSystem().ultimateSelected();
 			
-		scene::Instance& sourceInstance =
+		const scene::INodePtr& sourceNode =
 			GlobalSelectionSystem().penultimateSelected();
 		
 		// Cast the instances onto a patch
-		Patch* source = Node_getPatch(sourceInstance.path().top());
-		Patch* target = Node_getPatch(targetInstance.path().top());
+		Patch* source = Node_getPatch(sourceNode);
+		Patch* target = Node_getPatch(targetNode);
 		
 		if (source != NULL && target != NULL) {		
 			// Stitch the texture leaving the source patch intact 

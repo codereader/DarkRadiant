@@ -1,7 +1,7 @@
 #include "Face.h"
 
 #include "ifilter.h"
-#include "renderable.h"
+#include "irenderable.h"
 
 #include "shaderlib.h"
 #include "Winding.h"

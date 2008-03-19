@@ -36,8 +36,6 @@ public:
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch 
  * is handled here (unselected control points, tesselation lines, shader). 
  * 
- * All the selection stuff is handled by the PatchInstance, as this class does NOT inherit from a Selectable class.
- * 
  * This class also provides functions to export/import itself to XML.
  */
 // parametric surface defined by quadratic bezier control curves
@@ -51,7 +49,7 @@ class Patch :
 	XMLStateVector m_xml_state;
 
 public:
-	// A Patch observer, this is implemented by PatchInstance
+	// A Patch observer, this is implemented by the PatchNode
 	// to re-allocate the patch control instances.
 	class Observer {
 		public:
@@ -239,6 +237,7 @@ public:
 	const PatchControlArray& getControlPoints() const;
 	// Get the (temporary) transformed control point array, not the saved ones
 	PatchControlArray& getControlPointsTransformed();
+	const PatchControlArray& getControlPointsTransformed() const;
 
 	// Set the dimensions of this patch to width <w>, height <h>
 	void setDims(std::size_t w, std::size_t h);
@@ -419,7 +418,5 @@ public:
 	// Destructor
 	~Patch();
 }; // end class Patch
-
-typedef std::vector<Patch*> PatchPtrVector;
 
 #endif /*PATCHCLASS_H_*/

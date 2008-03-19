@@ -3,7 +3,7 @@
 #include "iregistry.h"
 #include "iuimanager.h"
 #include "shaderlib.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "selectable.h"
 #include "math/frustum.h"
 #include "stringio.h"
@@ -158,6 +158,10 @@ const PatchControlArray& Patch::getControlPoints() const {
 
 // Get the (temporary) transformed control point array, not the saved ones
 PatchControlArray& Patch::getControlPointsTransformed() {
+	return m_ctrlTransformed;
+}
+
+const PatchControlArray& Patch::getControlPointsTransformed() const {
 	return m_ctrlTransformed;
 }
 
@@ -2161,7 +2165,7 @@ void RenderablePatchSolid::RenderNormals() const
       {
         Vector3 vNormal(
             ((m_tess.m_vertices.data() + (j*width+i))->vertex) +
-            ((m_tess.m_vertices.data() + (j*width+i))->normal) * 8
+			((m_tess.m_vertices.data() + (j*width+i))->normal).getNormalised() * 8
         );
         glVertex3dv((m_tess.m_vertices.data() + (j*width+i))->vertex);
         glVertex3dv(vNormal);
@@ -2169,7 +2173,7 @@ void RenderablePatchSolid::RenderNormals() const
       {
         Vector3 vNormal(          
             ((m_tess.m_vertices.data() + (j*width+i))->vertex) +
-            ((m_tess.m_vertices.data() + (j*width+i))->tangent) * 8
+            ((m_tess.m_vertices.data() + (j*width+i))->tangent).getNormalised() * 8
         );
         glVertex3dv((m_tess.m_vertices.data() + (j*width+i))->vertex);
         glVertex3dv(vNormal);
@@ -2177,7 +2181,7 @@ void RenderablePatchSolid::RenderNormals() const
       {
         Vector3 vNormal(
             ((m_tess.m_vertices.data() + (j*width+i))->vertex) +
-            ((m_tess.m_vertices.data() + (j*width+i))->bitangent) * 8
+            ((m_tess.m_vertices.data() + (j*width+i))->bitangent).getNormalised() * 8
         );
         glVertex3dv((m_tess.m_vertices.data() + (j*width+i))->vertex);
         glVertex3dv(vNormal);
@@ -3562,12 +3566,8 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			break;
 	}
 	
-	// Convert the size_t stuff into int, because we need it for signed comparisons
-	int patchHeight = static_cast<int>(m_height);
-	int patchWidth = static_cast<int>(m_width);
-	
-	for (int col = 0; col < patchWidth; col++) {
-		for (int row = 0; row < patchHeight; row++) {
+	for (std::size_t col = 0; col < m_width; col++) {
+		for (std::size_t row = 0; row < m_height; row++) {
 			
 			// The current control vertex on the other patch
 			const PatchControl& curCtrl = sourcePatch.ctrlAt(row, col);
@@ -3579,10 +3579,10 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			};
 			
 			// Are we at the end of the column?
-			if (col == patchWidth-1) {
+			if (col == m_width-1) {
 				// Take the one neighbour vertex
 				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col-1);
-				// Only fill one of the rowTangens
+				// Only fill one of the rowTangents
 				colTangent[0] = neighbour.m_vertex - curCtrl.m_vertex;
 				// Reverse it, as it faces the other direction
 				colTangent[0] *= -1;
@@ -3591,12 +3591,12 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			else if (col == 0) {
 				// Take the one neighbour vertex
 				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col+1);
-				// Only fill one of the rowTangens
+				// Only fill one of the rowTangents
 				colTangent[0] = neighbour.m_vertex - curCtrl.m_vertex;
 			}
 			// We are in between, two normals tangents can be calculated
 			else {
-				// Take two neighbouring vertices that should form a triangle
+				// Take two neighbouring vertices that should form a line segment
 				const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, col+1);
 				const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col-1);
 				
@@ -3609,14 +3609,14 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			}
 			
 			// Get the next row index
-			int nextRow = (row == patchHeight-1) ? (row - 1) : (row + 1);
+			std::size_t nextRow = (row == m_height-1) ? (row - 1) : (row + 1);
 			
 			const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
 			
 			// Calculate the tangent vector to the next row
 			Vector3 rowTangent = rowNeighbour.m_vertex - curCtrl.m_vertex;
 			// Reverse it accordingly
-			rowTangent *= (row == patchHeight-1) ? -1 : +1;
+			rowTangent *= (row == m_height-1) ? -1 : +1;
 			
 			Vector3 normal;
 			
@@ -3644,7 +3644,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 					// Check for div by zero (if the normals are antiparallel)
 					// and stretch the resulting normal, if necessary
 					if (factor != 0) {
-						normal *= 1/factor;
+						normal /= factor;
 					}
 					else {
 						normal = Vector3(0,0,0);

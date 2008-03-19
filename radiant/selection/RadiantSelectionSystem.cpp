@@ -14,7 +14,6 @@
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
 #include "patch/PatchSceneWalk.h"
-#include "brush/BrushInstance.h"
 #include "xyview/GlobalXYWnd.h"
 #include "modulesystem/StaticModule.h"
 
@@ -39,14 +38,14 @@ inline void matrix4_assign_rotation(Matrix4& matrix, const Matrix4& other) {
 	matrix[10] = other[10];
 }
 
-void matrix4_assign_rotation_for_pivot(Matrix4& matrix, scene::Instance& instance) {
-	EditablePtr editable = Node_getEditable(instance.path().top());
+void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& node) {
+	EditablePtr editable = Node_getEditable(node);
 	// If the instance is editable, take the localpivot point into account, otherwise just apply the rotation
 	if (editable != 0) {
-		matrix4_assign_rotation(matrix, matrix4_multiplied_by_matrix4(instance.localToWorld(), editable->getLocalPivot()));
+		matrix4_assign_rotation(matrix, matrix4_multiplied_by_matrix4(node->localToWorld(), editable->getLocalPivot()));
 	}
 	else {
-		matrix4_assign_rotation(matrix, instance.localToWorld());
+		matrix4_assign_rotation(matrix, node->localToWorld());
 	}
 }
 
@@ -88,14 +87,14 @@ void RadiantSelectionSystem::removeObserver(Observer* observer) {
 	}
 }
 
-void RadiantSelectionSystem::notifyObservers(scene::Instance& instance, bool isComponent) {
+void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool isComponent) {
 	
 	// Cycle through the list of observers and call the moved method
 	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
 		Observer* observer = *i;
 		
 		if (observer != NULL) {
-			observer->selectionChanged(instance, isComponent);
+			observer->selectionChanged(node, isComponent);
 		}
 	}
 }
@@ -221,10 +220,8 @@ std::size_t RadiantSelectionSystem::countSelectedComponents() const {
 	return _countComponent;
 }
 
-// This is called if the selection changes, so that the local list of selected instances can be updated
-// greebo: Interestingly, this is called by the instance itself (deriving from SelectableInstance).
-// (This is a really annoying mess of callbacks. Hmpf.)
-void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const Selectable& selectable) {
+// This is called if the selection changes, so that the local list of selected nodes can be updated
+void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable) {
 	
 	// Cache the selection state
 	bool isSelected = selectable.isSelected();
@@ -234,10 +231,10 @@ void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const 
 	
 	_selectionInfo.totalCount += (isSelected) ? +1 : -1;
 	
-	if (Instance_getPatch(instance) != NULL) {
+	if (Node_getPatch(node) != NULL) {
 		_selectionInfo.patchCount += (isSelected) ? +1 : -1;
 	}
-	else if (Instance_getBrush(instance) != NULL) {
+	else if (Node_getBrush(node) != NULL) {
 		_selectionInfo.brushCount += (isSelected) ? +1 : -1;
 	}
 	else {
@@ -246,22 +243,22 @@ void RadiantSelectionSystem::onSelectedChanged(scene::Instance& instance, const 
 	
 	// If the selectable is selected, add it to the local selection list, otherwise remove it 
 	if (isSelected) {
-		_selection.append(instance);
+		_selection.append(node);
 	}
 	else {
-		_selection.erase(instance);
+		_selection.erase(node);
 	}
 	
 	// Notify observers, FALSE = primitive selection change
-	notifyObservers(instance, false);
+	notifyObservers(node, false);
 
 	// Check if the number of selected primitives in the list matches the value of the selection counter
 	ASSERT_MESSAGE(_selection.size() == _countPrimitive, "selection-tracking error");
 }
 
 // greebo: This should be called "onComponentSelectionChanged", as it is a similar function of the above one
-// Updates the internal list of component instances if the component selection gets changed
-void RadiantSelectionSystem::onComponentSelection(scene::Instance& instance, const Selectable& selectable) {
+// Updates the internal list of component nodes if the component selection gets changed
+void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, const Selectable& selectable) {
 	
 	_countComponent += (selectable.isSelected()) ? +1 : -1;
 	_selectionChangedCallbacks(selectable); // legacy
@@ -270,27 +267,27 @@ void RadiantSelectionSystem::onComponentSelection(scene::Instance& instance, con
 	
 	// If the instance got selected, add it to the list, otherwise remove it
 	if (selectable.isSelected()) {
-		_componentSelection.append(instance);
+		_componentSelection.append(node);
 	}
     else {
-		_componentSelection.erase(instance);
+		_componentSelection.erase(node);
 	}
 	
 	// Notify observers, TRUE => this is a component selection change
-	notifyObservers(instance, true);
+	notifyObservers(node, true);
 
 	// Check if the number of selected components in the list matches the value of the selection counter 
 	ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "component selection-tracking error");
 }
 
 // Returns the last instance in the list (if the list is not empty)
-scene::Instance& RadiantSelectionSystem::ultimateSelected() const {
+scene::INodePtr RadiantSelectionSystem::ultimateSelected() const {
 	ASSERT_MESSAGE(_selection.size() > 0, "no instance selected");
 	return _selection.ultimate();
 }
 
 // Returns the instance before the last instance in the list (second from the end)
-scene::Instance& RadiantSelectionSystem::penultimateSelected() const {
+scene::INodePtr RadiantSelectionSystem::penultimateSelected() const {
 	ASSERT_MESSAGE(_selection.size() > 1, "only one instance selected");
 	//return *(*(--(--_selection.end())));
 	return _selection.penultimate();
@@ -314,19 +311,18 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
 
 // Traverse the current selection and visit them with the given visitor class
 void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
-	SelectionListType::const_iterator i = _selection.begin();
-	while(i != _selection.end()) {
-		scene::Instance& instance = *(i++)->first; 
-		visitor.visit(instance);
+	for (SelectionListType::const_iterator i = _selection.begin(); i != _selection.end(); i++) {
+		visitor.visit(i->first);
 	}
 }
 
 // Traverse the current selection components and visit them with the given visitor class
 void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor) const {
-	SelectionListType::const_iterator i = _componentSelection.begin();
-	while(i != _componentSelection.end()) {
-		scene::Instance& instance = *(i++)->first; 
-		visitor.visit(instance);
+	for (SelectionListType::const_iterator i = _componentSelection.begin(); 
+		 i != _componentSelection.end(); 
+		 i++)
+	{
+		visitor.visit(i->first);
 	}
 }
 
@@ -842,8 +838,8 @@ void RadiantSelectionSystem::ConstructPivot() const {
 			GlobalRegistry().get(RKEY_ROTATION_PIVOT) == "1") 
 		{
 			// Test, if a single entity is selected
-			scene::Instance& instance = ultimateSelected();
-			Entity* entity = Node_getEntity(instance.path().top());
+			const scene::INodePtr& node = ultimateSelected();
+			Entity* entity = Node_getEntity(node);
 			
 			if (entity != NULL) {
 				objectPivot = entity->getKeyValue("origin");
@@ -959,6 +955,11 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 }
 
 void RadiantSelectionSystem::shutdownModule() {
+	// greebo: Unselect everything so that no references to scene::Nodes 
+	// are kept after shutdown, causing destruction issues.
+	setSelectedAll(false);
+	setSelectedAllComponents(false);
+
 	GlobalShaderCache().detachRenderable(*this);
 	GlobalSceneGraph().removeBoundsChangedCallback(_boundsChangedHandler);
 	

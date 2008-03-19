@@ -587,9 +587,8 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 	Node_getEntity(node)->setKeyValue("origin", RandomOrigin::generate(128));
 	
 	// Insert the node into the scene graph
-	scene::TraversablePtr root = Node_getTraversable(GlobalSceneGraph().root());
-	assert(root);
-	root->insert(node);
+	assert(GlobalSceneGraph().root());
+	GlobalSceneGraph().root()->addChildNode(node);
 	
 	// Refresh the widgets
 	self->populateWidgets();

@@ -10,22 +10,20 @@
 
 // -------------- Helper functions -------------------------------------
 
-inline AABB Instance_getPivotBounds(scene::Instance& instance) {
-	Entity* entity = Node_getEntity(instance.path().top());
-	if (entity != 0
-		&& (entity->getEntityClass()->isFixedSize() 
-			|| !node_is_group(instance.path().top())))
+inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
+	Entity* entity = Node_getEntity(node);
+	if (entity != NULL && (entity->getEntityClass()->isFixedSize() || !node_is_group(node)))
 	{
-		EditablePtr editable = Node_getEditable(instance.path().top());
+		EditablePtr editable = Node_getEditable(node);
 		if (editable != NULL) {
-			return AABB(matrix4_multiplied_by_matrix4(instance.localToWorld(), editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
+			return AABB(matrix4_multiplied_by_matrix4(node->localToWorld(), editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
 		}
 		else {
-			return AABB(instance.localToWorld().t().getVector3(), Vector3(0, 0, 0));
+			return AABB(node->localToWorld().t().getVector3(), Vector3(0, 0, 0));
 		}
 	}
 
-	return instance.worldAABB();
+	return node->worldAABB();
 }
 
 // ----------- The Walker Classes ------------------------------------------------
@@ -36,11 +34,8 @@ class SelectAllWalker : public scene::Graph::Walker {
 public:
 	SelectAllWalker(bool select) : _select(select) {}
   
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		Selectable* selectable = Instance_getSelectable(instance);
-		if (selectable != 0) {
-			selectable->setSelected(_select);
-		}
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		Node_setSelected(node, _select);
 		return true;
 	}
 };
@@ -53,9 +48,10 @@ public:
 	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode)
 		: _select(select), _mode(mode) {}
 
-  	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		ComponentSelectionTestable* componentSelectionTestable = Instance_getComponentSelectionTestable(instance);
-		if (componentSelectionTestable) {
+  	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
+
+		if (componentSelectionTestable != NULL) {
 			componentSelectionTestable->setSelectedComponents(_select, _mode);
 		}
 		return true;
@@ -76,7 +72,7 @@ public:
 		}
 	}
 
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		TransformNodePtr transformNode = Node_getTransformNode(path.top());
 		if (transformNode != 0) {
 			Brush* brush = Node_getBrush(path.top());
@@ -101,10 +97,10 @@ public:
 // As the name states, all visited instances have their transformations freezed
 class FreezeTransforms : public scene::Graph::Walker {
 public:
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		TransformNodePtr transformNode = Node_getTransformNode(path.top());
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		TransformNodePtr transformNode = Node_getTransformNode(node);
 		if (transformNode != 0) {
-			Transformable* transform = Instance_getTransformable(instance);
+			TransformablePtr transform = Node_getTransformable(node);
 			if (transform != 0) {
 				transform->freezeTransform(); 
 			}
@@ -118,10 +114,10 @@ class RevertTransforms :
 	public scene::Graph::Walker 
 {
 public:
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		TransformNodePtr transformNode = Node_getTransformNode(path.top());
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		TransformNodePtr transformNode = Node_getTransformNode(node);
 		if (transformNode != 0) {
-			Transformable* transform = Instance_getTransformable(instance);
+			TransformablePtr transform = Node_getTransformable(node);
 			if (transform != 0) {
 				transform->revertTransform(); 
 			}
@@ -135,12 +131,12 @@ class RevertTransformForSelected :
 	public scene::Graph::Walker 
 {
 public:
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		TransformNodePtr transformNode = Node_getTransformNode(path.top());
-		Selectable* selectable = Instance_getSelectable(instance);
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		TransformNodePtr transformNode = Node_getTransformNode(node);
+		SelectablePtr selectable = Node_getSelectable(node);
 				
 		if (transformNode != NULL && selectable != NULL && selectable->isSelected()) {
-			Transformable* transform = Instance_getTransformable(instance);
+			TransformablePtr transform = Node_getTransformable(node);
 			if (transform != NULL) {
 				transform->revertTransform(); 
 			}
@@ -158,11 +154,10 @@ public:
 		_bounds = AABB();
 	}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		Selectable* selectable = Instance_getSelectable(instance);
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		// Only update the aabb variable if the instance is selected 
-		if (selectable != 0 && selectable->isSelected()) {
-			_bounds.includeAABB(Instance_getPivotBounds(instance));
+		if (Node_isSelected(node)) {
+			_bounds.includeAABB(Node_getPivotBounds(node));
 		}
 		return true;
 	}
@@ -177,15 +172,15 @@ public:
 		_bounds = AABB();
 	}
   
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		Selectable* selectable = Instance_getSelectable(instance);
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		SelectablePtr selectable = Node_getSelectable(node);
 		// Only update the aabb variable if the instance is selected
 		if (selectable != 0 && selectable->isSelected()) {
-			ComponentEditable* componentEditable = Instance_getComponentEditable(instance);
-			if (componentEditable) {
+			ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
+			if (componentEditable != NULL) {
 				_bounds.includeAABB(
 					aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), 
-												instance.localToWorld()));
+												node->localToWorld()));
 			}
 		}
 		return true;

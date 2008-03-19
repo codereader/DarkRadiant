@@ -50,8 +50,8 @@ public:
   testselect_entity_visible(Selector& selector, SelectionTest& test)
     : _selector(selector), _test(test) {}
 
-  bool pre(const scene::Path& path, scene::Instance& instance) const;  
-  void post(const scene::Path& path, scene::Instance& instance) const;
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const;  
+  void post(const scene::Path& path, const scene::INodePtr& node) const;
 };
 
 class testselect_primitive_visible : public scene::Graph::Walker {
@@ -68,8 +68,8 @@ public:
 		_selectChildPrimitives(selectChildPrimitives) 
 	{}
 
-  bool pre(const scene::Path& path, scene::Instance& instance) const;
-  void post(const scene::Path& path, scene::Instance& instance) const;
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const;
+  void post(const scene::Path& path, const scene::INodePtr& node) const;
 };
 
 /** greebo: Tests for any primitives/entities matching the selectiontest
@@ -87,8 +87,8 @@ public:
 		_selectChildPrimitives(selectChildPrimitives)
 	{}
 
-	bool pre(const scene::Path& path, scene::Instance& instance) const;  
-	void post(const scene::Path& path, scene::Instance& instance) const;
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const;  
+	void post(const scene::Path& path, const scene::INodePtr& node) const;
 };
 
 class testselect_component_visible : public scene::Graph::Walker {
@@ -99,7 +99,7 @@ public:
   testselect_component_visible(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
     : _selector(selector), _test(test), _mode(mode) {}
   
-  bool pre(const scene::Path& path, scene::Instance& instance) const;
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const;
 };
 
 class testselect_component_visible_selected : public scene::Graph::Walker {
@@ -110,7 +110,7 @@ public:
   testselect_component_visible_selected(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
     : _selector(selector), _test(test), _mode(mode) {}
   
-  bool pre(const scene::Path& path, scene::Instance& instance) const;
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const;
 };
 
 // --------------------------------------------------------------------------------

@@ -92,13 +92,14 @@ const TransformModifierType TRANSFORM_COMPONENT = true;
 class Transformable
 {
 public:
-  virtual void setType(TransformModifierType type) = 0;
-  virtual void setTranslation(const Translation& value) = 0;
-  virtual void setRotation(const Rotation& value) = 0;
-  virtual void setScale(const Scale& value) = 0;
-  virtual void freezeTransform() = 0;
-  virtual void revertTransform() = 0;
+	virtual void setType(TransformModifierType type) = 0;
+	virtual void setTranslation(const Translation& value) = 0;
+	virtual void setRotation(const Rotation& value) = 0;
+	virtual void setScale(const Scale& value) = 0;
+	virtual void freezeTransform() = 0;
+	virtual void revertTransform() = 0;
 };
+typedef boost::shared_ptr<Transformable> TransformablePtr;
 
 const Translation c_translation_identity = Translation(0, 0, 0);
 const Rotation c_rotation_identity = c_quaternion_identity;

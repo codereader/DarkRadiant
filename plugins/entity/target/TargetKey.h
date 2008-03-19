@@ -1,6 +1,9 @@
 #ifndef _ENTITY_TARGETKEY_H_
 #define _ENTITY_TARGETKEY_H_
 
+#include "ientity.h"
+#include "generic/callback.h"
+
 #include "Target.h"
 
 namespace entity {

@@ -21,14 +21,12 @@ public:
 		_classname(classname)
 	{}
 
-	virtual void visit(scene::Instance& instance) const {
+	virtual void visit(const scene::INodePtr& node) const {
 		// Check if we have an entity
-		Entity* entity = Node_getEntity(instance.path().top());
+		Entity* entity = Node_getEntity(node);
 
-		if (entity != NULL && !_classname.empty() &&
-			(instance.childSelected() || Instance_isSelected(instance)))
-		{ 
-			changeEntityClassname(instance, _classname);
+		if (entity != NULL && !_classname.empty() && Node_isSelected(node)) { 
+			changeEntityClassname(node, _classname);
 		}
 	}
 };

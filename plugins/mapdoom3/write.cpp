@@ -81,7 +81,8 @@ void Entity_ExportTokens(const Entity& entity, std::ostream& os)
  * out to the token stream, including its member brushes.
  */
 
-class WriteTokensWalker : public scene::Traversable::Walker
+class WriteTokensWalker : 
+	public scene::NodeVisitor
 {
 	// Stack to hold the parent entity when writing a brush. Either
 	// the parent Entity is pushed, or a NULL pointer.
@@ -116,8 +117,7 @@ public:
 	}
 	
 	// Pre-descent callback
-  bool pre(scene::INodePtr node) const
-  {
+  virtual bool pre(const scene::INodePtr& node) {
 	// Check whether we are have a brush or an entity. We might get 
 	// called at either level.
     Entity* entity = Node_getEntity(node);
@@ -161,7 +161,7 @@ public:
   }
   
 	// Post-descent callback
-	void post(scene::INodePtr node) const {
+	virtual void post(const scene::INodePtr& node) {
 
 		// Check if we are popping an entity
 		Entity* ent = _entityStack.back();
@@ -188,8 +188,8 @@ public:
 	}
 };
 
-void Map_Write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os)
-{
-	traverse(root, WriteTokensWalker(os));
+void Map_Write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) {
+	WriteTokensWalker walker(os);
+	traverse(root, walker);
 }
 

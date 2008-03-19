@@ -88,7 +88,7 @@ void EntityList::update() {
 }
 
 // Gets notified upon selection change
-void EntityList::selectionChanged(scene::Instance& instance, bool isComponent) {
+void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	if (_callbackActive || !isVisible() || isComponent) {
 		// Don't update if not shown or already updating, also ignore components
 		return;
@@ -96,7 +96,7 @@ void EntityList::selectionChanged(scene::Instance& instance, bool isComponent) {
 	
 	_callbackActive = true;
 	
-	_treeModel.updateSelectionStatus(_selection, instance);
+	_treeModel.updateSelectionStatus(_selection, node);
 	
 	_callbackActive = false;
 }
@@ -194,10 +194,11 @@ gboolean EntityList::onSelection(GtkTreeSelection* selection,
 	gtk_tree_model_get_iter(model, &iter, path);
 	
 	// Load the instance pointer from the columns
-	scene::Instance& instance = *reinterpret_cast<scene::Instance*>(
-		gtkutil::TreeModel::getPointer(model, &iter, GraphTreeModel::COL_INSTANCE_POINTER));
+	scene::INode* node = reinterpret_cast<scene::Node*>(
+		gtkutil::TreeModel::getPointer(model, &iter, GraphTreeModel::COL_NODE_POINTER)
+	);
 	
-	Selectable* selectable = Instance_getSelectable(instance);
+	Selectable* selectable = dynamic_cast<Selectable*>(node);
 
 	if (selectable != NULL) {
 		// We've found a selectable instance
@@ -208,7 +209,7 @@ gboolean EntityList::onSelection(GtkTreeSelection* selection,
 		// Select the instance
 		selectable->setSelected(path_currently_selected == FALSE);
 
-		const AABB& aabb = instance.worldAABB();
+		const AABB& aabb = node->worldAABB();
 		Vector3 origin(aabb.origin);
 		
 		// Move the camera a bit off the AABB origin

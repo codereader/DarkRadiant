@@ -179,9 +179,9 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 	
 	// Exactly one entity has to be selected
 	if (info.totalCount == 1 && info.entityCount == 1) {
-		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 		
-		sensitive = node_is_group(instance.path().top());
+		sensitive = node_is_group(node);
 	}
 	
 	if (sensitive) {
@@ -249,14 +249,14 @@ void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMen
 	selection::algorithm::ModelFinder::ModelList::iterator iter;
 	for (iter = list.begin(); iter != list.end(); ++iter) {
 		// one of the models in the SelectionStack
-		scene::Instance& instance = findInstance(*iter);
+		const scene::INodePtr& node = *iter;
 
 		// retrieve the AABB
-		AABB brushAABB(instance.childBounds());
+		AABB brushAABB(node->worldAABB()); // TODO: Check if worldAABB() is appropriate
 
 		// create the brush
 		scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
-		Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(brushNode);
+		GlobalMap().findOrInsertWorldspawn()->addChildNode(brushNode);
 		Brush* theBrush = Node_getBrush(brushNode);
 		std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
 		Scene_BrushResize(*theBrush, brushAABB, clipShader);
@@ -313,14 +313,13 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 					// get the model
 					scene::Path modelPath(GlobalSceneGraph().root());
 					modelPath.push(modelNode);
-					scene::Instance& instance = findInstance(modelPath);
-	
+					
 					// retrieve the AABB
-					AABB brushAABB(instance.childBounds());
+					AABB brushAABB(modelNode->worldAABB()); // TODO: Check if worldAABB() is ok
 	
 					// create the brush
 					scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
-					Node_getTraversable(GlobalMap().findOrInsertWorldspawn())->insert(brushNode);
+					GlobalMap().findOrInsertWorldspawn()->addChildNode(brushNode);
 					Brush* theBrush = Node_getBrush(brushNode);
 					std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
 					Scene_BrushResize(*theBrush, brushAABB, clipShader);

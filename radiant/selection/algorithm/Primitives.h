@@ -11,7 +11,9 @@
 class Face;
 class Patch;
 class Brush;
-typedef std::vector<Patch*> PatchPtrVector; 
+class PatchNode;
+typedef boost::shared_ptr<PatchNode> PatchNodePtr;
+typedef std::vector<PatchNodePtr> PatchPtrVector; 
 typedef std::vector<Brush*> BrushPtrVector;
 typedef std::vector<Face*> FacePtrVector;
 
@@ -120,14 +122,14 @@ namespace selection {
 	 */
 	class OriginAdder :
 		public scene::Graph::Walker,
-		public scene::Traversable::Walker
+		public scene::NodeVisitor
 	{
 	public:
 		// Graph::Walker implementation
-		bool pre(const scene::Path& path, scene::Instance& instance) const;
+		bool pre(const scene::Path& path, const scene::INodePtr& node) const;
 	
-		// Traversable::Walker implementation
-		bool pre(scene::INodePtr node) const;
+		// NodeVisitor implementation
+		virtual bool pre(const scene::INodePtr& node);
 	};
 	
 	/** greebo: This adds/removes the origin from all the child primitivies
@@ -140,6 +142,17 @@ namespace selection {
 	/** greebo: Creates a coplanar patch for each selected face instance.
 	 */
 	void createDecalsForSelectedFaces();
+
+	/** 
+	 * greebo: This selects all the children of an entity, given the case 
+	 *         that a child of this entity is already selected. For instance, 
+	 *         if a child brush of a func_static is selected, this command 
+	 *         expands the selection to all other children (but not the 
+	 *         func_static entity itself). Select a single primitive of 
+	 *         the worldspawn entity and this command will select every primitive 
+	 *         that is child of worldspawn. 
+	 */
+	void expandSelectionToEntities();
 
 	} // namespace algorithm
 } // namespace selection

@@ -51,8 +51,8 @@ void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& l
 
 // ===================================================================================
 
-void TranslateSelected::visit(scene::Instance& instance) const {
-	Transformable* transform = Instance_getTransformable(instance);
+void TranslateSelected::visit(const scene::INodePtr& node) const {
+	TransformablePtr transform = Node_getTransformable(node);
     if(transform != 0) {
     	transform->setType(TRANSFORM_PRIMITIVE);
     	transform->setTranslation(m_translate);
@@ -61,11 +61,11 @@ void TranslateSelected::visit(scene::Instance& instance) const {
 
 // ===================================================================================
 
-void RotateSelected::visit(scene::Instance& instance) const {
-	TransformNodePtr transformNode = Node_getTransformNode(instance.path().top());
+void RotateSelected::visit(const scene::INodePtr& node) const {
+	TransformNodePtr transformNode = Node_getTransformNode(node);
 	if (transformNode != 0) {
 	  // Upcast the instance onto a Transformable
-	  Transformable* transform = Instance_getTransformable(instance);
+	  TransformablePtr transform = Node_getTransformable(node);
 	  
 	  if(transform != 0) {
 	  	// The object is not scaled or translated
@@ -83,7 +83,7 @@ void RotateSelected::visit(scene::Instance& instance) const {
 		 * not around the common center point.
 		 */
 	    {
-	      EditablePtr editable = Node_getEditable(instance.path().top());
+	      EditablePtr editable = Node_getEditable(node);
 	      const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : g_matrix4_identity;
 	
 	      Vector3 parent_translation;
@@ -91,7 +91,7 @@ void RotateSelected::visit(scene::Instance& instance) const {
 	        parent_translation,
 	        m_rotate,
 	        m_world_pivot,
-	        matrix4_multiplied_by_matrix4(instance.localToWorld(), localPivot),
+			matrix4_multiplied_by_matrix4(node->localToWorld(), localPivot),
 	        matrix4_multiplied_by_matrix4(transformNode->localToParent(), localPivot)
 	      );
 	
@@ -103,11 +103,11 @@ void RotateSelected::visit(scene::Instance& instance) const {
 
 // ===================================================================================
 
-void ScaleSelected::visit(scene::Instance& instance) const {
-    TransformNodePtr transformNode = Node_getTransformNode(instance.path().top());
+void ScaleSelected::visit(const scene::INodePtr& node) const {
+    TransformNodePtr transformNode = Node_getTransformNode(node);
     if(transformNode != 0)
     {
-      Transformable* transform = Instance_getTransformable(instance);
+      TransformablePtr transform = Node_getTransformable(node);
       if(transform != 0)
       {
         transform->setType(TRANSFORM_PRIMITIVE);
@@ -117,7 +117,7 @@ void ScaleSelected::visit(scene::Instance& instance) const {
         transform->setType(TRANSFORM_PRIMITIVE);
         transform->setScale(m_scale);
         {
-          EditablePtr editable = Node_getEditable(instance.path().top());
+          EditablePtr editable = Node_getEditable(node);
           const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : g_matrix4_identity;
     
           Vector3 parent_translation;
@@ -125,7 +125,7 @@ void ScaleSelected::visit(scene::Instance& instance) const {
             parent_translation,
             m_scale,
             m_world_pivot,
-            matrix4_multiplied_by_matrix4(instance.localToWorld(), localPivot),
+			matrix4_multiplied_by_matrix4(node->localToWorld(), localPivot),
             matrix4_multiplied_by_matrix4(transformNode->localToParent(), localPivot)
           );
 
@@ -137,8 +137,8 @@ void ScaleSelected::visit(scene::Instance& instance) const {
 
 // ====== Component Visitors ==========================================================
 
-void TranslateComponentSelected::visit(scene::Instance& instance) const {
-    Transformable* transform = Instance_getTransformable(instance);
+void TranslateComponentSelected::visit(const scene::INodePtr& node) const {
+    TransformablePtr transform = Node_getTransformable(node);
     if(transform != 0)
     {
       transform->setType(TRANSFORM_COMPONENT);
@@ -146,13 +146,13 @@ void TranslateComponentSelected::visit(scene::Instance& instance) const {
     }
 }
 
-void RotateComponentSelected::visit(scene::Instance& instance) const {
-    Transformable* transform = Instance_getTransformable(instance);
+void RotateComponentSelected::visit(const scene::INodePtr& node) const {
+    TransformablePtr transform = Node_getTransformable(node);
     if(transform != 0) {
       Vector3 parent_translation;
       translation_for_pivoted_rotation(parent_translation, m_rotate, m_world_pivot, 
-      					instance.localToWorld(), 
-      					Node_getTransformNode(instance.path().top())->localToParent());
+						node->localToWorld(), 
+      					Node_getTransformNode(node)->localToParent());
 
       transform->setType(TRANSFORM_COMPONENT);
       transform->setRotation(m_rotate);
@@ -160,11 +160,11 @@ void RotateComponentSelected::visit(scene::Instance& instance) const {
     }
 }
 
-void ScaleComponentSelected::visit(scene::Instance& instance) const {
-    Transformable* transform = Instance_getTransformable(instance);
+void ScaleComponentSelected::visit(const scene::INodePtr& node) const {
+    TransformablePtr transform = Node_getTransformable(node);
     if(transform != 0) {
       Vector3 parent_translation;
-      translation_for_pivoted_scale(parent_translation, m_scale, m_world_pivot, instance.localToWorld(), Node_getTransformNode(instance.path().top())->localToParent());
+	  translation_for_pivoted_scale(parent_translation, m_scale, m_world_pivot, node->localToWorld(), Node_getTransformNode(node)->localToParent());
 
       transform->setType(TRANSFORM_COMPONENT);
       transform->setScale(m_scale);

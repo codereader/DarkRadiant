@@ -41,7 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "os/path.h"
 #include "stream/textfilestream.h"
-#include "nullmodel.h"
 #include "stream/stringstream.h"
 #include "os/file.h"
 #include "moduleobserver.h"
@@ -58,7 +57,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/utility.hpp>
 #include <boost/weak_ptr.hpp>
-#include "referencecache/ModelResource.h"
 #include "map/MapResource.h"
 
 /** Save the map contents to the given filename using the given MapFormat export module

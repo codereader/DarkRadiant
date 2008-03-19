@@ -68,7 +68,7 @@ void Namespace::mergeNames(const Namespace& other) const {
 void Namespace::gatherNamespaced(scene::INodePtr root) {
 	// Local helper class
 	class GatherNamespacedWalker : 
-		public scene::Traversable::Walker
+		public scene::NodeVisitor
 	{
 		NamespacedList& _list;
 	public:
@@ -76,7 +76,7 @@ void Namespace::gatherNamespaced(scene::INodePtr root) {
 			_list(list)
 		{}
 	
-		bool pre(scene::INodePtr node) const {
+		virtual bool pre(const scene::INodePtr& node) {
 			NamespacedPtr namespaced = Node_getNamespaced(node);
 			if (namespaced != NULL) {
 				_list.push_back(namespaced);
@@ -85,7 +85,8 @@ void Namespace::gatherNamespaced(scene::INodePtr root) {
 		}
 	};
 	
-	Node_traverseSubgraph(root, GatherNamespacedWalker(_cloned));
+	GatherNamespacedWalker visitor(_cloned);
+	Node_traverseSubgraph(root, visitor);
 }
 
 void Namespace::mergeClonedNames() {

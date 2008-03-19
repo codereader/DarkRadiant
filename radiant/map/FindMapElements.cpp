@@ -15,7 +15,8 @@
  */
  
  
-class BrushFindByIndexWalker : public scene::Traversable::Walker
+class BrushFindByIndexWalker : 
+	public scene::NodeVisitor
 {
   mutable std::size_t m_index;
   scene::Path& m_path;
@@ -24,7 +25,7 @@ public:
     : m_index(index), m_path(path)
   {
   }
-  bool pre(scene::INodePtr node) const
+  virtual bool pre(const scene::INodePtr& node)
   {
     if(Node_isPrimitive(node) && m_index-- == 0)
     {
@@ -34,7 +35,8 @@ public:
   }
 };
 
-class EntityFindByIndexWalker : public scene::Traversable::Walker
+class EntityFindByIndexWalker : 
+	public scene::NodeVisitor
 {
   mutable std::size_t m_index;
   scene::Path& m_path;
@@ -43,8 +45,7 @@ public:
     : m_index(index), m_path(path)
   {
   }
-  bool pre(scene::INodePtr node) const
-  {
+  virtual bool pre(const scene::INodePtr& node) {
     if(Node_isEntity(node) && m_index-- == 0)
     {
       m_path.push(node);
@@ -57,40 +58,34 @@ void Scene_FindEntityBrush(std::size_t entity, std::size_t brush, scene::Path& p
 {
   path.push(GlobalSceneGraph().root());
   {
-    Node_getTraversable(path.top())->traverse(EntityFindByIndexWalker(entity, path));
+	  EntityFindByIndexWalker visitor(entity, path);
+	  path.top()->traverse(visitor);
   }
+
   if(path.size() == 2)
   {
-    scene::TraversablePtr traversable = Node_getTraversable(path.top());
-    if(traversable != 0)
-    {
-      traversable->traverse(BrushFindByIndexWalker(brush, path));
-    }
+	  BrushFindByIndexWalker visitor(brush, path);
+	  path.top()->traverse(visitor);
   }
 }
 
 inline bool Node_hasChildren(scene::INodePtr node)
 {
-  scene::TraversablePtr traversable = Node_getTraversable(node);
-  return traversable != NULL && !traversable->empty();
+	return node->hasChildNodes();
 }
 
 void SelectBrush (int entitynum, int brushnum)
 {
   scene::Path path;
   Scene_FindEntityBrush(entitynum, brushnum, path);
-  if(path.size() == 3 || (path.size() == 2 && !Node_hasChildren(path.top())))
+  if (path.size() == 3 || (path.size() == 2 && !Node_hasChildren(path.top())))
   {
-    scene::Instance* instance = GlobalSceneGraph().find(path);
-    ASSERT_MESSAGE(instance != 0, "SelectBrush: path not found in scenegraph");
-    Selectable* selectable = Instance_getSelectable(*instance);
-    ASSERT_MESSAGE(selectable != 0, "SelectBrush: path not selectable");
-    selectable->setSelected(true);
+	  Node_setSelected(path.top(), true);
     
     XYWndPtr xyView = GlobalXYWnd().getActiveXY();
     
     if (xyView) {
-    	xyView->positionView(instance->worldAABB().origin);
+    	xyView->positionView(path.top()->worldAABB().origin);
     }
   }
 }
@@ -105,11 +100,11 @@ public:
     : m_node(node), m_count(count)
   {
   }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const
   {
-    if(Node_isPrimitive(path.top()))
+    if(Node_isPrimitive(node))
     {
-      if(m_node == path.top()) {
+      if(m_node == node) {
         m_node = scene::INodePtr();
       }
       if(m_node)
@@ -130,7 +125,7 @@ public:
     : m_node(node), m_count(count)
   {
   }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const
   {
     if(Node_isEntity(path.top()))
     {
@@ -147,7 +142,7 @@ public:
   }
 };
 
-static void GetSelectionIndex (int *ent, int *brush)
+/*static void GetSelectionIndex (int *ent, int *brush)
 {
   std::size_t count_brush = 0;
   std::size_t count_entity = 0;
@@ -160,7 +155,7 @@ static void GetSelectionIndex (int *ent, int *brush)
   }
   *brush = int(count_brush);
   *ent = int(count_entity);
-}
+}*/
 
 void DoFind()
 {
@@ -231,9 +226,9 @@ void DoFind()
 
   // Initialize dialog
   char buf[16];
-  int ent, br;
+  int ent(0), br(0);
 
-  GetSelectionIndex (&ent, &br);
+  //GetSelectionIndex (&ent, &br);
   sprintf (buf, "%i", ent);
   gtk_entry_set_text(entity, buf);
   sprintf (buf, "%i", br);

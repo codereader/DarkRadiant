@@ -27,13 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void Select_GetBounds(Vector3& mins, Vector3& maxs);
 void Select_GetMid(Vector3& mid);
 
-void Select_Delete();
-void Select_Invert();
-void Select_Inside();
-void Select_Touching();
-void Select_Complete_Tall();
-void Scene_ExpandSelectionToEntities();
-
 void Selection_Flipx();
 void Selection_Flipy();
 void Selection_Flipz();
@@ -41,21 +34,8 @@ void Selection_Rotatex();
 void Selection_Rotatey();
 void Selection_Rotatez();
 
-
 void Selection_MoveDown();
 void Selection_MoveUp();
-
-void Select_AllOfType();
-
-void DoRotateDlg();
-void DoScaleDlg();
-
-// Hides all selected nodes
-void HideSelected();
-// Hides all de-selected nodes
-void HideDeselected();
-
-void Select_ShowAllHidden();
 
 // updating workzone to a given brush (depends on current view)
 

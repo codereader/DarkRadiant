@@ -145,46 +145,48 @@ public:
 	}
 }; // class OccludeSelector
 
-class SelectableInstance : 
-	public scene::Instance,
+class SelectableNode : 
+	public scene::Node,
 	public Selectable
 {
-  ObservedSelectable m_selectable;
+	ObservedSelectable _selectable;
 public:
-  SelectableInstance(const scene::Path& path, scene::Instance* parent) :
-	  Instance(path, parent),
-	  m_selectable(SelectedChangedCaller(*this))
-  {}
+	SelectableNode() :
+		_selectable(SelectedChangedCaller(*this))
+	{}
 
-  Selectable& getSelectable()
-  {
-    return m_selectable;
-  }
-  const Selectable& getSelectable() const
-  {
-    return m_selectable;
-  }
+	SelectableNode(const SelectableNode& other) :
+		scene::Node(other),
+		Selectable(other),
+		_selectable(SelectedChangedCaller(*this))
+	{}
 
-  void selectedChanged(const Selectable& selectable)
-  {
-    GlobalSelectionSystem().onSelectedChanged(*this, selectable);
+	Selectable& getSelectable() {
+		return _selectable;
+	}
 
-    Instance::selectedChanged();
-  }
-  typedef MemberCaller1<SelectableInstance, const Selectable&, &SelectableInstance::selectedChanged> SelectedChangedCaller;
+	const Selectable& getSelectable() const {
+		return _selectable;
+	}
+
+	void selectedChanged(const Selectable& selectable) {
+		GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), selectable);
+
+		//selectedChanged(); // TODO?
+	}
+	typedef MemberCaller1<SelectableNode, const Selectable&, &SelectableNode::selectedChanged> SelectedChangedCaller;
   
-	/** greebo: Selectable implementation
-	 */
+	// Selectable implementation
 	virtual void setSelected(bool select) {
-		m_selectable.setSelected(select);
+		_selectable.setSelected(select);
 	}
 	
 	virtual bool isSelected() const {
-		return m_selectable.isSelected();
+		return _selectable.isSelected();
 	}
 	
 	virtual void invertSelected() {
-		m_selectable.invertSelected();
+		_selectable.invertSelected();
 	}
 };
 

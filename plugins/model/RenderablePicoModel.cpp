@@ -180,5 +180,13 @@ void RenderablePicoModel::testSelect(Selector& selector,
 		}
 	}
 }
+
+std::string RenderablePicoModel::getModelPath() const {
+	return _modelPath;
+}
+
+void RenderablePicoModel::setModelPath(const std::string& modelPath) {
+	_modelPath = modelPath;
+}
 	
 }

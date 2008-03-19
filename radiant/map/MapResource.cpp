@@ -13,6 +13,7 @@
 #include "map/algorithm/Traverse.h"
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
+#include "referencecache/NullModelNode.h"
 
 namespace map {
 
@@ -27,7 +28,7 @@ namespace {
 
 // Constructor
 MapResource::MapResource(const std::string& name) :
-	_mapRoot(SingletonNullModel()),
+	_mapRoot(model::NullModelNode::InstancePtr()),
 	_originalName(name),
 	_type(name.substr(name.rfind(".") + 1)), 
 	_modified(0),
@@ -46,7 +47,7 @@ MapResource::~MapResource() {
 
 bool MapResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
-	if (_mapRoot == SingletonNullModel()) {
+	if (_mapRoot == model::NullModelNode::InstancePtr()) {
 		// Map not loaded yet, acquire map root node from loader
 		_mapRoot = loadMapNode();
 		
@@ -54,7 +55,7 @@ bool MapResource::load() {
 		mapSave();
 	}
 
-	return _mapRoot != SingletonNullModel();
+	return _mapRoot != model::NullModelNode::InstancePtr();
 }
   
 /**
@@ -189,7 +190,7 @@ void MapResource::unrealise() {
 	}
 
 	//globalOutputStream() << "MapResource::unrealise: " << _path.c_str() << _name.c_str() << "\n";
-	_mapRoot = SingletonNullModel();
+	_mapRoot = model::NullModelNode::InstancePtr();
 }
 
 void MapResource::onMapChanged() {
@@ -272,14 +273,14 @@ MapFormatPtr MapResource::getMapFormat() {
 scene::INodePtr MapResource::loadMapNode() {
 	// greebo: Check if we have valid settings
 	if (_path.empty() || (_name.empty() && _type.empty())) {
-		return SingletonNullModel();
+		return model::NullModelNode::InstancePtr();
 	}
 	
 	// Get the mapformat
 	MapFormatPtr format = getMapFormat();
 	
 	if (format == NULL) {
-		return SingletonNullModel(); 
+		return model::NullModelNode::InstancePtr(); 
 		// error message already printed in getMapFormat();
 	}
 	

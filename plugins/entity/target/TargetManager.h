@@ -17,14 +17,14 @@ namespace entity {
  *
  * The TargetableInstances report to this manager as soon as 
  * their name is changed or set. This will associate an empty Target object
- * with an actual scene::Instance.
+ * with an actual scene::Node.
  *
  *
  *          Target object (can be empty)
  *                   ________
  *                  /        \
  *                  |        |
- * TargetKey ----->>|    -------->> holds scene::Instance* (==NULL, if empty)
+ * TargetKey ----->>|    -------->> holds scene::INodePtr (==NULL, if empty)
  *                  |        |
  *                  \________/
  */
@@ -52,11 +52,11 @@ public:
 
 	/**
 	 * greebo: Associates the Target with the given name
-	 *         to the given scene::Instance.
+	 *         to the given scene::INodePtr.
 	 *
 	 * The Target will be created if it doesn't exist yet.
 	 */
-	void associateTarget(const std::string& name, scene::Instance* instance);
+	void associateTarget(const std::string& name, const scene::INodePtr& node);
 
 	/**
 	 * greebo: Disassociates the Target from the given name.

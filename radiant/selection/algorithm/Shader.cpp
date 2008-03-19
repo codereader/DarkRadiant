@@ -11,6 +11,7 @@
 #include "brush/BrushVisit.h"
 #include "brush/TextureProjection.h"
 #include "patch/PatchSceneWalk.h"
+#include "patch/Patch.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
@@ -64,9 +65,9 @@ public:
 		_shader = foundShader;
 	}
 	
-	void operator()(PatchInstance& patch) const {
+	void operator()(Patch& patch) const {
 		
-		std::string foundShader = patch.getPatch().GetShader();
+		std::string foundShader = patch.GetShader();
 			
 		if (foundShader != "$NONE" && _shader != "$NONE" && 
 			_shader != foundShader) 

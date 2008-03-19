@@ -46,6 +46,8 @@ public:
 
 const double ON_EPSILON	= 1.0 / (1 << 8);
 
+class SelectionIntersection;
+
 class Winding
 {
 public:
@@ -113,11 +115,7 @@ public:
 	 */
 	AABB aabb() const;
 	
-	void testSelect(SelectionTest& test, SelectionIntersection& best) {
-		if (numpoints > 0) {
-			test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.front().vertex), sizeof(WindingVertex)), numpoints, best);
-		}
-	}
+	void testSelect(SelectionTest& test, SelectionIntersection& best);
 	
 	// greebo: Updates the array containing the normal vectors of this winding
 	// The normal is the same for each vertex, so this just copies the values 

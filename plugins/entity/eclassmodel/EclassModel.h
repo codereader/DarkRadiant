@@ -12,7 +12,7 @@
 #include "../origin.h"
 #include "../rotation.h"
 #include "../angle.h"
-#include "../model.h"
+#include "../ModelKey.h"
 #include "../namedentity.h"
 #include "../namekeys.h"
 #include "../SkinChangedWalker.h"
@@ -33,7 +33,7 @@ class EclassModel :
 	float m_angle;
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
-	SingletonModel m_model;
+	ModelKey m_model;
 
 	NamedEntity m_named;
 	NameKeys m_nameKeys;
@@ -46,15 +46,17 @@ class EclassModel :
 	InstanceCounter m_instanceCounter;
 public:
 	EclassModel(IEntityClassPtr eclass,
-				scene::Traversable& traversable,
+				scene::INode& owner,
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 	
 	// Copy Constructor
 	EclassModel(const EclassModel& other,
-				scene::Traversable& traversable, 
+				scene::INode& owner, 
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
+
+	virtual ~EclassModel();
 
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
@@ -86,6 +88,7 @@ public:
 
 public:
 	void construct();
+	void destroy();
 
 	void updateTransform();
 	typedef MemberCaller<EclassModel, &EclassModel::updateTransform> UpdateTransformCaller;

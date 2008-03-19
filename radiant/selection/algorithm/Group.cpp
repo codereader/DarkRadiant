@@ -22,9 +22,9 @@ public:
 		_newParent(parent) 
 	{}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top() != _newParent && 
-			Node_isPrimitive(path.top()) && 
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		if (node != _newParent && 
+			Node_isPrimitive(node) && 
 			path.size() > 1) 
 		{
 			// Don't traverse the children, it's sufficient, if
@@ -34,29 +34,25 @@ public:
 		return true;
 	}
 	
-	void post(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top() != _newParent &&
-			Node_isPrimitive(path.top()) &&
+	void post(const scene::Path& path, const scene::INodePtr& node) const {
+		if (node != _newParent &&
+			Node_isPrimitive(node) &&
 			path.size() > 1)
 		{
 			// Retrieve the current parent of the visited instance
 			scene::INodePtr parent = path.parent();
 			// Check, if there is work to do in the first place 
 			if (parent != _newParent) {
-				// Extract the node to this instance
-				scene::INodePtr node(path.top());
-				
+				// Copy the shared_ptr
+				scene::INodePtr child(node);
+
 				// Delete the node from the old parent
-				Node_getTraversable(parent)->erase(node);
+				parent->removeChildNode(child);
 				
 				// and insert it as child of the given parent (passed in the constructor) 
-				Node_getTraversable(_newParent)->insert(node);
+				_newParent->addChildNode(child);
 				
-				Selectable* selectable = Instance_getSelectable(instance);
-				
-				if (selectable != NULL) {
-					selectable->setSelected(true);
-				}
+				Node_setSelected(child, true);
 			}
 		}
 	}
@@ -66,11 +62,11 @@ void revertGroupToWorldSpawn() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	if (info.totalCount == 1 && info.entityCount == 1) {
-		scene::Instance& instance = GlobalSelectionSystem().ultimateSelected();
+		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
 		
-		if (node_is_group(instance.path().top())) {
+		if (node_is_group(node)) {
 			
-			Entity* parent = Node_getEntity(instance.path().top());
+			Entity* parent = Node_getEntity(node);
 			
 			if (parent != NULL) {
 				// Deselect all, the children get selected after reparenting
@@ -81,17 +77,19 @@ void revertGroupToWorldSpawn() {
 	    	
 	    		Entity* worldspawn = Node_getEntity(worldspawnNode);
 	    		if (worldspawn != NULL) {
+					scene::Path nodePath = findPath(node);
+
 	    			// Cycle through all the children and reparent them to the worldspawn node
 			    	GlobalSceneGraph().traverse_subgraph(
 			    		ReparentToEntityWalker(worldspawnNode), // the visitor class
-			    		instance.path()							// start at this path
+			    		nodePath							// start at this path
 			    	);
 			    	// At this point, all the child primitives have been selected by the walker
 			    	
 			    	// Check if the old parent entity node is empty
-			    	if (Node_getTraversable(instance.path().top())->empty()) {
+					if (!node->hasChildNodes()) {
 			    		// Remove this path from the scenegraph
-			    		Path_deleteTop(instance.path());
+			    		Path_deleteTop(nodePath);
 			    	}
 			    	else {
 			    		globalErrorStream() << "Error while reparenting, cannot delete old parent (not empty)\n"; 
@@ -107,13 +105,11 @@ void revertGroupToWorldSpawn() {
 
 // Some helper methods
 bool contains_entity(scene::INodePtr node) {
-	return Node_getTraversable(node) != NULL && !Node_isBrush(node) && 
-		   !Node_isPatch(node) && !Node_isEntity(node);
+	return !Node_isBrush(node) && !Node_isPatch(node) && !Node_isEntity(node);
 }
 
 bool contains_primitive(scene::INodePtr node) {
-	return Node_isEntity(node) && Node_getTraversable(node) != NULL 
-		   && Node_getEntity(node)->isContainer();
+	return Node_isEntity(node) && Node_getEntity(node)->isContainer();
 }
 
 ENodeType node_get_contains(scene::INodePtr node) {
@@ -129,40 +125,53 @@ ENodeType node_get_contains(scene::INodePtr node) {
 class ParentSelectedBrushesToEntityWalker : 
 	public SelectionSystem::Visitor
 {
-	const scene::Path& _parent;
+	const scene::INodePtr _parent;
+
+	mutable std::list<scene::INodePtr> _childrenToReparent;
 public:
-	ParentSelectedBrushesToEntityWalker(const scene::Path& parent) : 
+	ParentSelectedBrushesToEntityWalker(const scene::INodePtr& parent) : 
 		_parent(parent)
 	{}
+
+	~ParentSelectedBrushesToEntityWalker() {
+		for (std::list<scene::INodePtr>::iterator i = _childrenToReparent.begin();
+			 i != _childrenToReparent.end(); i++)
+		{
+			scene::INodePtr oldParent = (*i)->getParent();
+			assert(oldParent != NULL);
+
+			// Remove this path from the old parent
+			oldParent->removeChildNode(*i);
+
+			// Insert the child node into the parent node 
+			_parent->addChildNode(*i);
+		}
+
+		// Update the scene
+		SceneChangeNotify();
+	}
 	
-	void visit(scene::Instance& instance) const {
-		
-		const scene::Path& child = instance.path();
-		
+	void visit(const scene::INodePtr& node) const {
 		// Don't reparent instances to themselves
-		if (&_parent != &child) {
-			// The type of the contained items
-			ENodeType contains = node_get_contains(_parent.top());
-			// The type of the 
-			ENodeType type = node_get_nodetype(child.top());
-			
-			if (contains != eNodeUnknown && contains == type) {
-				// Retrieve the child node
-				scene::INodePtr node(child.top());
-				// Remove this path from the scenegraph
-				Path_deleteTop(child);
-				// Insert the child node into the parent node 
-				Node_getTraversable(_parent.top())->insert(node);
-				// Update the scene
-				SceneChangeNotify();
-			}
-			else {
-				gtkutil::errorDialog(
-					"failed - " + nodetype_get_name(type) + " cannot be parented to " + 
-					nodetype_get_name(contains) + " container.\n", 
-					GlobalRadiant().getMainWindow()
-				);
-			}
+		if (_parent == node) {
+			return;
+		}
+
+		// The type of the contained items
+		ENodeType contains = node_get_contains(_parent);
+		// The type of the child
+		ENodeType type = node_get_nodetype(node);
+		
+		if (contains != eNodeUnknown && contains == type) {
+			// Got a child, add it to the list
+			_childrenToReparent.push_back(node);
+		}
+		else {
+			gtkutil::errorDialog(
+				"failed - " + nodetype_get_name(type) + " cannot be parented to " + 
+				nodetype_get_name(contains) + " container.\n", 
+				GlobalRadiant().getMainWindow()
+			);
 		}
 	}
 };
@@ -177,7 +186,7 @@ void parentSelection() {
 		
 		// Take the last selected item (this should be an entity)
 		ParentSelectedBrushesToEntityWalker visitor(
-			GlobalSelectionSystem().ultimateSelected().path()
+			GlobalSelectionSystem().ultimateSelected()
 		);
 		GlobalSelectionSystem().foreachSelected(visitor);
 	}
@@ -191,35 +200,47 @@ void parentSelection() {
 
 class GroupNodeChildSelector :
 	public SelectionSystem::Visitor,
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
-	mutable scene::INodePtr _ignoreNode;
+	typedef std::list<scene::INodePtr> NodeList;
+	mutable NodeList _groupNodes;
+
 public:
+	/**
+	 * greebo: The destructor takes care of the actual selection changes. During
+	 * selection traversal, the selection itself cannot be changed without
+	 * invalidating the SelectionSystem's internal iterators.
+	 */
+	~GroupNodeChildSelector() {
+		for (NodeList::iterator i = _groupNodes.begin(); i != _groupNodes.end(); i++) {
+			// De-select the groupnode
+			Node_setSelected(*i, false);
+
+			// Select all the child nodes using self as visitor
+			(*i)->traverse(*this);
+		}
+	}
+
 	// SelectionSystem::Visitor implementation
-	void visit(scene::Instance& instance) const {
+	void visit(const scene::INodePtr& node) const {
 		// Don't traverse hidden elements, just to be sure
-		if (!instance.path().top()->visible()) {
+		if (!node->visible()) {
 			return;
 		}
 		
 		// Is this a selected groupnode?
-		if (Instance_isSelected(instance) && 
-			Node_getGroupNode(instance.path().top()) != NULL)
+		if (Node_isSelected(node) && 
+			Node_getGroupNode(node) != NULL)
 		{
-			// De-select the groupnode
-			Instance_setSelected(instance, false);
-			
-			_ignoreNode = instance.path().top();
-			// Traverse the groupnode using self as visitor
-			GlobalSceneGraph().traverse_subgraph(*this, instance.path());
-			_ignoreNode = scene::INodePtr();
+			// Marke the groupnode for de-selection
+			_groupNodes.push_back(node);
 		}
 	}
 	
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::INodePtr& node) {
 		// Don't process starting point node or invisible nodes
-		if (instance.path().top()->visible() && path.top() != _ignoreNode) {
-			Instance_setSelected(instance, true);
+		if (node->visible()) {
+			Node_setSelected(node, true);
 		}
 		
 		return true;

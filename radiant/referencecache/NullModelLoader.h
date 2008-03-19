@@ -2,10 +2,22 @@
 #define NULLMODELLOADER_H_
 
 #include "imodel.h"
+#include "ifilesystem.h"
 #include "stream/textstream.h"
-#include "nullmodel.h"
+#include "os/path.h"
+
+#include "NullModelNode.h"
 
 namespace model {
+
+namespace {
+	// name may be absolute or relative
+	inline std::string rootPath(const std::string& name) {
+		return GlobalFileSystem().findRoot(
+			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
+		);
+	}
+} // namespace
 
 class NullModelLoader;
 typedef boost::shared_ptr<NullModelLoader> NullModelLoaderPtr;
@@ -14,13 +26,30 @@ class NullModelLoader :
 	public ModelLoader
 {
 public:
-	scene::INodePtr loadModel(ArchiveFile& file) {
-		return SingletonNullModel();
+	virtual scene::INodePtr loadModel(const std::string& modelName) {
+		// Initialise the paths, this is all needed for realisation
+		std::string path = rootPath(modelName);
+		std::string name = os::getRelativePath(modelName, path);
+
+		// Try to load the model from the given VFS path
+		NullModelPtr model = 
+			boost::static_pointer_cast<NullModel>(loadModelFromPath(name));
+
+		model->setModelPath(modelName);
+		model->setFilename(name);
+
+		// Construct a NullModelNode using this resource
+		NullModelNodePtr modelNode(new NullModelNode(model));
+		modelNode->setSelf(modelNode);
+
+		return modelNode;
 	}
   
   	// Required function, not implemented.
-	model::IModelPtr loadModelFromPath(const std::string& name) {
-		return model::IModelPtr();
+	IModelPtr loadModelFromPath(const std::string& name) {
+		NullModelPtr model(new NullModel);
+		model->setModelPath(name);
+		return model;
 	}
   
 	// RegisterableModule implementation

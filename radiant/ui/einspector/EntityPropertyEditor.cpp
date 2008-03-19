@@ -38,7 +38,7 @@ void EntityPropertyEditor::populateComboBox() {
             
         // Visit function
         virtual bool pre(const scene::Path& path, 
-        				 scene::Instance& instance) const 
+						 const scene::INodePtr& node) const 
 		{
             Entity* entity = Node_getEntity(path.top());
             if (entity != NULL) {

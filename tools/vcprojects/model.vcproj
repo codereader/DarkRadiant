@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="picomodellib.lib xmlutillib.lib mathlib.lib libxml2.lib opengl32.lib glew32.lib"
+				AdditionalDependencies="picomodellib.lib xmlutillib.lib mathlib.lib libxml2.lib opengl32.lib glew32.lib scenelib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -170,7 +170,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="picomodellib.lib xmlutillib.lib mathlib.lib libxml2.lib opengl32.lib glew32.lib"
+				AdditionalDependencies="picomodellib.lib xmlutillib.lib mathlib.lib libxml2.lib opengl32.lib glew32.lib scenelib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -222,19 +222,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\model\model.cpp"
+				RelativePath="..\..\plugins\model\PicoModelLoader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\model\model.h"
+				RelativePath="..\..\plugins\model\PicoModelLoader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\model\PicoModelInstance.cpp"
+				RelativePath="..\..\plugins\model\PicoModelNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\model\PicoModelInstance.h"
+				RelativePath="..\..\plugins\model\PicoModelNode.h"
 				>
 			</File>
 			<File

@@ -40,31 +40,31 @@ GraphTreeModel::~GraphTreeModel() {
 	clear();
 }
 
-const GraphTreeNodePtr& GraphTreeModel::insert(const scene::Instance& instance) {
+const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node) {
 	// Create a new GraphTreeNode
-	GraphTreeNodePtr node(new GraphTreeNode(instance));
+	GraphTreeNodePtr gtNode(new GraphTreeNode(node));
 	
 	// Insert this iterator below a possible parent iterator
-	gtk_tree_store_insert(_model, node->getIter(), findParentIter(instance), 0);
+	gtk_tree_store_insert(_model, gtNode->getIter(), findParentIter(node), 0);
 	
 	// Fill in the values
-	gtk_tree_store_set(_model, node->getIter(), 
-		COL_INSTANCE_POINTER, &instance,
-		COL_NAME, getNodeCaption(instance.path().top()).c_str(),
+	gtk_tree_store_set(_model, gtNode->getIter(), 
+		COL_NODE_POINTER, node.get(),
+		COL_NAME, getNodeCaption(node).c_str(),
 		-1
 	);
 	
 	// Insert this iterator into the node map to facilitate lookups
 	std::pair<NodeMap::iterator, bool> result = _nodemap.insert(
-		NodeMap::value_type(instance.path().top(), node)
+		NodeMap::value_type(node, gtNode)
 	);
 	
 	// Return the GraphTreeNode reference
 	return result.first->second;
 }
 
-void GraphTreeModel::erase(const scene::Instance& instance) {
-	NodeMap::iterator found = _nodemap.find(instance.path().top());
+void GraphTreeModel::erase(const scene::INodePtr& node) {
+	NodeMap::iterator found = _nodemap.find(node);
 	
 	if (found != _nodemap.end()) {
 		// Remove this from the GtkTreeStore...
@@ -75,8 +75,8 @@ void GraphTreeModel::erase(const scene::Instance& instance) {
 	}
 }
 
-const GraphTreeNodePtr& GraphTreeModel::find(const scene::Instance& instance) const {
-	NodeMap::const_iterator found = _nodemap.find(instance.path().top());
+const GraphTreeNodePtr& GraphTreeModel::find(const scene::INodePtr& node) const {
+	NodeMap::const_iterator found = _nodemap.find(node);
 	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
 }
 
@@ -98,11 +98,11 @@ void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection) {
 	GlobalSceneGraph().traverse(updater);
 }
 
-void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection, scene::Instance& instance) {
-	NodeMap::const_iterator found = _nodemap.find(instance.path().top());
+void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection, const scene::INodePtr& node) {
+	NodeMap::const_iterator found = _nodemap.find(node);
 	
 	if (found != _nodemap.end()) {
-		if (Instance_isSelected(instance)) {
+		if (Node_isSelected(node)) {
 
 			// Select the row in the TreeView
 			gtk_tree_selection_select_iter(selection, found->second->getIter());
@@ -123,24 +123,24 @@ void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection, scene::I
 	}
 }
 
-const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::Instance& instance) const {
-	const scene::Path& path = instance.path();
-	
-	if (path.size() <= 1) {
+const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::INodePtr& node) const {
+	scene::INodePtr parent = node->getParent();
+		
+	if (parent == NULL) {
 		// No parent, return the NULL pointer
 		return _nullTreeNode;
 	}
 	
 	// Try to find the node
-	NodeMap::const_iterator found = _nodemap.find(path.parent());
+	NodeMap::const_iterator found = _nodemap.find(parent);
 	
 	// Return NULL (empty shared_ptr) if not found
 	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
 }
 
-GtkTreeIter* GraphTreeModel::findParentIter(const scene::Instance& instance) const {
+GtkTreeIter* GraphTreeModel::findParentIter(const scene::INodePtr& node) const {
 	// Find the parent's GraphTreeNode
-	const GraphTreeNodePtr& nodePtr = findParentNode(instance);
+	const GraphTreeNodePtr& nodePtr = findParentNode(node);
 	// Return a NULL nodeptr if not found
 	return (nodePtr != NULL) ? nodePtr->getIter() : NULL;
 }
@@ -154,13 +154,13 @@ GraphTreeModel::operator GtkTreeModel*() {
 }
 
 // Gets called when a new <instance> is inserted into the scenegraph
-void GraphTreeModel::onSceneNodeInsert(const scene::Instance& instance) {
-	insert(instance); // wrap to the actual insert() method
+void GraphTreeModel::onSceneNodeInsert(const scene::INodePtr& node) {
+	insert(node); // wrap to the actual insert() method
 }
 
 // Gets called when <instance> is removed from the scenegraph
-void GraphTreeModel::onSceneNodeErase(const scene::Instance& instance) {
-	erase(instance); // wrap to the actual erase() method
+void GraphTreeModel::onSceneNodeErase(const scene::INodePtr& node) {
+	erase(node); // wrap to the actual erase() method
 }
 
 } // namespace ui

@@ -308,7 +308,7 @@ void LightInspector::update() {
 	
 	if (s.countSelected() == 1) {
 		// Check the EntityClass to ensure it is a light
-		Entity* e = Node_getEntity(s.ultimateSelected().path().top());
+		Entity* e = Node_getEntity(s.ultimateSelected());
 		
 		if (e != NULL && e->getEntityClass()->isLight()) {
 			// Exactly one light found, set the entity pointer
@@ -347,7 +347,7 @@ void LightInspector::_preShow() {
 	update();
 }
 
-void LightInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
+void LightInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	update();
 }
 

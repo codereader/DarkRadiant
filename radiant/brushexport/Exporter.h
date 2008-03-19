@@ -16,8 +16,8 @@ public:
     
 	virtual ~CExporter(void) {}
     
-    void visit(scene::Instance& instance) const {
-		m_exporter.visit(instance);
+    void visit(const scene::INodePtr& node) const {
+		m_exporter.visit(node);
     }
     
 private:

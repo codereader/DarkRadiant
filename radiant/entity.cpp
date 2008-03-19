@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "xyview/GlobalXYWnd.h"
 #include "selection/algorithm/Shader.h"
+#include "selection/algorithm/General.h"
 #include "ui/modelselector/ModelSelector.h"
 
 #include <iostream>
@@ -61,9 +62,9 @@ class RefreshSkinWalker :
 {
 public:
 
-	virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+	virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		// Check if we have a skinnable model
-		SkinnedModel* skinned = dynamic_cast<SkinnedModel*>(&instance);
+		SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
 
 		if (skinned != NULL) {
 			// Let the skinned model reload its current skin.
@@ -82,7 +83,7 @@ void ReloadSkins() {
 	ui::ModelSelector::refresh();
 }
 
-class EntitySetKeyValueSelected : public scene::Graph::Walker
+/*class EntitySetKeyValueSelected : public scene::Graph::Walker
 {
   const char* m_key;
   const char* m_value;
@@ -91,20 +92,19 @@ public:
     : m_key(key), m_value(value)
   {
   }
-  bool pre(const scene::Path& path, scene::Instance& instance) const
+  bool pre(const scene::Path& path, const scene::INodePtr& node) const
   {
     return true;
   }
-  void post(const scene::Path& path, scene::Instance& instance) const
+  void post(const scene::Path& path, const scene::INodePtr& node) const
   {
-    Entity* entity = Node_getEntity(path.top());
-    if(entity != 0
-      && (instance.childSelected() || Instance_getSelectable(instance)->isSelected()))
+    Entity* entity = Node_getEntity(node);
+    if(entity != NULL && (node->childSelected() || Node_getSelectable(node)->isSelected()))
     {
       entity->setKeyValue(m_key, m_value);
     }
   }
-};
+};*/
 
 /**
  * greebo: Changes the classname of the given instance. This is a nontrivial
@@ -112,24 +112,24 @@ public:
  *         spawnargs need to be copied over. Child primitives need to be 
  *         considered as well.
  * 
- * @instance: The scene::Instance to change the classname of.
+ * @node: The entity node to change the classname of.
  * @classname: The new classname
  */
-void changeEntityClassname(scene::Instance& instance, const std::string& classname) {
+void changeEntityClassname(const scene::INodePtr& node, const std::string& classname) {
 	// greebo: First, get the eclass
 	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
 		classname, 
-		node_is_group(instance.path().top()) // whether this entity has child primitives
+		node_is_group(node) // whether this entity has child primitives
 	);
 
 	// must not fail, findOrInsert always returns non-NULL
 	assert(eclass != NULL); 
 
 	// Create a new entity with the given class
-	scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
+	scene::INodePtr newNode(GlobalEntityCreator().createEntity(eclass));
 
-	Entity* oldEntity = Node_getEntity(instance.path().top());
-	Entity* newEntity = Node_getEntity(node);
+	Entity* oldEntity = Node_getEntity(node);
+	Entity* newEntity = Node_getEntity(newNode);
 	assert(newEntity != NULL); // must not be NULL
 
 	// Instantiate a visitor that copies all spawnargs to the new node
@@ -137,77 +137,37 @@ void changeEntityClassname(scene::Instance& instance, const std::string& classna
 	// Traverse the old entity with this walker
 	oldEntity->forEachKeyValue(visitor);
 
-	// The instance is the child to be relocated
-	scene::INodePtr child(instance.path().top());
-	// The child must not be the root node (size of path >= 2)
-	assert(instance.path().size() > 1);
-	scene::INodePtr parent(instance.path().parent());
+	// The old node must not be the root node (size of path >= 2)
+	scene::INodePtr parent = node->getParent();
+	assert(parent != NULL);
+	
+	// Remove the old entity node from the parent
+	parent->removeChildNode(node);
 
-	// Remove the old entity from the parent
-	Node_getTraversable(parent)->erase(child);
-
-	if (Node_getTraversable(child) != NULL && Node_getTraversable(node) != NULL && 
-		node_is_group(node))
-	{
+	if (node_is_group(newNode)) {
 		// Traverse the child and reparent all primitives to the new entity node
-		parentBrushes(child, node);
+		parentBrushes(node, newNode);
 	}
 
 	// Insert the new entity to the parent
-	Node_getTraversable(parent)->insert(node);
+	parent->addChildNode(newNode);
 }
 
 void Scene_EntitySetKeyValue_Selected(const char* key, const char* value)
 {
-	GlobalSceneGraph().traverse(EntitySetKeyValueSelected(key, value));
+	//GlobalSceneGraph().traverse(EntitySetKeyValueSelected(key, value)); // TODO?
 }
 
-class EntityUngroupVisitor : public SelectionSystem::Visitor
-{
-  const scene::Path& m_parent;
-public:
-  EntityUngroupVisitor(const scene::Path& parent) : m_parent(parent)
-  {
-  }
-  void visit(scene::Instance& instance) const
-  {
-    if(Node_getEntity(instance.path().top()) != 0
-      && node_is_group(instance.path().top()))
-    {
-      if(m_parent.top().get() != instance.path().top().get())
-      {
-        parentBrushes(instance.path().top(), m_parent.top());
-        Path_deleteTop(instance.path());
-      }
-    }
-  }
-};
-
-void Entity_ungroupSelected()
-{
-  UndoableCommand undo("ungroupSelectedEntities");
-
-  scene::Path world_path(GlobalSceneGraph().root());
-  world_path.push(GlobalMap().findOrInsertWorldspawn());
-
-  GlobalSelectionSystem().foreachSelected(EntityUngroupVisitor(world_path));
-}
-
-
-
-void Entity_connectSelected()
-{
-  if(GlobalSelectionSystem().countSelected() == 2)
-  {
-    GlobalEntityCreator().connectEntities(
-      GlobalSelectionSystem().penultimateSelected().path(),
-      GlobalSelectionSystem().ultimateSelected().path()
-    );
-  }
-  else
-  {
-    globalErrorStream() << "entityConnectSelected: exactly two instances must be selected\n";
-  }
+void Entity_connectSelected() {
+	if (GlobalSelectionSystem().countSelected() == 2) {
+		GlobalEntityCreator().connectEntities(
+			GlobalSelectionSystem().penultimateSelected(),	// source
+			GlobalSelectionSystem().ultimateSelected()		// target
+		);
+	}
+	else {
+		globalErrorStream() << "entityConnectSelected: exactly two instances must be selected\n";
+	}
 }
 
 // Function to return an AABB based on the current workzone AABB (retrieved
@@ -226,21 +186,13 @@ AABB Doom3Light_getBounds(AABB aabb)
 
 #include "map/ParentSelectedPrimitivesToEntityWalker.h"
 
-void Scene_parentSelectedPrimitivesToEntity(scene::Graph& graph, scene::INodePtr parent)
-{
-  graph.traverse(ParentSelectedPrimitivesToEntityWalker(parent));
-}
-
-/** Create an instance of the given entity at the given position, and return
+/** 
+ * Create an instance of the given entity at the given position, and return
  * the Node containing the new entity.
  * 
- * @returns
- * A NodeSmartReference containing the new entity.
+ * @returns: the scene::INodePtr referring to the new entity.
  */
-
-scene::INodePtr Entity_createFromSelection(const char* name, 
-				 						  const Vector3& origin) 
-{
+scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& origin) {
 	// Obtain the structure containing the selection counts
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
@@ -264,16 +216,15 @@ scene::INodePtr Entity_createFromSelection(const char* name,
     
     scene::INodePtr node(GlobalEntityCreator().createEntity(entityClass));
     
-    Node_getTraversable(GlobalSceneGraph().root())->insert(node);
+    GlobalSceneGraph().root()->addChildNode(node);
     
     scene::Path entitypath(GlobalSceneGraph().root());
     entitypath.push(node);
-    scene::Instance & instance = findInstance(entitypath);
 
     if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {
-        Select_Delete();
+		selection::algorithm::deleteSelection();
     
-        Transformable *transform = Instance_getTransformable(instance);
+        TransformablePtr transform = Node_getTransformable(node);
     
         if (transform != 0) {
             transform->setType(TRANSFORM_PRIMITIVE);
@@ -283,7 +234,7 @@ scene::INodePtr Entity_createFromSelection(const char* name,
     
         GlobalSelectionSystem().setSelectedAll(false);
     
-        Instance_setSelected(instance, true);
+        Node_setSelected(node, true);
     }
     else { // brush-based entity
     	
@@ -301,13 +252,13 @@ scene::INodePtr Entity_createFromSelection(const char* name,
             selection::algorithm::applyShaderToSelection(material);
         }
                 
-        // Parent the selected primitives
-	    Scene_parentSelectedPrimitivesToEntity(GlobalSceneGraph(), node);
-	    Scene_forEachChildSelectable(SelectableSetSelected(true), instance.path());
-	    
+        // Parent the selected primitives to the new node
+		ParentSelectedPrimitivesToEntityWalker walker(node);
+		GlobalSceneGraph().traverse(walker);
+
 	    // De-select the children and select the newly created parent entity
 	    GlobalSelectionSystem().setSelectedAll(false);
-	    Instance_setSelected(instance, true);
+	    Node_setSelected(node, true);
     }
 	
     // Set the light radius and origin
@@ -354,14 +305,13 @@ void createCurve(const std::string& key) {
 	scene::INodePtr curve(GlobalEntityCreator().createEntity(entityClass));
     
     // Insert this new node into the scenegraph root 
-    Node_getTraversable(GlobalSceneGraph().root())->insert(curve);
+    GlobalSceneGraph().root()->addChildNode(curve);
     
     // Select this new curve node (construct the path and select it)
     scene::Path entityPath(GlobalSceneGraph().root());
     entityPath.push(curve);
-    scene::Instance& instance = findInstance(entityPath);
     
-    Instance_setSelected(instance, true);
+    Node_setSelected(curve, true);
     
 	Entity* entity = Node_getEntity(curve);
 	assert(entity); // this must be true
@@ -375,7 +325,7 @@ void createCurve(const std::string& key) {
 		"3 ( 0 0 0  50 50 0  50 100 0 )"
 	);
 	
-	Transformable* transformable = Instance_getTransformable(instance);
+	TransformablePtr transformable = Node_getTransformable(curve);
 	if (transformable != NULL) {
 		// Translate the entity to the center of the current workzone
 		transformable->setTranslation(GlobalXYWnd().getActiveXY()->getOrigin());
@@ -395,7 +345,6 @@ void createCurveCatmullRom() {
 
 void Entity_Construct() {
 	GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
-	GlobalEventManager().addCommand("UngroupSelection", FreeCaller<Entity_ungroupSelected>());
 	GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
 	GlobalEventManager().addCommand("CreateCurveNURBS", FreeCaller<entity::createCurveNURBS>());
 	GlobalEventManager().addCommand("CreateCurveCatmullRom", FreeCaller<entity::createCurveCatmullRom>());

@@ -213,7 +213,7 @@ public:
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating.
 	 */
-	void selectionChanged(scene::Instance& instance, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 	
 	/** greebo: Updates the GL window
 	 */

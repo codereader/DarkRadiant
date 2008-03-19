@@ -7,7 +7,6 @@
  */
 
 #include "brush/Brush.h"	// for BrushVisitor declaration
-#include "brush/BrushInstance.h"
 
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
@@ -37,14 +36,13 @@ public:
     
     virtual ~CExportFormatWavefront(void) {}
     
-    void visit(scene::Instance& instance)
+    void visit(const scene::INodePtr& node)
     {
-      BrushInstance* bptr = dynamic_cast<BrushInstance*>(&instance);
-      if(bptr)
+		Brush* brush = Node_getBrush(node);
+		if (brush != NULL)
       {
-        Brush& brush(bptr->getBrush());
         m_file << "\ng " << "Brush" << static_cast<int>(exported) << "\n";
-        brush.forEachFace(*this);
+        brush->forEachFace(*this);
         m_file << vertexbuffer.c_str() << "\n";
         m_file << texcoordbuffer.c_str();
         m_file << facebuffer.c_str() << "\n";

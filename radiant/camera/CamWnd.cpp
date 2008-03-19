@@ -23,25 +23,27 @@
 class ObjectFinder :
 	public scene::Graph::Walker
 {
-	scene::Instance*& _instance;
+	mutable scene::INodePtr _node;
 	SelectionTest& _selectionTest;
 	
 	// To store the best intersection candidate
 	mutable SelectionIntersection _bestIntersection;
 public:
 	// Constructor
-	ObjectFinder(SelectionTest& test, scene::Instance*& instance) :
-		_instance(instance),
+	ObjectFinder(SelectionTest& test) :
 		_selectionTest(test)
-	{
-		_instance = NULL;
+	{}
+
+	// Return the found node
+	const scene::INodePtr& getNode() const {
+		return _node;
 	}
 	
 	// The visitor function
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		// Check if the node is filtered
-		if (path.top()->visible()) {	
-			SelectionTestable* selectionTestable = Instance_getSelectionTestable(instance);
+		if (node->visible()) {
+			SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
 			
 			if (selectionTestable != NULL) {
 				bool occluded;
@@ -49,7 +51,7 @@ public:
 				selectionTestable->testSelect(selector, _selectionTest);
 				
 				if (occluded) {
-					_instance = &instance;
+					_node = node;
 				}
 			}
 		}
@@ -75,11 +77,11 @@ public:
 		bestDown = -GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
 	}
 
-	bool pre(const scene::Path& path, scene::Instance& instance) const {
-		if (path.top()->visible() && Node_isBrush(path.top())) // this node is a floor
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		
+		if (node->visible() && Node_isBrush(node)) // this node is a floor
 		{
-
-			const AABB& aabb = instance.worldAABB();
+			const AABB& aabb = node->worldAABB();
 
 			float floorHeight = aabb.origin.z() + aabb.extents.z();
 
@@ -273,13 +275,13 @@ CamWnd::CamWnd() :
 }
 
 void CamWnd::jumpToObject(SelectionTest& selectionTest) {
-	// Find a suitable target Instance
-	scene::Instance* instance;
-	GlobalSceneGraph().traverse(ObjectFinder(selectionTest, instance));
-	
-	if (instance != NULL) {
-		// An instance has been found, get the bounding box
-		AABB found = instance->worldAABB();
+	// Find a suitable target node
+	ObjectFinder finder(selectionTest);
+	GlobalSceneGraph().traverse(finder);
+
+	if (finder.getNode() != NULL) {
+		// A node has been found, get the bounding box
+		AABB found = finder.getNode()->worldAABB();
 		
 		// Focus the view at the center of the found AABB
 		map::Map::focusViews(found.origin, getCameraAngles());

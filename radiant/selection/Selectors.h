@@ -85,7 +85,7 @@ class BooleanSelector : public Selector {
   SelectionIntersection _intersection;
   Selectable* _selectable;
 public:
-  BooleanSelector() : _selected(false)
+  BooleanSelector() : _selected(false), _selectable(NULL)
   {
   }
 
@@ -104,7 +104,7 @@ public:
   }
   void addIntersection(const SelectionIntersection& intersection)
   {
-    if(_selectable->isSelected())
+    if(_selectable != NULL && _selectable->isSelected())
     {
       assign_if_closer(_intersection, intersection);
     }

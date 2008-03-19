@@ -87,6 +87,12 @@ void Winding::draw(RenderStateFlags state) const {
 	glDrawArrays(GL_POLYGON, 0, GLsizei(numpoints));
 }
 
+void Winding::testSelect(SelectionTest& test, SelectionIntersection& best) {
+	if (numpoints > 0) {
+		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.front().vertex), sizeof(WindingVertex)), numpoints, best);
+	}
+}
+
 void Winding::updateNormals(const Vector3& normal) {
 	// Copy all normals into the winding vertices
 	for (iterator i = begin(); i != end(); i++) {

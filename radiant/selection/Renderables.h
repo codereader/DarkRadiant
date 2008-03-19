@@ -1,7 +1,7 @@
 #ifndef RENDERABLES_H_
 #define RENDERABLES_H_
 
-#include "renderable.h"
+#include "irenderable.h"
 
 /* greebo: This contains the renderables (rectangles, arrows, circles, semicircles) to represent
  * the manipulators of the selected items

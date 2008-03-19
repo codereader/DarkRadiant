@@ -1,8 +1,8 @@
 #include "SceneGraph.h"
 
 #include "debugging/debugging.h"
+#include "scene/InstanceWalkers.h"
 #include "scenelib.h"
-#include "instancelib.h"
 
 void SceneGraph::addSceneObserver(scene::Graph::Observer* observer) {
 	if (observer != NULL) {
@@ -31,26 +31,28 @@ void SceneGraph::sceneChanged() {
 }
 
 scene::INodePtr SceneGraph::root() {
-	ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
-	return m_rootpath.top();
+	ASSERT_MESSAGE(_root != NULL, "scenegraph root does not exist");
+	return _root;
 }
   
 void SceneGraph::insert_root(scene::INodePtr root) {
-	ASSERT_MESSAGE(m_rootpath.empty(), "scenegraph root already exists");
+	ASSERT_MESSAGE(_root == NULL, "scenegraph root already exists");
 
-    Node_traverseSubgraph(root, InstanceSubgraphWalker(scene::Path(), 0));
+	scene::Path path;
+	scene::InstanceSubgraphWalker instanceWalker(path);
+    Node_traverseSubgraph(root, instanceWalker);
 
-    m_rootpath.push(root);
+	_root = root;
 }
   
 void SceneGraph::erase_root() {
-    ASSERT_MESSAGE(!m_rootpath.empty(), "scenegraph root does not exist");
+    ASSERT_MESSAGE(_root != NULL, "scenegraph root does not exist");
 
-    scene::INodePtr root = m_rootpath.top();
+    scene::Path path;
+	scene::UninstanceSubgraphWalker walker(path);
+    Node_traverseSubgraph(_root, walker);
 
-    m_rootpath.pop();
-
-    Node_traverseSubgraph(root, UninstanceSubgraphWalker(scene::Path()));
+	_root = scene::INodePtr();
 }
 
 void SceneGraph::boundsChanged() {
@@ -58,43 +60,71 @@ void SceneGraph::boundsChanged() {
 }
 
 void SceneGraph::traverse(const Walker& walker) {
-    traverse_subgraph(walker, m_instances.begin());
+	if (_root == NULL) return;
+
+	scene::Path path;
+	path.push(_root);
+
+	traverse_subgraph(walker, path);
 }
+
+class WalkerAdaptor :
+	public scene::NodeVisitor
+{
+	const scene::Graph::Walker& _walker; // the legacy walker
+
+	scene::Path _path;
+public:
+	WalkerAdaptor(const scene::Graph::Walker& walker, const scene::Path& start) :
+		_walker(walker)
+	{
+		// We're starting with the given path
+		_path = start;
+	}
+
+	virtual bool pre(const scene::INodePtr& node) {
+		// Add this element to the path
+		_path.push(node);
+
+		// Pass the call to the contained walker object
+		return _walker.pre(_path, node);
+	}
+
+	virtual void post(const scene::INodePtr& node) {
+		_walker.post(_path, node);
+		_path.pop();
+	}
+};
 
 void SceneGraph::traverse_subgraph(const Walker& walker, const scene::Path& start) {
-    if(!m_instances.empty()) {
-      traverse_subgraph(walker, m_instances.find(PathConstReference(start)));
-    }
+	// greebo: Create an adaptor class to stay compatible with old code
+	scene::Path startPath(start);
+	// We start with the parent path already in the walker
+	startPath.pop(); 
+
+	WalkerAdaptor visitor(walker, startPath);
+	Node_traverseSubgraph(start.top(), visitor);
 }
 
-scene::Instance* SceneGraph::find(const scene::Path& path) {
-    InstanceMap::iterator i = m_instances.find(PathConstReference(path));
-    if(i == m_instances.end()) {
-      return NULL;
-    }
-    return i->second;
-}
-
-void SceneGraph::insert(scene::Instance* instance) {
-    m_instances.insert(InstanceMap::value_type(PathConstReference(instance->path()), instance));
-
-	// Notify the graph tree model about the change
+void SceneGraph::insert(const scene::INodePtr& node) {
+    // Notify the graph tree model about the change
 	sceneChanged();
 	
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
-		(*i)->onSceneNodeInsert(*instance);
+		(*i)->onSceneNodeInsert(node);
 	}
 }
 
-void SceneGraph::erase(scene::Instance* instance) {
+void SceneGraph::erase(const scene::INodePtr& node) {
+	// Un-select the node, as it's been removed from the scenegraph
+	Node_setSelected(node, false);
+
   	// Notify the graph tree model about the change
 	sceneChanged();
 	
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
-		(*i)->onSceneNodeErase(*instance);
+		(*i)->onSceneNodeErase(node);
 	}
-
-    m_instances.erase(PathConstReference(instance->path()));
 }
 
 SignalHandlerId SceneGraph::addBoundsChangedCallback(const SignalHandler& boundsChanged) {
@@ -103,43 +133,6 @@ SignalHandlerId SceneGraph::addBoundsChangedCallback(const SignalHandler& bounds
 
 void SceneGraph::removeBoundsChangedCallback(SignalHandlerId id) {
     m_boundsChanged.disconnect(id);
-}
-
-bool SceneGraph::pre(const Walker& walker, const InstanceMap::iterator& i) {
-    return walker.pre(i->first, *i->second);
-}
-
-void SceneGraph::post(const Walker& walker, const InstanceMap::iterator& i) {
-    walker.post(i->first, *i->second);
-}
-
-void SceneGraph::traverse_subgraph(const Walker& walker, InstanceMap::iterator i) {
-	std::stack<InstanceMap::iterator> stack;
-	if (i != m_instances.end()) {
-		// Initialise the start size using the path depth of the given iterator
-		const std::size_t startSize = i->first.get().size();
-		
-		do {
-			if (i != m_instances.end() && 
-				stack.size() < (i->first.get().size() - startSize + 1))
-			{
-				stack.push(i);
-				++i;
-				if (!pre(walker, stack.top())) {
-					// Walker's pre() return false, skip subgraph
-					while (i != m_instances.end() && 
-						   stack.size() < (i->first.get().size() - startSize + 1))
-					{
-						++i;
-					}
-				}
-			}
-			else {
-				post(walker, stack.top());
-				stack.pop();
-			}
-		} while (!stack.empty());
-	}
 }
 
 // RegisterableModule implementation

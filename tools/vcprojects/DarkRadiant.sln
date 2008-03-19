@@ -1,15 +1,16 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C++ Express 2005
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mathlib", "mathlib.vcproj", "{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkRadiant", "DarkRadiant.vcproj", "{8E70385C-223A-4DD1-9B99-28FF2331A2B5}"
 	ProjectSection(ProjectDependencies) = postProject
+		{4286E605-5358-462F-AC57-44FCC697585B} = {4286E605-5358-462F-AC57-44FCC697585B}
+		{F7408B46-E4A9-470C-9731-9A1564247385} = {F7408B46-E4A9-470C-9731-9A1564247385}
 		{D42098ED-E192-4DC1-BA1C-80812AB194B4} = {D42098ED-E192-4DC1-BA1C-80812AB194B4}
 		{8050CFB1-20CC-40FD-8D74-0901C9CA2BE8} = {8050CFB1-20CC-40FD-8D74-0901C9CA2BE8}
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
 		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
-		{4286E605-5358-462F-AC57-44FCC697585B} = {4286E605-5358-462F-AC57-44FCC697585B}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "archivezip", "archivezip.vcproj", "{A7E0FE03-E9BB-4478-9752-250BBD406C2D}"
@@ -20,6 +21,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclassmgr", "eclassmgr.vcpr
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entity", "entity.vcproj", "{DC28A0B7-51AB-4F4A-A428-0765CA2CE6AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F7408B46-E4A9-470C-9731-9A1564247385} = {F7408B46-E4A9-470C-9731-9A1564247385}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlutillib", "xmlutillib.vcproj", "{A15EFB56-927F-411D-A57B-0328321456A2}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -48,10 +52,16 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtkutillib", "gtkutillib.vcproj", "{B6D4B38A-0C39-42CD-8193-75979E1F4D68}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "md5model", "md5model.vcproj", "{D39D8067-7DE5-4BC2-8471-CFE99B00B042}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F7408B46-E4A9-470C-9731-9A1564247385} = {F7408B46-E4A9-470C-9731-9A1564247385}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "picomodellib", "picomodellib.vcproj", "{8050CFB1-20CC-40FD-8D74-0901C9CA2BE8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "model", "model.vcproj", "{AFC3BF28-FC48-44C6-A0AA-695865EB4C70}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F7408B46-E4A9-470C-9731-9A1564247385} = {F7408B46-E4A9-470C-9731-9A1564247385}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "particles", "particles.vcproj", "{4361B40C-C042-40E4-8CD1-5A24EA120E9B}"
 EndProject
@@ -88,12 +98,17 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.d3hook", "dm.d3hook.vcproj", "{916F8AE5-D7FC-44E1-908D-B54100C6F4AD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenegraph", "scenegraph.vcproj", "{89043465-96F4-4E90-A351-18ECEBD7E6F2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F7408B46-E4A9-470C-9731-9A1564247385} = {F7408B46-E4A9-470C-9731-9A1564247385}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entitylist", "entitylist.vcproj", "{A35C6082-EE2D-4DEB-944B-61CFEB19C5B1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libxml2", "libxml2\libxml2.vcproj", "{6780EE95-8768-4138-A89B-47D3504A6E5D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.difficulty", "dm.difficulty.vcproj", "{68B95079-09DF-48F7-BAD9-81C33118BEFD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenelib", "scenelib.vcproj", "{F7408B46-E4A9-470C-9731-9A1564247385}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -237,6 +252,10 @@ Global
 		{68B95079-09DF-48F7-BAD9-81C33118BEFD}.Debug|Win32.Build.0 = Debug|Win32
 		{68B95079-09DF-48F7-BAD9-81C33118BEFD}.Release|Win32.ActiveCfg = Release|Win32
 		{68B95079-09DF-48F7-BAD9-81C33118BEFD}.Release|Win32.Build.0 = Release|Win32
+		{F7408B46-E4A9-470C-9731-9A1564247385}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F7408B46-E4A9-470C-9731-9A1564247385}.Debug|Win32.Build.0 = Debug|Win32
+		{F7408B46-E4A9-470C-9731-9A1564247385}.Release|Win32.ActiveCfg = Release|Win32
+		{F7408B46-E4A9-470C-9731-9A1564247385}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="opengl32.lib mathlib.lib glew32.lib"
+				AdditionalDependencies="opengl32.lib mathlib.lib glew32.lib scenelib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -170,7 +170,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="opengl32.lib mathlib.lib glew32.lib"
+				AdditionalDependencies="opengl32.lib mathlib.lib glew32.lib scenelib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -231,14 +231,6 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\md5model\MD5Model.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\md5model\MD5ModelInstance.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\md5model\MD5ModelInstance.h"
 				>
 			</File>
 			<File

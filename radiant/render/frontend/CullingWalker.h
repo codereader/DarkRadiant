@@ -20,24 +20,24 @@ public:
   
 	// Pre-descent function
 	bool pre(const scene::Path& path, 
-			 scene::Instance& instance, 
+			 const scene::INodePtr& node, 
 			 VolumeIntersectionValue parentVisible) const 
 	{
-    	VolumeIntersectionValue visible = Cullable_testVisible(instance, 
+		VolumeIntersectionValue visible = Cullable_testVisible(node, 
     														   m_volume, 
     														   parentVisible);
 		if(visible != c_volumeOutside) {
-			return m_walker.pre(path, instance);
+			return m_walker.pre(path, node);
 		}
 		return true;
 	}
   
   	// Post-descent function
 	void post(const scene::Path& path, 
-			  scene::Instance& instance, 
+			  const scene::INodePtr& node, 
 			  VolumeIntersectionValue parentVisible) const 
 	{
-    	return m_walker.post(path, instance);
+    	return m_walker.post(path, node);
 	}
 };
 

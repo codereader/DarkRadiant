@@ -13,7 +13,7 @@
 #include "gtkutil/ControlButton.h"
 
 #include "mainframe.h"
-#include "patch/Patch.h"
+#include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
 
 namespace ui {
@@ -367,7 +367,7 @@ void PatchInspector::_preShow() {
 	update();
 }
 
-void PatchInspector::selectionChanged(scene::Instance& instance, bool isComponent) {
+void PatchInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	rescanSelection();
 }
 
@@ -405,7 +405,7 @@ void PatchInspector::rescanSelection() {
 		PatchPtrVector list = selection::algorithm::getSelectedPatches();
 		
 		if (list.size() > 0) {
-			_patch = list[0];
+			_patch = &(list[0]->getPatch());
 			_patchRows = _patch->getHeight();
 			_patchCols = _patch->getWidth();
 			
@@ -414,7 +414,7 @@ void PatchInspector::rescanSelection() {
 			for (std::size_t i = 0; i < _patchRows; i++) {
 				gtk_combo_box_append_text(
 					GTK_COMBO_BOX(_vertexChooser.rowCombo), 
-					intToStr(i).c_str()
+					sizetToStr(i).c_str()
 				);
 			}
 
@@ -426,7 +426,7 @@ void PatchInspector::rescanSelection() {
 			for (std::size_t i = 0; i < _patchCols; i++) {
 				gtk_combo_box_append_text(
 					GTK_COMBO_BOX(_vertexChooser.colCombo), 
-					intToStr(i).c_str()
+					sizetToStr(i).c_str()
 				);
 			}
 			gtk_combo_box_set_active(
@@ -471,7 +471,7 @@ void PatchInspector::emitTesselation() {
 			gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.vert))
 		);
 		
-		bool fixed = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_tesselation.fixed));
+		bool fixed = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_tesselation.fixed)) ? true : false;
 		
 		_patch->setFixedSubdivisions(fixed, tess);
 		

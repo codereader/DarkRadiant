@@ -50,6 +50,7 @@
 		<menuItem name="selectTouching" caption="Select _touching" command="SelectTouching" icon="selection_selecttouching.png" />
 		<menuItem name="selectionChildren" caption="Select Children" command="SelectChildren" />
 		<menuItem name="selectionEntities" caption="Expand selection to whole _Entities" command="ExpandSelectionToEntities" />
+		<menuItem name="selectalloftype" caption="Select all of type" command="SelectAllOfType" />
 		<menuSeparator />
 		<menuItem name="objExport" caption="Export selected brushes to _OBJ" command="BrushExportOBJ" />
 		<menuItem name="createCM" caption="Create CollisionModel from selection..." command="BrushExportCM" />

@@ -100,7 +100,7 @@ public:
 	 * 		 whether the walker.pre() and walker.post() methods are invoked. This allows
 	 * 		 filtering of the non-regioned nodes.
 	 */
-	static void traverseRegion(scene::INodePtr root, const scene::Traversable::Walker& walker);
+	static void traverseRegion(scene::INodePtr root, scene::NodeVisitor& walker);
 	
 	// Static command targets for use in EventManager
 	

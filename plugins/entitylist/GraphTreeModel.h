@@ -14,7 +14,7 @@ namespace ui {
  * greebo: This wraps around a GtkTreeModel which can be used
  *         in a GtkTreeView visualisation.
  * 
- * The class provides basic routines to insert/remove scene::Instances
+ * The class provides basic routines to insert/remove scene::INodePtrs
  * into the model (the lookup should be performed fast).
  */
 class GraphTreeModel :
@@ -23,7 +23,7 @@ class GraphTreeModel :
 public:
 	// The enumeration of GTK column names
 	enum {
-		COL_INSTANCE_POINTER, // this is scene::Instance*
+		COL_NODE_POINTER, // this is scene::INode*
 		COL_NAME,             // the name (caption)
 		NUM_COLS
 	};
@@ -45,12 +45,12 @@ public:
 	~GraphTreeModel();
 	
 	// Inserts the instance into the tree, returns the GtkTreeIter*
-	const GraphTreeNodePtr& insert(const scene::Instance& instance);
+	const GraphTreeNodePtr& insert(const scene::INodePtr& node);
 	// Removes the given instance from the tree
-	void erase(const scene::Instance& instance);
+	void erase(const scene::INodePtr& node);
 	
-	// Tries to lookup the given instance in the tree, can return the NULL node
-	const GraphTreeNodePtr& find(const scene::Instance& instance) const;
+	// Tries to lookup the given node in the tree, can return the NULL node
+	const GraphTreeNodePtr& find(const scene::INodePtr& node) const;
 	
 	// Remove everything from the TreeModel
 	void clear();
@@ -61,26 +61,26 @@ public:
 	// Updates the selection status of the entire tree
 	void updateSelectionStatus(GtkTreeSelection* selection);
 	
-	// Updates the selection status of the given instance only
-	void updateSelectionStatus(GtkTreeSelection* selection, scene::Instance& instance);
+	// Updates the selection status of the given node only
+	void updateSelectionStatus(GtkTreeSelection* selection, const scene::INodePtr& node);
 	
 	// Operator-cast to GtkTreeModel to allow for implicit conversion
 	operator GtkTreeModel*();
 	
 	// scene::Graph::Observer implementation
 
-	// Gets called when a new <instance> is inserted into the scenegraph
-	virtual void onSceneNodeInsert(const scene::Instance& instance);
-	// Gets called when <instance> is removed from the scenegraph
-	virtual void onSceneNodeErase(const scene::Instance& instance);
+	// Gets called when a new <node> is inserted into the scenegraph
+	virtual void onSceneNodeInsert(const scene::INodePtr& node);
+	// Gets called when <node> is removed from the scenegraph
+	virtual void onSceneNodeErase(const scene::INodePtr& node);
 		
 private:
-	// Looks up the parent of the given instance, can return NULL (empty shared_ptr)
-	const GraphTreeNodePtr& findParentNode(const scene::Instance& instance) const;
+	// Looks up the parent of the given node, can return NULL (empty shared_ptr)
+	const GraphTreeNodePtr& findParentNode(const scene::INodePtr& node) const;
 	
-	// Tries to lookup the iterator to the parent item of the given instance, 
+	// Tries to lookup the iterator to the parent item of the given node, 
 	// returns NULL if not found
-	GtkTreeIter* findParentIter(const scene::Instance& instance) const;
+	GtkTreeIter* findParentIter(const scene::INodePtr& node) const;
 	
 	// Get the caption string used to display the node in the tree
 	std::string getNodeCaption(const scene::INodePtr& node);

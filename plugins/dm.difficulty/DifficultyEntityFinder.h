@@ -32,7 +32,7 @@ public:
 	}
 
 	// Walker implementation
-	virtual bool pre(const scene::Path& path, scene::Instance& instance) const {
+	virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		// Entities have path depth == 2
 		if (path.size() >= 2) {
 			// Check if we have an entity

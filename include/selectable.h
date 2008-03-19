@@ -271,11 +271,12 @@ class VolumeTest;
 class SelectionTestable
 {
 public:
-  virtual void testSelect(Selector& selector, SelectionTest& test) = 0;
+	virtual void testSelect(Selector& selector, SelectionTest& test) = 0;
 };
+typedef boost::shared_ptr<SelectionTestable> SelectionTestablePtr;
 
-inline SelectionTestable* Instance_getSelectionTestable(scene::Instance& instance) {
-	return dynamic_cast<SelectionTestable*>(&instance);
+inline SelectionTestablePtr Node_getSelectionTestable(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<SelectionTestable>(node);
 }
 
 class ComponentSelectionTestable {
@@ -286,8 +287,8 @@ public:
 };
 typedef boost::shared_ptr<ComponentSelectionTestable> ComponentSelectionTestablePtr;
 
-inline ComponentSelectionTestable* Instance_getComponentSelectionTestable(scene::Instance& instance) {
-	return dynamic_cast<ComponentSelectionTestable*>(&instance);
+inline ComponentSelectionTestablePtr Node_getComponentSelectionTestable(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<ComponentSelectionTestable>(node);
 }
 
 class Plane3;
@@ -302,10 +303,13 @@ public:
 class PlaneSelectable
 {
 public:
-  virtual void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) = 0;
-  virtual void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) = 0;
+	virtual void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) = 0;
+	virtual void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) = 0;
 };
+typedef boost::shared_ptr<PlaneSelectable> PlaneSelectablePtr;
 
-
+inline PlaneSelectablePtr Node_getPlaneSelectable(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<PlaneSelectable>(node);
+}
 
 #endif

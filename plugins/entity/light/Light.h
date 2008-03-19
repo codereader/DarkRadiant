@@ -7,7 +7,7 @@
 #include "scenelib.h"
 #include "editable.h"
 #include "render.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "math/frustum.h"
 
 #include "../keyobservers.h"

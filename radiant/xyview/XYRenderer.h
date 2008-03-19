@@ -1,7 +1,7 @@
 #ifndef XYRENDERER_H_
 #define XYRENDERER_H_
 
-#include "renderable.h"
+#include "irenderable.h"
 
 class XYRenderer : 
 	public Renderer

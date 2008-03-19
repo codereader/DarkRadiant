@@ -21,28 +21,28 @@ class InstanceUpdateWalker
 public:
 
 	// Pre-descent walker function
-	bool pre(const scene::Path& path, scene::Instance& instance) const { 
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const { 
 
 		// Retrieve the parent entity and check its entity class.
 		Entity* entity = Node_getEntity(path.top());
 		if (entity) {
 			IEntityClassConstPtr eclass = entity->getEntityClass();
 			std::string name = eclass->getName();
-			instance.setFiltered(
+			node->setFiltered(
 				!GlobalFilterSystem().isVisible("entityclass", name)
 			);
 		}
 		
 		// greebo: Update visibility of PatchInstances
 		if (Node_isPatch(path.top())) {
-			instance.setFiltered(
+			node->setFiltered(
 				!GlobalFilterSystem().isVisible("object", "patch")
 			);
 		}
 		
 		// greebo: Update visibility of BrushInstances
 		if (Node_isBrush(path.top())) {
-			instance.setFiltered(
+			node->setFiltered(
 				!GlobalFilterSystem().isVisible("object", "brush")
 			);
 		}
@@ -52,7 +52,7 @@ public:
 	}
 
 	// Post descent function
-	void post(const scene::Path& path, scene::Instance& instance) const {
+	void post(const scene::Path& path, const scene::INodePtr& node) const {
 		
 	}
 };

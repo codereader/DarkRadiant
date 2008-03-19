@@ -24,7 +24,7 @@ ObjectiveEntity::ObjectiveEntity(scene::INodePtr n)
 
 // Delete the entity's world node
 void ObjectiveEntity::deleteWorldNode() {
-	Node_getTraversable(GlobalSceneGraph().root())->erase(_node);
+	GlobalSceneGraph().root()->removeChildNode(_node);
 	_entity = NULL;		
 }
 

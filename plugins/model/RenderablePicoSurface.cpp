@@ -3,7 +3,7 @@
 #include "modelskin.h"
 #include "math/frustum.h"
 #include "selectable.h"
-#include "renderable.h"
+#include "irenderable.h"
 
 #include <boost/algorithm/string/replace.hpp>
 

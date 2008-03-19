@@ -59,8 +59,8 @@ public:
 };
 typedef boost::shared_ptr<ComponentEditable> ComponentEditablePtr;
 
-inline ComponentEditable* Instance_getComponentEditable(scene::Instance& instance) {
-	return dynamic_cast<ComponentEditable*>(&instance);
+inline ComponentEditablePtr Node_getComponentEditable(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<ComponentEditable>(node);
 }
 
 class ComponentSnappable {
@@ -69,8 +69,8 @@ public:
 };
 typedef boost::shared_ptr<ComponentSnappable> ComponentSnappablePtr;
 
-inline ComponentSnappable* Instance_getComponentSnappable(scene::Instance& instance) {
-	return dynamic_cast<ComponentSnappable*>(&instance);
+inline ComponentSnappablePtr Node_getComponentSnappable(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<ComponentSnappable>(node);
 }
 
 #endif

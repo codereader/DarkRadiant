@@ -3,7 +3,7 @@
 
 #include "math/Plane3.h"
 #include "irender.h"
-#include "renderable.h"
+#include "irenderable.h"
 #include "Winding.h"
 
 class BrushClipPlane : public OpenGLRenderable {

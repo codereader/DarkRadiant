@@ -22,7 +22,7 @@ public:
 	
 	/* Connect two entities using a "target" key.
 	 */
-	void connectEntities(const scene::Path& path, const scene::Path& targetPath);
+	void connectEntities(const scene::INodePtr& source, const scene::INodePtr& target);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

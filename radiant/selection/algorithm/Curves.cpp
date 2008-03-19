@@ -10,18 +10,18 @@ namespace selection {
 	namespace algorithm {
 
 // A basic functor doing an action to the curve
-class CurveInstanceProcessor
+class CurveNodeProcessor
 {
 public:
-	virtual void operator() (CurveInstance& curve) = 0;
+	virtual void operator() (CurveNode& curve) = 0;
 };
 
 // Appends a single control point to the visited curve
 class CurveControlPointAppender :
-	public CurveInstanceProcessor
+	public CurveNodeProcessor
 {
 public:
-	virtual void operator() (CurveInstance& curve) {
+	virtual void operator() (CurveNode& curve) {
 		if (!curve.hasEmptyCurve()) {
 			curve.appendControlPoints(1);
 		}
@@ -30,10 +30,10 @@ public:
 
 // Removes the selected control points from the visited curve
 class CurveControlPointRemover :
-	public CurveInstanceProcessor
+	public CurveNodeProcessor
 {
 public:
-	virtual void operator() (CurveInstance& curve) {
+	virtual void operator() (CurveNode& curve) {
 		if (!curve.hasEmptyCurve()) {
 			curve.removeSelectedControlPoints();
 		}
@@ -42,10 +42,10 @@ public:
 
 // Removes the selected control points from the visited curve
 class CurveControlPointInserter :
-	public CurveInstanceProcessor
+	public CurveNodeProcessor
 {
 public:
-	virtual void operator() (CurveInstance& curve) {
+	virtual void operator() (CurveNode& curve) {
 		if (!curve.hasEmptyCurve()) {
 			curve.insertControlPointsAtSelected();
 		}
@@ -54,10 +54,10 @@ public:
 
 // Removes the selected control points from the visited curve
 class CurveConverter :
-	public CurveInstanceProcessor
+	public CurveNodeProcessor
 {
 public:
-	virtual void operator() (CurveInstance& curve) {
+	virtual void operator() (CurveNode& curve) {
 		if (!curve.hasEmptyCurve()) {
 			curve.convertCurveType();
 		}
@@ -66,23 +66,23 @@ public:
 
 /** greebo: This visits all selected curves and	calls 
  * 			the nominated Processor class using the 
- * 			CurveInstance as argument.  
+ * 			CurveNode as argument.  
  */
 class SelectedCurveVisitor : 
 	public SelectionSystem::Visitor
 {
-	CurveInstanceProcessor& _processor;
+	CurveNodeProcessor& _processor;
 public:
-	SelectedCurveVisitor(CurveInstanceProcessor& processor) :
+	SelectedCurveVisitor(CurveNodeProcessor& processor) :
 		_processor(processor)
 	{}
 
-	void visit(scene::Instance& instance) const {
-		// Try to cast the instance onto a CurveInstance
-		CurveInstance* curveInstance = Instance_getCurveInstance(instance);
-		if (curveInstance != NULL) {
+	void visit(const scene::INodePtr& node) const {
+		// Try to cast the instance onto a CurveNode
+		CurveNodePtr curve = Node_getCurve(node);
+		if (curve != NULL) {
 			// Call the processor
-			_processor(*curveInstance);
+			_processor(*curve);
 		}
 	}
 };

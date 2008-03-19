@@ -63,6 +63,14 @@ void MD5Model::setFilename(const std::string& name) {
 	_filename = name;
 }
 
+std::string MD5Model::getModelPath() const {
+	return _modelPath;
+}
+
+void MD5Model::setModelPath(const std::string& modelPath) {
+	_modelPath = modelPath;
+}
+
 void MD5Model::applySkin(const ModelSkin& skin) {
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
 		(*i)->applySkin(skin);

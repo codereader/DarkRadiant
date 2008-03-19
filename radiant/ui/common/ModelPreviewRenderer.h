@@ -1,7 +1,7 @@
 #ifndef MODELPREVIEWRENDERER_H_
 #define MODELPREVIEWRENDERER_H_
 
-#include "renderable.h"
+#include "irenderable.h"
 
 #include <vector>
 
