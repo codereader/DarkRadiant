@@ -231,14 +231,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\entry.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\entry.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\EntryAbortedException.h"
 			>
 		</File>
