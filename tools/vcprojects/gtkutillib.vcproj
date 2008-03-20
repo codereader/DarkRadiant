@@ -227,14 +227,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\frame.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\frame.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\FramedWidget.h"
 			>
 		</File>

@@ -95,8 +95,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "moduleobservers.h"
 
 #include "gtkutil/clipboard.h"
-#include "gtkutil/container.h"
-#include "gtkutil/frame.h"
 #include "gtkutil/glfont.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/Paned.h"
@@ -1290,17 +1288,15 @@ void MainFrame::Create()
     }
 
    	{
-		GtkFrame* frame = create_framed_widget(
-			GlobalTextureBrowser().constructWindow(
-				GTK_WINDOW(window)
-			)
+		GtkWidget* page = gtkutil::FramedWidget(
+			GlobalTextureBrowser().constructWindow(GTK_WINDOW(window))
 		);
 		// Add the Media Browser page
 		GlobalGroupDialog().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
-	    	GTK_WIDGET(frame), // page widget
+	    	GTK_WIDGET(page), // page widget
 	    	"Texture Browser"
 	    );
 		
@@ -1370,13 +1366,16 @@ void MainFrame::Create()
 	}
 	
     {      
-      GtkFrame* frame = create_framed_widget(GlobalTextureBrowser().constructWindow(window));
+		GtkWidget* textureBrowser = gtkutil::FramedWidget(
+			GlobalTextureBrowser().constructWindow(window)
+		);
+
 		// Add the Media Browser page
 		GlobalGroupDialog().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
-	    	GTK_WIDGET(frame), // page widget
+	    	GTK_WIDGET(textureBrowser), // page widget
 	    	"Texture Browser"
 	    );
     }
