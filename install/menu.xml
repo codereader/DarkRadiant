@@ -55,6 +55,7 @@
 		<menuItem name="objExport" caption="Export selected brushes to _OBJ" command="BrushExportOBJ" />
 		<menuItem name="createCM" caption="Create CollisionModel from selection..." command="BrushExportCM" />
 		<menuSeparator />
+		<menuItem name="shortcuts" caption="Keyboard Shortcuts" command="ShowCommandList" />
 		<menuItem name="preferences" caption="Pre_ferences" command="Preferences" />
 	</subMenu>
 
@@ -295,7 +296,6 @@
 	</subMenu>
 
 	<subMenu name="help" caption="_Help">
-		<menuItem name="shortcuts" caption="Shortcuts list" command="ShowCommandList" />
 		<menuItem name="about" caption="_About" command="About" />
 	</subMenu>
 </menu>
