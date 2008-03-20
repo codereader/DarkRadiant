@@ -58,7 +58,6 @@ gtkutil_env.useXML2()
 
 gtkutil_src = '\
   clipboard.cpp\
-  container.cpp\
   cursor.cpp\
   DeferredAdjustment.cpp\
   dialog.cpp\

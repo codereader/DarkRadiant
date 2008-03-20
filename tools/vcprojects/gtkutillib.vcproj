@@ -183,14 +183,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\container.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\container.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\ControlButton.h"
 			>
 		</File>
