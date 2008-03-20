@@ -185,7 +185,7 @@ void PrefDialog::selectPage() {
 	GtkTreeModel* model;
 	bool anythingSelected = gtk_tree_selection_get_selected(
 		_selection, &model, &iter
-	);
+	) ? true : false;
 	
 	if (anythingSelected) {
 		// Retrieve the pointer from the current row and cast it to a GtkWidget*

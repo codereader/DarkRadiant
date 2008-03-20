@@ -122,7 +122,7 @@ bool PatchCreateDialog::queryPatchDimensions(int& width, int& height,
 		width = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_comboWidth)));
 		height = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_comboHeight)));
 		
-		removeBrush = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox));
+		removeBrush = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox)) ? true : false;
 		
 		returnValue = true;
 	}

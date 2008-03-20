@@ -127,7 +127,7 @@ void FindAndReplaceShader::performReplace() {
 	int replaced = selection::algorithm::findAndReplaceShader(
 		gtk_entry_get_text(GTK_ENTRY(_findEntry)),					   // find
 		gtk_entry_get_text(GTK_ENTRY(_replaceEntry)), 				   // replace
-		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_selectedOnly)) // selected only
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_selectedOnly)) ? true : false // selected only
 	);
 	
 	const std::string replacedStr = 
