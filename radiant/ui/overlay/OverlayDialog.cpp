@@ -89,7 +89,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 					 0, 1, 1, 2, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 				
-	GtkWidget* transSlider = gtk_hscale_new_with_range(0, 1, 0.1);
+	GtkWidget* transSlider = gtk_hscale_new_with_range(0, 1, 0.01);
 	g_signal_connect(G_OBJECT(transSlider), "value-changed",
 					 G_CALLBACK(_onScrollChange), this);
 	_subWidgets["transparency"] = transSlider;
@@ -102,7 +102,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 					 0, 1, 2, 3, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 
-	GtkWidget* scale = gtk_hscale_new_with_range(0, 20, 0.1);
+	GtkWidget* scale = gtk_hscale_new_with_range(0, 20, 0.01);
 	g_signal_connect(G_OBJECT(scale), "value-changed",
 					 G_CALLBACK(_onScrollChange), this);
 	_subWidgets["scale"] = scale;
