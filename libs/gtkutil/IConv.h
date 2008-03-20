@@ -85,7 +85,7 @@ public:
 		gsize bytes_written = 0;
 		GError* gerror = 0;
 
-		char *const buf = g_convert_with_iconv(str.data(), str.size(), gobject_, 0, &bytes_written, &gerror);
+		char *const buf = g_convert_with_iconv(str.data(), static_cast<gssize>(str.size()), gobject_, 0, &bytes_written, &gerror);
 
 		if (gerror) {
 			return "";
@@ -109,7 +109,7 @@ public:
 		gsize bytes_written = 0;
 		GError* gerror = 0;
 
-		char *const buf = g_locale_to_utf8(input.data(), input.size(), 0, &bytes_written, &gerror);
+		char *const buf = g_locale_to_utf8(input.data(), static_cast<gssize>(input.size()), 0, &bytes_written, &gerror);
 
 		if (gerror) return "";
 		
@@ -127,7 +127,7 @@ public:
 		gsize bytes_written = 0;
 		GError* gerror = 0;
 
-		char *const buf = g_locale_from_utf8(input.data(), input.size(), 0, &bytes_written, &gerror);
+		char *const buf = g_locale_from_utf8(input.data(), static_cast<gssize>(input.size()), 0, &bytes_written, &gerror);
 
 		if (gerror) return "";
 		

@@ -42,7 +42,7 @@ public:
 
 struct Coord2D
 {
-  float x, y;
+  double x, y;
   Coord2D(double _x, double _y)
     : x(_x), y(_y)
   {
@@ -51,7 +51,7 @@ struct Coord2D
 
 inline Coord2D coord2d_device2screen(const Coord2D& coord, unsigned int width, unsigned int height)
 {
-  return Coord2D(((coord.x + 1.0f) * 0.5f) * width, ((coord.y + 1.0f) * 0.5f) * height);
+  return Coord2D(((coord.x + 1.0) * 0.5) * width, ((coord.y + 1.0) * 0.5) * height);
 }
 
 inline rectangle_t rectangle_from_area(const double min[2], const double max[2], unsigned int width, unsigned int height)

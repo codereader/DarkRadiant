@@ -158,7 +158,7 @@ GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& reg
 	gtk_widget_show(alignment);
 
 	GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-	gtk_entry_set_width_chars(entry, std::max(GlobalRegistry().get(registryKey).size(), std::size_t(10)));
+	gtk_entry_set_width_chars(entry, static_cast<gint>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(10))));
 	gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(entry));
 	
 	// Connect the registry key to the newly created input field
@@ -241,7 +241,7 @@ void PrefPage::appendRadioIcons(const std::string& name, const std::string& regi
 		return;
 	}
 	
-	GtkWidget* table = gtk_table_new(3, iconList.size(), FALSE);
+	GtkWidget* table = gtk_table_new(3, static_cast<guint>(iconList.size()), FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 	

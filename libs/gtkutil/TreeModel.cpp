@@ -25,7 +25,7 @@ bool TreeModel::getBoolean(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
 	gtk_tree_model_get_value(model, iter, colNo, &val);
 
 	// Create and return the string, and free the GValue
-	bool retVal = g_value_get_boolean(&val);
+	bool retVal = g_value_get_boolean(&val) ? true: false;
 	g_value_unset(&val);
 	return retVal;
 }

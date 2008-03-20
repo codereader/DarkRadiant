@@ -113,7 +113,7 @@ std::string SoundShaderPreview::getSelectedSoundFile() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 	bool anythingSelected = 
-		gtk_tree_selection_get_selected(_treeSelection, &model, &iter);
+		gtk_tree_selection_get_selected(_treeSelection, &model, &iter) ? true : false;
 	
 	if (anythingSelected) {
 		return gtkutil::TreeModel::getString(model, &iter, FILENAME_COL);

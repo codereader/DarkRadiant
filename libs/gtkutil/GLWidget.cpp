@@ -195,7 +195,7 @@ GdkGLConfig* GLWidget::createGLConfig() {
 bool GLWidget::makeCurrent(GtkWidget* widget) {
 	 GdkGLContext* glcontext = gtk_widget_get_gl_context(widget);
 	 GdkGLDrawable* gldrawable = gtk_widget_get_gl_drawable(widget);
-	 return static_cast<bool>(gdk_gl_drawable_gl_begin(gldrawable, glcontext));
+	 return gdk_gl_drawable_gl_begin(gldrawable, glcontext) ? true : false;
 }
 
 void GLWidget::swapBuffers(GtkWidget* widget) {

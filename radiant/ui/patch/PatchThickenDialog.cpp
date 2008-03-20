@@ -105,7 +105,7 @@ bool PatchThickenDialog::queryPatchThickness(float& thickness, bool& createSeams
 	
 	if (response == GTK_RESPONSE_OK) {
 		thickness = strToFloat(gtk_entry_get_text(GTK_ENTRY(_thicknessEntry)));
-		createSeams = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_seamsCheckBox));
+		createSeams = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_seamsCheckBox)) ? true : false;
 		
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_radX))) {
 			axis = 0;
