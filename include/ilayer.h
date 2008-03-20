@@ -3,6 +3,7 @@
 
 #include <set>
 #include <string>
+#include "imodule.h"
 
 namespace scene {
 
@@ -31,6 +32,25 @@ public:
     virtual LayerList getLayers() const = 0;
 };
 
+class ILayerSystem :
+	public RegisterableModule
+{
+public:
+	virtual bool layerIsVisible(const std::string& layerName) = 0;
+};
+
 } // namespace scene
+
+const std::string MODULE_LAYERSYSTEM("LayerSystem");
+
+inline scene::ILayerSystem& GlobalLayerSystem() {
+	// Cache the reference locally
+	static scene::ILayerSystem& _layerSystem(
+		*boost::static_pointer_cast<scene::ILayerSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_LAYERSYSTEM)
+		)
+	);
+	return _layerSystem;
+}
 
 #endif /*ILAYER_H_*/
