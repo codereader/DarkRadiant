@@ -53,6 +53,9 @@ private:
 	// Is true when the node is part of the scenegraph
 	bool _instantiated;
 
+	// The list of layers this object is associated to
+	LayerList _layers;
+
 public:
 	Node();	
 	Node(const Node& other);
@@ -69,6 +72,11 @@ public:
 	bool visible() const;
 
 	bool excluded() const;
+
+	// Layered implementation
+	virtual void addToLayer(const std::string& layer);
+    virtual void removeFromLayer(const std::string& layer);
+    virtual LayerList getLayers() const;
 
 	virtual void addChildNode(const INodePtr& node);
 	virtual void removeChildNode(const INodePtr& node);
