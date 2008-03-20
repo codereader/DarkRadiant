@@ -639,7 +639,8 @@ radiant_src = \
          'referencecache/ModelCache.cpp',
 	 'referencecache/NullModel.cpp',
  	 'referencecache/NullModelNode.cpp',
-         'referencecache/RadiantReferenceCache.cpp'
+         'referencecache/RadiantReferenceCache.cpp',
+		 'layers/LayerSystem.cpp'
          ]
     ]
 
