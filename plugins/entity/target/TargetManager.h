@@ -59,9 +59,12 @@ public:
 	void associateTarget(const std::string& name, const scene::INodePtr& node);
 
 	/**
-	 * greebo: Disassociates the Target from the given name.
+	 * greebo: Disassociates the Target from the given name. The node pointer
+	 *         must also be passed to allow the manager to check the request.
+	 *         Otherwise it would be possible for cloned nodes to dissociate
+	 *         the target from their source node.
 	 */
-	void clearTarget(const std::string& name);
+	void clearTarget(const std::string& name, const scene::INodePtr& node);
 };
 
 } // namespace entity

@@ -40,7 +40,7 @@ void TargetableNode::targetnameChanged(const std::string& name) {
 	if (!_targetName.empty()) {
 		// Old name is not empty
 		// Tell the Manager to disassociate us from the target
-		TargetManager::Instance().clearTarget(_targetName);
+		TargetManager::Instance().clearTarget(_targetName, _node.getSelf());
 	}
 	
 	// Store the new name, in any case
