@@ -15,8 +15,8 @@ class SoundRadii {
 	//set sound radii either in metres or in inch on initialization might cause a conversion
 	SoundRadii (float min = 0, float max = 0, bool inMetres = false) {
 		if (inMetres) {
-			minRad = min/0.0254;
-			maxRad = max/0.0254;
+			minRad = min/0.0254f;
+			maxRad = max/0.0254f;
 		}
 		else {
 			minRad = min;
@@ -25,11 +25,11 @@ class SoundRadii {
 	}
 	// set the sound radii in metres or in inch, might cause a conversion
 	inline void setMin (float min, bool inMetres = false) {
-		if (inMetres) minRad = min/0.0254;
+		if (inMetres) minRad = min/0.0254f;
 		else minRad = min;
 	}
 	inline void setMax (float max, bool inMetres = false) {
-		if (inMetres) maxRad = max/0.0254;
+		if (inMetres) maxRad = max/0.0254f;
 		else maxRad = max;
 	}
 	inline float getMin () const { return minRad; }

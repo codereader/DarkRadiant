@@ -214,8 +214,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget,
 	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 
 	// Render the bounding box if the toggle is active
-	if (gtk_toggle_tool_button_get_active(
-			GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox)) == TRUE) 
+	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox))) 
 	{
 		// Render as fullbright wireframe
 		glDisable(GL_LIGHTING);

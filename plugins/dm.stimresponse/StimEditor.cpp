@@ -270,13 +270,13 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 }
 
 std::string StimEditor::getTimerString() {
-	std::string hour = floatToStr(gtk_spin_button_get_value_as_int(
+	std::string hour = intToStr(gtk_spin_button_get_value_as_int(
 		GTK_SPIN_BUTTON(_propertyWidgets.timer.hour)));
-	std::string minute = floatToStr(gtk_spin_button_get_value_as_int(
+	std::string minute = intToStr(gtk_spin_button_get_value_as_int(
 		GTK_SPIN_BUTTON(_propertyWidgets.timer.minute)));
-	std::string second = floatToStr(gtk_spin_button_get_value_as_int(
+	std::string second = intToStr(gtk_spin_button_get_value_as_int(
 		GTK_SPIN_BUTTON(_propertyWidgets.timer.second)));
-	std::string ms = floatToStr(gtk_spin_button_get_value_as_int(
+	std::string ms = intToStr(gtk_spin_button_get_value_as_int(
 		GTK_SPIN_BUTTON(_propertyWidgets.timer.millisecond)));
 		
 	return hour + ":" + minute + ":" + second + ":" + ms;
@@ -297,7 +297,7 @@ void StimEditor::spinButtonChanged(GtkSpinButton* spinButton) {
 
 void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	GtkWidget* toggleWidget = GTK_WIDGET(toggleButton);
-	bool active = gtk_toggle_button_get_active(toggleButton);
+	bool active = gtk_toggle_button_get_active(toggleButton) ? true : false;
 	
 	if (toggleWidget == _propertyWidgets.active) {
 		setProperty("state", active ? "1" : "0");
@@ -321,7 +321,7 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		setProperty("time_interval", active ? "1000" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.chanceToggle) {
-		std::string entryText = floatToStr(gtk_spin_button_get_value_as_float(
+		std::string entryText = doubleToStr(gtk_spin_button_get_value_as_float(
 			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)
 		));
 

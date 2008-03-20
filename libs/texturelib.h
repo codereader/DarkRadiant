@@ -171,9 +171,9 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
 	return swap;
 }
 
-const float ProjectionAxisEpsilon = static_cast<float>(0.0001);
+const double ProjectionAxisEpsilon = 0.0001;
 
-inline bool projectionaxis_better(float axis, float other) {
+inline bool projectionaxis_better(double axis, double other) {
 	return fabs(axis) > fabs(other) + ProjectionAxisEpsilon;
 }
 

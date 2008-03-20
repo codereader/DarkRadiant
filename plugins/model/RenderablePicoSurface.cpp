@@ -31,8 +31,8 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 			
 			// Take off the everything before "base/", and everything after
 			// the first period if it exists (i.e. strip off ".tga")
-			int basePos = rawMapName.find("base");
-			int dotPos = rawMapName.find(".");
+			std::size_t basePos = rawMapName.find("base");
+			std::size_t dotPos = rawMapName.find(".");
 			if (basePos > 0) {
 				_originalShaderName = rawMapName.substr(basePos + 5, 
 														dotPos - basePos - 5);

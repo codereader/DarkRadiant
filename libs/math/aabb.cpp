@@ -70,9 +70,9 @@ void AABB::includePoint(const Vector3& point) {
 		// Extend each axis separately
 		for (int i = 0; i < 3; ++i) {
 			// Axis displacement from origin to point
-			float axisDisp = point[i] - origin[i]; 
+			double axisDisp = point[i] - origin[i]; 
 			// Half of extent increase needed (maybe negative if point inside)
-			float halfDif = 0.5 * (std::abs(axisDisp) - extents[i]); 
+			double halfDif = 0.5 * (std::abs(axisDisp) - extents[i]); 
 			if (halfDif > 0) {
 				origin[i] += (axisDisp > 0) ? halfDif : -halfDif;
 				extents[i] += halfDif;
@@ -91,11 +91,11 @@ void AABB::includeAABB(const AABB& other) {
 	if (isValid() && other.isValid()) {
 		// Extend each axis separately
 		for (int i = 0; i < 3; ++i) {
-		    float displacement = other.origin[i] - origin[i];
-		    float difference = other.extents[i] - extents[i];
+		    double displacement = other.origin[i] - origin[i];
+		    double difference = other.extents[i] - extents[i];
 		    if(fabs(displacement) > fabs(difference))
 		    {
-		      float half_difference = static_cast<float>(0.5 * (fabs(displacement) + difference));
+		      double half_difference = 0.5 * (fabs(displacement) + difference);
 		      if(half_difference > 0.0f)
 		      {
 		        origin[i] += (displacement >= 0.0f) ? half_difference : -half_difference;

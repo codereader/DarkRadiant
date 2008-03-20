@@ -158,7 +158,11 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, boo
 	_modelPreview.setModel("");
 
 	// Construct the model/skin combo and return it
-	return ModelSelectorResult(_lastModel, _lastSkin, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_clipCheckButton)) );
+	return ModelSelectorResult(
+		_lastModel, 
+		_lastSkin, 
+		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_clipCheckButton)) ? true : false 
+	);
 }
 
 // Static function to display the instance, and return the selected model to the 

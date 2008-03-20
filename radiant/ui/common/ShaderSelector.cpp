@@ -290,7 +290,7 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 	glViewport(0, 0, req.width, req.height);
 
 	// Initialise
-	glClearColor(0.3, 0.3, 0.3, 0);
+	glClearColor(0.3f, 0.3f, 0.3f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 	glMatrixMode(GL_PROJECTION);
@@ -364,7 +364,7 @@ void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStor
 					   -1);
 	
 	TexturePtr tex = shader->getDiffuse();
-	std::string dimStr = intToStr(tex->width) + " x " + intToStr(tex->height);
+	std::string dimStr = sizetToStr(tex->width) + " x " + sizetToStr(tex->height);
 	
 	gtk_list_store_append(listStore, &iter);
 	gtk_list_store_set(listStore, &iter,

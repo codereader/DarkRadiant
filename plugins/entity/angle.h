@@ -49,7 +49,7 @@ inline void read_angle(float& angle, const std::string& value)
     normalise_angle(angle);
   }
 }
-inline void write_angle(float angle, Entity* entity)
+inline void write_angle(double angle, Entity* entity)
 {
   if(angle == 0)
   {
@@ -57,9 +57,7 @@ inline void write_angle(float angle, Entity* entity)
   }
   else
   {
-    char value[64];
-    sprintf(value, "%g", angle);
-    entity->setKeyValue("angle", value);
+    entity->setKeyValue("angle", doubleToStr(angle));
   }
 }
 

@@ -106,9 +106,9 @@ void MapInfoDialog::populateWindow() {
 					(GtkAttachOptions) (0),
 					(GtkAttachOptions) (0), 0, 0);
 	
-	std::string bc = "<b>" + intToStr(GlobalRadiant().getCounter(counterBrushes).get()) + "</b>";
-	std::string pc = "<b>" + intToStr(GlobalRadiant().getCounter(counterPatches).get()) + "</b>";
-	std::string ec = "<b>" + intToStr(GlobalRadiant().getCounter(counterEntities).get()) + "</b>";
+	std::string bc = "<b>" + sizetToStr(GlobalRadiant().getCounter(counterBrushes).get()) + "</b>";
+	std::string pc = "<b>" + sizetToStr(GlobalRadiant().getCounter(counterPatches).get()) + "</b>";
+	std::string ec = "<b>" + sizetToStr(GlobalRadiant().getCounter(counterEntities).get()) + "</b>";
 	
 	gtk_label_set_markup(GTK_LABEL(_brushCount), bc.c_str());
 	gtk_label_set_markup(GTK_LABEL(_patchCount), pc.c_str());

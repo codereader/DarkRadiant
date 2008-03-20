@@ -13,8 +13,9 @@ namespace objectives
 /**
  * Data object representing a single mission objective.
  */
-struct Objective
+class Objective
 {
+public:
 	// Description of objective
 	std::string description;
 

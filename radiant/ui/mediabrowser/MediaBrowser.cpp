@@ -229,7 +229,7 @@ bool MediaBrowser::isDirectorySelected() {
 		memset(&dirFlagVal, 0, sizeof(GValue));
 		gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &iter, DIR_FLAG_COLUMN, &dirFlagVal);
 		// Return boolean value
-		return g_value_get_boolean(&dirFlagVal);
+		return g_value_get_boolean(&dirFlagVal) ? true : false;
 	}
 	else {
 		// Error condition if there is no selection

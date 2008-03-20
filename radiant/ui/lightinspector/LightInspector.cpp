@@ -367,7 +367,7 @@ void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
 	if (self->_updateActive) return; // avoid callback loops
 	
 	// Set the projected flag
-	self->_isProjected = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
+	self->_isProjected = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b)) ? true : false;
 	
 	// Set button state based on the value of the flag
 	if (self->_isProjected) {

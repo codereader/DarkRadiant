@@ -91,7 +91,7 @@ void ClassEditor::setEntity(SREntityPtr entity) {
 int ClassEditor::getIdFromSelection() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter);
+	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter) ? true : false;
 	
 	if (anythingSelected && _entity != NULL) {
 		return gtkutil::TreeModel::getInt(model, &iter, ID_COL);
@@ -131,7 +131,7 @@ void ClassEditor::spinButtonChanged(GtkSpinButton* spinButton) {
 	SpinButtonMap::iterator found = _spinWidgets.find(spinButton);
 	
 	if (found != _spinWidgets.end()) {
-		std::string entryText = floatToStr(
+		std::string entryText = doubleToStr(
 			gtk_spin_button_get_value_as_float(spinButton)
 		);
 		

@@ -248,7 +248,7 @@ void CustomStimEditor::addStimType() {
 int CustomStimEditor::getIdFromSelection() {
 	GtkTreeIter iter;
 	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter);
+	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter) ? true : false;
 	
 	return (anythingSelected) ? gtkutil::TreeModel::getInt(model, &iter, ST_ID_COL) : -1;
 }

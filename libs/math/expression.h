@@ -48,7 +48,7 @@ inline Literal<Value> float_literal(const Value& value)
 }
 
 template<typename Expression>
-inline float float_for_expression(const Expression& expression)
+inline double double_for_expression(const Expression& expression)
 {
   return expression.eval();
 }
@@ -463,7 +463,7 @@ class Matrix4Literal
 {
   const Matrix4 m_value;
 public:
-  typedef float value_type;
+  typedef double value_type;
   typedef IntegralConstant<4> dimension0;
   typedef IntegralConstant<4> dimension1;
 
@@ -486,7 +486,7 @@ class Matrix4Identity
 {
   const Matrix4& m_value;
 public:
-  typedef float value_type;
+  typedef double value_type;
   typedef IntegralConstant<4> dimension0;
   typedef IntegralConstant<4> dimension1;
 

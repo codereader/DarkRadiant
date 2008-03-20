@@ -239,7 +239,7 @@ GtkWidget* ResponseEditor::createEffectWidgets() {
 
 void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	GtkWidget* toggleWidget = GTK_WIDGET(toggleButton);
-	bool active = gtk_toggle_button_get_active(toggleButton);
+	bool active = gtk_toggle_button_get_active(toggleButton) ? true : false;
 	
 	if (toggleWidget == _propertyWidgets.active) {
 		setProperty("state", active ? "1" : "0");
@@ -258,7 +258,7 @@ void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 		setProperty("random_effects", entryText);
 	}
 	else if (toggleWidget == _propertyWidgets.chanceToggle) {
-		std::string entryText = floatToStr(gtk_spin_button_get_value_as_float(
+		std::string entryText = doubleToStr(gtk_spin_button_get_value_as_float(
 			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)
 		));
 
@@ -456,7 +456,7 @@ int ResponseEditor::getEffectIdFromSelection() {
 	GtkTreeModel* model;
 	bool anythingSelected = gtk_tree_selection_get_selected(
 		_effectWidgets.selection, &model, &iter
-	);
+	) ? true : false;
 	
 	if (anythingSelected && _entity != NULL) {
 		return gtkutil::TreeModel::getInt(model, &iter, EFFECT_INDEX_COL);

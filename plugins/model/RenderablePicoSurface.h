@@ -98,13 +98,13 @@ public:
 	/** Return the vertex count for this surface
 	 */
 	int getVertexCount() const {
-		return _vertices.size();
+		return static_cast<int>(_vertices.size());
 	}
 	
 	/** Return the poly count for this surface
 	 */
 	int getPolyCount() const {
-		return _indices.size() / 3; // 3 indices per triangle
+		return static_cast<int>(_indices.size() / 3); // 3 indices per triangle
 	}
 	
 	/** Get the Shader for this surface.
