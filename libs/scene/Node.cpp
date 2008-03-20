@@ -67,7 +67,8 @@ Node::Node(const Node& other) :
 	_childBoundsChanged(true),
 	_childBoundsMutex(false),
 	_local2world(other._local2world),
-	_instantiated(false)
+	_instantiated(false),
+	_layers(other._layers)
 {}
 
 void Node::resetIds() {

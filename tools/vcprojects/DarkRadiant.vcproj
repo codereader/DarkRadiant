@@ -2002,6 +2002,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="layers"
+				>
+				<File
+					RelativePath="..\..\radiant\layers\LayerSystem.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\layers\LayerSystem.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\radiant\darkradiant.rc"
