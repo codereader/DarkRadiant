@@ -102,6 +102,21 @@ bool Node::excluded() const {
 	return (_state & eExcluded) != 0;
 }
 
+void Node::addToLayer(const std::string& layer) {
+	_layers.insert(layer);
+}
+
+void Node::removeFromLayer(const std::string& layer) {
+	LayerList::iterator found = _layers.find(layer);
+	if (found != _layers.end()) {
+		_layers.erase(found);
+	}
+}
+
+LayerList Node::getLayers() const {
+	return _layers;
+}
+
 void Node::addChildNode(const INodePtr& node) {
 	// Add the node to the TraversableNodeSet, this triggers an 
 	// Node::onTraversableInsert() event

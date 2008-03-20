@@ -1,8 +1,11 @@
 #ifndef INODE_H_
 #define INODE_H_
 
+#include "ilayer.h"
 #include "iinstantiable.h"
 
+#include <set>
+#include <string>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
@@ -10,17 +13,6 @@ class AABB;
 class Matrix4;
 
 namespace scene {
-
-/** 
- * greebo: Preliminary interface of a Layered scenegraph object. Subject to change.
- */
-class Layered
-{
-public:
-	virtual unsigned int getLayerFlags() = 0;
-	virtual void addToLayer(unsigned int layer) = 0;
-	virtual void removeFromLayer(unsigned int layer) = 0;
-};
 
 /**
 * Interface for objects which can be filtered by the FilterSystem.
@@ -85,13 +77,6 @@ public:
 	 */
 	virtual void setIsRoot(bool isRoot) = 0;
 	
-	/** greebo: Currently empty implementations of the layer
-	 * 			accessor methods.
-	 */
-	virtual unsigned int getLayerFlags() { return 0; }
-	virtual void addToLayer(unsigned int layer) {}
-	virtual void removeFromLayer(unsigned int layer) {}
-
 	/** greebo: State bit accessor methods. This enables/disables
 	 * 			the bit of the state flag (e.g. hidden, excluded)
 	 */
