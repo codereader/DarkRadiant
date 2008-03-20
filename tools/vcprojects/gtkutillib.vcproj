@@ -239,11 +239,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\glwidget.cpp"
+			RelativePath="..\..\libs\gtkutil\GLWidget.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\glwidget.h"
+			RelativePath="..\..\libs\gtkutil\GLWidget.h"
 			>
 		</File>
 		<File
