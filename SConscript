@@ -63,7 +63,6 @@ gtkutil_src = '\
   cursor.cpp\
   DeferredAdjustment.cpp\
   dialog.cpp\
-  entry.cpp\
   frame.cpp\
   filechooser.cpp\
   glfont.cpp\
