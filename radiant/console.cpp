@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iregistry.h"
 
 #include "gtkutil/messagebox.h"
-#include "gtkutil/container.h"
 #include "gtkutil/nonmodal.h"
 #include "stream/stringstream.h"
 #include "convert.h"
@@ -104,7 +103,7 @@ void console_populate_popup(GtkTextView* textview, GtkMenu* menu, gpointer user_
   GtkWidget* item = gtk_menu_item_new_with_label ("Clear");
   g_signal_connect(G_OBJECT (item), "activate", G_CALLBACK(console_clear), 0);
   gtk_widget_show (item);
-  container_add_widget(GTK_CONTAINER(menu), item);
+  gtk_container_add(GTK_CONTAINER(menu), item);
 }
 
 gboolean destroy_set_null(GtkWindow* widget, GtkWidget** p)
