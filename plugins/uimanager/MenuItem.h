@@ -96,7 +96,7 @@ public:
 	bool isEmpty() const;
 	
 	// Returns the number of child items
-	int numChildren() const;
+	std::size_t numChildren() const;
 	
 	// Return / set the event name
 	std::string getEvent() const;

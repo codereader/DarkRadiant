@@ -658,7 +658,7 @@ void ObjectivesEditor::_onFlagToggle(GtkWidget* flag, ObjectivesEditor* self) {
 	
 	// Get the objective and the new status
 	Objective& o = self->getCurrentObjective();
-	bool status = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(flag));
+	bool status = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(flag)) ? true : false;
 	
 	// Determine which checkbox is toggled, then update the appropriate flag
 	// accordingly

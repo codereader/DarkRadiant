@@ -777,13 +777,13 @@ const Matrix4& Light::projection() const {
 	// If there is no light_end, but a light_start, assume light_end = light_target
 	Vector3 stop = m_useLightStart && m_useLightEnd ? _lightEndTransformed : _lightTargetTransformed;
 	
-	float rLen = _lightRightTransformed.getLength();
+	double rLen = _lightRightTransformed.getLength();
 	Vector3 right = _lightRightTransformed / rLen;
-	float uLen = _lightUpTransformed.getLength();
+	double uLen = _lightUpTransformed.getLength();
 	Vector3 up = _lightUpTransformed / uLen;
 	Vector3 normal = up.crossProduct(right).getNormalised();
 
-	float dist = _lightTargetTransformed.dot(normal);
+	double dist = _lightTargetTransformed.dot(normal);
 	if ( dist < 0 ) {
 		dist = -dist;
 		normal = -normal;
@@ -799,21 +799,21 @@ const Matrix4& Light::projection() const {
 	// now offset to center
 	Vector4 targetGlobal(_lightTargetTransformed, 1);
     {
-		float a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
-		float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
-		float ofs = 0.5f - a / b;
+		double a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
+		double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
+		double ofs = 0.5 - a / b;
 		plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
 	}
 	{
-		float a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
-		float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
-		float ofs = 0.5f - a / b;
+		double a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
+		double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
+		double ofs = 0.5 - a / b;
 		plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
 	}
 
 	// set the falloff vector
 	Vector3 falloff = stop - start;
-	float length = falloff.getLength();
+	double length = falloff.getLength();
 	falloff /= length;
 	if ( length <= 0 ) {
 		length = 1;

@@ -234,10 +234,10 @@ void Speaker::sShaderChanged(const std::string& value) {
 }
 
 void Speaker::sMinChanged(const std::string& value) {
-	m_minIsSet = atoi(value.c_str()) == 0 ? false : true;
+	m_minIsSet = strToInt(value) == 0 ? false : true;
 	if (m_minIsSet)
 		// we need to parse in metres
-		m_speakerRadii.m_radii.setMin(atof(value.c_str()), true);
+		m_speakerRadii.m_radii.setMin(strToFloat(value), true);
 	else 
 		m_speakerRadii.m_radii.setMin(m_stdVal.getMin());
 
@@ -245,10 +245,10 @@ void Speaker::sMinChanged(const std::string& value) {
 }
 
 void Speaker::sMaxChanged(const std::string& value) {
-	m_maxIsSet = atoi(value.c_str()) == 0 ? false : true;
+	m_maxIsSet = strToInt(value) == 0 ? false : true;
 	if (m_maxIsSet)
 		// we need to parse in metres
-		m_speakerRadii.m_radii.setMax(atof(value.c_str()), true);
+		m_speakerRadii.m_radii.setMax(strToFloat(value), true);
 	else 
 		m_speakerRadii.m_radii.setMax(m_stdVal.getMax());
 

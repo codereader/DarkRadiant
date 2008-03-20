@@ -104,7 +104,7 @@ HeightMapExpression::HeightMapExpression (DefTokeniser& token) {
 	token.assertNextToken("(");
 	heightMapExp = createForToken(token);
 	token.assertNextToken(",");
-	scale = std::atof(token.nextToken().data());
+	scale = static_cast<float>(std::atof(token.nextToken().data()));
 	token.assertNextToken(")");
 }
 
@@ -324,19 +324,19 @@ ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue
 	token.assertNextToken("(");
 	mapExp = createForToken(token);
 	token.assertNextToken(",");
-	scaleRed = std::atof(token.nextToken().data());
+	scaleRed = static_cast<float>(std::atof(token.nextToken().data()));
 	if (token.nextToken() == ")") {
 		return;
 	}
-	scaleGreen = std::atof(token.nextToken().data());
+	scaleGreen = static_cast<float>(std::atof(token.nextToken().data()));
 	if (token.nextToken() == ")") {
 		return;
 	}
-	scaleBlue = std::atof(token.nextToken().data());
+	scaleBlue = static_cast<float>(std::atof(token.nextToken().data()));
 	if (token.nextToken() == ")") {
 		return;
 	}
-	scaleAlpha = std::atof(token.nextToken().data());
+	scaleAlpha = static_cast<float>(std::atof(token.nextToken().data()));
 	token.assertNextToken(")");
 }
 

@@ -80,7 +80,7 @@ void MenuItem::setType(eMenuItemType type) {
 	_type = type;
 }
 
-int MenuItem::numChildren() const {
+std::size_t MenuItem::numChildren() const {
 	return _children.size();
 }
 

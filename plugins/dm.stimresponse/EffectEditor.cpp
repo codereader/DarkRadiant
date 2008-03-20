@@ -199,7 +199,7 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 	gtk_tooltips_enable(_tooltips);
 	
 	// Setup the table with default spacings
-	_argTable = gtk_table_new(list.size(), 3, false);
+	_argTable = gtk_table_new(static_cast<guint>(list.size()), 3, false);
     gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
     gtk_table_set_row_spacings(GTK_TABLE(_argTable), 6);
 	gtk_container_add(GTK_CONTAINER(_argAlignment), _argTable); 
@@ -353,7 +353,7 @@ void EffectEditor::onCancel(GtkWidget* button, EffectEditor* self) {
 
 void EffectEditor::onStateToggle(GtkToggleButton* toggleButton, EffectEditor* self) {
 	self->_response.getResponseEffect(self->_effectIndex).setActive(
-		gtk_toggle_button_get_active(toggleButton)
+		gtk_toggle_button_get_active(toggleButton) ? true : false
 	);
 }
 

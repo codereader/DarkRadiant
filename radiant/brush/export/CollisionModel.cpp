@@ -99,10 +99,10 @@ unsigned int CollisionModel::addVertex(const Vector3& vertex) {
 	if (foundIndex == -1) {
 		// Insert the vertex at the end of the VertexMap
 		// The size of the map is the highest index + 1
-		unsigned int lastIndex = _vertices.size();
+		std::size_t lastIndex = _vertices.size();
 		_vertices[lastIndex] = snapped;
 		
-		return lastIndex;
+		return static_cast<unsigned int>(lastIndex);
 	}
 	else {
 		// Return the found index
@@ -122,7 +122,7 @@ int CollisionModel::findEdge(const Edge& edge) const {
 		
 		// Opposite direction match?
 		if (i->second.from == edge.to && i->second.to == edge.from) {
-			return -i->first;
+			return -static_cast<int>(i->first);
 		}
 	}
 	return 0;
@@ -134,9 +134,9 @@ unsigned int CollisionModel::addEdge(const Edge& edge) {
 	
 	if (foundIndex == 0) {
 		// NULL edge found, insert the edge with a new index
-		unsigned int edgeIndex = _edges.size();
+		std::size_t edgeIndex = _edges.size();
 		_edges[edgeIndex] = edge;
-		return edgeIndex;
+		return static_cast<unsigned int>(edgeIndex);
 	}
 	else {
 		return abs(foundIndex);
@@ -192,7 +192,7 @@ void CollisionModel::addPolygon(
 	if (findPolygon(poly.edges) == -1) {
 		AABB faceAABB = face.getWinding().aabb();
 		
-		poly.numEdges = poly.edges.size();
+		poly.numEdges = static_cast<unsigned int>(poly.edges.size());
 		poly.plane = face.plane3();
 		poly.min = faceAABB.origin - faceAABB.extents;
 		poly.max = faceAABB.origin + faceAABB.extents;
@@ -238,7 +238,7 @@ void CollisionModel::addBrush(Brush& brush) {
 	BrushStruc b;
 
 	// The number of faces
-	b.numFaces = brush.size();
+	b.numFaces = static_cast<unsigned int>(brush.size());
 	
 	// Get the AABB of this brush
 	AABB brushAABB = brush.localAABB();

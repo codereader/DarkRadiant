@@ -58,7 +58,7 @@ double testDot1(const Vector3& a, const Vector3& b)
 
 double testDot2(const Vector3& a, const Vector3& b)
 {
-  return 1.0;//float_for_expression( vector3_identity(a).dot(vector3_identity(b)) );
+  return 1.0;//double_for_expression( vector3_identity(a).dot(vector3_identity(b)) );
 }
 
 double testLength1(const Vector3& a)
@@ -68,7 +68,7 @@ double testLength1(const Vector3& a)
 
 double testLength2(const Vector3& a)
 {
-  return float_for_expression( vector_length( vector3_identity(a) ) );
+  return double_for_expression( vector_length( vector3_identity(a) ) );
 }
 
 Vector3 testNormalised1(const Vector3& a)

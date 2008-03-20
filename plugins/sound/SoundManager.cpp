@@ -116,11 +116,11 @@ void SoundManager::parseSoundShader(parser::DefTokeniser& tok) {
 		if (nextToken == "minDistance") {
 			nextToken = tok.nextToken();
 
-			min = atoi(nextToken.data());
+			min = static_cast<float>(atof(nextToken.data()));
 		}
 		if (nextToken == "maxDistance") {
 			nextToken = tok.nextToken();
-			max = atoi(nextToken.data());
+			max = static_cast<float>(atof(nextToken.data()));
 		}
 		nextToken = tok.nextToken();
 	}

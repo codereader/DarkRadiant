@@ -619,7 +619,7 @@ void TextureBrowser::onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* sel
 // GTK callback for toggling uniform texture sizing
 void TextureBrowser::onResizeToggle(GtkWidget* button, TextureBrowser* self) {
 	self->m_resizeTextures = 
-		gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(button));
+		gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(button)) ? true : false;
 
 	// Update texture browser
 	self->heightChanged();

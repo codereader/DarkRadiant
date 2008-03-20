@@ -114,7 +114,7 @@ void AutoMapSaver::saveSnapshot() {
 	if (file_exists(snapshotPath.c_str()) || Q_mkdir(snapshotPath.c_str())) {
 		
 		// Reset the size counter of the snapshots folder 
-		unsigned int folderSize = 0;
+		std::size_t folderSize = 0;
 		
 		// This holds the target path of the snapshot
 		std::string filename;

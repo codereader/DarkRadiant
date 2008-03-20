@@ -72,11 +72,11 @@ ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 		while( x < width ) {
 			float du = 0;
 			for(KernelElement* i = kernel_du; i != kernel_du + kernelSize; ++i) {
-				du += (getPixel(in, width, height, x + (*i).x, y + (*i).y)[0] / 255.0) * (*i).w;
+				du += (getPixel(in, width, height, x + (*i).x, y + (*i).y)[0] / 255.0f) * (*i).w;
 			}
 			float dv = 0;
 			for(KernelElement* i = kernel_dv; i != kernel_dv + kernelSize; ++i) {
-				dv += (getPixel(in, width, height, x + (*i).x, y + (*i).y)[0] / 255.0) * (*i).w;
+				dv += (getPixel(in, width, height, x + (*i).x, y + (*i).y)[0] / 255.0f) * (*i).w;
 			}
 
 			float nx = -du * scale;
@@ -84,7 +84,7 @@ ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 			float nz = 1.0;
 
 			// Normalize      
-			float norm = 1.0/sqrt(nx*nx + ny*ny + nz*nz);
+			float norm = 1.0f/sqrt(nx*nx + ny*ny + nz*nz);
 			out[0] = float_to_integer(((nx * norm) + 1) * 127.5);
 			out[1] = float_to_integer(((ny * norm) + 1) * 127.5);
 			out[2] = float_to_integer(((nz * norm) + 1) * 127.5);
