@@ -16,7 +16,11 @@ class LayerSystem :
 	LayerVisibilityList _layerVisibility;
 
 public:
+	LayerSystem();
+
 	virtual bool layerIsVisible(const std::string& layerName);
+
+	virtual void setLayerVisibility(const std::string& layerName, bool visible);
 
 	void addSelectionToLayer(const std::string& layerName);
 
@@ -27,6 +31,10 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
+
+private:
+	// Internal callback, updates the scenegraph
+	void layerVisibilityChanged();
 };
 
 } // namespace scene

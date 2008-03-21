@@ -41,6 +41,11 @@ class ILayerSystem :
 public:
 	virtual bool layerIsVisible(const std::string& layerName) = 0;
 
+	/** 
+	 * greebo: Set the visibility of the given layer to <visible>.
+	 */
+	virtual void setLayerVisibility(const std::string& layerName, bool visible) = 0;
+
 	/**
 	 * greebo: Updates the visibility of the given node based on the
 	 *         current layer visibility settings.

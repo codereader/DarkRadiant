@@ -4,11 +4,27 @@
 #include "scene/Node.h"
 #include "modulesystem/StaticModule.h"
 #include "AddToLayerWalker.h"
+#include "UpdateNodeVisibilityWalker.h"
 
 namespace scene {
 
+LayerSystem::LayerSystem() {
+	_layerVisibility.resize(2); // temporary
+}
+
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
-	return true;
+	return _layerVisibility[1];
+}
+
+void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible) {
+	_layerVisibility[1] = visible;
+
+	layerVisibilityChanged();
+}
+
+void LayerSystem::layerVisibilityChanged() {
+	UpdateNodeVisibilityWalker walker;
+	GlobalSceneGraph().traverse(walker);
 }
 
 void LayerSystem::addSelectionToLayer(const std::string& layerName) {
