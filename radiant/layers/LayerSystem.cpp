@@ -55,23 +55,23 @@ int LayerSystem::createLayer(const std::string& name) {
 
 void LayerSystem::deleteLayer(const std::string& name) {
 	// Check if the layer already exists
-	int existingID = getLayerID(name);
+	int layerID = getLayerID(name);
 
-	if (existingID == -1) {
+	if (layerID == -1) {
 		globalErrorStream() << "Could not delete layer, name doesn't exist: " 
 			<< name.c_str() << "\n";
 		return;
 	}
 
 	// Remove all nodes from this layer first
-	RemoveFromLayerWalker walker(existingID);
+	RemoveFromLayerWalker walker(layerID);
 	GlobalSceneGraph().traverse(walker);
 
 	// Remove the layer
-	_layers.erase(existingID);
+	_layers.erase(layerID);
 
 	// Reset the visibility flag to TRUE
-	_layerVisibility[existingID] = true;
+	_layerVisibility[layerID] = true;
 
 	// Fire the visibility changed event to
 	// update the scenegraph and redraw the views
@@ -79,14 +79,56 @@ void LayerSystem::deleteLayer(const std::string& name) {
 }
 
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
-	return _layerVisibility[1];
+	// Check if the layer already exists
+	int layerID = getLayerID(layerName);
+
+	if (layerID == -1) {
+		globalErrorStream() << "Could not query layer visibility, name doesn't exist: " 
+			<< layerName.c_str() << "\n";
+		return false;
+	}
+
+	return _layerVisibility[layerID];
 }
 
-void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible) {
-	_layerVisibility[1] = visible;
+bool LayerSystem::layerIsVisible(int layerID) {
+	// Sanity check
+	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
+		globalOutputStream() << "LayerSystem: Querying invalid layer ID: " << layerID << "\n";
+		return false;
+	}
+
+	return _layerVisibility[layerID];
+}
+
+void LayerSystem::setLayerVisibility(int layerID, bool visible) {
+	// Sanity check
+	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
+		globalOutputStream() << 
+			"LayerSystem: Setting visibility of invalid layer ID: " <<
+			layerID << "\n";
+		return;
+	}
+
+	// Set the visibility
+	_layerVisibility[layerID] = visible;
 
 	// Fire the visibility changed event
 	onLayerVisibilityChanged();
+}
+
+void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible) {
+	// Check if the layer already exists
+	int layerID = getLayerID(layerName);
+
+	if (layerID == -1) {
+		globalErrorStream() << "Could not set layer visibility, name doesn't exist: " 
+			<< layerName.c_str() << "\n";
+		return;
+	}
+
+	// Pass the call to the overloaded method to do the work
+	setLayerVisibility(layerID, visible);
 }
 
 void LayerSystem::onLayerVisibilityChanged() {

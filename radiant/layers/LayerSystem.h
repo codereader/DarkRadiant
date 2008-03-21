@@ -39,8 +39,10 @@ public:
 	void deleteLayer(const std::string& name);
 
 	virtual bool layerIsVisible(const std::string& layerName);
+	virtual bool layerIsVisible(int layerID);
 
 	virtual void setLayerVisibility(const std::string& layerName, bool visible);
+	virtual void setLayerVisibility(int layerID, bool visible);
 
 	void addSelectionToLayer(const std::string& layerName);
 
