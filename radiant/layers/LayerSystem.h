@@ -53,6 +53,13 @@ public:
 	void addSelectionToLayer(const std::string& layerName);
 	void addSelectionToLayer(int layerID);
 
+	/**
+	 * greebo: Moves all selected nodes to the given layer. This implicitly
+	 *         removes the nodes from all other layers.
+	 */
+	void moveSelectionToLayer(const std::string& layerName);
+	void moveSelectionToLayer(int layerID);
+
 	virtual bool updateNodeVisibility(const scene::INodePtr& node);
 
 	// RegisterableModule implementation
