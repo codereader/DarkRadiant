@@ -2006,6 +2006,10 @@
 				Name="layers"
 				>
 				<File
+					RelativePath="..\..\radiant\layers\AddToLayerWalker.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\layers\LayerSystem.cpp"
 					>
 				</File>

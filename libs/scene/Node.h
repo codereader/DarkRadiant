@@ -75,8 +75,8 @@ public:
 	bool excluded() const;
 
 	// Layered implementation
-	virtual void addToLayer(const std::string& layer);
-    virtual void removeFromLayer(const std::string& layer);
+	virtual void addToLayer(int layerId);
+    virtual void removeFromLayer(int layerId);
     virtual LayerList getLayers() const;
 
 	virtual void addChildNode(const INodePtr& node);

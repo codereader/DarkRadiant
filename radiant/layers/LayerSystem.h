@@ -1,6 +1,7 @@
 #ifndef LAYERSYSTEM_H_
 #define LAYERSYSTEM_H_
 
+#include <vector>
 #include "ilayer.h"
 
 namespace scene {
@@ -8,10 +9,18 @@ namespace scene {
 class LayerSystem :
 	public ILayerSystem
 {
+	// greebo: An array of booleans reflects the visibility status
+	// of all layers. Indexed by the layer id, it can be used to
+	// quickly check whether a layer is visible or not.
+	typedef std::vector<bool> LayerVisibilityList;
+	LayerVisibilityList _layerVisibility;
+
 public:
-	bool layerIsVisible(const std::string& layerName);
+	virtual bool layerIsVisible(const std::string& layerName);
 
 	void addSelectionToLayer(const std::string& layerName);
+
+	virtual bool updateNodeVisibility(const scene::INodePtr& node);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
