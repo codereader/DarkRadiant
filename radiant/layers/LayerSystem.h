@@ -22,8 +22,6 @@ class LayerSystem :
 	LayerMap _layers;
 
 public:
-	LayerSystem();
-
 	/**
 	 * greebo: Creates a new layer with the given name.
 	 * 
@@ -53,12 +51,6 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
-
-	void toggleLayerVisibility();
-	typedef MemberCaller<LayerSystem, &LayerSystem::toggleLayerVisibility> ToggleCaller;
-
-	void addSelectionToLayer1();
-	typedef MemberCaller<LayerSystem, &LayerSystem::addSelectionToLayer1> AddSelectionCaller;
 
 private:
 	// Internal event, updates the scenegraph
