@@ -103,12 +103,12 @@ bool Node::excluded() const {
 	return (_state & eExcluded) != 0;
 }
 
-void Node::addToLayer(const std::string& layer) {
-	_layers.insert(layer);
+void Node::addToLayer(int layerId) {
+	_layers.insert(layerId);
 }
 
-void Node::removeFromLayer(const std::string& layer) {
-	LayerList::iterator found = _layers.find(layer);
+void Node::removeFromLayer(int layerId) {
+	LayerList::iterator found = _layers.find(layerId);
 	if (found != _layers.end()) {
 		_layers.erase(found);
 	}
