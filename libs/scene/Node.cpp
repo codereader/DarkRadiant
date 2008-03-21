@@ -54,7 +54,10 @@ Node::Node() :
 	_transformMutex(false),
 	_local2world(Matrix4::getIdentity()),
 	_instantiated(false)
-{}
+{
+	// Each node is part of layer 0 by default
+	_layers.insert(0);
+}
 
 Node::Node(const Node& other) :
 	INode(other),

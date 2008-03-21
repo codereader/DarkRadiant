@@ -6,6 +6,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include "AddToLayerWalker.h"
+#include "MoveToLayerWalker.h"
 #include "UpdateNodeVisibilityWalker.h"
 #include "RemoveFromLayerWalker.h"
 
@@ -155,6 +156,31 @@ void LayerSystem::addSelectionToLayer(const std::string& layerName) {
 
 	// Pass the call to the overload
 	addSelectionToLayer(layerID);
+}
+
+void LayerSystem::moveSelectionToLayer(const std::string& layerName) {
+	// Check if the layer already exists
+	int layerID = getLayerID(layerName);
+
+	if (layerID == -1) {
+		globalErrorStream() << "Cannot move to layer, name doesn't exist: " 
+			<< layerName.c_str() << "\n";
+		return;
+	}
+
+	// Pass the call to the overload
+	moveSelectionToLayer(layerID);
+}
+
+void LayerSystem::moveSelectionToLayer(int layerID) {
+	// Check if the layer ID exists
+	if (_layers.find(layerID) == _layers.end()) {
+		return;
+	}
+
+	// Instantiate a Selectionwalker and traverse the selection
+	MoveToLayerWalker walker(layerID);
+	GlobalSelectionSystem().foreachSelected(walker);
 }
 
 bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {

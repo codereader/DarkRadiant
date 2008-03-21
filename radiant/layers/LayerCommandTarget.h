@@ -25,6 +25,11 @@ public:
 	// The shortcut typedef for use with the EventManager
 	typedef MemberCaller<LayerCommandTarget, 
 		&LayerCommandTarget::addSelectionToLayer> AddSelectionCaller;
+
+	// Command target, this moves the selection to the associated layer
+	void moveSelectionToLayer();
+	typedef MemberCaller<LayerCommandTarget, 
+		&LayerCommandTarget::moveSelectionToLayer> MoveSelectionCaller;
 };
 typedef boost::shared_ptr<LayerCommandTarget> LayerCommandTargetPtr;
 

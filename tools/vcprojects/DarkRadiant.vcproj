@@ -2026,6 +2026,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\layers\MoveToLayerWalker.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\layers\RemoveFromLayerWalker.h"
 					>
 				</File>
