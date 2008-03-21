@@ -18,8 +18,17 @@ LayerControlDialog::LayerControlDialog() :
 	PersistentTransientWindow("Layers", GlobalRadiant().getMainWindow(), true),
 	_controlVBox(gtk_vbox_new(FALSE, 3))
 {
+	// Set the default border width in accordance to the HIG
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(
+		GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG
+	);
+
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+
+	// Add the vbox to the window
+	gtk_container_add(GTK_CONTAINER(getWindow()), _controlVBox);
 
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -30,6 +39,10 @@ LayerControlDialog::LayerControlDialog() :
 	
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
+
+	// Add two dummy layers
+	scene::getLayerSystem().createLayer("TestLayer1");
+	scene::getLayerSystem().createLayer("TestLayer2");
 }
 
 void LayerControlDialog::toggleDialog() {
@@ -121,6 +134,19 @@ LayerControlDialogPtr& LayerControlDialog::InstancePtr() {
 
 LayerControlDialog& LayerControlDialog::Instance() {
 	return *InstancePtr();
+}
+
+// TransientWindow callbacks
+void LayerControlDialog::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+	// Update the widgets
+	update();
+}
+
+void LayerControlDialog::_preHide() {
+	// Save the window position, to make sure
+	_windowPosition.readPosition();
 }
 
 } // namespace ui

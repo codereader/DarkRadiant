@@ -41,6 +41,11 @@ public:
 
 	static LayerControlDialog& Instance();
 	static LayerControlDialogPtr& InstancePtr();
+
+private:
+	// TransientWindow events
+	virtual void _preShow();
+	virtual void _preHide();
 };
 
 } // namespace ui

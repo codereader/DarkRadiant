@@ -224,6 +224,17 @@ int LayerSystem::getLayerID(const std::string& name) const {
 	return -1;
 }
 
+std::string LayerSystem::getLayerName(int layerID) const {
+	LayerMap::const_iterator found = _layers.find(layerID);
+
+	if (found != _layers.end()) {
+		return found->second;
+	}
+
+	// not found
+	return "";
+}
+
 int LayerSystem::getHighestLayerID() const {
 	if (_layers.size() == 0) {
 		// Empty layer map, just return 0

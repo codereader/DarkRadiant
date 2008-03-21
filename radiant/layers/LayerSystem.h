@@ -59,6 +59,10 @@ public:
 	 */
 	void foreachLayer(Visitor& visitor);
 
+	// Returns the ID of the named layer, or -1 if name doesn't exist
+	int getLayerID(const std::string& name) const;
+	std::string getLayerName(int layerID) const;
+
 	// Returns true if the given layer is visible
 	virtual bool layerIsVisible(const std::string& layerName);
 	virtual bool layerIsVisible(int layerID);
@@ -91,9 +95,6 @@ public:
 private:
 	// Internal event, updates the scenegraph
 	void onLayerVisibilityChanged();
-
-	// Returns the ID of the named layer, or -1 if name doesn't exist
-	int getLayerID(const std::string& name) const;
 
 	// Returns the highest used layer Id
 	int getHighestLayerID() const;
