@@ -4,8 +4,10 @@
 #include "stream/textstream.h"
 #include "scene/Node.h"
 #include "modulesystem/StaticModule.h"
+
 #include "AddToLayerWalker.h"
 #include "UpdateNodeVisibilityWalker.h"
+#include "RemoveFromLayerWalker.h"
 
 namespace scene {
 
@@ -52,7 +54,28 @@ int LayerSystem::createLayer(const std::string& name) {
 }
 
 void LayerSystem::deleteLayer(const std::string& name) {
+	// Check if the layer already exists
+	int existingID = getLayerID(name);
 
+	if (existingID == -1) {
+		globalErrorStream() << "Could not delete layer, name doesn't exist: " 
+			<< name.c_str() << "\n";
+		return;
+	}
+
+	// Remove all nodes from this layer first
+	RemoveFromLayerWalker walker(existingID);
+	GlobalSceneGraph().traverse(walker);
+
+	// Remove the layer
+	_layers.erase(existingID);
+
+	// Reset the visibility flag to TRUE
+	_layerVisibility[existingID] = true;
+
+	// Fire the visibility changed event to
+	// update the scenegraph and redraw the views
+	onLayerVisibilityChanged();
 }
 
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
