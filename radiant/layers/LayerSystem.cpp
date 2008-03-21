@@ -10,6 +10,8 @@
 #include "UpdateNodeVisibilityWalker.h"
 #include "RemoveFromLayerWalker.h"
 
+#include "ui/layers/LayerControlDialog.h"
+
 namespace scene {
 
 int LayerSystem::createLayer(const std::string& name) {
@@ -262,6 +264,11 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 			LayerCommandTargetPtr(new LayerCommandTarget(i))
 		);
 	}
+
+	GlobalEventManager().addCommand(
+		"ToggleLayerControlDialog", 
+		FreeCaller<ui::LayerControlDialog::toggle>()
+	);
 }
 
 void LayerSystem::shutdownModule() {
