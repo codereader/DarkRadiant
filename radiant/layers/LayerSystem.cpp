@@ -1,5 +1,6 @@
 #include "LayerSystem.h"
 
+#include "ieventmanager.h"
 #include "stream/textstream.h"
 #include "scene/Node.h"
 #include "modulesystem/StaticModule.h"
@@ -10,6 +11,8 @@ namespace scene {
 
 LayerSystem::LayerSystem() {
 	_layerVisibility.resize(2); // temporary
+	_layerVisibility[0] = true;
+	_layerVisibility[1] = true;
 }
 
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
@@ -25,6 +28,9 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 void LayerSystem::layerVisibilityChanged() {
 	UpdateNodeVisibilityWalker walker;
 	GlobalSceneGraph().traverse(walker);
+
+	// Redraw
+	SceneChangeNotify();
 }
 
 void LayerSystem::addSelectionToLayer(const std::string& layerName) {
@@ -55,6 +61,14 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 	return true;
 }
 
+void LayerSystem::toggleLayerVisibility() {
+	setLayerVisibility("", !_layerVisibility[1]);
+}
+
+void LayerSystem::addSelectionToLayer1() {
+	addSelectionToLayer("");
+}
+
 // RegisterableModule implementation
 const std::string& LayerSystem::getName() const {
 	static std::string _name(MODULE_LAYERSYSTEM);
@@ -63,6 +77,11 @@ const std::string& LayerSystem::getName() const {
 
 const StringSet& LayerSystem::getDependencies() const {
 	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_EVENTMANAGER);
+	}
+
 	return _dependencies;
 }
 
@@ -70,6 +89,8 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 	
 	// Add command targets here
+	GlobalEventManager().addCommand("LayerToggleVisibility", ToggleCaller(*this));
+	GlobalEventManager().addCommand("LayerAddSelectionToLayer1", AddSelectionCaller(*this));
 }
 
 void LayerSystem::shutdownModule() {

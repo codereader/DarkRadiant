@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "ilayer.h"
+#include "generic/callback.h"
 
 namespace scene {
 
@@ -31,6 +32,12 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
+
+	void toggleLayerVisibility();
+	typedef MemberCaller<LayerSystem, &LayerSystem::toggleLayerVisibility> ToggleCaller;
+
+	void addSelectionToLayer1();
+	typedef MemberCaller<LayerSystem, &LayerSystem::addSelectionToLayer1> AddSelectionCaller;
 
 private:
 	// Internal callback, updates the scenegraph
