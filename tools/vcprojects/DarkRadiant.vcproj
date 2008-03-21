@@ -2010,6 +2010,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\layers\LayerCommandTarget.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\layers\LayerCommandTarget.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\layers\LayerSystem.cpp"
 					>
 				</File>
