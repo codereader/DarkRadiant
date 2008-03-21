@@ -4,6 +4,7 @@
 #include <boost/shared_ptr.hpp>
 
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkToggleButton GtkToggleButton;
 
 namespace ui {
 
@@ -27,6 +28,9 @@ public:
 
 	// Returns the widget for packing this object into a container
 	GtkWidget* getWidget() const;
+
+private:
+	static void onToggle(GtkToggleButton* togglebutton, LayerControl* self);
 };
 typedef boost::shared_ptr<LayerControl> LayerControlPtr;
 
