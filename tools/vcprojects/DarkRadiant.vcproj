@@ -1919,6 +1919,14 @@
 					Name="layers"
 					>
 					<File
+						RelativePath="..\..\radiant\ui\layers\LayerControl.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\layers\LayerControl.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\layers\LayerControlDialog.cpp"
 						>
 					</File>

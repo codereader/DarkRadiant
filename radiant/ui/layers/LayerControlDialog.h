@@ -4,6 +4,7 @@
 #include "iradiant.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/WindowPosition.h"
+#include "LayerControl.h"
 #include <boost/shared_ptr.hpp>
 
 namespace ui { 

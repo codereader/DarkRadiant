@@ -3,6 +3,7 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "stream/textstream.h"
+#include "layers/LayerSystem.h"
 
 namespace ui {
 
@@ -38,7 +39,18 @@ void LayerControlDialog::toggleDialog() {
 }
 
 void LayerControlDialog::update() {
+	
+	// Local helper class for populating the window
+	class LayerPopulator :
+		public scene::LayerSystem::Visitor
+	{
+	public:
+		void visit(int layerId, std::string layerName) {
+			
+		}
+	} populator;
 
+	scene::getLayerSystem().foreachLayer(populator);
 }
 
 void LayerControlDialog::toggle() {

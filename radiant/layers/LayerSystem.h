@@ -18,6 +18,14 @@ namespace scene {
 class LayerSystem :
 	public ILayerSystem
 {
+public:
+	// Visitor class for use with the foreachLayer() method
+	class Visitor {
+	public:
+		virtual void visit(int layerId, std::string layerName) = 0;
+	};
+
+private:
 	// greebo: An array of booleans reflects the visibility status
 	// of all layers. Indexed by the layer id, it can be used to
 	// quickly check whether a layer is visible or not.
@@ -45,6 +53,11 @@ public:
 	 *         from this layer before deletion.
 	 */
 	void deleteLayer(const std::string& name);
+
+	/**
+	 * greebo: Visits each layer using the given visitor.
+	 */
+	void foreachLayer(Visitor& visitor);
 
 	// Returns true if the given layer is visible
 	virtual bool layerIsVisible(const std::string& layerName);
