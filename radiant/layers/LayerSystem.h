@@ -8,6 +8,13 @@
 
 namespace scene {
 
+	namespace {
+		const std::string COMMAND_PREFIX_ADDTOLAYER("AddSelectionToLayer");
+		const std::string COMMAND_PREFIX_MOVETOLAYER("MoveSelectionToLayer");
+		const std::string COMMAND_PREFIX_SHOWLAYER("ShowLayer");
+		const std::string COMMAND_PREFIX_HIDELAYER("HideLayer");
+	}
+
 class LayerSystem :
 	public ILayerSystem
 {
