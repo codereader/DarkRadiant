@@ -74,6 +74,12 @@ void LayerSystem::deleteLayer(const std::string& name) {
 	onLayerVisibilityChanged();
 }
 
+void LayerSystem::foreachLayer(Visitor& visitor) {
+	for (LayerMap::iterator i = _layers.begin(); i != _layers.end(); i++) {
+		visitor.visit(i->first, i->second);
+	}
+}
+
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
