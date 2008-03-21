@@ -132,6 +132,17 @@ void LayerSystem::onLayerVisibilityChanged() {
 	SceneChangeNotify();
 }
 
+void LayerSystem::addSelectionToLayer(int layerID) {
+	// Check if the layer ID exists
+	if (_layers.find(layerID) == _layers.end()) {
+		return;
+	}
+
+	// Instantiate a Selectionwalker and traverse the selection
+	AddToLayerWalker walker(layerID);
+	GlobalSelectionSystem().foreachSelected(walker);
+}
+
 void LayerSystem::addSelectionToLayer(const std::string& layerName) {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
@@ -142,9 +153,8 @@ void LayerSystem::addSelectionToLayer(const std::string& layerName) {
 		return;
 	}
 
-	// Instantiate a Selectionwalker
-	AddToLayerWalker walker(layerID);
-	GlobalSelectionSystem().foreachSelected(walker);
+	// Pass the call to the overload
+	addSelectionToLayer(layerID);
 }
 
 bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
@@ -220,8 +230,12 @@ const StringSet& LayerSystem::getDependencies() const {
 void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 	
-	// Add command targets here
-
+	// Add command targets for the first 10 layer IDs here
+	for (int i = 0; i < 10; i++) {
+		_commandTargets.push_back(
+			LayerCommandTargetPtr(new LayerCommandTarget(i))
+		);
+	}
 }
 
 void LayerSystem::shutdownModule() {

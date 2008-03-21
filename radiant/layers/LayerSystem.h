@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 #include "ilayer.h"
-#include "generic/callback.h"
+#include "LayerCommandTarget.h"
 
 namespace scene {
 
@@ -21,6 +21,9 @@ class LayerSystem :
 	typedef std::map<int, std::string> LayerMap;
 	LayerMap _layers;
 
+	typedef std::vector<LayerCommandTargetPtr> CommandTargetList;
+	CommandTargetList _commandTargets;
+
 public:
 	/**
 	 * greebo: Creates a new layer with the given name.
@@ -36,13 +39,19 @@ public:
 	 */
 	void deleteLayer(const std::string& name);
 
+	// Returns true if the given layer is visible
 	virtual bool layerIsVisible(const std::string& layerName);
 	virtual bool layerIsVisible(int layerID);
 
+	// Sets the visibility state of the given layer to <visible>
 	virtual void setLayerVisibility(const std::string& layerName, bool visible);
 	virtual void setLayerVisibility(int layerID, bool visible);
 
+	/**
+	 * greebo: Traverses the selection and adds each node to the given layer.
+	 */
 	void addSelectionToLayer(const std::string& layerName);
+	void addSelectionToLayer(int layerID);
 
 	virtual bool updateNodeVisibility(const scene::INodePtr& node);
 
