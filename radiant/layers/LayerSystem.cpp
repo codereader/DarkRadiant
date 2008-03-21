@@ -11,13 +11,6 @@
 
 namespace scene {
 
-LayerSystem::LayerSystem() {
-	// make sure we have room for 2 layers right from the start
-	_layerVisibility.resize(2); 
-	_layerVisibility[0] = true;
-	_layerVisibility[1] = true;
-}
-
 int LayerSystem::createLayer(const std::string& name) {
 	// Check if the layer already exists
 	int existingID = getLayerID(name);
@@ -140,8 +133,17 @@ void LayerSystem::onLayerVisibilityChanged() {
 }
 
 void LayerSystem::addSelectionToLayer(const std::string& layerName) {
+	// Check if the layer already exists
+	int layerID = getLayerID(layerName);
+
+	if (layerID == -1) {
+		globalErrorStream() << "Cannot add to layer, name doesn't exist: " 
+			<< layerName.c_str() << "\n";
+		return;
+	}
+
 	// Instantiate a Selectionwalker
-	AddToLayerWalker walker(1);
+	AddToLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
 }
 
@@ -165,14 +167,6 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 
 	// Node is visible, return TRUE
 	return true;
-}
-
-void LayerSystem::toggleLayerVisibility() {
-	setLayerVisibility("", !_layerVisibility[1]);
-}
-
-void LayerSystem::addSelectionToLayer1() {
-	addSelectionToLayer("");
 }
 
 int LayerSystem::getLayerID(const std::string& name) const {
@@ -227,8 +221,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 	
 	// Add command targets here
-	GlobalEventManager().addCommand("LayerToggleVisibility", ToggleCaller(*this));
-	GlobalEventManager().addCommand("LayerAddSelectionToLayer1", AddSelectionCaller(*this));
+
 }
 
 void LayerSystem::shutdownModule() {
