@@ -30,6 +30,16 @@ public:
 	void moveSelectionToLayer();
 	typedef MemberCaller<LayerCommandTarget, 
 		&LayerCommandTarget::moveSelectionToLayer> MoveSelectionCaller;
+
+	// Command target, shows the associated layer
+	void showLayer();
+	typedef MemberCaller<LayerCommandTarget, 
+		&LayerCommandTarget::showLayer> ShowLayerCaller;
+
+	// Command target, hides the associated layer
+	void hideLayer();
+	typedef MemberCaller<LayerCommandTarget, 
+		&LayerCommandTarget::hideLayer> HideLayerCaller;
 };
 typedef boost::shared_ptr<LayerCommandTarget> LayerCommandTargetPtr;
 
