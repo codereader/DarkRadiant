@@ -545,6 +545,7 @@ radiant_src = \
          'ui/texturebrowser/TextureBrowser.cpp',
          'ui/mapinfo/MapInfoDialog.cpp',
          'ui/splash/Splash.cpp',
+		 'ui/layers/LayerControl.cpp',
 		 'ui/layers/LayerControlDialog.cpp',
          'textool/TexTool.cpp',
          'textool/TexToolItem.cpp',
@@ -641,6 +642,7 @@ radiant_src = \
 	 'referencecache/NullModel.cpp',
  	 'referencecache/NullModelNode.cpp',
          'referencecache/RadiantReferenceCache.cpp',
+		 'layers/LayerCommandTarget.cpp',
 		 'layers/LayerSystem.cpp'
          ]
     ]
