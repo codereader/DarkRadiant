@@ -25,8 +25,8 @@ class LayerControl
 public:
 	LayerControl(int layerID);
 
-	// Operator cast for packing this object into a container
-	operator GtkWidget*();
+	// Returns the widget for packing this object into a container
+	GtkWidget* getWidget() const;
 };
 typedef boost::shared_ptr<LayerControl> LayerControlPtr;
 

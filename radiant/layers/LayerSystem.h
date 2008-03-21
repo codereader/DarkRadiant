@@ -22,7 +22,7 @@ public:
 	// Visitor class for use with the foreachLayer() method
 	class Visitor {
 	public:
-		virtual void visit(int layerId, std::string layerName) = 0;
+		virtual void visit(int layerID, std::string layerName) = 0;
 	};
 
 private:

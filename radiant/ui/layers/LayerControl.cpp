@@ -12,7 +12,7 @@ LayerControl::LayerControl(int layerID) :
 	gtk_box_pack_start(GTK_BOX(_hbox), toggle, FALSE, FALSE, 0); 
 }
 
-LayerControl::operator GtkWidget*() {
+GtkWidget* LayerControl::getWidget() const {
 	return _hbox;
 }
 

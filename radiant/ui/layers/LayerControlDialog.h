@@ -19,6 +19,11 @@ class LayerControlDialog :
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
+	typedef std::vector<LayerControlPtr> LayerControls;
+	LayerControls _layerControls;
+
+	GtkWidget* _controlVBox;
+
 public:
 	LayerControlDialog();
 
