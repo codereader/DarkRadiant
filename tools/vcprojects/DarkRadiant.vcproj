@@ -1915,6 +1915,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="layers"
+					>
+					<File
+						RelativePath="..\..\radiant\ui\layers\LayerControlDialog.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\layers\LayerControlDialog.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="xyview"
