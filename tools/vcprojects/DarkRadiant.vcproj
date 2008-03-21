@@ -2017,6 +2017,10 @@
 					RelativePath="..\..\radiant\layers\LayerSystem.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\radiant\layers\UpdateNodeVisibilityWalker.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
