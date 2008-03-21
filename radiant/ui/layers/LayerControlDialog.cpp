@@ -5,6 +5,8 @@
 #include "stream/textstream.h"
 #include "layers/LayerSystem.h"
 
+#include <gtk/gtk.h>
+
 namespace ui {
 
 	namespace {
@@ -13,7 +15,8 @@ namespace ui {
 	}
 
 LayerControlDialog::LayerControlDialog() :
-	PersistentTransientWindow("Layers", GlobalRadiant().getMainWindow(), true)
+	PersistentTransientWindow("Layers", GlobalRadiant().getMainWindow(), true),
+	_controlVBox(gtk_vbox_new(FALSE, 3))
 {
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
@@ -39,16 +42,43 @@ void LayerControlDialog::toggleDialog() {
 }
 
 void LayerControlDialog::update() {
+
+	// Remove the widgets from the vbox first
+	for (LayerControls::iterator i = _layerControls.begin(); 
+		 i != _layerControls.end(); i++)
+	{
+		gtk_container_remove(GTK_CONTAINER(_controlVBox), (*i)->getWidget());
+	}
+
+	// Remove all previously allocated layercontrols
+	_layerControls.clear();
 	
 	// Local helper class for populating the window
-	class LayerPopulator :
+	class LayerControlPopulator :
 		public scene::LayerSystem::Visitor
 	{
+		LayerControls& _layerControls;
+		GtkWidget* _vbox;
 	public:
-		void visit(int layerId, std::string layerName) {
-			
+		LayerControlPopulator(LayerControls& layerControls, GtkWidget* vbox) :
+			_layerControls(layerControls),
+			_vbox(vbox)
+		{}
+
+		void visit(int layerID, std::string layerName) {
+			// Create a new layercontrol for each visited layer
+			LayerControlPtr control(new LayerControl(layerID));
+
+			// Store the object locally
+			_layerControls.push_back(control);
+
+			gtk_box_pack_start(
+				GTK_BOX(_vbox),
+				control->getWidget(),
+				FALSE, FALSE, 0
+			);
 		}
-	} populator;
+	} populator(_layerControls, _controlVBox);
 
 	scene::getLayerSystem().foreachLayer(populator);
 }
