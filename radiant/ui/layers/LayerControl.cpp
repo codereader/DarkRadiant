@@ -9,19 +9,17 @@ LayerControl::LayerControl(int layerID) :
 	_layerID(layerID),
 	_hbox(gtk_hbox_new(FALSE, 3))
 {
-	// Shortcut reference
-	scene::LayerSystem& layerSystem = scene::getLayerSystem();
-
 	// Create the toggle button
 	_toggle = gtk_toggle_button_new();
 	gtk_box_pack_start(GTK_BOX(_hbox), _toggle, FALSE, FALSE, 0); 
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_toggle), layerSystem.layerIsVisible(_layerID));
 	g_signal_connect(G_OBJECT(_toggle), "toggled", G_CALLBACK(onToggle), this);
 
 	// Create the label
-	_label = gtk_label_new(layerSystem.getLayerName(_layerID).c_str());
+	_label = gtk_label_new("");
 	gtk_box_pack_start(GTK_BOX(_hbox), _label, FALSE, FALSE, 0); 
+
+	// Read the status from the Layer
+	update();
 }
 
 GtkWidget* LayerControl::getWidget() const {
