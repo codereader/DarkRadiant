@@ -59,8 +59,8 @@ void LayerSystem::deleteLayer(const std::string& name) {
 		return;
 	}
 
-	// Remove all nodes from this layer first
-	RemoveFromLayerWalker walker(layerID);
+	// Remove all nodes from this layer first, but don't de-select them yet
+	RemoveFromLayerWalker walker(layerID, false);
 	GlobalSceneGraph().traverse(walker);
 
 	// Remove the layer
@@ -191,6 +191,31 @@ void LayerSystem::moveSelectionToLayer(int layerID) {
 
 	// Instantiate a Selectionwalker and traverse the selection
 	MoveToLayerWalker walker(layerID);
+	GlobalSelectionSystem().foreachSelected(walker);
+}
+
+void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
+	// Check if the layer already exists
+	int layerID = getLayerID(layerName);
+
+	if (layerID == -1) {
+		globalErrorStream() << "Cannot remove from layer, name doesn't exist: " 
+			<< layerName.c_str() << "\n";
+		return;
+	}
+
+	// Pass the call to the overload
+	removeSelectionFromLayer(layerID);
+}
+
+void LayerSystem::removeSelectionFromLayer(int layerID) {
+	// Check if the layer ID exists
+	if (_layers.find(layerID) == _layers.end()) {
+		return;
+	}
+
+	// Instantiate a Selectionwalker and traverse the selection
+	RemoveFromLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
 }
 

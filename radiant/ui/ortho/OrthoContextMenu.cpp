@@ -59,8 +59,9 @@ namespace {
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
 
 	const char* LAYER_ICON = "layers.png";
-	const char* ADD_TO_LAYER_TEXT = "Add to Layer";
-	const char* MOVE_TO_LAYER_TEXT = "Move to Layer";
+	const char* ADD_TO_LAYER_TEXT = "Add to Layer...";
+	const char* MOVE_TO_LAYER_TEXT = "Move to Layer...";
+	const char* REMOVE_FROM_LAYER_TEXT = "Remove from Layer...";
 }
 
 // Static class function to display the singleton instance.
@@ -89,6 +90,7 @@ OrthoContextMenu::OrthoContextMenu()
 	// "Add to layer" submenu
 	_addToLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
 	_moveToLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), MOVE_TO_LAYER_TEXT);
+	_removeFromLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), REMOVE_FROM_LAYER_TEXT);
 	
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);
@@ -114,7 +116,8 @@ OrthoContextMenu::OrthoContextMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _revertWorldspawn);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addToLayer);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _moveToLayer);	
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _moveToLayer);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _removeFromLayer);
 
 	gtk_widget_show_all(_widget);
 }
@@ -136,14 +139,17 @@ void OrthoContextMenu::repopulateLayerMenus() {
 	// Create a new submenu and connect it to the according function
 	LayerContextMenu::OnSelectionFunc addToLayerCallback(callbackAddToLayer);
 	LayerContextMenu::OnSelectionFunc moveToLayerCallback(callbackMoveToLayer);
+	LayerContextMenu::OnSelectionFunc removeFromLayerCallback(callbackRemoveFromLayer);
 
 	// Create a new LayerContextMenu
 	_addToLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(addToLayerCallback));
 	_moveToLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(moveToLayerCallback));
+	_removeFromLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(removeFromLayerCallback));
 
 	// Cast the LayerContextMenu onto GtkWidget* and pack it
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_addToLayer), *_addToLayerSubmenu);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_moveToLayer), *_moveToLayerSubmenu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_removeFromLayer), *_removeFromLayerSubmenu);
 }
 
 // Check if the convert to static command should be enabled
@@ -386,6 +392,10 @@ void OrthoContextMenu::callbackAddToLayer(int layerID) {
 
 void OrthoContextMenu::callbackMoveToLayer(int layerID) {
 	scene::getLayerSystem().moveSelectionToLayer(layerID);
+}
+
+void OrthoContextMenu::callbackRemoveFromLayer(int layerID) {
+	scene::getLayerSystem().removeSelectionFromLayer(layerID);
 }
 
 } // namespace ui

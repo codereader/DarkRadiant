@@ -100,6 +100,12 @@ public:
 	virtual void moveSelectionToLayer(int layerID) = 0;
 
 	/**
+	 * greebo: Removes the selected nodes from the given layers.
+	 */
+	virtual void removeSelectionFromLayer(const std::string& layerName) = 0;
+	virtual void removeSelectionFromLayer(int layerID) = 0;
+
+	/**
 	 * greebo: Updates the visibility of the given node based on the
 	 *         current layer visibility settings.
 	 *
