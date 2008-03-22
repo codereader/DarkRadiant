@@ -20,8 +20,11 @@ namespace ui {
 
 LayerControlDialog::LayerControlDialog() :
 	PersistentTransientWindow("Layers", GlobalRadiant().getMainWindow(), true),
-	_controlVBox(gtk_vbox_new(FALSE, 3))
+	_controlContainer(gtk_table_new(1, 3, FALSE))
 {
+	gtk_table_set_row_spacings(GTK_TABLE(_controlContainer), 3);
+	gtk_table_set_col_spacings(GTK_TABLE(_controlContainer), 3);
+
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(
@@ -54,7 +57,7 @@ void LayerControlDialog::populateWindow() {
 	gtk_container_add(GTK_CONTAINER(getWindow()), overallVBox);
 
 	// Add the LayerControl vbox to the window
-	gtk_box_pack_start(GTK_BOX(overallVBox), _controlVBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(overallVBox), _controlContainer, FALSE, FALSE, 0);
 
 	// Add the option buttons ("Create Laye", etc.) to the window
 	gtk_box_pack_start(GTK_BOX(overallVBox), createButtons(), FALSE, FALSE, 0);
@@ -68,10 +71,6 @@ GtkWidget* LayerControlDialog::createButtons() {
 	gtk_widget_set_size_request(createButton, 100, -1);
 	gtk_box_pack_start(GTK_BOX(buttonVBox), createButton, FALSE, FALSE, 0);
 	
-	GtkWidget* deleteButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	gtk_widget_set_size_request(deleteButton, 100, -1);
-	gtk_box_pack_start(GTK_BOX(buttonVBox), deleteButton, FALSE, FALSE, 0);
-
 	return buttonVBox;
 }
 
@@ -89,7 +88,9 @@ void LayerControlDialog::refresh() {
 	for (LayerControls::iterator i = _layerControls.begin(); 
 		 i != _layerControls.end(); i++)
 	{
-		gtk_container_remove(GTK_CONTAINER(_controlVBox), (*i)->getWidget());
+		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getToggle());
+		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getLabel());
+		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getButtons());
 	}
 
 	// Remove all previously allocated layercontrols
@@ -100,11 +101,9 @@ void LayerControlDialog::refresh() {
 		public scene::LayerSystem::Visitor
 	{
 		LayerControls& _layerControls;
-		GtkWidget* _vbox;
 	public:
-		LayerControlPopulator(LayerControls& layerControls, GtkWidget* vbox) :
-			_layerControls(layerControls),
-			_vbox(vbox)
+		LayerControlPopulator(LayerControls& layerControls) :
+			_layerControls(layerControls)
 		{}
 
 		void visit(int layerID, std::string layerName) {
@@ -113,20 +112,29 @@ void LayerControlDialog::refresh() {
 
 			// Store the object locally
 			_layerControls.push_back(control);
-
-			gtk_box_pack_start(
-				GTK_BOX(_vbox),
-				control->getWidget(),
-				FALSE, FALSE, 0
-			);
 		}
-	} populator(_layerControls, _controlVBox);
+	} populator(_layerControls);
 
 	// Traverse the layers
 	scene::getLayerSystem().foreachLayer(populator);
 
+	gtk_table_resize(GTK_TABLE(_controlContainer), static_cast<guint>(_layerControls.size()), 3);
+
+	int c = 0;
+	for (LayerControls::iterator i = _layerControls.begin(); 
+		 i != _layerControls.end(); i++, c++)
+	{
+		gtk_table_attach(GTK_TABLE(_controlContainer), (*i)->getToggle(), 
+			0, 1, c, c+1, (GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0);
+
+		gtk_table_attach_defaults(GTK_TABLE(_controlContainer), (*i)->getLabel(), 1, 2, c, c+1);
+
+		gtk_table_attach(GTK_TABLE(_controlContainer), (*i)->getButtons(), 
+			2, 3, c, c+1, (GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0);
+	}
+
 	// Make sure the newly added items are visible
-	gtk_widget_show_all(_controlVBox);
+	gtk_widget_show_all(_controlContainer);
 }
 
 void LayerControlDialog::update() {

@@ -20,9 +20,6 @@ class LayerControl
 	// The ID of the associated layer
 	int _layerID;
 
-	// The hbox containing the control widgets
-	GtkWidget* _hbox;
-
 	GtkWidget* _toggle;
 	GtkWidget* _label;
 	GtkWidget* _deleteButton;
@@ -33,8 +30,10 @@ class LayerControl
 public:
 	LayerControl(int layerID);
 
-	// Returns the widget for packing this object into a container
-	GtkWidget* getWidget() const;
+	// Returns the widgets for packing this object into a container/table
+	GtkWidget* getLabel() const;
+	GtkWidget* getButtons() const;
+	GtkWidget* getToggle() const;
 
 	// Updates the state of all widgets
 	void update();
