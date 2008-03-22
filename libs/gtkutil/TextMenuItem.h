@@ -27,7 +27,7 @@ public:
 	
 	// Operator cast to GtkWidget* for packing into a menu
 	virtual operator GtkWidget* () {
-		GtkWidget* menuItem = gtk_menu_item_new();
+		GtkWidget* menuItem = gtk_menu_item_new_with_label(_label.c_str());
 		return menuItem;
 	}
 };
