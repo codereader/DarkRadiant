@@ -547,6 +547,7 @@ radiant_src = \
          'ui/splash/Splash.cpp',
 		 'ui/layers/LayerControl.cpp',
 		 'ui/layers/LayerControlDialog.cpp',
+		 'ui/layers/LayerContextMenu.cpp',
          'textool/TexTool.cpp',
          'textool/TexToolItem.cpp',
          'textool/item/PatchItem.cpp',

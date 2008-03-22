@@ -278,6 +278,9 @@ const StringSet& LayerSystem::getDependencies() const {
 void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 	
+	// Create the "master" layer with ID 0
+	createLayer("Default");
+
 	// Add command targets for the first 10 layer IDs here
 	for (int i = 0; i < 10; i++) {
 		_commandTargets.push_back(

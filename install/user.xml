@@ -50,6 +50,11 @@
 		<scaleYStep value="1.1" />
 		<scaleZStep value="1.1" />
 	</transformDialog>
+	<layers>
+		<controlDialog>
+			<window xPosition="57" yPosition="449" width="164" height="299" /> 
+		</controlDialog>
+	</layers>
 	<textures>
 		<shaderChooser>
 			<window xPosition="200" yPosition="100" width="550" height="500" />
