@@ -45,10 +45,6 @@ LayerControlDialog::LayerControlDialog() :
 	
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
-
-	// Add two dummy layers
-	scene::getLayerSystem().createLayer("TestLayer1");
-	scene::getLayerSystem().createLayer("TestLayer2");
 }
 
 void LayerControlDialog::populateWindow() {

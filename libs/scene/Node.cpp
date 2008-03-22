@@ -111,9 +111,16 @@ void Node::addToLayer(int layerId) {
 }
 
 void Node::removeFromLayer(int layerId) {
+	// Look up the layer ID and remove it from the list
 	LayerList::iterator found = _layers.find(layerId);
+
 	if (found != _layers.end()) {
 		_layers.erase(found);
+
+		// greebo: Make sure that every node is at least member of layer 0
+		if (_layers.empty()) {
+			_layers.insert(0);
+		}
 	}
 }
 
