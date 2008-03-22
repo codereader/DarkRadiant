@@ -224,21 +224,21 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 	// greebo: TODO: Check if returning the LayerList by value is taxing.
 	LayerList layers = node->getLayers();
 
-	// We start with the assumption that a node is visible
-	node->disable(Node::eLayered);
+	// We start with the assumption that a node is hidden
+	node->enable(Node::eLayered);
 
-	// Cycle through the Node's layers, and hide the node as soon as 
-	// a hidden layer is found.
+	// Cycle through the Node's layers, and show the node as soon as 
+	// a visible layer is found.
 	for (LayerList::const_iterator i = layers.begin(); i != layers.end(); i++) {
-		if (!_layerVisibility[*i]) {
-			// The layer is invisible, set the visibility to false and quit
-			node->enable(Node::eLayered);
-			return false;
+		if (_layerVisibility[*i]) {
+			// The layer is visible, set the visibility to true and quit
+			node->disable(Node::eLayered);
+			return true;
 		}
 	}
 
-	// Node is visible, return TRUE
-	return true;
+	// Node is hidden, return FALSE
+	return false;
 }
 
 int LayerSystem::getLayerID(const std::string& name) const {
