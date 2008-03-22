@@ -94,6 +94,9 @@ private:
 	// Internal event, updates the scenegraph
 	void onLayerVisibilityChanged();
 
+	// Updates the visibility state of the entire scenegraph
+	void updateSceneGraphVisibility();
+
 	// Returns the highest used layer Id
 	int getHighestLayerID() const;
 
