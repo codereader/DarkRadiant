@@ -2,11 +2,16 @@
 
 #include <gtk/gtk.h>
 
-#include "gtkutil/TextMenuItemToggle.h"
+#include "iradiant.h"
+#include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/pointer.h"
 #include "layers/LayerSystem.h"
 
 namespace ui {
+
+	namespace {
+		const std::string LAYER_ICON("layer.png");
+	}
 
 LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 	_onSelection(onSelection),
@@ -21,7 +26,8 @@ LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 
 void LayerContextMenu::visit(int layerID, std::string layerName) {
 	// Create a new menuitem
-	GtkWidget* menuItem = gtkutil::TextMenuItem(layerName);
+	GtkWidget* menuItem = gtkutil::IconTextMenuItem(
+		GlobalRadiant().getLocalPixbuf(LAYER_ICON), layerName);
 
 	// Connect the "onclick" signal
 	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(onClick), this);
