@@ -45,7 +45,7 @@ public:
 			_visibilityStack.top() = true;
 		}
 		
-		if (!_visibilityStack.top()) {
+		if (!node->visible()) {
 			// Node is hidden after update (and no children are visible), de-select
 			Node_setSelected(node, false);
 		}

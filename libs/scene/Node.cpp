@@ -110,6 +110,11 @@ void Node::addToLayer(int layerId) {
 	_layers.insert(layerId);
 }
 
+void Node::moveToLayer(int layerId) {
+	_layers.clear();
+	_layers.insert(layerId);
+}
+
 void Node::removeFromLayer(int layerId) {
 	// Look up the layer ID and remove it from the list
 	LayerList::iterator found = _layers.find(layerId);

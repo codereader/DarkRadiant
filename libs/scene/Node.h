@@ -77,6 +77,7 @@ public:
 	// Layered implementation
 	virtual void addToLayer(int layerId);
     virtual void removeFromLayer(int layerId);
+	virtual void moveToLayer(int layerId);
     virtual LayerList getLayers() const;
 
 	virtual void addChildNode(const INodePtr& node);

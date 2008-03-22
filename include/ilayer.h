@@ -24,6 +24,12 @@ public:
      */
     virtual void addToLayer(int layerId) = 0;
 
+	/**
+     * Moves this object to the layer. After this operation,the item is member 
+	 * of this layer only, all other layer memberships are erased.
+     */
+    virtual void moveToLayer(int layerId) = 0;
+
     /**
      * Remove this object from the layer with the given ID.
      */

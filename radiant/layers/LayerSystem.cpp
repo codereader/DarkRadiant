@@ -60,7 +60,7 @@ void LayerSystem::deleteLayer(const std::string& name) {
 	}
 
 	// Remove all nodes from this layer first, but don't de-select them yet
-	RemoveFromLayerWalker walker(layerID, false);
+	RemoveFromLayerWalker walker(layerID);
 	GlobalSceneGraph().traverse(walker);
 
 	// Remove the layer
@@ -133,9 +133,14 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 	setLayerVisibility(layerID, visible);
 }
 
-void LayerSystem::onLayerVisibilityChanged() {
+void LayerSystem::updateSceneGraphVisibility() {
 	UpdateNodeVisibilityWalker walker;
 	GlobalSceneGraph().traverse(walker);
+}
+
+void LayerSystem::onLayerVisibilityChanged() {
+	// Update all nodes
+	updateSceneGraphVisibility();
 
 	// Redraw
 	SceneChangeNotify();
@@ -153,6 +158,8 @@ void LayerSystem::addSelectionToLayer(int layerID) {
 	// Instantiate a Selectionwalker and traverse the selection
 	AddToLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
+
+	updateSceneGraphVisibility();
 }
 
 void LayerSystem::addSelectionToLayer(const std::string& layerName) {
@@ -192,6 +199,8 @@ void LayerSystem::moveSelectionToLayer(int layerID) {
 	// Instantiate a Selectionwalker and traverse the selection
 	MoveToLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
+
+	updateSceneGraphVisibility();
 }
 
 void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
@@ -217,6 +226,8 @@ void LayerSystem::removeSelectionFromLayer(int layerID) {
 	// Instantiate a Selectionwalker and traverse the selection
 	RemoveFromLayerWalker walker(layerID);
 	GlobalSelectionSystem().foreachSelected(walker);
+
+	updateSceneGraphVisibility();
 }
 
 bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
