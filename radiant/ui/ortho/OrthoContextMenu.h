@@ -37,10 +37,12 @@ class OrthoContextMenu
 	GtkWidget* _revertWorldspawn;
 
 	GtkWidget* _addToLayer;
-	LayerContextMenuPtr _addToLayerSubmenu;
-
 	GtkWidget* _moveToLayer;
+	GtkWidget* _removeFromLayer;
+
+	LayerContextMenuPtr _addToLayerSubmenu;
 	LayerContextMenuPtr _moveToLayerSubmenu;
+	LayerContextMenuPtr _removeFromLayerSubmenu;
 
 	// Enable or disable the "convert to static" option based on the number
 	// of selected brushes.
@@ -78,8 +80,9 @@ class OrthoContextMenu
 	static void callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self);
 
 	// Gets called by the items in the "Add to Layer" submenu
-	static void callbackAddToLayer(int layer);
-	static void callbackMoveToLayer(int layer);
+	static void callbackAddToLayer(int layerID);
+	static void callbackMoveToLayer(int layerID);
+	static void callbackRemoveFromLayer(int layerID);
 	
 public:
 

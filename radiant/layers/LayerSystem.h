@@ -76,6 +76,12 @@ public:
 	void moveSelectionToLayer(const std::string& layerName);
 	void moveSelectionToLayer(int layerID);
 
+	/**
+	 * greebo: Removes the selected nodes from the given layers.
+	 */
+	void removeSelectionFromLayer(const std::string& layerName);
+	void removeSelectionFromLayer(int layerID);
+
 	virtual bool updateNodeVisibility(const scene::INodePtr& node);
 
 	// RegisterableModule implementation
