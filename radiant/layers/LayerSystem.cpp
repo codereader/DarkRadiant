@@ -139,6 +139,9 @@ void LayerSystem::onLayerVisibilityChanged() {
 
 	// Redraw
 	SceneChangeNotify();
+
+	// Update the LayerControlDialog
+	ui::LayerControlDialog::Instance().update();
 }
 
 void LayerSystem::addSelectionToLayer(int layerID) {

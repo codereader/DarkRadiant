@@ -31,6 +31,9 @@ public:
 	void onRadiantShutdown();
 
 	// Re-populates the window
+	void refresh();
+
+	// Updates the state of all LayerControls
 	void update();
 
 	// Toggles the visibility of the dialog
@@ -46,6 +49,11 @@ private:
 	// TransientWindow events
 	virtual void _preShow();
 	virtual void _preHide();
+
+	void populateWindow();
+
+	// Creates the option buttons
+	GtkWidget* createButtons();
 };
 
 } // namespace ui

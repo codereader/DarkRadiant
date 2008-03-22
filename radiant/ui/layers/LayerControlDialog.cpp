@@ -27,8 +27,7 @@ LayerControlDialog::LayerControlDialog() :
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 
-	// Add the vbox to the window
-	gtk_container_add(GTK_CONTAINER(getWindow()), _controlVBox);
+	populateWindow();
 
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -45,6 +44,32 @@ LayerControlDialog::LayerControlDialog() :
 	scene::getLayerSystem().createLayer("TestLayer2");
 }
 
+void LayerControlDialog::populateWindow() {
+	// Create the "master" vbox 
+	GtkWidget* overallVBox = gtk_vbox_new(FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(getWindow()), overallVBox);
+
+	// Add the LayerControl vbox to the window
+	gtk_box_pack_start(GTK_BOX(overallVBox), _controlVBox, FALSE, FALSE, 0);
+
+	// Add the option buttons ("Create Laye", etc.) to the window
+	gtk_box_pack_start(GTK_BOX(overallVBox), createButtons(), FALSE, FALSE, 0);
+}
+
+GtkWidget* LayerControlDialog::createButtons() {
+	GtkWidget* buttonVBox = gtk_vbox_new(FALSE, 0);
+
+	GtkWidget* createButton = gtk_button_new_from_stock(GTK_STOCK_NEW);
+	gtk_widget_set_size_request(createButton, 100, -1);
+	gtk_box_pack_start(GTK_BOX(buttonVBox), createButton, FALSE, FALSE, 0);
+
+	GtkWidget* deleteButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	gtk_widget_set_size_request(deleteButton, 100, -1);
+	gtk_box_pack_start(GTK_BOX(buttonVBox), deleteButton, FALSE, FALSE, 0);
+
+	return buttonVBox;
+}
+
 void LayerControlDialog::toggleDialog() {
 	if (isVisible()) {
 		hide();
@@ -54,8 +79,7 @@ void LayerControlDialog::toggleDialog() {
 	}
 }
 
-void LayerControlDialog::update() {
-
+void LayerControlDialog::refresh() {
 	// Remove the widgets from the vbox first
 	for (LayerControls::iterator i = _layerControls.begin(); 
 		 i != _layerControls.end(); i++)
@@ -94,6 +118,15 @@ void LayerControlDialog::update() {
 	} populator(_layerControls, _controlVBox);
 
 	scene::getLayerSystem().foreachLayer(populator);
+}
+
+void LayerControlDialog::update() {
+	// Broadcast the update() call
+	for (LayerControls::iterator i = _layerControls.begin();
+		 i != _layerControls.end(); i++)
+	{
+		(*i)->update();
+	}
 }
 
 void LayerControlDialog::toggle() {
@@ -140,8 +173,8 @@ LayerControlDialog& LayerControlDialog::Instance() {
 void LayerControlDialog::_preShow() {
 	// Restore the position
 	_windowPosition.applyPosition();
-	// Update the widgets
-	update();
+	// Re-populate the dialog
+	refresh();
 }
 
 void LayerControlDialog::_preHide() {
