@@ -1,11 +1,15 @@
 #include "LayerControlDialog.h"
 
+#include <gtk/gtk.h>
+
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "stream/textstream.h"
-#include "layers/LayerSystem.h"
 
-#include <gtk/gtk.h>
+#include "gtkutil/dialog.h"
+#include "gtkutil/EntryAbortedException.h"
+
+#include "layers/LayerSystem.h"
 
 namespace ui {
 
@@ -60,9 +64,10 @@ GtkWidget* LayerControlDialog::createButtons() {
 	GtkWidget* buttonVBox = gtk_vbox_new(FALSE, 0);
 
 	GtkWidget* createButton = gtk_button_new_from_stock(GTK_STOCK_NEW);
+	g_signal_connect(G_OBJECT(createButton), "clicked", G_CALLBACK(onCreateLayer), this);
 	gtk_widget_set_size_request(createButton, 100, -1);
 	gtk_box_pack_start(GTK_BOX(buttonVBox), createButton, FALSE, FALSE, 0);
-
+	
 	GtkWidget* deleteButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_widget_set_size_request(deleteButton, 100, -1);
 	gtk_box_pack_start(GTK_BOX(buttonVBox), deleteButton, FALSE, FALSE, 0);
@@ -117,7 +122,11 @@ void LayerControlDialog::refresh() {
 		}
 	} populator(_layerControls, _controlVBox);
 
+	// Traverse the layers
 	scene::getLayerSystem().foreachLayer(populator);
+
+	// Make sure the newly added items are visible
+	gtk_widget_show_all(_controlVBox);
 }
 
 void LayerControlDialog::update() {
@@ -180,6 +189,38 @@ void LayerControlDialog::_preShow() {
 void LayerControlDialog::_preHide() {
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
+}
+
+// Static GTK callbacks
+void LayerControlDialog::onCreateLayer(GtkWidget* button, LayerControlDialog* self) {
+	while (true) {
+		// Query the name of the new layer from the user
+		std::string layerName;
+
+		try {
+			layerName = gtkutil::textEntryDialog(
+				"Enter Name", 
+				"Enter Layer Name", 
+				GTK_WINDOW(self->getWindow())
+			);
+		}
+		catch (gtkutil::EntryAbortedException e) {
+			break;
+		}
+
+		int layerID = scene::getLayerSystem().createLayer(layerName);
+
+		if (layerID != -1) {
+			// Reload the widgets, we're done here
+			self->refresh();
+			break;
+		}
+		else {
+			// Wrong name, let the user try again
+			gtkutil::errorDialog("This name already exists.", GTK_WINDOW(self->getWindow()));
+			continue; 
+		}
+	}
 }
 
 } // namespace ui

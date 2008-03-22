@@ -54,6 +54,8 @@ private:
 
 	// Creates the option buttons
 	GtkWidget* createButtons();
+
+	static void onCreateLayer(GtkWidget* button, LayerControlDialog* self);
 };
 
 } // namespace ui
