@@ -23,11 +23,20 @@ class LayerControl
 	// The hbox containing the control widgets
 	GtkWidget* _hbox;
 
+	GtkWidget* _toggle;
+	GtkWidget* _label;
+
+	// Locks down the callbacks during widget update
+	bool _updateActive;
+
 public:
 	LayerControl(int layerID);
 
 	// Returns the widget for packing this object into a container
 	GtkWidget* getWidget() const;
+
+	// Updates the state of all widgets
+	void update();
 
 private:
 	static void onToggle(GtkToggleButton* togglebutton, LayerControl* self);

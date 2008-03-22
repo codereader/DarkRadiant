@@ -13,22 +13,35 @@ LayerControl::LayerControl(int layerID) :
 	scene::LayerSystem& layerSystem = scene::getLayerSystem();
 
 	// Create the toggle button
-	GtkWidget* toggle = gtk_toggle_button_new();
-	gtk_box_pack_start(GTK_BOX(_hbox), toggle, FALSE, FALSE, 0); 
+	_toggle = gtk_toggle_button_new();
+	gtk_box_pack_start(GTK_BOX(_hbox), _toggle, FALSE, FALSE, 0); 
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), layerSystem.layerIsVisible(_layerID));
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(onToggle), this);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_toggle), layerSystem.layerIsVisible(_layerID));
+	g_signal_connect(G_OBJECT(_toggle), "toggled", G_CALLBACK(onToggle), this);
 
 	// Create the label
-	GtkWidget* label = gtk_label_new(layerSystem.getLayerName(_layerID).c_str());
-	gtk_box_pack_start(GTK_BOX(_hbox), label, FALSE, FALSE, 0); 
+	_label = gtk_label_new(layerSystem.getLayerName(_layerID).c_str());
+	gtk_box_pack_start(GTK_BOX(_hbox), _label, FALSE, FALSE, 0); 
 }
 
 GtkWidget* LayerControl::getWidget() const {
 	return _hbox;
 }
 
+void LayerControl::update() {
+	_updateActive = true;
+
+	scene::LayerSystem& layerSystem = scene::getLayerSystem();
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_toggle), layerSystem.layerIsVisible(_layerID));
+	gtk_label_set_text(GTK_LABEL(_label), layerSystem.getLayerName(_layerID).c_str());
+
+	_updateActive = false;
+}
+
 void LayerControl::onToggle(GtkToggleButton* togglebutton, LayerControl* self) {
+	if (self->_updateActive) return;
+
 	scene::getLayerSystem().setLayerVisibility(
 		self->_layerID, 
 		gtk_toggle_button_get_active(togglebutton) ? true : false
