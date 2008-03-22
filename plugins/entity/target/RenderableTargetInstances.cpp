@@ -19,11 +19,7 @@ void RenderableTargetInstances::renderSolid(Renderer& renderer, const VolumeTest
 	for (TargetableNodes::const_iterator i = _nodes.begin(); 
 		 i != _nodes.end(); ++i)
 	{
-		TargetableNode* node = *i;
-
-		//if (node->visible()) { // TODO
-		node->render(renderer, volume);
-		//}
+		(*i)->render(renderer, volume);
 	}
 }
 

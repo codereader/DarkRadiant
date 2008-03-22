@@ -80,6 +80,8 @@ const Vector3& TargetableNode::getWorldPosition() const {
 }
 
 void TargetableNode::render(Renderer& renderer, const VolumeTest& volume) const {
+	if (!_node.visible()) return;
+
 	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
 	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
 	_renderableLines.render(renderer, volume, getWorldPosition());
