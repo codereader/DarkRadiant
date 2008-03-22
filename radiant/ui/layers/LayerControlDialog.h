@@ -22,7 +22,7 @@ class LayerControlDialog :
 	typedef std::vector<LayerControlPtr> LayerControls;
 	LayerControls _layerControls;
 
-	GtkWidget* _controlVBox;
+	GtkWidget* _controlContainer;
 
 public:
 	LayerControlDialog();

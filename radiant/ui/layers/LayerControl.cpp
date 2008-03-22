@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "iradiant.h"
+#include "gtkutil/LeftAlignedLabel.h"
 
 #include "layers/LayerSystem.h"
 #include "LayerControlDialog.h"
@@ -15,32 +16,36 @@ namespace ui {
 	}
 
 LayerControl::LayerControl(int layerID) :
-	_layerID(layerID),
-	_hbox(gtk_hbox_new(FALSE, 3))
+	_layerID(layerID)
 {
 	// Create the toggle button
 	_toggle = gtk_toggle_button_new();
-	gtk_box_pack_start(GTK_BOX(_hbox), _toggle, FALSE, FALSE, 0); 
 	g_signal_connect(G_OBJECT(_toggle), "toggled", G_CALLBACK(onToggle), this);
 
 	// Create the label
-	_label = gtk_label_new("");
-	gtk_box_pack_start(GTK_BOX(_hbox), _label, FALSE, FALSE, 0); 
-
+	_label = gtkutil::LeftAlignedLabel("");
+		
 	_deleteButton = gtk_button_new();
 	gtk_button_set_image(
 		GTK_BUTTON(_deleteButton), 
 		gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(ICON_DELETE))
 	);
-	gtk_box_pack_start(GTK_BOX(_hbox), _deleteButton, FALSE, FALSE, 0); 
 	g_signal_connect(G_OBJECT(_deleteButton), "clicked", G_CALLBACK(onDelete), this);
 
 	// Read the status from the Layer
 	update();
 }
 
-GtkWidget* LayerControl::getWidget() const {
-	return _hbox;
+GtkWidget* LayerControl::getLabel() const {
+	return _label;
+}
+
+GtkWidget* LayerControl::getButtons() const {
+	return _deleteButton;
+}
+
+GtkWidget* LayerControl::getToggle() const {
+	return _toggle;
 }
 
 void LayerControl::update() {
