@@ -1,9 +1,16 @@
 #include "LayerControl.h"
 
-#include "layers/LayerSystem.h"
 #include <gtk/gtk.h>
+#include "iradiant.h"
+
+#include "layers/LayerSystem.h"
 
 namespace ui {
+
+	namespace {
+		const std::string ICON_LAYER_VISIBLE("check.png");
+		const std::string ICON_LAYER_HIDDEN("empty.png");
+	}
 
 LayerControl::LayerControl(int layerID) :
 	_layerID(layerID),
@@ -31,8 +38,15 @@ void LayerControl::update() {
 
 	scene::LayerSystem& layerSystem = scene::getLayerSystem();
 
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_toggle), layerSystem.layerIsVisible(_layerID));
+	bool layerIsVisible = layerSystem.layerIsVisible(_layerID);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_toggle), layerIsVisible);
 	gtk_label_set_text(GTK_LABEL(_label), layerSystem.getLayerName(_layerID).c_str());
+
+	std::string imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
+	gtk_button_set_image(
+		GTK_BUTTON(_toggle), 
+		gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(imageName))
+	);
 
 	_updateActive = false;
 }
