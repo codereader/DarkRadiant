@@ -132,10 +132,6 @@ void OrthoContextMenu::show(const Vector3& point) {
 }
 
 void OrthoContextMenu::repopulateLayerMenus() {
-	// Remove the previous submenu, if applicable
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_addToLayer), NULL);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_moveToLayer), NULL);
-
 	// Create a new submenu and connect it to the according function
 	LayerContextMenu::OnSelectionFunc addToLayerCallback(callbackAddToLayer);
 	LayerContextMenu::OnSelectionFunc moveToLayerCallback(callbackMoveToLayer);
