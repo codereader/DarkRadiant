@@ -7,6 +7,10 @@
 namespace ui
 {
 
+// Forward declaration
+class LayerContextMenu;
+typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
+
 /** Displays a menu when the mouse is right-clicked in the ortho window.
  * This is a singleton class which remains in existence once constructed,
  * and is hidden and displayed as appropriate.
@@ -32,6 +36,9 @@ class OrthoContextMenu
 	GtkWidget* _convertStatic;
 	GtkWidget* _revertWorldspawn;
 
+	GtkWidget* _addToLayer;
+	LayerContextMenuPtr _addToLayerSubmenu;
+
 	// Enable or disable the "convert to static" option based on the number
 	// of selected brushes.
 	void checkConvertStatic();
@@ -51,6 +58,9 @@ class OrthoContextMenu
 	// mohij: changes the "Add PlayerStart" entry if an info_player_start already exists
 	void checkPlayerStart();
 
+	// Refreshes the layer submenus
+	void repopulateLayerMenus();
+
 	/* Gtk Callbacks */
 	
 	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
@@ -63,6 +73,9 @@ class OrthoContextMenu
 	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu* self);
 	static void callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self);
+
+	// Gets called by the items in the "Add to Layer" submenu
+	static void callbackAddToLayer(int layer);
 	
 public:
 

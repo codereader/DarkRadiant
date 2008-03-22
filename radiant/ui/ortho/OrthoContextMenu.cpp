@@ -12,11 +12,13 @@
 
 #include "gtkutil/dialog.h"
 #include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/TextMenuItem.h"
 
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/entitychooser/EntityClassChooser.h"
+#include "ui/layers/LayerContextMenu.h"
 
 #include "math/aabb.h"
 #include "brushmanip.h"
@@ -55,6 +57,8 @@ namespace {
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
     const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
+
+	const char* ADD_TO_LAYER_TEXT = "Add to Layer";
 }
 
 // Static class function to display the singleton instance.
@@ -79,6 +83,9 @@ OrthoContextMenu::OrthoContextMenu()
 	_addSpkr = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT);
 	_convertStatic = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT);
 	_revertWorldspawn = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT);
+
+	// "Add to layer" submenu
+	_addToLayer = gtkutil::TextMenuItem(ADD_TO_LAYER_TEXT);
 	
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);
@@ -102,6 +109,8 @@ OrthoContextMenu::OrthoContextMenu()
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _movePlayerStart);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _convertStatic);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _revertWorldspawn);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addToLayer);
 		
 	gtk_widget_show_all(_widget);
 }
@@ -115,7 +124,22 @@ void OrthoContextMenu::show(const Vector3& point) {
 	checkMonsterClip(); // enable the "Add MonsterClip" entry only if one or more model is selected
 	checkPlayerStart(); // change the "Add PlayerStart" entry if an info_player_start is already existant 
 	checkAddOptions(); // disable the "Add *" command if an entity is already selected
+	repopulateLayerMenus(); // refresh the layer menus
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+}
+
+void OrthoContextMenu::repopulateLayerMenus() {
+	// Remove the previous submenu, if applicable
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_addToLayer), NULL);
+
+	// Create a new submenu and connect it to the "callbackAddToLayer" function
+	LayerContextMenu::OnSelectionFunc addToLayerCallback(callbackAddToLayer);
+
+	// Create a new LayerContextMenu
+	_addToLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(addToLayerCallback));
+
+	// Cast the LayerContextMenu onto GtkWidget* and pack it
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_addToLayer), *_addToLayerSubmenu);
 }
 
 // Check if the convert to static command should be enabled
@@ -350,6 +374,10 @@ void OrthoContextMenu::callbackConvertToStatic(GtkMenuItem* item, OrthoContextMe
 void OrthoContextMenu::callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self) {
 	// Pass the call to the according method
 	selection::algorithm::revertGroupToWorldSpawn();	
+}
+
+void OrthoContextMenu::callbackAddToLayer(int layerID) {
+	scene::getLayerSystem().addSelectionToLayer(layerID);
 }
 
 } // namespace ui
