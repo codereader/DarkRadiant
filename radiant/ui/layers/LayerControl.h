@@ -25,6 +25,7 @@ class LayerControl
 
 	GtkWidget* _toggle;
 	GtkWidget* _label;
+	GtkWidget* _deleteButton;
 
 	// Locks down the callbacks during widget update
 	bool _updateActive;
@@ -40,6 +41,7 @@ public:
 
 private:
 	static void onToggle(GtkToggleButton* togglebutton, LayerControl* self);
+	static void onDelete(GtkWidget* button, LayerControl* self);
 };
 typedef boost::shared_ptr<LayerControl> LayerControlPtr;
 
