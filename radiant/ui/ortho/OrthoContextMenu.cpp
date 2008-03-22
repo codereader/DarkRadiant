@@ -58,6 +58,7 @@ namespace {
     const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
 
+	const char* LAYER_ICON = "layers.png";
 	const char* ADD_TO_LAYER_TEXT = "Add to Layer";
 	const char* MOVE_TO_LAYER_TEXT = "Move to Layer";
 }
@@ -86,8 +87,8 @@ OrthoContextMenu::OrthoContextMenu()
 	_revertWorldspawn = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT);
 
 	// "Add to layer" submenu
-	_addToLayer = gtkutil::TextMenuItem(ADD_TO_LAYER_TEXT);
-	_moveToLayer = gtkutil::TextMenuItem(MOVE_TO_LAYER_TEXT);
+	_addToLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
+	_moveToLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), MOVE_TO_LAYER_TEXT);
 	
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);
