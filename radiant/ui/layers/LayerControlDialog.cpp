@@ -208,6 +208,7 @@ void LayerControlDialog::onCreateLayer(GtkWidget* button, LayerControlDialog* se
 			break;
 		}
 
+		// Attempt to create the layer, this will return -1 if the operation fails
 		int layerID = scene::getLayerSystem().createLayer(layerName);
 
 		if (layerID != -1) {

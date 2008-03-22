@@ -39,12 +39,65 @@ class ILayerSystem :
 	public RegisterableModule
 {
 public:
-	virtual bool layerIsVisible(const std::string& layerName) = 0;
+	// Visitor class for use with the foreachLayer() method
+	class Visitor {
+	public:
+		virtual void visit(int layerID, std::string layerName) = 0;
+	};
 
-	/** 
-	 * greebo: Set the visibility of the given layer to <visible>.
+	/**
+	 * greebo: Creates a new layer with the given name.
+	 * 
+	 * @returns: the ID of the layer of -1 if the layer could not
+	 *           be created (e.g. due to a name conflict).
+	 */
+	virtual int createLayer(const std::string& name) = 0;
+
+	/**
+	 * greebo: Deletes the named layer. All nodes are removed
+	 *         from this layer before deletion.
+	 */
+	virtual void deleteLayer(const std::string& name) = 0;
+
+	/**
+	 * greebo: Visits each layer using the given visitor.
+	 */
+	virtual void foreachLayer(Visitor& visitor) = 0;
+
+	/**
+	 * greebo: Returns the ID of the named layer, or -1 if name doesn't exist
+	 */
+	virtual int getLayerID(const std::string& name) const = 0;
+
+	/**
+	 * greebo: Returns the name of the layer with the given ID or "" if it doesn't exist
+	 */
+	virtual std::string getLayerName(int layerID) const = 0;
+
+	/**
+	 * greebo: Queries the visibility of the given layer.
+	 */
+	virtual bool layerIsVisible(const std::string& layerName) = 0;
+	virtual bool layerIsVisible(int layerID) = 0;
+
+	/**
+	 * greebo: Sets the visibility of the given layer.
 	 */
 	virtual void setLayerVisibility(const std::string& layerName, bool visible) = 0;
+	virtual void setLayerVisibility(int layerID, bool visible) = 0;
+
+	/**
+	 * greebo: Traverses the selection and adds each node to the given layer.
+	 */
+	virtual void addSelectionToLayer(const std::string& layerName) = 0;
+	virtual void addSelectionToLayer(int layerID) = 0;
+
+	/**
+	 * greebo: Moves all selected nodes to the given layer. This implicitly
+	 *         removes the nodes from all other layers.
+	 */
+	virtual void moveSelectionToLayer(const std::string& layerName) = 0;
+	virtual void moveSelectionToLayer(int layerID) = 0;
 
 	/**
 	 * greebo: Updates the visibility of the given node based on the
