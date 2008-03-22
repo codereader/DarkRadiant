@@ -4,12 +4,14 @@
 #include "iradiant.h"
 
 #include "layers/LayerSystem.h"
+#include "LayerControlDialog.h"
 
 namespace ui {
 
 	namespace {
 		const std::string ICON_LAYER_VISIBLE("check.png");
 		const std::string ICON_LAYER_HIDDEN("empty.png");
+		const std::string ICON_DELETE("delete.png");
 	}
 
 LayerControl::LayerControl(int layerID) :
@@ -24,6 +26,14 @@ LayerControl::LayerControl(int layerID) :
 	// Create the label
 	_label = gtk_label_new("");
 	gtk_box_pack_start(GTK_BOX(_hbox), _label, FALSE, FALSE, 0); 
+
+	_deleteButton = gtk_button_new();
+	gtk_button_set_image(
+		GTK_BUTTON(_deleteButton), 
+		gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(ICON_DELETE))
+	);
+	gtk_box_pack_start(GTK_BOX(_hbox), _deleteButton, FALSE, FALSE, 0); 
+	g_signal_connect(G_OBJECT(_deleteButton), "clicked", G_CALLBACK(onDelete), this);
 
 	// Read the status from the Layer
 	update();
@@ -48,6 +58,9 @@ void LayerControl::update() {
 		gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(imageName))
 	);
 
+	// Don't allow deletion of layer 0
+	gtk_widget_set_sensitive(_deleteButton, _layerID != 0);
+
 	_updateActive = false;
 }
 
@@ -58,6 +71,13 @@ void LayerControl::onToggle(GtkToggleButton* togglebutton, LayerControl* self) {
 		self->_layerID, 
 		gtk_toggle_button_get_active(togglebutton) ? true : false
 	);
+}
+
+void LayerControl::onDelete(GtkWidget* button, LayerControl* self) {
+	scene::getLayerSystem().deleteLayer(
+		scene::getLayerSystem().getLayerName(self->_layerID)
+	);
+	LayerControlDialog::Instance().refresh();
 }
 
 } // namespace ui
