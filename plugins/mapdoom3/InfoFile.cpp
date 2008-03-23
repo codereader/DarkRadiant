@@ -10,7 +10,7 @@ namespace map {
 // Pass the input stream to the constructor
 InfoFile::InfoFile(std::istream& infoStream) :
 	_tok(infoStream),
-	_isValid(false)
+	_isValid(true)
 {}
 
 const InfoFile::LayerNameList& InfoFile::getLayerNames() const {
@@ -35,22 +35,68 @@ void InfoFile::parse() {
         globalErrorStream() 
             << "[mapdoom3] Unable to parse info file header: " 
             << e.what() << "\n";
+		_isValid = false;
         return;
     }
     catch (boost::bad_lexical_cast e) {
         globalErrorStream() 
             << "[mapdoom3] Unable to parse info file version: " 
             << e.what() << "\n";
+		_isValid = false;
         return;
     }
 
+	// The opening brace of the master block
 	_tok.assertNextToken("{");
 	
-	_isValid = true;
+	parseInfoFileBody();
+}
+
+void InfoFile::parseInfoFileBody() {
+	while (_tok.hasMoreTokens()) {
+		std::string token = _tok.nextToken();
+
+		if (token == "Layers") {
+			parseLayerNames();
+		}
+
+		if (token == "}") {
+			break;
+		}
+	}
 }
 
 void InfoFile::parseLayerNames() {
+	// The opening brace
+	_tok.assertNextToken("{");
 	
+	std::string token = _tok.nextToken();
+	while (token != "}") {
+		if (token == "Layer") {
+			// Get the ID
+			std::string layerID = _tok.nextToken();
+
+			_tok.assertNextToken("{");
+
+			// Assemble the name
+			std::string name;
+
+			token = _tok.nextToken();
+			while (token != "}") {
+				name += token;
+				token = _tok.nextToken();
+			}
+
+			globalOutputStream() << "[InfoFile]: Parsed layer name " << name.c_str() << "\n";
+			_layerNames.push_back(name);
+		}
+
+		if (!_tok.hasMoreTokens()) {
+			break;
+		}
+
+		token = _tok.nextToken();
+	}
 }
 
 } // namespace map
