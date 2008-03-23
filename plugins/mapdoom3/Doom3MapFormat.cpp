@@ -6,16 +6,18 @@
 #include "ipatch.h"
 #include "iregistry.h"
 
+#include "NodeExporter.h"
 #include "parser/DefTokeniser.h"
 #include "stream/textstream.h"
 
-#include "write.h"
 #include <boost/lexical_cast.hpp>
 
-namespace {
-	const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
-	const int MAPVERSION = 2;
-}
+namespace map {
+
+	namespace {
+		const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
+		const int MAPVERSION = 2;
+	}
 
 // RegisterableModule implementation
 const std::string& Doom3MapFormat::getName() const {
@@ -121,5 +123,7 @@ void Doom3MapFormat::writeGraph(scene::INodePtr root, GraphTraversalFunc travers
 	int precision = GlobalRegistry().getInt(RKEY_PRECISION);  
 	os.precision(precision);
     os << "Version " << MAPVERSION << std::endl;
-	Map_Write(root, traverse, os);
+	NodeExporter::write(root, traverse, os);
 }
+
+} // namespace map

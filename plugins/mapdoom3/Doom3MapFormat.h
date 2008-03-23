@@ -4,6 +4,8 @@
 #include "imap.h"
 #include "parse.h"
 
+namespace map {
+
 class Doom3MapFormat : 
 	public MapFormat,
 	public PrimitiveParser
@@ -28,5 +30,7 @@ public:
 	void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) const;
 };
 typedef boost::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
+
+} // namespace map
 
 #endif /* DOOM3MAPFORMAT_H_ */

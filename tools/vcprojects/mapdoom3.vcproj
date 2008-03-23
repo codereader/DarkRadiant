@@ -247,14 +247,6 @@
 				RelativePath="..\..\plugins\mapdoom3\parse.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\write.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\write.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\mapdoom3\mapdoom3.def"
