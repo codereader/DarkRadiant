@@ -1,7 +1,6 @@
 #include "NodeExporter.h"
 
 #include "iregistry.h"
-#include "imap.h"
 #include "ieclass.h"
 #include "ientity.h"
 
@@ -59,7 +58,7 @@ bool NodeExporter::pre(const scene::INodePtr& node) {
 		_outStream << "{\n";
 
 		// Entity key values
-		exportEntity(*entity, _outStream);
+		exportEntity(*entity);
 
 		// Reset the brush count 
 		_brushCount = 0;
@@ -115,7 +114,7 @@ void NodeExporter::post(const scene::INodePtr& node) {
  * into the given stream.
  */
 
-void NodeExporter::exportEntity(const Entity& entity, std::ostream& os) {
+void NodeExporter::exportEntity(const Entity& entity) {
 	// Create a local Entity visitor class to export the keyvalues
 	// to the output stream	
 	class WriteKeyValue : public Entity::Visitor
@@ -134,10 +133,17 @@ void NodeExporter::exportEntity(const Entity& entity, std::ostream& os) {
 			_os << "\"" << key << "\" \"" << value << "\"\n";
 		}
 
-	} visitor(os);
+	} visitor(_outStream);
 
 	// Visit the entity
 	entity.forEachKeyValue(visitor);
+}
+
+// Static
+void NodeExporter::write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) {
+	// Instantiate a NodeExporter class and call the traverse function
+	NodeExporter exporter(os);
+	traverse(root, exporter);
 }
 
 } // namespace map

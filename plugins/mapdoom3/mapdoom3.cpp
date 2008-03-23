@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itextstream.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(Doom3MapFormatPtr(new Doom3MapFormat));
+	registry.registerModule(map::Doom3MapFormatPtr(new map::Doom3MapFormat));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

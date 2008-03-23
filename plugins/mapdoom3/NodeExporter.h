@@ -1,7 +1,8 @@
-#ifndef DOOM3MAPFORMAT_H_
-#define DOOM3MAPFORMAT_H_
+#ifndef NODEEXPORTER_H_
+#define NODEEXPORTER_H_
 
 #include "inode.h"
+#include "imap.h"
 #include <vector>
 #include <ostream>
 
@@ -42,10 +43,13 @@ public:
 	// Post-descent callback
 	virtual void post(const scene::INodePtr& node);
 
+	// Instantiates a NodeExporter class and calls the traverse func
+	static void write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os);
+
 private:
-	void exportEntity(const Entity& entity, std::ostream& os);
+	void exportEntity(const Entity& entity);
 };
 
 } // namespace map
 
-#endif /* DOOM3MAPFORMAT_H_ */
+#endif /* NODEEXPORTER_H_ */
