@@ -6,6 +6,14 @@
 
 namespace map {
 
+	namespace {
+		// The supported Doom3 map version 
+		const int MAPVERSION = 2;
+
+		// The version of the map info file
+		const int MAP_INFO_VERSION = 2;
+	}
+
 class Doom3MapFormat : 
 	public MapFormat,
 	public PrimitiveParser
