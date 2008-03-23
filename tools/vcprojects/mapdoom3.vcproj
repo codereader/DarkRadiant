@@ -228,6 +228,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\mapdoom3\InfoFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\mapdoom3\InfoFile.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\mapdoom3\mapdoom3.cpp"
 				>
 			</File>
