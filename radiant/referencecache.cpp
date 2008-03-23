@@ -59,23 +59,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/weak_ptr.hpp>
 #include "map/MapResource.h"
 
+#include "MapExportInfo.h"
+
 /** Save the map contents to the given filename using the given MapFormat export module
  */
 bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTraversalFunc traverse, const char* filename)
 {
-	globalOutputStream() << "Open file " << filename << " for write...";
+	globalOutputStream() << "Open file " << filename << " ";
 	
 	// Open the stream to the output file
 	std::ofstream outfile(filename);
 
-	if(outfile.is_open()) {
+	std::string auxFilename(filename);
+	auxFilename = auxFilename.substr(0, auxFilename.rfind('.'));
+	auxFilename += ".darkradiant"; // TODO: move this into the Registry
+
+	globalOutputStream() << "and auxiliary file " << auxFilename.c_str() << " for write...";
+
+	std::ofstream auxfile(auxFilename.c_str());
+
+	if(outfile.is_open() && auxfile.is_open()) {
 	    globalOutputStream() << "success\n";
+
+		map::MapExportInfo exportInfo(outfile, auxfile);
+		exportInfo.traverse = traverse;
+		exportInfo.root = root;
 	    
-		// Use the MapFormat module and traversal function to dump the scenegraph
-		// to the file stream.
-	    format.writeGraph(root, traverse, outfile);
+		// Let the map exporter module do its job
+	    format.writeGraph(exportInfo);
 	    
 	    outfile.close();
+		auxfile.close();
 	    return true;
 	}
 	else {

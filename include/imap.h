@@ -57,7 +57,16 @@ class TextInputStream;
  */
 typedef void (*GraphTraversalFunc) (scene::INodePtr root, scene::NodeVisitor& walker);
 
-/** Map Format interface. Each map format is able to traverse the scene graph and write
+namespace map {
+
+// The MapExport information structure, needed by the MapFormat::write() method.
+// The actual definition of this structure is stored in the libs/MapExportInfo.h file.
+class MapExportInfo;
+
+} // namespace map
+
+/** 
+ * Map Format interface. Each map format is able to traverse the scene graph and write
  * the contents into a mapfile, or to load a mapfile and populate a scene graph.
  */
 class MapFormat :
@@ -69,17 +78,10 @@ public:
 
 	/** Traverse the scene graph and write contents into the provided output stream.
 	 * 
-	 * @param root
-	 * The root of the scenegraph to traverse.
-	 * 
-	 * @param traverse
-	 * Pointer to a graph traversal function. This function takes as parameters the scenegraph
-	 * root and a scene::Traversable::Walker subclass to traverse the graph.
-	 * 
-	 * @param oStream
-	 * The output stream to write contents to.
+	 * @param exportInfo
+	 * The MapExportInfo structure, which contains the ostream references and such.
 	 */
-	virtual void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& oStream) const = 0;
+	virtual void writeGraph(const map::MapExportInfo& exportInfo) const = 0;
 };
 typedef boost::shared_ptr<MapFormat> MapFormatPtr;
 

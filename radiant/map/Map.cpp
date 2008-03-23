@@ -1,5 +1,6 @@
 #include "Map.h"
 
+#include <ostream>
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "ieventmanager.h"
@@ -16,6 +17,7 @@
 #include "entitylib.h"
 #include "convert.h"
 #include "os/path.h"
+#include "MapExportInfo.h"
 #include "gtkutil/messagebox.h"
 
 #include "mainframe.h"
@@ -792,7 +794,14 @@ void Map::importSelected(TextInputStream& in) {
 
 void Map::exportSelected(std::ostream& out) {
 	const MapFormat& format = getFormat();
-	format.writeGraph(GlobalSceneGraph().root(), map::traverseSelected, out);
+
+	std::ostringstream dummyStream;
+
+	map::MapExportInfo exportInfo(out, dummyStream);
+	exportInfo.traverse = map::traverseSelected;
+	exportInfo.root = GlobalSceneGraph().root();
+
+	format.writeGraph(exportInfo);
 }
 
 } // namespace map
