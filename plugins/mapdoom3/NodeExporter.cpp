@@ -50,12 +50,13 @@ NodeExporter::NodeExporter(std::ostream& mapStream, std::ostream& infoStream) :
 	writeLayerNames();
 
 	// Write the NodeToLayerMapping header
-	_infoStream << "NodeToLayerMapping\n{\n";
+	_infoStream << "\tNodeToLayerMapping\n";
+	_infoStream << "\t{\n";
 }
 
 NodeExporter::~NodeExporter() {
 	// Closing braces of NodeToLayerMapping block
-	_infoStream << "}\n";
+	_infoStream << "\t}\n";
 
 	// Write the closing braces of the information file
 	_infoStream << "}\n";
@@ -156,7 +157,7 @@ void NodeExporter::exportEntity(const Entity& entity) {
 
 void NodeExporter::writeNodeLayerInfo(const scene::INodePtr& node) {
 	// Open a Node block
-	_infoStream << "\tNode { ";
+	_infoStream << "\t\tNode { ";
 
 	scene::LayerList layers = node->getLayers();
 
@@ -171,8 +172,8 @@ void NodeExporter::writeNodeLayerInfo(const scene::INodePtr& node) {
 
 void NodeExporter::writeLayerNames() {
 	// Open a "Layers" block
-	_infoStream << "Layers\n";
-	_infoStream << "{\n";
+	_infoStream << "\tLayers\n";
+	_infoStream << "\t{\n";
 
 	// Local helper to traverse the layers
 	class LayerNameExporter : 
@@ -188,7 +189,7 @@ void NodeExporter::writeLayerNames() {
 
 		// Required visit function
     	void visit(int layerID, std::string layerName) {
-			_os << "\tLayer " << layerID << " { " << layerName << " }\n";
+			_os << "\t\tLayer " << layerID << " { " << layerName << " }\n";
 		}
 	};
 
@@ -196,7 +197,7 @@ void NodeExporter::writeLayerNames() {
 	LayerNameExporter visitor(_infoStream);
 	GlobalLayerSystem().foreachLayer(visitor);
 
-	_infoStream << "}\n";
+	_infoStream << "\t}\n";
 }
 
 } // namespace map
