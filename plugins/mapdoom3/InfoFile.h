@@ -29,6 +29,8 @@ public:
 	const LayerNameList& getLayerNames() const;
 
 private:
+	void parseInfoFileBody();
+
 	// Parses the Layers section
 	void parseLayerNames();
 };

@@ -12,6 +12,7 @@
 
 #include "MapImportInfo.h"
 #include "MapExportInfo.h"
+#include "InfoFile.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -79,6 +80,16 @@ scene::INodePtr Doom3MapFormat::parsePrimitive(parser::DefTokeniser& tokeniser) 
 }
 
 void Doom3MapFormat::readGraph(const map::MapImportInfo& importInfo) const {
+	// Read the infofile
+	map::InfoFile infoFile(importInfo.infoStream);
+
+	try {
+		infoFile.parse();
+	}
+	catch (parser::ParseException e) {
+        globalErrorStream() << "[mapdoom3] Unable to parse info file: " << e.what() << "\n";
+    }
+
     // Construct a tokeniser
     std::istream is(&importInfo.inputStream);
     parser::BasicDefTokeniser<std::istream> tok(is);
