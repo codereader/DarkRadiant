@@ -7,8 +7,9 @@
 namespace scene {
 
 class RemoveFromLayerWalker :
-	public scene::Graph::Walker,
-	public SelectionSystem::Visitor
+	public Graph::Walker,
+	public SelectionSystem::Visitor,
+	public NodeVisitor
 {
 	int _layer;
 
@@ -21,16 +22,27 @@ public:
 	{}
 
 	// SelectionSystem::Visitor
-	void visit(const scene::INodePtr& node) const {
+	void visit(const INodePtr& node) const {
 		// Remove the node from this layer
 		node->removeFromLayer(_layer);
+
+		if (Node_isEntity(node)) {
+			// We have an entity, traverse all children too
+			node->traverse(const_cast<RemoveFromLayerWalker&>(*this));
+		}
 	}
 
 	// Scene::Graph::Walker
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const Path& path, const INodePtr& node) const {
 		// Remove the node from this layer
 		node->removeFromLayer(_layer);
 
+		return true;
+	}
+
+	// scene::NodeVisitor
+	bool pre(const INodePtr& node) {
+		node->removeFromLayer(_layer);
 		return true;
 	}
 };

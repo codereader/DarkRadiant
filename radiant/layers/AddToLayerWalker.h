@@ -2,12 +2,13 @@
 #define ADDTOLAYERWALKER_H_
 
 #include "ilayer.h"
-#include "iselection.h"
+#include "scenelib.h"
 
 namespace scene {
 
 class AddToLayerWalker :
-	public SelectionSystem::Visitor
+	public SelectionSystem::Visitor,
+	public NodeVisitor
 {
 	int _layer;
 
@@ -18,6 +19,17 @@ public:
 
 	void visit(const scene::INodePtr& node) const {
 		node->addToLayer(_layer);
+
+		if (Node_isEntity(node)) {
+			// We have an entity, traverse all children too
+			node->traverse(const_cast<AddToLayerWalker&>(*this));
+		}
+	}
+
+	// scene::NodeVisitor
+	bool pre(const scene::INodePtr& node) {
+		node->addToLayer(_layer);
+		return true;
 	}
 };
 
