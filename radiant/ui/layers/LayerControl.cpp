@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "iradiant.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/messagebox.h"
 
 #include "layers/LayerSystem.h"
 #include "LayerControlDialog.h"
@@ -79,10 +80,21 @@ void LayerControl::onToggle(GtkToggleButton* togglebutton, LayerControl* self) {
 }
 
 void LayerControl::onDelete(GtkWidget* button, LayerControl* self) {
-	scene::getLayerSystem().deleteLayer(
-		scene::getLayerSystem().getLayerName(self->_layerID)
+	// Ask the about the deletion
+	std::string msg = "Do you really want to delete this layer?\n<b>" + 
+		scene::getLayerSystem().getLayerName(self->_layerID) + "</b>";
+
+	EMessageBoxReturn returnValue = gtk_MessageBox(
+		GTK_WIDGET(GlobalRadiant().getMainWindow()), 
+		msg.c_str(), "Delete Custom Stim", eMB_YESNO, eMB_ICONQUESTION
 	);
-	LayerControlDialog::Instance().refresh();
+	
+	if (returnValue == eIDYES) {
+		scene::getLayerSystem().deleteLayer(
+			scene::getLayerSystem().getLayerName(self->_layerID)
+		);
+		LayerControlDialog::Instance().refresh();
+	}
 }
 
 } // namespace ui
