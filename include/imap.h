@@ -25,10 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 #include "inode.h"
 
-#include <ostream>
-
-/* FORWARD DECLS */
-class TokenWriter;
+// Forward declaration
 namespace parser { class DefTokeniser; }
 
 /// \brief A node whose state can be imported from a token stream.
@@ -50,8 +47,6 @@ public:
 };
 typedef boost::shared_ptr<MapExporter> MapExporterPtr;
 
-class TextInputStream;
-
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
  */
@@ -59,9 +54,11 @@ typedef void (*GraphTraversalFunc) (scene::INodePtr root, scene::NodeVisitor& wa
 
 namespace map {
 
-// The MapExport information structure, needed by the MapFormat::write() method.
-// The actual definition of this structure is stored in the libs/MapExportInfo.h file.
+// The MapExport/MapImport information structures, needed by the MapFormat::write() and
+// MapFormat::read() methods. The actual definition of this structure is stored in the 
+// files libs/MapExportInfo.h and libs/MapImportInfo.h.
 class MapExportInfo;
+class MapImportInfo;
 
 } // namespace map
 
@@ -73,8 +70,11 @@ class MapFormat :
 	public RegisterableModule
 {
 public:
-	/// \brief Read a map graph into \p root from \p outputStream, using \p entityTable to create entities.
-	virtual void readGraph(scene::INodePtr root, TextInputStream& inputStream) const = 0;
+	/**
+	 * Read the contents of the given streams (which are contained in MapImportInfo)
+	 * and add them as children to the given root node (also in MapImportInfo).
+	 */
+	virtual void readGraph(const map::MapImportInfo& importInfo) const = 0;
 
 	/** Traverse the scene graph and write contents into the provided output stream.
 	 * 

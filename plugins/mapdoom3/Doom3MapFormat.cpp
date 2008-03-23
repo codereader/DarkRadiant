@@ -9,6 +9,8 @@
 #include "NodeExporter.h"
 #include "parser/DefTokeniser.h"
 #include "stream/textstream.h"
+
+#include "MapImportInfo.h"
 #include "MapExportInfo.h"
 
 #include <boost/lexical_cast.hpp>
@@ -59,9 +61,6 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx) {
 		"prefab", getName(), FileTypePattern("Doom 3 region", "*.reg"));
 }
 
-/**
- * Parse a primitive from the given token stream.
- */
 scene::INodePtr Doom3MapFormat::parsePrimitive(parser::DefTokeniser& tokeniser) const {
     std::string primitive = tokeniser.nextToken();
     
@@ -79,12 +78,9 @@ scene::INodePtr Doom3MapFormat::parsePrimitive(parser::DefTokeniser& tokeniser) 
     }
 }
 
-/**
- * Read tokens from a map stream and create entities accordingly.
- */
-void Doom3MapFormat::readGraph(scene::INodePtr root, TextInputStream& inputStream) const {
+void Doom3MapFormat::readGraph(const map::MapImportInfo& importInfo) const {
     // Construct a tokeniser
-    std::istream is(&inputStream);
+    std::istream is(&importInfo.inputStream);
     parser::BasicDefTokeniser<std::istream> tok(is);
     
     // Parse the map version
@@ -115,10 +111,9 @@ void Doom3MapFormat::readGraph(scene::INodePtr root, TextInputStream& inputStrea
     }
     
     // Now start parsing the map
-    Map_Read(root, tok, *this);
+    Map_Read(importInfo.root, tok, *this);
 }
 
-// Write scene graph to an ostream
 void Doom3MapFormat::writeGraph(const map::MapExportInfo& exportInfo) const {
 	int precision = GlobalRegistry().getInt(RKEY_PRECISION);
 	exportInfo.mapStream.precision(precision);

@@ -17,6 +17,7 @@
 #include "entitylib.h"
 #include "convert.h"
 #include "os/path.h"
+#include "MapImportInfo.h"
 #include "MapExportInfo.h"
 #include "gtkutil/messagebox.h"
 
@@ -783,8 +784,12 @@ void Map::rename(const std::string& filename) {
 void Map::importSelected(TextInputStream& in) {
 	scene::INodePtr node(new BasicContainer);
 	
+	// Pass an empty stringstream to the importer
+	std::istringstream dummyStream;
+	MapImportInfo importInfo(in, dummyStream);
+
 	const MapFormat& format = getFormat();
-	format.readGraph(node, in);
+	format.readGraph(importInfo);
 	
 	GlobalNamespace().gatherNamespaced(node);
 	GlobalNamespace().mergeClonedNames();

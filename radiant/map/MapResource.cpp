@@ -1,5 +1,8 @@
 #include "MapResource.h"
 
+#include <sstream>
+#include <fstream>
+#include <iostream>
 #include "ifiletypes.h"
 #include "ifilesystem.h"
 #include "map/Map.h"
@@ -10,6 +13,7 @@
 #include "referencecache.h"
 #include "os/path.h"
 #include "os/file.h"
+#include "MapImportInfo.h"
 #include "map/algorithm/Traverse.h"
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
@@ -304,9 +308,34 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 	globalOutputStream() << "Open file " << filename.c_str() << " for read...";
 
 	TextFileInputStream file(filename);
+
+	std::string infoFilename(filename.substr(0, filename.rfind('.')));
+	infoFilename += ".darkradiant";
+
+	std::ifstream infoFileStream(infoFilename.c_str());
+
+	if (infoFileStream.is_open()) {
+		globalOutputStream() << " found information file... ";
+	}
+
 	if (!file.failed()) {
 		globalOutputStream() << "success\n";
-		format.readGraph(root, file);
+
+		// Create an import information structure
+		if (infoFileStream.is_open()) {
+			// Infostream is open, call the MapFormat
+			MapImportInfo importInfo(file, infoFileStream);
+			importInfo.root = root;
+			format.readGraph(importInfo);
+		}
+		else {
+			// No active infostream, pass a dummy stream
+			std::istringstream emptyStream;
+			MapImportInfo importInfo(file, emptyStream);
+			importInfo.root = root;
+			format.readGraph(importInfo);
+		}
+
 		return true;
 	}
 	else
