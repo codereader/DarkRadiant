@@ -17,7 +17,6 @@ namespace map {
 
 	namespace {
 		const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
-		const int MAPVERSION = 2;
 	}
 
 // RegisterableModule implementation
@@ -128,7 +127,7 @@ void Doom3MapFormat::writeGraph(const map::MapExportInfo& exportInfo) const {
     exportInfo.mapStream << "Version " << MAPVERSION << std::endl;
 
 	// Instantiate a NodeExporter class and call the traverse function
-	NodeExporter exporter(exportInfo.mapStream);
+	NodeExporter exporter(exportInfo.mapStream, exportInfo.infoStream);
 	exportInfo.traverse(exportInfo.root, exporter);
 }
 

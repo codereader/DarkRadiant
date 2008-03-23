@@ -22,7 +22,8 @@ class NodeExporter :
 	std::vector<Entity*> _entityStack;
 
 	// Output stream to write to
-	std::ostream& _outStream;
+	std::ostream& _mapStream;
+	std::ostream& _infoStream;
   
 	// Number of entities written (map global)
 	int _entityCount;
@@ -35,7 +36,10 @@ class NodeExporter :
 	
 public:
 	// Constructor
-	NodeExporter(std::ostream& os);
+	NodeExporter(std::ostream& mapStream, std::ostream& infoStream);
+
+	// Destructor
+	~NodeExporter();
 	
 	// Pre-descent callback
 	virtual bool pre(const scene::INodePtr& node);
@@ -44,7 +48,14 @@ public:
 	virtual void post(const scene::INodePtr& node);
 
 private:
+	// Export all of the keyvalues from the given entity.
 	void exportEntity(const Entity& entity);
+
+	// Writes the layer numbers the node is a member of
+	void writeNodeLayerInfo(const scene::INodePtr& node);
+
+	// Writes the names of the layers existing in this map
+	void writeLayerNames();
 };
 
 } // namespace map
