@@ -127,7 +127,9 @@ void Doom3MapFormat::writeGraph(const map::MapExportInfo& exportInfo) const {
 	// Write the version tag first
     exportInfo.mapStream << "Version " << MAPVERSION << std::endl;
 
-	NodeExporter::write(exportInfo.root, exportInfo.traverse, exportInfo.mapStream);
+	// Instantiate a NodeExporter class and call the traverse function
+	NodeExporter exporter(exportInfo.mapStream);
+	exportInfo.traverse(exportInfo.root, exporter);
 }
 
 } // namespace map

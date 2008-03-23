@@ -43,9 +43,6 @@ public:
 	// Post-descent callback
 	virtual void post(const scene::INodePtr& node);
 
-	// Instantiates a NodeExporter class and calls the traverse func
-	static void write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os);
-
 private:
 	void exportEntity(const Entity& entity);
 };

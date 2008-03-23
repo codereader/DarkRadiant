@@ -139,11 +139,4 @@ void NodeExporter::exportEntity(const Entity& entity) {
 	entity.forEachKeyValue(visitor);
 }
 
-// Static
-void NodeExporter::write(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) {
-	// Instantiate a NodeExporter class and call the traverse function
-	NodeExporter exporter(os);
-	traverse(root, exporter);
-}
-
 } // namespace map
