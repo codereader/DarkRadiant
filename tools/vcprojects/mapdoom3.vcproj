@@ -232,6 +232,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\mapdoom3\NodeExporter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\mapdoom3\NodeExporter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\mapdoom3\parse.cpp"
 				>
 			</File>
