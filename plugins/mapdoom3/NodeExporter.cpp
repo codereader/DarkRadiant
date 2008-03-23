@@ -10,7 +10,7 @@
 namespace map {
 
 	namespace {
-		/* CONSTANTS */
+		// CONSTANTS
 		const char* DUMMY_BRUSH =
 			"// dummy brush 0\n\
 			{\n\
