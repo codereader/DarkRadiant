@@ -27,7 +27,7 @@ public:
     void readGraph(scene::INodePtr root, TextInputStream& inputStream) const;
 
 	// Write scene graph to an ostream
-	void writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) const;
+	void writeGraph(const map::MapExportInfo& exportInfo) const;
 };
 typedef boost::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
 

@@ -9,6 +9,7 @@
 #include "NodeExporter.h"
 #include "parser/DefTokeniser.h"
 #include "stream/textstream.h"
+#include "MapExportInfo.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -119,11 +120,14 @@ void Doom3MapFormat::readGraph(scene::INodePtr root, TextInputStream& inputStrea
 }
 
 // Write scene graph to an ostream
-void Doom3MapFormat::writeGraph(scene::INodePtr root, GraphTraversalFunc traverse, std::ostream& os) const {
-	int precision = GlobalRegistry().getInt(RKEY_PRECISION);  
-	os.precision(precision);
-    os << "Version " << MAPVERSION << std::endl;
-	NodeExporter::write(root, traverse, os);
+void Doom3MapFormat::writeGraph(const map::MapExportInfo& exportInfo) const {
+	int precision = GlobalRegistry().getInt(RKEY_PRECISION);
+	exportInfo.mapStream.precision(precision);
+
+	// Write the version tag first
+    exportInfo.mapStream << "Version " << MAPVERSION << std::endl;
+
+	NodeExporter::write(exportInfo.root, exportInfo.traverse, exportInfo.mapStream);
 }
 
 } // namespace map
