@@ -164,6 +164,24 @@ inline bool node_is_group(scene::INodePtr node) {
 
 namespace scene {
 
+/** 
+ * greebo: This assigns the given node to the given set of layers. Any previous
+ *         assignments of the node get overwritten by this routine.
+ */
+inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerList& layers) {
+	if (layers.size() > 0) {
+		scene::LayerList::const_iterator i = layers.begin();
+
+		// Move the node to the first layer (so that it gets removed from all others)
+		node->moveToLayer(*i);
+
+		// Add the node to all remaining layers
+		for (; i != layers.end(); i++) {
+			node->addToLayer(*i);
+		}
+	}
+}
+
 // This in combination with Instance_getLight can be used to
 // cast an instance onto a light and identify it as such.
 class SelectableLight {

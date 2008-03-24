@@ -29,6 +29,10 @@ MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
 	constructRemaps();
 }
 
+const model::IModel& MD5ModelNode::getIModel() const {
+	return *_model;
+}
+
 void MD5ModelNode::lightsChanged() {
 	_lightList->lightsChanged();
 }
