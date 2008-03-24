@@ -255,6 +255,10 @@
 				RelativePath="..\..\plugins\mapdoom3\parse.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\plugins\mapdoom3\Tokens.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\mapdoom3\mapdoom3.def"

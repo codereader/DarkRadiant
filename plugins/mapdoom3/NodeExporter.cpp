@@ -5,26 +5,12 @@
 #include "ientity.h"
 #include "ilayer.h"
 
+#include "Tokens.h"
 #include "Doom3MapFormat.h"
 
 namespace map {
 
 	namespace {
-		// CONSTANTS
-		const char* DUMMY_BRUSH =
-			"// dummy brush 0\n\
-			{\n\
-			brushDef3\n\
-			{\n\
-			( 0 0 -1 0 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
-			( 0 0 1 -8 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
-			( 0 -1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
-			( 1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
-			( 0 1 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
-			( -1 0 0 -16 ) ( ( 0.125 0 0 ) ( 0 0.125 0 ) ) \"_default\" 0 0 0\n\
-			}\n\
-			}\n";
-
 		inline MapExporterPtr Node_getMapExporter(scene::INodePtr node) {
 			return boost::dynamic_pointer_cast<MapExporter>(node);
 		}
@@ -43,14 +29,14 @@ NodeExporter::NodeExporter(std::ostream& mapStream, std::ostream& infoStream) :
 		_writeDummyBrushes = false;
 
 	// Write the information file header
-	_infoStream << "DarkRadiant Map Information File Version " << MAP_INFO_VERSION << "\n";
+	_infoStream << HEADER_SEQUENCE << " " << MAP_INFO_VERSION << "\n";
 	_infoStream << "{\n";
 
 	// Export the names of the layers
 	writeLayerNames();
 
 	// Write the NodeToLayerMapping header
-	_infoStream << "\tNodeToLayerMapping\n";
+	_infoStream << "\t" << NODE_TO_LAYER_MAPPING << "\n";
 	_infoStream << "\t{\n";
 }
 
@@ -157,7 +143,7 @@ void NodeExporter::exportEntity(const Entity& entity) {
 
 void NodeExporter::writeNodeLayerInfo(const scene::INodePtr& node) {
 	// Open a Node block
-	_infoStream << "\t\tNode { ";
+	_infoStream << "\t\t" << NODE << " { ";
 
 	scene::LayerList layers = node->getLayers();
 
@@ -172,7 +158,7 @@ void NodeExporter::writeNodeLayerInfo(const scene::INodePtr& node) {
 
 void NodeExporter::writeLayerNames() {
 	// Open a "Layers" block
-	_infoStream << "\tLayers\n";
+	_infoStream << "\t" << LAYERS << "\n";
 	_infoStream << "\t{\n";
 
 	// Local helper to traverse the layers
@@ -189,7 +175,7 @@ void NodeExporter::writeLayerNames() {
 
 		// Required visit function
     	void visit(int layerID, std::string layerName) {
-			_os << "\t\tLayer " << layerID << " { " << layerName << " }\n";
+			_os << "\t\t" << LAYER << " " << layerID << " { " << layerName << " }\n";
 		}
 	};
 
