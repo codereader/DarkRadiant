@@ -150,6 +150,12 @@ void OrthoContextMenu::repopulateLayerMenus() {
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_addToLayer), *_addToLayerSubmenu);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_moveToLayer), *_moveToLayerSubmenu);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_removeFromLayer), *_removeFromLayerSubmenu);
+
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	gtk_widget_set_sensitive(_addToLayer, info.totalCount > 0);
+	gtk_widget_set_sensitive(_moveToLayer, info.totalCount > 0);
+	gtk_widget_set_sensitive(_removeFromLayer, info.totalCount > 0);
 }
 
 // Check if the convert to static command should be enabled
