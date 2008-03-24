@@ -11,11 +11,13 @@
 
 #include "NodeImporter.h"
 #include "NodeExporter.h"
+#include "scenelib.h"
 
 #include "Tokens.h"
 #include "MapImportInfo.h"
 #include "MapExportInfo.h"
 #include "InfoFile.h"
+#include "AssignLayerMappingWalker.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -97,9 +99,10 @@ void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 	// Construct a MapImporter that will do the map parsing
 	NodeImporter importer(importInfo, infoFile, *this);
 	importer.parse();
-    
-    // Now start parsing the map
-    //Map_Read(importInfo.root, tok, *this, infoFile);
+
+	// Now that the graph is in place, assign the layers
+	AssignLayerMappingWalker walker(infoFile);
+	Node_traverseSubgraph(importInfo.root, walker);
 }
 
 void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {

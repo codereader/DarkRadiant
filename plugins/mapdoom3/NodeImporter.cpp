@@ -33,17 +33,14 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
 	_root(importInfo.root),
 	_tok(std::istream(&importInfo.inputStream)),
 	_infoFile(infoFile),
-	_loadStatusInterleave(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
+	_loadStatusInterleave(static_cast<std::size_t>(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE))),
 	_entityCount(0),
 	_primitiveCount(0),
+	_layerInfoCount(0),
 	_dialog(GlobalRadiant().getMainWindow(), "Loading map"),
 	_parser(parser),
 	_debug(GlobalRegistry().get("user/debug") == "1")
-{
-	if (_loadStatusInterleave <= 0) {
-		_loadStatusInterleave = 10;
-	}
-}
+{}
 
 void NodeImporter::parse() {
 	// Try to parse the map version
@@ -58,7 +55,7 @@ void NodeImporter::parse() {
 		// button is clicked, which we must catch and handle.
 		if (_entityCount % _loadStatusInterleave == 0) {
 			try {
-				_dialog.setText("Loading entity " + intToStr(_entityCount));
+				_dialog.setText("Loading entity " + sizetToStr(_entityCount));
 			}
 			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
 				gtkutil::errorDialog("Map loading cancelled", 
@@ -74,7 +71,7 @@ void NodeImporter::parse() {
 		}
 		catch (std::runtime_error e) {
 			gtkutil::errorDialog(
-				"Failed on entity " + intToStr(_entityCount) + "\n\n" + e.what(), 
+				"Failed on entity " + sizetToStr(_entityCount) + "\n\n" + e.what(), 
 				GlobalRadiant().getMainWindow()
 			);
 			return;			
@@ -123,7 +120,7 @@ void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity) {
     // Update the dialog
     if (updateDialog && (_primitiveCount % _loadStatusInterleave == 0)) {
         _dialog.setText(
-            _dlgEntityText + "\nPrimitive " + intToStr(_primitiveCount)
+            _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount)
         );
     }
 
@@ -133,7 +130,7 @@ void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity) {
     scene::INodePtr primitive(_parser.parsePrimitive(_tok));
 
     if (!primitive || !Node_getMapImporter(primitive)->importTokens(_tok)) {
-        throw std::runtime_error("Primitive #" + intToStr(_primitiveCount) 
+        throw std::runtime_error("Primitive #" + sizetToStr(_primitiveCount) 
                                  + ": parse error\n");
     }
     
@@ -181,7 +178,7 @@ scene::INodePtr NodeImporter::createEntity(const EntityKeyValues& keyValues) {
 
 void NodeImporter::parseEntity() {
 	// Set up the progress dialog text
-	_dlgEntityText = "Loading entity " + intToStr(_entityCount);
+	_dlgEntityText = "Loading entity " + sizetToStr(_entityCount);
 	
     // Map of keyvalues for this entity
     EntityKeyValues keyValues;
@@ -192,7 +189,7 @@ void NodeImporter::parseEntity() {
 
 	// Start parsing, first token must be an open brace
 	_tok.assertNextToken("{");
-	
+
 	std::string token = _tok.nextToken();
 
 	// Reset the primitive counter, we're starting a new entity
@@ -272,8 +269,8 @@ bool NodeImporter::checkEntityNum() {
 	
 	// Test the entity number is in the range
 	if (i != entityRange.end()) {
-		static int lower = strToInt(i->getAttributeValue("start"));
-		static int upper = strToInt(i->getAttributeValue("end"));
+		static std::size_t lower = strToSizet(i->getAttributeValue("start"));
+		static std::size_t upper = strToSizet(i->getAttributeValue("end"));
 	
 		if (_entityCount < lower || _entityCount > upper) {
 			std::cout << "DEBUG: Discarding entity " << _entityCount << ", out of range"

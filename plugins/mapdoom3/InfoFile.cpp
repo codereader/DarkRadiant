@@ -16,10 +16,36 @@ namespace map {
 InfoFile::InfoFile(std::istream& infoStream) :
 	_tok(infoStream),
 	_isValid(true)
-{}
+{
+	_standardLayerList.insert(0);
+}
+
+InfoFile::~InfoFile() {
+	globalOutputStream() << (_layerMappingIterator - _layerMappings.begin())  << " of " << 
+		_layerMappings.size() << " node-to-layer mappings assigned.\n";
+}
 
 const InfoFile::LayerNameList& InfoFile::getLayerNames() const {
 	return _layerNames;
+}
+
+std::size_t InfoFile::getLayerMappingCount() const {
+	return _layerMappings.size();
+}
+
+const scene::LayerList& InfoFile::getNextLayerMapping() {
+	// Check if we have a valid infofile
+	if (!_isValid) {
+		return _standardLayerList;
+	}
+
+	// Check if the node index is out of bounds
+	if (_layerMappingIterator == _layerMappings.end()) {
+		return _standardLayerList;
+	}
+
+	// Return the current list and increase the iterator afterwards
+	return *(_layerMappingIterator++);
 }
 
 void InfoFile::parse() {
@@ -59,6 +85,9 @@ void InfoFile::parse() {
 	_tok.assertNextToken("{");
 	
 	parseInfoFileBody();
+
+	// Set the layer mapping iterator to the beginning
+	_layerMappingIterator = _layerMappings.begin();
 }
 
 void InfoFile::parseInfoFileBody() {
@@ -67,10 +96,12 @@ void InfoFile::parseInfoFileBody() {
 
 		if (token == LAYERS) {
 			parseLayerNames();
+			continue;
 		}
 
 		if (token == NODE_TO_LAYER_MAPPING) {
 			parseNodeToLayerMapping();
+			continue;
 		}
 
 		if (token == "}") {
@@ -103,6 +134,7 @@ void InfoFile::parseLayerNames() {
 
 			globalOutputStream() << "[InfoFile]: Parsed layer name " << name.c_str() << "\n";
 			_layerNames.push_back(name);
+			continue;
 		}
 
 		if (token == "}") {
