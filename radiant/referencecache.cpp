@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "debugging/debugging.h"
 
 #include "iscenegraph.h"
+#include "iregistry.h"
 #include "iselection.h"
 #include "iundo.h"
 #include "imap.h"
@@ -70,9 +71,10 @@ bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTr
 	// Open the stream to the output file
 	std::ofstream outfile(filename);
 
+	// Open the auxiliary file too
 	std::string auxFilename(filename);
 	auxFilename = auxFilename.substr(0, auxFilename.rfind('.'));
-	auxFilename += ".darkradiant"; // TODO: move this into the Registry
+	auxFilename += GlobalRegistry().get(map::RKEY_INFO_FILE_EXTENSION);
 
 	globalOutputStream() << "and auxiliary file " << auxFilename.c_str() << " for write...";
 
