@@ -1,7 +1,7 @@
 #ifndef INFO_FILE_H_
 #define INFO_FILE_H_
 
-#include <vector>
+#include <map>
 #include "ilayer.h"
 #include "parser/DefTokeniser.h"
 
@@ -9,14 +9,14 @@ namespace map {
 
 class InfoFile {
 public:
-	typedef std::vector<std::string> LayerNameList;
+	typedef std::map<int, std::string> LayerNameMap;
 
 private:
 	// The actual DefTokeniser to split the infoStream into pieces
 	parser::BasicDefTokeniser<std::istream> _tok;
 
 	// The list of layernames
-	LayerNameList _layerNames;
+	LayerNameMap _layerNames;
 
 	typedef std::vector<scene::LayerList> LayerLists;
 	LayerLists _layerMappings;
@@ -40,7 +40,7 @@ public:
 	void parse();
 
 	// Get the parsed Layer list
-	const LayerNameList& getLayerNames() const;
+	const LayerNameMap& getLayerNames() const;
 
 	// Returns the next layer mapping. The internal iterator is increased by this call.
 	// This allows the client code to treat this class like a LayerList input stream.

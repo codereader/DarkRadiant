@@ -14,21 +14,20 @@
 
 namespace scene {
 
-int LayerSystem::createLayer(const std::string& name) {
-	// Check if the layer already exists
-	int existingID = getLayerID(name);
+	namespace {
+		const std::string DEFAULT_LAYER_NAME("Default");
+	} 
 
-	if (existingID != -1) {
-		globalErrorStream() << "Could not create layer, name already exists: " 
-			<< name.c_str() << "\n";
+int LayerSystem::createLayer(const std::string& name, int layerID) {
+	// Check if the ID already exists
+	if (_layers.find(layerID) != _layers.end()) {
+		// already exists => quit
 		return -1;
 	}
 
-	// Layer doesn't exist yet, get the lowest free Id
-	int newID = getLowestUnusedLayerID();
-
+	// Insert the new layer
 	std::pair<LayerMap::iterator, bool> result = _layers.insert(
-		LayerMap::value_type(newID, name)
+		LayerMap::value_type(layerID, name)
 	);
 
 	if (result.second == false) {
@@ -47,6 +46,23 @@ int LayerSystem::createLayer(const std::string& name) {
 	
 	// Return the ID of the inserted layer
 	return result.first->first;
+}
+
+int LayerSystem::createLayer(const std::string& name) {
+	// Check if the layer already exists
+	int existingID = getLayerID(name);
+
+	if (existingID != -1) {
+		globalErrorStream() << "Could not create layer, name already exists: " 
+			<< name.c_str() << "\n";
+		return -1;
+	}
+
+	// Layer doesn't exist yet, get the lowest free Id
+	int newID = getLowestUnusedLayerID();
+
+	// pass the call to the overload and return
+	return createLayer(name, newID);
 }
 
 void LayerSystem::deleteLayer(const std::string& name) {
@@ -78,6 +94,11 @@ void LayerSystem::foreachLayer(Visitor& visitor) {
 	for (LayerMap::iterator i = _layers.begin(); i != _layers.end(); i++) {
 		visitor.visit(i->first, i->second);
 	}
+}
+
+void LayerSystem::reset() {
+	_layers.clear();
+	_layers.insert(LayerMap::value_type(0, DEFAULT_LAYER_NAME));
 }
 
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
@@ -315,7 +336,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 	
 	// Create the "master" layer with ID 0
-	createLayer("Default");
+	createLayer(DEFAULT_LAYER_NAME);
 
 	// Add command targets for the first 10 layer IDs here
 	for (int i = 0; i < 10; i++) {

@@ -39,6 +39,7 @@ const StringSet& Doom3MapFormat::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_ECLASSMANAGER);
+		_dependencies.insert(MODULE_LAYERSYSTEM);
 		_dependencies.insert(MODULE_BRUSHCREATOR);
 		_dependencies.insert(MODULE_PATCH + DEF2);
 		_dependencies.insert(MODULE_PATCH + DEF3);
@@ -100,6 +101,17 @@ void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 	NodeImporter importer(importInfo, infoFile, *this);
 	importer.parse();
 
+	// Create the layers according to the data found in the map information file
+	GlobalLayerSystem().reset();
+	const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
+
+	for (InfoFile::LayerNameMap::const_iterator i = layers.begin(); 
+		 i != layers.end(); i++)
+	{
+		// Create the named layer with the saved ID
+		GlobalLayerSystem().createLayer(i->second, i->first);
+	}
+	
 	// Now that the graph is in place, assign the layers
 	AssignLayerMappingWalker walker(infoFile);
 	Node_traverseSubgraph(importInfo.root, walker);
