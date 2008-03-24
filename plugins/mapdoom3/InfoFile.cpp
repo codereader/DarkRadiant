@@ -25,7 +25,7 @@ InfoFile::~InfoFile() {
 		_layerMappings.size() << " node-to-layer mappings assigned.\n";
 }
 
-const InfoFile::LayerNameList& InfoFile::getLayerNames() const {
+const InfoFile::LayerNameMap& InfoFile::getLayerNames() const {
 	return _layerNames;
 }
 
@@ -119,7 +119,8 @@ void InfoFile::parseLayerNames() {
 
 		if (token == LAYER) {
 			// Get the ID
-			std::string layerID = _tok.nextToken();
+			std::string layerIDStr = _tok.nextToken();
+			int layerID = strToInt(layerIDStr);
 
 			_tok.assertNextToken("{");
 
@@ -132,8 +133,11 @@ void InfoFile::parseLayerNames() {
 				token = _tok.nextToken();
 			}
 
-			globalOutputStream() << "[InfoFile]: Parsed layer name " << name.c_str() << "\n";
-			_layerNames.push_back(name);
+			globalOutputStream() << "[InfoFile]: Parsed layer #" 
+				<< layerID << " with name " << name.c_str() << "\n";
+
+			_layerNames.insert(LayerNameMap::value_type(layerID, name));
+
 			continue;
 		}
 

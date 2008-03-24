@@ -60,10 +60,24 @@ public:
 	virtual int createLayer(const std::string& name) = 0;
 
 	/**
+	 * greebo: Overload: Creates a new layer with the given name and the given ID.
+	 * 
+	 * @returns: the ID of the layer of -1 if the layer could not
+	 *           be created (e.g. due to a name/ID conflict).
+	 */
+	virtual int createLayer(const std::string& name, int layerID) = 0;
+
+	/**
 	 * greebo: Deletes the named layer. All nodes are removed
 	 *         from this layer before deletion.
 	 */
 	virtual void deleteLayer(const std::string& name) = 0;
+
+	/**
+	 * greebo: Resets the layer system into its ground state. Deletes all
+	 *         layers except for layer #0 which is renamed to "Default".
+	 */
+	virtual void reset() = 0;
 
 	/**
 	 * greebo: Visits each layer using the given visitor.
