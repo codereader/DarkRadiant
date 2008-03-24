@@ -20,11 +20,6 @@ InfoFile::InfoFile(std::istream& infoStream) :
 	_standardLayerList.insert(0);
 }
 
-InfoFile::~InfoFile() {
-	globalOutputStream() << (_layerMappingIterator - _layerMappings.begin())  << " of " << 
-		_layerMappings.size() << " node-to-layer mappings assigned.\n";
-}
-
 const InfoFile::LayerNameMap& InfoFile::getLayerNames() const {
 	return _layerNames;
 }
