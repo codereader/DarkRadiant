@@ -37,6 +37,7 @@
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
 #include "ui/mru/MRU.h"
+#include "ui/layers/LayerControlDialog.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
@@ -434,6 +435,9 @@ void Map::load(const std::string& filename) {
 
 	// Let the filtersystem update the filtered status of all instances
 	GlobalFilterSystem().update();
+
+	// Update the layer control dialog
+	ui::LayerControlDialog::Instance().refresh();
 	
 	// Clear the modified flag
 	setModified(false);
