@@ -86,11 +86,31 @@ namespace model {
 	};
 	
 	// Smart pointer typedefs
-	typedef boost::shared_ptr<model::IModel> IModelPtr;
-	typedef boost::weak_ptr<model::IModel> IModelWeakPtr;
+	typedef boost::shared_ptr<IModel> IModelPtr;
+	typedef boost::weak_ptr<IModel> IModelWeakPtr;
 
+	/**
+	 * greebo: Each node in the scene that represents "just" a model,
+	 *         derives from this class. Use a cast on this class to
+	 *         identify model nodes in the scene.
+	 */
+	class ModelNode {
+	public:
+		// Returns the contained IModel
+		virtual const IModel& getIModel() const = 0;
+	};
+	typedef boost::shared_ptr<ModelNode> ModelNodePtr;
 
 } // namespace model
+
+// Utility methods
+inline bool Node_isModel(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<model::ModelNode>(node) != NULL;
+}
+
+inline model::ModelNodePtr Node_getModel(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<model::ModelNode>(node);
+}
 
 const std::string MODULE_MODELLOADER("ModelLoader"); // fileType is appended ("ModeLoaderASE")
 

@@ -10,7 +10,8 @@
 namespace md5 {
 
 class MD5ModelNode : 
-	public scene::Node, 
+	public scene::Node,
+	public model::ModelNode,
 	public Nameable,
 	public SelectionTestable,
 	public LightCullable,
@@ -40,6 +41,9 @@ class MD5ModelNode :
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
 	virtual ~MD5ModelNode();
+
+	// ModelNode implementation
+	virtual const model::IModel& getIModel() const;
 
 	void lightsChanged();
 	typedef MemberCaller<MD5ModelNode, &MD5ModelNode::lightsChanged> LightsChangedCaller;

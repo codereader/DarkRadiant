@@ -3,6 +3,7 @@
 #include "imodelcache.h"
 #include "ifiletypes.h"
 #include "stream/textstream.h"
+#include "scenelib.h"
 #include <boost/algorithm/string/replace.hpp>
 
 ModelKey::ModelKey(scene::INode& parentNode) : 
@@ -38,5 +39,8 @@ void ModelKey::modelChanged(const std::string& value) {
 	if (_modelNode != NULL) {
 		// Add the model node as child of the entity node
 		_parentNode.addChildNode(_modelNode);
+
+		// Assign the model node to the same layers as the parent entity
+		scene::assignNodeToLayers(_modelNode, _parentNode.getLayers());
 	}
 }

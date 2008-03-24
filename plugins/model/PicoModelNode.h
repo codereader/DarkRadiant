@@ -14,6 +14,7 @@ namespace model {
 
 class PicoModelNode : 
 	public scene::Node, 
+	public ModelNode,
 	public Nameable,
 	public SelectionTestable,
 	public LightCullable,
@@ -50,6 +51,9 @@ public:
 	PicoModelNode(const RenderablePicoModelPtr& picoModel);
 
 	virtual ~PicoModelNode();
+
+	// ModelNode implementation
+	virtual const IModel& getIModel() const;
 
 	// SkinnedModel implementation
 	// Skin changed notify

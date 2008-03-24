@@ -23,6 +23,10 @@ PicoModelNode::~PicoModelNode() {
 	GlobalShaderCache().detach(*this);
 }
 
+const IModel& PicoModelNode::getIModel() const {
+	return *_picoModel;
+}
+
 const AABB& PicoModelNode::localAABB() const {
 	return _picoModel->localAABB();
 }

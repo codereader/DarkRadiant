@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "ientity.h"
 #include "ilayer.h"
+#include "imodel.h"
 #include "stream/textstream.h"
 
 #include "Tokens.h"
@@ -54,8 +55,12 @@ NodeExporter::~NodeExporter() {
 
 // Pre-descent callback
 bool NodeExporter::pre(const scene::INodePtr& node) {
-	// Write the layer info to the infostream
-	writeNodeLayerInfo(node);
+	// Don't export the layer settings for models, as they are not there
+	// at map load/parse time.
+	if (!Node_isModel(node)) {
+		// Write the layer info to the infostream
+		writeNodeLayerInfo(node);
+	}
 
 	// Check whether we are have a brush or an entity. We might get 
 	// called at either level.
