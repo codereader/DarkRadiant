@@ -6,10 +6,13 @@
 #include "ipatch.h"
 #include "iregistry.h"
 
-#include "NodeExporter.h"
 #include "parser/DefTokeniser.h"
 #include "stream/textstream.h"
 
+#include "NodeImporter.h"
+#include "NodeExporter.h"
+
+#include "Tokens.h"
 #include "MapImportInfo.h"
 #include "MapExportInfo.h"
 #include "InfoFile.h"
@@ -79,58 +82,32 @@ scene::INodePtr Doom3MapFormat::parsePrimitive(parser::DefTokeniser& tokeniser) 
     }
 }
 
-void Doom3MapFormat::readGraph(const map::MapImportInfo& importInfo) const {
+void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 	// Read the infofile
-	map::InfoFile infoFile(importInfo.infoStream);
+	InfoFile infoFile(importInfo.infoStream);
 
 	try {
+		// Start parsing, this will throw if any errors occur
 		infoFile.parse();
 	}
 	catch (parser::ParseException e) {
         globalErrorStream() << "[mapdoom3] Unable to parse info file: " << e.what() << "\n";
     }
 
-    // Construct a tokeniser
-    std::istream is(&importInfo.inputStream);
-    parser::BasicDefTokeniser<std::istream> tok(is);
-    
-    // Parse the map version
-    float version = 0;
-    try {
-        tok.assertNextToken("Version");
-        version = boost::lexical_cast<float>(tok.nextToken());
-    }
-    catch (parser::ParseException e) {
-        globalErrorStream() 
-            << "[mapdoom3] Unable to parse map version: " 
-            << e.what() << "\n";
-        return;
-    }
-    catch (boost::bad_lexical_cast e) {
-        globalErrorStream() 
-            << "[mapdoom3] Unable to parse map version: " 
-            << e.what() << "\n";
-        return;
-    }
-
-    // Check we have the correct version for this module
-    if (version != MAPVERSION) {
-        globalErrorStream() 
-            << "Incorrect map version: required " << MAPVERSION 
-            << ", found " << version << "\n";
-        return;
-    }
+	// Construct a MapImporter that will do the map parsing
+	NodeImporter importer(importInfo, infoFile, *this);
+	importer.parse();
     
     // Now start parsing the map
-    Map_Read(importInfo.root, tok, *this);
+    //Map_Read(importInfo.root, tok, *this, infoFile);
 }
 
-void Doom3MapFormat::writeGraph(const map::MapExportInfo& exportInfo) const {
+void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {
 	int precision = GlobalRegistry().getInt(RKEY_PRECISION);
 	exportInfo.mapStream.precision(precision);
 
 	// Write the version tag first
-    exportInfo.mapStream << "Version " << MAPVERSION << std::endl;
+    exportInfo.mapStream << VERSION << " " << MAPVERSION << std::endl;
 
 	// Instantiate a NodeExporter class and call the traverse function
 	NodeExporter exporter(exportInfo.mapStream, exportInfo.infoStream);

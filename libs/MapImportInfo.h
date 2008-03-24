@@ -1,6 +1,7 @@
 #ifndef MAP_IMPORT_INFO_H_
 #define MAP_IMPORT_INFO_H_
 
+#include "itextstream.h"
 #include "parser/DefTokeniser.h"
 
 namespace map {

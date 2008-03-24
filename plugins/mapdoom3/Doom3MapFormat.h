@@ -2,7 +2,7 @@
 #define DOOM3MAPFORMAT_H_
 
 #include "imap.h"
-#include "parse.h"
+#include "PrimitiveParser.h"
 
 namespace map {
 
@@ -32,10 +32,10 @@ public:
     /**
      * Read tokens from a map stream and create entities accordingly.
      */
-    void readGraph(const map::MapImportInfo& importInfo) const;
+    void readGraph(const MapImportInfo& importInfo) const;
 
 	// Write scene graph to an ostream
-	void writeGraph(const map::MapExportInfo& exportInfo) const;
+	void writeGraph(const MapExportInfo& exportInfo) const;
 };
 typedef boost::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
 
