@@ -26,10 +26,13 @@ class NodeExporter :
 	std::ostream& _infoStream;
   
 	// Number of entities written (map global)
-	int _entityCount;
+	std::size_t _entityCount;
 	
 	// Number of brushes written for the current entity (entity local)
-	int _brushCount;
+	std::size_t _brushCount;
+
+	// Number of node-to-layer mappings written
+	std::size_t _layerInfoCount;
 
 	// Are we writing dummy brushes to brushless entities?
 	bool _writeDummyBrushes;
@@ -39,7 +42,7 @@ public:
 	NodeExporter(std::ostream& mapStream, std::ostream& infoStream);
 
 	// Destructor
-	~NodeExporter();
+	virtual ~NodeExporter();
 	
 	// Pre-descent callback
 	virtual bool pre(const scene::INodePtr& node);
@@ -52,6 +55,7 @@ private:
 	void exportEntity(const Entity& entity);
 
 	// Writes the layer numbers the node is a member of
+	// The node pointer can be NULL, an empty Node {} block is exported in this case.
 	void writeNodeLayerInfo(const scene::INodePtr& node);
 
 	// Writes the names of the layers existing in this map

@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "ientity.h"
 #include "ilayer.h"
+#include "stream/textstream.h"
 
 #include "Tokens.h"
 #include "Doom3MapFormat.h"
@@ -20,7 +21,8 @@ NodeExporter::NodeExporter(std::ostream& mapStream, std::ostream& infoStream) :
 	_mapStream(mapStream), 
 	_infoStream(infoStream),
 	_entityCount(0),
-	_brushCount(0)
+	_brushCount(0),
+	_layerInfoCount(0)
 {
 	// Check the game file to see whether we need dummy brushes or not
 	if (GlobalRegistry().get("game/mapFormat/compatibility/addDummyBrushes") == "true")
@@ -46,6 +48,8 @@ NodeExporter::~NodeExporter() {
 
 	// Write the closing braces of the information file
 	_infoStream << "}\n";
+
+	globalOutputStream() << _layerInfoCount << " node-to-layer mappings written.\n";
 }
 
 // Pre-descent callback
@@ -145,15 +149,19 @@ void NodeExporter::writeNodeLayerInfo(const scene::INodePtr& node) {
 	// Open a Node block
 	_infoStream << "\t\t" << NODE << " { ";
 
-	scene::LayerList layers = node->getLayers();
+	if (node != NULL) {
+		scene::LayerList layers = node->getLayers();
 
-	// Write a space-separated list of node IDs
-	for (scene::LayerList::iterator i = layers.begin(); i != layers.end(); i++) {
-		_infoStream << *i << " ";
+		// Write a space-separated list of node IDs
+		for (scene::LayerList::iterator i = layers.begin(); i != layers.end(); i++) {
+			_infoStream << *i << " ";
+		}
 	}
 
 	// Close the Node block
 	_infoStream << "}\n";
+
+	_layerInfoCount++;
 }
 
 void NodeExporter::writeLayerNames() {

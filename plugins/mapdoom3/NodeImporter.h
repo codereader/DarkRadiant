@@ -28,13 +28,16 @@ class NodeImporter {
 	InfoFile& _infoFile;
 
 	// The number of elements to be parsed before the progress dialog is updated
-	int _loadStatusInterleave;
+	std::size_t _loadStatusInterleave;
 
 	// The number of entities found in this map file so far
-	int _entityCount;
+	std::size_t _entityCount;
 
 	// The number of primitives of the currently parsed entity
-	int _primitiveCount;
+	std::size_t _primitiveCount;
+
+	// The number of layer sets written to the file
+	std::size_t _layerInfoCount;
 
 	// The progress dialog
 	gtkutil::ModalProgressDialog _dialog;
@@ -65,7 +68,7 @@ private:
 	// Parse the primitive block and insert the child into the given parent
 	void parsePrimitive(const scene::INodePtr& parentEntity);
 
-	// Create an entity with the given properties
+	// Create an entity with the given properties and layers
 	scene::INodePtr createEntity(const EntityKeyValues& keyValues);
 
 	// Inserts the entity into the root (and performs a couple of checks beforehand)
