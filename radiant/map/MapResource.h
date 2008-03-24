@@ -10,6 +10,10 @@
 
 namespace map {
 
+	namespace {
+		const std::string RKEY_INFO_FILE_EXTENSION("game/mapFormat/infoFileExtension");
+	}
+
 class MapResource : 
 	public Resource,
 	public boost::noncopyable

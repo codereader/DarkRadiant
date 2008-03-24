@@ -5,6 +5,7 @@
 #include <iostream>
 #include "ifiletypes.h"
 #include "ifilesystem.h"
+#include "iregistry.h"
 #include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
@@ -310,7 +311,7 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 	TextFileInputStream file(filename);
 
 	std::string infoFilename(filename.substr(0, filename.rfind('.')));
-	infoFilename += ".darkradiant";
+	infoFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
 
 	std::ifstream infoFileStream(infoFilename.c_str());
 
