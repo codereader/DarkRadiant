@@ -1,6 +1,7 @@
 #ifndef INFO_FILE_H_
 #define INFO_FILE_H_
 
+#include "ilayer.h"
 #include "parser/DefTokeniser.h"
 
 namespace map {
@@ -15,6 +16,9 @@ private:
 
 	// The list of layernames
 	LayerNameList _layerNames;
+
+	typedef std::vector<scene::LayerList> LayerLists;
+	LayerLists _layerMappings;
 
 	// TRUE if the map info fail was found to be valid
 	bool _isValid;
@@ -33,6 +37,8 @@ private:
 
 	// Parses the Layers section
 	void parseLayerNames();
+
+	void parseNodeToLayerMapping();
 };
 
 } // namespace map

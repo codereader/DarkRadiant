@@ -1,8 +1,13 @@
 #include "InfoFile.h"
 
 #include "stream/textstream.h"
+#include "string/string.h"
 
 #include "Doom3MapFormat.h"
+#include "Tokens.h"
+
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace map {
@@ -20,15 +25,19 @@ const InfoFile::LayerNameList& InfoFile::getLayerNames() const {
 void InfoFile::parse() {
 	// parse the header
 	try {
-		_tok.assertNextToken("DarkRadiant");
-		_tok.assertNextToken("Map");
-		_tok.assertNextToken("Information");
-		_tok.assertNextToken("File");
-		_tok.assertNextToken("Version");
+		std::vector<std::string> parts;
+		boost::algorithm::split(parts, HEADER_SEQUENCE, boost::algorithm::is_any_of(" "));
+
+		// Parse the string "DarkRadiant Map Information File Version"
+		for (std::size_t i = 0; i < parts.size(); i++) {
+			_tok.assertNextToken(parts[i]);
+		}
+
 		float version = boost::lexical_cast<float>(_tok.nextToken());
 
 		if (version != MAP_INFO_VERSION) {
-			throw parser::ParseException("Map version invalid");
+			_isValid = false;
+			throw parser::ParseException("Map Info File Version invalid");
 		}
 	}
 	catch (parser::ParseException e) {
@@ -56,8 +65,12 @@ void InfoFile::parseInfoFileBody() {
 	while (_tok.hasMoreTokens()) {
 		std::string token = _tok.nextToken();
 
-		if (token == "Layers") {
+		if (token == LAYERS) {
 			parseLayerNames();
+		}
+
+		if (token == NODE_TO_LAYER_MAPPING) {
+			parseNodeToLayerMapping();
 		}
 
 		if (token == "}") {
@@ -70,9 +83,10 @@ void InfoFile::parseLayerNames() {
 	// The opening brace
 	_tok.assertNextToken("{");
 	
-	std::string token = _tok.nextToken();
-	while (token != "}") {
-		if (token == "Layer") {
+	while (_tok.hasMoreTokens()) {
+		std::string token = _tok.nextToken();
+
+		if (token == LAYER) {
 			// Get the ID
 			std::string layerID = _tok.nextToken();
 
@@ -91,11 +105,40 @@ void InfoFile::parseLayerNames() {
 			_layerNames.push_back(name);
 		}
 
-		if (!_tok.hasMoreTokens()) {
+		if (token == "}") {
 			break;
 		}
+	}
+}
 
-		token = _tok.nextToken();
+void InfoFile::parseNodeToLayerMapping() {
+	// The opening brace
+	_tok.assertNextToken("{");
+
+	while (_tok.hasMoreTokens()) {
+		std::string token = _tok.nextToken();
+
+		if (token == NODE) {
+			_tok.assertNextToken("{");
+
+			// Create a new LayerList
+			_layerMappings.push_back(scene::LayerList());
+
+			while (_tok.hasMoreTokens()) {
+				std::string nodeToken = _tok.nextToken();
+
+				if (nodeToken == "}") {
+					break;
+				}
+
+				// Add the ID to the list
+				_layerMappings.back().insert(strToInt(nodeToken));
+			}
+		}
+
+		if (token == "}") {
+			break;
+		}
 	}
 }
 
