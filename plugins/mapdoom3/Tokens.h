@@ -1,15 +1,21 @@
 #ifndef TOKENS_H_
 #define TOKENS_H_
 
+#include <string>
+
 namespace map {
 
+// InfoFile tokens --------------------------------------------------
 const std::string HEADER_SEQUENCE = "DarkRadiant Map Information File Version";
-const char* const NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
-const char* const LAYER = "Layer";
-const char* const LAYERS = "Layers";
-const char* const NODE = "Node";
+const std::string NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
+const std::string LAYER = "Layer";
+const std::string LAYERS = "Layers";
+const std::string NODE = "Node";
 
-const char* const DUMMY_BRUSH =
+// Doom 3 Map File Tokens --------------------------------------------------
+const std::string VERSION = "Version";
+
+const std::string DUMMY_BRUSH =
 	"// dummy brush 0\n\
 	{\n\
 	brushDef3\n\

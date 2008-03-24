@@ -57,7 +57,7 @@ inline MapImporterPtr Node_getMapImporter(scene::INodePtr node) {
 /**
  * Create an entity with the given properties.
  */
-scene::INodePtr Entity_create(const StringMap& keyValues) {
+/*scene::INodePtr Entity_create(const StringMap& keyValues) {
     // Get the classname from the StringMap
     StringMap::const_iterator iter = keyValues.find("classname");
     if (iter == keyValues.end()) {
@@ -85,9 +85,9 @@ scene::INodePtr Entity_create(const StringMap& keyValues) {
         Node_getEntity(entity)->setKeyValue(i->first, i->second);
     }
     return entity;
-}
+}*/
 
-scene::INodePtr Entity_parseTokens(
+/*scene::INodePtr Entity_parseTokens(
 	parser::DefTokeniser& tokeniser, 
 	const PrimitiveParser& parser, 
 	int index,
@@ -108,7 +108,7 @@ scene::INodePtr Entity_parseTokens(
     // primitives start or the end of the entity is reached
     scene::INodePtr entity;
     
-    /* START PARSING */
+    // START PARSING 
     
 	// First token must be an open brace
 	tokeniser.assertNextToken("{");
@@ -190,7 +190,7 @@ scene::INodePtr Entity_parseTokens(
 	    token = tokeniser.nextToken();
 	    
 	} // end of while
-}
+}*/
 
 // Check if the given node is excluded based on entity class (debug code). 
 // Return true if not excluded, false otherwise
@@ -255,9 +255,10 @@ void checkInsert(scene::INodePtr node, scene::INodePtr root, int count) {
 	root->addChildNode(node);
 }
 		
-void Map_Read(scene::INodePtr root, 
+/*void Map_Read(scene::INodePtr root, 
 			  parser::DefTokeniser& tokeniser, 
-			  const PrimitiveParser& parser)
+			  const PrimitiveParser& parser,
+			  map::InfoFile& infoFile)
 {
 	int interleave = GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE);
 	if (interleave <= 0) {
@@ -306,4 +307,4 @@ void Map_Read(scene::INodePtr root,
 			return;			
 		}	
 	}
-}
+}*/

@@ -24,22 +24,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imap.h"
 
-/* FORWARD DECLS */
+// FORWARD DECLS
 class BrushCreator;
 class PatchCreator;
 namespace parser { class DefTokeniser; }
 
-class PrimitiveParser
+/*class PrimitiveParser
 {
 public:
     virtual scene::INodePtr parsePrimitive(parser::DefTokeniser& tok) const = 0;
-};
+};*/
+
+namespace map { class InfoFile; class PrimitiveParser; }
 
 /**
  * Parse map tokens.
  */
 void Map_Read(scene::INodePtr root, 
               parser::DefTokeniser& tokeniser, 
-              const PrimitiveParser& parser);
+			  const map::PrimitiveParser& parser,
+			  map::InfoFile& infoFile);
 
 #endif
