@@ -256,14 +256,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\mapdoom3\parse.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\parse.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\mapdoom3\PrimitiveParser.h"
 				>
 			</File>

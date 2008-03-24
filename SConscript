@@ -232,7 +232,7 @@ particlesEnv.Install(INSTALL + '/modules', particlesLib)
 
 # Map loading and saving module
 mapdoom3_env = module_env.Copy()
-mapdoom3_lst=build_list('plugins/mapdoom3', 'NodeExporter.cpp NodeImporter.cpp Doom3MapFormat.cpp mapdoom3.cpp parse.cpp InfoFile.cpp')
+mapdoom3_lst=build_list('plugins/mapdoom3', 'NodeExporter.cpp NodeImporter.cpp Doom3MapFormat.cpp InfoFile.cpp mapdoom3.cpp')
 mapdoom3_env.Append(LIBS = ['xmlutil', 'gtkutil'])
 mapdoom3_env.useGtk2()
 mapdoom3_env.useGlib2()
