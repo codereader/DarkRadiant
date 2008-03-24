@@ -86,6 +86,8 @@ scene::INodePtr Doom3MapFormat::parsePrimitive(parser::DefTokeniser& tokeniser) 
 }
 
 void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
+	assert(importInfo.root != NULL);
+
 	// Read the infofile
 	InfoFile infoFile(importInfo.infoStream);
 
@@ -114,7 +116,7 @@ void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 	
 	// Now that the graph is in place, assign the layers
 	AssignLayerMappingWalker walker(infoFile);
-	Node_traverseSubgraph(importInfo.root, walker);
+	importInfo.root->traverse(walker);
 }
 
 void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {
