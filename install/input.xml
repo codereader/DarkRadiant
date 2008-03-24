@@ -65,7 +65,7 @@
 		<shortcut command="ShowHidden" key="H" modifiers="SHIFT" />
 		<shortcut command="HideSelected" key="H" />
 		<shortcut command="HideDeselected" key="H" modifiers="CONTROL+SHIFT"/>
-		<shortcut command="MapInfo" key="M" />
+		<shortcut command="ToggleLayerControlDialog" key="M" />
 		<shortcut command="CSGSubtract" key="U" modifiers="SHIFT" />
 		<shortcut command="CSGMerge" key="U" modifiers="CONTROL" />
 		<shortcut command="CamDecreaseMoveSpeed" key="KP_Subtract" modifiers=""/>
