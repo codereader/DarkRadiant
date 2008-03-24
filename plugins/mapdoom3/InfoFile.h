@@ -34,8 +34,6 @@ public:
 	// Pass the input stream to the constructor
 	InfoFile(std::istream& infoStream);
 
-	~InfoFile();
-
 	// Parse the entire file
 	void parse();
 
