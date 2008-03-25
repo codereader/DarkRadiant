@@ -1,5 +1,6 @@
 #include "Group.h"
 
+#include <set>
 #include "igroupnode.h"
 #include "selectionlib.h"
 #include "scenelib.h"
@@ -7,20 +8,42 @@
 #include "map/Map.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
+#include "layers/UpdateNodeVisibilityWalker.h"
 
 namespace selection {
 
 namespace algorithm {
-		
+
+/**
+ * greebo: This walker traverses a subgraph and reparents all
+ * found primitives to the given parent node. After traversal
+ * all parent nodes (old and new ones) are updated in terms of
+ * their layer visibility state.
+ */
 class ReparentToEntityWalker : 
 	public scene::Graph::Walker
 {
 	// The new parent
 	scene::INodePtr _newParent;
+
+	// The old parent nodes are updated after rearrangement
+	mutable std::set<scene::INodePtr> _nodesToUpdate;
 public:
 	ReparentToEntityWalker(scene::INodePtr parent) : 
 		_newParent(parent) 
-	{}
+	{
+		// The new parent will be updated too
+		_nodesToUpdate.insert(_newParent);
+	}
+
+	~ReparentToEntityWalker() {
+		scene::UpdateNodeVisibilityWalker updater;
+		for (std::set<scene::INodePtr>::iterator i = _nodesToUpdate.begin();
+			 i != _nodesToUpdate.end(); i++)
+		{
+			Node_traverseSubgraph(*i, updater);
+		}
+	}
 	
 	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		if (node != _newParent && 
@@ -48,6 +71,9 @@ public:
 
 				// Delete the node from the old parent
 				parent->removeChildNode(child);
+
+				// Mark this parent node for a visibility update
+				_nodesToUpdate.insert(parent);
 				
 				// and insert it as child of the given parent (passed in the constructor) 
 				_newParent->addChildNode(child);

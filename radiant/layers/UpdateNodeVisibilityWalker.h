@@ -9,11 +9,11 @@
 namespace scene {
 
 class UpdateNodeVisibilityWalker :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
-	mutable std::stack<bool> _visibilityStack;
+	std::stack<bool> _visibilityStack;
 public:
-	bool pre(const Path& path, const INodePtr& node) const {
+	bool pre(const INodePtr& node) {
 		// Update the node visibility and store the result
 		bool nodeIsVisible = GlobalLayerSystem().updateNodeVisibility(node);
 
@@ -23,7 +23,7 @@ public:
 		return true;
 	}
 
-	void post(const Path& path, const INodePtr& node) const {
+	void post(const INodePtr& node) {
 		// Is this child visible?
 		bool childIsVisible = _visibilityStack.top();
 
