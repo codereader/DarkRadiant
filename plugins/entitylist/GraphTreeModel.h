@@ -67,6 +67,10 @@ public:
 	// Operator-cast to GtkTreeModel to allow for implicit conversion
 	operator GtkTreeModel*();
 	
+	// Connects/disconnects this class as SceneObserver
+	void connectToSceneGraph();
+	void disconnectFromSceneGraph();
+
 	// scene::Graph::Observer implementation
 
 	// Gets called when a new <node> is inserted into the scenegraph
