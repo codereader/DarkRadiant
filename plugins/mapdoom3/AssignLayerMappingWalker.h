@@ -2,6 +2,7 @@
 #define ASSIGN_LAYER_MAPPING_WALKER_H_
 
 #include "scenelib.h"
+#include "imodel.h"
 
 namespace map {
 
@@ -15,6 +16,11 @@ public:
 	{}
 
 	bool pre(const scene::INodePtr& node) {
+		if (Node_isModel(node)) {
+			// Don't assign anything to ModelNodes
+			return true;
+		}
+
 		// Retrieve the next set of layer mappings and assign them
 		assignNodeToLayers(node, _infoFile.getNextLayerMapping());
 		return true;
