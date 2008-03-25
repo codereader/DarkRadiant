@@ -21,13 +21,13 @@ namespace algorithm {
  * their layer visibility state.
  */
 class ReparentToEntityWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	// The new parent
 	scene::INodePtr _newParent;
 
 	// The old parent nodes are updated after rearrangement
-	mutable std::set<scene::INodePtr> _nodesToUpdate;
+	std::set<scene::INodePtr> _nodesToUpdate;
 public:
 	ReparentToEntityWalker(scene::INodePtr parent) : 
 		_newParent(parent) 
@@ -45,11 +45,8 @@ public:
 		}
 	}
 	
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		if (node != _newParent && 
-			Node_isPrimitive(node) && 
-			path.size() > 1) 
-		{
+	bool pre(const scene::INodePtr& node) {
+		if (node != _newParent && Node_isPrimitive(node)) {
 			// Don't traverse the children, it's sufficient, if
 			// this node alone is re-parented 
 			return false;
@@ -57,13 +54,11 @@ public:
 		return true;
 	}
 	
-	void post(const scene::Path& path, const scene::INodePtr& node) const {
-		if (node != _newParent &&
-			Node_isPrimitive(node) &&
-			path.size() > 1)
-		{
-			// Retrieve the current parent of the visited instance
-			scene::INodePtr parent = path.parent();
+	void post(const scene::INodePtr& node) {
+		if (node != _newParent && Node_isPrimitive(node)) {
+			// Retrieve the current parent of the visited node
+			scene::INodePtr parent = node->getParent();
+
 			// Check, if there is work to do in the first place 
 			if (parent != _newParent) {
 				// Copy the shared_ptr
@@ -78,6 +73,7 @@ public:
 				// and insert it as child of the given parent (passed in the constructor) 
 				_newParent->addChildNode(child);
 				
+				// Select the reparented child
 				Node_setSelected(child, true);
 			}
 		}
@@ -87,45 +83,52 @@ public:
 void revertGroupToWorldSpawn() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
-	if (info.totalCount == 1 && info.entityCount == 1) {
-		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
-		
-		if (node_is_group(node)) {
-			
-			Entity* parent = Node_getEntity(node);
-			
-			if (parent != NULL) {
-				// Deselect all, the children get selected after reparenting
-				GlobalSelectionSystem().setSelectedAll(false);
-				
-				// Get the worldspawn node
-	    		scene::INodePtr worldspawnNode = GlobalMap().findOrInsertWorldspawn();
-	    	
-	    		Entity* worldspawn = Node_getEntity(worldspawnNode);
-	    		if (worldspawn != NULL) {
-					scene::Path nodePath = findPath(node);
+	if (info.totalCount != 1 || info.entityCount != 1) {
+		return; // unsuitable selection
+	}
 
-	    			// Cycle through all the children and reparent them to the worldspawn node
-			    	GlobalSceneGraph().traverse_subgraph(
-			    		ReparentToEntityWalker(worldspawnNode), // the visitor class
-			    		nodePath							// start at this path
-			    	);
-			    	// At this point, all the child primitives have been selected by the walker
-			    	
-			    	// Check if the old parent entity node is empty
-					if (!node->hasChildNodes()) {
-			    		// Remove this path from the scenegraph
-			    		Path_deleteTop(nodePath);
-			    	}
-			    	else {
-			    		globalErrorStream() << "Error while reparenting, cannot delete old parent (not empty)\n"; 
-			    	}
-			     	
-			     	// Flag the map as changed
-			     	GlobalMap().setModified(true);
-				}
-			}
-		} // node_is_group
+	// Get the last selected node from the selectionsystem
+	scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
+	
+	if (!node_is_group(node)) {
+		return; // not a groupnode
+	}
+		
+	Entity* parent = Node_getEntity(node);
+	
+	if (parent == NULL) {
+		// Not an entity
+		return;
+	}
+
+	// Deselect all, the children get selected after reparenting
+	GlobalSelectionSystem().setSelectedAll(false);
+	
+	// Get the worldspawn node
+	scene::INodePtr worldspawnNode = GlobalMap().findOrInsertWorldspawn();
+
+	Entity* worldspawn = Node_getEntity(worldspawnNode);
+	if (worldspawn != NULL) {
+		// Cycle through all the children and reparent them to the worldspawn node
+		ReparentToEntityWalker reparentor(worldspawnNode);
+		node->traverse(reparentor);
+
+    	// At this point, all the child primitives have been selected by the walker
+    	
+    	// Check if the old parent entity node is empty
+		if (!node->hasChildNodes()) {
+    		// Remove this node from its parent, it's not needed anymore
+			scene::INodePtr parent = node->getParent();
+			assert(parent != NULL);
+
+			parent->removeChildNode(node);
+    	}
+    	else {
+    		globalErrorStream() << "Error while reparenting, cannot delete old parent (not empty)\n"; 
+    	}
+     	
+     	// Flag the map as changed
+     	GlobalMap().setModified(true);
 	}
 }
 
