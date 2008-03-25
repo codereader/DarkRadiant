@@ -18,7 +18,8 @@ class NullModelNode :
 	public SelectionTestable,
 	public Renderable,
 	public Bounded,
-	public Cullable
+	public Cullable,
+	public ModelNode
 {
 	NullModelPtr _nullModel;
 public:
@@ -33,7 +34,9 @@ public:
 
 	virtual void instantiate(const scene::Path& path);
 	virtual void uninstantiate(const scene::Path& path);
-  
+
+	virtual const IModel& getIModel() const;
+
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;

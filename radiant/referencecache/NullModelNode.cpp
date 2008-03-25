@@ -32,6 +32,10 @@ void NullModelNode::uninstantiate(const scene::Path& path) {
 	Node::uninstantiate(path);
 }
   
+const IModel& NullModelNode::getIModel() const {
+	return *_nullModel;
+}
+
 void NullModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_nullModel->testSelect(selector, test, localToWorld());
 }
