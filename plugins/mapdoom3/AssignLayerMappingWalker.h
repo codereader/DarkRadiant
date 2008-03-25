@@ -17,7 +17,11 @@ public:
 
 	bool pre(const scene::INodePtr& node) {
 		if (Node_isModel(node)) {
-			// Don't assign anything to ModelNodes
+			// We have a model, assign the layers of the parent
+			scene::INodePtr parent = node->getParent();
+			if (parent != NULL) {
+				assignNodeToLayers(node, parent->getLayers());
+			}
 			return true;
 		}
 
