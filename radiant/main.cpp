@@ -84,7 +84,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "mainframe.h"
 #include "settings/PreferenceSystem.h"
 #include "referencecache.h"
-#include "stacktrace.h"
 #include "ui/mru/MRU.h"
 #include "settings/GameManager.h"
 #include "ui/splash/Splash.h"
@@ -195,7 +194,7 @@ public:
   {
     getOutputStream() << "----------------\n";
     LineLimitedTextOutputStream outputStream(getOutputStream(), 24);
-    write_stack_trace(outputStream);
+    //write_stack_trace(outputStream);
     getOutputStream() << "----------------\n";
     globalErrorStream() << m_buffer.c_str();
     if(!m_lock.locked())
