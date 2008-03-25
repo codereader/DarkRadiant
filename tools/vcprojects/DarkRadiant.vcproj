@@ -367,14 +367,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\stacktrace.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\stacktrace.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\timer.cpp"
 				>
 			</File>
