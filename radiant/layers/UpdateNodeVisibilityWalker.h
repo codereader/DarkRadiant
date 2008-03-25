@@ -35,19 +35,14 @@ public:
 			node->disable(Node::eLayered);
 		}
 
-		if (_visibilityStack.empty()) {
-			// We've passed the root node the second time, we're done
-			return;
-		}
-
-		if (childIsVisible) {
-			// The child was visible, set this to true
-			_visibilityStack.top() = true;
-		}
-		
 		if (!node->visible()) {
 			// Node is hidden after update (and no children are visible), de-select
 			Node_setSelected(node, false);
+		}
+
+		if (childIsVisible && !_visibilityStack.empty()) {
+			// The child was visible, set this parent to true
+			_visibilityStack.top() = true;
 		}
 	}
 };
