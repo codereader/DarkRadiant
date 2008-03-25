@@ -34,9 +34,6 @@ EntityList::EntityList() :
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
-	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
-	
 	// Connect the window position tracker
 	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
 	
@@ -49,6 +46,11 @@ EntityList::EntityList() :
 }
 
 void EntityList::destroyInstance() {
+	if (InstancePtr() != NULL) {
+		// De-register self from the SelectionSystem
+		GlobalSelectionSystem().removeObserver(InstancePtr().get());
+	}
+
 	InstancePtr() = EntityListPtr();
 }
 
@@ -112,12 +114,23 @@ void EntityList::toggleWindow() {
 
 // Pre-hide callback
 void EntityList::_preHide() {
+	_treeModel.disconnectFromSceneGraph();
+
+	// De-register self from the SelectionSystem
+	GlobalSelectionSystem().removeObserver(this);
+
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
 }
 
 // Pre-show callback
 void EntityList::_preShow() {
+	// Observe the scenegraph
+	_treeModel.connectToSceneGraph();
+
+	// Register self to the SelSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
+
 	// Restore the position
 	_windowPosition.applyPosition();
 	

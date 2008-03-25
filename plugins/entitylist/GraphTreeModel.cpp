@@ -28,16 +28,20 @@ namespace ui {
 
 GraphTreeModel::GraphTreeModel() :
 	_model(gtk_tree_store_new(NUM_COLS, G_TYPE_POINTER, G_TYPE_STRING))
-{
+{}
+
+GraphTreeModel::~GraphTreeModel() {
+	// Remove everything before shutting down
+	clear();
+}
+
+void GraphTreeModel::connectToSceneGraph() {
 	// Subscribe to the scenegraph to get notified about insertions/deletions
 	GlobalSceneGraph().addSceneObserver(this);
 }
 
-GraphTreeModel::~GraphTreeModel() {
+void GraphTreeModel::disconnectFromSceneGraph() {
 	GlobalSceneGraph().removeSceneObserver(this);
-	
-	// Remove everything before shutting down
-	clear();
 }
 
 const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node) {
