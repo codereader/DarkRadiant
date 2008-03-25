@@ -20,6 +20,8 @@ class NodeImporter {
 
 	// The container which will hold the imported nodes
 	scene::INodePtr _root;
+	
+	std::istream _inputStream;
 
 	// The tokeniser used to split the stream into pieces
 	parser::BasicDefTokeniser<std::istream> _tok;
