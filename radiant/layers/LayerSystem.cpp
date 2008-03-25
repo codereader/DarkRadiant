@@ -156,7 +156,7 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 
 void LayerSystem::updateSceneGraphVisibility() {
 	UpdateNodeVisibilityWalker walker;
-	GlobalSceneGraph().traverse(walker);
+	GlobalSceneGraph().root()->traverse(walker);
 }
 
 void LayerSystem::onLayerVisibilityChanged() {
