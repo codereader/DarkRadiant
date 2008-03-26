@@ -243,30 +243,14 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
 		return;
   	}
  
-	xmlNodePtr importNode = importNodeList[0].getNodePtr();
-  	
   	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath.c_str() << "\n";
   	
   	// Load the file
 	xml::Document importDoc(importFilePath);
 	  	
   	if (importDoc.isValid()) {
-  		// Locate the top-level node(s)
-  		xml::NodeList topLevelNodes = importDoc.findXPath("/*");
-  		
-  		if (importNode->children != NULL) {
-  			if (importNode->name != NULL) {
-				for (std::size_t i = 0; i < topLevelNodes.size(); i++) {
-  					xmlNodePtr newNode = topLevelNodes[0].getNodePtr();
-  					
-  					// Add each of the imported nodes at the top to the registry
-  					xmlAddPrevSibling(importNode->children, newNode);
-  				}
-  			}
-  		}
-  		else {
-  			globalOutputStream() << "XMLRegistry: Critical: Could not import XML file. importNode is NULL!\n";
-  		}
+		// Import the document into our XML tree
+		_tree.importDocument(importDoc, importNodeList[0]);
   	}
   	else {
   		// Throw the XMLImportException

@@ -49,6 +49,10 @@ public:
 	// Returns the top level node (or an empty Node object if none exists)
 	Node getTopLevelNode() const;
 
+	// Merges the (top-level) nodes of the <other> document into this one.
+	// The insertion point in this Document is specified by <importNode>.
+	void importDocument(Document& other, Node& importNode);
+
 	// Copies the given Nodes into this document (a top level node
 	// must be created beforehand)
 	void copyNodes(const NodeList& nodeList);
