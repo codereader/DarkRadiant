@@ -295,33 +295,23 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 	xml::NodeList result = _tree.findXPath(fullKey);
 	
 	if (result.size() > 0) {
-		// Create a new XML document
-		xmlDocPtr targetDoc = xmlNewDoc(xmlCharStrdup("1.0"));
+		// Create a new xml::Document
+		xml::Document targetDoc = xml::Document::create();
 		
 		std::string keyName = fullKey.substr(fullKey.rfind("/") + 1);
 		
 		// Add an empty toplevel node with the given key (leaf) name
-		targetDoc->children = xmlNewDocNode(targetDoc, NULL, 
-  											xmlCharStrdup(keyName.c_str()), 
-  											xmlCharStrdup(""));
-		
+		targetDoc.addTopLevelNode(keyName);
+
 		// Select all the child nodes of the export key
 		xml::NodeList children = _tree.findXPath(fullKey + "/*");
 		
-		// Copy the child nodes one by one
-		for (std::size_t i = 0; i < children.size(); i++) {
-			// Copy the child node
-			xmlNodePtr exportNode = xmlCopyNode(children[i].getNodePtr(), 1);
-			// Add this node to the parent node
-			xmlAddChild(targetDoc->children, exportNode);
-		}
-		
-		// Save the whole document to the specified filename
-		xmlSaveFormatFile(filename.c_str(), targetDoc, 1);
+		// Copy the child nodes into this document
+		targetDoc.copyNodes(children);
 
-		// Free the document after exporting
-		xmlFreeDoc(targetDoc);
-				
+		// Save the whole document to the specified filename
+		targetDoc.saveToFile(filename);
+		
 		globalOutputStream() << "XMLRegistry: Saved " << key.c_str() << " to " << filename.c_str() << "\n";
 	}
 	else {

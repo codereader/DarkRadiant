@@ -28,6 +28,35 @@ Document::~Document() {
 	}
 }
 
+Document Document::create() {
+	// Create a new xmlDocPtr and return the object
+	return Document(xmlNewDoc(xmlCharStrdup("1.0")));
+}
+
+void Document::addTopLevelNode(const std::string& name) {
+	if (!isValid()) {
+		return; // is not Valid, place an assertion here?
+	}
+
+	_xmlDoc->children = xmlNewDocNode(_xmlDoc, NULL, 
+  									  xmlCharStrdup(name.c_str()), 
+  									  xmlCharStrdup(""));
+}
+
+void Document::copyNodes(const NodeList& nodeList) {
+	if (!isValid() || _xmlDoc->children == NULL) {
+		return; // is not Valid, place an assertion here?
+	}
+
+	// Copy the child nodes one by one
+	for (std::size_t i = 0; i < nodeList.size(); i++) {
+		// Copy the node
+		xmlNodePtr node = xmlCopyNode(nodeList[i].getNodePtr(), 1);
+		// Add this node to the top level node of this document
+		xmlAddChild(_xmlDoc->children, node);
+	}
+}
+
 bool Document::isValid() const {
 	return _xmlDoc != NULL;
 }
@@ -70,9 +99,9 @@ NodeList Document::findXPath(const std::string& path) const {
     return retval;
 }
 
-// Saves the file to the disk via xmlSaveFile
+// Saves the file to the disk via xmlSaveFormatFile
 void Document::saveToFile(const std::string& filename) {
-	xmlSaveFile(filename.c_str(), _xmlDoc);
+	xmlSaveFormatFile(filename.c_str(), _xmlDoc, 1);
 }
 
 }

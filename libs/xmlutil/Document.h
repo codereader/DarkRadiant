@@ -39,6 +39,16 @@ public:
 
 	// Destructor, frees the xmlDocPtr
 	~Document();
+
+	// Creates a new xml::Document object (allocates a new xmlDoc)
+	static Document create();
+
+	// Add a new toplevel node with the given name to this Document
+	void addTopLevelNode(const std::string& name);
+
+	// Copies the given Nodes into this document (a top level node
+	// must be created beforehand)
+	void copyNodes(const NodeList& nodeList);
     
 	// Returns TRUE if the document is ok and can be queried.
 	bool isValid() const;
@@ -47,7 +57,7 @@ public:
     // nodes.
     NodeList findXPath(const std::string& path) const;
     
-    // Saves the file to the disk via xmlSaveFile
+    // Saves the file to the disk via xmlSaveFormatFile
     void saveToFile(const std::string& filename);
 };
 
