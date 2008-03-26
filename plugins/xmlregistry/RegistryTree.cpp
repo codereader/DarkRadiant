@@ -235,16 +235,15 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
   		createKey(fullImportKey);	
   	}
   	
-  	// Set the "mountpoint" to its default value, the toplevel node
-  	xmlNodePtr importNode = _tree.getTopLevelNode().getNodePtr();
-  	
+  	// Lookup the mount point by using findXPath(), it must exist by now
   	xml::NodeList importNodeList = _tree.findXPath(fullImportKey);
-  	if (importNodeList.size() > 0) {
-  		importNode = importNodeList[0].getNodePtr();
-  	}
-  	else {
+	
+  	if (importNodeList.empty()) {
   		globalOutputStream() << "XMLRegistry: Critical: ImportNode could not be found.\n";
+		return;
   	}
+ 
+	xmlNodePtr importNode = importNodeList[0].getNodePtr();
   	
   	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath.c_str() << "\n";
   	
@@ -252,7 +251,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
 	xml::Document importDoc(importFilePath);
 	  	
   	if (importDoc.isValid()) {
-  		// Load the top-level node(s) (there should only be one)
+  		// Locate the top-level node(s)
   		xml::NodeList topLevelNodes = importDoc.findXPath("/*");
   		
   		if (importNode->children != NULL) {
