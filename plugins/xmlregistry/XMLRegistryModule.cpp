@@ -1,4 +1,5 @@
 #include "XMLRegistry.h"
+#include "itextstream.h"
 
 /**
  * greebo: This is the module entry point which the main binary will look for.
