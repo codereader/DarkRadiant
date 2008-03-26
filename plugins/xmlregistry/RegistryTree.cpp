@@ -318,6 +318,9 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 		
 		// Save the whole document to the specified filename
 		xmlSaveFormatFile(filename.c_str(), targetDoc, 1);
+
+		// Free the document after exporting
+		xmlFreeDoc(targetDoc);
 				
 		globalOutputStream() << "XMLRegistry: Saved " << key.c_str() << " to " << filename.c_str() << "\n";
 	}
