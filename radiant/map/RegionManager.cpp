@@ -143,7 +143,7 @@ void RegionManager::addRegionBrushes() {
 		// Create a new brush
 		_brushes[i] = GlobalBrushCreator().createBrush();
 		// Insert it into worldspawn
-		GlobalMap().findOrInsertWorldspawn()->addChildNode(_brushes[i]);
+		scene::addNodeToContainer(_brushes[i], GlobalMap().findOrInsertWorldspawn());
 	}
 	
 	// Obtain the size of the region (the corners)
