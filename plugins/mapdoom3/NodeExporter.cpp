@@ -50,7 +50,7 @@ NodeExporter::~NodeExporter() {
 	// Write the closing braces of the information file
 	_infoStream << "}\n";
 
-	globalOutputStream() << _layerInfoCount << " node-to-layer mappings written.\n";
+	globalOutputStream() << static_cast<int>(_layerInfoCount) << " node-to-layer mappings written.\n";
 }
 
 // Pre-descent callback
