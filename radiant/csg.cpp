@@ -79,42 +79,60 @@ void Brush_makeHollow(const Brush& brush, BrushVector& out, float offset, bool m
   Brush_forEachFace(brush, FaceMakeBrush(brush, out, offset, makeRoom));
 }
 
-class BrushHollowSelectedWalker : public scene::Graph::Walker
+class BrushHollowSelectedWalker : 
+	public scene::Graph::Walker
 {
-  float m_offset;
-  bool _makeRoom;
+	float _offset;
+	bool _makeRoom;
+
+	typedef std::map<scene::INodePtr, scene::INodePtr> NodeMap;
+	mutable NodeMap _nodesToInsert;
+
 public:
 	/** greebo: Hollows each visited selected brush
 	 * 
 	 * @makeRoom: set this to true if the brushes should be moved towards the outside
 	 * 			  so that the overlapping corners are resolved (works only for 4sided brushes). 
 	 */
-  BrushHollowSelectedWalker(float offset, bool makeRoom = false)
-    : m_offset(offset),
+	BrushHollowSelectedWalker(float offset, bool makeRoom = false) : 
+		_offset(offset),
     	_makeRoom(makeRoom)
-  {
-  }
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const
-  {
-    if(path.top()->visible())
-    {
-      Brush* brush = Node_getBrush(node);
-      if(brush != NULL && Node_getSelectable(node)->isSelected() && path.size() > 1)
-      {
-        BrushVector out;
-        Brush_makeHollow(*brush, out, m_offset, _makeRoom);
-        for(BrushVector::const_iterator i = out.begin(); i != out.end(); ++i)
-        {
-          (*i)->removeEmptyFaces();
-          scene::INodePtr node = GlobalBrushCreator().createBrush();
-          Node_getBrush(node)->copy(*(*i));
-          delete (*i);
-          path.parent()->addChildNode(node);
-        }
-      }
-    }
-    return true;
-  }
+	{}
+
+	// The constructor actually inserts the child nodes into their parents
+	~BrushHollowSelectedWalker() {
+		for (NodeMap::iterator i = _nodesToInsert.begin(); i != _nodesToInsert.end(); i++) {
+			// Insert the node into the new parent
+			scene::addNodeToContainer(i->first, i->second);
+		}
+	}
+
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		if (node->visible()) {
+			Brush* brush = Node_getBrush(node);
+			if (brush != NULL && Node_isSelected(node)) {
+				// Create the brushes
+				BrushVector out;
+				Brush_makeHollow(*brush, out, _offset, _makeRoom);
+
+				for (BrushVector::const_iterator i = out.begin(); i != out.end(); ++i) {
+					(*i)->removeEmptyFaces();
+
+					scene::INodePtr brushNode = GlobalBrushCreator().createBrush();
+
+					// Move the child brushes to the same layer as their source
+					scene::assignNodeToLayers(brushNode, node->getLayers());
+
+					Node_getBrush(brushNode)->copy(*(*i));
+
+					delete (*i);
+					
+					_nodesToInsert.insert(NodeMap::value_type(brushNode, path.parent()));
+				}
+			}
+		}
+		return true;
+	}
 };
 
 typedef std::list<Brush*> brushlist_t;
