@@ -141,7 +141,7 @@ std::string XMLRegistry::get(const std::string& key) {
 	}
 	else {
 		//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
-		return std::string("");
+		return "";
 	}
 }
 
@@ -218,7 +218,6 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx) {
 	try {
 		// Load all of the required XML files
 		import(base + "user.xml", "", Registry::treeStandard);
-		//GlobalRegistry().import(base + "upgradepaths.xml", "user", Registry::treeStandard);
 		import(base + "colours.xml", "user/ui", Registry::treeStandard);
 		import(base + "input.xml", "user/ui", Registry::treeStandard);
 		import(base + "menu.xml", "user/ui", Registry::treeStandard);
