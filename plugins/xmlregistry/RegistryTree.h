@@ -9,9 +9,8 @@ class RegistryTree
 	std::string _topLevelNode;
 	std::string _defaultImportNode;
 
-	// The private pointers to the libxml2 and xmlutil objects 
-	xmlNodePtr		_importNode;
-	xml::Document 	_tree;
+	// The actual XML data is encapsulated in this Document
+	xml::Document _tree;
 	
 public:
 	// Constructor, pass the name of the toplevel node to it
