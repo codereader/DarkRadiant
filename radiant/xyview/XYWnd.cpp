@@ -26,6 +26,7 @@
 #include "ui/overlay/Overlay.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "map/RegionManager.h"
+#include "layers/UpdateNodeVisibilityWalker.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
@@ -496,12 +497,28 @@ void XYWnd::NewBrushDrag(int x, int y) {
 	}
 
 	if (m_NewBrushDrag == NULL) {
-		scene::INodePtr node(GlobalBrushCreator().createBrush());
-		GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
+		int layer = GlobalLayerSystem().getFirstVisibleLayer();
 
-		Node_setSelected(node, true);
+		if (layer != -1) {
+			// greebo: Create a new brush
+			scene::INodePtr node(GlobalBrushCreator().createBrush());
+			// Move it to the first visible layer
+			node->moveToLayer(layer);
 
-		m_NewBrushDrag = node;
+			// Insert the brush into worldspawn
+			scene::INodePtr worldspawn = GlobalMap().findOrInsertWorldspawn();
+			worldspawn->addChildNode(node);
+
+			// Ensure that worldspawn is visible
+			scene::UpdateNodeVisibilityWalker walker;
+			Node_traverseSubgraph(worldspawn, walker);
+
+			// Make sure the brush is selected
+			Node_setSelected(node, true);
+
+			// Remember the node
+			m_NewBrushDrag = node;	
+		}
 	}
 
 	Scene_BrushResize_Selected(GlobalSceneGraph(),
