@@ -33,6 +33,7 @@
 #include "imodule.h"
 #include "ieventmanager.h"
 #include "iradiant.h"
+#include "string/string.h"
 #include "RegistryTree.h"
 #include "gtkutil/IConv.h"
 
@@ -103,11 +104,9 @@ public:
 		// Add the toplevel node to the path if required
 		xml::NodeList nodeList = findXPath(path);
 
-		if (nodeList.size() > 0) {
-			for (unsigned int i = 0; i < nodeList.size(); i++) {
-				// unlink and delete the node
-				nodeList[i].erase();
-			}
+		for (std::size_t i = 0; i < nodeList.size(); i++) {
+			// unlink and delete the node
+			nodeList[i].erase();
 		}
 	}
 	
@@ -147,75 +146,32 @@ public:
 	/* Gets a key containing a float from the registry, basically loads the string and
 	 * converts it into a float via boost libraries */
 	float getFloat(const std::string& key) {
-		// Load the key
-		const std::string valueStr = get(key);
-		
-		// Try to convert it into a float variable
-		float tempFloat;
-		try {
-			tempFloat = boost::lexical_cast<float>(valueStr);
-		}
-		catch (boost::bad_lexical_cast e) {
-			tempFloat = 0.0f;
-		}
-		
-		return tempFloat;
+		// Load the key and convert to float
+		return strToFloat(get(key));
 	}
 	
 	/* Sets a registry key value to the given float. The floating point variable
 	 * is converted via boost libraries first. */
 	void setFloat(const std::string& key, const double& value) {
-		
-		// Try to convert the float into a string
-		std::string valueStr;
-		try {
-			valueStr = boost::lexical_cast<std::string>(value);
-		}
-		catch (boost::bad_lexical_cast e) {
-			valueStr = "0.0";
-		}
-		
 		// Pass the call to set() to do the rest
-		set(key, valueStr);
+		set(key, doubleToStr(value));
 	}
 	
 	/* Gets a key containing an integer from the registry, basically loads the string and
 	 * converts it into an int via boost libraries */
 	int getInt(const std::string& key) {
-		// Load the key
-		const std::string valueStr = get(key);
-		
-		// Try to convert it into a float variable
-		int tempInt;
-		try {
-			tempInt = boost::lexical_cast<int>(valueStr);
-		}
-		catch (boost::bad_lexical_cast e) {
-			tempInt = 0;
-		}
-		
-		return tempInt;
+		// Load the key and convert to int
+		return strToInt(get(key));
 	}
 	
 	// Sets a registry key value to the given integer. The value is converted via boost libraries first.
 	void setInt(const std::string& key, const int& value) {
-		
-		// Try to convert the int into a string
-		std::string valueStr;
-		try {
-			valueStr = boost::lexical_cast<std::string>(value);
-		}
-		catch (boost::bad_lexical_cast e) {
-			valueStr = "0";
-		}
-		
 		// Pass the call to set() to do the rest
-		set(key, valueStr);
+		set(key, intToStr(value));
 	}
 	
 	// Sets the value of a key from the registry, 
 	void set(const std::string& key, const std::string& value) {
-		
 		// Create or set the value in the user tree, the default tree stays untouched
 		// Convert the string to UTF-8 before storing it into the RegistryTree
 		_userTree.set(key, gtkutil::IConv::localeToUTF8(value));
