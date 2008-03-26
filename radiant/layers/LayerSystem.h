@@ -69,6 +69,9 @@ public:
 	int getLayerID(const std::string& name) const;
 	std::string getLayerName(int layerID) const;
 
+	// Returns the ID of the first visible layer or -1 if all are hidden.
+	virtual int getFirstVisibleLayer() const;
+
 	// Returns true if the given layer is visible
 	virtual bool layerIsVisible(const std::string& layerName);
 	virtual bool layerIsVisible(int layerID);
