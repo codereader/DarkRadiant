@@ -114,7 +114,7 @@ filterEnv.Install(INSTALL + '/modules', filterLib)
 
 # XMLRegistry module
 xmlRegistryEnv = module_env.Copy()
-xmlRegistrySrc = build_list('plugins/xmlregistry', 'RegistryTree.cpp XMLRegistry.cpp')
+xmlRegistrySrc = build_list('plugins/xmlregistry', 'RegistryTree.cpp XMLRegistry.cpp XMLRegistryModule.cpp')
 xmlRegistryEnv.Append(LIBS = 'xmlutil')
 xmlRegistryEnv.useBoostRegex()
 xmlRegistryEnv.useGlib2()
