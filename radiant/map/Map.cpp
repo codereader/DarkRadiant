@@ -261,6 +261,8 @@ void Map::freeMap() {
 	m_resource = ReferenceCache::ResourcePtr();
 
 	GlobalReferenceCache().clear();
+
+	GlobalLayerSystem().reset();
 }
 
 bool Map::isModified() const {
