@@ -62,11 +62,9 @@ void RegistryTree::deleteXPath(const std::string& path) {
 	std::string fullPath = prepareKey(path);
 	xml::NodeList nodeList = _tree.findXPath(fullPath);
 
-	if (nodeList.size() > 0) {
-		for (std::size_t i = 0; i < nodeList.size(); i++) {
-			// unlink and delete the node
-			nodeList[i].erase();
-		}
+	for (std::size_t i = 0; i < nodeList.size(); i++) {
+		// unlink and delete the node
+		nodeList[i].erase();
 	}
 }
 
@@ -79,33 +77,24 @@ xml::Node RegistryTree::createKeyWithName(const std::string& path,
 	// Add the toplevel node to the path if required
 	std::string fullPath = prepareKey(path);
 	
-	xmlNodePtr insertPoint;
+	xml::Node insertPoint(NULL);
 	
 	// Check if the insert point <path> exists, create it otherwise
 	if (!keyExists(fullPath)) {
-		insertPoint = createKey(fullPath).getNodePtr();
+		insertPoint = createKey(fullPath);
 	}
 	else {
 		xml::NodeList nodeList = _tree.findXPath(fullPath);
-		insertPoint = nodeList[0].getNodePtr();
+		insertPoint = nodeList[0];
 	}
 	
 	// Add the <key> to the insert point <path>
-	xmlNodePtr createdNode = xmlNewChild(insertPoint, NULL, xmlCharStrdup(key.c_str()), xmlCharStrdup(""));
-		
-	if (createdNode != NULL) {
-		// Create an xml::Node out of the xmlNodePtr createdNode and set the name attribute
-		xml::Node node(createdNode);
-		//node.addText("createKeyWithName\n");
-		node.setAttributeValue("name", name);
-		
-		// Return the newly created node
-		return node;
-	}
-	else {
-		globalOutputStream() << "XMLRegistry: Critical: Could not create insert point.\n";
-		return NULL;
-	}
+	xml::Node createdNode = insertPoint.createChild(key);
+	
+	// Set the "name" attribute and return
+	createdNode.setAttributeValue("name", name);
+
+	return createdNode;
 }
 
 /*	Adds a key to the XMLRegistry (without value, just the node)
