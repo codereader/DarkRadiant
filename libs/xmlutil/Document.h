@@ -46,6 +46,9 @@ public:
 	// Add a new toplevel node with the given name to this Document
 	void addTopLevelNode(const std::string& name);
 
+	// Returns the top level node (or an empty Node object if none exists)
+	Node getTopLevelNode() const;
+
 	// Copies the given Nodes into this document (a top level node
 	// must be created beforehand)
 	void copyNodes(const NodeList& nodeList);

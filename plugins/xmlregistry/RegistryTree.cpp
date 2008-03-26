@@ -22,12 +22,9 @@ RegistryTree::RegistryTree(const std::string& topLevelNode) :
 	_tree(_origXmlDocPtr)
 {
 	// Create the base XML structure with the <darkradiant> top-level tag
-	_origXmlDocPtr->children = xmlNewDocNode(_origXmlDocPtr, NULL, 
-  											 xmlCharStrdup(_topLevelNode.c_str()), 
-  											 xmlCharStrdup(""));
-  	
-  	// Set the default import node
-	_importNode = _origXmlDocPtr->children;
+	_tree.addTopLevelNode(_topLevelNode);
+	// The default import node is the top level node
+	_importNode = _tree.getTopLevelNode().getNodePtr();
 }
 
 std::string RegistryTree::prepareKey(const std::string& key) {

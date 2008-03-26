@@ -43,6 +43,15 @@ void Document::addTopLevelNode(const std::string& name) {
   									  xmlCharStrdup(""));
 }
 
+Node Document::getTopLevelNode() const {
+	if (!isValid()) {
+		// Invalid Document, return a NULL node
+		return Node(NULL);
+	}
+
+	return Node(_xmlDoc->children);
+}
+
 void Document::copyNodes(const NodeList& nodeList) {
 	if (!isValid() || _xmlDoc->children == NULL) {
 		return; // is not Valid, place an assertion here?
