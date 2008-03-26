@@ -122,33 +122,34 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 	
 	// Are there any slashes in the path at all? If not, exit, we've no use for this
 	if (parts.size() > 0) {
-		xmlNodePtr createdNode = NULL;
+		xml::Node createdNode(NULL);
 		
 		// The temporary path variable for walking through the hierarchy
 		std::string path("");
 		
-		// If the whole path does not exist, insert at the root node
-		xmlNodePtr insertPoint = _tree.getTopLevelNode().getNodePtr();
+		// Start at the root node
+		xml::Node insertPoint = _tree.getTopLevelNode();
 		
 		for (std::size_t i = 0; i < parts.size(); i++) {
 			if (parts[i] == "") continue;
-						
+			
 			// Construct the new path to be searched for
 			path += "/" + parts[i];
-						
+			
 			// Check if the path exists
 			xml::NodeList nodeList = _tree.findXPath(path);
+
 			if (nodeList.size() > 0) {
 				// node exists, set the insertPoint to this node and continue 
-				insertPoint = nodeList[0].getNodePtr();
+				insertPoint = nodeList[0];
 				// Set the createdNode to this point, in case this is the node to be created 
 				createdNode = insertPoint;
 			}
 			else {
 				// Node not found, insert it and store the newly created node as new insertPoint
-				createdNode = xmlNewChild(insertPoint, NULL, xmlCharStrdup(parts[i].c_str()), xmlCharStrdup(""));
+				createdNode = insertPoint.createChild(parts[i]);
 				insertPoint = createdNode;
-				xml::Node(createdNode).addText(" ");
+				createdNode.addText(" ");
 			}
 		}
 		
@@ -157,7 +158,7 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 	}
 	else {
 		globalOutputStream() << "XMLRegistry: Cannot insert key/path without slashes.\n";
-		return NULL;
+		return xml::Node(NULL);
 	}
 }
 
@@ -177,14 +178,12 @@ std::string RegistryTree::get(const std::string& key) {
 	// There is the theoretical case that this returns two nodes that match the key criteria
 	// This function always uses the first one, but this may be changed if this turns out to be problematic
 	if (nodeList.size() > 0) {
-		// Load the node and get the value
-		xml::Node node = nodeList[0];
-
-		return gtkutil::IConv::localeFromUTF8(node.getAttributeValue("value"));
+		// Get and convert the value
+		return gtkutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	else {
 		//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";
-		return std::string("");
+		return "";
 	}
 }
 
@@ -203,10 +202,8 @@ void RegistryTree::set(const std::string& key, const std::string& value) {
 	xml::NodeList nodeList = _tree.findXPath(fullKey);
 	
 	if (nodeList.size() > 0) {
-		// Load the node and set the value
-		xml::Node node = nodeList[0];
-
-		node.setAttributeValue("value", value);
+		// Set the value
+		nodeList[0].setAttributeValue("value", value);
 	}
 	else {
 		// If the key is still not found, something nasty has happened
