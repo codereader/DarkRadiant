@@ -256,16 +256,14 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
   	
   	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath.c_str() << "\n";
   	
-  	// Load the file (TODO: Memory leak!)
-	xmlDocPtr pImportDoc = xmlParseFile(importFilePath.c_str());
-  	
-  	if (pImportDoc) {
-  		// Convert it into xml::Document and load the top-level node(s) (there should only be one)
-  		xml::Document importDoc(pImportDoc);
+  	// Load the file
+	xml::Document importDoc(importFilePath);
+	  	
+  	if (importDoc.isValid()) {
+  		// Load the top-level node(s) (there should only be one)
   		xml::NodeList topLevelNodes = importDoc.findXPath("/*");
   		
   		if (importNode->children != NULL) {
-  			
   			if (importNode->name != NULL) {
 				for (std::size_t i = 0; i < topLevelNodes.size(); i++) {
   					xmlNodePtr newNode = topLevelNodes[0].getNodePtr();
