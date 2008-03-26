@@ -14,12 +14,11 @@ Game::Game(const std::string& path, const std::string& filename) {
 	
 	std::string fullPath = path + filename;
 	
-	// Load the XML using libxml2 to check for the <game> tag
-	xmlDocPtr pDoc = xmlParseFile(fullPath.c_str());
+	// Load the XML file by constructing an xml::Document object
+	// and search for the <game> tag
+	xml::Document doc(fullPath);
 	
-	if (pDoc) {
-		xml::Document doc(pDoc);
-		
+	if (doc.isValid()) {
 		// Check for a toplevel game node
 		xml::NodeList list = doc.findXPath("/game");
 	    if (list.size() == 0) {
@@ -53,9 +52,6 @@ Game::Game(const std::string& path, const std::string& filename) {
 				_enginePath = getKeyValue(enginePath);
 			}
 		}
-		
-		// Free the xml document memory
-		xmlFreeDoc(pDoc);
 	}
 	else {
 		globalErrorStream() << "Could not parse XML file: " << fullPath.c_str() << "\n"; 

@@ -15,26 +15,19 @@
 
 // Constructor
 RegistryTree::RegistryTree(const std::string& topLevelNode) :
-	_tree(NULL),
-	_origXmlDocPtr(NULL),
+	_topLevelNode(topLevelNode),
+	_defaultImportNode(std::string("/") + _topLevelNode),
+	_origXmlDocPtr(xmlNewDoc(xmlCharStrdup("1.0"))),
 	_importNode(NULL),
-	_topLevelNode(topLevelNode)
+	_tree(_origXmlDocPtr)
 {
-	_defaultImportNode = std::string("/") + _topLevelNode;
-	
 	// Create the base XML structure with the <darkradiant> top-level tag
-	_origXmlDocPtr = xmlNewDoc(xmlCharStrdup("1.0"));
-  	_origXmlDocPtr->children = xmlNewDocNode(_origXmlDocPtr, NULL, 
+	_origXmlDocPtr->children = xmlNewDocNode(_origXmlDocPtr, NULL, 
   											 xmlCharStrdup(_topLevelNode.c_str()), 
   											 xmlCharStrdup(""));
   	
-  	// Store the newly created document into the member variable _tree
-	_tree = xml::Document(_origXmlDocPtr);
+  	// Set the default import node
 	_importNode = _origXmlDocPtr->children;
-}
-
-RegistryTree::~RegistryTree() {
-	xmlFreeDoc(_origXmlDocPtr);
 }
 
 std::string RegistryTree::prepareKey(const std::string& key) {
@@ -77,7 +70,7 @@ void RegistryTree::deleteXPath(const std::string& path) {
 	xml::NodeList nodeList = _tree.findXPath(fullPath);
 
 	if (nodeList.size() > 0) {
-		for (unsigned int i = 0; i < nodeList.size(); i++) {
+		for (std::size_t i = 0; i < nodeList.size(); i++) {
 			// unlink and delete the node
 			nodeList[i].erase();
 		}
@@ -145,7 +138,7 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 		// If the whole path does not exist, insert at the root node
 		xmlNodePtr insertPoint = _importNode;
 		
-		for (unsigned int i = 0; i < parts.size(); i++) {
+		for (std::size_t i = 0; i < parts.size(); i++) {
 			if (parts[i] == "") continue;
 						
 			// Construct the new path to be searched for
@@ -263,7 +256,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
   	
   	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath.c_str() << "\n";
   	
-  	// Load the file
+  	// Load the file (TODO: Memory leak!)
 	xmlDocPtr pImportDoc = xmlParseFile(importFilePath.c_str());
   	
   	if (pImportDoc) {
@@ -274,7 +267,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
   		if (importNode->children != NULL) {
   			
   			if (importNode->name != NULL) {
-  				for (unsigned int i = 0; i < topLevelNodes.size(); i++) {
+				for (std::size_t i = 0; i < topLevelNodes.size(); i++) {
   					xmlNodePtr newNode = topLevelNodes[0].getNodePtr();
   					
   					// Add each of the imported nodes at the top to the registry
@@ -292,7 +285,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
   	}
 }
 
-/*	Saves a specified path to the file <filename>. Use "-" if you want to write to std::out
+/*	Saves a specified path to the file <filename>. Use "-" if you want to write to std::cout
  */
 void RegistryTree::exportToFile(const std::string& key, const std::string& filename) {
 	if (key.empty()) return;
@@ -318,7 +311,7 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 		xml::NodeList children = _tree.findXPath(fullKey + "/*");
 		
 		// Copy the child nodes one by one
-		for (unsigned int i = 0; i < children.size(); i++) {
+		for (std::size_t i = 0; i < children.size(); i++) {
 			// Copy the child node
 			xmlNodePtr exportNode = xmlCopyNode(children[i].getNodePtr(), 1);
 			// Add this node to the parent node
