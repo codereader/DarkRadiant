@@ -99,6 +99,12 @@ void LayerSystem::foreachLayer(Visitor& visitor) {
 void LayerSystem::reset() {
 	_layers.clear();
 	_layers.insert(LayerMap::value_type(0, DEFAULT_LAYER_NAME));
+
+	_layerVisibility.resize(1);
+	_layerVisibility[0] = true;
+
+	// Update the LayerControlDialog
+	ui::LayerControlDialog::Instance().refresh();
 }
 
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
