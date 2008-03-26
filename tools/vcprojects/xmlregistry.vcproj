@@ -231,6 +231,14 @@
 				RelativePath="..\..\plugins\xmlregistry\XMLRegistry.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\plugins\xmlregistry\XMLRegistry.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\xmlregistry\XMLRegistryModule.cpp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\xmlregistry\xmlregistry.def"
