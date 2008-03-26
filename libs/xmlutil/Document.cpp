@@ -52,6 +52,24 @@ Node Document::getTopLevelNode() const {
 	return Node(_xmlDoc->children);
 }
 
+void Document::importDocument(Document& other, Node& importNode) {
+	// Locate the top-level node(s) of the other document
+	xml::NodeList topLevelNodes = other.findXPath("/*");
+	
+	xmlNodePtr targetNode = importNode.getNodePtr();
+
+	if (targetNode->children == NULL || targetNode->name == NULL) {
+		// invalid importnode
+		return;
+	}
+
+	// Add each of the imported nodes to the target importNode
+	for (std::size_t i = 0; i < topLevelNodes.size(); i++) {
+		xmlAddPrevSibling(targetNode->children, 
+						  topLevelNodes[i].getNodePtr());
+	}
+}
+
 void Document::copyNodes(const NodeList& nodeList) {
 	if (!isValid() || _xmlDoc->children == NULL) {
 		return; // is not Valid, place an assertion here?
