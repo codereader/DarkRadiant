@@ -561,37 +561,5 @@ void createDecalsForSelectedFaces() {
 	}
 }
 
-/**
- * greebo: This walker traverses the entire scenegraph, 
- *         searching for entities with selected child primitives.
- *         If such an entity is found, it is traversed and all
- *         child primitives are selected.
- */
-class ExpandSelectionToEntitiesWalker : 
-	public scene::Graph::Walker
-{
-public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		Entity* entity = Node_getEntity(node);
-
-		if (entity != NULL) {
-			// We have an entity, traverse and select children if any child is selected
-			return entity->isContainer() && Node_selectedDescendant(node);
-		}
-		else if (Node_isPrimitive(node)) {
-			// We have a primitive, select it
-			Node_setSelected(node, true);
-			// Don't traverse any deeper
-			return false;
-		}
-
-		return true;
-	}
-};
-
-void expandSelectionToEntities() {
-	GlobalSceneGraph().traverse(ExpandSelectionToEntitiesWalker());
-}
-
 	} // namespace algorithm
 } // namespace selection
