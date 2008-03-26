@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstddef>
 #include <string.h>
 #include <list>
+#include <stack>
 
 #include "debugging/debugging.h"
 #include "math/aabb.h"
@@ -180,6 +181,58 @@ inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerLi
 			node->addToLayer(*i);
 		}
 	}
+}
+
+class UpdateNodeVisibilityWalker :
+	public scene::NodeVisitor
+{
+	std::stack<bool> _visibilityStack;
+public:
+	bool pre(const INodePtr& node) {
+		// Update the node visibility and store the result
+		bool nodeIsVisible = GlobalLayerSystem().updateNodeVisibility(node);
+
+		// Add a new element for this level
+		_visibilityStack.push(nodeIsVisible);
+
+		return true;
+	}
+
+	void post(const INodePtr& node) {
+		// Is this child visible?
+		bool childIsVisible = _visibilityStack.top();
+
+		_visibilityStack.pop();
+
+		if (childIsVisible) {
+			// Show the node, regardless whether it was hidden before
+			// otherwise the parent would hide the visible children as well
+			node->disable(Node::eLayered);
+		}
+
+		if (!node->visible()) {
+			// Node is hidden after update (and no children are visible), de-select
+			Node_setSelected(node, false);
+		}
+
+		if (childIsVisible && !_visibilityStack.empty()) {
+			// The child was visible, set this parent to true
+			_visibilityStack.top() = true;
+		}
+	}
+};
+
+/**
+ * greebo: This method inserts the given node into the given container
+ *         and ensures that the container's layer visibility is updated.
+ */
+inline void addNodeToContainer(const scene::INodePtr& node, const scene::INodePtr& container) {
+	// Insert the child
+	container->addChildNode(node);
+
+	// Ensure that worldspawn is visible
+	UpdateNodeVisibilityWalker walker;
+	Node_traverseSubgraph(container, walker);
 }
 
 // This in combination with Instance_getLight can be used to

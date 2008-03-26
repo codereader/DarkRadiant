@@ -296,10 +296,16 @@ void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMen
 
 		// create the brush
 		scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
-		GlobalMap().findOrInsertWorldspawn()->addChildNode(brushNode);
-		Brush* theBrush = Node_getBrush(brushNode);
-		std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
-		Scene_BrushResize(*theBrush, brushAABB, clipShader);
+
+		if (brushNode != NULL) {
+			scene::addNodeToContainer(brushNode, GlobalMap().findOrInsertWorldspawn());
+			
+			Brush* theBrush = Node_getBrush(brushNode);
+
+			std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
+
+			Scene_BrushResize(*theBrush, brushAABB, clipShader);
+		}
 	}
 }
 
