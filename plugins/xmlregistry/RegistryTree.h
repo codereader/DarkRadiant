@@ -10,7 +10,6 @@ class RegistryTree
 	std::string _defaultImportNode;
 
 	// The private pointers to the libxml2 and xmlutil objects 
-	xmlDocPtr		_origXmlDocPtr;
 	xmlNodePtr		_importNode;
 	xml::Document 	_tree;
 	

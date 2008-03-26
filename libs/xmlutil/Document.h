@@ -61,7 +61,7 @@ public:
     NodeList findXPath(const std::string& path) const;
     
     // Saves the file to the disk via xmlSaveFormatFile
-    void saveToFile(const std::string& filename);
+    void saveToFile(const std::string& filename) const;
 };
 
 }

@@ -17,12 +17,12 @@
 RegistryTree::RegistryTree(const std::string& topLevelNode) :
 	_topLevelNode(topLevelNode),
 	_defaultImportNode(std::string("/") + _topLevelNode),
-	_origXmlDocPtr(xmlNewDoc(xmlCharStrdup("1.0"))),
 	_importNode(NULL),
-	_tree(_origXmlDocPtr)
+	_tree(xml::Document::create())
 {
 	// Create the base XML structure with the <darkradiant> top-level tag
 	_tree.addTopLevelNode(_topLevelNode);
+
 	// The default import node is the top level node
 	_importNode = _tree.getTopLevelNode().getNodePtr();
 }
@@ -317,5 +317,5 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 }
 
 void RegistryTree::dump() const {
-	xmlSaveFile("-", _origXmlDocPtr);	
+	_tree.saveToFile("-");
 }
