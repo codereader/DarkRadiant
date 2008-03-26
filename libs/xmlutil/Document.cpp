@@ -109,7 +109,7 @@ NodeList Document::findXPath(const std::string& path) const {
 }
 
 // Saves the file to the disk via xmlSaveFormatFile
-void Document::saveToFile(const std::string& filename) {
+void Document::saveToFile(const std::string& filename) const {
 	xmlSaveFormatFile(filename.c_str(), _xmlDoc, 1);
 }
 
