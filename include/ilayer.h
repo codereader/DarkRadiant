@@ -95,6 +95,11 @@ public:
 	virtual std::string getLayerName(int layerID) const = 0;
 
 	/**
+	 * greebo: Returns the ID of the first visible layer or -1 if none is visible.
+	 */
+	virtual int getFirstVisibleLayer() const = 0;
+
+	/**
 	 * greebo: Queries the visibility of the given layer.
 	 */
 	virtual bool layerIsVisible(const std::string& layerName) = 0;

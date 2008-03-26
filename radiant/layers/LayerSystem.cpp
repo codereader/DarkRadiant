@@ -107,6 +107,18 @@ void LayerSystem::reset() {
 	ui::LayerControlDialog::Instance().refresh();
 }
 
+int LayerSystem::getFirstVisibleLayer() const {
+	// Iterate over all IDs and check the visibility status, return the first visible
+	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {
+		if (_layerVisibility[i->first]) {
+			return i->first;
+		}
+	}
+
+	// No layer visible, return
+	return -1;
+}
+
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
