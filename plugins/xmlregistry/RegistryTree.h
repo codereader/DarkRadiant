@@ -5,21 +5,18 @@
 
 class RegistryTree 
 {
-	// The private pointers to the libxml2 and xmlutil objects 
-	xml::Document 	_tree;
-	xmlDocPtr		_origXmlDocPtr;
-	xmlNodePtr		_importNode;
-	
 	// The top level node name ("darkradiant")
 	std::string _topLevelNode;
 	std::string _defaultImportNode;
+
+	// The private pointers to the libxml2 and xmlutil objects 
+	xmlDocPtr		_origXmlDocPtr;
+	xmlNodePtr		_importNode;
+	xml::Document 	_tree;
 	
 public:
 	// Constructor, pass the name of the toplevel node to it
 	RegistryTree(const std::string& topLevelNode);
-
-	// Frees the XML structures
-	~RegistryTree();
 	
 	// Returns a list of nodes matching the given <xpath>
 	xml::NodeList findXPath(const std::string& xPath);

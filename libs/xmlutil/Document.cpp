@@ -9,19 +9,31 @@ namespace xml
 {
 
 // Construct a wrapper around the provided xmlDocPtr.
-
 Document::Document(xmlDocPtr doc):
     _xmlDoc(doc)
+{}
+
+Document::Document(const std::string& filename) :
+	_xmlDoc(xmlParseFile(filename.c_str()))
 {}
 
 Document::Document(const Document& other) :
 	_xmlDoc(other._xmlDoc) 
 {}
 
+Document::~Document() {
+	if (_xmlDoc != NULL) {
+		// Free the xml document memory
+		xmlFreeDoc(_xmlDoc);
+	}
+}
+
+bool Document::isValid() const {
+	return _xmlDoc != NULL;
+}
+
 // Evaluate an XPath expression and return matching Nodes.
-
 NodeList Document::findXPath(const std::string& path) const {
-
     // Set up the XPath context
     xmlXPathContextPtr context;
     xmlXPathObjectPtr result;
@@ -33,8 +45,7 @@ NodeList Document::findXPath(const std::string& path) const {
         throw XPathException("Failed to create XPath context");
     }
     
-    // Evaluate the expression
-    
+    // Evaluate the expression  
     const xmlChar* xpath = reinterpret_cast<const xmlChar*>(path.c_str());
     result = xmlXPathEvalExpression(xpath, context);
     xmlXPathFreeContext(context);
@@ -47,7 +58,6 @@ NodeList Document::findXPath(const std::string& path) const {
     
     // Construct the return vector. This may be empty if the provided XPath
     // expression does not identify any nodes.
-    
     NodeList retval;
     xmlNodeSetPtr nodeset = result->nodesetval;
 	if (nodeset != NULL) {
@@ -57,8 +67,7 @@ NodeList Document::findXPath(const std::string& path) const {
 	}
 
     xmlXPathFreeObject(result);
-    return retval;   
-    
+    return retval;
 }
 
 // Saves the file to the disk via xmlSaveFile
