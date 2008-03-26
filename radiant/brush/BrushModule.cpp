@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifilter.h"
 #include "igame.h"
+#include "ilayer.h"
 #include "ieventmanager.h"
 #include "brush/BrushNode.h"
 #include "brush/BrushClipPlane.h"
@@ -113,9 +114,19 @@ typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFa
 typedef Callback1<Face&> FaceCallback;
 
 scene::INodePtr BrushModuleClass::createBrush() {
-	scene::INodePtr node(new BrushNode);
-	node->setSelf(node);
-	return node;
+	// Determine the first visible layer
+	int layer = GlobalLayerSystem().getFirstVisibleLayer();
+
+	if (layer != -1) {
+		scene::INodePtr node(new BrushNode);
+		node->setSelf(node);
+		
+		// Move it to the first visible layer
+		node->moveToLayer(layer);
+		return node;
+	}
+	
+	return scene::INodePtr();
 }
 
 void BrushModuleClass::Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) {

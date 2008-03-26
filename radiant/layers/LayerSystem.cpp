@@ -7,7 +7,6 @@
 
 #include "AddToLayerWalker.h"
 #include "MoveToLayerWalker.h"
-#include "UpdateNodeVisibilityWalker.h"
 #include "RemoveFromLayerWalker.h"
 
 #include "ui/layers/LayerControlDialog.h"

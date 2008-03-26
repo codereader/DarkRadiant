@@ -8,7 +8,6 @@
 #include "map/Map.h"
 #include "gtkutil/dialog.h"
 #include "mainframe.h"
-#include "layers/UpdateNodeVisibilityWalker.h"
 
 namespace selection {
 
