@@ -17,14 +17,10 @@
 RegistryTree::RegistryTree(const std::string& topLevelNode) :
 	_topLevelNode(topLevelNode),
 	_defaultImportNode(std::string("/") + _topLevelNode),
-	_importNode(NULL),
 	_tree(xml::Document::create())
 {
 	// Create the base XML structure with the <darkradiant> top-level tag
 	_tree.addTopLevelNode(_topLevelNode);
-
-	// The default import node is the top level node
-	_importNode = _tree.getTopLevelNode().getNodePtr();
 }
 
 std::string RegistryTree::prepareKey(const std::string& key) {
@@ -124,16 +120,15 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 	
 	//globalOutputStream() << "XMLRegistry: Inserting key: " << key.c_str() << "\n";
 	
-	xmlNodePtr createdNode = NULL;
-	
 	// Are there any slashes in the path at all? If not, exit, we've no use for this
-	if (parts.size()>0) {
+	if (parts.size() > 0) {
+		xmlNodePtr createdNode = NULL;
 		
 		// The temporary path variable for walking through the hierarchy
 		std::string path("");
 		
 		// If the whole path does not exist, insert at the root node
-		xmlNodePtr insertPoint = _importNode;
+		xmlNodePtr insertPoint = _tree.getTopLevelNode().getNodePtr();
 		
 		for (std::size_t i = 0; i < parts.size(); i++) {
 			if (parts[i] == "") continue;
@@ -241,7 +236,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
   	}
   	
   	// Set the "mountpoint" to its default value, the toplevel node
-  	xmlNodePtr importNode = _importNode;
+  	xmlNodePtr importNode = _tree.getTopLevelNode().getNodePtr();
   	
   	xml::NodeList importNodeList = _tree.findXPath(fullImportKey);
   	if (importNodeList.size() > 0) {
