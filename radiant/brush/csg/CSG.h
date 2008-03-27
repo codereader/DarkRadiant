@@ -30,6 +30,11 @@ void hollowSelectedBrushes();
  */
 void makeRoomForSelectedBrushes();
 
+/**
+ * greebo: Subtracts the brushes from all surrounding unselected brushes. 
+ */
+void subtractBrushesFromUnselected();
+
 } // namespace csg
 } // namespace algorihtm
 
