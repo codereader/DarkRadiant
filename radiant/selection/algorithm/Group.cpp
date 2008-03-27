@@ -117,10 +117,7 @@ void revertGroupToWorldSpawn() {
     	// Check if the old parent entity node is empty
 		if (!node->hasChildNodes()) {
     		// Remove this node from its parent, it's not needed anymore
-			scene::INodePtr parent = node->getParent();
-			assert(parent != NULL);
-
-			parent->removeChildNode(node);
+			scene::removeNodeFromParent(node);
     	}
     	else {
     		globalErrorStream() << "Error while reparenting, cannot delete old parent (not empty)\n"; 
@@ -165,11 +162,8 @@ public:
 		for (std::list<scene::INodePtr>::iterator i = _childrenToReparent.begin();
 			 i != _childrenToReparent.end(); i++)
 		{
-			scene::INodePtr oldParent = (*i)->getParent();
-			assert(oldParent != NULL);
-
 			// Remove this path from the old parent
-			oldParent->removeChildNode(*i);
+			scene::removeNodeFromParent(*i);
 
 			// Insert the child node into the parent node 
 			_parent->addChildNode(*i);

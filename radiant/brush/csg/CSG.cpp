@@ -4,6 +4,7 @@
 #include "igrid.h"
 #include "iradiant.h"
 #include "scenelib.h"
+#include "shaderlib.h"
 
 #include "brush/Face.h"
 #include "brush/Brush.h"
@@ -92,8 +93,7 @@ void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom) {
 	}
 
 	// Now unselect and remove the source brush from the scene
-	Node_setSelected(sourceBrush, false);
-	parent->removeChildNode(sourceBrush);
+	scene::removeNodeFromParent(sourceBrush);
 }
 
 void hollowSelectedBrushes() {
@@ -194,8 +194,7 @@ public:
 		for (std::list<scene::INodePtr>::iterator i = _deleteList.begin();
 			 i != _deleteList.end(); i++)
 		{
-			scene::INodePtr parent = (*i)->getParent();
-			parent->removeChildNode(*i);
+			scene::removeNodeFromParent(*i);
 		}
 	}
 
@@ -245,14 +244,18 @@ public:
 				for (BrushVector::const_iterator i = out.begin(); i != out.end(); ++i) {
 					_after++;
 					
-					scene::INodePtr node = GlobalBrushCreator().createBrush();
+					scene::INodePtr newBrush = GlobalBrushCreator().createBrush();
+
+					// Move the new Brush to the same layers as the source node
+					scene::assignNodeToLayers(newBrush, node->getLayers());
+
 					(*i)->removeEmptyFaces();
 					ASSERT_MESSAGE(!(*i)->empty(), "brush left with no faces after subtract");
 
-					Node_getBrush(node)->copy(*(*i));
+					Node_getBrush(newBrush)->copy(*(*i));
 					delete (*i);
 
-					path.parent()->addChildNode(node);
+					path.parent()->addChildNode(newBrush);
 				}
 
 			    _deleteList.push_back(node);
@@ -287,9 +290,142 @@ void subtractBrushesFromUnselected() {
 
 	globalOutputStream() << "CSG Subtract: Result: "
 		<< static_cast<int>(after) << " fragment" << (after == 1 ? "" : "s")
-		<< " from " << static_cast<int>(before) << " brush" << (before == 1? "" : "es") << ".\n";
+		<< " from " << static_cast<int>(before) << " brush" << (before == 1 ? "" : "es") << ".\n";
 
 	SceneChangeNotify();
+}
+
+// greebo: TODO: Make this a member method of the Brush class
+bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
+	// gather potential outer faces 
+	typedef std::vector<const Face*> Faces;
+	Faces faces;
+
+	for (BrushPtrVector::const_iterator i(in.begin()); i != in.end(); ++i) {
+		(*i)->getBrush().evaluateBRep();
+
+		for (Brush::const_iterator j((*i)->getBrush().begin()); j != (*i)->getBrush().end(); ++j) {
+			if (!(*j)->contributes()) {
+				continue;
+			}
+
+			const Face& face1 = *(*j);
+
+			bool skip = false;
+
+			// test faces of all input brushes
+			//!\todo SPEEDUP: Flag already-skip faces and only test brushes from i+1 upwards.
+			for (BrushPtrVector::const_iterator k(in.begin()); !skip && k != in.end(); ++k) {
+				if (k != i) { // don't test a brush against itself
+					for (Brush::const_iterator l((*k)->getBrush().begin()); !skip && l != (*k)->getBrush().end(); ++l) {
+						const Face& face2 = *(*l);
+
+						// face opposes another face
+						if (face1.plane3() == -face2.plane3()) {
+							// skip opposing planes
+							skip  = true;
+							break;
+						}
+					}
+				}
+			}
+
+			// check faces already stored
+			for (Faces::const_iterator m = faces.begin(); !skip && m != faces.end(); ++m) {
+				const Face& face2 = *(*m);
+
+				// face equals another face
+				if (face1.plane3() == face2.plane3()) {
+					// if the texture/shader references should be the same but are not
+					if (!onlyshape && !shader_equal(face1.getShader().getShader(), face2.getShader().getShader())) {
+						return false;
+					}
+				
+					// skip duplicate planes
+					skip = true;
+					break;
+				}
+
+				// face1 plane intersects face2 winding or vice versa
+				if (Winding::planesConcave(face1.getWinding(), face2.getWinding(), face1.plane3(), face2.plane3())) {
+					// result would not be convex
+					return false;
+				}
+			}
+
+			if (!skip) {
+				faces.push_back(&face1);
+			}
+		}
+	}
+
+	for (Faces::const_iterator i = faces.begin(); i != faces.end(); ++i) {
+		if (!brush.addFace(*(*i))) {
+			// result would have too many sides
+			return false;
+		}
+	}
+
+	brush.removeEmptyFaces();
+	return true;
+}
+
+void mergeSelectedBrushes() {
+	// Get the current selection
+	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
+
+	if (brushes.empty()) {
+		globalOutputStream() << "CSG Merge: No brushes selected.\n";
+		gtkutil::errorDialog("CSG Merge: No brushes selected.", GlobalRadiant().getMainWindow());
+		return;
+	}
+
+	if (brushes.size() < 2) {
+		globalOutputStream() << "CSG Merge: At least two brushes have to be selected.\n";
+		gtkutil::errorDialog("CSG Merge: At least two brushes have to be selected.", GlobalRadiant().getMainWindow());
+		return;
+	}
+
+	globalOutputStream() << "CSG Merge: Merging " << static_cast<int>(brushes.size()) << " brushes.\n";
+
+	UndoableCommand undo("mergeSelectedBrushes");
+
+	// Take the last selected node as reference for layers and parent
+	scene::INodePtr merged = GlobalSelectionSystem().ultimateSelected();
+
+	// Create a new BrushNode
+	scene::INodePtr node = GlobalBrushCreator().createBrush();
+
+	// Move the new brush to the same layers as the merged one
+	scene::assignNodeToLayers(node, merged->getLayers());
+		
+	// Get the contained brush
+	Brush* brush = Node_getBrush(node);
+
+	// Attempt to merge the selected brushes into the new one 
+	if (!Brush_merge(*brush, brushes, true)) {
+		globalOutputStream() << "CSG Merge: Failed - result would not be convex.\n";
+	}
+	else {
+		ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after merge");
+
+		scene::INodePtr parent = merged->getParent();
+		assert(parent != NULL);
+
+		// Remove the original brushes
+		for (BrushPtrVector::iterator i = brushes.begin(); i != brushes.end(); i++) {
+			scene::removeNodeFromParent(*i);
+		}
+
+		// Insert the newly created brush into the (same) parent entity
+		parent->addChildNode(node);
+
+		// Select the new brush
+		Node_setSelected(node, true);
+		
+		globalOutputStream() << "CSG Merge: Succeeded.\n";
+		SceneChangeNotify();
+	}
 }
 
 } // namespace csg
