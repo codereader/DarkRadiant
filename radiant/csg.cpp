@@ -79,62 +79,6 @@ void Brush_makeHollow(const Brush& brush, BrushVector& out, float offset, bool m
   Brush_forEachFace(brush, FaceMakeBrush(brush, out, offset, makeRoom));
 }
 
-class BrushHollowSelectedWalker : 
-	public scene::Graph::Walker
-{
-	float _offset;
-	bool _makeRoom;
-
-	typedef std::map<scene::INodePtr, scene::INodePtr> NodeMap;
-	mutable NodeMap _nodesToInsert;
-
-public:
-	/** greebo: Hollows each visited selected brush
-	 * 
-	 * @makeRoom: set this to true if the brushes should be moved towards the outside
-	 * 			  so that the overlapping corners are resolved (works only for 4sided brushes). 
-	 */
-	BrushHollowSelectedWalker(float offset, bool makeRoom = false) : 
-		_offset(offset),
-    	_makeRoom(makeRoom)
-	{}
-
-	// The constructor actually inserts the child nodes into their parents
-	~BrushHollowSelectedWalker() {
-		for (NodeMap::iterator i = _nodesToInsert.begin(); i != _nodesToInsert.end(); i++) {
-			// Insert the node into the new parent
-			scene::addNodeToContainer(i->first, i->second);
-		}
-	}
-
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		if (node->visible()) {
-			Brush* brush = Node_getBrush(node);
-			if (brush != NULL && Node_isSelected(node)) {
-				// Create the brushes
-				BrushVector out;
-				Brush_makeHollow(*brush, out, _offset, _makeRoom);
-
-				for (BrushVector::const_iterator i = out.begin(); i != out.end(); ++i) {
-					(*i)->removeEmptyFaces();
-
-					scene::INodePtr brushNode = GlobalBrushCreator().createBrush();
-
-					// Move the child brushes to the same layer as their source
-					scene::assignNodeToLayers(brushNode, node->getLayers());
-
-					Node_getBrush(brushNode)->copy(*(*i));
-
-					delete (*i);
-					
-					_nodesToInsert.insert(NodeMap::value_type(brushNode, path.parent()));
-				}
-			}
-		}
-		return true;
-	}
-};
-
 typedef std::list<Brush*> brushlist_t;
 
 class BrushGatherSelected : public scene::Graph::Walker
@@ -183,36 +127,6 @@ public:
 		}
 	}
 };
-
-void Scene_BrushMakeHollow_Selected(scene::Graph& graph)
-{
-  GlobalSceneGraph().traverse(BrushHollowSelectedWalker(GlobalGrid().getGridSize()));
-  GlobalSceneGraph().traverse(BrushDeleteSelected());
-}
-
-/*
-=============
-CSG_MakeHollow
-=============
-*/
-
-void CSG_MakeHollow (void)
-{
-  UndoableCommand undo("brushHollow");
-
-  Scene_BrushMakeHollow_Selected(GlobalSceneGraph());
-
-  SceneChangeNotify();
-}
-
-void CSG_MakeRoom() {
-	UndoableCommand undo("brushRoom");
-
-	GlobalSceneGraph().traverse(BrushHollowSelectedWalker(GlobalGrid().getGridSize(), true));
-	GlobalSceneGraph().traverse(BrushDeleteSelected());
-
-	SceneChangeNotify();
-}
 
 typedef Face* FacePointer;
 const FacePointer c_nullFacePointer = 0;

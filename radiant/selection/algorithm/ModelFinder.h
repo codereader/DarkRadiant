@@ -5,11 +5,6 @@
 #include "ipath.h"
 #include "iselection.h"
 
-// Forward declaration to avoid including the entire scenelib
-namespace scene {
-	class Instance;
-} // namespace scene
-
 namespace selection {
 	namespace algorithm {
 	

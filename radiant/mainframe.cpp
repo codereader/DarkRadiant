@@ -106,6 +106,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/AutoSaver.h"
 #include "brushmanip.h"
 #include "brush/BrushModule.h"
+#include "brush/csg/CSG.h"
 #include "csg.h"
 #include "console.h"
 #include "entity.h"
@@ -1624,8 +1625,8 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("CSGSubtract", FreeCaller<CSG_Subtract>());
 	GlobalEventManager().addCommand("CSGMerge", FreeCaller<CSG_Merge>());
-	GlobalEventManager().addCommand("CSGHollow", FreeCaller<CSG_MakeHollow>());
-	GlobalEventManager().addCommand("CSGRoom", FreeCaller<CSG_MakeRoom>());
+	GlobalEventManager().addCommand("CSGHollow", FreeCaller<algorithm::csg::hollowSelectedBrushes>());
+	GlobalEventManager().addCommand("CSGRoom", FreeCaller<algorithm::csg::makeRoomForSelectedBrushes>());
 	
 	GlobalEventManager().addCommand("RefreshShaders", FreeCaller<RefreshShaders>());
 	

@@ -569,6 +569,36 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="csg"
+					>
+					<File
+						RelativePath="..\..\radiant\brush\csg\CSG.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\radiant\brush\csg\CSG.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="brushexport"
