@@ -1624,7 +1624,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addToggle("MouseDrag", FreeCaller<DragMode>());
 	
 	GlobalEventManager().addCommand("CSGSubtract", FreeCaller<algorithm::csg::subtractBrushesFromUnselected>());
-	GlobalEventManager().addCommand("CSGMerge", FreeCaller<CSG_Merge>());
+	GlobalEventManager().addCommand("CSGMerge", FreeCaller<algorithm::csg::mergeSelectedBrushes>());
 	GlobalEventManager().addCommand("CSGHollow", FreeCaller<algorithm::csg::hollowSelectedBrushes>());
 	GlobalEventManager().addCommand("CSGRoom", FreeCaller<algorithm::csg::makeRoomForSelectedBrushes>());
 	

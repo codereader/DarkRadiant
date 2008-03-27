@@ -35,6 +35,11 @@ void makeRoomForSelectedBrushes();
  */
 void subtractBrushesFromUnselected();
 
+/**
+ * greebo: Attempts to merge the selected brushes.
+ */
+void mergeSelectedBrushes();
+
 } // namespace csg
 } // namespace algorihtm
 

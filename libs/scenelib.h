@@ -165,6 +165,20 @@ inline bool node_is_group(scene::INodePtr node) {
 
 namespace scene {
 
+/**
+ * greebo: This removes the given node from its parent node.
+ *         The node is also deselected beforehand.
+ */
+inline void removeNodeFromParent(const scene::INodePtr& node) {
+	// Unselect the node
+	Node_setSelected(node, false);
+
+	scene::INodePtr parent = node->getParent();
+	assert(parent != NULL);
+
+	parent->removeChildNode(node);
+}
+
 /** 
  * greebo: This assigns the given node to the given set of layers. Any previous
  *         assignments of the node get overwritten by this routine.
