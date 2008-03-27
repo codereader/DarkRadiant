@@ -17,6 +17,7 @@
 #include "gtkutil/GLWidgetSentry.h"
 #include "mainframe.h"
 #include "brush/Face.h"
+#include "brush/BrushNode.h"
 #include "brush/Winding.h"
 #include "camera/GlobalCamera.h"
 
@@ -235,7 +236,7 @@ void TexTool::rescanSelection() {
 			for (std::size_t i = 0; i < brushList.size(); i++) {
 				// Allocate a new BrushItem on the heap (shared_ptr)
 				textool::TexToolItemPtr brushItem(
-					new textool::BrushItem(*brushList[i])
+					new textool::BrushItem(brushList[i]->getBrush())
 				);
 				
 				// Add it to the list

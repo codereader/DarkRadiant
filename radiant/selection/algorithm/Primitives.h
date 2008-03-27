@@ -12,9 +12,11 @@ class Face;
 class Patch;
 class Brush;
 class PatchNode;
+class BrushNode;
+typedef boost::shared_ptr<BrushNode> BrushNodePtr;
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 typedef std::vector<PatchNodePtr> PatchPtrVector; 
-typedef std::vector<Brush*> BrushPtrVector;
+typedef std::vector<BrushNodePtr> BrushPtrVector;
 typedef std::vector<Face*> FacePtrVector;
 
 namespace selection {

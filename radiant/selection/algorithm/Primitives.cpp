@@ -187,9 +187,9 @@ public:
 	{}
 	
 	void visit(const scene::INodePtr& node) const {
-		Brush* brush = Node_getBrush(node);
-		if (brush != NULL) {
-			_vector.push_back(brush);
+		BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(node);
+		if (brushNode != NULL) {
+			_vector.push_back(brushNode);
 		}
 	}
 };
@@ -276,7 +276,7 @@ void createCMFromSelection() {
 		
 			// Add all the brushes to the collision model
 			for (std::size_t i = 0; i < brushes.size(); i++) {
-				cm->addBrush(*brushes[i]);
+				cm->addBrush(brushes[i]->getBrush());
 			}
 			
 			ui::ModelSelectorResult modelAndSkin = ui::ModelSelector::chooseModel();
