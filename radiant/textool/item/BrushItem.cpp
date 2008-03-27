@@ -2,8 +2,7 @@
 
 #include "FaceItem.h"
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class FaceItemCreator :
 	public BrushVisitor
@@ -42,10 +41,10 @@ void BrushItem::selectRelated() {
 	TexToolItem::selectRelated();
 	
 	// Select all the faces, if one is selected
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		if (_children[i]->isSelected()) {
 			// A selected child has been found, select them all
-			for (unsigned int j = 0; j < _children.size(); j++) {
+			for (std::size_t j = 0; j < _children.size(); j++) {
 				_children[j]->setSelected(true);
 			}
 			// Stop the loop
@@ -54,5 +53,4 @@ void BrushItem::selectRelated() {
 	}
 }
 
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool

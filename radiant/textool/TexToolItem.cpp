@@ -1,7 +1,6 @@
 #include "TexToolItem.h"
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 void TexToolItem::addChild(TexToolItemPtr child) {
 	_children.push_back(child);
@@ -12,7 +11,7 @@ TexToolItemVec& TexToolItem::getChildren() {
 }
 
 void TexToolItem::foreachItem(ItemVisitor& visitor) {
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		// Visit the children
 		visitor.visit(_children[i]);
 		
@@ -24,7 +23,7 @@ void TexToolItem::foreachItem(ItemVisitor& visitor) {
 TexToolItemVec TexToolItem::getSelectableChilds(const Rectangle& rectangle) {
 	TexToolItemVec returnVector;
 	
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		// Add every children to the list
 		if (_children[i]->testSelect(rectangle)) {
 			returnVector.push_back(_children[i]);
@@ -36,7 +35,7 @@ TexToolItemVec TexToolItem::getSelectableChilds(const Rectangle& rectangle) {
 
 void TexToolItem::transform(const Matrix4& matrix) {
 	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->transform(matrix);
 	}
 	update();
@@ -49,7 +48,7 @@ void TexToolItem::transformSelected(const Matrix4& matrix) {
 	}
 	else {
 		// Object is not selected, propagate the call to the children
-		for (unsigned int i = 0; i < _children.size(); i++) {
+		for (std::size_t i = 0; i < _children.size(); i++) {
 			_children[i]->transformSelected(matrix);
 		}
 	}
@@ -58,7 +57,7 @@ void TexToolItem::transformSelected(const Matrix4& matrix) {
 
 void TexToolItem::flipSelected(const int& axis) {
 	// Default behaviour: Propagate the call to the children
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->flipSelected(axis);
 	}
 	update();
@@ -66,7 +65,7 @@ void TexToolItem::flipSelected(const int& axis) {
 
 void TexToolItem::snapSelectedToGrid(float grid) {
 	// Default behaviour: Propagate the call to the children
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->snapSelectedToGrid(grid);
 	}
 	update();
@@ -76,7 +75,7 @@ AABB TexToolItem::getExtents() {
 	AABB returnValue;
 	
 	// Cycle through all the children and include their AABB
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		returnValue.includeAABB(_children[i]->getExtents());
 	}
 	
@@ -92,7 +91,7 @@ AABB TexToolItem::getSelectedExtents() {
 	}
 	
 	// Cycle through all the children and include their AABB
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		if (_children[i]->isSelected()) {
 			returnValue.includeAABB(_children[i]->getExtents());
 		}
@@ -103,7 +102,7 @@ AABB TexToolItem::getSelectedExtents() {
 
 void TexToolItem::moveSelectedTo(const Vector2& targetCoords) {
 	// Default: Cycle through all children and move the selected
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->moveSelectedTo(targetCoords);
 	}
 	update();
@@ -111,21 +110,21 @@ void TexToolItem::moveSelectedTo(const Vector2& targetCoords) {
 
 void TexToolItem::render() {
 	// Cycle through all the children and ask them to render themselves
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->render();
 	}
 }
 
 void TexToolItem::beginTransformation() {
 	// Cycle through all the children and pass the call
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->beginTransformation();
 	}
 }
 
 void TexToolItem::endTransformation() {
 	// Cycle through all the children and pass the call
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->endTransformation();
 	}
 	update();
@@ -133,17 +132,16 @@ void TexToolItem::endTransformation() {
 
 void TexToolItem::selectRelated() {
 	// Default: Cycle through all the children and pass the call
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->selectRelated();
 	}
 }
 
 void TexToolItem::update() {
 	// Default: Cycle through all the children and pass the call
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		_children[i]->update();
 	}
 }
 
-	} // namespace textool
-} // namespace selection
+} // namespace textool

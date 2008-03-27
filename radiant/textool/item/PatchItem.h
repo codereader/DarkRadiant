@@ -5,8 +5,7 @@
 
 class Patch;
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class PatchItem :
 	public TexToolItem
@@ -33,7 +32,6 @@ public:
 	virtual void selectRelated();
 };
 	
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool
 
 #endif /*PATCHITEM_H_*/

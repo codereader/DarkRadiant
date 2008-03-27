@@ -53,16 +53,16 @@ class TexTool
 	float _zoomFactor;
 	
 	// The currently active objects in the textool window 
-	selection::textool::TexToolItemVec _items;
+	textool::TexToolItemVec _items;
 	
 	// The draggable selection rectangle
-	selection::Rectangle _selectionRectangle;
+	textool::Rectangle _selectionRectangle;
 	
 	// The rectangle defining the manipulation's start and end point
-	selection::Rectangle _manipulateRectangle;
+	textool::Rectangle _manipulateRectangle;
 	
 	// The rectangle defining the moveOrigin operation's start and end point
-	selection::Rectangle _moveOriginRectangle;
+	textool::Rectangle _moveOriginRectangle;
 	
 	// TRUE if we are in selection mode
 	bool _dragRectangle;
@@ -146,7 +146,7 @@ private:
 	
 	/** greebo: Passes the given visitor to every Item in the hierarchy.
 	 */
-	void foreachItem(selection::textool::ItemVisitor& visitor);
+	void foreachItem(textool::ItemVisitor& visitor);
 	
 	/** greebo: Returns the number of selected TexToolItems.
 	 */
@@ -161,12 +161,12 @@ private:
 	
 	/** greebo: Returns a list of selectables for the given rectangle.
 	 */
-	selection::textool::TexToolItemVec getSelectables(const selection::Rectangle& rectangle);
+	textool::TexToolItemVec getSelectables(const textool::Rectangle& rectangle);
 	
 	/** greebo: Returns a list of selectables for the given point.
 	 * (A small rectangle is constructed to perform the selection test)
 	 */
-	selection::textool::TexToolItemVec getSelectables(const Vector2& coords);
+	textool::TexToolItemVec getSelectables(const Vector2& coords);
 	
 	/** greebo: These two get called by the GTK callback and handle the event
 	 * 

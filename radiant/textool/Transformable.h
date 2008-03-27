@@ -5,8 +5,7 @@
 
 class Matrix4;
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class Transformable :
 	public Selectable
@@ -61,7 +60,6 @@ public:
 	virtual void update() = 0;
 };
 
-	} // namespace TexTool
-} // namespace selection
+} // namespace textool
 
 #endif /*TEXTOOL_TRANSFORMABLE_H_*/

@@ -4,8 +4,7 @@
 #include "brush/Brush.h"
 #include "textool/TexToolItem.h"
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class BrushItem :
 	public TexToolItem
@@ -28,7 +27,6 @@ public:
 
 }; // class BrushItem
 	
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool
 
 #endif /*BRUSHITEM_H_*/
