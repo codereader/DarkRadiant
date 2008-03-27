@@ -2,6 +2,7 @@
 
 #include "iundo.h"
 #include "igrid.h"
+#include "iradiant.h"
 #include "scenelib.h"
 
 #include "brush/Face.h"
@@ -9,6 +10,8 @@
 #include "brush/BrushNode.h"
 #include "brush/BrushVisit.h"
 #include "selection/algorithm/Primitives.h"
+
+#include "gtkutil/dialog.h"
 
 namespace algorithm {
 namespace csg {
@@ -119,6 +122,172 @@ void makeRoomForSelectedBrushes() {
 	for (std::size_t i = 0; i < brushes.size(); i++) {
 		hollowBrush(brushes[i], true);
 	}
+
+	SceneChangeNotify();
+}
+
+BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane) {
+	brush.evaluateBRep();
+	
+	BrushSplitType split;
+	for (Brush::const_iterator i(brush.begin()); i != brush.end(); ++i) {
+		if ((*i)->contributes()) {
+			split += (*i)->getWinding().classifyPlane(plane);
+		}
+	}
+
+	return split;
+}
+
+bool Brush_subtract(const Brush& brush, const Brush& other, BrushVector& ret_fragments) {
+	if (aabb_intersects_aabb(brush.localAABB(), other.localAABB())) {
+		BrushVector fragments;
+		fragments.reserve(other.size());
+		Brush back(brush);
+
+		for (Brush::const_iterator i(other.begin()); i != other.end(); ++i) {
+			if ((*i)->contributes()) {
+				BrushSplitType split = Brush_classifyPlane(back, (*i)->plane3());
+				
+				if (split.counts[ePlaneFront] != 0 && split.counts[ePlaneBack] != 0) {
+					fragments.push_back(new Brush(back));
+					FacePtr newFace = fragments.back()->addFace(*(*i));
+					if (newFace != 0) {
+						newFace->flipWinding();
+					}
+
+					back.addFace(*(*i));
+				}
+				else if(split.counts[ePlaneBack] == 0) {
+					for (BrushVector::iterator i = fragments.begin(); i != fragments.end(); ++i) {
+						delete(*i);
+					}
+
+					return false;
+				}
+			}
+		}
+
+		ret_fragments.insert(ret_fragments.end(), fragments.begin(), fragments.end());
+		return true;
+	}
+
+	return false;
+}
+
+class SubtractBrushesFromUnselected : 
+	public scene::Graph::Walker
+{
+	const BrushPtrVector& _brushlist;
+	std::size_t& _before;
+	std::size_t& _after;
+
+	mutable std::list<scene::INodePtr> _deleteList;
+public:
+	SubtractBrushesFromUnselected(const BrushPtrVector& brushlist, std::size_t& before, std::size_t& after) : 
+		_brushlist(brushlist), 
+		_before(before), 
+		_after(after)
+	{}
+
+	~SubtractBrushesFromUnselected() {
+		for (std::list<scene::INodePtr>::iterator i = _deleteList.begin();
+			 i != _deleteList.end(); i++)
+		{
+			scene::INodePtr parent = (*i)->getParent();
+			parent->removeChildNode(*i);
+		}
+	}
+
+	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		return true;
+	}
+
+	void post(const scene::Path& path, const scene::INodePtr& node) const {
+		if (!node->visible()) {
+			return;
+		}
+
+		Brush* brush = Node_getBrush(node);
+
+		if (brush != NULL && !Node_isSelected(node)) {
+			BrushVector buffer[2];
+			bool swap = false;
+			
+			Brush* original = new Brush(*brush);
+			buffer[static_cast<std::size_t>(swap)].push_back(original);
+
+			for (BrushPtrVector::const_iterator i(_brushlist.begin()); i != _brushlist.end(); ++i) {
+
+				for (BrushVector::iterator j(buffer[static_cast<std::size_t>(swap)].begin()); 
+					 j != buffer[static_cast<std::size_t>(swap)].end(); ++j)
+				{
+					if (Brush_subtract(*(*j), (*i)->getBrush(), buffer[static_cast<std::size_t>(!swap)])) {
+						delete (*j);
+					}
+					else {
+						buffer[static_cast<std::size_t>(!swap)].push_back((*j));
+					}
+				}
+
+				buffer[static_cast<std::size_t>(swap)].clear();
+				swap = !swap;
+			}
+
+			BrushVector& out = buffer[static_cast<std::size_t>(swap)];
+
+			if (out.size() == 1 && out.back() == original) {
+				delete original;
+			}
+			else {
+				_before++;
+
+				for (BrushVector::const_iterator i = out.begin(); i != out.end(); ++i) {
+					_after++;
+					
+					scene::INodePtr node = GlobalBrushCreator().createBrush();
+					(*i)->removeEmptyFaces();
+					ASSERT_MESSAGE(!(*i)->empty(), "brush left with no faces after subtract");
+
+					Node_getBrush(node)->copy(*(*i));
+					delete (*i);
+
+					path.parent()->addChildNode(node);
+				}
+
+			    _deleteList.push_back(node);
+			}
+		}
+	}
+};
+
+void subtractBrushesFromUnselected() {
+	// Collect all selected brushes
+	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
+	
+	if (brushes.empty()) {
+		globalOutputStream() << "CSG Subtract: No brushes selected.\n";
+		gtkutil::errorDialog("CSG Subtract: No brushes selected.", GlobalRadiant().getMainWindow());
+		return;
+	}
+
+	globalOutputStream() << "CSG Subtract: Subtracting " << static_cast<int>(brushes.size()) << " brushes.\n";
+
+	UndoableCommand undo("brushSubtract");
+
+	// subtract selected from unselected
+	std::size_t before = 0;
+	std::size_t after = 0;
+
+	// instantiate a scoped walker class
+	{
+		SubtractBrushesFromUnselected walker(brushes, before, after);
+		GlobalSceneGraph().traverse(walker);
+	}
+
+	globalOutputStream() << "CSG Subtract: Result: "
+		<< static_cast<int>(after) << " fragment" << (after == 1 ? "" : "s")
+		<< " from " << static_cast<int>(before) << " brush" << (before == 1? "" : "es") << ".\n";
 
 	SceneChangeNotify();
 }
