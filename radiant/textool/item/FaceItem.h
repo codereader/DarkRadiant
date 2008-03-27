@@ -6,8 +6,7 @@
 class Face;
 class Winding;
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class FaceItem :
 	public TexToolItem
@@ -52,7 +51,6 @@ private:
 	Vector2 getCentroid() const;
 };
 	
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool
 
 #endif /*FACEITEM_H_*/

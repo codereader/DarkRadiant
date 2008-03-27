@@ -4,8 +4,7 @@
 #include "brush/Face.h"
 #include "brush/Winding.h"
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 FaceItem::FaceItem(Face& sourceFace) : 
 	_sourceFace(sourceFace),
@@ -115,5 +114,4 @@ void FaceItem::flipSelected(const int& axis) {
 	}
 }
 
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool

@@ -3,7 +3,7 @@
 
 #include "math/Vector2.h"
 
-namespace selection {
+namespace textool {
 
 /** greebo: A structure defining a 2D rectangular shape 
  * 			by specifying the top left and the 
@@ -36,6 +36,6 @@ public:
 	}
 };
 
-} // namespace selection
+} // namespace textool
 
 #endif /*RECTANGLE_H_*/

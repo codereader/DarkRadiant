@@ -4,8 +4,7 @@
 #include "textool/TexToolItem.h"
 #include "ipatch.h"
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class PatchVertexItem :
 	public TexToolItem
@@ -45,7 +44,6 @@ public:
 	virtual void flipSelected(const int& axis);
 };
 	
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool
 
 #endif /*PATCHVERTEXITEM_H_*/

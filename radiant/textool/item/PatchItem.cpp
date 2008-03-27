@@ -3,8 +3,7 @@
 #include "PatchVertexItem.h"
 #include "patch/Patch.h"
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 PatchItem::PatchItem(Patch& sourcePatch) : 
 	_sourcePatch(sourcePatch)
@@ -67,7 +66,7 @@ void PatchItem::selectRelated() {
 	TexToolItem::selectRelated();
 	
 	// Now have a look at the patch vertices, select all if one is selected
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); i++) {
 		if (_children[i]->isSelected()) {
 			// A selected child has been found, select them all
 			for (unsigned int j = 0; j < _children.size(); j++) {
@@ -79,5 +78,4 @@ void PatchItem::selectRelated() {
 	}
 }
 
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool

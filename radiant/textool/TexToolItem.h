@@ -7,8 +7,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class TexToolItem;
 typedef boost::shared_ptr<TexToolItem> TexToolItemPtr;
@@ -111,7 +110,7 @@ public:
 /** greebo: Visitor class to select/deselect all visited TexToolItems
  */
 class SetSelectedWalker :
-	public selection::textool::ItemVisitor
+	public textool::ItemVisitor
 {
 	bool _selected;
 public:
@@ -127,7 +126,7 @@ public:
 /** greebo: Visitor class to count the selected items
  */
 class SelectedCounter :
-	public selection::textool::ItemVisitor
+	public textool::ItemVisitor
 {
 	int& _counter;
 public:
@@ -142,7 +141,6 @@ public:
 	}
 };
 
-	} // namespace textool
-} // namespace selection
+} // namespace textool
 
 #endif /*TEXTOOLITEM_H_*/

@@ -1,8 +1,7 @@
 #ifndef TEXTOOL_RENDERABLE_ITEM_H_
 #define TEXTOOL_RENDERABLE_ITEM_H_
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 class RenderableItem
 {
@@ -12,7 +11,6 @@ public:
 	virtual void render() = 0;
 };
 
-	} // namespace TexTool
-} // namespace selection
+} // namespace textool
 
 #endif /*TEXTOOL_RENDERABLE_ITEM_H_*/

@@ -3,8 +3,7 @@
 #include "math/aabb.h"
 #include "igl.h"
 
-namespace selection {
-	namespace textool {
+namespace textool {
 
 PatchVertexItem::PatchVertexItem(PatchControl& patchControl) : 
 	_patchControl(patchControl)
@@ -66,5 +65,4 @@ void PatchVertexItem::flipSelected(const int& axis) {
 	}
 }
 
-	} // namespace TexTool
-} // namespace selection
+} // namespace TexTool
