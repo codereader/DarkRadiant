@@ -565,6 +565,14 @@
 					Name="csg"
 					>
 					<File
+						RelativePath="..\..\radiant\brush\csg\BrushByPlaneClipper.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\brush\csg\BrushByPlaneClipper.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\brush\csg\CSG.cpp"
 						>
 						<FileConfiguration
