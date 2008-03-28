@@ -485,7 +485,6 @@ radiant_src = \
 	[('radiant/' + p) for p in \
 		['brushmanip.cpp',
 		 'console.cpp',
-		 'csg.cpp',
 		 'entity.cpp',
 		 'gtkdlgs.cpp',
 		 'gtkmisc.cpp',

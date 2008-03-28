@@ -245,14 +245,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\csg.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\csg.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\entity.cpp"
 				>
 			</File>
