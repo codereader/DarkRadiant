@@ -2,7 +2,7 @@
 #define BRUSH_CSG_H_
 
 #include "iclipper.h"
-#include "math/Vector3.h"
+#include "math/Plane3.h"
 
 // Contains the routines for brush subtract, merge and hollow
 
@@ -10,6 +10,7 @@ class BrushNode;
 typedef boost::shared_ptr<BrushNode> BrushNodePtr;
 
 class Plane3;
+class Brush;
 
 namespace brush {
 namespace algorithm {
@@ -47,6 +48,9 @@ void mergeSelectedBrushes();
  * greebo: Sets the "clip plane" of the selected brushes in the scene.
  */
 void setBrushClipPlane(const Plane3& plane);
+
+// Classifies the given brush (needed for clipping/csg)
+BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane);
 
 /**
  * greebo: Splits the selected brushes by the given plane.

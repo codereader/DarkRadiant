@@ -499,6 +499,7 @@ radiant_src = \
          'view.cpp',
          'windowobservers.cpp',
 	 'brush/csg/CSG.cpp',
+	 'brush/csg/BrushByPlaneClipper.cpp',
          'ui/einspector/EntityInspector.cpp',
          'ui/einspector/AddPropertyDialog.cpp',
          'ui/einspector/ComboBoxPropertyEditor.cpp',
