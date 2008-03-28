@@ -8,7 +8,7 @@
 
 #include "modulesystem/StaticModule.h"
 #include "ClipPoint.h"
-#include "csg.h"
+#include "brush/csg/CSG.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
 namespace {
@@ -130,12 +130,12 @@ void Clipper::splitBrushes(const Vector3& p0,
 {
 	Vector3 planePoints[3] = {p0, p1, p2};
 	
-	Scene_BrushSplitByPlane(planePoints, shader, split);
+	brush::algorithm::splitBrushesByPlane(planePoints, shader, split);
 	GlobalRadiant().updateAllWindows();
 }
 
 void Clipper::setClipPlane(const Plane3& plane) {
-	Scene_BrushSetClipPlane(plane);
+	brush::algorithm::setBrushClipPlane(plane);
 }
 
 void Clipper::update() {
