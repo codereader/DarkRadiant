@@ -267,10 +267,6 @@ void Brush::importState(const UndoMemento* state) {
 	}
 }
 
-bool Brush::isDetail() {
-	return !m_faces.empty() && m_faces.front()->isDetail();
-}
-
 /// \brief Appends a copy of \p face to the end of the face list.
 FacePtr Brush::addFace(const Face& face) {
 	if (m_faces.size() == c_brush_maxFaces) {
@@ -278,7 +274,6 @@ FacePtr Brush::addFace(const Face& face) {
 	}
 	undoSave();
 	push_back(FacePtr(new Face(face, this)));
-	m_faces.back()->setDetail(isDetail());
 	planeChanged();
 	return m_faces.back();
 }
@@ -290,7 +285,6 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 	}
 	undoSave();
 	push_back(FacePtr(new Face(p0, p1, p2, shader, projection, this)));
-	m_faces.back()->setDetail(isDetail());
 	planeChanged();
 	return m_faces.back();
 }

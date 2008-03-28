@@ -336,20 +336,6 @@ const FaceShader& Face::getShader() const {
 	return m_shader;
 }
 
-bool Face::isDetail() const {
-	return (m_shader.m_flags.m_contentFlags & BRUSH_DETAIL_MASK) != 0;
-}
-void Face::setDetail(bool detail) {
-	undoSave();
-	if (detail && !isDetail()) {
-		m_shader.m_flags.m_contentFlags |= BRUSH_DETAIL_MASK;
-	}
-	else if(!detail && isDetail()) {
-		m_shader.m_flags.m_contentFlags &= ~BRUSH_DETAIL_MASK;
-	}
-	m_observer->shaderChanged();
-}
-
 bool Face::contributes() const {
 	return m_winding.numpoints > 2;
 }
