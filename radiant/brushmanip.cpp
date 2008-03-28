@@ -393,25 +393,6 @@ void Scene_BrushSetShader_Component_Selected(scene::Graph& graph, const std::str
   SceneChangeNotify();
 }
 
-class FaceSetDetail
-{
-  bool m_detail;
-public:
-  FaceSetDetail(bool detail) : m_detail(detail)
-  {
-  }
-  void operator()(Face& face) const
-  {
-    face.setDetail(m_detail);
-  }
-};
-
-void Scene_BrushSetDetail_Selected(scene::Graph& graph, bool detail)
-{
-  Scene_ForEachSelectedBrush_ForEachFace(graph, FaceSetDetail(detail));
-  SceneChangeNotify();
-}
-
 TextureProjection g_defaultTextureProjection;
 const TextureProjection& TextureTransform_getDefault()
 {
@@ -723,18 +704,6 @@ public:
 const TestBleh testbleh;
 #endif
 
-void Select_MakeDetail()
-{
-  UndoableCommand undo("brushSetDetail");
-  Scene_BrushSetDetail_Selected(GlobalSceneGraph(), true);
-}
-
-void Select_MakeStructural()
-{
-  UndoableCommand undo("brushClearDetail");
-  Scene_BrushSetDetail_Selected(GlobalSceneGraph(), false);
-}
-
 class BrushMakeSided
 {
   std::size_t m_count;
@@ -830,8 +799,5 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("SplitSelected", FreeCaller<SplitSelected>());
 	GlobalEventManager().addCommand("FlipClip", FreeCaller<FlipClipper>());
 
-	GlobalEventManager().addCommand("MakeDetail", FreeCaller<Select_MakeDetail>());
-	GlobalEventManager().addCommand("MakeStructural", FreeCaller<Select_MakeStructural>());
-	
 	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
 }

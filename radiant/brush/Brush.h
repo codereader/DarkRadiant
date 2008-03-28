@@ -220,8 +220,6 @@ public:
 	UndoMemento* exportState() const;
 	void importState(const UndoMemento* state);
 	
-	bool isDetail();
-	
 	/// \brief Appends a copy of \p face to the end of the face list.
 	FacePtr addFace(const Face& face);
 

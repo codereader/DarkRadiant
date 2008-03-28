@@ -179,9 +179,6 @@ public:
 	FaceShader& getShader();
 	const FaceShader& getShader() const;
 	
-	bool isDetail() const;
-	void setDetail(bool detail);
-
 	bool contributes() const;
 	bool is_bounded() const;
 
