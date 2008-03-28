@@ -283,7 +283,7 @@ class DeleteSelected :
 	mutable bool _remove;
 	mutable bool _removedChild;
 
-	mutable std::list<scene::Path> _eraseList;
+	mutable std::set<scene::INodePtr> _eraseList;
 public:
 	DeleteSelected() : 
 		_remove(false), 
@@ -292,9 +292,8 @@ public:
 
 	// Actually destroy the nodes
 	~DeleteSelected() {
-		for (std::list<scene::Path>::iterator i = _eraseList.begin(); i != _eraseList.end(); i++) {
-			Node_setSelected(i->top(), false);
-			Path_deleteTop(*i);
+		for (std::set<scene::INodePtr>::iterator i = _eraseList.begin(); i != _eraseList.end(); i++) {
+			scene::removeNodeFromParent(*i);
 		}
 	}
 
@@ -321,7 +320,7 @@ public:
 				node != GlobalMap().findWorldspawn() && 
 				!node->hasChildNodes())
 			{
-				_eraseList.push_back(path);
+				_eraseList.insert(node);
 			}
 		}
 
@@ -334,7 +333,7 @@ public:
 			}
 
 			_remove = false;
-			_eraseList.push_back(path);
+			_eraseList.insert(node);
 		}
 	}
 };
