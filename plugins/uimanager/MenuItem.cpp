@@ -314,7 +314,7 @@ void MenuItem::updateAcceleratorRecursive() {
 		construct();
 	}
 	
-	if (_type == menuItem) {
+	if (_type == menuItem && _menuItem != NULL) {
 		// Try to lookup the event name
 		IEventPtr event = GlobalEventManager().findEvent(_event);
 					
