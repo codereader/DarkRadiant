@@ -793,6 +793,7 @@ void Map::importSelected(TextInputStream& in) {
 	// Pass an empty stringstream to the importer
 	std::istringstream dummyStream;
 	MapImportInfo importInfo(in, dummyStream);
+	importInfo.root = node;
 
 	const MapFormat& format = getFormat();
 	format.readGraph(importInfo);
