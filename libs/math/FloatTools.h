@@ -43,6 +43,7 @@ inline int lrint(double f) {
 #include <cmath>
 #include <float.h>
 #include <algorithm>
+#include <limits>
 
 // =========================================================================================
 
