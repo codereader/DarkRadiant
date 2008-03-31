@@ -67,11 +67,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "DirectoryArchive.h"
 #include "SortedFilenames.h"
 
-Quake3FileSystem::Quake3FileSystem() :
+Doom3FileSystem::Doom3FileSystem() :
 	_numDirectories(0)
 {}
 
-void Quake3FileSystem::initDirectory(const std::string& inputPath) {
+void Doom3FileSystem::initDirectory(const std::string& inputPath) {
     if (_numDirectories == (VFS_MAXDIRS-1)) {
 		return;
     }
@@ -114,7 +114,7 @@ void Quake3FileSystem::initDirectory(const std::string& inputPath) {
 	}
 }
 
-void Quake3FileSystem::initialise() {
+void Doom3FileSystem::initialise() {
     globalOutputStream() << "filesystem initialised\n";
     
     for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
@@ -122,7 +122,7 @@ void Quake3FileSystem::initialise() {
     }
 }
 
-void Quake3FileSystem::shutdown() {
+void Doom3FileSystem::shutdown() {
 	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
     	(*i)->onFileSystemShutdown();
     }
@@ -133,15 +133,15 @@ void Quake3FileSystem::shutdown() {
 	_numDirectories = 0;
 }
 
-void Quake3FileSystem::addObserver(Observer& observer) {
+void Doom3FileSystem::addObserver(Observer& observer) {
 	_observers.insert(&observer);
 }
 
-void Quake3FileSystem::removeObserver(Observer& observer) {
+void Doom3FileSystem::removeObserver(Observer& observer) {
 	_observers.erase(&observer);
 }
 
-int Quake3FileSystem::getFileCount(const std::string& filename) {
+int Doom3FileSystem::getFileCount(const std::string& filename) {
 	int count = 0;
 	std::string fixedFilename(os::standardPathWithSlash(filename));
 
@@ -154,7 +154,7 @@ int Quake3FileSystem::getFileCount(const std::string& filename) {
 	return count;
 }
 
-ArchiveFilePtr Quake3FileSystem::openFile(const std::string& filename) {
+ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
 	if (filename.find("\\") != std::string::npos) {
 		globalErrorStream() << "Filename contains backslash: " << filename.c_str() << "\n";
 		return ArchiveFilePtr();
@@ -171,7 +171,7 @@ ArchiveFilePtr Quake3FileSystem::openFile(const std::string& filename) {
 	return ArchiveFilePtr();
 }
 
-ArchiveTextFilePtr Quake3FileSystem::openTextFile(const std::string& filename) {
+ArchiveTextFilePtr Doom3FileSystem::openTextFile(const std::string& filename) {
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		ArchiveTextFilePtr file = i->archive->openTextFile(filename);
 		if (file != NULL) {
@@ -182,7 +182,7 @@ ArchiveTextFilePtr Quake3FileSystem::openTextFile(const std::string& filename) {
 	return ArchiveTextFilePtr();
 }
 
-std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffer) {
+std::size_t Doom3FileSystem::loadFile(const std::string& filename, void **buffer) {
 	std::string fixedFilename(os::standardPathWithSlash(filename));
 
 	ArchiveFilePtr file = openFile(fixedFilename);
@@ -206,13 +206,13 @@ std::size_t Quake3FileSystem::loadFile(const std::string& filename, void **buffe
 	return 0;
 }
 
-void Quake3FileSystem::freeFile(void *p) {
+void Doom3FileSystem::freeFile(void *p) {
 	free(p);
 }
 
 // Call the specified callback function for each file matching extension
 // inside basedir.
-void Quake3FileSystem::forEachFile(const std::string& basedir, 
+void Doom3FileSystem::forEachFile(const std::string& basedir, 
 				const std::string& extension,
 				const FileNameCallback& callback, 
 				std::size_t depth)
@@ -233,7 +233,7 @@ void Quake3FileSystem::forEachFile(const std::string& basedir,
     }
 }
 
-std::string Quake3FileSystem::findFile(const std::string& name) {
+std::string Doom3FileSystem::findFile(const std::string& name) {
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		if (!i->is_pakfile && i->archive->containsFile(name.c_str())) {
 			return i->name;
@@ -243,7 +243,7 @@ std::string Quake3FileSystem::findFile(const std::string& name) {
 	return "";
 }
 
-std::string Quake3FileSystem::findRoot(const std::string& name) {
+std::string Doom3FileSystem::findRoot(const std::string& name) {
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		if (!i->is_pakfile && path_equal_n(name.c_str(), i->name.c_str(), i->name.size())) {
 			return i->name;
@@ -253,7 +253,7 @@ std::string Quake3FileSystem::findRoot(const std::string& name) {
 	return "";
 }
 
-void Quake3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename) {
+void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename) {
 	std::string fileExt(os::getExtension(filename));
 	boost::to_upper(fileExt);
 	
@@ -271,12 +271,12 @@ void Quake3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::stri
 }
 
 // RegisterableModule implementation
-const std::string& Quake3FileSystem::getName() const {
+const std::string& Doom3FileSystem::getName() const {
 	static std::string _name(MODULE_VIRTUALFILESYSTEM);
 	return _name;
 }
 
-const StringSet& Quake3FileSystem::getDependencies() const {
+const StringSet& Doom3FileSystem::getDependencies() const {
 	static StringSet _dependencies;
 
 	if (_dependencies.empty()) {
@@ -287,7 +287,7 @@ const StringSet& Quake3FileSystem::getDependencies() const {
 	return _dependencies;
 }
 
-void Quake3FileSystem::initialiseModule(const ApplicationContext& ctx) {
+void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "VFS::initialiseModule called\n";
 	
 	// Get the VFS search paths from the game manager
