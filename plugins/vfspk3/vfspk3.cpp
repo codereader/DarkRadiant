@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Doom3FileSystem.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(Quake3FileSystemPtr(new Quake3FileSystem));
+	registry.registerModule(Doom3FileSystemPtr(new Doom3FileSystem));
 	
 	// Initialise the streams
 	const ApplicationContext& ctx = registry.getApplicationContext();

@@ -37,7 +37,7 @@
 
 #define VFS_MAXDIRS 8
 
-class Quake3FileSystem : 
+class Doom3FileSystem : 
 	public VirtualFileSystem
 {
 	std::string _directories[VFS_MAXDIRS];
@@ -57,7 +57,7 @@ class Quake3FileSystem :
 
 public:
 	// Constructor
-	Quake3FileSystem();
+	Doom3FileSystem();
 	
 	void initDirectory(const std::string& path);
 	void initialise();
@@ -89,6 +89,6 @@ public:
 private:
 	void initPakFile(ArchiveLoader& archiveModule, const std::string& filename);
 };
-typedef boost::shared_ptr<Quake3FileSystem> Quake3FileSystemPtr;
+typedef boost::shared_ptr<Doom3FileSystem> Doom3FileSystemPtr;
 
 #endif
