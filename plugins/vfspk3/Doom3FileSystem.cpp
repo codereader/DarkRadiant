@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // Leonardo Zide (leo@lokigames.com)
 //
 
-#include "vfs.h"
+#include "Doom3FileSystem.h"
 #include "FileVisitor.h"
 
 #include <stdio.h>

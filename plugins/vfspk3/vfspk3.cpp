@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iarchive.h"
 #include "ifilesystem.h"
 
-#include "vfs.h"
+#include "Doom3FileSystem.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(Quake3FileSystemPtr(new Quake3FileSystem));
