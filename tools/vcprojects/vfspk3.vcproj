@@ -228,6 +228,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\vfspk3\Doom3FileSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\vfspk3\Doom3FileSystem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\vfspk3\FileVisitor.h"
 				>
 			</File>
@@ -237,14 +245,6 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\vfspk3\UnixPath.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\vfspk3\vfs.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\vfspk3\vfs.h"
 				>
 			</File>
 			<File
