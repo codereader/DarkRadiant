@@ -106,20 +106,15 @@ public:
   }
 };*/
 
-/**
- * greebo: Changes the classname of the given instance. This is a nontrivial
- *         operation, as the Entity needs to be created afresh and all the
- *         spawnargs need to be copied over. Child primitives need to be 
- *         considered as well.
- * 
- * @node: The entity node to change the classname of.
- * @classname: The new classname
- */
-void changeEntityClassname(const scene::INodePtr& node, const std::string& classname) {
+// Documentation: see header
+scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const std::string& classname) {
+	// Make a copy of this node first
+	scene::INodePtr oldNode(node); 
+
 	// greebo: First, get the eclass
 	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
 		classname, 
-		node_is_group(node) // whether this entity has child primitives
+		node_is_group(oldNode) // whether this entity has child primitives
 	);
 
 	// must not fail, findOrInsert always returns non-NULL
@@ -128,7 +123,7 @@ void changeEntityClassname(const scene::INodePtr& node, const std::string& class
 	// Create a new entity with the given class
 	scene::INodePtr newNode(GlobalEntityCreator().createEntity(eclass));
 
-	Entity* oldEntity = Node_getEntity(node);
+	Entity* oldEntity = Node_getEntity(oldNode);
 	Entity* newEntity = Node_getEntity(newNode);
 	assert(newEntity != NULL); // must not be NULL
 
@@ -138,19 +133,21 @@ void changeEntityClassname(const scene::INodePtr& node, const std::string& class
 	oldEntity->forEachKeyValue(visitor);
 
 	// The old node must not be the root node (size of path >= 2)
-	scene::INodePtr parent = node->getParent();
+	scene::INodePtr parent = oldNode->getParent();
 	assert(parent != NULL);
 	
 	// Remove the old entity node from the parent
-	parent->removeChildNode(node);
+	scene::removeNodeFromParent(oldNode);
 
 	if (node_is_group(newNode)) {
 		// Traverse the child and reparent all primitives to the new entity node
-		parentBrushes(node, newNode);
+		parentBrushes(oldNode, newNode);
 	}
 
 	// Insert the new entity to the parent
 	parent->addChildNode(newNode);
+
+	return newNode;
 }
 
 void Scene_EntitySetKeyValue_Selected(const char* key, const char* value)
