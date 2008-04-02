@@ -798,10 +798,11 @@ void normaliseTexture() {
 /** greebo: This replaces the shader of the visited face/patch with <replace>
  * 			if the face is textured with <find> and increases the given <counter>. 
  */
-class ShaderReplacer
+class ShaderReplacer :
+	public BrushInstanceVisitor
 {
-	const std::string& _find;
-	const std::string& _replace;
+	const std::string _find;
+	const std::string _replace;
 	mutable int _counter;
 public:
 	ShaderReplacer(const std::string& find, const std::string& replace) : 
@@ -820,6 +821,14 @@ public:
 			_counter++;
 		}
 	}
+
+	// BrushInstanceVisitor implementation
+	virtual void visit(FaceInstance& face) const {
+		if (face.getFace().GetShader() == _find) {
+			face.getFace().SetShader(_replace);
+			_counter++;
+		}
+	}
 	
 	void operator()(Patch& patch) const {
 		if (patch.GetShader() == _find) {
@@ -829,12 +838,12 @@ public:
 	}
 };
 
-int findAndReplaceShader(const std::string find, 
-	const std::string replace, bool selectedOnly)
+int findAndReplaceShader(const std::string& find, 
+	const std::string& replace, bool selectedOnly)
 {
 	std::string command("textureFindReplace");
 	command += "-find " + find + " -replace " + replace;
-	UndoableCommand undo(command.c_str());
+	UndoableCommand undo(command);
 	
 	// Construct a visitor class
 	ShaderReplacer replacer(find, replace);
@@ -850,7 +859,7 @@ int findAndReplaceShader(const std::string find,
 		Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), replacer);
 	}
 	else {
-		Scene_ForEachBrush_ForEachFace(GlobalSceneGraph(), replacer);
+		Scene_ForEachBrush_ForEachFace(replacer);
 		// Search all patches
 		Scene_forEachVisiblePatch(replacer);
 	}

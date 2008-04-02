@@ -124,9 +124,11 @@ GtkWidget* FindAndReplaceShader::createButtons() {
 }
 
 void FindAndReplaceShader::performReplace() {
+	const std::string find(gtk_entry_get_text(GTK_ENTRY(_findEntry)));
+	const std::string replace(gtk_entry_get_text(GTK_ENTRY(_replaceEntry)));
+
 	int replaced = selection::algorithm::findAndReplaceShader(
-		gtk_entry_get_text(GTK_ENTRY(_findEntry)),					   // find
-		gtk_entry_get_text(GTK_ENTRY(_replaceEntry)), 				   // replace
+		find, replace,
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_selectedOnly)) ? true : false // selected only
 	);
 	
