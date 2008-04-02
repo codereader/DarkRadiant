@@ -135,8 +135,8 @@ namespace selection {
 	 * 
 	 * @returns: the number of replaced occurrences.  
 	 */
-	int findAndReplaceShader(const std::string find, 
-							 const std::string replace, 
+	int findAndReplaceShader(const std::string& find, 
+							 const std::string& replace, 
 							 bool selectedOnly);
 	
 	} // namespace algorithm
