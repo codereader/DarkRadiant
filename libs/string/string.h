@@ -116,7 +116,12 @@ inline std::string sizetToStr(const std::size_t& s) {
 	std::string returnValue;
 	
 	try {
+#ifdef WIN32
+		unsigned long u = static_cast<unsigned long>(s);
+		returnValue = boost::lexical_cast<std::string>(u);
+#else
 		returnValue = boost::lexical_cast<std::string>(s);
+#endif
 	}
 	catch (boost::bad_lexical_cast e) {
 		returnValue = "";
