@@ -22,6 +22,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace ui
 {
@@ -83,7 +84,7 @@ void ShaderSelector::setSelection(const std::string& sel) {
 	}
 
 	// Use the local SelectionFinder class to walk the TreeModel
-	gtkutil::TreeModel::SelectionFinder finder(sel, FULLNAME_COL);
+	gtkutil::TreeModel::SelectionFinder finder(boost::algorithm::to_lower_copy(sel), FULLNAME_COL);
 	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
 	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
 	
@@ -117,7 +118,7 @@ namespace {
 			// Get the display name by stripping off everything before the last
 			// slash
 			std::string displayName = path.substr(path.rfind("/") + 1);
-
+			
 			// Pathname is the model VFS name for a model, and blank for a folder
 			std::string fullPath = isExplicit ? path : "";
 
@@ -167,7 +168,8 @@ namespace {
 	
 		// Functor operator
 		void operator() (const char* shaderName) {
-			std::string name(shaderName);
+			std::string name = boost::algorithm::to_lower_copy(std::string(shaderName));
+			
 			for (ShaderSelector::PrefixList::iterator i = _prefixes.begin();
 				 i != _prefixes.end();
 				 i++)

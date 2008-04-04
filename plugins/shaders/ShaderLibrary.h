@@ -13,7 +13,7 @@ class ShaderLibrary
 	// These are referenced by name. 
 	ShaderDefinitionMap _definitions;
 	
-	typedef std::map<std::string, ShaderPtr> ShaderMap;
+	typedef std::map<std::string, ShaderPtr, ShaderNameCompareFunctor> ShaderMap;
 	
 	ShaderMap _shaders;
 	
