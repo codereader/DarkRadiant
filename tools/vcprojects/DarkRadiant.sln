@@ -110,6 +110,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.difficulty", "dm.difficu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenelib", "scenelib.vcproj", "{F7408B46-E4A9-470C-9731-9A1564247385}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvorbis", "libvorbis\libvorbis.vcproj", "{3BBB3A48-F1A9-4660-93C1-D141CB07E2DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -256,6 +258,10 @@ Global
 		{F7408B46-E4A9-470C-9731-9A1564247385}.Debug|Win32.Build.0 = Debug|Win32
 		{F7408B46-E4A9-470C-9731-9A1564247385}.Release|Win32.ActiveCfg = Release|Win32
 		{F7408B46-E4A9-470C-9731-9A1564247385}.Release|Win32.Build.0 = Release|Win32
+		{3BBB3A48-F1A9-4660-93C1-D141CB07E2DE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3BBB3A48-F1A9-4660-93C1-D141CB07E2DE}.Debug|Win32.Build.0 = Debug|Win32
+		{3BBB3A48-F1A9-4660-93C1-D141CB07E2DE}.Release|Win32.ActiveCfg = Release|Win32
+		{3BBB3A48-F1A9-4660-93C1-D141CB07E2DE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
