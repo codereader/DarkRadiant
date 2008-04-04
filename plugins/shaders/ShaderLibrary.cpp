@@ -1,6 +1,7 @@
 #include "ShaderLibrary.h"
 
 #include <iostream>
+#include <utility>
 #include "ShaderTemplate.h"
 #include "Doom3ShaderSystem.h"
 #include "textures/FileLoader.h"
@@ -18,7 +19,16 @@ ShaderLibrary::ShaderLibrary()
 bool ShaderLibrary::addDefinition(const std::string& name, 
 								  const ShaderDefinition& def) 
 {
-	return _definitions.insert(ShaderDefinitionMap::value_type(name, def)).second;
+	ShaderDefinitionMap::iterator i = _definitions.find(name);
+	
+	if (i != _definitions.end()) {
+		// Return the definition
+		return false;
+	}
+	else {
+		_definitions.insert(std::make_pair(name, def));
+		return true;
+	}
 }
 
 ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {

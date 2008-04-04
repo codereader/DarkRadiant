@@ -118,7 +118,14 @@ MediaBrowser::MediaBrowser()
 /* Callback functor for processing shader names */
 
 namespace {
-	
+
+struct ShaderNameCompareFunctor : public std::binary_function<std::string, std::string, bool>
+{
+	bool operator()(const std::string &s1, const std::string &s2) const {
+		return boost::algorithm::ilexicographical_compare(s1, s2);
+	}
+};
+
 struct ShaderNameFunctor {
 	
 	typedef const char* first_argument_type;
@@ -142,7 +149,7 @@ struct ShaderNameFunctor {
 	}
 	
 	// Map between string directory names and their corresponding Iters
-	typedef std::map<std::string, GtkTreeIter*> DirIterMap;
+	typedef std::map<std::string, GtkTreeIter*, ShaderNameCompareFunctor> DirIterMap;
 	DirIterMap _dirIterMap;
 
 	// Recursive function to add a folder (e.g. "textures/common/something") to the

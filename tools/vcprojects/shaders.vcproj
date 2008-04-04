@@ -260,6 +260,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\shaders\ShaderNameCompareFunctor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\shaders\ShaderFileLoader.cpp"
 				>
 			</File>
