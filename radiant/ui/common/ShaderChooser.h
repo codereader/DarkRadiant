@@ -3,7 +3,7 @@
 
 #include "ui/common/ShaderSelector.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 #include <string>
 #include <gtk/gtkwidget.h>
 
@@ -19,9 +19,9 @@ namespace ui {
  * Use the LightShaderChooser class if you need an implementation to choose
  * light shaders only.
  */
-class ShaderChooser 
-: public gtkutil::PersistentTransientWindow,
-  public ShaderSelector::Client
+class ShaderChooser : 
+	public gtkutil::BlockingTransientWindow,
+	public ShaderSelector::Client
 {
 public:
 	// Derive from this class to get notified upon shader changes.
@@ -56,6 +56,9 @@ public:
 	/** greebo: Construct the dialog window and its contents.
 	 * 
 	 * @parent: The widget this dialog is transient for.
+	 * @targetEntry: The text entry where the selected shader can be written to.
+	 *               Also, the initially selected shader will be read from 
+	 *               this field at startup.
 	 */
 	ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry = NULL);
 	
@@ -63,10 +66,10 @@ public:
 	 */
 	void shaderSelectionChanged(const std::string& shaderName, GtkListStore* listStore);
 	
-	// Constructor, delete widgets
-	~ShaderChooser();
-	
 private:
+	// Saves the window position
+	void shutdown();
+
 	// Reverts the connected entry field to the value it had before 
 	void revertShader();
 

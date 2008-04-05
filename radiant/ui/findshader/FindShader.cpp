@@ -138,13 +138,13 @@ void FindAndReplaceShader::performReplace() {
 }
 
 void FindAndReplaceShader::onChooseFind(GtkWidget* widget, FindAndReplaceShader* self) {
-	// Construct the modal dialog, self-destructs on close
-	new ShaderChooser(NULL, GTK_WINDOW(self->getWindow()), self->_findEntry);
+	// Construct the modal dialog, enters a main loop
+	ShaderChooser chooser(NULL, GTK_WINDOW(self->getWindow()), self->_findEntry);
 }
 
 void FindAndReplaceShader::onChooseReplace(GtkWidget* widget, FindAndReplaceShader* self) {
-	// Construct the modal dialog, self-destructs on close
-	new ShaderChooser(NULL, GTK_WINDOW(self->getWindow()), self->_replaceEntry);
+	// Construct the modal dialog, enters a main loop
+	ShaderChooser chooser(NULL, GTK_WINDOW(self->getWindow()), self->_replaceEntry);
 }
 
 void FindAndReplaceShader::onReplace(GtkWidget* widget, FindAndReplaceShader* self) {
