@@ -19,12 +19,12 @@ namespace ui {
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry) 
-: gtkutil::PersistentTransientWindow(LABEL_TITLE, parent),
-  _client(client),
-  _parent(parent), 
-  _targetEntry(targetEntry),
-  _selector(this, SHADER_PREFIXES)
+ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry) : 
+	gtkutil::BlockingTransientWindow(LABEL_TITLE, parent),
+	_client(client),
+	_parent(parent), 
+	_targetEntry(targetEntry),
+	_selector(this, SHADER_PREFIXES)
 {
 	if (_targetEntry != NULL) {
 		_initialShader = gtk_entry_get_text(GTK_ENTRY(_targetEntry));
@@ -32,10 +32,8 @@ ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget
 		_selector.setSelection(_initialShader);
 	}
 	
-	gtk_window_set_modal(GTK_WINDOW(getWindow()), true); // TODO: move into base class
-    gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER_ON_PARENT);
-	
-	// Set the default size of the window
+	// Set the default size and position of the window
+	gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	
 	// Connect the key handler to catch the ESC event
@@ -57,12 +55,11 @@ ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
 
-	// Show all widgets
+	// Show all widgets, this will enter a main loop
 	show();
 }
 
-ShaderChooser::~ShaderChooser() {
-	
+void ShaderChooser::shutdown() {
 	// Delete all the current window states from the registry
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -71,10 +68,6 @@ ShaderChooser::~ShaderChooser() {
 	
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
-	
-	// Destroy GTK widgets
-	destroy();
-	
 }
 
 // Construct the buttons
@@ -129,7 +122,7 @@ void ShaderChooser::callbackCancel(GtkWidget* w, ShaderChooser* self) {
 	// Revert the shadername to the value it had at dialog startup
 	self->revertShader();
 	
-	delete self;
+	self->destroy();
 }
 
 void ShaderChooser::callbackOK(GtkWidget* w, ShaderChooser* self) {
@@ -137,30 +130,35 @@ void ShaderChooser::callbackOK(GtkWidget* w, ShaderChooser* self) {
 		gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
 					   	   self->_selector.getSelection().c_str());
 	}
-	delete self;
+
+	self->destroy();
 }
 
 gboolean ShaderChooser::onKeyPress(GtkWidget* widget, GdkEventKey* event, ShaderChooser* self) {
-	// Check for ESC to close the dialog
-	if (event->keyval == GDK_Escape) {
-		// Revert the shadername to the value it had at dialog startup
-		self->revertShader();
-		// Remove this dialog
-		delete self;
-		// Don't propagate the keypress if the ESC could be processed
-		return true;
-	}
-	else if (event->keyval == GDK_Return) {
-		if (self->_targetEntry != NULL) {
-			gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
-					   	   self->_selector.getSelection().c_str());
-		}
-		// Remove this dialog
-		delete self;
-		return true;
-	}
-	
-	return false;
+	// Check for ESC or ENTER to close the dialog
+	switch (event->keyval) {
+		case GDK_Escape:
+			// Revert the shadername to the value it had at dialog startup
+			self->revertShader();
+
+			// Remove this dialog
+			self->destroy();
+			// Don't propagate the keypress if ESC could be processed
+			return TRUE;
+			
+		case GDK_Return:
+			if (self->_targetEntry != NULL) {
+				gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
+					   		   self->_selector.getSelection().c_str());
+			}
+
+			// Remove this dialog
+			self->destroy();
+
+			return TRUE;
+	};
+
+	return FALSE;
 }
 
 } // namespace ui
