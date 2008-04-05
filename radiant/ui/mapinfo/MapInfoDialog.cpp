@@ -25,9 +25,9 @@ namespace ui {
 	}
 
 MapInfoDialog::MapInfoDialog() :
-	DialogWindow(MAPINFO_WINDOW_TITLE, GlobalRadiant().getMainWindow())
+	BlockingTransientWindow(MAPINFO_WINDOW_TITLE, GlobalRadiant().getMainWindow())
 {
-	setWindowSize(MAPINFO_DEFAULT_SIZE_X, MAPINFO_DEFAULT_SIZE_Y);
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), MAPINFO_DEFAULT_SIZE_X, MAPINFO_DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
@@ -37,11 +37,11 @@ MapInfoDialog::MapInfoDialog() :
 	// Propagate shortcuts to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
-	// Show the window and its children
+	// Show the window and its children, enter the main loop
 	show();
 }
 
-MapInfoDialog::~MapInfoDialog() {
+void MapInfoDialog::shutdown() {
 	// Stop propagating shortcuts to the main window
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 }
@@ -134,12 +134,13 @@ GtkWidget* MapInfoDialog::createButtons() {
 }
 
 void MapInfoDialog::onClose(GtkWidget* widget, MapInfoDialog* self) {
-	// Call the DialogWindow::destroy method and remove self from heap
+	// Call the destroy method which exits the main loop
+	self->shutdown();
 	self->destroy();
 }
 
 void MapInfoDialog::showDialog() {
-	new MapInfoDialog(); // self-destructs in GTK callback
+	MapInfoDialog dialog; // blocks on instantiation
 }
 
 } // namespace ui

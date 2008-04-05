@@ -1,7 +1,7 @@
 #ifndef MAPINFODIALOG_H_
 #define MAPINFODIALOG_H_
 
-#include "gtkutil/DialogWindow.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 #include "map/EntityBreakdown.h"
 
 typedef struct _GtkListStore GtkListStore;
@@ -9,7 +9,7 @@ typedef struct _GtkListStore GtkListStore;
 namespace ui {
 
 class MapInfoDialog :
-	public gtkutil::DialogWindow
+	public gtkutil::BlockingTransientWindow
 {
 	// The helper class counting the entities in the map
 	map::EntityBreakdown _entityBreakdown;
@@ -25,16 +25,17 @@ class MapInfoDialog :
 public:
 	// Constructor
 	MapInfoDialog();
-	~MapInfoDialog();
-	
-	// This is called to initialise the dialog window / create the widgets
-	virtual void populateWindow();
-	
+
 	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
 	static void showDialog();
 	
 private:
+	// This is called to create the widgets
+	void populateWindow();
+
+	// Disconnect this window from the eventmanagaer
+	void shutdown();
 
 	// Helper method to create the OK/Cancel button
 	GtkWidget* createButtons();
