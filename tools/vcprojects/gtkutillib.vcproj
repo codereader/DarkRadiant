@@ -211,10 +211,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\DialogWindow.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\EntryAbortedException.h"
 			>
 		</File>

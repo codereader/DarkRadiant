@@ -9,7 +9,6 @@
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
-#include "gtkutil/DialogWindow.h"
 #include "gtkutil/dialog.h"
 
 #include "selectionlib.h"
