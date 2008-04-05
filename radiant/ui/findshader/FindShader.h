@@ -5,18 +5,17 @@
 #include "gtk/gtkwidget.h"
 #include "gtk/gtkeditable.h"
 #include "gtk/gtkliststore.h"
-#include "gtkutil/DialogWindow.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 /* greebo: The dialog providing the Find & Replace shader functionality.
  * 
- * Note: Show the dialog by instantiating this class with NEW on the heap, 
- * as it's deriving from gtkutil::DialogWindow. It destroys itself upon dialog closure 
- * and frees the allocated memory. 
+ * Note: Show the dialog by instantiating it. It automatically enters a
+ *       GTK main loop after show().
  */
 namespace ui {
 
 class FindAndReplaceShader :
-	public gtkutil::DialogWindow
+	public gtkutil::BlockingTransientWindow
 {
 	// The entry fields
 	GtkWidget* _findEntry;
