@@ -62,6 +62,7 @@
 	<subMenu name="view" caption="_View">
 		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
 		<menuItem name="cameraview" caption="Camera View" command="ToggleCamera" />
+		<menuItem name="layercontrols" caption="Layers" command="ToggleLayerControlDialog" />
 		<menuItem name="consoleView" caption="Console View" command="ToggleConsole" />
 		<menuItem name="textureBrowser" caption="Texture Browser" command="ViewTextures" />
 		<menuItem name="entityInspector" caption="Entity Inspector" command="ToggleEntityInspector" />
