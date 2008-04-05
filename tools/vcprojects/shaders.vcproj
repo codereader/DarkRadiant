@@ -153,7 +153,6 @@
 				UsePrecompiledHeader="0"
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="4"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
 			/>
@@ -260,10 +259,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\shaders\ShaderNameCompareFunctor.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\shaders\ShaderFileLoader.cpp"
 				>
 			</File>
@@ -277,6 +272,10 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\shaders\ShaderLibrary.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\shaders\ShaderNameCompareFunctor.h"
 				>
 			</File>
 			<File
