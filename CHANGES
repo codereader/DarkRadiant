@@ -1,9 +1,15 @@
-19/03/2007
+05/04/2008
+greebo
+- Added support for layers. All items in the scenegraph
+  can be assigned to one or more layers now and the information
+  gets saved along with the map (into a .darkradiant file).
+
+19/03/2008
 greebo
 - Refactored scenegraph elements: removed scene::Instances,
   all the objects are scene::INodes now.
 
-03/02/2007
+03/02/2008
 greebo
 - Added Difficulty Editor plugin (specific to Dark Mod).
 
