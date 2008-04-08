@@ -236,9 +236,8 @@ const AABB& PatchNode::getSelectedComponentsBounds() const {
 	return m_aabb_component;
 }
 
-// Check the GlobalFilterSystem to ensure patches should be rendered.
 bool PatchNode::isVisible() const {
-	return visible() && GlobalFilterSystem().isVisible("texture", m_patch.GetShader());	
+	return visible() && m_patch.getState()->getIShader()->isVisible();
 }
 
 void PatchNode::setSelected(bool select) {

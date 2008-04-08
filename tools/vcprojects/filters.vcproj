@@ -235,6 +235,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\filters\ShaderUpdateWalker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\filters\XMLFilter.cpp"
 				>
 			</File>

@@ -149,7 +149,7 @@ void FaceInstance::render(Renderer& renderer, const VolumeTest& volume, const Ma
 }
 
 void FaceInstance::testSelect(SelectionTest& test, SelectionIntersection& best) {
-	if (GlobalFilterSystem().isVisible("texture", getFace().GetShader())) {
+	if (getFace().getShader().state()->getIShader()->isVisible()) {
 		m_face->testSelect(test, best);
 	}
 }

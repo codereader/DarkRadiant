@@ -165,6 +165,8 @@ public:
 	void render_solid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void render_wireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void render_component(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+
+	const ShaderPtr& getState() const;
 	
 	// Implementation of the abstract method of SelectionTestable
 	// Called to test if the patch can be selected by the mouse pointer

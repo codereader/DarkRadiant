@@ -117,9 +117,7 @@ void PicoModelNode::submitRenderables(Renderer& renderer,
 				// Submit the surface and shader to the renderer, checking first
 				// to make sure the texture is not filtered
 				IShaderPtr surfaceShader = i->second->getIShader();
-				if (GlobalFilterSystem().isVisible("texture", 
-												   surfaceShader->getName()))
-				{ 
+				if (surfaceShader->isVisible()) { 
 					renderer.SetState(i->second, Renderer::eFullMaterials);
 					renderer.addRenderable(*i->first, localToWorld);
 				}
