@@ -19,8 +19,8 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_OS_DIR_H)
-#define INCLUDED_OS_DIR_H
+#ifndef _OS_DIR_H_
+#define _OS_DIR_H_
 
 /// \file
 /// \brief OS directory-listing object.
@@ -70,4 +70,58 @@ void Directory_forEach(const std::string& path, Functor& functor) {
 }
 
 
+// greebo: Moved this from GtkRadiant's cmdlib.h to here
+// some easy portability crap
+
+#define access_owner_read 0400
+#define access_owner_write 0200
+#define access_owner_execute 0100
+#define access_owner_rw_ 0600
+#define access_owner_r_x 0500
+#define access_owner__wx 0300
+#define access_owner_rwx 0700
+
+#define access_group_read 0040
+#define access_group_write 0020
+#define access_group_execute 0010
+#define access_group_rw_ 0060
+#define access_group_r_x 0050
+#define access_group__wx 0030
+#define access_group_rwx 0070
+
+#define access_others_read 0004
+#define access_others_write 0002
+#define access_others_execute 0001
+#define access_others_rw_ 0006
+#define access_others_r_x 0005
+#define access_others__wx 0003
+#define access_others_rwx 0007
+
+#define access_rwxrwxr_x (access_owner_rwx | access_group_rwx | access_others_r_x)
+#define access_rwxrwxrwx (access_owner_rwx | access_group_rwx | access_others_rwx)
+
+namespace os {
+
+#ifdef WIN32
+
+#include <direct.h>
+
+// returns true if succeeded in creating directory
+inline bool makeDirectory(const std::string& name) {
+	return _mkdir(name.c_str()) != -1; 
+}
+
+#else // POSIX
+
+#include <sys/stat.h>
+
+// returns true if succeeded in creating directory
+inline bool makeDirectory(const std::string& name) {
+	return mkdir(name.c_str(), access_rwxrwxr_x) != -1; 
+}
+
 #endif
+
+} // namespace os
+
+#endif /* _OS_DIR_H_ */

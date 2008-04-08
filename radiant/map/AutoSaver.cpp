@@ -8,8 +8,8 @@
 #include "gdk/gdkwindow.h"
 
 #include "os/file.h"
+#include "os/dir.h"
 #include "string/string.h"
-#include "cmdlib.h"
 #include "map/Map.h"
 #include "mainframe.h"
 #include "modulesystem/ApplicationContextImpl.h"
@@ -111,7 +111,7 @@ void AutoMapSaver::saveSnapshot() {
 	std::string mapName = fullPath.leaf();
 	
 	// Check if the folder exists and create it if necessary
-	if (file_exists(snapshotPath.c_str()) || Q_mkdir(snapshotPath.c_str())) {
+	if (file_exists(snapshotPath.c_str()) || os::makeDirectory(snapshotPath)) {
 		
 		// Reset the size counter of the snapshots folder 
 		std::size_t folderSize = 0;
@@ -206,7 +206,7 @@ void AutoMapSaver::checkSave() {
 				std::string autoSaveFilename = GlobalRegistry().get(RKEY_MAP_PATH);
 				
 				// Try to create the map folder, in case there doesn't exist one 
-				Q_mkdir(autoSaveFilename.c_str());
+				os::makeDirectory(autoSaveFilename);
 				
 				// Append the "autosave.map" to the filename
 				autoSaveFilename += "autosave.";

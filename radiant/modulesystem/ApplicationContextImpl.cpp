@@ -7,7 +7,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "os/path.h"
-#include "cmdlib.h"
+#include "os/dir.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -132,7 +132,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 	{
 		std::string home = getenv("APPDATA");
 		home += "\\DarkRadiant\\";
-		Q_mkdir(home.c_str());
+		os::makeDirectory(home);
 		_homePath = home;
 	}
 	{
@@ -184,10 +184,10 @@ void ApplicationContextImpl::initPaths() {
 	}
 	
 	// Make sure the home folder exists (attempt to create it)
-	Q_mkdir(_homePath.c_str());
+	os::makeDirectory(_homePath);
 
 	_settingsPath = _homePath;
-	Q_mkdir(_settingsPath.c_str());
+	os::makeDirectory(_settingsPath);
 
 	_bitmapsPath = _appPath + "bitmaps/";
 }
