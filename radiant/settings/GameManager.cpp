@@ -7,7 +7,6 @@
 #include "os/file.h"
 #include "os/dir.h"
 #include "os/path.h"
-#include "cmdlib.h"
 #include "GameFileLoader.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/messagebox.h"
