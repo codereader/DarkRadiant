@@ -204,6 +204,7 @@
 
 		<subMenu name="csg" caption="CSG">
 			<menuItem name="hollow" caption="Make _Hollow" command="CSGHollow" icon="selection_makehollow.png" />
+			<menuItem name="makeRoom" caption="Make _Room" command="CSGRoom" icon="selection_makeroom.png" />
 			<menuItem name="csgSubtract" caption="CSG _Subtract" command="CSGSubtract" icon="selection_csgsubtract.png" />
 			<menuItem name="csgMerge" caption="CSG _Merge" command="CSGMerge" icon="selection_csgmerge.png" />
 		</subMenu>
