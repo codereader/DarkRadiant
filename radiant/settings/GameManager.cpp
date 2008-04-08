@@ -331,7 +331,8 @@ void Manager::updateEnginePath(bool forced) {
 				mapPath = _modPath + mapFolder;
 			}
 			globalOutputStream() << "GameManager: Map path set to " << mapPath.c_str() << "\n";
-			Q_mkdir(mapPath.c_str());
+			os::makeDirectory(mapPath);
+
 			// Save the map path to the registry
 			GlobalRegistry().set(RKEY_MAP_PATH, mapPath);
 
