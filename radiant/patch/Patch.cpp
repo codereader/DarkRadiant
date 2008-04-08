@@ -288,6 +288,10 @@ void Patch::render_component(Renderer& renderer, const VolumeTest& volume, const
 	renderer.addRenderable(m_render_ctrl, localToWorld);
 }
 
+const ShaderPtr& Patch::getState() const {
+	return m_state;
+}
+
 // Implementation of the abstract method of SelectionTestable
 // Called to test if the patch can be selected by the mouse pointer
 void Patch::testSelect(Selector& selector, SelectionTest& test) {

@@ -115,7 +115,7 @@ public:
 	// Sets all Control Instances to selected = <selected>
   	void selectCtrl(bool selected);
 
-	// Check the GlobalFilterSystem to ensure patches should be rendered.
+	// Returns true if this patch can be rendered
 	bool isVisible() const;
 
 	// greebo: snaps all the _selected_ components to the grid (should be called "snapSelectedComponents")

@@ -1,11 +1,14 @@
 #include "BasicFilterSystem.h"
+
 #include "InstanceUpdateWalker.h"
+#include "ShaderUpdateWalker.h"
 
 #include "iradiant.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "igame.h"
+#include "ishaders.h"
 
 #include "generic/callback.h"
 
@@ -15,10 +18,10 @@ namespace filters
 namespace {
 	
 	// Registry key for .game-defined filters
-	const char* RKEY_GAME_FILTERS = "game/filtersystem//filter";
+	const std::string RKEY_GAME_FILTERS = "game/filtersystem//filter";
 	
 	// Registry key for user-defined persistent filters
-	const char* RKEY_USER_FILTERS = "user/ui/filtersystem//activeFilter";
+	const std::string RKEY_USER_FILTERS = "user/ui/filtersystem//activeFilter";
 
 }
 
@@ -103,7 +106,8 @@ void BasicFilterSystem::shutdownModule() {
 }
 
 void BasicFilterSystem::update() {
-	updateInstances();
+	updateScene();
+	updateShaders();
 }
 
 void BasicFilterSystem::forEachFilter(IFilterVisitor& visitor) {
@@ -149,7 +153,7 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 	_visibilityCache.clear();
 			
 	// Update the scenegraph instances
-	updateInstances();
+	update();
 	
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
@@ -188,12 +192,19 @@ bool BasicFilterSystem::isVisible(const std::string& item,
 }
 
 // Update scenegraph instances with filtered status
-void BasicFilterSystem::updateInstances() {
+void BasicFilterSystem::updateScene() {
 
 	// Construct an InstanceUpdateWalker and traverse the scenegraph to update
 	// all instances
 	InstanceUpdateWalker walker;
 	GlobalSceneGraph().traverse(walker);
+}
+
+// Update scenegraph instances with filtered status
+void BasicFilterSystem::updateShaders() {
+	// Construct a ShaderVisitor to traverse the shaders
+	ShaderUpdateWalker walker;
+	GlobalShaderSystem().foreachShader(walker);
 }
 
 // RegisterableModule implementation

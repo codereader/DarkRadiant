@@ -34,8 +34,10 @@ class BasicFilterSystem
 private:
 	
 	// Perform a traversal of the scenegraph, setting or clearing the filtered
-	// flag on Instances depending on their entity class
-	void updateInstances();
+	// flag on Nodes depending on their entity class
+	void updateScene();
+
+	void updateShaders();
 	
 public:
 	

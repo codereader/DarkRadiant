@@ -137,7 +137,7 @@ void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
 
 	SelectionIntersection best;
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		if (GlobalFilterSystem().isVisible("texture", i->getFace().GetShader())) {
+		if (i->getFace().getShader().state()->getIShader()->isVisible()) {
 			i->testSelect(test, best);
 		}
 	}
@@ -388,7 +388,7 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 			bool* j = faces_visible;
 			for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i, ++j) {
 				// Check if face is filtered before adding to visibility matrix
-				if (GlobalFilterSystem().isVisible("texture", i->getFace().GetShader()))
+				if (i->getFace().getShader().state()->getIShader()->isVisible())
 					*j = i->intersectVolume(volume, localToWorld);
 				else
 					*j = false;

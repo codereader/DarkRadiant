@@ -116,7 +116,7 @@ void MD5Model::render(RenderStateFlags state) const {
 	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
 		// Get the IShader to test the shader name against the filter system
 		IShaderPtr surfaceShader = (*i)->getState()->getIShader();
-		if (GlobalFilterSystem().isVisible("texture", surfaceShader->getName())) {
+		if (surfaceShader->isVisible()) {
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getTexture();
 			glBindTexture(GL_TEXTURE_2D, tex->texture_number);
