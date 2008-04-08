@@ -100,28 +100,32 @@ void Directory_forEach(const std::string& path, Functor& functor) {
 #define access_rwxrwxr_x (access_owner_rwx | access_group_rwx | access_others_r_x)
 #define access_rwxrwxrwx (access_owner_rwx | access_group_rwx | access_others_rwx)
 
-namespace os {
-
 #ifdef WIN32
 
 #include <direct.h>
+
+namespace os {
 
 // returns true if succeeded in creating directory
 inline bool makeDirectory(const std::string& name) {
 	return _mkdir(name.c_str()) != -1; 
 }
 
+} // namespace os
+
 #else // POSIX
 
 #include <sys/stat.h>
+
+namespace os {
 
 // returns true if succeeded in creating directory
 inline bool makeDirectory(const std::string& name) {
 	return mkdir(name.c_str(), access_rwxrwxr_x) != -1; 
 }
 
-#endif
-
 } // namespace os
+
+#endif
 
 #endif /* _OS_DIR_H_ */
