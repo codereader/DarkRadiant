@@ -29,6 +29,8 @@ class CShader :
 
 	bool m_bInUse;
 
+	bool _visible;
+
 public:
 	static bool m_lightingEnabled;
 	
@@ -152,6 +154,9 @@ public:
 
 	bool isBlendLight() const;
 	bool isFogLight() const;
+
+	bool isVisible() const;
+	void setVisible(bool visible);
 
 }; // class CShader
 

@@ -62,6 +62,9 @@ public:
 	void foreachShaderName(const ShaderNameCallback& callback);
 	
 	TexturePtr loadTextureFromFile(const std::string& filename, const std::string& moduleNames);
+
+	// Traverse the library using the given shadername
+	void foreachShader(ShaderVisitor& visitor);
 	
 }; // class ShaderLibrary
 

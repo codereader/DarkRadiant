@@ -205,6 +205,17 @@ public:
 
 	// greebo: Returns the description as defined in the material
 	virtual std::string getDescription() const = 0;
+
+	/**
+	 * greebo: Returns TRUE if the shader is visible, FALSE if it 
+	 *         is filtered or disabled in any other way.
+	 */
+	virtual bool isVisible() const = 0;
+
+	/**
+	 * greebo: Sets the visibility of this shader.
+	 */
+	virtual void setVisible(bool visible) = 0;
 };
 
 typedef boost::shared_ptr<IShader> IShaderPtr;
@@ -220,6 +231,19 @@ std::ostream& operator<< (std::ostream& os, const IShader& shader) {
 	   << " }";
 	return os;
 }
+
+namespace shaders {
+
+/**
+ * greebo: Abstract visitor class for traversing shader lists.
+ */
+class ShaderVisitor
+{
+public:
+	virtual void visit(const IShaderPtr& shader) = 0;
+};
+
+} // namespace shaders
 
 typedef struct _GSList GSList;
 typedef Callback1<const char*> ShaderNameCallback;
@@ -260,9 +284,14 @@ public:
 	 */
 	virtual IShaderPtr getShaderForName(const std::string& name) = 0;
 
-  virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
+	virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
 
-  // iterate over the list of active shaders
+	/**
+	 * greebo: Traverse all shaders using the given visitor class.
+	 */
+	virtual void foreachShader(shaders::ShaderVisitor& visitor) = 0;
+
+  // iterate over the list of active shaders (deprecated functions)
   virtual void beginActiveShadersIterator() = 0;
   virtual bool endActiveShadersIterator() = 0;
   virtual IShaderPtr dereferenceActiveShadersIterator() = 0;
@@ -282,7 +311,7 @@ public:
   virtual void setLightingEnabled(bool enabled) = 0;
 
   virtual const char* getTexturePrefix() const = 0;
-  
+
 	/**
 	 * greebo: This is a substitution for the "old" TexturesCache method
 	 * used to load an image from a file to graphics memory for arbitrary

@@ -72,7 +72,8 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 	_fileName(definition.filename),
 	_name(name),
 	m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
-	m_bInUse(false) 
+	m_bInUse(false),
+	_visible(true)
 {
 	// Realise the shader
 	realise();
@@ -332,6 +333,14 @@ bool CShader::isBlendLight() const {
 
 bool CShader::isFogLight() const {
 	return _template.fogLight;
+}
+
+bool CShader::isVisible() const {
+	return _visible;
+}
+
+void CShader::setVisible(bool visible) {
+	_visible = visible;
 }
 
 bool CShader::m_lightingEnabled = false;

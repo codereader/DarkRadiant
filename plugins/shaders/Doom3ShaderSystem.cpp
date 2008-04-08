@@ -196,6 +196,10 @@ void Doom3ShaderSystem::activeShadersChangedNotify() {
 		_activeShadersChangedNotify();
 }
 
+void Doom3ShaderSystem::foreachShader(ShaderVisitor& visitor) {
+	_library->foreachShader(visitor);
+}
+
 TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,
 												  const std::string& moduleNames)
 {
