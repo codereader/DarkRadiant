@@ -110,7 +110,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 	{
 		StringOutputStream home(256);
 		home << DirectoryCleaned(g_get_home_dir()) << ".darkradiant/";
-		os::makeDirectory(home);
+		os::makeDirectory(home.c_str());
 		_homePath = home.c_str();
 	}
 	{
