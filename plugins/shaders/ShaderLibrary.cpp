@@ -116,4 +116,10 @@ TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename, const
 	return texture;
 }
 
+void ShaderLibrary::foreachShader(ShaderVisitor& visitor) {
+	for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); i++) {
+		visitor.visit(i->second);
+	}
+}
+
 } // namespace shaders
