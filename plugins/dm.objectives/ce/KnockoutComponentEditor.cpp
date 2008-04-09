@@ -1,4 +1,4 @@
-#include "KillComponentEditor.h"
+#include "KnockoutComponentEditor.h"
 #include "../Specifier.h"
 
 #include "gtkutil/LeftAlignment.h"
@@ -13,10 +13,10 @@ namespace ce
 {
 
 // Registration helper
-KillComponentEditor::RegHelper KillComponentEditor::regHelper;
+KnockoutComponentEditor::RegHelper KnockoutComponentEditor::regHelper;
 
 // Constructor
-KillComponentEditor::KillComponentEditor(Component& component)
+KnockoutComponentEditor::KnockoutComponentEditor(Component& component)
 : _component(&component),
   _targetCombo(Specifier::SET_STANDARD_AI())
 {
@@ -26,7 +26,7 @@ KillComponentEditor::KillComponentEditor(Component& component)
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Kill target:</b>"),
+        gtkutil::LeftAlignedLabel("<b>Knockout target:</b>"),
         FALSE, FALSE, 0
     );
 	gtk_box_pack_start(
@@ -35,13 +35,13 @@ KillComponentEditor::KillComponentEditor(Component& component)
 }
 
 // Destructor
-KillComponentEditor::~KillComponentEditor() {
+KnockoutComponentEditor::~KnockoutComponentEditor() {
 	if (GTK_IS_WIDGET(_widget))
 		gtk_widget_destroy(_widget);
 }
 
 // Get the main widget
-GtkWidget* KillComponentEditor::getWidget() const
+GtkWidget* KnockoutComponentEditor::getWidget() const
 {
 	return _widget;
 }
