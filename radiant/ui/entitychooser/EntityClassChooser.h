@@ -70,7 +70,7 @@ private:
 	
 	// Called when close button is clicked, ensure that window is hidden
 	// not destroyed.
-	static void callbackHide(GtkWidget*, GdkEvent*, EntityClassChooser*);
+	static gboolean callbackHide(GtkWidget* widget, GdkEvent* ev, EntityClassChooser* self);
 
 	// Button callbacks
 	static void callbackCancel(GtkWidget*, EntityClassChooser*);

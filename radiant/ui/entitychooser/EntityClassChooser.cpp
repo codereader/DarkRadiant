@@ -69,7 +69,7 @@ EntityClassChooser::EntityClassChooser()
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 
 	// Signals
-	g_signal_connect(_widget, "delete_event", G_CALLBACK(callbackHide), this);
+	g_signal_connect(_widget, "delete-event", G_CALLBACK(callbackHide), this);
 
 }
 
@@ -168,12 +168,12 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass) {
 
 /* GTK CALLBACKS */
 
-void EntityClassChooser::callbackHide(GtkWidget* widget, 
-									  GdkEvent* ev, 
-									  EntityClassChooser* self) 
+gboolean EntityClassChooser::callbackHide(GtkWidget* widget, GdkEvent* ev, EntityClassChooser* self)
 {
 	gtk_widget_hide(self->_widget);
 	gtk_main_quit();
+
+	return TRUE; // don't propagate the event
 }
 
 void EntityClassChooser::callbackCancel(GtkWidget* widget, 
