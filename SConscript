@@ -370,6 +370,7 @@ objList = ['plugins/dm.objectives/' + f for f in [
 	 'Specifier.cpp',
 	 'ce/ComponentEditorFactory.cpp',
 	 'ce/KillComponentEditor.cpp',
+     'ce/KnockoutComponentEditor.cpp',
 	 'ce/SpecifierEditCombo.cpp',
 	 'ce/specpanel/SpecifierPanelFactory.cpp',
 	 'ce/specpanel/NoneSpecifierPanel.cpp'
