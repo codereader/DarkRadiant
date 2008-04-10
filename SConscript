@@ -373,7 +373,9 @@ objList = ['plugins/dm.objectives/' + f for f in [
      'ce/KnockoutComponentEditor.cpp',
 	 'ce/SpecifierEditCombo.cpp',
 	 'ce/specpanel/SpecifierPanelFactory.cpp',
-	 'ce/specpanel/NoneSpecifierPanel.cpp'
+	 'ce/specpanel/NoneSpecifierPanel.cpp',
+     'ce/specpanel/TextSpecifierPanel.cpp',
+     'ce/specpanel/EntityNameSpecifierPanel.cpp'
 	 ]
 ]
 objLib = objEnv.SharedLibrary(target='dm_objectives',
