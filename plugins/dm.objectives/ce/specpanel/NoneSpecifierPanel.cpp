@@ -25,8 +25,7 @@ NoneSpecifierPanel::~NoneSpecifierPanel()
 }
 
 // Show and return the widget
-GtkWidget* NoneSpecifierPanel::getWidget() const {
-	gtk_widget_show_all(_widget);
+GtkWidget* NoneSpecifierPanel::_getWidget() const {
 	return _widget;
 }
 

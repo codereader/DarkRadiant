@@ -1,6 +1,8 @@
 #ifndef SPECIFIERPANEL_H_
 #define SPECIFIERPANEL_H_
 
+#include "gtkutil/ifc/EditorWidget.h"
+
 #include <boost/shared_ptr.hpp>
 #include <gtk/gtkwidget.h>
 
@@ -34,6 +36,7 @@ typedef boost::shared_ptr<SpecifierPanel> SpecifierPanelPtr;
  * widgets in their own destructors.
  */
 class SpecifierPanel
+: public gtkutil::EditorWidget
 {
 public:
 	
@@ -47,15 +50,6 @@ public:
 	 * A SpecifierPanel subclass of the same type as this one.
 	 */
 	virtual SpecifierPanelPtr clone() const = 0;
-	
-	/**
-	 * Obtain the master GtkWidget for packing into the parent window.
-	 * 
-	 * @return
-	 * A GtkWidget containing all SpecifierPanel widgets. This widget will have
-	 * been made visible with <b>gtk_widget_show_all()</b>.
-	 */
-	virtual GtkWidget* getWidget() const = 0;
 };
 
 }
