@@ -33,6 +33,12 @@ class NoneSpecifierPanel
 	// Main widget
 	GtkWidget* _widget;
 	
+protected:
+
+    /* gtkutil::EditorWidget implementation */
+
+    virtual GtkWidget* _getWidget() const;
+
 public:
 	
 	/**
@@ -47,11 +53,14 @@ public:
 	
 	/* SpecifierPanel implementation */
 	
-	GtkWidget* getWidget() const;
-	
 	SpecifierPanelPtr clone() const {
 		return SpecifierPanelPtr(new NoneSpecifierPanel());
 	}
+
+    /* gtkutil::EditorWidget implementation */
+
+    void setValue(const std::string&) { }
+    std::string getValue() const { return ""; }
 };
 
 }

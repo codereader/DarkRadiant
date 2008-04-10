@@ -24,6 +24,12 @@ class TextSpecifierPanel
 	// Main widget
 	GtkWidget* _widget;
 	
+protected:
+
+    /* gtkutil::EditorWidget implementation */
+
+    virtual GtkWidget* _getWidget() const;
+
 public:
 	
 	/**
@@ -43,6 +49,11 @@ public:
 	SpecifierPanelPtr clone() const {
 		return SpecifierPanelPtr(new TextSpecifierPanel());
 	}
+
+    /* gtkutil::EditorWidget implementation */
+
+    void setValue(const std::string& value);
+    std::string getValue() const; 
 };
 
 }
