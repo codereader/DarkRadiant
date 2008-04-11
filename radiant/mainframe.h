@@ -31,16 +31,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iradiant.h"
 
-class IToolbarButton;
-
 // Camera window
 class CamWnd;
 typedef boost::shared_ptr<CamWnd> CamWndPtr;
-
-class ZWnd;
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
 
 const int c_command_status = 0;
 const int c_position_status = 1;
@@ -137,10 +130,6 @@ extern MainFrame* g_pParentWnd;
 
 GtkWindow* MainFrame_getWindow();
 
-template<typename Value>
-class LatchedValue;
-typedef LatchedValue<bool> LatchedBool;
-
 // Set the text to be displayed in the status bar
 void Sys_Status(const std::string& statusText);
 
@@ -176,12 +165,8 @@ void ClipperChangeNotify();
 
 void DefaultMode();
 
-void VFS_Construct();
-void VFS_Destroy();
-
 void MainFrame_Construct();
 
 extern float (*GridStatus_getGridSize)();
-extern int (*GridStatus_getFarClipDistance)();
 
 #endif

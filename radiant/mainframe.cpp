@@ -1506,13 +1506,11 @@ int getFarClipDistance() {
 	return getCameraSettings()->cubicScale();
 }
 
-int (*GridStatus_getFarClipDistance)() = getFarClipDistance;
-
 void MainFrame::SetGridStatus()
 {
 	std::string lock = (GlobalBrush()->textureLockEnabled()) ? "ON" : "OFF";
 	std::string text = "G:" + floatToStr(GlobalGrid().getGridSize());
-	text += "  C:" + intToStr(GridStatus_getFarClipDistance());
+	text += "  C:" + intToStr(getFarClipDistance());
     text += "  L:" + lock;
 	SetStatusText(m_grid_status, text);
 }
