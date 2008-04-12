@@ -24,20 +24,17 @@ RegistryTree::RegistryTree(const std::string& topLevelNode) :
 }
 
 std::string RegistryTree::prepareKey(const std::string& key) {
-	std::string returnValue = key;
-	
-	if (returnValue.length() == 0) {
+	if (key.empty()) {
 		// no string passed, return to sender
-		return returnValue;
+		return key;
 	}
-	else if (returnValue[0]=='/') {
+	else if (key[0]=='/') {
 		// this is a path relative to root, don't alter it
-		return returnValue;
+		return key;
 	}
 	else {
 		// add the prefix <darkradiant> and return
-		returnValue = std::string("/") + _topLevelNode + std::string("/") + key;
-		return returnValue;
+		return std::string("/") + _topLevelNode + std::string("/") + key;
 	}
 }
 
