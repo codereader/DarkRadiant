@@ -16,10 +16,10 @@ namespace ce
 SpecifierEditCombo::SpecifierEditCombo(const SpecifierSet& set)
 {
 	// Create the dropdown containing specifier types
-	GtkWidget* dropDown = objectives::util::TwoColumnTextCombo();
+	_specifierCombo = objectives::util::TwoColumnTextCombo();
 
 	GtkListStore* ls = GTK_LIST_STORE(
-		gtk_combo_box_get_model(GTK_COMBO_BOX(dropDown))
+		gtk_combo_box_get_model(GTK_COMBO_BOX(_specifierCombo))
 	);
 	for (SpecifierSet::const_iterator i = set.begin();
 		 i != set.end();
@@ -35,35 +35,52 @@ SpecifierEditCombo::SpecifierEditCombo(const SpecifierSet& set)
 		);	
 	}
 	g_signal_connect(
-		G_OBJECT(dropDown), "changed", G_CALLBACK(_onChange), this
+		G_OBJECT(_specifierCombo), "changed", G_CALLBACK(_onChange), this
 	);
 	
 	// Main hbox
 	_widget = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(_widget), dropDown, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), _specifierCombo, TRUE, TRUE, 0);
 }
 
 // Get the main widget
-GtkWidget* SpecifierEditCombo::getWidget() const {
-	gtk_widget_show_all(_widget);
+GtkWidget* SpecifierEditCombo::getWidget() const 
+{
+    gtk_widget_show_all(_widget);
 	return _widget;
+}
+
+// Get the selected Specifier
+const Specifier& SpecifierEditCombo::getSpecifier() const 
+{
+   return Specifier::getSpecifier(getSpecName());
+}
+
+// Get the selected string value from the SpecifierPanel
+std::string SpecifierEditCombo::getValue() const
+{
+    return _specPanel->getValue();
+}
+
+// Get the selected Specifier string
+std::string SpecifierEditCombo::getSpecName() const
+{
+	// Get the current selection
+	GtkTreeIter iter;
+	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(_specifierCombo), &iter);
+	return gtkutil::TreeModel::getString(
+			gtk_combo_box_get_model(GTK_COMBO_BOX(_specifierCombo)),
+			&iter,
+			1
+	); 
 }
 
 /* GTK CALLBACKS */
 
 void SpecifierEditCombo::_onChange(GtkWidget* w, SpecifierEditCombo* self)
 {
-	// Get the current selection
-	GtkTreeIter iter;
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter);
-	std::string selText = gtkutil::TreeModel::getString(
-			gtk_combo_box_get_model(GTK_COMBO_BOX(w)),
-			&iter,
-			1
-	); 
-
 	// Change the SpecifierPanel
-	self->_specPanel = SpecifierPanelFactory::create(selText);
+	self->_specPanel = SpecifierPanelFactory::create(self->getSpecName());
 	
 	// If the panel is valid, get its widget and pack into the hbox
 	if (self->_specPanel) {

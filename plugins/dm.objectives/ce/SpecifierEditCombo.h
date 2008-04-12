@@ -33,8 +33,14 @@ class SpecifierEditCombo
 	// Current SpecifierPanel
 	SpecifierPanelPtr _specPanel;
 	
+    // Combo box containing Specifiers
+    GtkWidget* _specifierCombo;
+
 private:
 	
+    // Get the selected Specifier string
+    std::string getSpecName() const;
+
 	/* GTK CALLBACKS */
 	static void _onChange(GtkWidget* w, SpecifierEditCombo* self);
 	
@@ -50,14 +56,31 @@ public:
 	 * specifiers.
 	 */
 	SpecifierEditCombo(const SpecifierSet& set = Specifier::SET_ALL());
-	
-	/**
-	 * Return the main GtkWidget for this edit panel.
-	 * 
-	 * @return
-	 * A GtkWidget containing all widgets involved in this edit panel.
-	 */
-	GtkWidget* getWidget() const;
+
+    /**
+     * Return the main GtkWidget for this edit panel.
+     *
+     * @return
+     * A GtkWidget containing all widgets involved in this edit panel.
+     */
+    GtkWidget* getWidget() const;
+
+    /**
+     * Return the selected Specifier.
+     *
+     * @return
+     * A const reference to the Specifier object corresponding to the ComboBox
+     * selection.
+     */
+    const Specifier& getSpecifier() const;
+
+    /**
+     * Return the string value associated with the selected Specifier.
+     *
+     * @return
+     * The string value contained within the currently-active SpecifierPanel.
+     */
+    std::string getValue() const;
 };
 
 }
