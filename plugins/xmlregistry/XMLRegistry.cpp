@@ -90,13 +90,12 @@ void XMLRegistry::addKeyObserver(RegistryKeyObserver* observer, const std::strin
 // Removes an observer watching the <observedKey> from the internal list of observers. 
 void XMLRegistry::removeKeyObserver(RegistryKeyObserver* observer) {
 	// Traverse through the keyObserverMap and try to find the specified observer
-	for (KeyObserverMap::iterator i = _keyObservers.begin(); i != _keyObservers.end(); ) {
+    for (KeyObserverMap::iterator i = _keyObservers.begin();
+         i != _keyObservers.end();
+         ++i) 
+    {
 		if (i->second == observer) {
-			// Be sure to increment the iterator with a postfix ++, so that the "old" iterator is passed
-			_keyObservers.erase(i++);
-		}
-		else {
-			i++;
+			_keyObservers.erase(i);
 		}
 	}
 }

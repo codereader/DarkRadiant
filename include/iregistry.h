@@ -132,7 +132,8 @@ public:
      *
      * @param observer
      * Pointer to a RegistryKeyObserver previously registered with
-     * addKeyObserver().
+     * addKeyObserver(). If the RegistryKeyObserver was not previously
+     * registered, no action is taken.
      */
 	virtual void removeKeyObserver(RegistryKeyObserver* observer) = 0;
 };
