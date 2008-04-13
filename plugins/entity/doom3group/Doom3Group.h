@@ -5,7 +5,6 @@
 #include "editable.h"
 #include "entitylib.h"
 #include "pivot.h"
-#include "iregistry.h"
 
 #include "../keyobservers.h"
 #include "../ModelKey.h"
@@ -17,6 +16,7 @@
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
+#include "../OptionalRenderedName.h"
 #include "scene/TraversableNodeSet.h"
 
 namespace entity {
@@ -30,7 +30,7 @@ class Doom3GroupNode;
 class Doom3Group 
 : public Bounded, 
   public Snappable,
-  public RegistryKeyObserver
+  public OptionalRenderedName
 {
 	Doom3Entity _entity;
 	KeyObserverMap m_keyObservers;
@@ -68,9 +68,6 @@ class Doom3Group
 	// brushes).
 	bool m_isModel;
 
-    // Whether the entity name should be rendered as well
-    bool _showEntityName;
-	
 public:
 	CurveNURBS m_curveNURBS;
 	SignalHandlerId m_curveNURBSChanged;
@@ -173,9 +170,6 @@ private:
 	void updateIsModel();
 
 public:
-
-    /* RegistryKeyObserver implementation */
-    void keyChanged(const std::string& key, const std::string& value);
 
 	void nameChanged(const std::string& value);
 	typedef MemberCaller1<Doom3Group, const std::string&, &Doom3Group::nameChanged> NameChangedCaller;
