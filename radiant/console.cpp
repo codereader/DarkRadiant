@@ -207,7 +207,7 @@ void Sys_LogFile(bool enable)
   return length;
 }*/
 
-#include "log/LogStream.h"
+/*#include "log/LogStream.h"
 
 std::ostream& getSysPrintOutputStream() {
 	static applog::LogOutputStream _stream;
@@ -217,4 +217,4 @@ std::ostream& getSysPrintOutputStream() {
 std::ostream& getSysPrintErrorStream() {
 	static applog::LogErrorStream _stream;
 	return _stream;
-}
+}*/

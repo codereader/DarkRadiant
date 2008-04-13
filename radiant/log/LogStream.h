@@ -36,6 +36,18 @@ typedef LogStream<SYS_STANDARD> LogOutputStream;
 typedef LogStream<SYS_ERROR>    LogErrorStream;
 typedef LogStream<SYS_WARNING>  LogWarningStream;
 
+// Accessors to the singleton log streams
+std::ostream& getGlobalOutputStream();
+std::ostream& getGlobalErrorStream();
+std::ostream& getGlobalWarningStream();
+
+// Gets called immediately after entering main()
+// Sets up the stream references for globalOutputStream(), redirects std::cout, etc.
+void initialiseLogStreams();
+
+// Hands back the original streambuf to std::cout
+void shutdownStreams();
+
 } // namespace applog
 
 #endif /* _LOG_STREAM_H_ */

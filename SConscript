@@ -652,7 +652,9 @@ radiant_src = \
 		 'log/Console.cpp',
 		 'log/LogFile.cpp',
 		 'log/LogWriter.cpp',
-		 'log/LogStreamBuf.cpp'
+		 'log/LogStream.cpp',
+		 'log/LogStreamBuf.cpp',
+		 'log/COutRedirector.cpp'
          ]
     ]
 

@@ -27,7 +27,9 @@ LogStreamBuf::LogStreamBuf(int level, int bufferSize) :
 }
 
 LogStreamBuf::~LogStreamBuf() {
-	sync();
+	// greebo: Removed this - at destruction time, there is no need
+	// to sync with the buffer anymore.
+	//sync();
 
 	if (_reserve != NULL) {
 		delete[] _reserve;
