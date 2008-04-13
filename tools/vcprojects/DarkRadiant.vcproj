@@ -2121,6 +2121,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\log\LogLevels.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\log\LogStream.h"
 					>
 				</File>

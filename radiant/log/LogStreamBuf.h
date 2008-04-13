@@ -2,6 +2,7 @@
 #define _LOG_STREAM_BUF_H_
 
 #include <streambuf>
+#include "LogLevels.h"
 
 namespace applog {
 
@@ -15,24 +16,27 @@ class LogStreamBuf :
 	// Internal character buffer
 	char* _reserve;
 
-	int _level;
+	// The associated level, is passed to the LogWriter
+	ELogLevel _level;
 
 public:
 	/**
 	 * greebo: Pass the level and the optional buffersize to the constructor.
-	 *         Level can be something like SYS_ERR, SYS_STD, etc.
+	 *         Level can be something like SYS_ERROR, SYS_STANDARD, etc.
 	 */
 	LogStreamBuf(int level, int bufferSize = 1);
 
+	// Cleans up the buffer
 	virtual ~LogStreamBuf();
 
 protected:
-	// These two get called by the base class streambuf
+	// These two get called by the base class streambuf and are necessary
+	// in order to write the buffer to the device
 	virtual int_type overflow(int_type c);
-
 	virtual int_type sync();
 
 private:
+	// Writes the buffer contents to the log device
 	void writeToBuffer();
 };
 

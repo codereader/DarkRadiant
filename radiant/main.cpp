@@ -263,7 +263,7 @@ int main (int argc, char* argv[]) {
 	
 	// Create the radiant.pid file in the settings folder 
 	// (emits a warning if the file already exists (due to a previous startup failure)) 
-	createPIDFile("radiant.pid");
+	createPIDFile("darkradiant.pid");
 	
 	ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.77f);
 

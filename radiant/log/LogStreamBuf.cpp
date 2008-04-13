@@ -1,13 +1,19 @@
 #include "LogStreamBuf.h"
 
+#include <stdexcept>
 #include "LogWriter.h"
 
 namespace applog {
 
 LogStreamBuf::LogStreamBuf(int level, int bufferSize) :
 	_reserve(NULL),
-	_level(level)
+	_level(static_cast<ELogLevel>(level))
 {
+	// Sanity-check the given int
+	if (level < 0 || level >= static_cast<int>(SYS_NUM_LOGLEVELS)) {
+		throw std::logic_error("Cannot instantiate LogStreamBuf (invalid level).");
+	}
+
 	if (bufferSize) {
 		_reserve = new char[bufferSize];
 		setp(_reserve, _reserve + bufferSize);

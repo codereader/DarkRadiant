@@ -2,6 +2,7 @@
 #define _LOG_WRITER_H_
 
 #include <cstddef>
+#include "LogLevels.h"
 
 typedef struct _GtkTextBuffer GtkTextBuffer;
 typedef struct _GtkTextTag GtkTextTag;
@@ -11,14 +12,9 @@ namespace applog {
 /**
  * greebo: These are the various warning levels. They are mostly used
  *         to "tag" the according output with various colours in the console.
- */
-enum ELogLevel {
-	SYS_VERBOSE = 0,
-	SYS_STANDARD = 1,
-	SYS_WARNING = 2,
-	SYS_ERROR = 3,
-};
 
+ * TODO: Make Console and Logfile derive from an abstract LogDevice class, attached to this Writer.
+ */
 class LogWriter
 {
 	GtkTextBuffer* _buffer;
@@ -31,10 +27,15 @@ class LogWriter
 public:
 	LogWriter();
 
-	void write(const char* p, std::size_t length, int level);
+	/** 
+	 * greebo: Writes the given buffer p with the given length to the 
+	 *         various output devices (i.e. Console and Log file).
+	 */
+	void write(const char* p, std::size_t length, ELogLevel level);
 
-	void disconnectConsoleWindow();
+	void disconnectConsoleWindow(); // TODO: Remove this
 
+	// Contains the static singleton instance of this writer
 	static LogWriter& Instance();
 };
 
