@@ -644,11 +644,15 @@ radiant_src = \
          'modulesystem/DynamicLibraryLoader.cpp',
          'modulesystem/ModuleRegistry.cpp',
          'referencecache/ModelCache.cpp',
-	 'referencecache/NullModel.cpp',
- 	 'referencecache/NullModelNode.cpp',
+         'referencecache/NullModel.cpp',
+         'referencecache/NullModelNode.cpp',
          'referencecache/RadiantReferenceCache.cpp',
 		 'layers/LayerCommandTarget.cpp',
-		 'layers/LayerSystem.cpp'
+		 'layers/LayerSystem.cpp',
+		 'log/Console.cpp',
+		 'log/LogFile.cpp',
+		 'log/LogWriter.cpp',
+		 'log/LogStreamBuf.cpp'
          ]
     ]
 

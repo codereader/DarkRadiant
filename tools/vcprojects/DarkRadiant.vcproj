@@ -2083,6 +2083,64 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="log"
+				>
+				<File
+					RelativePath="..\..\radiant\log\Console.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)\$(InputName)1.obj"
+							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\Console.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogFile.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogFile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogStream.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogStreamBuf.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogStreamBuf.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogWriter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogWriter.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\radiant\darkradiant.rc"

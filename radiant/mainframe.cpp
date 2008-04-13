@@ -106,7 +106,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 #include "brush/BrushModule.h"
 #include "brush/csg/CSG.h"
-#include "console.h"
+#include "log/Console.h"
 #include "entity.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
@@ -1154,7 +1154,7 @@ void MainFrame::Create()
 	    	"console",	// name
 	    	"Console", // tab title
 	    	"iconConsole16.png", // tab icon 
-			ui::Console::Instance().construct(GTK_WINDOW(window)), // page widget
+			ui::Console::Instance().construct(), // page widget
 	    	"Console"
 	    );
     }
@@ -1213,7 +1213,7 @@ void MainFrame::Create()
 		);
 
         // Create the Console
-		GtkWidget* console = ui::Console::Instance().construct(window);
+		GtkWidget* console = ui::Console::Instance().construct();
         
         // Now pack those widgets into the paned widgets
 

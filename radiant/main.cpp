@@ -79,6 +79,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 
 #include "gtkutil/messagebox.h"
 #include "console.h"
+#include "log/LogFile.h"
 #include "map/Map.h"
 #include "mainframe.h"
 #include "settings/PreferenceSystem.h"
@@ -267,7 +268,7 @@ int main (int argc, char* argv[]) {
 	ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.77f);
 
 	// The settings path is set, start logging now
-	Sys_LogFile(true);
+	applog::LogFile::create("darkradiant.log");
 	
 	ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.79f);
 
@@ -321,9 +322,9 @@ int main (int argc, char* argv[]) {
   	// Issue a shutdown() call to all the modules
   	module::GlobalModuleRegistry().shutdownModules();
 
-  // close the log file if any
-  Sys_LogFile(false);
+	// Close the logfile 
+	applog::LogFile::close();
 
-  return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 

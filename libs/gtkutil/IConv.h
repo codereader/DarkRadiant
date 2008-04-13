@@ -5,6 +5,7 @@
 #include <glib/gmessages.h>
 #include <glib/gunicode.h>
 #include <glib/gmem.h>
+#include <string>
 
 namespace gtkutil {
 
