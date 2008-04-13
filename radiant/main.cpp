@@ -146,7 +146,7 @@ class PopupDebugMessageHandler : public DebugMessageHandler
   std::ostringstream m_buffer;
   Lock m_lock;
 public:
-  TextOutputStream& getOutputStream()
+  std::ostream& getOutputStream()
   {
     if(!m_lock.locked())
     {

@@ -50,14 +50,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class DebugMessageHandler
 {
 public:
-  virtual TextOutputStream& getOutputStream() = 0;
+  virtual std::ostream& getOutputStream() = 0;
   virtual bool handleMessage() = 0;
 };
 
 class NullDebugMessageHandler : public NullOutputStream, public DebugMessageHandler
 {
 public:
-  virtual TextOutputStream& getOutputStream()
+  virtual std::ostream& getOutputStream()
   {
     return *this;
   }
@@ -70,7 +70,7 @@ public:
 class DefaultDebugMessageHandler : public DebugMessageHandler
 {
 public:
-  virtual TextOutputStream& getOutputStream()
+  virtual std::ostream& getOutputStream()
   {
     return globalErrorStream();
   }
