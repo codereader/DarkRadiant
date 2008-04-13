@@ -2,7 +2,6 @@
 
 #include "stream/textstream.h"
 #include "string/string.h"
-#include "stream/stringstream.h"
 #include "debugging/debugging.h"
 #include "itextstream.h"
 #include "iregistry.h"
@@ -145,9 +144,9 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 		else {
 			filename[0] = '\0';
 		}
-		StringOutputStream app(256);
-		app << PathCleaned(filename);
-		_appPath = app.str();
+		
+		// Make sure we have forward slashes
+		_appPath = os::standardPath(filename);
 	}
 	// Initialise the relative paths
 	initPaths();

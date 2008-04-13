@@ -74,7 +74,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 
 #include "os/file.h"
 #include "os/path.h"
-#include "stream/stringstream.h"
 #include "stream/textfilestream.h"
 
 #include "gtkutil/messagebox.h"
@@ -144,7 +143,7 @@ public:
 
 class PopupDebugMessageHandler : public DebugMessageHandler
 {
-  StringOutputStream m_buffer;
+  std::ostringstream m_buffer;
   Lock m_lock;
 public:
   TextOutputStream& getOutputStream()

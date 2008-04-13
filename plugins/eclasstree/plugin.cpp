@@ -6,7 +6,6 @@
 #include "iradiant.h"
 #include "ieclass.h"
 
-#include "stream/stringstream.h"
 #include "stream/textstream.h"
 #include "generic/callback.h"
 

@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushModule.h"
 #include "brush/FaceInstance.h"
 
-#include "stream/stringstream.h"
 #include "selection/algorithm/Shader.h"
 #include "xyview/GlobalXYWnd.h"
 
@@ -305,8 +304,8 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
   case eBrushPrism:
     {
       int axis = GetViewAxis();
-      StringOutputStream command;
-      command << c_brushPrism_name << " -sides " << Unsigned(sides) << " -axis " << axis;
+	  std::ostringstream command;
+      command << c_brushPrism_name << " -sides " << sides << " -axis " << axis;
       UndoableCommand undo(command.str());
 
       Brush_ConstructPrism(brush, bounds, sides, axis, shader, projection);
@@ -314,8 +313,8 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
     break;
   case eBrushCone:
     {
-      StringOutputStream command;
-      command << c_brushCone_name << " -sides " << Unsigned(sides);
+      std::ostringstream command;
+      command << c_brushCone_name << " -sides " << sides;
       UndoableCommand undo(command.str());
 
       Brush_ConstructCone(brush, bounds, sides, shader, projection);
@@ -323,8 +322,8 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
     break;
   case eBrushSphere:
     {
-      StringOutputStream command;
-      command << c_brushSphere_name << " -sides " << Unsigned(sides);
+      std::ostringstream command;
+      command << c_brushSphere_name << " -sides " << sides;
       UndoableCommand undo(command.str());
 
       Brush_ConstructSphere(brush, bounds, sides, shader, projection);

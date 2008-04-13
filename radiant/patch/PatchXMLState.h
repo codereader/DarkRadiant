@@ -2,7 +2,6 @@
 #define PATCHXMLSTATE_H_
 
 #include <vector>
-#include "stream/stringstream.h"
 
 class XMLState {
 public:

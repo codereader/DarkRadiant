@@ -3,7 +3,6 @@
 #include "imodule.h"
 #include "ieventmanager.h"
 #include "iradiant.h"
-#include "stream/stringstream.h"
 #include "stream/textstream.h"
 #include "generic/callback.h"
 

@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ientity.h"
 
-#include "stream/stringstream.h"
 #include "math/quaternion.h"
 #include "generic/callback.h"
 #include "stringio.h"
@@ -61,7 +60,7 @@ inline void write_rotation(const Float9 rotation, Entity* entity, const char* ke
   }
   else
   {
-    StringOutputStream value;
+	std::ostringstream value;
     value << rotation[0] << ' '
       << rotation[1] << ' '
       << rotation[2] << ' '

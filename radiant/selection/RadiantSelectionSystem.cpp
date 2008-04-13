@@ -9,7 +9,6 @@
 #include "renderer.h"
 #include "scenelib.h"
 #include "editable.h"
-#include "stream/stringstream.h"
 #include "Selectors.h"
 #include "SelectionTest.h"
 #include "SceneWalkers.h"
@@ -789,7 +788,7 @@ void RadiantSelectionSystem::endMove() {
 	
 	// If we started an undoable operation, end it now and tell the console what happened 
 	if (_undoBegun) {
-		StringOutputStream command;
+		std::ostringstream command;
 
 		if (ManipulatorMode() == eTranslate) {
 			command << "translateTool";

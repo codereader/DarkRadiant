@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "uniquenames.h"
 #include "namekeys.h"
-#include "stream/stringstream.h"
 
 #include "doom3group/Doom3GroupNode.h"
 #include "light/LightShader.h"

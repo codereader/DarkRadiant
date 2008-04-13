@@ -12,7 +12,6 @@
 #include "iradiant.h"
 #include "inamespace.h"
 
-#include "stream/stringstream.h"
 #include "stream/textfilestream.h"
 #include "entitylib.h"
 #include "convert.h"
