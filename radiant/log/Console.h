@@ -3,18 +3,20 @@
 
 #include <gtk/gtktextview.h>
 #include <gtk/gtkmenuitem.h>
-#include <string>
-#include "LogLevels.h"
+#include "LogDevice.h"
 
 namespace ui {
 
 /** 
- * greebo: The Console class encapsulates a GtkTextView represents 
- *         the "device", which the various stream buffers are writing to. 
+ * greebo: The Console class encapsulates a GtkTextView and represents 
+ *         the "device", which the LogWriter is writing its output to. 
+ *
  *         The Console is a singleton which needs to be constructed and packed
  *         during mainframe construction.
  */
-class Console {
+class Console :
+	public applog::LogDevice
+{
 	// The widget for packing into a parent window
 	GtkWidget* _scrolled;
 	GtkWidget* _textView;
@@ -36,14 +38,14 @@ public:
 	GtkWidget* getWidget();
 
 	/**
-	 * greebo: Writes the given output string <str> to the Console.
-	 *         The log level indicates which tag is used for colouring the output.
+	 * greebo: Writes the given output string to the Console.
+	 * The log level indicates which tag is used for colouring the output.
+	 * (Note: this gets called by the LogWriter automatically).
 	 */
-	void write(const std::string& str, applog::ELogLevel level);
+	void writeLog(const std::string& outputStr, applog::ELogLevel level);
 
 	/**
-	 * greebo: Destroys the text buffer and clears the pointers. Subsequent
-	 *         calls to getTextView() will return NULL.
+	 * greebo: Detaches itself from the LogWriter
 	 */ 
 	void shutdown();
 

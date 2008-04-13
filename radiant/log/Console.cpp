@@ -46,9 +46,12 @@ Console::Console() :
 	errorTag = gtk_text_buffer_create_tag(_buffer, "red_foreground", "foreground-gdk", &red, 0);
 	warningTag = gtk_text_buffer_create_tag(_buffer, "yellow_foreground", "foreground-gdk", &yellow, 0);
 	standardTag = gtk_text_buffer_create_tag(_buffer, "black_foreground", "foreground-gdk", &black, 0);
+
+	// We're ready to catch log output, register ourselves
+	applog::LogWriter::Instance().attach(this);
 }
 
-void Console::write(const std::string& str, applog::ELogLevel level) {
+void Console::writeLog(const std::string& outputStr, applog::ELogLevel level) {
 	// Select a tag according to the log level
 	GtkTextTag* tag;
 
@@ -73,7 +76,9 @@ void Console::write(const std::string& str, applog::ELogLevel level) {
 	static GtkTextMark* end = gtk_text_buffer_create_mark(_buffer, "end", &iter, FALSE);
 	
 	// GTK expects UTF8 characters, so convert the incoming string
-	std::string converted = gtkutil::IConv::localeToUTF8(str);
+	std::string converted = gtkutil::IConv::localeToUTF8(outputStr);
+
+	// Insert into the text buffer
 	gtk_text_buffer_insert_with_tags(_buffer, &iter, 
 		converted.c_str(), gint(converted.size()), tag, 0);
 
@@ -86,8 +91,7 @@ GtkWidget* Console::getWidget() {
 }
 
 void Console::shutdown() {
-	gtk_widget_destroy(_textView);
-	_textView = NULL;
+	applog::LogWriter::Instance().detach(this);
 }
 
 Console& Console::Instance() {

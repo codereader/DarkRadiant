@@ -2113,6 +2113,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\log\LogDevice.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\log\LogFile.cpp"
 					>
 				</File>

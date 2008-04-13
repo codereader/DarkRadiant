@@ -10,6 +10,7 @@
 
 #include "string/string.h"
 #include "gtkutil/messagebox.h"
+#include "LogWriter.h"
 
 namespace applog {
 
@@ -18,7 +19,41 @@ LogFile::LogFile(const std::string& filename) :
 	_logStream(_logFilename.c_str())
 {
 	if (_logStream.good()) {
-		globalOutputStream() << "Started logging to " << _logFilename << "\n";
+		// Register this class as logdevice
+		LogWriter::Instance().attach(this);
+	}
+	else {
+		gtk_MessageBox(0, "Failed to create log file, check write permissions in Radiant directory.\n",
+			"LogFile Error", eMB_OK, eMB_ICONERROR );
+	}
+}
+
+LogFile::~LogFile() {
+	time_t localtime;
+	time(&localtime);
+
+	globalOutputStream() << "Closing log file at " << ctime(&localtime) << "\n";
+	
+	_logStream.flush();
+	_logStream.close();
+
+	LogWriter::Instance().detach(this);
+}
+
+void LogFile::writeLog(const std::string& outputStr, ELogLevel level) {
+	// Insert the string into the stream and flush the buffer
+	_logStream << outputStr;
+	_logStream.flush();
+}
+
+// Creates the singleton logfile with the given filename
+void LogFile::create(const std::string& filename) {
+	if (InstancePtr() == NULL) {
+		// No logfile yet, create one
+		InstancePtr() = LogFilePtr(new LogFile(filename));
+
+		// Write the initialisation info to the logfile.
+		globalOutputStream() << "Started logging to " << InstancePtr()->_logFilename << "\n";
 
 		time_t localtime;
 		time(&localtime);
@@ -31,33 +66,6 @@ LogFile::LogFile(const std::string& filename) :
 		gtkVersion += intToStr(gtk_micro_version);
 
         globalOutputStream() << "GTK+ Version: " << gtkVersion.c_str() << "\n";
-	}
-	else {
-		gtk_MessageBox(0, "Failed to create log file, check write permissions in Radiant directory.\n",
-			"Console logging", eMB_OK, eMB_ICONERROR );
-	}
-}
-
-LogFile::~LogFile() {
-	time_t localtime;
-	time(&localtime);
-
-	globalOutputStream() << "Closing log file at " << ctime(&localtime) << "\n";
-	
-	_logStream.flush();
-	_logStream.close();
-}
-
-void LogFile::write(const std::string& str) {
-	_logStream << str;
-	_logStream.flush();
-}
-
-// Creates the singleton logfile with the given filename
-void LogFile::create(const std::string& filename) {
-	if (InstancePtr() != NULL) {
-		// No logfile yet, create one
-		InstancePtr() = LogFilePtr(new LogFile(filename));
 	}
 }
 
