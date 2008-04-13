@@ -236,14 +236,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\console.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\console.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\entity.cpp"
 				>
 			</File>
