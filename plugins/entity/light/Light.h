@@ -18,6 +18,7 @@
 #include "../namekeys.h"
 #include "../entity.h"
 #include "../Doom3Entity.h"
+#include "../OptionalRenderedName.h"
 
 #include "Renderables.h"
 #include "LightShader.h"
@@ -82,7 +83,8 @@ class Light :
 	public Cullable,
 	public Bounded,
 	public Editable,
-	public Snappable
+	public Snappable,
+    public OptionalRenderedName
 {
   entity::Doom3Entity m_entity;
   KeyObserverMap m_keyObservers;

@@ -152,7 +152,7 @@ void EclassModel::renderWireframe(Renderer& renderer,
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(renderer, volume, localToWorld, selected);
-	if(GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
+	if (isNameVisible()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }

@@ -130,7 +130,7 @@ void Speaker::renderWireframe(Renderer& renderer,
 	if (SpeakerSettings().showAllSpeakerRadii())
 		renderer.addRenderable(m_speakerRadii, localToWorld);
 	
-	if(GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
+	if (isNameVisible()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }

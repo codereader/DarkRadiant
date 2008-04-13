@@ -122,7 +122,7 @@ void GenericEntity::renderWireframe(Renderer& renderer,
 	renderer.addRenderable(m_aabb_wire, localToWorld);
 	renderArrow(renderer, volume, localToWorld);
 	
-	if(GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
+	if (isNameVisible()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }
