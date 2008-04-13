@@ -14,7 +14,6 @@
 
 #include "stream/textfilestream.h"
 #include "entitylib.h"
-#include "convert.h"
 #include "os/path.h"
 #include "MapImportInfo.h"
 #include "MapExportInfo.h"

@@ -262,12 +262,6 @@ inline bool string_parse_size(const char* string, std::size_t& i)
 
 #define RETURN_FALSE_IF_FAIL(expression) if(!expression) return false; else
 
-template<typename TextOutputStreamType>
-inline TextOutputStreamType& ostream_write(TextOutputStreamType& outputStream, const Vector3& v)
-{
-  return outputStream << '(' << v.x() << ' ' << v.y() << ' ' << v.z() << ')';
-}
-
 inline void Bool_importString(bool& self, const char* string)
 {
   self = string_equal(string, "true");
