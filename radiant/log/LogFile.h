@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <boost/shared_ptr.hpp>
+#include "LogDevice.h"
 
 namespace applog {
 
@@ -10,7 +11,9 @@ namespace applog {
 class LogFile;
 typedef boost::shared_ptr<LogFile> LogFilePtr;
 
-class LogFile {
+class LogFile :
+	public LogDevice
+{
 	// The log file name including path
 	std::string _logFilename;
 
@@ -28,9 +31,10 @@ public:
 	~LogFile();
 
 	/** 
-	 * Use this to write a string to the logfile.
+	 * Use this to write a string to the logfile. This usually gets
+	 * called by the LogWriter class, but it can be called independently.
 	 */
-	void write(const std::string& str);
+	void writeLog(const std::string& outputStr, ELogLevel level);
 
 	// Creates the singleton logfile with the given filename
 	static void create(const std::string& filename);
