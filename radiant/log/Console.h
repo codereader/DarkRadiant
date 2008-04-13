@@ -2,7 +2,8 @@
 #define _CONSOLE_H_
 
 #include <gtk/gtktextview.h>
-#include <cstddef>
+#include <gtk/gtkmenuitem.h>
+#include <string>
 #include "LogLevels.h"
 
 namespace ui {
@@ -14,29 +15,31 @@ namespace ui {
  *         during mainframe construction.
  */
 class Console {
-	// The GTK textview
+	// The widget for packing into a parent window
+	GtkWidget* _scrolled;
 	GtkWidget* _textView;
+
+	GtkTextBuffer* _buffer;
 	
-	// Private constructor
+	// The tags for colouring the output text
+	GtkTextTag* errorTag;
+	GtkTextTag* warningTag;
+	GtkTextTag* standardTag;
+
+	// Private constructor, creates the Gtk structures
 	Console();
 
 public:
-	/**
-	 * greebo: Constructs the textview and returns the widget for 
-	 *         packing the view into a parent container.
+	/** 
+	 * greebo: Returns the widget pointer for packing into a parent container.
 	 */
-	GtkWidget* construct();
+	GtkWidget* getWidget();
 
 	/**
-	 * greebo: Returns the textview widget pointer or NULL if not constructed yet.
-	 */
-	GtkWidget* getTextView(); // TODO: Remove this
-
-	/**
-	 * greebo: Writes the given data starting at buf with given length to the Console.
+	 * greebo: Writes the given output string <str> to the Console.
 	 *         The log level indicates which tag is used for colouring the output.
 	 */
-	void write(const char* buf, std::size_t length, applog::ELogLevel level);
+	void write(const std::string& str, applog::ELogLevel level);
 
 	/**
 	 * greebo: Destroys the text buffer and clears the pointers. Subsequent
@@ -50,8 +53,8 @@ public:
 private:
 	// Static GTK callbacks (ported from GtkRadiant code)
 	static gboolean destroy_set_null(GtkWindow* widget, GtkWidget** p);
-	static void console_clear();
-	static void console_populate_popup(GtkTextView* textview, GtkMenu* menu, gpointer user_data);
+	static void onClearConsole(GtkMenuItem* menuitem, Console* self);
+	static void console_populate_popup(GtkTextView* textview, GtkMenu* menu, Console* self);
 };
 
 } // namespace ui

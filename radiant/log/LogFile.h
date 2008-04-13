@@ -27,7 +27,10 @@ public:
 
 	~LogFile();
 
-	void write(const char* buf, std::size_t length);
+	/** 
+	 * Use this to write a string to the logfile.
+	 */
+	void write(const std::string& str);
 
 	// Creates the singleton logfile with the given filename
 	static void create(const std::string& filename);

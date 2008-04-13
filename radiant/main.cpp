@@ -298,7 +298,7 @@ int main (int argc, char* argv[]) {
 	}
 
 	// Remove the radiant.pid file again after loading all the settings
-	removePIDFile("radiant.pid");
+	removePIDFile("darkradiant.pid");
 
 #ifdef _PROFILE
 	// greebo: In profile builds, check if we should run an automated test
