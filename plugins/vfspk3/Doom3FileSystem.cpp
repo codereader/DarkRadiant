@@ -56,7 +56,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "generic/callback.h"
 #include "string/string.h"
-#include "stream/stringstream.h"
 #include "os/path.h"
 #include "os/dir.h"
 #include "moduleobservers.h"

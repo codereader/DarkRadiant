@@ -8,7 +8,6 @@
 
 #include "brush/Brush.h"	// for BrushVisitor declaration
 
-#include "stream/stringstream.h"
 #include <fstream>
 
 /* Exporterclass which will pass every visit-call to a special formatexporter. 
@@ -18,9 +17,9 @@ class CExportFormatWavefront:
 {
 	std::ofstream& m_file;
 
-	StringOutputStream vertexbuffer;
-	StringOutputStream texcoordbuffer;
-	StringOutputStream facebuffer;
+	std::ostringstream vertexbuffer;
+	std::ostringstream texcoordbuffer;
+	std::ostringstream facebuffer;
     
 	size_t vertices;
 	size_t exported;

@@ -5,7 +5,6 @@
 #include "iuimanager.h"
 #include "iradiant.h"
 
-#include "stream/stringstream.h"
 #include "stream/textstream.h"
 #include "generic/callback.h"
 

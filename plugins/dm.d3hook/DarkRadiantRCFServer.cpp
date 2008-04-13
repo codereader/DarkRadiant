@@ -1,7 +1,6 @@
 #include "DarkRadiantRCFServer.h"
 #include <RCF/TcpEndpoint.hpp>
 
-#include "stream/stringstream.h"
 #include "stream/textstream.h"
 
 #include "iregistry.h"

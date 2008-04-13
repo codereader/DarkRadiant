@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "igl.h"
 #include "stream/textstream.h"
-#include "stream/stringstream.h"
 
 #include <gtk/gtkdrawingarea.h>
 #include <gtk/gtkglwidget.h>

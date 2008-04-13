@@ -87,7 +87,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtktable.h>
 
 #include "scenelib.h"
-#include "stream/stringstream.h"
 #include "signal/isignal.h"
 #include "os/path.h"
 #include "os/file.h"
@@ -664,7 +663,7 @@ void Scene_SnapToGrid_Component_Selected(scene::Graph& graph, float snap)
 
 void Selection_SnapToGrid()
 {
-  StringOutputStream command;
+  std::ostringstream command;
   command << "snapSelected -grid " << GlobalGrid().getGridSize();
   UndoableCommand undo(command.str());
 

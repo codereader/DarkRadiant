@@ -16,7 +16,6 @@
 #include "os/file.h"
 #include "MapImportInfo.h"
 #include "map/algorithm/Traverse.h"
-#include "stream/stringstream.h"
 #include "stream/textfilestream.h"
 #include "referencecache/NullModelNode.h"
 

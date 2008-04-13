@@ -5,7 +5,6 @@
 #include "D3ProcessChecker.h"
 #include <gtk/gtkmain.h>
 
-#include "stream/stringstream.h"
 #include "stream/textstream.h"
 
 namespace {

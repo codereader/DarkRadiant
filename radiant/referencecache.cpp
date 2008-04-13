@@ -42,7 +42,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "os/path.h"
 #include "stream/textfilestream.h"
-#include "stream/stringstream.h"
 #include "os/file.h"
 #include "moduleobserver.h"
 #include "moduleobservers.h"

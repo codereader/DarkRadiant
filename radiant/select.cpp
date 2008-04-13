@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <vector>
 
-#include "stream/stringstream.h"
 #include "signal/isignal.h"
 #include "shaderlib.h"
 #include "scenelib.h"
@@ -269,7 +268,7 @@ void Nudge(int nDim, float fNudge)
 
 void Selection_NudgeZ(float amount)
 {
-  StringOutputStream command;
+  std::ostringstream command;
   command << "nudgeSelected -axis z -amount " << amount;
   UndoableCommand undo(command.str());
 
