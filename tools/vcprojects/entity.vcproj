@@ -307,6 +307,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\entity\OptionalRenderedName.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\entity\origin.cpp"
 				>
 			</File>
