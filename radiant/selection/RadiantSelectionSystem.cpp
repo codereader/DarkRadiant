@@ -616,15 +616,15 @@ void RadiantSelectionSystem::scale(const Vector3& scaling) {
 }
 
 // Dump the translation, rotation, scale to the output stream
-void RadiantSelectionSystem::outputTranslation(TextOutputStream& ostream) {
+void RadiantSelectionSystem::outputTranslation(std::ostream& ostream) {
 	ostream << " -xyz " << _translation.x() << " " << _translation.y() << " " << _translation.z();
 }
 
-void RadiantSelectionSystem::outputRotation(TextOutputStream& ostream) {
+void RadiantSelectionSystem::outputRotation(std::ostream& ostream) {
 	ostream << " -eulerXYZ " << _rotation.x() << " " << _rotation.y() << " " << _rotation.z();
 }
 
-void RadiantSelectionSystem::outputScale(TextOutputStream& ostream) {
+void RadiantSelectionSystem::outputScale(std::ostream& ostream) {
 	ostream << " -scale " << _scale.x() << " " << _scale.y() << " " << _scale.z();
 }
 

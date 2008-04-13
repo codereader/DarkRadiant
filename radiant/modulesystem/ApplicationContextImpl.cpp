@@ -34,11 +34,11 @@ const std::string& ApplicationContextImpl::getBitmapsPath() const {
 	return _bitmapsPath;
 }
 
-TextOutputStream& ApplicationContextImpl::getOutputStream() const {
+std::ostream& ApplicationContextImpl::getOutputStream() const {
 	return globalOutputStream();
 }
 
-TextOutputStream& ApplicationContextImpl::getErrorStream() const {
+std::ostream& ApplicationContextImpl::getErrorStream() const {
 	return globalErrorStream();
 }
 

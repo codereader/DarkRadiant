@@ -26,37 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <algorithm>
 #include <vector>
 
-class BufferOutputStream : public TextOutputStream
-{
-  std::vector<char> m_buffer;
-public:
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    m_buffer.insert(m_buffer.end(), buffer, buffer+length);
-    return length;
-  }
-  const char* data() const
-  {
-    return &(*m_buffer.begin());
-  }
-  std::size_t size() const
-  {
-    return m_buffer.size();
-  }
-  void clear()
-  {
-    std::vector<char> empty;
-    std::swap(empty, m_buffer);
-  }
-};
-
-template<typename T>
-inline BufferOutputStream& operator<<(BufferOutputStream& ostream, const T& t)
-{
-  return ostream_write(ostream, t);
-}
-
-
 class BufferInputStream : public TextInputStream
 {
   const char* m_read;

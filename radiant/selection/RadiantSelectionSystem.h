@@ -160,9 +160,9 @@ public:
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scaling);
 	
-	void outputTranslation(TextOutputStream& ostream);
-	void outputRotation(TextOutputStream& ostream);
-	void outputScale(TextOutputStream& ostream);
+	void outputTranslation(std::ostream& ostream);
+	void outputRotation(std::ostream& ostream);
+	void outputScale(std::ostream& ostream);
 	
 	void rotateSelected(const Quaternion& rotation);
 	void translateSelected(const Vector3& translation);

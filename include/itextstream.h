@@ -76,37 +76,6 @@ public:
   
 };
 
-/// \brief A write-only character-stream.
-/*class TextOutputStream :
-	public std::ostream
-{
-public:
-	/// \brief Attempts to write \p length characters to the stream from \p buffer.
-	/// Returns the number of characters actually read from \p buffer.
-	//virtual std::size_t write(const char* buffer, std::size_t length) = 0;
-};*/
-typedef std::ostream TextOutputStream;
-
-/// \brief Calls the overloaded function ostream_write() to perform text formatting specific to the type being written.
-/*! Note that ostream_write() is not globally defined - it must be defined once for each type supported.\n
-To support writing a custom type MyClass to any kind of text-output-stream with operator<<:
-\code
-template<typename TextOutputStreamType>
-TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const MyClass& myClass)
-{
-  return ostream << myClass.getName() << ' ' << myClass.getText();
-}
-\endcode
-Expressing this as a template allows it to be used directly with any concrete text-output-stream type, not just the abstract TextOutputStream\n
-\n
-This overload writes a single character to any text-output-stream - ostream_write(TextOutputStreamType& ostream, char c).
-*/
-/*template<typename T>
-inline TextOutputStream& operator<<(TextOutputStream& ostream, const T& t)
-{
-  return ostream_write(ostream, t);
-}*/
-
 class NullOutputBuf :
 	public std::streambuf
 {
@@ -123,28 +92,24 @@ class NullOutputStream :
 	NullOutputBuf _nullBuf;
 public:
 	NullOutputStream() :
-		TextOutputStream(&_nullBuf)
+		std::ostream(&_nullBuf)
 	{}
-
-	std::size_t write(const char*, std::size_t length) {
-		return length;
-	}
 };
 
 class OutputStreamHolder
 {
   NullOutputStream m_nullOutputStream;
-  TextOutputStream* m_outputStream;
+  std::ostream* m_outputStream;
 public:
   OutputStreamHolder()
     : m_outputStream(&m_nullOutputStream)
   {
   }
-  void setOutputStream(TextOutputStream& outputStream)
+  void setOutputStream(std::ostream& outputStream)
   {
     m_outputStream = &outputStream;
   }
-  TextOutputStream& getOutputStream()
+  std::ostream& getOutputStream()
   {
     return *m_outputStream;
   }
@@ -153,16 +118,15 @@ public:
 typedef Static<OutputStreamHolder> GlobalOutputStream;
 
 /// \brief Returns the global output stream. Used to display messages to the user.
-inline TextOutputStream& globalOutputStream()
+inline std::ostream& globalOutputStream()
 {
   return GlobalOutputStream::instance().getOutputStream();
 }
 
-class ErrorStreamHolder : public OutputStreamHolder {};
-typedef Static<ErrorStreamHolder> GlobalErrorStream;
+typedef Static<OutputStreamHolder> GlobalErrorStream;
 
 /// \brief Returns the global error stream. Used to display error messages to the user.
-inline TextOutputStream& globalErrorStream()
+inline std::ostream& globalErrorStream()
 {
   return GlobalErrorStream::instance().getOutputStream();
 }
