@@ -92,10 +92,13 @@ void XMLRegistry::removeKeyObserver(RegistryKeyObserver* observer) {
 	// Traverse through the keyObserverMap and try to find the specified observer
     for (KeyObserverMap::iterator i = _keyObservers.begin();
          i != _keyObservers.end();
-         ++i) 
+         /* in-loop increment */) 
     {
 		if (i->second == observer) {
-			_keyObservers.erase(i);
+			_keyObservers.erase(i++);
+		}
+		else {
+			i++;
 		}
 	}
 }
