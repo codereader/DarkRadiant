@@ -77,8 +77,7 @@ inline bool operator<(const UTF8Character& self, const UTF8Character& other)
 }
 
 /// \brief Writes \p c to \p ostream in Hex form. Useful for debugging.
-template<typename TextOutputStreamType>
-inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const UTF8Character& c)
+inline std::ostream& operator<<(std::ostream& ostream, const UTF8Character& c)
 {
   for(const char* p = c.buffer; p != c.buffer + c.length; ++p)
   {
@@ -278,8 +277,7 @@ public:
 };
 
 /// \brief Writes \p convert to \p ostream after decoding each character from extended-ascii to UTF-8.
-template<typename TextOutputStreamType>
-inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const ConvertLocaleToUTF8& convert)
+inline std::ostream& operator<<(std::ostream& ostream, const ConvertLocaleToUTF8& convert)
 {
   if(globalCharacterSet().isUTF8())
   {

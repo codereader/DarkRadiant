@@ -52,7 +52,8 @@ public:
 };
 
 /// \brief A wrapper around a file input stream opened for writing in text mode. Similar to std::ofstream.
-class TextFileOutputStream : public TextOutputStream
+typedef std::ofstream TextFileOutputStream;
+/*class TextFileOutputStream : public TextOutputStream
 {
   FILE* m_file;
 public:
@@ -81,7 +82,7 @@ template<typename T>
 inline TextFileOutputStream& operator<<(TextFileOutputStream& ostream, const T& t)
 {
   return ostream_write(ostream, t);
-}
+}*/
 
 
 #endif

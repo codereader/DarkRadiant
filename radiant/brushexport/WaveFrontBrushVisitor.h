@@ -10,6 +10,7 @@
 
 #include "stream/stringstream.h"
 #include "stream/textfilestream.h"
+#include <fstream>
 
 /* Exporterclass which will pass every visit-call to a special formatexporter. 
  */
@@ -43,9 +44,9 @@ public:
       {
         m_file << "\ng " << "Brush" << static_cast<int>(exported) << "\n";
         brush->forEachFace(*this);
-        m_file << vertexbuffer.c_str() << "\n";
-        m_file << texcoordbuffer.c_str();
-        m_file << facebuffer.c_str() << "\n";
+        m_file << vertexbuffer.str() << "\n";
+        m_file << texcoordbuffer.str();
+        m_file << facebuffer.str() << "\n";
         vertexbuffer.clear();
         texcoordbuffer.clear();
         facebuffer.clear();

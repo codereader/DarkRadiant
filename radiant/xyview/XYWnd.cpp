@@ -662,7 +662,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	status << "x:: " << FloatFormat(m_mousePosition[0], 6, 1)
 			<< "  y:: " << FloatFormat(m_mousePosition[1], 6, 1)
 			<< "  z:: " << FloatFormat(m_mousePosition[2], 6, 1);
-	g_pParentWnd->SetStatusText(g_pParentWnd->m_position_status, status.c_str());
+	g_pParentWnd->SetStatusText(g_pParentWnd->m_position_status, status.str());
 
 	if (GlobalXYWnd().showCrossHairs()) {
 		queueDraw();
@@ -914,7 +914,7 @@ void XYWnd::drawGrid() {
 		if (!GlobalXYWnd().showAxes()) {
 			glRasterPos2d ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
 
-			GlobalOpenGL().drawString(getViewTypeTitle(m_viewType).c_str());
+			GlobalOpenGL().drawString(getViewTypeTitle(m_viewType));
 		}
 	}
 
@@ -1131,17 +1131,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
 
     glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale, 0.0f);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
     dimensions.clear();
     
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
     dimensions.clear();
 
     glRasterPos3f (vMinBounds[nDim1] + 4, vMaxBounds[nDim2] + 8 / m_fScale, 0.0f);
     dimensions << "(" << g_pOrgStrings[0][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[0][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
   }
   else if (m_viewType == XZ)
   {
@@ -1170,17 +1170,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
 
     glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0f  / m_fScale);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
     dimensions.clear();
     
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
     dimensions.clear();
 
     glRasterPos3f (vMinBounds[nDim1] + 4, 0, vMaxBounds[nDim2] + 8 / m_fScale);
     dimensions << "(" << g_pOrgStrings[1][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[1][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
   }
   else
   {
@@ -1209,17 +1209,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
 
     glRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
     dimensions.clear();
     
     glRasterPos3f (0, vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
     dimensions.clear();
 
     glRasterPos3f (0, vMinBounds[nDim1] + 4.0f, vMaxBounds[nDim2] + 8 / m_fScale);
     dimensions << "(" << g_pOrgStrings[2][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[2][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.c_str());
+    GlobalOpenGL().drawString(dimensions.str());
   }
 }
 
@@ -1497,9 +1497,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 }
 
 void XYWnd::onEntityCreate(const std::string& item) {
-	StringOutputStream command;
-	command << "entityCreate -class " << item.c_str();
-	UndoableCommand undo(command.c_str());
+	UndoableCommand undo("entityCreate -class " + item);
 	Vector3 point;
 	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
 	Entity_createFromSelection(item.c_str(), point);

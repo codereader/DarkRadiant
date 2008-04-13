@@ -157,13 +157,13 @@ public:
   bool handleMessage()
   {
     getOutputStream() << "----------------\n";
-    globalErrorStream() << m_buffer.c_str();
+    globalErrorStream() << m_buffer.str();
     if(!m_lock.locked())
     {
       ScopedLock lock(m_lock);
 #if defined _DEBUG
       m_buffer << "Break into the debugger?\n";
-      bool handled = gtk_MessageBox(0, m_buffer.c_str(), "Radiant - Runtime Error", eMB_YESNO, eMB_ICONERROR) == eIDNO;
+      bool handled = gtk_MessageBox(0, m_buffer.str().c_str(), "Radiant - Runtime Error", eMB_YESNO, eMB_ICONERROR) == eIDNO;
       m_buffer.clear();
       return handled;
 #else

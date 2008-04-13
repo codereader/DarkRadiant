@@ -5,6 +5,7 @@
 #include "math/Vector2.h"
 #include "stream/stringstream.h"
 #include "stream/textstream.h"
+#include "string/string.h"
 #include "iradiant.h"
 
 ClipPoint::ClipPoint() {
@@ -30,9 +31,7 @@ ClipPoint::operator Vector3&() {
 
 /* Drawing clip points */
 void ClipPoint::Draw(int num, float scale) {
-	StringOutputStream label(4);
-	label << num;
-	Draw(label.c_str(), scale);
+	Draw(intToStr(num), scale);
 }
 
 void ClipPoint::Draw(const std::string& label, float scale) {

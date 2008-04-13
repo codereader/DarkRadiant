@@ -666,7 +666,7 @@ void Selection_SnapToGrid()
 {
   StringOutputStream command;
   command << "snapSelected -grid " << GlobalGrid().getGridSize();
-  UndoableCommand undo(command.c_str());
+  UndoableCommand undo(command.str());
 
   if(GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
   {
@@ -1154,8 +1154,7 @@ void MainFrame::Create()
 	    	"console",	// name
 	    	"Console", // tab title
 	    	"iconConsole16.png", // tab icon 
-	    	Console_constructWindow(
-	    		GTK_WINDOW(window)), // page widget
+			ui::Console::Instance().construct(GTK_WINDOW(window)), // page widget
 	    	"Console"
 	    );
     }
@@ -1214,7 +1213,7 @@ void MainFrame::Create()
 		);
 
         // Create the Console
-		GtkWidget* console = Console_constructWindow(window);
+		GtkWidget* console = ui::Console::Instance().construct(window);
         
         // Now pack those widgets into the paned widgets
 
@@ -1449,6 +1448,9 @@ void MainFrame::SaveWindowInfo() {
 
 void MainFrame::Shutdown()
 {
+	// Shutdown the console
+	ui::Console::Instance().shutdown();
+
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
 	

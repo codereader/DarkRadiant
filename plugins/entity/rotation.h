@@ -71,7 +71,7 @@ inline void write_rotation(const Float9 rotation, Entity* entity, const char* ke
       << rotation[6] << ' '
       << rotation[7] << ' '
       << rotation[8];
-    entity->setKeyValue(key, value.c_str());
+    entity->setKeyValue(key, value.str());
   }
 }
 inline void read_rotation(Float9 rotation, const std::string& value)

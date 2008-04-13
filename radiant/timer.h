@@ -116,7 +116,7 @@ public:
   ~ScopeTimer()
   {
     double elapsed_time = m_timer.elapsed_msec() / 1000.f;
-    globalOutputStream() << m_message << " timer: " << FloatFormat(elapsed_time, 5, 2) << " second(s) elapsed\n";
+	globalOutputStream() << m_message << " timer: " << std::string(FloatFormat(elapsed_time, 5, 2)) << " second(s) elapsed\n";
   }
 };
 

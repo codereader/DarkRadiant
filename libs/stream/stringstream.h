@@ -113,7 +113,9 @@ public:
 
 /// \brief A TextOutputStream which writes to a StringBuffer.
 /// Similar to std::stringstream.
-class StringOutputStream : public TextOutputStream
+typedef std::ostringstream StringOutputStream;
+
+/*class StringOutputStream : public TextOutputStream
 {
   StringBuffer m_string;
 public:
@@ -165,13 +167,13 @@ public:
   {
     m_string.clear();
   }
-};
+};*/
 
-template<typename T>
+/*template<typename T>
 inline StringOutputStream& operator<<(StringOutputStream& ostream, const T& t)
 {
   return ostream_write(ostream, t);
-}
+}*/
 
 
 #endif
