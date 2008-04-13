@@ -4,9 +4,6 @@
 #include <cstddef>
 #include "LogLevels.h"
 
-typedef struct _GtkTextBuffer GtkTextBuffer;
-typedef struct _GtkTextTag GtkTextTag;
-
 namespace applog {
 
 /**
@@ -17,23 +14,12 @@ namespace applog {
  */
 class LogWriter
 {
-	GtkTextBuffer* _buffer;
-	
-	// The tags needed for the console output
-	static GtkTextTag* errorTag;
-	static GtkTextTag* warningTag;
-	static GtkTextTag* standardTag;
-
 public:
-	LogWriter();
-
 	/** 
 	 * greebo: Writes the given buffer p with the given length to the 
 	 *         various output devices (i.e. Console and Log file).
 	 */
 	void write(const char* p, std::size_t length, ELogLevel level);
-
-	void disconnectConsoleWindow(); // TODO: Remove this
 
 	// Contains the static singleton instance of this writer
 	static LogWriter& Instance();

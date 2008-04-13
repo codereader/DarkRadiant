@@ -1154,7 +1154,7 @@ void MainFrame::Create()
 	    	"console",	// name
 	    	"Console", // tab title
 	    	"iconConsole16.png", // tab icon 
-			ui::Console::Instance().construct(), // page widget
+			ui::Console::Instance().getWidget(), // page widget
 	    	"Console"
 	    );
     }
@@ -1213,7 +1213,7 @@ void MainFrame::Create()
 		);
 
         // Create the Console
-		GtkWidget* console = ui::Console::Instance().construct();
+		GtkWidget* console = ui::Console::Instance().getWidget();
         
         // Now pack those widgets into the paned widgets
 

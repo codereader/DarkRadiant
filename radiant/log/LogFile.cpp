@@ -48,8 +48,8 @@ LogFile::~LogFile() {
 	_logStream.close();
 }
 
-void LogFile::write(const char* buf, std::size_t length) {
-	_logStream.write(buf, length);
+void LogFile::write(const std::string& str) {
+	_logStream << str;
 	_logStream.flush();
 }
 
