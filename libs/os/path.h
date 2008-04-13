@@ -223,69 +223,8 @@ inline MatchFileExtension<Functor> matchFileExtension(const char* extension, con
   return MatchFileExtension<Functor>(extension, functor);
 }
 
-class PathCleaned
-{
-public:
-  const char* m_path;
-  PathCleaned(const char* path) : m_path(path)
-  {
-  }
-};
-
-/// \brief Writes \p path to \p ostream with dos-style separators replaced by unix-style separators.
-inline std::ostream& operator<<(std::ostream& ostream, const PathCleaned& path)
-{
-  const char* i = path.m_path;
-  for(; *i != '\0'; ++i)
-  {
-    if(*i == '\\')
-    {
-      ostream << '/';
-    }
-    else
-    {
-      ostream << *i;
-    }
-  }
-  return ostream;
-}
-
-class DirectoryCleaned
-{
-public:
-  const char* m_path;
-  DirectoryCleaned(const char* path) : m_path(path)
-  {
-  }
-};
-
-/// \brief Writes \p path to \p ostream with dos-style separators replaced by unix-style separators, and appends a separator if necessary.
-template<typename TextOutputStreamType>
-TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const DirectoryCleaned& path)
-{
-  const char* i = path.m_path;
-  for(; *i != '\0'; ++i)
-  {
-    if(*i == '\\')
-    {
-      ostream << '/';
-    }
-    else
-    {
-      ostream << *i;
-    }
-  }
-  char c = *(i - 1);
-  if(c != '/' && c != '\\')
-  {
-    ostream << '/';
-  }
-  return ostream;
-}
-
 /** General utility functions for OS-related tasks
  */
- 
 namespace os {
  
     /** Convert the slashes in a Doom 3 path to forward-slashes. Doom 3 accepts either
