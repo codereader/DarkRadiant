@@ -82,8 +82,7 @@ void EClassManager::realise() {
 		return; // nothing to do anymore
 	}
 
-	globalOutputStream() << "searching vfs directory " << 
-							makeQuoted("def") << " for *.def\n";
+	globalOutputStream() << "searching vfs directory 'def' for *.def\n";
 	GlobalFileSystem().forEachFile("def/", "def", LoadFileCaller(*this));
 
     // Resolve inheritance on the model classes

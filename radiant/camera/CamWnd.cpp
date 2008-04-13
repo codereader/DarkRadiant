@@ -568,7 +568,7 @@ void CamWnd::Cam_Draw() {
 
 	glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 1.0f, 0.0f);
 
-	GlobalOpenGL().drawString(render::RenderStatistics::Instance().getStatString().c_str());
+	GlobalOpenGL().drawString(render::RenderStatistics::Instance().getStatString());
 
 	glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 11.0f, 0.0f);
 

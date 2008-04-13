@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <streambuf>
 #include <istream>
 #include <cassert>
+#include <sstream>
+#include <iostream>
 
 #include "generic/static.h"
 
@@ -75,13 +77,15 @@ public:
 };
 
 /// \brief A write-only character-stream.
-class TextOutputStream
+/*class TextOutputStream :
+	public std::ostream
 {
 public:
-  /// \brief Attempts to write \p length characters to the stream from \p buffer.
-  /// Returns the number of characters actually read from \p buffer.
-  virtual std::size_t write(const char* buffer, std::size_t length) = 0;
-};
+	/// \brief Attempts to write \p length characters to the stream from \p buffer.
+	/// Returns the number of characters actually read from \p buffer.
+	//virtual std::size_t write(const char* buffer, std::size_t length) = 0;
+};*/
+typedef std::ostream TextOutputStream;
 
 /// \brief Calls the overloaded function ostream_write() to perform text formatting specific to the type being written.
 /*! Note that ostream_write() is not globally defined - it must be defined once for each type supported.\n
@@ -97,19 +101,34 @@ Expressing this as a template allows it to be used directly with any concrete te
 \n
 This overload writes a single character to any text-output-stream - ostream_write(TextOutputStreamType& ostream, char c).
 */
-template<typename T>
+/*template<typename T>
 inline TextOutputStream& operator<<(TextOutputStream& ostream, const T& t)
 {
   return ostream_write(ostream, t);
-}
+}*/
 
-class NullOutputStream : public TextOutputStream
+class NullOutputBuf :
+	public std::streambuf
 {
+protected:
+	virtual std::size_t xsputn(const char*, std::size_t len) {
+		// Override the virtual xsputn method to do nothing instead
+		return len;
+	}
+};
+
+class NullOutputStream : 
+	public std::ostream
+{
+	NullOutputBuf _nullBuf;
 public:
-  std::size_t write(const char*, std::size_t length)
-  {
-    return length;
-  }
+	NullOutputStream() :
+		TextOutputStream(&_nullBuf)
+	{}
+
+	std::size_t write(const char*, std::size_t length) {
+		return length;
+	}
 };
 
 class OutputStreamHolder

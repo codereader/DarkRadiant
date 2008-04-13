@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_CONSOLE_H
 
 #include <cstddef>
+#include "itextstream.h"
+#include <gtk/gtkwidget.h>
 
 #define SYS_VRB 0 ///< verbose support (on/off)
 #define SYS_STD 1 ///< standard print level - this is the default
@@ -31,15 +33,49 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SYS_NOCON 4 ///< no console, only print to the file (useful whenever Sys_Printf and output IS the problem)
 
 std::size_t Sys_Print(int level, const char* buf, std::size_t length);
-class TextOutputStream;
-TextOutputStream& getSysPrintOutputStream();
-TextOutputStream& getSysPrintErrorStream();
 
-typedef struct _GtkWidget GtkWidget;
+std::ostream& getSysPrintOutputStream();
+std::ostream& getSysPrintErrorStream();
+
 typedef struct _GtkWindow GtkWindow;
-GtkWidget* Console_constructWindow(GtkWindow* toplevel);
+typedef struct _GtkTextView GtkTextView;
+typedef struct _GtkMenu GtkMenu;
+//GtkWidget* Console_constructWindow(GtkWindow* toplevel);
 
 // will open/close the log file based on the parameter
 void Sys_LogFile(bool enable);
+
+namespace ui {
+
+/** 
+ * greebo: The Console class represents the "device", which the
+ *         various stream buffers are writing to. The Console
+ *         is a singleton which needs to be constructed and packed
+ *         during mainframe construction.
+ */
+class Console {
+	
+	GtkWidget* _textView;
+
+	Console();
+
+public:
+	GtkWidget* construct(GtkWindow* toplevel);
+
+	GtkWidget* getTextView();
+
+	void shutdown();
+
+	static Console& Instance();
+
+private:
+	static gboolean destroy_set_null(GtkWindow* widget, GtkWidget** p);
+
+	static void console_clear();
+
+	static void console_populate_popup(GtkTextView* textview, GtkMenu* menu, gpointer user_data);
+};
+
+} // namespace ui
 
 #endif

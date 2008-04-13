@@ -233,8 +233,7 @@ public:
 };
 
 /// \brief Writes \p path to \p ostream with dos-style separators replaced by unix-style separators.
-template<typename TextOutputStreamType>
-TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const PathCleaned& path)
+inline std::ostream& operator<<(std::ostream& ostream, const PathCleaned& path)
 {
   const char* i = path.m_path;
   for(; *i != '\0'; ++i)
@@ -294,9 +293,7 @@ namespace os {
      */
        
     inline std::string standardPath(const std::string& inPath) {
-        std::string newStr = inPath;
-        boost::algorithm::replace_all(newStr, "\\", "/");
-        return newStr;
+        return boost::algorithm::replace_all_copy(inPath, "\\", "/");
     }
     
     /** greebo: OS Folder names have forward slashes and a trailing slash

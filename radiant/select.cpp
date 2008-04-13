@@ -271,7 +271,7 @@ void Selection_NudgeZ(float amount)
 {
   StringOutputStream command;
   command << "nudgeSelected -axis z -amount " << amount;
-  UndoableCommand undo(command.c_str());
+  UndoableCommand undo(command.str());
 
   Nudge(2, amount);
 }

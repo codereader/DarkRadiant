@@ -17,7 +17,7 @@ ZipArchive::ZipArchive(const std::string& name) :
 {
 	if (!m_istream.failed()) {
 		if (!read_pkzip()) {
-			globalErrorStream() << "ERROR: invalid zip-file " << makeQuoted(name.c_str()) << '\n';
+			globalErrorStream() << "ERROR: invalid zip-file " << name.c_str() << '\n';
 		}
 	}
 }
@@ -44,7 +44,7 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name) {
 		istream_read_zip_file_header(m_istream, file_header);
 		
 		if (file_header.z_magic != zip_file_header_magic) {
-			globalErrorStream() << "error reading zip file " << makeQuoted(m_name.c_str());
+			globalErrorStream() << "error reading zip file " << m_name.c_str();
 			return ArchiveFilePtr();
 		}
 
@@ -68,7 +68,7 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name) {
 		istream_read_zip_file_header(m_istream, file_header);
 		
 		if (file_header.z_magic != zip_file_header_magic) {
-			globalErrorStream() << "error reading zip file " << makeQuoted(m_name.c_str());
+			globalErrorStream() << "error reading zip file " << m_name.c_str();
 			return ArchiveTextFilePtr();
 		}
 
@@ -157,8 +157,8 @@ bool ZipArchive::read_record() {
 		ZipFileSystem::entry_type& file = m_filesystem[path];
 		if (!file.is_directory()) {
 			globalOutputStream() << "Warning: zip archive "
-				<< makeQuoted(m_name.c_str()) << " contains duplicated file: "
-				<< makeQuoted(filename.data()) << "\n";
+				<< m_name.c_str() << " contains duplicated file: "
+				<< filename.data() << "\n";
 		} 
 		else {
 			file = new ZipRecord(position, 

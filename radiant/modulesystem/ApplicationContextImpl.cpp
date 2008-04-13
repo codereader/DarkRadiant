@@ -148,7 +148,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 		}
 		StringOutputStream app(256);
 		app << PathCleaned(filename);
-		_appPath = app.c_str();
+		_appPath = app.str();
 	}
 	// Initialise the relative paths
 	initPaths();

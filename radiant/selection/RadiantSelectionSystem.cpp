@@ -808,7 +808,7 @@ void RadiantSelectionSystem::endMove() {
 		}
 
 		// Finish the undo move
-		GlobalUndoSystem().finish(command.c_str());
+		GlobalUndoSystem().finish(command.str());
 	}
 }
 

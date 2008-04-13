@@ -39,8 +39,8 @@ public:
 	virtual const std::string& getBitmapsPath() const;
 	
 	// Return the global stream references
-	virtual TextOutputStream& getOutputStream() const;
-	virtual TextOutputStream& getErrorStream() const;
+	virtual std::ostream& getOutputStream() const;
+	virtual std::ostream& getErrorStream() const;
 
 	// Exports/deletes the paths to/from the registry
 	virtual void savePathsToRegistry() const;

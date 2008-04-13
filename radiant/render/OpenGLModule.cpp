@@ -66,9 +66,9 @@ void OpenGLModule::sharedContextDestroyed() {
 	GlobalShaderCache().unrealise();
 }
 
-void OpenGLModule::drawString(const char* string) const {
+void OpenGLModule::drawString(const std::string& string) const {
 	glListBase(m_font);
-	glCallLists(GLsizei(strlen(string)), GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(string));
+	glCallLists(GLsizei(string.size()), GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(string.c_str()));
 }
 
 void OpenGLModule::drawChar(char character) const {

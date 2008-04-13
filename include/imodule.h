@@ -6,8 +6,6 @@
 #include <string>
 #include <set>
 
-class TextOutputStream;
-
 /**
  * \defgroup module Module system
  */
@@ -52,8 +50,8 @@ public:
 	/**
 	 * Return the reference to the application's output/error streams.
 	 */
-	virtual TextOutputStream& getOutputStream() const = 0;
-	virtual TextOutputStream& getErrorStream() const = 0;
+	virtual std::ostream& getOutputStream() const = 0;
+	virtual std::ostream& getErrorStream() const = 0;
 
 	/**
 	 * Sets up the paths and stores them into the registry.

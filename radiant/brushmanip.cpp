@@ -307,7 +307,7 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
       int axis = GetViewAxis();
       StringOutputStream command;
       command << c_brushPrism_name << " -sides " << Unsigned(sides) << " -axis " << axis;
-      UndoableCommand undo(command.c_str());
+      UndoableCommand undo(command.str());
 
       Brush_ConstructPrism(brush, bounds, sides, axis, shader, projection);
     }
@@ -316,7 +316,7 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
     {
       StringOutputStream command;
       command << c_brushCone_name << " -sides " << Unsigned(sides);
-      UndoableCommand undo(command.c_str());
+      UndoableCommand undo(command.str());
 
       Brush_ConstructCone(brush, bounds, sides, shader, projection);
     }
@@ -325,7 +325,7 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
     {
       StringOutputStream command;
       command << c_brushSphere_name << " -sides " << Unsigned(sides);
-      UndoableCommand undo(command.c_str());
+      UndoableCommand undo(command.str());
 
       Brush_ConstructSphere(brush, bounds, sides, shader, projection);
     }

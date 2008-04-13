@@ -552,7 +552,7 @@ void TextureBrowser::draw() {
       		   name.substr(name.size() - maxNameLength/2);  
       }
       
-      GlobalOpenGL().drawString(name.c_str());
+      GlobalOpenGL().drawString(name);
       glEnable (GL_TEXTURE_2D);
     }
 

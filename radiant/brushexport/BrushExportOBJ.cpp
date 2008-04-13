@@ -17,9 +17,9 @@ void export_selected(GtkWindow* mainWindow) {
 								   ".obj"); // default extension
 	
 	// Open the file
-	TextFileOutputStream file(path.c_str());
+	std::ofstream file(path.c_str());
 	
-	if (!file.failed()) {
+	if (file.good()) {
 		// Instantiate the Exporter of type CExportFormatWavefront
 		CExporter<CExportFormatWavefront> exporter(file);
 		// Traverse through the selection and export it to the file

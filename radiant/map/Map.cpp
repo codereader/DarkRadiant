@@ -206,7 +206,7 @@ void Map::updateTitle() {
 		title << " *";
 	}
 
-	gtk_window_set_title(GlobalRadiant().getMainWindow(), title.c_str());
+	gtk_window_set_title(GlobalRadiant().getMainWindow(), title.str().c_str());
 }
 
 void Map::setName(const std::string& newName) {
@@ -238,7 +238,7 @@ const MapFormat& Map::getFormatForFile(const std::string& filename) {
 	// Acquire the module from the ModuleRegistry
 	RegisterableModulePtr mapLoader = module::GlobalModuleRegistry().getModule(moduleName);
 	
-	ASSERT_MESSAGE(mapLoader != NULL, "map format not found for file " << makeQuoted(filename.c_str()));
+	ASSERT_MESSAGE(mapLoader != NULL, "map format not found for file " << filename.c_str());
 	return *static_cast<MapFormat*>(mapLoader.get());
 }
 
@@ -414,9 +414,9 @@ void Map::load(const std::string& filename) {
 	globalOutputStream() << "--- LoadMapFile ---\n";
 	globalOutputStream() << m_name.c_str() << "\n";
   
-	globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterBrushes).get()), 5) << " brushes\n";
-	globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterPatches).get()), 5) << " patches\n";
-	globalOutputStream() << makeLeftJustified(Unsigned(GlobalRadiant().getCounter(counterEntities).get()), 5) << " entities\n";
+	globalOutputStream() << Unsigned(GlobalRadiant().getCounter(counterBrushes).get()) << " brushes\n";
+	globalOutputStream() << Unsigned(GlobalRadiant().getCounter(counterPatches).get()) << " patches\n";
+	globalOutputStream() << Unsigned(GlobalRadiant().getCounter(counterEntities).get()) << " entities\n";
 
 	// Add the origin to all the children of func_static, etc.
 	selection::algorithm::addOriginToChildPrimitives();

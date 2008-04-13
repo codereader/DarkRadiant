@@ -24,7 +24,7 @@ public:
 	virtual void sharedContextCreated();
 	virtual void sharedContextDestroyed();
 	
-	virtual void drawString(const char* string) const;
+	virtual void drawString(const std::string& string) const;
 	virtual void drawChar(char character) const;
 	
 	// RegisterableModule implementation

@@ -72,7 +72,7 @@ void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type
 	std::size_t size = file_size(filename.c_str());
 	FileInputStream file(filename);
 	
-	ASSERT_MESSAGE(!file.failed(), "failed to open " << makeQuoted(filename.c_str()));
+	ASSERT_MESSAGE(!file.failed(), "failed to open " << filename);
 	
 	Array<GLcharARB> buffer(size);
 	size = file.read(reinterpret_cast<StreamBase::byte_type*>(buffer.data()), size);

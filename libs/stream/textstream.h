@@ -184,12 +184,12 @@ public:
 };
 
 /// \brief Writes a single character \p c to \p ostream in hexadecimal form.
-template<typename TextOutputStreamType>
-inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const HexChar& c)
+inline std::ostream& operator<<(std::ostream& ostream, const HexChar& c)
 {
   const std::size_t bufferSize = 16;
   char buf[bufferSize];
-  ostream.write(buf, snprintf(buf, bufferSize, "%X", c.m_value & 0xFF));
+  int size = snprintf(buf, bufferSize, "%X", c.m_value & 0xFF);
+  ostream << std::string(buf, size);
   return ostream;
 }
 
@@ -256,16 +256,23 @@ public:
     : m_f(f), m_width(width), m_precision(precision)
   {
   }
+
+	// Operator cast to std::string, useful for stream insertion
+  operator std::string() const {
+		static char buf[50];
+		snprintf(buf, 50, "%*.*lf", m_width, m_precision, m_f);
+		return std::string(buf);
+	}
 };
 
 /// \brief Writes a floating point value to \p ostream with a specific width and precision.
-template<typename TextOutputStreamType>
-inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const FloatFormat& formatted)
-{
-  const std::size_t bufferSize = 32;
-  char buf[bufferSize];
-  ostream.write(buf, snprintf(buf, bufferSize, "%*.*lf", formatted.m_width, formatted.m_precision, formatted.m_f));
-  return ostream;
+inline std::ostream& operator<<(std::ostream& ostream, const FloatFormat& formatted) {
+	ostream << std::string(formatted);
+	return ostream;
+  //const std::size_t bufferSize = 32;
+  //char buf[bufferSize];
+  //ostream.write(buf, snprintf(buf, bufferSize, "%*.*lf", formatted.m_width, formatted.m_precision, formatted.m_f));
+  //return ostream;
 }
 
 // never displays exponent, prints up to 10 decimal places
@@ -389,7 +396,7 @@ public:
 };
 
 /// \brief A wrapper for a TextOutputStream, optimised for writing a single character at a time.
-class SingleCharacterOutputStream : public TextOutputStream
+/*class SingleCharacterOutputStream : public TextOutputStream
 {
   enum unnamed0 { m_bufsize = 1024 };
   TextOutputStream& m_ostream;
@@ -411,9 +418,13 @@ class SingleCharacterOutputStream : public TextOutputStream
     reset();
   }
 public:
-  SingleCharacterOutputStream(TextOutputStream& ostream) : m_ostream(ostream), m_pos(m_buffer), m_end(m_buffer+m_bufsize)
-  {
-  }
+	SingleCharacterOutputStream(TextOutputStream& ostream) : 
+		TextOutputStream(&ostream),
+		m_ostream(ostream), 
+		m_pos(m_buffer),
+		m_end(m_buffer+m_bufsize)
+	{}
+
   ~SingleCharacterOutputStream()
   {
     flush();
@@ -435,7 +446,7 @@ public:
     }
     return length;
   }
-};
+};*/
 
 /// \brief A wrapper for a TextOutputStream, optimised for writing a few characters at a time.
 template<typename TextOutputStreamType, int SIZE = 1024>

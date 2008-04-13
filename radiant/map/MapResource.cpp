@@ -94,7 +94,7 @@ bool MapResource::save() {
 			success = MapResource_saveFile(*format, _mapRoot, map::traverse, fullpath.c_str());
 		}
 		else {
-			globalErrorStream() << "Map path is not absolute: " << makeQuoted(fullpath.c_str()) << "\n";
+			globalErrorStream() << "Map path is not absolute: " << fullpath << "\n";
 			success = false;
 		}
 		
@@ -126,7 +126,7 @@ bool MapResource::saveBackup() {
 				&& file_move(fullpath.c_str(), backup.c_str()); // rename current to backup
 		}
 		else {
-			globalErrorStream() << "map path is not writeable: " << makeQuoted(fullpath.c_str()) << "\n";
+			globalErrorStream() << "map path is not writeable: " << fullpath << "\n";
 			return false;
 		}
 	}
@@ -299,7 +299,7 @@ scene::INodePtr MapResource::loadMapNode() {
 		loadFile(*format, root, fullpath);
 	}
 	else {
-		globalErrorStream() << "map path is not fully qualified: " << makeQuoted(fullpath.c_str()) << "\n";
+		globalErrorStream() << "map path is not fully qualified: " << fullpath << "\n";
 	}
 
 	return root;
