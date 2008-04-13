@@ -5,6 +5,7 @@
 #include "modulesystem/ApplicationContextImpl.h"
 #include "mainframe.h"
 #include "gtkutil/filechooser.h"
+#include "gtkutil/IConv.h"
 #include "os/path.h"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -56,8 +57,8 @@ std::string MapFileManager::selectFile(bool open,
 	if (!filePath.empty()) {
 		_lastDirs[type] = filePath.substr(0, filePath.rfind("/"));
 	}
-	
-	return filePath;
+
+	return gtkutil::IConv::localeFromUTF8(filePath);
 }
 
 /* PUBLIC INTERFACE METHODS */

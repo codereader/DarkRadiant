@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gtkutil/messagebox.h"
 #include "gtkutil/nonmodal.h"
+#include "gtkutil/IConv.h"
 #include "stream/stringstream.h"
 #include "convert.h"
 
@@ -194,7 +195,8 @@ public:
 
 			static GtkTextMark* end = gtk_text_buffer_create_mark(_buffer, "end", &_iter, FALSE);
 			
-			gtk_text_buffer_insert_with_tags(_buffer, &_iter, p, gint(length), tag, 0);
+			std::string converted = gtkutil::IConv::localeToUTF8(std::string(p, length));
+			gtk_text_buffer_insert_with_tags(_buffer, &_iter, converted.c_str(), gint(converted.size()), tag, 0);
 
 			gtk_text_buffer_move_mark(_buffer, end, &_iter);
 			gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(textView), end);

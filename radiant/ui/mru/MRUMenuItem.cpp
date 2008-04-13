@@ -4,6 +4,7 @@
 #include "gtk/gtkmenuitem.h"
 #include "gtk/gtklabel.h"
 #include "gtk/gtkwidget.h"
+#include "gtkutil/IConv.h"
 #include "string/string.h"
 
 #include "MRU.h"
@@ -61,7 +62,7 @@ void MRUMenuItem::setLabel(const std::string& label) {
 	_label = label;
 	
 	// Add the number prefix to the widget label
-	const std::string widgetLabel = intToStr(_index) + " - " + _label;
+	const std::string widgetLabel = intToStr(_index) + " - " + gtkutil::IConv::localeToUTF8(_label);
 	
 	GtkWidget* hbox = gtk_bin_get_child(GTK_BIN(_widget));
 	

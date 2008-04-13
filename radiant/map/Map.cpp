@@ -20,6 +20,7 @@
 #include "MapImportInfo.h"
 #include "MapExportInfo.h"
 #include "gtkutil/messagebox.h"
+#include "gtkutil/IConv.h"
 
 #include "mainframe.h"
 #include "referencecache.h"
@@ -199,14 +200,13 @@ void Map::removeValidCallback(SignalHandlerId id) {
 }
 
 void Map::updateTitle() {
-	StringOutputStream title;
-	title << ConvertLocaleToUTF8(m_name.c_str());
+	std::string title = gtkutil::IConv::localeToUTF8(m_name);
 
 	if (m_modified) {
-		title << " *";
+		title += " *";
 	}
 
-	gtk_window_set_title(GlobalRadiant().getMainWindow(), title.str().c_str());
+	gtk_window_set_title(GlobalRadiant().getMainWindow(), title.c_str());
 }
 
 void Map::setName(const std::string& newName) {
@@ -694,7 +694,7 @@ void Map::openMap() {
 															   "Open map");
 
 	if (!filename.empty()) {
-	    GlobalMRU().insert(filename);
+		GlobalMRU().insert(filename);
 	    
 	    GlobalMap().freeMap();
 	    GlobalMap().load(filename);
