@@ -10,7 +10,8 @@
 namespace entity {
 
 	namespace {
-		const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+		const char* RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+        const char* RKEY_SHOW_ENTITY_NAMES = "user/ui/xyview/showEntityNames";
 	}
 
 inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count, 
@@ -45,7 +46,8 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
-	m_curveCatmullRom(boundsChanged)
+	m_curveCatmullRom(boundsChanged),
+    _showEntityName(false)
 {
 	// construct() is called by the Doom3GroupNode
 }
@@ -69,7 +71,8 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
-	m_curveCatmullRom(boundsChanged)
+	m_curveCatmullRom(boundsChanged),
+    _showEntityName(false)
 {
 	// construct() is called by the Doom3GroupNode
 }
@@ -160,11 +163,9 @@ void Doom3Group::renderWireframe(Renderer& renderer, const VolumeTest& volume,
 	const Matrix4& localToWorld, bool selected) const 
 {
 	renderSolid(renderer, volume, localToWorld, selected);
-#if 0
-	if (GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
+	if (_showEntityName) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
-#endif
 }
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
@@ -314,13 +315,28 @@ void Doom3Group::construct() {
 	m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3Doom3Group);
 
 	_entity.attach(m_keyObservers);
+
+    // Attach to the "Show entity names" registry key
+    _showEntityName = (GlobalRegistry().get(RKEY_SHOW_ENTITY_NAMES) == "1");
+    GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
 }
 
 void Doom3Group::destroy() {
 	_entity.detach(m_keyObservers);
 }
 
-void Doom3Group::addKeyObserver(const std::string& key, const KeyObserver& observer) {
+// Registry key changed callback
+void Doom3Group::keyChanged(const std::string& key, const std::string& value)
+{
+    assert(key == RKEY_SHOW_ENTITY_NAMES);
+    if (value == "1")
+        _showEntityName = true;
+    else
+        _showEntityName = false;
+}
+
+void Doom3Group::addKeyObserver(const std::string& key, const KeyObserver& observer) 
+{
 	_entity.detach(m_keyObservers); // detach first
 
 	m_keyObservers.insert(key, observer);

@@ -5,6 +5,7 @@
 #include "editable.h"
 #include "entitylib.h"
 #include "pivot.h"
+#include "iregistry.h"
 
 #include "../keyobservers.h"
 #include "../ModelKey.h"
@@ -23,9 +24,13 @@ namespace entity {
 // Forward declaration
 class Doom3GroupNode;
 
-class Doom3Group :
-	public Bounded,
-	public Snappable 
+/**
+ * An entity that contains brushes or patches, such as func_static.
+ */
+class Doom3Group 
+: public Bounded, 
+  public Snappable,
+  public RegistryKeyObserver
 {
 	Doom3Entity _entity;
 	KeyObserverMap m_keyObservers;
@@ -62,6 +67,9 @@ class Doom3Group :
 	// Flag to indicate this Doom3Group is a model (i.e. does not contain
 	// brushes).
 	bool m_isModel;
+
+    // Whether the entity name should be rendered as well
+    bool _showEntityName;
 	
 public:
 	CurveNURBS m_curveNURBS;
@@ -165,6 +173,10 @@ private:
 	void updateIsModel();
 
 public:
+
+    /* RegistryKeyObserver implementation */
+    void keyChanged(const std::string& key, const std::string& value);
+
 	void nameChanged(const std::string& value);
 	typedef MemberCaller1<Doom3Group, const std::string&, &Doom3Group::nameChanged> NameChangedCaller;
 
