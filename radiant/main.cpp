@@ -78,8 +78,8 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "stream/textfilestream.h"
 
 #include "gtkutil/messagebox.h"
-#include "console.h"
 #include "log/LogFile.h"
+#include "log/LogStream.h"
 #include "map/Map.h"
 #include "mainframe.h"
 #include "settings/PreferenceSystem.h"
@@ -179,12 +179,6 @@ public:
 
 typedef Static<PopupDebugMessageHandler> GlobalPopupDebugMessageHandler;
 
-void streams_init()
-{
-  GlobalErrorStream::instance().setOutputStream(getSysPrintErrorStream());
-  GlobalOutputStream::instance().setOutputStream(getSysPrintOutputStream());
-}
-
 void createPIDFile(const std::string& name) {
 	std::string pidFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + name;
 
@@ -236,8 +230,8 @@ int main (int argc, char* argv[]) {
 	// Initialise the debug flags
 	crt_init();
 
-	// Set the stream references for globalOutputStream() etc.
-	streams_init();
+	// Set the stream references for globalOutputStream(), redirect std::cout, etc.
+	applog::initialiseLogStreams();
 
 	// Initialse the context (application path / settings path, is OS-specific)
 	module::ModuleRegistry::Instance().initialiseContext(argc, argv);
@@ -324,6 +318,7 @@ int main (int argc, char* argv[]) {
 
 	// Close the logfile 
 	applog::LogFile::close();
+	applog::shutdownStreams();
 
 	return EXIT_SUCCESS;
 }

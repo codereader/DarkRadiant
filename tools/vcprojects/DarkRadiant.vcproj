@@ -2113,6 +2113,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\log\COutRedirector.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\COutRedirector.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\log\LogDevice.h"
 					>
 				</File>
@@ -2126,6 +2134,10 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\log\LogLevels.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\LogStream.cpp"
 					>
 				</File>
 				<File

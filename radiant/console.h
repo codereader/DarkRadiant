@@ -22,10 +22,5 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_CONSOLE_H)
 #define INCLUDED_CONSOLE_H
 
-#include <cstddef>
-#include "itextstream.h"
-
-std::ostream& getSysPrintOutputStream();
-std::ostream& getSysPrintErrorStream();
 
 #endif
