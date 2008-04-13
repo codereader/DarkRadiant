@@ -24,8 +24,8 @@ public:
 	}
 	
 	// Update the internal bool on registrykey change
-	void keyChanged() {
-		_showAllLightRadii = (GlobalRegistry().get(RKEY_SHOW_ALL_LIGHT_RADII) == "1");
+	void keyChanged(const std::string& key, const std::string& val) {
+		_showAllLightRadii = (val == "1");
 		GlobalRadiant().updateAllWindows();
 	}
 	

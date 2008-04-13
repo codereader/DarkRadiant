@@ -87,7 +87,8 @@ public:
 	}
 
 	// Gets called as soon as the observed registry keys get changed
-	void keyChanged() {
+	void keyChanged(const std::string& key, const std::string& val) {
+        // TODO: use val here
 		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
 	}
 

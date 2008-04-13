@@ -171,7 +171,7 @@ void XMLRegistry::set(const std::string& key, const std::string& value) {
 	_userTree.set(key, gtkutil::IConv::localeToUTF8(value));
 	
 	// Notify the observers
-	notifyKeyObservers(key);
+	notifyKeyObservers(key, value);
 }
 
 void XMLRegistry::import(const std::string& importFilePath, const std::string& parentKey, Tree tree) {
@@ -185,7 +185,8 @@ void XMLRegistry::import(const std::string& importFilePath, const std::string& p
 	}
 }
 
-void XMLRegistry::notifyKeyObservers(const std::string& changedKey) {
+void XMLRegistry::notifyKeyObservers(const std::string& changedKey, const std::string& newVal) 
+{
 	for (KeyObserverMap::iterator it = _keyObservers.find(changedKey);
 		 it != _keyObservers.upper_bound(changedKey) && it != _keyObservers.end();
 		 it++)
@@ -193,7 +194,7 @@ void XMLRegistry::notifyKeyObservers(const std::string& changedKey) {
 		RegistryKeyObserver* keyObserver = it->second;
 
 		if (keyObserver != NULL) {
-			keyObserver->keyChanged();
+			keyObserver->keyChanged(changedKey, newVal);
 		}
 	}
 }

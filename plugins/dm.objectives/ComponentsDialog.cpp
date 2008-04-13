@@ -257,7 +257,8 @@ int ComponentsDialog::getSelectedIndex() {
 /* GTK CALLBACKS */
 
 // Close button
-void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) {
+void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) 
+{
 	self->destroy();
 }
 

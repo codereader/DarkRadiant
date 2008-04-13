@@ -52,7 +52,7 @@ public:
 	static TextureManipulator& instance();
 
 	// RegistryKeyObserver implementation
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 
 	// Constructs the prefpage
 	void constructPreferences();

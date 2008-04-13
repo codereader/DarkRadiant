@@ -128,7 +128,7 @@ public:
 
 private:
 	// Cycles through the key observers and notifies the ones that observe the given <changedKey>
-	void notifyKeyObservers(const std::string& changedKey);
+	void notifyKeyObservers(const std::string& changedKey, const std::string& newVal);
 };
 typedef boost::shared_ptr<XMLRegistry> XMLRegistryPtr;
 

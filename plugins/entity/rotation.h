@@ -61,7 +61,7 @@ inline void write_rotation(const Float9 rotation, Entity* entity, const char* ke
   }
   else
   {
-    StringOutputStream value(256);
+    StringOutputStream value;
     value << rotation[0] << ' '
       << rotation[1] << ' '
       << rotation[2] << ' '

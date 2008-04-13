@@ -70,7 +70,7 @@ public:
 	XYWndManager();
 	
 	// The callback that gets called on registry key changes
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 	
 	// Returns the state of the xy view preferences
 	bool chaseMouse() const;

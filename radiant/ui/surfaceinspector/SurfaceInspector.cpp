@@ -205,8 +205,8 @@ void SurfaceInspector::toggleWindow() {
 		show();
 }
 
-void SurfaceInspector::keyChanged() {
-	
+void SurfaceInspector::keyChanged(const std::string& key, const std::string& val) 
+{
 	// Avoid callback loops
 	if (_callbackActive) { 
 		return;

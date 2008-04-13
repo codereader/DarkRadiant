@@ -18,6 +18,8 @@ namespace gtkutil
 /** 
  * Container that left-aligns a child widget, with configurable indentation
  * and fill ratio.
+ *
+ * \ingroup gtkutil
  */
 class LeftAlignment
 {

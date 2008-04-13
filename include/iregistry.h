@@ -9,19 +9,48 @@ namespace {
 	const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
 }
 
-// Abstract base class for a registry key observer, gets called by the registry
-// when a certain key changes.
+/**
+ * \addtogroup registry XML Registry
+ */
+
+/**
+ * \brief Interface for objects which wish to be notified of registry key
+ * changes.
+ *
+ * An object which needs notification when a registry key is changed must
+ * implement this interface, and can then be registered with
+ * Registry::addKeyObserver() to receive change events for a particular key.
+ *
+ * \ingroup registry
+ */
 class RegistryKeyObserver {
 public:
-	// the callback method
-	virtual void keyChanged() = 0;
+
+    /**
+     * @brief Key change notification callback.
+     * This method will be invoked when a registry key is changed. Notifications
+     * will only occur for keys which were passed to the addKeyObserver() method
+     * during registration.
+     *
+     * @param changedKey
+     * The registry key which was changed.
+     *
+     * @param newValue
+     * The new value of the changed key.
+     */
+	virtual void keyChanged(
+        const std::string& changedKey,
+        const std::string& newValue
+    ) = 0;
 };
 
 // String identifier for the registry module
 const std::string MODULE_XMLREGISTRY("XMLRegistry");
 
 /**
- * Abstract base class for a registry system
+ * Abstract base class for the registry module.
+ *
+ * \ingroup registry
  */
 class Registry :
 	public RegisterableModule
@@ -82,10 +111,29 @@ public:
 	// Deletes an entire subtree from the registry
 	virtual void deleteXPath(const std::string& path) = 0;
 	
-	// Add an observer watching the <observedKey> to the internal list of observers. 
+    /**
+     * \brief Add a RegistryKeyObserver to receive notifications when the
+     * specified key is changed.
+     *
+     * @param observer
+     * The RegistryKeyObserver to be notified of changes.
+     *
+     * @param observedKey
+     * The registry key for which the RegistryKeyObserver should be notified.
+     */
 	virtual void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) = 0;
 	
-	// Remove the specified observer from the list
+    /**
+     * \brief Remove the given RegistryKeyObserver from the list of notifiable
+     * observers.
+     *
+     * This method prevents the given RegistryKeyObserver from receiving
+     * notifications of future registry key changes.
+     *
+     * @param observer
+     * Pointer to a RegistryKeyObserver previously registered with
+     * addKeyObserver().
+     */
 	virtual void removeKeyObserver(RegistryKeyObserver* observer) = 0;
 };
 typedef boost::shared_ptr<Registry> RegistryPtr;

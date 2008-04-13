@@ -118,7 +118,7 @@ public:
 	typedef MemberCaller<TextureBrowser, &TextureBrowser::clearFilter> ClearFilterCaller;
 
 	// RegistryKeyObserver implementation
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 
 	// Return the display width of a texture in the texture browser
 	int getTextureWidth(TexturePtr tex);

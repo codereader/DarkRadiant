@@ -71,7 +71,7 @@ public:
 	std::string getLastMapName();
 	
 	// The callback for registry key changes
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 	
 	// Add the menu items to the GlobalUIManager 
 	void constructMenu();

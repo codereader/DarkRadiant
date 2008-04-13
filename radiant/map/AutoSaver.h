@@ -45,7 +45,7 @@ public:
 	void clearChanges();
 	
 	// The RegistryKeyObserver implementation - gets called upon key change
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 	
 	// Adds the elements to the according preference page
 	void constructPreferences();

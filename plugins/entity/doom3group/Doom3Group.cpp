@@ -160,9 +160,11 @@ void Doom3Group::renderWireframe(Renderer& renderer, const VolumeTest& volume,
 	const Matrix4& localToWorld, bool selected) const 
 {
 	renderSolid(renderer, volume, localToWorld, selected);
+#if 0
 	if (GlobalRegistry().get("user/ui/xyview/showEntityNames") == "1") {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
+#endif
 }
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {

@@ -24,8 +24,8 @@ public:
 	}
 	
 	// Update the internal bool on registrykey change
-	void keyChanged() {
-		_showAllSpeakerRadii = (GlobalRegistry().get(RKEY_SHOW_ALL_SPEAKER_RADII) == "1");
+	void keyChanged(const std::string& key, const std::string& val) {
+		_showAllSpeakerRadii = (val == "1");
 		GlobalRadiant().updateAllWindows();
 	}
 	

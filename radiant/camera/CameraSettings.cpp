@@ -92,7 +92,8 @@ void CameraSettings::importDrawMode(const int mode) {
 	GlobalShaderCache().setLightingEnabled(_cameraDrawMode == drawLighting);
 }
 
-void CameraSettings::keyChanged() {
+void CameraSettings::keyChanged(const std::string& key, const std::string& val) 
+{
 	// Check for iterative loops
 	if (_callbackActive) {
 		return;
