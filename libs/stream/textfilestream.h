@@ -51,38 +51,4 @@ public:
   }
 };
 
-/// \brief A wrapper around a file input stream opened for writing in text mode. Similar to std::ofstream.
-typedef std::ofstream TextFileOutputStream;
-/*class TextFileOutputStream : public TextOutputStream
-{
-  FILE* m_file;
-public:
-  TextFileOutputStream(const std::string& name) :
-	  m_file(!name.empty() ? fopen(name.c_str(), "wt") : NULL)
-  {}
-  
-  ~TextFileOutputStream()
-  {
-    if(!failed())
-      fclose(m_file);
-  }
-
-  bool failed() const
-  {
-    return m_file == 0;
-  }
-
-  std::size_t write(const char* buffer, std::size_t length)
-  {
-    return fwrite(buffer, 1, length, m_file);
-  }
-};
-
-template<typename T>
-inline TextFileOutputStream& operator<<(TextFileOutputStream& ostream, const T& t)
-{
-  return ostream_write(ostream, t);
-}*/
-
-
 #endif
