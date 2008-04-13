@@ -15,6 +15,8 @@
 #include "../namekeys.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
+#include "../OptionalRenderedName.h"
+
 #include "SpeakerRenderables.h"
 
 namespace entity {
@@ -22,7 +24,8 @@ namespace entity {
 class Speaker :
 	public Cullable,
 	public Bounded,
-	public Snappable
+	public Snappable,
+    public OptionalRenderedName
 {
 	Doom3Entity m_entity;
 	KeyObserverMap m_keyObservers;

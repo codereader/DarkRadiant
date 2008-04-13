@@ -17,11 +17,13 @@
 #include "../namekeys.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
+#include "../OptionalRenderedName.h"
 
 namespace entity {
 
 class EclassModel :
-	public Snappable
+	public Snappable,
+    public OptionalRenderedName
 {
 	MatrixTransform m_transform;
 	Doom3Entity m_entity;
