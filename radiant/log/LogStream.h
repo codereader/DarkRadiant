@@ -33,8 +33,8 @@ public:
 
 // Shorthand typedefs for the various LogLevels
 typedef LogStream<SYS_STANDARD> LogOutputStream;
-typedef LogStream<SYS_WARNING>  LogErrorStream;
-typedef LogStream<SYS_ERROR>    LogWarningStream;
+typedef LogStream<SYS_ERROR>    LogErrorStream;
+typedef LogStream<SYS_WARNING>  LogWarningStream;
 
 } // namespace applog
 
