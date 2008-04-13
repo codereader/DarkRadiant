@@ -2,7 +2,6 @@
 #define _LOG_STREAM_H_
 
 #include <ostream>
-#include "LogWriter.h"
 #include "LogStreamBuf.h"
 
 namespace applog {
