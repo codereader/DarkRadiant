@@ -36,7 +36,7 @@ public:
 	Clipper();
 
 	// Update the internally stored variables on registry key change
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 
 	void constructPreferences();
 	

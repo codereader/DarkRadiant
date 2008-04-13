@@ -46,7 +46,7 @@ TextureManipulator& TextureManipulator::instance() {
 }
 
 // RegistryKeyObserver implementation
-void TextureManipulator::keyChanged() {
+void TextureManipulator::keyChanged(const std::string& key, const std::string& val) {
 	_textureQuality = GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY);
 	_textureMode = readTextureMode(GlobalRegistry().getInt(RKEY_TEXTURES_MODE));
 	

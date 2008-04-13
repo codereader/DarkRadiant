@@ -658,7 +658,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	convertXYToWorld(x, y , m_mousePosition);
 	snapToGrid(m_mousePosition);
 
-	StringOutputStream status(64);
+	StringOutputStream status;
 	status << "x:: " << FloatFormat(m_mousePosition[0], 6, 1)
 			<< "  y:: " << FloatFormat(m_mousePosition[1], 6, 1)
 			<< "  z:: " << FloatFormat(m_mousePosition[2], 6, 1);
@@ -1102,7 +1102,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
 
   glColor3dv(ColourSchemes().getColour("brush_size_info"));
 
-  StringOutputStream dimensions(16);
+  StringOutputStream dimensions;
 
   if (m_viewType == XY)
   {

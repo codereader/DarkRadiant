@@ -109,7 +109,7 @@ public:
 	const SelectionInfo& getSelectionInfo();
 
 	// RegistryKeyObserver implementation
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 	
 	void pivotChanged() const;
 	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;

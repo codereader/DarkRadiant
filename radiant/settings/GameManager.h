@@ -48,7 +48,7 @@ public:
 	/** greebo: RegistryKeyObserver implementation, gets notified 
 	 * 			upon engine path changes.
 	 */
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 	
 	/** greebo: Returns TRUE if the engine path exists and
 	 * 			the fs_game (if it is non-empty) exists as well.

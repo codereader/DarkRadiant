@@ -75,7 +75,7 @@ void BrushModuleClass::clipperColourChanged() {
 	BrushClipPlane::constructStatic();
 }
 
-void BrushModuleClass::keyChanged() {
+void BrushModuleClass::keyChanged(const std::string& key, const std::string& val) {
 	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
 }
 

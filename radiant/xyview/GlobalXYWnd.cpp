@@ -31,7 +31,7 @@ XYWndManager::XYWndManager() :
 	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_BLOCKSIZE);
 	
 	// Trigger loading the values of the observed registry keys
-	keyChanged();
+	keyChanged("", "");
 	
 	// Construct the preference settings widgets
 	constructPreferences();
@@ -187,7 +187,8 @@ void XYWndManager::constructPreferences() {
 }
 
 // Load/Reload the values from the registry
-void XYWndManager::keyChanged() {
+void XYWndManager::keyChanged(const std::string& key, const std::string& val) 
+{
 	_chaseMouse = (GlobalRegistry().get(RKEY_CHASE_MOUSE) == "1");
 	_camXYUpdate = (GlobalRegistry().get(RKEY_CAMERA_XY_UPDATE) == "1");
 	_showCrossHairs = (GlobalRegistry().get(RKEY_SHOW_CROSSHAIRS) == "1");

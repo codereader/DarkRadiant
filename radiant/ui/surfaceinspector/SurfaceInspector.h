@@ -103,7 +103,7 @@ public:
 
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating of the

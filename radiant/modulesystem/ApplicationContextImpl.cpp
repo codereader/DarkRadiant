@@ -107,12 +107,11 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 
 	initArgs(argc, argv);
 
-	{
-		StringOutputStream home(256);
-		home << DirectoryCleaned(g_get_home_dir()) << ".darkradiant/";
-		os::makeDirectory(home.c_str());
-		_homePath = home.c_str();
-	}
+    // Initialise the home directory path
+    std::string home = os::standardPathWithSlash(g_get_home_dir()) + ".darkradiant/";
+    os::makeDirectory(home);
+    _homePath = home;
+
 	{
 		char real[PATH_MAX];
 		_appPath = getexename(real, argv);

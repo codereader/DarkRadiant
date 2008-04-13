@@ -99,8 +99,9 @@ TexToolPtr& TexTool::InstancePtr() {
 	return _instancePtr;
 }
 
-void TexTool::keyChanged() {
-	_gridActive = GlobalRegistry().get(RKEY_GRID_STATE) == "1";
+void TexTool::keyChanged(const std::string& key, const std::string& val) 
+{
+	_gridActive = (val == "1");
 	draw();
 }
 

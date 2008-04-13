@@ -812,7 +812,8 @@ void RadiantSelectionSystem::endMove() {
 	}
 }
 
-void RadiantSelectionSystem::keyChanged() {
+void RadiantSelectionSystem::keyChanged(const std::string& key, const std::string& val) 
+{
 	if (!nothingSelected()) {
 		pivotChanged();
 		ConstructPivot();

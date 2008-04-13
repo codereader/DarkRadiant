@@ -52,7 +52,7 @@ AutoMapSaver::~AutoMapSaver() {
 	stopTimer();
 }
 
-void AutoMapSaver::keyChanged() {
+void AutoMapSaver::keyChanged(const std::string& key, const std::string& val) {
 	// Stop the current timer
 	stopTimer();
 	

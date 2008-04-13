@@ -89,7 +89,8 @@ void MRU::loadMap(const std::string& fileName) {
 	}
 }
 
-void MRU::keyChanged() {
+void MRU::keyChanged(const std::string& key, const std::string& val) 
+{
 	// greebo: Don't load the new number of maximum files from the registry, 
 	// this would mess up the existing widgets, wait for the DarkRadiant restart instead
 	//_numMaxFiles = GlobalRegistry().getInt(RKEY_MRU_LENGTH);

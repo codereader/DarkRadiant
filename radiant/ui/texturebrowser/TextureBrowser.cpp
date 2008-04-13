@@ -107,7 +107,8 @@ void TextureBrowser::clearFilter() {
 	queueDraw();
 }
 
-void TextureBrowser::keyChanged() {
+void TextureBrowser::keyChanged(const std::string& key, const std::string& val) 
+{
 	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
 	m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
 	m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);

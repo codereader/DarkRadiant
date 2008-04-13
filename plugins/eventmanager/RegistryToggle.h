@@ -46,9 +46,9 @@ public:
 	}
 
 	// The RegistryKeyObserver implementation, gets called on key changes
-	void keyChanged() {
+	void keyChanged(const std::string& key, const std::string& val) {
 		// Update the internal toggle state according to the key value 
-		_toggled = (GlobalRegistry().get(_registryKey) == "1");
+		_toggled = (val == "1");
 		
 		updateWidgets();
 	}

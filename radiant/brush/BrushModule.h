@@ -89,7 +89,7 @@ public:
 	void toggleTextureLock();
 	
 	// The callback for registry key changes
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

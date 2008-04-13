@@ -87,7 +87,7 @@ public:
 	void setImagePosition(const float& x, const float& y);
 
 	// RegistryKeyObserver implementation, gets called upon key change
-	void keyChanged();
+	void keyChanged(const std::string& key, const std::string& val);
 	
 	/**
 	 * Public draw method, called from the XYWnd.

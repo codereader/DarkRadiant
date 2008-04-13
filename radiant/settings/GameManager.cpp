@@ -257,7 +257,8 @@ bool Manager::settingsValid() const {
 	return false;
 }
 
-void Manager::keyChanged() {
+void Manager::keyChanged(const std::string& key, const std::string& val) 
+{
 	// call the engine path setter, fs_game is updated there as well
 	updateEnginePath();
 }
