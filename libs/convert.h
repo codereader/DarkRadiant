@@ -266,18 +266,51 @@ inline TextOutputStreamType& ostream_write(TextOutputStreamType& ostream, const 
 
 class ConvertLocaleToUTF8
 {
+	std::string _converted;
 public:
-  StringRange m_range;
-  ConvertLocaleToUTF8(const char* string) : m_range(StringRange(string, string + strlen(string)))
-  {
-  }
-  ConvertLocaleToUTF8(const StringRange& range) : m_range(range)
-  {
-  }
+	ConvertLocaleToUTF8(const char* string, std::size_t length) {
+		if (globalCharacterSet().isUTF8()) {
+			_converted = std::string(string, length);
+			return;
+		}
+
+		for (const char* p = string; p != string + length; p++) {
+			if (!char_is_ascii(*p)) {
+				UTF8Character c(globalExtendedASCIICharacterSet().decode(*p));
+				//ostream.write(c.buffer, c.length);
+				_converted.append(c.buffer, c.length);
+			}
+			else {
+				_converted.append(1, *p);
+			}
+		}
+	}
+
+	ConvertLocaleToUTF8(const std::string& string) {
+		if (globalCharacterSet().isUTF8()) {
+			_converted = string;
+			return;
+		}
+
+		for (std::string::const_iterator p = string.begin(); p != string.end(); p++) {
+			if (!char_is_ascii(*p)) {
+				UTF8Character c(globalExtendedASCIICharacterSet().decode(*p));
+				//ostream.write(c.buffer, c.length);
+				_converted.append(c.buffer, c.length);
+			}
+			else {
+				_converted.append(1, *p);
+			}
+		}
+	}
+
+	operator const std::string&() {
+		return _converted;
+	}
 };
 
 /// \brief Writes \p convert to \p ostream after decoding each character from extended-ascii to UTF-8.
-inline std::ostream& operator<<(std::ostream& ostream, const ConvertLocaleToUTF8& convert)
+/*inline std::ostream& operator<<(std::ostream& ostream, const ConvertLocaleToUTF8& convert)
 {
   if(globalCharacterSet().isUTF8())
   {
@@ -297,7 +330,7 @@ inline std::ostream& operator<<(std::ostream& ostream, const ConvertLocaleToUTF8
     }
   }
   return ostream; 
-}
+}*/
 
 
 #endif
