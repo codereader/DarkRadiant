@@ -10,6 +10,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/dialog.h"
 
 namespace ui {
 
@@ -359,18 +360,26 @@ void ColourSchemeEditor::copyScheme() {
 	std::string name = getSelectedScheme();
 	std::string newName = inputDialog("Copy Colour Scheme", "Enter a name for the new scheme:");
 	
-	if (newName != "") {
-		// Copy the scheme
-		ColourSchemeManager::Instance().copyScheme(name, newName);
-		ColourSchemeManager::Instance().setActive(newName);
-		
-		// Add the new list item to the ListStore
-		gtk_list_store_append(_listStore, &iter);
-		gtk_list_store_set(_listStore, &iter, 0, newName.c_str(), -1);
-		
-		// Highlight the copied scheme
-		selectActiveScheme();
+	if (newName.empty()) {
+		return; // empty name
 	}
+
+	// greebo: Check if the new name is already existing
+	if (ColourSchemeManager::Instance().schemeExists(newName)) {
+		gtkutil::errorDialog("A Scheme with that name already exists.", GTK_WINDOW(getWindow()));
+		return;
+	}
+
+	// Copy the scheme
+	ColourSchemeManager::Instance().copyScheme(name, newName);
+	ColourSchemeManager::Instance().setActive(newName);
+	
+	// Add the new list item to the ListStore
+	gtk_list_store_append(_listStore, &iter);
+	gtk_list_store_set(_listStore, &iter, 0, newName.c_str(), -1);
+	
+	// Highlight the copied scheme
+	selectActiveScheme();
 }
 
 // GTK Callback Routines
