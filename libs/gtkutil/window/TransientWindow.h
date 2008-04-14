@@ -2,6 +2,7 @@
 #define TRANSIENTDIALOG_H_
 
 #include <gtk/gtkwindow.h>
+#include "gtkutil/pointer.h"
 
 #include <string>
 #include <iostream>
@@ -168,6 +169,30 @@ public:
 		_window = NULL;
 
 		_postDestroy();
+	}
+
+	void toggleFullscreen() {
+		setFullscreen(!isFullscreen());
+	}
+
+	bool isFullscreen() {
+		// Query the current fullscreen state variable
+		gpointer ptrData = g_object_get_data(G_OBJECT(_window), "dr-fullscreen");
+
+		return !(ptrData == NULL || gpointer_to_int(ptrData) == 0);
+	}
+
+	void setFullscreen(bool fullscreen) {
+		if (fullscreen) {
+			gtk_window_fullscreen(GTK_WINDOW(_window));
+			// Set the flag to 1
+			g_object_set_data(G_OBJECT(_window), "dr-fullscreen", gint_to_pointer(1));
+		}
+		else {
+			gtk_window_unfullscreen(GTK_WINDOW(_window));
+			// Set the flag to 1
+			g_object_set_data(G_OBJECT(_window), "dr-fullscreen", gint_to_pointer(0));
+		}
 	}
 };
 

@@ -137,15 +137,28 @@ gtkutil::PersistentTransientWindowPtr GlobalCameraManager::getFloatingWindow() {
 		else {
 			globalErrorStream() << "Could not connect ToggleCamera event\n";
 		}
+
+		// Add the toggle max/min command for floating windows
+		GlobalEventManager().addCommand("ToggleCameraFullScreen", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleFullscreen>(*this));
 	}
 	return _floatingCamWindow;
+}
+
+void GlobalCameraManager::toggleFullscreen() {
+	gtkutil::PersistentTransientWindowPtr window = getFloatingWindow();
+
+	if (window == NULL) {
+		return;
+	}
+
+	window->toggleFullscreen();
 }
 
 void GlobalCameraManager::resetCameraAngles() {
 	if (_camWnd != NULL) {
 		Vector3 angles;
 		angles[CAMERA_ROLL] = angles[CAMERA_PITCH] = 0;
-		angles[CAMERA_YAW] = static_cast<float>(22.5 * floor((_camWnd->getCameraAngles()[CAMERA_YAW]+11)/22.5));
+		angles[CAMERA_YAW] = 22.5 * floor((_camWnd->getCameraAngles()[CAMERA_YAW]+11)/22.5);
 		_camWnd->setCameraAngles(angles);
 	}
 }

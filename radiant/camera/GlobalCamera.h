@@ -83,6 +83,9 @@ public:
 
 	// Toggles between lighting and solid rendering mode (passes the call to the CameraSettings class)
 	void toggleLightingMode();
+
+	// Toggles the maximised/restored state of the camera window
+	void toggleFullscreen();
 	
 	// Increases/decreases the far clip plane distance (passes the call to CamWnd)
 	void cubicScaleIn();
