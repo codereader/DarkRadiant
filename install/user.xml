@@ -198,6 +198,8 @@
 			<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
 			<toggletoolbutton name="freemodelrotation" action="ToggleFreeModelRotation" tooltip="Rotate Models independently" icon="free_model_rotation.png" />
 			<toggletoolbutton name="togglerotationpivot" action="ToggleRotationPivot" tooltip="Rotate func_* Entities around origin" icon="rotation_pivot_origin.png" />
+		<separator/>
+			<toolbutton name="createDecals" action="CreateDecalsForFaces" tooltip="Create Decals for selected Faces" icon="create_decals.png"/>
 	</toolbar>
 	<toolbar name="edit" align="vertical">
 			<toolbutton name="xflip" action="MirrorSelectionX" tooltip="x-axis Mirror" icon="brush_flipx.png"/>

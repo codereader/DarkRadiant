@@ -220,7 +220,7 @@
 		<menuSeparator />
 		<menuItem name="texturelock" caption="Texture lock" command="TogTexLock" />
 		<menuSeparator />
-		<menuItem name="createdecals" caption="Create Decal Patches" command="CreateDecalsForFaces" />
+		<menuItem name="createdecals" caption="Create Decal Patches" command="CreateDecalsForFaces" icon="create_decals.png" />
 	</subMenu>
 
 	<subMenu name="patch" caption="_Patch">
