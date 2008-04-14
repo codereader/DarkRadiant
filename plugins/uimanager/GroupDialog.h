@@ -98,9 +98,15 @@ public:
 	 */
 	GtkWidget* getPage();
 
+	/**
+	 * greebo: Returns the name of the current groupdialog page or "" if none is set.
+	 */
+	std::string getPageName();
+
 	// Returns the window widget containing the GroupDialog.
 	GtkWidget* getDialogWindow();
 	void showDialogWindow();
+	void hideDialogWindow();
 	
 	/** greebo: Safely disconnects this window from
 	 * 			the eventmanager and saves the window position.

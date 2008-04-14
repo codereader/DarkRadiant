@@ -66,9 +66,29 @@ GtkWidget* GroupDialog::getPage() {
 	);
 }
 
+std::string GroupDialog::getPageName() {
+	// Get the widget
+	GtkWidget* curPage = gtk_notebook_get_nth_page(
+		GTK_NOTEBOOK(_notebook), 
+		gtk_notebook_get_current_page(GTK_NOTEBOOK(_notebook))
+	);
+
+	// Now cycle through the list of pages and find the matching one
+	for (std::size_t i = 0; i < _pages.size(); i++) {
+		if (_pages[i].page == curPage) {
+
+			// Found page. Set it to active if it is not already active.
+			return _pages[i].name;
+		}
+	}
+
+	// not found
+	return "";
+}
+
 // Display the named page
 void GroupDialog::setPage(const std::string& name) {
-	for (unsigned int i = 0; i < _pages.size(); i++) {
+	for (std::size_t i = 0; i < _pages.size(); i++) {
 		if (_pages[i].name == name) {
 
 			// Found page. Set it to active if it is not already active.
@@ -105,6 +125,10 @@ GroupDialog& GroupDialog::Instance() {
 
 void GroupDialog::showDialogWindow() {
 	show();
+}
+
+void GroupDialog::hideDialogWindow() {
+	hide();
 }
 
 // Public static method to toggle the window visibility

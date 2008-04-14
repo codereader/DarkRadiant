@@ -299,7 +299,16 @@ void TextureBrowser::activeShadersChanged() {
 
 // Static command target
 void TextureBrowser::toggle() {
-	GlobalGroupDialog().setPage("textures");
+	IGroupDialog& dlg = GlobalGroupDialog();
+
+	if (dlg.getPageName() != "textures" || !GTK_WIDGET_VISIBLE(dlg.getDialogWindow())) {
+		// TextureBrowser not yet visible, show it
+		dlg.setPage("textures");
+	}
+	else {
+		// TextureWindow is already active, hide it again
+		dlg.hideDialogWindow();
+	}
 }
 
 //++timo NOTE: this is a mix of Shader module stuff and texture explorer

@@ -133,11 +133,19 @@ public:
 	 */
 	virtual GtkWidget* getPage() = 0;
 
+	/**
+	 * greebo: Returns the name of the current groupdialog page or "" if none is set.
+	 */
+	virtual std::string getPageName() = 0;
+
 	// Returns the window widget containing the GroupDialog.
 	virtual GtkWidget* getDialogWindow() = 0;
 
 	// Shows the dialog
 	virtual void showDialogWindow() = 0;
+
+	// Hides the dialog
+	virtual void hideDialogWindow() = 0;
 };
 
 const std::string MODULE_UIMANAGER("UIManager");
