@@ -49,6 +49,8 @@ public:
 	static void showWindow();
 	
 private:
+	virtual void _preShow();
+
 	// Constructs and adds all the dialog widgets
 	void populateWindow();
 	

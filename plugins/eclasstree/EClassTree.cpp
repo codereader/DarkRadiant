@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 
 #include "ieclass.h"
+#include "selectionlib.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/IconTextColumn.h"
@@ -37,7 +38,7 @@ EClassTree::EClassTree() :
 		GDK_TYPE_PIXBUF		// icon
 	);
 	
-	// Construct an eclass visitor and traverse the 
+	// Construct an eclass visitor and traverse the entity classes
 	EClassTreeBuilder builder(_eclassStore);
 	
 	// Construct the window's widgets
@@ -191,6 +192,42 @@ void EClassTree::updatePropertyView(const std::string& eclassName) {
 	
 	ListStorePopulator populator(_propertyStore);
 	eclass->forEachClassAttribute(populator, true);
+}
+
+void EClassTree::_preShow() {
+	// Do we have anything selected
+	if (GlobalSelectionSystem().countSelected() == 0) {
+		return;
+	}
+
+	// Get the last selected node and check if it's an entity
+	scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
+
+	Entity* entity = Node_getEntity(lastSelected);
+
+	if (entity != NULL) {
+		// There is an entity selected, extract the classname
+		std::string classname = entity->getKeyValue("classname");
+
+		// Construct a finder
+		gtkutil::TreeModel::SelectionFinder finder(classname, NAME_COLUMN);
+
+		// Traverse the model and find the name
+		gtk_tree_model_foreach(
+			GTK_TREE_MODEL(_eclassStore), 
+			gtkutil::TreeModel::SelectionFinder::forEach, &finder);
+		
+		// Select the element, if something was found
+		GtkTreePath* path = finder.getPath();
+		if (path) {
+			// Expand the treeview to display the target row
+			gtk_tree_view_expand_to_path(_eclassView, path);
+			// Highlight the target row
+			gtk_tree_view_set_cursor(_eclassView, path, NULL, false);
+			// Make the selected row visible 
+			gtk_tree_view_scroll_to_cell(_eclassView, path, NULL, true, 0.3f, 0.0f);
+		}
+	}
 }
 
 // Static command target
