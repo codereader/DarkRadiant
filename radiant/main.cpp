@@ -168,7 +168,7 @@ public:
       return handled;
 #else
       m_buffer << "Please report this error to the developers\n";
-      gtk_MessageBox(0, m_buffer.c_str(), "Radiant - Runtime Error", eMB_OK, eMB_ICONERROR);
+      gtk_MessageBox(0, m_buffer.str().c_str(), "Radiant - Runtime Error", eMB_OK, eMB_ICONERROR);
       m_buffer.clear();
 #endif
     }
