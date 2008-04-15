@@ -33,6 +33,11 @@ class Console :
 
 public:
 	/** 
+	 * greebo: Static command target for toggling the console.
+	 */
+	static void toggle();
+
+	/** 
 	 * greebo: Returns the widget pointer for packing into a parent container.
 	 */
 	GtkWidget* getWidget();
