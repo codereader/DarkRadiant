@@ -78,10 +78,10 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 
 #include "gtkutil/messagebox.h"
 #include "log/LogFile.h"
+#include "log/PIDFile.h"
 #include "log/LogStream.h"
 #include "map/Map.h"
 #include "mainframe.h"
-#include "settings/PreferenceSystem.h"
 #include "referencecache.h"
 #include "ui/mru/MRU.h"
 #include "settings/GameManager.h"
@@ -178,49 +178,6 @@ public:
 
 typedef Static<PopupDebugMessageHandler> GlobalPopupDebugMessageHandler;
 
-void createPIDFile(const std::string& name) {
-	std::string pidFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + name;
-
-	FILE *pid;
-	pid = fopen(pidFile.c_str(), "r");
-	
-	// Check for an existing radiant.pid file
-	if (pid != NULL) {
-		fclose (pid);
-
-		if (remove (pidFile.c_str()) == -1) {
-			std::string msg = "WARNING: Could not delete " + pidFile;
-			gtk_MessageBox(0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
-		}
-
-	    std::string msg("Radiant failed to start properly the last time it was run.\n");
-	    msg += "The failure may be related to invalid preference settings.\n";
-		msg += "Do you want to rename your local user.xml file and restore the default settings?";
-
-		if (gtk_MessageBox(0, msg.c_str(), "Radiant - Startup Failure", 
-			   eMB_YESNO, eMB_ICONQUESTION) == eIDYES) 
-		{
-			resetPreferences();
-		}
-	}
-
-	// create a primary .pid for global init run
-	pid = fopen (pidFile.c_str(), "w");
-	if (pid) {
-		fclose (pid);
-	}
-}
-
-void removePIDFile(const std::string& name) {
-	std::string pidFile = GlobalRegistry().get(RKEY_SETTINGS_PATH) + name;
-
-	// close the primary
-	if (remove(pidFile.c_str()) == -1) {
-		std::string msg = "WARNING: Could not delete " + pidFile;
-		gtk_MessageBox(0, msg.c_str(), "Radiant", eMB_OK, eMB_ICONERROR );
-	}
-}
-
 /**
  * Main entry point for the application.
  */
@@ -235,63 +192,64 @@ int main (int argc, char* argv[]) {
 	// Initialse the context (application path / settings path, is OS-specific)
 	module::ModuleRegistry::Instance().initialiseContext(argc, argv);
 	
-	// Initialise GTK
-	gtk_disable_setlocale();
-	gtk_init(&argc, &argv);
+	{
+		// Create the radiant.pid file in the settings folder 
+		// (emits a warning if the file already exists (due to a previous startup failure)) 
+		applog::PIDFile pidFile(PID_FILENAME);
 
-	GlobalDebugMessageHandler::instance().setHandler(GlobalPopupDebugMessageHandler::instance());
+		// Initialise GTK
+		gtk_disable_setlocale();
+		gtk_init(&argc, &argv);
 
-	ui::Splash::Instance().show();
-	
-	// Initialise the Reference in the GlobalModuleRegistry() accessor. 
-	module::RegistryReference::Instance().setRegistry(module::getRegistry());
-	
-	ui::Splash::Instance().setProgressAndText("Searching for Modules", 0.0f);
-	
-	// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
-	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
-	module::Loader::loadModules(ctx.getApplicationPath());
-	
-	module::getRegistry().initialiseModules();
-	
-	// Create the radiant.pid file in the settings folder 
-	// (emits a warning if the file already exists (due to a previous startup failure)) 
-	createPIDFile("darkradiant.pid");
-	
-	ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.77f);
+		GlobalDebugMessageHandler::instance().setHandler(GlobalPopupDebugMessageHandler::instance());
 
-	// The settings path is set, start logging now
-	applog::LogFile::create("darkradiant.log");
+		ui::Splash::Instance().show();
 	
-	ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.79f);
-
-	// The VFS is setup at this point, we can load the modules
-	Radiant_Initialise();
+		// Initialise the Reference in the GlobalModuleRegistry() accessor. 
+		module::RegistryReference::Instance().setRegistry(module::getRegistry());
 	
-	ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.92f);
+		ui::Splash::Instance().setProgressAndText("Searching for Modules", 0.0f);
 	
-	g_pParentWnd = 0;
-  g_pParentWnd = new MainFrame();
-  
-  // Load the shortcuts from the registry
-   	GlobalEventManager().loadAccelerators();
-   	
-   	// Update all accelerators, at this point all commands should be setup
-   	GlobalUIManager().getMenuManager().updateAccelerators();
-  
-	ui::Splash::Instance().setProgressAndText("Complete", 1.0f);  
+		// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+		const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
+		module::Loader::loadModules(ctx.getApplicationPath());
+	
+		module::getRegistry().initialiseModules();
+	
+		ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.77f);
 
-	ui::Splash::Instance().hide();
+		// The settings path is set, start logging now
+		applog::LogFile::create("darkradiant.log");
+		
+		ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.79f);
 
-	if (GlobalMRU().loadLastMap() && GlobalMRU().getLastMapName() != "") {
-		GlobalMap().load(GlobalMRU().getLastMapName());
+		// The VFS is setup at this point, we can load the modules
+		Radiant_Initialise();
+		
+		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.92f);
+		
+		g_pParentWnd = 0;
+	  g_pParentWnd = new MainFrame();
+	  
+	  // Load the shortcuts from the registry
+   		GlobalEventManager().loadAccelerators();
+	   	
+   		// Update all accelerators, at this point all commands should be setup
+   		GlobalUIManager().getMenuManager().updateAccelerators();
+	  
+		ui::Splash::Instance().setProgressAndText("Complete", 1.0f);  
+
+		ui::Splash::Instance().hide();
+
+		if (GlobalMRU().loadLastMap() && GlobalMRU().getLastMapName() != "") {
+			GlobalMap().load(GlobalMRU().getLastMapName());
+		}
+		else {
+			GlobalMap().createNew();
+		}
+
+		// Scope ends here, PIDFile is deleted by its constructor
 	}
-	else {
-		GlobalMap().createNew();
-	}
-
-	// Remove the radiant.pid file again after loading all the settings
-	removePIDFile("darkradiant.pid");
 
 #ifdef _PROFILE
 	// greebo: In profile builds, check if we should run an automated test
