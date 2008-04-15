@@ -53,7 +53,7 @@ private:
 	static gboolean _onExpose(GtkWidget* self, GdkEventExpose* event, GtkWindow* parent) {
 		// Make sure the parent window is shown as well
 		if (parent != NULL && !GTK_WIDGET_VISIBLE(parent)) {
-			gtk_widget_show(GTK_WIDGET(parent));
+			gtk_window_present(parent);
 			
 			// Refocus on the self window
 			gtk_widget_show(self);
