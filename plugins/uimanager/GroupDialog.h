@@ -93,6 +93,9 @@ public:
 	 * 			refers to the name string passed to the addPage() method.
 	 */
 	void setPage(const std::string& name);
+
+	// Toggles page/dialog visibility
+	virtual void togglePage(const std::string& name);
 	
 	/** greebo: Returns the widget of the currently visible page.
 	 */

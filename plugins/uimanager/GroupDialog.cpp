@@ -110,6 +110,17 @@ void GroupDialog::setPage(GtkWidget* page) {
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(_notebook), gint(_currentPage));
 }
 
+void GroupDialog::togglePage(const std::string& name) {
+	if (getPageName() != name || !GTK_WIDGET_VISIBLE(getWindow())) {
+		// page not yet visible, show it
+		setPage(name);
+	}
+	else {
+		// page is already active, hide the dialog
+		hideDialogWindow();
+	}
+}
+
 GroupDialogPtr& GroupDialog::InstancePtr() {
 	static GroupDialogPtr _instancePtr;
 	return _instancePtr;

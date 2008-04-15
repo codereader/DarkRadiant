@@ -102,7 +102,7 @@ public:
 class IGroupDialog 
 {
 public:
-	/** Adds a page to the group dialog. (DEPRECATED, do not use in new code)
+	/** Adds a page to the group dialog.
 	 * 
 	 * @name: The name of this window (unique, can be used to show the page)
 	 * @tabLabel: The label string to be displayed on the tab
@@ -126,8 +126,20 @@ public:
 	
 	/** greebo: Activated the named page. The <name> parameter
 	 * 			refers to the name string passed to the addPage() method.
+	 * This also shows the GroupDialog, should it be hidden before the call.
 	 */
 	virtual void setPage(const std::string& name) = 0;
+
+	/** greebo: Toggle the named page. The <name> parameter
+	 * refers to the name string passed to the addPage() method.
+	 *
+	 * The behaviour is as follows: Calling this command opens the
+	 * GroupDialog (even if it is hidden) and switches to the given page.
+	 *
+	 * If the GroupDialog is already visible and focusing the requested page,
+	 * the dialog is hidden.
+	 */
+	virtual void togglePage(const std::string& name) = 0;
 	
 	/** greebo: Returns the widget of the currently visible page.
 	 */
