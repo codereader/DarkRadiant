@@ -241,11 +241,11 @@ void updateTextureBrowser() {
 }
 
 void Console_ToggleShow() {
-	GlobalGroupDialog().setPage("console");  
+	GlobalGroupDialog().togglePage("console");  
 }
 
 void EntityInspector_ToggleShow() {
-	GlobalGroupDialog().setPage("entity");  
+	GlobalGroupDialog().togglePage("entity");  
 }
 
 
