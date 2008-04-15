@@ -138,6 +138,10 @@ public:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
+	/** 
+	 * greebo: Static command target for toggling the Entity Inspector in the GroupDialog.
+	 */
+	static void toggle();
 };
 
 } // namespace ui

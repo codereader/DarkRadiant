@@ -1,11 +1,12 @@
 #include "Console.h"
 
-#include "LogLevels.h"
+#include "iuimanager.h"
 
 #include <gtk/gtk.h>
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/IConv.h"
 
+#include "LogLevels.h"
 #include "LogWriter.h"
 
 namespace ui {
@@ -49,6 +50,10 @@ Console::Console() :
 
 	// We're ready to catch log output, register ourselves
 	applog::LogWriter::Instance().attach(this);
+}
+
+void Console::toggle() {
+	GlobalGroupDialog().togglePage("console");  
 }
 
 void Console::writeLog(const std::string& outputStr, applog::ELogLevel level) {

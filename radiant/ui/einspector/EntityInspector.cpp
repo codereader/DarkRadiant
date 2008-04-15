@@ -6,6 +6,7 @@
 #include "ieclass.h"
 #include "iselection.h"
 #include "iregistry.h"
+#include "iuimanager.h"
 
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
@@ -640,6 +641,10 @@ bool EntityInspector::updateSelectedEntity() {
 	{
 		return true;
 	}
+}
+
+void EntityInspector::toggle() {
+	GlobalGroupDialog().togglePage("entity");
 }
 
 } // namespace ui

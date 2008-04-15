@@ -240,16 +240,6 @@ void updateTextureBrowser() {
 	GlobalTextureBrowser().queueDraw();
 }
 
-void Console_ToggleShow() {
-	GlobalGroupDialog().togglePage("console");  
-}
-
-void EntityInspector_ToggleShow() {
-	GlobalGroupDialog().togglePage("entity");  
-}
-
-
-
 void SetClipMode(bool enable);
 void ModeChangeNotify();
 
@@ -1566,11 +1556,11 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SelectChildren", FreeCaller<selection::algorithm::selectChildren>());
 	GlobalEventManager().addCommand("Preferences", FreeCaller<ui::PrefDialog::toggle>());
 	
-	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<Console_ToggleShow>());
+	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<ui::Console::toggle>());
 	
 	// Entity inspector (part of Group Dialog)
 	GlobalEventManager().addCommand("ToggleEntityInspector",
-									FreeCaller<EntityInspector_ToggleShow>());
+		FreeCaller<ui::EntityInspector::toggle>());
 	
 	// Light inspector
 	GlobalEventManager().addCommand("ToggleLightInspector",	
