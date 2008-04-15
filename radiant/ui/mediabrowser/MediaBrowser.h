@@ -89,6 +89,11 @@ public:
 	 * 			a "RefreshShaders" command.
 	 */
 	void reloadMedia();
+
+	/** 
+	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
+	 */
+	static void toggle();
 };
 
 }

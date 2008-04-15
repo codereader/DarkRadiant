@@ -1561,6 +1561,9 @@ void MainFrame_Construct()
 	// Entity inspector (part of Group Dialog)
 	GlobalEventManager().addCommand("ToggleEntityInspector",
 		FreeCaller<ui::EntityInspector::toggle>());
+
+	GlobalEventManager().addCommand("ToggleMediaBrowser",
+		FreeCaller<ui::MediaBrowser::toggle>());
 	
 	// Light inspector
 	GlobalEventManager().addCommand("ToggleLightInspector",	

@@ -1,6 +1,7 @@
 #include "MediaBrowser.h"
 #include "TextureDirectoryLoader.h"
 
+#include "iuimanager.h"
 #include "ishaders.h"
 #include "select.h"
 #include "generic/callback.h"
@@ -373,6 +374,10 @@ void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {
 		// Nothing selected, clear the clipboard
 		GlobalShaderClipboard().clear();
 	}
+}
+
+void MediaBrowser::toggle() {
+	GlobalGroupDialog().togglePage("mediabrowser");
 }
 
 }
