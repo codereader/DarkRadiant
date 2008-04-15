@@ -2152,6 +2152,10 @@
 					RelativePath="..\..\radiant\log\LogWriter.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\radiant\log\PIDFile.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
