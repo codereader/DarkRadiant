@@ -11,11 +11,15 @@
 #include "string/string.h"
 #include "gtkutil/messagebox.h"
 #include "LogWriter.h"
+#include "modulesystem/ModuleRegistry.h"
 
 namespace applog {
 
 LogFile::LogFile(const std::string& filename) :
-	_logFilename(GlobalRegistry().get(RKEY_SETTINGS_PATH) + "darkradiant.log"),
+	_logFilename(
+		module::ModuleRegistry::Instance().getApplicationContext().getSettingsPath() + 
+		filename
+	),
 	_logStream(_logFilename.c_str())
 {
 	if (_logStream.good()) {

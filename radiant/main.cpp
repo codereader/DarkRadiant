@@ -180,6 +180,9 @@ int main (int argc, char* argv[]) {
 
 	// Initialse the context (application path / settings path, is OS-specific)
 	module::ModuleRegistry::Instance().initialiseContext(argc, argv);
+
+	// The settings path is set, start logging now
+	applog::LogFile::create("darkradiant.log");
 	
 	{
 		// Create the radiant.pid file in the settings folder 
@@ -205,12 +208,7 @@ int main (int argc, char* argv[]) {
 	
 		module::getRegistry().initialiseModules();
 	
-		ui::Splash::Instance().setProgressAndText("Creating Logfile", 0.77f);
-
-		// The settings path is set, start logging now
-		applog::LogFile::create("darkradiant.log");
-		
-		ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.79f);
+		ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.85f);
 
 		// The VFS is setup at this point, we can load the modules
 		Radiant_Initialise();
