@@ -59,30 +59,21 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 
 #include "main.h"
 
-#include "version.h"
-
-#include "debugging/debugging.h"
-
-#include "iundo.h"
-#include "imodule.h"
-#include "iuimanager.h"
-#include "ifilesystem.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
+#include "iuimanager.h"
+#include "debugging/debugging.h"
 
 #include <gtk/gtkmain.h>
 
 #include "os/file.h"
 #include "os/path.h"
-#include "stream/textfilestream.h"
 
-#include "gtkutil/messagebox.h"
 #include "log/LogFile.h"
 #include "log/PIDFile.h"
 #include "log/LogStream.h"
 #include "map/Map.h"
 #include "mainframe.h"
-#include "referencecache.h"
 #include "ui/mru/MRU.h"
 #include "settings/GameManager.h"
 #include "ui/splash/Splash.h"
@@ -92,8 +83,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #ifdef _PROFILE
 #include "Profile.h"
 #endif
-
-#include <iostream>
 
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
 #include "crtdbg.h"
