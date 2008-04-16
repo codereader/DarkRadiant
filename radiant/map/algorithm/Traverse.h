@@ -7,11 +7,11 @@ namespace map {
 
 /** greebo: Traverses the entire scenegraph (used as entry point/TraverseFunc for map saving)
  */
-void traverse(scene::INodePtr root, scene::NodeVisitor& walker);
+void traverse(scene::INodePtr root, scene::NodeVisitor& nodeExporter);
 
 /** greebo: Traverses only the selected items
  */
-void traverseSelected(scene::INodePtr root, scene::NodeVisitor& walker);
+void traverseSelected(scene::INodePtr root, scene::NodeVisitor& nodeExporter);
 
 } // namespace map
 

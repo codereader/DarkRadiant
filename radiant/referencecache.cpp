@@ -75,7 +75,7 @@ bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTr
 	auxFilename = auxFilename.substr(0, auxFilename.rfind('.'));
 	auxFilename += GlobalRegistry().get(map::RKEY_INFO_FILE_EXTENSION);
 
-	globalOutputStream() << "and auxiliary file " << auxFilename.c_str() << " for write...";
+	globalOutputStream() << "and auxiliary file " << auxFilename << " for write...";
 
 	std::ofstream auxfile(auxFilename.c_str());
 
