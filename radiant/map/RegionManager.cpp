@@ -287,10 +287,10 @@ void RegionManager::setRegionFromSelection() {
 	}
 }
 
-void RegionManager::traverseRegion(scene::INodePtr root, scene::NodeVisitor& walker) {
+void RegionManager::traverseRegion(scene::INodePtr root, scene::NodeVisitor& nodeExporter) {
 	// Pass the given Walker on to the ExcludeWalker, 
-	// which calls the walker.pre() and .post() methods if the visited item is regioned.
-	ExcludeNonRegionedWalker visitor(walker);
+	// which calls the nodeExporter.pre() and .post() methods if the visited item is regioned.
+	ExcludeNonRegionedWalker visitor(nodeExporter);
 	root->traverse(visitor);
 }
 

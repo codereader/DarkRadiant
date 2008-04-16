@@ -50,7 +50,7 @@ typedef boost::shared_ptr<MapExporter> MapExporterPtr;
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
  */
-typedef void (*GraphTraversalFunc) (scene::INodePtr root, scene::NodeVisitor& walker);
+typedef void (*GraphTraversalFunc) (scene::INodePtr root, scene::NodeVisitor& nodeExporter);
 
 namespace map {
 

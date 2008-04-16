@@ -144,7 +144,7 @@ void Radiant_Initialise()
 	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage("Settings");
 	settingsPage->setTitle("");
 	
-	ui::Splash::Instance().setProgressAndText("Constructing Menu", 0.85f);
+	ui::Splash::Instance().setProgressAndText("Constructing Menu", 0.89f);
 	
 	// Construct the MRU commands and menu structure
 	GlobalMRU().constructMenu();
