@@ -65,9 +65,8 @@ void EClassManager::resolveModelInheritance(const std::string& name, IModelDefPt
 		Models::iterator i = _models.find(model->parent);
 		
 		if (i == _models.end()) {
-			globalErrorStream() << "model " << name.c_str()
-					<< " inherits unknown model " << model->parent.c_str()
-					<< "\n";
+			globalErrorStream() << "model " << name
+					<< " inherits unknown model " << model->parent << "\n";
 		} 
 		else {
 			resolveModelInheritance(i->first, i->second);
@@ -97,8 +96,7 @@ void EClassManager::realise() {
          i != _entityClasses.end(); ++i) 
 	{
 		// Get a Doom3EntityClass pointer
-		boost::shared_ptr<Doom3EntityClass> d3c =
-			boost::static_pointer_cast<Doom3EntityClass>(i->second);
+		Doom3EntityClassPtr d3c = boost::static_pointer_cast<Doom3EntityClass>(i->second);
 			
 		// Tell the class to resolve its own inheritance using the given
 		// map as a source for parent lookup
@@ -234,11 +232,14 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir) {
         	// Invoke the parser routine
         	model->parseFromTokens(tokeniser);
         	
-		    if (_models.find(model->name) != _models.end()) {
+			std::pair<Models::iterator, bool> result = _models.insert(
+				Models::value_type(model->name, model)
+			);
+
+			// Was the model already in the map (bool == false)?
+			if (!result.second) {
 		    	std::cout << "[eclassmgr]: Model " << model->name << " redefined.\n";
 		    }
-		    
-		    _models.insert(Models::value_type(model->name, model));
         }
     }
 }
