@@ -21,34 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "map.h"
 
-#include "ieclass.h"
 #include "map/MapPositionManager.h"
 #include "map/RegionManager.h"
 #include "map/Map.h"
-
-class MapEntityClasses : 
-	public ModuleObserver
-{
-	std::size_t m_unrealised;
-public:
-	MapEntityClasses() : 
-		m_unrealised(1)
-	{}
-	
-	void realise() {
-		if (--m_unrealised == 0) {
-			GlobalMap().realiseResource();
-		}
-	}
-	
-	void unrealise() {
-		if (++m_unrealised == 1) {
-			GlobalMap().unrealiseResource();
-		}
-	}
-};
-
-MapEntityClasses g_MapEntityClasses;
 
 void Map_Construct() {
 	// Add the Map-related commands to the EventManager
@@ -59,10 +34,4 @@ void Map_Construct() {
 
 	// Add the map position commands to the EventManager
 	map::GlobalMapPosition().initialise();
-
-	GlobalEntityClassManager().attach(g_MapEntityClasses);
-}
-
-void Map_Destroy() {
-	GlobalEntityClassManager().detach(g_MapEntityClasses);
 }
