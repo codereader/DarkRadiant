@@ -32,9 +32,6 @@ class EClassManager :
     // Whether the entity classes have been realised
     bool _realised;
 
-    // Set of ModuleObservers to notify on realise/unrealise
-    ModuleObservers m_observers;
-    
     // Map of named entity classes
     typedef std::map<std::string, IEntityClassPtr> EntityClasses;
     EntityClasses _entityClasses;
@@ -63,9 +60,6 @@ public:
     virtual void onFileSystemInitialise();
     virtual void onFileSystemShutdown();
 
-    void attach(ModuleObserver & observer);
-    void detach(ModuleObserver & observer);
-    
     // Find the modeldef with the given name
     virtual IModelDefPtr findModel(const std::string& name) const;
     

@@ -125,9 +125,6 @@ void EClassManager::realise() {
 	IEntityClassPtr worldspawn = findOrInsert("worldspawn", true);
 	worldspawn->setColour(worlspawnColour);
 
-    // Prod the observers (also on the first call)
-    m_observers.realise();
-    
 	_realised = true;
 }
 
@@ -157,20 +154,9 @@ void EClassManager::forEach(EntityClassVisitor& visitor) {
 
 void EClassManager::unrealise() {
     if (_realised) {
-        m_observers.unrealise();
        	_entityClasses.clear();
        	_realised = false;
     }
-}
-
-void EClassManager::attach(ModuleObserver & observer)
-{
-    m_observers.attach(observer);
-}
-
-void EClassManager::detach(ModuleObserver & observer)
-{
-    m_observers.detach(observer);
 }
 
 IModelDefPtr EClassManager::findModel(const std::string& name) const {

@@ -326,8 +326,6 @@ public:
 	virtual void visit(IEntityClassPtr eclass) = 0;
 };
 
-class ModuleObserver;
-
 const std::string MODULE_ECLASSMANAGER("EntityClassManager");
 
 /**
@@ -359,8 +357,7 @@ public:
     virtual IEntityClassPtr findClass(const std::string& name) const = 0;
     
  	virtual void forEach(EntityClassVisitor& visitor) = 0;
-	virtual void attach(ModuleObserver& observer) = 0;
-	virtual void detach(ModuleObserver& observer) = 0;
+
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;
 	

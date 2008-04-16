@@ -178,7 +178,6 @@ void RadiantModule::shutdownModule() {
 
 	map::PointFile::Instance().destroy();
     Entity_Destroy();
-    Map_Destroy();
     MultiMon_Destroy();
     Selection_destroy();
     
