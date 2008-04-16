@@ -57,13 +57,11 @@ void PicoPrintFunc( int level, const char *str )
 }
 
 void PicoLoadFileFunc(char *name, byte **buffer, int *bufSize) {
-	std::string filename(name);
-	*bufSize = vfsLoadFile(filename, (void**) buffer);
+	*bufSize = static_cast<int>(GlobalFileSystem().loadFile(name, (void**)buffer));
 }
 
-void PicoFreeFileFunc( void* file )
-{
-	vfsFreeFile(file);
+void PicoFreeFileFunc( void* file ) {
+	GlobalFileSystem().freeFile(file);
 }
 
 void pico_initialise()

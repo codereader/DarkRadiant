@@ -145,17 +145,4 @@ inline VirtualFileSystem& GlobalFileSystem() {
 	return _vfs;
 }
 
-
-/// \deprecated Use \c openFile.
-inline int vfsLoadFile(const std::string& filename, void** buffer, int index = 0)
-{
-	return static_cast<int>(GlobalFileSystem().loadFile(filename, buffer));
-};
-
-/// \deprecated Deprecated.
-inline void vfsFreeFile(void* p)
-{
-	GlobalFileSystem().freeFile(p);
-}
-
 #endif
