@@ -3,6 +3,8 @@
 
 #include <gtk/gtktextview.h>
 #include <gtk/gtkmenuitem.h>
+#include <gtk/gtkwindow.h>
+
 #include "LogDevice.h"
 
 namespace ui {
