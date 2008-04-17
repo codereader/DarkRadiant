@@ -75,6 +75,14 @@ public:
     const Specifier& getSpecifier() const;
 
     /**
+     * Set the Specifier to display in the ComboBox.
+     *
+     * @param
+     * The Specifier object to select.
+     */
+    void setSpecifier(const Specifier& spec);
+
+    /**
      * Return the string value associated with the selected Specifier.
      *
      * @return
