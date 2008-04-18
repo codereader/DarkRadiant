@@ -341,14 +341,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\NoneSpecifierPanel.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\NoneSpecifierPanel.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanel.h"
 						>
 					</File>
