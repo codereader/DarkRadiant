@@ -66,6 +66,7 @@
 		<menuItem name="layercontrols" caption="Layers" command="ToggleLayerControlDialog" />
 		<menuItem name="consoleView" caption="Console View" command="ToggleConsole" />
 		<menuItem name="textureBrowser" caption="Texture Browser" command="ViewTextures" />
+		<menuItem name="mediabrowser" caption="Media Browser" command="ToggleMediaBrowser" />
 		<menuItem name="entityInspector" caption="Entity Inspector" command="ToggleEntityInspector" />
 		<menuItem name="lightInspector" caption="_Light Inspector" command="ToggleLightInspector" />
 		<menuItem name="surfaceInspector" caption="_Surface Inspector" command="SurfaceInspector" />
