@@ -45,7 +45,7 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
     }
     
     globalOutputStream() << "  RenderablePicoSurface: using shader " 
-    					 << _originalShaderName.c_str() << "\n";
+    					 << _originalShaderName << "\n";
     
     _mappedShaderName = _originalShaderName; // no skin at this time
     

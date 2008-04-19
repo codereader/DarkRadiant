@@ -31,7 +31,7 @@ public:
 	: m_used(0)
 	{ }
 
-	void construct(const char* name);
+	void construct(const std::string& name);
 	void destroy();
 
 	/**
