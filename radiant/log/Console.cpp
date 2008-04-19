@@ -8,6 +8,9 @@
 
 #include "LogLevels.h"
 #include "LogWriter.h"
+#include "StringLogDevice.h"
+
+#include <boost/algorithm/string/replace.hpp>
 
 namespace ui {
 
@@ -50,6 +53,22 @@ Console::Console() :
 
 	// We're ready to catch log output, register ourselves
 	applog::LogWriter::Instance().attach(this);
+
+	// Copy the temporary buffers over
+	if (applog::StringLogDevice::InstancePtr() != NULL) {
+		applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
+
+		for (int level = applog::SYS_VERBOSE; 
+			 level < applog::SYS_NUM_LOGLEVELS; 
+			 level++)
+		{
+			writeLog(logger.getString(static_cast<applog::ELogLevel>(level)) + "\n", 
+				static_cast<applog::ELogLevel>(level));
+		}
+	}
+
+	// Destruct the temporary buffer
+	applog::StringLogDevice::destroy();
 }
 
 void Console::toggle() {
@@ -83,9 +102,12 @@ void Console::writeLog(const std::string& outputStr, applog::ELogLevel level) {
 	// GTK expects UTF8 characters, so convert the incoming string
 	std::string converted = gtkutil::IConv::localeToUTF8(outputStr);
 
+	// Replace NULL characters, this is not caught by localeToUTF8
+	boost::algorithm::replace_all(converted, "\0", "NULL");
+
 	// Insert into the text buffer
 	gtk_text_buffer_insert_with_tags(_buffer, &iter, 
-		converted.c_str(), gint(converted.size()), tag, 0);
+		converted.c_str(), gint(converted.size()), tag, NULL);
 
 	gtk_text_buffer_move_mark(_buffer, end, &iter);
 	gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(_textView), end);
