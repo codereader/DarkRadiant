@@ -184,14 +184,14 @@ int main (int argc, char* argv[]) {
 	// The settings path is set, start logging now
 	applog::LogFile::create("darkradiant.log");
 	
+	// Initialise GTK
+	gtk_disable_setlocale();
+	gtk_init(&argc, &argv);
+
 	{
 		// Create the radiant.pid file in the settings folder 
 		// (emits a warning if the file already exists (due to a previous startup failure)) 
 		applog::PIDFile pidFile(PID_FILENAME);
-
-		// Initialise GTK
-		gtk_disable_setlocale();
-		gtk_init(&argc, &argv);
 
 		GlobalDebugMessageHandler::instance().setHandler(GlobalPopupDebugMessageHandler::instance());
 
