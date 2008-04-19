@@ -2156,6 +2156,14 @@
 					RelativePath="..\..\radiant\log\PIDFile.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\radiant\log\StringLogDevice.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\StringLogDevice.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File

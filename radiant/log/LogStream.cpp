@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "COutRedirector.h"
+#include "StringLogDevice.h"
 
 namespace applog {
 
@@ -26,6 +27,10 @@ void initialiseLogStreams() {
 
 	// Redirect std::cout to the log
 	COutRedirector::init();
+
+	// Instantiate a temporary buffer, which copies the log until the
+	// GTK-based console is ready. The buffer's contents will then be copied over
+	StringLogDevice::InstancePtr() = StringLogDevicePtr(new StringLogDevice);
 }
 
 void shutdownStreams() {
