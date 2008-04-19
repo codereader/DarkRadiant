@@ -24,7 +24,7 @@ public:
 	 * greebo: Pass the level and the optional buffersize to the constructor.
 	 *         Level can be something like SYS_ERROR, SYS_STANDARD, etc.
 	 */
-	LogStreamBuf(int level, int bufferSize = 1);
+	LogStreamBuf(ELogLevel level, int bufferSize = 1);
 
 	// Cleans up the buffer
 	virtual ~LogStreamBuf();

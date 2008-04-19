@@ -14,13 +14,12 @@ namespace applog {
  * The LogStream uses a LogStreamBuf as buffer class, which itself
  * invokes the LogWriter class.
  */
-template<int LogLevel>
 class LogStream : 
 	public std::ostream
 {
 public:
-	LogStream() : 
-		std::ostream(new LogStreamBuf(LogLevel))
+	LogStream(ELogLevel logLevel) : 
+		std::ostream(new LogStreamBuf(logLevel))
 	{}
 
 	virtual ~LogStream() {
@@ -30,11 +29,6 @@ public:
 		}
 	}
 };
-
-// Shorthand typedefs for the various LogLevels
-typedef LogStream<SYS_STANDARD> LogOutputStream;
-typedef LogStream<SYS_ERROR>    LogErrorStream;
-typedef LogStream<SYS_WARNING>  LogWarningStream;
 
 // Accessors to the singleton log streams
 std::ostream& getGlobalOutputStream();
