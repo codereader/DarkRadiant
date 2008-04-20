@@ -2,6 +2,7 @@
 #define COMPONENT_H_
 
 #include "SpecifierType.h"
+#include "Specifier.h"
 #include "ComponentType.h"
 
 #include <string>
@@ -33,6 +34,9 @@ class Component
 	
 	// Component type
 	ComponentType _type;
+
+    // List of Specifiers (SpecifierType + value pairs)
+    SpecifierList _specifiers;
 	
 public:
 	
@@ -129,6 +133,29 @@ public:
 	std::string getString() const {
 		return _type.getDisplayName();
 	}
+
+    /**
+     * Set the Specifier at the given index.
+     *
+     * @param idx
+     * The index of the specifier, starting from 1.
+     */
+    void setSpecifier(std::size_t idx, const Specifier& spec) {
+        assert(idx > 0);
+        _specifiers[idx - 1] = spec;
+    }
+
+    /**
+     * Get the Specifier at the given index.
+     *
+     * @param idx
+     * The index of the specifier, starting from 1.
+     */
+    const Specifier& getSpecifier(std::size_t idx) const {
+        assert(idx > 0);
+        assert(_specifiers.size() >= idx);
+        return _specifiers[idx];
+    }
 };
 
 }
