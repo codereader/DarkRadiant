@@ -13,7 +13,7 @@ namespace ce
 {
 
 // Constructor
-SpecifierEditCombo::SpecifierEditCombo(const SpecifierSet& set)
+SpecifierEditCombo::SpecifierEditCombo(const SpecifierTypeSet& set)
 {
 	// Create the dropdown containing specifier types
 	_specifierCombo = objectives::util::TwoColumnTextCombo();
@@ -21,7 +21,7 @@ SpecifierEditCombo::SpecifierEditCombo(const SpecifierSet& set)
 	GtkListStore* ls = GTK_LIST_STORE(
 		gtk_combo_box_get_model(GTK_COMBO_BOX(_specifierCombo))
 	);
-	for (SpecifierSet::const_iterator i = set.begin();
+	for (SpecifierTypeSet::const_iterator i = set.begin();
 		 i != set.end();
 		 ++i)
 	{
@@ -50,14 +50,14 @@ GtkWidget* SpecifierEditCombo::getWidget() const
 	return _widget;
 }
 
-// Get the selected Specifier
-const Specifier& SpecifierEditCombo::getSpecifier() const 
+// Get the selected SpecifierType
+const SpecifierType& SpecifierEditCombo::getSpecifier() const 
 {
-   return Specifier::getSpecifier(getSpecName());
+   return SpecifierType::getSpecifierType(getSpecName());
 }
 
-// Set the selected Specifier
-void SpecifierEditCombo::setSpecifier(const Specifier& spec)
+// Set the selected SpecifierType
+void SpecifierEditCombo::setSpecifier(const SpecifierType& spec)
 {
 	// I copied and pasted this from the StimResponseEditor, the SelectionFinder
 	// could be cleaned up a bit.
@@ -68,7 +68,7 @@ void SpecifierEditCombo::setSpecifier(const Specifier& spec)
 		&finder
 	);
 	
-    // Specifier name should be found in list
+    // SpecifierType name should be found in list
     GtkTreePath* path = finder.getPath();
     assert(path);
 
@@ -83,7 +83,7 @@ std::string SpecifierEditCombo::getValue() const
     return _specPanel->getValue();
 }
 
-// Get the selected Specifier string
+// Get the selected SpecifierType string
 std::string SpecifierEditCombo::getSpecName() const
 {
 	// Get the current selection

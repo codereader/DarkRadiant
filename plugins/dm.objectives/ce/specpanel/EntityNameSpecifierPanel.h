@@ -21,7 +21,7 @@ class EntityNameSpecifierPanel
 	static struct RegHelper {
 		RegHelper() { 
 			SpecifierPanelFactory::registerType(
-				Specifier::SPEC_NAME().getName(),
+				SpecifierType::SPEC_NAME().getName(),
 				SpecifierPanelPtr(new EntityNameSpecifierPanel())
 			);
 		}

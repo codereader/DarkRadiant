@@ -1,7 +1,7 @@
 #ifndef SPECIFIEREDITCOMBO_H_
 #define SPECIFIEREDITCOMBO_H_
 
-#include "../Specifier.h"
+#include "../SpecifierType.h"
 #include "specpanel/SpecifierPanel.h"
 
 namespace objectives
@@ -15,13 +15,13 @@ namespace ce
  * 
  * A SpecifierEditCombo is a horizontal box containing two main elements. On the
  * left is a GtkComboBox which contains the names of a number of different
- * Specifier types, and on the right is a SpecifierPanel which is switched 
+ * SpecifierType types, and on the right is a SpecifierPanel which is switched
  * depending on the selected dropdown value. The SpecifierEditCombo therefore
- * provides a means for the user to choose both a Specifier and its associated
- * value.
+ * provides a means for the user to choose both a SpecifierType and its
+ * associated value.
  * 
- * Since some Component types accept a different subset of the Specifier types,
- * the SpecifierEditCombo can accept a std::set of Specifier types to display
+ * Since some Component types accept a different subset of the SpecifierType types,
+ * the SpecifierEditCombo can accept a std::set of SpecifierType types to display
  * in its dropdown list. Alternatively the entire set of Specifiers can be
  * made available.
  */
@@ -38,7 +38,7 @@ class SpecifierEditCombo
 
 private:
 	
-    // Get the selected Specifier string
+    // Get the selected SpecifierType string
     std::string getSpecName() const;
 
 	/* GTK CALLBACKS */
@@ -47,7 +47,7 @@ private:
 public:
 	
 	/**
-	 * Construct a SpecifierEditCombo with a subset of Specifier types
+	 * Construct a SpecifierEditCombo with a subset of SpecifierType types
 	 * available.
 	 * 
 	 * @param set
@@ -55,7 +55,7 @@ public:
 	 * displayed in this edit combo. The default is the complete set of
 	 * specifiers.
 	 */
-	SpecifierEditCombo(const SpecifierSet& set = Specifier::SET_ALL());
+	SpecifierEditCombo(const SpecifierTypeSet& set = SpecifierType::SET_ALL());
 
     /**
      * Return the main GtkWidget for this edit panel.
@@ -66,24 +66,24 @@ public:
     GtkWidget* getWidget() const;
 
     /**
-     * Return the selected Specifier.
+     * Return the selected SpecifierType.
      *
      * @return
-     * A const reference to the Specifier object corresponding to the ComboBox
+     * A const reference to the SpecifierType object corresponding to the ComboBox
      * selection.
      */
-    const Specifier& getSpecifier() const;
+    const SpecifierType& getSpecifier() const;
 
     /**
-     * Set the Specifier to display in the ComboBox.
+     * Set the SpecifierType to display in the ComboBox.
      *
      * @param
-     * The Specifier object to select.
+     * The SpecifierType object to select.
      */
-    void setSpecifier(const Specifier& spec);
+    void setSpecifier(const SpecifierType& spec);
 
     /**
-     * Return the string value associated with the selected Specifier.
+     * Return the string value associated with the selected SpecifierType.
      *
      * @return
      * The string value contained within the currently-active SpecifierPanel.
