@@ -367,7 +367,7 @@ objList = ['plugins/dm.objectives/' + f for f in [
 	 'ObjectiveEntity.cpp',
 	 'ObjectiveKeyExtractor.cpp',
 	 'ComponentsDialog.cpp',
-	 'Specifier.cpp',
+	 'SpecifierType.cpp',
 	 'ce/ComponentEditorFactory.cpp',
 	 'ce/KillComponentEditor.cpp',
      'ce/KnockoutComponentEditor.cpp',

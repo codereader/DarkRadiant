@@ -1,5 +1,5 @@
 #include "KillComponentEditor.h"
-#include "../Specifier.h"
+#include "../SpecifierType.h"
 
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -18,7 +18,7 @@ KillComponentEditor::RegHelper KillComponentEditor::regHelper;
 // Constructor
 KillComponentEditor::KillComponentEditor(Component& component)
 : _component(&component),
-  _targetCombo(Specifier::SET_STANDARD_AI())
+  _targetCombo(SpecifierType::SET_STANDARD_AI())
 {
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);

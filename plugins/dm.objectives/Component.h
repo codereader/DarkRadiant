@@ -1,7 +1,7 @@
 #ifndef COMPONENT_H_
 #define COMPONENT_H_
 
-#include "Specifier.h"
+#include "SpecifierType.h"
 #include "ComponentType.h"
 
 #include <string>

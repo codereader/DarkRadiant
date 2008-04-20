@@ -2,7 +2,7 @@
 #define SPECIFIERPANELFACTORY_H_
 
 #include "SpecifierPanel.h"
-#include "../../Specifier.h"
+#include "../../SpecifierType.h"
 
 #include <map>
 
@@ -14,7 +14,7 @@ namespace ce
 
 /**
  * Factory class for creating SpecifierPanel subclasses for a particular type
- * of Specifier.
+ * of SpecifierType.
  */
 class SpecifierPanelFactory
 {
@@ -30,10 +30,10 @@ public:
 	 * This method is invoked by SpecifierPanel subclasses to register
 	 * themselves for virtual construction. Once a SpecifierPanel is registered
 	 * it can be created and returned by the SpecifierPanelFactory::create()
-	 * method based on its Specifier type.
+	 * method based on its SpecifierType type.
 	 * 
 	 * @param name
-	 * Name of the Specifier type that this panel will edit.
+	 * Name of the SpecifierType type that this panel will edit.
 	 * 
 	 * @param cls
 	 * The SpecifierPanel subclass to register.
@@ -42,14 +42,14 @@ public:
 							 SpecifierPanelPtr cls);
 
 	/**
-	 * Create a SpecifierPanel to edit the given Specifier type.
+	 * Create a SpecifierPanel to edit the given SpecifierType type.
 	 * 
 	 * @param name
-	 * Name of the Specifier type for which a SpecifierPanel must be created.
+	 * Name of the SpecifierType type for which a SpecifierPanel must be created.
 	 * 
 	 * @return
 	 * Shared pointer to a SpecifierPanel which contains widgets to edit this
-	 * Specifier type. If no SpecifierPanl has been registered for this type,
+	 * SpecifierType type. If no SpecifierPanl has been registered for this type,
 	 * a NULL shared_ptr is returned.
 	 */
 	static SpecifierPanelPtr create(const std::string& name);
