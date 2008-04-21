@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "igroupdialog.h"
 #include "iradiant.h"
 #include "ipreferencesystem.h"
 

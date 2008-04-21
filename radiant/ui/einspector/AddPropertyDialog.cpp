@@ -8,6 +8,7 @@
 
 #include "iradiant.h"
 #include "iuimanager.h"
+#include "igroupdialog.h"
 #include "iregistry.h"
 #include "ieclass.h"
 #include "ientity.h"

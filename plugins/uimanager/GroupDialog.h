@@ -2,7 +2,7 @@
 #define GROUPDIALOG_H_
 
 #include "iradiant.h"
-#include "iuimanager.h"
+#include "igroupdialog.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 

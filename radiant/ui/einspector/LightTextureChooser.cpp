@@ -2,6 +2,7 @@
 
 #include "ishaders.h"
 #include "iuimanager.h"
+#include "igroupdialog.h"
 #include "texturelib.h"
 #include "iregistry.h"
 #include "gtkutil/RightAlignment.h"
