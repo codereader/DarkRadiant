@@ -35,6 +35,9 @@ namespace {
     const int PROPERTYEDITORPANE_MIN_HEIGHT = 90;
     
     const char* PROPERTY_NODES_XPATH = "game/entityInspector//property";
+
+	const std::string RKEY_ROOT = "user/ui/entityInspector/";
+	const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
     
 	// TreeView column numbers
     enum {
@@ -75,10 +78,20 @@ EntityInspector::EntityInspector()
 		createDialogPane(), // second child
 		false // is vertical
 	);
-	gtk_paned_set_position(GTK_PANED(paned), 400);
+	gtk_box_pack_start(GTK_BOX(_widget), paned, TRUE, TRUE, 0);
 
-    gtk_box_pack_start(GTK_BOX(_widget), paned, TRUE, TRUE, 0);
-    //gtk_box_pack_start(GTK_BOX(_widget), createDialogPane(), FALSE, FALSE, 0);
+	_panedPosition.connect(paned);
+
+	// Remove all previously stored pane information 
+	xml::NodeList list = GlobalRegistry().findXPath(RKEY_PANE_STATE);
+	if (list.size() > 0) {
+		_panedPosition.loadFromNode(list[0]);
+	}
+	else {
+		// No saved information, apply standard value
+		gtk_paned_set_position(GTK_PANED(paned), 400);
+	}
+	_panedPosition.applyPosition();
     
     // Create the context menu
     createContextMenu();
@@ -109,7 +122,11 @@ void EntityInspector::createContextMenu() {
 }
 
 void EntityInspector::onRadiantShutdown() {
-	// TODO: Save panel size
+	// Remove all previously stored pane information 
+	GlobalRegistry().deleteXPath(RKEY_PANE_STATE);
+	
+	xml::Node node = GlobalRegistry().createKey(RKEY_PANE_STATE);
+	_panedPosition.saveToNode(node);
 }
 
 // Return the singleton EntityInspector instance, creating it if it is not yet
