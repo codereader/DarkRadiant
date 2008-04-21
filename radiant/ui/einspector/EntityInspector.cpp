@@ -108,12 +108,25 @@ void EntityInspector::createContextMenu() {
 	);
 }
 
+void EntityInspector::onRadiantShutdown() {
+	// TODO: Save panel size
+}
+
 // Return the singleton EntityInspector instance, creating it if it is not yet
 // created. Single-threaded design.
-
 EntityInspector& EntityInspector::getInstance() {
-    static EntityInspector _instance;
-    return _instance;
+	// Check if this is a first-time call
+    if (getInstancePtr() == NULL) {
+		getInstancePtr() = EntityInspectorPtr(new EntityInspector);
+		GlobalRadiant().addEventListener(getInstancePtr());
+	}
+
+    return *getInstancePtr();
+}
+
+EntityInspectorPtr& EntityInspector::getInstancePtr() {
+	static EntityInspectorPtr _instancePtr;
+	return _instancePtr;
 }
 
 // Return the Gtk widget for the EntityInspector dialog. 
