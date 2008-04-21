@@ -50,18 +50,21 @@ GtkWidget* SpecifierEditCombo::getWidget() const
 	return _widget;
 }
 
-// Get the selected SpecifierType
-const SpecifierType& SpecifierEditCombo::getSpecifier() const 
+// Get the selected Specifier
+Specifier SpecifierEditCombo::getSpecifier() const 
 {
-   return SpecifierType::getSpecifierType(getSpecName());
+    return Specifier(
+        SpecifierType::getSpecifierType(getSpecName()),
+        _specPanel->getValue()
+    );
 }
 
-// Set the selected SpecifierType
-void SpecifierEditCombo::setSpecifier(const SpecifierType& spec)
+// Set the selected Specifier
+void SpecifierEditCombo::setSpecifier(const Specifier& spec)
 {
 	// I copied and pasted this from the StimResponseEditor, the SelectionFinder
 	// could be cleaned up a bit.
-	gtkutil::TreeModel::SelectionFinder finder(spec.getName(), 1);
+	gtkutil::TreeModel::SelectionFinder finder(spec.getType().getName(), 1);
 	gtk_tree_model_foreach(
 		gtk_combo_box_get_model(GTK_COMBO_BOX(_specifierCombo)),
 		gtkutil::TreeModel::SelectionFinder::forEach,
@@ -75,12 +78,6 @@ void SpecifierEditCombo::setSpecifier(const SpecifierType& spec)
     // Get an iter and set the selected item
     GtkTreeIter iter = finder.getIter();
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_specifierCombo), &iter);
-}
-
-// Get the selected string value from the SpecifierPanel
-std::string SpecifierEditCombo::getValue() const
-{
-    return _specPanel->getValue();
 }
 
 // Get the selected SpecifierType string
