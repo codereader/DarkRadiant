@@ -3,6 +3,7 @@
 
 #include "PropertyEditor.h"
 
+#include "iradiant.h"
 #include "iselection.h"
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/event/SingleIdleCallback.h"
@@ -33,16 +34,19 @@ namespace {
 	typedef std::map<std::string, PropertyParms> PropertyParmMap;
 	
 }
-	
+
+class EntityInspector;
+typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
+
 
 /* The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
  */
-
 class EntityInspector :
  	public SelectionSystem::Observer,
- 	public gtkutil::SingleIdleCallback
+ 	public gtkutil::SingleIdleCallback,
+	public RadiantEventListener
 {
 	// Currently selected entity
 	Entity* _selectedEntity;
@@ -120,10 +124,13 @@ protected:
 	// GTK idle callback, used for refreshing display
 	void onGtkIdle();
 
-public:
-
-    // Constructor
+	// Constructor
     EntityInspector();
+
+	// Holds the static shared_ptr
+	static EntityInspectorPtr& getInstancePtr();
+
+public:
 
     // Return or create the singleton instance
     static EntityInspector& getInstance();
@@ -137,6 +144,9 @@ public:
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
+
+	// RadiantEventListener implementation, gets called right before shutdown
+	virtual void onRadiantShutdown();
 
 	/** 
 	 * greebo: Static command target for toggling the Entity Inspector in the GroupDialog.
