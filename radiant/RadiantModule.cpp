@@ -92,11 +92,13 @@ void RadiantModule::updateAllWindows() {
 }
 	
 void RadiantModule::addEventListener(RadiantEventListenerPtr listener) {
-	_eventListeners.insert(listener);
+	_eventListeners.insert(RadiantEventListenerWeakPtr(listener));
 }
 	
 void RadiantModule::removeEventListener(RadiantEventListenerPtr listener) {
-	EventListenerList::iterator found = _eventListeners.find(listener);
+	EventListenerList::iterator found = _eventListeners.find(
+		RadiantEventListenerWeakPtr(listener)
+	);
 	if (found != _eventListeners.end()) {
 		_eventListeners.erase(found);
 	}
@@ -107,12 +109,21 @@ void RadiantModule::broadcastShutdownEvent() {
 	for (EventListenerList::iterator i = _eventListeners.begin();
 	     i != _eventListeners.end(); /* in-loop increment */)
 	{
-		// greebo: Post-increment the iterator, so that listeners can
-		// disconnect themselves without invalidating our iterator
-		(*i++)->onRadiantShutdown();
+		// Get the weak pointer and immediately increase the iterator
+		// This should allow removal of listeners without running into invalid
+		// iterators in the for() loop above.
+		RadiantEventListenerWeakPtr weakPtr = *i++;
+
+		// Try to lock the pointer
+		RadiantEventListenerPtr listener = weakPtr.lock();
+
+		if (listener != NULL)
+		{
+			listener->onRadiantShutdown();
+		}
 	}
 
-	// This was the final radiant event, don't hold any shared_ptr's after this point
+	// This was the final radiant event, no need for keeping any pointers anymore
 	_eventListeners.clear();
 }
 
@@ -121,9 +132,18 @@ void RadiantModule::broadcastStartupEvent() {
 	for (EventListenerList::iterator i = _eventListeners.begin();
 	     i != _eventListeners.end(); /* in-loop increment */)
 	{
-		// greebo: Post-increment the iterator, so that listeners can
-		// disconnect themselves without invalidating our iterator
-		(*i++)->onRadiantStartup();
+		// Get the weak pointer and immediately increase the iterator
+		// This should allow removal of listeners without running into invalid
+		// iterators in the for() loop above.
+		RadiantEventListenerWeakPtr weakPtr = *i++;
+
+		// Try to lock the pointer
+		RadiantEventListenerPtr listener = weakPtr.lock();
+
+		if (listener != NULL)
+		{
+			listener->onRadiantStartup();
+		}
 	}
 }
 
