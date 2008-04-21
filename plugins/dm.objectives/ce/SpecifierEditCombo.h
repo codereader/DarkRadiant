@@ -1,7 +1,7 @@
 #ifndef SPECIFIEREDITCOMBO_H_
 #define SPECIFIEREDITCOMBO_H_
 
-#include "../SpecifierType.h"
+#include "../Specifier.h"
 #include "specpanel/SpecifierPanel.h"
 
 namespace objectives
@@ -66,29 +66,23 @@ public:
     GtkWidget* getWidget() const;
 
     /**
-     * Return the selected SpecifierType.
+     * Return the current value of the Specifier (type and value).
      *
      * @return
-     * A const reference to the SpecifierType object corresponding to the ComboBox
-     * selection.
+     * A Specifier containing the type and value of the Specifier as currently
+     * shown by the edit widgets.
      */
-    const SpecifierType& getSpecifier() const;
+    Specifier getSpecifier() const;
 
     /**
-     * Set the SpecifierType to display in the ComboBox.
+     * Set the Specifier to display in the ComboBox.
      *
      * @param
-     * The SpecifierType object to select.
+     * A Specifier containing the type and value to be displayed in the edit
+     * widgets.
      */
-    void setSpecifier(const SpecifierType& spec);
+    void setSpecifier(const Specifier& spec);
 
-    /**
-     * Return the string value associated with the selected SpecifierType.
-     *
-     * @return
-     * The string value contained within the currently-active SpecifierPanel.
-     */
-    std::string getValue() const;
 };
 
 }
