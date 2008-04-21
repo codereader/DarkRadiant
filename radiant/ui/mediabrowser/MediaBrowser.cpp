@@ -2,6 +2,7 @@
 #include "TextureDirectoryLoader.h"
 
 #include "iuimanager.h"
+#include "igroupdialog.h"
 #include "ishaders.h"
 #include "select.h"
 #include "generic/callback.h"

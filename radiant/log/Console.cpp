@@ -1,6 +1,7 @@
 #include "Console.h"
 
 #include "iuimanager.h"
+#include "igroupdialog.h"
 
 #include <gtk/gtk.h>
 #include "gtkutil/nonmodal.h"
