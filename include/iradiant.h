@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define IRADIANT_H_
 
 #include "imodule.h"
+#include <boost/weak_ptr.hpp>
 
 // ========================================
 // GTK+ helper functions
@@ -95,6 +96,7 @@ public:
 	virtual void onRadiantShutdown() {}
 };
 typedef boost::shared_ptr<RadiantEventListener> RadiantEventListenerPtr;
+typedef boost::weak_ptr<RadiantEventListener> RadiantEventListenerWeakPtr;
 
 class ICounter;
 

@@ -33,7 +33,7 @@ class RadiantModule :
 {
 	map::CounterManager _counters;
 	
-	typedef std::set<RadiantEventListenerPtr> EventListenerList;
+	typedef std::set<RadiantEventListenerWeakPtr> EventListenerList;
 	EventListenerList _eventListeners;
 
 	GtkWindow* _mainWindow;
