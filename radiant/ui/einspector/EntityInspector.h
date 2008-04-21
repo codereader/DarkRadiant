@@ -7,6 +7,7 @@
 #include "iselection.h"
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/event/SingleIdleCallback.h"
+#include "gtkutil/PanedPosition.h"
 
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkwidget.h>
@@ -64,6 +65,9 @@ class EntityInspector :
 	// Key and value edit boxes
 	GtkWidget* _keyEntry;
 	GtkWidget* _valEntry;
+
+	// An object tracking the divider position of the paned view
+	gtkutil::PanedPosition _panedPosition;
 
 	// Context menu
 	gtkutil::PopupMenu _contextMenu;
