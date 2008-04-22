@@ -700,29 +700,29 @@ void stitchPatchTextures() {
 	}
 }
 
-void BulgePatch() {
-	if (selection::algorithm::getSelectedPatches().size() > 0)
-	{
+void bulgePatch() {
+	if (selection::algorithm::getSelectedPatches().size() > 0) {
 		ui::BulgePatchDialog dialog;
 		Patch& patch = selection::algorithm::getLastSelectedPatch();
-		UndoableCommand cmd("BulgePatch");
-		patch.undoSave();
+
 		int maxValue = 16;
-		if (dialog.queryPatchNoise(maxValue))
-		{
-			for (PatchControlIter i = patch.begin(); i != patch.end(); i++) 
-			{
+
+		if (dialog.queryPatchNoise(maxValue)) {
+			UndoableCommand cmd("BulgePatch");
+			patch.undoSave();
+
+			for (PatchControlIter i = patch.begin(); i != patch.end(); i++) {
 				PatchControl& control = *i;
 				int randomNumber = int(maxValue * (float(std::rand()) / float(RAND_MAX)));
 				control.m_vertex.set(control.m_vertex.x(), control.m_vertex.y(), control.m_vertex.z() + randomNumber);
 			}
+
 			patch.controlPointsChanged();
 		}
 	}
-	else
-	{
+	else {
 		gtkutil::errorDialog("Cannot bulge patch. No patches selected.",
-			MainFrame_getWindow());
+			GlobalRadiant().getMainWindow());
 	}
 }
 } // namespace patch
@@ -763,7 +763,7 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
   GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatches>());
   GlobalEventManager().addCommand("StitchPatchTexture", FreeCaller<patch::stitchPatchTextures>());
-  GlobalEventManager().addCommand("BulgePatch", FreeCaller<patch::BulgePatch>());
+  GlobalEventManager().addCommand("BulgePatch", FreeCaller<patch::bulgePatch>());
 }
 
 #include <gtk/gtkbox.h>

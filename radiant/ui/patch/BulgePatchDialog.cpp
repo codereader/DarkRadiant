@@ -2,7 +2,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include "mainframe.h"
+#include "iradiant.h"
 #include "string/string.h"
 
 namespace {
@@ -15,12 +15,13 @@ namespace {
 
 namespace ui {
 
-	BulgePatchDialog::BulgePatchDialog() :
-	_parent(MainFrame_getWindow()),
+BulgePatchDialog::BulgePatchDialog() :
 	_dialog(NULL)
 {
+	GtkWindow* parent = GlobalRadiant().getMainWindow();
+
 	// Create the new dialog window with OK and CANCEL button    
-  	_dialog = gtk_dialog_new_with_buttons(WINDOW_TITLE, _parent,
+  	_dialog = gtk_dialog_new_with_buttons(WINDOW_TITLE, parent,
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                          GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -74,8 +75,7 @@ namespace ui {
 	g_signal_connect(G_OBJECT(_dialog), "key-press-event", G_CALLBACK(onKeyPress), this);
 }
 
-bool BulgePatchDialog::queryPatchNoise(int& noise)
-{
+bool BulgePatchDialog::queryPatchNoise(int& noise) {
 	bool returnValue = false;
 	
 	gtk_widget_show_all(_dialog);
@@ -94,7 +94,6 @@ bool BulgePatchDialog::queryPatchNoise(int& noise)
 }
 
 gboolean BulgePatchDialog::onKeyPress(GtkWidget* widget, GdkEventKey* event, BulgePatchDialog* self) {
-	
 	// Check for ESC and ENTER keys
 	if (event->keyval == GDK_Escape) {
 		gtk_dialog_response(GTK_DIALOG(self->_dialog), GTK_RESPONSE_REJECT);

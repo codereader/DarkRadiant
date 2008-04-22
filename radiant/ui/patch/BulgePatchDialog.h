@@ -1,27 +1,24 @@
 #ifndef BULGEPATCHDIALOG_H_
 #define BULGEPATCHDIALOG_H_
 
-#include "gtk/gtkwidget.h"
-#include "gtk/gtkwindow.h"
+#include <gtk/gtkwidget.h>
 
-/** greebo: Dialog to query the user for the maxValue
- *  
+/** 
+ * Jesps: Dialog to query the user for the maxValue  
  */
 namespace ui {
 
-class BulgePatchDialog
-{
-	GtkWindow* _parent;
-	
+class BulgePatchDialog {
+	// The parent window plus entry box
 	GtkWidget* _noiseEntry;
 
-public:
-	// The dialog widget (is public so that onKeyPress can access it)
+	// The dialog widget
 	GtkWidget* _dialog;
-
+public:
 	// Constructor 
 	BulgePatchDialog();
 	
+	// Shows the dialog
 	bool queryPatchNoise(int& noise);
 
 private:
