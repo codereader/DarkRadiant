@@ -1832,6 +1832,14 @@
 					Name="patch"
 					>
 					<File
+						RelativePath="..\..\radiant\ui\patch\BulgePatchDialog.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\patch\BulgePatchDialog.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\patch\PatchCreateDialog.cpp"
 						>
 					</File>

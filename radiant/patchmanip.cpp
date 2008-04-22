@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patch/PatchSceneWalk.h"
 #include "patch/PatchCreators.h"
 #include "xyview/GlobalXYWnd.h"
+#include "ui/patch/BulgePatchDialog.h"
 #include "ui/patch/PatchThickenDialog.h"
 #include "ui/patch/PatchCreateDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
@@ -699,6 +700,31 @@ void stitchPatchTextures() {
 	}
 }
 
+void BulgePatch() {
+	if (selection::algorithm::getSelectedPatches().size() > 0)
+	{
+		ui::BulgePatchDialog dialog;
+		Patch& patch = selection::algorithm::getLastSelectedPatch();
+		UndoableCommand cmd("BulgePatch");
+		patch.undoSave();
+		int maxValue = 16;
+		if (dialog.queryPatchNoise(maxValue))
+		{
+			for (PatchControlIter i = patch.begin(); i != patch.end(); i++) 
+			{
+				PatchControl& control = *i;
+				int randomNumber = int(maxValue * (float(std::rand()) / float(RAND_MAX)));
+				control.m_vertex.set(control.m_vertex.x(), control.m_vertex.y(), control.m_vertex.z() + randomNumber);
+			}
+			patch.controlPointsChanged();
+		}
+	}
+	else
+	{
+		gtkutil::errorDialog("Cannot bulge patch. No patches selected.",
+			MainFrame_getWindow());
+	}
+}
 } // namespace patch
 
 #include "generic/callback.h"
@@ -737,6 +763,7 @@ void Patch_registerCommands()
   GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
   GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatches>());
   GlobalEventManager().addCommand("StitchPatchTexture", FreeCaller<patch::stitchPatchTextures>());
+  GlobalEventManager().addCommand("BulgePatch", FreeCaller<patch::BulgePatch>());
 }
 
 #include <gtk/gtkbox.h>

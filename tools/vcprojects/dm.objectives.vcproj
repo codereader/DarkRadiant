@@ -279,11 +279,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\dm.objectives\Specifier.cpp"
+				RelativePath="..\..\plugins\dm.objectives\Specifier.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\dm.objectives\Specifier.h"
+				RelativePath="..\..\plugins\dm.objectives\SpecifierType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.objectives\SpecifierType.h"
 				>
 			</File>
 			<File

@@ -284,6 +284,7 @@
 		<menuItem name="cycleCapTexture" caption="Cycle Cap Texture" command="CycleCapTexturePatch" />
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
+    <menuItem name="bulgePatch" caption="Bulge patch" command="BulgePatch" />
 	</subMenu>
 
 	<subMenu name="curve" caption="_Curve">
