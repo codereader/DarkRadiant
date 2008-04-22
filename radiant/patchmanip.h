@@ -36,6 +36,4 @@ void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name);
 
 void Scene_PatchCapTexture_Selected(scene::Graph& graph);
 
-void PatchFilters_construct();
-
 #endif
