@@ -37,12 +37,9 @@ enum EBrushPrefab
 };
 
 class Brush;
-class TextureProjection;
-class ContentsFlagsValue;
 namespace scene
 {
   class Graph;
-  class Node;
 }
 void Scene_BrushConstructPrefab(scene::Graph& graph, EBrushPrefab type, std::size_t sides, const std::string& shader);
 class AABB;
@@ -59,7 +56,6 @@ void Scene_BrushFlipTexture_Component_Selected(unsigned int flipAxis);
  */
 void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mins, const Vector3& region_maxs);
 
-void BrushFilters_construct();
 void Brush_registerCommands();
 
 #endif

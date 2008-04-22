@@ -232,10 +232,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\brushtokens.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\entity.cpp"
 				>
 			</File>
