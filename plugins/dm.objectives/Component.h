@@ -5,6 +5,7 @@
 #include "Specifier.h"
 #include "ComponentType.h"
 
+#include <assert.h>
 #include <string>
 
 namespace objectives
