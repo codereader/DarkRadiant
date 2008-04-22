@@ -628,7 +628,7 @@ void thickenSelectedPatches() {
 	}
 	else {
 		gtkutil::errorDialog("Cannot thicken patch. Nothing selected.",
-							 MainFrame_getWindow());
+							 GlobalRadiant().getMainWindow());
 	}
 }
 
@@ -687,7 +687,7 @@ void stitchPatchTextures() {
 		}
 		else {
 			gtkutil::errorDialog("Cannot stitch textures. \nCould not cast nodes to patches.",
-							 MainFrame_getWindow());
+							 GlobalRadiant().getMainWindow());
 		}
 		
 		SceneChangeNotify();
@@ -696,28 +696,35 @@ void stitchPatchTextures() {
 	}
 	else {
 		gtkutil::errorDialog("Cannot stitch patch textures. \nExactly 2 patches must be selected.",
-							 MainFrame_getWindow());
+							 GlobalRadiant().getMainWindow());
 	}
 }
 
 void bulgePatch() {
-	if (selection::algorithm::getSelectedPatches().size() > 0) {
-		ui::BulgePatchDialog dialog;
-		Patch& patch = selection::algorithm::getLastSelectedPatch();
+	// Get the list of selected patches
+	PatchPtrVector patches = selection::algorithm::getSelectedPatches();
 
+	if (patches.size() > 0) {
 		int maxValue = 16;
 
-		if (dialog.queryPatchNoise(maxValue)) {
+		// Ask the user to enter a noise value
+		if (ui::BulgePatchDialog::queryPatchNoise(maxValue)) {
 			UndoableCommand cmd("BulgePatch");
-			patch.undoSave();
 
-			for (PatchControlIter i = patch.begin(); i != patch.end(); i++) {
-				PatchControl& control = *i;
-				int randomNumber = int(maxValue * (float(std::rand()) / float(RAND_MAX)));
-				control.m_vertex.set(control.m_vertex.x(), control.m_vertex.y(), control.m_vertex.z() + randomNumber);
+			// Cycle through all patches and apply the bulge algorithm
+			for (PatchPtrVector::iterator p = patches.begin(); p != patches.end(); p++) {
+				Patch& patch = (*p)->getPatch();
+
+				patch.undoSave();
+
+				for (PatchControlIter i = patch.begin(); i != patch.end(); i++) {
+					PatchControl& control = *i;
+					int randomNumber = int(maxValue * (float(std::rand()) / float(RAND_MAX)));
+					control.m_vertex.set(control.m_vertex.x(), control.m_vertex.y(), control.m_vertex.z() + randomNumber);
+				}
+
+				patch.controlPointsChanged();
 			}
-
-			patch.controlPointsChanged();
 		}
 	}
 	else {

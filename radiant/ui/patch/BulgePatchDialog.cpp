@@ -76,19 +76,23 @@ BulgePatchDialog::BulgePatchDialog() :
 }
 
 bool BulgePatchDialog::queryPatchNoise(int& noise) {
+	// Default return value is "cancelled"
 	bool returnValue = false;
+
+	// Instantiate a dialog and run the GTK dialog routine
+	BulgePatchDialog dialog;
+
+	gtk_widget_show_all(dialog._dialog);
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog._dialog));
 	
-	gtk_widget_show_all(_dialog);
-	gint response = gtk_dialog_run(GTK_DIALOG(_dialog));
-		
 	if (response == GTK_RESPONSE_OK) {
 		// Retrieve the maxValue
-		noise = strToFloat(gtk_entry_get_text(GTK_ENTRY(_noiseEntry)));
+		noise = strToFloat(gtk_entry_get_text(GTK_ENTRY(dialog._noiseEntry)));
 		
 		returnValue = true;
 	}
 	
-	gtk_widget_destroy(GTK_WIDGET(_dialog));
+	gtk_widget_destroy(GTK_WIDGET(dialog._dialog));
 	
 	return returnValue;
 }
