@@ -19,9 +19,10 @@ public:
 	BulgePatchDialog();
 	
 	// Shows the dialog
-	bool queryPatchNoise(int& noise);
+	static bool queryPatchNoise(int& noise);
 
 private:
+	// GTK callback to allow ESC/Enter reactions
 	static gboolean onKeyPress(GtkWidget* widget, GdkEventKey* event, BulgePatchDialog* self);
 
 }; // class BulgePatchDialog
