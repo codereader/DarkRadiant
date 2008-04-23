@@ -535,6 +535,7 @@ radiant_src = \
          'ui/mediabrowser/MediaBrowser.cpp',
          'ui/menu/FiltersMenu.cpp',
          'ui/particles/ParticlesChooser.cpp',
+		 'ui/patch/BulgePatchDialog.cpp',
          'ui/patch/PatchInspector.cpp',
          'ui/patch/PatchCreateDialog.cpp',
          'ui/patch/PatchThickenDialog.cpp',
