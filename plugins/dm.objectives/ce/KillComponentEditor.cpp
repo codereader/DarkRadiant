@@ -1,5 +1,6 @@
 #include "KillComponentEditor.h"
 #include "../SpecifierType.h"
+#include "../Component.h"
 
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -32,6 +33,11 @@ KillComponentEditor::KillComponentEditor(Component& component)
 	gtk_box_pack_start(
 		GTK_BOX(_widget), _targetCombo.getWidget(), FALSE, FALSE, 0
 	);
+
+    // Populate the SpecifierEditCombo with the first specifier
+    _targetCombo.setSpecifier(
+        component.getSpecifier(Specifier::FIRST_SPECIFIER)
+    );
 }
 
 // Destructor

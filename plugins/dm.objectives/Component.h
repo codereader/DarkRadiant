@@ -51,7 +51,8 @@ public:
 	  _inverted(false), 
 	  _irreversible(false), 
 	  _playerResponsible(false), 
-	  _type(ComponentType::COMP_KILL()) // arbitrary choice, no NONE option
+	  _type(ComponentType::COMP_KILL()), // arbitrary choice, no NONE option
+      _specifiers(static_cast<std::size_t>(Specifier::MAX_SPECIFIERS))
 	{ }
 
 	/**
@@ -141,9 +142,14 @@ public:
      * @param idx
      * The index of the specifier, starting from 1.
      */
-    void setSpecifier(std::size_t idx, const Specifier& spec) {
-        assert(idx > 0);
-        _specifiers[idx - 1] = spec;
+    void setSpecifier(Specifier::SpecifierNumber num, const Specifier& spec) 
+    {
+        assert(
+            _specifiers.size() == static_cast<std::size_t>(
+                Specifier::MAX_SPECIFIERS
+            )
+        );
+        _specifiers[static_cast<std::size_t>(num)] = spec;
     }
 
     /**
@@ -152,10 +158,14 @@ public:
      * @param idx
      * The index of the specifier, starting from 1.
      */
-    const Specifier& getSpecifier(std::size_t idx) const {
-        assert(idx > 0);
-        assert(_specifiers.size() >= idx);
-        return _specifiers[idx];
+    const Specifier& getSpecifier(Specifier::SpecifierNumber num) const 
+    {
+        assert(
+            _specifiers.size() == static_cast<std::size_t>(
+                Specifier::MAX_SPECIFIERS
+            )
+        );
+        return _specifiers[static_cast<std::size_t>(num)];
     }
 };
 
