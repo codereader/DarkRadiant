@@ -78,6 +78,11 @@ void SpecifierEditCombo::setSpecifier(const Specifier& spec)
     // Get an iter and set the selected item
     GtkTreeIter iter = finder.getIter();
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_specifierCombo), &iter);
+
+    // Create the necessary SpecfieriPanel, and set it to display the current
+    // value
+    createSpecifierPanel(spec.getType().getName());
+    //_specPanel->setValue(spec.getValue());
 }
 
 // Get the selected SpecifierType string
@@ -93,13 +98,19 @@ std::string SpecifierEditCombo::getSpecName() const
 	); 
 }
 
+// Create the required SpecifierPanel
+void SpecifierEditCombo::createSpecifierPanel(const std::string& type)
+{
+	_specPanel = SpecifierPanelFactory::create(type);
+}
+
 /* GTK CALLBACKS */
 
 void SpecifierEditCombo::_onChange(GtkWidget* w, SpecifierEditCombo* self)
 {
-	// Change the SpecifierPanel
-	self->_specPanel = SpecifierPanelFactory::create(self->getSpecName());
-	
+    // Change the SpecifierPanel
+    self->createSpecifierPanel(self->getSpecName());
+
 	// If the panel is valid, get its widget and pack into the hbox
 	if (self->_specPanel) {
 		gtk_box_pack_end(

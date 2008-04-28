@@ -41,6 +41,9 @@ private:
     // Get the selected SpecifierType string
     std::string getSpecName() const;
 
+    // Create the SpecifierPanel for the given specifier type
+    void createSpecifierPanel(const std::string& type);
+
 	/* GTK CALLBACKS */
 	static void _onChange(GtkWidget* w, SpecifierEditCombo* self);
 	

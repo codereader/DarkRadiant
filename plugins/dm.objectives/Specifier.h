@@ -44,6 +44,18 @@ public:
     const std::string& getValue() const {
         return _value;
     }
+
+public:
+
+    /**
+     * Specifier number enum.
+     */
+    enum SpecifierNumber {
+        FIRST_SPECIFIER,
+        SECOND_SPECIFIER,
+        MAX_SPECIFIERS
+    };
+
 };
 
 /**
