@@ -104,7 +104,6 @@ void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 	importer.parse();
 
 	// Create the layers according to the data found in the map information file
-	GlobalLayerSystem().reset();
 	const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
 
 	for (InfoFile::LayerNameMap::const_iterator i = layers.begin(); 
