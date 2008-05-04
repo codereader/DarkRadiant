@@ -7,6 +7,8 @@
 #include <glib/gmem.h>
 #include <string>
 
+#include <cassert>
+
 namespace gtkutil {
 
 /**
@@ -36,7 +38,7 @@ public:
 			g_convert("", 0, to_codeset.c_str(), from_codeset.c_str(), 0, 0, &gerror);
 
 			// If this should ever fail we're fucked.
-			g_assert(gerror != 0);
+			assert(gerror != 0);
 		}
 	}
 
