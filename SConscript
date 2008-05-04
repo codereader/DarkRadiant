@@ -90,8 +90,6 @@ gtkutil_lib = gtkutil_env.StaticLibrary(target='libs/gtkutil', source=build_list
 # radiant, modules and plugins ----------------------------------------------------
 
 module_env = g_env.Copy()
-module_env.Dir('libs/string')
-module_env.Dir('libs/memory')
 module_env['CPPPATH'].append('include')
 if (module_env['PLATFORM'] == 'posix'):
     module_env['LINKFLAGS'] += '-ldl ' # do we need this library?
@@ -409,28 +407,28 @@ srLib = srEnv.SharedLibrary(target='dm_stimresponse',
 							no_import_lib=1)
 srEnv.Install(INSTALL + '/plugins', srLib)
 
-d3hookEnv = module_env.Copy()
-d3hookEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
-d3hookEnv.useGtk2()
-d3hookEnv.useGlib2()
-d3hookEnv.useBoost()
-d3hookEnv.Append(CPPPATH = ['#/plugins/dm.d3hook'])
-if (d3hookEnv['PLATFORM'] == 'win32'):
-	d3hookEnv.Append(LIBS = ['ws2_32', 'Psapi'])
-	d3hookEnv.Append(CXXFLAGS = ' -Wno-deprecated ')
-if (d3hookEnv['PLATFORM'] == 'posix'):
-	d3hookEnv.Append(CXXFLAGS = ' -DRCF_USE_BOOST_ASIO -Wno-deprecated -Wno-unused ')
-d3hookList = build_list('plugins/dm.d3hook',
-						'plugin.cpp \
-						 DarkRadiantRCFServer.cpp \
-						 D3ProcessChecker.cpp \
-						 DarkModRCFClient.cpp \
-						 DarkModCommands.cpp \
-						 RCF/RCF.cpp')
-d3hookLib = d3hookEnv.SharedLibrary(target='dm_d3hook',
-							source=d3hookList,
-							no_import_lib=1)
-d3hookEnv.Install(INSTALL + '/plugins', d3hookLib)
+#d3hookEnv = module_env.Copy()
+#d3hookEnv.Append(LIBS = ['gtkutil', 'xmlutil'])
+#d3hookEnv.useGtk2()
+#d3hookEnv.useGlib2()
+#d3hookEnv.useBoost()
+#d3hookEnv.Append(CPPPATH = ['#/plugins/dm.d3hook'])
+#if (d3hookEnv['PLATFORM'] == 'win32'):
+#	d3hookEnv.Append(LIBS = ['ws2_32', 'Psapi'])
+#	d3hookEnv.Append(CXXFLAGS = ' -Wno-deprecated ')
+#if (d3hookEnv['PLATFORM'] == 'posix'):
+#	d3hookEnv.Append(CXXFLAGS = ' -DRCF_USE_BOOST_ASIO -Wno-deprecated -Wno-unused ')
+#d3hookList = build_list('plugins/dm.d3hook',
+#						'plugin.cpp \
+#						 DarkRadiantRCFServer.cpp \
+#						 D3ProcessChecker.cpp \
+#						 DarkModRCFClient.cpp \
+#						 DarkModCommands.cpp \
+#						 RCF/RCF.cpp')
+#d3hookLib = d3hookEnv.SharedLibrary(target='dm_d3hook',
+#							source=d3hookList,
+#							no_import_lib=1)
+#d3hookEnv.Install(INSTALL + '/plugins', d3hookLib)
 
 # Entity Class Tree Plugin
 ectEnv = module_env.Copy()

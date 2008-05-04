@@ -82,7 +82,8 @@ void SpecifierEditCombo::setSpecifier(const Specifier& spec)
     // Create the necessary SpecfieriPanel, and set it to display the current
     // value
     createSpecifierPanel(spec.getType().getName());
-    //_specPanel->setValue(spec.getValue());
+    if (_specPanel)
+        _specPanel->setValue(spec.getValue());
 }
 
 // Get the selected SpecifierType string
