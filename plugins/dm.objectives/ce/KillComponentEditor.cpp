@@ -23,7 +23,6 @@ KillComponentEditor::KillComponentEditor(Component& component)
 {
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);
-    gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 

@@ -1,5 +1,6 @@
 #include "KnockoutComponentEditor.h"
 #include "../SpecifierType.h"
+#include "../Component.h"
 
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -22,7 +23,6 @@ KnockoutComponentEditor::KnockoutComponentEditor(Component& component)
 {
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);
-    gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
@@ -32,6 +32,11 @@ KnockoutComponentEditor::KnockoutComponentEditor(Component& component)
 	gtk_box_pack_start(
 		GTK_BOX(_widget), _targetCombo.getWidget(), FALSE, FALSE, 0
 	);
+
+    // Populate the SpecifierEditCombo with the first specifier
+    _targetCombo.setSpecifier(
+        component.getSpecifier(Specifier::FIRST_SPECIFIER)
+    );
 }
 
 // Destructor
