@@ -156,6 +156,17 @@ inline bool operator< (const SpecifierType& first, const SpecifierType& second)
 	return first.getId() < second.getId();
 }
 
+/**
+ * Operator equals function for SpecifierTypes.
+ *
+ * Returns true if the two SpecifierTypes have the same internal name, false
+ * otherwise.
+ */
+inline bool operator== (const SpecifierType& first, const SpecifierType& second)
+{
+    return first.getName() == second.getName();
+}
+
 }
 
 #endif /*SPECIFIERTYPE_H_*/

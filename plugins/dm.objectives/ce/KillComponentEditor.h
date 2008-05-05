@@ -72,6 +72,8 @@ public:
 	
 	GtkWidget* getWidget() const; 
 
+    void writeToComponent() const;
+
 };
 
 }

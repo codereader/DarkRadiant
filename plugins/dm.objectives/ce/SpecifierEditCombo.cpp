@@ -55,7 +55,7 @@ Specifier SpecifierEditCombo::getSpecifier() const
 {
     return Specifier(
         SpecifierType::getSpecifierType(getSpecName()),
-        _specPanel->getValue()
+        _specPanel ? _specPanel->getValue() : ""
     );
 }
 

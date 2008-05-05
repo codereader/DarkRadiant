@@ -64,6 +64,7 @@ private:
 	static void _onDeleteComponent(GtkWidget*, ComponentsDialog*);
 	
 	static void _onTypeChanged(GtkWidget*, ComponentsDialog*);
+    static void _onApplyComponentChanges(GtkWidget*, ComponentsDialog*);
 	
 public:
 	
