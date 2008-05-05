@@ -64,6 +64,18 @@ public:
 	 */
 	virtual ComponentEditorPtr clone(objectives::Component& comp) const = 0;
 
+    /**
+     * Instruct the ComponentEditor to commit its changes to the Component
+     * object.
+     *
+     * This method causes the current data contained within the
+     * ComponentEditor's GTK widgets to be written out to the Component object
+     * passed into the constructor. This method is intended for the owning
+     * dialog (e.g. ComponentsDialog) to invoke when an Apply button is clicked
+     * by the user.
+     */
+    virtual void writeToComponent() const = 0;
+
 };
 
 }

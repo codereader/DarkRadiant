@@ -51,6 +51,15 @@ GtkWidget* KnockoutComponentEditor::getWidget() const
 	return _widget;
 }
 
+// Write to component
+void KnockoutComponentEditor::writeToComponent() const
+{
+    assert(_component);
+    _component->setSpecifier(
+        Specifier::FIRST_SPECIFIER, _targetCombo.getSpecifier()
+    );
+}
+
 }
 
 }

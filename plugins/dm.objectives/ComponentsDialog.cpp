@@ -173,10 +173,18 @@ GtkWidget* ComponentsDialog::createComponentEditorPanel()
         GTK_SHADOW_NONE
     );
 
-    // Add a separator and an apply button, and pack into a visible frame
+    // Visible frame containing ComponentEditor and the Apply button
     GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
     gtk_container_set_border_width(GTK_CONTAINER(vbx), 6);
 
+    // Apply button
+    GtkWidget* applyButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+    g_signal_connect(
+        G_OBJECT(applyButton), "clicked", 
+        G_CALLBACK(_onApplyComponentChanges), this
+    );
+
+    // Pack into frame
     gtk_box_pack_start(
         GTK_BOX(vbx),
         _widgets[WIDGET_COMPEDITOR_PANEL],
@@ -184,8 +192,7 @@ GtkWidget* ComponentsDialog::createComponentEditorPanel()
     );
     gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
     gtk_box_pack_start(
-        GTK_BOX(vbx),
-        gtkutil::RightAlignment(gtk_button_new_from_stock(GTK_STOCK_APPLY)),
+        GTK_BOX(vbx), gtkutil::RightAlignment(applyButton),
         FALSE, FALSE, 0
     );
 
@@ -342,8 +349,8 @@ void ComponentsDialog::_onDeleteComponent(GtkWidget* w, ComponentsDialog* self)
 }
 
 // Type combo changed
-void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
-
+void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) 
+{
 	// Get the current selection
 	GtkTreeIter iter;
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(w), &iter);
@@ -385,6 +392,13 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self) {
 	gtk_list_store_set(
 		GTK_LIST_STORE(model), &compIter, 1, comp.getString().c_str(), -1
 	);
+}
+
+// Apply button for ComponentEditor
+void ComponentsDialog::_onApplyComponentChanges(GtkWidget* w, ComponentsDialog* self)
+{
+    if (self->_componentEditor)
+        self->_componentEditor->writeToComponent();
 }
 
 } // namespace objectives

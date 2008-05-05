@@ -7,6 +7,8 @@
 
 #include <gtk/gtk.h>
 
+#include <iostream>
+
 namespace objectives
 {
 
@@ -51,6 +53,15 @@ GtkWidget* KillComponentEditor::getWidget() const
 	return _widget;
 }
 
+// Write to component
+void KillComponentEditor::writeToComponent() const
+{
+    assert(_component);
+    _component->setSpecifier(
+        Specifier::FIRST_SPECIFIER, _targetCombo.getSpecifier()
+    );
 }
+
+} // namespace ce
 
 }

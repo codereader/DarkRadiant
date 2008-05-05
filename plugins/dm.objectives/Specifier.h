@@ -38,11 +38,23 @@ public:
         return _type;
     }
 
-    /*
+    /**
      * Get the specifier value.
      */
     const std::string& getValue() const {
         return _value;
+    }
+
+    /**
+     * Get a user-friendly string representing the contents of this Specifier.
+     */
+    std::string toString() const {
+        if (_type == SpecifierType::SPEC_NONE()) {
+            return _type.getDisplayName();
+        }
+        else {
+            return _type.getDisplayName() + " : " + _value;
+        }
     }
 
 public:
