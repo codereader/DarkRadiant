@@ -166,8 +166,32 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 // ComponentEditor panel
 GtkWidget* ComponentsDialog::createComponentEditorPanel()
 {
+    // Invisible frame to contain the ComponentEditor
 	_widgets[WIDGET_COMPEDITOR_PANEL] = gtk_frame_new(NULL);
-	return _widgets[WIDGET_COMPEDITOR_PANEL];
+    gtk_frame_set_shadow_type(
+        GTK_FRAME(_widgets[WIDGET_COMPEDITOR_PANEL]),
+        GTK_SHADOW_NONE
+    );
+
+    // Add a separator and an apply button, and pack into a visible frame
+    GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
+    gtk_container_set_border_width(GTK_CONTAINER(vbx), 6);
+
+    gtk_box_pack_start(
+        GTK_BOX(vbx),
+        _widgets[WIDGET_COMPEDITOR_PANEL],
+        TRUE, TRUE, 0
+    );
+    gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
+    gtk_box_pack_start(
+        GTK_BOX(vbx),
+        gtkutil::RightAlignment(gtk_button_new_from_stock(GTK_STOCK_APPLY)),
+        FALSE, FALSE, 0
+    );
+
+    GtkWidget* visibleFrame = gtk_frame_new(NULL);
+    gtk_container_add(GTK_CONTAINER(visibleFrame), vbx);
+	return visibleFrame;
 }
 
 // Create buttons
