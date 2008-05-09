@@ -25,7 +25,7 @@ const int PanedPosition::getPosition() const {
 	return _position;
 }
 
-void PanedPosition::setPosition(const int& position) {
+void PanedPosition::setPosition(int position) {
 	_position = position;
 }
 

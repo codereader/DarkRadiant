@@ -31,7 +31,7 @@ public:
 	void connect(GtkWidget* paned);
 
 	const int getPosition() const;
-	void setPosition(const int& position);
+	void setPosition(int position);
 	
 	void saveToNode(xml::Node node);
 	
