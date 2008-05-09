@@ -1292,6 +1292,9 @@ void MainFrame::Create()
     }
 
     GlobalGroupDialog().showDialogWindow();
+	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
+	// the position info from the Registry once again.
+	ui::EntityInspector::getInstance().restoreSettings();
   }
   else // 4 way (aka Splitplane view)
   {

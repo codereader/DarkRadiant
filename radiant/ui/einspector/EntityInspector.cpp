@@ -81,17 +81,8 @@ EntityInspector::EntityInspector()
 	gtk_box_pack_start(GTK_BOX(_widget), paned, TRUE, TRUE, 0);
 
 	_panedPosition.connect(paned);
-
-	// Remove all previously stored pane information 
-	xml::NodeList list = GlobalRegistry().findXPath(RKEY_PANE_STATE);
-	if (list.size() > 0) {
-		_panedPosition.loadFromNode(list[0]);
-	}
-	else {
-		// No saved information, apply standard value
-		gtk_paned_set_position(GTK_PANED(paned), 400);
-	}
-	_panedPosition.applyPosition();
+	// Reload the information from the registry
+	restoreSettings();
     
     // Create the context menu
     createContextMenu();
@@ -106,6 +97,20 @@ EntityInspector::EntityInspector()
 
 	// Register self to the SelectionSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
+}
+
+void EntityInspector::restoreSettings() {
+	// Find the information stored in the registry
+	xml::NodeList list = GlobalRegistry().findXPath(RKEY_PANE_STATE);
+	if (list.size() > 0) {
+		_panedPosition.loadFromNode(list[0]);
+	}
+	else {
+		// No saved information, apply standard value
+		_panedPosition.setPosition(400);
+	}
+
+	_panedPosition.applyPosition();
 }
 
 // Create the context menu

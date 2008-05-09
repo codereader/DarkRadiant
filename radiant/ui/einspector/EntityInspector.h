@@ -152,6 +152,9 @@ public:
 	// RadiantEventListener implementation, gets called right before shutdown
 	virtual void onRadiantShutdown();
 
+	// greebo: Tells the inspector to reload the window settings from the registry.
+	void restoreSettings();
+
 	/** 
 	 * greebo: Static command target for toggling the Entity Inspector in the GroupDialog.
 	 */
