@@ -224,20 +224,21 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 	
 	// Cache the selection state
 	bool isSelected = selectable.isSelected();
+	int delta = isSelected ? +1 : -1;
 	
-	_countPrimitive += (isSelected) ? +1 : -1;
+	_countPrimitive += delta;
 	_selectionChangedCallbacks(selectable); // legacy
 	
-	_selectionInfo.totalCount += (isSelected) ? +1 : -1;
+	_selectionInfo.totalCount += delta;
 	
 	if (Node_getPatch(node) != NULL) {
-		_selectionInfo.patchCount += (isSelected) ? +1 : -1;
+		_selectionInfo.patchCount += delta;
 	}
 	else if (Node_getBrush(node) != NULL) {
-		_selectionInfo.brushCount += (isSelected) ? +1 : -1;
+		_selectionInfo.brushCount += delta;
 	}
 	else {
-		_selectionInfo.entityCount += (isSelected) ? +1 : -1;
+		_selectionInfo.entityCount += delta;
 	}
 	
 	// If the selectable is selected, add it to the local selection list, otherwise remove it 
@@ -259,11 +260,14 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 // Updates the internal list of component nodes if the component selection gets changed
 void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, const Selectable& selectable) {
 	
-	_countComponent += (selectable.isSelected()) ? +1 : -1;
+	int delta = selectable.isSelected() ? +1 : -1;
+
+	_countComponent += delta;
 	_selectionChangedCallbacks(selectable); // legacy
 	
-	_selectionInfo.totalCount += (selectable.isSelected()) ? +1 : -1;
-	
+	_selectionInfo.totalCount += delta;
+	_selectionInfo.componentCount += delta;
+
 	// If the instance got selected, add it to the list, otherwise remove it
 	if (selectable.isSelected()) {
 		_componentSelection.append(node);
