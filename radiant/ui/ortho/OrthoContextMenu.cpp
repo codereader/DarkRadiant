@@ -166,7 +166,7 @@ void OrthoContextMenu::checkConvertStatic() {
 	// primitive and no non-primitive selections.
 	gtk_widget_set_sensitive(
 		_convertStatic, 
-		(info.totalCount > 0 && info.entityCount == 0)
+		((info.totalCount - info.entityCount - info.componentCount) > 0) // anything apart from entities and components
 	);
 }
 

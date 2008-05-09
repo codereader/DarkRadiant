@@ -40,12 +40,14 @@ public:
 	int patchCount; 	// number of selected patches
 	int brushCount; 	// -- " -- brushes
 	int entityCount; 	// -- " -- entities
+	int componentCount;	// -- " -- components (faces, edges, vertices)
 	
 	SelectionInfo() :
 		totalCount(0),
 		patchCount(0),
 		brushCount(0),
-		entityCount(0)
+		entityCount(0),
+		componentCount(0)
 	{}
 	
 	// Zeroes all the counters
@@ -54,6 +56,7 @@ public:
 		patchCount = 0;
 		brushCount = 0;
 		entityCount = 0;
+		componentCount = 0;
 	}
 };
 
