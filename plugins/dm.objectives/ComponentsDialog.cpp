@@ -167,36 +167,17 @@ GtkWidget* ComponentsDialog::createComponentEditorPanel()
     // Invisible frame to contain the ComponentEditor
 	_widgets[WIDGET_COMPEDITOR_PANEL] = gtk_frame_new(NULL);
     gtk_frame_set_shadow_type(
-        GTK_FRAME(_widgets[WIDGET_COMPEDITOR_PANEL]),
-        GTK_SHADOW_NONE
+        GTK_FRAME(_widgets[WIDGET_COMPEDITOR_PANEL]), GTK_SHADOW_NONE
     );
-
-    // Visible frame containing ComponentEditor and the Apply button
-    GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-    gtk_container_set_border_width(GTK_CONTAINER(vbx), 6);
-
-    // Apply button
-    GtkWidget* applyButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
-    g_signal_connect(
-        G_OBJECT(applyButton), "clicked", 
-        G_CALLBACK(_onApplyComponentChanges), this
+    gtk_container_set_border_width(
+        GTK_CONTAINER(_widgets[WIDGET_COMPEDITOR_PANEL]), 6
     );
+    
+    // Visible frame 
+    GtkContainer* borderFrame = GTK_CONTAINER(gtk_frame_new(NULL));
+    gtk_container_add(borderFrame, _widgets[WIDGET_COMPEDITOR_PANEL]);
 
-    // Pack into frame
-    gtk_box_pack_start(
-        GTK_BOX(vbx),
-        _widgets[WIDGET_COMPEDITOR_PANEL],
-        TRUE, TRUE, 0
-    );
-    gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
-    gtk_box_pack_start(
-        GTK_BOX(vbx), gtkutil::RightAlignment(applyButton),
-        FALSE, FALSE, 0
-    );
-
-    GtkWidget* visibleFrame = gtk_frame_new(NULL);
-    gtk_container_add(GTK_CONTAINER(visibleFrame), vbx);
-	return visibleFrame;
+	return GTK_WIDGET(borderFrame);
 }
 
 // Create buttons
@@ -314,11 +295,20 @@ void ComponentsDialog::changeComponentEditor(Component& compToEdit)
 		);
 	}
 }
+
+// Safely write the ComponentEditor contents to the Component
+void ComponentsDialog::checkWriteComponent()
+{
+    if (_componentEditor)
+        _componentEditor->writeToComponent();
+}
+
 /* GTK CALLBACKS */
 
 // Close button
 void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) 
 {
+    self->checkWriteComponent();
 	self->destroy();
 }
 
@@ -326,6 +316,9 @@ void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self)
 void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
 										   ComponentsDialog* self)
 {
+    // Save the existing ComponentEditor contents if req'd
+    self->checkWriteComponent();
+
 	// Get the selection if valid
 	GtkTreeModel* model;
 	GtkTreeIter iter;
@@ -408,13 +401,6 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self)
 	gtk_list_store_set(
 		GTK_LIST_STORE(model), &compIter, 1, comp.getString().c_str(), -1
 	);
-}
-
-// Apply button for ComponentEditor
-void ComponentsDialog::_onApplyComponentChanges(GtkWidget* w, ComponentsDialog* self)
-{
-    if (self->_componentEditor)
-        self->_componentEditor->writeToComponent();
 }
 
 } // namespace objectives
