@@ -2,7 +2,9 @@
 #define SPECIFIER_H_
 
 #include "SpecifierType.h"
+
 #include <vector>
+#include <ostream>
 
 namespace objectives
 {
@@ -74,6 +76,16 @@ public:
  * Specifier list type.
  */
 typedef std::vector<Specifier> SpecifierList;
+
+/**
+ * Stream insertion operator for Specifiers.
+ */
+inline std::ostream& operator<< (std::ostream& os, const Specifier& spec)
+{
+    os << "Specifier { type = " << spec.getType().getName()
+       << ", value = " << spec.getValue() << " }";
+    return os;
+}
 
 }
 

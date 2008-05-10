@@ -102,7 +102,15 @@ std::string SpecifierEditCombo::getSpecName() const
 // Create the required SpecifierPanel
 void SpecifierEditCombo::createSpecifierPanel(const std::string& type)
 {
-	_specPanel = SpecifierPanelFactory::create(type);
+    // Get a panel from the factory
+    _specPanel = SpecifierPanelFactory::create(type);
+
+	// If the panel is valid, get its widget and pack into the hbox
+	if (_specPanel) {
+		gtk_box_pack_end(
+			GTK_BOX(_widget), _specPanel->getWidget(), TRUE, TRUE, 0
+		);
+	}
 }
 
 /* GTK CALLBACKS */
@@ -111,13 +119,6 @@ void SpecifierEditCombo::_onChange(GtkWidget* w, SpecifierEditCombo* self)
 {
     // Change the SpecifierPanel
     self->createSpecifierPanel(self->getSpecName());
-
-	// If the panel is valid, get its widget and pack into the hbox
-	if (self->_specPanel) {
-		gtk_box_pack_end(
-			GTK_BOX(self->_widget), self->_specPanel->getWidget(), TRUE, TRUE, 0
-		);
-	}
 }
 
 }

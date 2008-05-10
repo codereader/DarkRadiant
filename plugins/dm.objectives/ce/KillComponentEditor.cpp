@@ -7,8 +7,6 @@
 
 #include <gtk/gtk.h>
 
-#include <iostream>
-
 namespace objectives
 {
 
