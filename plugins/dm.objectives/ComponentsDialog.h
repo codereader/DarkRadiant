@@ -58,6 +58,9 @@ private:
 
     // Change the active ComponentEditor
     void changeComponentEditor(Component& compToEdit);
+
+    // If there is a ComponentEditor, write its contents to the Component
+    void checkWriteComponent();
 	
 	/* GTK CALLBACKS */
 	static void _onClose(GtkWidget*, ComponentsDialog*);
