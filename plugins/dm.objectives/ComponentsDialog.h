@@ -55,6 +55,9 @@ private:
 	
 	// Get the index of the selected Component, or -1 if there is no selection
 	int getSelectedIndex();
+
+    // Change the active ComponentEditor
+    void changeComponentEditor(Component& compToEdit);
 	
 	/* GTK CALLBACKS */
 	static void _onClose(GtkWidget*, ComponentsDialog*);

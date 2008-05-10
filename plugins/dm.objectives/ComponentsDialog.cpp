@@ -12,8 +12,6 @@
 #include <gtk/gtk.h>
 #include <boost/algorithm/string/predicate.hpp>
 
-#include <iostream>
-
 namespace objectives
 {
 
@@ -209,7 +207,8 @@ GtkWidget* ComponentsDialog::createButtons() {
 	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
 	
 	g_signal_connect(
-		G_OBJECT(closeButton), "clicked", G_CALLBACK(_onClose), this);
+		G_OBJECT(closeButton), "clicked", G_CALLBACK(_onClose), this
+    );
 	
 	gtk_box_pack_end(GTK_BOX(hbx), closeButton, TRUE, TRUE, 0);
 
@@ -258,11 +257,22 @@ void ComponentsDialog::populateEditPanel(int index) {
 		comp.isInverted() ? TRUE : FALSE
 	);
 	
-	// Set the type combo. Since the combo box was populated in ID order, we
-	// can simply use our ComponentType's ID as an index.
-	gtk_combo_box_set_active(
-		GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]), comp.getType().getId()
-	);
+    // Change the type combo if necessary. Since the combo box was populated in
+    // ID order, we can simply use our ComponentType's ID as an index.
+    GtkComboBox* typeCombo = GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]); 
+    if (gtk_combo_box_get_active(typeCombo) != comp.getType().getId())
+    {
+        // Change the combo selection (this triggers a change of the
+        // ComponentEditor panel)
+        gtk_combo_box_set_active(typeCombo, comp.getType().getId());
+    }
+    else 
+    {
+        // Update the ComponentEditor ourselves, since the new Component has the
+        // same type but we still want to refresh the panel with the new
+        // contents
+        changeComponentEditor(comp);
+    }
 }
 
 // Get selected component index
@@ -285,6 +295,25 @@ int ComponentsDialog::getSelectedIndex() {
 
 }
 
+// Change component editor
+void ComponentsDialog::changeComponentEditor(Component& compToEdit)
+{
+	_componentEditor = ce::ComponentEditorFactory::create(
+        compToEdit.getType().getName(), compToEdit)
+    ;
+	if (_componentEditor) 
+	{
+		// Get the widget from the ComponentEditor and show it
+		GtkWidget* editor = _componentEditor->getWidget();
+		gtk_widget_show_all(editor);
+		
+		// Pack the widget into the containing frame
+		gtk_container_add(
+			GTK_CONTAINER(_widgets[WIDGET_COMPEDITOR_PANEL]),
+			editor
+		);
+	}
+}
 /* GTK CALLBACKS */
 
 // Close button
@@ -366,24 +395,11 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self)
 	assert(idx >= 0);
 	Component& comp(self->_objective.components[idx]);
 
+    // Store the newly-selected type in the Component
 	comp.setType(ComponentType::getComponentType(selectedText));
 	
-	// Change the ComponentEditor
-	self->_componentEditor = ce::ComponentEditorFactory::create(
-			selectedText, comp
-	);
-	if (self->_componentEditor) 
-	{
-		// Get the widget from the ComponentEditor and show it
-		GtkWidget* editor = self->_componentEditor->getWidget();
-		gtk_widget_show_all(editor);
-		
-		// Pack the widget into the containing frame
-		gtk_container_add(
-			GTK_CONTAINER(self->_widgets[WIDGET_COMPEDITOR_PANEL]),
-			editor
-		);
-	}
+    // Change the ComponentEditor
+    self->changeComponentEditor(comp);
 
 	// Update the components list with the new display string
 	GtkTreeModel* model;
