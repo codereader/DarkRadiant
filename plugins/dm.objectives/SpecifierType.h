@@ -99,7 +99,7 @@ public:
 	
 	//@{
 
-	/** No specifier. */
+	/** No specifier (used in-game to represent "any entity"). */
 	static const SpecifierType& SPEC_NONE();
 	
 	/** Specify name of an entity. */
@@ -165,6 +165,10 @@ inline bool operator< (const SpecifierType& first, const SpecifierType& second)
 inline bool operator== (const SpecifierType& first, const SpecifierType& second)
 {
     return first.getName() == second.getName();
+}
+inline bool operator!= (const SpecifierType& first, const SpecifierType& second)
+{
+    return !(first == second);
 }
 
 }

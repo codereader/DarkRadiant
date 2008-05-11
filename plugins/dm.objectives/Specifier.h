@@ -6,6 +6,8 @@
 #include <vector>
 #include <ostream>
 
+#include <boost/shared_ptr.hpp>
+
 namespace objectives
 {
 
@@ -73,9 +75,14 @@ public:
 };
 
 /**
+ * Specifier pointer type.
+ */
+typedef boost::shared_ptr<Specifier> SpecifierPtr;
+
+/**
  * Specifier list type.
  */
-typedef std::vector<Specifier> SpecifierList;
+typedef std::vector<SpecifierPtr> SpecifierList;
 
 /**
  * Stream insertion operator for Specifiers.

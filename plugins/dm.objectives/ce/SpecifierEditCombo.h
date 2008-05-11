@@ -75,7 +75,7 @@ public:
      * A Specifier containing the type and value of the Specifier as currently
      * shown by the edit widgets.
      */
-    Specifier getSpecifier() const;
+    SpecifierPtr getSpecifier() const;
 
     /**
      * Set the Specifier to display in the ComboBox.
@@ -84,7 +84,7 @@ public:
      * A Specifier containing the type and value to be displayed in the edit
      * widgets.
      */
-    void setSpecifier(const Specifier& spec);
+    void setSpecifier(SpecifierPtr spec);
 
 };
 

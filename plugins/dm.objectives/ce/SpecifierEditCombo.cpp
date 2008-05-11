@@ -51,20 +51,25 @@ GtkWidget* SpecifierEditCombo::getWidget() const
 }
 
 // Get the selected Specifier
-Specifier SpecifierEditCombo::getSpecifier() const 
+SpecifierPtr SpecifierEditCombo::getSpecifier() const 
 {
-    return Specifier(
+    return SpecifierPtr(new Specifier(
         SpecifierType::getSpecifierType(getSpecName()),
         _specPanel ? _specPanel->getValue() : ""
-    );
+    ));
 }
 
 // Set the selected Specifier
-void SpecifierEditCombo::setSpecifier(const Specifier& spec)
+void SpecifierEditCombo::setSpecifier(SpecifierPtr spec)
 {
+    // If the SpecifierPtr is null (because the Component object does not have a
+    // specifier for this slot), create a default None specifier.
+    if (!spec)
+        spec = SpecifierPtr(new Specifier());
+
 	// I copied and pasted this from the StimResponseEditor, the SelectionFinder
 	// could be cleaned up a bit.
-	gtkutil::TreeModel::SelectionFinder finder(spec.getType().getName(), 1);
+	gtkutil::TreeModel::SelectionFinder finder(spec->getType().getName(), 1);
 	gtk_tree_model_foreach(
 		gtk_combo_box_get_model(GTK_COMBO_BOX(_specifierCombo)),
 		gtkutil::TreeModel::SelectionFinder::forEach,
@@ -79,11 +84,11 @@ void SpecifierEditCombo::setSpecifier(const Specifier& spec)
     GtkTreeIter iter = finder.getIter();
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_specifierCombo), &iter);
 
-    // Create the necessary SpecfieriPanel, and set it to display the current
+    // Create the necessary SpecifierPanel, and set it to display the current
     // value
-    createSpecifierPanel(spec.getType().getName());
+    createSpecifierPanel(spec->getType().getName());
     if (_specPanel)
-        _specPanel->setValue(spec.getValue());
+        _specPanel->setValue(spec->getValue());
 }
 
 // Get the selected SpecifierType string

@@ -63,8 +63,55 @@ void ObjectiveEntity::populateListStore(GtkListStore* store) const {
 	}	
 }
 
+// Write the Components from a single Objective to the underlying entity
+void ObjectiveEntity::writeComponents(
+    const std::string& keyPrefix, const Objective& obj
+)
+{
+    assert(_entity);
+
+    using std::string;
+    using boost::lexical_cast;
+
+    for (Objective::ComponentMap::const_iterator i = obj.components.begin();
+         i != obj.components.end();
+         ++i)
+    {
+        const Component& c = i->second;
+
+        // Component prefix is like obj1_2_blah
+        string prefix = keyPrefix + lexical_cast<string>(i->first) + "_";
+
+        // Write out Component keyvals
+        _entity->setKeyValue(prefix + "state", c.isSatisfied() ? "1" : "0");
+        _entity->setKeyValue(prefix + "not", c.isInverted() ? "1" : "0");
+        _entity->setKeyValue(
+            prefix + "irreversible", c.isIrreversible() ? "1": "0"
+        );
+        _entity->setKeyValue(
+            prefix + "player_responsible", c.isPlayerResponsible() ? "1" : "0"
+        );
+        _entity->setKeyValue(prefix + "type", c.getType().getName());
+
+        // Write out Specifier keyvals for FIRST and SECOND specifiers
+        SpecifierPtr spec1 = c.getSpecifier(Specifier::FIRST_SPECIFIER);
+        if (spec1)
+        {
+            _entity->setKeyValue(prefix + "spec1", spec1->getType().getName());
+            _entity->setKeyValue(prefix + "spec1_val", spec1->getValue());
+        }
+        SpecifierPtr spec2 = c.getSpecifier(Specifier::SECOND_SPECIFIER);
+        if (spec2)
+        {
+            _entity->setKeyValue(prefix + "spec2", spec2->getType().getName());
+            _entity->setKeyValue(prefix + "spec2_val", spec2->getValue());
+        }
+    }
+}
+
 // Write out Objectives to entity keyvals
-void ObjectiveEntity::writeToEntity() const {
+void ObjectiveEntity::writeToEntity() 
+{
 	assert(_entity);
 	
 	for (ObjectiveMap::const_iterator i = _objectives.begin();
@@ -86,7 +133,9 @@ void ObjectiveEntity::writeToEntity() const {
 		_entity->setKeyValue(prefix + "irreversible", 
 							 o.irreversible ? "1" : "0");
 		_entity->setKeyValue(prefix + "state", lexical_cast<string>(o.state));
-		
+
+        // Write the Components for this Objective
+        writeComponents(prefix, o);
 	}	
 }
 
