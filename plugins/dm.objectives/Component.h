@@ -5,7 +5,7 @@
 #include "Specifier.h"
 #include "ComponentType.h"
 
-#include <assert.h>
+#include <cassert>
 #include <string>
 
 namespace objectives
@@ -140,7 +140,28 @@ public:
 	 * Return a string description of this Component.
 	 */
 	std::string getString() const {
-		return _type.getDisplayName();
+		
+        // Add the ComponentType
+        std::string retStr = _type.getDisplayName();
+        
+        // Add the Specifier details, if any
+        SpecifierPtr sp1 = getSpecifier(Specifier::FIRST_SPECIFIER);
+        if (sp1) {
+            retStr += " [ " + sp1->getType().getDisplayName();
+            retStr += " = " + sp1->getValue();
+        }
+        SpecifierPtr sp2 = getSpecifier(Specifier::SECOND_SPECIFIER);
+        if (sp2) {
+            if (sp1)
+                retStr += ", ";
+            retStr += sp2->getType().getDisplayName();
+            retStr += " = " + sp2->getValue();
+        }
+        if (sp1 || sp2) {
+            retStr += " ]";
+        }
+
+        return retStr;
 	}
 
     /**

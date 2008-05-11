@@ -322,9 +322,11 @@ void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
 	// Get the selection if valid
 	GtkTreeModel* model;
 	GtkTreeIter iter;
-	if (!gtk_tree_selection_get_selected(sel, &model, &iter)) {
-		// Disable the edit panel
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter)) 
+    {
+		// Disable the edit panel and remove the ComponentEditor
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], FALSE);
+        self->_componentEditor = objectives::ce::ComponentEditorPtr();
 	}
 	else {
 		// Otherwise populate edit panel with the current component index
@@ -362,7 +364,13 @@ void ComponentsDialog::_onDeleteComponent(GtkWidget* w, ComponentsDialog* self)
 {
 	// Delete the selected component
 	int idx = self->getSelectedIndex();
-	if (idx != -1) {
+	if (idx != -1) 
+    {
+        // Remove the selection first, so our selection-changed callback does not
+        // attempt to writeToComponent() after the Component has already been deleted
+        gtk_tree_selection_unselect_all(self->_componentSel);
+
+        // Erase the actual component
 		self->_objective.components.erase(idx);
 	}
 	
