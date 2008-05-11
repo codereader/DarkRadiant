@@ -39,6 +39,13 @@ class ObjectiveEntity
 	// Map of numbered Objective objects
 	ObjectiveMap _objectives;
 	
+private:
+
+    // Write the Components to the underlying entity
+    void writeComponents(
+        const std::string& keyPrefix, const Objective& objective
+    );
+
 public:
 
 	/**
@@ -113,7 +120,7 @@ public:
 	/**
 	 * Write all objective data to keyvals on the underlying entity.
 	 */
-	void writeToEntity() const;
+	void writeToEntity();
 };
 
 /**

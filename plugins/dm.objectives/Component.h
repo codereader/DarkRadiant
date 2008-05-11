@@ -114,6 +114,13 @@ public:
 	void setPlayerResponsible(bool playerResponsible) {
 		_playerResponsible = playerResponsible;
 	}
+
+    /**
+     * Get the player-responsible status.
+     */
+    bool isPlayerResponsible() const {
+        return _playerResponsible;
+    }
 	
 	/**
 	 * Set the type of this component ("kill", "ko" etc).
@@ -142,7 +149,7 @@ public:
      * @param idx
      * The index of the specifier, starting from 1.
      */
-    void setSpecifier(Specifier::SpecifierNumber num, const Specifier& spec) 
+    void setSpecifier(Specifier::SpecifierNumber num, SpecifierPtr spec) 
     {
         assert(
             _specifiers.size() == static_cast<std::size_t>(
@@ -158,7 +165,7 @@ public:
      * @param idx
      * The index of the specifier, starting from 1.
      */
-    const Specifier& getSpecifier(Specifier::SpecifierNumber num) const 
+    SpecifierPtr getSpecifier(Specifier::SpecifierNumber num) const 
     {
         assert(
             _specifiers.size() == static_cast<std::size_t>(
