@@ -12,7 +12,7 @@ namespace entity
 
 namespace 
 {
-    const char* RKEY_SHOW_ENTITY_NAMES = "user/ui/xyview/showEntityNames";
+	const std::string RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
 }
 
 /**
@@ -41,6 +41,11 @@ protected:
         GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
     }
 
+	~OptionalRenderedName()
+	{
+		GlobalRegistry().removeKeyObserver(this);
+	}
+
     /**
      * Get the current status of the rendered name.
      *
@@ -54,7 +59,7 @@ protected:
 
 public:
 
-    /* RegistryKeyObserver implementation */
+    // RegistryKeyObserver implementation
     void keyChanged(const std::string& key, const std::string& value)
     {
         assert(key == RKEY_SHOW_ENTITY_NAMES);
