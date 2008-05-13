@@ -37,6 +37,7 @@ void NullModel::renderSolid(Renderer& renderer,
 void NullModel::renderWireframe(Renderer& renderer, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
+	renderer.SetState(_state, Renderer::eWireframeOnly);
 	renderer.addRenderable(_aabbWire, localToWorld);
 }
 
