@@ -228,8 +228,9 @@ int main (int argc, char* argv[]) {
 
 		ui::Splash::Instance().hide();
 
-		if (GlobalMRU().loadLastMap() && GlobalMRU().getLastMapName() != "") {
-			GlobalMap().load(GlobalMRU().getLastMapName());
+		std::string lastMap = GlobalMRU().getLastMapName();
+		if (GlobalMRU().loadLastMap() && !lastMap.empty() && file_exists(lastMap.c_str())) {
+			GlobalMap().load(lastMap);
 		}
 		else {
 			GlobalMap().createNew();
