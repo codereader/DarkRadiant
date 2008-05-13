@@ -1277,7 +1277,7 @@ void MainFrame::Create()
 
    	{
 		GtkWidget* page = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(GTK_WINDOW(window))
+			GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalGroupDialog().getDialogWindow()))
 		);
 		// Add the Media Browser page
 		GlobalGroupDialog().addPage(
