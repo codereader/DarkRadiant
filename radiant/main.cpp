@@ -210,7 +210,6 @@ int main (int argc, char* argv[]) {
 	
 		ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.85f);
 
-		// The VFS is setup at this point, we can load the modules
 		Radiant_Initialise();
 		
 		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.92f);
@@ -236,7 +235,7 @@ int main (int argc, char* argv[]) {
 			GlobalMap().createNew();
 		}
 
-		// Scope ends here, PIDFile is deleted by its constructor
+		// Scope ends here, PIDFile is deleted by its destructor
 	}
 
 #ifdef _PROFILE
