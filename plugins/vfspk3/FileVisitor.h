@@ -8,6 +8,7 @@
 #include "generic/callback.h"
 
 #include <set>
+#include <boost/algorithm/string/case_conv.hpp>
 
 class FileVisitor 
 : public Archive::Visitor
@@ -43,15 +44,25 @@ public:
 		std::string subname = os::getRelativePath(name, _directory);
 	    if(subname != name)
 	    {
-	    	if (_extension == "*" 
-	    		|| os::getExtension(subname) == _extension
-	    		&& _visitedFiles.find(subname) == _visitedFiles.end())
+	    	if (_extension == "*" || 
+				extensionMatches(os::getExtension(subname)) && 
+				_visitedFiles.find(subname) == _visitedFiles.end())
 	    	{
 	    		// Matching file, call the callback and add to visited file set
 	    		_callback(subname);
 	    		_visitedFiles.insert(subname);
 	    	}
 	    }
+	}
+
+	// Returns true if the extension matches the required one
+	// treats extensions case-insensitively in Windows
+	bool extensionMatches(const std::string& ext) const {
+#ifdef WIN32
+		return boost::to_lower_copy(ext) == _extension;
+#elif
+		return ext == _extension;
+#endif
 	}
 };
     
