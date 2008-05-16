@@ -126,11 +126,13 @@
 		<defaultTexture value="_default" />
 		<collisionTexture value="textures/common/collision" />
 		<monsterClipShader value="textures/common/monster_clip" />
+		<visportalShader value="textures/editor/visportal" />
+		<nodrawShader value="textures/common/nodraw" />
 		<collisionModelExt value="cm" />
 		<defaultCurveEntity value="func_static" />
 		<curveNurbsKey value="curve_Nurbs" />
 		<curveCatmullRomKey value="curve_CatmullRomSpline" />
-        <playerHeight value="64" />
+		<playerHeight value="64" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

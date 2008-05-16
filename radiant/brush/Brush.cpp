@@ -148,6 +148,14 @@ void Brush::shaderChanged() {
 	planeChanged();
 }
 
+void Brush::setShader(const std::string& newShader) {
+	undoSave();
+
+	for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
+		(*i)->SetShader(newShader);
+	}
+}
+
 void Brush::evaluateBRep() const {
 	if(m_planeChanged) {
 		m_planeChanged = false;

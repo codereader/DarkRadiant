@@ -145,6 +145,11 @@ namespace selection {
 	 */
 	void createDecalsForSelectedFaces();
 
+	/** 
+	 * greebo: Applies the visportal/nodraw texture combo to the selected brushes.
+	 */
+	void makeVisportal();
+
 	} // namespace algorithm
 } // namespace selection
 

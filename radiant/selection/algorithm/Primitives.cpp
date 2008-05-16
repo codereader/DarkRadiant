@@ -30,6 +30,8 @@ namespace selection {
 
 	namespace {
 		const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
+		const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
+		const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
 		
 		const std::string ERRSTR_WRONG_SELECTION = 
 				"Can't export, create and select a func_* entity\
@@ -558,6 +560,73 @@ void createDecalsForSelectedFaces() {
 			intToStr(unsuitableWindings) + " faces were not suitable (had more than 4 edges).", 
 			GlobalRadiant().getMainWindow()
 		);
+	}
+}
+
+class LargestFaceFinder :
+	public BrushVisitor
+{
+	mutable float _largestArea;
+	mutable Face* _largestFace;
+public:
+	LargestFaceFinder() :
+		_largestArea(0),
+		_largestFace(NULL)
+	{}
+
+	void visit(Face& face) const {
+		if (_largestFace == NULL) {
+			_largestFace = &face;
+		}
+
+		// Calculate face area
+		float area = 0;
+		Winding& winding = face.getWinding();
+		const Vector3& centroid = face.centroid();
+
+		for (std::size_t i = 0; i < winding.size(); i++) {
+			Vector3 edge1 = centroid - winding[i].vertex;
+			Vector3 edge2 = centroid - winding[(i+1) % winding.size()].vertex;
+			area += edge1.crossProduct(edge2).getLength() * 0.5f;
+		}
+
+		if (area > _largestArea) {
+			_largestArea = area;
+			_largestFace = &face;
+		}
+	}
+
+	Face& getLargestFace() {
+		return *_largestFace;
+	}
+};
+
+void makeVisportal() {
+	BrushPtrVector brushes = getSelectedBrushes();
+
+	if (brushes.size() <= 0) {
+		gtkutil::errorDialog("No brushes selected.", GlobalRadiant().getMainWindow());
+		return;
+	}
+	
+	// Create a scoped undocmd object
+	UndoableCommand cmd("brushMakeVisportal");
+
+	for (std::size_t i = 0; i < brushes.size(); i++)
+	{
+		Brush& brush = brushes[i]->getBrush();
+
+		// don't allow empty brushes
+		if (brush.size() == 0) continue; 
+		
+		// Set all faces to nodraw first
+		brush.setShader(GlobalRegistry().get(RKEY_NODRAW_SHADER));
+
+		// Find the largest face (in terms of area)
+		LargestFaceFinder finder;
+		brush.forEachFace(finder);
+		
+		finder.getLargestFace().SetShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
 	}
 }
 
