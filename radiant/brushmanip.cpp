@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/FaceInstance.h"
 
 #include "selection/algorithm/Shader.h"
+#include "selection/algorithm/Primitives.h"
 #include "xyview/GlobalXYWnd.h"
 
 #include <list>
@@ -799,4 +800,5 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("FlipClip", FreeCaller<FlipClipper>());
 
 	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
+	GlobalEventManager().addCommand("MakeVisportal", FreeCaller<selection::algorithm::makeVisportal>());
 }

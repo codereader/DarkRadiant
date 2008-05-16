@@ -187,6 +187,9 @@ public:
 	void planeChanged();
 	void shaderChanged();
 	
+	// Sets the shader of all faces to the given name
+	void setShader(const std::string& newShader);
+
 	void evaluateBRep() const;
 	
 	void transformChanged();
