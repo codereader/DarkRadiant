@@ -60,7 +60,7 @@ public:
 	bool extensionMatches(const std::string& ext) const {
 #ifdef WIN32
 		return boost::to_lower_copy(ext) == _extension;
-#elif
+#else
 		return ext == _extension;
 #endif
 	}
