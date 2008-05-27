@@ -30,7 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 			is located on the primary screen. You will
  * 			have to call the tracker's applyPosition() method afterwards. 
  */
-void positionWindowOnPrimaryScreen(gtkutil::WindowPosition& position);
+//void positionWindowOnPrimaryScreen(gtkutil::WindowPosition& position);
+GdkRectangle getPrimaryScreen();
 
 	namespace {
 		const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";

@@ -35,7 +35,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		GdkRectangle primaryMonitor;
 	}
 
-void positionWindowOnPrimaryScreen(gtkutil::WindowPosition& position) {
+GdkRectangle getPrimaryScreen() {
+	return primaryMonitor;
+}
+
+/*void positionWindowOnPrimaryScreen(gtkutil::WindowPosition& position) {
 	gtkutil::PositionVector pos = position.getPosition();
 	gtkutil::SizeVector size = position.getSize();
 	
@@ -61,7 +65,7 @@ void positionWindowOnPrimaryScreen(gtkutil::WindowPosition& position) {
 	
 	position.setPosition(pos[0], pos[1]);
 	position.setSize(size[0], size[1]);
-}
+}*/
 
 void Multimon_registerPreferencesPage() {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Interface/Multi Monitor");
