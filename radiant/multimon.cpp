@@ -22,10 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "multimon.h"
 
 #include "iregistry.h"
-#include "debugging/debugging.h"
 
-#include "gtkutil/window.h"
-#include "gtkutil/widget.h"
 #include "gtkutil/MultiMonitor.h"
 #include "ipreferencesystem.h"
 #include "stringio.h"
@@ -35,12 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void Multimon_registerPreferencesPage() {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Interface/Multi Monitor");
 	
-	GtkWidget* primary_monitor = page->appendCheckBox("", 
-		"Start on Primary Monitor", RKEY_MULTIMON_START_PRIMARY);
-	GtkWidget* popup = page->appendCheckBox("", 
-		"Disable system menu on popup windows", RKEY_MULTIMON_DISABLE_SYS_MENU);
-	
-	Widget_connectToggleDependency(popup, primary_monitor);
+	page->appendCheckBox("", "Start on Primary Monitor", RKEY_MULTIMON_START_PRIMARY);
 }
 
 void MultiMon_Construct()

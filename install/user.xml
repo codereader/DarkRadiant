@@ -110,7 +110,6 @@
 	</entityList>
 	<multiMonitor>
 		<startOnPrimaryMonitor value="0" />
-		<disableSysMenuOnPopups value="0" />
 	</multiMonitor>
 	<xyview>
 		<views name="default">
