@@ -23,20 +23,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_MULTIMON_H
 
 #include <string>
-#include "gtkutil/WindowPosition.h"
 
-/** greebo: This adjusts the window coordinates within the given 
- * 			WindowPosition helper class so that the window
- * 			is located on the primary screen. You will
- * 			have to call the tracker's applyPosition() method afterwards. 
- */
-//void positionWindowOnPrimaryScreen(gtkutil::WindowPosition& position);
-GdkRectangle getPrimaryScreen();
-
-	namespace {
-		const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
-		const std::string RKEY_MULTIMON_DISABLE_SYS_MENU = "user/ui/multiMonitor/disableSysMenuOnPopups";
-	}
+namespace {
+	const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
+}
 
 #if defined(WIN32)
 void MultiMon_Construct();
