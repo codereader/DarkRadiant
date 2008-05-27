@@ -97,6 +97,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/glfont.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/Paned.h"
+#include "gtkutil/MultiMonitor.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/messagebox.h"
@@ -1165,7 +1166,7 @@ void MainFrame::Create()
 		// Yes, connect the position tracker, this overrides the existing setting.
   		_windowPosition.connect(window);
   		// Load the correct coordinates into the position tracker
-		_windowPosition.fitToScreen(getPrimaryScreen());
+		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(0));
 		// Apply the position
 		_windowPosition.applyPosition();
 	}
