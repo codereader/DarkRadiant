@@ -29,11 +29,11 @@ public:
 	 * Returns the screen rectangle of the screen with the given index.
 	 * The first screen is always present and has the index 0.
 	 */
-	static GdkRectangle getMonitor(int screenNum) {
+	static GdkRectangle getMonitor(int monitorNum) {
 		GdkScreen* screen = gdk_display_get_default_screen(gdk_display_get_default());
 
 		GdkRectangle geom;
-		gdk_screen_get_monitor_geometry(screen, screenNum, &geom);
+		gdk_screen_get_monitor_geometry(screen, monitorNum, &geom);
 
 		return geom;
 	}
