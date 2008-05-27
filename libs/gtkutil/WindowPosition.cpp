@@ -24,20 +24,20 @@ void WindowPosition::connect(GtkWindow* window) {
 	g_signal_connect(G_OBJECT(window), "configure_event", G_CALLBACK(onConfigure), this);
 }
 
-const PositionVector WindowPosition::getPosition() const {
+const PositionVector& WindowPosition::getPosition() const {
 	return _position;
 }
 
-const SizeVector WindowPosition::getSize() const {
+const SizeVector& WindowPosition::getSize() const {
 	return _size;
 }
 
-void WindowPosition::setPosition(const int& x, const int& y) {
+void WindowPosition::setPosition(int x, int y) {
 	_position[0] = x;
 	_position[1] = y;
 }
 
-void WindowPosition::setSize(const int& width, const int& height) {
+void WindowPosition::setSize(int width, int height) {
 	_size[0] = width;
 	_size[1] = height;
 }
@@ -85,6 +85,28 @@ void WindowPosition::readPosition() {
 	//gtk_window_set_gravity(_window, GDK_GRAVITY_STATIC);
 	gtk_window_get_position(_window, &_position[0], &_position[1]);
 	gtk_window_get_size(_window, &_size[0], &_size[1]);
+}
+
+void WindowPosition::fitToScreen(GdkRectangle screen) {
+	if (_size[0] >= screen.width - 12) {
+		_size[0] = screen.width - 12;
+	}
+	
+	if (_size[1] >= screen.height - 24) {
+		_size[1] = screen.height - 48;
+	}
+	
+	if (_position[0] <= screen.x || 
+		_position[0] + _size[0] >= (screen.x + screen.width) - 12) 
+	{
+		_position[0] = screen.x + 6;
+	}
+	
+	if (_position[1] <= screen.y || 
+		_position[1] + _size[1] >= (screen.y + screen.height) - 48)
+	{
+		_position[1] = screen.y + 24;
+	}
 }
 
 // The static GTK callback that gets invoked on window size/position changes

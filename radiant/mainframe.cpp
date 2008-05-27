@@ -1165,7 +1165,7 @@ void MainFrame::Create()
 		// Yes, connect the position tracker, this overrides the existing setting.
   		_windowPosition.connect(window);
   		// Load the correct coordinates into the position tracker
-		positionWindowOnPrimaryScreen(_windowPosition);
+		_windowPosition.fitToScreen(getPrimaryScreen());
 		// Apply the position
 		_windowPosition.applyPosition();
 	}

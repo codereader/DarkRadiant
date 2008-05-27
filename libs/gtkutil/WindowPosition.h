@@ -35,11 +35,11 @@ public:
 	// Connect the passed window to this object
 	void connect(GtkWindow* window);
 
-	const PositionVector getPosition() const;
-	const SizeVector getSize() const;
+	const PositionVector& getPosition() const;
+	const SizeVector& getSize() const;
 
-	void setPosition(const int& x, const int& y);
-	void setSize(const int& width, const int& height);
+	void setPosition(int x, int y);
+	void setSize(int width, int height);
 	
 	void saveToNode(xml::Node& node);
 	void loadFromNode(const xml::Node& node);
@@ -50,6 +50,9 @@ public:
 
 	// Reads the position from the GtkWindow
 	void readPosition();
+
+	// Adjusts the position/dimensions to fit on the given screen (GdkRectangle)
+	void fitToScreen(GdkRectangle screen);
 	
 private:
 
