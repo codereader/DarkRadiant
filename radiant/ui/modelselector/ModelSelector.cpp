@@ -10,6 +10,7 @@
 #include "math/Vector3.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
+#include "iradiant.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -41,11 +42,11 @@ ModelSelector::ModelSelector()
   _sorted(false)
 {
 	// Window properties
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), MODELSELECTOR_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_resizable(GTK_WINDOW(_widget), FALSE);
+	//gtk_window_set_resizable(GTK_WINDOW(_widget), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
 	// Set the default size of the window

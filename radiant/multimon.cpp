@@ -94,7 +94,7 @@ void MultiMon_Construct()
   }
 
 	if (m > 1) {
-		GlobalRegistry().set(RKEY_MULTIMON_START_PRIMARY, "1");
+		//GlobalRegistry().set(RKEY_MULTIMON_START_PRIMARY, "1");
 	}
 
 	Multimon_registerPreferencesPage();
