@@ -34,7 +34,7 @@
 		<!-- Size of the model preview, as a fraction of the screen height. The
 		     preview is always square.
 		-->
-    	<previewSizeFactor value="0.6"/>
+    	<previewSizeFactor value="0.7"/>
     </ModelSelector>
 	<showAllLightRadii value="0"/>
 	<alwaysShowLightVertices value="1"/>

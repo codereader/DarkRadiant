@@ -14,7 +14,8 @@ namespace gtkutil
 
 WindowPosition::WindowPosition() : 
 	_position(DEFAULT_POSITION_X, DEFAULT_POSITION_Y),
-	_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y)
+	_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y),
+	_window(NULL)
 {}
 
 // Connect the passed window to this object
@@ -87,26 +88,28 @@ void WindowPosition::readPosition() {
 	gtk_window_get_size(_window, &_size[0], &_size[1]);
 }
 
-void WindowPosition::fitToScreen(GdkRectangle screen) {
-	if (_size[0] >= screen.width - 12) {
-		_size[0] = screen.width - 12;
-	}
+void WindowPosition::fitToScreen(float xfraction, float yfraction) {
+	if (_window == NULL) return;
+
+	GdkScreen* screen = gtk_window_get_screen(_window);
 	
-	if (_size[1] >= screen.height - 24) {
-		_size[1] = screen.height - 48;
-	}
-	
-	if (_position[0] <= screen.x || 
-		_position[0] + _size[0] >= (screen.x + screen.width) - 12) 
-	{
-		_position[0] = screen.x + 6;
-	}
-	
-	if (_position[1] <= screen.y || 
-		_position[1] + _size[1] >= (screen.y + screen.height) - 48)
-	{
-		_position[1] = screen.y + 24;
-	}
+	gint x,y;
+	gtk_window_get_position(GTK_WINDOW(_window), &x, &y);
+	gint monitorNum = gdk_screen_get_monitor_at_point(screen, x, y);
+
+	GdkRectangle geom;
+	gdk_screen_get_monitor_geometry(screen, monitorNum, &geom);
+
+	// Pass the call
+	fitToScreen(geom, xfraction, yfraction);
+}
+
+void WindowPosition::fitToScreen(GdkRectangle screen, float xfraction, float yfraction) {
+	_size[0] = static_cast<int>(screen.width * xfraction) - 12;
+	_size[1] = static_cast<int>(screen.height * yfraction) - 48;
+
+	_position[0] = screen.x + static_cast<int>((screen.width - _size[0] - 12)/2);
+	_position[1] = screen.y + static_cast<int>((screen.height - _size[1] - 48)/2);
 }
 
 // The static GTK callback that gets invoked on window size/position changes

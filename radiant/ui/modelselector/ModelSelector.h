@@ -8,6 +8,7 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtkliststore.h>
+#include "gtkutil/WindowPosition.h"
 
 #include <string>
 
@@ -75,6 +76,9 @@ private:
 	// options widgets
 	GtkExpander* _advancedOptions;
 	GtkCheckButton* _clipCheckButton;
+
+	// The window position tracker
+	gtkutil::WindowPosition _position;
 	
 	// Last selected model, which will be returned by showAndBlock() once the
 	// recursive main loop exits.

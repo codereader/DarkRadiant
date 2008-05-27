@@ -49,17 +49,22 @@ ModelSelector::ModelSelector()
 	//gtk_window_set_resizable(GTK_WINDOW(_widget), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
-	// Set the default size of the window
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
-	gint w = gdk_screen_get_width(scr);
-	gint h = gdk_screen_get_height(scr);
-	
+	_position.connect(GTK_WINDOW(_widget));
+
 	// Size the model preview widget
 	float previewHeightFactor = GlobalRegistry().getFloat(
 		"user/ui/ModelSelector/previewSizeFactor"
 	);
-	gint glSize = gint(h * previewHeightFactor);
-	_modelPreview.setSize(glSize);
+
+	// Set the default size of the window
+	_position.readPosition();
+	_position.fitToScreen(0.8f, previewHeightFactor);
+	_position.applyPosition();
+
+	_modelPreview.setSize(_position.getSize()[1]);
+
+	// Re-center the window
+	gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 
 	// Signals
 	g_signal_connect(G_OBJECT(_widget), 
@@ -75,7 +80,7 @@ ModelSelector::ModelSelector()
 	GtkWidget* leftVbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(leftVbx), createTreeView(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(leftVbx), createInfoPanel(), TRUE, TRUE, 0);
-	gtk_widget_set_size_request(leftVbx, w / 3, -1);
+	//gtk_widget_set_size_request(leftVbx, w / 3, -1);
 	
 	// Pack the left Vbox into an HBox next to the preview widget on the right
 	// The preview gets a Vbox of its own, to stop it from expanding vertically
