@@ -135,6 +135,7 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 	namespace {
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
+		const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
 	}
 
 // This is called from main() to start up the Radiant stuff.
@@ -1532,6 +1533,11 @@ void Layout_registerPreferencesPage() {
 	
 	page->appendRadioIcons("", RKEY_WINDOW_LAYOUT, icons, descriptions);
 	page->appendLabel("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect.");
+
+	// Add another page for Multi-Monitor stuff
+	page = GlobalPreferenceSystem().getPage("Interface/Multi Monitor");
+	
+	page->appendCheckBox("", "Start on Primary Monitor", RKEY_MULTIMON_START_PRIMARY);
 }
 
 #include "stringio.h"
