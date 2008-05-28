@@ -22,12 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MULTIMON_H)
 #define INCLUDED_MULTIMON_H
 
-#include <string>
-
-namespace {
-	const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
-}
-
 #if defined(WIN32)
 void MultiMon_Construct();
 void MultiMon_Destroy();

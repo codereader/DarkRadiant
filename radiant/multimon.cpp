@@ -29,12 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <gdk/gdkdisplay.h>
 
-void Multimon_registerPreferencesPage() {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Interface/Multi Monitor");
-	
-	page->appendCheckBox("", "Start on Primary Monitor", RKEY_MULTIMON_START_PRIMARY);
-}
-
 void MultiMon_Construct()
 {
 	globalOutputStream() << "Default screen has " << gtkutil::MultiMonitor::getNumMonitors() << " monitors.\n";
@@ -47,8 +41,6 @@ void MultiMon_Construct()
 							 << geom.x << ", " << geom.y << ", " 
 							 << geom.width << ", " << geom.height << "\n";
 	}
-
-	Multimon_registerPreferencesPage();
 }
 
 void MultiMon_Destroy()
