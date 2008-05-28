@@ -667,7 +667,6 @@ radiant_env.Prepend(LIBPATH = ['libs'])
 
 if radiant_env['PLATFORM'] == 'win32':
     radiant_env.Append(LIBS = ['ws2_32', 'comdlg32'])
-    radiant_src.append('radiant/multimon.cpp')
 
 # Add the icon on Windows
 if radiant_env['PLATFORM'] == 'win32':

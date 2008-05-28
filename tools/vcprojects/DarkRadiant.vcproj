@@ -298,14 +298,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\multimon.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\multimon.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\patchmanip.cpp"
 				>
 			</File>
