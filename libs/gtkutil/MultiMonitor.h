@@ -3,6 +3,7 @@
 
 #include <gdk/gdkscreen.h>
 #include <gdk/gdkdisplay.h>
+#include "itextstream.h"
 
 namespace gtkutil {
 
@@ -36,6 +37,19 @@ public:
 		gdk_screen_get_monitor_geometry(screen, monitorNum, &geom);
 
 		return geom;
+	}
+
+	static void printMonitorInfo() {
+		globalOutputStream() << "Default screen has " << getNumMonitors() << " monitors.\n";
+
+		// detect multiple monitors
+		for (int j = 0; j < getNumMonitors(); j++) {
+			GdkRectangle geom = getMonitor(j);
+
+			globalOutputStream() << "Monitor " << j << " geometry: " 
+								 << geom.width << "x" << geom.height << " at "
+								 << geom.x << ", " << geom.y << "\n";
+		}
 	}
 };
 

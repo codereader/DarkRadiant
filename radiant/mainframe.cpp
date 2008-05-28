@@ -111,7 +111,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entity.h"
 #include "gtkdlgs.h"
 #include "gtkmisc.h"
-#include "multimon.h"
 #include "patchmanip.h"
 #include "select.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -154,6 +153,8 @@ void Radiant_Initialise()
 	
 	// Initialise the most recently used files list
 	GlobalMRU().loadRecentFiles();
+
+	gtkutil::MultiMonitor::printMonitorInfo();
 }
 
 void Exit() {

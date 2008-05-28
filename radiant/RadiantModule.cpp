@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entity.h"
 #include "map.h"
 #include "select.h"
-#include "multimon.h"
 #include "map/AutoSaver.h"
 #include "map/PointFile.h"
 #include "camera/GlobalCamera.h"
@@ -180,7 +179,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
 
     Selection_construct();
-    MultiMon_Construct();
     map::PointFile::Instance().registerCommands();
     Map_Construct();
     MainFrame_Construct();
@@ -198,7 +196,6 @@ void RadiantModule::shutdownModule() {
 
 	map::PointFile::Instance().destroy();
     Entity_Destroy();
-    MultiMon_Destroy();
     Selection_destroy();
     
     // Remove all the event listeners, otherwise the shared_ptrs 
