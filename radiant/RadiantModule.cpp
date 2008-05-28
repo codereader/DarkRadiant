@@ -41,11 +41,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "modulesystem/StaticModule.h"
 
+namespace radiant {
+
 RadiantModule::RadiantModule() :
 	_mainWindow(NULL)
-{
-	globalOutputStream() << "RadiantCore initialised.\n";
-}
+{}
 	
 GtkWindow* RadiantModule::getMainWindow() {
 	return _mainWindow;
@@ -170,7 +170,7 @@ const StringSet& RadiantModule::getDependencies() const {
 }
 
 void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "RadiantAPI::initialiseModule called.\n";
+	globalOutputStream() << "RadiantModule::initialiseModule called.\n";
 	
 	// Reset the node id count
   	scene::Node::resetIds();
@@ -207,12 +207,10 @@ void RadiantModule::shutdownModule() {
 // Define the static Radiant module
 module::StaticModule<RadiantModule> radiantCoreModule;
 
-namespace radiant {
-	
-	// Return the static Radiant module to other code within the main binary
-	RadiantModulePtr getGlobalRadiant() {
-		return radiantCoreModule.getModule();
-	}
-
+// Return the static Radiant module to other code within the main binary
+RadiantModulePtr getGlobalRadiant() {
+	return radiantCoreModule.getModule();
 }
+
+} // namespace radiant
 

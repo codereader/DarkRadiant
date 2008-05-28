@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/CounterManager.h"
 #include "iradiant.h"
 
+namespace radiant {
+
 /**
  * IRadiant implementation class.
  */
@@ -76,14 +78,12 @@ public:
 };
 typedef boost::shared_ptr<RadiantModule> RadiantModulePtr;
 
-namespace radiant {
-	
-	/**
-	 * Return the global Radiant module (for use internally, not by other 
-	 * modules).
-	 */
-	RadiantModulePtr getGlobalRadiant();
+/**
+ * Return the global Radiant module (for use internally, not by other 
+ * modules).
+ */
+RadiantModulePtr getGlobalRadiant();
 
-}
+} // namespace radiant
 
 #endif
