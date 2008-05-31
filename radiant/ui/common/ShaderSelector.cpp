@@ -365,6 +365,8 @@ void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStor
 					   1, shader->getName(),
 					   -1);
 	
+	/* greebo: Disabled this part, this loads the full-sized diffuse map, allocating massloads of memory.
+
 	TexturePtr tex = shader->getDiffuse();
 	std::string dimStr = sizetToStr(tex->width) + " x " + sizetToStr(tex->height);
 	
@@ -372,7 +374,7 @@ void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStor
 	gtk_list_store_set(listStore, &iter,
 					   0, "<b>Diffuse</b>",
 					   1, dimStr.c_str(),
-					   -1);
+					   -1);*/
 					   
 	// Containing MTR	
 	gtk_list_store_append(listStore, &iter);
