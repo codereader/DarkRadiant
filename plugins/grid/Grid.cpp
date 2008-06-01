@@ -52,6 +52,13 @@ public:
 		gridChanged();
 	}
 
+	virtual void shutdownModule() {
+		// Map the [GRID_0125...GRID_256] values (starting from -3) to [0..N]
+		int registryValue = static_cast<int>(_activeGridSize) - static_cast<int>(GRID_0125);
+
+		GlobalRegistry().setInt(RKEY_DEFAULT_GRID_SIZE, registryValue);
+	}
+
 private:
 	typedef std::list< std::pair<const std::string, GridItem> > GridItems;
 	
@@ -70,22 +77,15 @@ public:
 	void loadDefaultValue() {
 		// Get the registry value
 		int registryValue = GlobalRegistry().getInt(RKEY_DEFAULT_GRID_SIZE);
-		
+
 		// Map the [0..N] values to [GRID_0125...GRID_256]
-		switch (registryValue) {
-			case 0: _activeGridSize = GRID_0125; break;
-			case 1: _activeGridSize = GRID_025; break;
-			case 2: _activeGridSize = GRID_05; break;
-			case 3: _activeGridSize = GRID_1; break;
-			case 4: _activeGridSize = GRID_2; break;
-			case 5: _activeGridSize = GRID_4; break;
-			case 6: _activeGridSize = GRID_8; break;
-			case 7: _activeGridSize = GRID_16; break;
-			case 8: _activeGridSize = GRID_32; break;
-			case 9: _activeGridSize = GRID_64; break;
-			case 10: _activeGridSize = GRID_128; break;
-			case 11: _activeGridSize = GRID_256; break;
-			default: _activeGridSize = GRID_8; break;
+		int mapped = registryValue + static_cast<int>(GRID_0125); 
+
+		if (mapped >= GRID_0125 && mapped <= GRID_256) {
+			_activeGridSize = static_cast<GridSize>(mapped);
+		}
+		else {
+			_activeGridSize = GRID_8;
 		}
 	}
 	
