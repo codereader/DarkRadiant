@@ -6,6 +6,7 @@ darkradiant_CPPFLAGS = $(AM_CPPFLAGS)
 darkradiant_LDFLAGS = $(GTK_LIBS) \
 			          $(GTKGLEXT_LIBS) \
                       $(XML_LIBS) \
+                      $(GLEW_LIBS) \
                       $(GL_LIBS)
 darkradiant_LDADD = ../libs/scene/libscenegraph.a \
 					../libs/gtkutil/libgtkutil.a \
