@@ -6,5 +6,4 @@ libmath_a_SOURCES = matrix.cpp \
                     pi.cpp \
                     aabb.cpp \
                     quaternion.cpp \
-                    curve.cpp \
-                    expression.cpp
+                    curve.cpp 

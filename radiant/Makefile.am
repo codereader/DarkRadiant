@@ -9,7 +9,8 @@ darkradiant_LDFLAGS = $(GTK_LIBS) \
                       $(GL_LIBS)
 darkradiant_LDADD = ../libs/scene/libscenegraph.a \
 					../libs/gtkutil/libgtkutil.a \
-					../libs/xmlutil/libxmlutil.a
+					../libs/xmlutil/libxmlutil.a \
+                    ../libs/math/libmath.a
 darkradiant_SOURCES = main.cpp \
 					  RadiantModule.cpp \
 					  brushmanip.cpp \
