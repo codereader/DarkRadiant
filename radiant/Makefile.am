@@ -99,7 +99,6 @@ darkradiant_SOURCES = main.cpp \
 					  ui/lightinspector/LightInspector.cpp \
 					  ui/commandlist/CommandList.cpp \
 					  ui/commandlist/ShortcutChooser.cpp \
-					  main.cpp \
 					  patchmanip.cpp \
 					  xyview/XYWnd.cpp \
 					  xyview/GlobalXYWnd.cpp \
