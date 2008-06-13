@@ -12,9 +12,15 @@ PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
 PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 
+AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
+AC_CHECK_LIB([GLEW], [main],
+             [GLEW_LIBS='-lGLEW'],
+             [AC_MSG_ERROR([GLEW not found])])
+AC_SUBST([GLEW_LIBS])
+
 AC_CHECK_LIB([GL], [main], 
              [GL_LIBS='-lGL'],
-             [AC_MSG_FAILURE([OpenGL libraries not found.])])
+             [AC_MSG_ERROR([OpenGL libraries not found.])])
 AC_SUBST([GL_LIBS])
 
 # Generate output files
