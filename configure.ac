@@ -1,8 +1,10 @@
 AC_INIT([darkradiant], [1.0])
 AM_INIT_AUTOMAKE
 
+# Setup and defaults
 AC_LANG(C++)
 AC_PROG_CXX
+AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 
 # Check for required libraries
