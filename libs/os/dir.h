@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <glib/gdir.h>
 
 #include <string>
+#include <stdexcept>
 
 typedef GDir Directory;
 
@@ -67,6 +68,11 @@ void Directory_forEach(const std::string& path, Functor& functor) {
 
 		directory_close(dir);
 	}
+    else {
+        throw std::runtime_error(
+            "Directory_forEach(): invalid directory '" + path + "'"
+        );
+    }
 }
 
 
