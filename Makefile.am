@@ -1,1 +1,1 @@
-SUBDIRS = libs radiant 
+SUBDIRS = libs radiant plugins

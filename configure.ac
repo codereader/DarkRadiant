@@ -3,7 +3,7 @@ AM_INIT_AUTOMAKE
 
 AC_LANG(C++)
 AC_PROG_CXX
-AC_PROG_RANLIB
+AC_PROG_LIBTOOL
 
 # Check for required libraries
 
@@ -31,7 +31,9 @@ AC_CONFIG_FILES([Makefile
                  libs/scene/Makefile
                  libs/gtkutil/Makefile
                  libs/xmlutil/Makefile
-                 libs/math/Makefile])
+                 libs/math/Makefile
+                 plugins/Makefile
+                 plugins/eventmanager/Makefile])
 
 AC_OUTPUT
 
