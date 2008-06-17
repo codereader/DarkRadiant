@@ -1,1 +1,1 @@
-SUBDIRS = eventmanager
+SUBDIRS = eventmanager archivezip eclassmgr
