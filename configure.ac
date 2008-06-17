@@ -9,6 +9,8 @@ AC_PROG_LIBTOOL
 
 # Check for required libraries
 
+PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
+                  [AC_MSG_ERROR([GLIB not found])])
 PKG_CHECK_MODULES([GTK], [gtk+-2.0], [], 
                   [AC_MSG_FAILURE([GTK libraries not found.])])
 PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
@@ -56,7 +58,11 @@ AC_CONFIG_FILES([Makefile
                  plugins/scenegraph/Makefile
                  plugins/shaders/Makefile
                  plugins/skins/Makefile
-                 plugins/sound/Makefile])
+                 plugins/sound/Makefile
+                 plugins/uimanager/Makefile
+                 plugins/undo/Makefile
+                 plugins/vfspk3/Makefile
+                 plugins/xmlregistry/Makefile])
 
 AC_OUTPUT
 
