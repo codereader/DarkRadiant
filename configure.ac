@@ -35,6 +35,8 @@ AC_CONFIG_FILES([Makefile
                  libs/xmlutil/Makefile
                  libs/math/Makefile
                  plugins/Makefile
+                 plugins/archivezip/Makefile
+                 plugins/eclassmgr/Makefile
                  plugins/eventmanager/Makefile])
 
 AC_OUTPUT
