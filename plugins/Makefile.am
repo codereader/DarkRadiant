@@ -8,4 +8,11 @@ SUBDIRS = eventmanager \
           image \
           mapdoom3 \
           md5model \
-          model
+          model \
+          particles \
+          scenegraph \
+          shaders \
+          skins 
+
+# Conditional modules
+SUBDIRS += @sound_module@

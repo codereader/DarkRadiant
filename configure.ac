@@ -25,6 +25,12 @@ AC_CHECK_LIB([GL], [main],
              [AC_MSG_ERROR([OpenGL libraries not found.])])
 AC_SUBST([GL_LIBS])
 
+# Check for optional libraries
+AC_CHECK_HEADER([AL/alut.h],
+                [sound_module='sound'],
+                [sound_module=''])
+AC_SUBST([sound_module])
+
 # Generate output files
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile 
@@ -45,7 +51,12 @@ AC_CONFIG_FILES([Makefile
                  plugins/image/Makefile
                  plugins/mapdoom3/Makefile
                  plugins/md5model/Makefile
-                 plugins/model/Makefile])
+                 plugins/model/Makefile
+                 plugins/particles/Makefile
+                 plugins/scenegraph/Makefile
+                 plugins/shaders/Makefile
+                 plugins/skins/Makefile
+                 plugins/sound/Makefile])
 
 AC_OUTPUT
 
