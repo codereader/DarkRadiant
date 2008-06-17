@@ -4,7 +4,9 @@
 #include "imodule.h"
 
 #include "stream/textstream.h"
+
 #include "os/dir.h"
+#include "os/path.h"
 
 #include "DynamicLibraryLoader.h"
 
@@ -50,11 +52,26 @@ void Loader::operator() (const std::string& fileName) const {
  * @root: The root directory to search.
  */
 void Loader::loadModules(const std::string& root) {
-	Loader modulesLoader(root + MODULES_DIR);
-	Loader pluginsLoader(root + PLUGINS_DIR);
+
+    // Get standardised paths
+    std::string stdRoot = os::standardPathWithSlash(root);
+    std::string modulesPath = stdRoot + MODULES_DIR;
+    std::string pluginsPath = stdRoot + PLUGINS_DIR;
+
+    // Load modules and plugins
+	Loader modulesLoader(modulesPath);
+	Loader pluginsLoader(pluginsPath);
 	
-	Directory_forEach(root + MODULES_DIR, modulesLoader);
-	Directory_forEach(root + PLUGINS_DIR, pluginsLoader);
+	Directory_forEach(modulesPath, modulesLoader);
+
+    // Plugins are optional, so catch the exception
+    try {
+    	Directory_forEach(pluginsPath, pluginsLoader);
+    }
+    catch (DirectoryNotFoundException e) {
+        std::cout << "Loader::loadModules(): plugins directory '"
+                  << pluginsPath << "' not found." << std::endl;
+    }
 }
 
 void Loader::unloadModules() {

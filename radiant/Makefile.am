@@ -1,4 +1,5 @@
-AM_CPPFLAGS = -DPOSIX -I../libs -I../include \
+AM_CPPFLAGS = -DPOSIX -DPKGLIBDIR='"$(pkglibdir)"' \
+              -I../libs -I../include \
               $(GTK_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
 
 bin_PROGRAMS = darkradiant
