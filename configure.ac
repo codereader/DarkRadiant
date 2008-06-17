@@ -40,7 +40,9 @@ AC_CONFIG_FILES([Makefile
                  plugins/entity/Makefile
                  plugins/eventmanager/Makefile
                  plugins/filetypes/Makefile
-                 plugins/filters/Makefile])
+                 plugins/filters/Makefile
+                 plugins/grid/Makefile
+                 plugins/image/Makefile])
 
 AC_OUTPUT
 
