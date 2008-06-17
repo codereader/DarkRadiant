@@ -47,12 +47,13 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile 
                  radiant/Makefile 
                  libs/Makefile
-                 libs/scene/Makefile
                  libs/ddslib/Makefile
                  libs/gtkutil/Makefile
-                 libs/xmlutil/Makefile
                  libs/jpeg6/Makefile
                  libs/math/Makefile
+                 libs/picomodel/Makefile
+                 libs/scene/Makefile
+                 libs/xmlutil/Makefile
                  plugins/Makefile
                  plugins/archivezip/Makefile
                  plugins/eclassmgr/Makefile
