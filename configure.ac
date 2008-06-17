@@ -48,6 +48,7 @@ AC_CONFIG_FILES([Makefile
                  radiant/Makefile 
                  libs/Makefile
                  libs/scene/Makefile
+                 libs/ddslib/Makefile
                  libs/gtkutil/Makefile
                  libs/xmlutil/Makefile
                  libs/jpeg6/Makefile
