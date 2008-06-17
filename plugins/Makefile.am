@@ -1,1 +1,8 @@
-SUBDIRS = eventmanager archivezip eclassmgr entity filetypes filters
+SUBDIRS = eventmanager \
+          archivezip \
+          eclassmgr \
+          entity \
+          filetypes \
+          filters \
+          grid \
+          image
