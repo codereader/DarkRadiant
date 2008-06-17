@@ -2,6 +2,7 @@ AM_CPPFLAGS = -I../../include -I../../libs
 
 pkglib_LTLIBRARIES = model.la
 model_la_LDFLAGS = -module -avoid-version
+model_la_LIBADD = ../../libs/picomodel/libpicomodel.a
 model_la_SOURCES = PicoModelNode.cpp \
                    RenderablePicoModel.cpp \
                    PicoModelLoader.cpp \
