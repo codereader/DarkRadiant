@@ -48,10 +48,16 @@ const StringSet& Manager::getDependencies() const {
 }
 
 void Manager::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "GameManager::initialiseModule called.\n";
-	
 	// Load the game settings and select the game type
+#if defined(POSIX) && defined(PKGDATADIR)
+    // Load game files from compiled-in data path (e.g.
+    // /usr/share/darkradiant/games).
+    initialise(os::standardPathWithSlash(PKGDATADIR));
+#else
+    // Load game files from application-relative path
 	initialise(ctx.getApplicationPath());
+#endif
+
 	initEnginePath();
 }
 

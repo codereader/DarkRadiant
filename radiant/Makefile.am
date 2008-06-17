@@ -1,4 +1,6 @@
-AM_CPPFLAGS = -DPOSIX -DPKGLIBDIR='"$(pkglibdir)"' \
+AM_CPPFLAGS = -DPOSIX \
+			  -DPKGLIBDIR='"$(pkglibdir)"' \
+			  -DPKGDATADIR='"$(pkgdatadir)"' \
               -I../libs -I../include \
               $(GTK_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
 
