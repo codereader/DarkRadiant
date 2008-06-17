@@ -52,6 +52,20 @@ inline const char* directory_read_and_increment(Directory* directory)
   return g_dir_read_name(directory);
 }
 
+/**
+ * Exception thrown by Directory_forEach to indicate that the given directory
+ * does not exist.
+ */
+class DirectoryNotFoundException
+: public std::runtime_error
+{
+public:
+    DirectoryNotFoundException(const std::string& what)
+    : std::runtime_error(what)
+    { }
+};
+
+// Invoke functor for all items in a directory
 template<typename Functor>
 void Directory_forEach(const std::string& path, Functor& functor) {
 	Directory* dir = directory_open(path);
@@ -69,7 +83,7 @@ void Directory_forEach(const std::string& path, Functor& functor) {
 		directory_close(dir);
 	}
     else {
-        throw std::runtime_error(
+        throw DirectoryNotFoundException(
             "Directory_forEach(): invalid directory '" + path + "'"
         );
     }

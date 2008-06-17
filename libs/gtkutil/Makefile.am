@@ -3,6 +3,8 @@ AM_CPPFLAGS = -I../../include \
 			   $(GTK_CFLAGS) \
 			   $(GTKGLEXT_CFLAGS) \
 			   $(XML_CFLAGS)
+AM_CXXFLAGS = -fPIC
+
 noinst_LIBRARIES = libgtkutil.a
 libgtkutil_a_SOURCES = GLWidget.cpp \
 					   PanedPosition.cpp \
