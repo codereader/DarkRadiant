@@ -2,6 +2,7 @@ AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS)
 
 pkglib_LTLIBRARIES = entity.la
 entity_la_LDFLAGS = -module -avoid-version
+entity_la_LIBADD = ../../libs/math/libmath.a
 entity_la_SOURCES = origin.cpp \
                     angle.cpp \
                     ModelKey.cpp \
