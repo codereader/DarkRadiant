@@ -2,6 +2,7 @@ AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS) $(GTK_CFLAGS)
 
 pkglib_LTLIBRARIES = uimanager.la
 uimanager_la_LDFLAGS = -module -avoid-version
+uimanager_la_LIBADD = ../../libs/gtkutil/libgtkutil.a
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
                        colourscheme/ColourScheme.cpp \
