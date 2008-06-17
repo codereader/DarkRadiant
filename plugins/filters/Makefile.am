@@ -1,4 +1,5 @@
 AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS)
+AM_LDFLAGS = $(REGEX_LIBS)
 
 pkglib_LTLIBRARIES = filters.la
 filters_la_LDFLAGS = -module -avoid-version
