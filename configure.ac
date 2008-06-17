@@ -50,6 +50,7 @@ AC_CONFIG_FILES([Makefile
                  libs/scene/Makefile
                  libs/gtkutil/Makefile
                  libs/xmlutil/Makefile
+                 libs/jpeg6/Makefile
                  libs/math/Makefile
                  plugins/Makefile
                  plugins/archivezip/Makefile
