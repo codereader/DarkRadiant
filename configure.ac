@@ -38,7 +38,9 @@ AC_CONFIG_FILES([Makefile
                  plugins/archivezip/Makefile
                  plugins/eclassmgr/Makefile
                  plugins/entity/Makefile
-                 plugins/eventmanager/Makefile])
+                 plugins/eventmanager/Makefile
+                 plugins/filetypes/Makefile
+                 plugins/filters/Makefile])
 
 AC_OUTPUT
 

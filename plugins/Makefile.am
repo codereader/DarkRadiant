@@ -1,1 +1,1 @@
-SUBDIRS = eventmanager archivezip eclassmgr entity
+SUBDIRS = eventmanager archivezip eclassmgr entity filetypes filters
