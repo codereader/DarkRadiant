@@ -1,1 +1,1 @@
-SUBDIRS = scene gtkutil xmlutil math
+SUBDIRS = scene gtkutil xmlutil math jpeg6

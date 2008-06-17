@@ -2,6 +2,7 @@ AM_CPPFLAGS = -I../../include -I../../libs $(GTK_CFLAGS)
 
 pkglib_LTLIBRARIES = image.la
 image_la_LDFLAGS = -module -avoid-version
+image_la_LIBADD = ../../libs/jpeg6/libjpeg.a
 image_la_SOURCES = dds.cpp \
                    image.cpp \
                    bmp.cpp \
