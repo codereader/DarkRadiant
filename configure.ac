@@ -9,6 +9,7 @@ AC_PROG_LIBTOOL
 
 # Check for required libraries
 
+# GTK etc
 PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
                   [AC_MSG_ERROR([GLIB not found])])
 PKG_CHECK_MODULES([GTK], [gtk+-2.0], [], 
@@ -16,16 +17,24 @@ PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
 PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 
+# GLEW
 AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
 AC_CHECK_LIB([GLEW], [main],
              [GLEW_LIBS='-lGLEW'],
              [AC_MSG_ERROR([GLEW not found])])
 AC_SUBST([GLEW_LIBS])
 
+# OpenGL
 AC_CHECK_LIB([GL], [main], 
              [GL_LIBS='-lGL'],
              [AC_MSG_ERROR([OpenGL libraries not found.])])
 AC_SUBST([GL_LIBS])
+
+# Boost.Regex
+AC_CHECK_LIB([boost_regex], [main],
+             [REGEX_LIBS='-lboost_regex'],
+             [AC_MSG_ERROR([Boost.Regex not found])])
+AC_SUBST([REGEX_LIBS])
 
 # Check for optional libraries
 AC_CHECK_HEADER([AL/alut.h],
