@@ -5,4 +5,7 @@ SUBDIRS = eventmanager \
           filetypes \
           filters \
           grid \
-          image
+          image \
+          mapdoom3 \
+          md5model \
+          model

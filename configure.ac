@@ -42,7 +42,10 @@ AC_CONFIG_FILES([Makefile
                  plugins/filetypes/Makefile
                  plugins/filters/Makefile
                  plugins/grid/Makefile
-                 plugins/image/Makefile])
+                 plugins/image/Makefile
+                 plugins/mapdoom3/Makefile
+                 plugins/md5model/Makefile
+                 plugins/model/Makefile])
 
 AC_OUTPUT
 
