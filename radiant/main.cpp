@@ -203,8 +203,14 @@ int main (int argc, char* argv[]) {
 		ui::Splash::Instance().setProgressAndText("Searching for Modules", 0.0f);
 	
 		// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
+#if defined(POSIX) && defined(PKGLIBDIR)
+        // Load modules from compiled-in path (e.g. /usr/lib/darkradiant)
+        module::Loader::loadModules(PKGLIBDIR);
+#else
+        // Load modules from application-relative path
 		const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 		module::Loader::loadModules(ctx.getApplicationPath());
+#endif
 	
 		module::getRegistry().initialiseModules();
 	
