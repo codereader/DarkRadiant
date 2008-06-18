@@ -36,6 +36,12 @@ AC_CHECK_LIB([boost_regex], [main],
              [AC_MSG_ERROR([Boost.Regex not found])])
 AC_SUBST([REGEX_LIBS])
 
+# Boost.Filesystem
+AC_CHECK_LIB([boost_filesystem], [main],
+             [BOOST_FILESYSTEM_LIBS='-lboost_filesystem'],
+             [AC_MSG_ERROR([Boost.Filesystem not found])])
+AC_SUBST([BOOST_FILESYSTEM_LIBS])
+
 # Check for optional libraries
 AC_CHECK_HEADER([AL/alut.h],
                 [sound_module='sound'],
