@@ -20,6 +20,13 @@ AC_ARG_ENABLE([debug],
 
 # Check for required libraries
 
+# Zlib
+AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([ZLib not found])])
+AC_CHECK_LIB([z], [inflateEnd],
+             [Z_LIBS='-lz'],
+             [AC_MSG_ERROR([ZLib not found])])
+AC_SUBST([Z_LIBS])
+
 # GTK etc
 PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
                   [AC_MSG_ERROR([GLIB not found])])

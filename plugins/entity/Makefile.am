@@ -1,8 +1,11 @@
-AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS)
+libspath = ../../libs
+AM_CPPFLAGS = -I../../include -I$(libspath) $(XML_CFLAGS)
 
-pkglib_LTLIBRARIES = entity.la
-entity_la_LDFLAGS = -module -avoid-version
-entity_la_LIBADD = ../../libs/math/libmath.a
+modulesdir = $(pkglibdir)/modules
+modules_LTLIBRARIES = entity.la
+
+entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS)
+entity_la_LIBADD = $(libspath)/math/libmath.a $(libspath)/scene/libscenegraph.a
 entity_la_SOURCES = origin.cpp \
                     angle.cpp \
                     ModelKey.cpp \
@@ -41,10 +44,4 @@ entity_la_SOURCES = origin.cpp \
                     target/TargetKeyCollection.cpp \
                     target/TargetManager.cpp \
                     target/RenderableTargetInstances.cpp
-
-# Override the Automake install rule, we want to install in $(pkglibdir)/modules
-# not just $(pkglibdir).
-install-exec-am:
-	mkdir -p "$(DESTDIR)$(pkglibdir)/modules" && \
-	$(INSTALL) .libs/entity.so "$(DESTDIR)$(pkglibdir)/modules"
 

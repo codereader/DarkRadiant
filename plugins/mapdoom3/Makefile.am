@@ -1,16 +1,15 @@
-AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS) $(GTK_CFLAGS)
+libspath = ../../libs
+AM_CPPFLAGS = -I../../include -I$(libspath) $(XML_CFLAGS) $(GTK_CFLAGS)
 
-pkglib_LTLIBRARIES = mapdoom3.la
-mapdoom3_la_LDFLAGS = -module -avoid-version
+modulesdir = $(pkglibdir)/modules
+modules_LTLIBRARIES = mapdoom3.la
+
+mapdoom3_la_LIBADD = $(libspath)/gtkutil/libgtkutil.a \
+					 $(libspath)/xmlutil/libxmlutil.a
+mapdoom3_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       NodeImporter.cpp \
                       InfoFile.cpp \
                       mapdoom3.cpp \
                       NodeExporter.cpp
-
-# Override the Automake install rule, we want to install in $(pkglibdir)/modules
-# not just $(pkglibdir).
-install-exec-am:
-	mkdir -p "$(DESTDIR)$(pkglibdir)/modules" && \
-	$(INSTALL) .libs/mapdoom3.so "$(DESTDIR)$(pkglibdir)/modules"
 
