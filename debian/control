@@ -1,0 +1,12 @@
+Source: darkradiant
+Section: games
+Priority: extra
+Maintainer: orbweaver <orbweaver3d@gmail.com>
+Build-Depends: debhelper (>= 5), autotools-dev
+Standards-Version: 3.7.2
+
+Package: darkradiant
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
