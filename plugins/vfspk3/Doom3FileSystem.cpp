@@ -95,7 +95,13 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath) {
 	SortedFilenames filenameList;
 	
 	// Traverse the directory using the filename list as functor
-	Directory_forEach(path, filenameList);
+    try {
+        Directory_forEach(path, filenameList);
+    }
+    catch (DirectoryNotFoundException e) {
+        std::cout << "[vfs] Directory '" << path << "' not found." 
+                  << std::endl;
+    }
 	
 	if (filenameList.size() == 0) {
 		return; // nothing found
