@@ -42,11 +42,15 @@ AC_CHECK_LIB([GLEW], [main],
              [AC_MSG_ERROR([GLEW not found])])
 AC_SUBST([GLEW_LIBS])
 
-# OpenGL
+# OpenGL and GLU
 AC_CHECK_LIB([GL], [main], 
              [GL_LIBS='-lGL'],
-             [AC_MSG_ERROR([OpenGL libraries not found.])])
+             [AC_MSG_ERROR([GL library not found.])])
+AC_CHECK_LIB([GLU], [gluBuild2DMipmaps],
+             [GLU_LIBS="-lGLU"],
+             [AC_MSG_ERROR([GLU library not found.])])
 AC_SUBST([GL_LIBS])
+AC_SUBST([GLU_LIBS])
 
 # Boost.Regex
 AC_CHECK_LIB([boost_regex], [main],
