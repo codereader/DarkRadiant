@@ -11,9 +11,7 @@
 
 config.status: configure
 	dh_testdir
-	# Add here commands to configure the package.
-	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CFLAGS="$(CFLAGS)" 
-
+	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info LDFLAGS="-Wl,-z,defs"
 
 build: build-stamp
 
@@ -31,7 +29,7 @@ clean:
 	rm -f build-stamp 
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) clean
+	-$(MAKE) distclean
 
 	dh_clean 
 
