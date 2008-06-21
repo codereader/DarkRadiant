@@ -1,11 +1,22 @@
 AC_INIT([darkradiant], [1.0])
 AM_INIT_AUTOMAKE
 
+# Save user flags
+USER_CFLAGS=$CFLAGS
+USER_CXXFLAGS=$CXXFLAGS
+
 # Setup and defaults
 AC_LANG(C++)
 AC_PROG_CXX
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
+
+# Optional features
+AC_ARG_ENABLE([debug],
+              [AS_HELP_STRING([--enable-debug],
+                              [enable debug build])],
+              [debug_build=$enableval],
+              [debug_build='no'])
 
 # Check for required libraries
 
@@ -55,10 +66,21 @@ AC_CHECK_LIB([vorbisfile], [ov_clear],
 AC_SUBST([sound_module])
 AC_SUBST([ALUT_LIBS])
 
-# Add any global flags
-CFLAGS="-DPOSIX $CFLAGS"
+# Configure global flags
+CFLAGS="$USER_CFLAGS -DPOSIX"
+CXXFLAGS="$USER_CXXFLAGS -DPOSIX"
+
+# Debug/optimisation
+if [[ $debug_build != 'no' ]]
+then
+    CFLAGS="-g -O0 $CFLAGS"
+    CXXFLAGS="-g -O0 $CXXFLAGS"
+else
+    CFLAGS="-g -O2 $CFLAGS"
+    CXXFLAGS="-g -O2 $CXXFLAGS"
+fi
+
 AC_SUBST([CFLAGS])
-CXXFLAGS="-DPOSIX $CXXFLAGS"
 AC_SUBST([CXXFLAGS])
 
 # Generate output files
