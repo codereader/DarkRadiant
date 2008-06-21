@@ -187,7 +187,11 @@ void ApplicationContextImpl::initPaths() {
 	_settingsPath = _homePath;
 	os::makeDirectory(_settingsPath);
 
+#if defined(POSIX) && defined(PKGDATADIR)
+    _bitmapsPath = os::standardPathWithSlash(PKGDATADIR) + "bitmaps/";
+#else
 	_bitmapsPath = _appPath + "bitmaps/";
+#endif
 }
 
 void ApplicationContextImpl::savePathsToRegistry() const {
