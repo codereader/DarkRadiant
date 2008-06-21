@@ -46,7 +46,14 @@ AC_SUBST([BOOST_FILESYSTEM_LIBS])
 AC_CHECK_HEADER([AL/alut.h],
                 [sound_module='sound'],
                 [sound_module=''])
+AC_CHECK_LIB([alut], [main],
+             [ALUT_LIBS='-lalut'],
+             [sound_module=''])
+AC_CHECK_LIB([vorbisfile], [ov_clear],
+             [ALUT_LIBS="$ALUT_LIBS -lvorbisfile"],
+             [sound_module=''])
 AC_SUBST([sound_module])
+AC_SUBST([ALUT_LIBS])
 
 # Add any global flags
 CFLAGS="-DPOSIX $CFLAGS"
