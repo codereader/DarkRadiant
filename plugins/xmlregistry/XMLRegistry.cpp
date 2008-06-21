@@ -4,6 +4,8 @@
 #include <stdexcept>
 
 #include "os/file.h"
+#include "os/path.h"
+
 #include "version.h"
 #include "string/string.h"
 #include "gtkutil/IConv.h"
@@ -24,8 +26,14 @@ XMLRegistry::~XMLRegistry() {
 	deleteXPath(RKEY_SETTINGS_PATH);
 	deleteXPath(RKEY_BITMAPS_PATH);
 
+#if defined(POSIX) && defined(PKGDATADIR)
+    // Use "/usr/share/darkradiant" (default) on POSIX
+    std::string settingsPath = os::standardPathWithSlash(PKGDATADIR);
+#else
+    // Application-relative on other OS
 	std::string settingsPath = 
 		module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
+#endif
 
 	// Save the user tree to the settings path, this contains all
 	// settings that have been modified during runtime
@@ -215,8 +223,15 @@ const StringSet& XMLRegistry::getDependencies() const {
 void XMLRegistry::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "XMLRegistry::initialiseModule called\n";
 	
+#if defined(POSIX) && defined(PKGDATADIR)
+    // Use "/usr/share/darkradiant" (default) on POSIX
+    std::string base = os::standardPathWithSlash(PKGDATADIR);
+    std::cout << "XMLRegistry: looking for XML files under " 
+              << base << std::endl;
+#else
 	// Load the XML files from the installation directory
 	std::string base = ctx.getApplicationPath();
+#endif
 
 	try {
 		// Load all of the required XML files
