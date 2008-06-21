@@ -64,7 +64,7 @@ AC_CHECK_LIB([boost_filesystem], [main],
              [AC_MSG_ERROR([Boost.Filesystem not found])])
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
-# Check for optional libraries
+# OpenAL and vorbis
 AC_CHECK_HEADER([AL/alut.h],
                 [sound_module='sound'],
                 [sound_module=''])
@@ -72,10 +72,16 @@ AC_CHECK_LIB([alut], [main],
              [ALUT_LIBS='-lalut'],
              [sound_module=''])
 AC_CHECK_LIB([vorbisfile], [ov_clear],
-             [ALUT_LIBS="$ALUT_LIBS -lvorbisfile"],
+             [VORBIS_LIBS='-lvorbisfile'],
              [sound_module=''])
+AC_CHECK_LIB([openal], [alGetError],
+             [AL_LIBS='-lopenal'],
+             [sound_module=''])
+
 AC_SUBST([sound_module])
 AC_SUBST([ALUT_LIBS])
+AC_SUBST([VORBIS_LIBS])
+AC_SUBST([AL_LIBS])
 
 # Configure global flags
 CFLAGS="$USER_CFLAGS -DPOSIX"
