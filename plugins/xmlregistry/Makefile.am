@@ -1,4 +1,6 @@
-AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS) $(GLIB_CFLAGS)
+AM_CPPFLAGS = -DPKGDATADIR='"$(pkgdatadir)"' \
+			  -I../../include -I../../libs \
+			  $(XML_CFLAGS) $(GLIB_CFLAGS)
 
 pkglib_LTLIBRARIES = xmlregistry.la
 xmlregistry_la_LDFLAGS = -module -avoid-version

@@ -48,6 +48,12 @@ AC_CHECK_HEADER([AL/alut.h],
                 [sound_module=''])
 AC_SUBST([sound_module])
 
+# Add any global flags
+CFLAGS="-DPOSIX $CFLAGS"
+AC_SUBST([CFLAGS])
+CXXFLAGS="-DPOSIX $CXXFLAGS"
+AC_SUBST([CXXFLAGS])
+
 # Generate output files
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile 
