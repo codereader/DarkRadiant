@@ -1,12 +1,17 @@
 #include "Entity.h"
 
-#include "iselection.h"
+#include "selectionlib.h"
+#include "iradiant.h"
+#include "iregistry.h"
 #include "entitylib.h"
+#include "gtkutil/dialog.h"
 
 #include "../../entity.h"
 
 namespace selection {
 	namespace algorithm {
+
+const std::string RKEY_BIND_KEY("game/defaults/bindKey");
 
 /**
  * greebo: This walker traverses a subgraph and changes the classname
@@ -52,6 +57,38 @@ void setEntityClassname(const std::string& classname) {
 	GlobalSelectionSystem().foreachSelected(classnameSetter);
 
 	// The destructor of the classNameSetter will rename the entities
+}
+
+void bindEntities() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	if (info.totalCount == 2 && info.entityCount == 2) {
+		UndoableCommand command("bindEntities");
+
+		Entity* first = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+		Entity* second = Node_getEntity(GlobalSelectionSystem().penultimateSelected());
+
+		if (first != NULL && second != NULL) {
+			// Get the bind key
+			std::string bindKey = GlobalRegistry().get(RKEY_BIND_KEY);
+
+			if (bindKey.empty()) {
+				// Fall back to a safe default
+				bindKey = "bind";
+			}
+
+			// Set the spawnarg
+			second->setKeyValue(bindKey, first->getKeyValue("name"));
+		}
+		else {
+			gtkutil::errorDialog("Critical: Cannot find selected entities.",
+				GlobalRadiant().getMainWindow());
+		}
+	}
+	else {
+		gtkutil::errorDialog("Exactly two entities must be selected.",
+			GlobalRadiant().getMainWindow());
+	}
 }
 
 	} // namespace algorithm

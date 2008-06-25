@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/General.h"
+#include "selection/algorithm/Entity.h"
 #include "ui/modelselector/ModelSelector.h"
 
 #include <iostream>
@@ -342,6 +343,7 @@ void createCurveCatmullRom() {
 
 void Entity_Construct() {
 	GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
+	GlobalEventManager().addCommand("BindSelection", FreeCaller<selection::algorithm::bindEntities>());
 	GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
 	GlobalEventManager().addCommand("CreateCurveNURBS", FreeCaller<entity::createCurveNURBS>());
 	GlobalEventManager().addCommand("CreateCurveCatmullRom", FreeCaller<entity::createCurveCatmullRom>());
