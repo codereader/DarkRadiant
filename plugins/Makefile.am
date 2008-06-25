@@ -23,3 +23,4 @@ SUBDIRS += @sound_module@
 
 # Optional plugins
 SUBDIRS += @sr_plugin@
+SUBDIRS += @obj_plugin@
