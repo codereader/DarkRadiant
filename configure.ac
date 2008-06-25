@@ -64,6 +64,10 @@ AC_CHECK_LIB([boost_filesystem], [main],
              [AC_MSG_ERROR([Boost.Filesystem not found])])
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
+# Dependent Boost headers
+AC_CHECK_HEADER([boost/serialization/access.hpp], [],
+                [AC_MSG_ERROR([Boost.Serialization headers not found])])
+
 # OpenAL and vorbis
 AC_CHECK_HEADER([AL/alut.h],
                 [sound_module='sound'],
