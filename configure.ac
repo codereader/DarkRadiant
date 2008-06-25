@@ -27,8 +27,10 @@ if [[ $darkmod_plugins != 'no' ]]
 then
     # Enable conditional directories (used by plugins/Makefile.am)
     sr_plugin="dm.stimresponse"
+    obj_plugin="dm.objectives"
 fi
 AC_SUBST([sr_plugin])
+AC_SUBST([obj_plugin])
 
 # Check for required libraries
 
@@ -149,7 +151,8 @@ AC_CONFIG_FILES([Makefile
                  plugins/undo/Makefile
                  plugins/vfspk3/Makefile
                  plugins/xmlregistry/Makefile
-                 plugins/dm.stimresponse/Makefile])
+                 plugins/dm.stimresponse/Makefile
+                 plugins/dm.objectives/Makefile])
 
 AC_OUTPUT
 
