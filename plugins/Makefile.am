@@ -20,3 +20,6 @@ SUBDIRS = eventmanager \
 
 # Conditional modules
 SUBDIRS += @sound_module@
+
+# Optional plugins
+SUBDIRS += @sr_plugin@

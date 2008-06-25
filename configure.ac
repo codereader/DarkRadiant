@@ -17,6 +17,18 @@ AC_ARG_ENABLE([debug],
                               [enable debug build])],
               [debug_build=$enableval],
               [debug_build='no'])
+AC_ARG_ENABLE([darkmod-plugins],
+              [AS_HELP_STRING([--enable-darkmod-plugins],
+                              [build Dark Mod plugins such as S/R editor])],
+              [darkmod_plugins=$enableval],
+              [darkmod_plugins='no'])
+
+if [[ $darkmod_plugins != 'no' ]]
+then
+    # Enable conditional directories (used by plugins/Makefile.am)
+    sr_plugin="dm.stimresponse"
+fi
+AC_SUBST([sr_plugin])
 
 # Check for required libraries
 
@@ -136,7 +148,8 @@ AC_CONFIG_FILES([Makefile
                  plugins/uimanager/Makefile
                  plugins/undo/Makefile
                  plugins/vfspk3/Makefile
-                 plugins/xmlregistry/Makefile])
+                 plugins/xmlregistry/Makefile
+                 plugins/dm.stimresponse/Makefile])
 
 AC_OUTPUT
 

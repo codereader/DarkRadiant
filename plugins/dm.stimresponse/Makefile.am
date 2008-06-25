@@ -1,0 +1,21 @@
+AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS) $(GTK_CFLAGS)
+
+pluginsdir = $(pkglibdir)/plugins
+plugins_LTLIBRARIES = dm_stimresponse.la
+dm_stimresponse_la_LDFLAGS = -module -avoid-version
+dm_stimresponse_la_SOURCES = ResponseEditor.cpp \
+							 plugin.cpp \
+							 StimResponse.cpp \
+							 EffectArgumentItem.cpp \
+							 SRPropertyRemover.cpp \
+							 StimResponseEditor.cpp \
+							 SREntity.cpp \
+							 CustomStimEditor.cpp \
+							 EffectEditor.cpp \
+							 SRPropertyLoader.cpp \
+							 ClassEditor.cpp \
+							 ResponseEffect.cpp \
+							 SRPropertySaver.cpp \
+							 StimTypes.cpp \
+							 ResponseEffectTypes.cpp \
+							 StimEditor.cpp
