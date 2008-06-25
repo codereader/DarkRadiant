@@ -2,7 +2,7 @@ AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS) $(GTK_CFLAGS)
 
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_objectives.la
-dm_objectives_la_LDFLAGS = -module -avoid-version
+dm_objectives_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS)
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   objectives.cpp \
 						   SpecifierType.cpp \
