@@ -195,6 +195,7 @@
 	<subMenu name="entity" caption="E_ntity">
 		<menuItem name="ungroupEntity" caption="_Revert group to worldspawn" command="RevertToWorldspawn" icon="cmenu_revert_worldspawn.png" />
 		<menuItem name="connectEntity" caption="_Connect selected entities" command="ConnectSelection" />
+		<menuItem name="bindEntity" caption="_Bind selected entities" command="BindSelection" />
 	</subMenu>
 
 	<subMenu name="brush" caption="B_rush">

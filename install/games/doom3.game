@@ -132,6 +132,7 @@
 		<defaultCurveEntity value="func_static" />
 		<curveNurbsKey value="curve_Nurbs" />
 		<curveCatmullRomKey value="curve_CatmullRomSpline" />
+		<bindKey value="bind" />
 		<playerHeight value="64" />
 	</defaults>
 	<entityChooser>
