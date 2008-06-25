@@ -2,7 +2,7 @@ AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS) $(GTK_CFLAGS)
 
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_stimresponse.la
-dm_stimresponse_la_LDFLAGS = -module -avoid-version
+dm_stimresponse_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS)
 dm_stimresponse_la_SOURCES = ResponseEditor.cpp \
 							 plugin.cpp \
 							 StimResponse.cpp \
