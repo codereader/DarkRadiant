@@ -14,6 +14,8 @@ class StimEditor :
 		GtkWidget* useBounds;
 		GtkWidget* radiusToggle;
 		GtkWidget* radiusEntry;
+		GtkWidget* finalRadiusToggle;
+		GtkWidget* finalRadiusEntry;
 		GtkWidget* timeIntToggle;
 		GtkWidget* timeIntEntry;
 		GtkWidget* timeUnitLabel;
