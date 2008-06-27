@@ -1,3 +1,9 @@
+28/06/2008
+greebo
+- Rewrote Namespace module to allow for more intelligent
+  behaviour when updating entity names. All spawnargs pointing
+  to a certain name are properly updated when that name changes.
+
 05/04/2008
 greebo
 - Added support for layers. All items in the scenegraph
