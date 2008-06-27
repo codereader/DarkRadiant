@@ -316,20 +316,44 @@ void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isCompo
 // Set entity property from entry boxes
 
 void EntityInspector::setPropertyFromEntries() {
+	// greebo: Instantiate a scoped object to make this operation undoable
+	UndoableCommand command("entitySetProperty");
+
+	// Get the key from the entry box
 	std::string key = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
-	if (key.size() > 0) {
-		std::string name = _selectedEntity->getKeyValue("name");
-		std::string model = _selectedEntity->getKeyValue("model");
-		bool isFuncType = (!name.empty() && name == model);
-		
-		std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
-		_selectedEntity->setKeyValue(key, val);
-		
-		// Check for name key changes of func_statics
-		if (isFuncType && key == "name") {
-			// Adapt the model key along with the name
-			_selectedEntity->setKeyValue("model", val);
+	std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
+
+	if (key.empty()) {
+		return;
+	}
+
+	if (key == "name") {
+		// Check the global namespace if this change is ok
+		IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
+		if (mapRoot != NULL) {
+			INamespacePtr nspace = mapRoot->getNamespace();
+
+			if (nspace != NULL && nspace->nameExists(val)) {
+				// name exists, cancel the change
+				gtkutil::errorDialog("The name " + val + " already exists in this map!",
+					GlobalRadiant().getMainWindow());
+				return;
+			}
 		}
+	}
+
+	// Check if we have a func_static-style entity
+	std::string name = _selectedEntity->getKeyValue("name");
+	std::string model = _selectedEntity->getKeyValue("model");
+	bool isFuncType = (!name.empty() && name == model);
+	
+	// Set the actual value
+	_selectedEntity->setKeyValue(key, val);
+	
+	// Check for name key changes of func_statics
+	if (isFuncType && key == "name") {
+		// Adapt the model key along with the name
+		_selectedEntity->setKeyValue("model", val);
 	}
 }
 

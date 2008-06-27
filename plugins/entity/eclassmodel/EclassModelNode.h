@@ -11,23 +11,25 @@
 #include "transformlib.h"
 #include "selectionlib.h"
 #include "../target/TargetableNode.h"
+#include "../EntityNode.h"
 
 #include "EclassModel.h"
 
 namespace entity {
 
 class EclassModelNode :
+	public EntityNode,
 	public SelectableNode,
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
 	public TransformNode,
-	public EntityNode,
-	public Namespaced,
 	public Renderable,
 	public TransformModifier,
 	public TargetableNode
 {
+	friend class EclassModel;
+
 	EclassModel m_contained;
 
 	mutable bool _updateSkin;
@@ -38,7 +40,7 @@ public:
 	// Copy Constructor
 	EclassModelNode(const EclassModelNode& other);
 
-	~EclassModelNode();
+	virtual ~EclassModelNode();
 
 	// Snappable implementation
 	virtual void snapto(float snap);
@@ -51,7 +53,7 @@ public:
 	virtual void refreshModel();
 
 	// Namespaced implementation
-	virtual void setNamespace(INamespace& space);
+	//virtual void setNamespace(INamespace& space);
 
 	scene::INodePtr clone() const;
 

@@ -5,8 +5,9 @@
 namespace entity {
 
 GenericEntityNode::GenericEntityNode(IEntityClassPtr eclass) :
+	EntityNode(eclass),
 	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(eclass, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
@@ -16,19 +17,18 @@ GenericEntityNode::GenericEntityNode(IEntityClassPtr eclass) :
 }
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
+	EntityNode(other),
 	SelectableNode(other),
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	EntityNode(other),
-	Namespaced(other),
 	SelectionTestable(other),
 	Renderable(other),
 	Cullable(other),
 	Bounded(other),
 	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(other.m_contained, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
@@ -73,9 +73,9 @@ VolumeIntersectionValue GenericEntityNode::intersectVolume(
 }
 
 // Namespaced implementation
-void GenericEntityNode::setNamespace(INamespace& space) {
+/*void GenericEntityNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
-}
+}*/
 
 void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
 	m_contained.testSelect(selector, test, localToWorld());

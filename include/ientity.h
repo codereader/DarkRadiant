@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 #include "ipath.h"
 #include "imodule.h"
+#include "inameobserver.h"
 #include "generic/callbackfwd.h"
 
 class IEntityClass;
@@ -33,7 +34,8 @@ typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 typedef Callback1<const std::string&> KeyObserver;
 
-class EntityKeyValue
+class EntityKeyValue :
+	public NameObserver
 {
 public:
 	/** greebo: Retrieves the actual value of this key
@@ -118,6 +120,26 @@ public:
 	};
 
 	/**
+	 * Visitor class for keyvalues on an entity. An Entity::KeyValueVisitor is provided
+	 * to an Entity via the Entity::forEachKeyValue() method, after which the
+	 * visitor's visit() method will be invoked for each keyvalue on the Entity.
+	 */
+	struct KeyValueVisitor 
+	{
+		/**
+		 * The visit function which must be implemented by subclasses.
+		 * 
+		 * @param key
+		 * The current key being visited.
+		 * 
+		 * @param value
+		 * The actual keyvalue object associated with the current key.
+		 */
+    	virtual void visit(const std::string& key, 
+    					   EntityKeyValue& value) = 0;
+	};
+
+	/**
 	 * Return the entity class object for this entity.
 	 */
 	virtual IEntityClassConstPtr getEntityClass() const = 0;
@@ -126,6 +148,9 @@ public:
 	 * Enumerate key values on this entity using a Entity::Visitor class.
 	 */
 	virtual void forEachKeyValue(Visitor& visitor) const = 0;
+
+	// Same as above, but this one is visiting the KeyValues itself, not just strings.
+	virtual void forEachKeyValue(KeyValueVisitor& visitor) = 0;
 
 	/** Set a key value on this entity. Setting the value to "" will
 	 * remove the key.
@@ -190,7 +215,7 @@ public:
   virtual void detach(Observer& observer) = 0;
 };
 
-class EntityNode
+class IEntityNode
 {
 public:
 	/** greebo: Temporary workaround for entity-containing nodes.
@@ -206,10 +231,10 @@ public:
 	 */
 	virtual void refreshModel() = 0;
 };
-typedef boost::shared_ptr<EntityNode> EntityNodePtr; 
+typedef boost::shared_ptr<IEntityNode> IEntityNodePtr; 
 
 inline Entity* Node_getEntity(scene::INodePtr node) {
-	EntityNodePtr entityNode = boost::dynamic_pointer_cast<EntityNode>(node);
+	IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(node);
 	if (entityNode != NULL) {
 		return &(entityNode->getEntity());
 	}
@@ -217,7 +242,7 @@ inline Entity* Node_getEntity(scene::INodePtr node) {
 }
 
 inline bool Node_isEntity(scene::INodePtr node) {
-	return boost::dynamic_pointer_cast<EntityNode>(node) != NULL;
+	return boost::dynamic_pointer_cast<IEntityNode>(node) != NULL;
 }
 
 /**

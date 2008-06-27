@@ -851,6 +851,10 @@
 				Name="namespace"
 				>
 				<File
+					RelativePath="..\..\radiant\namespace\ComplexName.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\namespace\NameObserver.cpp"
 					>
 				</File>
@@ -864,6 +868,22 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\namespace\Namespace.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\namespace\NamespaceFactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\namespace\NamespaceFactory.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\namespace\PostfixSet.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\namespace\UniqueNameSet.h"
 					>
 				</File>
 			</Filter>

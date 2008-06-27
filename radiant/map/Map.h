@@ -3,6 +3,7 @@
 
 #include "inode.h"
 #include "imap.h"
+#include "inamespace.h"
 #include "ireference.h"
 #include "moduleobserver.h"
 #include "math/Vector3.h"
@@ -13,11 +14,12 @@ class TextInputStream;
 namespace map {
 
 class Map : 
+	public IMap,
 	public Resource::Observer
 {
 	// The map name
 	std::string m_name;
-	
+
 	// Pointer to the Model Resource for this map
 	ReferenceCache::ResourcePtr m_resource;
 	
@@ -33,7 +35,15 @@ class Map :
 
 public:
 	Map();
-	
+
+	virtual scene::INodePtr getWorldspawn();
+	virtual IMapRootNodePtr getRoot();
+
+	// RegisterableModule implementation
+	virtual const std::string& Map::getName() const;
+	virtual const StringSet& Map::getDependencies() const;
+	virtual void Map::initialiseModule(const ApplicationContext& ctx);
+
 	void realiseResource();
 	void unrealiseResource();
 	
@@ -44,11 +54,11 @@ public:
 	/** greebo: Updates the name of the map (and triggers an update
 	 * 			of the mainframe window title)
 	 */
-	void setName(const std::string& newName);
+	void setMapName(const std::string& newName);
 	
 	/** greebo: Returns the name of this class
 	 */
-	std::string getName() const;
+	std::string getMapName() const;
 	
 	/** greebo: Saves the current map, doesn't ask for any filenames, 
 	 * 			so this has to be done before this step.
@@ -123,7 +133,6 @@ public:
 	
 	// Accessor methods for the worldspawn node
 	void setWorldspawn(scene::INodePtr node);
-	scene::INodePtr getWorldspawn();
 	
 	/** greebo: This retrieves the worldspawn node of this map.
 	 *			If no worldspawn can be found, this creates one.

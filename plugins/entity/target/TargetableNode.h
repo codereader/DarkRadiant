@@ -23,7 +23,7 @@ class TargetableNode :
 	public Entity::Observer
 {
 	mutable Vertex3f m_position;
-	Doom3Entity& _entity;
+	Doom3Entity& _d3entity;
 	TargetKeyCollection _targetKeys;
 	mutable RenderableTargetLines _renderableLines;
 

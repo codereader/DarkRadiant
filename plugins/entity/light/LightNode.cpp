@@ -5,8 +5,9 @@ namespace entity {
 // --------- LightNode implementation ------------------------------------
 
 LightNode::LightNode(IEntityClassPtr eclass) :
+	EntityNode(eclass),
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
-	TargetableNode(_light.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	_light(eclass, 
 			*this, 
 			Node::TransformChangedCaller(*this), 
@@ -28,14 +29,13 @@ LightNode::LightNode(IEntityClassPtr eclass) :
 }
 
 LightNode::LightNode(const LightNode& other) :
+	EntityNode(other),
 	SelectableNode(other),
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
 	Editable(other),
 	TransformNode(other),
-	EntityNode(other),
-	Namespaced(other),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
@@ -46,7 +46,7 @@ LightNode::LightNode(const LightNode& other) :
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	RendererLight(other),
 	scene::SelectableLight(other),
-	TargetableNode(_light.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	_light(other._light, 
 				*this, 
 				Node::TransformChangedCaller(*this), 
@@ -116,9 +116,9 @@ const AABB& LightNode::localAABB() const {
 	return _light.localAABB();
 }
 
-void LightNode::setNamespace(INamespace& space) {
+/*void LightNode::setNamespace(INamespace& space) {
 	_light.getNamespaced().setNamespace(space);
-}
+}*/
 
 // Test the light volume for selection, this just passes the call on to the contained Light class
 void LightNode::testSelect(Selector& selector, SelectionTest& test) {

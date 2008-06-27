@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "iundo.h"
+#include "imap.h"
 #include "iscenegraph.h"
 #include "inamespace.h"
 #include "ifilter.h"
@@ -26,10 +27,10 @@ namespace entity {
 			return boost::dynamic_pointer_cast<Namespaced>(node);
 		}
 		
-		void Entity_setName(Entity& entity, const std::string& name) {
+		/*void Entity_setName(Entity& entity, const std::string& name) {
 			entity.setKeyValue("name", name);
 		}
-		typedef ReferenceCaller1<Entity, const std::string&, Entity_setName> EntitySetNameCaller;
+		typedef ReferenceCaller1<Entity, const std::string&, Entity_setName> EntitySetNameCaller;*/
 	}
 
 scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
@@ -71,8 +72,13 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 
 scene::INodePtr Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
 	scene::INodePtr node = getEntityForEClass(eclass);
-	Node_getEntity(node)->setKeyValue("classname", eclass->getName());
+	Entity* entity = Node_getEntity(node);
+	assert(entity != NULL);
+
+	entity->setKeyValue("classname", eclass->getName());
 	
+	//INamespacePtr mapNamespace = GlobalMapModule().getNamespace();
+
 	// If this is not a worldspawn or unrecognised entity, generate a unique
 	// name for it
 	if (eclass->getName().size() > 0 && 
@@ -86,16 +92,13 @@ scene::INodePtr Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
 		std::string entityName = 
 			boost::algorithm::replace_all_copy(eclass->getName(), ":", "_") + "_1";
 
-		GlobalNamespace().makeUnique(
-			entityName.c_str(), 
-			EntitySetNameCaller(*Node_getEntity(node))
-		);
-	}
+		entity->setKeyValue("name", entityName);
 
-	// Move the new entity into the global namespace
-	NamespacedPtr namespaced = Node_getNamespaced(node);
-	if (namespaced != NULL) {
-		namespaced->setNamespace(GlobalNamespace());
+		/*// Do we have a global map namespace available?
+		if (mapNamespace != NULL) {
+			// Move this entity node into the global namespace
+			mapNamespace->connect(node);
+		}*/
 	}
 
 	return node;
@@ -157,7 +160,7 @@ const StringSet& Doom3EntityCreator::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_NAMESPACE);
+		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_SHADERCACHE);
 		_dependencies.insert(MODULE_UNDOSYSTEM);

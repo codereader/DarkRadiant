@@ -31,15 +31,14 @@ Doom3Group::Doom3Group(IEntityClassPtr eclass,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
-	_entity(eclass),
 	_owner(owner),
+	_entity(_owner._entity),
 	m_model(owner),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
-	m_nameKeys(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_transformChanged(transformChanged),
@@ -55,15 +54,14 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
 		const Callback& evaluateTransform) :
-	_entity(other._entity),
 	_owner(owner),
+	_entity(_owner._entity),
 	m_model(owner),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
-	m_nameKeys(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_renderName(m_named, m_nameOrigin),
 	m_transformChanged(transformChanged),
@@ -101,9 +99,10 @@ const Doom3Entity& Doom3Group::getEntity() const {
 	return _entity;
 }
 
-Namespaced& Doom3Group::getNamespaced() {
-	return m_nameKeys;
-}
+/*Namespaced& Doom3Group::getNamespaced() {
+	static NameSpaced n();
+	return n;
+}*/
 
 NamedEntity& Doom3Group::getNameable() {
 	return m_named;
@@ -311,7 +310,7 @@ void Doom3Group::construct() {
 	m_keyObservers.insert(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 
 	m_isModel = false;
-	m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3Doom3Group);
+	//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3Doom3Group);
 
 	_entity.attach(m_keyObservers);
 }
@@ -340,12 +339,12 @@ bool Doom3Group::isModel() const {
 void Doom3Group::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
 		// The model key is not recognised as "name"
-		m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3);
+		//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3);
 		m_model.modelChanged(m_modelKey);
 	}
 	else if (!newValue && m_isModel) {
 		// The model key should be recognised as "name" (important for "namespacing")
-		m_nameKeys.setKeyIsName(NameKeys::keyIsNameDoom3Doom3Group);
+		//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3Doom3Group);
 		// Clear the model path
 		m_model.modelChanged("");
 		m_nameOrigin = m_origin;

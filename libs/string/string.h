@@ -34,85 +34,85 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/lexical_cast.hpp>
 
-inline std::string intToStr(const int& i) {
+inline std::string intToStr(int i, const std::string& fallBackValue = "") {
 	std::string returnValue;
 	
 	try {
 		returnValue = boost::lexical_cast<std::string>(i);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = "";
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;
 }
 
-inline int strToInt(const std::string& str) {
+inline int strToInt(const std::string& str, int fallBackValue = 0) {
 	int returnValue;
 	
 	try {
 		returnValue = boost::lexical_cast<int>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = 0;
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;
 }
 
-inline std::string floatToStr(const float& f) {
+inline std::string floatToStr(float f, const std::string& fallBackValue = "") {
 	std::string returnValue;
 	
 	try {
 		returnValue = boost::lexical_cast<std::string>(f);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = "";
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;
 }
 
-inline float strToFloat(const std::string& str) {
+inline float strToFloat(const std::string& str, float fallBackValue = 0) {
 	float returnValue;
 	
 	try {
 		returnValue = boost::lexical_cast<float>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = 0;
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;
 }
 
-inline std::string doubleToStr(const double& f) {
+inline std::string doubleToStr(double f, const std::string& fallBackValue = "") {
 	std::string returnValue;
 	
 	try {
 		returnValue = boost::lexical_cast<std::string>(f);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = "";
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;
 }
 
-inline double strToDouble(const std::string& str) {
+inline double strToDouble(const std::string& str, double fallBackValue = 0) {
 	double returnValue;
 	
 	try {
 		returnValue = boost::lexical_cast<double>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = 0;
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;
 }
 
-inline std::string sizetToStr(const std::size_t& s) {
+inline std::string sizetToStr(std::size_t s, const std::string& fallBackValue = "") {
 	std::string returnValue;
 	
 	try {
@@ -124,20 +124,20 @@ inline std::string sizetToStr(const std::size_t& s) {
 #endif
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = "";
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;
 }
 
-inline std::size_t strToSizet(const std::string& str) {
+inline std::size_t strToSizet(const std::string& str, std::size_t fallBackValue = 0) {
 	std::size_t returnValue;
 	
 	try {
 		returnValue = boost::lexical_cast<std::size_t>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = 0;
+		returnValue = fallBackValue;
 	}
 	
 	return returnValue;

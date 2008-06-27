@@ -6,14 +6,14 @@
 namespace entity {
 
 TargetableNode::TargetableNode(Doom3Entity& entity, const scene::Node& node) :
-	_entity(entity),
+	_d3entity(entity),
 	_renderableLines(_targetKeys),
 	_node(node)
 {}
 
 void TargetableNode::construct() {
-	_entity.attach(*this);
-	_entity.attach(_targetKeys);
+	_d3entity.attach(*this);
+	_d3entity.attach(_targetKeys);
 
 	RenderableTargetInstances::Instance().attach(*this);
 }
@@ -22,8 +22,8 @@ void TargetableNode::construct() {
 void TargetableNode::destruct() {
 	RenderableTargetInstances::Instance().detach(*this);
 
-	_entity.detach(_targetKeys);
-	_entity.detach(*this);
+	_d3entity.detach(_targetKeys);
+	_d3entity.detach(*this);
 }
 
 void TargetableNode::setTargetsChanged(const Callback& targetsChanged) {
@@ -82,8 +82,8 @@ const Vector3& TargetableNode::getWorldPosition() const {
 void TargetableNode::render(Renderer& renderer, const VolumeTest& volume) const {
 	if (!_node.visible()) return;
 
-	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
+	renderer.SetState(_d3entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
+	renderer.SetState(_d3entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
 	_renderableLines.render(renderer, volume, getWorldPosition());
 }
 

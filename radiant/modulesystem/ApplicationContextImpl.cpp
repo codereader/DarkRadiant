@@ -128,7 +128,13 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 	
 	initArgs(argc, argv);
 	{
-		std::string home = getenv("APPDATA");
+		const char* appData = getenv("APPDATA");
+
+		if (appData == NULL) {
+			throw std::runtime_error("Critical: cannot find APPDATA environment variable.\n");
+		}
+
+		std::string home = appData;
 		home += "\\DarkRadiant\\";
 		os::makeDirectory(home);
 		_homePath = home;

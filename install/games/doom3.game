@@ -134,6 +134,7 @@
 		<curveCatmullRomKey value="curve_CatmullRomSpline" />
 		<bindKey value="bind" />
 		<playerHeight value="64" />
+		<nameKey value="name" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

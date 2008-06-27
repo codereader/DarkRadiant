@@ -241,6 +241,8 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, 
 										 OrthoContextMenu* self) 
 {
+	UndoableCommand command("createEntity");
+
 	// Display the chooser to select an entity classname
 	std::string cName = EntityClassChooser::chooseEntityClass();
 	
@@ -257,6 +259,8 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item,
 }
 
 void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("addPlayerStart");	
+
 	try {
 		Entity_createFromSelection(PLAYERSTART_CLASSNAME, self->_lastPoint);
 	}
@@ -279,6 +283,8 @@ void OrthoContextMenu::callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMe
 }
 
 void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("addMonsterclip");	
+
 	// create a ModelFinder and retrieve the modelList
 	selection::algorithm::ModelFinder visitor;
 	GlobalSelectionSystem().foreachSelected(visitor);
@@ -310,6 +316,8 @@ void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMen
 }
 
 void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("addLight");	
+
     try {
     	Entity_createFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
     }
@@ -320,11 +328,15 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
 }
 
 void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("addPrefab");	
+
 	// Pass the call to the map algorithm and give the lastPoint coordinate as argument
 	GlobalMap().loadPrefabAt(self->_lastPoint);
 }
 
 void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("addSpeaker");	
+
     try {
         Entity_createFromSelection(SPEAKER_CLASSNAME, self->_lastPoint);	
     }
@@ -335,6 +347,8 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* s
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("addModel");	
+
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	// To create a model we need EITHER nothing selected OR exactly one brush selected.
@@ -388,12 +402,16 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 }
 
 void OrthoContextMenu::callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("convertToStatic");	
+
 	// Create a func_static entity. Only brushes can be selected if this menu item is
 	// enabled.
 	Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);	
 }
 
 void OrthoContextMenu::callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self) {
+	UndoableCommand command("revertToWorldspawn");	
+
 	// Pass the call to the according method
 	selection::algorithm::revertGroupToWorldSpawn();	
 }

@@ -22,7 +22,7 @@ namespace {
 	{
 	public:
 		virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-			EntityNodePtr entity = boost::dynamic_pointer_cast<EntityNode>(node);
+			IEntityNodePtr entity = boost::dynamic_pointer_cast<IEntityNode>(node);
 
 			if (entity != NULL) {
 				entity->refreshModel();

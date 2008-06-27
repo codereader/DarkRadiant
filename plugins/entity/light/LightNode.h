@@ -7,18 +7,18 @@
 #include "dragplanes.h"
 #include "../VertexInstance.h"
 #include "../target/TargetableNode.h"
+#include "../EntityNode.h"
 
 namespace entity {
 
 class LightNode :
+	public EntityNode,
 	public SelectableNode,
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
 	public Editable,
 	public TransformNode,
-	public EntityNode,
-	public Namespaced,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
@@ -31,6 +31,8 @@ class LightNode :
 	public scene::SelectableLight,
 	public TargetableNode
 {
+	friend class Light;
+
 	Light _light;
 
 	// The (draggable) light center instance
@@ -61,7 +63,7 @@ public:
 	virtual const AABB& localAABB() const;
 	
 	// Namespaced implementation
-	virtual void setNamespace(INamespace& space);
+	//virtual void setNamespace(INamespace& space);
 
 	// TransformNode implementation
 	virtual const Matrix4& localToParent() const;

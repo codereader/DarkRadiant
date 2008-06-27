@@ -10,19 +10,19 @@
 #include "irenderable.h"
 #include "selectionlib.h"
 #include "../target/TargetableNode.h"
+#include "../EntityNode.h"
 
 #include "Speaker.h"
 
 namespace entity {
 
 class SpeakerNode :
+	public EntityNode,
 	public SelectableNode,
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
 	public TransformNode,
-	public EntityNode,
-	public Namespaced,
 	public SelectionTestable,
 	public Renderable,
 	public Cullable,
@@ -30,6 +30,8 @@ class SpeakerNode :
 	public TransformModifier,
 	public TargetableNode
 {
+	friend class Speaker;
+
 	Speaker m_contained;
 
 public:
@@ -56,7 +58,7 @@ public:
 	    const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	// Namespaced implementation
-	virtual void setNamespace(INamespace& space);
+	//virtual void setNamespace(INamespace& space);
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);

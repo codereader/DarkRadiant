@@ -1,6 +1,6 @@
 #include "NameObserver.h"
 
-NameObserver::NameObserver(UniqueNames& names) : 
+/*NameObserver::NameObserver(UniqueNames& names) : 
 	m_names(names)
 {
 	construct();
@@ -43,4 +43,4 @@ void NameObserver::nameChanged(const std::string& name) {
 	destroy();
 	m_name = name;
 	construct();
-}
+}*/

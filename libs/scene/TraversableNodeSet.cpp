@@ -161,6 +161,13 @@ void TraversableNodeSet::erase(scene::INodePtr node) {
     }
 }
 
+void TraversableNodeSet::clear() {
+	// Remove each child until empty
+	while (!_children.empty()) {
+		erase(*_children.begin());
+	}
+}
+
 void TraversableNodeSet::traverse(scene::NodeVisitor& visitor) {
 	for (NodeList::const_iterator i = _children.begin();
 		 i != _children.end();)

@@ -11,18 +11,18 @@
 #include "../curve/CurveEditInstance.h"
 #include "../VertexInstance.h"
 #include "../target/TargetableNode.h"
+#include "../EntityNode.h"
 
 namespace entity {
 
 class Doom3GroupNode :
+	public EntityNode,
 	public SelectableNode,
 	public scene::Cloneable,
 	public scene::GroupNode,
 	public Nameable,
 	public Snappable,
 	public TransformNode,
-	public EntityNode,
-	public Namespaced,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
@@ -33,6 +33,8 @@ class Doom3GroupNode :
 	public CurveNode,
 	public TargetableNode
 {
+	friend class Doom3Group;
+
 	// The contained Doom3Group class
 	Doom3Group m_contained;
 
@@ -64,7 +66,7 @@ public:
 	virtual void convertCurveType();
 
 	// Namespaced implementation
-	virtual void setNamespace(INamespace& space);
+	//virtual void setNamespace(INamespace& space);
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;

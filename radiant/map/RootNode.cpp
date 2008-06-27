@@ -12,6 +12,10 @@ RootNode::RootNode(const std::string& name) :
 	attachTraverseObserver(this);
 
 	GlobalUndoSystem().trackerAttach(m_changeTracker);
+
+	// Create a new namespace
+	_namespace = GlobalNamespaceFactory().createNamespace();
+	assert(_namespace != NULL);
 }
 
 RootNode::~RootNode() {
@@ -20,6 +24,13 @@ RootNode::~RootNode() {
 	
 	// Remove ourselves as observer from the TraversableNodeSet
 	detachTraverseObserver(this);
+
+	// Remove all child nodes to trigger their destruction
+	removeAllChildNodes();
+}
+
+INamespacePtr RootNode::getNamespace() {
+	return _namespace;
 }
 
 // TransformNode implementation
@@ -50,6 +61,20 @@ std::size_t RootNode::changes() const {
 
 std::string RootNode::name() const {
 	return _name;
+}
+
+void RootNode::addChildNode(const scene::INodePtr& node) {
+	Node::addChildNode(node);
+
+	// Insert this node into our namespace
+	_namespace->connect(node);
+}
+
+void RootNode::removeChildNode(const scene::INodePtr& node) {
+	Node::removeChildNode(node);
+
+	// Detach the node from our namespace
+	_namespace->disconnect(node);
 }
 
 void RootNode::instanceAttach(const scene::Path& path) {

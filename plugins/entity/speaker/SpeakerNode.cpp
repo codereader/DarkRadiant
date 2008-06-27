@@ -5,8 +5,9 @@
 namespace entity {
 
 SpeakerNode::SpeakerNode(IEntityClassPtr eclass) :
+	EntityNode(eclass),
 	TransformModifier(Speaker::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(eclass, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
@@ -17,19 +18,18 @@ SpeakerNode::SpeakerNode(IEntityClassPtr eclass) :
 }
 
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
+	EntityNode(other),
 	SelectableNode(other),
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	EntityNode(other),
-	Namespaced(other),
 	SelectionTestable(other),
 	Renderable(other),
 	Cullable(other),
 	Bounded(other),
 	TransformModifier(Speaker::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(other.m_contained, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
@@ -75,9 +75,9 @@ void SpeakerNode::refreshModel() {
 }
 
 // Namespaced implementation
-void SpeakerNode::setNamespace(INamespace& space) {
+/*void SpeakerNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
-}
+}*/
 
 void SpeakerNode::testSelect(Selector& selector, SelectionTest& test) {
 	m_contained.testSelect(selector, test, localToWorld());

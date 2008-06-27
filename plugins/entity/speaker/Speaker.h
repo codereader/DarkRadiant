@@ -1,6 +1,7 @@
 #ifndef SPEAKER_H_
 #define SPEAKER_H_
 
+#include "ieclass.h"
 #include "Bounded.h"
 #include "cullable.h"
 #include "editable.h"
@@ -12,7 +13,6 @@
 #include "../origin.h"
 #include "../angle.h"
 #include "../namedentity.h"
-#include "../namekeys.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "../OptionalRenderedName.h"
@@ -21,13 +21,15 @@
 
 namespace entity {
 
+class SpeakerNode;
+
 class Speaker :
 	public Cullable,
 	public Bounded,
 	public Snappable,
     public OptionalRenderedName
 {
-	Doom3Entity m_entity;
+	Doom3Entity& m_entity;
 	KeyObserverMap m_keyObservers;
 	MatrixTransform m_transform;
 
@@ -37,7 +39,7 @@ class Speaker :
 	float m_angle;
 
 	NamedEntity m_named;
-	NameKeys m_nameKeys;
+	//NamespaceManager m_nameKeys;
 
 	entity::RenderSpeakerRadii m_speakerRadii;
 	SoundRadii m_stdVal;
@@ -61,14 +63,14 @@ class Speaker :
 public:
 	// Constructor
 	Speaker(IEntityClassPtr eclass, 
-				  scene::Node& node, 
+		entity::SpeakerNode& node, 
 				  const Callback& transformChanged, 
 				  const Callback& boundsChanged,
 				  const Callback& evaluateTransform);
 	
 	// Copy constructor
 	Speaker(const Speaker& other, 
-				  scene::Node& node, 
+				  SpeakerNode& node, 
 				  const Callback& transformChanged, 
 				  const Callback& boundsChanged,
 				  const Callback& evaluateTransform);
@@ -80,7 +82,7 @@ public:
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
-	Namespaced& getNamespaced();
+	//Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
