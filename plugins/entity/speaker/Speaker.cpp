@@ -5,21 +5,22 @@
 #include "isound.h"
 #include <stdlib.h>
 #include "SpeakerSettings.h"
+#include "SpeakerNode.h"
 
 namespace entity {
 
 Speaker::Speaker(IEntityClassPtr eclass, 
-		scene::Node& node, 
+		SpeakerNode& node, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged,
 		const Callback& evaluateTransform) :
-	m_entity(eclass),
+	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
+	//m_nameKeys(m_entity),
 	m_speakerRadii(m_aabb_local.origin),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -36,7 +37,7 @@ Speaker::Speaker(IEntityClassPtr eclass,
 }
 
 Speaker::Speaker(const Speaker& other, 
-		scene::Node& node, 
+		SpeakerNode& node, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged,
 		const Callback& evaluateTransform) :
@@ -46,7 +47,7 @@ Speaker::Speaker(const Speaker& other,
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
+	//m_nameKeys(m_entity),
 	m_speakerRadii(m_origin),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -83,9 +84,9 @@ const Doom3Entity& Speaker::getEntity() const {
 	return m_entity;
 }
 
-Namespaced& Speaker::getNamespaced() {
+/*Namespaced& Speaker::getNamespaced() {
 	return m_nameKeys;
-}
+}*/
 
 NamedEntity& Speaker::getNameable() {
 	return m_named;

@@ -99,6 +99,9 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name) {
 	// Create a shortcut to the module
 	RegisterableModulePtr module = _uninitialisedModules[name];
 	const StringSet& dependencies = module->getDependencies();
+
+	// Debug builds should ensure that the dependencies don't reference the module itself directly 
+	assert(dependencies.find(name) == dependencies.end());
 	
 	// Initialise the dependencies first
 	for (StringSet::const_iterator i = dependencies.begin(); 

@@ -66,6 +66,11 @@ public:
 	 * 			saves the UndoMemento and notifies the observer.
 	 */
 	void erase(scene::INodePtr node);
+
+	/** 
+	 * Removes all nodes from this container. Notifies the observers.
+	 */
+	void clear();
 	
 	/** greebo: scene::Traversable implementation. This visits all the child nodes
 	 * 			using the given visitor scene::NodeVisitor.

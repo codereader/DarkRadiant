@@ -15,7 +15,6 @@
 #include "../rotation.h"
 #include "../colour.h"
 #include "../namedentity.h"
-#include "../namekeys.h"
 #include "../entity.h"
 #include "../Doom3Entity.h"
 #include "../OptionalRenderedName.h"
@@ -78,6 +77,8 @@ inline void default_extents(Vector3& extents) {
 	extents = Vector3(8,8,8);
 }
 
+class LightNode;
+
 class Light :
 	public OpenGLRenderable,
 	public Cullable,
@@ -86,7 +87,7 @@ class Light :
 	public Snappable,
     public OptionalRenderedName
 {
-  entity::Doom3Entity m_entity;
+	Doom3Entity& m_entity;
   KeyObserverMap m_keyObservers;
   IdentityTransform m_transform;
 
@@ -96,20 +97,19 @@ class Light :
   Colour m_colour;
 
   NamedEntity m_named;
-  NameKeys m_nameKeys;
 
 	Doom3LightRadius m_doom3Radius;
 
 	// Renderable components of this light
-	entity::RenderLightRadiiBox m_radii_box;
-	entity::RenderableLightTarget _rCentre;
-	entity::RenderableLightTarget _rTarget;
+	RenderLightRadiiBox m_radii_box;
+	RenderableLightTarget _rCentre;
+	RenderableLightTarget _rTarget;
 	
-	entity::RenderableLightRelative _rUp;
-	entity::RenderableLightRelative _rRight;
+	RenderableLightRelative _rUp;
+	RenderableLightRelative _rRight;
 	
-	entity::RenderableLightTarget _rStart;
-	entity::RenderableLightTarget _rEnd;
+	RenderableLightTarget _rStart;
+	RenderableLightTarget _rEnd;
 	RenderableNamedEntity m_renderName;
 
   Vector3 m_lightOrigin;
@@ -152,7 +152,7 @@ class Light :
   mutable Frustum m_doom3Frustum;
   mutable bool m_doom3ProjectionChanged;
 
-  entity::RenderLightProjection m_renderProjection;
+  RenderLightProjection m_renderProjection;
 
   LightShader m_shader;
 
@@ -195,19 +195,19 @@ public:
 
 public:
 	// Constructor
-	Light(IEntityClassPtr eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
+	Light(IEntityClassPtr eclass, LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
 	
 	// Copy Constructor
-	Light(const Light& other, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
+	Light(const Light& other, LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
 	
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
-	entity::Doom3Entity& getEntity();
-	const entity::Doom3Entity& getEntity() const;
+	Doom3Entity& getEntity();
+	const Doom3Entity& getEntity() const;
 
-	Namespaced& getNamespaced();
+	//Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();

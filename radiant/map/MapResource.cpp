@@ -289,7 +289,7 @@ scene::INodePtr MapResource::loadMapNode() {
 	}
 	
 	// At this point, we have a valid mapformat
-	// Ccreate a new map root node
+	// Create a new map root node
 	scene::INodePtr root(NewMapRoot(_name));
 
   	std::string fullpath = _path + _name;

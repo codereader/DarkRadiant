@@ -1,14 +1,15 @@
 #include "EclassModel.h"
 
 #include "iregistry.h"
+#include "EclassModelNode.h"
 
 namespace entity {
 
 EclassModel::EclassModel(IEntityClassPtr eclass,
-						 scene::INode& owner, 
+						 EclassModelNode& owner, 
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
-	m_entity(eclass),
+	m_entity(owner._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(AngleChangedCaller(*this)),
@@ -16,7 +17,6 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_model(owner),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
 	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
@@ -26,10 +26,10 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 }
 
 EclassModel::EclassModel(const EclassModel& other, 
-						 scene::INode& owner,
+						 EclassModelNode& owner,
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
-	m_entity(other.m_entity),
+	m_entity(owner._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(AngleChangedCaller(*this)),
@@ -37,7 +37,6 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_model(owner),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
 	m_renderOrigin(m_origin),
 	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
@@ -119,9 +118,9 @@ const Doom3Entity& EclassModel::getEntity() const {
 	return m_entity;
 }
 
-Namespaced& EclassModel::getNamespaced() {
+/*Namespaced& EclassModel::getNamespaced() {
 	return m_nameKeys;
-}
+}*/
 
 NamedEntity& EclassModel::getNameable() {
 	return m_named;

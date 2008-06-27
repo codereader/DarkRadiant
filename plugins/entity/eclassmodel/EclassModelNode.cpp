@@ -3,9 +3,10 @@
 namespace entity {
 
 EclassModelNode::EclassModelNode(IEntityClassPtr eclass) :
+	EntityNode(eclass),
 	TransformModifier(EclassModel::TransformChangedCaller(m_contained), 
 					  ApplyTransformCaller(*this)),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(eclass, 
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this), 
@@ -17,17 +18,16 @@ EclassModelNode::EclassModelNode(IEntityClassPtr eclass) :
 }
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
+	EntityNode(other),
 	SelectableNode(other),
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	EntityNode(other),
-	Namespaced(other),
 	Renderable(other),
 	TransformModifier(EclassModel::TransformChangedCaller(m_contained), 
 					  ApplyTransformCaller(*this)),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this), 
@@ -78,9 +78,9 @@ void EclassModelNode::refreshModel() {
 }
 
 // Namespaced implementation
-void EclassModelNode::setNamespace(INamespace& space) {
+/*void EclassModelNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
-}
+}*/
 
 void EclassModelNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
 	// greebo: Check if the skin needs updating before rendering.

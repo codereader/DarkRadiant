@@ -5,8 +5,9 @@
 namespace entity {
 
 Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
+	EntityNode(eclass),
 	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(
 		eclass,
 		*this, // Pass <this> as Doom3GroupNode&
@@ -25,14 +26,13 @@ Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
 }
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
+	EntityNode(other),
 	SelectableNode(other),
 	scene::Cloneable(other),
 	scene::GroupNode(other),
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	EntityNode(other),
-	Namespaced(other),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
@@ -41,7 +41,7 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	Bounded(other),
 	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	CurveNode(other),
-	TargetableNode(m_contained.getEntity(), *this),
+	TargetableNode(_entity, *this),
 	m_contained(
 		other.m_contained,
 		*this, // Pass <this> as Doom3GroupNode&
@@ -240,9 +240,9 @@ Entity& Doom3GroupNode::getEntity() {
 	return m_contained.getEntity();
 }
 
-void Doom3GroupNode::setNamespace(INamespace& space) {
+/*void Doom3GroupNode::setNamespace(INamespace& space) {
 	m_contained.getNamespaced().setNamespace(space);
-}
+}*/
 
 void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());

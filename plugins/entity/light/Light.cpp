@@ -6,6 +6,8 @@
 #include "LightShader.h"
 #include "LightSettings.h"
 
+#include "LightNode.h"
+
 namespace entity {
 
 // Initialise the static default shader string
@@ -62,13 +64,12 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 // ----- Light Class Implementation -------------------------------------------------
 
 // Constructor
-Light::Light(IEntityClassPtr eclass, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
-	m_entity(eclass),
+Light::Light(IEntityClassPtr eclass, LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_colour(Callback()),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
 	m_radii_box(m_aabb_light.origin),
 	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
 	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
@@ -88,13 +89,12 @@ Light::Light(IEntityClassPtr eclass, scene::Node& node, const Callback& transfor
 }
 
 // Copy Constructor
-Light::Light(const Light& other, scene::Node& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
-	m_entity(other.m_entity),
+Light::Light(const Light& other, LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_colour(Callback()),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
 	m_radii_box(m_aabb_light.origin),
 	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
 	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
@@ -423,9 +423,9 @@ const entity::Doom3Entity& Light::getEntity() const {
 	return m_entity;
 }
 
-Namespaced& Light::getNamespaced() {
+/*Namespaced& Light::getNamespaced() {
 	return m_nameKeys;
-}
+}*/
 const NamedEntity& Light::getNameable() const {
 	return m_named;
 }

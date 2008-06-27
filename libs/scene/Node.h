@@ -83,7 +83,7 @@ public:
 	virtual void addChildNode(const INodePtr& node);
 	virtual void removeChildNode(const INodePtr& node);
 	virtual bool hasChildNodes() const;
-
+	
 	virtual void traverse(NodeVisitor& visitor);
 
 	virtual void setSelf(const INodePtr& self);
@@ -156,6 +156,9 @@ protected:
 
 	virtual void instanceAttach(MapFile* mapfile);
 	virtual void instanceDetach(MapFile* mapfile);
+
+	// Clears the TraversableNodeSet
+	virtual void removeAllChildNodes();
 
 private:
 	void evaluateBounds() const;

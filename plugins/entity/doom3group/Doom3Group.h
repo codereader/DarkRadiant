@@ -11,7 +11,6 @@
 #include "../origin.h"
 #include "../rotation.h"
 #include "../namedentity.h"
-#include "../namekeys.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
@@ -32,10 +31,11 @@ class Doom3Group
   public Snappable,
   public OptionalRenderedName
 {
-	Doom3Entity _entity;
 	KeyObserverMap m_keyObservers;
 	
 	Doom3GroupNode& _owner;
+	Doom3Entity& _entity;
+
 	MatrixTransform m_transform;
 
 	ModelKey m_model;
@@ -49,7 +49,6 @@ class Doom3Group
 	Float9 m_rotation;
 
 	NamedEntity m_named;
-	NameKeys m_nameKeys;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
 
@@ -107,7 +106,7 @@ public:
 
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;
-	Namespaced& getNamespaced();
+	//Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();

@@ -31,36 +31,10 @@ class RadiantUndoSystem :
 	public UndoSystem,
 	public RegistryKeyObserver
 {
-public:
-	// RegisterableModule implementation
-	virtual const std::string& getName() const {
-		static std::string _name(MODULE_UNDOSYSTEM);
-		return _name;
-	}
+	// The operation Observers which get notified on certain events
+	typedef std::set<Observer*> ObserverSet;
+	ObserverSet _observers;
 
-	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies;
-
-		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_XMLREGISTRY);
-			_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		}
-
-		return _dependencies;
-	}
-
-	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "UndoSystem::initialiseModule called\n";
-		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
-		
-		// Add self to the key observers to get notified on change
-		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
-		
-		// add the preference settings
-		constructPreferences();
-	}
-
-private:
 	static const std::size_t MAX_UNDO_LEVELS = 1024;
 
 	// The undo and redo stacks
@@ -76,13 +50,12 @@ private:
 	Trackers _trackers;
 
 public:
-
 	// Constructor
-	RadiantUndoSystem()
-		: _undoLevels(64) 
+	RadiantUndoSystem() : 
+		_undoLevels(64) 
 	{}
 
-	~RadiantUndoSystem() {
+	virtual ~RadiantUndoSystem() {
 		clear();
 	}
 
@@ -184,6 +157,11 @@ public:
 			operation->_snapshot.restore();
 			finishRedo(operation->_command.c_str());
 			_undoStack.pop_back();
+
+			for (ObserverSet::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */) {
+				Observer* observer = *(i++);
+				observer->postUndo();
+			}
 		}
 	}
 
@@ -200,6 +178,11 @@ public:
 			operation->_snapshot.restore();
 			finishUndo(operation->_command);
 			_redoStack.pop_back();
+
+			for (ObserverSet::iterator i = _observers.begin(); i != _observers.end(); /* in-loop */) {
+				Observer* observer = *(i++);
+				observer->postRedo();
+			}
 		}
 	}
 
@@ -208,6 +191,15 @@ public:
 		_undoStack.clear();
 		_redoStack.clear();
 		trackersClear();
+		_observers.clear();
+	}
+
+	void addObserver(Observer* observer) {
+		_observers.insert(observer);
+	}
+
+	void removeObserver(Observer* observer) {
+		_observers.erase(observer);
 	}
 
 	void trackerAttach(UndoTracker& tracker) {
@@ -248,6 +240,34 @@ public:
 	void constructPreferences() {
 		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Undo System");
 		page->appendSpinner("Undo Queue Size", RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
+	}
+
+	// RegisterableModule implementation
+	virtual const std::string& getName() const {
+		static std::string _name(MODULE_UNDOSYSTEM);
+		return _name;
+	}
+
+	virtual const StringSet& getDependencies() const {
+		static StringSet _dependencies;
+
+		if (_dependencies.empty()) {
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		}
+
+		return _dependencies;
+	}
+
+	virtual void initialiseModule(const ApplicationContext& ctx) {
+		globalOutputStream() << "UndoSystem::initialiseModule called\n";
+		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
+		
+		// Add self to the key observers to get notified on change
+		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
+		
+		// add the preference settings
+		constructPreferences();
 	}
 
 private:

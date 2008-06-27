@@ -143,6 +143,12 @@ void Doom3Entity::forEachKeyValue(Visitor& visitor) const {
 	}
 }
 
+void Doom3Entity::forEachKeyValue(KeyValueVisitor& visitor) {
+	for(KeyValues::iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
+		visitor.visit(i->first, *i->second);
+	}
+}
+
 /** Set a keyvalue on the entity.
  */
 void Doom3Entity::setKeyValue(const std::string& key, const std::string& value) {

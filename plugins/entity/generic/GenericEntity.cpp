@@ -4,19 +4,20 @@
 #include "irenderable.h"
 #include "math/frustum.h"
 
+#include "GenericEntityNode.h"
+
 namespace entity {
 
 GenericEntity::GenericEntity(IEntityClassPtr eclass, 
-		scene::Node& node, 
+		GenericEntityNode& node, 
 		const Callback& transformChanged, 
 		const Callback& evaluateTransform) :
-	m_entity(eclass),
+	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
@@ -28,16 +29,15 @@ GenericEntity::GenericEntity(IEntityClassPtr eclass,
 }
 
 GenericEntity::GenericEntity(const GenericEntity& other, 
-		scene::Node& node, 
+		GenericEntityNode& node, 
 		const Callback& transformChanged, 
 		const Callback& evaluateTransform) :
-	m_entity(other.m_entity),
+	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	m_nameKeys(m_entity),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
@@ -69,9 +69,9 @@ const Doom3Entity& GenericEntity::getEntity() const {
 	return m_entity;
 }
 
-Namespaced& GenericEntity::getNamespaced() {
+/*Namespaced& GenericEntity::getNamespaced() {
 	return m_nameKeys;
-}
+}*/
 
 NamedEntity& GenericEntity::getNameable() {
 	return m_named;

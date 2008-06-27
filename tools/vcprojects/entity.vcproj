@@ -267,6 +267,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\entity\EntityNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\entity\EntityNode.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\entity\keyobservers.cpp"
 				>
 			</File>
@@ -280,6 +288,14 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\entity\KeyValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\entity\KeyValueObserver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\entity\KeyValueObserver.h"
 				>
 			</File>
 			<File
@@ -299,11 +315,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\namekeys.cpp"
+				RelativePath="..\..\plugins\entity\NameKeyObserver.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\namekeys.h"
+				RelativePath="..\..\plugins\entity\NameKeyObserver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\entity\NamespaceManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\entity\NamespaceManager.h"
 				>
 			</File>
 			<File

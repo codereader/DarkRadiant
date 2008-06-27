@@ -12,7 +12,6 @@
 #include "../origin.h"
 #include "../angle.h"
 #include "../namedentity.h"
-#include "../namekeys.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "../OptionalRenderedName.h"
@@ -21,13 +20,15 @@
 
 namespace entity {
 
+class GenericEntityNode;
+
 class GenericEntity :
 	public Cullable,
 	public Bounded,
 	public Snappable,
     public OptionalRenderedName
 {
-	Doom3Entity m_entity;
+	Doom3Entity& m_entity;
 	KeyObserverMap m_keyObservers;
 	MatrixTransform m_transform;
 
@@ -37,7 +38,7 @@ class GenericEntity :
 	float m_angle;
 
 	NamedEntity m_named;
-	NameKeys m_nameKeys;
+	//NamespaceManager m_nameKeys;
 
 	AABB m_aabb_local;
 	Ray m_ray;
@@ -52,13 +53,13 @@ class GenericEntity :
 public:
 	// Constructor
 	GenericEntity(IEntityClassPtr eclass, 
-				  scene::Node& node, 
+				  GenericEntityNode& node, 
 				  const Callback& transformChanged, 
 				  const Callback& evaluateTransform);
 	
 	// Copy constructor
 	GenericEntity(const GenericEntity& other, 
-				  scene::Node& node, 
+				  GenericEntityNode& node, 
 				  const Callback& transformChanged, 
 				  const Callback& evaluateTransform);
 
@@ -69,7 +70,7 @@ public:
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
-	Namespaced& getNamespaced();
+	//Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();

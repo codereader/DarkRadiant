@@ -10,7 +10,6 @@
 #include "ifilter.h"
 #include "icounter.h"
 #include "iradiant.h"
-#include "inamespace.h"
 
 #include "stream/textfilestream.h"
 #include "entitylib.h"
@@ -40,6 +39,7 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "modulesystem/StaticModule.h"
 
 namespace map {
 	
@@ -159,7 +159,7 @@ void Map::onResourceRealise() {
         m_resource->load();
       }
 
-      // Take the new node and insert it as map root
+	  // Take the new node and insert it as map root
       GlobalSceneGraph().insert_root(m_resource->getNode());
 
       map::AutoSaver().clearChanges();
@@ -171,7 +171,7 @@ void Map::onResourceRealise() {
 void Map::onResourceUnrealise() {
     if(m_resource != 0)
     {
-      setValid(false);
+		setValid(false);
       setWorldspawn(scene::INodePtr());
 
       GlobalUndoSystem().clear();
@@ -207,12 +207,12 @@ void Map::updateTitle() {
 	gtk_window_set_title(GlobalRadiant().getMainWindow(), title.c_str());
 }
 
-void Map::setName(const std::string& newName) {
+void Map::setMapName(const std::string& newName) {
 	m_name = newName;
 	updateTitle();
 }
 
-std::string Map::getName() const {
+std::string Map::getMapName() const {
 	return m_name;
 }
 
@@ -226,6 +226,15 @@ void Map::setWorldspawn(scene::INodePtr node) {
 
 scene::INodePtr Map::getWorldspawn() {
 	return m_world_node;
+}
+
+IMapRootNodePtr Map::getRoot() {
+	if (m_resource != NULL) {
+		// Try to cast the node onto a root node and return
+		return boost::dynamic_pointer_cast<IMapRootNode>(m_resource->getNode());
+	}
+
+	return IMapRootNodePtr();
 }
 
 const MapFormat& Map::getFormatForFile(const std::string& filename) {
@@ -395,7 +404,7 @@ scene::INodePtr Map::findOrInsertWorldspawn() {
 void Map::load(const std::string& filename) {
 	globalOutputStream() << "Loading map from " << filename.c_str() << "\n";
 
-	setName(filename);
+	setMapName(filename);
 
 	// Reset all layers before loading the file
 	GlobalLayerSystem().reset();
@@ -486,7 +495,7 @@ void Map::save() {
 }
 
 void Map::createNew() {
-	setName(MAP_UNNAMED_STRING);
+	setMapName(MAP_UNNAMED_STRING);
 
 	m_resource = GlobalReferenceCache().capture(m_name.c_str());
 	m_resource->addObserver(*this);
@@ -511,7 +520,7 @@ bool Map::import(const std::string& filename) {
 			// is not the NULL node
 			
 			// Create a new maproot
-			scene::INodePtr clone(NewMapRoot(""));
+			scene::INodePtr cloneRoot(new BasicContainer);
 
 			{
 				bool textureLockStatus = GlobalBrush()->textureLockEnabled();
@@ -521,15 +530,24 @@ bool Map::import(const std::string& filename) {
 				selection::algorithm::OriginAdder adder;
 				resource->getNode()->traverse(adder);
         
-				CloneAll cloner(clone);
+				CloneAll cloner(cloneRoot);
 				resource->getNode()->traverse(cloner);
 				
 				GlobalBrush()->setTextureLock(textureLockStatus);
 			}
 
-			GlobalNamespace().gatherNamespaced(clone);
-			GlobalNamespace().mergeClonedNames();
-			MergeMap(clone);
+			// Adjust all new names to fit into the existing map namespace, 
+			// this routine will be changing a lot of names in the importNamespace
+			INamespacePtr nspace = getRoot()->getNamespace();
+			
+			if (nspace != NULL) {
+				// Prepare our namespace for import
+				nspace->importNames(cloneRoot);
+				// Now add the cloned names to the local namespace
+				nspace->connect(cloneRoot);
+			}
+
+			MergeMap(cloneRoot);
 			success = true;
 		}
 	}
@@ -624,7 +642,7 @@ bool Map::askForSave(const std::string& title) {
 bool Map::saveAs() {
 	if (_saveInProgress) return false; // safeguard
 
-	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map", "map", getName());
+	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map", "map", getMapName());
   
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
@@ -767,7 +785,7 @@ void Map::renameAbsolute(const std::string& absolute) {
 	// Apply the new resource pointer
 	m_resource = resource;
 
-	setName(absolute);
+	setMapName(absolute);
 
 	m_resource->addObserver(*this);
 
@@ -789,20 +807,28 @@ void Map::rename(const std::string& filename) {
 }
 
 void Map::importSelected(TextInputStream& in) {
-	scene::INodePtr node(new BasicContainer);
+	BasicContainerPtr root(new BasicContainer);
 	
 	// Pass an empty stringstream to the importer
 	std::istringstream dummyStream;
 	MapImportInfo importInfo(in, dummyStream);
-	importInfo.root = node;
+	importInfo.root = root;
 
 	const MapFormat& format = getFormat();
 	format.readGraph(importInfo);
 	
-	GlobalNamespace().gatherNamespaced(node);
-	GlobalNamespace().mergeClonedNames();
+	// Adjust all new names to fit into the existing map namespace, 
+	// this routine will be changing a lot of names in the importNamespace
+	INamespacePtr nspace = getRoot()->getNamespace();
 	
-	MergeMap(node);
+	if (nspace != NULL) {
+		// Prepare all names
+		nspace->importNames(root);
+		// Now add the cloned names to the local namespace
+		nspace->connect(root);
+	}
+	
+	MergeMap(root);
 }
 
 void Map::exportSelected(std::ostream& out) {
@@ -817,10 +843,27 @@ void Map::exportSelected(std::ostream& out) {
 	format.writeGraph(exportInfo);
 }
 
+// RegisterableModule implementation
+const std::string& Map::getName() const {
+	static std::string _name(MODULE_MAP);
+	return _name;
+}
+
+const StringSet& Map::getDependencies() const {
+	static StringSet _dependencies; // no dependencies
+	return _dependencies;
+}
+
+void Map::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << getName() << "::initialiseModule called.\n";
+}
+
+// Creates the static module instance
+module::StaticModule<Map> staticMapModule;
+
 } // namespace map
 
 // Accessor method containing the singleton Map instance
 map::Map& GlobalMap() {
-	static map::Map _mapInstance;
-	return _mapInstance;
+	return *map::staticMapModule.getModule();
 }

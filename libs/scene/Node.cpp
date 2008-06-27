@@ -161,6 +161,10 @@ bool Node::hasChildNodes() const {
 	return !_children.empty();
 }
 
+void Node::removeAllChildNodes() {
+	_children.clear();
+}
+
 void Node::traverse(NodeVisitor& visitor) {
 	_children.traverse(visitor);
 }

@@ -5,46 +5,50 @@
 #include <vector>
 #include "inamespace.h"
 #include "iscenegraph.h"
-#include "uniquenames.h"
+#include "UniqueNameSet.h"
 #include "NameObserver.h"
 
 class Namespace : 
 	public INamespace
 {
-	typedef std::map<NameCallback, NameObserver> Names;
-	Names m_names;
-	UniqueNames m_uniqueNames;
+	// The set of unique names in this namespace
+	UniqueNameSet _uniqueNames;
 	
-	// This is the list populated by gatherNamespaced(), see below
-	typedef std::vector<NamespacedPtr> NamespacedList;
-	NamespacedList _cloned;
+	// The mapping between full names and observers, multiple keys allowed
+	typedef std::multimap<std::string, NameObserver*> ObserverMap;
+	ObserverMap _observers;
 
 public:
-	void attach(const NameCallback& setName, const NameCallbackCallback& attachObserver);
-	void detach(const NameCallback& setName, const NameCallbackCallback& detachObserver);
+	virtual ~Namespace();
 
-	void makeUnique(const char* name, const NameCallback& setName) const;
+	// Documentation: see inamespace.h
+	virtual void connect(const scene::INodePtr& root);
+	virtual void disconnect(const scene::INodePtr& root);
 
-	void mergeNames(const Namespace& other) const;
-	
-	/** greebo: Collects all Namespaced nodes in the subgraph,
-	 * 			whose starting point is defined by <root>.
-	 * 			This stores all the Namespaced* objects into 
-	 * 			a local list, which can subsequently be used 
-	 * 			by mergeClonedNames().
-	 */
-	void gatherNamespaced(scene::INodePtr root);
-	
-	/** greebo: This moves all gathered Namespaced nodes into this
-	 * 			Namespace, making sure that all names are properly
-	 * 			made unique.
-	 */
-	void mergeClonedNames();
-	
-	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
-}; // class BasicNamespace
+	// Returns TRUE if the name already exists in this namespace
+	virtual bool nameExists(const std::string& name);
+
+	// Inserts a new name into the namespace, returns TRUE on success
+	virtual bool insert(const std::string& name);
+	virtual bool erase(const std::string& name);
+
+	// Returns a new, unique string which is not yet used in this namespace
+	// For the string is automatically registered in this namespace
+	virtual std::string makeUniqueAndInsert(const std::string& originalName);
+
+	// Returns a new, unique string which is not yet used in this namespace
+	virtual std::string makeUnique(const std::string& originalName);
+
+	// Add or remove a nameobserver
+	virtual void addNameObserver(const std::string& name, NameObserver& observer);
+	virtual void removeNameObserver(const std::string& name, NameObserver& observer);
+
+	// Broadcasts the nameChanged event
+	virtual void nameChanged(const std::string& oldName, const std::string& newName);
+
+	// Imports all names below root into this namespace, changing names where needed
+	virtual void importNames(const scene::INodePtr& root);
+};
+typedef boost::shared_ptr<Namespace> NamespacePtr;
 
 #endif /*NAMESPACE_H_*/

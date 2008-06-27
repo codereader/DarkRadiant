@@ -14,19 +14,20 @@
 #include "../angle.h"
 #include "../ModelKey.h"
 #include "../namedentity.h"
-#include "../namekeys.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../OptionalRenderedName.h"
 
 namespace entity {
 
+class EclassModelNode;
+
 class EclassModel :
 	public Snappable,
     public OptionalRenderedName
 {
 	MatrixTransform m_transform;
-	Doom3Entity m_entity;
+	Doom3Entity& m_entity;
 	KeyObserverMap m_keyObservers;
 
 	OriginKey m_originKey;
@@ -38,7 +39,7 @@ class EclassModel :
 	ModelKey m_model;
 
 	NamedEntity m_named;
-	NameKeys m_nameKeys;
+	//NamespaceManager m_nameKeys;
 	RenderablePivot m_renderOrigin;
 	RenderableNamedEntity m_renderName;
 
@@ -48,13 +49,13 @@ class EclassModel :
 	InstanceCounter m_instanceCounter;
 public:
 	EclassModel(IEntityClassPtr eclass,
-				scene::INode& owner,
+				EclassModelNode& owner,
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 	
 	// Copy Constructor
 	EclassModel(const EclassModel& other,
-				scene::INode& owner, 
+				EclassModelNode& owner, 
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 
@@ -70,7 +71,7 @@ public:
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
-	Namespaced& getNamespaced();
+	//Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();

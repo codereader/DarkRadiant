@@ -72,6 +72,7 @@ public:
 	IEntityClassConstPtr getEntityClass() const;
 
 	void forEachKeyValue(Visitor& visitor) const;
+	void forEachKeyValue(KeyValueVisitor& visitor);
 
 	/** Set a keyvalue on the entity.
 	 */
@@ -82,7 +83,7 @@ public:
 	std::string getKeyValue(const std::string& key) const;
 
 	// Returns true if the given key is inherited
-	virtual bool isInherited(const std::string& key) const;
+	bool isInherited(const std::string& key) const;
 
 	// Get all KeyValues matching the given prefix.
 	KeyValuePairs getKeyValuePairs(const std::string& prefix) const;
@@ -90,7 +91,7 @@ public:
 	bool isContainer() const;
 	void setIsContainer(bool isContainer);
 	
-	virtual bool isModel() const;
+	bool isModel() const;
 
 private:
 	void notifyInsert(const std::string& key, KeyValue& value);

@@ -31,10 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entitylib.h"
 #include "pivot.h"
 
-#include "uniquenames.h"
-#include "namekeys.h"
-
-#include "doom3group/Doom3GroupNode.h"
+#include "Doom3Entity.h"
 #include "light/LightShader.h"
 #include "curve/CurveEditInstance.h"
 #include "target/RenderableTargetInstances.h"

@@ -2,6 +2,8 @@
 #define MAPROOTNODE_H_
 
 #include "nameable.h"
+#include "inamespace.h"
+#include "imap.h"
 #include "selectionlib.h"
 #include "UndoFileChangeTracker.h"
 #include "scenelib.h"
@@ -19,7 +21,8 @@ namespace map {
  * 			and instantiates the node as soon as it gets notified about it.
  */
 class RootNode : 
-	public scene::Node, 
+	public scene::Node,
+	public IMapRootNode,
 	public Nameable,
 	public TransformNode,
 	public MapFile
@@ -30,11 +33,18 @@ class RootNode :
 	std::string _name;
 	
 	UndoFileChangeTracker m_changeTracker;
+
+	// The namespace this node belongs to
+	INamespacePtr _namespace;
+
 public:
 	// Constructor, pass the name of the map to it
 	RootNode(const std::string& name);
 	
 	virtual ~RootNode();
+
+	// Returns the reference to the Namespace of this rootnode
+	INamespacePtr getNamespace();
 	
 	// TransformNode implementation
 	virtual const Matrix4& localToParent() const;
@@ -52,6 +62,10 @@ public:
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
+
+	// Override the methods inherited from scene::Node 
+	virtual void addChildNode(const scene::INodePtr& node);
+	virtual void removeChildNode(const scene::INodePtr& node);
 
 	// Cloneable implementation
 	scene::INodePtr clone() const;
