@@ -41,7 +41,7 @@ darkradiant_SOURCES = main.cpp \
 					  camera/CameraSettings.cpp \
 					  camera/CamWnd.cpp \
 					  namespace/Namespace.cpp \
-					  namespace/NameObserver.cpp \
+					  namespace/NamespaceFactory.cpp \
 					  render/backend/OpenGLStateMap.cpp \
 					  render/backend/OpenGLShader.cpp \
 					  render/backend/GLProgramFactory.cpp \

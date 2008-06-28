@@ -6,7 +6,6 @@
 #include "inamespace.h"
 #include "iscenegraph.h"
 #include "UniqueNameSet.h"
-#include "NameObserver.h"
 
 class Namespace : 
 	public INamespace

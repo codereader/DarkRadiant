@@ -23,6 +23,7 @@ entity_la_SOURCES = origin.cpp \
                     speaker/SpeakerSettings.cpp \
                     speaker/SpeakerNode.cpp \
                     Doom3Entity.cpp \
+                    EntityNode.cpp \
                     doom3group/Doom3Group.cpp \
                     doom3group/Doom3GroupNode.cpp \
                     angles.cpp \
@@ -34,7 +35,9 @@ entity_la_SOURCES = origin.cpp \
                     generic/GenericEntity.cpp \
                     generic/GenericEntityNode.cpp \
                     keyobservers.cpp \
-                    namekeys.cpp \
+                    NamespaceManager.cpp \
+                    KeyValueObserver.cpp \
+                    NameKeyObserver.cpp \
                     colour.cpp \
                     entity.cpp \
                     scale.cpp \
