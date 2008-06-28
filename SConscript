@@ -626,7 +626,6 @@ radiant_src = \
          'map/algorithm/Traverse.cpp',
          'namespace/Namespace.cpp',
 	 'namespace/NamespaceFactory.cpp',
-         'namespace/NameObserver.cpp',
          'render/backend/OpenGLStateBucket.cpp',
          'render/backend/OpenGLShader.cpp',
          'render/backend/OpenGLStateMap.cpp',
