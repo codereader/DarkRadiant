@@ -855,14 +855,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\namespace\NameObserver.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\namespace\NameObserver.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\radiant\namespace\Namespace.cpp"
 					>
 				</File>
