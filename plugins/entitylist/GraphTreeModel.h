@@ -30,7 +30,7 @@ public:
 
 private:
 	// This maps scene::Nodes to TreeNode structures to allow fast lookups in the tree
-	typedef std::map<scene::INodePtr, GraphTreeNodePtr> NodeMap;
+	typedef std::map<scene::INodeWeakPtr, GraphTreeNodePtr> NodeMap;
 	NodeMap _nodemap;
 	
 	// The NULL treenode, must always be empty
@@ -41,7 +41,6 @@ private:
 	
 public:
 	GraphTreeModel();
-	
 	~GraphTreeModel();
 	
 	// Inserts the instance into the tree, returns the GtkTreeIter*
@@ -74,9 +73,9 @@ public:
 	// scene::Graph::Observer implementation
 
 	// Gets called when a new <node> is inserted into the scenegraph
-	virtual void onSceneNodeInsert(const scene::INodePtr& node);
+	void onSceneNodeInsert(const scene::INodePtr& node);
 	// Gets called when <node> is removed from the scenegraph
-	virtual void onSceneNodeErase(const scene::INodePtr& node);
+	void onSceneNodeErase(const scene::INodePtr& node);
 		
 private:
 	// Looks up the parent of the given node, can return NULL (empty shared_ptr)
