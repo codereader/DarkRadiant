@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include "iscenegraph.h"
+#include "scenelib.h"
 #include "ientity.h"
 #include "ieclass.h"
 
@@ -13,34 +13,36 @@ namespace map {
  * 			counting all occurrences of each entity class. 
  */
 class EntityBreakdown :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 public:
 	typedef std::map<std::string, std::size_t> Map;
 
 private:
-	mutable Map _map;
+	Map _map;
 
 public:
 	EntityBreakdown() {
 		_map.clear();
-		GlobalSceneGraph().traverse(*this);
+		Node_traverseSubgraph(GlobalSceneGraph().root(), *this);
 	}
 	
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		// Is this node an entity?
-		Entity* entity = Node_getEntity(path.top());
+		Entity* entity = Node_getEntity(node);
+
 		if (entity != NULL) {
 			IEntityClassConstPtr eclass = entity->getEntityClass();
 			std::string ecName = eclass->getName();
       
-			if (_map.find(ecName) == _map.end()) {
+			Map::iterator found = _map.find(ecName);
+			if (found == _map.end()) {
 				// Entity class not yet registered, create new entry
-				_map[ecName] = 1;
+				_map.insert(Map::value_type(ecName, 1));
 			}
 			else {
 				// Eclass is known, increase the counter
-				_map[ecName]++;
+				found->second++;
 			}
 		}
 		
@@ -52,11 +54,11 @@ public:
 		return _map;
 	}
 	
-	Map::iterator begin() {
+	Map::const_iterator begin() const {
 		return _map.begin();
 	}
 	
-	Map::iterator end() {
+	Map::const_iterator end() const {
 		return _map.end();
 	}
 
