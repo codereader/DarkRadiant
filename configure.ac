@@ -121,7 +121,7 @@ AC_SUBST([CXXFLAGS])
 # Generate output files
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile 
-                 radiant/Makefile 
+                 radiant/Makefile
                  libs/Makefile
                  libs/ddslib/Makefile
                  libs/gtkutil/Makefile
@@ -134,6 +134,7 @@ AC_CONFIG_FILES([Makefile
                  plugins/archivezip/Makefile
                  plugins/eclassmgr/Makefile
                  plugins/entity/Makefile
+                 plugins/entitylist/Makefile
                  plugins/eventmanager/Makefile
                  plugins/filetypes/Makefile
                  plugins/filters/Makefile

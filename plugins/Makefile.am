@@ -2,6 +2,7 @@ SUBDIRS = eventmanager \
           archivezip \
           eclassmgr \
           entity \
+		  entitylist \
           filetypes \
           filters \
           grid \
