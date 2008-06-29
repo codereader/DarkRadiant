@@ -60,7 +60,7 @@ const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node) {
 	
 	// Insert this iterator into the node map to facilitate lookups
 	std::pair<NodeMap::iterator, bool> result = _nodemap.insert(
-		NodeMap::value_type(node, gtNode)
+		NodeMap::value_type(scene::INodeWeakPtr(node), gtNode)
 	);
 	
 	// Return the GraphTreeNode reference
@@ -68,7 +68,7 @@ const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node) {
 }
 
 void GraphTreeModel::erase(const scene::INodePtr& node) {
-	NodeMap::iterator found = _nodemap.find(node);
+	NodeMap::iterator found = _nodemap.find(scene::INodeWeakPtr(node));
 	
 	if (found != _nodemap.end()) {
 		// Remove this from the GtkTreeStore...
@@ -80,7 +80,7 @@ void GraphTreeModel::erase(const scene::INodePtr& node) {
 }
 
 const GraphTreeNodePtr& GraphTreeModel::find(const scene::INodePtr& node) const {
-	NodeMap::const_iterator found = _nodemap.find(node);
+	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
 	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
 }
 
@@ -103,7 +103,7 @@ void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection) {
 }
 
 void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection, const scene::INodePtr& node) {
-	NodeMap::const_iterator found = _nodemap.find(node);
+	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
 	
 	if (found != _nodemap.end()) {
 		if (Node_isSelected(node)) {
@@ -136,7 +136,7 @@ const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::INodePtr& no
 	}
 	
 	// Try to find the node
-	NodeMap::const_iterator found = _nodemap.find(parent);
+	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(parent));
 	
 	// Return NULL (empty shared_ptr) if not found
 	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
