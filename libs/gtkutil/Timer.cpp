@@ -5,6 +5,7 @@ namespace gtkutil
 
 // Constructor (instantiate with timeout in millisec. and a static callback function)
 Timer::Timer(const unsigned long timeout, TimerCallback callback, gpointer data) :
+	_timerID(0),
 	_timeout(timeout),
 	_callback(callback),
 	_data(data)
