@@ -32,6 +32,13 @@ public:
 		// Insert this node into the GraphTreeModel
 		_model.insert(node);
 		
+		Entity* ent = Node_getEntity(node);
+
+		if (ent != NULL && ent->getKeyValue("classname") == "worldspawn") {
+			// Don't accumulate the worldspawn brushes
+			return false;
+		}
+
 		return true; // traverse children
 	}
 };
