@@ -160,6 +160,10 @@ void AutoMapSaver::saveSnapshot() {
 }
 
 void AutoMapSaver::checkSave() {
+	// Check if we have a proper map
+	if (!GlobalMap().isValid() || !ScreenUpdates_Enabled()) {
+		return;
+	}
 
 	// Check if the user is currently pressing a mouse button
 	GdkModifierType mask;
@@ -173,10 +177,6 @@ void AutoMapSaver::checkSave() {
 	
 	// Don't start the save if the user is holding a mouse button
 	if ((mask & anyButton) != 0) {
-		return;
-	}
-
-	if (!GlobalMap().isValid() || !ScreenUpdates_Enabled()) {
 		return;
 	}
 
