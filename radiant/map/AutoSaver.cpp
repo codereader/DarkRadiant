@@ -3,6 +3,7 @@
 #include <iostream>
 #include "mapfile.h"
 #include "iscenegraph.h"
+#include "iradiant.h"
 #include "ipreferencesystem.h"
 
 #include "gdk/gdkwindow.h"
@@ -165,9 +166,22 @@ void AutoMapSaver::checkSave() {
 		return;
 	}
 
+	// greebo: Check if we have a valid main window to grab the pointer
+	GtkWindow* mainWindow = GlobalRadiant().getMainWindow();
+	if (mainWindow == NULL) {
+		return;
+	}
+
+	// Get the GdkWindow from the widget
+	GdkWindow* mainGDKWindow = GTK_WIDGET(mainWindow)->window;
+	if (!GDK_IS_WINDOW(mainGDKWindow)) {
+		// Window might not be "shown" yet
+		return;
+	}
+
 	// Check if the user is currently pressing a mouse button
 	GdkModifierType mask;
-	gdk_window_get_pointer(0, 0, 0, &mask);
+	gdk_window_get_pointer(mainGDKWindow, 0, 0, &mask);
 	
 	const unsigned int anyButton = (
 		GDK_BUTTON1_MASK | GDK_BUTTON2_MASK |
