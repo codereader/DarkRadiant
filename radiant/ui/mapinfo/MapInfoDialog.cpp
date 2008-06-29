@@ -69,7 +69,7 @@ void MapInfoDialog::populateWindow() {
     gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::ScrolledFrame(_treeView), TRUE, TRUE, 0);
     
     // Populate the liststore with the entity count information
-    for (map::EntityBreakdown::Map::iterator i = _entityBreakdown.begin(); 
+    for (map::EntityBreakdown::Map::const_iterator i = _entityBreakdown.begin(); 
 		 i != _entityBreakdown.end(); 
 		 i++)
 	{
