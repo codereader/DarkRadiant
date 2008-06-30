@@ -18,6 +18,8 @@ namespace ui {
 		const std::string WINDOW_TITLE = "Entity List";
 		const std::string RKEY_ROOT = "user/ui/entityList/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+
+		const std::string RKEY_ENTITYLIST_FOCUS_SELECTION = RKEY_ROOT + "focusSelection";
 	}
 
 EntityList::EntityList() : 
@@ -55,6 +57,7 @@ void EntityList::destroyInstance() {
 }
 
 void EntityList::populateWindow() {
+	// Create the treeview
 	_treeView = GTK_TREE_VIEW(gtk_tree_view_new());
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 	
@@ -72,11 +75,24 @@ void EntityList::populateWindow() {
 	gtk_tree_view_append_column (_treeView, column);
 	gtk_tree_view_column_set_sort_column_id(column, GraphTreeModel::COL_NAME);
 	gtk_tree_view_column_clicked(column);
+
+	// Create the toggle item
+	_focusOnSelectedEntityToggle = gtk_check_button_new_with_label("Focus on the selected entity in the camera.");
+
+	// Update the toggle item status according to the registry
+	bool isActive = GlobalRegistry().get(RKEY_ENTITYLIST_FOCUS_SELECTION) == "1";
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_focusOnSelectedEntityToggle), isActive);
+
+	// Connect the toggle button's "toggled" signal
+	g_signal_connect(G_OBJECT(_focusOnSelectedEntityToggle), "toggled", G_CALLBACK(onFocusSelectionToggle), this);
 	
-	gtk_container_add(
-		GTK_CONTAINER(getWindow()), 
-		gtkutil::ScrolledFrame(GTK_WIDGET(_treeView))
-	);
+	// Create a VBOX
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::ScrolledFrame(GTK_WIDGET(_treeView)), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), _focusOnSelectedEntityToggle, FALSE, FALSE, 0);
+
+	// Pack the VBOX into the window
+	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);	
 }
 
 void EntityList::update() {
@@ -192,6 +208,15 @@ void EntityList::onRowExpand(GtkTreeView* view, GtkTreeIter* iter, GtkTreePath* 
 	self->update();
 }
 
+void EntityList::onFocusSelectionToggle(GtkToggleButton* togglebutton, EntityList* self)
+{
+	// Update the registry state in the registry
+	bool active = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(self->_focusOnSelectedEntityToggle)) ? true : false;
+
+	GlobalRegistry().set(RKEY_ENTITYLIST_FOCUS_SELECTION, active ? "1" : "0");
+}
+
 gboolean EntityList::onSelection(GtkTreeSelection* selection, 
 								GtkTreeModel* model, 
 								GtkTreePath* path, 
@@ -200,9 +225,14 @@ gboolean EntityList::onSelection(GtkTreeSelection* selection,
 {
 	// Get a pointer to the class instance
 	EntityList* self = reinterpret_cast<EntityList*>(data);
-	
+
 	if (self->_callbackActive) return TRUE; // avoid loops
+
+	bool shouldFocus = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(self->_focusOnSelectedEntityToggle)) ? true : false;
 	
+	if (!shouldFocus) return TRUE;
+
 	GtkTreeIter iter;
 	gtk_tree_model_get_iter(model, &iter, path);
 	

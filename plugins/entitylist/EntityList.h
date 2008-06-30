@@ -14,6 +14,7 @@ typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GtkTreeIter GtkTreeIter;
 typedef struct _GtkTreePath GtkTreePath;
 typedef struct _GtkTreeModel GtkTreeModel;
+typedef struct _GtkToggleButton GtkToggleButton;
 
 namespace ui {
 
@@ -31,6 +32,9 @@ class EntityList :
 	
 	// The GraphTreeModel instance
 	GraphTreeModel _treeModel; 
+
+	// The small checkbox in the lower half
+	GtkWidget* _focusOnSelectedEntityToggle;
 
 	gtkutil::WindowPosition _windowPosition;
 
@@ -65,6 +69,8 @@ private:
 	
 	static gboolean onSelection(GtkTreeSelection *selection, GtkTreeModel *model, 
 								GtkTreePath *path, gboolean path_currently_selected, gpointer data);
+
+	static void onFocusSelectionToggle(GtkToggleButton* togglebutton, EntityList* self);
 
 	// (private) Constructor, creates all the widgets
 	EntityList();
