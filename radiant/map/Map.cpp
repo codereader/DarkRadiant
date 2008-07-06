@@ -261,6 +261,7 @@ void Map::freeMap() {
 	GlobalSelectionSystem().setSelectedAllComponents(false);
 
 	GlobalShaderClipboard().clear();
+	GlobalRegion().clear();
 
 	m_resource->removeObserver(*this);
 

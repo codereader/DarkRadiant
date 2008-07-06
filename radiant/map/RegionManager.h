@@ -45,6 +45,9 @@ class RegionManager
 	
 public:
 	RegionManager();
+
+	// Clears the region information (and releases the wall brushes too)
+	void clear();
 	
 	/** greebo: Applies the currently active AABB to the scenegraph.
 	 * This excludes all nodes out of the current region bounds. 

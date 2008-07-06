@@ -95,6 +95,14 @@ void RegionManager::enable() {
 	GlobalSceneGraph().traverse(ExcludeRegionedWalker(false, _bounds));
 }
 
+void RegionManager::clear() {
+	for (int i = 0; i < 6; i++) {
+		_brushes[i] = scene::INodePtr();
+	}
+
+	_playerStart = scene::INodePtr();
+}
+
 const AABB& RegionManager::getRegion() const {
 	return _bounds;
 }
