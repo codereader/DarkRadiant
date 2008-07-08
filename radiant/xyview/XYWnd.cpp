@@ -1098,7 +1098,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
 
   glColor3dv(ColourSchemes().getColour("brush_size_info"));
 
-  std::ostringstream dimensions;
+  std::string dimensions;
 
   if (m_viewType == XY)
   {
@@ -1126,18 +1126,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
     glEnd();
 
     glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale, 0.0f);
-    dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.str());
-    dimensions.clear();
+    dimensions = g_pDimStrings[nDim1] + doubleToStr(vSize[nDim1]);
+    GlobalOpenGL().drawString(dimensions);
     
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
-    dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.str());
-    dimensions.clear();
+    dimensions = g_pDimStrings[nDim2] + doubleToStr(vSize[nDim2]);
+    GlobalOpenGL().drawString(dimensions);
 
     glRasterPos3f (vMinBounds[nDim1] + 4, vMaxBounds[nDim2] + 8 / m_fScale, 0.0f);
-    dimensions << "(" << g_pOrgStrings[0][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[0][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.str());
+	dimensions = std::string("(") + g_pOrgStrings[0][0] + doubleToStr(vMinBounds[nDim1]) + "  " 
+		+ g_pOrgStrings[0][1] + doubleToStr(vMaxBounds[nDim2]) + ")";
+    GlobalOpenGL().drawString(dimensions);
   }
   else if (m_viewType == XZ)
   {
@@ -1165,18 +1164,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
     glEnd();
 
     glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0f  / m_fScale);
-    dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.str());
-    dimensions.clear();
+    dimensions = g_pDimStrings[nDim1] + doubleToStr(vSize[nDim1]);
+    GlobalOpenGL().drawString(dimensions);
     
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
-    dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.str());
-    dimensions.clear();
+    dimensions = g_pDimStrings[nDim2] + doubleToStr(vSize[nDim2]);
+    GlobalOpenGL().drawString(dimensions);
 
     glRasterPos3f (vMinBounds[nDim1] + 4, 0, vMaxBounds[nDim2] + 8 / m_fScale);
-    dimensions << "(" << g_pOrgStrings[1][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[1][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.str());
+	dimensions = std::string("(") + g_pOrgStrings[1][0] + doubleToStr(vMinBounds[nDim1])
+		+ "  " + g_pOrgStrings[1][1] + doubleToStr(vMaxBounds[nDim2]) + ")";
+    GlobalOpenGL().drawString(dimensions);
   }
   else
   {
@@ -1204,18 +1202,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMa
     glEnd();
 
     glRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / m_fScale);
-    dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.str());
-    dimensions.clear();
-    
+    dimensions = g_pDimStrings[nDim1] + doubleToStr(vSize[nDim1]);
+    GlobalOpenGL().drawString(dimensions);
+        
     glRasterPos3f (0, vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
-    dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.str());
-    dimensions.clear();
-
+    dimensions = g_pDimStrings[nDim2] + doubleToStr(vSize[nDim2]);
+    GlobalOpenGL().drawString(dimensions);
+    
     glRasterPos3f (0, vMinBounds[nDim1] + 4.0f, vMaxBounds[nDim2] + 8 / m_fScale);
-    dimensions << "(" << g_pOrgStrings[2][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[2][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.str());
+	dimensions = std::string("(") + g_pOrgStrings[2][0] + doubleToStr(vMinBounds[nDim1])
+		+ "  " + g_pOrgStrings[2][1] + doubleToStr(vMaxBounds[nDim2]) + ")";
+    GlobalOpenGL().drawString(dimensions);
   }
 }
 
