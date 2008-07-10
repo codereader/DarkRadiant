@@ -26,14 +26,9 @@ XMLRegistry::~XMLRegistry() {
 	deleteXPath(RKEY_SETTINGS_PATH);
 	deleteXPath(RKEY_BITMAPS_PATH);
 
-#if defined(POSIX) && defined(PKGDATADIR)
-    // Use "/usr/share/darkradiant" (default) on POSIX
-    std::string settingsPath = os::standardPathWithSlash(PKGDATADIR);
-#else
     // Application-relative on other OS
 	std::string settingsPath = 
 		module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
-#endif
 
 	// Save the user tree to the settings path, this contains all
 	// settings that have been modified during runtime
@@ -258,6 +253,10 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx) {
 	if (file_exists(userSettingsFile.c_str())) {
 		import(userSettingsFile, "", Registry::treeUser);
 	}
+    else {
+        globalOutputStream() << 
+            "XMLRegistry: no user.xml in " << userSettingsFile << "\n";
+    }
 	
 	const std::string userColoursFile = ctx.getSettingsPath() + "colours.xml";
 	if (file_exists(userColoursFile.c_str())) {
