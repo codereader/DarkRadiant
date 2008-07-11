@@ -135,6 +135,36 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	gtk_table_attach_defaults(table, _propertyWidgets.timer.waitToggle, 0, 2, curRow, curRow+1);
 
 	curRow++;
+
+	// Time Interval
+	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 6);
+	_propertyWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
+	_propertyWidgets.timeIntEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry), 0);
+	_propertyWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
+		
+	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeUnitLabel, FALSE, FALSE, 0);
+	
+	gtk_table_attach(table, _propertyWidgets.timeIntToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(table, timeHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+
+	curRow++;
+
+	// Duration
+	GtkWidget* durationHBox = gtk_hbox_new(FALSE, 6);
+	_propertyWidgets.durationToggle = gtk_check_button_new_with_label("Duration:");
+	_propertyWidgets.durationEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.durationEntry), 0);
+	_propertyWidgets.durationUnitLabel = gtkutil::RightAlignedLabel("ms");
+	
+	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationEntry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationUnitLabel, FALSE, FALSE, 0);
+	
+	gtk_table_attach(table, _propertyWidgets.durationToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(table, durationHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+
+	curRow++;
 	
 	// Radius / Use Bounds
 	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
@@ -184,36 +214,6 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	gtk_table_attach(table, _propertyWidgets.magnToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach(table, magnHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-
-	curRow++;
-	
-	// Time Interval
-	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.timeIntToggle = gtk_check_button_new_with_label("Time interval:");
-	_propertyWidgets.timeIntEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry), 0);
-	_propertyWidgets.timeUnitLabel = gtkutil::RightAlignedLabel("ms");
-		
-	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntEntry, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeUnitLabel, FALSE, FALSE, 0);
-	
-	gtk_table_attach(table, _propertyWidgets.timeIntToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, timeHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-
-	curRow++;
-	
-	// Duration
-	GtkWidget* durationHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.durationToggle = gtk_check_button_new_with_label("Duration:");
-	_propertyWidgets.durationEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.durationEntry), 0);
-	_propertyWidgets.durationUnitLabel = gtkutil::RightAlignedLabel("ms");
-	
-	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationEntry, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationUnitLabel, FALSE, FALSE, 0);
-	
-	gtk_table_attach(table, _propertyWidgets.durationToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, durationHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 
 	curRow++;
 	
@@ -350,6 +350,11 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	}
 	else if (toggleWidget == _propertyWidgets.radiusToggle) {
 		setProperty("radius", active ? "10" : "");
+
+		// Clear final radius if disabled
+		if (!active) {
+			setProperty("radius_final", "");	
+		}
 	}
 	if (toggleWidget == _propertyWidgets.finalRadiusToggle) {
 		setProperty("radius_final", active ? "10" : "");
@@ -408,6 +413,11 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	}
 	else if (toggleWidget == _propertyWidgets.durationToggle) {
 		setProperty("duration", active ? "1000" : "");
+
+		// Clear final radius if disabled
+		if (!active) {
+			setProperty("radius_final", "");	
+		}
 	}
 	else if (toggleWidget == _propertyWidgets.timer.toggle) {
 		std::string timerStr = getTimerString();
@@ -533,26 +543,7 @@ void StimEditor::update() {
 		);
 		gtk_widget_set_sensitive(_propertyWidgets.useBounds, useRadius);
 
-		// Use Final radius
-		bool useFinalRadius = (sr.get("radius_final") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.finalRadiusToggle),
-			useFinalRadius
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.finalRadiusEntry), 
-			strToFloat(sr.get("radius_final"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.finalRadiusToggle, 
-			useRadius
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.finalRadiusEntry, 
-			useFinalRadius && useRadius
-		);
-		
-		// Use Time interval
+		// Use Duration
 		bool useDuration = (sr.get("duration") != "");
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_propertyWidgets.durationToggle),
@@ -588,6 +579,25 @@ void StimEditor::update() {
 		gtk_widget_set_sensitive(
 			_propertyWidgets.timeUnitLabel, 
 			useTimeInterval
+		);
+
+		// Use Final radius (duration must be enabled for this to work)
+		bool useFinalRadius = (sr.get("radius_final") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.finalRadiusToggle),
+			useFinalRadius && useDuration
+		);
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.finalRadiusEntry), 
+			strToFloat(sr.get("radius_final"))
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.finalRadiusToggle, 
+			useRadius && useDuration
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.finalRadiusEntry, 
+			useFinalRadius && useDuration && useRadius
 		);
 		
 		// Timer time
