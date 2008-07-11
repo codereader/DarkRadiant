@@ -67,7 +67,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
 	
 	// Create the table for the widget alignment
-	GtkTable* table = GTK_TABLE(gtk_table_new(11, 2, FALSE));
+	GtkTable* table = GTK_TABLE(gtk_table_new(12, 2, FALSE));
 	gtk_table_set_row_spacings(table, 6);
 	gtk_table_set_col_spacings(table, 6);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
@@ -183,7 +183,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 
 	// Final Radius
 	GtkWidget* finalRadiusHBox = gtk_hbox_new(FALSE, 0);
-	_propertyWidgets.finalRadiusToggle = gtk_check_button_new_with_label("Let radius change over time to:");
+	_propertyWidgets.finalRadiusToggle = gtk_check_button_new_with_label("Radius changes over time to:");
 	
 	_propertyWidgets.finalRadiusEntry = gtk_spin_button_new_with_range(0, 99999, 1);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.finalRadiusEntry), 1);
@@ -214,6 +214,18 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	
 	gtk_table_attach(table, _propertyWidgets.magnToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach(table, magnHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+
+	curRow++;
+
+	// Max fire count
+	_propertyWidgets.maxFireCountToggle = gtk_check_button_new_with_label("Max Fire Count:");
+	_propertyWidgets.maxFireCountEntry = gtk_spin_button_new_with_range(0, 1000000, 1);
+
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.maxFireCountEntry), 0);
+	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.maxFireCountEntry), 7);
+	
+	gtk_table_attach(table, _propertyWidgets.maxFireCountToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(table, _propertyWidgets.maxFireCountEntry, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 
 	curRow++;
 	
@@ -263,6 +275,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.magnEntry)] = "magnitude";
 	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.falloffEntry)] = "falloffexponent";
 	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)] = "chance";
+	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.maxFireCountEntry)] = "max_fire_count";
 	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.durationEntry)] = "duration";
 	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry)] = "timer_reload";
 	
@@ -280,6 +293,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.typeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.maxFireCountToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.durationToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
@@ -299,6 +313,7 @@ GtkWidget* StimEditor::createPropertyWidgets() {
 	g_signal_connect(G_OBJECT(_propertyWidgets.finalRadiusEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
+	g_signal_connect(G_OBJECT(_propertyWidgets.maxFireCountEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.durationEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.hour), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
 	g_signal_connect(G_OBJECT(_propertyWidgets.timer.minute), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
@@ -361,6 +376,9 @@ void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
 	}
 	else if (toggleWidget == _propertyWidgets.magnToggle) {
 		setProperty("magnitude", active ? "10" : "");
+	}
+	else if (toggleWidget == _propertyWidgets.maxFireCountToggle) {
+		setProperty("max_fire_count", active ? "10" : "");
 	}
 	else if (toggleWidget == _propertyWidgets.falloffToggle) {
 		setProperty("falloffexponent", active ? "1" : "");
@@ -703,6 +721,21 @@ void StimEditor::update() {
 		gtk_widget_set_sensitive(
 			_propertyWidgets.chanceEntry, 
 			useChance
+		);
+
+		// Use Max Fire Count
+		bool useMaxFireCount = (sr.get("max_fire_count") != "");
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_propertyWidgets.maxFireCountToggle),
+			useMaxFireCount
+		);
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_propertyWidgets.maxFireCountEntry),
+			strToFloat(sr.get("max_fire_count"))
+		);
+		gtk_widget_set_sensitive(
+			_propertyWidgets.maxFireCountEntry, 
+			useMaxFireCount
 		);
 		
 		// Use Velocity
