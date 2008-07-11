@@ -40,7 +40,9 @@ class StimEditor :
 		
 		GtkWidget* durationToggle;
 		GtkWidget* durationEntry;
-		GtkWidget* durationUnitLabel;		
+		GtkWidget* durationUnitLabel;
+		GtkWidget* maxFireCountToggle;
+		GtkWidget* maxFireCountEntry;
 		GtkWidget* magnToggle;
 		GtkWidget* magnEntry;
 		GtkWidget* falloffToggle;
