@@ -8,5 +8,6 @@ Standards-Version: 3.7.2
 Package: darkradiant
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: Level editor for Doom 3 and The Dark Mod
+ DarkRadiant is a 3D level editor for Doom 3 and The Dark Mod, based on the GPL
+ release of GtkRadiant.
