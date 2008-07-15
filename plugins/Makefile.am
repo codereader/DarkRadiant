@@ -23,5 +23,4 @@ SUBDIRS = eventmanager \
 SUBDIRS += @sound_module@
 
 # Optional plugins
-SUBDIRS += @sr_plugin@
-SUBDIRS += @obj_plugin@
+SUBDIRS += @sr_plugin@ @obj_plugin@ @difficulty_plugin@
