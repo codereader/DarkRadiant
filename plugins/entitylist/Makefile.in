@@ -50,8 +50,9 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-entitylist_la_DEPENDENCIES = $(libspath)/gtkutil/libgtkutil.a \
-	$(libspath)/xmlutil/libxmlutil.a
+entitylist_la_DEPENDENCIES =  \
+	$(top_builddir)/libs/gtkutil/libgtkutil.a \
+	$(top_builddir)/libs/xmlutil/libxmlutil.a
 am_entitylist_la_OBJECTS = EntityListModule.lo EntityList.lo \
 	GraphTreeModel.lo
 entitylist_la_OBJECTS = $(am_entitylist_la_OBJECTS)
@@ -204,13 +205,14 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath) $(GTK_CFLAGS) $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
+			  $(GTK_CFLAGS) $(XML_CFLAGS)
+
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entitylist.la
 entitylist_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
-entitylist_la_LIBADD = $(libspath)/gtkutil/libgtkutil.a \
-					   $(libspath)/xmlutil/libxmlutil.a
+entitylist_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a \
+					   $(top_builddir)/libs/xmlutil/libxmlutil.a
 
 entitylist_la_SOURCES = EntityListModule.cpp EntityList.cpp GraphTreeModel.cpp
 all: all-am

@@ -1,8 +1,8 @@
-AM_CPPFLAGS = -I../../include \
-			   -I.. \
-			   $(GTK_CFLAGS) \
-			   $(GTKGLEXT_CFLAGS) \
-			   $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include \
+			  -I$(top_srcdir)/libs \
+			  $(GTK_CFLAGS) \
+			  $(GTKGLEXT_CFLAGS) \
+			  $(XML_CFLAGS)
 AM_CXXFLAGS = -fPIC
 
 noinst_LIBRARIES = libgtkutil.a

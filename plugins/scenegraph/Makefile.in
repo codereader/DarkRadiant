@@ -50,7 +50,8 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-scenegraph_la_DEPENDENCIES = $(libspath)/scene/libscenegraph.a
+scenegraph_la_DEPENDENCIES =  \
+	$(top_builddir)/libs/scene/libscenegraph.a
 am_scenegraph_la_OBJECTS = SceneGraph.lo
 scenegraph_la_OBJECTS = $(am_scenegraph_la_OBJECTS)
 scenegraph_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -202,11 +203,10 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = scenegraph.la
-scenegraph_la_LIBADD = $(libspath)/scene/libscenegraph.a
+scenegraph_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.a
 scenegraph_la_LDFLAGS = -module -avoid-version
 scenegraph_la_SOURCES = SceneGraph.cpp
 all: all-am

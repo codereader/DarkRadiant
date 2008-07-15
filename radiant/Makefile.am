@@ -1,6 +1,8 @@
+libsdir = $(top_srcdir)/libs
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
 			  -DPKGDATADIR='"$(pkgdatadir)"' \
-              -I../libs -I../include \
+              -I$(top_srcdir)/include \
+			  -I$(libsdir) \
               $(GTK_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
 
 bin_PROGRAMS = darkradiant
@@ -11,10 +13,10 @@ darkradiant_LDFLAGS = $(GTK_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS)
-darkradiant_LDADD = ../libs/scene/libscenegraph.a \
-					../libs/gtkutil/libgtkutil.a \
-					../libs/xmlutil/libxmlutil.a \
-                    ../libs/math/libmath.a
+darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.a \
+					$(top_builddir)/libs/gtkutil/libgtkutil.a \
+					$(top_builddir)/libs/xmlutil/libxmlutil.a \
+                    $(top_builddir)/libs/math/libmath.a
 darkradiant_SOURCES = main.cpp \
 					  RadiantModule.cpp \
 					  brushmanip.cpp \

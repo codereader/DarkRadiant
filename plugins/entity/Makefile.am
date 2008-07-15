@@ -1,11 +1,11 @@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath) $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entity.la
 
 entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS)
-entity_la_LIBADD = $(libspath)/math/libmath.a $(libspath)/scene/libscenegraph.a
+entity_la_LIBADD = $(top_builddir)/libs/math/libmath.a \
+				   $(top_builddir)/libs/scene/libscenegraph.a
 entity_la_SOURCES = origin.cpp \
                     angle.cpp \
                     ModelKey.cpp \

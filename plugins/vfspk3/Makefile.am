@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I../../include -I../../libs $(GLIB_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GLIB_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = vfspk3.la
