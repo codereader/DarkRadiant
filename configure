@@ -872,6 +872,7 @@ ac_ct_F77
 LIBTOOL
 sr_plugin
 obj_plugin
+difficulty_plugin
 Z_LIBS
 PKG_CONFIG
 GLIB_CFLAGS
@@ -4838,7 +4839,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 4841 "configure"' > conftest.$ac_ext
+  echo '#line 4842 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7417,11 +7418,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7420: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7421: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7424: \$? = $ac_status" >&5
+   echo "$as_me:7425: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7707,11 +7708,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7710: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7711: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7714: \$? = $ac_status" >&5
+   echo "$as_me:7715: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7811,11 +7812,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7814: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7815: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7818: \$? = $ac_status" >&5
+   echo "$as_me:7819: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10188,7 +10189,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10191 "configure"
+#line 10192 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10288,7 +10289,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10291 "configure"
+#line 10292 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12689,11 +12690,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12692: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12693: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:12696: \$? = $ac_status" >&5
+   echo "$as_me:12697: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -12793,11 +12794,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12796: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12797: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:12800: \$? = $ac_status" >&5
+   echo "$as_me:12801: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14391,11 +14392,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14394: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14395: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14398: \$? = $ac_status" >&5
+   echo "$as_me:14399: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14495,11 +14496,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14498: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14499: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14502: \$? = $ac_status" >&5
+   echo "$as_me:14503: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16715,11 +16716,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16718: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16719: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16722: \$? = $ac_status" >&5
+   echo "$as_me:16723: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17005,11 +17006,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17008: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17009: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17012: \$? = $ac_status" >&5
+   echo "$as_me:17013: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17109,11 +17110,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17112: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17113: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17116: \$? = $ac_status" >&5
+   echo "$as_me:17117: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19821,7 +19822,9 @@ then
     # Enable conditional directories (used by plugins/Makefile.am)
     sr_plugin="dm.stimresponse"
     obj_plugin="dm.objectives"
+    difficulty_plugin="dm.difficulty"
 fi
+
 
 
 
@@ -21490,7 +21493,7 @@ fi
 # Generate output files
 ac_config_headers="$ac_config_headers config.h"
 
-ac_config_files="$ac_config_files Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile"
+ac_config_files="$ac_config_files Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -22113,6 +22116,7 @@ do
     "plugins/xmlregistry/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/xmlregistry/Makefile" ;;
     "plugins/dm.stimresponse/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/dm.stimresponse/Makefile" ;;
     "plugins/dm.objectives/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/dm.objectives/Makefile" ;;
+    "plugins/dm.difficulty/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/dm.difficulty/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
@@ -22322,6 +22326,7 @@ ac_ct_F77!$ac_ct_F77$ac_delim
 LIBTOOL!$LIBTOOL$ac_delim
 sr_plugin!$sr_plugin$ac_delim
 obj_plugin!$obj_plugin$ac_delim
+difficulty_plugin!$difficulty_plugin$ac_delim
 Z_LIBS!$Z_LIBS$ac_delim
 PKG_CONFIG!$PKG_CONFIG$ac_delim
 GLIB_CFLAGS!$GLIB_CFLAGS$ac_delim
@@ -22345,7 +22350,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 30; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 31; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
