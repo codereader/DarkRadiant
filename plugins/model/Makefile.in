@@ -50,8 +50,9 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-model_la_DEPENDENCIES = $(libspath)/picomodel/libpicomodel.a \
-	$(libspath)/math/libmath.a $(libspath)/scene/libscenegraph.a
+model_la_DEPENDENCIES = $(top_builddir)/libs/picomodel/libpicomodel.a \
+	$(top_builddir)/libs/math/libmath.a \
+	$(top_builddir)/libs/scene/libscenegraph.a
 am_model_la_OBJECTS = PicoModelNode.lo RenderablePicoModel.lo \
 	PicoModelLoader.lo RenderablePicoSurface.lo plugin.lo
 model_la_OBJECTS = $(am_model_la_OBJECTS)
@@ -204,14 +205,13 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = model.la
 model_la_LDFLAGS = -module -avoid-version $(GLEW_LIBS) $(GL_LIBS)
-model_la_LIBADD = $(libspath)/picomodel/libpicomodel.a \
-				  $(libspath)/math/libmath.a \
-				  $(libspath)/scene/libscenegraph.a
+model_la_LIBADD = $(top_builddir)/libs/picomodel/libpicomodel.a \
+				  $(top_builddir)/libs/math/libmath.a \
+				  $(top_builddir)/libs/scene/libscenegraph.a
 
 model_la_SOURCES = PicoModelNode.cpp \
                    RenderablePicoModel.cpp \

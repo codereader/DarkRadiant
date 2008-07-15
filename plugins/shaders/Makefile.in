@@ -50,7 +50,7 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-shaders_la_DEPENDENCIES = $(libspath)/xmlutil/libxmlutil.a
+shaders_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.a
 am_shaders_la_OBJECTS = ShaderTemplate.lo CShader.lo ShaderLibrary.lo \
 	MapExpression.lo ShaderFileLoader.lo plugin.lo \
 	TextureManipulator.lo FileLoader.lo DefaultConstructor.lo \
@@ -205,11 +205,10 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath) $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = shaders.la
-shaders_la_LIBADD = $(libspath)/xmlutil/libxmlutil.a
+shaders_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.a
 shaders_la_LDFLAGS = -module -avoid-version $(XML_LIBS) $(GL_LIBS) $(GLU_LIBS)
 shaders_la_SOURCES = ShaderTemplate.cpp \
                      CShader.cpp \

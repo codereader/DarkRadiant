@@ -50,7 +50,8 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-xmlregistry_la_DEPENDENCIES = $(libspath)/xmlutil/libxmlutil.a
+xmlregistry_la_DEPENDENCIES =  \
+	$(top_builddir)/libs/xmlutil/libxmlutil.a
 am_xmlregistry_la_OBJECTS = RegistryTree.lo XMLRegistry.lo \
 	XMLRegistryModule.lo
 xmlregistry_la_OBJECTS = $(am_xmlregistry_la_OBJECTS)
@@ -203,14 +204,13 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-libspath = ../../libs
 AM_CPPFLAGS = -DPKGDATADIR='"$(pkgdatadir)"' \
-			  -I../../include -I$(libspath) \
+			  -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 			  $(XML_CFLAGS) $(GLIB_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = xmlregistry.la
-xmlregistry_la_LIBADD = $(libspath)/xmlutil/libxmlutil.a
+xmlregistry_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.a
 xmlregistry_la_LDFLAGS = -module -avoid-version $(XML_LIBS) $(GLIB_LIBS)
 xmlregistry_la_SOURCES = RegistryTree.cpp XMLRegistry.cpp XMLRegistryModule.cpp
 all: all-am

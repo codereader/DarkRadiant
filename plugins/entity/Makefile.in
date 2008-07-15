@@ -50,8 +50,8 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-entity_la_DEPENDENCIES = $(libspath)/math/libmath.a \
-	$(libspath)/scene/libscenegraph.a
+entity_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.a \
+	$(top_builddir)/libs/scene/libscenegraph.a
 am_entity_la_OBJECTS = origin.lo angle.lo ModelKey.lo rotation.lo \
 	Light.lo LightSettings.lo Renderables.lo LightNode.lo \
 	EclassModel.lo EclassModelNode.lo EntityCreator.lo \
@@ -214,12 +214,13 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath) $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entity.la
 entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS)
-entity_la_LIBADD = $(libspath)/math/libmath.a $(libspath)/scene/libscenegraph.a
+entity_la_LIBADD = $(top_builddir)/libs/math/libmath.a \
+				   $(top_builddir)/libs/scene/libscenegraph.a
+
 entity_la_SOURCES = origin.cpp \
                     angle.cpp \
                     ModelKey.cpp \

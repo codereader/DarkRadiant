@@ -1,12 +1,8 @@
-AM_CPPFLAGS = -I../../include -I../../libs $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
 
-pkglib_LTLIBRARIES = grid.la
+modulesdir = $(pkglibdir)/modules
+modules_LTLIBRARIES = grid.la
+
 grid_la_LDFLAGS = -module -avoid-version
 grid_la_SOURCES = Grid.cpp
-
-# Override the Automake install rule, we want to install in $(pkglibdir)/modules
-# not just $(pkglibdir).
-install-exec-am:
-	mkdir -p "$(DESTDIR)$(pkglibdir)/modules" && \
-	$(INSTALL) .libs/grid.so "$(DESTDIR)$(pkglibdir)/modules"
 

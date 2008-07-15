@@ -1,13 +1,12 @@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = model.la
 
 model_la_LDFLAGS = -module -avoid-version $(GLEW_LIBS) $(GL_LIBS)
-model_la_LIBADD = $(libspath)/picomodel/libpicomodel.a \
-				  $(libspath)/math/libmath.a \
-				  $(libspath)/scene/libscenegraph.a
+model_la_LIBADD = $(top_builddir)/libs/picomodel/libpicomodel.a \
+				  $(top_builddir)/libs/math/libmath.a \
+				  $(top_builddir)/libs/scene/libscenegraph.a
 model_la_SOURCES = PicoModelNode.cpp \
                    RenderablePicoModel.cpp \
                    PicoModelLoader.cpp \
