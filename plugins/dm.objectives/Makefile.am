@@ -3,7 +3,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_objectives.la
-dm_objectives_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS)
+
+dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a
+dm_objectives_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS) $(GTK_LIBS)
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   objectives.cpp \
 						   SpecifierType.cpp \

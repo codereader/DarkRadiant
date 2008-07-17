@@ -189,11 +189,11 @@ top_srcdir = @top_srcdir@
 # Conditional modules
 
 # Optional plugins
-SUBDIRS = eventmanager archivezip eclassmgr entity entitylist \
-	filetypes filters grid image mapdoom3 md5model model particles \
-	scenegraph shaders skins uimanager undo vfspk3 xmlregistry \
-	@sound_module@ @sr_plugin@ @obj_plugin@ @difficulty_plugin@ \
-	$(am__empty)
+SUBDIRS = eventmanager archivezip eclassmgr eclasstree entity \
+	entitylist filetypes filters grid image mapdoom3 md5model \
+	model particles scenegraph shaders skins uimanager undo vfspk3 \
+	xmlregistry @sound_module@ @sr_plugin@ @obj_plugin@ \
+	@difficulty_plugin@ $(am__empty)
 all: all-recursive
 
 .SUFFIXES:

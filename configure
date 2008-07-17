@@ -21493,7 +21493,7 @@ fi
 # Generate output files
 ac_config_headers="$ac_config_headers config.h"
 
-ac_config_files="$ac_config_files Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile"
+ac_config_files="$ac_config_files Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/eclasstree/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -22095,6 +22095,7 @@ do
     "plugins/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/Makefile" ;;
     "plugins/archivezip/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/archivezip/Makefile" ;;
     "plugins/eclassmgr/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/eclassmgr/Makefile" ;;
+    "plugins/eclasstree/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/eclasstree/Makefile" ;;
     "plugins/entity/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/entity/Makefile" ;;
     "plugins/entitylist/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/entitylist/Makefile" ;;
     "plugins/eventmanager/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/eventmanager/Makefile" ;;

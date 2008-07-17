@@ -4,7 +4,10 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_stimresponse.la
 
-dm_stimresponse_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS)
+dm_stimresponse_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.a \
+							$(top_builddir)/libs/gtkutil/libgtkutil.a
+dm_stimresponse_la_LDFLAGS = -module -avoid-version \
+						     $(REGEX_LIBS) $(GTK_LIBS) $(XML_LIBS)
 dm_stimresponse_la_SOURCES = ResponseEditor.cpp \
 							 plugin.cpp \
 							 StimResponse.cpp \
