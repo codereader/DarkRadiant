@@ -161,3 +161,22 @@ AC_CONFIG_FILES([Makefile
 
 AC_OUTPUT
 
+# Display configured options
+echo "
+Configuration options:"
+
+echo     " Installation prefix: $prefix"
+if [[ $sound_module != '' ]]
+then
+    echo " Sound:               yes"
+else
+    echo " Sound:               no"
+fi
+
+if [[ $darkmod_plugins != 'no' ]]
+then
+    echo " Darkmod plugins:     yes"
+else
+    echo " Darkmod plugins:     no"
+fi
+
