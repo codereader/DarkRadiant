@@ -135,6 +135,7 @@ AC_CONFIG_FILES([Makefile
                  plugins/Makefile
                  plugins/archivezip/Makefile
                  plugins/eclassmgr/Makefile
+                 plugins/eclasstree/Makefile
                  plugins/entity/Makefile
                  plugins/entitylist/Makefile
                  plugins/eventmanager/Makefile

@@ -1,6 +1,7 @@
 SUBDIRS = eventmanager \
           archivezip \
           eclassmgr \
+		  eclasstree \
           entity \
 		  entitylist \
           filetypes \
