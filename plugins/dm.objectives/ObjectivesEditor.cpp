@@ -17,6 +17,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
 #include <boost/lexical_cast.hpp>
@@ -578,20 +579,32 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 	
 	// Obtain the entity class object
 	IEntityClassPtr eclass = 
-		GlobalEntityClassManager().findOrInsert(OBJECTIVE_ENTITY_CLASS, false);
+		GlobalEntityClassManager().findClass(OBJECTIVE_ENTITY_CLASS);
 		
-	// Construct a Node of this entity type
-	scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
-	
-	// Create a random offset
-	Node_getEntity(node)->setKeyValue("origin", RandomOrigin::generate(128));
-	
-	// Insert the node into the scene graph
-	assert(GlobalSceneGraph().root());
-	GlobalSceneGraph().root()->addChildNode(node);
-	
-	// Refresh the widgets
-	self->populateWidgets();
+    if (eclass) 
+    {
+        // Construct a Node of this entity type
+        scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
+        
+        // Create a random offset
+        Node_getEntity(node)->setKeyValue("origin", RandomOrigin::generate(128));
+        
+        // Insert the node into the scene graph
+        assert(GlobalSceneGraph().root());
+        GlobalSceneGraph().root()->addChildNode(node);
+        
+        // Refresh the widgets
+        self->populateWidgets();
+    }
+    else 
+    {
+        // Objective entityclass was not found
+        gtkutil::errorDialog(
+            std::string("Unable to create Objective Entity: class '")
+                + OBJECTIVE_ENTITY_CLASS + "' not found.",
+            GlobalRadiant().getMainWindow()
+        );
+    }
 }
 
 // Delete entity button
