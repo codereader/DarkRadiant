@@ -339,10 +339,14 @@ class IEntityClassManager :
 	public RegisterableModule
 {
 public:
+
 	/**
 	 * Return the IEntityClass corresponding to the given name, creating it if
 	 * necessary. If it is created, the has_brushes parameter will be used to
 	 * determine whether the new entity class should be brush-based or not.
+     *
+     * @deprecated
+     * Use findClass() instead.
 	 */
 	virtual IEntityClassPtr findOrInsert(const std::string& name, 
 										 bool has_brushes) = 0;
