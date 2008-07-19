@@ -1,10 +1,9 @@
-libspath = ../../libs
-AM_CPPFLAGS = -I../../include -I$(libspath) $(GTK_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GTK_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = sound.la
 
-sound_la_LIBADD = $(libspath)/gtkutil/libgtkutil.a
+sound_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a
 sound_la_LDFLAGS = -module -avoid-version \
 				   $(ALUT_LIBS) $(GTK_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
 sound_la_SOURCES = SoundManager.cpp sound.cpp SoundPlayer.cpp
