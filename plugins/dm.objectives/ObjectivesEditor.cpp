@@ -722,6 +722,9 @@ void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
 	ComponentsDialog compDialog(GTK_WINDOW(self->_widget),
 								self->getCurrentObjective());
 	compDialog.show(); // show and block
+
+    // Re-populate the edit panel, in case the component count changed
+    self->populateEditPanel();
 }
 
 }
