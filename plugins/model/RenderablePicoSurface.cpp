@@ -235,21 +235,24 @@ void RenderablePicoSurface::testSelect(Selector& selector,
 									   SelectionTest& test,
 									   const Matrix4& localToWorld) const
 {
-	// Test for triangle selection
-    test.BeginMesh(localToWorld);
-    SelectionIntersection result;
-    test.TestTriangles(
-		VertexPointer(VertexPointer::pointer(&_vertices[0].vertex), 
-					  sizeof(ArbitraryMeshVertex)),
-      	IndexPointer(&_indices[0], 
-      				 IndexPointer::index_type(_indices.size())),
-		result
-    );
+	if (!_vertices.empty() && !_indices.empty()) {
+		// Test for triangle selection
+		test.BeginMesh(localToWorld);
+		SelectionIntersection result;
 
-	// Add the intersection to the selector if it is valid
-    if(result.valid()) {
-		selector.addIntersection(result);
-    }
+		test.TestTriangles(
+			VertexPointer(VertexPointer::pointer(&_vertices[0].vertex), 
+						  sizeof(ArbitraryMeshVertex)),
+      		IndexPointer(&_indices[0], 
+      					 IndexPointer::index_type(_indices.size())),
+			result
+		);
+		
+		// Add the intersection to the selector if it is valid
+		if(result.valid()) {
+			selector.addIntersection(result);
+		}
+	}
 }
 
 } // namespace model
