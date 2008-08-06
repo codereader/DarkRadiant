@@ -24,8 +24,14 @@ ObjectiveEntity::ObjectiveEntity(scene::INodePtr n)
 
 // Delete the entity's world node
 void ObjectiveEntity::deleteWorldNode() {
-	GlobalSceneGraph().root()->removeChildNode(_node);
-	_entity = NULL;		
+	// Try to convert the weak_ptr reference to a shared_ptr
+	scene::INodePtr node = _node.lock();
+
+	if (node != NULL) {
+		GlobalSceneGraph().root()->removeChildNode(node);
+	}
+
+	_entity = NULL;
 }
 
 // Add a new objective
