@@ -94,6 +94,9 @@ private:
 	
 	// Return the currently-selected objective
 	Objective& getCurrentObjective();
+
+	// Clears the internal containers
+	void clear();
 	
 public:
 	
