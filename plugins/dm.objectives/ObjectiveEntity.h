@@ -33,7 +33,7 @@ namespace objectives
 class ObjectiveEntity
 {
 	// The actual entity's world node and entity pointer
-	scene::INodePtr _node;
+	scene::INodeWeakPtr _node;
 	Entity* _entity;
 	
 	// Map of numbered Objective objects
