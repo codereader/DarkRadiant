@@ -343,9 +343,7 @@ void ObjectivesEditor::show() {
 	populateWidgets();
 }
 
-// Populate widgets with map data
-void ObjectivesEditor::populateWidgets() {
-
+void ObjectivesEditor::clear() {
 	// Clear internal data
 	_worldSpawn = NULL;
 	_entities.clear();
@@ -354,6 +352,12 @@ void ObjectivesEditor::populateWidgets() {
 	// Clear the list boxes
 	gtk_list_store_clear(_objectiveEntityList);
 	gtk_list_store_clear(_objectiveList);
+}
+
+// Populate widgets with map data
+void ObjectivesEditor::populateWidgets() {
+	// Clear internal data first
+	clear();
 
 	// Use an ObjectiveEntityFinder to walk the map and add any objective
 	// entities to the liststore and entity map
@@ -483,6 +487,9 @@ Objective& ObjectivesEditor::getCurrentObjective() {
 
 void ObjectivesEditor::_onCancel(GtkWidget* w, ObjectivesEditor* self) {
 	gtk_widget_hide(self->_widget);
+
+	// Clear the containers, otherwise shared pointers are held by this dialog
+	self->clear();
 }
 
 // OK button
@@ -498,6 +505,9 @@ void ObjectivesEditor::_onOK(GtkWidget* w, ObjectivesEditor* self) {
 	
 	// Hide the dialog
 	gtk_widget_hide(self->_widget);
+
+	// Clear the containers, otherwise shared pointers are held by this dialog
+	self->clear();
 }
 
 // Callback for "start active" cell toggle in entities list
