@@ -14,25 +14,27 @@ You also need:
 
         g++-4.1
         libg++
-        scons
-        python
 
 Build
 =====
 
 To build DarkRadiant, issue:
 
-        scons BUILD=release
+        ./configure && make && make install
 
 A debug build is also available:
 
-        scons BUILD=debug
+        ./configure --enable-debug && make && make install
 
 To cleanup all built files:
 
-        scons -c
+        make clean
 
 Run
 ===
 
-The executable will be created inside the ./install/ directory.
+The executable will be installed in the bin/ subdirectory under the PREFIX used
+by ./configure, which by default is set to /usr/local but can be changed with
+the --prefix option provided to configure.
+
+
