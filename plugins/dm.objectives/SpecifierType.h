@@ -136,6 +136,9 @@ public:
 	
 	/** Set of all specifiers. */
 	static const SpecifierTypeSet& SET_ALL();
+
+	// The specifier set for the COMP_ITEM components
+	static const SpecifierTypeSet& SET_ITEM();
 	
 	/** Set for standard AI specifiers (all except SPEC_GROUP). */
 	static const SpecifierTypeSet& SET_STANDARD_AI();

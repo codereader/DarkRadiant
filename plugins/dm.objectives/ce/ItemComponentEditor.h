@@ -35,8 +35,8 @@ class ItemComponentEditor :
 	// Component to edit
 	Component* _component;	
 	
-	// SpecifierEditCombo for the item name
-	SpecifierEditCombo _targetCombo;
+	// SpecifierEditCombo for the item
+	SpecifierEditCombo _itemSpec;
 	
 public:
 

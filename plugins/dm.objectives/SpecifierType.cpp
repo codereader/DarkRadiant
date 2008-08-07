@@ -70,6 +70,20 @@ const SpecifierTypeSet& SpecifierType::SET_ALL() {
 	}
 	return _instance;
 }
+
+const SpecifierTypeSet& SpecifierType::SET_ITEM() {
+	static SpecifierTypeSet _instance;
+	if (_instance.empty()) {
+		_instance.insert(SPEC_NONE());
+		_instance.insert(SPEC_NAME());
+		_instance.insert(SPEC_OVERALL());
+		_instance.insert(SPEC_GROUP());
+		_instance.insert(SPEC_CLASSNAME());
+		_instance.insert(SPEC_SPAWNCLASS());
+	}
+	return _instance;
+}
+
 const SpecifierTypeSet& SpecifierType::SET_STANDARD_AI() {
 	static SpecifierTypeSet _instance;
 	if (_instance.empty()) {
