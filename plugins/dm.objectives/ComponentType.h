@@ -101,7 +101,7 @@ public:
 	static const ComponentType& COMP_AI_FIND_BODY();	// AI finds a body.
 	static const ComponentType& COMP_ALERT();			// AI is alerted.
 	static const ComponentType& COMP_DESTROY();		// Object is destroyed.
-	static const ComponentType& COMP_ITEM();			// Player possesses an item or loot.
+	static const ComponentType& COMP_ITEM();			// Player possesses a number of items or loot.
 	static const ComponentType& COMP_PICKPOCKET();		// Item is pickpocketed from conscious AI.
 	static const ComponentType& COMP_LOCATION();		// Item is in a particular objective location (defined by a brush).
 	static const ComponentType& COMP_CUSTOM_ASYNC();	// Custom component updated by user script.

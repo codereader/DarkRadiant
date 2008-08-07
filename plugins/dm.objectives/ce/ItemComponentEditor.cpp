@@ -17,22 +17,22 @@ ItemComponentEditor::RegHelper ItemComponentEditor::regHelper;
 // Constructor
 ItemComponentEditor::ItemComponentEditor(Component& component) :
 	_component(&component),
-	_targetCombo(SpecifierType::SET_STANDARD_AI())
+	_itemSpec(SpecifierType::SET_ITEM())
 {
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Item target:</b>"),
+        gtkutil::LeftAlignedLabel("<b>Item:</b>"),
         FALSE, FALSE, 0
     );
 	gtk_box_pack_start(
-		GTK_BOX(_widget), _targetCombo.getWidget(), FALSE, FALSE, 0
+		GTK_BOX(_widget), _itemSpec.getWidget(), FALSE, FALSE, 0
 	);
 
     // Populate the SpecifierEditCombo with the first specifier
-    _targetCombo.setSpecifier(
+    _itemSpec.setSpecifier(
         component.getSpecifier(Specifier::FIRST_SPECIFIER)
     );
 }
@@ -53,7 +53,7 @@ GtkWidget* ItemComponentEditor::getWidget() const {
 void ItemComponentEditor::writeToComponent() const {
     assert(_component);
     _component->setSpecifier(
-        Specifier::FIRST_SPECIFIER, _targetCombo.getSpecifier()
+        Specifier::FIRST_SPECIFIER, _itemSpec.getSpecifier()
     );
 }
 
