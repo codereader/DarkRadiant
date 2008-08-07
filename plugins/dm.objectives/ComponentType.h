@@ -95,41 +95,19 @@ public:
 	
 	//@{
 	
-	/** AI is killed. */
-	static const ComponentType& COMP_KILL();
-	
-	/** AI is knocked out. */
-	static const ComponentType& COMP_KO();
-	
-	/** AI finds a body. */
-	static const ComponentType& COMP_AI_FIND_BODY();
-	
-	/** AI is alerted. */
-	static const ComponentType& COMP_AI_ALERT();
-	
-	/** Object is destroyed. */
-	static const ComponentType& COMP_DESTROY();
-	
-	/** Player possesses an item or loot. */
-	static const ComponentType& COMP_ITEM();
-	
-	/** Item is pickpocketed from conscious AI. */
-	static const ComponentType& COMP_PICKPOCKET();
-	
-	/** Item is in a particular objective location (defined by a brush). */
-	static const ComponentType& COMP_LOCATION();
-	
-	/** Item is in a particular <b>info_location</b> area. */
-	static const ComponentType& COMP_INFO_LOCATION();
-	
-	/** Custom component updated by user script. */
-	static const ComponentType& COMP_CUSTOM_ASYNC();
-	
-	/** Custom component which periodically checks a user script. */
-	static const ComponentType& COMP_CUSTOM_CLOCKED();
-	
-	/** Two entities are within a radius of each other. */
-	static const ComponentType& COMP_DISTANCE();
+	static const ComponentType& COMP_KILL();			// AI is killed
+	static const ComponentType& COMP_KO();				// AI is knocked out.
+	static const ComponentType& COMP_AI_FIND_ITEM();	// AI finds an item.
+	static const ComponentType& COMP_AI_FIND_BODY();	// AI finds a body.
+	static const ComponentType& COMP_ALERT();			// AI is alerted.
+	static const ComponentType& COMP_DESTROY();		// Object is destroyed.
+	static const ComponentType& COMP_ITEM();			// Player possesses an item or loot.
+	static const ComponentType& COMP_PICKPOCKET();		// Item is pickpocketed from conscious AI.
+	static const ComponentType& COMP_LOCATION();		// Item is in a particular objective location (defined by a brush).
+	static const ComponentType& COMP_CUSTOM_ASYNC();	// Custom component updated by user script.
+	static const ComponentType& COMP_CUSTOM_CLOCKED();	// Custom component which periodically checks a user script.
+	static const ComponentType& COMP_INFO_LOCATION();	// Item is in a particular <b>info_location</b> area.
+	static const ComponentType& COMP_DISTANCE();		// Two entities are within a radius of each other.
 	
 	//@}
 	
