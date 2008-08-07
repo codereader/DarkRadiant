@@ -298,6 +298,14 @@
 				Name="ce"
 				>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\AlertComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\AlertComponentEditor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\ComponentEditor.h"
 					>
 				</File>
