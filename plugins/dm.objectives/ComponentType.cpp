@@ -79,7 +79,7 @@ const ComponentType& ComponentType::COMP_CUSTOM_CLOCKED() {
 
 const ComponentType& ComponentType::COMP_DISTANCE() {
 	static ComponentType _instance(
-		"comp_distance", "Two entities are within a radius of each other"
+		"distance", "Two entities are within a radius of each other"
 	);
 	return _instance;
 }
