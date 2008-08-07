@@ -67,7 +67,7 @@ public:
 	 * @return
 	 * The named SpecifierType if found.
 	 * 
-	 * @exception std::runtime_error
+	 * @exception ObjectivesException
 	 * Thrown if the named SpecifierType type does not exist.
 	 */
 	static const SpecifierType& getSpecifierType(const std::string& name); 

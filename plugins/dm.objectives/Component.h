@@ -6,6 +6,7 @@
 #include "ComponentType.h"
 
 #include <cassert>
+#include <vector>
 #include <string>
 
 namespace objectives
@@ -21,6 +22,13 @@ namespace objectives
  */
 class Component
 {
+public:
+	/**
+	 * greebo: Each component can have an arbitrary number of arguments.
+	 */
+	typedef std::vector<std::string> ArgumentList;
+
+private:
 	// Completion state flag
 	bool _satisfied;
 	
@@ -38,6 +46,9 @@ class Component
 
     // List of Specifiers (SpecifierType + value pairs)
     SpecifierList _specifiers;
+
+	// List of arguments for this component
+	ArgumentList _arguments;
 	
 public:
 	
@@ -195,6 +206,18 @@ public:
         );
         return _specifiers[static_cast<std::size_t>(num)];
     }
+
+	void clearArguments() {
+		_arguments.clear();
+	}
+
+	void addArgument(const std::string& arg) {
+		_arguments.push_back(arg);
+	}
+
+	std::size_t getNumArguments() {
+		return _arguments.size();
+	}
 };
 
 }

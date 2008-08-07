@@ -3,6 +3,7 @@
 #include "RandomOrigin.h"
 #include "TargetList.h"
 #include "ComponentsDialog.h"
+#include "util/ObjectivesException.h"
 
 #include "iscenegraph.h"
 #include "iradiant.h"
@@ -411,8 +412,20 @@ void ObjectivesEditor::displayDialog() {
 	// Static dialog instance
 	static ObjectivesEditor _instance;
 	
-	// Show the instance
-	_instance.show();
+	try {
+		// Show the instance
+		_instance.show();
+	}
+	catch (ObjectivesException e) {
+		gtkutil::errorDialog(
+			std::string("Exception occurred: ") + e.what(), 
+			GlobalRadiant().getMainWindow()
+		);
+
+		if (GTK_IS_WIDGET(_instance._widget)) {
+			gtk_widget_destroy(_instance._widget);
+		}
+	}
 }
 
 // Populate the edit panel widgets using the given objective number

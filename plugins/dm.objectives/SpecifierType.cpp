@@ -1,6 +1,5 @@
 #include "SpecifierType.h"
-
-#include <stdexcept>
+#include "util/ObjectivesException.h"
 
 namespace objectives
 {
@@ -111,7 +110,7 @@ const SpecifierType& SpecifierType::getSpecifierType(const std::string& name) {
 	if (i != getMap().end())
 		return i->second;
 	else
-		throw std::runtime_error("SpecifierType " + name + " not found.");
+		throw ObjectivesException("SpecifierType " + name + " not found.");
 }
 
 // Construct a named SpecifierType object, incrementing the count
