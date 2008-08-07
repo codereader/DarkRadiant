@@ -310,6 +310,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ItemComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ItemComponentEditor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\KillComponentEditor.cpp"
 					>
 				</File>
