@@ -48,7 +48,7 @@ public:
 	{}
 	
 	/**
-	 * Construct a ItemComponentEditor with a Component object to display and
+	 * Construct an ItemComponentEditor with a Component object to display and
 	 * edit.
 	 * 
 	 * @param component
