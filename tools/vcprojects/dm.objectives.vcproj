@@ -353,6 +353,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\GroupSpecifierPanel.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\GroupSpecifierPanel.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanel.h"
 						>
 					</File>
