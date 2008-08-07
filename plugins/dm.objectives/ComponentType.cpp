@@ -1,6 +1,5 @@
 #include "ComponentType.h"
-
-#include <stdexcept>
+#include "util/ObjectivesException.h"
 
 namespace objectives
 {
@@ -124,7 +123,7 @@ ComponentType ComponentType::getComponentType(const std::string& name)
 	if (i != getMap().end())
 		return i->second;
 	else
-		throw std::runtime_error("Invalid ComponentType: " + name);
+		throw ObjectivesException("Invalid ComponentType: " + name);
 }
 
 }

@@ -57,7 +57,7 @@ public:
 	 * @return
 	 * The identified ComponentType if it exists.
 	 * 
-	 * @exception std::runtime_error
+	 * @exception ObjectivesException
 	 * Thrown if the named ComponentType does not exist.
 	 */
 	static ComponentType getComponentType(const std::string& name);
