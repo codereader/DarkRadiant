@@ -1,5 +1,5 @@
-#ifndef _ITEM_COMPONENT_EDITOR_H_
-#define _ITEM_COMPONENT_EDITOR_H_
+#ifndef PICKPOCKET_COMPONENT_EDITOR_H_
+#define PICKPOCKET_COMPONENT_EDITOR_H_
 
 #include "ComponentEditor.h"
 #include "ComponentEditorFactory.h"
@@ -11,11 +11,11 @@ namespace objectives {
 namespace ce {
 
 /**
- * ComponentEditor subclass for COMP_ITEM component type.
+ * ComponentEditor subclass for COMP_PICKPOCKET component type.
  * 
- * An ITEM component requires that the player acquires or loses an item.
+ * An COMP_PICKPOCKET component uses a single specifier and one argument.
  */
-class ItemComponentEditor : 
+class PickpocketComponentEditor : 
 	public ComponentEditor
 {
 	// Registration class
@@ -23,8 +23,8 @@ class ItemComponentEditor :
 	{
 		RegHelper() {
 			ComponentEditorFactory::registerType(
-				objectives::ComponentType::COMP_ITEM().getName(), 
-				ComponentEditorPtr(new ItemComponentEditor())
+				objectives::ComponentType::COMP_PICKPOCKET().getName(), 
+				ComponentEditorPtr(new PickpocketComponentEditor())
 			);
 		}
 	} regHelper;
@@ -41,9 +41,9 @@ class ItemComponentEditor :
 public:
 
 	/**
-	 * Construct a default ItemComponentEditor.
+	 * Construct a default PickpocketComponentEditor.
 	 */
-	ItemComponentEditor() : 
+	PickpocketComponentEditor() : 
 		_component(NULL)
 	{}
 	
@@ -54,17 +54,17 @@ public:
 	 * @param component
 	 * The Component to edit.
 	 */
-	ItemComponentEditor(Component& component);
+	PickpocketComponentEditor(Component& component);
 	
 	/**
 	 * Destructor
 	 */
-	~ItemComponentEditor();
+	~PickpocketComponentEditor();
 	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new ItemComponentEditor(component));
+		return ComponentEditorPtr(new PickpocketComponentEditor(component));
 	}
 	
 	GtkWidget* getWidget() const; 
@@ -76,4 +76,4 @@ public:
 
 } // namespace objectives
 
-#endif /* _ITEM_COMPONENT_EDITOR_H_ */
+#endif /* PICKPOCKET_COMPONENT_EDITOR_H_ */
