@@ -41,19 +41,18 @@ KillComponentEditor::KillComponentEditor(Component& component)
 
 // Destructor
 KillComponentEditor::~KillComponentEditor() {
-	if (GTK_IS_WIDGET(_widget))
+	if (GTK_IS_WIDGET(_widget)) {
 		gtk_widget_destroy(_widget);
+	}
 }
 
 // Get the main widget
-GtkWidget* KillComponentEditor::getWidget() const
-{
+GtkWidget* KillComponentEditor::getWidget() const {
 	return _widget;
 }
 
 // Write to component
-void KillComponentEditor::writeToComponent() const
-{
+void KillComponentEditor::writeToComponent() const {
     assert(_component);
     _component->setSpecifier(
         Specifier::FIRST_SPECIFIER, _targetCombo.getSpecifier()

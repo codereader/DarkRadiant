@@ -220,7 +220,6 @@ void ComponentsDialog::populateComponents() {
 
 // Populate the edit panel
 void ComponentsDialog::populateEditPanel(int index) {
-	
 	// Get the component
 	Component& comp = _objective.components[index];
 	
@@ -258,7 +257,6 @@ void ComponentsDialog::populateEditPanel(int index) {
 
 // Get selected component index
 int ComponentsDialog::getSelectedIndex() {
-	
 	// Get the selection if valid
 	GtkTreeModel* model;
 	GtkTreeIter iter;
@@ -273,17 +271,18 @@ int ComponentsDialog::getSelectedIndex() {
 	else {
 		return -1;
 	}
-
 }
 
 // Change component editor
-void ComponentsDialog::changeComponentEditor(Component& compToEdit)
-{
+void ComponentsDialog::changeComponentEditor(Component& compToEdit) {
+
+	// greebo: Get a new component editor, any previous one will auto-destroy and
+	// remove its widget from the container.
 	_componentEditor = ce::ComponentEditorFactory::create(
-        compToEdit.getType().getName(), compToEdit)
-    ;
-	if (_componentEditor) 
-	{
+        compToEdit.getType().getName(), compToEdit
+	);
+
+	if (_componentEditor != NULL) {
 		// Get the widget from the ComponentEditor and show it
 		GtkWidget* editor = _componentEditor->getWidget();
 		gtk_widget_show_all(editor);
@@ -297,17 +296,16 @@ void ComponentsDialog::changeComponentEditor(Component& compToEdit)
 }
 
 // Safely write the ComponentEditor contents to the Component
-void ComponentsDialog::checkWriteComponent()
-{
-    if (_componentEditor)
+void ComponentsDialog::checkWriteComponent() {
+	if (_componentEditor) {
         _componentEditor->writeToComponent();
+	}
 }
 
 /* GTK CALLBACKS */
 
 // Close button
-void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) 
-{
+void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) {
     self->checkWriteComponent();
 	self->destroy();
 }
@@ -346,7 +344,7 @@ void ComponentsDialog::_onAddComponent(GtkWidget* w, ComponentsDialog* self)
 	Objective::ComponentMap& components = self->_objective.components;
 	
 	// Find an unused component number
-	for (int idx = 0; idx < 65535; ++idx) {
+	for (int idx = 0; idx < INT_MAX; ++idx) {
 		if (components.find(idx) == components.end()) {
 			// Unused, add a new component here
 			Component comp;
