@@ -310,6 +310,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\CustomClockedComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\CustomClockedComponentEditor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\DistanceComponentEditor.cpp"
 					>
 				</File>
