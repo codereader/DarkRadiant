@@ -334,6 +334,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\PickpocketComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\PickpocketComponentEditor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.cpp"
 					>
 				</File>
@@ -385,6 +393,10 @@
 			<Filter
 				Name="util"
 				>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\util\ObjectivesException.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\plugins\dm.objectives\util\TwoColumnTextCombo.h"
 					>
