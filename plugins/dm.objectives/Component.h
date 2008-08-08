@@ -22,12 +22,6 @@ namespace objectives
  */
 class Component
 {
-public:
-	/**
-	 * greebo: Each component can have an arbitrary number of arguments.
-	 */
-	typedef std::vector<std::string> ArgumentList;
-
 private:
 	// Completion state flag
 	bool _satisfied;
@@ -47,7 +41,10 @@ private:
     // List of Specifiers (SpecifierType + value pairs)
     SpecifierList _specifiers;
 
-	// List of arguments for this component
+	/**
+	 * greebo: Each component can have an arbitrary number of arguments.
+	 */
+	typedef std::vector<std::string> ArgumentList;
 	ArgumentList _arguments;
 	
 public:
