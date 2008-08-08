@@ -218,6 +218,22 @@ public:
 	std::size_t getNumArguments() {
 		return _arguments.size();
 	}
+
+	// returns "" if the argument with the given index doesn't exist
+	std::string getArgument(std::size_t index) {
+		return (index >= 0 && index < _arguments.size()) ? _arguments[index] : "";
+	}
+
+	// Sets the argument with the given index
+	void setArgument(std::size_t index, const std::string& value) {
+		// Ensure that the vector is large enough
+		if (_arguments.size() <= index) {
+			_arguments.resize(index);
+		}
+
+		// Now set the value
+		_arguments[index] = value;
+	}
 };
 
 }
