@@ -104,6 +104,9 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 					comp.addArgument(parts[i]);
 				}
 			}
+			else if (componentStr == "clock_interval") {
+				comp.setClockInterval(strToFloat(value));
+			}
 			// Check for the spec_val first
 			else if (boost::algorithm::starts_with(componentStr, "spec_val")) {
 				// We have a component specifier value, see if the specifier itself is there already
