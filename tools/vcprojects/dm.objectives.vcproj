@@ -298,6 +298,14 @@
 				Name="ce"
 				>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\AlertComponentEditor.cpp"
 					>
 				</File>
