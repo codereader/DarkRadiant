@@ -42,11 +42,25 @@ public:
         return _type;
     }
 
+	/**
+     * Set the SpecifierType to something new
+     */
+    void setType(const SpecifierType& type) {
+        _type = type;
+    }
+
     /**
      * Get the specifier value.
      */
     const std::string& getValue() const {
         return _value;
+    }
+
+	/**
+	 * Set the specifier value to the given string.
+	 */
+	void setValue(const std::string& value) {
+        _value = value;
     }
 
     /**
