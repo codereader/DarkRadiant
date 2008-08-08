@@ -425,6 +425,14 @@
 					Name="specpanel"
 					>
 					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\AITypeSpecifierPanel.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\AITypeSpecifierPanel.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\ClassnameSpecifierPanel.cpp"
 						>
 					</File>
