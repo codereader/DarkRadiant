@@ -425,6 +425,14 @@
 					Name="specpanel"
 					>
 					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\AIInnocenceSpecifierPanel.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\AIInnocenceSpecifierPanel.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\AITeamSpecifierPanel.cpp"
 						>
 					</File>
