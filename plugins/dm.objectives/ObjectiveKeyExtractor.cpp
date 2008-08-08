@@ -104,39 +104,68 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 					comp.addArgument(parts[i]);
 				}
 			}
+			// Check for the spec_val first
+			else if (boost::algorithm::starts_with(componentStr, "spec_val")) {
+				// We have a component specifier value, see if the specifier itself is there already
+				Specifier::SpecifierNumber specNum = getSpecifierNumber(
+					strToInt(componentStr.substr(8), -1)
+				);
+
+				if (specNum == Specifier::MAX_SPECIFIERS) {
+					globalErrorStream() << 
+						"[ObjectivesEditor]: Could not parse specifier value spawnarg " <<
+						key << std::endl;
+					return;
+				}
+
+				if (comp.getSpecifier(specNum) == NULL) {
+					// No specifier exists yet, allocate a new one
+					comp.setSpecifier(specNum, SpecifierPtr(new Specifier));
+				}
+
+				// Component exists, store the variable
+				comp.getSpecifier(specNum)->setValue(value);
+			}
+			// if "check_val" didn't match, look for "spec" alone
 			else if (boost::algorithm::starts_with(componentStr, "spec")) {
 				// We have a component specifier, see which one
-				int specNum = strToInt(componentStr.substr(4), -1);
-				
-				if (specNum <= 0) {
-					globalErrorStream() << "[ObjectivesEditor]: Cannot parse specifier spawnarg: " 
-						<< key << std::endl; 
+				Specifier::SpecifierNumber specNum = getSpecifierNumber(
+					strToInt(componentStr.substr(4), -1)
+				);
+
+				if (specNum == Specifier::MAX_SPECIFIERS) {
+					globalErrorStream() << 
+						"[ObjectivesEditor]: Could not parse specifier spawnarg " <<
+						key << std::endl;
 					return;
 				}
 
-				// greebo: specifier numbers start with 1 for user convenience,
-				// but we need valid array indices starting from 0, so subtract 1
-				specNum--;
-
-				// Sanity-check the incoming index
-				if (specNum < Specifier::FIRST_SPECIFIER || specNum >= Specifier::MAX_SPECIFIERS) {
-					globalErrorStream() << "[ObjectivesEditor]: Invalid specifier number in spawnarg: " 
-						<< key << std::endl; 
-					return;
+				if (comp.getSpecifier(specNum) == NULL) {
+					// No specifier exists yet, allocate a new one
+					comp.setSpecifier(specNum, SpecifierPtr(new Specifier));
 				}
 
-				// Create a new specifier out of this information
-				SpecifierPtr specifier(new Specifier(
+				// At this point, a specifier exists, set the parsed type
+				comp.getSpecifier(specNum)->setType(
 					SpecifierType::getSpecifierType(value)
-				));
-
-				comp.setSpecifier(
-					static_cast<Specifier::SpecifierNumber>(specNum), 
-					specifier
 				);
 			}
 		}
 	}
+}
+
+Specifier::SpecifierNumber ObjectiveKeyExtractor::getSpecifierNumber(int specNum) {
+	// greebo: specifier numbers start with 1 for user convenience,
+	// but we need valid array indices starting from 0, so subtract 1
+	specNum--;
+
+	// Sanity-check the incoming index
+	if (specNum < Specifier::FIRST_SPECIFIER || specNum >= Specifier::MAX_SPECIFIERS) {
+		return Specifier::MAX_SPECIFIERS;
+	}
+
+	// Sanity-checks passed
+	return static_cast<Specifier::SpecifierNumber>(specNum);
 }
 	
 } // namespace objectives
