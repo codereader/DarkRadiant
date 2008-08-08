@@ -306,6 +306,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\AIFindItemComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\AIFindItemComponentEditor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\AlertComponentEditor.cpp"
 					>
 				</File>
