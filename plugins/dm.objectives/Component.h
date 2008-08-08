@@ -34,6 +34,10 @@ private:
 	
 	// Player responsible flag
 	bool _playerResponsible;
+
+	// The clock interval in seconds (only applicable for clocked components)
+	// is negative if not used
+	float _clockInterval;
 	
 	// Component type
 	ComponentType _type;
@@ -59,6 +63,7 @@ public:
 	  _inverted(false), 
 	  _irreversible(false), 
 	  _playerResponsible(false), 
+	  _clockInterval(-1.0f),
 	  _type(ComponentType::COMP_KILL()), // arbitrary choice, no NONE option
       _specifiers(static_cast<std::size_t>(Specifier::MAX_SPECIFIERS))
 	{ }
@@ -129,6 +134,20 @@ public:
     bool isPlayerResponsible() const {
         return _playerResponsible;
     }
+
+	/**
+     * Set the clock interval for clocked components in seconds.
+     */
+	void setClockInterval(float clockInterval) {
+		_clockInterval = clockInterval;
+	}
+
+	/**
+     * Get the clock interval for clocked components in seconds.
+     */
+	float getClockInterval() const {
+		return _clockInterval;
+	}
 	
 	/**
 	 * Set the type of this component ("kill", "ko" etc).
