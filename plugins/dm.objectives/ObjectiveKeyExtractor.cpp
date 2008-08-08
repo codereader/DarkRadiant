@@ -1,9 +1,12 @@
 #include "ObjectiveKeyExtractor.h"
 
+#include "itextstream.h"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
 #include "string/string.h"
@@ -101,11 +104,39 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 					comp.addArgument(parts[i]);
 				}
 			}
-		}
-			
-		
-	}
+			else if (boost::algorithm::starts_with(componentStr, "spec")) {
+				// We have a component specifier, see which one
+				int specNum = strToInt(componentStr.substr(4), -1);
+				
+				if (specNum <= 0) {
+					globalErrorStream() << "[ObjectivesEditor]: Cannot parse specifier spawnarg: " 
+						<< key << std::endl; 
+					return;
+				}
 
+				// greebo: specifier numbers start with 1 for user convenience,
+				// but we need valid array indices starting from 0, so subtract 1
+				specNum--;
+
+				// Sanity-check the incoming index
+				if (specNum < Specifier::FIRST_SPECIFIER || specNum >= Specifier::MAX_SPECIFIERS) {
+					globalErrorStream() << "[ObjectivesEditor]: Invalid specifier number in spawnarg: " 
+						<< key << std::endl; 
+					return;
+				}
+
+				// Create a new specifier out of this information
+				SpecifierPtr specifier(new Specifier(
+					SpecifierType::getSpecifierType(value)
+				));
+
+				comp.setSpecifier(
+					static_cast<Specifier::SpecifierNumber>(specNum), 
+					specifier
+				);
+			}
+		}
+	}
 }
 	
 } // namespace objectives
