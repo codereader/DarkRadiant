@@ -42,7 +42,7 @@ class KillComponentEditor
 	SpecifierEditCombo _targetCombo;
 
 	// The spin button to specify the amount of AI to be killed
-	GtkWidget* _amountSpinButton;
+	GtkWidget* _amount;
 	
 public:
 
@@ -50,7 +50,8 @@ public:
 	 * Construct a default KillComponentEditor.
 	 */
 	KillComponentEditor()
-	: _component(NULL)
+	: _component(NULL),
+		_amount(NULL)
 	{ }
 	
 	/**

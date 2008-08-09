@@ -42,7 +42,7 @@ class KnockoutComponentEditor
 	SpecifierEditCombo _targetCombo;
 
 	// The spin button to specify the amount of AI to be knocked out
-	GtkWidget* _amountSpinButton;
+	GtkWidget* _amount;
 	
 public:
 
