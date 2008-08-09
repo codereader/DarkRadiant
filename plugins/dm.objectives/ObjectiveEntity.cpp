@@ -4,6 +4,7 @@
 
 #include "scenelib.h"
 
+#include "string/string.h"
 #include <boost/lexical_cast.hpp>
 
 namespace objectives
@@ -77,8 +78,7 @@ void ObjectiveEntity::writeComponents(
     assert(_entity);
 
     using std::string;
-    using boost::lexical_cast;
-
+    
     for (Objective::ComponentMap::const_iterator i = obj.components.begin();
          i != obj.components.end();
          ++i)
@@ -86,7 +86,7 @@ void ObjectiveEntity::writeComponents(
         const Component& c = i->second;
 
         // Component prefix is like obj1_2_blah
-        string prefix = keyPrefix + lexical_cast<string>(i->first) + "_";
+        string prefix = keyPrefix + intToStr(i->first) + "_";
 
         // Write out Component keyvals
         _entity->setKeyValue(prefix + "state", c.isSatisfied() ? "1" : "0");
@@ -99,19 +99,22 @@ void ObjectiveEntity::writeComponents(
         );
         _entity->setKeyValue(prefix + "type", c.getType().getName());
 
-        // Write out Specifier keyvals for FIRST and SECOND specifiers
-        SpecifierPtr spec1 = c.getSpecifier(Specifier::FIRST_SPECIFIER);
-        if (spec1)
-        {
-            _entity->setKeyValue(prefix + "spec1", spec1->getType().getName());
-            _entity->setKeyValue(prefix + "spec1_val", spec1->getValue());
-        }
-        SpecifierPtr spec2 = c.getSpecifier(Specifier::SECOND_SPECIFIER);
-        if (spec2)
-        {
-            _entity->setKeyValue(prefix + "spec2", spec2->getType().getName());
-            _entity->setKeyValue(prefix + "spec2_val", spec2->getValue());
-        }
+		_entity->setKeyValue(prefix + "clock_interval", 
+			c.getClockInterval() > 0 ? floatToStr(c.getClockInterval()) : "");
+
+        // Write out Specifier keyvals
+		for (int i = Specifier::FIRST_SPECIFIER; i < Specifier::MAX_SPECIFIERS; i++)
+		{
+			// The specifier index of the spawnargs is starting from 1, not 0
+			std::string indexStr = intToStr(i + 1);
+
+			SpecifierPtr spec = c.getSpecifier(static_cast<Specifier::SpecifierNumber>(i));
+
+			if (spec != NULL) {
+				_entity->setKeyValue(prefix + "spec" + indexStr, spec->getType().getName());
+				_entity->setKeyValue(prefix + "spec_val" + indexStr, spec->getValue());
+			}
+		}
     }
 }
 
