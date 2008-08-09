@@ -35,11 +35,17 @@ class DistanceComponentEditor :
 	// Component to edit
 	Component* _component;	
 	
-	// SpecifierEditCombo for the entity in question
-	SpecifierEditCombo _entSpec;
+	// Name of the entity in question
+	GtkWidget* _entity;
 
-	// SpecifierEditCombo for the location the entity should be in (or not)
-	SpecifierEditCombo _locationSpec;
+	// Name of the location entity
+	GtkWidget* _location;
+
+	// The distance between these two
+	GtkWidget* _distance;
+
+	// The evaluation interval in seconds
+	GtkWidget* _interval;
 	
 public:
 
@@ -47,7 +53,11 @@ public:
 	 * Construct a default DistanceComponentEditor.
 	 */
 	DistanceComponentEditor() : 
-		_component(NULL)
+		_component(NULL),
+		_entity(NULL),
+		_location(NULL),
+		_distance(NULL),
+		_interval(NULL)
 	{}
 	
 	/**
