@@ -16,18 +16,43 @@ CustomClockedComponentEditor::RegHelper CustomClockedComponentEditor::regHelper;
 
 // Constructor
 CustomClockedComponentEditor::CustomClockedComponentEditor(Component& component) :
-	_component(&component)
+	_component(&component),
+	_scriptFunction(gtk_entry_new()),
+	_interval(gtk_spin_button_new_with_range(0, 65535, 0.1))
 {
+	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_interval), 2);
+
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Item:</b>"),
+        gtkutil::LeftAlignedLabel("<b>Script Function:</b>"),
         FALSE, FALSE, 0
     );
 
-	// TODO
+	// The first row contains the script function name
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+
+	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel("Script Function:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _scriptFunction, TRUE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(_widget), hbox, FALSE, FALSE, 0);
+
+	// The second row contains the clock interval
+	GtkWidget* hbox2 = gtk_hbox_new(FALSE, 6);
+
+	gtk_box_pack_start(GTK_BOX(hbox2), gtkutil::LeftAlignedLabel("Clock interval:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), _interval, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox2), gtkutil::LeftAlignedLabel("seconds"), FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(_widget), hbox2, FALSE, FALSE, 0);
+
+	// Load the initial values into the boxes
+	gtk_entry_set_text(GTK_ENTRY(_scriptFunction), component.getArgument(0).c_str());
+
+	float interval = component.getClockInterval();
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(_interval), interval >= 0 ? interval : 1.0);
 }
 
 // Destructor
@@ -45,7 +70,10 @@ GtkWidget* CustomClockedComponentEditor::getWidget() const {
 // Write to component
 void CustomClockedComponentEditor::writeToComponent() const {
     assert(_component);
-	// TODO
+	
+	_component->setArgument(0, gtk_entry_get_text(GTK_ENTRY(_scriptFunction)));
+	_component->setClockInterval(
+		static_cast<float>(gtk_spin_button_get_value(GTK_SPIN_BUTTON(_interval))));
 }
 
 } // namespace ce
