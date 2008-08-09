@@ -37,6 +37,9 @@ class PickpocketComponentEditor :
 	
 	// SpecifierEditCombo for the item
 	SpecifierEditCombo _itemSpec;
+
+	// The spin button with the amount of pickpockets
+	GtkWidget* _amount;
 	
 public:
 
