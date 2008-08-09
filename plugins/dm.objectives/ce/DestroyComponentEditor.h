@@ -37,6 +37,9 @@ class DestroyComponentEditor :
 	
 	// SpecifierEditCombo for the item
 	SpecifierEditCombo _itemSpec;
+
+	// The spin button to specify the amount of AI to be killed
+	GtkWidget* _amount;
 	
 public:
 
@@ -44,7 +47,8 @@ public:
 	 * Construct a default DestroyComponentEditor.
 	 */
 	DestroyComponentEditor() : 
-		_component(NULL)
+		_component(NULL),
+		_amount(NULL)
 	{}
 	
 	/**
