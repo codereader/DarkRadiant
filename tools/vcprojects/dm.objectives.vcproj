@@ -473,11 +473,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpawnclassSpecifierPanel.cpp"
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpawnClassSpecifierPanel.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpawnclassSpecifierPanel.h"
+						RelativePath="..\..\plugins\dm.objectives\ce\specpanel\SpawnClassSpecifierPanel.h"
 						>
 					</File>
 					<File

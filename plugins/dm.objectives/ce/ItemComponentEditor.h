@@ -37,6 +37,9 @@ class ItemComponentEditor :
 	
 	// SpecifierEditCombo for the item
 	SpecifierEditCombo _itemSpec;
+
+	// The spin button for the amount of items
+	GtkWidget* _amountSpinButton;
 	
 public:
 
