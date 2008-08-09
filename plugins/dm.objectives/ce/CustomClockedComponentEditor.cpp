@@ -30,19 +30,16 @@ CustomClockedComponentEditor::CustomClockedComponentEditor(Component& component)
         gtkutil::LeftAlignedLabel("<b>Script Function:</b>"),
         FALSE, FALSE, 0
     );
+	gtk_box_pack_start(GTK_BOX(_widget), _scriptFunction, FALSE, FALSE, 0);
 
-	// The first row contains the script function name
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(
+        GTK_BOX(_widget), 
+        gtkutil::LeftAlignedLabel("<b>Clock interval:</b>"),
+        FALSE, FALSE, 0
+    );
 
-	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel("Script Function:"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _scriptFunction, TRUE, TRUE, 0);
-
-	gtk_box_pack_start(GTK_BOX(_widget), hbox, FALSE, FALSE, 0);
-
-	// The second row contains the clock interval
 	GtkWidget* hbox2 = gtk_hbox_new(FALSE, 6);
 
-	gtk_box_pack_start(GTK_BOX(hbox2), gtkutil::LeftAlignedLabel("Clock interval:"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox2), _interval, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox2), gtkutil::LeftAlignedLabel("seconds"), FALSE, FALSE, 0);
 
