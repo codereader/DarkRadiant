@@ -40,6 +40,9 @@ class KillComponentEditor
 	
 	// SpecifierEditCombo for the kill target
 	SpecifierEditCombo _targetCombo;
+
+	// The spin button to specify the amount of AI to be killed
+	GtkWidget* _amountSpinButton;
 	
 public:
 
