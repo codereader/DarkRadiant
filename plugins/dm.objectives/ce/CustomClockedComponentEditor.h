@@ -35,6 +35,12 @@ class CustomClockedComponentEditor :
 	
 	// Component to edit
 	Component* _component;
+
+	// The text field for the script function name
+	GtkWidget* _scriptFunction;
+
+	// The spin button for the clock interval
+	GtkWidget* _interval;
 	
 public:
 
