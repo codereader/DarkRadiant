@@ -37,6 +37,10 @@ class AlertComponentEditor :
 	
 	// SpecifierEditCombo for the kill target
 	SpecifierEditCombo _targetCombo;
+
+	// An entry box for the amount and the alert level
+	GtkWidget* _amount;
+	GtkWidget* _alertLevel;
 	
 public:
 
