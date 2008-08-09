@@ -343,8 +343,8 @@ void ComponentsDialog::_onAddComponent(GtkWidget* w, ComponentsDialog* self)
 {
 	Objective::ComponentMap& components = self->_objective.components;
 	
-	// Find an unused component number
-	for (int idx = 0; idx < INT_MAX; ++idx) {
+	// Find an unused component number (starting from 1)
+	for (int idx = 1; idx < INT_MAX; ++idx) {
 		if (components.find(idx) == components.end()) {
 			// Unused, add a new component here
 			Component comp;
