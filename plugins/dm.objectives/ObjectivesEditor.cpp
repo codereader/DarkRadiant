@@ -7,6 +7,7 @@
 
 #include "iscenegraph.h"
 #include "iradiant.h"
+#include "iregistry.h"
 #include "ieclass.h"
 #include "ientity.h"
 
@@ -31,6 +32,9 @@ namespace {
 
 	const char* DIALOG_TITLE = "Mission objectives"; 	
 	const char* OBJECTIVE_ENTITY_CLASS = "target_tdm_addobjectives";
+
+	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
+	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	
 	/* WIDGETS ENUM */
 	enum {
@@ -53,37 +57,28 @@ namespace {
 }
 
 // Constructor creates widgets
-ObjectivesEditor::ObjectivesEditor()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _objectiveEntityList(gtk_list_store_new(3, 
+ObjectivesEditor::ObjectivesEditor() :
+	gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalRadiant().getMainWindow()),
+	_objectiveEntityList(gtk_list_store_new(3, 
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
   										  G_TYPE_STRING)),		// entity name
-  _objectiveList(gtk_list_store_new(2, 
+	_objectiveList(gtk_list_store_new(2, 
   								    G_TYPE_INT,			// obj number 
   								    G_TYPE_STRING)),	// obj description
-  _objectiveListLocked(false)
+	_objectiveListLocked(false)
 {
 	// Window properties
-	gtk_window_set_transient_for(
-		GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
-	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), DIALOG_TITLE);
-    gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-    gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
     
     // Window size
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
-	gtk_window_set_default_size(GTK_WINDOW(_widget), -1, 
-								gint(gdk_screen_get_height(scr) * 0.6));
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(getWindow()));
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 
+		gint(gdk_screen_get_width(scr) * 0.5f), 
+		gint(gdk_screen_get_height(scr) * 0.6)
+	);
     
-    // Widget must hide not destroy when closed
-    g_signal_connect(G_OBJECT(_widget), 
-    				 "delete-event",
-    				 G_CALLBACK(gtk_widget_hide_on_delete),
-    				 NULL);
-
-	// Main dialog vbox
+    // Main dialog vbox
 	GtkWidget* mainVbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(mainVbx), 
 					   gtkutil::LeftAlignedLabel("<b>Objectives entities</b>"),
@@ -101,8 +96,18 @@ ObjectivesEditor::ObjectivesEditor()
 	gtk_box_pack_end(GTK_BOX(mainVbx), createButtons(), FALSE, FALSE, 0);
 					   
 	// Add vbox to dialog
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	gtk_container_add(GTK_CONTAINER(_widget), mainVbx);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_container_add(GTK_CONTAINER(getWindow()), mainVbx);
+
+	// Connect the window position tracker
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		_windowPosition.loadFromNode(windowStateList[0]);
+	}
+	
+	_windowPosition.connect(GTK_WINDOW(getWindow()));
+	_windowPosition.applyPosition();
 }
 
 // Create the objects panel (for manipulating the target_addobjectives objects)
@@ -338,12 +343,6 @@ GtkWidget* ObjectivesEditor::createButtons () {
 	return gtkutil::RightAlignment(hbx);
 }
 
-// Show the dialog
-void ObjectivesEditor::show() {
-	gtk_widget_show_all(_widget);
-	populateWidgets();
-}
-
 void ObjectivesEditor::clear() {
 	// Clear internal data
 	_worldSpawn = NULL;
@@ -406,11 +405,31 @@ void ObjectivesEditor::populateActiveAtStart() {
 	while (gtk_tree_model_iter_next(model, &iter));
 }
 
+void ObjectivesEditor::_preHide() {
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
+
+	// Clear all data before hiding
+	clear();
+}
+
+void ObjectivesEditor::_preShow() {
+	// Restore the position
+	_windowPosition.applyPosition();
+
+	populateWidgets();
+}
+
 // Static method to display dialog
 void ObjectivesEditor::displayDialog() {
-	
-	// Static dialog instance
-	static ObjectivesEditor _instance;
+	// Create a new dialog instance
+	ObjectivesEditor _instance;
 	
 	try {
 		// Show the instance
@@ -422,8 +441,8 @@ void ObjectivesEditor::displayDialog() {
 			GlobalRadiant().getMainWindow()
 		);
 
-		if (GTK_IS_WIDGET(_instance._widget)) {
-			gtk_widget_destroy(_instance._widget);
+		if (GTK_IS_WIDGET(_instance.getWindow())) {
+			_instance.destroy();
 		}
 	}
 }
@@ -499,10 +518,8 @@ Objective& ObjectivesEditor::getCurrentObjective() {
 /* GTK CALLBACKS */
 
 void ObjectivesEditor::_onCancel(GtkWidget* w, ObjectivesEditor* self) {
-	gtk_widget_hide(self->_widget);
-
-	// Clear the containers, otherwise shared pointers are held by this dialog
-	self->clear();
+	// Close the window without saving
+	self->destroy();
 }
 
 // OK button
@@ -516,11 +533,8 @@ void ObjectivesEditor::_onOK(GtkWidget* w, ObjectivesEditor* self) {
 		i->second->writeToEntity();		
 	} 
 	
-	// Hide the dialog
-	gtk_widget_hide(self->_widget);
-
-	// Clear the containers, otherwise shared pointers are held by this dialog
-	self->clear();
+	// Close the window
+	self->destroy();
 }
 
 // Callback for "start active" cell toggle in entities list
@@ -742,7 +756,7 @@ void ObjectivesEditor::_onDescriptionEdited(GtkEditable* e,
 void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
 	
 	// Display the ComponentsDialog
-	ComponentsDialog compDialog(GTK_WINDOW(self->_widget),
+	ComponentsDialog compDialog(GTK_WINDOW(self->getWindow()),
 								self->getCurrentObjective());
 	compDialog.show(); // show and block
 
