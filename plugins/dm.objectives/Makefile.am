@@ -13,6 +13,23 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   ce/KnockoutComponentEditor.cpp \
 						   ce/KillComponentEditor.cpp \
 						   ce/SpecifierEditCombo.cpp \
+						   ce/LocationComponentEditor.cpp \
+						   ce/AIFindBodyComponentEditor.cpp \
+						   ce/AlertComponentEditor.cpp \
+						   ce/ItemComponentEditor.cpp \
+						   ce/InfoLocationComponentEditor.cpp \
+						   ce/CustomComponentEditor.cpp \
+						   ce/DistanceComponentEditor.cpp \
+						   ce/CustomClockedComponentEditor.cpp \
+						   ce/PickpocketComponentEditor.cpp \
+						   ce/DestroyComponentEditor.cpp \
+						   ce/AIFindItemComponentEditor.cpp \
+						   ce/specpanel/AIInnocenceSpecifierPanel.cpp \
+						   ce/specpanel/AITypeSpecifierPanel.cpp \
+						   ce/specpanel/SpawnClassSpecifierPanel.cpp \
+						   ce/specpanel/ClassnameSpecifierPanel.cpp \
+						   ce/specpanel/AITeamSpecifierPanel.cpp \
+						   ce/specpanel/GroupSpecifierPanel.cpp \
 						   ce/specpanel/SpecifierPanelFactory.cpp \
 						   ce/specpanel/EntityNameSpecifierPanel.cpp \
 						   ce/specpanel/TextSpecifierPanel.cpp \
