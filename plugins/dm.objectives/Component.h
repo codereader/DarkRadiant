@@ -8,6 +8,7 @@
 #include <cassert>
 #include <vector>
 #include <string>
+#include <boost/algorithm/string/join.hpp>
 
 namespace objectives
 {
@@ -249,6 +250,11 @@ public:
 
 		// Now set the value
 		_arguments[index] = value;
+	}
+
+	// Returns all arguments in a space-delimited string
+	std::string getArgumentString() const {
+		return boost::algorithm::join(_arguments, " ");
 	}
 };
 

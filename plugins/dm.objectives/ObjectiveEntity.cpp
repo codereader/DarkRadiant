@@ -115,6 +115,9 @@ void ObjectiveEntity::writeComponents(
 				_entity->setKeyValue(prefix + "spec_val" + indexStr, spec->getValue());
 			}
 		}
+
+		// Export the component arguments
+		_entity->setKeyValue(prefix + "args", c.getArgumentString());
     }
 }
 
