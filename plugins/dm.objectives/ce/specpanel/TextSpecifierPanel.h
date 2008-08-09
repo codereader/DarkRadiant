@@ -44,8 +44,6 @@ public:
 	
 	/* SpecifierPanel implementation */
 	
-	GtkWidget* getWidget() const;
-	
 	SpecifierPanelPtr clone() const {
 		return SpecifierPanelPtr(new TextSpecifierPanel());
 	}

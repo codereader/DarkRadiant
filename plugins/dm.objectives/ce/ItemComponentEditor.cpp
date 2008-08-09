@@ -40,7 +40,7 @@ ItemComponentEditor::ItemComponentEditor(Component& component) :
 	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel("Amount:"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), _amountSpinButton, FALSE, FALSE, 0);
 
-    // Populate the SpecifierEditCombo with the first specifier
+	// Populate the SpecifierEditCombo with the first specifier
     _itemSpec.setSpecifier(
         component.getSpecifier(Specifier::FIRST_SPECIFIER)
     );
