@@ -245,7 +245,7 @@ public:
 	void setArgument(std::size_t index, const std::string& value) {
 		// Ensure that the vector is large enough
 		if (_arguments.size() <= index) {
-			_arguments.resize(index);
+			_arguments.resize(index+1);
 		}
 
 		// Now set the value
