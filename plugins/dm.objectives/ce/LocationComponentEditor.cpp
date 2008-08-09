@@ -25,12 +25,17 @@ LocationComponentEditor::LocationComponentEditor(Component& component) :
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Item:</b>"),
+        gtkutil::LeftAlignedLabel("<b>Entity:</b>"),
         FALSE, FALSE, 0
     );
 	gtk_box_pack_start(
 		GTK_BOX(_widget), _entSpec.getWidget(), FALSE, FALSE, 0
 	);
+	gtk_box_pack_start(
+        GTK_BOX(_widget), 
+        gtkutil::LeftAlignedLabel("<b>Location:</b>"),
+        FALSE, FALSE, 0
+    );
 	gtk_box_pack_start(
 		GTK_BOX(_widget), _locationSpec.getWidget(), FALSE, FALSE, 0
 	);
