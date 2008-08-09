@@ -10,6 +10,8 @@
 #include <gtk/gtkcellrenderertoggle.h>
 #include <gtk/gtktreeselection.h>
 #include <gtk/gtkeditable.h>
+#include "gtkutil/WindowPosition.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 #include <map>
 #include <string>
@@ -23,11 +25,9 @@ namespace objectives
 /**
  * Dialog for adding and manipulating mission objectives in Dark Mod missions.
  */
-class ObjectivesEditor
+class ObjectivesEditor :
+	public gtkutil::BlockingTransientWindow
 {
-	// Dialog window
-	GtkWidget* _widget;
-
 	// List of target_addobjectives entities
 	GtkListStore* _objectiveEntityList;
 
@@ -48,6 +48,9 @@ class ObjectivesEditor
 	// Iterators for current entity and current objective
 	ObjectiveEntityMap::iterator _curEntity;
 	GtkTreeIter _curObjective;
+
+	// The position/size memoriser
+	gtkutil::WindowPosition _windowPosition;
 
 private:
 
@@ -79,9 +82,6 @@ private:
 	static void _onDescriptionEdited(GtkEditable*, ObjectivesEditor*);
 	static void _onEditComponents(GtkWidget*, ObjectivesEditor*);
 	
-	// Show dialog widgets
-	void show();
-	
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
 	void populateActiveAtStart();
@@ -97,6 +97,9 @@ private:
 
 	// Clears the internal containers
 	void clear();
+
+	virtual void _preHide();
+	virtual void _preShow();
 	
 public:
 	
