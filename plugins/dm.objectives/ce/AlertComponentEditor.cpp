@@ -28,25 +28,16 @@ AlertComponentEditor::AlertComponentEditor(Component& component) :
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);
 
-    gtk_box_pack_start(
-        GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>AI:</b>"),
-        FALSE, FALSE, 0
-    );
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel("<b>AI:</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), _targetCombo.getWidget(), TRUE, TRUE, 0);
 
-	// Create a new hbox for the targetcombo and the amount spin button
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(_widget), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel("<b>Amount:</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignment(_amount), FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), _targetCombo.getWidget(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel("<b>Minimum Alert Level:</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignment(_alertLevel), FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel("Amount:"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _amount, FALSE, FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel("Minimum Alert Level:"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _alertLevel, FALSE, FALSE, 0);
-
-    // Populate the SpecifierEditCombo with the first specifier
+	// Populate the SpecifierEditCombo with the first specifier
     _targetCombo.setSpecifier(
         component.getSpecifier(Specifier::FIRST_SPECIFIER)
     );
