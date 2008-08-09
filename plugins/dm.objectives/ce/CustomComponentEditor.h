@@ -13,7 +13,7 @@ namespace ce {
 /**
  * ComponentEditor subclass for COMP_CUSTOM_ASYNC component type.
  * 
- * An COMP_CUSTOM_ASYNC component requires no specifiers, the state of these
+ * A COMP_CUSTOM_ASYNC component requires no specifiers, the state of these
  * components are controlled manually (by script or trigger).
  */
 class CustomComponentEditor : 
