@@ -39,6 +39,7 @@ KillComponentEditor::KillComponentEditor(Component& component)
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_amountSpinButton), 0);
 
 	gtk_box_pack_start(GTK_BOX(hbox), _targetCombo.getWidget(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel("Amount:"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), _amountSpinButton, FALSE, FALSE, 0);
 
     // Populate the SpecifierEditCombo with the first specifier
