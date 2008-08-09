@@ -39,7 +39,7 @@ class ItemComponentEditor :
 	SpecifierEditCombo _itemSpec;
 
 	// The spin button for the amount of items
-	GtkWidget* _amountSpinButton;
+	GtkWidget* _amount;
 	
 public:
 
@@ -47,7 +47,8 @@ public:
 	 * Construct a default ItemComponentEditor.
 	 */
 	ItemComponentEditor() : 
-		_component(NULL)
+		_component(NULL),
+		_amount(NULL)
 	{}
 	
 	/**
