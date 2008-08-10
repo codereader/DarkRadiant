@@ -20,6 +20,8 @@ ObjectiveEntity::ObjectiveEntity(scene::INodePtr node) :
 	// on the entity
 	ObjectiveKeyExtractor extractor(_objectives);
 	entity->forEachKeyValue(extractor);
+
+	// TODO: Read mission success/failure logic
 }
 
 // Delete the entity's world node
