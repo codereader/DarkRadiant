@@ -272,7 +272,6 @@ void ObjectivesEditor::populateActiveAtStart() {
 		
 	// Otherwise, iterate over each row, checking for the target each time
 	do {
-		
 		// Get the entity name and find it in the map
 		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
 		ObjectiveEntityPtr obj = _entities[name];
@@ -424,8 +423,7 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], FALSE);
 		gtk_widget_set_sensitive(
 			self->_widgets[WIDGET_OBJECTIVES_PANEL], FALSE);
-	} 
-		
+	}
 }
 
 // Callback for current objective selection changed
@@ -547,15 +545,6 @@ void ObjectivesEditor::_onClearObjectives(GtkWidget* w,
 	// Clear the entity and refresh the list
 	self->_curEntity->second->clearObjectives();
 	self->refreshObjectivesList();
-}
-
-// Callback for Edit Components button
-void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
-	
-	// Display the ComponentsDialog
-	ComponentsDialog compDialog(GTK_WINDOW(self->getWindow()),
-								self->getCurrentObjective());
-	compDialog.show(); // show and block
 }
 
 }

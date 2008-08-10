@@ -5,6 +5,7 @@
 
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
@@ -51,11 +52,17 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 	// Dialog contains list view, edit panel and buttons
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbx), createObjectiveEditPanel(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), createListView(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), createEditPanel(), FALSE, FALSE, 0);
+
 	gtk_box_pack_start(
-		GTK_BOX(vbx), createComponentEditorPanel(), TRUE, TRUE, 0
+		GTK_BOX(vbx), gtkutil::LeftAlignedLabel("<b>Components</b>"), FALSE, FALSE, 0
 	);
+
+	GtkWidget* compvbox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(compvbox), createListView(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(compvbox), createEditPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(compvbox), createComponentEditorPanel(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignment(compvbox, 12, 1.0f) , FALSE, FALSE, 0);
+
 	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	
@@ -72,7 +79,7 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(5, 2, FALSE);
+	GtkWidget* table = gtk_table_new(4, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 
@@ -139,29 +146,6 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), createObjectiveFlagsTable(), 1, 2, row, row+1);
 	
-	row++;
-
-	// Components text and button
-	GtkWidget* compButton = gtk_button_new_with_label("Edit conditions..."); 
-	/*gtk_button_set_image(GTK_BUTTON(compButton), 
-						 gtk_image_new_from_stock(GTK_STOCK_EDIT, 
-						 						  GTK_ICON_SIZE_BUTTON));
-	_widgets[WIDGET_COMPONENTS_BUTTON] = compButton;
-	g_signal_connect(G_OBJECT(compButton), "clicked", 
-					 G_CALLBACK(_onEditComponents), this);*/
-		
-	//_widgets[WIDGET_COMPONENTS_COUNT] = gtk_label_new("0 condition(s)");
-	
-	GtkWidget* compBox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(compBox), gtk_label_new("test"),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(compBox), compButton, TRUE, TRUE, 0);
-
-	gtk_table_attach(GTK_TABLE(table),
-					 gtkutil::LeftAlignedLabel("<b>Conditions</b>"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), compBox, 1, 2, row, row+1);
-
 	// Pack items into a vbox and return
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), table, FALSE, FALSE, 0);
