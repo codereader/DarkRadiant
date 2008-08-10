@@ -51,7 +51,8 @@ namespace {
 		WIDGET_ONGOING_FLAG,
 		WIDGET_VISIBLE_FLAG,
 		WIDGET_COMPONENTS_COUNT,
-		WIDGET_COMPONENTS_BUTTON
+		WIDGET_COMPONENTS_BUTTON,
+		WIDGET_DIFFICULTY_COMBO,
 	};
 	
 }
@@ -66,7 +67,9 @@ ObjectivesEditor::ObjectivesEditor() :
 	_objectiveList(gtk_list_store_new(2, 
   								    G_TYPE_INT,			// obj number 
   								    G_TYPE_STRING)),	// obj description
-	_objectiveListLocked(false)
+	_objectiveListLocked(false),
+	_successLogic(gtk_entry_new()),
+	_failureLogic(gtk_entry_new())
 {
 	// Window properties
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -219,29 +222,54 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 
 	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(4, 2, FALSE);
+	GtkWidget* table = gtk_table_new(6, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 12);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+
+	int row = 0;
 	
 	// Objective description
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Description</b>"),
-					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	_widgets[WIDGET_DESCRIPTION_ENTRY] = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), 
 							  _widgets[WIDGET_DESCRIPTION_ENTRY], 
-							  1, 2, 0, 1);
+							  1, 2, row, row+1);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_DESCRIPTION_ENTRY]), "changed",
 					 G_CALLBACK(_onDescriptionEdited), this);
 	
+	row++;
+
+	// Difficulty Selection
+	gtk_table_attach(GTK_TABLE(table),
+					 gtkutil::LeftAlignedLabel("<b>Difficulty</b>"),
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	_widgets[WIDGET_DIFFICULTY_COMBO] = gtk_combo_box_new_text();
+	gtk_table_attach_defaults(GTK_TABLE(table),
+							  _widgets[WIDGET_DIFFICULTY_COMBO],
+							  1, 2, row, row+1);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_DIFFICULTY_COMBO]), "changed",
+					 G_CALLBACK(_onDifficultyChanged), this);
+
+	// Populate the difficulty levels.
+	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
+	GtkComboBox* diffCombo = GTK_COMBO_BOX(_widgets[WIDGET_DIFFICULTY_COMBO]);
+	gtk_combo_box_append_text(diffCombo, "Applies to all difficulty levels");
+	gtk_combo_box_append_text(diffCombo, "Level 1 - Easy");
+	gtk_combo_box_append_text(diffCombo, "Level 2 - Hard");
+	gtk_combo_box_append_text(diffCombo, "Level 3 - Expert");
+
+	row++;
+
 	// State selection
 	gtk_table_attach(GTK_TABLE(table),
 					 gtkutil::LeftAlignedLabel("<b>Initial state</b>"),
-					 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	_widgets[WIDGET_STATE_COMBO] = gtk_combo_box_new_text();
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _widgets[WIDGET_STATE_COMBO],
-							  1, 2, 1, 2);
+							  1, 2, row, row+1);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_COMBO]), "changed",
 					 G_CALLBACK(_onInitialStateChanged), this);
 
@@ -253,12 +281,16 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 	gtk_combo_box_append_text(combo, "FAILED");
 	gtk_combo_box_append_text(combo, "INVALID");
 	
+	row++;
+
 	// Options checkboxes.
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
-					 0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), createFlagsTable(), 1, 2, 2, 3);
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), createFlagsTable(), 1, 2, row, row+1);
 	
+	row++;
+
 	// Components text and button
 	GtkWidget* compButton = gtk_button_new_with_label("Edit conditions..."); 
 	gtk_button_set_image(GTK_BUTTON(compButton), 
@@ -277,8 +309,16 @@ GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
 
 	gtk_table_attach(GTK_TABLE(table),
 					 gtkutil::LeftAlignedLabel("<b>Conditions</b>"),
-					 0, 1, 3, 4, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), compBox, 1, 2, 3, 4);
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), compBox, 1, 2, row, row+1);
+
+	row++;
+
+	// Logic
+	gtk_table_attach(GTK_TABLE(table),
+					 gtkutil::LeftAlignedLabel("<b>Logic</b>"),
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), _successLogic, 1, 2, row, row+1);
 	
 	// Pack items into a vbox and return
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
@@ -461,6 +501,12 @@ void ObjectivesEditor::populateEditPanel() {
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_DESCRIPTION_ENTRY]),
 					   obj.description.c_str());
 				
+	// Set the difficulty combo box value
+	// A value of -1 means "all levels" (=> combo box index 0)
+	// All other values [0..2] are translated to combo box indices [1..3]
+	gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_DIFFICULTY_COMBO]),
+		obj.difficultyLevel != -1 ? obj.difficultyLevel+1 : 0);
+
 	// Set initial state enum
 	gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_STATE_COMBO]),
 							 obj.state);
@@ -730,6 +776,15 @@ void ObjectivesEditor::_onInitialStateChanged(GtkWidget* w,
 	self->getCurrentObjective().state = 
 		static_cast<Objective::State>(
 			gtk_combo_box_get_active(GTK_COMBO_BOX(w)));
+}
+
+// Difficulty combo changed
+void ObjectivesEditor::_onDifficultyChanged(GtkWidget* w, ObjectivesEditor* self) {
+	// Set the state enum value from the combo box index
+	int level = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
+
+	// Set the difficulty int to -1 if the first option has been selected
+	self->getCurrentObjective().difficultyLevel = (level == 0) ? (-1) : (level - 1);
 }
 
 // Callback when description is edited

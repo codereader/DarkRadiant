@@ -32,16 +32,24 @@ public:
 	bool visible;
 	bool ongoing;
 	bool irreversible;
+
+	// The difficulty level this objective applies to
+	// A negative value means that this applies to all levels
+	int difficultyLevel;
 	
 	// Map of indexed components
 	typedef std::map<int, Component> ComponentMap;
 	ComponentMap components;
 	
 	// Constructor
-	Objective()
-	: state(INCOMPLETE), mandatory(false), visible(false), ongoing(false),
-	  irreversible(false)
-	{ }
+	Objective()	: 
+		state(INCOMPLETE), 
+		mandatory(false), 
+		visible(false), 
+		ongoing(false),
+		irreversible(false),
+		difficultyLevel(-1)
+	{}
 };
 
 /**
