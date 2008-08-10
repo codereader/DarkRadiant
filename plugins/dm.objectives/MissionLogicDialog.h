@@ -25,7 +25,8 @@ class MissionLogicDialog :
 	std::map<int, GtkWidget*> _widgets;
 
 	// A container for the logic editors of the various difficulty levels
-	std::map<int, LogicEditorPtr> _logicEditors;
+	typedef std::map<int, LogicEditorPtr> LogicEditorMap;
+	LogicEditorMap _logicEditors;
 
 	// The objective entity we're working on
 	ObjectiveEntity& _objectiveEnt;
@@ -46,6 +47,9 @@ private:
 
 	// Helper methods
 	GtkWidget* createButtons();
+
+	// Creates one logic editor for each difficulty level plus the default one
+	void createLogicEditors();
 
 	// Writes the contents of the widgets to the objective entity
 	void save();
