@@ -49,6 +49,9 @@ private:
 	// Read the mission success/failure logic from the entity
 	void readMissionLogic(Entity* ent);
 
+	// Store the mission logic to the entity
+	void writeMissionLogic(Entity* ent);
+
     // Write the Components to the underlying entity
     void writeComponents(
         Entity* entity, const std::string& keyPrefix, const Objective& objective

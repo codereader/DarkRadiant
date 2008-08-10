@@ -91,6 +91,23 @@ void ObjectiveEntity::readMissionLogic(Entity* ent) {
 	}
 }
 
+void ObjectiveEntity::writeMissionLogic(Entity* ent) {
+	for (LogicMap::iterator i = _logics.begin(); i != _logics.end(); i++) {
+		int index = i->first;
+
+		if (index == -1) {
+			// Default logic
+			ent->setKeyValue(KV_SUCCESS_LOGIC, i->second->successLogic);
+			ent->setKeyValue(KV_FAILURE_LOGIC, i->second->failureLogic);
+		}
+		else {
+			// Difficulty-specific logic
+			ent->setKeyValue(KV_SUCCESS_LOGIC + "_diff_" + intToStr(index), i->second->successLogic);
+			ent->setKeyValue(KV_FAILURE_LOGIC + "_diff_" + intToStr(index), i->second->failureLogic);
+		}
+	}
+}
+
 // Delete the entity's world node
 void ObjectiveEntity::deleteWorldNode() {
 	// Try to convert the weak_ptr reference to a shared_ptr
@@ -235,6 +252,9 @@ void ObjectiveEntity::writeToEntity() {
         // Write the Components for this Objective
         writeComponents(entity, prefix, o);
 	}	
+
+	// Export the mission success/failure logic
+	writeMissionLogic(entity);
 }
 
 } // namespace objectives
