@@ -27,7 +27,7 @@
 namespace objectives
 {
 
-/* CONSTANTS */
+// CONSTANTS 
 namespace {
 
 	const char* DIALOG_TITLE = "Mission objectives"; 	
@@ -36,11 +36,10 @@ namespace {
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	
-	/* WIDGETS ENUM */
+	// WIDGETS ENUM 
 	enum {
-		WIDGET_OBJECTIVES_PANEL,
 		WIDGET_ENTITY_LIST,
-		WIDGET_EDIT_PANEL,
+		WIDGET_LOGIC_PANEL,
 		WIDGET_DELETE_ENTITY,
 		WIDGET_DELETE_OBJECTIVE,
 		WIDGET_EDIT_OBJECTIVE,
@@ -48,7 +47,6 @@ namespace {
 		WIDGET_MISSION_SUCCESS_LOGIC,
 		WIDGET_MISSION_FAILURE_LOGIC,
 	};
-	
 }
 
 // Constructor creates widgets
@@ -60,8 +58,7 @@ ObjectivesEditor::ObjectivesEditor() :
   										  G_TYPE_STRING)),		// entity name
 	_objectiveList(gtk_list_store_new(2, 
   								    G_TYPE_INT,			// obj number 
-  								    G_TYPE_STRING)),	// obj description
-	_objectiveListLocked(false)
+  								    G_TYPE_STRING))		// obj description
 {
 	// Window properties
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -217,6 +214,8 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 GtkWidget* ObjectivesEditor::createLogicPanel() {
 	// Align the widgets in a table
 	GtkWidget* table = gtk_table_new(2, 2, FALSE);
+	gtk_widget_set_sensitive(table, FALSE);
+
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 	
@@ -242,6 +241,7 @@ GtkWidget* ObjectivesEditor::createLogicPanel() {
 	// Remember the text entry fields
 	_widgets[WIDGET_MISSION_SUCCESS_LOGIC] = successEntry;
 	_widgets[WIDGET_MISSION_FAILURE_LOGIC] = failureEntry;
+	_widgets[WIDGET_LOGIC_PANEL] = table;
 
 	return table;
 }
@@ -253,10 +253,8 @@ GtkWidget* ObjectivesEditor::createButtons () {
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	
-	g_signal_connect(
-		G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
-	g_signal_connect(
-		G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
 	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
@@ -289,8 +287,9 @@ void ObjectivesEditor::populateWidgets() {
 	
 	// Set the worldspawn entity and populate the active-at-start column
 	_worldSpawn = finder.getWorldSpawn();
-	if (_worldSpawn != NULL)
+	if (_worldSpawn != NULL) {
 		populateActiveAtStart();
+	}
 }
 
 // Populate the active-at-start column.
@@ -307,8 +306,9 @@ void ObjectivesEditor::populateActiveAtStart() {
 	GtkTreeModel* model = GTK_TREE_MODEL(_objectiveEntityList);
 	
 	// Get the initial iter, which may return FALSE if the tree is empty
-	if (!gtk_tree_model_get_iter_first(model, &iter))
+	if (!gtk_tree_model_get_iter_first(model, &iter)) {
 		return;
+	}
 		
 	// Otherwise, iterate over each row, checking for the target each time
 	do {
@@ -375,10 +375,12 @@ void ObjectivesEditor::refreshObjectivesList() {
 	_curEntity->second->populateListStore(_objectiveList);
 	
 	// If there is at least one objective, make the Clear button available
-	if (_curEntity->second->isEmpty())
+	if (_curEntity->second->isEmpty()) {
 		gtk_widget_set_sensitive(_widgets[WIDGET_CLEAR_OBJECTIVES], FALSE);
-	else
+	}
+	else {
 		gtk_widget_set_sensitive(_widgets[WIDGET_CLEAR_OBJECTIVES], TRUE);
+	}
 }
 
 // Get the currently selected objective
@@ -454,15 +456,13 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		
 		// Enable the delete button and objectives panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], TRUE); 
-		gtk_widget_set_sensitive(
-			self->_widgets[WIDGET_OBJECTIVES_PANEL], TRUE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], TRUE);
 	}
 	else {
 		// No selection, disable the delete button and clear the objective
 		// panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], FALSE);
-		gtk_widget_set_sensitive(
-			self->_widgets[WIDGET_OBJECTIVES_PANEL], FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], FALSE);
 	}
 }
 
@@ -587,4 +587,4 @@ void ObjectivesEditor::_onClearObjectives(GtkWidget* w,
 	self->refreshObjectivesList();
 }
 
-}
+} // namespace objectives
