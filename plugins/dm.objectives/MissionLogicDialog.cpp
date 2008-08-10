@@ -93,8 +93,8 @@ GtkWidget* MissionLogicDialog::createButtons() {
 	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(_onSave), this);
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), saveButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
 	return gtkutil::RightAlignment(hbx);
 }
@@ -102,7 +102,7 @@ GtkWidget* MissionLogicDialog::createButtons() {
 void MissionLogicDialog::populateLogicEditors() {
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
 	// to find out how many difficulty levels there are
-	for (int i = 0; i < 2; i++) {
+	for (int i = -1; i < 2; i++) {
 		LogicPtr logic = _objectiveEnt.getMissionLogic(i);
 
 		// FIXME: Hm, maybe it would be better to pass the Logic object itself to the editor?

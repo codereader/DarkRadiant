@@ -57,8 +57,7 @@ GtkWidget* LogicEditor::getWidget() {
 }
 
 std::string LogicEditor::getSuccessLogicStr() {
-	GtkWidget* entry = _widgets[WIDGET_SUCCESS_LOGIC_ENTRY];
-	return gtk_entry_get_text(GTK_ENTRY(entry));
+	return gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_SUCCESS_LOGIC_ENTRY]));
 }
 
 std::string LogicEditor::getFailureLogicStr() {
