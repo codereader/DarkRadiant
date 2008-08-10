@@ -145,6 +145,8 @@ void ObjectiveEntity::writeToEntity()
 		_entity->setKeyValue(prefix + "difficulty", 
 			o.difficultyLevel != -1 ? intToStr(o.difficultyLevel) : "");
 
+		_entity->setKeyValue(prefix + "enabling_objs", o.enablingObjs);
+
         // Write the Components for this Objective
         writeComponents(prefix, o);
 	}	

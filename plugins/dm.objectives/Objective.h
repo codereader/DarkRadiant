@@ -36,6 +36,9 @@ public:
 	// The difficulty level this objective applies to
 	// A negative value means that this applies to all levels
 	int difficultyLevel;
+
+	// The prerequisites of this objective (a space-delimited index list for now)
+	std::string enablingObjs;
 	
 	// Map of indexed components
 	typedef std::map<int, Component> ComponentMap;

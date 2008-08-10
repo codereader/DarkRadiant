@@ -66,6 +66,9 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 		// Invalid integers will be interpreted as -1
 		_objMap[iNum].difficultyLevel = strToInt(value, -1);
 	}
+	else if (objSubString == "enabling_objs") {
+		_objMap[iNum].enablingObjs = value;
+	}
 	else {
 	
 		// Use another regex to check for components (obj1_1_blah)
