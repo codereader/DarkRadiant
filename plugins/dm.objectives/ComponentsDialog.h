@@ -20,11 +20,11 @@ namespace objectives
 class Objective;
 
 /**
- * Dialog for displaying and editing the components (conditions) attached to
- * a particular objective.
+ * Dialog for displaying and editing the properties and components (conditions)
+ * attached to a particular objective.
  */
-class ComponentsDialog
-: public gtkutil::BlockingTransientWindow
+class ComponentsDialog : 
+	public gtkutil::BlockingTransientWindow
 {
 	// Widgets map
 	std::map<int, GtkWidget*> _widgets;
@@ -38,10 +38,15 @@ class ComponentsDialog
 	
 	// Currently-active ComponentEditor (if any)
 	ce::ComponentEditorPtr _componentEditor;
+
+	// TRUE while the widgets are populated to disable GTK callbacks
+	bool _updateMutex;
 	
 private:
 
 	// Construction helpers
+	GtkWidget* createObjectiveEditPanel();
+	GtkWidget* createObjectiveFlagsTable();
 	GtkWidget* createListView();
 	GtkWidget* createEditPanel();
 	GtkWidget* createComponentEditorPanel();
@@ -52,6 +57,9 @@ private:
 	
 	// Populate the edit panel widgets with the specified component number
 	void populateEditPanel(int index);
+
+	// Populate the objective properties
+	void populateObjectiveEditPanel();
 	
 	// Get the index of the selected Component, or -1 if there is no selection
 	int getSelectedIndex();
@@ -66,6 +74,12 @@ private:
 	static void _onClose(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
 	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
+
+	static void _onDescriptionEdited(GtkEditable*, ComponentsDialog*);
+	static void _onInitialStateChanged(GtkWidget*, ComponentsDialog*);
+	static void _onDifficultyChanged(GtkWidget*, ComponentsDialog*);
+	static void _onObjFlagToggle(GtkWidget*, ComponentsDialog*);
+
 	static void _onAddComponent(GtkWidget*, ComponentsDialog*);
 	static void _onDeleteComponent(GtkWidget*, ComponentsDialog*);
 	
