@@ -77,6 +77,7 @@ private:
 	static void _onEditObjective(GtkWidget*, ObjectivesEditor*);
 	static void _onDeleteObjective(GtkWidget*, ObjectivesEditor*);
 	static void _onClearObjectives(GtkWidget*, ObjectivesEditor*);
+	static void _onEditLogic(GtkWidget*, ObjectivesEditor*);
 	
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();

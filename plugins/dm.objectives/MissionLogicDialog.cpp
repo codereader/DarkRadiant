@@ -28,9 +28,16 @@ MissionLogicDialog::MissionLogicDialog(GtkWindow* parent, ObjectiveEntity& objec
 	// Dialog contains list view, edit panel and buttons
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	
-	gtk_box_pack_start(
-		GTK_BOX(vbx), gtkutil::LeftAlignedLabel("<b>Components</b>"), FALSE, FALSE, 0
-	);
+	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("<b>Default Logic</b>"), FALSE, FALSE, 0);
+
+	// Default Logic
+	GtkWidget* defaultVBox = gtk_vbox_new(FALSE, 6);
+
+	gtk_box_pack_start(GTK_BOX(defaultVBox), 
+		gtkutil::LeftAlignedLabel("Standard logic for all difficulty levels"), FALSE, FALSE, 0);
+
+	// Create the default logic editor
+	_logicEditors[-1] = LogicEditorPtr(new LogicEditor);
 
 	GtkWidget* compvbox = gtk_vbox_new(FALSE, 6);
 	//gtk_box_pack_start(GTK_BOX(compvbox), createListView(), TRUE, TRUE, 0);

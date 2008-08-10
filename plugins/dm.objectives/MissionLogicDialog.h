@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+#include "LogicEditor.h"
+
 #include <gtkutil/window/BlockingTransientWindow.h>
 
 namespace objectives {
@@ -21,6 +23,9 @@ class MissionLogicDialog :
 {
 	// Widgets map
 	std::map<int, GtkWidget*> _widgets;
+
+	// A container for the logic editors of the various difficulty levels
+	std::map<int, LogicEditorPtr> _logicEditors;
 
 	// The objective entity we're working on
 	ObjectiveEntity& _objectiveEnt;
