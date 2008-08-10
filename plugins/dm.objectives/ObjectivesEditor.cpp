@@ -43,16 +43,8 @@ namespace {
 		WIDGET_EDIT_PANEL,
 		WIDGET_DELETE_ENTITY,
 		WIDGET_DELETE_OBJECTIVE,
+		WIDGET_EDIT_OBJECTIVE,
 		WIDGET_CLEAR_OBJECTIVES,
-		WIDGET_DESCRIPTION_ENTRY,
-		WIDGET_STATE_COMBO,
-		WIDGET_MANDATORY_FLAG,
-		WIDGET_IRREVERSIBLE_FLAG,
-		WIDGET_ONGOING_FLAG,
-		WIDGET_VISIBLE_FLAG,
-		WIDGET_COMPONENTS_COUNT,
-		WIDGET_COMPONENTS_BUTTON,
-		WIDGET_DIFFICULTY_COMBO,
 	};
 	
 }
@@ -67,9 +59,7 @@ ObjectivesEditor::ObjectivesEditor() :
 	_objectiveList(gtk_list_store_new(2, 
   								    G_TYPE_INT,			// obj number 
   								    G_TYPE_STRING)),	// obj description
-	_objectiveListLocked(false),
-	_successLogic(gtk_entry_new()),
-	_failureLogic(gtk_entry_new())
+	_objectiveListLocked(false)
 {
 	// Window properties
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -178,12 +168,18 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Description", 1, false));
 	
-	// Beside the list is an vbox containing add, delete and clear buttons
+	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
 	
 	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD); 
 	g_signal_connect(G_OBJECT(addButton), "clicked",
 					 G_CALLBACK(_onAddObjective), this);
+
+	GtkWidget* editButton = gtk_button_new_from_stock(GTK_STOCK_EDIT); 
+	gtk_widget_set_sensitive(editButton, FALSE); // not enabled without selection 
+	g_signal_connect(G_OBJECT(editButton), "clicked",
+					 G_CALLBACK(_onEditObjective), this);
+	_widgets[WIDGET_EDIT_OBJECTIVE] = editButton;
 	
 	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_widget_set_sensitive(delButton, FALSE); // not enabled without selection 
@@ -198,6 +194,7 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	_widgets[WIDGET_CLEAR_OBJECTIVES] = clearButton;
 	
 	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), editButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), clearButton, FALSE, FALSE, 0);
 
@@ -206,163 +203,7 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0); 
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
 					   
-	// Finally, pack the hbox into a vbox, with the current objective edit panel
-	// underneath
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), createObjectiveEditPanel(), 
-					   FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(vbx, FALSE);
-	_widgets[WIDGET_OBJECTIVES_PANEL] = vbx;
-					   
-	return vbx; 
-}
-
-// Create the panel for editing the currently-selected objective
-GtkWidget* ObjectivesEditor::createObjectiveEditPanel() {
-
-	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(6, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 12);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
-
-	int row = 0;
-	
-	// Objective description
-	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Description</b>"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	_widgets[WIDGET_DESCRIPTION_ENTRY] = gtk_entry_new();
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  _widgets[WIDGET_DESCRIPTION_ENTRY], 
-							  1, 2, row, row+1);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_DESCRIPTION_ENTRY]), "changed",
-					 G_CALLBACK(_onDescriptionEdited), this);
-	
-	row++;
-
-	// Difficulty Selection
-	gtk_table_attach(GTK_TABLE(table),
-					 gtkutil::LeftAlignedLabel("<b>Difficulty</b>"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	_widgets[WIDGET_DIFFICULTY_COMBO] = gtk_combo_box_new_text();
-	gtk_table_attach_defaults(GTK_TABLE(table),
-							  _widgets[WIDGET_DIFFICULTY_COMBO],
-							  1, 2, row, row+1);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_DIFFICULTY_COMBO]), "changed",
-					 G_CALLBACK(_onDifficultyChanged), this);
-
-	// Populate the difficulty levels.
-	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
-	GtkComboBox* diffCombo = GTK_COMBO_BOX(_widgets[WIDGET_DIFFICULTY_COMBO]);
-	gtk_combo_box_append_text(diffCombo, "Applies to all difficulty levels");
-	gtk_combo_box_append_text(diffCombo, "Level 1 - Easy");
-	gtk_combo_box_append_text(diffCombo, "Level 2 - Hard");
-	gtk_combo_box_append_text(diffCombo, "Level 3 - Expert");
-
-	row++;
-
-	// State selection
-	gtk_table_attach(GTK_TABLE(table),
-					 gtkutil::LeftAlignedLabel("<b>Initial state</b>"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	_widgets[WIDGET_STATE_COMBO] = gtk_combo_box_new_text();
-	gtk_table_attach_defaults(GTK_TABLE(table),
-							  _widgets[WIDGET_STATE_COMBO],
-							  1, 2, row, row+1);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_COMBO]), "changed",
-					 G_CALLBACK(_onInitialStateChanged), this);
-
-	// Populate the list of states. This must be done in order to match the
-	// values in the enum, since the index will be used when writing to entity
-	GtkComboBox* combo = GTK_COMBO_BOX(_widgets[WIDGET_STATE_COMBO]);
-	gtk_combo_box_append_text(combo, "COMPLETE");
-	gtk_combo_box_append_text(combo, "INCOMPLETE");
-	gtk_combo_box_append_text(combo, "FAILED");
-	gtk_combo_box_append_text(combo, "INVALID");
-	
-	row++;
-
-	// Options checkboxes.
-	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), createFlagsTable(), 1, 2, row, row+1);
-	
-	row++;
-
-	// Components text and button
-	GtkWidget* compButton = gtk_button_new_with_label("Edit conditions..."); 
-	gtk_button_set_image(GTK_BUTTON(compButton), 
-						 gtk_image_new_from_stock(GTK_STOCK_EDIT, 
-						 						  GTK_ICON_SIZE_BUTTON));
-	_widgets[WIDGET_COMPONENTS_BUTTON] = compButton;
-	g_signal_connect(G_OBJECT(compButton), "clicked", 
-					 G_CALLBACK(_onEditComponents), this);
-		
-	_widgets[WIDGET_COMPONENTS_COUNT] = gtk_label_new("0 condition(s)");
-	
-	GtkWidget* compBox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(compBox), _widgets[WIDGET_COMPONENTS_COUNT],
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(compBox), compButton, TRUE, TRUE, 0);
-
-	gtk_table_attach(GTK_TABLE(table),
-					 gtkutil::LeftAlignedLabel("<b>Conditions</b>"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), compBox, 1, 2, row, row+1);
-
-	row++;
-
-	// Logic
-	gtk_table_attach(GTK_TABLE(table),
-					 gtkutil::LeftAlignedLabel("<b>Logic</b>"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), _successLogic, 1, 2, row, row+1);
-	
-	// Pack items into a vbox and return
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbx), table, FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(vbx, FALSE);
-	_widgets[WIDGET_EDIT_PANEL] = vbx;
-
-	return vbx;
-}
-
-// Create table of flag checkboxes
-GtkWidget* ObjectivesEditor::createFlagsTable() {
-	
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 12);
-
-	_widgets[WIDGET_MANDATORY_FLAG] =
-		gtk_check_button_new_with_label("Mandatory"); 
-	_widgets[WIDGET_IRREVERSIBLE_FLAG] =
-		gtk_check_button_new_with_label("Irreversible"); 
-	_widgets[WIDGET_ONGOING_FLAG] =
-		gtk_check_button_new_with_label("Ongoing"); 
-	_widgets[WIDGET_VISIBLE_FLAG] =
-		gtk_check_button_new_with_label("Visible"); 
-
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_MANDATORY_FLAG]), "toggled",
-					 G_CALLBACK(_onFlagToggle), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_IRREVERSIBLE_FLAG]), "toggled",
-					 G_CALLBACK(_onFlagToggle), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ONGOING_FLAG]), "toggled",
-					 G_CALLBACK(_onFlagToggle), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_VISIBLE_FLAG]), "toggled",
-					 G_CALLBACK(_onFlagToggle), this);
-
-	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_MANDATORY_FLAG], 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_ONGOING_FLAG], 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_IRREVERSIBLE_FLAG], 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_VISIBLE_FLAG], 
-					   FALSE, FALSE, 0);
-
-	return hbx;
-
+	return hbx; 
 }
 
 // Create the buttons panel
@@ -487,54 +328,6 @@ void ObjectivesEditor::displayDialog() {
 	}
 }
 
-// Populate the edit panel widgets using the given objective number
-void ObjectivesEditor::populateEditPanel() {
-
-	// Disable updates to the list store, so that setting widget values doesn't
-	// change the list data while we are in the middle of reading it.
-	_objectiveListLocked = true;
-
-	// Get the objective
-	const Objective& obj = getCurrentObjective();
-	
-	// Set description text
-	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_DESCRIPTION_ENTRY]),
-					   obj.description.c_str());
-				
-	// Set the difficulty combo box value
-	// A value of -1 means "all levels" (=> combo box index 0)
-	// All other values [0..2] are translated to combo box indices [1..3]
-	gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_DIFFICULTY_COMBO]),
-		obj.difficultyLevel != -1 ? obj.difficultyLevel+1 : 0);
-
-	// Set initial state enum
-	gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_STATE_COMBO]),
-							 obj.state);
-					   
-	// Set flags
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets[WIDGET_IRREVERSIBLE_FLAG]),
-		obj.irreversible ? TRUE : FALSE);
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets[WIDGET_ONGOING_FLAG]),
-		obj.ongoing ? TRUE : FALSE);
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets[WIDGET_MANDATORY_FLAG]),
-		obj.mandatory ? TRUE : FALSE);
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_widgets[WIDGET_VISIBLE_FLAG]),
-		obj.visible ? TRUE : FALSE);
-		
-	// Set component count
-	std::string sCount = boost::lexical_cast<std::string>(obj.components.size()) 
-						 + " condition(s)"; 
-	gtk_label_set_text(GTK_LABEL(_widgets[WIDGET_COMPONENTS_COUNT]),
-					   sCount.c_str());
-		
-	// Re-enable updates
-	_objectiveListLocked = false;
-}
-
 // Refresh the objectives list from the ObjectiveEntity
 void ObjectivesEditor::refreshObjectivesList() {
 	
@@ -643,17 +436,13 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 	if (gtk_tree_selection_get_selected(sel, NULL, &(self->_curObjective))) {
 		
 		// Enable the edit panel and delete button
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], TRUE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], TRUE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], TRUE);		
-		
-		// Populate the edit panel
-		self->populateEditPanel();				
 	}
 	else {
 		// Disable the edit panel and delete button
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], FALSE);		
-		gtk_widget_set_sensitive(
-			self->_widgets[WIDGET_DELETE_OBJECTIVE], FALSE);		
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], FALSE);
 	}
 }
 
@@ -723,6 +512,17 @@ void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
 	self->refreshObjectivesList();	
 }
 
+// Edit an existing objective
+void ObjectivesEditor::_onEditObjective(GtkWidget* w, ObjectivesEditor* self) {
+	// Display the ComponentsDialog
+	ComponentsDialog compDialog(GTK_WINDOW(self->getWindow()),
+								self->getCurrentObjective());
+	compDialog.show(); // show and block
+
+	// Repopulate the objective list
+	self->refreshObjectivesList();
+}
+
 // Delete an objective
 void ObjectivesEditor::_onDeleteObjective(GtkWidget* w, 
 										  ObjectivesEditor* self)
@@ -749,64 +549,6 @@ void ObjectivesEditor::_onClearObjectives(GtkWidget* w,
 	self->refreshObjectivesList();
 }
 
-// Callback for flag checkbox toggle
-void ObjectivesEditor::_onFlagToggle(GtkWidget* flag, ObjectivesEditor* self) {
-	
-	// Get the objective and the new status
-	Objective& o = self->getCurrentObjective();
-	bool status = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(flag)) ? true : false;
-	
-	// Determine which checkbox is toggled, then update the appropriate flag
-	// accordingly
-	if (flag == self->_widgets[WIDGET_MANDATORY_FLAG])
-		o.mandatory = status;
-	else if (flag == self->_widgets[WIDGET_VISIBLE_FLAG])
-		o.visible = status;
-	else if (flag == self->_widgets[WIDGET_ONGOING_FLAG])
-		o.ongoing = status;
-	else if (flag == self->_widgets[WIDGET_IRREVERSIBLE_FLAG])
-		o.irreversible = status;
-}
-
-// Initial state combo changed
-void ObjectivesEditor::_onInitialStateChanged(GtkWidget* w, 
-											  ObjectivesEditor* self)
-{
-	// Set the state enum value from the combo box index
-	self->getCurrentObjective().state = 
-		static_cast<Objective::State>(
-			gtk_combo_box_get_active(GTK_COMBO_BOX(w)));
-}
-
-// Difficulty combo changed
-void ObjectivesEditor::_onDifficultyChanged(GtkWidget* w, ObjectivesEditor* self) {
-	// Set the state enum value from the combo box index
-	int level = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
-
-	// Set the difficulty int to -1 if the first option has been selected
-	self->getCurrentObjective().difficultyLevel = (level == 0) ? (-1) : (level - 1);
-}
-
-// Callback when description is edited
-void ObjectivesEditor::_onDescriptionEdited(GtkEditable* e, 
-											ObjectivesEditor* self)
-{
-	// Abort if the objective liststore is locked
-	if (self->_objectiveListLocked)
-		return;
-	
-	// Get the string
-	std::string desc = gtk_entry_get_text(GTK_ENTRY(e));
-
-	// Set the string on the Objective 
-	Objective& o = self->getCurrentObjective();
-	o.description = desc;
-	
-	// Update the list store
-	gtk_list_store_set(self->_objectiveList, &(self->_curObjective),
-					   1, desc.c_str(), -1);
-}
-
 // Callback for Edit Components button
 void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
 	
@@ -814,9 +556,6 @@ void ObjectivesEditor::_onEditComponents(GtkWidget* w, ObjectivesEditor* self) {
 	ComponentsDialog compDialog(GTK_WINDOW(self->getWindow()),
 								self->getCurrentObjective());
 	compDialog.show(); // show and block
-
-    // Re-populate the edit panel, in case the component count changed
-    self->populateEditPanel();
 }
 
 }

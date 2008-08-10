@@ -49,9 +49,6 @@ class ObjectivesEditor :
 	ObjectiveEntityMap::iterator _curEntity;
 	GtkTreeIter _curObjective;
 
-	GtkWidget* _successLogic;
-	GtkWidget* _failureLogic;
-
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
 
@@ -64,7 +61,6 @@ private:
 	GtkWidget* createEntitiesPanel();
 	GtkWidget* createObjectivesPanel();
 	GtkWidget* createObjectiveEditPanel();
-	GtkWidget* createFlagsTable();
 	GtkWidget* createButtons();
 	
 	// GTK callbacks
@@ -78,12 +74,9 @@ private:
 	static void _onAddEntity(GtkWidget*, ObjectivesEditor*);
 	static void _onDeleteEntity(GtkWidget*, ObjectivesEditor*);
 	static void _onAddObjective(GtkWidget*, ObjectivesEditor*);
+	static void _onEditObjective(GtkWidget*, ObjectivesEditor*);
 	static void _onDeleteObjective(GtkWidget*, ObjectivesEditor*);
 	static void _onClearObjectives(GtkWidget*, ObjectivesEditor*);
-	static void _onFlagToggle(GtkWidget*, ObjectivesEditor*);
-	static void _onInitialStateChanged(GtkWidget*, ObjectivesEditor*);
-	static void _onDifficultyChanged(GtkWidget*, ObjectivesEditor*);
-	static void _onDescriptionEdited(GtkEditable*, ObjectivesEditor*);
 	static void _onEditComponents(GtkWidget*, ObjectivesEditor*);
 	
 	// Populate the dialog widgets with appropriate state from the map
@@ -93,9 +86,6 @@ private:
 	// Refresh the objectives list from the currently-selected ObjectiveEntity
 	void refreshObjectivesList();
 
-	// Populate the edit panel from the selected objective
-	void populateEditPanel();
-	
 	// Return the currently-selected objective
 	Objective& getCurrentObjective();
 
