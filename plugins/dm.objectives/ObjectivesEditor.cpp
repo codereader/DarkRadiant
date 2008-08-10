@@ -45,6 +45,8 @@ namespace {
 		WIDGET_DELETE_OBJECTIVE,
 		WIDGET_EDIT_OBJECTIVE,
 		WIDGET_CLEAR_OBJECTIVES,
+		WIDGET_MISSION_SUCCESS_LOGIC,
+		WIDGET_MISSION_FAILURE_LOGIC,
 	};
 	
 }
@@ -85,6 +87,12 @@ ObjectivesEditor::ObjectivesEditor() :
 	gtk_box_pack_start(GTK_BOX(mainVbx),
 					   gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0),
 					   TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(mainVbx), 
+					   gtkutil::LeftAlignedLabel("<b>Logic</b>"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(mainVbx),
+					   gtkutil::LeftAlignment(createLogicPanel(), 18, 1.0),
+					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(mainVbx), createButtons(), FALSE, FALSE, 0);
 					   
@@ -204,6 +212,38 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
 					   
 	return hbx; 
+}
+
+GtkWidget* ObjectivesEditor::createLogicPanel() {
+	// Align the widgets in a table
+	GtkWidget* table = gtk_table_new(2, 2, FALSE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+	
+	GtkWidget* successEntry = gtk_entry_new();
+	GtkWidget* failureEntry = gtk_entry_new();
+
+	// Success logic
+	int row = 0;
+
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("Success logic"),
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), successEntry, 1, 2, row, row+1);
+
+	// Failure logic
+	row++;
+
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("Failure logic"),
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), failureEntry, 1, 2, row, row+1);
+
+	// Remember the text entry fields
+	_widgets[WIDGET_MISSION_SUCCESS_LOGIC] = successEntry;
+	_widgets[WIDGET_MISSION_FAILURE_LOGIC] = failureEntry;
+
+	return table;
 }
 
 // Create the buttons panel

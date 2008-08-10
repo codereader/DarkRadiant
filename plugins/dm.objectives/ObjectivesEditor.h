@@ -61,7 +61,8 @@ private:
 	GtkWidget* createEntitiesPanel();
 	GtkWidget* createObjectivesPanel();
 	GtkWidget* createObjectiveEditPanel();
-	GtkWidget* createButtons();
+	GtkWidget* createLogicPanel();
+	GtkWidget* createButtons();	
 	
 	// GTK callbacks
 	static void _onCancel(GtkWidget* w, ObjectivesEditor* self);
@@ -100,7 +101,6 @@ public:
 	 * Static method to display the Objectives Editor dialog.
 	 */
 	static void displayDialog();
-	
 };
 
 }
