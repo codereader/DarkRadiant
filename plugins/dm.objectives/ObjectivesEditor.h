@@ -49,6 +49,9 @@ class ObjectivesEditor :
 	ObjectiveEntityMap::iterator _curEntity;
 	GtkTreeIter _curObjective;
 
+	GtkWidget* _successLogic;
+	GtkWidget* _failureLogic;
+
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
 
@@ -79,6 +82,7 @@ private:
 	static void _onClearObjectives(GtkWidget*, ObjectivesEditor*);
 	static void _onFlagToggle(GtkWidget*, ObjectivesEditor*);
 	static void _onInitialStateChanged(GtkWidget*, ObjectivesEditor*);
+	static void _onDifficultyChanged(GtkWidget*, ObjectivesEditor*);
 	static void _onDescriptionEdited(GtkEditable*, ObjectivesEditor*);
 	static void _onEditComponents(GtkWidget*, ObjectivesEditor*);
 	

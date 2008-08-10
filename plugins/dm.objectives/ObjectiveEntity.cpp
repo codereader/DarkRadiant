@@ -77,8 +77,6 @@ void ObjectiveEntity::writeComponents(
 {
     assert(_entity);
 
-    using std::string;
-    
     for (Objective::ComponentMap::const_iterator i = obj.components.begin();
          i != obj.components.end();
          ++i)
@@ -86,7 +84,7 @@ void ObjectiveEntity::writeComponents(
         const Component& c = i->second;
 
         // Component prefix is like obj1_2_blah
-        string prefix = keyPrefix + intToStr(i->first) + "_";
+		std::string prefix = keyPrefix + intToStr(i->first) + "_";
 
         // Write out Component keyvals
         _entity->setKeyValue(prefix + "state", c.isSatisfied() ? "1" : "0");
@@ -130,12 +128,9 @@ void ObjectiveEntity::writeToEntity()
 		 i != _objectives.end();
 		 ++i) 
 	{
-		using std::string;
-		using boost::lexical_cast;
-		
 		// Obtain the Objective and construct the key prefix from the index
 		const Objective& o = i->second;
-		string prefix = "obj" + lexical_cast<string>(i->first) + "_";
+		std::string prefix = "obj" + intToStr(i->first) + "_";
 		
 		// Set the entity keyvalues
 		_entity->setKeyValue(prefix + "desc", o.description);
@@ -144,7 +139,11 @@ void ObjectiveEntity::writeToEntity()
 		_entity->setKeyValue(prefix + "mandatory", o.mandatory ? "1" : "0");
 		_entity->setKeyValue(prefix + "irreversible", 
 							 o.irreversible ? "1" : "0");
-		_entity->setKeyValue(prefix + "state", lexical_cast<string>(o.state));
+		_entity->setKeyValue(prefix + "state", intToStr(o.state));
+
+		// Write an empty "objN_difficulty" value when this objective applies to all levels
+		_entity->setKeyValue(prefix + "difficulty", 
+			o.difficultyLevel != -1 ? intToStr(o.difficultyLevel) : "");
 
         // Write the Components for this Objective
         writeComponents(prefix, o);
