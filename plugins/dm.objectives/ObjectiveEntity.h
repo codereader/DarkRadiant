@@ -33,8 +33,7 @@ namespace objectives
 class ObjectiveEntity
 {
 	// The actual entity's world node and entity pointer
-	scene::INodeWeakPtr _node;
-	Entity* _entity;
+	scene::INodeWeakPtr _entityNode;
 	
 	// Map of numbered Objective objects
 	ObjectiveMap _objectives;
@@ -43,7 +42,7 @@ private:
 
     // Write the Components to the underlying entity
     void writeComponents(
-        const std::string& keyPrefix, const Objective& objective
+        Entity* entity, const std::string& keyPrefix, const Objective& objective
     );
 
 public:
@@ -51,7 +50,7 @@ public:
 	/**
 	 * Construct an ObjectiveEntity wrapper around the given Node.
 	 */
-	ObjectiveEntity(scene::INodePtr n);
+	ObjectiveEntity(scene::INodePtr node);
 	
 	/**
 	 * Return an Objective reference by numeric index.
