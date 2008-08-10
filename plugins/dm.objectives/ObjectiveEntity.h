@@ -37,6 +37,10 @@ class ObjectiveEntity
 	
 	// Map of numbered Objective objects
 	ObjectiveMap _objectives;
+
+	// The overall mission success/failure logic
+	std::string _successLogic;
+	std::string _failureLogic;
 	
 private:
 
