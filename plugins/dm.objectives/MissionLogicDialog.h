@@ -51,6 +51,9 @@ private:
 	// Creates one logic editor for each difficulty level plus the default one
 	void createLogicEditors();
 
+	// Populate the logic editors from the objective entity object
+	void populateLogicEditors();
+
 	// Writes the contents of the widgets to the objective entity
 	void save();
 
