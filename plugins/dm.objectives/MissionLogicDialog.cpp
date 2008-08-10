@@ -20,12 +20,6 @@ namespace {
 	const std::string DIFFICULTY_LOGIC_DESCR =
 		"These logics override the standard logic for the given difficulty level\n" \
 		"if the logic string is non-empty.";
-
-	// Widget enum
-	enum {
-		WIDGET_SUCCESS_LOGIC,
-		WIDGET_FAILURE_LOGIC,
-	};
 }
 
 // Main constructor
@@ -69,9 +63,8 @@ MissionLogicDialog::MissionLogicDialog(GtkWindow* parent, ObjectiveEntity& objec
 	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
 	
-	// Populate the list of components
-	//populateObjectiveEditPanel();
-	//populateComponents();
+	// Populate the logic strings
+	populateLogicEditors();
 
 	// Add contents to main window
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -104,6 +97,18 @@ GtkWidget* MissionLogicDialog::createButtons() {
 	gtk_box_pack_end(GTK_BOX(hbx), saveButton, TRUE, TRUE, 0);
 
 	return gtkutil::RightAlignment(hbx);
+}
+
+void MissionLogicDialog::populateLogicEditors() {
+	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
+	// to find out how many difficulty levels there are
+	for (int i = 0; i < 2; i++) {
+		LogicPtr logic = _objectiveEnt.getMissionLogic(i);
+
+		// FIXME: Hm, maybe it would be better to pass the Logic object itself to the editor?
+		_logicEditors[i]->setSuccessLogicStr(logic->successLogic);
+		_logicEditors[i]->setFailureLogicStr(logic->failureLogic);
+	}
 }
 
 void MissionLogicDialog::save() {

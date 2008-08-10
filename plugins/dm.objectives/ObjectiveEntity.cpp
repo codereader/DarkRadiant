@@ -3,11 +3,19 @@
 #include "TargetList.h"
 
 #include "scenelib.h"
+#include "ientity.h"
 
 #include "string/string.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 namespace objectives {
+
+	namespace {
+		const std::string KV_SUCCESS_LOGIC("mission_logic_success");
+		const std::string KV_FAILURE_LOGIC("mission_logic_failure");
+		const int INVALID_LEVEL_INDEX = -9999;
+	}
 
 // Constructor
 ObjectiveEntity::ObjectiveEntity(scene::INodePtr node) :
@@ -21,7 +29,66 @@ ObjectiveEntity::ObjectiveEntity(scene::INodePtr node) :
 	ObjectiveKeyExtractor extractor(_objectives);
 	entity->forEachKeyValue(extractor);
 
-	// TODO: Read mission success/failure logic
+	// Parse the logic strings from the entity
+	readMissionLogic(entity);
+}
+
+void ObjectiveEntity::readMissionLogic(Entity* ent) {
+	// Find the success logic strings
+	Entity::KeyValuePairs successLogics = ent->getKeyValuePairs(KV_SUCCESS_LOGIC);
+
+	for (Entity::KeyValuePairs::const_iterator kv = successLogics.begin();
+		 kv != successLogics.end(); kv++)
+	{
+		std::string postfix = kv->first.substr(KV_SUCCESS_LOGIC.size());	
+
+		if (postfix.empty()) {
+			// Empty postfix means that we've found the default logic
+			LogicPtr logic = getMissionLogic(-1);
+			logic->successLogic = kv->second;
+		}
+		else if (boost::algorithm::starts_with(postfix, "_diff_")) {
+			// We seem to have a difficulty-related logic, get the level
+			int level = strToInt(postfix.substr(6), INVALID_LEVEL_INDEX);
+
+			if (level == INVALID_LEVEL_INDEX) {
+				globalErrorStream() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
+					"logic strings: " << kv->second << std::endl;
+				continue;
+			}
+
+			LogicPtr logic = getMissionLogic(level);
+			logic->successLogic = kv->second;
+		}
+	}
+
+	// Find the failure logic strings
+	Entity::KeyValuePairs failureLogics = ent->getKeyValuePairs(KV_FAILURE_LOGIC);
+
+	for (Entity::KeyValuePairs::const_iterator kv = failureLogics.begin();
+		 kv != failureLogics.end(); kv++)
+	{
+		std::string postfix = kv->first.substr(KV_FAILURE_LOGIC.size());	
+
+		if (postfix.empty()) {
+			// Empty postfix means that we've found the default logic
+			LogicPtr logic = getMissionLogic(-1);
+			logic->failureLogic = kv->second;
+		}
+		else if (boost::algorithm::starts_with(postfix, "_diff_")) {
+			// We seem to have a difficulty-related logic, get the level
+			int level = strToInt(postfix.substr(6), INVALID_LEVEL_INDEX);
+
+			if (level == INVALID_LEVEL_INDEX) {
+				globalErrorStream() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
+					"logic strings: " << kv->second << std::endl;
+				continue;
+			}
+
+			LogicPtr logic = getMissionLogic(level);
+			logic->failureLogic = kv->second;
+		}
+	}
 }
 
 // Delete the entity's world node
@@ -54,6 +121,22 @@ bool ObjectiveEntity::isOnTargetList(const TargetList& list) const {
 	assert(entity != NULL);
 
 	return list.isTargeted(entity);
+}
+
+LogicPtr ObjectiveEntity::getMissionLogic(int difficultyLevel) {
+	// The usual game, look up and insert if not found
+	LogicMap::iterator i = _logics.find(difficultyLevel);
+
+	if (i == _logics.end()) {
+		std::pair<LogicMap::iterator, bool> result = _logics.insert(
+			LogicMap::value_type(difficultyLevel, LogicPtr(new Logic))
+		);
+
+		i = result.first;
+	}
+
+	// At this point, the iterator is pointing to something valid
+	return i->second;
 }
 
 // Populate a list store with objectives

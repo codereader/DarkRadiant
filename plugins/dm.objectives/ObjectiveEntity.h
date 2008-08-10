@@ -2,6 +2,7 @@
 #define OBJECTIVEENTITY_H_
 
 #include "Objective.h"
+#include "Logic.h"
 
 #include "inode.h"
 #include <boost/shared_ptr.hpp>
@@ -38,11 +39,15 @@ class ObjectiveEntity
 	// Map of numbered Objective objects
 	ObjectiveMap _objectives;
 
-	// The overall mission success/failure logic
-	std::string _successLogic;
-	std::string _failureLogic;
+	// Each difficulty level can have its own mission logic
+	// The index -1 is reserved for the default logic
+	typedef std::map<int, LogicPtr> LogicMap;
+	LogicMap _logics;
 	
 private:
+
+	// Read the mission success/failure logic from the entity
+	void readMissionLogic(Entity* ent);
 
     // Write the Components to the underlying entity
     void writeComponents(
@@ -111,6 +116,15 @@ public:
 	 */
 	bool isOnTargetList(const TargetList& list) const;
 	
+	/**
+	 * greebo: Returns the mission logic structure for the given difficulty level.
+	 * The level -1 refers to the default logic structure.
+	 *
+	 * @returns: The logic (is never NULL). The logic object will be created if 
+	 * it isn't already existing, but the logic structure would be empty in that case.
+	 */
+	LogicPtr getMissionLogic(int difficultyLevel);
+
 	/**
 	 * Populate the given list store with the objectives from this entity.
 	 * 
