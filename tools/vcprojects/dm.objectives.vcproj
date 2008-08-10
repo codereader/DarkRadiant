@@ -239,6 +239,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.objectives\LogicEditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.objectives\LogicEditor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.objectives\MissionLogicDialog.cpp"
 				>
 			</File>

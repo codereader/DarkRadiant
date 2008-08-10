@@ -3,6 +3,7 @@
 #include "RandomOrigin.h"
 #include "TargetList.h"
 #include "ComponentsDialog.h"
+#include "MissionLogicDialog.h"
 #include "util/ObjectivesException.h"
 
 #include "iscenegraph.h"
@@ -85,7 +86,7 @@ ObjectivesEditor::ObjectivesEditor() :
 					   gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0),
 					   TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx), 
-					   gtkutil::LeftAlignedLabel("<b>Logic</b>"),
+					   gtkutil::LeftAlignedLabel("<b>Success/Failure Logic</b>"),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx),
 					   gtkutil::LeftAlignment(createLogicPanel(), 18, 1.0),
@@ -213,37 +214,22 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 
 GtkWidget* ObjectivesEditor::createLogicPanel() {
 	// Align the widgets in a table
-	GtkWidget* table = gtk_table_new(2, 2, FALSE);
-	gtk_widget_set_sensitive(table, FALSE);
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	gtk_widget_set_sensitive(hbox, FALSE);
 
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
-	
-	GtkWidget* successEntry = gtk_entry_new();
-	GtkWidget* failureEntry = gtk_entry_new();
+	GtkWidget* editLogicButton = gtk_button_new_with_label("Edit mission success/failure logic..."); 
+	gtk_button_set_image(GTK_BUTTON(editLogicButton), 
+						 gtk_image_new_from_stock(GTK_STOCK_EDIT, 
+						 						  GTK_ICON_SIZE_BUTTON));
 
-	// Success logic
-	int row = 0;
+	g_signal_connect(G_OBJECT(editLogicButton), "clicked", 
+					 G_CALLBACK(_onEditLogic), this);
 
-	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("Success logic"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), successEntry, 1, 2, row, row+1);
+	gtk_box_pack_start(GTK_BOX(hbox), editLogicButton, TRUE, TRUE, 0);
 
-	// Failure logic
-	row++;
+	_widgets[WIDGET_LOGIC_PANEL] = hbox;
 
-	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("Failure logic"),
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), failureEntry, 1, 2, row, row+1);
-
-	// Remember the text entry fields
-	_widgets[WIDGET_MISSION_SUCCESS_LOGIC] = successEntry;
-	_widgets[WIDGET_MISSION_FAILURE_LOGIC] = failureEntry;
-	_widgets[WIDGET_LOGIC_PANEL] = table;
-
-	return table;
+	return hbox;
 }
 
 // Create the buttons panel
@@ -584,6 +570,13 @@ void ObjectivesEditor::_onClearObjectives(GtkWidget* w,
 {
 	// Clear the entity and refresh the list
 	self->_curEntity->second->clearObjectives();
+	self->refreshObjectivesList();
+}
+
+void ObjectivesEditor::_onEditLogic(GtkWidget* w, ObjectivesEditor* self) {
+	MissionLogicDialog _dialog(GTK_WINDOW(self->getWindow()), *self->_curEntity->second);
+	_dialog.show();
+
 	self->refreshObjectivesList();
 }
 
