@@ -33,6 +33,8 @@ namespace {
 		WIDGET_OBJ_VISIBLE_FLAG,
 		WIDGET_OBJ_DIFFICULTY_COMBO,
 		WIDGET_OBJ_ENABLING_OBJS,
+		WIDGET_OBJ_SUCCESS_LOGIC,
+		WIDGET_OBJ_FAILURE_LOGIC,
 		WIDGET_EDIT_PANEL,
 		WIDGET_TYPE_COMBO,
 		WIDGET_STATE_FLAG,
@@ -81,7 +83,7 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(5, 2, FALSE);
+	GtkWidget* table = gtk_table_new(6, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 
@@ -152,16 +154,38 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// Enabling objectives
 	GtkWidget* enablingObjs = gtk_entry_new();
+	_widgets[WIDGET_OBJ_ENABLING_OBJS] = enablingObjs;
 
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Enabling Objectives</b>"),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), enablingObjs, 1, 2, row, row+1);
 	
+	row++;
+
+	// Logic
+	GtkWidget* logicHBox = gtk_hbox_new(FALSE, 6);
+		
+	// Success Logic
+	GtkWidget* successLogic = gtk_entry_new();
+	_widgets[WIDGET_OBJ_SUCCESS_LOGIC] = successLogic;
+
+	// Failure Logic
+	GtkWidget* failureLogic = gtk_entry_new();
+	_widgets[WIDGET_OBJ_FAILURE_LOGIC] = failureLogic;
+
+	gtk_box_pack_start(GTK_BOX(logicHBox), successLogic, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(logicHBox), gtkutil::LeftAlignedLabel("<b>Failure Logic:</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(logicHBox), failureLogic, TRUE, TRUE, 0);
+
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("<b>Sucess Logic</b>"),
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), logicHBox, 1, 2, row, row+1);
+
 	// Pack items into a vbox and return
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), table, FALSE, FALSE, 0);
-	_widgets[WIDGET_OBJ_ENABLING_OBJS] = enablingObjs;
 
 	return vbx;
 }
@@ -437,6 +461,11 @@ void ComponentsDialog::populateObjectiveEditPanel() {
 		
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_OBJ_ENABLING_OBJS]),
 					   obj.enablingObjs.c_str());
+
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_OBJ_SUCCESS_LOGIC]),
+					   obj.logic.successLogic.c_str());
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_OBJ_FAILURE_LOGIC]),
+					   obj.logic.failureLogic.c_str());
 
 	_updateMutex = false;
 }
