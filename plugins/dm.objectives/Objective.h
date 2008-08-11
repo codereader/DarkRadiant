@@ -43,6 +43,10 @@ public:
 
 	// Success/failure logic
 	Logic logic;
+
+	// The scripts that are called when this objective completes/fails
+	std::string completionScript;
+	std::string failureScript;
 	
 	// Map of indexed components
 	typedef std::map<int, Component> ComponentMap;

@@ -249,6 +249,12 @@ void ObjectiveEntity::writeToEntity() {
 
 		entity->setKeyValue(prefix + "enabling_objs", o.enablingObjs);
 
+		entity->setKeyValue(prefix + "script_complete", o.completionScript);
+		entity->setKeyValue(prefix + "script_failed", o.failureScript);
+
+		entity->setKeyValue(prefix + "logic_success", o.logic.successLogic);
+		entity->setKeyValue(prefix + "logic_failure", o.logic.failureLogic);
+
         // Write the Components for this Objective
         writeComponents(entity, prefix, o);
 	}	
