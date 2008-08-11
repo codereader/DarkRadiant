@@ -2,6 +2,7 @@
 #define OBJECTIVE_H_
 
 #include "Component.h"
+#include "Logic.h"
 
 #include <string>
 #include <map>
@@ -39,6 +40,9 @@ public:
 
 	// The prerequisites of this objective (a space-delimited index list for now)
 	std::string enablingObjs;
+
+	// Success/failure logic
+	Logic logic;
 	
 	// Map of indexed components
 	typedef std::map<int, Component> ComponentMap;
