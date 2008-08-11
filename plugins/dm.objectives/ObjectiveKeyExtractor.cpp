@@ -69,6 +69,18 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 	else if (objSubString == "enabling_objs") {
 		_objMap[iNum].enablingObjs = value;
 	}
+	else if (objSubString == "script_complete") {
+		_objMap[iNum].completionScript = value;
+	}
+	else if (objSubString == "script_failed") {
+		_objMap[iNum].failureScript = value;
+	}
+	else if (objSubString == "logic_success") {
+		_objMap[iNum].logic.successLogic = value;
+	}
+	else if (objSubString == "logic_failure") {
+		_objMap[iNum].logic.failureLogic = value;
+	}
 	else {
 	
 		// Use another regex to check for components (obj1_1_blah)
