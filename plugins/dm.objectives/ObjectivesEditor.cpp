@@ -57,9 +57,10 @@ ObjectivesEditor::ObjectivesEditor() :
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
   										  G_TYPE_STRING)),		// entity name
-	_objectiveList(gtk_list_store_new(2, 
+	_objectiveList(gtk_list_store_new(3, 
   								    G_TYPE_INT,			// obj number 
-  								    G_TYPE_STRING))		// obj description
+  								    G_TYPE_STRING,		// obj description
+									G_TYPE_STRING))		// obj difficulty level
 {
 	// Window properties
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -173,6 +174,8 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Description", 1, false));
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Diff.", 2, false));
 	
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);

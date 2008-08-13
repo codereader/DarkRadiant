@@ -162,11 +162,16 @@ void ObjectiveEntity::populateListStore(GtkListStore* store) const {
 		 i != _objectives.end();
 		 ++i)
 	{
+		std::string diffStr = (i->second.difficultyLevel == -1)
+			? "all" 
+			: intToStr(i->second.difficultyLevel);
+
 		GtkTreeIter iter;
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter, 
 						   0, i->first, 
 						   1, i->second.description.c_str(),
+						   2, diffStr.c_str(),
 						   -1);	
 	}	
 }
