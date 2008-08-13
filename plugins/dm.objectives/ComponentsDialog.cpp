@@ -45,7 +45,7 @@ namespace {
 		WIDGET_COMPEDITOR_PANEL
 	};
 	
-}
+} // namespace
 
 // Main constructor
 ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
@@ -562,6 +562,22 @@ void ComponentsDialog::save() {
 
 	_objective.irreversible = gtk_toggle_button_get_active(
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_OBJ_IRREVERSIBLE_FLAG])) ? true : false;
+
+	// Enabling objectives
+	_objective.enablingObjs = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_ENABLING_OBJS]));
+
+	// Success/failure logic
+	_objective.logic.successLogic = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_SUCCESS_LOGIC]));
+	_objective.logic.failureLogic = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_FAILURE_LOGIC]));
+
+	// Completion/Failure script
+	_objective.completionScript = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_COMPLETION_SCRIPT]));
+	_objective.failureScript = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_FAILURE_SCRIPT]));
 
 	// Write the components
 	checkWriteComponent();
