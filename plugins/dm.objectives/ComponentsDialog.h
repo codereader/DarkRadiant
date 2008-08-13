@@ -69,16 +69,15 @@ private:
 
     // If there is a ComponentEditor, write its contents to the Component
     void checkWriteComponent();
+
+	// Writes the data from the widgets to the data structures
+	void save();
 	
 	/* GTK CALLBACKS */
-	static void _onClose(GtkWidget*, ComponentsDialog*);
+	static void _onSave(GtkWidget*, ComponentsDialog*);
+	static void _onCancel(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
 	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
-
-	static void _onDescriptionEdited(GtkEditable*, ComponentsDialog*);
-	static void _onInitialStateChanged(GtkWidget*, ComponentsDialog*);
-	static void _onDifficultyChanged(GtkWidget*, ComponentsDialog*);
-	static void _onObjFlagToggle(GtkWidget*, ComponentsDialog*);
 
 	static void _onAddComponent(GtkWidget*, ComponentsDialog*);
 	static void _onDeleteComponent(GtkWidget*, ComponentsDialog*);

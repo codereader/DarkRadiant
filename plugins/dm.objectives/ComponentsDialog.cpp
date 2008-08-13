@@ -99,8 +99,6 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	gtk_table_attach_defaults(GTK_TABLE(table), 
 							  _widgets[WIDGET_OBJ_DESCRIPTION_ENTRY], 
 							  1, 2, row, row+1);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_OBJ_DESCRIPTION_ENTRY]), "changed",
-					 G_CALLBACK(_onDescriptionEdited), this);
 	
 	row++;
 
@@ -112,8 +110,6 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _widgets[WIDGET_OBJ_DIFFICULTY_COMBO],
 							  1, 2, row, row+1);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_OBJ_DIFFICULTY_COMBO]), "changed",
-					 G_CALLBACK(_onDifficultyChanged), this);
 
 	// Populate the difficulty levels.
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
@@ -133,8 +129,6 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _widgets[WIDGET_OBJ_STATE_COMBO],
 							  1, 2, row, row+1);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_OBJ_STATE_COMBO]), "changed",
-					 G_CALLBACK(_onInitialStateChanged), this);
 
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
@@ -228,15 +222,6 @@ GtkWidget* ComponentsDialog::createObjectiveFlagsTable() {
 		gtk_check_button_new_with_label("Ongoing"); 
 	_widgets[WIDGET_OBJ_VISIBLE_FLAG] =
 		gtk_check_button_new_with_label("Visible"); 
-
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_OBJ_MANDATORY_FLAG]), "toggled",
-					 G_CALLBACK(_onObjFlagToggle), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_OBJ_IRREVERSIBLE_FLAG]), "toggled",
-					 G_CALLBACK(_onObjFlagToggle), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_OBJ_ONGOING_FLAG]), "toggled",
-					 G_CALLBACK(_onObjFlagToggle), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_OBJ_VISIBLE_FLAG]), "toggled",
-					 G_CALLBACK(_onObjFlagToggle), this);
 
 	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_OBJ_MANDATORY_FLAG], 
 					   FALSE, FALSE, 0);
@@ -375,16 +360,17 @@ GtkWidget* ComponentsDialog::createComponentEditorPanel()
 
 // Create buttons
 GtkWidget* ComponentsDialog::createButtons() {
-	
+	// Create a homogeneous hbox
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
-	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	
-	g_signal_connect(
-		G_OBJECT(closeButton), "clicked", G_CALLBACK(_onClose), this
-    );
+	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(_onSave), this);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
-	gtk_box_pack_end(GTK_BOX(hbx), closeButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), saveButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
 	return gtkutil::RightAlignment(hbx);
 }
@@ -547,57 +533,52 @@ void ComponentsDialog::checkWriteComponent() {
 	}
 }
 
+void ComponentsDialog::save() {
+	// Write the objective properties
+	_objective.description = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_DESCRIPTION_ENTRY]));
+
+	// Set the state enum value from the combo box index
+	int level = gtk_combo_box_get_active(
+		GTK_COMBO_BOX(_widgets[WIDGET_OBJ_DIFFICULTY_COMBO]));
+
+	// Set the difficulty int to -1 if the first option has been selected
+	_objective.difficultyLevel = (level == 0) ? (-1) : (level - 1);
+
+	// Set the initial state enum value from the combo box index
+	_objective.state = static_cast<Objective::State>(
+		gtk_combo_box_get_active(GTK_COMBO_BOX(_widgets[WIDGET_OBJ_STATE_COMBO]))
+	);
+
+	// Determine which checkbox is toggled, then update the appropriate flag
+	_objective.mandatory = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_OBJ_MANDATORY_FLAG])) ? true : false;
+
+	_objective.visible = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_OBJ_VISIBLE_FLAG])) ? true : false;
+
+	_objective.ongoing = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_OBJ_ONGOING_FLAG])) ? true : false;
+
+	_objective.irreversible = gtk_toggle_button_get_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_OBJ_IRREVERSIBLE_FLAG])) ? true : false;
+
+	// Write the components
+	checkWriteComponent();
+}
+
 /* GTK CALLBACKS */
 
-// Close button
-void ComponentsDialog::_onClose(GtkWidget* w, ComponentsDialog* self) {
-    self->checkWriteComponent();
+// Save button
+void ComponentsDialog::_onSave(GtkWidget* w, ComponentsDialog* self) {
+	self->save();
 	self->destroy();
 }
 
-// Callback when description is edited
-void ComponentsDialog::_onDescriptionEdited(GtkEditable* e, ComponentsDialog* self) {
-	// Abort if the objective liststore is locked
-	if (self->_updateMutex)
-		return;
-	
-	// Set the string on the Objective 
-	self->_objective.description = gtk_entry_get_text(GTK_ENTRY(e));
-}
-
-// Difficulty combo changed
-void ComponentsDialog::_onDifficultyChanged(GtkWidget* w, ComponentsDialog* self) {
-	// Set the state enum value from the combo box index
-	int level = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
-
-	// Set the difficulty int to -1 if the first option has been selected
-	self->_objective.difficultyLevel = (level == 0) ? (-1) : (level - 1);
-}
-
-// Initial state combo changed
-void ComponentsDialog::_onInitialStateChanged(GtkWidget* w, ComponentsDialog* self) {
-	// Set the state enum value from the combo box index
-	self->_objective.state = static_cast<Objective::State>(
-		gtk_combo_box_get_active(GTK_COMBO_BOX(w))
-	);
-}
-
-// Callback for flag checkbox toggle
-void ComponentsDialog::_onObjFlagToggle(GtkWidget* flag, ComponentsDialog* self) {
-	// Get the objective and the new status
-	Objective& o = self->_objective;
-	bool status = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(flag)) ? true : false;
-	
-	// Determine which checkbox is toggled, then update the appropriate flag
-	// accordingly
-	if (flag == self->_widgets[WIDGET_OBJ_MANDATORY_FLAG])
-		o.mandatory = status;
-	else if (flag == self->_widgets[WIDGET_OBJ_VISIBLE_FLAG])
-		o.visible = status;
-	else if (flag == self->_widgets[WIDGET_OBJ_ONGOING_FLAG])
-		o.ongoing = status;
-	else if (flag == self->_widgets[WIDGET_OBJ_IRREVERSIBLE_FLAG])
-		o.irreversible = status;
+// Cancel button
+void ComponentsDialog::_onCancel(GtkWidget* w, ComponentsDialog* self) {
+	// Destroy the dialog without saving
+    self->destroy();
 }
 
 // Selection changed
