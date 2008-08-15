@@ -63,8 +63,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 			static_cast<Objective::State>(strToInt(value));
 	}
 	else if (objSubString == "difficulty") {
-		// Invalid integers will be interpreted as -1
-		_objMap[iNum].difficultyLevel = strToInt(value, -1);
+		_objMap[iNum].difficultyLevels = value;
 	}
 	else if (objSubString == "enabling_objs") {
 		_objMap[iNum].enablingObjs = value;

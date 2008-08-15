@@ -9,9 +9,13 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
+#include "string/string.h"
 
+#include <vector>
 #include <gtk/gtk.h>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace objectives
@@ -42,8 +46,11 @@ namespace {
 		WIDGET_STATE_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
 		WIDGET_INVERTED_FLAG,
-		WIDGET_COMPEDITOR_PANEL
+		WIDGET_COMPEDITOR_PANEL,
+		WIDGET_OBJ_DIFFICULTY_TOGGLE, // this MUST stay the last item
 	};
+
+	typedef std::vector<std::string> StringParts;
 	
 } // namespace
 
@@ -106,18 +113,22 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	gtk_table_attach(GTK_TABLE(table),
 					 gtkutil::LeftAlignedLabel("<b>Difficulty</b>"),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	_widgets[WIDGET_OBJ_DIFFICULTY_COMBO] = gtk_combo_box_new_text();
+
+	GtkWidget* diffHBox = gtk_hbox_new(TRUE, 6);
 	gtk_table_attach_defaults(GTK_TABLE(table),
-							  _widgets[WIDGET_OBJ_DIFFICULTY_COMBO],
+							  diffHBox,
 							  1, 2, row, row+1);
 
-	// Populate the difficulty levels.
-	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
-	GtkComboBox* diffCombo = GTK_COMBO_BOX(_widgets[WIDGET_OBJ_DIFFICULTY_COMBO]);
-	gtk_combo_box_append_text(diffCombo, "Applies to all difficulty levels");
-	gtk_combo_box_append_text(diffCombo, "Level 1 - Easy");
-	gtk_combo_box_append_text(diffCombo, "Level 2 - Hard");
-	gtk_combo_box_append_text(diffCombo, "Level 3 - Expert");
+	// TODO: Connect to optional Difficulty plugin
+	_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 0] = gtk_check_button_new_with_label("All Levels");
+	_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 1] = gtk_check_button_new_with_label("Level 1: Easy");
+	_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 2] = gtk_check_button_new_with_label("Level 2: Hard");
+	_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 3] = gtk_check_button_new_with_label("Level 3: Expert");
+
+	gtk_box_pack_start(GTK_BOX(diffHBox), _widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 0], TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(diffHBox), _widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 1], TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(diffHBox), _widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 2], TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(diffHBox), _widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 3], TRUE, TRUE, 0);
 
 	row++;
 
@@ -446,11 +457,29 @@ void ComponentsDialog::populateObjectiveEditPanel() {
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_OBJ_DESCRIPTION_ENTRY]),
 					   obj.description.c_str());
 				
-	// Set the difficulty combo box value
-	// A value of -1 means "all levels" (=> combo box index 0)
-	// All other values [0..2] are translated to combo box indices [1..3]
-	gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_OBJ_DIFFICULTY_COMBO]),
-		obj.difficultyLevel != -1 ? obj.difficultyLevel+1 : 0);
+	// Set the difficulty level
+	StringParts parts;
+	boost::algorithm::split(parts, obj.difficultyLevels, boost::algorithm::is_any_of(" "));
+
+	// Set the "applies to all difficulty" toggle
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
+		_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 0]), obj.difficultyLevels.empty() ? TRUE : FALSE);
+
+	// Set all levels to deactivated
+	for (int i = 1; i < 4; i++) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
+			_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + i]), FALSE);
+	}
+
+	for (std::size_t i = 0; i < parts.size(); i++) {
+		// Convert the token to an integer
+		int level = strToInt(parts[i], -1);
+
+		if (level > -1 && level < 4) {
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(
+				_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + level]), TRUE);
+		}
+	}
 
 	// Set initial state enum
 	gtk_combo_box_set_active(GTK_COMBO_BOX(_widgets[WIDGET_OBJ_STATE_COMBO]),
@@ -538,12 +567,23 @@ void ComponentsDialog::save() {
 	_objective.description = gtk_entry_get_text(
 		GTK_ENTRY(_widgets[WIDGET_OBJ_DESCRIPTION_ENTRY]));
 
-	// Set the state enum value from the combo box index
-	int level = gtk_combo_box_get_active(
-		GTK_COMBO_BOX(_widgets[WIDGET_OBJ_DIFFICULTY_COMBO]));
+	// Set the difficulty 
+	_objective.difficultyLevels = "";
 
-	// Set the difficulty int to -1 if the first option has been selected
-	_objective.difficultyLevel = (level == 0) ? (-1) : (level - 1);
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + 0])))
+	{
+		// Not applicable to all difficulty levels, form the string
+		// TODO: Connect to difficulty plugin
+		for (int i = 1; i <= 3; i++) {
+			// Check each toggle button
+			if (gtk_toggle_button_get_active(
+				GTK_TOGGLE_BUTTON(_widgets[WIDGET_OBJ_DIFFICULTY_TOGGLE + i])))
+			{
+				std::string prefix = (!_objective.difficultyLevels.empty()) ? " " : "";
+				_objective.difficultyLevels += prefix + intToStr(i);
+			}
+		}
+	}
 
 	// Set the initial state enum value from the combo box index
 	_objective.state = static_cast<Objective::State>(
