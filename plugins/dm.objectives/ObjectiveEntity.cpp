@@ -162,9 +162,9 @@ void ObjectiveEntity::populateListStore(GtkListStore* store) const {
 		 i != _objectives.end();
 		 ++i)
 	{
-		std::string diffStr = (i->second.difficultyLevel == -1)
+		std::string diffStr = (i->second.difficultyLevels.empty())
 			? "all" 
-			: intToStr(i->second.difficultyLevel);
+			: i->second.difficultyLevels;
 
 		GtkTreeIter iter;
 		gtk_list_store_append(store, &iter);
@@ -249,8 +249,7 @@ void ObjectiveEntity::writeToEntity() {
 		entity->setKeyValue(prefix + "state", intToStr(o.state));
 
 		// Write an empty "objN_difficulty" value when this objective applies to all levels
-		entity->setKeyValue(prefix + "difficulty", 
-			o.difficultyLevel != -1 ? intToStr(o.difficultyLevel) : "");
+		entity->setKeyValue(prefix + "difficulty", o.difficultyLevels);
 
 		entity->setKeyValue(prefix + "enabling_objs", o.enablingObjs);
 

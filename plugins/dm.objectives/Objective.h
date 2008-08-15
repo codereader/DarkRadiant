@@ -34,9 +34,8 @@ public:
 	bool ongoing;
 	bool irreversible;
 
-	// The difficulty level this objective applies to
-	// A negative value means that this applies to all levels
-	int difficultyLevel;
+	// The difficulty levels this objective applies to (space-delimited integers)
+	std::string difficultyLevels;
 
 	// The prerequisites of this objective (a space-delimited index list for now)
 	std::string enablingObjs;
@@ -58,8 +57,7 @@ public:
 		mandatory(false), 
 		visible(false), 
 		ongoing(false),
-		irreversible(false),
-		difficultyLevel(-1)
+		irreversible(false)
 	{}
 };
 
