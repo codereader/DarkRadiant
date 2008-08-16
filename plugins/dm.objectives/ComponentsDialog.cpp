@@ -43,6 +43,7 @@ namespace {
 		WIDGET_STATE_FLAG,
 		WIDGET_IRREVERSIBLE_FLAG,
 		WIDGET_INVERTED_FLAG,
+		WIDGET_PLAYER_RESPONSIBLE_FLAG,
 		WIDGET_COMPEDITOR_PANEL,
 	};
 	
@@ -314,13 +315,17 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 		gtk_check_button_new_with_label("Irreversible");  
 	_widgets[WIDGET_INVERTED_FLAG] =
 		gtk_check_button_new_with_label("Boolean NOT");  
-	
+	_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG] =
+		gtk_check_button_new_with_label("Player responsible");  
+
 	GtkWidget* flagsBox = gtk_hbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_STATE_FLAG],
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_IRREVERSIBLE_FLAG],
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_INVERTED_FLAG],
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG],
 					   FALSE, FALSE, 0);
 	
 	gtk_table_attach(GTK_TABLE(table), 
@@ -409,6 +414,10 @@ void ComponentsDialog::populateEditPanel(int index) {
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_INVERTED_FLAG]), 
 		comp.isInverted() ? TRUE : FALSE
 	);
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG]), 
+		comp.isPlayerResponsible() ? TRUE : FALSE
+	);
 
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_FLAG]), "toggled", 
 		G_CALLBACK(_onCompToggleChanged), this);
@@ -416,7 +425,9 @@ void ComponentsDialog::populateEditPanel(int index) {
 		G_CALLBACK(_onCompToggleChanged), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_INVERTED_FLAG]), "toggled", 
 		G_CALLBACK(_onCompToggleChanged), this);
-	
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
+
     // Change the type combo if necessary. Since the combo box was populated in
     // ID order, we can simply use our ComponentType's ID as an index.
     GtkComboBox* typeCombo = GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]); 
@@ -612,6 +623,9 @@ void ComponentsDialog::_onCompToggleChanged(GtkToggleButton* togglebutton, Compo
 	}
 	else if (GTK_WIDGET(togglebutton) == self->_widgets[WIDGET_INVERTED_FLAG]) {
 		comp.setInverted(gtk_toggle_button_get_active(togglebutton) ? true : false);
+	}
+	else if (GTK_WIDGET(togglebutton) == self->_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG]) {
+		comp.setPlayerResponsible(gtk_toggle_button_get_active(togglebutton) ? true : false);
 	}
 }
 
