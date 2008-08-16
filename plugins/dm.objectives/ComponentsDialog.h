@@ -2,6 +2,7 @@
 #define COMPONENTSDIALOG_H_
 
 #include "ce/ComponentEditor.h"
+#include "DifficultyPanel.h"
 
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkliststore.h>
@@ -38,6 +39,9 @@ class ComponentsDialog :
 	
 	// Currently-active ComponentEditor (if any)
 	ce::ComponentEditorPtr _componentEditor;
+	
+	// The widgets needed for editing the difficulty levels
+	DifficultyPanel _diffPanel;
 
 	// TRUE while the widgets are populated to disable GTK callbacks
 	bool _updateMutex;
