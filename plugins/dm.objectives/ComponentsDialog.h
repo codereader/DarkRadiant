@@ -3,6 +3,7 @@
 
 #include "ce/ComponentEditor.h"
 #include "DifficultyPanel.h"
+#include "Objective.h"
 
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkliststore.h>
@@ -16,9 +17,6 @@
 
 namespace objectives
 {
-
-/* FORWARD DECLS */
-class Objective;
 
 /**
  * Dialog for displaying and editing the properties and components (conditions)
@@ -42,6 +40,10 @@ class ComponentsDialog :
 	
 	// The widgets needed for editing the difficulty levels
 	DifficultyPanel _diffPanel;
+
+	// Working set of components we're editing (get written to the objective
+	// as soon as the "Save" button is pressed.
+	Objective::ComponentMap _components;
 
 	// TRUE while the widgets are populated to disable GTK callbacks
 	bool _updateMutex;
