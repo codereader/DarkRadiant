@@ -195,12 +195,8 @@ void ObjectiveEntity::writeComponents(Entity* entity,
         // Write out Component keyvals
         entity->setKeyValue(prefix + "state", c.isSatisfied() ? "1" : "0");
         entity->setKeyValue(prefix + "not", c.isInverted() ? "1" : "0");
-        entity->setKeyValue(
-            prefix + "irreversible", c.isIrreversible() ? "1": "0"
-        );
-        entity->setKeyValue(
-            prefix + "player_responsible", c.isPlayerResponsible() ? "1" : "0"
-        );
+        entity->setKeyValue(prefix + "irreversible", c.isIrreversible() ? "1": "0");
+        entity->setKeyValue(prefix + "player_responsible", c.isPlayerResponsible() ? "1" : "0");
         entity->setKeyValue(prefix + "type", c.getType().getName());
 
 		entity->setKeyValue(prefix + "clock_interval", 

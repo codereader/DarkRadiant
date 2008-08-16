@@ -110,6 +110,9 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 			else if (componentStr == "irreversible") {
 				comp.setIrreversible(value == "1");
 			}
+			else if (componentStr == "player_responsible") {
+				comp.setPlayerResponsible(value == "1");
+			}
 			else if (componentStr == "args") {
 				// We have a component argument string
 				StringParts parts;
