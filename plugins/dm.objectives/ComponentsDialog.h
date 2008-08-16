@@ -8,6 +8,7 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtktreeselection.h>
+#include <gtk/gtktogglebutton.h>
 
 #include <map>
 #include <vector>
@@ -84,6 +85,8 @@ private:
 	static void _onCancel(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
 	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
+
+	static void _onCompToggleChanged(GtkToggleButton*, ComponentsDialog*);
 
 	static void _onAddComponent(GtkWidget*, ComponentsDialog*);
 	static void _onDeleteComponent(GtkWidget*, ComponentsDialog*);
