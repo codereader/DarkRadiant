@@ -409,6 +409,13 @@ void ComponentsDialog::populateEditPanel(int index) {
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_INVERTED_FLAG]), 
 		comp.isInverted() ? TRUE : FALSE
 	);
+
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_IRREVERSIBLE_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_INVERTED_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
 	
     // Change the type combo if necessary. Since the combo box was populated in
     // ID order, we can simply use our ComponentType's ID as an index.
@@ -585,6 +592,27 @@ void ComponentsDialog::_onSave(GtkWidget* w, ComponentsDialog* self) {
 void ComponentsDialog::_onCancel(GtkWidget* w, ComponentsDialog* self) {
 	// Destroy the dialog without saving
     self->destroy();
+}
+
+void ComponentsDialog::_onCompToggleChanged(GtkToggleButton* togglebutton, ComponentsDialog* self) {
+	if (self->_updateMutex) return;
+
+	// Update the Component working copy. The selected index must be valid, since the
+	// edit panel is only sensitive if a component is selected
+	int idx = self->getSelectedIndex();
+	assert(idx >= 0);
+
+	Component& comp = self->_components[idx];
+
+	if (GTK_WIDGET(togglebutton) == self->_widgets[WIDGET_STATE_FLAG]) {
+		comp.setSatisfied(gtk_toggle_button_get_active(togglebutton) ? true : false);
+	}
+	else if (GTK_WIDGET(togglebutton) == self->_widgets[WIDGET_IRREVERSIBLE_FLAG]) {
+		comp.setIrreversible(gtk_toggle_button_get_active(togglebutton) ? true : false);
+	}
+	else if (GTK_WIDGET(togglebutton) == self->_widgets[WIDGET_INVERTED_FLAG]) {
+		comp.setInverted(gtk_toggle_button_get_active(togglebutton) ? true : false);
+	}
 }
 
 // Selection changed
