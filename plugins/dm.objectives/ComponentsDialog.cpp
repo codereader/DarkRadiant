@@ -53,7 +53,8 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 	gtkutil::BlockingTransientWindow(DIALOG_TITLE, parent),
 	_objective(objective),
 	_componentList(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)),
-	_updateMutex(false)
+	_updateMutex(false),
+	_components(objective.components) // copy the components to our local working set
 {
 	// Dialog contains list view, edit panel and buttons
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
@@ -376,9 +377,8 @@ void ComponentsDialog::populateComponents() {
 	gtk_list_store_clear(_componentList);
 	
 	// Add components from the Objective to the list store
-	Objective::ComponentMap& components = _objective.components;
-	for (Objective::ComponentMap::const_iterator i = components.begin();
-		 i != components.end();
+	for (Objective::ComponentMap::const_iterator i = _components.begin();
+		 i != _components.end();
 		 ++i)
 	{
 		GtkTreeIter iter;
@@ -394,7 +394,7 @@ void ComponentsDialog::populateComponents() {
 // Populate the edit panel
 void ComponentsDialog::populateEditPanel(int index) {
 	// Get the component
-	Component& comp = _objective.components[index];
+	Component& comp = _components[index];
 	
 	// Set the flags
 	gtk_toggle_button_set_active(
@@ -568,6 +568,9 @@ void ComponentsDialog::save() {
 
 	// Write the components
 	checkWriteComponent();
+
+	// Copy the working set over the ones in the objective
+	_objective.components.swap(_components);
 }
 
 /* GTK CALLBACKS */
@@ -615,7 +618,7 @@ void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
 // Add a new component
 void ComponentsDialog::_onAddComponent(GtkWidget* w, ComponentsDialog* self) 
 {
-	Objective::ComponentMap& components = self->_objective.components;
+	Objective::ComponentMap& components = self->_components;
 	
 	// Find an unused component number (starting from 1)
 	for (int idx = 1; idx < INT_MAX; ++idx) {
@@ -643,7 +646,7 @@ void ComponentsDialog::_onDeleteComponent(GtkWidget* w, ComponentsDialog* self)
         gtk_tree_selection_unselect_all(self->_componentSel);
 
         // Erase the actual component
-		self->_objective.components.erase(idx);
+		self->_components.erase(idx);
 	}
 	
 	// Refresh the list
@@ -666,7 +669,7 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self)
 	// edit panel is only sensitive if a component is selected
 	int idx = self->getSelectedIndex();
 	assert(idx >= 0);
-	Component& comp(self->_objective.components[idx]);
+	Component& comp = self->_components[idx];
 
     // Store the newly-selected type in the Component
 	comp.setType(ComponentType::getComponentType(selectedText));
