@@ -167,30 +167,7 @@ public:
 	/**
 	 * Return a string description of this Component.
 	 */
-	std::string getString() const {
-		
-        // Add the ComponentType
-        std::string retStr = _type.getDisplayName();
-        
-        // Add the Specifier details, if any
-        SpecifierPtr sp1 = getSpecifier(Specifier::FIRST_SPECIFIER);
-        if (sp1) {
-            retStr += " [ " + sp1->getType().getDisplayName();
-            retStr += " = " + sp1->getValue();
-        }
-        SpecifierPtr sp2 = getSpecifier(Specifier::SECOND_SPECIFIER);
-        if (sp2) {
-            if (sp1)
-                retStr += ", ";
-            retStr += sp2->getType().getDisplayName();
-            retStr += " = " + sp2->getValue();
-        }
-        if (sp1 || sp2) {
-            retStr += " ]";
-        }
-
-        return retStr;
-	}
+	std::string getString();
 
     /**
      * Set the Specifier at the given index.
@@ -256,6 +233,10 @@ public:
 	std::string getArgumentString() const {
 		return boost::algorithm::join(_arguments, " ");
 	}
+
+private:
+	// Returns a more or less English sentence
+	std::string getSpecifierSentence();
 };
 
 }

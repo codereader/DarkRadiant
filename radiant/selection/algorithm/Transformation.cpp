@@ -146,7 +146,10 @@ void cloneSelected() {
 	clonedNamespace->connect(cloner.getCloneRoot());
 
 	// Get the namespace of the current map
-	INamespacePtr nspace = GlobalMapModule().getRoot()->getNamespace();
+	IMapRootNodePtr mapRoot = GlobalMapModule().getRoot();
+	if (mapRoot == NULL) return; // not map root (this can happen)
+
+	INamespacePtr nspace = mapRoot->getNamespace();
 	if (nspace != NULL) {
 		// Prepare the nodes for import
 		nspace->importNames(cloner.getCloneRoot());

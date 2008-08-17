@@ -382,7 +382,7 @@ void ComponentsDialog::populateComponents() {
 	gtk_list_store_clear(_componentList);
 	
 	// Add components from the Objective to the list store
-	for (Objective::ComponentMap::const_iterator i = _components.begin();
+	for (Objective::ComponentMap::iterator i = _components.begin();
 		 i != _components.end();
 		 ++i)
 	{
