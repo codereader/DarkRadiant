@@ -8,8 +8,9 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace objectives
-{
+namespace objectives {
+
+class Component;
 
 /**
  * A Specifier is a simple data class which combines a SpecifierType with its
@@ -74,6 +75,13 @@ public:
             return _type.getDisplayName() + " : " + _value;
         }
     }
+
+	/**
+	 * greebo: Returns a human-readable chunk of text based on the values
+	 * found in the given Component object. This is used for the user-friendly
+	 * display of components.
+	 */
+	std::string getSentence(Component& component);
 
 public:
 

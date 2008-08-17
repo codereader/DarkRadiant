@@ -219,6 +219,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\plugins\dm.objectives\Component.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.objectives\Component.h"
 				>
 			</File>
@@ -304,6 +308,10 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\dm.objectives\RandomOrigin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.objectives\Specifier.cpp"
 				>
 			</File>
 			<File
