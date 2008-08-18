@@ -145,6 +145,7 @@ public:
 
 	/**
      * Get the clock interval for clocked components in seconds.
+	 * Returns negative values if this option is not used for this component.
      */
 	float getClockInterval() const {
 		return _clockInterval;

@@ -18,6 +18,15 @@ inline std::string printEntity(int count) {
 	return getPlural(count, "entity", "entities");
 }
 
+inline std::string printEntityAmount(const std::string& amountStr) {
+	if (amountStr.empty()) { 
+		return printEntity(1);
+	}
+	else {
+		return amountStr + " " + printEntity(strToInt(amountStr));
+	}
+}
+
 } // namespace
 
 std::string Specifier::getSentence(Component& component) {
@@ -35,7 +44,7 @@ std::string Specifier::getSentence(Component& component) {
 		result += "the entity " + _value;
 	}
 	else if (id == SpecifierType::SPEC_OVERALL().getId()) {
-		result += amountStr + " " + printEntity(amount);
+		result += printEntityAmount(amountStr);
 	}
 	else if (id == SpecifierType::SPEC_GROUP().getId()) {
 
@@ -56,11 +65,10 @@ std::string Specifier::getSentence(Component& component) {
 		}
 	}
 	else if (id == SpecifierType::SPEC_CLASSNAME().getId()) {
-		result += amountStr + " " + printEntity(amount) + " of type " + _value;
+		result += printEntityAmount(amountStr) + " of type " + _value;
 	}
 	else if (id == SpecifierType::SPEC_SPAWNCLASS().getId()) {
-		int amount = strToInt(component.getArgument(0));
-		result += amountStr + " " + printEntity(amount) + " of spawnclass " + _value;
+		result += printEntityAmount(amountStr) + " of spawnclass " + _value;
 	}
 	else if (id == SpecifierType::SPEC_AI_TYPE().getId()) {
 		result += amountStr + " AI of type " + _value;
