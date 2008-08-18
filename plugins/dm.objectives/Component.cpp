@@ -87,19 +87,25 @@ std::string Component::getString() {
 		sentence += (sp2) ? (" " + sp2->getSentence(*this)) : "";
 	}
 	else if (componentId == ComponentType::COMP_INFO_LOCATION().getId()) {
+		sentence += "let the target";
+		
+		// Add the Specifier details, if any
+		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 
+		sentence += " be at info_location";
+		sentence += (sp2) ? (" " + sp2->getSentence(*this)) : "";
 	}
 	else if (componentId == ComponentType::COMP_CUSTOM_ASYNC().getId()) {
 	}
 	else if (componentId == ComponentType::COMP_CUSTOM_CLOCKED().getId()) {
 		sentence += "Call the script function ";
 		sentence += getArgument(0);
-
-		if (getClockInterval() > 0) {
-			sentence += " (time interval: " + floatToStr(getClockInterval()) + " seconds)";
-		}
 	}
 	else if (componentId == ComponentType::COMP_DISTANCE().getId()) {
+	}
+
+	if (getClockInterval() > 0) {
+		sentence += " (check interval: " + floatToStr(getClockInterval()) + " seconds)";
 	}
 
 	// Convert the first character of the sentence to upper case
