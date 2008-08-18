@@ -2,6 +2,7 @@
 
 #include "string/string.h"
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 namespace objectives {
 
@@ -77,17 +78,26 @@ std::string Component::getString() {
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 	}
 	else if (componentId == ComponentType::COMP_LOCATION().getId()) {
-		//sentence += " ";
-		//sentence += (sentence.empty()) ? cmd : (" " + boost::algorithm::to_lower_copy(cmd));
-
+		sentence += "let the target";
+		
 		// Add the Specifier details, if any
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
+
+		sentence += " be at location";
+		sentence += (sp2) ? (" " + sp2->getSentence(*this)) : "";
 	}
 	else if (componentId == ComponentType::COMP_INFO_LOCATION().getId()) {
+
 	}
 	else if (componentId == ComponentType::COMP_CUSTOM_ASYNC().getId()) {
 	}
 	else if (componentId == ComponentType::COMP_CUSTOM_CLOCKED().getId()) {
+		sentence += "Call the script function ";
+		sentence += getArgument(0);
+
+		if (getClockInterval() > 0) {
+			sentence += " (time interval: " + floatToStr(getClockInterval()) + " seconds)";
+		}
 	}
 	else if (componentId == ComponentType::COMP_DISTANCE().getId()) {
 	}
@@ -97,6 +107,9 @@ std::string Component::getString() {
 		std::string c(sentence.begin(), sentence.begin()+1);
 		sentence[0] = boost::algorithm::to_upper_copy(c)[0];
 	}
+
+	// Replace all double-space characters with one single space
+	boost::algorithm::replace_all(sentence, "  ", " ");
     
     /*if (sp2) {
         if (sp1)
