@@ -41,7 +41,7 @@ std::string Specifier::getSentence(Component& component) {
 		result += "<not specified>";
 	}
 	else if (id == SpecifierType::SPEC_NAME().getId()) {
-		result += "the entity " + _value;
+		result += "entity " + _value;
 	}
 	else if (id == SpecifierType::SPEC_OVERALL().getId()) {
 		result += printEntityAmount(amountStr);
