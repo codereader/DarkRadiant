@@ -96,12 +96,16 @@ std::string Component::getString() {
 		sentence += (sp2) ? (" " + sp2->getSentence(*this)) : "";
 	}
 	else if (componentId == ComponentType::COMP_CUSTOM_ASYNC().getId()) {
+		sentence += "controlled by external script";
 	}
 	else if (componentId == ComponentType::COMP_CUSTOM_CLOCKED().getId()) {
-		sentence += "Call the script function ";
+		sentence += "call the script function ";
 		sentence += getArgument(0);
 	}
 	else if (componentId == ComponentType::COMP_DISTANCE().getId()) {
+		sentence += "let the entities " + getArgument(0);
+		sentence += " and " + getArgument(1) + " get closer than ";
+		sentence += getArgument(2) + " units";
 	}
 
 	if (getClockInterval() > 0) {
@@ -112,6 +116,11 @@ std::string Component::getString() {
 	if (!sentence.empty()) {
 		std::string c(sentence.begin(), sentence.begin()+1);
 		sentence[0] = boost::algorithm::to_upper_copy(c)[0];
+
+		// Append a full stop at the end of the sentence
+		if (sentence[sentence.length() - 1] != '.') {
+			sentence.append(".");
+		}
 	}
 
 	// Replace all double-space characters with one single space
