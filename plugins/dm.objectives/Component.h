@@ -234,10 +234,6 @@ public:
 	std::string getArgumentString() const {
 		return boost::algorithm::join(_arguments, " ");
 	}
-
-private:
-	// Returns a more or less English sentence
-	std::string getSpecifierSentence();
 };
 
 }
