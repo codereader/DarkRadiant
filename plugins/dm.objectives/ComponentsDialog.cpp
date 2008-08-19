@@ -38,6 +38,8 @@ namespace {
 		WIDGET_OBJ_FAILURE_LOGIC,
 		WIDGET_OBJ_COMPLETION_SCRIPT,
 		WIDGET_OBJ_FAILURE_SCRIPT,
+		WIDGET_OBJ_COMPLETION_TARGET,
+		WIDGET_OBJ_FAILURE_TARGET,
 		WIDGET_EDIT_PANEL,
 		WIDGET_TYPE_COMBO,
 		WIDGET_STATE_FLAG,
@@ -88,7 +90,7 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// Table for entry boxes
-	GtkWidget* table = gtk_table_new(7, 2, FALSE);
+	GtkWidget* table = gtk_table_new(8, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
 
@@ -167,7 +169,7 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	_widgets[WIDGET_OBJ_FAILURE_LOGIC] = failureLogic;
 
 	gtk_box_pack_start(GTK_BOX(logicHBox), successLogic, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(logicHBox), gtkutil::LeftAlignedLabel("<b>Failure Logic:</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(logicHBox), gtkutil::LeftAlignedLabel("<b>Failure Logic</b>"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(logicHBox), failureLogic, TRUE, TRUE, 0);
 
 	gtk_table_attach(GTK_TABLE(table), 
@@ -190,13 +192,36 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	_widgets[WIDGET_OBJ_FAILURE_SCRIPT] = failureScript;
 
 	gtk_box_pack_start(GTK_BOX(scriptHBox), completionScript, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(scriptHBox), gtkutil::LeftAlignedLabel("<b>Failure Script:</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(scriptHBox), gtkutil::LeftAlignedLabel("<b>Failure Script</b>"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(scriptHBox), failureScript, TRUE, TRUE, 0);
 
 	gtk_table_attach(GTK_TABLE(table), 
 					 gtkutil::LeftAlignedLabel("<b>Completion Script</b>"),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), scriptHBox, 1, 2, row, row+1);
+	
+	row++;
+
+	// Completion/failure targets
+
+	GtkWidget* targetHBox = gtk_hbox_new(FALSE, 6);
+		
+	// Completion Target
+	GtkWidget* completionTarget = gtk_entry_new();
+	_widgets[WIDGET_OBJ_COMPLETION_TARGET] = completionTarget;
+
+	// Failure Target
+	GtkWidget* failureTarget = gtk_entry_new();
+	_widgets[WIDGET_OBJ_FAILURE_TARGET] = failureTarget;
+
+	gtk_box_pack_start(GTK_BOX(targetHBox), completionTarget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(targetHBox), gtkutil::LeftAlignedLabel("<b>Failure Target</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(targetHBox), failureTarget, TRUE, TRUE, 0);
+
+	gtk_table_attach(GTK_TABLE(table), 
+					 gtkutil::LeftAlignedLabel("<b>Completion Target</b>"),
+					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(GTK_TABLE(table), targetHBox, 1, 2, row, row+1);
 
 	// Pack items into a vbox and return
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
@@ -492,6 +517,11 @@ void ComponentsDialog::populateObjectiveEditPanel() {
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_OBJ_FAILURE_SCRIPT]),
 					   obj.failureScript.c_str());
 
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_OBJ_COMPLETION_TARGET]),
+					   obj.completionTarget.c_str());
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_OBJ_FAILURE_TARGET]),
+					   obj.failureTarget.c_str());
+
 	_updateMutex = false;
 }
 
@@ -583,6 +613,12 @@ void ComponentsDialog::save() {
 		GTK_ENTRY(_widgets[WIDGET_OBJ_COMPLETION_SCRIPT]));
 	_objective.failureScript = gtk_entry_get_text(
 		GTK_ENTRY(_widgets[WIDGET_OBJ_FAILURE_SCRIPT]));
+
+	// Completion/Failure targets
+	_objective.completionTarget = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_COMPLETION_TARGET]));
+	_objective.failureTarget = gtk_entry_get_text(
+		GTK_ENTRY(_widgets[WIDGET_OBJ_FAILURE_TARGET]));
 
 	// Write the components
 	checkWriteComponent();

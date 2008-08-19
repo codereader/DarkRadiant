@@ -46,6 +46,10 @@ public:
 	// The scripts that are called when this objective completes/fails
 	std::string completionScript;
 	std::string failureScript;
+
+	// These entities are triggered when this objective completes/fails
+	std::string completionTarget;
+	std::string failureTarget;
 	
 	// Map of indexed components
 	typedef std::map<int, Component> ComponentMap;
