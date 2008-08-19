@@ -6,10 +6,6 @@
 
 namespace objectives {
 
-std::string Component::getSpecifierSentence() {
-	return "";
-}
-
 std::string Component::getString() {
 	// This will hold our return value
 	std::string sentence;
@@ -126,17 +122,6 @@ std::string Component::getString() {
 	// Replace all double-space characters with one single space
 	boost::algorithm::replace_all(sentence, "  ", " ");
     
-    /*if (sp2) {
-        if (sp1)
-            retStr += ", ";
-        retStr += sp2->getType().getDisplayName();
-        retStr += " = " + sp2->getValue();
-    }
-
-    if (sp1 || sp2) {
-        retStr += " ]";
-    }*/
-
     return sentence;
 }
 
