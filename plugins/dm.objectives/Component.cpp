@@ -45,6 +45,8 @@ std::string Component::getString() {
 
 		// Add the Specifier details, if any
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
+
+		sentence += " (amount: " + getArgument(0) + ")";
 	}
 	else if (componentId == ComponentType::COMP_ALERT().getId()) {
 		sentence += "alert";
