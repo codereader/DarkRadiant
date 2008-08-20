@@ -17,8 +17,7 @@ InfoLocationComponentEditor::RegHelper InfoLocationComponentEditor::regHelper;
 // Constructor
 InfoLocationComponentEditor::InfoLocationComponentEditor(Component& component) :
 	_component(&component),
-	_entSpec(SpecifierType::SET_ITEM()),
-	_locationSpec(SpecifierType::SET_ITEM())
+	_locationSpec(SpecifierType::SET_LOCATION())
 {
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);

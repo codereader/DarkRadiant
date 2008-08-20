@@ -83,6 +83,18 @@ const SpecifierTypeSet& SpecifierType::SET_ITEM() {
 	return _instance;
 }
 
+const SpecifierTypeSet& SpecifierType::SET_LOCATION() {
+	static SpecifierTypeSet _instance;
+
+	if (_instance.empty()) {
+		_instance.insert(SPEC_NONE());
+		_instance.insert(SPEC_NAME());
+		_instance.insert(SPEC_GROUP());
+	}
+
+	return _instance;
+}
+
 const SpecifierTypeSet& SpecifierType::SET_STANDARD_AI() {
 	static SpecifierTypeSet _instance;
 	if (_instance.empty()) {
