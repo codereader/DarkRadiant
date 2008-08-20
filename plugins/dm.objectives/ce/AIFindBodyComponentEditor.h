@@ -33,7 +33,13 @@ class AIFindBodyComponentEditor :
 	GtkWidget* _widget;
 	
 	// Component to edit
-	Component* _component;	
+	Component* _component;
+
+	// SpecifierEditCombo for the body to be found
+	SpecifierEditCombo _bodyCombo;
+
+	// The spin button to specify the amount of AI to be knocked out
+	GtkWidget* _amount;
 	
 public:
 
