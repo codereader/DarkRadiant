@@ -34,7 +34,7 @@ KnockoutComponentEditor::KnockoutComponentEditor(Component& component) :
         FALSE, FALSE, 0
     );
 
-	gtk_box_pack_start(GTK_BOX(_widget), _targetCombo.getWidget(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), _targetCombo.getWidget(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel("Amount:"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignment(_amount), FALSE, FALSE, 0);
 

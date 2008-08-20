@@ -3,6 +3,7 @@
 #include "ce/ComponentEditorFactory.h"
 #include "util/TwoColumnTextCombo.h"
 
+#include "itextstream.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
@@ -56,8 +57,9 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 	gtkutil::BlockingTransientWindow(DIALOG_TITLE, parent),
 	_objective(objective),
 	_componentList(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)),
+	_components(objective.components), // copy the components to our local working set
 	_updateMutex(false),
-	_components(objective.components) // copy the components to our local working set
+	_timer(500, _onIntervalReached, this)
 {
 	// Dialog contains list view, edit panel and buttons
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
@@ -84,6 +86,10 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 	// Add contents to main window
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_container_add(GTK_CONTAINER(getWindow()), vbx);
+}
+
+ComponentsDialog::~ComponentsDialog() {
+	_timer.disable();
 }
 
 // Create the panel for editing the currently-selected objective
@@ -711,6 +717,9 @@ void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
 		// Disable the edit panel and remove the ComponentEditor
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], FALSE);
         self->_componentEditor = objectives::ce::ComponentEditorPtr();
+
+		// Turn off the periodic update of the component list
+		self->_timer.disable();
 	}
 	else {
 		// Otherwise populate edit panel with the current component index
@@ -721,6 +730,9 @@ void ComponentsDialog::_onSelectionChanged(GtkTreeSelection* sel,
 
 		// Enable the edit panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_PANEL], TRUE);
+
+		// Turn on the periodic update
+		self->_timer.enable();
 	}
 }
 
@@ -793,6 +805,18 @@ void ComponentsDialog::_onTypeChanged(GtkWidget* w, ComponentsDialog* self)
 	gtk_list_store_set(
 		GTK_LIST_STORE(model), &compIter, 1, comp.getString().c_str(), -1
 	);
+}
+
+gboolean ComponentsDialog::_onIntervalReached(gpointer data) {
+	ComponentsDialog* self = reinterpret_cast<ComponentsDialog*>(data);
+
+	if (self->_updateMutex) return TRUE;
+
+	self->checkWriteComponent();
+	self->updateComponents();
+
+	// Return true, so that the timer gets called again
+	return TRUE;
 }
 
 } // namespace objectives
