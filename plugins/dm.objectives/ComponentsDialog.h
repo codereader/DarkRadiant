@@ -14,7 +14,8 @@
 #include <vector>
 #include <string>
 
-#include <gtkutil/window/BlockingTransientWindow.h>
+#include "gtkutil/Timer.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 namespace objectives
 {
@@ -48,6 +49,9 @@ class ComponentsDialog :
 
 	// TRUE while the widgets are populated to disable GTK callbacks
 	bool _updateMutex;
+
+	// A timer to periodically update the component list
+	gtkutil::Timer _timer;
 	
 private:
 
@@ -96,6 +100,8 @@ private:
 	
 	static void _onTypeChanged(GtkWidget*, ComponentsDialog*);
     static void _onApplyComponentChanges(GtkWidget*, ComponentsDialog*);
+
+	static gboolean _onIntervalReached(gpointer data);
 	
 public:
 	
@@ -109,6 +115,9 @@ public:
 	 * The Objective object for which conditions should be displayed and edited.
 	 */
 	ComponentsDialog(GtkWindow* parent, Objective& objective);
+
+	// Destructor performs cleanup
+	~ComponentsDialog();
 	
 };
 

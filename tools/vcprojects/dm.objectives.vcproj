@@ -59,7 +59,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996;4355"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -154,7 +154,7 @@
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="4"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996"
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996;4355"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
