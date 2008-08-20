@@ -61,6 +61,9 @@ private:
 
 	// Populate the list of components from the Objective's component map
 	void populateComponents();
+
+	// Updates the list store contents without removing any components
+	void updateComponents();
 	
 	// Populate the edit panel widgets with the specified component number
 	void populateEditPanel(int index);

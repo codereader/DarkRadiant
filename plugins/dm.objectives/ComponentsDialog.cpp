@@ -341,7 +341,16 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	_widgets[WIDGET_INVERTED_FLAG] =
 		gtk_check_button_new_with_label("Boolean NOT");  
 	_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG] =
-		gtk_check_button_new_with_label("Player responsible");  
+		gtk_check_button_new_with_label("Player responsible");
+
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_IRREVERSIBLE_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_INVERTED_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG]), "toggled", 
+		G_CALLBACK(_onCompToggleChanged), this);
 
 	GtkWidget* flagsBox = gtk_hbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(flagsBox), _widgets[WIDGET_STATE_FLAG],
@@ -418,7 +427,35 @@ void ComponentsDialog::populateComponents() {
 						   1, i->second.getString().c_str(),
 						   -1);	
 	}
-	
+}
+
+void ComponentsDialog::updateComponents() {
+	// Traverse all components and update the items in the list
+	for (Objective::ComponentMap::iterator i = _components.begin();
+		 i != _components.end();
+		 ++i)
+	{
+		// Find the item in the list store (0th column carries the ID)
+		gtkutil::TreeModel::SelectionFinder finder(i->first, 0);
+
+		// Traverse the model
+		gtk_tree_model_foreach(
+			GTK_TREE_MODEL(_componentList), 
+			gtkutil::TreeModel::SelectionFinder::forEach, 
+			&finder
+		);
+
+		// Check if we found the item
+		if (finder.getPath() != NULL) {
+			GtkTreeIter iter = finder.getIter();
+			gtk_list_store_set(
+				_componentList, &iter, 
+				0, i->first, 
+				1, i->second.getString().c_str(),
+				-1
+			);
+		}
+	}
 }
 
 // Populate the edit panel
@@ -444,16 +481,7 @@ void ComponentsDialog::populateEditPanel(int index) {
 		comp.isPlayerResponsible() ? TRUE : FALSE
 	);
 
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_FLAG]), "toggled", 
-		G_CALLBACK(_onCompToggleChanged), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_IRREVERSIBLE_FLAG]), "toggled", 
-		G_CALLBACK(_onCompToggleChanged), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_INVERTED_FLAG]), "toggled", 
-		G_CALLBACK(_onCompToggleChanged), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG]), "toggled", 
-		G_CALLBACK(_onCompToggleChanged), this);
-
-    // Change the type combo if necessary. Since the combo box was populated in
+	// Change the type combo if necessary. Since the combo box was populated in
     // ID order, we can simply use our ComponentType's ID as an index.
     GtkComboBox* typeCombo = GTK_COMBO_BOX(_widgets[WIDGET_TYPE_COMBO]); 
     if (gtk_combo_box_get_active(typeCombo) != comp.getType().getId())
@@ -663,6 +691,9 @@ void ComponentsDialog::_onCompToggleChanged(GtkToggleButton* togglebutton, Compo
 	else if (GTK_WIDGET(togglebutton) == self->_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG]) {
 		comp.setPlayerResponsible(gtk_toggle_button_get_active(togglebutton) ? true : false);
 	}
+
+	// Update the list store
+	self->updateComponents();
 }
 
 // Selection changed
