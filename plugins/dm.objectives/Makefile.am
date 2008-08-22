@@ -4,8 +4,10 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_objectives.la
 
-dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a
-dm_objectives_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS) $(GTK_LIBS)
+dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a \
+						  $(top_builddir)/libs/xmlutil/libxmlutil.a
+dm_objectives_la_LDFLAGS = -module -avoid-version -Wl,-z,defs \
+						   $(REGEX_LIBS) $(GTK_LIBS) $(XML_LIBS)
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   objectives.cpp \
 						   SpecifierType.cpp \
@@ -35,5 +37,10 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   ce/specpanel/TextSpecifierPanel.cpp \
 						   ObjectiveEntity.cpp \
 						   ObjectiveKeyExtractor.cpp \
+						   Component.cpp \
 						   ComponentsDialog.cpp \
-						   ComponentType.cpp
+						   ComponentType.cpp \
+						   DifficultyPanel.cpp \
+						   LogicEditor.cpp \
+						   MissionLogicDialog.cpp \
+						   Specifier.cpp
