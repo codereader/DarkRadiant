@@ -62,11 +62,12 @@ am__vpath_adj = case $$p in \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" \
-	"$(DESTDIR)$(pkgdatadir)"
+	"$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)"
 bitmapsDATA_INSTALL = $(INSTALL_DATA)
 gameDATA_INSTALL = $(INSTALL_DATA)
+glprogsDATA_INSTALL = $(INSTALL_DATA)
 pkgdataDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(bitmaps_DATA) $(game_DATA) $(pkgdata_DATA)
+DATA = $(bitmaps_DATA) $(game_DATA) $(glprogs_DATA) $(pkgdata_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
@@ -220,12 +221,18 @@ gamedir = $(pkgdatadir)/games
 game_DATA = $(top_srcdir)/install/games/doom3.game 
 bitmapsdir = $(pkgdatadir)/bitmaps
 bitmaps_DATA = $(top_srcdir)/install/bitmaps/*
+
+# Install XML config files
 pkgdata_DATA = $(top_srcdir)/install/colours.xml \
 			   $(top_srcdir)/install/user.xml \
 			   $(top_srcdir)/install/menu.xml \
 			   $(top_srcdir)/install/input.xml \
 			   $(top_srcdir)/install/debug.xml
 
+
+# Install GL programs
+glprogsdir = $(pkgdatadir)/gl
+glprogs_DATA = $(top_srcdir)/install/gl/*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -322,6 +329,23 @@ uninstall-gameDATA:
 	  f=$(am__strip_dir) \
 	  echo " rm -f '$(DESTDIR)$(gamedir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(gamedir)/$$f"; \
+	done
+install-glprogsDATA: $(glprogs_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(glprogsdir)" || $(MKDIR_P) "$(DESTDIR)$(glprogsdir)"
+	@list='$(glprogs_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(glprogsDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(glprogsdir)/$$f'"; \
+	  $(glprogsDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(glprogsdir)/$$f"; \
+	done
+
+uninstall-glprogsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(glprogs_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(glprogsdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(glprogsdir)/$$f"; \
 	done
 install-pkgdataDATA: $(pkgdata_DATA)
 	@$(NORMAL_INSTALL)
@@ -624,7 +648,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -672,7 +696,7 @@ info: info-recursive
 info-am:
 
 install-data-am: install-bitmapsDATA install-gameDATA \
-	install-pkgdataDATA
+	install-glprogsDATA install-pkgdataDATA
 
 install-dvi: install-dvi-recursive
 
@@ -709,7 +733,7 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am: uninstall-bitmapsDATA uninstall-gameDATA \
-	uninstall-pkgdataDATA
+	uninstall-glprogsDATA uninstall-pkgdataDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
 	install-strip
@@ -723,14 +747,15 @@ uninstall-am: uninstall-bitmapsDATA uninstall-gameDATA \
 	dvi-am html html-am info info-am install install-am \
 	install-bitmapsDATA install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-gameDATA \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-pkgdataDATA \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-bitmapsDATA \
-	uninstall-gameDATA uninstall-pkgdataDATA
+	install-glprogsDATA install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-pkgdataDATA install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am \
+	uninstall-bitmapsDATA uninstall-gameDATA uninstall-glprogsDATA \
+	uninstall-pkgdataDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
