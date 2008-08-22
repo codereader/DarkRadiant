@@ -9,6 +9,7 @@
 #include "brush/Brush.h"	// for BrushVisitor declaration
 
 #include <fstream>
+#include <boost/lexical_cast.hpp>
 
 /* Exporterclass which will pass every visit-call to a special formatexporter. 
  */
@@ -17,10 +18,12 @@ class CExportFormatWavefront:
 {
 	std::ofstream& m_file;
 
-	std::ostringstream vertexbuffer;
-	std::ostringstream texcoordbuffer;
-	std::ostringstream facebuffer;
+    // Buffers for written vertices etc
+    std::string _vertexBuf;
+    std::string _texCoordBuf;
+    std::string _faceBuf;
     
+    // Persistent counters
 	size_t vertices;
 	size_t exported;
     
@@ -32,21 +35,32 @@ public:
 		exported(0)
     {}
     
+    // Visitor function, called for each brush
     void visit(const scene::INodePtr& node)
     {
+        // Buffers should be clean at start of each brush
+        assert(_vertexBuf.empty());
+        assert(_texCoordBuf.empty());
+        assert(_faceBuf.empty());
+
+        // Get the brush and visit its faces
 		Brush* brush = Node_getBrush(node);
 		if (brush != NULL)
-      {
-        m_file << "\ng " << "Brush" << static_cast<int>(exported) << "\n";
-        brush->forEachFace(*this);
-        m_file << vertexbuffer.str() << "\n";
-        m_file << texcoordbuffer.str();
-        m_file << facebuffer.str() << "\n";
-        vertexbuffer.clear();
-        texcoordbuffer.clear();
-        facebuffer.clear();
-        ++exported;
-      }
+        {
+            m_file << "\ng " << "Brush" << static_cast<int>(exported) << "\n";
+            brush->forEachFace(*this);
+            m_file << _vertexBuf << "\n";
+            m_file << _texCoordBuf;
+            m_file << _faceBuf << "\n";
+
+            // Clear the buffers
+            _vertexBuf.clear();
+            _texCoordBuf.clear();
+            _faceBuf.clear();
+
+            // Count the exported brush
+            ++exported;
+        }
     }
    
     void visit(Face& face) const
@@ -61,14 +75,22 @@ public:
       const Winding& w(face.getWinding());
       for(size_t i = 0; i < w.numpoints; ++i)
       {
-        vertexbuffer << "v " << w[i].vertex.x() << " " << w[i].vertex.y() << " " << w[i].vertex.z() << "\n";
-        texcoordbuffer << "vt " << w[i].texcoord.x() << " " << w[i].texcoord.y() << "\n";
+        // Write coordinates into the export buffers
+        _vertexBuf += "v " + std::string(w[i].vertex) + "\n";
+        _texCoordBuf += "vt " + std::string(w[i].texcoord) + "\n";
+
+        // Count the exported vertex
         ++vertices;
       }
       
-      facebuffer << "\nf";
+      // Construct the face section
+      using boost::lexical_cast;
+      _faceBuf += "\nf";
       for(size_t i = v_start; i < vertices; ++i)
-        facebuffer << " " << static_cast<int>(i+1) << "/" << static_cast<int>(i+1);
+      {
+        _faceBuf += " " + lexical_cast<std::string>(i+1) 
+                  + "/" + lexical_cast<std::string>(i+1);
+      }
     }
 }; // class CExportFormatWavefront
 
