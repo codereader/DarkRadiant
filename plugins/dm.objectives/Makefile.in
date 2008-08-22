@@ -51,7 +51,8 @@ am__installdirs = "$(DESTDIR)$(pluginsdir)"
 pluginsLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(plugins_LTLIBRARIES)
 dm_objectives_la_DEPENDENCIES =  \
-	$(top_builddir)/libs/gtkutil/libgtkutil.a
+	$(top_builddir)/libs/gtkutil/libgtkutil.a \
+	$(top_builddir)/libs/xmlutil/libxmlutil.a
 am_dm_objectives_la_OBJECTS = ObjectivesEditor.lo objectives.lo \
 	SpecifierType.lo ComponentEditorFactory.lo \
 	KnockoutComponentEditor.lo KillComponentEditor.lo \
@@ -66,7 +67,9 @@ am_dm_objectives_la_OBJECTS = ObjectivesEditor.lo objectives.lo \
 	AITeamSpecifierPanel.lo GroupSpecifierPanel.lo \
 	SpecifierPanelFactory.lo EntityNameSpecifierPanel.lo \
 	TextSpecifierPanel.lo ObjectiveEntity.lo \
-	ObjectiveKeyExtractor.lo ComponentsDialog.lo ComponentType.lo
+	ObjectiveKeyExtractor.lo Component.lo ComponentsDialog.lo \
+	ComponentType.lo DifficultyPanel.lo LogicEditor.lo \
+	MissionLogicDialog.lo Specifier.lo
 dm_objectives_la_OBJECTS = $(am_dm_objectives_la_OBJECTS)
 dm_objectives_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -223,8 +226,12 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_objectives.la
-dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a
-dm_objectives_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS) $(GTK_LIBS)
+dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a \
+						  $(top_builddir)/libs/xmlutil/libxmlutil.a
+
+dm_objectives_la_LDFLAGS = -module -avoid-version -Wl,-z,defs \
+						   $(REGEX_LIBS) $(GTK_LIBS) $(XML_LIBS)
+
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   objectives.cpp \
 						   SpecifierType.cpp \
@@ -254,8 +261,13 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   ce/specpanel/TextSpecifierPanel.cpp \
 						   ObjectiveEntity.cpp \
 						   ObjectiveKeyExtractor.cpp \
+						   Component.cpp \
 						   ComponentsDialog.cpp \
-						   ComponentType.cpp
+						   ComponentType.cpp \
+						   DifficultyPanel.cpp \
+						   LogicEditor.cpp \
+						   MissionLogicDialog.cpp \
+						   Specifier.cpp
 
 all: all-am
 
@@ -333,12 +345,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AITypeSpecifierPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AlertComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ClassnameSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Component.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ComponentEditorFactory.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ComponentType.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ComponentsDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CustomClockedComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CustomComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DestroyComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DifficultyPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DistanceComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityNameSpecifierPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupSpecifierPanel.Plo@am__quote@
@@ -347,11 +361,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KillComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnockoutComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LocationComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LogicEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MissionLogicDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveEntity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveKeyExtractor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectivesEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PickpocketComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpawnClassSpecifierPanel.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Specifier.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecifierEditCombo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecifierPanelFactory.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecifierType.Plo@am__quote@
