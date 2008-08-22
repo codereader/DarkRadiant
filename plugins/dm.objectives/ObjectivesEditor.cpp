@@ -45,6 +45,7 @@ namespace {
 		WIDGET_DELETE_OBJECTIVE,
 		WIDGET_EDIT_OBJECTIVE,
 		WIDGET_CLEAR_OBJECTIVES,
+        WIDGET_OBJ_BUTTONS_PANEL,
 		WIDGET_MISSION_SUCCESS_LOGIC,
 		WIDGET_MISSION_FAILURE_LOGIC,
 	};
@@ -179,7 +180,12 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
-	
+    
+    // Buttons panel box is disabled by default, enabled once an Entity is
+    // selected.
+    gtk_widget_set_sensitive(buttonBox, FALSE);
+    _widgets[WIDGET_OBJ_BUTTONS_PANEL] = buttonBox;
+
 	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD); 
 	g_signal_connect(G_OBJECT(addButton), "clicked",
 					 G_CALLBACK(_onAddObjective), this);
@@ -433,8 +439,8 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 	// Get the selection
 	GtkTreeIter iter;
 	GtkTreeModel* model;
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
-	
+	if (gtk_tree_selection_get_selected(sel, &model, &iter)) 
+    {
 		// Get name of the entity and find the corresponding ObjectiveEntity in
 		// the map
 		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
@@ -446,12 +452,21 @@ void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
 		// Enable the delete button and objectives panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], TRUE); 
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], TRUE);
+        gtk_widget_set_sensitive(
+            self->_widgets[WIDGET_OBJ_BUTTONS_PANEL], TRUE
+        );
 	}
-	else {
+	else 
+    {
 		// No selection, disable the delete button and clear the objective
 		// panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], FALSE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], FALSE);
+
+        // Disable all the Objective edit buttons
+        gtk_widget_set_sensitive(
+            self->_widgets[WIDGET_OBJ_BUTTONS_PANEL], FALSE
+        );
 	}
 }
 
@@ -460,14 +475,15 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 											 		ObjectivesEditor* self)
 {
 	// Get the selection
-	if (gtk_tree_selection_get_selected(sel, NULL, &(self->_curObjective))) {
-		
-		// Enable the edit panel and delete button
+	if (gtk_tree_selection_get_selected(sel, NULL, &(self->_curObjective))) 
+    {
+		// Enable the edit and delete buttons
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], TRUE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], TRUE);		
 	}
-	else {
-		// Disable the edit panel and delete button
+	else 
+    {
+		// Disable the edit and delete buttons
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], FALSE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], FALSE);
 	}
