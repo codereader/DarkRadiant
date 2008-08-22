@@ -11,7 +11,7 @@
 
 config.status: configure
 	dh_testdir
-	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info LDFLAGS="-Wl,-z,defs"
+	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info LDFLAGS="-Wl,-z,defs" --enable-darkmod-plugins
 
 build: build-stamp
 
