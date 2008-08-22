@@ -4,16 +4,17 @@
 		<menuItem name="new" caption="_New Map" command="NewMap" />
 		<menuSeparator />
 		<menuItem name="open" caption="_Open..." command="OpenMap" />
-		<menuItem name="import" caption="_Import" command="ImportMap" />
+		<menuItem name="import" caption="_Import map..." command="ImportMap" />
+		<menuItem name="loadprefab" caption="Import _prefab..." command="LoadPrefab" />
 		<menuItem name="save" caption="_Save" command="SaveMap" />
 		<menuItem name="saveas" caption="Save _as..." command="SaveMapAs" />
-		<menuItem name="saveCopyAs" caption="Save _Copy as..." command="SaveMapCopyAs" />
+		<menuItem name="saveCopyAs" caption="Save _copy as..." command="SaveMapCopyAs" />
 		<menuSeparator />
-		<menuItem name="loadprefab" caption="Load _Prefab..." command="LoadPrefab" />
-		<menuItem name="saveSelected" caption="_Save selected as Prefab..." command="SaveSelectedAsPrefab" />
-		<menuSeparator />
-		<menuItem name="saveSelected" caption="_Save selected..." command="SaveSelected" />
-		<menuItem name="saveRegion" caption="Save _Region..." command="SaveRegion" />
+		<menuItem name="saveSelected" caption="_Save selected as MAP..." command="SaveSelected" />
+		<menuItem name="saveSelected" caption="_Save selected as prefab..." command="SaveSelectedAsPrefab" />
+		<menuItem name="saveRegion" caption="Save selected as _region..." command="SaveRegion" />
+		<menuItem name="objExport" caption="Save selected as OB_J..." command="BrushExportOBJ" />
+		<menuItem name="createCM" caption="Save selected as Collision Model..." command="BrushExportCM" />
 		<menuSeparator />
 		<menuItem name="refreshModels" caption="_Reload Models" command="RefreshReferences" icon="model16red.png" />
 		<menuItem name="reloadSkins" caption="Reload S_kins" command="ReloadSkins" icon="skin16.png" />
@@ -52,9 +53,6 @@
 		<menuItem name="selectionChildren" caption="Select Children" command="SelectChildren" />
 		<menuItem name="selectionEntities" caption="Expand selection to all Siblings" command="ExpandSelectionToEntities" />
 		<menuItem name="selectalloftype" caption="Select all of type" command="SelectAllOfType" />
-		<menuSeparator />
-		<menuItem name="objExport" caption="Export selected brushes to _OBJ" command="BrushExportOBJ" />
-		<menuItem name="createCM" caption="Create CollisionModel from selection..." command="BrushExportCM" />
 		<menuSeparator />
 		<menuItem name="shortcuts" caption="Keyboard Shortcuts" command="ShowCommandList" />
 		<menuItem name="preferences" caption="Pre_ferences" command="Preferences" />
