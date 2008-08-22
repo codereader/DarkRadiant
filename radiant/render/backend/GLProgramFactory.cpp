@@ -72,7 +72,14 @@ void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type
 	std::size_t size = file_size(filename.c_str());
 	FileInputStream file(filename);
 	
-	ASSERT_MESSAGE(!file.failed(), "failed to open " << filename);
+    // Throw an exception if the file could not be found
+	if (file.failed())
+    {
+        throw std::runtime_error(
+            "GLProgramFactory::createARBProgram() failed to open file: "
+            + filename
+        );
+    }
 	
 	Array<GLcharARB> buffer(size);
 	size = file.read(reinterpret_cast<StreamBase::byte_type*>(buffer.data()), size);
@@ -89,6 +96,20 @@ void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type
 
 		ERROR_MESSAGE("error in gl program");
 	}
+}
+
+// Get the path of a GL program file
+std::string GLProgramFactory::getGLProgramPath(const std::string& progName)
+{
+    // Determine the root path of the GL programs
+#if defined(POSIX) && defined (PKGDATADIR)
+    std::string glProgRoot = std::string(PKGDATADIR) + "/";
+#else
+    std::string glProgRoot = GlobalRegistry().get("user/paths/appPath");
+#endif
+
+    // Append the requested filename with the "gl/" directory.
+    return glProgRoot + "gl/" + progName;
 }
 
 } // namespace render

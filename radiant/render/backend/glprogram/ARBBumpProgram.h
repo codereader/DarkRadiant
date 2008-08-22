@@ -11,6 +11,12 @@
 
 namespace render {
 
+/* CONSTANTS */
+namespace {
+    const char* BUMP_VP_FILENAME = "lighting_DBS_omni_vp.glp";
+    const char* BUMP_FP_FILENAME = "interaction_fp.arb";
+}
+
 class ARBBumpProgram 
 : public GLProgram
 {
@@ -42,16 +48,22 @@ public:
     {
       glGenProgramsARB(1, &m_vertex_program);
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
-      std::string filename = GlobalRegistry().get("user/paths/appPath")
-      						 + "gl/lighting_DBS_omni_vp.glp";
-      GLProgramFactory::createARBProgram(filename, GL_VERTEX_PROGRAM_ARB);
+
+
+        // Create the vertex program
+        GLProgramFactory::createARBProgram(
+            GLProgramFactory::getGLProgramPath(BUMP_VP_FILENAME),
+            GL_VERTEX_PROGRAM_ARB
+        );
 
       glGenProgramsARB(1, &m_fragment_program);
       glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
 
-      filename = GlobalRegistry().get("user/paths/appPath")
-      			 + "gl/interaction_fp.arb";
-      GLProgramFactory::createARBProgram(filename, GL_FRAGMENT_PROGRAM_ARB);
+        // Create the fragment program
+        GLProgramFactory::createARBProgram(
+            GLProgramFactory::getGLProgramPath(BUMP_FP_FILENAME),
+            GL_FRAGMENT_PROGRAM_ARB
+        );    
     }
 
     glDisable(GL_VERTEX_PROGRAM_ARB);
