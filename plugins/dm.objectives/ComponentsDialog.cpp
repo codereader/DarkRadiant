@@ -117,8 +117,6 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	gtk_table_attach(GTK_TABLE(table),
 					 gtkutil::LeftAlignedLabel("<b>Difficulty</b>"),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-
-	GtkWidget* diffHBox = gtk_hbox_new(TRUE, 6);
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _diffPanel.getWidget(),
 							  1, 2, row, row+1);
