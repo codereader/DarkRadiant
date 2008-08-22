@@ -120,7 +120,7 @@ private:
 
 	// Gets called on page selection
 	static void onPrefPageSelect(GtkTreeSelection* treeselection, PrefDialog* self);
-	static void onSave(GtkWidget* button, PrefDialog* self);
+	static void onOK(GtkWidget* button, PrefDialog* self);
 	static void onCancel(GtkWidget* button, PrefDialog* self);
 	
 	// Delete event (fired when the "X" close button is clicked)

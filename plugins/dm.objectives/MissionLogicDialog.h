@@ -58,7 +58,7 @@ private:
 	void save();
 
 	// GTK CALLBACKS
-	static void _onSave(GtkWidget*, MissionLogicDialog*);
+	static void _onOK(GtkWidget*, MissionLogicDialog*);
 	static void _onCancel(GtkWidget*, MissionLogicDialog*);
 };
 
