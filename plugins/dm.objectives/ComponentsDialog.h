@@ -88,7 +88,7 @@ private:
 	void save();
 	
 	/* GTK CALLBACKS */
-	static void _onSave(GtkWidget*, ComponentsDialog*);
+	static void _onOK(GtkWidget*, ComponentsDialog*);
 	static void _onCancel(GtkWidget*, ComponentsDialog*);
 	static void _onDelete(GtkWidget*, ComponentsDialog*);
 	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);

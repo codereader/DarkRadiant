@@ -87,13 +87,13 @@ GtkWidget* MissionLogicDialog::createButtons() {
 	// Create a new homogeneous hbox
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
-	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	
-	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(_onSave), this);
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
 	
-	gtk_box_pack_end(GTK_BOX(hbx), saveButton, TRUE, TRUE, 0);
+	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 
 	return gtkutil::RightAlignment(hbx);
@@ -126,7 +126,7 @@ void MissionLogicDialog::save() {
 // GTK CALLBACKS
 
 // Save button
-void MissionLogicDialog::_onSave(GtkWidget* w, MissionLogicDialog* self) {
+void MissionLogicDialog::_onOK(GtkWidget* w, MissionLogicDialog* self) {
     self->save();
 	self->destroy();
 }

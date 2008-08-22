@@ -58,9 +58,9 @@ void PrefDialog::populateWindow() {
 	// Create the buttons
 	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 0);
 	
-	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), saveButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(saveButton), "clicked", G_CALLBACK(onSave), this);
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOK), this);
 	
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 6);
@@ -249,7 +249,7 @@ bool PrefDialog::isVisible() const {
 }
 
 // Static GTK Callbacks
-void PrefDialog::onSave(GtkWidget* button, PrefDialog* self) {
+void PrefDialog::onOK(GtkWidget* button, PrefDialog* self) {
 	self->save();
 }
 
