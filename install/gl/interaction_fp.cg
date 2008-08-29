@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 struct cg_vertex2fragment
 {	
+    float4 colour       : COLOR;
+
 	float4 position		: TEXCOORD0;
 	float4 tex_diffuse_bump	: TEXCOORD1;
 	float4 tex_specular	: TEXCOORD2;
@@ -85,7 +87,7 @@ cg_fragment2final main(cg_vertex2fragment IN,
 	float3 attenuation_z	= tex2D(attenuationmap_z, float2(IN.tex_atten_xy_z.z, 0.5)).rgb;
 					
 	// compute final color
-	OUT.color.rgba = diffuse;
+	OUT.color.rgba = diffuse * IN.colour;
 	OUT.color.rgb += specular;
 	OUT.color.rgb *= attenuation_xy;
 	OUT.color.rgb *= attenuation_z;
