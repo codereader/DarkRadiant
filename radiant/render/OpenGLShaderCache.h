@@ -10,13 +10,13 @@
 #include "generic/reference.h"
 
 class OpenGLState;
-class OpenGLStateBucket;
+class OpenGLShaderPass;
 
 /* Sorted state map */
 
 typedef ConstReference<OpenGLState> OpenGLStateReference;
 typedef std::map<OpenGLStateReference, 
-				 OpenGLStateBucket*, 
+				 OpenGLShaderPass*, 
 				 OpenGLStateLess> OpenGLStates;
 
 namespace render {

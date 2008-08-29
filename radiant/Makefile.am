@@ -47,7 +47,7 @@ darkradiant_SOURCES = main.cpp \
 					  render/backend/OpenGLStateMap.cpp \
 					  render/backend/OpenGLShader.cpp \
 					  render/backend/GLProgramFactory.cpp \
-					  render/backend/OpenGLStateBucket.cpp \
+					  render/backend/OpenGLShaderPass.cpp \
 					  render/OpenGLModule.cpp \
 					  render/OpenGLShaderCache.cpp \
 					  ui/entitychooser/EntityClassChooser.cpp \

@@ -71,7 +71,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-OpenGLStateMap.$(OBJEXT) \
 	darkradiant-OpenGLShader.$(OBJEXT) \
 	darkradiant-GLProgramFactory.$(OBJEXT) \
-	darkradiant-OpenGLStateBucket.$(OBJEXT) \
+	darkradiant-OpenGLShaderPass.$(OBJEXT) \
 	darkradiant-OpenGLModule.$(OBJEXT) \
 	darkradiant-OpenGLShaderCache.$(OBJEXT) \
 	darkradiant-EntityClassChooser.$(OBJEXT) \
@@ -399,7 +399,7 @@ darkradiant_SOURCES = main.cpp \
 					  render/backend/OpenGLStateMap.cpp \
 					  render/backend/OpenGLShader.cpp \
 					  render/backend/GLProgramFactory.cpp \
-					  render/backend/OpenGLStateBucket.cpp \
+					  render/backend/OpenGLShaderPass.cpp \
 					  render/OpenGLModule.cpp \
 					  render/OpenGLShaderCache.cpp \
 					  ui/entitychooser/EntityClassChooser.cpp \
@@ -706,7 +706,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShaderCache.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLStateBucket.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShaderPass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLStateMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OrthoContextMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Overlay.Po@am__quote@
@@ -1223,19 +1223,19 @@ darkradiant-GLProgramFactory.obj: render/backend/GLProgramFactory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-GLProgramFactory.obj `if test -f 'render/backend/GLProgramFactory.cpp'; then $(CYGPATH_W) 'render/backend/GLProgramFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/GLProgramFactory.cpp'; fi`
 
-darkradiant-OpenGLStateBucket.o: render/backend/OpenGLStateBucket.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLStateBucket.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLStateBucket.Tpo -c -o darkradiant-OpenGLStateBucket.o `test -f 'render/backend/OpenGLStateBucket.cpp' || echo '$(srcdir)/'`render/backend/OpenGLStateBucket.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLStateBucket.Tpo $(DEPDIR)/darkradiant-OpenGLStateBucket.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/OpenGLStateBucket.cpp' object='darkradiant-OpenGLStateBucket.o' libtool=no @AMDEPBACKSLASH@
+darkradiant-OpenGLShaderPass.o: render/backend/OpenGLShaderPass.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLShaderPass.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLShaderPass.Tpo -c -o darkradiant-OpenGLShaderPass.o `test -f 'render/backend/OpenGLShaderPass.cpp' || echo '$(srcdir)/'`render/backend/OpenGLShaderPass.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLShaderPass.Tpo $(DEPDIR)/darkradiant-OpenGLShaderPass.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/OpenGLShaderPass.cpp' object='darkradiant-OpenGLShaderPass.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLStateBucket.o `test -f 'render/backend/OpenGLStateBucket.cpp' || echo '$(srcdir)/'`render/backend/OpenGLStateBucket.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLShaderPass.o `test -f 'render/backend/OpenGLShaderPass.cpp' || echo '$(srcdir)/'`render/backend/OpenGLShaderPass.cpp
 
-darkradiant-OpenGLStateBucket.obj: render/backend/OpenGLStateBucket.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLStateBucket.obj -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLStateBucket.Tpo -c -o darkradiant-OpenGLStateBucket.obj `if test -f 'render/backend/OpenGLStateBucket.cpp'; then $(CYGPATH_W) 'render/backend/OpenGLStateBucket.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/OpenGLStateBucket.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLStateBucket.Tpo $(DEPDIR)/darkradiant-OpenGLStateBucket.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/OpenGLStateBucket.cpp' object='darkradiant-OpenGLStateBucket.obj' libtool=no @AMDEPBACKSLASH@
+darkradiant-OpenGLShaderPass.obj: render/backend/OpenGLShaderPass.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLShaderPass.obj -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLShaderPass.Tpo -c -o darkradiant-OpenGLShaderPass.obj `if test -f 'render/backend/OpenGLShaderPass.cpp'; then $(CYGPATH_W) 'render/backend/OpenGLShaderPass.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/OpenGLShaderPass.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLShaderPass.Tpo $(DEPDIR)/darkradiant-OpenGLShaderPass.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/OpenGLShaderPass.cpp' object='darkradiant-OpenGLShaderPass.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLStateBucket.obj `if test -f 'render/backend/OpenGLStateBucket.cpp'; then $(CYGPATH_W) 'render/backend/OpenGLStateBucket.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/OpenGLStateBucket.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLShaderPass.obj `if test -f 'render/backend/OpenGLShaderPass.cpp'; then $(CYGPATH_W) 'render/backend/OpenGLShaderPass.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/OpenGLShaderPass.cpp'; fi`
 
 darkradiant-OpenGLModule.o: render/OpenGLModule.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLModule.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLModule.Tpo -c -o darkradiant-OpenGLModule.o `test -f 'render/OpenGLModule.cpp' || echo '$(srcdir)/'`render/OpenGLModule.cpp

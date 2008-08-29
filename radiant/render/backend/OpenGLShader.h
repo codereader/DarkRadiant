@@ -1,7 +1,7 @@
 #ifndef OPENGLSHADER_H_
 #define OPENGLSHADER_H_
 
-#include "OpenGLStateBucket.h"
+#include "OpenGLShaderPass.h"
 
 #include "irender.h"
 #include "ishaders.h"
@@ -16,7 +16,7 @@
 class OpenGLShader 
 : public Shader
 {
-	typedef std::list<OpenGLStateBucket*> Passes;
+	typedef std::list<OpenGLShaderPass*> Passes;
 	Passes m_passes;
 	IShaderPtr m_shader;
 	std::size_t m_used;

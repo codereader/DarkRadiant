@@ -1,5 +1,5 @@
-#ifndef OPENGLSTATEBUCKET_H_
-#define OPENGLSTATEBUCKET_H_
+#ifndef OPENGLSHADERPASS_H_
+#define OPENGLSHADERPASS_H_
 
 #include "math/Vector3.h"
 #include "iglrender.h"
@@ -11,9 +11,14 @@ class Matrix4;
 class OpenGLRenderable;
 class RendererLight;
 
-/// \brief A container of Renderable references.
-/// May contain the same Renderable multiple times, with different transforms.
-class OpenGLStateBucket
+/**
+ * @brief A single component pass of an OpenGL shader.
+ *
+ * Each OpenGLShader may contain multiple passes, which are rendered
+ * independently. Each pass retains its own OpenGLState and a list of renderable
+ * objects to be rendered in this pass.
+ */
+class OpenGLShaderPass
 {
 	// The state applied to this bucket
 	OpenGLState _state;
@@ -84,4 +89,4 @@ public:
 };
 
 
-#endif /*OPENGLSTATEBUCKET_H_*/
+#endif
