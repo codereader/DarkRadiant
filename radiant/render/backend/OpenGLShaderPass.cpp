@@ -1,4 +1,4 @@
-#include "OpenGLStateBucket.h"
+#include "OpenGLShaderPass.h"
 #include "OpenGLShader.h"
 
 #include "math/matrix.h"
@@ -56,7 +56,7 @@ inline void setState(unsigned int state,
 } // namespace
 
 // Apply own state to current state object
-void OpenGLStateBucket::applyState(OpenGLState& current,
+void OpenGLShaderPass::applyState(OpenGLState& current,
 								   unsigned int globalstate) 
 {
   if(_state.m_state & RENDER_OVERRIDE)
@@ -381,7 +381,7 @@ std::ostream& operator<< (std::ostream& os, const RendererLight& light) {
 }
 
 // Add a Renderable to this bucket
-void OpenGLStateBucket::addRenderable(const OpenGLRenderable& renderable, 
+void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable, 
 									  const Matrix4& modelview, 
 									  const RendererLight* light)
 {
@@ -390,7 +390,7 @@ void OpenGLStateBucket::addRenderable(const OpenGLRenderable& renderable,
 
 
 // Render the bucket contents
-void OpenGLStateBucket::render(OpenGLState& current, 
+void OpenGLShaderPass::render(OpenGLState& current, 
 							   unsigned int globalstate, 
 							   const Vector3& viewer)
 {
@@ -426,7 +426,7 @@ void OpenGLStateBucket::render(OpenGLState& current,
 }
 
 // Flush renderables
-void OpenGLStateBucket::flushRenderables(OpenGLState& current, 
+void OpenGLShaderPass::flushRenderables(OpenGLState& current, 
 										 unsigned int globalstate, 
 										 const Vector3& viewer)
 {
@@ -436,7 +436,7 @@ void OpenGLStateBucket::flushRenderables(OpenGLState& current,
 	glPushMatrix();
 	
 	// Iterate over each transformed renderable in the vector
-	for(OpenGLStateBucket::Renderables::const_iterator i = _renderables.begin(); 
+	for(OpenGLShaderPass::Renderables::const_iterator i = _renderables.begin(); 
   	  	i != _renderables.end(); 
   	  	++i)
 	{

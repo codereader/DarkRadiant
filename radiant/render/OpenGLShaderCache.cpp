@@ -158,7 +158,7 @@ void OpenGLShaderCache::render(RenderStateFlags globalstate,
 		i != _state_sorted.end(); 
 		++i)
 	{
-		// Render the OpenGLStateBucket
+		// Render the OpenGLShaderPass
 		i->second->render(current, globalstate, viewer);
 	}
 }

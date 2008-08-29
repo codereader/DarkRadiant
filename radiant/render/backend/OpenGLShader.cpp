@@ -140,7 +140,7 @@ unsigned int OpenGLShader::getFlags() const {
 
 // Append a default shader pass onto the back of the state list
 OpenGLState& OpenGLShader::appendDefaultPass() {
-    m_passes.push_back(new OpenGLStateBucket);
+    m_passes.push_back(new OpenGLShaderPass);
     OpenGLState& state = m_passes.back()->state();
     return state;
 }
