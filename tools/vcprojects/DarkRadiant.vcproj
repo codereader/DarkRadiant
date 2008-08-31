@@ -994,11 +994,11 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\radiant\render\backend\OpenGLStateBucket.cpp"
+						RelativePath="..\..\radiant\render\backend\OpenGLShaderPass.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\radiant\render\backend\OpenGLStateBucket.h"
+						RelativePath="..\..\radiant\render\backend\OpenGLShaderPass.h"
 						>
 					</File>
 					<File
