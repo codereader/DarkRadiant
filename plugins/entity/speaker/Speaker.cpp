@@ -41,7 +41,7 @@ Speaker::Speaker(const Speaker& other,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged,
 		const Callback& evaluateTransform) :
-	m_entity(other.m_entity),
+	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_angleKey(AngleChangedCaller(*this)),
