@@ -12,9 +12,9 @@
 		<menuSeparator />
 		<menuItem name="saveSelected" caption="_Save selected as MAP..." command="SaveSelected" />
 		<menuItem name="saveSelected" caption="_Save selected as prefab..." command="SaveSelectedAsPrefab" />
-		<menuItem name="saveRegion" caption="Save selected as _region..." command="SaveRegion" />
 		<menuItem name="objExport" caption="Save selected as OB_J..." command="BrushExportOBJ" />
 		<menuItem name="createCM" caption="Save selected as Collision Model..." command="BrushExportCM" />
+		<menuItem name="saveRegion" caption="Save _region..." command="SaveRegion" />
 		<menuSeparator />
 		<menuItem name="refreshModels" caption="_Reload Models" command="RefreshReferences" icon="model16red.png" />
 		<menuItem name="reloadSkins" caption="Reload S_kins" command="ReloadSkins" icon="skin16.png" />
