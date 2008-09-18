@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sstream>
 #include <iostream>
 
-#include "generic/static.h"
+#include "imodule.h"
 
 /// \brief A read-only character-stream.
 // OrbWeaver: merged functionality from TextStreambufAdaptor onto this class
@@ -96,39 +96,69 @@ public:
 	{}
 };
 
+/**
+ * greebo: This is a simple container holding a single output stream.
+ * Use the getStream() method to acquire a reference to the stream.
+ */
 class OutputStreamHolder
 {
-  NullOutputStream m_nullOutputStream;
-  std::ostream* m_outputStream;
+	NullOutputStream _nullOutputStream;
+	std::ostream* _outputStream;
+
 public:
-  OutputStreamHolder()
-    : m_outputStream(&m_nullOutputStream)
-  {
-  }
-  void setOutputStream(std::ostream& outputStream)
-  {
-    m_outputStream = &outputStream;
-  }
-  std::ostream& getOutputStream()
-  {
-    return *m_outputStream;
-  }
+	OutputStreamHolder() : 
+		_outputStream(&_nullOutputStream)
+	{}
+
+	void setStream(std::ostream& outputStream) {
+		_outputStream = &outputStream;
+	}
+
+	std::ostream& getStream() {
+		return *_outputStream;
+	}
 };
 
-typedef Static<OutputStreamHolder> GlobalOutputStream;
-
-/// \brief Returns the global output stream. Used to display messages to the user.
-inline std::ostream& globalOutputStream()
-{
-  return GlobalOutputStream::instance().getOutputStream();
+// The static stream holder containers, these are instantiated by each
+// module (DLL/so) at the time of the first call.
+inline OutputStreamHolder& GlobalOutputStream() {
+	static OutputStreamHolder _holder;
+	return _holder;
 }
 
-typedef Static<OutputStreamHolder> GlobalErrorStream;
-
-/// \brief Returns the global error stream. Used to display error messages to the user.
-inline std::ostream& globalErrorStream()
-{
-  return GlobalErrorStream::instance().getOutputStream();
+inline OutputStreamHolder& GlobalErrorStream() {
+	static OutputStreamHolder _holder;
+	return _holder;
 }
+
+inline OutputStreamHolder& GlobalWarningStream() {
+	static OutputStreamHolder _holder;
+	return _holder;
+}
+
+// The stream accessors: use these to write to the application's various streams.
+inline std::ostream& globalOutputStream() {
+	return GlobalOutputStream().getStream();
+}
+
+inline std::ostream& globalErrorStream() {
+	return GlobalErrorStream().getStream();
+}
+
+inline std::ostream& globalWarningStream() {
+	return GlobalWarningStream().getStream();
+}
+
+namespace module {
+
+// greebo: This is called once by each module at load time to initialise
+// the OutputStreamHolders above.
+inline void initialiseStreams(const ApplicationContext& ctx) {
+	GlobalOutputStream().setStream(ctx.getOutputStream());
+	GlobalWarningStream().setStream(ctx.getWarningStream());
+	GlobalErrorStream().setStream(ctx.getErrorStream());
+}
+
+} // namespace module
 
 #endif

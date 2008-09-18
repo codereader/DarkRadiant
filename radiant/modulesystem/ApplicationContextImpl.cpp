@@ -38,6 +38,10 @@ std::ostream& ApplicationContextImpl::getOutputStream() const {
 	return globalOutputStream();
 }
 
+std::ostream& ApplicationContextImpl::getWarningStream() const {
+	return globalWarningStream();
+}
+
 std::ostream& ApplicationContextImpl::getErrorStream() const {
 	return globalErrorStream();
 }

@@ -22,8 +22,9 @@ std::ostream& getGlobalWarningStream() {
 }
 
 void initialiseLogStreams() {
-	GlobalErrorStream::instance().setOutputStream(getGlobalErrorStream());
-	GlobalOutputStream::instance().setOutputStream(getGlobalOutputStream());
+	GlobalOutputStream().setStream(getGlobalOutputStream());
+	GlobalWarningStream().setStream(getGlobalWarningStream());
+	GlobalErrorStream().setStream(getGlobalErrorStream());
 
 	// Redirect std::cout to the log
 	COutRedirector::init();

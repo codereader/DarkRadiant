@@ -13,18 +13,18 @@ void SceneGraph::addSceneObserver(scene::Graph::Observer* observer) {
 
 void SceneGraph::removeSceneObserver(scene::Graph::Observer* observer) {
 	// Cycle through the list of observers and call the moved method
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		scene::Graph::Observer* registered = *i;
 		
 		if (registered == observer) {
-			_sceneObservers.erase(i++);
+			_sceneObservers.erase(i);
 			return; // Don't continue the loop, the iterator is obsolete 
 		}
 	}
 }
 
 void SceneGraph::sceneChanged() {
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		scene::Graph::Observer* observer = *i;
 		observer->onSceneGraphChange();
 	}
@@ -110,7 +110,7 @@ void SceneGraph::insert(const scene::INodePtr& node) {
     // Notify the graph tree model about the change
 	sceneChanged();
 	
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		(*i)->onSceneNodeInsert(node);
 	}
 }
@@ -122,7 +122,7 @@ void SceneGraph::erase(const scene::INodePtr& node) {
   	// Notify the graph tree model about the change
 	sceneChanged();
 	
-	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); i++) {
+	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		(*i)->onSceneNodeErase(node);
 	}
 }
@@ -153,11 +153,9 @@ void SceneGraph::initialiseModule(const ApplicationContext& ctx) {
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(SceneGraphPtr(new SceneGraph));
 	
-	// Initialise the streams
-	const ApplicationContext& ctx = registry.getApplicationContext();
-	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
-	GlobalErrorStream::instance().setOutputStream(ctx.getErrorStream());
-	
+	// Initialise the streams using the given application context
+	module::initialiseStreams(registry.getApplicationContext());
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 }
