@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "iradiant.h"
+#include "ieventmanager.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/messagebox.h"
 
@@ -17,15 +18,17 @@ namespace ui {
 	}
 
 LayerControl::LayerControl(int layerID) :
-	_layerID(layerID)
+	_layerID(layerID),
+	_tooltips(gtk_tooltips_new())
 {
 	// Create the toggle button
 	_toggle = gtk_toggle_button_new();
 	g_signal_connect(G_OBJECT(_toggle), "toggled", G_CALLBACK(onToggle), this);
 
 	// Create the label
-	_label = gtkutil::LeftAlignedLabel("");
-		
+	_labelButton = gtk_button_new_with_label("");
+	g_signal_connect(G_OBJECT(_labelButton), "clicked", G_CALLBACK(onLayerSelect), this);
+	
 	_deleteButton = gtk_button_new();
 	gtk_button_set_image(
 		GTK_BUTTON(_deleteButton), 
@@ -33,12 +36,18 @@ LayerControl::LayerControl(int layerID) :
 	);
 	g_signal_connect(G_OBJECT(_deleteButton), "clicked", G_CALLBACK(onDelete), this);
 
+	// Enable the tooltips group for the help mouseover texts
+	gtk_tooltips_enable(_tooltips);
+	gtk_tooltips_set_tip(_tooltips, _labelButton, "Click to select all in layer, hold SHIFT to deselect", "");
+	gtk_tooltips_set_tip(_tooltips, _deleteButton, "Delete this layer", "");
+	gtk_tooltips_set_tip(_tooltips, _toggle, "Toggle layer visibility", "");
+
 	// Read the status from the Layer
 	update();
 }
 
-GtkWidget* LayerControl::getLabel() const {
-	return _label;
+GtkWidget* LayerControl::getLabelButton() const {
+	return _labelButton;
 }
 
 GtkWidget* LayerControl::getButtons() const {
@@ -56,7 +65,8 @@ void LayerControl::update() {
 
 	bool layerIsVisible = layerSystem.layerIsVisible(_layerID);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_toggle), layerIsVisible);
-	gtk_label_set_text(GTK_LABEL(_label), layerSystem.getLayerName(_layerID).c_str());
+
+	gtk_button_set_label(GTK_BUTTON(_labelButton), layerSystem.getLayerName(_layerID).c_str());
 
 	std::string imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
 	gtk_button_set_image(
@@ -86,7 +96,7 @@ void LayerControl::onDelete(GtkWidget* button, LayerControl* self) {
 
 	EMessageBoxReturn returnValue = gtk_MessageBox(
 		GTK_WIDGET(GlobalRadiant().getMainWindow()), 
-		msg.c_str(), "Delete Custom Stim", eMB_YESNO, eMB_ICONQUESTION
+		msg.c_str(), "Delete Layer", eMB_YESNO, eMB_ICONQUESTION
 	);
 	
 	if (returnValue == eIDYES) {
@@ -95,6 +105,19 @@ void LayerControl::onDelete(GtkWidget* button, LayerControl* self) {
 		);
 		LayerControlDialog::Instance().refresh();
 	}
+}
+
+void LayerControl::onLayerSelect(GtkWidget* button, LayerControl* self) {
+	// By default, we SELECT the layer
+	bool selected = true;
+
+	// The user can choose to DESELECT the layer when holding down shift
+	if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0) {
+		selected = false;
+	}
+
+	// Set the entire layer to selected
+	GlobalLayerSystem().setSelected(self->_layerID, selected);
 }
 
 } // namespace ui

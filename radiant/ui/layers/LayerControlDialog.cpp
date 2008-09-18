@@ -85,7 +85,7 @@ void LayerControlDialog::refresh() {
 		 i != _layerControls.end(); i++)
 	{
 		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getToggle());
-		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getLabel());
+		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getLabelButton());
 		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getButtons());
 	}
 
@@ -123,7 +123,7 @@ void LayerControlDialog::refresh() {
 		gtk_table_attach(GTK_TABLE(_controlContainer), (*i)->getToggle(), 
 			0, 1, c, c+1, (GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0);
 
-		gtk_table_attach_defaults(GTK_TABLE(_controlContainer), (*i)->getLabel(), 1, 2, c, c+1);
+		gtk_table_attach_defaults(GTK_TABLE(_controlContainer), (*i)->getLabelButton(), 1, 2, c, c+1);
 
 		gtk_table_attach(GTK_TABLE(_controlContainer), (*i)->getButtons(), 
 			2, 3, c, c+1, (GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0);

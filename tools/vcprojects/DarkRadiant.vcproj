@@ -2082,6 +2082,10 @@
 					RelativePath="..\..\radiant\layers\RemoveFromLayerWalker.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\radiant\layers\SetLayerSelectedWalker.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="log"

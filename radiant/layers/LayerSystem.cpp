@@ -8,6 +8,7 @@
 #include "AddToLayerWalker.h"
 #include "MoveToLayerWalker.h"
 #include "RemoveFromLayerWalker.h"
+#include "SetLayerSelectedWalker.h"
 
 #include "ui/layers/LayerControlDialog.h"
 
@@ -288,6 +289,11 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 
 	// Node is hidden, return FALSE
 	return false;
+}
+
+void LayerSystem::setSelected(int layerID, bool selected) {
+	SetLayerSelectedWalker walker(layerID, selected);
+	GlobalSceneGraph().root()->traverse(walker);
 }
 
 int LayerSystem::getLayerID(const std::string& name) const {
