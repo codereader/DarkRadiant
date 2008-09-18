@@ -150,7 +150,7 @@ void Node::removeChildNode(const INodePtr& node) {
 	// Node::onTraversableErase() event
 	_children.erase(node);
 
-	// Set the parent of this new node
+	// Set the parent of this node to NULL
 	node->setParent(scene::INodePtr());
 
 	// greebo: The bounds are likely to change when child nodes are removed

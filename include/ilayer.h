@@ -139,6 +139,15 @@ public:
 	 *           node was therefore hidden.
 	 */
 	virtual bool updateNodeVisibility(const scene::INodePtr& node) = 0;
+
+	/**
+	 * greebo: Sets the selection status of the entire layer.
+	 * 
+	 * @layerID: the ID of the layer to be selected/deselected.
+	 * @selected: TRUE if the layer should be selected, FALSE if the members 
+	 * should be de-selected.
+	 */
+	virtual void setSelected(int layerID, bool selected) = 0;
 };
 
 } // namespace scene

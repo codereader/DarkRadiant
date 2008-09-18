@@ -101,6 +101,9 @@ public:
 
 	virtual bool updateNodeVisibility(const scene::INodePtr& node);
 
+	// Selects/unselects an entire layer
+	virtual void setSelected(int layerID, bool selected);
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;

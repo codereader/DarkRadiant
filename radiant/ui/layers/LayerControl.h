@@ -5,6 +5,7 @@
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkToggleButton GtkToggleButton;
+typedef struct _GtkTooltips GtkTooltips;
 
 namespace ui {
 
@@ -21,8 +22,10 @@ class LayerControl
 	int _layerID;
 
 	GtkWidget* _toggle;
-	GtkWidget* _label;
+	GtkWidget* _labelButton;
 	GtkWidget* _deleteButton;
+
+	GtkTooltips* _tooltips;
 
 	// Locks down the callbacks during widget update
 	bool _updateActive;
@@ -31,7 +34,7 @@ public:
 	LayerControl(int layerID);
 
 	// Returns the widgets for packing this object into a container/table
-	GtkWidget* getLabel() const;
+	GtkWidget* getLabelButton() const;
 	GtkWidget* getButtons() const;
 	GtkWidget* getToggle() const;
 
@@ -41,6 +44,7 @@ public:
 private:
 	static void onToggle(GtkToggleButton* togglebutton, LayerControl* self);
 	static void onDelete(GtkWidget* button, LayerControl* self);
+	static void onLayerSelect(GtkWidget* button, LayerControl* self);
 };
 typedef boost::shared_ptr<LayerControl> LayerControlPtr;
 
