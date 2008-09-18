@@ -253,7 +253,7 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item,
 			Entity_createFromSelection(cName.c_str(), self->_lastPoint);
 		}
 		catch (EntityCreationException e) {
-			gtkutil::errorDialog(e.what(), MainFrame_getWindow());
+			gtkutil::errorDialog(e.what(), GlobalRadiant().getMainWindow());
 		}
 	}
 }
@@ -265,7 +265,7 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
 		Entity_createFromSelection(PLAYERSTART_CLASSNAME, self->_lastPoint);
 	}
 	catch (EntityCreationException e) {
-		gtkutil::errorDialog(e.what(), MainFrame_getWindow());
+		gtkutil::errorDialog(e.what(), GlobalRadiant().getMainWindow());
 	}
 }
 
@@ -323,7 +323,7 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create light, classname not found.",
-                             MainFrame_getWindow());
+                             GlobalRadiant().getMainWindow());
     }
 }
 
@@ -342,7 +342,7 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* s
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create speaker, classname not found.",
-                             MainFrame_getWindow());
+                             GlobalRadiant().getMainWindow());
     }
 }
 
@@ -387,15 +387,15 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
             }
             catch (EntityCreationException e) {
                 gtkutil::errorDialog("Unable to create model, classname not found.",
-                                     MainFrame_getWindow());
+                                     GlobalRadiant().getMainWindow());
             }
 		}
 		
 	}
 	else {
 		gtkutil::errorDialog(
-                "Either nothing or exactly one brush must be selected for model creation",
-				 MainFrame_getWindow()
+            "Either nothing or exactly one brush must be selected for model creation",
+			GlobalRadiant().getMainWindow()
         );
 	}
 
@@ -418,14 +418,17 @@ void OrthoContextMenu::callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContex
 
 void OrthoContextMenu::callbackAddToLayer(int layerID) {
 	scene::getLayerSystem().addSelectionToLayer(layerID);
+	GlobalMap().setModified(true);
 }
 
 void OrthoContextMenu::callbackMoveToLayer(int layerID) {
 	scene::getLayerSystem().moveSelectionToLayer(layerID);
+	GlobalMap().setModified(true);
 }
 
 void OrthoContextMenu::callbackRemoveFromLayer(int layerID) {
 	scene::getLayerSystem().removeSelectionFromLayer(layerID);
+	GlobalMap().setModified(true);
 }
 
 } // namespace ui
