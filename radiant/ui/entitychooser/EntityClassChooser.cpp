@@ -28,6 +28,9 @@ std::string EntityClassChooser::showAndBlock() {
 	// Show the widget and set keyboard focus to the tree view
 	gtk_widget_show_all(_widget);
 	gtk_widget_grab_focus(_treeView);
+
+	// Update the member variables
+	updateSelection();
 	
 	// Enter recursive main loop
 	gtk_main();
@@ -166,10 +169,40 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass) {
 	gtk_text_buffer_set_text(buf, usage.c_str(), -1);
 }
 
+void EntityClassChooser::updateSelection() {
+	// Prepare to check for a selection
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	
+	// Add button is enabled if there is a selection and it is not a folder.
+	if (gtk_tree_selection_get_selected(_selection, &model, &iter)
+		&& !gtkutil::TreeModel::getBoolean(model, &iter, DIR_FLAG_COLUMN)) 
+	{
+		// Make the OK button active 
+		gtk_widget_set_sensitive(_okButton, TRUE);
+
+		// Set the panel text with the usage information
+		std::string selName = gtkutil::TreeModel::getString(
+			model, &iter, NAME_COLUMN
+		); 
+		updateUsageInfo(selName);
+
+		// Update the _selectionName field
+		_selectedName = selName;
+	}
+	else {
+		gtk_widget_set_sensitive(_okButton, FALSE);
+	}
+}
+
 /* GTK CALLBACKS */
 
 gboolean EntityClassChooser::callbackHide(GtkWidget* widget, GdkEvent* ev, EntityClassChooser* self)
 {
+	// greebo: Clear the selected name on hide, we don't want to create another entity when 
+	// the user clicks on the X in the upper right corner.
+	self->_selectedName = "";
+
 	gtk_widget_hide(self->_widget);
 	gtk_main_quit();
 
@@ -193,30 +226,7 @@ void EntityClassChooser::callbackOK(GtkWidget* widget, EntityClassChooser* self)
 void EntityClassChooser::callbackSelectionChanged(GtkWidget* widget, 
 												  EntityClassChooser* self) 
 {
-	// Prepare to check for a selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	
-	// Add button is enabled if there is a selection and it is not a folder.
-	if (gtk_tree_selection_get_selected(self->_selection, &model, &iter)
-		&& !gtkutil::TreeModel::getBoolean(model, &iter, DIR_FLAG_COLUMN)) 
-	{
-		// Make the OK button active 
-		gtk_widget_set_sensitive(self->_okButton, TRUE);
-
-		// Set the panel text with the usage information
-		std::string selName = gtkutil::TreeModel::getString(
-			model, &iter, NAME_COLUMN
-		); 
-		self->updateUsageInfo(selName);
-
-		// Update the _selectionName field
-		self->_selectedName = selName;
-	}
-	else {
-		gtk_widget_set_sensitive(self->_okButton, FALSE);
-	}
-	
+	self->updateSelection();
 }
 
 } // namespace ui
