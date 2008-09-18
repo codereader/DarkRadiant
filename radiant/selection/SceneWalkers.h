@@ -61,36 +61,40 @@ public:
 // Traverses through the scenegraph and removes degenerated brushes from the selected.
 // greebo: The actual erasure is performed in the destructor to keep the scenegraph intact during traversal.
 class RemoveDegenerateBrushWalker : 
-	public scene::Graph::Walker 
+	public SelectionSystem::Visitor
 {
-	mutable std::list<scene::Path> _eraseList;
+	mutable std::list<scene::INodePtr> _eraseList;
 public:
 	// Destructor removes marked paths
 	~RemoveDegenerateBrushWalker() {
-		for (std::list<scene::Path>::iterator i = _eraseList.begin(); i != _eraseList.end(); i++) {
-			Path_deleteTop(*i);
+		for (std::list<scene::INodePtr>::iterator i = _eraseList.begin(); i != _eraseList.end(); ++i) {
+			// Check if the parent has any children left at all
+			scene::INodePtr parent = (*i)->getParent();
+
+			// Remove the node from the scene
+			scene::removeNodeFromParent(*i);
+
+			if (parent != NULL && !parent->hasChildNodes()) {
+				globalErrorStream() << "Warning: removing empty parent entity." << std::endl;
+				scene::removeNodeFromParent(parent);
+			}
 		}
 	}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(path.top());
-		if (transformNode != 0) {
-			Brush* brush = Node_getBrush(path.top());
-			if (brush != NULL) {
-				if (!brush->hasContributingFaces()) {
+	void visit(const scene::INodePtr& node) const {
+		TransformNodePtr transformNode = Node_getTransformNode(node);
 
-					// greebo: Mark this path for removal
-					_eraseList.push_back(path);
+		if (transformNode == NULL) return;
+		
+		Brush* brush = Node_getBrush(node);
 
-					// Remove the degenerate brush
-					//Path_deleteTop(path);
+		if (brush != NULL && !brush->hasContributingFaces()) {
+			// greebo: Mark this path for removal
+			_eraseList.push_back(node);
 
-					globalErrorStream() << "Warning: removed degenerate brush!\n";
-					return false;
-				}
-			}
+			globalErrorStream() << "Warning: removed degenerate brush!\n";
+			return;
 		}
-		return true;
 	}
 };
 

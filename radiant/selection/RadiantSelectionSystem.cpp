@@ -76,11 +76,11 @@ void RadiantSelectionSystem::addObserver(Observer* observer) {
 
 void RadiantSelectionSystem::removeObserver(Observer* observer) {
 	// Cycle through the list of observers and call the moved method
-	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i) {
 		Observer* registered = *i;
 		
 		if (registered == observer) {
-			_observers.erase(i++);
+			_observers.erase(i);
 			return; // Don't continue the loop, the iterator is obsolete 
 		}
 	}
@@ -89,7 +89,7 @@ void RadiantSelectionSystem::removeObserver(Observer* observer) {
 void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool isComponent) {
 	
 	// Cycle through the list of observers and call the moved method
-	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i) {
 		Observer* observer = *i;
 		
 		if (observer != NULL) {
@@ -105,7 +105,7 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 	switch(mode) {
 		case eEntity: {
 			Scene_forEachVisible(GlobalSceneGraph(), view, testselect_entity_visible(selector, test));
-			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
 				targetList.push_back(i->second);
 			}
 		}
@@ -125,15 +125,15 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 			}
 		
 			// Add the first selection crop to the target vector
-			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
 				targetList.push_back(i->second);
 			}
 			
 			// Add the secondary crop to the vector (if it has any entries)
-			for (SelectionPool::iterator i = sel2.begin(); i != sel2.end(); i++) {
+			for (SelectionPool::iterator i = sel2.begin(); i != sel2.end(); ++i) {
 				// Check for duplicates
 				SelectablesList::iterator j;
-				for (j = targetList.begin(); j != targetList.end(); j++) {
+				for (j = targetList.begin(); j != targetList.end(); ++j) {
 					if (*j == i->second) break;
 				}
 				// Insert if not yet in the list
@@ -144,7 +144,7 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 		break;
 		case eComponent:
 			Scene_TestSelect_Component_Selected(selector, test, view, componentMode);
-			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
 				targetList.push_back(i->second);
 			}
 		break;
@@ -314,7 +314,7 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
 
 // Traverse the current selection and visit them with the given visitor class
 void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
-	for (SelectionListType::const_iterator i = _selection.begin(); i != _selection.end(); i++) {
+	for (SelectionListType::const_iterator i = _selection.begin(); i != _selection.end(); ++i) {
 		visitor.visit(i->first);
 	}
 }
@@ -323,7 +323,7 @@ void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
 void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor) const {
 	for (SelectionListType::const_iterator i = _componentSelection.begin(); 
 		 i != _componentSelection.end(); 
-		 i++)
+		 ++i)
 	{
 		visitor.visit(i->first);
 	}
@@ -782,7 +782,7 @@ void RadiantSelectionSystem::endMove() {
 	}
 	
 	// Remove all degenerated brushes from the scene graph (should emit a warning)
-	GlobalSceneGraph().traverse(RemoveDegenerateBrushWalker());
+	foreachSelected(RemoveDegenerateBrushWalker());
 
 	_pivotMoving = false;
 	pivotChanged();
