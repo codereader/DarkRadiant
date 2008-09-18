@@ -191,10 +191,8 @@ typedef boost::shared_ptr<GridManager> GridManagerPtr;
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(GridManagerPtr(new GridManager));
 	
-	// Initialise the streams
-	const ApplicationContext& ctx = registry.getApplicationContext();
-	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
-	GlobalErrorStream::instance().setOutputStream(ctx.getErrorStream());
+	// Initialise the streams using the given application context
+	module::initialiseStreams(registry.getApplicationContext());
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);

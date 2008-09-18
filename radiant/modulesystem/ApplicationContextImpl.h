@@ -40,6 +40,7 @@ public:
 	
 	// Return the global stream references
 	virtual std::ostream& getOutputStream() const;
+	virtual std::ostream& getWarningStream() const;
 	virtual std::ostream& getErrorStream() const;
 
 	// Exports/deletes the paths to/from the registry

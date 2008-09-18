@@ -52,6 +52,7 @@ public:
 	 */
 	virtual std::ostream& getOutputStream() const = 0;
 	virtual std::ostream& getErrorStream() const = 0;
+	virtual std::ostream& getWarningStream() const = 0;
 
 	/**
 	 * Sets up the paths and stores them into the registry.

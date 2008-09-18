@@ -29,10 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(Doom3FileSystemPtr(new Doom3FileSystem));
 	
-	// Initialise the streams
-	const ApplicationContext& ctx = registry.getApplicationContext();
-	GlobalOutputStream::instance().setOutputStream(ctx.getOutputStream());
-	GlobalErrorStream::instance().setOutputStream(ctx.getErrorStream());
+	// Initialise the streams using the given application context
+	module::initialiseStreams(registry.getApplicationContext());
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
