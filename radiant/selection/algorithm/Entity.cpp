@@ -31,7 +31,7 @@ public:
 
 	~EntitySetClassnameSelected() {
 		for (std::set<scene::INodePtr>::iterator i = _entities.begin();
-			 i != _entities.end(); i++)
+			 i != _entities.end(); ++i)
 		{
 			// "Rename" the entity, this deletes the old node and creates a new one
 			scene::INodePtr newNode = changeEntityClassname(*i, _classname);
@@ -45,13 +45,23 @@ public:
 		// Check if we have an entity
 		Entity* entity = Node_getEntity(node);
 
-		if (entity != NULL && !_classname.empty() && Node_isSelected(node)) { 
-			_entities.insert(node);
+		if (entity != NULL && Node_isSelected(node)) {
+			if (entity->getKeyValue("classname") != "worldspawn") {
+				_entities.insert(node);
+			}
+			else {
+				gtkutil::errorDialog("Cannot change classname of worldspawn entity.", GlobalRadiant().getMainWindow());
+			}
 		}
 	}
 };
 
 void setEntityClassname(const std::string& classname) {
+
+	if (classname.empty()) {
+		globalErrorStream() << "Cannot set classname to an empty string!" << std::endl;
+	}
+
 	// greebo: instantiate a walker and traverse the current selection
 	EntitySetClassnameSelected classnameSetter(classname);
 	GlobalSelectionSystem().foreachSelected(classnameSetter);
