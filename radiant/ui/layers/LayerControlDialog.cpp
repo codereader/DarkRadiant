@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 
 #include "ieventmanager.h"
+#include "ilayer.h"
 #include "iregistry.h"
 #include "stream/textstream.h"
 
@@ -55,18 +56,33 @@ void LayerControlDialog::populateWindow() {
 	// Add the LayerControl vbox to the window
 	gtk_box_pack_start(GTK_BOX(overallVBox), _controlContainer, FALSE, FALSE, 0);
 
-	// Add the option buttons ("Create Laye", etc.) to the window
+	// Add the option buttons ("Create Layer", etc.) to the window
 	gtk_box_pack_start(GTK_BOX(overallVBox), createButtons(), FALSE, FALSE, 0);
 }
 
 GtkWidget* LayerControlDialog::createButtons() {
-	GtkWidget* buttonVBox = gtk_vbox_new(FALSE, 0);
+	GtkWidget* buttonVBox = gtk_vbox_new(FALSE, 6);
 
+	// Show all / hide all buttons
+	GtkWidget* hideShowBox = gtk_hbox_new(TRUE, 6);
+
+	_showAllLayers = gtk_button_new_with_label("Show all");
+	_hideAllLayers = gtk_button_new_with_label("Hide all");
+
+	g_signal_connect(G_OBJECT(_showAllLayers), "clicked", G_CALLBACK(onShowAllLayers), this);
+	g_signal_connect(G_OBJECT(_hideAllLayers), "clicked", G_CALLBACK(onHideAllLayers), this);
+
+	gtk_box_pack_start(GTK_BOX(hideShowBox), _showAllLayers, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hideShowBox), _hideAllLayers, TRUE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(buttonVBox), hideShowBox, FALSE, FALSE, 0);
+
+	// Create layer button
 	GtkWidget* createButton = gtk_button_new_from_stock(GTK_STOCK_NEW);
 	g_signal_connect(G_OBJECT(createButton), "clicked", G_CALLBACK(onCreateLayer), this);
 	gtk_widget_set_size_request(createButton, 100, -1);
 	gtk_box_pack_start(GTK_BOX(buttonVBox), createButton, FALSE, FALSE, 0);
-	
+
 	return buttonVBox;
 }
 
@@ -131,6 +147,8 @@ void LayerControlDialog::refresh() {
 
 	// Make sure the newly added items are visible
 	gtk_widget_show_all(_controlContainer);
+
+	update();
 }
 
 void LayerControlDialog::update() {
@@ -140,6 +158,36 @@ void LayerControlDialog::update() {
 	{
 		(*i)->update();
 	}
+
+	// Update the show/hide all button sensitiveness
+
+	class CheckAllLayersWalker :
+		public scene::ILayerSystem::Visitor
+	{
+	public:
+		std::size_t numVisible;
+		std::size_t numHidden;
+
+		CheckAllLayersWalker() :
+			numVisible(0),
+			numHidden(0)
+		{}
+
+		void visit(int layerID, std::string layerName) {
+			if (GlobalLayerSystem().layerIsVisible(layerID)) {
+				numVisible++;
+			}
+			else {
+				numHidden++;
+			}
+		}
+	};
+
+	CheckAllLayersWalker visitor;
+	GlobalLayerSystem().foreachLayer(visitor);
+
+	gtk_widget_set_sensitive(_showAllLayers, visitor.numHidden > 0);
+	gtk_widget_set_sensitive(_hideAllLayers, visitor.numVisible > 0);
 }
 
 void LayerControlDialog::toggle() {
@@ -226,6 +274,36 @@ void LayerControlDialog::onCreateLayer(GtkWidget* button, LayerControlDialog* se
 			continue; 
 		}
 	}
+}
+
+void LayerControlDialog::onShowAllLayers(GtkWidget* button, LayerControlDialog* self) {
+	// Local helper class
+	class ShowAllLayersWalker :
+		public scene::ILayerSystem::Visitor
+	{
+	public:
+		void visit(int layerID, std::string layerName) {
+			GlobalLayerSystem().setLayerVisibility(layerID, true);
+		}
+	};
+
+	ShowAllLayersWalker walker;
+	GlobalLayerSystem().foreachLayer(walker);
+}
+
+void LayerControlDialog::onHideAllLayers(GtkWidget* button, LayerControlDialog* self) {
+	// Local helper class
+	class HideAllLayersWalker :
+		public scene::ILayerSystem::Visitor
+	{
+	public:
+		void visit(int layerID, std::string layerName) {
+			GlobalLayerSystem().setLayerVisibility(layerID, false);
+		}
+	};
+
+	HideAllLayersWalker walker;
+	GlobalLayerSystem().foreachLayer(walker);
 }
 
 } // namespace ui

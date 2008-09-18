@@ -24,6 +24,9 @@ class LayerControlDialog :
 
 	GtkWidget* _controlContainer;
 
+	GtkWidget* _showAllLayers;
+	GtkWidget* _hideAllLayers;
+
 public:
 	LayerControlDialog();
 
@@ -56,6 +59,8 @@ private:
 	GtkWidget* createButtons();
 
 	static void onCreateLayer(GtkWidget* button, LayerControlDialog* self);
+	static void onShowAllLayers(GtkWidget* button, LayerControlDialog* self);
+	static void onHideAllLayers(GtkWidget* button, LayerControlDialog* self);
 };
 
 } // namespace ui
