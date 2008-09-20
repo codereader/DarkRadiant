@@ -174,9 +174,8 @@ void Doom3EntityClass::captureColour() {
 
 // Release the shaders for the current colour
 void Doom3EntityClass::releaseColour() {
-	// Release fill and wire versions of the entity colour
-	std::string fillCol = (boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
-	std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
+	_fillShader = ShaderPtr();
+	_wireShader = ShaderPtr();
 }
 
 // Enumerate entity class attributes
@@ -322,33 +321,37 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
                 setIsLight(true);
             }
         }
-        else if (boost::algorithm::istarts_with(key, "editor_var ")) {
-        	// "editor_var" represents an attribute that may be set on this
+		else if (boost::algorithm::istarts_with(key, "editor_")) {
+			// "editor_yyy" represents an attribute that may be set on this
         	// entity. Construct a value-less EntityClassAttribute to add to
         	// the class, so that it will show in the entity inspector.
-        	std::string attName = key.substr(key.find(" ") + 1);
-        	if (!attName.empty()) {
-        		addAttribute(EntityClassAttribute("text", attName, "", value));
-        	}
-        }
-        else if (boost::algorithm::istarts_with(key, "editor_bool ")) {
-			// Same as editor_var, but with boolean rather than text type
-        	std::string attName = key.substr(key.find(" ") + 1);
-        	if (!attName.empty()) {
-        		addAttribute(EntityClassAttribute("boolean", attName, "", value));
-        	}
-        }
-		else if (boost::algorithm::istarts_with(key, "editor_float ")) {
-			// Same as editor_var, but with float rather than text type
-        	std::string attName = key.substr(key.find(" ") + 1);
-        	if (!attName.empty()) {
-        		addAttribute(EntityClassAttribute("float", attName, "", value));
-        	}
-        }
 
-		// Following key-specific processing, add the keyvalue to the entity
-		// class
+			// Locate the space in "editor_bool myVariable", starting after "editor_"
+			std::size_t spacePos = key.find(' ', 7);
+
+			// Only proceed if we have a space (some keys like "editor_displayFolder" don't have spaces)
+			if (spacePos != std::string::npos) {
+				// The part beyond the space is the name of the attribute
+				std::string attName = key.substr(spacePos + 1);
+				
+				// Get the type by trimming the string left and right
+				std::string type = key.substr(7, key.length() - attName.length() - 8);
+		
+				if (!attName.empty()) {
+
+					// Transform the type into a better format
+					if (type == "var" || type == "string") {
+						type = "text";
+					}
+
+        			addAttribute(EntityClassAttribute(type, attName, "", value));
+        		}
+			}
+		}
+        
+		// Following key-specific processing, add the keyvalue to the eclass
 		EntityClassAttribute attribute("text", key, value, "");
+
 		if (getAttribute(key).type.empty()) {
 			// Type is empty, attribute does not exist, add it.
 			addAttribute(attribute);
@@ -361,9 +364,7 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
 			// Both type and value are not empty, emit a warning
 			std::cerr << "[eclassmgr] attribute " << key << " already set on entityclass " 
             		  << sName << std::endl;
-
 		}
-            
     } // while true
 }
 
