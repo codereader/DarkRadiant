@@ -372,11 +372,11 @@ public:
 	// Catches the key/mouse press/release events from the given GtkObject
 	void connect(GtkObject* object)	{
 		// Create and store the handler into the map
-		gulong handlerId = g_signal_connect(G_OBJECT(object), "key_press_event", 
+		gulong handlerId = g_signal_connect(G_OBJECT(object), "key-press-event", 
 											G_CALLBACK(onKeyPress), this);
 		_handlers[handlerId] = object;
 		
-		handlerId = g_signal_connect(G_OBJECT(object), "key_release_event", 
+		handlerId = g_signal_connect(G_OBJECT(object), "key-release-event", 
 									 G_CALLBACK(onKeyRelease), this);
 		_handlers[handlerId] = object;
 	}
@@ -407,8 +407,13 @@ public:
 	 * firing global shortcuts all the time.   
 	 */
 	void connectDialogWindow(GtkWindow* window) {
-		gulong handlerId = g_signal_connect(G_OBJECT(window), "key_press_event", 
+		gulong handlerId = g_signal_connect(G_OBJECT(window), "key-press-event", 
 											G_CALLBACK(onDialogKeyPress), this);
+
+		_dialogWindows[handlerId] = GTK_OBJECT(window);		
+
+		handlerId = g_signal_connect(G_OBJECT(window), "key-release-event", 
+									 G_CALLBACK(onDialogKeyRelease), this);
 
 		_dialogWindows[handlerId] = GTK_OBJECT(window);		
 	}
@@ -599,6 +604,24 @@ private:
 		if (!keyProcessed) {
 			// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
 			self->onKeyPress(window, event, data);
+		}
+		
+		// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 
+		return keyProcessed;
+	}
+
+	// The GTK keyrelease callback
+	static gboolean onDialogKeyRelease(GtkWindow* window, GdkEventKey* event, gpointer data) {
+		
+		// Convert the passed pointer onto a KeyEventManager pointer
+		EventManager* self = reinterpret_cast<EventManager*>(data);
+		
+		// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
+		gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
+		
+		if (!keyProcessed) {
+			// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
+			self->onKeyRelease(window, event, data);
 		}
 		
 		// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 
