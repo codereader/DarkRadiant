@@ -21,10 +21,11 @@ PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
 // Register the classes
 void PropertyEditorFactory::registerClasses() {
     _peMap["vector3"] = PropertyEditorPtr(new Vector3PropertyEditor());
-    _peMap["boolean"] = PropertyEditorPtr(new BooleanPropertyEditor());
+    _peMap["bool"] = PropertyEditorPtr(new BooleanPropertyEditor());
     _peMap["entity"] = PropertyEditorPtr(new EntityPropertyEditor());
 	_peMap["colour"] = PropertyEditorPtr(new ColourPropertyEditor());
 	_peMap["texture"] = PropertyEditorPtr(new TexturePropertyEditor());
+	_peMap["mat"] = PropertyEditorPtr(new TexturePropertyEditor());
 	_peMap["skin"] = PropertyEditorPtr(new SkinPropertyEditor());
 	_peMap["sound"] = PropertyEditorPtr(new SoundPropertyEditor());
 	_peMap["float"] = PropertyEditorPtr(new FloatPropertyEditor());
