@@ -173,10 +173,14 @@ public:
 
 	// Required visit function
 	void visit(const EntityClassAttribute& attr) {
-		// greebo: Only add the property if it hasn't been set on the entity itself.
+		// greebo: Only add the property if it hasn't been set directly on the entity itself.
+		if (!_entity->getKeyValue(attr.name).empty() && !_entity->isInherited(attr.name)) {
+			return;
+		}
+
 		// Also ignore all attributes with empty descriptions
-		if (!_entity->isInherited(attr.name) || attr.description.empty()) {
-			return; // not empty
+		if (attr.description.empty()) {
+			return;
 		}
 
 		// Escape any Pango markup in the attribute name (e.g. "<" or ">")
