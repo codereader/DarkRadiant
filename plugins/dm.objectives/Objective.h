@@ -59,7 +59,7 @@ public:
 	Objective()	: 
 		state(INCOMPLETE), 
 		mandatory(false), 
-		visible(false), 
+		visible(true), 
 		ongoing(false),
 		irreversible(false)
 	{}
