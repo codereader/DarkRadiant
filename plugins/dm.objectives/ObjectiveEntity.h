@@ -88,11 +88,10 @@ public:
 	void addObjective();
 	
 	/**
-	 * Delete a numbered objective.
+	 * Delete a numbered objective. This re-orders all objectives so that the
+	 * numbering is consistent again (deleting obj 2 will re-number 3 => 2, 4 => 3, etc.)
 	 */
-	void deleteObjective(int index) {
-		_objectives.erase(index);
-	}
+	void deleteObjective(int index);
 	
 	/**
 	 * Clear all objectives.
