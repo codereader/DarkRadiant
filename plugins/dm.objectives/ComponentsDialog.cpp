@@ -135,8 +135,8 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
 	GtkComboBox* combo = GTK_COMBO_BOX(_widgets[WIDGET_OBJ_STATE_COMBO]);
-	gtk_combo_box_append_text(combo, "COMPLETE");
 	gtk_combo_box_append_text(combo, "INCOMPLETE");
+	gtk_combo_box_append_text(combo, "COMPLETE");
 	gtk_combo_box_append_text(combo, "FAILED");
 	gtk_combo_box_append_text(combo, "INVALID");
 	
