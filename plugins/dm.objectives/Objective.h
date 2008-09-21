@@ -22,8 +22,8 @@ public:
 
 	// Objective state enum
 	enum State {
+		INCOMPLETE = 0,
 		COMPLETE,
-		INCOMPLETE,
 		FAILED,
 		INVALID
 	} state;
