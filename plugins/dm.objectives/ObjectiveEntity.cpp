@@ -131,6 +131,35 @@ void ObjectiveEntity::addObjective() {
 	_objectives.insert(ObjectiveMap::value_type(index, o));
 }
 
+void ObjectiveEntity::deleteObjective(int index) {
+	// Look up the objective with the given index
+	ObjectiveMap::iterator i = _objectives.find(index);
+
+	if (i == _objectives.end()) {
+		// not found, nothing to do 
+		return; 
+	}
+
+	// Delete the found element
+	_objectives.erase(i++);
+	
+	// Then iterate all the way to the highest index
+	while (i != _objectives.end()) {
+		// Decrease the index of this objective
+		int newIndex = i->first - 1;
+		// Copy the objective into a temporary object
+		Objective temp = i->second;
+
+		// Remove the old one
+		_objectives.erase(i++);
+
+		// Re-insert with new index
+		_objectives.insert(
+			ObjectiveMap::value_type(newIndex, temp)
+		);
+	}
+}
+
 // Test for targeting
 bool ObjectiveEntity::isOnTargetList(const TargetList& list) const {
 	// Try to convert the weak_ptr reference to a shared_ptr
