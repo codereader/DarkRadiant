@@ -57,6 +57,9 @@ private:
         Entity* entity, const std::string& keyPrefix, const Objective& objective
     );
 
+	// Removes all objective-related spawnargs from the given entity
+	void clearEntity(Entity* entity);
+
 public:
 
 	/**
