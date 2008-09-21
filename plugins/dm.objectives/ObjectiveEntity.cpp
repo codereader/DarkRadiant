@@ -221,12 +221,27 @@ void ObjectiveEntity::writeComponents(Entity* entity,
     }
 }
 
+void ObjectiveEntity::clearEntity(Entity* entity) {
+	// Get all keyvalues matching the "obj" prefix.
+	Entity::KeyValuePairs keyValues = entity->getKeyValuePairs("obj");
+
+	for (Entity::KeyValuePairs::const_iterator i = keyValues.begin();
+		 i != keyValues.end(); ++i)
+	{
+		// Set the spawnarg to empty, which is equivalent to a removal
+		entity->setKeyValue(i->first, "");
+	}
+}
+
 // Write out Objectives to entity keyvals
 void ObjectiveEntity::writeToEntity() {
 	// Try to convert the weak_ptr reference to a shared_ptr
 	Entity* entity = Node_getEntity(_entityNode.lock());
 	assert(entity != NULL);
 	
+	// greebo: Remove all objective-related spawnargs first
+	clearEntity(entity);
+
 	for (ObjectiveMap::const_iterator i = _objectives.begin();
 		 i != _objectives.end();
 		 ++i) 
