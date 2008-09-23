@@ -7,34 +7,16 @@
 #include "map/MapResource.h"
 
 class RadiantReferenceCache : 
-	public ReferenceCache, 
-	public VirtualFileSystem::Observer
+	public ReferenceCache
 {
-	bool _realised;
-
 public:
-	RadiantReferenceCache();
-
 	// Capture a named resource.
 	ResourcePtr capture(const std::string& path);
-	
-	bool realised() const;
-	void realise();
-	void unrealise();
-		
-	// Gets called on VFS initialise
-  	virtual void onFileSystemInitialise();
-  	// Gets called on VFS shutdown
-  	virtual void onFileSystemShutdown();
-  
-	// Command target: calls refresh() and resets the ModelPreview
-	void refreshReferences();
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
 
 private:
   	// Branch for capturing mapfile resources

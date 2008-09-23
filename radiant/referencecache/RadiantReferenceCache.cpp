@@ -16,19 +16,13 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
-RadiantReferenceCache::RadiantReferenceCache() : 
-	_realised(false)
-{}
-
 // Branch for capturing mapfile resources
 ReferenceCache::ResourcePtr RadiantReferenceCache::captureMap(const std::string& path) {
 	// Create a new MapResource and return it.
 	map::MapResourcePtr newResource(new map::MapResource(path));
 	
-	// Realise the new resource if the ReferenceCache itself is realised
-	if (realised()) {
-		newResource->realise();
-	}
+	// Realise the new resource
+	newResource->realise();
 	
 	return newResource;
 }
@@ -39,38 +33,10 @@ ReferenceCache::ResourcePtr RadiantReferenceCache::capture(const std::string& pa
 	if (!GlobalFiletypes().findModuleName("map", os::getExtension(path)).empty()) {
 		return captureMap(path);
 	}
+
 	return ReferenceCache::ResourcePtr();
 }
 	
-bool RadiantReferenceCache::realised() const {
-	return _realised;
-}
-	
-void RadiantReferenceCache::realise() {
-	ASSERT_MESSAGE(!_realised, "RadiantReferenceCache::realise: already realised");
-	
-	if (!_realised) {
-		_realised = true;
-	}
-}
-
-void RadiantReferenceCache::unrealise() {
-	if (_realised) {
-		_realised = false;
-		GlobalModelCache().clear();
-	}
-}
-
-// Gets called on VFS initialise
-void RadiantReferenceCache::onFileSystemInitialise() {
-	realise();
-}
-  	
-// Gets called on VFS shutdown
-void RadiantReferenceCache::onFileSystemShutdown() {
-	unrealise();
-}
-  
 // RegisterableModule implementation
 const std::string& RadiantReferenceCache::getName() const {
 	static std::string _name(MODULE_REFERENCECACHE);
@@ -84,7 +50,6 @@ const StringSet& RadiantReferenceCache::getDependencies() const {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert("Doom3MapLoader");
-		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
 	
 	return _dependencies;
@@ -92,14 +57,6 @@ const StringSet& RadiantReferenceCache::getDependencies() const {
 
 void RadiantReferenceCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "ReferenceCache::initialiseModule called.\n";
-	
-	GlobalFileSystem().addObserver(*this);
-	realise();
-}
-
-void RadiantReferenceCache::shutdownModule() {
-	unrealise();
-	GlobalFileSystem().removeObserver(*this);
 }
 
 // Define the ReferenceCache registerable module
