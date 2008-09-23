@@ -170,6 +170,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapResource.cpp \
 					  map/Map.cpp \
 					  map/AutoSaver.cpp \
+					  map/MapResourceManager.cpp \
 					  entity.cpp \
 					  clipper/ClipPoint.cpp \
 					  clipper/Clipper.cpp \
@@ -185,6 +186,5 @@ darkradiant_SOURCES = main.cpp \
 					  windowobservers.cpp \
 					  referencecache/ModelCache.cpp \
 					  referencecache/NullModel.cpp \
-					  referencecache/NullModelNode.cpp \
-					  referencecache/RadiantReferenceCache.cpp 
+					  referencecache/NullModelNode.cpp 
 
