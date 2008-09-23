@@ -1,4 +1,4 @@
-#include "RadiantReferenceCache.h"
+#include "MapResourceManager.h"
 
 #include "ifilesystem.h"
 #include "ifiletypes.h"

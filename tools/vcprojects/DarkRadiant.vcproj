@@ -743,6 +743,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\MapResourceManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapResourceManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\ParentSelectedPrimitivesToEntityWalker.h"
 					>
 				</File>
@@ -2040,14 +2048,6 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\referencecache\NullModelNode.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\referencecache\RadiantReferenceCache.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\referencecache\RadiantReferenceCache.h"
 					>
 				</File>
 			</Filter>
