@@ -198,7 +198,7 @@ void MapResource::unrealise() {
 }
 
 void MapResource::onMapChanged() {
-	GlobalMap().setModified(!GlobalReferenceCache().referencesSaved());
+	GlobalMap().setModified(true);
 }
 
 void MapResource::connectMap() {

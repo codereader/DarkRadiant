@@ -40,37 +40,17 @@ RadiantReferenceCache::RadiantReferenceCache() :
 
 void RadiantReferenceCache::clear() {
 	GlobalModelCache().clear();
-	_mapReferences.clear();
 }
 
 // Branch for capturing mapfile resources
 ReferenceCache::ResourcePtr RadiantReferenceCache::captureMap(const std::string& path) {
-	// First lookup the reference in the map. If it is found, we need to
-	// lock the weak_ptr to get a shared_ptr, which may fail. If we cannot
-	// get a shared_ptr (because the object as already been deleted) or the
-	// item is not found at all, we create a new MapResource and add it
-	// into the map before returning.
-	MapReferences::iterator i = _mapReferences.find(path);
-	if (i != _mapReferences.end()) {
-		// Found. Try to lock the pointer. If it is valid, return it.
-		map::MapResourcePtr candidate = i->second.lock();
-		if (candidate) {
-			return candidate;
-		}
-	}
-	
-	// Either we did not find the resource, or the pointer was not valid.
-	// In this case we create a new MapResource, add it to the map and
-	// return it.
+	// Create a new MapResource and return it.
 	map::MapResourcePtr newResource(new map::MapResource(path));
 	
 	// Realise the new resource if the ReferenceCache itself is realised
 	if (realised()) {
 		newResource->realise();
 	}
-	
-	// Insert the weak pointer reference into the map
-	_mapReferences[path] = map::MapResourceWeakPtr(newResource);
 	
 	return newResource;
 }
@@ -93,33 +73,12 @@ void RadiantReferenceCache::realise() {
 	
 	if (!_realised) {
 		_realised = true;
-
-		for (MapReferences::iterator i = _mapReferences.begin();
-	  	     i != _mapReferences.end();
-	  	     ++i)
-		{
-			map::MapResourcePtr resource = i->second.lock();
-      		if (resource) {
-        		resource->realise();
-      		}
-    	}
 	}
 }
 
 void RadiantReferenceCache::unrealise() {
 	if (_realised) {
 		_realised = false;
-
-		for (MapReferences::iterator i = _mapReferences.begin();
-	  	     i != _mapReferences.end();
-	  	     ++i)
-		{
-			map::MapResourcePtr resource = i->second.lock();
-      		if (resource) {
-        		resource->unrealise();
-      		}
-    	}
-
 		GlobalModelCache().clear();
 	}
 }
@@ -183,7 +142,7 @@ void RadiantReferenceCache::shutdownModule() {
 	GlobalFileSystem().removeObserver(*this);
 }
 
-void RadiantReferenceCache::saveReferences() {
+/*void RadiantReferenceCache::saveReferences() {
 	for (MapReferences::iterator i = _mapReferences.begin(); 
 		 i != _mapReferences.end(); 
 		 ++i)
@@ -196,10 +155,10 @@ void RadiantReferenceCache::saveReferences() {
 	
 	// Map is modified as soon as unsaved references exist
 	GlobalMap().setModified(!referencesSaved());
-}
+}*/
 
 bool RadiantReferenceCache::referencesSaved() {
-	for (MapReferences::iterator i = _mapReferences.begin(); 
+	/*for (MapReferences::iterator i = _mapReferences.begin(); 
 		 i != _mapReferences.end(); ++i)
 	{
 		scene::INodePtr node;
@@ -215,7 +174,7 @@ bool RadiantReferenceCache::referencesSaved() {
 	    		return false;
 	    	}
 	    }
-	}
+	}*/
 
 	return true;
 }
