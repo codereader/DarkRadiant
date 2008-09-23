@@ -22,10 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IREFERENCE_H)
 #define INCLUDED_IREFERENCE_H
 
-#include "inode.h"
-#include "imodule.h"
+#include <boost/shared_ptr.hpp>
 
-class ModuleObserver;
+namespace scene {
+	class INode;
+	typedef boost::shared_ptr<INode> INodePtr;
+} // namespace scene
 
 class Resource
 {
@@ -49,30 +51,6 @@ public:
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;
 };
-
-const std::string MODULE_REFERENCECACHE("ReferenceCache");
-
-class ReferenceCache :
-	public RegisterableModule
-{
-public:
-	/* Resource pointer type */
-	typedef boost::shared_ptr<Resource> ResourcePtr;
-	
-	/**
-	 * Capture a named model resource, and return a pointer to it.
-	 */
-	virtual ResourcePtr capture(const std::string& path) = 0;
-};
-
-inline ReferenceCache& GlobalReferenceCache() {
-	// Cache the reference locally
-	static ReferenceCache& _refCache(
-		*boost::static_pointer_cast<ReferenceCache>(
-			module::GlobalModuleRegistry().getModule(MODULE_REFERENCECACHE)
-		)
-	);
-	return _refCache;
-}
+typedef boost::shared_ptr<Resource> ResourcePtr;
 
 #endif

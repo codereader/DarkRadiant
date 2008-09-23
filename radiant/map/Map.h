@@ -20,8 +20,8 @@ class Map :
 	// The map name
 	std::string m_name;
 
-	// Pointer to the Model Resource for this map
-	ReferenceCache::ResourcePtr m_resource;
+	// Pointer to the resource for this map
+	ResourcePtr m_resource;
 	
 	bool m_valid;
 
