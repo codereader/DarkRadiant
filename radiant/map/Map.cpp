@@ -476,10 +476,9 @@ void Map::save() {
 	// Substract the origin from child primitives (of entities like func_static)
 	selection::algorithm::removeOriginFromChildPrimitives();
 	
-	// Save the actual map, by iterating through the reference cache and saving
-	// each MapResource.
-	GlobalReferenceCache().saveReferences();
-	
+	// Save the actual map resource
+	m_resource->save();
+		
 	// Re-add the origins to the child primitives (of entities like func_static)
 	selection::algorithm::addOriginToChildPrimitives();
   
@@ -497,11 +496,13 @@ void Map::save() {
 
 void Map::createNew() {
 	setMapName(MAP_UNNAMED_STRING);
-
+	
 	m_resource = GlobalReferenceCache().capture(m_name.c_str());
 	m_resource->addObserver(*this);
 	
 	SceneChangeNotify();
+
+	setModified(false);
 	
 	focusViews(Vector3(0,0,0), Vector3(0,0,0));
 }
@@ -803,7 +804,9 @@ void Map::rename(const std::string& filename) {
     	SceneChangeNotify();
 	}
 	else {
-    	GlobalReferenceCache().saveReferences();
+		m_resource->save();
+		setModified(false);
+    	//GlobalReferenceCache().saveReferences();
   	}
 }
 

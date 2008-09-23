@@ -32,7 +32,7 @@ ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type) {
 		}
 		else {
 			globalErrorStream()	<< "ERROR: Model type incorrectly registered: \""
-								<< moduleName.c_str() << "\"\n";
+								<< moduleName << "\"\n";
 		}
 	}
 

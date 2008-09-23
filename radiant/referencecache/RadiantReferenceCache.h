@@ -10,10 +10,6 @@ class RadiantReferenceCache :
 	public ReferenceCache, 
 	public VirtualFileSystem::Observer
 {
-	// Map of named MapResource objects
-	typedef std::map<std::string, map::MapResourceWeakPtr> MapReferences;
-	MapReferences _mapReferences;
-  
 	bool _realised;
 
 public:
@@ -23,7 +19,7 @@ public:
 	ResourcePtr capture(const std::string& path);
 	
 	// Saves all map resources
-	void saveReferences();
+	//void saveReferences();
 	
 	// Returns true if all MapResources are saved.
 	bool referencesSaved();	
