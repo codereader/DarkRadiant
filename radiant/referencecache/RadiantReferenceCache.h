@@ -1,9 +1,7 @@
 #ifndef RADIANTREFERENCECACHE_H_
 #define RADIANTREFERENCECACHE_H_
 
-#include <map>
 #include "ireference.h"
-#include "ifilesystem.h"
 #include "map/MapResource.h"
 
 class RadiantReferenceCache : 
