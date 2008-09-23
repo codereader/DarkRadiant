@@ -64,14 +64,8 @@ public:
 	 */
 	virtual ResourcePtr capture(const std::string& path) = 0;
 	
-	// Saves all (save-able) references
-	//virtual void saveReferences() = 0;
-	
-	// Returns TRUE if all references are saved.
-	virtual bool referencesSaved() = 0;
-	
 	// Clears the ReferenceCache (and all child caches, e.g. ModelCache)
-	virtual void clear() = 0;
+	//virtual void clear() = 0;
 };
 
 inline ReferenceCache& GlobalReferenceCache() {

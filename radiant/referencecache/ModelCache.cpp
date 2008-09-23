@@ -3,16 +3,39 @@
 #include "ifilesystem.h"
 #include "imodel.h"
 #include "ifiletypes.h"
+#include "ieventmanager.h"
 
 #include <iostream>
 #include "os/path.h"
 #include "os/file.h"
 #include "stream/textstream.h"
+#include "mainframe.h"
 
 #include "modulesystem/StaticModule.h"
+#include "ui/modelselector/ModelSelector.h"
 #include "NullModelLoader.h"
 
 namespace model {
+
+namespace {
+
+	class ModelRefreshWalker :
+		public scene::Graph::Walker
+	{
+	public:
+		virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+			IEntityNodePtr entity = boost::dynamic_pointer_cast<IEntityNode>(node);
+
+			if (entity != NULL) {
+				entity->refreshModel();
+				return false;
+			}
+
+			return true;
+		}
+	};
+
+} // namespace
 
 ModelCache::ModelCache() :
 	_enabled(true)
@@ -119,6 +142,19 @@ void ModelCache::clear() {
 	_enabled = true;
 }
 
+void ModelCache::refreshModels() {
+	ScopeDisableScreenUpdates disableScreenUpdates("Refreshing models");
+	
+	// Clear the model cache
+	clear();
+
+	// Update all model nodes
+	GlobalSceneGraph().traverse(ModelRefreshWalker());
+		
+	// greebo: Reload the modelselector too
+	ui::ModelSelector::refresh();
+}
+
 // RegisterableModule implementation
 const std::string& ModelCache::getName() const {
 	static std::string _name("ModelCache");
@@ -139,6 +175,15 @@ const StringSet& ModelCache::getDependencies() const {
 
 void ModelCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "ModelCache::initialiseModule called.\n";
+
+	GlobalEventManager().addCommand(
+		"RefreshModels", 
+		MemberCaller<ModelCache, &ModelCache::refreshModels>(*this)
+	);
+}
+
+void ModelCache::shutdownModule() {
+	clear();
 }
 
 // The static module

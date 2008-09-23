@@ -16,7 +16,7 @@
 		<menuItem name="createCM" caption="Save selected as Collision Model..." command="BrushExportCM" />
 		<menuItem name="saveRegion" caption="Save _region..." command="SaveRegion" />
 		<menuSeparator />
-		<menuItem name="refreshModels" caption="_Reload Models" command="RefreshReferences" icon="model16red.png" />
+		<menuItem name="refreshModels" caption="_Reload Models" command="RefreshModels" icon="model16red.png" />
 		<menuItem name="reloadSkins" caption="Reload S_kins" command="ReloadSkins" icon="skin16.png" />
 		<menuItem name="refreshShaders" caption="Reload Shaders" command="RefreshShaders" icon="texwindow_flushandreload.png" />
 		<menuSeparator />
