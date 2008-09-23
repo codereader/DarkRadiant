@@ -1,20 +1,10 @@
 #include "RadiantReferenceCache.h"
 
-#include "imodel.h"
-#include "mapfile.h"
-#include "modelskin.h"
+#include "ifilesystem.h"
 #include "ifiletypes.h"
-#include "ieventmanager.h"
-#include "imap.h"
+#include "itextstream.h"
 #include "os/path.h"
-#include "ModelCache.h"
-#include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
-#include "mainframe.h"
-#include "ui/modelselector/ModelSelector.h"
-#include "map/Map.h"
-
-#include <boost/algorithm/string/predicate.hpp>
 
 // Branch for capturing mapfile resources
 ReferenceCache::ResourcePtr RadiantReferenceCache::captureMap(const std::string& path) {
