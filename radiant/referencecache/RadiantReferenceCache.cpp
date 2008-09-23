@@ -16,31 +16,9 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
-namespace {
-	class ModelRefreshWalker :
-		public scene::Graph::Walker
-	{
-	public:
-		virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-			IEntityNodePtr entity = boost::dynamic_pointer_cast<IEntityNode>(node);
-
-			if (entity != NULL) {
-				entity->refreshModel();
-				return false;
-			}
-
-			return true;
-		}
-	};
-}
-
 RadiantReferenceCache::RadiantReferenceCache() : 
 	_realised(false)
 {}
-
-void RadiantReferenceCache::clear() {
-	GlobalModelCache().clear();
-}
 
 // Branch for capturing mapfile resources
 ReferenceCache::ResourcePtr RadiantReferenceCache::captureMap(const std::string& path) {
@@ -93,19 +71,6 @@ void RadiantReferenceCache::onFileSystemShutdown() {
 	unrealise();
 }
   
-void RadiantReferenceCache::refreshReferences() {
-	ScopeDisableScreenUpdates disableScreenUpdates("Refreshing models");
-	
-	// Clear the model cache
-	GlobalModelCache().clear();
-
-	// Update all model nodes
-	GlobalSceneGraph().traverse(ModelRefreshWalker());
-		
-	// greebo: Reload the modelselector too
-	ui::ModelSelector::refresh();
-}
-
 // RegisterableModule implementation
 const std::string& RadiantReferenceCache::getName() const {
 	static std::string _name(MODULE_REFERENCECACHE);
@@ -128,11 +93,6 @@ const StringSet& RadiantReferenceCache::getDependencies() const {
 void RadiantReferenceCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "ReferenceCache::initialiseModule called.\n";
 	
-	GlobalEventManager().addCommand(
-		"RefreshReferences", 
-		MemberCaller<RadiantReferenceCache, &RadiantReferenceCache::refreshReferences>(*this)
-	);
-	
 	GlobalFileSystem().addObserver(*this);
 	realise();
 }
@@ -142,42 +102,5 @@ void RadiantReferenceCache::shutdownModule() {
 	GlobalFileSystem().removeObserver(*this);
 }
 
-/*void RadiantReferenceCache::saveReferences() {
-	for (MapReferences::iterator i = _mapReferences.begin(); 
-		 i != _mapReferences.end(); 
-		 ++i)
-	{
-    	map::MapResourcePtr res = i->second.lock();
-    	if (res != NULL) {
-    		res->save();
-    	}
-	}
-	
-	// Map is modified as soon as unsaved references exist
-	GlobalMap().setModified(!referencesSaved());
-}*/
-
-bool RadiantReferenceCache::referencesSaved() {
-	/*for (MapReferences::iterator i = _mapReferences.begin(); 
-		 i != _mapReferences.end(); ++i)
-	{
-		scene::INodePtr node;
-		
-	    map::MapResourcePtr res = i->second.lock();
-	    if (res != NULL) {
-	    	node = res->getNode();
-	    }
-	    	
-	    if (node != NULL) {
-	    	MapFilePtr map = Node_getMapFile(node);
-	    	if (map != NULL && !map->saved()) {
-	    		return false;
-	    	}
-	    }
-	}*/
-
-	return true;
-}
-	
 // Define the ReferenceCache registerable module
 module::StaticModule<RadiantReferenceCache> referenceCacheModule;

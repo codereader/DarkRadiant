@@ -18,18 +18,10 @@ public:
 	// Capture a named resource.
 	ResourcePtr capture(const std::string& path);
 	
-	// Saves all map resources
-	//void saveReferences();
-	
-	// Returns true if all MapResources are saved.
-	bool referencesSaved();	
-	
 	bool realised() const;
 	void realise();
 	void unrealise();
 		
-	void clear();
-
 	// Gets called on VFS initialise
   	virtual void onFileSystemInitialise();
   	// Gets called on VFS shutdown

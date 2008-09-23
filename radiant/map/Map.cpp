@@ -268,8 +268,6 @@ void Map::freeMap() {
 	// Reset the resource pointer
 	m_resource = ReferenceCache::ResourcePtr();
 
-	GlobalReferenceCache().clear();
-
 	GlobalLayerSystem().reset();
 }
 
