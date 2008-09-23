@@ -1,11 +1,11 @@
 #ifndef RADIANTREFERENCECACHE_H_
 #define RADIANTREFERENCECACHE_H_
 
-#include "ireference.h"
+#include "imapresource.h"
 #include "map/MapResource.h"
 
-class RadiantReferenceCache : 
-	public ReferenceCache
+class MapResourceManager : 
+	public IMapResourceManager
 {
 public:
 	// Capture a named resource.
@@ -15,10 +15,6 @@ public:
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
-
-private:
-  	// Branch for capturing mapfile resources
-  	ResourcePtr captureMap(const std::string& path);
 };
 
 #endif /*RADIANTREFERENCECACHE_H_*/

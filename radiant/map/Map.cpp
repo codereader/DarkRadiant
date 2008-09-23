@@ -10,6 +10,7 @@
 #include "ifilter.h"
 #include "icounter.h"
 #include "iradiant.h"
+#include "imapresource.h"
 
 #include "stream/textfilestream.h"
 #include "entitylib.h"
@@ -125,8 +126,7 @@ namespace map {
 		}
 	}
 
-Map::Map() : 
-	m_resource(ReferenceCache::ResourcePtr()),
+Map::Map() :
 	m_valid(false),
 	_saveInProgress(false)
 {}
@@ -266,7 +266,7 @@ void Map::freeMap() {
 	m_resource->removeObserver(*this);
 
 	// Reset the resource pointer
-	m_resource = ReferenceCache::ResourcePtr();
+	m_resource = ResourcePtr();
 
 	GlobalLayerSystem().reset();
 }
@@ -411,7 +411,7 @@ void Map::load(const std::string& filename) {
 	{
 		ScopeTimer timer("map load");
 
-		m_resource = GlobalReferenceCache().capture(m_name);
+		m_resource = GlobalMapResourceManager().capture(m_name);
 		// greebo: Add the observer, this usually triggers a onResourceRealise() call.
 		m_resource->addObserver(*this);
 
@@ -495,7 +495,7 @@ void Map::save() {
 void Map::createNew() {
 	setMapName(MAP_UNNAMED_STRING);
 	
-	m_resource = GlobalReferenceCache().capture(m_name.c_str());
+	m_resource = GlobalMapResourceManager().capture(m_name);
 	m_resource->addObserver(*this);
 	
 	SceneChangeNotify();
@@ -509,8 +509,7 @@ bool Map::import(const std::string& filename) {
 	bool success = false;
 	
 	{
-		ReferenceCache::ResourcePtr resource = 
-			GlobalReferenceCache().capture(filename);
+		ResourcePtr resource = GlobalMapResourceManager().capture(filename);
 		
 		// avoid loading old version if map has changed on disk since last import
 		resource->refresh(); 
@@ -767,8 +766,7 @@ void Map::saveSelectedAsPrefab() {
 }
 
 void Map::renameAbsolute(const std::string& absolute) {
-	ReferenceCache::ResourcePtr resource = 
-		GlobalReferenceCache().capture(absolute);
+	ResourcePtr resource = GlobalMapResourceManager().capture(absolute);
 		
 	scene::INodePtr clone(
 		NewMapRoot(
