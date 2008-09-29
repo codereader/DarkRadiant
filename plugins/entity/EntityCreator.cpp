@@ -26,11 +26,6 @@ namespace entity {
 		inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
 			return boost::dynamic_pointer_cast<Namespaced>(node);
 		}
-		
-		/*void Entity_setName(Entity& entity, const std::string& name) {
-			entity.setKeyValue("name", name);
-		}
-		typedef ReferenceCaller1<Entity, const std::string&, Entity_setName> EntitySetNameCaller;*/
 	}
 
 scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
