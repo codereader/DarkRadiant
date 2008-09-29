@@ -6,6 +6,7 @@ xcopy ..\DarkRadiant\install\*.* /s .
 del *.exp /S /Q
 del *.pdb /S /Q
 del *.lib /S /Q
+del *.suo /S /Q
 
 cd ..
 cd DarkRadiant\tools\innosetup
