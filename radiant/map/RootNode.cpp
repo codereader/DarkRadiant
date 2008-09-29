@@ -64,10 +64,12 @@ std::string RootNode::name() const {
 }
 
 void RootNode::addChildNode(const scene::INodePtr& node) {
-	Node::addChildNode(node);
-
 	// Insert this node into our namespace
+	// greebo: Do this first, otherwise the entity might get registered
+	// with the wrong names (in modules observing the scenegraph)
 	_namespace->connect(node);
+	
+	Node::addChildNode(node);
 }
 
 void RootNode::removeChildNode(const scene::INodePtr& node) {
