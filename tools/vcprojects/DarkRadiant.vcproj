@@ -783,6 +783,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\ShaderBreakdown.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\UndoFileChangeTracker.h"
 					>
 				</File>
@@ -1709,6 +1713,14 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\mapinfo\MapInfoDialog.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mapinfo\ShaderInfoDialog.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mapinfo\ShaderInfoDialog.h"
 						>
 					</File>
 				</Filter>

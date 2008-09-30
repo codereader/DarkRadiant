@@ -72,8 +72,6 @@ scene::INodePtr Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
 
 	entity->setKeyValue("classname", eclass->getName());
 	
-	//INamespacePtr mapNamespace = GlobalMapModule().getNamespace();
-
 	// If this is not a worldspawn or unrecognised entity, generate a unique
 	// name for it
 	if (eclass->getName().size() > 0 && 
@@ -88,12 +86,6 @@ scene::INodePtr Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
 			boost::algorithm::replace_all_copy(eclass->getName(), ":", "_") + "_1";
 
 		entity->setKeyValue("name", entityName);
-
-		/*// Do we have a global map namespace available?
-		if (mapNamespace != NULL) {
-			// Move this entity node into the global namespace
-			mapNamespace->connect(node);
-		}*/
 	}
 
 	return node;
@@ -167,13 +159,13 @@ const StringSet& Doom3EntityCreator::getDependencies() const {
 void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3EntityCreator::initialiseModule called.\n";
 	
-	entity::constructStatic();
+	constructStatic();
 }
 
 void Doom3EntityCreator::shutdownModule() {
 	globalOutputStream() << "Doom3EntityCreator::shutdownModule called.\n";
 	
-	entity::destroyStatic();
+	destroyStatic();
 }
 
 } // namespace entity
