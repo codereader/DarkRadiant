@@ -1728,11 +1728,19 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\radiant\ui\mapinfo\ShaderInfoDialog.cpp"
+						RelativePath="..\..\radiant\ui\mapinfo\ModelInfoTab.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\radiant\ui\mapinfo\ShaderInfoDialog.h"
+						RelativePath="..\..\radiant\ui\mapinfo\ModelInfoTab.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mapinfo\ShaderInfoTab.h"
 						>
 					</File>
 				</Filter>

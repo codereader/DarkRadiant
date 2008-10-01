@@ -3,6 +3,8 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "EntityInfoTab.h"
+#include "ShaderInfoTab.h"
+#include "ModelInfoTab.h"
 
 typedef struct _GtkNotebook GtkNotebook;
 
@@ -11,8 +13,10 @@ namespace ui {
 class MapInfoDialog :
 	public gtkutil::BlockingTransientWindow
 {
-	// The helper class displaying the entity statistics
+	// The helper classes displaying the statistics
 	EntityInfoTab _entityInfo;
+	ShaderInfoTab _shaderInfo;
+	ModelInfoTab _modelInfo;
 	
 	// The tabs of this dialog
 	GtkNotebook* _notebook;

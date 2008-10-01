@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "scenelib.h"
+#include "imodel.h"
 
 namespace map {
 
@@ -52,7 +53,7 @@ public:
 
 			if (found == _map.end()) {
 				std::pair<Map::iterator, bool> result = _map.insert(
-					Map::value_type(model.getModelPath(), ModelCount());
+					Map::value_type(model.getModelPath(), ModelCount())
 				);
 
 				found = result.first;
