@@ -751,6 +751,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\ModelBreakdown.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\ParentSelectedPrimitivesToEntityWalker.h"
 					>
 				</File>
@@ -1707,6 +1711,14 @@
 				<Filter
 					Name="mapinfo"
 					>
+					<File
+						RelativePath="..\..\radiant\ui\mapinfo\EntityInfoTab.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mapinfo\EntityInfoTab.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\radiant\ui\mapinfo\MapInfoDialog.cpp"
 						>
