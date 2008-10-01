@@ -79,6 +79,9 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-TextureBrowser.$(OBJEXT) \
 	darkradiant-FindShader.$(OBJEXT) \
 	darkradiant-MapInfoDialog.$(OBJEXT) \
+	darkradiant-EntityInfoTab.$(OBJEXT) \
+	darkradiant-ShaderInfoTab.$(OBJEXT) \
+	darkradiant-ModelInfoTab.$(OBJEXT) \
 	darkradiant-MediaBrowser.$(OBJEXT) \
 	darkradiant-ParticlesChooser.$(OBJEXT) \
 	darkradiant-OverlayDialog.$(OBJEXT) \
@@ -180,10 +183,12 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-PointFile.$(OBJEXT) \
 	darkradiant-MapPositionManager.$(OBJEXT) \
 	darkradiant-MapResource.$(OBJEXT) darkradiant-Map.$(OBJEXT) \
-	darkradiant-AutoSaver.$(OBJEXT) darkradiant-entity.$(OBJEXT) \
-	darkradiant-ClipPoint.$(OBJEXT) darkradiant-Clipper.$(OBJEXT) \
-	darkradiant-timer.$(OBJEXT) darkradiant-mainframe.$(OBJEXT) \
-	darkradiant-Console.$(OBJEXT) darkradiant-LogStream.$(OBJEXT) \
+	darkradiant-AutoSaver.$(OBJEXT) \
+	darkradiant-MapResourceManager.$(OBJEXT) \
+	darkradiant-entity.$(OBJEXT) darkradiant-ClipPoint.$(OBJEXT) \
+	darkradiant-Clipper.$(OBJEXT) darkradiant-timer.$(OBJEXT) \
+	darkradiant-mainframe.$(OBJEXT) darkradiant-Console.$(OBJEXT) \
+	darkradiant-LogStream.$(OBJEXT) \
 	darkradiant-LogWriter.$(OBJEXT) \
 	darkradiant-COutRedirector.$(OBJEXT) \
 	darkradiant-StringLogDevice.$(OBJEXT) \
@@ -192,8 +197,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-windowobservers.$(OBJEXT) \
 	darkradiant-ModelCache.$(OBJEXT) \
 	darkradiant-NullModel.$(OBJEXT) \
-	darkradiant-NullModelNode.$(OBJEXT) \
-	darkradiant-RadiantReferenceCache.$(OBJEXT)
+	darkradiant-NullModelNode.$(OBJEXT)
 darkradiant_OBJECTS = $(am_darkradiant_OBJECTS)
 darkradiant_DEPENDENCIES = $(top_builddir)/libs/scene/libscenegraph.a \
 	$(top_builddir)/libs/gtkutil/libgtkutil.a \
@@ -407,6 +411,9 @@ darkradiant_SOURCES = main.cpp \
 					  ui/texturebrowser/TextureBrowser.cpp \
 					  ui/findshader/FindShader.cpp \
 					  ui/mapinfo/MapInfoDialog.cpp \
+					  ui/mapinfo/EntityInfoTab.cpp \
+					  ui/mapinfo/ShaderInfoTab.cpp \
+					  ui/mapinfo/ModelInfoTab.cpp \
 					  ui/mediabrowser/MediaBrowser.cpp \
 					  ui/particles/ParticlesChooser.cpp \
 					  ui/overlay/OverlayDialog.cpp \
@@ -522,6 +529,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapResource.cpp \
 					  map/Map.cpp \
 					  map/AutoSaver.cpp \
+					  map/MapResourceManager.cpp \
 					  entity.cpp \
 					  clipper/ClipPoint.cpp \
 					  clipper/Clipper.cpp \
@@ -537,8 +545,7 @@ darkradiant_SOURCES = main.cpp \
 					  windowobservers.cpp \
 					  referencecache/ModelCache.cpp \
 					  referencecache/NullModel.cpp \
-					  referencecache/NullModelNode.cpp \
-					  referencecache/RadiantReferenceCache.cpp 
+					  referencecache/NullModelNode.cpp 
 
 all: all-am
 
@@ -646,6 +653,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Entity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityClassChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityClassTreePopulator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityInfoTab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Face.Po@am__quote@
@@ -691,9 +699,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPosition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPositionManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapResource.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapResourceManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MediaBrowser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelFinder.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelInfoTab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelSelector.Po@am__quote@
@@ -730,7 +740,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PropertyEditorFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantModule.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantReferenceCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantWindowObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RegionManager.Po@am__quote@
@@ -742,6 +751,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Shader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderClipboard.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderInfoTab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderSelector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShortcutChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SkinChooser.Po@am__quote@
@@ -1334,6 +1344,48 @@ darkradiant-MapInfoDialog.obj: ui/mapinfo/MapInfoDialog.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mapinfo/MapInfoDialog.cpp' object='darkradiant-MapInfoDialog.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapInfoDialog.obj `if test -f 'ui/mapinfo/MapInfoDialog.cpp'; then $(CYGPATH_W) 'ui/mapinfo/MapInfoDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/MapInfoDialog.cpp'; fi`
+
+darkradiant-EntityInfoTab.o: ui/mapinfo/EntityInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EntityInfoTab.o -MD -MP -MF $(DEPDIR)/darkradiant-EntityInfoTab.Tpo -c -o darkradiant-EntityInfoTab.o `test -f 'ui/mapinfo/EntityInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/EntityInfoTab.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-EntityInfoTab.Tpo $(DEPDIR)/darkradiant-EntityInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mapinfo/EntityInfoTab.cpp' object='darkradiant-EntityInfoTab.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-EntityInfoTab.o `test -f 'ui/mapinfo/EntityInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/EntityInfoTab.cpp
+
+darkradiant-EntityInfoTab.obj: ui/mapinfo/EntityInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EntityInfoTab.obj -MD -MP -MF $(DEPDIR)/darkradiant-EntityInfoTab.Tpo -c -o darkradiant-EntityInfoTab.obj `if test -f 'ui/mapinfo/EntityInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/EntityInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/EntityInfoTab.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-EntityInfoTab.Tpo $(DEPDIR)/darkradiant-EntityInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mapinfo/EntityInfoTab.cpp' object='darkradiant-EntityInfoTab.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-EntityInfoTab.obj `if test -f 'ui/mapinfo/EntityInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/EntityInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/EntityInfoTab.cpp'; fi`
+
+darkradiant-ShaderInfoTab.o: ui/mapinfo/ShaderInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ShaderInfoTab.o -MD -MP -MF $(DEPDIR)/darkradiant-ShaderInfoTab.Tpo -c -o darkradiant-ShaderInfoTab.o `test -f 'ui/mapinfo/ShaderInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/ShaderInfoTab.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ShaderInfoTab.Tpo $(DEPDIR)/darkradiant-ShaderInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mapinfo/ShaderInfoTab.cpp' object='darkradiant-ShaderInfoTab.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ShaderInfoTab.o `test -f 'ui/mapinfo/ShaderInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/ShaderInfoTab.cpp
+
+darkradiant-ShaderInfoTab.obj: ui/mapinfo/ShaderInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ShaderInfoTab.obj -MD -MP -MF $(DEPDIR)/darkradiant-ShaderInfoTab.Tpo -c -o darkradiant-ShaderInfoTab.obj `if test -f 'ui/mapinfo/ShaderInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/ShaderInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/ShaderInfoTab.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ShaderInfoTab.Tpo $(DEPDIR)/darkradiant-ShaderInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mapinfo/ShaderInfoTab.cpp' object='darkradiant-ShaderInfoTab.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ShaderInfoTab.obj `if test -f 'ui/mapinfo/ShaderInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/ShaderInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/ShaderInfoTab.cpp'; fi`
+
+darkradiant-ModelInfoTab.o: ui/mapinfo/ModelInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ModelInfoTab.o -MD -MP -MF $(DEPDIR)/darkradiant-ModelInfoTab.Tpo -c -o darkradiant-ModelInfoTab.o `test -f 'ui/mapinfo/ModelInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/ModelInfoTab.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ModelInfoTab.Tpo $(DEPDIR)/darkradiant-ModelInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mapinfo/ModelInfoTab.cpp' object='darkradiant-ModelInfoTab.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ModelInfoTab.o `test -f 'ui/mapinfo/ModelInfoTab.cpp' || echo '$(srcdir)/'`ui/mapinfo/ModelInfoTab.cpp
+
+darkradiant-ModelInfoTab.obj: ui/mapinfo/ModelInfoTab.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ModelInfoTab.obj -MD -MP -MF $(DEPDIR)/darkradiant-ModelInfoTab.Tpo -c -o darkradiant-ModelInfoTab.obj `if test -f 'ui/mapinfo/ModelInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/ModelInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/ModelInfoTab.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ModelInfoTab.Tpo $(DEPDIR)/darkradiant-ModelInfoTab.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mapinfo/ModelInfoTab.cpp' object='darkradiant-ModelInfoTab.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ModelInfoTab.obj `if test -f 'ui/mapinfo/ModelInfoTab.cpp'; then $(CYGPATH_W) 'ui/mapinfo/ModelInfoTab.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mapinfo/ModelInfoTab.cpp'; fi`
 
 darkradiant-MediaBrowser.o: ui/mediabrowser/MediaBrowser.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MediaBrowser.o -MD -MP -MF $(DEPDIR)/darkradiant-MediaBrowser.Tpo -c -o darkradiant-MediaBrowser.o `test -f 'ui/mediabrowser/MediaBrowser.cpp' || echo '$(srcdir)/'`ui/mediabrowser/MediaBrowser.cpp
@@ -2945,6 +2997,20 @@ darkradiant-AutoSaver.obj: map/AutoSaver.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-AutoSaver.obj `if test -f 'map/AutoSaver.cpp'; then $(CYGPATH_W) 'map/AutoSaver.cpp'; else $(CYGPATH_W) '$(srcdir)/map/AutoSaver.cpp'; fi`
 
+darkradiant-MapResourceManager.o: map/MapResourceManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapResourceManager.o -MD -MP -MF $(DEPDIR)/darkradiant-MapResourceManager.Tpo -c -o darkradiant-MapResourceManager.o `test -f 'map/MapResourceManager.cpp' || echo '$(srcdir)/'`map/MapResourceManager.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MapResourceManager.Tpo $(DEPDIR)/darkradiant-MapResourceManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/MapResourceManager.cpp' object='darkradiant-MapResourceManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapResourceManager.o `test -f 'map/MapResourceManager.cpp' || echo '$(srcdir)/'`map/MapResourceManager.cpp
+
+darkradiant-MapResourceManager.obj: map/MapResourceManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapResourceManager.obj -MD -MP -MF $(DEPDIR)/darkradiant-MapResourceManager.Tpo -c -o darkradiant-MapResourceManager.obj `if test -f 'map/MapResourceManager.cpp'; then $(CYGPATH_W) 'map/MapResourceManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapResourceManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MapResourceManager.Tpo $(DEPDIR)/darkradiant-MapResourceManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/MapResourceManager.cpp' object='darkradiant-MapResourceManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapResourceManager.obj `if test -f 'map/MapResourceManager.cpp'; then $(CYGPATH_W) 'map/MapResourceManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapResourceManager.cpp'; fi`
+
 darkradiant-entity.o: entity.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-entity.o -MD -MP -MF $(DEPDIR)/darkradiant-entity.Tpo -c -o darkradiant-entity.o `test -f 'entity.cpp' || echo '$(srcdir)/'`entity.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-entity.Tpo $(DEPDIR)/darkradiant-entity.Po
@@ -3168,20 +3234,6 @@ darkradiant-NullModelNode.obj: referencecache/NullModelNode.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='referencecache/NullModelNode.cpp' object='darkradiant-NullModelNode.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-NullModelNode.obj `if test -f 'referencecache/NullModelNode.cpp'; then $(CYGPATH_W) 'referencecache/NullModelNode.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/NullModelNode.cpp'; fi`
-
-darkradiant-RadiantReferenceCache.o: referencecache/RadiantReferenceCache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RadiantReferenceCache.o -MD -MP -MF $(DEPDIR)/darkradiant-RadiantReferenceCache.Tpo -c -o darkradiant-RadiantReferenceCache.o `test -f 'referencecache/RadiantReferenceCache.cpp' || echo '$(srcdir)/'`referencecache/RadiantReferenceCache.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-RadiantReferenceCache.Tpo $(DEPDIR)/darkradiant-RadiantReferenceCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='referencecache/RadiantReferenceCache.cpp' object='darkradiant-RadiantReferenceCache.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RadiantReferenceCache.o `test -f 'referencecache/RadiantReferenceCache.cpp' || echo '$(srcdir)/'`referencecache/RadiantReferenceCache.cpp
-
-darkradiant-RadiantReferenceCache.obj: referencecache/RadiantReferenceCache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RadiantReferenceCache.obj -MD -MP -MF $(DEPDIR)/darkradiant-RadiantReferenceCache.Tpo -c -o darkradiant-RadiantReferenceCache.obj `if test -f 'referencecache/RadiantReferenceCache.cpp'; then $(CYGPATH_W) 'referencecache/RadiantReferenceCache.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/RadiantReferenceCache.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-RadiantReferenceCache.Tpo $(DEPDIR)/darkradiant-RadiantReferenceCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='referencecache/RadiantReferenceCache.cpp' object='darkradiant-RadiantReferenceCache.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RadiantReferenceCache.obj `if test -f 'referencecache/RadiantReferenceCache.cpp'; then $(CYGPATH_W) 'referencecache/RadiantReferenceCache.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache/RadiantReferenceCache.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
