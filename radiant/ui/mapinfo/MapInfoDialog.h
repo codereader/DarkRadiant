@@ -2,31 +2,27 @@
 #define MAPINFODIALOG_H_
 
 #include "gtkutil/window/BlockingTransientWindow.h"
-#include "map/EntityBreakdown.h"
+#include "EntityInfoTab.h"
 
-typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkNotebook GtkNotebook;
 
 namespace ui {
 
 class MapInfoDialog :
 	public gtkutil::BlockingTransientWindow
 {
-	// The helper class counting the entities in the map
-	map::EntityBreakdown _entityBreakdown;
+	// The helper class displaying the entity statistics
+	EntityInfoTab _entityInfo;
 	
-	GtkWidget* _brushCount;
-	GtkWidget* _patchCount;
-	GtkWidget* _entityCount;
-	
-	// The treeview containing the above liststore
-	GtkListStore* _listStore;
-	GtkWidget* _treeView;
+	// The tabs of this dialog
+	GtkNotebook* _notebook;
 	
 public:
 	// Constructor
 	MapInfoDialog();
 
-	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
+	/** 
+	 * greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
 	static void showDialog();
 	
@@ -39,6 +35,8 @@ private:
 
 	// Helper method to create the OK/Cancel button
 	GtkWidget* createButtons();
+
+	GtkWidget* createTabLabel(const std::string& label, const std::string& iconName);
 	
 	// The callback for the buttons
 	static void onClose(GtkWidget* widget, MapInfoDialog* self);
