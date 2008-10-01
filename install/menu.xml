@@ -188,7 +188,6 @@
 	<subMenu name="map" caption="M_ap">
 		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />
-		<menuItem name="shaderinfo" caption="Shader usage info..." command="ShaderInfo" />
 	</subMenu>
 
 	<subMenu name="entity" caption="E_ntity">

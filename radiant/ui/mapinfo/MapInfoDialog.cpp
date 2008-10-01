@@ -48,9 +48,20 @@ void MapInfoDialog::populateWindow() {
 		createTabLabel(_entityInfo.getLabel(), _entityInfo.getIconName())
 	);
 
-	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), createTabLabel("Shaders", "icon_texture.png"));
-	gtk_notebook_append_page(_notebook, gtk_hbox_new(FALSE, 0), createTabLabel("Models", "model16green.png"));
+	// Shader Info
+	gtk_notebook_append_page(
+		_notebook, 
+		_shaderInfo.getWidget(), 
+		createTabLabel(_shaderInfo.getLabel(), _shaderInfo.getIconName())
+	);
 
+	// Model Info
+	gtk_notebook_append_page(
+		_notebook, 
+		_modelInfo.getWidget(), 
+		createTabLabel(_modelInfo.getLabel(), _modelInfo.getIconName())
+	);
+	
 	// Add notebook plus buttons to vbox
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(dialogVBox), createButtons(), FALSE, FALSE, 0);
