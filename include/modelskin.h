@@ -30,6 +30,12 @@ class ModuleObserver;
 class ModelSkin
 {
 public:
+
+	/** 
+	 * greebo: Returns the name of this skin.
+	 */
+	virtual std::string getName() const = 0;
+
 	/**
 	 * Get the mapped texture for the given query texture, using the mappings
 	 * in this skin. If there is no mapping for the given texture, return an

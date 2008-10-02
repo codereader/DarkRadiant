@@ -5,6 +5,7 @@
 #include <string>
 #include "scenelib.h"
 #include "imodel.h"
+#include "modelskin.h"
 
 namespace map {
 
@@ -64,9 +65,28 @@ public:
 			}
 
 			// The iterator "found" is valid at this point
-			found->second.count++;
+			// Get a shortcut reference
+			ModelCount& modelCount = found->second;
 			
-			// Increase the skin count
+			modelCount.count++;
+			
+			// Increase the skin count, check if we have a skinnable model
+			SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
+
+			if (skinned != NULL) {
+				std::string skinName = skinned->getSkin();
+
+				ModelCount::SkinCountMap::iterator foundSkin = modelCount.skinCount.find(skinName);
+
+				if (foundSkin == modelCount.skinCount.end()) {
+					std::pair<ModelCount::SkinCountMap::iterator, bool> result = 
+						modelCount.skinCount.insert(ModelCount::SkinCountMap::value_type(skinName, 0));
+
+					foundSkin = result.first;
+				}
+
+				foundSkin->second++;
+			}
 		}
 	
 		return true;
