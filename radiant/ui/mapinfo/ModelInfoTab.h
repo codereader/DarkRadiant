@@ -13,8 +13,8 @@ class ModelInfoTab
 	// The "master" widget
 	GtkWidget* _widget;
 
-	// The helper class counting the shaders in the map
-	map::ModelBreakdown _shaderBreakdown;
+	// The helper class counting the models in the map
+	map::ModelBreakdown _modelBreakdown;
 	
 	// The treeview containing the above liststore
 	GtkListStore* _listStore;
