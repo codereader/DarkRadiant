@@ -7,7 +7,7 @@
 namespace ui {
 
 	namespace {
-		const int MAPINFO_DEFAULT_SIZE_X = 400;
+		const int MAPINFO_DEFAULT_SIZE_X = 600;
 	    const int MAPINFO_DEFAULT_SIZE_Y = 550;
 	   	const std::string MAPINFO_WINDOW_TITLE = "Map Info";
 	}
