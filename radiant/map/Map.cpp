@@ -401,7 +401,7 @@ scene::INodePtr Map::findOrInsertWorldspawn() {
 }
 
 void Map::load(const std::string& filename) {
-	globalOutputStream() << "Loading map from " << filename.c_str() << "\n";
+	globalOutputStream() << "Loading map from " << filename << "\n";
 
 	setMapName(filename);
 
@@ -421,11 +421,11 @@ void Map::load(const std::string& filename) {
 	}
 
 	globalOutputStream() << "--- LoadMapFile ---\n";
-	globalOutputStream() << m_name.c_str() << "\n";
+	globalOutputStream() << m_name << "\n";
   
-	globalOutputStream() << Unsigned(GlobalRadiant().getCounter(counterBrushes).get()) << " brushes\n";
-	globalOutputStream() << Unsigned(GlobalRadiant().getCounter(counterPatches).get()) << " patches\n";
-	globalOutputStream() << Unsigned(GlobalRadiant().getCounter(counterEntities).get()) << " entities\n";
+	globalOutputStream() << GlobalRadiant().getCounter(counterBrushes).get() << " brushes\n";
+	globalOutputStream() << GlobalRadiant().getCounter(counterPatches).get() << " patches\n";
+	globalOutputStream() << GlobalRadiant().getCounter(counterEntities).get() << " entities\n";
 
 	// Add the origin to all the children of func_static, etc.
 	selection::algorithm::addOriginToChildPrimitives();
@@ -434,9 +434,9 @@ void Map::load(const std::string& filename) {
 	gotoStartPosition();
 
 	// Load the stored map positions from the worldspawn entity
-	map::GlobalMapPosition().loadPositions();
+	GlobalMapPosition().loadPositions();
 	// Remove them, so that the user doesn't get bothered with them
-	map::GlobalMapPosition().removePositions();
+	GlobalMapPosition().removePositions();
 	
 	// Disable the region to make sure
 	GlobalRegion().disable();
@@ -465,9 +465,9 @@ void Map::save() {
 	saveCameraPosition();
 	
 	// Store the map positions into the worldspawn spawnargs
-	map::GlobalMapPosition().savePositions();
+	GlobalMapPosition().savePositions();
 	
-	map::PointFile::Instance().clear();
+	PointFile::Instance().clear();
 
 	ScopeTimer timer("map save");
 	
@@ -484,7 +484,7 @@ void Map::save() {
 	removeCameraPosition();
 	
 	// Remove the map positions again after saving
-	map::GlobalMapPosition().removePositions();
+	GlobalMapPosition().removePositions();
 	
 	// Clear the modified flag
 	setModified(false);
@@ -641,7 +641,7 @@ bool Map::askForSave(const std::string& title) {
 bool Map::saveAs() {
 	if (_saveInProgress) return false; // safeguard
 
-	std::string filename = map::MapFileManager::getMapFilename(false, "Save Map", "map", getMapName());
+	std::string filename = MapFileManager::getMapFilename(false, "Save Map", "map", getMapName());
   
 	if (!filename.empty()) {
 	    GlobalMRU().insert(filename);
@@ -656,7 +656,7 @@ bool Map::saveAs() {
 }
 
 void Map::loadPrefabAt(const Vector3& targetCoords) {
-	std::string filename = map::MapFileManager::getMapFilename(true, "Load Prefab", "prefab");
+	std::string filename = MapFileManager::getMapFilename(true, "Load Prefab", "prefab");
 	
 	if (!filename.empty()) {
 		UndoableCommand undo("loadPrefabAt");

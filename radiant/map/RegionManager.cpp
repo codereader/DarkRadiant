@@ -21,6 +21,7 @@
 #include "MapFileManager.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"
+#include "ui/mru/MRU.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/General.h"
 
@@ -339,6 +340,9 @@ void RegionManager::saveRegion() {
 		
 		// Set the region AABB back to the state before saving
 		GlobalRegion().setRegion(oldRegionAABB, false);
+
+		// Add the filename to the recently used map list
+		GlobalMRU().insert(filename);
 	}
 }
 
