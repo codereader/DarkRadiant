@@ -215,7 +215,7 @@
 		<prefabFolder value="prefabs/" />
 		<!-- Compatibility options -->
 		<compatibility>
-			<addDummyBrushes value="true" />
+			<addDummyBrushes value="false" />
 		</compatibility>
 		<lastCameraPositionKey value="editor_drLastCameraPos" />
 		<lastCameraAngleKey value="editor_drLastCameraAngle" />

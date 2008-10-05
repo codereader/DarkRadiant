@@ -109,13 +109,13 @@ void NodeExporter::post(const scene::INodePtr& node) {
 	if (ent != NULL) {
 		// If the brush count is 0 and we are adding dummy brushes to please
 		// the Doom 3 editor, do so here.
-		if (_writeDummyBrushes 
+		/*if (_writeDummyBrushes 
 			&& _brushCount == 0
 			&& ent->getEntityClass()->isFixedSize()
 			&& !ent->getEntityClass()->isLight()) 
 		{
 			_mapStream << DUMMY_BRUSH;
-		}
+		}*/
 
 		// Write the closing brace for the entity
 		_mapStream << "}" << std::endl;
