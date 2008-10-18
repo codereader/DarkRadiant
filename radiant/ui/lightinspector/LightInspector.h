@@ -58,7 +58,8 @@ class LightInspector
 	WidgetMap _options;
 	
 	// The light entity to edit
-	Entity* _entity;
+    typedef std::vector<Entity*> EntityList;
+    EntityList _lightEntities;
 	
 	// Table of original value keys, to avoid replacing them with defaults
 	typedef std::map<std::string, std::string> StringMap;
@@ -97,11 +98,17 @@ private:
 	static void _onColourChange(GtkColorButton* widget, LightInspector* self); 
 	static void _onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self);
 
-	// Update the dialog widgets from keyvals on the entity
+	// Update the dialog widgets from keyvals on the first selected entity
 	void getValuesFromEntity();
 	
-	// Write the widget contents to the entity
-	void setValuesOnEntity();
+	// Write the widget contents to the given entity
+	void setValuesOnEntity(Entity* entity);
+
+    // Write contents to all light entities
+    void writeToAllEntities();
+
+    // Set the given key/value pair on ALL entities in the list of lights
+    void setKeyValueAllLights(const std::string& k, const std::string& v);
 	
 	/** greebo: Gets called when the shader selection gets changed, so that
 	 * 			the displayed texture info can be updated.

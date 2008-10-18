@@ -135,14 +135,35 @@ public:
   virtual void setSelectedAll(bool selected) = 0;
   virtual void setSelectedAllComponents(bool selected) = 0;
 
+    /**
+     * @brief
+     * Visitor interface the for the selection system.
+     *
+     * This defines the Visitor interface which is used in the foreachSelected()
+     * and foreachSelectedComponent() visit methods.
+     */
 	class Visitor
 	{
 	public:
+
+        /**
+         * @brief
+         * Called by the selection system for each visited node.
+         */
 		virtual void visit(const scene::INodePtr& node) const = 0;
 	};
 
-  virtual void foreachSelected(const Visitor& visitor) const = 0;
-  virtual void foreachSelectedComponent(const Visitor& visitor) const = 0;
+    /**
+     * @brief
+     * Use the provided Visitor object to enumerate each selected node.
+     */
+    virtual void foreachSelected(const Visitor& visitor) const = 0;
+
+    /**
+     * @brief
+     * Use the provided Visitor object to enumerate each selected component.
+     */
+    virtual void foreachSelectedComponent(const Visitor& visitor) const = 0;
 
   virtual void addSelectionChangeCallback(const SelectionChangeHandler& handler) = 0;
 
