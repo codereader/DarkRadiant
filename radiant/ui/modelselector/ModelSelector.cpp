@@ -38,15 +38,13 @@ ModelSelector::ModelSelector()
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _lastModel(""),
   _lastSkin(""),
-  _populated(false),
-  _sorted(false)
+  _populated(false)
 {
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), MODELSELECTOR_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	//gtk_window_set_resizable(GTK_WINDOW(_widget), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
 	_position.connect(GTK_WINDOW(_widget));
@@ -80,7 +78,6 @@ ModelSelector::ModelSelector()
 	GtkWidget* leftVbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(leftVbx), createTreeView(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(leftVbx), createInfoPanel(), TRUE, TRUE, 0);
-	//gtk_widget_set_size_request(leftVbx, w / 3, -1);
 	
 	// Pack the left Vbox into an HBox next to the preview widget on the right
 	// The preview gets a Vbox of its own, to stop it from expanding vertically
@@ -184,39 +181,40 @@ void ModelSelector::refresh() {
 }
 
 // Helper function to create the TreeView
-GtkWidget* ModelSelector::createTreeView() {
-
+GtkWidget* ModelSelector::createTreeView() 
+{
 	// Create the treeview
-	_treeView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore)));
-	gtk_tree_view_set_headers_visible(_treeView, TRUE);
+	_treeView = GTK_TREE_VIEW(
+        gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))
+    );
+	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 
 	// Single visible column, containing the directory/model name and the icon
-	_modelCol = gtkutil::IconTextColumn(
+	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
 		"Model Path", NAME_COLUMN, IMAGE_COLUMN
 	);
-	gtk_tree_view_append_column(_treeView, _modelCol);				
+	gtk_tree_view_append_column(_treeView, nameCol);				
+
+    // Set the tree store to sort on this column
+    gtk_tree_sortable_set_sort_column_id(
+        GTK_TREE_SORTABLE(_treeStore),
+        NAME_COLUMN,
+        GTK_SORT_ASCENDING
+    );
 
 	// Get the selection object and connect to its changed signal
-
 	_selection = gtk_tree_view_get_selection(_treeView);
-	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this);
+	g_signal_connect(
+        G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelChanged), this
+    );
 
 	// Pack treeview into a scrolled window and frame, and return
-	
-	GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin),
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scrollWin), GTK_WIDGET(_treeView));
-	
-	GtkWidget* fr = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(fr), scrollWin);
-	
-	return fr;
+	return gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));
 }
 
 // Populate the tree view with models
-void ModelSelector::populateModels() {
+void ModelSelector::populateModels() 
+{
 	// Clear the treestore first
 	gtk_tree_store_clear(_treeStore);
 	
@@ -233,12 +231,6 @@ void ModelSelector::populateModels() {
 	// Fill in the column data
 	ModelDataInserter inserter;
 	pop.forEachNode(inserter);
-	
-	if (!_sorted) {
-		gtk_tree_view_column_set_sort_column_id(_modelCol, NAME_COLUMN);
-		gtk_tree_view_column_clicked(_modelCol);
-		_sorted = true;
-	}
 	
 	// Set the flag, we're done	
 	_populated = true;
