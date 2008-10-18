@@ -1,8 +1,9 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs 
 AM_CFLAGS = -fPIC
 
-noinst_LIBRARIES = libpicomodel.a
-libpicomodel_a_SOURCES = picointernal.c \
+pkglib_LTLIBRARIES = libpicomodel.la
+libpicomodel_la_LDFLAGS = -release @PACKAGE_VERSION@
+libpicomodel_la_SOURCES = picointernal.c \
                          lwo/vecmath.c \
                          lwo/clip.c \
                          lwo/surface.c \

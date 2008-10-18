@@ -4,8 +4,8 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entity.la
 
 entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS)
-entity_la_LIBADD = $(top_builddir)/libs/math/libmath.a \
-				   $(top_builddir)/libs/scene/libscenegraph.a
+entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
+				   $(top_builddir)/libs/scene/libscenegraph.la
 entity_la_SOURCES = origin.cpp \
                     angle.cpp \
                     ModelKey.cpp \

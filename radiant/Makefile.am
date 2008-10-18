@@ -13,10 +13,10 @@ darkradiant_LDFLAGS = $(GTK_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS)
-darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.a \
-					$(top_builddir)/libs/gtkutil/libgtkutil.a \
-					$(top_builddir)/libs/xmlutil/libxmlutil.a \
-                    $(top_builddir)/libs/math/libmath.a
+darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
+					$(top_builddir)/libs/gtkutil/libgtkutil.la \
+					$(top_builddir)/libs/xmlutil/libxmlutil.la \
+                    $(top_builddir)/libs/math/libmath.la
 darkradiant_SOURCES = main.cpp \
 					  RadiantModule.cpp \
 					  brushmanip.cpp \

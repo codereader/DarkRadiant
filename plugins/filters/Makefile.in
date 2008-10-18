@@ -50,7 +50,7 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-filters_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.a
+filters_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
 am_filters_la_OBJECTS = XMLFilter.lo BasicFilterSystem.lo filters.lo
 filters_la_OBJECTS = $(am_filters_la_OBJECTS)
 filters_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -206,7 +206,7 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = filters.la
-filters_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.a
+filters_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 filters_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS) $(XML_LIBS)
 filters_la_SOURCES = XMLFilter.cpp BasicFilterSystem.cpp filters.cpp
 all: all-am

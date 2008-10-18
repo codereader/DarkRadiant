@@ -50,7 +50,7 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-eventmgr_la_DEPENDENCIES = ../../libs/xmlutil/libxmlutil.a
+eventmgr_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
 am_eventmgr_la_OBJECTS = Accelerator.lo Command.lo EventManager.lo \
 	Modifiers.lo MouseEvents.lo Toggle.lo WidgetToggle.lo
 eventmgr_la_OBJECTS = $(am_eventmgr_la_OBJECTS)
@@ -209,7 +209,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = eventmgr.la
-eventmgr_la_LIBADD = ../../libs/xmlutil/libxmlutil.a
+eventmgr_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 eventmgr_la_LDFLAGS = -module -avoid-version \
 					  $(GTK_LIBS) $(GLIB_LIBS) $(XML_LIBS)
 

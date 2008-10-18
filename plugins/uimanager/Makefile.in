@@ -50,8 +50,9 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-uimanager_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.a \
-	$(top_builddir)/libs/xmlutil/libxmlutil.a
+uimanager_la_DEPENDENCIES =  \
+	$(top_builddir)/libs/gtkutil/libgtkutil.la \
+	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_uimanager_la_OBJECTS = MenuItem.lo GroupDialog.lo ColourScheme.lo \
 	ColourSchemeEditor.lo ColourSchemeManager.lo ToolbarManager.lo \
 	UIManager.lo MenuManager.lo
@@ -210,8 +211,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GTK_C
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = uimanager.la
 uimanager_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
-uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a \
-					  $(top_builddir)/libs/xmlutil/libxmlutil.a
+uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
+					  $(top_builddir)/libs/xmlutil/libxmlutil.la
 
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \

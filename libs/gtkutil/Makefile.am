@@ -5,8 +5,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  $(XML_CFLAGS)
 AM_CXXFLAGS = -fPIC
 
-noinst_LIBRARIES = libgtkutil.a
-libgtkutil_a_SOURCES = GLWidget.cpp \
+pkglib_LTLIBRARIES = libgtkutil.la
+libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@
+libgtkutil_la_SOURCES = GLWidget.cpp \
 					   PanedPosition.cpp \
 					   VFSTreePopulator.cpp \
 					   messagebox.cpp \

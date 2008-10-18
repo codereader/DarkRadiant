@@ -1,3 +1,5 @@
 AM_CPPFLAGS = $(XML_CFLAGS)
-noinst_LIBRARIES = libxmlutil.a
-libxmlutil_a_SOURCES = Document.cpp Node.cpp
+
+pkglib_LTLIBRARIES = libxmlutil.la
+libxmlutil_la_LDFLAGS = -release @PACKAGE_VERSION@
+libxmlutil_la_SOURCES = Document.cpp Node.cpp

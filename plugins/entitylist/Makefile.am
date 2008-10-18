@@ -5,6 +5,6 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entitylist.la
 
 entitylist_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
-entitylist_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a \
-					   $(top_builddir)/libs/xmlutil/libxmlutil.a
+entitylist_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
+					   $(top_builddir)/libs/xmlutil/libxmlutil.la
 entitylist_la_SOURCES = EntityListModule.cpp EntityList.cpp GraphTreeModel.cpp

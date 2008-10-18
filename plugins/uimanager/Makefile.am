@@ -4,8 +4,8 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = uimanager.la
 
 uimanager_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
-uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a \
-					  $(top_builddir)/libs/xmlutil/libxmlutil.a
+uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
+					  $(top_builddir)/libs/xmlutil/libxmlutil.la
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
                        colourscheme/ColourScheme.cpp \
