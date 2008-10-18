@@ -279,19 +279,24 @@ void EntityInspector::onGtkIdle() {
     // or nothing selected result in a grayed-out dialog, as does the selection
     // of something that is not an Entity (worldspawn).
 
-    if (updateSelectedEntity()) {
-        gtk_widget_set_sensitive(_widget, TRUE);
+    if (updateSelectedEntity()) 
+    {
+        gtk_widget_set_sensitive(_editorFrame, TRUE);
+        gtk_widget_set_sensitive(_treeView, TRUE);
+
         refreshTreeModel(); // get values, already have category tree
     }
-    else {
-        
+    else 
+    {
         // Remove the displayed PropertyEditor
         if (_currentPropertyEditor) {
             _currentPropertyEditor = PropertyEditorPtr();
         }
 		
 		// Disable the dialog and clear the TreeView
-        gtk_widget_set_sensitive(_widget, FALSE);
+        gtk_widget_set_sensitive(_editorFrame, FALSE);
+        gtk_widget_set_sensitive(_treeView, FALSE);
+
         gtk_list_store_clear(_listStore);
     }
     
@@ -313,9 +318,54 @@ void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isCompo
 	getInstance().requestIdleCallback();
 }
 
-// Set entity property from entry boxes
+namespace
+{
 
-void EntityInspector::setPropertyFromEntries() {
+    // SelectionSystem visitor to set a keyvalue on each entity, checking for
+    // func_static-style name=model requirements
+    class EntityKeySetter
+    : public SelectionSystem::Visitor
+    {
+        // Key and value to set on all entities
+        std::string _key;
+        std::string _value;
+
+    public:
+
+        // Construct with key and value to set
+        EntityKeySetter(const std::string& k, const std::string& v)
+        : _key(k), _value(v)
+        { }
+
+        // Required visit function
+        void visit(const scene::INodePtr& node) const
+        {
+            Entity* entity = Node_getEntity(node);
+            if (entity)
+            {
+                // Check if we have a func_static-style entity
+                std::string name = entity->getKeyValue("name");
+                std::string model = entity->getKeyValue("model");
+                bool isFuncType = (!name.empty() && name == model);
+                
+                // Set the actual value
+                entity->setKeyValue(_key, _value);
+                
+                // Check for name key changes of func_statics
+                if (isFuncType && _key == "name") 
+                {
+                    // Adapt the model key along with the name
+                    entity->setKeyValue("model", _value);
+                }
+            }
+        }
+    };
+
+}
+
+// Set entity property from entry boxes
+void EntityInspector::setPropertyFromEntries() 
+{
 	// greebo: Instantiate a scoped object to make this operation undoable
 	UndoableCommand command("entitySetProperty");
 
@@ -333,7 +383,8 @@ void EntityInspector::setPropertyFromEntries() {
 		if (mapRoot != NULL) {
 			INamespacePtr nspace = mapRoot->getNamespace();
 
-			if (nspace != NULL && nspace->nameExists(val)) {
+			if (nspace != NULL && nspace->nameExists(val)) 
+            {
 				// name exists, cancel the change
 				gtkutil::errorDialog("The name " + val + " already exists in this map!",
 					GlobalRadiant().getMainWindow());
@@ -342,23 +393,12 @@ void EntityInspector::setPropertyFromEntries() {
 		}
 	}
 
-	// Check if we have a func_static-style entity
-	std::string name = _selectedEntity->getKeyValue("name");
-	std::string model = _selectedEntity->getKeyValue("model");
-	bool isFuncType = (!name.empty() && name == model);
-	
-	// Set the actual value
-	_selectedEntity->setKeyValue(key, val);
-	
-	// Check for name key changes of func_statics
-	if (isFuncType && key == "name") {
-		// Adapt the model key along with the name
-		_selectedEntity->setKeyValue("model", val);
-	}
+    // Use EntityKeySetter to set value on all selected entities
+    EntityKeySetter setter(key, val);
+    GlobalSelectionSystem().foreachSelected(setter);
 }
 
 // Construct and return static PropertyMap instance
-
 const PropertyParmMap& EntityInspector::getPropertyMap() {
 
 	// Static instance of local class, which queries the XML Registry
