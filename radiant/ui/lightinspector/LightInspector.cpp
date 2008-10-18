@@ -66,7 +66,6 @@ LightInspector::LightInspector()
 : gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), true),
   _isProjected(false),
   _texSelector(this, getPrefixList(), true),
-  _entity(NULL),
   _updateActive(false)
 {
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -188,19 +187,20 @@ void LightInspector::shaderSelectionChanged(
 	// Pass the call to the static member of ShaderSelector
 	ShaderSelector::displayLightShaderInfo(ishader, listStore);
 	
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") 
+    {
 		std::string commandStr("setLightTexture: ");
 		commandStr += _texSelector.getSelection();
 		UndoableCommand command(commandStr.c_str());
 	
 		// Write the texture key
-		_entity->setKeyValue("texture", _texSelector.getSelection());
+		setKeyValueAllLights("texture", _texSelector.getSelection());
 	}
 }
 
 // Create the point light panel
-GtkWidget* LightInspector::createPointLightPanel() {
-
+GtkWidget* LightInspector::createPointLightPanel() 
+{
 	// Create the point light togglebutton
 	_pointLightToggle = gtkutil::IconTextButton("Omni", 
 		GlobalRadiant().getLocalPixbuf("pointLight32.png"),
@@ -296,33 +296,58 @@ GtkWidget* LightInspector::createButtons() {
 	return gtkutil::RightAlignment(hbx);
 }
 
-void LightInspector::update() {
-	// Set the entity pointer to NULL, just to be sure
-	_entity = NULL;
+// Update dialog from map
+void LightInspector::update() 
+{
+	// Clear the list of light entities
+	_lightEntities.clear();
 	
-	// Prepare to check for a valid selection. We need exactly one object 
-	// selected and it must be a light.
-	SelectionSystem& s = GlobalSelectionSystem();
+    // Find all selected objects which are lights, and add them to our list of
+    // light entities
 
-	bool sensitive = false;
-	
-	if (s.countSelected() == 1) {
-		// Check the EntityClass to ensure it is a light
-		Entity* e = Node_getEntity(s.ultimateSelected());
-		
-		if (e != NULL && e->getEntityClass()->isLight()) {
-			// Exactly one light found, set the entity pointer
-			_entity = e;
-			
-			// Update the dialog with the correct values from the entity
-			getValuesFromEntity();
-			
-			sensitive = true;
-		}
+    class LightEntityFinder
+    : public SelectionSystem::Visitor
+    {
+        // List of light entities to add to
+        EntityList& _entityList;
+
+    public:
+        
+        // Constructor initialises entity list
+        LightEntityFinder(EntityList& list)
+        : _entityList(list)
+        { }
+
+        // Required visit method
+        void visit(const scene::INodePtr& node) const
+        {
+            Entity* ent = Node_getEntity(node);
+            if (ent && ent->getEntityClass()->isLight())
+            {
+                // Add light to list
+                _entityList.push_back(ent);
+            }
+        }
+    };
+    LightEntityFinder lightFinder(_lightEntities);
+
+    // Find the selected lights
+	GlobalSelectionSystem().foreachSelected(lightFinder);
+
+	if (!_lightEntities.empty()) 
+    {
+        // Update the dialog with the correct values from the first entity
+        getValuesFromEntity();
+
+        // Enable the dialog
+        gtk_widget_set_sensitive(_mainVBox, TRUE);
 	}
+    else
+    {
+        // Nothing found, disable the dialog
+        gtk_widget_set_sensitive(_mainVBox, FALSE);
+    }
 	
-	// Set the sensitivity of the widgets
-	gtk_widget_set_sensitive(_mainVBox, sensitive);
 }
 
 // Toggle this dialog
@@ -363,7 +388,8 @@ LightInspector& LightInspector::Instance() {
 
 /* GTK CALLBACKS */
 
-void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
+void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) 
+{
 	if (self->_updateActive) return; // avoid callback loops
 	
 	// Set the projected flag
@@ -381,7 +407,7 @@ void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) {
 		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
 	}
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->setValuesOnEntity();
+		self->writeToAllEntities();
 	}
 }
 
@@ -403,18 +429,24 @@ void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
 		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
 	}
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->setValuesOnEntity();
+		self->writeToAllEntities();
 	}
 }
 
 void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
-	self->setValuesOnEntity();
+	self->writeToAllEntities();
 }
 
 // Get keyvals from entity and insert into text entries
-void LightInspector::getValuesFromEntity() {
+void LightInspector::getValuesFromEntity() 
+{
 	// Disable unwanted callbacks
 	_updateActive = true;
+
+    // Read values from the first entity in the list of lights (we have to pick
+    // one, so might as well use the first).
+    assert(!_lightEntities.empty());
+    Entity* entity = _lightEntities[0];
 
 	// Populate the value map with defaults
 	_valueMap["light_radius"] = "320 320 320";
@@ -432,7 +464,7 @@ void LightInspector::getValuesFromEntity() {
 		 ++i)
 	{
 		// Overwrite the map value if the key exists on the entity
-		std::string val = _entity->getKeyValue(i->first);
+		std::string val = entity->getKeyValue(i->first);
 		if (!val.empty())
 			i->second = val;
 	}
@@ -440,7 +472,7 @@ void LightInspector::getValuesFromEntity() {
 	// Get the colour key from the entity to set the GtkColorButton. If the 
 	// light has no colour key, use a default of white rather than the Vector3
 	// default of black (0, 0, 0).
-	std::string colString = _entity->getKeyValue("_color");
+	std::string colString = entity->getKeyValue("_color");
 	if (colString.empty())
 		colString = "1.0 1.0 1.0";
 		 
@@ -452,19 +484,19 @@ void LightInspector::getValuesFromEntity() {
 	gtk_color_button_set_color(GTK_COLOR_BUTTON(_colour), &col);
 	
 	// Set the texture selection from the "texture" key
-	_texSelector.setSelection(_entity->getKeyValue("texture"));
+	_texSelector.setSelection(entity->getKeyValue("texture"));
 	
 	// Determine whether this is a projected light, and set the toggles
 	// appropriately
-	_isProjected = (!_entity->getKeyValue("light_target").empty() && 
-					!_entity->getKeyValue("light_right").empty() && 
-					!_entity->getKeyValue("light_up").empty());
+	_isProjected = (!entity->getKeyValue("light_target").empty() && 
+					!entity->getKeyValue("light_right").empty() && 
+					!entity->getKeyValue("light_up").empty());
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_projLightToggle), _isProjected);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle), !_isProjected);
 	
 	// If this entity has light_start and light_end keys, set the checkbox
-	if (!_entity->getKeyValue("light_start").empty()
-		&& !_entity->getKeyValue("light_end").empty())
+	if (!entity->getKeyValue("light_start").empty()
+		&& !entity->getKeyValue("light_end").empty())
 	{
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_useStartEnd), TRUE);
 	}
@@ -474,7 +506,7 @@ void LightInspector::getValuesFromEntity() {
 	
 	// Set the options checkboxes
 	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i) {
-		if (_entity->getKeyValue(i->first) == "1")
+		if (entity->getKeyValue(i->first) == "1")
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->second), TRUE);
 		else
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->second), FALSE);
@@ -483,14 +515,38 @@ void LightInspector::getValuesFromEntity() {
 	_updateActive = false;
 }
 
+// Write to all entities
+void LightInspector::writeToAllEntities()
+{
+    for (EntityList::iterator i = _lightEntities.begin();
+         i != _lightEntities.end();
+         ++i)
+    {
+        setValuesOnEntity(*i); 
+    }
+}
+
+// Set a given key value on all light entities
+void LightInspector::setKeyValueAllLights(const std::string& key,
+                                          const std::string& value)
+{
+    for (EntityList::iterator i = _lightEntities.begin();
+         i != _lightEntities.end();
+         ++i)
+    {
+        (*i)->setKeyValue(key, value);
+    }
+}
+
 // Set the keyvalues on the entity from the dialog widgets
-void LightInspector::setValuesOnEntity() {
+void LightInspector::setValuesOnEntity(Entity* entity) 
+{
 	UndoableCommand command("setLightProperties");
 	
 	// Set the "_color" keyvalue
 	GdkColor col;
 	gtk_color_button_get_color(GTK_COLOR_BUTTON(_colour), &col);
-	_entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f") 
+	entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f") 
 						  	  		% (col.red/65535.0)
 						  	  		% (col.green/65535.0)
 						  	  		% (col.blue/65535.0)).str());
@@ -500,7 +556,7 @@ void LightInspector::setValuesOnEntity() {
 		 i != _valueMap.end();
 		 ++i) 
 	{
-		_entity->setKeyValue(i->first, i->second);
+		entity->setKeyValue(i->first, i->second);
 	}
 		 	
 	// Remove vector keys that should not exist, depending on the lightvolume
@@ -509,41 +565,42 @@ void LightInspector::setValuesOnEntity() {
 
 		// Clear start/end vectors if checkbox is disabled
 		if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_useStartEnd))) {
-			_entity->setKeyValue("light_start", "");
-			_entity->setKeyValue("light_end", "");	
+			entity->setKeyValue("light_start", "");
+			entity->setKeyValue("light_end", "");	
 		}
 
 		// Blank out pointlight values
-		_entity->setKeyValue("light_radius", "");
-		_entity->setKeyValue("light_center", "");
+		entity->setKeyValue("light_radius", "");
+		entity->setKeyValue("light_center", "");
 	}
 	else {
 
 		// Blank out projected light values
-		_entity->setKeyValue("light_target", "");
-		_entity->setKeyValue("light_right", "");
-		_entity->setKeyValue("light_up", "");
-		_entity->setKeyValue("light_start", "");
-		_entity->setKeyValue("light_end", "");
+		entity->setKeyValue("light_target", "");
+		entity->setKeyValue("light_right", "");
+		entity->setKeyValue("light_up", "");
+		entity->setKeyValue("light_start", "");
+		entity->setKeyValue("light_end", "");
 	}
 
 	// Write the texture key
-	_entity->setKeyValue("texture", _texSelector.getSelection());
+	entity->setKeyValue("texture", _texSelector.getSelection());
 
 	// Write the options
 	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i) {
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(i->second)))
-			_entity->setKeyValue(i->first, "1");
+			entity->setKeyValue(i->first, "1");
 		else
-			_entity->setKeyValue(i->first, "0");
+			entity->setKeyValue(i->first, "0");
 	}
 }
 
-void LightInspector::_onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self) {
+void LightInspector::_onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self) 
+{
 	if (self->_updateActive) return; // avoid callback loops
 	
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->setValuesOnEntity();
+		self->writeToAllEntities();
 	}
 }
 
@@ -551,7 +608,7 @@ void LightInspector::_onColourChange(GtkColorButton* widget, LightInspector* sel
 	if (self->_updateActive) return; // avoid callback loops
 	
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->setValuesOnEntity();
+		self->writeToAllEntities();
 	}
 }
 
