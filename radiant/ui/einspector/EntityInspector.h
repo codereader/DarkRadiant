@@ -62,7 +62,8 @@ class EntityInspector :
     GtkListStore* _listStore;
     GtkWidget* _treeView;
 
-	// Key and value edit boxes
+	// Key and value edit boxes. These remain available even for multiple entity
+    // selections.
 	GtkWidget* _keyEntry;
 	GtkWidget* _valEntry;
 
@@ -117,7 +118,7 @@ private:
 	// than one object is selected.
 	bool updateSelectedEntity();
 
-	// Set the keyval on the object from the entry and value textboxes
+    // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();
 
 	// Static map of property names to PropertyParms objects
