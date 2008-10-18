@@ -51,7 +51,7 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
 xmlregistry_la_DEPENDENCIES =  \
-	$(top_builddir)/libs/xmlutil/libxmlutil.a
+	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_xmlregistry_la_OBJECTS = RegistryTree.lo XMLRegistry.lo \
 	XMLRegistryModule.lo
 xmlregistry_la_OBJECTS = $(am_xmlregistry_la_OBJECTS)
@@ -211,7 +211,7 @@ AM_CPPFLAGS = -DPKGDATADIR='"$(pkgdatadir)"' \
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = xmlregistry.la
-xmlregistry_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.a
+xmlregistry_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 xmlregistry_la_LDFLAGS = -module -avoid-version $(XML_LIBS) $(GLIB_LIBS)
 xmlregistry_la_SOURCES = RegistryTree.cpp XMLRegistry.cpp XMLRegistryModule.cpp
 all: all-am

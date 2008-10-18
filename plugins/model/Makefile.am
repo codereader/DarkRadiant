@@ -4,9 +4,9 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = model.la
 
 model_la_LDFLAGS = -module -avoid-version $(GLEW_LIBS) $(GL_LIBS)
-model_la_LIBADD = $(top_builddir)/libs/picomodel/libpicomodel.a \
-				  $(top_builddir)/libs/math/libmath.a \
-				  $(top_builddir)/libs/scene/libscenegraph.a
+model_la_LIBADD = $(top_builddir)/libs/picomodel/libpicomodel.la \
+				  $(top_builddir)/libs/math/libmath.la \
+				  $(top_builddir)/libs/scene/libscenegraph.la
 model_la_SOURCES = PicoModelNode.cpp \
                    RenderablePicoModel.cpp \
                    PicoModelLoader.cpp \

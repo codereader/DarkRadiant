@@ -4,7 +4,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = eventmgr.la
 
-eventmgr_la_LIBADD = ../../libs/xmlutil/libxmlutil.a
+eventmgr_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 eventmgr_la_LDFLAGS = -module -avoid-version \
 					  $(GTK_LIBS) $(GLIB_LIBS) $(XML_LIBS)
 eventmgr_la_SOURCES = Accelerator.cpp \

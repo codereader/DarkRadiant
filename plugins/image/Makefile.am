@@ -4,8 +4,8 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = image.la
 
 image_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
-image_la_LIBADD = $(top_builddir)/libs/jpeg6/libjpeg.a \
-				  $(top_builddir)/libs/ddslib/libdds.a
+image_la_LIBADD = $(top_builddir)/libs/jpeg6/libjpeg.la \
+				  $(top_builddir)/libs/ddslib/libdds.la
 image_la_SOURCES = dds.cpp \
                    image.cpp \
                    bmp.cpp \

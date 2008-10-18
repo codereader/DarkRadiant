@@ -50,8 +50,9 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-md5model_la_DEPENDENCIES = $(top_builddir)/libs/scene/libscenegraph.a \
-	$(top_builddir)/libs/math/libmath.a
+md5model_la_DEPENDENCIES =  \
+	$(top_builddir)/libs/scene/libscenegraph.la \
+	$(top_builddir)/libs/math/libmath.la
 am_md5model_la_OBJECTS = MD5Model.lo MD5ModelNode.lo MD5Surface.lo \
 	plugin.lo MD5ModelLoader.lo
 md5model_la_OBJECTS = $(am_md5model_la_OBJECTS)
@@ -208,8 +209,8 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = md5model.la
-md5model_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.a \
-					 $(top_builddir)/libs/math/libmath.a
+md5model_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la \
+					 $(top_builddir)/libs/math/libmath.la
 
 md5model_la_LDFLAGS = -module -avoid-version $(GLEW_LIBS) $(GL_LIBS)
 md5model_la_SOURCES = MD5Model.cpp \

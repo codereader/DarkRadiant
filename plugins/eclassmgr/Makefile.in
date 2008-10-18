@@ -50,7 +50,7 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-eclassmgr_la_DEPENDENCIES = ../../libs/math/libmath.a
+eclassmgr_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la
 am_eclassmgr_la_OBJECTS = Doom3EntityClass.lo EClassManager.lo \
 	eclass_doom3.lo
 eclassmgr_la_OBJECTS = $(am_eclassmgr_la_OBJECTS)
@@ -207,7 +207,7 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = eclassmgr.la
-eclassmgr_la_LIBADD = ../../libs/math/libmath.a
+eclassmgr_la_LIBADD = $(top_builddir)/libs/math/libmath.la
 eclassmgr_la_LDFLAGS = -module -avoid-version
 eclassmgr_la_SOURCES = Doom3EntityClass.cpp EClassManager.cpp eclass_doom3.cpp
 all: all-am

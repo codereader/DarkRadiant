@@ -50,8 +50,8 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
-mapdoom3_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.a \
-	$(top_builddir)/libs/xmlutil/libxmlutil.a
+mapdoom3_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.la \
+	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_mapdoom3_la_OBJECTS = Doom3MapFormat.lo NodeImporter.lo InfoFile.lo \
 	mapdoom3.lo NodeExporter.lo
 mapdoom3_la_OBJECTS = $(am_mapdoom3_la_OBJECTS)
@@ -210,8 +210,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = mapdoom3.la
-mapdoom3_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.a \
-					 $(top_builddir)/libs/xmlutil/libxmlutil.a
+mapdoom3_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
+					 $(top_builddir)/libs/xmlutil/libxmlutil.la
 
 mapdoom3_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
