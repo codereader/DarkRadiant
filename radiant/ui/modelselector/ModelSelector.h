@@ -65,7 +65,6 @@ private:
 	// Tree store containing model names
 	GtkTreeStore* _treeStore;
 	GtkTreeView* _treeView;
-	GtkTreeViewColumn* _modelCol;
 	
 	// Currently-selected row in the tree store
 	GtkTreeSelection* _selection;
@@ -88,9 +87,6 @@ private:
 	// TRUE if the treeview has been populated
 	bool _populated;
 	
-	// TRUE once the column header is set to ascending sorted
-	bool _sorted;
-
 private:
 	
 	// Private constructor, creates GTK widgets
