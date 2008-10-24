@@ -49,8 +49,14 @@ public:
 		if (file) {
 			std::istream is(&(file->getInputStream()));
 	
-			// Pass the contents back to the SkinCache module for parsing
-			_manager.parseShadersFrom(is);
+			try {
+				// Pass the contents back to the SoundModule for parsing
+				_manager.parseShadersFrom(is);
+			}
+			catch (parser::ParseException ex) {
+				globalErrorStream() << "[sound]: Error while parsing " << fileName <<
+					": " << ex.what() << std::endl;
+			}
 		}
 		else {
 			std::cerr << "[sound] Warning: unable to open \"" 
