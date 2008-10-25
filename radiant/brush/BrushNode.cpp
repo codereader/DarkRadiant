@@ -196,6 +196,16 @@ void BrushNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
 	}
 }
 
+void BrushNode::onRemoveFromScene() {
+	// De-select this node
+	setSelected(false);
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+	setSelectedComponents(false, SelectionSystem::eEdge);
+	setSelectedComponents(false, SelectionSystem::eFace);
+}
+
 const AABB& BrushNode::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
 
