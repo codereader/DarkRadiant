@@ -62,8 +62,8 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 	
-	// Namespaced implementation
-	//virtual void setNamespace(INamespace& space);
+	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onRemoveFromScene();
 
 	// TransformNode implementation
 	virtual const Matrix4& localToParent() const;

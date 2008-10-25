@@ -116,9 +116,14 @@ const AABB& LightNode::localAABB() const {
 	return _light.localAABB();
 }
 
-/*void LightNode::setNamespace(INamespace& space) {
-	_light.getNamespaced().setNamespace(space);
-}*/
+void LightNode::onRemoveFromScene() {
+	// Call the base class first
+	SelectableNode::onRemoveFromScene();
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+	setSelectedComponents(false, SelectionSystem::eFace);
+}
 
 // Test the light volume for selection, this just passes the call on to the contained Light class
 void LightNode::testSelect(Selector& selector, SelectionTest& test) {

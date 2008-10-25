@@ -180,6 +180,14 @@ void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& tes
 	}
 }
 
+void Doom3GroupNode::onRemoveFromScene() {
+	// Call the base class first
+	SelectableNode::onRemoveFromScene();
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+}
+
 const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
 	

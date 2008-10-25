@@ -109,6 +109,9 @@ public:
 	// Tests the patch components on selection using the passed SelectionTest 
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
+	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onRemoveFromScene();
+
 	// Create the axis aligned bounding box of the selected components
 	const AABB& getSelectedComponentsBounds() const;
 

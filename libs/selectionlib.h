@@ -191,6 +191,11 @@ public:
 	virtual void invertSelected() {
 		_selectable.invertSelected();
 	}
+
+	// override scene::Inode::onRemoveFromScene to de-select self
+	virtual void onRemoveFromScene() {
+		setSelected(false);
+	}
 };
 
 

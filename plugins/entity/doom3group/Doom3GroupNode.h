@@ -85,6 +85,9 @@ public:
 	void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode);
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
+	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onRemoveFromScene();
+
 	// ComponentEditable implementation
 	const AABB& getSelectedComponentsBounds() const;
 

@@ -222,6 +222,14 @@ void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
 	}
 }
 
+void PatchNode::onRemoveFromScene() {
+	// De-select this node
+	setSelected(false);
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+}
+
 const AABB& PatchNode::getSelectedComponentsBounds() const {
 	// Create a new axis aligned bounding box
 	m_aabb_component = AABB();

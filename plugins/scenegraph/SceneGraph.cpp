@@ -123,10 +123,7 @@ void SceneGraph::erase(const scene::INodePtr& node) {
 	// Fire the onRemove event on the Node
 	node->onRemoveFromScene();
 
-	// Un-select the node, as it's been removed from the scenegraph
-	Node_setSelected(node, false);
-
-  	// Notify the graph tree model about the change
+	// Notify the graph tree model about the change
 	sceneChanged();
 	
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
