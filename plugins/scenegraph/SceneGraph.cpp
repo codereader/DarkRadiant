@@ -141,7 +141,7 @@ void SceneGraph::removeBoundsChangedCallback(SignalHandlerId id) {
 
 // RegisterableModule implementation
 const std::string& SceneGraph::getName() const {
-	static std::string _name("SceneGraph");
+	static std::string _name(MODULE_SCENEGRAPH);
 	return _name;
 }
 
