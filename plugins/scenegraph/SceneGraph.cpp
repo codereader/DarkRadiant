@@ -109,6 +109,9 @@ void SceneGraph::traverse_subgraph(const Walker& walker, const scene::Path& star
 void SceneGraph::insert(const scene::INodePtr& node) {
     // Notify the graph tree model about the change
 	sceneChanged();
+
+	// Call the onInsert event on the node
+	node->onInsertIntoScene();
 	
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		(*i)->onSceneNodeInsert(node);
@@ -116,6 +119,10 @@ void SceneGraph::insert(const scene::INodePtr& node) {
 }
 
 void SceneGraph::erase(const scene::INodePtr& node) {
+
+	// Fire the onRemove event on the Node
+	node->onRemoveFromScene();
+
 	// Un-select the node, as it's been removed from the scenegraph
 	Node_setSelected(node, false);
 

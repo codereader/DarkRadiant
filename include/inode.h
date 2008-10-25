@@ -117,6 +117,18 @@ public:
 	virtual void setParent(const INodePtr& parent) = 0;
 	virtual scene::INodePtr getParent() const = 0;
 
+	/**
+	 * greebo: Gets called after the node has been inserted into the scene.
+	 */
+	virtual void onInsertIntoScene() {} // empty default implementation
+
+	/**
+	 * greebo: This gets called by the SceneGraph before the Node is actually 
+	 * removed from the scene. This gives the node the opportunity to 
+	 * change its "selected" status or anything else.
+	 */
+	virtual void onRemoveFromScene() {} // empty default implementation
+
 	// Call this if the node gets changed in any way or gets inserted somewhere.
 	virtual void boundsChanged() = 0;
 	// Call this on transform change
