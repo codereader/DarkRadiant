@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=DarkRadiant
-AppVerName=DarkRadiant 0.9.5
+AppVerName=DarkRadiant 0.9.8pre9
 AppPublisher=The Dark Mod
 AppPublisherURL=http://www.thedarkmod.com
 AppSupportURL=http://www.thedarkmod.com
 AppUpdatesURL=http://www.thedarkmod.com
 DefaultDirName={pf}\DarkRadiant
-DefaultGroupName=DarkRadiant 0.9.5
-OutputDir=C:\temp\DarkRadiant\tools\innosetup
-OutputBaseFilename=darkradiant-0.9.5
+DefaultGroupName=DarkRadiant 0.9.8pre9
+OutputDir=C:\Games\DarkRadiant\tools\innosetup
+OutputBaseFilename=darkradiant-0.9.8pre9
 Compression=lzma
 SolidCompression=yes
 
@@ -22,8 +22,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\temp\DarkRadiant_install\darkradiant.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\temp\DarkRadiant_install\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Games\DarkRadiant_install\darkradiant.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Games\DarkRadiant_install\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
