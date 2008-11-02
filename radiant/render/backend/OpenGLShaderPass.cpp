@@ -465,64 +465,79 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
 
 		// If we are using a lighting program and this renderable is lit, set
 		// up the lighting calculation
-		if(current.m_program != 0 && i->light != 0) {
-
+		if(current.m_program != 0 && i->light != 0) 
+        {
 			// Get the light shader and examine its first (and only valid) layer
 			IShaderPtr lightShader = i->light->getShader()->getIShader();
       
-			if(lightShader->firstLayer() != 0) {
-		
+			if(lightShader->firstLayer() != 0) 
+            {
 				// Get the XY and Z falloff texture numbers.
 	        	GLuint attenuation_xy = 
 	        		lightShader->firstLayer()->texture()->texture_number;
                 GLuint attenuation_z = 
                 	lightShader->lightFalloffImage()->texture_number;
 
-        setTextureState(current.m_texture3, attenuation_xy, GL_TEXTURE3);
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, attenuation_xy);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+                // Bind the falloff textures
+                setTextureState(current.m_texture3, attenuation_xy, GL_TEXTURE3);
+                glActiveTexture(GL_TEXTURE3);
+                glBindTexture(GL_TEXTURE_2D, attenuation_xy);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-        setTextureState(current.m_texture4, attenuation_z, GL_TEXTURE4);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, attenuation_z);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                setTextureState(current.m_texture4, attenuation_z, GL_TEXTURE4);
+                glActiveTexture(GL_TEXTURE4);
+                glBindTexture(GL_TEXTURE_2D, attenuation_z);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+                // Calculate the world-space to light-space transformation
+                // matrix
+                AABB lightBounds((*i).light->aabb());
 
-        AABB lightBounds((*i).light->aabb());
+                Matrix4 world2light(g_matrix4_identity);
 
-        Matrix4 world2light(g_matrix4_identity);
+                if (i->light->isProjected()) 
+                {
+                  world2light = (*i).light->projection();
+                  matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
+                  
+                  // greebo: old code: matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
+                  matrix4_translate_by_vec3(world2light, -(i->light->offset()));
+                }
+                else 
+                {
+                  matrix4_translate_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
+                  matrix4_scale_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
+                  matrix4_scale_by_vec3(world2light, Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
+                  matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
+                  matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
+                }
 
-        if (i->light->isProjected()) {
-          world2light = (*i).light->projection();
-          matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
-          
-          // greebo: old code: matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
-          matrix4_translate_by_vec3(world2light, -(i->light->offset()));
+                // Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
+                float ambient = 0.0;
+                if (lightShader->isAmbientLight())
+                    ambient = 1.0;
+
+                // Bind the GL program parameters
+                current.m_program->setParameters(
+                    viewer,
+                    *(*i).transform,
+                    lightBounds.origin + (*i).light->offset(),
+                    (*i).light->colour(),
+                    world2light,
+                    ambient
+                );
+            }
         }
-        else {
-          matrix4_translate_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
-          matrix4_scale_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
-          matrix4_scale_by_vec3(world2light, Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
-          matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
-          matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
-        }
 
-		// Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
-		float ambient = 0.0;
-		if (lightShader->isAmbientLight())
-			ambient = 1.0;
-
-        current.m_program->setParameters(viewer, *(*i).transform, lightBounds.origin + (*i).light->offset(), (*i).light->colour(), world2light, ambient);
-      }
+        // Render the renderable
+        i->renderable->render(current.m_state);
     }
 
-    i->renderable->render(current.m_state);
-  }
-  glPopMatrix();
-  _renderables.clear();
+    // Cleanup
+    glPopMatrix();
+    _renderables.clear();
 }
 
 
