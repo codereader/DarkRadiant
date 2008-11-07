@@ -165,6 +165,12 @@ class Light :
 	void construct();
 
 public:
+
+    Vector3 getOrigin() const
+    {
+        return m_originKey.m_origin;
+    }
+
 	void updateOrigin();
 	void originChanged();
 	typedef MemberCaller<Light, &Light::originChanged> OriginChangedCaller;

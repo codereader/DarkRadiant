@@ -140,6 +140,8 @@ public:
 	void applyTransform();
 	typedef MemberCaller<LightNode, &LightNode::applyTransform> ApplyTransformCaller;
 
+    /* RendererLight implementation */
+    Vector3 worldOrigin() const;
 	ShaderPtr getShader() const;
 	const AABB& aabb() const;
 	bool testAABB(const AABB& other) const;
