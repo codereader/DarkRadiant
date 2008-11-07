@@ -158,6 +158,10 @@ void Light::updateOrigin() {
 
 	m_doom3Radius.m_changed();
 
+    // Update the projection as well, if necessary
+    if (isProjected())
+        projectionChanged();
+
 	GlobalSelectionSystem().pivotChanged();
 }
 
@@ -713,10 +717,12 @@ const Matrix4& Light::rotation() const {
  * this method to determine the center of projection, hence the if (isProjected()) clause
  */
 const Vector3& Light::offset() const {
-	if (isProjected()) {
+	if (isProjected()) 
+    {
 		return _projectionCenter;
 	}
-	else {
+	else 
+    {
 		return m_doom3Radius.m_centerTransformed;
 	}
 }
@@ -752,10 +758,14 @@ bool Light::useStartEnd() const {
 	return m_useLightStart && m_useLightEnd;
 }
 
-void Light::projectionChanged() {
+void Light::projectionChanged() 
+{
 	m_doom3ProjectionChanged = true;
 	m_doom3Radius.m_changed();
+
+    // Calculate the projection centre
 	_projectionCenter = m_aabb_light.origin + _lightTargetTransformed;
+
 	SceneChangeNotify();
 }
 

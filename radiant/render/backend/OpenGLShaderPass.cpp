@@ -520,10 +520,13 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
                     ambient = 1.0;
 
                 // Bind the GL program parameters
+                Vector3 lightOrigin = (i->light->isProjected() 
+                                       ? i->light->worldOrigin()
+                                       : lightBounds.origin + i->light->offset());
                 current.m_program->setParameters(
                     viewer,
                     *(*i).transform,
-                    lightBounds.origin + (*i).light->offset(),
+                    lightOrigin,
                     (*i).light->colour(),
                     world2light,
                     ambient

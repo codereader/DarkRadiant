@@ -117,9 +117,11 @@ public:
     Matrix4 world2local(localToWorld);
     matrix4_affine_invert(world2local);
 
+    // Calculate the light origin in object space
     Vector3 localLight(origin);
     matrix4_transform_point(world2local, localLight);
 
+    // Viewer location in object space
     Vector3 localViewer(viewer);
     matrix4_transform_point(world2local, localViewer);
 

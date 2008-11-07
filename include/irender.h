@@ -67,6 +67,12 @@ class RendererLight
 {
 public:
 	virtual boost::shared_ptr<Shader> getShader() const = 0;
+
+    /**
+     * Return the origin of the light volume in world space.
+     */
+    virtual Vector3 worldOrigin() const = 0;
+
 	virtual const AABB& aabb() const = 0;
 	virtual bool testAABB(const AABB& other) const = 0;
 	virtual const Matrix4& rotation() const = 0;

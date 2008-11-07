@@ -438,6 +438,12 @@ void LightNode::applyTransform() {
 	_light.freezeTransform();
 }
 
+
+Vector3 LightNode::worldOrigin() const
+{
+    return _light.getOrigin();
+}
+
 ShaderPtr LightNode::getShader() const {
 	return _light.getShader();
 }
