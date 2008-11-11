@@ -1,1 +1,1 @@
-SUBDIRS = scene gtkutil xmlutil math jpeg6 ddslib picomodel
+SUBDIRS = scene gtkutil xmlutil math ddslib picomodel

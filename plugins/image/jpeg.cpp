@@ -42,10 +42,19 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include "stream/textstream.h"
 
+#ifdef POSIX
+
+#include <jpeglib.h>
+#include <jerror.h>
+
+#else
+
 extern "C" {
 #include "radiant_jpeglib.h"
 #include "jpeg6/jerror.h"
 }
+
+#endif
 
 #include "ifilesystem.h"
 
