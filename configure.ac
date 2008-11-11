@@ -43,6 +43,13 @@ AC_CHECK_LIB([z], [inflateEnd],
              [AC_MSG_ERROR([ZLib not found])])
 AC_SUBST([Z_LIBS])
 
+# JPEG
+AC_CHECK_HEADER([jpeglib.h], [], [AC_MSG_ERROR([libjpeg header not found])])
+AC_CHECK_LIB([jpeg], [jpeg_start_compress],
+             [JPEG_LIBS='-ljpeg'],
+             [AC_MSG_ERROR([libjpeg library not found])])
+AC_SUBST([JPEG_LIBS])
+
 # GTK etc
 PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
                   [AC_MSG_ERROR([GLIB not found])])
