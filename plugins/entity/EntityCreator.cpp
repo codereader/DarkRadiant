@@ -49,7 +49,7 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(IEntityClassPtr eclass) {
 		// Variable size entity
 		node = scene::INodePtr(new entity::Doom3GroupNode(eclass));
 	}
-	else if (eclass->getModelPath().size() > 0) {
+	else if (!eclass->getAttribute("model").value.empty()) {
 		// Fixed size, has model path
 		node = scene::INodePtr(new EclassModelNode(eclass));
 	}
