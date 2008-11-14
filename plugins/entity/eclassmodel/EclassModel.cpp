@@ -87,7 +87,7 @@ void EclassModel::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.attach(m_keyObservers);
-		m_model.modelChanged(m_entity.getEntityClass()->getModelPath());
+		m_model.modelChanged(m_entity.getKeyValue("model"));
 	}
 }
 	
