@@ -187,6 +187,9 @@ void LightInspector::shaderSelectionChanged(
 	// Pass the call to the static member of ShaderSelector
 	ShaderSelector::displayLightShaderInfo(ishader, listStore);
 	
+	// greebo: Do not write to the entities if this call resulted from an update()
+	if (_updateActive) return;
+
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") 
     {
 		std::string commandStr("setLightTexture: ");
