@@ -55,7 +55,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib WS2_32.lib"
+				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -115,7 +115,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib WS2_32.lib"
+				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -415,14 +415,6 @@
 		</File>
 		<File
 			RelativePath="..\..\..\w32deps\libxml2\list.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w32deps\libxml2\nanoftp.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w32deps\libxml2\nanohttp.c"
 			>
 		</File>
 		<File
