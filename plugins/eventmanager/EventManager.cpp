@@ -12,6 +12,8 @@
 #include "gdk/gdkkeysyms.h"
 #include "gtk/gtkwindow.h"
 #include "gtk/gtkaccelgroup.h"
+#include "gtk/gtkeditable.h"
+#include "gtk/gtktextview.h"
 
 #include "xmlutil/Node.h"
 #include "stream/textstream.h"
@@ -600,6 +602,14 @@ private:
 		
 		// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
 		gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
+
+		// Get the focus widget, is it an editable widget?
+		GtkWidget* focus = gtk_window_get_focus(window);
+
+		if (GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus)) {
+			// never pass onKeyPress event to the accelerator manager if an editable widget is focused
+			return keyProcessed;
+		}
 		
 		if (!keyProcessed) {
 			// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
@@ -619,6 +629,14 @@ private:
 		// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
 		gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
 		
+		// Get the focus widget, is it an editable widget?
+		GtkWidget* focus = gtk_window_get_focus(window);
+
+		if (GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus)) {
+			// never pass onKeyPress event to the accelerator manager if an editable widget is focused
+			return keyProcessed;
+		}
+
 		if (!keyProcessed) {
 			// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
 			self->onKeyRelease(window, event, data);
