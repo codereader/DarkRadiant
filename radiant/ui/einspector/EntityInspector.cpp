@@ -68,10 +68,10 @@ EntityInspector::EntityInspector()
     
 	// Pack in GUI components
 	
-	GtkWidget* showInherited = gtk_check_button_new_with_label("Show inherited properties");
-	g_signal_connect(G_OBJECT(showInherited), "toggled", G_CALLBACK(_onToggleShowInherited), this);
+	_showInheritedCheckbox = gtk_check_button_new_with_label("Show inherited properties");
+	g_signal_connect(G_OBJECT(_showInheritedCheckbox), "toggled", G_CALLBACK(_onToggleShowInherited), this);
 
-	gtk_box_pack_start(GTK_BOX(_widget), showInherited, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), _showInheritedCheckbox, FALSE, FALSE, 0);
 
 	GtkWidget* paned = gtkutil::Paned(
 		createTreeViewPane(), // first child
@@ -283,6 +283,7 @@ void EntityInspector::onGtkIdle() {
     {
         gtk_widget_set_sensitive(_editorFrame, TRUE);
         gtk_widget_set_sensitive(_treeView, TRUE);
+		gtk_widget_set_sensitive(_showInheritedCheckbox, TRUE);
 
         refreshTreeModel(); // get values, already have category tree
     }
@@ -296,6 +297,7 @@ void EntityInspector::onGtkIdle() {
 		// Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_editorFrame, FALSE);
         gtk_widget_set_sensitive(_treeView, FALSE);
+		gtk_widget_set_sensitive(_showInheritedCheckbox, FALSE);
 
         gtk_list_store_clear(_listStore);
     }
@@ -315,7 +317,7 @@ void EntityInspector::keyValueChanged() {
 
 // Selection changed callback
 void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
-	getInstance().requestIdleCallback();
+	requestIdleCallback();
 }
 
 namespace
@@ -562,6 +564,8 @@ void EntityInspector::refreshTreeModel() {
 	// Clear the existing list
 	gtk_list_store_clear(_listStore);
 
+	if (_selectedEntity == NULL) return; // sanity check
+
 	// Local functor to enumerate keyvals on object and add them to the list
 	// view.
 	
@@ -660,7 +664,6 @@ void EntityInspector::refreshTreeModel() {
                                    
 	// Force an update of widgets
 	treeSelectionChanged();
-
 }
 
 // Append inherited (entityclass) properties
