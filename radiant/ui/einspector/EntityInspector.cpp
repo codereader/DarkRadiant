@@ -654,13 +654,14 @@ void EntityInspector::refreshTreeModel() {
 	}
 
     // If we found the last-selected key, select it
-    GtkTreeIter* lastIter = visitor.getLastIter();
+	// greebo: Disabled auto-selection of last highlighted key (issue #1531)
+    /*GtkTreeIter* lastIter = visitor.getLastIter();
     if (lastIter != NULL) {
         gtk_tree_selection_select_iter(
             gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView)),
             lastIter
         );
-    }
+    }*/
                                    
 	// Force an update of widgets
 	treeSelectionChanged();
