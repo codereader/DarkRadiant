@@ -57,6 +57,9 @@ class EntityInspector :
     
 	// Frame to contain the Property Editor    
     GtkWidget* _editorFrame;
+
+	// The checkbox for showing the eclass properties
+	GtkWidget* _showInheritedCheckbox;
     
     // Key list store and view
     GtkListStore* _listStore;
