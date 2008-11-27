@@ -58,7 +58,7 @@ public:
 	// Constructor
 	Objective()	: 
 		state(INCOMPLETE), 
-		mandatory(false), 
+		mandatory(true), 
 		visible(true), 
 		ongoing(false),
 		irreversible(false)
