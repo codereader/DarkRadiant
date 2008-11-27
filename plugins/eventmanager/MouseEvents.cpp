@@ -529,6 +529,7 @@ std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& obser
 		case ui::obsPasteTextureProjected: return "<b>PasteTexture Projected</b>";		
 		case ui::obsPasteTextureNatural: return "<b>PasteTexture Natural</b>";
 		case ui::obsPasteTextureCoordinates: return "<b>PasteTexture Coordinates</b>";
+		case ui::obsPasteTextureToBrush: return "<b>Paste Texture to all Brush Faces</b>";
 		case ui::obsJumpToObject: return "<b>Jump to Object</b>";
 		default: return "<b>Unknown event</b>";
 	}
