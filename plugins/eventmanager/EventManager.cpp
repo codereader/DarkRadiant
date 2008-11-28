@@ -605,9 +605,11 @@ private:
 
 		// Get the focus widget, is it an editable widget?
 		GtkWidget* focus = gtk_window_get_focus(window);
+		bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
 
-		if (GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus)) {
-			// never pass onKeyPress event to the accelerator manager if an editable widget is focused
+		// never pass onKeyPress event to the accelerator manager if an editable widget is focused
+		// the only exception is the ESC key
+		if (isEditableWidget && event->keyval != GDK_Escape) {
 			return keyProcessed;
 		}
 		
@@ -631,8 +633,9 @@ private:
 		
 		// Get the focus widget, is it an editable widget?
 		GtkWidget* focus = gtk_window_get_focus(window);
+		bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
 
-		if (GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus)) {
+		if (isEditableWidget && event->keyval != GDK_Escape) {
 			// never pass onKeyPress event to the accelerator manager if an editable widget is focused
 			return keyProcessed;
 		}
