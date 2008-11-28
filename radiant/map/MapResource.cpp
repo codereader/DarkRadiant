@@ -49,6 +49,14 @@ MapResource::~MapResource() {
 	}
 }
 
+void MapResource::rename(const std::string& fullPath) {
+	// Save the paths locally and split them into parts
+	_originalName = fullPath;
+	_type = fullPath.substr(fullPath.rfind(".") + 1);
+	_path = rootPath(_originalName);
+	_name = os::getRelativePath(_originalName, _path);
+}
+
 bool MapResource::load() {
 	ASSERT_MESSAGE(realised(), "resource not realised");
 	if (_mapRoot == model::NullModelNode::InstancePtr()) {

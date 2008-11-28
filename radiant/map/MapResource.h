@@ -1,7 +1,7 @@
 #ifndef MAPRESOURCE_H_
 #define MAPRESOURCE_H_
 
-#include "ireference.h"
+#include "imapresource.h"
 #include "imap.h"
 #include "imodel.h"
 #include "generic/callback.h"
@@ -15,13 +15,13 @@ namespace map {
 	}
 
 class MapResource : 
-	public Resource,
+	public IMapResource,
 	public boost::noncopyable
 {
 	scene::INodePtr _mapRoot;
   
 	// Name given during construction
-	const std::string _originalName;
+	std::string _originalName;
 	
 	std::string _path;
 	std::string _name;
@@ -29,7 +29,7 @@ class MapResource :
 	// Type of resource (map, lwo etc)
 	std::string _type;
 	
-	typedef std::set<Resource::Observer*> ResourceObserverList;
+	typedef std::set<IMapResource::Observer*> ResourceObserverList;
 	ResourceObserverList _observers;
 	
 	std::time_t _modified;
@@ -40,6 +40,8 @@ public:
 	MapResource(const std::string& name);
 	
 	virtual ~MapResource();
+
+	void rename(const std::string& fullPath);
 
 	bool load();
   
