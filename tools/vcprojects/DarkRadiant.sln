@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+# Visual C++ Express 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mathlib", "mathlib.vcproj", "{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkRadiant", "DarkRadiant.vcproj", "{8E70385C-223A-4DD1-9B99-28FF2331A2B5}"
@@ -113,6 +113,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvorbis", "libvorbis\libvorbis.vcproj", "{3BBB3A48-F1A9-4660-93C1-D141CB07E2DE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "include", "include.vcproj", "{41CAAD78-9E48-4C6E-B8F8-A04A859C16F9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.conversation", "dm.conversation.vcproj", "{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -266,6 +268,10 @@ Global
 		{41CAAD78-9E48-4C6E-B8F8-A04A859C16F9}.Debug|Win32.Build.0 = Debug|Win32
 		{41CAAD78-9E48-4C6E-B8F8-A04A859C16F9}.Release|Win32.ActiveCfg = Release|Win32
 		{41CAAD78-9E48-4C6E-B8F8-A04A859C16F9}.Release|Win32.Build.0 = Release|Win32
+		{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}.Debug|Win32.Build.0 = Debug|Win32
+		{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}.Release|Win32.ActiveCfg = Release|Win32
+		{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
