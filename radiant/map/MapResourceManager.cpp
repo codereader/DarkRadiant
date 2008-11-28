@@ -6,7 +6,7 @@
 #include "os/path.h"
 #include "modulesystem/StaticModule.h"
 
-ResourcePtr MapResourceManager::capture(const std::string& path) {
+IMapResourcePtr MapResourceManager::capture(const std::string& path) {
 	// The path is recognised as map if the FileTypeRegistry has associated  
 	// the extension with the "map" moduletype.
 	if (!GlobalFiletypes().findModuleName("map", os::getExtension(path)).empty()) {
@@ -19,7 +19,7 @@ ResourcePtr MapResourceManager::capture(const std::string& path) {
 		return newResource;
 	}
 
-	return ResourcePtr();
+	return IMapResourcePtr();
 }
 	
 // RegisterableModule implementation

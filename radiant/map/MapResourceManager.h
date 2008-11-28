@@ -9,7 +9,7 @@ class MapResourceManager :
 {
 public:
 	// Capture a named resource.
-	ResourcePtr capture(const std::string& path);
+	IMapResourcePtr capture(const std::string& path);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

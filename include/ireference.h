@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IREFERENCE_H)
 #define INCLUDED_IREFERENCE_H
 
-#include <boost/shared_ptr.hpp>
+/*#include <boost/shared_ptr.hpp>
 
 namespace scene {
 	class INode;
@@ -51,6 +51,6 @@ public:
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;
 };
-typedef boost::shared_ptr<Resource> ResourcePtr;
+typedef boost::shared_ptr<Resource> ResourcePtr;*/
 
 #endif

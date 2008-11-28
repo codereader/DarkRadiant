@@ -208,7 +208,15 @@ void Map::updateTitle() {
 }
 
 void Map::setMapName(const std::string& newName) {
+	// Store the name into the member
 	m_name = newName;
+
+	// Update the map resource's root node, if there is one
+	if (m_resource != NULL) {
+		m_resource->rename(newName);
+	}
+
+	// Update the title of the main window
 	updateTitle();
 }
 
@@ -266,7 +274,7 @@ void Map::freeMap() {
 	m_resource->removeObserver(*this);
 
 	// Reset the resource pointer
-	m_resource = ResourcePtr();
+	m_resource = IMapResourcePtr();
 
 	GlobalLayerSystem().reset();
 }
@@ -509,7 +517,7 @@ bool Map::import(const std::string& filename) {
 	bool success = false;
 	
 	{
-		ResourcePtr resource = GlobalMapResourceManager().capture(filename);
+		IMapResourcePtr resource = GlobalMapResourceManager().capture(filename);
 		
 		// avoid loading old version if map has changed on disk since last import
 		resource->refresh(); 
@@ -765,44 +773,14 @@ void Map::saveSelectedAsPrefab() {
   	}
 }
 
-void Map::renameAbsolute(const std::string& absolute) {
-	ResourcePtr resource = GlobalMapResourceManager().capture(absolute);
-		
-	scene::INodePtr clone(
-		NewMapRoot(
-			os::getRelativePath(absolute, GlobalFileSystem().findRoot(absolute))
-		)
-	);
-	resource->setNode(clone);
-
-	CloneAll cloner(clone);
-	GlobalSceneGraph().root()->traverse(cloner);
-
-	m_resource->removeObserver(*this);
-	
-	// Apply the new resource pointer
-	m_resource = resource;
-
-	setMapName(absolute);
-
-	m_resource->addObserver(*this);
-
-	// greebo: Somehow the filter settings get lost after a rename, trigger an update.
-	GlobalFilterSystem().update();
-}
-
 void Map::rename(const std::string& filename) {
 	if (m_name != filename) {
-    	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
-
-    	renameAbsolute(filename);
-    
-    	SceneChangeNotify();
+    	setMapName(filename);
+       	SceneChangeNotify();
 	}
 	else {
 		m_resource->save();
 		setModified(false);
-    	//GlobalReferenceCache().saveReferences();
   	}
 }
 

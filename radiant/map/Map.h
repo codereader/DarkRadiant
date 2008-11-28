@@ -4,7 +4,7 @@
 #include "inode.h"
 #include "imap.h"
 #include "inamespace.h"
-#include "ireference.h"
+#include "imapresource.h"
 #include "moduleobserver.h"
 #include "math/Vector3.h"
 #include "signal/signal.h"
@@ -15,13 +15,13 @@ namespace map {
 
 class Map : 
 	public IMap,
-	public Resource::Observer
+	public IMapResource::Observer
 {
 	// The map name
 	std::string m_name;
 
 	// Pointer to the resource for this map
-	ResourcePtr m_resource;
+	IMapResourcePtr m_resource;
 	
 	bool m_valid;
 
@@ -101,7 +101,6 @@ public:
 	 */
 	void createNew();
 	
-	void renameAbsolute(const std::string& absolute);
 	void rename(const std::string& filename);
 	
 	void importSelected(TextInputStream& in);

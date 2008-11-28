@@ -40,7 +40,7 @@ class RootNode :
 public:
 	// Constructor, pass the name of the map to it
 	RootNode(const std::string& name);
-	
+
 	virtual ~RootNode();
 
 	// Returns the reference to the Namespace of this rootnode
@@ -75,6 +75,7 @@ public:
 	virtual void uninstantiate(const scene::Path& path);
 
 };
+typedef boost::shared_ptr<RootNode> RootNodePtr;
 
 } // namespace map
 
