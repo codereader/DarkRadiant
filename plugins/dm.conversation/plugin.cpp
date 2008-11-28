@@ -5,6 +5,8 @@
 #include "stream/textstream.h"
 #include "generic/callback.h"
 
+#include "ConversationDialog.h"
+
 /**
  * Module to register the menu commands for the Conversation Editor class.
  */
@@ -33,19 +35,19 @@ public:
 		globalOutputStream() << getName() << "::initialiseModule called.\n";
 		
 		// Add the callback event
-		/*GlobalEventManager().addCommand(
+		GlobalEventManager().addCommand(
 			"ConversationEditor", 
-			FreeCaller<ui::DifficultyDialog::showDialog>()
-		);*/
+			FreeCaller<ui::ConversationDialog::showDialog>()
+		);
 	
 		// Add the menu item
-		/*IMenuManager& mm = GlobalUIManager().getMenuManager();
+		IMenuManager& mm = GlobalUIManager().getMenuManager();
 		mm.add("main/map", 	// menu location path
 				"ConversationEditor", // name
 				ui::menuItem,	// type
-				"Difficulty...",	// caption
+				"Conversations...",	// caption
 				"stimresponse.png",	// icon
-				"DifficultyEditor"); // event name*/
+				"ConversationEditor"); // event name
 	}
 };
 typedef boost::shared_ptr<ConversationEditorModule> ConversationEditorModulePtr;
