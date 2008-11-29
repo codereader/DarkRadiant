@@ -1,13 +1,19 @@
 #ifndef CONVERSATION_DIALOG_H_
 #define CONVERSATION_DIALOG_H_
 
+#include <map>
+
 #include "ientity.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
+#include "ConversationEntity.h"
+
 // Forward decl.
 typedef struct _GtkNotebook GtkNotebook;
+typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
@@ -24,7 +30,14 @@ class ConversationDialog :
 	// The overall dialog vbox (used to quickly disable the whole dialog)
 	GtkWidget* _dialogVBox;
 
-	//GtkNotebook* _notebook;
+	// List of conversation_info entities
+	GtkListStore* _convEntityList;
+
+	// Map of ConversationEntity objects, indexed by the name of the world entity
+	conversation::ConversationEntityMap _entities;
+
+	// Table of dialog subwidgets
+	std::map<int, GtkWidget*> _widgets;
 
 	// The close button to toggle the view
 	GtkWidget* _closeButton;
@@ -45,13 +58,19 @@ private:
 	// greebo: Saves the current working set to the entity
 	void save();
 
+	void populateWidgets();
+
 	// WIDGET POPULATION
 	void populateWindow(); 			// Main window
+	GtkWidget* createEntitiesPanel();
 	GtkWidget* createButtons(); 	// Dialog buttons
 	
 	// Button callbacks
 	static void onSave(GtkWidget* button, ConversationDialog* self);
 	static void onClose(GtkWidget* button, ConversationDialog* self);
+	static void onEntitySelectionChanged(GtkTreeSelection*, ConversationDialog*);
+	static void onAddEntity(GtkWidget*, ConversationDialog*);
+	static void onDeleteEntity(GtkWidget*, ConversationDialog*);
 
 	// The keypress handler for catching the keys in the treeview
 	static gboolean onWindowKeyPress(GtkWidget* dialog, GdkEventKey* event, ConversationDialog* self);
