@@ -10,6 +10,7 @@
 #include <boost/algorithm/string/classification.hpp>
 
 #include "string/string.h"
+#include "ConversationCommand.h"
 
 namespace conversation {
 
@@ -55,12 +56,45 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 		_convMap[iNum].maxPlayCount = strToInt(value, -1);
 	}
 	else if (convSubString.substr(0, 6) == "actor_") {
-		// This is an actor definition
-		// TODO
+		// This is an actor definition, extract the number
+		int actorNum = strToInt(convSubString.substr(6), -1);
+
+		if (actorNum == -1) {
+			return;
+		}
+
+		// Store the actor in the map
+		_convMap[iNum].actors.insert(Conversation::ActorMap::value_type(actorNum, value));
 	}
 	else if (convSubString.substr(0, 4) == "cmd_") {
-		// This is a conversation command
-		// TODO
+		// This is a conversation command, form a new regex
+		static const boost::regex reCommand("(\\d+)_(.*)");
+		boost::smatch results;
+		
+		if (!boost::regex_match(convSubString, results, reCommand)) {
+			return; // not matching
+		}
+
+		int cmdIndex = strToInt(results[1]);
+		std::string cmdSubStr = results[2];
+
+		// Create a new command
+		ConversationCommandPtr command(new ConversationCommand);
+
+		if (cmdSubStr == "type") {
+			command->type = value;
+		}
+		else if (cmdSubStr == "actor") {
+			command->actor = strToInt(value);
+		}
+		else if (cmdSubStr == "wait_until_finished") {
+			command->waitUntilFinished = (value == "1");
+		}
+		else if (cmdSubStr.substr(0,4) == "arg_") {
+			int cmdArgIndex = strToInt(cmdSubStr.substr(4));
+
+			command->arguments[cmdArgIndex] = value;
+		}
 	}
 }
 	
