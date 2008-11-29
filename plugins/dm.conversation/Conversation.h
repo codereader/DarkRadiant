@@ -3,7 +3,9 @@
 
 #include <string>
 #include <map>
-#include <list>
+#include <vector>
+
+#include "ConversationCommand.h"
 
 namespace conversation {
 
@@ -21,6 +23,14 @@ public:
 	bool actorsMustBeWithinTalkdistance;
 	bool actorsAlwaysFaceEachOther;
 	int maxPlayCount;
+
+	// Indexed list of commands
+	typedef std::map<int, ConversationCommandPtr> CommandMap;
+	CommandMap commands;
+
+	// Indexed list of actors (by name)
+	typedef std::map<int, std::string> ActorMap;
+	ActorMap actors;
 		
 	// Constructor
 	Conversation() :
