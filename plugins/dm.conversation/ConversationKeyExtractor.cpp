@@ -69,7 +69,7 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 	}
 	else if (convSubString.substr(0, 4) == "cmd_") {
 		// This is a conversation command, form a new regex
-		static const boost::regex reCommand("(\\d+)_(.*)");
+		static const boost::regex reCommand("cmd_(\\d+)_(.*)");
 		boost::smatch results;
 		
 		if (!boost::regex_match(convSubString, results, reCommand)) {
