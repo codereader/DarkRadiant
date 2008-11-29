@@ -15,6 +15,7 @@
 #include "gtkutil/dialog.h"
 
 #include "RandomOrigin.h"
+#include "ConversationEntityFinder.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -35,6 +36,10 @@ namespace {
 	enum {
 		WIDGET_ENTITY_LIST,
 		WIDGET_DELETE_ENTITY,
+		WIDGET_CONV_BUTTONS_PANEL,
+		WIDGET_CLEAR_CONVERSATIONS,
+		WIDGET_EDIT_CONVERSATION,
+		WIDGET_DELETE_CONVERSATION,
 	};
 }
 
@@ -42,7 +47,10 @@ ConversationDialog::ConversationDialog() :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
 	_convEntityList(gtk_list_store_new(2, 
   									  G_TYPE_STRING, 		// display text
-  									  G_TYPE_STRING))		// entity name
+  									  G_TYPE_STRING)),		// entity name
+	_convList(gtk_list_store_new(2, 
+  								G_TYPE_INT, 		// index
+  								G_TYPE_STRING))		// name
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -83,6 +91,8 @@ void ConversationDialog::_preHide() {
 void ConversationDialog::_preShow() {
 	// Restore the position
 	_windowPosition.applyPosition();
+
+	populateWidgets();
 }
 
 void ConversationDialog::populateWindow() {
@@ -96,6 +106,12 @@ void ConversationDialog::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(_dialogVBox),
 					   gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0),
 					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox), 
+					   gtkutil::LeftAlignedLabel("<b>Conversations</b>"),
+					   FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_dialogVBox),
+					   gtkutil::LeftAlignment(createConversationsPanel(), 18, 1.0),
+					   TRUE, TRUE, 0);
 	
 	// Pack in dialog buttons
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
@@ -140,6 +156,58 @@ GtkWidget* ConversationDialog::createEntitiesPanel() {
 	return hbx;
 }
 
+// Create the main conversation editing widgets
+GtkWidget* ConversationDialog::createConversationsPanel() {
+	// Tree view
+	GtkWidget* tv = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_convList));
+
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), TRUE);
+
+	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(onConversationSelectionChanged), this);
+	
+	// Key and value text columns
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Name", 1, false));
+	
+	// Beside the list is an vbox containing add, edit, delete and clear buttons
+	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
+    
+    // Buttons panel box is disabled by default, enabled once an Entity is selected.
+    gtk_widget_set_sensitive(buttonBox, FALSE);
+    _widgets[WIDGET_CONV_BUTTONS_PANEL] = buttonBox;
+
+	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD); 
+	g_signal_connect(G_OBJECT(addButton), "clicked", G_CALLBACK(onAddConversation), this);
+
+	GtkWidget* editButton = gtk_button_new_from_stock(GTK_STOCK_EDIT); 
+	gtk_widget_set_sensitive(editButton, FALSE); // not enabled without selection 
+	g_signal_connect(G_OBJECT(editButton), "clicked", G_CALLBACK(onEditConversation), this);
+	_widgets[WIDGET_EDIT_CONVERSATION] = editButton;
+	
+	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	gtk_widget_set_sensitive(delButton, FALSE); // not enabled without selection 
+	g_signal_connect(G_OBJECT(delButton), "clicked", G_CALLBACK(onDeleteConversation), this);
+	_widgets[WIDGET_DELETE_CONVERSATION] = delButton;
+	
+	GtkWidget* clearButton = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+	gtk_widget_set_sensitive(clearButton, FALSE); // requires >0 conversations
+	g_signal_connect(G_OBJECT(clearButton), "clicked", G_CALLBACK(onClearConversations), this);
+	_widgets[WIDGET_CLEAR_CONVERSATIONS] = clearButton;
+	
+	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), editButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), clearButton, FALSE, FALSE, 0);
+
+	// Pack the list and the buttons into an hbox
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0); 
+	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
+					   
+	return hbx; 
+}
+
 // Lower dialog buttons
 GtkWidget* ConversationDialog::createButtons() {
 
@@ -168,8 +236,41 @@ void ConversationDialog::save() {
 	// Save the working set to the entity
 }
 
+void ConversationDialog::clear() {
+	// Clear internal data
+	_entities.clear();
+	_curEntity = _entities.end();
+
+	// Clear the list boxes
+	gtk_list_store_clear(_convEntityList);
+	gtk_list_store_clear(_convList);
+}
+
+void ConversationDialog::refreshConversationList() {
+	// Clear and refresh the conversation list
+	gtk_list_store_clear(_convList);
+	_curEntity->second->populateListStore(_convList);
+	
+	// If there is at least one objective, make the Clear button available
+	gtk_widget_set_sensitive(
+		_widgets[WIDGET_CLEAR_CONVERSATIONS],
+		_curEntity->second->isEmpty() ? FALSE : TRUE
+	);
+}
+
 void ConversationDialog::populateWidgets() {
-	// TODO
+	// First clear the data
+	clear();
+
+	// Use an ConversationEntityFinder to walk the map and add any conversation
+	// entities to the liststore and entity map
+	conversation::ConversationEntityFinder finder(
+		_convEntityList, 
+		_entities, 
+		CONVERSATION_ENTITY_CLASS
+	);
+
+	GlobalSceneGraph().root()->traverse(finder);
 }
 
 void ConversationDialog::onSave(GtkWidget* button, ConversationDialog* self) {
@@ -205,40 +306,32 @@ void ConversationDialog::onEntitySelectionChanged(GtkTreeSelection* sel,
 												 ConversationDialog* self)
 {
 	// Clear the objectives list
-	/*gtk_list_store_clear(self->_objectiveList);
+	gtk_list_store_clear(self->_convList);
 	
 	// Get the selection
 	GtkTreeIter iter;
 	GtkTreeModel* model;
 	if (gtk_tree_selection_get_selected(sel, &model, &iter)) 
     {
-		// Get name of the entity and find the corresponding ObjectiveEntity in
-		// the map
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
+		// Get name of the entity and find the corresponding ConversationEntity in the map
+		std::string name = gtkutil::TreeModel::getString(model, &iter, 1);
 		
-		// Save the current selection and refresh the objectives list
+		// Save the current selection and refresh the conversation list
 		self->_curEntity = self->_entities.find(name);
-		self->refreshObjectivesList();
+		self->refreshConversationList();
 		
 		// Enable the delete button and objectives panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], TRUE); 
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], TRUE);
-        gtk_widget_set_sensitive(
-            self->_widgets[WIDGET_OBJ_BUTTONS_PANEL], TRUE
-        );
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_CONV_BUTTONS_PANEL], TRUE);
 	}
 	else 
     {
-		// No selection, disable the delete button and clear the objective
-		// panel
+		// No selection, disable the delete button and clear the conversation panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], FALSE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], FALSE);
-
+		
         // Disable all the Objective edit buttons
-        gtk_widget_set_sensitive(
-            self->_widgets[WIDGET_OBJ_BUTTONS_PANEL], FALSE
-        );
-	}*/
+        gtk_widget_set_sensitive(self->_widgets[WIDGET_CONV_BUTTONS_PANEL], FALSE);
+	}
 }
 
 // Add a new objectives entity button
@@ -287,7 +380,7 @@ void ConversationDialog::onDeleteEntity(GtkWidget* w, ConversationDialog* self) 
 	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
 		
 		// Get the name of the selected entity
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
+		std::string name = gtkutil::TreeModel::getString(model, &iter, 1);
 		
 		// Instruct the ConversationEntity to delete its world node, and then
 		// remove it from the map
@@ -297,6 +390,57 @@ void ConversationDialog::onDeleteEntity(GtkWidget* w, ConversationDialog* self) 
 		// Update the widgets to remove the selection from the list
 		self->populateWidgets();
 	}
+}
+
+// Callback for current conversation selection changed
+void ConversationDialog::onConversationSelectionChanged(GtkTreeSelection* sel, 
+											 		ConversationDialog* self)
+{
+	// Get the selection
+	if (gtk_tree_selection_get_selected(sel, NULL, &(self->_currentConversation))) {
+		// Enable the edit and delete buttons
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_CONVERSATION], TRUE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_CONVERSATION], TRUE);		
+	}
+	else {
+		// Disable the edit and delete buttons
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_CONVERSATION], FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_CONVERSATION], FALSE);
+	}
+}
+
+void ConversationDialog::onAddConversation(GtkWidget*, ConversationDialog* self) {
+	// Add a new conversation to the ConversationEntity and refresh the list store
+	self->_curEntity->second->addConversation();
+	self->refreshConversationList();
+}
+
+void ConversationDialog::onEditConversation(GtkWidget*, ConversationDialog* self) {
+	// Display the edit dialog
+	// TODO
+
+	// Repopulate the conversation list
+	self->refreshConversationList();
+}
+
+void ConversationDialog::onDeleteConversation(GtkWidget*, ConversationDialog* self) {
+	// Get the index of the current objective
+	int index;
+	gtk_tree_model_get(GTK_TREE_MODEL(self->_convList), 
+					   &(self->_currentConversation),
+					   0, &index, -1);
+
+	// Tell the ConversationEntity to delete this conversation
+	self->_curEntity->second->deleteConversation(index);
+	
+	// Repopulate the conversation list
+	self->refreshConversationList();
+}
+
+void ConversationDialog::onClearConversations(GtkWidget*, ConversationDialog* self) {
+	// Clear the entity and refresh the list
+	self->_curEntity->second->clearConversations();
+	self->refreshConversationList();
 }
 
 } // namespace ui
