@@ -251,7 +251,7 @@ void ConversationDialog::refreshConversationList() {
 	gtk_list_store_clear(_convList);
 	_curEntity->second->populateListStore(_convList);
 	
-	// If there is at least one objective, make the Clear button available
+	// If there is at least one conversation, make the Clear button available
 	gtk_widget_set_sensitive(
 		_widgets[WIDGET_CLEAR_CONVERSATIONS],
 		_curEntity->second->isEmpty() ? FALSE : TRUE
@@ -305,7 +305,7 @@ void ConversationDialog::showDialog() {
 void ConversationDialog::onEntitySelectionChanged(GtkTreeSelection* sel,
 												 ConversationDialog* self)
 {
-	// Clear the objectives list
+	// Clear the conversations list
 	gtk_list_store_clear(self->_convList);
 	
 	// Get the selection
@@ -320,7 +320,7 @@ void ConversationDialog::onEntitySelectionChanged(GtkTreeSelection* sel,
 		self->_curEntity = self->_entities.find(name);
 		self->refreshConversationList();
 		
-		// Enable the delete button and objectives panel
+		// Enable the delete button and conversation panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], TRUE); 
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_CONV_BUTTONS_PANEL], TRUE);
 	}
@@ -329,12 +329,12 @@ void ConversationDialog::onEntitySelectionChanged(GtkTreeSelection* sel,
 		// No selection, disable the delete button and clear the conversation panel
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], FALSE);
 		
-        // Disable all the Objective edit buttons
+        // Disable all the Conversation edit buttons
         gtk_widget_set_sensitive(self->_widgets[WIDGET_CONV_BUTTONS_PANEL], FALSE);
 	}
 }
 
-// Add a new objectives entity button
+// Add a new conversations entity button
 void ConversationDialog::onAddEntity(GtkWidget* w, ConversationDialog* self) {
 	
 	// Obtain the entity class object
@@ -358,9 +358,9 @@ void ConversationDialog::onAddEntity(GtkWidget* w, ConversationDialog* self) {
     }
     else 
     {
-        // Objective entityclass was not found
+        // conversation entityclass was not found
         gtkutil::errorDialog(
-            std::string("Unable to create Objective Entity: class '")
+            std::string("Unable to create conversation Entity: class '")
                 + CONVERSATION_ENTITY_CLASS + "' not found.",
             GlobalRadiant().getMainWindow()
         );
@@ -424,7 +424,7 @@ void ConversationDialog::onEditConversation(GtkWidget*, ConversationDialog* self
 }
 
 void ConversationDialog::onDeleteConversation(GtkWidget*, ConversationDialog* self) {
-	// Get the index of the current objective
+	// Get the index of the current conversation
 	int index;
 	gtk_tree_model_get(GTK_TREE_MODEL(self->_convList), 
 					   &(self->_currentConversation),
