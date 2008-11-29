@@ -16,9 +16,18 @@ public:
 
 	// The (unique) name of this conversation
 	std::string name;
+
+	float talkDistance;
+	bool actorsMustBeWithinTalkdistance;
+	bool actorsAlwaysFaceEachOther;
+	int maxPlayCount;
 		
 	// Constructor
-	Conversation()
+	Conversation() :
+		talkDistance(60),
+		actorsMustBeWithinTalkdistance(true),
+		actorsAlwaysFaceEachOther(true),
+		maxPlayCount(-1)
 	{}
 };
 
