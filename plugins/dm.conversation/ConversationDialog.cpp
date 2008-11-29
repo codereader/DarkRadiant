@@ -234,6 +234,12 @@ void ConversationDialog::save() {
 	UndoableCommand command("editConversations");
 	
 	// Save the working set to the entity
+	for (conversation::ConversationEntityMap::iterator i = _entities.begin();
+		 i != _entities.end();
+		 ++i)
+	{
+		i->second->writeToEntity();		
+	}
 }
 
 void ConversationDialog::clear() {
