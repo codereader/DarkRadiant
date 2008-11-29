@@ -91,7 +91,7 @@ public:
 	 * 
 	 * @param store
 	 * The list store to populate. This must have 2 columns -- an integer 
-	 * column for the conversation number, and a text column for the description.
+	 * column for the conversation number, and a text column for the name.
 	 */
 	void populateListStore(GtkListStore* store) const;
 	

@@ -47,6 +47,7 @@ void ConversationEntity::addConversation() {
 		
 	// Insert a new conversation at this ID.
 	Conversation o;
+	o.name = "New Conversation";
 	_conversations.insert(ConversationMap::value_type(index, o));
 }
 
