@@ -13,8 +13,8 @@ namespace conversation {
 class ConversationCommand
 {
 public:
-	// What kind of command this is
-	std::string type;
+	// What kind of command this is (index of a certain ConversationCommandInfo structure)
+	int type;
 
 	// Which actor should perform this command.
 	int actor;
@@ -27,7 +27,7 @@ public:
 	
 	// Constructor
 	ConversationCommand() :
-		type("WaitSeconds"),
+		type(-1), // invalid id
 		actor(-1),
 		waitUntilFinished(true)
 	{}

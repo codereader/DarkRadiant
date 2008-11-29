@@ -11,6 +11,7 @@
 
 #include "string/string.h"
 #include "ConversationCommand.h"
+#include "ConversationCommandLibrary.h"
 
 namespace conversation {
 
@@ -82,7 +83,13 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 		ConversationCommandPtr command(new ConversationCommand);
 
 		if (cmdSubStr == "type") {
-			command->type = value;
+			try {
+				command->type = ConversationCommandLibrary::Instance().findCommandInfo(value).id;
+			}
+			catch (std::runtime_error e) {
+				globalErrorStream() << "Unknown conversation command " << value << std::endl;
+				return;
+			}
 		}
 		else if (cmdSubStr == "actor") {
 			command->actor = strToInt(value);
