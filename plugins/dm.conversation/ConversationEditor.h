@@ -1,6 +1,7 @@
 #ifndef CONVERSATION_EDITOR_H_
 #define CONVERSATION_EDITOR_H_
 
+#include <gtk/gtktreemodel.h>
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <map>
 
@@ -21,6 +22,8 @@ class ConversationEditor :
 	GtkListStore* _actorStore;
 	GtkListStore* _commandStore;
 
+	GtkTreeIter _currentActor;
+
 	std::map<int, GtkWidget*> _widgets;
 	
 	// The conversation we're editing
@@ -35,7 +38,7 @@ private:
 	void populateWindow();
 
 	// Fills the conversation values into the widgets
-	void populateWidgets();
+	void updateWidgets();
 
 	GtkWidget* createPropertyPane();
 	GtkWidget* createButtonPanel();
