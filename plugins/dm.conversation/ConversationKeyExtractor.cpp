@@ -79,8 +79,20 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 		int cmdIndex = strToInt(results[1]);
 		std::string cmdSubStr = results[2];
 
-		// Create a new command
-		ConversationCommandPtr command(new ConversationCommand);
+		ConversationCommandPtr command;
+		Conversation::CommandMap::iterator found = _convMap[iNum].commands.find(cmdIndex);
+
+		if (found != _convMap[iNum].commands.end()) {
+			// Command already exists
+			command = found->second;
+		}
+		else {
+			// Command with the given index does not exist yet, create it
+			command = ConversationCommandPtr(new ConversationCommand);
+
+			// Insert this into the map
+			_convMap[iNum].commands[cmdIndex] = command;
+		}
 
 		if (cmdSubStr == "type") {
 			try {
