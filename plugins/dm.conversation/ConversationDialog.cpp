@@ -433,7 +433,7 @@ void ConversationDialog::onEditConversation(GtkWidget*, ConversationDialog* self
 	conversation::Conversation& conv = self->_curEntity->second->getConversation(index);
 
 	// Display the edit dialog, blocks on construction
-	ConversationEditor editor(conv);
+	ConversationEditor editor(GTK_WINDOW(self->getWindow()), conv);
 
 	// Repopulate the conversation list
 	self->refreshConversationList();

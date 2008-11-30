@@ -7,6 +7,7 @@
 #include "Conversation.h"
 
 typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
@@ -17,6 +18,7 @@ class ConversationEditor :
 	GtkWidget* _dialogVBox;
 
 	GtkListStore* _actorStore;
+	GtkListStore* _commandStore;
 
 	std::map<int, GtkWidget*> _widgets;
 	
@@ -24,7 +26,7 @@ class ConversationEditor :
 	conversation::Conversation& _conversation;
 
 public:
-	ConversationEditor(conversation::Conversation& conversation);
+	ConversationEditor(GtkWindow* parent, conversation::Conversation& conversation);
 
 private:
 	void save();
@@ -36,9 +38,13 @@ private:
 
 	GtkWidget* createPropertyPane();
 	GtkWidget* createButtonPanel();
+	GtkWidget* createActorPanel();
+	GtkWidget* createCommandPanel();
 
 	static void onSave(GtkWidget* button, ConversationEditor* self);
 	static void onCancel(GtkWidget* button, ConversationEditor* self);
+	static void onActorSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
+	static void onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
 
 }; // class ConversationEditor
 
