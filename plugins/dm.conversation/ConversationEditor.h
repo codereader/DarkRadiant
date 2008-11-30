@@ -23,6 +23,7 @@ class ConversationEditor :
 	GtkListStore* _commandStore;
 
 	GtkTreeIter _currentActor;
+	GtkTreeIter _currentCommand;
 
 	std::map<int, GtkWidget*> _widgets;
 	
@@ -53,6 +54,10 @@ private:
 	static void onAddActor(GtkWidget* w, ConversationEditor* self);
 	static void onDeleteActor(GtkWidget* w, ConversationEditor* self);
 	static void onActorEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, ConversationEditor* self);
+
+	static void onAddCommand(GtkWidget* w, ConversationEditor* self);
+	static void onEditCommand(GtkWidget* w, ConversationEditor* self);
+	static void onDeleteCommand(GtkWidget* w, ConversationEditor* self);
 
 }; // class ConversationEditor
 

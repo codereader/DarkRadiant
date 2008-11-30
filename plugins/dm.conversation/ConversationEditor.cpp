@@ -22,6 +22,9 @@ namespace {
 		WIDGET_CONV_ACTORS_ALWAYS_FACE,
 		WIDGET_ADD_ACTOR_BUTTON,
 		WIDGET_DELETE_ACTOR_BUTTON,
+		WIDGET_ADD_CMD_BUTTON,
+		WIDGET_EDIT_CMD_BUTTON,
+		WIDGET_DELETE_CMD_BUTTON,
 	};
 }
 
@@ -179,9 +182,19 @@ GtkWidget* ConversationEditor::createCommandPanel() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Command", 2));
 	
 	// Action buttons
+	_widgets[WIDGET_ADD_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	_widgets[WIDGET_EDIT_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+	_widgets[WIDGET_DELETE_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_CMD_BUTTON]), "clicked", G_CALLBACK(onAddCommand), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_EDIT_CMD_BUTTON]), "clicked", G_CALLBACK(onEditCommand), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_CMD_BUTTON]), "clicked", G_CALLBACK(onDeleteCommand), this);
+
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
 
-	// TODO
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_CMD_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_EDIT_CMD_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_CMD_BUTTON], FALSE, FALSE, 0);
 
 	// Command treeview goes left, action buttons go right
 	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
@@ -285,7 +298,12 @@ void ConversationEditor::onActorSelectionChanged(GtkTreeSelection* sel, Conversa
 }
 
 void ConversationEditor::onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self) {
-	// TODO: Set button sensitivity
+	// Get the selection
+	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &(self->_currentCommand)) ? true : false;
+
+	// Enable the edit and delete buttons if we have a selection
+	gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_CMD_BUTTON], hasSelection ? TRUE: FALSE);
+	gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_CMD_BUTTON], hasSelection ? TRUE: FALSE);
 }
 
 void ConversationEditor::onAddActor(GtkWidget* w, ConversationEditor* self) {
@@ -316,6 +334,10 @@ void ConversationEditor::onDeleteActor(GtkWidget* w, ConversationEditor* self) {
 		// Remove the specified actor
 		self->_conversation.actors.erase(index);
 	}
+	else {
+		// Index not found, quit here
+		return;
+	}
 
 	// Adjust the numbers of all other actors with higher numbers
 	while (self->_conversation.actors.find(index + 1) != self->_conversation.actors.end()) {
@@ -345,6 +367,44 @@ void ConversationEditor::onActorEdited(GtkCellRendererText* renderer,
 		// Update all widgets
 		self->updateWidgets();
 	}
+}
+
+void ConversationEditor::onAddCommand(GtkWidget* w, ConversationEditor* self) {
+	// TODO
+}
+
+void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
+	// TODO
+}
+
+void ConversationEditor::onDeleteCommand(GtkWidget* w, ConversationEditor* self) {
+	// Get the index of the currently selected actor
+	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_commandStore), &(self->_currentCommand), 0);
+
+	// Add the new command to the map
+	conversation::Conversation::CommandMap::iterator i = self->_conversation.commands.find(index);
+
+	if (i != self->_conversation.commands.end()) {
+		// Remove the specified command
+		self->_conversation.commands.erase(index);
+	}
+	else {
+		// Index not found, quit here
+		return;
+	}
+
+	// Adjust the numbers of all other commands with higher numbers
+	while (self->_conversation.commands.find(index + 1) != self->_conversation.commands.end()) {
+		// Move the commands with the higher index "down" by one number...
+		self->_conversation.commands[index] = self->_conversation.commands[index + 1];
+		// ...and remove it from the old location
+		self->_conversation.commands.erase(index + 1);
+
+		index++;
+	}
+	
+	// Update the widgets
+	self->updateWidgets();
 }
 
 } // namespace ui
