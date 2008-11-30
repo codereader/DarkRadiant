@@ -423,8 +423,17 @@ void ConversationDialog::onAddConversation(GtkWidget*, ConversationDialog* self)
 }
 
 void ConversationDialog::onEditConversation(GtkWidget*, ConversationDialog* self) {
-	// Display the edit dialog
-	// TODO
+	// Retrieve the index of the current conversation
+	int index = gtkutil::TreeModel::getInt(
+		GTK_TREE_MODEL(self->_convList), 
+		&(self->_currentConversation), 
+		0 // column number
+	);
+
+	conversation::Conversation& conv = self->_curEntity->second->getConversation(index);
+
+	// Display the edit dialog, blocks on construction
+	ConversationEditor editor(conv);
 
 	// Repopulate the conversation list
 	self->refreshConversationList();
