@@ -1,10 +1,12 @@
 #include "ConversationEditor.h"
 
+#include <gtk/gtk.h>
 #include "gtkutil/LeftalignedLabel.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
-#include <gtk/gtk.h>
+#include "gtkutil/TreeModel.h"
+#include "string/string.h"
 
 namespace ui {
 
@@ -25,8 +27,9 @@ ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversa
 	_actorStore(gtk_list_store_new(2, 
 								   G_TYPE_INT,		// actor number
 								   G_TYPE_STRING)),	// display name
-   _commandStore(gtk_list_store_new(2, 
+   _commandStore(gtk_list_store_new(3, 
 								   G_TYPE_INT,		// cmd number
+								   G_TYPE_STRING,	// actor name
 								   G_TYPE_STRING)),	// sentence
    _conversation(conversation)
 {
@@ -125,18 +128,31 @@ GtkWidget* ConversationEditor::createActorPanel() {
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Actor", 1, false));
+
+	// Construct a new editable text column
+	gtkutil::TextColumn actorColumn("Actor (click to edit)", 1, false);
 	
+	GtkCellRendererText* rend = actorColumn.getCellRenderer();
+	g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
+	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(onActorEdited), this);
+
+	// Cast the column object to a GtkTreeViewColumn* and append it
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), actorColumn);
+		
 	// Action buttons
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
 
-	// TODO
+	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+
+	g_signal_connect(G_OBJECT(addButton), "clicked", G_CALLBACK(onAddActor), this);
+	g_signal_connect(G_OBJECT(delButton), "clicked", G_CALLBACK(onDeleteActor), this);
 
 	// Actors treeview goes left, actionbuttons go right
 	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), actionVBox, FALSE, FALSE, 0);
 		
-	return hbox;	
+	return hbox;
 }
 
 GtkWidget* ConversationEditor::createCommandPanel() {
@@ -153,7 +169,8 @@ GtkWidget* ConversationEditor::createCommandPanel() {
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Command", 1));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Actor", 1));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Command", 2));
 	
 	// Action buttons
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
@@ -164,7 +181,7 @@ GtkWidget* ConversationEditor::createCommandPanel() {
 	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), actionVBox, FALSE, FALSE, 0);
 		
-	return hbox;	
+	return hbox;
 }
 
 GtkWidget* ConversationEditor::createButtonPanel() {
@@ -184,6 +201,10 @@ GtkWidget* ConversationEditor::createButtonPanel() {
 }
 
 void ConversationEditor::populateWidgets() {
+	// Clear the liststores first
+	gtk_list_store_clear(_actorStore);
+	gtk_list_store_clear(_commandStore);
+
 	// Name
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_CONV_NAME_ENTRY]), _conversation.name.c_str());
 
@@ -219,7 +240,8 @@ void ConversationEditor::populateWidgets() {
 		gtk_list_store_append(_commandStore, &iter);
 		gtk_list_store_set(_commandStore, &iter, 
 						   0, i->first, 
-						   1, cmd.getSentence().c_str(),
+						   1, (std::string("Actor ") + intToStr(cmd.actor)).c_str(),
+						   2, cmd.getSentence().c_str(),
 						   -1);
 	}
 }
@@ -254,6 +276,30 @@ void ConversationEditor::onActorSelectionChanged(GtkTreeSelection* sel, Conversa
 
 void ConversationEditor::onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self) {
 	// TODO: Set button sensitivity
+}
+
+void ConversationEditor::onAddActor(GtkWidget* w, ConversationEditor* self) {
+	// TODO
+}
+
+void ConversationEditor::onDeleteActor(GtkWidget* w, ConversationEditor* self) {
+	// TODO
+}
+
+void ConversationEditor::onActorEdited(GtkCellRendererText* renderer, 
+	gchar* path, gchar* new_text, ConversationEditor* self) 
+{
+	GtkTreeIter iter;
+	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_actorStore), &iter, path)) {
+		// The iter points to the edited cell now, get the actor number
+		int actorNum = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_actorStore), &iter, 0);
+		
+		// Update the conversation
+		self->_conversation.actors[actorNum] = new_text;
+
+		// Update all widgets
+		self->populateWidgets();
+	}
 }
 
 } // namespace ui
