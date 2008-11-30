@@ -16,9 +16,6 @@ namespace ui {
 class ConversationEditor :
 	public gtkutil::BlockingTransientWindow
 {
-	// The overall dialog vbox (used to quickly disable the whole dialog)
-	GtkWidget* _dialogVBox;
-
 	GtkListStore* _actorStore;
 	GtkListStore* _commandStore;
 
@@ -48,6 +45,7 @@ private:
 
 	static void onSave(GtkWidget* button, ConversationEditor* self);
 	static void onCancel(GtkWidget* button, ConversationEditor* self);
+
 	static void onActorSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
 	static void onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
 
