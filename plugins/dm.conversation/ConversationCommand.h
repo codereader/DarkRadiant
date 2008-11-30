@@ -23,7 +23,8 @@ public:
 	bool waitUntilFinished;
 
 	// The numbered arguments
-	std::map<int, std::string> arguments;
+	typedef std::map<int, std::string> ArgumentMap;
+	ArgumentMap arguments;
 	
 	// Constructor
 	ConversationCommand();
@@ -32,6 +33,9 @@ public:
 	 * greebo: Returns a human-readable version of this command.
 	 */
 	std::string getSentence() const;
+
+	// Returns the argument with the given index or "" if not found
+	std::string getArgument(int index) const;
 };
 typedef boost::shared_ptr<ConversationCommand> ConversationCommandPtr;
 

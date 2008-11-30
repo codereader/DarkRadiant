@@ -51,7 +51,7 @@ void ConversationEditor::populateWindow() {
 
 	// Actors
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Actors</b>"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createActorPanel(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), createActorPanel(), FALSE, FALSE, 0);
 	
 	// Commands
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Commands</b>"), FALSE, FALSE, 0);
@@ -153,7 +153,7 @@ GtkWidget* ConversationEditor::createCommandPanel() {
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Command", 1, false));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Command", 1));
 	
 	// Action buttons
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
