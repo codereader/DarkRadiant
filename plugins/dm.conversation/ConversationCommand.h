@@ -26,11 +26,12 @@ public:
 	std::map<int, std::string> arguments;
 	
 	// Constructor
-	ConversationCommand() :
-		type(-1), // invalid id
-		actor(-1),
-		waitUntilFinished(true)
-	{}
+	ConversationCommand();
+
+	/**
+	 * greebo: Returns a human-readable version of this command.
+	 */
+	std::string getSentence() const;
 };
 typedef boost::shared_ptr<ConversationCommand> ConversationCommandPtr;
 

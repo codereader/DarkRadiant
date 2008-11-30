@@ -208,6 +208,20 @@ void ConversationEditor::populateWidgets() {
 						   1, i->second.c_str(),
 						   -1);
 	}
+
+	// Commands
+	for (conversation::Conversation::CommandMap::const_iterator i = _conversation.commands.begin();
+		 i != _conversation.commands.end(); ++i)
+	{
+		const conversation::ConversationCommand& cmd = *(i->second);
+
+		GtkTreeIter iter;
+		gtk_list_store_append(_commandStore, &iter);
+		gtk_list_store_set(_commandStore, &iter, 
+						   0, i->first, 
+						   1, cmd.getSentence().c_str(),
+						   -1);
+	}
 }
 
 void ConversationEditor::save() {
