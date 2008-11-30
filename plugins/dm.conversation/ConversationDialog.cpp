@@ -16,6 +16,7 @@
 
 #include "RandomOrigin.h"
 #include "ConversationEntityFinder.h"
+#include "ConversationEditor.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
