@@ -374,7 +374,19 @@ void ConversationEditor::onAddCommand(GtkWidget* w, ConversationEditor* self) {
 }
 
 void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
-	// TODO
+	// Get the index of the currently selected actor
+	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_commandStore), &(self->_currentCommand), 0);
+
+	// Try to look up the command in the conversation
+	conversation::Conversation::CommandMap::iterator i = self->_conversation.commands.find(index);
+
+	if (i != self->_conversation.commands.end()) {
+		// Get the command reference
+		conversation::ConversationCommandPtr command = i->second;
+
+		// Construct a command editor (blocks on construction)
+		// TODO
+	}
 }
 
 void ConversationEditor::onDeleteCommand(GtkWidget* w, ConversationEditor* self) {
