@@ -9,6 +9,8 @@
 #include "gtkutil/TreeModel.h"
 #include "string/string.h"
 
+#include "CommandEditor.h"
+
 namespace ui {
 
 namespace {
@@ -370,7 +372,16 @@ void ConversationEditor::onActorEdited(GtkCellRendererText* renderer,
 }
 
 void ConversationEditor::onAddCommand(GtkWidget* w, ConversationEditor* self) {
-	// TODO
+	// Create a new command
+	conversation::ConversationCommandPtr command(new conversation::ConversationCommand);
+
+	// Construct a command editor (blocks on construction)
+	CommandEditor editor(GTK_WINDOW(self->getWindow()), *command, self->_conversation);
+
+	if (editor.getResult() == CommandEditor::RESULT_OK) {
+		// The user hit ok, insert the command
+		// TODO
+	}
 }
 
 void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
@@ -385,7 +396,7 @@ void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
 		conversation::ConversationCommandPtr command = i->second;
 
 		// Construct a command editor (blocks on construction)
-		// TODO
+		CommandEditor editor(GTK_WINDOW(self->getWindow()), *command, self->_conversation);
 	}
 }
 

@@ -1,8 +1,10 @@
 #ifndef CONVERSATION_COMMAND_EDITOR_H_
 #define CONVERSATION_COMMAND_EDITOR_H_
 
+#include <gtk/gtkliststore.h>
 #include "gtkutil/window/BlockingTransientWindow.h"
 
+#include "Conversation.h"
 #include "ConversationCommand.h"
 
 namespace ui {
@@ -10,15 +12,43 @@ namespace ui {
 class CommandEditor :
 	public gtkutil::BlockingTransientWindow
 {
-	// The overall dialog vbox (used to quickly disable the whole dialog)
-	GtkWidget* _dialogVBox;
+public:
+	// Whether the user clicked on cancel or OK
+	enum Result {
+		RESULT_CANCEL,
+		RESULT_OK,
+		NUM_RESULTS
+	};
+
+private:
+	// The conversation (read-only)
+	const conversation::Conversation& _conversation;
 
 	// The command we're editing
 	conversation::ConversationCommand& _command;
 
+	Result _result;
+
+	GtkListStore* _actorStore;
+	GtkWidget* _actorDropDown;
+
 public:
-	// Pass the parent window and the command to edit
-	CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command);
+	// Pass the parent window, the command and the conversation to edit
+	CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv);
+
+	// Determine which action the user did take to close the dialog
+	Result getResult();
+
+private:
+	void populateWindow();
+	void updateWidgets();
+
+	void save();
+
+	GtkWidget* createButtonPanel();
+
+	static void onSave(GtkWidget* button, CommandEditor* self);
+	static void onCancel(GtkWidget* button, CommandEditor* self);
 };
 
 } // namespace ui
