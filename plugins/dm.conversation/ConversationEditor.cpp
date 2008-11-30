@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/LeftalignedLabel.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
@@ -19,6 +20,8 @@ namespace {
 		WIDGET_CONV_NAME_ENTRY,
 		WIDGET_CONV_ACTOR_WITHIN_TALKDIST,
 		WIDGET_CONV_ACTORS_ALWAYS_FACE,
+		WIDGET_ADD_ACTOR_BUTTON,
+		WIDGET_DELETE_ACTOR_BUTTON,
 	};
 }
 
@@ -39,7 +42,7 @@ ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversa
 	populateWindow();
 
 	// Load the conversation values into the widgets
-	populateWidgets();
+	updateWidgets();
 
 	// Show and block
 	show();
@@ -50,15 +53,16 @@ void ConversationEditor::populateWindow() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Create the conversation properties pane
-	gtk_box_pack_start(GTK_BOX(vbox), createPropertyPane(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Conversation Properties</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(createPropertyPane(), 18, 1), FALSE, FALSE, 0);
 
 	// Actors
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Actors</b>"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createActorPanel(), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(createActorPanel(), 18, 1), FALSE, FALSE, 0);
 	
 	// Commands
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Commands</b>"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createCommandPanel(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(createCommandPanel(), 18, 1), TRUE, TRUE, 0);
 
 	// Buttons
 	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
@@ -80,7 +84,7 @@ GtkWidget* ConversationEditor::createPropertyPane() {
 	
 	// Conversation name
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Name</b>"),
+					 gtkutil::LeftAlignedLabel("Name"),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	_widgets[WIDGET_CONV_NAME_ENTRY] = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), 
@@ -140,13 +144,15 @@ GtkWidget* ConversationEditor::createActorPanel() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), actorColumn);
 		
 	// Action buttons
+	_widgets[WIDGET_ADD_ACTOR_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	_widgets[WIDGET_DELETE_ACTOR_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ACTOR_BUTTON]), "clicked", G_CALLBACK(onAddActor), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_ACTOR_BUTTON]), "clicked", G_CALLBACK(onDeleteActor), this);
+
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
 
-	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-
-	g_signal_connect(G_OBJECT(addButton), "clicked", G_CALLBACK(onAddActor), this);
-	g_signal_connect(G_OBJECT(delButton), "clicked", G_CALLBACK(onDeleteActor), this);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_ACTOR_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_ACTOR_BUTTON], FALSE, FALSE, 0);
 
 	// Actors treeview goes left, actionbuttons go right
 	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
@@ -200,7 +206,7 @@ GtkWidget* ConversationEditor::createButtonPanel() {
 	return gtkutil::RightAlignment(buttonHBox);	
 }
 
-void ConversationEditor::populateWidgets() {
+void ConversationEditor::updateWidgets() {
 	// Clear the liststores first
 	gtk_list_store_clear(_actorStore);
 	gtk_list_store_clear(_commandStore);
@@ -271,7 +277,11 @@ void ConversationEditor::onCancel(GtkWidget* button, ConversationEditor* self) {
 }
 
 void ConversationEditor::onActorSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self) {
-	// TODO: Set button sensitivity
+	// Get the selection
+	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &(self->_currentActor)) ? true : false;
+
+	// Enable the delete buttons if we have a selection
+	gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ACTOR_BUTTON], hasSelection ? TRUE: FALSE);
 }
 
 void ConversationEditor::onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self) {
@@ -279,11 +289,46 @@ void ConversationEditor::onCommandSelectionChanged(GtkTreeSelection* sel, Conver
 }
 
 void ConversationEditor::onAddActor(GtkWidget* w, ConversationEditor* self) {
-	// TODO
+	// Get the lowest available actor ID
+	int idx = 1;
+
+	for (idx = 1; idx < INT_MAX; idx++) {
+		if (self->_conversation.actors.find(idx) == self->_conversation.actors.end()) {
+			break;
+		}
+	}
+
+	// Add the new actor to the map
+	self->_conversation.actors[idx] = "New Actor";
+
+	// Update the widgets
+	self->updateWidgets();
 }
 
 void ConversationEditor::onDeleteActor(GtkWidget* w, ConversationEditor* self) {
-	// TODO
+	// Get the index of the currently selected actor
+	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_actorStore), &(self->_currentActor), 0);
+
+	// Add the new actor to the map
+	conversation::Conversation::ActorMap::iterator i = self->_conversation.actors.find(index);
+
+	if (i != self->_conversation.actors.end()) {
+		// Remove the specified actor
+		self->_conversation.actors.erase(index);
+	}
+
+	// Adjust the numbers of all other actors with higher numbers
+	while (self->_conversation.actors.find(index + 1) != self->_conversation.actors.end()) {
+		// Move the actor with the higher index "down" by one number...
+		self->_conversation.actors[index] = self->_conversation.actors[index + 1];
+		// ...and remove it from the old location
+		self->_conversation.actors.erase(index + 1);
+
+		index++;
+	}
+	
+	// Update the widgets
+	self->updateWidgets();
 }
 
 void ConversationEditor::onActorEdited(GtkCellRendererText* renderer, 
@@ -298,7 +343,7 @@ void ConversationEditor::onActorEdited(GtkCellRendererText* renderer,
 		self->_conversation.actors[actorNum] = new_text;
 
 		// Update all widgets
-		self->populateWidgets();
+		self->updateWidgets();
 	}
 }
 
