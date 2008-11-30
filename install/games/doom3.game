@@ -285,6 +285,11 @@
 		<responseEffectPrefix value="effect_" />
 		<selfEntity value="_SELF" />
 	</stimResponseSystem>
+
+	<conversationSystem>
+		<conversationCommandPrefix value="atdm:conversation_command_" />
+	</conversationSystem>
+
 	<difficulty>
 		<numLevels value="3" />
 		<defaultSettingsEclass value="atdm:difficulty_settings_default" />
