@@ -8,6 +8,7 @@
 
 typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkTreeSelection GtkTreeSelection;
+typedef struct _GtkCellRendererText GtkCellRendererText;
 
 namespace ui {
 
@@ -45,6 +46,10 @@ private:
 	static void onCancel(GtkWidget* button, ConversationEditor* self);
 	static void onActorSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
 	static void onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
+
+	static void onAddActor(GtkWidget* w, ConversationEditor* self);
+	static void onDeleteActor(GtkWidget* w, ConversationEditor* self);
+	static void onActorEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, ConversationEditor* self);
 
 }; // class ConversationEditor
 

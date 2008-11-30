@@ -16,6 +16,7 @@ class TextColumn
 {
 	// Column widget
 	GtkTreeViewColumn* _column;
+	GtkCellRenderer* _renderer;
 	
 public:
 
@@ -33,21 +34,19 @@ public:
 	TextColumn(const std::string& title, gint colno, bool useMarkup = true) {
 		
 		// Create the cell renderer
-		GtkCellRenderer* rend = gtk_cell_renderer_text_new();
+		_renderer = gtk_cell_renderer_text_new();
 		
 		// Construct the column itself
-		if (useMarkup) {
-			_column = gtk_tree_view_column_new_with_attributes(title.c_str(),
-														   	   rend,
-														   	   "markup", colno,
-														   	   NULL);
-		}
-		else {
-			_column = gtk_tree_view_column_new_with_attributes(title.c_str(),
-														   	   rend,
-														   	   "text", colno,
-														   	   NULL);
-		}
+		_column = gtk_tree_view_column_new_with_attributes(
+			title.c_str(),
+			_renderer,
+			(useMarkup) ? "markup" : "text", colno,
+			NULL
+		);
+	}
+
+	GtkCellRendererText* getCellRenderer() {
+		return GTK_CELL_RENDERER_TEXT(_renderer);
 	}
 	
 	/** Operator cast to GtkTreeViewColumn*.
