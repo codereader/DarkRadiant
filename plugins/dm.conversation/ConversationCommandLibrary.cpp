@@ -1,5 +1,6 @@
 #include "ConversationCommandLibrary.h"
 
+#include <gtk/gtkliststore.h>
 #include "ieclass.h"
 #include "iregistry.h"
 #include "string/string.h"
@@ -74,6 +75,21 @@ void ConversationCommandLibrary::loadConversationCommands() {
 	// Load the possible command types
 	ConversationCommandInfoLoader loader(_commandInfo);
 	GlobalEntityClassManager().forEach(loader);
+}
+
+void ConversationCommandLibrary::populateListStore(GtkListStore* store) {
+	// Iterate over everything and push the data into the liststore
+	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin(); 
+		 i != _commandInfo.end(); 
+		 ++i)
+	{
+		GtkTreeIter iter;
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter, 
+						   0, i->second->id, 
+						   1, i->second->name.c_str(),
+						   -1);
+	}
 }
 
 // Static accessor

@@ -3,6 +3,8 @@
 
 #include "ConversationCommandInfo.h"
 
+typedef struct _GtkListStore GtkListStore;
+
 namespace conversation {
 
 	namespace {
@@ -37,6 +39,13 @@ public:
 	 */
 	const ConversationCommandInfo& findCommandInfo(const std::string& name);
 	const ConversationCommandInfo& findCommandInfo(int id);
+
+	/**
+	 * greebo: This populates the given liststore with all available commands.
+	 * The liststore must provide two columns (one INT for the ID, one STRING
+	 * for the display name).
+	 */
+	void populateListStore(GtkListStore* store);
 
 private:
 	// Loads all entityDefs matching the given prefix

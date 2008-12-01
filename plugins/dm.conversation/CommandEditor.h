@@ -29,8 +29,12 @@ private:
 
 	Result _result;
 
+	// All available actors
 	GtkListStore* _actorStore;
 	GtkWidget* _actorDropDown;
+
+	// All available commands
+	GtkListStore* _commandStore;
 
 public:
 	// Pass the parent window, the command and the conversation to edit

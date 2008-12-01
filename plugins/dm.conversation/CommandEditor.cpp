@@ -7,6 +7,8 @@
 #include "gtkutil/TreeModel.h"
 #include "string/string.h"
 
+#include "ConversationCommandLibrary.h"
+
 namespace ui {
 
 	namespace {
@@ -18,7 +20,8 @@ CommandEditor::CommandEditor(GtkWindow* parent, conversation::ConversationComman
 	_conversation(conv),
 	_command(command),
 	_result(NUM_RESULTS),
-	_actorStore(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)) // number + caption
+	_actorStore(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)), // number + caption
+	_commandStore(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)) // number + caption
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 
@@ -33,6 +36,9 @@ CommandEditor::CommandEditor(GtkWindow* parent, conversation::ConversationComman
 						   1, (std::string("Actor ") + intToStr(i->first) + " (" + i->second + ")").c_str(),
 						   -1);
 	}
+
+	// Let the command library fill the command store
+	conversation::ConversationCommandLibrary::Instance().populateListStore(_commandStore);
 
 	// Create all widgets
 	populateWindow();
