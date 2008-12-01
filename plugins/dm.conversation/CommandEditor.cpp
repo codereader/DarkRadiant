@@ -4,6 +4,7 @@
 #include "gtkutil/LeftalignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/TreeModel.h"
 #include "string/string.h"
 
 namespace ui {
@@ -48,7 +49,21 @@ CommandEditor::Result CommandEditor::getResult() {
 }
 
 void CommandEditor::updateWidgets() {
-	// TODO
+	// Select the actor passed from the command
+	// Find the entity using a TreeModel traversor (search the column #0)
+	gtkutil::TreeModel::SelectionFinder finder(_command.actor, 0);
+
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_actorStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	// Select the found treeiter, if the name was found in the liststore
+	if (finder.getPath() != NULL) {
+		GtkTreeIter iter = finder.getIter();
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_actorDropDown), &iter);
+	}
 }
 
 void CommandEditor::save() {
