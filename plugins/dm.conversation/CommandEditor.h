@@ -6,6 +6,7 @@
 
 #include "Conversation.h"
 #include "ConversationCommand.h"
+#include "CommandArgumentItem.h"
 
 namespace ui {
 
@@ -37,6 +38,15 @@ private:
 	GtkListStore* _commandStore;
 	GtkWidget* _commandDropDown;
 
+	GtkWidget* _argAlignment;
+	GtkWidget* _argTable;
+
+	// The tooltips group to display the help text
+	GtkTooltips* _tooltips;
+
+	typedef std::vector<CommandArgumentItemPtr> ArgumentItemList;
+	ArgumentItemList _argumentItems;
+
 public:
 	// Pass the parent window, the command and the conversation to edit
 	CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv);
@@ -50,10 +60,16 @@ private:
 
 	void save();
 
+	void commandTypeChanged();
+
+	void createArgumentWidgets(int commandTypeID);
+
 	GtkWidget* createButtonPanel();
 
 	static void onSave(GtkWidget* button, CommandEditor* self);
 	static void onCancel(GtkWidget* button, CommandEditor* self);
+
+	static void onCommandTypeChange(GtkWidget* combobox, CommandEditor* self);
 };
 
 } // namespace ui
