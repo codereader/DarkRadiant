@@ -56,7 +56,6 @@ CommandEditor::Result CommandEditor::getResult() {
 
 void CommandEditor::updateWidgets() {
 	// Select the actor passed from the command
-	// Find the entity using a TreeModel traversor (search the column #0)
 	gtkutil::TreeModel::SelectionFinder finder(_command.actor, 0);
 
 	gtk_tree_model_foreach(
@@ -69,6 +68,21 @@ void CommandEditor::updateWidgets() {
 	if (finder.getPath() != NULL) {
 		GtkTreeIter iter = finder.getIter();
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_actorDropDown), &iter);
+	}
+
+	// Select the type passed from the command
+	gtkutil::TreeModel::SelectionFinder cmdFinder(_command.type, 0);
+
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_commandStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&cmdFinder
+	);
+	
+	// Select the found treeiter, if the name was found in the liststore
+	if (cmdFinder.getPath() != NULL) {
+		GtkTreeIter iter = cmdFinder.getIter();
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_commandDropDown), &iter);
 	}
 }
 
@@ -95,7 +109,14 @@ void CommandEditor::populateWindow() {
 
 	// Command Type
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Command</b>"), FALSE, FALSE, 0);
-	//gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(createActorPanel(), 18, 1), FALSE, FALSE, 0);
+	_commandDropDown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(_commandStore));
+
+	// Add the cellrenderer for the name
+	GtkCellRenderer* cmdNameRenderer = gtk_cell_renderer_text_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_commandDropDown), cmdNameRenderer, TRUE);
+	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_commandDropDown), cmdNameRenderer, "text", 1);
+
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_commandDropDown, 18, 1), FALSE, FALSE, 0);
 	
 	// Command Arguments
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Command Arguments</b>"), FALSE, FALSE, 0);
