@@ -52,6 +52,9 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 		else if (argTypeStr == "entity") {
 			info.type = ArgumentInfo::ARGTYPE_ENTITY;
 		}
+		else if (argTypeStr == "bool") {
+			info.type = ArgumentInfo::ARGTYPE_BOOL;
+		}
 		else {
 			globalErrorStream() << "Could not determine Conversation Command Argument type: " << 
 				argTypeStr << " on entityDef " << eclass->getName() << std::endl; 
