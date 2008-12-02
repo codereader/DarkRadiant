@@ -185,7 +185,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID) {
 
 	typedef conversation::ConversationCommandInfo::ArgumentInfoList::const_iterator ArgumentIter;
 
-	int index = 0;
+	int index = 1;
 
 	for (ArgumentIter i = cmdInfo.arguments.begin(); 
 		 i != cmdInfo.arguments.end(); ++i, ++index)
@@ -196,6 +196,10 @@ void CommandEditor::createArgumentWidgets(int commandTypeID) {
 		
 		switch (argInfo.type)
 		{
+		case conversation::ArgumentInfo::ARGTYPE_BOOL:
+			// Create a new bool argument item
+			item = CommandArgumentItemPtr(new BooleanArgument(argInfo, _tooltips));
+			break;
 		case conversation::ArgumentInfo::ARGTYPE_INT:
 		case conversation::ArgumentInfo::ARGTYPE_FLOAT:
 		case conversation::ArgumentInfo::ARGTYPE_STRING:
@@ -223,7 +227,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID) {
 		if (item != NULL) {
 			_argumentItems.push_back(item);
 			
-			/*if (arg.type != "b") {
+			if (argInfo.type != conversation::ArgumentInfo::ARGTYPE_BOOL) {
 				// The label
 				gtk_table_attach(
 					GTK_TABLE(_argTable), item->getLabelWidget(),
@@ -251,7 +255,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID) {
 				GTK_TABLE(_argTable), item->getHelpWidget(),
 				2, 3, index-1, index, // index starts with 1, hence the -1
 				(GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0
-			);*/
+			);
 		}
 	}
 	
