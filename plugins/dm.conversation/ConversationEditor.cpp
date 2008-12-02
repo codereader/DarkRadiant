@@ -43,7 +43,8 @@ ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversa
 								   G_TYPE_STRING,	// actor name
 								   G_TYPE_STRING,	// sentence
 								   G_TYPE_STRING)),	// wait yes/no
-   _conversation(conversation)
+   _conversation(conversation), // copy the conversation to a local object
+   _targetConversation(conversation)
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 
@@ -342,6 +343,9 @@ void ConversationEditor::save() {
 
 	_conversation.actorsAlwaysFaceEachOther = 
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_widgets[WIDGET_CONV_ACTORS_ALWAYS_FACE])) ? true : false;
+
+	// Copy the working copy over the actual object
+	_targetConversation = _conversation;
 }
 
 void ConversationEditor::onSave(GtkWidget* button, ConversationEditor* self) {

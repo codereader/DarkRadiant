@@ -25,8 +25,11 @@ private:
 	// The conversation (read-only)
 	const conversation::Conversation& _conversation;
 
-	// The command we're editing
-	conversation::ConversationCommand& _command;
+	// The command we're editing (working copy)
+	conversation::ConversationCommand _command;
+
+	// The actual command we're saving to on "OK"
+	conversation::ConversationCommand& _targetCommand;
 
 	Result _result;
 

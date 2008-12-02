@@ -20,7 +20,8 @@ namespace ui {
 CommandEditor::CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv) :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, parent),
 	_conversation(conv),
-	_command(command),
+	_command(command), // copy the conversation command to a local object
+	_targetCommand(command),
 	_result(NUM_RESULTS),
 	_actorStore(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)), // number + caption
 	_commandStore(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)), // number + caption
@@ -166,6 +167,9 @@ void CommandEditor::save() {
 	catch (std::runtime_error e) {
 		globalErrorStream() << "Cannot find conversation command info for index " << _command.type << std::endl;
 	}
+
+	// Copy the command over the target object
+	_targetCommand = _command;
 }
 
 void CommandEditor::populateWindow() {

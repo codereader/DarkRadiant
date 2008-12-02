@@ -24,8 +24,11 @@ class ConversationEditor :
 
 	std::map<int, GtkWidget*> _widgets;
 	
-	// The conversation we're editing
-	conversation::Conversation& _conversation;
+	// The conversation we're editing (the working copy)
+	conversation::Conversation _conversation;
+
+	// The actual conversation, where the changes will be saved to on "OK"
+	conversation::Conversation& _targetConversation;
 
 public:
 	ConversationEditor(GtkWindow* parent, conversation::Conversation& conversation);

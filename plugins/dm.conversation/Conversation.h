@@ -39,6 +39,27 @@ public:
 		actorsAlwaysFaceEachOther(true),
 		maxPlayCount(-1)
 	{}
+
+	// Copy Constructor
+	Conversation(const Conversation& other) :
+		name(other.name),
+		talkDistance(other.talkDistance),
+		actorsMustBeWithinTalkdistance(other.actorsMustBeWithinTalkdistance),
+		actorsAlwaysFaceEachOther(other.actorsAlwaysFaceEachOther),
+		maxPlayCount(other.maxPlayCount),
+		actors(other.actors)
+	{
+		// Copy all commands, one by one
+		for (CommandMap::const_iterator i = other.commands.begin(); 
+			 i != other.commands.end(); ++i)
+		{
+			// Copy-construct a new conversation command
+			ConversationCommandPtr copy(new ConversationCommand(*i->second));
+
+			// Insert this into our own map
+			commands[i->first] = copy;
+		}
+	}
 };
 
 /**
