@@ -24,8 +24,11 @@ namespace {
 		WIDGET_CONV_ACTORS_ALWAYS_FACE,
 		WIDGET_ADD_ACTOR_BUTTON,
 		WIDGET_DELETE_ACTOR_BUTTON,
+		WIDGET_COMMAND_TREEVIEW,
 		WIDGET_ADD_CMD_BUTTON,
 		WIDGET_EDIT_CMD_BUTTON,
+		WIDGET_MOVE_UP_CMD_BUTTON,
+		WIDGET_MOVE_DOWN_CMD_BUTTON,
 		WIDGET_DELETE_CMD_BUTTON,
 	};
 }
@@ -35,10 +38,11 @@ ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversa
 	_actorStore(gtk_list_store_new(2, 
 								   G_TYPE_INT,		// actor number
 								   G_TYPE_STRING)),	// display name
-   _commandStore(gtk_list_store_new(3, 
+   _commandStore(gtk_list_store_new(4, 
 								   G_TYPE_INT,		// cmd number
 								   G_TYPE_STRING,	// actor name
-								   G_TYPE_STRING)),	// sentence
+								   G_TYPE_STRING,	// sentence
+								   G_TYPE_STRING)),	// wait yes/no
    _conversation(conversation)
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -48,6 +52,9 @@ ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversa
 
 	// Load the conversation values into the widgets
 	updateWidgets();
+
+	// Clear the button sensitivity in the command actions panel
+	updateCmdActionSensitivity(false);
 
 	// Show and block
 	show();
@@ -171,7 +178,9 @@ GtkWidget* ConversationEditor::createCommandPanel() {
 	
 	// Tree view
 	GtkWidget* tv = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_commandStore));
-	gtk_widget_set_size_request(tv, -1, MIN_HEIGHT_COMMAND_TREEVIEW);
+	_widgets[WIDGET_COMMAND_TREEVIEW] = tv;
+
+	gtk_widget_set_size_request(tv, 300, MIN_HEIGHT_COMMAND_TREEVIEW);
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), TRUE);
 
@@ -182,20 +191,27 @@ GtkWidget* ConversationEditor::createCommandPanel() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Actor", 1));
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Command", 2));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Wait", 3));
 	
 	// Action buttons
 	_widgets[WIDGET_ADD_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	_widgets[WIDGET_EDIT_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	_widgets[WIDGET_DELETE_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	_widgets[WIDGET_MOVE_UP_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+	_widgets[WIDGET_MOVE_DOWN_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
 
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_CMD_BUTTON]), "clicked", G_CALLBACK(onAddCommand), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_EDIT_CMD_BUTTON]), "clicked", G_CALLBACK(onEditCommand), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_UP_CMD_BUTTON]), "clicked", G_CALLBACK(onMoveUpCommand), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_DOWN_CMD_BUTTON]), "clicked", G_CALLBACK(onMoveDownCommand), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_CMD_BUTTON]), "clicked", G_CALLBACK(onDeleteCommand), this);
 
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
 
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_CMD_BUTTON], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_EDIT_CMD_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_MOVE_UP_CMD_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_MOVE_DOWN_CMD_BUTTON], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_CMD_BUTTON], FALSE, FALSE, 0);
 
 	// Command treeview goes left, action buttons go right
@@ -263,7 +279,57 @@ void ConversationEditor::updateWidgets() {
 						   0, i->first, 
 						   1, (std::string("Actor ") + intToStr(cmd.actor)).c_str(),
 						   2, cmd.getSentence().c_str(),
+						   3, cmd.waitUntilFinished ? "yes" : "no",
 						   -1);
+	}
+}
+
+void ConversationEditor::selectCommand(int index) {
+	// Select the actor passed from the command
+	gtkutil::TreeModel::SelectionFinder finder(index, 0);
+
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_commandStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	// Select the found treeiter, if the name was found in the liststore
+	if (finder.getPath() != NULL) {
+		GtkTreeView* tv = GTK_TREE_VIEW(_widgets[WIDGET_COMMAND_TREEVIEW]);
+		// Expand the treeview to display the target row
+		gtk_tree_view_expand_to_path(tv, finder.getPath());
+		// Highlight the target row
+		gtk_tree_view_set_cursor(tv, finder.getPath(), NULL, false);
+		// Make the selected row visible 
+		gtk_tree_view_scroll_to_cell(tv, finder.getPath(), NULL, true, 0.3f, 0.0f);
+	}
+}
+
+void ConversationEditor::moveSelectedCommand(int delta) {
+	// Get the index of the currently selected command
+	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(_commandStore), &(_currentCommand), 0);
+
+	int targetIndex = index + delta;
+	
+	if (targetIndex <= 0) {
+		return; // can't move any more upwards
+	}
+
+	// Try to look up the command indices in the conversation
+	conversation::Conversation::CommandMap::iterator oldCmd = _conversation.commands.find(index);
+	conversation::Conversation::CommandMap::iterator newCmd = _conversation.commands.find(targetIndex);
+
+	if (oldCmd != _conversation.commands.end() && newCmd != _conversation.commands.end()) {
+		// There is a command at this position, swap it
+		conversation::ConversationCommandPtr temp = newCmd->second;
+		newCmd->second = oldCmd->second;
+		oldCmd->second = temp;
+
+		updateWidgets();
+
+		// Select the moved command, for the user's convenience
+		selectCommand(newCmd->first);
 	}
 }
 
@@ -296,16 +362,35 @@ void ConversationEditor::onActorSelectionChanged(GtkTreeSelection* sel, Conversa
 	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &(self->_currentActor)) ? true : false;
 
 	// Enable the delete buttons if we have a selection
-	gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ACTOR_BUTTON], hasSelection ? TRUE: FALSE);
+	gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ACTOR_BUTTON], hasSelection ? TRUE : FALSE);
+}
+
+void ConversationEditor::updateCmdActionSensitivity(bool hasSelection) {
+	// Enable the edit and delete buttons if we have a selection
+	gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_CMD_BUTTON], hasSelection ? TRUE : FALSE);
+	gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_CMD_BUTTON], hasSelection ? TRUE : FALSE);
+
+	if (hasSelection) {
+		// Check if this is the first command in the list, get the ID of the selected item
+		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(_commandStore), &(_currentCommand), 0);
+
+		bool hasNext = _conversation.commands.find(index+1) != _conversation.commands.end();
+		bool hasPrev = index > 1;
+
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_UP_CMD_BUTTON], hasPrev ? TRUE : FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_DOWN_CMD_BUTTON], hasNext ? TRUE : FALSE);
+	}
+	else {
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_UP_CMD_BUTTON], FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_DOWN_CMD_BUTTON], FALSE);
+	}
 }
 
 void ConversationEditor::onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self) {
 	// Get the selection
 	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &(self->_currentCommand)) ? true : false;
 
-	// Enable the edit and delete buttons if we have a selection
-	gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_CMD_BUTTON], hasSelection ? TRUE: FALSE);
-	gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_CMD_BUTTON], hasSelection ? TRUE: FALSE);
+	self->updateCmdActionSensitivity(hasSelection);
 }
 
 void ConversationEditor::onAddActor(GtkWidget* w, ConversationEditor* self) {
@@ -372,20 +457,31 @@ void ConversationEditor::onActorEdited(GtkCellRendererText* renderer,
 }
 
 void ConversationEditor::onAddCommand(GtkWidget* w, ConversationEditor* self) {
+
+	conversation::Conversation& conv = self->_conversation; // shortcut
+
 	// Create a new command
 	conversation::ConversationCommandPtr command(new conversation::ConversationCommand);
 
 	// Construct a command editor (blocks on construction)
-	CommandEditor editor(GTK_WINDOW(self->getWindow()), *command, self->_conversation);
+	CommandEditor editor(GTK_WINDOW(self->getWindow()), *command, conv);
 
 	if (editor.getResult() == CommandEditor::RESULT_OK) {
-		// The user hit ok, insert the command
-		// TODO
+		// The user hit ok, insert the command, find the first free index
+		int index = 1;
+		while (conv.commands.find(index) != conv.commands.end()) {
+			index++;
+		}
+
+		// Insert the command at the new location
+		conv.commands[index] = command;
+
+		self->updateWidgets();
 	}
 }
 
 void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
-	// Get the index of the currently selected actor
+	// Get the index of the currently selected command
 	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_commandStore), &(self->_currentCommand), 0);
 
 	// Try to look up the command in the conversation
@@ -404,8 +500,18 @@ void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
 	}
 }
 
+void ConversationEditor::onMoveUpCommand(GtkWidget* w, ConversationEditor* self) {
+	// Pass the call
+	self->moveSelectedCommand(-1);
+}
+
+void ConversationEditor::onMoveDownCommand(GtkWidget* w, ConversationEditor* self) {
+	// Pass the call
+	self->moveSelectedCommand(+1);
+}
+
 void ConversationEditor::onDeleteCommand(GtkWidget* w, ConversationEditor* self) {
-	// Get the index of the currently selected actor
+	// Get the index of the currently selected command
 	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_commandStore), &(self->_currentCommand), 0);
 
 	// Add the new command to the map

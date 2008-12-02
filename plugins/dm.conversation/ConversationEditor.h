@@ -38,10 +38,19 @@ private:
 	// Fills the conversation values into the widgets
 	void updateWidgets();
 
+	void updateCmdActionSensitivity(bool hasSelection);
+
 	GtkWidget* createPropertyPane();
 	GtkWidget* createButtonPanel();
 	GtkWidget* createActorPanel();
 	GtkWidget* createCommandPanel();
+
+	// Move the currently selected command about the given delta 
+	// (-1 is one upwards, +1 is one position downards)
+	void moveSelectedCommand(int delta);
+
+	// Highlight the command with the given index
+	void selectCommand(int index);
 
 	static void onSave(GtkWidget* button, ConversationEditor* self);
 	static void onCancel(GtkWidget* button, ConversationEditor* self);
@@ -55,6 +64,8 @@ private:
 
 	static void onAddCommand(GtkWidget* w, ConversationEditor* self);
 	static void onEditCommand(GtkWidget* w, ConversationEditor* self);
+	static void onMoveUpCommand(GtkWidget* w, ConversationEditor* self);
+	static void onMoveDownCommand(GtkWidget* w, ConversationEditor* self);
 	static void onDeleteCommand(GtkWidget* w, ConversationEditor* self);
 
 }; // class ConversationEditor
