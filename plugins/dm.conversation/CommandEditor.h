@@ -38,6 +38,8 @@ private:
 	GtkListStore* _commandStore;
 	GtkWidget* _commandDropDown;
 
+	GtkWidget* _waitUntilFinished;
+
 	GtkWidget* _argAlignment;
 	GtkWidget* _argTable;
 
@@ -63,6 +65,8 @@ private:
 	void commandTypeChanged();
 
 	void createArgumentWidgets(int commandTypeID);
+
+	void upateWaitUntilFinished(int commandTypeID);
 
 	GtkWidget* createButtonPanel();
 

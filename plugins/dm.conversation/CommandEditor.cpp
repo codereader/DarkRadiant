@@ -107,10 +107,64 @@ void CommandEditor::updateWidgets() {
 		// Load the value into the argument item
 		_argumentItems[argIndex - 1]->setValueFromString(i->second);
 	}
+
+	// Update the "wait until finished" flag 
+	gtk_toggle_button_set_active(
+		GTK_TOGGLE_BUTTON(_waitUntilFinished), 
+		_command.waitUntilFinished ? TRUE : FALSE
+	);
+
+	// Update the sensitivity of the correct flag
+	upateWaitUntilFinished(_command.type);
 }
 
 void CommandEditor::save() {
-	// TODO
+	// Get the active actor item
+	GtkTreeIter iter;
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(_actorDropDown), &iter)) {
+		// Get the model
+		GtkTreeModel* model = gtk_combo_box_get_model(GTK_COMBO_BOX(_actorDropDown));
+		// Get the value
+		_command.actor = gtkutil::TreeModel::getInt(model, &iter, 0);
+	}
+
+	// Get the active command type selection
+	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(_commandDropDown), &iter)) {
+		// Get the model
+		GtkTreeModel* model = gtk_combo_box_get_model(GTK_COMBO_BOX(_commandDropDown));
+		// Get the value
+		_command.type = gtkutil::TreeModel::getInt(model, &iter, 0);
+	}
+
+	// Clear the existing arguments
+	_command.arguments.clear();
+
+	int index = 1;
+
+	for (ArgumentItemList::iterator i = _argumentItems.begin();
+		 i != _argumentItems.end(); ++i, ++index)
+	{
+		_command.arguments[index] = (*i)->getValue();
+	}
+
+	// Get the value of the "wait until finished" flag
+	try {
+		const conversation::ConversationCommandInfo& cmdInfo = 
+			conversation::ConversationCommandLibrary::Instance().findCommandInfo(_command.type);
+
+		if (cmdInfo.waitUntilFinishedAllowed) {
+			// Load the value
+			_command.waitUntilFinished = gtk_toggle_button_get_active(
+				GTK_TOGGLE_BUTTON(_waitUntilFinished)) ? true : false;
+		}
+		else {
+			// Command doesn't support "wait until finished", set to default == true
+			_command.waitUntilFinished = true;
+		}
+	}
+	catch (std::runtime_error e) {
+		globalErrorStream() << "Cannot find conversation command info for index " << _command.type << std::endl;
+	}
 }
 
 void CommandEditor::populateWindow() {
@@ -153,6 +207,12 @@ void CommandEditor::populateWindow() {
 
 	gtk_box_pack_start(GTK_BOX(vbox), _argAlignment, FALSE, FALSE, 3);
 
+	// Wait until finished
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Command Properties</b>"), FALSE, FALSE, 0);
+
+	_waitUntilFinished = gtk_check_button_new_with_label("Wait until finished");
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_waitUntilFinished, 18, 1), FALSE, FALSE, 0);
+
 	// Buttons
 	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
 
@@ -174,113 +234,141 @@ void CommandEditor::commandTypeChanged() {
 
 	// Create the argument widgets for this new command type
 	createArgumentWidgets(newCommandTypeID);
+
+	// Update the sensitivity of the correct flag
+	upateWaitUntilFinished(newCommandTypeID);
+}
+
+void CommandEditor::upateWaitUntilFinished(int commandTypeID) {
+	// Update the sensitivity of the correct flag
+	try {
+		const conversation::ConversationCommandInfo& cmdInfo = 
+			conversation::ConversationCommandLibrary::Instance().findCommandInfo(commandTypeID);
+
+		gtk_widget_set_sensitive(_waitUntilFinished, cmdInfo.waitUntilFinishedAllowed ? TRUE : FALSE);
+	}
+	catch (std::runtime_error e) {
+		globalErrorStream() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
+	}
 }
 
 void CommandEditor::createArgumentWidgets(int commandTypeID) {
 
-	const conversation::ConversationCommandInfo& cmdInfo = 
-		conversation::ConversationCommandLibrary::Instance().findCommandInfo(commandTypeID);
+	try {
+		const conversation::ConversationCommandInfo& cmdInfo = 
+			conversation::ConversationCommandLibrary::Instance().findCommandInfo(commandTypeID);
 
-	// Remove all possible previous items from the list
-	_argumentItems.clear();
+		// Remove all possible previous items from the list
+		_argumentItems.clear();
 
-	// Remove the old table if there exists one
-	if (_argTable != NULL) {
-		// This removes the old table from the alignment container
-		// greebo: Increase the refCount of the table to prevent destruction.
-		// Destruction would cause weird shutdown crashes.
-		g_object_ref(G_OBJECT(_argTable));
-		gtk_container_remove(GTK_CONTAINER(_argAlignment), _argTable);
-	}
-	
-	// Create the tooltips group for the help mouseover texts
-	_tooltips = gtk_tooltips_new();
-	gtk_tooltips_enable(_tooltips);
-	
-	// Setup the table with default spacings
-	_argTable = gtk_table_new(static_cast<guint>(cmdInfo.arguments.size()), 3, false);
-    gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
-    gtk_table_set_row_spacings(GTK_TABLE(_argTable), 6);
-	gtk_container_add(GTK_CONTAINER(_argAlignment), _argTable); 
-
-	typedef conversation::ConversationCommandInfo::ArgumentInfoList::const_iterator ArgumentIter;
-
-	int index = 1;
-
-	for (ArgumentIter i = cmdInfo.arguments.begin(); 
-		 i != cmdInfo.arguments.end(); ++i, ++index)
-	{
-		const conversation::ArgumentInfo& argInfo = *i;
-
-		CommandArgumentItemPtr item;
-		
-		switch (argInfo.type)
-		{
-		case conversation::ArgumentInfo::ARGTYPE_BOOL:
-			// Create a new bool argument item
-			item = CommandArgumentItemPtr(new BooleanArgument(argInfo, _tooltips));
-			break;
-		case conversation::ArgumentInfo::ARGTYPE_INT:
-		case conversation::ArgumentInfo::ARGTYPE_FLOAT:
-		case conversation::ArgumentInfo::ARGTYPE_STRING:
-			// Create a new string argument item
-			item = CommandArgumentItemPtr(new StringArgument(argInfo, _tooltips));
-			break;
-		case conversation::ArgumentInfo::ARGTYPE_VECTOR:
-		case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
-			// Create a new string argument item
-			item = CommandArgumentItemPtr(new StringArgument(argInfo, _tooltips));
-			break;
-		case conversation::ArgumentInfo::ARGTYPE_ACTOR:
-			// Create a new actor argument item
-			item = CommandArgumentItemPtr(new ActorArgument(argInfo, _tooltips, _actorStore));
-			break;
-		case conversation::ArgumentInfo::ARGTYPE_ENTITY:
-			// Create a new string argument item
-			item = CommandArgumentItemPtr(new StringArgument(argInfo, _tooltips));
-			break;
-		default:
-			globalErrorStream() << "Unknown command argument type: " << argInfo.type << std::endl;
-			break;
-		};
-
-		if (item != NULL) {
-			_argumentItems.push_back(item);
-			
-			if (argInfo.type != conversation::ArgumentInfo::ARGTYPE_BOOL) {
-				// The label
-				gtk_table_attach(
-					GTK_TABLE(_argTable), item->getLabelWidget(),
-					0, 1, index-1, index, // index starts with 1, hence the -1
-					GTK_FILL, (GtkAttachOptions)0, 0, 0
-				);
-				
-				// The edit widgets
-				gtk_table_attach_defaults(
-					GTK_TABLE(_argTable), item->getEditWidget(),
-					1, 2, index-1, index // index starts with 1, hence the -1
-				);
-			}
-			else {
-				// This is a checkbutton - should be spanned over two columns
-				gtk_table_attach(
-					GTK_TABLE(_argTable), item->getEditWidget(),
-					0, 2, index-1, index, // index starts with 1, hence the -1
-					GTK_FILL, (GtkAttachOptions)0, 0, 0
-				);
-			}
-			
-			// The help widgets
-			gtk_table_attach(
-				GTK_TABLE(_argTable), item->getHelpWidget(),
-				2, 3, index-1, index, // index starts with 1, hence the -1
-				(GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0
-			);
+		// Remove the old table if there exists one
+		if (_argTable != NULL) {
+			// This removes the old table from the alignment container
+			// greebo: Increase the refCount of the table to prevent destruction.
+			// Destruction would cause weird shutdown crashes.
+			g_object_ref(G_OBJECT(_argTable));
+			gtk_container_remove(GTK_CONTAINER(_argAlignment), _argTable);
 		}
+
+		if (cmdInfo.arguments.empty()) {
+			// No arguments, just push an empty label into the alignment
+			GtkWidget* label = gtkutil::LeftAlignedLabel("<i>None</i>");
+			gtk_container_add(GTK_CONTAINER(_argAlignment), label);
+			return;
+		}
+		
+		// Create the tooltips group for the help mouseover texts
+		_tooltips = gtk_tooltips_new();
+		gtk_tooltips_enable(_tooltips);
+		
+		// Setup the table with default spacings
+		_argTable = gtk_table_new(static_cast<guint>(cmdInfo.arguments.size()), 3, false);
+		gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
+		gtk_table_set_row_spacings(GTK_TABLE(_argTable), 6);
+		gtk_container_add(GTK_CONTAINER(_argAlignment), _argTable); 
+
+		typedef conversation::ConversationCommandInfo::ArgumentInfoList::const_iterator ArgumentIter;
+
+		int index = 1;
+
+		for (ArgumentIter i = cmdInfo.arguments.begin(); 
+			 i != cmdInfo.arguments.end(); ++i, ++index)
+		{
+			const conversation::ArgumentInfo& argInfo = *i;
+
+			CommandArgumentItemPtr item;
+			
+			switch (argInfo.type)
+			{
+			case conversation::ArgumentInfo::ARGTYPE_BOOL:
+				// Create a new bool argument item
+				item = CommandArgumentItemPtr(new BooleanArgument(argInfo, _tooltips));
+				break;
+			case conversation::ArgumentInfo::ARGTYPE_INT:
+			case conversation::ArgumentInfo::ARGTYPE_FLOAT:
+			case conversation::ArgumentInfo::ARGTYPE_STRING:
+				// Create a new string argument item
+				item = CommandArgumentItemPtr(new StringArgument(argInfo, _tooltips));
+				break;
+			case conversation::ArgumentInfo::ARGTYPE_VECTOR:
+			case conversation::ArgumentInfo::ARGTYPE_SOUNDSHADER:
+				// Create a new string argument item
+				item = CommandArgumentItemPtr(new StringArgument(argInfo, _tooltips));
+				break;
+			case conversation::ArgumentInfo::ARGTYPE_ACTOR:
+				// Create a new actor argument item
+				item = CommandArgumentItemPtr(new ActorArgument(argInfo, _tooltips, _actorStore));
+				break;
+			case conversation::ArgumentInfo::ARGTYPE_ENTITY:
+				// Create a new string argument item
+				item = CommandArgumentItemPtr(new StringArgument(argInfo, _tooltips));
+				break;
+			default:
+				globalErrorStream() << "Unknown command argument type: " << argInfo.type << std::endl;
+				break;
+			};
+
+			if (item != NULL) {
+				_argumentItems.push_back(item);
+				
+				if (argInfo.type != conversation::ArgumentInfo::ARGTYPE_BOOL) {
+					// The label
+					gtk_table_attach(
+						GTK_TABLE(_argTable), item->getLabelWidget(),
+						0, 1, index-1, index, // index starts with 1, hence the -1
+						GTK_FILL, (GtkAttachOptions)0, 0, 0
+					);
+					
+					// The edit widgets
+					gtk_table_attach_defaults(
+						GTK_TABLE(_argTable), item->getEditWidget(),
+						1, 2, index-1, index // index starts with 1, hence the -1
+					);
+				}
+				else {
+					// This is a checkbutton - should be spanned over two columns
+					gtk_table_attach(
+						GTK_TABLE(_argTable), item->getEditWidget(),
+						0, 2, index-1, index, // index starts with 1, hence the -1
+						GTK_FILL, (GtkAttachOptions)0, 0, 0
+					);
+				}
+				
+				// The help widgets
+				gtk_table_attach(
+					GTK_TABLE(_argTable), item->getHelpWidget(),
+					2, 3, index-1, index, // index starts with 1, hence the -1
+					(GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0
+				);
+			}
+		}
+		
+		// Show the table and all subwidgets
+		gtk_widget_show_all(_argTable);
 	}
-	
-	// Show the table and all subwidgets
-	gtk_widget_show_all(_argTable);
+	catch (std::runtime_error e) {
+		globalErrorStream() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
+	}
 }
 
 GtkWidget* CommandEditor::createButtonPanel() {
