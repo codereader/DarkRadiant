@@ -397,6 +397,10 @@ void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
 
 		// Construct a command editor (blocks on construction)
 		CommandEditor editor(GTK_WINDOW(self->getWindow()), *command, self->_conversation);
+
+		if (editor.getResult() == CommandEditor::RESULT_OK) {
+			self->updateWidgets();
+		}
 	}
 }
 

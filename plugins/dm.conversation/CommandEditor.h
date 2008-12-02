@@ -43,6 +43,9 @@ private:
 	GtkWidget* _argAlignment;
 	GtkWidget* _argTable;
 
+	// Widget pointer to keep track of the widget in the _argAlignment;
+	GtkWidget* _argumentWidget;
+
 	// The tooltips group to display the help text
 	GtkTooltips* _tooltips;
 

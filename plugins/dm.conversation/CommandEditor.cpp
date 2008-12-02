@@ -24,7 +24,8 @@ CommandEditor::CommandEditor(GtkWindow* parent, conversation::ConversationComman
 	_result(NUM_RESULTS),
 	_actorStore(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)), // number + caption
 	_commandStore(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)), // number + caption
-	_argTable(NULL)
+	_argTable(NULL),
+	_argumentWidget(NULL)
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 
@@ -261,19 +262,25 @@ void CommandEditor::createArgumentWidgets(int commandTypeID) {
 		// Remove all possible previous items from the list
 		_argumentItems.clear();
 
-		// Remove the old table if there exists one
-		if (_argTable != NULL) {
+		// Remove the old widget if there exists one
+		if (_argumentWidget != NULL) {
 			// This removes the old table from the alignment container
-			// greebo: Increase the refCount of the table to prevent destruction.
+			// greebo: Increase the refCount of the widget to prevent destruction.
 			// Destruction would cause weird shutdown crashes.
-			g_object_ref(G_OBJECT(_argTable));
-			gtk_container_remove(GTK_CONTAINER(_argAlignment), _argTable);
+			g_object_ref(G_OBJECT(_argumentWidget));
+			gtk_container_remove(GTK_CONTAINER(_argAlignment), _argumentWidget);
 		}
 
 		if (cmdInfo.arguments.empty()) {
 			// No arguments, just push an empty label into the alignment
 			GtkWidget* label = gtkutil::LeftAlignedLabel("<i>None</i>");
 			gtk_container_add(GTK_CONTAINER(_argAlignment), label);
+
+			gtk_widget_show_all(label);
+
+			// Remember this widget
+			_argumentWidget = label;
+
 			return;
 		}
 		
@@ -286,6 +293,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID) {
 		gtk_table_set_col_spacings(GTK_TABLE(_argTable), 12);
 		gtk_table_set_row_spacings(GTK_TABLE(_argTable), 6);
 		gtk_container_add(GTK_CONTAINER(_argAlignment), _argTable); 
+		_argumentWidget = _argTable;
 
 		typedef conversation::ConversationCommandInfo::ArgumentInfoList::const_iterator ArgumentIter;
 
