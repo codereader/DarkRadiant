@@ -27,6 +27,11 @@ public:
 	 * value of this row. This has to be implemented by the subclasses.
 	 */
 	virtual std::string getValue() = 0;
+
+	/**
+	 * greebo: Loads the given value into the widgets, passed in string form.
+	 */
+	virtual void setValueFromString(const std::string& value) = 0;
 	
 	// Retrieve the label widget
 	virtual GtkWidget* getLabelWidget();
@@ -53,6 +58,7 @@ public:
 	
 	virtual GtkWidget* getEditWidget();
 	virtual std::string getValue();
+	virtual void setValueFromString(const std::string& value);
 };
 
 /** 
@@ -88,6 +94,7 @@ public:
 	
 	virtual GtkWidget* getEditWidget();
 	virtual std::string getValue();
+	virtual void setValueFromString(const std::string& value);
 };
 
 /** 
@@ -106,6 +113,7 @@ public:
 	
 	virtual GtkWidget* getEditWidget();
 	virtual std::string getValue();
+	virtual void setValueFromString(const std::string& value);
 };
 
 } // namespace ui

@@ -57,6 +57,10 @@ std::string StringArgument::getValue() {
 	return gtk_entry_get_text(GTK_ENTRY(_entry));
 }
 
+void StringArgument::setValueFromString(const std::string& value) {
+	gtk_entry_set_text(GTK_ENTRY(_entry), value.c_str());
+}
+
 // Boolean argument
 BooleanArgument::BooleanArgument(const conversation::ArgumentInfo& argInfo, GtkTooltips* tooltips) :
 	 CommandArgumentItem(argInfo, tooltips)
@@ -71,6 +75,10 @@ GtkWidget* BooleanArgument::getEditWidget() {
 
 std::string BooleanArgument::getValue() {
 	return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_checkButton)) ? "1" : "";
+}
+
+void BooleanArgument::setValueFromString(const std::string& value) {
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_checkButton), value == "1" ? TRUE : FALSE);
 }
 
 // Actor Argument
@@ -98,6 +106,28 @@ std::string ActorArgument::getValue() {
 		return id;
 	}
 	return "";
+}
+
+void ActorArgument::setValueFromString(const std::string& value) {
+	// Convert the string to an actor ID
+	int actorId = strToInt(value, -1);
+	
+	if (actorId == -1) return; // invalid actor id
+
+	// Find the actor id in the liststore
+	gtkutil::TreeModel::SelectionFinder finder(actorId, 0);
+
+	gtk_tree_model_foreach(
+		GTK_TREE_MODEL(_actorStore), 
+		gtkutil::TreeModel::SelectionFinder::forEach, 
+		&finder
+	);
+	
+	// Select the found treeiter, if the name was found in the liststore
+	if (finder.getPath() != NULL) {
+		GtkTreeIter iter = finder.getIter();
+		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_comboBox), &iter);
+	}
 }
 
 GtkWidget* ActorArgument::getEditWidget() {
