@@ -87,6 +87,26 @@ void CommandEditor::updateWidgets() {
 		GtkTreeIter iter = cmdFinder.getIter();
 		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_commandDropDown), &iter);
 	}
+
+	// Populate the correct command argument widgets
+	createArgumentWidgets(_command.type);
+
+	// Pre-fill the values
+	for (conversation::ConversationCommand::ArgumentMap::const_iterator i = _command.arguments.begin();
+		i != _command.arguments.end(); ++i)
+	{
+		int argIndex = i->first;
+
+		if (argIndex > static_cast<int>(_argumentItems.size()) || argIndex < 0)
+		{
+			// Invalid command argument index
+			globalErrorStream() << "Invalid command argument index " << argIndex << std::endl;
+			continue;
+		}
+
+		// Load the value into the argument item
+		_argumentItems[argIndex - 1]->setValueFromString(i->second);
+	}
 }
 
 void CommandEditor::save() {
