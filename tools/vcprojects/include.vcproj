@@ -212,10 +212,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\ireference.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\iregistry.h"
 			>
 		</File>
