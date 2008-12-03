@@ -22,6 +22,9 @@ namespace {
 		WIDGET_CONV_NAME_ENTRY,
 		WIDGET_CONV_ACTOR_WITHIN_TALKDIST,
 		WIDGET_CONV_ACTORS_ALWAYS_FACE,
+		WIDGET_CONV_MAX_PLAY_COUNT_ENABLE,
+		WIDGET_CONV_MAX_PLAY_COUNT_HBOX,
+		WIDGET_CONV_MAX_PLAY_COUNT_ENTRY,
 		WIDGET_ADD_ACTOR_BUTTON,
 		WIDGET_DELETE_ACTOR_BUTTON,
 		WIDGET_COMMAND_TREEVIEW,
@@ -44,7 +47,8 @@ ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversa
 								   G_TYPE_STRING,	// sentence
 								   G_TYPE_STRING)),	// wait yes/no
    _conversation(conversation), // copy the conversation to a local object
-   _targetConversation(conversation)
+   _targetConversation(conversation),
+   _updateInProgress(false)
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 
@@ -124,6 +128,32 @@ GtkWidget* ConversationEditor::createPropertyPane() {
 			0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), 
 							  gtkutil::LeftAlignedLabel("Actors always face each other while talking"), 
+							  1, 2, row, row+1);
+	
+	row++;
+
+	// Max play count
+	_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENABLE] = gtk_check_button_new();
+
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENABLE]), "toggled", 
+		G_CALLBACK(onMaxPlayCountEnabled), this);
+
+	gtk_table_attach(GTK_TABLE(table), 
+			gtkutil::RightAlignment(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENABLE]),
+			0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
+
+	_widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX] = gtk_hbox_new(FALSE, 6);
+	GtkBox* hbox = GTK_BOX(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX]);
+
+	_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY] = gtk_spin_button_new_with_range(-1, 9999, 1);
+	gtk_widget_set_size_request(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY], 60, -1);
+
+	gtk_box_pack_start(hbox, gtkutil::LeftAlignedLabel("Let this conversation play"), FALSE, FALSE, 0);
+	gtk_box_pack_start(hbox, _widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY], FALSE, FALSE, 0);
+	gtk_box_pack_start(hbox, gtkutil::LeftAlignedLabel("times at maximum"), FALSE, FALSE, 0);
+
+	gtk_table_attach_defaults(GTK_TABLE(table), 
+							  _widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX], 
 							  1, 2, row, row+1);
 	
 	row++;
@@ -239,6 +269,8 @@ GtkWidget* ConversationEditor::createButtonPanel() {
 }
 
 void ConversationEditor::updateWidgets() {
+	_updateInProgress = true;
+
 	// Clear the liststores first
 	gtk_list_store_clear(_actorStore);
 	gtk_list_store_clear(_commandStore);
@@ -255,6 +287,32 @@ void ConversationEditor::updateWidgets() {
 		GTK_TOGGLE_BUTTON(_widgets[WIDGET_CONV_ACTORS_ALWAYS_FACE]),
 		_conversation.actorsAlwaysFaceEachOther ? TRUE : FALSE
 	);
+
+	// Update the max play count
+	if (_conversation.maxPlayCount != -1) {
+		// Max play count is enabled
+		gtk_widget_set_sensitive(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX], TRUE);
+
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY]), 
+			_conversation.maxPlayCount
+		);
+
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENABLE]), 
+			TRUE
+		);
+	}
+	else {
+		// Max play count disabled
+		gtk_widget_set_sensitive(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX], FALSE);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY]), -1);
+
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENABLE]), 
+			FALSE
+		);
+	}
 
 	// Actors
 	for (conversation::Conversation::ActorMap::const_iterator i = _conversation.actors.begin();
@@ -283,6 +341,8 @@ void ConversationEditor::updateWidgets() {
 						   3, cmd.waitUntilFinished ? "yes" : "no",
 						   -1);
 	}
+
+	_updateInProgress = false;
 }
 
 void ConversationEditor::selectCommand(int index) {
@@ -344,6 +404,15 @@ void ConversationEditor::save() {
 	_conversation.actorsAlwaysFaceEachOther = 
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_widgets[WIDGET_CONV_ACTORS_ALWAYS_FACE])) ? true : false;
 
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENABLE]))) {
+		_conversation.maxPlayCount = static_cast<int>(gtk_spin_button_get_value(
+			GTK_SPIN_BUTTON(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY])
+		));
+	}
+	else {
+		_conversation.maxPlayCount = -1;
+	}
+
 	// Copy the working copy over the actual object
 	_targetConversation = _conversation;
 }
@@ -362,6 +431,8 @@ void ConversationEditor::onCancel(GtkWidget* button, ConversationEditor* self) {
 }
 
 void ConversationEditor::onActorSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self) {
+	if (self->_updateInProgress) return;
+
 	// Get the selection
 	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &(self->_currentActor)) ? true : false;
 
@@ -391,10 +462,29 @@ void ConversationEditor::updateCmdActionSensitivity(bool hasSelection) {
 }
 
 void ConversationEditor::onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self) {
+	if (self->_updateInProgress) return;
+
 	// Get the selection
 	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &(self->_currentCommand)) ? true : false;
 
 	self->updateCmdActionSensitivity(hasSelection);
+}
+
+void ConversationEditor::onMaxPlayCountEnabled(GtkToggleButton* togglebutton, ConversationEditor* self) {
+	if (self->_updateInProgress) return;
+
+	if (gtk_toggle_button_get_active(togglebutton)) {
+		// Enabled, write a new value in the spin button
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(self->_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY]), 1);
+
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX], TRUE);
+	}
+	else {
+		// Disabled, write a -1 in the spin button
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(self->_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY]), -1);
+
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX], FALSE);
+	}
 }
 
 void ConversationEditor::onAddActor(GtkWidget* w, ConversationEditor* self) {

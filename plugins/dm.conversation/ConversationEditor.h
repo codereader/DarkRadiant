@@ -10,6 +10,7 @@
 typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GtkCellRendererText GtkCellRendererText;
+typedef struct _GtkToggleButton GtkToggleButton;
 
 namespace ui {
 
@@ -29,6 +30,9 @@ class ConversationEditor :
 
 	// The actual conversation, where the changes will be saved to on "OK"
 	conversation::Conversation& _targetConversation;
+
+	// Mutex to avoid callback loops
+	bool _updateInProgress;
 
 public:
 	ConversationEditor(GtkWindow* parent, conversation::Conversation& conversation);
@@ -57,6 +61,8 @@ private:
 
 	static void onSave(GtkWidget* button, ConversationEditor* self);
 	static void onCancel(GtkWidget* button, ConversationEditor* self);
+
+	static void onMaxPlayCountEnabled(GtkToggleButton* togglebutton, ConversationEditor* self);
 
 	static void onActorSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
 	static void onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
