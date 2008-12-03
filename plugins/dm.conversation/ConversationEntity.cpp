@@ -7,12 +7,9 @@
 #include <boost/algorithm/string/classification.hpp>
 
 #include "ConversationKeyExtractor.h"
+#include "ConversationCommandLibrary.h"
 
 namespace conversation {
-
-	namespace {
-		const int INVALID_LEVEL_INDEX = -9999;
-	}
 
 // Constructor
 ConversationEntity::ConversationEntity(scene::INodePtr node) :
@@ -121,31 +118,50 @@ void ConversationEntity::writeToEntity() {
 		 ++i) 
 	{
 		// Obtain the conversation and construct the key prefix from the index
-		/*const Conversation& o = i->second;
-		std::string prefix = "obj" + intToStr(i->first) + "_";
+		const Conversation& conv = i->second;
+		std::string prefix = "conv_" + intToStr(i->first) + "_";
 		
 		// Set the entity keyvalues
-		entity->setKeyValue(prefix + "desc", o.description);
-		entity->setKeyValue(prefix + "ongoing", o.ongoing ? "1" : "0");
-		entity->setKeyValue(prefix + "visible", o.visible ? "1" : "0");
-		entity->setKeyValue(prefix + "mandatory", o.mandatory ? "1" : "0");
-		entity->setKeyValue(prefix + "irreversible", 
-							 o.irreversible ? "1" : "0");
-		entity->setKeyValue(prefix + "state", intToStr(o.state));
+		entity->setKeyValue(prefix + "name", conv.name);
+		entity->setKeyValue(prefix + "actors_must_be_within_talkdistance", 
+			conv.actorsMustBeWithinTalkdistance ? "1" : "0");
+		entity->setKeyValue(prefix + "talk_distance", floatToStr(conv.talkDistance));
+		entity->setKeyValue(prefix + "actors_always_face_each_other_while_talking", 
+			conv.actorsAlwaysFaceEachOther ? "1" : "0");
+		entity->setKeyValue(prefix + "max_play_count", intToStr(conv.maxPlayCount));
+		
+		// Write the actor list
+		for (Conversation::ActorMap::const_iterator a = conv.actors.begin();
+			 a != conv.actors.end(); ++a)
+		{
+			std::string actorKey = prefix + "actor_" + intToStr(a->first);
+			entity->setKeyValue(actorKey, a->second);
+		}
 
-		// Write an empty "objN_difficulty" value when this conversation applies to all levels
-		entity->setKeyValue(prefix + "difficulty", o.difficultyLevels);
+		// Write all the commands
+		for (Conversation::CommandMap::const_iterator c = conv.commands.begin();
+			 c != conv.commands.end(); ++c)
+		{
+			std::string cmdPrefix = prefix + "cmd_" + intToStr(c->first) + "_";
 
-		entity->setKeyValue(prefix + "enabling_objs", o.enablingObjs);
+			try {
+				const ConversationCommandInfo& cmdInfo = 
+					ConversationCommandLibrary::Instance().findCommandInfo(c->second->type);
+				
+				entity->setKeyValue(cmdPrefix + "type", cmdInfo.name);
+				entity->setKeyValue(cmdPrefix + "actor", intToStr(c->second->actor));
+				entity->setKeyValue(cmdPrefix + "wait_until_finished", c->second->waitUntilFinished ? "1" : "0");
 
-		entity->setKeyValue(prefix + "script_complete", o.completionScript);
-		entity->setKeyValue(prefix + "script_failed", o.failureScript);
-
-		entity->setKeyValue(prefix + "logic_success", o.logic.successLogic);
-		entity->setKeyValue(prefix + "logic_failure", o.logic.failureLogic);
-
-        // Write the Components for this conversation
-        writeComponents(entity, prefix, o);*/
+				for (ConversationCommand::ArgumentMap::const_iterator a = c->second->arguments.begin();
+					a != c->second->arguments.end(); ++a)
+				{
+					entity->setKeyValue(cmdPrefix + "arg_" + intToStr(a->first), a->second);
+				}
+			}
+			catch (std::runtime_error e) {
+				globalErrorStream() << "Unrecognised conversation command ID: " << c->second->type << std::endl;
+			}
+		}
 	}
 }
 
