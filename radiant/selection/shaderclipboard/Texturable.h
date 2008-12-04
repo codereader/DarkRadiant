@@ -42,19 +42,19 @@ public:
 namespace algorithm {
 
 class ClosestTexturableFinder :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	Texturable& _texturable;
 	SelectionTest& _selectionTest;
 	
 	// To store the best intersection candidate
-	mutable SelectionIntersection _bestIntersection;
+	SelectionIntersection _bestIntersection;
 public:
 	// Constructor
 	ClosestTexturableFinder(SelectionTest& test, Texturable& texturable);
 	
 	// The visitor function
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const;
+	bool pre(const scene::INodePtr& node);
 };
 		
 } // namespace algorithm
