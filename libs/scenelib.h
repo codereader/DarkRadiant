@@ -156,6 +156,11 @@ public:
 };
 
 inline bool node_is_group(scene::INodePtr node) {
+	// A node without child nodes is not a group
+	if (!node->hasChildNodes()) {
+		return false;
+	}
+
 	bool hasBrushes = false;
 	HasBrushes visitor(hasBrushes);
 

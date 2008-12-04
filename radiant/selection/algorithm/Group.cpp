@@ -80,52 +80,71 @@ public:
 };
 
 void revertGroupToWorldSpawn() {
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
-	if (info.totalCount != 1 || info.entityCount != 1) {
-		return; // unsuitable selection
-	}
-
-	// Get the last selected node from the selectionsystem
-	scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
-	
-	if (!node_is_group(node)) {
-		return; // not a groupnode
-	}
 		
-	Entity* parent = Node_getEntity(node);
-	
-	if (parent == NULL) {
-		// Not an entity
-		return;
+	typedef std::list<scene::INodePtr> GroupNodeList;
+
+	// Collect all groupnodes
+	class GroupNodeCollector : 
+		public SelectionSystem::Visitor
+	{
+		mutable GroupNodeList _groupNodes;
+	public:
+		void visit(const scene::INodePtr& node) const {
+			if (node_is_group(node)) {
+				_groupNodes.push_back(node);
+			}
+		}
+
+		const GroupNodeList& getList() const {
+			return _groupNodes;
+		}
+	}; 
+
+	GroupNodeCollector walker;
+	GlobalSelectionSystem().foreachSelected(walker);
+
+	if (walker.getList().empty()) {
+		return; // nothing to do!
 	}
 
 	// Deselect all, the children get selected after reparenting
 	GlobalSelectionSystem().setSelectedAll(false);
-	
+
 	// Get the worldspawn node
 	scene::INodePtr worldspawnNode = GlobalMap().findOrInsertWorldspawn();
 
 	Entity* worldspawn = Node_getEntity(worldspawnNode);
-	if (worldspawn != NULL) {
+	if (worldspawn == NULL) {
+		return; // worldspawn not an entity?
+	}
+
+	for (GroupNodeList::const_iterator i = walker.getList().begin(); 
+		 i != walker.getList().end(); ++i)
+	{
+		const scene::INodePtr& groupNode = *i;
+
+		Entity* parent = Node_getEntity(groupNode);
+	
+		if (parent == NULL) continue; // not an entity
+		
 		// Cycle through all the children and reparent them to the worldspawn node
 		ReparentToEntityWalker reparentor(worldspawnNode);
-		node->traverse(reparentor);
+		groupNode->traverse(reparentor);
 
     	// At this point, all the child primitives have been selected by the walker
     	
     	// Check if the old parent entity node is empty
-		if (!node->hasChildNodes()) {
+		if (!groupNode->hasChildNodes()) {
     		// Remove this node from its parent, it's not needed anymore
-			scene::removeNodeFromParent(node);
+			scene::removeNodeFromParent(groupNode);
     	}
     	else {
     		globalErrorStream() << "Error while reparenting, cannot delete old parent (not empty)\n"; 
     	}
-     	
-     	// Flag the map as changed
-     	GlobalMap().setModified(true);
 	}
+
+	// Flag the map as changed
+	GlobalMap().setModified(true);	
 }
 
 // Some helper methods
