@@ -240,7 +240,10 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
     	
     	// Add selected brushes as children of non-fixed entity
 		entity->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
-		entity->setKeyValue("origin", std::string(workzone.getOrigin()));
+
+		// Take the selection center as new origin
+		Vector3 newOrigin = selection::algorithm::getCurrentSelectionCenter();
+		entity->setKeyValue("origin", std::string(newOrigin));
 		
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
