@@ -3548,6 +3548,9 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 {
 	// Clone the dimensions from the other patch
 	setDims(sourcePatch.getWidth(), sourcePatch.getHeight());
+
+	// Also inherit the tesselation from the source patch
+	setFixedSubdivisions(sourcePatch.subdivionsFixed(), sourcePatch.getSubdivisions());
 	
 	// Copy the shader from the source patch
 	SetShader(sourcePatch.GetShader());
