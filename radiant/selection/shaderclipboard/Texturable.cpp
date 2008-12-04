@@ -61,15 +61,14 @@ ClosestTexturableFinder::ClosestTexturableFinder(SelectionTest& test, Texturable
 	_selectionTest(test)
 {}
 
-bool ClosestTexturableFinder::pre(const scene::Path& path, const scene::INodePtr& node) const {
-
-	// Check if this node is an entity	
-	bool isEntity = Node_isEntity(node);
-	
+bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 	// Don't traverse invisible nodes and items
 	if (!node->visible()) {
 		return false;
 	}
+
+	// Check if this node is an entity	
+	bool isEntity = Node_isEntity(node);
 	
 	// Check if the node is an entity
 	if (!isEntity) {
@@ -83,7 +82,7 @@ bool ClosestTexturableFinder::pre(const scene::Path& path, const scene::INodePtr
 			// Cycle through all the faces
 			for (Brush::const_iterator i = brush->begin(); 
 				 i != brush->end(); 
-				 i++) 
+				 ++i) 
 			{
 				// Check for filtered faces, don't select them
 				if (!GlobalFilterSystem().isVisible("texture", (*i)->GetShader())) {

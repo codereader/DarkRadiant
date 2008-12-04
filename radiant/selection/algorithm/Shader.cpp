@@ -299,7 +299,8 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	Texturable target;
 	
 	// Find a suitable target Texturable
-	GlobalSceneGraph().traverse(ClosestTexturableFinder(test, target));
+	ClosestTexturableFinder finder(test, target);
+	GlobalSceneGraph().root()->traverse(finder);
 	
 	if (target.isPatch() && entireBrush) {
 		gtkutil::errorDialog("Can't paste shader to entire brush.\nTarget is not a brush.",
@@ -322,7 +323,8 @@ void pasteTextureCoords(SelectionTest& test) {
 	Texturable target;
 	
 	// Find a suitable target Texturable
-	GlobalSceneGraph().traverse(ClosestTexturableFinder(test, target));
+	ClosestTexturableFinder finder(test, target);
+	GlobalSceneGraph().root()->traverse(finder);
 	
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();

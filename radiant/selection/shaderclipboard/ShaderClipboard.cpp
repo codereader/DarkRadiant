@@ -27,9 +27,8 @@ Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 	// Initialise an empty Texturable structure
 	Texturable returnValue;
 	
-	GlobalSceneGraph().traverse(
-		algorithm::ClosestTexturableFinder(test, returnValue)
-	);
+	algorithm::ClosestTexturableFinder finder(test, returnValue);
+	GlobalSceneGraph().root()->traverse(finder);
 	
 	return returnValue;
 }
