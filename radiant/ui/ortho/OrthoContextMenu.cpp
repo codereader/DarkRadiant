@@ -166,7 +166,7 @@ void OrthoContextMenu::checkConvertStatic() {
 	// primitive and no non-primitive selections.
 	gtk_widget_set_sensitive(
 		_convertStatic, 
-		((info.totalCount - info.entityCount - info.componentCount) > 0) // anything apart from entities and components
+		(info.entityCount == 0 && info.componentCount == 0 && info.totalCount > 0) 
 	);
 }
 
@@ -217,11 +217,34 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 	
 	bool sensitive = false;
 	
-	// Exactly one entity has to be selected
-	if (info.totalCount == 1 && info.entityCount == 1) {
-		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
+	// Only entities are allowed to be selected, but they have to be groupnodes
+	if (info.totalCount > 0 && info.totalCount == info.entityCount) {
+
+		// Check the selection using a local walker
+		class GroupNodeChecker : 
+			public SelectionSystem::Visitor
+		{
+			mutable bool _onlyGroups;
+		public:
+			GroupNodeChecker() :
+				_onlyGroups(true)
+			{}
+
+			void visit(const scene::INodePtr& node) const {
+				if (!node_is_group(node)) {
+					_onlyGroups = false;
+				}
+			}
+
+			bool onlyGroupsAreSelected() const {
+				return _onlyGroups;
+			}
+		};
 		
-		sensitive = node_is_group(node);
+		GroupNodeChecker walker;
+		GlobalSelectionSystem().foreachSelected(walker);
+
+		sensitive = walker.onlyGroupsAreSelected();
 	}
 	
 	if (sensitive) {
