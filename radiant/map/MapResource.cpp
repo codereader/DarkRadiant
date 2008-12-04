@@ -284,7 +284,8 @@ MapFormatPtr MapResource::getMapFormat() {
 
 scene::INodePtr MapResource::loadMapNode() {
 	// greebo: Check if we have valid settings
-	if (_path.empty() || (_name.empty() && _type.empty())) {
+	// The _path might be empty if we're loading from a folder outside the mod
+	if (_name.empty() && _type.empty()) {
 		return model::NullModelNode::InstancePtr();
 	}
 	
