@@ -149,24 +149,6 @@ public:
 	}
 };
 
-// greebo: Calculates the axis-aligned bounding box of the selection.
-// The constructor is called with a reference to an AABB variable that is updated during the walk
-class BoundsSelected : public scene::Graph::Walker {
-	AABB& _bounds;
-public:
-	BoundsSelected(AABB& bounds): _bounds(bounds) {
-		_bounds = AABB();
-	}
-	
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		// Only update the aabb variable if the instance is selected 
-		if (Node_isSelected(node)) {
-			_bounds.includeAABB(Node_getPivotBounds(node));
-		}
-		return true;
-	}
-};
-
 /**
  * greebo: Calculates the axis-aligned bounding box of the current selection.
  * Use this walker to traverse the current selection and use the getBounds() 

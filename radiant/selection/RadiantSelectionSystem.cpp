@@ -858,7 +858,11 @@ void RadiantSelectionSystem::ConstructPivot() const {
 				GlobalSceneGraph().traverse(BoundsSelectedComponent(bounds));
 			}
 			else {
-				GlobalSceneGraph().traverse(BoundsSelected(bounds));
+				// greebo: Traverse the current selection to accumulate the AABB
+				BoundsAccumulator walker;
+				foreachSelected(walker);
+
+				bounds = walker.getBounds();
 			}
 			// the <bounds> variable now contains the AABB of the selection, retrieve the origin
 			objectPivot = bounds.origin;

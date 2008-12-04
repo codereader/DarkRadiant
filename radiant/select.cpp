@@ -84,16 +84,19 @@ void UpdateWorkzone_ForSelectionChanged(const Selectable& selectable)
 
 void Select_GetBounds (Vector3& mins, Vector3& maxs)
 {
-  AABB bounds;
-  GlobalSceneGraph().traverse(BoundsSelected(bounds));
-  if (bounds.isValid()) {
-  	maxs = bounds.origin + bounds.extents;
-  	mins = bounds.origin - bounds.extents;
-  }
-  else {
-  	maxs = Vector3(0,0,0);
-  	mins = Vector3(0,0,0);
-  }
+	BoundsAccumulator walker;
+	GlobalSelectionSystem().foreachSelected(walker);
+
+	AABB bounds = walker.getBounds();
+
+	if (bounds.isValid()) {
+		maxs = bounds.origin + bounds.extents;
+		mins = bounds.origin - bounds.extents;
+	}
+	else {
+		maxs = Vector3(0,0,0);
+		mins = Vector3(0,0,0);
+	}
 }
 
 void Select_FlipAxis (int axis)
