@@ -13,6 +13,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 
 #include "SelectionPolicies.h"
+#include "selection/SceneWalkers.h"
 #include "select.h"
 
 namespace selection {
@@ -494,6 +495,14 @@ void selectTouching() {
 
 void selectCompleteTall() {
 	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
+}
+
+Vector3 getCurrentSelectionCenter() {
+	// Construct a walker to traverse the selection
+	BoundsAccumulator walker;
+	GlobalSelectionSystem().foreachSelected(walker);
+
+	return vector3_snapped(walker.getBounds().getOrigin());
 }
 
 	} // namespace algorithm

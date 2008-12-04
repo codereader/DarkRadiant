@@ -5,6 +5,7 @@
 #include <string>
 #include "iscenegraph.h"
 #include "ientity.h"
+#include "math/Vector3.h"
 
 namespace selection {
 	namespace algorithm {
@@ -86,6 +87,9 @@ namespace selection {
 	void selectInside();
 	void selectTouching();
 	void selectCompleteTall();
+
+	// Returns the center point of the current selection (or <0,0,0> if nothing selected).
+	Vector3 getCurrentSelectionCenter();
 
 	} // namespace algorithm
 } // namespace selection
