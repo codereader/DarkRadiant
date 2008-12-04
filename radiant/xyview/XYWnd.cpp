@@ -25,6 +25,7 @@
 #include "ui/overlay/Overlay.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "map/RegionManager.h"
+#include "selection/algorithm/General.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
@@ -366,8 +367,8 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
 
 	convertXYToWorld(pointx, pointy, point);
 
-	Vector3 mid;
-	Select_GetMid(mid);
+	Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
+
 	GlobalClipper().setViewType(static_cast<EViewType>(getViewType()));
 	int nDim = (GlobalClipper().getViewType() == YZ ) ?  0 : ( (GlobalClipper().getViewType() == XZ) ? 1 : 2 );
 	point[nDim] = mid[nDim];

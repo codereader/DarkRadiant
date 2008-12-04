@@ -6,6 +6,7 @@
 #include "iscenegraph.h"
 #include "ientity.h"
 #include "math/Vector3.h"
+#include "math/aabb.h"
 
 namespace selection {
 	namespace algorithm {
@@ -90,6 +91,9 @@ namespace selection {
 
 	// Returns the center point of the current selection (or <0,0,0> if nothing selected).
 	Vector3 getCurrentSelectionCenter();
+
+	// Returns the AABB of the current selection (invalid bounds if nothing is selected).
+	AABB getCurrentSelectionBounds();
 
 	} // namespace algorithm
 } // namespace selection

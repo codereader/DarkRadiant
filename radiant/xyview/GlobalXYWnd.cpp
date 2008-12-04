@@ -8,7 +8,7 @@
 #include "gtkutil/FramedWidget.h"
 #include "stringio.h"
 
-#include "select.h"
+#include "selection/algorithm/General.h"
 #include "mainframe.h"
 
 // Constructor
@@ -486,7 +486,7 @@ Vector3 XYWndManager::getFocusPosition() {
 	Vector3 position(0,0,0);
 	
 	if (GlobalSelectionSystem().countSelected() != 0) {
-		Select_GetMid(position);
+		position = selection::algorithm::getCurrentSelectionCenter();
 	}
 	else {
 		position = g_pParentWnd->GetCamWnd()->getCameraOrigin();

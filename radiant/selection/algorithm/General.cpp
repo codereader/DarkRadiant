@@ -505,5 +505,13 @@ Vector3 getCurrentSelectionCenter() {
 	return vector3_snapped(walker.getBounds().getOrigin());
 }
 
+AABB getCurrentSelectionBounds() {
+	// Construct a walker to traverse the selection
+	BoundsAccumulator walker;
+	GlobalSelectionSystem().foreachSelected(walker);
+
+	return walker.getBounds();
+}
+
 	} // namespace algorithm
 } // namespace selection

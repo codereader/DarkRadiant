@@ -96,14 +96,6 @@ void Select_GetBounds (Vector3& mins, Vector3& maxs)
   }
 }
 
-void Select_GetMid (Vector3& mid)
-{
-  AABB bounds;
-  GlobalSceneGraph().traverse(BoundsSelected(bounds));
-  mid = vector3_snapped(bounds.origin);
-}
-
-
 void Select_FlipAxis (int axis)
 {
   Vector3 flip(1, 1, 1);
