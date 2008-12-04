@@ -3695,6 +3695,10 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 	
 	int sourceWidth = static_cast<int>(sourcePatch.getWidth());
 	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
+
+	bool sourceTesselationFixed = sourcePatch.subdivionsFixed();
+	BasicVector2<unsigned int> sourceTesselationX(sourcePatch.getSubdivisions().x(), 1);
+	BasicVector2<unsigned int> sourceTesselationY(sourcePatch.getSubdivisions().y(), 1);
 	
 	// Determine which of the four edges have to be connected
 	// and calculate the start, end & stepsize for the following loop
@@ -3704,24 +3708,28 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 			start = 0;
 			end = sourceWidth - 1;
 			incr = 1;
+			setFixedSubdivisions(sourceTesselationFixed, sourceTesselationX);
 			break;
 		case 1:
 			cols = sourceWidth;
 			start = sourceWidth * (sourceHeight-1);
 			end = sourceWidth*sourceHeight - 1;
 			incr = 1;
+			setFixedSubdivisions(sourceTesselationFixed, sourceTesselationX);
 			break;
 		case 2:
 			cols = sourceHeight;
 			start = 0;
 			end = sourceWidth*(sourceHeight-1);
 			incr = sourceWidth;
+			setFixedSubdivisions(sourceTesselationFixed, sourceTesselationY);
 			break;
 		case 3:
 			cols = sourceHeight;
 			start = sourceWidth - 1;
 			end = sourceWidth*sourceHeight - 1;
 			incr = sourceWidth;
+			setFixedSubdivisions(sourceTesselationFixed, sourceTesselationY);
 			break;
 	}
 	
