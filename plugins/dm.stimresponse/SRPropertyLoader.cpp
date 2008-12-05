@@ -36,7 +36,7 @@ void SRPropertyLoader::parseAttribute(
 	std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
 	
 	// Now cycle through the possible key names and see if we have a match
-	for (unsigned int i = 0; i < _keys.size(); i++) {
+	for (std::size_t i = 0; i < _keys.size(); i++) {
 
 		// Construct a regex with the number as match variable
 		std::string exprStr = "^" + prefix + _keys[i].key + "_([0-9])+$";
@@ -78,7 +78,7 @@ void SRPropertyLoader::parseAttribute(
 		// This should search for something like "sr_effect_2_3_arg3" 
 		// (with the optional postfix "_argN" or "_state")
 		std::string exprStr = 
-			"^" + prefix + responseEffectPrefix + "([0-9])+_([0-9])+(_arg[0-9]+|_state)*$";
+			"^" + prefix + responseEffectPrefix + "([0-9]+)_([0-9]+)(_arg[0-9]+|_state)*$";
 		boost::regex expr(exprStr);
 		boost::smatch matches;
 		
