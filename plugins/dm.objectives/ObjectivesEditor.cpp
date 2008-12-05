@@ -43,6 +43,8 @@ namespace {
 		WIDGET_LOGIC_PANEL,
 		WIDGET_DELETE_ENTITY,
 		WIDGET_DELETE_OBJECTIVE,
+		WIDGET_MOVE_UP_OBJECTIVE,
+		WIDGET_MOVE_DOWN_OBJECTIVE,
 		WIDGET_EDIT_OBJECTIVE,
 		WIDGET_CLEAR_OBJECTIVES,
         WIDGET_OBJ_BUTTONS_PANEL,
@@ -195,7 +197,19 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	g_signal_connect(G_OBJECT(editButton), "clicked",
 					 G_CALLBACK(_onEditObjective), this);
 	_widgets[WIDGET_EDIT_OBJECTIVE] = editButton;
-	
+
+	GtkWidget* moveUpButton = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+	gtk_widget_set_sensitive(moveUpButton, FALSE); // not enabled without selection 
+	g_signal_connect(G_OBJECT(moveUpButton), "clicked",
+					 G_CALLBACK(_onMoveUpObjective), this);
+	_widgets[WIDGET_MOVE_UP_OBJECTIVE] = moveUpButton;
+
+	GtkWidget* moveDownButton = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+	gtk_widget_set_sensitive(moveDownButton, FALSE); // not enabled without selection 
+	g_signal_connect(G_OBJECT(moveDownButton), "clicked",
+					 G_CALLBACK(_onMoveDownObjective), this);
+	_widgets[WIDGET_MOVE_DOWN_OBJECTIVE] = moveDownButton;
+
 	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_widget_set_sensitive(delButton, FALSE); // not enabled without selection 
 	g_signal_connect(G_OBJECT(delButton), "clicked",
@@ -210,6 +224,8 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	
 	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), editButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), moveUpButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(buttonBox), moveDownButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(buttonBox), clearButton, FALSE, FALSE, 0);
 
@@ -480,11 +496,25 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 		// Enable the edit and delete buttons
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], TRUE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], TRUE);		
+
+		// Check if this is the first command in the list, get the ID of the selected item
+		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0);
+
+		int highestIndex = self->_curEntity->second->getHighestObjIndex();
+		int lowestIndex = self->_curEntity->second->getLowestObjIndex();
+
+		bool hasNext = (highestIndex != -1 && highestIndex > index);
+		bool hasPrev = (lowestIndex != -1 && lowestIndex < index);
+
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_UP_OBJECTIVE], hasPrev ? TRUE : FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_DOWN_OBJECTIVE], hasNext ? TRUE : FALSE);
 	}
 	else 
     {
-		// Disable the edit and delete buttons
+		// Disable the edit, delete and move buttons
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_UP_OBJECTIVE], FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_DOWN_OBJECTIVE], FALSE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], FALSE);
 	}
 }
@@ -566,15 +596,34 @@ void ObjectivesEditor::_onEditObjective(GtkWidget* w, ObjectivesEditor* self) {
 	self->refreshObjectivesList();
 }
 
+void ObjectivesEditor::_onMoveUpObjective(GtkWidget* w, ObjectivesEditor* self) {
+	// get the current index
+	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0);
+
+	// Pass the call to the general method
+	self->_curEntity->second->moveObjective(index, -1);
+
+	self->refreshObjectivesList();	
+}
+
+void ObjectivesEditor::_onMoveDownObjective(GtkWidget* w, ObjectivesEditor* self) {
+	// get the current index
+	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0);
+
+	// Pass the call to the general method
+	self->_curEntity->second->moveObjective(index, +1);
+
+	self->refreshObjectivesList();	
+}
+
 // Delete an objective
 void ObjectivesEditor::_onDeleteObjective(GtkWidget* w, 
 										  ObjectivesEditor* self)
 {
 	// Get the index of the current objective
-	int index;
-	gtk_tree_model_get(GTK_TREE_MODEL(self->_objectiveList), 
-					   &(self->_curObjective),
-					   0, &index, -1);
+	int index = gtkutil::TreeModel::getInt(
+		GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0
+	);
 					   
 	// Tell the ObjectiveEntity to delete this objective
 	self->_curEntity->second->deleteObjective(index);

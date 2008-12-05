@@ -82,10 +82,29 @@ public:
 		return _objectives[iIndex];
 	}
 
+	// Returns the highest used objective index or -1 if none are present
+	int getHighestObjIndex() {
+		if (_objectives.empty()) return -1;
+
+		return _objectives.rbegin()->first;
+	}
+
+	// Returns the highest used objective index or -1 if none are present
+	int getLowestObjIndex() {
+		if (_objectives.empty()) return -1;
+
+		return _objectives.begin()->first;
+	}
+
 	/**
 	 * Add a new objective, starting from the first unused objective ID.
 	 */
 	void addObjective();
+
+	/**
+	 * greebo: Moves the specified objective by the given amount (e.g. +1/-1).
+	 */
+	void moveObjective(int index, int delta);
 	
 	/**
 	 * Delete a numbered objective. This re-orders all objectives so that the

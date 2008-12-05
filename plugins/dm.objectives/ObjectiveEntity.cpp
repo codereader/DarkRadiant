@@ -131,6 +131,48 @@ void ObjectiveEntity::addObjective() {
 	_objectives.insert(ObjectiveMap::value_type(index, o));
 }
 
+void ObjectiveEntity::moveObjective(int index, int delta) {
+	// Calculate the target index
+	int targetIndex = index + delta;
+	
+	if (targetIndex < getLowestObjIndex()) {
+		targetIndex = getLowestObjIndex() -1;
+	}
+
+	// Constrain the obj index to sane values
+	if (targetIndex < 0) {
+		targetIndex = 0;
+	}
+
+	if (targetIndex > getHighestObjIndex()) {
+		targetIndex = getHighestObjIndex() + 1;
+	}
+
+	if (targetIndex == index) return; // nothing to do
+
+	// Try to look up the command indices in the conversation
+	ObjectiveMap::iterator oldObj = _objectives.find(index);
+	ObjectiveMap::iterator newObj = _objectives.find(targetIndex);
+
+	if (oldObj == _objectives.end()) return; // invalid source objective
+
+	if (newObj == _objectives.end()) {
+		// no objective at the target index, just re-locate the source objective
+		Objective temp(oldObj->second);
+
+		_objectives.erase(oldObj);
+
+		_objectives[targetIndex] = temp;
+	}
+	else {
+		// Both source and target indices exist, swap them
+		Objective temp(oldObj->second);
+
+		_objectives[index] = _objectives[targetIndex];
+		_objectives[targetIndex] = temp;
+	}
+}
+
 void ObjectiveEntity::deleteObjective(int index) {
 	// Look up the objective with the given index
 	ObjectiveMap::iterator i = _objectives.find(index);
