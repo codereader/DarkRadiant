@@ -29,6 +29,8 @@ std::string EntityClassChooser::showAndBlock() {
 	gtk_widget_show_all(_widget);
 	gtk_widget_grab_focus(_treeView);
 
+	_modelPreview.initialisePreview();
+
 	// Update the member variables
 	updateSelection();
 	
@@ -59,17 +61,25 @@ EntityClassChooser::EntityClassChooser()
 	gint w = gdk_screen_get_width(scr);
 	gint h = gdk_screen_get_height(scr);
 	gtk_window_set_default_size(
-		GTK_WINDOW(_widget), gint(w * 0.4f), gint(h * 0.6f)
+		GTK_WINDOW(_widget), gint(w * 0.7f), gint(h * 0.6f)
 	);
+
+	_modelPreview.setSize(gint(w*0.3f));
 
 	// Create GUI elements and pack into main VBox
 	
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createUsagePanel(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), createButtonPanel(), FALSE, FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+
+	gtk_box_pack_start(GTK_BOX(hbox), vbx, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _modelPreview, FALSE, FALSE, 0);
+
+	gtk_container_add(GTK_CONTAINER(_widget), hbox);
 
 	// Signals
 	g_signal_connect(_widget, "delete-event", G_CALLBACK(callbackHide), this);
@@ -187,10 +197,21 @@ void EntityClassChooser::updateSelection() {
 		); 
 		updateUsageInfo(selName);
 
+		// Lookup the IEntityClass instance
+		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(selName);	
+
+		if (eclass != NULL) {
+			_modelPreview.setModel(eclass->getAttribute("model").value);
+			_modelPreview.setSkin(eclass->getAttribute("skin").value);
+		}
+
 		// Update the _selectionName field
 		_selectedName = selName;
 	}
 	else {
+		_modelPreview.setModel("");
+		_modelPreview.setSkin("");
+
 		gtk_widget_set_sensitive(_okButton, FALSE);
 	}
 }

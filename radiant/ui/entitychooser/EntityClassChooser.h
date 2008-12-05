@@ -3,6 +3,7 @@
 
 #include <gtk/gtk.h>
 
+#include "ui/common/ModelPreview.h"
 #include "math/Vector3.h"
 
 namespace {
@@ -54,6 +55,9 @@ class EntityClassChooser
 	
 	// Last selected classname
 	std::string _selectedName;
+
+	// Model preview widget
+	ModelPreview _modelPreview;
 
 private:
 
