@@ -9,6 +9,7 @@ EclassModel::EclassModel(IEntityClassPtr eclass,
 						 EclassModelNode& owner, 
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
+	_owner(owner),
 	m_entity(owner._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -29,6 +30,7 @@ EclassModel::EclassModel(const EclassModel& other,
 						 EclassModelNode& owner,
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
+	_owner(owner),	
 	m_entity(owner._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -88,6 +90,7 @@ void EclassModel::instanceAttach(const scene::Path& path) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 		m_entity.attach(m_keyObservers);
 		m_model.modelChanged(m_entity.getKeyValue("model"));
+		_owner.skinChanged(m_entity.getKeyValue("skin"));
 	}
 }
 	

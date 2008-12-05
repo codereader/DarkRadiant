@@ -26,6 +26,8 @@ class EclassModel :
 	public Snappable,
     public OptionalRenderedName
 {
+	EclassModelNode& _owner;
+
 	MatrixTransform m_transform;
 	Doom3Entity& m_entity;
 	KeyObserverMap m_keyObservers;
