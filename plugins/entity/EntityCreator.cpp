@@ -88,6 +88,16 @@ scene::INodePtr Doom3EntityCreator::createEntity(IEntityClassPtr eclass) {
 		entity->setKeyValue("name", entityName);
 	}
 
+	// Check for auto-setting key values
+	EntityClassAttributeList list = eclass->getAttributeList("editor_setKeyValue");
+
+	if (!list.empty()) {
+		for (EntityClassAttributeList::const_iterator i = list.begin(); i != list.end(); ++i) {
+			// Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
+			entity->setKeyValue(i->name.substr(i->name.find_first_of(' ') + 1, 18), i->value);
+		}
+	}
+
 	return node;
 }
 
