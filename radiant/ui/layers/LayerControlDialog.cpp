@@ -194,6 +194,20 @@ void LayerControlDialog::toggle() {
 	Instance().toggleDialog();
 }
 
+void LayerControlDialog::init() {
+	// Lookup the stored window information in the registry
+	xml::NodeList list = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+
+	if (!list.empty()) {
+		xml::Node& node = list[0];
+
+		if (node.getAttributeValue("visible") == "1") {
+			// Show dialog
+			Instance().show();
+		}
+	}
+}
+
 void LayerControlDialog::onRadiantShutdown() {
 	globalOutputStream() << "LayerControlDialog shutting down.\n";
 
@@ -205,8 +219,13 @@ void LayerControlDialog::onRadiantShutdown() {
 	
 	// Tell the position tracker to save the information
 	_windowPosition.saveToNode(node);
-	
+
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+
+	// Write the visibility status to the registry
+	if (isVisible()) {
+		node.setAttributeValue("visible", "1");
+	}
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	destroy();
