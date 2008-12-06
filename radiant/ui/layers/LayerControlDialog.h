@@ -45,6 +45,9 @@ public:
 	// Command target (registered in the event manager)
 	static void toggle();
 
+	// Called during mainframe construction
+	static void init();
+
 	static LayerControlDialog& Instance();
 	static LayerControlDialogPtr& InstancePtr();
 

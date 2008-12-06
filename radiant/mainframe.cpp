@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/transform/TransformDialog.h"
 #include "ui/overlay/Overlay.h"
 #include "ui/overlay/OverlayDialog.h"
+#include "ui/layers/LayerControlDialog.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Group.h"
@@ -1389,6 +1390,8 @@ void MainFrame::Create()
 	
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();
+
+	ui::LayerControlDialog::init();
 }
 
 void MainFrame::SaveWindowInfo() {
