@@ -21,19 +21,28 @@ class SingleIdleCallback
 	// ID of the registered callback (for subsequent removal)
 	guint _id;
 
+	// some sort of "resource lock" to avoid duplicate callback registrations
+	bool _callbacksPending;
+
 private:
 	
 	// Actual GTK idle callback static function, which invokes the child class'
 	// implementing method
 	static gboolean _onIdle(gpointer self) {
 		SingleIdleCallback* cb = reinterpret_cast<SingleIdleCallback*>(self);
+
+		// Call the virtual function
 		cb->onGtkIdle();
+
+		cb->_callbacksPending = false;
+
 		return FALSE; // automatically deregister callback 
 	}
 	
 	// Remove the callback
 	void deregisterCallback() {
 		g_source_remove(_id);
+		_callbacksPending = false;
 	}
 	
 protected:
@@ -43,6 +52,10 @@ protected:
 	 * the next GTK idle period.
 	 */
 	void requestIdleCallback() {
+		if (_callbacksPending) return; // avoid duplicate registrations
+
+		_callbacksPending = true;
+
 		_id = g_idle_add(_onIdle, this);
 	}
 	
@@ -53,7 +66,11 @@ protected:
 	virtual void onGtkIdle() { }
 	
 public:
-	
+
+	SingleIdleCallback() :
+		_callbacksPending(false)
+	{}
+
 	/**
 	 * Destructor. De-registers the callback from GTK, so that the method will
 	 * not be invoked after the object is destroyed.
