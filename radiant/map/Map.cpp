@@ -462,8 +462,8 @@ void Map::load(const std::string& filename) {
 	setModified(false);
 }
 
-void Map::save() {
-	if (_saveInProgress) return; // safeguard
+bool Map::save() {
+	if (_saveInProgress) return false; // safeguard
 	
 	_saveInProgress = true;
 	
@@ -483,7 +483,7 @@ void Map::save() {
 	selection::algorithm::removeOriginFromChildPrimitives();
 	
 	// Save the actual map resource
-	m_resource->save();
+	bool success = m_resource->save();
 		
 	// Re-add the origins to the child primitives (of entities like func_static)
 	selection::algorithm::addOriginToChildPrimitives();
@@ -494,10 +494,14 @@ void Map::save() {
 	// Remove the map positions again after saving
 	GlobalMapPosition().removePositions();
 	
-	// Clear the modified flag
-	setModified(false);
+	if (success) {
+		// Clear the modified flag
+		setModified(false);
+	}
 
 	_saveInProgress = false;
+
+	return success;
 }
 
 void Map::createNew() {
@@ -652,10 +656,24 @@ bool Map::saveAs() {
 	std::string filename = MapFileManager::getMapFilename(false, "Save Map", "map", getMapName());
   
 	if (!filename.empty()) {
-	    GlobalMRU().insert(filename);
+		// Remember the old name, we might need to revert
+		std::string oldFilename = m_name;
+
+		// Rename the file and try to save
 	    rename(filename);
-	    save();
-	    return true;
+
+		// Try to save the file, this might fail
+		bool success = save();
+
+		if (success) {
+			GlobalMRU().insert(filename);
+		}
+		else if (!success) {
+			// Revert the name change if the file could not be saved
+			rename(oldFilename);
+		}
+
+	    return success;
 	}
 	else {
 		// Invalid filename entered, return false
