@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 #include <fstream>
 
+#include "gtkutil/dialog.h"
 #include "os/path.h"
 #include "stream/textfilestream.h"
 #include "os/file.h"
@@ -66,6 +67,13 @@ bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTr
 {
 	globalOutputStream() << "Open file " << filename << " ";
 	
+	if (file_exists(filename) && !file_writeable(filename)) {
+		// File is write-protected
+		globalErrorStream() << "failure, file is write-protected." << std::endl;
+		gtkutil::errorDialog(std::string("File is write-protected: ") + filename, GlobalRadiant().getMainWindow());
+		return false;
+	}
+
 	// Open the stream to the output file
 	std::ofstream outfile(filename);
 
@@ -76,9 +84,16 @@ bool MapResource_saveFile(const MapFormat& format, scene::INodePtr root, GraphTr
 
 	globalOutputStream() << "and auxiliary file " << auxFilename << " for write...";
 
+	if (file_exists(auxFilename.c_str()) && !file_writeable(auxFilename.c_str())) {
+		// File is write-protected
+		globalErrorStream() << "failure, file is write-protected." << std::endl;
+		gtkutil::errorDialog(std::string("File is write-protected: ") + auxFilename, GlobalRadiant().getMainWindow());
+		return false;
+	}
+
 	std::ofstream auxfile(auxFilename.c_str());
 
-	if(outfile.is_open() && auxfile.is_open()) {
+	if (outfile.is_open() && auxfile.is_open()) {
 	    globalOutputStream() << "success\n";
 
 		map::MapExportInfo exportInfo(outfile, auxfile);

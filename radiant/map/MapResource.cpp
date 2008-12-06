@@ -9,6 +9,7 @@
 #include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
+#include "gtkutil/dialog.h"
 #include "referencecache/NullModelLoader.h"
 #include "debugging/debugging.h"
 #include "referencecache.h"
@@ -88,11 +89,15 @@ bool MapResource::save() {
 			globalErrorStream() << "Could not locate map loader module.\n";
 			return false;
 		}
-		
-		// Save a backup of the existing file (rename it to .bak)
-		saveBackup();
-		
+	
 		std::string fullpath = _path + _name;
+
+		// Save a backup of the existing file (rename it to .bak) if it exists in the first place
+		if (file_exists(fullpath.c_str())) {
+			if (!saveBackup()) {
+				return false;
+			}
+		}
 		
 		bool success = false;
 		
@@ -134,6 +139,8 @@ bool MapResource::saveBackup() {
 		}
 		else {
 			globalErrorStream() << "map path is not writeable: " << fullpath << "\n";
+			// File is write-protected
+			gtkutil::errorDialog(std::string("File is write-protected: ") + fullpath, GlobalRadiant().getMainWindow());
 			return false;
 		}
 	}

@@ -60,16 +60,21 @@ public:
 	 */
 	std::string getMapName() const;
 	
-	/** greebo: Saves the current map, doesn't ask for any filenames, 
-	 * 			so this has to be done before this step.
+	/** 
+	 * greebo: Saves the current map, doesn't ask for any filenames, 
+	 * so this has to be done before this step.
+	 *
+	 * @returns: TRUE if the save was successful, FALSE if an error occurred.
 	 */
-	void save();
+	bool save();
 	
-	/** greebo: Asks the user for a new filename and saves the map
-	 * 			if a valid filename was specified.
+	/** 
+	 * greebo: Asks the user for a new filename and saves the map if 
+	 * a valid filename was specified.
 	 * 
 	 * @returns: TRUE, if the user entered a valid filename and the map was 
-	 * 			 saved correctly. Returns FALSE if no valid filename was entered.
+	 * saved correctly. Returns FALSE if no valid filename was entered or 
+	 * an error occurred.
 	 */
 	bool saveAs();
 	
