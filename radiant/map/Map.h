@@ -20,6 +20,9 @@ class Map :
 	// The map name
 	std::string m_name;
 
+	// The name of the last "save copy as" filename
+	std::string _lastCopyMapName;
+
 	// Pointer to the resource for this map
 	IMapResourcePtr m_resource;
 	
@@ -77,6 +80,12 @@ public:
 	 * an error occurred.
 	 */
 	bool saveAs();
+
+	/** 
+	 * greebo: Saves a copy of the current map (asks for filename using 
+	 * a dialog window).
+	 */
+	bool saveCopyAs();
 	
 	/** greebo: Saves the current selection to the target <filename>.
 	 * 
@@ -97,8 +106,10 @@ public:
 	/** greebo: Exports the current map directly to the given filename.
 	 * 			This skips any "modified" or "unnamed" checks, it just dumps
 	 * 			the current scenegraph content to the file.
+	 *
+	 * @returns: true on success, false on failure.
 	 */
-	void saveDirect(const std::string& filename);
+	bool saveDirect(const std::string& filename);
 	
 	/** greebo: Creates a new map file.
 	 * 

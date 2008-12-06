@@ -127,6 +127,7 @@ namespace map {
 	}
 
 Map::Map() :
+	_lastCopyMapName(""),
 	m_valid(false),
 	_saveInProgress(false)
 {}
@@ -568,8 +569,8 @@ bool Map::import(const std::string& filename) {
 	return success;
 }
 
-void Map::saveDirect(const std::string& filename) {
-	if (_saveInProgress) return; // safeguard
+bool Map::saveDirect(const std::string& filename) {
+	if (_saveInProgress) return false; // safeguard
 
 	ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename.c_str()));
 	
@@ -578,7 +579,7 @@ void Map::saveDirect(const std::string& filename) {
 	// Substract the origin from child primitives (of entities like func_static)
 	selection::algorithm::removeOriginFromChildPrimitives();
 	
-	MapResource_saveFile(
+	bool result = MapResource_saveFile(
 		getFormatForFile(filename), 
 		GlobalSceneGraph().root(), 
 		map::traverse, // TraversalFunc 
@@ -589,6 +590,8 @@ void Map::saveDirect(const std::string& filename) {
 	selection::algorithm::addOriginToChildPrimitives();
 
 	_saveInProgress = false;
+
+	return result;
 }
 
 bool Map::saveSelected(const std::string& filename) {
@@ -681,6 +684,26 @@ bool Map::saveAs() {
 	}
 }
 
+bool Map::saveCopyAs() {
+	// Let's see if we can remember a 
+	if (_lastCopyMapName.empty()) {
+		_lastCopyMapName = getMapName();
+	}
+
+	std::string filename = MapFileManager::getMapFilename(false, "Save Copy As...", "map", _lastCopyMapName);
+	
+	if (!filename.empty()) {
+		// Remember the last name
+		_lastCopyMapName = filename;
+
+		// Return the result of the actual save method
+		return saveDirect(filename);
+  	}
+
+	// Not executed, return false
+	return false;
+}
+
 void Map::loadPrefabAt(const Vector3& targetCoords) {
 	std::string filename = MapFileManager::getMapFilename(true, "Load Prefab", "prefab");
 	
@@ -699,11 +722,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords) {
 }
 
 void Map::saveMapCopyAs() {
-	std::string filename = MapFileManager::getMapFilename(false, "Save Copy As...");
-
-	if (!filename.empty()) {
-	    GlobalMap().saveDirect(filename);
-  	}
+	GlobalMap().saveCopyAs();
 }
 
 void Map::registerCommands() {
