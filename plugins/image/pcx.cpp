@@ -198,7 +198,7 @@ RGBAImagePtr LoadPCX32Buff(byte* buffer, std::size_t length)
 
   RGBAImagePtr image (new RGBAImage(width, height));
   c = (width) * (height);
-  pic32 = image->getRGBAPixels();
+  pic32 = image->getMipMapPixels(0);
   for (i = 0; i < c; i++)
   {
     p = pic8[i];

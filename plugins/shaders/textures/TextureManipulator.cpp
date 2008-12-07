@@ -105,7 +105,7 @@ ETexturesMode TextureManipulator::readTextureMode(const unsigned int& mode) {
 
 Colour3 TextureManipulator::getFlatshadeColour(ImagePtr input) {
 	// Calculate the number of pixels in this image
-	int numPixels = input->getWidth() * input->getHeight();
+	int numPixels = input->getWidth(0) * input->getHeight(0);
 	
 	// Calculate the pixel step value, ensuring it is greater than 0
 	int incr = static_cast<int>(static_cast<float>(numPixels) / 20.0f);
@@ -113,7 +113,7 @@ Colour3 TextureManipulator::getFlatshadeColour(ImagePtr input) {
 		incr = 1;
 	
 	// Set the pixel pointer to the very first pixel
-	unsigned char* pixels = input->getRGBAPixels();
+	unsigned char* pixels = input->getMipMapPixels(0);
 	
 	Colour3 returnValue;
 	int pixelCount = 0;
@@ -150,9 +150,9 @@ ImagePtr TextureManipulator::getProcessedImage(ImagePtr input) {
 
 ImagePtr TextureManipulator::getResized(ImagePtr input) {
 	
-	int width = input->getWidth();
-	int height = input->getHeight();
-	unsigned char* sourcePixels = input->getRGBAPixels();
+	int width = input->getWidth(0);
+	int height = input->getHeight(0);
+	unsigned char* sourcePixels = input->getMipMapPixels(0);
 	
 	ImagePtr output;
 	
@@ -173,7 +173,7 @@ ImagePtr TextureManipulator::getResized(ImagePtr input) {
 		
 		// Resample the texture into the allocated image
 		resampleTexture(sourcePixels, width, height, 
-						output->getRGBAPixels(), gl_width, gl_height, 4);
+						output->getMipMapPixels(0), gl_width, gl_height, 4);
 	}
 	else {
 		// Nothing to do, return the source image
@@ -198,7 +198,7 @@ ImagePtr TextureManipulator::getResized(ImagePtr input) {
 	// Reduce the image to the next smaller power of two until it fits the openGL max texture size
 	while (gl_width > targetWidth || gl_height > targetHeight) {
 		
-		mipReduce(output->getRGBAPixels(), output->getRGBAPixels(), 
+		mipReduce(output->getMipMapPixels(0), output->getMipMapPixels(0), 
 				  gl_width, gl_height, targetWidth, targetHeight);
 
 		if (gl_width > targetWidth)
@@ -219,10 +219,10 @@ ImagePtr TextureManipulator::processGamma(ImagePtr input) {
 	}
 	
 	// Calculate the number of pixels in this image
-	int numPixels = input->getWidth() * input->getHeight();
+	int numPixels = input->getWidth(0) * input->getHeight(0);
 	
 	// Set the pixel pointer to the very first pixel
-	unsigned char* pixels = input->getRGBAPixels();
+	unsigned char* pixels = input->getMipMapPixels(0);
 	
 	// Go over all the pixels and change their value accordingly
 	for (int i = 0; i < (numPixels*4); i += 4) {
