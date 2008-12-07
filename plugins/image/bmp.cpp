@@ -181,16 +181,16 @@ RGBAImagePtr LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
   switch(bmpHeader.bitsPerPixel)
   {
   case 8:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel8(bmpHeader.palette));
+    ReadBMP(inputStream, image->getMipMapPixels(0), rows, columns, ReadPixel8(bmpHeader.palette));
     break;
   case 16:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel16());
+    ReadBMP(inputStream, image->getMipMapPixels(0), rows, columns, ReadPixel16());
     break;
   case 24:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel24());
+    ReadBMP(inputStream, image->getMipMapPixels(0), rows, columns, ReadPixel24());
     break;
   case 32:
-    ReadBMP(inputStream, image->getRGBAPixels(), rows, columns, ReadPixel32());
+    ReadBMP(inputStream, image->getMipMapPixels(0), rows, columns, ReadPixel32());
     break;
   default:
     globalErrorStream() << "LoadBMP: illegal pixel_size '" << bmpHeader.bitsPerPixel << "'\n";

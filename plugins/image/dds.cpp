@@ -30,27 +30,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ddslib.h"
 #include "imagelib.h"
+#include "DDSImage.h"
 
-RGBAImagePtr LoadDDSBuff(const byte* buffer)
+DDSImagePtr LoadDDSFromBuffer(const byte* buffer)
 {
-  int width, height;
-  ddsPF_t pixelFormat;
-  if(DDSGetInfo(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), &width, &height, &pixelFormat) == -1)
-  {
-    return RGBAImagePtr();
-  }
+	int width, height;
+	ddsPF_t pixelFormat;
 
-  RGBAImagePtr image (new RGBAImage(width, height));
+	if (DDSGetInfo(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), &width, &height, &pixelFormat) == -1) {
+		return DDSImagePtr();
+	}
 
-  if(DDSDecompress(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), image->getRGBAPixels()) == -1)
-  {
-    return RGBAImagePtr();
-  }
-  return image;
+	DDSImagePtr image(new DDSImage());
+
+	// Declare a new mip map
+	image->declareMipMap(width, height, 4);
+	image->allocateMipMapMemory();
+
+	if (DDSDecompress(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), image->getMipMapPixels(0)) == -1) {
+		return DDSImagePtr();
+	}
+
+	return image;
 }
 
-ImagePtr LoadDDS(ArchiveFile& file)
-{
-  ScopedArchiveBuffer buffer(file);
-  return LoadDDSBuff(buffer.buffer);
+ImagePtr LoadDDS(ArchiveFile& file) {
+	ScopedArchiveBuffer buffer(file);
+	return LoadDDSFromBuffer(buffer.buffer);
 }

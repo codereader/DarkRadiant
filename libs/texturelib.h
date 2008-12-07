@@ -59,9 +59,6 @@ public:
 	// for flat shade mode
 	Colour3 color;
 	
-	// The flags
-	int surfaceFlags, contentFlags, value;
-
 	int referenceCounter;
 
 	// Constructor

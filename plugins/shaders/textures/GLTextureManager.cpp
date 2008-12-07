@@ -141,12 +141,8 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 void GLTextureManager::load(TexturePtr texture, ImagePtr image) {
 	
 	// Fill the Texture structure with the metadata
-	texture->width = image->getWidth();
-	texture->height = image->getHeight();
-	
-	texture->surfaceFlags = image->getSurfaceFlags();
-	texture->contentFlags = image->getContentFlags();
-	texture->value = image->getValue();
+	texture->width = image->getWidth(0);
+	texture->height = image->getHeight(0);
 	
 	// Calculate an average, representative colour for flatshade rendering 
 	texture->color = TextureManipulator::instance().getFlatshadeColour(image);
@@ -159,8 +155,8 @@ void GLTextureManager::load(TexturePtr texture, ImagePtr image) {
 	TextureManipulator::instance().setTextureParameters();
 	
 	// Now create the mipmaps; conveniently, there exists an openGL method for this 
-	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image->getWidth(), image->getHeight(), 
-					  GL_RGBA, GL_UNSIGNED_BYTE, image->getRGBAPixels());
+	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image->getWidth(0), image->getHeight(0), 
+					  GL_RGBA, GL_UNSIGNED_BYTE, image->getMipMapPixels(0));
 	
 	// Clear the texture binding
 	glBindTexture(GL_TEXTURE_2D, 0);
