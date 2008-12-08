@@ -95,7 +95,10 @@ bool MapResource::save() {
 		// Save a backup of the existing file (rename it to .bak) if it exists in the first place
 		if (file_exists(fullpath.c_str())) {
 			if (!saveBackup()) {
-				return false;
+				// angua: if backup creation is not possible, still save the map
+				// but create message in the console
+				globalErrorStream() << "Could not create backup (Map is possibly open in Doom3)\n";
+				// return false;
 			}
 		}
 		
