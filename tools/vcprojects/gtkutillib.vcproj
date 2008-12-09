@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="gtkutillib"
 	ProjectGUID="{B6D4B38A-0C39-42CD-8193-75979E1F4D68}"
 	RootNamespace="gtkutillib"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

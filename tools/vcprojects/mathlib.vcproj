@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="mathlib"
 	ProjectGUID="{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
