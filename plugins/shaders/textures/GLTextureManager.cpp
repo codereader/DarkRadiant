@@ -139,12 +139,17 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 }
 
 void GLTextureManager::load(TexturePtr texture, ImagePtr image) {
-	
+	// Download the texture and set the reference number
+	texture->texture_number = image->downloadTextureToGL();
+
 	// Fill the Texture structure with the metadata
 	texture->width = image->getWidth(0);
 	texture->height = image->getHeight(0);
+
+	// Flat-shade colour mode will not be supported in the near future (TODO)
+	texture->color = Colour3(0.5, 0.5, 0.5);
 	
-	// Calculate an average, representative colour for flatshade rendering 
+	/*// Calculate an average, representative colour for flatshade rendering 
 	texture->color = TextureManipulator::instance().getFlatshadeColour(image);
 	
 	// Allocate a new texture number and store it into the Texture structure
@@ -159,7 +164,7 @@ void GLTextureManager::load(TexturePtr texture, ImagePtr image) {
 					  GL_RGBA, GL_UNSIGNED_BYTE, image->getMipMapPixels(0));
 	
 	// Clear the texture binding
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);*/
 }
 
 } // namespace shaders

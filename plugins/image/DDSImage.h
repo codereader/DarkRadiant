@@ -25,11 +25,14 @@ class DDSImage :
 		std::size_t width;	// pixel width
 		std::size_t height; // pixel height
 
+		std::size_t size;	// memory size used by this mipmap
+
 		std::size_t offset;	// offset in _pixelData to the beginning of this mipmap
 
 		MipMapInfo() :
 			width(0),
 			height(0),
+			size(0),
 			offset(0)
 		{}
 	};
@@ -61,9 +64,10 @@ public:
 	 * greebo: Declares a new mip map to be added to the internal
 	 * structure.
 	 */
-	void addMipMap(std::size_t width, std::size_t height, std::size_t offset) {
+	void addMipMap(std::size_t width, std::size_t height, std::size_t size, std::size_t offset) {
 		MipMapInfo info;
 
+		info.size = size;
 		info.width = width;
 		info.height = height;
 		info.offset = offset;
@@ -116,6 +120,31 @@ public:
 		assert(mipMapIndex < _mipMapInfo.size());
 
 		return _mipMapInfo[mipMapIndex].height;
+	}
+
+	virtual GLuint downloadTextureToGL() {
+		GLuint textureNum;
+
+		// Allocate a new texture number and store it into the Texture structure
+		glGenTextures(1, &textureNum);
+		glBindTexture(GL_TEXTURE_2D, textureNum);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+
+		for (unsigned int i = 0; i < _mipMapInfo.size(); ++i) {
+			const MipMapInfo& mipMap = _mipMapInfo[i];
+
+			glCompressedTexImage2D(GL_TEXTURE_2D, i, _format, 
+				mipMap.width, mipMap.height, 0, 
+				mipMap.size, _pixelData + mipMap.offset );
+		}
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, _mipMapInfo.size() - 1);
+
+		// Un-bind the texture
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return textureNum;
 	}
 
 	bool isPrecompressed() const {
