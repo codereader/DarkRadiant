@@ -56,9 +56,23 @@ void RadiantModule::setMainWindow(GtkWindow* mainWindow) {
 }
 	
 GdkPixbuf* RadiantModule::getLocalPixbuf(const std::string& fileName) {
+	// Try to use a cached pixbuf first
+	PixBufMap::iterator i = _localPixBufs.find(fileName);
+	
+	if (i != _localPixBufs.end()) {
+		return i->second;
+	}
+
+	// Not cached yet, load afresh
+
 	// Construct the full filename using the Bitmaps path
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-	return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+
+	GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+
+	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
+
+	return pixbuf;
 }
 
 GdkPixbuf* RadiantModule::getLocalPixbufWithMask(const std::string& fileName) {
