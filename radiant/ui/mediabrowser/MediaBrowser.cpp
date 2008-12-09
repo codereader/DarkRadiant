@@ -309,14 +309,15 @@ void MediaBrowser::reloadMedia() {
 } 
 
 void MediaBrowser::populate() {
+	// Set the flag to true to avoid double-entering this function
+	_isPopulated = true;
+
 	ShaderNameFunctor functor(_treeStore);
 	
 	// greebo: Add the textures folder first, so that it gets displayed before
 	// the "Other Materials" folder.
 	functor.addFolder("textures");
-	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));
-
-	_isPopulated = true;	
+	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));	
 }
 
 /* gtkutil::PopupMenu callbacks */

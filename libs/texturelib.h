@@ -59,16 +59,10 @@ public:
 	// for flat shade mode
 	Colour3 color;
 	
-	// The flags
-	int surfaceFlags, contentFlags, value;
-
-	int referenceCounter;
-
 	// Constructor
 	Texture(const std::string& name) :
 		name(name),
-		texture_number(0),
-		referenceCounter(0)
+		texture_number(0)
 	{}
 	
 	~Texture() {

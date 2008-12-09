@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IIMAGE_H)
 #define INCLUDED_IIMAGE_H
 
+#include "igl.h"
 #include "imodule.h"
 
 typedef unsigned char byte;
@@ -29,22 +30,32 @@ typedef unsigned char byte;
 class Image
 {
 public:
-  virtual byte* getRGBAPixels() const = 0;
-  virtual unsigned int getWidth() const = 0;
-  virtual unsigned int getHeight() const = 0;
+	/**
+	 * greebo: Returns the number of mipmaps in this image.
+	 */
+	virtual std::size_t getNumMipMaps() const = 0;
 
-  virtual int getSurfaceFlags() const
-  {
-    return 0;
-  }
-  virtual int getContentFlags() const
-  {
-    return 0;
-  }
-  virtual int getValue() const
-  {
-    return 0;
-  }
+	/**
+	 * greebo: Returns the specified mipmap pixel data.
+	 */
+	virtual byte* getMipMapPixels(std::size_t mipMapIndex) const = 0;
+
+	/**
+	 * greebo: Returns the dimension of the specified mipmap.
+	 */
+	virtual std::size_t getWidth(std::size_t mipMapIndex) const = 0;
+	virtual std::size_t getHeight(std::size_t mipMapIndex) const = 0;
+
+	/** 
+	 * greebo: This downloads all mipmaps to OpenGL and returns the
+	 * bound texture number.
+	 */
+	virtual GLuint downloadTextureToGL() = 0;
+
+	// greebo: Returns TRUE whether this image is precompressed (DDS)
+	virtual bool isPrecompressed() const {
+		return false;
+	}
 };
 typedef boost::shared_ptr<Image> ImagePtr;
 

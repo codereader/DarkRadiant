@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="ddslib"
 	ProjectGUID="{D42098ED-E192-4DC1-BA1C-80812AB194B4}"
 	RootNamespace="jpeglib"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform

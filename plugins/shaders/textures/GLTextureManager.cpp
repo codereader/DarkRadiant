@@ -139,31 +139,18 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 }
 
 void GLTextureManager::load(TexturePtr texture, ImagePtr image) {
-	
-	// Fill the Texture structure with the metadata
-	texture->width = image->getWidth();
-	texture->height = image->getHeight();
-	
-	texture->surfaceFlags = image->getSurfaceFlags();
-	texture->contentFlags = image->getContentFlags();
-	texture->value = image->getValue();
-	
-	// Calculate an average, representative colour for flatshade rendering 
-	texture->color = TextureManipulator::instance().getFlatshadeColour(image);
-	
-	// Allocate a new texture number and store it into the Texture structure
-	glGenTextures(1, &texture->texture_number);
-	glBindTexture(GL_TEXTURE_2D, texture->texture_number);
+	// Download the texture and set the reference number
+	texture->texture_number = image->downloadTextureToGL();
 
-	// Tell OpenGL how to use the mip maps we will be creating here
-	TextureManipulator::instance().setTextureParameters();
+	// Fill the Texture structure with the metadata
+	texture->width = image->getWidth(0);
+	texture->height = image->getHeight(0);
+
+	// Flat-shade colour mode will not be supported in the near future (TODO)
+	texture->color = Colour3(0.5, 0.5, 0.5);
 	
-	// Now create the mipmaps; conveniently, there exists an openGL method for this 
-	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image->getWidth(), image->getHeight(), 
-					  GL_RGBA, GL_UNSIGNED_BYTE, image->getRGBAPixels());
-	
-	// Clear the texture binding
-	glBindTexture(GL_TEXTURE_2D, 0);
+	/*// Calculate an average, representative colour for flatshade rendering 
+	texture->color = TextureManipulator::instance().getFlatshadeColour(image);*/
 }
 
 } // namespace shaders
