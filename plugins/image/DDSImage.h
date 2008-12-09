@@ -2,6 +2,7 @@
 #define DDS_IMAGE_H_
 
 #include <vector>
+#include "igl.h"
 
 #include "imagelib.h"
 #include <boost/noncopyable.hpp>
@@ -16,18 +17,19 @@ class DDSImage :
 	// The amount of memory used by the image data
 	std::size_t _memSize;
 
+	// The compression format ID
+	GLuint _format;
+
 	struct MipMapInfo 
 	{
 		std::size_t width;	// pixel width
 		std::size_t height; // pixel height
-		std::size_t bpp;	// bytes per pixel
 
 		std::size_t offset;	// offset in _pixelData to the beginning of this mipmap
 
 		MipMapInfo() :
 			width(0),
 			height(0),
-			bpp(0),
 			offset(0)
 		{}
 	};
@@ -51,31 +53,22 @@ public:
 		releaseMemory();
 	}
 
+	void setFormat(GLuint format) {
+		_format = format;
+	}
+
 	/**
 	 * greebo: Declares a new mip map to be added to the internal
-	 * memory calculation. The actual memory is not allocated by
-	 * calling this, use the allocateMipMapMemory() for that purpose.
+	 * structure.
 	 */
-	void declareMipMap(std::size_t width, std::size_t height, std::size_t bpp) {
+	void addMipMap(std::size_t width, std::size_t height, std::size_t offset) {
 		MipMapInfo info;
 
 		info.width = width;
 		info.height = height;
-		info.bpp = bpp;
+		info.offset = offset;
 
 		_mipMapInfo.push_back(info);
-	}
-
-	/**
-	 * greebo: Removes all mipmap declarations. This leaves this class
-	 * with 0 mipmaps and no allocated memory.
-	 */
-	void clearMipMapDeclarations() {
-		// Free previously allocated memory
-		releaseMemory();
-
-		// Clear mipmap declarations
-		_mipMapInfo.clear();
 	}
 
 	/**
@@ -127,23 +120,6 @@ public:
 
 	bool isPrecompressed() const {
 		return true;
-	}
-
-private:
-	/**
-	 * Returns the total number of bytes required to store
-	 * all declared mipmaps.
-	 */
-	std::size_t getTotalMemory() {
-		std::size_t memory(0);
-
-		for (MipMapInfoList::const_iterator i = _mipMapInfo.begin(); 
-			 i != _mipMapInfo.end(); ++i)
-		{
-			memory += i->width * i->height * i->bpp;
-		}
-
-		return memory;
 	}
 };
 typedef boost::shared_ptr<DDSImage> DDSImagePtr;
