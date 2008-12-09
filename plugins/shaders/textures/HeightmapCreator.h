@@ -19,13 +19,13 @@ inline byte* getPixel(byte* pixels, int width, int height, int x, int y) {
 ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 	assert(heightMap);
 	 
-	int width = heightMap->getWidth();
-	int height = heightMap->getHeight();
+	int width = heightMap->getWidth(0);
+	int height = heightMap->getHeight(0);
 	 
 	ImagePtr normalMap (new RGBAImage(width, height));
  
-	byte* in = heightMap->getRGBAPixels();
-	byte* out = normalMap->getRGBAPixels();
+	byte* in = heightMap->getMipMapPixels(0);
+	byte* out = normalMap->getMipMapPixels(0);
 
 	struct KernelElement
 	{

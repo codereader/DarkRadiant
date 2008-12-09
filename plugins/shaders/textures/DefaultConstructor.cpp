@@ -58,7 +58,7 @@ ImagePtr DefaultConstructor::construct() {
 		 i != loaders.end();
 		 ++i) 
 	{
-		ImageLoaderPtr ldr = *i;
+		const ImageLoaderPtr& ldr = *i;
 		
 		// Construct the full name of the image to load, including the 
 		// prefix (e.g. "dds/") and the file extension.

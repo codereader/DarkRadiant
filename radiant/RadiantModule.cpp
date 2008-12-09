@@ -56,12 +56,36 @@ void RadiantModule::setMainWindow(GtkWindow* mainWindow) {
 }
 	
 GdkPixbuf* RadiantModule::getLocalPixbuf(const std::string& fileName) {
+	// Try to use a cached pixbuf first
+	PixBufMap::iterator i = _localPixBufs.find(fileName);
+	
+	if (i != _localPixBufs.end()) {
+		return i->second;
+	}
+
+	// Not cached yet, load afresh
+
 	// Construct the full filename using the Bitmaps path
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-	return gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+
+	GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+
+	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
+
+	return pixbuf;
 }
 
 GdkPixbuf* RadiantModule::getLocalPixbufWithMask(const std::string& fileName) {
+
+	// Try to find a cached pixbuf before loading from disk
+	PixBufMap::iterator i = _localPixBufsWithMask.find(fileName);
+	
+	if (i != _localPixBufsWithMask.end()) {
+		return i->second;
+	}
+
+	// Not cached yet, load afresh
+
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 	
 	GdkPixbuf* rgb = gdk_pixbuf_new_from_file(fullFileName.c_str(), 0);
@@ -69,6 +93,9 @@ GdkPixbuf* RadiantModule::getLocalPixbufWithMask(const std::string& fileName) {
 		// File load successful, add alpha channel
 		GdkPixbuf* rgba = gdk_pixbuf_add_alpha(rgb, TRUE, 255, 0, 255);
 		gdk_pixbuf_unref(rgb);
+
+		_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
+
 		return rgba;
 	}
 	else {

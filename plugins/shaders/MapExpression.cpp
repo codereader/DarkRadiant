@@ -81,15 +81,15 @@ MapExpressionPtr IMapExpression::createForString(std::string str) {
 
 ImagePtr IMapExpression::getResampled(ImagePtr input, unsigned int width, unsigned int height) {
 	// Check if the dimensions differ from the desired ones
-	if (width != input->getWidth() || height != input->getHeight()) {
+	if (width != input->getWidth(0) || height != input->getHeight(0)) {
 		// Allocate a new image buffer
 		ImagePtr resampled (new RGBAImage(width, height));
 	
 		// Resample the texture to match the dimensions of the first image
 		TextureManipulator::instance().resampleTexture(
-			input->getRGBAPixels(), 
-			input->getWidth(), input->getHeight(), 
-			resampled->getRGBAPixels(), 
+			input->getMipMapPixels(0), 
+			input->getWidth(0), input->getHeight(0), 
+			resampled->getMipMapPixels(0), 
 			width, height, 4
 		);
 		return resampled;
@@ -138,8 +138,8 @@ ImagePtr AddNormalsExpression::getImage() {
     
     if (imgOne == NULL) return ImagePtr();
 
-    unsigned int width = imgOne->getWidth();
-    unsigned int height = imgOne->getHeight();
+    unsigned int width = imgOne->getWidth(0);
+    unsigned int height = imgOne->getHeight(0);
 
     ImagePtr imgTwo = mapExpTwo->getImage();
 
@@ -150,9 +150,9 @@ ImagePtr AddNormalsExpression::getImage() {
 
     ImagePtr result (new RGBAImage(width, height));
 
-    byte* pixOne = imgOne->getRGBAPixels();
-    byte* pixTwo = imgTwo->getRGBAPixels();
-    byte* pixOut = result->getRGBAPixels();
+    byte* pixOne = imgOne->getMipMapPixels(0);
+    byte* pixTwo = imgTwo->getMipMapPixels(0);
+    byte* pixOut = result->getMipMapPixels(0);
 
     // iterate through the pixels
     for( int y = 0; y < static_cast<int>(height); y++ ) {
@@ -203,13 +203,13 @@ ImagePtr SmoothNormalsExpression::getImage() {
 	
 	if (normalMap == NULL) return ImagePtr();
 	 
-	unsigned int width = normalMap->getWidth();
-	unsigned int height = normalMap->getHeight();
+	unsigned int width = normalMap->getWidth(0);
+	unsigned int height = normalMap->getHeight(0);
 	 
 	ImagePtr result (new RGBAImage(width, height));
  
-	byte* in = normalMap->getRGBAPixels();
-	byte* out = result->getRGBAPixels();
+	byte* in = normalMap->getMipMapPixels(0);
+	byte* out = result->getMipMapPixels(0);
 
 	struct KernelElement {
 		// offset to the current pixel
@@ -280,8 +280,8 @@ ImagePtr AddExpression::getImage() {
     
     if (imgOne == NULL) return ImagePtr();
 
-    unsigned int width = imgOne->getWidth();
-    unsigned int height = imgOne->getHeight();
+    unsigned int width = imgOne->getWidth(0);
+    unsigned int height = imgOne->getHeight(0);
 
 	ImagePtr imgTwo = mapExpTwo->getImage();
 	
@@ -292,9 +292,9 @@ ImagePtr AddExpression::getImage() {
 
     ImagePtr result (new RGBAImage(width, height));
 
-    byte* pixOne = imgOne->getRGBAPixels();
-    byte* pixTwo = imgTwo->getRGBAPixels();
-    byte* pixOut = result->getRGBAPixels();
+    byte* pixOne = imgOne->getMipMapPixels(0);
+    byte* pixTwo = imgTwo->getMipMapPixels(0);
+    byte* pixOut = result->getMipMapPixels(0);
 
     // iterate through the pixels
     for( int y = 0; y < static_cast<int>(height); y++) {
@@ -345,8 +345,8 @@ ImagePtr ScaleExpression::getImage() {
     
     if (img == NULL) return ImagePtr();
 
-    unsigned int width = img->getWidth();
-    unsigned int height = img->getHeight();
+    unsigned int width = img->getWidth(0);
+    unsigned int height = img->getHeight(0);
     
     if (scaleRed < 0 || scaleGreen < 0 || scaleBlue < 0 || scaleAlpha < 0) {
 		std::cout << "[shaders] ScaleExpression: Invalid scale values found.\n";
@@ -355,8 +355,8 @@ ImagePtr ScaleExpression::getImage() {
 	 
     ImagePtr result (new RGBAImage(width, height));
  
-    byte* in = img->getRGBAPixels();
-    byte* out = result->getRGBAPixels();
+    byte* in = img->getMipMapPixels(0);
+    byte* out = result->getMipMapPixels(0);
 
     // iterate through the pixels
     for( int y = 0; y < static_cast<int>(height); y++) {
@@ -399,13 +399,13 @@ ImagePtr InvertAlphaExpression::getImage() {
 	
 	if (img == NULL) return ImagePtr();
 
-	unsigned int width = img->getWidth();
-	unsigned int height = img->getHeight();
+	unsigned int width = img->getWidth(0);
+	unsigned int height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
 
-	byte* in = img->getRGBAPixels();
-	byte* out = result->getRGBAPixels();
+	byte* in = img->getMipMapPixels(0);
+	byte* out = result->getMipMapPixels(0);
 
 	// iterate through the pixels
 	for( int y = 0; y < static_cast<int>(height); y++) {
@@ -440,13 +440,13 @@ ImagePtr InvertColorExpression::getImage() {
 	
 	if (img == NULL) return ImagePtr();
 
-	unsigned int width = img->getWidth();
-	unsigned int height = img->getHeight();
+	unsigned int width = img->getWidth(0);
+	unsigned int height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
  
-	byte* in = img->getRGBAPixels();
-	byte* out = result->getRGBAPixels();
+	byte* in = img->getMipMapPixels(0);
+	byte* out = result->getMipMapPixels(0);
 
 	// iterate through the pixels
 	for( int y = 0; y < static_cast<int>(height); y++) {
@@ -481,13 +481,13 @@ ImagePtr MakeIntensityExpression::getImage() {
 	
 	if (img == NULL) return ImagePtr();
 
-	unsigned int width = img->getWidth();
-	unsigned int height = img->getHeight();
+	unsigned int width = img->getWidth(0);
+	unsigned int height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
  
-	byte* in = img->getRGBAPixels();
-	byte* out = result->getRGBAPixels();
+	byte* in = img->getMipMapPixels(0);
+	byte* out = result->getMipMapPixels(0);
 	
 	// iterate through the pixels
 	for( int y = 0; y < static_cast<int>(height); y++) {
@@ -522,13 +522,13 @@ ImagePtr MakeAlphaExpression::getImage() {
 	
 	if (img == NULL) return ImagePtr();
 
-	unsigned int width = img->getWidth();
-	unsigned int height = img->getHeight();
+	unsigned int width = img->getWidth(0);
+	unsigned int height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
 
-	byte* in = img->getRGBAPixels();
-	byte* out = result->getRGBAPixels();
+	byte* in = img->getMipMapPixels(0);
+	byte* out = result->getMipMapPixels(0);
 
 	// iterate through the pixels
 	for( int y = 0; y < static_cast<int>(height); y++) {

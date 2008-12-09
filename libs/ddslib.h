@@ -71,6 +71,23 @@ typedef enum
 }
 ddsPF_t;
 
+// greebo: General parameters which depend on the DDS format
+/*struct DDSLoadInfo
+{
+	unsigned int divSize = 4;
+	unsigned int blockBytes;
+	GLenum internalFormat;
+};
+
+DDSLoadInfo loadInfoDXT1 = {
+      8, GL_COMPRESSED_RGBA_S3TC_DXT1
+};
+DdsLoadInfo loadInfoDXT3 = {
+      16, GL_COMPRESSED_RGBA_S3TC_DXT3
+};
+DdsLoadInfo loadInfoDXT5 = {
+      16, GL_COMPRESSED_RGBA_S3TC_DXT5
+};*/
 
 /* 16bpp stuff */
 #define DDS_LOW_5		0x001F;
@@ -157,8 +174,17 @@ typedef struct ddsPixelFormat_s
 }
 ddsPixelFormat_t;
 
+//  DDS header flags
+#define DDSD_CAPS         0x00000001 
+#define DDSD_HEIGHT       0x00000002 
+#define DDSD_WIDTH        0x00000004 
+#define DDSD_PITCH        0x00000008 
+#define DDSD_PIXELFORMAT  0x00001000 
+#define DDSD_MIPMAPCOUNT  0x00020000 
+#define DDSD_LINEARSIZE   0x00080000 
+#define DDSD_DEPTH        0x00800000 
 
-typedef struct ddsBuffer_s
+struct DDSHeader
 {
 	/* magic: 'dds ' */
 	char				magic[ 4 ];
@@ -194,6 +220,11 @@ typedef struct ddsBuffer_s
 	ddsPixelFormat_t	pixelFormat;
 	ddsCaps_t			ddsCaps;
 	unsigned int		textureStage;
+};
+
+typedef struct ddsBuffer_s
+{
+	DDSHeader			header;
 	
 	/* data (Varying size) */
 	unsigned char		data[ 4 ];
@@ -235,8 +266,8 @@ ddsColor_t;
 
 
 /* public functions */
-int						DDSGetInfo( ddsBuffer_t *dds, int *width, int *height, ddsPF_t *pf );
-int						DDSDecompress( ddsBuffer_t *dds, unsigned char *pixels );
+int						DDSGetInfo( const DDSHeader* header, int *width, int *height, ddsPF_t *pf );
+int						DDSDecompress( const DDSHeader* header, const unsigned char* buffer, unsigned char *pixels );
 
 
 

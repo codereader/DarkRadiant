@@ -40,7 +40,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
 		return i->second;
 	}
 	else {
-		globalErrorStream() << "Definition not found: " << name.c_str() << "\n";
+		globalErrorStream() << "Definition not found: " << name << "\n";
 		
 		// Create an empty template with this name
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
@@ -87,7 +87,7 @@ ShaderLibrary::iterator& ShaderLibrary::getIterator() {
 
 void ShaderLibrary::incrementIterator() {
 	if (_publicIterator != end()) {
-		_publicIterator++;
+		++_publicIterator;
 	}
 }
 
@@ -102,7 +102,7 @@ ShaderLibrary::iterator ShaderLibrary::end() {
 void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {	
 	for (ShaderDefinitionMap::const_iterator i = _definitions.begin(); 
 		 i != _definitions.end(); 
-		 i++) 
+		 ++i) 
 	{
 		callback(i->first.c_str());
 	}
@@ -117,7 +117,7 @@ TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename, const
 }
 
 void ShaderLibrary::foreachShader(ShaderVisitor& visitor) {
-	for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); i++) {
+	for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i) {
 		visitor.visit(i->second);
 	}
 }
