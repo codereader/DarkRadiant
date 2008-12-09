@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 DDSImagePtr LoadDDSFromStream(InputStream& stream)
 {
-	int width, height;
+	int width(0), height(0);
 	ddsPF_t pixelFormat;
 
 	// Load the header
@@ -46,6 +46,15 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 		return DDSImagePtr();
 	}
 
+	struct MipMapInfo {
+		std::size_t size;
+		std::size_t width;
+		std::size_t height;
+		std::size_t offset;
+	};
+	typedef boost::shared_ptr<MipMapInfo> MipMapInfoPtr;
+	std::vector<MipMapInfoPtr> mipMapInfo;
+
 	// Get the number of mipmaps from the file
 	std::size_t mipMapCount = (header.flags & DDSD_MIPMAPCOUNT) ? header.mipMapCount : 1;
 	
@@ -53,13 +62,22 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 	std::size_t blockBytes = (pixelFormat == DDS_PF_DXT1) ? 8 : 16;
 
 	std::size_t size = 0;
+	std::size_t offset = 0;
 
-	std::size_t x = width;
-	std::size_t y = height;
- 
 	for (std::size_t i = 0; i < mipMapCount; ++i) {
-		// Calculate this mipmap size
-		size += std::max( 4, width ) / 4 * std::max( 4, height ) / 4 * blockBytes;
+		// Create a new mipmap structure
+		MipMapInfoPtr mipMap(new MipMapInfo);
+
+		mipMap->offset = offset;
+		mipMap->width = width;
+		mipMap->height = height;
+		mipMap->size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
+
+		// Update the offset for the next mipmap
+		offset += mipMap->size;
+
+		// Store the mipmap info
+		mipMapInfo.push_back(mipMap);
 
 		// Go to the next mipmap
 		width = (width+1) >> 1;
@@ -69,12 +87,30 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 	// Allocate a new DDS image with that size
 	DDSImagePtr image(new DDSImage(size));
 
-	// Declare a new mip map
-	image->declareMipMap(width, height, 4);
+	// Set the format of this DDS image
+	switch (pixelFormat) {
+		case DDS_PF_DXT1:
+			image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
+			break;
+		case DDS_PF_DXT3:
+			image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT3_EXT);
+			break;
+		case DDS_PF_DXT5:
+			image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
+			break;
+	};
 
-	/*if (DDSDecompress(header, image->getMipMapPixels(0)) == -1) {
-		return DDSImagePtr();
-	}*/
+	// Load the mipmaps into the allocated memory
+	for (std::size_t i = 0; i < mipMapInfo.size(); ++i) {
+		const MipMapInfoPtr& mipMap = mipMapInfo[i];
+
+		// Declare a new mipmap and store the offset
+		image->addMipMap(mipMap->width, mipMap->height, mipMap->offset);
+
+		// Read the data into the DDSImage's memory
+		std::size_t bytesRead =	stream.read(reinterpret_cast<byteType*>(image->getMipMapPixels(i)), mipMap->size);
+		assert(bytesRead == mipMap->size);
+	}
 
 	return image;
 }
