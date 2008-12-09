@@ -270,6 +270,8 @@ void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Model
 }
 
 void ModelPreview::callbackGLScroll(GtkWidget* widget, GdkEventScroll* ev, ModelPreview* self) {
+	if (self->_model == NULL) return;
+
 	float inc = self->_model->localAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
 	if (ev->direction == GDK_SCROLL_UP)
 		self->_camDist += inc;
