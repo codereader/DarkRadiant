@@ -37,17 +37,39 @@ DDSImagePtr LoadDDSFromBuffer(const byte* buffer)
 	int width, height;
 	ddsPF_t pixelFormat;
 
-	if (DDSGetInfo(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), &width, &height, &pixelFormat) == -1) {
+	const ddsBuffer_t* header = reinterpret_cast<const ddsBuffer_t*>(buffer);
+
+	if (DDSGetInfo(header, &width, &height, &pixelFormat) == -1) {
 		return DDSImagePtr();
 	}
 
-	DDSImagePtr image(new DDSImage());
+	// Get the number of mipmaps from the file
+	std::size_t mipMapCount = (header->flags & DDSD_MIPMAPCOUNT) ? header->mipMapCount : 1;
+	
+	// Calculate the total memory requirements (greebo: DXT1 has 8 bytes per block)
+	std::size_t blockBytes = (pixelFormat == DDS_PF_DXT1) ? 8 : 16;
+
+	std::size_t size = 0;
+
+	std::size_t x = width;
+	std::size_t y = height;
+
+	for (std::size_t i = 0; i < mipMapCount; ++i) {
+		// Calculate this mipmap size
+		size += std::max( 4, width ) / 4 * std::max( 4, height ) / 4 * blockBytes;
+
+		// Go to the next mipmap
+		width = (width+1) >> 1;
+		height = (height+1) >> 1;
+	}
+	
+	// Allocate a new DDS image with that size
+	DDSImagePtr image(new DDSImage(size));
 
 	// Declare a new mip map
 	image->declareMipMap(width, height, 4);
-	image->allocateMipMapMemory();
 
-	if (DDSDecompress(reinterpret_cast<ddsBuffer_t*>(const_cast<byte*>(buffer)), image->getMipMapPixels(0)) == -1) {
+	if (DDSDecompress(header, image->getMipMapPixels(0)) == -1) {
 		return DDSImagePtr();
 	}
 

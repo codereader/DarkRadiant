@@ -142,7 +142,7 @@ DDSDecodePixelFormat()
 determines which pixel format the dds texture is in
 */
 
-static void DDSDecodePixelFormat( ddsBuffer_t *dds, ddsPF_t *pf ) {
+static void DDSDecodePixelFormat( const ddsBuffer_t *dds, ddsPF_t *pf ) {
 	unsigned char	fourCC[4];
 
 
@@ -182,7 +182,7 @@ DDSGetInfo()
 extracts relevant info from a dds texture, returns 0 on success
 */
 
-int DDSGetInfo( ddsBuffer_t *dds, int *width, int *height, ddsPF_t *pf ) {
+int DDSGetInfo(const ddsBuffer_t *dds, int *width, int *height, ddsPF_t *pf ) {
 	/* dummy test */
 	if( dds == NULL )
 		return -1;
@@ -573,7 +573,7 @@ DDSDecompressDXT1()
 decompresses a dxt1 format texture
 */
 
-static int DDSDecompressDXT1( ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
+static int DDSDecompressDXT1( const ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
 	int				x, y, xBlocks, yBlocks;
 	unsigned int	*pixel;
 	ddsColorBlock_t	*block;
@@ -608,7 +608,7 @@ DDSDecompressDXT3()
 decompresses a dxt3 format texture
 */
 
-static int DDSDecompressDXT3( ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
+static int DDSDecompressDXT3( const ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
 	int						x, y, xBlocks, yBlocks;
 	unsigned int			*pixel, alphaZero;
 	ddsColorBlock_t			*block;
@@ -661,7 +661,7 @@ DDSDecompressDXT5()
 decompresses a dxt5 format texture
 */
 
-static int DDSDecompressDXT5( ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
+static int DDSDecompressDXT5( const ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
 	int							x, y, xBlocks, yBlocks;
 	unsigned int				*pixel, alphaZero;
 	ddsColorBlock_t				*block;
@@ -714,7 +714,7 @@ DDSDecompressDXT2()
 decompresses a dxt2 format texture (fixme: un-premultiply alpha)
 */
 
-static int DDSDecompressDXT2( ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
+static int DDSDecompressDXT2( const ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
 	int		r;
 
 
@@ -732,7 +732,7 @@ DDSDecompressDXT4()
 decompresses a dxt4 format texture (fixme: un-premultiply alpha)
 */
 
-static int DDSDecompressDXT4( ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
+static int DDSDecompressDXT4( const ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
 	int		r;
 
 
@@ -750,9 +750,10 @@ DDSDecompressARGB8888()
 decompresses an argb 8888 format texture
 */
 
-static int DDSDecompressARGB8888( ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
+static int DDSDecompressARGB8888( const ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
 	int							x, y;
-	unsigned char				*in, *out;
+	const unsigned char		*in;
+	unsigned char *out;
 
 
 	/* setup */
@@ -776,7 +777,7 @@ static int DDSDecompressARGB8888( ddsBuffer_t *dds, int width, int height, unsig
 
 /** greebo: This decompresses a DXT5 RXGB texture as used by the Doom3 engine.
  */
-static int DDSDecompressRXGB( ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
+static int DDSDecompressRXGB( const ddsBuffer_t *dds, int width, int height, unsigned char *pixels ) {
 	int							x, y, xBlocks, yBlocks;
 	unsigned int				*pixel, redZero;
 	ddsColorBlock_t				*block;
@@ -828,7 +829,7 @@ DDSDecompress()
 decompresses a dds texture into an rgba image buffer, returns 0 on success
 */
 
-int DDSDecompress( ddsBuffer_t *dds, unsigned char *pixels ) {
+int DDSDecompress( const ddsBuffer_t *dds, unsigned char *pixels ) {
 	int			width, height, r;
 	ddsPF_t		pf;
 
