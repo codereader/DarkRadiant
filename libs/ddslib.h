@@ -266,8 +266,8 @@ ddsColor_t;
 
 
 /* public functions */
-int						DDSGetInfo( const ddsBuffer_t *dds, int *width, int *height, ddsPF_t *pf );
-int						DDSDecompress( const ddsBuffer_t *dds, unsigned char *pixels );
+int						DDSGetInfo( const DDSHeader* header, int *width, int *height, ddsPF_t *pf );
+int						DDSDecompress( const DDSHeader* header, const unsigned char* buffer, unsigned char *pixels );
 
 
 

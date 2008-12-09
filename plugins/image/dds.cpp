@@ -42,11 +42,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 	DDSHeader header;
 	stream.read(reinterpret_cast<byteType*>(&header), sizeof(header));
 
-	//const ddsBuffer_t* header = reinterpret_cast<const ddsBuffer_t*>(buffer);
-	ddsBuffer_t buffer;
-	buffer.header = header;
-
-	if (DDSGetInfo(&buffer, &width, &height, &pixelFormat) == -1) {
+	if (DDSGetInfo(&header, &width, &height, &pixelFormat) == -1) {
 		return DDSImagePtr();
 	}
 
