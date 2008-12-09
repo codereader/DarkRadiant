@@ -6,18 +6,6 @@
 #include "iregistry.h"
 typedef unsigned char byte;
 
-namespace {
-	// The OpenGL Texture render modes 
-	enum ETexturesMode {
-	    eTextures_NEAREST = 0,
-	    eTextures_NEAREST_MIPMAP_NEAREST = 1,
-	    eTextures_NEAREST_MIPMAP_LINEAR = 2,
-	    eTextures_LINEAR = 3,
-	    eTextures_LINEAR_MIPMAP_NEAREST = 4,
-	    eTextures_LINEAR_MIPMAP_LINEAR = 5,
-	};	
-}
-
 namespace shaders {
 
 class TextureManipulator :
@@ -28,9 +16,6 @@ class TextureManipulator :
 	
 	// The currently active gamma value (0.0...1.0)
 	float _gamma;
-	
-	// The filtering mode (mipmap_linear and such)
-	ETexturesMode _textureMode;
 	
 	// Gets filled in by an OpenGL query
 	int _maxTextureSize;
@@ -74,11 +59,6 @@ public:
 	 */
 	Colour3 getFlatshadeColour(ImagePtr input);
 
-	/* greebo: Sends the openGL texturemode commands according to the internal
-	 * texture mode member variable. (e.g. MIPMAP_LINEAR)
-	 */
-	void setTextureParameters();
-
 private:
 
 	// Returns the gamma corrected image taken from <input>
@@ -97,9 +77,6 @@ private:
 	// Recalculates the gamma table according to the given gamma value
 	// This is called on first startup or if the user changes the value
 	void calculateGammaTable();
-	
-	// Converts the <int> to the ETexturesMode enumeration
-	ETexturesMode readTextureMode(const unsigned int& mode);
 	
 	void resampleTextureLerpLine(const byte *in, byte *out, 
 								 int inwidth, int outwidth, int bytesperpixel);
