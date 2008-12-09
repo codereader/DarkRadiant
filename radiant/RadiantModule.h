@@ -42,6 +42,7 @@ class RadiantModule :
 
 	typedef std::map<std::string, GdkPixbuf*> PixBufMap;
 	PixBufMap _localPixBufs;
+	PixBufMap _localPixBufsWithMask;
 
 	GtkWindow* _mainWindow;
 
