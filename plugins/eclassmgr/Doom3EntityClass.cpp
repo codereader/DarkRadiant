@@ -233,6 +233,11 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 
 	// Construct the inheritance list
 	buildInheritanceChain();
+
+	if (getAttribute("model").value != "") {
+		// We have a model path (probably an inherited one)
+		setModelPath(getAttribute("model").value);
+	}
 }
 
 // Find a single attribute
