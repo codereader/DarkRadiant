@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/CounterManager.h"
 #include "iradiant.h"
 
+typedef struct _GdkPixbuf GdkPixbuf;
+
 namespace radiant {
 
 /**
@@ -37,6 +39,9 @@ class RadiantModule :
 	
 	typedef std::set<RadiantEventListenerWeakPtr> EventListenerList;
 	EventListenerList _eventListeners;
+
+	typedef std::map<std::string, GdkPixbuf*> PixBufMap;
+	PixBufMap _localPixBufs;
 
 	GtkWindow* _mainWindow;
 
