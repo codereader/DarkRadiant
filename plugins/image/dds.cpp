@@ -46,17 +46,17 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 		return DDSImagePtr();
 	}
 
+	// Get the number of mipmaps from the file
+	std::size_t mipMapCount = (header.flags & DDSD_MIPMAPCOUNT) ? header.mipMapCount : 1;
+
 	struct MipMapInfo {
 		std::size_t size;
 		std::size_t width;
 		std::size_t height;
 		std::size_t offset;
 	};
-	typedef boost::shared_ptr<MipMapInfo> MipMapInfoPtr;
-	std::vector<MipMapInfoPtr> mipMapInfo;
-
-	// Get the number of mipmaps from the file
-	std::size_t mipMapCount = (header.flags & DDSD_MIPMAPCOUNT) ? header.mipMapCount : 1;
+	std::vector<MipMapInfo> mipMapInfo;
+	mipMapInfo.resize(mipMapCount);
 	
 	// Calculate the total memory requirements (greebo: DXT1 has 8 bytes per block)
 	std::size_t blockBytes = (pixelFormat == DDS_PF_DXT1) ? 8 : 16;
@@ -66,21 +66,18 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 
 	for (std::size_t i = 0; i < mipMapCount; ++i) {
 		// Create a new mipmap structure
-		MipMapInfoPtr mipMap(new MipMapInfo);
+		MipMapInfo& mipMap = mipMapInfo[i];
 
-		mipMap->offset = offset;
-		mipMap->width = width;
-		mipMap->height = height;
-		mipMap->size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
+		mipMap.offset = offset;
+		mipMap.width = width;
+		mipMap.height = height;
+		mipMap.size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
 
 		// Update the offset for the next mipmap
-		offset += mipMap->size;
+		offset += mipMap.size;
 
 		// Increase the size counter
-		size += mipMap->size;
-
-		// Store the mipmap info
-		mipMapInfo.push_back(mipMap);
+		size += mipMap.size;
 
 		// Go to the next mipmap
 		width = (width+1) >> 1;
@@ -105,17 +102,14 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 
 	// Load the mipmaps into the allocated memory
 	for (std::size_t i = 0; i < mipMapInfo.size(); ++i) {
-		const MipMapInfo& mipMap = *(mipMapInfo[i]);
+		const MipMapInfo& mipMap = mipMapInfo[i];
 
 		// Declare a new mipmap and store the offset
 		image->addMipMap(mipMap.width, mipMap.height, mipMap.size, mipMap.offset);
 
 		// Read the data into the DDSImage's memory
-		static std::size_t tempSize = mipMap.size;
-
-		tempSize = mipMap.size;
-		std::size_t bytesRead =	stream.read(reinterpret_cast<byteType*>(image->getMipMapPixels(i)), tempSize);
-		assert(bytesRead == tempSize);
+		std::size_t bytesRead =	stream.read(reinterpret_cast<byteType*>(image->getMipMapPixels(i)), mipMap.size);
+		assert(bytesRead == mipMap.size);
 	}
 
 	return image;
