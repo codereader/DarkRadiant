@@ -32,19 +32,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imagelib.h"
 #include "DDSImage.h"
 
-DDSImagePtr LoadDDSFromBuffer(const byte* buffer)
+DDSImagePtr LoadDDSFromStream(InputStream& stream)
 {
 	int width, height;
 	ddsPF_t pixelFormat;
 
-	const ddsBuffer_t* header = reinterpret_cast<const ddsBuffer_t*>(buffer);
+	// Load the header
+	typedef StreamBase::byte_type byteType;
+	DDSHeader header;
+	stream.read(reinterpret_cast<byteType*>(&header), sizeof(header));
 
-	if (DDSGetInfo(header, &width, &height, &pixelFormat) == -1) {
+	//const ddsBuffer_t* header = reinterpret_cast<const ddsBuffer_t*>(buffer);
+	ddsBuffer_t buffer;
+	buffer.header = header;
+
+	if (DDSGetInfo(&buffer, &width, &height, &pixelFormat) == -1) {
 		return DDSImagePtr();
 	}
 
 	// Get the number of mipmaps from the file
-	std::size_t mipMapCount = (header->flags & DDSD_MIPMAPCOUNT) ? header->mipMapCount : 1;
+	std::size_t mipMapCount = (header.flags & DDSD_MIPMAPCOUNT) ? header.mipMapCount : 1;
 	
 	// Calculate the total memory requirements (greebo: DXT1 has 8 bytes per block)
 	std::size_t blockBytes = (pixelFormat == DDS_PF_DXT1) ? 8 : 16;
@@ -53,7 +60,7 @@ DDSImagePtr LoadDDSFromBuffer(const byte* buffer)
 
 	std::size_t x = width;
 	std::size_t y = height;
-
+ 
 	for (std::size_t i = 0; i < mipMapCount; ++i) {
 		// Calculate this mipmap size
 		size += std::max( 4, width ) / 4 * std::max( 4, height ) / 4 * blockBytes;
@@ -69,14 +76,13 @@ DDSImagePtr LoadDDSFromBuffer(const byte* buffer)
 	// Declare a new mip map
 	image->declareMipMap(width, height, 4);
 
-	if (DDSDecompress(header, image->getMipMapPixels(0)) == -1) {
+	/*if (DDSDecompress(header, image->getMipMapPixels(0)) == -1) {
 		return DDSImagePtr();
-	}
+	}*/
 
 	return image;
 }
 
 ImagePtr LoadDDS(ArchiveFile& file) {
-	ScopedArchiveBuffer buffer(file);
-	return LoadDDSFromBuffer(buffer.buffer);
+	return LoadDDSFromStream(file.getInputStream());
 }
