@@ -184,7 +184,7 @@ ddsPixelFormat_t;
 #define DDSD_LINEARSIZE   0x00080000 
 #define DDSD_DEPTH        0x00800000 
 
-typedef struct ddsBuffer_s
+struct DDSHeader
 {
 	/* magic: 'dds ' */
 	char				magic[ 4 ];
@@ -220,6 +220,11 @@ typedef struct ddsBuffer_s
 	ddsPixelFormat_t	pixelFormat;
 	ddsCaps_t			ddsCaps;
 	unsigned int		textureStage;
+};
+
+typedef struct ddsBuffer_s
+{
+	DDSHeader			header;
 	
 	/* data (Varying size) */
 	unsigned char		data[ 4 ];

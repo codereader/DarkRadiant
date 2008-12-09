@@ -151,10 +151,10 @@ static void DDSDecodePixelFormat( const ddsBuffer_t *dds, ddsPF_t *pf ) {
 		return;
 
 	/* extract fourCC */
-	fourCC[0] = dds->pixelFormat.fourCC[0];
-	fourCC[1] = dds->pixelFormat.fourCC[1];
-	fourCC[2] = dds->pixelFormat.fourCC[2];
-	fourCC[3] = dds->pixelFormat.fourCC[3];
+	fourCC[0] = dds->header.pixelFormat.fourCC[0];
+	fourCC[1] = dds->header.pixelFormat.fourCC[1];
+	fourCC[2] = dds->header.pixelFormat.fourCC[2];
+	fourCC[3] = dds->header.pixelFormat.fourCC[3];
 
 	/* test it */
 	if (fourCC[0] == 0 && fourCC[1] == 0 && fourCC[2] == 0 && fourCC[3] == 0)
@@ -188,16 +188,16 @@ int DDSGetInfo(const ddsBuffer_t *dds, int *width, int *height, ddsPF_t *pf ) {
 		return -1;
 
 	/* test dds header */
-	if( *((int*) dds->magic) != *((int*) "DDS ") )
+	if( *((int*) dds->header.magic) != *((int*) "DDS ") )
 		return -1;
-	if( DDSLittleLong( dds->size ) != 124 )
+	if( DDSLittleLong( dds->header.size ) != 124 )
 		return -1;
 
 	/* extract width and height */
 	if( width != NULL )
-		*width = DDSLittleLong( dds->width );
+		*width = DDSLittleLong( dds->header.width );
 	if( height != NULL )
-		*height = DDSLittleLong( dds->height );
+		*height = DDSLittleLong( dds->header.height );
 
 	/* get pixel format */
 	DDSDecodePixelFormat( dds, pf );
