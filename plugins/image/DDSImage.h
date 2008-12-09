@@ -13,6 +13,9 @@ class DDSImage :
 	// The actual pixels
 	byte* _pixelData;
 
+	// The amount of memory used by the image data
+	std::size_t _memSize;
+
 	struct MipMapInfo 
 	{
 		std::size_t width;	// pixel width
@@ -36,12 +39,16 @@ public:
 	RGBAPixel* pixels;
 	unsigned int width, height;
 
-	DDSImage() : 
-		_pixelData(NULL)
-	{}
+	// Pass the required memory size to the constructor
+	DDSImage(std::size_t size) : 
+		_pixelData(NULL),
+		_memSize(size)
+	{
+		allocateMemory();
+	}
 
 	~DDSImage() {
-		releaseMipMapMemory();
+		releaseMemory();
 	}
 
 	/**
@@ -65,36 +72,24 @@ public:
 	 */
 	void clearMipMapDeclarations() {
 		// Free previously allocated memory
-		releaseMipMapMemory();
+		releaseMemory();
 
 		// Clear mipmap declarations
 		_mipMapInfo.clear();
 	}
 
 	/**
-	 * Allocates the memory for the mipmaps as declared earlier.
+	 * Allocates the memory as declared in the constructor.
 	 * This will release any previously allocated memory.
 	 */
-	void allocateMipMapMemory() {
+	void allocateMemory() {
 		// Release memory first
-		releaseMipMapMemory();
+		releaseMemory();
 
-		std::size_t requiredMemory = getTotalMemory();
-
-		if (requiredMemory > 0) {
-			_pixelData = new byte[requiredMemory];
-
-			// Calculate the mipmap offsets
-			for (std::size_t i = 0; i < _mipMapInfo.size(); ++i)
-			{
-				MipMapInfo& info = _mipMapInfo[i];
-
-				info.offset = i * info.width * info.height * info.bpp;
-			}
-		}
+		_pixelData = new byte[_memSize];
 	}
 
-	void releaseMipMapMemory() {
+	void releaseMemory() {
 		// Check if we have something to do at all
 		if (_pixelData == NULL) return;
 
