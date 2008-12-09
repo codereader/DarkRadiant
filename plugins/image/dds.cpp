@@ -76,6 +76,9 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 		// Update the offset for the next mipmap
 		offset += mipMap->size;
 
+		// Increase the size counter
+		size += mipMap->size;
+
 		// Store the mipmap info
 		mipMapInfo.push_back(mipMap);
 
@@ -102,14 +105,17 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 
 	// Load the mipmaps into the allocated memory
 	for (std::size_t i = 0; i < mipMapInfo.size(); ++i) {
-		const MipMapInfoPtr& mipMap = mipMapInfo[i];
+		const MipMapInfo& mipMap = *(mipMapInfo[i]);
 
 		// Declare a new mipmap and store the offset
-		image->addMipMap(mipMap->width, mipMap->height, mipMap->offset);
+		image->addMipMap(mipMap.width, mipMap.height, mipMap.size, mipMap.offset);
 
 		// Read the data into the DDSImage's memory
-		std::size_t bytesRead =	stream.read(reinterpret_cast<byteType*>(image->getMipMapPixels(i)), mipMap->size);
-		assert(bytesRead == mipMap->size);
+		static std::size_t tempSize = mipMap.size;
+
+		tempSize = mipMap.size;
+		std::size_t bytesRead =	stream.read(reinterpret_cast<byteType*>(image->getMipMapPixels(i)), tempSize);
+		assert(bytesRead == tempSize);
 	}
 
 	return image;

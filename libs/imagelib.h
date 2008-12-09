@@ -81,6 +81,29 @@ public:
 		return height;
 	}
 
+	virtual GLuint downloadTextureToGL() {
+		GLuint textureNum;
+
+		// Allocate a new texture number and store it into the Texture structure
+		glGenTextures(1, &textureNum);
+		glBindTexture(GL_TEXTURE_2D, textureNum);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+
+		// Download the image to OpenGL
+		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, 
+			getWidth(0), getHeight(0), GL_RGBA, GL_UNSIGNED_BYTE, 
+			getMipMapPixels(0)
+		);
+
+		// Un-bind the texture
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return textureNum;
+	}
+
 	bool isPrecompressed() const {
 		return false; // not compressed
 	}
