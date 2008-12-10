@@ -1,20 +1,36 @@
 #ifndef LRINT_H_
 #define LRINT_H_
 
+/**
+ * Casting a double to an int the fast way.
+ */
 #if defined (_MSC_VER)
 
-inline int lrint (double flt)
-{
-  int i;
+#if defined (_WIN64)
 
-	_asm
-	{
-    fld flt
-		fistp i
-  };
-			
-	return i;
-} 
+// Only for SSE2 or x64 
+
+#include <emmintrin.h>  
+
+// greebo: VC++ x64 doesn't support inline assembly, we have to use x64 intrinsics instead
+inline int lrint(const double x) {
+	return _mm_cvtsd_si32(_mm_load_sd(&x));
+}
+
+#elif
+
+	// Win32 target
+	inline int lrint (double flt) {
+		int i;
+		
+		_asm {
+			fld flt
+				fistp i
+		};
+		
+		return i;
+	} 
+#endif
 
 #elif defined(__FreeBSD__)
 
