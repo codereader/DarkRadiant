@@ -22,6 +22,7 @@
 #endif
 
 #include "OggFileStream.h"
+#include "WavFileLoader.h"
 
 namespace sound {
 
@@ -39,21 +40,11 @@ SoundPlayer::SoundPlayer() :
 	// Disable the timer, to make sure
 	_timer.disable();
 	
-	// Initialise the ALUT library with two NULL pointers instead of &argc, argv 
-	// (yes, this is allowed)
-	alutInit(NULL, NULL);
-	
-	if (alGetError() != AL_FALSE) {
-		globalErrorStream() << "SoundPlayer: Error while initialising.\n";
-	}
-	else {
-		globalOutputStream() << "SoundPlayer initialised.\n";
-	}
+	globalOutputStream() << "SoundPlayer initialised.\n";
 }
 
 SoundPlayer::~SoundPlayer() {
 	clearBuffer();
-	alutExit();
 }
 
 gboolean SoundPlayer::checkBuffer(gpointer data) {
@@ -105,13 +96,13 @@ void SoundPlayer::play(ArchiveFile& file) {
 	// Stop any previous playback operations, that might be still active 
 	clearBuffer();
 	
-	// Convert the file into a buffer, self-destructs at end of scope
-	ScopedArchiveBuffer buffer(file);
-	
 	// Retrieve the extension
 	std::string ext = os::getExtension(file.getName());
 	
 	if (boost::algorithm::to_lower_copy(ext) == "ogg") {
+		// Convert the file into a buffer, self-destructs at end of scope
+		ScopedArchiveBuffer buffer(file);
+
 		// This is an OGG Vorbis file, decode it
 		vorbis_info* vorbisInfo;
   		OggVorbis_File oggFile;
@@ -186,11 +177,14 @@ void SoundPlayer::play(ArchiveFile& file) {
 	}
 	else {
 		// Must be a wave file
-		// Create an AL sound buffer directly from the buffer in memory
-		_buffer = alutCreateBufferFromFileImage(
-			buffer.buffer,	// The pointer to the buffer data 
-			static_cast<ALsizei>(buffer.length) // The length
-		);
+		try {
+			// Create an AL sound buffer directly from the buffer in memory
+			_buffer = WavFileLoader::LoadFromStream(file.getInputStream());
+		}
+		catch (std::runtime_error e) {
+			globalErrorStream() << "SoundPlayer: Error opening WAV file: " << e.what() << std::endl;
+			_buffer = 0;
+		}
 	}
 	
 	if (_buffer != 0) {
