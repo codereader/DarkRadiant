@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="ddslib"
-	ProjectGUID="{D42098ED-E192-4DC1-BA1C-80812AB194B4}"
-	RootNamespace="jpeglib"
+	Name="libiconv"
+	ProjectGUID="{C486CD3C-31E0-4438-BCED-B8A26F9ACAE1}"
+	RootNamespace="libiconv"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -23,6 +23,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,12 +42,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="3"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -59,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -81,6 +83,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -100,12 +103,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="3"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -118,6 +121,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -140,6 +144,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -158,12 +163,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
-				DisableSpecificWarnings="4244"
+				CompileAs="1"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -176,6 +181,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -198,6 +204,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -217,12 +224,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
-				DisableSpecificWarnings="4244"
+				CompileAs="1"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -256,8 +263,16 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="include"
+			>
+			<File
+				RelativePath="..\..\..\w64deps\win_iconv\include\iconv.h"
+				>
+			</File>
+		</Filter>
 		<File
-			RelativePath="..\..\libs\ddslib\ddslib.cpp"
+			RelativePath="..\..\..\w64deps\win_iconv\src\win_iconv.c"
 			>
 		</File>
 	</Files>

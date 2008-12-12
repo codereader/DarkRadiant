@@ -10,6 +10,9 @@
 		<Platform
 			Name="Win32"
 		/>
+		<Platform
+			Name="x64"
+		/>
 	</Platforms>
 	<ToolFiles>
 	</ToolFiles>
@@ -75,6 +78,67 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
+				RuntimeLibrary="3"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalDependencies="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\libiconv.lib kernel32.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
@@ -117,6 +181,67 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|x64"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
+			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w64deps/win_iconv/include&quot;"
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
+				RuntimeLibrary="2"
+				WarningLevel="3"
+				CompileAs="1"
+				DisableSpecificWarnings="4996"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+				AdditionalDependencies="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
