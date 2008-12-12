@@ -31,7 +31,7 @@ class DynamicLibrary {
 	
 public:
 	// The win32 function pointer typedef for calling symbols
-	typedef int (__stdcall	*FunctionPointer)();
+	typedef FARPROC FunctionPointer;
 
 	// Constructor, pass the full filename to load this DLL 
 	DynamicLibrary(const std::string& filename);
