@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="ddslib"
-	ProjectGUID="{D42098ED-E192-4DC1-BA1C-80812AB194B4}"
-	RootNamespace="jpeglib"
+	Name="libzlib"
+	ProjectGUID="{BEC4EE48-0806-4E16-A16C-3E43D39763D6}"
+	RootNamespace="libzlib"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -23,6 +23,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,12 +42,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="3"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -59,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -81,6 +83,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -100,12 +103,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="3"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CompileAs="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -140,6 +143,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -158,12 +162,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
-				DisableSpecificWarnings="4244"
+				CompileAs="1"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -176,6 +180,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -198,6 +203,7 @@
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
+			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -217,12 +223,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
-				DisableSpecificWarnings="4244"
+				CompileAs="1"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -257,7 +263,103 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\libs\ddslib\ddslib.cpp"
+			RelativePath="..\..\..\w64deps\zlib\src\adler32.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\compress.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\crc32.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\crc32.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\deflate.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\deflate.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\example.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\gzio.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\infback.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\inffast.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\inffast.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\inffixed.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\inflate.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\inflate.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\inftrees.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\inftrees.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\minigzip.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\trees.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\trees.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\uncompr.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\zconf.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\zconf.in.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\zlib.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\zutil.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\w64deps\zlib\src\zutil.h"
 			>
 		</File>
 	</Files>
