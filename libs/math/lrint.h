@@ -17,7 +17,7 @@ inline int lrint(const double x) {
 	return _mm_cvtsd_si32(_mm_load_sd(&x));
 }
 
-#elif
+#else
 
 	// Win32 target
 	inline int lrint (double flt) {
