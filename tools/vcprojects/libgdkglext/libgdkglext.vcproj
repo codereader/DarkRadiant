@@ -103,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w64deps/gtk2/src/gtkglext/&quot;;&quot;$(SolutionDir)/../../w64deps/gtk2/src/gtkglext/gdk&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/gtkglext/&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext/gdk&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;GDK_GL_COMPILATION"
 				RuntimeLibrary="3"
 				WarningLevel="3"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w64deps/gtk2/src/gtkglext/&quot;;&quot;$(SolutionDir)/../../w64deps/gtk2/src/gtkglext/gdk&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/gtkglext/&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext/gdk&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;GDK_GL_COMPILATION"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -270,192 +270,224 @@
 			Name="gdk"
 			>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkgl.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkgl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglconfig.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglconfig.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglconfig.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglconfig.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglcontext.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglcontext.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglcontext.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglcontext.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkgldebug.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkgldebug.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkgldefs.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkgldefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkgldrawable.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkgldrawable.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkgldrawable.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkgldrawable.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglenumtypes.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglenumtypes.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglenumtypes.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglenumtypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglfont.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglfont.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglglext.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglglext.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglglext.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglglext.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglinit.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglinit.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglinit.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglinit.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglpixmap.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglpixmap.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglpixmap.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglpixmap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglprivate.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglprivate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglquery.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglquery.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglquery.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglquery.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglshapes.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglshapes.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglshapes.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglshapes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkgltokens.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkgltokens.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkgltypes.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkgltypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglversion.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglversion.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglversion.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglversion.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglwindow.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglwindow.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglwindow.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglwindow.h"
 				>
 			</File>
 			<Filter
 				Name="win32"
 				>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglconfig-win32.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglconfig-win32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglconfig-win32.h"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglconfig-win32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglcontext-win32.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglcontext-win32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglcontext-win32.h"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglcontext-win32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkgldrawable-win32.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkgldrawable-win32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglfont-win32.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglfont-win32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglpixmap-win32.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglpixmap-win32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglpixmap-win32.h"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglpixmap-win32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglprivate-win32.h"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglprivate-win32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglquery-win32.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglquery-win32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglwglext.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwglext.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglwglext.h"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwglext.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglwin32.h"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwin32.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglwindow-win32.c"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwindow-win32.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\win32\gdkglwindow-win32.h"
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwindow-win32.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="glext"
+				>
+				<File
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\glext\common-header.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\glext\glext-extra.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\glext\glext.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\glext\glxext-extra.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\glext\glxext.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\glext\wglext-extra.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\w32deps\gtkglext\gdk\glext\wglext.h"
 					>
 				</File>
 			</Filter>
 		</Filter>
 		<File
-			RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglext-gtk20.def"
+			RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglext-gtk20.def"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gdk\gdkglext.def"
+			RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglext.def"
 			>
 		</File>
 	</Files>

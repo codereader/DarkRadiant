@@ -103,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w64deps/gtk2/src/gtkglext/&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/gtkglext/&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;GTK_GL_COMPILATION;"
 				RuntimeLibrary="3"
 				WarningLevel="3"
@@ -225,7 +225,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w64deps/gtk2/src/gtkglext/&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/gtkglext/&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;GTK_GL_COMPILATION;"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -270,48 +270,48 @@
 			Name="gtk"
 			>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkgl.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkgl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkgldebug.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkgldebug.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkgldefs.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkgldefs.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglinit.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglinit.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglinit.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglinit.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglprivate.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglprivate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglversion.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglversion.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglversion.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglversion.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglwidget.c"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglwidget.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglwidget.h"
+				RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglwidget.h"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\..\w64deps\gtk2\src\gtkglext\gtk\gtkglext.def"
+			RelativePath="..\..\..\w32deps\gtkglext\gtk\gtkglext.def"
 			>
 		</File>
 	</Files>
