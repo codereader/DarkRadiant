@@ -61,7 +61,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib WS2_32.lib"
+				AdditionalDependencies="libiconv.lib kernel32.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -123,7 +124,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\libiconv.lib kernel32.lib"
+				AdditionalDependencies="libiconv.lib kernel32.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -183,7 +185,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib WS2_32.lib"
+				AdditionalDependencies="libiconv.lib kernel32.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -244,7 +247,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\libiconv.lib kernel32.lib"
+				AdditionalDependencies="libiconv.lib kernel32.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
 			/>
 			<Tool
 				Name="VCALinkTool"
