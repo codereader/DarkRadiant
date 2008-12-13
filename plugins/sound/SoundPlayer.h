@@ -3,6 +3,7 @@
 
 #include <string>
 #include <AL/al.h>
+#include <AL/alc.h>
 #include "gtkutil/Timer.h"
 
 class ArchiveFile;
@@ -11,6 +12,8 @@ namespace sound {
 
 class SoundPlayer
 {
+	ALCcontext* _context;
+
 	// The buffer containing the currently played audio data
 	ALuint _buffer;
 	

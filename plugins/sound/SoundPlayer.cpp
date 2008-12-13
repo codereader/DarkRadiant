@@ -33,18 +33,66 @@ namespace sound {
 
 // Constructor
 SoundPlayer::SoundPlayer() :
+	_context(NULL),
 	_buffer(0),
 	_source(0),
 	_timer(200, checkBuffer, this)
 {
 	// Disable the timer, to make sure
 	_timer.disable();
-	
-	globalOutputStream() << "SoundPlayer initialised.\n";
+
+	// Create device
+	ALCdevice* device = alcOpenDevice(NULL);
+
+	if (device != NULL) {
+		// Create context
+		_context = alcCreateContext(device, NULL);
+
+		if (_context != NULL) {
+			// Make context current
+			if (!alcMakeContextCurrent(_context)) {
+				alcDestroyContext(_context);
+				alcCloseDevice(device);
+				_context = NULL;
+
+				globalErrorStream() << "Could not make ALC context current." << std::endl;
+			}
+
+			// Success
+			globalOutputStream() << "SoundPlayer: OpenAL context successfully set up." << std::endl;
+		}
+		else {
+			alcCloseDevice(device);
+			globalErrorStream() << "Could not create ALC context." << std::endl;
+		}
+	}
+	else {
+		globalErrorStream() << "Could not open ALC device." << std::endl;
+    }
 }
 
 SoundPlayer::~SoundPlayer() {
 	clearBuffer();
+
+	// Unset the context
+	if (alcMakeContextCurrent(NULL)) {
+		// Destroy the context and close device if appropriate
+		if (_context != NULL) {
+			ALCdevice* device = alcGetContextsDevice(_context);
+			alcDestroyContext(_context);
+			
+			if (alcGetError(device) != ALC_NO_ERROR) {
+				globalErrorStream() << "Could not destroy ALC context." << std::endl;
+			}
+
+			if (!alcCloseDevice(device)) {
+				globalErrorStream() << "Could not close ALC device." << std::endl;
+			}
+		}
+	}
+	else {
+		globalErrorStream() << "Could not reset ALC context." << std::endl;
+    }
 }
 
 gboolean SoundPlayer::checkBuffer(gpointer data) {

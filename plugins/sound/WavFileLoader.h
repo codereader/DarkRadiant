@@ -30,8 +30,6 @@ public:
 		typedef StreamBase::byte_type byte;
 
 		byte temp[256];
-		byte buffer32[4];
-		byte buffer16[2];
 
 		int format = 0;
 		
@@ -147,20 +145,13 @@ public:
 		ALuint bufferNum = 0;
 		alGenBuffers(1, &bufferNum);
 
-		if (!alGetError()) {
-			throw std::runtime_error("Could not generate buffer.");
-		}
+		byte* buffer = new byte[remainingSize];
+		stream.read(buffer, remainingSize);
 
-		byte* buffer = new byte[bufferSize];
-
-		alBufferData(bufferNum, format, &buffer, static_cast<ALsizei>(bufferSize), freq);
+		alBufferData(bufferNum, format, buffer, static_cast<ALsizei>(remainingSize), freq);
 
 		delete[] buffer;
 
-		if (!alGetError()) {
-			throw std::runtime_error("Could not load buffer data.");
-		}
-			
 		return bufferNum;
 	}
 };
