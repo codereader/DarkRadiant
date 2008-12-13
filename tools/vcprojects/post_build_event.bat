@@ -1,7 +1,8 @@
 copy ..\..\w32deps\libxml2\lib\libxml2.dll ..\..\install
-copy ..\..\w32deps\openal\lib\alut.dll ..\..\install
-copy ..\..\w32deps\openal\lib\OpenAL32.dll ..\..\install
-copy ..\..\w32deps\openal\lib\wrap_oal.dll ..\..\install
+
+copy ..\..\w32deps\openal\bin\OpenAL32.dll ..\..\install
+copy ..\..\w32deps\openal\bin\wrap_oal.dll ..\..\install
+
 copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install
 copy ..\..\w32deps\libpng\bin\libpng13.dll ..\..\install
 copy ..\..\w32deps\libiconv\lib\libiconv2.dll ..\..\install
