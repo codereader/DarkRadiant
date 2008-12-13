@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
@@ -42,7 +42,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/zlib/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="3"
 				WarningLevel="3"
@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
+				AdditionalDependencies="kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -81,7 +81,7 @@
 		<Configuration
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
@@ -103,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/zlib/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="3"
 				WarningLevel="3"
@@ -140,7 +140,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/zlib/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -180,7 +180,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="$(SolutionDir)\..\..\w32deps\libiconv\lib\libiconv.lib kernel32.lib"
+				AdditionalDependencies="kernel32.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -201,7 +201,7 @@
 		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ProjectName)\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(ConfigurationName)"
 			ConfigurationType="4"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
@@ -223,7 +223,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/zlib/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
 				WarningLevel="3"
@@ -262,104 +262,104 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="include"
+			>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\crc32.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\deflate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\inffast.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\inffixed.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\inflate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\inftrees.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\trees.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\zconf.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\zconf.in.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\zlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\w32deps\zlib\include\zutil.h"
+				>
+			</File>
+		</Filter>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\adler32.c"
+			RelativePath="..\..\..\w32deps\zlib\src\adler32.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\compress.c"
+			RelativePath="..\..\..\w32deps\zlib\src\compress.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\crc32.c"
+			RelativePath="..\..\..\w32deps\zlib\src\crc32.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\crc32.h"
+			RelativePath="..\..\..\w32deps\zlib\src\deflate.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\deflate.c"
+			RelativePath="..\..\..\w32deps\zlib\src\gzio.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\deflate.h"
+			RelativePath="..\..\..\w32deps\zlib\src\infback.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\example.c"
+			RelativePath="..\..\..\w32deps\zlib\src\inffast.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\gzio.c"
+			RelativePath="..\..\..\w32deps\zlib\src\inflate.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\infback.c"
+			RelativePath="..\..\..\w32deps\zlib\src\inftrees.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\inffast.c"
+			RelativePath="..\..\..\w32deps\zlib\src\minigzip.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\inffast.h"
+			RelativePath="..\..\..\w32deps\zlib\src\trees.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\inffixed.h"
+			RelativePath="..\..\..\w32deps\zlib\src\uncompr.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w64deps\zlib\src\inflate.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\inflate.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\inftrees.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\inftrees.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\minigzip.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\trees.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\trees.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\uncompr.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\zconf.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\zconf.in.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\zlib.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\zutil.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w64deps\zlib\src\zutil.h"
+			RelativePath="..\..\..\w32deps\zlib\src\zutil.c"
 			>
 		</File>
 	</Files>
