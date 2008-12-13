@@ -103,8 +103,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entitylist", "entitylist.vcproj", "{A35C6082-EE2D-4DEB-944B-61CFEB19C5B1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libxml2", "libxml2\libxml2.vcproj", "{6780EE95-8768-4138-A89B-47D3504A6E5D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C486CD3C-31E0-4438-BCED-B8A26F9ACAE1} = {C486CD3C-31E0-4438-BCED-B8A26F9ACAE1}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.difficulty", "dm.difficulty.vcproj", "{68B95079-09DF-48F7-BAD9-81C33118BEFD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6780EE95-8768-4138-A89B-47D3504A6E5D} = {6780EE95-8768-4138-A89B-47D3504A6E5D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenelib", "scenelib.vcproj", "{F7408B46-E4A9-470C-9731-9A1564247385}"
 EndProject
@@ -113,6 +119,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "include", "include.vcproj", "{41CAAD78-9E48-4C6E-B8F8-A04A859C16F9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.conversation", "dm.conversation.vcproj", "{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6780EE95-8768-4138-A89B-47D3504A6E5D} = {6780EE95-8768-4138-A89B-47D3504A6E5D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libiconv", "libiconv\libiconv.vcproj", "{C486CD3C-31E0-4438-BCED-B8A26F9ACAE1}"
 EndProject
