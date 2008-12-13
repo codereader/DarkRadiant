@@ -267,12 +267,12 @@
 			Name="include"
 			>
 			<File
-				RelativePath="..\..\..\w64deps\win_iconv\include\iconv.h"
+				RelativePath="..\..\..\w32deps\win_iconv\include\iconv.h"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath="..\..\..\w64deps\win_iconv\src\win_iconv.c"
+			RelativePath="..\..\..\w32deps\win_iconv\src\win_iconv.c"
 			>
 		</File>
 	</Files>
