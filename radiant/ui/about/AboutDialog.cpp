@@ -43,9 +43,11 @@ void AboutDialog::populateWindow() {
 	
 	bool showBuildTime = GlobalRegistry().get(RKEY_SHOW_BUILD_TIME) == "1";
 	std::string buildDate = (showBuildTime) ? date + " " + time : date;
-	
+
+	std::string appName(RADIANT_APPNAME_FULL);
+
 	GtkWidget* title = gtkutil::LeftAlignedLabel(
-		std::string("<b><span size=\"large\">DarkRadiant ") + RADIANT_VERSION + "</span></b>\n" +
+		std::string("<b><span size=\"large\">") + appName + "</span></b>\n" +
 		 "Build date: " + buildDate + "\n\n"
 		"<b>The Dark Mod</b> (www.thedarkmod.com)\n\n"
 		"This product contains software technology\n"
