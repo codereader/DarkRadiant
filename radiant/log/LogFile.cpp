@@ -62,14 +62,14 @@ void LogFile::create(const std::string& filename) {
 		time_t localtime;
 		time(&localtime);
 		globalOutputStream() << "Today is: " << ctime(&localtime) 
-			                 << "This is DarkRadiant " RADIANT_VERSION "\n";
+			                 << "This is " << RADIANT_APPNAME_FULL << "\n";
         
 		// Output the GTK+ version to the logfile
         std::string gtkVersion = intToStr(gtk_major_version) + "."; 
 		gtkVersion += intToStr(gtk_minor_version) + "."; 
 		gtkVersion += intToStr(gtk_micro_version);
 
-        globalOutputStream() << "GTK+ Version: " << gtkVersion.c_str() << "\n";
+        globalOutputStream() << "GTK+ Version: " << gtkVersion << "\n";
 	}
 }
 
