@@ -1,3 +1,9 @@
+del ..\..\install\lib\* /S /Q
+rd ..\..\install\lib
+del ..\..\install\etc\* /S /Q
+rd ..\..\install\etc
+del ..\..\install\*.dll
+
 copy ..\..\w32deps\libxml2\lib\libxml2.dll ..\..\install
 
 copy ..\..\w64deps\openal\bin\OpenAL32.dll ..\..\install
