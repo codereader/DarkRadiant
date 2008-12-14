@@ -57,7 +57,7 @@ void OpenGLModule::sharedContextCreated() {
 	GlobalShaderCache().extensionsInitialised();
 	GlobalShaderCache().realise();
 
-	_font = glfont_create("courier 8");
+	_font = glfont_create("Sans 8");
 	m_font = _font.getDisplayList();
 	m_fontHeight = _font.getPixelHeight();
 }
