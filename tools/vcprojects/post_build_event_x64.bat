@@ -33,5 +33,6 @@ copy ..\..\w64deps\gtk2\bin\libpango-1.0-0.dll ..\..\install
 copy ..\..\w64deps\gtk2\bin\zlib1.dll ..\..\install
 copy ..\..\w64deps\gtk2\bin\libpangocairo-1.0-0.dll ..\..\install
 copy ..\..\w64deps\gtk2\bin\libpangowin32-1.0-0.dll ..\..\install
+copy ..\..\w64deps\gtk2\bin\libpangoft2-1.0-0.dll ..\..\install
 
 copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install
