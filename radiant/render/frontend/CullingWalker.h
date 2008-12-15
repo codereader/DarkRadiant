@@ -9,35 +9,33 @@ template<typename _Walker>
 class CullingWalker
 {
 	const VolumeTest& m_volume;
-	const _Walker& m_walker;
+	_Walker& m_walker;
 
 public:
 	
 	// Constructor
-	CullingWalker(const VolumeTest& volume, const _Walker& walker)
+	CullingWalker(const VolumeTest& volume, _Walker& walker)
     : m_volume(volume), m_walker(walker)
 	{  }
   
 	// Pre-descent function
-	bool pre(const scene::Path& path, 
-			 const scene::INodePtr& node, 
+	bool pre(const scene::INodePtr& node, 
 			 VolumeIntersectionValue parentVisible) const 
 	{
 		VolumeIntersectionValue visible = Cullable_testVisible(node, 
     														   m_volume, 
     														   parentVisible);
 		if(visible != c_volumeOutside) {
-			return m_walker.pre(path, node);
+			return m_walker.pre(node);
 		}
 		return true;
 	}
   
   	// Post-descent function
-	void post(const scene::Path& path, 
-			  const scene::INodePtr& node, 
+	void post(const scene::INodePtr& node, 
 			  VolumeIntersectionValue parentVisible) const 
 	{
-    	return m_walker.post(path, node);
+    	return m_walker.post(node);
 	}
 };
 

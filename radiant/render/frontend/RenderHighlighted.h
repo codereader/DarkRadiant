@@ -32,8 +32,7 @@ public:
 							   &RenderHighlighted::render> RenderCaller;
 
 	// Pre-descent function called by ForEachVisible walker.
-	bool pre(const scene::Path& path, 
-			 const scene::INodePtr& node, 
+	bool pre(const scene::INodePtr& node, 
 			 VolumeIntersectionValue parentVisible) const
 	{
 		m_renderer.PushState();
@@ -69,8 +68,7 @@ public:
 	}
   
   	// Post-descent function, called from ForEachVisible
-	void post(const scene::Path& path, 
-			  const scene::INodePtr& node, 
+	void post(const scene::INodePtr& node, 
 			  VolumeIntersectionValue parentVisible) const
 	{
     	m_renderer.PopState();

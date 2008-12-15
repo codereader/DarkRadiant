@@ -1,6 +1,8 @@
 #ifndef FOREACHVISIBLE_H_
 #define FOREACHVISIBLE_H_
 
+#include <inode.h>
+
 /**
  * Scenegraph walker class which applies the given walker object to objects
  * in the scene graph depending on their intersection with the provided 
@@ -12,8 +14,8 @@
  * by the filter system.
  */
 template<typename Walker_>
-class ForEachVisible 
-: public scene::Graph::Walker
+class ForEachVisible : 
+	public scene::NodeVisitor
 {
 	// The VolumeTest object that all instances must be tested against
 	const VolumeTest& m_volume;
@@ -22,19 +24,19 @@ class ForEachVisible
 	const Walker_& m_walker;
 	
 	// Stack of parent visibility values
-	mutable std::vector<VolumeIntersectionValue> _visStack;
+	std::vector<VolumeIntersectionValue> _visStack;
 
 public:
 
 	// Constructor
-	ForEachVisible(const VolumeTest& volume, const Walker_& walker)
-	: m_volume(volume), m_walker(walker)
+	ForEachVisible(const VolumeTest& volume, const Walker_& walker) : 
+		m_volume(volume), m_walker(walker)
 	{
 		_visStack.push_back(c_volumePartial);
 	}
   
 	// Pre-descent walker function
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		
 		VolumeIntersectionValue visible = (node->visible()) 
 										   ? _visStack.back() 
@@ -53,15 +55,15 @@ public:
 			return false;
 		}
 		else {
-			return m_walker.pre(path, node, visible);
+			return m_walker.pre(node, visible);
 		}
 	}
 	
 	// Post descent function
-	void post(const scene::Path& path, const scene::INodePtr& node) const {
+	void post(const scene::INodePtr& node) {
 		// If instance was visible, call the contained walker's post-descent
 		if(_visStack.back() != c_volumeOutside) {
-			m_walker.post(path, node, _visStack.back());
+			m_walker.post(node, _visStack.back());
 		}
 
     	_visStack.pop_back();

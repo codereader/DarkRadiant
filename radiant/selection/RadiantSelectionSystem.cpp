@@ -103,8 +103,11 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 	SelectionPool selector;
 	SelectionPool sel2;
 	switch(mode) {
-		case eEntity: {
-			Scene_forEachVisible(GlobalSceneGraph(), view, testselect_entity_visible(selector, test));
+		case eEntity:
+		{
+			testselect_entity_visible entityTest(selector, test);
+
+			Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
 				targetList.push_back(i->second);
 			}
@@ -114,12 +117,16 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 			// Do we have a camera view (filled rendering?)
 			if (view.fill() || !GlobalXYWnd().higherEntitySelectionPriority()) {
 				// Test for any visible elements (primitives, entities), but don't select child primitives
-				Scene_forEachVisible(GlobalSceneGraph(), view, testselect_any_visible(selector, test, false)); 
+				testselect_any_visible anyVisible(selector, test, false);
+
+				Scene_forEachVisible(GlobalSceneGraph(), view, anyVisible); 
 			}
 			else {
 				// We have an orthoview, here, select entities first
 				// First, obtain all the selectable entities
-				Scene_forEachVisible(GlobalSceneGraph(), view, testselect_entity_visible(selector, test));
+				testselect_entity_visible entityTest(selector, test);
+
+				Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
 				// Now, retrieve all the selectable primitives (and don't select child primitives (false)) 
 				Scene_TestSelect_Primitive(sel2, test, view, false);
 			}

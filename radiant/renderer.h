@@ -73,12 +73,13 @@ VolumeIntersectionValue Cullable_testVisible(const scene::INodePtr& node,
 template<typename Functor>
 inline void Scene_forEachVisible(scene::Graph& graph, 
 								 const VolumeTest& volume, 
-								 const Functor& functor)
+								 Functor& functor)
 {
-	graph.traverse(
-		ForEachVisible< CullingWalker<Functor> >(
-			volume, 
-			CullingWalker<Functor>(volume, functor)));
+	CullingWalker<Functor> cullingWalker(volume, functor);
+
+	ForEachVisible< CullingWalker<Functor> > walker(volume, cullingWalker);
+
+	Node_traverseSubgraph(graph.root(), walker);
 }
 
 #include "render/frontend/RenderHighlighted.h"
@@ -87,12 +88,14 @@ inline void Scene_forEachVisible(scene::Graph& graph,
  * Scene render function. Uses the visibility walkers to traverse the scene
  * graph and submit all visible objects to the provided Renderer.
  */
-inline void Scene_Render(Renderer& renderer, const VolumeTest& volume)
-{
+inline void Scene_Render(Renderer& renderer, const VolumeTest& volume) {
+
+	// Instantiate a new walker class
+	RenderHighlighted renderHighlightWalker(renderer, volume);
+	ForEachVisible<RenderHighlighted> walker(volume, renderHighlightWalker);
+
 	// Submit renderables from scene graph
-	GlobalSceneGraph().traverse(
-		ForEachVisible<RenderHighlighted>(volume, 
-										  RenderHighlighted(renderer, volume)));
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	// Submit renderables directly attached to the ShaderCache
 	GlobalShaderCache().forEachRenderable(
