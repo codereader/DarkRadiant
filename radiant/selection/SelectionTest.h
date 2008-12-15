@@ -43,18 +43,18 @@ public:
 
 // --------------------------------------------------------------------------------
 
-class testselect_entity_visible : public scene::Graph::Walker {
+class testselect_entity_visible : public scene::NodeVisitor {
   Selector& _selector;
   SelectionTest& _test;
 public:
   testselect_entity_visible(Selector& selector, SelectionTest& test)
     : _selector(selector), _test(test) {}
 
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const;  
-  void post(const scene::Path& path, const scene::INodePtr& node) const;
+  bool pre(const scene::INodePtr& node);  
+  void post(const scene::INodePtr& node);
 };
 
-class testselect_primitive_visible : public scene::Graph::Walker {
+class testselect_primitive_visible : public scene::NodeVisitor {
   Selector& _selector;
   SelectionTest& _test;
 	bool _selectChildPrimitives;
@@ -68,14 +68,14 @@ public:
 		_selectChildPrimitives(selectChildPrimitives) 
 	{}
 
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const;
-  void post(const scene::Path& path, const scene::INodePtr& node) const;
+  bool pre(const scene::INodePtr& node);
+  void post(const scene::INodePtr& node);
 };
 
 /** greebo: Tests for any primitives/entities matching the selectiontest
  */
 class testselect_any_visible : 
-	public scene::Graph::Walker 
+	public scene::NodeVisitor 
 {
 	Selector& _selector;
 	SelectionTest& _test;
@@ -87,11 +87,11 @@ public:
 		_selectChildPrimitives(selectChildPrimitives)
 	{}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const;  
-	void post(const scene::Path& path, const scene::INodePtr& node) const;
+	bool pre(const scene::INodePtr& node);  
+	void post(const scene::INodePtr& node);
 };
 
-class testselect_component_visible : public scene::Graph::Walker {
+class testselect_component_visible : public scene::NodeVisitor {
   Selector& _selector;
   SelectionTest& _test;
   SelectionSystem::EComponentMode _mode;
@@ -99,10 +99,10 @@ public:
   testselect_component_visible(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
     : _selector(selector), _test(test), _mode(mode) {}
   
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const;
+  bool pre(const scene::INodePtr& node);
 };
 
-class testselect_component_visible_selected : public scene::Graph::Walker {
+class testselect_component_visible_selected : public scene::NodeVisitor {
   Selector& _selector;
   SelectionTest& _test;
   SelectionSystem::EComponentMode _mode;
@@ -110,7 +110,7 @@ public:
   testselect_component_visible_selected(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
     : _selector(selector), _test(test), _mode(mode) {}
   
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const;
+  bool pre(const scene::INodePtr& node);
 };
 
 // --------------------------------------------------------------------------------

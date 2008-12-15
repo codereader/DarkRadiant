@@ -634,10 +634,10 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
     {
     	// Find all entities
 		BooleanSelector entitySelector;
-		Scene_forEachVisible(
-			GlobalSceneGraph(), view, 
-			testselect_entity_visible(entitySelector, test)
-		);
+
+		testselect_entity_visible selectionTest(entitySelector, test);
+
+		Scene_forEachVisible(GlobalSceneGraph(), view, selectionTest);
     	
     	// Find all primitives that are selectable 
 		BooleanSelector booleanSelector;
@@ -663,8 +663,8 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 		BooleanSelector booleanSelector;
 	
 		// Find the visible entities
-		Scene_forEachVisible(GlobalSceneGraph(), view, 
-							 testselect_entity_visible(booleanSelector, test));
+		testselect_entity_visible tester(booleanSelector, test);
+		Scene_forEachVisible(GlobalSceneGraph(), view, tester);
 
 		// Check, if an entity could be found
       	if (booleanSelector.isSelected()) {

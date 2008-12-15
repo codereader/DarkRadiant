@@ -197,9 +197,9 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
 
 // ==================================================================================
 
-bool testselect_entity_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+bool testselect_entity_visible::pre(const scene::INodePtr& node) {
     SelectablePtr selectable = Node_getSelectable(node);
-    if(selectable != NULL && Node_isEntity(path.top())) {
+    if(selectable != NULL && Node_isEntity(node)) {
     	_selector.pushSelectable(*selectable);
     }
 
@@ -211,11 +211,11 @@ bool testselect_entity_visible::pre(const scene::Path& path, const scene::INodeP
     return true;
 }
 
-void testselect_entity_visible::post(const scene::Path& path, const scene::INodePtr& node) const {
+void testselect_entity_visible::post(const scene::INodePtr& node) {
 	SelectablePtr selectable = Node_getSelectable(node);
-    if (selectable != NULL && Node_isEntity(path.top())) {
+    if (selectable != NULL && Node_isEntity(node)) {
     	// Get the Entity from this node
-    	Entity* entity = Node_getEntity(path.top());
+    	Entity* entity = Node_getEntity(node);
     	
     	// Don't select the worldspawn entity
     	if (entity != NULL && entity->getKeyValue("classname") != "worldspawn") {
@@ -224,7 +224,7 @@ void testselect_entity_visible::post(const scene::Path& path, const scene::INode
     }
 }
 
-bool testselect_primitive_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+bool testselect_primitive_visible::pre(const scene::INodePtr& node) {
     SelectablePtr selectable = Node_getSelectable(node);
     if (selectable != NULL && !Node_isEntity(node)) {
     	_selector.pushSelectable(*selectable);
@@ -238,13 +238,16 @@ bool testselect_primitive_visible::pre(const scene::Path& path, const scene::INo
     return true;
 }
 
-void testselect_primitive_visible::post(const scene::Path& path, const scene::INodePtr& node) const {
+void testselect_primitive_visible::post(const scene::INodePtr& node) {
 	SelectablePtr selectable = Node_getSelectable(node);
-    if (selectable != NULL && !Node_isEntity(path.top())) {
-    	// Don't test for parent if the path has only 1 element
-    	if (path.size() > 1) {
-    	  	// Get the parent entity of this object, if there is one
-    		Entity* parent = Node_getEntity(path.parent());
+
+    if (selectable != NULL && !Node_isEntity(node)) {
+    	
+		scene::INodePtr parentNode = node->getParent();
+
+    	if (parentNode != NULL) {
+			// Get the parent entity of this object, if there is one
+    		Entity* parent = Node_getEntity(parentNode);
     	
 	    	if (parent != NULL) {
 	    		if (parent->getKeyValue("classname") == "worldspawn" || _selectChildPrimitives) {
@@ -255,13 +258,16 @@ void testselect_primitive_visible::post(const scene::Path& path, const scene::IN
     }
 }
 
-bool testselect_any_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+bool testselect_any_visible::pre(const scene::INodePtr& node) {
     SelectablePtr selectable = Node_getSelectable(node);
+
     if (selectable != NULL) {
-    	// Don't test for parent if the path has only 1 element
-    	if (path.size() > 1) {
+    	
+		scene::INodePtr parentNode = node->getParent();
+
+    	if (parentNode != NULL) {
     	  	// Get the parent entity of this object, if there is one
-    		Entity* parent = Node_getEntity(path.parent());
+    		Entity* parent = Node_getEntity(parentNode);
     		
     		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
     			// Non-worldspawn entity found, don't add it unless specified to do so
@@ -287,32 +293,36 @@ bool testselect_any_visible::pre(const scene::Path& path, const scene::INodePtr&
     return true;
 }
 
-void testselect_any_visible::post(const scene::Path& path, const scene::INodePtr& node) const {
+void testselect_any_visible::post(const scene::INodePtr& node) {
 	SelectablePtr selectable = Node_getSelectable(node);
-    if (selectable != NULL) {
-    	// Don't test for parent if the path has only 1 element
-    	if (path.size() > 1) {
-    	  	// Get the parent entity of this object, if there is one
-    		Entity* parent = Node_getEntity(path.parent());
-    		
-    		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
-    			// Non-worldspawn entity found, add it if specified
-    			if (_selectChildPrimitives) {
-    				_selector.popSelectable();
-    			}
-	   		}
-    		else {
-    			// This is a child of worldspawn, pop it
-    			_selector.popSelectable();
-    		}
-    	}
-    	else {
-    	   	_selector.popSelectable();
-    	}
-    }
+
+    if (selectable == NULL) {
+		return;
+	}
+
+	scene::INodePtr parentNode = node->getParent();
+
+	if (parentNode != NULL) {
+	  	// Get the parent entity of this object, if there is one
+		Entity* parent = Node_getEntity(parentNode);
+		
+		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
+			// Non-worldspawn entity found, add it if specified
+			if (_selectChildPrimitives) {
+				_selector.popSelectable();
+			}
+   		}
+		else {
+			// This is a child of worldspawn, pop it
+			_selector.popSelectable();
+		}
+	}
+	else {
+	   	_selector.popSelectable();
+	}
 }
 
-bool testselect_component_visible::pre(const scene::Path& path, const scene::INodePtr& node) const {
+bool testselect_component_visible::pre(const scene::INodePtr& node) {
 	ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
 
 	if (componentSelectionTestable != NULL) {
@@ -322,7 +332,7 @@ bool testselect_component_visible::pre(const scene::Path& path, const scene::INo
     return true;
 }
 
-bool testselect_component_visible_selected::pre(const scene::Path& path, const scene::INodePtr& node) const {
+bool testselect_component_visible_selected::pre(const scene::INodePtr& node) {
     if (Node_isSelected(node)) {
 		ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
 		if (componentSelectionTestable != NULL) {
@@ -336,13 +346,16 @@ bool testselect_component_visible_selected::pre(const scene::Path& path, const s
 // ==================================================================================
 
 void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume, bool selectChildPrimitives) {
-  Scene_forEachVisible(GlobalSceneGraph(), volume, testselect_primitive_visible(selector, test, selectChildPrimitives));
+	testselect_primitive_visible tester(selector, test, selectChildPrimitives);
+	Scene_forEachVisible(GlobalSceneGraph(), volume, tester);
 }
 
 void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode) {
-  Scene_forEachVisible(GlobalSceneGraph(), volume, testselect_component_visible_selected(selector, test, componentMode));
+	testselect_component_visible_selected tester(selector, test, componentMode);
+	Scene_forEachVisible(GlobalSceneGraph(), volume, tester);
 }
 
 void Scene_TestSelect_Component(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode) {
-  Scene_forEachVisible(GlobalSceneGraph(), volume, testselect_component_visible(selector, test, componentMode));
+	testselect_component_visible tester(selector, test, componentMode);
+	Scene_forEachVisible(GlobalSceneGraph(), volume, tester);
 }
