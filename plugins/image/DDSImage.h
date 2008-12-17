@@ -11,14 +11,7 @@ class DDSImage :
 	public Image,
 	public boost::noncopyable
 {
-	// The actual pixels
-	byte* _pixelData;
-
-	// The amount of memory used by the image data
-	std::size_t _memSize;
-
-	// The compression format ID
-	GLuint _format;
+public:
 
 	struct MipMapInfo 
 	{
@@ -37,6 +30,16 @@ class DDSImage :
 		{}
 	};
 	typedef std::vector<MipMapInfo> MipMapInfoList;
+
+private:
+	// The actual pixels
+	byte* _pixelData;
+
+	// The amount of memory used by the image data
+	std::size_t _memSize;
+
+	// The compression format ID
+	GLuint _format;
 
 	MipMapInfoList _mipMapInfo;
 

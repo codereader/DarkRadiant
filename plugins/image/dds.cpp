@@ -49,13 +49,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 	// Get the number of mipmaps from the file
 	std::size_t mipMapCount = (header.flags & DDSD_MIPMAPCOUNT) ? header.mipMapCount : 1;
 
-	struct MipMapInfo {
-		std::size_t size;
-		std::size_t width;
-		std::size_t height;
-		std::size_t offset;
-	};
-	std::vector<MipMapInfo> mipMapInfo;
+	DDSImage::MipMapInfoList mipMapInfo;
 	mipMapInfo.resize(mipMapCount);
 	
 	// Calculate the total memory requirements (greebo: DXT1 has 8 bytes per block)
@@ -66,7 +60,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 
 	for (std::size_t i = 0; i < mipMapCount; ++i) {
 		// Create a new mipmap structure
-		MipMapInfo& mipMap = mipMapInfo[i];
+		DDSImage::MipMapInfo& mipMap = mipMapInfo[i];
 
 		mipMap.offset = offset;
 		mipMap.width = width;
@@ -102,7 +96,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 
 	// Load the mipmaps into the allocated memory
 	for (std::size_t i = 0; i < mipMapInfo.size(); ++i) {
-		const MipMapInfo& mipMap = mipMapInfo[i];
+		const DDSImage::MipMapInfo& mipMap = mipMapInfo[i];
 
 		// Declare a new mipmap and store the offset
 		image->addMipMap(mipMap.width, mipMap.height, mipMap.size, mipMap.offset);
