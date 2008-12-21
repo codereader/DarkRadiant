@@ -80,6 +80,12 @@ MapExpressionPtr IMapExpression::createForString(std::string str) {
 }
 
 ImagePtr IMapExpression::getResampled(ImagePtr input, unsigned int width, unsigned int height) {
+	// Don't process precompressed images
+	if (input->isPrecompressed()) {
+		globalWarningStream() << "Cannot resample precompressed texture." << std::endl;
+		return input;
+	}
+
 	// Check if the dimensions differ from the desired ones
 	if (width != input->getWidth(0) || height != input->getHeight(0)) {
 		// Allocate a new image buffer
@@ -113,6 +119,12 @@ ImagePtr HeightMapExpression::getImage() {
 	ImagePtr heightMap = heightMapExp->getImage();
 	
 	if (heightMap == NULL) return ImagePtr();
+
+	// Don't process precompressed images
+	if (heightMap->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return heightMap;
+	}
 	
 	// Convert the heightmap into a normalmap
 	ImagePtr normalMap = createNormalmapFromHeightmap(heightMap, scale);
@@ -144,6 +156,12 @@ ImagePtr AddNormalsExpression::getImage() {
     ImagePtr imgTwo = mapExpTwo->getImage();
 
     if (imgTwo == NULL) return ImagePtr();
+
+	// Don't process precompressed images
+	if (imgOne->isPrecompressed() || imgTwo->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return imgOne;
+	}
     
 	// The image must match the dimensions of the first 
 	imgTwo = getResampled(imgTwo, width, height);
@@ -202,6 +220,12 @@ ImagePtr SmoothNormalsExpression::getImage() {
 	ImagePtr normalMap = mapExp->getImage();
 	
 	if (normalMap == NULL) return ImagePtr();
+
+	// Don't process precompressed images
+	if (normalMap->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return normalMap;
+	}
 	 
 	unsigned int width = normalMap->getWidth(0);
 	unsigned int height = normalMap->getHeight(0);
@@ -286,6 +310,12 @@ ImagePtr AddExpression::getImage() {
 	ImagePtr imgTwo = mapExpTwo->getImage();
 	
 	if (imgTwo == NULL) return ImagePtr();
+
+	// Don't process precompressed images
+	if (imgOne->isPrecompressed() || imgTwo->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return imgOne;
+	}
 	
 	// Resize the image to match the dimensions of the first
     imgTwo = getResampled(imgTwo, width, height);
@@ -345,6 +375,12 @@ ImagePtr ScaleExpression::getImage() {
     
     if (img == NULL) return ImagePtr();
 
+	// Don't process precompressed images
+	if (img->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return img;
+	}
+
     unsigned int width = img->getWidth(0);
     unsigned int height = img->getHeight(0);
     
@@ -399,6 +435,12 @@ ImagePtr InvertAlphaExpression::getImage() {
 	
 	if (img == NULL) return ImagePtr();
 
+	// Don't process precompressed images
+	if (img->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return img;
+	}
+
 	unsigned int width = img->getWidth(0);
 	unsigned int height = img->getHeight(0);
 
@@ -439,6 +481,12 @@ ImagePtr InvertColorExpression::getImage() {
 	ImagePtr img = mapExp->getImage();
 	
 	if (img == NULL) return ImagePtr();
+
+	// Don't process precompressed images
+	if (img->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return img;
+	}
 
 	unsigned int width = img->getWidth(0);
 	unsigned int height = img->getHeight(0);
@@ -481,6 +529,12 @@ ImagePtr MakeIntensityExpression::getImage() {
 	
 	if (img == NULL) return ImagePtr();
 
+	// Don't process precompressed images
+	if (img->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return img;
+	}
+
 	unsigned int width = img->getWidth(0);
 	unsigned int height = img->getHeight(0);
 
@@ -521,6 +575,12 @@ ImagePtr MakeAlphaExpression::getImage() {
 	ImagePtr img = mapExp->getImage();
 	
 	if (img == NULL) return ImagePtr();
+
+	// Don't process precompressed images
+	if (img->isPrecompressed()) {
+		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
+		return img;
+	}
 
 	unsigned int width = img->getWidth(0);
 	unsigned int height = img->getHeight(0);
