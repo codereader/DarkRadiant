@@ -47,6 +47,7 @@ public:
 	 * Construct a default InfoLocationComponentEditor.
 	 */
 	InfoLocationComponentEditor() : 
+		_widget(NULL),
 		_component(NULL)
 	{}
 	

@@ -48,7 +48,10 @@ public:
 	 * Construct a default CustomClockedComponentEditor.
 	 */
 	CustomClockedComponentEditor() : 
-		_component(NULL)
+		_widget(NULL),
+		_component(NULL),
+		_scriptFunction(NULL),
+		_interval(NULL)
 	{}
 	
 	/**

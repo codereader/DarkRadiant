@@ -49,8 +49,10 @@ public:
 	/**
 	 * Construct a default KnockoutComponentEditor.
 	 */
-	KnockoutComponentEditor()
-	: _component(NULL)
+	KnockoutComponentEditor() : 
+		_widget(NULL),
+		_component(NULL),
+		_amount(NULL)
 	{ }
 	
 	/**

@@ -53,6 +53,7 @@ public:
 	 * Construct a default DistanceComponentEditor.
 	 */
 	DistanceComponentEditor() : 
+		_widget(NULL),
 		_component(NULL),
 		_entity(NULL),
 		_location(NULL),

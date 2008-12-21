@@ -47,6 +47,7 @@ public:
 	 * Construct a default ItemComponentEditor.
 	 */
 	ItemComponentEditor() : 
+		_widget(NULL),
 		_component(NULL),
 		_amount(NULL)
 	{}
