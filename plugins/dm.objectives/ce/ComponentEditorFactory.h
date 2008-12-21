@@ -59,6 +59,12 @@ public:
 	 */
 	static void registerType(const std::string& type, 
 							 ComponentEditorPtr subclass);
+
+	/**
+	 * greebo: Clears the internal storage - no more component editors
+	 * can be constructed after this call.
+	 */
+	static void clear();
 };
 
 }

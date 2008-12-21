@@ -47,7 +47,9 @@ public:
 	 * Construct a default AIFindBodyComponentEditor.
 	 */
 	AIFindBodyComponentEditor() : 
-		_component(NULL)
+		_widget(NULL),
+		_component(NULL),
+		_amount(NULL)
 	{}
 	
 	/**

@@ -42,6 +42,7 @@ public:
 	 * Construct a default CustomComponentEditor.
 	 */
 	CustomComponentEditor() : 
+		_widget(NULL),
 		_component(NULL)
 	{}
 	

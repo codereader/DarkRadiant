@@ -12,6 +12,7 @@
 #include "stream/textstream.h"
 #include "generic/callback.h"
 
+#include "ce/ComponentEditorFactory.h"
 #include <iostream>
 
 /**
@@ -66,6 +67,13 @@ public:
 				"Objectives...",
 				"objectives16.png",
 				"ObjectivesEditor");
+	}
+
+	virtual void shutdownModule() {
+		globalOutputStream() << "ObjectivesEditorModule shutting down.\n";
+
+		// Remove all the registered Component Editors from memory
+		objectives::ce::ComponentEditorFactory::clear();
 	}
 };
 typedef boost::shared_ptr<ObjectivesEditorModule> ObjectivesEditorModulePtr;

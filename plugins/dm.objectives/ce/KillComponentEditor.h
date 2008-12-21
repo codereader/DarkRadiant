@@ -49,8 +49,9 @@ public:
 	/**
 	 * Construct a default KillComponentEditor.
 	 */
-	KillComponentEditor()
-	: _component(NULL),
+	KillComponentEditor() : 
+		_widget(NULL),
+		_component(NULL),
 		_amount(NULL)
 	{ }
 	

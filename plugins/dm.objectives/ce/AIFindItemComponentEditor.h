@@ -40,6 +40,7 @@ public:
 	 * Construct a default AIFindItemComponentEditor.
 	 */
 	AIFindItemComponentEditor() : 
+		_widget(NULL),
 		_component(NULL)
 	{}
 	

@@ -33,6 +33,10 @@ void ComponentEditorFactory::registerType(const std::string& type,
 	getMap().insert(ComponentEditorMap::value_type(type, subclass));
 }
 
+void ComponentEditorFactory::clear() {
+	getMap().clear();
+}
+
 }
 
 }

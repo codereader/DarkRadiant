@@ -48,7 +48,10 @@ public:
 	 * Construct a default AlertComponentEditor.
 	 */
 	AlertComponentEditor() : 
-		_component(NULL)
+		_widget(NULL),
+		_component(NULL),
+		_amount(NULL),
+		_alertLevel(NULL)
 	{}
 	
 	/**
