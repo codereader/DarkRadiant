@@ -238,6 +238,11 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 		// We have a model path (probably an inherited one)
 		setModelPath(getAttribute("model").value);
 	}
+
+	if (getAttribute("editor_light").value == "1" || getAttribute("spawnclass").value == "idLight") {
+		// We have a light
+		setIsLight(true);
+	}
 }
 
 // Find a single attribute
