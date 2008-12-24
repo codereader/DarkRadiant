@@ -39,9 +39,8 @@ class Speaker :
 	float m_angle;
 
 	NamedEntity m_named;
-	//NamespaceManager m_nameKeys;
 
-	entity::RenderSpeakerRadii m_speakerRadii;
+	RenderSpeakerRadii m_speakerRadii;
 	SoundRadii m_stdVal;
 	bool m_useSpeakerRadii;
 	bool m_minIsSet;
