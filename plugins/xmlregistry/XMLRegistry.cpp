@@ -36,6 +36,10 @@ XMLRegistry::~XMLRegistry() {
 		// Replace the version tag and set it to the current DarkRadiant version
 		deleteXPath("user//version");
 		set("user/version", RADIANT_VERSION);
+
+		// Export the user-defined filter definitions to a separate file
+		exportToFile("user/ui/filtersystem/filters", settingsPath + "filters.xml");
+		deleteXPath("user/ui/filtersystem/filters");
 		
 		// Export the colour schemes and remove them from the registry
 		exportToFile("user/ui/colourschemes", settingsPath + "colours.xml");
@@ -234,7 +238,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx) {
 		import(base + "colours.xml", "user/ui", Registry::treeStandard);
 		import(base + "input.xml", "user/ui", Registry::treeStandard);
 		import(base + "menu.xml", "user/ui", Registry::treeStandard);
-		
+
 		// Load the debug.xml file only if the relevant key is set in user.xml
 		if (get("user/debug") == "1") {
 			import(base + "debug.xml", "", Registry::treeStandard);
@@ -266,6 +270,11 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx) {
 	const std::string userInputFile = ctx.getSettingsPath() + "input.xml";
 	if (file_exists(userInputFile.c_str())) {
 		import(userInputFile, "user/ui", Registry::treeUser);
+	}
+
+	const std::string userFilterFile = ctx.getSettingsPath() + "filters.xml";
+	if (file_exists(userFilterFile.c_str())) {
+		import(userFilterFile, "user/ui/filtersystem", Registry::treeUser);
 	}
 
 	// Now the registry is up and running, tell the context to emit
