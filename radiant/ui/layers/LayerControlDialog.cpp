@@ -98,7 +98,7 @@ void LayerControlDialog::toggleDialog() {
 void LayerControlDialog::refresh() {
 	// Remove the widgets from the vbox first
 	for (LayerControls::iterator i = _layerControls.begin(); 
-		 i != _layerControls.end(); i++)
+		 i != _layerControls.end(); ++i)
 	{
 		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getToggle());
 		gtk_container_remove(GTK_CONTAINER(_controlContainer), (*i)->getLabelButton());
@@ -109,32 +109,44 @@ void LayerControlDialog::refresh() {
 	_layerControls.clear();
 	
 	// Local helper class for populating the window
-	class LayerControlPopulator :
+	class LayerControlAccumulator :
 		public scene::LayerSystem::Visitor
 	{
-		LayerControls& _layerControls;
+		typedef std::map<std::string, LayerControlPtr> LayerControlMap;
+		LayerControlMap _sortedLayerControls;
 	public:
-		LayerControlPopulator(LayerControls& layerControls) :
-			_layerControls(layerControls)
-		{}
-
 		void visit(int layerID, std::string layerName) {
 			// Create a new layercontrol for each visited layer
-			LayerControlPtr control(new LayerControl(layerID));
-
-			// Store the object locally
-			_layerControls.push_back(control);
+			// Store the object in a sorted container
+			_sortedLayerControls[layerName] = LayerControlPtr(new LayerControl(layerID));
 		}
-	} populator(_layerControls);
+
+		// Returns the sorted vector
+		LayerControls getVector() {
+			LayerControls returnValue;
+
+			// Copy the objects over to a linear vector
+			for (LayerControlMap::const_iterator i = _sortedLayerControls.begin(); 
+				 i != _sortedLayerControls.end(); ++i)
+			{
+				returnValue.push_back(i->second);
+			}
+			
+			return returnValue;
+		}
+	} populator;
 
 	// Traverse the layers
 	scene::getLayerSystem().foreachLayer(populator);
+
+	// Get the sorted vector
+	_layerControls = populator.getVector();
 
 	gtk_table_resize(GTK_TABLE(_controlContainer), static_cast<guint>(_layerControls.size()), 3);
 
 	int c = 0;
 	for (LayerControls::iterator i = _layerControls.begin(); 
-		 i != _layerControls.end(); i++, c++)
+		 i != _layerControls.end(); ++i, ++c)
 	{
 		gtk_table_attach(GTK_TABLE(_controlContainer), (*i)->getToggle(), 
 			0, 1, c, c+1, (GtkAttachOptions)0, (GtkAttachOptions)0, 0, 0);
@@ -154,7 +166,7 @@ void LayerControlDialog::refresh() {
 void LayerControlDialog::update() {
 	// Broadcast the update() call
 	for (LayerControls::iterator i = _layerControls.begin();
-		 i != _layerControls.end(); i++)
+		 i != _layerControls.end(); ++i)
 	{
 		(*i)->update();
 	}
