@@ -19,10 +19,14 @@ namespace {
 	
 	// Registry key for .game-defined filters
 	const std::string RKEY_GAME_FILTERS = "game/filtersystem//filter";
-	
-	// Registry key for user-defined persistent filters
-	const std::string RKEY_USER_FILTERS = "user/ui/filtersystem//activeFilter";
 
+	const std::string RKEY_USER_FILTER_BASE = "user/ui/filtersystem";
+
+	// Registry key for user-defined filters
+	const std::string RKEY_USER_FILTERS = RKEY_USER_FILTER_BASE + "//filter";
+	
+	// Registry key for persistent filter setting
+	const std::string RKEY_USER_ACTIVE_FILTERS = RKEY_USER_FILTER_BASE + "//activeFilter";
 }
 
 // Initialise the filter system
@@ -31,7 +35,8 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 	// Load the list of active filter names from the user tree. There is no
 	// guarantee that these are actually valid filters in the .game file
 	std::set<std::string> activeFilterNames;
-	xml::NodeList activeFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
+	xml::NodeList activeFilters = GlobalRegistry().findXPath(RKEY_USER_ACTIVE_FILTERS);
+
 	for (xml::NodeList::const_iterator i = activeFilters.begin();
 		 i != activeFilters.end();
 		 ++i)
@@ -40,8 +45,13 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 		activeFilterNames.insert(i->getAttributeValue("name"));
 	}
 	
-	// Ask the XML Registry for the game filter nodes
+	// Ask the XML Registry for filter nodes
 	xml::NodeList filters = GlobalRegistry().findXPath(RKEY_GAME_FILTERS);
+	xml::NodeList userFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
+
+	// Append the userFilters at the end of the vector
+	std::copy(userFilters.begin(), userFilters.end(), std::back_inserter(filters));
+
 	std::cout << "[filters] Loaded " << filters.size() 
 			  << " filters from registry." << std::endl;
 
@@ -92,7 +102,7 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 void BasicFilterSystem::shutdownModule() {
 	
 	// Remove the existing set of active filter nodes
-	GlobalRegistry().deleteXPath("user/ui/filtersystem");
+	GlobalRegistry().deleteXPath(RKEY_USER_ACTIVE_FILTERS);
 	
 	// Add a node for each active filter
 	for (FilterTable::const_iterator i = _activeFilters.begin();
@@ -100,7 +110,7 @@ void BasicFilterSystem::shutdownModule() {
 		 ++i)
 	{
 		GlobalRegistry().createKeyWithName(
-			"user/ui/filtersystem", "activeFilter", i->first
+			RKEY_USER_FILTER_BASE, "activeFilter", i->first
 		);
 	}
 }
