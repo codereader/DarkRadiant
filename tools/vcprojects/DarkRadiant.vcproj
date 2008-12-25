@@ -2259,6 +2259,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="filterdialog"
+					>
+					<File
+						RelativePath="..\..\radiant\ui\filterdialog\FilterDialog.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\filterdialog\FilterDialog.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="xyview"
