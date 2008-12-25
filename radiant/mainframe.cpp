@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/overlay/Overlay.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/layers/LayerControlDialog.h"
+#include "ui/filterdialog/FilterDialog.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Group.h"
@@ -1615,6 +1616,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("FindBrush", FreeCaller<DoFind>());
 	GlobalEventManager().addCommand("RevertToWorldspawn", FreeCaller<selection::algorithm::revertGroupToWorldSpawn>());
 	GlobalEventManager().addCommand("MapInfo", FreeCaller<ui::MapInfoDialog::showDialog>());
+	GlobalEventManager().addCommand("EditFiltersDialog", FreeCaller<ui::FilterDialog::showDialog>());
 	
 	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", "user/ui/showAllLightRadii");
