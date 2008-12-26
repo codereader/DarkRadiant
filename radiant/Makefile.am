@@ -108,6 +108,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/commandlist/CommandList.cpp \
 					  ui/commandlist/ShortcutChooser.cpp \
 					  ui/filterdialog/FilterDialog.cpp \
+					  ui/filterdialog/FilterEditor.cpp \
 					  patchmanip.cpp \
 					  xyview/XYWnd.cpp \
 					  xyview/GlobalXYWnd.cpp \
