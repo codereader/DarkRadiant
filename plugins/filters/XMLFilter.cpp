@@ -25,7 +25,7 @@ bool XMLFilter::isVisible(const std::string& item, const std::string& name) cons
 
 	bool visible = true; // default if unmodified by rules
 	
-	for (RuleList::const_iterator ruleIter = _rules.begin();
+	for (FilterRules::const_iterator ruleIter = _rules.begin();
 		 ruleIter != _rules.end();
 		 ++ruleIter)
 	{
@@ -60,5 +60,9 @@ std::string XMLFilter::getEventName() const {
 bool XMLFilter::isReadOnly() const {
 	return _readonly;
 }
-	
+
+FilterRules XMLFilter::getRuleSet() {
+	return _rules;
+}
+
 } // namespace filters

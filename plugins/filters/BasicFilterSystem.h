@@ -67,6 +67,9 @@ public:
 
 	// Removes the filter and returns true on success
 	bool removeFilter(const std::string& filter);
+
+	// Returns the ruleset of the named filter
+	FilterRules getRuleSet(const std::string& filter);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

@@ -1,10 +1,9 @@
 #ifndef XMLFILTER_H_
 #define XMLFILTER_H_
 
-#include "XMLFilterRule.h"
-
 #include <string>
 #include <vector>
+#include "ifilter.h"
 
 namespace filters
 {
@@ -24,8 +23,7 @@ private:
 	std::string _eventName;
 	
 	// Ordered list of rule objects
-	typedef std::vector<XMLFilterRule> RuleList;
-	RuleList _rules;
+	FilterRules _rules;
 
 	// True if this filter can't be changed
 	bool _readonly;
@@ -51,7 +49,7 @@ public:
 	 * hide them.
 	 */
 	void addRule(const std::string& type, const std::string& match, bool show) {
-		_rules.push_back(XMLFilterRule(type, match, show));	
+		_rules.push_back(FilterRule(type, match, show));
 	}
 	
 	/** Test a given item for visibility against all of the rules
@@ -75,6 +73,9 @@ public:
 
 	// Whether this filter is read-only
 	bool isReadOnly() const;
+
+	// Returns the ruleset
+	FilterRules getRuleSet();
 };
 
 

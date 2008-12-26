@@ -1,7 +1,8 @@
 #ifndef _UI_FILTER_H_
 #define _UI_FILTER_H_
 
-#include <string>
+#include "ifilter.h"
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 namespace ui {
@@ -9,33 +10,25 @@ namespace ui {
 // This object represents a filter in the filtersystem.
 class Filter
 {
+public:
+
 	// The name
-	std::string _name;
+	std::string name;
 
 	// Filter is enabled or disabled
-	bool _state;
+	bool state;
 
 	// Whether this is read-only
-	bool _readonly;
+	bool readOnly;
 
-public:
-	Filter(const std::string& name, bool state, bool readonly) :
-		 _name(name),
-		 _state(state),
-		 _readonly(readonly)
+	// The rules defining this filter
+	FilterRules rules;
+
+	Filter(const std::string& _name, const bool _state, const bool _readOnly) :
+		name(_name),
+		state(_state),
+		readOnly(_readOnly)
 	{}
-
-	const std::string& getName() const {
-		return _name;
-	}
-
-	bool getState() const {
-		return _state;
-	}
-
-	bool isReadOnly() const {
-		return _readonly;
-	}
 };
 typedef boost::shared_ptr<Filter> FilterPtr;
 
