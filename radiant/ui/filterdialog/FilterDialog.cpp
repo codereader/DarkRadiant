@@ -46,6 +46,9 @@ FilterDialog::FilterDialog() :
 	// Create the child widgets
 	populateWindow();
 
+	// Load the filters from the filtersystem
+	loadFilters();
+
 	// Refresh dialog contents
 	update();
 
@@ -57,41 +60,53 @@ void FilterDialog::save() {
 	// TODO
 }
 
-void FilterDialog::update() {
-	
-	// Local helper class to populate the liststore
-	class FilterStorePopulator :
+void FilterDialog::loadFilters() {
+	// Clear first, before population
+	_filters.clear();
+
+	// Local helper class to populate the map
+	class FilterMapPopulator :
 		public IFilterVisitor
 	{
-		GtkListStore* _store;
+		FilterMap& _target;
 	public:
-		FilterStorePopulator(GtkListStore* targetStore) :
-			_store(targetStore)
+		FilterMapPopulator(FilterMap& target) :
+			_target(target)
 		{}
 
 		void visit(const std::string& filterName) {
-			GtkTreeIter iter;
-		
-			// Allocate a new list store element and store its pointer into <iter>
-			gtk_list_store_append(_store, &iter);
-			
+			// Get the properties
 			bool state = GlobalFilterSystem().getFilterState(filterName);
 			bool readOnly = GlobalFilterSystem().filterIsReadOnly(filterName);
-			
-			gtk_list_store_set(_store, &iter, COL_NAME, filterName.c_str(), 
-											  COL_STATE, state ? "enabled" : "disabled", 
-											  COL_COLOUR, readOnly ? "#707070" : "black",
-											  COL_READONLY, readOnly ? TRUE : FALSE,
-											  -1);
+
+			_target.insert(
+				FilterMap::value_type(filterName, FilterPtr(new Filter(filterName, state, readOnly)))
+			);
 		}
 
-	} populator(_filterStore);
+	} populator(_filters);
 
+	GlobalFilterSystem().forEachFilter(populator);
+}
+
+void FilterDialog::update() {
 	// Clear the store first
 	gtk_list_store_clear(_filterStore);
 
-	// Traverse the filters
-	GlobalFilterSystem().forEachFilter(populator);
+	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i) {
+		GtkTreeIter iter;
+		
+		// Allocate a new list store element and store its pointer into <iter>
+		gtk_list_store_append(_filterStore, &iter);
+
+		const Filter& filter = *(i->second);
+				
+		gtk_list_store_set(_filterStore, &iter, COL_NAME, i->first.c_str(), 
+										  COL_STATE, filter.getState() ? "enabled" : "disabled", 
+										  COL_COLOUR, filter.isReadOnly() ? "#707070" : "black",
+										  COL_READONLY, filter.isReadOnly() ? TRUE : FALSE,
+										  -1);
+	}
 
 	// Update the button sensitivity
 	updateWidgetSensitivity();
@@ -209,15 +224,16 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 }
 
 void FilterDialog::onDeleteFilter(GtkWidget* w, FilterDialog* self) {
-	// Check the prerequisites
-	if (self->_selectedFilter.empty() || 
-		GlobalFilterSystem().filterIsReadOnly(self->_selectedFilter))
-	{
-		// No filter selected or read-only
-		return;
+	// Lookup the Filter object
+	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
+
+	if (f == self->_filters.end() || f->second->isReadOnly()) {
+		return; // not found or read-only
 	}
 
-	GlobalFilterSystem().removeFilter(self->_selectedFilter);
+	// Move the object from _filters to _deletedfilters
+	self->_deletedFilters.insert(*f);
+	self->_filters.erase(f);
 
 	// Update all widgets
 	self->update();

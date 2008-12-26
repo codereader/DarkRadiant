@@ -3,6 +3,7 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <map>
+#include "Filter.h"
 
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkListStore GtkListStore;
@@ -22,6 +23,13 @@ class FilterDialog :
 	// Holds the name of the currently selected filter (or "" if none selected)
 	std::string _selectedFilter;
 
+	// The current working set, indexed by name
+	typedef std::map<std::string, FilterPtr> FilterMap;
+	FilterMap _filters;
+
+	// The deleted filters, the actual deletion happens in the save() method
+	FilterMap _deletedFilters;
+
 	// Private constructor
 	FilterDialog();
 
@@ -37,6 +45,9 @@ private:
 
 	// Reload filter settings and fill widges
 	void update();
+
+	// Loads the filters from the filtersystem (happens at dialog construction)
+	void loadFilters();
 
 	// This is called to create the widgets
 	void populateWindow();
