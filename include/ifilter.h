@@ -77,6 +77,11 @@ public:
 	 */
 	virtual std::string getFilterEventName(const std::string& filter) = 0;
 
+	/**
+	 * greebo: Returns TRUE if the filter is read-only and can't be deleted.
+	 */
+	virtual bool filterIsReadOnly(const std::string& filter) = 0;
+
 	/** Test if a given item should be visible or not, based on the currently-
 	 * active filters.
 	 * 

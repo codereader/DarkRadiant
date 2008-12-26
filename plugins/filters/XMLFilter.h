@@ -27,11 +27,16 @@ private:
 	typedef std::vector<XMLFilterRule> RuleList;
 	RuleList _rules;
 
+	// True if this filter can't be changed
+	bool _readonly;
+
 public:
 
 	/** Construct an XMLFilter with the given name.
+	 * Pass the read-only flag to indicate whether this filter is
+	 * custom or coming from the "stock" filters in the .game files.
 	 */
-	XMLFilter(const std::string& name);
+	XMLFilter(const std::string& name, bool readOnly);
 	
 	/** Add a rule to this filter.
 	 * 
@@ -67,6 +72,9 @@ public:
 	/** greebo: Gets called when the associated Event is fired. 
 	 */
 	void toggle();
+
+	// Whether this filter is read-only
+	bool isReadOnly() const;
 };
 
 
