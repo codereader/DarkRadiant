@@ -6,6 +6,7 @@
 
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace ui {
 
@@ -17,6 +18,9 @@ class FilterDialog :
 	GtkListStore* _filterStore;
 
 	std::map<int, GtkWidget*> _widgets;
+
+	// Holds the name of the currently selected filter (or "" if none selected)
+	std::string _selectedFilter;
 
 	// Private constructor
 	FilterDialog();
@@ -40,11 +44,16 @@ private:
 	GtkWidget* createButtonPanel();
 	GtkWidget* createFiltersPanel();
 
+	// Update buttons
+	void updateWidgetSensitivity();
+
 	static void onSave(GtkWidget* widget, FilterDialog* self);
 	static void onCancel(GtkWidget* widget, FilterDialog* self);
 
 	static void onAddFilter(GtkWidget* w, FilterDialog* self);
 	static void onDeleteFilter(GtkWidget* w, FilterDialog* self);
+
+	static void onFilterSelectionChanged(GtkTreeSelection* sel, FilterDialog* self);
 };
 
 } // namespace ui
