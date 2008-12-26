@@ -185,6 +185,31 @@ bool BasicFilterSystem::filterIsReadOnly(const std::string& filter) {
 	}
 }
 
+bool BasicFilterSystem::removeFilter(const std::string& filter) {
+	FilterTable::iterator f = _availableFilters.find(filter);
+	
+	if (f != _availableFilters.end()) {
+		if (f->second.isReadOnly()) {
+			return false;
+		}
+
+		// Remove all accelerators from that event before removal
+		GlobalEventManager().disconnectAccelerator(f->second.getEventName());
+		
+		// Disable the event in the EventManager, to avoid crashes when calling the menu items
+		GlobalEventManager().disableEvent(f->second.getEventName());
+
+		// Now actually remove the object
+		_availableFilters.erase(f);
+
+		return true;
+	}
+	else {
+		// Filter not found
+		return false;
+	}
+}
+
 // Query whether an item is visible or filtered out
 bool BasicFilterSystem::isVisible(const std::string& item, 
 								  const std::string& name) 

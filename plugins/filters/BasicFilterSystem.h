@@ -59,11 +59,14 @@ public:
 	// Set the state of a filter
 	void setFilterState(const std::string& filter, bool state);
 
+	// Query whether an item is visible or filtered out
+	bool isVisible(const std::string& item, const std::string& name);
+
 	// Whether this filter is read-only and can't be changed
 	bool filterIsReadOnly(const std::string& filter);
 
-	// Query whether an item is visible or filtered out
-	bool isVisible(const std::string& item, const std::string& name);
+	// Removes the filter and returns true on success
+	bool removeFilter(const std::string& filter);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

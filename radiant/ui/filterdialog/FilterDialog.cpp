@@ -3,6 +3,7 @@
 #include "ifilter.h"
 #include "iradiant.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignment.h"
@@ -91,11 +92,30 @@ void FilterDialog::update() {
 
 	// Traverse the filters
 	GlobalFilterSystem().forEachFilter(populator);
+
+	// Update the button sensitivity
+	updateWidgetSensitivity();
 }
 
 void FilterDialog::populateWindow() {
 	// Create the dialog vbox
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+
+	// Create the "Filters" label	
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Filters</b>"), FALSE, FALSE, 0);
+
+	// Pack the treeview into the main window's vbox
+	gtk_box_pack_start(GTK_BOX(vbox), createFiltersPanel(), TRUE, TRUE, 0);
+
+	// Buttons
+	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
+
+	gtk_container_add(GTK_CONTAINER(getWindow()), GTK_WIDGET(vbox));
+}
+
+GtkWidget* FilterDialog::createFiltersPanel() {
+	// Create an hbox for the treeview and the action buttons
+	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
 
 	// Create a new treeview
 	_filterView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_filterStore)));
@@ -116,21 +136,8 @@ void FilterDialog::populateWindow() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_filterView), filterCol);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_filterView), stateCol);
 
-	// Create the "Filters" label	
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Filters</b>"), FALSE, FALSE, 0);
-
-	// Pack the treeview into the main window's vbox
-	gtk_box_pack_start(GTK_BOX(vbox), createFiltersPanel(), TRUE, TRUE, 0);
-
-	// Buttons
-	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
-
-	gtk_container_add(GTK_CONTAINER(getWindow()), GTK_WIDGET(vbox));
-}
-
-GtkWidget* FilterDialog::createFiltersPanel() {
-	// Create an hbox for the treeview and the action buttons
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(_filterView));
+	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(onFilterSelectionChanged), this);
 
 	// Action buttons
 	_widgets[WIDGET_ADD_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
@@ -166,6 +173,19 @@ GtkWidget* FilterDialog::createButtonPanel() {
 	return gtkutil::RightAlignment(buttonHBox);	
 }
 
+void FilterDialog::updateWidgetSensitivity() {
+	if (!_selectedFilter.empty()) {
+		// We have a filter, is it read-only?
+		bool readonly = GlobalFilterSystem().filterIsReadOnly(_selectedFilter);
+		
+		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], readonly ? FALSE : TRUE);
+	}
+	else {
+		// no filter selected
+		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE);
+	}
+}
+
 void FilterDialog::showDialog() {
 	// Instantiate a new instance, blocks GTK
 	FilterDialog instance;
@@ -178,6 +198,9 @@ void FilterDialog::onCancel(GtkWidget* widget, FilterDialog* self) {
 
 void FilterDialog::onSave(GtkWidget* widget, FilterDialog* self) {
 	self->save();
+	
+	// TODO: Check rebuilding the filter menu
+
 	self->destroy();
 }
 
@@ -186,7 +209,35 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 }
 
 void FilterDialog::onDeleteFilter(GtkWidget* w, FilterDialog* self) {
-	// TODO
+	// Check the prerequisites
+	if (self->_selectedFilter.empty() || 
+		GlobalFilterSystem().filterIsReadOnly(self->_selectedFilter))
+	{
+		// No filter selected or read-only
+		return;
+	}
+
+	GlobalFilterSystem().removeFilter(self->_selectedFilter);
+
+	// Update all widgets
+	self->update();
+}
+
+void FilterDialog::onFilterSelectionChanged(GtkTreeSelection* sel, FilterDialog* self) {
+	// Get the selection
+	GtkTreeIter selected;
+	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &selected) ? true : false;
+
+	if (hasSelection) {
+		self->_selectedFilter = gtkutil::TreeModel::getString(
+			GTK_TREE_MODEL(self->_filterStore), &selected, COL_NAME
+		);
+	}
+	else {
+		self->_selectedFilter = "";
+	}
+
+	self->updateWidgetSensitivity();
 }
 
 } // namespace ui
