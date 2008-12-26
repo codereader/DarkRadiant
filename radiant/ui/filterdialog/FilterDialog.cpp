@@ -8,6 +8,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/messagebox.h"
 #include <gtk/gtk.h>
 
 #include "FilterEditor.h"
@@ -248,8 +249,32 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 		return; // not found or read-only
 	}
 
+	// Copy-construct a new filter
+	Filter workingCopy(*(f->second));
+
 	// Instantiate a new editor, will block
-	FilterEditor editor(*(f->second), GTK_WINDOW(self->getWindow()));
+	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()));
+
+	if (workingCopy.rules.empty()) {
+		// Empty ruleset, ask user for deletion
+		EMessageBoxReturn rv = gtk_MessageBox(self->getWindow(), "No rules defined for this filter. Delete it?", "Empty Filter", eMB_YESNO, eMB_ICONQUESTION);
+
+		if (rv == eIDYES) {
+			// Move the object from _filters to _deletedfilters
+			self->_deletedFilters.insert(*f);
+			self->_filters.erase(f);
+		}
+		else {
+			// Don't delete the empty filter, leave the old one alone
+		}
+	}
+	else {
+		// Ruleset is ok, overwrite the actual filter
+		*(f->second) = workingCopy;
+	}
+
+	// Update all widgets
+	self->update();
 }
 
 void FilterDialog::onDeleteFilter(GtkWidget* w, FilterDialog* self) {
