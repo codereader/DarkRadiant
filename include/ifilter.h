@@ -23,11 +23,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IFILTER_H
 
 #include "imodule.h"
+#include <vector>
+
+/**
+ * This structure defines a simple filtercriterion as used by the Filtersystem
+ */
+struct FilterRule {
+
+	// "texture", "entityclass" or "object"
+	std::string type; 	
+
+	// the match expression regex
+	std::string match; 	
+
+	// true for action="show", false for action="hide"
+	bool show;			
+	
+	// Constructor
+	FilterRule(const std::string t, const std::string m, bool s) : 
+		type(t), 
+		match(m), 
+		show(s) 
+	{}
+};
+typedef std::vector<FilterRule> FilterRules;
 
 /** Visitor interface for evaluating the available filters in the 
  * FilterSystem.
  */
- 
 struct IFilterVisitor {
 	// Visit function
 	virtual void visit(const std::string& filterName) = 0;
@@ -102,6 +125,11 @@ public:
 	 * greebo: Removes the filter, returns TRUE on success.
 	 */
 	virtual bool removeFilter(const std::string& filter) = 0;
+
+	/**
+	 * greebo: Returns the ruleset of this filter, order is important.
+	 */
+	virtual FilterRules getRuleSet(const std::string& filter) = 0;
 };
 
 inline FilterSystem& GlobalFilterSystem() {

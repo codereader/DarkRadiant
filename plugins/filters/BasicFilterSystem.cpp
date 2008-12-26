@@ -242,6 +242,16 @@ bool BasicFilterSystem::isVisible(const std::string& item,
 	return visFlag;
 }
 
+FilterRules BasicFilterSystem::getRuleSet(const std::string& filter) {
+	FilterTable::iterator f = _availableFilters.find(filter);
+	
+	if (f != _availableFilters.end()) {
+		return f->second.getRuleSet();
+	}
+
+	return FilterRules();
+}
+
 // Update scenegraph instances with filtered status
 void BasicFilterSystem::updateScene() {
 

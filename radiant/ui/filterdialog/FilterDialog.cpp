@@ -21,6 +21,7 @@ namespace ui {
 
 		enum {
 			WIDGET_ADD_FILTER_BUTTON,
+			WIDGET_EDIT_FILTER_BUTTON,
 			WIDGET_DELETE_FILTER_BUTTON,
 		};
 
@@ -85,9 +86,12 @@ void FilterDialog::loadFilters() {
 			bool state = GlobalFilterSystem().getFilterState(filterName);
 			bool readOnly = GlobalFilterSystem().filterIsReadOnly(filterName);
 
-			_target.insert(
+			std::pair<FilterMap::iterator, bool> result = _target.insert(
 				FilterMap::value_type(filterName, FilterPtr(new Filter(filterName, state, readOnly)))
 			);
+
+			// Copy the ruleset from the given filter
+			result.first->second->rules = GlobalFilterSystem().getRuleSet(filterName);
 		}
 
 	} populator(_filters);
@@ -108,9 +112,9 @@ void FilterDialog::update() {
 		const Filter& filter = *(i->second);
 				
 		gtk_list_store_set(_filterStore, &iter, COL_NAME, i->first.c_str(), 
-										  COL_STATE, filter.getState() ? "enabled" : "disabled", 
-										  COL_COLOUR, filter.isReadOnly() ? "#707070" : "black",
-										  COL_READONLY, filter.isReadOnly() ? TRUE : FALSE,
+										  COL_STATE, filter.state ? "enabled" : "disabled", 
+										  COL_COLOUR, filter.readOnly ? "#707070" : "black",
+										  COL_READONLY, filter.readOnly ? TRUE : FALSE,
 										  -1);
 	}
 
@@ -162,14 +166,17 @@ GtkWidget* FilterDialog::createFiltersPanel() {
 
 	// Action buttons
 	_widgets[WIDGET_ADD_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	_widgets[WIDGET_EDIT_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_EDIT);
 	_widgets[WIDGET_DELETE_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_FILTER_BUTTON]), "clicked", G_CALLBACK(onAddFilter), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_EDIT_FILTER_BUTTON]), "clicked", G_CALLBACK(onEditFilter), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_FILTER_BUTTON]), "clicked", G_CALLBACK(onDeleteFilter), this);
 
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
 
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_FILTER_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(GTK_WIDGET(_filterView)), TRUE, TRUE, 0);
@@ -200,10 +207,12 @@ void FilterDialog::updateWidgetSensitivity() {
 		bool readonly = GlobalFilterSystem().filterIsReadOnly(_selectedFilter);
 		
 		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], readonly ? FALSE : TRUE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], readonly ? FALSE : TRUE);
 	}
 	else {
 		// no filter selected
 		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE);
 	}
 }
 
@@ -218,10 +227,12 @@ void FilterDialog::onCancel(GtkWidget* widget, FilterDialog* self) {
 }
 
 void FilterDialog::onSave(GtkWidget* widget, FilterDialog* self) {
+	// Save changes
 	self->save();
 	
 	// TODO: Check rebuilding the filter menu
 
+	// Close the dialog
 	self->destroy();
 }
 
@@ -233,7 +244,7 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 	// Lookup the Filter object
 	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
 
-	if (f == self->_filters.end() || f->second->isReadOnly()) {
+	if (f == self->_filters.end() || f->second->readOnly) {
 		return; // not found or read-only
 	}
 
@@ -245,7 +256,7 @@ void FilterDialog::onDeleteFilter(GtkWidget* w, FilterDialog* self) {
 	// Lookup the Filter object
 	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
 
-	if (f == self->_filters.end() || f->second->isReadOnly()) {
+	if (f == self->_filters.end() || f->second->readOnly) {
 		return; // not found or read-only
 	}
 

@@ -442,10 +442,6 @@
 				RelativePath="..\..\plugins\filters\XMLFilter.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\plugins\filters\XMLFilterRule.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\filters\filters.def"
