@@ -2274,6 +2274,14 @@
 						RelativePath="..\..\radiant\ui\filterdialog\FilterDialog.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\radiant\ui\filterdialog\FilterEditor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\filterdialog\FilterEditor.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

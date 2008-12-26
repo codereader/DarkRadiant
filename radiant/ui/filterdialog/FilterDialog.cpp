@@ -10,6 +10,8 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include <gtk/gtk.h>
 
+#include "FilterEditor.h"
+
 namespace ui {
 
 	namespace {
@@ -57,7 +59,11 @@ FilterDialog::FilterDialog() :
 }
 
 void FilterDialog::save() {
-	// TODO
+	// TODO: Delete marked filters
+
+	// Save settings of remaining filters
+
+
 }
 
 void FilterDialog::loadFilters() {
@@ -221,6 +227,18 @@ void FilterDialog::onSave(GtkWidget* widget, FilterDialog* self) {
 
 void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 	// TODO
+}
+
+void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
+	// Lookup the Filter object
+	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
+
+	if (f == self->_filters.end() || f->second->isReadOnly()) {
+		return; // not found or read-only
+	}
+
+	// Instantiate a new editor, will block
+	FilterEditor editor(*(f->second), GTK_WINDOW(self->getWindow()));
 }
 
 void FilterDialog::onDeleteFilter(GtkWidget* w, FilterDialog* self) {
