@@ -26,9 +26,11 @@ class FilterEditor :
 
 	std::map<int, GtkWidget*> _widgets;
 
-	GtkTreeView* _criteriaView;
+	GtkTreeView* _ruleView;
 
-	GtkListStore* _criteriaStore;
+	GtkListStore* _ruleStore;
+
+	int _selectedRule;
 
 public:
 	// Constructor, pass the Filter object to be edited
@@ -40,6 +42,7 @@ private:
 	void save();
 
 	void update();
+	void updateWidgetSensitivity();
 
 	GtkWidget* createButtonPanel();
 	GtkWidget* createCriteriaPanel();
@@ -53,11 +56,16 @@ private:
 	static void onSave(GtkWidget* widget, FilterEditor* self);
 	static void onCancel(GtkWidget* widget, FilterEditor* self);
 
+	static void onAddRule(GtkWidget* widget, FilterEditor* self);
+	static void onMoveRuleUp(GtkWidget* widget, FilterEditor* self);
+	static void onMoveRuleDown(GtkWidget* widget, FilterEditor* self);
+	static void onDeleteRule(GtkWidget* widget, FilterEditor* self);
+
 	static void onRegexEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
 	static void onTypeEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
 	static void onActionEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
 
-	static void onCriterionSelectionChanged(GtkTreeSelection* sel, FilterEditor* self);
+	static void onRuleSelectionChanged(GtkTreeSelection* sel, FilterEditor* self);
 };
 
 } // namespace

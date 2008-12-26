@@ -23,17 +23,25 @@ namespace ui {
 			COL_ACTION,
 			NUM_COLS
 		};
+
+		enum {
+			WIDGET_ADD_RULE_BUTTON,
+			WIDGET_MOVE_RULE_UP_BUTTON,
+			WIDGET_MOVE_RULE_DOWN_BUTTON,
+			WIDGET_DELETE_RULE_BUTTON,
+		};
 	}
 
 FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent) :
 	BlockingTransientWindow(WINDOW_TITLE, parent),
 	_originalFilter(filter),
 	_filter(_originalFilter), // copy-construct
-	_criteriaStore(gtk_list_store_new(NUM_COLS, G_TYPE_INT,	// index
+	_ruleStore(gtk_list_store_new(NUM_COLS, G_TYPE_INT,	// index
 												G_TYPE_INT, // type
 												G_TYPE_STRING, // type string
 												G_TYPE_STRING, // regex match
-												G_TYPE_STRING))  // show/hide
+												G_TYPE_STRING)),  // show/hide
+	_selectedRule(-1)
 {
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -67,7 +75,9 @@ void FilterEditor::populateWindow() {
 
 void FilterEditor::update() {
 	// Populate the criteria store
-	gtk_list_store_clear(_criteriaStore);
+	gtk_list_store_clear(_ruleStore);
+
+	_selectedRule = -1;
 
 	// Traverse the criteria of the Filter to be edited
 	for (std::size_t i = 0; i < _filter.rules.size(); ++i) {
@@ -75,12 +85,12 @@ void FilterEditor::update() {
 		const FilterRule& rule = _filter.rules[i];
 
 		// Allocate a new list store element and store its pointer into <iter>
-		gtk_list_store_append(_criteriaStore, &iter);
+		gtk_list_store_append(_ruleStore, &iter);
 
 		int typeIndex = getTypeIndexForString(rule.type);
 		
-		gtk_list_store_set(_criteriaStore, &iter, 
-			COL_INDEX, static_cast<int>(i+1), 
+		gtk_list_store_set(_ruleStore, &iter, 
+			COL_INDEX, static_cast<int>(i), 
 			COL_TYPE, typeIndex,
 			COL_TYPE_STR, rule.type.c_str(),
 			COL_REGEX, rule.match.c_str(),
@@ -88,6 +98,8 @@ void FilterEditor::update() {
 			-1
 		);
 	}
+
+	updateWidgetSensitivity();
 }
 
 GtkWidget* FilterEditor::createCriteriaPanel() {
@@ -95,7 +107,7 @@ GtkWidget* FilterEditor::createCriteriaPanel() {
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
 
 	// Create a new treeview
-	_criteriaView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_criteriaStore)));
+	_ruleView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_ruleStore)));
 		
 	gtkutil::TextColumn indexCol("Index", COL_INDEX);
 	gtkutil::TextColumn regexCol("Match", COL_REGEX);
@@ -143,31 +155,34 @@ GtkWidget* FilterEditor::createCriteriaPanel() {
 	);
 	g_signal_connect(G_OBJECT(typeComboRenderer), "edited", G_CALLBACK(onTypeEdited), this);
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_criteriaView), indexCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_criteriaView), typeCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_criteriaView), regexCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_criteriaView), actionCol);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_ruleView), indexCol);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_ruleView), typeCol);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_ruleView), regexCol);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_ruleView), actionCol);
 
-	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(_criteriaView));
-	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(onCriterionSelectionChanged), this);
+	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(_ruleView));
+	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(onRuleSelectionChanged), this);
 
 	// Action buttons
-	/*_widgets[WIDGET_ADD_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	_widgets[WIDGET_EDIT_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	_widgets[WIDGET_DELETE_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	_widgets[WIDGET_ADD_RULE_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	_widgets[WIDGET_MOVE_RULE_UP_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
+	_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
+	_widgets[WIDGET_DELETE_RULE_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_FILTER_BUTTON]), "clicked", G_CALLBACK(onAddFilter), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_EDIT_FILTER_BUTTON]), "clicked", G_CALLBACK(onEditFilter), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_FILTER_BUTTON]), "clicked", G_CALLBACK(onDeleteFilter), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_RULE_BUTTON]), "clicked", G_CALLBACK(onAddRule), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_RULE_UP_BUTTON]), "clicked", G_CALLBACK(onMoveRuleUp), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON]), "clicked", G_CALLBACK(onMoveRuleDown), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_RULE_BUTTON]), "clicked", G_CALLBACK(onDeleteRule), this);
 
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
 
-	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_FILTER_BUTTON], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE, FALSE, 0);*/
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_RULE_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_MOVE_RULE_UP_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_MOVE_RULE_DOWN_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_RULE_BUTTON], FALSE, FALSE, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(GTK_WIDGET(_criteriaView)), TRUE, TRUE, 0);
-	//gtk_box_pack_start(GTK_BOX(hbox), actionVBox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(GTK_WIDGET(_ruleView)), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), actionVBox, FALSE, FALSE, 0);
 
 	return gtkutil::LeftAlignment(hbox, 18, 1);
 }
@@ -242,6 +257,24 @@ void FilterEditor::save() {
 	_originalFilter = _filter;
 }
 
+void FilterEditor::updateWidgetSensitivity() {
+	if (_selectedRule != -1) {
+
+		bool lastSelected = (_selectedRule + 1 >= _filter.rules.size() || _filter.rules.size() <= 1);
+		bool firstSelected = (_selectedRule <= 0 || _filter.rules.size() <= 1);
+
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_RULE_UP_BUTTON], firstSelected ? FALSE : TRUE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON], lastSelected ? FALSE : TRUE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_RULE_BUTTON], TRUE);
+	}
+	else {
+		// no rule selected
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_RULE_UP_BUTTON], FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON], FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_RULE_BUTTON], FALSE);
+	}
+}
+
 void FilterEditor::onSave(GtkWidget* widget, FilterEditor* self) {
 	self->save();
 	self->destroy();
@@ -254,9 +287,9 @@ void FilterEditor::onCancel(GtkWidget* widget, FilterEditor* self) {
 void FilterEditor::onRegexEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self) 
 {
 	GtkTreeIter iter;
-	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_criteriaStore), &iter, path)) {
+	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_ruleStore), &iter, path)) {
 		// The iter points to the edited cell now, get the criterion number
-		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_criteriaStore), &iter, COL_INDEX);
+		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_ruleStore), &iter, COL_INDEX);
 		
 		// Update the criterion
 		assert(index >= 0 && index < self->_filter.rules.size());
@@ -264,19 +297,19 @@ void FilterEditor::onRegexEdited(GtkCellRendererText* renderer, gchar* path, gch
 		self->_filter.rules[index].match = new_text;
 
 		// Update the liststore item
-		gtk_list_store_set(self->_criteriaStore, &iter, COL_REGEX, new_text, -1);
+		gtk_list_store_set(self->_ruleStore, &iter, COL_REGEX, new_text, -1);
 	}
 }
 
 void FilterEditor::onTypeEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self) 
 {
 	GtkTreeIter iter;
-	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_criteriaStore), &iter, path)) {
+	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_ruleStore), &iter, path)) {
 		// Look up the type index for "new_text"
 		int typeIndex = self->getTypeIndexForString(new_text);
 
 		// The iter points to the edited cell, get the criterion number
-		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_criteriaStore), &iter, COL_INDEX);
+		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_ruleStore), &iter, COL_INDEX);
 		
 		// Update the criterion
 		assert(index >= 0 && index < self->_filter.rules.size());
@@ -284,7 +317,7 @@ void FilterEditor::onTypeEdited(GtkCellRendererText* renderer, gchar* path, gcha
 		self->_filter.rules[index].type = new_text;
 
 		// Update the liststore item
-		gtk_list_store_set(self->_criteriaStore, &iter, 
+		gtk_list_store_set(self->_ruleStore, &iter, 
 			COL_TYPE, typeIndex,
 			COL_TYPE_STR, new_text, 
 			-1
@@ -295,9 +328,9 @@ void FilterEditor::onTypeEdited(GtkCellRendererText* renderer, gchar* path, gcha
 void FilterEditor::onActionEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self) 
 {
 	GtkTreeIter iter;
-	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_criteriaStore), &iter, path)) {
+	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_ruleStore), &iter, path)) {
 		// The iter points to the edited cell, get the criterion number
-		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_criteriaStore), &iter, COL_INDEX);
+		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_ruleStore), &iter, COL_INDEX);
 		
 		// Update the criterion
 		assert(index >= 0 && index < self->_filter.rules.size());
@@ -306,15 +339,69 @@ void FilterEditor::onActionEdited(GtkCellRendererText* renderer, gchar* path, gc
 		self->_filter.rules[index].show = (std::string(new_text) == "show");
 		
 		// Update the liststore item
-		gtk_list_store_set(self->_criteriaStore, &iter, 
+		gtk_list_store_set(self->_ruleStore, &iter, 
 			COL_ACTION, new_text,
 			-1
 		);
 	}
 }
 
-void FilterEditor::onCriterionSelectionChanged(GtkTreeSelection* sel, FilterEditor* self) {
-	// TODO
+void FilterEditor::onRuleSelectionChanged(GtkTreeSelection* sel, FilterEditor* self) {
+	// Get the selection
+	GtkTreeIter selected;
+	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &selected) ? true : false;
+
+	if (hasSelection) {
+		self->_selectedRule = gtkutil::TreeModel::getInt(
+			GTK_TREE_MODEL(self->_ruleStore), &selected, COL_INDEX
+		);
+	}
+	else {
+		self->_selectedRule = -1;
+	}
+
+	self->updateWidgetSensitivity();
+}
+
+void FilterEditor::onAddRule(GtkWidget* widget, FilterEditor* self) {
+	FilterRule newRule("texture", "textures/", false);
+	self->_filter.rules.push_back(newRule);
+
+	self->update();
+}
+
+void FilterEditor::onMoveRuleUp(GtkWidget* widget, FilterEditor* self) {
+	if (self->_selectedRule >= 1) {
+		FilterRule temp = self->_filter.rules[self->_selectedRule - 1];
+		self->_filter.rules[self->_selectedRule - 1] = self->_filter.rules[self->_selectedRule];
+		self->_filter.rules[self->_selectedRule] = temp;
+
+		self->update();
+	}
+}
+
+void FilterEditor::onMoveRuleDown(GtkWidget* widget, FilterEditor* self) {
+	if (self->_selectedRule < self->_filter.rules.size() - 1) {
+		FilterRule temp = self->_filter.rules[self->_selectedRule + 1];
+		self->_filter.rules[self->_selectedRule + 1] = self->_filter.rules[self->_selectedRule];
+		self->_filter.rules[self->_selectedRule] = temp;
+
+		self->update();
+	}
+}
+
+void FilterEditor::onDeleteRule(GtkWidget* widget, FilterEditor* self) {
+	if (self->_selectedRule != -1) {
+		// Let the rules slip down one index each
+		for (std::size_t i = self->_selectedRule; i+1 < self->_filter.rules.size(); ++i) {
+			self->_filter.rules[i] = self->_filter.rules[i+1];
+		}
+
+		// Remove one item, it is the superfluous one now
+		self->_filter.rules.pop_back();
+
+		self->update();
+	}
 }
 
 } // namespace ui
