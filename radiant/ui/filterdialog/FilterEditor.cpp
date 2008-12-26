@@ -80,7 +80,7 @@ void FilterEditor::update() {
 		int typeIndex = getTypeIndexForString(rule.type);
 		
 		gtk_list_store_set(_criteriaStore, &iter, 
-			COL_INDEX, static_cast<int>(i), 
+			COL_INDEX, static_cast<int>(i+1), 
 			COL_TYPE, typeIndex,
 			COL_TYPE_STR, rule.type.c_str(),
 			COL_REGEX, rule.match.c_str(),
@@ -99,7 +99,30 @@ GtkWidget* FilterEditor::createCriteriaPanel() {
 		
 	gtkutil::TextColumn indexCol("Index", COL_INDEX);
 	gtkutil::TextColumn regexCol("Match", COL_REGEX);
-	gtkutil::TextColumn actionCol("Action", COL_ACTION);
+
+	// Create the cell renderer for the action choice
+	GtkCellRenderer* actionComboRenderer = gtk_cell_renderer_combo_new();
+	g_object_set(G_OBJECT(actionComboRenderer), "has-entry", FALSE, NULL);
+	g_object_set(G_OBJECT(actionComboRenderer), "text-column", 1, NULL);
+	g_object_set(G_OBJECT(actionComboRenderer), "editable", TRUE, NULL);
+
+	// Create the store
+	GtkListStore* actionStore = createActionStore();
+	g_object_set(G_OBJECT(actionComboRenderer), "model", GTK_TREE_MODEL(actionStore), NULL);
+
+	// Construct the column itself
+	GtkTreeViewColumn* actionCol = gtk_tree_view_column_new_with_attributes(
+		"Action", 
+		actionComboRenderer, 
+		"markup", COL_ACTION,
+		NULL
+	);
+	g_signal_connect(G_OBJECT(actionComboRenderer), "edited", G_CALLBACK(onActionEdited), this);
+
+	// Regex editing
+	GtkCellRendererText* rend = regexCol.getCellRenderer();
+	g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
+	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(onRegexEdited), this);
 
 	// Create the cell renderer for the type choice
 	GtkCellRenderer* typeComboRenderer = gtk_cell_renderer_combo_new();
@@ -119,10 +142,6 @@ GtkWidget* FilterEditor::createCriteriaPanel() {
 		NULL
 	);
 	g_signal_connect(G_OBJECT(typeComboRenderer), "edited", G_CALLBACK(onTypeEdited), this);
-
-	GtkCellRendererText* rend = regexCol.getCellRenderer();
-	g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
-	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(onRegexEdited), this);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_criteriaView), indexCol);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_criteriaView), typeCol);
@@ -170,6 +189,21 @@ GtkListStore* FilterEditor::createTypeStore() {
 	gtk_list_store_set(typeStore, &iter, 0, index++, 1, "object", -1);
 
 	return typeStore;
+}
+
+GtkListStore* FilterEditor::createActionStore() {
+	// Create the typestore
+	GtkTreeIter iter;
+
+	GtkListStore* actionStore = gtk_list_store_new(2, G_TYPE_BOOLEAN, G_TYPE_STRING);
+	
+	gtk_list_store_append(actionStore, &iter);
+	gtk_list_store_set(actionStore, &iter, 0, TRUE, 1, "show", -1);
+
+	gtk_list_store_append(actionStore, &iter);
+	gtk_list_store_set(actionStore, &iter, 0, FALSE, 1, "hide", -1);
+
+	return actionStore;
 }
 
 GtkWidget* FilterEditor::createButtonPanel() {
@@ -253,6 +287,27 @@ void FilterEditor::onTypeEdited(GtkCellRendererText* renderer, gchar* path, gcha
 		gtk_list_store_set(self->_criteriaStore, &iter, 
 			COL_TYPE, typeIndex,
 			COL_TYPE_STR, new_text, 
+			-1
+		);
+	}
+}
+
+void FilterEditor::onActionEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self) 
+{
+	GtkTreeIter iter;
+	if (gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->_criteriaStore), &iter, path)) {
+		// The iter points to the edited cell, get the criterion number
+		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_criteriaStore), &iter, COL_INDEX);
+		
+		// Update the criterion
+		assert(index >= 0 && index < self->_filter.rules.size());
+
+		// Update the bool flag
+		self->_filter.rules[index].show = (std::string(new_text) == "show");
+		
+		// Update the liststore item
+		gtk_list_store_set(self->_criteriaStore, &iter, 
+			COL_ACTION, new_text,
 			-1
 		);
 	}
