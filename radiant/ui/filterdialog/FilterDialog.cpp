@@ -75,13 +75,12 @@ void FilterDialog::update() {
 			gtk_list_store_append(_store, &iter);
 			
 			bool state = GlobalFilterSystem().getFilterState(filterName);
-
-			// TODO: Check for read-only filters
+			bool readOnly = GlobalFilterSystem().filterIsReadOnly(filterName);
 			
 			gtk_list_store_set(_store, &iter, COL_NAME, filterName.c_str(), 
 											  COL_STATE, state ? "enabled" : "disabled", 
-											  COL_COLOUR, "black",
-											  COL_READONLY, FALSE,
+											  COL_COLOUR, readOnly ? "#707070" : "black",
+											  COL_READONLY, readOnly ? TRUE : FALSE,
 											  -1);
 		}
 

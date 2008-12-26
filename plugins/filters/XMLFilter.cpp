@@ -6,8 +6,9 @@
 
 namespace filters {
 
-XMLFilter::XMLFilter(const std::string& name) : 
-	_name(name)
+XMLFilter::XMLFilter(const std::string& name, bool readOnly) : 
+	_name(name),
+	_readonly(readOnly)
 {
 	// Construct the eventname out of the filtername (strip the spaces and add "Filter" prefix)
 	_eventName = _name;
@@ -54,6 +55,10 @@ void XMLFilter::toggle() {
 
 std::string XMLFilter::getEventName() const {
 	return _eventName;
+}
+
+bool XMLFilter::isReadOnly() const {
+	return _readonly;
 }
 	
 } // namespace filters

@@ -4,6 +4,7 @@
 #include "XMLFilter.h"
 #include "imodule.h"
 #include "ifilter.h"
+#include "xmlutil/Node.h"
 
 #include <map>
 #include <vector>
@@ -38,6 +39,8 @@ private:
 	void updateScene();
 
 	void updateShaders();
+
+	void addFiltersFromXML(const xml::NodeList& nodes, bool readOnly);
 	
 public:
 	
@@ -55,6 +58,9 @@ public:
 	
 	// Set the state of a filter
 	void setFilterState(const std::string& filter, bool state);
+
+	// Whether this filter is read-only and can't be changed
+	bool filterIsReadOnly(const std::string& filter);
 
 	// Query whether an item is visible or filtered out
 	bool isVisible(const std::string& item, const std::string& name);

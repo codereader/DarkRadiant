@@ -31,7 +31,21 @@ namespace {
 
 // Initialise the filter system
 void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
+	// Ask the XML Registry for filter nodes
+	xml::NodeList filters = GlobalRegistry().findXPath(RKEY_GAME_FILTERS);
+	xml::NodeList userFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
 
+	std::cout << "[filters] Loaded " << (filters.size() + userFilters.size())
+			  << " filters from registry." << std::endl;
+
+	// Read-only filters
+	addFiltersFromXML(filters, true);
+
+	// user-defined filters
+	addFiltersFromXML(userFilters, false);
+}
+
+void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readOnly) {
 	// Load the list of active filter names from the user tree. There is no
 	// guarantee that these are actually valid filters in the .game file
 	std::set<std::string> activeFilterNames;
@@ -44,25 +58,15 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
 		// Add the name of this filter to the set
 		activeFilterNames.insert(i->getAttributeValue("name"));
 	}
-	
-	// Ask the XML Registry for filter nodes
-	xml::NodeList filters = GlobalRegistry().findXPath(RKEY_GAME_FILTERS);
-	xml::NodeList userFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
-
-	// Append the userFilters at the end of the vector
-	std::copy(userFilters.begin(), userFilters.end(), std::back_inserter(filters));
-
-	std::cout << "[filters] Loaded " << filters.size() 
-			  << " filters from registry." << std::endl;
 
 	// Iterate over the list of nodes, adding filter objects onto the list
-	for (xml::NodeList::iterator iter = filters.begin();
-		 iter != filters.end();
+	for (xml::NodeList::const_iterator iter = nodes.begin();
+		 iter != nodes.end();
 		 ++iter)
 	{
 		// Initialise the XMLFilter object
 		std::string filterName = iter->getAttributeValue("name");
-		XMLFilter filter(filterName);
+		XMLFilter filter(filterName, readOnly);
 
 		// Get all of the filterCriterion children of this node
 		xml::NodeList critNodes = iter->getNamedChildren("filterCriterion");
@@ -167,6 +171,18 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 	
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
+}
+
+bool BasicFilterSystem::filterIsReadOnly(const std::string& filter) {
+	FilterTable::const_iterator f = _availableFilters.find(filter);
+	
+	if (f != _availableFilters.end()) {
+		return f->second.isReadOnly();
+	}
+	else {
+		// Filter not found, return "read-only" just in case
+		return true;
+	}
 }
 
 // Query whether an item is visible or filtered out
