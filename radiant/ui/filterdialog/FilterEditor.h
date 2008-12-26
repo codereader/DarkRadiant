@@ -45,6 +45,7 @@ private:
 	GtkWidget* createCriteriaPanel();
 
 	GtkListStore* createTypeStore();
+	GtkListStore* createActionStore();
 
 	// Converts the given string "entityclass", "object", etc. into an index in the typestore
 	int getTypeIndexForString(const std::string& type);
@@ -54,6 +55,7 @@ private:
 
 	static void onRegexEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
 	static void onTypeEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
+	static void onActionEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
 
 	static void onCriterionSelectionChanged(GtkTreeSelection* sel, FilterEditor* self);
 };
