@@ -41,7 +41,7 @@ namespace ui {
 				std::string eventName = 
 					GlobalFilterSystem().getFilterEventName(filterName);
 
-				// Create the toplevel menu item
+				// Create the menu item
 				menuManager.add(_targetPath, _targetPath + "_" + filterName, 
 								menuItem, filterName, 
 								MENU_ICON, eventName);
@@ -89,6 +89,9 @@ void FiltersMenu::addItems() {
 	// Visit the filters in the FilterSystem to populate the menu
 	MenuPopulatingVisitor visitor(MENU_PATH);
 	GlobalFilterSystem().forEachFilter(visitor);
+
+	menuManager.add(MENU_PATH, "_FiltersSep", menuSeparator, "", "", "");
+	menuManager.add(MENU_PATH, "EditFilters", menuItem, "Edit Filters...", MENU_ICON, "EditFiltersDialog");
 }
 
 void FiltersMenu::removeItems() {
@@ -96,7 +99,7 @@ void FiltersMenu::removeItems() {
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// Remove the filters menu if there exists one
-	menuManager.remove(MENU_NAME + "/" + MENU_FILTERS_NAME);
+	menuManager.remove(MENU_PATH);
 }
 
 } // namespace ui
