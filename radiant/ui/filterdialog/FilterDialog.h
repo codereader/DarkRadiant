@@ -63,6 +63,7 @@ private:
 
 	static void onAddFilter(GtkWidget* w, FilterDialog* self);
 	static void onEditFilter(GtkWidget* w, FilterDialog* self);
+	static void onViewFilter(GtkWidget* w, FilterDialog* self);
 	static void onDeleteFilter(GtkWidget* w, FilterDialog* self);
 
 	static void onFilterSelectionChanged(GtkTreeSelection* sel, FilterDialog* self);

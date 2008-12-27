@@ -11,9 +11,10 @@
 namespace ui {
 
 	namespace {
-		const int DEFAULT_SIZE_X = 500;
-	    const int DEFAULT_SIZE_Y = 300;
-		const std::string WINDOW_TITLE = "Edit Filter";
+		const int DEFAULT_SIZE_X = 550;
+	    const int DEFAULT_SIZE_Y = 350;
+		const std::string WINDOW_TITLE_EDIT = "Edit Filter";
+		const std::string WINDOW_TITLE_VIEW = "View Filter";
 
 		enum {
 			COL_INDEX,
@@ -33,8 +34,8 @@ namespace ui {
 		};
 	}
 
-FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent) :
-	BlockingTransientWindow(WINDOW_TITLE, parent),
+FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent, bool viewOnly) :
+	BlockingTransientWindow(viewOnly ? WINDOW_TITLE_VIEW : WINDOW_TITLE_EDIT, parent),
 	_originalFilter(filter),
 	_filter(_originalFilter), // copy-construct
 	_ruleStore(gtk_list_store_new(NUM_COLS, G_TYPE_INT,	// index
@@ -44,7 +45,8 @@ FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent) :
 												G_TYPE_STRING)),  // show/hide
 	_selectedRule(-1),
 	_result(NUM_RESULTS),
-	_updateActive(false)
+	_updateActive(false),
+	_viewOnly(viewOnly)
 {
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -244,15 +246,24 @@ GtkListStore* FilterEditor::createActionStore() {
 GtkWidget* FilterEditor::createButtonPanel() {
 	GtkWidget* buttonHBox = gtk_hbox_new(TRUE, 12);
 	
-	// Save button
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onSave), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, TRUE, TRUE, 0);
-	
-	// Cancel Button
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, TRUE, TRUE, 0);
+	if (_viewOnly) {
+		// OK button
+		GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+		// Connect the OK button to the "CANCEL" event
+		g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onCancel), this);
+		gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, TRUE, TRUE, 0);
+	}
+	else {
+		// Save button
+		GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+		g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onSave), this);
+		gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, TRUE, TRUE, 0);
+		
+		// Cancel Button
+		GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+		g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+		gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, TRUE, TRUE, 0);
+	}
 	
 	return gtkutil::RightAlignment(buttonHBox);	
 }
@@ -280,6 +291,18 @@ void FilterEditor::save() {
 }
 
 void FilterEditor::updateWidgetSensitivity() {
+
+	if (_viewOnly) {
+		gtk_widget_set_sensitive(_widgets[WIDGET_NAME_ENTRY], FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(_ruleView), FALSE);
+
+		gtk_widget_set_sensitive(_widgets[WIDGET_ADD_RULE_BUTTON], FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_RULE_UP_BUTTON], FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON], FALSE);
+		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_RULE_BUTTON], FALSE);
+		return;
+	}
+
 	if (_selectedRule != -1) {
 
 		bool lastSelected = (_selectedRule + 1 >= _filter.rules.size() || _filter.rules.size() <= 1);
