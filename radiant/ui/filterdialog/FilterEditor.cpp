@@ -16,6 +16,11 @@ namespace ui {
 		const std::string WINDOW_TITLE_EDIT = "Edit Filter";
 		const std::string WINDOW_TITLE_VIEW = "View Filter";
 
+		const std::string RULE_HELP_TEXT = 
+			"Filter rules are applied in the shown order.\n" \
+			"<b>Match</b> is accepting regular expressions.\n" \
+			"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.";
+
 		enum {
 			COL_INDEX,
 			COL_TYPE,
@@ -31,6 +36,7 @@ namespace ui {
 			WIDGET_MOVE_RULE_UP_BUTTON,
 			WIDGET_MOVE_RULE_DOWN_BUTTON,
 			WIDGET_DELETE_RULE_BUTTON,
+			WIDGET_HELP_TEXT,
 		};
 	}
 
@@ -81,6 +87,12 @@ void FilterEditor::populateWindow() {
 	// And the rule treeview
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Rules</b>"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createCriteriaPanel(), TRUE, TRUE, 0);
+
+	// Add the help text
+	if (!_viewOnly) {
+		_widgets[WIDGET_HELP_TEXT] = gtkutil::LeftAlignedLabel(RULE_HELP_TEXT);
+		gtk_box_pack_start(GTK_BOX(vbox), _widgets[WIDGET_HELP_TEXT], FALSE, FALSE, 0);
+	}
 
 	// Buttons
 	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
