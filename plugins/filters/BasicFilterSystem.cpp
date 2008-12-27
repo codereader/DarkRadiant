@@ -23,7 +23,7 @@ namespace {
 	const std::string RKEY_USER_FILTER_BASE = "user/ui/filtersystem";
 
 	// Registry key for user-defined filters
-	const std::string RKEY_USER_FILTERS = RKEY_USER_FILTER_BASE + "//filter";
+	const std::string RKEY_USER_FILTERS = RKEY_USER_FILTER_BASE + "/filters//filter";
 	
 	// Registry key for persistent filter setting
 	const std::string RKEY_USER_ACTIVE_FILTERS = RKEY_USER_FILTER_BASE + "//activeFilter";
@@ -116,6 +116,36 @@ void BasicFilterSystem::shutdownModule() {
 		GlobalRegistry().createKeyWithName(
 			RKEY_USER_FILTER_BASE, "activeFilter", i->first
 		);
+	}
+
+	// Save user-defined filters too (delete all first)
+	GlobalRegistry().deleteXPath(RKEY_USER_FILTER_BASE + "/filters");
+
+	// Create the new top-level node
+	xml::Node filterParent = GlobalRegistry().createKey(RKEY_USER_FILTER_BASE + "/filters");
+
+	for (FilterTable::iterator i = _availableFilters.begin();
+		 i != _availableFilters.end();
+		 ++i)
+	{
+		// Don't save stock filters
+		if (i->second.isReadOnly()) continue;
+
+		// Create a new filter node with a name
+		xml::Node filter = filterParent.createChild("filter");
+		filter.setAttributeValue("name", i->first);
+		
+		// Save all the rules as children to that node
+		FilterRules ruleSet = i->second.getRuleSet();
+
+		for (FilterRules::const_iterator r = ruleSet.begin(); r != ruleSet.end(); ++r) {
+			// Create a new criterion tag
+			xml::Node criterion = filter.createChild("filterCriterion");
+
+			criterion.setAttributeValue("type", r->type);
+			criterion.setAttributeValue("match", r->match);
+			criterion.setAttributeValue("action", r->show ? "show" : "hide");
+		}
 	}
 }
 
