@@ -78,7 +78,12 @@ public:
 	 * 
 	 *  Note: the new child is NOT reparented, the calling function must to this. 
 	 */
-	void addChild(MenuItemPtr newChild);
+	void addChild(const MenuItemPtr& newChild);
+
+	/**
+	 * Removes the given child from this menu item.
+	 */
+	void removeChild(const MenuItemPtr& child);
 	
 	/** greebo: Tries to find the GtkMenu position index of the given child.
 	 */

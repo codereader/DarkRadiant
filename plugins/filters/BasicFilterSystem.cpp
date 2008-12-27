@@ -185,6 +185,32 @@ bool BasicFilterSystem::filterIsReadOnly(const std::string& filter) {
 	}
 }
 
+bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRules& ruleSet) {
+	FilterTable::iterator f = _availableFilters.find(filterName);
+	
+	if (f != _availableFilters.end()) {
+		return false; // already exists
+	}
+
+	std::pair<FilterTable::iterator, bool> result = _availableFilters.insert(
+		FilterTable::value_type(filterName, XMLFilter(filterName, false))
+	);
+
+	// Apply the ruleset
+	result.first->second.setRules(ruleSet);
+
+	// Add the according toggle command to the eventmanager
+	IEventPtr fEvent = GlobalEventManager().addToggle(
+		result.first->second.getEventName(),
+		MemberCaller<XMLFilter, &XMLFilter::toggle>(result.first->second) 
+	);
+
+	// Clear the cache, the rules have changed
+	_visibilityCache.clear();
+
+	return true;
+}
+
 bool BasicFilterSystem::removeFilter(const std::string& filter) {
 	FilterTable::iterator f = _availableFilters.find(filter);
 	
@@ -260,7 +286,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 
 		// Add the according toggle command to the eventmanager
 		IEventPtr fEvent = GlobalEventManager().addToggle(
-			f->second.getEventName(),
+			result.first->second.getEventName(),
 			MemberCaller<XMLFilter, &XMLFilter::toggle>(result.first->second) 
 		);
 

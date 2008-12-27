@@ -10,6 +10,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/messagebox.h"
 #include <gtk/gtk.h>
+#include "ui/menu/FiltersMenu.h"
 
 #include "FilterEditor.h"
 
@@ -69,9 +70,17 @@ void FilterDialog::save() {
 
 	// Save all remaining filters
 	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i) {
-		// Check if the name has changed
+		// Check if the name has changed (or a new filters has been defined)
 		if (i->second->nameHasChanged()) {
-			GlobalFilterSystem().renameFilter(i->second->getOriginalName(), i->second->name);
+			// New filters have their original name set to the empty string
+			if (i->second->getOriginalName().empty()) {
+				// Insert a new filter
+				GlobalFilterSystem().addFilter(i->second->name, i->second->rules);
+			}
+			else {
+				// Existing filer, issue the rename command
+				GlobalFilterSystem().renameFilter(i->second->getOriginalName(), i->second->name);
+			}
 		}
 
 		// Save the ruleset (to the new name, in case the filter has been renamed)
@@ -80,6 +89,9 @@ void FilterDialog::save() {
 
 	// Trigger an update
 	GlobalFilterSystem().update();
+
+	// Re-build the filters menu
+	ui::FiltersMenu::addItems();
 }
 
 void FilterDialog::loadFilters() {

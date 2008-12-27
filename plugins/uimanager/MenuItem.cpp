@@ -84,8 +84,17 @@ std::size_t MenuItem::numChildren() const {
 	return _children.size();
 }
 
-void MenuItem::addChild(MenuItemPtr newChild) {
+void MenuItem::addChild(const MenuItemPtr& newChild) {
 	_children.push_back(newChild);
+}
+
+void MenuItem::removeChild(const MenuItemPtr& child) {
+	for (MenuItemList::iterator i = _children.begin(); i != _children.end(); ++i) {
+		if (*i == child) {
+			_children.erase(i);
+			return;
+		}
+	}
 }
 
 std::string MenuItem::getEvent() const {

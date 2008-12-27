@@ -26,6 +26,11 @@ public:
 	 *  Should be called by the Mainframe window only (and only once).
 	 */
 	static void addItems();
+
+	/**
+	 * Removes all filter menu items from the menu.
+	 */
+	static void removeItems();
 };
 
 }
