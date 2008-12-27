@@ -122,6 +122,14 @@ public:
 	virtual bool filterIsReadOnly(const std::string& filter) = 0;
 
 	/**
+	 * greebo: Adds a new filter to the system with the given ruleset. The new filter
+	 * is not set to read-only.
+	 *
+	 * @returns: TRUE on success, FALSE if the filter name already exists.
+	 */
+	virtual bool addFilter(const std::string& filterName, const FilterRules& ruleSet) = 0;
+
+	/**
 	 * greebo: Removes the filter, returns TRUE on success.
 	 */
 	virtual bool removeFilter(const std::string& filter) = 0;

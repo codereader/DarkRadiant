@@ -78,7 +78,10 @@ FiltersMenu::operator GtkWidget*() {
 void FiltersMenu::addItems() {
 	// Get the menu manager
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-	
+
+	// remove any items first
+	removeItems();
+
 	// Create the toplevel menu item
 	menuManager.insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME, 
 						ui::menuFolder, "Fi_lter", "", ""); // empty icon, empty event
@@ -86,6 +89,14 @@ void FiltersMenu::addItems() {
 	// Visit the filters in the FilterSystem to populate the menu
 	MenuPopulatingVisitor visitor(MENU_PATH);
 	GlobalFilterSystem().forEachFilter(visitor);
+}
+
+void FiltersMenu::removeItems() {
+	// Get the menu manager
+	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+
+	// Remove the filters menu if there exists one
+	menuManager.remove(MENU_NAME + "/" + MENU_FILTERS_NAME);
 }
 
 } // namespace ui

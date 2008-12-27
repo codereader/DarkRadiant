@@ -65,6 +65,9 @@ public:
 	// Whether this filter is read-only and can't be changed
 	bool filterIsReadOnly(const std::string& filter);
 
+	// Adds a new filter to the system
+	bool addFilter(const std::string& filterName, const FilterRules& ruleSet);
+
 	// Removes the filter and returns true on success
 	bool removeFilter(const std::string& filter);
 

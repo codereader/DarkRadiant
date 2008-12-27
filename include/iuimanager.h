@@ -80,6 +80,11 @@ public:
 							  const std::string& caption,
 							  const std::string& icon,
 							  const std::string& eventName) = 0;
+
+	/**
+	 * Removes an entire path from the menus.
+ 	 */
+	virtual void remove(const std::string& path) = 0;
 	
 	/** Recursively iterates over the menu items and updates
 	 *  the accelerator strings by requesting them from the EventManager.
