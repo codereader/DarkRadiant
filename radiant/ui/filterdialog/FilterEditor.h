@@ -9,6 +9,7 @@ typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GtkCellRendererText GtkCellRendererText;
+typedef struct _GtkEditable GtkEditable;
 
 namespace ui {
 
@@ -18,6 +19,14 @@ namespace ui {
 class FilterEditor :
 	public gtkutil::BlockingTransientWindow
 {
+public:
+	enum Result {
+		RESULT_CANCEL,
+		RESULT_OK,
+		NUM_RESULTS
+	};
+
+private:
 	// The actual filter object to be edited
 	Filter& _originalFilter;
 
@@ -32,9 +41,16 @@ class FilterEditor :
 
 	int _selectedRule;
 
+	Result _result;
+
+	bool _updateActive;
+
 public:
 	// Constructor, pass the Filter object to be edited
 	FilterEditor(Filter& filter, GtkWindow* parent);
+
+	// Returns the dialog result (OK, CANCEL)
+	Result getResult();
 
 private:
 	void populateWindow();
@@ -64,6 +80,7 @@ private:
 	static void onRegexEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
 	static void onTypeEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
 	static void onActionEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
+	static void onNameEdited(GtkEditable* editable, FilterEditor* self);
 
 	static void onRuleSelectionChanged(GtkTreeSelection* sel, FilterEditor* self);
 };

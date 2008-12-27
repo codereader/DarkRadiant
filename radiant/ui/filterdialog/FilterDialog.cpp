@@ -241,7 +241,34 @@ void FilterDialog::onSave(GtkWidget* widget, FilterDialog* self) {
 }
 
 void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
-	// TODO
+	// Construct a new filter
+	FilterPtr workingCopy(new Filter("NewFilter", false, false));
+
+	// Instantiate a new editor, will block
+	FilterEditor editor(*workingCopy, GTK_WINDOW(self->getWindow()));
+
+	if (editor.getResult() != FilterEditor::RESULT_OK) {
+		// User hit cancel, we're done
+		return;
+	}
+
+	if (workingCopy->rules.empty()) {
+		// Empty ruleset, notify user
+		gtk_MessageBox(self->getWindow(), "No rules defined for this filter, cannot insert.", "Empty Filter", eMB_OK, eMB_ICONASTERISK);
+		return;
+	}
+
+	std::pair<FilterMap::iterator, bool> result = self->_filters.insert(
+		FilterMap::value_type(workingCopy->name, workingCopy)
+	);
+
+	if (!result.second) {
+		// Empty ruleset, notify user
+		gtk_MessageBox(self->getWindow(), "Cannot add, filter with same name already exists.", "Name Conflict", eMB_OK, eMB_ICONASTERISK);
+		return;
+	}
+
+	self->update();
 }
 
 void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
@@ -257,6 +284,11 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 
 	// Instantiate a new editor, will block
 	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()));
+
+	if (editor.getResult() != FilterEditor::RESULT_OK) {
+		// User hit cancel, we're done
+		return;
+	}
 
 	if (workingCopy.rules.empty()) {
 		// Empty ruleset, ask user for deletion
