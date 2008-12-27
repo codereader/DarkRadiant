@@ -215,6 +215,9 @@ public:
 	// Enables/Disables the specified command
 	virtual void enableEvent(const std::string& eventName) = 0;
 	virtual void disableEvent(const std::string& eventName) = 0;
+
+	// Removes the given event and disconnects all accelerators from it
+	virtual void removeEvent(const std::string& eventName) = 0;
 	
 	// Visit each event with the given class
 	virtual void foreachEvent(IEventVisitor& eventVisitor) = 0;

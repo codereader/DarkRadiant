@@ -38,14 +38,14 @@ void WidgetToggle::updateWidgets() {
 	
 // Show all the connected widgets
 void WidgetToggle::showWidgets() {
-	for (unsigned int i = 0; i < _widgets.size(); i++) {
+	for (std::size_t i = 0; i < _widgets.size(); i++) {
 		gtk_widget_show(_widgets[i]);
 	}
 }
 
 // Hide all the connected widgets
 void WidgetToggle::hideWidgets() {
-	for (unsigned int i = 0; i < _widgets.size(); i++) {
+	for (std::size_t i = 0; i < _widgets.size(); i++) {
 		gtk_widget_hide(_widgets[i]);
 	}
 }

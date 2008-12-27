@@ -25,8 +25,8 @@ class Toggle :
 	Callback _callback;
 	
 protected:
-	// The list of connected widgets
-	typedef std::list<GtkWidget*> ToggleWidgetList;
+	// The list of connected widgets (associates handler IDs)
+	typedef std::map<GtkWidget*, gulong> ToggleWidgetList;
 	ToggleWidgetList _toggleWidgets;
 	
 	bool _callbackActive;
@@ -37,8 +37,8 @@ protected:
 public:
 	Toggle(const Callback& callback);
 
-	virtual ~Toggle() {}
-	
+	virtual ~Toggle();
+
 	// Returns usually false, because a Toggle is never empty 
 	virtual bool empty() const;
 	

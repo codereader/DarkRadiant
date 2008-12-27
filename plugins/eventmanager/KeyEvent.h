@@ -28,8 +28,6 @@ public:
 		_keyDownCallback(keyDownCallback)
 	{}
 
-	virtual ~KeyEvent() {}
-	
 	virtual bool empty() const {
 		return false;
 	}
