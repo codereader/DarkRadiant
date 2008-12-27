@@ -66,6 +66,11 @@ public:
 	/** greebo: Returns the name of the toggle event associated to this filter
 	 */
 	std::string getEventName() const;
+
+	/**
+	 * greebo: Renames the event to <newName>. This also updates the event name.
+	 */
+	void setName(const std::string& newName);
 	
 	/** greebo: Gets called when the associated Event is fired. 
 	 */
@@ -76,6 +81,12 @@ public:
 
 	// Returns the ruleset
 	FilterRules getRuleSet();
+
+	// Applies the given ruleset, replacing the existing one.
+	void setRules(const FilterRules& rules);
+
+private:
+	void updateEventName();
 };
 
 

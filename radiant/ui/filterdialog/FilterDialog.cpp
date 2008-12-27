@@ -62,11 +62,24 @@ FilterDialog::FilterDialog() :
 }
 
 void FilterDialog::save() {
-	// TODO: Delete marked filters
+	// Delete filters marked for removal
+	for (FilterMap::const_iterator i = _deletedFilters.begin(); i != _deletedFilters.end(); ++i) {
+		GlobalFilterSystem().removeFilter(i->first);
+	}
 
-	// Save settings of remaining filters
+	// Save all remaining filters
+	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i) {
+		// Check if the name has changed
+		if (i->second->nameHasChanged()) {
+			GlobalFilterSystem().renameFilter(i->second->getOriginalName(), i->second->name);
+		}
 
+		// Save the ruleset (to the new name, in case the filter has been renamed)
+		GlobalFilterSystem().setFilterRules(i->first, i->second->rules);
+	}
 
+	// Trigger an update
+	GlobalFilterSystem().update();
 }
 
 void FilterDialog::loadFilters() {
@@ -253,15 +266,14 @@ void FilterDialog::onSave(GtkWidget* widget, FilterDialog* self) {
 	// Save changes
 	self->save();
 	
-	// TODO: Check rebuilding the filter menu
-
 	// Close the dialog
 	self->destroy();
 }
 
 void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
-	// Construct a new filter
-	FilterPtr workingCopy(new Filter("NewFilter", false, false));
+	// Construct a new filter with an empty name (this indicates it has not been there before when saving)
+	FilterPtr workingCopy(new Filter("", false, false));
+	workingCopy->name = "NewFilter";
 
 	// Instantiate a new editor, will block
 	FilterEditor editor(*workingCopy, GTK_WINDOW(self->getWindow()), false);
