@@ -25,6 +25,7 @@ namespace ui {
 		};
 
 		enum {
+			WIDGET_NAME_ENTRY,
 			WIDGET_ADD_RULE_BUTTON,
 			WIDGET_MOVE_RULE_UP_BUTTON,
 			WIDGET_MOVE_RULE_DOWN_BUTTON,
@@ -61,10 +62,14 @@ void FilterEditor::populateWindow() {
 	// Create the dialog vbox
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
-	// Create the "Filters" label	
+	// Create the name entry box
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Name</b>"), FALSE, FALSE, 0);
 
-	// Pack the treeview into the main window's vbox
+	_widgets[WIDGET_NAME_ENTRY] = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_widgets[WIDGET_NAME_ENTRY], 18, 1), FALSE, FALSE, 0);
+	
+	// And the rule treeview
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Rules</b>"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createCriteriaPanel(), TRUE, TRUE, 0);
 
 	// Buttons
@@ -98,6 +103,8 @@ void FilterEditor::update() {
 			-1
 		);
 	}
+
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_NAME_ENTRY]), _filter.name.c_str());
 
 	updateWidgetSensitivity();
 }
@@ -253,6 +260,8 @@ int FilterEditor::getTypeIndexForString(const std::string& type) {
 }
 
 void FilterEditor::save() {
+	_filter.name = gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_NAME_ENTRY]));
+
 	// Copy the working set over the actual Filter
 	_originalFilter = _filter;
 }
