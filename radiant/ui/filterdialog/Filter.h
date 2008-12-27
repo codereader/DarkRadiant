@@ -10,8 +10,10 @@ namespace ui {
 // This object represents a filter in the filtersystem.
 class Filter
 {
-public:
+	// The name at construction time, can't be altered
+	std::string _originalName;
 
+public:
 	// The name
 	std::string name;
 
@@ -25,10 +27,19 @@ public:
 	FilterRules rules;
 
 	Filter(const std::string& _name, const bool _state, const bool _readOnly) :
+		_originalName(_name),
 		name(_name),
 		state(_state),
 		readOnly(_readOnly)
 	{}
+
+	bool nameHasChanged() {
+		return _originalName != name;
+	}
+
+	const std::string& getOriginalName() const {
+		return _originalName;
+	}
 };
 typedef boost::shared_ptr<Filter> FilterPtr;
 

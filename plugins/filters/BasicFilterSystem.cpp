@@ -199,8 +199,100 @@ bool BasicFilterSystem::removeFilter(const std::string& filter) {
 		// Disable the event in the EventManager, to avoid crashes when calling the menu items
 		GlobalEventManager().disableEvent(f->second.getEventName());
 
-		// Now actually remove the object
+		// Check if the filter was active
+		FilterTable::iterator found = _activeFilters.find(f->first);
+
+		if (found != _activeFilters.end()) {
+			_activeFilters.erase(found);
+		}
+
+		// Now remove the object from the available filters too
 		_availableFilters.erase(f);
+
+		return true;
+	}
+	else {
+		// Filter not found
+		return false;
+	}
+}
+
+bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std::string& newFilterName) {
+	// Check if the new name is already used
+	FilterTable::iterator c = _availableFilters.find(newFilterName);
+
+	if (c != _availableFilters.end()) {
+		// Can't rename, name is already in use
+		return false;
+	}
+
+	FilterTable::iterator f = _availableFilters.find(oldFilterName);
+	
+	if (f != _availableFilters.end()) {
+		// Check for read-only filters
+		if (f->second.isReadOnly()) {
+			return false;
+		}
+
+		// Check if the filter was active
+		FilterTable::iterator found = _activeFilters.find(f->first);
+
+		bool wasActive = (found != _activeFilters.end());
+
+		if (wasActive) {
+			_activeFilters.erase(found);
+		}
+
+		std::string oldEventName = f->second.getEventName();
+
+		IEventPtr oldEvent = GlobalEventManager().findEvent(oldEventName);
+
+		// Get the accelerator associated to the old event, if appropriate
+		IAccelerator& oldAccel = GlobalEventManager().findAccelerator(oldEvent);
+
+		// Perform the actual rename procedure
+		f->second.setName(newFilterName);
+
+		// Insert the new filter into the table
+		std::pair<FilterTable::iterator, bool> result = _availableFilters.insert(
+			FilterTable::value_type(newFilterName, f->second)
+		);
+
+		// Add the according toggle command to the eventmanager
+		IEventPtr fEvent = GlobalEventManager().addToggle(
+			f->second.getEventName(),
+			MemberCaller<XMLFilter, &XMLFilter::toggle>(result.first->second) 
+		);
+
+		if (!fEvent->empty()) {
+			GlobalEventManager().connectAccelerator(oldAccel, f->second.getEventName());
+		}
+		else {
+			globalWarningStream()
+				<< "Can't register event after rename, the new event name is already registered!" 
+				<< std::endl;
+		}
+
+		// If this filter is in our active set, enable it
+		if (wasActive) {
+			fEvent->setToggled(true);
+
+			_activeFilters.insert(
+				FilterTable::value_type(newFilterName, f->second)
+			);
+		}
+		else {
+			fEvent->setToggled(false);
+		}
+
+		// Remove the old filter from the filtertable
+		_availableFilters.erase(oldFilterName);
+
+		// Remove all accelerators from the old event
+		GlobalEventManager().disconnectAccelerator(oldEventName);
+		
+		// Disable the old event in the EventManager, to avoid crashes when calling the menu items
+		GlobalEventManager().disableEvent(oldEventName);
 
 		return true;
 	}
@@ -250,6 +342,22 @@ FilterRules BasicFilterSystem::getRuleSet(const std::string& filter) {
 	}
 
 	return FilterRules();
+}
+
+bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRules& ruleSet) {
+	FilterTable::iterator f = _availableFilters.find(filter);
+	
+	if (f != _availableFilters.end() && !f->second.isReadOnly()) {
+		// Apply the ruleset
+		f->second.setRules(ruleSet);
+
+		// Clear the cache, the ruleset has changed
+		_visibilityCache.clear();
+
+		return true;
+	}
+
+	return false; // not found or readonly
 }
 
 // Update scenegraph instances with filtered status

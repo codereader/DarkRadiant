@@ -10,10 +10,7 @@ XMLFilter::XMLFilter(const std::string& name, bool readOnly) :
 	_name(name),
 	_readonly(readOnly)
 {
-	// Construct the eventname out of the filtername (strip the spaces and add "Filter" prefix)
-	_eventName = _name;
-	boost::algorithm::erase_all(_eventName, " ");
-	_eventName = "Filter" + _eventName;
+	updateEventName();
 }
 
 // Test visibility of an item against all rules
@@ -57,12 +54,31 @@ std::string XMLFilter::getEventName() const {
 	return _eventName;
 }
 
+void XMLFilter::setName(const std::string& newName) {
+	// Set the name ...
+	_name = newName;
+
+	// ...and update the event name
+	updateEventName();
+}
+
 bool XMLFilter::isReadOnly() const {
 	return _readonly;
 }
 
 FilterRules XMLFilter::getRuleSet() {
 	return _rules;
+}
+
+void XMLFilter::setRules(const FilterRules& rules) {
+	_rules = rules;
+}
+
+void XMLFilter::updateEventName() {
+	// Construct the eventname out of the filtername (strip the spaces and add "Filter" prefix)
+	_eventName = _name;
+	boost::algorithm::erase_all(_eventName, " ");
+	_eventName = "Filter" + _eventName;
 }
 
 } // namespace filters

@@ -127,9 +127,25 @@ public:
 	virtual bool removeFilter(const std::string& filter) = 0;
 
 	/**
+	 * greebo: Renames the specified filter. This also takes care of renaming the corresponding command in the
+	 * EventManager class.
+	 *
+	 * @returns: TRUE on success, FALSE if the filter hasn't been found or is read-only.
+	 */
+	virtual bool renameFilter(const std::string& oldFilterName, const std::string& newFilterName) = 0;
+
+	/**
 	 * greebo: Returns the ruleset of this filter, order is important.
 	 */
 	virtual FilterRules getRuleSet(const std::string& filter) = 0;
+
+	/**
+	 * greebo: Applies the given criteria set to the named filter, replacing the existing set.
+	 * This applies to non-read-only filters only.
+	 *
+	 * @returns: TRUE on success, FALSE if filter not found or read-only.
+ 	 */
+	virtual bool setFilterRules(const std::string& filter, const FilterRules& ruleSet) = 0;
 };
 
 inline FilterSystem& GlobalFilterSystem() {

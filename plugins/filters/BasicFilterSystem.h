@@ -21,7 +21,7 @@ class BasicFilterSystem
 : public FilterSystem
 {
 	// Hashtable of available filters, indexed by name
-	typedef std::map<std::string, filters::XMLFilter> FilterTable;
+	typedef std::map<std::string, XMLFilter> FilterTable;
 	FilterTable _availableFilters;
 	
 	// Second table containing just the active filters
@@ -68,8 +68,14 @@ public:
 	// Removes the filter and returns true on success
 	bool removeFilter(const std::string& filter);
 
+	// Renames the filter and updates eventmanager
+	bool renameFilter(const std::string& oldFilterName, const std::string& newFilterName);
+
 	// Returns the ruleset of the named filter
 	FilterRules getRuleSet(const std::string& filter);
+
+	// Applies the ruleset and replaces the previous one for a given filter.
+	bool setFilterRules(const std::string& filter, const FilterRules& ruleSet);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
