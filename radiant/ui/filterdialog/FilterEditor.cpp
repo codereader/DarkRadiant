@@ -42,7 +42,9 @@ FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent) :
 												G_TYPE_STRING, // type string
 												G_TYPE_STRING, // regex match
 												G_TYPE_STRING)),  // show/hide
-	_selectedRule(-1)
+	_selectedRule(-1),
+	_result(NUM_RESULTS),
+	_updateActive(false)
 {
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -58,6 +60,10 @@ FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent) :
 	show();
 }
 
+FilterEditor::Result FilterEditor::getResult() {
+	return _result;
+}
+
 void FilterEditor::populateWindow() {
 	// Create the dialog vbox
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
@@ -67,6 +73,8 @@ void FilterEditor::populateWindow() {
 
 	_widgets[WIDGET_NAME_ENTRY] = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_widgets[WIDGET_NAME_ENTRY], 18, 1), FALSE, FALSE, 0);
+
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_NAME_ENTRY]), "changed", G_CALLBACK(onNameEdited), this);
 	
 	// And the rule treeview
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Rules</b>"), FALSE, FALSE, 0);
@@ -79,6 +87,9 @@ void FilterEditor::populateWindow() {
 }
 
 void FilterEditor::update() {
+	// Avoid callback loops
+	_updateActive = true;
+
 	// Populate the criteria store
 	gtk_list_store_clear(_ruleStore);
 
@@ -107,6 +118,8 @@ void FilterEditor::update() {
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_NAME_ENTRY]), _filter.name.c_str());
 
 	updateWidgetSensitivity();
+
+	_updateActive = false;
 }
 
 GtkWidget* FilterEditor::createCriteriaPanel() {
@@ -286,10 +299,12 @@ void FilterEditor::updateWidgetSensitivity() {
 
 void FilterEditor::onSave(GtkWidget* widget, FilterEditor* self) {
 	self->save();
+	self->_result = RESULT_OK;
 	self->destroy();
 }
 
 void FilterEditor::onCancel(GtkWidget* widget, FilterEditor* self) {
+	self->_result = RESULT_CANCEL;
 	self->destroy();
 }
 
@@ -353,6 +368,12 @@ void FilterEditor::onActionEdited(GtkCellRendererText* renderer, gchar* path, gc
 			-1
 		);
 	}
+}
+
+void FilterEditor::onNameEdited(GtkEditable* editable, FilterEditor* self) {
+	if (self->_updateActive) return;
+
+	self->_filter.name = gtk_entry_get_text(GTK_ENTRY(editable));
 }
 
 void FilterEditor::onRuleSelectionChanged(GtkTreeSelection* sel, FilterEditor* self) {
