@@ -23,6 +23,7 @@ namespace ui {
 		enum {
 			WIDGET_ADD_FILTER_BUTTON,
 			WIDGET_EDIT_FILTER_BUTTON,
+			WIDGET_VIEW_FILTER_BUTTON,
 			WIDGET_DELETE_FILTER_BUTTON,
 		};
 
@@ -168,16 +169,20 @@ GtkWidget* FilterDialog::createFiltersPanel() {
 	// Action buttons
 	_widgets[WIDGET_ADD_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	_widgets[WIDGET_EDIT_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_EDIT);
+	_widgets[WIDGET_VIEW_FILTER_BUTTON] = gtk_button_new_with_label("View");
+		
 	_widgets[WIDGET_DELETE_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_FILTER_BUTTON]), "clicked", G_CALLBACK(onAddFilter), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_EDIT_FILTER_BUTTON]), "clicked", G_CALLBACK(onEditFilter), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_VIEW_FILTER_BUTTON]), "clicked", G_CALLBACK(onViewFilter), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_FILTER_BUTTON]), "clicked", G_CALLBACK(onDeleteFilter), this);
 
 	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
 
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_FILTER_BUTTON], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_VIEW_FILTER_BUTTON], FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(GTK_WIDGET(_filterView)), TRUE, TRUE, 0);
@@ -208,8 +213,19 @@ void FilterDialog::updateWidgetSensitivity() {
 		FilterMap::const_iterator i = _filters.find(_selectedFilter);
 
 		if (i != _filters.end()) {
+
+			if (i->second->readOnly) {
+				gtk_widget_hide(_widgets[WIDGET_EDIT_FILTER_BUTTON]);
+				gtk_widget_show(_widgets[WIDGET_VIEW_FILTER_BUTTON]);
+			}
+			else {
+				gtk_widget_show(_widgets[WIDGET_EDIT_FILTER_BUTTON]);
+				gtk_widget_hide(_widgets[WIDGET_VIEW_FILTER_BUTTON]);
+			}
+
 			gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], i->second->readOnly ? FALSE : TRUE);
 			gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], i->second->readOnly ? FALSE : TRUE);
+			gtk_widget_set_sensitive(_widgets[WIDGET_VIEW_FILTER_BUTTON], i->second->readOnly ? TRUE : FALSE);
 
 			return;
 		}
@@ -218,6 +234,9 @@ void FilterDialog::updateWidgetSensitivity() {
 	// no valid filter selected
 	gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE);
 	gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE);
+	gtk_widget_set_sensitive(_widgets[WIDGET_VIEW_FILTER_BUTTON], FALSE);
+	gtk_widget_hide(_widgets[WIDGET_EDIT_FILTER_BUTTON]);
+	gtk_widget_show(_widgets[WIDGET_VIEW_FILTER_BUTTON]);
 }
 
 void FilterDialog::showDialog() {
@@ -245,7 +264,7 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 	FilterPtr workingCopy(new Filter("NewFilter", false, false));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(*workingCopy, GTK_WINDOW(self->getWindow()));
+	FilterEditor editor(*workingCopy, GTK_WINDOW(self->getWindow()), false);
 
 	if (editor.getResult() != FilterEditor::RESULT_OK) {
 		// User hit cancel, we're done
@@ -271,6 +290,21 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 	self->update();
 }
 
+void FilterDialog::onViewFilter(GtkWidget* w, FilterDialog* self) {
+	// Lookup the Filter object
+	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
+
+	if (f == self->_filters.end()) {
+		return; // not found 
+	}
+
+	// Construct a new filter
+	Filter workingCopy(*(f->second));
+
+	// Instantiate a new editor, will block
+	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()), true);
+}
+
 void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 	// Lookup the Filter object
 	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
@@ -283,7 +317,7 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()));
+	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()), false);
 
 	if (editor.getResult() != FilterEditor::RESULT_OK) {
 		// User hit cancel, we're done

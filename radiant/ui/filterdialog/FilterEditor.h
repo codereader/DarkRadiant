@@ -36,7 +36,6 @@ private:
 	std::map<int, GtkWidget*> _widgets;
 
 	GtkTreeView* _ruleView;
-
 	GtkListStore* _ruleStore;
 
 	int _selectedRule;
@@ -44,10 +43,11 @@ private:
 	Result _result;
 
 	bool _updateActive;
+	bool _viewOnly;
 
 public:
 	// Constructor, pass the Filter object to be edited
-	FilterEditor(Filter& filter, GtkWindow* parent);
+	FilterEditor(Filter& filter, GtkWindow* parent, bool viewOnly);
 
 	// Returns the dialog result (OK, CANCEL)
 	Result getResult();
