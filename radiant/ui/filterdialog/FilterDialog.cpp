@@ -205,16 +205,19 @@ GtkWidget* FilterDialog::createButtonPanel() {
 void FilterDialog::updateWidgetSensitivity() {
 	if (!_selectedFilter.empty()) {
 		// We have a filter, is it read-only?
-		bool readonly = GlobalFilterSystem().filterIsReadOnly(_selectedFilter);
-		
-		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], readonly ? FALSE : TRUE);
-		gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], readonly ? FALSE : TRUE);
+		FilterMap::const_iterator i = _filters.find(_selectedFilter);
+
+		if (i != _filters.end()) {
+			gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], i->second->readOnly ? FALSE : TRUE);
+			gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], i->second->readOnly ? FALSE : TRUE);
+
+			return;
+		}
 	}
-	else {
-		// no filter selected
-		gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE);
-		gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE);
-	}
+
+	// no valid filter selected
+	gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE);
+	gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE);
 }
 
 void FilterDialog::showDialog() {
@@ -269,8 +272,17 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 		}
 	}
 	else {
-		// Ruleset is ok, overwrite the actual filter
-		*(f->second) = workingCopy;
+		// Ruleset is ok, has the name changed?
+
+		if (workingCopy.name != f->first) {
+			// Name has changed, relocate the filter object
+			self->_filters.erase(f->first);
+			self->_filters[workingCopy.name] = FilterPtr(new Filter(workingCopy));
+		}
+		else {
+			// No name change, just overwrite the filter object
+			*(f->second) = workingCopy;
+		}
 	}
 
 	// Update all widgets
