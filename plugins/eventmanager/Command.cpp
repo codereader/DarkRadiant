@@ -5,6 +5,12 @@ Command::Command(const Callback& callback, bool reactOnKeyUp) :
 	_reactOnKeyUp(reactOnKeyUp)
 {}
 
+Command::~Command() {
+	for (WidgetList::iterator i = _connectedWidgets.begin(); i != _connectedWidgets.end(); ++i) {
+		g_signal_handler_disconnect(i->first, i->second);
+	}
+}
+
 bool Command::empty() const {
 	return false;
 }
@@ -36,15 +42,21 @@ void Command::keyDown() {
 void Command::connectWidget(GtkWidget* widget) {
 	if (GTK_IS_MENU_ITEM(widget)) {
 		// Connect the static callback function and pass the pointer to this class
-		g_signal_connect(G_OBJECT(widget), "activate", G_CALLBACK(onMenuItemClicked), this);
+		gulong handler = g_signal_connect(G_OBJECT(widget), "activate", G_CALLBACK(onMenuItemClicked), this);
+
+		_connectedWidgets[widget] = handler;
 	}
 	else if (GTK_IS_TOOL_BUTTON(widget)) {
 		// Connect the static callback function and pass the pointer to this class
-		g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onToolButtonPress), this);
+		gulong handler = g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onToolButtonPress), this);
+
+		_connectedWidgets[widget] = handler;
 	}
 	else if (GTK_IS_BUTTON(widget)) {
 		// Connect the static callback function and pass the pointer to this class
-		g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onButtonPress), this);
+		gulong handler = g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onButtonPress), this);
+
+		_connectedWidgets[widget] = handler;
 	}
 }
 

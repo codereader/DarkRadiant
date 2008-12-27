@@ -25,12 +25,15 @@ class Command :
 
 	// Whether this command reacts on keyup or keydown
 	bool _reactOnKeyUp;
+
+	typedef std::map<GtkWidget*, gulong> WidgetList;
+	WidgetList _connectedWidgets;
 	
 public:
 	Command(const Callback& callback, bool reactOnKeyUp = false);
-	
-	virtual ~Command() {}
 
+	virtual ~Command();
+	
 	// Invoke the registered callback
 	virtual void execute();
 	

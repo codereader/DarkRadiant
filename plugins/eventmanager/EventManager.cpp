@@ -371,6 +371,19 @@ public:
 		findEvent(eventName)->setEnabled(true);
 	}
 
+	void removeEvent(const std::string& eventName) {
+		// Try to lookup the command
+		EventMap::iterator i = _events.find(eventName);
+		
+		if (i != _events.end()) {
+			// Remove all accelerators beforehand
+			disconnectAccelerator(eventName);
+
+			// Remove the event from the list
+			_events.erase(i);
+		}
+	}
+
 	// Catches the key/mouse press/release events from the given GtkObject
 	void connect(GtkObject* object)	{
 		// Create and store the handler into the map

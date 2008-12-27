@@ -288,11 +288,8 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 		// Remove the old filter from the filtertable
 		_availableFilters.erase(oldFilterName);
 
-		// Remove all accelerators from the old event
-		GlobalEventManager().disconnectAccelerator(oldEventName);
-		
-		// Disable the old event in the EventManager, to avoid crashes when calling the menu items
-		GlobalEventManager().disableEvent(oldEventName);
+		// Remove the old event from the EventManager
+		GlobalEventManager().removeEvent(oldEventName);
 
 		return true;
 	}

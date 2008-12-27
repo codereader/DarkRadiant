@@ -6,6 +6,12 @@ Toggle::Toggle(const Callback& callback) :
 	_toggled(false)
 {}
 
+Toggle::~Toggle() {
+	for (ToggleWidgetList::iterator i = _toggleWidgets.begin(); i != _toggleWidgets.end(); ++i) {
+		g_signal_handler_disconnect(i->first, i->second);
+	}
+}
+
 bool Toggle::empty() const {
 	return false;
 }
@@ -33,9 +39,9 @@ void Toggle::updateWidgets() {
 	
 	for (ToggleWidgetList::iterator i = _toggleWidgets.begin();
 		 i != _toggleWidgets.end();
-		 i++)
+		 ++i)
 	{
-		GtkWidget* widget = *i;
+		GtkWidget* widget = i->first;
 		if (GTK_IS_TOGGLE_TOOL_BUTTON(widget)) {
 			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(widget), _toggled);
 		}
@@ -58,32 +64,32 @@ bool Toggle::isToggled() const {
 
 void Toggle::connectWidget(GtkWidget* widget) {
 	if (GTK_IS_TOGGLE_TOOL_BUTTON(widget)) {
-		
-		// Store the pointer for later use
-		_toggleWidgets.push_back(widget);
 			
 		gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(widget), _toggled);
 		
 		// Connect the toggleToolbutton to the static callback of this class
-		g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onToggleToolButtonClicked), this);
+		gulong handle = g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onToggleToolButtonClicked), this);
+
+		// Store the pointer for later use
+		_toggleWidgets[widget] = handle;
 	}
 	else if (GTK_IS_TOGGLE_BUTTON(widget)) {
-		
-		// Store the pointer for later use
-		_toggleWidgets.push_back(widget);
 		
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), _toggled);
 		
 		// Connect the toggleToolbutton to the static callback of this class
-		g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onToggleToolButtonClicked), this);
+		gulong handle = g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onToggleToolButtonClicked), this);
+
+		// Store the pointer for later use
+		_toggleWidgets[widget] = handle;
 	}
 	else if (GTK_IS_CHECK_MENU_ITEM(widget)) {
-		// Store it internally
-		_toggleWidgets.push_back(widget);
 		
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(widget), _toggled);
 		
-		g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onCheckMenuItemClicked), this);
+		gulong handle = g_signal_connect(G_OBJECT(widget), "toggled", G_CALLBACK(onCheckMenuItemClicked), this);
+
+		_toggleWidgets[widget] = handle;
 	}
 }
 
