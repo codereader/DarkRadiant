@@ -250,6 +250,16 @@ void Face::SetTexdef(const TextureProjection& projection) {
 	texdefChanged();
 }
 
+void Face::applyShaderFromFace(const Face& other) {
+	// Retrieve the textureprojection from the source face
+	TextureProjection projection;
+	other.GetTexdef(projection);	
+	
+	SetShader(other.GetShader());
+	SetTexdef(projection);
+	SetFlags(other.getShader().m_flags);
+}
+
 void Face::GetFlags(ContentsFlagsValue& flags) const {
 	flags = m_shader.getFlags();
 }
