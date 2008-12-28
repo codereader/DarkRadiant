@@ -22,6 +22,7 @@ namespace game {
 	namespace {
 		const std::string RKEY_GAME_TYPE = "user/game/type";
 		const std::string RKEY_FS_GAME = "user/game/fs_game";
+		const std::string RKEY_FS_GAME_BASE = "user/game/fs_game_base";
 		// This key is only temporarily used
 		const std::string RKEY_GAME_INDEX = "user/game/typeIndex";
 		const std::string RKEY_PREFAB_FOLDER = "game/mapFormat/prefabFolder";
@@ -65,6 +66,10 @@ const std::string& Manager::getFSGame() const {
 	return _fsGame;
 }
 
+const std::string& Manager::getFSGameBase() const {
+	return _fsGameBase;
+}
+
 const std::string& Manager::getModPath() const {
 	return _modPath;
 }
@@ -90,7 +95,8 @@ void Manager::constructPreferences() {
 	page->appendCombo("Select a Game:", RKEY_GAME_INDEX, gameList); 
 	
 	page->appendPathEntry("Engine Path", RKEY_ENGINE_PATH, true);
-	page->appendEntry("Game Mod (fs_game)", RKEY_FS_GAME);
+	page->appendEntry("Mod (fs_game)", RKEY_FS_GAME);
+	page->appendEntry("Mod Base(fs_game_base, optional)", RKEY_FS_GAME_BASE);
 }
 
 /** greebo: Loads the game files and the saved settings.
