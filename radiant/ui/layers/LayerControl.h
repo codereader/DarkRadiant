@@ -2,6 +2,7 @@
 #define LAYERCONTROL_H_
 
 #include <boost/shared_ptr.hpp>
+#include <map>
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkToggleButton GtkToggleButton;
@@ -21,10 +22,8 @@ class LayerControl
 	// The ID of the associated layer
 	int _layerID;
 
-	GtkWidget* _toggle;
-	GtkWidget* _labelButton;
-	GtkWidget* _deleteButton;
-
+	std::map<int, GtkWidget*> _widgets;
+	
 	GtkTooltips* _tooltips;
 
 	// Locks down the callbacks during widget update
@@ -44,6 +43,7 @@ public:
 private:
 	static void onToggle(GtkToggleButton* togglebutton, LayerControl* self);
 	static void onDelete(GtkWidget* button, LayerControl* self);
+	static void onRename(GtkWidget* button, LayerControl* self);
 	static void onLayerSelect(GtkWidget* button, LayerControl* self);
 };
 typedef boost::shared_ptr<LayerControl> LayerControlPtr;

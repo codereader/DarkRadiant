@@ -107,6 +107,24 @@ void LayerSystem::reset() {
 	ui::LayerControlDialog::Instance().refresh();
 }
 
+bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName) {
+	// Check sanity
+	if (newLayerName.empty() || newLayerName == DEFAULT_LAYER_NAME) {
+		return false; // empty name or default name used
+	}
+
+	LayerMap::iterator i = _layers.find(layerID);
+
+	if (i == _layers.end()) {
+		return false; // not found
+	}
+
+	// Rename that layer
+	i->second = newLayerName;
+
+	return true;
+}
+
 int LayerSystem::getFirstVisibleLayer() const {
 	// Iterate over all IDs and check the visibility status, return the first visible
 	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {

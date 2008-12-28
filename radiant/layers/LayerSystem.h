@@ -69,6 +69,9 @@ public:
 	int getLayerID(const std::string& name) const;
 	std::string getLayerName(int layerID) const;
 
+	// Renames the given layer and returns TRUE on success
+	bool renameLayer(int layerID, const std::string& newLayerName);
+
 	// Returns the ID of the first visible layer or -1 if all are hidden.
 	virtual int getFirstVisibleLayer() const;
 

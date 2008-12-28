@@ -284,6 +284,7 @@ void LayerControlDialog::onCreateLayer(GtkWidget* button, LayerControlDialog* se
 			layerName = gtkutil::textEntryDialog(
 				"Enter Name", 
 				"Enter Layer Name", 
+				"",
 				GTK_WINDOW(self->getWindow())
 			);
 		}
