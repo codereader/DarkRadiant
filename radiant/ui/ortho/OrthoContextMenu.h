@@ -39,6 +39,7 @@ class OrthoContextMenu
 	GtkWidget* _addToLayer;
 	GtkWidget* _moveToLayer;
 	GtkWidget* _removeFromLayer;
+	GtkWidget* _createLayer;
 
 	LayerContextMenuPtr _addToLayerSubmenu;
 	LayerContextMenuPtr _moveToLayerSubmenu;

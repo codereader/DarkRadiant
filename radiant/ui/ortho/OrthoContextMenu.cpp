@@ -3,6 +3,7 @@
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "ibrush.h"
+#include "ieventmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
@@ -62,6 +63,7 @@ namespace {
 	const char* ADD_TO_LAYER_TEXT = "Add to Layer...";
 	const char* MOVE_TO_LAYER_TEXT = "Move to Layer...";
 	const char* REMOVE_FROM_LAYER_TEXT = "Remove from Layer...";
+	const char* CREATE_LAYER_TEXT = "Create Layer...";
 }
 
 // Static class function to display the singleton instance.
@@ -91,6 +93,13 @@ OrthoContextMenu::OrthoContextMenu()
 	_addToLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
 	_moveToLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), MOVE_TO_LAYER_TEXT);
 	_removeFromLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), REMOVE_FROM_LAYER_TEXT);
+
+	// Add a "Create New Layer" item and connect it to the corresponding event
+	_createLayer = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), CREATE_LAYER_TEXT);
+	IEventPtr ev = GlobalEventManager().findEvent("CreateNewLayer");
+	if (ev != NULL) {
+		ev->connectWidget(_createLayer);
+	}
 	
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);
@@ -115,6 +124,7 @@ OrthoContextMenu::OrthoContextMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _convertStatic);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _revertWorldspawn);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _createLayer);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addToLayer);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _moveToLayer);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _removeFromLayer);
