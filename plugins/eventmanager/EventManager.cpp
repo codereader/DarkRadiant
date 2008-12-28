@@ -124,6 +124,11 @@ public:
 	virtual void shutdownModule() {
 		globalOutputStream() << "EventManager: shutting down.\n";
 		saveEventListToRegistry();
+
+		_handlers.clear();
+		_dialogWindows.clear();
+		_accelerators.clear();
+		_events.clear();
 	}
 	
 	// Constructor

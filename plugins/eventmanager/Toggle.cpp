@@ -8,7 +8,9 @@ Toggle::Toggle(const Callback& callback) :
 
 Toggle::~Toggle() {
 	for (ToggleWidgetList::iterator i = _toggleWidgets.begin(); i != _toggleWidgets.end(); ++i) {
-		g_signal_handler_disconnect(i->first, i->second);
+		if (GTK_IS_WIDGET(i->first)) {
+			g_signal_handler_disconnect(i->first, i->second);
+		}
 	}
 }
 
