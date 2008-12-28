@@ -7,7 +7,9 @@ Command::Command(const Callback& callback, bool reactOnKeyUp) :
 
 Command::~Command() {
 	for (WidgetList::iterator i = _connectedWidgets.begin(); i != _connectedWidgets.end(); ++i) {
-		g_signal_handler_disconnect(i->first, i->second);
+		if (GTK_IS_WIDGET(i->first)) {
+			g_signal_handler_disconnect(i->first, i->second);
+		}
 	}
 }
 
