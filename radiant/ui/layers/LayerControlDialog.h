@@ -48,6 +48,12 @@ public:
 	// Called during mainframe construction
 	static void init();
 
+	// Called to register events
+	static void registerCommands();
+
+	// Static command target for "CreateNewLayer"
+	static void createLayer();
+
 	static LayerControlDialog& Instance();
 	static LayerControlDialogPtr& InstancePtr();
 

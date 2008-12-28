@@ -1700,6 +1700,8 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::showDialog>());
 	GlobalEventManager().addCommand("About", FreeCaller<ui::AboutDialog::showDialog>());
 
+	ui::LayerControlDialog::registerCommands();
+
 	ui::TexTool::registerCommands();
 
   Patch_registerCommands();
