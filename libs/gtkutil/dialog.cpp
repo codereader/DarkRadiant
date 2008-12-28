@@ -325,6 +325,7 @@ void fatalErrorDialog(const std::string& errorText, GtkWindow* mainFrame) {
 
 const std::string textEntryDialog(const std::string& title, 
 								  const std::string& prompt,
+								  const std::string& defaultText,
 								  GtkWindow* mainFrame) 
 {
     GtkWidget* dialog = gtk_dialog_new_with_buttons(title.c_str(),
@@ -344,6 +345,7 @@ const std::string textEntryDialog(const std::string& title,
     gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(prompt.c_str()), FALSE, FALSE, 0);
 
     GtkWidget* entry = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(entry), defaultText.c_str());
     gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
     gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 3);
 
