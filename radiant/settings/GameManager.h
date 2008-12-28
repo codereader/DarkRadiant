@@ -38,6 +38,10 @@ private:
 	
 	// The "userengine" path (where the fs_game is stored)
 	// this is ~/.doom3/<fs_game> in linux, and <enginepath>/<fs_game> in Win32
+	std::string _modBasePath;
+
+	// The "mod mod" path (where the fs_game_base is stored)
+	// this is ~/.doom3/<fs_game_base> in linux, and <enginepath>/<fs_game_base> in Win32
 	std::string _modPath;
 	
 	// The sorted list of VFS search paths (valid after module initialisation) 
