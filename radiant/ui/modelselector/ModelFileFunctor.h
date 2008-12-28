@@ -3,8 +3,9 @@
 
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/ModalProgressDialog.h"
-#include "mainframe.h"
+#include "iradiant.h"
 
+#include "string/string.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -36,11 +37,11 @@ public:
 	typedef const std::string& first_argument_type;
 
 	// Constructor sets the populator
-	ModelFileFunctor(gtkutil::VFSTreePopulator& pop)
-	: _populator(pop),
-	  _progress(MainFrame_getWindow(), "Loading models"),
-	  _count(0),
-	  _guiUpdateInterleave(50)
+	ModelFileFunctor(gtkutil::VFSTreePopulator& pop) : 
+		_populator(pop),
+		_progress(GlobalRadiant().getMainWindow(), "Loading models"),
+		_count(0),
+		_guiUpdateInterleave(50)
 	{
 		_progress.setText("Searching");
 	}
