@@ -258,6 +258,35 @@ void Face::applyShaderFromFace(const Face& other) {
 	SetShader(other.GetShader());
 	SetTexdef(projection);
 	SetFlags(other.getShader().m_flags);
+
+	// The list of shared vertices
+	std::vector<Winding::const_iterator> thisVerts, otherVerts;
+
+	// Let's see whether this face is sharing any 3D coordinates with the other one
+	for (Winding::const_iterator i = other.m_winding.begin(); i != other.m_winding.end(); ++i) {
+		for (Winding::const_iterator j = m_winding.begin(); j != m_winding.end(); ++j) {
+			// Check if the vertices are matching
+			if (vector3_equal_epsilon(j->vertex, i->vertex, 0.001)) {
+				// Match found, add to list
+				thisVerts.push_back(j);
+				otherVerts.push_back(i);
+			}
+		}
+	}
+
+	if (thisVerts.empty() || thisVerts.size() != otherVerts.size()) {
+		return; // nothing to do
+	}
+
+	// Calculate the distance in texture space of the first shared vertices
+	Vector2 dist = thisVerts[0]->texcoord - otherVerts[0]->texcoord;
+
+	// Scale the translation (ShiftTexDef() is scaling this down again, yes this is weird).
+	dist[0] *= getShader().width();
+	dist[1] *= getShader().height();
+
+	// Shift the texture to match
+	ShiftTexdef(dist.x(), dist.y());
 }
 
 void Face::GetFlags(ContentsFlagsValue& flags) const {
