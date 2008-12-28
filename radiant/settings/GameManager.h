@@ -29,6 +29,9 @@ private:
 	
 	// The fs_game argument (usually "darkmod")
 	std::string _fsGame;
+
+	// Optional, defines the "mod base", which the fs_game builds upon
+	std::string _fsGameBase;
 	
 	// The current engine path
 	std::string _enginePath;
@@ -73,6 +76,10 @@ public:
 	/** greebo: Accessor method for the fs_game parameter
 	 */
 	const std::string& getFSGame() const;
+
+	/** greebo: Accessor method for the fs_game_base parameter
+	 */
+	const std::string& getFSGameBase() const;
 
 	/** greebo: Initialises the engine path from the settings in the registry.
 	 * 			If nothing is found, the game file is queried.
