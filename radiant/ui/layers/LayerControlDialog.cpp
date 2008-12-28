@@ -206,6 +206,53 @@ void LayerControlDialog::toggle() {
 	Instance().toggleDialog();
 }
 
+void LayerControlDialog::createLayer() {
+	while (true) {
+		// Query the name of the new layer from the user
+		std::string layerName;
+
+		try {
+			layerName = gtkutil::textEntryDialog(
+				"Enter Name", 
+				"Enter Layer Name", 
+				"",
+				GlobalRadiant().getMainWindow()
+			);
+		}
+		catch (gtkutil::EntryAbortedException e) {
+			break;
+		}
+
+		if (layerName.empty()) {
+			// Wrong name, let the user try again
+			gtkutil::errorDialog("Cannot create layer with empty name.", GlobalRadiant().getMainWindow());
+			continue;
+		}
+
+		// Attempt to create the layer, this will return -1 if the operation fails
+		int layerID = scene::getLayerSystem().createLayer(layerName);
+
+		if (layerID != -1) {
+			// Success, break the loop
+			Instance().refresh();
+			break;
+		}
+		else {
+			// Wrong name, let the user try again
+			gtkutil::errorDialog("This name already exists.", GlobalRadiant().getMainWindow());
+			continue; 
+		}
+	}
+}
+
+void LayerControlDialog::registerCommands() {
+	// Register the "create layer" command
+	GlobalEventManager().addCommand(
+		"CreateNewLayer", 
+		FreeCaller<LayerControlDialog::createLayer>()
+	);
+}
+
 void LayerControlDialog::init() {
 	// Lookup the stored window information in the registry
 	xml::NodeList list = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
@@ -276,36 +323,8 @@ void LayerControlDialog::_preHide() {
 
 // Static GTK callbacks
 void LayerControlDialog::onCreateLayer(GtkWidget* button, LayerControlDialog* self) {
-	while (true) {
-		// Query the name of the new layer from the user
-		std::string layerName;
-
-		try {
-			layerName = gtkutil::textEntryDialog(
-				"Enter Name", 
-				"Enter Layer Name", 
-				"",
-				GTK_WINDOW(self->getWindow())
-			);
-		}
-		catch (gtkutil::EntryAbortedException e) {
-			break;
-		}
-
-		// Attempt to create the layer, this will return -1 if the operation fails
-		int layerID = scene::getLayerSystem().createLayer(layerName);
-
-		if (layerID != -1) {
-			// Reload the widgets, we're done here
-			self->refresh();
-			break;
-		}
-		else {
-			// Wrong name, let the user try again
-			gtkutil::errorDialog("This name already exists.", GTK_WINDOW(self->getWindow()));
-			continue; 
-		}
-	}
+	// Pass the call to the command
+	createLayer();
 }
 
 void LayerControlDialog::onShowAllLayers(GtkWidget* button, LayerControlDialog* self) {
