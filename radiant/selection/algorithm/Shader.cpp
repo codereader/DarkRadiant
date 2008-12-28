@@ -185,13 +185,7 @@ void applyClipboardFaceToFace(Face& target) {
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
 	
-	// Retrieve the textureprojection from the source face
-	TextureProjection projection;
-	source.face->GetTexdef(projection);	
-	
-	target.SetShader(source.face->GetShader());
-	target.SetTexdef(projection);
-	target.SetFlags(source.face->getShader().m_flags);
+	target.applyShaderFromFace(*(source.face));
 }
 
 /** greebo: Applies the shader from the clipboard's patch to the given <target> face
@@ -293,7 +287,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	command += (projected ? "Projected" : "Natural");
 	command += (entireBrush ? "ToBrush" : "");
 	
-	UndoableCommand undo(command.c_str());
+	UndoableCommand undo(command);
 	
 	// Initialise an empty Texturable structure
 	Texturable target;
@@ -304,7 +298,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	
 	if (target.isPatch() && entireBrush) {
 		gtkutil::errorDialog("Can't paste shader to entire brush.\nTarget is not a brush.",
-			MainFrame_getWindow());
+			GlobalRadiant().getMainWindow());
 	}
 	else {
 		// Pass the call to the algorithm function taking care of all the IFs

@@ -145,6 +145,13 @@ public:
 
 	void GetTexdef(TextureProjection& projection) const;
 	void SetTexdef(const TextureProjection& projection);
+
+	/**
+	 * greebo: Copies the shader (texdef) from the other face,
+	 * and attempts to move the texture such that the transition
+	 * between the faces are seamless.
+	 */
+	void applyShaderFromFace(const Face& other);
 	
 	void GetFlags(ContentsFlagsValue& flags) const;
 	void SetFlags(const ContentsFlagsValue& flags);
