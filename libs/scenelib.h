@@ -78,12 +78,6 @@ inline void Node_traverseSubgraph(const scene::INodePtr& node, scene::NodeVisito
 	visitor.post(node);
 }
 
-inline void Path_deleteTop(const scene::Path& path) {
-	if (path.size() > 1) {
-		path.parent()->removeChildNode(path.top());
-	}
-}
-
 inline SelectablePtr Node_getSelectable(const scene::INodePtr& node) {
 	return boost::dynamic_pointer_cast<Selectable>(node);
 }
