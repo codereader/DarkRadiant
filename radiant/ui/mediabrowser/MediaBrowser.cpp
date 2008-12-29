@@ -18,6 +18,8 @@
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
+#include "ui/texturebrowser/TextureBrowser.h"
+
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
@@ -332,6 +334,9 @@ void MediaBrowser::_onLoadInTexView() {
 	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
 		// Ignore the error and return from the function normally	
 	}
+
+	// Update texture browser, to fix the "scrollbar is missing" issue
+	GlobalTextureBrowser().update();
 }
 
 bool MediaBrowser::_testLoadInTexView() {
