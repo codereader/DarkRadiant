@@ -15,8 +15,8 @@ namespace cmutil {
 		const float MAX_PRECISION = 0.0001f;
 		
 		// greebo: These are the empirical brush size factors (I think they work)
-		const unsigned int SIZEOF_BRUSH = 44;
-		const unsigned int SIZEOF_FACE = 16;
+		const std::size_t SIZEOF_BRUSH = 44;
+		const std::size_t SIZEOF_FACE = 16;
 	}
 
 // Writes the given Vector3 in the format ( 0 1 2 ) to the given stream
@@ -35,7 +35,7 @@ std::ostream& operator<< (std::ostream& st, const Polygon poly) {
 	
 	// Edge List
 	st << " (";
-	for (unsigned int e = 0; e < poly.edges.size(); e++) {
+	for (std::size_t e = 0; e < poly.edges.size(); e++) {
 		st << " " << poly.edges[e];
 	}
 	st << " ) ";
@@ -54,7 +54,7 @@ std::ostream& operator<< (std::ostream& st, const BrushStruc b) {
 	st << b.numFaces << " {\n";
 		
 	// Write all the planes
-	for (unsigned int i = 0; i < b.planes.size(); i++) {
+	for (std::size_t i = 0; i < b.planes.size(); i++) {
 		st << "\t\t";
 		writeVector(st, b.planes[i].normal());
 		st << " " << b.planes[i].dist() << "\n";
@@ -81,16 +81,16 @@ CollisionModel::CollisionModel() {
 int CollisionModel::findVertex(const Vector3& vertex) const {
 	for (VertexMap::const_iterator i = _vertices.begin(); 
 		i != _vertices.end(); 
-		i++) 
+		++i) 
 	{
 		if (i->second == vertex) {
-			return i->first;
+			return static_cast<int>(i->first);
 		}
 	}
 	return -1;
 }
 
-unsigned int CollisionModel::addVertex(const Vector3& vertex) {
+std::size_t CollisionModel::addVertex(const Vector3& vertex) {
 	Vector3 snapped = vector3_snapped(vertex, MAX_PRECISION);
 	
 	// Try to lookup the index of the given vertex
@@ -102,11 +102,11 @@ unsigned int CollisionModel::addVertex(const Vector3& vertex) {
 		std::size_t lastIndex = _vertices.size();
 		_vertices[lastIndex] = snapped;
 		
-		return static_cast<unsigned int>(lastIndex);
+		return lastIndex;
 	}
 	else {
 		// Return the found index
-		return static_cast<unsigned int>(foundIndex);
+		return static_cast<std::size_t>(foundIndex);
 	} 
 }
 
@@ -117,7 +117,7 @@ int CollisionModel::findEdge(const Edge& edge) const {
 	{
 		// Direction match?
 		if (i->second.from == edge.from && i->second.to == edge.to) {
-			return i->first;
+			return static_cast<int>(i->first);
 		}
 		
 		// Opposite direction match?
@@ -128,7 +128,7 @@ int CollisionModel::findEdge(const Edge& edge) const {
 	return 0;
 }  
 
-unsigned int CollisionModel::addEdge(const Edge& edge) {
+std::size_t CollisionModel::addEdge(const Edge& edge) {
 	// Check for existing edge!
 	int foundIndex = findEdge(edge);
 	
@@ -136,7 +136,7 @@ unsigned int CollisionModel::addEdge(const Edge& edge) {
 		// NULL edge found, insert the edge with a new index
 		std::size_t edgeIndex = _edges.size();
 		_edges[edgeIndex] = edge;
-		return static_cast<unsigned int>(edgeIndex);
+		return edgeIndex;
 	}
 	else {
 		return abs(foundIndex);
@@ -144,15 +144,15 @@ unsigned int CollisionModel::addEdge(const Edge& edge) {
 }
 
 int CollisionModel::findPolygon(const EdgeList& otherEdges) {
-	for (unsigned int p = 0; p < _polygons.size(); p++) {
+	for (std::size_t p = 0; p < _polygons.size(); p++) {
 		// Check if the edge count matches
 		if (otherEdges.size() == _polygons[p].numEdges) {
 			// The match count
-			unsigned int matches = 0;
+			std::size_t matches = 0;
 			
 			// See through the current polygon and count the matches
-			for (unsigned int i = 0; i < _polygons[p].edges.size(); i++) {
-				for (unsigned int j = 0; j < otherEdges.size(); j++) {	
+			for (std::size_t i = 0; i < _polygons[p].edges.size(); i++) {
+				for (std::size_t j = 0; j < otherEdges.size(); j++) {	
 					if (abs(_polygons[p].edges[i]) == abs(otherEdges[j])) {
 						matches++;
 					}
@@ -165,7 +165,7 @@ int CollisionModel::findPolygon(const EdgeList& otherEdges) {
 				PolygonList::iterator i = _polygons.begin() + p;
 				_polygons.erase(i);
 				globalOutputStream() << "CollisionModel: Removed duplicate polygon.\n";
-				return p;
+				return static_cast<int>(p);
 			}
 		}
 	}
@@ -179,7 +179,7 @@ void CollisionModel::addPolygon(
 	Polygon poly;
 	
 	// Cycle from the beginning to the end-1 and add the edges 
-	for (unsigned int i = 0; i < vertexList.size()-1; i++) {
+	for (std::size_t i = 0; i < vertexList.size()-1; i++) {
 		Edge edge;
 		edge.from = vertexList[i];
 		edge.to = vertexList[i+1];
@@ -192,7 +192,7 @@ void CollisionModel::addPolygon(
 	if (findPolygon(poly.edges) == -1) {
 		AABB faceAABB = face.getWinding().aabb();
 		
-		poly.numEdges = static_cast<unsigned int>(poly.edges.size());
+		poly.numEdges = poly.edges.size();
 		poly.plane = face.plane3();
 		poly.min = faceAABB.origin - faceAABB.extents;
 		poly.max = faceAABB.origin + faceAABB.extents;
@@ -208,7 +208,7 @@ VertexList CollisionModel::addWinding(
 {
 	VertexList vertexList;
 	
-	for (Winding::const_iterator i = winding.begin(); i != winding.end(); i++) {
+	for (Winding::const_iterator i = winding.begin(); i != winding.end(); ++i) {
 		// Create a vertexId and add it to the stack
 		vertexList.push_back(addVertex(i->vertex));
 	}
@@ -219,7 +219,7 @@ VertexList CollisionModel::addWinding(
 		Edge edge;
 		
 		// Now work through the stack, adding the edges (note the -1 in the for condition)
-		for (unsigned int i = 0; i < vertexList.size()-1; i++) {
+		for (std::size_t i = 0; i < vertexList.size()-1; i++) {
 			edge.from = vertexList[i];
 			edge.to = vertexList[i+1];
 			
@@ -238,7 +238,7 @@ void CollisionModel::addBrush(Brush& brush) {
 	BrushStruc b;
 
 	// The number of faces
-	b.numFaces = static_cast<unsigned int>(brush.size());
+	b.numFaces = brush.size();
 	
 	// Get the AABB of this brush
 	AABB brushAABB = brush.localAABB();
@@ -266,10 +266,10 @@ void CollisionModel::setModel(const std::string& model) {
 	_model = model;
 }
 
-unsigned int CollisionModel::getBrushMemory(const BrushList& brushes) {
-	unsigned int faceCount = 0;
+std::size_t CollisionModel::getBrushMemory(const BrushList& brushes) {
+	std::size_t faceCount = 0;
 	// Count the faces
-	for (unsigned int b = 0; b < brushes.size(); b++) {
+	for (std::size_t b = 0; b < brushes.size(); b++) {
 		faceCount += brushes[b].numFaces;
 	} 
 	return faceCount*SIZEOF_FACE + brushes.size()*SIZEOF_BRUSH;
@@ -298,7 +298,7 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	st << "\tedges { /* numEdges = */ " << cm._edges.size() << "\n";
 	for (EdgeMap::const_iterator i = cm._edges.begin(); 
 		 i != cm._edges.end(); 
-		 i++) 
+		 ++i) 
 	{
 		st << "\t/* " << i->first << " */ ";
 		st << "( " << i->second.from << " " << i->second.to << " ) ";
@@ -313,7 +313,7 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	
 	// Export the polygons
 	st << "\tpolygons {\n";
-	for (unsigned int i = 0; i < cm._polygons.size(); i++) {
+	for (std::size_t i = 0; i < cm._polygons.size(); i++) {
 		st << "\t" << cm._polygons[i] << "\n";
 	}
 	st << "\t}\n";
@@ -324,7 +324,7 @@ std::ostream& operator<<(std::ostream& st, const CollisionModel& cm) {
 	st << " {\n";
 	
 	// Now cycle through all the brushes
-	for (unsigned int i = 0; i < cm._brushes.size(); i++) {
+	for (std::size_t i = 0; i < cm._brushes.size(); i++) {
 		st << "\t" << cm._brushes[i] << "\n";
 	}
 	st << "\t}\n";

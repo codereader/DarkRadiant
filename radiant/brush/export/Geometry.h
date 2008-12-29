@@ -12,17 +12,17 @@
 namespace cmutil {
 
 // A list of indexed ("named") vertices
-typedef std::vector<unsigned int> VertexList;
+typedef std::vector<std::size_t> VertexList;
 
 // The indexed vertices of the collisionmodel
-typedef std::map<unsigned int, Vector3> VertexMap;
+typedef std::map<std::size_t, Vector3> VertexMap;
 
 struct Edge {
-	unsigned int from;	// The starting vertex index
-	unsigned int to;	// The end vertex index
-	unsigned int numVertices; // At least I think it's numVertices
+	std::size_t from;	// The starting vertex index
+	std::size_t to;	// The end vertex index
+	std::size_t numVertices; // At least I think it's numVertices
 	
-	Edge(unsigned int num = 2) : 
+	Edge(std::size_t num = 2) : 
 		from(0), 
 		to(0), 
 		numVertices(num) 
@@ -30,13 +30,13 @@ struct Edge {
 };
 
 // The indexed Edges (each consisting of a start/end vertex)
-typedef std::map<unsigned int, Edge> EdgeMap;
+typedef std::map<std::size_t, Edge> EdgeMap;
 // A vector of Edges defining a polygon (the sign indicates the direction) 
 typedef std::vector<int> EdgeList;
 
 struct Polygon {
 	// The number of edges of this polygon
-	unsigned int numEdges;
+	std::size_t numEdges;
 	
 	// The indices of the edges forming this polygon
 	EdgeList edges;
@@ -59,7 +59,7 @@ typedef std::vector<Polygon> PolygonList;
 typedef std::vector<Plane3> PlaneList;
 
 struct BrushStruc {
-	unsigned int numFaces;
+	std::size_t numFaces;
 	PlaneList planes;
 	// Two points defining the AABB
 	Vector3 min;
