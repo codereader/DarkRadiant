@@ -314,13 +314,17 @@ scene::INodePtr MapResource::loadMapNode() {
   	std::string fullpath = _path + _name;
 
 	if (path_is_absolute(fullpath.c_str())) {
-		loadFile(*format, root, fullpath);
+
+		if (loadFile(*format, root, fullpath)) {
+			return root;
+		}
 	}
 	else {
 		globalErrorStream() << "map path is not fully qualified: " << fullpath << "\n";
 	}
 
-	return root;
+	// Return the NULL node on failure
+	return model::NullModelNode::InstancePtr();
 }
 
 bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename) {
@@ -345,17 +349,17 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 			// Infostream is open, call the MapFormat
 			MapImportInfo importInfo(file, infoFileStream);
 			importInfo.root = root;
-			format.readGraph(importInfo);
+
+			return format.readGraph(importInfo);
 		}
 		else {
 			// No active infostream, pass a dummy stream
 			std::istringstream emptyStream;
 			MapImportInfo importInfo(file, emptyStream);
 			importInfo.root = root;
-			format.readGraph(importInfo);
-		}
 
-		return true;
+			return format.readGraph(importInfo);
+		}
 	}
 	else
 	{

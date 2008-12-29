@@ -73,8 +73,10 @@ public:
 	/**
 	 * Read the contents of the given streams (which are contained in MapImportInfo)
 	 * and add them as children to the given root node (also in MapImportInfo).
+	 *
+	 * @returns: TRUE on success, FALSE if parsing errors occurred.
 	 */
-	virtual void readGraph(const map::MapImportInfo& importInfo) const = 0;
+	virtual bool readGraph(const map::MapImportInfo& importInfo) const = 0;
 
 	/** Traverse the scene graph and write contents into the provided output stream.
 	 * 
