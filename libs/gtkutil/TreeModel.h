@@ -86,6 +86,21 @@ public:
 	 */
 	static std::string getSelectedString(GtkTreeSelection* selection,
 										 gint colNo);
+
+	/**
+	 * greebo: Utility callback for use in gtk_tree_view_set_search_equal_func, which 
+	 * enables some sort of "full string" search in treeviews. 
+	 *
+	 * The equalFuncStringContains returns "match" as soon as the given key occurs
+	 * somewhere in the string in question, not only at the beginning (GTK default).
+	 *
+	 * Prerequisites: The search column must contain a string.
+	 */
+	static gboolean equalFuncStringContains(GtkTreeModel* model, 
+											gint column,
+											const gchar* key,
+											GtkTreeIter* iter,
+											gpointer search_data);
 						 
 	/* Local object that walks the GtkTreeModel and obtains a GtkTreePath locating
 	 * the given name. The gtk_tree_model_foreach function requires a pointer to

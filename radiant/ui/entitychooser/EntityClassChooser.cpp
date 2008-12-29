@@ -103,6 +103,14 @@ GtkWidget* EntityClassChooser::createTreeView() {
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), TRUE);
 
+	// Use the TreeModel's full string search function
+	gtk_tree_view_set_search_equal_func(
+		GTK_TREE_VIEW(_treeView), 
+		gtkutil::TreeModel::equalFuncStringContains, 
+		NULL, 
+		NULL
+	);
+
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_BROWSE);
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(callbackSelectionChanged), this);

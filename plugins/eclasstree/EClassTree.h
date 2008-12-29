@@ -10,6 +10,8 @@ typedef struct _GtkTreeView GtkTreeView;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeStore GtkTreeStore;
 typedef struct _GtkTreeSelection GtkTreeSelection;
+typedef struct _GtkTreeModel GtkTreeModel;
+typedef struct _GtkTreeIter GtkTreeIter;
 
 namespace ui {
 
@@ -64,6 +66,13 @@ private:
 	// Static GTK callbacks
 	static void onClose(GtkWidget* button, EClassTree* self);
 	static void onSelectionChanged(GtkWidget* widget, EClassTree* self);
+
+	// The comparison function for eclasstree's type-in search
+	static gboolean eClassnameEqualFunc(GtkTreeModel* model, 
+										 gint column,
+										 const gchar* key,
+										 GtkTreeIter* iter,
+										 gpointer search_data);
 };
 
 } // namespace ui
