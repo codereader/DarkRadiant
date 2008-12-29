@@ -100,6 +100,9 @@ void LayerControl::update() {
 	gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_BUTTON], _layerID != 0);
 	gtk_widget_set_sensitive(_widgets[WIDGET_RENAME_BUTTON], _layerID != 0);
 
+	// Don't allow selection of hidden layers
+	gtk_widget_set_sensitive(_widgets[WIDGET_LABEL_BUTTON], layerIsVisible ? TRUE : FALSE);
+
 	_updateActive = false;
 }
 
