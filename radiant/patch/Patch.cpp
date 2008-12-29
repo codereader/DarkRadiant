@@ -523,6 +523,32 @@ bool Patch::isValid() const
   return true;
 }
 
+bool Patch::isDegenerate() const {
+	
+	if (!isValid()) {
+		// Invalid patches are also "degenerate"
+		return true;
+	}
+
+	Vector3 prev(0,0,0);
+
+	// Compare each control's 3D coordinates with the previous one and break out 
+	// on the first non-equal one
+	for (PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
+		
+		// Skip the first comparison
+		if (i != m_ctrl.begin() && !vector3_equal_epsilon(i->m_vertex, prev, 0.0001)) {
+			return false;
+		}
+
+		// Remember the coords of this vertex
+		prev = i->m_vertex;
+	}
+
+	// The loop went through, all vertices the same
+	return true;
+}
+
 void Patch::UpdateCachedData()
 {
   m_ctrl_vertices.clear();
