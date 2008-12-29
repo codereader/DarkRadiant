@@ -120,7 +120,8 @@ std::string getShaderFromSelection() {
 		else {
 			// Try to get the unique shader from the faces
 			try {
-				g_SelectedFaceInstances.foreach(UniqueShaderFinder(faceShader));
+				UniqueShaderFinder finder(faceShader);
+				g_SelectedFaceInstances.foreach(finder);
 			}
 			catch (AmbiguousShaderException a) {
 				faceShader = "";

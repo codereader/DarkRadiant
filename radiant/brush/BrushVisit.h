@@ -180,7 +180,8 @@ public:
 
 template<typename Functor>
 inline const Functor& Scene_ForEachSelectedBrushFace(scene::Graph& graph, const Functor& functor) {
-	g_SelectedFaceInstances.foreach(FaceVisitorWrapper<Functor>(functor));
+	FaceVisitorWrapper<Functor> wrapper(functor);
+	g_SelectedFaceInstances.foreach(wrapper);
 	return functor;
 }
 

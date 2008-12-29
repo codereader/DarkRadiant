@@ -156,7 +156,7 @@ public:
 	}
 
 	template<typename Functor>
-	void foreach(Functor functor) {
+	void foreach(Functor& functor) {
 		for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 			functor(*(*i));
 		}
