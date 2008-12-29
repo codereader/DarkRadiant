@@ -195,6 +195,9 @@ public:
 	// Check if the patch has invalid control points or width/height are zero
 	bool isValid() const;
 
+	// Check whether all control vertices are in the same 3D spot (with minimal tolerance)
+	bool isDegenerate() const;
+
 	// Snaps the control points to the grid
 	void snapto(float snap);
 

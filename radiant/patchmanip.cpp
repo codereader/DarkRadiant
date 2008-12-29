@@ -97,21 +97,41 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
   {
     scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
 	parent->addChildNode(cap);
+	
+	Patch* capPatch = Node_getPatch(cap);
+	assert(capPatch != NULL);
 
-    patch.MakeCap(Node_getPatch(cap), type, ROW, true);
-    Node_getPatch(cap)->SetShader(shader);
+    patch.MakeCap(capPatch, type, ROW, true);
+    capPatch->SetShader(shader);
 
-	Node_setSelected(cap, true);
+	// greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
+	if (!capPatch->isDegenerate()) {
+		Node_setSelected(cap, true);
+	}
+	else {
+		parent->removeChildNode(cap);
+		globalWarningStream() << "Prevented insertion of degenerate patch." << std::endl;
+	}
   }
 
   {
     scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
-    parent->addChildNode(cap);
+	parent->addChildNode(cap);
 
-    patch.MakeCap(Node_getPatch(cap), type, ROW, false);
-    Node_getPatch(cap)->SetShader(shader);
+	Patch* capPatch = Node_getPatch(cap);
+	assert(capPatch != NULL);
+    
+    patch.MakeCap(capPatch, type, ROW, false);
+    capPatch->SetShader(shader);
 
-    Node_setSelected(cap, true);
+	// greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
+	if (!capPatch->isDegenerate()) {
+		Node_setSelected(cap, true);
+	}
+	else {
+		parent->removeChildNode(cap);
+		globalWarningStream() << "Prevented insertion of degenerate patch." << std::endl;
+	}
   }
 }
 
