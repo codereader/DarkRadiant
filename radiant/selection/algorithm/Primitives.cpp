@@ -243,7 +243,8 @@ FacePtrVector getSelectedFaces() {
 	FacePtrVector vector;
 	
 	// Cycle through all selected faces and fill the vector 
-	g_SelectedFaceInstances.foreach(FaceVectorPopulator(vector));
+	FaceVectorPopulator populator(vector);
+	g_SelectedFaceInstances.foreach(populator);
 	
 	return vector;
 }
@@ -497,25 +498,27 @@ void addOriginToChildPrimitives() {
 	GlobalBrush()->setTextureLock(textureLockStatus);
 }
 
-void createDecalsForSelectedFaces() {
-	FacePtrVector faces = getSelectedFaces();
-	
-	if (faces.size() <= 0) {
-		gtkutil::errorDialog("No faces selected.", GlobalRadiant().getMainWindow());
-		return;
-	}
-	
-	// Create a scoped undocmd object
-	UndoableCommand cmd("createDecalsForSelectedFaces");
-	
-	int unsuitableWindings(0);
-	
-	// greebo: For each face, create a patch with fixed tesselation
-	for (std::size_t i = 0; i < faces.size(); i++) {
-		const Winding& winding = faces[i]->getWinding();
-		
-		// For now, only windings with four edges are supported
-		if (winding.numpoints == 4) {
+/**
+ * greebo: Functor class which creates a decal patch for each visited face instance.
+ */
+class DecalPatchCreator
+{
+	int _unsuitableWindings;
+
+	typedef std::list<FaceInstance*> FaceInstanceList;
+	FaceInstanceList _faceInstances;
+
+public:
+	DecalPatchCreator() :
+		_unsuitableWindings(0)
+	{}
+
+	void createDecals() {
+		for (FaceInstanceList::iterator i = _faceInstances.begin(); i != _faceInstances.end(); ++i) {
+			// Get the winding
+			const Winding& winding = (*i)->getFace().getWinding();
+
+			// Create a new decal patch
 			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
 			
 			if (patchNode == NULL) {
@@ -552,12 +555,56 @@ void createDecalsForSelectedFaces() {
 			assert(worldSpawnNode != NULL); // This must be non-NULL, otherwise we won't have faces
 			
 			worldSpawnNode->addChildNode(patchNode);
+
+			// Deselect the face instance
+			(*i)->setSelected(SelectionSystem::eFace, false);
+
+			// Select the patch
+			Node_setSelected(patchNode, true);
 		}
 	}
+
+	void operator() (FaceInstance& faceInstance) {
+		// Get the winding
+		const Winding& winding = faceInstance.getFace().getWinding();
+
+		// For now, only windings with four edges are supported
+		if (winding.numpoints == 4) {
+			_faceInstances.push_back(&faceInstance);
+		}
+		else {
+			_unsuitableWindings++;
+		}
+	}
+
+	int getNumUnsuitableWindings() const {
+		return _unsuitableWindings;
+	}
+};
+
+void createDecalsForSelectedFaces() {
+	// Sanity check	
+	if (g_SelectedFaceInstances.empty()) {
+		gtkutil::errorDialog("No faces selected.", GlobalRadiant().getMainWindow());
+		return;
+	}
 	
+	// Create a scoped undocmd object
+	UndoableCommand cmd("createDecalsForSelectedFaces");
+	
+	// greebo: For each face, create a patch with fixed tesselation
+	DecalPatchCreator creator;
+	g_SelectedFaceInstances.foreach(creator);
+
+	// Issue the command
+	creator.createDecals();
+	
+	// Check how many faces were not suitable
+	int unsuitableWindings = creator.getNumUnsuitableWindings();
+
 	if (unsuitableWindings > 0) {
 		gtkutil::errorDialog(
-			intToStr(unsuitableWindings) + " faces were not suitable (had more than 4 edges).", 
+			intToStr(unsuitableWindings) + " faces were not suitable (had more than 4 vertices).", 
 			GlobalRadiant().getMainWindow()
 		);
 	}
