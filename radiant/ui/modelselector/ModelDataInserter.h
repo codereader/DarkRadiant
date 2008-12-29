@@ -15,9 +15,19 @@ namespace {
  * VFSPopulatorVisitor subclass to fill in column data for the model tree nodes
  * created by the VFS tree populator.
  */
-class ModelDataInserter
-: public gtkutil::VFSTreePopulator::Visitor
+class ModelDataInserter : 
+	public gtkutil::VFSTreePopulator::Visitor
 {
+	bool _includeSkins;
+
+public:
+	/**
+	 * greebo: Pass TRUE to the constructor to add skins to the store.
+	 */
+	ModelDataInserter(const bool includeSkins) :
+		_includeSkins(includeSkins)
+	{}
+
 	// Required visit function
 	void visit(GtkTreeStore* store, 
 			   GtkTreeIter* iter, 
@@ -43,7 +53,11 @@ class ModelDataInserter
 						   SKIN_COLUMN, "",
 						   IMAGE_COLUMN, pixBuf,
 						   -1);
-						   
+		
+		if (!_includeSkins) {
+			return; // done
+		}
+
 		// Now check if there are any skins for this model, and add them as
 		// children if so
 		const StringList& skinList = 

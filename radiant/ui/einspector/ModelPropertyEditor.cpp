@@ -66,10 +66,12 @@ void ModelPropertyEditor::_onModelButton(GtkWidget* w,
 {
 	// Use the ModelSelector to choose a model
 	ModelSelectorResult result = ModelSelector::chooseModel(
-		self->_entity->getKeyValue(self->_key) // pass the current model
+		self->_entity->getKeyValue(self->_key), false, false // pass the current model, don't show options or skins
 	);
-	if (!result.model.empty())
+
+	if (!result.model.empty()) {
 		self->_entity->setKeyValue(self->_key, result.model);
+	}
 }
 
 void ModelPropertyEditor::_onParticleButton(GtkWidget* w,

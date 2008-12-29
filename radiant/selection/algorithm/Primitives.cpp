@@ -281,7 +281,7 @@ void createCMFromSelection() {
 				cm->addBrush(brushes[i]->getBrush());
 			}
 			
-			ui::ModelSelectorResult modelAndSkin = ui::ModelSelector::chooseModel();
+			ui::ModelSelectorResult modelAndSkin = ui::ModelSelector::chooseModel("", false, false);
 			std::string basePath = GlobalGameManager().getModPath();
 			
 			std::string modelPath = basePath + modelAndSkin.model;
@@ -307,7 +307,7 @@ void createCMFromSelection() {
 					// Close the file
 					outfile.close();
 					
-					globalOutputStream() << "CollisionModel saved to " << cmPath.string().c_str() << "\n";
+					globalOutputStream() << "CollisionModel saved to " << cmPath.string() << "\n";
 				}
 				else {
 					gtkutil::errorDialog("Couldn't save to file: " + cmPath.string(),
