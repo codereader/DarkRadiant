@@ -58,7 +58,8 @@ public:
 				 const PrimitiveParser& parser);
 
 	// Start parsing, this should not "leak" any exceptions
-	void parse();
+	// Returns TRUE if the parsing succeeded without errors or exceptions.
+	bool parse();
 
 private:
 	// Parse the version tag at the beginning, returns TRUE on success

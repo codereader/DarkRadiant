@@ -146,27 +146,29 @@ void Map::unrealiseResource() {
 }
 
 void Map::onResourceRealise() {
-    if(m_resource != 0)
-    {
-      if (isUnnamed()) {
-        m_resource->setNode(NewMapRoot(""));
-        MapFilePtr map = Node_getMapFile(m_resource->getNode());
-        if(map != NULL) {
-          map->save();
-        }
-      }
-      else
-      {
-        m_resource->load();
-      }
+	if (m_resource == NULL) {
+		return;
+	}
 
-	  // Take the new node and insert it as map root
-      GlobalSceneGraph().insert_root(m_resource->getNode());
+	if (isUnnamed() || !m_resource->load()) {
+		// Map is unnamed or load failed, reset map resource node to empty
+		m_resource->setNode(NewMapRoot(""));
+		MapFilePtr map = Node_getMapFile(m_resource->getNode());
+		
+		if (map != NULL) {
+			map->save();
+		}
 
-      map::AutoSaver().clearChanges();
+		// Rename the map to "unnamed" in any case to avoid overwriting the failed map
+		setMapName(MAP_UNNAMED_STRING);
+	}
 
-      setValid(true);
-    }
+	// Take the new node and insert it as map root
+	GlobalSceneGraph().insert_root(m_resource->getNode());
+
+	map::AutoSaver().clearChanges();
+
+	setValid(true);
 }
 
 void Map::onResourceUnrealise() {

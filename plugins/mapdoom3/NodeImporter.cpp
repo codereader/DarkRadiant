@@ -43,11 +43,11 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
 	_debug(GlobalRegistry().get("user/debug") == "1")
 {}
 
-void NodeImporter::parse() {
+bool NodeImporter::parse() {
 	// Try to parse the map version
 	if (!parseMapVersion()) {
 		// Failed => quit
-		return;
+		return false;
 	}
 
 	// Read each entity in the map, until EOF is reached
@@ -61,7 +61,12 @@ void NodeImporter::parse() {
 			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
 				gtkutil::errorDialog("Map loading cancelled", 
 									 GlobalRadiant().getMainWindow());
-				return;			
+
+				// Clear out the root node, otherwise we end up with half a map
+				scene::NodeRemover remover;
+				_root->traverse(remover); 
+
+				return false;	
 			}
 		}
 
@@ -75,11 +80,19 @@ void NodeImporter::parse() {
 				"Failed on entity " + sizetToStr(_entityCount) + "\n\n" + e.what(), 
 				GlobalRadiant().getMainWindow()
 			);
-			return;			
+
+			// Clear out the root node, otherwise we end up with half a map
+			scene::NodeRemover remover;
+			_root->traverse(remover); 
+
+			return false;			
 		}
 
 		_entityCount++;
 	}
+
+	// EOF reached, return success
+	return true;
 }
 
 bool NodeImporter::parseMapVersion() {

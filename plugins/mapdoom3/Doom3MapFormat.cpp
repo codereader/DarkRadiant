@@ -85,7 +85,7 @@ scene::INodePtr Doom3MapFormat::parsePrimitive(parser::DefTokeniser& tokeniser) 
     }
 }
 
-void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
+bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 	assert(importInfo.root != NULL);
 
 	// Read the infofile
@@ -101,21 +101,28 @@ void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 
 	// Construct a MapImporter that will do the map parsing
 	NodeImporter importer(importInfo, infoFile, *this);
-	importer.parse();
 
-	// Create the layers according to the data found in the map information file
-	const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
+	if (importer.parse()) {
+		// Create the layers according to the data found in the map information file
+		const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
 
-	for (InfoFile::LayerNameMap::const_iterator i = layers.begin(); 
-		 i != layers.end(); i++)
-	{
-		// Create the named layer with the saved ID
-		GlobalLayerSystem().createLayer(i->second, i->first);
+		for (InfoFile::LayerNameMap::const_iterator i = layers.begin(); 
+			 i != layers.end(); i++)
+		{
+			// Create the named layer with the saved ID
+			GlobalLayerSystem().createLayer(i->second, i->first);
+		}
+		
+		// Now that the graph is in place, assign the layers
+		AssignLayerMappingWalker walker(infoFile);
+		importInfo.root->traverse(walker);
+		
+		return true;
 	}
-	
-	// Now that the graph is in place, assign the layers
-	AssignLayerMappingWalker walker(infoFile);
-	importInfo.root->traverse(walker);
+	else {
+		// Importer return FALSE, propagate this failure
+		return false;
+	}
 }
 
 void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {

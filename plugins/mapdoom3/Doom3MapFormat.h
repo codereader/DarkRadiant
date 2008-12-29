@@ -32,7 +32,7 @@ public:
     /**
      * Read tokens from a map stream and create entities accordingly.
      */
-    void readGraph(const MapImportInfo& importInfo) const;
+    bool readGraph(const MapImportInfo& importInfo) const;
 
 	// Write scene graph to an ostream
 	void writeGraph(const MapExportInfo& exportInfo) const;

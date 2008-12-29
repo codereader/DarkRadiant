@@ -518,4 +518,32 @@ inline scene::Path findPath(const scene::INodePtr& node) {
 	return finder.getPath();
 }
 
+namespace scene {
+
+/**
+ * greebo: This walker removes all encountered child nodes without
+ * traversing each node's children. This deselects all removed nodes as well.
+ *
+ * Use this to clear all children from a node:
+ *
+ * NodeRemover walker();
+ * node->traverse(walker);
+ */
+class NodeRemover :
+	public scene::NodeVisitor
+{
+public:
+	bool pre(const INodePtr& node) {
+		// Copy the node, the reference might point right to 
+		// the parent's container
+		scene::INodePtr copy(node);
+
+		removeNodeFromParent(copy);
+
+		return false;
+	}
+};
+
+} // namespace scene
+
 #endif
