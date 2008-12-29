@@ -70,6 +70,19 @@ std::string TreeModel::getSelectedString(GtkTreeSelection* sel, gint colNo)
 	}
 }
 
+gboolean TreeModel::equalFuncStringContains(GtkTreeModel* model, 
+										gint column,
+										const gchar* key,
+										GtkTreeIter* iter,
+										gpointer search_data)
+{
+	// Retrieve the eclass string from the model
+	std::string str = getString(model, iter, column);
+
+	// Returning FALSE means "match".
+	return (str.find(key) != std::string::npos) ? FALSE: TRUE;
+}
+
 TreeModel::SelectionFinder::SelectionFinder(const std::string& selection, int column) : 
 	_selection(selection),
 	_needle(0),

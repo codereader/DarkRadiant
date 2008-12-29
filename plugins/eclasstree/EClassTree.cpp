@@ -78,6 +78,9 @@ GtkWidget* EClassTree::createEClassTreeView() {
 	_eclassView = GTK_TREE_VIEW(
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_eclassStore))
 	);
+
+	// Use the TreeModel's full string search function
+	gtk_tree_view_set_search_equal_func(_eclassView, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
 	
 	// Tree selection
 	_eclassSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_eclassView));
