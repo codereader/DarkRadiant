@@ -387,7 +387,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 	// To create a model we need EITHER nothing selected OR exactly one brush selected.
 	if (info.totalCount == 0 || info.brushCount == 1) {
 		// Display the model selector and block waiting for a selection (may be empty)
-		ModelSelectorResult ms = ui::ModelSelector::chooseModel();
+		ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
 		
 		// If a model was selected, create the entity and set its model key
 		if (!ms.model.empty()) {

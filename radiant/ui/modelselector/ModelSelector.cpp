@@ -35,6 +35,11 @@ ModelSelector::ModelSelector()
   								G_TYPE_STRING,
   								G_TYPE_STRING,
   								GDK_TYPE_PIXBUF)),
+  _treeStoreWithSkins(gtk_tree_store_new(N_COLUMNS, 
+  										G_TYPE_STRING,
+  										G_TYPE_STRING,
+  										G_TYPE_STRING,
+  										GDK_TYPE_PIXBUF)),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _lastModel(""),
   _lastSkin(""),
@@ -108,7 +113,7 @@ ModelSelector& ModelSelector::Instance() {
 }
 
 // Show the dialog and enter recursive main loop
-ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, bool showOptions) {
+ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, bool showOptions, bool showSkins) {
 
 	if (!_populated) {
 		// Attempt to construct the static instance. This could throw an 
@@ -130,12 +135,21 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, boo
 	if (!showOptions) {
 		gtk_widget_hide(GTK_WIDGET(_advancedOptions));
 	}
-	
-	if (!curModel.empty()) {
+
+	// Choose the model based on the "showSkins" setting
+	gtk_tree_view_set_model(
+		GTK_TREE_VIEW(_treeView), 
+		(showSkins) ? GTK_TREE_MODEL(_treeStoreWithSkins) : GTK_TREE_MODEL(_treeStore)
+	);
+
+	// If an empty string was passed for the current model, use the last selected one
+	std::string previouslySelected = (!curModel.empty()) ? curModel : _lastModel;
+
+	if (!previouslySelected.empty()) {
 		// Lookup the model path in the treemodel
-		gtkutil::TreeModel::SelectionFinder finder(curModel, FULLNAME_COLUMN);
+		gtkutil::TreeModel::SelectionFinder finder(previouslySelected, FULLNAME_COLUMN);
 		
-		GtkTreeModel* model = GTK_TREE_MODEL(_treeStore);
+		GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
 		gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
 		
 		// Get the found TreePath (may be NULL)
@@ -170,9 +184,9 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, boo
 
 // Static function to display the instance, and return the selected model to the 
 // calling function
-ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel, bool showOptions) {
+ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel, bool showOptions, bool showSkins) {
 	// Use the instance to select a model.
-	return Instance().showAndBlock(curModel, showOptions);
+	return Instance().showAndBlock(curModel, showOptions, showSkins);
 }
 
 void ModelSelector::refresh() {
@@ -217,19 +231,25 @@ void ModelSelector::populateModels()
 {
 	// Clear the treestore first
 	gtk_tree_store_clear(_treeStore);
-	
+	gtk_tree_store_clear(_treeStoreWithSkins);
+
 	// Create a VFSTreePopulator for the treestore
 	gtkutil::VFSTreePopulator pop(_treeStore);
+	gtkutil::VFSTreePopulator popSkins(_treeStoreWithSkins);
 	
 	// Use a ModelFileFunctor to add paths to the populator
-	ModelFileFunctor functor(pop);
+	ModelFileFunctor functor(pop, popSkins);
 	GlobalFileSystem().forEachFile(MODELS_FOLDER, 
 								   "*", 
 								   makeCallback1(functor), 
 								   0);
 	
-	// Fill in the column data
-	ModelDataInserter inserter;
+	// Fill in the column data (TRUE = including skins)
+	ModelDataInserter inserterSkins(true);
+	popSkins.forEachNode(inserterSkins);
+
+	// Insert data into second model (FALSE = without skins)
+	ModelDataInserter inserter(false);
 	pop.forEachNode(inserter);
 	
 	// Set the flag, we're done	

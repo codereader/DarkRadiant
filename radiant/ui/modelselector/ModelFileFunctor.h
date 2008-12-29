@@ -24,8 +24,9 @@ namespace {
  */
 class ModelFileFunctor 
 {
-	// VFSTreePopulator to populate
+	// VFSTreePopulators to populate
 	gtkutil::VFSTreePopulator& _populator;
+	gtkutil::VFSTreePopulator& _populator2;
 
 	// Progress dialog and model count
 	gtkutil::ModalProgressDialog _progress;
@@ -37,8 +38,9 @@ public:
 	typedef const std::string& first_argument_type;
 
 	// Constructor sets the populator
-	ModelFileFunctor(gtkutil::VFSTreePopulator& pop) : 
+	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) : 
 		_populator(pop),
+		_populator2(pop2),
 		_progress(GlobalRadiant().getMainWindow(), "Loading models"),
 		_count(0),
 		_guiUpdateInterleave(50)
@@ -56,7 +58,9 @@ public:
 			boost::algorithm::iends_with(file, MD5MESH_EXTENSION)) 
 		{
 			_count++;
+
 			_populator.addPath(file);
+			_populator2.addPath(file);
 			
 			if (_count % _guiUpdateInterleave == 0) {
 				_progress.setText(boost::lexical_cast<std::string>(_count)
