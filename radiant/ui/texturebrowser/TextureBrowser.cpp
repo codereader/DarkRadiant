@@ -866,6 +866,10 @@ void TextureBrowser::construct() {
 	TextureBrowser::registerPreferencesPage();
 }
 
+void TextureBrowser::update() {
+	heightChanged();
+}
+
 } // namespace ui
 
 /** greebo: The accessor method, use this to call non-static TextureBrowser methods

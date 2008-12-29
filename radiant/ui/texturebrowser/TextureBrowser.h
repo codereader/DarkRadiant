@@ -113,6 +113,9 @@ public:
 	 * 			adds the options to the preferences dialog (called by plugin.cpp).
 	 */
 	void construct();
+
+	// Triggers a refresh
+	void update();
   
 	void clearFilter();
 	typedef MemberCaller<TextureBrowser, &TextureBrowser::clearFilter> ClearFilterCaller;
