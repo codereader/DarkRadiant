@@ -69,12 +69,13 @@ void Doom3FaceTokenExporter::exportTexDefTokens(std::ostream& os) const {
 
 void Doom3FaceTokenExporter::exportFaceShaderTokens(std::ostream& os) const {
 	const FaceShader& faceShader = _face.getShader();
+	const std::string& shaderName = faceShader.getShader();
 	
-	if (string_empty(shader_get_textureName(faceShader.getShader().c_str()))) {
+	if (shaderName.empty()) {
 		os << "\"_default\" ";
 	}
 	else {
-		os << "\"" << faceShader.getShader() << "\" ";
+		os << "\"" << shaderName << "\" ";
 	}
 }
 
