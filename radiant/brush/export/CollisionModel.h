@@ -42,7 +42,7 @@ public:
 	/** greebo: Calculates the "BrushMemory" number by using the constants
 	 * 			defined in the .cpp file. 
 	 */
-	static unsigned int getBrushMemory(const BrushList& brushes);
+	static std::size_t getBrushMemory(const BrushList& brushes);
 
 private:
 	/** greebo: Adds the given vertex to the internal vertex list
@@ -51,7 +51,7 @@ private:
 	 * 
 	 * @returns: the index of the (existing/inserted) vertex.
 	 */
-	unsigned int addVertex(const Vector3& vertex);
+	std::size_t addVertex(const Vector3& vertex);
 	
 	/** greebo: Tries to lookup the index of the given vertex.
 	 * 
@@ -73,7 +73,7 @@ private:
 	 * 
 	 * @returns: the index of the (existing/inserted) edge.
 	 */
-	unsigned int addEdge(const Edge& edge);
+	std::size_t addEdge(const Edge& edge);
 	
 	/** greebo: Tries to lookup the index of the given edge, 
 	 * 			and returns the index with the factor +1/-1

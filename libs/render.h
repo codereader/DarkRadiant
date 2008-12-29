@@ -414,7 +414,7 @@ inline Normal3f normal3f_unfold_sextant(const Normal3f& normal, UnitSphereSextan
 	return normal3f_fold_sextant(normal, sextant);
 }
 
-const std::size_t c_quantise_normal = 1 << 6;
+const unsigned int c_quantise_normal = 1 << 6;
 
 /// \brief All the components of \p folded must be positive and sorted so that x > y > z.
 inline Normal3f normal3f_folded_quantised(const Normal3f& folded) {

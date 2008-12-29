@@ -110,8 +110,6 @@ int DifficultySettings::save(int id, const SettingPtr& setting) {
 		newSetting->isDefault = false;
 		return newSetting->id;
 	}
-
-	return -1;
 }
 
 void DifficultySettings::deleteSetting(int id) {
