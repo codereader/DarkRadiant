@@ -88,6 +88,9 @@
 	<grid>
 		<defaultGridPower value="3" />
 	</grid>
+	<mediaBrowser>
+		<preLoadMediaTree value="1" />
+	</mediaBrowser>
 	<mainFrame>
 		<windowLayout value="1" />
 		<window xPosition="0" yPosition="0" width="800" height="580" state="4" />
