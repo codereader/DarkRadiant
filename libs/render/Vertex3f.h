@@ -13,6 +13,11 @@ public:
 	Vertex3f()
 	{}
 
+	// Construct from a Vector3
+	Vertex3f(const Vector3& other) :
+		Vector3(other)
+	{}
+
 	/** Construct a Vertex3f from 3 individual values
 	 */
 	Vertex3f(double _x, double _y, double _z) : 

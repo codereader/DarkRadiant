@@ -540,19 +540,29 @@ public:
 	Colour4b colour;
 	Vertex3f vertex;
 
-	PointVertex() {}
+	PointVertex()
+	{}
 
-	PointVertex(Vertex3f _vertex)
-			: colour(Colour4b(255, 255, 255, 255)), vertex(_vertex) {}
+	PointVertex(const Vertex3f& _vertex) : 
+		colour(Colour4b(255, 255, 255, 255)), 
+		vertex(_vertex)
+	{}
 
-	PointVertex(Vertex3f _vertex, Colour4b _colour)
-			: colour(_colour), vertex(_vertex) {}
+	PointVertex(const Vertex3f& _vertex, const Colour4b& _colour) : 
+		colour(_colour), 
+		vertex(_vertex)
+	{}
+
+	PointVertex(const Vector3& vector) :
+		colour(255, 255, 255, 255),
+		vertex(vector)
+	{}
 
 	// greebo: Same as above, but with a Vector3 as <point> argument
-	PointVertex(const Vector3& point, const Colour4b& _colour) {
-		vertex = Vertex3f(point);
-		colour = _colour;
-	}
+	PointVertex(const Vector3& point, const Colour4b& _colour) :
+		colour(_colour),
+		vertex(point)
+	{}
 
 	bool operator< (const PointVertex& other) const {
 		if (vertex != other.vertex) {
@@ -615,35 +625,41 @@ public:
 	}
 };
 
-class RenderablePointVector : public OpenGLRenderable {
-	std::vector<PointVertex> m_vector;
-	const GLenum m_mode;
+class RenderablePointVector : 
+	public OpenGLRenderable
+{
+	std::vector<PointVertex> _vector;
+	const GLenum _mode;
 public:
-	RenderablePointVector(GLenum mode)
-			: m_mode(mode) {}
+	RenderablePointVector(GLenum mode) : 
+		_mode(mode)
+	{}
 
 	void render(RenderStateFlags state) const {
-		if (m_vector.size() > 0)
-		{
-			pointvertex_gl_array(&m_vector.front());
-			glDrawArrays(m_mode, 0, GLsizei(m_vector.size()));
+		if (!_vector.empty()) {
+			pointvertex_gl_array(&_vector.front());
+			glDrawArrays(_mode, 0, GLsizei(_vector.size()));
 		}
 	}
 
 	std::size_t size() const {
-		return m_vector.size();
+		return _vector.size();
 	}
+
 	bool empty() const {
-		return m_vector.empty();
+		return _vector.empty();
 	}
+
 	void clear() {
-		m_vector.clear();
+		_vector.clear();
 	}
+
 	void reserve(std::size_t size) {
-		m_vector.reserve(size);
+		_vector.reserve(size);
 	}
+
 	void push_back(const PointVertex& point) {
-		m_vector.push_back(point);
+		_vector.push_back(point);
 	}
 };
 
