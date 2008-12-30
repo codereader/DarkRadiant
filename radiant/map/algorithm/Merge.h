@@ -3,6 +3,7 @@
 
 #include "iscenegraph.h"
 #include "itraversable.h"
+#include "scenelib.h"
 
 namespace map {
 
@@ -35,10 +36,14 @@ class MapMergeEntities :
 	// The target path (usually GlobalSceneGraph().root())
 	mutable scene::Path m_path;
 
+	scene::LayerList _targetLayers;
+
 public:
 	MapMergeEntities(const scene::Path& root) : 
 		m_path(root) 
-	{}
+	{
+		_targetLayers.insert(GlobalLayerSystem().getFirstVisibleLayer());
+	}
 
 	virtual bool pre(const scene::INodePtr& node) {
 		// greebo: Check if the visited node is the worldspawn of the other map
@@ -54,13 +59,16 @@ public:
 				m_path.top()->addChildNode(node);
 				
 				m_path.push(node);
-				
+
 				// Select all the children of the visited node (these are primitives)
 				NodeSelector visitor;
 				node->traverse(visitor);
 			}
 			else {
+				// The target map already has a worldspawn
 				m_path.push(world_node);
+
+				// Merge all children of this node into the target worldspawn
 				MapMergeAll visitor(m_path);
 				node->traverse(visitor);
 			}
@@ -83,15 +91,18 @@ public:
 			// Select the visited node
 			Node_setSelected(node, true);
 		}
+
+		// Add the node to the target layer set
+		scene::AssignNodeToLayersWalker walker(_targetLayers);
+		Node_traverseSubgraph(node, walker);
 		
 		// Only traverse top-level entities, don't traverse the children
 		return false;
 	}
 
-  virtual void post(const scene::INodePtr& node)
-  {
-    m_path.pop();
-  }
+	virtual void post(const scene::INodePtr& node) {
+		m_path.pop();
+	}
 };
 
 /// Merges the map graph rooted at \p node into the global scene-graph.
