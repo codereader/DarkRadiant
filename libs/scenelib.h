@@ -196,6 +196,27 @@ inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerLi
 	}
 }
 
+/**
+ * This assigns every visited node to the given set of layers. 
+ * Any previous assignments of the node get overwritten by this routine.
+ */
+class AssignNodeToLayersWalker :
+	public scene::NodeVisitor
+{
+	const scene::LayerList& _layers;
+public:
+	AssignNodeToLayersWalker(const scene::LayerList& layers) :
+		_layers(layers)
+	{}
+
+	bool pre(const INodePtr& node) {
+		// Pass the call to the single-node method
+		assignNodeToLayers(node, _layers);
+
+		return true; // full traverse
+	}
+};
+
 class UpdateNodeVisibilityWalker :
 	public scene::NodeVisitor
 {
