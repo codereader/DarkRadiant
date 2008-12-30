@@ -3,7 +3,9 @@
 
 #include "iuimanager.h"
 #include "igroupdialog.h"
+#include "ipreferencesystem.h"
 #include "ishaders.h"
+#include "iregistry.h"
 #include "select.h"
 #include "generic/callback.h"
 #include "gtkutil/IconTextMenuItem.h"
@@ -49,6 +51,7 @@ namespace {
 		N_COLUMNS
 	};
 	
+	const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
 }
 
 // Constructor
@@ -310,6 +313,13 @@ void MediaBrowser::reloadMedia() {
 	gtk_widget_queue_draw(_widget);
 } 
 
+void MediaBrowser::init() {
+	// Check for pre-loading the textures
+	if (GlobalRegistry().get(RKEY_MEDIA_BROWSER_PRELOAD) == "1") {
+		getInstance().populate();
+	}
+}
+
 void MediaBrowser::populate() {
 	// Set the flag to true to avoid double-entering this function
 	_isPopulated = true;
@@ -387,4 +397,11 @@ void MediaBrowser::toggle() {
 	GlobalGroupDialog().togglePage("mediabrowser");
 }
 
+void MediaBrowser::registerPreferences() {
+	// Add a page to the given group
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Media Browser");
+	
+	page->appendCheckBox("", "Load media tree at startup", RKEY_MEDIA_BROWSER_PRELOAD);
 }
+
+} // namespace ui

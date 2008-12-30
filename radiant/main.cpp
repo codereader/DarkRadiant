@@ -75,6 +75,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "map/Map.h"
 #include "mainframe.h"
 #include "ui/mru/MRU.h"
+#include "ui/mediabrowser/MediaBrowser.h"
 #include "settings/GameManager.h"
 #include "ui/splash/Splash.h"
 #include "modulesystem/ModuleLoader.h"
@@ -218,12 +219,14 @@ int main (int argc, char* argv[]) {
 
 		Radiant_Initialise();
 		
-		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.92f);
-		
-		g_pParentWnd = 0;
-	  g_pParentWnd = new MainFrame();
-	  
-	  // Load the shortcuts from the registry
+		// Initialise the mediabrowser
+		ui::Splash::Instance().setProgressAndText("Initialising MediaBrowser", 0.92f);
+		ui::MediaBrowser::init();
+
+		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.95f);
+		g_pParentWnd = new MainFrame();
+
+		// Load the shortcuts from the registry
    		GlobalEventManager().loadAccelerators();
 	   	
    		// Update all accelerators, at this point all commands should be setup

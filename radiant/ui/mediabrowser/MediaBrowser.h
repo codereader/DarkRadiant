@@ -90,10 +90,20 @@ public:
 	 */
 	void reloadMedia();
 
+	/**
+	 * Called during startup, checks for preloading texture tree.
+	 */
+	static void init();
+
 	/** 
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
 	 */
 	static void toggle();
+
+	/**
+	 * greebo: Registers the preference page.
+	 */
+	static void registerPreferences();
 };
 
 }

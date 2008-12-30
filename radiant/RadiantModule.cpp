@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "camera/GlobalCamera.h"
 #include "xyview/GlobalXYWnd.h"
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "ui/mediabrowser/MediaBrowser.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -211,6 +212,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     MainFrame_Construct();
     GlobalCamera().construct();
     GlobalXYWnd().construct();
+	ui::MediaBrowser::registerPreferences();
     GlobalTextureBrowser().construct();
     Entity_Construct();
     map::AutoSaver().init();
