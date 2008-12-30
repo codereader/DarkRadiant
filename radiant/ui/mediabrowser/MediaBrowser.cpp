@@ -11,6 +11,7 @@
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/IconTextColumn.h"
 
 #include <gtk/gtk.h>
 
@@ -75,15 +76,10 @@ MediaBrowser::MediaBrowser()
 	GtkTreeViewColumn* col = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_spacing(col, 3);
 	
-	GtkCellRenderer* pixRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(col, pixRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(col, pixRenderer, "pixbuf", ICON_COLUMN, NULL);
-
-	GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(col, textRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(col, textRenderer, "text", DISPLAYNAME_COLUMN, NULL);
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);
+	gtk_tree_view_append_column(
+		GTK_TREE_VIEW(_treeView), 
+		gtkutil::IconTextColumn("Shader", DISPLAYNAME_COLUMN, ICON_COLUMN)
+	);
 	
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
 	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
