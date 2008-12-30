@@ -24,24 +24,30 @@ bool BezierCurve_IsCurved(BezierCurve *pCurve) {
   if(v1 == g_vector3_identity || vTemp == v1) // return 0 if 1->2 == 0 or 1->2 == 1->3
     return false;
 
-  vector3_normalise(v1);
-  vector3_normalise(v2);
-  if (v1 == v2)
+  v1.normalise();
+  v2.normalise();
+  
+  if (v1 == v2) {
     return false;
+  }
   
   Vector3 v3(vTemp);
   const double width = v3.getLength();
   v3 *= 1.0 / width;
 
-  if(v1 == v3 && v2 == v3)
+  if (v1 == v3 && v2 == v3) {
     return false;
+  }
   
   const double angle = acos(v1.dot(v2)) / c_pi;
 
   const double index = width * angle;
 
-  if(index > GlobalRegistry().getFloat(RKEY_PATCH_SUBDIVIDE_THRESHOLD))
-    return true;
+  static float subdivideThreshold = GlobalRegistry().getFloat(RKEY_PATCH_SUBDIVIDE_THRESHOLD);
+
+  if (index > subdivideThreshold) {
+		return true;
+  }
   return false;
 }
 
