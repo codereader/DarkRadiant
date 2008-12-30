@@ -35,6 +35,7 @@ class OrthoContextMenu
 	GtkWidget* _addSpkr;
 	GtkWidget* _convertStatic;
 	GtkWidget* _revertWorldspawn;
+	GtkWidget* _makeVisportal;
 
 	GtkWidget* _addToLayer;
 	GtkWidget* _moveToLayer;
@@ -63,6 +64,8 @@ class OrthoContextMenu
 
 	// mohij: changes the "Add PlayerStart" entry if an info_player_start already exists
 	void checkPlayerStart();
+
+	void checkMakeVisportal();
 
 	// Refreshes the layer submenus
 	void repopulateLayerMenus();

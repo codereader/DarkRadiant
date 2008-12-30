@@ -58,6 +58,8 @@ namespace {
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
     const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
+	const char* MAKE_VISPORTAL = "Make Visportal";
+	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
 
 	const char* LAYER_ICON = "layers.png";
 	const char* ADD_TO_LAYER_TEXT = "Add to Layer...";
@@ -100,6 +102,13 @@ OrthoContextMenu::OrthoContextMenu()
 	if (ev != NULL) {
 		ev->connectWidget(_createLayer);
 	}
+
+	// Add a "Make Visportal" item and connect it to the corresponding event
+	_makeVisportal = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(MAKE_VISPORTAL_ICON), MAKE_VISPORTAL);
+	ev = GlobalEventManager().findEvent("MakeVisportal");
+	if (ev != NULL) {
+		ev->connectWidget(_makeVisportal);
+	}
 	
 	g_signal_connect(G_OBJECT(_addEntity), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_addPlayerStart), "activate", G_CALLBACK(callbackAddPlayerStart), this);
@@ -123,6 +132,7 @@ OrthoContextMenu::OrthoContextMenu()
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _movePlayerStart);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _convertStatic);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _revertWorldspawn);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _makeVisportal);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _createLayer);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _addToLayer);
@@ -141,6 +151,7 @@ void OrthoContextMenu::show(const Vector3& point) {
 	checkMonsterClip(); // enable the "Add MonsterClip" entry only if one or more model is selected
 	checkPlayerStart(); // change the "Add PlayerStart" entry if an info_player_start is already existant 
 	checkAddOptions(); // disable the "Add *" command if an entity is already selected
+	checkMakeVisportal(); // enable or disable the make visportal command
 	repopulateLayerMenus(); // refresh the layer menus
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
@@ -166,6 +177,15 @@ void OrthoContextMenu::repopulateLayerMenus() {
 	gtk_widget_set_sensitive(_addToLayer, info.totalCount > 0);
 	gtk_widget_set_sensitive(_moveToLayer, info.totalCount > 0);
 	gtk_widget_set_sensitive(_removeFromLayer, info.totalCount > 0);
+}
+
+void OrthoContextMenu::checkMakeVisportal() {
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	gtk_widget_set_sensitive(
+		_makeVisportal, 
+		(info.totalCount > 0 && info.totalCount == info.brushCount) ? TRUE : FALSE
+	);
 }
 
 // Check if the convert to static command should be enabled
