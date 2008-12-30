@@ -465,12 +465,14 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
 
 		// If we are using a lighting program and this renderable is lit, set
 		// up the lighting calculation
-		if(current.m_program != 0 && i->light != 0) 
+		const RendererLight* light = i->light;
+
+		if (current.m_program != 0 && light != NULL) 
         {
 			// Get the light shader and examine its first (and only valid) layer
-			IShaderPtr lightShader = i->light->getShader()->getIShader();
+			IShaderPtr lightShader = light->getShader()->getIShader();
       
-			if(lightShader->firstLayer() != 0) 
+			if (lightShader->firstLayer() != 0) 
             {
 				// Get the XY and Z falloff texture numbers.
 	        	GLuint attenuation_xy = 
@@ -493,24 +495,24 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
 
                 // Calculate the world-space to light-space transformation
                 // matrix
-                AABB lightBounds((*i).light->aabb());
+                AABB lightBounds(light->aabb());
 
                 Matrix4 world2light(g_matrix4_identity);
 
-                if (i->light->isProjected()) 
+                if (light->isProjected()) 
                 {
-                  world2light = (*i).light->projection();
-                  matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
+                  world2light = light->projection();
+                  matrix4_multiply_by_matrix4(world2light, light->rotation().getTransposed());
                   
                   // greebo: old code: matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
-                  matrix4_translate_by_vec3(world2light, -(i->light->offset()));
+                  matrix4_translate_by_vec3(world2light, -(light->offset()));
                 }
                 else 
                 {
                   matrix4_translate_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
                   matrix4_scale_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
                   matrix4_scale_by_vec3(world2light, Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
-                  matrix4_multiply_by_matrix4(world2light, i->light->rotation().getTransposed());
+                  matrix4_multiply_by_matrix4(world2light, light->rotation().getTransposed());
                   matrix4_translate_by_vec3(world2light, -lightBounds.origin); // world->lightBounds
                 }
 
@@ -520,14 +522,14 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
                     ambient = 1.0;
 
                 // Bind the GL program parameters
-                Vector3 lightOrigin = (i->light->isProjected() 
-                                       ? i->light->worldOrigin()
-                                       : lightBounds.origin + i->light->offset());
+                Vector3 lightOrigin = (light->isProjected() 
+                                       ? light->worldOrigin()
+                                       : lightBounds.origin + light->offset());
                 current.m_program->setParameters(
                     viewer,
-                    *(*i).transform,
+                    *i->transform,
                     lightOrigin,
-                    (*i).light->colour(),
+                    light->colour(),
                     world2light,
                     ambient
                 );

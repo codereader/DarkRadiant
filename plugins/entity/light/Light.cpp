@@ -151,6 +151,10 @@ void Light::construct() {
 	m_doom3Radius.setCenterColour(m_entity.getEntityClass()->getColour());
 
 	m_entity.setIsContainer(true);
+
+	// Load the light colour (might be inherited)
+	m_colour.colourChanged(m_entity.getKeyValue("_color"));
+	m_shader.valueChanged(m_entity.getKeyValue("texture"));
 }
 
 void Light::updateOrigin() {
