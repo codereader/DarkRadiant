@@ -226,6 +226,9 @@ void Manager::initEnginePath() {
 			currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE)
 		);
 	}
+
+	// Normalise the path in any case
+	enginePath = os::standardPathWithSlash(enginePath);
 	
 	// Take this path and store it into the Registry, it's expected to be there
 	GlobalRegistry().set(RKEY_ENGINE_PATH, enginePath);
@@ -250,11 +253,11 @@ void Manager::initEnginePath() {
 				msg += "Engine path does not exist.\n";
 			}
 			
-			if (!_fsGame.empty() && !file_exists(_modBasePath.c_str())) {
+			if (!_fsGame.empty() && !file_exists(_modPath.c_str())) {
 				msg += "The fs_game folder does not exist.\n";
 			}
 
-			if (!_fsGameBase.empty() && !file_exists(_modPath.c_str())) {
+			if (!_fsGameBase.empty() && !file_exists(_modBasePath.c_str())) {
 				msg += "The fs_game_base folder does not exist.\n";
 			}
 
@@ -280,9 +283,23 @@ void Manager::initEnginePath() {
 
 bool Manager::settingsValid() const {
 	if (file_exists(_enginePath.c_str())) {
-		// Return true, if the fs_game is empty OR the modPath exists
-		return (_fsGame.empty() || file_exists(_modBasePath.c_str())); 
+
+		// Check the mod base path, if appropriate
+		if (!_fsGameBase.empty() && !file_exists(_modBasePath.c_str())) {
+			// Mod base name is not empty, but folder doesnt' exist
+			return false;
+		}
+
+		// Check the mod path, if appropriate
+		if (!_fsGame.empty() && !file_exists(_modPath.c_str())) {
+			// Mod name is not empty, but mod folder doesnt' exist
+			return false;
+		}
+
+		return true; // all settings there
 	}
+
+	// Engine path doesn't exist
 	return false;
 }
 
