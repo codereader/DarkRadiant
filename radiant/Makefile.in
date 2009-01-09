@@ -129,6 +129,8 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-LightInspector.$(OBJEXT) \
 	darkradiant-CommandList.$(OBJEXT) \
 	darkradiant-ShortcutChooser.$(OBJEXT) \
+	darkradiant-FilterDialog.$(OBJEXT) \
+	darkradiant-FilterEditor.$(OBJEXT) \
 	darkradiant-patchmanip.$(OBJEXT) darkradiant-XYWnd.$(OBJEXT) \
 	darkradiant-GlobalXYWnd.$(OBJEXT) \
 	darkradiant-TexToolItem.$(OBJEXT) \
@@ -465,6 +467,8 @@ darkradiant_SOURCES = main.cpp \
 					  ui/lightinspector/LightInspector.cpp \
 					  ui/commandlist/CommandList.cpp \
 					  ui/commandlist/ShortcutChooser.cpp \
+					  ui/filterdialog/FilterDialog.cpp \
+					  ui/filterdialog/FilterEditor.cpp \
 					  patchmanip.cpp \
 					  xyview/XYWnd.cpp \
 					  xyview/GlobalXYWnd.cpp \
@@ -664,6 +668,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FacePlane.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FaceShader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FaceTexDef.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FilterDialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FilterEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FiltersMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FindMapElements.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FindShader.Po@am__quote@
@@ -2074,6 +2080,34 @@ darkradiant-ShortcutChooser.obj: ui/commandlist/ShortcutChooser.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/commandlist/ShortcutChooser.cpp' object='darkradiant-ShortcutChooser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ShortcutChooser.obj `if test -f 'ui/commandlist/ShortcutChooser.cpp'; then $(CYGPATH_W) 'ui/commandlist/ShortcutChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/commandlist/ShortcutChooser.cpp'; fi`
+
+darkradiant-FilterDialog.o: ui/filterdialog/FilterDialog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FilterDialog.o -MD -MP -MF $(DEPDIR)/darkradiant-FilterDialog.Tpo -c -o darkradiant-FilterDialog.o `test -f 'ui/filterdialog/FilterDialog.cpp' || echo '$(srcdir)/'`ui/filterdialog/FilterDialog.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FilterDialog.Tpo $(DEPDIR)/darkradiant-FilterDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/filterdialog/FilterDialog.cpp' object='darkradiant-FilterDialog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FilterDialog.o `test -f 'ui/filterdialog/FilterDialog.cpp' || echo '$(srcdir)/'`ui/filterdialog/FilterDialog.cpp
+
+darkradiant-FilterDialog.obj: ui/filterdialog/FilterDialog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FilterDialog.obj -MD -MP -MF $(DEPDIR)/darkradiant-FilterDialog.Tpo -c -o darkradiant-FilterDialog.obj `if test -f 'ui/filterdialog/FilterDialog.cpp'; then $(CYGPATH_W) 'ui/filterdialog/FilterDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/filterdialog/FilterDialog.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FilterDialog.Tpo $(DEPDIR)/darkradiant-FilterDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/filterdialog/FilterDialog.cpp' object='darkradiant-FilterDialog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FilterDialog.obj `if test -f 'ui/filterdialog/FilterDialog.cpp'; then $(CYGPATH_W) 'ui/filterdialog/FilterDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/filterdialog/FilterDialog.cpp'; fi`
+
+darkradiant-FilterEditor.o: ui/filterdialog/FilterEditor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FilterEditor.o -MD -MP -MF $(DEPDIR)/darkradiant-FilterEditor.Tpo -c -o darkradiant-FilterEditor.o `test -f 'ui/filterdialog/FilterEditor.cpp' || echo '$(srcdir)/'`ui/filterdialog/FilterEditor.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FilterEditor.Tpo $(DEPDIR)/darkradiant-FilterEditor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/filterdialog/FilterEditor.cpp' object='darkradiant-FilterEditor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FilterEditor.o `test -f 'ui/filterdialog/FilterEditor.cpp' || echo '$(srcdir)/'`ui/filterdialog/FilterEditor.cpp
+
+darkradiant-FilterEditor.obj: ui/filterdialog/FilterEditor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FilterEditor.obj -MD -MP -MF $(DEPDIR)/darkradiant-FilterEditor.Tpo -c -o darkradiant-FilterEditor.obj `if test -f 'ui/filterdialog/FilterEditor.cpp'; then $(CYGPATH_W) 'ui/filterdialog/FilterEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/filterdialog/FilterEditor.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FilterEditor.Tpo $(DEPDIR)/darkradiant-FilterEditor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/filterdialog/FilterEditor.cpp' object='darkradiant-FilterEditor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FilterEditor.obj `if test -f 'ui/filterdialog/FilterEditor.cpp'; then $(CYGPATH_W) 'ui/filterdialog/FilterEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/filterdialog/FilterEditor.cpp'; fi`
 
 darkradiant-patchmanip.o: patchmanip.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-patchmanip.o -MD -MP -MF $(DEPDIR)/darkradiant-patchmanip.Tpo -c -o darkradiant-patchmanip.o `test -f 'patchmanip.cpp' || echo '$(srcdir)/'`patchmanip.cpp
