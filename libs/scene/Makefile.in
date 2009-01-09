@@ -50,7 +50,7 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 pkglibLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-libscenegraph_la_LIBADD =
+libscenegraph_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la
 am_libscenegraph_la_OBJECTS = InstanceWalkers.lo TraversableNodeSet.lo \
 	Node.lo UndoableObject.lo
 libscenegraph_la_OBJECTS = $(am_libscenegraph_la_OBJECTS)
@@ -208,6 +208,7 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
 pkglib_LTLIBRARIES = libscenegraph.la
 libscenegraph_la_LDFLAGS = -release @PACKAGE_VERSION@
+libscenegraph_la_LIBADD = $(top_builddir)/libs/math/libmath.la
 libscenegraph_la_SOURCES = InstanceWalkers.cpp \
 			 			  TraversableNodeSet.cpp \
 						  Node.cpp \

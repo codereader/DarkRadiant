@@ -50,7 +50,8 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 pkglibLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
-libgtkutil_la_LIBADD =
+libgtkutil_la_DEPENDENCIES =  \
+	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_libgtkutil_la_OBJECTS = GLWidget.lo PanedPosition.lo \
 	VFSTreePopulator.lo messagebox.lo nonmodal.lo Timer.lo \
 	WindowPosition.lo idledraw.lo PersistentTransientWindow.lo \
@@ -219,7 +220,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 
 AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libgtkutil.la
-libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@
+libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ $(GTKGLEXT_LIBS) $(GTK_LIBS)
+libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = GLWidget.cpp \
 					   PanedPosition.cpp \
 					   VFSTreePopulator.cpp \

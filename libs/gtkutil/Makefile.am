@@ -6,7 +6,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 AM_CXXFLAGS = -fPIC
 
 pkglib_LTLIBRARIES = libgtkutil.la
-libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@
+libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ $(GTKGLEXT_LIBS) $(GTK_LIBS)
+libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = GLWidget.cpp \
 					   PanedPosition.cpp \
 					   VFSTreePopulator.cpp \
