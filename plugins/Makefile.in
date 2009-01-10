@@ -150,6 +150,7 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 builddir = @builddir@
+conv_plugin = @conv_plugin@
 datadir = @datadir@
 datarootdir = @datarootdir@
 difficulty_plugin = @difficulty_plugin@
@@ -194,7 +195,7 @@ SUBDIRS = eventmanager archivezip eclassmgr eclasstree entity \
 	entitylist filetypes filters grid image mapdoom3 md5model \
 	model particles scenegraph shaders skins uimanager undo vfspk3 \
 	xmlregistry @sound_module@ @sr_plugin@ @obj_plugin@ \
-	@difficulty_plugin@ $(am__empty)
+	@difficulty_plugin@ @conv_plugin@ $(am__empty)
 all: all-recursive
 
 .SUFFIXES:

@@ -179,6 +179,7 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 builddir = @builddir@
+conv_plugin = @conv_plugin@
 datadir = @datadir@
 datarootdir = @datarootdir@
 difficulty_plugin = @difficulty_plugin@
