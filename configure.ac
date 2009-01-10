@@ -29,10 +29,12 @@ then
     sr_plugin="dm.stimresponse"
     obj_plugin="dm.objectives"
     difficulty_plugin="dm.difficulty"
+    conv_plugin="dm.conversation"
 fi
 AC_SUBST([sr_plugin])
 AC_SUBST([obj_plugin])
 AC_SUBST([difficulty_plugin])
+AC_SUBST([conv_plugin])
 
 # Check for required libraries
 
@@ -164,7 +166,8 @@ AC_CONFIG_FILES([Makefile
                  plugins/xmlregistry/Makefile
                  plugins/dm.stimresponse/Makefile
                  plugins/dm.objectives/Makefile
-                 plugins/dm.difficulty/Makefile])
+                 plugins/dm.difficulty/Makefile
+                 plugins/dm.conversation/Makefile])
 
 AC_OUTPUT
 
