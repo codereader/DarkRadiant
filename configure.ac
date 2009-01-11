@@ -131,7 +131,8 @@ AC_SUBST([CXXFLAGS])
 
 # Generate output files
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile 
+AC_CONFIG_FILES([install/darkradiant.desktop
+                 Makefile 
                  radiant/Makefile
                  libs/Makefile
                  libs/ddslib/Makefile
