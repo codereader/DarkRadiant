@@ -21703,7 +21703,7 @@ fi
 # Generate output files
 ac_config_headers="$ac_config_headers config.h"
 
-ac_config_files="$ac_config_files Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/eclasstree/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile plugins/dm.conversation/Makefile"
+ac_config_files="$ac_config_files install/darkradiant.desktop Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/eclasstree/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile plugins/dm.conversation/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -22292,6 +22292,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+    "install/darkradiant.desktop") CONFIG_FILES="$CONFIG_FILES install/darkradiant.desktop" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "radiant/Makefile") CONFIG_FILES="$CONFIG_FILES radiant/Makefile" ;;
     "libs/Makefile") CONFIG_FILES="$CONFIG_FILES libs/Makefile" ;;

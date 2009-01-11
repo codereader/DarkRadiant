@@ -8,7 +8,7 @@ bitmapsdir = $(pkgdatadir)/bitmaps
 bitmaps_DATA = $(top_srcdir)/install/bitmaps/*
 
 applicationsdir = $(datadir)/applications
-applications_DATA = tools/linux/darkradiant.desktop
+applications_DATA = $(top_builddir)/install/darkradiant.desktop
 
 # Install XML config files
 pkgdata_DATA = $(top_srcdir)/install/colours.xml \

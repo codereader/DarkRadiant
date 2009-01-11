@@ -35,8 +35,10 @@ host_triplet = @host@
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure AUTHORS ChangeLog NEWS config.guess \
-	config.sub depcomp install-sh ltmain.sh missing
+	$(top_srcdir)/configure \
+	$(top_srcdir)/install/darkradiant.desktop.in AUTHORS ChangeLog \
+	NEWS config.guess config.sub depcomp install-sh ltmain.sh \
+	missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -45,7 +47,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = install/darkradiant.desktop
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -227,7 +229,7 @@ game_DATA = $(top_srcdir)/install/games/doom3.game
 bitmapsdir = $(pkgdatadir)/bitmaps
 bitmaps_DATA = $(top_srcdir)/install/bitmaps/*
 applicationsdir = $(datadir)/applications
-applications_DATA = tools/linux/darkradiant.desktop
+applications_DATA = $(top_builddir)/install/darkradiant.desktop
 
 # Install XML config files
 pkgdata_DATA = $(top_srcdir)/install/colours.xml \
@@ -294,6 +296,8 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+install/darkradiant.desktop: $(top_builddir)/config.status $(top_srcdir)/install/darkradiant.desktop.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo
