@@ -61,13 +61,16 @@ am__vpath_adj = case $$p in \
     *) f=$$p;; \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
-am__installdirs = "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" \
+am__installdirs = "$(DESTDIR)$(applicationsdir)" \
+	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" \
 	"$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)"
+applicationsDATA_INSTALL = $(INSTALL_DATA)
 bitmapsDATA_INSTALL = $(INSTALL_DATA)
 gameDATA_INSTALL = $(INSTALL_DATA)
 glprogsDATA_INSTALL = $(INSTALL_DATA)
 pkgdataDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(bitmaps_DATA) $(game_DATA) $(glprogs_DATA) $(pkgdata_DATA)
+DATA = $(applications_DATA) $(bitmaps_DATA) $(game_DATA) \
+	$(glprogs_DATA) $(pkgdata_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
@@ -223,6 +226,8 @@ gamedir = $(pkgdatadir)/games
 game_DATA = $(top_srcdir)/install/games/doom3.game 
 bitmapsdir = $(pkgdatadir)/bitmaps
 bitmaps_DATA = $(top_srcdir)/install/bitmaps/*
+applicationsdir = $(datadir)/applications
+applications_DATA = tools/linux/darkradiant.desktop
 
 # Install XML config files
 pkgdata_DATA = $(top_srcdir)/install/colours.xml \
@@ -298,6 +303,23 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool
+install-applicationsDATA: $(applications_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(applicationsdir)" || $(MKDIR_P) "$(DESTDIR)$(applicationsdir)"
+	@list='$(applications_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(applicationsDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(applicationsdir)/$$f'"; \
+	  $(applicationsDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(applicationsdir)/$$f"; \
+	done
+
+uninstall-applicationsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(applications_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(applicationsdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(applicationsdir)/$$f"; \
+	done
 install-bitmapsDATA: $(bitmaps_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(bitmapsdir)" || $(MKDIR_P) "$(DESTDIR)$(bitmapsdir)"
@@ -650,7 +672,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -697,8 +719,8 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-bitmapsDATA install-gameDATA \
-	install-glprogsDATA install-pkgdataDATA
+install-data-am: install-applicationsDATA install-bitmapsDATA \
+	install-gameDATA install-glprogsDATA install-pkgdataDATA
 
 install-dvi: install-dvi-recursive
 
@@ -734,8 +756,8 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-bitmapsDATA uninstall-gameDATA \
-	uninstall-glprogsDATA uninstall-pkgdataDATA
+uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
+	uninstall-gameDATA uninstall-glprogsDATA uninstall-pkgdataDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
 	install-strip
@@ -747,15 +769,16 @@ uninstall-am: uninstall-bitmapsDATA uninstall-gameDATA \
 	distclean distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-bitmapsDATA install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-gameDATA \
-	install-glprogsDATA install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-pkgdataDATA install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am \
+	install-applicationsDATA install-bitmapsDATA install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-gameDATA install-glprogsDATA \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-pkgdataDATA \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
+	uninstall uninstall-am uninstall-applicationsDATA \
 	uninstall-bitmapsDATA uninstall-gameDATA uninstall-glprogsDATA \
 	uninstall-pkgdataDATA
 
