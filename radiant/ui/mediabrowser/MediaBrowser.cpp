@@ -95,6 +95,9 @@ MediaBrowser::MediaBrowser()
 		this,				// userdata
 		NULL				// no destroy notify
 	);
+
+	// Use the TreeModel's full string search function
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(_treeView), gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
 	
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
 	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);

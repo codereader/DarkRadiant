@@ -216,6 +216,9 @@ GtkWidget* ModelSelector::createTreeView()
         GTK_SORT_ASCENDING
     );
 
+	// Use the TreeModel's full string search function
+	gtk_tree_view_set_search_equal_func(_treeView, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+
 	// Get the selection object and connect to its changed signal
 	_selection = gtk_tree_view_get_selection(_treeView);
 	g_signal_connect(
