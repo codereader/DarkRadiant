@@ -239,7 +239,8 @@ void TextureBrowser::heightChanged() {
 }
 
 void TextureBrowser::evaluateHeight() {
-	if (m_heightChanged) {
+	// greebo: Let the texture browser re-evaluate the scrollbar each frame
+	//if (m_heightChanged) {
 		m_heightChanged = false;
 
 		m_nTotalHeight = 0;
@@ -257,7 +258,7 @@ void TextureBrowser::evaluateHeight() {
 	      nextTexturePos(layout, shader->getTexture(), &x, &y);
 	      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getTexture()) + 4);
 	    }
-	}
+	//}
 }
 
 int TextureBrowser::getTotalHeight() {
@@ -727,6 +728,7 @@ gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, Text
 	
     GlobalOpenGL_debugAssertNoErrors();
     self->evaluateHeight();
+	self->updateScroll();
     self->draw();
     GlobalOpenGL_debugAssertNoErrors();
 
