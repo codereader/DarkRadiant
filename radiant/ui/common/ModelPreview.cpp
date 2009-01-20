@@ -78,6 +78,11 @@ void ModelPreview::setSize(int size) {
 	gtk_widget_set_size_request(_glWidget, size, size);	
 }
 
+void ModelPreview::clear() {
+	_modelCache.clear();
+	_model = model::IModelPtr();
+}
+
 // Initialise the preview GL stuff
 
 void ModelPreview::initialisePreview() {
@@ -132,28 +137,44 @@ void ModelPreview::setModel(const std::string& model) {
 	// Copy the model string to a local variable
 	std::string modelToLoad = model;
 
-	// Load the model, using a lowercase version of the file extension to
-	// identify the loader module to use
-	std::string ldrName = os::getExtension(modelToLoad);
-	boost::algorithm::to_lower(ldrName);
+	// Check the model cache if the model is already there
+	ModelMap::iterator foundModel = _modelCache.find(model);
 
-	// greebo: If the extension is empty, this might be a modeldef
-	IModelDefPtr modelDef = GlobalEntityClassManager().findModel(modelToLoad);
-	if (modelDef != NULL) {
-		// Model def found, let's try to get the extension of the "mesh" key
-		ldrName = os::getExtension(modelDef->mesh);
-		modelToLoad = modelDef->mesh;
-		boost::algorithm::to_lower(ldrName);
-	}
-	
-	ModelLoaderPtr loader = GlobalModelCache().getModelLoaderForType(ldrName);
-	
-	if (loader != NULL) {
-		_model = loader->loadModelFromPath(modelToLoad);
+	if (foundModel != _modelCache.end()) {
+		// Use cached model
+		_model = foundModel->second;
 	}
 	else {
-		_model = model::IModelPtr();
-		return;
+		// Load the model, using a lowercase version of the file extension to
+		// identify the loader module to use
+		std::string ldrName = os::getExtension(modelToLoad);
+		boost::algorithm::to_lower(ldrName);
+
+		// greebo: If the extension is empty, this might be a modeldef
+		IModelDefPtr modelDef = GlobalEntityClassManager().findModel(modelToLoad);
+
+		if (modelDef != NULL) {
+			// Model def found, let's try to get the extension of the "mesh" key
+			ldrName = os::getExtension(modelDef->mesh);
+			modelToLoad = modelDef->mesh;
+			boost::algorithm::to_lower(ldrName);
+		}
+		
+		ModelLoaderPtr loader = GlobalModelCache().getModelLoaderForType(ldrName);
+		
+		if (loader != NULL) {
+			_model = loader->loadModelFromPath(modelToLoad);
+		}
+		else {
+			_model = model::IModelPtr();
+			return;
+		}
+
+		if (_model != NULL) {
+			// Insert model into cache on successful load
+			// use the unmodified model name as key
+			_modelCache.insert(ModelMap::value_type(model, _model));
+		}
 	}
 
 	// Reset camera if the model has changed
@@ -177,7 +198,7 @@ void ModelPreview::setSkin(const std::string& skin) {
 	
 	// Load and apply the skin, checking first to make sure the model is valid
 	// and not null
-	if (_model.get() != NULL) {
+	if (_model != NULL) {
 		ModelSkin& mSkin = GlobalModelSkinCache().capture(skin);
 		_model->applySkin(mSkin);
 	}
@@ -284,5 +305,4 @@ void ModelPreview::callbackToggleBBox(GtkToggleToolButton* b, ModelPreview* self
 	gtk_widget_queue_draw(self->_glWidget);
 }
 
-
-}
+} // namespace ui

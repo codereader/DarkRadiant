@@ -36,6 +36,9 @@ std::string EntityClassChooser::showAndBlock() {
 	
 	// Enter recursive main loop
 	gtk_main();
+
+	// Release the models
+	_modelPreview.clear();
 	
 	// Return the last selection (may be "" if dialog was cancelled)
 	return _selectedName;
