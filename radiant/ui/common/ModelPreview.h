@@ -7,6 +7,7 @@
 #include <gtk/gtk.h>
 #include <GL/glew.h>
 #include <string>
+#include <map>
 #include "gtkutil/GLWidget.h"
 #include "ui/menu/FiltersMenu.h"
 
@@ -31,6 +32,13 @@ class ModelPreview
 	// Toolbar buttons
 	GtkToolItem* _drawBBox;
 	
+	// A small cache mapping model names to IModel objects to avoid
+	// reloading the models on each selection or skin change.
+	// This map is cleared on dialog closure so that the allocated
+	// models get released when they're not needed anymore.
+	typedef std::map<std::string, model::IModelPtr> ModelMap;
+	ModelMap _modelCache;
+
 	// Current model to display
 	model::IModelPtr _model;
 
@@ -107,6 +115,9 @@ public:
 	model::IModelPtr getModel() {
 		return _model;	
 	}
+
+	// To be called on dialog shutdown - releases local model cache
+	void clear();
 };
 
 }

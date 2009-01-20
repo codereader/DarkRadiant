@@ -172,7 +172,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, boo
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
 
 	// Reset the preview model to release resources
-	_modelPreview.setModel("");
+	_modelPreview.clear();
 
 	// Construct the model/skin combo and return it
 	return ModelSelectorResult(
