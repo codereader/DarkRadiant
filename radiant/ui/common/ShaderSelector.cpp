@@ -212,6 +212,16 @@ GtkWidget* ShaderSelector::createTreeView() {
 														NAME_COL,
 														IMAGE_COL));
 
+	// Set the tree store to sort on this column
+    gtk_tree_sortable_set_sort_column_id(
+        GTK_TREE_SORTABLE(store),
+        NAME_COL,
+        GTK_SORT_ASCENDING
+    );
+
+	// Use the TreeModel's full string search function
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(_treeView), gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+
 	// Get selection and connect the changed callback
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	g_signal_connect(G_OBJECT(_selection), 
