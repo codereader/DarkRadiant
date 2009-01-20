@@ -231,6 +231,9 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
         }
     
         GlobalSelectionSystem().setSelectedAll(false);
+
+		// Move the item to the first visible layer
+		node->moveToLayer(GlobalLayerSystem().getFirstVisibleLayer());
     
         Node_setSelected(node, true);
     }
