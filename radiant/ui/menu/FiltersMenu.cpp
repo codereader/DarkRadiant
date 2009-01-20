@@ -2,6 +2,7 @@
 
 #include <gtk/gtkwidget.h>
 
+#include "string/string.h"
 #include "ifilter.h"
 #include "iuimanager.h"
 
@@ -49,10 +50,12 @@ namespace ui {
 		};
 	}
 
+int FiltersMenu::_counter = 0;
+
 FiltersMenu::FiltersMenu() {
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
-	_menu = menuManager.get(FILTERS_MENU_BAR);
+	_menu = menuManager.get(FILTERS_MENU_BAR + intToStr(_counter++));
 
 	if (_menu == NULL)
 	{

@@ -14,6 +14,10 @@ namespace ui {
 class FiltersMenu
 {
 	GtkWidget* _menu;
+
+	// Static counter to create unique menu bar widgets
+	static int _counter;
+
 public:
 	// Constructs the filters submenu which can be added to a menubar
 	FiltersMenu();
