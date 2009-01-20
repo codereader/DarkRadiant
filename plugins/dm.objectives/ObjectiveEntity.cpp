@@ -338,6 +338,9 @@ void ObjectiveEntity::writeToEntity() {
 		entity->setKeyValue(prefix + "script_complete", o.completionScript);
 		entity->setKeyValue(prefix + "script_failed", o.failureScript);
 
+		entity->setKeyValue(prefix + "target_complete", o.completionTarget);
+		entity->setKeyValue(prefix + "target_failed", o.failureTarget);
+
 		entity->setKeyValue(prefix + "logic_success", o.logic.successLogic);
 		entity->setKeyValue(prefix + "logic_failure", o.logic.failureLogic);
 

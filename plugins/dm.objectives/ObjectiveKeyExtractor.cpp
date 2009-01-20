@@ -74,6 +74,12 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 	else if (objSubString == "script_failed") {
 		_objMap[iNum].failureScript = value;
 	}
+	else if (objSubString == "target_complete") {
+		_objMap[iNum].completionTarget = value;
+	}
+	else if (objSubString == "target_failed") {
+		_objMap[iNum].failureTarget = value;
+	}
 	else if (objSubString == "logic_success") {
 		_objMap[iNum].logic.successLogic = value;
 	}
