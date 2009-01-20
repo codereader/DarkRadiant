@@ -101,7 +101,7 @@ public:
 	virtual bool renameLayer(int layerID, const std::string& newLayerName) = 0;
 
 	/**
-	 * greebo: Returns the ID of the first visible layer or -1 if none is visible.
+	 * greebo: Returns the ID of the first visible layer or 0 (default layer) if none is visible.
 	 */
 	virtual int getFirstVisibleLayer() const = 0;
 

@@ -133,8 +133,8 @@ int LayerSystem::getFirstVisibleLayer() const {
 		}
 	}
 
-	// No layer visible, return
-	return -1;
+	// No layer visible, return 0 to prevent callers from doing unreasonable things.
+	return 0;
 }
 
 bool LayerSystem::layerIsVisible(const std::string& layerName) {
