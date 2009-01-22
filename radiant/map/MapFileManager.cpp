@@ -44,14 +44,13 @@ std::string MapFileManager::selectFile(bool open,
 	boost::algorithm::erase_all(defaultExt, "*");
 	
 	// Display a file chooser dialog to get a new path
-	std::string filePath = 
-		file_dialog(GTK_WIDGET(MainFrame_getWindow()), 
-				     open, 
-					 title, 
-					 _lastDirs[type], 
-					 type,
-					 defaultExt,
-                     defaultFile);
+	gtkutil::FileChooser fileChooser(GTK_WIDGET(GlobalRadiant().getMainWindow()),
+		title, open, type, defaultExt);
+
+	fileChooser.setCurrentFile(defaultFile);
+	fileChooser.setCurrentPath(_lastDirs[type]);
+
+	std::string filePath = fileChooser.display();
 
 	// If a filename was chosen, update the last path
 	if (!filePath.empty()) {

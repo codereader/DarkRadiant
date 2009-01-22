@@ -9,12 +9,11 @@
 void export_selected(GtkWindow* mainWindow) {		
 	
 	// Obtain the path from a File Dialog Window
-	std::string path = file_dialog(GTK_WIDGET(mainWindow), 
-								   false, 
-								   "Save as Obj",	// title
-								   GlobalRegistry().get(RKEY_MAP_PATH),		// path
-								   "", 		// pattern
-								   ".obj"); // default extension
+	gtkutil::FileChooser chooser(GTK_WIDGET(mainWindow), "Save as Obj", false, "", ".obj");
+
+	chooser.setCurrentPath(GlobalRegistry().get(RKEY_MAP_PATH));
+
+	std::string path = chooser.display();
 	
 	// Open the file
 	std::ofstream file(path.c_str());
