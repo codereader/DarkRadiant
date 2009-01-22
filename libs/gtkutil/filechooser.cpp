@@ -28,12 +28,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkfilechooser.h>
 #include <gtk/gtkfilechooserdialog.h>
 #include <gtk/gtkstock.h>
+#include <gtk/gtkimage.h>
 
 #include "os/path.h"
 #include "os/file.h"
 
 #include "messagebox.h"
 #include <boost/algorithm/string/predicate.hpp>
+
+static void update_preview_cb (GtkFileChooser *file_chooser, gpointer data)
+{
+  GtkWidget *preview;
+  char *filename;
+  GdkPixbuf *pixbuf;
+  gboolean have_preview;
+
+  preview = GTK_WIDGET (data);
+  filename = gtk_file_chooser_get_preview_filename (file_chooser);
+
+  pixbuf = gdk_pixbuf_new_from_file_at_size (filename, 128, 128, NULL);
+  have_preview = (pixbuf != NULL);
+  g_free (filename);
+
+  gtk_image_set_from_pixbuf (GTK_IMAGE (preview), pixbuf);
+  if (pixbuf)
+    g_object_unref (pixbuf);
+
+  gtk_file_chooser_set_preview_widget_active (file_chooser, have_preview);
+}
+
 
 std::string file_dialog_show(GtkWidget* parent,
                              bool open,
@@ -70,6 +93,11 @@ std::string file_dialog_show(GtkWidget* parent,
 	if (!open) {
 		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), defaultFile.c_str());
 	}
+
+	/*GtkImage* preview = GTK_IMAGE(gtk_image_new());
+	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog), GTK_WIDGET(preview));
+
+	g_signal_connect(G_OBJECT(dialog), "update-preview", G_CALLBACK(update_preview_cb), preview);*/
 
 	// Set the Enter key to activate the default response
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_ACCEPT);
@@ -188,3 +216,61 @@ std::string file_dialog(GtkWidget* parent,
 		}
 	}
 }
+
+namespace gtkutil {
+
+FileChooser::FileChooser(GtkWidget* parent, const std::string& title, 
+						 bool open, const std::string& pattern,
+						 const std::string& defaultExt) :
+	_parent(parent),
+	_title(title),
+	_pattern(pattern),
+	_defaultExt(defaultExt),
+	_open(open)
+{}
+
+void FileChooser::setCurrentPath(const std::string& path) {
+	_path = path;
+}
+
+void FileChooser::setCurrentFile(const std::string& file) {
+	_file = file;
+}
+
+std::string FileChooser::display() {
+	// Loop until break
+	while (1) {
+		std::string fileName = file_dialog_show(_parent, _open, _title, _path, _pattern, _file);
+
+		// Convert the backslashes to forward slashes
+		fileName = os::standardPath(fileName);
+
+		// Append the default extension for save operations before checking overwrites
+		if (!_open											// save operation
+		    && !fileName.empty() 								// valid filename
+		    && !_defaultExt.empty()							// non-empty default extension
+		    && !boost::algorithm::iends_with(fileName, _defaultExt)) // no default extension
+		{
+			fileName.append(_defaultExt);
+		}
+
+		std::string askTitle = _title;
+		askTitle += (!fileName.empty()) ? ": " + fileName.substr(fileName.rfind("/") + 1) : "";
+
+		// Always return the fileName for "open" and empty filenames, otherwise check file existence 
+		if (_open
+		    || fileName.empty()
+		    || !file_exists(fileName.c_str())
+		    || gtk_MessageBox(_parent,
+		                      "The specified file already exists.\nDo you want to replace it?",
+		                      askTitle.c_str(),
+		                      eMB_NOYES,
+		                      eMB_ICONQUESTION) == eIDYES)
+		{
+			return fileName;
+		}
+	}
+}
+
+} // namespace gtkutil
+

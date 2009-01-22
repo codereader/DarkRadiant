@@ -32,13 +32,13 @@ typedef struct _GtkWidget GtkWidget;
 /**
  * Display a file chooser dialog.
  */
-std::string file_dialog(GtkWidget *parent, 
+/*std::string file_dialog(GtkWidget *parent, 
 						bool open, 
 						const std::string& title, 
 						const std::string& path = "", 
 						const std::string& pattern = "",
 						const std::string& defaultExt = "",
-                        const std::string& defaultFile = "");
+                        const std::string& defaultFile = "");*/
 
 
 /// \brief Prompts the user to browse for a directory.
@@ -46,5 +46,59 @@ std::string file_dialog(GtkWidget *parent,
 /// The directory will initially default to \p path, which must be an absolute path.
 /// The returned string is allocated with \c g_malloc and must be freed with \c g_free.
 char* dir_dialog(GtkWidget *parent, const char* title = "Choose Directory", const char* path = "");
+
+namespace gtkutil {
+
+class FileChooser	
+{
+	// Parent widget
+	GtkWidget* _parent;
+
+	// Window title
+	std::string _title;
+
+	std::string _path;
+	std::string _file;
+
+	std::string _pattern;
+
+	std::string _defaultExt;
+
+	// Open or save dialog
+	bool _open;
+
+public:
+	/**
+	 * Construct a new filechooser with the given parameters.
+	 *
+	 * @parent: The parent GtkWidget
+	 * @title: The dialog title.
+	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
+	 * @pattern: the type "map", "prefab", this determines the file extensions.
+	 * @defaultExt: The default extension appended when the user enters 
+	 *              filenames without extension.
+ 	 */
+	FileChooser(GtkWidget* parent, 
+				const std::string& title, 
+				bool open, 
+				const std::string& pattern = "",
+				const std::string& defaultExt = "");
+
+	// Lets the dialog start at a certain path
+	void setCurrentPath(const std::string& path);
+
+	// Pre-fills the currently selected file
+	void setCurrentFile(const std::string& file);
+
+	/**
+	 * greebo: Displays the dialog and enters the GTK main loop.
+	 * Returns the filename or "" if the user hit cancel.
+	 *
+	 * The returned file name is normalised using the os::standardPath() method.
+	 */
+	std::string display();
+};
+
+} // namespace gtkutil
 
 #endif

@@ -46,7 +46,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // File dialog
 
 void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry) {
-	std::string filename = file_dialog(gtk_widget_get_toplevel(widget), TRUE, "Choose File", gtk_entry_get_text(entry));
+
+	gtkutil::FileChooser fileChooser(gtk_widget_get_toplevel(widget), "Choose File", true);
+
+	fileChooser.setCurrentPath(gtk_entry_get_text(entry));
+
+	std::string filename = fileChooser.display();
+		//file_dialog(gtk_widget_get_toplevel(widget), TRUE, "Choose File", gtk_entry_get_text(entry));
 
 	if (GTK_IS_WINDOW(gtk_widget_get_toplevel(widget))) {
 		gtk_window_present(GTK_WINDOW(gtk_widget_get_toplevel(widget)));
