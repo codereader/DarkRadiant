@@ -287,14 +287,25 @@ std::string FileChooser::getSelectedFileName() {
 	return fileName;
 }
 
+void FileChooser::attachPreview(const PreviewPtr& preview) {
+	if (_preview != NULL) {
+		globalErrorStream() << "Error, preview already attached to FileChooser." << std::endl;
+		return;
+	}
+
+	_preview = preview;
+
+	gtk_file_chooser_set_preview_widget(
+		GTK_FILE_CHOOSER(_dialog), 
+		_preview->getPreviewWidget()
+	);
+
+	g_signal_connect(G_OBJECT(_dialog), "update-preview", G_CALLBACK(onUpdatePreview), this);
+}
+
 std::string FileChooser::display() {
 	// Loop until break
 	while (1) {
-		/*GtkImage* preview = GTK_IMAGE(gtk_image_new());
-		gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog), GTK_WIDGET(preview));
-
-		g_signal_connect(G_OBJECT(dialog), "update-preview", G_CALLBACK(update_preview_cb), preview);*/
-
 		// Display the dialog and return the selected filename, or ""
 		std::string fileName("");
 
@@ -322,6 +333,23 @@ std::string FileChooser::display() {
 			return fileName;
 		}
 	}
+}
+
+void FileChooser::setPreviewActive(bool active) {
+	// Pass the call to the dialog
+	gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(_dialog), active ? TRUE : FALSE);
+}
+
+void FileChooser::onUpdatePreview(GtkFileChooser* chooser, FileChooser* self) {
+	// Check if we have a valid preview object attached
+	if (self->_preview == NULL) return;
+
+	std::string previewFileName = os::standardPath(
+		gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(self->_dialog))
+	);
+
+	// Emit the signal
+	self->_preview->onFileSelectionChanged(previewFileName, *self);
 }
 
 } // namespace gtkutil
