@@ -344,9 +344,13 @@ void FileChooser::onUpdatePreview(GtkFileChooser* chooser, FileChooser* self) {
 	// Check if we have a valid preview object attached
 	if (self->_preview == NULL) return;
 
-	std::string previewFileName = os::standardPath(
-		gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(self->_dialog))
-	);
+	char* sel = gtk_file_chooser_get_preview_filename(GTK_FILE_CHOOSER(self->_dialog));
+
+	std::string previewFileName = (sel != NULL) ? sel : "";
+
+	g_free(sel);
+
+	previewFileName = os::standardPath(previewFileName);
 
 	// Emit the signal
 	self->_preview->onFileSelectionChanged(previewFileName, *self);

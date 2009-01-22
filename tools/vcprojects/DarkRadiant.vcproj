@@ -972,6 +972,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\MapPreview.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapPreview.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\MapResource.cpp"
 					>
 				</File>

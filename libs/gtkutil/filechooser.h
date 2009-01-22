@@ -54,7 +54,7 @@ public:
 	{
 	public:
 		// Retrieve the preview widget for packing into the dialog
-		virtual GtkWidget* getPreviewWidget();
+		virtual GtkWidget* getPreviewWidget() = 0;
 
 		/**
 		 * Gets called whenever the user changes the file selection.
