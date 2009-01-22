@@ -54,6 +54,8 @@ class FileChooser
 	// Parent widget
 	GtkWidget* _parent;
 
+	GtkWidget* _dialog;
+
 	// Window title
 	std::string _title;
 
@@ -84,6 +86,8 @@ public:
 				const std::string& pattern = "",
 				const std::string& defaultExt = "");
 
+	virtual ~FileChooser();
+
 	// Lets the dialog start at a certain path
 	void setCurrentPath(const std::string& path);
 
@@ -91,12 +95,18 @@ public:
 	void setCurrentFile(const std::string& file);
 
 	/**
+	 * Returns the selected filename (default extension
+	 * will be added if appropriate).
+	 */
+	virtual std::string getSelectedFileName();
+
+	/**
 	 * greebo: Displays the dialog and enters the GTK main loop.
 	 * Returns the filename or "" if the user hit cancel.
 	 *
 	 * The returned file name is normalised using the os::standardPath() method.
 	 */
-	std::string display();
+	virtual std::string display();
 };
 
 } // namespace gtkutil

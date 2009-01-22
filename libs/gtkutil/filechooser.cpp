@@ -175,97 +175,149 @@ char* dir_dialog(GtkWidget* parent, const char* title, const char* path) {
 	return filename;
 }
 
-// Display a file chooser
-std::string file_dialog(GtkWidget* parent,
-                        bool open,
-                        const std::string& title,
-                        const std::string& path,
-                        const std::string& pattern,
-                        const std::string& defaultExt,
-                        const std::string& defaultFile)
-{
-	while (1) {
-		std::string file = file_dialog_show(parent, open, title, path, pattern, defaultFile);
-
-		// Convert the backslashes to forward slashes
-		file = os::standardPath(file);
-
-		// Append the default extension for save operations before checking overwrites
-		if (!open											// save operation
-		    && !file.empty() 								// valid filename
-		    && !defaultExt.empty()							// non-empty default extension
-		    && !boost::algorithm::iends_with(file, defaultExt)) // no default extension
-		{
-			file += defaultExt;
-		}
-
-		std::string askTitle = title;
-		askTitle += (!file.empty()) ? ": " + file.substr(file.rfind("/")+1) : "";
-
-		// Always return the file for "open" and empty filenames, otherwise check file existence 
-		if (open
-		    || file.empty()
-		    || !file_exists(file.c_str())
-		    || gtk_MessageBox(parent,
-		                      "The specified file already exists.\nDo you want to replace it?",
-		                      askTitle.c_str(),
-		                      eMB_NOYES,
-		                      eMB_ICONQUESTION) == eIDYES)
-		{
-			return file;
-		}
-	}
-}
-
 namespace gtkutil {
 
 FileChooser::FileChooser(GtkWidget* parent, const std::string& title, 
 						 bool open, const std::string& pattern,
 						 const std::string& defaultExt) :
 	_parent(parent),
+	_dialog(NULL),
 	_title(title),
 	_pattern(pattern),
 	_defaultExt(defaultExt),
 	_open(open)
-{}
+{
+	if (_pattern.empty()) {
+		_pattern = "*";
+	}
+
+	if (_title.empty()) {
+		_title = _open ? "Open File" : "Save File";
+	}
+
+	if (_open) {
+		_dialog = gtk_file_chooser_dialog_new(_title.c_str(),
+											 GTK_WINDOW(_parent),
+											 GTK_FILE_CHOOSER_ACTION_OPEN,
+											 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+											 GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+											 NULL);
+	}
+	else {
+		_dialog = gtk_file_chooser_dialog_new(title.c_str(),
+											 GTK_WINDOW(_parent),
+											 GTK_FILE_CHOOSER_ACTION_SAVE,
+											 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+											 GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+											 NULL);
+	}
+
+	// Set the Enter key to activate the default response
+	gtk_dialog_set_default_response(GTK_DIALOG(_dialog), GTK_RESPONSE_ACCEPT);
+
+	// Set position and modality of the dialog
+	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
+	gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
+
+	// Set the default size of the window
+	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_dialog));
+	gint w = gdk_screen_get_width(scr);
+	gint h = gdk_screen_get_height(scr);
+
+	gtk_window_set_default_size(GTK_WINDOW(_dialog), w/2, 2*h/3);
+
+	// Add the filetype masks
+	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(_pattern);
+	for (ModuleTypeList::iterator i = typeList->begin();
+	 	 i != typeList->end();
+		 ++i)
+	{
+		// Create a GTK file filter and add it to the chooser dialog
+		GtkFileFilter* filter = gtk_file_filter_new();
+		gtk_file_filter_add_pattern(filter, i->filePattern.pattern.c_str());
+
+		std::string combinedName = i->filePattern.name + " ("
+								   + i->filePattern.pattern + ")";
+		gtk_file_filter_set_name(filter, combinedName.c_str());
+		gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(_dialog), filter);
+	}
+
+	// Add a final mask for All Files (*.*)
+	GtkFileFilter* allFilter = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(allFilter, "*.*");
+	gtk_file_filter_set_name(allFilter, "All Files (*.*)");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(_dialog), allFilter);
+}
+
+FileChooser::~FileChooser() {
+	// Destroy the dialog
+	gtk_widget_destroy(_dialog);
+}
 
 void FileChooser::setCurrentPath(const std::string& path) {
-	_path = path;
+	_path = os::standardPath(path);
+
+	// Convert path to standard and set the folder in the dialog
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(_dialog), _path.c_str());
 }
 
 void FileChooser::setCurrentFile(const std::string& file) {
 	_file = file;
+
+	if (!_open) {
+		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(_dialog), _file.c_str());
+	}
+}
+
+std::string FileChooser::getSelectedFileName() {
+	// Load the filename from the dialog
+	std::string fileName = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(_dialog));
+
+	fileName = os::standardPath(fileName);
+
+	// Append the default extension for save operations before checking overwrites
+	if (!_open											// save operation
+	    && !fileName.empty() 							// valid filename
+	    && !_defaultExt.empty()							// non-empty default extension
+	    && !boost::algorithm::iends_with(fileName, _defaultExt)) // no default extension
+	{
+		fileName.append(_defaultExt);
+	}
+
+	return fileName;
 }
 
 std::string FileChooser::display() {
 	// Loop until break
 	while (1) {
-		std::string fileName = file_dialog_show(_parent, _open, _title, _path, _pattern, _file);
+		/*GtkImage* preview = GTK_IMAGE(gtk_image_new());
+		gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog), GTK_WIDGET(preview));
 
-		// Convert the backslashes to forward slashes
-		fileName = os::standardPath(fileName);
+		g_signal_connect(G_OBJECT(dialog), "update-preview", G_CALLBACK(update_preview_cb), preview);*/
 
-		// Append the default extension for save operations before checking overwrites
-		if (!_open											// save operation
-		    && !fileName.empty() 								// valid filename
-		    && !_defaultExt.empty()							// non-empty default extension
-		    && !boost::algorithm::iends_with(fileName, _defaultExt)) // no default extension
-		{
-			fileName.append(_defaultExt);
+		// Display the dialog and return the selected filename, or ""
+		std::string fileName("");
+
+		if (gtk_dialog_run(GTK_DIALOG(_dialog)) == GTK_RESPONSE_ACCEPT) {
+			// "OK" pressed, retrieve the filename
+			fileName = getSelectedFileName();
 		}
 
-		std::string askTitle = _title;
-		askTitle += (!fileName.empty()) ? ": " + fileName.substr(fileName.rfind("/") + 1) : "";
-
 		// Always return the fileName for "open" and empty filenames, otherwise check file existence 
-		if (_open
-		    || fileName.empty()
-		    || !file_exists(fileName.c_str())
-		    || gtk_MessageBox(_parent,
-		                      "The specified file already exists.\nDo you want to replace it?",
-		                      askTitle.c_str(),
-		                      eMB_NOYES,
-		                      eMB_ICONQUESTION) == eIDYES)
+		if (_open || fileName.empty()) {
+			return fileName;
+		}
+
+		// If file exists, ask for overwrite
+		std::string askTitle = _title;
+		askTitle += (!fileName.empty()) ? ": " + os::getFilename(fileName) : "";
+
+		if (!file_exists(fileName.c_str()) || 
+			 gtk_MessageBox(_parent,
+		                    "The specified file already exists.\nDo you want to replace it?",
+		                    askTitle.c_str(),
+		                    eMB_NOYES,
+		                    eMB_ICONQUESTION) == eIDYES)
 		{
 			return fileName;
 		}
