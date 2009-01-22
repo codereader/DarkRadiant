@@ -3,10 +3,12 @@
 #include "iregistry.h"
 #include "ifiletypes.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include "mainframe.h"
+#include "iradiant.h"
 #include "gtkutil/filechooser.h"
 #include "gtkutil/IConv.h"
 #include "os/path.h"
+#include "MapPreview.h"
+#include <gtk/gtkwidget.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -49,6 +51,15 @@ std::string MapFileManager::selectFile(bool open,
 
 	fileChooser.setCurrentFile(defaultFile);
 	fileChooser.setCurrentPath(_lastDirs[type]);
+
+	// For prefabs, add a preview widget
+	if (type == "prefab") {
+		// Instantiate a new preview object
+		MapPreviewPtr preview(new MapPreview());
+
+		// attach the preview object
+		fileChooser.attachPreview(preview);
+	}
 
 	std::string filePath = fileChooser.display();
 
