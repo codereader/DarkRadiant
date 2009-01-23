@@ -6,7 +6,9 @@
 
 #include <gtk/gtk.h>
 
+#include "camera/CamRenderer.h"
 #include "ui/common/RenderableAABB.h"
+#include "MapPreviewView.h"
 
 namespace map {
 
@@ -50,6 +52,10 @@ MapPreviewCamera::MapPreviewCamera() :
 
 void MapPreviewCamera::setSize(int size) {
 	gtk_widget_set_size_request(_glWidget, size, size);	
+}
+
+void MapPreviewCamera::setRootNode(const scene::INodePtr& root) {
+	_root = root;
 }
 
 // Initialise the preview GL stuff
@@ -96,9 +102,14 @@ void MapPreviewCamera::initialisePreview() {
 	
 	// Calculate camera distance so model is appropriately zoomed
 	_camDist = -(20 * 2.0); 
+
+	_stateSelect1 = GlobalShaderCache().capture("$CAM_HIGHLIGHT");
+	_stateSelect2 = GlobalShaderCache().capture("$CAM_OVERLAY");
 }
 
 void MapPreviewCamera::draw() {
+	if (_root == NULL) return;
+
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(_glWidget);
 
@@ -121,10 +132,39 @@ void MapPreviewCamera::draw() {
 	// Submit the AABB geometry
 	ui::RenderableAABB(aabb).render(RENDER_DEFAULT);
 
-	// Render the actual model.
+	// Render the actual model
 	glEnable(GL_LIGHTING);
 	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
-	// TODO: Render scene here
+
+	// Start rendering
+	unsigned int globalstate = 
+		RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|
+		RENDER_ALPHATEST|RENDER_BLEND|RENDER_CULLFACE|RENDER_COLOURARRAY|
+		RENDER_OFFSETLINE|RENDER_POLYGONSMOOTH|RENDER_LINESMOOTH|
+		RENDER_FOG|RENDER_COLOURCHANGE;
+
+	globalstate |=	RENDER_FILL | RENDER_LIGHTING | RENDER_TEXTURE | 
+					RENDER_SMOOTH | RENDER_SCALED | RENDER_BUMP | RENDER_PROGRAM | RENDER_SCREEN;
+
+	CamRenderer renderer(globalstate, _stateSelect1, _stateSelect2, Vector3(0,0,_camDist));
+	MapPreviewView view;
+
+	// Save the new GL matrix for GL draw
+	glGetDoublev(GL_MODELVIEW_MATRIX, view.modelView);
+	glGetDoublev(GL_PROJECTION_MATRIX, view.projection);
+
+	// Instantiate a new walker class
+	RenderHighlighted renderHighlightWalker(renderer, view);
+	ForEachVisible<RenderHighlighted> walker(view, renderHighlightWalker);
+
+	// Submit renderables from this map root
+	Node_traverseSubgraph(_root, walker);
+	
+	// Submit renderables directly attached to the ShaderCache
+	GlobalShaderCache().forEachRenderable(
+		RenderHighlighted::RenderCaller(RenderHighlighted(renderer, view)));
+
+	renderer.render(view.modelView, view.projection);
 }
 
 void MapPreviewCamera::onExpose(GtkWidget* widget, GdkEventExpose* ev, MapPreviewCamera* self) { 
@@ -166,7 +206,6 @@ void MapPreviewCamera::onMouseMotion(GtkWidget* widget, GdkEventMotion* ev, MapP
 
 			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
 		}
-		
 	}
 }
 

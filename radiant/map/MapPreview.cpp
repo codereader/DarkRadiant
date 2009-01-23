@@ -35,8 +35,6 @@ void MapPreview::onFileSelectionChanged(
 }
 
 bool MapPreview::setMapName(const std::string& name) {
-	return true;
-
 	_mapName = name;
 	_mapResource = GlobalMapResourceManager().capture(_mapName);
 
@@ -45,8 +43,8 @@ bool MapPreview::setMapName(const std::string& name) {
 	}
 
 	if (_mapResource->load()) {
-		int i = 5;
-		i++;
+		// Set the new rootnode
+		_camera.setRootNode(_mapResource->getNode());
 		return true;
 	}
 	else {
