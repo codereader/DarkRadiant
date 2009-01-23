@@ -5,11 +5,16 @@
 
 namespace map {
 
-MapPreview::MapPreview()
-{}
+MapPreview::MapPreview() :
+	_previewContainer(gtk_vbox_new(FALSE, 0))
+{
+	_camera.setSize(400);
+	gtk_box_pack_start(GTK_BOX(_previewContainer), _camera, TRUE, TRUE, 0);
+}
 
 GtkWidget* MapPreview::getPreviewWidget() {
-	return gtk_vbox_new(FALSE, 0);;
+	gtk_widget_show_all(_previewContainer);
+	return _previewContainer;
 }
 
 /**
@@ -20,9 +25,35 @@ GtkWidget* MapPreview::getPreviewWidget() {
 void MapPreview::onFileSelectionChanged(
 	const std::string& newFileName, gtkutil::FileChooser& fileChooser)
 {
-	fileChooser.setPreviewActive(false);
+	// Attempt to load file
+	bool success = setMapName(newFileName);
 
-	globalOutputStream() << "Selection changed to " << newFileName << std::endl;
+	_camera.initialisePreview();
+	gtk_widget_queue_draw(_camera); 
+	
+	fileChooser.setPreviewActive(success);
+}
+
+bool MapPreview::setMapName(const std::string& name) {
+	return true;
+
+	_mapName = name;
+	_mapResource = GlobalMapResourceManager().capture(_mapName);
+
+	if (_mapResource == NULL) {
+		return false;
+	}
+
+	if (_mapResource->load()) {
+		int i = 5;
+		i++;
+		return true;
+	}
+	else {
+		// Map load failed
+		globalWarningStream() << "Could not load map: " << _mapName << std::endl;
+		return false;
+	}
 }
 
 } // namespace map

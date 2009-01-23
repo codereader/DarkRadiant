@@ -1,6 +1,10 @@
 #ifndef _MAP_PREVIEW_H_
 #define _MAP_PREVIEW_H_
 
+#include "imapresource.h"
+
+#include "MapPreviewCamera.h"
+
 #include "gtkutil/filechooser.h"
 #include <boost/shared_ptr.hpp>
 
@@ -9,6 +13,16 @@ namespace map {
 class MapPreview :
 	public gtkutil::FileChooser::Preview
 {
+	// The loaded map resource
+	IMapResourcePtr _mapResource;
+
+	// The name of the map being previewed
+	std::string _mapName;
+
+	GtkWidget* _previewContainer;
+
+	MapPreviewCamera _camera;
+
 public:
 	MapPreview();
 
@@ -21,6 +35,10 @@ public:
 	 * FileChooser class to indicate whether the widget is active or not.
 	 */
 	void onFileSelectionChanged(const std::string& newFileName, gtkutil::FileChooser& fileChooser);
+
+private:
+	// Sets the name of the map to preview, returns TRUE on success
+	bool setMapName(const std::string& name);
 };
 typedef boost::shared_ptr<MapPreview> MapPreviewPtr;
 
