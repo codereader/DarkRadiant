@@ -2,6 +2,8 @@
 
 #include "itextstream.h"
 #include <gtk/gtkvbox.h>
+#include "brush/BrushModule.h"
+#include "selection/algorithm/Primitives.h"
 
 namespace map {
 
@@ -43,8 +45,23 @@ bool MapFileChooserPreview::setMapName(const std::string& name) {
 	}
 
 	if (_mapResource->load()) {
+		// Get the node from the reosource
+		scene::INodePtr root = _mapResource->getNode();
+
+		assert(root != NULL);
+
+		bool textureLockStatus = GlobalBrush()->textureLockEnabled();
+		GlobalBrush()->setTextureLock(false);
+		
+		// Add the origin to all the child brushes
+		selection::algorithm::OriginAdder adder;
+		root->traverse(adder);
+
+		GlobalBrush()->setTextureLock(textureLockStatus);
+
 		// Set the new rootnode
-		_preview.setRootNode(_mapResource->getNode());
+		_preview.setRootNode(root);
+
 		return true;
 	}
 	else {
