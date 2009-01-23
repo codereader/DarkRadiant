@@ -323,7 +323,7 @@
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="0"
-			WholeProgramOptimization="1"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -977,6 +977,18 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\map\MapPreview.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapPreviewCamera.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapPreviewCamera.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapPreviewView.h"
 					>
 				</File>
 				<File

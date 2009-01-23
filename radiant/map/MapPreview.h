@@ -10,6 +10,10 @@
 
 namespace map {
 
+// Forward decl.
+class MapPreviewFilterObserver;
+typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
+
 class MapPreview :
 	public gtkutil::FileChooser::Preview
 {
@@ -23,8 +27,12 @@ class MapPreview :
 
 	MapPreviewCamera _camera;
 
+	MapPreviewFilterObserverPtr _filterObserver;
+
 public:
 	MapPreview();
+
+	~MapPreview();
 
 	// Retrieve the preview widget for packing into the dialog
 	GtkWidget* getPreviewWidget();
@@ -35,6 +43,9 @@ public:
 	 * FileChooser class to indicate whether the widget is active or not.
 	 */
 	void onFileSelectionChanged(const std::string& newFileName, gtkutil::FileChooser& fileChooser);
+
+	// Gets called by a local helper object on each FilterSystem change
+	void onFiltersChanged();
 
 private:
 	// Sets the name of the map to preview, returns TRUE on success

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IFILTER_H
 
 #include "imodule.h"
+#include "inode.h"
 #include <vector>
 
 /**
@@ -64,12 +65,29 @@ class FilterSystem :
 	public RegisterableModule
 {
 public:
+	class Observer
+	{
+	public:
+		// Get notified when a filter is added or its enabled status changes
+		virtual void onFiltersChanged() = 0;
+	};
+	typedef boost::shared_ptr<Observer> ObserverPtr;
+
+	// Adds and removes an observer which gets notified on filter status changes
+	virtual void addObserver(const ObserverPtr& observer) = 0;
+	virtual void removeObserver(const ObserverPtr& observer) = 0;
 
 	/**
 	 * greebo: Updates all the "Filtered" status of all Instances 
 	 *         in the scenegraph based on the current filter settings.         
 	 */ 
 	virtual void update() = 0;
+
+	/**
+	 * greebo: Lets the filtersystem update the specified subgraph only,
+	 * which includes the given node and all children.
+	 */
+	virtual void updateSubgraph(const scene::INodePtr& root) = 0;
 
 	/** Visit the available filters, passing each filter's text
 	 * name to the visitor.
