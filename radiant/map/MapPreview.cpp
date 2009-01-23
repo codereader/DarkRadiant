@@ -66,6 +66,8 @@ void MapPreview::onFiltersChanged() {
 	if (root != NULL) {
 		GlobalFilterSystem().updateSubgraph(root);
 	}
+
+	_camera.draw();
 }
 
 bool MapPreview::setMapName(const std::string& name) {
