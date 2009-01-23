@@ -61,6 +61,9 @@ void MapPreviewCamera::setRootNode(const scene::INodePtr& root) {
 	if (_root != NULL) {
 		// Trigger an initial update of the subgraph
 		GlobalFilterSystem().updateSubgraph(_root);
+
+		// Calculate camera distance so map is appropriately zoomed
+		_camDist = -(_root->worldAABB().getRadius() * 2.0); 
 	}
 }
 
@@ -220,7 +223,10 @@ void MapPreviewCamera::onMouseMotion(GtkWidget* widget, GdkEventMotion* ev, MapP
 }
 
 void MapPreviewCamera::onMouseScroll(GtkWidget* widget, GdkEventScroll* ev, MapPreviewCamera* self) {
-	float inc = 50;
+	// Sanity check
+	if (self->_root == NULL) return;
+
+	float inc = static_cast<float>(self->_root->worldAABB().getRadius() * 0.1);
 
 	if (ev->direction == GDK_SCROLL_UP)
 		self->_camDist += inc;

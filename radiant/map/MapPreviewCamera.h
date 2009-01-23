@@ -65,10 +65,10 @@ public:
 	void setRootNode(const scene::INodePtr& root);
 	scene::INodePtr getRootNode();
 
-private:
-
+	// Updates the view
 	void draw();
 
+private:
 	// GTK Callbacks
 	static void onExpose(GtkWidget*, GdkEventExpose*, MapPreviewCamera*);
 	static void onMouseMotion(GtkWidget*, GdkEventMotion*, MapPreviewCamera*);
