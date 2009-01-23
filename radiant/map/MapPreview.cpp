@@ -1,15 +1,41 @@
 #include "MapPreview.h"
 
+#include "ifilter.h"
 #include "itextstream.h"
 #include <gtk/gtk.h>
 
 namespace map {
+
+// Helper class, which notifies the MapPreview about a filter change
+class MapPreviewFilterObserver :
+	public FilterSystem::Observer
+{
+	MapPreview& _owner;
+public:
+	MapPreviewFilterObserver(MapPreview& owner) :
+		_owner(owner)
+	{}
+
+	void onFiltersChanged() {
+		_owner.onFiltersChanged();
+	}
+};
+typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
 
 MapPreview::MapPreview() :
 	_previewContainer(gtk_vbox_new(FALSE, 0))
 {
 	_camera.setSize(400);
 	gtk_box_pack_start(GTK_BOX(_previewContainer), _camera, TRUE, TRUE, 0);
+
+	// Add an observer to the FilterSystem to get notified about changes
+	_filterObserver = MapPreviewFilterObserverPtr(new MapPreviewFilterObserver(*this));
+
+	GlobalFilterSystem().addObserver(_filterObserver);
+}
+
+MapPreview::~MapPreview() {
+	GlobalFilterSystem().removeObserver(_filterObserver);
 }
 
 GtkWidget* MapPreview::getPreviewWidget() {
@@ -32,6 +58,14 @@ void MapPreview::onFileSelectionChanged(
 	gtk_widget_queue_draw(_camera); 
 	
 	fileChooser.setPreviewActive(success);
+}
+
+void MapPreview::onFiltersChanged() {
+	scene::INodePtr root = _camera.getRootNode();
+
+	if (root != NULL) {
+		GlobalFilterSystem().updateSubgraph(root);
+	}
 }
 
 bool MapPreview::setMapName(const std::string& name) {

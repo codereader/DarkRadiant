@@ -25,11 +25,11 @@ public:
  * status of their parent entity class.
  */
 class InstanceUpdateWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 public:
 	// Pre-descent walker function
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const { 
+	bool pre(const scene::INodePtr& node) { 
 
 		// Retrieve the parent entity and check its entity class.
 		Entity* entity = Node_getEntity(node);

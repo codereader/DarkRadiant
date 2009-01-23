@@ -3,6 +3,7 @@
 #include "camera/RadiantCameraView.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/GLWidgetSentry.h"
+#include "ifilter.h"
 
 #include <gtk/gtk.h>
 
@@ -56,6 +57,15 @@ void MapPreviewCamera::setSize(int size) {
 
 void MapPreviewCamera::setRootNode(const scene::INodePtr& root) {
 	_root = root;
+
+	if (_root != NULL) {
+		// Trigger an initial update of the subgraph
+		GlobalFilterSystem().updateSubgraph(_root);
+	}
+}
+
+scene::INodePtr MapPreviewCamera::getRootNode() {
+	return _root;
 }
 
 // Initialise the preview GL stuff
@@ -125,14 +135,14 @@ void MapPreviewCamera::draw() {
 	glMultMatrixd(_rotation); // post multiply with rotations
 	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 
-	// Render as fullbright wireframe
+	/*// Render as fullbright wireframe
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
 	glColor3f(0, 1, 1);
 	// Submit the AABB geometry
-	ui::RenderableAABB(aabb).render(RENDER_DEFAULT);
+	ui::RenderableAABB(aabb).render(RENDER_DEFAULT);*/
 
-	// Render the actual model
+	// Render the map
 	glEnable(GL_LIGHTING);
 	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 

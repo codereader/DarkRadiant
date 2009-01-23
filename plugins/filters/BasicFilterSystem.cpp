@@ -149,6 +149,14 @@ void BasicFilterSystem::shutdownModule() {
 	}
 }
 
+void BasicFilterSystem::addObserver(const ObserverPtr& observer) {
+	_observers.insert(observer);
+}
+
+void BasicFilterSystem::removeObserver(const ObserverPtr& observer) {
+	_observers.erase(observer);
+}
+
 void BasicFilterSystem::update() {
 	updateScene();
 	updateShaders();
@@ -176,6 +184,14 @@ std::string BasicFilterSystem::getFilterEventName(const std::string& filter) {
 	}
 }
 
+void BasicFilterSystem::notifyObservers() {
+	// Traverse the set
+	for (ObserverList::const_iterator i = _observers.begin(); i != _observers.end(); ++i) {
+		// Call each observer
+		(*i)->onFiltersChanged();
+	}
+}
+
 // Change the state of a named filter
 void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 
@@ -198,6 +214,8 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 			
 	// Update the scenegraph instances
 	update();
+
+	notifyObservers();
 	
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
@@ -238,6 +256,8 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	// Clear the cache, the rules have changed
 	_visibilityCache.clear();
 
+	notifyObservers();
+
 	return true;
 }
 
@@ -264,6 +284,11 @@ bool BasicFilterSystem::removeFilter(const std::string& filter) {
 
 		// Now remove the object from the available filters too
 		_availableFilters.erase(f);
+
+		// Clear the cache, the rules have changed
+		_visibilityCache.clear();
+
+		notifyObservers();
 
 		return true;
 	}
@@ -407,19 +432,25 @@ bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRu
 		// Clear the cache, the ruleset has changed
 		_visibilityCache.clear();
 
+		notifyObservers();
+
 		return true;
 	}
 
 	return false; // not found or readonly
 }
 
-// Update scenegraph instances with filtered status
-void BasicFilterSystem::updateScene() {
-
+void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root) {
 	// Construct an InstanceUpdateWalker and traverse the scenegraph to update
 	// all instances
 	InstanceUpdateWalker walker;
-	GlobalSceneGraph().traverse(walker);
+	Node_traverseSubgraph(root, walker);
+}
+
+// Update scenegraph instances with filtered status
+void BasicFilterSystem::updateScene() {
+	// pass scenegraph root to specialised routine
+	updateSubgraph(GlobalSceneGraph().root());
 }
 
 // Update scenegraph instances with filtered status

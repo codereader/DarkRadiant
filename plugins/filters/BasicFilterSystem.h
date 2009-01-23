@@ -32,6 +32,9 @@ class BasicFilterSystem
 	typedef std::map<std::string, bool> StringFlagCache;
 	StringFlagCache _visibilityCache;
 
+	typedef std::set<FilterSystem::ObserverPtr> ObserverList;
+	ObserverList _observers;
+
 private:
 	
 	// Perform a traversal of the scenegraph, setting or clearing the filtered
@@ -41,11 +44,19 @@ private:
 	void updateShaders();
 
 	void addFiltersFromXML(const xml::NodeList& nodes, bool readOnly);
+
+	// Notifies all observers about a change
+	void notifyObservers();
 	
 public:
-	
+	void addObserver(const ObserverPtr& observer);
+	void removeObserver(const ObserverPtr& observer);
+
 	// Invoke the InstanceUpateWalker to update the filtered status.
 	void update();
+
+	// Updates the given subgraph
+	void updateSubgraph(const scene::INodePtr& root);
 
 	// Filter system visit function
 	void forEachFilter(IFilterVisitor& visitor);

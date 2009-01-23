@@ -61,8 +61,9 @@ public:
 		return _widget;
 	}
 
-	// Set the map root to render
+	// Get/set the map root to render
 	void setRootNode(const scene::INodePtr& root);
+	scene::INodePtr getRootNode();
 
 private:
 
