@@ -1,20 +1,16 @@
-#ifndef _MAP_PREVIEW_H_
-#define _MAP_PREVIEW_H_
+#ifndef _MAP_FILECHOOSER_PREVIEW_H_
+#define _MAP_FILECHOOSER_PREVIEW_H_
 
 #include "imapresource.h"
 
-#include "MapPreviewCamera.h"
+#include "ui/common/MapPreview.h"
 
 #include "gtkutil/filechooser.h"
 #include <boost/shared_ptr.hpp>
 
 namespace map {
 
-// Forward decl.
-class MapPreviewFilterObserver;
-typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
-
-class MapPreview :
+class MapFileChooserPreview :
 	public gtkutil::FileChooser::Preview
 {
 	// The loaded map resource
@@ -25,14 +21,11 @@ class MapPreview :
 
 	GtkWidget* _previewContainer;
 
-	MapPreviewCamera _camera;
-
-	MapPreviewFilterObserverPtr _filterObserver;
+	// The actual MapPreview widget
+	ui::MapPreview _preview;
 
 public:
-	MapPreview();
-
-	~MapPreview();
+	MapFileChooserPreview();
 
 	// Retrieve the preview widget for packing into the dialog
 	GtkWidget* getPreviewWidget();
@@ -44,15 +37,12 @@ public:
 	 */
 	void onFileSelectionChanged(const std::string& newFileName, gtkutil::FileChooser& fileChooser);
 
-	// Gets called by a local helper object on each FilterSystem change
-	void onFiltersChanged();
-
 private:
 	// Sets the name of the map to preview, returns TRUE on success
 	bool setMapName(const std::string& name);
 };
-typedef boost::shared_ptr<MapPreview> MapPreviewPtr;
+typedef boost::shared_ptr<MapFileChooserPreview> MapFileChooserPreviewPtr;
 
 } // namespace map
 
-#endif /* _MAP_PREVIEW_H_ */
+#endif /* _MAP_FILECHOOSER_PREVIEW_H_ */

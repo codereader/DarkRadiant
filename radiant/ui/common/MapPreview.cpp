@@ -1,25 +1,38 @@
-#include "MapPreviewCamera.h"
+#include "MapPreview.h"
 
-#include "camera/RadiantCameraView.h"
+#include "ifilter.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/GLWidgetSentry.h"
-#include "ifilter.h"
-
 #include <gtk/gtk.h>
 
+#include "camera/RadiantCameraView.h"
 #include "camera/CamRenderer.h"
-#include "ui/common/RenderableAABB.h"
+
 #include "MapPreviewView.h"
 
-namespace map {
+namespace ui {
 
-	namespace {
-		const float PREVIEW_FOV = 75.0f;
+// Helper class, which notifies the MapPreview about a filter change
+class MapPreviewFilterObserver :
+	public FilterSystem::Observer
+{
+	MapPreview& _owner;
+public:
+	MapPreviewFilterObserver(MapPreview& owner) :
+		_owner(owner)
+	{}
+
+	void onFiltersChanged() {
+		_owner.onFiltersChanged();
 	}
+};
+typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
 
-// Construct the widgets
+namespace {
+	const float PREVIEW_FOV = 75.0f;
+}
 
-MapPreviewCamera::MapPreviewCamera() :
+MapPreview::MapPreview() :
 	_widget(gtk_frame_new(NULL)),
 	_glWidget(true)
 {
@@ -47,15 +60,24 @@ MapPreviewCamera::MapPreviewCamera() :
 
 	// Pack into a frame and return
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+
+	// Add an observer to the FilterSystem to get notified about changes
+	_filterObserver = MapPreviewFilterObserverPtr(new MapPreviewFilterObserver(*this));
+
+	GlobalFilterSystem().addObserver(_filterObserver);
+}
+
+MapPreview::~MapPreview() {
+	GlobalFilterSystem().removeObserver(_filterObserver);
 }
 
 // Set the size request for the widget
 
-void MapPreviewCamera::setSize(int size) {
+void MapPreview::setSize(int size) {
 	gtk_widget_set_size_request(_glWidget, size, size);	
 }
 
-void MapPreviewCamera::setRootNode(const scene::INodePtr& root) {
+void MapPreview::setRootNode(const scene::INodePtr& root) {
 	_root = root;
 
 	if (_root != NULL) {
@@ -67,13 +89,19 @@ void MapPreviewCamera::setRootNode(const scene::INodePtr& root) {
 	}
 }
 
-scene::INodePtr MapPreviewCamera::getRootNode() {
+scene::INodePtr MapPreview::getRootNode() {
 	return _root;
 }
 
-// Initialise the preview GL stuff
+void MapPreview::onFiltersChanged() {
+	// Sanity check
+	if (_root == NULL) return;
 
-void MapPreviewCamera::initialisePreview() {
+	GlobalFilterSystem().updateSubgraph(_root);
+	draw();
+}
+
+void MapPreview::initialisePreview() {
 
 	// Grab the GL widget with sentry object
 	gtkutil::GLWidgetSentry sentry(_glWidget);
@@ -120,7 +148,7 @@ void MapPreviewCamera::initialisePreview() {
 	_stateSelect2 = GlobalShaderCache().capture("$CAM_OVERLAY");
 }
 
-void MapPreviewCamera::draw() {
+void MapPreview::draw() {
 	if (_root == NULL) return;
 
 	// Create scoped sentry object to swap the GLWidget's buffers
@@ -137,13 +165,6 @@ void MapPreviewCamera::draw() {
 	glTranslatef(0, 0, _camDist); // camera translation
 	glMultMatrixd(_rotation); // post multiply with rotations
 	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
-
-	/*// Render as fullbright wireframe
-	glDisable(GL_LIGHTING);
-	glDisable(GL_TEXTURE_2D);
-	glColor3f(0, 1, 1);
-	// Submit the AABB geometry
-	ui::RenderableAABB(aabb).render(RENDER_DEFAULT);*/
 
 	// Render the map
 	glEnable(GL_LIGHTING);
@@ -180,11 +201,11 @@ void MapPreviewCamera::draw() {
 	renderer.render(view.modelView, view.projection);
 }
 
-void MapPreviewCamera::onExpose(GtkWidget* widget, GdkEventExpose* ev, MapPreviewCamera* self) { 
+void MapPreview::onExpose(GtkWidget* widget, GdkEventExpose* ev, MapPreview* self) { 
 	self->draw();
 }
 
-void MapPreviewCamera::onMouseMotion(GtkWidget* widget, GdkEventMotion* ev, MapPreviewCamera* self) {
+void MapPreview::onMouseMotion(GtkWidget* widget, GdkEventMotion* ev, MapPreview* self) {
 	if (ev->state & GDK_BUTTON1_MASK) { // dragging with mouse button
 		static gdouble _lastX = ev->x;
 		static gdouble _lastY = ev->y;
@@ -222,7 +243,7 @@ void MapPreviewCamera::onMouseMotion(GtkWidget* widget, GdkEventMotion* ev, MapP
 	}
 }
 
-void MapPreviewCamera::onMouseScroll(GtkWidget* widget, GdkEventScroll* ev, MapPreviewCamera* self) {
+void MapPreview::onMouseScroll(GtkWidget* widget, GdkEventScroll* ev, MapPreview* self) {
 	// Sanity check
 	if (self->_root == NULL) return;
 
@@ -235,4 +256,4 @@ void MapPreviewCamera::onMouseScroll(GtkWidget* widget, GdkEventScroll* ev, MapP
 	gtk_widget_queue_draw(widget);
 }
 
-} // namespace map
+} // namespace ui
