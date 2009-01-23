@@ -14,6 +14,12 @@ copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install
 copy ..\..\w32deps\libpng\bin\libpng13.dll ..\..\install
 copy ..\..\w32deps\libiconv\bin\libiconv2.dll ..\..\install
 
+rem greebo: The GTK 2.14.5 binaries somehow not always work for Win32 builds?
+rem Use the GTK+ 2.10.8 ones instead
+
+xcopy ..\..\w32deps\gtk2.10.8_binaries\* ..\..\install\. /S /Y
+exit
+
 md ..\..\install\etc
 xcopy ..\..\w32deps\gtk2\bin\etc\* ..\..\install\etc\. /S /Y
 
