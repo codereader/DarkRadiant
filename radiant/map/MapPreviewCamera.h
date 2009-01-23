@@ -5,6 +5,8 @@
 #include "math/matrix.h"
 #include <gtk/gtkwidget.h>
 #include "igl.h"
+#include "irender.h"
+#include "inode.h"
 
 #include "ui/menu/FiltersMenu.h"
 
@@ -28,6 +30,12 @@ class MapPreviewCamera
 
 	// Constructs the filters menu (provides a GtkWidget* operator)
 	ui::FiltersMenu _filtersMenu;
+
+	// The root node of the scene to be rendered
+	scene::INodePtr _root;
+
+	ShaderPtr _stateSelect1;
+	ShaderPtr _stateSelect2;
 	
 public:
 	MapPreviewCamera();
@@ -52,6 +60,9 @@ public:
 	operator GtkWidget* () {
 		return _widget;
 	}
+
+	// Set the map root to render
+	void setRootNode(const scene::INodePtr& root);
 
 private:
 
