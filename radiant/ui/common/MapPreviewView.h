@@ -4,6 +4,15 @@
 #include "cullable.h"
 #include "math/matrix.h"
 
+namespace ui {
+
+/**
+ * greebo: This is more or less a stub class implementing the
+ * needed routines of the VolumeTest abstract base class.
+ *
+ * Most routines just return TRUE or positive, so this class
+ * won't do any culling.
+ */
 class MapPreviewView : 
 	public VolumeTest
 {
@@ -64,5 +73,7 @@ public:
 		return modelView;
 	};
 };
+
+} // namespace ui
 
 #endif /* _MAP_PREVIEW_VIEW_H_ */

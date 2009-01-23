@@ -7,7 +7,7 @@
 #include "gtkutil/filechooser.h"
 #include "gtkutil/IConv.h"
 #include "os/path.h"
-#include "MapPreview.h"
+#include "MapFileChooserPreview.h"
 #include <gtk/gtkwidget.h>
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -55,7 +55,7 @@ std::string MapFileManager::selectFile(bool open,
 	// For prefabs, add a preview widget
 	if (type == "prefab") {
 		// Instantiate a new preview object
-		MapPreviewPtr preview(new MapPreview());
+		MapFileChooserPreviewPtr preview(new MapFileChooserPreview());
 
 		// attach the preview object
 		fileChooser.attachPreview(preview);

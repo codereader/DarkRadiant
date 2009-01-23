@@ -948,6 +948,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\MapFileChooserPreview.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapFileChooserPreview.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\MapFileManager.cpp"
 					>
 				</File>
@@ -969,26 +977,6 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\map\MapPositionManager.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\map\MapPreview.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\map\MapPreview.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\map\MapPreviewCamera.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\map\MapPreviewCamera.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\map\MapPreviewView.h"
 					>
 				</File>
 				<File
@@ -1738,6 +1726,18 @@
 				<Filter
 					Name="common"
 					>
+					<File
+						RelativePath="..\..\radiant\ui\common\MapPreview.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\common\MapPreview.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\common\MapPreviewView.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\radiant\ui\common\ModelPreview.cpp"
 						>
