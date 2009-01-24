@@ -326,6 +326,7 @@ void EntityInspector::onGtkIdle() {
         gtk_widget_set_sensitive(_editorFrame, TRUE);
         gtk_widget_set_sensitive(_treeView, TRUE);
 		gtk_widget_set_sensitive(_showInheritedCheckbox, TRUE);
+		gtk_widget_set_sensitive(_showHelpColumnCheckbox, TRUE);
 
         refreshTreeModel(); // get values, already have category tree
     }
@@ -340,6 +341,7 @@ void EntityInspector::onGtkIdle() {
         gtk_widget_set_sensitive(_editorFrame, FALSE);
         gtk_widget_set_sensitive(_treeView, FALSE);
 		gtk_widget_set_sensitive(_showInheritedCheckbox, FALSE);
+		gtk_widget_set_sensitive(_showHelpColumnCheckbox, FALSE);
 
         gtk_list_store_clear(_listStore);
     }
