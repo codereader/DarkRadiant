@@ -59,6 +59,7 @@ namespace {
     const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
     const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
+	const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = "Revert part to worldspawn";
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
 	const char* MAKE_VISPORTAL = "Make Visportal";
 	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
@@ -80,6 +81,7 @@ namespace {
 		WIDGET_ADD_SPEAKER,
 		WIDGET_CONVERT_STATIC,
 		WIDGET_REVERT_WORLDSPAWN,
+		WIDGET_REVERT_PARTIAL,
 		WIDGET_MAKE_VISPORTAL,
 		WIDGET_ADD_TO_LAYER,
 		WIDGET_MOVE_TO_LAYER,
@@ -110,6 +112,7 @@ OrthoContextMenu::OrthoContextMenu()
 	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT);
 	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT);
 	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT);
+	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT);
 
 	// "Add to layer" submenu
 	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
@@ -140,20 +143,22 @@ OrthoContextMenu::OrthoContextMenu()
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_CONVERT_STATIC]), "activate", G_CALLBACK(callbackConvertToStatic), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_REVERT_WORLDSPAWN]), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_REVERT_PARTIAL]), "activate", G_CALLBACK(callbackRevertToWorldspawnPartial), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_ENTITY]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MODEL]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_LIGHT]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_SPEAKER]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PREFAB]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MONSTERCLIP]);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PLAYERSTART]);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_PLAYERSTART]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CONVERT_STATIC]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_WORLDSPAWN]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_PARTIAL]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MAKE_VISPORTAL]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CREATE_LAYER]);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_TO_LAYER]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_TO_LAYER]);
@@ -297,14 +302,42 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 	}
 	
 	if (sensitive) {
-		gtk_widget_set_sensitive(_widgets[WIDGET_REVERT_WORLDSPAWN], true);
+		gtk_widget_set_sensitive(_widgets[WIDGET_REVERT_WORLDSPAWN], TRUE);
 		gtk_widget_show_all(_widgets[WIDGET_REVERT_WORLDSPAWN]);
 		gtk_widget_hide_all(_widgets[WIDGET_CONVERT_STATIC]);
 	}
 	else {
-		gtk_widget_set_sensitive(_widgets[WIDGET_REVERT_WORLDSPAWN], false);
+		gtk_widget_set_sensitive(_widgets[WIDGET_REVERT_WORLDSPAWN], FALSE);
 		gtk_widget_hide_all(_widgets[WIDGET_REVERT_WORLDSPAWN]);
 		gtk_widget_show_all(_widgets[WIDGET_CONVERT_STATIC]);
+	}
+
+	bool partialSensitive = false;
+
+	// Also, check the revert part to worldspawn option
+	if (info.totalCount == 1 && (info.brushCount + info.patchCount == 1)) {
+		// Check the selected node
+		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
+
+		// Only allow revert partial if the parent node is a groupnode
+		if (node != NULL && Node_isPrimitive(node) && 
+			node->getParent() != NULL && node_is_group(node->getParent()))
+		{
+			Entity* parent = Node_getEntity(node->getParent());
+			if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
+				partialSensitive = true;
+			}
+		}
+	}
+	
+	if (partialSensitive) {
+		gtk_widget_show_all(_widgets[WIDGET_REVERT_PARTIAL]);
+
+		// Disable "convert to func_static" if revert partial is active
+		gtk_widget_set_sensitive(_widgets[WIDGET_CONVERT_STATIC], FALSE);
+	}
+	else {
+		gtk_widget_hide_all(_widgets[WIDGET_REVERT_PARTIAL]);
 	}
 }
 
@@ -486,6 +519,11 @@ void OrthoContextMenu::callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContex
 
 	// Pass the call to the according method
 	selection::algorithm::revertGroupToWorldSpawn();	
+}
+
+void OrthoContextMenu::callbackRevertToWorldspawnPartial(GtkMenuItem* item, OrthoContextMenu* self) {
+	// Call the specialised method (this also handles the Undo stuff)
+	selection::algorithm::parentSelectionToWorldspawn();
 }
 
 void OrthoContextMenu::callbackAddToLayer(int layerID) {
