@@ -62,6 +62,7 @@ class EntityInspector :
 
 	// The checkbox for showing the eclass properties
 	GtkWidget* _showInheritedCheckbox;
+	GtkWidget* _showHelpColumnCheckbox;
     
     // Key list store and view
     GtkListStore* _listStore;
@@ -111,6 +112,7 @@ private:
 	static void _onEntryActivate(GtkWidget*, EntityInspector*);
 	static void _onSetProperty(GtkWidget*, EntityInspector*);    
 	static void _onToggleShowInherited(GtkToggleButton*, EntityInspector*);
+	static void _onToggleShowHelpIcons(GtkToggleButton*, EntityInspector*);
 
 	static gboolean _onQueryTooltip(GtkWidget* widget, 
 									 gint x, gint y, gboolean keyboard_mode, 
