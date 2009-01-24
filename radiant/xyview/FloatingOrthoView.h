@@ -65,8 +65,17 @@ public:
 		gtk_window_set_type_hint(
 	    	GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL
 	    );
+
+		g_signal_connect(G_OBJECT(getWindow()), "focus-in-event", G_CALLBACK(onFocus), this);
 	}
-	
+
+	static gboolean onFocus(GtkWidget* widget, GdkEventFocus* event, FloatingOrthoView* self) {
+		// Let the global XYWndManager know about the focus change
+		GlobalXYWnd().setActiveXY(self->_id);
+
+		return FALSE;
+	}
+
 	/** Overrides the setViewType method of the XYWnd base class.
 	 *  Extends the functionality by setting the window title.
 	 */
