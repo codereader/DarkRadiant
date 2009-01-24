@@ -1,8 +1,11 @@
 #ifndef ORTHOCONTEXTMENU_H_
 #define ORTHOCONTEXTMENU_H_
 
-#include <gtk/gtk.h>
+#include <map>
 #include "math/Vector3.h"
+
+typedef struct _GtkMenuItem GtkMenuItem;
+typedef struct _GtkWidget GtkWidget;
 
 namespace ui
 {
@@ -23,25 +26,10 @@ class OrthoContextMenu
 	
 	// Last provided 3D point for action
 	Vector3 _lastPoint;
+
+	// The widgets, indexed by an enum
+	std::map<int, GtkWidget*> _widgets;
 	
-	// GTK MENU ITEMS
-	GtkWidget* _addEntity;
-	GtkWidget* _addPlayerStart;
-	GtkWidget* _movePlayerStart;
-	GtkWidget* _addModel;
-	GtkWidget* _addMonsterClip;
-	GtkWidget* _addLight;
-	GtkWidget* _addPrefab;
-	GtkWidget* _addSpkr;
-	GtkWidget* _convertStatic;
-	GtkWidget* _revertWorldspawn;
-	GtkWidget* _makeVisportal;
-
-	GtkWidget* _addToLayer;
-	GtkWidget* _moveToLayer;
-	GtkWidget* _removeFromLayer;
-	GtkWidget* _createLayer;
-
 	LayerContextMenuPtr _addToLayerSubmenu;
 	LayerContextMenuPtr _moveToLayerSubmenu;
 	LayerContextMenuPtr _removeFromLayerSubmenu;
