@@ -81,6 +81,9 @@ class TexDef;
 class _QERFaceData;
 typedef Callback1<const _QERFaceData&> BrushFaceDataCallback;
 
+// Some constants
+const std::string RKEY_ENABLE_TEXTURE_LOCK("user/ui/brush/textureLock");
+
 const std::string MODULE_BRUSHCREATOR("Doom3BrushCreator");
 
 class BrushCreator :

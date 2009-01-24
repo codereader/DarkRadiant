@@ -28,11 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/TexDef.h"
 #include "ibrush.h"
 
-	// Some constants
-	namespace {
-		const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
-	}
-
 class _QERFaceData
 {
 public:

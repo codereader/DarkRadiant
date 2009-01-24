@@ -472,6 +472,9 @@ public:
 };
 
 void removeOriginFromChildPrimitives(const scene::INodePtr& root) {
+
+	return; // temp hack
+
 	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
 	GlobalBrush()->setTextureLock(false);
 
@@ -482,6 +485,9 @@ void removeOriginFromChildPrimitives(const scene::INodePtr& root) {
 }
 
 void addOriginToChildPrimitives(const scene::INodePtr& root) {
+
+	return; // temp hack
+
 	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
 	GlobalBrush()->setTextureLock(false);
 

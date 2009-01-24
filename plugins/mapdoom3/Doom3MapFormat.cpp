@@ -5,6 +5,7 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "iregistry.h"
+#include "igroupnode.h"
 
 #include "parser/DefTokeniser.h"
 #include "stream/textstream.h"
@@ -116,6 +117,9 @@ bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 		// Now that the graph is in place, assign the layers
 		AssignLayerMappingWalker walker(infoFile);
 		importInfo.root->traverse(walker);
+
+		// Also process the func_static child primitives
+		addOriginToChildPrimitives(importInfo.root);
 		
 		return true;
 	}
@@ -126,6 +130,10 @@ bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 }
 
 void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {
+
+	// Prepare the func_statics contained in the subgraph
+	removeOriginFromChildPrimitives(exportInfo.root);
+
 	int precision = GlobalRegistry().getInt(RKEY_PRECISION);
 	exportInfo.mapStream.precision(precision);
 
@@ -135,6 +143,79 @@ void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {
 	// Instantiate a NodeExporter class and call the traverse function
 	NodeExporter exporter(exportInfo.mapStream, exportInfo.infoStream);
 	exportInfo.traverse(exportInfo.root, exporter);
+
+	// Add the origin to the primitives again
+	addOriginToChildPrimitives(exportInfo.root);
+}
+
+void Doom3MapFormat::addOriginToChildPrimitives(const scene::INodePtr& root) const {
+	// Disable texture lock during this process
+	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
+	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
+	
+	// Local helper to add origins
+	class OriginAdder :
+		public scene::NodeVisitor
+	{
+	public:
+		// NodeVisitor implementation
+		bool pre(const scene::INodePtr& node) {
+			Entity* entity = Node_getEntity(node);
+		
+			// Check for an entity
+			if (entity != NULL) {
+				// greebo: Check for a Doom3Group
+				scene::GroupNodePtr groupNode = Node_getGroupNode(node);
+				
+				// Don't handle the worldspawn children, they're safe&sound
+				if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+					groupNode->addOriginToChildren();
+					// Don't traverse the children
+					return false;
+				}
+			}
+			return true;
+		}
+	} adder;
+
+	Node_traverseSubgraph(root, adder);
+
+	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
+}
+
+void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root) const {
+	// Disable texture lock during this process
+	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
+	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
+	
+	// Local helper to remove the origins
+	class OriginRemover :
+		public scene::NodeVisitor 
+	{
+	public:
+		bool pre(const scene::INodePtr& node) {
+			Entity* entity = Node_getEntity(node);
+			
+			// Check for an entity
+			if (entity != NULL) {
+				// greebo: Check for a Doom3Group
+				scene::GroupNodePtr groupNode = Node_getGroupNode(node);
+				
+				// Don't handle the worldspawn children, they're safe&sound
+				if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+					groupNode->removeOriginFromChildren();
+					// Don't traverse the children
+					return false;
+				}
+			}
+			
+			return true;
+		}
+	} remover;
+
+	Node_traverseSubgraph(root, remover);
+
+	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
 }
 
 } // namespace map
