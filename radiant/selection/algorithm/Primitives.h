@@ -120,26 +120,14 @@ namespace selection {
 	 
 	int countSelectedBrushes();
 	
-	/** greebo: Class used to add the origin to the selected brushes
-	 */
-	class OriginAdder :
-		public scene::Graph::Walker,
-		public scene::NodeVisitor
-	{
-	public:
-		// Graph::Walker implementation
-		bool pre(const scene::Path& path, const scene::INodePtr& node) const;
-	
-		// NodeVisitor implementation
-		virtual bool pre(const scene::INodePtr& node);
-	};
-	
 	/** greebo: This adds/removes the origin from all the child primitivies
 	 * 			of container entities like func_static. This has to be called
 	 * 			right after/before a map save and load process.
+	 *
+	 * @root: The root of the subgraph to process.
 	 */
-	void removeOriginFromChildPrimitives();
-	void addOriginToChildPrimitives();
+	void removeOriginFromChildPrimitives(const scene::INodePtr& root);
+	void addOriginToChildPrimitives(const scene::INodePtr& root);
 	
 	/** greebo: Creates a coplanar patch for each selected face instance.
 	 */
