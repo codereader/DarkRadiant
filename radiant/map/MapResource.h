@@ -52,8 +52,9 @@ public:
 	 * true if the resource was saved, false otherwise.
 	 */
 	bool save();
-	
-	void flush();
+
+	// Reloads from disk
+	void reload();
 	
 	scene::INodePtr getNode();
 	void setNode(scene::INodePtr node);

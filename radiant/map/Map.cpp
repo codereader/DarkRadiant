@@ -140,7 +140,6 @@ void Map::realiseResource() {
 
 void Map::unrealiseResource() {
 	if (m_resource != NULL) {
-		m_resource->flush();
 		m_resource->unrealise();
 	}
 }
@@ -166,7 +165,7 @@ void Map::onResourceRealise() {
 	// Take the new node and insert it as map root
 	GlobalSceneGraph().insert_root(m_resource->getNode());
 
-	map::AutoSaver().clearChanges();
+	AutoSaver().clearChanges();
 
 	setValid(true);
 }
@@ -516,9 +515,6 @@ bool Map::import(const std::string& filename) {
 	
 	{
 		IMapResourcePtr resource = GlobalMapResourceManager().capture(filename);
-		
-		// avoid loading old version if map has changed on disk since last import
-		resource->refresh(); 
 		
 		if (resource->load()) {
 			// load() returned TRUE, this means that the resource node 
