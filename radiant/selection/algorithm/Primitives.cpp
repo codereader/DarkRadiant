@@ -134,6 +134,15 @@ void forEachSelectedPrimitive(PrimitiveVisitor& visitor) {
 	g_SelectedFaceInstances.foreach(walker);
 }
 
+// PatchTesselationUpdater implementation
+void PatchTesselationUpdater::visit(const scene::INodePtr& node) const {
+	Patch* patch = Node_getPatch(node);
+
+	if (patch != NULL) {
+		patch->setFixedSubdivisions(_fixed, _tess);
+	}
+}
+
 int selectedFaceCount() {
 	return static_cast<int>(g_SelectedFaceInstances.size());
 }

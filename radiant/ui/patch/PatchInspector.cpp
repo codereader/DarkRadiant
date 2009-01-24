@@ -297,28 +297,6 @@ void PatchInspector::update() {
 	_updateActive = true;
 	
 	if (_patch != NULL) {
-		// Load the "fixed tesselation" value
-		bool fixed = _patch->subdivionsFixed();
-		
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_tesselation.fixed), 
-			fixed
-		);
-		
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_tesselation.horiz),
-			_patch->getSubdivisions()[0]
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_tesselation.vert),
-			_patch->getSubdivisions()[1]
-		);
-		
-		gtk_widget_set_sensitive(_tesselation.horiz, fixed);
-		gtk_widget_set_sensitive(_tesselation.vert, fixed);
-		gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
-		gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
-		
 		// Load the data from the vertex
 		loadControlVertex();
 	}
@@ -378,8 +356,9 @@ void PatchInspector::rescanSelection() {
 	gtk_widget_set_sensitive(GTK_WIDGET(_vertexChooser.table), sensitive);
 	gtk_widget_set_sensitive(GTK_WIDGET(_vertexChooser.title), sensitive);
 	
-	gtk_widget_set_sensitive(_tesselation.title, sensitive);
-	gtk_widget_set_sensitive(GTK_WIDGET(_tesselation.table), sensitive);
+	// Tesselation is always sensitive when one or more patches are selected
+	gtk_widget_set_sensitive(_tesselation.title, _selectionInfo.patchCount > 0);
+	gtk_widget_set_sensitive(GTK_WIDGET(_tesselation.table), _selectionInfo.patchCount > 0);
 	
 	gtk_widget_set_sensitive(_coordsLabel, sensitive);
 	gtk_widget_set_sensitive(GTK_WIDGET(_coordsTable), sensitive);
@@ -401,15 +380,64 @@ void PatchInspector::rescanSelection() {
 	_patchRows = 0;
 	_patchCols = 0;
 	
-	if (sensitive) {
+	if (_selectionInfo.patchCount > 0) {
+		// Get the list of selected patches
 		PatchPtrVector list = selection::algorithm::getSelectedPatches();
+
+		BasicVector2<unsigned int> tess(-1,-1);
+		bool tessIsFixed = false;
+		bool tessIsSame = false;
+
+		// Try to find a pair of same tesselation values
+		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i) {
+			Patch& p = (*i)->getPatch();
+
+			if (tess.x() == -1) {
+				// Not initialised yet, take these values for starters
+				tessIsSame = true;
+				tessIsFixed = p.subdivionsFixed();
+				tess = p.getSubdivisions();
+			}
+			else {
+				// We already have a pair of divisions, compare
+				BasicVector2<unsigned int> otherTess = p.getSubdivisions();
+
+				if (tessIsFixed != p.subdivionsFixed() || otherTess != tess) {
+					// Our journey ends here, we cannot find a pair of tesselations 
+					// for all selected patches or the same fixed/variable status
+					tessIsSame = false;
+					tessIsFixed = false;
+					break;
+				}
+			}
+		}
+
+		_updateActive = true;
+
+		// Load the "fixed tesselation" value
+		gtk_toggle_button_set_active(
+			GTK_TOGGLE_BUTTON(_tesselation.fixed), 
+			tessIsFixed
+		);
 		
-		if (list.size() > 0) {
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_tesselation.horiz),
+			tess[0]
+		);
+		gtk_spin_button_set_value(
+			GTK_SPIN_BUTTON(_tesselation.vert),
+			tess[1]
+		);
+		
+		gtk_widget_set_sensitive(_tesselation.horiz, tessIsFixed);
+		gtk_widget_set_sensitive(_tesselation.vert, tessIsFixed);
+		gtk_widget_set_sensitive(_tesselation.vertLabel, tessIsFixed);
+		gtk_widget_set_sensitive(_tesselation.horizLabel, tessIsFixed);
+		
+		if (_selectionInfo.patchCount == 1) {
 			_patch = &(list[0]->getPatch());
 			_patchRows = _patch->getHeight();
 			_patchCols = _patch->getWidth();
-			
-			_updateActive = true;
 			
 			for (std::size_t i = 0; i < _patchRows; i++) {
 				gtk_combo_box_append_text(
@@ -433,9 +461,9 @@ void PatchInspector::rescanSelection() {
 				GTK_COMBO_BOX(_vertexChooser.colCombo), 
 				0
 			);
-			
-			_updateActive = false;
 		}
+
+		_updateActive = false;
 	}
 	
 	update();
@@ -462,24 +490,23 @@ void PatchInspector::emitCoords() {
 }
 
 void PatchInspector::emitTesselation() {
-	// Save the setting into the patch
-	if (_patch != NULL) {
-		UndoableCommand setFixedTessCmd("patchSetFixedTesselation");
-		
-		BasicVector2<unsigned int> tess(
-			gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.horiz)),
-			gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.vert))
-		);
-		
-		bool fixed = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_tesselation.fixed)) ? true : false;
-		
-		_patch->setFixedSubdivisions(fixed, tess);
-		
-		gtk_widget_set_sensitive(_tesselation.horiz, fixed);
-		gtk_widget_set_sensitive(_tesselation.vert, fixed);
-		gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
-		gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
-	}
+	UndoableCommand setFixedTessCmd("patchSetFixedTesselation");
+
+	BasicVector2<unsigned int> tess(
+		gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.horiz)),
+		gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.vert))
+	);
+
+	bool fixed = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_tesselation.fixed)) ? true : false;
+
+	// Save the setting into the selected patch(es)
+	selection::algorithm::PatchTesselationUpdater updater(fixed, tess);
+	GlobalSelectionSystem().foreachSelected(updater);	
+
+	gtk_widget_set_sensitive(_tesselation.horiz, fixed);
+	gtk_widget_set_sensitive(_tesselation.vert, fixed);
+	gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
+	gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
 }
 
 void PatchInspector::saveToRegistry() {
