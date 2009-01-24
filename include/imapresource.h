@@ -18,8 +18,10 @@ public:
 	
 	virtual bool load() = 0;
 	virtual bool save() = 0;
-	virtual void flush() = 0;
-	virtual void refresh() = 0;
+
+	// Reloads the map file from disk
+	virtual void reload() = 0;
+
 	virtual scene::INodePtr getNode() = 0;
 	virtual void setNode(scene::INodePtr node) = 0;
 	

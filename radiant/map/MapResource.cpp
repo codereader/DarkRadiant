@@ -150,10 +150,6 @@ bool MapResource::saveBackup() {
 	return false;
 }
 
-void MapResource::flush() {
-	// greebo: Nothing to do, no cache is used for MapResources
-}
-
 scene::INodePtr MapResource::getNode() {
 	return _mapRoot;
 }
@@ -246,12 +242,9 @@ bool MapResource::isModified() const {
 			|| !path_equal(rootPath(_originalName).c_str(), _path.c_str()); // OR absolute vfs-root changed
 }
 
-void MapResource::refresh() {
-    if (isModified()) {
-		flush();
-		unrealise();
-		realise();
-	}
+void MapResource::reload() {
+    unrealise();
+	realise();
 }
 
 MapFormatPtr MapResource::getMapFormat() {
