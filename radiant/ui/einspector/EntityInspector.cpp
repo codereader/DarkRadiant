@@ -16,6 +16,7 @@
 #include "xmlutil/Document.h"
 #include "signal/signal.h"
 #include "map/Map.h"
+#include "selection/algorithm/Entity.h"
 
 #include <map>
 #include <string>
@@ -358,7 +359,7 @@ namespace
                 {
                     // Adapt the model key along with the name
                     entity->setKeyValue("model", _value);
-                }
+				}
             }
         }
     };
@@ -395,9 +396,16 @@ void EntityInspector::setPropertyFromEntries()
 		}
 	}
 
-    // Use EntityKeySetter to set value on all selected entities
-    EntityKeySetter setter(key, val);
-    GlobalSelectionSystem().foreachSelected(setter);
+	// Detect classname changes
+    if (key == "classname") {
+		// Classname changes are handled in a special way
+		selection::algorithm::setEntityClassname(val);
+	}
+	else {
+		// Regular key change, use EntityKeySetter to set value on all selected entities
+		EntityKeySetter setter(key, val);
+		GlobalSelectionSystem().foreachSelected(setter);
+	}
 }
 
 // Construct and return static PropertyMap instance
