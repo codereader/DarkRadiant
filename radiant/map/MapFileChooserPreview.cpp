@@ -2,8 +2,12 @@
 
 #include "itextstream.h"
 #include <gtk/gtkvbox.h>
+#include "scenelib.h"
+#include <gtk/gtktextview.h>
 #include "brush/BrushModule.h"
+#include "gtkutil/ScrolledFrame.h"
 #include "selection/algorithm/Primitives.h"
+#include "map/algorithm/WorldspawnArgFinder.h"
 
 namespace map {
 
@@ -11,7 +15,23 @@ MapFileChooserPreview::MapFileChooserPreview() :
 	_previewContainer(gtk_vbox_new(FALSE, 0))
 {
 	_preview.setSize(400);
-	gtk_box_pack_start(GTK_BOX(_previewContainer), _preview, TRUE, TRUE, 0);
+
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+	
+	gtk_box_pack_start(GTK_BOX(vbox), _preview, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), createUsagePanel(), TRUE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(_previewContainer), vbox, TRUE, TRUE, 0);
+}
+
+// Create the entity usage information panel
+GtkWidget* MapFileChooserPreview::createUsagePanel() {
+	// Create a GtkTextView
+	_usageInfo = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_usageInfo), GTK_WRAP_WORD);
+	gtk_text_view_set_editable(GTK_TEXT_VIEW(_usageInfo), FALSE);
+
+	return gtkutil::ScrolledFrame(_usageInfo);	
 }
 
 GtkWidget* MapFileChooserPreview::getPreviewWidget() {
@@ -31,9 +51,35 @@ void MapFileChooserPreview::onFileSelectionChanged(
 	bool success = setMapName(newFileName);
 
 	_preview.initialisePreview();
-	gtk_widget_queue_draw(_preview); 
+	gtk_widget_queue_draw(_preview);
 	
 	fileChooser.setPreviewActive(success);
+
+	updateUsageInfo();
+}
+
+void MapFileChooserPreview::updateUsageInfo() {
+	// Get the underlying buffer object	
+	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageInfo));
+
+	std::string usage("");
+
+	if (_mapResource != NULL && _mapResource->getNode() != NULL) {
+		// Retrieve the root node
+		scene::INodePtr root = _mapResource->getNode();
+
+		// Traverse the root to find the worldspawn
+		WorldspawnArgFinder finder("editor_description");
+		Node_traverseSubgraph(root, finder);
+
+		usage = finder.getFoundValue();
+
+		if (usage.empty()) {
+			usage = "<no description>";
+		}
+	}
+
+	gtk_text_buffer_set_text(buf, usage.c_str(), -1);
 }
 
 bool MapFileChooserPreview::setMapName(const std::string& name) {
