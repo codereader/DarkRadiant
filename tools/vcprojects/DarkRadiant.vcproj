@@ -1058,6 +1058,10 @@
 						RelativePath="..\..\radiant\map\algorithm\Traverse.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\WorldspawnArgFinder.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

@@ -21,6 +21,9 @@ class MapFileChooserPreview :
 
 	GtkWidget* _previewContainer;
 
+	// The description widget (text entry)
+	GtkWidget* _usageInfo;
+
 	// The actual MapPreview widget
 	ui::MapPreview _preview;
 
@@ -38,6 +41,12 @@ public:
 	void onFileSelectionChanged(const std::string& newFileName, gtkutil::FileChooser& fileChooser);
 
 private:
+	// Updates the usage info based on the prefab's worldspawn spawnargs
+	void updateUsageInfo();
+
+	// The usage text view
+	GtkWidget* createUsagePanel();
+
 	// Sets the name of the map to preview, returns TRUE on success
 	bool setMapName(const std::string& name);
 };
