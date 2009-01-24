@@ -50,9 +50,6 @@ bool MapFileChooserPreview::setMapName(const std::string& name) {
 
 		assert(root != NULL);
 
-		// Treat func_statics
-		selection::algorithm::addOriginToChildPrimitives(root);
-
 		// Set the new rootnode
 		_preview.setRootNode(root);
 

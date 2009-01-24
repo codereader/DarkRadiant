@@ -322,18 +322,12 @@ void RegionManager::saveRegion() {
 		// Add the region brushes
 		GlobalRegion().addRegionBrushes();
 		
-		// Substract the origin from child primitives (of entities like func_static)
-		selection::algorithm::removeOriginFromChildPrimitives(GlobalSceneGraph().root());
-		
 		// Save the map and pass the RegionManager::traverseRegion functor 
 		// that assures that only regioned items are traversed
 		MapResource_saveFile(Map::getFormatForFile(filename),
 							 GlobalSceneGraph().root(),
   							 RegionManager::traverseRegion,
   							 filename.c_str());
-		
-		// Add the origin to all the children of func_static, etc.
-		selection::algorithm::addOriginToChildPrimitives(GlobalSceneGraph().root());
 		
 		// Remove the region brushes
 		GlobalRegion().removeRegionBrushes();
