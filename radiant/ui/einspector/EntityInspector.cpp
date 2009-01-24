@@ -40,6 +40,8 @@ namespace {
 
 	const std::string RKEY_ROOT = "user/ui/entityInspector/";
 	const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
+
+	const std::string HELP_ICON_NAME = "helpicon.png";
     
 	// TreeView column numbers
     enum {
@@ -49,6 +51,7 @@ namespace {
         PROPERTY_ICON_COLUMN,
         INHERITED_FLAG_COLUMN,
 		HELP_ICON_COLUMN,
+		HAS_HELP_FLAG_COLUMN,
         N_COLUMNS
     };
 
@@ -58,12 +61,13 @@ namespace {
 
 EntityInspector::EntityInspector()
 : _listStore(gtk_list_store_new(N_COLUMNS, 
-	    						G_TYPE_STRING, // property
-	    						G_TYPE_STRING, // value
-	    						G_TYPE_STRING, // text colour
-	    						GDK_TYPE_PIXBUF, // value icon
-	    						G_TYPE_STRING, // inherited flag
-								GDK_TYPE_PIXBUF)), // help icon
+	    						G_TYPE_STRING,		// property
+	    						G_TYPE_STRING,		// value
+	    						G_TYPE_STRING,		// text colour
+	    						GDK_TYPE_PIXBUF,	// value icon
+	    						G_TYPE_STRING,		// inherited flag
+								GDK_TYPE_PIXBUF,	// help icon
+								G_TYPE_BOOLEAN)),	// has help
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore))),
   _contextMenu(gtkutil::PopupMenu(_treeView)),
   _showInherited(false)
@@ -214,10 +218,10 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 	gtk_tree_view_column_set_sort_column_id(valCol, PROPERTY_VALUE_COLUMN);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
 
-	// Help column
-	_helpColumn = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(_helpColumn, "?");
-	gtk_tree_view_column_set_spacing(_helpColumn, 3);
+	GdkPixbuf* helpIcon = GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME);
+	if (helpIcon != NULL) {
+		gtk_tree_view_column_set_fixed_width(_helpColumn, gdk_pixbuf_get_width(helpIcon));
+	}
 	
 	// Add the help icon
 	GtkCellRenderer* pixRend = gtk_cell_renderer_pixbuf_new();
@@ -228,6 +232,7 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), _helpColumn);
 
+	// Connect the tooltip query signal to our custom routine
 	g_object_set(G_OBJECT(_treeView), "has-tooltip", TRUE, NULL);
 	g_signal_connect(G_OBJECT(_treeView), "query-tooltip", G_CALLBACK(_onQueryTooltip), this);
 
@@ -532,6 +537,7 @@ gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget,
 	if (self->_selectedEntity == NULL) return FALSE; // no single entity selected
 
 	GtkTreeView* tv = GTK_TREE_VIEW(widget);
+	bool showToolTip = false;
 
 	// greebo: Important: convert the widget coordinates to bin coordinates first
 	gint binX, binY;
@@ -542,44 +548,37 @@ gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget,
 	GtkTreePath* path = NULL;
 
 	if (gtk_tree_view_get_path_at_pos(tv, binX, binY, &path, &column, &cellx, &celly)) {
-		// Check if the correct column has been focused
-		if (column != self->_helpColumn) return FALSE;
-
 		// Get the iter of the row pointed at
 		GtkTreeIter iter;
 		GtkTreeModel* model = GTK_TREE_MODEL(self->_listStore);
 		if (gtk_tree_model_get_iter(model, &iter, path)) {
 			// Get the key pointed at
-			std::string key = gtkutil::TreeModel::getString(model, &iter, PROPERTY_NAME_COLUMN);
+			bool hasHelp = gtkutil::TreeModel::getBoolean(model, &iter, HAS_HELP_FLAG_COLUMN);
+
+			if (hasHelp) {
+				std::string key = gtkutil::TreeModel::getString(model, &iter, PROPERTY_NAME_COLUMN);
 			
-			IEntityClassConstPtr eclass = self->_selectedEntity->getEntityClass();
-			assert(eclass != NULL);
+				IEntityClassConstPtr eclass = self->_selectedEntity->getEntityClass();
+				assert(eclass != NULL);
 
-			std::string debugText = key;
+				// Find the attribute on the eclass, that's where the descriptions are defined
+				const EntityClassAttribute& attr = eclass->getAttribute(key);
 
-			gtk_entry_set_text(GTK_ENTRY(self->_valEntry), debugText.c_str());
-
-			// Find the attribute on the eclass, that's where the descriptions are defined
-			const EntityClassAttribute& attr = eclass->getAttribute(key);
-
-			if (!attr.description.empty()) {
-				// Check the description of the focused item
-				gtk_tree_view_set_tooltip_row(tv, tooltip, path);
-				gtk_tooltip_set_markup(tooltip, attr.description.c_str());
-				return TRUE;
+				if (!attr.description.empty()) {
+					// Check the description of the focused item
+					gtk_tree_view_set_tooltip_row(tv, tooltip, path);
+					gtk_tooltip_set_markup(tooltip, attr.description.c_str());
+					showToolTip = true;
+				}
 			}
-
-			return FALSE;
 		}
-
-		return FALSE;
 	}
 
 	if (path != NULL) {
 		gtk_tree_path_free(path);
 	}
 
-	return FALSE;
+	return showToolTip ? TRUE : FALSE;
 }
 
 /* END GTK CALLBACKS */
@@ -689,14 +688,19 @@ void EntityInspector::refreshTreeModel() {
 			// Look up type for this key. First check the property parm map,
 			// then the entity class itself. If nothing is found, leave blank.
 			PropertyParmMap::const_iterator typeIter = _map.find(key);
+
+			const EntityClassAttribute& attr = _eclass->getAttribute(key);
+
 			std::string type;
 			if (typeIter != _map.end()) {
 				type = typeIter->second.type;
 			}
 			else {
 				// Check the entityclass (which will return blank if not found)
-				type = _eclass->getAttribute(key).type;
+				type = attr.type;
 			}
+
+			bool hasDescription = !attr.description.empty();
 
 			// Append the details to the treestore
 			GtkTreeIter iter;
@@ -708,7 +712,8 @@ void EntityInspector::refreshTreeModel() {
 				TEXT_COLOUR_COLUMN, "black",
 				PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
 				INHERITED_FLAG_COLUMN, "", // not inherited
-				HELP_ICON_COLUMN, GlobalRadiant().getLocalPixbuf("helpicon.png"),
+				HELP_ICON_COLUMN, hasDescription ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) : NULL,
+				HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
 				-1);
             
             // If this was the last selected key, save the Iter so we can
@@ -780,6 +785,9 @@ void EntityInspector::appendClassProperties() {
 			// Only add properties with values, we don't want the optional
 			// "editor_var xxx" properties here.
 			if (!a.value.empty()) {
+
+				bool hasDescription = !a.description.empty();
+
 				GtkTreeIter iter;
 				gtk_list_store_append(_store, &iter);
 				gtk_list_store_set(_store, &iter,
@@ -788,7 +796,8 @@ void EntityInspector::appendClassProperties() {
 					TEXT_COLOUR_COLUMN, "#707070",
 					PROPERTY_ICON_COLUMN, NULL,
 					INHERITED_FLAG_COLUMN, "1", // inherited
-					HELP_ICON_COLUMN, GlobalRadiant().getLocalPixbuf("helpicon.png"),
+					HELP_ICON_COLUMN, hasDescription ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) : NULL,
+					HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
 					-1);
 			}
 		}
