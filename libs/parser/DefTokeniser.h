@@ -19,6 +19,8 @@ class DefTokeniserFunc {
         SEARCHING,        // haven't found anything yet
         TOKEN_STARTED,    // found the start of a possible multi-char token
         QUOTED,         // inside quoted text, no tokenising
+		AFTER_CLOSING_QUOTE, // right after a quoted text, checking for backslash
+		SEARCHING_FOR_QUOTE, // searching for continuation of quoted string (after a backslash was found)
         FORWARDSLASH,   // forward slash found, possible comment coming
         COMMENT_EOL,    // double-forwardslash comment
         COMMENT_DELIM,  // inside delimited comment (/*)
@@ -140,13 +142,60 @@ public:
                     // quote. No delimiter splitting is required.
                     if (*next == '\"') {
                         ++next;
-                        return true;
+
+						// greebo: We've found a closing quote, but there might be a backslash indicating
+						// a multi-line string constant "" \ "", so switch to AFTER_CLOSING_QUOTE mode
+						_state = AFTER_CLOSING_QUOTE;
+                        continue;
                     }
                     else {
                         tok += *next;
                         ++next;
                         continue;
                     }
+
+				case AFTER_CLOSING_QUOTE:
+					// We already have a valid string token in our hands, but it might be continued
+					// if one of the next tokens is a backslash
+
+					if (*next == '\\') {
+						// We've found a backslash right after a closing quote, this indicates we could
+						// proceed with parsing quoted content
+						++next;
+						_state = SEARCHING_FOR_QUOTE;
+						continue;
+					}
+
+					// Ignore delimiters
+					if (isDelim(*next)) {
+                        ++next;
+                        continue;
+                    }
+
+					// Everything except delimiters and backslashes indicates that
+					// the quoted content is not continued, so break the loop.
+					// This returns the token and parsing continues.
+					// Return TRUE in any case, even if the parsed token is empty ("").
+					return true;
+
+				case SEARCHING_FOR_QUOTE:
+					// We have found a backslash after a closing quote, search for an opening quote
+					
+					// Step over delimiters
+					if (isDelim(*next)) {
+                        ++next;
+                        continue;
+                    }
+
+					if (*next == '\"') {
+						// Found the desired opening quote, switch to QUOTED
+						++next;
+						_state = QUOTED;
+						continue;
+					}
+
+					// Everything except delimiters or opening quotes indicates an error
+					throw ParseException("Could not find opening double quote after backslash.");
                         
                 case FORWARDSLASH:
                 
