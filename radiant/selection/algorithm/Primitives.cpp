@@ -421,16 +421,16 @@ int countSelectedBrushes() {
 }
 
 class OriginRemover :
-	public scene::Graph::Walker 
+	public scene::NodeVisitor 
 {
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		Entity* entity = Node_getEntity(path.top());
+	bool pre(const scene::INodePtr& node) {
+		Entity* entity = Node_getEntity(node);
 		
 		// Check for an entity
 		if (entity != NULL) {
 			// greebo: Check for a Doom3Group
-			scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
+			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
 			
 			// Don't handle the worldspawn children, they're safe&sound
 			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
@@ -444,57 +444,50 @@ public:
 	}
 };
 
-// Graph::Walker implementation
-bool OriginAdder::pre(const scene::Path& path, const scene::INodePtr& node) const {
-	Entity* entity = Node_getEntity(path.top());
+/** 
+ * greebo: Class used to add the origin to child brushes of func_* entities.
+ */
+class OriginAdder :
+	public scene::NodeVisitor
+{
+public:
+	// NodeVisitor implementation
+	bool pre(const scene::INodePtr& node) {
+		Entity* entity = Node_getEntity(node);
 	
-	// Check for an entity
-	if (entity != NULL) {
-		// greebo: Check for a Doom3Group
-		scene::GroupNodePtr groupNode = Node_getGroupNode(path.top());
-		
-		// Don't handle the worldspawn children, they're safe&sound
-		if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
-			groupNode->addOriginToChildren();
-			// Don't traverse the children
-			return false;
+		// Check for an entity
+		if (entity != NULL) {
+			// greebo: Check for a Doom3Group
+			scene::GroupNodePtr groupNode = Node_getGroupNode(node);
+			
+			// Don't handle the worldspawn children, they're safe&sound
+			if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
+				groupNode->addOriginToChildren();
+				// Don't traverse the children
+				return false;
+			}
 		}
+		return true;
 	}
-	
-	return true;
-}
-	
-// NodeVisitor implementation
-bool OriginAdder::pre(const scene::INodePtr& node) {
-	Entity* entity = Node_getEntity(node);
-	
-	// Check for an entity
-	if (entity != NULL) {
-		// greebo: Check for a Doom3Group
-		scene::GroupNodePtr groupNode = Node_getGroupNode(node);
-		
-		// Don't handle the worldspawn children, they're safe&sound
-		if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
-			groupNode->addOriginToChildren();
-			// Don't traverse the children
-			return false;
-		}
-	}
-	return true;
-}
+};
 
-
-void removeOriginFromChildPrimitives() {
+void removeOriginFromChildPrimitives(const scene::INodePtr& root) {
 	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
 	GlobalBrush()->setTextureLock(false);
-	GlobalSceneGraph().traverse(OriginRemover());
+
+	OriginRemover remover;
+	Node_traverseSubgraph(root, remover);
+
 	GlobalBrush()->setTextureLock(textureLockStatus);
 }
 
-void addOriginToChildPrimitives() {
+void addOriginToChildPrimitives(const scene::INodePtr& root) {
 	bool textureLockStatus = GlobalBrush()->textureLockEnabled();
 	GlobalBrush()->setTextureLock(false);
-	GlobalSceneGraph().traverse(OriginAdder());
+
+	OriginAdder adder;
+	Node_traverseSubgraph(root, adder);
+
 	GlobalBrush()->setTextureLock(textureLockStatus);
 }
 

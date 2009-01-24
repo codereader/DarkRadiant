@@ -50,14 +50,8 @@ bool MapFileChooserPreview::setMapName(const std::string& name) {
 
 		assert(root != NULL);
 
-		bool textureLockStatus = GlobalBrush()->textureLockEnabled();
-		GlobalBrush()->setTextureLock(false);
-		
-		// Add the origin to all the child brushes
-		selection::algorithm::OriginAdder adder;
-		root->traverse(adder);
-
-		GlobalBrush()->setTextureLock(textureLockStatus);
+		// Treat func_statics
+		selection::algorithm::addOriginToChildPrimitives(root);
 
 		// Set the new rootnode
 		_preview.setRootNode(root);
