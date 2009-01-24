@@ -239,6 +239,17 @@ void parentSelection() {
 	}
 }
 
+void parentSelectionToWorldspawn() {
+	UndoableCommand undo("parentSelectedPrimitives");
+
+	scene::INodePtr world = GlobalMap().findOrInsertWorldspawn();
+	if (world == NULL) return;
+
+	// Take the last selected item (this should be an entity)
+	ParentSelectedBrushesToEntityWalker visitor(world);
+	GlobalSelectionSystem().foreachSelected(visitor);
+}
+
 class GroupNodeChildSelector :
 	public SelectionSystem::Visitor,
 	public scene::NodeVisitor

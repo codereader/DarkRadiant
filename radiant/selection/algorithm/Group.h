@@ -14,6 +14,12 @@ namespace selection {
 	 * 			the requirements
 	 */
 	void parentSelection();
+
+	/**
+	 * greebo: Like the above method, but specialises on parent operations
+	 * to the worldspawn entity.
+	 */
+	void parentSelectionToWorldspawn();
 	
 	/** greebo: Selects the children of the currently selected groupnodes.
 	 * 			This deselects the groupnodes entities, so that ONLY the children 
