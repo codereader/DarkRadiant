@@ -6,6 +6,8 @@
 #include <vector>
 #include "iscenegraph.h"
 #include "itraversable.h"
+#include "iselection.h"
+#include "math/Vector2.h"
 #include "math/Vector3.h"
 
 class Face;
@@ -49,6 +51,25 @@ namespace selection {
 	};
 	
 	namespace algorithm {
+
+	class PatchTesselationUpdater :
+		public SelectionSystem::Visitor
+	{
+		bool _fixed;
+		BasicVector2<unsigned int> _tess;
+
+	public:
+		/**
+		 * @fixed: whether the visited patches should be set to fixed tesselation.
+		 * @tess: the fixed X,Y tesselation in case @fixed is set to true.
+		 */
+		PatchTesselationUpdater(bool fixed, const BasicVector2<unsigned int>& tess) :
+			_fixed(fixed),
+			_tess(tess)
+		{}
+
+		void visit(const scene::INodePtr& node) const;
+	};
 
 	/**
 	 * greebo: Traverse the selection and invoke the given visitor

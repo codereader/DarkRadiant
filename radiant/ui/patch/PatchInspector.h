@@ -73,7 +73,7 @@ class PatchInspector
 	std::size_t _patchRows;
 	std::size_t _patchCols;
 	
-	// The pointer to the active patch
+	// The pointer to the active patch (only non-NULL if there is a single patch selected)
 	Patch* _patch;
 	
 	// If this is set to TRUE, the GTK callbacks will be disabled
