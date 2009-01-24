@@ -438,9 +438,6 @@ void Map::load(const std::string& filename) {
 	globalOutputStream() << GlobalRadiant().getCounter(counterPatches).get() << " patches\n";
 	globalOutputStream() << GlobalRadiant().getCounter(counterEntities).get() << " entities\n";
 
-	// Add the origin to all the children of func_static, etc.
-	selection::algorithm::addOriginToChildPrimitives(GlobalSceneGraph().root());
-
 	// Move the view to a start position
 	gotoStartPosition();
 
@@ -482,15 +479,9 @@ bool Map::save() {
 
 	ScopeTimer timer("map save");
 	
-	// Substract the origin from child primitives (of entities like func_static)
-	selection::algorithm::removeOriginFromChildPrimitives(GlobalSceneGraph().root());
-	
 	// Save the actual map resource
 	bool success = m_resource->save();
 		
-	// Re-add the origins to the child primitives (of entities like func_static)
-	selection::algorithm::addOriginToChildPrimitives(GlobalSceneGraph().root());
-  
 	// Remove the saved camera position
 	removeCameraPosition();
 	
@@ -537,8 +528,6 @@ bool Map::import(const std::string& filename) {
 			scene::INodePtr cloneRoot(new BasicContainer);
 
 			{
-				selection::algorithm::addOriginToChildPrimitives(resource->getNode());
-        
 				CloneAll cloner(cloneRoot);
 				resource->getNode()->traverse(cloner);
 			}
@@ -571,9 +560,6 @@ bool Map::saveDirect(const std::string& filename) {
 	
 	_saveInProgress = true;
 
-	// Substract the origin from child primitives (of entities like func_static)
-	selection::algorithm::removeOriginFromChildPrimitives(GlobalSceneGraph().root());
-	
 	bool result = MapResource_saveFile(
 		getFormatForFile(filename), 
 		GlobalSceneGraph().root(), 
@@ -581,9 +567,6 @@ bool Map::saveDirect(const std::string& filename) {
 		filename.c_str()
 	);
 	
-	// Re-add the origins to the child primitives (of entities like func_static)
-	selection::algorithm::addOriginToChildPrimitives(GlobalSceneGraph().root());
-
 	_saveInProgress = false;
 
 	return result;
@@ -596,16 +579,10 @@ bool Map::saveSelected(const std::string& filename) {
 	
 	_saveInProgress = true;
 
-	// Substract the origin from child primitives (of entities like func_static)
-	selection::algorithm::removeOriginFromChildPrimitives(GlobalSceneGraph().root());
-	
 	bool success = MapResource_saveFile(Map::getFormatForFile(filename), 
   							  GlobalSceneGraph().root(), 
   							  map::traverseSelected, // TraversalFunc
   							  filename.c_str());
-
-	// Add the origin to all the children of func_static, etc.
-	selection::algorithm::addOriginToChildPrimitives(GlobalSceneGraph().root());
 
 	_saveInProgress = false;
 
