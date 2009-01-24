@@ -9,7 +9,9 @@
 #include "gdk/gdkwindow.h"
 
 #include "os/file.h"
+#include "os/path.h"
 #include "os/dir.h"
+#include <limits.h>
 #include "string/string.h"
 #include "map/Map.h"
 #include "mainframe.h"
@@ -120,12 +122,11 @@ void AutoMapSaver::saveSnapshot() {
 		// This holds the target path of the snapshot
 		std::string filename;
 		
-		for (int nCount = 0; nCount < 5000; nCount++) {
+		for (int nCount = 0; nCount < INT_MAX; nCount++) {
 			
 			// Construct the base name without numbered extension
 			filename = snapshotPath + mapName;
 			
-			std::cout << filename.c_str() << "\n";
 			// Now append the number and the map extension to the map name
 			filename += ".";
 			filename += intToStr(nCount);
@@ -142,21 +143,21 @@ void AutoMapSaver::saveSnapshot() {
 			}
 		}
 
-		globalOutputStream() << "Autosaving snapshot to " << filename.c_str() << "\n"; 
+		globalOutputStream() << "Autosaving snapshot to " << filename << "\n"; 
 		
 		// Dump to map to the next available filename
 		GlobalMap().saveDirect(filename);
 
 		// Display a warning, if the folder size exceeds the limit 
 		if (folderSize > maxSnapshotFolderSize*1024*1024) {
-			globalOutputStream() << "AutoSaver: The snapshot files in " << snapshotPath.c_str();
+			globalOutputStream() << "AutoSaver: The snapshot files in " << snapshotPath;
 			globalOutputStream() << " total more than " << maxSnapshotFolderSize;
-			globalOutputStream() << " MB. You might consider cleaning up.\n";
+			globalOutputStream() << " MB. You might consider cleaning up." << std::endl;
 		}
 	}
 	else {
 		globalErrorStream() << "Snapshot save failed.. unable to create directory";
-		globalErrorStream() << snapshotPath.c_str() << "\n";
+		globalErrorStream() << snapshotPath << std::endl;
 	}
 }
 
@@ -211,7 +212,7 @@ void AutoMapSaver::checkSave() {
 				saveSnapshot();
 			}
 			catch (boost::filesystem::filesystem_error f) {
-				globalErrorStream() << "AutoSaver::saveSnapshot: " << f.what() << "\n";
+				globalErrorStream() << "AutoSaver::saveSnapshot: " << f.what() << std::endl;
 			}
 		}
 		else {
@@ -226,36 +227,30 @@ void AutoMapSaver::checkSave() {
 				autoSaveFilename += "autosave.";
 				autoSaveFilename += GlobalRegistry().get(RKEY_MAP_EXTENSION);
 				
-				globalOutputStream() << "Autosaving unnamed map to " << autoSaveFilename.c_str() << "\n";
+				globalOutputStream() << "Autosaving unnamed map to " << autoSaveFilename << std::endl;
 				
 				// Invoke the save call
 				GlobalMap().saveDirect(autoSaveFilename);
 			}
 			else {
-				// Construct the new extension (e.g. ".autosave.map")
-				std::string newExtension = ".autosave.";
-				newExtension += GlobalRegistry().get(RKEY_MAP_EXTENSION);
+				// Construct the new filename (e.g. "test_autosave.map")
+				std::string filename = GlobalMap().getMapName();
+				std::string extension = os::getExtension(filename);
+
+				// Cut off the extension
+				filename = filename.substr(0, filename.rfind('.'));
+				filename += "_autosave";
+				filename += "." + extension;
 				
-				try {
-					// create the new autosave filename by changing the extension
-					Path autoSaveFilename = boost::filesystem::change_extension(
-							Path(GlobalMap().getMapName(), boost::filesystem::native), 
-							newExtension
-						);
-					
-					globalOutputStream() << "Autosaving map to " << autoSaveFilename.string().c_str() << "\n";
-				
-					// Invoke the save call
-					GlobalMap().saveDirect(autoSaveFilename.string());
-				}
-				catch (boost::filesystem::filesystem_error f) {
-					globalErrorStream() << "AutoSaver: " << f.what() << "\n";
-				}
+				globalOutputStream() << "Autosaving map to " << filename << std::endl;
+			
+				// Invoke the save call
+				GlobalMap().saveDirect(filename);
 			}
 		}
 	}
 	else {
-		globalOutputStream() << "Autosave skipped...\n";
+		globalOutputStream() << "Autosave skipped..." << std::endl;
 	}
 	
 	// Re-start the timer after saving has finished
