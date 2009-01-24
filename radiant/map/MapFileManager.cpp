@@ -53,7 +53,7 @@ std::string MapFileManager::selectFile(bool open,
 	fileChooser.setCurrentPath(_lastDirs[type]);
 
 	// For prefabs, add a preview widget
-	if (type == "prefab") {
+	if (open && type == "prefab") {
 		// Instantiate a new preview object
 		MapFileChooserPreviewPtr preview(new MapFileChooserPreview());
 
