@@ -69,6 +69,7 @@ EntityInspector::EntityInspector()
 								GDK_TYPE_PIXBUF,	// help icon
 								G_TYPE_BOOLEAN)),	// has help
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore))),
+  _helpColumn(NULL),
   _contextMenu(gtkutil::PopupMenu(_treeView)),
   _showInherited(false)
 {
@@ -76,10 +77,19 @@ EntityInspector::EntityInspector()
     
 	// Pack in GUI components
 	
+	GtkWidget* topHBox = gtk_hbox_new(FALSE, 6);
+
 	_showInheritedCheckbox = gtk_check_button_new_with_label("Show inherited properties");
 	g_signal_connect(G_OBJECT(_showInheritedCheckbox), "toggled", G_CALLBACK(_onToggleShowInherited), this);
 
-	gtk_box_pack_start(GTK_BOX(_widget), _showInheritedCheckbox, FALSE, FALSE, 0);
+	_showHelpColumnCheckbox = gtk_check_button_new_with_label("Show help icons");
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_showHelpColumnCheckbox), FALSE);
+	g_signal_connect(G_OBJECT(_showHelpColumnCheckbox), "toggled", G_CALLBACK(_onToggleShowHelpIcons), this);
+
+	gtk_box_pack_start(GTK_BOX(topHBox), _showInheritedCheckbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(topHBox), _showHelpColumnCheckbox, FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(_widget), topHBox, FALSE, FALSE, 0);
 
 	GtkWidget* paned = gtkutil::Paned(
 		createTreeViewPane(), // first child
@@ -217,6 +227,12 @@ GtkWidget* EntityInspector::createTreeViewPane() {
 
 	gtk_tree_view_column_set_sort_column_id(valCol, PROPERTY_VALUE_COLUMN);
     gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
+
+	// Help column
+	_helpColumn = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(_helpColumn, "?");
+	gtk_tree_view_column_set_spacing(_helpColumn, 3);
+	gtk_tree_view_column_set_visible(_helpColumn, FALSE);
 
 	GdkPixbuf* helpIcon = GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME);
 	if (helpIcon != NULL) {
@@ -528,6 +544,11 @@ void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector
 	}
 	// Refresh list display
 	self->refreshTreeModel();
+}
+
+void EntityInspector::_onToggleShowHelpIcons(GtkToggleButton* b, EntityInspector* self) {
+	// Set the visibility of the column accordingly
+	gtk_tree_view_column_set_visible(self->_helpColumn, gtk_toggle_button_get_active(b));
 }
 
 gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget, 
