@@ -190,6 +190,9 @@ public:
 	// Sets the shader of all faces to the given name
 	void setShader(const std::string& newShader);
 
+	// Returns TRUE if any of the faces has the given shader
+	bool hasShader(const std::string& name);
+
 	void evaluateBRep() const;
 	
 	void transformChanged();
