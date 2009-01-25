@@ -91,71 +91,91 @@ void SelectBrush (int entitynum, int brushnum)
 }
 
 
-class BrushFindIndexWalker : public scene::Graph::Walker
+class PrimitiveFindIndexWalker : 
+	public scene::NodeVisitor
 {
-  mutable scene::INodePtr m_node;
-  std::size_t& m_count;
+	scene::INodePtr _node;
+	std::size_t& _count;
 public:
-  BrushFindIndexWalker(const scene::INodePtr node, std::size_t& count)
-    : m_node(node), m_count(count)
-  {
-  }
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const
-  {
-    if(Node_isPrimitive(node))
-    {
-      if(m_node == node) {
-        m_node = scene::INodePtr();
-      }
-      if(m_node)
-      {
-        ++m_count;
-      }
-    }
-    return true;
-  }
+	PrimitiveFindIndexWalker(const scene::INodePtr& node, std::size_t& count) : 
+		_node(node), 
+		_count(count)
+	{}
+
+	bool pre(const scene::INodePtr& node) {
+		if (Node_isPrimitive(node)) {
+			// Have we found the node?
+			if (_node == node) {
+				// Yes, found, set needle to NULL
+				_node = scene::INodePtr();
+			}
+
+			// As long as the needle is non-NULL, increment the counter
+			if (_node != NULL) {
+				++_count;
+			}
+		}
+
+		return true;
+	}
 };
 
-class EntityFindIndexWalker : public scene::Graph::Walker
+class EntityFindIndexWalker : 
+	public scene::NodeVisitor
 {
-  mutable scene::INodePtr m_node;
-  std::size_t& m_count;
+	scene::INodePtr _node;
+	std::size_t& _count;
 public:
-  EntityFindIndexWalker(const scene::INodePtr node, std::size_t& count)
-    : m_node(node), m_count(count)
-  {
-  }
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const
-  {
-    if(Node_isEntity(path.top()))
-    {
-      if(m_node == path.top())
-      {
-        m_node = scene::INodePtr();
-      }
-      if(m_node)
-      {
-        ++m_count;
-      }
-    }
-    return true;
-  }
+	EntityFindIndexWalker(const scene::INodePtr& node, std::size_t& count) : 
+		_node(node), 
+		_count(count)
+	{}
+
+	bool pre(const scene::INodePtr& node) {
+		if (Node_isEntity(node)) {
+			// Have we found the node?
+			if (_node == node) {
+				// Yes, found, set needle to NULL
+				_node = scene::INodePtr();
+			}
+
+			// As long as the needle is non-NULL, increment the counter
+			if (_node != NULL) {
+				++_count;
+			}
+		}
+
+		return true;
+	}
 };
 
-/*static void GetSelectionIndex (int *ent, int *brush)
+void GetSelectionIndex(int *ent, int *brush)
 {
-  std::size_t count_brush = 0;
-  std::size_t count_entity = 0;
-  if(GlobalSelectionSystem().countSelected() != 0)
-  {
-    const scene::Path& path = GlobalSelectionSystem().ultimateSelected().path();
+	std::size_t count_brush = 0;
+	std::size_t count_entity = 0;
 
-    GlobalSceneGraph().traverse(BrushFindIndexWalker(path.top(), count_brush));
-    GlobalSceneGraph().traverse(EntityFindIndexWalker(path.parent(), count_entity));
-  }
-  *brush = int(count_brush);
-  *ent = int(count_entity);
-}*/
+	if (GlobalSelectionSystem().countSelected() != 0) {
+		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
+		scene::INodePtr parent = node->getParent();
+
+		if (Node_isEntity(node)) {
+			// Selection is an entity, find its index
+			EntityFindIndexWalker walker(node, count_entity);
+			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+		}
+		else if (Node_isPrimitive(node)) {
+			// Node is a primitive, find parent entity and child index
+			EntityFindIndexWalker walker(parent, count_entity);
+			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+
+			PrimitiveFindIndexWalker brushWalker(node, count_brush);
+			Node_traverseSubgraph(parent, brushWalker);
+		}
+	}
+
+	*brush = static_cast<int>(count_brush);
+	*ent = static_cast<int>(count_entity);
+}
 
 void DoFind()
 {
@@ -228,7 +248,7 @@ void DoFind()
   char buf[16];
   int ent(0), br(0);
 
-  //GetSelectionIndex (&ent, &br);
+  GetSelectionIndex (&ent, &br);
   sprintf (buf, "%i", ent);
   gtk_entry_set_text(entity, buf);
   sprintf (buf, "%i", br);
