@@ -329,16 +329,16 @@ void selectChildren() {
 }
 
 /**
- * greebo: This walker traverses the entire scenegraph, 
+ * greebo: This walker traverses the entire subgraph, 
  *         searching for entities with selected child primitives.
  *         If such an entity is found, it is traversed and all
  *         child primitives are selected.
  */
 class ExpandSelectionToEntitiesWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		Entity* entity = Node_getEntity(node);
 
 		if (entity != NULL) {
@@ -357,7 +357,8 @@ public:
 };
 
 void expandSelectionToEntities() {
-	GlobalSceneGraph().traverse(ExpandSelectionToEntitiesWalker());
+	ExpandSelectionToEntitiesWalker walker;
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
 
 } // namespace algorithm

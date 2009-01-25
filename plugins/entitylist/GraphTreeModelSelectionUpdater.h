@@ -8,7 +8,7 @@
 namespace ui {
 
 class GraphTreeModelSelectionUpdater :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	GraphTreeModel& _model;
 	GtkTreeSelection* _selection;
@@ -18,7 +18,7 @@ public:
 		_selection(selection)
 	{}
 	
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		const GraphTreeNodePtr& gtNode = _model.find(node);
 		
 		if (gtNode == NULL) {

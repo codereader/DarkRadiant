@@ -14,7 +14,7 @@ namespace ui {
  * This is used by the GraphTreeModel itself to update its status on show.
  */
 class GraphTreeModelPopulator :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	// The model to be populated
 	GraphTreeModel& _model;
@@ -27,8 +27,8 @@ public:
 		_model.clear();
 	}
 	
-	// Graph::Walker implementation
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	// NodeVisitor implementation
+	bool pre(const scene::INodePtr& node) {
 		// Insert this node into the GraphTreeModel
 		_model.insert(node);
 		

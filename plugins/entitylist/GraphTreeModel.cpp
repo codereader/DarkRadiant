@@ -94,12 +94,12 @@ void GraphTreeModel::refresh() {
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
 	GraphTreeModelPopulator populator(*this);
-	GlobalSceneGraph().traverse(populator);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), populator);
 }
 
 void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection) {
 	GraphTreeModelSelectionUpdater updater(*this, selection);
-	GlobalSceneGraph().traverse(updater);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), updater);
 }
 
 void GraphTreeModel::updateSelectionStatus(GtkTreeSelection* selection, const scene::INodePtr& node) {
