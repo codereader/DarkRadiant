@@ -54,7 +54,7 @@ void DifficultySettingsManager::loadDefaultSettings() {
 void DifficultySettingsManager::loadMapSettings() {
 	// Construct a helper walker
 	DifficultyEntityFinder finder;
-	GlobalSceneGraph().traverse(finder);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 
 	const DifficultyEntityFinder::EntityList& found = finder.getEntities();
 
@@ -110,7 +110,7 @@ void DifficultySettingsManager::loadDifficultyNames() {
 void DifficultySettingsManager::saveSettings() {
 	// Locates all difficulty entities
 	DifficultyEntityFinder finder;
-	GlobalSceneGraph().traverse(finder);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 
 	// Copy the list from the finder to a local list
 	DifficultyEntityFinder::EntityList entities = finder.getEntities();

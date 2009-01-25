@@ -8,7 +8,7 @@
 namespace difficulty {
 
 class DifficultyEntityFinder :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 public:
 	// Found difficulty entities are stored in this list
@@ -19,7 +19,7 @@ private:
 	std::string _entityClassName;
 
 	// The list of found entities
-	mutable EntityList _foundEntities;
+	EntityList _foundEntities;
 
 public:
 	DifficultyEntityFinder() :
@@ -32,16 +32,13 @@ public:
 	}
 
 	// Walker implementation
-	virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		// Entities have path depth == 2
-		if (path.size() >= 2) {
-			// Check if we have an entity
-			Entity* entity = Node_getEntity(path.top());
+	bool pre(const scene::INodePtr& node) {
+		// Check if we have an entity
+		Entity* entity = Node_getEntity(node);
 
-			// Check if we have a matching entity class
-			if (entity != NULL && 
-				entity->getKeyValue("classname") == _entityClassName)
-			{
+		if (entity != NULL) {
+			// Check for a classname match
+			if (entity->getKeyValue("classname") == _entityClassName) {
 				_foundEntities.push_back(entity);
 			}
 			
