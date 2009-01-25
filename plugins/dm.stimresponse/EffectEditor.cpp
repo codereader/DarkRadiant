@@ -298,7 +298,7 @@ void EffectEditor::populateEntityListStore() {
 
 	// Create a scenegraph walker to traverse the graph
 	class EntityFinder : 
-		public scene::Graph::Walker
+		public scene::NodeVisitor
 	{    
 		// List store to add to
 		GtkListStore* _store;
@@ -309,8 +309,10 @@ void EffectEditor::populateEntityListStore() {
 		{}
 
 		// Visit function
-		virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-			Entity* entity = Node_getEntity(path.top());
+		bool pre(const scene::INodePtr& node) {
+
+			Entity* entity = Node_getEntity(node);
+
 			if (entity != NULL) {
 				// Get the entity name
 				std::string entName = entity->getKeyValue("name");
@@ -324,11 +326,12 @@ void EffectEditor::populateEntityListStore() {
 	
 				return false; // don't traverse children if entity found
 	        }
+
 	        return true; // traverse children otherwise
 		}
 	} finder(_entityStore);
 
-    GlobalSceneGraph().traverse(finder);
+    Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 }
 
 void EffectEditor::revert() {

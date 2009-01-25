@@ -59,11 +59,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	}
 
 class RefreshSkinWalker :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 public:
-
-	virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		// Check if we have a skinnable model
 		SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
 
@@ -78,7 +77,8 @@ public:
 
 void ReloadSkins() {
 	GlobalModelSkinCache().refresh();
-	GlobalSceneGraph().traverse(RefreshSkinWalker());
+	RefreshSkinWalker walker;
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	// Refresh the ModelSelector too
 	ui::ModelSelector::refresh();
