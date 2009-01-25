@@ -321,8 +321,11 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
 
 // Traverse the current selection and visit them with the given visitor class
 void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
-	for (SelectionListType::const_iterator i = _selection.begin(); i != _selection.end(); ++i) {
-		visitor.visit(i->first);
+	for (SelectionListType::const_iterator i = _selection.begin(); 
+		 i != _selection.end(); 
+		 /* in-loop increment */)
+	{
+		visitor.visit((i++)->first);
 	}
 }
 
@@ -330,9 +333,9 @@ void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
 void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor) const {
 	for (SelectionListType::const_iterator i = _componentSelection.begin(); 
 		 i != _componentSelection.end(); 
-		 ++i)
+		 /* in-loop increment */)
 	{
-		visitor.visit(i->first);
+		visitor.visit((i++)->first);
 	}
 }
 
