@@ -181,13 +181,13 @@ bool Brush_subtract(const Brush& brush, const Brush& other, BrushVector& ret_fra
 }
 
 class SubtractBrushesFromUnselected : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	const BrushPtrVector& _brushlist;
 	std::size_t& _before;
 	std::size_t& _after;
 
-	mutable std::list<scene::INodePtr> _deleteList;
+	std::list<scene::INodePtr> _deleteList;
 public:
 	SubtractBrushesFromUnselected(const BrushPtrVector& brushlist, std::size_t& before, std::size_t& after) : 
 		_brushlist(brushlist), 
@@ -203,18 +203,23 @@ public:
 		}
 	}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		return true;
 	}
 
-	void post(const scene::Path& path, const scene::INodePtr& node) const {
+	void post(const scene::INodePtr& node) {
 		if (!node->visible()) {
 			return;
 		}
 
 		Brush* brush = Node_getBrush(node);
-
+		
 		if (brush != NULL && !Node_isSelected(node)) {
+
+			// Get the parent of this brush
+			scene::INodePtr parent = node->getParent();
+			assert(parent != NULL); // parent should not be NULL
+
 			BrushVector buffer[2];
 			bool swap = false;
 			
@@ -260,7 +265,7 @@ public:
 					Node_getBrush(newBrush)->copy(*(*i));
 					delete (*i);
 
-					path.parent()->addChildNode(newBrush);
+					parent->addChildNode(newBrush);
 				}
 
 			    _deleteList.push_back(node);
@@ -279,7 +284,7 @@ void subtractBrushesFromUnselected() {
 		return;
 	}
 
-	globalOutputStream() << "CSG Subtract: Subtracting " << static_cast<int>(brushes.size()) << " brushes.\n";
+	globalOutputStream() << "CSG Subtract: Subtracting " << brushes.size() << " brushes.\n";
 
 	UndoableCommand undo("brushSubtract");
 
@@ -290,12 +295,12 @@ void subtractBrushesFromUnselected() {
 	// instantiate a scoped walker class
 	{
 		SubtractBrushesFromUnselected walker(brushes, before, after);
-		GlobalSceneGraph().traverse(walker);
+		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	}
 
 	globalOutputStream() << "CSG Subtract: Result: "
-		<< static_cast<int>(after) << " fragment" << (after == 1 ? "" : "s")
-		<< " from " << static_cast<int>(before) << " brush" << (before == 1 ? "" : "es") << ".\n";
+		<< after << " fragment" << (after == 1 ? "" : "s")
+		<< " from " << before << " brush" << (before == 1 ? "" : "es") << ".\n";
 
 	SceneChangeNotify();
 }
