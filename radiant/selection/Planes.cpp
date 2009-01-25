@@ -1,43 +1,45 @@
 #include "Planes.h"
 
-bool PlaneSelectableSelectPlanes::pre(const scene::Path& path, const scene::INodePtr& node) const {
-	if (node->visible()) {
-		if (Node_isSelected(node)) {
-			PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
-			if (planeSelectable != NULL) {
-				planeSelectable->selectPlanes(_selector, _test, _selectedPlaneCallback);
-			}
-		}
+void PlaneSelectableSelectPlanes::visit(const scene::INodePtr& node) const {
+	// Skip hidden nodes
+	if (!node->visible()) {
+		return;
 	}
-    return true; 
+
+	PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
+	if (planeSelectable != NULL) {
+		planeSelectable->selectPlanes(_selector, _test, _selectedPlaneCallback);
+	}
 }
 
-bool PlaneSelectableSelectReversedPlanes::pre(const scene::Path& path, const scene::INodePtr& node) const {
-	if (node->visible()) {
-		if (Node_isSelected(node)) {
-			PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
-			if (planeSelectable != NULL) {
-				planeSelectable->selectReversedPlanes(_selector, _selectedPlanes);
-			}
-		}
-    }
-    return true; 
+void PlaneSelectableSelectReversedPlanes::visit(const scene::INodePtr& node) const {
+	// Skip hidden nodes
+	if (!node->visible()) {
+		return;
+	}
+
+	PlaneSelectablePtr planeSelectable = Node_getPlaneSelectable(node);
+	if (planeSelectable != NULL) {
+		planeSelectable->selectReversedPlanes(_selector, _selectedPlanes);
+	}
 }
 
-void Scene_forEachPlaneSelectable_selectPlanes(scene::Graph& graph, Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) {
-  graph.traverse(PlaneSelectableSelectPlanes(selector, test, selectedPlaneCallback));
+void Scene_forEachPlaneSelectable_selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) {
+	PlaneSelectableSelectPlanes walker(selector, test, selectedPlaneCallback);
+	GlobalSelectionSystem().foreachSelected(walker);
 }
 
-void Scene_forEachPlaneSelectable_selectReversedPlanes(scene::Graph& graph, Selector& selector, const SelectedPlanes& selectedPlanes) {
-  graph.traverse(PlaneSelectableSelectReversedPlanes(selector, selectedPlanes));
+void Scene_forEachPlaneSelectable_selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) {
+	PlaneSelectableSelectReversedPlanes walker(selector, selectedPlanes);
+	GlobalSelectionSystem().foreachSelected(walker);
 }
 
-bool Scene_forEachPlaneSelectable_selectPlanes(scene::Graph& graph, Selector& selector, SelectionTest& test) {
-  SelectedPlaneSet selectedPlanes;
+bool Scene_forEachPlaneSelectable_selectPlanes(Selector& selector, SelectionTest& test) {
+	SelectedPlaneSet selectedPlanes;
 
-  Scene_forEachPlaneSelectable_selectPlanes(graph, selector, test, SelectedPlaneSet::InsertCaller(selectedPlanes));
-  Scene_forEachPlaneSelectable_selectReversedPlanes(graph, selector, selectedPlanes);
+	Scene_forEachPlaneSelectable_selectPlanes(selector, test, SelectedPlaneSet::InsertCaller(selectedPlanes));
+	Scene_forEachPlaneSelectable_selectReversedPlanes(selector, selectedPlanes);
 
-  return !selectedPlanes.empty();
+	return !selectedPlanes.empty();
 }
 

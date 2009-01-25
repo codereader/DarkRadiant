@@ -6,23 +6,36 @@
 #include "selectable.h"
 #include "scenelib.h"
 
-class PlaneSelectableSelectPlanes : public scene::Graph::Walker {
+// Considers all front planes of selected planeselectables
+class PlaneSelectableSelectPlanes : 
+	public SelectionSystem::Visitor
+{
 	Selector& _selector;
 	SelectionTest& _test;
 	PlaneCallback _selectedPlaneCallback;
 public:
-	PlaneSelectableSelectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
-    	: _selector(selector), _test(test), _selectedPlaneCallback(selectedPlaneCallback) {}
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const;
+	PlaneSelectableSelectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) : 
+		_selector(selector), 
+		_test(test),
+		_selectedPlaneCallback(selectedPlaneCallback)
+	{}
+
+	void visit(const scene::INodePtr& node) const;
 };
 
-class PlaneSelectableSelectReversedPlanes : public scene::Graph::Walker {
+// Considers all back planes of selected planeselectables
+class PlaneSelectableSelectReversedPlanes : 
+	public SelectionSystem::Visitor
+{
 	Selector& _selector;
 	const SelectedPlanes& _selectedPlanes;
 public:
-	PlaneSelectableSelectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
-		: _selector(selector), _selectedPlanes(selectedPlanes) {}
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const;
+	PlaneSelectableSelectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) : 
+		_selector(selector), 
+		_selectedPlanes(selectedPlanes)
+	{}
+
+	void visit(const scene::INodePtr& node) const;
 };
 
 class PlaneLess
@@ -64,34 +77,27 @@ public:
 
 typedef std::set<Plane3, PlaneLess> PlaneSet;
 
-inline void PlaneSet_insert(PlaneSet& self, const Plane3& plane) {
-  self.insert(plane);
-}
-
-inline bool PlaneSet_contains(const PlaneSet& self, const Plane3& plane) {
-  return self.find(plane) != self.end();
-}
-
 class SelectedPlaneSet : public SelectedPlanes
 {
-  PlaneSet _selectedPlanes;
+	PlaneSet _selectedPlanes;
 public:
-  bool empty() const {
-    return _selectedPlanes.empty();
-  }
+	bool empty() const {
+		return _selectedPlanes.empty();
+	}
 
-  void insert(const Plane3& plane) {
-    PlaneSet_insert(_selectedPlanes, plane);
-  }
-  bool contains(const Plane3& plane) const {
-    return PlaneSet_contains(_selectedPlanes, plane);
-  }
-  typedef MemberCaller1<SelectedPlaneSet, const Plane3&, &SelectedPlaneSet::insert> InsertCaller;
+	void insert(const Plane3& plane) {
+		_selectedPlanes.insert(plane);
+	}
+	typedef MemberCaller1<SelectedPlaneSet, const Plane3&, &SelectedPlaneSet::insert> InsertCaller;
+
+	bool contains(const Plane3& plane) const {
+		return _selectedPlanes.find(plane) != _selectedPlanes.end();
+	}
 };
 
-bool Scene_forEachPlaneSelectable_selectPlanes(scene::Graph& graph, Selector& selector, SelectionTest& test);
-void Scene_forEachPlaneSelectable_selectPlanes(scene::Graph& graph, Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
-void Scene_forEachPlaneSelectable_selectReversedPlanes(scene::Graph& graph, Selector& selector, const SelectedPlanes& selectedPlanes);
+bool Scene_forEachPlaneSelectable_selectPlanes(Selector& selector, SelectionTest& test);
+void Scene_forEachPlaneSelectable_selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
+void Scene_forEachPlaneSelectable_selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
 
 
 #endif /*PLANES_H_*/
