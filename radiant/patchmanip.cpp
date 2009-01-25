@@ -221,7 +221,7 @@ public:
 
 void Scene_PatchCapTexture_Selected(scene::Graph& graph)
 {
-  Scene_forEachVisibleSelectedPatch(PatchCapTexture());
+  Scene_forEachSelectedPatch(PatchCapTexture());
   Patch::m_CycleCapIndex = (Patch::m_CycleCapIndex == 0) ? 1 : (Patch::m_CycleCapIndex == 1) ? 2 : 0;
   SceneChangeNotify();
 }
@@ -237,7 +237,7 @@ public:
 
 void Scene_PatchInvert_Selected(scene::Graph& graph)
 {
-  Scene_forEachVisibleSelectedPatch(PatchInvertMatrix());
+  Scene_forEachSelectedPatch(PatchInvertMatrix());
 }
 
 class PatchRedisperse
@@ -255,7 +255,7 @@ public:
 
 void Scene_PatchRedisperse_Selected(scene::Graph& graph, EMatrixMajor major)
 {
-  Scene_forEachVisibleSelectedPatch(PatchRedisperse(major));
+  Scene_forEachSelectedPatch(PatchRedisperse(major));
 }
 
 class PatchTransposeMatrix
@@ -269,7 +269,7 @@ public:
 
 void Scene_PatchTranspose_Selected(scene::Graph& graph)
 {
-  Scene_forEachVisibleSelectedPatch(PatchTransposeMatrix());
+  Scene_forEachSelectedPatch(PatchTransposeMatrix());
 }
 
 class PatchSetShader
@@ -288,12 +288,12 @@ public:
 
 void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name)
 {
-  Scene_forEachVisibleSelectedPatch(PatchSetShader(name));
+  Scene_forEachSelectedPatch(PatchSetShader(name));
   SceneChangeNotify();
 }
 
 class PatchSelectByShader :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	std::string _name;
 public:
@@ -301,17 +301,24 @@ public:
 		_name(name)
 	{}
 
-	virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
+		// Don't traverse hidden nodes
+		if (!node->visible()) return false;
+
 		Patch* patch = Node_getPatch(node);
-		if (patch != NULL && node->visible() && shader_equal(patch->GetShader(), _name)) {
+
+		if (patch != NULL && shader_equal(patch->GetShader(), _name)) {
 			Node_setSelected(node, true);
+			return false;
 		}
+
 		return true;
 	}
 };
 
 void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name) {
-	GlobalSceneGraph().traverse(PatchSelectByShader(name));
+	PatchSelectByShader walker(name);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
 
 AABB PatchCreator_getBounds()
@@ -495,69 +502,69 @@ public:
 void insertColumnsAtEnd() {
 	UndoableCommand undo("patchInsertColumnsAtEnd");
 	// true = insert, true = columns, false = end
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, false));
+	Scene_forEachSelectedPatch(PatchRowColumnInserter(true, false));
 }
 
 void insertColumnsAtBeginning() {
 	UndoableCommand undo("patchInsertColumnsAtBeginning");
 	// true = insert, true = columns, true = at beginning
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(true, true));
+	Scene_forEachSelectedPatch(PatchRowColumnInserter(true, true));
 }
 
 void insertRowsAtEnd() {
 	UndoableCommand undo("patchInsertRowsAtEnd");
 	// true = insert, false = rows, false = at end
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, false));
+	Scene_forEachSelectedPatch(PatchRowColumnInserter(false, false));
 }
 
 void insertRowsAtBeginning() {
 	UndoableCommand undo("patchInsertRowsAtBeginning");
 	// true = insert, false = rows, true = at beginning
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnInserter(false, true));
+	Scene_forEachSelectedPatch(PatchRowColumnInserter(false, true));
 }
 
 void deleteColumnsFromBeginning() {
 	UndoableCommand undo("patchDeleteColumnsFromBeginning");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(true, true));
+	Scene_forEachSelectedPatch(PatchRowColumnRemover(true, true));
 }
 
 void deleteColumnsFromEnd() {
 	UndoableCommand undo("patchDeleteColumnsFromEnd");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(true, false));
+	Scene_forEachSelectedPatch(PatchRowColumnRemover(true, false));
 }
 
 void deleteRowsFromBeginning() {
 	UndoableCommand undo("patchDeleteRowsFromBeginning");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(false, true));
+	Scene_forEachSelectedPatch(PatchRowColumnRemover(false, true));
 }
 
 void deleteRowsFromEnd() {
 	UndoableCommand undo("patchDeleteRowsFromEnd");
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnRemover(false, false));
+	Scene_forEachSelectedPatch(PatchRowColumnRemover(false, false));
 }
 
 void appendColumnsAtBeginning() {
 	UndoableCommand undo("patchAppendColumnsAtBeginning");
 	// true = columns, true = at the beginning
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(true, true));
+	Scene_forEachSelectedPatch(PatchRowColumnAppender(true, true));
 }
 
 void appendColumnsAtEnd() {
 	UndoableCommand undo("patchAppendColumnsAtEnd");
 	// true = columns, false = at the end
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(true, false));
+	Scene_forEachSelectedPatch(PatchRowColumnAppender(true, false));
 }
 
 void appendRowsAtBeginning() {
 	UndoableCommand undo("patchAppendRowsAtBeginning");
 	// false = rows, true = at the beginning
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(false, true));
+	Scene_forEachSelectedPatch(PatchRowColumnAppender(false, true));
 }
 
 void appendRowsAtEnd() {
 	UndoableCommand undo("patchAppendRowsAtEnd");
 	// false = rows, false = at the end
-	Scene_forEachVisibleSelectedPatch(PatchRowColumnAppender(false, false));
+	Scene_forEachSelectedPatch(PatchRowColumnAppender(false, false));
 }
 
 void thickenPatch(const PatchNodePtr& sourcePatch, 
