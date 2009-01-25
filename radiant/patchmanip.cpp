@@ -62,12 +62,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
   patch->ConstructPrefab(aabb, eType, axis, width, height);
   patch->controlPointsChanged();
 
-  {
-    scene::Path patchpath(GlobalSceneGraph().root());
-    patchpath.push(GlobalMap().getWorldspawn());
-    patchpath.push(node);
-    Node_getSelectable(node)->setSelected(true);
-  }
+	Node_setSelected(node, true);
 }
 
 
