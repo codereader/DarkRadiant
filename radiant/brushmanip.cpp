@@ -437,18 +437,6 @@ void Scene_BrushResize(Brush& brush, const AABB& bounds, const std::string& shad
       SceneChangeNotify();
 }
 
-bool Brush_hasShader(const Brush& brush, const std::string& name)
-{
-  for(Brush::const_iterator i = brush.begin(); i != brush.end(); ++i)
-  {
-    if(shader_equal((*i)->GetShader(), name))
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
 /**
  * Selects all visible brushes which carry the shader name as passed
  * to the constructor.
@@ -466,7 +454,7 @@ public:
 		if (node->visible()) {
 			Brush* brush = Node_getBrush(node);
 
-			if (brush != NULL && Brush_hasShader(*brush, _name)) {
+			if (brush != NULL && brush->hasShader(_name)) {
 				Node_setSelected(node, true);
 				return false; // don't traverse brushes
 			}

@@ -4,6 +4,7 @@
 #include "signal/signal.h"
 #include "irenderable.h"
 #include "iuimanager.h"
+#include "shaderlib.h"
 
 #include "BrushModule.h"
 #include "Face.h"
@@ -154,6 +155,18 @@ void Brush::setShader(const std::string& newShader) {
 	for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
 		(*i)->SetShader(newShader);
 	}
+}
+
+bool Brush::hasShader(const std::string& name) {
+	// Traverse the faces
+	for (Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
+		if (shader_equal((*i)->GetShader(), name)) {
+			return true;
+		}
+	}
+
+	// not found
+	return false;
 }
 
 void Brush::evaluateBRep() const {
