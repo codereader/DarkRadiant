@@ -28,7 +28,7 @@
 			EntityFindByClassnameWalker walker(className);
 			
 			// Walk the scenegraph
-			GlobalSceneGraph().traverse(walker);
+			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 			
 			return walker.getEntity();
 		}

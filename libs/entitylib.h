@@ -359,13 +359,13 @@ inline std::ostream& operator<< (std::ostream& os, const Entity& entity) {
 /** Walker to locate an Entity in the scenegraph with a specific classname.
  */
 class EntityFindByClassnameWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	// Name to search for
 	std::string _name;
 	
 	// Reference to a pointer to modify with the result 
-	mutable Entity* _entity;
+	Entity* _entity;
 	
 public:
 	// Constructor
@@ -379,17 +379,28 @@ public:
 	}
 	
 	// Pre-descent callback
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		if (_entity == NULL) {
 			// Entity not found yet
+			Entity* entity = Node_getEntity(node);
 			
-			Entity* entity = Node_getEntity(path.top());
-			
-			if(entity != NULL  && _name == entity->getKeyValue("classname")) {
-				_entity = entity;
+			if (entity != NULL) {
+				// Got an entity, let's see if the name matches
+				if (entity->getKeyValue("classname") == _name) {
+					_entity = entity;
+				}
+
+				return false; // don't traverse entities
+			}
+			else {
+				// Not an entity, traverse
+				return true;
 			}
 		}
-		return true;
+		else {
+			// Entity already found, don't traverse any further
+			return false;
+		}
 	}
 };
 
@@ -400,7 +411,7 @@ inline Entity* Scene_FindEntityByClass(const std::string& className) {
 	EntityFindByClassnameWalker walker(className);
 	
 	// Walk the scenegraph
-	GlobalSceneGraph().traverse(walker);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	return walker.getEntity();
 }
