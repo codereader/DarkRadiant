@@ -479,10 +479,6 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 
 				// If 'createClip' is ticked, create a clip brush
 				if (ms.createClip) {
-					// get the model
-					scene::Path modelPath(GlobalSceneGraph().root());
-					modelPath.push(modelNode);
-					
 					// retrieve the AABB
 					AABB brushAABB(modelNode->worldAABB()); // TODO: Check if worldAABB() is ok
 	

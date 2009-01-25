@@ -239,7 +239,7 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
     	Entity* entity = Node_getEntity(node);
     	
     	// Add selected brushes as children of non-fixed entity
-		entity->setKeyValue("model", Node_getEntity(node)->getKeyValue("name"));
+		entity->setKeyValue("model", entity->getKeyValue("name"));
 
 		// Take the selection center as new origin
 		Vector3 newOrigin = selection::algorithm::getCurrentSelectionCenter();
@@ -247,15 +247,15 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
 		
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
-        std::string material =
-            entity->getEntityClass()->getAttribute("editor_material").value;
+        std::string material = entity->getEntityClass()->getAttribute("editor_material").value;
+
         if (!material.empty()) {
             selection::algorithm::applyShaderToSelection(material);
         }
                 
         // Parent the selected primitives to the new node
 		ParentSelectedPrimitivesToEntityWalker walker(node);
-		GlobalSceneGraph().traverse(walker);
+		GlobalSelectionSystem().foreachSelected(walker);
 
 	    // De-select the children and select the newly created parent entity
 	    GlobalSelectionSystem().setSelectedAll(false);
