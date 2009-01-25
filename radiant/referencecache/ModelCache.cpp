@@ -20,10 +20,10 @@ namespace model {
 namespace {
 
 	class ModelRefreshWalker :
-		public scene::Graph::Walker
+		public scene::NodeVisitor
 	{
 	public:
-		virtual bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+		bool pre(const scene::INodePtr& node) {
 			IEntityNodePtr entity = boost::dynamic_pointer_cast<IEntityNode>(node);
 
 			if (entity != NULL) {
@@ -149,7 +149,8 @@ void ModelCache::refreshModels() {
 	clear();
 
 	// Update all model nodes
-	GlobalSceneGraph().traverse(ModelRefreshWalker());
+	ModelRefreshWalker walker;
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 		
 	// greebo: Reload the modelselector too
 	ui::ModelSelector::refresh();
