@@ -172,6 +172,9 @@ class ParentSelectedBrushesToEntityWalker :
 	const scene::INodePtr _parent;
 
 	mutable std::list<scene::INodePtr> _childrenToReparent;
+
+	// Old parents will be checked for emptiness afterwards
+	mutable std::set<scene::INodePtr> _oldParents;
 public:
 	ParentSelectedBrushesToEntityWalker(const scene::INodePtr& parent) : 
 		_parent(parent)
@@ -186,6 +189,23 @@ public:
 
 			// Insert the child node into the parent node 
 			_parent->addChildNode(*i);
+		}
+
+		// Now check if any parents were left behind empty
+		for (std::set<scene::INodePtr>::iterator i = _oldParents.begin();
+			 i != _oldParents.end(); i++)
+		{
+			if (!(*i)->hasChildNodes()) {
+				// Is empty, but make sure we're not removing the worldspawn
+				if (Node_getEntity(*i) != NULL && 
+					Node_getEntity(*i)->getKeyValue("classname") == "worldspawn")
+				{
+					continue;
+				}
+
+				// Is empty now, remove it
+				scene::removeNodeFromParent(*i);
+			}
 		}
 
 		// Update the scene
@@ -206,6 +226,8 @@ public:
 		if (contains != eNodeUnknown && contains == type) {
 			// Got a child, add it to the list
 			_childrenToReparent.push_back(node);
+
+			_oldParents.insert(node->getParent());
 		}
 		else {
 			gtkutil::errorDialog(

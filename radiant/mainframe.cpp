@@ -1560,6 +1560,8 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("CloneSelection", FreeCaller<selection::algorithm::cloneSelected>(), true); // react on keyUp
 	GlobalEventManager().addCommand("DeleteSelection", FreeCaller<selection::algorithm::deleteSelectionCmd>());
 	GlobalEventManager().addCommand("ParentSelection", FreeCaller<selection::algorithm::parentSelection>());
+	GlobalEventManager().addCommand("ParentSelectionToWorldspawn", FreeCaller<selection::algorithm::parentSelectionToWorldspawn>());
+
 	GlobalEventManager().addCommand("UnSelectSelection", FreeCaller<Selection_Deselect>());
 	GlobalEventManager().addCommand("InvertSelection", FreeCaller<selection::algorithm::invertSelection>());
 
