@@ -150,17 +150,17 @@ void hideSelected() {
 
 // Hides all nodes that are not selected
 class HideDeselectedWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	bool _hide;
 
-	mutable std::stack<bool> _stack;
+	std::stack<bool> _stack;
 public:
 	HideDeselectedWalker(bool hide) : 
 		_hide(hide)
 	{}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		// Check the selection status
 		bool isSelected = Node_isSelected(node);
 
@@ -180,8 +180,7 @@ public:
 		return !isSelected;
 	}
 
-	virtual void post(const scene::Path& path, const scene::INodePtr& node) const {
-		
+	void post(const scene::INodePtr& node) {
 		// greebo: We've traversed this subtree, now check if we had selected children
 		if (!node->isRoot() && 
 			_stack.size() > 0 && _stack.top() == false && 
@@ -197,14 +196,17 @@ public:
 };
 
 void hideDeselected() {
-	GlobalSceneGraph().traverse(HideDeselectedWalker(true));
+	HideDeselectedWalker walker(true);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+
 	// Hide all components, there might be faces selected
 	GlobalSelectionSystem().setSelectedAllComponents(false);
+
 	SceneChangeNotify();
 }
 
 class HideAllWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	bool _hide;
 public:
@@ -212,28 +214,29 @@ public:
 		_hide(hide)
 	{}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		hideNode(node, _hide);
 		return true;
 	}
 };
 
 void showAllHidden() {
-	GlobalSceneGraph().traverse(HideAllWalker(false));
+	HideAllWalker walker(false);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	SceneChangeNotify();
 }
 
 class InvertSelectionWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	SelectionSystem::EMode _mode;
-	mutable SelectablePtr _selectable;
+	SelectablePtr _selectable;
 public:
 	InvertSelectionWalker(SelectionSystem::EMode mode) : 
 		_mode(mode)
 	{}
 	
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		// Check if we have a selectable
 		SelectablePtr selectable = Node_getSelectable(node);
 
@@ -273,7 +276,7 @@ public:
 		return true;
 	}
 	
-	void post(const scene::Path& path, const scene::INodePtr& node) const {
+	void post(const scene::INodePtr& node) {
 		if (_selectable != NULL) {
 			_selectable->invertSelected();
 			_selectable = SelectablePtr();
@@ -282,67 +285,35 @@ public:
 };
 
 void invertSelection() {
-	GlobalSceneGraph().traverse(
-		InvertSelectionWalker(GlobalSelectionSystem().Mode())
-	);
+	InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
 
-class DeleteSelected : 
-	public scene::Graph::Walker
+class DeleteSelected :
+	public SelectionSystem::Visitor
 {
-	mutable bool _remove;
-	mutable bool _removedChild;
-
 	mutable std::set<scene::INodePtr> _eraseList;
 public:
-	DeleteSelected() : 
-		_remove(false), 
-		_removedChild(false)
-	{}
-
-	// Actually destroy the nodes
+	// Destructor performs the actual deletion
 	~DeleteSelected() {
-		for (std::set<scene::INodePtr>::iterator i = _eraseList.begin(); i != _eraseList.end(); i++) {
+		for (std::set<scene::INodePtr>::iterator i = _eraseList.begin(); i != _eraseList.end(); ++i) {
+
+			scene::INodePtr parent = (*i)->getParent();
+
+			// Remove the childnodes
 			scene::removeNodeFromParent(*i);
+
+			if (!parent->hasChildNodes()) {
+				// Remove the parent as well
+				scene::removeNodeFromParent(parent);
+			}
 		}
 	}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		_removedChild = false;
-
-		if (Node_isSelected(node) && path.size() > 1 && !node->isRoot()) {
-			_remove = true;
-			return false;// dont traverse into child elements of deletion candidates
-		}
-
-		return true;
-	}
-
-	void post(const scene::Path& path, const scene::INodePtr& node) const {
-		if (_removedChild) {
-			// A child node has been removed, check if we have an empty entity
-			_removedChild = false;
-
-			// Delete empty entities, but leave the worldspawn alone
-			Entity* entity = Node_getEntity(node);
-
-			if (entity != NULL && 
-				node != GlobalMap().findWorldspawn() && 
-				!node->hasChildNodes())
-			{
-				_eraseList.insert(node);
-			}
-		}
-
-		// node should be removed
-		if (_remove) {
-			if (Node_isEntity(path.parent())) {
-				// The parent node is an entity, set the bool to indicate
-				// the child removal. The entity is then checked for emptiness.
-				_removedChild = true;
-			}
-
-			_remove = false;
+	void visit(const scene::INodePtr& node) const {
+		// Check for selected nodes whose parent is not NULL and are not root
+		if (node->getParent() != NULL && !node->isRoot()) {
+			// Found a candidate
 			_eraseList.insert(node);
 		}
 	}
@@ -350,8 +321,9 @@ public:
 
 void deleteSelection() {
 	// Traverse the scene, deleting all selected nodes
-	GlobalSceneGraph().traverse(DeleteSelected());
-
+	DeleteSelected walker;
+	GlobalSelectionSystem().foreachSelected(walker);
+	
 	SceneChangeNotify();
 }
 
