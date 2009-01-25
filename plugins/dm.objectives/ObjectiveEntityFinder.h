@@ -24,7 +24,7 @@ namespace objectives
  * any objective entities that should be active at start).
  */
 class ObjectiveEntityFinder
-: public scene::Graph::Walker
+: public scene::NodeVisitor
 {
 	// Name of entity class we are looking for
 	std::string _className;
@@ -36,7 +36,7 @@ class ObjectiveEntityFinder
 	ObjectiveEntityMap& _map;
 	
 	// Worldspawn entity
-	mutable Entity* _worldSpawn;
+	Entity* _worldSpawn;
 	
 public:
 
@@ -78,14 +78,16 @@ public:
 	}
 	
 	/**
-	 * @see scene::Graph::Walker::pre()
+	 * @see scene::NodeVisitor::pre()
 	 */
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		
 		// Get the entity and check the classname
-		Entity* ePtr = Node_getEntity(path.top());
+		Entity* ePtr = Node_getEntity(node);
 		if (!ePtr)
 			return true;
+
+		// We have an entity at this point
 			
 		// Check for objective entity or worldspawn	
 		if (ePtr->getKeyValue("classname") == _className) 
@@ -105,7 +107,7 @@ public:
 							   -1);
 							   
 			// Construct an ObjectiveEntity with the node, and add to the map
-			ObjectiveEntityPtr oe(new ObjectiveEntity(path.top()));
+			ObjectiveEntityPtr oe(new ObjectiveEntity(node));
 			_map.insert(ObjectiveEntityMap::value_type(name, oe));
 		}
 		else if (ePtr->getKeyValue("classname") == "worldspawn")
@@ -113,7 +115,7 @@ public:
 			_worldSpawn = ePtr;	
 		}
 		
-		return true;
+		return false; // don't traverse entity children
 	}
 
 };
