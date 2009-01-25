@@ -39,7 +39,8 @@
 		<menuItem name="duplicate" caption="_Duplicate" command="CloneSelection" />
 		<menuItem name="delete" caption="D_elete" command="DeleteSelection" />
 		<menuSeparator />
-		<menuItem name="parent" caption="Rep_arent primitives" command="ParentSelection" />
+		<menuItem name="parent" caption="Rep_arent Primitives" command="ParentSelection" />
+		<menuItem name="parenttoworldspawn" caption="Rep_arent Primitives to Worldspawn" command="ParentSelectionToWorldspawn" />
 		<menuSeparator />
 		<menuItem name="copyShader" caption="Copy Shader" command="CopyShader" />
 		<menuItem name="pasteShader" caption="Paste Shader" command="PasteShader" />

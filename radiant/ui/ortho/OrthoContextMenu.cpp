@@ -114,6 +114,11 @@ OrthoContextMenu::OrthoContextMenu()
 	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT);
 	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT);
 
+	IEventPtr ev = GlobalEventManager().findEvent("ParentSelectionToWorldspawn");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_REVERT_PARTIAL]);
+	}
+
 	// "Add to layer" submenu
 	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
 	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), MOVE_TO_LAYER_TEXT);
@@ -121,7 +126,7 @@ OrthoContextMenu::OrthoContextMenu()
 
 	// Add a "Create New Layer" item and connect it to the corresponding event
 	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), CREATE_LAYER_TEXT);
-	IEventPtr ev = GlobalEventManager().findEvent("CreateNewLayer");
+	ev = GlobalEventManager().findEvent("CreateNewLayer");
 	if (ev != NULL) {
 		ev->connectWidget(_widgets[WIDGET_CREATE_LAYER]);
 	}
@@ -143,7 +148,6 @@ OrthoContextMenu::OrthoContextMenu()
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_CONVERT_STATIC]), "activate", G_CALLBACK(callbackConvertToStatic), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_REVERT_WORLDSPAWN]), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_REVERT_PARTIAL]), "activate", G_CALLBACK(callbackRevertToWorldspawnPartial), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_ENTITY]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MODEL]);
@@ -519,11 +523,6 @@ void OrthoContextMenu::callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContex
 
 	// Pass the call to the according method
 	selection::algorithm::revertGroupToWorldSpawn();	
-}
-
-void OrthoContextMenu::callbackRevertToWorldspawnPartial(GtkMenuItem* item, OrthoContextMenu* self) {
-	// Call the specialised method (this also handles the Undo stuff)
-	selection::algorithm::parentSelectionToWorldspawn();
 }
 
 void OrthoContextMenu::callbackAddToLayer(int layerID) {
