@@ -26,23 +26,23 @@ void EntityPropertyEditor::populateComboBox() {
 
     // Create a scenegraph walker to traverse the graph
   
-    struct EntityFinder: public scene::Graph::Walker {
-        
+    struct EntityFinder: 
+		public scene::NodeVisitor
+	{
         // List store to add to
         GtkTreeModel* _store;
         
         // Constructor
-        EntityFinder(GtkWidget* box) {
-            _store = gtk_combo_box_get_model(GTK_COMBO_BOX(box));
-        }
+		EntityFinder(GtkWidget* box) :
+			_store(gtk_combo_box_get_model(GTK_COMBO_BOX(box)))
+		{}
             
         // Visit function
-        virtual bool pre(const scene::Path& path, 
-						 const scene::INodePtr& node) const 
-		{
-            Entity* entity = Node_getEntity(path.top());
-            if (entity != NULL) {
+        bool pre(const scene::INodePtr& node) {
+			// Check for an entity
+            Entity* entity = Node_getEntity(node);
 
+            if (entity != NULL) {
 				// Get the entity name
                 std::string entName = entity->getKeyValue("name");
 
@@ -54,15 +54,13 @@ void EntityPropertyEditor::populateComboBox() {
                 				   -1);
 
                 return false; // don't traverse children if entity found
-                
             }
             
             return true; // traverse children otherwise
         }
-            
     } finder(_comboBox);
 
-    GlobalSceneGraph().traverse(finder);  
+	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 }
 
 } // namespace ui
