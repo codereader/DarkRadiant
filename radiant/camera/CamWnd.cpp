@@ -21,13 +21,13 @@
 #include "render/RenderStatistics.h"
 
 class ObjectFinder :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
-	mutable scene::INodePtr _node;
+	scene::INodePtr _node;
 	SelectionTest& _selectionTest;
 	
 	// To store the best intersection candidate
-	mutable SelectionIntersection _bestIntersection;
+	SelectionIntersection _bestIntersection;
 public:
 	// Constructor
 	ObjectFinder(SelectionTest& test) :
@@ -40,7 +40,7 @@ public:
 	}
 	
 	// The visitor function
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		// Check if the node is filtered
 		if (node->visible()) {
 			SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
@@ -55,6 +55,9 @@ public:
 				}
 			}
 		}
+		else {
+			return false; // don't traverse filtered nodes
+		}
 			
 		return true;
 	}
@@ -64,34 +67,42 @@ inline WindowVector windowvector_for_widget_centre(GtkWidget* widget) {
 	return WindowVector(static_cast<float>(widget->allocation.width / 2), static_cast<float>(widget->allocation.height / 2));
 }
 
-class FloorHeightWalker : public scene::Graph::Walker
+class FloorHeightWalker : 
+	public scene::NodeVisitor
 {
-	float m_current;
-	float& m_bestUp;
-	float& m_bestDown;
+	float _current;
+	float& _bestUp;
+	float& _bestDown;
 
 public:
 	FloorHeightWalker(float current, float& bestUp, float& bestDown) :
-			m_current(current), m_bestUp(bestUp), m_bestDown(bestDown) {
-		bestUp = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
-		bestDown = -GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+		_current(current), 
+		_bestUp(bestUp), 
+		_bestDown(bestDown)
+	{
+		_bestUp = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+		_bestDown = -GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
 	}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
+
+		if (!node->visible()) return false; // don't traverse hidden nodes
 		
-		if (node->visible() && Node_isBrush(node)) // this node is a floor
+		if (Node_isBrush(node)) // this node is a floor
 		{
 			const AABB& aabb = node->worldAABB();
 
 			float floorHeight = aabb.origin.z() + aabb.extents.z();
 
-			if (floorHeight > m_current && floorHeight < m_bestUp) {
-				m_bestUp = floorHeight;
+			if (floorHeight > _current && floorHeight < _bestUp) {
+				_bestUp = floorHeight;
 			}
 
-			if (floorHeight < m_current && floorHeight > m_bestDown) {
-				m_bestDown = floorHeight;
+			if (floorHeight < _current && floorHeight > _bestDown) {
+				_bestDown = floorHeight;
 			}
+
+			return false;
 		}
 
 		return true;
@@ -277,7 +288,7 @@ CamWnd::CamWnd() :
 void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 	// Find a suitable target node
 	ObjectFinder finder(selectionTest);
-	GlobalSceneGraph().traverse(finder);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 
 	if (finder.getNode() != NULL) {
 		// A node has been found, get the bounding box
@@ -298,7 +309,8 @@ void CamWnd::changeFloor(const bool up) {
 	float current = m_Camera.origin[2] - 48;
 	float bestUp;
 	float bestDown;
-	GlobalSceneGraph().traverse(FloorHeightWalker(current, bestUp, bestDown));
+	FloorHeightWalker walker(current, bestUp, bestDown);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
 	if (up && bestUp != GlobalRegistry().getFloat("game/defaults/maxWorldCoord")) {
 		current = bestUp;
