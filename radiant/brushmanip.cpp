@@ -449,32 +449,40 @@ bool Brush_hasShader(const Brush& brush, const std::string& name)
   return false;
 }
 
+/**
+ * Selects all visible brushes which carry the shader name as passed
+ * to the constructor.
+ */
 class BrushSelectByShaderWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
-  std::string m_name;
+	std::string _name;
 public:
-  BrushSelectByShaderWalker(const std::string& name)
-    : m_name(name)
-  {
-  }
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const
-  {
-    if(path.top()->visible())
-    {
-      Brush* brush = Node_getBrush(path.top());
-      if(brush != 0 && Brush_hasShader(*brush, m_name))
-      {
-		  Node_getSelectable(node)->setSelected(true);
-      }
-    }
-    return true;
-  }
+	BrushSelectByShaderWalker(const std::string& name) :
+		_name(name)
+	{}
+
+	bool pre(const scene::INodePtr& node) {
+		if (node->visible()) {
+			Brush* brush = Node_getBrush(node);
+
+			if (brush != NULL && Brush_hasShader(*brush, _name)) {
+				Node_setSelected(node, true);
+				return false; // don't traverse brushes
+			}
+
+			// not a suitable brush, traverse further
+			return true;
+		}
+		else {
+			return false; // don't traverse invisible nodes
+		}
+	}
 };
 
-void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name)
-{
-  graph.traverse(BrushSelectByShaderWalker(name));
+void Scene_BrushSelectByShader(scene::Graph& graph, const std::string& name) {
+	BrushSelectByShaderWalker walker(name);
+	Node_traverseSubgraph(graph.root(), walker);
 }
 
 class FaceSelectByShader

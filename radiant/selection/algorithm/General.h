@@ -14,17 +14,17 @@ namespace selection {
 	typedef std::list<std::string> ClassnameList; 
 
 	/**
-	 * greebo: This selects each entity in the scene whose classname matches
+	 * greebo: This selects each visible entity in the subgraph whose classname matches
 	 *         the given list.
 	 */
 	class EntitySelectByClassnameWalker : 
-		public scene::Graph::Walker
+		public scene::NodeVisitor
 	{
 		const ClassnameList& _classnames;
 	public:
 		EntitySelectByClassnameWalker(const ClassnameList& classnames);
 
-		bool pre(const scene::Path& path, const scene::INodePtr& node) const;
+		bool pre(const scene::INodePtr& node);
 
 	private:
 		bool entityMatches(Entity* entity) const;

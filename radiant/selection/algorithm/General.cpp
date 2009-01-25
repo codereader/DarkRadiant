@@ -23,15 +23,24 @@ EntitySelectByClassnameWalker::EntitySelectByClassnameWalker(const ClassnameList
 	_classnames(classnames)
 {}
 
-bool EntitySelectByClassnameWalker::pre(
-	const scene::Path& path, const scene::INodePtr& node) const
-{
+bool EntitySelectByClassnameWalker::pre(const scene::INodePtr& node) {
+	// don't traverse invisible nodes
+	if (!node->visible()) return false; 
+
 	Entity* entity = Node_getEntity(node);
 	
-	if (entity != NULL && entityMatches(entity)) {
-		Node_setSelected(node, true);
+	if (entity != NULL) {
+
+		if (entityMatches(entity)) {
+			// Got a matching entity
+			Node_setSelected(node, true);
+		}
+
+		// Don't traverse entities
+		return false;
 	}
 
+	// Not an entity, traverse
 	return true;
 }
 
@@ -94,7 +103,7 @@ void selectAllOfType() {
 			);
 
 			// Traverse the scenegraph, select all matching the classname list
-			GlobalSceneGraph().traverse(classnameSelector);
+			Node_traverseSubgraph(GlobalSceneGraph().root(), classnameSelector);
 		}
 		else {
 			Scene_BrushSelectByShader(GlobalSceneGraph(), GlobalTextureBrowser().getSelectedShader());
