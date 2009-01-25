@@ -573,7 +573,7 @@ void naturalTexture() {
 	UndoableCommand undo("naturalTexture");
 	
 	// Patches
-	Scene_forEachVisibleSelectedPatch(PatchTextureNaturaliser());
+	Scene_forEachSelectedPatch(PatchTextureNaturaliser());
 	
 	TextureProjection projection;
 	projection.constructDefault();
@@ -849,7 +849,7 @@ int findAndReplaceShader(const std::string& find,
 		if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
 			// Find & replace all the brush shaders
 			Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), replacer);
-			Scene_forEachVisibleSelectedPatch(replacer);
+			Scene_forEachSelectedPatch(replacer);
 		}
 		
 		// Search the single selected faces 
