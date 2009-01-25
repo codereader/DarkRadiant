@@ -255,11 +255,7 @@ bool MediaBrowser::isDirectorySelected() {
 	// Get the selected value
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
-		GValue dirFlagVal;
-		memset(&dirFlagVal, 0, sizeof(GValue));
-		gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &iter, DIR_FLAG_COLUMN, &dirFlagVal);
-		// Return boolean value
-		return g_value_get_boolean(&dirFlagVal) ? true : false;
+		return gtkutil::TreeModel::getBoolean(GTK_TREE_MODEL(_treeStore), &iter, DIR_FLAG_COLUMN);
 	}
 	else {
 		// Error condition if there is no selection
@@ -271,11 +267,7 @@ std::string MediaBrowser::getSelectedName() {
 	// Get the selected value
 	GtkTreeIter iter;
 	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
-		GValue nameVal;
-		memset(&nameVal, 0, sizeof(GValue));
-		gtk_tree_model_get_value(GTK_TREE_MODEL(_treeStore), &iter, FULLNAME_COLUMN, &nameVal);
-		// Return boolean value
-		return g_value_get_string(&nameVal);
+		return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_treeStore), &iter, FULLNAME_COLUMN);
 	}
 	else {
 		// Error condition if there is no selection
