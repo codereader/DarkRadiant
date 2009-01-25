@@ -654,7 +654,7 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 		}
 		else {
 			// Check for selectable faces
-			_selected = Scene_forEachPlaneSelectable_selectPlanes(GlobalSceneGraph(), selector, test);
+			_selected = Scene_forEachPlaneSelectable_selectPlanes(selector, test);
 		}
     }
     // Check for entities that can be selected
