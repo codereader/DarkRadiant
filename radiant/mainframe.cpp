@@ -600,35 +600,31 @@ void ClipperMode() {
 }
 
 class SnappableSnapToGridSelected : 
-	public scene::Graph::Walker
+	public SelectionSystem::Visitor
 {
-  float m_snap;
+	float _snap;
 public:
-  SnappableSnapToGridSelected(float snap)
-    : m_snap(snap)
-  {}
-  
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-	if(path.top()->visible()) {
-		SnappablePtr snappable = Node_getSnappable(path.top());
-		if (snappable != NULL && Node_getSelectable(node)->isSelected()) {
-			snappable->snapto(m_snap);
+	SnappableSnapToGridSelected(float snap) : 
+		_snap(snap)
+	{}
+
+	void visit(const scene::INodePtr& node) const {
+		// Don't do anything with hidden nodes
+		if (!node->visible()) return;
+
+		SnappablePtr snappable = Node_getSnappable(node);
+
+		if (snappable != NULL) {
+			snappable->snapto(_snap);
 		}
 	}
-	return true;
-  }
 };
-
-void Scene_SnapToGrid_Selected(scene::Graph& graph, float snap)
-{
-  graph.traverse(SnappableSnapToGridSelected(snap));
-}
 
 /* greebo: This is the visitor class to snap all components of a selected instance to the grid
  * While visiting all the instances, it checks if the instance derives from ComponentSnappable 
  */
 class ComponentSnappableSnapToGridSelected : 
-	public scene::Graph::Walker
+	public SelectionSystem::Visitor
 {
 	float _snap;
 public:
@@ -637,39 +633,35 @@ public:
 		_snap(snap)
 	{}
   
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-	    if (node->visible()) {
-	    	// Check if the visited instance is componentSnappable
-			ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
-			
-			// Call the snapComponents() method if the instance is also a _selected_ Selectable 
-			if (componentSnappable != NULL  && Node_isSelected(node)) {
-				componentSnappable->snapComponents(_snap);
-			}
-	    }
-		return true;
+	void visit(const scene::INodePtr& node) const {
+		// Don't do anything with hidden nodes
+	    if (!node->visible()) return;
+
+    	// Check if the visited instance is componentSnappable
+		ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
+		
+		if (componentSnappable != NULL) {
+			componentSnappable->snapComponents(_snap);
+		}
 	}
 }; // ComponentSnappableSnapToGridSelected
 
-void Scene_SnapToGrid_Component_Selected(scene::Graph& graph, float snap)
-{
-  graph.traverse(ComponentSnappableSnapToGridSelected(snap));
-}
-
 void Selection_SnapToGrid()
 {
-  std::ostringstream command;
-  command << "snapSelected -grid " << GlobalGrid().getGridSize();
-  UndoableCommand undo(command.str());
+	std::ostringstream command;
+	command << "snapSelected -grid " << GlobalGrid().getGridSize();
+	UndoableCommand undo(command.str());
 
-  if(GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
-  {
-    Scene_SnapToGrid_Component_Selected(GlobalSceneGraph(), GlobalGrid().getGridSize());
-  }
-  else
-  {
-    Scene_SnapToGrid_Selected(GlobalSceneGraph(), GlobalGrid().getGridSize());
-  }
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
+		// Component mode
+		ComponentSnappableSnapToGridSelected walker(GlobalGrid().getGridSize());
+		GlobalSelectionSystem().foreachSelectedComponent(walker);
+	}
+	else {
+		// Non-component mode
+		SnappableSnapToGridSelected walker(GlobalGrid().getGridSize());
+		GlobalSelectionSystem().foreachSelected(walker);
+	}
 }
 
 gint window_realize_remove_decoration(GtkWidget* widget, gpointer data)
