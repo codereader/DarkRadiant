@@ -216,9 +216,6 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
     
     GlobalSceneGraph().root()->addChildNode(node);
     
-    scene::Path entitypath(GlobalSceneGraph().root());
-    entitypath.push(node);
-
     if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {
 		selection::algorithm::deleteSelection();
     
@@ -311,10 +308,7 @@ void createCurve(const std::string& key) {
     // Insert this new node into the scenegraph root 
     GlobalSceneGraph().root()->addChildNode(curve);
     
-    // Select this new curve node (construct the path and select it)
-    scene::Path entityPath(GlobalSceneGraph().root());
-    entityPath.push(curve);
-    
+    // Select this new curve node
     Node_setSelected(curve, true);
     
 	Entity* entity = Node_getEntity(curve);
