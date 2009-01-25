@@ -379,7 +379,7 @@ public:
  */
 template<class TSelectionPolicy>
 class SelectByBounds : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	AABB* _aabbs;				// selection aabbs
 	std::size_t _count;			// number of aabbs in _aabbs
@@ -391,7 +391,7 @@ public:
         _count(count)
 	{}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node) {
 		// Don't traverse hidden nodes
 		if (!node->visible()) {
 			return false;
@@ -409,7 +409,7 @@ public:
     
     	bool selected = false;
     
-		if (path.size() > 1 && !node->isRoot() && selectable != NULL) {
+		if (selectable != NULL && node->getParent() != NULL && !node->isRoot()) {
 			for (std::size_t i = 0; i < _count; ++i) {
 				// Check if the selectable passes the AABB test
 				if (policy.evaluate(_aabbs[i], node)) {
@@ -457,10 +457,9 @@ public:
 		}
 
 		// Instantiate a "self" object SelectByBounds and use it as visitor
-		GlobalSceneGraph().traverse(
-			SelectByBounds<TSelectionPolicy>(aabbs, count)
-		);
-      
+		SelectByBounds<TSelectionPolicy> walker(aabbs, count);
+		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+		
 		SceneChangeNotify();
 		delete[] aabbs;
 	}
