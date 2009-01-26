@@ -895,7 +895,11 @@ GtkWidget* create_main_statusbar(GtkWidget *pStatusLabel[c_count_status])
     pStatusLabel[i] = GTK_WIDGET(label);
   }
 
-  return GTK_WIDGET(table);
+	// greebo: Set the size request of the table to prevent it from "breaking" the window width
+    // which can cause lockup problems on GTK+ 2.12
+	gtk_widget_set_size_request(GTK_WIDGET(table), 100, -1);
+
+	return GTK_WIDGET(table);
 }
 
 #if 0
