@@ -11,7 +11,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
 
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "selection/algorithm/Transformation.h"
 
 namespace ui {

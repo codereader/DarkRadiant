@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/modelselector/ModelSelector.h"
 
 #include "map/RootNode.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "map/Map.h"
 #include "map/algorithm/Traverse.h"
 #include "referencecache/ModelCache.h"

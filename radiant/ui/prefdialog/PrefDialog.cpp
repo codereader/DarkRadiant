@@ -10,7 +10,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "PrefPageWalkers.h"
 
-#include "mainframe.h" // for UpdateAllWindows()
+#include "mainframe_old.h" // for UpdateAllWindows()
 
 namespace ui {
 

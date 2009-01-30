@@ -3,7 +3,7 @@
 
 #include "icounter.h"
 #include "iradiant.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include <map>
 #include "string/string.h"
 

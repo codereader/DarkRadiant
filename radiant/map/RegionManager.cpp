@@ -12,7 +12,7 @@
 #include "selectionlib.h"
 #include "gtkutil/dialog.h"
 
-#include "mainframe.h" // MainFrame_getWindow()
+#include "mainframe_old.h" // MainFrame_getWindow()
 #include "select.h"
 
 #include "brushmanip.h" // Construct_RegionBrushes()

@@ -4,7 +4,7 @@
 #include "ishaders.h"
 
 #include "gtkutil/ModalProgressDialog.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>

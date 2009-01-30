@@ -1,7 +1,7 @@
 #include "FindShader.h"
 
 #include "ieventmanager.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/IconTextButton.h"

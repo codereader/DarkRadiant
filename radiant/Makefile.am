@@ -94,6 +94,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/common/ShaderChooser.cpp \
 					  ui/common/SoundShaderPreview.cpp \
 					  ui/common/RenderableAABB.cpp \
+					  ui/common/MapPreview.cpp \
 					  ui/menu/FiltersMenu.cpp \
 					  ui/prefdialog/PrefPage.cpp \
 					  ui/prefdialog/PrefDialog.cpp \
@@ -109,6 +110,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/commandlist/ShortcutChooser.cpp \
 					  ui/filterdialog/FilterDialog.cpp \
 					  ui/filterdialog/FilterEditor.cpp \
+					  ui/mainframe/MainFrame.cpp \
 					  patchmanip.cpp \
 					  xyview/XYWnd.cpp \
 					  xyview/GlobalXYWnd.cpp \
@@ -168,6 +170,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapPosition.cpp \
 					  map/FindMapElements.cpp \
 					  map/MapFileManager.cpp \
+					  map/MapFileChooserPreview.cpp \
 					  map/algorithm/Traverse.cpp \
 					  map/RegionManager.cpp \
 					  map/PointFile.cpp \
@@ -180,7 +183,7 @@ darkradiant_SOURCES = main.cpp \
 					  clipper/ClipPoint.cpp \
 					  clipper/Clipper.cpp \
 					  timer.cpp \
-					  mainframe.cpp \
+					  mainframe_old.cpp \
 					  log/Console.cpp \
 					  log/LogStream.cpp \
 					  log/LogWriter.cpp \

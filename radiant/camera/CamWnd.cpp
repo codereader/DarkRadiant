@@ -13,7 +13,7 @@
 #include "selectable.h"
 #include "selectionlib.h"
 #include "windowobservers.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "map/Map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"

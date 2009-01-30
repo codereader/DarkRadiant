@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchmanip.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "gtkmisc.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "igrid.h"
 #include "selection/SceneWalkers.h"
 #include "xyview/GlobalXYWnd.h"

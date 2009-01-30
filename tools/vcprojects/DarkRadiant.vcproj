@@ -465,11 +465,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\mainframe.cpp"
+				RelativePath="..\..\radiant\mainframe_old.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\mainframe.h"
+				RelativePath="..\..\radiant\mainframe_old.h"
 				>
 			</File>
 			<File
@@ -2304,6 +2304,18 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\filterdialog\FilterEditor.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="mainframe"
+					>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\MainFrame.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\MainFrame.h"
 						>
 					</File>
 				</Filter>

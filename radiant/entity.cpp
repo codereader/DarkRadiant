@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "select.h"
 #include "map/Map.h"
 #include "gtkdlgs.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 #include "xyview/GlobalXYWnd.h"
 #include "selection/algorithm/Shader.h"
