@@ -1,7 +1,7 @@
 #include "SoundChooser.h"
 
 #include "isound.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"

@@ -13,7 +13,7 @@
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
 #include "gtkutil/dialog.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "map/Map.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "settings/GameManager.h" 

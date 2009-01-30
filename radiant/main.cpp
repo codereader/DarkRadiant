@@ -73,7 +73,8 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "log/PIDFile.h"
 #include "log/LogStream.h"
 #include "map/Map.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
+#include "ui/mainframe/MainFrame.h"
 #include "ui/mru/MRU.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "settings/GameManager.h"
@@ -224,7 +225,7 @@ int main (int argc, char* argv[]) {
 		ui::MediaBrowser::init();
 
 		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.95f);
-		g_pParentWnd = new MainFrame();
+		g_pParentWnd = new ui::MainFrame();
 
 		// Load the shortcuts from the registry
    		GlobalEventManager().loadAccelerators();

@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iradiant.h"
 
-// Camera window
+/*// Camera window
 class CamWnd;
 typedef boost::shared_ptr<CamWnd> CamWndPtr;
 
@@ -124,9 +124,11 @@ public:
   {
     return CurrentStyle() == eFloating || CurrentStyle() == eSplit;
   };
-};
+};*/
 
-extern MainFrame* g_pParentWnd;
+#include "ui/mainframe/MainFrame.h"
+
+extern ui::MainFrame* g_pParentWnd;
 
 GtkWindow* MainFrame_getWindow();
 

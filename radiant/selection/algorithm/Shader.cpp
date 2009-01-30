@@ -6,7 +6,7 @@
 #include "igroupnode.h"
 #include "selectionlib.h"
 #include "gtkutil/dialog.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
 #include "brush/TextureProjection.h"

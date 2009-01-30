@@ -9,7 +9,7 @@
 #include "iselection.h"
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "map/algorithm/Clone.h"
 #include "map/BasicContainer.h"
 

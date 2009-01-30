@@ -2,7 +2,7 @@
 #include "ModelFileFunctor.h"
 #include "ModelDataInserter.h"
 
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/RightAlignment.h"

@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 #include "modulesystem/StaticModule.h"
 
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 // ---------------------------------------------------------------------------------------
 

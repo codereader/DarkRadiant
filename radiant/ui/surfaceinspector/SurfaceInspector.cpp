@@ -19,7 +19,7 @@
 #include "brush/TextureProjection.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 namespace ui {
 

@@ -7,7 +7,7 @@
 #include "entitylib.h"
 #include "map/Map.h"
 #include "gtkutil/dialog.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 namespace selection {
 

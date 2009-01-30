@@ -9,7 +9,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
 
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 #include "CommandListPopulator.h"
 #include "ShortcutChooser.h"

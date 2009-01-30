@@ -9,7 +9,7 @@
 #include "stringio.h"
 
 #include "selection/algorithm/General.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 // Constructor
 XYWndManager::XYWndManager() :

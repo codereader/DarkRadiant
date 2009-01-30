@@ -14,7 +14,7 @@
 #include "brush/TexDef.h"
 #include "ibrush.h"
 #include "brushmanip.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "select.h"
 #include "entity.h"
 #include "renderer.h"
@@ -1453,7 +1453,7 @@ void XYWnd::draw() {
 			glLoadIdentity();
 
 			// four view mode doesn't colorize
-			if (g_pParentWnd->CurrentStyle() == MainFrame::eSplit) {
+			if (g_pParentWnd->CurrentStyle() == ui::MainFrame::eSplit) {
 				glColor3dv(ColourSchemes().getColour("active_view_name"));
 			}
 			else {

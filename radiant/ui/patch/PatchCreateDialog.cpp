@@ -2,7 +2,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "string/string.h"
 
 namespace {

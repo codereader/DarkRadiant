@@ -9,7 +9,7 @@
 #include "os/path.h"
 #include "os/file.h"
 #include "stream/textstream.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 
 #include "modulesystem/StaticModule.h"
 #include "ui/modelselector/ModelSelector.h"

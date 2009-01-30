@@ -11,7 +11,7 @@
 #include "math/matrix.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
-#include "mainframe.h"
+#include "mainframe_old.h"
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
 
