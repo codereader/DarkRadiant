@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieclass.h"
 #include "ipreferencesystem.h"
 #include "ieventmanager.h"
+#include "iclipper.h"
 
 #include "entity.h"
 #include "map.h"
@@ -192,6 +193,7 @@ const StringSet& RadiantModule::getDependencies() const {
 		_dependencies.insert(MODULE_ECLASSMANAGER);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_CLIPPER);
 	}
 	
 	return _dependencies;
