@@ -26,6 +26,10 @@ IGroupDialog& UIManager::getGroupDialog() {
 	return GroupDialog::Instance();
 }
 
+IStatusBarManager& UIManager::getStatusBarManager() {
+	return _statusBarManager;
+}
+
 const std::string& UIManager::getName() const {
 	static std::string _name(MODULE_UIMANAGER);
 	return _name;

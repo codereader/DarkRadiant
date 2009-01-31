@@ -98,6 +98,65 @@ public:
 	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
 };
 
+class IStatusBarManager
+{
+public:
+
+	// Use these positions to place the status bar elements in between
+	// the default ones. A position of 31 would put a widget in between 
+	// POS_BRUSHCOUNT and POS_SHADERCLIPBOARD.
+	enum StandardPositions {
+		POS_FRONT			= 0,
+		POS_COMMAND			= 10,
+		POS_POSITION		= 20,
+		POS_BRUSHCOUNT		= 30,
+		POS_SHADERCLIPBOARD	= 40,
+		POS_GRID			= 50,
+		POS_BACK			= 9000,
+	};
+
+	/**
+	 * Get the status bar widget, for packing into the main window.
+	 */
+	virtual GtkWidget* getStatusBar() = 0;
+
+	/**
+	 * greebo: This adds a named element to the status bar. Pass the widget
+	 * which should be added and specify the position order.
+	 * 
+	 * @name: the name of the element (can be used for later lookup).
+	 * @widget: the widget to pack.
+	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
+	 *       at the front or back of the status bar container.
+	 */
+	virtual void addElement(const std::string& name, GtkWidget* widget, int pos) = 0;
+
+	/**
+	 * greebo: A specialised method, adding a named text element.
+	 * Use the setText() method to update this element.
+	 *
+	 * @name: the name for this element (can be used as key for the setText() method).
+	 * @icon: the icon file to pack into the element, relative the BITMAPS_PATH. Leave empty
+	 *        if no icon is desired.
+	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
+	 *       at the front or back of the status bar container.
+ 	 */
+	virtual void addTextElement(const std::string& name, const std::string& icon, int pos) = 0;
+
+	/**
+	 * Updates the content of the named text element. The name must refer to
+	 * an element previously added by addTextElement().
+	 */
+	virtual void setText(const std::string& name, const std::string& text) = 0;
+
+	/**
+	 * Returns a named status bar widget, previously added by addElement().
+	 * 
+	 * @returns: NULL if the named widget does not exist.
+	 */
+	virtual GtkWidget* getElement(const std::string& name) = 0;
+};
+
 // Forward declaration, see igroupdialog.h for definition
 class IGroupDialog;
 
@@ -116,6 +175,7 @@ public:
 	virtual IToolbarManager& getToolbarManager() = 0;
 	virtual IColourSchemeManager& getColourSchemeManager() = 0;
 	virtual IGroupDialog& getGroupDialog() = 0;
+	virtual IStatusBarManager& getStatusBarManager() = 0;
 };
 
 // This is the accessor for the UI manager

@@ -197,7 +197,7 @@ MainWindowActive g_MainWindowActive;
 namespace ui {
 
 MainFrame::MainFrame() : 
-	m_window(0), 
+	_window(NULL), 
 	m_idleRedrawStatusText(RedrawStatusTextCaller(*this))
 {
 	for (int n = 0;n < NUM_STATI; n++) {
@@ -214,11 +214,11 @@ MainFrame::~MainFrame()
 {
 	SaveWindowInfo();
 	
-	gtk_widget_hide(GTK_WIDGET(m_window));
+	gtk_widget_hide(GTK_WIDGET(_window));
 	
 	Shutdown();
 
-	gtk_widget_destroy(GTK_WIDGET(m_window));
+	gtk_widget_destroy(GTK_WIDGET(_window));
 }
 
 void MainFrame::Create() {
@@ -226,7 +226,7 @@ void MainFrame::Create() {
 	GtkWindowGroup* windowGroup = gtk_window_group_new();
 	
   GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  m_window = window;
+  _window = window;
   radiant::getGlobalRadiant()->setMainWindow(window);
   
   // Tell the XYManager which window the xyviews should be transient for
@@ -315,6 +315,11 @@ void MainFrame::Create() {
     // Create and pack main statusbar 
     GtkWidget *main_statusbar = CreateStatusBar();
     gtk_box_pack_end(GTK_BOX(vbox), main_statusbar, FALSE, TRUE, 2);
+
+	GtkWidget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
+    gtk_box_pack_end(GTK_BOX(vbox), statusBar, FALSE, TRUE, 2);
+
+	gtk_widget_show_all(statusBar);
 
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
@@ -602,7 +607,7 @@ void MainFrame::SaveWindowInfo() {
 	_windowPosition.saveToNode(node);
 	node.setAttributeValue(
 		"state", 
-		intToStr(gdk_window_get_state(GTK_WIDGET(m_window)->window))
+		intToStr(gdk_window_get_state(GTK_WIDGET(_window)->window))
 	); 
   
 	// Save the splitpane widths/heights 
@@ -718,6 +723,7 @@ GtkWidget* MainFrame::CreateStatusBar()
 
   for(int i = 1; i < NUM_STATI; ++i)
   {
+	  gtk_table_resize(table, 1, i+1);
     GtkFrame* frame = GTK_FRAME(gtk_frame_new(0));
     gtk_widget_show(GTK_WIDGET(frame));
     gtk_table_attach_defaults(table, GTK_WIDGET(frame), i, i + 1, 0, 1);

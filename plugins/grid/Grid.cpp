@@ -6,7 +6,9 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
+#include "iuimanager.h"
 #include "ipreferencesystem.h"
+#include "string/string.h"
 #include "signal/signal.h"
 
 #include "GridItem.h"
@@ -32,6 +34,7 @@ public:
 			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+			_dependencies.insert(MODULE_UIMANAGER);
 		}
 
 		return _dependencies;
@@ -39,6 +42,10 @@ public:
 	
 	virtual void initialiseModule(const ApplicationContext& ctx) {
 		globalOutputStream() << "GridManager::initialiseModule called.\n";
+
+		// Add the grid status bar element
+		GlobalUIManager().getStatusBarManager().addTextElement("GridStatus", "grid_up.png", IStatusBarManager::POS_GRID);
+		GlobalUIManager().getStatusBarManager().setText("GridStatus", "-");
 		
 		populateGridItems();
 		registerCommands();
@@ -174,13 +181,15 @@ public:
 	}
 	
 	void gridChanged() {
-		for (GridItems::iterator i = _gridItems.begin(); i != _gridItems.end(); i++) {
+		for (GridItems::iterator i = _gridItems.begin(); i != _gridItems.end(); ++i) {
 			std::string toggleName = "SetGrid";
 			toggleName += i->first; // Makes "SetGrid" to "SetGrid64", for example
 			GridItem& gridItem = i->second;
 			
 			GlobalEventManager().setToggled(toggleName, _activeGridSize == gridItem.getGridSize()); 
 		}
+
+		GlobalUIManager().getStatusBarManager().setText("GridStatus", floatToStr(getGridSize()));
 		
 		gridChangeNotify();
 	}

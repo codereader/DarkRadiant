@@ -792,7 +792,7 @@ GtkWindow* MainFrame_getWindow()
   {
   	return 0;
   }
-  return g_pParentWnd->m_window;
+  return g_pParentWnd->_window;
 }
 
 
