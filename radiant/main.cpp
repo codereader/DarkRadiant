@@ -190,6 +190,8 @@ int main (int argc, char* argv[]) {
 	gtk_disable_setlocale();
 	gtk_init(&argc, &argv);
 
+	ui::MainFrame* mainFrame = NULL;
+
 	{
 		// Create the radiant.pid file in the settings folder 
 		// (emits a warning if the file already exists (due to a previous startup failure)) 
@@ -225,7 +227,8 @@ int main (int argc, char* argv[]) {
 		ui::MediaBrowser::init();
 
 		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.95f);
-		g_pParentWnd = new ui::MainFrame();
+
+		mainFrame = new ui::MainFrame();
 
 		// Load the shortcuts from the registry
    		GlobalEventManager().loadAccelerators();
@@ -263,7 +266,7 @@ int main (int argc, char* argv[]) {
 	
 	GlobalMap().freeMap();
 
-  delete g_pParentWnd;
+	delete mainFrame;
 
 	GlobalMRU().saveRecentFiles();
 

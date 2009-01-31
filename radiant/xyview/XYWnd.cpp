@@ -1455,22 +1455,16 @@ void XYWnd::draw() {
 			glMatrixMode (GL_MODELVIEW);
 			glLoadIdentity();
 
-			// four view mode doesn't colorize
-			if (g_pParentWnd->CurrentStyle() == ui::MainFrame::eSplit) {
-				glColor3dv(ColourSchemes().getColour("active_view_name"));
-			}
-			else {
-				switch (m_viewType) {
-					case YZ:
-						glColor3dv(ColourSchemes().getColour("axis_x"));
-						break;
-					case XZ:
-						glColor3dv(ColourSchemes().getColour("axis_y"));
-						break;
-					case XY:
-						glColor3dv(ColourSchemes().getColour("axis_z"));
-						break;
-				}
+			switch (m_viewType) {
+				case YZ:
+					glColor3dv(ColourSchemes().getColour("axis_x"));
+					break;
+				case XZ:
+					glColor3dv(ColourSchemes().getColour("axis_y"));
+					break;
+				case XY:
+					glColor3dv(ColourSchemes().getColour("axis_z"));
+					break;
 			}
 
 			glBegin (GL_LINE_LOOP);

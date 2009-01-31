@@ -128,8 +128,6 @@ public:
 
 #include "ui/mainframe/MainFrame.h"
 
-extern ui::MainFrame* g_pParentWnd;
-
 void ScreenUpdates_Disable(const char* message, const char* title = "");
 void ScreenUpdates_Enable();
 bool ScreenUpdates_Enabled();
@@ -153,7 +151,6 @@ void Radiant_Initialise();
 void SaveMapAs();
 
 void GlobalCamera_UpdateWindow();
-void XY_UpdateAllWindows();
 void UpdateAllWindows();
 
 void updateTextureBrowser();
@@ -162,7 +159,5 @@ void ClipperChangeNotify();
 void DefaultMode();
 
 void MainFrame_Construct();
-
-extern float (*GridStatus_getGridSize)();
 
 #endif

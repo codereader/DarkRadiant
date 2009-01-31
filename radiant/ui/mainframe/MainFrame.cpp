@@ -570,8 +570,6 @@ void MainFrame::Create() {
     }
   }
 
-	GlobalGrid().addGridChangeCallback(FreeCaller<XY_UpdateAllWindows>());
-
 	// Start the autosave timer so that it can periodically check the map for changes 
 	map::AutoSaver().startTimer();
   

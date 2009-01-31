@@ -647,20 +647,10 @@ void Selection_SnapToGrid()
 	}
 }
 
-void XY_UpdateAllWindows()
-{
-  if(g_pParentWnd != 0)
-  {
-    GlobalXYWnd().updateAllViews();
-  }
+void UpdateAllWindows() {
+	GlobalCamera().update();
+	GlobalXYWnd().updateAllViews();
 }
-
-void UpdateAllWindows()
-{
-  GlobalCamera().update();
-  XY_UpdateAllWindows();
-}
-
 
 void ModeChangeNotify()
 {
@@ -755,8 +745,6 @@ WindowFocusPrinter g_mainframeFocusPrinter("mainframe");
 
 // =============================================================================
 // MainFrame class
-
-ui::MainFrame* g_pParentWnd = 0;
 
 int getFarClipDistance() {
 	return getCameraSettings()->cubicScale();
