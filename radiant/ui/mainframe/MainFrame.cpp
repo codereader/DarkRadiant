@@ -681,10 +681,10 @@ void MainFrame::Shutdown()
 void MainFrame::RedrawStatusText()
 {
   gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_COMMAND]), m_command_status.c_str());
-  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_POSITION]), m_position_status.c_str());
+  //gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_POSITION]), m_position_status.c_str());
   gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_BRUSHCOUNT]), m_brushcount_status.c_str());
-  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_SHADERCLIPBOARD]), m_texture_status.c_str());
-  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_GRID]), m_grid_status.c_str());
+  //gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_SHADERCLIPBOARD]), m_texture_status.c_str());
+  //gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_GRID]), m_grid_status.c_str());
 }
 
 void MainFrame::UpdateStatusText()

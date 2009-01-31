@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifiletypes.h"
 #include "iregistry.h"
 #include "ifilesystem.h"
+#include "iuimanager.h"
 #include "ieclass.h"
 #include "ipreferencesystem.h"
 #include "ieventmanager.h"
@@ -42,6 +43,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/mediabrowser/MediaBrowser.h"
 
 #include "modulesystem/StaticModule.h"
+
+#include "mainframe_old.h"
 
 namespace radiant {
 
@@ -112,11 +115,13 @@ ICounter& RadiantModule::getCounter(CounterType counter) {
 }
 	
 void RadiantModule::setStatusText(const std::string& statusText) {
-	Sys_Status(statusText);
+	// Pass the call
+	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }
 	
 void RadiantModule::updateAllWindows() {
-	UpdateAllWindows();
+	GlobalCamera().update();
+	GlobalXYWnd().updateAllViews();
 }
 	
 void RadiantModule::addEventListener(RadiantEventListenerPtr listener) {
@@ -194,6 +199,7 @@ const StringSet& RadiantModule::getDependencies() const {
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_SHADERCACHE);
 		_dependencies.insert(MODULE_CLIPPER);
+		_dependencies.insert(MODULE_UIMANAGER);
 	}
 	
 	return _dependencies;
@@ -218,6 +224,15 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     GlobalTextureBrowser().construct();
     Entity_Construct();
     map::AutoSaver().init();
+
+	// Add the statusbar command text item
+	GlobalUIManager().getStatusBarManager().addTextElement(
+		STATUSBAR_COMMAND, 
+		"",  // no icon
+		IStatusBarManager::POS_COMMAND
+	);
+
+	_counters.init();
 }
 
 void RadiantModule::shutdownModule() {
