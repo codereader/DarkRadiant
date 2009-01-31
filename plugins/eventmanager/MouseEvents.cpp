@@ -1,10 +1,9 @@
 #include "MouseEvents.h"
 
+#include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
 #include "iselection.h"
-
-#include "stream/textstream.h"
 
 #include "gdk/gdkkeys.h"
 
@@ -48,7 +47,7 @@ unsigned int MouseEventManager::getButtonId(const std::string& buttonName) {
    		return it->second;
    	}
    	else {
-   		globalOutputStream() << "MouseEventManager: Warning: Button " << buttonName.c_str() << " not found, returning ID=0\n";
+   		globalOutputStream() << "MouseEventManager: Warning: Button " << buttonName << " not found, returning ID=0\n";
    		return 0;
    	}
 }

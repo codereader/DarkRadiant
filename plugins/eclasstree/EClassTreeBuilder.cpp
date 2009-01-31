@@ -1,7 +1,7 @@
 #include "EClassTreeBuilder.h"
 
+#include "itextstream.h"
 #include "EClassTree.h"
-#include "stream/textstream.h"
 
 namespace ui {
 

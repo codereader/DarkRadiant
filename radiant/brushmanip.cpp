@@ -103,12 +103,12 @@ void Brush_ConstructPrism(Brush& brush, const AABB& bounds, std::size_t sides, i
 {
   if(sides < c_brushPrism_minSides)
   {
-    globalErrorStream() << c_brushPrism_name << ": sides " << Unsigned(sides) << ": too few sides, minimum is " << Unsigned(c_brushPrism_minSides) << "\n";
+    globalErrorStream() << c_brushPrism_name << ": sides " << sides << ": too few sides, minimum is " << c_brushPrism_minSides << "\n";
     return;
   }
   if(sides > c_brushPrism_maxSides)
   {
-    globalErrorStream() << c_brushPrism_name << ": sides " << Unsigned(sides) << ": too many sides, maximum is " << Unsigned(c_brushPrism_maxSides) << "\n";
+    globalErrorStream() << c_brushPrism_name << ": sides " << sides << ": too many sides, maximum is " << c_brushPrism_maxSides << "\n";
     return;
   }
 
@@ -175,12 +175,12 @@ void Brush_ConstructCone(Brush& brush, const AABB& bounds, std::size_t sides, co
 {
   if(sides < c_brushCone_minSides)
   {
-    globalErrorStream() << c_brushCone_name << ": sides " << Unsigned(sides) << ": too few sides, minimum is " << Unsigned(c_brushCone_minSides) << "\n";
+    globalErrorStream() << c_brushCone_name << ": sides " << sides << ": too few sides, minimum is " << c_brushCone_minSides << "\n";
     return;
   }
   if(sides > c_brushCone_maxSides)
   {
-    globalErrorStream() << c_brushCone_name << ": sides " << Unsigned(sides) << ": too many sides, maximum is " << Unsigned(c_brushCone_maxSides) << "\n";
+    globalErrorStream() << c_brushCone_name << ": sides " << sides << ": too many sides, maximum is " << c_brushCone_maxSides << "\n";
     return;
   }
 
@@ -229,12 +229,12 @@ void Brush_ConstructSphere(Brush& brush, const AABB& bounds, std::size_t sides, 
 {
   if(sides < c_brushSphere_minSides)
   {
-    globalErrorStream() << c_brushSphere_name << ": sides " << Unsigned(sides) << ": too few sides, minimum is " << Unsigned(c_brushSphere_minSides) << "\n";
+    globalErrorStream() << c_brushSphere_name << ": sides " << sides << ": too few sides, minimum is " << c_brushSphere_minSides << "\n";
     return;
   }
   if(sides > c_brushSphere_maxSides)
   {
-    globalErrorStream() << c_brushSphere_name << ": sides " << Unsigned(sides) << ": too many sides, maximum is " << Unsigned(c_brushSphere_maxSides) << "\n";
+    globalErrorStream() << c_brushSphere_name << ": sides " << sides << ": too many sides, maximum is " << c_brushSphere_maxSides << "\n";
     return;
   }
 

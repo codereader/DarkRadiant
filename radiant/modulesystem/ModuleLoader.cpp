@@ -1,9 +1,8 @@
 #include "ModuleLoader.h"
 
+#include "itextstream.h"
 #include <iostream>
 #include "imodule.h"
-
-#include "stream/textstream.h"
 
 #include "os/dir.h"
 #include "os/path.h"
@@ -34,7 +33,7 @@ void Loader::operator() (const std::string& fileName) const {
 	// Check for the correct extension of the visited file
 	if (boost::algorithm::iends_with(fileName, _ext)) {
 		std::string fullName = _path + fileName;
-		globalOutputStream() << "ModuleLoader: Loading module '" << fullName.c_str() << "'\n";
+		globalOutputStream() << "ModuleLoader: Loading module '" << fullName << "'\n";
 		
 		// Create the encapsulator class
 		DynamicLibraryPtr library(new DynamicLibrary(fullName));

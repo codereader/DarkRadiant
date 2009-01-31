@@ -1,11 +1,11 @@
 #include "NodeExporter.h"
 
+#include "itextstream.h"
 #include "iregistry.h"
 #include "ieclass.h"
 #include "ientity.h"
 #include "ilayer.h"
 #include "imodel.h"
-#include "stream/textstream.h"
 
 #include "Tokens.h"
 #include "Doom3MapFormat.h"
@@ -50,7 +50,7 @@ NodeExporter::~NodeExporter() {
 	// Write the closing braces of the information file
 	_infoStream << "}\n";
 
-	globalOutputStream() << static_cast<int>(_layerInfoCount) << " node-to-layer mappings written.\n";
+	globalOutputStream() << _layerInfoCount << " node-to-layer mappings written.\n";
 }
 
 // Pre-descent callback

@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Vector3.h"
 #include "string/string.h"
-#include "stream/textstream.h"
 #include "generic/callback.h"
 
 inline float string_read_float(const char* string)
@@ -302,13 +301,14 @@ inline void Size_importString(std::size_t& self, const char* string)
   }
 }
 typedef ReferenceCaller1<std::size_t, const char*, Size_importString> SizeImportStringCaller;
-inline void Size_exportString(const std::size_t& self, const StringImportCallback& importer)
+
+/*inline void Size_exportString(const std::size_t& self, const StringImportCallback& importer)
 {
   char buffer[16];
-  sprintf(buffer, "%u", Unsigned(self));
+  sprintf(buffer, "%u", self);
   importer(buffer);
 }
-typedef ConstReferenceCaller1<std::size_t, const StringImportCallback&, Size_exportString> SizeExportStringCaller;
+typedef ConstReferenceCaller1<std::size_t, const StringImportCallback&, Size_exportString> SizeExportStringCaller;*/
 
 inline void Float_importString(float& self, const char* string)
 {
@@ -437,13 +437,6 @@ public:
     return m_value;
   }
 };
-
-inline void Size_toString(const StringImportCallback& self, std::size_t value)
-{
-  Size_exportString(value, self);
-}
-typedef ConstReferenceCaller1<StringImportCallback, std::size_t, Size_toString> SizeToString;
-
 
 template<typename Caller>
 inline StringImportCallback makeSizeStringImportCallback(const Caller& caller)

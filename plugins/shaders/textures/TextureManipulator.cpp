@@ -3,7 +3,6 @@
 #include "igl.h"
 #include <stdlib.h>
 #include "imagelib.h"
-#include "stream/textstream.h"
 #include "math/Vector3.h"
 #include "ipreferencesystem.h"
 #include "../Doom3ShaderSystem.h"

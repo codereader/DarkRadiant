@@ -1,9 +1,9 @@
 #include "UIManager.h"
 
+#include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include "stream/textstream.h"
 #include "generic/callback.h"
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"

@@ -5,7 +5,6 @@
 #include <vector>
 #include <boost/algorithm/string/case_conv.hpp>
 
-#include "stream/textstream.h"
 #include "stream/textfilestream.h"
 #include "archivelib.h"
 #include "os/path.h"

@@ -1,7 +1,6 @@
 #include "ZipArchive.h"
 
 #include "iarchive.h"
-#include "stream/textstream.h"
 #include "archivelib.h"
 #include "container/array.h"
 

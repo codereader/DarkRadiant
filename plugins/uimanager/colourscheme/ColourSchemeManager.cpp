@@ -2,7 +2,6 @@
 #include "iregistry.h"
 
 #include "stringio.h"
-#include "stream/textstream.h"
 #include "stream/textfilestream.h"
 
 namespace ui {

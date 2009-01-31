@@ -1,6 +1,6 @@
 #include "ColourScheme.h"
 
-#include "stream/textstream.h"
+#include "itextstream.h"
 
 namespace ui {
 	

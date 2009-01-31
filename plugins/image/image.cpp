@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "image.h"
 
 #include "imodule.h"
-#include "stream/textstream.h"
 
 #include "jpeg.h"
 #include "tga.h"

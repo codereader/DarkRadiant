@@ -3,7 +3,6 @@
 #include <gdk/gdkpixbuf.h>
 #include "iarchive.h"
 #include "imagelib.h"
-#include "stream/textstream.h"
 
 /* greebo: This loads a file from the disk using GDKPixbuf routines.
  * 

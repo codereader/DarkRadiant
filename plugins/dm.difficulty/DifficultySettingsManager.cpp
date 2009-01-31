@@ -4,7 +4,6 @@
 #include "entitylib.h"
 #include "scenelib.h"
 #include "iregistry.h"
-#include "stream/textstream.h"
 #include "string/string.h"
 #include "DifficultyEntity.h"
 #include "DifficultyEntityFinder.h"

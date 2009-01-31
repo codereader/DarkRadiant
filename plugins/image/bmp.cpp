@@ -21,11 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "bmp.h"
 
+#include "itextstream.h"
 #include "ifilesystem.h"
 
 typedef unsigned char byte;
 
-#include "stream/textstream.h"
 #include "imagelib.h"
 #include "bytestreamutils.h"
 
@@ -157,7 +157,7 @@ RGBAImagePtr LoadBMPBuff(PointerInputStream& inputStream, std::size_t length)
   }
   if (bmpHeader.fileSize != length)
   {
-    globalErrorStream() << "LoadBMP: header size does not match file size (" << Unsigned(bmpHeader.fileSize) << " vs. " << Unsigned(length) << ")\n";
+    globalErrorStream() << "LoadBMP: header size does not match file size (" << bmpHeader.fileSize << " vs. " << length << ")\n";
     return RGBAImagePtr();
   }
   if (bmpHeader.compression != 0)

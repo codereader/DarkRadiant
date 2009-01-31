@@ -6,7 +6,6 @@
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "archivelib.h"
-#include "stream/textstream.h"
 #include "os/path.h"
 
 #include "MD5ModelNode.h"

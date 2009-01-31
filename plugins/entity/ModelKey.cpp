@@ -2,7 +2,6 @@
 
 #include "imodelcache.h"
 #include "ifiletypes.h"
-#include "stream/textstream.h"
 #include "scenelib.h"
 #include <boost/algorithm/string/replace.hpp>
 

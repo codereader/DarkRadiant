@@ -1,7 +1,7 @@
 #include "FileTypeRegistry.h"
 
+#include "itextstream.h"
 #include "os/path.h"
-#include "stream/textstream.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>

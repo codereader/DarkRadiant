@@ -1,8 +1,8 @@
 #include "MenuItem.h"
 
+#include "itextstream.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include "stream/textstream.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -243,7 +243,7 @@ void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
 	} 
 	else {
 		_type = menuNothing;
-		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName.c_str() << "\n"; 
+		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName << "\n"; 
 	}
 }
 

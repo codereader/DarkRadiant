@@ -8,7 +8,6 @@
 #include "igroupnode.h"
 
 #include "parser/DefTokeniser.h"
-#include "stream/textstream.h"
 
 #include "NodeImporter.h"
 #include "NodeExporter.h"

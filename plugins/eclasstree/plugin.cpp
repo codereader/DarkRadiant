@@ -1,12 +1,12 @@
 #include "imodule.h"
 
+#include "itextstream.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "iradiant.h"
 #include "ieclass.h"
 
-#include "stream/textstream.h"
 #include "generic/callback.h"
 
 #include "EClassTree.h"

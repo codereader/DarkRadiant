@@ -6,7 +6,6 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "iradiant.h"
-#include "stream/textstream.h"
 
 #include <iostream>
 
