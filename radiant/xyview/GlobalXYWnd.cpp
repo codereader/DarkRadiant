@@ -2,6 +2,7 @@
 #include "FloatingOrthoView.h"
 
 #include "ieventmanager.h"
+#include "iuimanager.h"
 #include "ipreferencesystem.h"
 
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -38,6 +39,12 @@ XYWndManager::XYWndManager() :
 	
 	// Add the commands to the EventManager
 	registerCommands();
+
+	GlobalUIManager().getStatusBarManager().addTextElement(
+		"XYZPos", 
+		"",  // no icon
+		IStatusBarManager::POS_POSITION
+	);
 }
 
 void XYWndManager::construct() {
