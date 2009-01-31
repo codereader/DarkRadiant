@@ -487,8 +487,6 @@ void ToolChanged() {
 	GlobalEventManager().setToggled("MouseDrag", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eDrag);
 }
 
-const char* const c_ResizeMode_status = "QE4 Drag Tool: move and resize objects";
-
 void DragMode()
 {
   if(g_currentToolMode == DragMode && g_defaultToolMode != DragMode)
@@ -502,15 +500,11 @@ void DragMode()
 
     GlobalClipper().onClipMode(false);
 
-    Sys_Status(c_ResizeMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eDrag);
     ToolChanged();
     ModeChangeNotify();
   }
 }
-
-
-const char* const c_TranslateMode_status = "Translate Tool: translate objects and components";
 
 void TranslateMode()
 {
@@ -525,14 +519,11 @@ void TranslateMode()
 
     GlobalClipper().onClipMode(false);
 
-    Sys_Status(c_TranslateMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eTranslate);
     ToolChanged();
     ModeChangeNotify();
   }
 }
-
-const char* const c_RotateMode_status = "Rotate Tool: rotate objects and components";
 
 void RotateMode()
 {
@@ -547,14 +538,11 @@ void RotateMode()
 
     GlobalClipper().onClipMode(false);
 
-    Sys_Status(c_RotateMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eRotate);
     ToolChanged();
     ModeChangeNotify();
   }
 }
-
-const char* const c_ScaleMode_status = "Scale Tool: scale objects and components";
 
 void ScaleMode()
 {
@@ -569,15 +557,11 @@ void ScaleMode()
 
     GlobalClipper().onClipMode(false);
 
-    Sys_Status(c_ScaleMode_status);
     GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eScale);
     ToolChanged();
     ModeChangeNotify();
   }*/
 }
-
-
-const char* const c_ClipperMode_status = "Clipper Tool: apply clip planes to objects";
 
 
 void ClipperMode() {
@@ -592,7 +576,6 @@ void ClipperMode() {
 
 		GlobalClipper().onClipMode(true);
 
-		Sys_Status(c_ClipperMode_status);
 		GlobalSelectionSystem().SetManipulatorMode(SelectionSystem::eClip);
 		ToolChanged();
 		ModeChangeNotify();
@@ -793,12 +776,6 @@ GtkWindow* MainFrame_getWindow()
   	return 0;
   }
   return g_pParentWnd->_window;
-}
-
-void Sys_Status(const std::string& statusText) {
-	if (g_pParentWnd != 0) {
-		g_pParentWnd->SetStatusText(g_pParentWnd->m_command_status, statusText);
-	}
 }
 
 int getFarClipDistance() {

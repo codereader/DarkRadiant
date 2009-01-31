@@ -197,13 +197,8 @@ MainWindowActive g_MainWindowActive;
 namespace ui {
 
 MainFrame::MainFrame() : 
-	_window(NULL), 
-	m_idleRedrawStatusText(RedrawStatusTextCaller(*this))
+	_window(NULL)
 {
-	for (int n = 0;n < NUM_STATI; n++) {
-		m_pStatusLabel[n] = 0;
-	}
-
 	Create();
   
   	// Broadcast the startup event
@@ -313,12 +308,8 @@ void MainFrame::Create() {
 	}
     
     // Create and pack main statusbar 
-    GtkWidget *main_statusbar = CreateStatusBar();
-    gtk_box_pack_end(GTK_BOX(vbox), main_statusbar, FALSE, TRUE, 2);
-
-	GtkWidget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
+    GtkWidget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
     gtk_box_pack_end(GTK_BOX(vbox), statusBar, FALSE, TRUE, 2);
-
 	gtk_widget_show_all(statusBar);
 
 	/* Construct the Group Dialog. This is the tabbed window that contains
@@ -579,10 +570,7 @@ void MainFrame::Create() {
     }
   }
 
-  GlobalGrid().addGridChangeCallback(SetGridStatusCaller(*this));
-  GlobalGrid().addGridChangeCallback(FreeCaller<XY_UpdateAllWindows>());
-
-	SetStatusText(m_command_status, "");
+	GlobalGrid().addGridChangeCallback(FreeCaller<XY_UpdateAllWindows>());
 
 	// Start the autosave timer so that it can periodically check the map for changes 
 	map::AutoSaver().startTimer();
@@ -676,72 +664,6 @@ void MainFrame::Shutdown()
 	GlobalCamera().destroy();
 	
 	GlobalXYWnd().destroy();
-}
-
-void MainFrame::RedrawStatusText()
-{
-  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_COMMAND]), m_command_status.c_str());
-  //gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_POSITION]), m_position_status.c_str());
-  gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_BRUSHCOUNT]), m_brushcount_status.c_str());
-  //gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_SHADERCLIPBOARD]), m_texture_status.c_str());
-  //gtk_label_set_markup(GTK_LABEL(m_pStatusLabel[STATUS_GRID]), m_grid_status.c_str());
-}
-
-void MainFrame::UpdateStatusText()
-{
-  m_idleRedrawStatusText.queueDraw();
-}
-
-void MainFrame::SetStatusText(std::string& status_text, const std::string& newText)
-{
-  status_text = newText;
-  UpdateStatusText();
-}
-
-void MainFrame::SetGridStatus()
-{
-	std::string lock = (GlobalBrush()->textureLockEnabled()) ? "ON" : "OFF";
-	std::string text = "G:" + floatToStr(GlobalGrid().getGridSize());
-	text += "  C:" + intToStr(getCameraSettings()->cubicScale());
-    text += "  L:" + lock;
-	SetStatusText(m_grid_status, text);
-}
-
-GtkWidget* MainFrame::CreateStatusBar()
-{
-  GtkTable* table = GTK_TABLE(gtk_table_new(1, NUM_STATI, FALSE));
-  gtk_widget_show(GTK_WIDGET(table));
-
-  {
-    GtkLabel* label = GTK_LABEL(gtk_label_new ("Label"));
-    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-    gtk_misc_set_padding(GTK_MISC(label), 4, 2);
-    gtk_widget_show(GTK_WIDGET(label));
-    gtk_table_attach_defaults(table, GTK_WIDGET(label), 0, 1, 0, 1);
-    m_pStatusLabel[STATUS_COMMAND] = GTK_WIDGET(label);
-  }
-
-  for(int i = 1; i < NUM_STATI; ++i)
-  {
-	  gtk_table_resize(table, 1, i+1);
-    GtkFrame* frame = GTK_FRAME(gtk_frame_new(0));
-    gtk_widget_show(GTK_WIDGET(frame));
-    gtk_table_attach_defaults(table, GTK_WIDGET(frame), i, i + 1, 0, 1);
-    gtk_frame_set_shadow_type(frame, GTK_SHADOW_IN);
-
-    GtkLabel* label = GTK_LABEL(gtk_label_new ("Label"));
-    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-    gtk_misc_set_padding(GTK_MISC(label), 4, 2);
-    gtk_widget_show(GTK_WIDGET(label));
-    gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(label));
-    m_pStatusLabel[i] = GTK_WIDGET(label);
-  }
-
-	// greebo: Set the size request of the table to prevent it from "breaking" the window width
-    // which can cause lockup problems on GTK+ 2.12
-	gtk_widget_set_size_request(GTK_WIDGET(table), 100, -1);
-
-	return GTK_WIDGET(table);
 }
 
 // GTK callbacks

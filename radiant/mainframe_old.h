@@ -132,10 +132,6 @@ extern ui::MainFrame* g_pParentWnd;
 
 GtkWindow* MainFrame_getWindow();
 
-// Set the text to be displayed in the status bar
-void Sys_Status(const std::string& statusText);
-
-
 void ScreenUpdates_Disable(const char* message, const char* title = "");
 void ScreenUpdates_Enable();
 bool ScreenUpdates_Enabled();

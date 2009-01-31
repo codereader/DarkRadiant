@@ -802,7 +802,6 @@ void CamWnd::cubicScaleOut() {
 
 	m_Camera.updateProjection();
 	update();
-	g_pParentWnd->SetGridStatus();
 }
 
 void CamWnd::cubicScaleIn() {
@@ -810,8 +809,6 @@ void CamWnd::cubicScaleIn() {
 
 	m_Camera.updateProjection();
 	update();
-	
-	g_pParentWnd->SetGridStatus();
 }
 
 // -------------------------------------------------------------------------------
