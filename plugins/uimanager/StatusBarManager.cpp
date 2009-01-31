@@ -76,13 +76,29 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	ElementMap::const_iterator found = _elements.find(name);
 	
 	// return NULL if not found
-	if (found != _elements.end() && found->second->label != NULL && GTK_IS_LABEL(found->second->label)) {
+	if (found != _elements.end() && found->second->label != NULL) {
 		// Set the text
-		gtk_label_set_markup(GTK_LABEL(found->second->label), text.c_str());
+		found->second->text = text;
+
+		// Request an idle callback
+		requestIdleCallback();
 	}
 	else {
 		globalErrorStream() << "Could not find text status bar element with the name " 
 			<< name << std::endl;
+	}
+}
+
+void StatusBarManager::onGtkIdle() {
+	// Fill in all buffered texts
+	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i) {
+		// Shortcut
+		const StatusBarElement& element = *(i->second);
+
+		// Skip non-labels
+		if (element.label == NULL) continue;
+		
+		gtk_label_set_markup(GTK_LABEL(element.label), element.text.c_str());
 	}
 }
 

@@ -3,12 +3,14 @@
 
 #include "iuimanager.h"
 #include <map>
+#include "gtkutil/event/SingleIdleCallback.h"
 #include <gtk/gtkwidget.h>
 
 namespace ui {
 
 class StatusBarManager :
-	public IStatusBarManager
+	public IStatusBarManager,
+	protected gtkutil::SingleIdleCallback
 {
 	struct StatusBarElement {
 		// The toplevel container 
@@ -16,6 +18,8 @@ class StatusBarManager :
 
 		// If this status bar element is a label, this is not NULL
 		GtkWidget* label;
+		// The text for this label, gets filled in when GTK is idle
+		std::string text;
 
 		StatusBarElement(GtkWidget* _toplevel) :
 			toplevel(_toplevel),
@@ -83,6 +87,10 @@ public:
 	 * an element previously added by addTextElement().
 	 */
 	void setText(const std::string& name, const std::string& text);
+
+protected:
+	// Gets called when GTK is idle - this fills in the status text
+	void onGtkIdle();
 
 private:
 	// Returns an integer position which is not used yet.
