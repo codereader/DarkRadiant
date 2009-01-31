@@ -1,10 +1,10 @@
 #ifndef RENDERSTATISTICS_H_
 #define RENDERSTATISTICS_H_
 
-namespace render {
-
 #include "timer.h"
 #include "string/string.h"
+
+namespace render {
 
 class RenderStatistics {
 	std::string _statStr;

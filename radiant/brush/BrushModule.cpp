@@ -36,8 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "stringio.h"
 #include "modulesystem/StaticModule.h"
 
-#include "mainframe_old.h"
-
 // ---------------------------------------------------------------------------------------
 
 void BrushModuleClass::constructPreferences() {
@@ -90,10 +88,6 @@ void BrushModuleClass::setTextureLock(bool enabled) {
 
 void BrushModuleClass::toggleTextureLock() {
 	setTextureLock(!textureLockEnabled());
-	
-	if (g_pParentWnd != 0) {
-		g_pParentWnd->SetGridStatus();
-	}
 }
 
 // ------------ BrushCreator implementation --------------------------------------------
