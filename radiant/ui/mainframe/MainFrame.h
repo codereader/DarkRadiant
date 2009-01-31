@@ -37,7 +37,7 @@ public:
 		eRegularLeft = 3,
 	};
 
-	GtkWindow* m_window;
+	GtkWindow* _window;
 
 	std::string m_command_status;
 	std::string m_position_status;

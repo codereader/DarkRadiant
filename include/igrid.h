@@ -39,8 +39,6 @@ public:
 	virtual void gridUp() = 0;
 	
 	virtual void addGridChangeCallback(const SignalHandler& handler) = 0;
-	
-	virtual void gridChangeNotify() = 0;
 }; // class IGridManager
 
 // This is the accessor for the grid module
