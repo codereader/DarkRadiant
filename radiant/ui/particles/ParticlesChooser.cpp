@@ -21,7 +21,7 @@ ParticlesChooser::ParticlesChooser()
   _selectedParticle("")
 {
 	// Set up main window
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), MainFrame_getWindow());
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), "Choose particles");
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);

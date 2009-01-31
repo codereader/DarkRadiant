@@ -334,19 +334,19 @@ void pasteTextureCoords(SelectionTest& test) {
 		}
 		else {
 			gtkutil::errorDialog("Can't paste Texture Coordinates.\nTarget patch dimensions must match.",
-					MainFrame_getWindow());
+					GlobalRadiant().getMainWindow());
 		}
 	}
 	else {
 		if (source.isPatch()) {
 		 	// Nothing to do, this works for patches only
 		 	gtkutil::errorDialog("Can't paste Texture Coordinates from patches to faces.",
-							 MainFrame_getWindow());
+							 GlobalRadiant().getMainWindow());
 		}
 		else {
 			// Nothing to do, this works for patches only
 		 	gtkutil::errorDialog("Can't paste Texture Coordinates from faces.",
-							 MainFrame_getWindow());
+							 GlobalRadiant().getMainWindow());
 		}
 	}
 	
@@ -368,7 +368,7 @@ void pickShaderFromSelection() {
 		}
 		catch (InvalidSelectionException e) {
 			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve patch.",
-		 		MainFrame_getWindow());
+		 		GlobalRadiant().getMainWindow());
 		}
 	}
 	else if (selectedFaceCount() == 1) {
@@ -378,13 +378,13 @@ void pickShaderFromSelection() {
 		}
 		catch (InvalidSelectionException e) {
 			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve face.",
-		 		MainFrame_getWindow());
+		 		GlobalRadiant().getMainWindow());
 		}
 	}
 	else {
 		// Nothing to do, this works for patches only
 		gtkutil::errorDialog("Can't copy Shader. Please select a single face or patch.",
-			 MainFrame_getWindow());
+			 GlobalRadiant().getMainWindow());
 	}
 }
 

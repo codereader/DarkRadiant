@@ -130,8 +130,6 @@ public:
 
 extern ui::MainFrame* g_pParentWnd;
 
-GtkWindow* MainFrame_getWindow();
-
 void ScreenUpdates_Disable(const char* message, const char* title = "");
 void ScreenUpdates_Enable();
 bool ScreenUpdates_Enabled();

@@ -815,7 +815,7 @@ EMessageBoxReturn DoCapDlg(ECapDialog* type)
   GtkWidget* iendcap;
   GtkWidget* cylinder;
  
-  GtkWindow* window = create_modal_dialog_window(MainFrame_getWindow(), "Cap", dialog);
+  GtkWindow* window = create_modal_dialog_window(GlobalRadiant().getMainWindow(), "Cap", dialog);
 
   GtkAccelGroup *accel_group = gtk_accel_group_new();
   gtk_window_add_accel_group(window, accel_group);

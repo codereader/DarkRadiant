@@ -30,7 +30,7 @@ public:
 	// Constructor sets the directory to search
 	TextureDirectoryLoader(const std::string& directory)
 	: _searchDir(directory + "/"),
-	  _dialog(MainFrame_getWindow(), "Loading textures")
+	  _dialog(GlobalRadiant().getMainWindow(), "Loading textures")
 	{}
 	
 	// Functor operator

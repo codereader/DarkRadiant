@@ -696,10 +696,10 @@ void RefreshShaders() {
 
 void CallBrushExportOBJ() {
 	if (GlobalSelectionSystem().countSelected() != 0) {
-		export_selected(MainFrame_getWindow());
+		export_selected(GlobalRadiant().getMainWindow());
 	}
 	else {
-		gtk_MessageBox(GTK_WIDGET(MainFrame_getWindow()), "No Brushes Selected!", "Error", eMB_OK, eMB_ICONERROR);
+		gtk_MessageBox(GTK_WIDGET(GlobalRadiant().getMainWindow()), "No Brushes Selected!", "Error", eMB_OK, eMB_ICONERROR);
 	}
 }
 
@@ -757,15 +757,6 @@ WindowFocusPrinter g_mainframeFocusPrinter("mainframe");
 // MainFrame class
 
 ui::MainFrame* g_pParentWnd = 0;
-
-GtkWindow* MainFrame_getWindow()
-{
-  if(g_pParentWnd == 0)
-  {
-  	return 0;
-  }
-  return g_pParentWnd->_window;
-}
 
 int getFarClipDistance() {
 	return getCameraSettings()->cubicScale();

@@ -1,5 +1,6 @@
 #include "CommandList.h"
 
+#include "iradiant.h"
 #include "iuimanager.h"
 
 #include "gtk/gtk.h"
@@ -24,7 +25,7 @@ namespace ui {
 	}
 
 CommandList::CommandList() :
-	gtkutil::BlockingTransientWindow(CMDLISTDLG_WINDOW_TITLE, MainFrame_getWindow())
+	gtkutil::BlockingTransientWindow(CMDLISTDLG_WINDOW_TITLE, GlobalRadiant().getMainWindow())
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
