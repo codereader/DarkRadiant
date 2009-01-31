@@ -3,7 +3,6 @@
 #include "igl.h"
 
 #include "math/Vector2.h"
-#include "stream/textstream.h"
 #include "string/string.h"
 #include "iradiant.h"
 

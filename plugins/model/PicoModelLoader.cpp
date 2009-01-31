@@ -7,7 +7,6 @@
 
 #include "picomodel.h"
 
-#include "stream/textstream.h"
 #include "os/path.h"
 
 #include "PicoModelNode.h"

@@ -1,6 +1,5 @@
 #include "ApplicationContextImpl.h"
 
-#include "stream/textstream.h"
 #include "string/string.h"
 #include "debugging/debugging.h"
 #include "itextstream.h"

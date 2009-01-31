@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief Debugging macros for fatal error/assert messages.
 
-#include "stream/textstream.h"
+#include "itextstream.h"
 #include "warnings.h"
 #include "generic/static.h"
 

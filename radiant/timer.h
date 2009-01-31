@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_TIMER_H
 
 #include "itextstream.h"
-#include "stream/textstream.h"
+#include <boost/format.hpp>
 
 #if 1
 
@@ -116,7 +116,7 @@ public:
   ~ScopeTimer()
   {
     double elapsed_time = m_timer.elapsed_msec() / 1000.f;
-	globalOutputStream() << m_message << " timer: " << std::string(FloatFormat(elapsed_time, 5, 2)) << " second(s) elapsed\n";
+	globalOutputStream() << m_message << " timer: " << (boost::format("%5.2lf") % elapsed_time).str() << " second(s) elapsed\n";
   }
 };
 

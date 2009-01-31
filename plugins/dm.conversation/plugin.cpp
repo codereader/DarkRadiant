@@ -1,8 +1,8 @@
 #include "imodule.h"
 
+#include "itextstream.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
-#include "stream/textstream.h"
 #include "generic/callback.h"
 
 #include "ConversationDialog.h"

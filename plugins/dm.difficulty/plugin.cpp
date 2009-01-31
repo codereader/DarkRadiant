@@ -8,7 +8,6 @@
 #include "iselection.h"
 #include "iradiant.h"
 #include "iundo.h"
-#include "stream/textstream.h"
 #include "generic/callback.h"
 
 #include "DifficultyDialog.h"

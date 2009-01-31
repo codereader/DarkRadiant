@@ -1,8 +1,8 @@
 #include "ModuleRegistry.h"
 
+#include "itextstream.h"
 #include <stdexcept>
 #include <iostream>
-#include "stream/textstream.h"
 #include "ApplicationContextImpl.h"
 #include "ModuleLoader.h"
 
@@ -94,7 +94,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name) {
 		ModulesMap::value_type(name, _uninitialisedModules[name])
 	);
 	
-	globalOutputStream() << "Initialising module: " << name.c_str() << "\n";
+	globalOutputStream() << "Initialising module: " << name << "\n";
 	
 	// Create a shortcut to the module
 	RegisterableModulePtr module = _uninitialisedModules[name];
@@ -117,7 +117,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name) {
 	// Initialise the module itself, now that the dependencies are ready
 	module->initialiseModule(_context);
 	
-	globalOutputStream() << "=> Module " << name.c_str() << " initialised.\n";
+	globalOutputStream() << "=> Module " << name << " initialised.\n";
 }
 
 // Initialise all registered modules

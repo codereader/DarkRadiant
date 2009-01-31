@@ -4,7 +4,6 @@
 #include "iregistry.h"
 #include "xmlutil/Document.h"
 #include <iostream>
-#include "stream/textstream.h"
 
 namespace game {
 

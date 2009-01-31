@@ -1,6 +1,6 @@
 #include "TargetManager.h"
 
-#include "stream/textstream.h"
+#include "itextstream.h"
 
 namespace entity {
 
@@ -53,7 +53,7 @@ void TargetManager::associateTarget(const std::string& name, const scene::INodeP
 		}
 		else {
 			// Non-empty target!
-			globalErrorStream() << "TargetManager: Target " << name.c_str() << " already associated!\n";
+			globalErrorStream() << "TargetManager: Target " << name << " already associated!\n";
 		}
 
 		return;

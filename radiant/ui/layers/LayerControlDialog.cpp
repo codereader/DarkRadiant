@@ -2,10 +2,10 @@
 
 #include <gtk/gtk.h>
 
+#include "itextstream.h"
 #include "ieventmanager.h"
 #include "ilayer.h"
 #include "iregistry.h"
-#include "stream/textstream.h"
 
 #include "gtkutil/dialog.h"
 #include "gtkutil/EntryAbortedException.h"

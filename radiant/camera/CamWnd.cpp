@@ -9,6 +9,7 @@
 #include "gtkutil/widget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include <time.h>
+#include <boost/format.hpp>
 
 #include "selectable.h"
 #include "selectionlib.h"
@@ -611,7 +612,7 @@ void CamWnd::draw() {
 }
 
 void CamWnd::benchmark() {
-	double dStart = clock()/ 1000.0;
+	double dStart = clock() / 1000.0;
 
 	for (int i=0 ; i < 100 ; i++) {
 		Vector3 angles;
@@ -621,9 +622,9 @@ void CamWnd::benchmark() {
 		setCameraAngles(angles);
 	}
 
-	double dEnd = clock()/ 1000.0;
+	double dEnd = clock() / 1000.0;
 
-	globalOutputStream() << FloatFormat(dEnd - dStart, 5, 2) << " seconds\n";
+	globalOutputStream() << (boost::format("%5.2lf") % (dEnd - dStart)) << " seconds\n";
 }
 
 void CamWnd::onSceneGraphChange() {

@@ -4,7 +4,6 @@
 #include "ParticleStage.h"
 
 #include "ifilesystem.h"
-#include "stream/textstream.h"
 
 #include "generic/callback.h"
 #include "parser/DefTokeniser.h"

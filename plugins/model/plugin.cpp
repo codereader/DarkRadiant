@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "plugin.h"
 
+#include "itextstream.h"
 #include "ifilesystem.h"
 #include <stdio.h>
 #include "picomodel.h"
-#include "stream/textstream.h"
 typedef unsigned char byte;
 #include <boost/algorithm/string/case_conv.hpp>
 

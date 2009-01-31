@@ -221,7 +221,7 @@ Vector3 Winding::centroid(const Plane3& plane) const {
 void Winding::printConnectivity() {
 	for (iterator i = begin(); i != end(); ++i) {
 		std::size_t vertexIndex = std::distance(begin(), i);
-		globalOutputStream() << "vertex: " << Unsigned(vertexIndex)
-			<< " adjacent: " << Unsigned(i->adjacent) << "\n";
+		globalOutputStream() << "vertex: " << vertexIndex
+			<< " adjacent: " << i->adjacent << "\n";
 	}
 }

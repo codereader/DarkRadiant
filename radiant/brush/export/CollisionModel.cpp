@@ -1,6 +1,5 @@
 #include "CollisionModel.h"
 
-#include "stream/textstream.h"
 #include "itextstream.h"
 #include "iselection.h"
 #include "ientity.h"

@@ -1,5 +1,6 @@
 #include "MenuManager.h"
 
+#include "itextstream.h"
 #include "iregistry.h"
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkmenushell.h>
@@ -7,7 +8,6 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include "stream/textstream.h"
 
 namespace ui {
 
@@ -26,7 +26,7 @@ void MenuManager::loadFromRegistry() {
 	xml::NodeList menuNodes = GlobalRegistry().findXPath(RKEY_MENU_ROOT);
 	
 	if (menuNodes.size() > 0) {
-		for (unsigned int i = 0; i < menuNodes.size(); i++) {
+		for (std::size_t i = 0; i < menuNodes.size(); i++) {
 			std::string name = menuNodes[i].getAttributeValue("name");
 		
 			// Allocate a new MenuItem with root as parent
@@ -59,7 +59,7 @@ void MenuManager::setVisibility(const std::string& path, bool visible) {
 		}
 	}
 	else {
-		globalErrorStream() << "MenuManager: Warning: Menu " << path.c_str() << " not found!\n";
+		globalErrorStream() << "MenuManager: Warning: Menu " << path << " not found!\n";
 	}
 }
 
@@ -182,12 +182,12 @@ GtkWidget* MenuManager::insert(const std::string& insertPath,
 		}
 		else {
 			globalErrorStream() << "MenuManager: Unparented menuitem, can't determine position: ";
-			globalErrorStream() << insertPath.c_str() << "\n";
+			globalErrorStream() << insertPath << "\n";
 			return NULL;
 		}
 	}
 	else {
-		globalErrorStream() << "MenuManager: Could not find insertPath: " << insertPath.c_str() << "\n";
+		globalErrorStream() << "MenuManager: Could not find insertPath: " << insertPath << "\n";
 		return NULL; 
 	}
 }

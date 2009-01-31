@@ -16,7 +16,6 @@
 #include "gtk/gtktextview.h"
 
 #include "xmlutil/Node.h"
-#include "stream/textstream.h"
 
 #include "MouseEvents.h"
 #include "Modifiers.h"

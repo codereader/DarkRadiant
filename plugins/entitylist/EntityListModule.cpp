@@ -1,9 +1,9 @@
 #include "EntityList.h"
 
+#include "itextstream.h"
 #include "imodule.h"
 #include "ieventmanager.h"
 #include "iradiant.h"
-#include "stream/textstream.h"
 #include "generic/callback.h"
 
 class EntityListModule :

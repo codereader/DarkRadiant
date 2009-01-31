@@ -4,7 +4,6 @@
 #include "iradiant.h"
 #include "iregistry.h"
 #include "ieclass.h"
-#include "stream/textstream.h"
 #include "string/string.h"
 
 #include "gtkutil/dialog.h"

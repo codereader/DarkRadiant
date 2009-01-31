@@ -2,7 +2,6 @@
 
 #include "itextstream.h"
 #include "stream/textfilestream.h"
-#include "stream/textstream.h"
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"

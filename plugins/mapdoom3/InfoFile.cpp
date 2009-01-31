@@ -1,6 +1,6 @@
 #include "InfoFile.h"
 
-#include "stream/textstream.h"
+#include "itextstream.h"
 #include "string/string.h"
 
 #include "Doom3MapFormat.h"

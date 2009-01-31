@@ -9,7 +9,6 @@
 #include "ientity.h"
 #include "itextstream.h"
 
-#include "stream/textstream.h"
 #include "generic/callback.h"
 
 #include "ce/ComponentEditorFactory.h"

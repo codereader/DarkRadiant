@@ -29,7 +29,6 @@ typedef unsigned char byte;
 
 #include "imagelib.h"
 #include "bytestreamutils.h"
-#include "stream/textstream.h"
 
 /*
 =================================================================
