@@ -73,7 +73,7 @@ namespace ui {
 	}
 
 SurfaceInspector::SurfaceInspector() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
   _callbackActive(false),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {

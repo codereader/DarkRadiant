@@ -321,7 +321,7 @@ void createCMFromSelection() {
 				}
 				else {
 					gtkutil::errorDialog("Couldn't save to file: " + cmPath.string(),
-						 MainFrame_getWindow());
+						 GlobalRadiant().getMainWindow());
 				}
 			}
 			catch (boost::filesystem::filesystem_error f) {
@@ -339,7 +339,7 @@ void createCMFromSelection() {
 		}
 	}
 	else {
-		gtkutil::errorDialog(ERRSTR_WRONG_SELECTION, MainFrame_getWindow());
+		gtkutil::errorDialog(ERRSTR_WRONG_SELECTION, GlobalRadiant().getMainWindow());
 	}
 }
 

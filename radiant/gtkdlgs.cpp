@@ -57,7 +57,7 @@ void DoSides (int type, int axis)
   ModalDialog dialog;
   GtkEntry* sides_entry;
 
-  GtkWindow* window = create_dialog_window(MainFrame_getWindow(), "Arbitrary sides", G_CALLBACK(dialog_delete_callback), &dialog);
+  GtkWindow* window = create_dialog_window(GlobalRadiant().getMainWindow(), "Arbitrary sides", G_CALLBACK(dialog_delete_callback), &dialog);
 
   GtkAccelGroup* accel = gtk_accel_group_new();
   gtk_window_add_accel_group(window, accel);

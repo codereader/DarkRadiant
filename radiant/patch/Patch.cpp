@@ -1703,7 +1703,7 @@ void Patch::pasteTextureNatural(const Face* face) {
 
 		if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f) {
 			gtkutil::errorDialog("Sorry. Patch is not suitable for this kind of operation.",
-								 MainFrame_getWindow());
+								 GlobalRadiant().getMainWindow());
 			return;
 		}
 		

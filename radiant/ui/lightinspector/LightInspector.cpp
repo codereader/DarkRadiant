@@ -63,7 +63,7 @@ namespace {
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector() 
-: gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, MainFrame_getWindow(), true),
+: gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, GlobalRadiant().getMainWindow(), true),
   _isProjected(false),
   _texSelector(this, getPrefixList(), true),
   _updateActive(false)

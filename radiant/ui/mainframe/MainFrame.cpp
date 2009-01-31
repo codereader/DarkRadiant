@@ -62,7 +62,7 @@ public:
 	static WaitDialog create(const std::string& title, const std::string& text) {
 		WaitDialog dialog;
 
-		dialog.m_window = create_floating_window(title.c_str(), MainFrame_getWindow());
+		dialog.m_window = create_floating_window(title.c_str(), GlobalRadiant().getMainWindow());
 		gtk_window_set_resizable(dialog.m_window, FALSE);
 		gtk_container_set_border_width(GTK_CONTAINER(dialog.m_window), 0);
 		gtk_window_set_position(dialog.m_window, GTK_WIN_POS_CENTER_ON_PARENT);

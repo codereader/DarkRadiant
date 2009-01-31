@@ -22,7 +22,7 @@ namespace {
 namespace ui {
 
 PatchCreateDialog::PatchCreateDialog() :
-	_parent(MainFrame_getWindow()),
+	_parent(GlobalRadiant().getMainWindow()),
 	_dialog(NULL)
 {
 	// Create the new dialog window with OK and CANCEL button    

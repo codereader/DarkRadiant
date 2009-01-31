@@ -43,7 +43,7 @@ namespace ui {
 	}
 
 TransformDialog::TransformDialog() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, MainFrame_getWindow(), true),
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Set the default border width in accordance to the HIG
