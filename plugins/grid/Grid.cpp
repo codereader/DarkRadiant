@@ -35,6 +35,7 @@ public:
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_RADIANT);
 		}
 
 		return _dependencies;
@@ -192,6 +193,8 @@ public:
 		GlobalUIManager().getStatusBarManager().setText("GridStatus", floatToStr(getGridSize()));
 		
 		gridChangeNotify();
+
+		GlobalRadiant().updateAllWindows();
 	}
 
 }; // class GridManager
