@@ -3,7 +3,7 @@
 
 #include "icounter.h"
 #include "iradiant.h"
-#include "mainframe_old.h"
+#include "iuimanager.h"
 #include <map>
 #include "string/string.h"
 
@@ -54,7 +54,7 @@ public:
 		// Create the counter object
 		_counters[counterBrushes] = CounterPtr(new Counter(this));
 		_counters[counterPatches] = CounterPtr(new Counter(this));
-		_counters[counterEntities] = CounterPtr(new Counter(this));		
+		_counters[counterEntities] = CounterPtr(new Counter(this));	
 	}
 	
 	ICounter& get(CounterType counter) {
@@ -63,19 +63,23 @@ public:
 		}
 		return *_counters[counter];
 	}
+
+	void init() {
+		// Add the statusbar command text item
+		GlobalUIManager().getStatusBarManager().addTextElement(
+			"MapCounters", 
+			"",  // no icon
+			IStatusBarManager::POS_BRUSHCOUNT
+		);
+	}
 	
 	// ICounter::Observer implementation
 	void countChanged() {
-		std::size_t brushCount(_counters[counterBrushes]->get());
-		std::size_t patchCount(_counters[counterPatches]->get());
-		std::size_t entityCount(_counters[counterEntities]->get());
+		std::string text = "Brushes: " + sizetToStr(_counters[counterBrushes]->get());
+		text += " Patches: " + sizetToStr(_counters[counterPatches]->get());
+		text += " Entities: " + sizetToStr(_counters[counterEntities]->get());
 		
-		std::string text = "Brushes: " + intToStr(static_cast<int>(brushCount));
-		text += " Patches: " + intToStr(static_cast<int>(patchCount));
-		text += " Entities: " + intToStr(static_cast<int>(entityCount));
-		
-		// TODO: Using global g_pParentWnd here is evil
-		g_pParentWnd->SetStatusText(g_pParentWnd->m_brushcount_status, text);
+		GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
 	}
 };
 

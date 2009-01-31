@@ -98,6 +98,9 @@ public:
 	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
 };
 
+// The name of the command status bar item
+#define STATUSBAR_COMMAND "Command"
+
 class IStatusBarManager
 {
 public:

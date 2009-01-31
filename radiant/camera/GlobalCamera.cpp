@@ -192,7 +192,9 @@ void GlobalCameraManager::benchmark() {
 }
 
 void GlobalCameraManager::update() {
-	_camWnd->update();
+	if (_camWnd != NULL) {
+		_camWnd->update();
+	}
 }
 
 // Set the global parent window

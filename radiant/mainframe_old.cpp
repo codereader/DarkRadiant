@@ -795,16 +795,6 @@ GtkWindow* MainFrame_getWindow()
   return g_pParentWnd->_window;
 }
 
-
-
-static gint mainframe_delete (GtkWidget *widget, GdkEvent *event, gpointer data) {
-	if (GlobalMap().askForSave("Exit Radiant")) {
-		gtk_main_quit();
-	}
-
-	return TRUE;
-}
-
 void Sys_Status(const std::string& statusText) {
 	if (g_pParentWnd != 0) {
 		g_pParentWnd->SetStatusText(g_pParentWnd->m_command_status, statusText);
@@ -813,14 +803,6 @@ void Sys_Status(const std::string& statusText) {
 
 int getFarClipDistance() {
 	return getCameraSettings()->cubicScale();
-}
-
-void GridStatus_onTextureLockEnabledChanged()
-{
-  if(g_pParentWnd != 0)
-  {
-    g_pParentWnd->SetGridStatus();
-  }
 }
 
 void Layout_registerPreferencesPage() {
