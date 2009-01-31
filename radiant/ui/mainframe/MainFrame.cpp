@@ -381,7 +381,7 @@ void MainFrame::Create() {
 
 	// Create the camera instance
 	GlobalCamera().setParent(window);
-	_camWnd = GlobalCamera().getCamWnd();
+	CamWndPtr camWnd = GlobalCamera().getCamWnd();
 	
 	if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
     	// Allocate a new OrthoView and set its ViewType to XY
@@ -391,9 +391,9 @@ void MainFrame::Create() {
         GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget());
 
         // Pack in the camera window
-		GtkWidget* camWindow = gtkutil::FramedWidget(_camWnd->getWidget());
+		GtkWidget* camWindow = gtkutil::FramedWidget(camWnd->getWidget());
 		// greebo: The mainframe window acts as parent for the camwindow
-	    _camWnd->setContainer(window);
+	    camWnd->setContainer(window);
 
         // Create the texture window
 		GtkWidget* texWindow = gtkutil::FramedWidget(
@@ -496,9 +496,9 @@ void MainFrame::Create() {
   }
   else // 4 way (aka Splitplane view)
   {
-    GtkWidget* camera = _camWnd->getWidget();
+    GtkWidget* camera = camWnd->getWidget();
     // greebo: The mainframe window acts as parent for the camwindow
-    _camWnd->setContainer(window);
+    camWnd->setContainer(window);
 
 	// Allocate the three ortho views
     XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
@@ -658,11 +658,7 @@ void MainFrame::Shutdown()
 	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();
 	
-	// greebo: Release the camera window now and advise the
-	// camera manager to do so as well.
-	_camWnd = CamWndPtr();
 	GlobalCamera().destroy();
-	
 	GlobalXYWnd().destroy();
 }
 

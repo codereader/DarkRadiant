@@ -15,7 +15,6 @@
 
 // Constructor
 GlobalCameraManager::GlobalCameraManager() :
-	_camWnd(),
 	_parent(NULL)
 {}
 
