@@ -31,6 +31,7 @@
 #include "XYRenderer.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 inline float Betwixt(float f1, float f2) {
 	return (f1 + f2) * 0.5f;
@@ -655,11 +656,13 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	convertXYToWorld(x, y , m_mousePosition);
 	snapToGrid(m_mousePosition);
 
-	std::ostringstream status;
-	status << "x:: " << FloatFormat(m_mousePosition[0], 6, 1)
-			<< "  y:: " << FloatFormat(m_mousePosition[1], 6, 1)
-			<< "  z:: " << FloatFormat(m_mousePosition[2], 6, 1);
-	g_pParentWnd->SetStatusText(g_pParentWnd->m_position_status, status.str());
+	GlobalUIManager().getStatusBarManager().setText(
+		"XYZPos", 
+		(boost::format("x: %6.1lf y: %6.1lf z: %6.1lf") 
+			% m_mousePosition[0] 
+			% m_mousePosition[1] 
+			% m_mousePosition[2]).str()
+	);
 
 	if (GlobalXYWnd().showCrossHairs()) {
 		queueDraw();
