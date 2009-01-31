@@ -2,7 +2,7 @@
 
 #include "selectable.h"
 #include "iscenegraph.h"
-#include "mainframe_old.h"
+#include "iuimanager.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
@@ -10,7 +10,13 @@ namespace selection {
 
 ShaderClipboard::ShaderClipboard() :
 	_updatesDisabled(false)
-{}
+{
+	GlobalUIManager().getStatusBarManager().addTextElement(
+		"ShaderClipBoard", 
+		"icon_texture.png", 
+		IStatusBarManager::POS_SHADERCLIPBOARD
+	);
+}
 
 void ShaderClipboard::clear() {
 	_source.clear();
@@ -48,8 +54,9 @@ void ShaderClipboard::updateMediaBrowsers() {
 }
 
 void ShaderClipboard::updateStatusText() {
-	std::string statusText = "ShaderClipboard is empty.";
-		
+
+	std::string statusText;
+
 	if (!_source.empty()) {
 		statusText = "ShaderClipboard: " + _source.getShader();
 	
@@ -63,10 +70,11 @@ void ShaderClipboard::updateStatusText() {
 			statusText += " (Shader)";
 		}
 	}
-	
-	if (g_pParentWnd != NULL) {
-		g_pParentWnd->SetStatusText(g_pParentWnd->m_texture_status, statusText);
+	else {
+		statusText = "ShaderClipboard is empty.";
 	}
+
+	GlobalUIManager().getStatusBarManager().setText("ShaderClipBoard", statusText);
 }
 
 void ShaderClipboard::setSource(SelectionTest& test) {
