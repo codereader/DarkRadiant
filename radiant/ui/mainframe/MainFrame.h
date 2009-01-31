@@ -28,10 +28,6 @@ public:
 	MainFrame();
 	~MainFrame();
 
-  	CamWndPtr GetCamWnd() {
-  		return _camWnd;
-  	}
-
 	EViewStyle CurrentStyle() {
 		return m_nCurrentStyle;
 	}
@@ -66,11 +62,6 @@ private:
 	} _regular;
 	
 	gtkutil::WindowPosition _windowPosition;
-
-	// Pointer to the active camera window
-	// TODO: Don't share ownership with GlobalCameraManager, there should only
-	// be one instance owner
-	CamWndPtr _camWnd;
 
 	EViewStyle m_nCurrentStyle;
 

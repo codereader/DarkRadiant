@@ -10,7 +10,7 @@
 #include "stringio.h"
 
 #include "selection/algorithm/General.h"
-#include "mainframe_old.h"
+#include "camera/GlobalCamera.h"
 
 // Constructor
 XYWndManager::XYWndManager() :
@@ -496,7 +496,7 @@ Vector3 XYWndManager::getFocusPosition() {
 		position = selection::algorithm::getCurrentSelectionCenter();
 	}
 	else {
-		position = g_pParentWnd->GetCamWnd()->getCameraOrigin();
+		position = GlobalCamera().getCamWnd()->getCameraOrigin();
 	}
 	
 	return position;

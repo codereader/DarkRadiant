@@ -595,11 +595,11 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 	}
 	
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, event)) {
-		positionCamera(x, y, *g_pParentWnd->GetCamWnd());
+		positionCamera(x, y, *GlobalCamera().getCamWnd());
 	}
 	
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, event)) {
-		orientCamera(x, y, *g_pParentWnd->GetCamWnd());
+		orientCamera(x, y, *GlobalCamera().getCamWnd());
 	}
 	
 	// Only start a NewBrushDrag operation, if not other elements are selected
@@ -628,11 +628,11 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 	
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state)) {
-		positionCamera(x, y, *g_pParentWnd->GetCamWnd());
+		positionCamera(x, y, *GlobalCamera().getCamWnd());
 	}
 	
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state)) {
-		orientCamera(x, y, *g_pParentWnd->GetCamWnd());
+		orientCamera(x, y, *GlobalCamera().getCamWnd());
 	}
 	
 	// Check, if we are in a NewBrushDrag operation and continue it
@@ -1444,7 +1444,7 @@ void XYWnd::draw() {
 	glScalef(m_fScale, m_fScale, 1);
 	glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
 
-	drawCameraIcon(g_pParentWnd->GetCamWnd()->getCameraOrigin(), g_pParentWnd->GetCamWnd()->getCameraAngles());
+	drawCameraIcon(GlobalCamera().getCamWnd()->getCameraOrigin(), GlobalCamera().getCamWnd()->getCameraAngles());
 
 	if (GlobalXYWnd().showOutline()) {
 		if (isActive()) {

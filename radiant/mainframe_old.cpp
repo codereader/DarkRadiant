@@ -226,7 +226,7 @@ void Paste() {
 
 void PasteToCamera()
 {
-  CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
+	CamWnd& camwnd = *GlobalCamera().getCamWnd();
   GlobalSelectionSystem().setSelectedAll(false);
   
   UndoableCommand undo("pasteToCamera");
@@ -647,15 +647,6 @@ void Selection_SnapToGrid()
 	}
 }
 
-
-void GlobalCamera_UpdateWindow()
-{
-  if(g_pParentWnd != 0)
-  {
-    g_pParentWnd->GetCamWnd()->update();
-  }
-}
-
 void XY_UpdateAllWindows()
 {
   if(g_pParentWnd != 0)
@@ -666,7 +657,7 @@ void XY_UpdateAllWindows()
 
 void UpdateAllWindows()
 {
-  GlobalCamera_UpdateWindow();
+  GlobalCamera().update();
   XY_UpdateAllWindows();
 }
 
@@ -676,10 +667,8 @@ void ModeChangeNotify()
   SceneChangeNotify();
 }
 
-void ClipperChangeNotify()
-{
-  GlobalCamera_UpdateWindow();
-  XY_UpdateAllWindows();
+void ClipperChangeNotify() {
+	UpdateAllWindows();
 }
 
 

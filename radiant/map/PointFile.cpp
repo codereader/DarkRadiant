@@ -11,7 +11,7 @@
 #include "math/matrix.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
-#include "mainframe_old.h"
+#include "camera/GlobalCamera.h"
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
 
@@ -106,7 +106,7 @@ void PointFile::parse() {
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
 		gtkutil::errorDialog("Could not open pointfile:\n\n" + pfName,
-							 MainFrame_getWindow());
+			GlobalRadiant().getMainWindow());
 		return;
 	}
 
@@ -165,7 +165,7 @@ void PointFile::advance(bool forward) {
 		_curPos--;
 	}
 
-	CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
+	CamWnd& camwnd = *GlobalCamera().getCamWnd();
 	camwnd.setCameraOrigin(*_curPos);
 	GlobalXYWnd().getActiveXY()->setOrigin(*_curPos);
 	{

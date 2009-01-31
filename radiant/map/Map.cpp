@@ -323,7 +323,7 @@ void Map::saveCameraPosition() {
 		Entity* worldspawn = Node_getEntity(m_world_node);
 		assert(worldspawn != NULL);	// This must succeed
 		
-		CamWnd& camwnd = *g_pParentWnd->GetCamWnd();
+		CamWnd& camwnd = *GlobalCamera().getCamWnd();
 		
 		worldspawn->setKeyValue(keyLastCamPos, camwnd.getCameraOrigin());
 		worldspawn->setKeyValue(keyLastCamAngle, camwnd.getCameraAngles());
