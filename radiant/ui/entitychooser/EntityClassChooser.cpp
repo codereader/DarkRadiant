@@ -1,7 +1,6 @@
 #include "EntityClassChooser.h"
 #include "EntityClassTreePopulator.h"
 
-#include "mainframe_old.h"
 #include "ieclass.h"
 #include "iregistry.h"
 #include "gtkutil/dialog.h"

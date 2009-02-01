@@ -12,7 +12,6 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
 
-#include "mainframe_old.h"
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
 

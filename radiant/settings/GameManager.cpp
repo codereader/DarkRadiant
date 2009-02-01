@@ -10,7 +10,6 @@
 #include "GameFileLoader.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/messagebox.h"
-#include "mainframe_old.h"
 #include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
