@@ -695,12 +695,21 @@ void MainFrame::Shutdown()
 	GlobalXYWnd().destroy();
 }
 
+bool MainFrame::screenUpdatesEnabled() {
+	return _screenUpdatesEnabled;
+}
+
 void MainFrame::enableScreenUpdates() {
 	_screenUpdatesEnabled = true;
 }
 
 void MainFrame::disableScreenUpdates() {
 	_screenUpdatesEnabled = false;
+}
+
+void MainFrame::updateAllWindows() {
+	GlobalCamera().update();
+	GlobalXYWnd().updateAllViews();
 }
 
 // GTK callbacks

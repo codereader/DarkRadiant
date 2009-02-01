@@ -1,12 +1,16 @@
 #include "FindShader.h"
 
 #include "ieventmanager.h"
-#include "mainframe_old.h"
+#include "iradiant.h"
+
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/IconTextButton.h"
+#include "string/string.h"
+
 #include "ui/common/ShaderChooser.h"
 #include "selection/algorithm/Shader.h"
+
 #include <gtk/gtk.h>
 
 namespace ui {

@@ -11,11 +11,11 @@
 
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/GLWidgetSentry.h"
+#include "string/string.h"
 
 #include "brush/TexDef.h"
 #include "ibrush.h"
 #include "brushmanip.h"
-#include "mainframe_old.h"
 #include "select.h"
 #include "entity.h"
 #include "renderer.h"
@@ -402,7 +402,7 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 		convertXYToWorld(x, y , GlobalClipper().getMovingClipCoords());
 		snapToGrid(GlobalClipper().getMovingClipCoords());
 		GlobalClipper().update();
-		ClipperChangeNotify();
+		GlobalMainFrame().updateAllWindows();
 	}
 }
 

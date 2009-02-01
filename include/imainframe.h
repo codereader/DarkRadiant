@@ -23,6 +23,11 @@ public:
 
 	// Use this to disable camera and xyview draw updates until enableScreenUpdates is called.
 	virtual void disableScreenUpdates() = 0;
+
+	/**
+	 * Updates all viewports which are child of the toplevel window.
+	 */
+	virtual void updateAllWindows() = 0;
 };
 
 // This is the accessor for the mainframe module

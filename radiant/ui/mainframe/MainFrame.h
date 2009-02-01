@@ -66,12 +66,12 @@ public:
 		return CurrentStyle() == eFloating || CurrentStyle() == eSplit;
 	}
 
-	bool screenUpdatesEnabled() {
-		return _screenUpdatesEnabled;
-	}
-
+	// IMainFrame implementation
+	bool screenUpdatesEnabled();
 	void enableScreenUpdates();
 	void disableScreenUpdates();
+
+	void updateAllWindows();
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

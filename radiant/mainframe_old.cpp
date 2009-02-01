@@ -648,18 +648,13 @@ void Selection_SnapToGrid()
 	}
 }
 
-void UpdateAllWindows() {
-	GlobalCamera().update();
-	GlobalXYWnd().updateAllViews();
-}
-
 void ModeChangeNotify()
 {
   SceneChangeNotify();
 }
 
 void ClipperChangeNotify() {
-	UpdateAllWindows();
+	GlobalMainFrame().updateAllWindows();
 }
 
 // The "Flush & Reload Shaders" command target 
@@ -677,7 +672,7 @@ void RefreshShaders() {
 	GlobalShaderCache().realise();
 	
 	ui::MediaBrowser::getInstance().reloadMedia();
-	UpdateAllWindows();
+	GlobalMainFrame().updateAllWindows();
 }
 
 void CallBrushExportOBJ() {

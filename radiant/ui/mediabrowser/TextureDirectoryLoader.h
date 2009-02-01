@@ -1,10 +1,10 @@
 #ifndef TEXTUREDIRECTORYLOADER_H_
 #define TEXTUREDIRECTORYLOADER_H_
 
+#include "iradiant.h"
 #include "ishaders.h"
 
 #include "gtkutil/ModalProgressDialog.h"
-#include "mainframe_old.h"
 
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>

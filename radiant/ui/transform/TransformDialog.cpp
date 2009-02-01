@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
+#include "string/string.h"
 
 #include <gtk/gtk.h>
 

@@ -1,7 +1,7 @@
 #include "SkinChooser.h"
 
+#include "iradiant.h"
 #include "modelskin.h"
-#include "mainframe_old.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/IconTextColumn.h"
