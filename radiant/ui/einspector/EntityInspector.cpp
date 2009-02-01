@@ -404,6 +404,20 @@ namespace
                     entity->setKeyValue("model", _value);
 				}
             }
+			else if (Node_isPrimitive(node)) {
+				// We have a primitve node selected, check its parent
+				scene::INodePtr parent(node->getParent());
+
+				if (parent == NULL) return;
+
+				Entity* parentEnt = Node_getEntity(parent);
+
+				if (parentEnt != NULL) {
+					// We have child primitive of an entity selected, the change
+					// should go right into that parent entity
+					parentEnt->setKeyValue(_key, _value);
+				}
+			}
         }
     };
 
