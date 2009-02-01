@@ -2318,6 +2318,14 @@
 						RelativePath="..\..\radiant\ui\mainframe\MainFrame.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

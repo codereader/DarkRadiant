@@ -204,6 +204,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\imainframe.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\imap.h"
 			>
 		</File>
