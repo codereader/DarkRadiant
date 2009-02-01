@@ -48,7 +48,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "brushmanip.h"
 #include "ui/texturebrowser/TextureBrowser.h"
-#include "mainframe_old.h"
 
 // =============================================================================
 // Arbitrary Sides dialog

@@ -20,7 +20,6 @@
 #include "gtkutil/messagebox.h"
 #include "gtkutil/IConv.h"
 
-#include "mainframe_old.h"
 #include "referencecache.h"
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"

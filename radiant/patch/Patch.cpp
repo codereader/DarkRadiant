@@ -11,7 +11,6 @@
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
 #include "gtkutil/dialog.h"
-#include "mainframe_old.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/patch/PatchInspector.h"
 

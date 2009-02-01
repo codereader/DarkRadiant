@@ -1,4 +1,4 @@
-#include "mainframe_old.h"
+#include "MainFrame.h"
 
 #include <gtk/gtk.h>
 
