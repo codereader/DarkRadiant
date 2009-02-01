@@ -77,40 +77,49 @@ void MainFrame::shutdownModule() {
 }
 
 void MainFrame::construct() {
-	Create();
+	create();
   
   	// Broadcast the startup event
     radiant::getGlobalRadiant()->broadcastStartupEvent();
 }
 
 void MainFrame::destroy() {
-	SaveWindowInfo();
+	saveWindowInfo();
 	
 	gtk_widget_hide(GTK_WIDGET(_window));
 	
-	Shutdown();
+	shutdown();
 
 	gtk_widget_destroy(GTK_WIDGET(_window));
 }
 
-void MainFrame::Create() {
+GtkWindow* MainFrame::createTopLevelWindow() {
+	// Destroy any previous toplevel window
+	if (_window != NULL) {
+		gtk_widget_hide(GTK_WIDGET(_window));
+		gtk_widget_destroy(GTK_WIDGET(_window));
 
-	GtkWindowGroup* windowGroup = gtk_window_group_new();
+		// Clear the module as well
+		radiant::getGlobalRadiant()->setMainWindow(NULL);
+	}
+
+	// Create a new window
+	_window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 	
-  GtkWindow* window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-  _window = window;
-  radiant::getGlobalRadiant()->setMainWindow(window);
-  
-  // Tell the XYManager which window the xyviews should be transient for
-  GlobalXYWnd().setGlobalParentWindow(window);
+	// Let the radiant module know about the new toplevel
+	radiant::getGlobalRadiant()->setMainWindow(_window);
 
-  GlobalWindowObservers_connectTopLevel(window);
+	// Tell the XYManager which window the xyviews should be transient for
+	GlobalXYWnd().setGlobalParentWindow(_window);
 
-	gtk_window_set_transient_for(ui::Splash::Instance().getWindow(), window);
+	GlobalWindowObservers_connectTopLevel(_window);
+
+	// Set the splash window transient to this toplevel
+	gtk_window_set_transient_for(ui::Splash::Instance().getWindow(), _window);
 
 #if !defined(WIN32)
 	{
-		// Set the default icon for POSIX-systems 
+		// Set the default icon for non-Win32-systems 
 		// (Win32 builds use the one embedded in the exe)
 		std::string icon = GlobalRegistry().get(RKEY_BITMAPS_PATH) + 
   						   "darkradiant_icon_64x64.png";
@@ -118,16 +127,24 @@ void MainFrame::Create() {
 	}
 #endif
 
-  gtk_widget_add_events(GTK_WIDGET(window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
-  g_signal_connect(G_OBJECT(window), "delete-event", G_CALLBACK(onDelete), this);
+	// Signal setup
+	gtk_widget_add_events(GTK_WIDGET(_window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
+	g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
+
+	return _window;
+}
+
+void MainFrame::create() {
+	// Create the topmost window first
+	createTopLevelWindow();
 
     GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     
-    gtk_container_add(GTK_CONTAINER(window), vbox);
+    gtk_container_add(GTK_CONTAINER(_window), vbox);
     gtk_widget_show(vbox);
     
-    GlobalEventManager().connect(GTK_OBJECT(window));
-    GlobalEventManager().connectAccelGroup(GTK_WINDOW(window));
+    GlobalEventManager().connect(GTK_OBJECT(_window));
+    GlobalEventManager().connectAccelGroup(_window);
     
     int viewStyle = GlobalRegistry().getInt(RKEY_WINDOW_LAYOUT);
     
@@ -236,7 +253,7 @@ void MainFrame::Create() {
 	// Do the settings say that we should start on the primary screen?
 	if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1") {
 		// Yes, connect the position tracker, this overrides the existing setting.
-  		_windowPosition.connect(window);
+  		_windowPosition.connect(_window);
   		// Load the correct coordinates into the position tracker
 		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(0));
 		// Apply the position
@@ -245,17 +262,17 @@ void MainFrame::Create() {
 	else
 #endif
 	if (windowState & GDK_WINDOW_STATE_MAXIMIZED) {
-		gtk_window_maximize(window);
+		gtk_window_maximize(_window);
 	}
 	else {
-		_windowPosition.connect(window);
+		_windowPosition.connect(_window);
 		_windowPosition.applyPosition();
 	}
 
-	gtk_widget_show(GTK_WIDGET(window));
+	gtk_widget_show(GTK_WIDGET(_window));
 
 	// Create the camera instance
-	GlobalCamera().setParent(window);
+	GlobalCamera().setParent(_window);
 	CamWndPtr camWnd = GlobalCamera().getCamWnd();
 	
 	if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
@@ -268,11 +285,11 @@ void MainFrame::Create() {
         // Pack in the camera window
 		GtkWidget* camWindow = gtkutil::FramedWidget(camWnd->getWidget());
 		// greebo: The mainframe window acts as parent for the camwindow
-	    camWnd->setContainer(window);
+	    camWnd->setContainer(_window);
 
         // Create the texture window
 		GtkWidget* texWindow = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(window)
+			GlobalTextureBrowser().constructWindow(_window)
 		);
 
         // Create the Console
@@ -334,8 +351,6 @@ void MainFrame::Create() {
   else if (CurrentStyle() == eFloating)
   {
 	  
-	  gtk_window_group_add_window(windowGroup, window);
-	  
     {
      	// Get the floating window with the CamWnd packed into it
 		gtkutil::PersistentTransientWindowPtr floatingWindow =
@@ -344,8 +359,6 @@ void MainFrame::Create() {
 			GTK_WINDOW(floatingWindow->getWindow()));
       
 		floatingWindow->show();
-		
-		gtk_window_group_add_window(windowGroup, GTK_WINDOW(floatingWindow->getWindow()));
     }
 
    	{
@@ -360,8 +373,6 @@ void MainFrame::Create() {
 	    	GTK_WIDGET(page), // page widget
 	    	"Texture Browser"
 	    );
-		
-		gtk_window_group_add_window(windowGroup, GTK_WINDOW(window));
     }
 
     GlobalGroupDialog().showDialogWindow();
@@ -373,7 +384,7 @@ void MainFrame::Create() {
   {
     GtkWidget* camera = camWnd->getWidget();
     // greebo: The mainframe window acts as parent for the camwindow
-    camWnd->setContainer(window);
+    camWnd->setContainer(_window);
 
 	// Allocate the three ortho views
     XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
@@ -431,7 +442,7 @@ void MainFrame::Create() {
 	
     {      
 		GtkWidget* textureBrowser = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(window)
+			GlobalTextureBrowser().constructWindow(_window)
 		);
 
 		// Add the Media Browser page
@@ -457,7 +468,7 @@ void MainFrame::Create() {
 	ui::LayerControlDialog::init();
 }
 
-void MainFrame::SaveWindowInfo() {
+void MainFrame::saveWindowInfo() {
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -507,7 +518,7 @@ void MainFrame::SaveWindowInfo() {
 	} 
 }
 
-void MainFrame::Shutdown()
+void MainFrame::shutdown()
 {
 	// Shutdown the console
 	ui::Console::Instance().shutdown();

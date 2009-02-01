@@ -80,9 +80,12 @@ public:
 	void shutdownModule();
 
 private:
-	void Create();
-	void SaveWindowInfo();
-	void Shutdown();
+	void create();
+	void saveWindowInfo();
+	void shutdown();
+
+	// Creates and returns the topmost application window
+	GtkWindow* createTopLevelWindow();
 
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self);
 };
