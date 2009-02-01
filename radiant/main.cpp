@@ -62,6 +62,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 #include "debugging/debugging.h"
 
 #include <gtk/gtkmain.h>
@@ -74,7 +75,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "log/LogStream.h"
 #include "map/Map.h"
 #include "mainframe_old.h"
-#include "ui/mainframe/MainFrame.h"
 #include "ui/mru/MRU.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "settings/GameManager.h"
@@ -190,8 +190,6 @@ int main (int argc, char* argv[]) {
 	gtk_disable_setlocale();
 	gtk_init(&argc, &argv);
 
-	ui::MainFrame* mainFrame = NULL;
-
 	{
 		// Create the radiant.pid file in the settings folder 
 		// (emits a warning if the file already exists (due to a previous startup failure)) 
@@ -228,7 +226,8 @@ int main (int argc, char* argv[]) {
 
 		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.95f);
 
-		mainFrame = new ui::MainFrame();
+		// Initialise the mainframe
+		GlobalMainFrame().construct();
 
 		// Load the shortcuts from the registry
    		GlobalEventManager().loadAccelerators();
@@ -266,7 +265,7 @@ int main (int argc, char* argv[]) {
 	
 	GlobalMap().freeMap();
 
-	delete mainFrame;
+	GlobalMainFrame().destroy();
 
 	GlobalMRU().saveRecentFiles();
 

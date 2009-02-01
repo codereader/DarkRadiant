@@ -1,7 +1,7 @@
 #ifndef _MAINFRAME_H_
 #define _MAINFRAME_H_
 
-#include <string>
+#include "imainframe.h"
 #include "gtkutil/PanedPosition.h"
 #include "gtkutil/WindowPosition.h"
 
@@ -11,7 +11,8 @@ typedef boost::shared_ptr<CamWnd> CamWndPtr;
 
 namespace ui {
 
-class MainFrame
+class MainFrame :
+	public IMainFrame
 {
 public:
 	enum EViewStyle
@@ -24,22 +25,8 @@ public:
 
 	GtkWindow* _window;
 
-public:
-	MainFrame();
-	~MainFrame();
-
-	EViewStyle CurrentStyle() {
-		return m_nCurrentStyle;
-	}
-
-	bool FloatingGroupDialog() {
-		return CurrentStyle() == eFloating || CurrentStyle() == eSplit;
-	}
-
 private:
-	void Create();
-	void SaveWindowInfo();
-	void Shutdown();
+	bool _screenUpdatesEnabled;
 
 	struct SplitPaneView {
 		GtkWidget* horizPane;
@@ -64,6 +51,38 @@ private:
 	gtkutil::WindowPosition _windowPosition;
 
 	EViewStyle m_nCurrentStyle;
+
+public:
+	MainFrame();
+
+	void construct();
+	void destroy();
+
+	EViewStyle CurrentStyle() {
+		return m_nCurrentStyle;
+	}
+
+	bool FloatingGroupDialog() {
+		return CurrentStyle() == eFloating || CurrentStyle() == eSplit;
+	}
+
+	bool screenUpdatesEnabled() {
+		return _screenUpdatesEnabled;
+	}
+
+	void enableScreenUpdates();
+	void disableScreenUpdates();
+
+	// RegisterableModule implementation
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+	void shutdownModule();
+
+private:
+	void Create();
+	void SaveWindowInfo();
+	void Shutdown();
 
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self);
 };

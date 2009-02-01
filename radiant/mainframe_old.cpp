@@ -661,12 +661,6 @@ void ClipperChangeNotify() {
 	UpdateAllWindows();
 }
 
-
-GtkWidget* g_toggle_z_item = 0;
-GtkWidget* g_toggle_console_item = 0;
-GtkWidget* g_toggle_entity_item = 0;
-GtkWidget* g_toggle_entitylist_item = 0;
-
 // The "Flush & Reload Shaders" command target 
 void RefreshShaders() {
 	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Shaders");

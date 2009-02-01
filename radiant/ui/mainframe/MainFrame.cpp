@@ -6,6 +6,8 @@
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "ieventmanager.h"
+#include "ipreferencesystem.h"
+#include "iregistry.h"
 #include "igrid.h"
 
 #include "ui/splash/Splash.h"
@@ -29,6 +31,10 @@
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
+
+#include "ui/mainframe/ScreenUpdateBlocker.h"
+
+#include "modulesystem/StaticModule.h"
 
 	namespace {
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
@@ -197,16 +203,45 @@ MainWindowActive g_MainWindowActive;
 namespace ui {
 
 MainFrame::MainFrame() : 
-	_window(NULL)
-{
+	_window(NULL),
+	_screenUpdatesEnabled(true)
+{}
+
+// RegisterableModule implementation
+const std::string& MainFrame::getName() const {
+	static std::string _name(MODULE_MAINFRAME);
+	return _name;
+}
+
+const StringSet& MainFrame::getDependencies() const {
+	static StringSet _dependencies;
+	
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_UIMANAGER);
+	}
+	
+	return _dependencies;
+}
+
+void MainFrame::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "MainFrame::initialiseModule called.\n";
+}
+
+void MainFrame::shutdownModule() {
+	globalOutputStream() << "MainFrame::shutdownModule called.\n";
+}
+
+void MainFrame::construct() {
 	Create();
   
   	// Broadcast the startup event
     radiant::getGlobalRadiant()->broadcastStartupEvent();
 }
 
-MainFrame::~MainFrame()
-{
+void MainFrame::destroy() {
 	SaveWindowInfo();
 	
 	gtk_widget_hide(GTK_WIDGET(_window));
@@ -660,6 +695,14 @@ void MainFrame::Shutdown()
 	GlobalXYWnd().destroy();
 }
 
+void MainFrame::enableScreenUpdates() {
+	_screenUpdatesEnabled = true;
+}
+
+void MainFrame::disableScreenUpdates() {
+	_screenUpdatesEnabled = false;
+}
+
 // GTK callbacks
 gboolean MainFrame::onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self) {
 	if (GlobalMap().askForSave("Exit Radiant")) {
@@ -668,5 +711,8 @@ gboolean MainFrame::onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self) {
 
 	return TRUE;
 }
+
+// Define the static MainFrame module
+module::StaticModule<MainFrame> mainFrameModule;
 
 } // namespace ui
