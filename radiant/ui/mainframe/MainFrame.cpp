@@ -180,7 +180,7 @@ void ScreenUpdates_Enable()
   }
 }
 
-class MainWindowActive
+/*class MainWindowActive
 {
   static gboolean notify(GtkWindow* window, gpointer dummy, MainWindowActive* self)
   {
@@ -198,7 +198,7 @@ public:
   }
 };
 
-MainWindowActive g_MainWindowActive;
+MainWindowActive g_MainWindowActive;*/
 
 namespace ui {
 
@@ -279,7 +279,7 @@ void MainFrame::Create() {
   gtk_widget_add_events(GTK_WIDGET(window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
   g_signal_connect(G_OBJECT(window), "delete-event", G_CALLBACK(onDelete), this);
 
-    g_MainWindowActive.connect(window);
+    //g_MainWindowActive.connect(window);
     
     GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
     

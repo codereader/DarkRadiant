@@ -4,6 +4,7 @@
 #include "iscenegraph.h"
 #include "iundo.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
 #include "ientity.h"
 #include "igrid.h"
 #include "iuimanager.h"
@@ -1629,7 +1630,7 @@ gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocatio
 gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) {
 	gtkutil::GLWidgetSentry sentry(self->getWidget());
 	
-	if (GlobalMap().isValid() && ScreenUpdates_Enabled()) {
+	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
 		GlobalOpenGL_debugAssertNoErrors();
 		self->draw();
 		GlobalOpenGL_debugAssertNoErrors();

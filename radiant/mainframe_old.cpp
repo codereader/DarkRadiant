@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/menu/FiltersMenu.h"
 #include "ui/transform/TransformDialog.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/overlay/Overlay.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/layers/LayerControlDialog.h"
@@ -663,7 +664,8 @@ void ClipperChangeNotify() {
 
 // The "Flush & Reload Shaders" command target 
 void RefreshShaders() {
-	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Loading Shaders");
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", "Loading Shaders");
 	
 	// Destroy all the OpenGLShader objects
 	GlobalShaderCache().unrealise();
