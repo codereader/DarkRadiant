@@ -3,6 +3,7 @@
 #include "iclipper.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
 
 #include "gdk/gdkkeysyms.h"
 
@@ -600,7 +601,7 @@ void CamWnd::draw() {
 	// Scoped object handling the GL context switching
 	gtkutil::GLWidgetSentry sentry(m_gl_widget);
 
-	if (GlobalMap().isValid() && ScreenUpdates_Enabled()) {
+	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
 		GlobalOpenGL_debugAssertNoErrors();
 		Cam_Draw();
 		GlobalOpenGL_debugAssertNoErrors();

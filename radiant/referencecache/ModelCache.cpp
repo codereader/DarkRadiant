@@ -12,6 +12,7 @@
 
 #include "modulesystem/StaticModule.h"
 #include "ui/modelselector/ModelSelector.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "NullModelLoader.h"
 
 namespace model {
@@ -142,7 +143,8 @@ void ModelCache::clear() {
 }
 
 void ModelCache::refreshModels() {
-	ScopeDisableScreenUpdates disableScreenUpdates("Refreshing models");
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Models");
 	
 	// Clear the model cache
 	clear();

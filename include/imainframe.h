@@ -23,7 +23,7 @@ public:
 
 	// Use this to disable camera and xyview draw updates until enableScreenUpdates is called.
 	virtual void disableScreenUpdates() = 0;
-}; // class IGridManager
+};
 
 // This is the accessor for the mainframe module
 inline IMainFrame& GlobalMainFrame() {

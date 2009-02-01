@@ -36,6 +36,7 @@
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
 #include "ui/mru/MRU.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/layers/LayerControlDialog.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
@@ -466,7 +467,8 @@ bool Map::save() {
 	
 	_saveInProgress = true;
 	
-	ScopeDisableScreenUpdates disableScreenUpdates("Processing...", "Saving Map");
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", "Saving Map");
 	
 	// Store the camview position into worldspawn
 	saveCameraPosition();
@@ -552,7 +554,8 @@ bool Map::import(const std::string& filename) {
 bool Map::saveDirect(const std::string& filename) {
 	if (_saveInProgress) return false; // safeguard
 
-	ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename.c_str()));
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", path_get_filename_start(filename.c_str()));
 	
 	_saveInProgress = true;
 
@@ -571,7 +574,8 @@ bool Map::saveDirect(const std::string& filename) {
 bool Map::saveSelected(const std::string& filename) {
 	if (_saveInProgress) return false; // safeguard
 
-	ScopeDisableScreenUpdates disableScreenUpdates(path_get_filename_start(filename.c_str()));
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", path_get_filename_start(filename.c_str()));
 	
 	_saveInProgress = true;
 

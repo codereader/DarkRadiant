@@ -3,6 +3,7 @@
 #include <iostream>
 #include "mapfile.h"
 #include "iscenegraph.h"
+#include "imainframe.h"
 #include "iradiant.h"
 #include "ipreferencesystem.h"
 
@@ -163,7 +164,7 @@ void AutoMapSaver::saveSnapshot() {
 
 void AutoMapSaver::checkSave() {
 	// Check if we have a proper map
-	if (!GlobalMap().isValid() || !ScreenUpdates_Enabled()) {
+	if (!GlobalMap().isValid() || !GlobalMainFrame().screenUpdatesEnabled()) {
 		return;
 	}
 

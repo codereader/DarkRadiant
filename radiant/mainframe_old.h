@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ui/mainframe/MainFrame.h"
 
-void ScreenUpdates_Disable(const char* message, const char* title = "");
+/*void ScreenUpdates_Disable(const char* message, const char* title = "");
 void ScreenUpdates_Enable();
 bool ScreenUpdates_Enabled();
 void ScreenUpdates_process();
@@ -49,7 +49,7 @@ public:
   {
     ScreenUpdates_Enable();
   }
-};
+};*/
 
 void Radiant_Initialise();
 
