@@ -13,13 +13,13 @@
 
 #include "selectionlib.h"
 #include "math/FloatTools.h"
+#include "string/string.h"
 
 #include "textool/TexTool.h"
 #include "ui/patch/PatchInspector.h"
 #include "brush/TextureProjection.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
-#include "mainframe_old.h"
 
 namespace ui {
 

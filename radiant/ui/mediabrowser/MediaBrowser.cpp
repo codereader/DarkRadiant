@@ -1,6 +1,7 @@
 #include "MediaBrowser.h"
 #include "TextureDirectoryLoader.h"
 
+#include "iradiant.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"

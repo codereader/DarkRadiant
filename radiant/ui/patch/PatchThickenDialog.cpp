@@ -1,7 +1,7 @@
 #include "PatchThickenDialog.h"
 
+#include "iradiant.h"
 #include <gtk/gtk.h>
-#include "mainframe_old.h"
 #include "string/string.h"
 
 namespace {

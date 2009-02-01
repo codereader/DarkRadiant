@@ -20,6 +20,8 @@
 #include <sstream>
 #include <GL/glew.h>
 
+#include "generic/callback.h"
+
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
 

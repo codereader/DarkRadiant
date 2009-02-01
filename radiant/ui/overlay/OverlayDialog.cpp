@@ -1,6 +1,6 @@
 #include "OverlayDialog.h"
-#include "mainframe_old.h"
 
+#include "iradiant.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
 

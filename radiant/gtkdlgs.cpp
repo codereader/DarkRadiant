@@ -44,6 +44,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtkutil/messagebox.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/widget.h"
 
 #include "brushmanip.h"
 #include "ui/texturebrowser/TextureBrowser.h"

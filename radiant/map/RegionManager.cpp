@@ -10,9 +10,9 @@
 #include "ieventmanager.h"
 
 #include "selectionlib.h"
+#include "string/string.h"
 #include "gtkutil/dialog.h"
 
-#include "mainframe_old.h" // MainFrame_getWindow()
 #include "select.h"
 
 #include "brushmanip.h" // Construct_RegionBrushes()

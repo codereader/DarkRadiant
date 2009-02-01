@@ -1,5 +1,7 @@
 #include "PrefDialog.h"
 
+#include "imainframe.h"
+
 #include <gtk/gtk.h>
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -9,8 +11,6 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "PrefPageWalkers.h"
-
-#include "mainframe_old.h" // for UpdateAllWindows()
 
 namespace ui {
 
@@ -221,7 +221,8 @@ void PrefDialog::save() {
 	toggleWindow();
 	_requestedPage = "";
 	_isModal = false;
-	UpdateAllWindows();
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 void PrefDialog::cancel() {

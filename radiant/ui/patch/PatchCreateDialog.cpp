@@ -1,8 +1,8 @@
 #include "PatchCreateDialog.h"
 
+#include "iradiant.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include "mainframe_old.h"
 #include "string/string.h"
 
 namespace {
