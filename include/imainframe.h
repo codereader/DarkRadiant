@@ -28,6 +28,11 @@ public:
 	 * Updates all viewports which are child of the toplevel window.
 	 */
 	virtual void updateAllWindows() = 0;
+
+	/**
+	 * Applies the named layout to the MainFrame window. See MainFrameLayout class.
+	 */
+	virtual void applyLayout(const std::string& name) = 0;
 };
 
 // This is the accessor for the mainframe module
