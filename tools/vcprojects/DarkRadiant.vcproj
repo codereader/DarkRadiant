@@ -2311,11 +2311,27 @@
 					Name="mainframe"
 					>
 					<File
+						RelativePath="..\..\radiant\ui\mainframe\FloatingLayout.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\FloatingLayout.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\mainframe\MainFrame.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\mainframe\MainFrame.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h"
 						>
 					</File>
 					<File

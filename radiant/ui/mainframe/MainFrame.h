@@ -2,6 +2,7 @@
 #define _MAINFRAME_H_
 
 #include "imainframe.h"
+#include "imainframelayout.h"
 #include "gtkutil/PanedPosition.h"
 #include "gtkutil/WindowPosition.h"
 
@@ -51,6 +52,9 @@ private:
 	gtkutil::WindowPosition _windowPosition;
 
 	EViewStyle m_nCurrentStyle;
+
+	// The current layout object (NULL if no layout active)
+	IMainFrameLayoutPtr _currentLayout;
 
 public:
 	MainFrame();

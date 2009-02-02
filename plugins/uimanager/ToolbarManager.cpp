@@ -19,7 +19,7 @@ void ToolbarManager::initialise() {
 		loadToolbars();
 	}
 	catch (std::runtime_error e) {
-		std::cout << "ToolbarManager: Warning: " << e.what() << "\n";
+		std::cout << "ToolbarManager: Warning: " << e.what() << std::endl;
 	}
 }
 
@@ -32,7 +32,7 @@ GtkToolbar* ToolbarManager::getToolbar(const std::string& toolbarName) {
 		// Instantiate the toolbar with buttons, if not done yet 
 		if (_toolbars[toolbarName]==NULL) {
 			
-			globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName.c_str() << "\n";
+			globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
 						
 			// Build the path into the registry, where the toolbar should be found
 			std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
@@ -42,7 +42,7 @@ GtkToolbar* ToolbarManager::getToolbar(const std::string& toolbarName) {
 				_toolbars[toolbarName] = createToolbar(toolbarList[0]);
 			}
 			else {
-				globalOutputStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName.c_str() << "!\n";
+				globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << "!\n";
 			}
 		}		
 		
@@ -88,7 +88,7 @@ GtkWidget* ToolbarManager::createToolItem(xml::Node& node) {
 			event->updateWidgets();
 		}
 		else {
-			globalErrorStream() << "ToolbarManager: Failed to lookup command " << action.c_str() << "\n"; 
+			globalErrorStream() << "ToolbarManager: Failed to lookup command " << action << std::endl; 
 		}
 		
 		// Set the tooltip, if not empty
@@ -119,7 +119,7 @@ GtkToolbar* ToolbarManager::createToolbar(xml::Node& node) {
 	xml::NodeList toolItemList = node.getChildren();
 	GtkWidget* toolbar;
 		
-	if (toolItemList.size() > 0) {
+	if (!toolItemList.empty()) {
 		// Create a new toolbar
 		toolbar = gtk_toolbar_new();
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
@@ -129,7 +129,7 @@ GtkToolbar* ToolbarManager::createToolbar(xml::Node& node) {
 		GtkOrientation orientation = (align == "vertical") ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
 		gtk_toolbar_set_orientation(GTK_TOOLBAR(toolbar), orientation);
 		
-		for (unsigned int i = 0; i < toolItemList.size(); i++) {
+		for (std::size_t i = 0; i < toolItemList.size(); i++) {
 			// Create and get the toolItem with the parsing 
 			GtkWidget* toolItem = createToolItem(toolItemList[i]);
 			
@@ -157,12 +157,12 @@ bool ToolbarManager::toolbarExists(const std::string& toolbarName) {
 void ToolbarManager::loadToolbars() {
 	xml::NodeList toolbarList = GlobalRegistry().findXPath("//ui//toolbar");
 	
-	if (toolbarList.size() > 0) {
+	if (!toolbarList.empty()) {
 		// Create a new tooltips element
 		_tooltips = gtk_tooltips_new();
 		gtk_tooltips_enable(_tooltips);
 		
-		for (unsigned int i = 0; i < toolbarList.size(); i++) {
+		for (std::size_t i = 0; i < toolbarList.size(); i++) {
 			std::string toolbarName = toolbarList[i].getAttributeValue("name");
 			
 			if (toolbarExists(toolbarName)) {
@@ -170,8 +170,7 @@ void ToolbarManager::loadToolbars() {
 				continue;
 			}
 			
-			globalOutputStream() << "Found toolbar: " << toolbarName.c_str();
-			globalOutputStream() << "\n";
+			globalOutputStream() << "Found toolbar: " << toolbarName << std::endl;
 			
 			_toolbars[toolbarName] = NULL;
 		}
