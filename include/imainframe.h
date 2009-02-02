@@ -5,6 +5,9 @@
 
 const std::string MODULE_MAINFRAME("MainFrame");
 
+// Forward declaration
+typedef struct _GtkWindow GtkWindow;
+
 class IMainFrame :
 	public RegisterableModule
 {
@@ -23,6 +26,12 @@ public:
 
 	// Use this to disable camera and xyview draw updates until enableScreenUpdates is called.
 	virtual void disableScreenUpdates() = 0;
+
+	/** 
+	 * Returns the main application window widget. Returns NULL if no window
+	 * has been constructed yet.
+	 */
+	virtual GtkWindow* getTopLevelWindow() = 0;
 
 	/**
 	 * Updates all viewports which are child of the toplevel window.
