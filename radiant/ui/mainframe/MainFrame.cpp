@@ -33,6 +33,7 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
+#include "ui/mainframe/FloatingLayout.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -40,6 +41,8 @@
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 		const std::string RKEY_MULTIMON_START_PRIMARY = "user/ui/multiMonitor/startOnPrimaryMonitor";
+
+		const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
 	}
 
 namespace ui {
@@ -59,6 +62,7 @@ const StringSet& MainFrame::getDependencies() const {
 	static StringSet _dependencies;
 	
 	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_MAINFRAME_LAYOUT_MANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
@@ -78,12 +82,34 @@ void MainFrame::shutdownModule() {
 
 void MainFrame::construct() {
 	create();
+
+	std::string activeLayout = GlobalRegistry().get(RKEY_ACTIVE_LAYOUT);
+
+	if (activeLayout.empty()) {
+		activeLayout = FLOATING_LAYOUT_NAME; // fall back to hardcoded layout
+	}
+
+	// Apply the layout
+	applyLayout(activeLayout);
+
+	if (_currentLayout == NULL) {
+		// Layout is still empty, this is not good
+		globalErrorStream() << "Could not restore layout " << activeLayout << std::endl;
+
+		if (activeLayout != FLOATING_LAYOUT_NAME) {
+			// Try to fallback to floating layout
+			applyLayout(FLOATING_LAYOUT_NAME);
+		}
+	}
   
   	// Broadcast the startup event
     radiant::getGlobalRadiant()->broadcastStartupEvent();
 }
 
 void MainFrame::destroy() {
+	// Save the layout to the registry
+	GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, _currentLayout->getName());
+
 	saveWindowInfo();
 	
 	gtk_widget_hide(GTK_WIDGET(_window));
@@ -577,7 +603,24 @@ void MainFrame::updateAllWindows() {
 }
 
 void MainFrame::applyLayout(const std::string& name) {
-	// TODO
+	// Try to find that new layout
+	IMainFrameLayoutPtr layout = GlobalMainFrameLayoutManager().getLayout(name);
+
+	if (layout == NULL) {
+		globalErrorStream() << "MainFrame: Could not find layout with name " << name << std::endl;
+		return;
+	}
+
+	// Deactivate the current layout first
+	if (_currentLayout != NULL) {
+		_currentLayout->deactivate();		
+	}
+
+	globalOutputStream() << "MainFrame: Activating layout " << name << std::endl;
+
+	// Store and activate the new layout
+	_currentLayout = layout;
+	_currentLayout->activate();
 }
 
 // GTK callbacks

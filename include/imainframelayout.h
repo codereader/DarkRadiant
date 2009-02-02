@@ -8,6 +8,11 @@ class IMainFrameLayout
 {
 public:
 	/**
+	 * Each MainFrame layout has a unique name.
+	 */
+	virtual std::string getName() = 0;
+
+	/**
 	 * Use this to let the Layout construct its widgets and
 	 * restore its state from the Registry, if appropriate.
 	 */
