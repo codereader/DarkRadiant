@@ -75,6 +75,8 @@ public:
 	void enableScreenUpdates();
 	void disableScreenUpdates();
 
+	GtkWindow* getTopLevelWindow();
+
 	void updateAllWindows();
 
 	// Apply the named viewstyle
