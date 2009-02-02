@@ -1,6 +1,8 @@
 #ifndef _FLOATING_LAYOUT_H_
 #define _FLOATING_LAYOUT_H_
 
+#include "gtkutil/window/PersistentTransientWindow.h"
+#include "gtkutil/WindowPosition.h"
 #include "imainframelayout.h"
 
 namespace ui {
@@ -13,6 +15,12 @@ typedef boost::shared_ptr<FloatingLayout> FloatingLayoutPtr;
 class FloatingLayout :
 	public IMainFrameLayout
 {
+	// The floating camera window
+	gtkutil::PersistentTransientWindowPtr _floatingCamWnd;
+
+	// The camera window position tracker
+	gtkutil::WindowPosition _camWndPosition;
+
 public:
 	// IMainFrameLayout implementation
 	virtual std::string getName();

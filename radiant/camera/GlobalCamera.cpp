@@ -13,6 +13,8 @@
 #include "gtkutil/FramedWidget.h"
 #include "modulesystem/StaticModule.h"
 
+#include "FloatingCamWnd.h"
+
 // Constructor
 GlobalCameraManager::GlobalCameraManager() :
 	_parent(NULL)
@@ -97,6 +99,11 @@ CamWndPtr GlobalCameraManager::getCamWnd() {
 
 // Construct/return a floating window containing the CamWnd widget
 gtkutil::PersistentTransientWindowPtr GlobalCameraManager::getFloatingWindow() {
+
+	// Create a new floating camera window widget and return it
+	return ui::FloatingCamWndPtr(new ui::FloatingCamWnd(_parent));
+
+#if 0
 	if (!_floatingCamWindow) {
 		
 		// Create the floating window
@@ -141,6 +148,7 @@ gtkutil::PersistentTransientWindowPtr GlobalCameraManager::getFloatingWindow() {
 		GlobalEventManager().addCommand("ToggleCameraFullScreen", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleFullscreen>(*this));
 	}
 	return _floatingCamWindow;
+#endif
 }
 
 void GlobalCameraManager::toggleFullscreen() {

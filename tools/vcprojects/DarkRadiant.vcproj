@@ -872,6 +872,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\camera\FloatingCamWnd.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\camera\FloatingCamWnd.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\camera\GlobalCamera.cpp"
 					>
 				</File>
