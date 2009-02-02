@@ -777,8 +777,20 @@ GtkWindow* CamWnd::getParent() const {
 }
 
 void CamWnd::setContainer(GtkWindow* newParent) {
-	_parentWidget = newParent;
-	GlobalEventManager().connect(GTK_OBJECT(_parentWidget));
+	if (newParent == _parentWidget) {
+		// Do nothing if no change required
+		return;
+	}
+
+	if (_parentWidget != NULL) {
+		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+		_parentWidget = NULL;
+	}
+
+	if (newParent != NULL) {
+		_parentWidget = newParent;
+		GlobalEventManager().connect(GTK_OBJECT(_parentWidget));
+	}
 }
 
 Vector3 CamWnd::getCameraOrigin() const {

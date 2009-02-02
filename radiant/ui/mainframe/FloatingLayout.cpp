@@ -1,5 +1,6 @@
 #include "FloatingLayout.h"
 
+#include "itextstream.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
@@ -13,16 +14,48 @@
 
 namespace ui {
 
+	namespace {
+		const std::string RKEY_CAMERA_ROOT = "user/ui/camera"; 
+		const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
+	}
+
 std::string FloatingLayout::getName() {
 	return FLOATING_LAYOUT_NAME;
 }
 
 void FloatingLayout::activate() {
  	// Get the floating window with the CamWnd packed into it
-	gtkutil::PersistentTransientWindowPtr floatingWindow = GlobalCamera().getFloatingWindow();
-	GlobalEventManager().connectAccelGroup(GTK_WINDOW(floatingWindow->getWindow()));
+	_floatingCamWnd = GlobalCamera().getFloatingWindow();
+	GlobalEventManager().connectAccelGroup(GTK_WINDOW(_floatingCamWnd->getWindow()));
+
+	// Restore the window position from the registry if possible
+	xml::NodeList windowStateList = 
+		GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE);
+	
+	if (!windowStateList.empty()) {
+		_camWndPosition.loadFromNode(windowStateList[0]);
+		_camWndPosition.connect(
+			GTK_WINDOW(_floatingCamWnd->getWindow())
+		);
+	}
   
-	floatingWindow->show();
+	_floatingCamWnd->show();
+
+	// Connect up the toggle camera event
+	IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
+	if (!ev->empty()) {
+		ev->connectWidget(_floatingCamWnd->getWindow());
+		ev->updateWidgets();
+	}
+	else {
+		globalErrorStream() << "Could not connect ToggleCamera event\n";
+	}
+
+	// Add the toggle max/min command for floating windows
+	GlobalEventManager().addCommand("ToggleCameraFullScreen", 
+		MemberCaller<gtkutil::TransientWindow, 
+					 &gtkutil::TransientWindow::toggleFullscreen>(*_floatingCamWnd)
+	);
 
 	GtkWidget* page = gtkutil::FramedWidget(
 		GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalGroupDialog().getDialogWindow()))
@@ -45,7 +78,23 @@ void FloatingLayout::activate() {
 }
 
 void FloatingLayout::deactivate() {
-	// TODO
+	// Destroy the camera window
+	if (_floatingCamWnd != NULL) {
+		// Save camwnd state
+		// Delete all the current window states from the registry  
+		GlobalRegistry().deleteXPath(RKEY_CAMERA_WINDOW_STATE);
+		
+		// Create a new node
+		xml::Node node(GlobalRegistry().createKey(RKEY_CAMERA_WINDOW_STATE));
+		
+		_camWndPosition.saveToNode(node);
+
+		// Release the object
+		_floatingCamWnd = gtkutil::PersistentTransientWindowPtr();
+
+		// De-register commands
+		// TODO
+	}
 }
 
 // The creation function, needed by the mainframe layout manager
