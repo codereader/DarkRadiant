@@ -81,6 +81,7 @@ void MainFrame::shutdownModule() {
 }
 
 void MainFrame::construct() {
+	// Create the base window and the default widgets
 	create();
 
 	std::string activeLayout = GlobalRegistry().get(RKEY_ACTIVE_LAYOUT);
@@ -117,6 +118,10 @@ void MainFrame::destroy() {
 	shutdown();
 
 	gtk_widget_destroy(GTK_WIDGET(_window));
+}
+
+GtkWindow* MainFrame::getTopLevelWindow() {
+	return _window;
 }
 
 GtkWindow* MainFrame::createTopLevelWindow() {
@@ -312,6 +317,8 @@ void MainFrame::create() {
 
 	// Create the camera instance
 	GlobalCamera().setParent(_window);
+
+#if 0
 	CamWndPtr camWnd = GlobalCamera().getCamWnd();
 	
 	if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
@@ -494,6 +501,7 @@ void MainFrame::create() {
 	    );
     }
   }
+#endif
 
 	// Start the autosave timer so that it can periodically check the map for changes 
 	map::AutoSaver().startTimer();
