@@ -73,6 +73,9 @@ public:
 
 	void updateAllWindows();
 
+	// Apply the named viewstyle
+	void applyLayout(const std::string& name);
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
@@ -81,12 +84,18 @@ public:
 
 private:
 	void create();
-	void saveWindowInfo();
-	void shutdown();
 
+	void saveWindowInfo();
+
+	// Restore the window position as saved to the registry
+	void restoreWindowPosition();
+
+	void shutdown();
+	
 	// Creates and returns the topmost application window
 	GtkWindow* createTopLevelWindow();
-
+	GtkWidget* createMenuBar();
+	
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self);
 };
 

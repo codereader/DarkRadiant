@@ -96,11 +96,13 @@ void MainFrame::destroy() {
 GtkWindow* MainFrame::createTopLevelWindow() {
 	// Destroy any previous toplevel window
 	if (_window != NULL) {
-		gtk_widget_hide(GTK_WIDGET(_window));
-		gtk_widget_destroy(GTK_WIDGET(_window));
+		GlobalEventManager().disconnect(GTK_OBJECT(_window));
 
 		// Clear the module as well
 		radiant::getGlobalRadiant()->setMainWindow(NULL);
+
+		gtk_widget_hide(GTK_WIDGET(_window));
+		gtk_widget_destroy(GTK_WIDGET(_window));
 	}
 
 	// Create a new window
@@ -131,40 +133,55 @@ GtkWindow* MainFrame::createTopLevelWindow() {
 	gtk_widget_add_events(GTK_WIDGET(_window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
 	g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
 
+	// Notify the event manager
+	GlobalEventManager().connect(GTK_OBJECT(_window));
+    GlobalEventManager().connectAccelGroup(_window);
+
 	return _window;
 }
 
-void MainFrame::create() {
-	// Create the topmost window first
-	createTopLevelWindow();
+void MainFrame::restoreWindowPosition() {
+	// We start out maximised by default
+	int windowState = GDK_WINDOW_STATE_MAXIMIZED;
 
-    GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-    
-    gtk_container_add(GTK_CONTAINER(_window), vbox);
-    gtk_widget_show(vbox);
-    
-    GlobalEventManager().connect(GTK_OBJECT(_window));
-    GlobalEventManager().connectAccelGroup(_window);
-    
-    int viewStyle = GlobalRegistry().getInt(RKEY_WINDOW_LAYOUT);
-    
-    switch (viewStyle) {
-    	case 0: m_nCurrentStyle = eRegular; break;
-    	case 1: m_nCurrentStyle = eFloating; break;
-    	case 2: m_nCurrentStyle = eSplit; break;
-    	case 3: m_nCurrentStyle = eRegularLeft; break;
-    	default: m_nCurrentStyle = eFloating; break;
-    };
+	// Connect the window position tracker
+	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
+	
+	if (windowStateList.size() > 0) {
+		_windowPosition.loadFromNode(windowStateList[0]);
+		windowState = strToInt(windowStateList[0].getAttributeValue("state"));
+	}
+	
+#ifdef WIN32
+	// Do the settings say that we should start on the primary screen?
+	if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1") {
+		// Yes, connect the position tracker, this overrides the existing setting.
+  		_windowPosition.connect(_window);
+  		// Load the correct coordinates into the position tracker
+		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(0));
+		// Apply the position
+		_windowPosition.applyPosition();
+	}
+	else
+#endif
+	if (windowState & GDK_WINDOW_STATE_MAXIMIZED) {
+		gtk_window_maximize(_window);
+	}
+	else {
+		_windowPosition.connect(_window);
+		_windowPosition.applyPosition();
+	}
+}
 
-    // Create the Filter menu entries
+GtkWidget* MainFrame::createMenuBar() {
+	// Create the Filter menu entries before adding the menu bar
     ui::FiltersMenu::addItems();
     
     // Get the reference to the MenuManager class
     IMenuManager& menuManager = GlobalUIManager().getMenuManager();
     
     // Retrieve the "main" menubar from the UIManager
-    GtkMenuBar* mainMenu = GTK_MENU_BAR(menuManager.get("main"));
-    gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(mainMenu), false, false, 0);
+    GtkWidget* mainMenu = menuManager.get("main");
     
     if (m_nCurrentStyle != eFloating) {
     	// Hide the camera toggle option for non-floating views
@@ -176,6 +193,31 @@ void MainFrame::create() {
 		menuManager.setVisibility("main/view/consoleView", false);
 		menuManager.setVisibility("main/view/textureBrowser", false);	
 	}
+
+	return mainMenu;
+}
+
+void MainFrame::create() {
+	// Create the topmost window first
+	createTopLevelWindow();
+
+    GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
+    
+    gtk_container_add(GTK_CONTAINER(_window), vbox);
+    gtk_widget_show(vbox);
+    
+    int viewStyle = GlobalRegistry().getInt(RKEY_WINDOW_LAYOUT);
+    
+    switch (viewStyle) {
+    	case 0: m_nCurrentStyle = eRegular; break;
+    	case 1: m_nCurrentStyle = eFloating; break;
+    	case 2: m_nCurrentStyle = eSplit; break;
+    	case 3: m_nCurrentStyle = eRegularLeft; break;
+    	default: m_nCurrentStyle = eFloating; break;
+    };
+
+    // Retrieve the "main" menubar from the UIManager
+    gtk_box_pack_start(GTK_BOX(vbox), createMenuBar(), FALSE, FALSE, 0);
     
     // Instantiate the ToolbarManager and retrieve the view toolbar widget 
 	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
@@ -187,7 +229,7 @@ void MainFrame::create() {
 		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(viewToolbar), FALSE, FALSE, 0);
 	}
 	
-    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+    GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
     gtk_widget_show(hbox);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
     
@@ -207,8 +249,6 @@ void MainFrame::create() {
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
      */
-	//GlobalGroupDialog().construct(window);
-
     // Add entity inspector widget
     GlobalGroupDialog().addPage(
     	"entity",	// name
@@ -239,35 +279,8 @@ void MainFrame::create() {
 	    );
     }
 
-	int windowState = GDK_WINDOW_STATE_MAXIMIZED;
-
-	// Connect the window position tracker
-	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
-	
-	if (windowStateList.size() > 0) {
-		_windowPosition.loadFromNode(windowStateList[0]);
-		windowState = strToInt(windowStateList[0].getAttributeValue("state"));
-	}
-	
-#ifdef WIN32
-	// Do the settings say that we should start on the primary screen?
-	if (GlobalRegistry().get(RKEY_MULTIMON_START_PRIMARY) == "1") {
-		// Yes, connect the position tracker, this overrides the existing setting.
-  		_windowPosition.connect(_window);
-  		// Load the correct coordinates into the position tracker
-		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(0));
-		// Apply the position
-		_windowPosition.applyPosition();
-	}
-	else
-#endif
-	if (windowState & GDK_WINDOW_STATE_MAXIMIZED) {
-		gtk_window_maximize(_window);
-	}
-	else {
-		_windowPosition.connect(_window);
-		_windowPosition.applyPosition();
-	}
+	// Load the previous window settings from the registry
+	restoreWindowPosition();
 
 	gtk_widget_show(GTK_WIDGET(_window));
 
@@ -561,6 +574,10 @@ void MainFrame::disableScreenUpdates() {
 void MainFrame::updateAllWindows() {
 	GlobalCamera().update();
 	GlobalXYWnd().updateAllViews();
+}
+
+void MainFrame::applyLayout(const std::string& name) {
+	// TODO
 }
 
 // GTK callbacks
