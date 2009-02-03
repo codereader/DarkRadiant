@@ -17,6 +17,7 @@
 
 // Constructor
 GlobalCameraManager::GlobalCameraManager() :
+	_activeCam(-1),
 	_parent(NULL)
 {}
 
@@ -78,95 +79,75 @@ void GlobalCameraManager::construct() {
 }
 
 void GlobalCameraManager::destroy() {
-	
-	// Release windows, destroy the CamWnd class before destroying the PersistentWindow
-	_camWnd = CamWndPtr();
-	// The TransientWindow destructor will destroy the window widget
-	_floatingCamWindow = gtkutil::PersistentTransientWindowPtr();
+	// Release windows, destroy the CamWnd classes
+	_cameras.clear();
 	
 	// Release shaders
 	CamWnd::releaseStates();
 }
 
-// Construct and return the CamWnd instance
-CamWndPtr GlobalCameraManager::getCamWnd() {
-	if (!_camWnd) {
-		// Create and initialise the CamWnd
-		_camWnd = CamWndPtr(new CamWnd());
+CamWndPtr GlobalCameraManager::getActiveCamWnd() {
+	// Sanity check in debug builds
+	assert(_cameras.find(_activeCam) != _cameras.end());
+
+	return (_activeCam != -1) ? _cameras[_activeCam] : CamWndPtr();
+}
+
+CamWndPtr GlobalCameraManager::createCamWnd() {
+	// Instantantiate a new camera
+	CamWndPtr cam(new CamWnd());
+
+	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
+
+	if (_activeCam == -1) {
+		_activeCam = cam->getId();
 	}
-	return _camWnd;
+
+	return cam;
+}
+
+void GlobalCameraManager::removeCamWnd(std::size_t id) {
+	// Find and remove the CamWnd
+	CamWndMap::iterator i = _cameras.find(id);
+
+	if (i != _cameras.end()) {
+		_cameras.erase(i);
+	}
+
+	if (_activeCam == id) {
+		// Find a new active camera
+		if (!_cameras.empty()) {
+			_activeCam = _cameras.begin()->first;
+		}
+		else {
+			// No more cameras available
+			_activeCam = -1;
+		}
+	}
 }
 
 // Construct/return a floating window containing the CamWnd widget
-gtkutil::PersistentTransientWindowPtr GlobalCameraManager::getFloatingWindow() {
-
+FloatingCamWndPtr GlobalCameraManager::createFloatingWindow() {
 	// Create a new floating camera window widget and return it
-	return ui::FloatingCamWndPtr(new ui::FloatingCamWnd(_parent));
+	FloatingCamWndPtr cam(new FloatingCamWnd(_parent));
 
-#if 0
-	if (!_floatingCamWindow) {
-		
-		// Create the floating window
-		_floatingCamWindow = gtkutil::PersistentTransientWindowPtr(
-			new gtkutil::PersistentTransientWindow("Camera", _parent, true)
-		);
-		
-		// Pack in the CamWnd widget
-		CamWndPtr camWnd = getCamWnd();
-		camWnd->setContainer(GTK_WINDOW(_floatingCamWindow->getWindow()));
-		gtk_container_add(
-			GTK_CONTAINER(_floatingCamWindow->getWindow()),
-			gtkutil::FramedWidget(_camWnd->getWidget())
-		);
-		
-		gtk_window_set_type_hint(
-			GTK_WINDOW(_floatingCamWindow->getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL
-	    );
-		
-		// Restore the window position from the registry if possible
-		xml::NodeList windowStateList = 
-			GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE);
-		
-		if (!windowStateList.empty()) {
-			_windowPosition.loadFromNode(windowStateList[0]);
-			_windowPosition.connect(
-				GTK_WINDOW(_floatingCamWindow->getWindow())
-			);
-		}
+	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
 
-		// Connect up the toggle camera event
-		IEventPtr event = GlobalEventManager().findEvent("ToggleCamera");
-		if (!event->empty()) {
-			event->connectWidget(_floatingCamWindow->getWindow());
-			event->updateWidgets();
-		}
-		else {
-			globalErrorStream() << "Could not connect ToggleCamera event\n";
-		}
-
-		// Add the toggle max/min command for floating windows
-		GlobalEventManager().addCommand("ToggleCameraFullScreen", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleFullscreen>(*this));
-	}
-	return _floatingCamWindow;
-#endif
-}
-
-void GlobalCameraManager::toggleFullscreen() {
-	gtkutil::PersistentTransientWindowPtr window = getFloatingWindow();
-
-	if (window == NULL) {
-		return;
+	if (_activeCam == -1) {
+		_activeCam = cam->getId();
 	}
 
-	window->toggleFullscreen();
+	return cam;
 }
 
 void GlobalCameraManager::resetCameraAngles() {
-	if (_camWnd != NULL) {
+	CamWndPtr camWnd = getActiveCamWnd();
+
+	if (camWnd != NULL) {
 		Vector3 angles;
 		angles[CAMERA_ROLL] = angles[CAMERA_PITCH] = 0;
-		angles[CAMERA_YAW] = 22.5 * floor((_camWnd->getCameraAngles()[CAMERA_YAW]+11)/22.5);
-		_camWnd->setCameraAngles(angles);
+		angles[CAMERA_YAW] = 22.5 * floor((camWnd->getCameraAngles()[CAMERA_YAW]+11)/22.5);
+		camWnd->setCameraAngles(angles);
 	}
 }
 
@@ -195,12 +176,17 @@ void GlobalCameraManager::decreaseCameraSpeed() {
 }
 
 void GlobalCameraManager::benchmark() {
-	_camWnd->benchmark();
+	CamWndPtr camWnd = getActiveCamWnd();
+
+	if (camWnd != NULL) {
+		camWnd->benchmark();
+	}
 }
 
 void GlobalCameraManager::update() {
-	if (_camWnd != NULL) {
-		_camWnd->update();
+	// Issue the update call to all cameras
+	for (CamWndMap::const_iterator i = _cameras.begin(); i != _cameras.end(); ++i) {
+		i->second->update();
 	}
 }
 
@@ -210,13 +196,19 @@ void GlobalCameraManager::setParent(GtkWindow* parent) {
 }
 
 void GlobalCameraManager::changeFloorUp() {
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
 	// Pass the call to the currently active CamWnd 
-	_camWnd->changeFloor(true);
+	camWnd->changeFloor(true);
 }
 
 void GlobalCameraManager::changeFloorDown() {
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
 	// Pass the call to the currently active CamWnd 
-	_camWnd->changeFloor(false);
+	camWnd->changeFloor(false);
 }
 
 void GlobalCameraManager::addCameraObserver(CameraObserver* observer) {
@@ -255,122 +247,181 @@ void GlobalCameraManager::toggleLightingMode() {
 }
 
 void GlobalCameraManager::cubicScaleIn() {
-	_camWnd->cubicScaleIn();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->cubicScaleIn();
 }
 
 void GlobalCameraManager::cubicScaleOut() {
-	_camWnd->cubicScaleOut();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->cubicScaleOut();
 }
 
 void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angles) {
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
 	
-	if (_camWnd != NULL) {
-		_camWnd->setCameraOrigin(point);
-		_camWnd->setCameraAngles(angles);
-	}
-}
-
-void GlobalCameraManager::saveCamWndState() {
-	return;
-
-	// TODO: Remove
-	// Delete all the current window states from the registry  
-	GlobalRegistry().deleteXPath(RKEY_CAMERA_WINDOW_STATE);
-	
-	// Create a new node
-	xml::Node node(GlobalRegistry().createKey(RKEY_CAMERA_WINDOW_STATE));
-	
-	_windowPosition.saveToNode(node);
+	camWnd->setCameraOrigin(point);
+	camWnd->setCameraAngles(angles);
 }
 
 // --------------- Keyboard movement methods ------------------------------------------
 
 void GlobalCameraManager::freelookMoveForwardKeyUp() {
-	_camWnd->getCamera().clearMovementFlags(MOVE_FORWARD);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().clearMovementFlags(MOVE_FORWARD);
 }
 
 void GlobalCameraManager::freelookMoveForwardKeyDown() {
-	_camWnd->getCamera().setMovementFlags(MOVE_FORWARD);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().setMovementFlags(MOVE_FORWARD);
 }
 
 void GlobalCameraManager::freelookMoveBackKeyUp() {
-	_camWnd->getCamera().clearMovementFlags(MOVE_BACK);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().clearMovementFlags(MOVE_BACK);
 }
 
 void GlobalCameraManager::freelookMoveBackKeyDown() {
-	_camWnd->getCamera().setMovementFlags(MOVE_BACK);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().setMovementFlags(MOVE_BACK);
 }
 
 void GlobalCameraManager::freelookMoveLeftKeyUp() {
-	_camWnd->getCamera().clearMovementFlags(MOVE_STRAFELEFT);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().clearMovementFlags(MOVE_STRAFELEFT);
 }
 
 void GlobalCameraManager::freelookMoveLeftKeyDown() {
-	_camWnd->getCamera().setMovementFlags(MOVE_STRAFELEFT);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().setMovementFlags(MOVE_STRAFELEFT);
 }
 
 void GlobalCameraManager::freelookMoveRightKeyUp() {
-	_camWnd->getCamera().clearMovementFlags(MOVE_STRAFERIGHT);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().clearMovementFlags(MOVE_STRAFERIGHT);
 }
 
 void GlobalCameraManager::freelookMoveRightKeyDown() {
-	_camWnd->getCamera().setMovementFlags(MOVE_STRAFERIGHT);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().setMovementFlags(MOVE_STRAFERIGHT);
 }
 
 void GlobalCameraManager::freelookMoveUpKeyUp() {
-	_camWnd->getCamera().clearMovementFlags(MOVE_UP);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().clearMovementFlags(MOVE_UP);
 }
 
 void GlobalCameraManager::freelookMoveUpKeyDown() {
-	_camWnd->getCamera().setMovementFlags(MOVE_UP);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().setMovementFlags(MOVE_UP);
 }
 
 void GlobalCameraManager::freelookMoveDownKeyUp() {
-	_camWnd->getCamera().clearMovementFlags(MOVE_DOWN);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().clearMovementFlags(MOVE_DOWN);
 }
 
 void GlobalCameraManager::freelookMoveDownKeyDown() {
-	_camWnd->getCamera().setMovementFlags(MOVE_DOWN);
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().setMovementFlags(MOVE_DOWN);
 }
 
 void GlobalCameraManager::moveForwardDiscrete() {
-	_camWnd->getCamera().moveForwardDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().moveForwardDiscrete();
 }
 
 void GlobalCameraManager::moveBackDiscrete() {
-	_camWnd->getCamera().moveBackDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().moveBackDiscrete();
 }
 
 void GlobalCameraManager::moveUpDiscrete() {
-	_camWnd->getCamera().moveUpDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().moveUpDiscrete();
 }
 
 void GlobalCameraManager::moveDownDiscrete() {
-	_camWnd->getCamera().moveDownDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().moveDownDiscrete();
 }
 
 void GlobalCameraManager::moveLeftDiscrete() {
-	_camWnd->getCamera().moveLeftDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().moveLeftDiscrete();
 }
 
 void GlobalCameraManager::moveRightDiscrete() {
-	_camWnd->getCamera().moveRightDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().moveRightDiscrete();
 }
 
 void GlobalCameraManager::rotateLeftDiscrete() {
-	_camWnd->getCamera().rotateLeftDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().rotateLeftDiscrete();
 }
 
 void GlobalCameraManager::rotateRightDiscrete() {
-	_camWnd->getCamera().rotateRightDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().rotateRightDiscrete();
 }
 
 void GlobalCameraManager::pitchUpDiscrete() {
-	_camWnd->getCamera().pitchUpDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().pitchUpDiscrete();
 }
 
 void GlobalCameraManager::pitchDownDiscrete() {
-	_camWnd->getCamera().pitchDownDiscrete();
+	CamWndPtr camWnd = getActiveCamWnd();
+	if (camWnd == NULL) return;
+
+	camWnd->getCamera().pitchDownDiscrete();
 }
 
 // RegisterableModule implementation

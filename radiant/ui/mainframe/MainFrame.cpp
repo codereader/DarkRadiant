@@ -596,9 +596,6 @@ void MainFrame::shutdown()
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
 
-  	// Save the camera size to the registry
-	GlobalCamera().saveCamWndState();
-	
 	// Save the current XYViews to the registry
 	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();

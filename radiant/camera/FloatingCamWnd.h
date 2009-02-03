@@ -6,14 +6,10 @@
 
 #include "CamWnd.h"
 
-namespace ui {
-
 class FloatingCamWnd :
-	public gtkutil::PersistentTransientWindow
+	public gtkutil::PersistentTransientWindow,
+	public CamWnd
 {
-	// The contained camera window
-	CamWndPtr _camWnd;
-
 public:
 	// Pass the parent widget to this camwnd
 	FloatingCamWnd(GtkWindow* parent);
@@ -21,7 +17,5 @@ public:
 	virtual ~FloatingCamWnd();
 };
 typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
-
-} // namespace ui
 
 #endif /* _FLOATING_CAMERA_WINDOW_H_ */

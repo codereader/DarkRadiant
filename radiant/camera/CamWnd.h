@@ -22,6 +22,11 @@ class SelectionTest;
 class CamWnd :
 	public scene::Graph::Observer
 {
+	// The ID of this window
+	int _id;
+
+	static int _maxId;
+
 	View m_view;
 	
 	// The contained camera
@@ -44,8 +49,9 @@ class CamWnd :
 	gtkutil::GLWidget m_gl_widget;
 	GtkWindow* _parentWidget;
 
-public:
+	SignalHandlerId _mapValidHandle;
 
+public:
 	SelectionSystemWindowObserver* m_window_observer;
 
 	XORRectangle m_XORRectangle;
@@ -64,6 +70,9 @@ public:
 	// Constructor and destructor
 	CamWnd();
 	~CamWnd();
+
+	// The unique ID of this camwindow
+	std::size_t getId();
 
 	void queueDraw();
 	void draw();

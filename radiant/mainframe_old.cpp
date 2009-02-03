@@ -228,7 +228,9 @@ void Paste() {
 
 void PasteToCamera()
 {
-	CamWnd& camwnd = *GlobalCamera().getCamWnd();
+	CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+	if (camWnd == NULL) return;
+
   GlobalSelectionSystem().setSelectedAll(false);
   
   UndoableCommand undo("pasteToCamera");
@@ -237,7 +239,7 @@ void PasteToCamera()
   
   // Work out the delta
   Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
-  Vector3 delta = vector3_snapped(camwnd.getCameraOrigin(), GlobalGrid().getGridSize()) - mid;
+  Vector3 delta = vector3_snapped(camWnd->getCameraOrigin(), GlobalGrid().getGridSize()) - mid;
   
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
