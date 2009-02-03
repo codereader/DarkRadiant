@@ -581,6 +581,8 @@ void MainFrame::saveWindowInfo() {
 
 void MainFrame::shutdown()
 {
+	GlobalCamera().destroy();
+
 	// Shutdown the console
 	ui::Console::Instance().shutdown();
 
@@ -600,7 +602,6 @@ void MainFrame::shutdown()
 	GlobalXYWnd().saveState();
 	GlobalXYWnd().destroyViews();
 	
-	GlobalCamera().destroy();
 	GlobalXYWnd().destroy();
 }
 
