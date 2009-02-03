@@ -79,8 +79,15 @@ void GlobalCameraManager::construct() {
 }
 
 void GlobalCameraManager::destroy() {
-	// Release windows, destroy the CamWnd classes
+	// Copy camera structure into temporary map
+	CamWndMap temp = _cameras;
+
+	// During this clear call, a lot of callbacks will be issued, leading to
+	// potential double-free issues.
 	_cameras.clear();
+
+	// Now clear the temporary structure
+	temp.clear();
 	
 	// Release shaders
 	CamWnd::releaseStates();
