@@ -236,6 +236,7 @@ gboolean disable_freelook_button_release(GtkWidget* widget, GdkEventButton* even
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
+	_id(++_maxId),
 	m_view(true),
 	m_Camera(&m_view, CamWndQueueDraw(*this)),
 	m_cameraview(m_Camera, &m_view, CamWndUpdate(*this)),
@@ -260,8 +261,6 @@ CamWnd::CamWnd() :
 	m_window_observer->setRectangleDrawCallback(updateXORRectangleCallback(*this));
 	m_window_observer->setView(m_view);
 
-	gtk_widget_ref(glWidget);
-
 	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	GTK_WIDGET_SET_FLAGS (glWidget, GTK_CAN_FOCUS);
 	gtk_widget_set_size_request(glWidget, CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y);
@@ -269,7 +268,7 @@ CamWnd::CamWnd() :
 	m_sizeHandler = g_signal_connect(G_OBJECT(glWidget), "size_allocate", G_CALLBACK(camera_size_allocate), this);
 	m_exposeHandler = g_signal_connect(G_OBJECT(glWidget), "expose_event", G_CALLBACK(camera_expose), this);
 
-	GlobalMap().addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+	_mapValidHandle = GlobalMap().addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
 
 	// Deactivate all commands, just to make sure
 	disableDiscreteMoveEvents();
@@ -284,6 +283,40 @@ CamWnd::CamWnd() :
 	GlobalSceneGraph().addSceneObserver(this);
 
 	GlobalEventManager().connect(GTK_OBJECT(glWidget));
+}
+
+CamWnd::~CamWnd() {
+	// Unsubscribe from the global scene graph update 
+	GlobalSceneGraph().removeSceneObserver(this);
+	
+	GtkWidget* glWidget = m_gl_widget; // cast
+	
+	// Disconnect self from EventManager
+	GlobalEventManager().disconnect(GTK_OBJECT(glWidget));
+	if (_parentWidget != NULL) {
+		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+	}
+
+	GlobalMap().removeValidCallback(_mapValidHandle);
+	
+	if (m_bFreeMove) {
+		disableFreeMove();
+	}
+
+	removeHandlersMove();
+
+	g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
+	g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
+
+	GlobalWindowObservers_remove(m_window_observer);
+	m_window_observer->release();
+
+	// Notify the camera manager about our destruction
+	GlobalCamera().removeCamWnd(_id);
+}
+
+std::size_t CamWnd::getId() {
+	return _id;
 }
 
 void CamWnd::jumpToObject(SelectionTest& selectionTest) {
@@ -632,32 +665,6 @@ void CamWnd::onSceneGraphChange() {
 	update();
 }
 
-CamWnd::~CamWnd() {
-	// Subscribe to the global scene graph update 
-	GlobalSceneGraph().removeSceneObserver(this);
-	
-	GtkWidget* glWidget = m_gl_widget; // cast
-	
-	// Disconnect self from EventManager
-	GlobalEventManager().disconnect(GTK_OBJECT(glWidget));
-	if (_parentWidget != NULL) {
-		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
-	}
-	
-	if (m_bFreeMove) {
-		disableFreeMove();
-	}
-
-	removeHandlersMove();
-
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
-
-	gtk_widget_unref(glWidget);
-
-	m_window_observer->release();
-}
-
 // ----------------------------------------------------------
 
 void CamWnd::enableFreeMoveEvents() {
@@ -827,3 +834,4 @@ void CamWnd::cubicScaleIn() {
 
 ShaderPtr CamWnd::m_state_select1;
 ShaderPtr CamWnd::m_state_select2;
+int CamWnd::_maxId = 0;

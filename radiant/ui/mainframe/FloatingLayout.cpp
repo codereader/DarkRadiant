@@ -25,7 +25,7 @@ std::string FloatingLayout::getName() {
 
 void FloatingLayout::activate() {
  	// Get the floating window with the CamWnd packed into it
-	_floatingCamWnd = GlobalCamera().getFloatingWindow();
+	_floatingCamWnd = GlobalCamera().createFloatingWindow();
 	GlobalEventManager().connectAccelGroup(GTK_WINDOW(_floatingCamWnd->getWindow()));
 
 	// Restore the window position from the registry if possible

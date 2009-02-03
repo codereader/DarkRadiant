@@ -1,37 +1,28 @@
 #ifndef GLOBALCAMERA_H_
 #define GLOBALCAMERA_H_
 
-#include <list>
+#include <map>
 #include "icamera.h"
 
 #include "CamWnd.h"
+#include "FloatingCamWnd.h"
 #include "CameraObserver.h"
 
-/* FORWARD DECLS */
-namespace gtkutil {
-	class PersistentTransientWindow;
-	typedef boost::shared_ptr<PersistentTransientWindow> 
-			PersistentTransientWindowPtr;
-}
-
-/* greebo: This is the gateway class to access the currently active CamWindow
+/**
+ * greebo: This is the gateway class to access the currently active CamWindow
  * 
  * This class provides an interface for creating and deleting CamWnd instances
  * as well as some methods that are passed to the currently active CamWnd, like
  * resetCameraAngles() or lookThroughSelected().
- * 
- * The active CamWnd class is referenced by the _camWnd member pointer. */
-
+ **/
 class GlobalCameraManager :
 	public ICamera
 {
-	// The currently active camera window
-	CamWndPtr _camWnd;
-	
-	// The PersistentTransientWindow containing the CamWnd's GTK widget. This
-	// may not be set, since the splitpane view styles do not have the camera
-	// in its own window
-	gtkutil::PersistentTransientWindowPtr _floatingCamWindow;
+	typedef std::map<int, CamWndPtr> CamWndMap;
+	CamWndMap _cameras;
+
+	// The currently active camera window (-1 if no cam active)
+	int _activeCam;
 	
 	// The parent widget for the camera window (this should be the main frame)
 	GtkWindow* _parent;
@@ -43,7 +34,6 @@ class GlobalCameraManager :
 	gtkutil::WindowPosition _windowPosition;
 	
 public:
-
 	// Constructor
 	GlobalCameraManager();
 	
@@ -54,25 +44,29 @@ public:
 	// This releases the shader states of the CamWnd class
 	void destroy();
 	
-	// Saves the current state of the camera window to the registry
-	void saveCamWndState();
-
 	/**
 	 * Specifies the parent window which should be used for the CamWnd.
 	 */
 	void setParent(GtkWindow* parent);
 	
 	/**
-	 * Get the single CamWnd instance, creating it if necessary. A parent window 
-	 * must have been set with setParent() before the instance can be created. 
+	 * Returns the currently active CamWnd or NULL if none is active.
 	 */
-	CamWndPtr getCamWnd();
+	CamWndPtr getActiveCamWnd();
+
+	/**
+	 * Create a new camera window, ready for packing into a parent widget.
+	 */
+	CamWndPtr createCamWnd();
+
+	// Remove the camwnd with the given ID
+	void removeCamWnd(std::size_t id);
 	
 	/**
 	 * Get a PersistentFloatingWindow containing the CamWnd widget, creating
 	 * it if necessary.
 	 */
-	gtkutil::PersistentTransientWindowPtr getFloatingWindow();
+	FloatingCamWndPtr createFloatingWindow();
 	
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles();
@@ -84,9 +78,6 @@ public:
 	// Toggles between lighting and solid rendering mode (passes the call to the CameraSettings class)
 	void toggleLightingMode();
 
-	// Toggles the maximised/restored state of the camera window
-	void toggleFullscreen();
-	
 	// Increases/decreases the far clip plane distance (passes the call to CamWnd)
 	void cubicScaleIn();
 	void cubicScaleOut();
