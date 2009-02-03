@@ -108,10 +108,17 @@ void MainFrame::construct() {
 }
 
 void MainFrame::destroy() {
-	// Save the layout to the registry
-	GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, _currentLayout->getName());
 
 	saveWindowInfo();
+
+	// Free the layout
+	if (_currentLayout != NULL) {
+		// Save the layout to the registry
+		GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, _currentLayout->getName());
+
+		_currentLayout->deactivate();
+		_currentLayout = IMainFrameLayoutPtr();
+	}	
 	
 	gtk_widget_hide(GTK_WIDGET(_window));
 	

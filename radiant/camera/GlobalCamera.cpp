@@ -271,6 +271,9 @@ void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angle
 }
 
 void GlobalCameraManager::saveCamWndState() {
+	return;
+
+	// TODO: Remove
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_CAMERA_WINDOW_STATE);
 	
