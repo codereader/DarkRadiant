@@ -76,7 +76,7 @@ class TextureBrowser :
   NonModalEntry m_filterEntry;
 
   GtkWindow* m_parent;
-  gtkutil::GLWidget m_gl_widget;
+	gtkutil::GLWidgetPtr _glWidget;
 
   guint m_sizeHandler;
   guint m_exposeHandler;

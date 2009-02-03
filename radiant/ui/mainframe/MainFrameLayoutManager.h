@@ -21,6 +21,8 @@ public:
 	// Register a layout by passing a name and a function to create such a layout.
 	void registerLayout(const std::string& name, const CreateMainFrameLayoutFunc& func);
 
+	void toggleFloating();
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;

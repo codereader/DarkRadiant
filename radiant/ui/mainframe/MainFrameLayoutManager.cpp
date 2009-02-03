@@ -1,6 +1,10 @@
 #include "MainFrameLayoutManager.h"
 
 #include "itextstream.h"
+#include "ieventmanager.h"
+#include "imainframe.h"
+
+#include "generic/callback.h"
 #include "modulesystem/StaticModule.h"
 
 #include "FloatingLayout.h"
@@ -37,6 +41,17 @@ void MainFrameLayoutManager::registerLayout(
 	}
 }
 
+void MainFrameLayoutManager::toggleFloating() {
+	// Check if active
+	if (GlobalMainFrame().getCurrentLayout() == FLOATING_LAYOUT_NAME) {
+		// Remove the active floating layout
+		GlobalMainFrame().applyLayout("");
+	}
+	else {
+		GlobalMainFrame().applyLayout(FLOATING_LAYOUT_NAME);
+	}
+}
+
 // RegisterableModule implementation
 const std::string& MainFrameLayoutManager::getName() const {
 	static std::string _name(MODULE_MAINFRAME_LAYOUT_MANAGER);
@@ -53,6 +68,10 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 
 	// Register the default layouts
 	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
+
+	GlobalEventManager().addCommand("ToggleLayoutFloating",
+		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleFloating>(*this)
+	);
 }
 
 void MainFrameLayoutManager::shutdownModule() {

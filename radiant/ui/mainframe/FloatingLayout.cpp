@@ -78,6 +78,13 @@ void FloatingLayout::activate() {
 }
 
 void FloatingLayout::deactivate() {
+	// Hide the group dialog
+	GlobalGroupDialog().hideDialogWindow();
+
+	// Remove the texture browser from the groupdialog
+	GlobalGroupDialog().removePage("textures");
+	GlobalTextureBrowser().destroyWindow();
+
 	// Destroy the camera window
 	if (_floatingCamWnd != NULL) {
 		// Save camwnd state
@@ -93,7 +100,7 @@ void FloatingLayout::deactivate() {
 		_floatingCamWnd = gtkutil::PersistentTransientWindowPtr();
 
 		// De-register commands
-		// TODO
+		GlobalEventManager().removeEvent("ToggleCameraFullScreen");
 	}
 }
 

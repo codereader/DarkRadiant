@@ -81,6 +81,9 @@ public:
 	GtkWidget* addPage(const std::string& name, 
 					   const std::string& tabLabel, const std::string& tabIcon, 
 					   GtkWidget* page, const std::string& windowLabel);
+
+	// Removes a given page
+	void removePage(const std::string& name);
 	
 	/** greebo: Sets the active tab to the given widget.
 	 * 
