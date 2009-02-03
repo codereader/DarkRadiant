@@ -107,6 +107,14 @@ void MainFrame::construct() {
     radiant::getGlobalRadiant()->broadcastStartupEvent();
 }
 
+void MainFrame::removeLayout() {
+	// Sanity check
+	if (_currentLayout == NULL) return;
+
+	_currentLayout->deactivate();
+	_currentLayout = IMainFrameLayoutPtr();	
+}
+
 void MainFrame::destroy() {
 
 	saveWindowInfo();
@@ -116,9 +124,8 @@ void MainFrame::destroy() {
 		// Save the layout to the registry
 		GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, _currentLayout->getName());
 
-		_currentLayout->deactivate();
-		_currentLayout = IMainFrameLayoutPtr();
-	}	
+		removeLayout();
+	}
 	
 	gtk_widget_hide(GTK_WIDGET(_window));
 	
@@ -618,24 +625,33 @@ void MainFrame::updateAllWindows() {
 }
 
 void MainFrame::applyLayout(const std::string& name) {
-	// Try to find that new layout
-	IMainFrameLayoutPtr layout = GlobalMainFrameLayoutManager().getLayout(name);
+	// Set or clear?
+	if (!name.empty()) {
+		// Try to find that new layout
+		IMainFrameLayoutPtr layout = GlobalMainFrameLayoutManager().getLayout(name);
 
-	if (layout == NULL) {
-		globalErrorStream() << "MainFrame: Could not find layout with name " << name << std::endl;
-		return;
+		if (layout == NULL) {
+			globalErrorStream() << "MainFrame: Could not find layout with name " << name << std::endl;
+			return;
+		}
+
+		// Found a new layout, remove the old one
+		removeLayout();
+
+		globalOutputStream() << "MainFrame: Activating layout " << name << std::endl;
+
+		// Store and activate the new layout
+		_currentLayout = layout;
+		_currentLayout->activate();
 	}
-
-	// Deactivate the current layout first
-	if (_currentLayout != NULL) {
-		_currentLayout->deactivate();		
+	else {
+		// Empty layout name => remove
+		removeLayout();
 	}
+}
 
-	globalOutputStream() << "MainFrame: Activating layout " << name << std::endl;
-
-	// Store and activate the new layout
-	_currentLayout = layout;
-	_currentLayout->activate();
+std::string MainFrame::getCurrentLayout() {
+	return (_currentLayout != NULL) ? _currentLayout->getName() : "";
 }
 
 // GTK callbacks

@@ -223,6 +223,24 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	return notebookPage;
 }
 
+void GroupDialog::removePage(const std::string& name) {
+	// Find the page with that name
+	for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i) {
+		// Skip the wrong ones
+		if (i->name != name) continue;
+
+		// Remove the page from the notebook
+		gtk_notebook_remove_page(
+			GTK_NOTEBOOK(_notebook), 
+			gtk_notebook_page_num(GTK_NOTEBOOK(_notebook), i->page)
+		);
+
+		// Remove the page and break the loop, iterators are invalid
+		_pages.erase(i);
+		break;
+	}
+}
+
 void GroupDialog::updatePageTitle(unsigned int pageNumber) {
 	if (pageNumber < _pages.size()) {
 		gtk_window_set_title(GTK_WINDOW(getWindow()), _pages[pageNumber].title.c_str());

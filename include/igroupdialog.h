@@ -30,6 +30,12 @@ public:
 							   const std::string& tabLabel, const std::string& tabIcon, 
 							   GtkWidget* page, const std::string& windowLabel) = 0;
 
+	/**
+	 * Removes the named page from the TextureBrowser. If the page doesn't exist,
+	 * nothing happens.
+	 */
+	virtual void removePage(const std::string& name) = 0;
+
 	/** greebo: Sets the active tab to the given widget.
 	 * 
 	 * @page: The widget that should be displayed, must have been added

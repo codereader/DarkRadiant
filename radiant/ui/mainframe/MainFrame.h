@@ -81,6 +81,7 @@ public:
 
 	// Apply the named viewstyle
 	void applyLayout(const std::string& name);
+	std::string getCurrentLayout();
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
@@ -92,6 +93,8 @@ private:
 	void create();
 
 	void saveWindowInfo();
+
+	void removeLayout();
 
 	// Restore the window position as saved to the registry
 	void restoreWindowPosition();

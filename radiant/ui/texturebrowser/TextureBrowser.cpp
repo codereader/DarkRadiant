@@ -40,7 +40,6 @@ TextureBrowser::TextureBrowser() :
 	_popupMenu(gtk_menu_new()),
 	m_filter(0),
 	m_filterEntry(TextureBrowserQueueDrawCaller(*this), ClearFilterCaller(*this)),
-	m_gl_widget(false), // no z-buffer
 	m_texture_scroll(0),
 	m_heightChanged(true),
 	m_originInvalid(true),
@@ -80,8 +79,10 @@ TextureBrowser::TextureBrowser() :
 }
 
 void TextureBrowser::queueDraw() {
-	if (m_gl_widget != NULL) {
-		gtk_widget_queue_draw(m_gl_widget);
+	if (_glWidget != NULL) {
+		// Cast to GtkWidget* and issue a queue draw
+		GtkWidget* glWidget = *_glWidget;
+		gtk_widget_queue_draw(glWidget);
 	}
 }
 
@@ -723,8 +724,11 @@ gboolean TextureBrowser::onSizeAllocate(GtkWidget* widget, GtkAllocation* alloca
 }
 
 gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self) {
+	// No widget, no drawing
+	if (self->_glWidget == NULL) return FALSE;
+
 	// This calls glwidget_make_current() for us and swap_buffers at the end of scope
-	gtkutil::GLWidgetSentry sentry(self->m_gl_widget);
+	gtkutil::GLWidgetSentry sentry(*self->_glWidget);
 	
     GlobalOpenGL_debugAssertNoErrors();
     self->evaluateHeight();
@@ -738,6 +742,9 @@ gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, Text
 GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	
 	m_parent = parent;
+
+	// Instantiate a new GLwidget without z-buffering
+	_glWidget = gtkutil::GLWidgetPtr(new gtkutil::GLWidget(false));
 	
 	GlobalShaderSystem().setActiveShadersChangedNotify(
 		MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(*this)
@@ -803,8 +810,9 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 
 		{
 			// Cast gtkutil::GLWidget to GtkWidget*
-			GtkWidget* glWidget = m_gl_widget;
-			gtk_widget_ref(glWidget);
+			GtkWidget* glWidget = *_glWidget;
+			// Keep a reference to the GLWidget
+			//gtk_widget_ref(glWidget);
 
 			gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 			GTK_WIDGET_SET_FLAGS(glWidget, GTK_CAN_FOCUS);
@@ -815,6 +823,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 			m_sizeHandler = g_signal_connect(G_OBJECT(glWidget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
 			m_exposeHandler = g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onExpose), this);
 
+			// TODO: Remember handles
 			g_signal_connect(G_OBJECT(glWidget), "button-press-event", G_CALLBACK(onButtonPress), this);
 			g_signal_connect(G_OBJECT(glWidget), "button-release-event", G_CALLBACK(onButtonRelease), this);
 			g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
@@ -831,11 +840,13 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 void TextureBrowser::destroyWindow() {
 	GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
 
-	GtkWidget* glWidget = m_gl_widget;
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
+	//GtkWidget* glWidget = *_glWidget;
+	//g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
+	//g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
 
-	gtk_widget_unref(glWidget);
+	_glWidget = gtkutil::GLWidgetPtr();
+
+	// We're still keeping one reference of the GL widget
 }
 
 void TextureBrowser::registerPreferencesPage() {
