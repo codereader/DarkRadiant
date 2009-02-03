@@ -811,8 +811,6 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 		{
 			// Cast gtkutil::GLWidget to GtkWidget*
 			GtkWidget* glWidget = *_glWidget;
-			// Keep a reference to the GLWidget
-			//gtk_widget_ref(glWidget);
 
 			gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 			GTK_WIDGET_SET_FLAGS(glWidget, GTK_CAN_FOCUS);
@@ -820,10 +818,9 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 			gtk_box_pack_start(GTK_BOX(texbox), glWidget, TRUE, TRUE, 0);
 			gtk_widget_show(glWidget);
 
-			m_sizeHandler = g_signal_connect(G_OBJECT(glWidget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
-			m_exposeHandler = g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onExpose), this);
+			g_signal_connect(G_OBJECT(glWidget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
+			g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onExpose), this);
 
-			// TODO: Remember handles
 			g_signal_connect(G_OBJECT(glWidget), "button-press-event", G_CALLBACK(onButtonPress), this);
 			g_signal_connect(G_OBJECT(glWidget), "button-release-event", G_CALLBACK(onButtonRelease), this);
 			g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
@@ -840,13 +837,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 void TextureBrowser::destroyWindow() {
 	GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
 
-	//GtkWidget* glWidget = *_glWidget;
-	//g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
-	//g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
-
 	_glWidget = gtkutil::GLWidgetPtr();
-
-	// We're still keeping one reference of the GL widget
 }
 
 void TextureBrowser::registerPreferencesPage() {

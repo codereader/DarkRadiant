@@ -78,9 +78,6 @@ class TextureBrowser :
   GtkWindow* m_parent;
 	gtkutil::GLWidgetPtr _glWidget;
 
-  guint m_sizeHandler;
-  guint m_exposeHandler;
-
   GtkWidget* m_texture_scroll;
 
   bool m_heightChanged;
