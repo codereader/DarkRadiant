@@ -56,7 +56,6 @@ void SplitPaneLayout::activate() {
 	// Retrieve the main container of the main window
 	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
 	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(_splitPane.horizPane));
-	//gtk_box_pack_start(GTK_BOX(mainWindow), GTK_WIDGET(_splitPane.horizPane), TRUE, TRUE, 0);
 
 	gtk_paned_set_position(GTK_PANED(_splitPane.horizPane), 200);
 	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane1), 200);
@@ -141,6 +140,10 @@ void SplitPaneLayout::deactivate() {
 	// Remove the texture browser from the groupdialog
 	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
+
+	// Remove the widgets from the main container
+	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
+	gtk_container_remove(GTK_CONTAINER(mainContainer), GTK_WIDGET(_splitPane.horizPane));
 }
 
 // The creation function, needed by the mainframe layout manager

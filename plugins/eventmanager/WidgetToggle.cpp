@@ -23,6 +23,17 @@ void WidgetToggle::connectWidget(GtkWidget* widget) {
 	}
 }
 
+void WidgetToggle::disconnectWidget(GtkWidget* widget) { 
+	// Call the base class method to handle GtkCheckMenuItems and GtkToggleButtons
+	Toggle::disconnectWidget(widget);
+
+	WidgetList::iterator i = std::find(_widgets.begin(), _widgets.end(), widget);
+
+	if (i != _widgets.end()) {
+		_widgets.erase(i);
+	}
+}
+
 void WidgetToggle::updateWidgets() {
 	// Show/hide the widgets according to the _toggled state
 	if (_toggled) {
