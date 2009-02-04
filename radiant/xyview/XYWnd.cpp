@@ -1457,7 +1457,7 @@ void XYWnd::draw() {
 	glScalef(m_fScale, m_fScale, 1);
 	glTranslatef(-m_vOrigin[nDim1], -m_vOrigin[nDim2], 0);
 
-	CamWndPtr& cam = GlobalCamera().getActiveCamWnd();
+	CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
 	if (cam != NULL) {
 		drawCameraIcon(cam->getCameraOrigin(), cam->getCameraAngles());

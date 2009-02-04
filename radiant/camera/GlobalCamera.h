@@ -18,7 +18,7 @@
 class GlobalCameraManager :
 	public ICamera
 {
-	typedef std::map<int, CamWndPtr> CamWndMap;
+	typedef std::map<int, CamWndWeakPtr> CamWndMap;
 	CamWndMap _cameras;
 
 	// The currently active camera window (-1 if no cam active)
@@ -60,7 +60,7 @@ public:
 	CamWndPtr createCamWnd();
 
 	// Remove the camwnd with the given ID
-	void removeCamWnd(std::size_t id);
+	void removeCamWnd(int id);
 	
 	/**
 	 * Get a PersistentFloatingWindow containing the CamWnd widget, creating
