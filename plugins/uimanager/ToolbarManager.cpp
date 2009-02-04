@@ -40,6 +40,10 @@ GtkToolbar* ToolbarManager::getToolbar(const std::string& toolbarName) {
 			
 			if (toolbarList.size() > 0) {
 				_toolbars[toolbarName] = createToolbar(toolbarList[0]);
+
+				// Add a reference to this toolbar, to prevent its destruction when
+				// it is removed from its parent container in the future
+				g_object_ref(_toolbars[toolbarName]);
 			}
 			else {
 				globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << "!\n";

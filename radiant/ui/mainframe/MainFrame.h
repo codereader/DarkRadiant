@@ -56,6 +56,9 @@ private:
 	// The current layout object (NULL if no layout active)
 	IMainFrameLayoutPtr _currentLayout;
 
+	// The main container (where layouts can start packing stuff into)
+	GtkWidget* _mainContainer;
+
 public:
 	MainFrame();
 
@@ -76,6 +79,7 @@ public:
 	void disableScreenUpdates();
 
 	GtkWindow* getTopLevelWindow();
+	GtkWidget* getMainContainer();
 
 	void updateAllWindows();
 
