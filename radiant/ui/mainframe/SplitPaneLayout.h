@@ -1,8 +1,10 @@
 #ifndef _SPLITPANE_LAYOUT_H_
 #define _SPLITPANE_LAYOUT_H_
 
-#include "gtkutil/WindowPosition.h"
+#include "gtkutil/PanedPosition.h"
 #include "imainframelayout.h"
+
+#include "camera/CamWnd.h"
 
 namespace ui {
 
@@ -14,6 +16,19 @@ typedef boost::shared_ptr<SplitPaneLayout> SplitPaneLayoutPtr;
 class SplitPaneLayout :
 	public IMainFrameLayout
 {
+	// The camera view
+	CamWndPtr _camWnd;
+
+	struct SplitPaneView {
+		GtkWidget* horizPane;
+		GtkWidget* vertPane1;
+		GtkWidget* vertPane2;
+		
+		gtkutil::PanedPosition posHPane;
+		gtkutil::PanedPosition posVPane1;
+		gtkutil::PanedPosition posVPane2;
+	} _splitPane;
+
 public:
 	// IMainFrameLayout implementation
 	virtual std::string getName();

@@ -7,6 +7,7 @@ const std::string MODULE_MAINFRAME("MainFrame");
 
 // Forward declaration
 typedef struct _GtkWindow GtkWindow;
+typedef struct _GtkWidget GtkWidget;
 
 class IMainFrame :
 	public RegisterableModule
@@ -32,6 +33,14 @@ public:
 	 * has been constructed yet.
 	 */
 	virtual GtkWindow* getTopLevelWindow() = 0;
+
+	/**
+	 * greebo: Returns the main container widget (a vbox), where layouts
+	 * can start packing widgets into. This resembles the large grey area
+	 * in the main window.
+	 * May return NULL if mainframe is not constructed yet.
+	 */
+	virtual GtkWidget* getMainContainer() = 0;
 
 	/**
 	 * Updates all viewports which are child of the toplevel window.

@@ -138,6 +138,10 @@ GtkWindow* MainFrame::getTopLevelWindow() {
 	return _window;
 }
 
+GtkWidget* MainFrame::getMainContainer() {
+	return _mainContainer;
+}
+
 GtkWindow* MainFrame::createTopLevelWindow() {
 	// Destroy any previous toplevel window
 	if (_window != NULL) {
@@ -274,7 +278,9 @@ void MainFrame::create() {
 		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(viewToolbar), FALSE, FALSE, 0);
 	}
 	
+	// Create the main container (this is a hbox)
     GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
+	
     gtk_widget_show(hbox);
     gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
     
@@ -285,6 +291,10 @@ void MainFrame::create() {
 		gtk_widget_show(GTK_WIDGET(editToolbar));
 		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(editToolbar), FALSE, FALSE, 0);
 	}
+
+	// Create the main container for layouts
+	_mainContainer = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _mainContainer, TRUE, TRUE, 0);
     
     // Create and pack main statusbar 
     GtkWidget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
