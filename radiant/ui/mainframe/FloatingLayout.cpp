@@ -107,11 +107,19 @@ void FloatingLayout::deactivate() {
 		
 		_camWndPosition.saveToNode(node);
 
-		// Release the object
-		_floatingCamWnd = gtkutil::PersistentTransientWindowPtr();
-
 		// De-register commands
 		GlobalEventManager().removeEvent("ToggleCameraFullScreen");
+
+		IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
+		if (!ev->empty()) {
+			ev->disconnectWidget(_floatingCamWnd->getWindow());
+		}
+		else {
+			globalErrorStream() << "Could not disconnect ToggleCamera event\n";
+		}
+
+		// Release the object
+		_floatingCamWnd = gtkutil::PersistentTransientWindowPtr();
 	}
 }
 
