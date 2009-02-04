@@ -2350,6 +2350,14 @@
 						RelativePath="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\SplitPaneLayout.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

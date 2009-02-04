@@ -22,6 +22,10 @@ public:
 	void registerLayout(const std::string& name, const CreateMainFrameLayoutFunc& func);
 
 	void toggleFloating();
+	void toggleSplitPane();
+
+	// Deactivates the layout if it is already active, activates it otherwise
+	void toggleLayout(const std::string& name);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

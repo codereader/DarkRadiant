@@ -520,9 +520,6 @@ void MainFrame::create() {
 	// Start the autosave timer so that it can periodically check the map for changes 
 	map::AutoSaver().startTimer();
   
-	// Restore any floating XYViews that were active before, this applies to all view layouts
-	//GlobalXYWnd().restoreState();
-	
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();
 
@@ -598,10 +595,6 @@ void MainFrame::shutdown()
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
 
-	// Save the current XYViews to the registry
-	//GlobalXYWnd().saveState();
-	//GlobalXYWnd().destroyViews();
-	
 	GlobalXYWnd().destroy();
 }
 
