@@ -11,6 +11,7 @@
 #include "camera/GlobalCamera.h"
 #include "ui/einspector/EntityInspector.h"
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "xyview/GlobalXYWnd.h"
 
 namespace ui {
 
@@ -75,9 +76,19 @@ void FloatingLayout::activate() {
 	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
 	// the position info from the Registry once again.
 	ui::EntityInspector::getInstance().restoreSettings();
+
+	// Restore any floating XYViews that were active before
+	// This will create a default view if no saved info is found
+	GlobalXYWnd().restoreState();
 }
 
 void FloatingLayout::deactivate() {
+	// Save the current XYViews to the registry
+	GlobalXYWnd().saveState();
+
+	// Delete all active views
+	GlobalXYWnd().destroyViews();
+
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
 
