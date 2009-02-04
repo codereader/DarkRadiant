@@ -521,7 +521,7 @@ void MainFrame::create() {
 	map::AutoSaver().startTimer();
   
 	// Restore any floating XYViews that were active before, this applies to all view layouts
-	GlobalXYWnd().restoreState();
+	//GlobalXYWnd().restoreState();
 	
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();
@@ -599,8 +599,8 @@ void MainFrame::shutdown()
 	map::AutoSaver().stopTimer();
 
 	// Save the current XYViews to the registry
-	GlobalXYWnd().saveState();
-	GlobalXYWnd().destroyViews();
+	//GlobalXYWnd().saveState();
+	//GlobalXYWnd().destroyViews();
 	
 	GlobalXYWnd().destroy();
 }
