@@ -8,6 +8,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include "FloatingLayout.h"
+#include "SplitPaneLayout.h"
 
 namespace ui {
 
@@ -41,15 +42,23 @@ void MainFrameLayoutManager::registerLayout(
 	}
 }
 
-void MainFrameLayoutManager::toggleFloating() {
+void MainFrameLayoutManager::toggleLayout(const std::string& name) {
 	// Check if active
-	if (GlobalMainFrame().getCurrentLayout() == FLOATING_LAYOUT_NAME) {
-		// Remove the active floating layout
+	if (GlobalMainFrame().getCurrentLayout() == name) {
+		// Remove the active layout
 		GlobalMainFrame().applyLayout("");
 	}
 	else {
-		GlobalMainFrame().applyLayout(FLOATING_LAYOUT_NAME);
+		GlobalMainFrame().applyLayout(name);
 	}
+}
+
+void MainFrameLayoutManager::toggleFloating() {
+	toggleLayout(FLOATING_LAYOUT_NAME);
+}
+
+void MainFrameLayoutManager::toggleSplitPane() {
+	toggleLayout(SPLITPANE_LAYOUT_NAME);
 }
 
 // RegisterableModule implementation
@@ -68,9 +77,14 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 
 	// Register the default layouts
 	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
+	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
 
 	GlobalEventManager().addCommand("ToggleLayoutFloating",
 		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleFloating>(*this)
+	);
+
+	GlobalEventManager().addCommand("ToggleLayoutSplitPane",
+		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleSplitPane>(*this)
 	);
 }
 
