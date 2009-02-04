@@ -79,16 +79,9 @@ void GlobalCameraManager::construct() {
 }
 
 void GlobalCameraManager::destroy() {
-	// Copy camera structure into temporary map
-	CamWndMap temp = _cameras;
-
-	// During this clear call, a lot of callbacks will be issued, leading to
-	// potential double-free issues.
+	// Remove all weak references
 	_cameras.clear();
 
-	// Now clear the temporary structure
-	temp.clear();
-	
 	// Release shaders
 	CamWnd::releaseStates();
 }
@@ -97,7 +90,27 @@ CamWndPtr GlobalCameraManager::getActiveCamWnd() {
 	// Sanity check in debug builds
 	assert(_cameras.find(_activeCam) != _cameras.end());
 
-	return (_activeCam != -1) ? _cameras[_activeCam] : CamWndPtr();
+	CamWndPtr cam = _cameras[_activeCam].lock();
+
+	if (cam == NULL) {
+		// Camera is not used anymore, remove it
+		removeCamWnd(_activeCam);
+
+		// Find a new active camera
+		if (!_cameras.empty()) {
+			_activeCam = _cameras.begin()->first;
+		}
+		else {
+			// No more cameras available
+			_activeCam = -1;
+		}
+
+		if (_activeCam != -1) {
+			cam = _cameras[_activeCam].lock();
+		}
+	}
+
+	return (_activeCam != -1) ? cam : CamWndPtr();
 }
 
 CamWndPtr GlobalCameraManager::createCamWnd() {
@@ -113,7 +126,7 @@ CamWndPtr GlobalCameraManager::createCamWnd() {
 	return cam;
 }
 
-void GlobalCameraManager::removeCamWnd(std::size_t id) {
+void GlobalCameraManager::removeCamWnd(int id) {
 	// Find and remove the CamWnd
 	CamWndMap::iterator i = _cameras.find(id);
 
@@ -192,8 +205,16 @@ void GlobalCameraManager::benchmark() {
 
 void GlobalCameraManager::update() {
 	// Issue the update call to all cameras
-	for (CamWndMap::const_iterator i = _cameras.begin(); i != _cameras.end(); ++i) {
-		i->second->update();
+	for (CamWndMap::iterator i = _cameras.begin(); i != _cameras.end(); /* in-loop */ ) {
+		CamWndPtr cam = i->second.lock();
+
+		if (cam != NULL) {
+			cam->update();
+			++i;
+		}
+		else {
+			_cameras.erase(i++);
+		}
 	}
 }
 

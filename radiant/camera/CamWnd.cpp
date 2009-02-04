@@ -315,7 +315,7 @@ CamWnd::~CamWnd() {
 	GlobalCamera().removeCamWnd(_id);
 }
 
-std::size_t CamWnd::getId() {
+int CamWnd::getId() {
 	return _id;
 }
 

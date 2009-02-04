@@ -14,6 +14,8 @@
 #include "RadiantCameraView.h"
 #include "Camera.h"
 
+#include <boost/shared_ptr.hpp>
+
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
 
@@ -72,7 +74,7 @@ public:
 	~CamWnd();
 
 	// The unique ID of this camwindow
-	std::size_t getId();
+	int getId();
 
 	void queueDraw();
 	void draw();
@@ -138,6 +140,7 @@ private:
  * Shared pointer typedef.
  */
 typedef boost::shared_ptr<CamWnd> CamWndPtr;
+typedef boost::weak_ptr<CamWnd> CamWndWeakPtr;
 
 typedef MemberCaller<CamWnd, &CamWnd::queueDraw> CamWndQueueDraw;
 typedef MemberCaller<CamWnd, &CamWnd::update> CamWndUpdate;
