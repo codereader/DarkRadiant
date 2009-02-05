@@ -100,9 +100,18 @@ void RegularLayout::activate() {
 	GlobalGroupDialog().hideDialogWindow();
 
 	gtk_widget_show_all(mainContainer);
+
+	// Hide the camera toggle option for non-floating views
+    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
+	// Hide the console/texture browser toggles for non-floating/non-split views
+	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
 }
 
 void RegularLayout::deactivate() {
+	// Show the camera toggle option again
+    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
+	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
+
 	std::string path("user/ui/mainFrame/regular");
 		
 	// Remove all previously stored pane information 

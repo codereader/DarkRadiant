@@ -49,6 +49,7 @@ namespace ui {
 
 MainFrame::MainFrame() : 
 	_window(NULL),
+	_mainContainer(NULL),
 	_screenUpdatesEnabled(true)
 {}
 
@@ -117,7 +118,7 @@ void MainFrame::removeLayout() {
 
 void MainFrame::destroy() {
 
-	saveWindowInfo();
+	saveWindowPosition();
 
 	// Free the layout
 	if (_currentLayout != NULL) {
@@ -166,7 +167,7 @@ GtkWindow* MainFrame::createTopLevelWindow() {
 	GlobalWindowObservers_connectTopLevel(_window);
 
 	// Set the splash window transient to this toplevel
-	gtk_window_set_transient_for(ui::Splash::Instance().getWindow(), _window);
+	gtk_window_set_transient_for(Splash::Instance().getWindow(), _window);
 
 #if !defined(WIN32)
 	{
@@ -224,26 +225,10 @@ void MainFrame::restoreWindowPosition() {
 
 GtkWidget* MainFrame::createMenuBar() {
 	// Create the Filter menu entries before adding the menu bar
-    ui::FiltersMenu::addItems();
+    FiltersMenu::addItems();
     
-    // Get the reference to the MenuManager class
-    IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-    
-    // Retrieve the "main" menubar from the UIManager
-    GtkWidget* mainMenu = menuManager.get("main");
-    
-    if (m_nCurrentStyle != eFloating) {
-    	// Hide the camera toggle option for non-floating views
-    	menuManager.setVisibility("main/view/cameraview", false);
-    }
-    
-	if (m_nCurrentStyle != eFloating && m_nCurrentStyle != eSplit) {
-		// Hide the console/texture browser toggles for non-floating/non-split views
-		menuManager.setVisibility("main/view/consoleView", false);
-		menuManager.setVisibility("main/view/textureBrowser", false);	
-	}
-
-	return mainMenu;
+    // Return the "main" menubar from the UIManager
+    return GlobalUIManager().getMenuManager().get("main");
 }
 
 void MainFrame::create() {
@@ -255,16 +240,6 @@ void MainFrame::create() {
     gtk_container_add(GTK_CONTAINER(_window), vbox);
     gtk_widget_show(vbox);
     
-    int viewStyle = GlobalRegistry().getInt(RKEY_WINDOW_LAYOUT);
-    
-    switch (viewStyle) {
-    	case 0: m_nCurrentStyle = eRegular; break;
-    	case 1: m_nCurrentStyle = eFloating; break;
-    	case 2: m_nCurrentStyle = eSplit; break;
-    	case 3: m_nCurrentStyle = eRegularLeft; break;
-    	default: m_nCurrentStyle = eFloating; break;
-    };
-
     // Retrieve the "main" menubar from the UIManager
     gtk_box_pack_start(GTK_BOX(vbox), createMenuBar(), FALSE, FALSE, 0);
     
@@ -309,7 +284,7 @@ void MainFrame::create() {
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
-    	ui::EntityInspector::getInstance().getWidget(), // page widget
+    	EntityInspector::getInstance().getWidget(), // page widget
     	"Entity"
     );
 
@@ -318,21 +293,19 @@ void MainFrame::create() {
     	"mediabrowser",	// name
     	"Media", // tab title
     	"folder16.png", // tab icon 
-    	ui::MediaBrowser::getInstance().getWidget(), // page widget
+    	MediaBrowser::getInstance().getWidget(), // page widget
     	"Media"
     );
 	
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
-    if (FloatingGroupDialog()) {
-    	GlobalGroupDialog().addPage(
-	    	"console",	// name
-	    	"Console", // tab title
-	    	"iconConsole16.png", // tab icon 
-			ui::Console::Instance().getWidget(), // page widget
-	    	"Console"
-	    );
-    }
+	GlobalGroupDialog().addPage(
+    	"console",	// name
+    	"Console", // tab title
+    	"iconConsole16.png", // tab icon 
+		Console::Instance().getWidget(), // page widget
+    	"Console"
+    );
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
@@ -342,201 +315,16 @@ void MainFrame::create() {
 	// Create the camera instance
 	GlobalCamera().setParent(_window);
 
-#if 0
-	CamWndPtr camWnd = GlobalCamera().getCamWnd();
-	
-	if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
-    	// Allocate a new OrthoView and set its ViewType to XY
-		XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
-        xyWnd->setViewType(XY);
-        // Create a framed window out of the view's internal widget
-        GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget());
-
-        // Pack in the camera window
-		GtkWidget* camWindow = gtkutil::FramedWidget(camWnd->getWidget());
-		// greebo: The mainframe window acts as parent for the camwindow
-	    camWnd->setContainer(_window);
-
-        // Create the texture window
-		GtkWidget* texWindow = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(_window)
-		);
-
-        // Create the Console
-		GtkWidget* console = ui::Console::Instance().getWidget();
-        
-        // Now pack those widgets into the paned widgets
-
-        // First, pack the texwindow and the camera
-        _regular.texCamPane = gtkutil::Paned(camWindow, texWindow, false);
-        
-        // Depending on the viewstyle, pack the xy left or right
-        if (CurrentStyle() == eRegularLeft) {
-        	_regular.horizPane = gtkutil::Paned(_regular.texCamPane, xyView, true);
-        }
-        else {
-        	// This is "regular", put the xyview to the left
-        	_regular.horizPane = gtkutil::Paned(xyView, _regular.texCamPane, true);
-        }
-        
-        // Finally, pack the horizontal pane plus the console window into a vpane
-        _regular.vertPane = gtkutil::Paned(_regular.horizPane, console, false);
-        
-        // Add this to the mainframe hbox
-		gtk_box_pack_start(GTK_BOX(hbox), _regular.vertPane, TRUE, TRUE, 0);
-        gtk_widget_show_all(_regular.vertPane);
-
-        // Set some default values for the width and height
-        gtk_paned_set_position(GTK_PANED(_regular.vertPane), 650);
-		gtk_paned_set_position(GTK_PANED(_regular.horizPane), 500);
-		gtk_paned_set_position(GTK_PANED(_regular.texCamPane), 350);
-
-		// Connect the pane position trackers
-		_regular.posVPane.connect(_regular.vertPane);
-		_regular.posHPane.connect(_regular.horizPane);
-		_regular.posTexCamPane.connect(_regular.texCamPane);
-
-        // Now load the paned positions from the registry
-		xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='vertical']");
-	
-		if (list.size() > 0) {
-			_regular.posVPane.loadFromNode(list[0]);
-			_regular.posVPane.applyPosition();
-		}
-	
-		list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='horizontal']");
-	
-		if (list.size() > 0) {
-			_regular.posHPane.loadFromNode(list[0]);
-			_regular.posHPane.applyPosition();
-		}
-	
-		list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='texcam']");
-
-		if (list.size() > 0) {
-			_regular.posTexCamPane.loadFromNode(list[0]);
-			_regular.posTexCamPane.applyPosition();
-		}
-	} // end if (regular)
-  else if (CurrentStyle() == eFloating)
-  {
-	  
-    {
-     	// Get the floating window with the CamWnd packed into it
-		gtkutil::PersistentTransientWindowPtr floatingWindow =
-			GlobalCamera().getFloatingWindow();
-		GlobalEventManager().connectAccelGroup(
-			GTK_WINDOW(floatingWindow->getWindow()));
-      
-		floatingWindow->show();
-    }
-
-   	{
-		GtkWidget* page = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalGroupDialog().getDialogWindow()))
-		);
-		// Add the Media Browser page
-		GlobalGroupDialog().addPage(
-	    	"textures",	// name
-	    	"Textures", // tab title
-	    	"icon_texture.png", // tab icon 
-	    	GTK_WIDGET(page), // page widget
-	    	"Texture Browser"
-	    );
-    }
-
-    GlobalGroupDialog().showDialogWindow();
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
-	// the position info from the Registry once again.
-	ui::EntityInspector::getInstance().restoreSettings();
-  }
-  else // 4 way (aka Splitplane view)
-  {
-    GtkWidget* camera = camWnd->getWidget();
-    // greebo: The mainframe window acts as parent for the camwindow
-    camWnd->setContainer(_window);
-
-	// Allocate the three ortho views
-    XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
-    xyWnd->setViewType(XY);
-    GtkWidget* xy = xyWnd->getWidget();
-    
-    XYWndPtr yzWnd = GlobalXYWnd().createEmbeddedOrthoView();
-    yzWnd->setViewType(YZ);
-    GtkWidget* yz = yzWnd->getWidget();
-
-    XYWndPtr xzWnd = GlobalXYWnd().createEmbeddedOrthoView();
-    xzWnd->setViewType(XZ);
-    GtkWidget* xz = xzWnd->getWidget();
-
-	// Arrange the widgets into the paned views
-	_splitPane.vertPane1 = gtkutil::Paned(gtkutil::FramedWidget(camera), 
-										  gtkutil::FramedWidget(yz), 
-										  false);
-	_splitPane.vertPane2 = gtkutil::Paned(gtkutil::FramedWidget(xy), 
-										  gtkutil::FramedWidget(xz), 
-										  false);
-	_splitPane.horizPane = gtkutil::Paned(_splitPane.vertPane1, _splitPane.vertPane2, true);
-
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(_splitPane.horizPane), TRUE, TRUE, 0);
-
-	gtk_paned_set_position(GTK_PANED(_splitPane.horizPane), 200);
-	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane1), 200);
-	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane2), 400);
-
-	_splitPane.posHPane.connect(_splitPane.horizPane);
-	_splitPane.posVPane1.connect(_splitPane.vertPane1);
-	_splitPane.posVPane2.connect(_splitPane.vertPane2);
-	
-	// TODO: Move this whole stuff into a class (maybe some deriving from a Layout class)
-	xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='horizontal']");
-	
-	if (list.size() > 0) {
-		_splitPane.posHPane.loadFromNode(list[0]);
-		_splitPane.posHPane.applyPosition();
-	}
-	
-	list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='vertical1']");
-	
-	if (list.size() > 0) {
-		_splitPane.posVPane1.loadFromNode(list[0]);
-		_splitPane.posVPane1.applyPosition();
-	}
-	
-	list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='vertical2']");
-	
-	if (list.size() > 0) {
-		_splitPane.posVPane2.loadFromNode(list[0]);
-		_splitPane.posVPane2.applyPosition();
-	}
-	
-    {      
-		GtkWidget* textureBrowser = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(_window)
-		);
-
-		// Add the Media Browser page
-		GlobalGroupDialog().addPage(
-	    	"textures",	// name
-	    	"Textures", // tab title
-	    	"icon_texture.png", // tab icon 
-	    	GTK_WIDGET(textureBrowser), // page widget
-	    	"Texture Browser"
-	    );
-    }
-  }
-#endif
-
 	// Start the autosave timer so that it can periodically check the map for changes 
 	map::AutoSaver().startTimer();
   
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();
 
-	ui::LayerControlDialog::init();
+	LayerControlDialog::init();
 }
 
-void MainFrame::saveWindowInfo() {
+void MainFrame::saveWindowPosition() {
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
 	
@@ -548,50 +336,15 @@ void MainFrame::saveWindowInfo() {
 	node.setAttributeValue(
 		"state", 
 		intToStr(gdk_window_get_state(GTK_WIDGET(_window)->window))
-	); 
-  
-	// Save the splitpane widths/heights 
-	if (CurrentStyle() == eSplit) {
-		// TODO: Move this whole stuff into a class 
-		// (maybe some deriving from a Layout class)
-		
-		std::string path("user/ui/mainFrame/splitPane");
-		
-		// Remove all previously stored pane information 
-		GlobalRegistry().deleteXPath(path + "//pane");
-		
-		xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-		_splitPane.posHPane.saveToNode(node);
-		
-		node = GlobalRegistry().createKeyWithName(path, "pane", "vertical1");
-		_splitPane.posVPane1.saveToNode(node);
-		
-		node = GlobalRegistry().createKeyWithName(path, "pane", "vertical2");
-		_splitPane.posVPane2.saveToNode(node);
-	}
-	else if (CurrentStyle() == eRegular || CurrentStyle() == eRegularLeft) {
-		std::string path("user/ui/mainFrame/regular");
-		
-		// Remove all previously stored pane information 
-		GlobalRegistry().deleteXPath(path + "//pane");
-		
-		xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "vertical");
-		_regular.posVPane.saveToNode(node);
-		
-		node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-		_regular.posHPane.saveToNode(node);
-		
-		node = GlobalRegistry().createKeyWithName(path, "pane", "texcam");
-		_regular.posTexCamPane.saveToNode(node);
-	} 
+	);
 }
 
-void MainFrame::shutdown()
-{
+void MainFrame::shutdown() {
+	// Destroy the camera manager
 	GlobalCamera().destroy();
 
 	// Shutdown the console
-	ui::Console::Instance().shutdown();
+	Console::Instance().shutdown();
 
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
@@ -600,7 +353,7 @@ void MainFrame::shutdown()
 	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 
 	// Destroy the Overlay instance
-	ui::Overlay::destroyInstance();
+	Overlay::destroyInstance();
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
