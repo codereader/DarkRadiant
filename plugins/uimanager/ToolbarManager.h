@@ -1,7 +1,7 @@
 #ifndef TOOLBARMANAGER_H_
 #define TOOLBARMANAGER_H_
 
-#include <map>
+#include <set>
 #include <string>
 #include "iuimanager.h"
 #include "xmlutil/Node.h"
@@ -22,10 +22,10 @@ namespace ui {
 class ToolbarManager :
 	public IToolbarManager 
 {
-	// This is where the generated GtkToolbars are stored after parsing the XML file 
-	typedef std::map<const std::string, GtkToolbar*> ToolbarMap;
+	// This is where the available Toolbar names are stored after parsing the XML file 
+	typedef std::set<std::string> ToolbarList;
 	
-	ToolbarMap _toolbars;
+	ToolbarList _toolbars;
 	GtkTooltips* _tooltips;
 
 public:
