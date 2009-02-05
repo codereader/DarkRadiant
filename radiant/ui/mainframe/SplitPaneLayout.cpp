@@ -110,9 +110,15 @@ void SplitPaneLayout::activate() {
 	GlobalGroupDialog().hideDialogWindow();
 
 	gtk_widget_show_all(mainContainer);
+
+	// Hide the camera toggle option for non-floating views
+    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
 }
 
 void SplitPaneLayout::deactivate() {
+	// Show the camera toggle option again
+    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
+
 	// Save the splitplane info
 	std::string path("user/ui/mainFrame/splitPane");
 		
