@@ -64,32 +64,20 @@ void RegularLayout::activate() {
     	_regular.horizPane = gtkutil::Paned(xyView, _regular.texCamPane, true);
     }
     
-    // Finally, pack the horizontal pane plus the console window into a vpane
-    _regular.vertPane = gtkutil::Paned(_regular.horizPane, console, false);
-
 	// Retrieve the main container of the main window
 	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(_regular.vertPane));
+	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(_regular.horizPane));
 
 	// Set some default values for the width and height
-    gtk_paned_set_position(GTK_PANED(_regular.vertPane), 650);
 	gtk_paned_set_position(GTK_PANED(_regular.horizPane), 500);
 	gtk_paned_set_position(GTK_PANED(_regular.texCamPane), 350);
 
 	// Connect the pane position trackers
-	_regular.posVPane.connect(_regular.vertPane);
 	_regular.posHPane.connect(_regular.horizPane);
 	_regular.posTexCamPane.connect(_regular.texCamPane);
 	
 	// Now load the paned positions from the registry
-	xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='vertical']");
-
-	if (!list.empty()) {
-		_regular.posVPane.loadFromNode(list[0]);
-		_regular.posVPane.applyPosition();
-	}
-
-	list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='horizontal']");
+	xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='horizontal']");
 
 	if (!list.empty()) {
 		_regular.posHPane.loadFromNode(list[0]);
@@ -120,10 +108,7 @@ void RegularLayout::deactivate() {
 	// Remove all previously stored pane information 
 	GlobalRegistry().deleteXPath(path + "//pane");
 	
-	xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "vertical");
-	_regular.posVPane.saveToNode(node);
-	
-	node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+	xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
 	_regular.posHPane.saveToNode(node);
 	
 	node = GlobalRegistry().createKeyWithName(path, "pane", "texcam");
@@ -141,7 +126,7 @@ void RegularLayout::deactivate() {
 	GlobalTextureBrowser().destroyWindow();
 
 	// Destroy the widget, so it gets removed from the main container
-	gtk_widget_destroy(GTK_WIDGET(_regular.vertPane));
+	gtk_widget_destroy(GTK_WIDGET(_regular.horizPane));
 }
 
 // The creation function, needed by the mainframe layout manager
