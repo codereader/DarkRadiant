@@ -21,11 +21,9 @@ class RegularLayout :
 	CamWndPtr _camWnd;
 
 	struct RegularView {
-		GtkWidget* vertPane;
 		GtkWidget* horizPane;
 		GtkWidget* texCamPane;
 		
-		gtkutil::PanedPosition posVPane;
 		gtkutil::PanedPosition posHPane;
 		gtkutil::PanedPosition posTexCamPane;
 	} _regular;
