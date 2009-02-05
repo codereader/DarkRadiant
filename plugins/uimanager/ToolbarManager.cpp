@@ -29,28 +29,20 @@ GtkToolbar* ToolbarManager::getToolbar(const std::string& toolbarName) {
 	// Check if the toolbarName exists
 	if (toolbarExists(toolbarName)) {
 		
-		// Instantiate the toolbar with buttons, if not done yet 
-		if (_toolbars[toolbarName]==NULL) {
-			
-			globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
+		// Instantiate the toolbar with buttons
+		globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
 						
-			// Build the path into the registry, where the toolbar should be found
-			std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
-			xml::NodeList toolbarList = GlobalRegistry().findXPath(toolbarPath);
+		// Build the path into the registry, where the toolbar should be found
+		std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
+		xml::NodeList toolbarList = GlobalRegistry().findXPath(toolbarPath);
 			
-			if (toolbarList.size() > 0) {
-				_toolbars[toolbarName] = createToolbar(toolbarList[0]);
-
-				// Add a reference to this toolbar, to prevent its destruction when
-				// it is removed from its parent container in the future
-				g_object_ref(_toolbars[toolbarName]);
-			}
-			else {
-				globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << "!\n";
-			}
+		if (toolbarList.size() > 0) {
+			return createToolbar(toolbarList[0]);
+		}
+		else {
+			globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << "!\n";
+			return NULL;
 		}		
-		
-		return _toolbars[toolbarName];
 	} 
 	else {
 		return NULL;
@@ -151,7 +143,7 @@ GtkToolbar* ToolbarManager::createToolbar(xml::Node& node) {
 }
 
 bool ToolbarManager::toolbarExists(const std::string& toolbarName) {
-	ToolbarMap::iterator it = _toolbars.find(toolbarName);
+	ToolbarList::iterator it = _toolbars.find(toolbarName);
    	return (it != _toolbars.end());
 }
 
@@ -176,7 +168,7 @@ void ToolbarManager::loadToolbars() {
 			
 			globalOutputStream() << "Found toolbar: " << toolbarName << std::endl;
 			
-			_toolbars[toolbarName] = NULL;
+			_toolbars.insert(toolbarName);
 		}
 	}
 	else {
