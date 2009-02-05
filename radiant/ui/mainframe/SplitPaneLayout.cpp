@@ -141,9 +141,8 @@ void SplitPaneLayout::deactivate() {
 	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
 
-	// Remove the widgets from the main container
-	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_remove(GTK_CONTAINER(mainContainer), GTK_WIDGET(_splitPane.horizPane));
+	// Destroy the widget, so it gets removed from the main container
+	gtk_widget_destroy(GTK_WIDGET(_splitPane.horizPane));
 }
 
 // The creation function, needed by the mainframe layout manager

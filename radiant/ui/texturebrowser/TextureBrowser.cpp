@@ -793,7 +793,6 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	    	gtk_toolbar_insert(GTK_TOOLBAR(textureToolbar), sizeToggle, 0);
 	    	g_signal_connect(G_OBJECT(sizeToggle), "toggled", G_CALLBACK(onResizeToggle), this);
 
-	    	gdk_pixbuf_unref(pixBuf);
 	    	gtk_widget_show_all(GTK_WIDGET(textureToolbar));
 		}
 
