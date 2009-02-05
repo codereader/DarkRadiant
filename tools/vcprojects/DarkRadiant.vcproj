@@ -2343,6 +2343,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\mainframe\RegularLayout.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\RegularLayout.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp"
 						>
 					</File>
