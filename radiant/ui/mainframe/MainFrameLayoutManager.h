@@ -23,6 +23,8 @@ public:
 
 	void toggleFloating();
 	void toggleSplitPane();
+	void toggleRegular();
+	void toggleRegularLeft();
 
 	// Deactivates the layout if it is already active, activates it otherwise
 	void toggleLayout(const std::string& name);

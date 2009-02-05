@@ -9,6 +9,7 @@
 
 #include "FloatingLayout.h"
 #include "SplitPaneLayout.h"
+#include "RegularLayout.h"
 
 namespace ui {
 
@@ -61,6 +62,14 @@ void MainFrameLayoutManager::toggleSplitPane() {
 	toggleLayout(SPLITPANE_LAYOUT_NAME);
 }
 
+void MainFrameLayoutManager::toggleRegular() {
+	toggleLayout(REGULAR_LAYOUT_NAME);
+}
+
+void MainFrameLayoutManager::toggleRegularLeft() {
+	toggleLayout(REGULAR_LEFT_LAYOUT_NAME);
+}
+
 // RegisterableModule implementation
 const std::string& MainFrameLayoutManager::getName() const {
 	static std::string _name(MODULE_MAINFRAME_LAYOUT_MANAGER);
@@ -78,6 +87,8 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 	// Register the default layouts
 	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
 	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
+	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
+	registerLayout(REGULAR_LEFT_LAYOUT_NAME, RegularLayout::CreateRegularLeftInstance);
 
 	GlobalEventManager().addCommand("ToggleLayoutFloating",
 		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleFloating>(*this)
@@ -85,6 +96,14 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 
 	GlobalEventManager().addCommand("ToggleLayoutSplitPane",
 		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleSplitPane>(*this)
+	);
+
+	GlobalEventManager().addCommand("ToggleLayoutRegular",
+		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleRegular>(*this)
+	);
+
+	GlobalEventManager().addCommand("ToggleLayoutRegularLeft",
+		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleRegularLeft>(*this)
 	);
 }
 
