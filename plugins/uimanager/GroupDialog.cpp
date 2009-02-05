@@ -152,8 +152,19 @@ void GroupDialog::toggle() {
 
 // Pre-hide callback from TransientWindow
 void GroupDialog::_preHide() {
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
+	if (isVisible()) {
+		// Save the window position, to make sure
+		_windowPosition.readPosition();
+	}
+
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
 }
 
 // Pre-show callback from TransientWindow
@@ -170,14 +181,7 @@ void GroupDialog::_postShow() {
 }
 
 void GroupDialog::onRadiantShutdown() {
-	// Delete all the current window states from the registry  
-	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
-	
-	// Create a new node
-	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
-	
-	// Tell the position tracker to save the information
-	_windowPosition.saveToNode(node);
+	hide();
 	
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 
