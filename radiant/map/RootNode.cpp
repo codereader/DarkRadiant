@@ -63,6 +63,10 @@ std::string RootNode::name() const {
 	return _name;
 }
 
+void RootNode::setName(const std::string& name) {
+	_name = name;
+}
+
 void RootNode::addChildNode(const scene::INodePtr& node) {
 	// Insert this node into our namespace
 	// greebo: Do this first, otherwise the entity might get registered

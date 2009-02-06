@@ -56,6 +56,11 @@ void MapResource::rename(const std::string& fullPath) {
 	_type = fullPath.substr(fullPath.rfind(".") + 1);
 	_path = rootPath(_originalName);
 	_name = os::getRelativePath(_originalName, _path);
+
+	// Rename the map root as well
+	if (_mapRoot != NULL && boost::dynamic_pointer_cast<RootNode>(_mapRoot) != NULL) {
+		boost::static_pointer_cast<RootNode>(_mapRoot)->setName(_name);
+	}
 }
 
 bool MapResource::load() {

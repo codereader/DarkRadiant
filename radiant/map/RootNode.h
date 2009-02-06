@@ -58,6 +58,8 @@ public:
 
 	// Nameable implementation
 	std::string name() const;
+	
+	void setName(const std::string& name);
   
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
