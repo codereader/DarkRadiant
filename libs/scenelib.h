@@ -169,13 +169,15 @@ namespace scene {
  *         The node is also deselected beforehand.
  */
 inline void removeNodeFromParent(const scene::INodePtr& node) {
-	// Unselect the node
-	Node_setSelected(node, false);
-
+	// Check if the node has a parent in the first place
 	scene::INodePtr parent = node->getParent();
-	assert(parent != NULL);
 
-	parent->removeChildNode(node);
+	if (parent != NULL) {
+		// Unselect the node
+		Node_setSelected(node, false);
+
+		parent->removeChildNode(node);
+	}
 }
 
 /** 
