@@ -111,6 +111,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/filterdialog/FilterDialog.cpp \
 					  ui/filterdialog/FilterEditor.cpp \
 					  ui/mainframe/MainFrame.cpp \
+					  ui/mainframe/ScreenUpdateBlocker.cpp \
 					  patchmanip.cpp \
 					  xyview/XYWnd.cpp \
 					  xyview/GlobalXYWnd.cpp \
