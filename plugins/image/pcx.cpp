@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef unsigned char byte;
 
 #include <stdlib.h>
+#include <memory.h>
 
 #include "imagelib.h"
 #include "bytestreamutils.h"
