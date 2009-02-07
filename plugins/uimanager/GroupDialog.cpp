@@ -112,8 +112,10 @@ void GroupDialog::setPage(const std::string& name) {
 				setPage(_pages[i].page);
 			}
 
-			// Show the window
-			show();
+			// Show the window if the notebook is hosted here
+			if (gtk_widget_get_parent(_notebook) == getWindow()) {
+				show();
+			}
 			
 			// Don't continue the loop, we've found the page
 			break;
@@ -127,6 +129,7 @@ void GroupDialog::setPage(GtkWidget* page) {
 }
 
 void GroupDialog::togglePage(const std::string& name) {
+	// We still own the notebook in this dialog
 	if (getPageName() != name || !GTK_WIDGET_VISIBLE(getWindow())) {
 		// page not yet visible, show it
 		setPage(name);
