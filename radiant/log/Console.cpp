@@ -25,6 +25,7 @@ Console::Console() :
 
 	// Create the textview, which acts as textbuffer
 	_textView = gtk_text_view_new();
+
 	gtk_widget_set_size_request(_textView, 0, -1); // allow shrinking
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_textView), GTK_WRAP_WORD);
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(_textView), FALSE);

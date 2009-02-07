@@ -75,7 +75,15 @@ GdkPixbuf* RadiantModule::getLocalPixbuf(const std::string& fileName) {
 
 	GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
 
-	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
+	if (pixbuf != NULL) {
+		_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
+		
+		// Avoid destruction of this pixbuf
+		g_object_ref(pixbuf);
+	}
+	else {
+		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+	}
 
 	return pixbuf;
 }
@@ -101,10 +109,14 @@ GdkPixbuf* RadiantModule::getLocalPixbufWithMask(const std::string& fileName) {
 
 		_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
 
+		// Avoid destruction of this pixbuf
+		g_object_ref(rgba);
+
 		return rgba;
 	}
 	else {
 		// File load failed
+		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
 		return NULL;
 	}
 }
@@ -248,6 +260,19 @@ void RadiantModule::shutdownModule() {
     // lock the instances. This is just for safety, usually all
 	// EventListeners get cleared upon OnRadiantShutdown anyway.
     _eventListeners.clear();
+
+	// Remove all remaining pixbufs
+	for (PixBufMap::iterator i = _localPixBufs.begin(); i != _localPixBufs.end(); ++i) {
+		if (GDK_IS_PIXBUF(i->second)) {
+			g_object_unref(i->second);
+		}
+	}
+
+	for (PixBufMap::iterator i = _localPixBufsWithMask.begin(); i != _localPixBufsWithMask.end(); ++i) {
+		if (GDK_IS_PIXBUF(i->second)) {
+			g_object_unref(i->second);
+		}
+	}
 }
 
 // Define the static Radiant module

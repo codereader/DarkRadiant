@@ -95,6 +95,15 @@ void Toggle::connectWidget(GtkWidget* widget) {
 	}
 }
 
+void Toggle::disconnectWidget(GtkWidget* widget) {
+	ToggleWidgetList::iterator i = _toggleWidgets.find(widget);
+
+	if (i != _toggleWidgets.end()) {
+		g_signal_handler_disconnect(i->first, i->second);
+		_toggleWidgets.erase(i);
+	}
+}
+
 // Invoke the registered callback and update/notify
 void Toggle::toggle() {
 	if (_callbackActive) {

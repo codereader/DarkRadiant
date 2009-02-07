@@ -115,25 +115,27 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 		importDrawMode(GlobalRegistry().getInt(RKEY_DRAWMODE));
 		
 		// Check if a global camwindow is set
-		if (GlobalCamera().getCamWnd() != 0) {
+		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+
+		if (cam != NULL) {
 			// Disable free move if it was enabled during key change (e.g. LightingMode Toggle)
-			if (GlobalCamera().getCamWnd()->freeMoveEnabled()) {
-				GlobalCamera().getCamWnd()->disableFreeMove();
+			if (cam->freeMoveEnabled()) {
+				cam->disableFreeMove();
 			}
 			
 			// Disconnect the handlers for the old state and re-connect after reading the registry value
-			GlobalCamera().getCamWnd()->removeHandlersMove();
+			cam->removeHandlersMove();
 		
 			// Check the value and take the according actions
 			_discreteMovement = (GlobalRegistry().get(RKEY_DISCRETE_MOVEMENT) == "1");
 			
 			// Reconnect the new handlers
-			GlobalCamera().getCamWnd()->addHandlersMove();
+			cam->addHandlersMove();
 			
-			GlobalCamera().getCamWnd()->getCamera().updateProjection();
+			cam->getCamera().updateProjection();
 			
 			// Call the update method in case the render mode has changed
-			GlobalCamera().getCamWnd()->update();
+			GlobalCamera().update();
 		}
 	}
 	_callbackActive = false; 

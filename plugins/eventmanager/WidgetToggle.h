@@ -36,6 +36,7 @@ public:
 	 * is NOT of type GtkCheckMenuItem/GtkToggleToolButtons. Any other
 	 * widgets are added to the show/hide list */
 	virtual void connectWidget(GtkWidget* widget);
+	virtual void disconnectWidget(GtkWidget* widget);
 	
 	virtual void updateWidgets();
 	

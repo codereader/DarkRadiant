@@ -60,6 +60,7 @@ public:
 	
 	// Connect a Widget (e.g. GtkToggleToolButton or GtkCheckMenuItem to this Toggle)
 	virtual void connectWidget(GtkWidget* widget);
+	virtual void disconnectWidget(GtkWidget* widget);
 	
 	// Invoke the registered callback and update/notify
 	virtual void toggle();

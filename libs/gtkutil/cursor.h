@@ -60,8 +60,18 @@ class DeferredMotion {
 	}
 	
 public:
-	DeferredMotion(MotionFunction function, void* data) : m_handler(0), m_function(function), m_data(data)
+	DeferredMotion(MotionFunction function, void* data) : 
+		m_handler(0),
+		m_function(function),
+		m_data(data)
 	{}
+
+	~DeferredMotion() {
+		// Check if we have an active motion handler
+		if (m_handler != 0) {
+			g_source_remove(m_handler);
+		}
+	}
 	
 	void motion(gdouble x, gdouble y, guint state) {
 		m_x = x;

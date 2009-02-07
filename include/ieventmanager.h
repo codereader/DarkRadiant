@@ -71,6 +71,7 @@ public:
 	
 	// Connect a GtkWidget to this event (the event must support the according widget). 
 	virtual void connectWidget(GtkWidget* widget) = 0; 
+	virtual void disconnectWidget(GtkWidget* widget) = 0; 
 	
 	// Exports the current state to the widgets
 	virtual void updateWidgets() = 0;

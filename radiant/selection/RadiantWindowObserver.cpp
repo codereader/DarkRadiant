@@ -65,7 +65,10 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		// Do we have a camera view (fill() == true)?
 		if (_selectObserver._view->fill()) {
 			if (observerEvent == ui::obsJumpToObject) {
-				GlobalCamera().getCamWnd()->jumpToObject(volume);
+				CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+				if (cam != NULL) {
+					cam->jumpToObject(volume);
+				}
 			}
 			// If the apply texture modifier is held
 			else if (observerEvent == ui::obsPasteTextureProjected) {

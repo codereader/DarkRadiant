@@ -22,17 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MAINFRAME_H)
 #define INCLUDED_MAINFRAME_H
 
-#include "ui/mainframe/MainFrame.h"
-
 void Radiant_Initialise();
-
-void SaveMapAs();
-
-void updateTextureBrowser();
-void ClipperChangeNotify();
-
-void DefaultMode();
-
 void MainFrame_Construct();
 
 #endif
