@@ -75,6 +75,10 @@ const StringSet& MainFrame::getDependencies() const {
 
 void MainFrame::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "MainFrame::initialiseModule called.\n";
+
+	// Add another page for Multi-Monitor stuff
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Multi Monitor");
+	page->appendCheckBox("", "Start on Primary Monitor", RKEY_MULTIMON_START_PRIMARY);
 }
 
 void MainFrame::shutdownModule() {

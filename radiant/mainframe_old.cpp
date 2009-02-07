@@ -687,26 +687,6 @@ void CallBrushExportOBJ() {
 	}
 }
 
-void Layout_registerPreferencesPage() {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Interface");
-	
-	IconList icons;
-	IconDescriptionList descriptions;
-	
-	icons.push_back("layout_regular.png"); descriptions.push_back("Regular");
-	icons.push_back("layout_floating.png"); descriptions.push_back("Floating");
-	icons.push_back("layout_splitpane.png"); descriptions.push_back("Split");
-	icons.push_back("layout_regular_left.png"); descriptions.push_back("Regular Left");
-	
-	page->appendRadioIcons("", RKEY_WINDOW_LAYOUT, icons, descriptions);
-	page->appendLabel("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect.");
-
-	// Add another page for Multi-Monitor stuff
-	page = GlobalPreferenceSystem().getPage("Interface/Multi Monitor");
-	
-	page->appendCheckBox("", "Start on Primary Monitor", RKEY_MULTIMON_START_PRIMARY);
-}
-
 #include "stringio.h"
 
 void MainFrame_Construct()
@@ -875,6 +855,4 @@ void MainFrame_Construct()
 
   typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;
   GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
-
-  Layout_registerPreferencesPage();
 }
