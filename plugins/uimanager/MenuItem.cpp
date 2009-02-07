@@ -287,7 +287,7 @@ void MenuItem::construct() {
 					new gtkutil::TextMenuItemAccelerator(
 						_caption,
 						accelText,
-						GlobalRadiant().getLocalPixbuf(_icon),
+						!_icon.empty() ? GlobalRadiant().getLocalPixbuf(_icon) : NULL,
 						event->isToggle()
 					)
 				);
@@ -299,7 +299,7 @@ void MenuItem::construct() {
 				event->connectWidget(_widget);
 			}
 			else {
-				std::cout << "MenuItem: Cannot find associated event: " << _event.c_str() << "\n"; 
+				std::cout << "MenuItem: Cannot find associated event: " << _event << std::endl; 
 			}
 		}
 		else {
