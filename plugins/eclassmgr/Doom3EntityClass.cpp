@@ -346,9 +346,9 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
 				
 				// Get the type by trimming the string left and right
 				std::string type = key.substr(7, key.length() - attName.length() - 8);
-		
-				if (!attName.empty()) {
 
+				// Ignore editor_setKeyValue
+				if (!attName.empty() && type != "setKeyValue") {
 					// Transform the type into a better format
 					if (type == "var" || type == "string") {
 						type = "text";
