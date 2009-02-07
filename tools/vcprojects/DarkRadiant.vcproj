@@ -2319,6 +2319,14 @@
 					Name="mainframe"
 					>
 					<File
+						RelativePath="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\EmbeddedLayout.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\mainframe\FloatingLayout.cpp"
 						>
 					</File>

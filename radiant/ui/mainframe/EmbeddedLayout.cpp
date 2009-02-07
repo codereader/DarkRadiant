@@ -1,4 +1,4 @@
-#include "RegularLayout.h"
+#include "EmbeddedLayout.h"
 
 #include "itextstream.h"
 #include "ieventmanager.h"
@@ -8,6 +8,7 @@
 
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/Paned.h"
+#include <gtk/gtkvbox.h>
 
 #include "camera/GlobalCamera.h"
 #include "ui/einspector/EntityInspector.h"
@@ -16,15 +17,11 @@
 
 namespace ui {
 
-RegularLayout::RegularLayout(bool regularLeft) :
-	_regularLeft(regularLeft)
-{}
-
-std::string RegularLayout::getName() {
-	return REGULAR_LAYOUT_NAME;
+std::string EmbeddedLayout::getName() {
+	return EMBEDDED_LAYOUT_NAME;
 }
 
-void RegularLayout::activate() {
+void EmbeddedLayout::activate() {
 
 	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
 
@@ -41,24 +38,16 @@ void RegularLayout::activate() {
     // Create a framed window out of the view's internal widget
     GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget());
 
-	// Create the texture window
-	GtkWidget* texWindow = gtkutil::FramedWidget(
-		GlobalTextureBrowser().constructWindow(parent)
-	);
+	// Detach the notebook from the groupdialog to fit it into our pane
+	GtkWidget* groupPane = createGroupPane();
 
 	// Now pack those widgets into the paned widgets
 
-	// First, pack the texwindow and the camera
-    _regular.texCamPane = gtkutil::Paned(camWindow, texWindow, false);
+	// First, pack the groupPane and the camera
+    _regular.texCamPane = gtkutil::Paned(camWindow, groupPane, false);
     
     // Depending on the viewstyle, pack the xy left or right
-    if (_regularLeft) {
-    	_regular.horizPane = gtkutil::Paned(_regular.texCamPane, xyView, true);
-    }
-    else {
-    	// This is "regular", put the xyview to the left
-    	_regular.horizPane = gtkutil::Paned(xyView, _regular.texCamPane, true);
-    }
+   	_regular.horizPane = gtkutil::Paned(_regular.texCamPane, xyView, true);
     
 	// Retrieve the main container of the main window
 	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
@@ -97,13 +86,36 @@ void RegularLayout::activate() {
 
 	gtk_widget_show_all(mainContainer);
 
+	// Reparent the notebook to our local pane (after the other widgets have been realised)
+	GlobalGroupDialog().reparentNotebook(groupPane);
+
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
 	// Hide the console/texture browser toggles for non-floating/non-split views
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
 }
 
-void RegularLayout::deactivate() {
+GtkWidget* EmbeddedLayout::createGroupPane() {
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+
+	// Create the texture window
+	GtkWidget* texWindow = gtkutil::FramedWidget(
+		GlobalTextureBrowser().constructWindow(GlobalMainFrame().getTopLevelWindow())
+	);
+
+	// Add the Texture Browser page to the group dialog
+	GlobalGroupDialog().addPage(
+    	"textures",	// name
+    	"Textures", // tab title
+    	"icon_texture.png", // tab icon 
+    	GTK_WIDGET(texWindow), // page widget
+    	"Texture Browser"
+    );
+
+	return vbox;
+}
+
+void EmbeddedLayout::deactivate() {
 	// Show the camera toggle option again
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
@@ -125,9 +137,13 @@ void RegularLayout::deactivate() {
 	// Delete the CamWnd
 	_camWnd = CamWndPtr();
 
+	// Give the notebook back to the GroupDialog
+	GlobalGroupDialog().reparentNotebook(GlobalGroupDialog().getDialogWindow());
+
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
 
+	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
 
 	// Destroy the widget, so it gets removed from the main container
@@ -135,12 +151,8 @@ void RegularLayout::deactivate() {
 }
 
 // The creation function, needed by the mainframe layout manager
-RegularLayoutPtr RegularLayout::CreateRegularLeftInstance() {
-	return RegularLayoutPtr(new RegularLayout(true));
-}
-
-RegularLayoutPtr RegularLayout::CreateRegularInstance() {
-	return RegularLayoutPtr(new RegularLayout(false));
+EmbeddedLayoutPtr EmbeddedLayout::CreateInstance() {
+	return EmbeddedLayoutPtr(new EmbeddedLayout);
 }
 
 } // namespace ui
