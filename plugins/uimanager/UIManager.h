@@ -12,6 +12,9 @@
 
 namespace ui {
 
+class UIManagerShutdownListener;
+typedef boost::shared_ptr<UIManagerShutdownListener> UIManagerShutdownListenerPtr;
+
 class UIManager :
 	public IUIManager
 {
@@ -21,6 +24,9 @@ class UIManager :
 	ToolbarManager _toolbarManager;
 
 	StatusBarManager _statusBarManager;
+
+	UIManagerShutdownListenerPtr _shutdownListener;
+
 public:
 
 	/** greebo: Retrieves the helper class to manipulate the menu.
@@ -34,6 +40,9 @@ public:
 	IGroupDialog& getGroupDialog();
 
 	IStatusBarManager& getStatusBarManager();
+
+	// Called on radiant shutdown
+	void clear();
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
