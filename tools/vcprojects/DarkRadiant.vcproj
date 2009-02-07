@@ -872,6 +872,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\camera\FloatingCamWnd.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\camera\FloatingCamWnd.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\camera\GlobalCamera.cpp"
 					>
 				</File>
@@ -2311,6 +2319,14 @@
 					Name="mainframe"
 					>
 					<File
+						RelativePath="..\..\radiant\ui\mainframe\FloatingLayout.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\FloatingLayout.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\mainframe\MainFrame.cpp"
 						>
 					</File>
@@ -2319,11 +2335,35 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\RegularLayout.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\RegularLayout.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\mainframe\SplitPaneLayout.h"
 						>
 					</File>
 				</Filter>

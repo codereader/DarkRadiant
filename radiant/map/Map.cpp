@@ -20,7 +20,6 @@
 #include "gtkutil/messagebox.h"
 #include "gtkutil/IConv.h"
 
-#include "mainframe_old.h"
 #include "referencecache.h"
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
@@ -324,10 +323,11 @@ void Map::saveCameraPosition() {
 		Entity* worldspawn = Node_getEntity(m_world_node);
 		assert(worldspawn != NULL);	// This must succeed
 		
-		CamWnd& camwnd = *GlobalCamera().getCamWnd();
-		
-		worldspawn->setKeyValue(keyLastCamPos, camwnd.getCameraOrigin());
-		worldspawn->setKeyValue(keyLastCamAngle, camwnd.getCameraAngles());
+		CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+		if (camWnd == NULL) return;
+				
+		worldspawn->setKeyValue(keyLastCamPos, camWnd->getCameraOrigin());
+		worldspawn->setKeyValue(keyLastCamAngle, camWnd->getCameraAngles());
 	}
 }
 

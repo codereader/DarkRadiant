@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_GLWIDGET_H)
 #define INCLUDED_GTKUTIL_GLWIDGET_H
 
+#include <boost/shared_ptr.hpp>
+
 // Forward declarations
 typedef struct _GdkGLConfig GdkGLConfig;
 typedef struct _GtkWidget GtkWidget;
@@ -68,6 +70,7 @@ private:
 	static GdkGLConfig* createGLConfigWithDepth();
 	static GdkGLConfig* createGLConfig();
 };
+typedef boost::shared_ptr<GLWidget> GLWidgetPtr;
 
 } // namespace gtkutil
 

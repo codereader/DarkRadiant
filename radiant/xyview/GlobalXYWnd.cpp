@@ -108,21 +108,15 @@ void XYWndManager::restoreState() {
 }
 
 void XYWndManager::saveState() {
-
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_XYVIEW_ROOT + "//views");
 	
 	// Create a new node
 	xml::Node rootNode(GlobalRegistry().createKey(RKEY_XYVIEW_ROOT + "/views"));
 	
-	for (XYWndMap::iterator i = _xyWnds.begin(); i
-		 != _xyWnds.end(); 
-		 ++i) 
-	{
-		XYWndPtr xyView = i->second;
-		
-		xyView->saveStateToNode(rootNode);
-		// gtk_widget_hide(GTK_WIDGET(xyView->getParent())); TODO: What?
+	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); ++i) {
+		// Save each XYView state to the registry
+		i->second->saveStateToNode(rootNode);
 	}
 }
 
@@ -496,7 +490,11 @@ Vector3 XYWndManager::getFocusPosition() {
 		position = selection::algorithm::getCurrentSelectionCenter();
 	}
 	else {
-		position = GlobalCamera().getCamWnd()->getCameraOrigin();
+		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+
+		if (cam != NULL) {
+			position = cam->getCameraOrigin();
+		}
 	}
 	
 	return position;

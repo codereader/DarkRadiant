@@ -8,7 +8,6 @@
 #include "iundo.h"
 
 #include "scenelib.h"
-#include "mainframe_old.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"

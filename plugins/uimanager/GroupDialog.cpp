@@ -152,8 +152,19 @@ void GroupDialog::toggle() {
 
 // Pre-hide callback from TransientWindow
 void GroupDialog::_preHide() {
-	// Save the window position, to make sure
-	_windowPosition.readPosition();
+	if (isVisible()) {
+		// Save the window position, to make sure
+		_windowPosition.readPosition();
+	}
+
+	// Delete all the current window states from the registry  
+	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
+	
+	// Create a new node
+	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
+	
+	// Tell the position tracker to save the information
+	_windowPosition.saveToNode(node);
 }
 
 // Pre-show callback from TransientWindow
@@ -170,14 +181,7 @@ void GroupDialog::_postShow() {
 }
 
 void GroupDialog::onRadiantShutdown() {
-	// Delete all the current window states from the registry  
-	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
-	
-	// Create a new node
-	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
-	
-	// Tell the position tracker to save the information
-	_windowPosition.saveToNode(node);
+	hide();
 	
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 
@@ -221,6 +225,24 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	_pages.push_back(newPage);
 
 	return notebookPage;
+}
+
+void GroupDialog::removePage(const std::string& name) {
+	// Find the page with that name
+	for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i) {
+		// Skip the wrong ones
+		if (i->name != name) continue;
+
+		// Remove the page from the notebook
+		gtk_notebook_remove_page(
+			GTK_NOTEBOOK(_notebook), 
+			gtk_notebook_page_num(GTK_NOTEBOOK(_notebook), i->page)
+		);
+
+		// Remove the page and break the loop, iterators are invalid
+		_pages.erase(i);
+		break;
+	}
 }
 
 void GroupDialog::updatePageTitle(unsigned int pageNumber) {

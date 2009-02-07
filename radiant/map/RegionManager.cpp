@@ -170,7 +170,8 @@ void RegionManager::addRegionBrushes() {
 	// Create the info_player_start entity
 	_playerStart = GlobalEntityCreator().createEntity(playerStart);
 	
-	CamWndPtr camWnd = GlobalCamera().getCamWnd();
+	CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+
 	if (camWnd != NULL) { 
 		// Obtain the camera origin = player start point
 		Vector3 camOrigin = camWnd->getCameraOrigin();

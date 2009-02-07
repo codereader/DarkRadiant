@@ -15,7 +15,6 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/GLWidgetSentry.h"
-#include "mainframe_old.h"
 #include "brush/Face.h"
 #include "brush/BrushNode.h"
 #include "brush/Winding.h"

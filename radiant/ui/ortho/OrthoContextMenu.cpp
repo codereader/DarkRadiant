@@ -8,7 +8,6 @@
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
-#include "mainframe_old.h"
 #include "map/Map.h"
 
 #include <gtk/gtk.h>

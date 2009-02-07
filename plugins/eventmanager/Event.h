@@ -51,6 +51,7 @@ public:
 	// Empty standard implementation 
 	// (implement this in the derived classes to support the various GTKWidget types)
 	virtual void connectWidget(GtkWidget* widget) {}
+	virtual void disconnectWidget(GtkWidget* widget) {}
 
 }; // class Event
 

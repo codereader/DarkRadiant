@@ -15,7 +15,6 @@
 #include <limits.h>
 #include "string/string.h"
 #include "map/Map.h"
-#include "mainframe_old.h"
 #include "modulesystem/ApplicationContextImpl.h"
 
 #include <boost/filesystem/path.hpp>

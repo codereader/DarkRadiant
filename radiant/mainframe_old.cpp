@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "mainframe_old.h"
 
+#include "imainframe.h"
 #include "debugging/debugging.h"
 #include "version.h"
 #include "settings/PreferenceSystem.h"
@@ -227,7 +228,9 @@ void Paste() {
 
 void PasteToCamera()
 {
-	CamWnd& camwnd = *GlobalCamera().getCamWnd();
+	CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+	if (camWnd == NULL) return;
+
   GlobalSelectionSystem().setSelectedAll(false);
   
   UndoableCommand undo("pasteToCamera");
@@ -236,7 +239,7 @@ void PasteToCamera()
   
   // Work out the delta
   Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
-  Vector3 delta = vector3_snapped(camwnd.getCameraOrigin(), GlobalGrid().getGridSize()) - mid;
+  Vector3 delta = vector3_snapped(camWnd->getCameraOrigin(), GlobalGrid().getGridSize()) - mid;
   
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
@@ -682,63 +685,6 @@ void CallBrushExportOBJ() {
 	else {
 		gtk_MessageBox(GTK_WIDGET(GlobalRadiant().getMainWindow()), "No Brushes Selected!", "Error", eMB_OK, eMB_ICONERROR);
 	}
-}
-
-#if 0
-
-
-WidgetFocusPrinter g_mainframeWidgetFocusPrinter("mainframe");
-
-class WindowFocusPrinter
-{
-  const char* m_name;
-
-  static gboolean frame_event(GtkWidget *widget, GdkEvent* event, WindowFocusPrinter* self)
-  {
-    globalOutputStream() << self->m_name << " frame_event\n";
-    return FALSE;
-  }
-  static gboolean keys_changed(GtkWidget *widget, WindowFocusPrinter* self)
-  {
-    globalOutputStream() << self->m_name << " keys_changed\n";
-    return FALSE;
-  }
-  static gboolean notify(GtkWindow* window, gpointer dummy, WindowFocusPrinter* self)
-  {
-    if(gtk_window_is_active(window))
-    {
-      globalOutputStream() << self->m_name << " takes toplevel focus\n";
-    }
-    else
-    {
-      globalOutputStream() << self->m_name << " loses toplevel focus\n";
-    }
-    return FALSE;
-  }
-public:
-  WindowFocusPrinter(const char* name) : m_name(name)
-  {
-  }
-  void connect(GtkWindow* toplevel_window)
-  {
-    g_signal_connect(G_OBJECT(toplevel_window), "notify::has_toplevel_focus", G_CALLBACK(notify), this);
-    g_signal_connect(G_OBJECT(toplevel_window), "notify::is_active", G_CALLBACK(notify), this);
-    g_signal_connect(G_OBJECT(toplevel_window), "keys_changed", G_CALLBACK(keys_changed), this);
-    g_signal_connect(G_OBJECT(toplevel_window), "frame_event", G_CALLBACK(frame_event), this);
-  }
-};
-
-WindowFocusPrinter g_mainframeFocusPrinter("mainframe");
-
-#endif
-
-#include "ui/mainframe/MainFrame.h"
-
-// =============================================================================
-// MainFrame class
-
-int getFarClipDistance() {
-	return getCameraSettings()->cubicScale();
 }
 
 void Layout_registerPreferencesPage() {
