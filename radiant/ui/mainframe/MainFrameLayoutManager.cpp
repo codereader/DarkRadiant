@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "ieventmanager.h"
+#include "iuimanager.h"
 #include "imainframe.h"
 
 #include "generic/callback.h"
@@ -66,6 +67,7 @@ const StringSet& MainFrameLayoutManager::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_UIMANAGER);
 	}
 
 	return _dependencies;
