@@ -36,6 +36,16 @@ MenuItem::MenuItem(MenuItemPtr parent) :
 	}
 }
 
+MenuItem::~MenuItem() {
+	if (_widget != NULL && GTK_IS_WIDGET(_widget) && !_event.empty()) {
+		IEventPtr ev = GlobalEventManager().findEvent(_event);
+		
+		if (ev != NULL) {
+			ev->disconnectWidget(_widget);
+		}
+	}
+}
+
 std::string MenuItem::getName() const {
 	return _name;
 }

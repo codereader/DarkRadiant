@@ -43,6 +43,8 @@ private:
 
 	void updateShaders();
 
+	void updateEvents();
+
 	void addFiltersFromXML(const xml::NodeList& nodes, bool readOnly);
 
 	// Notifies all observers about a change
