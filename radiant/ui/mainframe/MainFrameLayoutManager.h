@@ -3,7 +3,10 @@
 
 #include "imainframelayout.h"
 #include <map>
+#include <vector>
 #include <string>
+
+#include "LayoutCommand.h"
 
 namespace ui {
 
@@ -14,6 +17,9 @@ class MainFrameLayoutManager :
 	typedef std::map<std::string, CreateMainFrameLayoutFunc> LayoutMap;
 	LayoutMap _layouts;
 
+	// The container for the LayoutCommand objects.
+	std::vector<LayoutCommandPtr> _commands;
+
 public:
 	// Retrieves a layout with the given name. Returns NULL if not found.
 	IMainFrameLayoutPtr getLayout(const std::string& name);
@@ -21,13 +27,8 @@ public:
 	// Register a layout by passing a name and a function to create such a layout.
 	void registerLayout(const std::string& name, const CreateMainFrameLayoutFunc& func);
 
-	void toggleFloating();
-	void toggleSplitPane();
-	void toggleRegular();
-	void toggleRegularLeft();
-
-	// Deactivates the layout if it is already active, activates it otherwise
-	void toggleLayout(const std::string& name);
+	// Adds all commands for all layouts registered so far
+	void registerCommands();
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

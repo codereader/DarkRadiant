@@ -43,31 +43,16 @@ void MainFrameLayoutManager::registerLayout(
 	}
 }
 
-void MainFrameLayoutManager::toggleLayout(const std::string& name) {
-	// Check if active
-	if (GlobalMainFrame().getCurrentLayout() == name) {
-		// Remove the active layout
-		GlobalMainFrame().applyLayout("");
+void MainFrameLayoutManager::registerCommands() {
+	// remove all commands beforehand
+	_commands.clear();
+
+	for (LayoutMap::const_iterator i = _layouts.begin(); i != _layouts.end(); ++i) {
+		// add a new command for each layout
+		_commands.push_back(
+			LayoutCommandPtr(new LayoutCommand(i->first))
+		);
 	}
-	else {
-		GlobalMainFrame().applyLayout(name);
-	}
-}
-
-void MainFrameLayoutManager::toggleFloating() {
-	toggleLayout(FLOATING_LAYOUT_NAME);
-}
-
-void MainFrameLayoutManager::toggleSplitPane() {
-	toggleLayout(SPLITPANE_LAYOUT_NAME);
-}
-
-void MainFrameLayoutManager::toggleRegular() {
-	toggleLayout(REGULAR_LAYOUT_NAME);
-}
-
-void MainFrameLayoutManager::toggleRegularLeft() {
-	toggleLayout(REGULAR_LEFT_LAYOUT_NAME);
 }
 
 // RegisterableModule implementation
@@ -78,6 +63,11 @@ const std::string& MainFrameLayoutManager::getName() const {
 
 const StringSet& MainFrameLayoutManager::getDependencies() const {
 	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_EVENTMANAGER);
+	}
+
 	return _dependencies;
 }
 
@@ -89,27 +79,12 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
 	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
 	registerLayout(REGULAR_LEFT_LAYOUT_NAME, RegularLayout::CreateRegularLeftInstance);
-
-	GlobalEventManager().addCommand("ToggleLayoutFloating",
-		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleFloating>(*this)
-	);
-
-	GlobalEventManager().addCommand("ToggleLayoutSplitPane",
-		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleSplitPane>(*this)
-	);
-
-	GlobalEventManager().addCommand("ToggleLayoutRegular",
-		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleRegular>(*this)
-	);
-
-	GlobalEventManager().addCommand("ToggleLayoutRegularLeft",
-		MemberCaller<MainFrameLayoutManager, &MainFrameLayoutManager::toggleRegularLeft>(*this)
-	);
 }
 
 void MainFrameLayoutManager::shutdownModule() {
 	globalOutputStream() << "MainFrameLayoutManager::shutdownModule called.\n";
 
+	_commands.clear();
 	_layouts.clear();
 }
 

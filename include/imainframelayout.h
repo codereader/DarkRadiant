@@ -48,6 +48,11 @@ public:
 	 * Register a layout by passing a name and a function to create such a layout.
  	 */
 	virtual void registerLayout(const std::string& name, const CreateMainFrameLayoutFunc& func) = 0;
+
+	/**
+	 * greebo: Registers all layout commands to the eventmanager.
+	 */
+	virtual void registerCommands() = 0;
 };
 
 // This is the accessor for the mainframe module

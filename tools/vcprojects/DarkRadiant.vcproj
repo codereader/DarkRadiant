@@ -2327,6 +2327,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\mainframe\LayoutCommand.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\mainframe\MainFrame.cpp"
 						>
 					</File>

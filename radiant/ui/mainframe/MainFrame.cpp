@@ -103,6 +103,9 @@ void MainFrame::construct() {
 			applyLayout(FLOATING_LAYOUT_NAME);
 		}
 	}
+
+	// register the commands
+	GlobalMainFrameLayoutManager().registerCommands();
   
   	// Broadcast the startup event
     radiant::getGlobalRadiant()->broadcastStartupEvent();
