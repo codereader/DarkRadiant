@@ -300,8 +300,8 @@ void SurfaceInspector::populateWindow() {
 	_fitTexture.label = gtkutil::LeftAlignedLabel(LABEL_FIT_TEXTURE);
 	gtk_table_attach_defaults(operTable, _fitTexture.label, 0, 1, 0, 1);
 	
-	_fitTexture.widthAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 1.0f);
-	_fitTexture.heightAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 1.0f);
+	_fitTexture.widthAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 0);
+	_fitTexture.heightAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 0);
 	
 	// Create the width entry field
 	_fitTexture.width = gtk_spin_button_new(GTK_ADJUSTMENT(_fitTexture.widthAdj), 1.0f, 4);
@@ -359,7 +359,7 @@ void SurfaceInspector::populateWindow() {
 	// Create the default texture scale spinner
 	GtkObject* defaultAdj = gtk_adjustment_new(
 		GlobalRegistry().getFloat(RKEY_DEFAULT_TEXTURE_SCALE), 
-		0.0f, 1000.0f, 0.1f, 0.1f, 0.1f
+		0.0f, 1000.0f, 0.1f, 0.1f, 0
 	);
 	_defaultTexScale = gtk_spin_button_new(GTK_ADJUSTMENT(defaultAdj), 1.0f, 4);
 	gtk_widget_set_size_request(_defaultTexScale, 55, -1);
