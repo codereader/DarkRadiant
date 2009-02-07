@@ -42,6 +42,7 @@ darkradiant_SOURCES = main.cpp \
 					  camera/GlobalCamera.cpp \
 					  camera/CameraSettings.cpp \
 					  camera/CamWnd.cpp \
+					  camera/FloatingCamWnd.cpp \
 					  namespace/Namespace.cpp \
 					  namespace/NamespaceFactory.cpp \
 					  render/backend/OpenGLStateMap.cpp \
@@ -111,6 +112,10 @@ darkradiant_SOURCES = main.cpp \
 					  ui/filterdialog/FilterDialog.cpp \
 					  ui/filterdialog/FilterEditor.cpp \
 					  ui/mainframe/MainFrame.cpp \
+					  ui/mainframe/MainFrameLayoutManager.cpp \
+					  ui/mainframe/FloatingLayout.cpp \
+					  ui/mainframe/SplitPaneLayout.cpp \
+					  ui/mainframe/RegularLayout.cpp \
 					  ui/mainframe/ScreenUpdateBlocker.cpp \
 					  patchmanip.cpp \
 					  xyview/XYWnd.cpp \
