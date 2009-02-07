@@ -8,8 +8,8 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "math/Vector3.h"
 #include "ifilesystem.h"
+#include "itextstream.h"
 #include "iregistry.h"
-#include "iradiant.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -31,6 +31,7 @@ namespace ui
 
 ModelSelector::ModelSelector()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+  _modelPreview(new ModelPreview),
   _treeStore(gtk_tree_store_new(N_COLUMNS, 
   								G_TYPE_STRING,
   								G_TYPE_STRING,
@@ -65,7 +66,7 @@ ModelSelector::ModelSelector()
 	_position.fitToScreen(0.8f, previewHeightFactor);
 	_position.applyPosition();
 
-	_modelPreview.setSize(_position.getSize()[1]);
+	_modelPreview->setSize(_position.getSize()[1]);
 
 	// Re-center the window
 	gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
@@ -91,7 +92,7 @@ ModelSelector::ModelSelector()
 	gtk_box_pack_start(GTK_BOX(hbx), leftVbx, TRUE, TRUE, 0);
 	
 	GtkWidget* previewBox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(previewBox), _modelPreview, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(previewBox), *_modelPreview, FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(hbx), previewBox, FALSE, FALSE, 0);
 	
@@ -107,10 +108,27 @@ ModelSelector::ModelSelector()
 
 ModelSelector& ModelSelector::Instance() {
 	// Static instance pointer
-	typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
-	static ModelSelectorPtr _selector(new ModelSelector);
-	
-	return *_selector;
+	return *InstancePtr();
+}
+
+ModelSelectorPtr& ModelSelector::InstancePtr() {
+	static ModelSelectorPtr _instancePtr;
+
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = ModelSelectorPtr(new ModelSelector);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+
+	return _instancePtr;
+}
+
+void ModelSelector::onRadiantShutdown() {
+	globalOutputStream() << "ModelSelector shutting down.\n";
+
+	_modelPreview = ModelPreviewPtr();
 }
 
 // Show the dialog and enter recursive main loop
@@ -167,13 +185,13 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, boo
 
 	// Update the model preview widget, forcing an update of the selected model
 	// since the preview model is deleted on dialog hide
-	_modelPreview.initialisePreview();
+	_modelPreview->initialisePreview();
 	updateSelected();
 
 	gtk_main(); // recursive main loop. This will block until the dialog is closed in some way.
 
 	// Reset the preview model to release resources
-	_modelPreview.clear();
+	_modelPreview->clear();
 
 	// Construct the model/skin combo and return it
 	return ModelSelectorResult(
@@ -349,12 +367,12 @@ void ModelSelector::updateSelected() {
 	std::string skinName = getSelectedValue(SKIN_COLUMN);
 
 	// Pass the model and skin to the preview widget
-	_modelPreview.setModel(mName);
-	_modelPreview.setSkin(skinName);
+	_modelPreview->setModel(mName);
+	_modelPreview->setSkin(skinName);
 
 	// Check that the model is actually valid by querying the IModelPtr 
 	// returned from the preview widget.
-	model::IModelPtr mdl = _modelPreview.getModel();
+	model::IModelPtr mdl = _modelPreview->getModel();
 	if (!mdl) {
 		return; // no valid model
 	}

@@ -119,6 +119,7 @@ public:
 	// To be called on dialog shutdown - releases local model cache
 	void clear();
 };
+typedef boost::shared_ptr<ModelPreview> ModelPreviewPtr;
 
 }
 

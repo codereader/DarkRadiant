@@ -61,6 +61,9 @@ public:
 	// Constructor, needs a name and a parent specified
 	MenuItem(MenuItemPtr parent);
 
+	// Destructor disconnects the widget from the event
+	~MenuItem();
+
 	// The name of this MenuItem
 	std::string getName() const;
 	void setName(const std::string& name);

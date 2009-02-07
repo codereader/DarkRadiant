@@ -221,6 +221,19 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 	GlobalSceneGraph().sceneChanged();
 }
 
+void BasicFilterSystem::updateEvents() {
+	for (FilterTable::const_iterator iter = _availableFilters.begin();
+		 iter != _availableFilters.end();
+		 ++iter)
+	{
+		IEventPtr toggle = GlobalEventManager().findEvent(iter->second.getEventName());
+
+		if (toggle == NULL) continue;
+
+		toggle->setToggled(getFilterState(iter->first));
+	}
+}
+
 bool BasicFilterSystem::filterIsReadOnly(const std::string& filter) {
 	FilterTable::const_iterator f = _availableFilters.find(filter);
 	

@@ -1,6 +1,8 @@
 #ifndef FILTERSMENU_H_
 #define FILTERSMENU_H_
 
+#include <string>
+
 typedef struct _GtkWidget GtkWidget;
 
 namespace ui {
@@ -18,9 +20,14 @@ class FiltersMenu
 	// Static counter to create unique menu bar widgets
 	static int _counter;
 
+	// The path of this menu
+	std::string _path;
+
 public:
 	// Constructs the filters submenu which can be added to a menubar
 	FiltersMenu();
+
+	~FiltersMenu();
 
 	// Returns a GtkWidget* with a fabricated filters submenu,
 	// ready for packing into a menu bar.

@@ -2,6 +2,7 @@
 #define MODELSELECTOR_H_
 
 #include "modelskin.h"
+#include "iradiant.h"
 #include "ui/common/ModelPreview.h"
 
 #include <gtk/gtkwidget.h>
@@ -49,18 +50,22 @@ struct ModelSelectorResult {
 	: model(m), skin(s), createClip(clip) {}
 };
 
+class ModelSelector;
+typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
+
 /** Singleton class encapsulating the Model Selector dialog and methods required to display the
  * dialog and retrieve the selected model.
  */
 
-class ModelSelector
+class ModelSelector :
+	public RadiantEventListener
 {
 private:
 	// Main dialog widget
 	GtkWidget* _widget;
 
 	// Model preview widget
-	ModelPreview _modelPreview;
+	ModelPreviewPtr _modelPreview;
 	
 	// Tree store containing model names (one with and one without skins)
 	GtkTreeStore* _treeStore;
@@ -96,6 +101,9 @@ private:
 	
 	// Home of the static instance
 	static ModelSelector& Instance();
+
+	// This is where the static shared_ptr of the singleton instance is held.
+	static ModelSelectorPtr& InstancePtr();
 
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
 	ModelSelectorResult showAndBlock(const std::string& curModel, bool showOptions, bool showSkins);
@@ -145,6 +153,9 @@ public:
 	
 	// greebo: Lets the modelselector repopulate its treeview next time the dialog is shown.
 	static void refresh();
+
+	// RadiantEventListener implementation
+	void onRadiantShutdown();
 };
 
 }
