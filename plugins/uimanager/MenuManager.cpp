@@ -25,7 +25,7 @@ MenuManager::MenuManager() :
 void MenuManager::loadFromRegistry() {
 	xml::NodeList menuNodes = GlobalRegistry().findXPath(RKEY_MENU_ROOT);
 	
-	if (menuNodes.size() > 0) {
+	if (!menuNodes.empty()) {
 		for (std::size_t i = 0; i < menuNodes.size(); i++) {
 			std::string name = menuNodes[i].getAttributeValue("name");
 		
