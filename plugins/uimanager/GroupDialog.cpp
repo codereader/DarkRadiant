@@ -51,6 +51,22 @@ void GroupDialog::construct() {
 	GlobalRadiant().addEventListener(InstancePtr());
 }
 
+void GroupDialog::reparentNotebook(GtkWidget* newParent) {
+	// greebo: Use the reparent method, the commented code below
+	// triggers an unrealise signal.
+	gtk_widget_reparent(_notebook, newParent);
+	return;
+
+	/*// Find the current parent
+	GtkWidget* oldParent = gtk_widget_get_parent(_notebook);
+
+	// Add a reference to the notebook
+	gtk_widget_ref(_notebook);
+	gtk_container_remove(GTK_CONTAINER(oldParent), _notebook);
+	gtk_container_add(GTK_CONTAINER(newParent), _notebook);
+	gtk_widget_unref(_notebook);*/
+}
+
 void GroupDialog::populateWindow() {
 	_notebook = gtk_notebook_new();
 	gtk_container_add(GTK_CONTAINER(getWindow()), _notebook);

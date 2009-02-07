@@ -49,9 +49,9 @@ Console::Console() :
 	const GdkColor red = { 0, 0xffff, 0x0000, 0x0000 };
 	const GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
 
-	errorTag = gtk_text_buffer_create_tag(_buffer, "red_foreground", "foreground-gdk", &red, 0);
-	warningTag = gtk_text_buffer_create_tag(_buffer, "yellow_foreground", "foreground-gdk", &yellow, 0);
-	standardTag = gtk_text_buffer_create_tag(_buffer, "black_foreground", "foreground-gdk", &black, 0);
+	_errorTag = gtk_text_buffer_create_tag(_buffer, "red_foreground", "foreground-gdk", &red, 0);
+	_warningTag = gtk_text_buffer_create_tag(_buffer, "yellow_foreground", "foreground-gdk", &yellow, 0);
+	_standardTag = gtk_text_buffer_create_tag(_buffer, "black_foreground", "foreground-gdk", &black, 0);
 
 	// We're ready to catch log output, register ourselves
 	applog::LogWriter::Instance().attach(this);
@@ -84,16 +84,16 @@ void Console::writeLog(const std::string& outputStr, applog::ELogLevel level) {
 	switch (level) {
 		case applog::SYS_VERBOSE:
 		case applog::SYS_STANDARD:
-			tag = standardTag;
+			tag = _standardTag;
 			break;
 		case applog::SYS_WARNING:
-			tag = warningTag;
+			tag = _warningTag;
 			break;
 		case applog::SYS_ERROR:
-			tag = errorTag;
+			tag = _errorTag;
 			break;
 		default:
-			tag = standardTag;
+			tag = _standardTag;
 	};
 
 	GtkTextIter iter;

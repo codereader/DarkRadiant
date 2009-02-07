@@ -113,6 +113,9 @@ public:
 	GtkWidget* getDialogWindow();
 	void showDialogWindow();
 	void hideDialogWindow();
+
+	// Detaches the notebook and relocates it to another parent container
+	void reparentNotebook(GtkWidget* newParent);
 	
 	/** greebo: Safely disconnects this window from
 	 * 			the eventmanager and saves the window position.

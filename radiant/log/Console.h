@@ -26,9 +26,9 @@ class Console :
 	GtkTextBuffer* _buffer;
 	
 	// The tags for colouring the output text
-	GtkTextTag* errorTag;
-	GtkTextTag* warningTag;
-	GtkTextTag* standardTag;
+	GtkTextTag* _errorTag;
+	GtkTextTag* _warningTag;
+	GtkTextTag* _standardTag;
 
 	// Private constructor, creates the Gtk structures
 	Console();

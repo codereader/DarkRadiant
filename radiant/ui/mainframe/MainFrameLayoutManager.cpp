@@ -11,6 +11,7 @@
 #include "FloatingLayout.h"
 #include "SplitPaneLayout.h"
 #include "RegularLayout.h"
+#include "EmbeddedLayout.h"
 
 namespace ui {
 
@@ -77,6 +78,7 @@ void MainFrameLayoutManager::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "MainFrameLayoutManager::initialiseModule called.\n";
 
 	// Register the default layouts
+	registerLayout(EMBEDDED_LAYOUT_NAME, EmbeddedLayout::CreateInstance);
 	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
 	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
 	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
