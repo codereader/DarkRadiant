@@ -19,13 +19,11 @@ class EmbeddedLayout :
 	// The camera view
 	CamWndPtr _camWnd;
 
-	struct RegularView {
-		GtkWidget* horizPane;
-		GtkWidget* texCamPane;
+	GtkWidget* horizPane;
+	GtkWidget* groupCamPane;
 		
-		gtkutil::PanedPosition posHPane;
-		gtkutil::PanedPosition posTexCamPane;
-	} _regular;
+	gtkutil::PanedPosition posHPane;
+	gtkutil::PanedPosition posgroupCamPane;
 
 	// Whether the cam is left or right
 	bool _regularLeft;
