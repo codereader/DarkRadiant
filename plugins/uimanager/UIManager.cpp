@@ -7,6 +7,7 @@
 #include "generic/callback.h"
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
+#include "ShutdownListener.h"
 
 namespace ui {
 
@@ -28,6 +29,10 @@ IGroupDialog& UIManager::getGroupDialog() {
 
 IStatusBarManager& UIManager::getStatusBarManager() {
 	return _statusBarManager;
+}
+
+void UIManager::clear() {
+	_menuManager.clear();
 }
 
 const std::string& UIManager::getName() const {
@@ -57,6 +62,9 @@ void UIManager::initialiseModule(const ApplicationContext& ctx) {
 		"EditColourScheme", 
 		FreeCaller<ColourSchemeEditor::editColourSchemes>()
 	);
+
+	_shutdownListener = UIManagerShutdownListenerPtr(new UIManagerShutdownListener(*this));
+	GlobalRadiant().addEventListener(_shutdownListener);
 }
 
 } // namespace ui

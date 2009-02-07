@@ -22,6 +22,10 @@ MenuManager::MenuManager() :
 	_root(new MenuItem(MenuItemPtr())) // Allocate the root item (type is set automatically)
 {}
 
+void MenuManager::clear() {
+	_root = MenuItemPtr();
+}
+
 void MenuManager::loadFromRegistry() {
 	xml::NodeList menuNodes = GlobalRegistry().findXPath(RKEY_MENU_ROOT);
 	
@@ -46,6 +50,9 @@ void MenuManager::loadFromRegistry() {
 }
 
 void MenuManager::setVisibility(const std::string& path, bool visible) {
+	// Sanity check for empty menu
+	if (_root == NULL) return;
+
 	MenuItemPtr foundMenu = _root->find(path);
 	
 	if (foundMenu != NULL) {
@@ -64,6 +71,9 @@ void MenuManager::setVisibility(const std::string& path, bool visible) {
 }
 
 GtkWidget* MenuManager::get(const std::string& path) {
+	// Sanity check for empty menu
+	if (_root == NULL) return NULL;
+
 	MenuItemPtr foundMenu = _root->find(path);
 	
 	if (foundMenu != NULL) {
@@ -83,6 +93,9 @@ GtkWidget* MenuManager::add(const std::string& insertPath,
 			 		  		const std::string& icon,
 					  		const std::string& eventName)
 {
+	// Sanity check for empty menu
+	if (_root == NULL) return NULL;
+
 	MenuItemPtr found = _root->find(insertPath);
 
 	if (found != NULL) {
@@ -148,6 +161,9 @@ GtkWidget* MenuManager::insert(const std::string& insertPath,
 						 const std::string& icon,
 						 const std::string& eventName)
 {
+	// Sanity check for empty menu
+	if (_root == NULL) return NULL;
+
 	MenuItemPtr found = _root->find(insertPath);
 	
 	if (found != NULL) {
@@ -193,6 +209,9 @@ GtkWidget* MenuManager::insert(const std::string& insertPath,
 }
 
 void MenuManager::remove(const std::string& path) {
+	// Sanity check for empty menu
+	if (_root == NULL) return;
+
 	MenuItemPtr item = _root->find(path);
 
 	if (item == NULL) return; // nothing to do
@@ -225,6 +244,9 @@ void MenuManager::remove(const std::string& path) {
 }
 
 void MenuManager::updateAccelerators() {
+	// Sanity check for empty menu
+	if (_root == NULL) return;
+
 	_root->updateAcceleratorRecursive();
 }
 

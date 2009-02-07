@@ -95,6 +95,11 @@ public:
 	 *          strings of all the menu items.
 	 */
 	void updateAccelerators();
+
+	/**
+	 * Clears all references to GtkWidgets etc.
+	 */
+	void clear();
 };
 
 } // namespace ui
