@@ -3,6 +3,7 @@
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "parser/DefTokeniser.h"
+#include "parser/DefBlockTokeniser.h"
 #include "ShaderDefinition.h"
 #include "Doom3ShaderSystem.h"
 
@@ -55,6 +56,21 @@ void ShaderFileLoader::parseShaderDecl(parser::DefTokeniser& tokeniser,
 void ShaderFileLoader::parseShaderFile(std::istream& inStr, 
 									   const std::string& filename)
 {
+#if 0
+	// Parse the file with a blocktokeniser, the actual block contents
+	// will be parsed separately.
+	parser::BasicDefBlockTokeniser<std::istream> tokeniser(inStr);
+
+	while (tokeniser.hasMoreBlocks()) {
+		// Get the next block
+		parser::BlockTokeniser::Block block = tokeniser.nextBlock();
+
+		if (block.name != "table") {
+			ShaderTemplatePtr tmp(new ShaderTemplate(block.name));
+			tmp->setBlockContents(block.contents);
+		}
+	}
+#else
 	// Create the tokeniser
 	parser::BasicDefTokeniser<std::istream> tokeniser(inStr, 
 													  " \t\n\v\r", 
@@ -96,6 +112,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 			}
 		}
 	}
+#endif
 }
 
 /* Normalises a given (raw) shadername (slash conversion, extension removal, ...) 

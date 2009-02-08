@@ -11,6 +11,8 @@
 #include "ShaderFileLoader.h"
 #include "MissingXMLNodeException.h"
 
+#include "debugging/ScopedDebugTimer.h"
+
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace {
@@ -83,7 +85,19 @@ void Doom3ShaderSystem::loadMaterialFiles() {
 
 void Doom3ShaderSystem::realise() {
 	if (!_realised) {
-		loadMaterialFiles();
+
+		/*for (int i = 0; i < 10; ++i) {
+			{
+				ScopedDebugTimer timer("Round: ");
+				loadMaterialFiles();
+			}			
+		}
+
+		terminate();*/
+		{
+			ScopedDebugTimer timer("ShaderFiles parsed: ");
+			loadMaterialFiles();
+		}
 		_observers.realise();
 		_realised = true;
 	}

@@ -90,6 +90,11 @@ public:
   // cull stuff
   IShader::ECull m_Cull;
 
+	std::string _blockContents;
+
+	// Whether the block has been parsed
+	bool _parsed;
+
 	/** 
 	 * Constructor. Accepts the name to use for this template.
 	 */
@@ -97,7 +102,20 @@ public:
 	: _name(name),
       fogLight(false),
       ambientLight(false),
-      blendLight(false)
+      blendLight(false),
+	  _parsed(false)
+	{
+    	m_nFlags = 0;
+    	m_fTrans = 1.0f;    
+	}
+
+	ShaderTemplate(const std::string& name, const std::string& blockContents) 
+	: _name(name),
+      fogLight(false),
+      ambientLight(false),
+      blendLight(false),
+	  _blockContents(blockContents),
+	  _parsed(false)
 	{
     	m_nFlags = 0;
     	m_fTrans = 1.0f;    
@@ -115,6 +133,11 @@ public:
 	 */
 	void setName(const std::string& name) {
 		_name = name;
+	}
+
+	// Sets the raw block definition contents, will be parsed on demand
+	void setBlockContents(const std::string& blockContents) {
+		_blockContents = blockContents;
 	}
 
 	/**
