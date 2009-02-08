@@ -20,7 +20,7 @@
 class WidgetToggle :
 	public Toggle
 {
-	typedef std::vector<GtkWidget*> WidgetList;
+	typedef std::list<GtkWidget*> WidgetList;
 
 	// The list of all the connected widgets
 	WidgetList _widgets;

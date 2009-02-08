@@ -22,24 +22,26 @@ namespace ui {
 		typedef std::vector<std::string> StringVector;
 	}
 
-MenuItem::MenuItem(MenuItemPtr parent) :
-	_parent(parent),
+MenuItem::MenuItem(const MenuItemPtr& parent) :
+	_parent(MenuItemWeakPtr(parent)),
 	_widget(NULL),
 	_type(menuNothing),
 	_constructed(false)
 {
-	if (_parent == NULL) {
+	if (parent == NULL) {
 		_type = menuRoot;
 	}
-	else if (_parent->isRoot()) {
+	else if (parent->isRoot()) {
 		_type = menuBar;
 	}
 }
 
 MenuItem::~MenuItem() {
-	if (_widget != NULL && GTK_IS_WIDGET(_widget) && !_event.empty()) {
+	if (!_event.empty()) {
 		IEventPtr ev = GlobalEventManager().findEvent(_event);
-		
+
+		// Tell the eventmanager to disconnect the widget in any case
+		// even if has been destroyed already.
 		if (ev != NULL) {
 			ev->disconnectWidget(_widget);
 		}
@@ -59,10 +61,10 @@ bool MenuItem::isRoot() const {
 }
 
 MenuItemPtr MenuItem::parent() const {
-	return _parent;
+	return _parent.lock();
 }
 
-void MenuItem::setParent(MenuItemPtr parent) {
+void MenuItem::setParent(const MenuItemPtr& parent) {
 	_parent = parent;
 }
 	
@@ -115,7 +117,7 @@ void MenuItem::setEvent(const std::string& eventName) {
 	_event = eventName;
 }
 
-int MenuItem::getMenuPosition(MenuItemPtr child) {
+int MenuItem::getMenuPosition(const MenuItemPtr& child) {
 	if (!_constructed) {
 		construct();
 	}
@@ -205,7 +207,7 @@ MenuItemPtr MenuItem::find(const std::string& menuPath) {
 	return MenuItemPtr();
 }
 
-void MenuItem::parseNode(xml::Node& node, MenuItemPtr thisItem) {
+void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 	std::string nodeName = node.getName();
 	
 	setName(node.getAttributeValue("name"));
