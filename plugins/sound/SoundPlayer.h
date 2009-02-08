@@ -12,6 +12,10 @@ namespace sound {
 
 class SoundPlayer
 {
+protected:
+	// Are we set up yet? Defer initialisation until we play something.
+	bool _initialised;
+
 	ALCcontext* _context;
 
 	// The buffer containing the currently played audio data
@@ -25,10 +29,11 @@ class SoundPlayer
 	gtkutil::Timer _timer;
 	
 public:
-	// Constructor, initialises the AL utitilites
+	// Constructor
 	SoundPlayer();
 	
-	/** greebo: Destroys the alut context
+	/** 
+	 * greebo: Destroys the alut context
 	 */
 	~SoundPlayer();
 
@@ -41,13 +46,16 @@ public:
 	 */
 	virtual void stop();
 
-private:
+protected:
+	// Initialises the AL context
+	void initialise();
+
 	// Clears the buffer, stops playing
 	void clearBuffer();
 
 	// This is called periodically to check whether the buffer can be cleared
 	static gboolean checkBuffer(gpointer data);
-}; // class AudioManager
+};
 
 } // namespace sound
 
