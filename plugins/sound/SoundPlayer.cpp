@@ -32,6 +32,7 @@ namespace sound {
 
 // Constructor
 SoundPlayer::SoundPlayer() :
+	_initialised(false),
 	_context(NULL),
 	_buffer(0),
 	_source(0),
@@ -39,7 +40,9 @@ SoundPlayer::SoundPlayer() :
 {
 	// Disable the timer, to make sure
 	_timer.disable();
+}
 
+void SoundPlayer::initialise() {
 	// Create device
 	ALCdevice* device = alcOpenDevice(NULL);
 
@@ -58,6 +61,7 @@ SoundPlayer::SoundPlayer() :
 			}
 
 			// Success
+			_initialised = true;
 			globalOutputStream() << "SoundPlayer: OpenAL context successfully set up." << std::endl;
 		}
 		else {
@@ -140,6 +144,11 @@ void SoundPlayer::stop() {
 }
 
 void SoundPlayer::play(ArchiveFile& file) {
+	// If we're not initialised yet, do it now
+	if (!_initialised) {
+		initialise();
+    }
+
 	// Stop any previous playback operations, that might be still active 
 	clearBuffer();
 	
