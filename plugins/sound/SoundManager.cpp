@@ -6,6 +6,8 @@
 #include "generic/callback.h"
 #include "parser/DefTokeniser.h"
 
+#include "debugging/ScopedDebugTimer.h"
+
 #include <iostream>
 #include <boost/algorithm/string/predicate.hpp>
 #include <stdlib.h> // for atoi
@@ -148,6 +150,8 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "SoundManager::initialiseModule called\n";
 	// Pass a SoundFileLoader to the filesystem
 	SoundFileLoader loader(*this);
+
+	ScopedDebugTimer timer("Sound definitions parsed: ");
 	GlobalFileSystem().forEachFile(
 		SOUND_FOLDER,			// directory 
 		"sndshd", 				// required extension
