@@ -33,7 +33,7 @@ void ShaderFileLoader::parseShaderDecl(parser::DefTokeniser& tokeniser,
 					  ShaderTemplatePtr shaderTemplate, 
 					  const std::string& filename) 
 {
-	// Get the ShaderTemplate to populate itself by parsing tokens from the
+	/*// Get the ShaderTemplate to populate itself by parsing tokens from the
 	// DefTokeniser. This may throw exceptions.	
 	shaderTemplate->parseDoom3(tokeniser);
 	
@@ -47,7 +47,7 @@ void ShaderFileLoader::parseShaderDecl(parser::DefTokeniser& tokeniser,
     if (!GetShaderLibrary().addDefinition(name, def)) {
     	std::cout << "[shaders] " << filename << ": shader " << name
     			  << " already defined." << std::endl;
-    }
+    }*/
 }
 
 /* Parses through the shader file and processes the tokens delivered by 
@@ -56,7 +56,7 @@ void ShaderFileLoader::parseShaderDecl(parser::DefTokeniser& tokeniser,
 void ShaderFileLoader::parseShaderFile(std::istream& inStr, 
 									   const std::string& filename)
 {
-#if 0
+#if 1
 	// Parse the file with a blocktokeniser, the actual block contents
 	// will be parsed separately.
 	parser::BasicDefBlockTokeniser<std::istream> tokeniser(inStr);
@@ -65,9 +65,22 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 		// Get the next block
 		parser::BlockTokeniser::Block block = tokeniser.nextBlock();
 
-		if (block.name != "table") {
-			ShaderTemplatePtr tmp(new ShaderTemplate(block.name));
-			tmp->setBlockContents(block.contents);
+		// Skip tables
+		if (block.name.substr(0, 5) == "table") {
+			continue;
+		}
+
+		boost::algorithm::replace_all(block.name, "\\", "/"); // use forward slashes
+
+		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(block.name, block.contents));
+		
+		// Construct the ShaderDefinition wrapper class
+		ShaderDefinition def(shaderTemplate, filename);
+
+		// Insert into the definitions map, if not already present
+		if (!GetShaderLibrary().addDefinition(block.name, def)) {
+    		globalErrorStream() << "[shaders] " << filename 
+				<< ": shader " << block.name << " already defined." << std::endl;
 		}
 	}
 #else
@@ -120,7 +133,7 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
  */
 ShaderTemplatePtr ShaderFileLoader::parseShaderName(std::string& rawName) 
 {
-	boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
+	/*boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
 	// greebo: Don't use lowercase as this might screw the shader lookup
 	//boost::algorithm::to_lower(rawName); // use lowercase
 
@@ -132,7 +145,8 @@ ShaderTemplatePtr ShaderFileLoader::parseShaderName(std::string& rawName)
 
 	// Construct and return the ShaderTemplate pointer	
 	ShaderTemplatePtr shaderTemplate(new ShaderTemplate(rawName));
-	return shaderTemplate;
+	return shaderTemplate;*/
+	return ShaderTemplatePtr();
 } 
 
 /* Parses through a table definition within a material file.

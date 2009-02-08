@@ -57,13 +57,14 @@ class ShaderTemplate
 	// Template name
 	std::string _name;
   
-public:
-
 	// The current layer (used by the parsing functions)
 	LayerTemplate 	m_currentLayer;
   
+public:
   	// Vector of LayerTemplates representing each stage in the material
   	typedef std::vector<LayerTemplate> Layers;
+
+private:
 	Layers m_layers;
 
 	// Map expressions
@@ -95,20 +96,7 @@ public:
 	// Whether the block has been parsed
 	bool _parsed;
 
-	/** 
-	 * Constructor. Accepts the name to use for this template.
-	 */
-	ShaderTemplate(const std::string& name) 
-	: _name(name),
-      fogLight(false),
-      ambientLight(false),
-      blendLight(false),
-	  _parsed(false)
-	{
-    	m_nFlags = 0;
-    	m_fTrans = 1.0f;    
-	}
-
+public:
 	ShaderTemplate(const std::string& name, const std::string& blockContents) 
 	: _name(name),
       fogLight(false),
@@ -135,17 +123,93 @@ public:
 		_name = name;
 	}
 
+	const std::string& getDescription() {
+		if (!_parsed) parseDefinition();
+		return description;
+	}
+
+	int getFlags() {
+		if (!_parsed) parseDefinition();
+		return m_nFlags;
+	}
+
+	float getTrans() {
+		if (!_parsed) parseDefinition();
+		return m_fTrans;
+	}
+
+	IShader::EAlphaFunc getAlphaFunc() {
+		if (!_parsed) parseDefinition();
+		return m_AlphaFunc;
+	}
+
+	float getAlphaRef() {
+		if (!_parsed) parseDefinition();
+		return m_AlphaRef;
+	}
+
+	IShader::ECull getCull() {
+		if (!_parsed) parseDefinition();
+		return m_Cull;
+	}
+
+	const Layers& getLayers() {
+		if (!_parsed) parseDefinition();
+		return m_layers;
+	}
+
+	bool isFogLight() {
+		if (!_parsed) parseDefinition();
+		return fogLight;
+	}
+
+	bool isAmbientLight() {
+		if (!_parsed) parseDefinition();
+		return ambientLight;
+	}
+
+	bool isBlendLight() {
+		if (!_parsed) parseDefinition();
+		return blendLight;
+	}
+
 	// Sets the raw block definition contents, will be parsed on demand
 	void setBlockContents(const std::string& blockContents) {
 		_blockContents = blockContents;
 	}
 
+	const shaders::MapExpressionPtr& getTexture() {
+		if (!_parsed) parseDefinition();
+		return _texture;
+	}
+
+	const shaders::MapExpressionPtr& getDiffuse() {
+		if (!_parsed) parseDefinition();
+		return _diffuse;
+	}
+
+	const shaders::MapExpressionPtr& getBump() {
+		if (!_parsed) parseDefinition();
+		return _bump;
+	}
+
+	const shaders::MapExpressionPtr& getSpecular() {
+		if (!_parsed) parseDefinition();
+		return _specular;
+	}
+
+	const shaders::MapExpressionPtr& getLightFalloff() {
+		if (!_parsed) parseDefinition();
+		return _lightFalloff;
+	}
+
+private:
 	/**
 	 * Parse a Doom 3 material decl. This is the master parse function, it
 	 * returns no value but exceptions may be thrown at any stage of the 
 	 * parsing.
 	 */
-	void parseDoom3(parser::DefTokeniser&);
+	void parseDefinition();
 
 	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
 	bool parseLightFlags(parser::DefTokeniser&, const std::string&);

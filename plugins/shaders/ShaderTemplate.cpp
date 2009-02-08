@@ -1,7 +1,10 @@
 #include "ShaderTemplate.h"
 #include "MapExpression.h"
 
+#include "itextstream.h"
+
 #include "os/path.h"
+#include "parser/DefTokeniser.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
@@ -199,43 +202,53 @@ bool ShaderTemplate::saveLayer()
 /* Parses a material definition for shader keywords and takes the according 
  * actions. 
  */
-void ShaderTemplate::parseDoom3(parser::DefTokeniser& tokeniser)
-{
-	int curStage = 1;	// we always start at stage 1
-		
-	while (curStage>0 && tokeniser.hasMoreTokens()) {
-		std::string token = tokeniser.nextToken();
-		std::string token_lowercase = boost::algorithm::to_lower_copy(token);
-		
-		if (token=="}") {
+void ShaderTemplate::parseDefinition() {
+	// Construct a local deftokeniser to parse the unparsed block
+	parser::BasicDefTokeniser<std::string> tokeniser(_blockContents);
+
+	_parsed = true; // we're parsed from now on
+
+	try
+	{
+		int curStage = 1;	// we always start at stage 1
 			
-			if (--curStage == 1) {
-				saveLayer();
-			}
+		while (curStage > 0 && tokeniser.hasMoreTokens()) {
+			std::string token = tokeniser.nextToken();
+			std::string token_lowercase = boost::algorithm::to_lower_copy(token);
 			
-			// If the texture is missing (i.e. no editorimage provided), 
-			// substitute this with the diffusemap
-			if (!_texture) {		
-				_texture = _diffuse;
+			if (token=="}") {
+				
+				if (--curStage == 1) {
+					saveLayer();
+				}
+				
+				// If the texture is missing (i.e. no editorimage provided), 
+				// substitute this with the diffusemap
+				if (!_texture) {		
+					_texture = _diffuse;
+				}
+			} 
+			else if (token=="{") {
+				++curStage;
 			}
-		} 
-		else if (token=="{") {
-			++curStage;
+			else {
+				switch (curStage) {
+					case 1:
+						parseShaderFlags(tokeniser, token_lowercase);
+						parseLightFlags(tokeniser, token_lowercase);
+						parseBlendShortcuts(tokeniser, token_lowercase);
+						break;
+					case 2:
+						parseBlendType(tokeniser, token_lowercase);
+						parseBlendMaps(tokeniser, token_lowercase);
+						parseClamp(tokeniser, token_lowercase);
+						break;
+				}
+			} 
 		}
-		else {
-			switch (curStage) {
-				case 1:
-					parseShaderFlags(tokeniser, token_lowercase);
-					parseLightFlags(tokeniser, token_lowercase);
-					parseBlendShortcuts(tokeniser, token_lowercase);
-					break;
-				case 2:
-					parseBlendType(tokeniser, token_lowercase);
-					parseBlendMaps(tokeniser, token_lowercase);
-					parseClamp(tokeniser, token_lowercase);
-					break;
-			}
-		} 
 	}
-	
+	catch (parser::ParseException p) {
+		globalErrorStream() << "Error while parsing shader " << _name << ": "
+			<< p.what() << std::endl;
+	}
 }

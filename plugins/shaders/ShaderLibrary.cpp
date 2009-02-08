@@ -19,16 +19,11 @@ ShaderLibrary::ShaderLibrary()
 bool ShaderLibrary::addDefinition(const std::string& name, 
 								  const ShaderDefinition& def) 
 {
-	ShaderDefinitionMap::iterator i = _definitions.find(name);
+	std::pair<ShaderDefinitionMap::iterator, bool> result = _definitions.insert(
+		ShaderDefinitionMap::value_type(name, def)
+	);
 	
-	if (i != _definitions.end()) {
-		// Return the definition
-		return false;
-	}
-	else {
-		_definitions.insert(std::make_pair(name, def));
-		return true;
-	}
+	return result.second;
 }
 
 ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
@@ -43,7 +38,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
 		globalErrorStream() << "Definition not found: " << name << "\n";
 		
 		// Create an empty template with this name
-		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name));
+		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name, ""));
 				
 		// Take this empty shadertemplate and create a ShaderDefinition
 		ShaderDefinition def(shaderTemplate, "");
