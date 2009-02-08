@@ -49,14 +49,26 @@ void WidgetToggle::updateWidgets() {
 	
 // Show all the connected widgets
 void WidgetToggle::showWidgets() {
-	for (std::size_t i = 0; i < _widgets.size(); i++) {
-		gtk_widget_show(_widgets[i]);
+	for (WidgetList::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */) {
+		if (GTK_IS_WIDGET(*i)) {
+			gtk_widget_show(*i++);
+		}
+		else {
+			// Not a valid widget anymore, remove from the list
+			_widgets.erase(i++);
+		}
 	}
 }
 
 // Hide all the connected widgets
 void WidgetToggle::hideWidgets() {
-	for (std::size_t i = 0; i < _widgets.size(); i++) {
-		gtk_widget_hide(_widgets[i]);
+	for (WidgetList::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */) {
+		if (GTK_IS_WIDGET(*i)) {
+			gtk_widget_hide(*i++);
+		}
+		else {
+			// Not a valid widget anymore, remove from the list
+			_widgets.erase(i++);
+		}
 	}
 }

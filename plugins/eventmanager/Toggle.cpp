@@ -41,15 +41,24 @@ void Toggle::updateWidgets() {
 	
 	for (ToggleWidgetList::iterator i = _toggleWidgets.begin();
 		 i != _toggleWidgets.end();
-		 ++i)
+		 /* in-loop increment */)
 	{
 		GtkWidget* widget = i->first;
+
+		// remove invalid widgets on the fly
+		if (!GTK_IS_WIDGET(i->first)) {
+			_toggleWidgets.erase(i++);
+			continue;
+		}
+
 		if (GTK_IS_TOGGLE_TOOL_BUTTON(widget)) {
 			gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(widget), _toggled);
 		}
 		else if (GTK_IS_CHECK_MENU_ITEM(widget)) {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(widget), _toggled);
 		}
+
+		++i;
 	}
 	
 	_callbackActive = false;
@@ -99,7 +108,12 @@ void Toggle::disconnectWidget(GtkWidget* widget) {
 	ToggleWidgetList::iterator i = _toggleWidgets.find(widget);
 
 	if (i != _toggleWidgets.end()) {
-		g_signal_handler_disconnect(i->first, i->second);
+		// Disconnect the signal, if appropriate
+		if (GTK_IS_WIDGET(i->first)) {
+			g_signal_handler_disconnect(i->first, i->second);
+		}
+
+		// Erase from the list
 		_toggleWidgets.erase(i);
 	}
 }

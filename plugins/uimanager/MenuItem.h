@@ -6,6 +6,7 @@
 #include "gtkutil/MenuItemAccelerator.h"
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 typedef struct _GtkWidget GtkWidget;
 
@@ -25,12 +26,12 @@ namespace ui {
 
 class MenuItem;
 typedef boost::shared_ptr<MenuItem> MenuItemPtr;
-typedef std::vector<MenuItemPtr> MenuItemList;
+typedef boost::weak_ptr<MenuItem> MenuItemWeakPtr;
 
 class MenuItem
 {
-	// The parent of this MenuItem
-	MenuItemPtr _parent;
+	// The parent of this MenuItem (weak reference to avoid circular ownership)
+	MenuItemWeakPtr _parent;
 	
 	// The name of this node
 	std::string _name;
@@ -50,6 +51,7 @@ class MenuItem
 	GtkWidget* _widget;
 	
 	// The children of this MenuItem
+	typedef std::vector<MenuItemPtr> MenuItemList;
 	MenuItemList _children;
 	
 	eMenuItemType _type;
@@ -59,7 +61,7 @@ class MenuItem
 	
 public:
 	// Constructor, needs a name and a parent specified
-	MenuItem(MenuItemPtr parent);
+	MenuItem(const MenuItemPtr& parent);
 
 	// Destructor disconnects the widget from the event
 	~MenuItem();
@@ -75,7 +77,7 @@ public:
 	
 	// Returns the pointer to the parent (is NULL for the root item)
 	MenuItemPtr parent() const;
-	void setParent(MenuItemPtr parent);
+	void setParent(const MenuItemPtr& parent);
 	
 	/** greebo: Adds the given menuitem to the list of children.
 	 * 
@@ -90,7 +92,7 @@ public:
 	
 	/** greebo: Tries to find the GtkMenu position index of the given child.
 	 */
-	int getMenuPosition(MenuItemPtr child);
+	int getMenuPosition(const MenuItemPtr& child);
 	
 	// Returns the type of this item node
 	eMenuItemType getType() const;
@@ -122,7 +124,7 @@ public:
 	 * 			At least I don't know of any other method right now to 
 	 * 			create a "self" shared_ptr from itself.
 	 */
-	void parseNode(xml::Node& node, MenuItemPtr thisItem);
+	void parseNode(xml::Node& node, const MenuItemPtr& thisItem);
 	
 	/** Updates the accelerator string of this item and all its children,
 	 *  if applicable.
