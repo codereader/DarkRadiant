@@ -17,8 +17,27 @@ namespace ui
 
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass() {
-	static EntityClassChooser instance;
-	return instance.showAndBlock();
+	return InstancePtr()->showAndBlock();
+}
+
+EntityClassChooserPtr& EntityClassChooser::InstancePtr() {
+	static EntityClassChooserPtr _instancePtr;
+
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = EntityClassChooserPtr(new EntityClassChooser);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+
+	return _instancePtr;
+}
+
+void EntityClassChooser::onRadiantShutdown() {
+	globalOutputStream() << "EntityClassChooser shutting down.\n";
+
+	_modelPreview = ModelPreviewPtr();
 }
 
 // Show the dialog
@@ -28,7 +47,7 @@ std::string EntityClassChooser::showAndBlock() {
 	gtk_widget_show_all(_widget);
 	gtk_widget_grab_focus(_treeView);
 
-	_modelPreview.initialisePreview();
+	_modelPreview->initialisePreview();
 
 	// Update the member variables
 	updateSelection();
@@ -37,7 +56,7 @@ std::string EntityClassChooser::showAndBlock() {
 	gtk_main();
 
 	// Release the models
-	_modelPreview.clear();
+	_modelPreview->clear();
 	
 	// Return the last selection (may be "" if dialog was cancelled)
 	return _selectedName;
@@ -50,7 +69,8 @@ EntityClassChooser::EntityClassChooser()
   _treeStore(NULL),
   _selection(NULL),
   _okButton(NULL),
-  _selectedName("")
+  _selectedName(""),
+  _modelPreview(new ModelPreview)
 {
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
@@ -66,7 +86,7 @@ EntityClassChooser::EntityClassChooser()
 		GTK_WINDOW(_widget), gint(w * 0.7f), gint(h * 0.6f)
 	);
 
-	_modelPreview.setSize(gint(w*0.3f));
+	_modelPreview->setSize(gint(w*0.3f));
 
 	// Create GUI elements and pack into main VBox
 	
@@ -79,7 +99,7 @@ EntityClassChooser::EntityClassChooser()
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbx, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _modelPreview, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), *_modelPreview, FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(_widget), hbox);
 
@@ -211,16 +231,16 @@ void EntityClassChooser::updateSelection() {
 		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(selName);	
 
 		if (eclass != NULL) {
-			_modelPreview.setModel(eclass->getAttribute("model").value);
-			_modelPreview.setSkin(eclass->getAttribute("skin").value);
+			_modelPreview->setModel(eclass->getAttribute("model").value);
+			_modelPreview->setSkin(eclass->getAttribute("skin").value);
 		}
 
 		// Update the _selectionName field
 		_selectedName = selName;
 	}
 	else {
-		_modelPreview.setModel("");
-		_modelPreview.setSkin("");
+		_modelPreview->setModel("");
+		_modelPreview->setSkin("");
 
 		gtk_widget_set_sensitive(_okButton, FALSE);
 	}
