@@ -67,7 +67,10 @@ class DefBlockTokeniserFunc {
         STAR              // asterisk, possibly indicates end of comment (*/)
     } _state;
        
-	const char* _delims;
+	const char* _delims;			// whitespace
+
+	const char _blockStartChar;	// "{"
+	const char _blockEndChar;		// "}"
 
 	// Test if a character is a delimiter
     bool isDelim(char c) {
@@ -83,9 +86,11 @@ class DefBlockTokeniserFunc {
 public:
 
     // Constructor
-    DefBlockTokeniserFunc() : 
+    DefBlockTokeniserFunc(const char* delims, char blockStartChar, char blockEndChar) : 
 		_state(SEARCHING_NAME),
-		_delims(" \t\n\v\r")
+		_delims(delims),
+		_blockStartChar(blockStartChar),
+		_blockEndChar(blockEndChar)
     {}
 
     /* REQUIRED. Operator() is called by the boost::tokenizer. This function
@@ -145,21 +150,31 @@ public:
 					break;
 
 				case SEARCHING_BLOCK:
-					// Check for opening brace
-					if (ch == '{') {
+					if (isDelim(ch)) {
+						++next; // keep on searching
+						continue;
+					}
+					else if (ch == _blockStartChar) {
+						// Found an opening brace
 						_state = BLOCK_CONTENT;
 						blockLevel++;
 						++next;
 						continue;
 					}
 					else {
-						++next; // keep on searching
+						// Not a delimiter, not an opening brace, must be 
+						// an "extension" for the name
+						tok.name += ' ';
+						tok.name += ch;
+
+						// Switch back to name
+						_state = TOKEN_STARTED;
 						continue;
 					}
 
 				case BLOCK_CONTENT:
 					// Check for another opening brace
-					if (ch == '}') {
+					if (ch == _blockEndChar) {
 						blockLevel--;
 
 						if (blockLevel == 0) {
@@ -175,7 +190,7 @@ public:
 							continue;
 						}
 					}
-					else if (ch == '{') {
+					else if (ch == _blockStartChar) {
 						// another block within this block, ignore this
 						blockLevel++;
 						tok.contents += ch;
@@ -303,8 +318,11 @@ public:
      * @param str
      * The container to tokenise.
      */
-    BasicDefBlockTokeniser(const ContainerT& str) : 
-		_tok(str, DefBlockTokeniserFunc()),
+    BasicDefBlockTokeniser(const ContainerT& str,
+						   const char* delims = " \t\n\v\r",
+						   const char blockStartChar = '{',
+						   const char blockEndChar = '}') : 
+		_tok(str, DefBlockTokeniserFunc(delims, blockStartChar, blockEndChar)),
 		_tokIter(_tok.begin())
     {}
         
@@ -373,10 +391,13 @@ public:
      * The std::istream to tokenise. This is a non-const parameter, since tokens
      * will be extracted from the stream.
      */
-	BasicDefBlockTokeniser(std::istream& str) :
+	BasicDefBlockTokeniser(std::istream& str, 
+						   const char* delims = " \t\n\v\r",
+						   const char blockStartChar = '{',
+						   const char blockEndChar = '}') :
 		_tok(CharStreamIterator(setNoskipws(str)), // start iterator
 			 CharStreamIterator(), // end (null) iterator
-			 DefBlockTokeniserFunc()),
+			 DefBlockTokeniserFunc(delims, blockStartChar, blockEndChar)),
 		_tokIter(_tok.begin())
 	{}
         
