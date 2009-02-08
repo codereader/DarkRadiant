@@ -1,10 +1,37 @@
 #ifndef SCOPEDDEBUGTIMER_H_
 #define SCOPEDDEBUGTIMER_H_
 
-#include <sys/time.h>
+#if defined(_MSC_VER) || defined(_WINDOWS_)
+   #include <time.h>
+   #include <windows.h>
+   #if !defined(_WINSOCK2API_) && !defined(_WINSOCKAPI_)
+         struct timeval 
+         {
+            long tv_sec;
+            long tv_usec;
+         };
+   #endif 
+#else
+   #include <sys/time.h>
+#endif 
+
+#if defined(_MSC_VER) || defined(_WINDOWS_)
+   int gettimeofday(struct timeval* tv, void*) 
+   {
+      union {
+         long long ns100;
+         FILETIME ft;
+      } now;
+     
+      GetSystemTimeAsFileTime (&now.ft);
+      tv->tv_usec = (long) ((now.ns100 / 10LL) % 1000000LL);
+      tv->tv_sec = (long) ((now.ns100 - 116444736000000000LL) / 10000000LL);
+     return (0);
+   }
+#endif
+
 #include <string>
 #include "stream/textfilestream.h"
-#include "stream/stringstream.h"
 
 namespace {
 	
@@ -76,15 +103,14 @@ public:
 		// Calculate duration
 		double duration = end - _s;
 		
-		std::cout << "[ScopedDebugTimer] \"" << _op 
-				  << "\" in " << duration << " seconds.";
-		globalOutputStream() << "[ScopedDebugTimer] \"" << _op.c_str() 
-		  					 << "\" in " << duration << " seconds.";
+		globalOutputStream() << "[ScopedDebugTimer] \"" << _op 
+			<< "\" in " << duration << " seconds";
+
 		if (_fps) {
-			std::cout << " (" << (1.0 / duration) << " FPS)";
 			globalOutputStream() << " (" << (1.0 / duration) << " FPS)";
 		}
-		std::cout << std::endl;
+
+		globalOutputStream() << std::endl;
 	}
 };
 
