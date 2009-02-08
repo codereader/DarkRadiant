@@ -114,6 +114,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/mainframe/MainFrame.cpp \
 					  ui/mainframe/MainFrameLayoutManager.cpp \
 					  ui/mainframe/FloatingLayout.cpp \
+					  ui/mainframe/EmbeddedLayout.cpp \
 					  ui/mainframe/SplitPaneLayout.cpp \
 					  ui/mainframe/RegularLayout.cpp \
 					  ui/mainframe/ScreenUpdateBlocker.cpp \
