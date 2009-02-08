@@ -2,6 +2,7 @@
 #define ENTITYCLASSCHOOSER_H_
 
 #include <gtk/gtk.h>
+#include "iradiant.h"
 
 #include "ui/common/ModelPreview.h"
 #include "math/Vector3.h"
@@ -30,11 +31,15 @@ namespace {
 namespace ui
 {
 
+class EntityClassChooser;
+typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
+
 /** 
  * Dialog window displaying a tree of Entity Classes, allowing the selection
  * of a class to create at the current location. 
  */
-class EntityClassChooser
+class EntityClassChooser :
+	public RadiantEventListener
 {
 	// Main dialog window
 	GtkWidget* _widget;
@@ -57,7 +62,7 @@ class EntityClassChooser
 	std::string _selectedName;
 
 	// Model preview widget
-	ModelPreview _modelPreview;
+	ModelPreviewPtr _modelPreview;
 
 private:
 
@@ -92,6 +97,9 @@ private:
 	
 	// Show the dialog and choose an entity class.
 	std::string showAndBlock();
+
+	// This is where the static shared_ptr of the singleton instance is held.
+	static EntityClassChooserPtr& InstancePtr();
 	
 public:
 	
@@ -101,9 +109,11 @@ public:
 	 * selection is made, and empty string will be returned.
 	 */
 	static std::string chooseEntityClass();
-	
+
+	// RadiantEventListener implementation
+	void onRadiantShutdown();
 };
 
-}
+} // namespace ui
 
 #endif /*ENTITYCLASSCHOOSER_H_*/
