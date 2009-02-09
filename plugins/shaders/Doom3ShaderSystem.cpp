@@ -91,9 +91,10 @@ void Doom3ShaderSystem::realise() {
 				ScopedDebugTimer timer("Round: ");
 				loadMaterialFiles();
 			}			
+			freeShaders();
 		}
 
-		terminate();*/
+		//terminate();*/
 		{
 			ScopedDebugTimer timer("ShaderFiles parsed: ");
 			loadMaterialFiles();

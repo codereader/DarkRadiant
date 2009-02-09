@@ -204,7 +204,11 @@ bool ShaderTemplate::saveLayer()
  */
 void ShaderTemplate::parseDefinition() {
 	// Construct a local deftokeniser to parse the unparsed block
-	parser::BasicDefTokeniser<std::string> tokeniser(_blockContents);
+	parser::BasicDefTokeniser<std::string> tokeniser(
+		_blockContents,
+		" \t\n\v\r",	// delimiters (whitespace)
+		"{}(),"			// add the comma character to the kept delimiters
+	);
 
 	_parsed = true; // we're parsed from now on
 
