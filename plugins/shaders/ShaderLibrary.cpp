@@ -76,6 +76,10 @@ void ShaderLibrary::clear() {
 	_definitions.clear();
 }
 
+std::size_t ShaderLibrary::getNumShaders() {
+	return _definitions.size();
+}
+
 ShaderLibrary::iterator& ShaderLibrary::getIterator() {
 	return _publicIterator;
 }

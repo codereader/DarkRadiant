@@ -43,6 +43,9 @@ public:
 	/* greebo: Clears out the stored shader definitions
 	 */
 	void clear();
+
+	// Get the number of known shaders
+	std::size_t getNumShaders();
 	
 	/* greebo: Retrieves the shader with the given name.
 	 * 

@@ -39,7 +39,7 @@ public:
 	
 	/** greebo: Returns the soundshader with the name <shaderName>   
 	 */
-	const ISoundShaderPtr& getSoundShader(const std::string& shaderName); 
+	ISoundShaderPtr getSoundShader(const std::string& shaderName); 
 	
 	/** greebo: Plays the sound file. Tries to resolve the filename's
 	 * 			extension by appending .ogg or .wav and such.
