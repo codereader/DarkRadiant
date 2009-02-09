@@ -24,6 +24,11 @@ public:
 
 		// The block contents (excluding braces)
 		std::string contents;
+
+		void clear() {
+			name.clear();
+			contents.clear();
+		}
 	};
 	
     /** 
@@ -55,7 +60,7 @@ public:
 class DefBlockTokeniserFunc {
     
     // Enumeration of states
-    enum {
+    enum State {
         SEARCHING_NAME,	  // haven't found anything yet
 		TOKEN_STARTED,	  // first non-delimiter character found
         BLOCK_NAME,       // found the start of a possible multi-char token
@@ -104,7 +109,7 @@ public:
         _state = SEARCHING_NAME;
 
         // Clear out the token, no guarantee that it is empty
-		tok = BlockTokeniser::Block();
+		tok.clear();
 
 		char ch = '\0';
 		std::size_t blockLevel = 0;
@@ -161,6 +166,12 @@ public:
 						++next;
 						continue;
 					}
+					else if (ch == '/') {
+						// Forward slash, possible comment start
+						_state = FORWARDSLASH;
+						++next;
+						continue;
+					}
 					else {
 						// Not a delimiter, not an opening brace, must be 
 						// an "extension" for the name
@@ -169,6 +180,7 @@ public:
 
 						// Switch back to name
 						_state = TOKEN_STARTED;
+						++next;
 						continue;
 					}
 
@@ -222,7 +234,7 @@ public:
                             
                         default: // false alarm, add the slash and carry on
                             _state = TOKEN_STARTED;
-                            tok.name += "/";
+                            tok.name += '/';
                             // Do not increment next here
                             continue;
                     }
@@ -243,7 +255,8 @@ public:
                 case COMMENT_EOL:                
                     // This comment lasts until the end of the line.                    
                     if (ch == '\r' || ch == '\n') {
-                        _state = SEARCHING_NAME;
+						// An EOL comment with non-empty name means searching for block
+						_state = (tok.name.empty()) ? SEARCHING_NAME : SEARCHING_BLOCK;
                         ++next;
                         continue;
                     }
@@ -258,7 +271,7 @@ public:
                     // delimited comment.
                     if (ch == '/') {
                     	// End of comment
-                        _state = SEARCHING_NAME;
+                        _state = (tok.name.empty()) ? SEARCHING_NAME : SEARCHING_BLOCK;
                         ++next;
                         continue;
                     }
@@ -279,7 +292,7 @@ public:
 			}
 
         // Return true if we have found a named block
-        if (tok.name != "")
+        if (!tok.name.empty())
             return true;
         else
             return false;
