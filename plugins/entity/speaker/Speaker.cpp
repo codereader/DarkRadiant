@@ -222,7 +222,7 @@ void Speaker::sShaderChanged(const std::string& value) {
 		m_stdVal.setMax(0);
 	}
 	else {
-		m_stdVal = GlobalSoundManager().getSoundShader(value).getRadii();
+		m_stdVal = GlobalSoundManager().getSoundShader(value)->getRadii();
 	}
 	if (!m_minIsSet) m_speakerRadii.m_radii.setMin(m_stdVal.getMin());
 	if (!m_maxIsSet) m_speakerRadii.m_radii.setMax(m_stdVal.getMax());

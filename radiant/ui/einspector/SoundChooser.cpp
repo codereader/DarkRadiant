@@ -74,12 +74,12 @@ public:
 	{ }
 	
 	// Functor operator
-	void operator() (const ISoundShader& shader) {
+	void operator() (const ISoundShaderPtr& shader) {
 		GtkTreeIter iter;
 		gtk_tree_store_append(_store, &iter, NULL);
 		gtk_tree_store_set(_store, &iter, 
-						   DISPLAYNAME_COLUMN, shader.getName().c_str(),
-						   SHADERNAME_COLUMN, shader.getName().c_str(),
+						   DISPLAYNAME_COLUMN, shader->getName().c_str(),
+						   SHADERNAME_COLUMN, shader->getName().c_str(),
 						   -1);	
 	}	
 	
