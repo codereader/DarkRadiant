@@ -100,7 +100,7 @@ void SoundManager::parseShadersFrom(std::istream& contents) {
 	}
 }
 
-const ISoundShaderPtr& SoundManager::getSoundShader(const std::string& shaderName) {
+ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName) {
 	ShaderMap::const_iterator found = _shaders.find(shaderName);
 	
 	// If the name was found, return it, otherwise return an empty shader object
@@ -136,6 +136,8 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx) {
 			99						// max depth
 		);
 	}
+
+	globalOutputStream() << _shaders.size() << " sound shaders found." << std::endl;
 }
 
 } // namespace sound

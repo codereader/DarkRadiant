@@ -96,7 +96,7 @@ public:
 	/** greebo: Tries to lookup the SoundShader with the given name,
 	 * 			returns a soundshader with an empty name, if the lookup failed.
 	 */
-	virtual const ISoundShaderPtr& getSoundShader(const std::string& shaderName) = 0;
+	virtual ISoundShaderPtr getSoundShader(const std::string& shaderName) = 0;
 	
 	/** greebo: Plays the given sound file (defined by its VFS path).
 	 * 

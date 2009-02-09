@@ -77,28 +77,20 @@ void Doom3ShaderSystem::loadMaterialFiles() {
 	
 	// Load each file from the global filesystem
 	ShaderFileLoader ldr(sPath);
-	GlobalFileSystem().forEachFile(sPath, 
-								   extension, 
-								   makeCallback1(ldr), 
-								   0);
+	{
+		ScopedDebugTimer timer("ShaderFiles parsed: ");
+		GlobalFileSystem().forEachFile(sPath, 
+									   extension, 
+									   makeCallback1(ldr), 
+									   0);
+	}
+
+	globalOutputStream() << _library->getNumShaders() << " shaders found." << std::endl;
 }
 
 void Doom3ShaderSystem::realise() {
 	if (!_realised) {
-
-		/*for (int i = 0; i < 10; ++i) {
-			{
-				ScopedDebugTimer timer("Round: ");
-				loadMaterialFiles();
-			}			
-			freeShaders();
-		}
-
-		//terminate();*/
-		{
-			ScopedDebugTimer timer("ShaderFiles parsed: ");
-			loadMaterialFiles();
-		}
+		loadMaterialFiles();
 		_observers.realise();
 		_realised = true;
 	}
