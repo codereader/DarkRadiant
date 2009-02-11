@@ -16,7 +16,7 @@
 #endif 
 
 #if defined(_MSC_VER) || defined(_WINDOWS_)
-   int gettimeofday(struct timeval* tv, void*) 
+   inline int gettimeofday(struct timeval* tv, void*) 
    {
       union {
          long long ns100;
