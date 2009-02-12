@@ -46,6 +46,24 @@ public:
 	 * Return the settings path of the current Radiant instance.
 	 */
 	virtual const std::string& getBitmapsPath() const = 0;
+
+	/**
+	 * Returns the number of command line arguments specified at
+	 * application start (argc, argv). Note that the 0th argument 
+	 * (the executable path) is not included/counted here.
+	 */
+	virtual std::size_t getNumCmdLineArgs() const = 0;
+
+	/**
+	 * Returns the Nth command line argument as specified at
+	 * application start. Note that the 0th argument (the executable path)
+	 * is not accessible here.
+	 *
+	 * @index: zero-based index number, range = [0..numArguments)
+	 * 
+	 * @returns: the nth command line argument, or "" if the index is invalid.
+	 */
+	virtual std::string getCmdLineArg(std::size_t index) const = 0;
 	
 	/**
 	 * Return the reference to the application's output/error streams.
