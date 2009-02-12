@@ -23,17 +23,33 @@ class SoundRadii {
 			maxRad = max;
 		}
 	}
+
 	// set the sound radii in metres or in inch, might cause a conversion
-	inline void setMin (float min, bool inMetres = false) {
-		if (inMetres) minRad = min/0.0254f;
-		else minRad = min;
+	void setMin(float min, bool inMetres = false) {
+		if (inMetres) {
+			minRad = min/0.0254f;
+		}
+		else {
+			minRad = min;
+		}
 	}
-	inline void setMax (float max, bool inMetres = false) {
-		if (inMetres) maxRad = max/0.0254f;
-		else maxRad = max;
+
+	void setMax (float max, bool inMetres = false) {
+		if (inMetres) {
+			maxRad = max/0.0254f;
+		}
+		else {
+			maxRad = max;
+		}
 	}
-	inline float getMin () const { return minRad; }
-	inline float getMax () const { return maxRad; }
+
+	float getMin() const { 
+		return minRad;
+	}
+
+	float getMax() const { 
+		return maxRad;
+	}
 };
 
 /**
@@ -44,23 +60,24 @@ struct ISoundShader {
 	/**
 	 * Get the name of the shader.
 	 */
-	virtual std::string getName() const = 0;
+	virtual std::string getName() = 0;
 
 	/**
 	 * Get the min and max radii of the shader.
 	 */
-	virtual SoundRadii getRadii() const = 0;
+	virtual SoundRadii getRadii() = 0;
 	
 	/** greebo: Get the list of sound files associated to 
 	 * 			this shader.
 	 */
-	virtual SoundFileList getSoundFileList() const = 0;
+	virtual SoundFileList getSoundFileList() = 0;
 };
+typedef boost::shared_ptr<ISoundShader> ISoundShaderPtr;
 
 /**
  * Sound shader visitor function typedef.
  */
-typedef boost::function< void (const ISoundShader&) > SoundShaderVisitor;
+typedef boost::function< void (const ISoundShaderPtr&) > SoundShaderVisitor;
 
 const std::string MODULE_SOUNDMANAGER("SoundManager");
 
@@ -79,7 +96,7 @@ public:
 	/** greebo: Tries to lookup the SoundShader with the given name,
 	 * 			returns a soundshader with an empty name, if the lookup failed.
 	 */
-	virtual const ISoundShader& getSoundShader(const std::string& shaderName) = 0;
+	virtual ISoundShaderPtr getSoundShader(const std::string& shaderName) = 0;
 	
 	/** greebo: Plays the given sound file (defined by its VFS path).
 	 * 

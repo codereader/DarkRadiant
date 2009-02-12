@@ -225,13 +225,14 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
 	// Set of visited files, to avoid name conflicts
 	std::set<std::string> visitedFiles;
 	
+	FileVisitor visitor(callback, basedir, extension, visitedFiles);
+
 	// Visit each Archive, applying the FileVisitor to each one (which in
 	// turn calls the callback for each matching file.
 	for (ArchiveList::iterator i = _archives.begin(); 
 		 i != _archives.end(); 
 		 ++i)
     {
-		FileVisitor visitor(callback, basedir, extension, visitedFiles);
 		i->archive->forEachFile(
 						Archive::VisitorFunc(
 								visitor, Archive::eFiles, depth), basedir);

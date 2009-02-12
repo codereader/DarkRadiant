@@ -18,13 +18,10 @@ class SoundManager :
 	public ISoundManager
 {
 	// Map of named sound shaders
-	typedef std::map<std::string, ShaderPtr> ShaderMap;
+	typedef std::map<std::string, SoundShaderPtr> ShaderMap;
 	ShaderMap _shaders;
 	
-	SoundShader _emptyShader;
-	
-	// Parse a single sound shader from the given token stream
-	void parseSoundShader(parser::DefTokeniser& tok);
+	SoundShaderPtr _emptyShader;
 	
 	// The helper class for playing the sounds
 	SoundPlayer _soundPlayer;
@@ -42,7 +39,7 @@ public:
 	
 	/** greebo: Returns the soundshader with the name <shaderName>   
 	 */
-	const ISoundShader& getSoundShader(const std::string& shaderName); 
+	ISoundShaderPtr getSoundShader(const std::string& shaderName); 
 	
 	/** greebo: Plays the sound file. Tries to resolve the filename's
 	 * 			extension by appending .ogg or .wav and such.
