@@ -168,6 +168,11 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 // ============== OS-Specific Implementations end ===================
 
 void ApplicationContextImpl::initArgs(int argc, char* argv[]) {
+	// Store the arguments locally, ignore the first one
+	for (int i = 1; i < argc; i++) {
+		_cmdLineArgs.push_back(argv[i]);
+	}
+	
 	int i, j, k;
 	
 	for (i = 1; i < argc; i++) {
