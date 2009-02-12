@@ -2,6 +2,7 @@
 #define APPLICATIONCONTEXT_H_
 
 #include "imodule.h"
+#include <vector>
 
 namespace module {
 
@@ -16,6 +17,9 @@ class ApplicationContextImpl :
 	
 	// The path where the .map files are stored
 	std::string _mapsPath;
+
+	// Command line arguments
+	std::vector<std::string> _cmdLineArgs;
 	
 public:
 	/**
