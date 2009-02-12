@@ -6,6 +6,10 @@
 #include "os/dir.h"
 #include <vector>
 
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
 DirectoryArchive::DirectoryArchive(const std::string& root) : 
 	_root(root)
 {}
@@ -45,56 +49,32 @@ bool DirectoryArchive::containsFile(const char* name) {
 #include <iostream>
 
 void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
-	std::vector<Directory*> dirs;
-	
 	// Initialise the search's starting point
-	UnixPath path(_root);
-	path.push(root);
-	
-	// Open the starting directory and enter the recursion
-	dirs.push_back(directory_open(path));
+	fs::path start(_root + root);
 
-	while (!dirs.empty() && directory_good(dirs.back())) {
-		// Get a new filename
-		const char* name = directory_read_and_increment(dirs.back());
+	if (!fs::exists(start)) {
+		return;
+	}
 
-		if (name == 0) {
-			// Finished traversing this directory
-			directory_close(dirs.back());
-			dirs.pop_back();
-			path.pop();
-			continue;
-		}
-		
-		// Non-NULL filename
-		std::string filename(name);
-		if (filename == "." || filename == "..") {
-			continue;
-		}
-		
-		// Assemble the full filename
-		path.push_filename(filename);
+	// For cutting off the base path
+	std::size_t rootLen = _root.length();
 
-		bool is_directory = file_is_directory(path.c_str());
+	typedef fs::recursive_directory_iterator DirIter;
+	for (fs::recursive_directory_iterator it(start); it != fs::recursive_directory_iterator(); ++it)
+	{
+		// Get the candidate
+		const fs::path& candidate = *it;
 
-		if (!is_directory) {
-			visitor.file(os::getRelativePath(path, _root));
-			
-			// Remove the filename again, continue to search the dir
-			path.pop();
+		if (fs::is_directory(candidate)) {
+			// Check if we should traverse further
+			if (visitor.directory(candidate.string().substr(rootLen), it.level()+1)) {
+				// Visitor returned true, prevent going deeper into it
+				it.no_push();
+			}
 		}
 		else {
-			// We've got a folder, push a slash and attempt to traverse
-			path.push("/");
-
-			if (!visitor.directory(os::getRelativePath(path, _root), dirs.size())) {
-				// Open this new directory and push the handle
-				dirs.push_back(directory_open(path));
-			}
-			else {
-				// Visitor says: don't traverse, pop the path and continue
-				path.pop();
-			}
+			// File
+			visitor.file(candidate.string().substr(rootLen));
 		}
 	}
 }

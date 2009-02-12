@@ -80,17 +80,17 @@ void SoundShaderPreview::update() {
 		// We have a sound shader, update the liststore
 		
 		// Get the list of sound files associated to this shader
-		const ISoundShader& shader = GlobalSoundManager().getSoundShader(_soundShader);
+		const ISoundShaderPtr& shader = GlobalSoundManager().getSoundShader(_soundShader);
 		
-		if (!shader.getName().empty()) {
+		if (!shader->getName().empty()) {
 			// Create a new liststore and pack it into the treeview
 			_listStore = gtk_list_store_new(NUM_COLS, G_TYPE_STRING);
 			gtk_tree_view_set_model(GTK_TREE_VIEW(_treeView), GTK_TREE_MODEL(_listStore));
 			
 			// Retrieve the list of associated filenames (VFS paths)
-			SoundFileList list = shader.getSoundFileList();
+			SoundFileList list = shader->getSoundFileList();
 			
-			for (unsigned int i = 0; i < list.size(); i++) {
+			for (std::size_t i = 0; i < list.size(); i++) {
 				GtkTreeIter iter;
 				gtk_list_store_append(_listStore, &iter);
 				gtk_list_store_set(_listStore, &iter, 

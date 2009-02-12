@@ -11,6 +11,8 @@
 #include "ShaderFileLoader.h"
 #include "MissingXMLNodeException.h"
 
+#include "debugging/ScopedDebugTimer.h"
+
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace {
@@ -75,10 +77,15 @@ void Doom3ShaderSystem::loadMaterialFiles() {
 	
 	// Load each file from the global filesystem
 	ShaderFileLoader ldr(sPath);
-	GlobalFileSystem().forEachFile(sPath, 
-								   extension, 
-								   makeCallback1(ldr), 
-								   0);
+	{
+		ScopedDebugTimer timer("ShaderFiles parsed: ");
+		GlobalFileSystem().forEachFile(sPath, 
+									   extension, 
+									   makeCallback1(ldr), 
+									   0);
+	}
+
+	globalOutputStream() << _library->getNumShaders() << " shaders found." << std::endl;
 }
 
 void Doom3ShaderSystem::realise() {

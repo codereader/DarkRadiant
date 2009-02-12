@@ -10,7 +10,7 @@ namespace shaders {
 class CShader : 
 	public IShader 
 {
-	const ShaderTemplate& _template;
+	ShaderTemplatePtr _template;
 	
 	// The shader file name (i.e. the file where this one is defined)
 	std::string _fileName;
@@ -138,9 +138,9 @@ public:
 		float alphaTest() const {
 			return m_alphaTest;
 		}
-	};
 
-	static MapLayer evaluateLayer(const LayerTemplate& layerTemplate);
+		static MapLayer getFromLayerTemplate(const LayerTemplate& layerTemplate);
+	};
 
 	typedef std::vector<MapLayer> MapLayers;
 	MapLayers m_layers;

@@ -19,7 +19,7 @@ struct ShaderDefinition
 
 	/* Constructor
 	 */
-	ShaderDefinition(ShaderTemplatePtr templ, const std::string& fname) : 
+	ShaderDefinition(const ShaderTemplatePtr& templ, const std::string& fname) : 
 		shaderTemplate(templ),
 		filename(fname)
 	{}

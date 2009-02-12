@@ -5,72 +5,74 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace sound
-{
+namespace sound {
 
 /**
  * Representation of a single sound shader.
  */
-class SoundShader
-: public ISoundShader
+class SoundShader : 
+	public ISoundShader
 {
 	// Name of the shader
 	std::string _name;
+
+	// The raw unparsed definition block
+	std::string _blockContents;
 	
 	SoundFileList _soundFiles;
 
 	// min and max radii of the shader
 	SoundRadii _soundRadii;
+
+	// Whether the raw definition block has been dissected already
+	bool _parsed;
 	
 public:
 
 	/**
 	 * Constructor.
 	 */
-	SoundShader(const std::string& name)
-	: _name(name), 
-	  _soundRadii()
-	{ }
+	SoundShader(const std::string& name, const std::string& blockContents) : 
+		_name(name), 
+		_blockContents(blockContents),
+		_parsed(false)
+	{}
 
 	/**
 	 * Return the min and max radii of the shader
 	 */
-	SoundRadii getRadii() const {
+	SoundRadii getRadii() {
+		if (!_parsed) {
+			// Evil const_cast to allow parsing on the fly
+			const_cast<SoundShader*>(this)->parseDefinition();
+		}
 		return _soundRadii;
 	}
 
 	/**
 	 * Return the name of the shader.
 	 */
-	std::string getName() const {
+	std::string getName() {
 		return _name;
 	}
 
-	/**
-	 * Set the min and max radii
+	/** 
+	 * greebo: Returns the list of soundfiles
 	 */
-	void setSoundRadii(const SoundRadii& soundRadii) {
-		_soundRadii = soundRadii;
-	}
-	
-	/** greebo: Adds a sound file (VFS path) to this shader
-	 * 			(used by the tokeniser to populate this class)
-	 */
-	void addSoundFile(const std::string& file) {
-		_soundFiles.push_back(file);
-	}
-	
-	/** greebo: Returns the list of soundfiles
-	 */
-	virtual SoundFileList getSoundFileList() const {
+	SoundFileList getSoundFileList() {
+		if (!_parsed) parseDefinition();
 		return _soundFiles;
 	}
+
+private:
+	// Parses the definition block
+	void parseDefinition();
 };
 
 /**
  * Shared pointer type.
  */
-typedef boost::shared_ptr<SoundShader> ShaderPtr;
+typedef boost::shared_ptr<SoundShader> SoundShaderPtr;
 
 }
 

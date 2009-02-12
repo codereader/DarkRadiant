@@ -3,6 +3,7 @@
 #include "ifilesystem.h"
 #include "iarchive.h"
 #include "parser/DefTokeniser.h"
+#include "parser/DefBlockTokeniser.h"
 #include "ShaderDefinition.h"
 #include "Doom3ShaderSystem.h"
 
@@ -14,109 +15,39 @@
 
 namespace shaders {
 
-/**
- * Parses the contents of a material definition. The shader name and opening
- * brace "{" will already have been removed when this function is called.
- * 
- * @param tokeniser
- * DefTokeniser to retrieve tokens from.
- * 
- * @param shaderTemplate
- * An empty ShaderTemplate which will parse the token stream and populate
- * itself.
- * 
- * @param filename
- * The name of the shader file we are parsing.
- */
-void ShaderFileLoader::parseShaderDecl(parser::DefTokeniser& tokeniser, 
-					  ShaderTemplatePtr shaderTemplate, 
-					  const std::string& filename) 
-{
-	// Get the ShaderTemplate to populate itself by parsing tokens from the
-	// DefTokeniser. This may throw exceptions.	
-	shaderTemplate->parseDoom3(tokeniser);
-	
-	// Construct the ShaderDefinition wrapper class
-	ShaderDefinition def(shaderTemplate, filename);
-	
-	// Get the parsed shader name
-	std::string name = shaderTemplate->getName();
-	
-	// Insert into the definitions map, if not already present
-    if (!GetShaderLibrary().addDefinition(name, def)) {
-    	std::cout << "[shaders] " << filename << ": shader " << name
-    			  << " already defined." << std::endl;
-    }
-}
-
 /* Parses through the shader file and processes the tokens delivered by 
  * DefTokeniser. 
  */ 
 void ShaderFileLoader::parseShaderFile(std::istream& inStr, 
 									   const std::string& filename)
 {
-	// Create the tokeniser
-	parser::BasicDefTokeniser<std::istream> tokeniser(inStr, 
-													  " \t\n\v\r", 
-													  "{}(),");
-	
-	while (tokeniser.hasMoreTokens()) {
-		// Load the first token, it should be a name
-		std::string token = tokeniser.nextToken();		
+	// Parse the file with a blocktokeniser, the actual block contents
+	// will be parsed separately.
+	parser::BasicDefBlockTokeniser<std::istream> tokeniser(inStr);
 
-		if (token == "table") {
-			parseShaderTable(tokeniser);		 		
-		} 
-		else if (token[0] == '{' || token[0] == '}') {
-			// This is not supposed to happen, as the shaderName is still 
-			// undefined
-			std::cerr << "[shaders] Missing shadername in " 
-					  << filename << std::endl;
-			return; 
-		} 
-		else if (token == "material") {
-			// Discard optional "material" keyword
-			token = tokeniser.nextToken();
+	while (tokeniser.hasMoreBlocks()) {
+		// Get the next block
+		parser::BlockTokeniser::Block block = tokeniser.nextBlock();
+
+		// Skip tables
+		if (block.name.substr(0, 5) == "table") {
+			continue;
 		}
-		else {			
-			// We are still outside of any braces, so this must be a shader name			
-			ShaderTemplatePtr shaderTemplate = parseShaderName(token);
 
-			// Try to parse the rest of the decl, catching and printing any
-			// exception
-			try {
-				tokeniser.assertNextToken("{");
-				parseShaderDecl(tokeniser, shaderTemplate, filename);
-			}
-			catch (parser::ParseException e) {
-				std::cerr << "[shaders] " << filename << ": Failed to parse \"" 
-						  << shaderTemplate->getName() << "\" (" << e.what() 
-						  << ")" << std::endl;
-				return;
-			}
+		boost::algorithm::replace_all(block.name, "\\", "/"); // use forward slashes
+
+		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(block.name, block.contents));
+		
+		// Construct the ShaderDefinition wrapper class
+		ShaderDefinition def(shaderTemplate, filename);
+
+		// Insert into the definitions map, if not already present
+		if (!GetShaderLibrary().addDefinition(block.name, def)) {
+    		globalErrorStream() << "[shaders] " << filename 
+				<< ": shader " << block.name << " already defined." << std::endl;
 		}
 	}
 }
-
-/* Normalises a given (raw) shadername (slash conversion, extension removal, ...) 
- * and inserts a new shader 
- */
-ShaderTemplatePtr ShaderFileLoader::parseShaderName(std::string& rawName) 
-{
-	boost::algorithm::replace_all(rawName, "\\", "/"); // use forward slashes
-	// greebo: Don't use lowercase as this might screw the shader lookup
-	//boost::algorithm::to_lower(rawName); // use lowercase
-
-	// Remove the extension if present
-	size_t dotPos = rawName.rfind(".");
-	if (dotPos != std::string::npos) {
-		rawName = rawName.substr(0, dotPos);
-	}
-
-	// Construct and return the ShaderTemplate pointer	
-	ShaderTemplatePtr shaderTemplate(new ShaderTemplate(rawName));
-	return shaderTemplate;
-} 
 
 /* Parses through a table definition within a material file.
  * It just skips over the whole content 
