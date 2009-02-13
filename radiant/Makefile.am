@@ -185,6 +185,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapResource.cpp \
 					  map/Map.cpp \
 					  map/AutoSaver.cpp \
+					  map/StartupMapLoader.cpp \
 					  map/MapResourceManager.cpp \
 					  entity.cpp \
 					  clipper/ClipPoint.cpp \

@@ -9,6 +9,8 @@
 #include "math/Vector3.h"
 #include "signal/signal.h"
 
+#include "StartupMapLoader.h"
+
 class TextInputStream;
 
 namespace map {
@@ -35,6 +37,9 @@ class Map :
 	scene::INodePtr m_world_node; // "classname" "worldspawn" !
 
 	bool _saveInProgress;
+
+	// A local helper object, observing the radiant module
+	StartupMapLoaderPtr _startupMapLoader;
 
 public:
 	Map();
