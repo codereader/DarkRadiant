@@ -837,12 +837,21 @@ const std::string& Map::getName() const {
 }
 
 const StringSet& Map::getDependencies() const {
-	static StringSet _dependencies; // no dependencies
+	static StringSet _dependencies; 
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_RADIANT);
+	}
+
 	return _dependencies;
 }
 
 void Map::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << getName() << "::initialiseModule called.\n";
+
+	// Register for the startup event
+	_startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);
+	GlobalRadiant().addEventListener(_startupMapLoader);
 }
 
 // Creates the static module instance

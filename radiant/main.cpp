@@ -75,7 +75,6 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "log/LogStream.h"
 #include "map/Map.h"
 #include "mainframe_old.h"
-#include "ui/mru/MRU.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "settings/GameManager.h"
 #include "ui/splash/Splash.h"
@@ -239,14 +238,6 @@ int main (int argc, char* argv[]) {
 
 		ui::Splash::Instance().hide();
 
-		std::string lastMap = GlobalMRU().getLastMapName();
-		if (GlobalMRU().loadLastMap() && !lastMap.empty() && file_exists(lastMap.c_str())) {
-			GlobalMap().load(lastMap);
-		}
-		else {
-			GlobalMap().createNew();
-		}
-
 		// Scope ends here, PIDFile is deleted by its destructor
 	}
 
@@ -267,9 +258,7 @@ int main (int argc, char* argv[]) {
 
 	GlobalMainFrame().destroy();
 
-	GlobalMRU().saveRecentFiles();
-
-  	// Issue a shutdown() call to all the modules
+	// Issue a shutdown() call to all the modules
   	module::GlobalModuleRegistry().shutdownModules();
 
 	// Close the logfile 
