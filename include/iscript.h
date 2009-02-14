@@ -31,6 +31,12 @@ public:
 	 * and objects to the given namespace.
 	 */
 	virtual void addInterface(const std::string& name, const IScriptInterfacePtr& iface) = 0;
+
+	/**
+	 * greebo: Executes the given python script file. The filename is specified relatively
+	 * to the scripts/ folder.
+	 */
+	virtual void executeScriptFile(const std::string& filename) = 0;
 };
 typedef boost::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 
