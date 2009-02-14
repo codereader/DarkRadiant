@@ -39,6 +39,9 @@ public:
 	// Adds a script interface to this system
 	void addInterface(const std::string& name, const IScriptInterfacePtr& iface);
 
+	// Executes a script file
+	void executeScriptFile(const std::string& filename);
+
 	/**
 	 * This actually initialises the Scripting System, adding all
 	 * registered interfaces to the Python context. After this call

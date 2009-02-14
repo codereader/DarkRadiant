@@ -6,8 +6,7 @@
 #include "StartupListener.h"
 
 #include "interfaces/RegistryInterface.h"
-
-#include <boost/python.hpp>
+#include "interfaces/RadiantInterface.h"
 
 namespace script {
 
@@ -32,6 +31,29 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 	if (_initialised) {
 		// Add the interface at once, all the others are already added
 		iface->registerInterface(_mainNamespace);
+	}
+}
+
+void ScriptingSystem::executeScriptFile(const std::string& filename) {
+	try
+	{
+		// Attempt to run the specified script
+		boost::python::object ignored = boost::python::exec_file(
+			(_scriptPath + filename).c_str(),
+			_mainNamespace,
+			_globals
+		);
+	}
+	catch (const boost::python::error_already_set&) {
+		globalErrorStream() << "Error while executing file: " 
+					<< filename << ": " << std::endl;
+
+		// Dump the error to the console, this will invoke the PythonConsoleWriter
+		PyErr_Print();
+		PyErr_Clear();
+
+		// Python is usually not appending line feeds...
+		globalOutputStream() << std::endl;
 	}
 }
 
@@ -122,6 +144,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	_scriptPath = ctx.getApplicationPath() + "scripts/";
 
 	// Add the built-in interfaces
+	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 }
 
