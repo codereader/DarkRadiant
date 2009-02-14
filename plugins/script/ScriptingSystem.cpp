@@ -7,14 +7,10 @@
 
 namespace script {
 
-class PythonStdIoRedirect {
-public:
-    void write(const std::string& msg) {
-		// Python doesn't send entire lines, it may send single characters, 
-		// so don't add std::endl each time
-		globalErrorStream() << msg;
-    }
-};
+ScriptingSystem::ScriptingSystem() :
+	_outputWriter(false),
+	_errorWriter(true)
+{}
 
 // RegisterableModule implementation
 const std::string& ScriptingSystem::getName() const {
@@ -35,20 +31,20 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	globalOutputStream() << getName() << ": Python interpreter initialised.\n";
 
+	boost::python::object main_module = boost::python::import("__main__");
+	boost::python::object main_namespace = main_module.attr("__dict__");
+	boost::python::dict globals;
+
 	std::string appPath = ctx.getApplicationPath() + "scripts/";
 
-	PythonStdIoRedirect python_stdio_redirector;
-
 	try {
-		boost::python::object main_module = boost::python::import("__main__");
-		boost::python::object main_namespace = main_module.attr("__dict__");
-		boost::python::dict globals;
-
-		main_namespace["PythonStdIoRedirect"] = boost::python::class_<PythonStdIoRedirect>("PythonStdIoRedirect", boost::python::init<>())
-			.def("write", &PythonStdIoRedirect::write);
+		// Declare the console writer to Python
+		main_namespace["PythonConsoleWriter"] = PythonConsoleWriterClass("PythonConsoleWriter", boost::python::init<bool>())
+			.def("write", &PythonConsoleWriter::write);
 		
-		boost::python::import("sys").attr("stderr") = python_stdio_redirector;
-		boost::python::import("sys").attr("stdout") = python_stdio_redirector; 
+		// Redirect stdio output to our local instances
+		boost::python::import("sys").attr("stderr") = _errorWriter;
+		boost::python::import("sys").attr("stdout") = _outputWriter; 
 
 		// Declare the Temp object in python
 		main_namespace["Temp"] = boost::python::class_<SysObject>("Temp")
@@ -61,7 +57,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 		);
 	}
 	catch (const boost::python::error_already_set& e) {
-		// Dump the error to the console
+		// Dump the error to the console, this will invoke the PythonConsoleWriter
 		PyErr_Print();
 		PyErr_Clear();
 	}
