@@ -26,11 +26,11 @@ class IScriptingSystem :
 {
 public:
 	/**
-	 * greebo: Add an interface to the scripting system. The interface object
+	 * greebo: Add a named interface to the scripting system. The interface object
 	 * must provide a "registerInterface" method which will declare the names
 	 * and objects to the given namespace.
 	 */
-	virtual void addInterface(const IScriptInterfacePtr& iface) = 0;
+	virtual void addInterface(const std::string& name, const IScriptInterfacePtr& iface) = 0;
 };
 typedef boost::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 

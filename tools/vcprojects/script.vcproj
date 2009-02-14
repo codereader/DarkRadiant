@@ -442,7 +442,7 @@
 				Name="interfaces"
 				>
 				<File
-					RelativePath="..\..\plugins\script\interfaces\PythonRegistry.h"
+					RelativePath="..\..\plugins\script\interfaces\RegistryInterface.h"
 					>
 				</File>
 			</Filter>
