@@ -431,6 +431,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\script\StartupListener.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\script\SysObject.h"
 				>
 			</File>
