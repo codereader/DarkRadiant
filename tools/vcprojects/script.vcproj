@@ -434,13 +434,13 @@
 				RelativePath="..\..\plugins\script\StartupListener.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\plugins\script\SysObject.h"
-				>
-			</File>
 			<Filter
 				Name="interfaces"
 				>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\RadiantInterface.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\plugins\script\interfaces\RegistryInterface.h"
 					>

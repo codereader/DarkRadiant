@@ -5,7 +5,6 @@
 
 #include "StartupListener.h"
 
-#include "SysObject.h"
 #include "interfaces/RegistryInterface.h"
 
 #include <boost/python.hpp>
@@ -57,10 +56,6 @@ void ScriptingSystem::initialise() {
 		// Redirect stdio output to our local ConsoleWriter instances
 		boost::python::import("sys").attr("stderr") = _errorWriter;
 		boost::python::import("sys").attr("stdout") = _outputWriter; 
-
-		// Declare the Temp object in python (TODO: Convert this to interface)
-		_mainNamespace["Temp"] = SysObjectClass("Temp")
-			.def("printToConsole", &SysObject::print);
 
 		// Add the registered interface
 		for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
