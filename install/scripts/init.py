@@ -5,6 +5,6 @@ t.printToConsole()
 
 # t.print('Bla - Python is working!');
 
-hello = file('hello.txt', 'w')
+hello = fi le('hello.txt', 'w')
 hello.write('Done.')
 hello.close()
