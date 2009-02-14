@@ -1,10 +1,8 @@
 # Called at DarkRadiant startup
 
 t = Temp()
-t.printToConsole()
+t.printToConsole('Boost::Python is working.')
 
-# t.print('Bla - Python is working!');
+value = GlobalRegistry.get('user/paths/appPath')
 
-hello = fi le('hello.txt', 'w')
-hello.write('Done.')
-hello.close()
+t.printToConsole(value)

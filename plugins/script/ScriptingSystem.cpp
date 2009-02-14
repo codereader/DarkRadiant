@@ -3,6 +3,8 @@
 #include "itextstream.h"
 #include "SysObject.h"
 
+#include "interfaces/PythonRegistry.h"
+
 #include <boost/python.hpp>
 
 namespace script {
@@ -47,8 +49,11 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 		boost::python::import("sys").attr("stdout") = _outputWriter; 
 
 		// Declare the Temp object in python
-		main_namespace["Temp"] = boost::python::class_<SysObject>("Temp")
+		main_namespace["Temp"] = SysObjectClass("Temp")
 			.def("printToConsole", &SysObject::print);
+
+		// Add the registry interface
+		PythonRegistry::RegisterInterface(main_namespace);
 
 		boost::python::object ignored = boost::python::exec_file(
 			(appPath + "init.py").c_str(),
@@ -56,7 +61,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 			globals
 		);
 	}
-	catch (const boost::python::error_already_set& e) {
+	catch (const boost::python::error_already_set&) {
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
 		PyErr_Print();
 		PyErr_Clear();

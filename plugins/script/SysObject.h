@@ -9,17 +9,11 @@ namespace script {
 class SysObject
 {
 public:
-	void print() {
-		globalOutputStream() << "Boost::Python is working!" << std::endl;
+	void print(const std::string& str) {
+		globalOutputStream() << str << std::endl;
 	}
 };
-
-/*BOOST_PYTHON_MODULE(darkradiant)
-{
-	boost::python::class_<SysObject>("Sys")
-        .def("print", &SysObject::print)
-    ;
-}*/
+typedef boost::python::class_<SysObject> SysObjectClass;
 
 } // namespace script
 
