@@ -6,7 +6,7 @@
 #include "StartupListener.h"
 
 #include "SysObject.h"
-#include "interfaces/PythonRegistry.h"
+#include "interfaces/RegistryInterface.h"
 
 #include <boost/python.hpp>
 
@@ -18,8 +18,17 @@ ScriptingSystem::ScriptingSystem() :
 	_initialised(false)
 {}
 
-void ScriptingSystem::addInterface(const IScriptInterfacePtr& iface) {
-	_interfaces.insert(iface);
+void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfacePtr& iface) {
+	// Try to insert
+	std::pair<Interfaces::iterator, bool> result = _interfaces.insert(
+		Interfaces::value_type(name, iface)
+	);
+
+	if (!result.second) {
+		globalErrorStream() << "Cannot add script interface " << name 
+			<< ", this interface is already registered." << std::endl;
+		return;
+	}
 
 	if (_initialised) {
 		// Add the interface at once, all the others are already added
@@ -55,9 +64,24 @@ void ScriptingSystem::initialise() {
 
 		// Add the registered interface
 		for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
-			(*i)->registerInterface(_mainNamespace);
+			// Handle each interface in its own try/catch block
+			try 
+			{
+				i->second->registerInterface(_mainNamespace);
+			}
+			catch (const boost::python::error_already_set&)
+			{
+				globalErrorStream() << "Error while initialising interface " 
+					<< i->first << ": " << std::endl;
+
+				PyErr_Print();
+				PyErr_Clear();
+
+				globalOutputStream() << std::endl;
+			}
 		}
 		
+		// Now run the startup script
 		boost::python::object ignored = boost::python::exec_file(
 			(_scriptPath + "init.py").c_str(),
 			_mainNamespace,
@@ -68,6 +92,9 @@ void ScriptingSystem::initialise() {
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
 		PyErr_Print();
 		PyErr_Clear();
+
+		// Python is usually not appending line feeds...
+		globalOutputStream() << std::endl;
 	}
 
 	_initialised = true;
@@ -98,6 +125,9 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	// Construct the script path
 	_scriptPath = ctx.getApplicationPath() + "scripts/";
+
+	// Add the built-in interfaces
+	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 }
 
 void ScriptingSystem::shutdownModule() {

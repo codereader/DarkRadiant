@@ -2,7 +2,7 @@
 #define _SCRIPTING_SYSTEM_H_
 
 #include <boost/python.hpp>
-#include <set>
+#include <map>
 
 #include "iscript.h"
 #include "PythonConsoleWriter.h"
@@ -21,7 +21,7 @@ class ScriptingSystem :
 
 	bool _initialised;
 
-	typedef std::set<IScriptInterfacePtr> Interfaces;
+	typedef std::map<std::string, IScriptInterfacePtr> Interfaces;
 	Interfaces _interfaces;
 
 	boost::python::object _mainModule;
@@ -37,7 +37,7 @@ public:
 	ScriptingSystem();
 
 	// Adds a script interface to this system
-	void addInterface(const IScriptInterfacePtr& iface);
+	void addInterface(const std::string& name, const IScriptInterfacePtr& iface);
 
 	/**
 	 * This actually initialises the Scripting System, adding all
