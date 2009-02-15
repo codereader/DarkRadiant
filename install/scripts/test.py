@@ -15,4 +15,12 @@ print(eclass.getAttribute('editor_usage').value)
 modelDef = GlobalEntityClassManager.findModel('builderforger')
 print('ModelDef mesh for builderforger = ' + modelDef.mesh)
 
+# Test implementing a eclass visitor interface
+#class TestVisitor(EntityClassVisitor) :
+#	def visit(self, eclass):
+#		print eclass.getAttribute('editor_usage').value
+
+#eclassVisitor = TestVisitor()
+#GlobalEntityClassManager.forEach(eclassVisitor)
+
 print('')
