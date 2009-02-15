@@ -31,6 +31,7 @@ ScriptEntity* RadiantInterface::findEntityByClassname(const std::string& name) {
 	EntityFindByClassnameWalker walker(name);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
+	// Note: manage_new_object return value policy will take care of that raw pointer
 	return new ScriptEntity(walker.getEntity());
 }
 
@@ -44,7 +45,7 @@ void RadiantInterface::registerInterface(boost::python::object& nspace) {
 	nspace["Radiant"] = boost::python::class_<RadiantInterface>("Radiant")
 		.def("findEntityByClassname", &RadiantInterface::findEntityByClassname, 
 				boost::python::return_value_policy<
-					boost::python::reference_existing_object, 
+					boost::python::manage_new_object, // transfer ownership of returned pointer
 					boost::python::default_call_policies>())
 	;
 
