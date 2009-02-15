@@ -30,6 +30,18 @@ public:
 	}
 };
 
+// Wrap around the EntityClassVisitor interface
+class EntityClassVisitorWrapper : 
+	public EntityClassVisitor, 
+	public boost::python::wrapper<EntityClassVisitor>
+{
+public:
+    void visit(IEntityClassPtr eclass) {
+		// Wrap this method to python
+		this->get_override("visit")(ScriptEntityClass(eclass));
+	}
+};
+
 /**
  * greebo: This class provides the script interface for the GlobalEntityClassManager module.
  */
@@ -47,6 +59,10 @@ public:
 	IModelDef findModel(const std::string& name) {
 		IModelDefPtr modelDef = GlobalEntityClassManager().findModel(name);
 		return (modelDef != NULL) ? *modelDef : _emptyModelDef;
+	}
+
+	void forEach(EntityClassVisitor& visitor) {
+		GlobalEntityClassManager().forEach(visitor);
 	}
 
 	// IScriptInterface implementation
@@ -78,9 +94,16 @@ public:
 					boost::python::default_call_policies>())
 		;
 
+		// Expose the entityclass visitor interface
+		nspace["EntityClassVisitor"] = 
+			boost::python::class_<EntityClassVisitorWrapper, boost::noncopyable>("EntityClassVisitor")
+			.def("visit", boost::python::pure_virtual(&EntityClassVisitor::visit))
+		;
+
 		// Add the module declaration to the given python namespace
 		nspace["GlobalEntityClassManager"] = boost::python::class_<EClassManagerInterface>("GlobalEntityClassManager")
 			.def("findClass", &EClassManagerInterface::findClass)
+			.def("forEach", &EClassManagerInterface::forEach)
 			.def("findModel", &EClassManagerInterface::findModel)
 		;
 
