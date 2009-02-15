@@ -3,6 +3,7 @@
 
 #include "iscript.h"
 #include "math/FloatTools.h"
+#include "math/aabb.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include <map>
@@ -23,9 +24,12 @@ public:
 		nspace["Vector3"] = boost::python::class_<Vector3>("Vector3", boost::python::init<double, double, double>())
 			.def(boost::python::init<const Vector3&>())
 			// greebo: Pick the correct overload - this is hard to read, but it is necessary
-			.def("x", static_cast<double& (Vector3::*)()>(&Vector3::x), boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-			.def("y", static_cast<double& (Vector3::*)()>(&Vector3::y), boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-			.def("z", static_cast<double& (Vector3::*)()>(&Vector3::z), boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			.def("x", static_cast<double& (Vector3::*)()>(&Vector3::x), 
+				boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			.def("y", static_cast<double& (Vector3::*)()>(&Vector3::y), 
+				boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			.def("z", static_cast<double& (Vector3::*)()>(&Vector3::z), 
+				boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 			.def("getLength", &Vector3::getLength)
 			.def("getLengthSquared", &Vector3::getLengthSquared)
 			.def("getNormalised", &Vector3::getNormalised)
@@ -49,8 +53,10 @@ public:
 		nspace["Vector2"] = boost::python::class_<Vector2>("Vector2", boost::python::init<double, double>())
 			.def(boost::python::init<const Vector2&>())
 			// greebo: Pick the correct overload - this is hard to read, but it is necessary
-			.def("x", static_cast<double& (Vector2::*)()>(&Vector2::x), boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-			.def("y", static_cast<double& (Vector2::*)()>(&Vector2::y), boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			.def("x", static_cast<double& (Vector2::*)()>(&Vector2::x), 
+				boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			.def("y", static_cast<double& (Vector2::*)()>(&Vector2::y), 
+				boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 			.def("getLength", &Vector2::getLength)
 			.def("getLengthSquared", &Vector2::getLengthSquared)
 			.def("dot", &Vector2::dot<double>)
@@ -61,6 +67,17 @@ public:
 			.def(boost::python::self += boost::python::self)
 			.def(boost::python::self -= boost::python::self)
 			.def(boost::python::self < boost::python::self);	// __lt__
+		;
+
+		// Declare AABB to python
+		nspace["AABB"] = boost::python::class_<AABB>("AABB", boost::python::init<>())
+			.def(boost::python::init<const Vector3&, const Vector3&>())
+			.def_readwrite("origin", &AABB::origin)
+			.def_readwrite("extents", &AABB::extents)
+			.def("isValid", &AABB::isValid)
+			.def("getRadius", &AABB::getRadius)
+			.def("includePoint", &AABB::includePoint)
+			.def("includeAABB", &AABB::includeAABB)
 		;
 	}
 };
