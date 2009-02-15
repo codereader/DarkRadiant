@@ -15,6 +15,13 @@ print(eclass.getAttribute('editor_usage').value)
 modelDef = GlobalEntityClassManager.findModel('builderforger')
 print('ModelDef mesh for builderforger = ' + modelDef.mesh)
 
+# Test iterating over C++ std::map
+for anim in modelDef.anims:
+	print(anim.key())
+	print(' = ')
+	print(anim.data())
+	print('')
+
 # Test implementing a eclass visitor interface
 #class TestVisitor(EntityClassVisitor) :
 #	def visit(self, eclass):
