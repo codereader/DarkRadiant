@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "iradiant.h"
+#include "ieventmanager.h"
 
 #include "StartupListener.h"
 
@@ -116,6 +117,11 @@ void ScriptingSystem::initialise() {
 	executeScriptFile("init.py");
 }
 
+void ScriptingSystem::runTestScript() {
+	// Start the test script
+	executeScriptFile("test.py");
+}
+
 // RegisterableModule implementation
 const std::string& ScriptingSystem::getName() const {
 	static std::string _name(MODULE_SCRIPTING_SYSTEM);
@@ -127,6 +133,7 @@ const StringSet& ScriptingSystem::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_RADIANT);
+		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
 
 	return _dependencies;
@@ -148,6 +155,8 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("SceneGraph", SceneGraphInterfacePtr(new SceneGraphInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
+
+	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
 }
 
 void ScriptingSystem::shutdownModule() {

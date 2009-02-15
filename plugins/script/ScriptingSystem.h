@@ -51,6 +51,9 @@ public:
 	 */
 	void initialise();
 
+	// For development purposes
+	void runTestScript();
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;

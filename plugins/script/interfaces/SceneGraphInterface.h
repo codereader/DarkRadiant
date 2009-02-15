@@ -3,6 +3,7 @@
 
 #include "inode.h"
 #include "iscript.h"
+#include "iscenegraph.h"
 #include "scenelib.h"
 
 #include <boost/python.hpp>
@@ -51,12 +52,50 @@ public:
 	std::string getNodeType() {
 		return nodetype_get_name(node_get_nodetype(_node));
 	}
+
+	void traverse(scene::NodeVisitor& visitor) {
+		if (_node != NULL) {
+			_node->traverse(visitor);
+		}
+	}
+};
+
+// Wrap around the scene::NodeVisitor interface
+class SceneNodeVisitorWrapper : 
+	public scene::NodeVisitor, 
+	public boost::python::wrapper<scene::NodeVisitor>
+{
+public:
+    bool pre(const scene::INodePtr& node) {
+		// Wrap this method to python
+		return this->get_override("pre")(ScriptSceneNode(node));
+	}
+
+	void post(const scene::INodePtr& node) {
+		if (this->get_override("post")) {
+			// Call the overriden method
+            this->get_override("post")(ScriptSceneNode(node)); 
+		}
+		else {
+			// No override, call base class default
+			scene::NodeVisitor::post(node);
+		}
+	}
+
+	void post_default(const scene::INodePtr& node) {
+		// Default method: Just call the base class
+		scene::NodeVisitor::post(node);
+	}
 };
 
 class SceneGraphInterface :
 	public IScriptInterface
 {
 public:
+	ScriptSceneNode root() {
+		return GlobalSceneGraph().root();
+	}
+
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace) {
 		// Expose the scene::Node interface
@@ -69,7 +108,23 @@ public:
 			.def("isNull", &ScriptSceneNode::isNull)
 			.def("getParent", &ScriptSceneNode::getParent)
 			.def("getNodeType", &ScriptSceneNode::getNodeType)
+			.def("traverse", &ScriptSceneNode::traverse)
 		;
+
+		// Expose the scene::NodeVisitor interface
+		nspace["SceneNodeVisitor"] = 
+			boost::python::class_<SceneNodeVisitorWrapper, boost::noncopyable>("SceneNodeVisitor")
+			.def("pre", boost::python::pure_virtual(&scene::NodeVisitor::pre))
+			.def("post", &scene::NodeVisitor::post, &SceneNodeVisitorWrapper::post_default) // respect default impl.
+		;
+
+		// Add the module declaration to the given python namespace
+		nspace["GlobalSceneGraph"] = boost::python::class_<SceneGraphInterface>("GlobalSceneGraph")
+			.def("root", &SceneGraphInterface::root)
+		;
+
+		// Now point the Python variable "GlobalSceneGraph" to this instance
+		nspace["GlobalSceneGraph"] = boost::python::ptr(this);
 	}
 };
 typedef boost::shared_ptr<SceneGraphInterface> SceneGraphInterfacePtr;
