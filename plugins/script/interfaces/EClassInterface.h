@@ -12,15 +12,21 @@ namespace script {
  */
 class ScriptEntityClass
 {
-	const IEntityClassConstPtr _eclass;
+	IEntityClassPtr _eclass;
+	EntityClassAttribute _emptyAttribute;
+
 public:
-	ScriptEntityClass(const IEntityClassConstPtr& eclass) :
+	ScriptEntityClass(const IEntityClassPtr& eclass) :
 		_eclass(eclass)
 	{}
 
 	// Returns a specific spawnarg from this entityDef, or "" if not found
-	EntityClassAttribute getAttribute(const std::string& name) {
-		return (_eclass != NULL) ? _eclass->getAttribute(name) : EntityClassAttribute();
+	EntityClassAttribute& getAttribute(const std::string& name) {
+		if (_eclass == NULL) {
+			return _emptyAttribute;
+		}
+
+		return _eclass->getAttribute(name);
 	}
 };
 
@@ -30,10 +36,17 @@ public:
 class EClassManagerInterface :
 	public IScriptInterface
 {
+	IModelDef _emptyModelDef;
+
 public:
 	ScriptEntityClass findClass(const std::string& name) {
 		// Find the eclass and convert implicitly to ScriptEntityClass
 		return GlobalEntityClassManager().findClass(name);
+	}
+
+	IModelDef findModel(const std::string& name) {
+		IModelDefPtr modelDef = GlobalEntityClassManager().findModel(name);
+		return (modelDef != NULL) ? *modelDef : _emptyModelDef;
 	}
 
 	// IScriptInterface implementation
@@ -47,15 +60,28 @@ public:
 			.def_readwrite("inherited", &EntityClassAttribute::inherited)
 		;
 
+		// Add the declaration for a ModelDef
+		nspace["ModelDef"] = boost::python::class_<IModelDef>("ModelDef")
+			.def_readonly("name", &IModelDef::name)
+			.def_readonly("mesh", &IModelDef::mesh)
+			.def_readonly("skin", &IModelDef::skin)
+			.def_readonly("parent", &IModelDef::parent)
+			.def_readonly("anims", &IModelDef::anims)
+		;
+
 		// Add the declaration for an EntityClass
 		nspace["EntityClass"] = boost::python::class_<ScriptEntityClass>(
-			"EntityClass", boost::python::init<const IEntityClassConstPtr&>())
-			.def("getAttribute", &ScriptEntityClass::getAttribute)
+			"EntityClass", boost::python::init<const IEntityClassPtr&>())
+			.def("getAttribute", &ScriptEntityClass::getAttribute, 
+				boost::python::return_value_policy<
+					boost::python::reference_existing_object,
+					boost::python::default_call_policies>())
 		;
 
 		// Add the module declaration to the given python namespace
 		nspace["GlobalEntityClassManager"] = boost::python::class_<EClassManagerInterface>("GlobalEntityClassManager")
 			.def("findClass", &EClassManagerInterface::findClass)
+			.def("findModel", &EClassManagerInterface::findModel)
 		;
 
 		// Now point the Python variable "GlobalRegistry" to this instance

@@ -98,13 +98,6 @@ void ScriptingSystem::initialise() {
 				globalOutputStream() << std::endl;
 			}
 		}
-		
-		/*// Now run the startup script
-		boost::python::object ignored = boost::python::exec_file(
-			(_scriptPath + "init.py").c_str(),
-			_mainNamespace,
-			_globals
-		);*/
 	}
 	catch (const boost::python::error_already_set&) {
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
@@ -116,6 +109,9 @@ void ScriptingSystem::initialise() {
 	}
 
 	_initialised = true;
+
+	// Start the init script
+	executeScriptFile("init.py");
 }
 
 // RegisterableModule implementation
