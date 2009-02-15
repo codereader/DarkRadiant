@@ -8,6 +8,7 @@
 #include "interfaces/MathInterface.h"
 #include "interfaces/RegistryInterface.h"
 #include "interfaces/RadiantInterface.h"
+#include "interfaces/SceneGraphInterface.h"
 #include "interfaces/EClassInterface.h"
 
 namespace script {
@@ -144,6 +145,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	// Add the built-in interfaces
 	addInterface("Math", MathInterfacePtr(new MathInterface));
 	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
+	addInterface("SceneGraph", SceneGraphInterfacePtr(new SceneGraphInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
 }
