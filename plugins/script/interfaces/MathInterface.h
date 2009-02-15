@@ -3,6 +3,7 @@
 
 #include "iscript.h"
 #include "math/FloatTools.h"
+#include "math/Vector2.h"
 #include "math/Vector3.h"
 #include <map>
 
@@ -19,8 +20,6 @@ public:
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace) {
 		// Add the Vector3 class
-		double& (Vector3::*fx)() = &Vector3::x;
-
 		nspace["Vector3"] = boost::python::class_<Vector3>("Vector3", boost::python::init<double, double, double>())
 			.def(boost::python::init<const Vector3&>())
 			// greebo: Pick the correct overload - this is hard to read, but it is necessary
@@ -38,6 +37,30 @@ public:
 			.def("max", &Vector3::max)
 			.def("min", &Vector3::min)
 			.def("isParallel", &Vector3::isParallel<double>)
+			// Most important operators
+			.def(boost::python::self + boost::python::self)		// __add__
+			.def(boost::python::self - boost::python::self)		// __sub__
+			.def(boost::python::self += boost::python::self)
+			.def(boost::python::self -= boost::python::self)
+			.def(boost::python::self < boost::python::self);	// __lt__
+		;
+
+		// Add the Vector2 class
+		nspace["Vector2"] = boost::python::class_<Vector2>("Vector2", boost::python::init<double, double>())
+			.def(boost::python::init<const Vector2&>())
+			// greebo: Pick the correct overload - this is hard to read, but it is necessary
+			.def("x", static_cast<double& (Vector2::*)()>(&Vector2::x), boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			.def("y", static_cast<double& (Vector2::*)()>(&Vector2::y), boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			.def("getLength", &Vector2::getLength)
+			.def("getLengthSquared", &Vector2::getLengthSquared)
+			.def("dot", &Vector2::dot<double>)
+			.def("crossProduct", &Vector2::crossProduct<double>)
+			// Most important operators
+			.def(boost::python::self + boost::python::self)		// __add__
+			.def(boost::python::self - boost::python::self)		// __sub__
+			.def(boost::python::self += boost::python::self)
+			.def(boost::python::self -= boost::python::self)
+			.def(boost::python::self < boost::python::self);	// __lt__
 		;
 	}
 };
