@@ -457,6 +457,10 @@
 					RelativePath="..\..\plugins\script\interfaces\RegistryInterface.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\SceneGraphInterface.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
