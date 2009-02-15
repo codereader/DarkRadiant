@@ -11,6 +11,7 @@
 #include "interfaces/RadiantInterface.h"
 #include "interfaces/SceneGraphInterface.h"
 #include "interfaces/EClassInterface.h"
+#include "interfaces/SelectionInterface.h"
 
 namespace script {
 
@@ -155,6 +156,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("SceneGraph", SceneGraphInterfacePtr(new SceneGraphInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
+	addInterface("GlobalSelectionSystem", SelectionInterfacePtr(new SelectionInterface));
 
 	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
 }
