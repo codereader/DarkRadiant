@@ -7,6 +7,7 @@
 
 #include "interfaces/RegistryInterface.h"
 #include "interfaces/RadiantInterface.h"
+#include "interfaces/EClassInterface.h"
 
 namespace script {
 
@@ -98,12 +99,12 @@ void ScriptingSystem::initialise() {
 			}
 		}
 		
-		// Now run the startup script
+		/*// Now run the startup script
 		boost::python::object ignored = boost::python::exec_file(
 			(_scriptPath + "init.py").c_str(),
 			_mainNamespace,
 			_globals
-		);
+		);*/
 	}
 	catch (const boost::python::error_already_set&) {
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
@@ -146,6 +147,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	// Add the built-in interfaces
 	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
+	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
 }
 
 void ScriptingSystem::shutdownModule() {
@@ -158,6 +160,8 @@ void ScriptingSystem::shutdownModule() {
 	_interfaces.clear();
 
 	_initialised = false;
+
+	Py_Finalize();
 }
 
 } // namespace script
