@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "iscript.h"
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 namespace script {
 
@@ -74,6 +75,11 @@ public:
 			.def_readwrite("value", &EntityClassAttribute::value)
 			.def_readwrite("description", &EntityClassAttribute::description)
 			.def_readwrite("inherited", &EntityClassAttribute::inherited)
+		;
+
+		// Declare the Anims std::map to Python
+		boost::python::class_<IModelDef::Anims>("Anims")
+			.def(boost::python::map_indexing_suite<IModelDef::Anims, true>())
 		;
 
 		// Add the declaration for a ModelDef
