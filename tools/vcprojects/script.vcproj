@@ -442,6 +442,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\MathInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\RadiantInterface.cpp"
 					>
 				</File>

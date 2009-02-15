@@ -5,6 +5,7 @@
 
 #include "StartupListener.h"
 
+#include "interfaces/MathInterface.h"
 #include "interfaces/RegistryInterface.h"
 #include "interfaces/RadiantInterface.h"
 #include "interfaces/EClassInterface.h"
@@ -141,6 +142,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	_scriptPath = ctx.getApplicationPath() + "scripts/";
 
 	// Add the built-in interfaces
+	addInterface("Math", MathInterfacePtr(new MathInterface));
 	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
