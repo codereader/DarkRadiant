@@ -461,6 +461,10 @@
 					RelativePath="..\..\plugins\script\interfaces\SceneGraphInterface.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\SelectionInterface.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
