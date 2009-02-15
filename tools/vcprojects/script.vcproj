@@ -438,6 +438,10 @@
 				Name="interfaces"
 				>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\EClassInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\RadiantInterface.cpp"
 					>
 				</File>

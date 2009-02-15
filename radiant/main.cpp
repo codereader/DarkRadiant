@@ -59,6 +59,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 
 #include "main.h"
 
+#include "iscript.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
@@ -251,6 +252,8 @@ int main (int argc, char* argv[]) {
 #else 
 	// Start the GTK main loop. This will run until a quit command is given by
 	// the user
+	GlobalScriptingSystem().executeScriptFile("test.py");
+
 	gtk_main();
 #endif
 	
