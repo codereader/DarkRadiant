@@ -16,11 +16,11 @@ modelDef = GlobalEntityClassManager.findModel('builderforger')
 print('ModelDef mesh for builderforger = ' + modelDef.mesh)
 
 # Test iterating over C++ std::map
-for anim in modelDef.anims:
-	print(anim.key())
-	print(' = ')
-	print(anim.data())
-	print('')
+#for anim in modelDef.anims:
+#	print(anim.key())
+#	print(' = ')
+#	print(anim.data())
+#	print('')
 
 # Test implementing a eclass visitor interface
 #class TestVisitor(EntityClassVisitor) :
@@ -29,5 +29,14 @@ for anim in modelDef.anims:
 
 #eclassVisitor = TestVisitor()
 #GlobalEntityClassManager.forEach(eclassVisitor)
+
+# Test traversing the scenegraph
+class SceneWalker(SceneNodeVisitor) :
+	def pre(self, node):
+		print(node.getNodeType())
+		return 1
+
+walker = SceneWalker()
+GlobalSceneGraph.root().traverse(walker)
 
 print('')

@@ -113,7 +113,7 @@ public:
 			.def("findModel", &EClassManagerInterface::findModel)
 		;
 
-		// Now point the Python variable "GlobalRegistry" to this instance
+		// Now point the Python variable "GlobalEntityClassManager" to this instance
 		nspace["GlobalEntityClassManager"] = boost::python::ptr(this);
 	}
 };
