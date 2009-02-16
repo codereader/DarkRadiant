@@ -438,6 +438,10 @@
 				Name="interfaces"
 				>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\EClassInterface.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\EClassInterface.h"
 					>
 				</File>
@@ -459,6 +463,10 @@
 				</File>
 				<File
 					RelativePath="..\..\plugins\script\interfaces\SceneGraphInterface.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\SelectionInterface.cpp"
 					>
 				</File>
 				<File
