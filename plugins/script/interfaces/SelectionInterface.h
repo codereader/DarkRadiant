@@ -1,13 +1,13 @@
 #ifndef _SELECTION_INTERFACE_H_
 #define _SELECTION_INTERFACE_H_
 
+#include <boost/python.hpp>
+
 #include "iscript.h"
 #include "selectionlib.h"
 #include <map>
 
 #include "SceneGraphInterface.h"
-
-#include <boost/python.hpp>
 
 namespace script {
 
@@ -29,40 +29,20 @@ class SelectionInterface :
 	public IScriptInterface
 {
 public:
-	const SelectionInfo& getSelectionInfo() {
-		return GlobalSelectionSystem().getSelectionInfo();
-	}
+	// SelectionSystem wrappers
+	const SelectionInfo& getSelectionInfo();
 
-	void foreachSelected(const SelectionSystem::Visitor& visitor) {
-		GlobalSelectionSystem().foreachSelected(visitor);
-	}
+	void foreachSelected(const SelectionSystem::Visitor& visitor);
+	void foreachSelectedComponent(const SelectionSystem::Visitor& visitor);
+
+	void setSelectedAll(bool selected);
+	void setSelectedAllComponents(bool selected);
+
+	ScriptSceneNode ultimateSelected();
+	ScriptSceneNode penultimateSelected();
 
 	// IScriptInterface implementation
-	void registerInterface(boost::python::object& nspace) {
-		// Expose the SelectionInfo structure
-		nspace["SelectionInfo"] = boost::python::class_<SelectionInfo>("SelectionInfo", boost::python::init<>())
-			.def_readonly("totalCount", &SelectionInfo::totalCount)
-			.def_readonly("patchCount", &SelectionInfo::patchCount)
-			.def_readonly("brushCount", &SelectionInfo::brushCount)
-			.def_readonly("entityCount", &SelectionInfo::entityCount)
-			.def_readonly("componentCount", &SelectionInfo::componentCount)
-		;
-
-		// Expose the SelectionSystem::Visitor interface
-		nspace["SelectionVisitor"] = boost::python::class_<SelectionVisitorWrapper, boost::noncopyable>("SelectionVisitor")
-			.def("visit", boost::python::pure_virtual(&SelectionSystem::Visitor::visit))
-		;
-
-		// Add the module declaration to the given python namespace
-		nspace["GlobalSelectionSystem"] = boost::python::class_<SelectionInterface>("GlobalSelectionSystem")
-			.def("getSelectionInfo", &SelectionInterface::getSelectionInfo, 
-				boost::python::return_value_policy<boost::python::copy_const_reference>())
-			.def("foreachSelected", &SelectionInterface::foreachSelected) 
-		;
-
-		// Now point the Python variable "GlobalSelectionSystem" to this instance
-		nspace["GlobalSelectionSystem"] = boost::python::ptr(this);
-	}
+	void registerInterface(boost::python::object& nspace);
 };
 typedef boost::shared_ptr<SelectionInterface> SelectionInterfacePtr;
 
