@@ -90,6 +90,17 @@ class EntityInspector :
     // The last selected key
     std::string _lastKey;
 
+	// The clipboard for spawnargs
+	struct ClipBoard
+	{
+		std::string key;
+		std::string value;
+
+		bool empty() const {
+			return key.empty();
+		}
+	} _clipBoard;
+
 private:
 
     // Utility functions to construct the Gtk components
@@ -105,7 +116,14 @@ private:
 	/* gtkutil::PopupMenu callbacks */
 	void _onAddKey();
 	void _onDeleteKey();
+	void _onCopyKey();
+	void _onCutKey();
+	void _onPasteKey();
+
 	bool _testDeleteKey();
+	bool _testCopyKey();
+	bool _testCutKey();
+	bool _testPasteKey();
 	
     /* GTK CALLBACKS */
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
@@ -133,6 +151,9 @@ private:
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();
+
+	// Applies the given key/value pair to the selection (works with multiple selected entities)
+	void applyKeyValueToSelection(const std::string& key, const std::string& value);
 
 	// Static map of property names to PropertyParms objects
 	const PropertyParmMap& getPropertyMap();

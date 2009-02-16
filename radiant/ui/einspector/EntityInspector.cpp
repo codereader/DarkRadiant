@@ -4,15 +4,16 @@
 
 #include "ientity.h"
 #include "ieclass.h"
-#include "iselection.h"
 #include "iregistry.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 
+#include "selectionlib.h"
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/Paned.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include "gtkutil/SeparatorMenuItem.h"
 #include "gtkutil/TreeModel.h"
 #include "xmlutil/Document.h"
 #include "signal/signal.h"
@@ -141,6 +142,24 @@ void EntityInspector::createContextMenu() {
 		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property"), 
 		boost::bind(&EntityInspector::_onDeleteKey, this), 
 		boost::bind(&EntityInspector::_testDeleteKey, this)
+	);
+
+	_contextMenu.addItem(gtkutil::SeparatorMenuItem(), gtkutil::PopupMenu::Callback());
+
+	_contextMenu.addItem(
+		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy Spawnarg"), 
+		boost::bind(&EntityInspector::_onCopyKey, this), 
+		boost::bind(&EntityInspector::_testCopyKey, this)
+	);
+	_contextMenu.addItem(
+		gtkutil::StockIconMenuItem(GTK_STOCK_CUT, "Cut Spawnarg"), 
+		boost::bind(&EntityInspector::_onCutKey, this), 
+		boost::bind(&EntityInspector::_testCutKey, this)
+	);
+	_contextMenu.addItem(
+		gtkutil::StockIconMenuItem(GTK_STOCK_PASTE, "Paste Spawnarg"), 
+		boost::bind(&EntityInspector::_onPasteKey, this), 
+		boost::bind(&EntityInspector::_testPasteKey, this)
 	);
 }
 
@@ -426,12 +445,17 @@ namespace
 // Set entity property from entry boxes
 void EntityInspector::setPropertyFromEntries() 
 {
-	// greebo: Instantiate a scoped object to make this operation undoable
-	UndoableCommand command("entitySetProperty");
-
 	// Get the key from the entry box
 	std::string key = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
 	std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
+
+	// Pass the call to the specialised routine
+	applyKeyValueToSelection(key, val);
+}
+
+void EntityInspector::applyKeyValueToSelection(const std::string& key, const std::string& val) {
+	// greebo: Instantiate a scoped object to make this operation undoable
+	UndoableCommand command("entitySetProperty");
 
 	if (key.empty()) {
 		return;
@@ -531,6 +555,62 @@ bool EntityInspector::_testDeleteKey() {
 		return true;
 	else
 		return false;
+}
+
+void EntityInspector::_onCopyKey() {
+	std::string key = getListSelection(PROPERTY_NAME_COLUMN);
+    std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
+
+	if (!key.empty()) {
+		_clipBoard.key = key;
+		_clipBoard.value = value;
+	}
+}
+
+bool EntityInspector::_testCopyKey() {
+	return !getListSelection(PROPERTY_NAME_COLUMN).empty();
+}
+
+void EntityInspector::_onCutKey() {
+	std::string key = getListSelection(PROPERTY_NAME_COLUMN);
+    std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
+
+	if (!key.empty() && _selectedEntity != NULL) {
+		_clipBoard.key = key;
+		_clipBoard.value = value;
+
+		// Clear the key after copying
+		_selectedEntity->setKeyValue(key, "");
+	}
+}
+
+bool EntityInspector::_testCutKey() {
+	// Make sure the Delete item is only available for explicit 
+	// (non-inherited) properties
+	if (getListSelection(INHERITED_FLAG_COLUMN) != "1") {
+		// return true only if selection is not empty		
+		return !getListSelection(PROPERTY_NAME_COLUMN).empty();
+	}
+	else {
+		return false;
+	}
+}
+
+void EntityInspector::_onPasteKey() {
+	if (!_clipBoard.key.empty() && !_clipBoard.value.empty()) {
+		// Pass the call
+		applyKeyValueToSelection(_clipBoard.key, _clipBoard.value);
+	}
+}
+
+bool EntityInspector::_testPasteKey() {
+	if (GlobalSelectionSystem().getSelectionInfo().entityCount == 0) {
+		// No entities selected
+		return false;
+	}
+
+	// Return true if the clipboard contains data
+	return !_clipBoard.key.empty() && !_clipBoard.value.empty();
 }
 
 /* GTK CALLBACKS */
