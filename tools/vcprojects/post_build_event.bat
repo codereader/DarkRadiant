@@ -42,3 +42,5 @@ copy ..\..\w32deps\gtk2\bin\libpangowin32-1.0-0.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\libpng12-0.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\libtiff3.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\zlib1.dll ..\..\install
+
+copy ..\..\w32deps\python\bin\python26.dll ..\..\install

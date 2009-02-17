@@ -36,3 +36,5 @@ copy ..\..\w64deps\gtk2\bin\libpangowin32-1.0-0.dll ..\..\install
 copy ..\..\w64deps\gtk2\bin\libpangoft2-1.0-0.dll ..\..\install
 
 copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install
+
+copy ..\..\w64deps\python\bin\python26.dll ..\..\install
