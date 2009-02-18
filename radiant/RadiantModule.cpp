@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iclipper.h"
 
 #include "entity.h"
-#include "map.h"
 #include "select.h"
 #include "map/AutoSaver.h"
 #include "map/PointFile.h"
@@ -228,7 +227,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
 
     Selection_construct();
     map::PointFile::Instance().registerCommands();
-    Map_Construct();
     MainFrame_Construct();
     GlobalCamera().construct();
     GlobalXYWnd().construct();

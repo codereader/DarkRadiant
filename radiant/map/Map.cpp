@@ -852,6 +852,15 @@ void Map::initialiseModule(const ApplicationContext& ctx) {
 	// Register for the startup event
 	_startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);
 	GlobalRadiant().addEventListener(_startupMapLoader);
+
+	// Add the Map-related commands to the EventManager
+	registerCommands();
+	
+	// Add the region-related commands to the EventManager
+	RegionManager::initialiseCommands();
+
+	// Add the map position commands to the EventManager
+	GlobalMapPosition().initialise();
 }
 
 // Creates the static module instance
