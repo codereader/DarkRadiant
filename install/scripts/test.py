@@ -51,6 +51,16 @@ class Walker(SelectionVisitor) :
 		else:
 			print('Node is not a brush')
 
+		# Try to cast the node to a patch
+		patch = node.getPatch()
+
+		# If the Patch is not NULL the cast succeeded
+		if not patch.isNull():
+			print('Node is a patch')
+		else:
+			print('Node is not a patch')
+
+
 visitor = Walker()
 GlobalSelectionSystem.foreachSelected(visitor)
 
