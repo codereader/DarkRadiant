@@ -462,6 +462,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\PatchInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\PatchInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\RadiantInterface.cpp"
 					>
 				</File>

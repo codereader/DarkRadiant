@@ -13,6 +13,7 @@
 #include "interfaces/EClassInterface.h"
 #include "interfaces/SelectionInterface.h"
 #include "interfaces/BrushInterface.h"
+#include "interfaces/PatchInterface.h"
 
 namespace script {
 
@@ -171,6 +172,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
 	addInterface("GlobalSelectionSystem", SelectionInterfacePtr(new SelectionInterface));
 	addInterface("Brush", BrushInterfacePtr(new BrushInterface));
+	addInterface("Patch", PatchInterfacePtr(new PatchInterface));
 
 	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
 }
