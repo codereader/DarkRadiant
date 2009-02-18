@@ -12,6 +12,7 @@ namespace script {
 
 class ScriptSceneNode
 {
+protected:
 	// The contained scene::INodePtr
 	const scene::INodePtr _node;
 

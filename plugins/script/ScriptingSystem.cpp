@@ -12,6 +12,7 @@
 #include "interfaces/SceneGraphInterface.h"
 #include "interfaces/EClassInterface.h"
 #include "interfaces/SelectionInterface.h"
+#include "interfaces/BrushInterface.h"
 
 namespace script {
 
@@ -22,21 +23,33 @@ ScriptingSystem::ScriptingSystem() :
 {}
 
 void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfacePtr& iface) {
-	// Try to insert
-	std::pair<Interfaces::iterator, bool> result = _interfaces.insert(
-		Interfaces::value_type(name, iface)
-	);
-
-	if (!result.second) {
+	// Check if exists
+	if (interfaceExists(name)) {
 		globalErrorStream() << "Cannot add script interface " << name 
 			<< ", this interface is already registered." << std::endl;
 		return;
 	}
 
+	// Try to insert
+	_interfaces.push_back(
+		std::make_pair<std::string, IScriptInterfacePtr>(name, iface)
+	);
+	
 	if (_initialised) {
 		// Add the interface at once, all the others are already added
 		iface->registerInterface(_mainNamespace);
 	}
+}
+
+bool ScriptingSystem::interfaceExists(const std::string& name) {
+	// Traverse the interface list 
+	for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
+		if (i->first == name) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void ScriptingSystem::executeScriptFile(const std::string& filename) {
@@ -157,6 +170,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
 	addInterface("GlobalSelectionSystem", SelectionInterfacePtr(new SelectionInterface));
+	addInterface("Brush", BrushInterfacePtr(new BrushInterface));
 
 	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
 }

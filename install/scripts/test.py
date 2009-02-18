@@ -42,7 +42,14 @@ print('ModelDef mesh for builderforger = ' + modelDef.mesh)
 # Test traversing the current selection
 class Walker(SelectionVisitor) :
 	def visit(self, node):
-		print(node.getNodeType())
+		# Try to "cast" the node to a brush
+		brush = node.getBrush()
+
+		# If the Brush is not NULL the cast succeeded
+		if not brush.isNull():
+			print(brush.getNumFaces())
+		else:
+			print('Node is not a brush')
 
 visitor = Walker()
 GlobalSelectionSystem.foreachSelected(visitor)

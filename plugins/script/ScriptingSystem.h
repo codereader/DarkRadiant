@@ -3,6 +3,7 @@
 
 #include <boost/python.hpp>
 #include <map>
+#include <vector>
 
 #include "iscript.h"
 #include "PythonConsoleWriter.h"
@@ -21,7 +22,8 @@ class ScriptingSystem :
 
 	bool _initialised;
 
-	typedef std::map<std::string, IScriptInterfacePtr> Interfaces;
+	typedef std::pair<std::string, IScriptInterfacePtr> NamedInterface;
+	typedef std::vector<NamedInterface> Interfaces;
 	Interfaces _interfaces;
 
 	boost::python::object _mainModule;
@@ -59,6 +61,9 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 	void ScriptingSystem::shutdownModule();
+
+private: 
+	bool interfaceExists(const std::string& name);
 };
 typedef boost::shared_ptr<ScriptingSystem> ScriptingSystemPtr;
 
