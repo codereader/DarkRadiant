@@ -59,6 +59,9 @@ PropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 // Return a GdkPixbuf containing the icon for the given property type
 
 GdkPixbuf* PropertyEditorFactory::getPixbufFor(const std::string& type) {
+	// Sanity check
+	if (type.empty()) return NULL;
+
 	std::string iconName = "icon_" + type + ".png";
 	return GlobalRadiant().getLocalPixbuf(iconName);	
 }
