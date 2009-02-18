@@ -139,7 +139,6 @@ darkradiant_SOURCES = main.cpp \
 					  modulesystem/ModuleRegistry.cpp \
 					  brushexport/BrushExportOBJ.cpp \
 					  gtkdlgs.cpp \
-					  map.cpp \
 					  select.cpp \
 					  selection/SelectedNodeList.cpp \
 					  selection/shaderclipboard/ShaderClipboard.cpp \

@@ -201,7 +201,7 @@ public:
 
 	/** greebo: Registers the commands with the EventManager.
 	 */
-	static void registerCommands();
+	void registerCommands();
 	
 	// Static command targets for connection to the EventManager
 	static void exportMap();
