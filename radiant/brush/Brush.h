@@ -84,6 +84,7 @@ public:
 };
 
 class Brush :
+	public IBrush,
 	public TransformNode,
 	public Bounded,
 	public Cullable,
