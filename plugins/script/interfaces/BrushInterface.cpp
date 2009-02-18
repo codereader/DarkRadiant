@@ -16,9 +16,9 @@ public:
 		// Sanity check
 		if (_node == NULL) return 0;
 
-		Brush* brush = Node_getBrush(_node);
+		IBrush* brush = Node_getIBrush(_node);
 
-		return 1;
+		return (brush != NULL) ? brush->size() : 0;
 	}
 
 	// Checks if the given SceneNode structure is a BrushNode

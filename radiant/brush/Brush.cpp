@@ -48,6 +48,7 @@ Brush::Brush(const Brush& other, scene::Node& node, const Callback& evaluateTran
 }
 
 Brush::Brush(const Brush& other) :
+	IBrush(other),
 	TransformNode(other),
 	Bounded(other),
 	Cullable(other),

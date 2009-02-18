@@ -99,6 +99,7 @@ public:
 
 	// IBrushNode implementtation
 	virtual Brush& getBrush();
+	virtual IBrush& getIBrush();
 	
 	std::string name() const {
 		return "Brush";

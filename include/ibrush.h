@@ -98,6 +98,14 @@ public:
 	virtual void clipperColourChanged() = 0;
 };
 
+// Brush Interface
+class IBrush
+{
+public:
+	// Returns the number of faces for this brush
+	virtual std::size_t size() const = 0;
+};
+
 class Brush;
 class IBrushNode
 {
@@ -105,6 +113,9 @@ public:
 	/** greebo: Retrieves the contained Brush from the BrushNode
 	 */
 	virtual Brush& getBrush() = 0;
+
+	// Returns the IBrush interface
+	virtual IBrush& getIBrush() = 0;
 };
 typedef boost::shared_ptr<IBrushNode> IBrushNodePtr;
 
@@ -117,6 +128,15 @@ inline Brush* Node_getBrush(scene::INodePtr node) {
 	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
 	if (brushNode != NULL) {
 		return &brushNode->getBrush();
+	}
+	return NULL;
+}
+
+// Casts the node onto a BrushNode and returns the IBrush pointer
+inline IBrush* Node_getIBrush(scene::INodePtr node) {
+	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
+	if (brushNode != NULL) {
+		return &brushNode->getIBrush();
 	}
 	return NULL;
 }

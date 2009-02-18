@@ -252,6 +252,10 @@ Brush& BrushNode::getBrush() {
 	return m_brush;
 }
 
+IBrush& BrushNode::getIBrush() {
+	return m_brush;
+}
+
 void BrushNode::translateDoom3Brush(const Vector3& translation) {
 	m_brush.translateDoom3Brush(translation);
 }
