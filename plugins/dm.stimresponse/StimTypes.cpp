@@ -25,7 +25,7 @@
 		 */
 		Entity* findEntityByClass(const std::string& className) {
 			// Instantiate a walker to find the entity
-			EntityFindByClassnameWalker walker(className);
+			EntityNodeFindByClassnameWalker walker(className);
 			
 			// Walk the scenegraph
 			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);

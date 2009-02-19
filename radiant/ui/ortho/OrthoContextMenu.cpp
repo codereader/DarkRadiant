@@ -256,7 +256,7 @@ void OrthoContextMenu::checkAddOptions() {
 
 void OrthoContextMenu::checkPlayerStart() {
 	// Check if a playerStart already exists
-	EntityFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
+	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	if (walker.getEntity() == NULL) {
@@ -380,7 +380,7 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
 void OrthoContextMenu::callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {
 	UndoableCommand _cmd("movePlayerStart");
 	
-	EntityFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
+	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	Entity* playerStart = walker.getEntity();

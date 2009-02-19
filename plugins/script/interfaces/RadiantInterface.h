@@ -6,11 +6,9 @@
 #include "iradiant.h"
 #include "iscript.h"
 
-#include "ientity.h"
+#include "EntityInterface.h"
 
 namespace script {
-
-class ScriptEntity;
 
 /**
  * greebo: This class registers the base set of interfaces, like
@@ -21,7 +19,7 @@ class RadiantInterface :
 {
 public:
 	// Returns the first entity matching the given classname
-	ScriptEntity* findEntityByClassname(const std::string& name);
+	ScriptEntityNode findEntityByClassname(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
