@@ -454,6 +454,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\EntityInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\EntityInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\MathInterface.cpp"
 					>
 				</File>

@@ -14,6 +14,7 @@
 #include "interfaces/SelectionInterface.h"
 #include "interfaces/BrushInterface.h"
 #include "interfaces/PatchInterface.h"
+#include "interfaces/EntityInterface.h"
 
 namespace script {
 
@@ -173,6 +174,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("GlobalSelectionSystem", SelectionInterfacePtr(new SelectionInterface));
 	addInterface("Brush", BrushInterfacePtr(new BrushInterface));
 	addInterface("Patch", PatchInterfacePtr(new PatchInterface));
+	addInterface("Entity", EntityInterfacePtr(new EntityInterface));
 
 	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
 }
