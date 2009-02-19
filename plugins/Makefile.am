@@ -21,7 +21,7 @@ SUBDIRS = eventmanager \
           xmlregistry
 
 # Conditional modules
-SUBDIRS += @sound_module@
+SUBDIRS += @sound_module@ @script_module@
 
 # Optional plugins
 SUBDIRS += @sr_plugin@ @obj_plugin@ @difficulty_plugin@ @conv_plugin@

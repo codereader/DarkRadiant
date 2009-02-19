@@ -890,6 +890,7 @@ GL_LIBS
 GLU_LIBS
 REGEX_LIBS
 BOOST_FILESYSTEM_LIBS
+script_module
 sound_module
 ALUT_LIBS
 VORBIS_LIBS
@@ -4841,7 +4842,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 4844 "configure"' > conftest.$ac_ext
+  echo '#line 4845 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7420,11 +7421,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7423: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7424: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7427: \$? = $ac_status" >&5
+   echo "$as_me:7428: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7710,11 +7711,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7713: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7714: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7717: \$? = $ac_status" >&5
+   echo "$as_me:7718: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7814,11 +7815,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7817: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7818: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7821: \$? = $ac_status" >&5
+   echo "$as_me:7822: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10191,7 +10192,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10194 "configure"
+#line 10195 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10291,7 +10292,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10294 "configure"
+#line 10295 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12692,11 +12693,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12695: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12696: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:12699: \$? = $ac_status" >&5
+   echo "$as_me:12700: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -12796,11 +12797,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12799: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12800: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:12803: \$? = $ac_status" >&5
+   echo "$as_me:12804: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14394,11 +14395,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14397: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14398: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14401: \$? = $ac_status" >&5
+   echo "$as_me:14402: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14498,11 +14499,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14501: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14502: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14505: \$? = $ac_status" >&5
+   echo "$as_me:14506: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16718,11 +16719,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16721: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16722: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16725: \$? = $ac_status" >&5
+   echo "$as_me:16726: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17008,11 +17009,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17011: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17012: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17015: \$? = $ac_status" >&5
+   echo "$as_me:17016: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17112,11 +17113,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17115: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17116: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17119: \$? = $ac_status" >&5
+   echo "$as_me:17120: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -21213,6 +21214,141 @@ fi
 
 
 
+# Boost.Python
+if test "${ac_cv_header_boost_python_hpp+set}" = set; then
+  { echo "$as_me:$LINENO: checking for boost/python.hpp" >&5
+echo $ECHO_N "checking for boost/python.hpp... $ECHO_C" >&6; }
+if test "${ac_cv_header_boost_python_hpp+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_header_boost_python_hpp" >&5
+echo "${ECHO_T}$ac_cv_header_boost_python_hpp" >&6; }
+else
+  # Is the header compilable?
+{ echo "$as_me:$LINENO: checking boost/python.hpp usability" >&5
+echo $ECHO_N "checking boost/python.hpp usability... $ECHO_C" >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <boost/python.hpp>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_header_compiler=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6; }
+
+# Is the header present?
+{ echo "$as_me:$LINENO: checking boost/python.hpp presence" >&5
+echo $ECHO_N "checking boost/python.hpp presence... $ECHO_C" >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <boost/python.hpp>
+_ACEOF
+if { (ac_try="$ac_cpp conftest.$ac_ext"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null && {
+	 test -z "$ac_cxx_preproc_warn_flag$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       }; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+
+rm -f conftest.err conftest.$ac_ext
+{ echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6; }
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_cxx_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: boost/python.hpp: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: boost/python.hpp: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp: present but cannot be compiled" >&5
+echo "$as_me: WARNING: boost/python.hpp: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: boost/python.hpp:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: boost/python.hpp: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: boost/python.hpp:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: boost/python.hpp: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: boost/python.hpp: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: boost/python.hpp: in the future, the compiler will take precedence" >&2;}
+
+    ;;
+esac
+{ echo "$as_me:$LINENO: checking for boost/python.hpp" >&5
+echo $ECHO_N "checking for boost/python.hpp... $ECHO_C" >&6; }
+if test "${ac_cv_header_boost_python_hpp+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_boost_python_hpp=$ac_header_preproc
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_header_boost_python_hpp" >&5
+echo "${ECHO_T}$ac_cv_header_boost_python_hpp" >&6; }
+
+fi
+if test $ac_cv_header_boost_python_hpp = yes; then
+  script_module='script'
+else
+  script_module=''
+fi
+
+
+
+
 # Dependent Boost headers
 if test "${ac_cv_header_boost_serialization_access_hpp+set}" = set; then
   { echo "$as_me:$LINENO: checking for boost/serialization/access.hpp" >&5
@@ -21703,7 +21839,7 @@ fi
 # Generate output files
 ac_config_headers="$ac_config_headers config.h"
 
-ac_config_files="$ac_config_files install/darkradiant.desktop Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/eclasstree/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile plugins/dm.conversation/Makefile"
+ac_config_files="$ac_config_files install/darkradiant.desktop Makefile radiant/Makefile libs/Makefile libs/ddslib/Makefile libs/gtkutil/Makefile libs/jpeg6/Makefile libs/math/Makefile libs/picomodel/Makefile libs/scene/Makefile libs/xmlutil/Makefile plugins/Makefile plugins/archivezip/Makefile plugins/eclassmgr/Makefile plugins/eclasstree/Makefile plugins/entity/Makefile plugins/entitylist/Makefile plugins/eventmanager/Makefile plugins/filetypes/Makefile plugins/filters/Makefile plugins/grid/Makefile plugins/image/Makefile plugins/mapdoom3/Makefile plugins/md5model/Makefile plugins/model/Makefile plugins/particles/Makefile plugins/scenegraph/Makefile plugins/script/Makefile plugins/shaders/Makefile plugins/skins/Makefile plugins/sound/Makefile plugins/uimanager/Makefile plugins/undo/Makefile plugins/vfspk3/Makefile plugins/xmlregistry/Makefile plugins/dm.stimresponse/Makefile plugins/dm.objectives/Makefile plugins/dm.difficulty/Makefile plugins/dm.conversation/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -22319,6 +22455,7 @@ do
     "plugins/model/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/model/Makefile" ;;
     "plugins/particles/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/particles/Makefile" ;;
     "plugins/scenegraph/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/scenegraph/Makefile" ;;
+    "plugins/script/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/script/Makefile" ;;
     "plugins/shaders/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/shaders/Makefile" ;;
     "plugins/skins/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/skins/Makefile" ;;
     "plugins/sound/Makefile") CONFIG_FILES="$CONFIG_FILES plugins/sound/Makefile" ;;
@@ -22557,6 +22694,7 @@ GL_LIBS!$GL_LIBS$ac_delim
 GLU_LIBS!$GLU_LIBS$ac_delim
 REGEX_LIBS!$REGEX_LIBS$ac_delim
 BOOST_FILESYSTEM_LIBS!$BOOST_FILESYSTEM_LIBS$ac_delim
+script_module!$script_module$ac_delim
 sound_module!$sound_module$ac_delim
 ALUT_LIBS!$ALUT_LIBS$ac_delim
 VORBIS_LIBS!$VORBIS_LIBS$ac_delim
@@ -22565,7 +22703,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 33; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 34; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
@@ -23182,5 +23320,12 @@ then
     echo " Darkmod plugins:     yes"
 else
     echo " Darkmod plugins:     no"
+fi
+
+if test -z $script_module
+then
+    echo " Python scripting:    no"
+else
+    echo " Python scripting:    yes"
 fi
 
