@@ -42,7 +42,20 @@ ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 }
 
 // Creates a new entity for the given entityclass
-ScriptSceneNode EntityInterface::createEntity(const IEntityClassPtr& eclass) {
+ScriptSceneNode EntityInterface::createEntity(const ScriptEntityClass& eclass) {
+	return ScriptSceneNode(GlobalEntityCreator().createEntity(eclass));
+}
+
+// Creates a new entity for the given entityclass
+ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
+	// Find the eclass
+	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
+
+	if (eclass == NULL) {
+		globalOutputStream() << "Could not find entity class: " << eclassName << std::endl;
+		return ScriptSceneNode(scene::INodePtr());
+	}
+
 	return ScriptSceneNode(GlobalEntityCreator().createEntity(eclass));
 }
 
@@ -65,7 +78,9 @@ void EntityInterface::registerInterface(boost::python::object& nspace) {
 
 	// Add the EntityCreator module declaration to the given python namespace
 	nspace["GlobalEntityCreator"] = boost::python::class_<EntityInterface>("GlobalEntityCreator")
-		.def("createEntity", &EntityInterface::createEntity)
+		// Add both overloads to createEntity
+		.def("createEntity", static_cast<ScriptSceneNode (EntityInterface::*)(const std::string&)>(&EntityInterface::createEntity))
+		.def("createEntity", static_cast<ScriptSceneNode (EntityInterface::*)(const ScriptEntityClass&)>(&EntityInterface::createEntity))
 	;
 
 	// Now point the Python variable "GlobalEntityCreator" to this instance

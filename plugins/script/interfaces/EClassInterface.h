@@ -22,6 +22,10 @@ public:
 		_eclass(eclass)
 	{}
 
+	operator const IEntityClassPtr&() const {
+		return _eclass;
+	}
+
 	// Returns a specific spawnarg from this entityDef, or "" if not found
 	EntityClassAttribute& getAttribute(const std::string& name) {
 		if (_eclass == NULL) {
@@ -29,6 +33,10 @@ public:
 		}
 
 		return _eclass->getAttribute(name);
+	}
+
+	bool isNull() const {
+		return _eclass == NULL;
 	}
 };
 
