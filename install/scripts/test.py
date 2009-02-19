@@ -12,6 +12,10 @@ print('Worldspawn edited')
 eclass = GlobalEntityClassManager.findClass('atdm:func_shooter')
 print(eclass.getAttribute('editor_usage').value)
 
+# Try creating a func_shooter entity
+if not eclass.isNull():
+	shooter = GlobalEntityCreator.createEntity(eclass)
+
 modelDef = GlobalEntityClassManager.findModel('builderforger')
 print('ModelDef mesh for builderforger = ' + modelDef.mesh)
 

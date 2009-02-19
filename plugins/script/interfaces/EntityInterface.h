@@ -6,6 +6,7 @@
 
 #include "ientity.h"
 
+#include "EClassInterface.h"
 #include "SceneGraphInterface.h"
 
 namespace script {
@@ -38,7 +39,10 @@ class EntityInterface :
 {
 public:
 	// Creates a new entity for the given entityclass
-	ScriptSceneNode createEntity(const IEntityClassPtr& eclass);
+	ScriptSceneNode createEntity(const ScriptEntityClass& eclass);
+
+	// Creates a new entity for the named entityclass
+	ScriptSceneNode createEntity(const std::string& eclassName);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
