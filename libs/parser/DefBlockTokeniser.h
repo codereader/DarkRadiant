@@ -359,7 +359,7 @@ public:
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
     Block nextBlock() {
-        if (hasMoreTokens())
+        if (hasMoreBlocks())
             return *(_tokIter++);
         else
             throw ParseException("BlockTokeniser: no more blocks");

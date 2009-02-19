@@ -66,7 +66,9 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-Camera.$(OBJEXT) \
 	darkradiant-GlobalCamera.$(OBJEXT) \
 	darkradiant-CameraSettings.$(OBJEXT) \
-	darkradiant-CamWnd.$(OBJEXT) darkradiant-Namespace.$(OBJEXT) \
+	darkradiant-CamWnd.$(OBJEXT) \
+	darkradiant-FloatingCamWnd.$(OBJEXT) \
+	darkradiant-Namespace.$(OBJEXT) \
 	darkradiant-NamespaceFactory.$(OBJEXT) \
 	darkradiant-OpenGLStateMap.$(OBJEXT) \
 	darkradiant-OpenGLShader.$(OBJEXT) \
@@ -116,6 +118,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-ShaderChooser.$(OBJEXT) \
 	darkradiant-SoundShaderPreview.$(OBJEXT) \
 	darkradiant-RenderableAABB.$(OBJEXT) \
+	darkradiant-MapPreview.$(OBJEXT) \
 	darkradiant-FiltersMenu.$(OBJEXT) \
 	darkradiant-PrefPage.$(OBJEXT) \
 	darkradiant-PrefDialog.$(OBJEXT) \
@@ -131,6 +134,13 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-ShortcutChooser.$(OBJEXT) \
 	darkradiant-FilterDialog.$(OBJEXT) \
 	darkradiant-FilterEditor.$(OBJEXT) \
+	darkradiant-MainFrame.$(OBJEXT) \
+	darkradiant-MainFrameLayoutManager.$(OBJEXT) \
+	darkradiant-FloatingLayout.$(OBJEXT) \
+	darkradiant-EmbeddedLayout.$(OBJEXT) \
+	darkradiant-SplitPaneLayout.$(OBJEXT) \
+	darkradiant-RegularLayout.$(OBJEXT) \
+	darkradiant-ScreenUpdateBlocker.$(OBJEXT) \
 	darkradiant-patchmanip.$(OBJEXT) darkradiant-XYWnd.$(OBJEXT) \
 	darkradiant-GlobalXYWnd.$(OBJEXT) \
 	darkradiant-TexToolItem.$(OBJEXT) \
@@ -148,8 +158,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-ModuleLoader.$(OBJEXT) \
 	darkradiant-ModuleRegistry.$(OBJEXT) \
 	darkradiant-BrushExportOBJ.$(OBJEXT) \
-	darkradiant-gtkdlgs.$(OBJEXT) darkradiant-map.$(OBJEXT) \
-	darkradiant-select.$(OBJEXT) \
+	darkradiant-gtkdlgs.$(OBJEXT) darkradiant-select.$(OBJEXT) \
 	darkradiant-SelectedNodeList.$(OBJEXT) \
 	darkradiant-ShaderClipboard.$(OBJEXT) \
 	darkradiant-Texturable.$(OBJEXT) \
@@ -180,17 +189,19 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-MapPosition.$(OBJEXT) \
 	darkradiant-FindMapElements.$(OBJEXT) \
 	darkradiant-MapFileManager.$(OBJEXT) \
+	darkradiant-MapFileChooserPreview.$(OBJEXT) \
 	darkradiant-Traverse.$(OBJEXT) \
 	darkradiant-RegionManager.$(OBJEXT) \
 	darkradiant-PointFile.$(OBJEXT) \
 	darkradiant-MapPositionManager.$(OBJEXT) \
 	darkradiant-MapResource.$(OBJEXT) darkradiant-Map.$(OBJEXT) \
 	darkradiant-AutoSaver.$(OBJEXT) \
+	darkradiant-StartupMapLoader.$(OBJEXT) \
 	darkradiant-MapResourceManager.$(OBJEXT) \
 	darkradiant-entity.$(OBJEXT) darkradiant-ClipPoint.$(OBJEXT) \
 	darkradiant-Clipper.$(OBJEXT) darkradiant-timer.$(OBJEXT) \
-	darkradiant-mainframe.$(OBJEXT) darkradiant-Console.$(OBJEXT) \
-	darkradiant-LogStream.$(OBJEXT) \
+	darkradiant-mainframe_old.$(OBJEXT) \
+	darkradiant-Console.$(OBJEXT) darkradiant-LogStream.$(OBJEXT) \
 	darkradiant-LogWriter.$(OBJEXT) \
 	darkradiant-COutRedirector.$(OBJEXT) \
 	darkradiant-StringLogDevice.$(OBJEXT) \
@@ -403,6 +414,7 @@ darkradiant_SOURCES = main.cpp \
 					  camera/GlobalCamera.cpp \
 					  camera/CameraSettings.cpp \
 					  camera/CamWnd.cpp \
+					  camera/FloatingCamWnd.cpp \
 					  namespace/Namespace.cpp \
 					  namespace/NamespaceFactory.cpp \
 					  render/backend/OpenGLStateMap.cpp \
@@ -455,6 +467,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/common/ShaderChooser.cpp \
 					  ui/common/SoundShaderPreview.cpp \
 					  ui/common/RenderableAABB.cpp \
+					  ui/common/MapPreview.cpp \
 					  ui/menu/FiltersMenu.cpp \
 					  ui/prefdialog/PrefPage.cpp \
 					  ui/prefdialog/PrefDialog.cpp \
@@ -470,6 +483,13 @@ darkradiant_SOURCES = main.cpp \
 					  ui/commandlist/ShortcutChooser.cpp \
 					  ui/filterdialog/FilterDialog.cpp \
 					  ui/filterdialog/FilterEditor.cpp \
+					  ui/mainframe/MainFrame.cpp \
+					  ui/mainframe/MainFrameLayoutManager.cpp \
+					  ui/mainframe/FloatingLayout.cpp \
+					  ui/mainframe/EmbeddedLayout.cpp \
+					  ui/mainframe/SplitPaneLayout.cpp \
+					  ui/mainframe/RegularLayout.cpp \
+					  ui/mainframe/ScreenUpdateBlocker.cpp \
 					  patchmanip.cpp \
 					  xyview/XYWnd.cpp \
 					  xyview/GlobalXYWnd.cpp \
@@ -491,7 +511,6 @@ darkradiant_SOURCES = main.cpp \
 					  modulesystem/ModuleRegistry.cpp \
 					  brushexport/BrushExportOBJ.cpp \
 					  gtkdlgs.cpp \
-					  map.cpp \
 					  select.cpp \
 					  selection/SelectedNodeList.cpp \
 					  selection/shaderclipboard/ShaderClipboard.cpp \
@@ -529,6 +548,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapPosition.cpp \
 					  map/FindMapElements.cpp \
 					  map/MapFileManager.cpp \
+					  map/MapFileChooserPreview.cpp \
 					  map/algorithm/Traverse.cpp \
 					  map/RegionManager.cpp \
 					  map/PointFile.cpp \
@@ -536,12 +556,13 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapResource.cpp \
 					  map/Map.cpp \
 					  map/AutoSaver.cpp \
+					  map/StartupMapLoader.cpp \
 					  map/MapResourceManager.cpp \
 					  entity.cpp \
 					  clipper/ClipPoint.cpp \
 					  clipper/Clipper.cpp \
 					  timer.cpp \
-					  mainframe.cpp \
+					  mainframe_old.cpp \
 					  log/Console.cpp \
 					  log/LogStream.cpp \
 					  log/LogWriter.cpp \
@@ -657,6 +678,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Curves.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-DynamicLibrary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-DynamicLibraryLoader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EmbeddedLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Entity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityClassChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityClassTreePopulator.Po@am__quote@
@@ -676,6 +698,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FindShader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FixedWinding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FloatPropertyEditor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FloatingCamWnd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FloatingLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-GLProgramFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Game.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-GameFileLoader.Po@am__quote@
@@ -699,14 +723,18 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LogWriter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MRU.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MRUMenuItem.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MainFrame.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MainFrameLayoutManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Manipulatables.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ManipulateObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Manipulators.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Map.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileChooserPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapInfoDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPosition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPositionManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapResource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapResourceManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MediaBrowser.Po@am__quote@
@@ -752,8 +780,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantWindowObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RegionManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RegularLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RenderableAABB.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RootNode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ScreenUpdateBlocker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectedNodeList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectionTest.Po@am__quote@
@@ -769,6 +799,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SoundPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SoundShaderPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Splash.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SplitPaneLayout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-StartupMapLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-StringLogDevice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SurfaceInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-TexDef.Po@am__quote@
@@ -792,8 +824,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-gtkdlgs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-gtkmisc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-mainframe.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-map.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-mainframe_old.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-patchmanip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-referencecache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-select.Po@am__quote@
@@ -1171,6 +1202,20 @@ darkradiant-CamWnd.obj: camera/CamWnd.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='camera/CamWnd.cpp' object='darkradiant-CamWnd.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CamWnd.obj `if test -f 'camera/CamWnd.cpp'; then $(CYGPATH_W) 'camera/CamWnd.cpp'; else $(CYGPATH_W) '$(srcdir)/camera/CamWnd.cpp'; fi`
+
+darkradiant-FloatingCamWnd.o: camera/FloatingCamWnd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FloatingCamWnd.o -MD -MP -MF $(DEPDIR)/darkradiant-FloatingCamWnd.Tpo -c -o darkradiant-FloatingCamWnd.o `test -f 'camera/FloatingCamWnd.cpp' || echo '$(srcdir)/'`camera/FloatingCamWnd.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FloatingCamWnd.Tpo $(DEPDIR)/darkradiant-FloatingCamWnd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='camera/FloatingCamWnd.cpp' object='darkradiant-FloatingCamWnd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FloatingCamWnd.o `test -f 'camera/FloatingCamWnd.cpp' || echo '$(srcdir)/'`camera/FloatingCamWnd.cpp
+
+darkradiant-FloatingCamWnd.obj: camera/FloatingCamWnd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FloatingCamWnd.obj -MD -MP -MF $(DEPDIR)/darkradiant-FloatingCamWnd.Tpo -c -o darkradiant-FloatingCamWnd.obj `if test -f 'camera/FloatingCamWnd.cpp'; then $(CYGPATH_W) 'camera/FloatingCamWnd.cpp'; else $(CYGPATH_W) '$(srcdir)/camera/FloatingCamWnd.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FloatingCamWnd.Tpo $(DEPDIR)/darkradiant-FloatingCamWnd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='camera/FloatingCamWnd.cpp' object='darkradiant-FloatingCamWnd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FloatingCamWnd.obj `if test -f 'camera/FloatingCamWnd.cpp'; then $(CYGPATH_W) 'camera/FloatingCamWnd.cpp'; else $(CYGPATH_W) '$(srcdir)/camera/FloatingCamWnd.cpp'; fi`
 
 darkradiant-Namespace.o: namespace/Namespace.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Namespace.o -MD -MP -MF $(DEPDIR)/darkradiant-Namespace.Tpo -c -o darkradiant-Namespace.o `test -f 'namespace/Namespace.cpp' || echo '$(srcdir)/'`namespace/Namespace.cpp
@@ -1900,6 +1945,20 @@ darkradiant-RenderableAABB.obj: ui/common/RenderableAABB.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RenderableAABB.obj `if test -f 'ui/common/RenderableAABB.cpp'; then $(CYGPATH_W) 'ui/common/RenderableAABB.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/RenderableAABB.cpp'; fi`
 
+darkradiant-MapPreview.o: ui/common/MapPreview.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapPreview.o -MD -MP -MF $(DEPDIR)/darkradiant-MapPreview.Tpo -c -o darkradiant-MapPreview.o `test -f 'ui/common/MapPreview.cpp' || echo '$(srcdir)/'`ui/common/MapPreview.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MapPreview.Tpo $(DEPDIR)/darkradiant-MapPreview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/MapPreview.cpp' object='darkradiant-MapPreview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapPreview.o `test -f 'ui/common/MapPreview.cpp' || echo '$(srcdir)/'`ui/common/MapPreview.cpp
+
+darkradiant-MapPreview.obj: ui/common/MapPreview.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapPreview.obj -MD -MP -MF $(DEPDIR)/darkradiant-MapPreview.Tpo -c -o darkradiant-MapPreview.obj `if test -f 'ui/common/MapPreview.cpp'; then $(CYGPATH_W) 'ui/common/MapPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/MapPreview.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MapPreview.Tpo $(DEPDIR)/darkradiant-MapPreview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/MapPreview.cpp' object='darkradiant-MapPreview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapPreview.obj `if test -f 'ui/common/MapPreview.cpp'; then $(CYGPATH_W) 'ui/common/MapPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/MapPreview.cpp'; fi`
+
 darkradiant-FiltersMenu.o: ui/menu/FiltersMenu.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FiltersMenu.o -MD -MP -MF $(DEPDIR)/darkradiant-FiltersMenu.Tpo -c -o darkradiant-FiltersMenu.o `test -f 'ui/menu/FiltersMenu.cpp' || echo '$(srcdir)/'`ui/menu/FiltersMenu.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FiltersMenu.Tpo $(DEPDIR)/darkradiant-FiltersMenu.Po
@@ -2109,6 +2168,104 @@ darkradiant-FilterEditor.obj: ui/filterdialog/FilterEditor.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/filterdialog/FilterEditor.cpp' object='darkradiant-FilterEditor.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FilterEditor.obj `if test -f 'ui/filterdialog/FilterEditor.cpp'; then $(CYGPATH_W) 'ui/filterdialog/FilterEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/filterdialog/FilterEditor.cpp'; fi`
+
+darkradiant-MainFrame.o: ui/mainframe/MainFrame.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MainFrame.o -MD -MP -MF $(DEPDIR)/darkradiant-MainFrame.Tpo -c -o darkradiant-MainFrame.o `test -f 'ui/mainframe/MainFrame.cpp' || echo '$(srcdir)/'`ui/mainframe/MainFrame.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MainFrame.Tpo $(DEPDIR)/darkradiant-MainFrame.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/MainFrame.cpp' object='darkradiant-MainFrame.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MainFrame.o `test -f 'ui/mainframe/MainFrame.cpp' || echo '$(srcdir)/'`ui/mainframe/MainFrame.cpp
+
+darkradiant-MainFrame.obj: ui/mainframe/MainFrame.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MainFrame.obj -MD -MP -MF $(DEPDIR)/darkradiant-MainFrame.Tpo -c -o darkradiant-MainFrame.obj `if test -f 'ui/mainframe/MainFrame.cpp'; then $(CYGPATH_W) 'ui/mainframe/MainFrame.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/MainFrame.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MainFrame.Tpo $(DEPDIR)/darkradiant-MainFrame.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/MainFrame.cpp' object='darkradiant-MainFrame.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MainFrame.obj `if test -f 'ui/mainframe/MainFrame.cpp'; then $(CYGPATH_W) 'ui/mainframe/MainFrame.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/MainFrame.cpp'; fi`
+
+darkradiant-MainFrameLayoutManager.o: ui/mainframe/MainFrameLayoutManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MainFrameLayoutManager.o -MD -MP -MF $(DEPDIR)/darkradiant-MainFrameLayoutManager.Tpo -c -o darkradiant-MainFrameLayoutManager.o `test -f 'ui/mainframe/MainFrameLayoutManager.cpp' || echo '$(srcdir)/'`ui/mainframe/MainFrameLayoutManager.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MainFrameLayoutManager.Tpo $(DEPDIR)/darkradiant-MainFrameLayoutManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/MainFrameLayoutManager.cpp' object='darkradiant-MainFrameLayoutManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MainFrameLayoutManager.o `test -f 'ui/mainframe/MainFrameLayoutManager.cpp' || echo '$(srcdir)/'`ui/mainframe/MainFrameLayoutManager.cpp
+
+darkradiant-MainFrameLayoutManager.obj: ui/mainframe/MainFrameLayoutManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MainFrameLayoutManager.obj -MD -MP -MF $(DEPDIR)/darkradiant-MainFrameLayoutManager.Tpo -c -o darkradiant-MainFrameLayoutManager.obj `if test -f 'ui/mainframe/MainFrameLayoutManager.cpp'; then $(CYGPATH_W) 'ui/mainframe/MainFrameLayoutManager.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/MainFrameLayoutManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MainFrameLayoutManager.Tpo $(DEPDIR)/darkradiant-MainFrameLayoutManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/MainFrameLayoutManager.cpp' object='darkradiant-MainFrameLayoutManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MainFrameLayoutManager.obj `if test -f 'ui/mainframe/MainFrameLayoutManager.cpp'; then $(CYGPATH_W) 'ui/mainframe/MainFrameLayoutManager.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/MainFrameLayoutManager.cpp'; fi`
+
+darkradiant-FloatingLayout.o: ui/mainframe/FloatingLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FloatingLayout.o -MD -MP -MF $(DEPDIR)/darkradiant-FloatingLayout.Tpo -c -o darkradiant-FloatingLayout.o `test -f 'ui/mainframe/FloatingLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/FloatingLayout.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FloatingLayout.Tpo $(DEPDIR)/darkradiant-FloatingLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/FloatingLayout.cpp' object='darkradiant-FloatingLayout.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FloatingLayout.o `test -f 'ui/mainframe/FloatingLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/FloatingLayout.cpp
+
+darkradiant-FloatingLayout.obj: ui/mainframe/FloatingLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FloatingLayout.obj -MD -MP -MF $(DEPDIR)/darkradiant-FloatingLayout.Tpo -c -o darkradiant-FloatingLayout.obj `if test -f 'ui/mainframe/FloatingLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/FloatingLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/FloatingLayout.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-FloatingLayout.Tpo $(DEPDIR)/darkradiant-FloatingLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/FloatingLayout.cpp' object='darkradiant-FloatingLayout.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FloatingLayout.obj `if test -f 'ui/mainframe/FloatingLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/FloatingLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/FloatingLayout.cpp'; fi`
+
+darkradiant-EmbeddedLayout.o: ui/mainframe/EmbeddedLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EmbeddedLayout.o -MD -MP -MF $(DEPDIR)/darkradiant-EmbeddedLayout.Tpo -c -o darkradiant-EmbeddedLayout.o `test -f 'ui/mainframe/EmbeddedLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/EmbeddedLayout.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-EmbeddedLayout.Tpo $(DEPDIR)/darkradiant-EmbeddedLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/EmbeddedLayout.cpp' object='darkradiant-EmbeddedLayout.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-EmbeddedLayout.o `test -f 'ui/mainframe/EmbeddedLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/EmbeddedLayout.cpp
+
+darkradiant-EmbeddedLayout.obj: ui/mainframe/EmbeddedLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EmbeddedLayout.obj -MD -MP -MF $(DEPDIR)/darkradiant-EmbeddedLayout.Tpo -c -o darkradiant-EmbeddedLayout.obj `if test -f 'ui/mainframe/EmbeddedLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/EmbeddedLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/EmbeddedLayout.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-EmbeddedLayout.Tpo $(DEPDIR)/darkradiant-EmbeddedLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/EmbeddedLayout.cpp' object='darkradiant-EmbeddedLayout.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-EmbeddedLayout.obj `if test -f 'ui/mainframe/EmbeddedLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/EmbeddedLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/EmbeddedLayout.cpp'; fi`
+
+darkradiant-SplitPaneLayout.o: ui/mainframe/SplitPaneLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SplitPaneLayout.o -MD -MP -MF $(DEPDIR)/darkradiant-SplitPaneLayout.Tpo -c -o darkradiant-SplitPaneLayout.o `test -f 'ui/mainframe/SplitPaneLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/SplitPaneLayout.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-SplitPaneLayout.Tpo $(DEPDIR)/darkradiant-SplitPaneLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/SplitPaneLayout.cpp' object='darkradiant-SplitPaneLayout.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SplitPaneLayout.o `test -f 'ui/mainframe/SplitPaneLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/SplitPaneLayout.cpp
+
+darkradiant-SplitPaneLayout.obj: ui/mainframe/SplitPaneLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SplitPaneLayout.obj -MD -MP -MF $(DEPDIR)/darkradiant-SplitPaneLayout.Tpo -c -o darkradiant-SplitPaneLayout.obj `if test -f 'ui/mainframe/SplitPaneLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/SplitPaneLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/SplitPaneLayout.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-SplitPaneLayout.Tpo $(DEPDIR)/darkradiant-SplitPaneLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/SplitPaneLayout.cpp' object='darkradiant-SplitPaneLayout.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SplitPaneLayout.obj `if test -f 'ui/mainframe/SplitPaneLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/SplitPaneLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/SplitPaneLayout.cpp'; fi`
+
+darkradiant-RegularLayout.o: ui/mainframe/RegularLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RegularLayout.o -MD -MP -MF $(DEPDIR)/darkradiant-RegularLayout.Tpo -c -o darkradiant-RegularLayout.o `test -f 'ui/mainframe/RegularLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/RegularLayout.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-RegularLayout.Tpo $(DEPDIR)/darkradiant-RegularLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/RegularLayout.cpp' object='darkradiant-RegularLayout.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RegularLayout.o `test -f 'ui/mainframe/RegularLayout.cpp' || echo '$(srcdir)/'`ui/mainframe/RegularLayout.cpp
+
+darkradiant-RegularLayout.obj: ui/mainframe/RegularLayout.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RegularLayout.obj -MD -MP -MF $(DEPDIR)/darkradiant-RegularLayout.Tpo -c -o darkradiant-RegularLayout.obj `if test -f 'ui/mainframe/RegularLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/RegularLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/RegularLayout.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-RegularLayout.Tpo $(DEPDIR)/darkradiant-RegularLayout.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/RegularLayout.cpp' object='darkradiant-RegularLayout.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RegularLayout.obj `if test -f 'ui/mainframe/RegularLayout.cpp'; then $(CYGPATH_W) 'ui/mainframe/RegularLayout.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/RegularLayout.cpp'; fi`
+
+darkradiant-ScreenUpdateBlocker.o: ui/mainframe/ScreenUpdateBlocker.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ScreenUpdateBlocker.o -MD -MP -MF $(DEPDIR)/darkradiant-ScreenUpdateBlocker.Tpo -c -o darkradiant-ScreenUpdateBlocker.o `test -f 'ui/mainframe/ScreenUpdateBlocker.cpp' || echo '$(srcdir)/'`ui/mainframe/ScreenUpdateBlocker.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ScreenUpdateBlocker.Tpo $(DEPDIR)/darkradiant-ScreenUpdateBlocker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/ScreenUpdateBlocker.cpp' object='darkradiant-ScreenUpdateBlocker.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ScreenUpdateBlocker.o `test -f 'ui/mainframe/ScreenUpdateBlocker.cpp' || echo '$(srcdir)/'`ui/mainframe/ScreenUpdateBlocker.cpp
+
+darkradiant-ScreenUpdateBlocker.obj: ui/mainframe/ScreenUpdateBlocker.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ScreenUpdateBlocker.obj -MD -MP -MF $(DEPDIR)/darkradiant-ScreenUpdateBlocker.Tpo -c -o darkradiant-ScreenUpdateBlocker.obj `if test -f 'ui/mainframe/ScreenUpdateBlocker.cpp'; then $(CYGPATH_W) 'ui/mainframe/ScreenUpdateBlocker.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/ScreenUpdateBlocker.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ScreenUpdateBlocker.Tpo $(DEPDIR)/darkradiant-ScreenUpdateBlocker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/ScreenUpdateBlocker.cpp' object='darkradiant-ScreenUpdateBlocker.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ScreenUpdateBlocker.obj `if test -f 'ui/mainframe/ScreenUpdateBlocker.cpp'; then $(CYGPATH_W) 'ui/mainframe/ScreenUpdateBlocker.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/ScreenUpdateBlocker.cpp'; fi`
 
 darkradiant-patchmanip.o: patchmanip.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-patchmanip.o -MD -MP -MF $(DEPDIR)/darkradiant-patchmanip.Tpo -c -o darkradiant-patchmanip.o `test -f 'patchmanip.cpp' || echo '$(srcdir)/'`patchmanip.cpp
@@ -2403,20 +2560,6 @@ darkradiant-gtkdlgs.obj: gtkdlgs.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gtkdlgs.cpp' object='darkradiant-gtkdlgs.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-gtkdlgs.obj `if test -f 'gtkdlgs.cpp'; then $(CYGPATH_W) 'gtkdlgs.cpp'; else $(CYGPATH_W) '$(srcdir)/gtkdlgs.cpp'; fi`
-
-darkradiant-map.o: map.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-map.o -MD -MP -MF $(DEPDIR)/darkradiant-map.Tpo -c -o darkradiant-map.o `test -f 'map.cpp' || echo '$(srcdir)/'`map.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-map.Tpo $(DEPDIR)/darkradiant-map.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map.cpp' object='darkradiant-map.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-map.o `test -f 'map.cpp' || echo '$(srcdir)/'`map.cpp
-
-darkradiant-map.obj: map.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-map.obj -MD -MP -MF $(DEPDIR)/darkradiant-map.Tpo -c -o darkradiant-map.obj `if test -f 'map.cpp'; then $(CYGPATH_W) 'map.cpp'; else $(CYGPATH_W) '$(srcdir)/map.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-map.Tpo $(DEPDIR)/darkradiant-map.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map.cpp' object='darkradiant-map.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-map.obj `if test -f 'map.cpp'; then $(CYGPATH_W) 'map.cpp'; else $(CYGPATH_W) '$(srcdir)/map.cpp'; fi`
 
 darkradiant-select.o: select.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-select.o -MD -MP -MF $(DEPDIR)/darkradiant-select.Tpo -c -o darkradiant-select.o `test -f 'select.cpp' || echo '$(srcdir)/'`select.cpp
@@ -2936,6 +3079,20 @@ darkradiant-MapFileManager.obj: map/MapFileManager.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapFileManager.obj `if test -f 'map/MapFileManager.cpp'; then $(CYGPATH_W) 'map/MapFileManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFileManager.cpp'; fi`
 
+darkradiant-MapFileChooserPreview.o: map/MapFileChooserPreview.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapFileChooserPreview.o -MD -MP -MF $(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo -c -o darkradiant-MapFileChooserPreview.o `test -f 'map/MapFileChooserPreview.cpp' || echo '$(srcdir)/'`map/MapFileChooserPreview.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo $(DEPDIR)/darkradiant-MapFileChooserPreview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/MapFileChooserPreview.cpp' object='darkradiant-MapFileChooserPreview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapFileChooserPreview.o `test -f 'map/MapFileChooserPreview.cpp' || echo '$(srcdir)/'`map/MapFileChooserPreview.cpp
+
+darkradiant-MapFileChooserPreview.obj: map/MapFileChooserPreview.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapFileChooserPreview.obj -MD -MP -MF $(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo -c -o darkradiant-MapFileChooserPreview.obj `if test -f 'map/MapFileChooserPreview.cpp'; then $(CYGPATH_W) 'map/MapFileChooserPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFileChooserPreview.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MapFileChooserPreview.Tpo $(DEPDIR)/darkradiant-MapFileChooserPreview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/MapFileChooserPreview.cpp' object='darkradiant-MapFileChooserPreview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapFileChooserPreview.obj `if test -f 'map/MapFileChooserPreview.cpp'; then $(CYGPATH_W) 'map/MapFileChooserPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFileChooserPreview.cpp'; fi`
+
 darkradiant-Traverse.o: map/algorithm/Traverse.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Traverse.o -MD -MP -MF $(DEPDIR)/darkradiant-Traverse.Tpo -c -o darkradiant-Traverse.o `test -f 'map/algorithm/Traverse.cpp' || echo '$(srcdir)/'`map/algorithm/Traverse.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-Traverse.Tpo $(DEPDIR)/darkradiant-Traverse.Po
@@ -3034,6 +3191,20 @@ darkradiant-AutoSaver.obj: map/AutoSaver.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-AutoSaver.obj `if test -f 'map/AutoSaver.cpp'; then $(CYGPATH_W) 'map/AutoSaver.cpp'; else $(CYGPATH_W) '$(srcdir)/map/AutoSaver.cpp'; fi`
 
+darkradiant-StartupMapLoader.o: map/StartupMapLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-StartupMapLoader.o -MD -MP -MF $(DEPDIR)/darkradiant-StartupMapLoader.Tpo -c -o darkradiant-StartupMapLoader.o `test -f 'map/StartupMapLoader.cpp' || echo '$(srcdir)/'`map/StartupMapLoader.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-StartupMapLoader.Tpo $(DEPDIR)/darkradiant-StartupMapLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/StartupMapLoader.cpp' object='darkradiant-StartupMapLoader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-StartupMapLoader.o `test -f 'map/StartupMapLoader.cpp' || echo '$(srcdir)/'`map/StartupMapLoader.cpp
+
+darkradiant-StartupMapLoader.obj: map/StartupMapLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-StartupMapLoader.obj -MD -MP -MF $(DEPDIR)/darkradiant-StartupMapLoader.Tpo -c -o darkradiant-StartupMapLoader.obj `if test -f 'map/StartupMapLoader.cpp'; then $(CYGPATH_W) 'map/StartupMapLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/map/StartupMapLoader.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-StartupMapLoader.Tpo $(DEPDIR)/darkradiant-StartupMapLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/StartupMapLoader.cpp' object='darkradiant-StartupMapLoader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-StartupMapLoader.obj `if test -f 'map/StartupMapLoader.cpp'; then $(CYGPATH_W) 'map/StartupMapLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/map/StartupMapLoader.cpp'; fi`
+
 darkradiant-MapResourceManager.o: map/MapResourceManager.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapResourceManager.o -MD -MP -MF $(DEPDIR)/darkradiant-MapResourceManager.Tpo -c -o darkradiant-MapResourceManager.o `test -f 'map/MapResourceManager.cpp' || echo '$(srcdir)/'`map/MapResourceManager.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-MapResourceManager.Tpo $(DEPDIR)/darkradiant-MapResourceManager.Po
@@ -3104,19 +3275,19 @@ darkradiant-timer.obj: timer.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-timer.obj `if test -f 'timer.cpp'; then $(CYGPATH_W) 'timer.cpp'; else $(CYGPATH_W) '$(srcdir)/timer.cpp'; fi`
 
-darkradiant-mainframe.o: mainframe.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-mainframe.o -MD -MP -MF $(DEPDIR)/darkradiant-mainframe.Tpo -c -o darkradiant-mainframe.o `test -f 'mainframe.cpp' || echo '$(srcdir)/'`mainframe.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-mainframe.Tpo $(DEPDIR)/darkradiant-mainframe.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainframe.cpp' object='darkradiant-mainframe.o' libtool=no @AMDEPBACKSLASH@
+darkradiant-mainframe_old.o: mainframe_old.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-mainframe_old.o -MD -MP -MF $(DEPDIR)/darkradiant-mainframe_old.Tpo -c -o darkradiant-mainframe_old.o `test -f 'mainframe_old.cpp' || echo '$(srcdir)/'`mainframe_old.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-mainframe_old.Tpo $(DEPDIR)/darkradiant-mainframe_old.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainframe_old.cpp' object='darkradiant-mainframe_old.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-mainframe.o `test -f 'mainframe.cpp' || echo '$(srcdir)/'`mainframe.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-mainframe_old.o `test -f 'mainframe_old.cpp' || echo '$(srcdir)/'`mainframe_old.cpp
 
-darkradiant-mainframe.obj: mainframe.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-mainframe.obj -MD -MP -MF $(DEPDIR)/darkradiant-mainframe.Tpo -c -o darkradiant-mainframe.obj `if test -f 'mainframe.cpp'; then $(CYGPATH_W) 'mainframe.cpp'; else $(CYGPATH_W) '$(srcdir)/mainframe.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-mainframe.Tpo $(DEPDIR)/darkradiant-mainframe.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainframe.cpp' object='darkradiant-mainframe.obj' libtool=no @AMDEPBACKSLASH@
+darkradiant-mainframe_old.obj: mainframe_old.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-mainframe_old.obj -MD -MP -MF $(DEPDIR)/darkradiant-mainframe_old.Tpo -c -o darkradiant-mainframe_old.obj `if test -f 'mainframe_old.cpp'; then $(CYGPATH_W) 'mainframe_old.cpp'; else $(CYGPATH_W) '$(srcdir)/mainframe_old.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-mainframe_old.Tpo $(DEPDIR)/darkradiant-mainframe_old.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainframe_old.cpp' object='darkradiant-mainframe_old.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-mainframe.obj `if test -f 'mainframe.cpp'; then $(CYGPATH_W) 'mainframe.cpp'; else $(CYGPATH_W) '$(srcdir)/mainframe.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-mainframe_old.obj `if test -f 'mainframe_old.cpp'; then $(CYGPATH_W) 'mainframe_old.cpp'; else $(CYGPATH_W) '$(srcdir)/mainframe_old.cpp'; fi`
 
 darkradiant-Console.o: log/Console.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Console.o -MD -MP -MF $(DEPDIR)/darkradiant-Console.Tpo -c -o darkradiant-Console.o `test -f 'log/Console.cpp' || echo '$(srcdir)/'`log/Console.cpp
