@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 #include "inode.h"
 
+// Registry setting for suppressing the map load progress dialog
+const std::string RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMapLoadDialog";
+
 // Forward declaration
 namespace parser { class DefTokeniser; }
 
