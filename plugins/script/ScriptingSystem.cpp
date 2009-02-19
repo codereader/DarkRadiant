@@ -165,9 +165,8 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	// Construct the script path
 	_scriptPath = ctx.getApplicationPath() + "scripts/";
 
-	// Add the built-in interfaces
+	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", MathInterfacePtr(new MathInterface));
-	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
 	addInterface("SceneGraph", SceneGraphInterfacePtr(new SceneGraphInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
@@ -175,6 +174,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("Brush", BrushInterfacePtr(new BrushInterface));
 	addInterface("Patch", PatchInterfacePtr(new PatchInterface));
 	addInterface("Entity", EntityInterfacePtr(new EntityInterface));
+	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
 
 	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
 }
