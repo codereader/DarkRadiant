@@ -68,4 +68,15 @@ class Walker(SelectionVisitor) :
 visitor = Walker()
 GlobalSelectionSystem.foreachSelected(visitor)
 
+# Try to find the map's worldspawn
+worldspawn = GlobalMap.getWorldSpawn()
+
+if not worldspawn.isNull():
+	# Cast the node onto an entity
+	worldspawnent = worldspawn.getEntity()
+	if not worldspawnent.isNull():
+		print('Spawnclass of worldspawn: ' + worldspawnent.getKeyValue('spawnclass'))
+else:
+	print('There is no worldspawn in this map yet')
+
 print('')

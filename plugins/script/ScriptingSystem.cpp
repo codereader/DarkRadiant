@@ -15,6 +15,7 @@
 #include "interfaces/BrushInterface.h"
 #include "interfaces/PatchInterface.h"
 #include "interfaces/EntityInterface.h"
+#include "interfaces/MapInterface.h"
 
 namespace script {
 
@@ -175,6 +176,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("Patch", PatchInterfacePtr(new PatchInterface));
 	addInterface("Entity", EntityInterfacePtr(new EntityInterface));
 	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
+	addInterface("Map", MapInterfacePtr(new MapInterface));
 
 	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
 }

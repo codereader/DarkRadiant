@@ -462,6 +462,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\MapInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\MapInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\MathInterface.cpp"
 					>
 				</File>
