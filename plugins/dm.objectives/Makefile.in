@@ -215,6 +215,7 @@ prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
+script_module = @script_module@
 sharedstatedir = @sharedstatedir@
 sound_module = @sound_module@
 sr_plugin = @sr_plugin@

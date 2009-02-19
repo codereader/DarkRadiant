@@ -179,6 +179,7 @@ prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
+script_module = @script_module@
 sharedstatedir = @sharedstatedir@
 sound_module = @sound_module@
 sr_plugin = @sr_plugin@
@@ -194,8 +195,8 @@ top_srcdir = @top_srcdir@
 SUBDIRS = eventmanager archivezip eclassmgr eclasstree entity \
 	entitylist filetypes filters grid image mapdoom3 md5model \
 	model particles scenegraph shaders skins uimanager undo vfspk3 \
-	xmlregistry @sound_module@ @sr_plugin@ @obj_plugin@ \
-	@difficulty_plugin@ @conv_plugin@ $(am__empty)
+	xmlregistry @sound_module@ @script_module@ @sr_plugin@ \
+	@obj_plugin@ @difficulty_plugin@ @conv_plugin@ $(am__empty)
 all: all-recursive
 
 .SUFFIXES:

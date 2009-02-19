@@ -89,6 +89,12 @@ AC_CHECK_LIB([boost_filesystem], [main],
              [AC_MSG_ERROR([Boost.Filesystem not found])])
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
+# Boost.Python
+AC_CHECK_HEADER([boost/python.hpp],
+                [script_module='script'],
+                [script_module=''])
+AC_SUBST([script_module])
+
 # Dependent Boost headers
 AC_CHECK_HEADER([boost/serialization/access.hpp], [],
                 [AC_MSG_ERROR([Boost.Serialization headers not found])])
@@ -158,6 +164,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop
                  plugins/model/Makefile
                  plugins/particles/Makefile
                  plugins/scenegraph/Makefile
+                 plugins/script/Makefile
                  plugins/shaders/Makefile
                  plugins/skins/Makefile
                  plugins/sound/Makefile
@@ -189,5 +196,12 @@ then
     echo " Darkmod plugins:     yes"
 else
     echo " Darkmod plugins:     no"
+fi
+
+if test -z $script_module
+then
+    echo " Python scripting:    no"
+else
+    echo " Python scripting:    yes"
 fi
 
