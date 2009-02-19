@@ -42,7 +42,7 @@ class NodeImporter {
 	std::size_t _layerInfoCount;
 
 	// The progress dialog
-	gtkutil::ModalProgressDialog _dialog;
+	gtkutil::ModalProgressDialogPtr _dialog;
 	// The progress dialog text for the current entity
 	std::string _dlgEntityText;
 

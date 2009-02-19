@@ -37,10 +37,17 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
 	_entityCount(0),
 	_primitiveCount(0),
 	_layerInfoCount(0),
-	_dialog(GlobalRadiant().getMainWindow(), "Loading map"),
 	_parser(parser),
 	_debug(GlobalRegistry().get("user/debug") == "1")
-{}
+{
+	bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
+
+	if (showProgressDialog) {
+		_dialog = gtkutil::ModalProgressDialogPtr(
+			new gtkutil::ModalProgressDialog(GlobalRadiant().getMainWindow(), "Loading map")
+		);
+	}
+}
 
 bool NodeImporter::parse() {
 	// Try to parse the map version
@@ -53,9 +60,9 @@ bool NodeImporter::parse() {
 	while (_tok.hasMoreTokens()) {
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
-		if (_entityCount % _loadStatusInterleave == 0) {
+		if (_dialog != NULL && _entityCount % _loadStatusInterleave == 0) {
 			try {
-				_dialog.setText("Loading entity " + sizetToStr(_entityCount));
+				_dialog->setText("Loading entity " + sizetToStr(_entityCount));
 			}
 			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
 				gtkutil::errorDialog("Map loading cancelled", 
@@ -128,11 +135,11 @@ bool NodeImporter::parseMapVersion() {
 
 void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity) {
 	// Check if the entitycount is matching the interleave
-	bool updateDialog = (_entityCount % _loadStatusInterleave == 0);
+	bool updateDialog = _dialog != NULL && (_entityCount % _loadStatusInterleave == 0);
 
     // Update the dialog
     if (updateDialog && (_primitiveCount % _loadStatusInterleave == 0)) {
-        _dialog.setText(
+        _dialog->setText(
             _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount)
         );
     }
@@ -167,7 +174,7 @@ scene::INodePtr NodeImporter::createEntity(const EntityKeyValues& keyValues) {
 
 	if (classPtr == NULL) {
 		globalErrorStream() << "[mapdoom3]: Could not find entity class: " 
-			                << className.c_str() << "\n";
+			<< className << std::endl;
 
 		// greebo: EntityClass not found, insert a brush-based one
 		classPtr = GlobalEntityClassManager().findOrInsert(className, true);

@@ -6,6 +6,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <boost/shared_ptr.hpp>
 
 namespace gtkutil
 {
@@ -74,6 +75,7 @@ public:
 	 */
 	void setText(const std::string& text);
 };
+typedef boost::shared_ptr<ModalProgressDialog> ModalProgressDialogPtr;
 
 }
 

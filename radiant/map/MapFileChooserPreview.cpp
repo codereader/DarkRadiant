@@ -1,5 +1,6 @@
 #include "MapFileChooserPreview.h"
 
+#include "imap.h"
 #include "itextstream.h"
 #include <gtk/gtkvbox.h>
 #include "scenelib.h"
@@ -48,12 +49,13 @@ void MapFileChooserPreview::onFileSelectionChanged(
 	const std::string& newFileName, gtkutil::FileChooser& fileChooser)
 {
 	// Attempt to load file
-	bool success = setMapName(newFileName);
+	/*bool success = */setMapName(newFileName);
 
 	_preview.initialisePreview();
 	gtk_widget_queue_draw(_preview);
 	
-	fileChooser.setPreviewActive(success);
+	// Always have the preview active
+	fileChooser.setPreviewActive(true);
 
 	updateUsageInfo();
 }
@@ -86,9 +88,18 @@ bool MapFileChooserPreview::setMapName(const std::string& name) {
 	_mapName = name;
 	_mapResource = GlobalMapResourceManager().capture(_mapName);
 
+	bool success = false;
+
 	if (_mapResource == NULL) {
-		return false;
+		// NULLify the preview map root on failure
+		_preview.setRootNode(scene::INodePtr());
+		return success;
 	}
+
+	// Suppress the map loading dialog to avoid user 
+	// getting stuck in the "drag filename" operation
+	std::string prevValue = GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG);
+	GlobalRegistry().set(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, "1");
 
 	if (_mapResource->load()) {
 		// Get the node from the reosource
@@ -99,13 +110,16 @@ bool MapFileChooserPreview::setMapName(const std::string& name) {
 		// Set the new rootnode
 		_preview.setRootNode(root);
 
-		return true;
+		success = true;
 	}
 	else {
 		// Map load failed
 		globalWarningStream() << "Could not load map: " << _mapName << std::endl;
-		return false;
 	}
+
+	GlobalRegistry().set(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, prevValue);
+
+	return success;
 }
 
 } // namespace map
