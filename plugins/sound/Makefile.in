@@ -51,7 +51,8 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
 sound_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.la
-am_sound_la_OBJECTS = SoundManager.lo sound.lo SoundPlayer.lo
+am_sound_la_OBJECTS = SoundManager.lo sound.lo SoundPlayer.lo \
+	SoundShader.lo
 sound_la_OBJECTS = $(am_sound_la_OBJECTS)
 sound_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -212,7 +213,7 @@ sound_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la
 sound_la_LDFLAGS = -module -avoid-version \
 				   $(ALUT_LIBS) $(GTK_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
 
-sound_la_SOURCES = SoundManager.cpp sound.cpp SoundPlayer.cpp
+sound_la_SOURCES = SoundManager.cpp sound.cpp SoundPlayer.cpp SoundShader.cpp
 all: all-am
 
 .SUFFIXES:
@@ -284,6 +285,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SoundManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SoundPlayer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SoundShader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sound.Plo@am__quote@
 
 .cpp.o:
