@@ -14,9 +14,10 @@ public:
 
 	std::size_t getNumFaces() {
 		// Sanity check
-		if (_node == NULL) return 0;
+		scene::INodePtr node = _node.lock();
+		if (node == NULL) return 0;
 
-		IBrush* brush = Node_getIBrush(_node);
+		IBrush* brush = Node_getIBrush(node);
 
 		return (brush != NULL) ? brush->size() : 0;
 	}
@@ -31,7 +32,7 @@ public:
 	static ScriptBrushNode getBrush(const ScriptSceneNode& node) {
 		// Try to cast the node onto a brush
 		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(
-			static_cast<const scene::INodePtr&>(node)
+			static_cast<scene::INodePtr>(node)
 		);
 		
 		// Construct a brushnode (contained node may be NULL)

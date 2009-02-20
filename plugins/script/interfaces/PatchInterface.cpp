@@ -22,7 +22,7 @@ public:
 	static ScriptPatchNode getPatch(const ScriptSceneNode& node) {
 		// Try to cast the node onto a patch
 		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(
-			static_cast<const scene::INodePtr&>(node)
+			static_cast<scene::INodePtr>(node)
 		);
 		
 		// Construct a patchNode (contained node may be NULL)

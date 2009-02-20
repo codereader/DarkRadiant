@@ -12,12 +12,12 @@ ScriptEntityNode::ScriptEntityNode(const scene::INodePtr& node) :
 
 // Methods wrapping to Entity class
 std::string ScriptEntityNode::getKeyValue(const std::string& key) {
-	Entity* entity = Node_getEntity(_node);
+	Entity* entity = Node_getEntity(*this);
 	return (entity != NULL) ? entity->getKeyValue(key) : "";
 }
 
 void ScriptEntityNode::setKeyValue(const std::string& key, const std::string& value) {
-	Entity* entity = Node_getEntity(_node);
+	Entity* entity = Node_getEntity(*this);
 
 	if (entity != NULL) {
 		entity->setKeyValue(key, value);
@@ -25,7 +25,7 @@ void ScriptEntityNode::setKeyValue(const std::string& key, const std::string& va
 }
 
 void ScriptEntityNode::forEachKeyValue(Entity::Visitor& visitor) {
-	Entity* entity = Node_getEntity(_node);
+	Entity* entity = Node_getEntity(*this);
 
 	if (entity != NULL) {
 		entity->forEachKeyValue(visitor);
@@ -42,7 +42,7 @@ bool ScriptEntityNode::isEntity(const ScriptSceneNode& node) {
 ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 	// Try to cast the node onto a brush
 	IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(
-		static_cast<const scene::INodePtr&>(node)
+		static_cast<scene::INodePtr>(node)
 	);
 	
 	// Construct a entityNode (contained node is NULL if not an entity)
