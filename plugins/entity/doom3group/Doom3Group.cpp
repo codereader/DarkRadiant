@@ -5,6 +5,7 @@
 #include "render.h"
 #include "transformlib.h"
 
+#include "../EntitySettings.h"
 #include "Doom3GroupNode.h"
 
 namespace entity {
@@ -161,7 +162,7 @@ void Doom3Group::renderWireframe(Renderer& renderer, const VolumeTest& volume,
 	renderSolid(renderer, volume, localToWorld, selected);
 
     // Render the name if required
-	if (isNameVisible()) {
+	if (EntitySettings::InstancePtr()->renderEntityNames()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }

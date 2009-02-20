@@ -471,6 +471,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\entity\EntitySettings.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\entity\EntitySettings.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\entity\keyobservers.cpp"
 				>
 			</File>
@@ -524,10 +532,6 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\entity\NamespaceManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\entity\OptionalRenderedName.h"
 				>
 			</File>
 			<File

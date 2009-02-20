@@ -15,7 +15,7 @@
 #include "../namedentity.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
-#include "../OptionalRenderedName.h"
+#include "../EntitySettings.h"
 
 #include "SpeakerRenderables.h"
 
@@ -26,8 +26,7 @@ class SpeakerNode;
 class Speaker :
 	public Cullable,
 	public Bounded,
-	public Snappable,
-    public OptionalRenderedName
+	public Snappable
 {
 	Doom3Entity& m_entity;
 	KeyObserverMap m_keyObservers;

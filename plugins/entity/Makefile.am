@@ -17,6 +17,7 @@ entity_la_SOURCES = origin.cpp \
                     eclassmodel/EclassModel.cpp \
                     eclassmodel/EclassModelNode.cpp \
                     EntityCreator.cpp \
+		    EntitySettings.cpp \
                     namedentity.cpp \
                     speaker/Speaker.cpp \
                     speaker/SpeakerRenderables.cpp \

@@ -15,7 +15,6 @@
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
-#include "../OptionalRenderedName.h"
 #include "scene/TraversableNodeSet.h"
 
 namespace entity {
@@ -28,8 +27,7 @@ class Doom3GroupNode;
  */
 class Doom3Group 
 : public Bounded, 
-  public Snappable,
-  public OptionalRenderedName
+  public Snappable
 {
 	KeyObserverMap m_keyObservers;
 	

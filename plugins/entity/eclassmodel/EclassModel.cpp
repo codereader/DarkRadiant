@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "EclassModelNode.h"
+#include "../EntitySettings.h"
 
 namespace entity {
 
@@ -154,7 +155,7 @@ void EclassModel::renderWireframe(Renderer& renderer,
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(renderer, volume, localToWorld, selected);
-	if (isNameVisible()) {
+	if (EntitySettings::InstancePtr()->renderEntityNames()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }

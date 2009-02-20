@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "SpeakerSettings.h"
 #include "SpeakerNode.h"
+#include "../EntitySettings.h"
 
 namespace entity {
 
@@ -127,7 +128,7 @@ void Speaker::renderWireframe(Renderer& renderer,
 	if (SpeakerSettings().showAllSpeakerRadii())
 		renderer.addRenderable(m_speakerRadii, localToWorld);
 	
-	if (isNameVisible()) {
+	if (EntitySettings::InstancePtr()->renderEntityNames()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }
