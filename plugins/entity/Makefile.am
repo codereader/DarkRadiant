@@ -21,7 +21,6 @@ entity_la_SOURCES = origin.cpp \
                     namedentity.cpp \
                     speaker/Speaker.cpp \
                     speaker/SpeakerRenderables.cpp \
-                    speaker/SpeakerSettings.cpp \
                     speaker/SpeakerNode.cpp \
                     Doom3Entity.cpp \
                     EntityNode.cpp \

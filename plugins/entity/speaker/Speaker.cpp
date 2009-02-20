@@ -4,7 +4,6 @@
 #include "irenderable.h"
 #include "isound.h"
 #include <stdlib.h>
-#include "SpeakerSettings.h"
 #include "SpeakerNode.h"
 #include "../EntitySettings.h"
 
@@ -116,7 +115,7 @@ void Speaker::renderSolid(Renderer& renderer,
 {
 	renderer.SetState(m_entity.getEntityClass()->getFillShader(), Renderer::eFullMaterials);
 	renderer.addRenderable(m_aabb_solid, localToWorld);
-	if (SpeakerSettings().showAllSpeakerRadii())
+	if (EntitySettings::InstancePtr()->showAllSpeakerRadii())
 		renderer.addRenderable(m_speakerRadii, localToWorld);
 }
 
@@ -125,7 +124,7 @@ void Speaker::renderWireframe(Renderer& renderer,
 {
 	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
 	renderer.addRenderable(m_aabb_wire, localToWorld);
-	if (SpeakerSettings().showAllSpeakerRadii())
+	if (EntitySettings::InstancePtr()->showAllSpeakerRadii())
 		renderer.addRenderable(m_speakerRadii, localToWorld);
 	
 	if (EntitySettings::InstancePtr()->renderEntityNames()) {
