@@ -38,7 +38,9 @@ ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 	);
 	
 	// Construct a entityNode (contained node is NULL if not an entity)
-	return ScriptEntityNode(entityNode != NULL ? node : scene::INodePtr());
+	return ScriptEntityNode(entityNode != NULL 
+                           ? node 
+                           : ScriptSceneNode(scene::INodePtr()));
 }
 
 // Creates a new entity for the given entityclass

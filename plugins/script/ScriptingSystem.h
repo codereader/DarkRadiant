@@ -60,7 +60,7 @@ public:
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
-	void ScriptingSystem::shutdownModule();
+	void shutdownModule();
 
 private: 
 	bool interfaceExists(const std::string& name);
