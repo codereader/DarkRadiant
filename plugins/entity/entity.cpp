@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "light/LightShader.h"
 #include "curve/CurveEditInstance.h"
 #include "target/RenderableTargetInstances.h"
+#include "EntitySettings.h"
 
 // Initialise the static variables of the entitylibraries (we're in a module here)
 EntityCreator::KeyValueChangedFunc entity::Doom3Entity::_keyValueChangedNotify = 0;
@@ -58,6 +59,9 @@ void constructStatic() {
 
 void destroyStatic() {
 	GlobalShaderCache().detachRenderable(RenderableTargetInstances::Instance());
+
+	// Destroy the settings instance
+	EntitySettings::destroy();
 }
 
 } // namespace entity

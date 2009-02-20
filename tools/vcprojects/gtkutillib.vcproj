@@ -166,6 +166,7 @@
 				RuntimeLibrary="2"
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
+				DebugInformationFormat="3"
 				DisableSpecificWarnings="4244"
 			/>
 			<Tool

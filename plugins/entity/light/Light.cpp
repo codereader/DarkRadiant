@@ -5,6 +5,7 @@
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
 #include "LightSettings.h"
+#include "../EntitySettings.h"
 
 #include "LightNode.h"
 
@@ -529,7 +530,7 @@ void Light::renderWireframe(Renderer& renderer,
 	}
 
 	// Render the name
-	if (isNameVisible()) {
+	if (EntitySettings::InstancePtr()->renderEntityNames()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }

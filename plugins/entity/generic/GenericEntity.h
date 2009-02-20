@@ -14,7 +14,6 @@
 #include "../namedentity.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
-#include "../OptionalRenderedName.h"
 
 #include "RenderableArrow.h"
 
@@ -25,8 +24,7 @@ class GenericEntityNode;
 class GenericEntity :
 	public Cullable,
 	public Bounded,
-	public Snappable,
-    public OptionalRenderedName
+	public Snappable
 {
 	Doom3Entity& m_entity;
 	KeyObserverMap m_keyObservers;

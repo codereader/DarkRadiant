@@ -4,6 +4,7 @@
 #include "irenderable.h"
 #include "math/frustum.h"
 
+#include "../EntitySettings.h"
 #include "GenericEntityNode.h"
 
 namespace entity {
@@ -122,7 +123,7 @@ void GenericEntity::renderWireframe(Renderer& renderer,
 	renderer.addRenderable(m_aabb_wire, localToWorld);
 	renderArrow(renderer, volume, localToWorld);
 	
-	if (isNameVisible()) {
+	if (EntitySettings::InstancePtr()->renderEntityNames()) {
 		renderer.addRenderable(m_renderName, localToWorld);
 	}
 }

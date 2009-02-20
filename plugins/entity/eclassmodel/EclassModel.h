@@ -16,15 +16,13 @@
 #include "../namedentity.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
-#include "../OptionalRenderedName.h"
 
 namespace entity {
 
 class EclassModelNode;
 
 class EclassModel :
-	public Snappable,
-    public OptionalRenderedName
+	public Snappable
 {
 	EclassModelNode& _owner;
 
