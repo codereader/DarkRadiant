@@ -53,16 +53,16 @@ LTLIBRARIES = $(modules_LTLIBRARIES)
 entity_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/scene/libscenegraph.la
 am_entity_la_OBJECTS = origin.lo angle.lo ModelKey.lo rotation.lo \
-	Light.lo LightSettings.lo Renderables.lo LightNode.lo \
-	EclassModel.lo EclassModelNode.lo EntityCreator.lo \
-	namedentity.lo Speaker.lo SpeakerRenderables.lo \
-	SpeakerSettings.lo SpeakerNode.lo Doom3Entity.lo EntityNode.lo \
-	Doom3Group.lo Doom3GroupNode.lo angles.lo CurveCatmullRom.lo \
-	CurveNURBS.lo Curve.lo CurveEditInstance.lo plugin.lo \
-	GenericEntity.lo GenericEntityNode.lo keyobservers.lo \
-	NamespaceManager.lo KeyValueObserver.lo NameKeyObserver.lo \
-	colour.lo entity.lo scale.lo KeyValue.lo TargetKey.lo \
-	TargetableNode.lo TargetKeyCollection.lo TargetManager.lo \
+	Light.lo Renderables.lo LightNode.lo EclassModel.lo \
+	EclassModelNode.lo EntityCreator.lo EntitySettings.lo \
+	namedentity.lo Speaker.lo SpeakerRenderables.lo SpeakerNode.lo \
+	Doom3Entity.lo EntityNode.lo Doom3Group.lo Doom3GroupNode.lo \
+	angles.lo CurveCatmullRom.lo CurveNURBS.lo Curve.lo \
+	CurveEditInstance.lo plugin.lo GenericEntity.lo \
+	GenericEntityNode.lo keyobservers.lo NamespaceManager.lo \
+	KeyValueObserver.lo NameKeyObserver.lo colour.lo entity.lo \
+	scale.lo KeyValue.lo TargetKey.lo TargetableNode.lo \
+	TargetKeyCollection.lo TargetManager.lo \
 	RenderableTargetInstances.lo
 entity_la_OBJECTS = $(am_entity_la_OBJECTS)
 entity_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -95,6 +95,7 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BOOST_FILESYSTEM_LIBS = @BOOST_FILESYSTEM_LIBS@
+BOOST_PYTHON_LIBS = @BOOST_PYTHON_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -150,6 +151,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PYTHON_CFLAGS = @PYTHON_CFLAGS@
+PYTHON_CONFIG = @PYTHON_CONFIG@
+PYTHON_LIBS = @PYTHON_LIBS@
 RANLIB = @RANLIB@
 REGEX_LIBS = @REGEX_LIBS@
 SED = @SED@
@@ -230,16 +234,15 @@ entity_la_SOURCES = origin.cpp \
                     ModelKey.cpp \
                     rotation.cpp \
                     light/Light.cpp \
-                    light/LightSettings.cpp \
                     light/Renderables.cpp \
                     light/LightNode.cpp \
                     eclassmodel/EclassModel.cpp \
                     eclassmodel/EclassModelNode.cpp \
                     EntityCreator.cpp \
+		    EntitySettings.cpp \
                     namedentity.cpp \
                     speaker/Speaker.cpp \
                     speaker/SpeakerRenderables.cpp \
-                    speaker/SpeakerSettings.cpp \
                     speaker/SpeakerNode.cpp \
                     Doom3Entity.cpp \
                     EntityNode.cpp \
@@ -347,13 +350,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EclassModelNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityCreator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityNode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntitySettings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GenericEntity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GenericEntityNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KeyValue.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KeyValueObserver.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Light.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LightNode.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LightSettings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NameKeyObserver.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamespaceManager.Plo@am__quote@
@@ -362,7 +365,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Speaker.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerRenderables.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerSettings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetKey.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetKeyCollection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetManager.Plo@am__quote@
@@ -406,13 +408,6 @@ Light.lo: light/Light.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Light.lo `test -f 'light/Light.cpp' || echo '$(srcdir)/'`light/Light.cpp
 
-LightSettings.lo: light/LightSettings.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT LightSettings.lo -MD -MP -MF $(DEPDIR)/LightSettings.Tpo -c -o LightSettings.lo `test -f 'light/LightSettings.cpp' || echo '$(srcdir)/'`light/LightSettings.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/LightSettings.Tpo $(DEPDIR)/LightSettings.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='light/LightSettings.cpp' object='LightSettings.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o LightSettings.lo `test -f 'light/LightSettings.cpp' || echo '$(srcdir)/'`light/LightSettings.cpp
-
 Renderables.lo: light/Renderables.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Renderables.lo -MD -MP -MF $(DEPDIR)/Renderables.Tpo -c -o Renderables.lo `test -f 'light/Renderables.cpp' || echo '$(srcdir)/'`light/Renderables.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/Renderables.Tpo $(DEPDIR)/Renderables.Plo
@@ -454,13 +449,6 @@ SpeakerRenderables.lo: speaker/SpeakerRenderables.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='speaker/SpeakerRenderables.cpp' object='SpeakerRenderables.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SpeakerRenderables.lo `test -f 'speaker/SpeakerRenderables.cpp' || echo '$(srcdir)/'`speaker/SpeakerRenderables.cpp
-
-SpeakerSettings.lo: speaker/SpeakerSettings.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpeakerSettings.lo -MD -MP -MF $(DEPDIR)/SpeakerSettings.Tpo -c -o SpeakerSettings.lo `test -f 'speaker/SpeakerSettings.cpp' || echo '$(srcdir)/'`speaker/SpeakerSettings.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/SpeakerSettings.Tpo $(DEPDIR)/SpeakerSettings.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='speaker/SpeakerSettings.cpp' object='SpeakerSettings.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SpeakerSettings.lo `test -f 'speaker/SpeakerSettings.cpp' || echo '$(srcdir)/'`speaker/SpeakerSettings.cpp
 
 SpeakerNode.lo: speaker/SpeakerNode.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SpeakerNode.lo -MD -MP -MF $(DEPDIR)/SpeakerNode.Tpo -c -o SpeakerNode.lo `test -f 'speaker/SpeakerNode.cpp' || echo '$(srcdir)/'`speaker/SpeakerNode.cpp

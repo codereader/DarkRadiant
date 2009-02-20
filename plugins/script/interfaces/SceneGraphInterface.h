@@ -47,7 +47,9 @@ public:
 	}
 
 	ScriptSceneNode getParent() {
-		return _node != NULL ? _node->getParent() : ScriptSceneNode(scene::INodePtr());
+		return _node != NULL 
+                    ? ScriptSceneNode(_node->getParent()) 
+                    : ScriptSceneNode(scene::INodePtr());
 	}
 
 	std::string getNodeType() {

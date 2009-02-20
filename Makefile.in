@@ -65,14 +65,16 @@ am__vpath_adj = case $$p in \
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(applicationsdir)" \
 	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" \
-	"$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)"
+	"$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" \
+	"$(DESTDIR)$(scriptsdir)"
 applicationsDATA_INSTALL = $(INSTALL_DATA)
 bitmapsDATA_INSTALL = $(INSTALL_DATA)
 gameDATA_INSTALL = $(INSTALL_DATA)
 glprogsDATA_INSTALL = $(INSTALL_DATA)
 pkgdataDATA_INSTALL = $(INSTALL_DATA)
+scriptsDATA_INSTALL = $(INSTALL_DATA)
 DATA = $(applications_DATA) $(bitmaps_DATA) $(game_DATA) \
-	$(glprogs_DATA) $(pkgdata_DATA)
+	$(glprogs_DATA) $(pkgdata_DATA) $(scripts_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
@@ -99,6 +101,7 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BOOST_FILESYSTEM_LIBS = @BOOST_FILESYSTEM_LIBS@
+BOOST_PYTHON_LIBS = @BOOST_PYTHON_LIBS@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -154,6 +157,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PYTHON_CFLAGS = @PYTHON_CFLAGS@
+PYTHON_CONFIG = @PYTHON_CONFIG@
+PYTHON_LIBS = @PYTHON_LIBS@
 RANLIB = @RANLIB@
 REGEX_LIBS = @REGEX_LIBS@
 SED = @SED@
@@ -243,6 +249,10 @@ pkgdata_DATA = $(top_srcdir)/install/colours.xml \
 # Install GL programs
 glprogsdir = $(pkgdatadir)/gl
 glprogs_DATA = $(top_srcdir)/install/gl/*
+
+# Install python scripts
+scriptsdir = $(bindir)/scripts
+scripts_DATA = $(top_srcdir)/install/scripts/*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -392,6 +402,23 @@ uninstall-pkgdataDATA:
 	  f=$(am__strip_dir) \
 	  echo " rm -f '$(DESTDIR)$(pkgdatadir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(pkgdatadir)/$$f"; \
+	done
+install-scriptsDATA: $(scripts_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(scriptsdir)" || $(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
+	@list='$(scripts_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(scriptsDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(scriptsdir)/$$f'"; \
+	  $(scriptsDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(scriptsdir)/$$f"; \
+	done
+
+uninstall-scriptsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(scripts_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(scriptsdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(scriptsdir)/$$f"; \
 	done
 
 # This directory's subdirectories are mostly independent; you can cd
@@ -677,7 +704,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -725,7 +752,8 @@ info: info-recursive
 info-am:
 
 install-data-am: install-applicationsDATA install-bitmapsDATA \
-	install-gameDATA install-glprogsDATA install-pkgdataDATA
+	install-gameDATA install-glprogsDATA install-pkgdataDATA \
+	install-scriptsDATA
 
 install-dvi: install-dvi-recursive
 
@@ -762,7 +790,8 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
-	uninstall-gameDATA uninstall-glprogsDATA uninstall-pkgdataDATA
+	uninstall-gameDATA uninstall-glprogsDATA uninstall-pkgdataDATA \
+	uninstall-scriptsDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
 	install-strip
@@ -779,13 +808,14 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	install-exec-am install-gameDATA install-glprogsDATA \
 	install-html install-html-am install-info install-info-am \
 	install-man install-pdf install-pdf-am install-pkgdataDATA \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-applicationsDATA \
-	uninstall-bitmapsDATA uninstall-gameDATA uninstall-glprogsDATA \
-	uninstall-pkgdataDATA
+	install-ps install-ps-am install-scriptsDATA install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am \
+	uninstall-applicationsDATA uninstall-bitmapsDATA \
+	uninstall-gameDATA uninstall-glprogsDATA uninstall-pkgdataDATA \
+	uninstall-scriptsDATA
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

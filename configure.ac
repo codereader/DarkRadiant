@@ -4,6 +4,7 @@ AM_INIT_AUTOMAKE
 # Save user flags
 USER_CFLAGS=$CFLAGS
 USER_CXXFLAGS=$CXXFLAGS
+USER_CPPFLAGS=$CPPFLAGS
 
 # Setup and defaults
 AC_LANG(C++)
@@ -90,10 +91,26 @@ AC_CHECK_LIB([boost_filesystem], [main],
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
 # Boost.Python
+AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
+if test ! -z $PYTHON_CONFIG
+then
+    PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
+    PYTHON_LIBS=`$PYTHON_CONFIG --libs`
+fi
+
+CPPFLAGS="$PYTHON_CFLAGS"
+LDFLAGS="$PYTHON_LIBS"
 AC_CHECK_HEADER([boost/python.hpp],
                 [script_module='script'],
                 [script_module=''])
+AC_CHECK_LIB([boost_python], [main],
+             [BOOST_PYTHON_LIBS='-lboost_python'],
+             [script_module=''])
+
 AC_SUBST([script_module])
+AC_SUBST([PYTHON_CFLAGS])
+AC_SUBST([PYTHON_LIBS])
+AC_SUBST([BOOST_PYTHON_LIBS])
 
 # Dependent Boost headers
 AC_CHECK_HEADER([boost/serialization/access.hpp], [],
@@ -118,9 +135,11 @@ AC_SUBST([ALUT_LIBS])
 AC_SUBST([VORBIS_LIBS])
 AC_SUBST([AL_LIBS])
 
-# Configure global flags
-CFLAGS="$USER_CFLAGS -DPOSIX"
-CXXFLAGS="$USER_CXXFLAGS -DPOSIX"
+# Configure global flags, cancelling any modifications we may have made during
+# configuration
+CFLAGS="$USER_CFLAGS"
+CXXFLAGS="$USER_CXXFLAGS"
+CPPFLAGS="$USER_CPPFLAGS -DPOSIX"
 
 # Debug/optimisation
 if [[ $debug_build != 'no' ]]
