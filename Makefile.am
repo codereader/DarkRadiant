@@ -22,5 +22,5 @@ glprogsdir = $(pkgdatadir)/gl
 glprogs_DATA = $(top_srcdir)/install/gl/*
 
 # Install python scripts
-scriptsdir = $(bindir)/scripts
+scriptsdir = $(pkglibdir)/scripts
 scripts_DATA = $(top_srcdir)/install/scripts/*

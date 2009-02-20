@@ -1,8 +1,8 @@
 libsdir = $(top_srcdir)/libs
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
-			  -DPKGDATADIR='"$(pkgdatadir)"' \
+              -DPKGDATADIR='"$(pkgdatadir)"' \
               -I$(top_srcdir)/include \
-			  -I$(libsdir) \
+              -I$(libsdir) \
               $(GTK_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
 
 bin_PROGRAMS = darkradiant
