@@ -5,7 +5,6 @@
 
 #include "ieclass.h"
 #include "iscript.h"
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 namespace script {
 
