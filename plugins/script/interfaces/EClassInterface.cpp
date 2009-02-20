@@ -1,5 +1,7 @@
 #include "EClassInterface.h"
 
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+
 namespace script {
 
 ScriptEntityClass EClassManagerInterface::findClass(const std::string& name) {

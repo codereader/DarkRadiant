@@ -24,6 +24,14 @@ void ScriptEntityNode::setKeyValue(const std::string& key, const std::string& va
 	}
 }
 
+void ScriptEntityNode::forEachKeyValue(Entity::Visitor& visitor) {
+	Entity* entity = Node_getEntity(_node);
+
+	if (entity != NULL) {
+		entity->forEachKeyValue(visitor);
+	}
+}
+
 // Checks if the given SceneNode structure is a BrushNode
 bool ScriptEntityNode::isEntity(const ScriptSceneNode& node) {
 	return Node_isEntity(node);
@@ -77,6 +85,12 @@ void EntityInterface::registerInterface(boost::python::object& nspace) {
 
 	boost::python::objects::add_to_namespace(sceneNode, 
 		"getEntity", boost::python::make_function(&ScriptEntityNode::getEntity));
+
+	// Expose the Entity::Visitor interface
+	nspace["EntityVisitor"] = 
+		boost::python::class_<EntityVisitorWrapper, boost::noncopyable>("EntityVisitor")
+		.def("visit", boost::python::pure_virtual(&EntityVisitorWrapper::visit))
+	;
 
 	// Add the EntityCreator module declaration to the given python namespace
 	nspace["GlobalEntityCreator"] = boost::python::class_<EntityInterface>("GlobalEntityCreator")

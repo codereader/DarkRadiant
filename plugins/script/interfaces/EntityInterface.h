@@ -22,12 +22,27 @@ public:
 	std::string getKeyValue(const std::string& key);
 	void setKeyValue(const std::string& key, const std::string& value);
 
+	// Visit each keyvalue, wraps to the contained entity
+	void forEachKeyValue(Entity::Visitor& visitor);
+
 	// Checks if the given SceneNode structure is a BrushNode
 	static bool isEntity(const ScriptSceneNode& node);
 
 	// "Cast" service for Python, returns a ScriptEntityNode. 
 	// The returned node is non-NULL if the cast succeeded
 	static ScriptEntityNode getEntity(const ScriptSceneNode& node);
+};
+
+// Wrap around the EntityClassVisitor interface
+class EntityVisitorWrapper : 
+	public Entity::Visitor, 
+	public boost::python::wrapper<Entity::Visitor>
+{
+public:
+	void visit(const std::string& key, const std::string& value) {
+		// Wrap this method to python
+		this->get_override("visit")(key, value);
+	}
 };
 
 /**
