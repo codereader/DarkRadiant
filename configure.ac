@@ -23,6 +23,11 @@ AC_ARG_ENABLE([darkmod-plugins],
                               [build Dark Mod plugins such as S/R editor])],
               [darkmod_plugins=$enableval],
               [darkmod_plugins='no'])
+AC_ARG_ENABLE([python],
+              [AS_HELP_STRING([--disable-python],
+                              [disable Python scripting functionality])],
+              [python_scripting=$enableval],
+              [python_scripting='yes'])
 
 if [[ $darkmod_plugins != 'no' ]]
 then
@@ -90,27 +95,30 @@ AC_CHECK_LIB([boost_filesystem], [main],
              [AC_MSG_ERROR([Boost.Filesystem not found])])
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
-# Boost.Python
-AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
-if test ! -z $PYTHON_CONFIG
+# Boost.Python if required
+if test $python_scripting == 'yes'
 then
-    PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
-    PYTHON_LIBS=`$PYTHON_CONFIG --libs`
+    AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
+    if test ! -z $PYTHON_CONFIG
+    then
+        PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
+        PYTHON_LIBS=`$PYTHON_CONFIG --libs`
+    fi
+
+    CPPFLAGS="$PYTHON_CFLAGS"
+    LDFLAGS="$PYTHON_LIBS"
+    AC_CHECK_HEADER([boost/python.hpp],
+                    [script_module='script'],
+                    [script_module=''])
+    AC_CHECK_LIB([boost_python], [main],
+                 [BOOST_PYTHON_LIBS='-lboost_python'],
+                 [script_module=''])
+
+    AC_SUBST([script_module])
+    AC_SUBST([PYTHON_CFLAGS])
+    AC_SUBST([PYTHON_LIBS])
+    AC_SUBST([BOOST_PYTHON_LIBS])
 fi
-
-CPPFLAGS="$PYTHON_CFLAGS"
-LDFLAGS="$PYTHON_LIBS"
-AC_CHECK_HEADER([boost/python.hpp],
-                [script_module='script'],
-                [script_module=''])
-AC_CHECK_LIB([boost_python], [main],
-             [BOOST_PYTHON_LIBS='-lboost_python'],
-             [script_module=''])
-
-AC_SUBST([script_module])
-AC_SUBST([PYTHON_CFLAGS])
-AC_SUBST([PYTHON_LIBS])
-AC_SUBST([BOOST_PYTHON_LIBS])
 
 # Dependent Boost headers
 AC_CHECK_HEADER([boost/serialization/access.hpp], [],

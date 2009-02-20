@@ -1515,6 +1515,7 @@ Optional Features:
   --enable-debug          enable debug build
   --enable-darkmod-plugins
                           build Dark Mod plugins such as S/R editor
+  --disable-python        disable Python scripting functionality
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -4847,7 +4848,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 4850 "configure"' > conftest.$ac_ext
+  echo '#line 4851 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7426,11 +7427,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7429: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7430: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7433: \$? = $ac_status" >&5
+   echo "$as_me:7434: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7716,11 +7717,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7719: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7720: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7723: \$? = $ac_status" >&5
+   echo "$as_me:7724: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7820,11 +7821,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7823: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7824: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7827: \$? = $ac_status" >&5
+   echo "$as_me:7828: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10197,7 +10198,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10200 "configure"
+#line 10201 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10297,7 +10298,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 10300 "configure"
+#line 10301 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12698,11 +12699,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12701: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12702: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:12705: \$? = $ac_status" >&5
+   echo "$as_me:12706: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -12802,11 +12803,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12805: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12806: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:12809: \$? = $ac_status" >&5
+   echo "$as_me:12810: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14400,11 +14401,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14403: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14404: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14407: \$? = $ac_status" >&5
+   echo "$as_me:14408: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14504,11 +14505,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14507: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14508: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14511: \$? = $ac_status" >&5
+   echo "$as_me:14512: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16724,11 +16725,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16727: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16728: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16731: \$? = $ac_status" >&5
+   echo "$as_me:16732: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17014,11 +17015,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17017: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17018: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17021: \$? = $ac_status" >&5
+   echo "$as_me:17022: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17118,11 +17119,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17121: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17122: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17125: \$? = $ac_status" >&5
+   echo "$as_me:17126: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19824,6 +19825,13 @@ else
   darkmod_plugins='no'
 fi
 
+# Check whether --enable-python was given.
+if test "${enable_python+set}" = set; then
+  enableval=$enable_python; python_scripting=$enableval
+else
+  python_scripting='yes'
+fi
+
 
 if [ $darkmod_plugins != 'no' ]
 then
@@ -21219,8 +21227,10 @@ fi
 
 
 
-# Boost.Python
-for ac_prog in python-config
+# Boost.Python if required
+if test $python_scripting == 'yes'
+then
+    for ac_prog in python-config
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -21262,15 +21272,15 @@ fi
   test -n "$PYTHON_CONFIG" && break
 done
 
-if test ! -z $PYTHON_CONFIG
-then
-    PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
-    PYTHON_LIBS=`$PYTHON_CONFIG --libs`
-fi
+    if test ! -z $PYTHON_CONFIG
+    then
+        PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
+        PYTHON_LIBS=`$PYTHON_CONFIG --libs`
+    fi
 
-CPPFLAGS="$PYTHON_CFLAGS"
-LDFLAGS="$PYTHON_LIBS"
-if test "${ac_cv_header_boost_python_hpp+set}" = set; then
+    CPPFLAGS="$PYTHON_CFLAGS"
+    LDFLAGS="$PYTHON_LIBS"
+    if test "${ac_cv_header_boost_python_hpp+set}" = set; then
   { echo "$as_me:$LINENO: checking for boost/python.hpp" >&5
 echo $ECHO_N "checking for boost/python.hpp... $ECHO_C" >&6; }
 if test "${ac_cv_header_boost_python_hpp+set}" = set; then
@@ -21402,7 +21412,7 @@ else
 fi
 
 
-{ echo "$as_me:$LINENO: checking for main in -lboost_python" >&5
+    { echo "$as_me:$LINENO: checking for main in -lboost_python" >&5
 echo $ECHO_N "checking for main in -lboost_python... $ECHO_C" >&6; }
 if test "${ac_cv_lib_boost_python_main+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -21468,6 +21478,7 @@ fi
 
 
 
+fi
 
 # Dependent Boost headers
 if test "${ac_cv_header_boost_serialization_access_hpp+set}" = set; then
