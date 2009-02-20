@@ -164,7 +164,11 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	GlobalRadiant().addEventListener(_startupListener);
 
 	// Construct the script path
+#if defined(POSIX) && defined(PKGLIBDIR)
+   _scriptPath = std::string(PKGLIBDIR) + "/scripts/";
+#else
 	_scriptPath = ctx.getApplicationPath() + "scripts/";
+#endif
 
 	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", MathInterfacePtr(new MathInterface));

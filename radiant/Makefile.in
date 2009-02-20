@@ -376,9 +376,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 libsdir = $(top_srcdir)/libs
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
-			  -DPKGDATADIR='"$(pkgdatadir)"' \
+              -DPKGDATADIR='"$(pkgdatadir)"' \
               -I$(top_srcdir)/include \
-			  -I$(libsdir) \
+              -I$(libsdir) \
               $(GTK_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
 
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
