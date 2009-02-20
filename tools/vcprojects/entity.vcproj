@@ -793,14 +793,6 @@
 					RelativePath="..\..\plugins\entity\speaker\SpeakerRenderables.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\plugins\entity\speaker\SpeakerSettings.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\speaker\SpeakerSettings.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="target"

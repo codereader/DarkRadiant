@@ -21,6 +21,9 @@ class EntitySettings :
 	// TRUE if entity names should be drawn
     bool _renderEntityNames;
 
+	// TRUE if speaker radii should be drawn
+	bool _showAllSpeakerRadii;
+
 	// Private constructor
 	EntitySettings();
 public:
@@ -31,6 +34,10 @@ public:
 
 	bool renderEntityNames() {
 		return _renderEntityNames;
+	}
+
+	bool showAllSpeakerRadii() {
+		return _showAllSpeakerRadii;
 	}
 
 	// Container for the singleton (ptr)
