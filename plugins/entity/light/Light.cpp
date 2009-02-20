@@ -4,7 +4,6 @@
 #include "igrid.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
-#include "LightSettings.h"
 #include "../EntitySettings.h"
 
 #include "LightNode.h"
@@ -516,7 +515,7 @@ void Light::renderWireframe(Renderer& renderer,
 	renderer.addRenderable(*this, localToWorld);
 
 	// Render bounding box if selected or the showAllLighRadii flag is set
-	if (selected || LightSettings().showAllLightRadii()) {
+	if (selected || EntitySettings::InstancePtr()->showAllLightRadii()) {
 
 		if (isProjected()) {
 			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.

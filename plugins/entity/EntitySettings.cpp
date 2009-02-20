@@ -7,15 +7,18 @@ namespace entity {
 namespace {
 	const std::string RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
 	const std::string RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
+	const std::string RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
 }
 
 EntitySettings::EntitySettings() :
 	_renderEntityNames(GlobalRegistry().get(RKEY_SHOW_ENTITY_NAMES) == "1"),
-	_showAllSpeakerRadii(GlobalRegistry().get(RKEY_SHOW_ALL_SPEAKER_RADII) == "1")
+	_showAllSpeakerRadii(GlobalRegistry().get(RKEY_SHOW_ALL_SPEAKER_RADII) == "1"),
+	_showAllLightRadii(GlobalRegistry().get(RKEY_SHOW_ALL_LIGHT_RADII) == "1")
 {
 	// Register this class as keyobserver
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ALL_SPEAKER_RADII);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ALL_LIGHT_RADII);
 }
 
 EntitySettings::~EntitySettings() {
@@ -44,6 +47,9 @@ void EntitySettings::keyChanged(const std::string& key, const std::string& value
 	}
 	else if (key == RKEY_SHOW_ALL_SPEAKER_RADII) {
 		_showAllSpeakerRadii = (value == "1");
+	}
+	else if (key == RKEY_SHOW_ALL_LIGHT_RADII) {
+		_showAllLightRadii = (value == "1");
 	}
 
 	// Redraw the scene
