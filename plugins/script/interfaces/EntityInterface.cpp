@@ -75,6 +75,7 @@ void EntityInterface::registerInterface(boost::python::object& nspace) {
 		boost::python::bases<ScriptSceneNode> >("EntityNode", boost::python::init<const scene::INodePtr&>() )
 		.def("getKeyValue", &ScriptEntityNode::getKeyValue)
 		.def("setKeyValue", &ScriptEntityNode::setKeyValue)
+		.def("forEachKeyValue", &ScriptEntityNode::forEachKeyValue)
 	;
 
 	// Add the "isEntity" and "getEntity" method to all ScriptSceneNodes

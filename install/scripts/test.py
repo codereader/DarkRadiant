@@ -79,4 +79,17 @@ if not worldspawn.isNull():
 else:
 	print('There is no worldspawn in this map yet')
 
+# Test the entity visitor interface
+class TestEntityVisitor(EntityVisitor) :
+	def visit(self, key, value):
+		print('Worldspawn has spawnarg: ' + key + ' = ' + value)
+
+if not worldspawn.isNull():
+	tev = TestEntityVisitor()
+
+	# Cast the node onto an entity
+	worldspawnent = worldspawn.getEntity()
+
+	worldspawnent.forEachKeyValue(tev)
+
 print('')
