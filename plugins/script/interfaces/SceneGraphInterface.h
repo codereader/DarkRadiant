@@ -14,7 +14,7 @@ class ScriptSceneNode
 {
 protected:
 	// The contained scene::INodePtr
-	const scene::INodePtr _node;
+	const scene::INodeWeakPtr _node;
 
 	AABB _emptyAABB;
 public:
@@ -22,43 +22,49 @@ public:
 		_node(node)
 	{}
 
-	operator const scene::INodePtr&() const {
-		return _node;
+	operator scene::INodePtr() const {
+		return _node.lock();
 	}
 
 	void removeFromParent() {
-		if (_node != NULL) {
-			scene::removeNodeFromParent(_node);
+		scene::INodePtr node = _node.lock();
+		if (node != NULL) {
+			scene::removeNodeFromParent(node);
 		}
 	}
 
 	void addToContainer(const ScriptSceneNode& container) {
-		if (_node != NULL) {
-			scene::addNodeToContainer(_node, container);
+		scene::INodePtr node = _node.lock();
+		if (node != NULL) {
+			scene::addNodeToContainer(node, container);
 		}
 	}
 
 	const AABB& getWorldAABB() const {
-		return _node != NULL ? _node->worldAABB() : _emptyAABB;
+		scene::INodePtr node = _node.lock();
+		return node != NULL ? node->worldAABB() : _emptyAABB;
 	}
 
 	bool isNull() const {
-		return _node == NULL;
+		return _node.lock() == NULL;
 	}
 
 	ScriptSceneNode getParent() {
-		return _node != NULL 
-                    ? ScriptSceneNode(_node->getParent()) 
+		scene::INodePtr node = _node.lock();
+		return node != NULL 
+                    ? ScriptSceneNode(node->getParent()) 
                     : ScriptSceneNode(scene::INodePtr());
 	}
 
 	std::string getNodeType() {
-		return nodetype_get_name(node_get_nodetype(_node));
+		scene::INodePtr node = _node.lock();
+		return nodetype_get_name(node_get_nodetype(node));
 	}
 
 	void traverse(scene::NodeVisitor& visitor) {
-		if (_node != NULL) {
-			_node->traverse(visitor);
+		scene::INodePtr node = _node.lock();
+		if (node != NULL) {
+			node->traverse(visitor);
 		}
 	}
 };
