@@ -698,14 +698,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\plugins\entity\light\LightSettings.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\entity\light\LightSettings.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\plugins\entity\light\LightShader.h"
 					>
 				</File>

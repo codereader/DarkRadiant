@@ -11,7 +11,6 @@ entity_la_SOURCES = origin.cpp \
                     ModelKey.cpp \
                     rotation.cpp \
                     light/Light.cpp \
-                    light/LightSettings.cpp \
                     light/Renderables.cpp \
                     light/LightNode.cpp \
                     eclassmodel/EclassModel.cpp \

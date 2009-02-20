@@ -24,6 +24,9 @@ class EntitySettings :
 	// TRUE if speaker radii should be drawn
 	bool _showAllSpeakerRadii;
 
+	// TRUE if light radii should be drawn even when not selected
+	bool _showAllLightRadii;
+
 	// Private constructor
 	EntitySettings();
 public:
@@ -38,6 +41,10 @@ public:
 
 	bool showAllSpeakerRadii() {
 		return _showAllSpeakerRadii;
+	}
+
+	bool showAllLightRadii() {
+		return _showAllLightRadii;
 	}
 
 	// Container for the singleton (ptr)
