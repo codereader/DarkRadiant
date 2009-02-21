@@ -439,6 +439,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\eventmanager\EventManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\eventmanager\KeyEvent.h"
 				>
 			</File>
