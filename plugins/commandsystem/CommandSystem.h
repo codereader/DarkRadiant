@@ -12,12 +12,12 @@ class CommandSystem :
 	struct Command 
 	{
 		// The actual function to call
-		CommandFunction function;
+		Function function;
 
 		// The number and types of arguments to use
-		CommandSignature signature;
+		Signature signature;
 
-		Command(const CommandFunction& _func, const CommandSignature& _sign) :
+		Command(const Function& _func, const Signature& _sign) :
 			function(_func),
 			signature(_sign)
 		{}
@@ -29,10 +29,9 @@ class CommandSystem :
 	CommandMap _commands;
 
 public:
-	void addCommand(const std::string& name, 
-					CommandFunction func, 
-					const CommandSignature& signature);
+	void addCommand(const std::string& name, Function func, const Signature& signature);
 
+	void executeCommand(const std::string& name);
 	void executeCommand(const std::string& name, const Argument& arg1);
 	void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2);
 	void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3);

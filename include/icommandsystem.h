@@ -11,6 +11,16 @@
 
 namespace cmd {
 
+enum ArgumentType
+{
+	ARGTYPE_STRING,
+	ARGTYPE_INT,
+	ARGTYPE_DOUBLE,
+	ARGTYPE_VECTOR3,
+	ARGTYPE_POINTER,
+	NUM_ARGTYPES,
+};
+
 // One command argument, provides several getter methods
 class Argument
 {
@@ -21,6 +31,13 @@ class Argument
 	void* _pointerValue;
 
 public:
+	Argument() :
+		_doubleValue(0),
+		_intValue(0),
+		_vectorValue(0,0,0),
+		_pointerValue(NULL)
+	{}
+
 	// String => Argument constructor
 	Argument(const std::string& str) :
 		_strValue(str),
@@ -105,20 +122,10 @@ typedef std::vector<Argument> ArgumentList;
  *
  * This can be both a free function and a member function.
  */
-typedef boost::function<void (const ArgumentList&)> CommandFunction;
-
-enum ArgumentType
-{
-	ARGTYPE_STRING,
-	ARGTYPE_INT,
-	ARGTYPE_DOUBLE,
-	ARGTYPE_VECTOR3,
-	ARGTYPE_POINTER,
-	NUM_ARGTYPES,
-};
+typedef boost::function<void (const ArgumentList&)> Function;
 
 // A command signature consists just of arguments, no return types
-typedef std::vector<ArgumentType> CommandSignature;
+typedef std::vector<ArgumentType> Signature;
 
 class ICommandSystem :
 	public RegisterableModule
@@ -127,13 +134,13 @@ public:
 	/**
 	 * greebo: Declares a new command with the given signature.
 	 */
-	virtual void addCommand(const std::string& name, 
-						    CommandFunction func, 
-							const CommandSignature& signature = CommandSignature()) = 0;
+	virtual void addCommand(const std::string& name, Function func, 
+							const Signature& signature = Signature()) = 0;
 
 	/**
 	 * Execute the named command with the given arguments.
 	 */
+	virtual void executeCommand(const std::string& name) = 0;
 	virtual void executeCommand(const std::string& name, const Argument& arg1) = 0;
 	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2) = 0;
 	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3) = 0;
