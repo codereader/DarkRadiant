@@ -7,29 +7,105 @@
 
 #include "imodule.h"
 
+#include "string/string.h"
+
 namespace cmd {
 
 // One command argument, provides several getter methods
-class CommandArgument
+class Argument
 {
+	std::string _strValue;
+	double _doubleValue;
+	int _intValue;
+	Vector3 _vectorValue;
+	void* _pointerValue;
+
 public:
-	virtual std::string getString() const = 0;
-	virtual int getInt() const = 0;
-	virtual double getDouble() const = 0;
-	virtual Vector3 getVector() const = 0;
-	virtual void* getPointer() const = 0;
+	// String => Argument constructor
+	Argument(const std::string& str) :
+		_strValue(str),
+		_doubleValue(strToDouble(str)),
+		_intValue(strToInt(str)),
+		_vectorValue(Vector3(str)),
+		_pointerValue(NULL)
+	{}
+
+	// Double => Argument constructor
+	Argument(const double d) :
+		_strValue(doubleToStr(d)),
+		_doubleValue(d),
+		_intValue(static_cast<int>(d)),
+		_vectorValue(0,0,0),
+		_pointerValue(NULL)
+	{}
+
+	// Double => Argument constructor
+	Argument(const int i) :
+		_strValue(intToStr(i)),
+		_doubleValue(static_cast<double>(i)),
+		_intValue(i),
+		_vectorValue(0,0,0),
+		_pointerValue(NULL)
+	{}
+
+	// Vector3 => Argument constructor
+	Argument(const Vector3& v) :
+		_strValue(doubleToStr(v[0]) + " " + doubleToStr(v[1]) + " " + doubleToStr(v[2])),
+		_doubleValue(v.getLength()),
+		_intValue(static_cast<int>(v.getLength())),
+		_vectorValue(v),
+		_pointerValue(NULL)
+	{}
+
+	// Pointer => Argument constructor
+	Argument(void* ptr) :
+		_strValue(""),
+		_doubleValue(0),
+		_intValue(0),
+		_vectorValue(0,0,0),
+		_pointerValue(ptr)
+	{}
+
+	// Copy Constructor
+	Argument(const Argument& other) :
+		_strValue(other._strValue),
+		_doubleValue(other._doubleValue),
+		_intValue(other._intValue),
+		_vectorValue(other._vectorValue),
+		_pointerValue(other._pointerValue)
+	{}
+
+	std::string getString() const {
+		return _strValue;
+	}
+
+	int getInt() const {
+		return _intValue;
+	}
+
+	double getDouble() const {
+		return _doubleValue;
+	}
+
+	Vector3 getVector() const {
+		return _vectorValue;
+	}
+
+	void* getPointer() const {
+		return _pointerValue;
+	}
 };
 
-typedef std::vector<CommandArgument> CommandArguments;
+typedef std::vector<Argument> ArgumentList;
 
 /**
- * greebo: A command target must take a CommandArguments argument, like this:
+ * greebo: A command target must take a ArgumentList argument, like this:
  *
- * void execute(const CommandArguments& args);
+ * void execute(const ArgumentList& args);
  *
  * This can be both a free function and a member function.
  */
-typedef boost::function<void (const CommandArguments&)> CommandFunction;
+typedef boost::function<void (const ArgumentList&)> CommandFunction;
 
 enum ArgumentType
 {
@@ -54,6 +130,17 @@ public:
 	virtual void addCommand(const std::string& name, 
 						    CommandFunction func, 
 							const CommandSignature& signature = CommandSignature()) = 0;
+
+	/**
+	 * Execute the named command with the given arguments.
+	 */
+	virtual void executeCommand(const std::string& name, const Argument& arg1) = 0;
+	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2) = 0;
+	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3) = 0;
+
+	// For more than 3 arguments, use this method to pass a vector of arguments
+	virtual void executeCommand(const std::string& name, 
+								 const ArgumentList& args) = 0;
 };
 typedef boost::shared_ptr<ICommandSystem> ICommandSystemPtr;
 
