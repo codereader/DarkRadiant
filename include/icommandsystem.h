@@ -153,6 +153,22 @@ public:
 							const Signature& signature = Signature()) = 0;
 
 	/**
+	 * greebo: Executes the given string as if the user had typed it
+	 * in the command console. The passed string can be a sequence of
+	 * statements separated by semicolon ';' characters. Each statement
+	 * can have zero or more arguments, separated by spaces.
+	 *
+	 * It is possible to pass string arguments by using
+	 * double- or single-quote characters.
+	 * e.g. "This; string; will be; treated as a whole".
+	 *
+	 * The last command needs not to be delimited by a semicolon.
+	 *
+	 * Example: nudgeLeft; nudgeRight -1 0 0; write "Bla! Test"
+	 */
+	virtual void execute(const std::string& input) = 0;
+
+	/**
 	 * Execute the named command with the given arguments.
 	 */
 	virtual void executeCommand(const std::string& name) = 0;

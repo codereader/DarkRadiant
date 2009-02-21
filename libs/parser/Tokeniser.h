@@ -7,11 +7,55 @@
 
 namespace parser {
 
+/**
+ * greebo: Abstract type of a StringTokeniser, which splits a given
+ * input string into pieces. It must provide a basic set of methods 
+ * to retrieve the tokens one by one.
+ */
+class StringTokeniser
+{
+public:
+	/** Test if this StringTokeniser has more tokens to return.
+     * 
+     * @returns
+     * true if there are further tokens, false otherwise
+     */
+    virtual bool hasMoreTokens() = 0;
+
+    /** Return the next token in the sequence. This function consumes
+     * the returned token and advances the internal state to the following
+     * token.
+     * 
+     * @returns
+     * std::string containing the next token in the sequence.
+     * 
+     * @pre
+     * hasMoreTokens() must be true, otherwise an exception will be thrown.
+     */
+    virtual std::string nextToken() = 0;
+    
+    /** Assert that the next token in the sequence must be equal to the provided
+     * value. A ParseException is thrown if the assert fails.
+     * 
+     * @param val
+     * The expected value of the token.
+     */
+	virtual void assertNextToken(const std::string& val) = 0;
+    
+    /** Skip the next n tokens. This method provides a convenient way to dispose
+     * of a number of tokens without returning them.
+     * 
+     * @param n
+     * The number of tokens to consume.
+     */
+    virtual void skipTokens(unsigned int n) = 0;
+};
+
 /** Base class of a tokeniser wrapping around a boost::tokeniser
  * 
  *  Standard delimiters are initialised to whitespace: " \t\n\v\r"
  */
-class StringTokeniser
+class BasicStringTokeniser
 {
     // Internal Boost tokenizer and its iterator
     typedef boost::char_separator<char> CharSeparator;
@@ -34,8 +78,8 @@ public:
      * @param keptDelims
      * The list of delimiters to keep
      */
-    StringTokeniser(const std::string& str, 
-					const char* delimiters = " \t\n\v\r") :
+    BasicStringTokeniser(const std::string& str, 
+						 const char* delimiters = " \t\n\v\r") :
     	_separator(delimiters),
 		_tok(str, _separator),
 		_tokIter(_tok.begin()) 
@@ -96,8 +140,8 @@ public:
             }
         }
     }
-}; // class StringTokeniser
+}; // class BasicStringTokeniser
 	
 } // namespace parser
 
-#endif /*TOKENISER_H_*/
+#endif /* TOKENISER_H_ */

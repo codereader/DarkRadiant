@@ -1,6 +1,7 @@
 #include "CommandSystem.h"
 
 #include "itextstream.h"
+#include "CommandTokeniser.h"
 
 namespace cmd {
 
@@ -39,6 +40,61 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	if (!result.second) {
 		globalErrorStream() << "Cannot register command " << name 
 			<< ", this command is already registered." << std::endl;
+	}
+}
+
+void CommandSystem::execute(const std::string& input) {
+	// Instantiate a CommandTokeniser to analyse the given input string
+	CommandTokeniser tokeniser(input);
+
+	if (!tokeniser.hasMoreTokens()) return; // nothing to do!
+
+	std::vector<Statement> statements;
+
+	Statement curStatement;
+
+	while (tokeniser.hasMoreTokens()) {
+		// Inspect the next token
+		std::string token = tokeniser.nextToken();
+
+		if (token.empty()) {
+			continue; // skip empty tokens
+		}
+		else if (token == ";") {
+			// Finish the current statement
+			if (!curStatement.command.empty()) {
+				// Add the non-empty statement to our list
+				statements.push_back(curStatement);
+			}
+
+			// Clear the statement
+			curStatement = Statement();
+			continue;
+		}
+		// Token is not a semicolon
+		else if (curStatement.command.empty()) {
+			// The statement is still without command name, take this one
+			curStatement.command = token;
+			continue;
+		}
+		else {
+			// Non-empty token, command name is already known, so
+			// this must be an argument
+			curStatement.args.push_back(token);
+		}
+	}
+
+	// Check if we have an unfinished statement
+	if (!curStatement.command.empty()) {
+		// Add the non-empty statement to our list
+		statements.push_back(curStatement);
+	}
+
+	// Now execute the statements
+	for (std::vector<Statement>::iterator i = statements.begin(); 
+		 i != statements.end(); ++i)
+	{
+		executeCommand(i->command, i->args);
 	}
 }
 
