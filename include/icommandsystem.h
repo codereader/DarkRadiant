@@ -17,7 +17,6 @@ enum ArgumentType
 	ARGTYPE_INT,
 	ARGTYPE_DOUBLE,
 	ARGTYPE_VECTOR3,
-	ARGTYPE_POINTER,
 	NUM_ARGTYPES,
 };
 
@@ -28,14 +27,19 @@ class Argument
 	double _doubleValue;
 	int _intValue;
 	Vector3 _vectorValue;
-	void* _pointerValue;
 
 public:
 	Argument() :
 		_doubleValue(0),
 		_intValue(0),
-		_vectorValue(0,0,0),
-		_pointerValue(NULL)
+		_vectorValue(0,0,0)
+	{}
+
+	Argument(const char* str) :
+		_strValue(str),
+		_doubleValue(strToDouble(str)),
+		_intValue(strToInt(str)),
+		_vectorValue(Vector3(str))
 	{}
 
 	// String => Argument constructor
@@ -43,8 +47,7 @@ public:
 		_strValue(str),
 		_doubleValue(strToDouble(str)),
 		_intValue(strToInt(str)),
-		_vectorValue(Vector3(str)),
-		_pointerValue(NULL)
+		_vectorValue(Vector3(str))
 	{}
 
 	// Double => Argument constructor
@@ -52,8 +55,7 @@ public:
 		_strValue(doubleToStr(d)),
 		_doubleValue(d),
 		_intValue(static_cast<int>(d)),
-		_vectorValue(0,0,0),
-		_pointerValue(NULL)
+		_vectorValue(0,0,0)
 	{}
 
 	// Double => Argument constructor
@@ -61,8 +63,7 @@ public:
 		_strValue(intToStr(i)),
 		_doubleValue(static_cast<double>(i)),
 		_intValue(i),
-		_vectorValue(0,0,0),
-		_pointerValue(NULL)
+		_vectorValue(0,0,0)
 	{}
 
 	// Vector3 => Argument constructor
@@ -70,17 +71,7 @@ public:
 		_strValue(doubleToStr(v[0]) + " " + doubleToStr(v[1]) + " " + doubleToStr(v[2])),
 		_doubleValue(v.getLength()),
 		_intValue(static_cast<int>(v.getLength())),
-		_vectorValue(v),
-		_pointerValue(NULL)
-	{}
-
-	// Pointer => Argument constructor
-	Argument(void* ptr) :
-		_strValue(""),
-		_doubleValue(0),
-		_intValue(0),
-		_vectorValue(0,0,0),
-		_pointerValue(ptr)
+		_vectorValue(v)
 	{}
 
 	// Copy Constructor
@@ -88,8 +79,7 @@ public:
 		_strValue(other._strValue),
 		_doubleValue(other._doubleValue),
 		_intValue(other._intValue),
-		_vectorValue(other._vectorValue),
-		_pointerValue(other._pointerValue)
+		_vectorValue(other._vectorValue)
 	{}
 
 	std::string getString() const {
@@ -107,25 +97,50 @@ public:
 	Vector3 getVector() const {
 		return _vectorValue;
 	}
-
-	void* getPointer() const {
-		return _pointerValue;
-	}
 };
 
 typedef std::vector<Argument> ArgumentList;
 
 /**
- * greebo: A command target must take a ArgumentList argument, like this:
+ * greebo: A command target must take an ArgumentList argument, like this:
  *
- * void execute(const ArgumentList& args);
+ * void doSomething(const ArgumentList& args);
  *
  * This can be both a free function and a member function.
  */
 typedef boost::function<void (const ArgumentList&)> Function;
 
 // A command signature consists just of arguments, no return types
-typedef std::vector<ArgumentType> Signature;
+class Signature :
+	public std::vector<ArgumentType> 
+{
+public:
+	Signature()
+	{}
+
+	// Additional convenience constructors
+	Signature(ArgumentType type1) {
+		push_back(type1);
+	}
+
+	Signature(ArgumentType type1, ArgumentType type2) {
+		push_back(type1);
+		push_back(type2);
+	}
+
+	Signature(ArgumentType type1, ArgumentType type2, ArgumentType type3) {
+		push_back(type1);
+		push_back(type2);
+		push_back(type3);
+	}
+
+	Signature(ArgumentType type1, ArgumentType type2, ArgumentType type3, ArgumentType type4) {
+		push_back(type1);
+		push_back(type2);
+		push_back(type3);
+		push_back(type4);
+	}
+};
 
 class ICommandSystem :
 	public RegisterableModule
