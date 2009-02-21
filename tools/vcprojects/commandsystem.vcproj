@@ -418,6 +418,10 @@
 				RelativePath="..\..\plugins\commandsystem\CommandSystem.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\plugins\commandsystem\CommandTokeniser.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\commandsystem\commandsystem.def"

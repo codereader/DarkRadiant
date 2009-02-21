@@ -24,12 +24,25 @@ class CommandSystem :
 	};
 	typedef boost::shared_ptr<Command> CommandPtr;
 
+	// A statement consists of a command and a set of arguments
+	struct Statement
+	{
+		// The command to invoke
+		std::string command;
+
+		// The arguments to pass
+		ArgumentList args;
+	};
+
 	// The named commands
 	typedef std::map<std::string, CommandPtr> CommandMap;
 	CommandMap _commands;
 
 public:
 	void addCommand(const std::string& name, Function func, const Signature& signature);
+
+	// Execute the given command sequence
+	void execute(const std::string& input);
 
 	void executeCommand(const std::string& name);
 	void executeCommand(const std::string& name, const Argument& arg1);

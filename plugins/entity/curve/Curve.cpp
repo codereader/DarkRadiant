@@ -95,7 +95,7 @@ bool Curve::isEmpty() const {
 }
 
 bool Curve::parseCurve(const std::string& value) {
-	parser::StringTokeniser tokeniser(value, " ");
+	parser::BasicStringTokeniser tokeniser(value, " ");
 	
 	try {
 		// First token is the number of control points
