@@ -26,9 +26,8 @@ void CommandSystem::shutdownModule() {
 	_commands.clear();
 }
 
-void CommandSystem::addCommand(const std::string& name, 
-					CommandFunction func, 
-					const CommandSignature& signature)
+void CommandSystem::addCommand(const std::string& name, Function func, 
+	const Signature& signature)
 {
 	// Create a new command
 	CommandPtr cmd(new Command(func, signature));
@@ -41,6 +40,10 @@ void CommandSystem::addCommand(const std::string& name,
 		globalErrorStream() << "Cannot register command " << name 
 			<< ", this command is already registered." << std::endl;
 	}
+}
+
+void CommandSystem::executeCommand(const std::string& name) {
+	executeCommand(name, ArgumentList());
 }
 
 void CommandSystem::executeCommand(const std::string& name, const Argument& arg1) {
@@ -73,7 +76,25 @@ void CommandSystem::executeCommand(const std::string& name,
 }
 
 void CommandSystem::executeCommand(const std::string& name, const ArgumentList& args) {
-	// TODO
+	// Find the named command
+	CommandMap::const_iterator i = _commands.find(name);
+
+	if (i == _commands.end()) {
+		globalErrorStream() << "Cannot execute command " << name << ": Command not found." << std::endl;
+		return;
+	}
+
+	const Command& cmd = *i->second;
+
+	// Check matching number of arguments
+	if (args.size() != cmd.signature.size()) {
+		globalErrorStream() << "Cannot execute command " << name << ": Wrong number of arguments." 
+			<< "(" + args.size() << " passed instead of " << cmd.signature.size() << ")" << std::endl;
+		return;
+	}
+
+	// Checks passed, call the command
+	cmd.function(args);
 }
 
 } // namespace cmd
