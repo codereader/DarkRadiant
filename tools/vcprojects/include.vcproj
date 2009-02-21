@@ -132,6 +132,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\icommandsystem.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\icounter.h"
 			>
 		</File>

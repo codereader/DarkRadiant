@@ -17,14 +17,11 @@
 
 #include "xmlutil/Node.h"
 
-#include "MouseEvents.h"
-#include "Modifiers.h"
 #include "Command.h"
 #include "Toggle.h"
 #include "WidgetToggle.h"
 #include "RegistryToggle.h"
 #include "KeyEvent.h"
-#include "Accelerator.h"
 #include "SaveEventVisitor.h"
 
 #include <iostream>
