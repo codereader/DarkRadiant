@@ -88,8 +88,8 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 
 	// Check matching number of arguments
 	if (args.size() != cmd.signature.size()) {
-		globalErrorStream() << "Cannot execute command " << name << ": Wrong number of arguments." 
-			<< "(" + args.size() << " passed instead of " << cmd.signature.size() << ")" << std::endl;
+		globalErrorStream() << "Cannot execute command " << name << ": Wrong number of arguments. " 
+			<< "(" << args.size() << " passed instead of " << cmd.signature.size() << ")" << std::endl;
 		return;
 	}
 
