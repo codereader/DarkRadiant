@@ -63,6 +63,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "icommandsystem.h"
 #include "debugging/debugging.h"
 
 #include <gtk/gtkmain.h>
@@ -168,6 +169,10 @@ public:
 
 typedef Static<PopupDebugMessageHandler> GlobalPopupDebugMessageHandler;
 
+void TestCommand(const cmd::ArgumentList& args) {
+	globalOutputStream() << "Testcommand executed: " << args[0].getString() << std::endl;
+}
+
 /**
  * Main entry point for the application.
  */
@@ -240,6 +245,17 @@ int main (int argc, char* argv[]) {
 
 		// Scope ends here, PIDFile is deleted by its destructor
 	}
+
+	// Test the command system
+	GlobalCommandSystem().addCommand("test", TestCommand, cmd::ARGTYPE_STRING);
+
+	GlobalCommandSystem().executeCommand("test", "Bla!");
+
+	cmd::ArgumentList list;
+	list.push_back("Stored argument");
+	GlobalCommandSystem().addStatement("testbla", "test", list);
+
+	GlobalCommandSystem().execute("test Bla!; test Borg!; test 'Borg Borg'; testbla");
 
 #ifdef _PROFILE
 	// greebo: In profile builds, check if we should run an automated test
