@@ -4,6 +4,7 @@
 #include <gtk/gtktextview.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkwindow.h>
+#include <gtk/gtkentry.h>
 
 #include "LogDevice.h"
 
@@ -68,6 +69,8 @@ private:
 	static gboolean destroy_set_null(GtkWindow* widget, GtkWidget** p);
 	static void onClearConsole(GtkMenuItem* menuitem, Console* self);
 	static void console_populate_popup(GtkTextView* textview, GtkMenu* menu, Console* self);
+
+	static void onCmdEntryActivate(GtkEntry* entry, Console* self);
 };
 
 } // namespace ui
