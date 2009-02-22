@@ -4,6 +4,7 @@
 #include "itextstream.h"
 
 #include <gtk/gtkhbox.h>
+#include <gtk/gtkbutton.h>
 #include <gdk/gdkkeysyms.h>
 
 namespace ui {
@@ -16,8 +17,12 @@ CommandEntry::CommandEntry() :
 	_entry(gtk_entry_new()),
 	_curHistoryIndex(0)
 {
-	// Pack the entry into the hbox
+	GtkWidget* goButton = gtk_button_new_with_label("Go");
+	g_signal_connect(G_OBJECT(goButton), "clicked", G_CALLBACK(onCmdEntryActivate), this);
+
+	// Pack the widget sinto the hbox
 	gtk_box_pack_start(GTK_BOX(_mainWidget), _entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_mainWidget), goButton, FALSE, FALSE, 0);
 
 	// Connect the signal
 	g_signal_connect(G_OBJECT(_entry), "activate", G_CALLBACK(onCmdEntryActivate), this);
@@ -81,7 +86,8 @@ void CommandEntry::historyMoveTowardsPast() {
 
 	std::string histEntry = getHistoricEntry(_curHistoryIndex);
 	gtk_entry_set_text(GTK_ENTRY(_entry), histEntry.c_str());
-	gtk_editable_set_position(GTK_EDITABLE(_entry), static_cast<gint>(histEntry.length()));
+	// Move the cursor to the last position
+	gtk_editable_set_position(GTK_EDITABLE(_entry), -1);
 }
 
 void CommandEntry::historyMoveTowardsPresent() {
@@ -93,16 +99,17 @@ void CommandEntry::historyMoveTowardsPresent() {
 
 	std::string histEntry = getHistoricEntry(_curHistoryIndex);
 	gtk_entry_set_text(GTK_ENTRY(_entry), histEntry.c_str());
-	gtk_editable_set_position(GTK_EDITABLE(_entry), static_cast<gint>(histEntry.length()));
+	// Move the cursor to the last position
+	gtk_editable_set_position(GTK_EDITABLE(_entry), -1);
 }
 
-void CommandEntry::onCmdEntryActivate(GtkEntry* entry, CommandEntry* self) {
+void CommandEntry::executeCurrentStatement() {
 	// Reset the history cursor to the last entry
-	self->_curHistoryIndex = 0;
-	self->_presentEntry.clear();
+	_curHistoryIndex = 0;
+	_presentEntry.clear();
 
 	// Take the contents of the entry box and pass it to the command window
-	std::string command = gtk_entry_get_text(GTK_ENTRY(self->_entry));
+	std::string command = gtk_entry_get_text(GTK_ENTRY(_entry));
 
 	globalOutputStream() << ">> " << command << std::endl;
 
@@ -112,11 +119,15 @@ void CommandEntry::onCmdEntryActivate(GtkEntry* entry, CommandEntry* self) {
 	GlobalCommandSystem().execute(command);
 
 	// Push this command to the history
-	self->_history.push_front(command);
-	self->ensureMaxHistorySize();
+	_history.push_front(command);
+	ensureMaxHistorySize();
 
 	// Clear the command entry after execution
-	gtk_entry_set_text(GTK_ENTRY(self->_entry), "");
+	gtk_entry_set_text(GTK_ENTRY(_entry), "");
+}
+
+void CommandEntry::onCmdEntryActivate(GtkEntry* entry, CommandEntry* self) {
+	self->executeCurrentStatement();
 }
 
 gboolean CommandEntry::onCmdEntryKeyPress(GtkWidget* widget, GdkEventKey* event, CommandEntry* self) {
@@ -131,6 +142,10 @@ gboolean CommandEntry::onCmdEntryKeyPress(GtkWidget* widget, GdkEventKey* event,
 	}
 
 	return FALSE;
+}
+
+void CommandEntry::onGoButtonClicked(GtkWidget* button, CommandEntry* self) {
+	self->executeCurrentStatement();
 }
 
 } // namespace ui

@@ -64,9 +64,12 @@ private:
 	void historyMoveTowardsPast();
 	void historyMoveTowardsPresent();
 
+	void executeCurrentStatement();
+
 	// GTK callbacks
 	static void onCmdEntryActivate(GtkEntry* entry, CommandEntry* self);
 	static gboolean onCmdEntryKeyPress(GtkWidget* widget, GdkEventKey* event, CommandEntry* self);
+	static void onGoButtonClicked(GtkWidget* button, CommandEntry* self);
 };
 
 } // namespace ui
