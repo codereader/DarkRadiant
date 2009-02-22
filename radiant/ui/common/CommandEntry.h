@@ -4,8 +4,7 @@
 #include <list>
 #include <string>
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkEntry GtkEntry;
+#include <gtk/gtkentry.h>
 
 namespace ui {
 
@@ -36,6 +35,16 @@ class CommandEntry
 	// The actual entry box
 	GtkWidget* _entry;
 
+	// The current history cursor, 
+	// 0 is the currently edited command,
+	// 1 is the most recently entered one, larger values are further in the past
+	std::size_t _curHistoryIndex;
+
+	// The entry which is currently edited (the most present one)
+	// This is remembered when moving to past entries, so that moving back
+	// to the present one is not clearing the current input.
+	std::string _presentEntry;
+
 public:
 	// Constructor is creating widgets
 	CommandEntry();
@@ -49,8 +58,15 @@ private:
 	// Truncates the history if the number of items exceeds _historySize
 	void ensureMaxHistorySize();
 
+	// Returns a historic entry (0 = "present" entry, 1 = first historic entry, ...)
+	std::string getHistoricEntry(std::size_t historyIndex);
+
+	void historyMoveTowardsPast();
+	void historyMoveTowardsPresent();
+
 	// GTK callbacks
 	static void onCmdEntryActivate(GtkEntry* entry, CommandEntry* self);
+	static gboolean onCmdEntryKeyPress(GtkWidget* widget, GdkEventKey* event, CommandEntry* self);
 };
 
 } // namespace ui
