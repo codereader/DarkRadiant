@@ -70,6 +70,9 @@ public:
 	// Execute the given statement
 	void executeStatement(const std::string& name);
 
+	// The "bind" command
+	void bindCmd(const ArgumentList& args);
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
