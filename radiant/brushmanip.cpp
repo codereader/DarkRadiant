@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 
 #include "iclipper.h"
+#include "icommandsystem.h"
 #include "ieventmanager.h"
 
 #include "gtkutil/widget.h"
@@ -756,7 +757,7 @@ BrushPrefab g_brushprism(eBrushPrism);
 BrushPrefab g_brushcone(eBrushCone);
 BrushPrefab g_brushsphere(eBrushSphere);
 
-void ClipSelected() {
+void ClipSelection(const cmd::ArgumentList& args) {
 	if (GlobalClipper().clipMode()) {
 		UndoableCommand undo("clipperClip");
 		GlobalClipper().clip();
@@ -790,7 +791,10 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("Brush8Sided", BrushMakeSided::SetCaller(g_brushmakesided8));
 	GlobalEventManager().addCommand("Brush9Sided", BrushMakeSided::SetCaller(g_brushmakesided9));
 
-	GlobalEventManager().addCommand("ClipSelected", FreeCaller<ClipSelected>());
+	// Add the clipper commands
+	GlobalCommandSystem().addCommand("clipselection", ClipSelection);
+	GlobalEventManager().addCommand("ClipSelected", "clipselection");
+
 	GlobalEventManager().addCommand("SplitSelected", FreeCaller<SplitSelected>());
 	GlobalEventManager().addCommand("FlipClip", FreeCaller<FlipClipper>());
 
