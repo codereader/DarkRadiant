@@ -20,6 +20,8 @@ class Console :
 	public applog::LogDevice
 {
 	// The widget for packing into a parent window
+	GtkWidget* _vbox;
+
 	GtkWidget* _scrolled;
 	GtkWidget* _textView;
 
@@ -29,6 +31,8 @@ class Console :
 	GtkTextTag* _errorTag;
 	GtkTextTag* _warningTag;
 	GtkTextTag* _standardTag;
+
+	GtkWidget* _commandEntry;
 
 	// Private constructor, creates the Gtk structures
 	Console();

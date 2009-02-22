@@ -16,12 +16,16 @@
 namespace ui {
 
 Console::Console() :
+	_vbox(gtk_vbox_new(FALSE, 6)),
 	_scrolled(gtk_scrolled_window_new(NULL, NULL))
 {
 	// Set the properties of the scrolled frame
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(_scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(_scrolled), GTK_SHADOW_IN);
 	gtk_widget_show(_scrolled);
+
+	// Create the command entry field
+	_commandEntry = gtk_entry_new();
 
 	// Create the textview, which acts as textbuffer
 	_textView = gtk_text_view_new();
@@ -40,6 +44,11 @@ Console::Console() :
 	g_signal_connect(G_OBJECT(_textView), "destroy", G_CALLBACK(destroy_set_null), &_textView);
 
 	gtk_container_set_focus_chain(GTK_CONTAINER(_scrolled), NULL);
+
+	// Pack the scrolled textview and the entry box to the vbox
+	gtk_box_pack_start(GTK_BOX(_vbox), _scrolled, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_vbox), _commandEntry, FALSE, FALSE, 0);
+	gtk_widget_show_all(_vbox);
 
 	// Remember the pointer to the textbuffer
 	_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_textView));
@@ -116,7 +125,7 @@ void Console::writeLog(const std::string& outputStr, applog::ELogLevel level) {
 }
 
 GtkWidget* Console::getWidget() {
-	return _scrolled;
+	return _vbox;
 }
 
 void Console::shutdown() {
