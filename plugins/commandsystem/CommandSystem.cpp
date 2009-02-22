@@ -23,6 +23,7 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	// Add the built-in commands
 	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
+	addCommand("unbind", boost::bind(&CommandSystem::unbindCmd, this, _1), Signature(ARGTYPE_STRING));
 }
 
 void CommandSystem::shutdownModule() {
@@ -53,6 +54,18 @@ void CommandSystem::bindCmd(const ArgumentList& args) {
 
 	// Add the statement - bind complete
 	addStatement(args[0].getString(), cmdName, cmdArgs);
+}
+
+void CommandSystem::unbindCmd(const ArgumentList& args) {
+	// Sanity check
+	if (args.size() != 1) return;
+
+	// First argument is the statement to unbind
+	StatementMap::iterator found = _statements.find(args[0].getString());
+
+	if (found != _statements.end()) {
+		_statements.erase(found);
+	}
 }
 
 void CommandSystem::addCommand(const std::string& name, Function func, 
@@ -224,7 +237,15 @@ void CommandSystem::executeStatement(const std::string& name) {
 
 	const Statement& statement = *i->second;
 
-	executeCommand(statement.command, statement.args);
+	// If the arguments are empty, we should also check for statements
+	if (statement.args.empty() && _statements.find(statement.command) != _statements.end()) {
+		// This is matching a statement, execute it
+		executeStatement(statement.command);
+	}
+	else {
+		// Attempt ordinary command execution
+		executeCommand(statement.command, statement.args);
+	}
 }
 
 } // namespace cmd

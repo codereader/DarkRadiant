@@ -72,6 +72,7 @@ public:
 
 	// The "bind" command
 	void bindCmd(const ArgumentList& args);
+	void unbindCmd(const ArgumentList& args);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
