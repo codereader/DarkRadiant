@@ -32,14 +32,29 @@ class CommandSystem :
 
 		// The arguments to pass
 		ArgumentList args;
+
+		Statement()
+		{}
+
+		Statement(const std::string& c, const ArgumentList& a) :
+			command(c),
+			args(a)
+		{}
 	};
+	typedef boost::shared_ptr<Statement> StatementPtr;
 
 	// The named commands
 	typedef std::map<std::string, CommandPtr> CommandMap;
 	CommandMap _commands;
 
+	// Named statements (command + arguments)
+	typedef std::map<std::string, StatementPtr> StatementMap;
+	StatementMap _statements;
+
 public:
 	void addCommand(const std::string& name, Function func, const Signature& signature);
+
+	void addStatement(const std::string& statementName, const std::string& cmdName, const ArgumentList& args);
 
 	// Execute the given command sequence
 	void execute(const std::string& input);
@@ -51,6 +66,9 @@ public:
 
 	// For more than 3 arguments, use this method to pass a vector of arguments
 	void executeCommand(const std::string& name, const ArgumentList& args);
+
+	// Execute the given statement
+	void executeStatement(const std::string& name);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

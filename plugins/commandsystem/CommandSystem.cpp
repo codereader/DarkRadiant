@@ -43,6 +43,29 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	}
 }
 
+void CommandSystem::addStatement(const std::string& statementName, 
+	const std::string& cmdName, const ArgumentList& args)
+{
+	// First check if a command with this name already exists
+	if (_statements.find(statementName) != _statements.end()) {
+		globalErrorStream() << "Cannot register statement " << statementName 
+			<< ", a command with this name is already registered." << std::endl;
+		return;
+	}
+
+	// Create a new statement
+	StatementPtr statement(new Statement(cmdName, args));
+	
+	std::pair<StatementMap::iterator, bool> result = _statements.insert(
+		StatementMap::value_type(statementName, statement)
+	);
+
+	if (!result.second) {
+		globalErrorStream() << "Cannot register statement " << statementName 
+			<< ", this statement is already registered." << std::endl;
+	}
+}
+
 void CommandSystem::execute(const std::string& input) {
 	// Instantiate a CommandTokeniser to analyse the given input string
 	CommandTokeniser tokeniser(input);
@@ -94,7 +117,15 @@ void CommandSystem::execute(const std::string& input) {
 	for (std::vector<Statement>::iterator i = statements.begin(); 
 		 i != statements.end(); ++i)
 	{
-		executeCommand(i->command, i->args);
+		// If the arguments are empty, we should also check for statements
+		if (i->args.empty() && _statements.find(i->command) != _statements.end()) {
+			// This is matching a statement, execute it
+			executeStatement(i->command);
+		}
+		else {
+			// Attempt ordinary command execution
+			executeCommand(i->command, i->args);
+		}
 	}
 }
 
@@ -151,6 +182,21 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 
 	// Checks passed, call the command
 	cmd.function(args);
+}
+
+void CommandSystem::executeStatement(const std::string& name) {
+	// Find the named statement
+	StatementMap::const_iterator i = _statements.find(name);
+
+	if (i == _statements.end()) {
+		globalErrorStream() << "Cannot execute statement " << name 
+			<< ": Statement not found." << std::endl;
+		return;
+	}
+
+	const Statement& statement = *i->second;
+
+	executeCommand(statement.command, statement.args);
 }
 
 } // namespace cmd
