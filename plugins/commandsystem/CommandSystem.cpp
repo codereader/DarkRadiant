@@ -3,6 +3,8 @@
 #include "itextstream.h"
 #include "CommandTokeniser.h"
 
+#include <boost/bind.hpp>
+
 namespace cmd {
 
 // RegisterableModule implementation
@@ -18,6 +20,9 @@ const StringSet& CommandSystem::getDependencies() const {
 
 void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "CommandSystem::initialiseModule called.\n";
+
+	// Add the built-in commands
+	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
 }
 
 void CommandSystem::shutdownModule() {
@@ -25,6 +30,29 @@ void CommandSystem::shutdownModule() {
 
 	// Free all commands
 	_commands.clear();
+}
+
+void CommandSystem::bindCmd(const ArgumentList& args) {
+	// Sanity check
+	if (args.size() != 2) return;
+
+	// First argument is the command name
+	// Second argument is the command to be called plus its arguments
+
+	// Use a tokeniser to split the second argument into its pieces
+	std::string input = args[1].getString();
+
+	CommandTokeniser tok(input);
+
+	std::string cmdName = tok.nextToken();
+	
+	ArgumentList cmdArgs;
+	while (tok.hasMoreTokens()) {
+		cmdArgs.push_back(tok.nextToken());
+	}
+
+	// Add the statement - bind complete
+	addStatement(args[0].getString(), cmdName, cmdArgs);
 }
 
 void CommandSystem::addCommand(const std::string& name, Function func, 
