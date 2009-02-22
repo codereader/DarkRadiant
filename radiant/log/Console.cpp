@@ -2,6 +2,8 @@
 
 #include "iuimanager.h"
 #include "igroupdialog.h"
+#include "icommandsystem.h"
+#include "itextstream.h"
 
 #include <gtk/gtk.h>
 #include "gtkutil/nonmodal.h"
@@ -26,6 +28,7 @@ Console::Console() :
 
 	// Create the command entry field
 	_commandEntry = gtk_entry_new();
+	g_signal_connect(G_OBJECT(_commandEntry), "activate", G_CALLBACK(onCmdEntryActivate), this);
 
 	// Create the textview, which acts as textbuffer
 	_textView = gtk_text_view_new();
@@ -154,6 +157,21 @@ void Console::console_populate_popup(GtkTextView* textview, GtkMenu* menu, Conso
 
 	gtk_widget_show(item);
 	gtk_container_add(GTK_CONTAINER(menu), item);
+}
+
+void Console::onCmdEntryActivate(GtkEntry* entry, Console* self) {
+	// Take the contents of the entry box and pass it to the command window
+	std::string command = gtk_entry_get_text(GTK_ENTRY(self->_commandEntry));
+
+	globalOutputStream() << ">> " << command << std::endl;
+
+	if (command.empty()) return; // nothing to do
+
+	// Pass the command string
+	GlobalCommandSystem().execute(command);
+
+	// Clear the command entry after execution
+	gtk_entry_set_text(GTK_ENTRY(self->_commandEntry), "");
 }
 
 } // namespace ui
