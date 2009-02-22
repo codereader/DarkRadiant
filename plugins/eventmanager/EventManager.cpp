@@ -642,6 +642,20 @@ void EventManager::updateStatusText(GdkEventKey* event, bool keyPress) {
 gboolean EventManager::onKeyPress(GtkWindow* window, GdkEventKey* event, gpointer data) {
 	// Convert the passed pointer onto a KeyEventManager pointer
 	EventManager* self = reinterpret_cast<EventManager*>(data);
+
+	if (!GTK_IS_WINDOW(window)) return FALSE;
+
+	// Pass the key event to the connected window and see if it can process it (returns TRUE)
+	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
+
+	// Get the focus widget, is it an editable widget?
+	GtkWidget* focus = gtk_window_get_focus(window);
+	bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
+
+	// Never propagate keystrokes if editable widgets are focused
+	if ((isEditableWidget && event->keyval != GDK_Escape) || keyProcessed) {
+		return keyProcessed;
+	}
 	
 	// Try to find a matching accelerator
 	AcceleratorList accelList = self->findAccelerator(event);
@@ -675,6 +689,20 @@ gboolean EventManager::onKeyRelease(GtkWindow* window, GdkEventKey* event, gpoin
 	// Convert the passed pointer onto a KeyEventManager pointer
 	EventManager* self = reinterpret_cast<EventManager*>(data);
 	
+	if (!GTK_IS_WINDOW(window)) return FALSE;
+
+	// Pass the key event to the connected window and see if it can process it (returns TRUE)
+	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
+
+	// Get the focus widget, is it an editable widget?
+	GtkWidget* focus = gtk_window_get_focus(window);
+	bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
+
+	// Never propagate keystrokes if editable widgets are focused
+	if ((isEditableWidget && event->keyval != GDK_Escape) || keyProcessed) {
+		return keyProcessed;
+	}
+
 	// Try to find a matching accelerator
 	AcceleratorList accelList = self->findAccelerator(event);
 	
