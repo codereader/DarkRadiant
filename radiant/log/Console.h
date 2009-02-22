@@ -6,6 +6,7 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkentry.h>
 
+#include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
 
 namespace ui {
@@ -33,7 +34,8 @@ class Console :
 	GtkTextTag* _warningTag;
 	GtkTextTag* _standardTag;
 
-	GtkWidget* _commandEntry;
+	// The entry box for console commands
+	CommandEntry _commandEntry;
 
 	// Private constructor, creates the Gtk structures
 	Console();
