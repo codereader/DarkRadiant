@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<commandsystem>
+	<!-- These are the default statements used by vanilla DarkRadiant, don't remove these -->
+	<binds>
+		<bind name="Brush3Sided" value="BrushMakeSided 3" readonly="1" />
+		<bind name="Brush4Sided" value="BrushMakeSided 4" readonly="1" />
+		<bind name="Brush5Sided" value="BrushMakeSided 5" readonly="1" />
+		<bind name="Brush6Sided" value="BrushMakeSided 6" readonly="1" />
+		<bind name="Brush7Sided" value="BrushMakeSided 7" readonly="1" />
+		<bind name="Brush8Sided" value="BrushMakeSided 8" readonly="1" />
+		<bind name="Brush9Sided" value="BrushMakeSided 9" readonly="1" />
+	</binds>
+</commandsystem>

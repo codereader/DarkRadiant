@@ -64,7 +64,23 @@ void CommandSystem::loadBinds() {
 	// Load all bind commands from the nodes
 	for (std::size_t i = 0; i < nodeList.size(); ++i) {
 		xml::Node& node = nodeList[i];
-		addStatement(node.getAttributeValue("name"), node.getAttributeValue("value"));
+
+		// Create a new statement
+		StoredStatement st;
+		st.statement = node.getAttributeValue("value");
+		st.readonly = node.getAttributeValue("readonly") == "1";
+		
+		// Remove all whitespace at the front and the tail
+		boost::algorithm::trim(st.statement);
+		
+		std::pair<BindMap::iterator, bool> result = _binds.insert(
+			BindMap::value_type(node.getAttributeValue("name"), st)
+		);
+
+		if (!result.second) {
+			globalWarningStream() << "Duplicate statement detected: "
+				<< node.getAttributeValue("name") << std::endl;
+		}
 	}
 }
 
@@ -73,10 +89,13 @@ void CommandSystem::saveBinds() {
 	GlobalRegistry().deleteXPath(RKEY_COMMANDSYSTEM_BINDS + "//bind");
 
 	for (BindMap::const_iterator i = _binds.begin(); i != _binds.end(); ++i) {
+		// Don't save readonly statements
+		if (i->second.readonly) continue;
+
 		xml::Node node = GlobalRegistry().createKey(RKEY_COMMANDSYSTEM_BINDS + "/bind");
 		
 		node.setAttributeValue("name", i->first);
-		node.setAttributeValue("value", i->second);
+		node.setAttributeValue("value", i->second.statement);
 	}
 }
 
@@ -132,13 +151,14 @@ void CommandSystem::addStatement(const std::string& statementName, const std::st
 	}
 
 	// Create a new statement
-	std::string statement(str);
-
+	StoredStatement st;
+	st.statement = str;
+	
 	// Remove all whitespace at the front and the tail
-	boost::algorithm::trim(statement);
+	boost::algorithm::trim(st.statement);
 	
 	std::pair<BindMap::iterator, bool> result = _binds.insert(
-		BindMap::value_type(statementName, statement)
+		BindMap::value_type(statementName, st)
 	);
 
 	if (!result.second) {
@@ -275,7 +295,7 @@ void CommandSystem::executeStatement(const std::string& name) {
 		return;
 	}
 
-	if (i->second == name) {
+	if (i->second.statement == name) {
 		// Don't execute self and begin an infinite loop
 		globalErrorStream() << "Possible infinite loop detected, "
 			<< "cannot execute bind: " << name << std::endl;
@@ -283,7 +303,7 @@ void CommandSystem::executeStatement(const std::string& name) {
 	}
 
 	// Execute the contained string
-	execute(i->second);
+	execute(i->second.statement);
 }
 
 } // namespace cmd

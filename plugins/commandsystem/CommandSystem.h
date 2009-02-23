@@ -48,8 +48,21 @@ class CommandSystem :
 	typedef std::map<std::string, CommandPtr, CaseInsensitiveCompare> CommandMap;
 	CommandMap _commands;
 
+	struct StoredStatement
+	{
+		// The statement to execute
+		std::string statement;
+
+		// Whether this statement is a default one (won't be saved or deleted)
+		bool readonly;
+
+		StoredStatement() :
+			readonly(false)
+		{}
+	};
+
 	// Named statements (macros) (case-insensitive lookup)
-	typedef std::map<std::string, std::string, CaseInsensitiveCompare> BindMap;
+	typedef std::map<std::string, StoredStatement, CaseInsensitiveCompare> BindMap;
 	BindMap _binds;
 
 public:

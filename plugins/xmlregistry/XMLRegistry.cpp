@@ -238,6 +238,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx) {
 		import(base + "colours.xml", "user/ui", Registry::treeStandard);
 		import(base + "input.xml", "user/ui", Registry::treeStandard);
 		import(base + "menu.xml", "user/ui", Registry::treeStandard);
+		import(base + "commandsystem.xml", "user/ui", Registry::treeStandard);
 
 		// Load the debug.xml file only if the relevant key is set in user.xml
 		if (get("user/debug") == "1") {
