@@ -3,6 +3,7 @@
 
 #include "iclipper.h"
 #include "iregistry.h"
+#include "icommandsystem.h"
 #include "ClipPoint.h"
 #include "math/aabb.h"
 
@@ -76,6 +77,11 @@ public:
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
+
+	// Command targets
+	void clipSelectionCmd(const cmd::ArgumentList& args);
+	void splitSelectedCmd(const cmd::ArgumentList& args);
+	void flipClipperCmd(const cmd::ArgumentList& args);
 
 }; // class Clipper
 
