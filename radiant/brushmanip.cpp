@@ -731,24 +731,27 @@ inline int axis_for_viewtype(int viewtype)
   return 2;
 }
 
-class BrushPrefab
-{
-  EBrushPrefab m_type;
-public:
-  BrushPrefab(EBrushPrefab type)
-    : m_type(type)
-  {
-  }
-  void set()
-  {
-    DoSides(m_type, axis_for_viewtype(GetViewAxis()));
-  }
-  typedef MemberCaller<BrushPrefab, &BrushPrefab::set> SetCaller;
-};
+void brushMakePrefab(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		return;
+	}
 
-BrushPrefab g_brushprism(eBrushPrism);
-BrushPrefab g_brushcone(eBrushCone);
-BrushPrefab g_brushsphere(eBrushSphere);
+	// First argument contains the number of sides
+	int input = args[0].getInt();
+
+	if (input >= eBrushCuboid && input < eNumPrefabTypes) {
+		// Boundary checks passed
+		EBrushPrefab type = static_cast<EBrushPrefab>(input);
+		DoSides(type, axis_for_viewtype(GetViewAxis()));
+	}
+	else {
+		globalErrorStream() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl 
+			<< eBrushCuboid << " = cuboid " << std::endl
+			<< eBrushPrism  << " = prism " << std::endl
+			<< eBrushCone  << " = cone " << std::endl
+			<< eBrushSphere << " = sphere " << std::endl;
+	}
+}
 
 void ClipSelection(const cmd::ArgumentList& args) {
 	if (GlobalClipper().clipMode()) {
@@ -772,9 +775,16 @@ void Brush_registerCommands()
 {
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
-	GlobalEventManager().addCommand("BrushPrism", BrushPrefab::SetCaller(g_brushprism));
-	GlobalEventManager().addCommand("BrushCone", BrushPrefab::SetCaller(g_brushcone));
-	GlobalEventManager().addCommand("BrushSphere", BrushPrefab::SetCaller(g_brushsphere));
+	GlobalCommandSystem().addCommand("BrushMakePrefab", brushMakePrefab, cmd::ARGTYPE_INT);
+	GlobalCommandSystem().addStatement("BrushCuboid", "BrushMakePrefab 0");
+	GlobalCommandSystem().addStatement("BrushPrism", "BrushMakePrefab 1");
+	GlobalCommandSystem().addStatement("BrushCone", "BrushMakePrefab 2");
+	GlobalCommandSystem().addStatement("BrushSphere", "BrushMakePrefab 3");
+
+	GlobalEventManager().addCommand("BrushCuboid", "BrushCuboid");
+	GlobalEventManager().addCommand("BrushPrism", "BrushPrism");
+	GlobalEventManager().addCommand("BrushCone", "BrushCone");
+	GlobalEventManager().addCommand("BrushSphere", "BrushSphere");
 
 	GlobalCommandSystem().addCommand("BrushMakeSided", brushMakeSided, cmd::ARGTYPE_INT);
 
