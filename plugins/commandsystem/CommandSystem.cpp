@@ -1,12 +1,17 @@
 #include "CommandSystem.h"
 
 #include "itextstream.h"
+#include "iregistry.h"
 #include "CommandTokeniser.h"
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/trim.hpp>
 
 namespace cmd {
+
+	namespace {
+		const std::string RKEY_COMMANDSYSTEM_BINDS = "user/ui/commandsystem/binds";
+	}
 
 // RegisterableModule implementation
 const std::string& CommandSystem::getName() const {
@@ -16,6 +21,11 @@ const std::string& CommandSystem::getName() const {
 
 const StringSet& CommandSystem::getDependencies() const {
 	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_XMLREGISTRY);
+	}
+
 	return _dependencies;
 }
 
@@ -25,14 +35,49 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 	// Add the built-in commands
 	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
 	addCommand("unbind", boost::bind(&CommandSystem::unbindCmd, this, _1), Signature(ARGTYPE_STRING));
+
+	loadBinds();
 }
 
 void CommandSystem::shutdownModule() {
 	globalOutputStream() << "CommandSystem: shutting down.\n";
 
+	// Save binds to registry
+	saveBinds();
+
 	// Free all commands
 	_commands.clear();
 	_binds.clear();
+}
+
+void CommandSystem::loadBinds() {
+	// Clear binds before loading
+	_binds.clear();
+
+	// Find all accelerators
+	xml::NodeList nodeList = GlobalRegistry().findXPath(RKEY_COMMANDSYSTEM_BINDS + "//bind");
+
+	if (nodeList.empty()) {
+		return;
+	}
+
+	// Load all bind commands from the nodes
+	for (std::size_t i = 0; i < nodeList.size(); ++i) {
+		xml::Node& node = nodeList[i];
+		addStatement(node.getAttributeValue("name"), node.getAttributeValue("value"));
+	}
+}
+
+void CommandSystem::saveBinds() {
+	// Delete all previous binds
+	GlobalRegistry().deleteXPath(RKEY_COMMANDSYSTEM_BINDS + "//bind");
+
+	for (BindMap::const_iterator i = _binds.begin(); i != _binds.end(); ++i) {
+		xml::Node node = GlobalRegistry().createKey(RKEY_COMMANDSYSTEM_BINDS + "/bind");
+		
+		node.setAttributeValue("name", i->first);
+		node.setAttributeValue("value", i->second);
+	}
 }
 
 void CommandSystem::bindCmd(const ArgumentList& args) {
