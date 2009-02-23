@@ -138,7 +138,7 @@ public:
 	}
 };
 
-void hideSelected() {
+void hideSelected(const cmd::ArgumentList& args) {
 	// Traverse the selection, hiding all nodes
 	GlobalSelectionSystem().foreachSelected(HideSelectedWalker(true));
 
@@ -195,7 +195,7 @@ public:
 	}
 };
 
-void hideDeselected() {
+void hideDeselected(const cmd::ArgumentList& args) {
 	HideDeselectedWalker walker(true);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
@@ -220,7 +220,7 @@ public:
 	}
 };
 
-void showAllHidden() {
+void showAllHidden(const cmd::ArgumentList& args) {
 	HideAllWalker walker(false);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	SceneChangeNotify();

@@ -48,17 +48,17 @@ namespace selection {
 	/**
 	 * greebo: Hides all selected nodes in the scene.
 	 */
-	void hideSelected();
+	void hideSelected(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Hides everything that is not selected.
 	 */
-	void hideDeselected();
+	void hideDeselected(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Clears the hidden flag of all nodes in the scene.
 	 */
-	void showAllHidden();
+	void showAllHidden(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Each selected item will be deselected and vice versa.

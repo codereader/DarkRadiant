@@ -725,6 +725,12 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
 	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::display);
 
+	GlobalCommandSystem().addCommand("ShowHidden", selection::algorithm::showAllHidden);
+	GlobalCommandSystem().addCommand("HideSelected", selection::algorithm::hideSelected);
+	GlobalCommandSystem().addCommand("HideDeselected", selection::algorithm::hideDeselected);
+
+	// ----------------------- Bind Events ---------------------------------------
+
 	GlobalEventManager().addCommand("Exit", "Exit");
 	GlobalEventManager().addCommand("Undo", "Undo");
 	GlobalEventManager().addCommand("Redo", "Redo");
@@ -761,9 +767,9 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
 	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
 
-	GlobalEventManager().addCommand("ShowHidden", FreeCaller<selection::algorithm::showAllHidden>());
-	GlobalEventManager().addCommand("HideSelected", FreeCaller<selection::algorithm::hideSelected>());
-	GlobalEventManager().addCommand("HideDeselected", FreeCaller<selection::algorithm::hideDeselected>());
+	GlobalEventManager().addCommand("ShowHidden", "ShowHidden");
+	GlobalEventManager().addCommand("HideSelected", "HideSelected");
+	GlobalEventManager().addCommand("HideDeselected", "HideDeselected");
 	
 	GlobalEventManager().addToggle("DragVertices", FreeCaller<ToggleVertexMode>());
 	GlobalEventManager().addToggle("DragEdges", FreeCaller<ToggleEdgeMode>());
