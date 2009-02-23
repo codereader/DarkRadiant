@@ -578,7 +578,7 @@ public:
 	}
 };
 
-void makeVisportal() {
+void makeVisportal(const cmd::ArgumentList& args) {
 	BrushPtrVector brushes = getSelectedBrushes();
 
 	if (brushes.size() <= 0) {

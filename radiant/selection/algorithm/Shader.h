@@ -2,6 +2,7 @@
 #define SELECTION_ALGORITHM_SHADER_H_
 
 #include <string>
+#include "icommandsystem.h"
 #include "math/Vector2.h"
 
 class TextureProjection;
@@ -100,7 +101,7 @@ namespace selection {
 	/** greebo: Applies the texture "naturally" to the selected
 	 * primitives. Natural makes use of the currently active default scale. 
 	 */
-	void naturalTexture();
+	void naturalTexture(const cmd::ArgumentList& args);
 	
 	/** greebo: Shifts the texture of the current selection about
 	 * the specified Vector2
