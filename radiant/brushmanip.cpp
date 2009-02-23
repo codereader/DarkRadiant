@@ -753,24 +753,6 @@ void brushMakePrefab(const cmd::ArgumentList& args) {
 	}
 }
 
-void ClipSelection(const cmd::ArgumentList& args) {
-	if (GlobalClipper().clipMode()) {
-		UndoableCommand undo("clipperClip");
-		GlobalClipper().clip();
-	}
-}
-
-void SplitSelected(const cmd::ArgumentList& args) {
-	if (GlobalClipper().clipMode()) {
-		UndoableCommand undo("clipperSplit");
-		GlobalClipper().splitClip();
-	}
-}
-
-void FlipClipper(const cmd::ArgumentList& args) {
-	GlobalClipper().flipClip();
-}
-
 void Brush_registerCommands()
 {
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
@@ -792,15 +774,6 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("Brush7Sided", "Brush7Sided");
 	GlobalEventManager().addCommand("Brush8Sided", "Brush8Sided");
 	GlobalEventManager().addCommand("Brush9Sided", "Brush9Sided");
-
-	// Add the clipper commands
-	GlobalCommandSystem().addCommand("ClipSelected", ClipSelection);
-	GlobalCommandSystem().addCommand("SplitSelected", SplitSelected);
-	GlobalCommandSystem().addCommand("FlipClip", FlipClipper);
-	
-	GlobalEventManager().addCommand("ClipSelected", "ClipSelected");
-	GlobalEventManager().addCommand("SplitSelected", "SplitSelected");
-	GlobalEventManager().addCommand("FlipClip", "FlipClip");
 
 	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
 	GlobalCommandSystem().addCommand("MakeVisportal", selection::algorithm::makeVisportal);
