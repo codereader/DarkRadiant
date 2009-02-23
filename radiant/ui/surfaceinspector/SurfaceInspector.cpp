@@ -649,7 +649,7 @@ void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self)
 }
 
 // Static command target to toggle the window
-void SurfaceInspector::toggle() {
+void SurfaceInspector::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleWindow();
 }
 

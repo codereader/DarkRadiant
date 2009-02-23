@@ -448,7 +448,7 @@ gint MediaBrowser::treeViewSortFunc(GtkTreeModel *model,
 	}
 }
 
-void MediaBrowser::toggle() {
+void MediaBrowser::toggle(const cmd::ArgumentList& args) {
 	GlobalGroupDialog().togglePage("mediabrowser");
 }
 

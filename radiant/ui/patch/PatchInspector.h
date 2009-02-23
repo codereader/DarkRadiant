@@ -2,6 +2,7 @@
 #define PATCHINSPECTOR_H_
 
 #include <map>
+#include "icommandsystem.h"
 #include "iselection.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
@@ -146,7 +147,7 @@ public:
 	static PatchInspector& Instance();
 
 	// The command target
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating of the
