@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include "iscenegraph.h"
+#include "icommandsystem.h"
 #include "itraversable.h"
 #include "iselection.h"
 #include "math/Vector2.h"
@@ -148,7 +149,7 @@ namespace selection {
 	/** 
 	 * greebo: Applies the visportal/nodraw texture combo to the selected brushes.
 	 */
-	void makeVisportal();
+	void makeVisportal(const cmd::ArgumentList& args);
 
 	} // namespace algorithm
 } // namespace selection

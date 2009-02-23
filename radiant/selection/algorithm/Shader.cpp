@@ -569,7 +569,7 @@ public:
 	}
 };
 
-void naturalTexture() {
+void naturalTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("naturalTexture");
 	
 	// Patches

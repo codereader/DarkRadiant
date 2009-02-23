@@ -815,6 +815,8 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("SplitSelected", "SplitSelected");
 	GlobalEventManager().addCommand("FlipClip", "FlipClip");
 
-	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
-	GlobalEventManager().addCommand("MakeVisportal", FreeCaller<selection::algorithm::makeVisportal>());
+	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
+	GlobalCommandSystem().addCommand("MakeVisportal", selection::algorithm::makeVisportal);
+	GlobalEventManager().addCommand("TextureNatural", "TextureNatural");
+	GlobalEventManager().addCommand("MakeVisportal", "MakeVisportal");
 }
