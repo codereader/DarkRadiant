@@ -3,6 +3,7 @@
 
 #include "icommandsystem.h"
 #include <map>
+#include "CaseInsensitiveCompare.h"
 
 namespace cmd {
 
@@ -43,12 +44,12 @@ class CommandSystem :
 	};
 	typedef boost::shared_ptr<Statement> StatementPtr;
 
-	// The named commands
-	typedef std::map<std::string, CommandPtr> CommandMap;
+	// The named commands (case-insensitive lookup)
+	typedef std::map<std::string, CommandPtr, CaseInsensitiveCompare> CommandMap;
 	CommandMap _commands;
 
-	// Named statements (macros)
-	typedef std::map<std::string, std::string> BindMap;
+	// Named statements (macros) (case-insensitive lookup)
+	typedef std::map<std::string, std::string, CaseInsensitiveCompare> BindMap;
 	BindMap _binds;
 
 public:
