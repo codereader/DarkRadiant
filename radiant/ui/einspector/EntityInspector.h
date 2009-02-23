@@ -4,6 +4,7 @@
 #include "PropertyEditor.h"
 
 #include "iradiant.h"
+#include "icommandsystem.h"
 #include "iselection.h"
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/event/SingleIdleCallback.h"
@@ -193,7 +194,7 @@ public:
 	/** 
 	 * greebo: Static command target for toggling the Entity Inspector in the GroupDialog.
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 };
 
 } // namespace ui

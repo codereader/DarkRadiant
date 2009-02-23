@@ -183,7 +183,7 @@ GtkWidget* OverlayDialog::createButtons() {
 }
 
 // Static show method
-void OverlayDialog::display() {
+void OverlayDialog::display(const cmd::ArgumentList& args) {
 	
 	// Maintain a static dialog instance and display it on demand
 	static OverlayDialog _instance;

@@ -718,6 +718,13 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
 	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
 
+	GlobalCommandSystem().addCommand("ToggleEntityInspector", ui::EntityInspector::toggle);
+	GlobalCommandSystem().addCommand("ToggleMediaBrowser", ui::MediaBrowser::toggle);
+	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
+	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
+	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
+	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::display);
+
 	GlobalEventManager().addCommand("Exit", "Exit");
 	GlobalEventManager().addCommand("Undo", "Undo");
 	GlobalEventManager().addCommand("Redo", "Redo");
@@ -747,23 +754,13 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
 	
 	// Entity inspector (part of Group Dialog)
-	GlobalEventManager().addCommand("ToggleEntityInspector",
-		FreeCaller<ui::EntityInspector::toggle>());
+	GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
+	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
+	GlobalEventManager().addCommand("ToggleLightInspector",	"ToggleLightInspector");
+	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
+	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
+	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
 
-	GlobalEventManager().addCommand("ToggleMediaBrowser",
-		FreeCaller<ui::MediaBrowser::toggle>());
-	
-	// Light inspector
-	GlobalEventManager().addCommand("ToggleLightInspector",	
-							FreeCaller<ui::LightInspector::toggleInspector>());
-	
-	GlobalEventManager().addCommand("SurfaceInspector", FreeCaller<ui::SurfaceInspector::toggle>());
-	GlobalEventManager().addCommand("PatchInspector", FreeCaller<ui::PatchInspector::toggle>());
-	
-	// Overlay dialog
-	GlobalEventManager().addCommand("OverlayDialog",
-									FreeCaller<ui::OverlayDialog::display>());
-	
 	GlobalEventManager().addCommand("ShowHidden", FreeCaller<selection::algorithm::showAllHidden>());
 	GlobalEventManager().addCommand("HideSelected", FreeCaller<selection::algorithm::hideSelected>());
 	GlobalEventManager().addCommand("HideDeselected", FreeCaller<selection::algorithm::hideDeselected>());

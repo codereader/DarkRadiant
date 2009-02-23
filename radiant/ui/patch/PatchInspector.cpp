@@ -566,7 +566,7 @@ void PatchInspector::onClickSmaller(GtkWidget* button, CoordRow* row) {
 }
 
 // static command target
-void PatchInspector::toggle() {
+void PatchInspector::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleWindow();
 }
 

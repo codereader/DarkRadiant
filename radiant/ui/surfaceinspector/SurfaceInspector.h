@@ -2,6 +2,7 @@
 #define SURFACEINSPECTOR_H_
 
 #include <map>
+#include "icommandsystem.h"
 #include "iselection.h"
 #include "iregistry.h"
 #include "iradiant.h"
@@ -119,7 +120,7 @@ public:
 	virtual void shaderSelectionChanged(const std::string& shader);
 
 	// Command target to toggle the dialog
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 	
 	/** greebo: RadiantEventListener implementation: Some sort of 
 	 *          "soft" destructor that de-registers this class from the 
