@@ -47,14 +47,14 @@ class CommandSystem :
 	typedef std::map<std::string, CommandPtr> CommandMap;
 	CommandMap _commands;
 
-	// Named statements (command + arguments)
-	typedef std::map<std::string, StatementPtr> StatementMap;
-	StatementMap _statements;
+	// Named statements (macros)
+	typedef std::map<std::string, std::string> BindMap;
+	BindMap _binds;
 
 public:
 	void addCommand(const std::string& name, Function func, const Signature& signature);
 
-	void addStatement(const std::string& statementName, const std::string& cmdName, const ArgumentList& args);
+	void addStatement(const std::string& statementName, const std::string& string);
 
 	// Execute the given command sequence
 	void execute(const std::string& input);
