@@ -2,6 +2,7 @@
 #define BRUSH_CSG_H_
 
 #include "iclipper.h"
+#include "icommandsystem.h"
 #include "math/Plane3.h"
 
 // Contains the routines for brush subtract, merge and hollow
@@ -27,22 +28,22 @@ void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom);
 /**
  * greebo: Hollows all currently selected brushes.
  */
-void hollowSelectedBrushes();
+void hollowSelectedBrushes(const cmd::ArgumentList& args);
 
 /** greebo: This tries to move the newly created brushes towards the outside
  * 			so that the corners don't overlap (works only for rectangular prisms). 
  */
-void makeRoomForSelectedBrushes();
+void makeRoomForSelectedBrushes(const cmd::ArgumentList& args);
 
 /**
  * greebo: Subtracts the brushes from all surrounding unselected brushes. 
  */
-void subtractBrushesFromUnselected();
+void subtractBrushesFromUnselected(const cmd::ArgumentList& args);
 
 /**
  * greebo: Attempts to merge the selected brushes.
  */
-void mergeSelectedBrushes();
+void mergeSelectedBrushes(const cmd::ArgumentList& args);
 
 /**
  * greebo: Sets the "clip plane" of the selected brushes in the scene.

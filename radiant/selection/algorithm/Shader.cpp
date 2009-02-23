@@ -726,43 +726,43 @@ void rotateTexture(const float& angle) {
 	ui::SurfaceInspector::Instance().update();
 }
 
-void shiftTextureLeft() {
+void shiftTextureLeft(const cmd::ArgumentList& args) {
 	shiftTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
 }
 
-void shiftTextureRight() {
+void shiftTextureRight(const cmd::ArgumentList& args) {
 	shiftTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
 }
 
-void shiftTextureUp() {
+void shiftTextureUp(const cmd::ArgumentList& args) {
 	shiftTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
-void shiftTextureDown() {
+void shiftTextureDown(const cmd::ArgumentList& args) {
 	shiftTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
-void scaleTextureLeft() {
+void scaleTextureLeft(const cmd::ArgumentList& args) {
 	scaleTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
-void scaleTextureRight() {
+void scaleTextureRight(const cmd::ArgumentList& args) {
 	scaleTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
-void scaleTextureUp() {
+void scaleTextureUp(const cmd::ArgumentList& args) {
 	scaleTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
-void scaleTextureDown() {
+void scaleTextureDown(const cmd::ArgumentList& args) {
 	scaleTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
-void rotateTextureClock() {
+void rotateTextureClock(const cmd::ArgumentList& args) {
 	rotateTexture(fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 
-void rotateTextureCounter() {
+void rotateTextureCounter(const cmd::ArgumentList& args) {
 	rotateTexture(-fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 

@@ -107,11 +107,11 @@ void GroupCycle::doCycleBackward() {
 	}
 }
 
-void GroupCycle::cycleBackward() {
+void GroupCycle::cycleBackward(const cmd::ArgumentList& args) {
 	Instance().doCycleBackward();
 }
 
-void GroupCycle::cycleForward() {
+void GroupCycle::cycleForward(const cmd::ArgumentList& args) {
 	Instance().doCycleForward();
 }
 

@@ -79,7 +79,7 @@ public:
 	}
 };
 
-void selectAllOfType() {
+void selectAllOfType(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
 		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace) {
 			// Deselect all faces
