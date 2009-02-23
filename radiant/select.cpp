@@ -214,37 +214,37 @@ void Select_RotateAxis (int axis, float deg)
   }
 }
 
-void Selection_Flipx()
+void Selection_Flipx(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("mirrorSelected -axis x");
   Select_FlipAxis(0);
 }
 
-void Selection_Flipy()
+void Selection_Flipy(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("mirrorSelected -axis y");
   Select_FlipAxis(1);
 }
 
-void Selection_Flipz()
+void Selection_Flipz(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("mirrorSelected -axis z");
   Select_FlipAxis(2);
 }
 
-void Selection_Rotatex()
+void Selection_Rotatex(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("rotateSelected -axis x -angle -90");
   Select_RotateAxis(0,-90);
 }
 
-void Selection_Rotatey()
+void Selection_Rotatey(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("rotateSelected -axis y -angle 90");
   Select_RotateAxis(1, 90);
 }
 
-void Selection_Rotatez()
+void Selection_Rotatez(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("rotateSelected -axis z -angle -90");
   Select_RotateAxis(2,-90);

@@ -78,8 +78,9 @@ public:
 	}
 };
 
-void revertGroupToWorldSpawn() {
-		
+void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
+	UndoableCommand cmd("revertToWorldspawn");
+
 	typedef std::list<scene::INodePtr> GroupNodeList;
 
 	// Collect all groupnodes

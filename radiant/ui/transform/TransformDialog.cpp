@@ -110,7 +110,7 @@ TransformDialog& TransformDialog::Instance() {
 }
 
 // The command target
-void TransformDialog::toggle() {
+void TransformDialog::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleDialog();
 }
 

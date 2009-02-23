@@ -1,6 +1,7 @@
 #ifndef _FILTER_DIALOG_H_
 #define _FILTER_DIALOG_H_
 
+#include "icommandsystem.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <map>
 #include "Filter.h"
@@ -37,7 +38,7 @@ public:
 	/** 
 	 * greebo: Shows the dialog (command target)
 	 */
-	static void showDialog();
+	static void showDialog(const cmd::ArgumentList& args);
 
 private:
 	// Saves filter settings and exits

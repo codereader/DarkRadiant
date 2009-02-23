@@ -6,6 +6,12 @@
 
 namespace entity {
 
+namespace {
+	const std::string RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
+	const std::string RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
+	const std::string RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
+}
+
 class EntitySettings;
 typedef boost::shared_ptr<EntitySettings> EntitySettingsPtr;
 
