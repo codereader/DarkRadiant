@@ -254,7 +254,10 @@ void RegionManager::setRegionFromBrush() {
 		GlobalRegion().setRegion(node->worldAABB());
 		
 		// Delete the currently selected brush (undoable command)
-		selection::algorithm::deleteSelectionCmd();
+		{
+			UndoableCommand undo("deleteSelected");
+			selection::algorithm::deleteSelection();
+		}
 		
 		SceneChangeNotify();
 	}

@@ -74,7 +74,7 @@ public:
 	}
 };
 
-void ReloadSkins() {
+void ReloadSkins(const cmd::ArgumentList& args) {
 	GlobalModelSkinCache().refresh();
 	RefreshSkinWalker walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);

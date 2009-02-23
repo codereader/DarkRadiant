@@ -241,7 +241,7 @@ void PrefDialog::showModal(const std::string& path) {
 	}
 }
 
-void PrefDialog::showProjectSettings() {
+void PrefDialog::showProjectSettings(const cmd::ArgumentList& args) {
 	showModal("Game");
 }
 

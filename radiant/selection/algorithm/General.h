@@ -3,6 +3,7 @@
 
 #include <list>
 #include <string>
+#include "icommandsystem.h"
 #include "iscenegraph.h"
 #include "ientity.h"
 #include "math/Vector3.h"
@@ -72,7 +73,7 @@ namespace selection {
 	 *       Use deleteSelection() to just remove the selection without
 	 *       disrupting the undo stack.
 	 */
-	void deleteSelectionCmd();
+	void deleteSelectionCmd(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Deletes all selected nodes including empty entities. 

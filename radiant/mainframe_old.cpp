@@ -205,7 +205,7 @@ void Selection_Paste()
   clipboard_paste(Map_ImportSelected);
 }
 
-void Copy() {
+void Copy(const cmd::ArgumentList& args) {
 	if (g_SelectedFaceInstances.empty()) {
 		Selection_Copy();
 	}
@@ -214,7 +214,7 @@ void Copy() {
 	}
 }
 
-void Paste() {
+void Paste(const cmd::ArgumentList& args) {
 	if (g_SelectedFaceInstances.empty()) {
 		UndoableCommand undo("paste");
 
@@ -226,7 +226,7 @@ void Paste() {
 	}
 }
 
-void PasteToCamera()
+void PasteToCamera(const cmd::ArgumentList& args)
 {
 	CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
 	if (camWnd == NULL) return;
@@ -696,20 +696,31 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("Exit", Exit);
 	GlobalCommandSystem().addCommand("Undo", Undo);
 	GlobalCommandSystem().addCommand("Redo", Redo);
+	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
+	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
+	GlobalCommandSystem().addCommand("Copy", Copy);
+	GlobalCommandSystem().addCommand("Paste", Paste);
+	GlobalCommandSystem().addCommand("PasteToCamera", PasteToCamera);
 
-	GlobalEventManager().addCommand("ReloadSkins", FreeCaller<ReloadSkins>());
-	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<ui::PrefDialog::showProjectSettings>());
+	GlobalCommandSystem().addCommand("CloneSelection", selection::algorithm::cloneSelected); 
+	GlobalCommandSystem().addCommand("DeleteSelection", selection::algorithm::deleteSelectionCmd);
+	GlobalCommandSystem().addCommand("ParentSelection", selection::algorithm::parentSelection);
+	GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", selection::algorithm::parentSelectionToWorldspawn);
+
 	GlobalEventManager().addCommand("Exit", "Exit");
-	
 	GlobalEventManager().addCommand("Undo", "Undo");
 	GlobalEventManager().addCommand("Redo", "Redo");
-	GlobalEventManager().addCommand("Copy", FreeCaller<Copy>());
-	GlobalEventManager().addCommand("Paste", FreeCaller<Paste>());
-	GlobalEventManager().addCommand("PasteToCamera", FreeCaller<PasteToCamera>());
-	GlobalEventManager().addCommand("CloneSelection", FreeCaller<selection::algorithm::cloneSelected>(), true); // react on keyUp
-	GlobalEventManager().addCommand("DeleteSelection", FreeCaller<selection::algorithm::deleteSelectionCmd>());
-	GlobalEventManager().addCommand("ParentSelection", FreeCaller<selection::algorithm::parentSelection>());
-	GlobalEventManager().addCommand("ParentSelectionToWorldspawn", FreeCaller<selection::algorithm::parentSelectionToWorldspawn>());
+	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
+	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
+	
+	GlobalEventManager().addCommand("Copy", "Copy");
+	GlobalEventManager().addCommand("Paste", "Paste");
+	GlobalEventManager().addCommand("PasteToCamera", "PasteToCamera");
+
+	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
+	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
+	GlobalEventManager().addCommand("ParentSelection", "ParentSelection");
+	GlobalEventManager().addCommand("ParentSelectionToWorldspawn", "ParentSelectionToWorldspawn");
 
 	GlobalEventManager().addCommand("UnSelectSelection", FreeCaller<Selection_Deselect>());
 	GlobalEventManager().addCommand("InvertSelection", FreeCaller<selection::algorithm::invertSelection>());
