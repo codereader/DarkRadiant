@@ -103,7 +103,7 @@ void MapInfoDialog::onClose(GtkWidget* widget, MapInfoDialog* self) {
 	self->destroy();
 }
 
-void MapInfoDialog::showDialog() {
+void MapInfoDialog::showDialog(const cmd::ArgumentList& args) {
 	MapInfoDialog dialog; // blocks on instantiation
 }
 

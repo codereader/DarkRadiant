@@ -9,7 +9,7 @@ namespace selection {
 	/** greebo: This reparents the child primitives of an entity container like func_static
 	 * back to worldspawn and deletes the entity thereafter.  
 	 */
-	void revertGroupToWorldSpawn();
+	void revertGroupToWorldSpawn(const cmd::ArgumentList& args);
 
 	/** greebo: This re-parents the selected primitives to an entity. The entity has to 
 	 * 			be selected last. Emits an error message if the selection doesn't meet

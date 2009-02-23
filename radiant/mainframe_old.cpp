@@ -724,10 +724,23 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
 	GlobalCommandSystem().addCommand("PatchInspector", ui::PatchInspector::toggle);
 	GlobalCommandSystem().addCommand("OverlayDialog", ui::OverlayDialog::display);
+	GlobalCommandSystem().addCommand("TransformDialog", ui::TransformDialog::toggle);
 
 	GlobalCommandSystem().addCommand("ShowHidden", selection::algorithm::showAllHidden);
 	GlobalCommandSystem().addCommand("HideSelected", selection::algorithm::hideSelected);
 	GlobalCommandSystem().addCommand("HideDeselected", selection::algorithm::hideDeselected);
+
+	GlobalCommandSystem().addCommand("MirrorSelectionX", Selection_Flipx);
+	GlobalCommandSystem().addCommand("RotateSelectionX", Selection_Rotatex);
+	GlobalCommandSystem().addCommand("MirrorSelectionY", Selection_Flipy);
+	GlobalCommandSystem().addCommand("RotateSelectionY", Selection_Rotatey);
+	GlobalCommandSystem().addCommand("MirrorSelectionZ", Selection_Flipz);
+	GlobalCommandSystem().addCommand("RotateSelectionZ", Selection_Rotatez);
+
+	GlobalCommandSystem().addCommand("FindBrush", DoFind);
+	GlobalCommandSystem().addCommand("RevertToWorldspawn", selection::algorithm::revertGroupToWorldSpawn);
+	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::showDialog);
+	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::showDialog);
 
 	// ----------------------- Bind Events ---------------------------------------
 
@@ -766,6 +779,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
 	GlobalEventManager().addCommand("PatchInspector", "PatchInspector");
 	GlobalEventManager().addCommand("OverlayDialog", "OverlayDialog");
+	GlobalEventManager().addCommand("TransformDialog", "TransformDialog");
 
 	GlobalEventManager().addCommand("ShowHidden", "ShowHidden");
 	GlobalEventManager().addCommand("HideSelected", "HideSelected");
@@ -780,23 +794,19 @@ void MainFrame_Construct()
 	GlobalEventManager().setToggled("DragFaces", false); 
 	GlobalEventManager().setToggled("DragEntities", false);
 	
-	GlobalEventManager().addCommand("MirrorSelectionX", FreeCaller<Selection_Flipx>());
-	GlobalEventManager().addCommand("RotateSelectionX", FreeCaller<Selection_Rotatex>());
-	GlobalEventManager().addCommand("MirrorSelectionY", FreeCaller<Selection_Flipy>());
-	GlobalEventManager().addCommand("RotateSelectionY", FreeCaller<Selection_Rotatey>());
-	GlobalEventManager().addCommand("MirrorSelectionZ", FreeCaller<Selection_Flipz>());
-	GlobalEventManager().addCommand("RotateSelectionZ", FreeCaller<Selection_Rotatez>());
+	GlobalEventManager().addCommand("MirrorSelectionX", "MirrorSelectionX");
+	GlobalEventManager().addCommand("RotateSelectionX", "RotateSelectionX");
+	GlobalEventManager().addCommand("MirrorSelectionY", "MirrorSelectionY");
+	GlobalEventManager().addCommand("RotateSelectionY", "RotateSelectionY");
+	GlobalEventManager().addCommand("MirrorSelectionZ", "MirrorSelectionZ");
+	GlobalEventManager().addCommand("RotateSelectionZ", "RotateSelectionZ");
 	
-	GlobalEventManager().addCommand("TransformDialog", FreeCaller<ui::TransformDialog::toggle>());
-	
-	GlobalEventManager().addCommand("FindBrush", FreeCaller<DoFind>());
-	GlobalEventManager().addCommand("RevertToWorldspawn", FreeCaller<selection::algorithm::revertGroupToWorldSpawn>());
-	GlobalEventManager().addCommand("MapInfo", FreeCaller<ui::MapInfoDialog::showDialog>());
-	GlobalEventManager().addCommand("EditFiltersDialog", FreeCaller<ui::FilterDialog::showDialog>());
+	GlobalEventManager().addCommand("FindBrush", "FindBrush");
+	GlobalEventManager().addCommand("RevertToWorldspawn", "RevertToWorldspawn");
+	GlobalEventManager().addCommand("MapInfo", "MapInfo");
+	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
 	
 	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
-	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", "user/ui/showAllLightRadii");
-	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", "user/ui/showAllSpeakerRadii");
 
 	GlobalEventManager().addToggle("ToggleClipper", FreeCaller<ClipperMode>());
 	

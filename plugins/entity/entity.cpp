@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iregistry.h"
 #include "ieclass.h"
+#include "ieventmanager.h"
 #include "ifilter.h"
 #include "selectable.h"
 #include "inamespace.h"
@@ -55,6 +56,9 @@ void constructStatic() {
 	RenderablePivot::StaticShader::instance() = GlobalShaderCache().capture("$PIVOT");
 
 	GlobalShaderCache().attachRenderable(RenderableTargetInstances::Instance());
+
+	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);
+	GlobalEventManager().addRegistryToggle("ToggleShowAllSpeakerRadii", RKEY_SHOW_ALL_SPEAKER_RADII);
 }
 
 void destroyStatic() {

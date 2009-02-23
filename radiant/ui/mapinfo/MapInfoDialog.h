@@ -1,6 +1,7 @@
 #ifndef MAPINFODIALOG_H_
 #define MAPINFODIALOG_H_
 
+#include "icommandsystem.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "EntityInfoTab.h"
 #include "ShaderInfoTab.h"
@@ -28,7 +29,7 @@ public:
 	/** 
 	 * greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
-	static void showDialog();
+	static void showDialog(const cmd::ArgumentList& args);
 	
 private:
 	// This is called to create the widgets
