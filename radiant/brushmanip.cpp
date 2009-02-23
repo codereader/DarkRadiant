@@ -764,14 +764,14 @@ void ClipSelection(const cmd::ArgumentList& args) {
 	}
 }
 
-void SplitSelected() {
+void SplitSelected(const cmd::ArgumentList& args) {
 	if (GlobalClipper().clipMode()) {
 		UndoableCommand undo("clipperSplit");
 		GlobalClipper().splitClip();
 	}
 }
 
-void FlipClipper() {
+void FlipClipper(const cmd::ArgumentList& args) {
 	GlobalClipper().flipClip();
 }
 
@@ -792,11 +792,13 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("Brush9Sided", BrushMakeSided::SetCaller(g_brushmakesided9));
 
 	// Add the clipper commands
-	GlobalCommandSystem().addCommand("clipselection", ClipSelection);
+	GlobalCommandSystem().addCommand("ClipSelection", ClipSelection);
+	GlobalCommandSystem().addCommand("SplitSelected", SplitSelected);
+	GlobalCommandSystem().addCommand("FlipClipPlane", FlipClipper);
+	
 	GlobalEventManager().addCommand("ClipSelected", "clipselection");
-
-	GlobalEventManager().addCommand("SplitSelected", FreeCaller<SplitSelected>());
-	GlobalEventManager().addCommand("FlipClip", FreeCaller<FlipClipper>());
+	GlobalEventManager().addCommand("SplitSelected", "SplitSelected");
+	GlobalEventManager().addCommand("FlipClip", "FlipClipPlane");
 
 	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
 	GlobalEventManager().addCommand("MakeVisportal", FreeCaller<selection::algorithm::makeVisportal>());
