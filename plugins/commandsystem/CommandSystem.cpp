@@ -4,6 +4,7 @@
 #include "CommandTokeniser.h"
 
 #include <boost/bind.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 namespace cmd {
 
@@ -31,6 +32,7 @@ void CommandSystem::shutdownModule() {
 
 	// Free all commands
 	_commands.clear();
+	_binds.clear();
 }
 
 void CommandSystem::bindCmd(const ArgumentList& args) {
@@ -41,19 +43,11 @@ void CommandSystem::bindCmd(const ArgumentList& args) {
 	// Second argument is the command to be called plus its arguments
 
 	// Use a tokeniser to split the second argument into its pieces
+	// and trim all unnecessary whitespace
 	std::string input = args[1].getString();
 
-	CommandTokeniser tok(input);
-
-	std::string cmdName = tok.nextToken();
-	
-	ArgumentList cmdArgs;
-	while (tok.hasMoreTokens()) {
-		cmdArgs.push_back(tok.nextToken());
-	}
-
 	// Add the statement - bind complete
-	addStatement(args[0].getString(), cmdName, cmdArgs);
+	addStatement(args[0].getString(), input);
 }
 
 void CommandSystem::unbindCmd(const ArgumentList& args) {
@@ -61,10 +55,10 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 	if (args.size() != 1) return;
 
 	// First argument is the statement to unbind
-	StatementMap::iterator found = _statements.find(args[0].getString());
+	BindMap::iterator found = _binds.find(args[0].getString());
 
-	if (found != _statements.end()) {
-		_statements.erase(found);
+	if (found != _binds.end()) {
+		_binds.erase(found);
 	}
 }
 
@@ -84,21 +78,22 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	}
 }
 
-void CommandSystem::addStatement(const std::string& statementName, 
-	const std::string& cmdName, const ArgumentList& args)
-{
+void CommandSystem::addStatement(const std::string& statementName, const std::string& str) {
 	// First check if a command with this name already exists
-	if (_statements.find(statementName) != _statements.end()) {
+	if (_binds.find(statementName) != _binds.end()) {
 		globalErrorStream() << "Cannot register statement " << statementName 
 			<< ", a command with this name is already registered." << std::endl;
 		return;
 	}
 
 	// Create a new statement
-	StatementPtr statement(new Statement(cmdName, args));
+	std::string statement(str);
+
+	// Remove all whitespace at the front and the tail
+	boost::algorithm::trim(statement);
 	
-	std::pair<StatementMap::iterator, bool> result = _statements.insert(
-		StatementMap::value_type(statementName, statement)
+	std::pair<BindMap::iterator, bool> result = _binds.insert(
+		BindMap::value_type(statementName, statement)
 	);
 
 	if (!result.second) {
@@ -158,8 +153,8 @@ void CommandSystem::execute(const std::string& input) {
 	for (std::vector<Statement>::iterator i = statements.begin(); 
 		 i != statements.end(); ++i)
 	{
-		// If the arguments are empty, we should also check for statements
-		if (i->args.empty() && _statements.find(i->command) != _statements.end()) {
+		// If the arguments are empty, we check for a named bind
+		if (i->args.empty() && _binds.find(i->command) != _binds.end()) {
 			// This is matching a statement, execute it
 			executeStatement(i->command);
 		}
@@ -227,25 +222,23 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 
 void CommandSystem::executeStatement(const std::string& name) {
 	// Find the named statement
-	StatementMap::const_iterator i = _statements.find(name);
+	BindMap::const_iterator i = _binds.find(name);
 
-	if (i == _statements.end()) {
+	if (i == _binds.end()) {
 		globalErrorStream() << "Cannot execute statement " << name 
 			<< ": Statement not found." << std::endl;
 		return;
 	}
 
-	const Statement& statement = *i->second;
+	if (i->second == name) {
+		// Don't execute self and begin an infinite loop
+		globalErrorStream() << "Possible infinite loop detected, "
+			<< "cannot execute bind: " << name << std::endl;
+		return;
+	}
 
-	// If the arguments are empty, we should also check for statements
-	if (statement.args.empty() && _statements.find(statement.command) != _statements.end()) {
-		// This is matching a statement, execute it
-		executeStatement(statement.command);
-	}
-	else {
-		// Attempt ordinary command execution
-		executeCommand(statement.command, statement.args);
-	}
+	// Execute the contained string
+	execute(i->second);
 }
 
 } // namespace cmd

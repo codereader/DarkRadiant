@@ -153,16 +153,13 @@ public:
 							const Signature& signature = Signature()) = 0;
 
 	/**
-	 * greebo: Define a new statement, which consists of a given command
-	 * and a set of arguments. This statement can be lookd up by name and
-	 * will invoke the contained command with the given set of arguments 
-	 * when executed.
+	 * greebo: Define a new statement, which consists of a name and a
+	 * string to exeute.
 	 *
 	 * Consider this as some sort of macro.
 	 */
 	virtual void addStatement(const std::string& statementName, 
-							   const std::string& cmdName, 
-							   const ArgumentList& args) = 0;
+							   const std::string& string) = 0;
 
 	/**
 	 * greebo: Executes the given string as if the user had typed it
