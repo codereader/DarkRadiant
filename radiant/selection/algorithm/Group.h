@@ -27,7 +27,7 @@ namespace selection {
 	 * 			This deselects the groupnodes entities, so that ONLY the children 
 	 * 			are highlighted.
 	 */
-	void selectChildren();
+	void selectChildren(const cmd::ArgumentList& args);
 
 	/** 
 	 * greebo: This selects all the children of an entity, given the case 
@@ -38,7 +38,7 @@ namespace selection {
 	 *         the worldspawn entity and this command will select every primitive 
 	 *         that is child of worldspawn. 
 	 */
-	void expandSelectionToEntities();
+	void expandSelectionToEntities(const cmd::ArgumentList& args);
 
 	} // namespace algorithm
 } // namespace selection

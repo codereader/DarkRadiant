@@ -432,7 +432,7 @@ void NudgeSelection(ENudgeDirection direction, float fAmount, EViewType viewtype
 }
 
 // called when the escape key is used (either on the main window or on an inspector)
-void Selection_Deselect()
+void Selection_Deselect(const cmd::ArgumentList& args)
 {
   if(GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
   {
@@ -707,6 +707,17 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("ParentSelection", selection::algorithm::parentSelection);
 	GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", selection::algorithm::parentSelectionToWorldspawn);
 
+	GlobalCommandSystem().addCommand("UnSelectSelection", Selection_Deselect);
+	GlobalCommandSystem().addCommand("InvertSelection", selection::algorithm::invertSelection);
+	GlobalCommandSystem().addCommand("SelectInside", selection::algorithm::selectInside);
+	GlobalCommandSystem().addCommand("SelectTouching", selection::algorithm::selectTouching);
+	GlobalCommandSystem().addCommand("SelectCompleteTall", selection::algorithm::selectCompleteTall);
+	GlobalCommandSystem().addCommand("ExpandSelectionToEntities", selection::algorithm::expandSelectionToEntities);
+	GlobalCommandSystem().addCommand("SelectChildren", selection::algorithm::selectChildren);
+
+	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
+	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
+
 	GlobalEventManager().addCommand("Exit", "Exit");
 	GlobalEventManager().addCommand("Undo", "Undo");
 	GlobalEventManager().addCommand("Redo", "Redo");
@@ -722,18 +733,18 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ParentSelection", "ParentSelection");
 	GlobalEventManager().addCommand("ParentSelectionToWorldspawn", "ParentSelectionToWorldspawn");
 
-	GlobalEventManager().addCommand("UnSelectSelection", FreeCaller<Selection_Deselect>());
-	GlobalEventManager().addCommand("InvertSelection", FreeCaller<selection::algorithm::invertSelection>());
+	GlobalEventManager().addCommand("UnSelectSelection", "UnSelectSelection");
+	GlobalEventManager().addCommand("InvertSelection", "InvertSelection");
 
-	GlobalEventManager().addCommand("SelectInside", FreeCaller<selection::algorithm::selectInside>());
-	GlobalEventManager().addCommand("SelectTouching", FreeCaller<selection::algorithm::selectTouching>());
-	GlobalEventManager().addCommand("SelectCompleteTall", FreeCaller<selection::algorithm::selectCompleteTall>());
+	GlobalEventManager().addCommand("SelectInside", "SelectInside");
+	GlobalEventManager().addCommand("SelectTouching", "SelectTouching");
+	GlobalEventManager().addCommand("SelectCompleteTall", "SelectCompleteTall");
+	GlobalEventManager().addCommand("ExpandSelectionToEntities", "ExpandSelectionToEntities");
+	GlobalEventManager().addCommand("SelectChildren", "SelectChildren");
 
-	GlobalEventManager().addCommand("ExpandSelectionToEntities", FreeCaller<selection::algorithm::expandSelectionToEntities>());
-	GlobalEventManager().addCommand("SelectChildren", FreeCaller<selection::algorithm::selectChildren>());
-	GlobalEventManager().addCommand("Preferences", FreeCaller<ui::PrefDialog::toggle>());
+	GlobalEventManager().addCommand("Preferences", "Preferences");
 	
-	GlobalEventManager().addCommand("ToggleConsole", FreeCaller<ui::Console::toggle>());
+	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
 	
 	// Entity inspector (part of Group Dialog)
 	GlobalEventManager().addCommand("ToggleEntityInspector",

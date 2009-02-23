@@ -1,6 +1,8 @@
 #ifndef _CONSOLE_H_
 #define _CONSOLE_H_
 
+#include "icommandsystem.h"
+
 #include <gtk/gtktextview.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkwindow.h>
@@ -44,7 +46,7 @@ public:
 	/** 
 	 * greebo: Static command target for toggling the console.
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 
 	/** 
 	 * greebo: Returns the widget pointer for packing into a parent container.

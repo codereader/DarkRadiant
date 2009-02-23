@@ -320,7 +320,7 @@ public:
 	}
 };
 
-void selectChildren() {
+void selectChildren(const cmd::ArgumentList& args) {
 	// Traverse the selection and identify the groupnodes
 	GlobalSelectionSystem().foreachSelected(
 		GroupNodeChildSelector()
@@ -355,7 +355,7 @@ public:
 	}
 };
 
-void expandSelectionToEntities() {
+void expandSelectionToEntities(const cmd::ArgumentList& args) {
 	ExpandSelectionToEntitiesWalker walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }

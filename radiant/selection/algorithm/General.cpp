@@ -284,7 +284,7 @@ public:
 	}
 };
 
-void invertSelection() {
+void invertSelection(const cmd::ArgumentList& args) {
 	InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
@@ -465,15 +465,15 @@ public:
 	}
 };
 
-void selectInside() {
+void selectInside(const cmd::ArgumentList& args) {
 	SelectByBounds<SelectionPolicy_Inside>::DoSelection();
 }
 
-void selectTouching() {
+void selectTouching(const cmd::ArgumentList& args) {
 	SelectByBounds<SelectionPolicy_Touching>::DoSelection(false);
 }
 
-void selectCompleteTall() {
+void selectCompleteTall(const cmd::ArgumentList& args) {
 	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
 }
 
