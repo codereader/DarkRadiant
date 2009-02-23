@@ -101,7 +101,7 @@ void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom) {
 	scene::removeNodeFromParent(sourceBrush);
 }
 
-void hollowSelectedBrushes() {
+void hollowSelectedBrushes(const cmd::ArgumentList& args) {
 	UndoableCommand undo("hollowSelectedBrushes");
 
 	// Find all brushes
@@ -116,7 +116,7 @@ void hollowSelectedBrushes() {
 	SceneChangeNotify();
 }
 
-void makeRoomForSelectedBrushes() {
+void makeRoomForSelectedBrushes(const cmd::ArgumentList& args) {
 	UndoableCommand undo("brushMakeRoom");
 
 	// Find all brushes
@@ -274,7 +274,7 @@ public:
 	}
 };
 
-void subtractBrushesFromUnselected() {
+void subtractBrushesFromUnselected(const cmd::ArgumentList& args) {
 	// Collect all selected brushes
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 	
@@ -380,7 +380,7 @@ bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
 	return true;
 }
 
-void mergeSelectedBrushes() {
+void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 	// Get the current selection
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 

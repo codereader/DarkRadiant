@@ -633,7 +633,7 @@ public:
 	}
 }; // ComponentSnappableSnapToGridSelected
 
-void Selection_SnapToGrid()
+void Selection_SnapToGrid(const cmd::ArgumentList& args)
 {
 	std::ostringstream command;
 	command << "snapSelected -grid " << GlobalGrid().getGridSize();
@@ -661,7 +661,7 @@ void ClipperChangeNotify() {
 }
 
 // The "Flush & Reload Shaders" command target 
-void RefreshShaders() {
+void RefreshShaders(const cmd::ArgumentList& args) {
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker("Processing...", "Loading Shaders");
 	
@@ -742,6 +742,30 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::showDialog);
 	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::showDialog);
 
+	GlobalCommandSystem().addCommand("CSGSubtract", brush::algorithm::subtractBrushesFromUnselected);
+	GlobalCommandSystem().addCommand("CSGMerge", brush::algorithm::mergeSelectedBrushes);
+	GlobalCommandSystem().addCommand("CSGHollow", brush::algorithm::hollowSelectedBrushes);
+	GlobalCommandSystem().addCommand("CSGRoom", brush::algorithm::makeRoomForSelectedBrushes);
+
+	GlobalCommandSystem().addCommand("RefreshShaders", RefreshShaders);
+	
+	GlobalCommandSystem().addCommand("SnapToGrid", Selection_SnapToGrid);
+	
+	GlobalCommandSystem().addCommand("SelectAllOfType", selection::algorithm::selectAllOfType);
+	GlobalCommandSystem().addCommand("GroupCycleForward", selection::GroupCycle::cycleForward);
+	GlobalCommandSystem().addCommand("GroupCycleBackward", selection::GroupCycle::cycleBackward);
+	
+	GlobalCommandSystem().addCommand("TexRotateClock", selection::algorithm::rotateTextureClock);
+	GlobalCommandSystem().addCommand("TexRotateCounter", selection::algorithm::rotateTextureCounter);
+	GlobalCommandSystem().addCommand("TexScaleUp", selection::algorithm::scaleTextureUp);
+	GlobalCommandSystem().addCommand("TexScaleDown", selection::algorithm::scaleTextureDown);
+	GlobalCommandSystem().addCommand("TexScaleLeft", selection::algorithm::scaleTextureLeft);
+	GlobalCommandSystem().addCommand("TexScaleRight", selection::algorithm::scaleTextureRight);
+	GlobalCommandSystem().addCommand("TexShiftUp", selection::algorithm::shiftTextureUp);
+	GlobalCommandSystem().addCommand("TexShiftDown", selection::algorithm::shiftTextureDown);
+	GlobalCommandSystem().addCommand("TexShiftLeft", selection::algorithm::shiftTextureLeft);
+	GlobalCommandSystem().addCommand("TexShiftRight", selection::algorithm::shiftTextureRight);
+
 	// ----------------------- Bind Events ---------------------------------------
 
 	GlobalEventManager().addCommand("Exit", "Exit");
@@ -815,29 +839,29 @@ void MainFrame_Construct()
 	//GlobalEventManager().addToggle("MouseScale", FreeCaller<ScaleMode>());
 	GlobalEventManager().addToggle("MouseDrag", FreeCaller<DragMode>());
 	
-	GlobalEventManager().addCommand("CSGSubtract", FreeCaller<brush::algorithm::subtractBrushesFromUnselected>());
-	GlobalEventManager().addCommand("CSGMerge", FreeCaller<brush::algorithm::mergeSelectedBrushes>());
-	GlobalEventManager().addCommand("CSGHollow", FreeCaller<brush::algorithm::hollowSelectedBrushes>());
-	GlobalEventManager().addCommand("CSGRoom", FreeCaller<brush::algorithm::makeRoomForSelectedBrushes>());
+	GlobalEventManager().addCommand("CSGSubtract", "CSGSubtract");
+	GlobalEventManager().addCommand("CSGMerge", "CSGMerge");
+	GlobalEventManager().addCommand("CSGHollow", "CSGHollow");
+	GlobalEventManager().addCommand("CSGRoom", "CSGRoom");
 	
-	GlobalEventManager().addCommand("RefreshShaders", FreeCaller<RefreshShaders>());
+	GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
 	
-	GlobalEventManager().addCommand("SnapToGrid", FreeCaller<Selection_SnapToGrid>());
+	GlobalEventManager().addCommand("SnapToGrid", "SnapToGrid");
 	
-	GlobalEventManager().addCommand("SelectAllOfType", FreeCaller<selection::algorithm::selectAllOfType>());
-	GlobalEventManager().addCommand("GroupCycleForward", FreeCaller<selection::GroupCycle::cycleForward>());
-	GlobalEventManager().addCommand("GroupCycleBackward", FreeCaller<selection::GroupCycle::cycleBackward>());
+	GlobalEventManager().addCommand("SelectAllOfType", "SelectAllOfType");
+	GlobalEventManager().addCommand("GroupCycleForward", "GroupCycleForward");
+	GlobalEventManager().addCommand("GroupCycleBackward", "GroupCycleBackward");
 	
-	GlobalEventManager().addCommand("TexRotateClock", FreeCaller<selection::algorithm::rotateTextureClock>());
-	GlobalEventManager().addCommand("TexRotateCounter", FreeCaller<selection::algorithm::rotateTextureCounter>());
-	GlobalEventManager().addCommand("TexScaleUp", FreeCaller<selection::algorithm::scaleTextureUp>());
-	GlobalEventManager().addCommand("TexScaleDown", FreeCaller<selection::algorithm::scaleTextureDown>());
-	GlobalEventManager().addCommand("TexScaleLeft", FreeCaller<selection::algorithm::scaleTextureLeft>());
-	GlobalEventManager().addCommand("TexScaleRight", FreeCaller<selection::algorithm::scaleTextureRight>());
-	GlobalEventManager().addCommand("TexShiftUp", FreeCaller<selection::algorithm::shiftTextureUp>());
-	GlobalEventManager().addCommand("TexShiftDown", FreeCaller<selection::algorithm::shiftTextureDown>());
-	GlobalEventManager().addCommand("TexShiftLeft", FreeCaller<selection::algorithm::shiftTextureLeft>());
-	GlobalEventManager().addCommand("TexShiftRight", FreeCaller<selection::algorithm::shiftTextureRight>());
+	GlobalEventManager().addCommand("TexRotateClock", "TexRotateClock");
+	GlobalEventManager().addCommand("TexRotateCounter", "TexRotateCounter");
+	GlobalEventManager().addCommand("TexScaleUp", "TexScaleUp");
+	GlobalEventManager().addCommand("TexScaleDown", "TexScaleDown");
+	GlobalEventManager().addCommand("TexScaleLeft", "TexScaleLeft");
+	GlobalEventManager().addCommand("TexScaleRight", "TexScaleRight");
+	GlobalEventManager().addCommand("TexShiftUp", "TexShiftUp");
+	GlobalEventManager().addCommand("TexShiftDown", "TexShiftDown");
+	GlobalEventManager().addCommand("TexShiftLeft", "TexShiftLeft");
+	GlobalEventManager().addCommand("TexShiftRight", "TexShiftRight");
 
 	GlobalEventManager().addCommand("NormaliseTexture", FreeCaller<selection::algorithm::normaliseTexture>());
 

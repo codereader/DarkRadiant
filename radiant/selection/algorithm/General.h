@@ -43,7 +43,7 @@ namespace selection {
 	 * For faces: all faces carrying the current shader (as selected in the texture
 	 *            browser) are selected.
 	 */
-	void selectAllOfType();
+	void selectAllOfType(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Hides all selected nodes in the scene.

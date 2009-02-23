@@ -112,16 +112,16 @@ namespace selection {
 	 * texture of the selected primitives about the values that are currently
 	 * active in the Surface Inspector.
 	 */
-	void shiftTextureLeft();
-	void shiftTextureRight();
-	void shiftTextureUp();
-	void shiftTextureDown();
-	void scaleTextureLeft();
-	void scaleTextureRight();
-	void scaleTextureUp();
-	void scaleTextureDown();
-	void rotateTextureClock();
-	void rotateTextureCounter();
+	void shiftTextureLeft(const cmd::ArgumentList& args);
+	void shiftTextureRight(const cmd::ArgumentList& args);
+	void shiftTextureUp(const cmd::ArgumentList& args);
+	void shiftTextureDown(const cmd::ArgumentList& args);
+	void scaleTextureLeft(const cmd::ArgumentList& args);
+	void scaleTextureRight(const cmd::ArgumentList& args);
+	void scaleTextureUp(const cmd::ArgumentList& args);
+	void scaleTextureDown(const cmd::ArgumentList& args);
+	void rotateTextureClock(const cmd::ArgumentList& args);
+	void rotateTextureCounter(const cmd::ArgumentList& args);
 	
 	/** greebo: This translates the texture coordinates towards the origin
 	 * 			in texture space without altering the appearance.
