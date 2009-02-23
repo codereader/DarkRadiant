@@ -776,10 +776,6 @@ void Brush_registerCommands()
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
 	GlobalCommandSystem().addCommand("BrushMakePrefab", brushMakePrefab, cmd::ARGTYPE_INT);
-	GlobalCommandSystem().addStatement("BrushCuboid", "BrushMakePrefab 0");
-	GlobalCommandSystem().addStatement("BrushPrism", "BrushMakePrefab 1");
-	GlobalCommandSystem().addStatement("BrushCone", "BrushMakePrefab 2");
-	GlobalCommandSystem().addStatement("BrushSphere", "BrushMakePrefab 3");
 
 	GlobalEventManager().addCommand("BrushCuboid", "BrushCuboid");
 	GlobalEventManager().addCommand("BrushPrism", "BrushPrism");
