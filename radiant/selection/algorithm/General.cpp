@@ -327,7 +327,7 @@ void deleteSelection() {
 	SceneChangeNotify();
 }
 
-void deleteSelectionCmd() {
+void deleteSelectionCmd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("deleteSelected");
 
 	deleteSelection();

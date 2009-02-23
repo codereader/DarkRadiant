@@ -239,7 +239,7 @@ public:
 };
 
 // re-parents the selected brushes/patches
-void parentSelection() {
+void parentSelection(const cmd::ArgumentList& args) {
 	// Retrieve the selection information structure
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
@@ -260,7 +260,7 @@ void parentSelection() {
 	}
 }
 
-void parentSelectionToWorldspawn() {
+void parentSelectionToWorldspawn(const cmd::ArgumentList& args) {
 	UndoableCommand undo("parentSelectedPrimitives");
 
 	scene::INodePtr world = GlobalMap().findOrInsertWorldspawn();
