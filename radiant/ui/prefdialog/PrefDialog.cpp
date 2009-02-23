@@ -157,7 +157,7 @@ void PrefDialog::toggleWindow(bool isModal) {
 	}
 }
 
-void PrefDialog::toggle() {
+void PrefDialog::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleWindow();
 }
 

@@ -52,7 +52,7 @@ public:
 
 	/** greebo: Toggles the window visibility
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 	
 	/** greebo: Makes sure that the dialog is visible.
 	 * 			(does nothing if the dialog is already on screen)

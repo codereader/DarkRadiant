@@ -63,7 +63,7 @@ namespace selection {
 	/**
 	 * greebo: Each selected item will be deselected and vice versa.
 	 */
-	void invertSelection();
+	void invertSelection(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Removes all selected nodes. If entities end up with
@@ -86,9 +86,9 @@ namespace selection {
 	/**
 	 * greebo: As the name says, these are the various selection routines.
 	 */
-	void selectInside();
-	void selectTouching();
-	void selectCompleteTall();
+	void selectInside(const cmd::ArgumentList& args);
+	void selectTouching(const cmd::ArgumentList& args);
+	void selectCompleteTall(const cmd::ArgumentList& args);
 
 	// Returns the center point of the current selection (or <0,0,0> if nothing selected).
 	Vector3 getCurrentSelectionCenter();

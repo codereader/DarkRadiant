@@ -79,7 +79,7 @@ Console::Console() :
 	applog::StringLogDevice::destroy();
 }
 
-void Console::toggle() {
+void Console::toggle(const cmd::ArgumentList& args) {
 	GlobalGroupDialog().togglePage("console");  
 }
 
