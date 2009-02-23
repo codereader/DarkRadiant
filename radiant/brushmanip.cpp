@@ -788,15 +788,6 @@ void Brush_registerCommands()
 
 	GlobalCommandSystem().addCommand("BrushMakeSided", brushMakeSided, cmd::ARGTYPE_INT);
 
-	// Create the shortcuts for the various prisms
-	GlobalCommandSystem().addStatement("Brush3Sided", "BrushMakeSided 3");
-	GlobalCommandSystem().addStatement("Brush4Sided", "BrushMakeSided 4");
-	GlobalCommandSystem().addStatement("Brush5Sided", "BrushMakeSided 5");
-	GlobalCommandSystem().addStatement("Brush6Sided", "BrushMakeSided 6");
-	GlobalCommandSystem().addStatement("Brush7Sided", "BrushMakeSided 7");
-	GlobalCommandSystem().addStatement("Brush8Sided", "BrushMakeSided 8");
-	GlobalCommandSystem().addStatement("Brush9Sided", "BrushMakeSided 9");
-	
 	// Link the Events to the corresponding statements
 	GlobalEventManager().addCommand("Brush3Sided", "Brush3Sided");
 	GlobalEventManager().addCommand("Brush4Sided", "Brush4Sided");
