@@ -161,13 +161,13 @@ void Radiant_Initialise()
 	gtkutil::MultiMonitor::printMonitorInfo();
 }
 
-void Exit() {
+void Exit(const cmd::ArgumentList& args) {
 	if (GlobalMap().askForSave("Exit Radiant")) {
 		gtk_main_quit();
 	}
 }
 
-void Undo()
+void Undo(const cmd::ArgumentList& args)
 {
   GlobalUndoSystem().undo();
   SceneChangeNotify();
@@ -177,7 +177,7 @@ void Undo()
   GlobalShaderClipboard().clear();
 }
 
-void Redo()
+void Redo(const cmd::ArgumentList& args)
 {
   GlobalUndoSystem().redo();
   SceneChangeNotify();
@@ -693,12 +693,16 @@ void MainFrame_Construct()
 {
 	DragMode();
 
+	GlobalCommandSystem().addCommand("Exit", Exit);
+	GlobalCommandSystem().addCommand("Undo", Undo);
+	GlobalCommandSystem().addCommand("Redo", Redo);
+
 	GlobalEventManager().addCommand("ReloadSkins", FreeCaller<ReloadSkins>());
 	GlobalEventManager().addCommand("ProjectSettings", FreeCaller<ui::PrefDialog::showProjectSettings>());
-	GlobalEventManager().addCommand("Exit", FreeCaller<Exit>());
+	GlobalEventManager().addCommand("Exit", "Exit");
 	
-	GlobalEventManager().addCommand("Undo", FreeCaller<Undo>());
-	GlobalEventManager().addCommand("Redo", FreeCaller<Redo>());
+	GlobalEventManager().addCommand("Undo", "Undo");
+	GlobalEventManager().addCommand("Redo", "Redo");
 	GlobalEventManager().addCommand("Copy", FreeCaller<Copy>());
 	GlobalEventManager().addCommand("Paste", FreeCaller<Paste>());
 	GlobalEventManager().addCommand("PasteToCamera", FreeCaller<PasteToCamera>());
