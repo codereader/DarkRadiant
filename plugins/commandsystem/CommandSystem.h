@@ -80,6 +80,11 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
+
+private:
+	// Save/load bind strings from Registry
+	void loadBinds();
+	void saveBinds();
 };
 typedef boost::shared_ptr<CommandSystem> CommandSystemPtr;
 
