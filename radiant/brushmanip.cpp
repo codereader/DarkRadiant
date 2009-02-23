@@ -700,29 +700,22 @@ public:
 const TestBleh testbleh;
 #endif
 
-class BrushMakeSided
-{
-  std::size_t m_count;
-public:
-  BrushMakeSided(std::size_t count)
-    : m_count(count)
-  {
-  }
-  void set()
-  {
-    Scene_BrushConstructPrefab(GlobalSceneGraph(), eBrushPrism, m_count, GlobalTextureBrowser().getSelectedShader());
-  }
-  typedef MemberCaller<BrushMakeSided, &BrushMakeSided::set> SetCaller;
-};
+void brushMakeSided(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		return;
+	}
 
+	// First argument contains the number of sides
+	int input = args[0].getInt();
 
-BrushMakeSided g_brushmakesided3(3);
-BrushMakeSided g_brushmakesided4(4);
-BrushMakeSided g_brushmakesided5(5);
-BrushMakeSided g_brushmakesided6(6);
-BrushMakeSided g_brushmakesided7(7);
-BrushMakeSided g_brushmakesided8(8);
-BrushMakeSided g_brushmakesided9(9);
+	if (input < 0) {
+		globalErrorStream() << "BrushMakeSide: invalid number of sides: " << input << std::endl;
+		return;
+	}
+
+	std::size_t numSides = static_cast<std::size_t>(input);
+	Scene_BrushConstructPrefab(GlobalSceneGraph(), eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+}
 
 inline int axis_for_viewtype(int viewtype)
 {
@@ -783,22 +776,34 @@ void Brush_registerCommands()
 	GlobalEventManager().addCommand("BrushCone", BrushPrefab::SetCaller(g_brushcone));
 	GlobalEventManager().addCommand("BrushSphere", BrushPrefab::SetCaller(g_brushsphere));
 
-	GlobalEventManager().addCommand("Brush3Sided", BrushMakeSided::SetCaller(g_brushmakesided3));
-	GlobalEventManager().addCommand("Brush4Sided", BrushMakeSided::SetCaller(g_brushmakesided4));
-	GlobalEventManager().addCommand("Brush5Sided", BrushMakeSided::SetCaller(g_brushmakesided5));
-	GlobalEventManager().addCommand("Brush6Sided", BrushMakeSided::SetCaller(g_brushmakesided6));
-	GlobalEventManager().addCommand("Brush7Sided", BrushMakeSided::SetCaller(g_brushmakesided7));
-	GlobalEventManager().addCommand("Brush8Sided", BrushMakeSided::SetCaller(g_brushmakesided8));
-	GlobalEventManager().addCommand("Brush9Sided", BrushMakeSided::SetCaller(g_brushmakesided9));
+	GlobalCommandSystem().addCommand("BrushMakeSided", brushMakeSided, cmd::ARGTYPE_INT);
+
+	// Create the shortcuts for the various prisms
+	GlobalCommandSystem().addStatement("Brush3Sided", "BrushMakeSided 3");
+	GlobalCommandSystem().addStatement("Brush4Sided", "BrushMakeSided 4");
+	GlobalCommandSystem().addStatement("Brush5Sided", "BrushMakeSided 5");
+	GlobalCommandSystem().addStatement("Brush6Sided", "BrushMakeSided 6");
+	GlobalCommandSystem().addStatement("Brush7Sided", "BrushMakeSided 7");
+	GlobalCommandSystem().addStatement("Brush8Sided", "BrushMakeSided 8");
+	GlobalCommandSystem().addStatement("Brush9Sided", "BrushMakeSided 9");
+	
+	// Link the Events to the corresponding statements
+	GlobalEventManager().addCommand("Brush3Sided", "Brush3Sided");
+	GlobalEventManager().addCommand("Brush4Sided", "Brush4Sided");
+	GlobalEventManager().addCommand("Brush5Sided", "Brush5Sided");
+	GlobalEventManager().addCommand("Brush6Sided", "Brush6Sided");
+	GlobalEventManager().addCommand("Brush7Sided", "Brush7Sided");
+	GlobalEventManager().addCommand("Brush8Sided", "Brush8Sided");
+	GlobalEventManager().addCommand("Brush9Sided", "Brush9Sided");
 
 	// Add the clipper commands
-	GlobalCommandSystem().addCommand("ClipSelection", ClipSelection);
+	GlobalCommandSystem().addCommand("ClipSelected", ClipSelection);
 	GlobalCommandSystem().addCommand("SplitSelected", SplitSelected);
-	GlobalCommandSystem().addCommand("FlipClipPlane", FlipClipper);
+	GlobalCommandSystem().addCommand("FlipClip", FlipClipper);
 	
-	GlobalEventManager().addCommand("ClipSelected", "clipselection");
+	GlobalEventManager().addCommand("ClipSelected", "ClipSelected");
 	GlobalEventManager().addCommand("SplitSelected", "SplitSelected");
-	GlobalEventManager().addCommand("FlipClip", "FlipClipPlane");
+	GlobalEventManager().addCommand("FlipClip", "FlipClip");
 
 	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
 	GlobalEventManager().addCommand("MakeVisportal", FreeCaller<selection::algorithm::makeVisportal>());
