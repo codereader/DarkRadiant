@@ -419,6 +419,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\commandsystem\Command.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\commandsystem\CommandSystem.cpp"
 				>
 			</File>
@@ -428,6 +432,14 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\commandsystem\CommandTokeniser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\commandsystem\Executable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\commandsystem\Statement.h"
 				>
 			</File>
 		</Filter>
