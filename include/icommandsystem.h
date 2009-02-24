@@ -3,6 +3,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
+#include "math/Vector2.h"
 #include "math/Vector3.h"
 
 #include "imodule.h"
@@ -17,6 +18,7 @@ enum ArgumentType
 	ARGTYPE_INT,
 	ARGTYPE_DOUBLE,
 	ARGTYPE_VECTOR3,
+	ARGTYPE_VECTOR2,
 	NUM_ARGTYPES,
 };
 
@@ -26,20 +28,23 @@ class Argument
 	std::string _strValue;
 	double _doubleValue;
 	int _intValue;
-	Vector3 _vectorValue;
+	Vector3 _vector3Value;
+	Vector2 _vector2Value;
 
 public:
 	Argument() :
 		_doubleValue(0),
 		_intValue(0),
-		_vectorValue(0,0,0)
+		_vector3Value(0,0,0),
+		_vector2Value(0,0)
 	{}
 
 	Argument(const char* str) :
 		_strValue(str),
 		_doubleValue(strToDouble(str)),
 		_intValue(strToInt(str)),
-		_vectorValue(Vector3(str))
+		_vector3Value(Vector3(str)),
+		_vector2Value(Vector2(str))
 	{}
 
 	// String => Argument constructor
@@ -47,7 +52,8 @@ public:
 		_strValue(str),
 		_doubleValue(strToDouble(str)),
 		_intValue(strToInt(str)),
-		_vectorValue(Vector3(str))
+		_vector3Value(Vector3(str)),
+		_vector2Value(Vector2(str))
 	{}
 
 	// Double => Argument constructor
@@ -55,7 +61,8 @@ public:
 		_strValue(doubleToStr(d)),
 		_doubleValue(d),
 		_intValue(static_cast<int>(d)),
-		_vectorValue(0,0,0)
+		_vector3Value(d,d,d),
+		_vector2Value(d,d)
 	{}
 
 	// Double => Argument constructor
@@ -63,7 +70,8 @@ public:
 		_strValue(intToStr(i)),
 		_doubleValue(static_cast<double>(i)),
 		_intValue(i),
-		_vectorValue(0,0,0)
+		_vector3Value(i,i,i),
+		_vector2Value(i,i)
 	{}
 
 	// Vector3 => Argument constructor
@@ -71,7 +79,17 @@ public:
 		_strValue(doubleToStr(v[0]) + " " + doubleToStr(v[1]) + " " + doubleToStr(v[2])),
 		_doubleValue(v.getLength()),
 		_intValue(static_cast<int>(v.getLength())),
-		_vectorValue(v)
+		_vector3Value(v),
+		_vector2Value(v[0], v[1])
+	{}
+
+	// Vector2 => Argument constructor
+	Argument(const Vector2& v) :
+		_strValue(doubleToStr(v[0]) + " " + doubleToStr(v[1]) + " " + doubleToStr(v[2])),
+		_doubleValue(v.getLength()),
+		_intValue(static_cast<int>(v.getLength())),
+		_vector3Value(v[0], v[1], 0),
+		_vector2Value(v)
 	{}
 
 	// Copy Constructor
@@ -79,7 +97,8 @@ public:
 		_strValue(other._strValue),
 		_doubleValue(other._doubleValue),
 		_intValue(other._intValue),
-		_vectorValue(other._vectorValue)
+		_vector3Value(other._vector3Value),
+		_vector2Value(other._vector2Value)
 	{}
 
 	std::string getString() const {
@@ -94,8 +113,12 @@ public:
 		return _doubleValue;
 	}
 
-	Vector3 getVector() const {
-		return _vectorValue;
+	Vector3 getVector3() const {
+		return _vector3Value;
+	}
+
+	Vector2 getVector2() const {
+		return _vector2Value;
 	}
 };
 

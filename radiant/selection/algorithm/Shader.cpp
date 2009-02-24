@@ -16,6 +16,8 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 // greebo: Nasty global that contains all the selected face instances
 extern FaceInstanceSet g_SelectedFaceInstances;
 
@@ -742,19 +744,19 @@ void shiftTextureDown(const cmd::ArgumentList& args) {
 	shiftTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
-void scaleTextureLeft(const cmd::ArgumentList& args) {
+void scaleTextureLeft() {
 	scaleTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
-void scaleTextureRight(const cmd::ArgumentList& args) {
+void scaleTextureRight() {
 	scaleTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
-void scaleTextureUp(const cmd::ArgumentList& args) {
+void scaleTextureUp() {
 	scaleTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
-void scaleTextureDown(const cmd::ArgumentList& args) {
+void scaleTextureDown() {
 	scaleTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
@@ -768,7 +770,7 @@ void rotateTextureCounter() {
 
 void rotateTexture(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
-		globalOutputStream() << "Usage: rotateTexture [+1|-1]" << std::endl;
+		globalOutputStream() << "Usage: TexRotate [+1|-1]" << std::endl;
 		return;
 	}
 
@@ -779,6 +781,38 @@ void rotateTexture(const cmd::ArgumentList& args) {
 	else {
 		// Counter-Clockwise
 		rotateTextureCounter();
+	}
+}
+
+void scaleTexture(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		globalOutputStream() << "Usage: TexScale 's t'" << std::endl;
+		globalOutputStream() << "       TexScale [up|down|left|right]" << std::endl;
+		globalOutputStream() << "Example: TexScale '0.05 0' performs" 
+			<< " a 105% scale in the s direction." << std::endl;
+		globalOutputStream() << "Example: TexScale up performs" 
+			<< " a vertical scale using the step value defined in the Surface Inspector." 
+			<< std::endl;
+		return;
+	}
+
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	
+	if (arg == "up") {
+		scaleTextureUp();
+	}
+	else if (arg == "down") {
+		scaleTextureDown();
+	}
+	if (arg == "left") {
+		scaleTextureLeft();
+	}
+	if (arg == "right") {
+		scaleTextureRight();
+	}
+	else {
+		// No special argument, retrieve the Vector2 argument and pass the call
+		scaleTexture(args[0].getVector2());
 	}
 }
 
