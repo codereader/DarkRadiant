@@ -120,8 +120,16 @@ namespace selection {
 	void scaleTextureRight(const cmd::ArgumentList& args);
 	void scaleTextureUp(const cmd::ArgumentList& args);
 	void scaleTextureDown(const cmd::ArgumentList& args);
-	void rotateTextureClock(const cmd::ArgumentList& args);
-	void rotateTextureCounter(const cmd::ArgumentList& args);
+	void rotateTextureClock();
+	void rotateTextureCounter();
+
+	/**
+	 * Command target to rotate the texture.
+	 * 
+	 * args[0]: Pass positive values to rotate clockwise,
+	 *          negative values for counter-clockwise rotation.
+	 */
+	void rotateTexture(const cmd::ArgumentList& args);
 	
 	/** greebo: This translates the texture coordinates towards the origin
 	 * 			in texture space without altering the appearance.

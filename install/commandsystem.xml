@@ -15,5 +15,8 @@
 		<bind name="BrushPrism" value="BrushMakePrefab 1" readonly="1" />
 		<bind name="BrushCone" value="BrushMakePrefab 2" readonly="1" />
 		<bind name="BrushSphere" value="BrushMakePrefab 3" readonly="1" />
+		<!-- Texture Manipulation -->
+		<bind name="TexRotateClock" value="TexRotate 1" readonly="1" />
+		<bind name="TexRotateCounter" value="TexRotate -1" readonly="1" />
 	</binds>
 </commandsystem>
