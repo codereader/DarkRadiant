@@ -35,6 +35,7 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 	// Add the built-in commands
 	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
 	addCommand("unbind", boost::bind(&CommandSystem::unbindCmd, this, _1), Signature(ARGTYPE_STRING));
+	addCommand("listCmds", boost::bind(&CommandSystem::listCmds, this, _1), Signature());
 
 	loadBinds();
 }
@@ -123,6 +124,23 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 
 	if (found != _binds.end()) {
 		_binds.erase(found);
+	}
+}
+
+void CommandSystem::listCmds(const ArgumentList& args) {
+	// Copy all commands and combine them with the binds
+	CommandMap copy = _commands;
+
+	for (BindMap::const_iterator i = _binds.begin(); i != _binds.end(); ++i) {
+		// Insert the binds into the commands
+		copy.insert(CommandMap::value_type(
+			i->first, 
+			CommandPtr(new Command(Function(), Signature()))
+		));
+	}
+
+	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
+		globalOutputStream() << i->first << std::endl;
 	}
 }
 
