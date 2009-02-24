@@ -757,11 +757,7 @@ void MainFrame_Construct()
 	
 	GlobalCommandSystem().addCommand("TexRotate", selection::algorithm::rotateTexture, cmd::ARGTYPE_INT);
 	GlobalCommandSystem().addCommand("TexScale", selection::algorithm::scaleTexture, cmd::ARGTYPE_VECTOR2);
-
-	GlobalCommandSystem().addCommand("TexShiftUp", selection::algorithm::shiftTextureUp);
-	GlobalCommandSystem().addCommand("TexShiftDown", selection::algorithm::shiftTextureDown);
-	GlobalCommandSystem().addCommand("TexShiftLeft", selection::algorithm::shiftTextureLeft);
-	GlobalCommandSystem().addCommand("TexShiftRight", selection::algorithm::shiftTextureRight);
+	GlobalCommandSystem().addCommand("TexShift", selection::algorithm::shiftTextureCmd, cmd::ARGTYPE_VECTOR2);
 
 	GlobalCommandSystem().addCommand("NormaliseTexture", selection::algorithm::normaliseTexture);
 

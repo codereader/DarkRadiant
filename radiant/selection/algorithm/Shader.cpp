@@ -728,19 +728,19 @@ void rotateTexture(const float& angle) {
 	ui::SurfaceInspector::Instance().update();
 }
 
-void shiftTextureLeft(const cmd::ArgumentList& args) {
+void shiftTextureLeft() {
 	shiftTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
 }
 
-void shiftTextureRight(const cmd::ArgumentList& args) {
+void shiftTextureRight() {
 	shiftTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
 }
 
-void shiftTextureUp(const cmd::ArgumentList& args) {
+void shiftTextureUp() {
 	shiftTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
-void shiftTextureDown(const cmd::ArgumentList& args) {
+void shiftTextureDown() {
 	shiftTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
@@ -813,6 +813,35 @@ void scaleTexture(const cmd::ArgumentList& args) {
 	else {
 		// No special argument, retrieve the Vector2 argument and pass the call
 		scaleTexture(args[0].getVector2());
+	}
+}
+
+void shiftTextureCmd(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		globalOutputStream() << "Usage: TexShift 's t'" << std::endl
+			 << "       TexShift [up|down|left|right]" << std::endl
+			 << "[up|down|left|right| takes the step values " 
+			 << "from the Surface Inspector." << std::endl;
+		return;
+	}
+
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	
+	if (arg == "up") {
+		shiftTextureUp();
+	}
+	else if (arg == "down") {
+		shiftTextureDown();
+	}
+	if (arg == "left") {
+		shiftTextureLeft();
+	}
+	if (arg == "right") {
+		shiftTextureRight();
+	}
+	else {
+		// No special argument, retrieve the Vector2 argument and pass the call
+		shiftTexture(args[0].getVector2());
 	}
 }
 
