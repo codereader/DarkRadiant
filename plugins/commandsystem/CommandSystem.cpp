@@ -2,7 +2,10 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
+
 #include "CommandTokeniser.h"
+#include "Command.h"
+#include "Statement.h"
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -48,13 +51,9 @@ void CommandSystem::shutdownModule() {
 
 	// Free all commands
 	_commands.clear();
-	_binds.clear();
 }
 
 void CommandSystem::loadBinds() {
-	// Clear binds before loading
-	_binds.clear();
-
 	// Find all accelerators
 	xml::NodeList nodeList = GlobalRegistry().findXPath(RKEY_COMMANDSYSTEM_BINDS + "//bind");
 
@@ -66,21 +65,25 @@ void CommandSystem::loadBinds() {
 	for (std::size_t i = 0; i < nodeList.size(); ++i) {
 		xml::Node& node = nodeList[i];
 
+		std::string name = node.getAttributeValue("name");
+		std::string statement = node.getAttributeValue("value");
+
+		// remove all whitespace from the front and the tail
+		boost::algorithm::trim(statement);
+
 		// Create a new statement
-		StoredStatement st;
-		st.statement = node.getAttributeValue("value");
-		st.readonly = node.getAttributeValue("readonly") == "1";
+		StatementPtr st(new Statement(
+			statement,
+			(node.getAttributeValue("readonly") == "1")
+		));
 		
-		// Remove all whitespace at the front and the tail
-		boost::algorithm::trim(st.statement);
-		
-		std::pair<BindMap::iterator, bool> result = _binds.insert(
-			BindMap::value_type(node.getAttributeValue("name"), st)
+		std::pair<CommandMap::iterator, bool> result = _commands.insert(
+			CommandMap::value_type(name, st)
 		);
 
 		if (!result.second) {
 			globalWarningStream() << "Duplicate statement detected: "
-				<< node.getAttributeValue("name") << std::endl;
+				<< name << std::endl;
 		}
 	}
 }
@@ -89,14 +92,16 @@ void CommandSystem::saveBinds() {
 	// Delete all previous binds
 	GlobalRegistry().deleteXPath(RKEY_COMMANDSYSTEM_BINDS + "//bind");
 
-	for (BindMap::const_iterator i = _binds.begin(); i != _binds.end(); ++i) {
-		// Don't save readonly statements
-		if (i->second.readonly) continue;
+	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
+		// Check if this is actually a statement
+		StatementPtr st = boost::dynamic_pointer_cast<Statement>(i->second);
+
+		if (st == NULL || st->isReadonly()) continue; // not a statement or readonly
 
 		xml::Node node = GlobalRegistry().createKey(RKEY_COMMANDSYSTEM_BINDS + "/bind");
 		
 		node.setAttributeValue("name", i->first);
-		node.setAttributeValue("value", i->second.statement);
+		node.setAttributeValue("value", st->getValue());
 	}
 }
 
@@ -120,25 +125,30 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 	if (args.size() != 1) return;
 
 	// First argument is the statement to unbind
-	BindMap::iterator found = _binds.find(args[0].getString());
+	CommandMap::iterator found = _commands.find(args[0].getString());
 
-	if (found != _binds.end()) {
-		_binds.erase(found);
+	if (found == _commands.end()) {
+		globalErrorStream() << "Cannot unbind: " << args[0].getString() 
+			<< ": no such command." << std::endl;
+		return;
+	}
+
+	// Check if this is actually a statement
+	StatementPtr st = boost::dynamic_pointer_cast<Statement>(found->second);
+
+	if (st != NULL && !st->isReadonly()) {
+		// This is a user-statement
+		_commands.erase(found);
+	}
+	else {
+		globalErrorStream() << "Cannot unbind built-in command: " 
+			<< args[0].getString() << std::endl;
+		return;
 	}
 }
 
 void CommandSystem::listCmds(const ArgumentList& args) {
-	// Copy all commands and combine them with the binds
-	CommandMap copy = _commands;
-
-	for (BindMap::const_iterator i = _binds.begin(); i != _binds.end(); ++i) {
-		// Insert the binds into the commands
-		copy.insert(CommandMap::value_type(
-			i->first, 
-			CommandPtr(new Command(Function(), Signature()))
-		));
-	}
-
+	// Dump all commands
 	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
 		globalOutputStream() << i->first << std::endl;
 	}
@@ -161,22 +171,13 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 }
 
 void CommandSystem::addStatement(const std::string& statementName, const std::string& str) {
-	// First check if a command with this name already exists
-	if (_binds.find(statementName) != _binds.end()) {
-		globalErrorStream() << "Cannot register statement " << statementName 
-			<< ", a command with this name is already registered." << std::endl;
-		return;
-	}
-
-	// Create a new statement
-	StoredStatement st;
-	st.statement = str;
-	
 	// Remove all whitespace at the front and the tail
-	boost::algorithm::trim(st.statement);
+	StatementPtr st(new Statement(
+		boost::algorithm::trim_copy(str))
+	);
 	
-	std::pair<BindMap::iterator, bool> result = _binds.insert(
-		BindMap::value_type(statementName, st)
+	std::pair<CommandMap::iterator, bool> result = _commands.insert(
+		CommandMap::value_type(statementName, st)
 	);
 
 	if (!result.second) {
@@ -191,8 +192,17 @@ void CommandSystem::execute(const std::string& input) {
 
 	if (!tokeniser.hasMoreTokens()) return; // nothing to do!
 
-	std::vector<Statement> statements;
+	// A statement consists of a command and a set of arguments
+	struct Statement
+	{
+		// The command to invoke
+		std::string command;
 
+		// The arguments to pass
+		ArgumentList args;
+	};
+
+	std::vector<Statement> statements;
 	Statement curStatement;
 
 	while (tokeniser.hasMoreTokens()) {
@@ -236,15 +246,8 @@ void CommandSystem::execute(const std::string& input) {
 	for (std::vector<Statement>::iterator i = statements.begin(); 
 		 i != statements.end(); ++i)
 	{
-		// If the arguments are empty, we check for a named bind
-		if (i->args.empty() && _binds.find(i->command) != _binds.end()) {
-			// This is matching a statement, execute it
-			executeStatement(i->command);
-		}
-		else {
-			// Attempt ordinary command execution
-			executeCommand(i->command, i->args);
-		}
+		// Attempt ordinary command execution
+		executeCommand(i->command, i->args);
 	}
 }
 
@@ -290,38 +293,7 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 		return;
 	}
 
-	const Command& cmd = *i->second;
-
-	// Check matching number of arguments
-	if (args.size() != cmd.signature.size()) {
-		globalErrorStream() << "Cannot execute command " << name << ": Wrong number of arguments. " 
-			<< "(" << args.size() << " passed instead of " << cmd.signature.size() << ")" << std::endl;
-		return;
-	}
-
-	// Checks passed, call the command
-	cmd.function(args);
-}
-
-void CommandSystem::executeStatement(const std::string& name) {
-	// Find the named statement
-	BindMap::const_iterator i = _binds.find(name);
-
-	if (i == _binds.end()) {
-		globalErrorStream() << "Cannot execute statement " << name 
-			<< ": Statement not found." << std::endl;
-		return;
-	}
-
-	if (i->second.statement == name) {
-		// Don't execute self and begin an infinite loop
-		globalErrorStream() << "Possible infinite loop detected, "
-			<< "cannot execute bind: " << name << std::endl;
-		return;
-	}
-
-	// Execute the contained string
-	execute(i->second.statement);
+	i->second->execute(args);
 }
 
 } // namespace cmd
