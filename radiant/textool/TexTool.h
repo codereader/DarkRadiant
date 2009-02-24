@@ -1,6 +1,7 @@
 #ifndef TEXTOOL_H_
 #define TEXTOOL_H_
 
+#include "icommandsystem.h"
 #include "gtk/gtkwidget.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/WindowPosition.h"
@@ -247,14 +248,14 @@ public:
 	
 	/** greebo: Static command targets for use in FreeCaller<> constructions
 	 */
-	static void toggle();
-	static void texToolGridUp();
-	static void texToolGridDown();
-	static void texToolSnapToGrid();
-	static void texToolMergeItems();
-	static void texToolFlipS();
-	static void texToolFlipT();
-	static void selectRelated();
+	static void toggle(const cmd::ArgumentList& args);
+	static void texToolGridUp(const cmd::ArgumentList& args);
+	static void texToolGridDown(const cmd::ArgumentList& args);
+	static void texToolSnapToGrid(const cmd::ArgumentList& args);
+	static void texToolMergeItems(const cmd::ArgumentList& args);
+	static void texToolFlipS(const cmd::ArgumentList& args);
+	static void texToolFlipT(const cmd::ArgumentList& args);
+	static void selectRelated(const cmd::ArgumentList& args);
 	
 	/** greebo: Registers the commands in the EventManager
 	 */
