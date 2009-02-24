@@ -11,3 +11,9 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Level editor for Doom 3 and The Dark Mod
  DarkRadiant is a 3D level editor for Doom 3 and The Dark Mod, based on the GPL
  release of GtkRadiant.
+
+Package: darkradiant-plugins-darkmod
+Architecture: any
+Depends: darkradiant, ${shlibs:Depends}, ${misc:Depends}
+Description: DarkMod-specific plugins for DarkRadiant
+ These plugins are used for editing Dark Mod missions.
