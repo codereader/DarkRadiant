@@ -112,10 +112,10 @@ namespace selection {
 	 * texture of the selected primitives about the values that are currently
 	 * active in the Surface Inspector.
 	 */
-	void shiftTextureLeft(const cmd::ArgumentList& args);
-	void shiftTextureRight(const cmd::ArgumentList& args);
-	void shiftTextureUp(const cmd::ArgumentList& args);
-	void shiftTextureDown(const cmd::ArgumentList& args);
+	void shiftTextureLeft();
+	void shiftTextureRight();
+	void shiftTextureUp();
+	void shiftTextureDown();
 	void scaleTextureLeft();
 	void scaleTextureRight();
 	void scaleTextureUp();
@@ -136,10 +136,21 @@ namespace selection {
 	 * 
 	 * args[0]: Vector2 which contains the relative scale values 
 	 *          in the s and t axis (0 = 100%).
+	 * args[0]: String: [up|down|left|right] which takes the values
+	 *          from the SurfaceInspector.
 	 *
 	 *          Example: <0.05, 0> results in a 105% scale in the s direction.
 	 */
 	void scaleTexture(const cmd::ArgumentList& args);
+
+	/**
+	 * Command target to shift the texture.
+	 * 
+	 * args[0]: Vector2 which contains the s/t shift values 
+	 * args[0]: String: [up|down|left|right] which takes the values
+	 *          from the SurfaceInspector.
+	 */
+	void shiftTextureCmd(const cmd::ArgumentList& args);
 	
 	/** greebo: This translates the texture coordinates towards the origin
 	 * 			in texture space without altering the appearance.
