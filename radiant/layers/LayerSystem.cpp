@@ -1,6 +1,7 @@
 #include "LayerSystem.h"
 
 #include "ieventmanager.h"
+#include "icommandsystem.h"
 #include "scene/Node.h"
 #include "modulesystem/StaticModule.h"
 
@@ -367,6 +368,7 @@ const StringSet& LayerSystem::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
@@ -385,14 +387,11 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 		);
 	}
 
-	GlobalEventManager().addCommand(
+	GlobalCommandSystem().addCommand(
 		"ToggleLayerControlDialog", 
-		FreeCaller<ui::LayerControlDialog::toggle>()
+		ui::LayerControlDialog::toggle
 	);
-}
-
-void LayerSystem::shutdownModule() {
-	
+	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
 }
 
 // Define the static LayerSystem module

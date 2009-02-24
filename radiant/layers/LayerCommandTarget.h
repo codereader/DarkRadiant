@@ -1,7 +1,7 @@
 #ifndef LAYER_COMMAND_TARGET_H_
 #define LAYER_COMMAND_TARGET_H_
 
-#include "generic/callback.h"
+#include "icommandsystem.h"
 #include <boost/shared_ptr.hpp>
 
 namespace scene {
@@ -20,26 +20,12 @@ public:
 	LayerCommandTarget(int layerID);
 
 	// Command target, this adds the current selection to the associated layer
-	void addSelectionToLayer();
+	void addSelectionToLayer(const cmd::ArgumentList& args);
+	void moveSelectionToLayer(const cmd::ArgumentList& args);
 
-	// The shortcut typedef for use with the EventManager
-	typedef MemberCaller<LayerCommandTarget, 
-		&LayerCommandTarget::addSelectionToLayer> AddSelectionCaller;
-
-	// Command target, this moves the selection to the associated layer
-	void moveSelectionToLayer();
-	typedef MemberCaller<LayerCommandTarget, 
-		&LayerCommandTarget::moveSelectionToLayer> MoveSelectionCaller;
-
-	// Command target, shows the associated layer
-	void showLayer();
-	typedef MemberCaller<LayerCommandTarget, 
-		&LayerCommandTarget::showLayer> ShowLayerCaller;
-
-	// Command target, hides the associated layer
-	void hideLayer();
-	typedef MemberCaller<LayerCommandTarget, 
-		&LayerCommandTarget::hideLayer> HideLayerCaller;
+	// Command targets, hides/shows the associated layer
+	void showLayer(const cmd::ArgumentList& args);
+	void hideLayer(const cmd::ArgumentList& args);
 };
 typedef boost::shared_ptr<LayerCommandTarget> LayerCommandTargetPtr;
 

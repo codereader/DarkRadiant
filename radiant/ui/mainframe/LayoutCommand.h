@@ -3,11 +3,13 @@
 
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "icommandsystem.h"
 #include "imainframe.h"
 
 #include "generic/callback.h"
 
 #include <string>
+#include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace ui {
@@ -31,16 +33,21 @@ public:
 	LayoutCommand(const std::string& layoutName) :
 		_layoutName(layoutName) 
 	{
+		GlobalCommandSystem().addCommand(
+			std::string("ToggleLayout") + _layoutName,
+			boost::bind(&LayoutCommand::toggleLayout, this, _1)
+		);
 		GlobalEventManager().addCommand(
 			std::string("ToggleLayout") + _layoutName,
-			MemberCaller<LayoutCommand, &LayoutCommand::toggleLayout>(*this)
+			std::string("ToggleLayout") + _layoutName
 		);
 
 		std::string activateEventName = "ActivateLayout" + _layoutName;
-		GlobalEventManager().addCommand(
+		GlobalCommandSystem().addCommand(
 			activateEventName,
-			MemberCaller<LayoutCommand, &LayoutCommand::activateLayout>(*this)
+			boost::bind(&LayoutCommand::activateLayout, this, _1)
 		);
+		GlobalEventManager().addCommand(activateEventName, activateEventName);
 
 		// Add commands to menu
 		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
@@ -67,15 +74,18 @@ public:
 		// Remove the events
 		GlobalEventManager().removeEvent(std::string("ToggleLayout") + _layoutName);
 		GlobalEventManager().removeEvent(std::string("ActivateLayout") + _layoutName);
+
+		GlobalCommandSystem().removeCommand(std::string("ToggleLayout") + _layoutName);
+		GlobalCommandSystem().removeCommand(std::string("ToggleLayout") + _layoutName);
 	}
 
 	// Command target for activating the layout
-	void activateLayout() {
+	void activateLayout(const cmd::ArgumentList& args) {
 		GlobalMainFrame().applyLayout(_layoutName);
 	}
 
 	// Command target for toggling the layout
-	void toggleLayout() {
+	void toggleLayout(const cmd::ArgumentList& args) {
 		// Check if active
 		if (GlobalMainFrame().getCurrentLayout() == _layoutName) {
 			// Remove the active layout

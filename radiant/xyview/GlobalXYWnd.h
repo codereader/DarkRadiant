@@ -5,6 +5,7 @@
 
 #include "iclipper.h"
 #include "iregistry.h"
+#include "icommandsystem.h"
 
 #include "XYWnd.h"
 
@@ -115,12 +116,12 @@ public:
 	void setActiveXY(int id);
 	
 	// Shortcut commands for connect view the EventManager
-	void setActiveViewXY(); // top view
-	void setActiveViewXZ(); // side view
-	void setActiveViewYZ(); // front view
-	void splitViewFocus(); // Re-position all available views
-	void zoom100(); // Sets the scale of all windows to 1
-	void focusActiveView(); // sets the focus of the active view
+	void setActiveViewXY(const cmd::ArgumentList& args); // top view
+	void setActiveViewXZ(const cmd::ArgumentList& args); // side view
+	void setActiveViewYZ(const cmd::ArgumentList& args); // front view
+	void splitViewFocus(const cmd::ArgumentList& args); // Re-position all available views
+	void zoom100(const cmd::ArgumentList& args); // Sets the scale of all windows to 1
+	void focusActiveView(const cmd::ArgumentList& args); // sets the focus of the active view
 	
 	// Sets the origin of all available views
 	void setOrigin(const Vector3& origin);
@@ -129,8 +130,8 @@ public:
 	void setScale(float scale);
 	
 	// Zooms the currently active view in/out
-	void zoomIn();
-	void zoomOut();
+	void zoomIn(const cmd::ArgumentList& args);
+	void zoomOut(const cmd::ArgumentList& args);
 	
 	// Positions the view of all available views / the active view
 	void positionAllViews(const Vector3& origin);
@@ -140,7 +141,7 @@ public:
 	EViewType getActiveViewType() const;
 	void setActiveViewType(EViewType viewType);
 	
-	void toggleActiveView();
+	void toggleActiveView(const cmd::ArgumentList& args);
 	
 	// Retrieves the pointer to the first view matching the given view type
 	// @returns: NULL if no matching window could be found, the according pointer otherwise 
@@ -160,7 +161,7 @@ public:
 	 * Parameter-less wrapper for createFloatingOrthoView(), for use by the
 	 * event manager. The default orientation of XY is used.
 	 */
-	void createXYFloatingOrthoView();
+	void createXYFloatingOrthoView(const cmd::ArgumentList& args);
 	
 	/**
 	 * Invoked by the PersistentTransientWindow when a floating XY window is

@@ -202,7 +202,7 @@ void LayerControlDialog::update() {
 	gtk_widget_set_sensitive(_hideAllLayers, visitor.numVisible > 0);
 }
 
-void LayerControlDialog::toggle() {
+void LayerControlDialog::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleDialog();
 }
 

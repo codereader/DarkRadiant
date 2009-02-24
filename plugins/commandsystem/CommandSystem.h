@@ -17,6 +17,7 @@ class CommandSystem :
 
 public:
 	void addCommand(const std::string& name, Function func, const Signature& signature);
+	void removeCommand(const std::string& name);
 
 	void addStatement(const std::string& statementName, const std::string& string);
 

@@ -14,6 +14,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include "FloatingCamWnd.h"
+#include <boost/bind.hpp>
 
 // Constructor
 GlobalCameraManager::GlobalCameraManager() :
@@ -22,39 +23,66 @@ GlobalCameraManager::GlobalCameraManager() :
 {}
 
 void GlobalCameraManager::construct() {
-	GlobalEventManager().addCommand("CenterView", MemberCaller<GlobalCameraManager, &GlobalCameraManager::resetCameraAngles>(*this));
+	GlobalCommandSystem().addCommand("CenterView", boost::bind(&GlobalCameraManager::resetCameraAngles, this, _1));
+	GlobalCommandSystem().addCommand("CubicClipZoomIn", boost::bind(&GlobalCameraManager::cubicScaleIn, this, _1));
+	GlobalCommandSystem().addCommand("CubicClipZoomOut", boost::bind(&GlobalCameraManager::cubicScaleOut, this, _1));
+
+	GlobalCommandSystem().addCommand("UpFloor", boost::bind(&GlobalCameraManager::changeFloorUp, this, _1));
+	GlobalCommandSystem().addCommand("DownFloor", boost::bind(&GlobalCameraManager::changeFloorDown, this, _1));
+
+	// angua: increases and decreases the movement speed of the camera
+	GlobalCommandSystem().addCommand("CamIncreaseMoveSpeed", boost::bind(&GlobalCameraManager::increaseCameraSpeed, this, _1));
+	GlobalCommandSystem().addCommand("CamDecreaseMoveSpeed", boost::bind(&GlobalCameraManager::decreaseCameraSpeed, this, _1));
+	
+	GlobalCommandSystem().addCommand("TogglePreview", boost::bind(&GlobalCameraManager::toggleLightingMode, this, _1));
+	
+	// Insert movement commands
+	GlobalCommandSystem().addCommand("CameraForward", boost::bind(&GlobalCameraManager::moveForwardDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraBack", boost::bind(&GlobalCameraManager::moveBackDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraLeft", boost::bind(&GlobalCameraManager::rotateLeftDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraRight", boost::bind(&GlobalCameraManager::rotateRightDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraStrafeRight", boost::bind(&GlobalCameraManager::moveRightDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraStrafeLeft", boost::bind(&GlobalCameraManager::moveLeftDiscrete, this, _1));
+
+	GlobalCommandSystem().addCommand("CameraUp", boost::bind(&GlobalCameraManager::moveUpDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraDown", boost::bind(&GlobalCameraManager::moveDownDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraAngleUp", boost::bind(&GlobalCameraManager::pitchUpDiscrete, this, _1));
+	GlobalCommandSystem().addCommand("CameraAngleDown", boost::bind(&GlobalCameraManager::pitchDownDiscrete, this, _1));
+
+	// Bind the events to the commands
+	GlobalEventManager().addCommand("CenterView", "CenterView");
 
 	GlobalEventManager().addToggle("ToggleCubicClip", MemberCaller<CameraSettings, &CameraSettings::toggleFarClip>(*getCameraSettings()));
 	// Set the default status of the cubic clip
 	GlobalEventManager().setToggled("ToggleCubicClip", getCameraSettings()->farClipEnabled());
 
-	GlobalEventManager().addCommand("CubicClipZoomIn", MemberCaller<GlobalCameraManager, &GlobalCameraManager::cubicScaleIn>(*this));
-	GlobalEventManager().addCommand("CubicClipZoomOut", MemberCaller<GlobalCameraManager, &GlobalCameraManager::cubicScaleOut>(*this));
+	GlobalEventManager().addCommand("CubicClipZoomIn", "CubicClipZoomIn");
+	GlobalEventManager().addCommand("CubicClipZoomOut", "CubicClipZoomOut");
 
-	GlobalEventManager().addCommand("UpFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorUp>(*this));
-	GlobalEventManager().addCommand("DownFloor", MemberCaller<GlobalCameraManager, &GlobalCameraManager::changeFloorDown>(*this));
+	GlobalEventManager().addCommand("UpFloor", "UpFloor");
+	GlobalEventManager().addCommand("DownFloor", "DownFloor");
 
 	GlobalEventManager().addWidgetToggle("ToggleCamera");
 	GlobalEventManager().setToggled("ToggleCamera", true);
 
 	// angua: increases and decreases the movement speed of the camera
-	GlobalEventManager().addCommand("CamIncreaseMoveSpeed", MemberCaller<GlobalCameraManager, &GlobalCameraManager::increaseCameraSpeed>(*this));
-	GlobalEventManager().addCommand("CamDecreaseMoveSpeed", MemberCaller<GlobalCameraManager, &GlobalCameraManager::decreaseCameraSpeed>(*this));
+	GlobalEventManager().addCommand("CamIncreaseMoveSpeed", "CamIncreaseMoveSpeed");
+	GlobalEventManager().addCommand("CamDecreaseMoveSpeed", "CamDecreaseMoveSpeed");
 	
-	GlobalEventManager().addCommand("TogglePreview", MemberCaller<GlobalCameraManager, &GlobalCameraManager::toggleLightingMode>(*this));
+	GlobalEventManager().addCommand("TogglePreview", "TogglePreview");
 	
 	// Insert movement commands
-	GlobalEventManager().addCommand("CameraForward", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveForwardDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraBack", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveBackDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraLeft", MemberCaller<GlobalCameraManager, &GlobalCameraManager::rotateLeftDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraRight", MemberCaller<GlobalCameraManager, &GlobalCameraManager::rotateRightDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraStrafeRight", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveRightDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraStrafeLeft", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveLeftDiscrete>(*this));
+	GlobalEventManager().addCommand("CameraForward", "CameraForward");
+	GlobalEventManager().addCommand("CameraBack", "CameraBack");
+	GlobalEventManager().addCommand("CameraLeft", "CameraLeft");
+	GlobalEventManager().addCommand("CameraRight", "CameraRight");
+	GlobalEventManager().addCommand("CameraStrafeRight", "CameraStrafeRight");
+	GlobalEventManager().addCommand("CameraStrafeLeft", "CameraStrafeLeft");
 
-	GlobalEventManager().addCommand("CameraUp", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveUpDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::moveDownDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraAngleUp", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchUpDiscrete>(*this));
-	GlobalEventManager().addCommand("CameraAngleDown", MemberCaller<GlobalCameraManager, &GlobalCameraManager::pitchDownDiscrete>(*this));
+	GlobalEventManager().addCommand("CameraUp", "CameraUp");
+	GlobalEventManager().addCommand("CameraDown", "CameraDown");
+	GlobalEventManager().addCommand("CameraAngleUp", "CameraAngleUp");
+	GlobalEventManager().addCommand("CameraAngleDown", "CameraAngleDown");
 	
 	GlobalEventManager().addKeyEvent("CameraFreeMoveForward",
 	                       MemberCaller<GlobalCameraManager, &GlobalCameraManager::freelookMoveForwardKeyUp>(*this),
@@ -160,7 +188,7 @@ FloatingCamWndPtr GlobalCameraManager::createFloatingWindow() {
 	return cam;
 }
 
-void GlobalCameraManager::resetCameraAngles() {
+void GlobalCameraManager::resetCameraAngles(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 
 	if (camWnd != NULL) {
@@ -171,7 +199,7 @@ void GlobalCameraManager::resetCameraAngles() {
 	}
 }
 
-void GlobalCameraManager::increaseCameraSpeed() {
+void GlobalCameraManager::increaseCameraSpeed(const cmd::ArgumentList& args) {
 
 	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
 	movementSpeed *= 2;
@@ -183,7 +211,7 @@ void GlobalCameraManager::increaseCameraSpeed() {
 	GlobalRegistry().setInt(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
-void GlobalCameraManager::decreaseCameraSpeed() {
+void GlobalCameraManager::decreaseCameraSpeed(const cmd::ArgumentList& args) {
 
 	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
 	movementSpeed /= 2;
@@ -223,7 +251,7 @@ void GlobalCameraManager::setParent(GtkWindow* parent) {
 	_parent = parent;
 }
 
-void GlobalCameraManager::changeFloorUp() {
+void GlobalCameraManager::changeFloorUp(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
@@ -231,7 +259,7 @@ void GlobalCameraManager::changeFloorUp() {
 	camWnd->changeFloor(true);
 }
 
-void GlobalCameraManager::changeFloorDown() {
+void GlobalCameraManager::changeFloorDown(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
@@ -270,18 +298,18 @@ void GlobalCameraManager::movedNotify() {
 	}
 }
 
-void GlobalCameraManager::toggleLightingMode() {
+void GlobalCameraManager::toggleLightingMode(const cmd::ArgumentList& args) {
 	getCameraSettings()->toggleLightingMode();
 }
 
-void GlobalCameraManager::cubicScaleIn() {
+void GlobalCameraManager::cubicScaleIn(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->cubicScaleIn();
 }
 
-void GlobalCameraManager::cubicScaleOut() {
+void GlobalCameraManager::cubicScaleOut(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
@@ -382,70 +410,70 @@ void GlobalCameraManager::freelookMoveDownKeyDown() {
 	camWnd->getCamera().setMovementFlags(MOVE_DOWN);
 }
 
-void GlobalCameraManager::moveForwardDiscrete() {
+void GlobalCameraManager::moveForwardDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().moveForwardDiscrete();
 }
 
-void GlobalCameraManager::moveBackDiscrete() {
+void GlobalCameraManager::moveBackDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().moveBackDiscrete();
 }
 
-void GlobalCameraManager::moveUpDiscrete() {
+void GlobalCameraManager::moveUpDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().moveUpDiscrete();
 }
 
-void GlobalCameraManager::moveDownDiscrete() {
+void GlobalCameraManager::moveDownDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().moveDownDiscrete();
 }
 
-void GlobalCameraManager::moveLeftDiscrete() {
+void GlobalCameraManager::moveLeftDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().moveLeftDiscrete();
 }
 
-void GlobalCameraManager::moveRightDiscrete() {
+void GlobalCameraManager::moveRightDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().moveRightDiscrete();
 }
 
-void GlobalCameraManager::rotateLeftDiscrete() {
+void GlobalCameraManager::rotateLeftDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().rotateLeftDiscrete();
 }
 
-void GlobalCameraManager::rotateRightDiscrete() {
+void GlobalCameraManager::rotateRightDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().rotateRightDiscrete();
 }
 
-void GlobalCameraManager::pitchUpDiscrete() {
+void GlobalCameraManager::pitchUpDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
 	camWnd->getCamera().pitchUpDiscrete();
 }
 
-void GlobalCameraManager::pitchDownDiscrete() {
+void GlobalCameraManager::pitchDownDiscrete(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 

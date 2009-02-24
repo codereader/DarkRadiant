@@ -240,7 +240,7 @@ gboolean StimResponseEditor::onWindowKeyPress(
 }
 
 // Static command target
-void StimResponseEditor::showDialog() {
+void StimResponseEditor::showDialog(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	if (info.entityCount == 1 && info.totalCount == 1) {

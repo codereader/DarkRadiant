@@ -44,7 +44,7 @@ public:
 	void toggleDialog();
 
 	// Command target (registered in the event manager)
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 
 	// Called during mainframe construction
 	static void init();

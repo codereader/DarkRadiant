@@ -358,7 +358,7 @@ void ObjectivesEditor::_preShow() {
 }
 
 // Static method to display dialog
-void ObjectivesEditor::displayDialog() {
+void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args) {
 	// Create a new dialog instance
 	ObjectivesEditor _instance;
 	

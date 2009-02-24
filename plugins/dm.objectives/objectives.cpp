@@ -44,6 +44,7 @@ public:
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
 
 		return _dependencies;
@@ -53,10 +54,11 @@ public:
 		globalOutputStream() << "ObjectivesEditorModule::initialiseModule called.\n";
 		
 		// Add the callback event
-		GlobalEventManager().addCommand(
-			"ObjectivesEditor",
-			FreeCaller<objectives::ObjectivesEditor::displayDialog>());
-	
+		GlobalCommandSystem().addCommand(
+			"ObjectivesEditor", 
+			objectives::ObjectivesEditor::displayDialog
+		);
+		GlobalEventManager().addCommand("ObjectivesEditor", "ObjectivesEditor");
 	
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();

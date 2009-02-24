@@ -4,6 +4,7 @@
 #include "ieventmanager.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
+#include "icommandsystem.h"
 #include "iuimanager.h"
 #include "iregistry.h"
 #include "iselection.h"
@@ -33,6 +34,7 @@ public:
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
 
 		return _dependencies;
@@ -42,11 +44,9 @@ public:
 		globalOutputStream() << "StimResponseModule::initialiseModule called.\n";
 		
 		// Add the callback event
-		GlobalEventManager().addCommand(
-			"StimResponseEditor", 
-			FreeCaller<ui::StimResponseEditor::showDialog>()
-		);
-	
+		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::showDialog);
+		GlobalEventManager().addCommand("StimResponseEditor", "StimResponseEditor");
+
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
 		mm.add("main/entity", 	// menu location path

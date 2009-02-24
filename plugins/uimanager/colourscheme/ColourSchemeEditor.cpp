@@ -441,7 +441,7 @@ void ColourSchemeEditor::_onDeleteEvent(GtkWidget* w,
 	self->doCancel();
 }
 
-void ColourSchemeEditor::editColourSchemes() {
+void ColourSchemeEditor::editColourSchemes(const cmd::ArgumentList& args) {
 	 ColourSchemeEditor editor;
 	 editor.show(); // enter GTK main loop
 }

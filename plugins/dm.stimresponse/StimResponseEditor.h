@@ -3,6 +3,8 @@
 
 #include "ientity.h"
 #include "iradiant.h"
+#include "icommandsystem.h"
+#include "iscenegraph.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
@@ -56,7 +58,7 @@ public:
 	StimResponseEditor();
 	
 	// Command target to toggle the dialog
-	static void showDialog();
+	static void showDialog(const cmd::ArgumentList& args);
 
 private:
 	virtual void _preHide();

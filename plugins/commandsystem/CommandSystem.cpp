@@ -170,6 +170,14 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	}
 }
 
+void CommandSystem::removeCommand(const std::string& name) {
+	CommandMap::iterator i = _commands.find(name);
+
+	if (i != _commands.end()) {
+		_commands.erase(i);
+	}
+}
+
 void CommandSystem::addStatement(const std::string& statementName, const std::string& str) {
 	// Remove all whitespace at the front and the tail
 	StatementPtr st(new Statement(

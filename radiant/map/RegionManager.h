@@ -2,6 +2,7 @@
 #define MAP_REGIONMANAGER_
 
 #include <list>
+#include "icommandsystem.h"
 #include "math/aabb.h"
 #include "math/Vector2.h"
 #include "iscenegraph.h"
@@ -109,15 +110,15 @@ public:
 	
 	/** greebo: Saves the current selection as Region to the queried file.
 	 */
-	static void saveRegion();
+	static void saveRegion(const cmd::ArgumentList& args);
 	
 	/** greebo: Disables regioning and resets the bounds.
 	 */
-	static void disableRegion();
+	static void disableRegion(const cmd::ArgumentList& args);
 	
 	/** greebo: Sets the region according to the XY bounds of the current orthoview 
 	 */
-	static void setRegionXY();
+	static void setRegionXY(const cmd::ArgumentList& args);
 	
 	/** greebo: Sets the region to the bounds of the currently drawn brush,
 	 * 			similar to the partial tall selection method.
@@ -125,14 +126,14 @@ public:
 	 * 
 	 * Note: The brush is deleted after "use".
 	 */
-	static void setRegionFromBrush();
+	static void setRegionFromBrush(const cmd::ArgumentList& args);
 	
 	/** greebo: Retrieves the AABB from the current selection and 
 	 * 			takes it as new region bounds. The selection is NOT deleted.
 	 * 			Not available in component selection mode.
 	 * 			The selected items are de-selected after "use".
 	 */
-	static void setRegionFromSelection();
+	static void setRegionFromSelection(const cmd::ArgumentList& args);
 	
 	/** greebo: Adds the region commands to the EventManager.
 	 */

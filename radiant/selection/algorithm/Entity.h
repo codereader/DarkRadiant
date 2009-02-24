@@ -1,6 +1,7 @@
 #ifndef SELECTION_ALGORITHM_ENTITY_H_
 #define SELECTION_ALGORITHM_ENTITY_H_
 
+#include "icommandsystem.h"
 #include <string>
 
 namespace selection {
@@ -16,7 +17,7 @@ namespace selection {
 	 * spawnarg on both entities. Two entities must be highlighted for this
 	 * command to function correctly.
 	 */
-	void bindEntities();
+	void bindEntities(const cmd::ArgumentList& args);
 
 	} // namespace algorithm
 } // namespace selection

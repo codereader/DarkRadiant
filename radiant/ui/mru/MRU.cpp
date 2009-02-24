@@ -1,6 +1,7 @@
 #include "MRU.h"
 
 #include "ieventmanager.h"
+#include "icommandsystem.h"
 #include "ipreferencesystem.h"
 #include "iuimanager.h"
 #include "gtk/gtkmenu.h"
@@ -34,10 +35,11 @@ MRU::MRU() :
 		const std::string commandName = std::string("MRUOpen") + intToStr(i+1);
 		
 		// Connect the command to the last inserted menuItem
-		GlobalEventManager().addCommand(
+		GlobalCommandSystem().addCommand(
 			commandName, 
-			MemberCaller<MRUMenuItem, &MRUMenuItem::activate>(item)
+			boost::bind(&MRUMenuItem::activate, &item, _1)
 		);
+		GlobalEventManager().addCommand(commandName, commandName);
 	}
 }
 
