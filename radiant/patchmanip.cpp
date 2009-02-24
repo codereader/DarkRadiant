@@ -347,84 +347,84 @@ AABB PatchCreator_getBounds()
   return AABB(Vector3(0, 0, 0), Vector3(64, 64, 64));
 }
 
-void Patch_Cylinder()
+void Patch_Cylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateCylinder");
 
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCylinder, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_DenseCylinder()
+void Patch_DenseCylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateDenseCylinder");
 
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eDenseCylinder, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_VeryDenseCylinder()
+void Patch_VeryDenseCylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateVeryDenseCylinder");
 
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eVeryDenseCylinder, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_SquareCylinder()
+void Patch_SquareCylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateSquareCylinder");
 
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSqCylinder, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_Endcap()
+void Patch_Endcap(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateCaps");
 
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eEndCap, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_Bevel()
+void Patch_Bevel(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateBevel");
 
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eBevel, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_Cone()
+void Patch_Cone(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateCone");
 
   Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCone, GlobalXYWnd().getActiveViewType());
 }
 
-void Patch_Invert()
+void Patch_Invert(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchInvert");
 
   Scene_PatchInvert_Selected(GlobalSceneGraph());
 }
 
-void Patch_RedisperseRows()
+void Patch_RedisperseRows(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchRedisperseRows");
 
   Scene_PatchRedisperse_Selected(GlobalSceneGraph(), COL);
 }
 
-void Patch_RedisperseCols()
+void Patch_RedisperseCols(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchRedisperseColumns");
 
   Scene_PatchRedisperse_Selected(GlobalSceneGraph(), COL);
 }
 
-void Patch_Transpose()
+void Patch_Transpose(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchTranspose");
 
   Scene_PatchTranspose_Selected(GlobalSceneGraph());
 }
 
-void Patch_Cap()
+void Patch_Cap(const cmd::ArgumentList& args)
 {
   // FIXME: add support for patch cap creation
   // Patch_CapCurrent();
@@ -433,7 +433,7 @@ void Patch_Cap()
   Scene_PatchDoCap_Selected(GlobalSceneGraph(), GlobalTextureBrowser().getSelectedShader());
 }
 
-void Patch_CycleProjection()
+void Patch_CycleProjection(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCycleUVProjectionAxis");
 
@@ -498,69 +498,69 @@ public:
 
 /** greebo: The command targets
  */
-void insertColumnsAtEnd() {
+void insertColumnsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertColumnsAtEnd");
 	// true = insert, true = columns, false = end
 	Scene_forEachSelectedPatch(PatchRowColumnInserter(true, false));
 }
 
-void insertColumnsAtBeginning() {
+void insertColumnsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertColumnsAtBeginning");
 	// true = insert, true = columns, true = at beginning
 	Scene_forEachSelectedPatch(PatchRowColumnInserter(true, true));
 }
 
-void insertRowsAtEnd() {
+void insertRowsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertRowsAtEnd");
 	// true = insert, false = rows, false = at end
 	Scene_forEachSelectedPatch(PatchRowColumnInserter(false, false));
 }
 
-void insertRowsAtBeginning() {
+void insertRowsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchInsertRowsAtBeginning");
 	// true = insert, false = rows, true = at beginning
 	Scene_forEachSelectedPatch(PatchRowColumnInserter(false, true));
 }
 
-void deleteColumnsFromBeginning() {
+void deleteColumnsFromBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteColumnsFromBeginning");
 	Scene_forEachSelectedPatch(PatchRowColumnRemover(true, true));
 }
 
-void deleteColumnsFromEnd() {
+void deleteColumnsFromEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteColumnsFromEnd");
 	Scene_forEachSelectedPatch(PatchRowColumnRemover(true, false));
 }
 
-void deleteRowsFromBeginning() {
+void deleteRowsFromBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteRowsFromBeginning");
 	Scene_forEachSelectedPatch(PatchRowColumnRemover(false, true));
 }
 
-void deleteRowsFromEnd() {
+void deleteRowsFromEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchDeleteRowsFromEnd");
 	Scene_forEachSelectedPatch(PatchRowColumnRemover(false, false));
 }
 
-void appendColumnsAtBeginning() {
+void appendColumnsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendColumnsAtBeginning");
 	// true = columns, true = at the beginning
 	Scene_forEachSelectedPatch(PatchRowColumnAppender(true, true));
 }
 
-void appendColumnsAtEnd() {
+void appendColumnsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendColumnsAtEnd");
 	// true = columns, false = at the end
 	Scene_forEachSelectedPatch(PatchRowColumnAppender(true, false));
 }
 
-void appendRowsAtBeginning() {
+void appendRowsAtBeginning(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendRowsAtBeginning");
 	// false = rows, true = at the beginning
 	Scene_forEachSelectedPatch(PatchRowColumnAppender(false, true));
 }
 
-void appendRowsAtEnd() {
+void appendRowsAtEnd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("patchAppendRowsAtEnd");
 	// false = rows, false = at the end
 	Scene_forEachSelectedPatch(PatchRowColumnAppender(false, false));
@@ -626,7 +626,7 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
  * class would get stuck in a loop (as the newly created patches get selected,
  * and they are thickened as well, and again and again).  
  */
-void thickenSelectedPatches() {
+void thickenSelectedPatches(const cmd::ArgumentList& args) {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 	
@@ -653,7 +653,7 @@ void thickenSelectedPatches() {
 	}
 }
 
-void createSimplePatch() {
+void createSimplePatch(const cmd::ArgumentList& args) {
 	ui::PatchCreateDialog dialog;
 	
 	int width = 3;
@@ -684,7 +684,7 @@ void createSimplePatch() {
 	}
 }
 
-void stitchPatchTextures() {
+void stitchPatchTextures(const cmd::ArgumentList& args) {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 	
@@ -721,7 +721,7 @@ void stitchPatchTextures() {
 	}
 }
 
-void bulgePatch() {
+void bulgePatch(const cmd::ArgumentList& args) {
 	// Get the list of selected patches
 	PatchPtrVector patches = selection::algorithm::getSelectedPatches();
 
@@ -757,41 +757,76 @@ void bulgePatch() {
 
 #include "generic/callback.h"
 
-void Patch_registerCommands()
-{
-  GlobalEventManager().addCommand("PatchCylinder", FreeCaller<Patch_Cylinder>());
-  GlobalEventManager().addCommand("PatchDenseCylinder", FreeCaller<Patch_DenseCylinder>());
-  GlobalEventManager().addCommand("PatchVeryDenseCylinder", FreeCaller<Patch_VeryDenseCylinder>());
-  GlobalEventManager().addCommand("PatchSquareCylinder", FreeCaller<Patch_SquareCylinder>());
-  GlobalEventManager().addCommand("PatchEndCap", FreeCaller<Patch_Endcap>());
-  GlobalEventManager().addCommand("PatchBevel", FreeCaller<Patch_Bevel>());
-  GlobalEventManager().addCommand("PatchCone", FreeCaller<Patch_Cone>());
-  GlobalEventManager().addCommand("SimplePatchMesh", FreeCaller<patch::createSimplePatch>());
-  
-  GlobalEventManager().addCommand("PatchInsertColumnEnd", FreeCaller<patch::insertColumnsAtEnd>());
-  GlobalEventManager().addCommand("PatchInsertColumnBeginning", FreeCaller<patch::insertColumnsAtBeginning>());
-  GlobalEventManager().addCommand("PatchInsertRowEnd", FreeCaller<patch::insertRowsAtEnd>());
-  GlobalEventManager().addCommand("PatchInsertRowBeginning", FreeCaller<patch::insertRowsAtBeginning>());
-  
-  GlobalEventManager().addCommand("PatchDeleteColumnBeginning", FreeCaller<patch::deleteColumnsFromBeginning>());
-  GlobalEventManager().addCommand("PatchDeleteColumnEnd", FreeCaller<patch::deleteColumnsFromEnd>());
-  GlobalEventManager().addCommand("PatchDeleteRowBeginning", FreeCaller<patch::deleteRowsFromBeginning>());
-  GlobalEventManager().addCommand("PatchDeleteRowEnd", FreeCaller<patch::deleteRowsFromEnd>());
-  
-  GlobalEventManager().addCommand("PatchAppendColumnBeginning", FreeCaller<patch::appendColumnsAtBeginning>());
-  GlobalEventManager().addCommand("PatchAppendColumnEnd", FreeCaller<patch::appendColumnsAtEnd>());
-  GlobalEventManager().addCommand("PatchAppendRowBeginning", FreeCaller<patch::appendRowsAtBeginning>());
-  GlobalEventManager().addCommand("PatchAppendRowEnd", FreeCaller<patch::appendRowsAtEnd>());
-  
-  GlobalEventManager().addCommand("InvertCurve", FreeCaller<Patch_Invert>());
-  GlobalEventManager().addCommand("RedisperseRows", FreeCaller<Patch_RedisperseRows>());
-  GlobalEventManager().addCommand("RedisperseCols", FreeCaller<Patch_RedisperseCols>());
-  GlobalEventManager().addCommand("MatrixTranspose", FreeCaller<Patch_Transpose>());
-  GlobalEventManager().addCommand("CapCurrentCurve", FreeCaller<Patch_Cap>());
-  GlobalEventManager().addCommand("CycleCapTexturePatch", FreeCaller<Patch_CycleProjection>());
-  GlobalEventManager().addCommand("ThickenPatch", FreeCaller<patch::thickenSelectedPatches>());
-  GlobalEventManager().addCommand("StitchPatchTexture", FreeCaller<patch::stitchPatchTextures>());
-  GlobalEventManager().addCommand("BulgePatch", FreeCaller<patch::bulgePatch>());
+void Patch_registerCommands() {
+	// First connect the commands to the code
+	GlobalCommandSystem().addCommand("PatchCylinder", Patch_Cylinder);
+	GlobalCommandSystem().addCommand("PatchDenseCylinder", Patch_DenseCylinder);
+	GlobalCommandSystem().addCommand("PatchVeryDenseCylinder", Patch_VeryDenseCylinder);
+	GlobalCommandSystem().addCommand("PatchSquareCylinder", Patch_SquareCylinder);
+	GlobalCommandSystem().addCommand("PatchEndCap", Patch_Endcap);
+	GlobalCommandSystem().addCommand("PatchBevel", Patch_Bevel);
+	GlobalCommandSystem().addCommand("PatchCone", Patch_Cone);
+	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::createSimplePatch);
+
+	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", patch::insertColumnsAtEnd);
+	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", patch::insertColumnsAtBeginning);
+	GlobalCommandSystem().addCommand("PatchInsertRowEnd", patch::insertRowsAtEnd);
+	GlobalCommandSystem().addCommand("PatchInsertRowBeginning", patch::insertRowsAtBeginning);
+
+	GlobalCommandSystem().addCommand("PatchDeleteColumnBeginning", patch::deleteColumnsFromBeginning);
+	GlobalCommandSystem().addCommand("PatchDeleteColumnEnd", patch::deleteColumnsFromEnd);
+	GlobalCommandSystem().addCommand("PatchDeleteRowBeginning", patch::deleteRowsFromBeginning);
+	GlobalCommandSystem().addCommand("PatchDeleteRowEnd", patch::deleteRowsFromEnd);
+
+	GlobalCommandSystem().addCommand("PatchAppendColumnBeginning", patch::appendColumnsAtBeginning);
+	GlobalCommandSystem().addCommand("PatchAppendColumnEnd", patch::appendColumnsAtEnd);
+	GlobalCommandSystem().addCommand("PatchAppendRowBeginning", patch::appendRowsAtBeginning);
+	GlobalCommandSystem().addCommand("PatchAppendRowEnd", patch::appendRowsAtEnd);
+
+	GlobalCommandSystem().addCommand("InvertCurve", Patch_Invert);
+	GlobalCommandSystem().addCommand("RedisperseRows", Patch_RedisperseRows);
+	GlobalCommandSystem().addCommand("RedisperseCols", Patch_RedisperseCols);
+	GlobalCommandSystem().addCommand("MatrixTranspose", Patch_Transpose);
+	GlobalCommandSystem().addCommand("CapCurrentCurve", Patch_Cap);
+	GlobalCommandSystem().addCommand("CycleCapTexturePatch", Patch_CycleProjection);
+	GlobalCommandSystem().addCommand("ThickenPatch", patch::thickenSelectedPatches);
+	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::stitchPatchTextures);
+	GlobalCommandSystem().addCommand("BulgePatch", patch::bulgePatch);
+
+	// Then, connect the Events to the commands
+	GlobalEventManager().addCommand("PatchCylinder", "PatchCylinder");
+	GlobalEventManager().addCommand("PatchDenseCylinder", "PatchDenseCylinder");
+	GlobalEventManager().addCommand("PatchVeryDenseCylinder", "PatchVeryDenseCylinder");
+	GlobalEventManager().addCommand("PatchSquareCylinder", "PatchSquareCylinder");
+	GlobalEventManager().addCommand("PatchEndCap", "PatchEndCap");
+	GlobalEventManager().addCommand("PatchBevel", "PatchBevel");
+	GlobalEventManager().addCommand("PatchCone", "PatchCone");
+	GlobalEventManager().addCommand("SimplePatchMesh", "SimplePatchMesh");
+
+	GlobalEventManager().addCommand("PatchInsertColumnEnd", "PatchInsertColumnEnd");
+	GlobalEventManager().addCommand("PatchInsertColumnBeginning", "PatchInsertColumnBeginning");
+	GlobalEventManager().addCommand("PatchInsertRowEnd", "PatchInsertRowEnd");
+	GlobalEventManager().addCommand("PatchInsertRowBeginning", "PatchInsertRowBeginning");
+
+	GlobalEventManager().addCommand("PatchDeleteColumnBeginning", "PatchDeleteColumnBeginning");
+	GlobalEventManager().addCommand("PatchDeleteColumnEnd", "PatchDeleteColumnEnd");
+	GlobalEventManager().addCommand("PatchDeleteRowBeginning", "PatchDeleteRowBeginning");
+	GlobalEventManager().addCommand("PatchDeleteRowEnd", "PatchDeleteRowEnd");
+
+	GlobalEventManager().addCommand("PatchAppendColumnBeginning", "PatchAppendColumnBeginning");
+	GlobalEventManager().addCommand("PatchAppendColumnEnd", "PatchAppendColumnEnd");
+	GlobalEventManager().addCommand("PatchAppendRowBeginning", "PatchAppendRowBeginning");
+	GlobalEventManager().addCommand("PatchAppendRowEnd", "PatchAppendRowEnd");
+
+	GlobalEventManager().addCommand("InvertCurve", "InvertCurve");
+	GlobalEventManager().addCommand("RedisperseRows", "RedisperseRows");
+	GlobalEventManager().addCommand("RedisperseCols", "RedisperseCols");
+	GlobalEventManager().addCommand("MatrixTranspose", "MatrixTranspose");
+	GlobalEventManager().addCommand("CapCurrentCurve", "CapCurrentCurve");
+	GlobalEventManager().addCommand("CycleCapTexturePatch", "CycleCapTexturePatch");
+	GlobalEventManager().addCommand("ThickenPatch", "ThickenPatch");
+	GlobalEventManager().addCommand("StitchPatchTexture", "StitchPatchTexture");
+	GlobalEventManager().addCommand("BulgePatch", "BulgePatch");
 }
 
 #include <gtk/gtkbox.h>
