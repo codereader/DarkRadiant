@@ -116,10 +116,10 @@ namespace selection {
 	void shiftTextureRight(const cmd::ArgumentList& args);
 	void shiftTextureUp(const cmd::ArgumentList& args);
 	void shiftTextureDown(const cmd::ArgumentList& args);
-	void scaleTextureLeft(const cmd::ArgumentList& args);
-	void scaleTextureRight(const cmd::ArgumentList& args);
-	void scaleTextureUp(const cmd::ArgumentList& args);
-	void scaleTextureDown(const cmd::ArgumentList& args);
+	void scaleTextureLeft();
+	void scaleTextureRight();
+	void scaleTextureUp();
+	void scaleTextureDown();
 	void rotateTextureClock();
 	void rotateTextureCounter();
 
@@ -130,6 +130,16 @@ namespace selection {
 	 *          negative values for counter-clockwise rotation.
 	 */
 	void rotateTexture(const cmd::ArgumentList& args);
+
+	/**
+	 * Command target to scale the texture.
+	 * 
+	 * args[0]: Vector2 which contains the relative scale values 
+	 *          in the s and t axis (0 = 100%).
+	 *
+	 *          Example: <0.05, 0> results in a 105% scale in the s direction.
+	 */
+	void scaleTexture(const cmd::ArgumentList& args);
 	
 	/** greebo: This translates the texture coordinates towards the origin
 	 * 			in texture space without altering the appearance.

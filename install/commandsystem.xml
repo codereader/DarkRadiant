@@ -18,5 +18,9 @@
 		<!-- Texture Manipulation -->
 		<bind name="TexRotateClock" value="TexRotate 1" readonly="1" />
 		<bind name="TexRotateCounter" value="TexRotate -1" readonly="1" />
+		<bind name="TexScaleUp" value="TexScale up" readonly="1" />
+		<bind name="TexScaleDown" value="TexRotate down" readonly="1" />
+		<bind name="TexScaleLeft" value="TexRotate left" readonly="1" />
+		<bind name="TexScaleRight" value="TexRotate right" readonly="1" />
 	</binds>
 </commandsystem>
