@@ -258,7 +258,7 @@ FacePtrVector getSelectedFaces() {
 }
 
 // Try to create a CM from the selected entity
-void createCMFromSelection() {
+void createCMFromSelection(const cmd::ArgumentList& args) {
 	// Check the current selection state
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
@@ -512,7 +512,7 @@ public:
 	}
 };
 
-void createDecalsForSelectedFaces() {
+void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Sanity check	
 	if (g_SelectedFaceInstances.empty()) {
 		gtkutil::errorDialog("No faces selected.", GlobalRadiant().getMainWindow());

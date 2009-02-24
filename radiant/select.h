@@ -34,8 +34,8 @@ void Selection_Rotatex(const cmd::ArgumentList& args);
 void Selection_Rotatey(const cmd::ArgumentList& args);
 void Selection_Rotatez(const cmd::ArgumentList& args);
 
-void Selection_MoveDown();
-void Selection_MoveUp();
+void Selection_MoveDown(const cmd::ArgumentList& args);
+void Selection_MoveUp(const cmd::ArgumentList& args);
 
 // updating workzone to a given brush (depends on current view)
 

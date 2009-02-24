@@ -141,7 +141,7 @@ void AboutDialog::callbackClose(GtkWidget* widget, AboutDialog* self) {
 	self->destroy();
 }
 
-void AboutDialog::showDialog() {
+void AboutDialog::showDialog(const cmd::ArgumentList& args) {
 	AboutDialog dialog; 
 	dialog.show(); // blocks
 }

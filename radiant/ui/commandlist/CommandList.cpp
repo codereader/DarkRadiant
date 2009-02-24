@@ -165,7 +165,7 @@ void CommandList::callbackClose(GtkWidget* widget, CommandList* self) {
 	GlobalUIManager().getMenuManager().updateAccelerators();
 }
 
-void CommandList::showDialog() {
+void CommandList::showDialog(const cmd::ArgumentList& args) {
 	new CommandList(); // self-destructs in GTK callback
 }
 
