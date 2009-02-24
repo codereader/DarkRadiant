@@ -355,7 +355,7 @@ void pasteTextureCoords(SelectionTest& test) {
 	ui::SurfaceInspector::Instance().update();
 }
 
-void pickShaderFromSelection() {
+void pickShaderFromSelection(const cmd::ArgumentList& args) {
 	GlobalShaderClipboard().clear();
 	
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
@@ -414,7 +414,7 @@ public:
 	}
 };
 
-void pasteShaderToSelection() {
+void pasteShaderToSelection(const cmd::ArgumentList& args) {
 	if (GlobalShaderClipboard().getSource().empty()) {
 		return;
 	}
@@ -430,7 +430,7 @@ void pasteShaderToSelection() {
 	ui::SurfaceInspector::Instance().update();
 }
 
-void pasteShaderNaturalToSelection() {
+void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
 	if (GlobalShaderClipboard().getSource().empty()) {
 		return;
 	}
@@ -536,11 +536,11 @@ void flipTexture(unsigned int flipAxis) {
 	SceneChangeNotify();
 }
 
-void flipTextureS() {
+void flipTextureS(const cmd::ArgumentList& args) {
 	flipTexture(0);
 }
 
-void flipTextureT() {
+void flipTextureT(const cmd::ArgumentList& args) {
 	flipTexture(1);
 }
 
@@ -781,7 +781,7 @@ public:
 	}
 };
 
-void normaliseTexture() {
+void normaliseTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("normaliseTexture");
 	
 	TextureNormaliser normaliser;

@@ -49,18 +49,18 @@ namespace selection {
 	/** greebo: The command target of "CopyTexure". This tries to pick the shader
 	 * 			from the current selection and copies it to the clipboard.
 	 */
-	void pickShaderFromSelection();
+	void pickShaderFromSelection(const cmd::ArgumentList& args);
 	
 	/** greebo: The command target of "PasteTexture". This tries to get the Texturables
 	 * 			from the current selection and pastes the clipboard shader onto them.
 	 */
-	void pasteShaderToSelection();
+	void pasteShaderToSelection(const cmd::ArgumentList& args);
 	
 	/** greebo: The command target of "PasteTextureNatural". This tries to get 
 	 * 			the Texturables	from the current selection and 
 	 * 			pastes the clipboard shader "naturally" (undistorted) onto them.
 	 */
-	void pasteShaderNaturalToSelection();
+	void pasteShaderNaturalToSelection(const cmd::ArgumentList& args);
 	
 	/** greebo: Retrieves the texture projection from the current selection.
 	 * 
@@ -95,8 +95,8 @@ namespace selection {
 	 * 			S and T axes respectively. 
 	 * 			Passes the call to flipTexture() method above.
 	 */
-	void flipTextureS();
-	void flipTextureT();
+	void flipTextureS(const cmd::ArgumentList& args);
+	void flipTextureT(const cmd::ArgumentList& args);
 	
 	/** greebo: Applies the texture "naturally" to the selected
 	 * primitives. Natural makes use of the currently active default scale. 
@@ -127,7 +127,7 @@ namespace selection {
 	 * 			in texture space without altering the appearance.
 	 * 			The texture is translated in multiples of 1.0 
 	 */
-	void normaliseTexture();
+	void normaliseTexture(const cmd::ArgumentList& args);
 	
 	/** greebo: Replaces all <find> shaders with <replace>.
 	 * 

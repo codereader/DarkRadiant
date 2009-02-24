@@ -124,7 +124,7 @@ namespace selection {
 	 * 			selection. The basic check for a single selected 
 	 * 			func_clipmodel is done here and the CM object is created.
 	 */
-	void createCMFromSelection();
+	void createCMFromSelection(const cmd::ArgumentList& args);
 	
 	/** Count the number of selected primitives in the current map.
 	 * 
@@ -144,7 +144,7 @@ namespace selection {
 	
 	/** greebo: Creates a coplanar patch for each selected face instance.
 	 */
-	void createDecalsForSelectedFaces();
+	void createDecalsForSelectedFaces(const cmd::ArgumentList& args);
 
 	/** 
 	 * greebo: Applies the visportal/nodraw texture combo to the selected brushes.

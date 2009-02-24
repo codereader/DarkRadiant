@@ -210,7 +210,7 @@ void Copy(const cmd::ArgumentList& args) {
 		Selection_Copy();
 	}
 	else {
-		selection::algorithm::pickShaderFromSelection();
+		selection::algorithm::pickShaderFromSelection(args);
 	}
 }
 
@@ -222,7 +222,7 @@ void Paste(const cmd::ArgumentList& args) {
 		Selection_Paste();
 	}
 	else {
-		selection::algorithm::pasteShaderToSelection();
+		selection::algorithm::pasteShaderToSelection(args);
 	}
 }
 
@@ -459,25 +459,25 @@ void Selection_Deselect(const cmd::ArgumentList& args)
   }
 }
 
-void Selection_NudgeUp()
+void Selection_NudgeUp(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("nudgeSelectedUp");
   NudgeSelection(eNudgeUp, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
-void Selection_NudgeDown()
+void Selection_NudgeDown(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("nudgeSelectedDown");
   NudgeSelection(eNudgeDown, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
-void Selection_NudgeLeft()
+void Selection_NudgeLeft(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("nudgeSelectedLeft");
   NudgeSelection(eNudgeLeft, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
-void Selection_NudgeRight()
+void Selection_NudgeRight(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("nudgeSelectedRight");
   NudgeSelection(eNudgeRight, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
@@ -678,7 +678,7 @@ void RefreshShaders(const cmd::ArgumentList& args) {
 	GlobalMainFrame().updateAllWindows();
 }
 
-void CallBrushExportOBJ() {
+void CallBrushExportOBJ(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().countSelected() != 0) {
 		export_selected(GlobalRadiant().getMainWindow());
 	}
@@ -765,6 +765,37 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("TexShiftDown", selection::algorithm::shiftTextureDown);
 	GlobalCommandSystem().addCommand("TexShiftLeft", selection::algorithm::shiftTextureLeft);
 	GlobalCommandSystem().addCommand("TexShiftRight", selection::algorithm::shiftTextureRight);
+
+	GlobalCommandSystem().addCommand("NormaliseTexture", selection::algorithm::normaliseTexture);
+
+	GlobalCommandSystem().addCommand("CopyShader", selection::algorithm::pickShaderFromSelection);
+	GlobalCommandSystem().addCommand("PasteShader", selection::algorithm::pasteShaderToSelection);
+	GlobalCommandSystem().addCommand("PasteShaderNatural", selection::algorithm::pasteShaderNaturalToSelection);
+  
+	GlobalCommandSystem().addCommand("FlipTextureX", selection::algorithm::flipTextureS);
+	GlobalCommandSystem().addCommand("FlipTextureY", selection::algorithm::flipTextureT);
+	
+	GlobalCommandSystem().addCommand("MoveSelectionDOWN", Selection_MoveDown);
+	GlobalCommandSystem().addCommand("MoveSelectionUP", Selection_MoveUp);
+	
+	GlobalCommandSystem().addCommand("SelectNudgeLeft", Selection_NudgeLeft);
+	GlobalCommandSystem().addCommand("SelectNudgeRight", Selection_NudgeRight);
+	GlobalCommandSystem().addCommand("SelectNudgeUp", Selection_NudgeUp);
+	GlobalCommandSystem().addCommand("SelectNudgeDown", Selection_NudgeDown);
+
+	GlobalCommandSystem().addCommand("CurveAppendControlPoint", selection::algorithm::appendCurveControlPoint);
+	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", selection::algorithm::removeCurveControlPoints);
+	GlobalCommandSystem().addCommand("CurveInsertControlPoint", selection::algorithm::insertCurveControlPoints);
+	GlobalCommandSystem().addCommand("CurveConvertType", selection::algorithm::convertCurveTypes);
+
+	GlobalCommandSystem().addCommand("BrushExportOBJ", CallBrushExportOBJ);
+	GlobalCommandSystem().addCommand("BrushExportCM", selection::algorithm::createCMFromSelection);
+	
+	GlobalCommandSystem().addCommand("CreateDecalsForFaces", selection::algorithm::createDecalsForSelectedFaces);
+
+	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
+	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::showDialog);
+	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
 
 	// ----------------------- Bind Events ---------------------------------------
 
@@ -863,52 +894,38 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("TexShiftLeft", "TexShiftLeft");
 	GlobalEventManager().addCommand("TexShiftRight", "TexShiftRight");
 
-	GlobalEventManager().addCommand("NormaliseTexture", FreeCaller<selection::algorithm::normaliseTexture>());
+	GlobalEventManager().addCommand("NormaliseTexture", "NormaliseTexture");
 
-	GlobalEventManager().addCommand("CopyShader", FreeCaller<selection::algorithm::pickShaderFromSelection>());
-	GlobalEventManager().addCommand("PasteShader", FreeCaller<selection::algorithm::pasteShaderToSelection>());
-	GlobalEventManager().addCommand("PasteShaderNatural", FreeCaller<selection::algorithm::pasteShaderNaturalToSelection>());
+	GlobalEventManager().addCommand("CopyShader", "CopyShader");
+	GlobalEventManager().addCommand("PasteShader", "PasteShader");
+	GlobalEventManager().addCommand("PasteShaderNatural", "PasteShaderNatural");
   
-	GlobalEventManager().addCommand("FlipTextureX", FreeCaller<selection::algorithm::flipTextureS>());
-	GlobalEventManager().addCommand("FlipTextureY", FreeCaller<selection::algorithm::flipTextureT>());
+	GlobalEventManager().addCommand("FlipTextureX", "FlipTextureX");
+	GlobalEventManager().addCommand("FlipTextureY", "FlipTextureY");
 	
-	GlobalEventManager().addCommand("MoveSelectionDOWN", FreeCaller<Selection_MoveDown>());
-	GlobalEventManager().addCommand("MoveSelectionUP", FreeCaller<Selection_MoveUp>());
+	GlobalEventManager().addCommand("MoveSelectionDOWN", "MoveSelectionDOWN");
+	GlobalEventManager().addCommand("MoveSelectionUP", "MoveSelectionUP");
 	
-	GlobalEventManager().addCommand("SelectNudgeLeft", FreeCaller<Selection_NudgeLeft>());
-	GlobalEventManager().addCommand("SelectNudgeRight", FreeCaller<Selection_NudgeRight>());
-	GlobalEventManager().addCommand("SelectNudgeUp", FreeCaller<Selection_NudgeUp>());
-	GlobalEventManager().addCommand("SelectNudgeDown", FreeCaller<Selection_NudgeDown>());
+	GlobalEventManager().addCommand("SelectNudgeLeft", "SelectNudgeLeft");
+	GlobalEventManager().addCommand("SelectNudgeRight", "SelectNudgeRight");
+	GlobalEventManager().addCommand("SelectNudgeUp", "SelectNudgeUp");
+	GlobalEventManager().addCommand("SelectNudgeDown", "SelectNudgeDown");
+
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
 	
-	GlobalEventManager().addCommand(
-		"CurveAppendControlPoint", 
-		FreeCaller<selection::algorithm::appendCurveControlPoint>()
-	);
-	GlobalEventManager().addCommand(
-		"CurveRemoveControlPoint", 
-		FreeCaller<selection::algorithm::removeCurveControlPoints>()
-	);
-	GlobalEventManager().addCommand(
-		"CurveInsertControlPoint", 
-		FreeCaller<selection::algorithm::insertCurveControlPoints>()
-	);
-	GlobalEventManager().addCommand(
-		"CurveConvertType", 
-		FreeCaller<selection::algorithm::convertCurveTypes>()
-	);
+	GlobalEventManager().addCommand("CurveAppendControlPoint", "CurveAppendControlPoint");
+	GlobalEventManager().addCommand("CurveRemoveControlPoint", "CurveRemoveControlPoint");
+	GlobalEventManager().addCommand("CurveInsertControlPoint", "CurveInsertControlPoint");
+	GlobalEventManager().addCommand("CurveConvertType", "CurveConvertType");
 	
-	GlobalEventManager().addCommand("BrushExportOBJ", FreeCaller<CallBrushExportOBJ>());
-	GlobalEventManager().addCommand("BrushExportCM", FreeCaller<selection::algorithm::createCMFromSelection>());
+	GlobalEventManager().addCommand("BrushExportOBJ", "BrushExportOBJ");
+	GlobalEventManager().addCommand("BrushExportCM", "BrushExportCM");
 	
-	GlobalEventManager().addCommand(
-		"CreateDecalsForFaces",
-		FreeCaller<selection::algorithm::createDecalsForSelectedFaces>()
-	);
+	GlobalEventManager().addCommand("CreateDecalsForFaces", "CreateDecalsForFaces");
 
-	GlobalEventManager().addCommand("FindReplaceTextures", FreeCaller<ui::FindAndReplaceShader::showDialog>());
-	GlobalEventManager().addCommand("ShowCommandList", FreeCaller<ui::CommandList::showDialog>());
-	GlobalEventManager().addCommand("About", FreeCaller<ui::AboutDialog::showDialog>());
+	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
+	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
+	GlobalEventManager().addCommand("About", "About");
 
 	ui::LayerControlDialog::registerCommands();
 

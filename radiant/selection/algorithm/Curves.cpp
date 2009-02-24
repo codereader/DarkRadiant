@@ -87,7 +87,7 @@ public:
 	}
 };
 
-void appendCurveControlPoint() {
+void appendCurveControlPoint(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	if (info.entityCount > 0) {
@@ -109,7 +109,7 @@ void appendCurveControlPoint() {
 	}
 }
 
-void removeCurveControlPoints() {
+void removeCurveControlPoints(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
@@ -141,7 +141,7 @@ void removeCurveControlPoints() {
 	}
 }
 
-void insertCurveControlPoints() {
+void insertCurveControlPoints(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
@@ -173,7 +173,7 @@ void insertCurveControlPoints() {
 	}
 }
 
-void convertCurveTypes() {
+void convertCurveTypes(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	if (info.entityCount > 0) {

@@ -269,12 +269,12 @@ void Selection_NudgeZ(float amount)
   Nudge(2, amount);
 }
 
-void Selection_MoveDown()
+void Selection_MoveDown(const cmd::ArgumentList& args)
 {
   Selection_NudgeZ(-GlobalGrid().getGridSize());
 }
 
-void Selection_MoveUp()
+void Selection_MoveUp(const cmd::ArgumentList& args)
 {
   Selection_NudgeZ(GlobalGrid().getGridSize());
 }
