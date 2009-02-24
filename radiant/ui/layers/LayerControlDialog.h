@@ -2,6 +2,7 @@
 #define LAYER_CONTROL_DIALOG_H_
 
 #include "iradiant.h"
+#include "icommandsystem.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "LayerControl.h"
@@ -52,7 +53,7 @@ public:
 	static void registerCommands();
 
 	// Static command target for "CreateNewLayer"
-	static void createLayer();
+	static void createLayer(const cmd::ArgumentList& args);
 
 	static LayerControlDialog& Instance();
 	static LayerControlDialogPtr& InstancePtr();
