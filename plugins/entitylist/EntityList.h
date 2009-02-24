@@ -4,6 +4,7 @@
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
+#include "icommandsystem.h"
 #include "imodule.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -84,7 +85,7 @@ public:
 	
 	/** greebo: Toggles the window (command target).
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 	
 	/** greebo: Contains the static instance. Use this
 	 * 			to access the other members

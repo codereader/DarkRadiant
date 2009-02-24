@@ -212,12 +212,12 @@ void RegionManager::removeRegionBrushes() {
 
 // Static members (used as command targets for EventManager)
 
-void RegionManager::disableRegion() {
+void RegionManager::disableRegion(const cmd::ArgumentList& args) {
 	GlobalRegion().disable();
 	SceneChangeNotify();
 }
 
-void RegionManager::setRegionXY() {
+void RegionManager::setRegionXY(const cmd::ArgumentList& args) {
 	// Obtain the current XY orthoview, if there is one
 	XYWndPtr xyWnd = GlobalXYWnd().getView(XY);
 	
@@ -242,7 +242,7 @@ void RegionManager::setRegionXY() {
 	SceneChangeNotify();
 }
 
-void RegionManager::setRegionFromBrush() {
+void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	// Check, if exactly one brush is selected
@@ -267,7 +267,7 @@ void RegionManager::setRegionFromBrush() {
 	}
 }
 
-void RegionManager::setRegionFromSelection() {
+void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	// Check, if there is anything selected
@@ -307,7 +307,7 @@ void RegionManager::traverseRegion(scene::INodePtr root, scene::NodeVisitor& nod
 	root->traverse(visitor);
 }
 
-void RegionManager::saveRegion() {
+void RegionManager::saveRegion(const cmd::ArgumentList& args) {
 	// Query the desired filename from the user
 	std::string filename = map::MapFileManager::getMapFilename(false, "Export region");
 	
@@ -345,11 +345,17 @@ void RegionManager::saveRegion() {
 }
 
 void RegionManager::initialiseCommands() {
-	GlobalEventManager().addCommand("SaveRegion", FreeCaller<RegionManager::saveRegion>());
-	GlobalEventManager().addCommand("RegionOff", FreeCaller<RegionManager::disableRegion>());
-	GlobalEventManager().addCommand("RegionSetXY", FreeCaller<RegionManager::setRegionXY>());
-	GlobalEventManager().addCommand("RegionSetBrush", FreeCaller<RegionManager::setRegionFromBrush>());
-	GlobalEventManager().addCommand("RegionSetSelection", FreeCaller<RegionManager::setRegionFromSelection>());
+	GlobalCommandSystem().addCommand("SaveRegion", saveRegion);
+	GlobalCommandSystem().addCommand("RegionOff", disableRegion);
+	GlobalCommandSystem().addCommand("RegionSetXY", setRegionXY);
+	GlobalCommandSystem().addCommand("RegionSetBrush", setRegionFromBrush);
+	GlobalCommandSystem().addCommand("RegionSetSelection", setRegionFromSelection);
+
+	GlobalEventManager().addCommand("SaveRegion", "SaveRegion");
+	GlobalEventManager().addCommand("RegionOff", "RegionOff");
+	GlobalEventManager().addCommand("RegionSetXY", "RegionSetXY");
+	GlobalEventManager().addCommand("RegionSetBrush", "RegionSetBrush");
+	GlobalEventManager().addCommand("RegionSetSelection", "RegionSetSelection");
 }
 
 } // namespace map

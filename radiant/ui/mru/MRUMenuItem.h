@@ -2,6 +2,7 @@
 #define MRUMENUITEM_H_
 
 #include <string>
+#include "icommandsystem.h"
 
 // Forward declaration
 typedef struct _GtkWidget GtkWidget; 
@@ -41,7 +42,7 @@ public:
 	operator GtkWidget* ();
 	
 	// Triggers loading the map represented by this widget 
-	void activate();
+	void activate(const cmd::ArgumentList& args);
 	
 	// Shows/hides the widget
 	void show();

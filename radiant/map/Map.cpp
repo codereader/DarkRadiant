@@ -693,24 +693,34 @@ void Map::loadPrefabAt(const Vector3& targetCoords) {
 	}
 }
 
-void Map::saveMapCopyAs() {
+void Map::saveMapCopyAs(const cmd::ArgumentList& args) {
 	GlobalMap().saveCopyAs();
 }
 
 void Map::registerCommands() {
-	GlobalEventManager().addCommand("NewMap", FreeCaller<Map::newMap>());
-	GlobalEventManager().addCommand("OpenMap", FreeCaller<Map::openMap>());
-	GlobalEventManager().addCommand("ImportMap", FreeCaller<Map::importMap>());
-	GlobalEventManager().addCommand("LoadPrefab", FreeCaller<Map::loadPrefab>());
-	GlobalEventManager().addCommand("SaveSelectedAsPrefab", FreeCaller<Map::saveSelectedAsPrefab>());
-	GlobalEventManager().addCommand("SaveMap", FreeCaller<Map::saveMap>());
-	GlobalEventManager().addCommand("SaveMapAs", FreeCaller<Map::saveMapAs>());
-	GlobalEventManager().addCommand("SaveMapCopyAs", FreeCaller<Map::saveMapCopyAs>());
-	GlobalEventManager().addCommand("SaveSelected", FreeCaller<Map::exportMap>());
+	GlobalCommandSystem().addCommand("NewMap", Map::newMap);
+	GlobalCommandSystem().addCommand("OpenMap", Map::openMap);
+	GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
+	GlobalCommandSystem().addCommand("LoadPrefab", Map::loadPrefab);
+	GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
+	GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
+	GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
+	GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
+	GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
+
+	GlobalEventManager().addCommand("NewMap", "NewMap");
+	GlobalEventManager().addCommand("OpenMap", "OpenMap");
+	GlobalEventManager().addCommand("ImportMap", "ImportMap");
+	GlobalEventManager().addCommand("LoadPrefab", "LoadPrefab");
+	GlobalEventManager().addCommand("SaveSelectedAsPrefab", "SaveSelectedAsPrefab");
+	GlobalEventManager().addCommand("SaveMap", "SaveMap");
+	GlobalEventManager().addCommand("SaveMapAs", "SaveMapAs");
+	GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
+	GlobalEventManager().addCommand("SaveSelected", "SaveSelected");
 }
 
 // Static command targets
-void Map::newMap() {
+void Map::newMap(const cmd::ArgumentList& args) {
 	if (GlobalMap().askForSave("New Map")) {
 		// Turn regioning off when starting a new map
 		GlobalRegion().disable();
@@ -720,7 +730,7 @@ void Map::newMap() {
 	}
 }
 
-void Map::openMap() {
+void Map::openMap(const cmd::ArgumentList& args) {
 	if (!GlobalMap().askForSave("Open Map"))
 		return;
 
@@ -736,7 +746,7 @@ void Map::openMap() {
 	}
 }
 
-void Map::importMap() {
+void Map::importMap(const cmd::ArgumentList& args) {
 	std::string filename = map::MapFileManager::getMapFilename(true,
 															   "Import map");
 
@@ -746,11 +756,11 @@ void Map::importMap() {
 	}
 }
 
-void Map::saveMapAs() {
+void Map::saveMapAs(const cmd::ArgumentList& args) {
 	GlobalMap().saveAs();
 }
 
-void Map::saveMap() {
+void Map::saveMap(const cmd::ArgumentList& args) {
 	if (GlobalMap().isUnnamed()) {
 		GlobalMap().saveAs();
 	}
@@ -760,7 +770,7 @@ void Map::saveMap() {
 	}
 }
 
-void Map::exportMap() {
+void Map::exportMap(const cmd::ArgumentList& args) {
 	std::string filename = map::MapFileManager::getMapFilename(
 								false, "Export selection");
 
@@ -769,11 +779,11 @@ void Map::exportMap() {
   	}
 }
 
-void Map::loadPrefab() {
+void Map::loadPrefab(const cmd::ArgumentList& args) {
 	GlobalMap().loadPrefabAt(Vector3(0,0,0));
 }
 
-void Map::saveSelectedAsPrefab() {
+void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args) {
 	std::string filename = 
 		map::MapFileManager::getMapFilename(false, "Save selected as Prefab", "prefab");
 	

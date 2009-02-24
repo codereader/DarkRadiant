@@ -160,7 +160,7 @@ gboolean DifficultyDialog::onWindowKeyPress(
 }
 
 // Static command target
-void DifficultyDialog::showDialog() {
+void DifficultyDialog::showDialog(const cmd::ArgumentList& args) {
 	// Construct a new instance, this enters the main loop
 	DifficultyDialog _editor;
 }

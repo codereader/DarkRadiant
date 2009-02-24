@@ -173,7 +173,7 @@ public:
 	virtual std::string getAcceleratorStr(const IEventPtr event, bool forMenu) = 0;
 	
 	// Creates a new command that calls the given callback when invoked  
-	virtual IEventPtr addCommand(const std::string& name, const Callback& callback, bool reactOnKeyUp = false) = 0;
+	//virtual IEventPtr addCommand(const std::string& name, const Callback& callback, bool reactOnKeyUp = false) = 0;
 
 	// Add a command and specify the statement to execute when triggered
 	virtual IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp = false) = 0;

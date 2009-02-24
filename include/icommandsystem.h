@@ -247,6 +247,11 @@ public:
 	virtual void addCommand(const std::string& name, Function func, 
 							const Signature& signature = Signature()) = 0;
 
+	/** 
+	 * Remove a named command.
+	 */
+	virtual void removeCommand(const std::string& name) = 0;
+
 	/**
 	 * greebo: Define a new statement, which consists of a name and a
 	 * string to exeute.

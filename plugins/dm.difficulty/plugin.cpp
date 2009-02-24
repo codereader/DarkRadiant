@@ -31,19 +31,18 @@ public:
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
 
 		return _dependencies;
 	}
 	
 	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
+		globalOutputStream() << getName() << "::initialiseModule called.\n";
 		
 		// Add the callback event
-		GlobalEventManager().addCommand(
-			"DifficultyEditor", 
-			FreeCaller<ui::DifficultyDialog::showDialog>()
-		);
+		GlobalCommandSystem().addCommand("DifficultyEditor",  ui::DifficultyDialog::showDialog);
+		GlobalEventManager().addCommand("DifficultyEditor", "DifficultyEditor");
 	
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();

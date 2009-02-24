@@ -4,6 +4,7 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "icommandsystem.h"
 
 #include "generic/callback.h"
 #include "modulesystem/StaticModule.h"
@@ -69,6 +70,7 @@ const StringSet& MainFrameLayoutManager::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;

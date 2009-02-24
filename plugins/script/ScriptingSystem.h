@@ -7,6 +7,7 @@
 
 #include "iscript.h"
 #include "PythonConsoleWriter.h"
+#include "icommandsystem.h"
 
 namespace script {
 
@@ -53,8 +54,8 @@ public:
 	 */
 	void initialise();
 
-	// For development purposes
-	void runTestScript();
+	// Runs a specific script
+	void runScript(const cmd::ArgumentList& args);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

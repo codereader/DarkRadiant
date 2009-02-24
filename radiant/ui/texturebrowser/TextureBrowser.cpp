@@ -301,7 +301,7 @@ void TextureBrowser::activeShadersChanged() {
 }
 
 // Static command target
-void TextureBrowser::toggle() {
+void TextureBrowser::toggle(const cmd::ArgumentList& args) {
 	GlobalGroupDialog().togglePage("textures");
 }
 
@@ -864,7 +864,8 @@ void TextureBrowser::registerPreferencesPage() {
 
 void TextureBrowser::construct() {
 	GlobalEventManager().addRegistryToggle("ShowInUse", RKEY_TEXTURES_HIDE_UNUSED);
-	GlobalEventManager().addCommand("ViewTextures", FreeCaller<TextureBrowser::toggle>());
+	GlobalCommandSystem().addCommand("ViewTextures", TextureBrowser::toggle);
+	GlobalEventManager().addCommand("ViewTextures", "ViewTextures");
 
 	TextureBrowser::registerPreferencesPage();
 }

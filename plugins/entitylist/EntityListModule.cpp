@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "imodule.h"
+#include "icommandsystem.h"
 #include "ieventmanager.h"
 #include "iradiant.h"
 #include "generic/callback.h"
@@ -29,6 +30,7 @@ const StringSet& EntityListModule::getDependencies() const {
 	
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 	
 	return _dependencies;
@@ -37,10 +39,8 @@ const StringSet& EntityListModule::getDependencies() const {
 void EntityListModule::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "EntityListModule::initialiseModule called\n";
 	
-	GlobalEventManager().addCommand(
-		"EntityList", 
-		FreeCaller<ui::EntityList::toggle>()
-	);
+	GlobalCommandSystem().addCommand("EntityList", ui::EntityList::toggle);
+	GlobalEventManager().addCommand("EntityList", "EntityList");
 }
 
 void EntityListModule::shutdownModule() {

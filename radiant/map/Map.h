@@ -5,6 +5,7 @@
 #include "imap.h"
 #include "inamespace.h"
 #include "imapresource.h"
+#include "icommandsystem.h"
 #include "moduleobserver.h"
 #include "math/Vector3.h"
 #include "signal/signal.h"
@@ -204,22 +205,22 @@ public:
 	void registerCommands();
 	
 	// Static command targets for connection to the EventManager
-	static void exportMap();
-	static void newMap();
-	static void openMap();
-	static void importMap();
-	static void saveMap();
-	static void saveMapAs();
+	static void exportMap(const cmd::ArgumentList& args);
+	static void newMap(const cmd::ArgumentList& args);
+	static void openMap(const cmd::ArgumentList& args);
+	static void importMap(const cmd::ArgumentList& args);
+	static void saveMap(const cmd::ArgumentList& args);
+	static void saveMapAs(const cmd::ArgumentList& args);
 
 	/** greebo: Queries a filename from the user and saves a copy 
 	 *          of the current map to the specified filename.
 	 */
-	static void saveMapCopyAs();
+	static void saveMapCopyAs(const cmd::ArgumentList& args);
 	
 	/** greebo: Asks the user for the .pfb file and imports/exports the file/selection
 	 */
-	static void loadPrefab();
-	static void saveSelectedAsPrefab(); 
+	static void loadPrefab(const cmd::ArgumentList& args);
+	static void saveSelectedAsPrefab(const cmd::ArgumentList& args); 
 
 private:
 	// If no worldspawn can be found in the scenegraph, this creates one

@@ -3,6 +3,7 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <string>
+#include "icommandsystem.h"
 #include "ColourScheme.h"
 #include <gdk/gdkevents.h>
 
@@ -93,7 +94,7 @@ private:
 	
 public:
 	// Command target
-	static void editColourSchemes();
+	static void editColourSchemes(const cmd::ArgumentList& args);
 }; // class ColourSchemeEditor
 
 } // namespace ui
