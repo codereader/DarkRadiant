@@ -19,7 +19,7 @@ build-stamp:  config.status
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE)
+	$(MAKE) -j2
 
 	touch $@
 
@@ -39,8 +39,7 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 
-	# Add here commands to install the package into debian/darkradiant.
-	$(MAKE) DESTDIR=$(CURDIR)/debian/darkradiant install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
 
 
 # Build architecture-independent files here.
@@ -52,7 +51,7 @@ binary-arch: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs ChangeLog
-#	dh_install
+	dh_install --sourcedir=debian/tmp
 #	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate
@@ -69,7 +68,7 @@ binary-arch: build install
 	dh_compress
 	dh_fixperms
 #	dh_perl
-#	dh_makeshlibs
+	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol

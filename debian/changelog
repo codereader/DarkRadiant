@@ -1,3 +1,10 @@
+darkradiant (0.9.11-1) unstable; urgency=low
+
+  * New upstream release
+  * Split DarkMod plugins into separate package
+
+ -- orbweaver <orbweaver3d@gmail.com>  Tue, 24 Feb 2009 12:42:50 +0000
+
 darkradiant (0.9.9-1) unstable; urgency=low
 
   * Install .desktop file in correct location
