@@ -758,12 +758,28 @@ void scaleTextureDown(const cmd::ArgumentList& args) {
 	scaleTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
-void rotateTextureClock(const cmd::ArgumentList& args) {
+void rotateTextureClock() {
 	rotateTexture(fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 
-void rotateTextureCounter(const cmd::ArgumentList& args) {
+void rotateTextureCounter() {
 	rotateTexture(-fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
+}
+
+void rotateTexture(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		globalOutputStream() << "Usage: rotateTexture [+1|-1]" << std::endl;
+		return;
+	}
+
+	if (args[0].getInt() > 0) {
+		// Clockwise
+		rotateTextureClock();
+	}
+	else {
+		// Counter-Clockwise
+		rotateTextureCounter();
+	}
 }
 
 /** greebo: Normalises the texture of the visited faces/patches.
