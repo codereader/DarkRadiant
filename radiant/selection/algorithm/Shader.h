@@ -2,6 +2,7 @@
 #define SELECTION_ALGORITHM_SHADER_H_
 
 #include <string>
+#include "icommandsystem.h"
 #include "math/Vector2.h"
 
 class TextureProjection;
@@ -48,18 +49,18 @@ namespace selection {
 	/** greebo: The command target of "CopyTexure". This tries to pick the shader
 	 * 			from the current selection and copies it to the clipboard.
 	 */
-	void pickShaderFromSelection();
+	void pickShaderFromSelection(const cmd::ArgumentList& args);
 	
 	/** greebo: The command target of "PasteTexture". This tries to get the Texturables
 	 * 			from the current selection and pastes the clipboard shader onto them.
 	 */
-	void pasteShaderToSelection();
+	void pasteShaderToSelection(const cmd::ArgumentList& args);
 	
 	/** greebo: The command target of "PasteTextureNatural". This tries to get 
 	 * 			the Texturables	from the current selection and 
 	 * 			pastes the clipboard shader "naturally" (undistorted) onto them.
 	 */
-	void pasteShaderNaturalToSelection();
+	void pasteShaderNaturalToSelection(const cmd::ArgumentList& args);
 	
 	/** greebo: Retrieves the texture projection from the current selection.
 	 * 
@@ -94,13 +95,13 @@ namespace selection {
 	 * 			S and T axes respectively. 
 	 * 			Passes the call to flipTexture() method above.
 	 */
-	void flipTextureS();
-	void flipTextureT();
+	void flipTextureS(const cmd::ArgumentList& args);
+	void flipTextureT(const cmd::ArgumentList& args);
 	
 	/** greebo: Applies the texture "naturally" to the selected
 	 * primitives. Natural makes use of the currently active default scale. 
 	 */
-	void naturalTexture();
+	void naturalTexture(const cmd::ArgumentList& args);
 	
 	/** greebo: Shifts the texture of the current selection about
 	 * the specified Vector2
@@ -121,12 +122,41 @@ namespace selection {
 	void scaleTextureDown();
 	void rotateTextureClock();
 	void rotateTextureCounter();
+
+	/**
+	 * Command target to rotate the texture.
+	 * 
+	 * args[0]: Pass positive values to rotate clockwise,
+	 *          negative values for counter-clockwise rotation.
+	 */
+	void rotateTexture(const cmd::ArgumentList& args);
+
+	/**
+	 * Command target to scale the texture.
+	 * 
+	 * args[0]: Vector2 which contains the relative scale values 
+	 *          in the s and t axis (0 = 100%).
+	 * args[0]: String: [up|down|left|right] which takes the values
+	 *          from the SurfaceInspector.
+	 *
+	 *          Example: <0.05, 0> results in a 105% scale in the s direction.
+	 */
+	void scaleTexture(const cmd::ArgumentList& args);
+
+	/**
+	 * Command target to shift the texture.
+	 * 
+	 * args[0]: Vector2 which contains the s/t shift values 
+	 * args[0]: String: [up|down|left|right] which takes the values
+	 *          from the SurfaceInspector.
+	 */
+	void shiftTextureCmd(const cmd::ArgumentList& args);
 	
 	/** greebo: This translates the texture coordinates towards the origin
 	 * 			in texture space without altering the appearance.
 	 * 			The texture is translated in multiples of 1.0 
 	 */
-	void normaliseTexture();
+	void normaliseTexture(const cmd::ArgumentList& args);
 	
 	/** greebo: Replaces all <find> shaders with <replace>.
 	 * 

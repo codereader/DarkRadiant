@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ENTITY_H)
 #define INCLUDED_ENTITY_H
 
+#include "icommandsystem.h"
 #include "scenelib.h"
 
 // CONSTANTS
@@ -78,6 +79,6 @@ void Entity_Construct();
 void Entity_Destroy();
 
 // Triggers a SkinCache refresh
-void ReloadSkins();
+void ReloadSkins(const cmd::ArgumentList& args);
 
 #endif

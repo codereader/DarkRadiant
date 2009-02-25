@@ -2,6 +2,7 @@
 #define ECLASSTREE_H_
 
 #include "iradiant.h"
+#include "icommandsystem.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <boost/shared_ptr.hpp>
 
@@ -48,7 +49,7 @@ class EClassTree :
 
 public:
 	// Shows the singleton class (static command target)
-	static void showWindow();
+	static void showWindow(const cmd::ArgumentList& args);
 	
 private:
 	virtual void _preShow();

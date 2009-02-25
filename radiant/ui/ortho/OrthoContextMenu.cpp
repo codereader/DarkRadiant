@@ -136,7 +136,13 @@ OrthoContextMenu::OrthoContextMenu()
 	if (ev != NULL) {
 		ev->connectWidget(_widgets[WIDGET_MAKE_VISPORTAL]);
 	}
-	
+
+	// Connect the "Revert to Worldspawn" menu item to the corresponding event
+	ev = GlobalEventManager().findEvent("RevertToWorldspawn");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_REVERT_WORLDSPAWN]);
+	}
+
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ENTITY]), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PLAYERSTART]), "activate", G_CALLBACK(callbackAddPlayerStart), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_PLAYERSTART]), "activate", G_CALLBACK(callbackMovePlayerStart), this);
@@ -146,7 +152,6 @@ OrthoContextMenu::OrthoContextMenu()
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PREFAB]), "activate", G_CALLBACK(callbackAddPrefab), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_CONVERT_STATIC]), "activate", G_CALLBACK(callbackConvertToStatic), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_REVERT_WORLDSPAWN]), "activate", G_CALLBACK(callbackRevertToWorldspawn), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_ENTITY]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MODEL]);
@@ -511,13 +516,6 @@ void OrthoContextMenu::callbackConvertToStatic(GtkMenuItem* item, OrthoContextMe
 	// Create a func_static entity. Only brushes can be selected if this menu item is
 	// enabled.
 	Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);	
-}
-
-void OrthoContextMenu::callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self) {
-	UndoableCommand command("revertToWorldspawn");	
-
-	// Pass the call to the according method
-	selection::algorithm::revertGroupToWorldSpawn();	
 }
 
 void OrthoContextMenu::callbackAddToLayer(int layerID) {

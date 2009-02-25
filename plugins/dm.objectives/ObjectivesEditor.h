@@ -4,6 +4,7 @@
 #include "Objective.h"
 #include "ObjectiveEntity.h"
 
+#include "icommandsystem.h"
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtktreestore.h>
@@ -102,7 +103,7 @@ public:
 	/**
 	 * Static method to display the Objectives Editor dialog.
 	 */
-	static void displayDialog();
+	static void displayDialog(const cmd::ArgumentList& args);
 };
 
 }

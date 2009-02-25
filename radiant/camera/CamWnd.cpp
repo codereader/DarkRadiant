@@ -168,7 +168,9 @@ gboolean selection_motion_freemove(GtkWidget *widget, GdkEventMotion *event, Win
 
 // greebo: The GTK Callback during freemove mode for scroll events.
 gboolean wheelmove_scroll(GtkWidget* widget, GdkEventScroll* event, CamWnd* camwnd) {
-	
+	// Set the GTK focus to this widget
+	gtk_widget_grab_focus(widget);
+
 	// Determine the direction we are moving.
 	if (event->direction == GDK_SCROLL_UP) {
 		camwnd->getCamera().freemoveUpdateAxes();
@@ -186,6 +188,9 @@ gboolean wheelmove_scroll(GtkWidget* widget, GdkEventScroll* event, CamWnd* camw
  * to the according window observer. */
 gboolean selection_button_press(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
 	
+	// Set the GTK focus to this widget
+	gtk_widget_grab_focus(widget);
+
 	// Check for the correct event type
 	if (event->type == GDK_BUTTON_PRESS) {
 		observer->onMouseDown(WindowVector(event->x, event->y), event);
@@ -264,6 +269,8 @@ CamWnd::CamWnd() :
 	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
 	GTK_WIDGET_SET_FLAGS (glWidget, GTK_CAN_FOCUS);
 	gtk_widget_set_size_request(glWidget, CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y);
+
+	g_object_set(m_gl_widget, "can-focus", TRUE, NULL);
 
 	m_sizeHandler = g_signal_connect(G_OBJECT(glWidget), "size_allocate", G_CALLBACK(camera_size_allocate), this);
 	m_exposeHandler = g_signal_connect(G_OBJECT(glWidget), "expose_event", G_CALLBACK(camera_expose), this);

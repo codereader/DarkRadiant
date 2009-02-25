@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "entity.h"
 
 #include "ieventmanager.h"
+#include "icommandsystem.h"
 #include "ientity.h"
 #include "iregistry.h"
 #include "ieclass.h"
@@ -74,7 +75,7 @@ public:
 	}
 };
 
-void ReloadSkins() {
+void ReloadSkins(const cmd::ArgumentList& args) {
 	GlobalModelSkinCache().refresh();
 	RefreshSkinWalker walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
@@ -155,7 +156,7 @@ void Scene_EntitySetKeyValue_Selected(const char* key, const char* value)
 	//GlobalSceneGraph().traverse(EntitySetKeyValueSelected(key, value)); // TODO?
 }
 
-void Entity_connectSelected() {
+void Entity_connectSelected(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().countSelected() == 2) {
 		GlobalEntityCreator().connectEntities(
 			GlobalSelectionSystem().penultimateSelected(),	// source
@@ -330,22 +331,27 @@ void createCurve(const std::string& key) {
 	}
 }
 
-void createCurveNURBS() {
+void createCurveNURBS(const cmd::ArgumentList& args) {
 	createCurve(GlobalRegistry().get(RKEY_CURVE_NURBS_KEY));
 }
 
-void createCurveCatmullRom() {
+void createCurveCatmullRom(const cmd::ArgumentList& args) {
 	createCurve(GlobalRegistry().get(RKEY_CURVE_CATMULLROM_KEY));
 }
 
 } // namespace entity
 
 void Entity_Construct() {
-	GlobalEventManager().addCommand("ConnectSelection", FreeCaller<Entity_connectSelected>());
-	GlobalEventManager().addCommand("BindSelection", FreeCaller<selection::algorithm::bindEntities>());
+	GlobalCommandSystem().addCommand("ConnectSelection", Entity_connectSelected);
+	GlobalCommandSystem().addCommand("BindSelection", selection::algorithm::bindEntities);
+	GlobalCommandSystem().addCommand("CreateCurveNURBS", entity::createCurveNURBS);
+	GlobalCommandSystem().addCommand("CreateCurveCatmullRom", entity::createCurveCatmullRom);
+
+	GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
+	GlobalEventManager().addCommand("BindSelection", "BindSelection");
 	GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
-	GlobalEventManager().addCommand("CreateCurveNURBS", FreeCaller<entity::createCurveNURBS>());
-	GlobalEventManager().addCommand("CreateCurveCatmullRom", FreeCaller<entity::createCurveCatmullRom>());
+	GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
+	GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
 }
 
 void Entity_Destroy()

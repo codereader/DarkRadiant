@@ -2,10 +2,11 @@
 
 #include "ieventmanager.h"
 #include "iregistry.h"
+#include "icommandsystem.h"
 #include "map/Map.h"
 #include "entitylib.h"
 #include "string/string.h"
-#include "generic/callback.h"
+#include <boost/bind.hpp>
 
 namespace map {
 	
@@ -26,16 +27,24 @@ void MapPositionManager::initialise() {
 		// Allocate a new MapPosition object and store the shared_ptr
 		_positions[i] = MapPositionPtr(new MapPosition(i));
 					
-		// Add the SAVE command to the eventmanager and point it to the member
+		// Add the load/save commands to the eventmanager and point it to the member
+		GlobalCommandSystem().addCommand(
+			SAVE_COMMAND_ROOT + intToStr(i),
+			boost::bind(&MapPosition::store, _positions[i].get(), _1)
+		);
+		GlobalCommandSystem().addCommand(
+			SAVE_COMMAND_ROOT + intToStr(i),
+			boost::bind(&MapPosition::recall, _positions[i].get(), _1)
+		);
+
 		GlobalEventManager().addCommand(
 			SAVE_COMMAND_ROOT + intToStr(i),
-			MemberCaller<MapPosition, &MapPosition::store>(*_positions[i])
+			SAVE_COMMAND_ROOT + intToStr(i)
 		);
 		
-		// Add the LOAD command to the eventmanager and point it to the member
 		GlobalEventManager().addCommand(
 			LOAD_COMMAND_ROOT + intToStr(i),
-			MemberCaller<MapPosition, &MapPosition::recall>(*_positions[i])
+			LOAD_COMMAND_ROOT + intToStr(i)
 		);
 	}
 

@@ -136,6 +136,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgdkglext", "libgdkglext\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "script", "script.vcproj", "{979A38FE-BE30-4121-845C-B705461BB1B0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commandsystem", "commandsystem.vcproj", "{3E374D7E-B371-4373-9700-AA896E530C85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -480,6 +482,14 @@ Global
 		{979A38FE-BE30-4121-845C-B705461BB1B0}.Release|Win32.Build.0 = Release|Win32
 		{979A38FE-BE30-4121-845C-B705461BB1B0}.Release|x64.ActiveCfg = Release|x64
 		{979A38FE-BE30-4121-845C-B705461BB1B0}.Release|x64.Build.0 = Release|x64
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Debug|Win32.Build.0 = Debug|Win32
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Debug|x64.ActiveCfg = Debug|x64
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Debug|x64.Build.0 = Debug|x64
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Release|Win32.ActiveCfg = Release|Win32
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Release|Win32.Build.0 = Release|Win32
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Release|x64.ActiveCfg = Release|x64
+		{3E374D7E-B371-4373-9700-AA896E530C85}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

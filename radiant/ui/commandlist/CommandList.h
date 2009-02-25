@@ -2,6 +2,7 @@
 #define COMMANDLIST_H_
 
 #include <string>
+#include "icommandsystem.h"
 #include "gtk/gtkwidget.h"
 #include "gtk/gtkliststore.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
@@ -34,7 +35,7 @@ public:
 	
 	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
-	static void showDialog();
+	static void showDialog(const cmd::ArgumentList& args);
 	
 private:
 	// Handles the assignment of a new shortcut to the selected row

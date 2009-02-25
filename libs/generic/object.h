@@ -87,11 +87,12 @@ inline void constructor(Type& object, const T1& t1, const T2& t2, const T3& t3, 
   new(&object) Type(t1, t2, t3, t4, t5, t6, t7, t8); 
 }
 
+/* greebo: Commented this out, this was conflicting with boost headers.
 template<typename Type>
 inline void destructor(Type& object)
 {
   object.~Type();
-}
+}*/
 
 
 

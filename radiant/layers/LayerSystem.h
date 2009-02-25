@@ -111,7 +111,6 @@ public:
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
-	virtual void shutdownModule();
 
 private:
 	// Internal event, updates the scenegraph

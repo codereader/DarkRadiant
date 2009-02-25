@@ -35,7 +35,7 @@ MRUMenuItem::operator GtkWidget* () {
 	return _widget;
 }
 
-void MRUMenuItem::activate() {
+void MRUMenuItem::activate(const cmd::ArgumentList& args) {
 	// Only pass the call if the MenuItem is not the empty menu item (with index == 0)
 	if (_label != "" && _index > 0) {
 		// Pass the call back to the main MRU class to do the logistics

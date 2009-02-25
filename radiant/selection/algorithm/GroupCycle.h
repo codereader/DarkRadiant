@@ -2,6 +2,7 @@
 #define GROUPCYCLE_H_
 
 #include <vector>
+#include "icommandsystem.h"
 #include "scenelib.h"
 
 namespace selection {
@@ -46,8 +47,8 @@ public:
 	
 	// The targets for the according Events (have to be static to allow
 	// them being used in FreeCaller<> templates instead of MemberCallers.
-	static void cycleBackward();
-	static void cycleForward();
+	static void cycleBackward(const cmd::ArgumentList& args);
+	static void cycleForward(const cmd::ArgumentList& args);
 	
 	/** greebo: This contains the static instance of this class
 	 */

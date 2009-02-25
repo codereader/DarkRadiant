@@ -94,6 +94,8 @@ XYWnd::XYWnd(int id) :
 	GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
 	gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
 
+	g_object_set(m_gl_widget, "can-focus", TRUE, NULL);
+
 	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(callbackSizeAllocate), this);
 	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(callbackExpose), this);
 
@@ -1580,6 +1582,10 @@ void XYWnd::readStateFromNode(const xml::Node& node) {
  * it checks for the correct event type and passes the call to the according xy view window. 
  */
 gboolean XYWnd::callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self) {
+
+	// Move the focus to this GL widget
+	gtk_widget_grab_focus(widget);
+
 	if (event->type == GDK_BUTTON_PRESS) {
 
 		// Put the focus on the xy view that has been clicked on

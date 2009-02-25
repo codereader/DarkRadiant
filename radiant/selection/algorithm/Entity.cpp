@@ -69,7 +69,7 @@ void setEntityClassname(const std::string& classname) {
 	// The destructor of the classNameSetter will rename the entities
 }
 
-void bindEntities() {
+void bindEntities(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
 	if (info.totalCount == 2 && info.entityCount == 2) {

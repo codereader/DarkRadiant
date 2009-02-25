@@ -12,6 +12,7 @@
 #include "ui/einspector/EntityInspector.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
+#include <boost/bind.hpp>
 
 namespace ui {
 
@@ -53,10 +54,11 @@ void FloatingLayout::activate() {
 	}
 
 	// Add the toggle max/min command for floating windows
-	GlobalEventManager().addCommand("ToggleCameraFullScreen", 
-		MemberCaller<gtkutil::TransientWindow, 
-					 &gtkutil::TransientWindow::toggleFullscreen>(*_floatingCamWnd)
+	GlobalCommandSystem().addCommand("ToggleCameraFullScreen", 
+		boost::bind(&FloatingLayout::toggleCameraFullScreen, this, _1)
 	);
+
+	GlobalEventManager().addCommand("ToggleCameraFullScreen", "ToggleCameraFullScreen");
 
 	GtkWidget* page = gtkutil::FramedWidget(
 		GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalGroupDialog().getDialogWindow()))
@@ -109,6 +111,7 @@ void FloatingLayout::deactivate() {
 
 		// De-register commands
 		GlobalEventManager().removeEvent("ToggleCameraFullScreen");
+		GlobalCommandSystem().removeCommand("ToggleCameraFullScreen");
 
 		IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
 		if (!ev->empty()) {
@@ -121,6 +124,10 @@ void FloatingLayout::deactivate() {
 		// Release the object
 		_floatingCamWnd = gtkutil::PersistentTransientWindowPtr();
 	}
+}
+
+void FloatingLayout::toggleCameraFullScreen(const cmd::ArgumentList& args) {
+	_floatingCamWnd->toggleFullscreen();
 }
 
 // The creation function, needed by the mainframe layout manager

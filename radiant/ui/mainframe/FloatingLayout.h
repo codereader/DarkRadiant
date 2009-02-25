@@ -1,6 +1,7 @@
 #ifndef _FLOATING_LAYOUT_H_
 #define _FLOATING_LAYOUT_H_
 
+#include "icommandsystem.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "imainframelayout.h"
@@ -26,6 +27,8 @@ public:
 	virtual std::string getName();
 	virtual void activate();
 	virtual void deactivate();
+
+	void toggleCameraFullScreen(const cmd::ArgumentList& args);
 
 	// The creation function, needed by the mainframe layout manager
 	static FloatingLayoutPtr CreateInstance();

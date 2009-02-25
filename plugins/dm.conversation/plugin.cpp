@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "ieventmanager.h"
+#include "icommandsystem.h"
 #include "iuimanager.h"
 #include "generic/callback.h"
 
@@ -26,6 +27,7 @@ public:
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
 
 		return _dependencies;
@@ -35,10 +37,8 @@ public:
 		globalOutputStream() << getName() << "::initialiseModule called.\n";
 		
 		// Add the callback event
-		GlobalEventManager().addCommand(
-			"ConversationEditor", 
-			FreeCaller<ui::ConversationDialog::showDialog>()
-		);
+		GlobalCommandSystem().addCommand("ConversationEditor", ui::ConversationDialog::showDialog);
+		GlobalEventManager().addCommand("ConversationEditor", "ConversationEditor");
 	
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();

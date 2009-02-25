@@ -22,19 +22,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_SELECT_H)
 #define INCLUDED_SELECT_H
 
+#include "icommandsystem.h"
 #include "math/Vector3.h"
 
 void Select_GetBounds(Vector3& mins, Vector3& maxs);
 
-void Selection_Flipx();
-void Selection_Flipy();
-void Selection_Flipz();
-void Selection_Rotatex();
-void Selection_Rotatey();
-void Selection_Rotatez();
+void Selection_Flipx(const cmd::ArgumentList& args);
+void Selection_Flipy(const cmd::ArgumentList& args);
+void Selection_Flipz(const cmd::ArgumentList& args);
+void Selection_Rotatex(const cmd::ArgumentList& args);
+void Selection_Rotatey(const cmd::ArgumentList& args);
+void Selection_Rotatez(const cmd::ArgumentList& args);
 
-void Selection_MoveDown();
-void Selection_MoveUp();
+void Selection_MoveDown(const cmd::ArgumentList& args);
+void Selection_MoveUp(const cmd::ArgumentList& args);
 
 // updating workzone to a given brush (depends on current view)
 

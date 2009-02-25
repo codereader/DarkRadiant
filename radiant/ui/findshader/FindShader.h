@@ -2,6 +2,7 @@
 #define FINDSHADER_H_
 
 #include <string>
+#include "icommandsystem.h"
 #include "gtk/gtkwidget.h"
 #include "gtk/gtkeditable.h"
 #include "gtk/gtkliststore.h"
@@ -44,7 +45,7 @@ public:
 	
 	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
-	static void showDialog();
+	static void showDialog(const cmd::ArgumentList& args);
 	
 private:
 

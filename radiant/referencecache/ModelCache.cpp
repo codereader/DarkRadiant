@@ -13,6 +13,7 @@
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "NullModelLoader.h"
+#include <boost/bind.hpp>
 
 namespace model {
 
@@ -141,7 +142,7 @@ void ModelCache::clear() {
 	_enabled = true;
 }
 
-void ModelCache::refreshModels() {
+void ModelCache::refreshModels(const cmd::ArgumentList& args) {
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Models");
 	
@@ -169,6 +170,7 @@ const StringSet& ModelCache::getDependencies() const {
 		_dependencies.insert(MODULE_MODELLOADER + "ASE");
 		_dependencies.insert(MODULE_MODELLOADER + "LWO");
 		_dependencies.insert(MODULE_MODELLOADER + "MD5MESH");
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
@@ -177,10 +179,11 @@ const StringSet& ModelCache::getDependencies() const {
 void ModelCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "ModelCache::initialiseModule called.\n";
 
-	GlobalEventManager().addCommand(
+	GlobalCommandSystem().addCommand(
 		"RefreshModels", 
-		MemberCaller<ModelCache, &ModelCache::refreshModels>(*this)
+		boost::bind(&ModelCache::refreshModels, this, _1)
 	);
+	GlobalEventManager().addCommand("RefreshModels", "RefreshModels");
 }
 
 void ModelCache::shutdownModule() {

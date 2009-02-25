@@ -177,7 +177,7 @@ void GetSelectionIndex(int *ent, int *brush)
 	*ent = static_cast<int>(count_entity);
 }
 
-void DoFind()
+void DoFind(const cmd::ArgumentList& args)
 {
   ModalDialog dialog;
   GtkEntry* entity;

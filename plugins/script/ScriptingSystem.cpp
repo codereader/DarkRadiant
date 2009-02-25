@@ -2,7 +2,6 @@
 
 #include "itextstream.h"
 #include "iradiant.h"
-#include "ieventmanager.h"
 
 #include "StartupListener.h"
 
@@ -134,9 +133,10 @@ void ScriptingSystem::initialise() {
 	executeScriptFile("init.py");
 }
 
-void ScriptingSystem::runTestScript() {
+void ScriptingSystem::runScript(const cmd::ArgumentList& args) {
 	// Start the test script
-	executeScriptFile("test.py");
+	if (args.empty()) return;
+	executeScriptFile(args[0].getString());
 }
 
 // RegisterableModule implementation
@@ -150,7 +150,7 @@ const StringSet& ScriptingSystem::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_RADIANT);
-		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
@@ -182,7 +182,11 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
 	addInterface("Map", MapInterfacePtr(new MapInterface));
 
-	GlobalEventManager().addCommand("RunTestScript", MemberCaller<ScriptingSystem, &ScriptingSystem::runTestScript>(*this));
+	GlobalCommandSystem().addCommand(
+		"RunScript", 
+		boost::bind(&ScriptingSystem::runScript, this, _1),
+		cmd::ARGTYPE_STRING
+	);
 }
 
 void ScriptingSystem::shutdownModule() {

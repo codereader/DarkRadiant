@@ -16,6 +16,8 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 // greebo: Nasty global that contains all the selected face instances
 extern FaceInstanceSet g_SelectedFaceInstances;
 
@@ -355,7 +357,7 @@ void pasteTextureCoords(SelectionTest& test) {
 	ui::SurfaceInspector::Instance().update();
 }
 
-void pickShaderFromSelection() {
+void pickShaderFromSelection(const cmd::ArgumentList& args) {
 	GlobalShaderClipboard().clear();
 	
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
@@ -414,7 +416,7 @@ public:
 	}
 };
 
-void pasteShaderToSelection() {
+void pasteShaderToSelection(const cmd::ArgumentList& args) {
 	if (GlobalShaderClipboard().getSource().empty()) {
 		return;
 	}
@@ -430,7 +432,7 @@ void pasteShaderToSelection() {
 	ui::SurfaceInspector::Instance().update();
 }
 
-void pasteShaderNaturalToSelection() {
+void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
 	if (GlobalShaderClipboard().getSource().empty()) {
 		return;
 	}
@@ -536,11 +538,11 @@ void flipTexture(unsigned int flipAxis) {
 	SceneChangeNotify();
 }
 
-void flipTextureS() {
+void flipTextureS(const cmd::ArgumentList& args) {
 	flipTexture(0);
 }
 
-void flipTextureT() {
+void flipTextureT(const cmd::ArgumentList& args) {
 	flipTexture(1);
 }
 
@@ -569,7 +571,7 @@ public:
 	}
 };
 
-void naturalTexture() {
+void naturalTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("naturalTexture");
 	
 	// Patches
@@ -766,6 +768,83 @@ void rotateTextureCounter() {
 	rotateTexture(-fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
 }
 
+void rotateTexture(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		globalOutputStream() << "Usage: TexRotate [+1|-1]" << std::endl;
+		return;
+	}
+
+	if (args[0].getInt() > 0) {
+		// Clockwise
+		rotateTextureClock();
+	}
+	else {
+		// Counter-Clockwise
+		rotateTextureCounter();
+	}
+}
+
+void scaleTexture(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		globalOutputStream() << "Usage: TexScale 's t'" << std::endl;
+		globalOutputStream() << "       TexScale [up|down|left|right]" << std::endl;
+		globalOutputStream() << "Example: TexScale '0.05 0' performs" 
+			<< " a 105% scale in the s direction." << std::endl;
+		globalOutputStream() << "Example: TexScale up performs" 
+			<< " a vertical scale using the step value defined in the Surface Inspector." 
+			<< std::endl;
+		return;
+	}
+
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	
+	if (arg == "up") {
+		scaleTextureUp();
+	}
+	else if (arg == "down") {
+		scaleTextureDown();
+	}
+	if (arg == "left") {
+		scaleTextureLeft();
+	}
+	if (arg == "right") {
+		scaleTextureRight();
+	}
+	else {
+		// No special argument, retrieve the Vector2 argument and pass the call
+		scaleTexture(args[0].getVector2());
+	}
+}
+
+void shiftTextureCmd(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		globalOutputStream() << "Usage: TexShift 's t'" << std::endl
+			 << "       TexShift [up|down|left|right]" << std::endl
+			 << "[up|down|left|right| takes the step values " 
+			 << "from the Surface Inspector." << std::endl;
+		return;
+	}
+
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	
+	if (arg == "up") {
+		shiftTextureUp();
+	}
+	else if (arg == "down") {
+		shiftTextureDown();
+	}
+	if (arg == "left") {
+		shiftTextureLeft();
+	}
+	if (arg == "right") {
+		shiftTextureRight();
+	}
+	else {
+		// No special argument, retrieve the Vector2 argument and pass the call
+		shiftTexture(args[0].getVector2());
+	}
+}
+
 /** greebo: Normalises the texture of the visited faces/patches.
  */
 class TextureNormaliser :
@@ -781,7 +860,7 @@ public:
 	}
 };
 
-void normaliseTexture() {
+void normaliseTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("normaliseTexture");
 	
 	TextureNormaliser normaliser;

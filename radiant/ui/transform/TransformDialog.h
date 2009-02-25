@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include "iselection.h"
+#include "icommandsystem.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -131,7 +132,7 @@ public:
 	/** greebo: The command target compatible with FreeCaller<> to connect
 	 * 			this method to the EventManager.
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 
 private:
 	static TransformDialogPtr& InstancePtr();

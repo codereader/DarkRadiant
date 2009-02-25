@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<commandsystem>
+	<!-- These are the default statements used by vanilla DarkRadiant, don't remove these -->
+	<binds>
+		<!-- Brush cuboid commands -->
+		<bind name="Brush3Sided" value="BrushMakeSided 3" readonly="1" />
+		<bind name="Brush4Sided" value="BrushMakeSided 4" readonly="1" />
+		<bind name="Brush5Sided" value="BrushMakeSided 5" readonly="1" />
+		<bind name="Brush6Sided" value="BrushMakeSided 6" readonly="1" />
+		<bind name="Brush7Sided" value="BrushMakeSided 7" readonly="1" />
+		<bind name="Brush8Sided" value="BrushMakeSided 8" readonly="1" />
+		<bind name="Brush9Sided" value="BrushMakeSided 9" readonly="1" />
+		<!-- Prefab commands -->
+		<bind name="BrushCuboid" value="BrushMakePrefab 0" readonly="1" />
+		<bind name="BrushPrism" value="BrushMakePrefab 1" readonly="1" />
+		<bind name="BrushCone" value="BrushMakePrefab 2" readonly="1" />
+		<bind name="BrushSphere" value="BrushMakePrefab 3" readonly="1" />
+		<!-- Texture Manipulation -->
+		<bind name="TexRotateClock" value="TexRotate 1" readonly="1" />
+		<bind name="TexRotateCounter" value="TexRotate -1" readonly="1" />
+		<bind name="TexScaleUp" value="TexScale up" readonly="1" />
+		<bind name="TexScaleDown" value="TexScale down" readonly="1" />
+		<bind name="TexScaleLeft" value="TexScale left" readonly="1" />
+		<bind name="TexScaleRight" value="TexScale right" readonly="1" />
+		<bind name="TexShiftUp" value="TexShift up" readonly="1" />
+		<bind name="TexShiftDown" value="TexShift down" readonly="1" />
+		<bind name="TexShiftLeft" value="TexShift left" readonly="1" />
+		<bind name="TexShiftRight" value="TexShift right" readonly="1" />
+	</binds>
+</commandsystem>

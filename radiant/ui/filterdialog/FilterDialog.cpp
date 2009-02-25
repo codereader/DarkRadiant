@@ -264,7 +264,7 @@ void FilterDialog::updateWidgetSensitivity() {
 	gtk_widget_show(_widgets[WIDGET_VIEW_FILTER_BUTTON]);
 }
 
-void FilterDialog::showDialog() {
+void FilterDialog::showDialog(const cmd::ArgumentList& args) {
 	// Instantiate a new instance, blocks GTK
 	FilterDialog instance;
 }

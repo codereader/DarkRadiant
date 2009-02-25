@@ -1,6 +1,7 @@
 #ifndef MEDIABROWSER_H_
 #define MEDIABROWSER_H_
 
+#include "icommandsystem.h"
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "gtkutil/menu/PopupMenu.h"
@@ -106,7 +107,7 @@ public:
 	/** 
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: Registers the preference page.

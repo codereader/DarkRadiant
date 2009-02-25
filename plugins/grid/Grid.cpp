@@ -3,6 +3,7 @@
 #include <iostream>
 #include <map>
 #include "imodule.h"
+#include "icommandsystem.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
@@ -12,6 +13,7 @@
 #include "signal/signal.h"
 
 #include "GridItem.h"
+#include <boost/bind.hpp>
 
 	namespace {
 		const std::string RKEY_DEFAULT_GRID_SIZE = "user/ui/grid/defaultGridPower";
@@ -33,6 +35,7 @@ public:
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_RADIANT);
@@ -122,8 +125,11 @@ public:
 			GlobalEventManager().addToggle(toggleName, GridItem::ActivateCaller(gridItem)); 
 		}
 		
-		GlobalEventManager().addCommand("GridDown", MemberCaller<GridManager, &GridManager::gridDown>(*this));
-		GlobalEventManager().addCommand("GridUp", MemberCaller<GridManager, &GridManager::gridUp>(*this));
+		GlobalCommandSystem().addCommand("GridDown", boost::bind(&GridManager::gridDownCmd, this, _1));
+		GlobalCommandSystem().addCommand("GridUp", boost::bind(&GridManager::gridUpCmd, this, _1));
+		
+		GlobalEventManager().addCommand("GridDown", "GridDown");
+		GlobalEventManager().addCommand("GridUp", "GridUp");
 	}
 	
 	ComboBoxValueList getGridList() {
@@ -151,6 +157,10 @@ public:
 		_gridChangeCallbacks();
 	}
 	
+	void gridDownCmd(const cmd::ArgumentList& args) {
+		gridDown();
+	}
+
 	void gridDown() {
 		if (_activeGridSize > GRID_0125) {
 			int _activeGridIndex = static_cast<int>(_activeGridSize);
@@ -159,6 +169,10 @@ public:
 		}
 	}
 	
+	void gridUpCmd(const cmd::ArgumentList& args) {
+		gridUp();
+	}
+
 	void gridUp() {
 		if (_activeGridSize < GRID_256) {
 			int _activeGridIndex = static_cast<int>(_activeGridSize);
