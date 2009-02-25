@@ -7,6 +7,8 @@
 #include <gtk/gtkbutton.h>
 #include <gdk/gdkkeysyms.h>
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 namespace ui {
 
 const std::size_t CommandEntry::DEFAULT_HISTORY_SIZE = 100;
@@ -88,6 +90,8 @@ void CommandEntry::historyMoveTowardsPast() {
 	gtk_entry_set_text(GTK_ENTRY(_entry), histEntry.c_str());
 	// Move the cursor to the last position
 	gtk_editable_set_position(GTK_EDITABLE(_entry), -1);
+
+	_previousCompletionPrefix.clear();
 }
 
 void CommandEntry::historyMoveTowardsPresent() {
@@ -101,6 +105,8 @@ void CommandEntry::historyMoveTowardsPresent() {
 	gtk_entry_set_text(GTK_ENTRY(_entry), histEntry.c_str());
 	// Move the cursor to the last position
 	gtk_editable_set_position(GTK_EDITABLE(_entry), -1);
+
+	_previousCompletionPrefix.clear();
 }
 
 void CommandEntry::executeCurrentStatement() {
@@ -126,8 +132,67 @@ void CommandEntry::executeCurrentStatement() {
 	gtk_entry_set_text(GTK_ENTRY(_entry), "");
 }
 
+void CommandEntry::moveAutoCompletion(int direction) {
+	// Get the current prefix
+	std::string prefixOrig = gtk_entry_get_text(GTK_ENTRY(_entry));
+	std::string prefix = boost::algorithm::to_lower_copy(prefixOrig);
+
+	if (prefix.empty()) {
+		_previousCompletionPrefix.clear();
+		_curCompletionIndex = 0;
+		return;
+	}
+
+	// Cut off the selected part
+	gint startpos = 0;
+	gint endpos = 0;
+	if (gtk_editable_get_selection_bounds(GTK_EDITABLE(_entry), &startpos, &endpos)) {
+		prefix = prefix.substr(0, startpos);
+	}
+
+	cmd::AutoCompletionInfo info = GlobalCommandSystem().getAutoCompletionInfo(prefix);
+
+	if (_previousCompletionPrefix != prefix) {
+		// Prefix has changed write a new list of candidates
+		globalOutputStream() << ">> " << prefixOrig << std::endl;
+
+		for (cmd::AutoCompletionInfo::Candidates::const_iterator i = info.candidates.begin();
+			i != info.candidates.end(); ++i)
+		{
+			globalOutputStream() << *i << std::endl;
+		}
+	}
+
+	if (info.candidates.empty()) {
+		globalOutputStream() << "No matches for " << prefixOrig << std::endl;
+	}
+	else {
+		// Cycle through candidates
+		if (_previousCompletionPrefix != prefix) {
+			_curCompletionIndex = 0;
+		}
+		else {
+			_curCompletionIndex++;
+
+			if (_curCompletionIndex >= info.candidates.size()) {
+				_curCompletionIndex = 0;
+			}
+		}
+
+		// Take the n-th completion candidate and append it
+		gtk_entry_set_text(GTK_ENTRY(_entry), info.candidates[_curCompletionIndex].c_str());
+
+		// Select the suggested part
+		gtk_editable_select_region(GTK_EDITABLE(_entry), static_cast<gint>(prefix.length()), -1);
+	}
+
+	_previousCompletionPrefix = prefix;
+}
+
 void CommandEntry::onCmdEntryActivate(GtkEntry* entry, CommandEntry* self) {
 	self->executeCurrentStatement();
+
+	self->_previousCompletionPrefix.clear();
 }
 
 gboolean CommandEntry::onCmdEntryKeyPress(GtkWidget* widget, GdkEventKey* event, CommandEntry* self) {
@@ -138,6 +203,10 @@ gboolean CommandEntry::onCmdEntryKeyPress(GtkWidget* widget, GdkEventKey* event,
 	}
 	else if (event->keyval == GDK_Down) {
 		self->historyMoveTowardsPresent();
+		return TRUE;
+	}
+	else if (event->keyval == GDK_Tab || event->keyval == GDK_ISO_Left_Tab) {
+		self->moveAutoCompletion(+1);
 		return TRUE;
 	}
 
