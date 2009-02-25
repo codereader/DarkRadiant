@@ -237,6 +237,20 @@ public:
 	}
 };
 
+/**
+ * greebo: Auto-completion information returned by the CommandSystem
+ * when the user is entering a partial command.
+ */
+struct AutoCompletionInfo
+{
+	// The command prefix this info is referring to
+	std::string prefix;
+
+	// The candidaes, alphabetically ordered, case-insensitively
+	typedef std::vector<std::string> Candidates;
+	Candidates _candidaes;
+};
+
 class ICommandSystem :
 	public RegisterableModule
 {
@@ -288,6 +302,11 @@ public:
 	// For more than 3 arguments, use this method to pass a vector of arguments
 	virtual void executeCommand(const std::string& name, 
 								 const ArgumentList& args) = 0;
+
+	/**
+	 * greebo: Returns autocompletion info for the given prefix.
+	 */
+	virtual AutoCompletionInfo getAutoCompletionInfo(const std::string& prefix) = 0;
 };
 typedef boost::shared_ptr<ICommandSystem> ICommandSystemPtr;
 

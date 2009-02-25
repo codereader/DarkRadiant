@@ -32,6 +32,9 @@ public:
 	// For more than 3 arguments, use this method to pass a vector of arguments
 	void executeCommand(const std::string& name, const ArgumentList& args);
 
+	// Get autocompletion suggestions for the given prefix
+	AutoCompletionInfo getAutoCompletionInfo(const std::string& prefix);
+
 	// The "bind" command
 	void bindCmd(const ArgumentList& args);
 	void unbindCmd(const ArgumentList& args);

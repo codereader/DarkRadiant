@@ -304,6 +304,10 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 	i->second->execute(args);
 }
 
+AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefix) {
+	return AutoCompletionInfo();
+}
+
 } // namespace cmd
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
