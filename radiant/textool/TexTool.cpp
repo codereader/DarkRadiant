@@ -913,48 +913,57 @@ gboolean TexTool::onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TexToo
 }
 
 // Static command targets
-void TexTool::toggle() {
+void TexTool::toggle(const cmd::ArgumentList& args) {
 	// Call the toggle() method of the static instance
 	Instance().toggleWindow();
 }
 
-void TexTool::texToolGridUp() {
+void TexTool::texToolGridUp(const cmd::ArgumentList& args) {
 	Instance().gridUp();
 }
 
-void TexTool::texToolGridDown() {
+void TexTool::texToolGridDown(const cmd::ArgumentList& args) {
 	Instance().gridDown();
 }
 
-void TexTool::texToolSnapToGrid() {
+void TexTool::texToolSnapToGrid(const cmd::ArgumentList& args) {
 	Instance().snapToGrid();
 }
 
-void TexTool::texToolMergeItems() {
+void TexTool::texToolMergeItems(const cmd::ArgumentList& args) {
 	Instance().mergeSelectedItems();
 }
 
-void TexTool::texToolFlipS() {
+void TexTool::texToolFlipS(const cmd::ArgumentList& args) {
 	Instance().flipSelected(0);
 }
 
-void TexTool::texToolFlipT() {
+void TexTool::texToolFlipT(const cmd::ArgumentList& args) {
 	Instance().flipSelected(1);
 }
 
-void TexTool::selectRelated() {
+void TexTool::selectRelated(const cmd::ArgumentList& args) {
 	Instance().selectRelatedItems();
 }
 
 void TexTool::registerCommands() {
-	GlobalEventManager().addCommand("TextureTool", FreeCaller<TexTool::toggle>());
-	GlobalEventManager().addCommand("TexToolGridUp", FreeCaller<TexTool::texToolGridUp>());
-	GlobalEventManager().addCommand("TexToolGridDown", FreeCaller<TexTool::texToolGridDown>());
-	GlobalEventManager().addCommand("TexToolSnapToGrid", FreeCaller<TexTool::texToolSnapToGrid>());
-	GlobalEventManager().addCommand("TexToolMergeItems", FreeCaller<TexTool::texToolMergeItems>());
-	GlobalEventManager().addCommand("TexToolFlipS", FreeCaller<TexTool::texToolFlipS>());
-	GlobalEventManager().addCommand("TexToolFlipT", FreeCaller<TexTool::texToolFlipT>());
-	GlobalEventManager().addCommand("TexToolSelectRelated", FreeCaller<TexTool::selectRelated>());
+	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
+	GlobalCommandSystem().addCommand("TexToolGridUp", TexTool::texToolGridUp);
+	GlobalCommandSystem().addCommand("TexToolGridDown", TexTool::texToolGridDown);
+	GlobalCommandSystem().addCommand("TexToolSnapToGrid", TexTool::texToolSnapToGrid);
+	GlobalCommandSystem().addCommand("TexToolMergeItems", TexTool::texToolMergeItems);
+	GlobalCommandSystem().addCommand("TexToolFlipS", TexTool::texToolFlipS);
+	GlobalCommandSystem().addCommand("TexToolFlipT", TexTool::texToolFlipT);
+	GlobalCommandSystem().addCommand("TexToolSelectRelated", TexTool::selectRelated);
+
+	GlobalEventManager().addCommand("TextureTool", "TextureTool");
+	GlobalEventManager().addCommand("TexToolGridUp", "TexToolGridUp");
+	GlobalEventManager().addCommand("TexToolGridDown", "TexToolGridDown");
+	GlobalEventManager().addCommand("TexToolSnapToGrid", "TexToolSnapToGrid");
+	GlobalEventManager().addCommand("TexToolMergeItems", "TexToolMergeItems");
+	GlobalEventManager().addCommand("TexToolFlipS", "TexToolFlipS");
+	GlobalEventManager().addCommand("TexToolFlipT", "TexToolFlipT");
+	GlobalEventManager().addCommand("TexToolSelectRelated", "TexToolSelectRelated");
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 }
 

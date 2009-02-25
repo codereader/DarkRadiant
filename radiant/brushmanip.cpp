@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 
 #include "iclipper.h"
+#include "icommandsystem.h"
 #include "ieventmanager.h"
 
 #include "gtkutil/widget.h"
@@ -699,29 +700,22 @@ public:
 const TestBleh testbleh;
 #endif
 
-class BrushMakeSided
-{
-  std::size_t m_count;
-public:
-  BrushMakeSided(std::size_t count)
-    : m_count(count)
-  {
-  }
-  void set()
-  {
-    Scene_BrushConstructPrefab(GlobalSceneGraph(), eBrushPrism, m_count, GlobalTextureBrowser().getSelectedShader());
-  }
-  typedef MemberCaller<BrushMakeSided, &BrushMakeSided::set> SetCaller;
-};
+void brushMakeSided(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		return;
+	}
 
+	// First argument contains the number of sides
+	int input = args[0].getInt();
 
-BrushMakeSided g_brushmakesided3(3);
-BrushMakeSided g_brushmakesided4(4);
-BrushMakeSided g_brushmakesided5(5);
-BrushMakeSided g_brushmakesided6(6);
-BrushMakeSided g_brushmakesided7(7);
-BrushMakeSided g_brushmakesided8(8);
-BrushMakeSided g_brushmakesided9(9);
+	if (input < 0) {
+		globalErrorStream() << "BrushMakeSide: invalid number of sides: " << input << std::endl;
+		return;
+	}
+
+	std::size_t numSides = static_cast<std::size_t>(input);
+	Scene_BrushConstructPrefab(GlobalSceneGraph(), eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
+}
 
 inline int axis_for_viewtype(int viewtype)
 {
@@ -737,63 +731,52 @@ inline int axis_for_viewtype(int viewtype)
   return 2;
 }
 
-class BrushPrefab
-{
-  EBrushPrefab m_type;
-public:
-  BrushPrefab(EBrushPrefab type)
-    : m_type(type)
-  {
-  }
-  void set()
-  {
-    DoSides(m_type, axis_for_viewtype(GetViewAxis()));
-  }
-  typedef MemberCaller<BrushPrefab, &BrushPrefab::set> SetCaller;
-};
-
-BrushPrefab g_brushprism(eBrushPrism);
-BrushPrefab g_brushcone(eBrushCone);
-BrushPrefab g_brushsphere(eBrushSphere);
-
-void ClipSelected() {
-	if (GlobalClipper().clipMode()) {
-		UndoableCommand undo("clipperClip");
-		GlobalClipper().clip();
+void brushMakePrefab(const cmd::ArgumentList& args) {
+	if (args.size() != 1) {
+		return;
 	}
-}
 
-void SplitSelected() {
-	if (GlobalClipper().clipMode()) {
-		UndoableCommand undo("clipperSplit");
-		GlobalClipper().splitClip();
+	// First argument contains the number of sides
+	int input = args[0].getInt();
+
+	if (input >= eBrushCuboid && input < eNumPrefabTypes) {
+		// Boundary checks passed
+		EBrushPrefab type = static_cast<EBrushPrefab>(input);
+		DoSides(type, axis_for_viewtype(GetViewAxis()));
 	}
-}
-
-void FlipClipper() {
-	GlobalClipper().flipClip();
+	else {
+		globalErrorStream() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl 
+			<< eBrushCuboid << " = cuboid " << std::endl
+			<< eBrushPrism  << " = prism " << std::endl
+			<< eBrushCone  << " = cone " << std::endl
+			<< eBrushSphere << " = sphere " << std::endl;
+	}
 }
 
 void Brush_registerCommands()
 {
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
-	GlobalEventManager().addCommand("BrushPrism", BrushPrefab::SetCaller(g_brushprism));
-	GlobalEventManager().addCommand("BrushCone", BrushPrefab::SetCaller(g_brushcone));
-	GlobalEventManager().addCommand("BrushSphere", BrushPrefab::SetCaller(g_brushsphere));
+	GlobalCommandSystem().addCommand("BrushMakePrefab", brushMakePrefab, cmd::ARGTYPE_INT);
 
-	GlobalEventManager().addCommand("Brush3Sided", BrushMakeSided::SetCaller(g_brushmakesided3));
-	GlobalEventManager().addCommand("Brush4Sided", BrushMakeSided::SetCaller(g_brushmakesided4));
-	GlobalEventManager().addCommand("Brush5Sided", BrushMakeSided::SetCaller(g_brushmakesided5));
-	GlobalEventManager().addCommand("Brush6Sided", BrushMakeSided::SetCaller(g_brushmakesided6));
-	GlobalEventManager().addCommand("Brush7Sided", BrushMakeSided::SetCaller(g_brushmakesided7));
-	GlobalEventManager().addCommand("Brush8Sided", BrushMakeSided::SetCaller(g_brushmakesided8));
-	GlobalEventManager().addCommand("Brush9Sided", BrushMakeSided::SetCaller(g_brushmakesided9));
+	GlobalEventManager().addCommand("BrushCuboid", "BrushCuboid");
+	GlobalEventManager().addCommand("BrushPrism", "BrushPrism");
+	GlobalEventManager().addCommand("BrushCone", "BrushCone");
+	GlobalEventManager().addCommand("BrushSphere", "BrushSphere");
 
-	GlobalEventManager().addCommand("ClipSelected", FreeCaller<ClipSelected>());
-	GlobalEventManager().addCommand("SplitSelected", FreeCaller<SplitSelected>());
-	GlobalEventManager().addCommand("FlipClip", FreeCaller<FlipClipper>());
+	GlobalCommandSystem().addCommand("BrushMakeSided", brushMakeSided, cmd::ARGTYPE_INT);
 
-	GlobalEventManager().addCommand("TextureNatural", FreeCaller<selection::algorithm::naturalTexture>());
-	GlobalEventManager().addCommand("MakeVisportal", FreeCaller<selection::algorithm::makeVisportal>());
+	// Link the Events to the corresponding statements
+	GlobalEventManager().addCommand("Brush3Sided", "Brush3Sided");
+	GlobalEventManager().addCommand("Brush4Sided", "Brush4Sided");
+	GlobalEventManager().addCommand("Brush5Sided", "Brush5Sided");
+	GlobalEventManager().addCommand("Brush6Sided", "Brush6Sided");
+	GlobalEventManager().addCommand("Brush7Sided", "Brush7Sided");
+	GlobalEventManager().addCommand("Brush8Sided", "Brush8Sided");
+	GlobalEventManager().addCommand("Brush9Sided", "Brush9Sided");
+
+	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
+	GlobalCommandSystem().addCommand("MakeVisportal", selection::algorithm::makeVisportal);
+	GlobalEventManager().addCommand("TextureNatural", "TextureNatural");
+	GlobalEventManager().addCommand("MakeVisportal", "MakeVisportal");
 }

@@ -1,10 +1,14 @@
 #ifndef _CONSOLE_H_
 #define _CONSOLE_H_
 
+#include "icommandsystem.h"
+
 #include <gtk/gtktextview.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkwindow.h>
+#include <gtk/gtkentry.h>
 
+#include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
 
 namespace ui {
@@ -20,6 +24,8 @@ class Console :
 	public applog::LogDevice
 {
 	// The widget for packing into a parent window
+	GtkWidget* _vbox;
+
 	GtkWidget* _scrolled;
 	GtkWidget* _textView;
 
@@ -30,6 +36,9 @@ class Console :
 	GtkTextTag* _warningTag;
 	GtkTextTag* _standardTag;
 
+	// The entry box for console commands
+	CommandEntry _commandEntry;
+
 	// Private constructor, creates the Gtk structures
 	Console();
 
@@ -37,7 +46,10 @@ public:
 	/** 
 	 * greebo: Static command target for toggling the console.
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
+
+	// Command target to clear the console
+	void clearCmd(const cmd::ArgumentList& args);
 
 	/** 
 	 * greebo: Returns the widget pointer for packing into a parent container.
@@ -64,6 +76,8 @@ private:
 	static gboolean destroy_set_null(GtkWindow* widget, GtkWidget** p);
 	static void onClearConsole(GtkMenuItem* menuitem, Console* self);
 	static void console_populate_popup(GtkTextView* textview, GtkMenu* menu, Console* self);
+
+	static void onCmdEntryActivate(GtkEntry* entry, Console* self);
 };
 
 } // namespace ui

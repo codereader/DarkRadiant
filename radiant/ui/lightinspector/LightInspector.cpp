@@ -379,7 +379,7 @@ void LightInspector::selectionChanged(const scene::INodePtr& node, bool isCompon
 }
 
 // Static method to toggle the dialog
-void LightInspector::toggleInspector() {
+void LightInspector::toggleInspector(const cmd::ArgumentList& args) {
 	// Toggle the instance
 	Instance().toggle();
 }

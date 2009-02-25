@@ -2,6 +2,7 @@
 #define PREFDIALOG_H_
 
 #include "iradiant.h"
+#include "icommandsystem.h"
 #include "gtkutil/RegistryConnector.h"
 #include "gtkutil/WindowPosition.h"
 #include "PrefPage.h"
@@ -51,7 +52,7 @@ public:
 
 	/** greebo: Toggles the window visibility
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 	
 	/** greebo: Makes sure that the dialog is visible.
 	 * 			(does nothing if the dialog is already on screen)
@@ -60,7 +61,7 @@ public:
 
 	/** greebo: The command target to show the Game settings preferences.
 	 */
-	static void showProjectSettings();
+	static void showProjectSettings(const cmd::ArgumentList& args);
 
 	/** greebo: Looks up the page for the path and creates it
 	 * 			if necessary.

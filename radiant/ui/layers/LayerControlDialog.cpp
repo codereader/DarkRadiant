@@ -202,25 +202,37 @@ void LayerControlDialog::update() {
 	gtk_widget_set_sensitive(_hideAllLayers, visitor.numVisible > 0);
 }
 
-void LayerControlDialog::toggle() {
+void LayerControlDialog::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleDialog();
 }
 
-void LayerControlDialog::createLayer() {
+void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
+
+	std::string initialName = !args.empty() ? args[0].getString() : "";
+
 	while (true) {
 		// Query the name of the new layer from the user
 		std::string layerName;
 
-		try {
-			layerName = gtkutil::textEntryDialog(
-				"Enter Name", 
-				"Enter Layer Name", 
-				"",
-				GlobalRadiant().getMainWindow()
-			);
+		if (!initialName.empty()) {
+			// If we got a layer name passed through the arguments,
+			// we use this one, but only the first time
+			layerName = initialName;
+			initialName.clear();
 		}
-		catch (gtkutil::EntryAbortedException e) {
-			break;
+
+		if (layerName.empty()) {
+			try {
+				layerName = gtkutil::textEntryDialog(
+					"Enter Name", 
+					"Enter Layer Name", 
+					"",
+					GlobalRadiant().getMainWindow()
+				);
+			}
+			catch (gtkutil::EntryAbortedException e) {
+				break;
+			}
 		}
 
 		if (layerName.empty()) {
@@ -247,10 +259,8 @@ void LayerControlDialog::createLayer() {
 
 void LayerControlDialog::registerCommands() {
 	// Register the "create layer" command
-	GlobalEventManager().addCommand(
-		"CreateNewLayer", 
-		FreeCaller<LayerControlDialog::createLayer>()
-	);
+	GlobalCommandSystem().addCommand("CreateNewLayer", createLayer, cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
+	GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
 }
 
 void LayerControlDialog::init() {
@@ -324,7 +334,7 @@ void LayerControlDialog::_preHide() {
 // Static GTK callbacks
 void LayerControlDialog::onCreateLayer(GtkWidget* button, LayerControlDialog* self) {
 	// Pass the call to the command
-	createLayer();
+	createLayer(cmd::ArgumentList());
 }
 
 void LayerControlDialog::onShowAllLayers(GtkWidget* button, LayerControlDialog* self) {

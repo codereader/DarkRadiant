@@ -959,7 +959,7 @@ bool EntityInspector::updateSelectedEntity() {
 	}
 }
 
-void EntityInspector::toggle() {
+void EntityInspector::toggle(const cmd::ArgumentList& args) {
 	GlobalGroupDialog().togglePage("entity");
 }
 

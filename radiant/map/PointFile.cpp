@@ -183,11 +183,11 @@ void PointFile::advance(bool forward) {
 	SceneChangeNotify();
 }
 
-void PointFile::nextLeakSpot() {
+void PointFile::nextLeakSpot(const cmd::ArgumentList& args) {
 	Instance().advance(true);
 }
 
-void PointFile::prevLeakSpot() {
+void PointFile::prevLeakSpot(const cmd::ArgumentList& args) {
 	Instance().advance(false);
 }
 
@@ -195,14 +195,18 @@ void PointFile::clear() {
 	show(false);
 }
 
-void PointFile::toggle() {
+void PointFile::toggle(const cmd::ArgumentList& args) {
 	Instance().show(!Instance().isVisible());
 }
 
 void PointFile::registerCommands() {
-	GlobalEventManager().addCommand("TogglePointfile", FreeCaller<PointFile::toggle>());
-	GlobalEventManager().addCommand("NextLeakSpot", FreeCaller<PointFile::nextLeakSpot>());
-	GlobalEventManager().addCommand("PrevLeakSpot", FreeCaller<PointFile::prevLeakSpot>());
+	GlobalCommandSystem().addCommand("TogglePointfile", toggle);
+	GlobalCommandSystem().addCommand("NextLeakSpot", nextLeakSpot);
+	GlobalCommandSystem().addCommand("PrevLeakSpot", prevLeakSpot);
+
+	GlobalEventManager().addCommand("TogglePointfile", "TogglePointfile");
+	GlobalEventManager().addCommand("NextLeakSpot", "NextLeakSpot");
+	GlobalEventManager().addCommand("PrevLeakSpot", "PrevLeakSpot");
 }
 
 } // namespace map

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ifiletypes.h"
 #include "iregistry.h"
+#include "icommandsystem.h"
 #include "ifilesystem.h"
 #include "iuimanager.h"
 #include "ieclass.h"
@@ -201,6 +202,7 @@ const StringSet& RadiantModule::getDependencies() const {
 	static StringSet _dependencies;
 	
 	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_XMLREGISTRY);

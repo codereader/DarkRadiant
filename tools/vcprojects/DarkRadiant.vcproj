@@ -1703,6 +1703,14 @@
 					Name="common"
 					>
 					<File
+						RelativePath="..\..\radiant\ui\common\CommandEntry.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\common\CommandEntry.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\common\MapPreview.cpp"
 						>
 					</File>

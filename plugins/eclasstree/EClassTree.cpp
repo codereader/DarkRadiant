@@ -234,7 +234,7 @@ void EClassTree::_preShow() {
 }
 
 // Static command target
-void EClassTree::showWindow() {
+void EClassTree::showWindow(const cmd::ArgumentList& args) {
 	// Construct a new instance, this enters the main loop
 	EClassTree _tree;
 }

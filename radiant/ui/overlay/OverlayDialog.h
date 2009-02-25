@@ -1,6 +1,8 @@
 #ifndef OVERLAYDIALOG_H_
 #define OVERLAYDIALOG_H_
 
+#include "icommandsystem.h"
+
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktogglebutton.h>
 #include <gtk/gtkfilechooser.h>
@@ -67,7 +69,7 @@ public:
 	/**
 	 * Static method to display the overlay dialog.
 	 */
-	static void display();
+	static void display(const cmd::ArgumentList& args);
 
 };
 

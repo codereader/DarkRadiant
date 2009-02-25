@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_TEXWINDOW_H
 
 #include "iregistry.h"
+#include "icommandsystem.h"
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
 #include "gtkutil/nonmodal.h"
@@ -155,7 +156,7 @@ public:
 	 * 
 	 * Note: This is a command target, hence the static 
 	 */
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 
 	/** greebo: Adds the according options to the Preferences dialog.
 	 */

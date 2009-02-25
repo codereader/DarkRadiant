@@ -79,7 +79,7 @@ public:
 	}
 };
 
-void selectAllOfType() {
+void selectAllOfType(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
 		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace) {
 			// Deselect all faces
@@ -138,7 +138,7 @@ public:
 	}
 };
 
-void hideSelected() {
+void hideSelected(const cmd::ArgumentList& args) {
 	// Traverse the selection, hiding all nodes
 	GlobalSelectionSystem().foreachSelected(HideSelectedWalker(true));
 
@@ -195,7 +195,7 @@ public:
 	}
 };
 
-void hideDeselected() {
+void hideDeselected(const cmd::ArgumentList& args) {
 	HideDeselectedWalker walker(true);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
@@ -220,7 +220,7 @@ public:
 	}
 };
 
-void showAllHidden() {
+void showAllHidden(const cmd::ArgumentList& args) {
 	HideAllWalker walker(false);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	SceneChangeNotify();
@@ -284,7 +284,7 @@ public:
 	}
 };
 
-void invertSelection() {
+void invertSelection(const cmd::ArgumentList& args) {
 	InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
@@ -327,7 +327,7 @@ void deleteSelection() {
 	SceneChangeNotify();
 }
 
-void deleteSelectionCmd() {
+void deleteSelectionCmd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("deleteSelected");
 
 	deleteSelection();
@@ -465,15 +465,15 @@ public:
 	}
 };
 
-void selectInside() {
+void selectInside(const cmd::ArgumentList& args) {
 	SelectByBounds<SelectionPolicy_Inside>::DoSelection();
 }
 
-void selectTouching() {
+void selectTouching(const cmd::ArgumentList& args) {
 	SelectByBounds<SelectionPolicy_Touching>::DoSelection(false);
 }
 
-void selectCompleteTall() {
+void selectCompleteTall(const cmd::ArgumentList& args) {
 	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
 }
 

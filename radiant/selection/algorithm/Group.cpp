@@ -78,8 +78,9 @@ public:
 	}
 };
 
-void revertGroupToWorldSpawn() {
-		
+void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
+	UndoableCommand cmd("revertToWorldspawn");
+
 	typedef std::list<scene::INodePtr> GroupNodeList;
 
 	// Collect all groupnodes
@@ -239,7 +240,7 @@ public:
 };
 
 // re-parents the selected brushes/patches
-void parentSelection() {
+void parentSelection(const cmd::ArgumentList& args) {
 	// Retrieve the selection information structure
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
@@ -260,7 +261,7 @@ void parentSelection() {
 	}
 }
 
-void parentSelectionToWorldspawn() {
+void parentSelectionToWorldspawn(const cmd::ArgumentList& args) {
 	UndoableCommand undo("parentSelectedPrimitives");
 
 	scene::INodePtr world = GlobalMap().findOrInsertWorldspawn();
@@ -320,7 +321,7 @@ public:
 	}
 };
 
-void selectChildren() {
+void selectChildren(const cmd::ArgumentList& args) {
 	// Traverse the selection and identify the groupnodes
 	GlobalSelectionSystem().foreachSelected(
 		GroupNodeChildSelector()
@@ -355,7 +356,7 @@ public:
 	}
 };
 
-void expandSelectionToEntities() {
+void expandSelectionToEntities(const cmd::ArgumentList& args) {
 	ExpandSelectionToEntitiesWalker walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }

@@ -303,7 +303,7 @@ gboolean ConversationDialog::onWindowKeyPress(
 }
 
 // Static command target
-void ConversationDialog::showDialog() {
+void ConversationDialog::showDialog(const cmd::ArgumentList& args) {
 	// Construct a new instance, this enters the main loop
 	ConversationDialog _editor;
 }

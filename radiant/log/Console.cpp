@@ -11,11 +11,13 @@
 #include "LogWriter.h"
 #include "StringLogDevice.h"
 
+#include <boost/bind.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
 namespace ui {
 
 Console::Console() :
+	_vbox(gtk_vbox_new(FALSE, 6)),
 	_scrolled(gtk_scrolled_window_new(NULL, NULL))
 {
 	// Set the properties of the scrolled frame
@@ -40,6 +42,11 @@ Console::Console() :
 	g_signal_connect(G_OBJECT(_textView), "destroy", G_CALLBACK(destroy_set_null), &_textView);
 
 	gtk_container_set_focus_chain(GTK_CONTAINER(_scrolled), NULL);
+
+	// Pack the scrolled textview and the entry box to the vbox
+	gtk_box_pack_start(GTK_BOX(_vbox), _scrolled, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_vbox), _commandEntry, FALSE, FALSE, 0);
+	gtk_widget_show_all(_vbox);
 
 	// Remember the pointer to the textbuffer
 	_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_textView));
@@ -71,9 +78,15 @@ Console::Console() :
 
 	// Destruct the temporary buffer
 	applog::StringLogDevice::destroy();
+
+	GlobalCommandSystem().addCommand("clear", boost::bind(&Console::clearCmd, this, _1));
 }
 
-void Console::toggle() {
+void Console::clearCmd(const cmd::ArgumentList& args) {
+	gtk_text_buffer_set_text(_buffer, "", -1);
+}
+
+void Console::toggle(const cmd::ArgumentList& args) {
 	GlobalGroupDialog().togglePage("console");  
 }
 
@@ -116,11 +129,13 @@ void Console::writeLog(const std::string& outputStr, applog::ELogLevel level) {
 }
 
 GtkWidget* Console::getWidget() {
-	return _scrolled;
+	return _vbox;
 }
 
 void Console::shutdown() {
 	applog::LogWriter::Instance().detach(this);
+
+	GlobalCommandSystem().removeCommand("clear");
 }
 
 Console& Console::Instance() {

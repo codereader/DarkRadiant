@@ -89,6 +89,10 @@ public:
 	
 	// Add the given command to the internal list
 	IEventPtr addCommand(const std::string& name, const Callback& callback, bool reactOnKeyUp);
+
+	// Add a command and specify the statement to execute when triggered
+	IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp);
+
 	IEventPtr addKeyEvent(const std::string& name, const Callback& keyUpCallback, const Callback& keyDownCallback);
 	IEventPtr addWidgetToggle(const std::string& name);
 	IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey);

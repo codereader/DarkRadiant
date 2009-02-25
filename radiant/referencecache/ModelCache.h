@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "imodelcache.h"
+#include "icommandsystem.h"
 
 namespace model {
 
@@ -34,7 +35,7 @@ public:
 	virtual void clear();
 
 	// Command target: this reloads all models in the map
-	void refreshModels();
+	void refreshModels(const cmd::ArgumentList& args);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

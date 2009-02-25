@@ -161,7 +161,7 @@ void EntityList::_preShow() {
 	update();
 }
 
-void EntityList::toggle() {
+void EntityList::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleWindow();
 }
 

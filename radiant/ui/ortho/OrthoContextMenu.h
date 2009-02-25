@@ -69,7 +69,6 @@ class OrthoContextMenu
 	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu* self);
 	static void callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackRevertToWorldspawn(GtkMenuItem* item, OrthoContextMenu* self);
 
 	// Gets called by the items in the "Add to Layer" submenu
 	static void callbackAddToLayer(int layerID);

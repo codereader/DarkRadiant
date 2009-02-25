@@ -1,6 +1,8 @@
 #ifndef ABOUTDIALOG_H_
 #define ABOUTDIALOG_H_
+
 #include <string>
+#include "icommandsystem.h"
 #include "gtk/gtkwidget.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
@@ -28,7 +30,7 @@ public:
 	
 	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
-	static void showDialog();
+	static void showDialog(const cmd::ArgumentList& args);
 	
 private:
 	// The callback for the buttons

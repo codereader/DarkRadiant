@@ -168,7 +168,7 @@ void FindAndReplaceShader::onReplaceChanged(GtkEditable* editable, FindAndReplac
 	gtk_label_set_markup(GTK_LABEL(self->_counterLabel), "");
 }
 
-void FindAndReplaceShader::showDialog() {
+void FindAndReplaceShader::showDialog(const cmd::ArgumentList& args) {
 	// Just instantiate a new dialog, this enters a main loop
 	FindAndReplaceShader dialog; 
 }

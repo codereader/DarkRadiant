@@ -2,6 +2,7 @@
 #define MAPPOSITION_H_
 
 #include <string>
+#include "icommandsystem.h"
 #include "math/Vector3.h"
 #include <boost/shared_ptr.hpp>
 
@@ -56,11 +57,11 @@ public:
 	/** greebo: Reads the current position from the camera and 
 	 * stores it into the internal values.
 	 */
-	void store();
+	void store(const cmd::ArgumentList& args);
 	
 	/** greebo: Recalls the stored position
 	 */
-	void recall();
+	void recall(const cmd::ArgumentList& args);
 };
 
 typedef boost::shared_ptr<MapPosition> MapPositionPtr;

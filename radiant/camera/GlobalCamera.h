@@ -3,6 +3,7 @@
 
 #include <map>
 #include "icamera.h"
+#include "icommandsystem.h"
 
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
@@ -69,26 +70,26 @@ public:
 	FloatingCamWndPtr createFloatingWindow();
 	
 	// Resets the camera angles of the currently active Camera
-	void resetCameraAngles();
+	void resetCameraAngles(const cmd::ArgumentList& args);
 
 	/** greebo: Sets the camera to the given point/angle.
 	 */
 	void focusCamera(const Vector3& point, const Vector3& angles);
 
 	// Toggles between lighting and solid rendering mode (passes the call to the CameraSettings class)
-	void toggleLightingMode();
+	void toggleLightingMode(const cmd::ArgumentList& args);
 
 	// Increases/decreases the far clip plane distance (passes the call to CamWnd)
-	void cubicScaleIn();
-	void cubicScaleOut();
+	void cubicScaleIn(const cmd::ArgumentList& args);
+	void cubicScaleOut(const cmd::ArgumentList& args);
 
 	// Change the floor up/down, passes the call on to the CamWnd class
-	void changeFloorUp();
-	void changeFloorDown();
+	void changeFloorUp(const cmd::ArgumentList& args);
+	void changeFloorDown(const cmd::ArgumentList& args);
 
 	// angua: increases and decreases the movement speed of the camera
-	void increaseCameraSpeed();
-	void decreaseCameraSpeed();
+	void increaseCameraSpeed(const cmd::ArgumentList& args);
+	void decreaseCameraSpeed(const cmd::ArgumentList& args);
 	
 	// greebo: This measures the rendering time for a full 360 degrees turn of the camera
 	// Note: unused at the moment
@@ -104,16 +105,16 @@ public:
 	void movedNotify();
 	
 	// Movement commands (the calls are passed on to the Camera class)
-	void moveForwardDiscrete();
-	void moveBackDiscrete();
-	void moveUpDiscrete();
-	void moveDownDiscrete();
-	void moveLeftDiscrete();
-	void moveRightDiscrete();
-	void rotateLeftDiscrete();
-	void rotateRightDiscrete();
-	void pitchUpDiscrete();
-	void pitchDownDiscrete();
+	void moveForwardDiscrete(const cmd::ArgumentList& args);
+	void moveBackDiscrete(const cmd::ArgumentList& args);
+	void moveUpDiscrete(const cmd::ArgumentList& args);
+	void moveDownDiscrete(const cmd::ArgumentList& args);
+	void moveLeftDiscrete(const cmd::ArgumentList& args);
+	void moveRightDiscrete(const cmd::ArgumentList& args);
+	void rotateLeftDiscrete(const cmd::ArgumentList& args);
+	void rotateRightDiscrete(const cmd::ArgumentList& args);
+	void pitchUpDiscrete(const cmd::ArgumentList& args);
+	void pitchDownDiscrete(const cmd::ArgumentList& args);
 	
 public:
 	void freelookMoveForwardKeyUp();

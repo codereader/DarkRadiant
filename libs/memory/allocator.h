@@ -223,7 +223,7 @@ class Destroy
 public:
   void operator()(Type& t)
   {
-    destructor(t);
+    t.~Type();
   }
 };
 

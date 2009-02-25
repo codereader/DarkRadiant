@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "irender.h"
+#include "icommandsystem.h"
 #include "irenderable.h"
 #include "math/Vector3.h"
 
@@ -75,11 +76,11 @@ public:
 	static void registerCommands();
 	
 	// Static command targets, these re-route the call to the static instance
-	static void nextLeakSpot();
-	static void prevLeakSpot();
+	static void nextLeakSpot(const cmd::ArgumentList& args);
+	static void prevLeakSpot(const cmd::ArgumentList& args);
 	
 	// Toggles visibility of the point file line
-	static void toggle();
+	static void toggle(const cmd::ArgumentList& args);
 
 private:
 	// Parse the current pointfile and read the vectors into the point list

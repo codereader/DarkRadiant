@@ -1,6 +1,7 @@
 #ifndef SELECTION_TRANSFORMATION_H_
 #define SELECTION_TRANSFORMATION_H_
 
+#include "icommandsystem.h"
 #include "math/Vector3.h"
 
 namespace selection {
@@ -30,7 +31,7 @@ namespace selection {
 		/** greebo: This duplicates the current selection (that's what happening
 		 * 			when you hit the space bar).
 		 */
-		void cloneSelected();
+		void cloneSelected(const cmd::ArgumentList& args);
 		
 	} // namespace algorithm
 } // namespace selection
