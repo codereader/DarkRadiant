@@ -305,7 +305,18 @@ void CommandSystem::executeCommand(const std::string& name, const ArgumentList& 
 }
 
 AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefix) {
-	return AutoCompletionInfo();
+	AutoCompletionInfo returnValue;
+
+	returnValue.prefix = prefix;
+
+	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
+		// Check if the command matches the given prefix
+		if (boost::algorithm::istarts_with(i->first, prefix)) {
+			returnValue.candidates.push_back(i->first);
+		}
+	}
+
+	return returnValue;
 }
 
 } // namespace cmd

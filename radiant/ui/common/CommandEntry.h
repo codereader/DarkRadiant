@@ -45,6 +45,10 @@ class CommandEntry
 	// to the present one is not clearing the current input.
 	std::string _presentEntry;
 
+	// Which prefix was displayed when TAB was last hit
+	std::string _previousCompletionPrefix;
+	std::size_t _curCompletionIndex;
+
 public:
 	// Constructor is creating widgets
 	CommandEntry();
@@ -65,6 +69,8 @@ private:
 	void historyMoveTowardsPresent();
 
 	void executeCurrentStatement();
+
+	void moveAutoCompletion(int direction);
 
 	// GTK callbacks
 	static void onCmdEntryActivate(GtkEntry* entry, CommandEntry* self);

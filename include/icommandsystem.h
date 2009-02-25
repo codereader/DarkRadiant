@@ -248,7 +248,7 @@ struct AutoCompletionInfo
 
 	// The candidaes, alphabetically ordered, case-insensitively
 	typedef std::vector<std::string> Candidates;
-	Candidates _candidaes;
+	Candidates candidates;
 };
 
 class ICommandSystem :
