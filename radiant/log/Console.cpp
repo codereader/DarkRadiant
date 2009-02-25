@@ -11,6 +11,7 @@
 #include "LogWriter.h"
 #include "StringLogDevice.h"
 
+#include <boost/bind.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
 namespace ui {
@@ -77,6 +78,12 @@ Console::Console() :
 
 	// Destruct the temporary buffer
 	applog::StringLogDevice::destroy();
+
+	GlobalCommandSystem().addCommand("clear", boost::bind(&Console::clearCmd, this, _1));
+}
+
+void Console::clearCmd(const cmd::ArgumentList& args) {
+	gtk_text_buffer_set_text(_buffer, "", -1);
 }
 
 void Console::toggle(const cmd::ArgumentList& args) {
@@ -127,6 +134,8 @@ GtkWidget* Console::getWidget() {
 
 void Console::shutdown() {
 	applog::LogWriter::Instance().detach(this);
+
+	GlobalCommandSystem().removeCommand("clear");
 }
 
 Console& Console::Instance() {

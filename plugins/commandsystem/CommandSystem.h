@@ -16,7 +16,7 @@ class CommandSystem :
 	CommandMap _commands;
 
 public:
-	void addCommand(const std::string& name, Function func, const Signature& signature);
+	void addCommand(const std::string& name, Function func, const Signature& signature = Signature());
 	void removeCommand(const std::string& name);
 
 	void addStatement(const std::string& statementName, const std::string& string);
@@ -39,6 +39,7 @@ public:
 	void bindCmd(const ArgumentList& args);
 	void unbindCmd(const ArgumentList& args);
 	void listCmds(const ArgumentList& args);
+	void printCmd(const ArgumentList& args);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

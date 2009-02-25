@@ -48,6 +48,9 @@ public:
 	 */
 	static void toggle(const cmd::ArgumentList& args);
 
+	// Command target to clear the console
+	void clearCmd(const cmd::ArgumentList& args);
+
 	/** 
 	 * greebo: Returns the widget pointer for packing into a parent container.
 	 */

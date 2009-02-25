@@ -35,7 +35,7 @@ public:
 		for (Signature::const_iterator cur = _signature.begin(); cur != _signature.end(); ++cur) {
 
 			std::size_t curFlags = *cur;
-			bool curIsOptional = (curFlags & ARGTYPE_OPTIONAL);
+			bool curIsOptional = ((curFlags & ARGTYPE_OPTIONAL) != 0);
 
 			// If arguments have run out, all remaining parts of the signature must be optional
 			if (arg == args.end()) {

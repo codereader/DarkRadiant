@@ -37,8 +37,9 @@ void CommandSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	// Add the built-in commands
 	addCommand("bind", boost::bind(&CommandSystem::bindCmd, this, _1), Signature(ARGTYPE_STRING, ARGTYPE_STRING));
-	addCommand("unbind", boost::bind(&CommandSystem::unbindCmd, this, _1), Signature(ARGTYPE_STRING));
-	addCommand("listCmds", boost::bind(&CommandSystem::listCmds, this, _1), Signature());
+	addCommand("unbind", boost::bind(&CommandSystem::unbindCmd, this, _1), ARGTYPE_STRING);
+	addCommand("listCmds", boost::bind(&CommandSystem::listCmds, this, _1));
+	addCommand("print", boost::bind(&CommandSystem::printCmd, this, _1), ARGTYPE_STRING);
 
 	loadBinds();
 }
@@ -51,6 +52,13 @@ void CommandSystem::shutdownModule() {
 
 	// Free all commands
 	_commands.clear();
+}
+
+void CommandSystem::printCmd(const ArgumentList& args) {
+	for (ArgumentList::const_iterator i = args.begin(); i != args.end(); ++i) {
+		globalOutputStream() << i->getString() << (i != args.begin() ? " " : "");
+	}
+	globalOutputStream() << std::endl;
 }
 
 void CommandSystem::loadBinds() {
