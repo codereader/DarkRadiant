@@ -446,6 +446,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\CommandSystemInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\CommandSystemInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\EClassInterface.cpp"
 					>
 				</File>

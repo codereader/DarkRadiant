@@ -15,6 +15,7 @@
 #include "interfaces/PatchInterface.h"
 #include "interfaces/EntityInterface.h"
 #include "interfaces/MapInterface.h"
+#include "interfaces/CommandSystemInterface.h"
 
 namespace script {
 
@@ -172,6 +173,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", MathInterfacePtr(new MathInterface));
+	addInterface("CommandSystem", CommandSystemInterfacePtr(new CommandSystemInterface));
 	addInterface("SceneGraph", SceneGraphInterfacePtr(new SceneGraphInterface));
 	addInterface("GlobalRegistry", RegistryInterfacePtr(new RegistryInterface));
 	addInterface("GlobalEntityClassManager", EClassManagerInterfacePtr(new EClassManagerInterface));
