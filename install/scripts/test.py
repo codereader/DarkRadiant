@@ -92,4 +92,7 @@ if not worldspawn.isNull():
 
 	worldspawnent.forEachKeyValue(tev)
 
+# Test the commandsystem
+GlobalCommandSystem.execute('texscale "0 0.1"')
+
 print('')
