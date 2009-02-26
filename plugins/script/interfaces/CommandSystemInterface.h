@@ -11,6 +11,8 @@ class CommandSystemInterface :
 {
 public:
 	void execute(const std::string& buffer);
+	void addStatement(const std::string& statementName, const std::string& string);
+	void removeCommand(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
