@@ -24,7 +24,7 @@ namespace {
 	const std::string IMAGE_DEFAULT = "_default.bmp";
 	const std::string IMAGE_FLAT = "_flat.bmp";
 	const std::string IMAGE_FOG = "_fog.bmp";
-	const std::string IMAGE_NOFALLOFF = "_nofalloff.bmp";
+	const std::string IMAGE_NOFALLOFF = "noFalloff.bmp";
 	const std::string IMAGE_POINTLIGHT1 = "_pointlight1.bmp";
 	const std::string IMAGE_POINTLIGHT2 = "_pointlight2.bmp";
 	const std::string IMAGE_POINTLIGHT3 = "_pointlight3.bmp";
@@ -70,7 +70,7 @@ MapExpressionPtr IMapExpression::createForToken(DefTokeniser& token) {
 	}
 	else {
 		// since we already took away the expression into the variable type, we need to pass type instead of token
-		return MapExpressionPtr(new ImageExpression (type));
+		return MapExpressionPtr(new ImageExpression(type));
 	}
 }
 
@@ -625,7 +625,7 @@ ImagePtr ImageExpression::getImage() {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK);
 		return d.construct();
 	}
-	else if (_imgName == "_cubicLight") {
+	else if (_imgName == "_cubiclight") {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CUBICLIGHT);
 		return d.construct();
 	}
@@ -645,19 +645,19 @@ ImagePtr ImageExpression::getImage() {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FOG);
 		return d.construct();
 	}
-	else if (_imgName == "_noFalloff") {
+	else if (_imgName == "_nofalloff") {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_NOFALLOFF);
 		return d.construct();
 	}
-	else if (_imgName == "_pointLight1") {
+	else if (_imgName == "_pointlight1") {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT1);
 		return d.construct();
 	}
-	else if (_imgName == "_pointLight2") {
+	else if (_imgName == "_pointlight2") {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT2);
 		return d.construct();
 	}
-	else if (_imgName == "_pointLight3") {
+	else if (_imgName == "_pointlight3") {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT3);
 		return d.construct();
 	}
