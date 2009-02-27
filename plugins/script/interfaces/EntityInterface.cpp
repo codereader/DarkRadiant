@@ -3,6 +3,8 @@
 #include "ientity.h"
 #include "ieclass.h"
 
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
 namespace script {
 
 // Constructor, checks if the passed node is actually an entity
@@ -33,6 +35,16 @@ bool ScriptEntityNode::isInherited(const std::string& key) {
 ScriptEntityClass ScriptEntityNode::getEntityClass() {
 	Entity* entity = Node_getEntity(*this);
 	return ScriptEntityClass(entity != NULL ? entity->getEntityClass() : IEntityClassConstPtr());
+}
+
+bool ScriptEntityNode::isModel() {
+	Entity* entity = Node_getEntity(*this);
+	return (entity != NULL) ? entity->isModel() : false;
+}
+
+Entity::KeyValuePairs ScriptEntityNode::getKeyValuePairs(const std::string& prefix) {
+	Entity* entity = Node_getEntity(*this);
+	return (entity != NULL) ? entity->getKeyValuePairs(prefix) : Entity::KeyValuePairs();
 }
 
 void ScriptEntityNode::forEachKeyValue(Entity::Visitor& visitor) {
@@ -87,6 +99,22 @@ void EntityInterface::registerInterface(boost::python::object& nspace) {
 		.def("getKeyValue", &ScriptEntityNode::getKeyValue)
 		.def("setKeyValue", &ScriptEntityNode::setKeyValue)
 		.def("forEachKeyValue", &ScriptEntityNode::forEachKeyValue)
+		.def("isInherited", &ScriptEntityNode::isInherited)
+		.def("getEntityClass", &ScriptEntityNode::getEntityClass)
+		.def("isModel", &ScriptEntityNode::isModel)
+		.def("getKeyValuePairs", &ScriptEntityNode::getKeyValuePairs)
+	;
+
+	// Declare a KeyValuePair (pair of strings)
+	boost::python::class_< std::pair<std::string, std::string> >(
+		"EntityKeyValuePair", boost::python::init<std::string, std::string>())
+		.def_readwrite("first", &std::pair<std::string, std::string>::first)
+		.def_readwrite("second", &std::pair<std::string, std::string>::second)
+	;
+
+	// Declare the KeyValuePairs vector
+	boost::python::class_<Entity::KeyValuePairs>("EntityKeyValuePairs")
+		.def(boost::python::vector_indexing_suite<Entity::KeyValuePairs, true>())
 	;
 
 	// Add the "isEntity" and "getEntity" method to all ScriptSceneNodes

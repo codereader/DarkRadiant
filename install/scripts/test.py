@@ -92,6 +92,12 @@ if not worldspawn.isNull():
 
 	worldspawnent.forEachKeyValue(tev)
 
+	# Try to retrieve all keyvalues starting with "n"
+	keyvalues = worldspawnent.getKeyValuePairs('t')
+
+	for kv in keyvalues:
+		print('Keyvalue ' + kv.first + ' = ' + kv.second)
+
 # Test the commandsystem
 GlobalCommandSystem.execute('texscale "0 0.1"')
 

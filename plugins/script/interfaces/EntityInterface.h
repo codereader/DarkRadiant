@@ -24,6 +24,8 @@ public:
 	bool isInherited(const std::string& key);
 
 	ScriptEntityClass getEntityClass();
+	bool isModel();
+	Entity::KeyValuePairs getKeyValuePairs(const std::string& prefix);
 
 	// Visit each keyvalue, wraps to the contained entity
 	void forEachKeyValue(Entity::Visitor& visitor);
