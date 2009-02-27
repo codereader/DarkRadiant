@@ -95,4 +95,16 @@ if not worldspawn.isNull():
 # Test the commandsystem
 GlobalCommandSystem.execute('texscale "0 0.1"')
 
+# Test the GameManager interface
+print('Mod path = ' + GlobalGameManager.getModPath())
+
+game = GlobalGameManager.currentGame()
+print('Current game type: ' + game.getKeyValue('type'))
+
+print('VFS Search paths:')
+vfsPaths = GlobalGameManager.getVFSSearchPaths()
+
+for path in vfsPaths:
+	print(path)
+
 print('')
