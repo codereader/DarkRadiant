@@ -118,6 +118,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-ShaderChooser.$(OBJEXT) \
 	darkradiant-SoundShaderPreview.$(OBJEXT) \
 	darkradiant-RenderableAABB.$(OBJEXT) \
+	darkradiant-CommandEntry.$(OBJEXT) \
 	darkradiant-MapPreview.$(OBJEXT) \
 	darkradiant-FiltersMenu.$(OBJEXT) \
 	darkradiant-PrefPage.$(OBJEXT) \
@@ -472,6 +473,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/common/ShaderChooser.cpp \
 					  ui/common/SoundShaderPreview.cpp \
 					  ui/common/RenderableAABB.cpp \
+					  ui/common/CommandEntry.cpp \
 					  ui/common/MapPreview.cpp \
 					  ui/menu/FiltersMenu.cpp \
 					  ui/prefdialog/PrefPage.cpp \
@@ -678,6 +680,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CollisionModel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ColourPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandEntry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Console.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Curves.Po@am__quote@
@@ -1949,6 +1952,20 @@ darkradiant-RenderableAABB.obj: ui/common/RenderableAABB.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/RenderableAABB.cpp' object='darkradiant-RenderableAABB.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RenderableAABB.obj `if test -f 'ui/common/RenderableAABB.cpp'; then $(CYGPATH_W) 'ui/common/RenderableAABB.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/RenderableAABB.cpp'; fi`
+
+darkradiant-CommandEntry.o: ui/common/CommandEntry.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CommandEntry.o -MD -MP -MF $(DEPDIR)/darkradiant-CommandEntry.Tpo -c -o darkradiant-CommandEntry.o `test -f 'ui/common/CommandEntry.cpp' || echo '$(srcdir)/'`ui/common/CommandEntry.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-CommandEntry.Tpo $(DEPDIR)/darkradiant-CommandEntry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/CommandEntry.cpp' object='darkradiant-CommandEntry.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CommandEntry.o `test -f 'ui/common/CommandEntry.cpp' || echo '$(srcdir)/'`ui/common/CommandEntry.cpp
+
+darkradiant-CommandEntry.obj: ui/common/CommandEntry.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CommandEntry.obj -MD -MP -MF $(DEPDIR)/darkradiant-CommandEntry.Tpo -c -o darkradiant-CommandEntry.obj `if test -f 'ui/common/CommandEntry.cpp'; then $(CYGPATH_W) 'ui/common/CommandEntry.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/CommandEntry.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-CommandEntry.Tpo $(DEPDIR)/darkradiant-CommandEntry.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/CommandEntry.cpp' object='darkradiant-CommandEntry.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CommandEntry.obj `if test -f 'ui/common/CommandEntry.cpp'; then $(CYGPATH_W) 'ui/common/CommandEntry.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/CommandEntry.cpp'; fi`
 
 darkradiant-MapPreview.o: ui/common/MapPreview.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapPreview.o -MD -MP -MF $(DEPDIR)/darkradiant-MapPreview.Tpo -c -o darkradiant-MapPreview.o `test -f 'ui/common/MapPreview.cpp' || echo '$(srcdir)/'`ui/common/MapPreview.cpp

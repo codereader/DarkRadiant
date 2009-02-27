@@ -202,12 +202,8 @@ void CommandSystem::addStatement(const std::string& statementName, const std::st
 	}
 }
 
-void CommandSystem::execute(const std::string& input) {
-	// Instantiate a CommandTokeniser to analyse the given input string
-	CommandTokeniser tokeniser(input);
-
-	if (!tokeniser.hasMoreTokens()) return; // nothing to do!
-
+namespace local
+{
 	// A statement consists of a command and a set of arguments
 	struct Statement
 	{
@@ -217,9 +213,16 @@ void CommandSystem::execute(const std::string& input) {
 		// The arguments to pass
 		ArgumentList args;
 	};
+}
 
-	std::vector<Statement> statements;
-	Statement curStatement;
+void CommandSystem::execute(const std::string& input) {
+	// Instantiate a CommandTokeniser to analyse the given input string
+	CommandTokeniser tokeniser(input);
+
+	if (!tokeniser.hasMoreTokens()) return; // nothing to do!
+
+	std::vector<local::Statement> statements;
+	local::Statement curStatement;
 
 	while (tokeniser.hasMoreTokens()) {
 		// Inspect the next token
@@ -236,7 +239,7 @@ void CommandSystem::execute(const std::string& input) {
 			}
 
 			// Clear the statement
-			curStatement = Statement();
+			curStatement = local::Statement();
 			continue;
 		}
 		// Token is not a semicolon
@@ -259,7 +262,7 @@ void CommandSystem::execute(const std::string& input) {
 	}
 
 	// Now execute the statements
-	for (std::vector<Statement>::iterator i = statements.begin(); 
+	for (std::vector<local::Statement>::iterator i = statements.begin(); 
 		 i != statements.end(); ++i)
 	{
 		// Attempt ordinary command execution
