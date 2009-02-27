@@ -95,6 +95,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/common/ShaderChooser.cpp \
 					  ui/common/SoundShaderPreview.cpp \
 					  ui/common/RenderableAABB.cpp \
+					  ui/common/CommandEntry.cpp \
 					  ui/common/MapPreview.cpp \
 					  ui/menu/FiltersMenu.cpp \
 					  ui/prefdialog/PrefPage.cpp \
