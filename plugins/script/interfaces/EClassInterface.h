@@ -13,20 +13,20 @@ namespace script {
  */
 class ScriptEntityClass
 {
-	IEntityClassPtr _eclass;
+	IEntityClassConstPtr _eclass;
 	EntityClassAttribute _emptyAttribute;
 
 public:
-	ScriptEntityClass(const IEntityClassPtr& eclass) :
+	ScriptEntityClass(const IEntityClassConstPtr& eclass) :
 		_eclass(eclass)
 	{}
 
-	operator const IEntityClassPtr&() const {
+	operator const IEntityClassConstPtr&() const {
 		return _eclass;
 	}
 
 	// Returns a specific spawnarg from this entityDef, or "" if not found
-	EntityClassAttribute& getAttribute(const std::string& name) {
+	const EntityClassAttribute& getAttribute(const std::string& name) {
 		if (_eclass == NULL) {
 			return _emptyAttribute;
 		}

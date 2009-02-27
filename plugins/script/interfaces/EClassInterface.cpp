@@ -48,9 +48,7 @@ void EClassManagerInterface::registerInterface(boost::python::object& nspace) {
 		"EntityClass", boost::python::init<const IEntityClassPtr&>())
 		.def("isNull", &ScriptEntityClass::isNull)
 		.def("getAttribute", &ScriptEntityClass::getAttribute, 
-			boost::python::return_value_policy<
-				boost::python::reference_existing_object,
-				boost::python::default_call_policies>())
+			boost::python::return_value_policy<boost::python::copy_const_reference>())
 	;
 
 	// Expose the entityclass visitor interface

@@ -9,8 +9,7 @@
 
 namespace entity {
 
-Speaker::Speaker(IEntityClassPtr eclass, 
-		SpeakerNode& node, 
+Speaker::Speaker(SpeakerNode& node, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged,
 		const Callback& evaluateTransform) :

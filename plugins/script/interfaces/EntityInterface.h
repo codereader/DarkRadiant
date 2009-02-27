@@ -21,6 +21,9 @@ public:
 	// Methods wrapping to Entity class
 	std::string getKeyValue(const std::string& key);
 	void setKeyValue(const std::string& key, const std::string& value);
+	bool isInherited(const std::string& key);
+
+	ScriptEntityClass getEntityClass();
 
 	// Visit each keyvalue, wraps to the contained entity
 	void forEachKeyValue(Entity::Visitor& visitor);

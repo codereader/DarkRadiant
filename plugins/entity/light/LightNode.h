@@ -50,7 +50,7 @@ class LightNode :
 	mutable AABB m_aabb_component;
 	
 public:
-	LightNode(IEntityClassPtr eclass);
+	LightNode(const IEntityClassConstPtr& eclass);
 	LightNode(const LightNode& other);
 
 	virtual ~LightNode();

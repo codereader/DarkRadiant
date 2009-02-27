@@ -49,7 +49,7 @@ class Doom3Entity :
 
 public:
 	// Constructor, pass the according entity class
-	Doom3Entity(IEntityClassPtr eclass);
+	Doom3Entity(const IEntityClassConstPtr& eclass);
 	
 	// Copy constructor
 	Doom3Entity(const Doom3Entity& other);

@@ -16,7 +16,7 @@ class EntityNode :
 {
 protected:
 	// The entity class
-	IEntityClassPtr _eclass;
+	IEntityClassConstPtr _eclass;
 
 	// The actual entity (which contains the key/value pairs)
 	// TODO: Rename this to "spawnargs"?
@@ -27,7 +27,7 @@ protected:
 
 public:
 	// The Constructor needs the eclass
-	EntityNode(IEntityClassPtr eclass);
+	EntityNode(const IEntityClassConstPtr& eclass);
 
 	// Copy constructor
 	EntityNode(const EntityNode& other);

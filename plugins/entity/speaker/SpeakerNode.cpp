@@ -4,12 +4,11 @@
 
 namespace entity {
 
-SpeakerNode::SpeakerNode(IEntityClassPtr eclass) :
+SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(Speaker::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
-	m_contained(eclass, 
-		*this, 
+	m_contained(*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this),
 		EvaluateTransformCaller(*this))

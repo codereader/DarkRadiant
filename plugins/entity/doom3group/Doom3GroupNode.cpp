@@ -4,12 +4,11 @@
 
 namespace entity {
 
-Doom3GroupNode::Doom3GroupNode(IEntityClassPtr eclass) :
+Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
 	m_contained(
-		eclass,
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
 		Node::BoundsChangedCaller(*this),

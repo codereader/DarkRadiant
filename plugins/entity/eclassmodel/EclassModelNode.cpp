@@ -2,13 +2,12 @@
 
 namespace entity {
 
-EclassModelNode::EclassModelNode(IEntityClassPtr eclass) :
+EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(EclassModel::TransformChangedCaller(m_contained), 
 					  ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
-	m_contained(eclass, 
-				*this, // pass <self> as scene::INode&
+	m_contained(*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this), 
 				EvaluateTransformCaller(*this)),
 	_updateSkin(true)

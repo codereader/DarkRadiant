@@ -9,8 +9,7 @@
 
 namespace entity {
 
-GenericEntity::GenericEntity(IEntityClassPtr eclass, 
-		GenericEntityNode& node, 
+GenericEntity::GenericEntity(GenericEntityNode& node, 
 		const Callback& transformChanged, 
 		const Callback& evaluateTransform) :
 	m_entity(node._entity),

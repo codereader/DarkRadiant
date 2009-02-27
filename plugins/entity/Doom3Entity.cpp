@@ -8,7 +8,7 @@
 
 namespace entity {
 
-Doom3Entity::Doom3Entity(IEntityClassPtr eclass) :
+Doom3Entity::Doom3Entity(const IEntityClassConstPtr& eclass) :
 	_eclass(eclass),
 	_undo(_keyValues, UndoImportCaller(*this)),
 	_instanced(false),

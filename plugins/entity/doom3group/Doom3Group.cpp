@@ -27,7 +27,7 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 	);
 }
 
-Doom3Group::Doom3Group(IEntityClassPtr eclass, 
+Doom3Group::Doom3Group(
 		Doom3GroupNode& owner,
 		const Callback& transformChanged, 
 		const Callback& boundsChanged, 
