@@ -54,7 +54,8 @@ script_la_LIBADD =
 am_script_la_OBJECTS = ScriptingSystem.lo ScriptModule.lo \
 	EClassInterface.lo BrushInterface.lo RadiantInterface.lo \
 	PatchInterface.lo SelectionInterface.lo MapInterface.lo \
-	EntityInterface.lo MathInterface.lo
+	EntityInterface.lo MathInterface.lo CommandSystemInterface.lo \
+	GameInterface.lo
 script_la_OBJECTS = $(am_script_la_OBJECTS)
 script_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -229,7 +230,9 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/SelectionInterface.cpp \
 					interfaces/MapInterface.cpp \
 					interfaces/EntityInterface.cpp \
-					interfaces/MathInterface.cpp
+					interfaces/MathInterface.cpp \
+					interfaces/CommandSystemInterface.cpp \
+					interfaces/GameInterface.cpp
 
 all: all-am
 
@@ -301,8 +304,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BrushInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CommandSystemInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EClassInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GameInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MathInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchInterface.Plo@am__quote@
@@ -387,6 +392,20 @@ MathInterface.lo: interfaces/MathInterface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/MathInterface.cpp' object='MathInterface.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MathInterface.lo `test -f 'interfaces/MathInterface.cpp' || echo '$(srcdir)/'`interfaces/MathInterface.cpp
+
+CommandSystemInterface.lo: interfaces/CommandSystemInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CommandSystemInterface.lo -MD -MP -MF $(DEPDIR)/CommandSystemInterface.Tpo -c -o CommandSystemInterface.lo `test -f 'interfaces/CommandSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/CommandSystemInterface.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/CommandSystemInterface.Tpo $(DEPDIR)/CommandSystemInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/CommandSystemInterface.cpp' object='CommandSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CommandSystemInterface.lo `test -f 'interfaces/CommandSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/CommandSystemInterface.cpp
+
+GameInterface.lo: interfaces/GameInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GameInterface.lo -MD -MP -MF $(DEPDIR)/GameInterface.Tpo -c -o GameInterface.lo `test -f 'interfaces/GameInterface.cpp' || echo '$(srcdir)/'`interfaces/GameInterface.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/GameInterface.Tpo $(DEPDIR)/GameInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/GameInterface.cpp' object='GameInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GameInterface.lo `test -f 'interfaces/GameInterface.cpp' || echo '$(srcdir)/'`interfaces/GameInterface.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
