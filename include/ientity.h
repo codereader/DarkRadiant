@@ -274,7 +274,7 @@ class EntityCreator :
 	public RegisterableModule
 {
 public:
-  virtual scene::INodePtr createEntity(IEntityClassPtr eclass) = 0;
+  virtual scene::INodePtr createEntity(const IEntityClassConstPtr& eclass) = 0;
 
   typedef void (*KeyValueChangedFunc)();
   virtual void setKeyValueChangedFunc(KeyValueChangedFunc func) = 0;

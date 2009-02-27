@@ -60,8 +60,7 @@ class Speaker :
 	Callback m_evaluateTransform;
 public:
 	// Constructor
-	Speaker(IEntityClassPtr eclass, 
-		entity::SpeakerNode& node, 
+	Speaker(entity::SpeakerNode& node,
 				  const Callback& transformChanged, 
 				  const Callback& boundsChanged,
 				  const Callback& evaluateTransform);

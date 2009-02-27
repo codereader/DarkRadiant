@@ -4,12 +4,11 @@
 
 namespace entity {
 
-GenericEntityNode::GenericEntityNode(IEntityClassPtr eclass) :
+GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
-	m_contained(eclass, 
-		*this, 
+	m_contained(*this, 
 		Node::TransformChangedCaller(*this), 
 		EvaluateTransformCaller(*this))
 {

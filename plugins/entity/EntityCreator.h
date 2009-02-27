@@ -12,7 +12,7 @@ class Doom3EntityCreator :
 public:
 	/** greebo: Creates an entity for the given EntityClass
 	 */
-	scene::INodePtr createEntity(IEntityClassPtr eclass);
+	scene::INodePtr createEntity(const IEntityClassConstPtr& eclass);
 	
 	/** greebo: Sets the function to call when any keyvalue gets changed.
 	 * 	
@@ -33,7 +33,7 @@ public:
 private:
 	/** greebo: Creates the right entity for the entityclass.
 	 */
-	scene::INodePtr getEntityForEClass(IEntityClassPtr eclass);
+	scene::INodePtr getEntityForEClass(const IEntityClassConstPtr& eclass);
 };
 typedef boost::shared_ptr<Doom3EntityCreator> Doom3EntityCreatorPtr;
 

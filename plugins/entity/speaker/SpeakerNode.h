@@ -35,7 +35,7 @@ class SpeakerNode :
 	Speaker m_contained;
 
 public:
-	SpeakerNode(IEntityClassPtr eclass);
+	SpeakerNode(const IEntityClassConstPtr& eclass);
 	SpeakerNode(const SpeakerNode& other);
 
 	virtual ~SpeakerNode();

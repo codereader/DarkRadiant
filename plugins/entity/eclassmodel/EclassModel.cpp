@@ -6,8 +6,7 @@
 
 namespace entity {
 
-EclassModel::EclassModel(IEntityClassPtr eclass,
-						 EclassModelNode& owner, 
+EclassModel::EclassModel(EclassModelNode& owner, 
 						 const Callback& transformChanged, 
 						 const Callback& evaluateTransform) :
 	_owner(owner),

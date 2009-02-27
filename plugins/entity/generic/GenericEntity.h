@@ -50,8 +50,7 @@ class GenericEntity :
 	Callback m_evaluateTransform;
 public:
 	// Constructor
-	GenericEntity(IEntityClassPtr eclass, 
-				  GenericEntityNode& node, 
+	GenericEntity(GenericEntityNode& node, 
 				  const Callback& transformChanged, 
 				  const Callback& evaluateTransform);
 	

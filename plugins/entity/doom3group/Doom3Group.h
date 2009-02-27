@@ -72,13 +72,12 @@ public:
 	SignalHandlerId m_curveCatmullRomChanged;
 	InstanceCounter m_instanceCounter;
 
-	/** greebo: The constructor takes the Entity class and the Node as argument
+	/** greebo: The constructor takes the Node as argument
 	 * as well as some callbacks for transformation and bounds changes.
 	 * 
 	 * These callbacks point to and InstanceSet::transformChangedCaller(), for example.  
 	 */
-	Doom3Group(IEntityClassPtr eclass, 
-			   Doom3GroupNode& owner,
+	Doom3Group(Doom3GroupNode& owner,
 			   const Callback& transformChanged, 
 			   const Callback& boundsChanged, 
 			   const Callback& evaluateTransform);

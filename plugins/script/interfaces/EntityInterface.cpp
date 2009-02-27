@@ -24,6 +24,17 @@ void ScriptEntityNode::setKeyValue(const std::string& key, const std::string& va
 	}
 }
 
+bool ScriptEntityNode::isInherited(const std::string& key) {
+	Entity* entity = Node_getEntity(*this);
+
+	return (entity != NULL) ? entity->isInherited(key) : false;
+}
+
+ScriptEntityClass ScriptEntityNode::getEntityClass() {
+	Entity* entity = Node_getEntity(*this);
+	return ScriptEntityClass(entity != NULL ? entity->getEntityClass() : IEntityClassConstPtr());
+}
+
 void ScriptEntityNode::forEachKeyValue(Entity::Visitor& visitor) {
 	Entity* entity = Node_getEntity(*this);
 

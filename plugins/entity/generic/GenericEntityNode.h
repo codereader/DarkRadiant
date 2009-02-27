@@ -35,7 +35,7 @@ class GenericEntityNode :
 	GenericEntity m_contained;
 
 public:
-	GenericEntityNode(IEntityClassPtr eclass);
+	GenericEntityNode(const IEntityClassConstPtr& eclass);
 	GenericEntityNode(const GenericEntityNode& other);
 
 	virtual ~GenericEntityNode();

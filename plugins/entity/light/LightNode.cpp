@@ -4,12 +4,11 @@ namespace entity {
 
 // --------- LightNode implementation ------------------------------------
 
-LightNode::LightNode(IEntityClassPtr eclass) :
+LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
-	_light(eclass, 
-			*this, 
+	_light(*this, 
 			Node::TransformChangedCaller(*this), 
 			Node::BoundsChangedCaller(*this), 
 			EvaluateTransformCaller(*this)),

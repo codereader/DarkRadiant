@@ -2,7 +2,7 @@
 
 namespace entity {
 
-EntityNode::EntityNode(IEntityClassPtr eclass) :
+EntityNode::EntityNode(const IEntityClassConstPtr& eclass) :
 	_eclass(eclass),
 	_entity(_eclass),
 	_namespaceManager(_entity)

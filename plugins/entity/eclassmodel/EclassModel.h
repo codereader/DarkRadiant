@@ -48,8 +48,7 @@ class EclassModel :
 	
 	InstanceCounter m_instanceCounter;
 public:
-	EclassModel(IEntityClassPtr eclass,
-				EclassModelNode& owner,
+	EclassModel(EclassModelNode& owner,
 				const Callback& transformChanged, 
 				const Callback& evaluateTransform);
 	
