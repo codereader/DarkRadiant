@@ -470,6 +470,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\GameInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\GameInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\MapInterface.cpp"
 					>
 				</File>
