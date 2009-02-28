@@ -18,6 +18,7 @@
 #include "interfaces/CommandSystemInterface.h"
 #include "interfaces/GameInterface.h"
 #include "interfaces/FileSystemInterface.h"
+#include "interfaces/GridInterface.h"
 
 namespace script {
 
@@ -187,6 +188,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("Radiant", RadiantInterfacePtr(new RadiantInterface));
 	addInterface("Map", MapInterfacePtr(new MapInterface));
 	addInterface("FileSystem", FileSystemInterfacePtr(new FileSystemInterface));
+	addInterface("Grid", GridInterfacePtr(new GridInterface));
 
 	GlobalCommandSystem().addCommand(
 		"RunScript", 

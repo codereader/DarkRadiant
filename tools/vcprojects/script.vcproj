@@ -486,6 +486,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\GridInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\GridInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\MapInterface.cpp"
 					>
 				</File>
