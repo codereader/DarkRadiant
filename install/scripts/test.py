@@ -127,4 +127,12 @@ print(filecontents)
 # Test the Grid Interface
 print('Current grid size = ' + str(GlobalGrid.getGridSize()))
 
+# Test the ShaderSystem interface
+class TestShaderVisitor(ShaderVisitor) :
+	def visit(self, shader):
+		print('Found shader: ' + shader.getName() + ' defined in ' + shader.getShaderFileName())
+
+shadervisitor = TestShaderVisitor()
+GlobalShaderSystem.foreachShader(shadervisitor)
+
 print('')
