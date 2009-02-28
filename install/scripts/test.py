@@ -130,9 +130,15 @@ print('Current grid size = ' + str(GlobalGrid.getGridSize()))
 # Test the ShaderSystem interface
 class TestShaderVisitor(ShaderVisitor) :
 	def visit(self, shader):
-		print('Found shader: ' + shader.getName() + ' defined in ' + shader.getShaderFileName())
+		if not shader.isNull():
+			print('Found shader: ' + shader.getName() + ' defined in ' + shader.getShaderFileName())
 
 shadervisitor = TestShaderVisitor()
 GlobalShaderSystem.foreachShader(shadervisitor)
+
+shader = GlobalShaderSystem.getShaderForName('bc_rat')
+
+if not shader.isNull():
+	print('Shader ' + shader.getName() + ' is defined in ' + shader.getShaderFileName())
 
 print('')
