@@ -541,6 +541,14 @@
 					RelativePath="..\..\plugins\script\interfaces\SelectionInterface.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\ShaderSystemInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\ShaderSystemInterface.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
