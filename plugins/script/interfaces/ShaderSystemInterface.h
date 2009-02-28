@@ -40,6 +40,18 @@ public:
 		return (_shader != NULL) ? _shader->isVisible() : false;
 	}
 
+	bool isAmbientLight() {
+		return (_shader != NULL) ? _shader->isAmbientLight() : false;
+	}
+
+	bool isBlendLight() {
+		return (_shader != NULL) ? _shader->isBlendLight() : false;
+	}
+
+	bool isFogLight() {
+		return (_shader != NULL) ? _shader->isFogLight() : false;
+	}
+
 	bool isNull() const {
 		return _shader == NULL;
 	}
