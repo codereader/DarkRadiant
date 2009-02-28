@@ -113,4 +113,12 @@ vfsPaths = GlobalGameManager.getVFSSearchPaths()
 for path in vfsPaths:
 	print(path)
 
+# Test FileSystem (VFS)
+class TestFileVisitor(FileVisitor) :
+	def visit(self, filename):
+		print('Found file: ' + filename) 
+
+filevisitor = TestFileVisitor()
+GlobalFileSystem.forEachFile('skins/', 'skin', filevisitor, 99)
+
 print('')

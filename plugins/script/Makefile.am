@@ -17,4 +17,5 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/EntityInterface.cpp \
 					interfaces/MathInterface.cpp \
 					interfaces/CommandSystemInterface.cpp \
+					interfaces/FileSystemInterface.cpp \
 					interfaces/GameInterface.cpp
