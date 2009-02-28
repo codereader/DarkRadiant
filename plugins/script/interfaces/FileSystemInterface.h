@@ -35,8 +35,18 @@ class FileSystemInterface :
 	public IScriptInterface
 {
 public:
+	// Reads a text file and returns the contents to the script
+	// Filename is a VFS path, not an absolute OS path
+	// Returns an empty string if not found
+	std::string readTextFile(const std::string& filename);
+
+	// Wrapped methods, see "ifilesystem.h" for documentation
 	void forEachFile(const std::string& basedir, const std::string& extension, 
 					  FileVisitor& visitor, std::size_t depth);
+
+	int getFileCount(const std::string& filename);
+	std::string findFile(const std::string& name);
+	std::string findRoot(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);

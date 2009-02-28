@@ -121,4 +121,7 @@ class TestFileVisitor(FileVisitor) :
 filevisitor = TestFileVisitor()
 GlobalFileSystem.forEachFile('skins/', 'skin', filevisitor, 99)
 
+filecontents = GlobalFileSystem.readTextFile('skins/tdm_ai_elemental_fire.skin');
+print(filecontents)
+
 print('')
