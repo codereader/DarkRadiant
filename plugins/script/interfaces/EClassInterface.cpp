@@ -6,7 +6,7 @@ namespace script {
 
 ScriptEntityClass EClassManagerInterface::findClass(const std::string& name) {
 	// Find the eclass and convert implicitly to ScriptEntityClass
-	return GlobalEntityClassManager().findClass(name);
+	return ScriptEntityClass(GlobalEntityClassManager().findClass(name));
 }
 
 IModelDef EClassManagerInterface::findModel(const std::string& name) {
