@@ -13,7 +13,7 @@ namespace script {
  */
 class ScriptShader
 {
-	// The contained shader
+	// The contained shader (can be NULL)
 	IShaderPtr _shader;
 public:
 	ScriptShader(const IShaderPtr& shader) :
@@ -30,6 +30,14 @@ public:
 
 	std::string getShaderFileName() {
 		return (_shader != NULL) ? _shader->getShaderFileName() : "";
+	}
+
+	std::string getDescription() {
+		return (_shader != NULL) ? _shader->getDescription() : "";
+	}
+
+	bool isVisible() {
+		return (_shader != NULL) ? _shader->isVisible() : false;
 	}
 
 	bool isNull() const {
@@ -57,6 +65,7 @@ class ShaderSystemInterface :
 {
 public:
 	void foreachShader(shaders::ShaderVisitor& visitor);
+	ScriptShader getShaderForName(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);

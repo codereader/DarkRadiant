@@ -6,6 +6,10 @@ void ShaderSystemInterface::foreachShader(shaders::ShaderVisitor& visitor) {
 	GlobalShaderSystem().foreachShader(visitor);
 }
 
+ScriptShader ShaderSystemInterface::getShaderForName(const std::string& name) {
+	return ScriptShader(GlobalShaderSystem().getShaderForName(name));
+}
+
 // IScriptInterface implementation
 void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
 	// Add the declaration for a Shader object
@@ -13,6 +17,8 @@ void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
 		"Shader", boost::python::init<const IShaderPtr&>())
 		.def("getName", &ScriptShader::getName)
 		.def("getShaderFileName", &ScriptShader::getShaderFileName)
+		.def("getDescription", &ScriptShader::getDescription)
+		.def("isVisible", &ScriptShader::isVisible)
 		.def("isNull", &ScriptShader::isNull)
 	;
 	
@@ -25,6 +31,7 @@ void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
 	// Add the module declaration to the given python namespace
 	nspace["GlobalShaderSystem"] = boost::python::class_<ShaderSystemInterface>("GlobalShaderSystem")
 		.def("foreachShader", &ShaderSystemInterface::foreachShader)
+		.def("getShaderForName", &ShaderSystemInterface::getShaderForName)
 	;
 
 	// Now point the Python variable "GlobalShaderSystem" to this instance
