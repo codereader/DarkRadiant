@@ -419,6 +419,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\script\ScriptCommand.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\script\ScriptCommand.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\script\ScriptingSystem.cpp"
 				>
 			</File>

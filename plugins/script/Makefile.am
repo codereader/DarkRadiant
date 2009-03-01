@@ -7,6 +7,7 @@ modules_LTLIBRARIES = script.la
 
 script_la_LDFLAGS = -module -avoid-version $(BOOST_PYTHON_LIBS) $(PYTHON_LIBS)
 script_la_SOURCES = ScriptingSystem.cpp \
+					ScriptCommand.cpp \
 					ScriptModule.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
