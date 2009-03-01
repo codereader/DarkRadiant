@@ -9,6 +9,8 @@
 #include "PythonConsoleWriter.h"
 #include "icommandsystem.h"
 
+#include "ScriptCommand.h"
+
 namespace script {
 
 // Forward declaration
@@ -36,6 +38,10 @@ class ScriptingSystem :
 	// The path where the script files are hosted
 	std::string _scriptPath;
 
+	// All named script commands (pointing to .py files)
+	typedef std::map<std::string, ScriptCommandPtr> ScriptCommandMap;
+	ScriptCommandMap _commands;
+
 public:
 	ScriptingSystem();
 
@@ -44,6 +50,9 @@ public:
 
 	// Executes a script file
 	void executeScriptFile(const std::string& filename);
+
+	// (Re)loads all scripts from the scripts/ folder
+	void reloadScriptsCmd(const cmd::ArgumentList& args);
 
 	/**
 	 * This actually initialises the Scripting System, adding all
@@ -65,6 +74,10 @@ public:
 
 private: 
 	bool interfaceExists(const std::string& name);
+
+	void reloadScripts();
+
+	void loadCommandScript(const std::string& scriptFilename);
 };
 typedef boost::shared_ptr<ScriptingSystem> ScriptingSystemPtr;
 
