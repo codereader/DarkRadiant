@@ -2,6 +2,8 @@
 
 #include "itextstream.h"
 #include "iradiant.h"
+#include "ieventmanager.h"
+#include "iuimanager.h"
 
 #include "StartupListener.h"
 
@@ -261,6 +263,8 @@ const StringSet& ScriptingSystem::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
 
 	return _dependencies;
@@ -346,6 +350,18 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	// Search script folder for commands
 	reloadScripts();
+
+	// Bind the reloadscripts command to the menu
+	GlobalEventManager().addCommand("ReloadScripts", "ReloadScripts");
+
+	// Add the menu item
+	IMenuManager& mm = GlobalUIManager().getMenuManager();
+	mm.insert("main/file/refreshShaders", 	// menu location path
+			"ReloadScripts", // name
+			ui::menuItem,	// type
+			"Reload Scripts",	// caption
+			"",	// icon
+			"ReloadScripts"); // event name
 }
 
 void ScriptingSystem::shutdownModule() {
