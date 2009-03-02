@@ -58,17 +58,17 @@ void ModuleRegistry::registerModule(RegisterableModulePtr module) {
 		);
 	}
 	
+	// Add this module to the list of uninitialised ones 
+	std::pair<ModulesMap::iterator, bool> result = _uninitialisedModules.insert(
+		ModulesMap::value_type(module->getName(), module)
+	);
+
 	// Don't allow modules with the same name being added twice 
-	if (moduleExists(module->getName())) {
+	if (!result.second) {
 		throw std::logic_error(
 			"ModuleRegistry: multiple modules named " + module->getName()
 		);
 	}
-	
-	// Add this module to the list of uninitialised ones 
-	_uninitialisedModules.insert(
-		ModulesMap::value_type(module->getName(), module)
-	);
 	
 	globalOutputStream() << "Module registered: " << module->getName().c_str() << "\n";
 }
@@ -160,9 +160,9 @@ void ModuleRegistry::shutdownModules() {
 }
 
 bool ModuleRegistry::moduleExists(const std::string& name) const {
-	// Try to find the module
-	ModulesMap::const_iterator found = _uninitialisedModules.find(name);
-	return (found != _uninitialisedModules.end());
+	// Try to find the initialised module, uninitialised don't count as existing
+	ModulesMap::const_iterator found = _initialisedModules.find(name);
+	return (found != _initialisedModules.end());
 }
 
 // Get the module

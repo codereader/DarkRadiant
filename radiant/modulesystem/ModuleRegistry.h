@@ -63,6 +63,9 @@ public:
 	
 	// Returns a list of modules
 	std::string getModuleList(const std::string& separator = "\n");
+
+	// Returns TRUE if the named module exists in the records
+	bool moduleExists(const std::string& name) const;
 	
 private:
 
@@ -74,9 +77,6 @@ private:
 	
 	// Initialises the module (including dependencies, recursively).
 	void initialiseModuleRecursive(const std::string& name);
-	
-	// Returns TRUE if the named module exists in the records
-	bool moduleExists(const std::string& name) const;
 
 }; // class Registry
 

@@ -195,6 +195,11 @@ public:
 	 * to downcast the pointer to the appropriate type.
 	 */
 	virtual RegisterableModulePtr getModule(const std::string& name) const = 0;
+
+	/**
+	 * Returns TRUE if the named module exists in the records.
+	 */
+	virtual bool moduleExists(const std::string& name) const = 0;
 	
 	/**
 	 * This retrieves a reference to the information structure ApplicationContext,

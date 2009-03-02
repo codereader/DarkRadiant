@@ -222,7 +222,11 @@ void PrefDialog::save() {
 	_requestedPage = "";
 	_isModal = false;
 
-	GlobalMainFrame().updateAllWindows();
+	// greebo: Check if the mainframe module is already "existing". It might be
+	// uninitialised if this dialog is shown during DarkRadiant startup
+	if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME)) {
+		GlobalMainFrame().updateAllWindows();
+	}
 }
 
 void PrefDialog::cancel() {
