@@ -21,6 +21,10 @@ public:
 		_signature(signature)
 	{}
 
+	Signature getSignature() {
+		return _signature;
+	}
+
 	virtual void execute(const ArgumentList& args) {
 		// Check arguments
 		if (_signature.size() < args.size()) {

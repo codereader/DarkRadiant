@@ -209,6 +209,17 @@ void CommandSystem::addStatement(const std::string& statementName, const std::st
 	}
 }
 
+Signature CommandSystem::getSignature(const std::string& name) {
+	// Lookup the named command
+	CommandMap::iterator i = _commands.find(name);
+
+	if (i == _commands.end()) {
+		return Signature(); // not found => empty signature
+	}
+
+	return i->second->getSignature();
+}
+
 namespace local
 {
 	// A statement consists of a command and a set of arguments

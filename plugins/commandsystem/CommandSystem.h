@@ -21,6 +21,9 @@ public:
 
 	void addStatement(const std::string& statementName, const std::string& string);
 
+	// Retrieve the signature for the given command
+	Signature getSignature(const std::string& name);
+
 	// Execute the given command sequence
 	void execute(const std::string& input);
 

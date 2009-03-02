@@ -276,6 +276,12 @@ public:
 							   const std::string& string) = 0;
 
 	/**
+	 * Returns the signature for the named command or bind. Statements
+	 * always have an empty signature.
+	 */
+	virtual Signature getSignature(const std::string& name) = 0;
+
+	/**
 	 * greebo: Executes the given string as if the user had typed it
 	 * in the command console. The passed string can be a sequence of
 	 * statements separated by semicolon ';' characters. Each statement
