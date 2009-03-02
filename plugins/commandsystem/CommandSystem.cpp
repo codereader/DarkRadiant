@@ -158,7 +158,14 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 void CommandSystem::listCmds(const ArgumentList& args) {
 	// Dump all commands
 	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
-		globalOutputStream() << i->first << std::endl;
+		globalOutputStream() << i->first;
+		
+		StatementPtr st = boost::dynamic_pointer_cast<Statement>(i->second);
+		if (st != NULL) {
+			globalOutputStream() << " => " << st->getValue();
+		}
+
+		globalOutputStream() << std::endl;
 	}
 }
 
