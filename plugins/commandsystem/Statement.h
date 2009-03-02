@@ -26,6 +26,10 @@ public:
 		GlobalCommandSystem().execute(_string);
 	}
 
+	Signature getSignature() {
+		return Signature(); // signature is always empty
+	}
+
 	const std::string& getValue() const {
 		return _string;
 	}
