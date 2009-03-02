@@ -124,14 +124,45 @@ void ScriptingSystem::initialise() {
 	executeScriptFile("init.py");
 }
 
-void ScriptingSystem::runScript(const cmd::ArgumentList& args) {
+void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args) {
 	// Start the test script
 	if (args.empty()) return;
+
 	executeScriptFile(args[0].getString());
+}
+
+void ScriptingSystem::runScriptCommand(const cmd::ArgumentList& args) {
+	// Start the test script
+	if (args.empty()) return;
+
+	executeCommand(args[0].getString());
 }
 
 void ScriptingSystem::reloadScriptsCmd(const cmd::ArgumentList& args) {
 	reloadScripts();
+}
+
+void ScriptingSystem::executeCommand(const std::string& name) {
+	// Sanity check
+	if (!_initialised) {
+		globalErrorStream() << "Cannot execute script command " << name 
+			<< ", ScriptingSystem not initialised yet." << std::endl;
+		return;
+	}
+
+	// Lookup the name
+	ScriptCommandMap::iterator found = _commands.find(name);
+
+	if (found == _commands.end()) {
+		globalErrorStream() << "Couldn't find command " << name << std::endl;
+		return;
+	}
+
+	// Set the execution flag in the global namespace
+	_globals["__executeCommand__"] = true;
+
+	// Execute the script file behind this command
+	executeScriptFile(found->second->getFilename());
 }
 
 void ScriptingSystem::loadCommandScript(const std::string& scriptFilename) {
@@ -140,8 +171,8 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename) {
 		// Create a new dictionary for the initialisation routine
 		boost::python::dict locals;
 
-		// Set the flag for initialisation
-		locals["initCommand"] = true;
+		// Disable the flag for initialisation, just for sure
+		locals["__executeCommand__"] = false;
 		
 		// Attempt to run the specified script
 		boost::python::object ignored = boost::python::exec_file(
@@ -150,11 +181,11 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename) {
 			locals	// pass the new dictionary for the locals
 		);
 		
-		std::string cmdName = boost::python::extract<std::string>(locals["commandName"]);
+		std::string cmdName = boost::python::extract<std::string>(locals["__commandName__"]);
 		
 		if (!cmdName.empty()) {
 			// Successfully retrieved the command
-			ScriptCommandPtr cmd(new ScriptCommand(scriptFilename));
+			ScriptCommandPtr cmd(new ScriptCommand(cmdName, scriptFilename));
 
 			// Try to register this named command
 			std::pair<ScriptCommandMap::iterator, bool> result = _commands.insert(
@@ -168,7 +199,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename) {
 			}
 			else {
 				globalErrorStream() << "Error in " << scriptFilename << ": Script command " 
-					<< cmdName << " has already registered in " 
+					<< cmdName << " has already been registered in " 
 					<< _commands[cmdName]->getFilename() << std::endl;
 			}
 		}
@@ -298,13 +329,19 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 
 	GlobalCommandSystem().addCommand(
 		"RunScript", 
-		boost::bind(&ScriptingSystem::runScript, this, _1),
+		boost::bind(&ScriptingSystem::runScriptFile, this, _1),
 		cmd::ARGTYPE_STRING
 	);
 
 	GlobalCommandSystem().addCommand(
 		"ReloadScripts", 
 		boost::bind(&ScriptingSystem::reloadScriptsCmd, this, _1)
+	);
+
+	GlobalCommandSystem().addCommand(
+		"RunScriptCommand", 
+		boost::bind(&ScriptingSystem::runScriptCommand, this, _1),
+		cmd::ARGTYPE_STRING
 	);
 
 	// Search script folder for commands

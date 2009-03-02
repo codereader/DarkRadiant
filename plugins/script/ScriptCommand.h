@@ -6,12 +6,21 @@
 
 namespace script {
 
+// Forward decl.
+class ScriptingSystem;
+
 class ScriptCommand
 {
+	// The name of this command
+	std::string _name;
+
 	// The script file name to execute (relative to scripts/ folder)
 	std::string _scriptFilename;
+
 public:
-	ScriptCommand(const std::string& scriptFilename);
+	ScriptCommand(const std::string& name, const std::string& scriptFilename);
+
+	~ScriptCommand();
 
 	const std::string& getFilename() {
 		return _scriptFilename;

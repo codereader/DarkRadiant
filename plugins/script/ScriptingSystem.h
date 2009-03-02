@@ -48,9 +48,6 @@ public:
 	// Adds a script interface to this system
 	void addInterface(const std::string& name, const IScriptInterfacePtr& iface);
 
-	// Executes a script file
-	void executeScriptFile(const std::string& filename);
-
 	// (Re)loads all scripts from the scripts/ folder
 	void reloadScriptsCmd(const cmd::ArgumentList& args);
 
@@ -63,8 +60,17 @@ public:
 	 */
 	void initialise();
 
-	// Runs a specific script
-	void runScript(const cmd::ArgumentList& args);
+	// Runs a specific script file (command target)
+	void runScriptFile(const cmd::ArgumentList& args);
+
+	// Runs a named script command (command target)
+	void runScriptCommand(const cmd::ArgumentList& args);
+
+	// Executes a script file
+	void executeScriptFile(const std::string& filename);
+
+	// Runs the named command (or rather the .py file behind it)
+	void executeCommand(const std::string& name);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
