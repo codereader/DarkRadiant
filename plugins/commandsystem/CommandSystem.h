@@ -16,6 +16,11 @@ class CommandSystem :
 	CommandMap _commands;
 
 public:
+	/** 
+	 * Visit each command/bind using the given walker class.
+	 */
+	void foreachCommand(Visitor& visitor);
+
 	void addCommand(const std::string& name, Function func, const Signature& signature = Signature());
 	void removeCommand(const std::string& name);
 

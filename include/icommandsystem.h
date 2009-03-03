@@ -255,6 +255,19 @@ class ICommandSystem :
 	public RegisterableModule
 {
 public:
+
+	class Visitor
+	{
+	public:
+		// Gets invoked for each command
+		virtual void visit(const std::string& commandName) = 0;
+	};
+
+	/** 
+	 * Visit each command/bind using the given walker class.
+	 */
+	virtual void foreachCommand(Visitor& visitor) = 0;
+
 	/**
 	 * greebo: Declares a new command with the given signature.
 	 */
