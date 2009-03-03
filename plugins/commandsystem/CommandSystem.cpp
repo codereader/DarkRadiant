@@ -169,6 +169,12 @@ void CommandSystem::listCmds(const ArgumentList& args) {
 	}
 }
 
+void CommandSystem::foreachCommand(Visitor& visitor) {
+	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
+		visitor.visit(i->first);
+	}
+}
+
 void CommandSystem::addCommand(const std::string& name, Function func, 
 	const Signature& signature)
 {
