@@ -158,8 +158,8 @@ private:
 	AcceleratorList findAccelerator(GdkEventKey* event);
 
 	// The GTK keypress callbacks for dialogs
-	static gboolean onDialogKeyPress(GtkWindow* window, GdkEventKey* event, gpointer data);
-	static gboolean onDialogKeyRelease(GtkWindow* window, GdkEventKey* event, gpointer data);
+	static gboolean onDialogKeyPress(GtkWindow* window, GdkEventKey* event, EventManager* self);
+	static gboolean onDialogKeyRelease(GtkWindow* window, GdkEventKey* event, EventManager* self);
 	
 	void updateStatusText(GdkEventKey* event, bool keyPress);
 	
