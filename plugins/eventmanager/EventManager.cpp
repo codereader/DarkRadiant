@@ -582,11 +582,7 @@ EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event) 
 }
 
 // The GTK keypress callback
-gboolean EventManager::onDialogKeyPress(GtkWindow* window, GdkEventKey* event, gpointer data) {
-	
-	// Convert the passed pointer onto a KeyEventManager pointer
-	EventManager* self = reinterpret_cast<EventManager*>(data);
-	
+gboolean EventManager::onDialogKeyPress(GtkWindow* window, GdkEventKey* event, EventManager* self) {
 	// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
 	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
 
@@ -602,7 +598,7 @@ gboolean EventManager::onDialogKeyPress(GtkWindow* window, GdkEventKey* event, g
 	
 	if (!keyProcessed) {
 		// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
-		self->onKeyPress(window, event, data);
+		self->onKeyPress(window, event, self);
 	}
 	
 	// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 
@@ -610,11 +606,7 @@ gboolean EventManager::onDialogKeyPress(GtkWindow* window, GdkEventKey* event, g
 }
 
 // The GTK keyrelease callback
-gboolean EventManager::onDialogKeyRelease(GtkWindow* window, GdkEventKey* event, gpointer data) {
-	
-	// Convert the passed pointer onto a KeyEventManager pointer
-	EventManager* self = reinterpret_cast<EventManager*>(data);
-	
+gboolean EventManager::onDialogKeyRelease(GtkWindow* window, GdkEventKey* event, EventManager* self) {
 	// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
 	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
 	
@@ -629,7 +621,7 @@ gboolean EventManager::onDialogKeyRelease(GtkWindow* window, GdkEventKey* event,
 
 	if (!keyProcessed) {
 		// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
-		self->onKeyRelease(window, event, data);
+		self->onKeyRelease(window, event, self);
 	}
 	
 	// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 

@@ -24,7 +24,9 @@ public:
 
 	// Invoke the statement, overriding the base class method
 	virtual void execute() {
-		GlobalCommandSystem().execute(_statement);
+		if (_enabled) {
+			GlobalCommandSystem().execute(_statement);
+		}
 	}
 
 }; // class Statement
