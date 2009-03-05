@@ -650,7 +650,7 @@ gboolean EventManager::onKeyPress(GtkWindow* window, GdkEventKey* event, gpointe
 	// Convert the passed pointer onto a KeyEventManager pointer
 	EventManager* self = reinterpret_cast<EventManager*>(data);
 
-	if (!GTK_IS_WINDOW(window)) return FALSE;
+	if (!GTK_IS_WIDGET(window)) return FALSE;
 
 	// Pass the key event to the connected window and see if it can process it (returns TRUE)
 	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
@@ -696,7 +696,7 @@ gboolean EventManager::onKeyRelease(GtkWindow* window, GdkEventKey* event, gpoin
 	// Convert the passed pointer onto a KeyEventManager pointer
 	EventManager* self = reinterpret_cast<EventManager*>(data);
 	
-	if (!GTK_IS_WINDOW(window)) return FALSE;
+	if (!GTK_IS_WIDGET(window)) return FALSE;
 
 	// Pass the key event to the connected window and see if it can process it (returns TRUE)
 	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
