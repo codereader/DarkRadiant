@@ -15,6 +15,7 @@
 #include "Camera.h"
 
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
@@ -22,7 +23,8 @@ const int CAMWND_MINSIZE_Y = 200;
 class SelectionTest;
 
 class CamWnd :
-	public scene::Graph::Observer
+	public scene::Graph::Observer,
+	public boost::noncopyable
 {
 	// The ID of this window
 	int _id;
@@ -71,7 +73,8 @@ public:
 
 	// Constructor and destructor
 	CamWnd();
-	~CamWnd();
+
+	virtual ~CamWnd();
 
 	// The unique ID of this camwindow
 	int getId();
