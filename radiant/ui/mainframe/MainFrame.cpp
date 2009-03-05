@@ -33,7 +33,7 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "ui/mainframe/FloatingLayout.h"
+#include "ui/mainframe/EmbeddedLayout.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -92,7 +92,7 @@ void MainFrame::construct() {
 	std::string activeLayout = GlobalRegistry().get(RKEY_ACTIVE_LAYOUT);
 
 	if (activeLayout.empty()) {
-		activeLayout = FLOATING_LAYOUT_NAME; // fall back to hardcoded layout
+		activeLayout = EMBEDDED_LAYOUT_NAME; // fall back to hardcoded layout
 	}
 
 	// Apply the layout
@@ -102,9 +102,9 @@ void MainFrame::construct() {
 		// Layout is still empty, this is not good
 		globalErrorStream() << "Could not restore layout " << activeLayout << std::endl;
 
-		if (activeLayout != FLOATING_LAYOUT_NAME) {
+		if (activeLayout != EMBEDDED_LAYOUT_NAME) {
 			// Try to fallback to floating layout
-			applyLayout(FLOATING_LAYOUT_NAME);
+			applyLayout(EMBEDDED_LAYOUT_NAME);
 		}
 	}
 
