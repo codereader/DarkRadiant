@@ -167,7 +167,7 @@ void PointFile::advance(bool forward) {
 
 	CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 	if (cam == NULL) return;
-	CamWnd camwnd = *cam;
+	CamWnd& camwnd = *cam;
 
 	camwnd.setCameraOrigin(*_curPos);
 	GlobalXYWnd().getActiveXY()->setOrigin(*_curPos);
