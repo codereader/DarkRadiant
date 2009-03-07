@@ -255,8 +255,13 @@ namespace os {
     inline std::string getRelativePath(const std::string& fullPath,
                                        const std::string& basePath)
     {
-        if (boost::algorithm::starts_with(fullPath, basePath)) {
-            return fullPath.substr(basePath.length());
+#ifdef OS_CASE_INSENSITIVE
+		if (boost::algorithm::istarts_with(fullPath, basePath))
+#else
+		if (boost::algorithm::starts_with(fullPath, basePath))
+#endif
+		{
+			return fullPath.substr(basePath.length());
         }
         else {
             return fullPath;
