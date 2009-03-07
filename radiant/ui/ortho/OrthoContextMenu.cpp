@@ -441,8 +441,6 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
 }
 
 void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self) {
-	UndoableCommand command("addPrefab");	
-
 	// Pass the call to the map algorithm and give the lastPoint coordinate as argument
 	GlobalMap().loadPrefabAt(self->_lastPoint);
 }
