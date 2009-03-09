@@ -8,6 +8,7 @@
 #include "string/string.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 namespace objectives {
 
@@ -233,10 +234,22 @@ void ObjectiveEntity::populateListStore(GtkListStore* store) const {
 		 i != _objectives.end();
 		 ++i)
 	{
-		std::string diffStr = (i->second.difficultyLevels.empty())
-			? "all" 
-			: i->second.difficultyLevels;
+		std::string diffStr = "all";
 
+		if (!i->second.difficultyLevels.empty()) {
+			// clear the string first
+			diffStr.clear();
+
+			// Split the string and increase each index by 1 for display (Level 1 == 0)
+			std::vector<std::string> parts;
+			boost::algorithm::split(parts, i->second.difficultyLevels, boost::algorithm::is_any_of(" "));
+
+			for (std::size_t d = 0; d < parts.size(); ++d) {
+				diffStr += (diffStr.empty()) ? "" : " ";
+				diffStr += intToStr(strToInt(parts[d]) + 1);
+			}
+		}
+		
 		GtkTreeIter iter;
 		gtk_list_store_append(store, &iter);
 		gtk_list_store_set(store, &iter, 
