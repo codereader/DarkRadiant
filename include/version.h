@@ -1,4 +1,4 @@
-#define RADIANT_VERSION "0.9.12"
+#define RADIANT_VERSION "0.9.13"
 
 #define RADIANT_APPNAME "DarkRadiant"
 #define RADIANT_BLANK " "
