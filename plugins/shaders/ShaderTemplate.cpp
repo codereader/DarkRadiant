@@ -225,12 +225,6 @@ void ShaderTemplate::parseDefinition() {
 				if (--curStage == 1) {
 					saveLayer();
 				}
-				
-				// If the texture is missing (i.e. no editorimage provided), 
-				// substitute this with the diffusemap
-				if (!_texture) {		
-					_texture = _diffuse;
-				}
 			} 
 			else if (token=="{") {
 				++curStage;
@@ -249,6 +243,12 @@ void ShaderTemplate::parseDefinition() {
 						break;
 				}
 			} 
+		}
+
+		// If the texture is missing (i.e. no editorimage provided), 
+		// substitute this with the diffusemap
+		if (!_texture) {		
+			_texture = _diffuse;
 		}
 	}
 	catch (parser::ParseException p) {
