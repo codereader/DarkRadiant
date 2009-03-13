@@ -8,6 +8,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/IconTextColumn.h"
+#include "gtkutil/MultiMonitor.h"
 #include "string/string.h"
 
 #include "entity.h" // Entity_createFromSelection()
@@ -72,21 +73,20 @@ EntityClassChooser::EntityClassChooser()
   _selectedName(""),
   _modelPreview(new ModelPreview)
 {
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
+	GtkWindow* mainWindow = GlobalRadiant().getMainWindow();
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), mainWindow);
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), ECLASS_CHOOSER_TITLE);
 
 	// Set the default size of the window
 	
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
-	gint w = gdk_screen_get_width(scr);
-	gint h = gdk_screen_get_height(scr);
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
 	gtk_window_set_default_size(
-		GTK_WINDOW(_widget), gint(w * 0.7f), gint(h * 0.6f)
+		GTK_WINDOW(_widget), gint(rect.width * 0.7f), gint(rect.height * 0.6f)
 	);
 
-	_modelPreview->setSize(gint(w*0.3f));
+	_modelPreview->setSize(gint(rect.width * 0.3f));
 
 	// Create GUI elements and pack into main VBox
 	

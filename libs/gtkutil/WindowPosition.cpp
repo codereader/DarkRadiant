@@ -1,6 +1,7 @@
 #include "WindowPosition.h"
 
 #include "string/string.h"
+#include "MultiMonitor.h"
 
 namespace {
 	const int DEFAULT_POSITION_X = 50;
@@ -91,15 +92,8 @@ void WindowPosition::readPosition() {
 void WindowPosition::fitToScreen(float xfraction, float yfraction) {
 	if (_window == NULL) return;
 
-	GdkScreen* screen = gtk_window_get_screen(_window);
+	GdkRectangle geom = MultiMonitor::getMonitorForWindow(_window);
 	
-	gint x,y;
-	gtk_window_get_position(GTK_WINDOW(_window), &x, &y);
-	gint monitorNum = gdk_screen_get_monitor_at_point(screen, x, y);
-
-	GdkRectangle geom;
-	gdk_screen_get_monitor_geometry(screen, monitorNum, &geom);
-
 	// Pass the call
 	fitToScreen(geom, xfraction, yfraction);
 }
