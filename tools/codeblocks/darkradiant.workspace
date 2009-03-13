@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="DarkRadiant workspace">
+		<Project filename="archivezip.cbp">
+			<Depends filename="libzlib\libzlib.cbp" />
+		</Project>
+		<Project filename="DarkRadiant.cbp">
+			<Depends filename="ddslib.cbp" />
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="jpeglib.cbp" />
+			<Depends filename="libgtkglext\libgtkglext.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="picomodellib.cbp" />
+			<Depends filename="scenelib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="ddslib.cbp" />
+		<Project filename="dm.conversation.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="dm.difficulty.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="dm.objectives.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="dm.stimresponse.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="eclassmgr.cbp">
+			<Depends filename="mathlib.cbp" />
+		</Project>
+		<Project filename="eclasstree.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="entity.cbp">
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="scenelib.cbp" />
+		</Project>
+		<Project filename="entitylist.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="eventmanager.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="filetypes.cbp" />
+		<Project filename="filters.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="grid.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="gtkutillib.cbp" />
+		<Project filename="image.cbp">
+			<Depends filename="ddslib.cbp" />
+			<Depends filename="jpeglib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="include.cbp" />
+		<Project filename="jpeglib.cbp" />
+		<Project filename="libgdkglext\libgdkglext.cbp" />
+		<Project filename="libgtkglext\libgtkglext.cbp">
+			<Depends filename="libgdkglext\libgdkglext.cbp" />
+		</Project>
+		<Project filename="libiconv\libiconv.cbp" />
+		<Project filename="libvorbis\libvorbis.cbp">
+			<Depends filename="libiconv\libiconv.cbp" />
+		</Project>
+		<Project filename="libxml2\libxml2.cbp">
+			<Depends filename="libiconv\libiconv.cbp" />
+		</Project>
+		<Project filename="libzlib\libzlib.cbp" />
+		<Project filename="mapdoom3.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="mathlib.cbp" />
+		<Project filename="md5model.cbp">
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="scenelib.cbp" />
+		</Project>
+		<Project filename="model.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="picomodellib.cbp" />
+			<Depends filename="scenelib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="particles.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="picomodellib.cbp" />
+		<Project filename="scenelib.cbp" />
+		<Project filename="scenegraph.cbp">
+			<Depends filename="scenelib.cbp" />
+		</Project>
+		<Project filename="script.cbp">
+			<Depends filename="mathlib.cbp" />
+		</Project>
+		<Project filename="shaders.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="skins.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="sound.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libvorbis\libvorbis.cbp" />
+		</Project>
+		<Project filename="uimanager.cbp">
+			<Depends filename="gtkutillib.cbp" />
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="undo.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="vfspk3.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="xmlregistry.cbp">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="mathlib.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+		<Project filename="xmlutillib.cbp" />
+		<Project filename="commandsystem.cbp" active="1">
+			<Depends filename="libxml2\libxml2.cbp" />
+			<Depends filename="xmlutillib.cbp" />
+		</Project>
+	</Workspace>
+</CodeBlocks_workspace_file>

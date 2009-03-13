@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="shaders" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/Gm" />
+					<Add option="/fp:precise" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Od" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/GS-" />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DWIN32" />
+					<Add option="/D_MBCS" />
+					<Add option="/D_WINDLL" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/DEBUG" />
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
+					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add library="xmlutillib" />
+					<Add library="mathlib" />
+					<Add library="libxml2" />
+					<Add library="opengl32" />
+					<Add library="glew32" />
+					<Add library="glu32" />
+					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="$(#boost.lib)" />
+					<Add directory="..\..\w32deps\libxml2\lib" />
+					<Add directory="..\..\w32deps\glew\lib" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/GL" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Ob" />
+					<Add option="/Oi" />
+					<Add option="/Ot" />
+					<Add option="/O2" />
+					<Add option="/W4" />
+					<Add option="/Zi" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/GS-" />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/DWIN32" />
+					<Add option="/D_MBCS" />
+					<Add option="/D_WINDLL" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
+					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/OPT:REF" />
+					<Add option="/OPT:ICF" />
+					<Add option="/LTCG" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add library="xmlutillib" />
+					<Add library="mathlib" />
+					<Add library="libxml2" />
+					<Add library="opengl32" />
+					<Add library="glew32" />
+					<Add library="glu32" />
+					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="$(#boost.lib)" />
+					<Add directory="..\..\w32deps\libxml2\lib" />
+					<Add directory="..\..\w32deps\glew\lib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\plugins\shaders\CShader.cpp" />
+		<Unit filename="..\..\plugins\shaders\CShader.h" />
+		<Unit filename="..\..\plugins\shaders\Doom3ShaderSystem.cpp" />
+		<Unit filename="..\..\plugins\shaders\Doom3ShaderSystem.h" />
+		<Unit filename="..\..\plugins\shaders\MapExpression.cpp" />
+		<Unit filename="..\..\plugins\shaders\MapExpression.h" />
+		<Unit filename="..\..\plugins\shaders\MissingXMLNodeException.h" />
+		<Unit filename="..\..\plugins\shaders\ShaderDefinition.h" />
+		<Unit filename="..\..\plugins\shaders\ShaderFileLoader.cpp" />
+		<Unit filename="..\..\plugins\shaders\ShaderFileLoader.h" />
+		<Unit filename="..\..\plugins\shaders\ShaderLibrary.cpp" />
+		<Unit filename="..\..\plugins\shaders\ShaderLibrary.h" />
+		<Unit filename="..\..\plugins\shaders\ShaderNameCompareFunctor.h" />
+		<Unit filename="..\..\plugins\shaders\ShaderTemplate.cpp" />
+		<Unit filename="..\..\plugins\shaders\ShaderTemplate.h" />
+		<Unit filename="..\..\plugins\shaders\plugin.cpp" />
+		<Unit filename="..\..\plugins\shaders\plugin.h" />
+		<Unit filename="..\..\plugins\shaders\shaders.def" />
+		<Unit filename="..\..\plugins\shaders\textures\DefaultConstructor.cpp" />
+		<Unit filename="..\..\plugins\shaders\textures\DefaultConstructor.h" />
+		<Unit filename="..\..\plugins\shaders\textures\FileLoader.cpp" />
+		<Unit filename="..\..\plugins\shaders\textures\FileLoader.h" />
+		<Unit filename="..\..\plugins\shaders\textures\GLTextureManager.cpp" />
+		<Unit filename="..\..\plugins\shaders\textures\GLTextureManager.h" />
+		<Unit filename="..\..\plugins\shaders\textures\HeightmapCreator.h" />
+		<Unit filename="..\..\plugins\shaders\textures\ImageLoaderManager.cpp" />
+		<Unit filename="..\..\plugins\shaders\textures\ImageLoaderManager.h" />
+		<Unit filename="..\..\plugins\shaders\textures\TextureManipulator.cpp" />
+		<Unit filename="..\..\plugins\shaders\textures\TextureManipulator.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

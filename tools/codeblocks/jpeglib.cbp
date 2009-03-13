@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="jpeglib" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\build\libs\Win32\Debug\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/DEBUG" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\build\libs\Win32\Release\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</ResourceCompiler>
+			</Target>
+		</Build>
+		<Unit filename="..\..\libs\jpeg6\jchuff.h" />
+		<Unit filename="..\..\libs\jpeg6\jcomapi.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jconfig.h" />
+		<Unit filename="..\..\libs\jpeg6\jdapimin.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdapistd.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdatasrc.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdcoefct.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdcolor.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdct.h" />
+		<Unit filename="..\..\libs\jpeg6\jddctmgr.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdhuff.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdhuff.h" />
+		<Unit filename="..\..\libs\jpeg6\jdinput.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdmainct.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdmarker.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdmaster.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdpostct.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdsample.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jdtrans.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jerror.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jerror.h" />
+		<Unit filename="..\..\libs\jpeg6\jfdctflt.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jidctflt.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jinclude.h" />
+		<Unit filename="..\..\libs\jpeg6\jmemmgr.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jmemnobs.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jmemsys.h" />
+		<Unit filename="..\..\libs\jpeg6\jmorecfg.h" />
+		<Unit filename="..\..\libs\jpeg6\jpegint.h" />
+		<Unit filename="..\..\libs\jpeg6\jpgload.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jutils.cpp" />
+		<Unit filename="..\..\libs\jpeg6\jversion.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

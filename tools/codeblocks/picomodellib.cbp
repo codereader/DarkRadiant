@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="picomodellib" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\build\libs\Win32\Debug\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/wd4996" />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/DEBUG" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\build\libs\Win32\Release\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/wd4996" />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+				</ResourceCompiler>
+			</Target>
+		</Build>
+		<Unit filename="..\..\libs\picomodel\lwo\clip.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\envelope.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\list.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\lwio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\lwo2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\lwo2.h" />
+		<Unit filename="..\..\libs\picomodel\lwo\lwob.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\pntspols.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\surface.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\vecmath.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\lwo\vmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\picointernal.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\picointernal.h" />
+		<Unit filename="..\..\libs\picomodel\picomodel.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\picomodules.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_3ds.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_ase.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_fm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_fm.h" />
+		<Unit filename="..\..\libs\picomodel\pm_lwo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_md2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_md3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_mdc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_ms3d.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_obj.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\libs\picomodel\pm_terrain.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
