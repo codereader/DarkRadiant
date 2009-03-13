@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="libxml2" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\..\build\libs\Win32\Debug\libxml2" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\..\build\libxml2\Win32\Debug" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DLIBICONV_PLUG" />
+					<Add option="/DLIBICONV_STATIC" />
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/DEBUG" />
+					<Add library="libiconv" />
+					<Add library="kernel32" />
+					<Add directory="..\..\..\build\libs\Win32\Debug" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\..\build\libs\Win32\Release\libxml2" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\..\build\libxml2\Win32\Release" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/wd4996" />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DLIBICONV_PLUG" />
+					<Add option="/DLIBICONV_STATIC" />
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="libiconv" />
+					<Add library="kernel32" />
+					<Add directory="..\..\..\build\libs\Win32\Release" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\..\w32deps\libxml2\DOCBparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\HTMLparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\HTMLtree.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\SAX.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\SAX2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\acconfig.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\c14n.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\catalog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\chvalid.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\config.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\debugXML.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\dict.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\elfgcchack.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\encoding.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\entities.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\error.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\globals.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\hash.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\DOCBparser.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\HTMLparser.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\HTMLtree.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\SAX.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\SAX2.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\c14n.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\catalog.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\chvalid.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\debugXML.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\dict.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\encoding.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\entities.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\globals.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\hash.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\list.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\nanoftp.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\nanohttp.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\parser.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\parserInternals.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\pattern.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\relaxng.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\schemasInternals.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\schematron.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\threads.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\tree.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\uri.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\valid.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xinclude.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xlink.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlIO.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlautomata.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlerror.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlexports.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlmemory.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlmodule.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlreader.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlregexp.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlsave.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlschemas.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlschemastypes.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlstring.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlunicode.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlversion.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xmlwriter.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xpath.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xpathInternals.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\libxml\xpointer.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\win32config.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\include\wsockcompat.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\legacy.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\libxml.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\list.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\parser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\parserInternals.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\pattern.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\relaxng.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\schematron.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\threads.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\tree.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\trio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\trio.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\triodef.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\trionan.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\trionan.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\triop.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\triostr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\triostr.h" />
+		<Unit filename="..\..\..\w32deps\libxml2\uri.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\valid.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xinclude.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xlink.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlIO.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlcatalog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmllint.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlmemory.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlmodule.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlreader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlregexp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlsave.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlschemas.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlschemastypes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlstring.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlunicode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xmlwriter.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xpath.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\libxml2\xpointer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

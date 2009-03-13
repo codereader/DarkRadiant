@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="libgdkglext" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\..\build\libs\Win32\Debug\libgdkglext" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\..\build\libgdkglext\Win32\Debug" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DGDK_GL_COMPILATION" />
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+					<Add directory="..\..\..\w32deps\gtkglext\" />
+					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
+					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+					<Add directory="..\..\..\w32deps\gtkglext\" />
+					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
+					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/DEBUG" />
+					<Add library="pangowin32-1.0" />
+					<Add directory="..\..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\..\build\libs\Win32\Release\libgdkglext" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\..\build\libgdkglext\Win32\Release" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/wd4996" />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DGDK_GL_COMPILATION" />
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+					<Add directory="..\..\..\w32deps\gtkglext\" />
+					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
+					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\..\w32deps\win_iconv\include" />
+					<Add directory="..\..\..\w32deps\gtkglext\" />
+					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
+					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
+					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="pangowin32-1.0" />
+					<Add directory="..\..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\..\w32deps\gtk2\lib\" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgl.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglconfig.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglconfig.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglcontext.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglcontext.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgldebug.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgldefs.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgldrawable.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgldrawable.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglenumtypes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglenumtypes.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglext-gtk20.def" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglext.def" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglfont.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglglext.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglglext.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglinit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglinit.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglpixmap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglpixmap.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglprivate.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglquery.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglquery.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglshapes.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglshapes.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgltokens.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgltypes.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglversion.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglversion.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglwindow.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglwindow.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\glext\common-header.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\glext\glext-extra.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\glext\glext.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\glext\glxext-extra.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\glext\glxext.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\glext\wglext-extra.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\glext\wglext.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglconfig-win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglconfig-win32.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglcontext-win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglcontext-win32.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkgldrawable-win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglfont-win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglpixmap-win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglpixmap-win32.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglprivate-win32.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglquery-win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwglext.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwglext.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwin32.h" />
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwindow-win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\gtkglext\gdk\win32\gdkglwindow-win32.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

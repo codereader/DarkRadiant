@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="dm.objectives" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\install\plugins\$(PROJECT_NAME).dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/Gm" />
+					<Add option="/fp:precise" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Od" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option="/GS-" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DWIN32" />
+					<Add option="/D_WINDLL" />
+					<Add option="/D_MBCS" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
+					<Add option="/DEBUG" />
+					<Add option='/PDB:&quot;..\..\install\plugins/$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add library="gtkutillib" />
+					<Add library="xmlutillib" />
+					<Add library="libxml2" />
+					<Add library="glib-2.0" />
+					<Add library="gtk-win32-2.0" />
+					<Add library="gdk-win32-2.0" />
+					<Add library="gobject-2.0" />
+					<Add library="gdk_pixbuf-2.0" />
+					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\w32deps\gtk2\lib" />
+					<Add directory="..\..\w32deps\libxml2\lib" />
+					<Add directory="$(#boost.lib)" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\install\plugins\$(PROJECT_NAME).dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/GL" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Ob" />
+					<Add option="/Oi" />
+					<Add option="/Ot" />
+					<Add option="/O2" />
+					<Add option="/W4" />
+					<Add option="/Zi" />
+					<Add option="/GS-" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DWIN32" />
+					<Add option="/D_WINDLL" />
+					<Add option="/D_MBCS" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\glew\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
+					<Add option='/PDB:&quot;..\..\install\plugins/$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/OPT:REF" />
+					<Add option="/OPT:ICF" />
+					<Add option="/LTCG" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add library="gtkutillib" />
+					<Add library="xmlutillib" />
+					<Add library="libxml2" />
+					<Add library="glib-2.0" />
+					<Add library="gtk-win32-2.0" />
+					<Add library="gdk-win32-2.0" />
+					<Add library="gobject-2.0" />
+					<Add library="gdk_pixbuf-2.0" />
+					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\w32deps\gtk2\lib" />
+					<Add directory="..\..\w32deps\libxml2\lib" />
+					<Add directory="$(#boost.lib)" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\plugins\dm.objectives\Component.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\Component.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ComponentType.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ComponentType.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ComponentsDialog.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ComponentsDialog.h" />
+		<Unit filename="..\..\plugins\dm.objectives\DifficultyPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\DifficultyPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\Logic.h" />
+		<Unit filename="..\..\plugins\dm.objectives\LogicEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\LogicEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\MissionLogicDialog.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\MissionLogicDialog.h" />
+		<Unit filename="..\..\plugins\dm.objectives\Objective.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ObjectiveEntity.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ObjectiveEntity.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ObjectiveEntityFinder.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ObjectivesEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ObjectivesEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\RandomOrigin.h" />
+		<Unit filename="..\..\plugins\dm.objectives\Specifier.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\Specifier.h" />
+		<Unit filename="..\..\plugins\dm.objectives\SpecifierType.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\SpecifierType.h" />
+		<Unit filename="..\..\plugins\dm.objectives\TargetList.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\AIFindItemComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\AIFindItemComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\AlertComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\AlertComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\ComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\ComponentEditorFactory.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\ComponentEditorFactory.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\CustomClockedComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\CustomClockedComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\CustomComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\CustomComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\DestroyComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\DestroyComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\DistanceComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\DistanceComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\InfoLocationComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\InfoLocationComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\ItemComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\ItemComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\KillComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\KillComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\KnockoutComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\KnockoutComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\LocationComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\LocationComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\PickpocketComponentEditor.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\PickpocketComponentEditor.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\AIInnocenceSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\AIInnocenceSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\AITeamSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\AITeamSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\AITypeSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\AITypeSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\ClassnameSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\ClassnameSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\EntityNameSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\EntityNameSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\GroupSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\GroupSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\SpawnClassSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\SpawnClassSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanelFactory.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\SpecifierPanelFactory.h" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\TextSpecifierPanel.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\ce\specpanel\TextSpecifierPanel.h" />
+		<Unit filename="..\..\plugins\dm.objectives\dm.objectives.def" />
+		<Unit filename="..\..\plugins\dm.objectives\objectives.cpp" />
+		<Unit filename="..\..\plugins\dm.objectives\util\ObjectivesException.h" />
+		<Unit filename="..\..\plugins\dm.objectives\util\TwoColumnTextCombo.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

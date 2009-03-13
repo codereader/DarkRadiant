@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="libzlib" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\..\build\libs\Win32\Debug\libzlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\..\build\libzlib\Win32\Debug" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add directory="..\..\..\w32deps\zlib\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\w32deps\zlib\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/DEBUG" />
+					<Add library="kernel32" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\..\build\libs\Win32\Release\libzlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\..\..\build\libzlib\Win32\Release" />
+				<Option type="2" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TC" />
+					<Add option="/Gd" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/O2" />
+					<Add option="/W3" />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/wd4996" />
+					<Add option="/DWIN32" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add directory="..\..\..\w32deps\zlib\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\..\w32deps\zlib\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add library="kernel32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\..\w32deps\zlib\include\crc32.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\deflate.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\inffast.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\inffixed.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\inflate.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\inftrees.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\trees.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\zconf.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\zconf.in.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\zlib.h" />
+		<Unit filename="..\..\..\w32deps\zlib\include\zutil.h" />
+		<Unit filename="..\..\..\w32deps\zlib\src\adler32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\compress.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\crc32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\deflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\gzio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\infback.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\inffast.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\inflate.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\inftrees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\minigzip.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\trees.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\uncompr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\..\..\w32deps\zlib\src\zutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

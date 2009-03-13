@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="vfspk3" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/Gm" />
+					<Add option="/fp:precise" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Od" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option="/GS-" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DWIN32" />
+					<Add option="/D_WINDLL" />
+					<Add option="/D_MBCS" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/DEBUG" />
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
+					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add library="xmlutillib" />
+					<Add library="mathlib" />
+					<Add library="libxml2" />
+					<Add library="glib-2.0" />
+					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="$(#boost.lib)" />
+					<Add directory="..\..\w32deps\gtk2\lib" />
+					<Add directory="..\..\w32deps\libxml2\lib" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/GL" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Ob" />
+					<Add option="/Oi" />
+					<Add option="/Ot" />
+					<Add option="/O2" />
+					<Add option="/W4" />
+					<Add option="/Zi" />
+					<Add option="/GS-" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/DWIN32" />
+					<Add option="/D_WINDLL" />
+					<Add option="/D_MBCS" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="$(#boost.include)" />
+					<Add directory="..\..\w32deps\libxml2\include" />
+					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
+					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
+					<Add directory="..\..\w32deps\gtk2\include\cairo" />
+					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
+					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
+					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
+					<Add directory="..\..\w32deps\win_iconv\include" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
+					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/OPT:REF" />
+					<Add option="/OPT:ICF" />
+					<Add option="/LTCG" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add library="xmlutillib" />
+					<Add library="mathlib" />
+					<Add library="libxml2" />
+					<Add library="glib-2.0" />
+					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="$(#boost.lib)" />
+					<Add directory="..\..\w32deps\gtk2\lib" />
+					<Add directory="..\..\w32deps\libxml2\lib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\plugins\vfspk3\DirectoryArchive.cpp" />
+		<Unit filename="..\..\plugins\vfspk3\DirectoryArchive.h" />
+		<Unit filename="..\..\plugins\vfspk3\Doom3FileSystem.cpp" />
+		<Unit filename="..\..\plugins\vfspk3\Doom3FileSystem.h" />
+		<Unit filename="..\..\plugins\vfspk3\FileVisitor.h" />
+		<Unit filename="..\..\plugins\vfspk3\SortedFilenames.h" />
+		<Unit filename="..\..\plugins\vfspk3\UnixPath.h" />
+		<Unit filename="..\..\plugins\vfspk3\vfspk3.cpp" />
+		<Unit filename="..\..\plugins\vfspk3\vfspk3.def" />
+		<Unit filename="..\..\plugins\vfspk3\vfspk3.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="archivezip" />
+		<Option pch_mode="2" />
+		<Option compiler="msvc8" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MDd" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/Gm" />
+					<Add option="/fp:precise" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Od" />
+					<Add option="/W3" />
+					<Add option="/Zi /D_DEBUG" />
+					<Add option="/GS-" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DWIN32" />
+					<Add option="/D_MBCS" />
+					<Add option="/D_WINDLL" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="..\..\w32deps\zlib\include" />
+					<Add directory="$(#boost.include)" />
+				</Compiler>
+				<Linker>
+					<Add option="/DEBUG" />
+					<Add option='/LIBPATH:&quot;..\..\build\libs\Win32\Debug&quot;' />
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;..\..\plugins\$(PROJECT_NAME)\$(PROJECT_NAME).def&quot;' />
+					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add library="libzlib" />
+					<Add directory="..\..\build\libs\Win32\Debug" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option type="3" />
+				<Option compiler="msvc8" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="/MD" />
+					<Add option="/TP" />
+					<Add option="/Gd" />
+					<Add option="/GL" />
+					<Add option="/fp:precise" />
+					<Add option="/EHc" />
+					<Add option="/EHs" />
+					<Add option="/GF" />
+					<Add option="/Ob" />
+					<Add option="/Oi" />
+					<Add option="/Ot" />
+					<Add option="/O2" />
+					<Add option="/W4" />
+					<Add option="/Zi" />
+					<Add option="/GS-" />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
+					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
+					<Add option="/DWIN32" />
+					<Add option="/D_MBCS" />
+					<Add option="/D_WINDLL" />
+					<Add directory="..\..\include" />
+					<Add directory="..\..\libs" />
+					<Add directory="..\..\w32deps\zlib\include" />
+					<Add directory="$(#boost.include)" />
+				</Compiler>
+				<Linker>
+					<Add option='/LIBPATH:&quot;..\..\build\libs\Win32\Release&quot;' />
+					<Add option="/INCREMENTAL:NO" />
+					<Add option="/NOLOGO" />
+					<Add option="/DLL" />
+					<Add option="/MANIFEST" />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/DEF:&quot;..\..\plugins\$(PROJECT_NAME)\$(PROJECT_NAME).def&quot;' />
+					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
+					<Add option="/SUBSYSTEM:WINDOWS" />
+					<Add option="/MACHINE:X86" />
+					<Add option="/ERRORREPORT:PROMPT" />
+					<Add option="/OPT:REF" />
+					<Add option="/OPT:ICF" />
+					<Add option="/LTCG" />
+					<Add library="libzlib" />
+					<Add directory="..\..\build\libs\Win32\Release" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\plugins\archivezip\DeflatedArchiveFile.h" />
+		<Unit filename="..\..\plugins\archivezip\DeflatedArchiveTextFile.h" />
+		<Unit filename="..\..\plugins\archivezip\ZipArchive.cpp" />
+		<Unit filename="..\..\plugins\archivezip\ZipArchive.h" />
+		<Unit filename="..\..\plugins\archivezip\archivezip.def" />
+		<Unit filename="..\..\plugins\archivezip\pkzip.cpp" />
+		<Unit filename="..\..\plugins\archivezip\pkzip.h" />
+		<Unit filename="..\..\plugins\archivezip\plugin.cpp" />
+		<Unit filename="..\..\plugins\archivezip\plugin.h" />
+		<Unit filename="..\..\plugins\archivezip\zlibstream.cpp" />
+		<Unit filename="..\..\plugins\archivezip\zlibstream.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
