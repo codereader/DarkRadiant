@@ -318,10 +318,10 @@ class BasicDefBlockTokeniser :
     // Internal Boost tokenizer and its iterator
 	typedef boost::tokenizer<DefBlockTokeniserFunc, 
 							  std::string::const_iterator, 
-							  BlockTokeniser::Block> BlockTokeniser;
+							  BlockTokeniser::Block> Tokeniser;
 
-    BlockTokeniser _tok;
-    BlockTokeniser::iterator _tokIter;
+    Tokeniser _tok;
+    Tokeniser::iterator _tokIter;
 
 public:
 
@@ -382,10 +382,10 @@ class BasicDefBlockTokeniser<std::istream> :
     // Internal Boost tokenizer and its iterator
     typedef boost::tokenizer<DefBlockTokeniserFunc,
                              CharStreamIterator,
-							 BlockTokeniser::Block> BlockTokeniser;
+							 BlockTokeniser::Block> Tokeniser;
 
-    BlockTokeniser _tok;
-    BlockTokeniser::iterator _tokIter;
+    Tokeniser _tok;
+    Tokeniser::iterator _tokIter;
 
 private:
 	
