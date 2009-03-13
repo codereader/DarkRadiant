@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "os/file.h"
 
+#include "MultiMonitor.h"
 #include "messagebox.h"
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -106,11 +107,11 @@ FileChooser::FileChooser(GtkWidget* parent, const std::string& title,
 	gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER_ON_PARENT);
 
 	// Set the default size of the window
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_dialog));
-	gint w = gdk_screen_get_width(scr);
-	gint h = gdk_screen_get_height(scr);
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_parent));
 
-	gtk_window_set_default_size(GTK_WINDOW(_dialog), w/2, 2*h/3);
+	gtk_window_set_default_size(
+		GTK_WINDOW(_dialog), gint(rect.width/2), gint(2*rect.height/3)
+	);
 
 	// Add the filetype masks
 	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(_pattern);
