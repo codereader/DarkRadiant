@@ -445,6 +445,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\libs\gtkutil\MultiMonitor.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\libs\gtkutil\nonmodal.cpp"
 			>
 		</File>

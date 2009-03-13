@@ -39,6 +39,20 @@ public:
 		return geom;
 	}
 
+	/** 
+	 * greebo: Returns the rectangle (width/height) for the monitor 
+	 * which the given window is displayed on.
+	 */
+	static GdkRectangle getMonitorForWindow(GtkWindow* window) {
+		// Retrieve the screen
+		GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(window));
+
+		// Get the monitor which the GtkWindow is displayed on
+		gint monitorNum = gdk_screen_get_monitor_at_window(scr, GTK_WIDGET(window)->window);
+
+		return getMonitor(monitorNum);
+	}
+
 	static void printMonitorInfo() {
 		globalOutputStream() << "Default screen has " << getNumMonitors() << " monitors.\n";
 
