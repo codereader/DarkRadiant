@@ -7,8 +7,10 @@
 		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\gtkutillib.lib;..\..\build\libs\$(TARGET_NAME)\libxml2.lib;..\..\build\libs\$(TARGET_NAME)\xmlutillib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -25,7 +27,7 @@
 					<Add option="/W3" />
 					<Add option="/Zi /D_DEBUG" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -64,7 +66,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -78,14 +80,16 @@
 					<Add library="gdk-win32-2.0" />
 					<Add library="gobject-2.0" />
 					<Add library="gdk_pixbuf-2.0" />
-					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\gtkutillib.lib;..\..\build\libs\$(TARGET_NAME)\libxml2.lib;..\..\build\libs\$(TARGET_NAME)\xmlutillib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -106,7 +110,7 @@
 					<Add option="/W4" />
 					<Add option="/Zi" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -144,7 +148,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -161,32 +165,100 @@
 					<Add library="gdk-win32-2.0" />
 					<Add library="gobject-2.0" />
 					<Add library="gdk_pixbuf-2.0" />
-					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
+			<Target title="Clean Install Win32">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="msvc8" />
+				<ExtraCommands>
+					<Add before='cmd /C &quot;del ..\..\install\modules\$(PROJECT_NAME).* /F /Q &amp; exit 0&quot;' />
+				</ExtraCommands>
+			</Target>
 		</Build>
-		<Unit filename="..\..\plugins\uimanager\GroupDialog.cpp" />
-		<Unit filename="..\..\plugins\uimanager\GroupDialog.h" />
-		<Unit filename="..\..\plugins\uimanager\MenuItem.cpp" />
-		<Unit filename="..\..\plugins\uimanager\MenuItem.h" />
-		<Unit filename="..\..\plugins\uimanager\MenuManager.cpp" />
-		<Unit filename="..\..\plugins\uimanager\MenuManager.h" />
-		<Unit filename="..\..\plugins\uimanager\ShutdownListener.h" />
-		<Unit filename="..\..\plugins\uimanager\StatusBarManager.cpp" />
-		<Unit filename="..\..\plugins\uimanager\StatusBarManager.h" />
-		<Unit filename="..\..\plugins\uimanager\ToolbarManager.cpp" />
-		<Unit filename="..\..\plugins\uimanager\ToolbarManager.h" />
-		<Unit filename="..\..\plugins\uimanager\UIManager.cpp" />
-		<Unit filename="..\..\plugins\uimanager\UIManager.h" />
-		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourScheme.cpp" />
-		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourScheme.h" />
-		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp" />
-		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.h" />
-		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.cpp" />
-		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.h" />
-		<Unit filename="..\..\plugins\uimanager\uimanager.def" />
+		<Unit filename="..\..\plugins\uimanager\GroupDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\GroupDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\MenuItem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\MenuItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\MenuManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\MenuManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\ShutdownListener.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\StatusBarManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\StatusBarManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\ToolbarManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\ToolbarManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\UIManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\UIManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourScheme.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourScheme.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\colourscheme\ColourSchemeManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\uimanager\uimanager.def">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

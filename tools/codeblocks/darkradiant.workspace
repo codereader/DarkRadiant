@@ -5,13 +5,11 @@
 			<Depends filename="libzlib\libzlib.cbp" />
 		</Project>
 		<Project filename="DarkRadiant.cbp">
-			<Depends filename="ddslib.cbp" />
 			<Depends filename="gtkutillib.cbp" />
 			<Depends filename="jpeglib.cbp" />
 			<Depends filename="libgtkglext\libgtkglext.cbp" />
 			<Depends filename="libxml2\libxml2.cbp" />
 			<Depends filename="mathlib.cbp" />
-			<Depends filename="picomodellib.cbp" />
 			<Depends filename="scenelib.cbp" />
 			<Depends filename="xmlutillib.cbp" />
 		</Project>
@@ -70,7 +68,7 @@
 			<Depends filename="xmlutillib.cbp" />
 		</Project>
 		<Project filename="gtkutillib.cbp" />
-		<Project filename="image.cbp">
+		<Project filename="image.cbp" active="1">
 			<Depends filename="ddslib.cbp" />
 			<Depends filename="jpeglib.cbp" />
 			<Depends filename="libxml2\libxml2.cbp" />
@@ -155,7 +153,7 @@
 			<Depends filename="xmlutillib.cbp" />
 		</Project>
 		<Project filename="xmlutillib.cbp" />
-		<Project filename="commandsystem.cbp" active="1">
+		<Project filename="commandsystem.cbp">
 			<Depends filename="libxml2\libxml2.cbp" />
 			<Depends filename="xmlutillib.cbp" />
 		</Project>

@@ -7,8 +7,10 @@
 		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\gtkutillib.lib;..\..\build\libs\$(TARGET_NAME)\libvorbis.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -25,7 +27,7 @@
 					<Add option="/W3" />
 					<Add option="/Zi /D_DEBUG" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -71,7 +73,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -81,15 +83,17 @@
 					<Add library="libvorbis" />
 					<Add library="gtkutillib" />
 					<Add library="gtk-win32-2.0" />
-					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="$(#boost.lib)" />
 					<Add directory="..\..\w32deps\openal\lib" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\libvorbis.lib;..\..\build\libs\$(TARGET_NAME)\gtkutillib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -110,7 +114,7 @@
 					<Add option="/W4" />
 					<Add option="/Zi" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
@@ -154,7 +158,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -167,25 +171,66 @@
 					<Add library="libvorbis" />
 					<Add library="gtkutillib" />
 					<Add library="gtk-win32-2.0" />
-					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="$(#boost.lib)" />
 					<Add directory="..\..\w32deps\openal\lib" />
 					<Add directory="..\..\w32deps\vorbis\lib" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 				</Linker>
 			</Target>
+			<Target title="Clean Install Win32">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="msvc8" />
+				<ExtraCommands>
+					<Add before='cmd /C &quot;del ..\..\install\modules\$(PROJECT_NAME).* /F /Q &amp; exit 0&quot;' />
+				</ExtraCommands>
+			</Target>
 		</Build>
-		<Unit filename="..\..\plugins\sound\OggFileStream.h" />
-		<Unit filename="..\..\plugins\sound\SoundFileLoader.h" />
-		<Unit filename="..\..\plugins\sound\SoundManager.cpp" />
-		<Unit filename="..\..\plugins\sound\SoundManager.h" />
-		<Unit filename="..\..\plugins\sound\SoundPlayer.cpp" />
-		<Unit filename="..\..\plugins\sound\SoundPlayer.h" />
-		<Unit filename="..\..\plugins\sound\SoundShader.cpp" />
-		<Unit filename="..\..\plugins\sound\SoundShader.h" />
-		<Unit filename="..\..\plugins\sound\WavFileLoader.h" />
-		<Unit filename="..\..\plugins\sound\sound.cpp" />
-		<Unit filename="..\..\plugins\sound\sound.def" />
+		<Unit filename="..\..\plugins\sound\OggFileStream.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\SoundFileLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\SoundManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\SoundManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\SoundPlayer.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\SoundPlayer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\SoundShader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\SoundShader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\WavFileLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\sound.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\sound\sound.def">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -7,9 +7,11 @@
 		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\..\install" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\gtkutillib.lib;..\..\build\libs\$(TARGET_NAME)\ddslib.lib;..\..\build\libs\$(TARGET_NAME)\jpeglib.lib;..\..\build\libs\$(TARGET_NAME)\libgtkglext.lib;..\..\build\libs\$(TARGET_NAME)\libxml2.lib;..\..\build\libs\$(TARGET_NAME)\picomodellib.lib;..\..\build\libs\$(TARGET_NAME)\scenelib.lib;..\..\build\libs\$(TARGET_NAME)\xmlutillib.lib;..\..\build\libs\$(TARGET_NAME)\mathlib.lib;" />
 				<Option type="0" />
 				<Option compiler="msvc8" />
 				<Compiler>
@@ -24,7 +26,7 @@
 					<Add option="/W4" />
 					<Add option="/Zi /D_DEBUG" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996 /wd4244 /wd4355" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -65,7 +67,7 @@
 					<Add option="/NODEFAULTLIB:LIBCMT" />
 					<Add option="/INCREMENTAL:NO" />
 					<Add option="/NOLOGO" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).exe.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).exe.intermediate.manifest&quot;' />
 					<Add option='/pdb:&quot;..\..\install\$(PROJECT_NAME).pdb&quot;' />
 					<Add option='/PDBSTRIPPED:&quot;..\..\install\$(PROJECT_NAME)_stripped.pdb&quot;' />
 					<Add option="/SUBSYSTEM:CONSOLE" />
@@ -95,7 +97,7 @@
 					<Add library="opengl32" />
 					<Add library="libxml2" />
 					<Add library="scenelib" />
-					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 					<Add directory="..\..\w32deps\libxml2\lib" />
 					<Add directory="$(#boost.lib)" />
@@ -106,9 +108,11 @@
 				</ExtraCommands>
 			</Target>
 			<Target title="Release Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="..\..\install" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\gtkutillib.lib;..\..\build\libs\$(TARGET_NAME)\ddslib.lib;..\..\build\libs\$(TARGET_NAME)\jpeglib.lib;..\..\build\libs\$(TARGET_NAME)\libgtkglext.lib;..\..\build\libs\$(TARGET_NAME)\libxml2.lib;..\..\build\libs\$(TARGET_NAME)\mathlib.lib;..\..\build\libs\$(TARGET_NAME)\picomodellib.lib;..\..\build\libs\$(TARGET_NAME)\scenelib.lib;..\..\build\libs\$(TARGET_NAME)\xmlutillib.lib;" />
 				<Option type="0" />
 				<Option compiler="msvc8" />
 				<Compiler>
@@ -127,7 +131,7 @@
 					<Add option="/W4" />
 					<Add option="/Zi" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996 /wd4244 /wd4355" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -168,7 +172,7 @@
 					<Add option="/NODEFAULTLIB:LIBCMT" />
 					<Add option="/INCREMENTAL:NO" />
 					<Add option="/NOLOGO" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).exe.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).exe.intermediate.manifest&quot;' />
 					<Add option='/pdb:&quot;..\..\install\$(PROJECT_NAME).pdb&quot;' />
 					<Add option='/PDBSTRIPPED:&quot;..\..\install\$(PROJECT_NAME)_stripped.pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -200,7 +204,7 @@
 					<Add library="opengl32" />
 					<Add library="libxml2" />
 					<Add library="scenelib" />
-					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 					<Add directory="..\..\w32deps\libxml2\lib" />
 					<Add directory="$(#boost.lib)" />
@@ -210,466 +214,1844 @@
 					<Add after="post_build_event.bat" />
 				</ExtraCommands>
 			</Target>
+			<Target title="Clean Install Win32">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="msvc8" />
+				<ExtraCommands>
+					<Add before='cmd /C &quot;del ..\..\install\$(PROJECT_NAME).exe ..\..\install\$(PROJECT_NAME).lib ..\..\install\$(PROJECT_NAME).exp ..\..\install\$(PROJECT_NAME).pdb ..\..\install\$(PROJECT_NAME)_stripped.pdb /F /Q &amp; exit 0&quot;' />
+				</ExtraCommands>
+			</Target>
 		</Build>
-		<Unit filename="..\..\radiant\RadiantModule.cpp" />
-		<Unit filename="..\..\radiant\RadiantModule.h" />
-		<Unit filename="..\..\radiant\brush\Brush.cpp" />
-		<Unit filename="..\..\radiant\brush\Brush.h" />
-		<Unit filename="..\..\radiant\brush\BrushClipPlane.h" />
-		<Unit filename="..\..\radiant\brush\BrushModule.cpp" />
-		<Unit filename="..\..\radiant\brush\BrushModule.h" />
-		<Unit filename="..\..\radiant\brush\BrushNode.cpp" />
-		<Unit filename="..\..\radiant\brush\BrushNode.h" />
-		<Unit filename="..\..\radiant\brush\BrushPrimitTexDef.cpp" />
-		<Unit filename="..\..\radiant\brush\BrushPrimitTexDef.h" />
-		<Unit filename="..\..\radiant\brush\BrushTokenExporter.cpp" />
-		<Unit filename="..\..\radiant\brush\BrushTokenExporter.h" />
-		<Unit filename="..\..\radiant\brush\BrushTokenImporter.cpp" />
-		<Unit filename="..\..\radiant\brush\BrushTokenImporter.h" />
-		<Unit filename="..\..\radiant\brush\BrushVisit.h" />
-		<Unit filename="..\..\radiant\brush\ContentsFlagsValue.h" />
-		<Unit filename="..\..\radiant\brush\EdgeInstance.h" />
-		<Unit filename="..\..\radiant\brush\Face.cpp" />
-		<Unit filename="..\..\radiant\brush\Face.h" />
-		<Unit filename="..\..\radiant\brush\FaceInstance.cpp" />
-		<Unit filename="..\..\radiant\brush\FaceInstance.h" />
-		<Unit filename="..\..\radiant\brush\FacePlane.cpp" />
-		<Unit filename="..\..\radiant\brush\FacePlane.h" />
-		<Unit filename="..\..\radiant\brush\FaceShader.cpp" />
-		<Unit filename="..\..\radiant\brush\FaceShader.h" />
-		<Unit filename="..\..\radiant\brush\FaceTexDef.cpp" />
-		<Unit filename="..\..\radiant\brush\FaceTexDef.h" />
-		<Unit filename="..\..\radiant\brush\FixedWinding.cpp" />
-		<Unit filename="..\..\radiant\brush\FixedWinding.h" />
-		<Unit filename="..\..\radiant\brush\PlanePoints.h" />
-		<Unit filename="..\..\radiant\brush\RenderableWireFrame.h" />
-		<Unit filename="..\..\radiant\brush\SelectableComponents.h" />
-		<Unit filename="..\..\radiant\brush\TexDef.cpp" />
-		<Unit filename="..\..\radiant\brush\TexDef.h" />
-		<Unit filename="..\..\radiant\brush\TextureProjection.cpp" />
-		<Unit filename="..\..\radiant\brush\TextureProjection.h" />
-		<Unit filename="..\..\radiant\brush\VectorLightList.h" />
-		<Unit filename="..\..\radiant\brush\VertexInstance.h" />
-		<Unit filename="..\..\radiant\brush\VertexSelection.h" />
-		<Unit filename="..\..\radiant\brush\Winding.cpp" />
-		<Unit filename="..\..\radiant\brush\Winding.h" />
-		<Unit filename="..\..\radiant\brush\csg\BrushByPlaneClipper.cpp" />
-		<Unit filename="..\..\radiant\brush\csg\BrushByPlaneClipper.h" />
-		<Unit filename="..\..\radiant\brush\csg\CSG.cpp" />
-		<Unit filename="..\..\radiant\brush\csg\CSG.h" />
-		<Unit filename="..\..\radiant\brush\export\CollisionModel.cpp" />
-		<Unit filename="..\..\radiant\brush\export\CollisionModel.h" />
-		<Unit filename="..\..\radiant\brush\export\Geometry.h" />
-		<Unit filename="..\..\radiant\brushexport\BrushExportOBJ.cpp" />
-		<Unit filename="..\..\radiant\brushexport\BrushExportOBJ.h" />
-		<Unit filename="..\..\radiant\brushexport\Exporter.h" />
-		<Unit filename="..\..\radiant\brushexport\WaveFrontBrushVisitor.h" />
-		<Unit filename="..\..\radiant\brushmanip.cpp" />
-		<Unit filename="..\..\radiant\brushmanip.h" />
-		<Unit filename="..\..\radiant\camera\CamRenderer.h" />
-		<Unit filename="..\..\radiant\camera\CamWnd.cpp" />
-		<Unit filename="..\..\radiant\camera\CamWnd.h" />
-		<Unit filename="..\..\radiant\camera\Camera.cpp" />
-		<Unit filename="..\..\radiant\camera\Camera.h" />
-		<Unit filename="..\..\radiant\camera\CameraObserver.h" />
-		<Unit filename="..\..\radiant\camera\CameraSettings.cpp" />
-		<Unit filename="..\..\radiant\camera\CameraSettings.h" />
-		<Unit filename="..\..\radiant\camera\FloatingCamWnd.cpp" />
-		<Unit filename="..\..\radiant\camera\FloatingCamWnd.h" />
-		<Unit filename="..\..\radiant\camera\GlobalCamera.cpp" />
-		<Unit filename="..\..\radiant\camera\GlobalCamera.h" />
-		<Unit filename="..\..\radiant\camera\RadiantCameraView.h" />
-		<Unit filename="..\..\radiant\clipper\ClipPoint.cpp" />
-		<Unit filename="..\..\radiant\clipper\ClipPoint.h" />
-		<Unit filename="..\..\radiant\clipper\Clipper.cpp" />
-		<Unit filename="..\..\radiant\clipper\Clipper.h" />
+		<Unit filename="..\..\radiant\RadiantModule.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\RadiantModule.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\Brush.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\Brush.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushClipPlane.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushModule.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushModule.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushPrimitTexDef.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushPrimitTexDef.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushTokenExporter.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushTokenExporter.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushTokenImporter.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushTokenImporter.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\BrushVisit.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\ContentsFlagsValue.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\EdgeInstance.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\Face.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\Face.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FaceInstance.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FaceInstance.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FacePlane.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FacePlane.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FaceShader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FaceShader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FaceTexDef.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FaceTexDef.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FixedWinding.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\FixedWinding.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\PlanePoints.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\RenderableWireFrame.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\SelectableComponents.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\TexDef.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\TexDef.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\TextureProjection.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\TextureProjection.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\VectorLightList.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\VertexInstance.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\VertexSelection.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\Winding.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\Winding.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\csg\BrushByPlaneClipper.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\csg\BrushByPlaneClipper.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\csg\CSG.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\csg\CSG.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\export\CollisionModel.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\export\CollisionModel.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brush\export\Geometry.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brushexport\BrushExportOBJ.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brushexport\BrushExportOBJ.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brushexport\Exporter.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brushexport\WaveFrontBrushVisitor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brushmanip.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\brushmanip.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\CamRenderer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\CamWnd.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\CamWnd.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\Camera.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\Camera.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\CameraObserver.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\CameraSettings.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\CameraSettings.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\FloatingCamWnd.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\FloatingCamWnd.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\GlobalCamera.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\GlobalCamera.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\camera\RadiantCameraView.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\clipper\ClipPoint.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\clipper\ClipPoint.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\clipper\Clipper.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\clipper\Clipper.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Unit filename="..\..\radiant\darkradiant.rc">
 			<Option compilerVar="WINDRES" />
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\radiant\entity.cpp" />
-		<Unit filename="..\..\radiant\entity.h" />
-		<Unit filename="..\..\radiant\gtkdlgs.cpp" />
-		<Unit filename="..\..\radiant\gtkdlgs.h" />
-		<Unit filename="..\..\radiant\gtkmisc.cpp" />
-		<Unit filename="..\..\radiant\gtkmisc.h" />
-		<Unit filename="..\..\radiant\layers\AddToLayerWalker.h" />
-		<Unit filename="..\..\radiant\layers\LayerCommandTarget.cpp" />
-		<Unit filename="..\..\radiant\layers\LayerCommandTarget.h" />
-		<Unit filename="..\..\radiant\layers\LayerSystem.cpp" />
-		<Unit filename="..\..\radiant\layers\LayerSystem.h" />
-		<Unit filename="..\..\radiant\layers\MoveToLayerWalker.h" />
-		<Unit filename="..\..\radiant\layers\RemoveFromLayerWalker.h" />
-		<Unit filename="..\..\radiant\layers\SetLayerSelectedWalker.h" />
-		<Unit filename="..\..\radiant\log\COutRedirector.cpp" />
-		<Unit filename="..\..\radiant\log\COutRedirector.h" />
-		<Unit filename="..\..\radiant\log\Console.cpp" />
-		<Unit filename="..\..\radiant\log\Console.h" />
-		<Unit filename="..\..\radiant\log\LogDevice.h" />
-		<Unit filename="..\..\radiant\log\LogFile.cpp" />
-		<Unit filename="..\..\radiant\log\LogFile.h" />
-		<Unit filename="..\..\radiant\log\LogLevels.h" />
-		<Unit filename="..\..\radiant\log\LogStream.cpp" />
-		<Unit filename="..\..\radiant\log\LogStream.h" />
-		<Unit filename="..\..\radiant\log\LogStreamBuf.cpp" />
-		<Unit filename="..\..\radiant\log\LogStreamBuf.h" />
-		<Unit filename="..\..\radiant\log\LogWriter.cpp" />
-		<Unit filename="..\..\radiant\log\LogWriter.h" />
-		<Unit filename="..\..\radiant\log\PIDFile.h" />
-		<Unit filename="..\..\radiant\log\StringLogDevice.cpp" />
-		<Unit filename="..\..\radiant\log\StringLogDevice.h" />
-		<Unit filename="..\..\radiant\main.cpp" />
-		<Unit filename="..\..\radiant\main.h" />
-		<Unit filename="..\..\radiant\mainframe_old.cpp" />
-		<Unit filename="..\..\radiant\mainframe_old.h" />
-		<Unit filename="..\..\radiant\map\AutoSaver.cpp" />
-		<Unit filename="..\..\radiant\map\AutoSaver.h" />
-		<Unit filename="..\..\radiant\map\BasicContainer.h" />
-		<Unit filename="..\..\radiant\map\CounterManager.h" />
-		<Unit filename="..\..\radiant\map\DeferredDraw.h" />
-		<Unit filename="..\..\radiant\map\EntityBreakdown.h" />
-		<Unit filename="..\..\radiant\map\FindMapElements.cpp" />
-		<Unit filename="..\..\radiant\map\FindMapElements.h" />
-		<Unit filename="..\..\radiant\map\Map.cpp" />
-		<Unit filename="..\..\radiant\map\Map.h" />
-		<Unit filename="..\..\radiant\map\MapFileChooserPreview.cpp" />
-		<Unit filename="..\..\radiant\map\MapFileChooserPreview.h" />
-		<Unit filename="..\..\radiant\map\MapFileManager.cpp" />
-		<Unit filename="..\..\radiant\map\MapFileManager.h" />
-		<Unit filename="..\..\radiant\map\MapPosition.cpp" />
-		<Unit filename="..\..\radiant\map\MapPosition.h" />
-		<Unit filename="..\..\radiant\map\MapPositionManager.cpp" />
-		<Unit filename="..\..\radiant\map\MapPositionManager.h" />
-		<Unit filename="..\..\radiant\map\MapResource.cpp" />
-		<Unit filename="..\..\radiant\map\MapResource.h" />
-		<Unit filename="..\..\radiant\map\MapResourceManager.cpp" />
-		<Unit filename="..\..\radiant\map\MapResourceManager.h" />
-		<Unit filename="..\..\radiant\map\ModelBreakdown.h" />
-		<Unit filename="..\..\radiant\map\ParentSelectedPrimitivesToEntityWalker.h" />
-		<Unit filename="..\..\radiant\map\PointFile.cpp" />
-		<Unit filename="..\..\radiant\map\PointFile.h" />
-		<Unit filename="..\..\radiant\map\RegionManager.cpp" />
-		<Unit filename="..\..\radiant\map\RegionManager.h" />
-		<Unit filename="..\..\radiant\map\RegionWalkers.h" />
-		<Unit filename="..\..\radiant\map\RootNode.cpp" />
-		<Unit filename="..\..\radiant\map\RootNode.h" />
-		<Unit filename="..\..\radiant\map\ShaderBreakdown.h" />
-		<Unit filename="..\..\radiant\map\StartupMapLoader.cpp" />
-		<Unit filename="..\..\radiant\map\StartupMapLoader.h" />
-		<Unit filename="..\..\radiant\map\UndoFileChangeTracker.h" />
-		<Unit filename="..\..\radiant\map\algorithm\Clone.h" />
-		<Unit filename="..\..\radiant\map\algorithm\Merge.h" />
-		<Unit filename="..\..\radiant\map\algorithm\Traverse.cpp" />
-		<Unit filename="..\..\radiant\map\algorithm\Traverse.h" />
-		<Unit filename="..\..\radiant\map\algorithm\WorldspawnArgFinder.h" />
-		<Unit filename="..\..\radiant\modulesystem\ApplicationContextImpl.cpp" />
-		<Unit filename="..\..\radiant\modulesystem\ApplicationContextImpl.h" />
-		<Unit filename="..\..\radiant\modulesystem\DynamicLibrary.cpp" />
-		<Unit filename="..\..\radiant\modulesystem\DynamicLibrary.h" />
-		<Unit filename="..\..\radiant\modulesystem\DynamicLibraryLoader.cpp" />
-		<Unit filename="..\..\radiant\modulesystem\DynamicLibraryLoader.h" />
-		<Unit filename="..\..\radiant\modulesystem\ModuleLoader.cpp" />
-		<Unit filename="..\..\radiant\modulesystem\ModuleLoader.h" />
-		<Unit filename="..\..\radiant\modulesystem\ModuleRegistry.cpp" />
-		<Unit filename="..\..\radiant\modulesystem\ModuleRegistry.h" />
-		<Unit filename="..\..\radiant\modulesystem\StaticModule.h" />
-		<Unit filename="..\..\radiant\namespace\ComplexName.h" />
-		<Unit filename="..\..\radiant\namespace\Namespace.cpp" />
-		<Unit filename="..\..\radiant\namespace\Namespace.h" />
-		<Unit filename="..\..\radiant\namespace\NamespaceFactory.cpp" />
-		<Unit filename="..\..\radiant\namespace\NamespaceFactory.h" />
-		<Unit filename="..\..\radiant\namespace\PostfixSet.h" />
-		<Unit filename="..\..\radiant\namespace\UniqueNameSet.h" />
-		<Unit filename="..\..\radiant\patch\Patch.cpp" />
-		<Unit filename="..\..\radiant\patch\Patch.h" />
-		<Unit filename="..\..\radiant\patch\PatchBezier.cpp" />
-		<Unit filename="..\..\radiant\patch\PatchBezier.h" />
-		<Unit filename="..\..\radiant\patch\PatchConstants.h" />
-		<Unit filename="..\..\radiant\patch\PatchControl.h" />
-		<Unit filename="..\..\radiant\patch\PatchControlInstance.h" />
-		<Unit filename="..\..\radiant\patch\PatchCreators.h" />
-		<Unit filename="..\..\radiant\patch\PatchImportExport.h" />
-		<Unit filename="..\..\radiant\patch\PatchModule.cpp" />
-		<Unit filename="..\..\radiant\patch\PatchNode.cpp" />
-		<Unit filename="..\..\radiant\patch\PatchNode.h" />
-		<Unit filename="..\..\radiant\patch\PatchRenderables.h" />
-		<Unit filename="..\..\radiant\patch\PatchSavedState.h" />
-		<Unit filename="..\..\radiant\patch\PatchSceneWalk.h" />
-		<Unit filename="..\..\radiant\patch\PatchTesselation.h" />
-		<Unit filename="..\..\radiant\patch\PatchXMLState.h" />
-		<Unit filename="..\..\radiant\patchmanip.cpp" />
-		<Unit filename="..\..\radiant\patchmanip.h" />
-		<Unit filename="..\..\radiant\referencecache.cpp" />
-		<Unit filename="..\..\radiant\referencecache.h" />
-		<Unit filename="..\..\radiant\referencecache\ModelCache.cpp" />
-		<Unit filename="..\..\radiant\referencecache\ModelCache.h" />
-		<Unit filename="..\..\radiant\referencecache\NullModel.cpp" />
-		<Unit filename="..\..\radiant\referencecache\NullModel.h" />
-		<Unit filename="..\..\radiant\referencecache\NullModelLoader.h" />
-		<Unit filename="..\..\radiant\referencecache\NullModelNode.cpp" />
-		<Unit filename="..\..\radiant\referencecache\NullModelNode.h" />
-		<Unit filename="..\..\radiant\render\LinearLightList.h" />
-		<Unit filename="..\..\radiant\render\OpenGLModule.cpp" />
-		<Unit filename="..\..\radiant\render\OpenGLModule.h" />
-		<Unit filename="..\..\radiant\render\OpenGLShaderCache.cpp" />
-		<Unit filename="..\..\radiant\render\OpenGLShaderCache.h" />
-		<Unit filename="..\..\radiant\render\backend\GLProgramFactory.cpp" />
-		<Unit filename="..\..\radiant\render\backend\GLProgramFactory.h" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLShader.cpp" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLShader.h" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLShaderPass.cpp" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLShaderPass.h" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLStateBucketAdd.h" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLStateLess.h" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLStateMap.cpp" />
-		<Unit filename="..\..\radiant\render\backend\OpenGLStateMap.h" />
-		<Unit filename="..\..\radiant\render\backend\glprogram\ARBBumpProgram.h" />
-		<Unit filename="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.h" />
-		<Unit filename="..\..\radiant\render\frontend\CullingWalker.h" />
-		<Unit filename="..\..\radiant\render\frontend\ForEachVisible.h" />
-		<Unit filename="..\..\radiant\render\frontend\RenderHighlighted.h" />
-		<Unit filename="..\..\radiant\renderer.h" />
-		<Unit filename="..\..\radiant\resource.h" />
-		<Unit filename="..\..\radiant\select.cpp" />
-		<Unit filename="..\..\radiant\select.h" />
-		<Unit filename="..\..\radiant\selection\BestPoint.cpp" />
-		<Unit filename="..\..\radiant\selection\BestPoint.h" />
-		<Unit filename="..\..\radiant\selection\Device.h" />
-		<Unit filename="..\..\radiant\selection\Intersection.cpp" />
-		<Unit filename="..\..\radiant\selection\Intersection.h" />
-		<Unit filename="..\..\radiant\selection\Manipulatables.cpp" />
-		<Unit filename="..\..\radiant\selection\Manipulatables.h" />
-		<Unit filename="..\..\radiant\selection\ManipulateObserver.cpp" />
-		<Unit filename="..\..\radiant\selection\ManipulateObserver.h" />
-		<Unit filename="..\..\radiant\selection\Manipulators.cpp" />
-		<Unit filename="..\..\radiant\selection\Manipulators.h" />
-		<Unit filename="..\..\radiant\selection\Planes.cpp" />
-		<Unit filename="..\..\radiant\selection\Planes.h" />
-		<Unit filename="..\..\radiant\selection\RadiantSelectionSystem.cpp" />
-		<Unit filename="..\..\radiant\selection\RadiantSelectionSystem.h" />
-		<Unit filename="..\..\radiant\selection\RadiantWindowObserver.cpp" />
-		<Unit filename="..\..\radiant\selection\RadiantWindowObserver.h" />
-		<Unit filename="..\..\radiant\selection\Remap.h" />
-		<Unit filename="..\..\radiant\selection\Renderables.h" />
-		<Unit filename="..\..\radiant\selection\SceneWalkers.h" />
-		<Unit filename="..\..\radiant\selection\SelectObserver.cpp" />
-		<Unit filename="..\..\radiant\selection\SelectObserver.h" />
-		<Unit filename="..\..\radiant\selection\SelectedNodeList.cpp" />
-		<Unit filename="..\..\radiant\selection\SelectedNodeList.h" />
-		<Unit filename="..\..\radiant\selection\SelectionBox.h" />
-		<Unit filename="..\..\radiant\selection\SelectionTest.cpp" />
-		<Unit filename="..\..\radiant\selection\SelectionTest.h" />
-		<Unit filename="..\..\radiant\selection\Selectors.h" />
-		<Unit filename="..\..\radiant\selection\TransformationVisitors.cpp" />
-		<Unit filename="..\..\radiant\selection\TransformationVisitors.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\Curves.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\Curves.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\Entity.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\Entity.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\General.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\General.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\Group.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\Group.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\GroupCycle.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\GroupCycle.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\ModelFinder.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\ModelFinder.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\Primitives.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\Primitives.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\SelectionPolicies.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\Shader.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\Shader.h" />
-		<Unit filename="..\..\radiant\selection\algorithm\Transformation.cpp" />
-		<Unit filename="..\..\radiant\selection\algorithm\Transformation.h" />
-		<Unit filename="..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp" />
-		<Unit filename="..\..\radiant\selection\shaderclipboard\ShaderClipboard.h" />
-		<Unit filename="..\..\radiant\selection\shaderclipboard\Texturable.cpp" />
-		<Unit filename="..\..\radiant\selection\shaderclipboard\Texturable.h" />
-		<Unit filename="..\..\radiant\settings\Game.cpp" />
-		<Unit filename="..\..\radiant\settings\Game.h" />
-		<Unit filename="..\..\radiant\settings\GameFileLoader.cpp" />
-		<Unit filename="..\..\radiant\settings\GameFileLoader.h" />
-		<Unit filename="..\..\radiant\settings\GameManager.cpp" />
-		<Unit filename="..\..\radiant\settings\GameManager.h" />
-		<Unit filename="..\..\radiant\settings\PreferenceSystem.cpp" />
-		<Unit filename="..\..\radiant\settings\PreferenceSystem.h" />
-		<Unit filename="..\..\radiant\settings\Win32Registry.cpp" />
-		<Unit filename="..\..\radiant\settings\Win32Registry.h" />
-		<Unit filename="..\..\radiant\textool\Rectangle.h" />
-		<Unit filename="..\..\radiant\textool\RenderableItem.h" />
-		<Unit filename="..\..\radiant\textool\Selectable.h" />
-		<Unit filename="..\..\radiant\textool\TexTool.cpp" />
-		<Unit filename="..\..\radiant\textool\TexTool.h" />
-		<Unit filename="..\..\radiant\textool\TexToolItem.cpp" />
-		<Unit filename="..\..\radiant\textool\TexToolItem.h" />
-		<Unit filename="..\..\radiant\textool\Transformable.h" />
-		<Unit filename="..\..\radiant\textool\item\BrushItem.cpp" />
-		<Unit filename="..\..\radiant\textool\item\BrushItem.h" />
-		<Unit filename="..\..\radiant\textool\item\FaceItem.cpp" />
-		<Unit filename="..\..\radiant\textool\item\FaceItem.h" />
-		<Unit filename="..\..\radiant\textool\item\PatchItem.cpp" />
-		<Unit filename="..\..\radiant\textool\item\PatchItem.h" />
-		<Unit filename="..\..\radiant\textool\item\PatchVertexItem.cpp" />
-		<Unit filename="..\..\radiant\textool\item\PatchVertexItem.h" />
-		<Unit filename="..\..\radiant\timer.cpp" />
-		<Unit filename="..\..\radiant\timer.h" />
-		<Unit filename="..\..\radiant\ui\about\AboutDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\about\AboutDialog.h" />
-		<Unit filename="..\..\radiant\ui\commandlist\CommandList.cpp" />
-		<Unit filename="..\..\radiant\ui\commandlist\CommandList.h" />
-		<Unit filename="..\..\radiant\ui\commandlist\CommandListPopulator.h" />
-		<Unit filename="..\..\radiant\ui\commandlist\ShortcutChooser.cpp" />
-		<Unit filename="..\..\radiant\ui\commandlist\ShortcutChooser.h" />
-		<Unit filename="..\..\radiant\ui\common\CommandEntry.cpp" />
-		<Unit filename="..\..\radiant\ui\common\CommandEntry.h" />
-		<Unit filename="..\..\radiant\ui\common\MapPreview.cpp" />
-		<Unit filename="..\..\radiant\ui\common\MapPreview.h" />
-		<Unit filename="..\..\radiant\ui\common\MapPreviewView.h" />
-		<Unit filename="..\..\radiant\ui\common\ModelPreview.cpp" />
-		<Unit filename="..\..\radiant\ui\common\ModelPreview.h" />
-		<Unit filename="..\..\radiant\ui\common\ModelPreviewRenderer.h" />
-		<Unit filename="..\..\radiant\ui\common\RenderableAABB.cpp" />
-		<Unit filename="..\..\radiant\ui\common\RenderableAABB.h" />
-		<Unit filename="..\..\radiant\ui\common\ShaderChooser.cpp" />
-		<Unit filename="..\..\radiant\ui\common\ShaderChooser.h" />
-		<Unit filename="..\..\radiant\ui\common\ShaderSelector.cpp" />
-		<Unit filename="..\..\radiant\ui\common\ShaderSelector.h" />
-		<Unit filename="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
-		<Unit filename="..\..\radiant\ui\common\SoundShaderPreview.h" />
-		<Unit filename="..\..\radiant\ui\common\TexturePreviewCombo.cpp" />
-		<Unit filename="..\..\radiant\ui\common\TexturePreviewCombo.h" />
-		<Unit filename="..\..\radiant\ui\einspector\AddPropertyDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\AddPropertyDialog.h" />
-		<Unit filename="..\..\radiant\ui\einspector\BooleanPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\BooleanPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\ClassnamePropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\ClassnamePropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\ColourPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\ColourPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\EntityInspector.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\EntityInspector.h" />
-		<Unit filename="..\..\radiant\ui\einspector\EntityPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\EntityPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\FloatPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\FloatPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\LightTextureChooser.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\LightTextureChooser.h" />
-		<Unit filename="..\..\radiant\ui\einspector\ModelPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\ModelPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\PropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\PropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\PropertyEditorFactory.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\PropertyEditorFactory.h" />
-		<Unit filename="..\..\radiant\ui\einspector\SkinChooser.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\SkinChooser.h" />
-		<Unit filename="..\..\radiant\ui\einspector\SkinPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\SkinPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\SoundChooser.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\SoundChooser.h" />
-		<Unit filename="..\..\radiant\ui\einspector\SoundPropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\SoundPropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\TexturePropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\TexturePropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\einspector\Vector3PropertyEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\einspector\Vector3PropertyEditor.h" />
-		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassChooser.cpp" />
-		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassChooser.h" />
-		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.cpp" />
-		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.h" />
-		<Unit filename="..\..\radiant\ui\filterdialog\Filter.h" />
-		<Unit filename="..\..\radiant\ui\filterdialog\FilterDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\filterdialog\FilterDialog.h" />
-		<Unit filename="..\..\radiant\ui\filterdialog\FilterEditor.cpp" />
-		<Unit filename="..\..\radiant\ui\filterdialog\FilterEditor.h" />
-		<Unit filename="..\..\radiant\ui\findshader\FindShader.cpp" />
-		<Unit filename="..\..\radiant\ui\findshader\FindShader.h" />
-		<Unit filename="..\..\radiant\ui\layers\LayerContextMenu.cpp" />
-		<Unit filename="..\..\radiant\ui\layers\LayerContextMenu.h" />
-		<Unit filename="..\..\radiant\ui\layers\LayerControl.cpp" />
-		<Unit filename="..\..\radiant\ui\layers\LayerControl.h" />
-		<Unit filename="..\..\radiant\ui\layers\LayerControlDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\layers\LayerControlDialog.h" />
-		<Unit filename="..\..\radiant\ui\lightinspector\LightInspector.cpp" />
-		<Unit filename="..\..\radiant\ui\lightinspector\LightInspector.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp" />
-		<Unit filename="..\..\radiant\ui\mainframe\EmbeddedLayout.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\FloatingLayout.cpp" />
-		<Unit filename="..\..\radiant\ui\mainframe\FloatingLayout.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\LayoutCommand.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\MainFrame.cpp" />
-		<Unit filename="..\..\radiant\ui\mainframe\MainFrame.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp" />
-		<Unit filename="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\RegularLayout.cpp" />
-		<Unit filename="..\..\radiant\ui\mainframe\RegularLayout.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp" />
-		<Unit filename="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h" />
-		<Unit filename="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp" />
-		<Unit filename="..\..\radiant\ui\mainframe\SplitPaneLayout.h" />
-		<Unit filename="..\..\radiant\ui\mapinfo\EntityInfoTab.cpp" />
-		<Unit filename="..\..\radiant\ui\mapinfo\EntityInfoTab.h" />
-		<Unit filename="..\..\radiant\ui\mapinfo\MapInfoDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\mapinfo\MapInfoDialog.h" />
-		<Unit filename="..\..\radiant\ui\mapinfo\ModelInfoTab.cpp" />
-		<Unit filename="..\..\radiant\ui\mapinfo\ModelInfoTab.h" />
-		<Unit filename="..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp" />
-		<Unit filename="..\..\radiant\ui\mapinfo\ShaderInfoTab.h" />
-		<Unit filename="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp" />
-		<Unit filename="..\..\radiant\ui\mediabrowser\MediaBrowser.h" />
-		<Unit filename="..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h" />
-		<Unit filename="..\..\radiant\ui\menu\FiltersMenu.cpp" />
-		<Unit filename="..\..\radiant\ui\menu\FiltersMenu.h" />
-		<Unit filename="..\..\radiant\ui\modelselector\ModelDataInserter.h" />
-		<Unit filename="..\..\radiant\ui\modelselector\ModelFileFunctor.h" />
-		<Unit filename="..\..\radiant\ui\modelselector\ModelSelector.cpp" />
-		<Unit filename="..\..\radiant\ui\modelselector\ModelSelector.h" />
-		<Unit filename="..\..\radiant\ui\mru\MRU.cpp" />
-		<Unit filename="..\..\radiant\ui\mru\MRU.h" />
-		<Unit filename="..\..\radiant\ui\mru\MRUList.h" />
-		<Unit filename="..\..\radiant\ui\mru\MRUMenuItem.cpp" />
-		<Unit filename="..\..\radiant\ui\mru\MRUMenuItem.h" />
-		<Unit filename="..\..\radiant\ui\ortho\OrthoContextMenu.cpp" />
-		<Unit filename="..\..\radiant\ui\ortho\OrthoContextMenu.h" />
-		<Unit filename="..\..\radiant\ui\overlay\Overlay.cpp" />
-		<Unit filename="..\..\radiant\ui\overlay\Overlay.h" />
-		<Unit filename="..\..\radiant\ui\overlay\OverlayDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\overlay\OverlayDialog.h" />
-		<Unit filename="..\..\radiant\ui\overlay\OverlayRegistryKeys.h" />
-		<Unit filename="..\..\radiant\ui\particles\ParticlesChooser.cpp" />
-		<Unit filename="..\..\radiant\ui\particles\ParticlesChooser.h" />
-		<Unit filename="..\..\radiant\ui\particles\ParticlesVisitor.h" />
-		<Unit filename="..\..\radiant\ui\patch\BulgePatchDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\patch\BulgePatchDialog.h" />
-		<Unit filename="..\..\radiant\ui\patch\PatchCreateDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\patch\PatchCreateDialog.h" />
-		<Unit filename="..\..\radiant\ui\patch\PatchInspector.cpp" />
-		<Unit filename="..\..\radiant\ui\patch\PatchInspector.h" />
-		<Unit filename="..\..\radiant\ui\patch\PatchThickenDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\patch\PatchThickenDialog.h" />
-		<Unit filename="..\..\radiant\ui\prefdialog\PrefDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\prefdialog\PrefDialog.h" />
-		<Unit filename="..\..\radiant\ui\prefdialog\PrefPage.cpp" />
-		<Unit filename="..\..\radiant\ui\prefdialog\PrefPage.h" />
-		<Unit filename="..\..\radiant\ui\prefdialog\PrefPageWalkers.h" />
-		<Unit filename="..\..\radiant\ui\splash\Splash.cpp" />
-		<Unit filename="..\..\radiant\ui\splash\Splash.h" />
-		<Unit filename="..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp" />
-		<Unit filename="..\..\radiant\ui\surfaceinspector\SurfaceInspector.h" />
-		<Unit filename="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp" />
-		<Unit filename="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />
-		<Unit filename="..\..\radiant\ui\transform\TransformDialog.cpp" />
-		<Unit filename="..\..\radiant\ui\transform\TransformDialog.h" />
-		<Unit filename="..\..\radiant\view.cpp" />
-		<Unit filename="..\..\radiant\view.h" />
-		<Unit filename="..\..\radiant\windowobservers.cpp" />
-		<Unit filename="..\..\radiant\windowobservers.h" />
-		<Unit filename="..\..\radiant\xyview\FloatingOrthoView.h" />
-		<Unit filename="..\..\radiant\xyview\GlobalXYWnd.cpp" />
-		<Unit filename="..\..\radiant\xyview\GlobalXYWnd.h" />
-		<Unit filename="..\..\radiant\xyview\XYRenderer.h" />
-		<Unit filename="..\..\radiant\xyview\XYWnd.cpp" />
-		<Unit filename="..\..\radiant\xyview\XYWnd.h" />
+		<Unit filename="..\..\radiant\entity.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\entity.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\gtkdlgs.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\gtkdlgs.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\gtkmisc.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\gtkmisc.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\AddToLayerWalker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\LayerCommandTarget.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\LayerCommandTarget.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\LayerSystem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\LayerSystem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\MoveToLayerWalker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\RemoveFromLayerWalker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\layers\SetLayerSelectedWalker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\COutRedirector.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\COutRedirector.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\Console.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\Console.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogDevice.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogFile.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogFile.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogLevels.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogStream.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogStream.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogStreamBuf.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogStreamBuf.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogWriter.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\LogWriter.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\PIDFile.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\StringLogDevice.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\log\StringLogDevice.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\main.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\main.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\mainframe_old.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\mainframe_old.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\AutoSaver.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\AutoSaver.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\BasicContainer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\CounterManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\DeferredDraw.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\EntityBreakdown.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\FindMapElements.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\FindMapElements.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\Map.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\Map.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapFileChooserPreview.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapFileChooserPreview.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapFileManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapFileManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapPosition.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapPosition.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapPositionManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapPositionManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapResource.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapResource.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapResourceManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\MapResourceManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\ModelBreakdown.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\ParentSelectedPrimitivesToEntityWalker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\PointFile.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\PointFile.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\RegionManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\RegionManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\RegionWalkers.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\RootNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\RootNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\ShaderBreakdown.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\StartupMapLoader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\StartupMapLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\UndoFileChangeTracker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\algorithm\Clone.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\algorithm\Merge.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\algorithm\Traverse.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\algorithm\Traverse.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\map\algorithm\WorldspawnArgFinder.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\ApplicationContextImpl.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\ApplicationContextImpl.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\DynamicLibrary.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\DynamicLibrary.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\DynamicLibraryLoader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\DynamicLibraryLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\ModuleLoader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\ModuleLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\ModuleRegistry.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\ModuleRegistry.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\modulesystem\StaticModule.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\namespace\ComplexName.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\namespace\Namespace.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\namespace\Namespace.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\namespace\NamespaceFactory.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\namespace\NamespaceFactory.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\namespace\PostfixSet.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\namespace\UniqueNameSet.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\Patch.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\Patch.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchBezier.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchBezier.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchConstants.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchControl.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchControlInstance.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchCreators.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchImportExport.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchModule.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchRenderables.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchSavedState.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchSceneWalk.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchTesselation.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patch\PatchXMLState.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patchmanip.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\patchmanip.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache\ModelCache.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache\ModelCache.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache\NullModel.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache\NullModel.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache\NullModelLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache\NullModelNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\referencecache\NullModelNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\LinearLightList.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\OpenGLModule.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\OpenGLModule.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\OpenGLShaderCache.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\OpenGLShaderCache.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\GLProgramFactory.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\GLProgramFactory.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLShader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLShader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLShaderPass.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLShaderPass.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLStateBucketAdd.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLStateLess.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLStateMap.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\OpenGLStateMap.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\glprogram\ARBBumpProgram.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\frontend\CullingWalker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\frontend\ForEachVisible.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\render\frontend\RenderHighlighted.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\renderer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\resource.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\select.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\select.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\BestPoint.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\BestPoint.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Device.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Intersection.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Intersection.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Manipulatables.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Manipulatables.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\ManipulateObserver.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\ManipulateObserver.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Manipulators.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Manipulators.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Planes.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Planes.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\RadiantSelectionSystem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\RadiantSelectionSystem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\RadiantWindowObserver.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\RadiantWindowObserver.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Remap.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Renderables.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SceneWalkers.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SelectObserver.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SelectObserver.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SelectedNodeList.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SelectedNodeList.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SelectionBox.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SelectionTest.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\SelectionTest.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\Selectors.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\TransformationVisitors.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\TransformationVisitors.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Curves.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Curves.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Entity.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Entity.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\General.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\General.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Group.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Group.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\GroupCycle.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\GroupCycle.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\ModelFinder.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\ModelFinder.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Primitives.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Primitives.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\SelectionPolicies.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Shader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Shader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Transformation.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\algorithm\Transformation.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\shaderclipboard\ShaderClipboard.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\shaderclipboard\Texturable.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\selection\shaderclipboard\Texturable.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\Game.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\Game.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\GameFileLoader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\GameFileLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\GameManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\GameManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\PreferenceSystem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\PreferenceSystem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\Win32Registry.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\settings\Win32Registry.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\Rectangle.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\RenderableItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\Selectable.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\TexTool.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\TexTool.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\TexToolItem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\TexToolItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\Transformable.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\BrushItem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\BrushItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\FaceItem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\FaceItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\PatchItem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\PatchItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\PatchVertexItem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\textool\item\PatchVertexItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\timer.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\timer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\about\AboutDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\about\AboutDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\commandlist\CommandList.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\commandlist\CommandList.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\commandlist\CommandListPopulator.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\commandlist\ShortcutChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\commandlist\ShortcutChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\CommandEntry.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\CommandEntry.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\MapPreview.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\MapPreview.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\MapPreviewView.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\ModelPreview.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\ModelPreview.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\ModelPreviewRenderer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\RenderableAABB.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\RenderableAABB.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\ShaderChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\ShaderChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\ShaderSelector.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\ShaderSelector.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\SoundShaderPreview.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\SoundShaderPreview.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\TexturePreviewCombo.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\TexturePreviewCombo.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\AddPropertyDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\AddPropertyDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\BooleanPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\BooleanPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ClassnamePropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ClassnamePropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ColourPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ColourPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\EntityInspector.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\EntityInspector.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\EntityPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\EntityPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\FloatPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\FloatPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\LightTextureChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\LightTextureChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ModelPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\ModelPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\PropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\PropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\PropertyEditorFactory.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\PropertyEditorFactory.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SkinChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SkinChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SkinPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SkinPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SoundChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SoundChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SoundPropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\SoundPropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\TexturePropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\TexturePropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\Vector3PropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\Vector3PropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\entitychooser\EntityClassTreePopulator.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\filterdialog\Filter.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\filterdialog\FilterDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\filterdialog\FilterDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\filterdialog\FilterEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\filterdialog\FilterEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\findshader\FindShader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\findshader\FindShader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\layers\LayerContextMenu.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\layers\LayerContextMenu.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\layers\LayerControl.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\layers\LayerControl.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\layers\LayerControlDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\layers\LayerControlDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\lightinspector\LightInspector.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\lightinspector\LightInspector.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\EmbeddedLayout.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\FloatingLayout.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\FloatingLayout.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\LayoutCommand.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\MainFrame.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\MainFrame.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\RegularLayout.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\RegularLayout.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mainframe\SplitPaneLayout.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\EntityInfoTab.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\EntityInfoTab.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\MapInfoDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\MapInfoDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\ModelInfoTab.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\ModelInfoTab.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mapinfo\ShaderInfoTab.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mediabrowser\MediaBrowser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\menu\FiltersMenu.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\menu\FiltersMenu.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\modelselector\ModelDataInserter.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\modelselector\ModelFileFunctor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\modelselector\ModelSelector.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\modelselector\ModelSelector.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mru\MRU.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mru\MRU.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mru\MRUList.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mru\MRUMenuItem.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\mru\MRUMenuItem.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\ortho\OrthoContextMenu.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\ortho\OrthoContextMenu.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\overlay\Overlay.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\overlay\Overlay.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\overlay\OverlayDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\overlay\OverlayDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\overlay\OverlayRegistryKeys.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\particles\ParticlesChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\particles\ParticlesChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\particles\ParticlesVisitor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\BulgePatchDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\BulgePatchDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\PatchCreateDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\PatchCreateDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\PatchInspector.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\PatchInspector.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\PatchThickenDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\patch\PatchThickenDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\prefdialog\PrefDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\prefdialog\PrefDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\prefdialog\PrefPage.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\prefdialog\PrefPage.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\prefdialog\PrefPageWalkers.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\splash\Splash.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\splash\Splash.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\surfaceinspector\SurfaceInspector.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\texturebrowser\TextureBrowser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\transform\TransformDialog.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\transform\TransformDialog.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\view.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\view.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\windowobservers.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\windowobservers.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\xyview\FloatingOrthoView.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\xyview\GlobalXYWnd.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\xyview\GlobalXYWnd.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\xyview\XYRenderer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\xyview\XYWnd.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\xyview\XYWnd.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />
