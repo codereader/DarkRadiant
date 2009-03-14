@@ -7,8 +7,10 @@
 		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\mathlib.lib;..\..\build\libs\$(TARGET_NAME)\scenelib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -25,7 +27,7 @@
 					<Add option="/W3" />
 					<Add option="/Zi /D_DEBUG" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -52,7 +54,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -61,12 +63,14 @@
 					<Add library="mathlib" />
 					<Add library="opengl32" />
 					<Add library="scenelib" />
-					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\mathlib.lib;..\..\build\libs\$(TARGET_NAME)\scenelib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -86,7 +90,7 @@
 					<Add option="/W4" />
 					<Add option="/Zi" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -112,7 +116,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -124,101 +128,382 @@
 					<Add library="mathlib" />
 					<Add library="opengl32" />
 					<Add library="scenelib" />
-					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
+			<Target title="Clean Install Win32">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="msvc8" />
+				<ExtraCommands>
+					<Add before='cmd /C &quot;del ..\..\install\modules\$(PROJECT_NAME).* /F /Q &amp; exit 0&quot;' />
+				</ExtraCommands>
+			</Target>
 		</Build>
-		<Unit filename="..\..\plugins\entity\Doom3Entity.cpp" />
-		<Unit filename="..\..\plugins\entity\Doom3Entity.h" />
-		<Unit filename="..\..\plugins\entity\EntityCreator.cpp" />
-		<Unit filename="..\..\plugins\entity\EntityCreator.h" />
-		<Unit filename="..\..\plugins\entity\EntityNode.cpp" />
-		<Unit filename="..\..\plugins\entity\EntityNode.h" />
-		<Unit filename="..\..\plugins\entity\EntitySettings.cpp" />
-		<Unit filename="..\..\plugins\entity\EntitySettings.h" />
-		<Unit filename="..\..\plugins\entity\KeyValue.cpp" />
-		<Unit filename="..\..\plugins\entity\KeyValue.h" />
-		<Unit filename="..\..\plugins\entity\KeyValueObserver.cpp" />
-		<Unit filename="..\..\plugins\entity\KeyValueObserver.h" />
-		<Unit filename="..\..\plugins\entity\ModelKey.cpp" />
-		<Unit filename="..\..\plugins\entity\ModelKey.h" />
-		<Unit filename="..\..\plugins\entity\NameKeyObserver.cpp" />
-		<Unit filename="..\..\plugins\entity\NameKeyObserver.h" />
-		<Unit filename="..\..\plugins\entity\NamespaceManager.cpp" />
-		<Unit filename="..\..\plugins\entity\NamespaceManager.h" />
-		<Unit filename="..\..\plugins\entity\SkinChangedWalker.h" />
-		<Unit filename="..\..\plugins\entity\VertexInstance.h" />
-		<Unit filename="..\..\plugins\entity\angle.cpp" />
-		<Unit filename="..\..\plugins\entity\angle.h" />
-		<Unit filename="..\..\plugins\entity\angles.cpp" />
-		<Unit filename="..\..\plugins\entity\angles.h" />
-		<Unit filename="..\..\plugins\entity\colour.cpp" />
-		<Unit filename="..\..\plugins\entity\colour.h" />
-		<Unit filename="..\..\plugins\entity\curve\Curve.cpp" />
-		<Unit filename="..\..\plugins\entity\curve\Curve.h" />
-		<Unit filename="..\..\plugins\entity\curve\CurveCatmullRom.cpp" />
-		<Unit filename="..\..\plugins\entity\curve\CurveCatmullRom.h" />
-		<Unit filename="..\..\plugins\entity\curve\CurveControlPointFunctors.h" />
-		<Unit filename="..\..\plugins\entity\curve\CurveEditInstance.cpp" />
-		<Unit filename="..\..\plugins\entity\curve\CurveEditInstance.h" />
-		<Unit filename="..\..\plugins\entity\curve\CurveNURBS.cpp" />
-		<Unit filename="..\..\plugins\entity\curve\CurveNURBS.h" />
-		<Unit filename="..\..\plugins\entity\curve\RenderableCurve.h" />
-		<Unit filename="..\..\plugins\entity\doom3group\Doom3Group.cpp" />
-		<Unit filename="..\..\plugins\entity\doom3group\Doom3Group.h" />
-		<Unit filename="..\..\plugins\entity\doom3group\Doom3GroupNode.cpp" />
-		<Unit filename="..\..\plugins\entity\doom3group\Doom3GroupNode.h" />
-		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModel.cpp" />
-		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModel.h" />
-		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp" />
-		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModelNode.h" />
-		<Unit filename="..\..\plugins\entity\entity.cpp" />
-		<Unit filename="..\..\plugins\entity\entity.def" />
-		<Unit filename="..\..\plugins\entity\entity.h" />
-		<Unit filename="..\..\plugins\entity\generic\GenericEntity.cpp" />
-		<Unit filename="..\..\plugins\entity\generic\GenericEntity.h" />
-		<Unit filename="..\..\plugins\entity\generic\GenericEntityNode.cpp" />
-		<Unit filename="..\..\plugins\entity\generic\GenericEntityNode.h" />
-		<Unit filename="..\..\plugins\entity\generic\RenderableArrow.h" />
-		<Unit filename="..\..\plugins\entity\keyobservers.cpp" />
-		<Unit filename="..\..\plugins\entity\keyobservers.h" />
-		<Unit filename="..\..\plugins\entity\light\Doom3LightRadius.h" />
-		<Unit filename="..\..\plugins\entity\light\Light.cpp" />
-		<Unit filename="..\..\plugins\entity\light\Light.h" />
-		<Unit filename="..\..\plugins\entity\light\LightNode.cpp" />
-		<Unit filename="..\..\plugins\entity\light\LightNode.h" />
-		<Unit filename="..\..\plugins\entity\light\LightShader.h" />
-		<Unit filename="..\..\plugins\entity\light\RenderableVertices.h" />
-		<Unit filename="..\..\plugins\entity\light\Renderables.cpp" />
-		<Unit filename="..\..\plugins\entity\light\Renderables.h" />
-		<Unit filename="..\..\plugins\entity\namedentity.cpp" />
-		<Unit filename="..\..\plugins\entity\namedentity.h" />
-		<Unit filename="..\..\plugins\entity\origin.cpp" />
-		<Unit filename="..\..\plugins\entity\origin.h" />
-		<Unit filename="..\..\plugins\entity\plugin.cpp" />
-		<Unit filename="..\..\plugins\entity\plugin.h" />
-		<Unit filename="..\..\plugins\entity\rotation.cpp" />
-		<Unit filename="..\..\plugins\entity\rotation.h" />
-		<Unit filename="..\..\plugins\entity\scale.cpp" />
-		<Unit filename="..\..\plugins\entity\scale.h" />
-		<Unit filename="..\..\plugins\entity\speaker\Speaker.cpp" />
-		<Unit filename="..\..\plugins\entity\speaker\Speaker.h" />
-		<Unit filename="..\..\plugins\entity\speaker\SpeakerNode.cpp" />
-		<Unit filename="..\..\plugins\entity\speaker\SpeakerNode.h" />
-		<Unit filename="..\..\plugins\entity\speaker\SpeakerRenderables.cpp" />
-		<Unit filename="..\..\plugins\entity\speaker\SpeakerRenderables.h" />
-		<Unit filename="..\..\plugins\entity\target\RenderableTargetInstances.cpp" />
-		<Unit filename="..\..\plugins\entity\target\RenderableTargetInstances.h" />
-		<Unit filename="..\..\plugins\entity\target\RenderableTargetLines.h" />
-		<Unit filename="..\..\plugins\entity\target\Target.h" />
-		<Unit filename="..\..\plugins\entity\target\TargetKey.cpp" />
-		<Unit filename="..\..\plugins\entity\target\TargetKey.h" />
-		<Unit filename="..\..\plugins\entity\target\TargetKeyCollection.cpp" />
-		<Unit filename="..\..\plugins\entity\target\TargetKeyCollection.h" />
-		<Unit filename="..\..\plugins\entity\target\TargetManager.cpp" />
-		<Unit filename="..\..\plugins\entity\target\TargetManager.h" />
-		<Unit filename="..\..\plugins\entity\target\TargetableNode.cpp" />
-		<Unit filename="..\..\plugins\entity\target\TargetableNode.h" />
+		<Unit filename="..\..\plugins\entity\Doom3Entity.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\Doom3Entity.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\EntityCreator.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\EntityCreator.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\EntityNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\EntityNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\EntitySettings.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\EntitySettings.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\KeyValue.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\KeyValue.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\KeyValueObserver.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\KeyValueObserver.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\ModelKey.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\ModelKey.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\NameKeyObserver.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\NameKeyObserver.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\NamespaceManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\NamespaceManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\SkinChangedWalker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\VertexInstance.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\angle.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\angle.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\angles.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\angles.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\colour.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\colour.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\Curve.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\Curve.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\CurveCatmullRom.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\CurveCatmullRom.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\CurveControlPointFunctors.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\CurveEditInstance.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\CurveEditInstance.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\CurveNURBS.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\CurveNURBS.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\curve\RenderableCurve.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\doom3group\Doom3Group.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\doom3group\Doom3Group.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\doom3group\Doom3GroupNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\doom3group\Doom3GroupNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModel.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModel.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\eclassmodel\EclassModelNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\entity.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\entity.def">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\entity.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\generic\GenericEntity.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\generic\GenericEntity.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\generic\GenericEntityNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\generic\GenericEntityNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\generic\RenderableArrow.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\keyobservers.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\keyobservers.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\Doom3LightRadius.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\Light.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\Light.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\LightNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\LightNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\LightShader.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\RenderableVertices.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\Renderables.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\light\Renderables.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\namedentity.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\namedentity.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\origin.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\origin.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\plugin.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\plugin.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\rotation.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\rotation.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\scale.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\scale.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\speaker\Speaker.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\speaker\Speaker.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\speaker\SpeakerNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\speaker\SpeakerNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\speaker\SpeakerRenderables.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\speaker\SpeakerRenderables.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\RenderableTargetInstances.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\RenderableTargetInstances.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\RenderableTargetLines.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\Target.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetKey.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetKey.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetKeyCollection.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetKeyCollection.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetableNode.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\entity\target\TargetableNode.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -7,8 +7,10 @@
 		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Debug" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\libxml2.lib;..\..\build\libs\$(TARGET_NAME)\xmlutillib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -25,7 +27,7 @@
 					<Add option="/W3" />
 					<Add option="/Zi /D_DEBUG" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -64,7 +66,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Debug\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -76,14 +78,16 @@
 					<Add library="gtk-win32-2.0" />
 					<Add library="gdk-win32-2.0" />
 					<Add library="gobject-2.0" />
-					<Add directory="..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
+				<Option platforms="Windows;" />
 				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\Win32\Release" />
+				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
+				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\libxml2.lib;..\..\build\libs\$(TARGET_NAME)\xmlutillib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -104,7 +108,7 @@
 					<Add option="/W4" />
 					<Add option="/Zi" />
 					<Add option="/GS-" />
-					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4610 /wd4510 /wd4512 /wd4505 /wd4100 /wd4127 /wd4996" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
@@ -142,7 +146,7 @@
 					<Add option="/NOLOGO" />
 					<Add option="/DLL" />
 					<Add option="/MANIFEST" />
-					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\Win32\Release\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
+					<Add option='/MANIFESTFILE:&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\$(PROJECT_NAME).dll.intermediate.manifest&quot;' />
 					<Add option='/DEF:&quot;../../plugins/$(PROJECT_NAME)/$(PROJECT_NAME).def&quot;' />
 					<Add option='/pdb:&quot;..\..\install\modules\$(PROJECT_NAME).pdb&quot;' />
 					<Add option="/SUBSYSTEM:WINDOWS" />
@@ -157,32 +161,100 @@
 					<Add library="gtk-win32-2.0" />
 					<Add library="gdk-win32-2.0" />
 					<Add library="gobject-2.0" />
-					<Add directory="..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\w32deps\gtk2\lib" />
 					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
+			<Target title="Clean Install Win32">
+				<Option platforms="Windows;" />
+				<Option type="4" />
+				<Option compiler="msvc8" />
+				<ExtraCommands>
+					<Add before='cmd /C &quot;del ..\..\install\modules\$(PROJECT_NAME).* /F /Q &amp; exit 0&quot;' />
+				</ExtraCommands>
+			</Target>
 		</Build>
-		<Unit filename="..\..\plugins\eventmanager\Accelerator.cpp" />
-		<Unit filename="..\..\plugins\eventmanager\Accelerator.h" />
-		<Unit filename="..\..\plugins\eventmanager\Command.cpp" />
-		<Unit filename="..\..\plugins\eventmanager\Command.h" />
-		<Unit filename="..\..\plugins\eventmanager\Event.h" />
-		<Unit filename="..\..\plugins\eventmanager\EventManager.cpp" />
-		<Unit filename="..\..\plugins\eventmanager\EventManager.h" />
-		<Unit filename="..\..\plugins\eventmanager\KeyEvent.h" />
-		<Unit filename="..\..\plugins\eventmanager\Modifiers.cpp" />
-		<Unit filename="..\..\plugins\eventmanager\Modifiers.h" />
-		<Unit filename="..\..\plugins\eventmanager\MouseEvents.cpp" />
-		<Unit filename="..\..\plugins\eventmanager\MouseEvents.h" />
-		<Unit filename="..\..\plugins\eventmanager\RegistryToggle.h" />
-		<Unit filename="..\..\plugins\eventmanager\SaveEventVisitor.h" />
-		<Unit filename="..\..\plugins\eventmanager\Statement.h" />
-		<Unit filename="..\..\plugins\eventmanager\Toggle.cpp" />
-		<Unit filename="..\..\plugins\eventmanager\Toggle.h" />
-		<Unit filename="..\..\plugins\eventmanager\WidgetToggle.cpp" />
-		<Unit filename="..\..\plugins\eventmanager\WidgetToggle.h" />
-		<Unit filename="..\..\plugins\eventmanager\eventmanager.def" />
+		<Unit filename="..\..\plugins\eventmanager\Accelerator.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Accelerator.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Command.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Command.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Event.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\EventManager.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\EventManager.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\KeyEvent.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Modifiers.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Modifiers.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\MouseEvents.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\MouseEvents.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\RegistryToggle.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\SaveEventVisitor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Statement.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Toggle.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\Toggle.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\WidgetToggle.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\WidgetToggle.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\eventmanager\eventmanager.def">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

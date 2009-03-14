@@ -7,9 +7,10 @@
 		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug Win32">
-				<Option output="..\..\..\build\libs\Win32\Debug\libgdkglext" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="..\..\..\build\libs\$(TARGET_NAME)\libgdkglext" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\..\build\libgdkglext\Win32\Debug" />
+				<Option object_output="..\..\..\build\libgdkglext\$(TARGET_NAME)" />
 				<Option type="2" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -23,7 +24,7 @@
 					<Add option="/O2" />
 					<Add option="/W3" />
 					<Add option="/Zi /D_DEBUG" />
-					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DGDK_GL_COMPILATION" />
@@ -57,14 +58,15 @@
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add library="pangowin32-1.0" />
-					<Add directory="..\..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\..\w32deps\gtk2\lib\" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
-				<Option output="..\..\..\build\libs\Win32\Release\libgdkglext" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="..\..\..\build\libs\$(TARGET_NAME)\libgdkglext" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\..\build\libgdkglext\Win32\Release" />
+				<Option object_output="..\..\..\build\libgdkglext\$(TARGET_NAME)" />
 				<Option type="2" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -77,7 +79,7 @@
 					<Add option="/EHs" />
 					<Add option="/O2" />
 					<Add option="/W3" />
-					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4996" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
@@ -111,7 +113,7 @@
 				</ResourceCompiler>
 				<Linker>
 					<Add library="pangowin32-1.0" />
-					<Add directory="..\..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 					<Add directory="..\..\..\w32deps\gtk2\lib\" />
 				</Linker>
 			</Target>

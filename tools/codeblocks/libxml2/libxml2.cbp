@@ -7,9 +7,11 @@
 		<Option compiler="msvc8" />
 		<Build>
 			<Target title="Debug Win32">
-				<Option output="..\..\..\build\libs\Win32\Debug\libxml2" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="..\..\..\build\libs\$(TARGET_NAME)\libxml2" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\..\build\libxml2\Win32\Debug" />
+				<Option object_output="..\..\..\build\libxml2\$(TARGET_NAME)" />
+				<Option external_deps="..\..\..\build\libs\$(TARGET_NAME)\libiconv.lib;" />
 				<Option type="2" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -23,7 +25,7 @@
 					<Add option="/O2" />
 					<Add option="/W3" />
 					<Add option="/Zi /D_DEBUG" />
-					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Debug\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DLIBICONV_PLUG" />
@@ -39,13 +41,15 @@
 					<Add option="/DEBUG" />
 					<Add library="libiconv" />
 					<Add library="kernel32" />
-					<Add directory="..\..\..\build\libs\Win32\Debug" />
+					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
-				<Option output="..\..\..\build\libs\Win32\Release\libxml2" prefix_auto="1" extension_auto="1" />
+				<Option platforms="Windows;" />
+				<Option output="..\..\..\build\libs\$(TARGET_NAME)\libxml2" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\..\..\build\libxml2\Win32\Release" />
+				<Option object_output="..\..\..\build\libxml2\$(TARGET_NAME)" />
+				<Option external_deps="..\..\..\build\libs\$(TARGET_NAME)\libiconv.lib;" />
 				<Option type="2" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -58,7 +62,7 @@
 					<Add option="/EHs" />
 					<Add option="/O2" />
 					<Add option="/W3" />
-					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\Win32\Release\vc80.pdb&quot;' />
+					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/wd4996" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
@@ -74,7 +78,7 @@
 				<Linker>
 					<Add library="libiconv" />
 					<Add library="kernel32" />
-					<Add directory="..\..\..\build\libs\Win32\Release" />
+					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 		</Build>
