@@ -145,10 +145,8 @@ private:
 	// Update the GTK components when a new selection is made in the tree view
     void treeSelectionChanged();
     
-	// Update the currently selected entity pointer. This function returns true
-	// if a single Entity is selected, and false if either a non-Entity or more
-	// than one object is selected.
-	bool updateSelectedEntity();
+    // Update our selected entity pointer from the selection system
+    void updateSelectedEntity();
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();

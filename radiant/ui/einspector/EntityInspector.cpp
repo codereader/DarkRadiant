@@ -340,31 +340,33 @@ void EntityInspector::onGtkIdle() {
     // or nothing selected result in a grayed-out dialog, as does the selection
     // of something that is not an Entity (worldspawn).
 
-    if (updateSelectedEntity()) 
+    // Update from selection system
+    updateSelectedEntity();
+
+    if (_selectedEntity != NULL) 
     {
         gtk_widget_set_sensitive(_editorFrame, TRUE);
         gtk_widget_set_sensitive(_treeView, TRUE);
-		gtk_widget_set_sensitive(_showInheritedCheckbox, TRUE);
-		gtk_widget_set_sensitive(_showHelpColumnCheckbox, TRUE);
+        gtk_widget_set_sensitive(_showInheritedCheckbox, TRUE);
+        gtk_widget_set_sensitive(_showHelpColumnCheckbox, TRUE);
 
         refreshTreeModel(); // get values, already have category tree
     }
-    else 
+    else  // no selected entity
     {
         // Remove the displayed PropertyEditor
         if (_currentPropertyEditor) {
             _currentPropertyEditor = PropertyEditorPtr();
         }
 		
-		// Disable the dialog and clear the TreeView
+        // Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_editorFrame, FALSE);
         gtk_widget_set_sensitive(_treeView, FALSE);
-		gtk_widget_set_sensitive(_showInheritedCheckbox, FALSE);
-		gtk_widget_set_sensitive(_showHelpColumnCheckbox, FALSE);
+        gtk_widget_set_sensitive(_showInheritedCheckbox, FALSE);
+        gtk_widget_set_sensitive(_showHelpColumnCheckbox, FALSE);
 
         gtk_list_store_clear(_listStore);
     }
-    
 }
 
 // Entity keyvalue changed callback
@@ -925,38 +927,31 @@ void EntityInspector::appendClassProperties() {
 	eclass->forEachClassAttribute(visitor);
 }
 
-// Update the selected Entity pointer
-
-bool EntityInspector::updateSelectedEntity() {
+// Update the selected Entity pointer from the selection system
+void EntityInspector::updateSelectedEntity() {
 
 	_selectedEntity = NULL;
 
 	// A single entity must be selected
 	if (GlobalSelectionSystem().countSelected() != 1) {
-		return false;
+		return;
 	}
 
 	scene::INodePtr selectedNode = GlobalSelectionSystem().ultimateSelected();
 
-	// The root node must not be selected (this can happen if Invert Selection is activated
-	// with an empty scene, or by direct selection in the entity list).
+   // The root node must not be selected (this can happen if Invert Selection is
+   // activated with an empty scene, or by direct selection in the entity list).
 	if (selectedNode->isRoot()) {
-		return false;
+		return;
 	}
 	
-	scene::INodePtr parent = selectedNode->getParent();
+	scene::INodePtr selectedNodeParent = selectedNode->getParent();
 
-	// Try both the selected node (if an entity is selected) or the parent node (if a brush is 
-	// selected. If neither of them convert to entities, return false.
-	if ((_selectedEntity = Node_getEntity(selectedNode)) == 0
-		 && (_selectedEntity = Node_getEntity(parent)) == 0)
-	{
-		return false;
-	}
-	else 
-	{
-		return true;
-	}
+   // Try both the selected node (if an entity is selected) or the parent node
+   // (if a brush is selected). 
+   _selectedEntity = Node_getEntity(selectedNode);
+   if (!_selectedEntity)
+      _selectedEntity = Node_getEntity(selectedNodeParent);
 }
 
 void EntityInspector::toggle(const cmd::ArgumentList& args) {
