@@ -121,7 +121,8 @@ public:
      * @param observedKey
      * The registry key for which the RegistryKeyObserver should be notified.
      */
-	virtual void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) = 0;
+	virtual void addKeyObserver(RegistryKeyObserver* observer,
+                               const std::string& observedKey) = 0;
 	
     /**
      * \brief Remove the given RegistryKeyObserver from the list of notifiable

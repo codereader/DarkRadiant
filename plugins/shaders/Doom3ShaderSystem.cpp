@@ -56,16 +56,17 @@ void Doom3ShaderSystem::destroy() {
 	// the CShader destructors.
 }
 
-void Doom3ShaderSystem::loadMaterialFiles() {
+void Doom3ShaderSystem::loadMaterialFiles() 
+{
 	// Get the shaders path and extension from the XML game file
 	xml::NodeList nlShaderPath = 
 		GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
-	if (nlShaderPath.size() != 1)
+	if (nlShaderPath.empty())
 		throw MissingXMLNodeException(MISSING_BASEPATH_NODE);
 
 	xml::NodeList nlShaderExt = 
 		GlobalRegistry().findXPath("game/filesystem/shaders/extension");
-	if (nlShaderExt.size() != 1)
+	if (nlShaderExt.empty())
 		throw MissingXMLNodeException(MISSING_EXTENSION_NODE);
 
 	// Load the shader files from the VFS
