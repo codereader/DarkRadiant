@@ -51,11 +51,12 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
 script_la_LIBADD =
-am_script_la_OBJECTS = ScriptingSystem.lo ScriptModule.lo \
-	EClassInterface.lo BrushInterface.lo RadiantInterface.lo \
-	PatchInterface.lo SelectionInterface.lo MapInterface.lo \
-	EntityInterface.lo MathInterface.lo CommandSystemInterface.lo \
-	GameInterface.lo
+am_script_la_OBJECTS = ScriptingSystem.lo ScriptCommand.lo \
+	ScriptModule.lo EClassInterface.lo BrushInterface.lo \
+	RadiantInterface.lo PatchInterface.lo SelectionInterface.lo \
+	MapInterface.lo EntityInterface.lo MathInterface.lo \
+	CommandSystemInterface.lo FileSystemInterface.lo \
+	GridInterface.lo ShaderSystemInterface.lo GameInterface.lo
 script_la_OBJECTS = $(am_script_la_OBJECTS)
 script_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -222,6 +223,7 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = script.la
 script_la_LDFLAGS = -module -avoid-version $(BOOST_PYTHON_LIBS) $(PYTHON_LIBS)
 script_la_SOURCES = ScriptingSystem.cpp \
+					ScriptCommand.cpp \
 					ScriptModule.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
@@ -232,6 +234,9 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/EntityInterface.cpp \
 					interfaces/MathInterface.cpp \
 					interfaces/CommandSystemInterface.cpp \
+					interfaces/FileSystemInterface.cpp \
+					interfaces/GridInterface.cpp \
+					interfaces/ShaderSystemInterface.cpp \
 					interfaces/GameInterface.cpp
 
 all: all-am
@@ -307,14 +312,18 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CommandSystemInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EClassInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileSystemInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GameInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GridInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MathInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RadiantInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptCommand.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptModule.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptingSystem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SelectionInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderSystemInterface.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -399,6 +408,27 @@ CommandSystemInterface.lo: interfaces/CommandSystemInterface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/CommandSystemInterface.cpp' object='CommandSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o CommandSystemInterface.lo `test -f 'interfaces/CommandSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/CommandSystemInterface.cpp
+
+FileSystemInterface.lo: interfaces/FileSystemInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileSystemInterface.lo -MD -MP -MF $(DEPDIR)/FileSystemInterface.Tpo -c -o FileSystemInterface.lo `test -f 'interfaces/FileSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/FileSystemInterface.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/FileSystemInterface.Tpo $(DEPDIR)/FileSystemInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/FileSystemInterface.cpp' object='FileSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileSystemInterface.lo `test -f 'interfaces/FileSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/FileSystemInterface.cpp
+
+GridInterface.lo: interfaces/GridInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GridInterface.lo -MD -MP -MF $(DEPDIR)/GridInterface.Tpo -c -o GridInterface.lo `test -f 'interfaces/GridInterface.cpp' || echo '$(srcdir)/'`interfaces/GridInterface.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/GridInterface.Tpo $(DEPDIR)/GridInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/GridInterface.cpp' object='GridInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GridInterface.lo `test -f 'interfaces/GridInterface.cpp' || echo '$(srcdir)/'`interfaces/GridInterface.cpp
+
+ShaderSystemInterface.lo: interfaces/ShaderSystemInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ShaderSystemInterface.lo -MD -MP -MF $(DEPDIR)/ShaderSystemInterface.Tpo -c -o ShaderSystemInterface.lo `test -f 'interfaces/ShaderSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/ShaderSystemInterface.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ShaderSystemInterface.Tpo $(DEPDIR)/ShaderSystemInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/ShaderSystemInterface.cpp' object='ShaderSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ShaderSystemInterface.lo `test -f 'interfaces/ShaderSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/ShaderSystemInterface.cpp
 
 GameInterface.lo: interfaces/GameInterface.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GameInterface.lo -MD -MP -MF $(DEPDIR)/GameInterface.Tpo -c -o GameInterface.lo `test -f 'interfaces/GameInterface.cpp' || echo '$(srcdir)/'`interfaces/GameInterface.cpp
