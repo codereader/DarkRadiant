@@ -23,7 +23,13 @@ public:
 	typedef std::map<std::string, GamePtr> GameMap;
 
 private:	
+
+   // Map of named games
 	GameMap _games;
+
+   // List of games in order
+   typedef std::vector<GamePtr> GameList;
+   GameList _orderedGames;
 	
 	std::string _currentGameType;
 	

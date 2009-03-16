@@ -85,14 +85,22 @@ IGamePtr Manager::currentGame() {
 	return _games[_currentGameType];
 }
 
-void Manager::constructPreferences() {
+void Manager::constructPreferences() 
+{
 	PreferencesPagePtr page = GetPreferenceSystem().getPage("Game");
 	
 	ComboBoxValueList gameList;
-	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) {
+	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) 
+   {
 		gameList.push_back(i->second->getKeyValue("name"));
+
+      // Build list of games in order
+      _orderedGames.push_back(i->second);
 	}
 	page->appendCombo("Select a Game:", RKEY_GAME_INDEX, gameList); 
+
+   // Listen to change events from the game-combo's registry key
+   GlobalRegistry().addKeyObserver(this, RKEY_GAME_INDEX);
 	
 	page->appendPathEntry("Engine Path", RKEY_ENGINE_PATH, true);
 	page->appendEntry("Mod (fs_game)", RKEY_FS_GAME);
@@ -103,24 +111,29 @@ void Manager::constructPreferences() {
  * 			If no saved game setting is found, the user
  * 			is asked to enter the relevant information in a Dialog. 
  */
-void Manager::initialise(const std::string& appPath) {
+void Manager::initialise(const std::string& appPath) 
+{
 	// Scan the <applicationpath>/games folder for .game files
 	loadGameFiles(appPath);
+   if (_games.empty()) 
+   {
+      // No game types available, bail out, the program would crash anyway on
+      // module load
+      gtkutil::fatalErrorDialog(
+         "GameManager: No valid game files found, can't continue\n", NULL
+      );
+   }
 	
 	// Add the settings widgets to the Preference Dialog, we might need it
 	constructPreferences();
 	
+	// Find the user's selected game from the XML registry, and attempt to find
+   // it in the set of available games.
 	std::string gameType = GlobalRegistry().get(RKEY_GAME_TYPE);
-	// Try to lookup the game
 	GameMap::iterator i = _games.find(gameType);
 	
-	if (gameType.empty() || i == _games.end()) {
-		// Check the number of available games
-		if (_games.size() == 0) {
-			// No game type selected, bail out, the program would crash anyway on module load
-			gtkutil::fatalErrorDialog("GameManager: No valid game files found, can't continue\n", NULL);
-		}
-		
+	if (gameType.empty() || i == _games.end()) 
+   {
 		// We have at least one game type available, select the first
 		// Store the name of the only game into the Registry 
 		GlobalRegistry().set(RKEY_GAME_TYPE, _games.begin()->first); 
@@ -317,10 +330,24 @@ bool Manager::settingsValid() const {
 	return false;
 }
 
+// Callback when a registry key is changed
 void Manager::keyChanged(const std::string& key, const std::string& val) 
 {
 	// call the engine path setter, fs_game is updated there as well
 	updateEnginePath();
+
+   // If this is the game index, convert into a game name and set the correct
+   // registry key
+   //
+   // \todo Using two registry keys is nasty, should set the correct one
+   // directly from the PreferenceSystem by enhancing the interface if
+   // necessary.
+   if (key == RKEY_GAME_INDEX)
+   {
+      GamePtr chosenGame = _orderedGames[boost::lexical_cast<int>(val)]; 
+      std::string chosenGameType = chosenGame->getKeyValue("type");
+      GlobalRegistry().set(RKEY_GAME_TYPE, chosenGameType);
+   }
 }
 
 void Manager::updateEnginePath(bool forced) {
@@ -451,7 +478,8 @@ const std::string& Manager::getCurrentGameType() const {
 
 /** greebo: Scans the "games/" subfolder for .game description foles.
  */
-void Manager::loadGameFiles(const std::string& appPath) {
+void Manager::loadGameFiles(const std::string& appPath) 
+{
 	std::string gamePath = appPath + "games/";
 	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath << '\n';
 
