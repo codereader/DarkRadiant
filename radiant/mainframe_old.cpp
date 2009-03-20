@@ -146,7 +146,6 @@ void Radiant_Initialise()
 {
 	// Create the empty Settings node and set the title to empty.
 	ui::PrefDialog::Instance().createOrFindPage("Game");
-	ui::PrefDialog::Instance().createOrFindPage("Interface");
 	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage("Settings");
 	settingsPage->setTitle("");
 	
