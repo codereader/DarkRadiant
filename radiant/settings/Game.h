@@ -18,7 +18,8 @@ class Game :
 {
 	std::string _enginePath;
 	
-	std::string _type;
+   // user-friendly name
+	std::string _name;
 	
 public:
 	/** greebo: Constructor, call this with the filename relative to "games/"
@@ -28,9 +29,9 @@ public:
 	// Copy Constructor
 	Game(const Game& other);
 	
-	/** greebo: Retrieves the name of the game (e.g. "doom3");
+	/** greebo: Retrieves the name of the game (e.g. "Doom 3");
 	 */
-	std::string getType() const;
+	std::string getName() const;
 	
 	/** greebo: Looks up the specified key
 	 */

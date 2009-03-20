@@ -22,8 +22,6 @@ namespace game {
 		const std::string RKEY_GAME_TYPE = "user/game/type";
 		const std::string RKEY_FS_GAME = "user/game/fs_game";
 		const std::string RKEY_FS_GAME_BASE = "user/game/fs_game_base";
-		// This key is only temporarily used
-		const std::string RKEY_GAME_INDEX = "user/game/typeIndex";
 		const std::string RKEY_PREFAB_FOLDER = "game/mapFormat/prefabFolder";
 		const std::string RKEY_MAPS_FOLDER = "game/mapFormat/mapFolder";
 	}
@@ -93,15 +91,8 @@ void Manager::constructPreferences()
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) 
    {
 		gameList.push_back(i->second->getKeyValue("name"));
-
-      // Build list of games in order
-      _orderedGames.push_back(i->second);
 	}
-	page->appendCombo("Select a Game:", RKEY_GAME_INDEX, gameList); 
-
-   // Listen to change events from the game-combo's registry key
-   GlobalRegistry().addKeyObserver(this, RKEY_GAME_INDEX);
-	
+	page->appendCombo("Select a Game:", RKEY_GAME_TYPE, gameList, true); 
 	page->appendPathEntry("Engine Path", RKEY_ENGINE_PATH, true);
 	page->appendEntry("Mod (fs_game)", RKEY_FS_GAME);
 	page->appendEntry("Mod Base (fs_game_base, optional)", RKEY_FS_GAME_BASE);
@@ -335,19 +326,6 @@ void Manager::keyChanged(const std::string& key, const std::string& val)
 {
 	// call the engine path setter, fs_game is updated there as well
 	updateEnginePath();
-
-   // If this is the game index, convert into a game name and set the correct
-   // registry key
-   //
-   // \todo Using two registry keys is nasty, should set the correct one
-   // directly from the PreferenceSystem by enhancing the interface if
-   // necessary.
-   if (key == RKEY_GAME_INDEX)
-   {
-      GamePtr chosenGame = _orderedGames[boost::lexical_cast<int>(val)]; 
-      std::string chosenGameType = chosenGame->getKeyValue("type");
-      GlobalRegistry().set(RKEY_GAME_TYPE, chosenGameType);
-   }
 }
 
 void Manager::updateEnginePath(bool forced) {
@@ -404,7 +382,8 @@ void Manager::updateEnginePath(bool forced) {
 #if defined(POSIX)
 			// this is the *NIX path ~/.doom3/base/
 			std::string userBasePath = os::standardPathWithSlash(
-				getUserEnginePath() + _enginePath + currentGame()->getRequiredKeyValue("basegame")
+				getUserEnginePath() // ~/.doom3
+            + currentGame()->getRequiredKeyValue("basegame") // base
 			);
 			_vfsSearchPaths.push_back(userBasePath);
 #endif
@@ -453,7 +432,10 @@ void Manager::updateEnginePath(bool forced) {
 			_enginePathInitialised = true;
 			
 			globalOutputStream() << "VFS Search Path priority is: \n"; 
-			for (PathList::iterator i = _vfsSearchPaths.begin(); i != _vfsSearchPaths.end(); i++) {
+			for (PathList::iterator i = _vfsSearchPaths.begin();
+              i != _vfsSearchPaths.end();
+              i++) 
+         {
 				globalOutputStream() << "- " << (*i) << "\n";
 			}
 		}
@@ -487,9 +469,9 @@ void Manager::loadGameFiles(const std::string& appPath)
 	GameFileLoader gameFileLoader(_games, gamePath);
 	Directory_forEach(gamePath.c_str(), gameFileLoader);
 	
-	globalOutputStream() << "GameManager: Found game definitions: ";
+	globalOutputStream() << "GameManager: Found game definitions:\n";
 	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) {
-		globalOutputStream() << i->first << " ";
+		globalOutputStream() << "  " << i->first << "\n";
 	}
 	globalOutputStream() << "\n";
 }

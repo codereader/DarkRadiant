@@ -22,7 +22,8 @@ TextSpecifierPanel::~TextSpecifierPanel()
 }
 
 // Show and return the widget
-GtkWidget* TextSpecifierPanel::_getWidget() const {
+GtkWidget* TextSpecifierPanel::_getWidget() const 
+{
 	return _widget;
 }
 

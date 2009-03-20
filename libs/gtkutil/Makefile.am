@@ -28,6 +28,7 @@ libgtkutil_la_SOURCES = GLWidget.cpp \
 					   xorrectangle.cpp \
 					   TreeModel.cpp \
 					   ModalProgressDialog.cpp \
+						SerialisableWidgets.cpp \
 					   window.cpp \
 					   clipboard.cpp \
 					   filechooser.cpp \

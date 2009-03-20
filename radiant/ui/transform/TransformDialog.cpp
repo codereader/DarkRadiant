@@ -11,6 +11,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
+#include "gtkutil/SerialisableWidgets.h"
 
 #include "selection/algorithm/Transformation.h"
 
@@ -158,12 +159,43 @@ void TransformDialog::populateWindow() {
     _entries["scaleZ"] = createEntryRow(LABEL_SCALEZ, _scaleTable, 2, false, 2);
     
     // Connect the step values to the according registry values
-	_connector.connectGtkObject(GTK_OBJECT(_entries["rotateX"].step), RKEY_ROTX_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_entries["rotateY"].step), RKEY_ROTY_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_entries["rotateZ"].step), RKEY_ROTZ_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_entries["scaleX"].step), RKEY_SCALEX_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_entries["scaleY"].step), RKEY_SCALEY_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_entries["scaleZ"].step), RKEY_SCALEZ_STEP);
+   using namespace gtkutil;
+	_connector.addObject(
+      RKEY_ROTX_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_entries["rotateX"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_ROTY_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_entries["rotateY"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_ROTZ_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_entries["rotateZ"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_SCALEX_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_entries["scaleX"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_SCALEY_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_entries["scaleY"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_SCALEZ_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_entries["scaleZ"].step)
+      )
+   );
     
     // Connect all the arrow buttons
     for (EntryRowMap::iterator i = _entries.begin(); i != _entries.end(); i++) {

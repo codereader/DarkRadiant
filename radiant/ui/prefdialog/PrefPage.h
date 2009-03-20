@@ -109,11 +109,6 @@ public:
 	GtkWidget* appendSpinner(const std::string& name, const std::string& registryKey,
 	                         double lower, double upper, int fraction);
 
-	/* greebo: Use this to add a series of radio buttons with icons and descriptions.
-	 * The result will be stored under the given RegistryKey (with 0 referring to the first item) */               
-	void appendRadioIcons(const std::string& name, const std::string& registryKey, 
-						  const IconList& iconList, const IconDescriptionList& iconDescriptions);
-	
 	/** greebo: Performs a recursive lookup of the given path
 	 * 			and creates any items that do not exist.
 	 * 

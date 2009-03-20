@@ -3,9 +3,12 @@
 #include "itextstream.h"
 #include "stream/textfilestream.h"
 #include <gtk/gtk.h>
+
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/SerialisableWidgets.h"
+
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -85,12 +88,19 @@ void PrefPage::foreachPage(Visitor& visitor) {
 
 /* greebo: This adds a checkbox and connects it to an XMLRegistry key.
  * @returns: the pointer to the created GtkWidget */
-GtkWidget* PrefPage::appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) {
+GtkWidget* PrefPage::appendCheckBox(const std::string& name,
+                                    const std::string& flag,
+                                    const std::string& registryKey) 
+{
 	// Create a new checkbox with the given caption and display it
 	GtkWidget* check = gtk_check_button_new_with_label(flag.c_str());
 	
 	// Connect the registry key to this toggle button
-	_connector.connectGtkObject(GTK_OBJECT(check), registryKey);
+   using namespace gtkutil;
+	_connector.addObject(
+      registryKey,
+      SerialisableWidgetWrapperPtr(new SerialisableToggleButton(check))
+   );
 	
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), check)));
 	return check;
@@ -99,12 +109,17 @@ GtkWidget* PrefPage::appendCheckBox(const std::string& name, const std::string& 
 /* greebo: This adds a horizontal slider to the internally referenced VBox and connects
  * it to the given registryKey. */
 void PrefPage::appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
-                            double value, double lower, double upper, double step_increment, double page_increment, double page_size) {
+                            double value, double lower, double upper, double step_increment, double page_increment, double page_size) 
+{
 	// Create a new adjustment with the boundaries <lower> and <upper> and all the increments
 	GtkObject* adj = gtk_adjustment_new(value, lower, upper, step_increment, page_increment, page_size);
 	
 	// Connect the registry key to this adjustment
-	_connector.connectGtkObject(adj, registryKey);
+    using namespace gtkutil;
+	_connector.addObject(
+        registryKey,
+        StringSerialisablePtr(new SerialisableAdjustment(adj))
+    );
 	
 	// scale
 	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 1.0, 0.0);
@@ -132,22 +147,39 @@ void PrefPage::appendCombo(const std::string& name,
 {
 	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
 	
-	{
-		// Create a new combo box
-		GtkWidget* combo = gtk_combo_box_new_text();
-	
-		// Add all the string values to the combo box
-		for (ComboBoxValueList::const_iterator i = valueList.begin(); i != valueList.end(); i++) {
-			// Add the current string value to the combo box  
-			gtk_combo_box_append_text(GTK_COMBO_BOX(combo), i->c_str());
-		}
-		
-		// Connect the registry key to the newly created combo box
-		_connector.connectGtkObject(GTK_OBJECT(combo), registryKey);
-		
-		// Add it to the container 
-		gtk_container_add(GTK_CONTAINER(alignment), combo);
-	}
+    // Create a new combo box of the correct type
+    using boost::shared_ptr;
+    using namespace gtkutil;
+
+    SerialisableWidgetWrapperPtr combo;
+    if (storeValueNotIndex)
+    {
+        combo = SerialisableWidgetWrapperPtr(
+            new gtkutil::SerialisableComboBox_Text
+        );
+    }
+    else
+    {
+        combo = SerialisableWidgetWrapperPtr(
+            new gtkutil::SerialisableComboBox_Index
+        );
+    }
+
+    // Add all the string values to the combo box
+    for (ComboBoxValueList::const_iterator i = valueList.begin();
+         i != valueList.end();
+         i++) 
+    {
+        gtk_combo_box_append_text(
+            GTK_COMBO_BOX(combo->getWidget()), i->c_str()
+        );
+    }
+
+    // Connect the registry key to the newly created combo box
+    _connector.addObject(registryKey, combo);
+
+    // Add it to the container 
+    gtk_container_add(GTK_CONTAINER(alignment), combo->getWidget());
 	
 	// Add the widget to the dialog row
 	GtkTable* row = DialogRow_new(name.c_str(), alignment);
@@ -160,12 +192,19 @@ GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& reg
 	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
 	gtk_widget_show(alignment);
 
-	GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-	gtk_entry_set_width_chars(entry, static_cast<gint>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(10))));
+	GtkWidget* entry = gtk_entry_new();
+	gtk_entry_set_width_chars(
+      GTK_ENTRY(entry), 
+      static_cast<gint>(std::max(GlobalRegistry().get(registryKey).size(), std::size_t(10)))
+   );
 	gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(entry));
 	
 	// Connect the registry key to the newly created input field
-	_connector.connectGtkObject(GTK_OBJECT(entry), registryKey);
+   using namespace gtkutil;
+	_connector.addObject(
+      registryKey,
+      SerialisableWidgetWrapperPtr(new SerialisableTextEntry(entry))
+   );
 
 	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(alignment));
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
@@ -193,7 +232,13 @@ GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string&
 	);
 
 	// Connect the registry key to the newly created input field
-	_connector.connectGtkObject(GTK_OBJECT(pathEntry.m_entry), registryKey);
+   using namespace gtkutil;
+	_connector.addObject(
+      registryKey,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(GTK_WIDGET(pathEntry.m_entry))
+      )
+   );
 
 	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(pathEntry.m_frame));
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
@@ -230,49 +275,16 @@ GtkWidget* PrefPage::appendSpinner(const std::string& name, const std::string& r
 	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(alignment));
 	
 	// Connect the registry key to the newly created input field
-	_connector.connectGtkObject(GTK_OBJECT(spin), registryKey);
+   using namespace gtkutil;
+	_connector.addObject(
+      registryKey,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableSpinButton(GTK_WIDGET(spin))
+      )
+   );
 
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
 	return GTK_WIDGET(spin);
-}
-
-void PrefPage::appendRadioIcons(const std::string& name, const std::string& registryKey, 
-		const IconList& iconList, const IconDescriptionList& iconDescriptions)
-{
-	if (iconList.size() != iconDescriptions.size()) {
-		globalErrorStream() << "PrefPage: Inconsistent Icons/IconDescription vectors!\n";
-		return;
-	}
-	
-	GtkWidget* table = gtk_table_new(3, static_cast<guint>(iconList.size()), FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
-	
-	// The radio button group
-	GSList* group = NULL;
-	GtkWidget* radio = NULL;
-	for (unsigned int i = 0; i < iconList.size(); i++) {
-		GtkWidget* image = gtk_image_new_from_pixbuf(
-			GlobalRadiant().getLocalPixbuf(iconList[i])
-		);
-		gtk_table_attach(GTK_TABLE(table), image, i, i+1, 0, 1, 
-						 (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-		
-		GtkWidget* label = gtk_label_new(iconDescriptions[i].c_str());
-		gtk_misc_set_alignment(GTK_MISC(label), 0.5f, 0.5f);
-		gtk_table_attach(GTK_TABLE(table), label, i, i+1, 1, 2,
-						 (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-		
-		radio = gtk_radio_button_new(group);
-		gtk_table_attach(GTK_TABLE(table), radio, i, i+1, 2, 3,
-						 (GtkAttachOptions) (0), (GtkAttachOptions) (0), 0, 0);
-		group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio));
-	}
-	
-	// Connect the registry key to the newly created radio
-	_connector.connectGtkObject(GTK_OBJECT(radio), registryKey);
-	
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), table)));
 }
 
 PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {

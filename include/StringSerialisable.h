@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 /**
  * \brief
@@ -22,4 +23,6 @@ public:
     */
    virtual void importFromString(const std::string& str) = 0;
 };
+
+typedef boost::shared_ptr<StringSerialisable> StringSerialisablePtr;
 
