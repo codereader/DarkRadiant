@@ -356,6 +356,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\StringSerialisable.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\version.h"
 			>
 		</File>
