@@ -64,17 +64,18 @@ am__vpath_adj = case $$p in \
   esac;
 am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(applicationsdir)" \
-	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" \
-	"$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" \
-	"$(DESTDIR)$(scriptsdir)"
+	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" \
+	"$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" \
+	"$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)"
 applicationsDATA_INSTALL = $(INSTALL_DATA)
 bitmapsDATA_INSTALL = $(INSTALL_DATA)
+commandsDATA_INSTALL = $(INSTALL_DATA)
 gameDATA_INSTALL = $(INSTALL_DATA)
 glprogsDATA_INSTALL = $(INSTALL_DATA)
 pkgdataDATA_INSTALL = $(INSTALL_DATA)
 scriptsDATA_INSTALL = $(INSTALL_DATA)
-DATA = $(applications_DATA) $(bitmaps_DATA) $(game_DATA) \
-	$(glprogs_DATA) $(pkgdata_DATA) $(scripts_DATA)
+DATA = $(applications_DATA) $(bitmaps_DATA) $(commands_DATA) \
+	$(game_DATA) $(glprogs_DATA) $(pkgdata_DATA) $(scripts_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
@@ -254,6 +255,8 @@ glprogs_DATA = $(top_srcdir)/install/gl/*
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
 scripts_DATA = $(top_srcdir)/install/scripts/*
+commandsdir = $(scriptsdir)/commands
+commands_DATA = $(top_srcdir)/install/scripts/commands/*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -352,6 +355,23 @@ uninstall-bitmapsDATA:
 	  f=$(am__strip_dir) \
 	  echo " rm -f '$(DESTDIR)$(bitmapsdir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(bitmapsdir)/$$f"; \
+	done
+install-commandsDATA: $(commands_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(commandsdir)" || $(MKDIR_P) "$(DESTDIR)$(commandsdir)"
+	@list='$(commands_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(commandsDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(commandsdir)/$$f'"; \
+	  $(commandsDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(commandsdir)/$$f"; \
+	done
+
+uninstall-commandsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(commands_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(commandsdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(commandsdir)/$$f"; \
 	done
 install-gameDATA: $(game_DATA)
 	@$(NORMAL_INSTALL)
@@ -705,7 +725,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -753,8 +773,8 @@ info: info-recursive
 info-am:
 
 install-data-am: install-applicationsDATA install-bitmapsDATA \
-	install-gameDATA install-glprogsDATA install-pkgdataDATA \
-	install-scriptsDATA
+	install-commandsDATA install-gameDATA install-glprogsDATA \
+	install-pkgdataDATA install-scriptsDATA
 
 install-dvi: install-dvi-recursive
 
@@ -791,7 +811,8 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
-	uninstall-gameDATA uninstall-glprogsDATA uninstall-pkgdataDATA \
+	uninstall-commandsDATA uninstall-gameDATA \
+	uninstall-glprogsDATA uninstall-pkgdataDATA \
 	uninstall-scriptsDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
@@ -804,17 +825,18 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	distclean distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-applicationsDATA install-bitmapsDATA install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-gameDATA install-glprogsDATA \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-pkgdataDATA \
-	install-ps install-ps-am install-scriptsDATA install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am \
-	uninstall-applicationsDATA uninstall-bitmapsDATA \
+	install-applicationsDATA install-bitmapsDATA \
+	install-commandsDATA install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-gameDATA \
+	install-glprogsDATA install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-pkgdataDATA install-ps install-ps-am \
+	install-scriptsDATA install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
+	uninstall uninstall-am uninstall-applicationsDATA \
+	uninstall-bitmapsDATA uninstall-commandsDATA \
 	uninstall-gameDATA uninstall-glprogsDATA uninstall-pkgdataDATA \
 	uninstall-scriptsDATA
 
