@@ -127,7 +127,8 @@ void PrefPage::appendSlider(const std::string& name, const std::string& registry
  * stored in the registryKey is used to determine the currently selected combobox item */
 void PrefPage::appendCombo(const std::string& name,
                            const std::string& registryKey,
-                           const ComboBoxValueList& valueList) 
+                           const ComboBoxValueList& valueList,
+                           bool storeValueNotIndex)
 {
 	GtkWidget* alignment = gtk_alignment_new(0.0, 0.5, 0.0, 0.0);
 	

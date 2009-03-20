@@ -56,9 +56,29 @@ public:
 							  double value, double lower, double upper, 
 							  double step_increment, double page_increment, double page_size) = 0;
 	
-	/* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
-	 * stored in the registryKey is used to determine the currently selected combobox item */		  
-	virtual void appendCombo(const std::string& name, const std::string& registryKey, const ComboBoxValueList& valueList) = 0;
+   /**
+    * \brief
+    * Add a drop-down combo box to the preference page.
+    *
+    * \param name
+    * The name to be displayed next to the combo box.
+    *
+    * \param registryKey
+    * The registry key which stores the value of the combo box.
+    *
+    * \param valueList
+    * List of strings containing the values that should be displayed in the
+    * combo box.
+    *
+    * \param storeValueNotIndex
+    * If true, store the selected text in the registry key. If false, store the
+    * numeric index of the selected item in the registry key. The default is
+    * false.
+    */
+   virtual void appendCombo(const std::string& name,
+                            const std::string& registryKey,
+                            const ComboBoxValueList& valueList,
+                            bool storeValueNotIndex = false) = 0;
 	
 	/* greebo: Use this to add a series of radio buttons with icons and descriptions.
 	 * The result will be stored under the given RegistryKey (with 0 referring to the first item) */		  

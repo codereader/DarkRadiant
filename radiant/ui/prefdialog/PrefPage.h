@@ -91,9 +91,10 @@ public:
 	void appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
 	                  double value, double lower, double upper, double step_increment, double page_increment, double page_size) ;
 	
-	/* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
-	 * stored in the registryKey is used to determine the currently selected combobox item */
-	void appendCombo(const std::string& name, const std::string& registryKey, const ComboBoxValueList& valueList);
+    void appendCombo(const std::string& name,
+                     const std::string& registryKey,
+                     const ComboBoxValueList& valueList,
+                     bool storeValueNotIndex = false);
 	
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */
