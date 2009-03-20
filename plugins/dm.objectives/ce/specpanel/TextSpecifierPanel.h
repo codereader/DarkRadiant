@@ -26,7 +26,7 @@ class TextSpecifierPanel
 	
 protected:
 
-    /* gtkutil::EditorWidget implementation */
+    /* gtkutil::Widget implementation */
 
     virtual GtkWidget* _getWidget() const;
 

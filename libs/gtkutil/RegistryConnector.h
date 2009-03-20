@@ -3,41 +3,46 @@
 
 #include <map>
 #include <string>
-#include "iregistry.h"
 
-/* greebo: This class establishes connections between values stored in GtkObjects and
- * registry key/values. It provides methods for connecting the objects to certain keys,
- * and loading/saving the values from/to the registry. 
- * 
- * The references to the GtkWidgets/GtkObjects are stored as GtkObject* pointers, that
- * are cast onto the supported types (e.g. GtkToggleButton, GtkAdjustment, etc.).
- * 
- * The stored objects have to be supported by this class, otherwise an error is thrown to std::cout
- * 
- * Note to avoid any confusion:
- * 
- * "import" is to be understood as importing values FROM the XMLRegistry and storing them TO the widgets.
- * "export" is naturally the opposite: values are exported TO the XMLRegistry (with values FROM the widgets).
- * */
+#include "iregistry.h"
+#include <StringSerialisable.h>
 
 // Forward declarations to avoid including the whole GTK headers
 typedef struct _GtkObject GtkObject;
 
 namespace gtkutil {
 
-	namespace {
-		typedef std::map<GtkObject*, std::string> ObjectKeyMap;
-	}
-
-class RegistryConnector {
-
-	// The association of widgets and registry keys
-	ObjectKeyMap _objectKeyMap;
+/**
+ * \brief
+ * Association of StringSerialisable objects with registry keys.
+ *
+ * This class maintains a set of serialisable objects, each one associated with
+ * a registry key which its value should be written to and read from when the
+ * appropriate method is called.
+ */
+class RegistryConnector 
+{
+   // Association of registry keys with StringSerialisable objects
+   typedef std::map<std::string, StringSerialisablePtr> ObjectMap;
+   ObjectMap _objects;
 
 public:
-	// Connect a GtkObject to the specified XMLRegistry key
-	void connectGtkObject(GtkObject* object, const std::string& registryKey);
-	
+   
+   /**
+    * \brief
+    * Insert a serialisable object to be associated with the given registry
+    * key.
+    *
+    * \param key
+    * The registry key to associate the given object with. It is an error to
+    * attempt to associate more than one object with the given registry key.
+    *
+    * \param obj
+    * StringSerialisablePtr to a serialisable object whose value will be read
+    * and written to the key.
+    */
+   void addObject(const std::string& key, StringSerialisablePtr obj);
+
 	// Loads all the values from the registry into the connected GtkObjects
 	void importValues();
 	
@@ -45,11 +50,10 @@ public:
 	void exportValues();
 
 private:
-	// Load the value from the registry and store it into the GtkObject
-	void importKey(GtkObject* obj, const std::string& registryKey);
 
-	// Retrieve the value from the GtkObject and save it into the registry
-	void exportKey(GtkObject* obj, const std::string& registryKey);
+   // Load a value from the registry into the StringSerialisable object
+   void importRegistryValue(StringSerialisablePtr obj,
+                            const std::string& key);
 
 }; // class RegistryConnector
 

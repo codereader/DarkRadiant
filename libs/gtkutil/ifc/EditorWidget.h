@@ -1,6 +1,8 @@
 #ifndef EDITORWIDGET_H_
 #define EDITORWIDGET_H_
 
+#include "Widget.h"
+
 #include <gtk/gtkwidget.h>
 #include <string>
 
@@ -22,28 +24,9 @@ namespace gtkutil
  * particular set of value types.
  */
 class EditorWidget
+: public Widget
 {
-protected:
-
-    /**
-     * Return the actual editing widget. This method is called by the public
-     * getWidget() method, which calls gtk_widget_show_all() on the returned
-     * widget before in turn returning it to the calling code.
-     */
-    virtual GtkWidget* _getWidget() const = 0;
-
 public:
-
-    /**
-     * Return the editor GtkWidget for packing into the parent window. This may
-     * be a single GtkWidget or a container which encloses multiple widgets. The
-     * widget is guaranteed to be shown when returned from this method.     *
-     */
-    GtkWidget* getWidget() const {
-        GtkWidget* w = _getWidget();
-        gtk_widget_show_all(w);
-        return w;
-    }
 
     /**
      * Set the value of the string which should be edited by this widget. The

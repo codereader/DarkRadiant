@@ -58,8 +58,8 @@ am_libgtkutil_la_OBJECTS = GLWidget.lo PanedPosition.lo \
 	dialog.lo glfont.lo MenuItemAccelerator.lo cursor.lo \
 	DeferredAdjustment.lo PopupMenu.lo widget.lo \
 	RegistryConnector.lo xorrectangle.lo TreeModel.lo \
-	ModalProgressDialog.lo window.lo clipboard.lo filechooser.lo \
-	pointer.lo
+	ModalProgressDialog.lo SerialisableWidgets.lo window.lo \
+	clipboard.lo filechooser.lo pointer.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 libgtkutil_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -248,6 +248,7 @@ libgtkutil_la_SOURCES = GLWidget.cpp \
 					   xorrectangle.cpp \
 					   TreeModel.cpp \
 					   ModalProgressDialog.cpp \
+						SerialisableWidgets.cpp \
 					   window.cpp \
 					   clipboard.cpp \
 					   filechooser.cpp \
@@ -330,6 +331,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PopupMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RegistryConnector.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SerialisableWidgets.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Timer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TreeModel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFSTreePopulator.Plo@am__quote@

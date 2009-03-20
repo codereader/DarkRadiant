@@ -80,11 +80,6 @@ public:
                             const ComboBoxValueList& valueList,
                             bool storeValueNotIndex = false) = 0;
 	
-	/* greebo: Use this to add a series of radio buttons with icons and descriptions.
-	 * The result will be stored under the given RegistryKey (with 0 referring to the first item) */		  
-	virtual void appendRadioIcons(const std::string& name, const std::string& registryKey, 
-								  const IconList& iconList, const IconDescriptionList& iconDescriptions) = 0;
-	
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */
 	virtual GtkWidget* appendEntry(const std::string& name, const std::string& registryKey) = 0;

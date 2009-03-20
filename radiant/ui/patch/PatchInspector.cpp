@@ -11,6 +11,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
+#include "gtkutil/SerialisableWidgets.h"
 
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
@@ -173,11 +174,37 @@ void PatchInspector::populateWindow() {
     _coords["t"] = createCoordRow("T:", _coordsTable, 4);
     
     // Connect the step values to the according registry values
-	_connector.connectGtkObject(GTK_OBJECT(_coords["x"].step), RKEY_X_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_coords["y"].step), RKEY_Y_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_coords["z"].step), RKEY_Z_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_coords["s"].step), RKEY_S_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_coords["t"].step), RKEY_T_STEP);
+   using namespace gtkutil;
+	_connector.addObject(
+      RKEY_X_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_coords["x"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_Y_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_coords["y"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_Z_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_coords["z"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_S_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_coords["s"].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_T_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_coords["t"].step)
+      )
+   );
     
     // Connect all the arrow buttons
     for (CoordMap::iterator i = _coords.begin(); i != _coords.end(); i++) {

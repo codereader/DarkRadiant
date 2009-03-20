@@ -6,6 +6,7 @@
 
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/SerialisableWidgets.h"
 
 #include <gtk/gtk.h>
 
@@ -194,14 +195,55 @@ void OverlayDialog::display(const cmd::ArgumentList& args) {
 }
 
 void OverlayDialog::connectWidgets() {
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["useImage"]), RKEY_OVERLAY_VISIBLE);
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["transparency"]), RKEY_OVERLAY_TRANSPARENCY);
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["scale"]), RKEY_OVERLAY_SCALE);
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["keepAspect"]), RKEY_OVERLAY_PROPORTIONAL);
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["scaleImage"]), RKEY_OVERLAY_SCALE_WITH_XY);
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["panImage"]), RKEY_OVERLAY_PAN_WITH_XY);
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["translateX"]), RKEY_OVERLAY_TRANSLATIONX);
-	_connector.connectGtkObject(GTK_OBJECT(_subWidgets["translateY"]), RKEY_OVERLAY_TRANSLATIONY);
+   using namespace gtkutil;
+	_connector.addObject(
+        RKEY_OVERLAY_VISIBLE,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableToggleButton(_subWidgets["useImage"])
+        )
+    );
+	_connector.addObject(
+        RKEY_OVERLAY_TRANSPARENCY,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableScaleWidget(_subWidgets["transparency"])
+        )
+    );
+	_connector.addObject(
+        RKEY_OVERLAY_SCALE,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableScaleWidget(_subWidgets["scale"])
+        )
+    );
+	_connector.addObject(
+        RKEY_OVERLAY_PROPORTIONAL,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableToggleButton(_subWidgets["keepAspect"])
+        )
+    );
+	_connector.addObject(
+        RKEY_OVERLAY_SCALE_WITH_XY,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableToggleButton(_subWidgets["scaleImage"])
+        )
+    );
+	_connector.addObject(
+        RKEY_OVERLAY_PAN_WITH_XY,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableToggleButton(_subWidgets["panImage"])
+        )
+    );
+	_connector.addObject(
+        RKEY_OVERLAY_TRANSLATIONX,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableScaleWidget(_subWidgets["translateX"])
+        )
+    );
+	_connector.addObject(
+        RKEY_OVERLAY_TRANSLATIONY,
+        SerialisableWidgetWrapperPtr(
+            new SerialisableScaleWidget(_subWidgets["translateY"])
+        )
+    );
 }
 
 // Get the dialog state from the registry

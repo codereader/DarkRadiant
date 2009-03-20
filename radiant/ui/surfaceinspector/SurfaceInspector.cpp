@@ -10,6 +10,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/SerialisableWidgets.h"
 
 #include "selectionlib.h"
 #include "math/FloatTools.h"
@@ -87,15 +88,51 @@ SurfaceInspector::SurfaceInspector()
 	populateWindow();
 	
 	// Connect the defaultTexScale and texLockButton widgets to "their" registry keys
-	_connector.connectGtkObject(GTK_OBJECT(_defaultTexScale), RKEY_DEFAULT_TEXTURE_SCALE);
-	_connector.connectGtkObject(GTK_OBJECT(_texLockButton), RKEY_ENABLE_TEXTURE_LOCK);
+   using namespace gtkutil;
+	_connector.addObject(
+      RKEY_DEFAULT_TEXTURE_SCALE,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableSpinButton(_defaultTexScale)
+      )
+   );
+	_connector.addObject(
+      RKEY_ENABLE_TEXTURE_LOCK,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableToggleButton(_texLockButton)
+      )
+   );
 	
 	// Connect the step values to the according registry values
-	_connector.connectGtkObject(GTK_OBJECT(_manipulators[HSHIFT].step), RKEY_HSHIFT_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_manipulators[VSHIFT].step), RKEY_VSHIFT_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_manipulators[HSCALE].step), RKEY_HSCALE_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_manipulators[VSCALE].step), RKEY_VSCALE_STEP);
-	_connector.connectGtkObject(GTK_OBJECT(_manipulators[ROTATION].step), RKEY_ROTATION_STEP);
+	_connector.addObject(
+      RKEY_HSHIFT_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_manipulators[HSHIFT].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_VSHIFT_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_manipulators[VSHIFT].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_HSCALE_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_manipulators[HSCALE].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_VSCALE_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_manipulators[VSCALE].step)
+      )
+   );
+	_connector.addObject(
+      RKEY_ROTATION_STEP,
+      SerialisableWidgetWrapperPtr(
+         new SerialisableTextEntry(_manipulators[ROTATION].step)
+      )
+   );
 	
 	// Load the values from the Registry
 	_connector.importValues();

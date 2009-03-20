@@ -2,7 +2,7 @@ SUBDIRS = libs radiant plugins
 
 # Install data and stuff
 gamedir = $(pkgdatadir)/games
-game_DATA = $(top_srcdir)/install/games/doom3.game 
+game_DATA = $(top_srcdir)/install/games/*.game 
 
 bitmapsdir = $(pkgdatadir)/bitmaps
 bitmaps_DATA = $(top_srcdir)/install/bitmaps/*

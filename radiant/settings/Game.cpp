@@ -29,7 +29,7 @@ Game::Game(const std::string& path, const std::string& filename) {
 			xml::Node node = list[0];
 			
 			// Get the game name
-			_type = node.getAttributeValue("type");
+			_name = node.getAttributeValue("name");
 			
 			const std::string enginePath =
 #if defined(WIN32)
@@ -43,7 +43,7 @@ Game::Game(const std::string& path, const std::string& filename) {
 #endif
 			;
 			
-			if (!_type.empty()) {
+			if (!_name.empty()) {
 				// Import the game file into the registry 
 				GlobalRegistry().import(fullPath, "", Registry::treeStandard);
 				
@@ -60,17 +60,17 @@ Game::Game(const std::string& path, const std::string& filename) {
 Game::Game(const Game& other) :
 	IGame(other),
 	_enginePath(other._enginePath),
-	_type(other._type)
+	_name(other._name)
 {}
 
-std::string Game::getType() const {
-	return _type;
+std::string Game::getName() const {
+	return _name;
 }
 
 /** greebo: Looks up the specified key
  */
 std::string Game::getKeyValue(const std::string& key) {
-	std::string gameXPath = std::string("//game[@type='") + _type + "']";
+	std::string gameXPath = std::string("//game[@name='") + _name + "']";
 	
 	xml::NodeList found = GlobalRegistry().findXPath(gameXPath);
 	
@@ -91,7 +91,7 @@ std::string Game::getRequiredKeyValue(const std::string& key) {
 	}
 	else {
 		std::cout << "Game: Required Keyvalue '" << key 
-				  << "' not found for game type '" << _type << "'";
+				  << "' not found for game type '" << _name << "'";
 		return "";
 	}
 }
