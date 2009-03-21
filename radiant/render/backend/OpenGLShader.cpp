@@ -10,44 +10,6 @@
 #include "generic/callback.h"
 #include "texturelib.h"
 
-namespace {
-
-/*	
- * Convert a blend factor from one format to another. TODO: either refactor
- * into class method or remove entirely.
- */
-inline GLenum convertBlendFactor(BlendFactor factor)
-{
-  switch(factor)
-  {
-  case BLEND_ZERO:
-    return GL_ZERO;
-  case BLEND_ONE:
-    return GL_ONE;
-  case BLEND_SRC_COLOUR:
-    return GL_SRC_COLOR;
-  case BLEND_ONE_MINUS_SRC_COLOUR:
-    return GL_ONE_MINUS_SRC_COLOR;
-  case BLEND_SRC_ALPHA:
-    return GL_SRC_ALPHA;
-  case BLEND_ONE_MINUS_SRC_ALPHA:
-    return GL_ONE_MINUS_SRC_ALPHA;
-  case BLEND_DST_COLOUR:
-    return GL_DST_COLOR;
-  case BLEND_ONE_MINUS_DST_COLOUR:
-    return GL_ONE_MINUS_DST_COLOR;
-  case BLEND_DST_ALPHA:
-    return GL_DST_ALPHA;
-  case BLEND_ONE_MINUS_DST_ALPHA:
-    return GL_ONE_MINUS_DST_ALPHA;
-  case BLEND_SRC_ALPHA_SATURATE:
-    return GL_SRC_ALPHA_SATURATE;
-  }
-  return GL_ZERO;
-}
-	
-} // namespace
-
 void OpenGLShader::destroy() {
 	// Clear the shaderptr, so that the shared_ptr reference count is decreased 
     _iShader = IShaderPtr();
@@ -252,24 +214,26 @@ void OpenGLShader::constructStandardPassesFromIShader()
   reinterpret_cast<Vector3&>(state.m_colour) = _iShader->getTexture()->color;
   state.m_colour[3] = 1.0f;
   
-  if((_iShader->getFlags() & QER_TRANS) != 0)
-  {
-    state.m_state |= RENDER_BLEND;
-    state.m_colour[3] = _iShader->getTrans();
-    state.m_sort = OpenGLState::eSortTranslucent;
-    BlendFunc blendFunc = _iShader->getBlendFunc();
-    state.m_blend_src = convertBlendFactor(blendFunc.m_src);
-    state.m_blend_dst = convertBlendFactor(blendFunc.m_dst);
-    if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
+    if((_iShader->getFlags() & QER_TRANS) != 0)
     {
-      state.m_state |= RENDER_DEPTHWRITE;
+        state.m_state |= RENDER_BLEND;
+        state.m_colour[3] = _iShader->getTrans();
+        state.m_sort = OpenGLState::eSortTranslucent;
+        
+        // Get the blend function
+        BlendFunc blendFunc = _iShader->getBlendFunc();
+        state.m_blend_src = blendFunc.m_src;
+        state.m_blend_dst = blendFunc.m_dst;
+        if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
+        {
+          state.m_state |= RENDER_DEPTHWRITE;
+        }
     }
-  }
-  else
-  {
-    state.m_state |= RENDER_DEPTHWRITE;
-    state.m_sort = OpenGLState::eSortFullbright;
-  }
+    else
+    {
+        state.m_state |= RENDER_DEPTHWRITE;
+        state.m_sort = OpenGLState::eSortFullbright;
+    }
 }
 
 // Construct a normal shader

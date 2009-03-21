@@ -5,6 +5,7 @@
 #include "ishaders.h"
 #include "texturelib.h"
 #include "parser/DefTokeniser.h"
+
 #include <boost/lexical_cast.hpp>
 
 /* CONSTANTS */
@@ -19,48 +20,49 @@ namespace {
 	
 }
 
-// Map string blend functions to their enum equivalents
-BlendFactor evaluateBlendFactor(const std::string& value) {
+// Map string blend functions to their GLenum equivalents
+GLenum evaluateBlendFactor(const std::string& value) 
+{
 	if (value == "gl_zero") {
-		return BLEND_ZERO;
+		return GL_ZERO;
 	}
 	if (value == "gl_one") {
-		return BLEND_ONE;
+		return GL_ONE;
 	}
 	if (value == "gl_src_color") {
-		return BLEND_SRC_COLOUR;
+		return GL_SRC_COLOR;
 	}
 	if (value == "gl_one_minus_src_color") {
-		return BLEND_ONE_MINUS_SRC_COLOUR;
+		return GL_ONE_MINUS_SRC_COLOR;
 	}
 	if (value == "gl_src_alpha") {
-		return BLEND_SRC_ALPHA;
+		return GL_SRC_ALPHA;
 	}
 	if (value == "gl_one_minus_src_alpha") {
-		return BLEND_ONE_MINUS_SRC_ALPHA;
+		return GL_ONE_MINUS_SRC_ALPHA;
 	}
 	if (value == "gl_dst_color") {
-		return BLEND_DST_COLOUR;
+		return GL_DST_COLOR;
 	}
 	if (value == "gl_one_minus_dst_color") {
-		return BLEND_ONE_MINUS_DST_COLOUR;
+		return GL_ONE_MINUS_DST_COLOR;
 	}
 	if (value == "gl_dst_alpha") {
-		return BLEND_DST_ALPHA;
+		return GL_DST_ALPHA;
 	}
 	if (value == "gl_one_minus_dst_alpha") {
-		return BLEND_ONE_MINUS_DST_ALPHA;
+		return GL_ONE_MINUS_DST_ALPHA;
 	}
 	if (value == "gl_src_alpha_saturate") {
-		return BLEND_SRC_ALPHA_SATURATE;
+		return GL_SRC_ALPHA_SATURATE;
 	}
 
-	return BLEND_ZERO;
+	return GL_ZERO;
 }
 
 ///\todo BlendFunc parsing
 BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc) {
-	return BlendFunc(BLEND_ONE, BLEND_ZERO);
+	return BlendFunc(GL_ONE, GL_ZERO);
 }
 
 namespace shaders {
@@ -71,7 +73,7 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 	_template(definition.shaderTemplate),
 	_fileName(definition.filename),
 	_name(name),
-	m_blendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA),
+	m_blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA),
 	m_bInUse(false),
 	_visible(true)
 {
@@ -272,14 +274,14 @@ void CShader::realiseLighting() {
 		}
 		else {
 			if (blendFunc.first == "add") {
-				m_blendFunc = BlendFunc(BLEND_ONE, BLEND_ONE);
+				m_blendFunc = BlendFunc(GL_ONE, GL_ONE);
 			}
 			else if (blendFunc.first == "filter") {
-				m_blendFunc = BlendFunc(BLEND_DST_COLOUR, BLEND_ZERO);
+				m_blendFunc = BlendFunc(GL_DST_COLOR, GL_ZERO);
 			}
 			else if (blendFunc.first == "blend") {
-				m_blendFunc = BlendFunc(BLEND_SRC_ALPHA,
-				                        BLEND_ONE_MINUS_SRC_ALPHA);
+				m_blendFunc = BlendFunc(GL_SRC_ALPHA,
+				                        GL_ONE_MINUS_SRC_ALPHA);
 			}
 		}
 	}
@@ -287,7 +289,7 @@ void CShader::realiseLighting() {
 
 void CShader::unrealiseLighting() {
 	m_layers.clear();
-	m_blendFunc = BlendFunc(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
+	m_blendFunc = BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /*

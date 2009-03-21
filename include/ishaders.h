@@ -107,28 +107,14 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 typedef Vector3 Colour3;
 
-enum BlendFactor {
-	BLEND_ZERO,
-	BLEND_ONE,
-	BLEND_SRC_COLOUR,
-	BLEND_ONE_MINUS_SRC_COLOUR,
-	BLEND_SRC_ALPHA,
-	BLEND_ONE_MINUS_SRC_ALPHA,
-	BLEND_DST_COLOUR,
-	BLEND_ONE_MINUS_DST_COLOUR,
-	BLEND_DST_ALPHA,
-	BLEND_ONE_MINUS_DST_ALPHA,
-	BLEND_SRC_ALPHA_SATURATE
-};
-
 class BlendFunc
 {
 public:
-  BlendFunc(BlendFactor src, BlendFactor dst) : m_src(src), m_dst(dst)
+  BlendFunc(GLenum src, GLenum dst) : m_src(src), m_dst(dst)
   {
   }
-  BlendFactor m_src;
-  BlendFactor m_dst;
+  GLenum m_src;
+  GLenum m_dst;
 };
 
 class ShaderLayer
