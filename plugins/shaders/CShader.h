@@ -7,41 +7,12 @@
 
 namespace shaders {
 
-class MapLayer : public ShaderLayer {
-    TexturePtr m_texture;
-    BlendFunc m_blendFunc;
-    bool m_clampToBorder;
-    float m_alphaTest;
-
-public:
-    MapLayer(TexturePtr texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
-            m_texture(texture),
-            m_blendFunc(blendFunc),
-            m_clampToBorder(false),
-            m_alphaTest(alphaTest) 
-    {}
-    
-    TexturePtr texture() const {
-        return m_texture;
-    }
-    
-    BlendFunc blendFunc() const {
-        return m_blendFunc;
-    }
-    
-    bool clampToBorder() const {
-        return m_clampToBorder;
-    }
-    
-    float alphaTest() const {
-        return m_alphaTest;
-    }
-
-    static MapLayer getFromLayerTemplate(const LayerTemplate& layerTemplate);
-};
-
-class CShader : 
-	public IShader 
+/**
+ * \brief
+ * Implementation class for IShader.
+ */
+class CShader 
+: public IShader 
 {
 	ShaderTemplatePtr _template;
 	
@@ -65,9 +36,13 @@ class CShader :
 	bool _visible;
 
     // Vector of shader layers
-	typedef std::vector<MapLayer> MapLayers;
-	MapLayers m_layers;
+	typedef std::vector<ShaderLayer> ShaderLayers;
+	ShaderLayers _layers;
 
+private:
+
+    // Convert a LayerTemplate into an actual ShaderLayer
+    static ShaderLayer getShaderLayerFromTemplate(const LayerTemplate&);
 
 public:
 	static bool m_lightingEnabled;

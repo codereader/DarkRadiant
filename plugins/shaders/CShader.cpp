@@ -259,10 +259,10 @@ void CShader::realiseLighting() {
 	        i != _template->getLayers().end();
 	        ++i)
 	{
-		m_layers.push_back(MapLayer::getFromLayerTemplate(*i));
+		_layers.push_back(getShaderLayerFromTemplate(*i));
 	}
 
-	if (m_layers.size() == 1) {
+	if (_layers.size() == 1) {
 		const BlendFuncExpression& blendFunc =
 		    _template->getLayers().front().m_blendFunc;
 
@@ -288,7 +288,7 @@ void CShader::realiseLighting() {
 }
 
 void CShader::unrealiseLighting() {
-	m_layers.clear();
+	_layers.clear();
 	m_blendFunc = BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
@@ -300,10 +300,10 @@ void CShader::setName(const std::string& name) {
 }
 
 const ShaderLayer* CShader::firstLayer() const {
-	if (m_layers.empty()) {
+	if (_layers.empty()) {
 		return 0;
 	}
-	return &m_layers.front();
+	return &_layers.front();
 }
 
 /* Required IShader light type predicates */
@@ -328,13 +328,13 @@ void CShader::setVisible(bool visible) {
 	_visible = visible;
 }
 
-MapLayer MapLayer::getFromLayerTemplate(const LayerTemplate& layerTemplate) 
+ShaderLayer CShader::getShaderLayerFromTemplate(const LayerTemplate& layerTemp) 
 {
-	return MapLayer(
-		GetTextureManager().getBinding(layerTemplate.mapExpr),
-		evaluateBlendFunc(layerTemplate.m_blendFunc),
-		layerTemplate.m_clampToBorder,
-		boost::lexical_cast<float>(layerTemplate.m_alphaTest)
+	return ShaderLayer(
+		GetTextureManager().getBinding(layerTemp.mapExpr),
+		evaluateBlendFunc(layerTemp.m_blendFunc),
+		layerTemp.m_clampToBorder,
+		boost::lexical_cast<float>(layerTemp.m_alphaTest)
 	);
 }
 
