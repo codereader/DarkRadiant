@@ -162,9 +162,29 @@ public:
 
   // get/set the qtexture_t* Radiant uses to represent this shader object
   virtual TexturePtr getTexture() = 0;
-  virtual TexturePtr getDiffuse() = 0;
-  virtual TexturePtr getBump() = 0;
-  virtual TexturePtr getSpecular() = 0;
+
+    /**
+     * \brief
+     * Return the diffuse map texture for this shader, to be used in lighting
+     * render mode.
+     *
+     * This method may be return a NULL shared pointer, since a texture does not
+     * need to have a diffusemap. In this case, the shader should not be
+     * rendered in lighting mode.
+     */
+    virtual TexturePtr getDiffuse() = 0;
+
+    /**
+     * \brief
+     * Return the bump map texture for this shader.
+     *
+     * Unlike getDiffuse(), this method will always return a non-NULL pointer.
+     * If the shader does not use a bump map, a fully-flat bump map will be
+     * returned instead.
+     */
+    virtual TexturePtr getBump() = 0;
+
+    virtual TexturePtr getSpecular() = 0;
   // get shader name
   virtual const char* getName() const = 0;
   virtual bool IsInUse() const = 0;
