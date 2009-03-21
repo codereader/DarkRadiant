@@ -357,12 +357,12 @@ const std::string& OpenGLShaderCache::getName() const {
 	return _name;
 }
 
-const StringSet& OpenGLShaderCache::getDependencies() const {
+const StringSet& OpenGLShaderCache::getDependencies() const 
+{
 	static StringSet _dependencies;
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_SHADERSYSTEM);
-		_dependencies.insert(MODULE_OPENGL_STATE_LIBRARY);
 		_dependencies.insert(MODULE_OPENGL);
 	}
 

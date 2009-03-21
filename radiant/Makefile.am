@@ -45,7 +45,6 @@ darkradiant_SOURCES = main.cpp \
 					  camera/FloatingCamWnd.cpp \
 					  namespace/Namespace.cpp \
 					  namespace/NamespaceFactory.cpp \
-					  render/backend/OpenGLStateMap.cpp \
 					  render/backend/OpenGLShader.cpp \
 					  render/backend/GLProgramFactory.cpp \
 					  render/backend/OpenGLShaderPass.cpp \

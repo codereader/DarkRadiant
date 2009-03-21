@@ -157,43 +157,4 @@ public:
 	{ }
 };
 
-const std::string MODULE_OPENGL_STATE_LIBRARY("OpenGLStateLibrary");
-
-/**
- * Library of named OpenGLState objects.
- */
-class OpenGLStateLibrary :
-	public RegisterableModule
-{
-public:
-	virtual void getDefaultState(OpenGLState& state) const = 0;
-
-	/** 
-	 * Add a named state.
-	 */
-	virtual void insert(const std::string& name, const OpenGLState& state) = 0;
-	
-	/**
-	 * Erase a named state.
-	 */
-	virtual void erase(const std::string& name) = 0;
-	
-	/**
-	 * Find a named state. Throws an std::runtime_error exception if the
-	 * state is not found.
-	 */
-	virtual const OpenGLState& find(const std::string& name) = 0;
-	
-};
-
-inline OpenGLStateLibrary& GlobalOpenGLStateLibrary() {
-	// Cache the reference locally
-	static OpenGLStateLibrary& _openGLStateLib(
-		*boost::static_pointer_cast<OpenGLStateLibrary>(
-			module::GlobalModuleRegistry().getModule(MODULE_OPENGL_STATE_LIBRARY)
-		)
-	);
-	return _openGLStateLib;
-}
-
 #endif
