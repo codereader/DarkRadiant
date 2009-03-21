@@ -375,39 +375,68 @@ void OpenGLShader::construct(const std::string& name)
     // construction from IShader
     m_shader = QERApp_Shader_ForName(name);
 
+    // Determine whether we can render this shader in lighting/bump-map mode
     if (GlobalShaderCache().lightingSupported() 
     	&& GlobalShaderCache().lightingEnabled() 
-    	&& m_shader->getBump() != 0 
+        && m_shader->getDiffuse()
+    	&& m_shader->getBump()
     	&& m_shader->getBump()->texture_number != 0) // is a bump shader
     {
-      state.m_state = RENDER_FILL | RENDER_CULLFACE | RENDER_TEXTURE | RENDER_DEPTHTEST | RENDER_DEPTHWRITE | RENDER_COLOURWRITE | RENDER_PROGRAM;
-      state.m_colour[0] = 0;
-      state.m_colour[1] = 0;
-      state.m_colour[2] = 0;
-      state.m_colour[3] = 1;
-      state.m_sort = OpenGLState::eSortOpaque;
+        // Yes, this can be rendered in bump-map mode
 
-      state.m_program = render::GLProgramFactory::getProgram("depthFill").get();
+        // Create depth-buffer fill pass
+        state.m_state = RENDER_FILL 
+                        | RENDER_CULLFACE 
+                        | RENDER_TEXTURE 
+                        | RENDER_DEPTHTEST 
+                        | RENDER_DEPTHWRITE 
+                        | RENDER_COLOURWRITE 
+                        | RENDER_PROGRAM;
 
-      OpenGLState& bumpPass = appendDefaultPass();
-      bumpPass.m_texture = m_shader->getDiffuse()->texture_number;
-      bumpPass.m_texture1 = m_shader->getBump()->texture_number;
-      bumpPass.m_texture2 = m_shader->getSpecular()->texture_number;
-
-      bumpPass.m_state = RENDER_BLEND|RENDER_FILL|RENDER_CULLFACE|RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_SMOOTH|RENDER_BUMP|RENDER_PROGRAM;
-
-      bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
-
-      bumpPass.m_depthfunc = GL_LEQUAL;
-      bumpPass.m_sort = OpenGLState::eSortMultiFirst;
-      bumpPass.m_blend_src = GL_ONE;
-      bumpPass.m_blend_dst = GL_ONE;
+        state.m_colour[0] = 0;
+        state.m_colour[1] = 0;
+        state.m_colour[2] = 0;
+        state.m_colour[3] = 1;
+        state.m_sort = OpenGLState::eSortOpaque;
+        
+        state.m_program = render::GLProgramFactory::getProgram("depthFill").get();
+        
+        // Construct diffuse/bump/specular render pass
+        OpenGLState& bumpPass = appendDefaultPass();
+        bumpPass.m_texture = m_shader->getDiffuse()->texture_number;
+        bumpPass.m_texture1 = m_shader->getBump()->texture_number;
+        bumpPass.m_texture2 = m_shader->getSpecular()->texture_number;
+        
+        bumpPass.m_state = RENDER_BLEND
+                           |RENDER_FILL
+                           |RENDER_CULLFACE
+                           |RENDER_DEPTHTEST
+                           |RENDER_COLOURWRITE
+                           |RENDER_SMOOTH
+                           |RENDER_BUMP
+                           |RENDER_PROGRAM;
+        
+        bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
+        
+        bumpPass.m_depthfunc = GL_LEQUAL;
+        bumpPass.m_sort = OpenGLState::eSortMultiFirst;
+        bumpPass.m_blend_src = GL_ONE;
+        bumpPass.m_blend_dst = GL_ONE;
     }
     else
     {
-      state.m_texture = m_shader->getTexture()->texture_number;
+      // No, this cannot be rendered in bump-map mode
 
-      state.m_state = RENDER_FILL|RENDER_TEXTURE|RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_LIGHTING|RENDER_SMOOTH;
+      // Render the editor texture in legacy mode
+      state.m_texture = m_shader->getTexture()->texture_number;
+      state.m_state = RENDER_FILL
+                      | RENDER_TEXTURE
+                      |RENDER_DEPTHTEST
+                      |RENDER_COLOURWRITE
+                      |RENDER_LIGHTING
+                      |RENDER_SMOOTH;
+
+      // Handle certain shader flags
       if((m_shader->getFlags() & QER_CULL) != 0)
       {
         if(m_shader->getCull() == IShader::eCullBack)
@@ -419,6 +448,7 @@ void OpenGLShader::construct(const std::string& name)
       {
         state.m_state |= RENDER_CULLFACE;
       }
+
       if((m_shader->getFlags() & QER_ALPHATEST) != 0)
       {
         state.m_state |= RENDER_ALPHATEST;

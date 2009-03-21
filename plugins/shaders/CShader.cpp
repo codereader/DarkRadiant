@@ -96,14 +96,12 @@ TexturePtr CShader::getTexture() {
 	return _editorTexture;
 }
 
-TexturePtr CShader::getDiffuse() {
-
-	// Check if the boost::shared_ptr is still uninitialised
-	if (!_diffuse) {
-		
-		// Create image
-//		Image img = _template->_diffuse.getImage();
-		
+TexturePtr CShader::getDiffuse() 
+{
+	// If we have no diffuse texture but the template contains a map expression,
+    // get a texture binding for it
+	if (!_diffuse && _template->getDiffuse()) 
+    {
 		// Pass the call to the GLTextureManager to realise this image 
 		_diffuse = GetTextureManager().getBinding(_template->getDiffuse()); 
 	}
