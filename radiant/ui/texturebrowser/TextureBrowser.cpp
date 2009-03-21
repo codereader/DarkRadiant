@@ -16,6 +16,8 @@
 #include "selection/algorithm/Shader.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 
+#include <boost/algorithm/string/predicate.hpp>
+
 namespace ui {
 
 namespace {
@@ -210,12 +212,14 @@ void TextureBrowser::nextTexturePos(TextureLayout& layout, TexturePtr tex, int *
 }
 
 // if texture_showinuse jump over non in-use textures
-bool TextureBrowser::shaderIsVisible(IShaderPtr shader) {
+bool TextureBrowser::shaderIsVisible(IShaderPtr shader) 
+{
 	if (shader == NULL) {
 		return false;
 	}
 	
-	if (!shader_equal_prefix(shader->getName(), "textures/")) {
+	if (!boost::algorithm::istarts_with(shader->getName(), "textures/")) 
+    {
 		return false;
 	}
 
@@ -223,9 +227,10 @@ bool TextureBrowser::shaderIsVisible(IShaderPtr shader) {
 		return false;
 	}
 
-  	if (!getFilter().empty()) {
+  	if (!getFilter().empty()) 
+    {
 		// some basic filtering
-		if (strstr( shader_get_textureName(shader->getName()), getFilter().c_str() ) == 0)
+		if (strstr( shader_get_textureName(shader->getName().c_str()), getFilter().c_str() ) == 0)
 			return false;
 	}
 
