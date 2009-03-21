@@ -365,14 +365,15 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 	}
 }
 
-void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStore) {
+void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStore) 
+{
 	// Update the infostore in the ShaderSelector
 	GtkTreeIter iter;
 	
 	gtk_list_store_append(listStore, &iter);
 	gtk_list_store_set(listStore, &iter, 
 					   0, "<b>Shader</b>",
-					   1, shader->getName(),
+					   1, shader->getName().c_str(),
 					   -1);
 	
 	/* greebo: Disabled this part, this loads the full-sized diffuse map, allocating massloads of memory.

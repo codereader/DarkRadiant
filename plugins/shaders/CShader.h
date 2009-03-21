@@ -7,6 +7,39 @@
 
 namespace shaders {
 
+class MapLayer : public ShaderLayer {
+    TexturePtr m_texture;
+    BlendFunc m_blendFunc;
+    bool m_clampToBorder;
+    float m_alphaTest;
+
+public:
+    MapLayer(TexturePtr texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
+            m_texture(texture),
+            m_blendFunc(blendFunc),
+            m_clampToBorder(false),
+            m_alphaTest(alphaTest) 
+    {}
+    
+    TexturePtr texture() const {
+        return m_texture;
+    }
+    
+    BlendFunc blendFunc() const {
+        return m_blendFunc;
+    }
+    
+    bool clampToBorder() const {
+        return m_clampToBorder;
+    }
+    
+    float alphaTest() const {
+        return m_alphaTest;
+    }
+
+    static MapLayer getFromLayerTemplate(const LayerTemplate& layerTemplate);
+};
+
 class CShader : 
 	public IShader 
 {
@@ -30,6 +63,11 @@ class CShader :
 	bool m_bInUse;
 
 	bool _visible;
+
+    // Vector of shader layers
+	typedef std::vector<MapLayer> MapLayers;
+	MapLayers m_layers;
+
 
 public:
 	static bool m_lightingEnabled;
@@ -66,7 +104,7 @@ public:
 	/*
 	 * Return name of shader.
 	 */
-	const char* getName() const;
+	std::string getName() const;
 
 	bool IsInUse() const;
 	
@@ -108,42 +146,6 @@ public:
 	 * Set name of shader.
 	 */
 	void setName(const std::string& name);
-
-	class MapLayer : public ShaderLayer {
-		TexturePtr m_texture;
-		BlendFunc m_blendFunc;
-		bool m_clampToBorder;
-		float m_alphaTest;
-	
-	public:
-		MapLayer(TexturePtr texture, BlendFunc blendFunc, bool clampToBorder, float alphaTest) :
-				m_texture(texture),
-				m_blendFunc(blendFunc),
-				m_clampToBorder(false),
-				m_alphaTest(alphaTest) 
-		{}
-		
-		TexturePtr texture() const {
-			return m_texture;
-		}
-		
-		BlendFunc blendFunc() const {
-			return m_blendFunc;
-		}
-		
-		bool clampToBorder() const {
-			return m_clampToBorder;
-		}
-		
-		float alphaTest() const {
-			return m_alphaTest;
-		}
-
-		static MapLayer getFromLayerTemplate(const LayerTemplate& layerTemplate);
-	};
-
-	typedef std::vector<MapLayer> MapLayers;
-	MapLayers m_layers;
 
 	const ShaderLayer* firstLayer() const;
 	

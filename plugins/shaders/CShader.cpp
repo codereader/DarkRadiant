@@ -190,8 +190,9 @@ TexturePtr CShader::lightFalloffImage() {
 /*
  * Return name of shader.
  */
-const char* CShader::getName() const {
-	return _name.c_str();
+std::string CShader::getName() const 
+{
+	return _name;
 }
 
 std::string CShader::getDescription() const {
@@ -334,7 +335,8 @@ void CShader::setVisible(bool visible) {
 	_visible = visible;
 }
 
-CShader::MapLayer CShader::MapLayer::getFromLayerTemplate(const LayerTemplate& layerTemplate) {
+MapLayer MapLayer::getFromLayerTemplate(const LayerTemplate& layerTemplate) 
+{
 	return MapLayer(
 		GetTextureManager().getBinding(layerTemplate.mapExpr),
 		evaluateBlendFunc(layerTemplate.m_blendFunc),

@@ -171,8 +171,13 @@ public:
     virtual TexturePtr getBump() = 0;
 
     virtual TexturePtr getSpecular() = 0;
-  // get shader name
-  virtual const char* getName() const = 0;
+
+    /**
+     * \brief
+     * Get the string name of this shader.
+     */
+    virtual std::string getName() const = 0;
+
   virtual bool IsInUse() const = 0;
   virtual void SetInUse(bool bInUse) = 0;
   // get the editor flags (QER_NOCARVE QER_TRANS)
