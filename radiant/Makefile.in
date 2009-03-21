@@ -70,7 +70,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-FloatingCamWnd.$(OBJEXT) \
 	darkradiant-Namespace.$(OBJEXT) \
 	darkradiant-NamespaceFactory.$(OBJEXT) \
-	darkradiant-OpenGLStateMap.$(OBJEXT) \
 	darkradiant-OpenGLShader.$(OBJEXT) \
 	darkradiant-GLProgramFactory.$(OBJEXT) \
 	darkradiant-OpenGLShaderPass.$(OBJEXT) \
@@ -423,7 +422,6 @@ darkradiant_SOURCES = main.cpp \
 					  camera/FloatingCamWnd.cpp \
 					  namespace/Namespace.cpp \
 					  namespace/NamespaceFactory.cpp \
-					  render/backend/OpenGLStateMap.cpp \
 					  render/backend/OpenGLShader.cpp \
 					  render/backend/GLProgramFactory.cpp \
 					  render/backend/OpenGLShaderPass.cpp \
@@ -762,7 +760,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShaderCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShaderPass.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLStateMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OrthoContextMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Overlay.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OverlayDialog.Po@am__quote@
@@ -1252,20 +1249,6 @@ darkradiant-NamespaceFactory.obj: namespace/NamespaceFactory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='namespace/NamespaceFactory.cpp' object='darkradiant-NamespaceFactory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-NamespaceFactory.obj `if test -f 'namespace/NamespaceFactory.cpp'; then $(CYGPATH_W) 'namespace/NamespaceFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/namespace/NamespaceFactory.cpp'; fi`
-
-darkradiant-OpenGLStateMap.o: render/backend/OpenGLStateMap.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLStateMap.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLStateMap.Tpo -c -o darkradiant-OpenGLStateMap.o `test -f 'render/backend/OpenGLStateMap.cpp' || echo '$(srcdir)/'`render/backend/OpenGLStateMap.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLStateMap.Tpo $(DEPDIR)/darkradiant-OpenGLStateMap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/OpenGLStateMap.cpp' object='darkradiant-OpenGLStateMap.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLStateMap.o `test -f 'render/backend/OpenGLStateMap.cpp' || echo '$(srcdir)/'`render/backend/OpenGLStateMap.cpp
-
-darkradiant-OpenGLStateMap.obj: render/backend/OpenGLStateMap.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLStateMap.obj -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLStateMap.Tpo -c -o darkradiant-OpenGLStateMap.obj `if test -f 'render/backend/OpenGLStateMap.cpp'; then $(CYGPATH_W) 'render/backend/OpenGLStateMap.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/OpenGLStateMap.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLStateMap.Tpo $(DEPDIR)/darkradiant-OpenGLStateMap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/OpenGLStateMap.cpp' object='darkradiant-OpenGLStateMap.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLStateMap.obj `if test -f 'render/backend/OpenGLStateMap.cpp'; then $(CYGPATH_W) 'render/backend/OpenGLStateMap.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/OpenGLStateMap.cpp'; fi`
 
 darkradiant-OpenGLShader.o: render/backend/OpenGLShader.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLShader.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLShader.Tpo -c -o darkradiant-OpenGLShader.o `test -f 'render/backend/OpenGLShader.cpp' || echo '$(srcdir)/'`render/backend/OpenGLShader.cpp
