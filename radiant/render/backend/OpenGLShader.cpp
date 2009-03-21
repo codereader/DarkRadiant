@@ -1,7 +1,6 @@
 #include "OpenGLShader.h"
 #include "GLProgramFactory.h"
 #include "OpenGLStateBucketAdd.h"
-#include "OpenGLStateMap.h"
 #include "render/OpenGLShaderCache.h"
 
 #include "iuimanager.h"
