@@ -16,11 +16,19 @@
 class OpenGLShader 
 : public Shader
 {
+    // List of shader passes for this shader
 	typedef std::list<OpenGLShaderPass*> Passes;
-	Passes m_passes;
+	Passes _shaderPasses;
+
 	IShaderPtr m_shader;
 	std::size_t m_used;
 	ModuleObservers m_observers;
+
+private:
+
+    // Construct shader passes from a regular shader (as opposed to a special
+    // built-in shader)
+    void constructNormalShader(const std::string& name);
 
 public:
 	
