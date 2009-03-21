@@ -329,7 +329,7 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 	}
 	else {
 		// This is an "ordinary" texture, take the editor image
-		tex = shader->getTexture();
+		tex = shader->getEditorImage();
 		if (tex != NULL) {
 			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
 			drawQuad = true;

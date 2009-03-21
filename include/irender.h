@@ -159,7 +159,6 @@ public:
   virtual void decrementUsed() = 0;
   virtual void attach(ModuleObserver& observer) = 0;
   virtual void detach(ModuleObserver& observer) = 0;
-  virtual Texture& getTexture() const = 0;
   
 	/** Retrieve the contained IShader from this object.
 	 * 

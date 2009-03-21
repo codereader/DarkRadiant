@@ -748,7 +748,7 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 	// Acquire the texture number of the active texture
-	TexturePtr tex = self->_shader->getTexture();
+	TexturePtr tex = self->_shader->getEditorImage();
 	glBindTexture(GL_TEXTURE_2D, tex->texture_number);
 	
 	// Draw the background texture

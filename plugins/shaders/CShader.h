@@ -79,8 +79,7 @@ public:
 
 	virtual ~CShader();
 
-	// get/set the TexturePtr Radiant uses to represent this shader object
-	TexturePtr getTexture();
+	TexturePtr getEditorImage();
 	
 	// getDiffuse() retrieves the TexturePtr and realises the shader if necessary
 	TexturePtr getDiffuse();
@@ -149,8 +148,6 @@ public:
 
 	const ShaderLayer* firstLayer() const;
 	
-	void forEachLayer(const ShaderLayerCallback& callback) const;
-
 	/* Required IShader light type predicates */
 	bool isAmbientLight() const;
 

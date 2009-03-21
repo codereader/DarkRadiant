@@ -104,8 +104,6 @@ public:
 		return _iShader;
 	}
 
-	Texture& getTexture() const;
-
 	unsigned int getFlags() const;
 
 };
