@@ -108,14 +108,14 @@ ShaderPtr FaceShader::state() const {
 
 std::size_t FaceShader::width() const {
 	if (m_realised) {
-		return m_state->getTexture().width;
+		return m_state->getIShader()->getEditorImage()->width;
 	}
 	return 1;
 }
 
 std::size_t FaceShader::height() const {
 	if (m_realised) {
-		return m_state->getTexture().height;
+		return m_state->getIShader()->getEditorImage()->height;
 	}
 	return 1;
 }

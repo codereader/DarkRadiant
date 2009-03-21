@@ -93,10 +93,6 @@ void OpenGLShader::unrealise() {
     destroy();
 }
 
-Texture& OpenGLShader::getTexture() const {
-    return *(_iShader->getTexture());
-}
-
 unsigned int OpenGLShader::getFlags() const {
     return _iShader->getFlags();
 }
@@ -169,7 +165,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
     OpenGLState& state = appendDefaultPass();
 
     // Render the editor texture in legacy mode
-    state.m_texture = _iShader->getTexture()->texture_number;
+    state.m_texture = _iShader->getEditorImage()->texture_number;
     state.m_state = RENDER_FILL
                     | RENDER_TEXTURE
                     |RENDER_DEPTHTEST
@@ -177,18 +173,12 @@ void OpenGLShader::constructStandardPassesFromIShader()
                     |RENDER_LIGHTING
                     |RENDER_SMOOTH;
 
-  // Handle certain shader flags
-  if((_iShader->getFlags() & QER_CULL) != 0)
-  {
-    if(_iShader->getCull() == IShader::eCullBack)
+    // Handle certain shader flags
+    if ((_iShader->getFlags() & QER_CULL) == 0
+        || _iShader->getCull() == IShader::eCullBack)
     {
-      state.m_state |= RENDER_CULLFACE;
+        state.m_state |= RENDER_CULLFACE;
     }
-  }
-  else
-  {
-    state.m_state |= RENDER_CULLFACE;
-  }
 
   if((_iShader->getFlags() & QER_ALPHATEST) != 0)
   {
@@ -211,7 +201,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
       state.m_alphafunc = GL_GEQUAL;
     }
   }
-  reinterpret_cast<Vector3&>(state.m_colour) = _iShader->getTexture()->color;
+  reinterpret_cast<Vector3&>(state.m_colour) = _iShader->getEditorImage()->color;
   state.m_colour[3] = 1.0f;
   
     if((_iShader->getFlags() & QER_TRANS) != 0)

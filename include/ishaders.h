@@ -126,8 +126,6 @@ public:
   virtual float alphaTest() const = 0;
 };
 
-typedef Callback1<const ShaderLayer&> ShaderLayerCallback;
-
 class IShader
 {
 public:
@@ -146,8 +144,11 @@ public:
     eCullBack,
   };
 
-  // get/set the qtexture_t* Radiant uses to represent this shader object
-  virtual TexturePtr getTexture() = 0;
+    /**
+     * \brief
+     * Return the editor image texture for this shader.
+     */
+    virtual TexturePtr getEditorImage() = 0;
 
     /**
      * \brief
@@ -210,7 +211,6 @@ public:
 	virtual bool isFogLight() const = 0;
 
   virtual const ShaderLayer* firstLayer() const = 0;
-  virtual void forEachLayer(const ShaderLayerCallback& layer) const = 0;
 
   virtual TexturePtr lightFalloffImage() = 0;
 

@@ -86,11 +86,10 @@ CShader::~CShader() {
 	GetTextureManager().checkBindings();
 }
 
-// get/set the Texture* Radiant uses to represent this shader object
-TexturePtr CShader::getTexture() {
-
-	// Check if the boost::shared_ptr is still uninitialised
-	if (!_editorTexture) {
+TexturePtr CShader::getEditorImage() 
+{
+	if (!_editorTexture) 
+    {
 		// Pass the call to the GLTextureManager to realise this image 
 		_editorTexture = GetTextureManager().getBinding(_template->getTexture());
 	}
@@ -305,12 +304,6 @@ const ShaderLayer* CShader::firstLayer() const {
 		return 0;
 	}
 	return &m_layers.front();
-}
-
-void CShader::forEachLayer(const ShaderLayerCallback& callback) const {
-	for (MapLayers::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i) {
-		callback(*i);
-	}
 }
 
 /* Required IShader light type predicates */

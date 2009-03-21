@@ -261,8 +261,8 @@ void TextureBrowser::evaluateHeight() {
 	        continue;
 	
 	      int   x, y;
-	      nextTexturePos(layout, shader->getTexture(), &x, &y);
-	      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getTexture()) + 4);
+	      nextTexturePos(layout, shader->getEditorImage(), &x, &y);
+	      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getEditorImage()) + 4);
 	    }
 	//}
 }
@@ -326,8 +326,8 @@ void TextureBrowser::focus(const std::string& name) {
       continue;
 
     int x, y;
-    nextTexturePos(layout, shader->getTexture(), &x, &y);
-    TexturePtr q = shader->getTexture();
+    nextTexturePos(layout, shader->getEditorImage(), &x, &y);
+    TexturePtr q = shader->getEditorImage();
     if (!q)
       break;
 
@@ -368,9 +368,9 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 			continue;
 
 		int x, y;
-		nextTexturePos(layout, shader->getTexture(), &x, &y);
+		nextTexturePos(layout, shader->getEditorImage(), &x, &y);
 		
-		TexturePtr tex = shader->getTexture();
+		TexturePtr tex = shader->getEditorImage();
 		if (tex == NULL) {
 			break;
 		}
@@ -456,8 +456,8 @@ void TextureBrowser::draw() {
       continue;
 
     int x, y;
-    nextTexturePos(layout, shader->getTexture(), &x, &y);
-    TexturePtr q = shader->getTexture();
+    nextTexturePos(layout, shader->getEditorImage(), &x, &y);
+    TexturePtr q = shader->getEditorImage();
     if (!q)
       break;
 

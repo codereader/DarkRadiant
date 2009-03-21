@@ -40,3 +40,4 @@ public:
 } // namespace ui
 
 #endif /* _MAINFRAME_LAYOUT_MANAGER_H_ */
+
