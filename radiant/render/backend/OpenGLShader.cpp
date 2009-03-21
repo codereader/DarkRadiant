@@ -338,15 +338,6 @@ void OpenGLShader::construct(const std::string& name)
         {
             OpenGLState& state = appendDefaultPass();
 
-            // Check the state library
-            try {
-                state = GlobalOpenGLStateLibrary().find(name);
-                break;
-            }
-            catch (std::runtime_error e) {
-                // Not found, continue with this case
-            }
-
             if (name == "$POINT")
             {
               state.m_state = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
