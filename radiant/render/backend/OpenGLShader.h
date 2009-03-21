@@ -20,7 +20,9 @@ class OpenGLShader
 	typedef std::list<OpenGLShaderPass*> Passes;
 	Passes _shaderPasses;
 
-	IShaderPtr m_shader;
+    // The IShader corresponding to this OpenGLShader
+	IShaderPtr _iShader;
+
 	std::size_t m_used;
 	ModuleObservers m_observers;
 
@@ -33,11 +35,19 @@ private:
     // built-in shader)
     void constructNormalShader(const std::string& name);
 
+    // Construct either lighting-mode or legacy render passes from the IShader
+    // member
+    void constructLightingPassesFromIShader();
+    void constructStandardPassesFromIShader();
+
     // Destroy internal data
 	void destroy();
 
     // Add a shader pass to the end of the list, and return its state object
 	OpenGLState& appendDefaultPass();
+
+    // Test if we can render using lighting mode
+    bool canUseLightingMode() const;
 
 public:
 	
@@ -61,7 +71,7 @@ public:
 
   bool realised() const
   {
-    return m_shader != 0;
+    return _iShader != 0;
   }
 
   void attach(ModuleObserver& observer)
@@ -91,7 +101,7 @@ public:
 
 	// Return the IShader*
 	IShaderPtr getIShader() const {
-		return m_shader;
+		return _iShader;
 	}
 
 	Texture& getTexture() const;

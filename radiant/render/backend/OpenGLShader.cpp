@@ -51,7 +51,7 @@ inline GLenum convertBlendFactor(BlendFactor factor)
 
 void OpenGLShader::destroy() {
 	// Clear the shaderptr, so that the shared_ptr reference count is decreased 
-    m_shader = IShaderPtr();
+    _iShader = IShaderPtr();
 
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
     {
@@ -84,16 +84,16 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 }
 
 void OpenGLShader::incrementUsed() {
-    if(++m_used == 1 && m_shader != 0)
+    if(++m_used == 1 && _iShader != 0)
     { 
-      m_shader->SetInUse(true);
+      _iShader->SetInUse(true);
     }
 }
 
 void OpenGLShader::decrementUsed() {
-    if(--m_used == 0 && m_shader != 0)
+    if(--m_used == 0 && _iShader != 0)
     {
-      m_shader->SetInUse(false);
+      _iShader->SetInUse(false);
     }
 }
 
@@ -102,12 +102,12 @@ void OpenGLShader::realise(const std::string& name)
     // Construct the shader passes based on the name
     construct(name);
 
-    if (m_shader != NULL) {
+    if (_iShader != NULL) {
 		// greebo: Check the filtersystem whether we're filtered
-		m_shader->setVisible(GlobalFilterSystem().isVisible("texture", name));
+		_iShader->setVisible(GlobalFilterSystem().isVisible("texture", name));
 
 		if (m_used != 0) {
-			m_shader->SetInUse(true);
+			_iShader->SetInUse(true);
 		}
     }
     
@@ -133,11 +133,11 @@ void OpenGLShader::unrealise() {
 }
 
 Texture& OpenGLShader::getTexture() const {
-    return *(m_shader->getTexture());
+    return *(_iShader->getTexture());
 }
 
 unsigned int OpenGLShader::getFlags() const {
-    return m_shader->getFlags();
+    return _iShader->getFlags();
 }
 
 // Append a default shader pass onto the back of the state list
@@ -147,130 +147,147 @@ OpenGLState& OpenGLShader::appendDefaultPass() {
     return state;
 }
 
+// Test if we can render in bump map mode
+bool OpenGLShader::canUseLightingMode() const
+{
+    return (
+        GlobalShaderCache().lightingSupported()  // hw supports lighting mode
+    	&& GlobalShaderCache().lightingEnabled()  // user enable lighting mode
+        && _iShader->getDiffuse() // IShader has a diffuse map
+    );
+}
+
+// Construct lighting mode render passes
+void OpenGLShader::constructLightingPassesFromIShader()
+{
+    // Create depth-buffer fill pass
+    OpenGLState& state = appendDefaultPass();
+    state.m_state = RENDER_FILL 
+                    | RENDER_CULLFACE 
+                    | RENDER_TEXTURE 
+                    | RENDER_DEPTHTEST 
+                    | RENDER_DEPTHWRITE 
+                    | RENDER_COLOURWRITE 
+                    | RENDER_PROGRAM;
+
+    state.m_colour[0] = 0;
+    state.m_colour[1] = 0;
+    state.m_colour[2] = 0;
+    state.m_colour[3] = 1;
+    state.m_sort = OpenGLState::eSortOpaque;
+    
+    state.m_program = render::GLProgramFactory::getProgram("depthFill").get();
+    
+    // Construct diffuse/bump/specular render pass
+    OpenGLState& bumpPass = appendDefaultPass();
+    bumpPass.m_texture = _iShader->getDiffuse()->texture_number;
+    bumpPass.m_texture1 = _iShader->getBump()->texture_number;
+    bumpPass.m_texture2 = _iShader->getSpecular()->texture_number;
+    
+    bumpPass.m_state = RENDER_BLEND
+                       |RENDER_FILL
+                       |RENDER_CULLFACE
+                       |RENDER_DEPTHTEST
+                       |RENDER_COLOURWRITE
+                       |RENDER_SMOOTH
+                       |RENDER_BUMP
+                       |RENDER_PROGRAM;
+    
+    bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
+    
+    bumpPass.m_depthfunc = GL_LEQUAL;
+    bumpPass.m_sort = OpenGLState::eSortMultiFirst;
+    bumpPass.m_blend_src = GL_ONE;
+    bumpPass.m_blend_dst = GL_ONE;
+
+}
+
+// Construct non-lighting mode render passes
+void OpenGLShader::constructStandardPassesFromIShader()
+{
+    OpenGLState& state = appendDefaultPass();
+
+    // Render the editor texture in legacy mode
+    state.m_texture = _iShader->getTexture()->texture_number;
+    state.m_state = RENDER_FILL
+                    | RENDER_TEXTURE
+                    |RENDER_DEPTHTEST
+                    |RENDER_COLOURWRITE
+                    |RENDER_LIGHTING
+                    |RENDER_SMOOTH;
+
+  // Handle certain shader flags
+  if((_iShader->getFlags() & QER_CULL) != 0)
+  {
+    if(_iShader->getCull() == IShader::eCullBack)
+    {
+      state.m_state |= RENDER_CULLFACE;
+    }
+  }
+  else
+  {
+    state.m_state |= RENDER_CULLFACE;
+  }
+
+  if((_iShader->getFlags() & QER_ALPHATEST) != 0)
+  {
+    state.m_state |= RENDER_ALPHATEST;
+    IShader::EAlphaFunc alphafunc;
+    _iShader->getAlphaFunc(&alphafunc, &state.m_alpharef);
+    switch(alphafunc)
+    {
+    case IShader::eAlways:
+      state.m_alphafunc = GL_ALWAYS;
+    case IShader::eEqual:
+      state.m_alphafunc = GL_EQUAL;
+    case IShader::eLess:
+      state.m_alphafunc = GL_LESS;
+    case IShader::eGreater:
+      state.m_alphafunc = GL_GREATER;
+    case IShader::eLEqual:
+      state.m_alphafunc = GL_LEQUAL;
+    case IShader::eGEqual:
+      state.m_alphafunc = GL_GEQUAL;
+    }
+  }
+  reinterpret_cast<Vector3&>(state.m_colour) = _iShader->getTexture()->color;
+  state.m_colour[3] = 1.0f;
+  
+  if((_iShader->getFlags() & QER_TRANS) != 0)
+  {
+    state.m_state |= RENDER_BLEND;
+    state.m_colour[3] = _iShader->getTrans();
+    state.m_sort = OpenGLState::eSortTranslucent;
+    BlendFunc blendFunc = _iShader->getBlendFunc();
+    state.m_blend_src = convertBlendFactor(blendFunc.m_src);
+    state.m_blend_dst = convertBlendFactor(blendFunc.m_dst);
+    if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
+    {
+      state.m_state |= RENDER_DEPTHWRITE;
+    }
+  }
+  else
+  {
+    state.m_state |= RENDER_DEPTHWRITE;
+    state.m_sort = OpenGLState::eSortFullbright;
+  }
+}
+
 // Construct a normal shader
 void OpenGLShader::constructNormalShader(const std::string& name)
 {
-    // construction from IShader
-    m_shader = QERApp_Shader_ForName(name);
+    // Obtain the IShader
+    _iShader = QERApp_Shader_ForName(name);
 
-    // Determine whether we can render this shader in lighting/bump-map mode
-    if (GlobalShaderCache().lightingSupported() 
-    	&& GlobalShaderCache().lightingEnabled() 
-        && m_shader->getDiffuse()
-    	&& m_shader->getBump()
-    	&& m_shader->getBump()->texture_number != 0) // is a bump shader
+    // Determine whether we can render this shader in lighting/bump-map mode,
+    // and construct the appropriate shader passes
+    if (canUseLightingMode()) 
     {
-        // Yes, this can be rendered in bump-map mode
-
-        // Create depth-buffer fill pass
-        OpenGLState& state = appendDefaultPass();
-        state.m_state = RENDER_FILL 
-                        | RENDER_CULLFACE 
-                        | RENDER_TEXTURE 
-                        | RENDER_DEPTHTEST 
-                        | RENDER_DEPTHWRITE 
-                        | RENDER_COLOURWRITE 
-                        | RENDER_PROGRAM;
-
-        state.m_colour[0] = 0;
-        state.m_colour[1] = 0;
-        state.m_colour[2] = 0;
-        state.m_colour[3] = 1;
-        state.m_sort = OpenGLState::eSortOpaque;
-        
-        state.m_program = render::GLProgramFactory::getProgram("depthFill").get();
-        
-        // Construct diffuse/bump/specular render pass
-        OpenGLState& bumpPass = appendDefaultPass();
-        bumpPass.m_texture = m_shader->getDiffuse()->texture_number;
-        bumpPass.m_texture1 = m_shader->getBump()->texture_number;
-        bumpPass.m_texture2 = m_shader->getSpecular()->texture_number;
-        
-        bumpPass.m_state = RENDER_BLEND
-                           |RENDER_FILL
-                           |RENDER_CULLFACE
-                           |RENDER_DEPTHTEST
-                           |RENDER_COLOURWRITE
-                           |RENDER_SMOOTH
-                           |RENDER_BUMP
-                           |RENDER_PROGRAM;
-        
-        bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
-        
-        bumpPass.m_depthfunc = GL_LEQUAL;
-        bumpPass.m_sort = OpenGLState::eSortMultiFirst;
-        bumpPass.m_blend_src = GL_ONE;
-        bumpPass.m_blend_dst = GL_ONE;
+        constructLightingPassesFromIShader();
     }
     else
     {
-        // No, this cannot be rendered in bump-map mode
-        OpenGLState& state = appendDefaultPass();
-
-        // Render the editor texture in legacy mode
-        state.m_texture = m_shader->getTexture()->texture_number;
-        state.m_state = RENDER_FILL
-                        | RENDER_TEXTURE
-                        |RENDER_DEPTHTEST
-                        |RENDER_COLOURWRITE
-                        |RENDER_LIGHTING
-                        |RENDER_SMOOTH;
-
-      // Handle certain shader flags
-      if((m_shader->getFlags() & QER_CULL) != 0)
-      {
-        if(m_shader->getCull() == IShader::eCullBack)
-        {
-          state.m_state |= RENDER_CULLFACE;
-        }
-      }
-      else
-      {
-        state.m_state |= RENDER_CULLFACE;
-      }
-
-      if((m_shader->getFlags() & QER_ALPHATEST) != 0)
-      {
-        state.m_state |= RENDER_ALPHATEST;
-        IShader::EAlphaFunc alphafunc;
-        m_shader->getAlphaFunc(&alphafunc, &state.m_alpharef);
-        switch(alphafunc)
-        {
-        case IShader::eAlways:
-          state.m_alphafunc = GL_ALWAYS;
-        case IShader::eEqual:
-          state.m_alphafunc = GL_EQUAL;
-        case IShader::eLess:
-          state.m_alphafunc = GL_LESS;
-        case IShader::eGreater:
-          state.m_alphafunc = GL_GREATER;
-        case IShader::eLEqual:
-          state.m_alphafunc = GL_LEQUAL;
-        case IShader::eGEqual:
-          state.m_alphafunc = GL_GEQUAL;
-        }
-      }
-      reinterpret_cast<Vector3&>(state.m_colour) = m_shader->getTexture()->color;
-      state.m_colour[3] = 1.0f;
-      
-      if((m_shader->getFlags() & QER_TRANS) != 0)
-      {
-        state.m_state |= RENDER_BLEND;
-        state.m_colour[3] = m_shader->getTrans();
-        state.m_sort = OpenGLState::eSortTranslucent;
-        BlendFunc blendFunc = m_shader->getBlendFunc();
-        state.m_blend_src = convertBlendFactor(blendFunc.m_src);
-        state.m_blend_dst = convertBlendFactor(blendFunc.m_dst);
-        if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
-        {
-          state.m_state |= RENDER_DEPTHWRITE;
-        }
-      }
-      else
-      {
-        state.m_state |= RENDER_DEPTHWRITE;
-        state.m_sort = OpenGLState::eSortFullbright;
-      }
+        constructStandardPassesFromIShader();
     }
 }
 
