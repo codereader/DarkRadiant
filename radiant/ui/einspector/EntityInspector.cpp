@@ -208,8 +208,8 @@ GtkWidget* EntityInspector::createDialogPane() {
 
 // Create the TreeView pane
 
-GtkWidget* EntityInspector::createTreeViewPane() {
-    
+GtkWidget* EntityInspector::createTreeViewPane() 
+{
     GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 
     // Create the Property column

@@ -17,19 +17,13 @@ namespace gtkutil
  */
 class Paned
 {
-	// The contained widgets
-	GtkWidget* _firstchild;
-	GtkWidget* _secondChild;
-	
-	// The actual paned container
+	// The paned container
 	GtkWidget* _paned;
 	
 public:
 
 	// Constructor
-	Paned(GtkWidget* firstchild, GtkWidget* secondChild, bool isHorizontal) : 
-		_firstchild(firstchild),
-		_secondChild(secondChild)
+	Paned(GtkWidget* firstChild, GtkWidget* secondChild, bool isHorizontal)
 	{
 		if (isHorizontal) {
 			_paned = gtk_hpaned_new();
@@ -38,8 +32,9 @@ public:
 			_paned = gtk_vpaned_new();
 		}
 		
-		gtk_paned_add1(GTK_PANED(_paned), _firstchild);
-        gtk_paned_add2(GTK_PANED(_paned), _secondChild);
+        // Pack in the children
+		gtk_paned_pack1(GTK_PANED(_paned), firstChild, TRUE, FALSE);
+        gtk_paned_pack2(GTK_PANED(_paned), secondChild, TRUE, FALSE);
 	}
 	
 	// Operator cast to GtkWindow*
