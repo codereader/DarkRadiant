@@ -117,13 +117,48 @@ public:
   GLenum m_dst;
 };
 
-class ShaderLayer
+/**
+ * \brief
+ * Data class representing a single layer of a material shader.
+ *
+ * Each shader layer contains an image texture, a blend mode (e.g. add,
+ * modulate) and various other data.
+ */
+class ShaderLayer 
 {
+    TexturePtr m_texture;
+    BlendFunc m_blendFunc;
+    bool m_clampToBorder;
+    float m_alphaTest;
+
 public:
-  virtual TexturePtr texture() const = 0;
-  virtual BlendFunc blendFunc() const = 0;
-  virtual bool clampToBorder() const = 0;
-  virtual float alphaTest() const = 0;
+
+    ShaderLayer(TexturePtr texture,
+                BlendFunc blendFunc,
+                bool clampToBorder,
+                float alphaTest) 
+    : m_texture(texture),
+      m_blendFunc(blendFunc),
+      m_clampToBorder(false),
+      m_alphaTest(alphaTest) 
+    {}
+    
+    TexturePtr texture() const {
+        return m_texture;
+    }
+    
+    BlendFunc blendFunc() const {
+        return m_blendFunc;
+    }
+    
+    bool clampToBorder() const {
+        return m_clampToBorder;
+    }
+    
+    float alphaTest() const {
+        return m_alphaTest;
+    }
+
 };
 
 class IShader
