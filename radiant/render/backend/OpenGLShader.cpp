@@ -97,7 +97,9 @@ void OpenGLShader::decrementUsed() {
     }
 }
 
-void OpenGLShader::realise(const std::string& name) {
+void OpenGLShader::realise(const std::string& name) 
+{
+    // Construct the shader passes based on the name
     construct(name);
 
     if (m_shader != NULL) {

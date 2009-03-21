@@ -26,9 +26,18 @@ class OpenGLShader
 
 private:
 
+    // Start point for constructing shader passes from the shader name
+	void construct(const std::string& name);
+
     // Construct shader passes from a regular shader (as opposed to a special
     // built-in shader)
     void constructNormalShader(const std::string& name);
+
+    // Destroy internal data
+	void destroy();
+
+    // Add a shader pass to the end of the list, and return its state object
+	OpenGLState& appendDefaultPass();
 
 public:
 	
@@ -38,9 +47,6 @@ public:
 	OpenGLShader() 
 	: m_used(0)
 	{ }
-
-	void construct(const std::string& name);
-	void destroy();
 
 	/**
 	 * Add a renderable object to this shader.
@@ -92,7 +98,6 @@ public:
 
 	unsigned int getFlags() const;
 
-	OpenGLState& appendDefaultPass();
 };
 
 
