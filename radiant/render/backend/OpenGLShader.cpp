@@ -110,7 +110,6 @@ bool OpenGLShader::canUseLightingMode() const
     return (
         GlobalShaderCache().lightingSupported()  // hw supports lighting mode
     	&& GlobalShaderCache().lightingEnabled()  // user enable lighting mode
-        && _iShader->getDiffuse() // IShader has a diffuse map
     );
 }
 
@@ -159,8 +158,8 @@ void OpenGLShader::constructLightingPassesFromIShader()
 
 }
 
-// Construct non-lighting mode render passes
-void OpenGLShader::constructStandardPassesFromIShader()
+// Construct editor-image-only render passes
+void OpenGLShader::constructEditorPreviewPassFromIShader()
 {
     OpenGLState& state = appendDefaultPass();
 
@@ -201,9 +200,52 @@ void OpenGLShader::constructStandardPassesFromIShader()
       state.m_alphafunc = GL_GEQUAL;
     }
   }
-  reinterpret_cast<Vector3&>(state.m_colour) = _iShader->getEditorImage()->color;
-  state.m_colour[3] = 1.0f;
-  
+
+    // Set the GL color
+    reinterpret_cast<Vector3&>(state.m_colour) = _iShader->getEditorImage()->color;
+    state.m_colour[3] = 1.0f;
+
+    // Opaque blending, write to depth buffer
+    state.m_state |= RENDER_DEPTHWRITE;
+    state.m_sort = OpenGLState::eSortFullbright;
+}
+
+// Construct non-lighting mode render passes
+void OpenGLShader::constructStandardPassesFromIShader()
+{
+    ShaderLayerVector allLayers(_iShader->getAllLayers());
+    //std::cout << "OpenGLShader::constructStandardPassesFromIShader(): " << _iShader->getName() << std::endl;
+    for (ShaderLayerVector::const_iterator i = allLayers.begin();
+         i != allLayers.end();
+         ++i)
+    {
+        //std::cout << " layer '" << i->texture()->name << "'" << std::endl;
+        TexturePtr layerTex = i->texture();
+
+        OpenGLState& state = appendDefaultPass();
+        state.m_state = RENDER_FILL
+                        | RENDER_BLEND
+                        | RENDER_TEXTURE
+                        | RENDER_DEPTHTEST
+                        | RENDER_COLOURWRITE;
+
+        // Set the texture
+        state.m_texture = layerTex->texture_number;
+
+        // Get the blend function
+        BlendFunc blendFunc = i->blendFunc();
+        state.m_blend_src = blendFunc.m_src;
+        state.m_blend_dst = blendFunc.m_dst;
+        //std::cout << "   blend func = " << blendFunc.m_src << ", " << blendFunc.m_dst << std::endl;
+        if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
+        {
+          state.m_state |= RENDER_DEPTHWRITE;
+        }
+
+        state.m_sort = OpenGLState::eSortFullbright;
+    }
+
+#if 0 // legacy translucency code
     if((_iShader->getFlags() & QER_TRANS) != 0)
     {
         state.m_state |= RENDER_BLEND;
@@ -224,6 +266,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
         state.m_state |= RENDER_DEPTHWRITE;
         state.m_sort = OpenGLState::eSortFullbright;
     }
+#endif
 }
 
 // Construct a normal shader
@@ -236,11 +279,21 @@ void OpenGLShader::constructNormalShader(const std::string& name)
     // and construct the appropriate shader passes
     if (canUseLightingMode()) 
     {
-        constructLightingPassesFromIShader();
+        if (_iShader->getDiffuse())
+        {
+            // Regular light interaction
+            constructLightingPassesFromIShader();
+        }
+        else
+        {
+            // Lighting mode without diffusemap, do multi-pass shading
+            constructStandardPassesFromIShader();
+        }
     }
     else
     {
-        constructStandardPassesFromIShader();
+        // Editor image rendering only
+        constructEditorPreviewPassFromIShader();
     }
 }
 

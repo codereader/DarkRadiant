@@ -21,7 +21,7 @@ namespace {
 }
 
 // Map string blend functions to their GLenum equivalents
-GLenum evaluateBlendFactor(const std::string& value) 
+GLenum glBlendFromString(const std::string& value) 
 {
 	if (value == "gl_zero") {
 		return GL_ZERO;
@@ -73,7 +73,6 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 	_template(definition.shaderTemplate),
 	_fileName(definition.filename),
 	_name(name),
-	m_blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA),
 	m_bInUse(false),
 	_visible(true)
 {
@@ -228,10 +227,6 @@ void CShader::getAlphaFunc(EAlphaFunc *func, float *ref) {
 	*ref = _template->getAlphaRef();
 };
 
-BlendFunc CShader::getBlendFunc() const {
-	return m_blendFunc;
-}
-
 // get the cull type
 IShader::ECull CShader::getCull() {
 	return _template->getCull();
@@ -253,8 +248,8 @@ void CShader::unrealise() {
 }
 
 // Parse and load image maps for this shader
-void CShader::realiseLighting() {
-
+void CShader::realiseLighting() 
+{
 	for (ShaderTemplate::Layers::const_iterator i = _template->getLayers().begin();
 	        i != _template->getLayers().end();
 	        ++i)
@@ -262,6 +257,7 @@ void CShader::realiseLighting() {
 		_layers.push_back(getShaderLayerFromTemplate(*i));
 	}
 
+#if 0
 	if (_layers.size() == 1) {
 		const BlendFuncExpression& blendFunc =
 		    _template->getLayers().front().m_blendFunc;
@@ -269,8 +265,8 @@ void CShader::realiseLighting() {
 		// If explicit blend function (2-components), evaluate it, otherwise
 		// use a standard one
 		if (!blendFunc.second.empty()) {
-			m_blendFunc = BlendFunc(evaluateBlendFactor(blendFunc.first),
-			                        evaluateBlendFactor(blendFunc.second));
+			m_blendFunc = BlendFunc(glBlendFromString(blendFunc.first),
+			                        glBlendFromString(blendFunc.second));
 		}
 		else {
 			if (blendFunc.first == "add") {
@@ -285,11 +281,12 @@ void CShader::realiseLighting() {
 			}
 		}
 	}
+#endif
 }
 
-void CShader::unrealiseLighting() {
+void CShader::unrealiseLighting() 
+{
 	_layers.clear();
-	m_blendFunc = BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 /*
@@ -304,6 +301,12 @@ const ShaderLayer* CShader::firstLayer() const {
 		return 0;
 	}
 	return &_layers.front();
+}
+
+// Get all layers
+const ShaderLayerVector& CShader::getAllLayers() const
+{
+    return _layers;
 }
 
 /* Required IShader light type predicates */

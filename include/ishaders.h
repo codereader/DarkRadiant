@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 
 #include <ostream>
+#include <vector>
 
 class Texture; 	// defined in texturelib.h
 typedef boost::shared_ptr<Texture> TexturePtr;
@@ -161,6 +162,16 @@ public:
 
 };
 
+typedef std::vector<ShaderLayer> ShaderLayerVector;
+
+/**
+ * \brief
+ * Interface for a material shader.
+ *
+ * A material shader consists of global parameters, an editor image, and zero or
+ * more shader layers (including diffusemap, bumpmap and specularmap textures
+ * which are handled specially).
+ */
 class IShader
 {
 public:
@@ -224,7 +235,6 @@ public:
   virtual bool IsDefault() const = 0;
   // get the alphaFunc
   virtual void getAlphaFunc(EAlphaFunc *func, float *ref) = 0;
-  virtual BlendFunc getBlendFunc() const = 0;
   // get the cull type
   virtual ECull getCull() = 0;
   // get shader file name (ie the file where this one is defined)
@@ -246,6 +256,12 @@ public:
 	virtual bool isFogLight() const = 0;
 
   virtual const ShaderLayer* firstLayer() const = 0;
+
+    /**
+     * \brief
+     * Return a std::vector containing all layers in this material shader.
+     */
+    virtual const ShaderLayerVector& getAllLayers() const = 0;
 
   virtual TexturePtr lightFalloffImage() = 0;
 

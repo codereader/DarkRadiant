@@ -29,15 +29,12 @@ class CShader
 	TexturePtr _specular;
 	TexturePtr _texLightFalloff;
 
-	BlendFunc m_blendFunc;
-
 	bool m_bInUse;
 
 	bool _visible;
 
     // Vector of shader layers
-	typedef std::vector<ShaderLayer> ShaderLayers;
-	ShaderLayers _layers;
+	ShaderLayerVector _layers;
 
 private:
 
@@ -96,8 +93,6 @@ public:
 	// get the alphaFunc
 	void getAlphaFunc(EAlphaFunc *func, float *ref);
 	
-	BlendFunc getBlendFunc() const;
-	
 	// get the cull type
 	ECull getCull();
 	
@@ -122,10 +117,12 @@ public:
 	void setName(const std::string& name);
 
 	const ShaderLayer* firstLayer() const;
-	
-	/* Required IShader light type predicates */
-	bool isAmbientLight() const;
 
+    /* IShader implementation */
+
+    const ShaderLayerVector& getAllLayers() const;
+
+	bool isAmbientLight() const;
 	bool isBlendLight() const;
 	bool isFogLight() const;
 
