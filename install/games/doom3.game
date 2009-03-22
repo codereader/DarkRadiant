@@ -91,6 +91,10 @@
 				type="texture" 
 				match="textures/common/nodraw(.*)" 
 				action="hide" />
+			<filterCriterion
+				type="texture"
+				match="textures/common/tdm_nodraw(.*)"
+				action="hide" />
 		</filter>
 		<filter name="Shadow Textures">
 			<filterCriterion 
