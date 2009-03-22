@@ -20,6 +20,9 @@ namespace {
 	
 }
 
+namespace shaders 
+{
+
 // Map string blend functions to their GLenum equivalents
 GLenum glBlendFromString(const std::string& value) 
 {
@@ -60,12 +63,27 @@ GLenum glBlendFromString(const std::string& value)
 	return GL_ZERO;
 }
 
-///\todo BlendFunc parsing
-BlendFunc evaluateBlendFunc(const BlendFuncExpression& blendFunc) {
-	return BlendFunc(GL_ONE, GL_ZERO);
+// Convert a string pair describing a blend function into a BlendFunc object
+BlendFunc blendFuncFromStrings(const StringPair& blendFunc) 
+{
+    // Handle predefined blend modes first: add, modulate, filter
+    if (blendFunc.first == "add")
+    {
+        return BlendFunc(GL_ONE, GL_ONE);
+    }
+    else if (blendFunc.first == "modulate" || blendFunc.first == "filter")
+    {
+        return BlendFunc(GL_ZERO, GL_SRC_COLOR);
+    }
+    else
+    {
+        // Not predefined, just use the specified blend function directly
+        return BlendFunc(
+            glBlendFromString(blendFunc.first),
+            glBlendFromString(blendFunc.second)
+        );
+    }
 }
-
-namespace shaders {
 
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
@@ -335,7 +353,7 @@ ShaderLayer CShader::getShaderLayerFromTemplate(const LayerTemplate& layerTemp)
 {
 	return ShaderLayer(
 		GetTextureManager().getBinding(layerTemp.mapExpr),
-		evaluateBlendFunc(layerTemp.m_blendFunc),
+		blendFuncFromStrings(layerTemp.blendFunc),
 		layerTemp.m_clampToBorder,
 		boost::lexical_cast<float>(layerTemp.m_alphaTest)
 	);

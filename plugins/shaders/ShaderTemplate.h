@@ -9,7 +9,7 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-typedef std::pair<std::string, std::string> BlendFuncExpression;
+typedef std::pair<std::string, std::string> StringPair;
 
 namespace shaders { class IMapExpression; }
 
@@ -31,7 +31,10 @@ struct LayerTemplate
 	shaders::MapExpressionPtr mapExpr;
 
   LayerTypeId m_type;
-  BlendFuncExpression m_blendFunc;
+
+    // Blend function as strings (e.g. "GL_ONE", "GL_ZERO")
+    StringPair blendFunc;
+
   bool m_clampToBorder;
   std::string m_alphaTest;
   std::string m_heightmapScale;
@@ -40,7 +43,7 @@ struct LayerTemplate
 	LayerTemplate() 
 	: mapExpr(shaders::MapExpressionPtr()),
 	  m_type(LAYER_NONE), 
-	  m_blendFunc("GL_ONE", "GL_ZERO"), 
+	  blendFunc("GL_ONE", "GL_ZERO"), 
   	  m_clampToBorder(false), 
   	  m_alphaTest("-1"), 
   	  m_heightmapScale("0")

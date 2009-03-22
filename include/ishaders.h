@@ -108,14 +108,28 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 typedef Vector3 Colour3;
 
+/**
+ * \brief
+ * Representation of a GL blend function.
+ *
+ * A GL blend function consists of two GLenums representing the operations that
+ * should be performed on the source and destination pixel colours respectively,
+ * before the two results are added together into a final pixel colour.
+ */
 class BlendFunc
 {
 public:
-  BlendFunc(GLenum src, GLenum dst) : m_src(src), m_dst(dst)
-  {
-  }
-  GLenum m_src;
-  GLenum m_dst;
+
+    // Source pixel function
+    GLenum src;
+
+    // Destination pixel function
+    GLenum dest;
+
+    // Constructor
+    BlendFunc(GLenum s, GLenum d) 
+    : src(s), dest(d)
+    { }
 };
 
 /**
