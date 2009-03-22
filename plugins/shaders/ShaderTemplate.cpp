@@ -113,7 +113,8 @@ bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
  */
 bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::string& token) 
 {
-	if (token == "blend") {
+	if (token == "blend") 
+    {
 		std::string blendType = boost::algorithm::to_lower_copy(tokeniser.nextToken());
 		
 		if (blendType == "diffusemap") {
@@ -125,15 +126,19 @@ bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
 		else if (blendType == "specularmap") {
 			m_currentLayer.m_type = LAYER_SPECULARMAP;
 		}
-		else {
-			m_currentLayer.m_blendFunc.first = blendType.c_str();
+		else 
+        {
+            // Special blend type, either predefined like "add" or "modulate",
+            // or an explicit combination of GL blend modes
+			m_currentLayer.blendFunc.first = blendType;
 			
-			if (blendType.substr(0,3) == "gl_") {
-				// there is a second argument to parse
+			if (blendType.substr(0,3) == "gl_") 
+            {
+				// This is an explicit GL blend mode
 				tokeniser.assertNextToken(",");
-				m_currentLayer.m_blendFunc.second = tokeniser.nextToken().c_str();
+				m_currentLayer.blendFunc.second = tokeniser.nextToken();
 			} else {
-				m_currentLayer.m_blendFunc.second = "";
+				m_currentLayer.blendFunc.second = "";
 			}			
 		}		
 	} 

@@ -214,12 +214,10 @@ void OpenGLShader::constructEditorPreviewPassFromIShader()
 void OpenGLShader::constructStandardPassesFromIShader()
 {
     ShaderLayerVector allLayers(_iShader->getAllLayers());
-    //std::cout << "OpenGLShader::constructStandardPassesFromIShader(): " << _iShader->getName() << std::endl;
     for (ShaderLayerVector::const_iterator i = allLayers.begin();
          i != allLayers.end();
          ++i)
     {
-        //std::cout << " layer '" << i->texture()->name << "'" << std::endl;
         TexturePtr layerTex = i->texture();
 
         OpenGLState& state = appendDefaultPass();
@@ -234,9 +232,8 @@ void OpenGLShader::constructStandardPassesFromIShader()
 
         // Get the blend function
         BlendFunc blendFunc = i->blendFunc();
-        state.m_blend_src = blendFunc.m_src;
-        state.m_blend_dst = blendFunc.m_dst;
-        //std::cout << "   blend func = " << blendFunc.m_src << ", " << blendFunc.m_dst << std::endl;
+        state.m_blend_src = blendFunc.src;
+        state.m_blend_dst = blendFunc.dest;
         if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
         {
           state.m_state |= RENDER_DEPTHWRITE;
