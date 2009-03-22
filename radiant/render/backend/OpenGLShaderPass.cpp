@@ -55,204 +55,223 @@ inline void setState(unsigned int state,
 
 } // namespace
 
+// GL state enabling/disabling helpers
+
+void OpenGLShaderPass::enableRenderTexture()
+{
+    GlobalOpenGL_debugAssertNoErrors();
+
+    if(GLEW_VERSION_1_3)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glClientActiveTexture(GL_TEXTURE0);
+    }
+
+    glEnable(GL_TEXTURE_2D);
+
+    //glColor4d(1,1,1,_state.m_colour[3]);
+
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
+void OpenGLShaderPass::disableRenderTexture()
+{
+    if(GLEW_VERSION_1_3)
+    {
+        glActiveTexture(GL_TEXTURE0);
+        glClientActiveTexture(GL_TEXTURE0);
+    }
+
+    glDisable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
+void OpenGLShaderPass::enableRenderBlend()
+{
+    glEnable(GL_BLEND);
+    if(GLEW_VERSION_1_3)
+    {
+        glActiveTexture(GL_TEXTURE0);
+    }
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
+void OpenGLShaderPass::disableRenderBlend()
+{
+    glDisable(GL_BLEND);
+    if(GLEW_VERSION_1_3)
+    {
+        glActiveTexture(GL_TEXTURE0);
+    }
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
-								   unsigned int globalstate) 
+					              unsigned int globalStateMask) 
 {
   if(_state.renderFlags & RENDER_OVERRIDE)
   {
-    globalstate |= RENDER_FILL | RENDER_DEPTHWRITE;
+    globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
   }
   
-	// Required state bitmask is combination of this statebucket's internal
-	// state and the current global state
-	const unsigned int requiredState = _state.renderFlags & globalstate;
+    // Apply the global state mask to our own desired render flags to determine
+    // the final set of flags that must bet set
+	const unsigned int requiredState = _state.renderFlags & globalStateMask;
 	
-	// Delta is change between the current state and the required state
-	const unsigned int stateDelta = requiredState ^ current.renderFlags;
+    // Construct a mask containing all the flags that will be changing between
+    // the current state and the required state. This avoids performing
+    // unnecessary GL calls to set the state to its existing value.
+	const unsigned int changingBitsMask = requiredState ^ current.renderFlags;
 
+    // Set the GLProgram if required
 	GLProgram* program = (requiredState & RENDER_PROGRAM) != 0 
 						  ? _state.m_program 
 						  : 0;
 						  
-  if(program != current.m_program)
-  {
-    if(current.m_program != 0)
+    if(program != current.m_program)
     {
-      current.m_program->disable();
-      glColor4dv(current.m_colour);
+        if(current.m_program != 0)
+        {
+          current.m_program->disable();
+          glColor4dv(current.m_colour);
+        }
+
+        current.m_program = program;
+
+        if(current.m_program != 0)
+        {
+          current.m_program->enable();
+        }
     }
 
-    current.m_program = program;
-
-    if(current.m_program != 0)
-    {
-      current.m_program->enable();
-    }
-  }
-
-    // State changes. Only perform these if stateDelta > 0, since if there are
+    // State changes. Only perform these if changingBitsMask > 0, since if there are
     // no changes required we don't want a whole load of unnecessary bit
     // operations.
-    if (stateDelta != 0) {
-        if(stateDelta & requiredState & RENDER_FILL)
+    if (changingBitsMask != 0) {
+        if(changingBitsMask & requiredState & RENDER_FILL)
         {
             glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
             GlobalOpenGL_debugAssertNoErrors();
         }
-        else if(stateDelta & ~requiredState & RENDER_FILL)
+        else if(changingBitsMask & ~requiredState & RENDER_FILL)
         {
             glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        setState(requiredState, stateDelta, RENDER_OFFSETLINE, GL_POLYGON_OFFSET_LINE);
+        setState(requiredState, changingBitsMask, RENDER_OFFSETLINE, GL_POLYGON_OFFSET_LINE);
 
-        if(stateDelta & requiredState & RENDER_LIGHTING)
+        if(changingBitsMask & requiredState & RENDER_LIGHTING)
         {
             glEnable(GL_LIGHTING);
             glEnable(GL_COLOR_MATERIAL);
-            //qglEnable(GL_RESCALE_NORMAL);
             glEnableClientState(GL_NORMAL_ARRAY);
             GlobalOpenGL_debugAssertNoErrors();
         }
-        else if(stateDelta & ~requiredState & RENDER_LIGHTING)
+        else if(changingBitsMask & ~requiredState & RENDER_LIGHTING)
         {
             glDisable(GL_LIGHTING);
             glDisable(GL_COLOR_MATERIAL);
-            //qglDisable(GL_RESCALE_NORMAL);
             glDisableClientState(GL_NORMAL_ARRAY);
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        if(stateDelta & requiredState & RENDER_TEXTURE)
-        {
-            GlobalOpenGL_debugAssertNoErrors();
-
-            if(GLEW_VERSION_1_3)
-            {
-                glActiveTexture(GL_TEXTURE0);
-                glClientActiveTexture(GL_TEXTURE0);
-            }
-
-            glEnable(GL_TEXTURE_2D);
-
-            glColor4d(1,1,1,_state.m_colour[3]);
-
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            GlobalOpenGL_debugAssertNoErrors();
+        // RENDER_TEXTURE
+        if(changingBitsMask & requiredState & RENDER_TEXTURE)
+        { 
+            enableRenderTexture();
         }
-        else if(stateDelta & ~requiredState & RENDER_TEXTURE)
-        {
-            if(GLEW_VERSION_1_3)
-            {
-                glActiveTexture(GL_TEXTURE0);
-                glClientActiveTexture(GL_TEXTURE0);
-            }
-
-            glDisable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-            GlobalOpenGL_debugAssertNoErrors();
+        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE)
+        { 
+            disableRenderTexture();
         }
 
-        if(stateDelta & requiredState & RENDER_BLEND)
-        {
-            // FIXME: some .TGA are buggy, have a completely empty alpha channel
-            // if such brushes are rendered in this loop they would be totally transparent with GL_MODULATE
-            // so I decided using GL_DECAL instead
-            // if an empty-alpha-channel or nearly-empty texture is used. It will be blank-transparent.
-            // this could get better if you can get glTexEnviv (GL_TEXTURE_ENV, to work .. patches are welcome
-
-            glEnable(GL_BLEND);
-            if(GLEW_VERSION_1_3)
-            {
-                glActiveTexture(GL_TEXTURE0);
-            }
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-            GlobalOpenGL_debugAssertNoErrors();
+        // RENDER_BLEND
+        if(changingBitsMask & requiredState & RENDER_BLEND)
+        { 
+            enableRenderBlend();
         }
-        else if(stateDelta & ~requiredState & RENDER_BLEND)
-        {
-            glDisable(GL_BLEND);
-            if(GLEW_VERSION_1_3)
-            {
-                glActiveTexture(GL_TEXTURE0);
-            }
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-            GlobalOpenGL_debugAssertNoErrors();
+        else if(changingBitsMask & ~requiredState & RENDER_BLEND)
+        { 
+            disableRenderBlend();
         }
 
-        setState(requiredState, stateDelta, RENDER_CULLFACE, GL_CULL_FACE);
+        setState(requiredState, changingBitsMask, RENDER_CULLFACE, GL_CULL_FACE);
 
-        if(stateDelta & requiredState & RENDER_SMOOTH)
+        if(changingBitsMask & requiredState & RENDER_SMOOTH)
         {
             glShadeModel(GL_SMOOTH);
             GlobalOpenGL_debugAssertNoErrors();
         }
-        else if(stateDelta & ~requiredState & RENDER_SMOOTH)
+        else if(changingBitsMask & ~requiredState & RENDER_SMOOTH)
         {
             glShadeModel(GL_FLAT);
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        setState(requiredState, stateDelta, RENDER_SCALED, GL_NORMALIZE); // not GL_RESCALE_NORMAL
+        setState(requiredState, changingBitsMask, RENDER_SCALED, GL_NORMALIZE); // not GL_RESCALE_NORMAL
 
-        setState(requiredState, stateDelta, RENDER_DEPTHTEST, GL_DEPTH_TEST);
+        setState(requiredState, changingBitsMask, RENDER_DEPTHTEST, GL_DEPTH_TEST);
 
-        if(stateDelta & requiredState & RENDER_DEPTHWRITE)
+        if(changingBitsMask & requiredState & RENDER_DEPTHWRITE)
         {
             glDepthMask(GL_TRUE);
 
             GlobalOpenGL_debugAssertNoErrors();
         }
-        else if(stateDelta & ~requiredState & RENDER_DEPTHWRITE)
+        else if(changingBitsMask & ~requiredState & RENDER_DEPTHWRITE)
         {
             glDepthMask(GL_FALSE);
 
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        if(stateDelta & requiredState & RENDER_COLOURWRITE)
+        if(changingBitsMask & requiredState & RENDER_COLOURWRITE)
         {
             glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
             GlobalOpenGL_debugAssertNoErrors();
         }
-        else if(stateDelta & ~requiredState & RENDER_COLOURWRITE)
+        else if(changingBitsMask & ~requiredState & RENDER_COLOURWRITE)
         {
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        setState(requiredState, stateDelta, RENDER_ALPHATEST, GL_ALPHA_TEST);
+        setState(requiredState, changingBitsMask, RENDER_ALPHATEST, GL_ALPHA_TEST);
 
-        if(stateDelta & requiredState & RENDER_COLOURARRAY)
+        if(changingBitsMask & requiredState & RENDER_COLOURARRAY)
         {
             glEnableClientState(GL_COLOR_ARRAY);
             GlobalOpenGL_debugAssertNoErrors();
         }
-        else if(stateDelta & ~requiredState & RENDER_COLOURARRAY)
+        else if(changingBitsMask & ~requiredState & RENDER_COLOURARRAY)
         {
             glDisableClientState(GL_COLOR_ARRAY);
             glColor4dv(_state.m_colour);
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        if(stateDelta & ~requiredState & RENDER_COLOURCHANGE)
+        if(changingBitsMask & ~requiredState & RENDER_COLOURCHANGE)
         {
             glColor4dv(_state.m_colour);
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        setState(requiredState, stateDelta, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
-        setState(requiredState, stateDelta, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
+        setState(requiredState, changingBitsMask, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
+        setState(requiredState, changingBitsMask, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
 
-        setState(requiredState, stateDelta, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
-        setState(requiredState, stateDelta, RENDER_POLYGONSMOOTH, GL_POLYGON_SMOOTH);
+        setState(requiredState, changingBitsMask, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
+        setState(requiredState, changingBitsMask, RENDER_POLYGONSMOOTH, GL_POLYGON_SMOOTH);
 
-        setState(requiredState, stateDelta, RENDER_FOG, GL_FOG);
-    } // end of stateDelta-dependent changes
+        setState(requiredState, changingBitsMask, RENDER_FOG, GL_FOG);
+    } // end of changingBitsMask-dependent changes
 
   if(requiredState & RENDER_DEPTHTEST && _state.m_depthfunc != current.m_depthfunc)
   {
@@ -321,22 +340,21 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
   }
 
 
+#if 0
   if(requiredState & RENDER_TEXTURE && _state.m_colour[3] != current.m_colour[3])
   {
     glColor4d(1,1,1,_state.m_colour[3]);
     GlobalOpenGL_debugAssertNoErrors();
   }
+#endif
 
-  if(!(requiredState & RENDER_TEXTURE)
-    && (_state.m_colour[0] != current.m_colour[0]
-    || _state.m_colour[1] != current.m_colour[1]
-    || _state.m_colour[2] != current.m_colour[2]
-    || _state.m_colour[3] != current.m_colour[3]))
-  {
-    glColor4dv(_state.m_colour);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-  current.m_colour = _state.m_colour;
+    // Set the GL colour if it isn't set already
+    if (_state.m_colour != current.m_colour)
+    {
+        glColor4dv(_state.m_colour);
+        current.m_colour = _state.m_colour;
+        GlobalOpenGL_debugAssertNoErrors();
+    }
 
   if(requiredState & RENDER_BLEND
     && (_state.m_blend_src != current.m_blend_src || _state.m_blend_dst != current.m_blend_dst))

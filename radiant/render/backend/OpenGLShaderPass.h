@@ -55,13 +55,22 @@ class OpenGLShaderPass
 private:
 
 	// Apply own state to the "current" state object passed in as a reference,
-	// in combination with the global state parameter
-	void applyState(OpenGLState& current, unsigned int globalState);
+	// in combination with the global state mask, as well as setting
+    // relevant GL parameters directly.
+	void applyState(OpenGLState& current, unsigned int globalStateMask);
 
 	// Flush out the renderables in the vector and draw them to screen
 	void flushRenderables(OpenGLState& current, 
 						  unsigned int globalstate, 
 						  const Vector3& viewer);
+
+    /* Helper functions to enable/disable particular GL states */
+
+    void enableRenderTexture();
+    void disableRenderTexture();
+
+    void enableRenderBlend();
+    void disableRenderBlend();
 
 public:
 
