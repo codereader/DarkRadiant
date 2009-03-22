@@ -154,12 +154,12 @@ void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
     if (tok_lc == "vertexcolor")
     {
         _currentLayer.vertexColourMode =
-            LayerTemplate::VERTEX_COLOUR_MULTIPLY;
+            ShaderLayer::VERTEX_COLOUR_MULTIPLY;
     }
     else if (tok_lc == "inversevertexcolor")
     {
         _currentLayer.vertexColourMode = 
-            LayerTemplate::VERTEX_COLOUR_INVERSE_MULTIPLY;
+            ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY;
     }
     else if (tok_lc == "red" 
              || tok_lc == "green" 

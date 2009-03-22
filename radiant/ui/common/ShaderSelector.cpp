@@ -322,7 +322,7 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 		// This is a light, take the first layer texture
 		const ShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
-			tex = shader->firstLayer()->texture();
+			tex = shader->firstLayer()->texture;
 			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
 			drawQuad = true;
 		} 
@@ -407,7 +407,7 @@ void ShaderSelector::displayLightShaderInfo(IShaderPtr shader, GtkListStore* lis
 	const ShaderLayer* first = shader->firstLayer();
 	std::string texName = "None";
 	if (first != NULL) {
-		TexturePtr tex = shader->firstLayer()->texture();
+		TexturePtr tex = shader->firstLayer()->texture;
 		texName = tex->name;
 	}
 

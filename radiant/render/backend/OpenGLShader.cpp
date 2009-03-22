@@ -217,7 +217,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
          i != allLayers.end();
          ++i)
     {
-        TexturePtr layerTex = i->texture();
+        TexturePtr layerTex = i->texture;
 
         OpenGLState& state = appendDefaultPass();
         state.renderFlags = RENDER_FILL
@@ -230,7 +230,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
         state.m_texture = layerTex->texture_number;
 
         // Get the blend function
-        BlendFunc blendFunc = i->blendFunc();
+        BlendFunc blendFunc = i->blendFunc;
         state.m_blend_src = blendFunc.src;
         state.m_blend_dst = blendFunc.dest;
         if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
