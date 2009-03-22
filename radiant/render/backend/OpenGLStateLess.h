@@ -49,9 +49,9 @@ struct OpenGLStateLess
 	    return self.m_texture7 < other.m_texture7;
 	  }
 	  //! Sort by state bit-vector.
-	  if(self.m_state != other.m_state)
+	  if(self.renderFlags != other.renderFlags)
 	  {
-	    return self.m_state < other.m_state;
+	    return self.renderFlags < other.renderFlags;
 	  }
 	  //! Comparing address makes sure states are never equal.
 	  return &self < &other;

@@ -59,17 +59,17 @@ inline void setState(unsigned int state,
 void OpenGLShaderPass::applyState(OpenGLState& current,
 								   unsigned int globalstate) 
 {
-  if(_state.m_state & RENDER_OVERRIDE)
+  if(_state.renderFlags & RENDER_OVERRIDE)
   {
     globalstate |= RENDER_FILL | RENDER_DEPTHWRITE;
   }
   
 	// Required state bitmask is combination of this statebucket's internal
 	// state and the current global state
-	const unsigned int requiredState = _state.m_state & globalstate;
+	const unsigned int requiredState = _state.renderFlags & globalstate;
 	
 	// Delta is change between the current state and the required state
-	const unsigned int stateDelta = requiredState ^ current.m_state;
+	const unsigned int stateDelta = requiredState ^ current.renderFlags;
 
 	GLProgram* program = (requiredState & RENDER_PROGRAM) != 0 
 						  ? _state.m_program 
@@ -363,7 +363,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     current.m_pointsize = _state.m_pointsize;
   }
 
-  current.m_state = requiredState;
+  current.renderFlags = requiredState;
 
   GlobalOpenGL_debugAssertNoErrors();
 }
@@ -397,7 +397,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
 	// Apply our state to the current state object
 	applyState(current, globalstate);
 	
-  if((globalstate & _state.m_state & RENDER_SCREEN) != 0)
+  if((globalstate & _state.renderFlags & RENDER_SCREEN) != 0)
   {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -452,7 +452,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
       		glMultMatrixd(*transform);
       		
       		// Determine the face direction
-      		if ((current.m_state & RENDER_CULLFACE) != 0
+      		if ((current.renderFlags & RENDER_CULLFACE) != 0
       			&& matrix4_handedness(*transform) == MATRIX4_RIGHTHANDED)
       		{
       			glFrontFace(GL_CW);
@@ -537,7 +537,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
         }
 
         // Render the renderable
-        i->renderable->render(current.m_state);
+        i->renderable->render(current.renderFlags);
     }
 
     // Cleanup

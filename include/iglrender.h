@@ -88,7 +88,11 @@ public:
   							   float ambientFactor) = 0;
 };
 
-//! A collection of opengl state information.
+/**
+ * \brief
+ * Data structure encapsulating various parameters of the OpenGL state machine,
+ * as well as parameters used internally by Radiant.
+ */
 class OpenGLState
 {
 public:
@@ -111,7 +115,15 @@ public:
     eSortLast = 4096,
   };
 
-  unsigned int m_state;
+    /**
+     * \brief
+     * Render state flags.
+     *
+     * A bitfield containing render flags such as RENDER_COLOURWRITE or
+     * RENDER_BLEND.
+     */
+    unsigned int renderFlags;
+
   std::size_t m_sort;
   GLint m_texture;
   GLint m_texture1;
@@ -134,7 +146,7 @@ public:
 
 	// Default constructor
 	OpenGLState() 
-	: m_state(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
+	: renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
 	  m_texture(0),
 	  m_texture1(0),
 	  m_texture2(0),
