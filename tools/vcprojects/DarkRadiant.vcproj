@@ -1250,6 +1250,10 @@
 						Name="glprogram"
 						>
 						<File
+							RelativePath="..\..\radiant\render\backend\glprogram\ARBBumpProgram.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\..\radiant\render\backend\glprogram\ARBBumpProgram.h"
 							>
 						</File>
