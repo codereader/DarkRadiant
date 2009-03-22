@@ -5,6 +5,7 @@
 
 #include "ishaders.h"
 #include "parser/DefTokeniser.h"
+#include "math/Vector3.h"
 
 #include <map>
 #include <boost/shared_ptr.hpp>
@@ -38,6 +39,17 @@ struct LayerTemplate
   std::string m_alphaTest;
   std::string m_heightmapScale;
 
+    // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
+    Vector3 colour;
+
+    // Vertex colour blend mode
+    enum
+    {
+        VERTEX_COLOUR_NONE, // no vertex colours
+        VERTEX_COLOUR_MULTIPLY, // "vertexColor"
+        VERTEX_COLOUR_INVERSE_MULTIPLY // "inverseVertexColor"
+    } vertexColourMode;
+
 	// Constructor
 	LayerTemplate() 
 	: mapExpr(shaders::MapExpressionPtr()),
@@ -45,7 +57,9 @@ struct LayerTemplate
 	  blendFunc("GL_ONE", "GL_ZERO"), 
   	  m_clampToBorder(false), 
   	  m_alphaTest("-1"), 
-  	  m_heightmapScale("0")
+  	  m_heightmapScale("0"),
+      colour(1, 1, 1),
+      vertexColourMode(VERTEX_COLOUR_NONE)
 	{ }
 };
 
@@ -60,7 +74,7 @@ class ShaderTemplate
 	std::string _name;
   
 	// The current layer (used by the parsing functions)
-	LayerTemplate 	m_currentLayer;
+	LayerTemplate _currentLayer;
   
 public:
   	// Vector of LayerTemplates representing each stage in the material
@@ -213,12 +227,16 @@ private:
 	 */
 	void parseDefinition();
 
-	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
-	bool parseLightFlags(parser::DefTokeniser&, const std::string&);
-	bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
-	bool parseBlendType(parser::DefTokeniser&, const std::string&);
-	bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
-	bool parseClamp(parser::DefTokeniser&, const std::string&);
+    // Parse helpers. These scan for possible matches, this is not a
+    // recursive-descent parser
+	void parseShaderFlags(parser::DefTokeniser&, const std::string&);
+	void parseLightFlags(parser::DefTokeniser&, const std::string&);
+	void parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
+	void parseBlendType(parser::DefTokeniser&, const std::string&);
+	void parseBlendMaps(parser::DefTokeniser&, const std::string&);
+	void parseClamp(parser::DefTokeniser&, const std::string&);
+    void parseColourModulation(parser::DefTokeniser&, const std::string&);
+
 	bool saveLayer();
   
 };

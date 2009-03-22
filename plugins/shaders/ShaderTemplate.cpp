@@ -15,7 +15,7 @@
  * 
  * 	Note: input "token" has to be lowercase for the keywords to be recognized
  */
-bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
+void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "qer_trans") {
 		m_fTrans = boost::lexical_cast<float>(tokeniser.nextToken());
@@ -53,17 +53,11 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std
 		// greebo: Parse description token, this should be the next one
 		description = tokeniser.nextToken();
 	}
-	else {
-		// We haven't found anything of interest >> return false
-		return false;
-	}
-
-	return true;
 }
 
 /* Searches for light-specific keywords and takes the appropriate actions
  */
-bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
+void ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "ambientlight") {
 		ambientLight = true;
@@ -77,15 +71,10 @@ bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
     else if (!fogLight && token == "lightfalloffimage") {
     	_lightFalloff = shaders::IMapExpression::createForToken(tokeniser);
     }
-	else {
-		// No light-specific keywords found, return false
-		return false;	
-	}
-	return true;
 }
 
 // Parse any single-line stages (such as "diffusemap x/y/z")
-bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, 
+void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, 
 										 const std::string& token) 
 {
 	if (token == "qer_editorimage") {
@@ -100,114 +89,138 @@ bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
 	else if (token == "bumpmap") {
 		_bump = shaders::IMapExpression::createForToken(tokeniser);
 	}
-	else {
-		// No shortcuts found, return false
-		return false;	
-	}
-	return true;
 }
 
 /* Parses for possible blend commands like "add", "diffusemap", "gl_one, gl_zero" etc.
  * Note: input "token" has to be lowercase
  * Output: true, if the blend keyword was found, false otherwise.
  */
-bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::string& token) 
+void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::string& token) 
 {
 	if (token == "blend") 
     {
 		std::string blendType = boost::algorithm::to_lower_copy(tokeniser.nextToken());
 		
 		if (blendType == "diffusemap") {
-			m_currentLayer.m_type = LAYER_DIFFUSEMAP;
+			_currentLayer.m_type = LAYER_DIFFUSEMAP;
 		}
 		else if (blendType == "bumpmap") {
-			m_currentLayer.m_type = LAYER_BUMPMAP;
+			_currentLayer.m_type = LAYER_BUMPMAP;
 		}
 		else if (blendType == "specularmap") {
-			m_currentLayer.m_type = LAYER_SPECULARMAP;
+			_currentLayer.m_type = LAYER_SPECULARMAP;
 		}
 		else 
         {
             // Special blend type, either predefined like "add" or "modulate",
             // or an explicit combination of GL blend modes
-			m_currentLayer.blendFunc.first = blendType;
+			_currentLayer.blendFunc.first = blendType;
 			
 			if (blendType.substr(0,3) == "gl_") 
             {
 				// This is an explicit GL blend mode
 				tokeniser.assertNextToken(",");
-				m_currentLayer.blendFunc.second = tokeniser.nextToken();
+				_currentLayer.blendFunc.second = tokeniser.nextToken();
 			} else {
-				m_currentLayer.blendFunc.second = "";
+				_currentLayer.blendFunc.second = "";
 			}			
 		}		
 	} 
-	else {
-		// Nothing found
-		return false;	
-	}
-	
-	return true;
 }
 
 /* Searches for clamp keywords in stage 2, expects token to be lowercase 
  */
-bool ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::string& token) 
+void ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "zeroclamp") {
-		m_currentLayer.m_clampToBorder = true;
+		_currentLayer.m_clampToBorder = true;
 	}
-	else {
-		return false;
-	}
-	
-	return true;
 }
 
 /* Searches for the map keyword in stage 2, expects token to be lowercase 
  */
-bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
+void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {	
 	if (token == "map") {
-		m_currentLayer.mapExpr = shaders::IMapExpression::createForToken(tokeniser);		
+		_currentLayer.mapExpr = shaders::IMapExpression::createForToken(tokeniser);		
 	}
-	else {
-		return false;
-	}
-	
-	return true;
+}
+
+// Search for colour modifications, e.g. red, green, blue, rgb or vertexColor
+void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
+                                           const std::string& token)
+{
+    std::string tok_lc = boost::algorithm::to_lower_copy(token);
+    if (tok_lc == "vertexcolor")
+    {
+        _currentLayer.vertexColourMode =
+            LayerTemplate::VERTEX_COLOUR_MULTIPLY;
+    }
+    else if (tok_lc == "inversevertexcolor")
+    {
+        _currentLayer.vertexColourMode = 
+            LayerTemplate::VERTEX_COLOUR_INVERSE_MULTIPLY;
+    }
+    else if (tok_lc == "red" 
+             || tok_lc == "green" 
+             || tok_lc == "blue" 
+             || tok_lc == "rgb")
+    {
+        // Get the colour value
+        std::string valueString = tokeniser.nextToken();
+        float value = strToFloat(valueString);
+
+        // Set the appropriate component(s)
+        if (tok_lc == "red")
+        {
+            _currentLayer.colour[0] = value;
+        }
+        else if (tok_lc == "green")
+        {
+            _currentLayer.colour[1] = value;
+        }
+        else if (tok_lc == "blue")
+        {
+            _currentLayer.colour[2] = value;
+        }
+        else
+        {
+            _currentLayer.colour = Vector3(value, value, value);
+        }
+    }
 }
 
 /* Saves the accumulated data (m_type, m_blendFunc etc.) to the m_layers vector.  
  */
 bool ShaderTemplate::saveLayer()
 {
-	switch (m_currentLayer.m_type) {
+	switch (_currentLayer.m_type) {
 		case LAYER_DIFFUSEMAP:
-			_diffuse = m_currentLayer.mapExpr;
+			_diffuse = _currentLayer.mapExpr;
 			break;
 		case LAYER_BUMPMAP:
-			_bump = m_currentLayer.mapExpr;
+			_bump = _currentLayer.mapExpr;
 			break;
 		case LAYER_SPECULARMAP:
-			_specular = m_currentLayer.mapExpr;
+			_specular = _currentLayer.mapExpr;
 			break;
 		default:
-			if (m_currentLayer.mapExpr) {
-				m_layers.push_back(m_currentLayer);
+			if (_currentLayer.mapExpr) {
+				m_layers.push_back(_currentLayer);
 			}
 	}
 	
 	// Clear the currentLayer structure for possible future layers
-	m_currentLayer.m_type = LAYER_NONE;
-	m_currentLayer.mapExpr = shaders::MapExpressionPtr();
+	_currentLayer.m_type = LAYER_NONE;
+	_currentLayer.mapExpr = shaders::MapExpressionPtr();
 	return true;
 }
 
 /* Parses a material definition for shader keywords and takes the according 
  * actions. 
  */
-void ShaderTemplate::parseDefinition() {
+void ShaderTemplate::parseDefinition() 
+{
 	// Construct a local deftokeniser to parse the unparsed block
 	parser::BasicDefTokeniser<std::string> tokeniser(
 		_blockContents,
@@ -219,29 +232,30 @@ void ShaderTemplate::parseDefinition() {
 
 	try
 	{
-		int curStage = 1;	// we always start at stage 1
+		int level = 1;	// we always start at top level
 			
-		while (curStage > 0 && tokeniser.hasMoreTokens()) {
+		while (level > 0 && tokeniser.hasMoreTokens()) 
+        {
 			std::string token = tokeniser.nextToken();
 			std::string token_lowercase = boost::algorithm::to_lower_copy(token);
 			
 			if (token=="}") {
 				
-				if (--curStage == 1) {
+				if (--level == 1) {
 					saveLayer();
 				}
 			} 
 			else if (token=="{") {
-				++curStage;
+				++level;
 			}
 			else {
-				switch (curStage) {
-					case 1:
+				switch (level) {
+					case 1: // global level
 						parseShaderFlags(tokeniser, token_lowercase);
 						parseLightFlags(tokeniser, token_lowercase);
 						parseBlendShortcuts(tokeniser, token_lowercase);
 						break;
-					case 2:
+					case 2: // stage level
 						parseBlendType(tokeniser, token_lowercase);
 						parseBlendMaps(tokeniser, token_lowercase);
 						parseClamp(tokeniser, token_lowercase);
