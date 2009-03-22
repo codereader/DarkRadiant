@@ -14,8 +14,7 @@
 #semantic main.view_origin : C4
 #semantic main.light_origin : C2
 #semantic main.light_color : C3
-#semantic main.bump_scale : C1
-#semantic main.specular_exponent : C5
+#semantic main.vertexColourFactor : C1
 #semantic main.light_scale : C6
 #semantic main.ambientFactor : C7
 #var float4 IN.colour : $vin.COLOR : COL0 : 0 : 1
@@ -34,13 +33,12 @@
 #var float3 view_origin : C4 : c[4] : 6 : 1
 #var float3 light_origin : C2 : c[2] : 7 : 1
 #var float3 light_color : C3 : c[3] : 8 : 1
-#var float bump_scale : C1 : c[1] : 9 : 1
-#var float specular_exponent : C5 : c[5] : 10 : 1
-#var float3 light_scale : C6 : c[6] : 11 : 1
-#var float ambientFactor : C7 : c[7] : 12 : 1
+#var float vertexColourFactor : C1 : c[1] : 9 : 1
+#var float3 light_scale : C6 : c[6] : 10 : 1
+#var float ambientFactor : C7 : c[7] : 11 : 1
 #var float4 main.color : $vout.COLOR : COL : -1 : 1
-#const c[0] = 0.5 2 1
-PARAM c[8] = { { 0.5, 2, 1 },
+#const c[0] = 0.5 2 32 1
+PARAM c[8] = { { 0.5, 2, 32, 1 },
 		program.local[1..7] };
 TEMP R0;
 TEMP R1;
@@ -59,20 +57,19 @@ DP3 R1.y, R0, fragment.texcoord[5];
 DP3 R0.w, R1, R1;
 RSQ R0.w, R0.w;
 MAD R1.xyz, R0.w, R1, R2;
-DP3 R0.w, R1, R1;
-RSQ R2.w, R0.w;
+DP3 R1.w, R1, R1;
+RSQ R1.w, R1.w;
 TEX R0.xyz, fragment.texcoord[1].zwzw, texture[1], 2D;
 ADD R0.xyz, R0, -c[0].x;
 MUL R0.xyz, R0, c[0].y;
-MUL R0.z, R0, c[1].x;
-DP3 R1.w, R0, R0;
-RSQ R0.w, R1.w;
-MUL R1.xyz, R2.w, R1;
+DP3 R0.w, R0, R0;
+RSQ R0.w, R0.w;
+MUL R1.xyz, R1.w, R1;
 MUL R0.xyz, R0.w, R0;
 DP3_SAT R0.w, R0, R1;
 DP3 R1.x, R0, R2;
-POW R1.w, R0.w, c[5].x;
-MOV R0.w, c[0].z;
+POW R2.w, R0.w, c[0].z;
+MOV R0.w, c[0];
 MOV R0.xyz, c[6];
 ADD R0.w, R0, -c[7].x;
 MAD_SAT R0.w, R0, R1.x, c[7].x;
@@ -80,10 +77,12 @@ MUL R0.xyz, R0, c[3];
 MUL R1.xyz, R0, R0.w;
 TEX R0, fragment.texcoord[1], texture[0], 2D;
 MUL R0.xyz, R0, R1;
-MUL R0, R0, fragment.color.primary;
-TEX R1.xyz, fragment.texcoord[2], texture[2], 2D;
-MUL R1.xyz, R1, c[3];
-MAD R2.xyz, R1, R1.w, R0;
+MAD R1, fragment.color.primary, c[1].x, -c[1].x;
+ADD R1, R1, c[0].w;
+MUL R0, R0, R1;
+TEX R2.xyz, fragment.texcoord[2], texture[2], 2D;
+MUL R1.xyz, R2, c[3];
+MAD R2.xyz, R1, R2.w, R0;
 TXP R0.xyz, fragment.texcoord[3], texture[3], 2D;
 MOV R1.y, c[0].x;
 MOV R1.x, fragment.texcoord[3].z;
@@ -92,4 +91,4 @@ MUL R0.xyz, R2, R0;
 MUL result.color.xyz, R0, R1;
 MOV result.color.w, R0;
 END
-# 46 instructions, 3 R-regs
+# 47 instructions, 3 R-regs

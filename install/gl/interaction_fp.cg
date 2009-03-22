@@ -51,8 +51,7 @@ cg_fragment2final main(cg_vertex2fragment IN,
 			uniform float3 view_origin : C4,
 			uniform float3 light_origin : C2,
 			uniform float3 light_color : C3,
-			uniform float bump_scale : C1,
-			uniform float specular_exponent : C5,
+			uniform float vertexColourFactor : C1,
 			uniform float3 light_scale: C6,
 			uniform float ambientFactor: C7)
 {
@@ -72,7 +71,6 @@ cg_fragment2final main(cg_vertex2fragment IN,
 	
 	// compute normal in tangent space from bumpmap
 	float3 T = CG_Expand(tex2D(bumpmap, IN.tex_diffuse_bump.zw).xyz);
-	T.z *= bump_scale;
 	float3 N = normalize(T);
 	
 	// compute the diffuse term
@@ -80,14 +78,19 @@ cg_fragment2final main(cg_vertex2fragment IN,
 	diffuse.rgb *= light_color * light_scale * saturate((1 - ambientFactor) * dot(N, L) + ambientFactor);
 	
 	// compute the specular term
-	float3 specular = tex2D(specularmap, IN.tex_specular.xy).rgb * light_color * pow(saturate(dot(N, H)), specular_exponent);
+	float3 specular = tex2D(specularmap, IN.tex_specular.xy).rgb 
+                      * light_color 
+                      * pow(saturate(dot(N, H)), 32);
 	
 	// compute attenuation
 	float3 attenuation_xy	= tex2Dproj(attenuationmap_xy, float3(IN.tex_atten_xy_z.x, IN.tex_atten_xy_z.y, IN.tex_atten_xy_z.w)).rgb;
 	float3 attenuation_z	= tex2D(attenuationmap_z, float2(IN.tex_atten_xy_z.z, 0.5)).rgb;
 					
+    // multiply in vertex colour, as specified by the vertexColourFactor
+    diffuse *= (IN.colour * vertexColourFactor + (1 - vertexColourFactor));
+
 	// compute final color
-	OUT.color.rgba = diffuse * IN.colour;
+	OUT.color.rgba = diffuse;
 	OUT.color.rgb += specular;
 	OUT.color.rgb *= attenuation_xy;
 	OUT.color.rgb *= attenuation_z;

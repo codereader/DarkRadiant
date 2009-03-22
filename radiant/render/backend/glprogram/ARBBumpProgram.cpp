@@ -3,6 +3,20 @@
 namespace render
 {
 
+namespace
+{
+    /* CONSTANT FRAGMENT PROGRAM PARAMETERS
+     * These should match what is used by interaction_fp.cg
+     */
+    const int C1_VERTEX_COL_FACTOR = 1;
+    const int C2_LIGHT_ORIGIN = 2;
+    const int C3_LIGHT_COLOR = 3;
+    const int C4_VIEW_ORIGIN = 4;
+    const int C6_LIGHT_SCALE = 6;
+    const int C7_AMBIENT_FACTOR = 7;
+
+}
+
 void ARBBumpProgram::setParameters(const Vector3& viewer, 
                                    const Matrix4& localToWorld, 
                                    const Vector3& origin, 
@@ -25,25 +39,34 @@ void ARBBumpProgram::setParameters(const Vector3& viewer,
     matrix4_multiply_by_matrix4(local2light, localToWorld); // local->world->light
 
     // view origin
-    glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 4, localViewer.x(), localViewer.y(), localViewer.z(), 0);
+    glProgramLocalParameter4fARB(
+        GL_FRAGMENT_PROGRAM_ARB, C4_VIEW_ORIGIN, localViewer.x(), localViewer.y(), localViewer.z(), 0
+    );
 
     // light origin
-    glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 2, localLight.x(), localLight.y(), localLight.z(), 1);
+    glProgramLocalParameter4fARB(
+        GL_FRAGMENT_PROGRAM_ARB, C2_LIGHT_ORIGIN, localLight.x(), localLight.y(), localLight.z(), 1
+    );
 
     // light colour
-    glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 3, colour.x(), colour.y(), colour.z(), 0);
+    glProgramLocalParameter4fARB(
+        GL_FRAGMENT_PROGRAM_ARB, C3_LIGHT_COLOR, colour.x(), colour.y(), colour.z(), 0
+    );
 
-    // bump scale
-    glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 1, 1, 0, 0, 0);
-
-    // specular exponent
-    glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 5, 32, 0, 0, 0);
+    // Vertex colour factor (0 - 1)
+    glProgramLocalParameter4fARB(
+        GL_FRAGMENT_PROGRAM_ARB, C1_VERTEX_COL_FACTOR, 0, 0, 0, 0
+    );
 
 	// light scale
-	glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6, _lightScale, _lightScale, _lightScale, 0);
+	glProgramLocalParameter4fARB(
+        GL_FRAGMENT_PROGRAM_ARB, C6_LIGHT_SCALE, _lightScale, _lightScale, _lightScale, 0
+    );
 
 	// ambient factor
-	glProgramLocalParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 7, ambientFactor, 0, 0, 0);
+	glProgramLocalParameter4fARB(
+        GL_FRAGMENT_PROGRAM_ARB, C7_AMBIENT_FACTOR, ambientFactor, 0, 0, 0
+    );
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);
