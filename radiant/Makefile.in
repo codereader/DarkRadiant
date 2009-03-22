@@ -70,6 +70,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-FloatingCamWnd.$(OBJEXT) \
 	darkradiant-Namespace.$(OBJEXT) \
 	darkradiant-NamespaceFactory.$(OBJEXT) \
+	darkradiant-ARBBumpProgram.$(OBJEXT) \
 	darkradiant-OpenGLShader.$(OBJEXT) \
 	darkradiant-GLProgramFactory.$(OBJEXT) \
 	darkradiant-OpenGLShaderPass.$(OBJEXT) \
@@ -422,6 +423,7 @@ darkradiant_SOURCES = main.cpp \
 					  camera/FloatingCamWnd.cpp \
 					  namespace/Namespace.cpp \
 					  namespace/NamespaceFactory.cpp \
+					  render/backend/glprogram/ARBBumpProgram.cpp \
 					  render/backend/OpenGLShader.cpp \
 					  render/backend/GLProgramFactory.cpp \
 					  render/backend/OpenGLShaderPass.cpp \
@@ -651,6 +653,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ARBBumpProgram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AboutDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AddPropertyDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ApplicationContextImpl.Po@am__quote@
@@ -1249,6 +1252,20 @@ darkradiant-NamespaceFactory.obj: namespace/NamespaceFactory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='namespace/NamespaceFactory.cpp' object='darkradiant-NamespaceFactory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-NamespaceFactory.obj `if test -f 'namespace/NamespaceFactory.cpp'; then $(CYGPATH_W) 'namespace/NamespaceFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/namespace/NamespaceFactory.cpp'; fi`
+
+darkradiant-ARBBumpProgram.o: render/backend/glprogram/ARBBumpProgram.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ARBBumpProgram.o -MD -MP -MF $(DEPDIR)/darkradiant-ARBBumpProgram.Tpo -c -o darkradiant-ARBBumpProgram.o `test -f 'render/backend/glprogram/ARBBumpProgram.cpp' || echo '$(srcdir)/'`render/backend/glprogram/ARBBumpProgram.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ARBBumpProgram.Tpo $(DEPDIR)/darkradiant-ARBBumpProgram.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/glprogram/ARBBumpProgram.cpp' object='darkradiant-ARBBumpProgram.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ARBBumpProgram.o `test -f 'render/backend/glprogram/ARBBumpProgram.cpp' || echo '$(srcdir)/'`render/backend/glprogram/ARBBumpProgram.cpp
+
+darkradiant-ARBBumpProgram.obj: render/backend/glprogram/ARBBumpProgram.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ARBBumpProgram.obj -MD -MP -MF $(DEPDIR)/darkradiant-ARBBumpProgram.Tpo -c -o darkradiant-ARBBumpProgram.obj `if test -f 'render/backend/glprogram/ARBBumpProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/ARBBumpProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/ARBBumpProgram.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ARBBumpProgram.Tpo $(DEPDIR)/darkradiant-ARBBumpProgram.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/glprogram/ARBBumpProgram.cpp' object='darkradiant-ARBBumpProgram.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ARBBumpProgram.obj `if test -f 'render/backend/glprogram/ARBBumpProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/ARBBumpProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/ARBBumpProgram.cpp'; fi`
 
 darkradiant-OpenGLShader.o: render/backend/OpenGLShader.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLShader.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLShader.Tpo -c -o darkradiant-OpenGLShader.o `test -f 'render/backend/OpenGLShader.cpp' || echo '$(srcdir)/'`render/backend/OpenGLShader.cpp
