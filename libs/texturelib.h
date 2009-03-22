@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iimage.h"
 #include "ishaders.h"
 
-typedef Vector3 Colour3;
 typedef unsigned int GLuint;
 
 enum ProjectionAxis {
@@ -55,9 +54,6 @@ public:
 	
 	// The GL bind number for use in OpenGL calls
 	GLuint texture_number;
-	
-	// for flat shade mode
-	Colour3 color;
 	
 	// Constructor
 	Texture(const std::string& name) :

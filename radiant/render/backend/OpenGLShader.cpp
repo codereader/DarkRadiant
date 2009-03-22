@@ -201,9 +201,8 @@ void OpenGLShader::constructEditorPreviewPassFromIShader()
     }
   }
 
-    // Set the GL color
-    reinterpret_cast<Vector3&>(state.m_colour) = _iShader->getEditorImage()->color;
-    state.m_colour[3] = 1.0f;
+    // Set the GL color to white
+    state.m_colour = Vector4(1, 1, 1, 1);
 
     // Opaque blending, write to depth buffer
     state.renderFlags |= RENDER_DEPTHWRITE;
@@ -240,7 +239,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
         }
 
         // Colour modulation
-        state.m_colour = Vector4(1.0, 0, 0.25, 1.0);
+        //state.m_colour = Vector4(1.0, 0, 0.25, 1.0);
 
         state.m_sort = OpenGLState::eSortFullbright;
     }

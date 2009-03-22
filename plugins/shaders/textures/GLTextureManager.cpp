@@ -138,19 +138,14 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	return returnValue;
 }
 
-void GLTextureManager::load(TexturePtr texture, ImagePtr image) {
+void GLTextureManager::load(TexturePtr texture, ImagePtr image) 
+{
 	// Download the texture and set the reference number
 	texture->texture_number = image->downloadTextureToGL();
 
 	// Fill the Texture structure with the metadata
 	texture->width = image->getWidth(0);
 	texture->height = image->getHeight(0);
-
-	// Flat-shade colour mode will not be supported in the near future (TODO)
-	texture->color = Colour3(0.5, 0.5, 0.5);
-	
-	/*// Calculate an average, representative colour for flatshade rendering 
-	texture->color = TextureManipulator::instance().getFlatshadeColour(image);*/
 }
 
 } // namespace shaders
