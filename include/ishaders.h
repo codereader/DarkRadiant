@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iimage.h"
 #include "imodule.h"
 
+#include "math/Vector3.h"
+
 #include <ostream>
 #include <vector>
 
@@ -139,41 +141,52 @@ public:
  * Each shader layer contains an image texture, a blend mode (e.g. add,
  * modulate) and various other data.
  */
-class ShaderLayer 
+struct ShaderLayer 
 {
-    TexturePtr m_texture;
-    BlendFunc m_blendFunc;
-    bool m_clampToBorder;
-    float m_alphaTest;
-
 public:
 
-    ShaderLayer(TexturePtr texture,
-                BlendFunc blendFunc,
-                bool clampToBorder,
-                float alphaTest) 
-    : m_texture(texture),
-      m_blendFunc(blendFunc),
-      m_clampToBorder(false),
-      m_alphaTest(alphaTest) 
-    {}
-    
-    TexturePtr texture() const {
-        return m_texture;
-    }
-    
-    BlendFunc blendFunc() const {
-        return m_blendFunc;
-    }
-    
-    bool clampToBorder() const {
-        return m_clampToBorder;
-    }
-    
-    float alphaTest() const {
-        return m_alphaTest;
-    }
+    // The image texture
+    TexturePtr texture;
 
+    // Blend function
+    BlendFunc blendFunc;
+
+    // Clamp flag
+    bool clampToBorder;
+
+    // Alpha test value
+    float alphaTest;
+
+    /**
+     * \brief
+     * Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
+     */
+    Vector3 colour;
+
+    /**
+     * \brief
+     * Vertex colour blend mode
+     */
+    enum VertexColourMode
+    {
+        VERTEX_COLOUR_NONE, // no vertex colours
+        VERTEX_COLOUR_MULTIPLY, // "vertexColor"
+        VERTEX_COLOUR_INVERSE_MULTIPLY // "inverseVertexColor"
+    } vertexColourMode;
+
+    /**
+     * \brief
+     * Main constructor.
+     */
+    ShaderLayer(TexturePtr t,
+                BlendFunc bf,
+                bool clamp,
+                float at) 
+    : texture(t),
+      blendFunc(bf),
+      clampToBorder(false),
+      alphaTest(at) 
+    {}
 };
 
 typedef std::vector<ShaderLayer> ShaderLayerVector;

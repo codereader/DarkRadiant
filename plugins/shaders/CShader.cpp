@@ -351,12 +351,17 @@ void CShader::setVisible(bool visible) {
 
 ShaderLayer CShader::getShaderLayerFromTemplate(const LayerTemplate& layerTemp) 
 {
-	return ShaderLayer(
+    // Construct a ShaderLayer and copy across all parameters from the template.
+    ShaderLayer layer(
 		GetTextureManager().getBinding(layerTemp.mapExpr),
 		blendFuncFromStrings(layerTemp.blendFunc),
 		layerTemp.m_clampToBorder,
 		boost::lexical_cast<float>(layerTemp.m_alphaTest)
 	);
+    layer.colour = layerTemp.colour;
+    layer.vertexColourMode = layerTemp.vertexColourMode;
+
+    return layer;
 }
 
 bool CShader::m_lightingEnabled = false;

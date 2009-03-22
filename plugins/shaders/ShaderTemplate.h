@@ -43,12 +43,7 @@ struct LayerTemplate
     Vector3 colour;
 
     // Vertex colour blend mode
-    enum
-    {
-        VERTEX_COLOUR_NONE, // no vertex colours
-        VERTEX_COLOUR_MULTIPLY, // "vertexColor"
-        VERTEX_COLOUR_INVERSE_MULTIPLY // "inverseVertexColor"
-    } vertexColourMode;
+    ShaderLayer::VertexColourMode vertexColourMode;
 
 	// Constructor
 	LayerTemplate() 
@@ -59,7 +54,7 @@ struct LayerTemplate
   	  m_alphaTest("-1"), 
   	  m_heightmapScale("0"),
       colour(1, 1, 1),
-      vertexColourMode(VERTEX_COLOUR_NONE)
+      vertexColourMode(ShaderLayer::VERTEX_COLOUR_NONE)
 	{ }
 };
 
