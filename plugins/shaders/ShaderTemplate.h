@@ -16,7 +16,6 @@ namespace shaders { class IMapExpression; }
 enum LayerTypeId
 {
   LAYER_NONE,
-  LAYER_BLEND,
   LAYER_DIFFUSEMAP,
   LAYER_BUMPMAP,
   LAYER_SPECULARMAP
