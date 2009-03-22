@@ -39,6 +39,7 @@ private:
     // member
     void constructLightingPassesFromIShader();
     void constructStandardPassesFromIShader();
+    void constructEditorPreviewPassFromIShader();
 
     // Destroy internal data
 	void destroy();
