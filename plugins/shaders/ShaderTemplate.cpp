@@ -150,36 +150,35 @@ void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
                                            const std::string& token)
 {
-    std::string tok_lc = boost::algorithm::to_lower_copy(token);
-    if (tok_lc == "vertexcolor")
+    if (token == "vertexcolor")
     {
         _currentLayer.vertexColourMode =
             ShaderLayer::VERTEX_COLOUR_MULTIPLY;
     }
-    else if (tok_lc == "inversevertexcolor")
+    else if (token == "inversevertexcolor")
     {
         _currentLayer.vertexColourMode = 
             ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY;
     }
-    else if (tok_lc == "red" 
-             || tok_lc == "green" 
-             || tok_lc == "blue" 
-             || tok_lc == "rgb")
+    else if (token == "red" 
+             || token == "green" 
+             || token == "blue" 
+             || token == "rgb")
     {
         // Get the colour value
         std::string valueString = tokeniser.nextToken();
         float value = strToFloat(valueString);
 
         // Set the appropriate component(s)
-        if (tok_lc == "red")
+        if (token == "red")
         {
             _currentLayer.colour[0] = value;
         }
-        else if (tok_lc == "green")
+        else if (token == "green")
         {
             _currentLayer.colour[1] = value;
         }
-        else if (tok_lc == "blue")
+        else if (token == "blue")
         {
             _currentLayer.colour[2] = value;
         }
@@ -259,6 +258,7 @@ void ShaderTemplate::parseDefinition()
 						parseBlendType(tokeniser, token_lowercase);
 						parseBlendMaps(tokeniser, token_lowercase);
 						parseClamp(tokeniser, token_lowercase);
+                        parseColourModulation(tokeniser, token_lowercase);
 						break;
 				}
 			} 

@@ -239,7 +239,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
         }
 
         // Colour modulation
-        //state.m_colour = Vector4(1.0, 0, 0.25, 1.0);
+        state.m_colour = Vector4(i->colour, 1.0);
 
         state.m_sort = OpenGLState::eSortFullbright;
     }
