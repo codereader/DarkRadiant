@@ -1052,11 +1052,7 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\radiant\render\backend\OpenGLStateMap.cpp">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
-		<Unit filename="..\..\radiant\render\backend\OpenGLStateMap.h">
+		<Unit filename="..\..\radiant\render\backend\glprogram\ARBBumpProgram.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
