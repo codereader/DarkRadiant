@@ -543,7 +543,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
                 Vector3 lightOrigin = (light->isProjected() 
                                        ? light->worldOrigin()
                                        : lightBounds.origin + light->offset());
-                current.m_program->setParameters(
+                current.m_program->applyRenderParams(
                     viewer,
                     *i->transform,
                     lightOrigin,

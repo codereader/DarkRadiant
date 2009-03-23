@@ -107,12 +107,16 @@ public:
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-  void setParameters(const Vector3& viewer, 
-					  const Matrix4& localToWorld, 
-					  const Vector3& origin, 
-					  const Vector3& colour, 
-					  const Matrix4& world2light,
-					  float ambientFactor);
+    // Set shader parameters
+    void setShaderParams(ShaderLayer::VertexColourMode mode);
+
+    // Set render pass parameters
+    void applyRenderParams(const Vector3& viewer, 
+                           const Matrix4& localToWorld, 
+                           const Vector3& origin, 
+                           const Vector3& colour, 
+                           const Matrix4& world2light,
+                           float ambientFactor);
 };
 
 } // namespace render
