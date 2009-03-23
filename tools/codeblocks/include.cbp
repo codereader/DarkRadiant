@@ -18,6 +18,7 @@
 		<Unit filename="..\..\include\Bounded.h" />
 		<Unit filename="..\..\include\GLProgramAttributes.h" />
 		<Unit filename="..\..\include\ModResource.h" />
+		<Unit filename="..\..\include\StringSerialisable.h" />
 		<Unit filename="..\..\include\cullable.h" />
 		<Unit filename="..\..\include\editable.h" />
 		<Unit filename="..\..\include\iarchive.h" />
@@ -85,6 +86,7 @@
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

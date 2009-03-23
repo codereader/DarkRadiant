@@ -150,6 +150,8 @@
 		<Unit filename="..\..\libs\gtkutil\RightAlignment.h" />
 		<Unit filename="..\..\libs\gtkutil\ScrolledFrame.h" />
 		<Unit filename="..\..\libs\gtkutil\SeparatorMenuItem.h" />
+		<Unit filename="..\..\libs\gtkutil\SerialisableWidgets.cpp" />
+		<Unit filename="..\..\libs\gtkutil\SerialisableWidgets.h" />
 		<Unit filename="..\..\libs\gtkutil\StockIconMenuItem.h" />
 		<Unit filename="..\..\libs\gtkutil\TextButton.h" />
 		<Unit filename="..\..\libs\gtkutil\TextColumn.h" />
@@ -177,6 +179,7 @@
 		<Unit filename="..\..\libs\gtkutil\idledraw.cpp" />
 		<Unit filename="..\..\libs\gtkutil\idledraw.h" />
 		<Unit filename="..\..\libs\gtkutil\ifc\EditorWidget.h" />
+		<Unit filename="..\..\libs\gtkutil\ifc\Widget.h" />
 		<Unit filename="..\..\libs\gtkutil\menu\PopupMenu.cpp" />
 		<Unit filename="..\..\libs\gtkutil\menu\PopupMenu.h" />
 		<Unit filename="..\..\libs\gtkutil\messagebox.cpp" />
