@@ -328,7 +328,45 @@ void Manager::keyChanged(const std::string& key, const std::string& val)
 	updateEnginePath();
 }
 
-void Manager::updateEnginePath(bool forced) {
+void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
+{
+   // Construct the map path and make sure the folder exists
+   std::string mapPath;
+   
+   // Get the maps folder (e.g. "maps/")
+   std::string mapFolder = GlobalRegistry().get(RKEY_MAPS_FOLDER);
+   if (mapFolder.empty()) {
+      mapFolder = "maps/"; 
+   }
+    
+   if (_fsGame.empty() && _fsGameBase.empty()) {
+      mapPath = baseGamePath + mapFolder;
+   }
+   else if (!_fsGame.empty()) {
+      mapPath = _modPath + mapFolder;
+   }
+   else { // fsGameBase is not empty
+      mapPath = _modBasePath + mapFolder;
+   }
+   globalOutputStream() << "GameManager: Map path set to " << mapPath << "\n";
+   os::makeDirectory(mapPath);
+
+   // Save the map path to the registry
+   GlobalRegistry().set(RKEY_MAP_PATH, mapPath);
+
+   // Setup the prefab path
+   std::string prefabPath = mapPath;
+   std::string pfbFolder = GlobalRegistry().get(RKEY_PREFAB_FOLDER);
+   
+   // Replace the "maps/" with "prefabs/"
+   boost::algorithm::replace_last(prefabPath, mapFolder, pfbFolder);
+   // Store the path into the registry
+   globalOutputStream() << "GameManager: Prefab path set to " << prefabPath << "\n";
+   GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);
+}
+
+void Manager::updateEnginePath(bool forced) 
+{
 	// Clean the new path
 	std::string newPath = os::standardPathWithSlash(
 		GlobalRegistry().get(RKEY_ENGINE_PATH)
@@ -379,14 +417,13 @@ void Manager::updateEnginePath(bool forced) {
 #endif
 			}
 			
-#if defined(POSIX)
-			// this is the *NIX path ~/.doom3/base/
+			// On UNIX this is the user-local enginepath, e.g. ~/.doom3/base/
+         // On Windows this will be the same as global engine path
 			std::string userBasePath = os::standardPathWithSlash(
 				getUserEnginePath() // ~/.doom3
             + currentGame()->getRequiredKeyValue("basegame") // base
 			);
 			_vfsSearchPaths.push_back(userBasePath);
-#endif
 			
 			// Register the base game folder (/usr/local/games/doom3/<basegame>) last
 			// This will always be searched, but *after* the other paths
@@ -395,39 +432,8 @@ void Manager::updateEnginePath(bool forced) {
 			);
 			_vfsSearchPaths.push_back(baseGame);
 			
-			// Construct the map path and make sure the folder exists
-			std::string mapPath;
-			
-			// Get the maps folder (e.g. "maps/")
-			std::string mapFolder = GlobalRegistry().get(RKEY_MAPS_FOLDER);
-			if (mapFolder.empty()) {
-				mapFolder = "maps/"; 
-			}
-			 
-			if (_fsGame.empty() && _fsGameBase.empty()) {
-				mapPath = baseGame + mapFolder;
-			}
-			else if (!_fsGame.empty()) {
-				mapPath = _modPath + mapFolder;
-			}
-			else { // fsGameBase is not empty
-				mapPath = _modBasePath + mapFolder;
-			}
-			globalOutputStream() << "GameManager: Map path set to " << mapPath << "\n";
-			os::makeDirectory(mapPath);
-
-			// Save the map path to the registry
-			GlobalRegistry().set(RKEY_MAP_PATH, mapPath);
-
-			// Setup the prefab path
-			std::string prefabPath = mapPath;
-			std::string pfbFolder = GlobalRegistry().get(RKEY_PREFAB_FOLDER);
-			
-			// Replace the "maps/" with "prefabs/"
-			boost::algorithm::replace_last(prefabPath, mapFolder, pfbFolder);
-			// Store the path into the registry
-			globalOutputStream() << "GameManager: Prefab path set to " << prefabPath << "\n";
-			GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);
+         // Update map and prefab paths
+         setMapAndPrefabPaths(userBasePath);
 
 			_enginePathInitialised = true;
 			

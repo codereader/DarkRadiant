@@ -55,10 +55,10 @@ public:
 	 * The full path of the file selected, or the empty string if no selection
 	 * was made.
 	 */
-	 static std::string getMapFilename(bool open, 
-	 								   const std::string& title,
-	 								   const std::string& type = "map",
-                                       const std::string& defaultFile = "");
+   static std::string getMapFilename(bool open, 
+                                     const std::string& title,
+                                     const std::string& type = "map",
+                                     const std::string& defaultFile = "");
 };
 
 }
