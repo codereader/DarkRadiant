@@ -17,12 +17,17 @@ namespace
 
 }
 
-void ARBBumpProgram::setParameters(const Vector3& viewer, 
-                                   const Matrix4& localToWorld, 
-                                   const Vector3& origin, 
-                                   const Vector3& colour, 
-                                   const Matrix4& world2light,
-                                   float ambientFactor)
+void ARBBumpProgram::setShaderParams(ShaderLayer::VertexColourMode mode)
+{
+
+}
+
+void ARBBumpProgram::applyRenderParams(const Vector3& viewer, 
+                                       const Matrix4& localToWorld, 
+                                       const Vector3& origin, 
+                                       const Vector3& colour, 
+                                       const Matrix4& world2light,
+                                       float ambientFactor)
 {
     Matrix4 world2local(localToWorld);
     matrix4_affine_invert(world2local);
