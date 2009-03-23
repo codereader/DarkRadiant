@@ -24,9 +24,12 @@ class CShader
 
 	// Textures for this shader
 	TexturePtr _editorTexture;
-	TexturePtr _diffuse;
-	TexturePtr _bump;
-	TexturePtr _specular;
+
+    // Special layers
+	ShaderLayer _diffuse;
+	ShaderLayer _bump;
+	ShaderLayer _specular;
+
 	TexturePtr _texLightFalloff;
 
 	bool m_bInUse;
@@ -54,13 +57,13 @@ public:
 	TexturePtr getEditorImage();
 	
 	// getDiffuse() retrieves the TexturePtr and realises the shader if necessary
-	TexturePtr getDiffuse();
+	const ShaderLayer& getDiffuse();
 	
 	// Return bumpmap if it exists, otherwise _flat
-	TexturePtr getBump();
+	const ShaderLayer& getBump();
 	
 	// Return specular map or a black texture
-	TexturePtr getSpecular();
+	const ShaderLayer& getSpecular();
 
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();

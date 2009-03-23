@@ -114,51 +114,61 @@ TexturePtr CShader::getEditorImage()
 	return _editorTexture;
 }
 
-TexturePtr CShader::getDiffuse() 
+const ShaderLayer& CShader::getDiffuse() 
 {
 	// If we have no diffuse texture but the template contains a map expression,
     // get a texture binding for it
-	if (!_diffuse && _template->getDiffuse()) 
+	if (!_diffuse.texture && _template->getDiffuseLayer().mapExpr) 
     {
 		// Pass the call to the GLTextureManager to realise this image 
-		_diffuse = GetTextureManager().getBinding(_template->getDiffuse()); 
+		_diffuse.texture = GetTextureManager().getBinding(
+            _template->getDiffuseLayer().mapExpr
+        ); 
 	}
 
 	return _diffuse;
 }
 
 // Return bumpmap if it exists, otherwise _flat
-TexturePtr CShader::getBump() {
-	
+const ShaderLayer& CShader::getBump() 
+{
 	// Check if the boost::shared_ptr is still uninitialised
-	if (!_bump) {
-	
+	if (!_bump.texture) 
+    {
 		// Create image. If the bump map is not set, we need to use the
 		// flat image here
-		if (_template->getBump()) {
-			_bump = GetTextureManager().getBinding(_template->getBump());
+		if (_template->getBumpLayer().mapExpr) {
+			_bump.texture = GetTextureManager().getBinding(
+                _template->getBumpLayer().mapExpr
+            );
 		}
 		else {
-			_bump = GetTextureManager().getBinding(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT);
+			_bump.texture = GetTextureManager().getBinding(
+                GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
+            );
 		}
 	}
 	return _bump;
 }
 
 // Get the specular texture
-TexturePtr CShader::getSpecular() {
-
+const ShaderLayer& CShader::getSpecular() 
+{
 	// Check if the boost::shared_ptr is still uninitialised
-	if (!_specular) {
-		
+	if (!_specular.texture) 
+    {
 		// Create image. If the specular map is not set, we need to use 
 		// the _black image here
-		if (_template->getSpecular()) {
-			_specular = GetTextureManager().getBinding(_template->getSpecular());
+		if (_template->getSpecularLayer().mapExpr) {
+			_specular.texture = GetTextureManager().getBinding(
+                _template->getSpecularLayer().mapExpr
+            );
 		}
 		else {
 			// Create a Black MapExpression
-			_specular = GetTextureManager().getBinding(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK);
+			_specular.texture = GetTextureManager().getBinding(
+                GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
+            );
 		}
 	}
 	return _specular;
