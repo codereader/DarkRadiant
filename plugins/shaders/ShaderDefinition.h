@@ -6,6 +6,9 @@
 #include "ShaderTemplate.h"
 #include "ShaderNameCompareFunctor.h"
 
+namespace shaders
+{
+
 /**
  * Wrapper class that associates a ShaderTemplate with its filename.
  */
@@ -27,5 +30,7 @@ struct ShaderDefinition
 };
 
 typedef std::map<std::string, ShaderDefinition, ShaderNameCompareFunctor> ShaderDefinitionMap;
+
+}
 
 #endif /*SHADERDEFINITION_H_*/

@@ -174,6 +174,7 @@ void RenderablePicoSurface::createDisplayLists() {
 			glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
 			glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);
 		}
+        glColor3dv(v.colour);
 		glVertex3dv(v.vertex);	
 	}
 	glEnd();

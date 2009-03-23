@@ -178,13 +178,13 @@ public:
      * \brief
      * Main constructor.
      */
-    ShaderLayer(TexturePtr t,
-                BlendFunc bf,
-                bool clamp,
-                float at) 
+    ShaderLayer(TexturePtr t = TexturePtr(),
+                BlendFunc bf = BlendFunc(GL_ONE, GL_ZERO),
+                bool clamp = false,
+                float at = 0) 
     : texture(t),
       blendFunc(bf),
-      clampToBorder(false),
+      clampToBorder(clamp),
       alphaTest(at) 
     {}
 };
@@ -225,26 +225,30 @@ public:
 
     /**
      * \brief
-     * Return the diffuse map texture for this shader, to be used in lighting
+     * Return the diffuse map layer for this shader, to be used in lighting
      * render mode.
      *
-     * This method may be return a NULL shared pointer, since a texture does not
-     * need to have a diffusemap. In this case, the shader should not be
-     * rendered in lighting mode.
+     * This method may return a layer containing a NULL texture pointer, since a
+     * texture does not need to have a diffusemap. In this case, the shader
+     * should not be rendered in lighting mode.
      */
-    virtual TexturePtr getDiffuse() = 0;
+    virtual const ShaderLayer& getDiffuse() = 0;
 
     /**
      * \brief
-     * Return the bump map texture for this shader.
+     * Return the bump map layer for this shader.
      *
-     * Unlike getDiffuse(), this method will always return a non-NULL pointer.
-     * If the shader does not use a bump map, a fully-flat bump map will be
-     * returned instead.
+     * Unlike getDiffuse(), this method will always return a layer with a valid
+     * texture pointer.  If the shader does not use a bump map, a fully-flat
+     * bump map will be returned instead.
      */
-    virtual TexturePtr getBump() = 0;
+    virtual const ShaderLayer& getBump() = 0;
 
-    virtual TexturePtr getSpecular() = 0;
+    /**
+     * \brief 
+     * Return the specular layer for this shader.
+     */
+    virtual const ShaderLayer& getSpecular() = 0;
 
     /**
      * \brief

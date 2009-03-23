@@ -22,6 +22,9 @@ enum LayerTypeId
   LAYER_SPECULARMAP
 };
 
+namespace shaders
+{
+
 /**
  * Parsed structure for a single material stage.
  */
@@ -80,10 +83,12 @@ private:
 
 	// Map expressions
 	shaders::MapExpressionPtr _texture;
-	shaders::MapExpressionPtr _diffuse;
-	shaders::MapExpressionPtr _bump;
-	shaders::MapExpressionPtr _specular;
 	shaders::MapExpressionPtr _lightFalloff;
+
+    // Shader layers
+	LayerTemplate _diffuseLayer;
+	LayerTemplate _bumpLayer;
+	LayerTemplate _specularLayer;
 
 	/* Light type booleans */	
 	bool fogLight;
@@ -194,19 +199,19 @@ public:
 		return _texture;
 	}
 
-	const shaders::MapExpressionPtr& getDiffuse() {
+	const LayerTemplate& getDiffuseLayer() {
 		if (!_parsed) parseDefinition();
-		return _diffuse;
+		return _diffuseLayer;
 	}
 
-	const shaders::MapExpressionPtr& getBump() {
+	const LayerTemplate& getBumpLayer() {
 		if (!_parsed) parseDefinition();
-		return _bump;
+		return _bumpLayer;
 	}
 
-	const shaders::MapExpressionPtr& getSpecular() {
+	const LayerTemplate& getSpecularLayer() {
 		if (!_parsed) parseDefinition();
-		return _specular;
+		return _specularLayer;
 	}
 
 	const shaders::MapExpressionPtr& getLightFalloff() {
@@ -243,5 +248,7 @@ typedef boost::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
 
 // Map of named ShaderTemplates
 typedef std::map<std::string, ShaderTemplatePtr> ShaderTemplateMap;
+
+}
 
 #endif /*SHADERTEMPLATE_H_*/
