@@ -185,7 +185,9 @@ public:
     : texture(t),
       blendFunc(bf),
       clampToBorder(clamp),
-      alphaTest(at) 
+      alphaTest(at),
+      colour(1, 1, 1),
+      vertexColourMode(VERTEX_COLOUR_NONE)
     {}
 };
 
