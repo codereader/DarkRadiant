@@ -51,6 +51,11 @@ private:
 	
 	bool _enginePathInitialised;
 	
+private:
+
+   // Set the map and prefab file paths from the current game information
+   void setMapAndPrefabPaths(const std::string& baseGamePath);
+
 public:
 	Manager();
 
