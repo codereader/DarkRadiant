@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ctime>
+
 /**
  * \brief
  * Helper class to restrict the frequency of an event, such as updating a GTK
@@ -20,16 +22,8 @@ class EventRateLimiter
    // Separation time provided at construction
    unsigned long _separationTime;
 
-   // Time until next event
-   unsigned long _timeUntilNext;
-
-private:
-
-   // Decrement the timer (platform-specific)
-   void decrementTimer()
-   {
-      _timeUntilNext--;
-   }
+   // Last clock invocation
+   clock_t _lastClock;
 
 public:
 
@@ -38,36 +32,32 @@ public:
     * Construct an EventRateLimiter with the given event separation time.
     *
     * \param separationTime
-    * Value representing the number of calls to readyForEvent() which should
-    * occur between events.
-    *
-    * \todo
-    * On supported platforms, make the separation time work as an actual time in
-    * milliseconds.
+    * Number of milliseconds that should elapse between subsequent events.
     */
-   EventRateLimiter(unsigned long separationTime)
-   : _separationTime(separationTime),
-     _timeUntilNext(separationTime)
+   EventRateLimiter(unsigned long separationTimeMillis)
+   : _separationTime(separationTimeMillis),
+     _lastClock(clock())
    { }
 
    /**
     * \brief
     * Test whether the event is ready to be triggered.
     *
-    * If the return value is false, the timer is decremented and the calling
-    * code should not trigger the event. If the return value is true, the timer
-    * is reset and the event may be triggered by the calling code.
+    * If the return value is false, the calling code should not trigger the
+    * event. If the return value is true, the timer is reset and the event may
+    * be triggered by the calling code.
     */
    bool readyForEvent()
    {
-      if (_timeUntilNext == 0)
+      clock_t currentClk = clock();
+      float diffMillis = (currentClk - _lastClock) / (0.001 * CLOCKS_PER_SEC);
+      if (diffMillis >= _separationTime)
       {
-         _timeUntilNext = _separationTime;
+         _lastClock = currentClk;
          return true;
       }
       else
       {
-         decrementTimer();
          return false;
       }
    }
