@@ -26,25 +26,29 @@ namespace map {
 		}
 	}
 
+// Constructor
 NodeImporter::NodeImporter(const MapImportInfo& importInfo, 
 						   InfoFile& infoFile, 
-						   const PrimitiveParser& parser) :
-	_root(importInfo.root),
-	_inputStream(&importInfo.inputStream),
-	_tok(_inputStream),
-	_infoFile(infoFile),
-	_loadStatusInterleave(static_cast<std::size_t>(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE))),
-	_entityCount(0),
-	_primitiveCount(0),
-	_layerInfoCount(0),
-	_parser(parser),
-	_debug(GlobalRegistry().get("user/debug") == "1")
+						   const PrimitiveParser& parser) 
+: _root(importInfo.root),
+  _inputStream(&importInfo.inputStream),
+  _tok(_inputStream),
+  _infoFile(infoFile),
+  _dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
+  _entityCount(0),
+  _primitiveCount(0),
+  _layerInfoCount(0),
+  _parser(parser),
+  _debug(GlobalRegistry().get("user/debug") == "1")
 {
 	bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
 
-	if (showProgressDialog) {
+	if (showProgressDialog) 
+   {
 		_dialog = gtkutil::ModalProgressDialogPtr(
-			new gtkutil::ModalProgressDialog(GlobalRadiant().getMainWindow(), "Loading map")
+			new gtkutil::ModalProgressDialog(
+            GlobalRadiant().getMainWindow(), "Loading map"
+         )
 		);
 	}
 }
@@ -57,16 +61,21 @@ bool NodeImporter::parse() {
 	}
 
 	// Read each entity in the map, until EOF is reached
-	while (_tok.hasMoreTokens()) {
+	while (_tok.hasMoreTokens()) 
+   {
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
-		if (_dialog != NULL && _entityCount % _loadStatusInterleave == 0) {
-			try {
+		if (_dialog && _dialogEventLimiter.readyForEvent()) 
+      {
+			try 
+         {
 				_dialog->setText("Loading entity " + sizetToStr(_entityCount));
 			}
-			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
-				gtkutil::errorDialog("Map loading cancelled", 
-									 GlobalRadiant().getMainWindow());
+			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) 
+         {
+				gtkutil::errorDialog(
+               "Map loading cancelled", GlobalRadiant().getMainWindow()
+            );
 
 				// Clear out the root node, otherwise we end up with half a map
 				scene::NodeRemover remover;
@@ -133,12 +142,11 @@ bool NodeImporter::parseMapVersion() {
 	return true;
 }
 
-void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity) {
-	// Check if the entitycount is matching the interleave
-	bool updateDialog = _dialog != NULL && (_entityCount % _loadStatusInterleave == 0);
-
+void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity) 
+{
     // Update the dialog
-    if (updateDialog && (_primitiveCount % _loadStatusInterleave == 0)) {
+    if (_dialog && _dialogEventLimiter.readyForEvent()) 
+    {
         _dialog->setText(
             _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount)
         );
