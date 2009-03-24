@@ -54,7 +54,8 @@ shaders_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
 am_shaders_la_OBJECTS = ShaderTemplate.lo CShader.lo ShaderLibrary.lo \
 	MapExpression.lo ShaderFileLoader.lo plugin.lo \
 	TextureManipulator.lo FileLoader.lo DefaultConstructor.lo \
-	ImageLoaderManager.lo GLTextureManager.lo Doom3ShaderSystem.lo
+	ImageLoaderManager.lo GLTextureManager.lo Doom3ShaderSystem.lo \
+	Doom3ShaderLayer.lo
 shaders_la_OBJECTS = $(am_shaders_la_OBJECTS)
 shaders_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -229,7 +230,8 @@ shaders_la_SOURCES = ShaderTemplate.cpp \
                      textures/DefaultConstructor.cpp \
                      textures/ImageLoaderManager.cpp \
                      textures/GLTextureManager.cpp \
-                     Doom3ShaderSystem.cpp
+                     Doom3ShaderSystem.cpp \
+					 Doom3ShaderLayer.cpp
 
 all: all-am
 
@@ -302,6 +304,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CShader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DefaultConstructor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3ShaderLayer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3ShaderSystem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLTextureManager.Plo@am__quote@

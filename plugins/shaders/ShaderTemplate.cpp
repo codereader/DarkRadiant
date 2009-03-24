@@ -84,13 +84,19 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
         _texture = IMapExpression::createForToken(tokeniser);
     }
     else if (token == "diffusemap") {
-        _diffuseLayer.mapExpr = IMapExpression::createForToken(tokeniser);
+        _diffuseLayer->setMapExpression(
+            IMapExpression::createForToken(tokeniser)
+        );
     }
     else if (token == "specularmap") {
-        _specularLayer.mapExpr = IMapExpression::createForToken(tokeniser);
+        _specularLayer->setMapExpression(
+            IMapExpression::createForToken(tokeniser)
+        );
     }
     else if (token == "bumpmap") {
-        _bumpLayer.mapExpr = IMapExpression::createForToken(tokeniser);
+        _bumpLayer->setMapExpression(
+            IMapExpression::createForToken(tokeniser)
+        );
     }
 }
 
@@ -105,39 +111,32 @@ void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
         std::string blendType = boost::algorithm::to_lower_copy(tokeniser.nextToken());
         
         if (blendType == "diffusemap") {
-            _currentLayer.m_type = LAYER_DIFFUSEMAP;
+            _currentLayer->setLayerType(LAYER_DIFFUSEMAP);
         }
         else if (blendType == "bumpmap") {
-            _currentLayer.m_type = LAYER_BUMPMAP;
+            _currentLayer->setLayerType(LAYER_BUMPMAP);
         }
         else if (blendType == "specularmap") {
-            _currentLayer.m_type = LAYER_SPECULARMAP;
+            _currentLayer->setLayerType(LAYER_SPECULARMAP);
         }
         else 
         {
             // Special blend type, either predefined like "add" or "modulate",
             // or an explicit combination of GL blend modes
-            _currentLayer.blendFunc.first = blendType;
+            StringPair blendFuncStrings;
+            blendFuncStrings.first = blendType;
             
             if (blendType.substr(0,3) == "gl_") 
             {
                 // This is an explicit GL blend mode
                 tokeniser.assertNextToken(",");
-                _currentLayer.blendFunc.second = tokeniser.nextToken();
+                blendFuncStrings.second = tokeniser.nextToken();
             } else {
-                _currentLayer.blendFunc.second = "";
+                blendFuncStrings.second = "";
             }           
+            _currentLayer->setBlendFuncStrings(blendFuncStrings);
         }       
     } 
-}
-
-/* Searches for clamp keywords in stage 2, expects token to be lowercase 
- */
-void ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::string& token) 
-{   
-    if (token == "zeroclamp") {
-        _currentLayer.m_clampToBorder = true;
-    }
 }
 
 /* Searches for the map keyword in stage 2, expects token to be lowercase 
@@ -145,7 +144,7 @@ void ShaderTemplate::parseClamp(parser::DefTokeniser& tokeniser, const std::stri
 void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {   
     if (token == "map") {
-        _currentLayer.mapExpr = shaders::IMapExpression::createForToken(tokeniser);     
+        _currentLayer->setMapExpression(IMapExpression::createForToken(tokeniser));     
     }
 }
 
@@ -155,13 +154,15 @@ void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
 {
     if (token == "vertexcolor")
     {
-        _currentLayer.vertexColourMode =
-            ShaderLayer::VERTEX_COLOUR_MULTIPLY;
+        _currentLayer->setVertexColourMode(
+            ShaderLayer::VERTEX_COLOUR_MULTIPLY
+        );
     }
     else if (token == "inversevertexcolor")
     {
-        _currentLayer.vertexColourMode = 
-            ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY;
+        _currentLayer->setVertexColourMode( 
+            ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY
+        );
     }
     else if (token == "red" 
              || token == "green" 
@@ -173,22 +174,24 @@ void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
         float value = strToFloat(valueString);
 
         // Set the appropriate component(s)
+        Vector3 currentColour = _currentLayer->getColour();
         if (token == "red")
         {
-            _currentLayer.colour[0] = value;
+            currentColour[0] = value;
         }
         else if (token == "green")
         {
-            _currentLayer.colour[1] = value;
+            currentColour[1] = value;
         }
         else if (token == "blue")
         {
-            _currentLayer.colour[2] = value;
+            currentColour[2] = value;
         }
         else
         {
-            _currentLayer.colour = Vector3(value, value, value);
+            currentColour = Vector3(value, value, value);
         }
+        _currentLayer->setColour(currentColour);
     }
 }
 
@@ -198,7 +201,7 @@ bool ShaderTemplate::saveLayer()
 {
     // If the current layer is a special layer, save it to the respective member
     // variable, otherwise add it to the layer list
-    switch (_currentLayer.m_type) {
+    switch (_currentLayer->getLayerType()) {
         case LAYER_DIFFUSEMAP:
             _diffuseLayer = _currentLayer;
             break;
@@ -209,14 +212,13 @@ bool ShaderTemplate::saveLayer()
             _specularLayer = _currentLayer;
             break;
         default:
-            if (_currentLayer.mapExpr) {
+            if (_currentLayer->getMapExpression()) {
                 m_layers.push_back(_currentLayer);
             }
     }
     
     // Clear the currentLayer structure for possible future layers
-    _currentLayer.m_type = LAYER_NONE;
-    _currentLayer.mapExpr = shaders::MapExpressionPtr();
+    _currentLayer = Doom3ShaderLayerPtr(new Doom3ShaderLayer);
     return true;
 }
 
@@ -262,7 +264,6 @@ void ShaderTemplate::parseDefinition()
                     case 2: // stage level
                         parseBlendType(tokeniser, token_lowercase);
                         parseBlendMaps(tokeniser, token_lowercase);
-                        parseClamp(tokeniser, token_lowercase);
                         parseColourModulation(tokeniser, token_lowercase);
                         break;
                 }
@@ -271,9 +272,8 @@ void ShaderTemplate::parseDefinition()
 
         // If the texture is missing (i.e. no editorimage provided), 
         // substitute this with the diffusemap
-        // \todo WARNING: THIS WILL BREAK IF NO DIFFUSE
         if (!_texture) {        
-            _texture = _diffuseLayer.mapExpr;
+            _texture = _diffuseLayer->getMapExpression();
         }
     }
     catch (parser::ParseException p) {

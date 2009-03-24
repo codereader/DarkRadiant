@@ -2,6 +2,7 @@
 #define SHADERTEMPLATE_H_
 
 #include "MapExpression.h"
+#include "Doom3ShaderLayer.h"
 
 #include "ishaders.h"
 #include "parser/DefTokeniser.h"
@@ -10,56 +11,10 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-typedef std::pair<std::string, std::string> StringPair;
-
 namespace shaders { class IMapExpression; }
-
-enum LayerTypeId
-{
-  LAYER_NONE,
-  LAYER_DIFFUSEMAP,
-  LAYER_BUMPMAP,
-  LAYER_SPECULARMAP
-};
 
 namespace shaders
 {
-
-/**
- * Parsed structure for a single material stage.
- */
-struct LayerTemplate
-{
-	// The Map Expression for this stage
-	shaders::MapExpressionPtr mapExpr;
-
-  LayerTypeId m_type;
-
-    // Blend function as strings (e.g. "GL_ONE", "GL_ZERO")
-    StringPair blendFunc;
-
-  bool m_clampToBorder;
-  std::string m_alphaTest;
-  std::string m_heightmapScale;
-
-    // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
-    Vector3 colour;
-
-    // Vertex colour blend mode
-    ShaderLayer::VertexColourMode vertexColourMode;
-
-	// Constructor
-	LayerTemplate() 
-	: mapExpr(shaders::MapExpressionPtr()),
-	  m_type(LAYER_NONE), 
-	  blendFunc("GL_ONE", "GL_ZERO"), 
-  	  m_clampToBorder(false), 
-  	  m_alphaTest("-1"), 
-  	  m_heightmapScale("0"),
-      colour(1, 1, 1),
-      vertexColourMode(ShaderLayer::VERTEX_COLOUR_NONE)
-	{ }
-};
 
 /**
  * Data structure storing parsed material information from a material decl. This
@@ -71,12 +26,13 @@ class ShaderTemplate
 	// Template name
 	std::string _name;
   
-	// The current layer (used by the parsing functions)
-	LayerTemplate _currentLayer;
+	// Temporary current layer (used by the parsing functions)
+	Doom3ShaderLayerPtr _currentLayer;
   
 public:
+
   	// Vector of LayerTemplates representing each stage in the material
-  	typedef std::vector<LayerTemplate> Layers;
+  	typedef std::vector<Doom3ShaderLayerPtr> Layers;
 
 private:
 	Layers m_layers;
@@ -86,9 +42,9 @@ private:
 	shaders::MapExpressionPtr _lightFalloff;
 
     // Shader layers
-	LayerTemplate _diffuseLayer;
-	LayerTemplate _bumpLayer;
-	LayerTemplate _specularLayer;
+	Doom3ShaderLayerPtr _diffuseLayer;
+	Doom3ShaderLayerPtr _bumpLayer;
+	Doom3ShaderLayerPtr _specularLayer;
 
 	/* Light type booleans */	
 	bool fogLight;
@@ -113,8 +69,17 @@ private:
 	bool _parsed;
 
 public:
+
+    /**
+     * \brief
+     * Construct a ShaderTemplate.
+     */
 	ShaderTemplate(const std::string& name, const std::string& blockContents) 
 	: _name(name),
+      _currentLayer(new Doom3ShaderLayer),
+      _diffuseLayer(new Doom3ShaderLayer),
+      _bumpLayer(new Doom3ShaderLayer),
+      _specularLayer(new Doom3ShaderLayer),
       fogLight(false),
       ambientLight(false),
       blendLight(false),
@@ -199,17 +164,20 @@ public:
 		return _texture;
 	}
 
-	const LayerTemplate& getDiffuseLayer() {
+	Doom3ShaderLayerPtr getDiffuseLayer() 
+    {
 		if (!_parsed) parseDefinition();
 		return _diffuseLayer;
 	}
 
-	const LayerTemplate& getBumpLayer() {
+	Doom3ShaderLayerPtr getBumpLayer() 
+    {
 		if (!_parsed) parseDefinition();
 		return _bumpLayer;
 	}
 
-	const LayerTemplate& getSpecularLayer() {
+	Doom3ShaderLayerPtr& getSpecularLayer() 
+    {
 		if (!_parsed) parseDefinition();
 		return _specularLayer;
 	}
@@ -234,7 +202,6 @@ private:
 	void parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
 	void parseBlendType(parser::DefTokeniser&, const std::string&);
 	void parseBlendMaps(parser::DefTokeniser&, const std::string&);
-	void parseClamp(parser::DefTokeniser&, const std::string&);
     void parseColourModulation(parser::DefTokeniser&, const std::string&);
 
 	bool saveLayer();

@@ -136,62 +136,62 @@ public:
 
 /**
  * \brief
- * Data class representing a single layer of a material shader.
+ * A single layer of a material shader.
  *
  * Each shader layer contains an image texture, a blend mode (e.g. add,
  * modulate) and various other data.
  */
-struct ShaderLayer 
+class ShaderLayer 
 {
 public:
 
-    // The image texture
-    TexturePtr texture;
+    /**
+     * \brief
+     * Return the Texture object corresponding to this layer (may be NULL).
+     */
+    virtual TexturePtr getTexture() const = 0;
 
-    // Blend function
-    BlendFunc blendFunc;
-
-    // Clamp flag
-    bool clampToBorder;
-
-    // Alpha test value
-    float alphaTest;
+    /**
+     * \brief
+     * Return the GL blend function for this layer.
+     */
+    virtual BlendFunc getBlendFunc() const = 0;
 
     /**
      * \brief
      * Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
      */
-    Vector3 colour;
+    virtual Vector3 getColour() const = 0;
 
     /**
      * \brief
-     * Vertex colour blend mode
+     * Vertex colour blend mode enumeration.
      */
     enum VertexColourMode
     {
         VERTEX_COLOUR_NONE, // no vertex colours
         VERTEX_COLOUR_MULTIPLY, // "vertexColor"
         VERTEX_COLOUR_INVERSE_MULTIPLY // "inverseVertexColor"
-    } vertexColourMode;
-
+    };
+    
     /**
      * \brief
-     * Main constructor.
+     * Get the vertex colour mode for this layer.
      */
-    ShaderLayer(TexturePtr t = TexturePtr(),
-                BlendFunc bf = BlendFunc(GL_ONE, GL_ZERO),
-                bool clamp = false,
-                float at = 0) 
-    : texture(t),
-      blendFunc(bf),
-      clampToBorder(clamp),
-      alphaTest(at),
-      colour(1, 1, 1),
-      vertexColourMode(VERTEX_COLOUR_NONE)
-    {}
+    virtual VertexColourMode getVertexColourMode() const = 0;
 };
 
-typedef std::vector<ShaderLayer> ShaderLayerVector;
+/**
+ * \brief
+ * Shader pointer for ShaderLayer,
+ */
+typedef boost::shared_ptr<ShaderLayer> ShaderLayerPtr;
+
+/**
+ * \brief
+ * Vector of ShaderLayer pointers.
+ */
+typedef std::vector<ShaderLayerPtr> ShaderLayerVector;
 
 /**
  * \brief
@@ -234,7 +234,7 @@ public:
      * texture does not need to have a diffusemap. In this case, the shader
      * should not be rendered in lighting mode.
      */
-    virtual const ShaderLayer& getDiffuse() = 0;
+    virtual ShaderLayerPtr getDiffuse() = 0;
 
     /**
      * \brief
@@ -244,13 +244,13 @@ public:
      * texture pointer.  If the shader does not use a bump map, a fully-flat
      * bump map will be returned instead.
      */
-    virtual const ShaderLayer& getBump() = 0;
+    virtual ShaderLayerPtr getBump() = 0;
 
     /**
      * \brief 
      * Return the specular layer for this shader.
      */
-    virtual const ShaderLayer& getSpecular() = 0;
+    virtual ShaderLayerPtr getSpecular() = 0;
 
     /**
      * \brief

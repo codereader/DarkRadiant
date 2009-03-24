@@ -494,7 +494,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
             {
 				// Get the XY and Z falloff texture numbers.
 	        	GLuint attenuation_xy = 
-	        		lightShader->firstLayer()->texture->texture_number;
+	        		lightShader->firstLayer()->getTexture()->texture_number;
                 GLuint attenuation_z = 
                 	lightShader->lightFalloffImage()->texture_number;
 
