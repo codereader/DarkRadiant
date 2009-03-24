@@ -35,7 +35,7 @@ public:
 	TextureDirectoryLoader(const std::string& directory)
 	: _searchDir(directory + "/"),
 	  _dialog(GlobalRadiant().getMainWindow(), "Loading textures"),
-     _evLimiter(50)
+     _evLimiter(100)
 	{}
 	
 	// Functor operator
