@@ -5,6 +5,7 @@
 #include "ishaders.h"
 
 #include "gtkutil/ModalProgressDialog.h"
+#include "EventRateLimiter.h"
 
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
@@ -23,6 +24,9 @@ class TextureDirectoryLoader
 	
 	// Modal dialog window to display progress
 	gtkutil::ModalProgressDialog _dialog;
+
+   // Event limiter for dialog updates
+   EventRateLimiter _evLimiter;
 	
 public:
 	typedef const char* first_argument_type;
@@ -30,7 +34,8 @@ public:
 	// Constructor sets the directory to search
 	TextureDirectoryLoader(const std::string& directory)
 	: _searchDir(directory + "/"),
-	  _dialog(GlobalRadiant().getMainWindow(), "Loading textures")
+	  _dialog(GlobalRadiant().getMainWindow(), "Loading textures"),
+     _evLimiter(50)
 	{}
 	
 	// Functor operator
@@ -40,9 +45,14 @@ public:
 
 		// Visited texture must start with the directory name
 		// separated by a slash.
-		if (boost::algorithm::istarts_with(sName, _searchDir)) {
+		if (boost::algorithm::istarts_with(sName, _searchDir)) 
+      {
 			// Update the text in the dialog
-			_dialog.setText("<b>" + sName + "</b>");
+         if (_evLimiter.readyForEvent())
+         {
+            _dialog.setText("<b>" + sName + "</b>");
+         }
+
 			// Load the shader
 			IShaderPtr ref = GlobalShaderSystem().getShaderForName(shaderName);
 		}
