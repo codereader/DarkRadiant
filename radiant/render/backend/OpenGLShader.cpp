@@ -136,9 +136,9 @@ void OpenGLShader::constructLightingPassesFromIShader()
     
     // Construct diffuse/bump/specular render pass
     OpenGLState& bumpPass = appendDefaultPass();
-    bumpPass.m_texture = _iShader->getDiffuse().texture->texture_number;
-    bumpPass.m_texture1 = _iShader->getBump().texture->texture_number;
-    bumpPass.m_texture2 = _iShader->getSpecular().texture->texture_number;
+    bumpPass.m_texture = _iShader->getDiffuse()->getTexture()->texture_number;
+    bumpPass.m_texture1 = _iShader->getBump()->getTexture()->texture_number;
+    bumpPass.m_texture2 = _iShader->getSpecular()->getTexture()->texture_number;
     
     bumpPass.renderFlags = RENDER_BLEND
                        |RENDER_FILL
@@ -151,8 +151,8 @@ void OpenGLShader::constructLightingPassesFromIShader()
     
     bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
 
-//    std::cout << "constructLightingPassesFromIShader(): shader " << _iShader->getName() << std::endl;
-    //std::cout << "  vertex mode is " << _iShader->getDiffuse().vertexColourMode << std::endl;
+    //std::cout << "constructLightingPassesFromIShader(): shader " << _iShader->getName() << std::endl;
+    //std::cout << "  vertex mode is " << _iShader->getDiffuse()->getVertexColourMode() << std::endl;
     
     bumpPass.m_depthfunc = GL_LEQUAL;
     bumpPass.m_sort = OpenGLState::eSortMultiFirst;
@@ -220,7 +220,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
          i != allLayers.end();
          ++i)
     {
-        TexturePtr layerTex = i->texture;
+        TexturePtr layerTex = (*i)->getTexture();
 
         OpenGLState& state = appendDefaultPass();
         state.renderFlags = RENDER_FILL
@@ -233,7 +233,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
         state.m_texture = layerTex->texture_number;
 
         // Get the blend function
-        BlendFunc blendFunc = i->blendFunc;
+        BlendFunc blendFunc = (*i)->getBlendFunc();
         state.m_blend_src = blendFunc.src;
         state.m_blend_dst = blendFunc.dest;
         if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
@@ -242,7 +242,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
         }
 
         // Colour modulation
-        state.m_colour = Vector4(i->colour, 1.0);
+        state.m_colour = Vector4((*i)->getColour(), 1.0);
 
         state.m_sort = OpenGLState::eSortFullbright;
     }
@@ -281,7 +281,7 @@ void OpenGLShader::constructNormalShader(const std::string& name)
     // and construct the appropriate shader passes
     if (canUseLightingMode()) 
     {
-        if (_iShader->getDiffuse().texture)
+        if (_iShader->getDiffuse()->getTexture())
         {
             // Regular light interaction
             constructLightingPassesFromIShader();

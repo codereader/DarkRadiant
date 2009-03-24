@@ -16,5 +16,6 @@ shaders_la_SOURCES = ShaderTemplate.cpp \
                      textures/DefaultConstructor.cpp \
                      textures/ImageLoaderManager.cpp \
                      textures/GLTextureManager.cpp \
-                     Doom3ShaderSystem.cpp
+                     Doom3ShaderSystem.cpp \
+					 Doom3ShaderLayer.cpp
 

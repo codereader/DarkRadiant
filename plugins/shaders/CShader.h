@@ -26,9 +26,9 @@ class CShader
 	TexturePtr _editorTexture;
 
     // Special layers
-	ShaderLayer _diffuse;
-	ShaderLayer _bump;
-	ShaderLayer _specular;
+	Doom3ShaderLayerPtr _diffuse;
+	Doom3ShaderLayerPtr _bump;
+	Doom3ShaderLayerPtr _specular;
 
 	TexturePtr _texLightFalloff;
 
@@ -38,11 +38,6 @@ class CShader
 
     // Vector of shader layers
 	ShaderLayerVector _layers;
-
-private:
-
-    // Convert a LayerTemplate into an actual ShaderLayer
-    static ShaderLayer getShaderLayerFromTemplate(const LayerTemplate&);
 
 public:
 	static bool m_lightingEnabled;
@@ -57,13 +52,13 @@ public:
 	TexturePtr getEditorImage();
 	
 	// getDiffuse() retrieves the TexturePtr and realises the shader if necessary
-	const ShaderLayer& getDiffuse();
+	ShaderLayerPtr getDiffuse();
 	
 	// Return bumpmap if it exists, otherwise _flat
-	const ShaderLayer& getBump();
+	ShaderLayerPtr getBump();
 	
 	// Return specular map or a black texture
-	const ShaderLayer& getSpecular();
+	ShaderLayerPtr getSpecular();
 
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();

@@ -23,68 +23,6 @@ namespace {
 namespace shaders 
 {
 
-// Map string blend functions to their GLenum equivalents
-GLenum glBlendFromString(const std::string& value) 
-{
-	if (value == "gl_zero") {
-		return GL_ZERO;
-	}
-	if (value == "gl_one") {
-		return GL_ONE;
-	}
-	if (value == "gl_src_color") {
-		return GL_SRC_COLOR;
-	}
-	if (value == "gl_one_minus_src_color") {
-		return GL_ONE_MINUS_SRC_COLOR;
-	}
-	if (value == "gl_src_alpha") {
-		return GL_SRC_ALPHA;
-	}
-	if (value == "gl_one_minus_src_alpha") {
-		return GL_ONE_MINUS_SRC_ALPHA;
-	}
-	if (value == "gl_dst_color") {
-		return GL_DST_COLOR;
-	}
-	if (value == "gl_one_minus_dst_color") {
-		return GL_ONE_MINUS_DST_COLOR;
-	}
-	if (value == "gl_dst_alpha") {
-		return GL_DST_ALPHA;
-	}
-	if (value == "gl_one_minus_dst_alpha") {
-		return GL_ONE_MINUS_DST_ALPHA;
-	}
-	if (value == "gl_src_alpha_saturate") {
-		return GL_SRC_ALPHA_SATURATE;
-	}
-
-	return GL_ZERO;
-}
-
-// Convert a string pair describing a blend function into a BlendFunc object
-BlendFunc blendFuncFromStrings(const StringPair& blendFunc) 
-{
-    // Handle predefined blend modes first: add, modulate, filter
-    if (blendFunc.first == "add")
-    {
-        return BlendFunc(GL_ONE, GL_ONE);
-    }
-    else if (blendFunc.first == "modulate" || blendFunc.first == "filter")
-    {
-        return BlendFunc(GL_ZERO, GL_SRC_COLOR);
-    }
-    else
-    {
-        // Not predefined, just use the specified blend function directly
-        return BlendFunc(
-            glBlendFromString(blendFunc.first),
-            glBlendFromString(blendFunc.second)
-        );
-    }
-}
-
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
 CShader::CShader(const std::string& name, const ShaderDefinition& definition) : 
@@ -114,63 +52,54 @@ TexturePtr CShader::getEditorImage()
 	return _editorTexture;
 }
 
-const ShaderLayer& CShader::getDiffuse() 
+ShaderLayerPtr CShader::getDiffuse() 
 {
-	// If we have no diffuse texture but the template contains a map expression,
-    // get a texture binding for it
-	if (!_diffuse.texture && _template->getDiffuseLayer().mapExpr) 
+    if (!_diffuse)
     {
-		// Pass the call to the GLTextureManager to realise this image 
-		_diffuse.texture = GetTextureManager().getBinding(
-            _template->getDiffuseLayer().mapExpr
-        ); 
-	}
-
+        _diffuse = _template->getDiffuseLayer();
+    }
 	return _diffuse;
 }
 
 // Return bumpmap if it exists, otherwise _flat
-const ShaderLayer& CShader::getBump() 
+ShaderLayerPtr CShader::getBump() 
 {
-	// Check if the boost::shared_ptr is still uninitialised
-	if (!_bump.texture) 
+    if (!_bump)
     {
-		// Create image. If the bump map is not set, we need to use the
-		// flat image here
-		if (_template->getBumpLayer().mapExpr) {
-			_bump.texture = GetTextureManager().getBinding(
-                _template->getBumpLayer().mapExpr
+        _bump = _template->getBumpLayer();
+
+        // If no texture, use the _flat texture
+        if (!_bump->getTexture())
+        {
+            _bump->setTexture(
+                GetTextureManager().getBinding(
+                    GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
+                )
             );
-		}
-		else {
-			_bump.texture = GetTextureManager().getBinding(
-                GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
-            );
-		}
-	}
-	return _bump;
+        }
+
+    }
+    return _bump;
 }
 
 // Get the specular texture
-const ShaderLayer& CShader::getSpecular() 
+ShaderLayerPtr CShader::getSpecular() 
 {
-	// Check if the boost::shared_ptr is still uninitialised
-	if (!_specular.texture) 
+    if (!_specular)
     {
-		// Create image. If the specular map is not set, we need to use 
-		// the _black image here
-		if (_template->getSpecularLayer().mapExpr) {
-			_specular.texture = GetTextureManager().getBinding(
-                _template->getSpecularLayer().mapExpr
+        _specular = _template->getSpecularLayer();
+
+        // If no texture, use black
+        if (!_specular->getTexture())
+        {
+            _specular->setTexture(
+                GetTextureManager().getBinding(
+                    GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
+                )
             );
-		}
-		else {
-			// Create a Black MapExpression
-			_specular.texture = GetTextureManager().getBinding(
-                GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
-            );
-		}
-	}
+        }
+
+    }
 	return _specular;
 }
 
@@ -278,38 +207,13 @@ void CShader::unrealise() {
 // Parse and load image maps for this shader
 void CShader::realiseLighting() 
 {
+    // Only realises extra layers (no diffuse/bump/specular)
 	for (ShaderTemplate::Layers::const_iterator i = _template->getLayers().begin();
 	        i != _template->getLayers().end();
 	        ++i)
 	{
-		_layers.push_back(getShaderLayerFromTemplate(*i));
+		_layers.push_back(*i);
 	}
-
-#if 0
-	if (_layers.size() == 1) {
-		const BlendFuncExpression& blendFunc =
-		    _template->getLayers().front().m_blendFunc;
-
-		// If explicit blend function (2-components), evaluate it, otherwise
-		// use a standard one
-		if (!blendFunc.second.empty()) {
-			m_blendFunc = BlendFunc(glBlendFromString(blendFunc.first),
-			                        glBlendFromString(blendFunc.second));
-		}
-		else {
-			if (blendFunc.first == "add") {
-				m_blendFunc = BlendFunc(GL_ONE, GL_ONE);
-			}
-			else if (blendFunc.first == "filter") {
-				m_blendFunc = BlendFunc(GL_DST_COLOR, GL_ZERO);
-			}
-			else if (blendFunc.first == "blend") {
-				m_blendFunc = BlendFunc(GL_SRC_ALPHA,
-				                        GL_ONE_MINUS_SRC_ALPHA);
-			}
-		}
-	}
-#endif
 }
 
 void CShader::unrealiseLighting() 
@@ -328,7 +232,7 @@ const ShaderLayer* CShader::firstLayer() const {
 	if (_layers.empty()) {
 		return 0;
 	}
-	return &_layers.front();
+	return _layers.front().get();
 }
 
 // Get all layers
@@ -357,21 +261,6 @@ bool CShader::isVisible() const {
 
 void CShader::setVisible(bool visible) {
 	_visible = visible;
-}
-
-ShaderLayer CShader::getShaderLayerFromTemplate(const LayerTemplate& layerTemp) 
-{
-    // Construct a ShaderLayer and copy across all parameters from the template.
-    ShaderLayer layer(
-		GetTextureManager().getBinding(layerTemp.mapExpr),
-		blendFuncFromStrings(layerTemp.blendFunc),
-		layerTemp.m_clampToBorder,
-		boost::lexical_cast<float>(layerTemp.m_alphaTest)
-	);
-    layer.colour = layerTemp.colour;
-    layer.vertexColourMode = layerTemp.vertexColourMode;
-
-    return layer;
 }
 
 bool CShader::m_lightingEnabled = false;
