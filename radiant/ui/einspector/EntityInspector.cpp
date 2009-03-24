@@ -32,18 +32,18 @@ namespace ui {
 /* CONSTANTS */
 
 namespace {
-	
+
     const int TREEVIEW_MIN_WIDTH = 220;
     const int TREEVIEW_MIN_HEIGHT = 60;
     const int PROPERTYEDITORPANE_MIN_HEIGHT = 90;
-    
+
     const char* PROPERTY_NODES_XPATH = "game/entityInspector//property";
 
 	const std::string RKEY_ROOT = "user/ui/entityInspector/";
 	const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
 
 	const std::string HELP_ICON_NAME = "helpicon.png";
-    
+
 	// TreeView column numbers
     enum {
         PROPERTY_NAME_COLUMN,
@@ -61,7 +61,7 @@ namespace {
 // Constructor creates UI components for the EntityInspector dialog
 
 EntityInspector::EntityInspector()
-: _listStore(gtk_list_store_new(N_COLUMNS, 
+: _listStore(gtk_list_store_new(N_COLUMNS,
 	    						G_TYPE_STRING,		// property
 	    						G_TYPE_STRING,		// value
 	    						G_TYPE_STRING,		// text colour
@@ -75,9 +75,9 @@ EntityInspector::EntityInspector()
   _showInherited(false)
 {
     _widget = gtk_vbox_new(FALSE, 0);
-    
+
 	// Pack in GUI components
-	
+
 	GtkWidget* topHBox = gtk_hbox_new(FALSE, 6);
 
 	_showInheritedCheckbox = gtk_check_button_new_with_label("Show inherited properties");
@@ -102,13 +102,13 @@ EntityInspector::EntityInspector()
 	_panedPosition.connect(paned);
 	// Reload the information from the registry
 	restoreSettings();
-    
+
     // Create the context menu
     createContextMenu();
-    
+
     // Stimulate initial redraw to get the correct status
     requestIdleCallback();
-    
+
     // Set the function to call when a keyval is changed. This is a requirement
     // of the EntityCreator interface.
     GlobalEntityCreator().setKeyValueChangedFunc(
@@ -135,38 +135,38 @@ void EntityInspector::restoreSettings() {
 // Create the context menu
 void EntityInspector::createContextMenu() {
 	_contextMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property..."), 
+		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property..."),
 		boost::bind(&EntityInspector::_onAddKey, this)
 	);
 	_contextMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property"), 
-		boost::bind(&EntityInspector::_onDeleteKey, this), 
+		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property"),
+		boost::bind(&EntityInspector::_onDeleteKey, this),
 		boost::bind(&EntityInspector::_testDeleteKey, this)
 	);
 
 	_contextMenu.addItem(gtkutil::SeparatorMenuItem(), gtkutil::PopupMenu::Callback());
 
 	_contextMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy Spawnarg"), 
-		boost::bind(&EntityInspector::_onCopyKey, this), 
+		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy Spawnarg"),
+		boost::bind(&EntityInspector::_onCopyKey, this),
 		boost::bind(&EntityInspector::_testCopyKey, this)
 	);
 	_contextMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_CUT, "Cut Spawnarg"), 
-		boost::bind(&EntityInspector::_onCutKey, this), 
+		gtkutil::StockIconMenuItem(GTK_STOCK_CUT, "Cut Spawnarg"),
+		boost::bind(&EntityInspector::_onCutKey, this),
 		boost::bind(&EntityInspector::_testCutKey, this)
 	);
 	_contextMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_PASTE, "Paste Spawnarg"), 
-		boost::bind(&EntityInspector::_onPasteKey, this), 
+		gtkutil::StockIconMenuItem(GTK_STOCK_PASTE, "Paste Spawnarg"),
+		boost::bind(&EntityInspector::_onPasteKey, this),
 		boost::bind(&EntityInspector::_testPasteKey, this)
 	);
 }
 
 void EntityInspector::onRadiantShutdown() {
-	// Remove all previously stored pane information 
+	// Remove all previously stored pane information
 	GlobalRegistry().deleteXPath(RKEY_PANE_STATE);
-	
+
 	xml::Node node = GlobalRegistry().createKey(RKEY_PANE_STATE);
 	_panedPosition.saveToNode(node);
 }
@@ -188,7 +188,7 @@ EntityInspectorPtr& EntityInspector::getInstancePtr() {
 	return _instancePtr;
 }
 
-// Return the Gtk widget for the EntityInspector dialog. 
+// Return the Gtk widget for the EntityInspector dialog.
 
 GtkWidget* EntityInspector::getWidget() {
 	gtk_widget_show_all(_widget);
@@ -208,7 +208,7 @@ GtkWidget* EntityInspector::createDialogPane() {
 
 // Create the TreeView pane
 
-GtkWidget* EntityInspector::createTreeViewPane() 
+GtkWidget* EntityInspector::createTreeViewPane()
 {
     GtkWidget* vbx = gtk_vbox_new(FALSE, 3);
 
@@ -230,7 +230,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
                                         NULL);
 
 	gtk_tree_view_column_set_sort_column_id(nameCol, PROPERTY_NAME_COLUMN);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);                                                                        
+    gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);
 
 	// Create the value column
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
@@ -239,8 +239,8 @@ GtkWidget* EntityInspector::createTreeViewPane()
 
     GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
     gtk_tree_view_column_pack_start(valCol, valRenderer, TRUE);
-    gtk_tree_view_column_set_attributes(valCol, valRenderer, 
-    									"text", PROPERTY_VALUE_COLUMN, 
+    gtk_tree_view_column_set_attributes(valCol, valRenderer,
+    									"text", PROPERTY_VALUE_COLUMN,
     									"foreground", TEXT_COLOUR_COLUMN,
     									NULL);
 
@@ -257,11 +257,11 @@ GtkWidget* EntityInspector::createTreeViewPane()
 	if (helpIcon != NULL) {
 		gtk_tree_view_column_set_fixed_width(_helpColumn, gdk_pixbuf_get_width(helpIcon));
 	}
-	
+
 	// Add the help icon
 	GtkCellRenderer* pixRend = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(_helpColumn, pixRend, FALSE);
-	gtk_tree_view_column_set_attributes(_helpColumn, pixRend, 
+	gtk_tree_view_column_set_attributes(_helpColumn, pixRend,
 										"pixbuf", HELP_ICON_COLUMN,
 										NULL);
 
@@ -274,13 +274,13 @@ GtkWidget* EntityInspector::createTreeViewPane()
     // Set up the signals
     GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
     g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(callbackTreeSelectionChanged), this);
-                                                                         
+
     // Embed the TreeView in a scrolled viewport
     GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrollWin), GTK_SHADOW_ETCHED_IN);
     gtk_widget_set_size_request(scrollWin, TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT);
-    gtk_container_add(GTK_CONTAINER(scrollWin), _treeView);    
+    gtk_container_add(GTK_CONTAINER(scrollWin), _treeView);
 
     gtk_box_pack_start(GTK_BOX(vbx), scrollWin, TRUE, TRUE, 0);
 
@@ -290,17 +290,17 @@ GtkWidget* EntityInspector::createTreeViewPane()
 
 	GtkWidget* setButton = gtk_button_new();
 	gtk_container_add(
-		GTK_CONTAINER(setButton), 
+		GTK_CONTAINER(setButton),
 		gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_MENU)
 	);
 	GtkWidget* setButtonBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(setButtonBox), _valEntry, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(setButtonBox), setButton, FALSE, FALSE, 0);
-	
+
 	gtk_box_pack_start(GTK_BOX(vbx), _keyEntry, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), setButtonBox, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
-    
+
     // Signals for entry boxes
     g_signal_connect(
     	G_OBJECT(setButton), "clicked", G_CALLBACK(_onSetProperty), this);
@@ -308,8 +308,8 @@ GtkWidget* EntityInspector::createTreeViewPane()
     	G_OBJECT(_keyEntry), "activate", G_CALLBACK(_onEntryActivate), this);
     g_signal_connect(
     	G_OBJECT(_valEntry), "activate", G_CALLBACK(_onEntryActivate), this);
-    
-    return vbx;    
+
+    return vbx;
 }
 
 // Retrieve the selected string from the given property in the list store
@@ -325,7 +325,7 @@ std::string EntityInspector::getListSelection(int col) {
         gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, col, &selString);
         std::string value = g_value_get_string(&selString);
         g_value_unset(&selString);
-        
+
         return value;
     }
     else {
@@ -343,7 +343,7 @@ void EntityInspector::onGtkIdle() {
     // Update from selection system
     updateSelectedEntity();
 
-    if (_selectedEntity != NULL) 
+    if (_selectedEntity != NULL)
     {
         gtk_widget_set_sensitive(_editorFrame, TRUE);
         gtk_widget_set_sensitive(_treeView, TRUE);
@@ -358,7 +358,7 @@ void EntityInspector::onGtkIdle() {
         if (_currentPropertyEditor) {
             _currentPropertyEditor = PropertyEditorPtr();
         }
-		
+
         // Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_editorFrame, FALSE);
         gtk_widget_set_sensitive(_treeView, FALSE);
@@ -371,10 +371,10 @@ void EntityInspector::onGtkIdle() {
 
 // Entity keyvalue changed callback
 void EntityInspector::keyValueChanged() {
-    
+
     // Redraw the entity inspector GUI
     getInstance().requestIdleCallback();
-    
+
     // Set the map modified flag
     if (getInstance()._selectedEntity != NULL)
     	GlobalMap().setModified(true);
@@ -414,12 +414,12 @@ namespace
                 std::string name = entity->getKeyValue("name");
                 std::string model = entity->getKeyValue("model");
                 bool isFuncType = (!name.empty() && name == model);
-                
+
                 // Set the actual value
                 entity->setKeyValue(_key, _value);
-                
+
                 // Check for name key changes of func_statics
-                if (isFuncType && _key == "name") 
+                if (isFuncType && _key == "name")
                 {
                     // Adapt the model key along with the name
                     entity->setKeyValue("model", _value);
@@ -444,12 +444,49 @@ namespace
 
 }
 
+bool    checkString( std::string& string )
+{
+    int                     count = 0;
+
+    // Baal: check string for newline characters \n \r and count them
+    for ( std::string::const_iterator i = string.begin(); i != string.end(); i++ )
+        if ( *i == '\n' || *i == '\r' )
+            count++;
+
+    // Baal: copy the string and remove newlines (only if one of these was found before)
+    if ( count > 0 )
+    {
+        std::string                 temp( string.length() - count, 0 );
+        std::string::const_iterator stringIt;
+        std::string::iterator       tempIt;
+
+        for ( ( stringIt = string.begin(), tempIt = temp.begin() ) ;
+              stringIt != string.end();
+              stringIt++ )
+        {
+            if ( *stringIt == '\n' || *stringIt == '\r' )
+                    continue;
+
+            *tempIt++ = *stringIt;
+        }
+        string = temp;
+        return true;
+    }
+    return false;
+}
+
 // Set entity property from entry boxes
-void EntityInspector::setPropertyFromEntries() 
+void EntityInspector::setPropertyFromEntries()
 {
 	// Get the key from the entry box
 	std::string key = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
 	std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
+
+    //  Baal: check key and value strings for newline characters
+    if ( checkString( key ) )
+        gtk_entry_set_text( GTK_ENTRY( _keyEntry ), key.c_str() );
+    if ( checkString( val ) )
+        gtk_entry_set_text( GTK_ENTRY( _valEntry ), val.c_str() );
 
 	// Pass the call to the specialised routine
 	applyKeyValueToSelection(key, val);
@@ -469,7 +506,7 @@ void EntityInspector::applyKeyValueToSelection(const std::string& key, const std
 		if (mapRoot != NULL) {
 			INamespacePtr nspace = mapRoot->getNamespace();
 
-			if (nspace != NULL && nspace->nameExists(val)) 
+			if (nspace != NULL && nspace->nameExists(val))
             {
 				// name exists, cancel the change
 				gtkutil::errorDialog("The name " + val + " already exists in this map!",
@@ -496,15 +533,15 @@ const PropertyParmMap& EntityInspector::getPropertyMap() {
 
 	// Static instance of local class, which queries the XML Registry
 	// upon construction and adds the property nodes to the map.
-	
+
 	struct PropertyMapConstructor
 	{
 		// Map to construct
 		PropertyParmMap _map;
-		
+
 		// Constructor queries the XML registry
 		PropertyMapConstructor() {
-			xml::NodeList pNodes = GlobalRegistry().findXPath(PROPERTY_NODES_XPATH);	
+			xml::NodeList pNodes = GlobalRegistry().findXPath(PROPERTY_NODES_XPATH);
 			for (xml::NodeList::const_iterator iter = pNodes.begin();
 				 iter != pNodes.end();
 				 ++iter)
@@ -516,29 +553,29 @@ const PropertyParmMap& EntityInspector::getPropertyMap() {
 												  		parms));
 			}
 		}
-		
-		
+
+
 	};
 	static PropertyMapConstructor _propMap;
-	
+
 	// Return the constructed map
 	return _propMap._map;
 }
 
 /* Popup menu callbacks (see gtkutil::PopupMenu) */
 
-void EntityInspector::_onAddKey() 
+void EntityInspector::_onAddKey()
 {
 	// Obtain the entity class to provide to the AddPropertyDialog
 	IEntityClassConstPtr ec = _selectedEntity->getEntityClass();
-	
+
 	// Choose a property, and add to entity with a default value
 	std::string property = AddPropertyDialog::chooseProperty(_selectedEntity);
     if (!property.empty()) {
-        
+
         // Save last key, so that it will be automatically selected
         _lastKey = property;
-        
+
         // Add the keyvalue on the entity (triggering the refresh)
 		_selectedEntity->setKeyValue(property, "-");
     }
@@ -551,7 +588,7 @@ void EntityInspector::_onDeleteKey() {
 }
 
 bool EntityInspector::_testDeleteKey() {
-	// Make sure the Delete item is only available for explicit 
+	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
 	if (getListSelection(INHERITED_FLAG_COLUMN) != "1")
 		return true;
@@ -587,10 +624,10 @@ void EntityInspector::_onCutKey() {
 }
 
 bool EntityInspector::_testCutKey() {
-	// Make sure the Delete item is only available for explicit 
+	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
 	if (getListSelection(INHERITED_FLAG_COLUMN) != "1") {
-		// return true only if selection is not empty		
+		// return true only if selection is not empty
 		return !getListSelection(PROPERTY_NAME_COLUMN).empty();
 	}
 	else {
@@ -649,8 +686,8 @@ void EntityInspector::_onToggleShowHelpIcons(GtkToggleButton* b, EntityInspector
 	gtk_tree_view_column_set_visible(self->_helpColumn, gtk_toggle_button_get_active(b));
 }
 
-gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget, 
-	 gint x, gint y, gboolean keyboard_mode, 
+gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget,
+	 gint x, gint y, gboolean keyboard_mode,
 	 GtkTooltip* tooltip, EntityInspector* self)
 {
 	if (self->_selectedEntity == NULL) return FALSE; // no single entity selected
@@ -676,7 +713,7 @@ gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget,
 
 			if (hasHelp) {
 				std::string key = gtkutil::TreeModel::getString(model, &iter, PROPERTY_NAME_COLUMN);
-			
+
 				IEntityClassConstPtr eclass = self->_selectedEntity->getEntityClass();
 				assert(eclass != NULL);
 
@@ -702,11 +739,11 @@ gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget,
 
 /* END GTK CALLBACKS */
 
-// Update the PropertyEditor pane, displaying the PropertyEditor if necessary 
+// Update the PropertyEditor pane, displaying the PropertyEditor if necessary
 // and making sure it refers to the currently-selected Entity.
 void EntityInspector::treeSelectionChanged() {
 
-	// Abort if called without a valid entity selection (may happen during 
+	// Abort if called without a valid entity selection (may happen during
 	// various cleanup operations).
 	if (_selectedEntity == NULL)
 		return;
@@ -716,16 +753,16 @@ void EntityInspector::treeSelectionChanged() {
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
     if (!key.empty())
         _lastKey = key; // save last key
-    
+
     // Get the type for this key if it exists, and the options
     PropertyParmMap::const_iterator tIter = getPropertyMap().find(key);
-    std::string type = (tIter != getPropertyMap().end() 
-    					? tIter->second.type 
+    std::string type = (tIter != getPropertyMap().end()
+    					? tIter->second.type
     					: "");
-    std::string options = (tIter != getPropertyMap().end() 
-    					   ? tIter->second.options 
+    std::string options = (tIter != getPropertyMap().end()
+    					   ? tIter->second.options
     					   : "");
-    
+
     // If the type was not found, also try looking on the entity class
     if (type.empty()) {
     	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
@@ -733,7 +770,7 @@ void EntityInspector::treeSelectionChanged() {
     }
 
 	// Remove the existing PropertyEditor widget, if there is one
-	GtkWidget* existingWidget = gtk_bin_get_child(GTK_BIN(_editorFrame));    
+	GtkWidget* existingWidget = gtk_bin_get_child(GTK_BIN(_editorFrame));
    	if (existingWidget != NULL)
    		gtk_widget_destroy(existingWidget);
 
@@ -742,14 +779,14 @@ void EntityInspector::treeSelectionChanged() {
                                                            _selectedEntity,
                                                            key,
                                                            options);
-                                                           
+
 	// If the creation was successful (because the PropertyEditor type exists),
 	// add its widget to the editor pane
     if (_currentPropertyEditor) {
-        gtk_container_add(GTK_CONTAINER(_editorFrame), 
+        gtk_container_add(GTK_CONTAINER(_editorFrame),
         				  _currentPropertyEditor->getWidget());
     }
-    
+
     // Update key and value entry boxes, but only if there is a key value. If
     // there is no selection we do not clear the boxes, to allow keyval copying
     // between entities.
@@ -770,29 +807,29 @@ void EntityInspector::refreshTreeModel() {
 
 	// Local functor to enumerate keyvals on object and add them to the list
 	// view.
-	
+
 	class ListPopulateVisitor
 	: public Entity::Visitor
 	{
 		// List store to populate
 		GtkListStore* _store;
-		
+
 		// Property map to look up types
 		const PropertyParmMap& _map;
-		
+
 		// Entity class to check for types
 		IEntityClassConstPtr _eclass;
-        
+
         // Last selected key to highlight
         std::string _lastKey;
-        
+
         // TreeIter to select, if we find the last-selected key
         GtkTreeIter* _lastIter;
-	
+
 	public:
-	
+
 		// Constructor
-		ListPopulateVisitor(GtkListStore* store, 
+		ListPopulateVisitor(GtkListStore* store,
 							const PropertyParmMap& map,
 							IEntityClassConstPtr cls,
                             std::string lastKey)
@@ -800,7 +837,7 @@ void EntityInspector::refreshTreeModel() {
           _lastIter(NULL)
 		{
         }
-		
+
 		// Required visit function
 		virtual void visit(const std::string& key, const std::string& value) {
 
@@ -834,24 +871,24 @@ void EntityInspector::refreshTreeModel() {
 				HELP_ICON_COLUMN, hasDescription ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) : NULL,
 				HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
 				-1);
-            
+
             // If this was the last selected key, save the Iter so we can
             // select it again
             if (key == _lastKey) {
                 _lastIter = gtk_tree_iter_copy(&iter);
             }
-							   	
+
 		}
-        
+
         // Get the iter pointing to the last-selected key
         GtkTreeIter* getLastIter() {
             return _lastIter;
         }
-			
+
 	};
-	
+
 	// Populate the list view
-	ListPopulateVisitor visitor(_listStore, 
+	ListPopulateVisitor visitor(_listStore,
 								getPropertyMap(),
 								_selectedEntity->getEntityClass(),
                                 _lastKey);
@@ -871,7 +908,7 @@ void EntityInspector::refreshTreeModel() {
             lastIter
         );
     }*/
-                                   
+
 	// Force an update of widgets
 	treeSelectionChanged();
 }
@@ -881,9 +918,9 @@ void EntityInspector::appendClassProperties() {
 
 	// Get the entityclass for the current entity
 	std::string className = _selectedEntity->getKeyValue("classname");
-	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(className, 
+	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(className,
 																	 true);
-	
+
 	// Use a functor to walk the entityclass and add all of its attributes
 	// to the tree
 
@@ -900,7 +937,7 @@ void EntityInspector::appendClassProperties() {
 
 		// Required visitor function
 		void visit(const EntityClassAttribute& a) {
-			
+
 			// Only add properties with values, we don't want the optional
 			// "editor_var xxx" properties here.
 			if (!a.value.empty()) {
@@ -921,7 +958,7 @@ void EntityInspector::appendClassProperties() {
 			}
 		}
 	};
-	
+
 	// Visit the entity class
 	ClassPropertyVisitor visitor(_listStore);
 	eclass->forEachClassAttribute(visitor);
@@ -944,11 +981,11 @@ void EntityInspector::updateSelectedEntity() {
 	if (selectedNode->isRoot()) {
 		return;
 	}
-	
+
 	scene::INodePtr selectedNodeParent = selectedNode->getParent();
 
    // Try both the selected node (if an entity is selected) or the parent node
-   // (if a brush is selected). 
+   // (if a brush is selected).
    _selectedEntity = Node_getEntity(selectedNode);
    if (!_selectedEntity)
       _selectedEntity = Node_getEntity(selectedNodeParent);
