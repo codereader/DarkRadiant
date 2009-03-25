@@ -25,7 +25,7 @@ class Selectable;
 namespace ui {
 
 namespace {
-	
+
 	// Data structure to store the type (vector3, text etc) and the options
 	// string for a single property.
 	struct PropertyParms {
@@ -35,7 +35,7 @@ namespace {
 
 	// Map of property names to PropertyParms
 	typedef std::map<std::string, PropertyParms> PropertyParmMap;
-	
+
 }
 
 class EntityInspector;
@@ -51,20 +51,20 @@ class EntityInspector :
  	public gtkutil::SingleIdleCallback,
 	public RadiantEventListener
 {
-	// Currently selected entity, this pointer is only non-NULL if the 
+	// Currently selected entity, this pointer is only non-NULL if the
 	// current entity selection includes exactly 1 entity.
 	Entity* _selectedEntity;
 
 	// Main EntityInspector widget
-    GtkWidget* _widget; 
-    
-	// Frame to contain the Property Editor    
+    GtkWidget* _widget;
+
+	// Frame to contain the Property Editor
     GtkWidget* _editorFrame;
 
 	// The checkbox for showing the eclass properties
 	GtkWidget* _showInheritedCheckbox;
 	GtkWidget* _showHelpColumnCheckbox;
-    
+
     // Key list store and view
     GtkListStore* _listStore;
     GtkWidget* _treeView;
@@ -81,13 +81,13 @@ class EntityInspector :
 
 	// Context menu
 	gtkutil::PopupMenu _contextMenu;
-	
+
 	// Currently displayed PropertyEditor
 	PropertyEditorPtr _currentPropertyEditor;
 
     // Whether to show inherited properties or not
     bool _showInherited;
-    
+
     // The last selected key
     std::string _lastKey;
 
@@ -106,7 +106,7 @@ private:
 
     // Utility functions to construct the Gtk components
 
-    GtkWidget* createDialogPane(); // bottom widget pane 
+    GtkWidget* createDialogPane(); // bottom widget pane
     GtkWidget* createTreeViewPane(); // tree view for selecting attributes
     void createContextMenu();
 
@@ -125,26 +125,28 @@ private:
 	bool _testCopyKey();
 	bool _testCutKey();
 	bool _testPasteKey();
-	
+
     /* GTK CALLBACKS */
     static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
 	static void _onEntryActivate(GtkWidget*, EntityInspector*);
-	static void _onSetProperty(GtkWidget*, EntityInspector*);    
+	static void _onSetProperty(GtkWidget*, EntityInspector*);
 	static void _onToggleShowInherited(GtkToggleButton*, EntityInspector*);
 	static void _onToggleShowHelpIcons(GtkToggleButton*, EntityInspector*);
 
-	static gboolean _onQueryTooltip(GtkWidget* widget, 
-									 gint x, gint y, gboolean keyboard_mode, 
+	static gboolean _onQueryTooltip(GtkWidget* widget,
+									 gint x, gint y, gboolean keyboard_mode,
 									 GtkTooltip* tooltip, EntityInspector* self);
 
+    static std::string  cleanInputString( const std::string& );
+
     // Routines to populate the TreeStore with the keyvals attached to the
-    // currently-selected object. 
-    void refreshTreeModel(); 
+    // currently-selected object.
+    void refreshTreeModel();
     void appendClassProperties();
 
 	// Update the GTK components when a new selection is made in the tree view
     void treeSelectionChanged();
-    
+
     // Update our selected entity pointer from the selection system
     void updateSelectedEntity();
 
@@ -158,7 +160,7 @@ private:
 	const PropertyParmMap& getPropertyMap();
 
 protected:
-	
+
 	// GTK idle callback, used for refreshing display
 	void onGtkIdle();
 
@@ -189,7 +191,7 @@ public:
 	// greebo: Tells the inspector to reload the window settings from the registry.
 	void restoreSettings();
 
-	/** 
+	/**
 	 * greebo: Static command target for toggling the Entity Inspector in the GroupDialog.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
