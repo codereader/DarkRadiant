@@ -154,13 +154,18 @@ void OpenGLShader::constructLightingPassesFromIShader()
     
     bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
 
-    std::cout << "constructLightingPassesFromIShader(): shader " << _iShader->getName() << std::endl;
+    // Set layer vertex colour mode
     ShaderLayer::VertexColourMode vcolMode = diffuseLayer->getVertexColourMode();
-    std::cout << "  vertex mode is " << vcolMode << std::endl;
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
-        std::cout << "  setting RENDER_MATERIAL_VCOL = " << RENDER_MATERIAL_VCOL << std::endl;
+        // Vertex colours allowed
         bumpPass.renderFlags |= RENDER_MATERIAL_VCOL;
+
+        if (vcolMode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
+        {
+            // Vertex colours are inverted
+            bumpPass.renderFlags |= RENDER_VCOL_INVERT;
+        }
     }
     
     bumpPass.m_depthfunc = GL_LEQUAL;
