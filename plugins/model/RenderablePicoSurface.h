@@ -7,6 +7,8 @@
 #include "render.h"
 #include "math/aabb.h"
 
+#include "ishaders.h"
+
 /* FORWARD DECLS */
 class ModelSkin;
 class Renderer;
@@ -53,7 +55,8 @@ class RenderablePicoSurface
 
 	// The GL display lists for this surface's geometry
 	GLuint _dlRegular;
-	GLuint _dlProgramWithVCol;
+	GLuint _dlProgramPosVCol;
+    GLuint _dlProgramNegVCol;
     GLuint _dlProgramNoVCol;
 	
 private:
@@ -65,7 +68,7 @@ private:
 	void calculateTangents();
 	
 	// Create the display lists
-    GLuint compileProgramList(bool withVCol);
+    GLuint compileProgramList(ShaderLayer::VertexColourMode);
 	void createDisplayLists();
 
 public:
