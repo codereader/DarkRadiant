@@ -17,11 +17,6 @@ namespace
 
 }
 
-void ARBBumpProgram::setShaderParams(ShaderLayer::VertexColourMode mode)
-{
-
-}
-
 void ARBBumpProgram::applyRenderParams(const Vector3& viewer, 
                                        const Matrix4& localToWorld, 
                                        const Vector3& origin, 
@@ -60,7 +55,7 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
 
     // Vertex colour factor (0 - 1)
     glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, C1_VERTEX_COL_FACTOR, 0, 0, 0, 0
+        GL_FRAGMENT_PROGRAM_ARB, C1_VERTEX_COL_FACTOR, 1, 0, 0, 0
     );
 
 	// light scale

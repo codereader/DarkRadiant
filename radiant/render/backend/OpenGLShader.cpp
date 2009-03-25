@@ -135,8 +135,11 @@ void OpenGLShader::constructLightingPassesFromIShader()
     state.m_program = render::GLProgramFactory::getProgram("depthFill").get();
     
     // Construct diffuse/bump/specular render pass
+
     OpenGLState& bumpPass = appendDefaultPass();
-    bumpPass.m_texture = _iShader->getDiffuse()->getTexture()->texture_number;
+    ShaderLayerPtr diffuseLayer = _iShader->getDiffuse();
+
+    bumpPass.m_texture = diffuseLayer->getTexture()->texture_number;
     bumpPass.m_texture1 = _iShader->getBump()->getTexture()->texture_number;
     bumpPass.m_texture2 = _iShader->getSpecular()->getTexture()->texture_number;
     
@@ -151,8 +154,14 @@ void OpenGLShader::constructLightingPassesFromIShader()
     
     bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
 
-    //std::cout << "constructLightingPassesFromIShader(): shader " << _iShader->getName() << std::endl;
-    //std::cout << "  vertex mode is " << _iShader->getDiffuse()->getVertexColourMode() << std::endl;
+    std::cout << "constructLightingPassesFromIShader(): shader " << _iShader->getName() << std::endl;
+    ShaderLayer::VertexColourMode vcolMode = diffuseLayer->getVertexColourMode();
+    std::cout << "  vertex mode is " << vcolMode << std::endl;
+    if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
+    {
+        std::cout << "  setting RENDER_MATERIAL_VCOL = " << RENDER_MATERIAL_VCOL << std::endl;
+        bumpPass.renderFlags |= RENDER_MATERIAL_VCOL;
+    }
     
     bumpPass.m_depthfunc = GL_LEQUAL;
     bumpPass.m_sort = OpenGLState::eSortMultiFirst;

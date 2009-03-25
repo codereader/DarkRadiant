@@ -500,15 +500,27 @@ void CamWnd::Cam_Draw() {
 	}
 
 
-	unsigned int globalstate = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_ALPHATEST|RENDER_BLEND|RENDER_CULLFACE|RENDER_COLOURARRAY|RENDER_OFFSETLINE|RENDER_POLYGONSMOOTH|RENDER_LINESMOOTH|RENDER_FOG|RENDER_COLOURCHANGE;
+    // Set the allowed render flags for this view
+	unsigned int allowedRenderFlags = RENDER_DEPTHTEST
+                                     | RENDER_COLOURWRITE
+                                     | RENDER_DEPTHWRITE
+                                     | RENDER_ALPHATEST
+                                     | RENDER_BLEND
+                                     | RENDER_CULLFACE
+                                     | RENDER_COLOURARRAY
+                                     | RENDER_OFFSETLINE
+                                     | RENDER_POLYGONSMOOTH
+                                     | RENDER_LINESMOOTH
+                                     | RENDER_COLOURCHANGE;
 
-	switch (getCameraSettings()->getMode()) {
-
+    // Add mode-specific render flags
+	switch (getCameraSettings()->getMode()) 
+    {
 		case drawWire:
 			break;
 
 		case drawSolid:
-			globalstate |= RENDER_FILL
+			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_SMOOTH
 			               | RENDER_SCALED;
@@ -516,7 +528,7 @@ void CamWnd::Cam_Draw() {
 			break;
 
 		case drawTexture:
-			globalstate |= RENDER_FILL
+			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE
 			               | RENDER_SMOOTH
@@ -525,29 +537,31 @@ void CamWnd::Cam_Draw() {
 			break;
 
 		case drawLighting:
-			globalstate |= RENDER_FILL
+			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE
 			               | RENDER_SMOOTH
 			               | RENDER_SCALED
 			               | RENDER_BUMP
 			               | RENDER_PROGRAM
+                           | RENDER_MATERIAL_VCOL
+                           | RENDER_VCOL_INVERT
 			               | RENDER_SCREEN;
 
 			break;
 
 		default:
-			globalstate = 0;
+			allowedRenderFlags = 0;
 
 			break;
 	}
 
 	if (!getCameraSettings()->solidSelectionBoxes()) {
-		globalstate |= RENDER_LINESTIPPLE|RENDER_POLYGONSTIPPLE;
+		allowedRenderFlags |= RENDER_LINESTIPPLE|RENDER_POLYGONSTIPPLE;
 	}
 
 	{
-		CamRenderer renderer(globalstate, m_state_select2, m_state_select1, m_view.getViewer());
+		CamRenderer renderer(allowedRenderFlags, m_state_select2, m_state_select1, m_view.getViewer());
 
 		Scene_Render(renderer, m_view);
 

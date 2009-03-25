@@ -24,6 +24,9 @@ private:
 
 	// The value all lights should be scaled by, obtained from the game description
 	double _lightScale;
+
+    // Vertex colour factor
+    float _vertexColFactor;
 	
 public:
   GLuint m_vertex_program;
@@ -106,9 +109,6 @@ public:
 
     GlobalOpenGL_debugAssertNoErrors();
   }
-
-    // Set shader parameters
-    void setShaderParams(ShaderLayer::VertexColourMode mode);
 
     // Set render pass parameters
     void applyRenderParams(const Vector3& viewer, 

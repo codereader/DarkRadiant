@@ -47,11 +47,13 @@ const unsigned int RENDER_OFFSETLINE = 1 << 14; // glEnable(GL_POLYGON_OFFSET_LI
 const unsigned int RENDER_FILL = 1 << 15; // glPolygonMode
 const unsigned int RENDER_COLOURARRAY = 1 << 16; // glEnableClientState(GL_COLOR_ARRAY)
 const unsigned int RENDER_COLOURCHANGE = 1 << 17; // render() is allowed to call glColor*()
-const unsigned int RENDER_TEXTURE = 1 << 18; // glEnable(GL_TEXTURE_2D)
-const unsigned int RENDER_BUMP = 1 << 19;
-const unsigned int RENDER_PROGRAM = 1 << 20;
-const unsigned int RENDER_SCREEN = 1 << 21;
-const unsigned int RENDER_OVERRIDE = 1 << 22;
+const unsigned int RENDER_MATERIAL_VCOL = 1 << 18; // material requests per-vertex colour
+const unsigned int RENDER_VCOL_INVERT = 1 << 19; // vertex colours should be inverted
+const unsigned int RENDER_TEXTURE = 1 << 20; // glEnable(GL_TEXTURE_2D)
+const unsigned int RENDER_BUMP = 1 << 21;
+const unsigned int RENDER_PROGRAM = 1 << 22;
+const unsigned int RENDER_SCREEN = 1 << 23;
+const unsigned int RENDER_OVERRIDE = 1 << 24;
 typedef unsigned int RenderStateFlags;
 
 

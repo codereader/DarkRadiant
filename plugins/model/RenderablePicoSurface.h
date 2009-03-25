@@ -52,8 +52,9 @@ class RenderablePicoSurface
 	AABB _localAABB;
 
 	// The GL display lists for this surface's geometry
-	GLuint _normalList;
-	GLuint _lightingList;
+	GLuint _dlRegular;
+	GLuint _dlProgramWithVCol;
+    GLuint _dlProgramNoVCol;
 	
 private:
 
@@ -64,6 +65,7 @@ private:
 	void calculateTangents();
 	
 	// Create the display lists
+    GLuint compileProgramList(bool withVCol);
 	void createDisplayLists();
 
 public:

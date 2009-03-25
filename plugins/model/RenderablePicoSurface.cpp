@@ -14,8 +14,9 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 											 const std::string& fExt)
 : _originalShaderName(""),
   _mappedShaderName(""),
-  _normalList(0),
-  _lightingList(0)
+  _dlRegular(0),
+  _dlProgramWithVCol(0),
+  _dlProgramNoVCol(0)
 {
 	// Get the shader from the picomodel struct. If this is a LWO model, use
 	// the material name to select the shader, while for an ASE model the
@@ -89,9 +90,11 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 }
 
 // Destructor. Release the GL display lists.
-RenderablePicoSurface::~RenderablePicoSurface() {
-	glDeleteLists(_normalList, 1);
-	glDeleteLists(_lightingList, 1);	
+RenderablePicoSurface::~RenderablePicoSurface() 
+{
+	glDeleteLists(_dlRegular, 1);
+	glDeleteLists(_dlProgramNoVCol, 1);	
+	glDeleteLists(_dlProgramWithVCol, 1);	
 }
 
 // Convert byte pointers to colour vector
@@ -141,23 +144,31 @@ void RenderablePicoSurface::submitRenderables(Renderer& rend,
 }
 
 // Back-end render function
-void RenderablePicoSurface::render(RenderStateFlags flags) const {
-
+void RenderablePicoSurface::render(RenderStateFlags flags) const 
+{
 	// Invoke appropriate display list
-	if (flags & RENDER_BUMP) {
-		glCallList(_lightingList);
+	if (flags & RENDER_PROGRAM) 
+    {
+        if (flags & RENDER_MATERIAL_VCOL)
+        {
+            glCallList(_dlProgramWithVCol);
+        }
+        else
+        {
+            glCallList(_dlProgramNoVCol);
+        }
 	}
-	else {
-		glCallList(_normalList);
+	else 
+    {
+		glCallList(_dlRegular);
 	}
 }
 
-// Construct the two display lists
-void RenderablePicoSurface::createDisplayLists() {
-
-	// Generate the list for lighting mode
-	_lightingList = glGenLists(1);
-	glNewList(_lightingList, GL_COMPILE);
+// Construct a list for GLProgram mode, either with or without vertex colour
+GLuint RenderablePicoSurface::compileProgramList(bool vCol)
+{
+    GLuint list = glGenLists(1);
+    glNewList(list, GL_COMPILE);
 
 	glBegin(GL_TRIANGLES);
 	for (Indices::const_iterator i = _indices.begin();
@@ -168,21 +179,43 @@ void RenderablePicoSurface::createDisplayLists() {
 		ArbitraryMeshVertex& v = _vertices[*i];
 
 		// Submit the vertex attributes and coordinate
-		if (GLEW_ARB_vertex_program) {
+		if (GLEW_ARB_vertex_program) 
+        {
 			glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
 			glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
 			glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
 			glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);
 		}
-        glColor3dv(v.colour);
+
+        // Optional vertex colour
+        if (vCol)
+            glColor3dv(v.colour);
+
+        // Submit the vertex itself
 		glVertex3dv(v.vertex);	
 	}
+
+    // Set vertex colour back to white
+    // HACK: find out why other objects are not setting their correct colour,
+    // and fix them.
+    glColor3f(1, 1, 1);
+
 	glEnd();
 	glEndList();
 
+    return list;
+}
+
+// Construct the two display lists
+void RenderablePicoSurface::createDisplayLists() 
+{
+	// Generate the two lists for lighting mode
+    _dlProgramNoVCol = compileProgramList(false);
+    _dlProgramWithVCol = compileProgramList(true);
+
 	// Generate the list for flat-shaded (unlit) mode
-	_normalList = glGenLists(1);
-	glNewList(_normalList, GL_COMPILE);
+	_dlRegular = glGenLists(1);
+	glNewList(_dlRegular, GL_COMPILE);
 	
 	glBegin(GL_TRIANGLES);
 	for (Indices::const_iterator i = _indices.begin();
@@ -203,7 +236,8 @@ void RenderablePicoSurface::createDisplayLists() {
 }
 
 // Apply a skin to this surface
-void RenderablePicoSurface::applySkin(const ModelSkin& skin) {
+void RenderablePicoSurface::applySkin(const ModelSkin& skin) 
+{
 	// Look up the remap for this surface's material name. If there is a remap
 	// change the Shader* to point to the new shader.
 	std::string remap = skin.getRemap(_originalShaderName);
