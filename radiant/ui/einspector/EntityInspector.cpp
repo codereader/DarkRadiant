@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include <boost/bind.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 namespace ui {
 
@@ -444,49 +445,27 @@ namespace
 
 }
 
-bool    checkString( std::string& string )
+
+std::string    EntityInspector::cleanInputString( const std::string &input )
 {
-    int                     count = 0;
+    std::string ret = input;
 
-    // Baal: check string for newline characters \n \r and count them
-    for ( std::string::const_iterator i = string.begin(); i != string.end(); i++ )
-        if ( *i == '\n' || *i == '\r' )
-            count++;
-
-    // Baal: copy the string and remove newlines (only if one of these was found before)
-    if ( count > 0 )
-    {
-        std::string                 temp( string.length() - count, 0 );
-        std::string::const_iterator stringIt;
-        std::string::iterator       tempIt;
-
-        for ( ( stringIt = string.begin(), tempIt = temp.begin() ) ;
-              stringIt != string.end();
-              stringIt++ )
-        {
-            if ( *stringIt == '\n' || *stringIt == '\r' )
-                    continue;
-
-            *tempIt++ = *stringIt;
-        }
-        string = temp;
-        return true;
-    }
-    return false;
+    boost::algorithm::replace_all( ret, "\n", "" );
+    boost::algorithm::replace_all( ret, "\r", "" );
+    return ret;
 }
+
 
 // Set entity property from entry boxes
 void EntityInspector::setPropertyFromEntries()
 {
 	// Get the key from the entry box
-	std::string key = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
-	std::string val = gtk_entry_get_text(GTK_ENTRY(_valEntry));
+	std::string key = cleanInputString( std::string( gtk_entry_get_text(GTK_ENTRY(_keyEntry)) ) );
+	std::string val = cleanInputString( std::string( gtk_entry_get_text(GTK_ENTRY(_valEntry)) ) );
 
-    //  Baal: check key and value strings for newline characters
-    if ( checkString( key ) )
-        gtk_entry_set_text( GTK_ENTRY( _keyEntry ), key.c_str() );
-    if ( checkString( val ) )
-        gtk_entry_set_text( GTK_ENTRY( _valEntry ), val.c_str() );
+    // Update the entry boxes
+    gtk_entry_set_text( GTK_ENTRY( _keyEntry ), key.c_str() );
+    gtk_entry_set_text( GTK_ENTRY( _valEntry ), val.c_str() );
 
 	// Pass the call to the specialised routine
 	applyKeyValueToSelection(key, val);
