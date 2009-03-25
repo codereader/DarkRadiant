@@ -160,6 +160,14 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
+		<Unit filename="..\..\plugins\shaders\Doom3ShaderLayer.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\shaders\Doom3ShaderLayer.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Unit filename="..\..\plugins\shaders\Doom3ShaderSystem.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
