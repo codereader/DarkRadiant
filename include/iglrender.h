@@ -59,28 +59,13 @@ public:
   	 */
 	virtual void disable() = 0;
 
-    /**
-     * \brief
-     * Set various parameters on this program from the IShader layer used to
-     * create it, which do not vary between individual lights or renderables.
-     *
-     * The program must NOT make any GL calls in this function, but should store
-     * the shader parameters (if it needs them) for later application by
-     * applyRenderParms().
-     *
-     * \param vcolMode
-     * The ShaderLayer::VertexColourMode applied to this shader layer.
-     */
-    virtual void setShaderParams(ShaderLayer::VertexColourMode vcolMode) = 0;
-	
 	/**
 	 * \brief
      * Apply render parameters used by this program to OpenGL.
      *
      * This method is invoked shortly before the renderable geometry is
      * submitted for rendering; the GLProgram must apply to the GL state any
-     * parameters it uses, include those provided as arguments and any global
-     * shader parameters provided to a previous invocation of setShaderParams().
+     * parameters it uses.
 	 * 
 	 * @param viewer
 	 * Location of the viewer in 3D space.

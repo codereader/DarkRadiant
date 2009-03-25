@@ -74,11 +74,7 @@ public:
     GlobalOpenGL_debugAssertNoErrors();
   }
 
-    // Required set parameters functions, just empty implementations
-
-    void setShaderParams(ShaderLayer::VertexColourMode)
-    { }
-
+    // Required set parameters function, just empty implementation
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,
                            const Vector3& origin,
