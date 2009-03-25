@@ -15,7 +15,8 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 : _originalShaderName(""),
   _mappedShaderName(""),
   _dlRegular(0),
-  _dlProgramWithVCol(0),
+  _dlProgramPosVCol(0),
+  _dlProgramNegVCol(0),
   _dlProgramNoVCol(0)
 {
 	// Get the shader from the picomodel struct. If this is a LWO model, use
@@ -94,7 +95,8 @@ RenderablePicoSurface::~RenderablePicoSurface()
 {
 	glDeleteLists(_dlRegular, 1);
 	glDeleteLists(_dlProgramNoVCol, 1);	
-	glDeleteLists(_dlProgramWithVCol, 1);	
+	glDeleteLists(_dlProgramPosVCol, 1);	
+    glDeleteLists(_dlProgramNegVCol, 1);
 }
 
 // Convert byte pointers to colour vector
@@ -151,7 +153,14 @@ void RenderablePicoSurface::render(RenderStateFlags flags) const
     {
         if (flags & RENDER_MATERIAL_VCOL)
         {
-            glCallList(_dlProgramWithVCol);
+            if (flags & RENDER_VCOL_INVERT)
+            {
+                glCallList(_dlProgramNegVCol);
+            }
+            else
+            {
+                glCallList(_dlProgramPosVCol);
+            }
         }
         else
         {
@@ -165,7 +174,9 @@ void RenderablePicoSurface::render(RenderStateFlags flags) const
 }
 
 // Construct a list for GLProgram mode, either with or without vertex colour
-GLuint RenderablePicoSurface::compileProgramList(bool vCol)
+GLuint RenderablePicoSurface::compileProgramList(
+        ShaderLayer::VertexColourMode mode
+)
 {
     GLuint list = glGenLists(1);
     glNewList(list, GL_COMPILE);
@@ -188,8 +199,18 @@ GLuint RenderablePicoSurface::compileProgramList(bool vCol)
 		}
 
         // Optional vertex colour
-        if (vCol)
+        if (mode == ShaderLayer::VERTEX_COLOUR_MULTIPLY)
+        {
             glColor3dv(v.colour);
+        }
+        else if (mode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
+        {
+            glColor3d(
+                1.0 - v.colour[0],
+                1.0 - v.colour[1],
+                1.0 - v.colour[2]
+            );
+        }
 
         // Submit the vertex itself
 		glVertex3dv(v.vertex);	
@@ -209,9 +230,16 @@ GLuint RenderablePicoSurface::compileProgramList(bool vCol)
 // Construct the two display lists
 void RenderablePicoSurface::createDisplayLists() 
 {
-	// Generate the two lists for lighting mode
-    _dlProgramNoVCol = compileProgramList(false);
-    _dlProgramWithVCol = compileProgramList(true);
+	// Generate the lists for lighting mode
+    _dlProgramNoVCol = compileProgramList(
+        ShaderLayer::VERTEX_COLOUR_NONE
+    );
+    _dlProgramPosVCol = compileProgramList(
+        ShaderLayer::VERTEX_COLOUR_MULTIPLY
+    );
+    _dlProgramNegVCol = compileProgramList(
+        ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY
+    );
 
 	// Generate the list for flat-shaded (unlit) mode
 	_dlRegular = glGenLists(1);
