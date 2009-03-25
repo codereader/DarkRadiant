@@ -1,0 +1,11 @@
+CGC = cgc
+CGCFLAGS_FP = -profile arbfp1
+CGCFLAGS_VP = -profile arbvp
+
+all: interaction_fp.arb interaction_vp.arb
+
+interaction_fp.arb: interaction_fp.cg
+	$(CGC) $(CGCFLAGS_FP) -o interaction_fp.arb interaction_fp.cg
+
+interaction_vp.arb: interaction_vp.cg
+	$(CGC) $(CGCFLAGS_VP) -o interaction_vp.arb interaction_vp.cg

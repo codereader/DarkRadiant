@@ -8,7 +8,6 @@ namespace
     /* CONSTANT FRAGMENT PROGRAM PARAMETERS
      * These should match what is used by interaction_fp.cg
      */
-    const int C1_VERTEX_COL_FACTOR = 1;
     const int C2_LIGHT_ORIGIN = 2;
     const int C3_LIGHT_COLOR = 3;
     const int C4_VIEW_ORIGIN = 4;
@@ -51,11 +50,6 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
     // light colour
     glProgramLocalParameter4fARB(
         GL_FRAGMENT_PROGRAM_ARB, C3_LIGHT_COLOR, colour.x(), colour.y(), colour.z(), 0
-    );
-
-    // Vertex colour factor (0 - 1)
-    glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, C1_VERTEX_COL_FACTOR, 1, 0, 0, 0
     );
 
 	// light scale
