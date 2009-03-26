@@ -350,42 +350,42 @@ void BrushNode::clearLights() {
 	}
 }
 
-void BrushNode::renderComponents(Renderer& renderer, const VolumeTest& volume) const {
+void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const {
 	m_brush.evaluateBRep();
 
 	const Matrix4& l2w = localToWorld();
 
-	renderer.SetState(m_brush.m_state_point, Renderer::eWireframeOnly);
-	renderer.SetState(m_brush.m_state_point, Renderer::eFullMaterials);
+	collector.SetState(m_brush.m_state_point, RenderableCollector::eWireframeOnly);
+	collector.SetState(m_brush.m_state_point, RenderableCollector::eFullMaterials);
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace) {
 		evaluateViewDependent(volume, l2w);
-		renderer.addRenderable(m_render_faces_wireframe, l2w);
+		collector.addRenderable(m_render_faces_wireframe, l2w);
 	}
 	else {
-		m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), renderer, volume, l2w);
+		m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), collector, volume, l2w);
 	}
 }
 
-void BrushNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void BrushNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	m_brush.evaluateBRep();
 
-	renderClipPlane(renderer, volume);
+	renderClipPlane(collector, volume);
 
-	renderSolid(renderer, volume, localToWorld());
+	renderSolid(collector, volume, localToWorld());
 }
 
-void BrushNode::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
+void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
 	m_brush.evaluateBRep();
 
-	renderClipPlane(renderer, volume);
+	renderClipPlane(collector, volume);
 
-	renderWireframe(renderer, volume, localToWorld());
+	renderWireframe(collector, volume, localToWorld());
 }
 
-void BrushNode::renderClipPlane(Renderer& renderer, const VolumeTest& volume) const {
+void BrushNode::renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const {
 	if (GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eClip && isSelected()) {
-		m_clipPlane.render(renderer, volume, localToWorld());
+		m_clipPlane.render(collector, volume, localToWorld());
 	}
 }
 
@@ -414,29 +414,29 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	}
 }
 
-void BrushNode::renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-	//renderCommon(renderer, volume);
+void BrushNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+	//renderCommon(collector, volume);
 
 	m_lightList->evaluateLights();
 
 	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-			renderer.setLights(i->m_lights);
-			i->render(renderer, volume, localToWorld);
+			collector.setLights(i->m_lights);
+			i->render(collector, volume, localToWorld);
 		}
 
-	renderComponentsSelected(renderer, volume, localToWorld);
+	renderComponentsSelected(collector, volume, localToWorld);
 }
 
-void BrushNode::renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-	//renderCommon(renderer, volume);
+void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+	//renderCommon(collector, volume);
 
 	evaluateViewDependent(volume, localToWorld);
 
 	if (m_render_wireframe.m_size != 0) {
-		renderer.addRenderable(m_render_wireframe, localToWorld);
+		collector.addRenderable(m_render_wireframe, localToWorld);
 	}
 
-	renderComponentsSelected(renderer, volume, localToWorld);
+	renderComponentsSelected(collector, volume, localToWorld);
 }
 
 void BrushNode::update_selected() const {
@@ -449,15 +449,15 @@ void BrushNode::update_selected() const {
 	}
 }
 
-void BrushNode::renderComponentsSelected(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
+void BrushNode::renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
 	m_brush.evaluateBRep();
 
 	update_selected();
 	if (!m_render_selected.empty()) {
-		renderer.Highlight(Renderer::ePrimitive, false);
-		renderer.SetState(BrushNode::m_state_selpoint, Renderer::eWireframeOnly);
-		renderer.SetState(BrushNode::m_state_selpoint, Renderer::eFullMaterials);
-		renderer.addRenderable(m_render_selected, localToWorld);
+		collector.Highlight(RenderableCollector::ePrimitive, false);
+		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
+		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eFullMaterials);
+		collector.addRenderable(m_render_selected, localToWorld);
 	}
 }
 

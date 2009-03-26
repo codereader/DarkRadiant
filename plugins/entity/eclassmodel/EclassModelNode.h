@@ -62,8 +62,8 @@ public:
 	virtual void uninstantiate(const scene::Path& path);
 
 	// Renderable implementation
-	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	// Nameable implementation
 	virtual std::string name() const;

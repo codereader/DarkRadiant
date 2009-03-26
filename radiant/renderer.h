@@ -86,12 +86,12 @@ inline void Scene_forEachVisible(scene::Graph& graph,
 
 /**
  * Scene render function. Uses the visibility walkers to traverse the scene
- * graph and submit all visible objects to the provided Renderer.
+ * graph and submit all visible objects to the provided RenderableCollector.
  */
-inline void Scene_Render(Renderer& renderer, const VolumeTest& volume) {
+inline void Scene_Render(RenderableCollector& collector, const VolumeTest& volume) {
 
 	// Instantiate a new walker class
-	RenderHighlighted renderHighlightWalker(renderer, volume);
+	RenderHighlighted renderHighlightWalker(collector, volume);
 	ForEachVisible<RenderHighlighted> walker(volume, renderHighlightWalker);
 
 	// Submit renderables from scene graph
@@ -99,7 +99,7 @@ inline void Scene_Render(Renderer& renderer, const VolumeTest& volume) {
 	
 	// Submit renderables directly attached to the ShaderCache
 	GlobalShaderCache().forEachRenderable(
-		RenderHighlighted::RenderCaller(RenderHighlighted(renderer, volume)));
+		RenderHighlighted::RenderCaller(RenderHighlighted(collector, volume)));
 }
 
 #endif

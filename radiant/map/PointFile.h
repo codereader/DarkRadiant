@@ -55,12 +55,12 @@ public:
 	/*
 	 * Solid renderable submission function (front-end)
 	 */
-	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	/*
 	 * Wireframe renderable submission function (front-end).
 	 */
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	/** greebo: This sets the camera position to the next/prev leak spot.
 	 * 	

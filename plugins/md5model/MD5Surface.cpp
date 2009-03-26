@@ -189,13 +189,13 @@ const AABB& MD5Surface::localAABB() const {
 	return _aabb_local;
 }
 
-void MD5Surface::render(Renderer& renderer, const Matrix4& localToWorld, ShaderPtr state) const {
-	renderer.SetState(state, Renderer::eFullMaterials);
-	renderer.addRenderable(*this, localToWorld);
+void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, ShaderPtr state) const {
+	collector.SetState(state, RenderableCollector::eFullMaterials);
+	collector.addRenderable(*this, localToWorld);
 }
 
-void MD5Surface::render(Renderer& renderer, const Matrix4& localToWorld) const {
-	render(renderer, localToWorld, _shader);
+void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld) const {
+	render(collector, localToWorld, _shader);
 }
 
 } // namespace md5

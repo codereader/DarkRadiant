@@ -3,7 +3,7 @@
 
 #include "renderer.h"
 
-class CamRenderer: public Renderer {
+class CamRenderer: public RenderableCollector {
   struct state_type
   {
     state_type() : m_highlight(0), m_lights(0)

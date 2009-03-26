@@ -72,7 +72,7 @@ public:
 	virtual void saveToEntity(Entity& target) = 0;
 	
 	// Front-end render method
-	void renderSolid(Renderer& renderer, const VolumeTest& volume, 
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
 					 const Matrix4& localToWorld) const;
 					 
 	// Performs a selection test on the point vertices of this curve

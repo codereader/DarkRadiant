@@ -10,7 +10,7 @@
 
 /* FORWARD DECLS */
 namespace model { class RenderablePicoSurface; }
-class Renderer;
+class RenderableCollector;
 class RendererLight;
 class SelectionTest;
 class Selector;
@@ -65,15 +65,15 @@ public:
 	RenderablePicoModel(picoModel_t* mod, const std::string& fExt);
 		
 	/**
-	 * Front-end render function used by the main renderer.
+	 * Front-end render function used by the main collector.
 	 * 
 	 * @param rend
-	 * The sorting Renderer object which accepts renderable geometry.
+	 * The sorting RenderableCollector object which accepts renderable geometry.
 	 * 
 	 * @param localToWorld
 	 * Object to world-space transform.
 	 */
-	void submitRenderables(Renderer& rend, const Matrix4& localToWorld);		
+	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld);		
 		
 	/** 
 	 * Back-end render function from OpenGLRenderable. This is called from the

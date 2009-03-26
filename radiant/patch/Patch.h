@@ -162,9 +162,9 @@ public:
 	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 	
 	// Render functions: solid mode, wireframe mode and components 
-	void render_solid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void render_wireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void render_component(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render_solid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	const ShaderPtr& getState() const;
 	

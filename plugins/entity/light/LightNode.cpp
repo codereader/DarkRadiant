@@ -289,22 +289,22 @@ void LightNode::selectedChangedComponent(const Selectable& selectable) {
 /* greebo: This is the method that gets called by renderer.h. It passes the call 
  * on to the Light class render methods. 
  */
-void LightNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	// Pass through to wireframe render
-	renderWireframe(renderer, volume);
+	renderWireframe(collector, volume);
 }
   
-void LightNode::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
+void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
 	const bool lightIsSelected = isSelected();
 	_light.renderWireframe(
-		renderer, volume, localToWorld(), lightIsSelected
+		collector, volume, localToWorld(), lightIsSelected
 	);
 	
-	renderInactiveComponents(renderer, volume, lightIsSelected);
+	renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
 // Renders the components of this light instance 
-void LightNode::renderComponents(Renderer& renderer, const VolumeTest& volume) const {
+void LightNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const {
 	// Render the components (light center) as selected/deselected, if we are in the according mode
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
 		if (_light.isProjected()) {
@@ -324,7 +324,7 @@ void LightNode::renderComponents(Renderer& renderer, const VolumeTest& volume) c
 			const_cast<Light&>(_light).colourLightEnd() = (_lightEndInstance.isSelected()) ? colourStartEndSelected : colourStartEndDeselected;
 			
 			// Render the projection points
-			_light.renderProjectionPoints(renderer, volume, localToWorld());
+			_light.renderProjectionPoints(collector, volume, localToWorld());
 		}
 		else {
 			// A point light
@@ -332,17 +332,17 @@ void LightNode::renderComponents(Renderer& renderer, const VolumeTest& volume) c
 			// Update the colour of the light center dot 
 			if (_lightCenterInstance.isSelected()) {
 				const_cast<Light&>(_light).getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_selected"));
-				_light.renderLightCentre(renderer, volume, localToWorld());
+				_light.renderLightCentre(collector, volume, localToWorld());
 			}
 			else {
 				const_cast<Light&>(_light).getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_deselected"));
-				_light.renderLightCentre(renderer, volume, localToWorld());
+				_light.renderLightCentre(collector, volume, localToWorld());
 			}
 		}
 	}
 }
 
-void LightNode::renderInactiveComponents(Renderer& renderer, const VolumeTest& volume, const bool selected) const {
+void LightNode::renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const {
 	// greebo: We are not in component selection mode (and the light is still selected), 
 	// check if we should draw the center of the light anyway
 	if (selected 
@@ -361,11 +361,11 @@ void LightNode::renderInactiveComponents(Renderer& renderer, const VolumeTest& v
 			const_cast<Light&>(_light).colourLightUp() = colourVertexInactive;
 			
 			// Render the projection points
-			_light.renderProjectionPoints(renderer, volume, localToWorld());
+			_light.renderProjectionPoints(collector, volume, localToWorld());
 		} 
 		else {
 			const_cast<Light&>(_light).getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_normal"));
-			_light.renderLightCentre(renderer, volume, localToWorld());
+			_light.renderLightCentre(collector, volume, localToWorld());
 		}
 	}
 }

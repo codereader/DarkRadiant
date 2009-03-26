@@ -99,31 +99,31 @@ VolumeIntersectionValue GenericEntity::intersectVolume(
 	return volume.TestAABB(localAABB(), localToWorld);
 }
 
-void GenericEntity::renderArrow(Renderer& renderer, 
+void GenericEntity::renderArrow(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	if (GlobalRegistry().get("user/ui/xyview/showEntityAngles") == "1") {
-		renderer.addRenderable(m_arrow, localToWorld);
+		collector.addRenderable(m_arrow, localToWorld);
 	}
 }
 
-void GenericEntity::renderSolid(Renderer& renderer, 
+void GenericEntity::renderSolid(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	renderer.SetState(m_entity.getEntityClass()->getFillShader(), Renderer::eFullMaterials);
-	renderer.addRenderable(m_aabb_solid, localToWorld);
-	renderArrow(renderer, volume, localToWorld);
+	collector.SetState(m_entity.getEntityClass()->getFillShader(), RenderableCollector::eFullMaterials);
+	collector.addRenderable(m_aabb_solid, localToWorld);
+	renderArrow(collector, volume, localToWorld);
 }
 
-void GenericEntity::renderWireframe(Renderer& renderer, 
+void GenericEntity::renderWireframe(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(m_aabb_wire, localToWorld);
-	renderArrow(renderer, volume, localToWorld);
+	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+	collector.addRenderable(m_aabb_wire, localToWorld);
+	renderArrow(collector, volume, localToWorld);
 	
 	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		renderer.addRenderable(m_renderName, localToWorld);
+		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
 

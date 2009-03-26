@@ -39,7 +39,7 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
 }
 
 // Front end renderable submission
-void RenderablePicoModel::submitRenderables(Renderer& rend, 
+void RenderablePicoModel::submitRenderables(RenderableCollector& rend, 
 											const Matrix4& localToWorld)
 {
 	// Submit renderables from each surface

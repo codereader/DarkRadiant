@@ -11,7 +11,7 @@
 
 /* FORWARD DECLS */
 class ModelSkin;
-class Renderer;
+class RenderableCollector;
 class SelectionTest;
 class Selector;
 class Shader;
@@ -88,12 +88,12 @@ public:
 	 * Front-end render function used by the main renderer.
 	 * 
 	 * @param rend
-	 * The sorting Renderer object which accepts renderable geometry.
+	 * The sorting RenderableCollector object which accepts renderable geometry.
 	 * 
 	 * @param localToWorld
 	 * Object to world-space transform.
 	 */
-	void submitRenderables(Renderer& rend, const Matrix4& localToWorld);		
+	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld);		
 	
 	/** 
 	 * Render function from OpenGLRenderable

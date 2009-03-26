@@ -118,7 +118,7 @@ public:
 
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void render(Renderer& renderer, const Matrix4& localToWorld) const;
+	void render(RenderableCollector& collector, const Matrix4& localToWorld) const;
 
 	void transform(const Matrix4& matrix, bool mirror);
 

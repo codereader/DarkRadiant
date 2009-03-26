@@ -14,6 +14,7 @@
 
 typedef const Plane3* PlanePointer;
 typedef PlanePointer* PlanesIterator;
+class RenderableCollector;
 
 class FaceInstance {
 	Face* m_face;
@@ -103,7 +104,7 @@ public:
 
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void testSelect(SelectionTest& test, SelectionIntersection& best);
 

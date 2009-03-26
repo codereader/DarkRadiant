@@ -74,8 +74,8 @@ public:
 	void clearLights();
 
 	// Renderable implementation
-	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	// Returns the name of the currently active skin
 	virtual std::string getSkin() const;
@@ -85,7 +85,7 @@ private:
 	void constructRemaps();
 	void destroyRemaps();
 
-	void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 };
 typedef boost::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
 

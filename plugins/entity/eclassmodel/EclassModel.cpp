@@ -141,21 +141,21 @@ const TransformNode& EclassModel::getTransformNode() const {
 	return m_transform;
 }
 
-void EclassModel::renderSolid(Renderer& renderer, 
+void EclassModel::renderSolid(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
 	if(selected) {
-		m_renderOrigin.render(renderer, volume, localToWorld);
+		m_renderOrigin.render(collector, volume, localToWorld);
 	}
 
-	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
+	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 }
-void EclassModel::renderWireframe(Renderer& renderer, 
+void EclassModel::renderWireframe(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
-	renderSolid(renderer, volume, localToWorld, selected);
+	renderSolid(collector, volume, localToWorld, selected);
 	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		renderer.addRenderable(m_renderName, localToWorld);
+		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
 

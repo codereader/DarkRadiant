@@ -101,17 +101,17 @@ void MD5ModelNode::clearLights() {
 	}
 }
 
-void MD5ModelNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	_lightList->evaluateLights();
 
-	render(renderer, volume, localToWorld());
+	render(collector, volume, localToWorld());
 }
 
-void MD5ModelNode::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	renderSolid(renderer, volume);
+void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	renderSolid(collector, volume);
 }
 
-void MD5ModelNode::render(Renderer& renderer, const VolumeTest& volume,
+void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volume,
 		const Matrix4& localToWorld) const
 {
 	SurfaceLightLists::const_iterator j = _surfaceLightLists.begin();
@@ -123,8 +123,8 @@ void MD5ModelNode::render(Renderer& renderer, const VolumeTest& volume,
 		 ++i, ++j, ++k)
 	{
 		if ((*i)->intersectVolume(volume, localToWorld) != c_volumeOutside) {
-			renderer.setLights(*j);
-			(*i)->render(renderer, localToWorld, k->shader != NULL ? k->shader : (*i)->getState());
+			collector.setLights(*j);
+			(*i)->render(collector, localToWorld, k->shader != NULL ? k->shader : (*i)->getState());
 		}
 	}
 }

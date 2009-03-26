@@ -40,12 +40,12 @@ void NullModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_nullModel->testSelect(selector, test, localToWorld());
 }
 
-void NullModelNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
-	_nullModel->renderSolid(renderer, volume, localToWorld());
+void NullModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+	_nullModel->renderSolid(collector, volume, localToWorld());
 }
 
-void NullModelNode::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	_nullModel->renderWireframe(renderer, volume, localToWorld());
+void NullModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	_nullModel->renderWireframe(collector, volume, localToWorld());
 }
 
 const AABB& NullModelNode::localAABB() const {

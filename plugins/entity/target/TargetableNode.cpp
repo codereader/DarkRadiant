@@ -79,12 +79,12 @@ const Vector3& TargetableNode::getWorldPosition() const {
 	return _node.localToWorld().t().getVector3();
 }
 
-void TargetableNode::render(Renderer& renderer, const VolumeTest& volume) const {
+void TargetableNode::render(RenderableCollector& collector, const VolumeTest& volume) const {
 	if (!_node.visible()) return;
 
-	renderer.SetState(_d3entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-	renderer.SetState(_d3entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
-	_renderableLines.render(renderer, volume, getWorldPosition());
+	collector.SetState(_d3entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+	collector.SetState(_d3entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials);
+	_renderableLines.render(collector, volume, getWorldPosition());
 }
 
 } // namespace entity

@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callbackfwd.h"
 #include "signal/signalfwd.h"
 
-class Renderer;
+class RenderableCollector;
 class View;
 
 /**

@@ -260,31 +260,31 @@ VolumeIntersectionValue Patch::intersectVolume(const VolumeTest& test, const Mat
 }
 
 // Render functions: solid mode
-void Patch::render_solid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-	renderer.SetState(m_state, Renderer::eFullMaterials);
-	renderer.addRenderable(m_render_solid, localToWorld);
+void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+	collector.SetState(m_state, RenderableCollector::eFullMaterials);
+	collector.addRenderable(m_render_solid, localToWorld);
 }
 
 // Render functions for WireFrame rendering
-void Patch::render_wireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-	renderer.SetState(m_state, Renderer::eFullMaterials);
+void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+	collector.SetState(m_state, RenderableCollector::eFullMaterials);
 	if (m_patchDef3) {
-		renderer.addRenderable(m_render_wireframe_fixed, localToWorld);
+		collector.addRenderable(m_render_wireframe_fixed, localToWorld);
 	}
 	else {
-		renderer.addRenderable(m_render_wireframe, localToWorld);
+		collector.addRenderable(m_render_wireframe, localToWorld);
 	}
 }
 
 // greebo: This renders the patch components, namely the lattice and the corner controls
-void Patch::render_component(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-	renderer.SetState(m_state_lattice, Renderer::eWireframeOnly);
-	renderer.SetState(m_state_lattice, Renderer::eFullMaterials);
-	renderer.addRenderable(m_render_lattice, localToWorld);
+void Patch::render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+	collector.SetState(m_state_lattice, RenderableCollector::eWireframeOnly);
+	collector.SetState(m_state_lattice, RenderableCollector::eFullMaterials);
+	collector.addRenderable(m_render_lattice, localToWorld);
 
-	renderer.SetState(m_state_ctrl, Renderer::eWireframeOnly);
-	renderer.SetState(m_state_ctrl, Renderer::eFullMaterials);
-	renderer.addRenderable(m_render_ctrl, localToWorld);
+	collector.SetState(m_state_ctrl, RenderableCollector::eWireframeOnly);
+	collector.SetState(m_state_ctrl, RenderableCollector::eFullMaterials);
+	collector.addRenderable(m_render_ctrl, localToWorld);
 }
 
 const ShaderPtr& Patch::getState() const {

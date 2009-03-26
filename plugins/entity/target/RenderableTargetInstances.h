@@ -30,8 +30,8 @@ public:
 	void detach(TargetableNode& node);
 
 	// Renderable implementation
-	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	// Accessor method to the singleton instance
 	static RenderableTargetInstances& Instance();

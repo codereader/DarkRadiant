@@ -137,33 +137,33 @@ const AABB& Doom3Group::localAABB() const {
 	return m_curveBounds;
 }
 
-void Doom3Group::renderSolid(Renderer& renderer, const VolumeTest& volume, 
+void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
 	const Matrix4& localToWorld, bool selected) const 
 {
 	if (selected) {
-		m_renderOrigin.render(renderer, volume, localToWorld);
+		m_renderOrigin.render(collector, volume, localToWorld);
 	}
 
-	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-	renderer.SetState(_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials);
+	collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+	collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials);
 
 	if (!m_curveNURBS.isEmpty()) {
-		m_curveNURBS.renderSolid(renderer, volume, localToWorld);
+		m_curveNURBS.renderSolid(collector, volume, localToWorld);
 	}
 	
 	if (!m_curveCatmullRom.isEmpty()) {
-		m_curveCatmullRom.renderSolid(renderer, volume, localToWorld);
+		m_curveCatmullRom.renderSolid(collector, volume, localToWorld);
 	}
 }
 
-void Doom3Group::renderWireframe(Renderer& renderer, const VolumeTest& volume, 
+void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
 	const Matrix4& localToWorld, bool selected) const 
 {
-	renderSolid(renderer, volume, localToWorld, selected);
+	renderSolid(collector, volume, localToWorld, selected);
 
     // Render the name if required
 	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		renderer.addRenderable(m_renderName, localToWorld);
+		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
 
