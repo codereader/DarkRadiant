@@ -264,13 +264,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             GlobalOpenGL_debugAssertNoErrors();
         }
 
+        // Set GL states corresponding to RENDER_ flags
         setState(requiredState, changingBitsMask, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
         setState(requiredState, changingBitsMask, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
 
         setState(requiredState, changingBitsMask, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
         setState(requiredState, changingBitsMask, RENDER_POLYGONSMOOTH, GL_POLYGON_SMOOTH);
 
-        setState(requiredState, changingBitsMask, RENDER_FOG, GL_FOG);
     } // end of changingBitsMask-dependent changes
 
   if(requiredState & RENDER_DEPTHTEST && _state.m_depthfunc != current.m_depthfunc)

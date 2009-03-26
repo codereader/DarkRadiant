@@ -40,20 +40,19 @@ const unsigned int RENDER_COLOURWRITE = 1 << 7; // glColorMask(GL_TRUE; GL_TRUE;
 const unsigned int RENDER_CULLFACE = 1 << 8; // glglEnable(GL_CULL_FACE)
 const unsigned int RENDER_SCALED = 1 << 9; // glEnable(GL_NORMALIZE)
 const unsigned int RENDER_SMOOTH = 1 << 10; // glShadeModel
-const unsigned int RENDER_FOG = 1 << 11; // glEnable(GL_FOG)
-const unsigned int RENDER_LIGHTING = 1 << 12; // glEnable(GL_LIGHTING)
-const unsigned int RENDER_BLEND = 1 << 13; // glEnable(GL_BLEND)
-const unsigned int RENDER_OFFSETLINE = 1 << 14; // glEnable(GL_POLYGON_OFFSET_LINE)
-const unsigned int RENDER_FILL = 1 << 15; // glPolygonMode
-const unsigned int RENDER_COLOURARRAY = 1 << 16; // glEnableClientState(GL_COLOR_ARRAY)
-const unsigned int RENDER_COLOURCHANGE = 1 << 17; // render() is allowed to call glColor*()
-const unsigned int RENDER_MATERIAL_VCOL = 1 << 18; // material requests per-vertex colour
-const unsigned int RENDER_VCOL_INVERT = 1 << 19; // vertex colours should be inverted
-const unsigned int RENDER_TEXTURE = 1 << 20; // glEnable(GL_TEXTURE_2D)
-const unsigned int RENDER_BUMP = 1 << 21;
-const unsigned int RENDER_PROGRAM = 1 << 22;
-const unsigned int RENDER_SCREEN = 1 << 23;
-const unsigned int RENDER_OVERRIDE = 1 << 24;
+const unsigned int RENDER_LIGHTING = 1 << 11; // glEnable(GL_LIGHTING)
+const unsigned int RENDER_BLEND = 1 << 12; // glEnable(GL_BLEND)
+const unsigned int RENDER_OFFSETLINE = 1 << 13; // glEnable(GL_POLYGON_OFFSET_LINE)
+const unsigned int RENDER_FILL = 1 << 14; // glPolygonMode
+const unsigned int RENDER_COLOURARRAY = 1 << 15; // glEnableClientState(GL_COLOR_ARRAY)
+const unsigned int RENDER_COLOURCHANGE = 1 << 16; // render() is allowed to call glColor*()
+const unsigned int RENDER_MATERIAL_VCOL = 1 << 17; // material requests per-vertex colour
+const unsigned int RENDER_VCOL_INVERT = 1 << 18; // vertex colours should be inverted
+const unsigned int RENDER_TEXTURE = 1 << 19; // glEnable(GL_TEXTURE_2D)
+const unsigned int RENDER_BUMP = 1 << 20;
+const unsigned int RENDER_PROGRAM = 1 << 21;
+const unsigned int RENDER_SCREEN = 1 << 22;
+const unsigned int RENDER_OVERRIDE = 1 << 23;
 typedef unsigned int RenderStateFlags;
 
 
