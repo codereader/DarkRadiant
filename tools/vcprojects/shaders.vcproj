@@ -423,6 +423,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\shaders\Doom3ShaderLayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\shaders\Doom3ShaderLayer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\shaders\Doom3ShaderSystem.cpp"
 				>
 			</File>
