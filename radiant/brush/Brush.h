@@ -11,6 +11,8 @@
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
 
+class RenderableCollector;
+
 const std::size_t c_brush_maxFaces = 1024;
 
 typedef std::size_t faceIndex_t;
@@ -209,7 +211,7 @@ public:
 	
 	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 	
-	void renderComponents(SelectionSystem::EComponentMode mode, Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	
 	void transform(const Matrix4& matrix);
 	

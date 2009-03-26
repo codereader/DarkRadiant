@@ -94,12 +94,12 @@ public:
 	void clearLights();
 
 	// Renderable implementation	
-  	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+  	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 private:
 	// Instance render function 
-	void submitRenderables(Renderer& renderer, 
+	void submitRenderables(RenderableCollector& collector, 
 						   const VolumeTest& volume, 
 						   const Matrix4& localToWorld) const;
 };

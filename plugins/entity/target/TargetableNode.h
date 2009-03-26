@@ -54,7 +54,7 @@ public:
 	// Entity::Observer implementation, gets called on key erase
 	void onKeyErase(const std::string& key, EntityKeyValue& value);
 
-	void render(Renderer& renderer, const VolumeTest& volume) const;
+	void render(RenderableCollector& collector, const VolumeTest& volume) const;
 
 private:
 	// Helper method to retrieve the current position

@@ -109,12 +109,12 @@ void GenericEntityNode::detach(const NameCallback& callback) {
 	m_contained.getNameable().detach(callback);
 }
 
-void GenericEntityNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
-	m_contained.renderSolid(renderer, volume, localToWorld());
+void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+	m_contained.renderSolid(collector, volume, localToWorld());
 }
 
-void GenericEntityNode::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	m_contained.renderWireframe(renderer, volume, localToWorld());
+void GenericEntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	m_contained.renderWireframe(collector, volume, localToWorld());
 }
 
 void GenericEntityNode::evaluateTransform() {

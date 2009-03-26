@@ -264,7 +264,7 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
 	}
 }
 
-void Doom3GroupNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	// greebo: Check if the skin needs updating before rendering.
 	if (_updateSkin) {
 		if (m_contained.isModel()) {
@@ -277,27 +277,27 @@ void Doom3GroupNode::renderSolid(Renderer& renderer, const VolumeTest& volume) c
 		_updateSkin = false;
 	}
 
-	m_contained.renderSolid(renderer, volume, localToWorld(), isSelected());
+	m_contained.renderSolid(collector, volume, localToWorld(), isSelected());
 
-	m_curveNURBS.renderComponentsSelected(renderer, volume, localToWorld());
-	m_curveCatmullRom.renderComponentsSelected(renderer, volume, localToWorld());
+	m_curveNURBS.renderComponentsSelected(collector, volume, localToWorld());
+	m_curveCatmullRom.renderComponentsSelected(collector, volume, localToWorld());
 }
 
-void Doom3GroupNode::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	m_contained.renderWireframe(renderer, volume, localToWorld(), isSelected());
+void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
 
-	m_curveNURBS.renderComponentsSelected(renderer, volume, localToWorld());
-	m_curveCatmullRom.renderComponentsSelected(renderer, volume, localToWorld());
+	m_curveNURBS.renderComponentsSelected(collector, volume, localToWorld());
+	m_curveCatmullRom.renderComponentsSelected(collector, volume, localToWorld());
 }
 
-void Doom3GroupNode::renderComponents(Renderer& renderer, const VolumeTest& volume) const {
+void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const {
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
-		m_curveNURBS.renderComponents(renderer, volume, localToWorld());
-		m_curveCatmullRom.renderComponents(renderer, volume, localToWorld());
+		m_curveNURBS.renderComponents(collector, volume, localToWorld());
+		m_curveCatmullRom.renderComponents(collector, volume, localToWorld());
 		
 		// Register the renderable with OpenGL
 		if (!m_contained.isModel()) {
-			_originInstance.render(renderer, volume, localToWorld());
+			_originInstance.render(collector, volume, localToWorld());
 		}
 	}
 }

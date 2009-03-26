@@ -3,23 +3,23 @@
 
 class RenderHighlighted
 {
-  Renderer& m_renderer;
+  RenderableCollector& m_renderer;
   const VolumeTest& m_volume;
 public:
-  RenderHighlighted(Renderer& renderer, const VolumeTest& volume)
-    : m_renderer(renderer), m_volume(volume)
+  RenderHighlighted(RenderableCollector& collector, const VolumeTest& volume)
+    : m_renderer(collector), m_volume(volume)
   {
   }
   
 	// Render function, instructs the Renderable object to submit its geometry
-	// to the contained Renderer.
+	// to the contained RenderableCollector.
 	void render(const Renderable& renderable) const {
 	    switch(m_renderer.getStyle())
 	    {
-	    case Renderer::eFullMaterials:
+	    case RenderableCollector::eFullMaterials:
 	      renderable.renderSolid(m_renderer, m_volume);
 	      break;
-	    case Renderer::eWireframeOnly:
+	    case RenderableCollector::eWireframeOnly:
 	      renderable.renderWireframe(m_renderer, m_volume);
 	      break;
 	    }      
@@ -49,13 +49,13 @@ public:
 	      {
 	        if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
 	        {
-	          m_renderer.Highlight(Renderer::eFace);
+	          m_renderer.Highlight(RenderableCollector::eFace);
 	        }
 	        else if(renderable)
 	        {
 	          renderable->renderComponents(m_renderer, m_volume);
 	        }
-	        m_renderer.Highlight(Renderer::ePrimitive);
+	        m_renderer.Highlight(RenderableCollector::ePrimitive);
 	      }
 	        
 	      if(renderable)

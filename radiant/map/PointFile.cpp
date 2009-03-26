@@ -79,19 +79,19 @@ void PointFile::render(RenderStateFlags state) const {
 /*
  * Solid renderable submission function (front-end)
  */
-void PointFile::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	if(isVisible()) {
-		renderer.SetState(_renderstate, Renderer::eWireframeOnly);
-		renderer.SetState(_renderstate, Renderer::eFullMaterials);
-		renderer.addRenderable(*this, g_matrix4_identity);
+		collector.SetState(_renderstate, RenderableCollector::eWireframeOnly);
+		collector.SetState(_renderstate, RenderableCollector::eFullMaterials);
+		collector.addRenderable(*this, g_matrix4_identity);
 	}
 }
 
 /*
  * Wireframe renderable submission function (front-end).
  */
-void PointFile::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	renderSolid(renderer, volume);
+void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	renderSolid(collector, volume);
 }
 
 // Parse the current pointfile and read the vectors into the point list

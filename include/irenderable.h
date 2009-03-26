@@ -30,24 +30,23 @@ class LightList;
 class Matrix4;
 
 /** 
- * This is a proxy class used in the first (sorting) stage of rendering, which 
- * accepts OpenGLRenderables and adds them to a suitable data structure for 
- * rendering in the second stage. Despite its name, this class does not
- * actually render anything.
+ * \brief
+ * Class which accepts OpenGLRenderable objects during the first pass of
+ * rendering.
  * 
- * Each Renderable in the scenegraph is passed a reference to a Renderer, on 
- * which the Renderable sets the necessary state variables and then submits its 
- * OpenGLRenderable(s) for later rendering. A single Renderable may submit more 
- * than one OpenGLRenderable, with a different state each time -- for instance a 
- * Renderable model class may submit each of its material surfaces separately 
- * with the respective shaders set beforehand.
+ * Each Renderable in the scenegraph is passed a reference to a
+ * RenderableCollector, on which the Renderable sets the necessary state
+ * variables and then submits its OpenGLRenderable(s) for later rendering. A
+ * single Renderable may submit more than one OpenGLRenderable, with a different
+ * state each time -- for instance a Renderable model class may submit each of
+ * its material surfaces separately with the respective shaders set beforehand.
  * 
- * @todo
+ * \todo
  * This class probably doesn't need to be a state machine, convert it to a 
  * single submit method with necessary parameters.
  */
 
-class Renderer
+class RenderableCollector
 {
 public:
   enum EHighlightMode
@@ -88,8 +87,8 @@ public:
 	 * 
 	 * @param mode
 	 * The type of rendering (wireframe or shaded) that this shader should be
-	 * used for. Individual Renderer subclasses may ignore this method call if
-	 * it does not use the render mode they are interested in.
+    * used for. Individual RenderableCollector subclasses may ignore this method
+    * call if it does not use the render mode they are interested in.
 	 */
 	virtual void SetState(boost::shared_ptr<Shader> state, EStyle mode) = 0;
 	
@@ -110,10 +109,10 @@ public:
   
 	
 	/**
-	 * Return the render style of this Renderer.
+    * Return the render style of this RenderableCollector.
 	 * 
-	 * TODO: If a Renderer has a single style, why do we pass in an EStyle
-	 * parameter when setting the state with SetState()?
+    * TODO: If a RenderableCollector has a single style, why do we pass in an
+    * EStyle parameter when setting the state with SetState()?
 	 */
 	virtual const EStyle getStyle() const = 0;
 	
@@ -124,7 +123,8 @@ public:
   
   	/**
   	 * Set the list of lights to be used for lighting-mode rendering. This
-  	 * method only makes sense for Renderers that support this rendering mode.
+    * method only makes sense for RenderableCollectors that support this
+    * rendering mode.
   	 * 
   	 * TODO: Use boost::shared_ptr<> here.
   	 */
@@ -135,7 +135,7 @@ class VolumeTest;
 
 /** Interface class for Renderable objects. All objects which wish to be
  * rendered need to implement this interface. During the scenegraph traversal
- * for rendering, each Renderable object is passed a Renderer object
+ * for rendering, each Renderable object is passed a RenderableCollector object
  * which it can use to submit its geometry and state parameters.
  */
 
@@ -144,16 +144,16 @@ class Renderable
 public:
 	/** Submit renderable geometry when rendering takes place in Solid mode.
 	 */
-	virtual void renderSolid(Renderer& renderer, 
+	virtual void renderSolid(RenderableCollector& collector, 
   						  	 const VolumeTest& volume) const = 0;
 
 	/** Submit renderable geometry when rendering takes place in Wireframe
 	 * mode.
 	 */
-	virtual void renderWireframe(Renderer& renderer, 
+	virtual void renderWireframe(RenderableCollector& collector, 
 								 const VolumeTest& volume) const = 0;
   							   
-	virtual void renderComponents(Renderer&, const VolumeTest&) const
+	virtual void renderComponents(RenderableCollector&, const VolumeTest&) const
 	{ }
 	
 	virtual void viewChanged() const

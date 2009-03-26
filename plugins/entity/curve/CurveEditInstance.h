@@ -72,9 +72,9 @@ public:
 
 	void updateSelected() const;
   
-	void renderComponents(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void renderComponentsSelected(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void curveChanged();
 	typedef MemberCaller<CurveEditInstance, &CurveEditInstance::curveChanged> CurveChangedCaller;

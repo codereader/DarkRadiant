@@ -108,7 +108,7 @@ public:
 		_targetKeys(targetKeys)
 	{}
 
-	void render(Renderer& renderer, const VolumeTest& volume, const Vector3& worldPosition) {
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition) {
 		if (_targetKeys.empty()) {
 			return;
 		}
@@ -122,7 +122,7 @@ public:
 
 		// If we hold any objects now, add us as renderable
 		if (!empty()) {
-			renderer.addRenderable(*this, g_matrix4_identity);
+			collector.addRenderable(*this, g_matrix4_identity);
 		}
 	}
 };

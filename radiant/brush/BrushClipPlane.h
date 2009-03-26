@@ -38,10 +38,10 @@ public:
 		}
 	}
 
-	void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-		renderer.SetState(m_state, Renderer::eWireframeOnly);
-		renderer.SetState(m_state, Renderer::eFullMaterials);
-		renderer.addRenderable(*this, localToWorld);
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+		collector.SetState(m_state, RenderableCollector::eWireframeOnly);
+		collector.SetState(m_state, RenderableCollector::eFullMaterials);
+		collector.addRenderable(*this, localToWorld);
 	}
 }; // class BrushClipPlane
 

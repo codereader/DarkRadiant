@@ -76,8 +76,8 @@ public:
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 
-	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);

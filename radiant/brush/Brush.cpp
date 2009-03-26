@@ -207,16 +207,16 @@ VolumeIntersectionValue Brush::intersectVolume(const VolumeTest& test, const Mat
 	return test.TestAABB(m_aabb_local, localToWorld);
 }
 
-void Brush::renderComponents(SelectionSystem::EComponentMode mode, Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
+void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
 	switch (mode) {
 		case SelectionSystem::eVertex:
-			renderer.addRenderable(m_render_vertices, localToWorld);
+			collector.addRenderable(m_render_vertices, localToWorld);
 			break;
 		case SelectionSystem::eEdge:
-			renderer.addRenderable(m_render_edges, localToWorld);
+			collector.addRenderable(m_render_edges, localToWorld);
 			break;
 		case SelectionSystem::eFace:
-			renderer.addRenderable(m_render_faces, localToWorld);
+			collector.addRenderable(m_render_faces, localToWorld);
 			break;
 		default:
 			break;

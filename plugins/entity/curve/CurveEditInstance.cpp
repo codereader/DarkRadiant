@@ -140,24 +140,24 @@ void CurveEditInstance::updateSelected() const {
     forEachSelected(adder);
 }
   
-void CurveEditInstance::renderComponents(Renderer& renderer, 
+void CurveEditInstance::renderComponents(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-    renderer.SetState(StaticShaders::instance().controlsShader, Renderer::eWireframeOnly);
-    renderer.SetState(StaticShaders::instance().controlsShader, Renderer::eFullMaterials);
-    renderer.addRenderable(m_controlsRender, localToWorld);
+    collector.SetState(StaticShaders::instance().controlsShader, RenderableCollector::eWireframeOnly);
+    collector.SetState(StaticShaders::instance().controlsShader, RenderableCollector::eFullMaterials);
+    collector.addRenderable(m_controlsRender, localToWorld);
 }
 
-void CurveEditInstance::renderComponentsSelected(Renderer& renderer, 
+void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     updateSelected();
     if(!m_selectedRender.empty())
     {
-      renderer.Highlight(Renderer::ePrimitive, false);
-      renderer.SetState(StaticShaders::instance().selectedShader, Renderer::eWireframeOnly);
-      renderer.SetState(StaticShaders::instance().selectedShader, Renderer::eFullMaterials);
-      renderer.addRenderable(m_selectedRender, localToWorld);
+      collector.Highlight(RenderableCollector::ePrimitive, false);
+      collector.SetState(StaticShaders::instance().selectedShader, RenderableCollector::eWireframeOnly);
+      collector.SetState(StaticShaders::instance().selectedShader, RenderableCollector::eFullMaterials);
+      collector.addRenderable(m_selectedRender, localToWorld);
     }
 }
 

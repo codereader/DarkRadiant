@@ -86,18 +86,18 @@ void PicoModelNode::clearLights() {
 	_lights.clear();
 }
 
-void PicoModelNode::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	_lightList.evaluateLights();
 
-	submitRenderables(renderer, volume, localToWorld());
+	submitRenderables(collector, volume, localToWorld());
 }
 
-void PicoModelNode::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	renderSolid(renderer, volume);
+void PicoModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	renderSolid(collector, volume);
 }
 
 // Renderable submission
-void PicoModelNode::submitRenderables(Renderer& renderer, 
+void PicoModelNode::submitRenderables(RenderableCollector& collector, 
 									  const VolumeTest& volume, 
 									  const Matrix4& localToWorld) const
 {
@@ -105,7 +105,7 @@ void PicoModelNode::submitRenderables(Renderer& renderer,
 	// render call
 	if (_picoModel->intersectVolume(volume, localToWorld) != c_volumeOutside) {
 		// Submit the lights
-		renderer.setLights(_lights);
+		collector.setLights(_lights);
 	
 		// If the surface cache is populated, then use this instead of the
 		// original model in order to get the skinned textures
@@ -114,18 +114,18 @@ void PicoModelNode::submitRenderables(Renderer& renderer,
 				 i != _mappedSurfs.end();
 				 ++i)
 			{
-				// Submit the surface and shader to the renderer, checking first
+				// Submit the surface and shader to the collector, checking first
 				// to make sure the texture is not filtered
 				IShaderPtr surfaceShader = i->second->getIShader();
 				if (surfaceShader->isVisible()) { 
-					renderer.SetState(i->second, Renderer::eFullMaterials);
-					renderer.addRenderable(*i->first, localToWorld);
+					collector.SetState(i->second, RenderableCollector::eFullMaterials);
+					collector.addRenderable(*i->first, localToWorld);
 				}
 			}			
 		}
 		else {
 			// Submit the model's geometry
-			_picoModel->submitRenderables(renderer, localToWorld);
+			_picoModel->submitRenderables(collector, localToWorld);
 		}
 	}
 }

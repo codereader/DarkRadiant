@@ -460,59 +460,59 @@ Doom3LightRadius& Light::getDoom3Radius() {
 	return m_doom3Radius;
 }
 
-void Light::renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
+void Light::renderProjectionPoints(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
 	// Add the renderable light target
-	renderer.Highlight(Renderer::ePrimitive, false);
-	renderer.Highlight(Renderer::eFace, false);
+	collector.Highlight(RenderableCollector::ePrimitive, false);
+	collector.Highlight(RenderableCollector::eFace, false);
 	
-	renderer.SetState(_rRight.getShader(), Renderer::eFullMaterials);
-	renderer.SetState(_rRight.getShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(_rRight, localToWorld);
+	collector.SetState(_rRight.getShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_rRight.getShader(), RenderableCollector::eWireframeOnly);
+	collector.addRenderable(_rRight, localToWorld);
 	
-	renderer.SetState(_rUp.getShader(), Renderer::eFullMaterials);
-	renderer.SetState(_rUp.getShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(_rUp, localToWorld);
+	collector.SetState(_rUp.getShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_rUp.getShader(), RenderableCollector::eWireframeOnly);
+	collector.addRenderable(_rUp, localToWorld);
 	
-	renderer.SetState(_rTarget.getShader(), Renderer::eFullMaterials);
-	renderer.SetState(_rTarget.getShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(_rTarget, localToWorld);
+	collector.SetState(_rTarget.getShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_rTarget.getShader(), RenderableCollector::eWireframeOnly);
+	collector.addRenderable(_rTarget, localToWorld);
 	
 	if (m_useLightStart) {
-		renderer.SetState(_rStart.getShader(), Renderer::eFullMaterials);
-		renderer.SetState(_rStart.getShader(), Renderer::eWireframeOnly);
-		renderer.addRenderable(_rStart, localToWorld);
+		collector.SetState(_rStart.getShader(), RenderableCollector::eFullMaterials);
+		collector.SetState(_rStart.getShader(), RenderableCollector::eWireframeOnly);
+		collector.addRenderable(_rStart, localToWorld);
 	}
 	
 	if (m_useLightEnd) {
-		renderer.SetState(_rEnd.getShader(), Renderer::eFullMaterials);
-		renderer.SetState(_rEnd.getShader(), Renderer::eWireframeOnly);
-		renderer.addRenderable(_rEnd, localToWorld);
+		collector.SetState(_rEnd.getShader(), RenderableCollector::eFullMaterials);
+		collector.SetState(_rEnd.getShader(), RenderableCollector::eWireframeOnly);
+		collector.addRenderable(_rEnd, localToWorld);
 	}
 }
 
-// Adds the light centre renderable to the given renderer
-void Light::renderLightCentre(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-	renderer.Highlight(Renderer::ePrimitive, false);
-	renderer.Highlight(Renderer::eFace, false);
-	renderer.SetState(_rCentre.getShader(), Renderer::eFullMaterials);
-	renderer.SetState(_rCentre.getShader(), Renderer::eWireframeOnly);
+// Adds the light centre renderable to the given collector
+void Light::renderLightCentre(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+	collector.Highlight(RenderableCollector::ePrimitive, false);
+	collector.Highlight(RenderableCollector::eFace, false);
+	collector.SetState(_rCentre.getShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_rCentre.getShader(), RenderableCollector::eWireframeOnly);
       
-	renderer.addRenderable(_rCentre, localToWorld);
+	collector.addRenderable(_rCentre, localToWorld);
 }
 
-void Light::renderWireframe(Renderer& renderer, 
+void Light::renderWireframe(RenderableCollector& collector, 
 							const VolumeTest& volume, 
 							const Matrix4& localToWorld, 
 							bool selected) const 
 {
 	// Main render, submit the diamond that represents the light entity
-	renderer.SetState(
-		m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly
+	collector.SetState(
+		m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
 	);
-	renderer.SetState(
-		m_entity.getEntityClass()->getWireShader(), Renderer::eFullMaterials
+	collector.SetState(
+		m_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
 	);
-	renderer.addRenderable(*this, localToWorld);
+	collector.addRenderable(*this, localToWorld);
 
 	// Render bounding box if selected or the showAllLighRadii flag is set
 	if (selected || EntitySettings::InstancePtr()->showAllLightRadii()) {
@@ -520,17 +520,17 @@ void Light::renderWireframe(Renderer& renderer,
 		if (isProjected()) {
 			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.
 			projection();
-			renderer.addRenderable(m_renderProjection, localToWorld);
+			collector.addRenderable(m_renderProjection, localToWorld);
 		}
 		else {
 			updateLightRadiiBox();
-			renderer.addRenderable(m_radii_box, localToWorld);
+			collector.addRenderable(m_radii_box, localToWorld);
 		}
 	}
 
 	// Render the name
 	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		renderer.addRenderable(m_renderName, localToWorld);
+		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
 

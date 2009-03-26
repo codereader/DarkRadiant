@@ -71,13 +71,13 @@ public:
 	}
 	
 	// Front-end render function
-	void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const {
-		renderer.Highlight(Renderer::ePrimitive, false);
-		renderer.Highlight(Renderer::eFace, false);
-		renderer.SetState(_shader, Renderer::eFullMaterials);
-		renderer.SetState(_shader, Renderer::eWireframeOnly);
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+		collector.Highlight(RenderableCollector::ePrimitive, false);
+		collector.Highlight(RenderableCollector::eFace, false);
+		collector.SetState(_shader, RenderableCollector::eFullMaterials);
+		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
 		
-		renderer.addRenderable(*this, localToWorld);
+		collector.addRenderable(*this, localToWorld);
 	}
 	
 	// GL render function (backend)

@@ -227,14 +227,14 @@ public:
 	mutable Matrix4 m_projectionOrientation;
 
 	// Renderable submission functions
-	void renderWireframe(Renderer& renderer, 
+	void renderWireframe(RenderableCollector& collector, 
 						 const VolumeTest& volume, 
 						 const Matrix4& localToWorld, 
 						 bool selected) const;
 
-	// Adds the light centre renderable to the given renderer
-	void renderLightCentre(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderProjectionPoints(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	// Adds the light centre renderable to the given collector
+	void renderLightCentre(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderProjectionPoints(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();

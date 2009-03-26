@@ -46,7 +46,7 @@ public:
   	
   	// This function is responsible for bringing the visual representation
   	// of this manipulator onto the screen
-  	virtual void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& pivot2world) {}
+  	virtual void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) {}
   	
   	virtual void setSelected(bool select) = 0;
   	virtual bool isSelected() const = 0;
@@ -88,7 +88,7 @@ public:
   void UpdateColours();
   void updateCircleTransforms();
   
-  void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& pivot2world);
+  void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   
   void testSelect(const View& view, const Matrix4& pivot2world);
   
@@ -128,7 +128,7 @@ public:
   void UpdateColours();
   bool manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis);
   
-  void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& pivot2world);
+  void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   void testSelect(const View& view, const Matrix4& pivot2world);
   Manipulatable* GetManipulatable();
   
@@ -164,7 +164,7 @@ public:
 
   void UpdateColours();
   
-  void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& pivot2world);
+  void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   void testSelect(const View& view, const Matrix4& pivot2world);
   Manipulatable* GetManipulatable();
   

@@ -118,9 +118,9 @@ public:
 	void removeOriginFromChildren();
 
 	// Renderable implementation
-	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
-	void renderComponents(Renderer& renderer, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	void evaluateTransform();
 	typedef MemberCaller<Doom3GroupNode, &Doom3GroupNode::evaluateTransform> EvaluateTransformCaller;

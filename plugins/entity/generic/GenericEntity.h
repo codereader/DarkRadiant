@@ -77,9 +77,9 @@ public:
 
 	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void renderArrow(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderArrow(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 

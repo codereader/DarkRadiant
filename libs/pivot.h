@@ -280,19 +280,19 @@ public:
     glDrawArrays(GL_LINES, 0, m_vertices.size());
   }
 
-  void render(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const
+  void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
-    renderer.PushState();
+    collector.PushState();
 
 	// greebo: Commented this out to avoid the point from being moved along with the view.
     //Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
-    renderer.Highlight(Renderer::ePrimitive, false);
-    renderer.SetState(getShader(), Renderer::eWireframeOnly);
-    renderer.SetState(getShader(), Renderer::eFullMaterials);
-    renderer.addRenderable(*this, localToWorld);
+    collector.Highlight(RenderableCollector::ePrimitive, false);
+    collector.SetState(getShader(), RenderableCollector::eWireframeOnly);
+    collector.SetState(getShader(), RenderableCollector::eFullMaterials);
+    collector.addRenderable(*this, localToWorld);
 
-    renderer.PopState();
+    collector.PopState();
   }
 };
 

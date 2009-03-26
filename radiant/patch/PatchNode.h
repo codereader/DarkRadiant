@@ -159,10 +159,10 @@ public:
 
 	// Render functions, these make sure that all things get rendered properly. The calls are also passed on
 	// to the contained patch <m_patch>
-	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	// Renders the components of this patch instance, makes use of the Patch::render_component() method 
-	void renderComponents(Renderer& renderer, const VolumeTest& volume) const;
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	// Apply the transformation to the patch
 	void applyTransform();
@@ -180,7 +180,7 @@ private:
 	void update_selected() const;
 
 	// greebo: Renders the selected components. This is called by the above two render functions
-	void renderComponentsSelected(Renderer& renderer, const VolumeTest& volume) const;
+	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const;
 };
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 

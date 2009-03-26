@@ -15,16 +15,16 @@ void RenderableTargetInstances::detach(TargetableNode& node) {
 	_nodes.erase(&node);
 }
 
-void RenderableTargetInstances::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void RenderableTargetInstances::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	for (TargetableNodes::const_iterator i = _nodes.begin(); 
 		 i != _nodes.end(); ++i)
 	{
-		(*i)->render(renderer, volume);
+		(*i)->render(collector, volume);
 	}
 }
 
-void RenderableTargetInstances::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	renderSolid(renderer, volume);
+void RenderableTargetInstances::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	renderSolid(collector, volume);
 }
 
 RenderableTargetInstances& RenderableTargetInstances::Instance() {

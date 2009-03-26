@@ -716,8 +716,8 @@ void RadiantSelectionSystem::NudgeManipulator(const Vector3& nudge, const Vector
 }
 
 // greebo: This just passes the call on to renderSolid, the manipulators are wireframes anyway 
-void RadiantSelectionSystem::renderWireframe(Renderer& renderer, const VolumeTest& volume) const {
-	renderSolid(renderer, volume);
+void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+	renderSolid(collector, volume);
 }
 
 // Lets the ConstructPivot() method do the work and returns the result that is stored in the member variable 
@@ -912,21 +912,21 @@ void RadiantSelectionSystem::ConstructPivot() const {
 /* greebo: Renders the currently active manipulator by setting the render state and 
  * calling the manipulator's render method
  */
-void RadiantSelectionSystem::renderSolid(Renderer& renderer, const VolumeTest& volume) const {
+void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	if (!nothingSelected()) {
-		renderer.Highlight(Renderer::ePrimitive, false);
-		renderer.Highlight(Renderer::eFace, false);
+		collector.Highlight(RenderableCollector::ePrimitive, false);
+		collector.Highlight(RenderableCollector::eFace, false);
 
-		renderer.SetState(_state, Renderer::eWireframeOnly);
-		renderer.SetState(_state, Renderer::eFullMaterials);
+		collector.SetState(_state, RenderableCollector::eWireframeOnly);
+		collector.SetState(_state, RenderableCollector::eFullMaterials);
 
-		_manipulator->render(renderer, volume, GetPivot2World());
+		_manipulator->render(collector, volume, GetPivot2World());
 	}
 
 #if defined(DEBUG_SELECTION)
-	renderer.SetState(g_state_clipped, Renderer::eWireframeOnly);
-	renderer.SetState(g_state_clipped, Renderer::eFullMaterials);
-	renderer.addRenderable(g_render_clipped, g_render_clipped.m_world);
+	collector.SetState(g_state_clipped, RenderableCollector::eWireframeOnly);
+	collector.SetState(g_state_clipped, RenderableCollector::eFullMaterials);
+	collector.addRenderable(g_render_clipped, g_render_clipped.m_world);
 #endif
 }
 

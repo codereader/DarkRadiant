@@ -109,25 +109,25 @@ VolumeIntersectionValue Speaker::intersectVolume(
 	return volume.TestAABB(localAABB(), localToWorld);
 }
 
-void Speaker::renderSolid(Renderer& renderer, 
+void Speaker::renderSolid(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	renderer.SetState(m_entity.getEntityClass()->getFillShader(), Renderer::eFullMaterials);
-	renderer.addRenderable(m_aabb_solid, localToWorld);
+	collector.SetState(m_entity.getEntityClass()->getFillShader(), RenderableCollector::eFullMaterials);
+	collector.addRenderable(m_aabb_solid, localToWorld);
 	if (EntitySettings::InstancePtr()->showAllSpeakerRadii())
-		renderer.addRenderable(m_speakerRadii, localToWorld);
+		collector.addRenderable(m_speakerRadii, localToWorld);
 }
 
-void Speaker::renderWireframe(Renderer& renderer, 
+void Speaker::renderWireframe(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	renderer.SetState(m_entity.getEntityClass()->getWireShader(), Renderer::eWireframeOnly);
-	renderer.addRenderable(m_aabb_wire, localToWorld);
+	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+	collector.addRenderable(m_aabb_wire, localToWorld);
 	if (EntitySettings::InstancePtr()->showAllSpeakerRadii())
-		renderer.addRenderable(m_speakerRadii, localToWorld);
+		collector.addRenderable(m_speakerRadii, localToWorld);
 	
 	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		renderer.addRenderable(m_renderName, localToWorld);
+		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
 

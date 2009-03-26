@@ -185,9 +185,9 @@ public:
 	void clearLights();
 
 	// Renderable implementation
-	void renderComponents(Renderer& renderer, const VolumeTest& volume) const;
-	void renderSolid(Renderer& renderer, const VolumeTest& volume) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume) const;
+	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void viewChanged() const;
 
 	// Gets called by the TransformModifier
@@ -204,13 +204,13 @@ public:
 private:
 	void transformComponents(const Matrix4& matrix);
 
-	void renderSolid(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void update_selected() const;
-	void renderComponentsSelected(Renderer& renderer, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void renderClipPlane(Renderer& renderer, const VolumeTest& volume) const;
+	void renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const;
 	void evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const;
 	
 }; // class BrushNode

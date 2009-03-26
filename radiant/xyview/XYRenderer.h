@@ -4,7 +4,7 @@
 #include "irenderable.h"
 
 class XYRenderer : 
-	public Renderer
+	public RenderableCollector
 {
 	// State type structure
 	struct state_type {
