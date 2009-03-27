@@ -62,7 +62,7 @@ Matrix4 TextureProjection::getBasisForNormal(const Vector3& normal) const {
 	
 	Matrix4 basis;
 	
-	basis = g_matrix4_identity;
+	basis = Matrix4::getIdentity();
 	ComputeAxisBase(normal, basis.x().getVector3(), basis.y().getVector3());
 	basis.z().getVector3() = normal;
 	

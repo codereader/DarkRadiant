@@ -122,7 +122,7 @@ public:
 
 		// If we hold any objects now, add us as renderable
 		if (!empty()) {
-			collector.addRenderable(*this, g_matrix4_identity);
+			collector.addRenderable(*this, Matrix4::getIdentity());
 		}
 	}
 };

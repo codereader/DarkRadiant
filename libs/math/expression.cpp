@@ -151,7 +151,7 @@ Matrix4 testMatrix4AffineMultiplied2(const Matrix4& a, const Matrix4& b)
 
 Matrix4 testMatrix4MultipliedConstant1(const Matrix4& a)
 {
-  return matrix4_multiplied_by_matrix4(a, g_matrix4_identity);
+  return matrix4_multiplied_by_matrix4(a, Matrix4::getIdentity());
 }
 
 Matrix4 testMatrix4MultipliedConstant2(const Matrix4& a)
@@ -159,7 +159,7 @@ Matrix4 testMatrix4MultipliedConstant2(const Matrix4& a)
   return matrix4_for_expression(
     matrix4_multiplied(
       matrix4_identity(a),
-      matrix4_identity(g_matrix4_identity)
+      matrix4_identity(Matrix4::getIdentity())
     )
   );
 }

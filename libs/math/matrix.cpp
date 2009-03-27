@@ -21,6 +21,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "matrix.h"
 
+// Identity matrix
+const Matrix4& Matrix4::getIdentity()
+{
+    static const Matrix4 _identity(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    );
+    return _identity;
+}
+
 // Get a rotation from 2 vectors (named constructor)
 Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b) {
 	double angle = a.angle(b);

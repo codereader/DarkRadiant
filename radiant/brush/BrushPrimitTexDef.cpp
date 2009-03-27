@@ -167,7 +167,7 @@ void BrushPrimitTexDef::normalise(double width, double height) {
  */
 Matrix4 BrushPrimitTexDef::getTransform() const {
 	// Initialise the return value with the identity matrix
-	Matrix4 transform = g_matrix4_identity;
+	Matrix4 transform = Matrix4::getIdentity();
 	
 	// Just copy the member variables to the according matrix components
 	transform.xx() = coords[0][0];

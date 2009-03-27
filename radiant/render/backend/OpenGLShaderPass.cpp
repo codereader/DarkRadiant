@@ -419,11 +419,11 @@ void OpenGLShaderPass::render(OpenGLState& current,
   {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadMatrixd(g_matrix4_identity);
+    glLoadMatrixd(Matrix4::getIdentity());
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-    glLoadMatrixd(g_matrix4_identity);
+    glLoadMatrixd(Matrix4::getIdentity());
 
     glBegin(GL_QUADS);
     glVertex3f(-1, -1, 0);
@@ -515,7 +515,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
                 // matrix
                 AABB lightBounds(light->aabb());
 
-                Matrix4 world2light(g_matrix4_identity);
+                Matrix4 world2light(Matrix4::getIdentity());
 
                 if (light->isProjected()) 
                 {

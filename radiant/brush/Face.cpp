@@ -330,7 +330,6 @@ void Face::flipTexture(unsigned int flipAxis) {
 }
 
 void Face::EmitTextureCoordinates() {
-	//m_texdefTransformed.emitTextureCoordinates(m_shader.width(), m_shader.height(), m_winding, plane3().normal(), g_matrix4_identity);
 	m_texdefTransformed.emitTextureCoordinates(m_winding, plane3().normal(), Matrix4::getIdentity());
 }
 

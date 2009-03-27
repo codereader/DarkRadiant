@@ -106,7 +106,7 @@ inline Matrix4 matrix4_swap_axes(const Vector3& from, const Vector3& to) {
 
 	ERROR_MESSAGE("unhandled axis swap case");
 
-	return g_matrix4_identity;
+	return Matrix4::getIdentity();
 }
 
 inline Matrix4 matrix4_reflection_for_plane(const Plane3& plane) {

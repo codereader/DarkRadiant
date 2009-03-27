@@ -83,7 +83,7 @@ void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	if(isVisible()) {
 		collector.SetState(_renderstate, RenderableCollector::eWireframeOnly);
 		collector.SetState(_renderstate, RenderableCollector::eFullMaterials);
-		collector.addRenderable(*this, g_matrix4_identity);
+		collector.addRenderable(*this, Matrix4::getIdentity());
 	}
 }
 

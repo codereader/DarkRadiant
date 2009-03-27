@@ -84,7 +84,7 @@ void RotateSelected::visit(const scene::INodePtr& node) const {
 		 */
 	    {
 	      EditablePtr editable = Node_getEditable(node);
-	      const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : g_matrix4_identity;
+	      const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : Matrix4::getIdentity();
 	
 	      Vector3 parent_translation;
 	      translation_for_pivoted_rotation(
@@ -118,7 +118,7 @@ void ScaleSelected::visit(const scene::INodePtr& node) const {
         transform->setScale(m_scale);
         {
           EditablePtr editable = Node_getEditable(node);
-          const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : g_matrix4_identity;
+          const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : Matrix4::getIdentity();
     
           Vector3 parent_translation;
           translation_for_pivoted_scale(
