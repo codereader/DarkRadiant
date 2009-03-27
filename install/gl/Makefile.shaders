@@ -1,6 +1,6 @@
 CGC = cgc
 CGCFLAGS_FP = -profile arbfp1
-CGCFLAGS_VP = -profile arbvp
+CGCFLAGS_VP = -profile arbvp1
 
 all: interaction_fp.arb interaction_vp.arb
 
