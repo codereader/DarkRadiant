@@ -33,7 +33,7 @@ public:
   /// \brief Returns the identity matrix.
   const Matrix4& localToParent() const
   {
-    return g_matrix4_identity;
+    return Matrix4::getIdentity();
   }
 };
 
@@ -42,7 +42,7 @@ class MatrixTransform : public TransformNode
 {
   Matrix4 m_localToParent;
 public:
-  MatrixTransform() : m_localToParent(g_matrix4_identity)
+  MatrixTransform() : m_localToParent(Matrix4::getIdentity())
   {
   }
 

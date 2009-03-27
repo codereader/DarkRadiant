@@ -110,7 +110,7 @@ void RotateManipulator::updateCircleTransforms()  {
     _circleX_visible = !vector3_equal_epsilon(g_vector3_axis_x, localViewpoint, 1e-6);
     if(_circleX_visible)
     {
-      _local2worldX = g_matrix4_identity;
+      _local2worldX = Matrix4::getIdentity();
       _local2worldX.y().getVector3() = g_vector3_axis_x.crossProduct(localViewpoint).getNormalised();
       _local2worldX.z().getVector3() = _local2worldX.x().getVector3().crossProduct( 
         											_local2worldX.y().getVector3()).getNormalised();
@@ -120,7 +120,7 @@ void RotateManipulator::updateCircleTransforms()  {
     _circleY_visible = !vector3_equal_epsilon(g_vector3_axis_y, localViewpoint, 1e-6);
     if(_circleY_visible)
     {
-      _local2worldY = g_matrix4_identity;
+      _local2worldY = Matrix4::getIdentity();
       _local2worldY.z().getVector3() = g_vector3_axis_y.crossProduct(localViewpoint).getNormalised();
       _local2worldY.x().getVector3() = _local2worldY.y().getVector3().crossProduct( 
       											 		_local2worldY.z().getVector3()).getNormalised();
@@ -130,7 +130,7 @@ void RotateManipulator::updateCircleTransforms()  {
     _circleZ_visible = !vector3_equal_epsilon(g_vector3_axis_z, localViewpoint, 1e-6);
     if(_circleZ_visible)
     {
-      _local2worldZ = g_matrix4_identity;
+      _local2worldZ = Matrix4::getIdentity();
       _local2worldZ.x().getVector3() = g_vector3_axis_z.crossProduct(localViewpoint).getNormalised();
       _local2worldZ.y().getVector3() = _local2worldZ.z().getVector3().crossProduct( 
       												_local2worldZ.x().getVector3()).getNormalised();

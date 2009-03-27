@@ -247,7 +247,7 @@ void Patch::onAllocate(std::size_t size) {
 // For the TransformNode implementation (localToParent() is abstract and needs to be here)
 const Matrix4& Patch::localToParent() const {
 	// Just return the identity matrix
-	return g_matrix4_identity;
+	return Matrix4::getIdentity();
 }
 
 // Return the interally stored AABB

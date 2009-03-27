@@ -40,14 +40,11 @@ public:
 	
 	/* NAMED CONSTRUCTORS FOR SPECIFIC MATRICES */
 	
-	/* Get a new identity matrix */
-
-	static Matrix4 getIdentity() {
-		return Matrix4(1, 0, 0, 0,
-						0, 1, 0, 0,
-						0, 0, 1, 0,
-						0, 0, 0, 1);
-	}
+   /**
+    * \brief
+    * Obtain the identity matrix.
+    */
+	static const Matrix4& getIdentity();
 	
 	/** Get a matrix representing the given 3D translation.
 	 * 
@@ -362,15 +359,6 @@ public:
 	}
 	
 };
-
-/// \brief The 4x4 identity matrix.
-const Matrix4 g_matrix4_identity(
-  1, 0, 0, 0,
-  0, 1, 0, 0,
-  0, 0, 1, 0,
-  0, 0, 0, 1
-);
-
 
 /// \brief Returns true if \p self and \p other are exactly element-wise equal.
 inline bool operator==(const Matrix4& self, const Matrix4& other)

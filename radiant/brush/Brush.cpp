@@ -191,7 +191,7 @@ void Brush::evaluateTransform() {
 }
 
 const Matrix4& Brush::localToParent() const {
-	return g_matrix4_identity;
+	return Matrix4::getIdentity();
 }
 
 void Brush::aabbChanged() {

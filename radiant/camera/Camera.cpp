@@ -97,7 +97,7 @@ void Camera::keyMove() {
 }
 
 void Camera::updateModelview() {
-	modelview = g_matrix4_identity;
+	modelview = Matrix4::getIdentity();
 
 	// roll, pitch, yaw
 	Vector3 radiant_eulerXYZ(0, -angles[CAMERA_PITCH], angles[CAMERA_YAW]);

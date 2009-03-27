@@ -87,7 +87,7 @@ public:
     m_selectable_top.setSelected(selected);
     m_selectable_bottom.setSelected(selected);
   }
-  void selectPlanes(const AABB& aabb, Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback, const Matrix4& rotation = g_matrix4_identity)
+  void selectPlanes(const AABB& aabb, Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback, const Matrix4& rotation = Matrix4::getIdentity())
   {
     Line line(test.getNear(), test.getFar());
     Vector3 corners[8];
@@ -158,7 +158,7 @@ public:
 
     m_bounds = aabb;
   }
-  void selectReversedPlanes(const AABB& aabb, Selector& selector, const SelectedPlanes& selectedPlanes, const Matrix4& rotation = g_matrix4_identity)
+  void selectReversedPlanes(const AABB& aabb, Selector& selector, const SelectedPlanes& selectedPlanes, const Matrix4& rotation = Matrix4::getIdentity())
   {
     Plane3 planes[6];
     aabb_planes_oriented(aabb, rotation, planes);
