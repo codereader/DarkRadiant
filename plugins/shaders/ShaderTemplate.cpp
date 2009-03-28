@@ -72,7 +72,7 @@ void ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
         fogLight = true;
     }
     else if (!fogLight && token == "lightfalloffimage") {
-        _lightFalloff = shaders::IMapExpression::createForToken(tokeniser);
+        _lightFalloff = shaders::MapExpression::createForToken(tokeniser);
     }
 }
 
@@ -82,12 +82,12 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
 {
     if (token == "qer_editorimage") 
     {
-        _editorTex = IMapExpression::createForToken(tokeniser);
+        _editorTex = MapExpression::createForToken(tokeniser);
     }
     else if (token == "diffusemap") 
     {
         // Parse the map expression
-        MapExpressionPtr difMapExp = IMapExpression::createForToken(tokeniser);
+        MapExpressionPtr difMapExp = MapExpression::createForToken(tokeniser);
 
         // Add the diffuse layer
         Doom3ShaderLayerPtr layer(
@@ -106,7 +106,7 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
         Doom3ShaderLayerPtr layer(
             new Doom3ShaderLayer(
                 ShaderLayer::SPECULAR, 
-                IMapExpression::createForToken(tokeniser)
+                MapExpression::createForToken(tokeniser)
             )
         );
         m_layers.push_back(layer);
@@ -116,7 +116,7 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
         Doom3ShaderLayerPtr layer(
             new Doom3ShaderLayer(
                 ShaderLayer::BUMP,
-                IMapExpression::createForToken(tokeniser)
+                MapExpression::createForToken(tokeniser)
             )
         );
         m_layers.push_back(layer);
@@ -167,7 +167,7 @@ void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
 void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {   
     if (token == "map") {
-        _currentLayer->setMapExpression(IMapExpression::createForToken(tokeniser));     
+        _currentLayer->setMapExpression(MapExpression::createForToken(tokeniser));     
     }
 }
 
