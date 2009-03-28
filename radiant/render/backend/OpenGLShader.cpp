@@ -219,39 +219,30 @@ void OpenGLShader::constructLightingPassesFromIShader()
         switch ((*i)->getType())
         {
         case ShaderLayer::DIFFUSE:
-            if (!triplet.diffuse)
-            {
-                triplet.diffuse = *i;
-            }
-            else
+            if (triplet.diffuse)
             {
                 appendInteractionLayer(triplet);
                 triplet.reset();
             }
+            triplet.diffuse = *i;
             break;
 
         case ShaderLayer::BUMP:
-            if (!triplet.bump)
-            {
-                triplet.bump = *i;
-            }
-            else
+            if (triplet.bump)
             {
                 appendInteractionLayer(triplet);
                 triplet.reset();
             }
+            triplet.bump = *i;
             break;
 
         case ShaderLayer::SPECULAR:
-            if (!triplet.specular)
-            {
-                triplet.specular = *i;
-            }
-            else
+            if (triplet.specular)
             {
                 appendInteractionLayer(triplet);
                 triplet.reset();
             }
+            triplet.specular = *i;
             break;
 
         case ShaderLayer::BLEND:
