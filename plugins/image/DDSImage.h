@@ -121,7 +121,9 @@ public:
 		return _mipMapInfo[mipMapIndex].height;
 	}
 
-	virtual GLuint downloadTextureToGL() {
+    /* BindableTexture implementation */
+	GLuint bindTexture() const
+    {
 		GLuint textureNum;
 
 		// Allocate a new texture number and store it into the Texture structure

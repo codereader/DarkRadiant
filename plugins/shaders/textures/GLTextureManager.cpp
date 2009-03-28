@@ -146,7 +146,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 void GLTextureManager::textureFromImage(TexturePtr texture, ImagePtr image) 
 {
 	// Download the texture and set the reference number
-	texture->texture_number = image->downloadTextureToGL();
+	texture->texture_number = image->bindTexture();
 
 	// Fill the Texture structure with the metadata
 	texture->width = image->getWidth(0);
