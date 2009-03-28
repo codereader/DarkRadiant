@@ -84,19 +84,25 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
         _texture = IMapExpression::createForToken(tokeniser);
     }
     else if (token == "diffusemap") {
+        _diffuseLayer->setLayerType(ShaderLayer::DIFFUSE);
         _diffuseLayer->setMapExpression(
             IMapExpression::createForToken(tokeniser)
         );
+        m_layers.push_back(_diffuseLayer);
     }
     else if (token == "specularmap") {
+        _specularLayer->setLayerType(ShaderLayer::SPECULAR);
         _specularLayer->setMapExpression(
             IMapExpression::createForToken(tokeniser)
         );
+        m_layers.push_back(_specularLayer);
     }
     else if (token == "bumpmap") {
+        _bumpLayer->setLayerType(ShaderLayer::BUMP);
         _bumpLayer->setMapExpression(
             IMapExpression::createForToken(tokeniser)
         );
+        m_layers.push_back(_bumpLayer);
     }
 }
 
@@ -111,13 +117,13 @@ void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
         std::string blendType = boost::algorithm::to_lower_copy(tokeniser.nextToken());
         
         if (blendType == "diffusemap") {
-            _currentLayer->setLayerType(LAYER_DIFFUSEMAP);
+            _currentLayer->setLayerType(ShaderLayer::DIFFUSE);
         }
         else if (blendType == "bumpmap") {
-            _currentLayer->setLayerType(LAYER_BUMPMAP);
+            _currentLayer->setLayerType(ShaderLayer::BUMP);
         }
         else if (blendType == "specularmap") {
-            _currentLayer->setLayerType(LAYER_SPECULARMAP);
+            _currentLayer->setLayerType(ShaderLayer::SPECULAR);
         }
         else 
         {
@@ -201,20 +207,25 @@ bool ShaderTemplate::saveLayer()
 {
     // If the current layer is a special layer, save it to the respective member
     // variable, otherwise add it to the layer list
-    switch (_currentLayer->getLayerType()) {
-        case LAYER_DIFFUSEMAP:
+    switch (_currentLayer->getType()) 
+    {
+        case ShaderLayer::DIFFUSE:
             _diffuseLayer = _currentLayer;
             break;
-        case LAYER_BUMPMAP:
+        case ShaderLayer::BUMP:
             _bumpLayer = _currentLayer;
             break;
-        case LAYER_SPECULARMAP:
+        case ShaderLayer::SPECULAR:
             _specularLayer = _currentLayer;
             break;
         default:
-            if (_currentLayer->getMapExpression()) {
-                m_layers.push_back(_currentLayer);
-            }
+            // Do nothing
+            break;
+    }
+
+    // Append layer to list of all layers
+    if (_currentLayer->getMapExpression()) {
+        m_layers.push_back(_currentLayer);
     }
     
     // Clear the currentLayer structure for possible future layers

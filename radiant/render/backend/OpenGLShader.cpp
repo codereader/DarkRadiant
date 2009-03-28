@@ -113,6 +113,77 @@ bool OpenGLShader::canUseLightingMode() const
     );
 }
 
+// Add an interaction layer
+void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
+{
+    OpenGLState& bumpPass = appendDefaultPass();
+
+    // Get texture components. If any of the triplet is missing, look up the
+    // default from the shader system.
+    if (triplet.diffuse)
+    {
+        bumpPass.m_texture = triplet.diffuse->getTexture()->texture_number;
+    }
+    else
+    {
+        bumpPass.m_texture = GlobalShaderSystem().getDefaultInteractionTexture(
+            ShaderLayer::DIFFUSE
+        )->texture_number;
+    }
+    if (triplet.bump)
+    {
+        bumpPass.m_texture1 = triplet.bump->getTexture()->texture_number;
+    }
+    else
+    {
+        bumpPass.m_texture1 = GlobalShaderSystem().getDefaultInteractionTexture(
+            ShaderLayer::BUMP
+        )->texture_number;
+    }
+    if (triplet.specular)
+    {
+        bumpPass.m_texture2 = triplet.specular->getTexture()->texture_number;
+    }
+    else
+    {
+        bumpPass.m_texture2 = GlobalShaderSystem().getDefaultInteractionTexture(
+            ShaderLayer::SPECULAR
+        )->texture_number;
+    }
+    
+    // Set render flags
+    bumpPass.renderFlags = RENDER_BLEND
+                       |RENDER_FILL
+                       |RENDER_CULLFACE
+                       |RENDER_DEPTHTEST
+                       |RENDER_COLOURWRITE
+                       |RENDER_SMOOTH
+                       |RENDER_BUMP
+                       |RENDER_PROGRAM;
+    
+    bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
+
+    // Set layer vertex colour mode
+    ShaderLayer::VertexColourMode vcolMode = 
+            triplet.diffuse->getVertexColourMode();
+    if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
+    {
+        // Vertex colours allowed
+        bumpPass.renderFlags |= RENDER_MATERIAL_VCOL;
+
+        if (vcolMode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
+        {
+            // Vertex colours are inverted
+            bumpPass.renderFlags |= RENDER_VCOL_INVERT;
+        }
+    }
+    
+    bumpPass.m_depthfunc = GL_LEQUAL;
+    bumpPass.m_sort = OpenGLState::eSortMultiFirst;
+    bumpPass.m_blend_src = GL_ONE;
+    bumpPass.m_blend_dst = GL_ONE;
+}
+
 // Construct lighting mode render passes
 void OpenGLShader::constructLightingPassesFromIShader()
 {
@@ -134,45 +205,68 @@ void OpenGLShader::constructLightingPassesFromIShader()
     
     state.m_program = render::GLProgramFactory::getProgram("depthFill").get();
     
-    // Construct diffuse/bump/specular render pass
+    // Build up and add shader passes for DBS triplets as they are found. A
+    // new triplet is found when (1) the same DBS layer type is seen twice, (2)
+    // we have at least one DBS layer then see a blend layer, or (3) we have at
+    // least one DBS layer then reach the end of the layers.
 
-    OpenGLState& bumpPass = appendDefaultPass();
-    ShaderLayerPtr diffuseLayer = _iShader->getDiffuse();
-
-    bumpPass.m_texture = diffuseLayer->getTexture()->texture_number;
-    bumpPass.m_texture1 = _iShader->getBump()->getTexture()->texture_number;
-    bumpPass.m_texture2 = _iShader->getSpecular()->getTexture()->texture_number;
-    
-    bumpPass.renderFlags = RENDER_BLEND
-                       |RENDER_FILL
-                       |RENDER_CULLFACE
-                       |RENDER_DEPTHTEST
-                       |RENDER_COLOURWRITE
-                       |RENDER_SMOOTH
-                       |RENDER_BUMP
-                       |RENDER_PROGRAM;
-    
-    bumpPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
-
-    // Set layer vertex colour mode
-    ShaderLayer::VertexColourMode vcolMode = diffuseLayer->getVertexColourMode();
-    if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
+    const ShaderLayerVector& allLayers = _iShader->getAllLayers();
+    DBSTriplet triplet;
+    for (ShaderLayerVector::const_iterator i = allLayers.begin();
+         i != allLayers.end();
+         ++i)
     {
-        // Vertex colours allowed
-        bumpPass.renderFlags |= RENDER_MATERIAL_VCOL;
-
-        if (vcolMode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
+        switch ((*i)->getType())
         {
-            // Vertex colours are inverted
-            bumpPass.renderFlags |= RENDER_VCOL_INVERT;
+        case ShaderLayer::DIFFUSE:
+            if (!triplet.diffuse)
+            {
+                triplet.diffuse = *i;
+            }
+            else
+            {
+                appendInteractionLayer(triplet);
+                triplet.reset();
+            }
+            break;
+
+        case ShaderLayer::BUMP:
+            if (!triplet.bump)
+            {
+                triplet.bump = *i;
+            }
+            else
+            {
+                appendInteractionLayer(triplet);
+                triplet.reset();
+            }
+            break;
+
+        case ShaderLayer::SPECULAR:
+            if (!triplet.specular)
+            {
+                triplet.specular = *i;
+            }
+            else
+            {
+                appendInteractionLayer(triplet);
+                triplet.reset();
+            }
+            break;
+
+        case ShaderLayer::BLEND:
+            if (triplet.specular || triplet.bump || triplet.diffuse)
+            {
+                appendInteractionLayer(triplet);
+                triplet.reset();
+            }
+            appendBlendLayer(*i);
         }
     }
-    
-    bumpPass.m_depthfunc = GL_LEQUAL;
-    bumpPass.m_sort = OpenGLState::eSortMultiFirst;
-    bumpPass.m_blend_src = GL_ONE;
-    bumpPass.m_blend_dst = GL_ONE;
 
+    // Submit final pass if we reach the end
+    if (triplet.specular || triplet.bump || triplet.diffuse)
+    appendInteractionLayer(triplet);
 }
 
 // Construct editor-image-only render passes
@@ -226,6 +320,37 @@ void OpenGLShader::constructEditorPreviewPassFromIShader()
     state.m_sort = OpenGLState::eSortFullbright;
 }
 
+// Append a blend (non-interaction) layer
+void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
+{
+    TexturePtr layerTex = layer->getTexture();
+
+    OpenGLState& state = appendDefaultPass();
+    state.renderFlags = RENDER_FILL
+                    | RENDER_BLEND
+                    | RENDER_TEXTURE
+                    | RENDER_DEPTHTEST
+                    | RENDER_COLOURWRITE;
+
+    // Set the texture
+    state.m_texture = layerTex->texture_number;
+
+    // Get the blend function
+    BlendFunc blendFunc = layer->getBlendFunc();
+    state.m_blend_src = blendFunc.src;
+    state.m_blend_dst = blendFunc.dest;
+    if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
+    {
+      state.renderFlags |= RENDER_DEPTHWRITE;
+    }
+
+    // Colour modulation
+    state.m_colour = Vector4(layer->getColour(), 1.0);
+
+    state.m_sort = OpenGLState::eSortFullbright;
+
+}
+
 // Construct non-lighting mode render passes
 void OpenGLShader::constructStandardPassesFromIShader()
 {
@@ -234,31 +359,7 @@ void OpenGLShader::constructStandardPassesFromIShader()
          i != allLayers.end();
          ++i)
     {
-        TexturePtr layerTex = (*i)->getTexture();
-
-        OpenGLState& state = appendDefaultPass();
-        state.renderFlags = RENDER_FILL
-                        | RENDER_BLEND
-                        | RENDER_TEXTURE
-                        | RENDER_DEPTHTEST
-                        | RENDER_COLOURWRITE;
-
-        // Set the texture
-        state.m_texture = layerTex->texture_number;
-
-        // Get the blend function
-        BlendFunc blendFunc = (*i)->getBlendFunc();
-        state.m_blend_src = blendFunc.src;
-        state.m_blend_dst = blendFunc.dest;
-        if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
-        {
-          state.renderFlags |= RENDER_DEPTHWRITE;
-        }
-
-        // Colour modulation
-        state.m_colour = Vector4((*i)->getColour(), 1.0);
-
-        state.m_sort = OpenGLState::eSortFullbright;
+        appendBlendLayer(*i);
     }
 
 #if 0 // legacy translucency code

@@ -11,10 +11,6 @@
 /* CONSTANTS */
 namespace {
 	
-	// Default image maps for optional material stages
-	const std::string IMAGE_FLAT = "_flat.bmp";
-	const std::string IMAGE_BLACK = "_black.bmp";
-	
 	// Registry path for default light shader
 	const std::string DEFAULT_LIGHT_PATH = "game/defaults/lightShader";	
 	
@@ -67,17 +63,6 @@ ShaderLayerPtr CShader::getBump()
     if (!_bump)
     {
         _bump = _template->getBumpLayer();
-
-        // If no texture, use the _flat texture
-        if (!_bump->getTexture())
-        {
-            _bump->setTexture(
-                GetTextureManager().getBinding(
-                    GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
-                )
-            );
-        }
-
     }
     return _bump;
 }
@@ -88,17 +73,6 @@ ShaderLayerPtr CShader::getSpecular()
     if (!_specular)
     {
         _specular = _template->getSpecularLayer();
-
-        // If no texture, use black
-        if (!_specular->getTexture())
-        {
-            _specular->setTexture(
-                GetTextureManager().getBinding(
-                    GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
-                )
-            );
-        }
-
     }
 	return _specular;
 }
