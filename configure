@@ -19833,7 +19833,7 @@ else
 fi
 
 
-if [ $darkmod_plugins != 'no' ]
+if [ "$darkmod_plugins" != 'no' ]
 then
     # Enable conditional directories (used by plugins/Makefile.am)
     sr_plugin="dm.stimresponse"
@@ -21228,7 +21228,7 @@ fi
 
 
 # Boost.Python if required
-if test $python_scripting == 'yes'
+if test "$python_scripting" = 'yes'
 then
     for ac_prog in python-config
 do
@@ -21272,7 +21272,7 @@ fi
   test -n "$PYTHON_CONFIG" && break
 done
 
-    if test ! -z $PYTHON_CONFIG
+    if test ! -z "$PYTHON_CONFIG"
     then
         PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
         PYTHON_LIBS=`$PYTHON_CONFIG --libs`
@@ -21749,67 +21749,6 @@ else
 fi
 
 
-{ echo "$as_me:$LINENO: checking for main in -lalut" >&5
-echo $ECHO_N "checking for main in -lalut... $ECHO_C" >&6; }
-if test "${ac_cv_lib_alut_main+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lalut  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-
-int
-main ()
-{
-return main ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_cxx_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext &&
-       $as_test_x conftest$ac_exeext; then
-  ac_cv_lib_alut_main=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_lib_alut_main=no
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ echo "$as_me:$LINENO: result: $ac_cv_lib_alut_main" >&5
-echo "${ECHO_T}$ac_cv_lib_alut_main" >&6; }
-if test $ac_cv_lib_alut_main = yes; then
-  ALUT_LIBS='-lalut'
-else
-  sound_module=''
-fi
-
 { echo "$as_me:$LINENO: checking for ov_clear in -lvorbisfile" >&5
 echo $ECHO_N "checking for ov_clear in -lvorbisfile... $ECHO_C" >&6; }
 if test "${ac_cv_lib_vorbisfile_ov_clear+set}" = set; then
@@ -21944,6 +21883,67 @@ else
   sound_module=''
 fi
 
+{ echo "$as_me:$LINENO: checking for main in -lalut" >&5
+echo $ECHO_N "checking for main in -lalut... $ECHO_C" >&6; }
+if test "${ac_cv_lib_alut_main+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lalut $AL_LIBS $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_lib_alut_main=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_alut_main=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_lib_alut_main" >&5
+echo "${ECHO_T}$ac_cv_lib_alut_main" >&6; }
+if test $ac_cv_lib_alut_main = yes; then
+  ALUT_LIBS='-lalut'
+else
+  sound_module=''
+fi
+
 
 
 
@@ -21957,7 +21957,7 @@ CXXFLAGS="$USER_CXXFLAGS"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX"
 
 # Debug/optimisation
-if [ $debug_build != 'no' ]
+if [ "$debug_build" != 'no' ]
 then
     CFLAGS="-g -O0 $CFLAGS"
     CXXFLAGS="-g -O0 $CXXFLAGS"
@@ -23446,21 +23446,21 @@ echo "
 Configuration options:"
 
 echo     " Installation prefix: $prefix"
-if [ $sound_module != '' ]
+if [ "$sound_module" != '' ]
 then
     echo " Sound:               yes"
 else
     echo " Sound:               no"
 fi
 
-if [ $darkmod_plugins != 'no' ]
+if [ "$darkmod_plugins" != 'no' ]
 then
     echo " Darkmod plugins:     yes"
 else
     echo " Darkmod plugins:     no"
 fi
 
-if test -z $script_module
+if test -z "$script_module"
 then
     echo " Python scripting:    no"
 else
