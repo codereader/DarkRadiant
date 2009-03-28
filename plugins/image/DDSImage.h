@@ -97,10 +97,6 @@ public:
 		_pixelData = NULL;
 	}
 
-	virtual std::size_t getNumMipMaps() const {
-		return _mipMapInfo.size();
-	}
-
 	/**
 	 * greebo: Returns the specified mipmap pixel data.
 	 */
