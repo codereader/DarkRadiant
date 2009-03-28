@@ -29,7 +29,7 @@ AC_ARG_ENABLE([python],
               [python_scripting=$enableval],
               [python_scripting='yes'])
 
-if [[ $darkmod_plugins != 'no' ]]
+if [[ "$darkmod_plugins" != 'no' ]]
 then
     # Enable conditional directories (used by plugins/Makefile.am)
     sr_plugin="dm.stimresponse"
@@ -96,10 +96,10 @@ AC_CHECK_LIB([boost_filesystem], [main],
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
 # Boost.Python if required
-if test $python_scripting == 'yes'
+if test "$python_scripting" = 'yes'
 then
     AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
-    if test ! -z $PYTHON_CONFIG
+    if test ! -z "$PYTHON_CONFIG"
     then
         PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
         PYTHON_LIBS=`$PYTHON_CONFIG --libs`
@@ -128,15 +128,16 @@ AC_CHECK_HEADER([boost/serialization/access.hpp], [],
 AC_CHECK_HEADER([AL/alut.h],
                 [sound_module='sound'],
                 [sound_module=''])
-AC_CHECK_LIB([alut], [main],
-             [ALUT_LIBS='-lalut'],
-             [sound_module=''])
 AC_CHECK_LIB([vorbisfile], [ov_clear],
              [VORBIS_LIBS='-lvorbisfile'],
              [sound_module=''])
 AC_CHECK_LIB([openal], [alGetError],
              [AL_LIBS='-lopenal'],
              [sound_module=''])
+AC_CHECK_LIB([alut], [main],
+             [ALUT_LIBS='-lalut'],
+             [sound_module=''],
+             [$AL_LIBS])
 
 AC_SUBST([sound_module])
 AC_SUBST([ALUT_LIBS])
@@ -150,7 +151,7 @@ CXXFLAGS="$USER_CXXFLAGS"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX"
 
 # Debug/optimisation
-if [[ $debug_build != 'no' ]]
+if [[ "$debug_build" != 'no' ]]
 then
     CFLAGS="-g -O0 $CFLAGS"
     CXXFLAGS="-g -O0 $CXXFLAGS"
@@ -212,21 +213,21 @@ echo "
 Configuration options:"
 
 echo     " Installation prefix: $prefix"
-if [[ $sound_module != '' ]]
+if [[ "$sound_module" != '' ]]
 then
     echo " Sound:               yes"
 else
     echo " Sound:               no"
 fi
 
-if [[ $darkmod_plugins != 'no' ]]
+if [[ "$darkmod_plugins" != 'no' ]]
 then
     echo " Darkmod plugins:     yes"
 else
     echo " Darkmod plugins:     no"
 fi
 
-if test -z $script_module
+if test -z "$script_module"
 then
     echo " Python scripting:    no"
 else
