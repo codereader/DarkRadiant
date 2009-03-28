@@ -37,14 +37,11 @@ public:
 private:
 	Layers m_layers;
 
-	// Map expressions
-	shaders::MapExpressionPtr _texture;
-	shaders::MapExpressionPtr _lightFalloff;
+    // Editorimage texture
+	shaders::MapExpressionPtr _editorTex;
 
-    // Shader layers
-	Doom3ShaderLayerPtr _diffuseLayer;
-	Doom3ShaderLayerPtr _bumpLayer;
-	Doom3ShaderLayerPtr _specularLayer;
+	// Map expressions
+	shaders::MapExpressionPtr _lightFalloff;
 
 	/* Light type booleans */	
 	bool fogLight;
@@ -77,9 +74,6 @@ public:
 	ShaderTemplate(const std::string& name, const std::string& blockContents) 
 	: _name(name),
       _currentLayer(new Doom3ShaderLayer),
-      _diffuseLayer(new Doom3ShaderLayer),
-      _bumpLayer(new Doom3ShaderLayer),
-      _specularLayer(new Doom3ShaderLayer),
       fogLight(false),
       ambientLight(false),
       blendLight(false),
@@ -161,13 +155,7 @@ public:
 
 	const shaders::MapExpressionPtr& getTexture() {
 		if (!_parsed) parseDefinition();
-		return _texture;
-	}
-
-	Doom3ShaderLayerPtr getDiffuseLayer() 
-    {
-		if (!_parsed) parseDefinition();
-		return _diffuseLayer;
+		return _editorTex;
 	}
 
 	const shaders::MapExpressionPtr& getLightFalloff() {

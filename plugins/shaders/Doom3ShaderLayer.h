@@ -38,9 +38,10 @@ private:
 public:
 
 	// Constructor
-	Doom3ShaderLayer() 
-	: _mapExpr(shaders::MapExpressionPtr()),
-	  _type(ShaderLayer::BLEND), 
+	Doom3ShaderLayer(ShaderLayer::Type type = ShaderLayer::BLEND,
+                     MapExpressionPtr mapExpr = MapExpressionPtr()) 
+	: _mapExpr(mapExpr),
+	  _type(type), 
 	  _blendFuncStrings("GL_ONE", "GL_ZERO"), 
       _colour(1, 1, 1),
       _vertexColourMode(VERTEX_COLOUR_NONE)
