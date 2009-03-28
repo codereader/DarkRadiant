@@ -80,29 +80,46 @@ void ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
 void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser, 
                                          const std::string& token) 
 {
-    if (token == "qer_editorimage") {
-        _texture = IMapExpression::createForToken(tokeniser);
+    if (token == "qer_editorimage") 
+    {
+        _editorTex = IMapExpression::createForToken(tokeniser);
     }
-    else if (token == "diffusemap") {
-        _diffuseLayer->setLayerType(ShaderLayer::DIFFUSE);
-        _diffuseLayer->setMapExpression(
-            IMapExpression::createForToken(tokeniser)
+    else if (token == "diffusemap") 
+    {
+        // Parse the map expression
+        MapExpressionPtr difMapExp = IMapExpression::createForToken(tokeniser);
+
+        // Add the diffuse layer
+        Doom3ShaderLayerPtr layer(
+            new Doom3ShaderLayer(ShaderLayer::DIFFUSE, difMapExp)
         );
-        m_layers.push_back(_diffuseLayer);
+        m_layers.push_back(layer);
+
+        // If there is no editor texture set, use the diffusemap texture instead
+        if (_editorTex)
+        {
+            _editorTex = difMapExp;
+        }
     }
-    else if (token == "specularmap") {
-        _specularLayer->setLayerType(ShaderLayer::SPECULAR);
-        _specularLayer->setMapExpression(
-            IMapExpression::createForToken(tokeniser)
+    else if (token == "specularmap") 
+    {
+        Doom3ShaderLayerPtr layer(
+            new Doom3ShaderLayer(
+                ShaderLayer::SPECULAR, 
+                IMapExpression::createForToken(tokeniser)
+            )
         );
-        m_layers.push_back(_specularLayer);
+        m_layers.push_back(layer);
     }
-    else if (token == "bumpmap") {
-        _bumpLayer->setLayerType(ShaderLayer::BUMP);
-        _bumpLayer->setMapExpression(
-            IMapExpression::createForToken(tokeniser)
+    else if (token == "bumpmap") 
+    {
+        Doom3ShaderLayerPtr layer(
+            new Doom3ShaderLayer(
+                ShaderLayer::BUMP,
+                IMapExpression::createForToken(tokeniser)
+            )
         );
-        m_layers.push_back(_bumpLayer);
+        m_layers.push_back(layer);
     }
 }
 
@@ -205,24 +222,6 @@ void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
  */
 bool ShaderTemplate::saveLayer()
 {
-    // If the current layer is a special layer, save it to the respective member
-    // variable, otherwise add it to the layer list
-    switch (_currentLayer->getType()) 
-    {
-        case ShaderLayer::DIFFUSE:
-            _diffuseLayer = _currentLayer;
-            break;
-        case ShaderLayer::BUMP:
-            _bumpLayer = _currentLayer;
-            break;
-        case ShaderLayer::SPECULAR:
-            _specularLayer = _currentLayer;
-            break;
-        default:
-            // Do nothing
-            break;
-    }
-
     // Append layer to list of all layers
     if (_currentLayer->getMapExpression()) {
         m_layers.push_back(_currentLayer);
@@ -279,12 +278,6 @@ void ShaderTemplate::parseDefinition()
                         break;
                 }
             } 
-        }
-
-        // If the texture is missing (i.e. no editorimage provided), 
-        // substitute this with the diffusemap
-        if (!_texture) {        
-            _texture = _diffuseLayer->getMapExpression();
         }
     }
     catch (parser::ParseException p) {
