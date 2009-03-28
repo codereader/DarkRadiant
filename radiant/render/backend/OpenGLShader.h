@@ -31,9 +31,18 @@ private:
     // Triplet of diffuse, bump and specular shaders
     struct DBSTriplet
     {
+        // DBS layers
         ShaderLayerPtr diffuse;
         ShaderLayerPtr bump;
         ShaderLayerPtr specular;
+
+        // Need-depth-fill flag
+        bool needDepthFill;
+
+        // Initialise
+        DBSTriplet()
+        : needDepthFill(true)
+        { }
 
         // Clear pointers
         void reset()
@@ -41,6 +50,7 @@ private:
             diffuse.reset();
             bump.reset();
             specular.reset();
+            needDepthFill = false;
         }
     };
 
@@ -57,7 +67,6 @@ private:
     void appendBlendLayer(ShaderLayerPtr layer);
     void appendInteractionLayer(const DBSTriplet& triplet);
     void constructLightingPassesFromIShader();
-    void constructStandardPassesFromIShader();
     void constructEditorPreviewPassFromIShader();
 
     // Destroy internal data
