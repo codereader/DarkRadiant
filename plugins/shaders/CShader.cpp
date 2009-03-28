@@ -57,26 +57,6 @@ ShaderLayerPtr CShader::getDiffuse()
 	return _diffuse;
 }
 
-// Return bumpmap if it exists, otherwise _flat
-ShaderLayerPtr CShader::getBump() 
-{
-    if (!_bump)
-    {
-        _bump = _template->getBumpLayer();
-    }
-    return _bump;
-}
-
-// Get the specular texture
-ShaderLayerPtr CShader::getSpecular() 
-{
-    if (!_specular)
-    {
-        _specular = _template->getSpecularLayer();
-    }
-	return _specular;
-}
-
 // Return the falloff texture name
 std::string CShader::getFalloffName() const {
 	return _template->getLightFalloff()->getIdentifier();
