@@ -36,7 +36,7 @@ namespace {
 
 namespace shaders {
 
-MapExpressionPtr IMapExpression::createForToken(DefTokeniser& token) {
+MapExpressionPtr MapExpression::createForToken(DefTokeniser& token) {
 	// Switch on the first keyword, to determine what kind of expression this
 	// is.
 	std::string type = boost::algorithm::to_lower_copy(token.nextToken());
@@ -74,12 +74,18 @@ MapExpressionPtr IMapExpression::createForToken(DefTokeniser& token) {
 	}
 }
 
-MapExpressionPtr IMapExpression::createForString(std::string str) {
+MapExpressionPtr MapExpression::createForString(std::string str) {
 	parser::BasicDefTokeniser<std::string> token(str);
 	return createForToken(token);
 }
 
-ImagePtr IMapExpression::getResampled(ImagePtr input, unsigned int width, unsigned int height) {
+// Construct a cube map
+MapExpressionPtr MapExpression::createCubeMapForString(const std::string& s)
+{
+    return MapExpressionPtr(new CubeMapExpression(s));
+}
+
+ImagePtr MapExpression::getResampled(ImagePtr input, unsigned int width, unsigned int height) {
 	// Don't process precompressed images
 	if (input->isPrecompressed()) {
 		globalWarningStream() << "Cannot resample precompressed texture." << std::endl;
@@ -687,5 +693,40 @@ ImagePtr ImageExpression::getImage() {
 std::string ImageExpression::getIdentifier() {
 	return _imgName;
 }
+
+// Cubemap expression
+
+ImagePtr CubeMapExpression::getImage()
+{
+    return ImagePtr();
+}
+
+std::string CubeMapExpression::getIdentifier()
+{
+    return "_cubemap_" + _prefix;
+}
+
+bool CubeMapExpression::isCubeMap() const
+{
+    return true;
+}
+
+MapExpression::ImageVector CubeMapExpression::getCubeMapImages() const
+{
+    ImageVector images;
+
+    // The six images start with _prefix then append _up, _down, _left, _right,
+    // _forward and _back
+    images.push_back(DefaultConstructor(_prefix + "_up").construct());
+    images.push_back(DefaultConstructor(_prefix + "_down").construct());
+    images.push_back(DefaultConstructor(_prefix + "_left").construct());
+    images.push_back(DefaultConstructor(_prefix + "_right").construct());
+    images.push_back(DefaultConstructor(_prefix + "_forward").construct());
+    images.push_back(DefaultConstructor(_prefix + "_back").construct());
+
+    return images;
+}
+
+
 
 } // namespace shaders

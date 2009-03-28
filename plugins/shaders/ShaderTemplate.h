@@ -11,7 +11,7 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 
-namespace shaders { class IMapExpression; }
+namespace shaders { class MapExpression; }
 
 namespace shaders
 {

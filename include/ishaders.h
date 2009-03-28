@@ -52,8 +52,8 @@ typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
 // Forward declaration
 namespace shaders {
 	
-class IMapExpression;
-typedef boost::shared_ptr<IMapExpression> MapExpressionPtr;
+class MapExpression;
+typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
 
 /* greebo: The TextureManager keeps track of all the Textures that are
  * bound in OpenGL. It is responsible for loading/unloading the textures

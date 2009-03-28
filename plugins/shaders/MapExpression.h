@@ -12,21 +12,81 @@ using parser::DefTokeniser;
 
 namespace shaders {
 
-class IMapExpression;
-typedef boost::shared_ptr<IMapExpression> MapExpressionPtr;
+class MapExpression;
+typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
 
-// the base class, with the still accessible createForToken function
-class IMapExpression {
-public:
+/**
+ * \brief
+ * Abstract base class for map expressions.
+ *
+ * Map expression are recursive expressions that generate an image, such as
+ * "heightmap(addnormals(blah, bleh), 1).
+ */
+class MapExpression 
+{
+public: /* TYPES */
+
+    /**
+     * \brief
+     * Vector of ImagePtrs.
+     */
+    typedef std::vector<ImagePtr> ImageVector;
+
+public: /* INTERFACE METHODS */
+
+	/**
+     * \brief
+     * Construct and return the image created from this map expression.
+     */
+	virtual ImagePtr getImage() = 0;
+
+    /**
+     * \brief
+     * Return a text string that uniquely identifies this map expression.
+     *
+     * Each map expression must generate a unique string that identifies it, so
+     * that it can be cached for performance by the GL texture manager.
+     */
+	virtual std::string getIdentifier() = 0;
+
+    /**
+     * \brief
+     * Return whether this map expression creates a cube map.
+     *
+     * \return
+     * true if this map expression creates a cube map, false if it is a single
+     * image.
+     */
+    virtual bool isCubeMap() const
+    {
+        return false;
+    }
+
+    /**
+     * \brief
+     * Return the vector of six cube map images for this cube map expression.
+     *
+     * If this is not a cube map expression, the vector will be empty.
+     */
+    virtual ImageVector getCubeMapImages() const
+    {
+        return ImageVector();
+    }
+	
+public: /* STATIC CONSTRUCTION METHODS */
+
 	/** Creates the a MapExpression out of the given token. Nested mapexpressions
 	 * 	are recursively passed to child classes.
 	 */
 	static MapExpressionPtr createForToken(DefTokeniser& token);
 	static MapExpressionPtr createForString(std::string str);
-	
-	// These have to be implemented by the subclasses
-	virtual ImagePtr getImage() = 0;
-	virtual std::string getIdentifier() = 0;
+
+    /**
+     * \brief
+     * Create a cube map expression from the given texture path, e.g.
+     * "env/skyboxes/skybox1".
+     */
+    static MapExpressionPtr createCubeMapForString(const std::string& str);
 	
 protected:
 	/** greebo: Assures that the image is matching the desired dimensions.
@@ -43,7 +103,7 @@ protected:
 };
 
 // the specific MapExpressions
-class HeightMapExpression : public IMapExpression {
+class HeightMapExpression : public MapExpression {
 	MapExpressionPtr heightMapExp;
 	float scale;
 public:
@@ -52,7 +112,7 @@ public:
 	std::string getIdentifier();
 };
 
-class AddNormalsExpression : public IMapExpression {
+class AddNormalsExpression : public MapExpression {
 	MapExpressionPtr mapExpOne;
 	MapExpressionPtr mapExpTwo;
 public:
@@ -61,7 +121,7 @@ public:
 	std::string getIdentifier();
 };
 
-class SmoothNormalsExpression : public IMapExpression {
+class SmoothNormalsExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	SmoothNormalsExpression (DefTokeniser& token);
@@ -69,7 +129,7 @@ public:
 	std::string getIdentifier();
 };
 
-class AddExpression : public IMapExpression {
+class AddExpression : public MapExpression {
 	MapExpressionPtr mapExpOne;
 	MapExpressionPtr mapExpTwo;
 public:
@@ -78,7 +138,7 @@ public:
 	std::string getIdentifier();
 };
 
-class ScaleExpression : public IMapExpression {
+class ScaleExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 	float scaleRed;
 	float scaleGreen;
@@ -90,7 +150,7 @@ public:
 	std::string getIdentifier();
 };
 
-class InvertAlphaExpression : public IMapExpression {
+class InvertAlphaExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	InvertAlphaExpression (DefTokeniser& token);
@@ -98,7 +158,7 @@ public:
 	std::string getIdentifier();
 };
 
-class InvertColorExpression : public IMapExpression {
+class InvertColorExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	InvertColorExpression (DefTokeniser& token);
@@ -106,7 +166,7 @@ public:
 	std::string getIdentifier();
 };
 
-class MakeIntensityExpression : public IMapExpression {
+class MakeIntensityExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	MakeIntensityExpression (DefTokeniser& token);
@@ -114,7 +174,7 @@ public:
 	std::string getIdentifier();
 };
 
-class MakeAlphaExpression : public IMapExpression {
+class MakeAlphaExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	MakeAlphaExpression (DefTokeniser& token);
@@ -122,13 +182,37 @@ public:
 	std::string getIdentifier();
 };
 
-class ImageExpression : public IMapExpression {
+class ImageExpression : public MapExpression {
 	std::string _imgName;
 	ImageLoaderList _imageLoaders;
 public:
 	ImageExpression(std::string imgName);
 	ImagePtr getImage();
 	std::string getIdentifier();
+};
+
+/**
+ * \brief
+ * Map expression that creates a cube map out of six images in a directory.
+ */
+class CubeMapExpression
+: public MapExpression
+{
+    // The source prefix. The actual images will be (_prefix + "_up") etc.
+    std::string _prefix;
+
+public:
+
+    // Constructor
+    CubeMapExpression(const std::string& prefix)
+    : _prefix(prefix)
+    { }
+
+    /* MapExpression interface */
+    ImagePtr getImage();
+    std::string getIdentifier();
+    bool isCubeMap() const;
+    ImageVector getCubeMapImages() const;
 };
 
 } // namespace shaders
