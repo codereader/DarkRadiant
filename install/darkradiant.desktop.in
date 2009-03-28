@@ -1,10 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
-
+Version=1.0
 Name=DarkRadiant
 GenericName=Level editor
 
-Version=@PACKAGE_VERSION@
 
 Comment=3D level editor for Doom 3 and the Dark Mod
 Comment[de]=3D Level Editor für Doom 3 und The Dark Mod
@@ -15,8 +13,8 @@ Icon=@prefix@/share/darkradiant/bitmaps/darkradiant_icon_64x64.png
 # first copied in a local temp location and then given to the program:
 Exec=@prefix@/bin/darkradiant %f
 
-Terminal=0
+Terminal=false
 
 Type=Application
 
-Categories=Application;Games
+Categories=Game;3DGraphics;
