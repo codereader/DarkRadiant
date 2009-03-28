@@ -35,44 +35,49 @@ void GLTextureManager::checkBindings() {
 	}
 }
 
-TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp) {
-	// check if we got an empty MapExpression
-	if (mapExp != NULL) {
-		// check if the texture has to be loaded
-		std::string identifier = mapExp->getIdentifier();
-		TextureMap::iterator i = _textures.find(identifier);
+TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp) 
+{
+	// Check if we got an empty MapExpression, and return the NOT FOUND texture
+    // if so
+	if (!mapExp)
+    {
+        return getShaderNotFound();
+    }
 
-		if (i == _textures.end()) {
-			// This may produce a NULL image if a file can't be found, for example.
-			ImagePtr img = mapExp->getImage();
+    // Check if we already have the texture, otherwise construct it
+    std::string identifier = mapExp->getIdentifier();
+    TextureMap::iterator i = _textures.find(identifier);
+    if (i != _textures.end()) 
+    {
+        // Found, return
+        return i->second;
+    }
+    else
+    {
+        // This may produce a NULL image if a file can't be found, for example.
+        ImagePtr img = mapExp->getImage();
 
-			// see if the MapExpression returned a valid image
-			if (img != NULL) {
-				// Constructor returned a valid image, now create the texture object
-				// and insert this into the map
-				std::pair<TextureMap::iterator, bool> result = _textures.insert(
-					TextureMap::value_type(identifier, TexturePtr(new Texture(identifier)))
-				);
-				
-				// Bind the texture and get the OpenGL id
-				load(result.first->second, img);
+        // see if the MapExpression returned a valid image
+        if (img != NULL) 
+        {
+            // Constructor returned a valid image, now create the texture object
+            // and insert this into the map
+            TexturePtr texture(new Texture(identifier));
+            _textures.insert(TextureMap::value_type(identifier, texture));
+            
+            // Bind the texture and get the OpenGL id
+            textureFromImage(texture, img);
 
-				globalOutputStream() << "[shaders] Loaded texture: " << identifier << "\n";
+            globalOutputStream() << "[shaders] Loaded texture: " << identifier << "\n";
 
-				return result.first->second;
-			}
-			else {
-				globalErrorStream() << "[shaders] Unable to load texture: " << identifier << "\n";
-			    // invalid image produced, return shader not found
-			    return getShaderNotFound();
-			}
-		}
-
-		return i->second;
-	}
-	// We got an empty MapExpression, so we'll return the "image missing texture"
-	// globalErrorStream() << "[shaders] Unable to load shader texture.\n";
-	return getShaderNotFound();
+            return texture;
+        }
+        else {
+            globalErrorStream() << "[shaders] Unable to load texture: " << identifier << "\n";
+            // invalid image produced, return shader not found
+            return getShaderNotFound();
+        }
+    }
 }
 
 TexturePtr GLTextureManager::getBinding(const std::string& fullPath, const std::string& moduleNames) {
@@ -89,7 +94,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath, const std::
 			_textures[fullPath] = TexturePtr(new Texture(fullPath));
 	
 			// Bind the texture and get the OpenGL id
-			load(_textures[fullPath], img);
+			textureFromImage(_textures[fullPath], img);
 	
 			globalOutputStream() << "[shaders] Loaded texture: " << fullPath << "\n";
 	    }
@@ -128,7 +133,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	if (img != ImagePtr()) {
 		// Bind the (processed) texture and get the OpenGL id
 		// The getProcessed() call may substitute the passed image by another
-		load(returnValue, img);
+		textureFromImage(returnValue, img);
 	}
 	else {
 		globalErrorStream() << "[shaders] Couldn't load Standard Texture texture: " 
@@ -138,7 +143,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	return returnValue;
 }
 
-void GLTextureManager::load(TexturePtr texture, ImagePtr image) 
+void GLTextureManager::textureFromImage(TexturePtr texture, ImagePtr image) 
 {
 	// Download the texture and set the reference number
 	texture->texture_number = image->downloadTextureToGL();
