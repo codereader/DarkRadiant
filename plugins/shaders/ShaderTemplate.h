@@ -170,18 +170,6 @@ public:
 		return _diffuseLayer;
 	}
 
-	Doom3ShaderLayerPtr getBumpLayer() 
-    {
-		if (!_parsed) parseDefinition();
-		return _bumpLayer;
-	}
-
-	Doom3ShaderLayerPtr& getSpecularLayer() 
-    {
-		if (!_parsed) parseDefinition();
-		return _specularLayer;
-	}
-
 	const shaders::MapExpressionPtr& getLightFalloff() {
 		if (!_parsed) parseDefinition();
 		return _lightFalloff;

@@ -259,22 +259,6 @@ public:
 
     /**
      * \brief
-     * Return the bump map layer for this shader.
-     *
-     * Unlike getDiffuse(), this method will always return a layer with a valid
-     * texture pointer.  If the shader does not use a bump map, a fully-flat
-     * bump map will be returned instead.
-     */
-    virtual ShaderLayerPtr getBump() = 0;
-
-    /**
-     * \brief 
-     * Return the specular layer for this shader.
-     */
-    virtual ShaderLayerPtr getSpecular() = 0;
-
-    /**
-     * \brief
      * Get the string name of this shader.
      */
     virtual std::string getName() const = 0;

@@ -54,12 +54,6 @@ public:
 	// getDiffuse() retrieves the TexturePtr and realises the shader if necessary
 	ShaderLayerPtr getDiffuse();
 	
-	// Return bumpmap if it exists, otherwise _flat
-	ShaderLayerPtr getBump();
-	
-	// Return specular map or a black texture
-	ShaderLayerPtr getSpecular();
-
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();
 
