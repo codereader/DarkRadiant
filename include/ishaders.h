@@ -248,17 +248,6 @@ public:
 
     /**
      * \brief
-     * Return the diffuse map layer for this shader, to be used in lighting
-     * render mode.
-     *
-     * This method may return a layer containing a NULL texture pointer, since a
-     * texture does not need to have a diffusemap. In this case, the shader
-     * should not be rendered in lighting mode.
-     */
-    virtual ShaderLayerPtr getDiffuse() = 0;
-
-    /**
-     * \brief
      * Get the string name of this shader.
      */
     virtual std::string getName() const = 0;

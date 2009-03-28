@@ -48,15 +48,6 @@ TexturePtr CShader::getEditorImage()
 	return _editorTexture;
 }
 
-ShaderLayerPtr CShader::getDiffuse() 
-{
-    if (!_diffuse)
-    {
-        _diffuse = _template->getDiffuseLayer();
-    }
-	return _diffuse;
-}
-
 // Return the falloff texture name
 std::string CShader::getFalloffName() const {
 	return _template->getLightFalloff()->getIdentifier();
