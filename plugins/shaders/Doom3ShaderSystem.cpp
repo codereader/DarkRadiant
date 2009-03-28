@@ -24,6 +24,11 @@ in game descriptor";
 	const char* MISSING_EXTENSION_NODE =
 		"Failed to find \"/game/filesystem/shaders/extension\" node \
 in game descriptor";
+
+	// Default image maps for optional material stages
+	const std::string IMAGE_FLAT = "_flat.bmp";
+	const std::string IMAGE_BLACK = "_black.bmp";
+	
 }
 
 namespace shaders {
@@ -197,6 +202,31 @@ ShaderLibrary& Doom3ShaderSystem::getLibrary() {
 
 GLTextureManager& Doom3ShaderSystem::getTextureManager() {
 	return *_textureManager;
+}
+
+// Get default textures
+TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(ShaderLayer::Type t)
+{
+    TexturePtr defaultTex;
+
+    // Look up based on layer type
+    switch (t)
+    {
+    case ShaderLayer::DIFFUSE:
+    case ShaderLayer::SPECULAR:
+        defaultTex = GetTextureManager().getBinding(
+            GlobalRegistry().get(RKEY_BITMAPS_PATH) + IMAGE_BLACK
+        );
+        break;
+
+    case ShaderLayer::BUMP:
+        defaultTex = GetTextureManager().getBinding(
+            GlobalRegistry().get(RKEY_BITMAPS_PATH) + IMAGE_FLAT
+        );
+        break;
+    }
+
+    return defaultTex;
 }
 
 void Doom3ShaderSystem::activeShadersChangedNotify() {

@@ -5,14 +5,6 @@
 namespace shaders
 {
 
-enum LayerTypeId
-{
-  LAYER_NONE,
-  LAYER_DIFFUSEMAP,
-  LAYER_BUMPMAP,
-  LAYER_SPECULARMAP
-};
-
 typedef std::pair<std::string, std::string> StringPair;
 
 
@@ -32,7 +24,7 @@ private:
     mutable TexturePtr _texture;
 
     // Layer type (diffuse, bump, specular or nothing)
-    LayerTypeId _type;
+    ShaderLayer::Type _type;
 
     // Blend function as strings (e.g. "GL_ONE", "GL_ZERO")
     StringPair _blendFuncStrings;
@@ -48,7 +40,7 @@ public:
 	// Constructor
 	Doom3ShaderLayer() 
 	: _mapExpr(shaders::MapExpressionPtr()),
-	  _type(LAYER_NONE), 
+	  _type(ShaderLayer::BLEND), 
 	  _blendFuncStrings("GL_ONE", "GL_ZERO"), 
       _colour(1, 1, 1),
       _vertexColourMode(VERTEX_COLOUR_NONE)
@@ -82,7 +74,7 @@ public:
      * \brief
      * Set the layer type.
      */
-    void setLayerType(LayerTypeId type)
+    void setLayerType(ShaderLayer::Type type)
     {
         _type = type;
     }
@@ -91,7 +83,7 @@ public:
      * \brief
      * Get the layer type.
      */
-    LayerTypeId getLayerType() const
+    ShaderLayer::Type getType() const
     {
         return _type;
     }

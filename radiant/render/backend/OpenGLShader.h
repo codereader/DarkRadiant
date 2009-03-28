@@ -28,6 +28,24 @@ class OpenGLShader
 
 private:
 
+    // Triplet of diffuse, bump and specular shaders
+    struct DBSTriplet
+    {
+        ShaderLayerPtr diffuse;
+        ShaderLayerPtr bump;
+        ShaderLayerPtr specular;
+
+        // Clear pointers
+        void reset()
+        {
+            diffuse.reset();
+            bump.reset();
+            specular.reset();
+        }
+    };
+
+private:
+
     // Start point for constructing shader passes from the shader name
 	void construct(const std::string& name);
 
@@ -35,8 +53,9 @@ private:
     // built-in shader)
     void constructNormalShader(const std::string& name);
 
-    // Construct either lighting-mode or legacy render passes from the IShader
-    // member
+    // Shader pass construction helpers
+    void appendBlendLayer(ShaderLayerPtr layer);
+    void appendInteractionLayer(const DBSTriplet& triplet);
     void constructLightingPassesFromIShader();
     void constructStandardPassesFromIShader();
     void constructEditorPreviewPassFromIShader();

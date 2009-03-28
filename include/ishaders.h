@@ -147,6 +147,24 @@ public:
 
     /**
      * \brief
+     * Enumeration of layer types.
+     */
+    enum Type
+    {
+        DIFFUSE,
+        BUMP,
+        SPECULAR,
+        BLEND
+    };
+
+    /**
+     * \brief
+     * Return the layer type.
+     */
+    virtual Type getType() const = 0;
+
+    /**
+     * \brief
      * Return the Texture object corresponding to this layer (may be NULL).
      */
     virtual TexturePtr getTexture() const = 0;
@@ -154,6 +172,9 @@ public:
     /**
      * \brief
      * Return the GL blend function for this layer.
+     *
+     * Only layers of type BLEND use a BlendFunc. Layers of type DIFFUSE, BUMP
+     * and SPECULAR do not use blend functions.
      */
     virtual BlendFunc getBlendFunc() const = 0;
 
@@ -293,6 +314,8 @@ public:
     /**
      * \brief
      * Return a std::vector containing all layers in this material shader.
+     *
+     * This includes all diffuse, bump, specular or blend layers.
      */
     virtual const ShaderLayerVector& getAllLayers() const = 0;
 
@@ -407,6 +430,16 @@ public:
 
   virtual const char* getTexturePrefix() const = 0;
 
+    /**
+     * \brief
+     * Return the default texture to be used for lighting mode rendering if it
+     * is not defined for a shader.
+     *
+     * \param type
+     * The type of interaction layer whose default texture is required.
+     */
+    virtual TexturePtr getDefaultInteractionTexture(ShaderLayer::Type type) = 0;
+    
 	/**
 	 * greebo: This is a substitution for the "old" TexturesCache method
 	 * used to load an image from a file to graphics memory for arbitrary

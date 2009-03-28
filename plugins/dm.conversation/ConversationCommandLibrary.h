@@ -55,3 +55,4 @@ private:
 } // namespace conversation
 
 #endif /* CONVERSATION_COMMAND_LIBRARY_H_ */
+
