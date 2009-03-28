@@ -166,8 +166,16 @@ void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
  */
 void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token) 
 {   
-    if (token == "map") {
+    if (token == "map") 
+    {
         _currentLayer->setMapExpression(MapExpression::createForToken(tokeniser));     
+    }
+    else if (token == "cameracubemap")
+    {
+        std::string cubeMapPrefix = tokeniser.nextToken();
+        _currentLayer->setMapExpression(
+            MapExpression::createCubeMapForString(cubeMapPrefix)
+        );
     }
 }
 
