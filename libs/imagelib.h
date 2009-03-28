@@ -59,10 +59,6 @@ public:
 		delete[] pixels;
 	}
 
-	virtual std::size_t getNumMipMaps() const {
-		return 1; // we only have one mipmap at all times
-	}
-
 	virtual byte* getMipMapPixels(std::size_t mipMapIndex) const {
 		assert(mipMapIndex == 0); // only one mipmap is allowed here
 

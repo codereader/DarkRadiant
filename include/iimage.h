@@ -30,10 +30,6 @@ typedef unsigned char byte;
 class Image
 {
 public:
-	/**
-	 * greebo: Returns the number of mipmaps in this image.
-	 */
-	virtual std::size_t getNumMipMaps() const = 0;
 
 	/**
 	 * greebo: Returns the specified mipmap pixel data.
