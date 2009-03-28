@@ -25,11 +25,6 @@ class CShader
 	// Textures for this shader
 	TexturePtr _editorTexture;
 
-    // Special layers
-	Doom3ShaderLayerPtr _diffuse;
-	Doom3ShaderLayerPtr _bump;
-	Doom3ShaderLayerPtr _specular;
-
 	TexturePtr _texLightFalloff;
 
 	bool m_bInUse;
@@ -50,9 +45,6 @@ public:
 	virtual ~CShader();
 
 	TexturePtr getEditorImage();
-	
-	// getDiffuse() retrieves the TexturePtr and realises the shader if necessary
-	ShaderLayerPtr getDiffuse();
 	
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();
