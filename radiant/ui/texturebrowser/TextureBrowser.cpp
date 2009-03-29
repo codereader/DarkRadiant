@@ -129,37 +129,37 @@ void TextureBrowser::keyChanged(const std::string& key, const std::string& val)
 }
 
 // Return the display width of a texture in the texture browser
-int TextureBrowser::getTextureWidth(TexturePtr tex) {
+int TextureBrowser::getTextureWidth(Texture2DPtr tex) {
     int width;
     if (!m_resizeTextures) {
 		// Don't use uniform size
-		width = (int)(tex->width * ((float)m_textureScale / 100));
+		width = (int)(tex->getWidth() * ((float)m_textureScale / 100));
 	}
-	else if (tex->width >= tex->height) {
+	else if (tex->getWidth() >= tex->getHeight()) {
 		// Texture is square, or wider than it is tall
 		width = m_uniformTextureSize;
 	}
 	else {
 		// Otherwise, preserve the texture's aspect ratio
-		width = (int)(m_uniformTextureSize * ((float)tex->width / tex->height));
+		width = (int)(m_uniformTextureSize * ((float)tex->getWidth() / tex->getHeight()));
 	}
     
     return width;
 }
 
-int TextureBrowser::getTextureHeight(TexturePtr tex) {
+int TextureBrowser::getTextureHeight(Texture2DPtr tex) {
 	int height;
 	if (!m_resizeTextures) {
 		// Don't use uniform size
-		height = (int)(tex->height * ((float)m_textureScale / 100));
+		height = (int)(tex->getHeight() * ((float)m_textureScale / 100));
 	}
-    else if (tex->height >= tex->width) {
+    else if (tex->getHeight() >= tex->getWidth()) {
 		// Texture is square, or taller than it is wide
 		height = m_uniformTextureSize;
 	}
 	else {
 		// Otherwise, preserve the texture's aspect ratio
-		height = (int)(m_uniformTextureSize * ((float)tex->height / tex->width));
+		height = (int)(m_uniformTextureSize * ((float)tex->getHeight() / tex->getWidth()));
 	}
     
 	return height;
@@ -185,7 +185,7 @@ void TextureBrowser::setSelectedShader(const std::string& newShader) {
 	focus(shader);
 }
 
-void TextureBrowser::nextTexturePos(TextureLayout& layout, TexturePtr tex, int *x, int *y) {
+void TextureBrowser::nextTexturePos(TextureLayout& layout, Texture2DPtr tex, int *x, int *y) {
 	int nWidth = getTextureWidth(tex);
 	int nHeight = getTextureHeight(tex);
   
@@ -327,7 +327,7 @@ void TextureBrowser::focus(const std::string& name) {
 
     int x, y;
     nextTexturePos(layout, shader->getEditorImage(), &x, &y);
-    TexturePtr q = shader->getEditorImage();
+    Texture2DPtr q = shader->getEditorImage();
     if (!q)
       break;
 
@@ -370,7 +370,7 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 		int x, y;
 		nextTexturePos(layout, shader->getEditorImage(), &x, &y);
 		
-		TexturePtr tex = shader->getEditorImage();
+		Texture2DPtr tex = shader->getEditorImage();
 		if (tex == NULL) {
 			break;
 		}
@@ -457,7 +457,7 @@ void TextureBrowser::draw() {
 
     int x, y;
     nextTexturePos(layout, shader->getEditorImage(), &x, &y);
-    TexturePtr q = shader->getEditorImage();
+    Texture2DPtr q = shader->getEditorImage();
     if (!q)
       break;
 
@@ -530,7 +530,7 @@ void TextureBrowser::draw() {
       }
 
       // Draw the texture
-      glBindTexture (GL_TEXTURE_2D, q->texture_number);
+      glBindTexture (GL_TEXTURE_2D, q->getGLTexNum());
       GlobalOpenGL_debugAssertNoErrors();
       glColor3f (1,1,1);
       glBegin (GL_QUADS);

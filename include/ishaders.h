@@ -31,8 +31,58 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ostream>
 #include <vector>
 
-class Texture; 	// defined in texturelib.h
+/**
+ * \brief
+ * Basic interface for all GL textures.
+ *
+ * This interface represents a texture which is bound to OpenGL, with an OpenGL
+ * texture number (as returned from glGenTextures()). This may be a 2D, 3D, cube
+ * map or any other kind of texture object supported by OpenGL.
+ */
+class Texture
+{
+public:
+
+    /**
+     * \brief
+     * Return the name of this texture, for example
+     * "textures/darkmod/stone/stone_1".
+     */
+    virtual std::string getName() const = 0;
+
+    /**
+     * \brief
+     * Return the GL texture identifier for this texture.
+     */
+    virtual GLuint getGLTexNum() const = 0;
+};
 typedef boost::shared_ptr<Texture> TexturePtr;
+
+/**
+ * \brief
+ * Interface for a 2D GL texture.
+ *
+ * In addition to implementing Texture, a Texture2D provides methods to return
+ * the width and height of the image.
+ */
+class Texture2D
+: public Texture
+{
+public:
+
+    /**
+     * \brief
+     * Return the width of this texture in pixels.
+     */
+    virtual unsigned getWidth() const = 0;
+
+    /**
+     * \brief
+     * Return the height of this texture in pixels.
+     */
+    virtual unsigned getHeight() const = 0;
+};
+typedef boost::shared_ptr<Texture2D> Texture2DPtr;
 
 class Image;
 
@@ -54,39 +104,6 @@ namespace shaders {
 	
 class MapExpression;
 typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
-
-/* greebo: The TextureManager keeps track of all the Textures that are
- * bound in OpenGL. It is responsible for loading/unloading the textures
- * on demand and/or retrieving the pointers to these textures.
- */
-class IGLTextureManager
-{
-public:
-	
-	/**
-	 * Retrieves the pointer to the Texture object named by the textureKey 
-	 * string. If the texture is already bound in OpenGL the pointer to the 
-	 * existing Texture is returned.
-	 * 
-	 * @param textureKey
-	 * Name of the texture to look up.
-	 * 
-	 * @param constructor
-	 * TextureConstructor object which will be used to populate and bind this
-	 * texture if it is not found in the cache. 
-	 */
-	virtual TexturePtr getBinding(MapExpressionPtr mapExp) = 0;
-	
-	/** greebo: This loads a texture directly from the disk using the
-	 * 			specified <fullPath>.
-	 * 
-	 * @fullPath: The absolute path to the file (no VFS paths).
-	 * @moduleNames: The module names used to invoke the correct imageloader.
-	 * 				 This usually defaults to "BMP".
-	 */
-	virtual TexturePtr getBinding(const std::string& fullPath,
-								  const std::string& moduleNames) = 0;
-};
 
 } // namespace shaders
 
@@ -244,7 +261,7 @@ public:
      * \brief
      * Return the editor image texture for this shader.
      */
-    virtual TexturePtr getEditorImage() = 0;
+    virtual Texture2DPtr getEditorImage() = 0;
 
     /**
      * \brief
@@ -424,7 +441,7 @@ public:
 	 * @param moduleNames
 	 * The space-separated list of image modules (default is "GDK").
 	 */
-	virtual TexturePtr loadTextureFromFile(
+	virtual Texture2DPtr loadTextureFromFile(
 			const std::string& filename,
 			const std::string& moduleNames = "GDK") = 0;
 };

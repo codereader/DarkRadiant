@@ -42,7 +42,7 @@ Overlay::Overlay()
 }
 
 void Overlay::onRadiantShutdown() {
-	_texture = TexturePtr();
+	_texture = Texture2DPtr();
 	GlobalRegistry().removeKeyObserver(this);
 }
 
@@ -131,7 +131,7 @@ void Overlay::draw(float xbegin, float xend, float ybegin, float yend,
 	Vector3 windowLowerRight(xend, yend, 0);
 	
 	if (_keepProportions) {
-		float aspectRatio = static_cast<float>(_texture->width)/_texture->height;
+		float aspectRatio = static_cast<float>(_texture->getWidth())/_texture->getHeight();
 		
 		// Calculate the proportionally stretched yEnd coordinate
 		float newYend = ybegin + (xend - xbegin) / aspectRatio;
@@ -185,7 +185,7 @@ void Overlay::draw(float xbegin, float xend, float ybegin, float yend,
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 	
 	// Define the texture (get the ID from the texture object)
-	glBindTexture (GL_TEXTURE_2D, _texture->texture_number);
+	glBindTexture (GL_TEXTURE_2D, _texture->getGLTexNum());
 	glColor3f (1,1,1);
 	
 	// Draw the rectangle with the texture on it

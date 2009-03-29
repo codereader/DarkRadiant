@@ -37,12 +37,18 @@ CShader::~CShader() {
 	GetTextureManager().checkBindings();
 }
 
-TexturePtr CShader::getEditorImage() 
+Texture2DPtr CShader::getEditorImage() 
 {
 	if (!_editorTexture) 
     {
 		// Pass the call to the GLTextureManager to realise this image 
-		_editorTexture = GetTextureManager().getBinding(_template->getTexture());
+		_editorTexture = boost::dynamic_pointer_cast<Texture2D>(
+            GetTextureManager().getBinding(_template->getTexture())
+        );
+        if (!_editorTexture)
+        {
+            _editorTexture = GetTextureManager().getShaderNotFound();
+        }
 	}
 	
 	return _editorTexture;

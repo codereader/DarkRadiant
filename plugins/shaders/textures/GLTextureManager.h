@@ -4,40 +4,35 @@
 #include "ishaders.h"
 #include <map>
 #include "../MapExpression.h"
+#include "texturelib.h"
 
 namespace shaders {
 
-class GLTextureManager :
-	public IGLTextureManager
+class GLTextureManager 
 {
 	// The mapping between texturekeys and Texture instances
 	typedef std::map<std::string, TexturePtr> TextureMap;
 	TextureMap _textures;
 	
 	// The fallback textures in case a texture is empty or broken
-	TexturePtr _shaderNotFound;
+	Texture2DPtr _shaderNotFound;
 
 private:
 
 	/* greebo: Binds the specified texture to openGL and populates the texture object 
 	 */
-	void textureFromImage(TexturePtr texture, ImagePtr image);
+	void textureFromImage(BasicTexture2DPtr texture,
+                          ImagePtr image);
 	
 	// Constructs the fallback textures like "Shader Image Missing"
-	TexturePtr loadStandardTexture(const std::string& filename);
-
-	// Construct and return the "shader not found" texture
-	TexturePtr getShaderNotFound();
+	Texture2DPtr loadStandardTexture(const std::string& filename);
 
 public:
 
-	/* greebo: Use this method to request a Texture to be realised
-	 * (i.e. loaded into graphics memory and assigned a texture_number).
-	 * 
-	 * This will return the realised texture or a "fallback" texture
-	 * according to the given <textureType> (flat image for normalmaps,
-	 * black for specular), if the texture is empty or can't be loaded.  
-	 */
+    /**
+     * \brief
+     * Construct a bound texture from a map expression.
+     */
 	TexturePtr getBinding(MapExpressionPtr mapExp);
 	
 	/** greebo: This loads a texture directly from the disk using the
@@ -47,8 +42,14 @@ public:
 	 * @moduleNames: The module names used to invoke the correct imageloader.
 	 * 				 This defaults to "BMP".
 	 */
-	TexturePtr getBinding(const std::string& fullPath,
+	Texture2DPtr getBinding(const std::string& fullPath,
 				 		const std::string& moduleNames = "bmp");
+
+	/**
+     * \brief
+     * Get the "shader not found" texture.
+     */
+	Texture2DPtr getShaderNotFound();
 
 	/* greebo: This is some sort of "cleanup" call, which causes
 	 * the TextureManager to go through the list of textures and 

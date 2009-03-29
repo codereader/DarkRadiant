@@ -62,7 +62,7 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp)
         {
             // Constructor returned a valid image, now create the texture object
             // and insert this into the map
-            TexturePtr texture(new Texture(identifier));
+            BasicTexture2DPtr texture(new BasicTexture2D(identifier));
             _textures.insert(TextureMap::value_type(identifier, texture));
             
             // Bind the texture and get the OpenGL id
@@ -80,7 +80,9 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp)
     }
 }
 
-TexturePtr GLTextureManager::getBinding(const std::string& fullPath, const std::string& moduleNames) {
+Texture2DPtr GLTextureManager::getBinding(const std::string& fullPath,
+                                          const std::string& moduleNames) 
+{
     // check if the texture has to be loaded
     TextureMap::iterator i = _textures.find(fullPath);
 
@@ -91,10 +93,11 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath, const std::
 	    // see if the MapExpression returned a valid image
 	    if (img != NULL) {
 			// Constructor returned a valid image, now create the texture object
-			_textures[fullPath] = TexturePtr(new Texture(fullPath));
+            BasicTexture2DPtr basicTex(new BasicTexture2D(fullPath));
+			_textures[fullPath] = basicTex;
 	
 			// Bind the texture and get the OpenGL id
-			textureFromImage(_textures[fullPath], img);
+			textureFromImage(basicTex, img);
 	
 			globalOutputStream() << "[shaders] Loaded texture: " << fullPath << "\n";
 	    }
@@ -105,12 +108,13 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath, const std::
 	    }
 	}
 
-    return _textures[fullPath];
+    // Cast should succeed since all single image textures will be Texture2D
+    return boost::dynamic_pointer_cast<Texture2D>(_textures[fullPath]);
 }
 
 // Return the shader-not-found texture, loading if necessary
-TexturePtr GLTextureManager::getShaderNotFound() {
-
+Texture2DPtr GLTextureManager::getShaderNotFound() 
+{
 	// Construct the texture if necessary
 	if (!_shaderNotFound) {
 		_shaderNotFound = loadStandardTexture(SHADER_NOT_FOUND);
@@ -120,11 +124,12 @@ TexturePtr GLTextureManager::getShaderNotFound() {
 	return _shaderNotFound;				  
 }
 
-TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
+Texture2DPtr GLTextureManager::loadStandardTexture(const std::string& filename) 
+{
 	// Create the texture path
 	std::string fullpath = GlobalRegistry().get("user/paths/bitmapsPath") + filename;
 	
-	TexturePtr returnValue(new Texture(fullpath));
+	BasicTexture2DPtr returnValue(new BasicTexture2D(fullpath));
 	
 	// load the image with the FileLoader (which can handle .bmp in contrast to the DefaultConstructor)
 	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
@@ -143,14 +148,15 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) {
 	return returnValue;
 }
 
-void GLTextureManager::textureFromImage(TexturePtr texture, ImagePtr image) 
+void GLTextureManager::textureFromImage(BasicTexture2DPtr tex2D, 
+                                        ImagePtr image) 
 {
 	// Download the texture and set the reference number
-	texture->texture_number = image->bindTexture();
+	tex2D->setGLTexNum(image->bindTexture());
 
 	// Fill the Texture structure with the metadata
-	texture->width = image->getWidth(0);
-	texture->height = image->getHeight(0);
+	tex2D->setWidth(image->getWidth(0));
+	tex2D->setHeight(image->getHeight(0));
 }
 
 } // namespace shaders
