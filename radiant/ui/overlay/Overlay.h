@@ -48,7 +48,7 @@ private:
 	float _translationY;
 
 	// The loaded texture
-	TexturePtr _texture;
+	Texture2DPtr _texture;
 
 private:
 

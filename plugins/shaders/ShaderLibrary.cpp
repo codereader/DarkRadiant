@@ -107,10 +107,11 @@ void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {
 	}
 }
 
-TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename, const std::string& moduleNames) {
-
+Texture2DPtr ShaderLibrary::loadTextureFromFile(const std::string& filename,
+                                                const std::string& moduleNames) 
+{
 	// Get the binding (i.e. load the texture)
-	TexturePtr texture = GetTextureManager().getBinding(filename, moduleNames);
+	Texture2DPtr texture = GetTextureManager().getBinding(filename, moduleNames);
 
 	return texture;
 }

@@ -22,8 +22,8 @@ class CShader
 	// Name of shader
 	std::string _name;
 
-	// Textures for this shader
-	TexturePtr _editorTexture;
+	// The 2D editor texture
+	Texture2DPtr _editorTexture;
 
 	TexturePtr _texLightFalloff;
 
@@ -44,7 +44,7 @@ public:
 
 	virtual ~CShader();
 
-	TexturePtr getEditorImage();
+	Texture2DPtr getEditorImage();
 	
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();

@@ -323,7 +323,7 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 		const ShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
 			tex = shader->firstLayer()->getTexture();
-			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+			glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
 			drawQuad = true;
 		} 
 	}
@@ -331,14 +331,23 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 		// This is an "ordinary" texture, take the editor image
 		tex = shader->getEditorImage();
 		if (tex != NULL) {
-			glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+			glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
 			drawQuad = true;
 		}
 	}
 	
-	if (drawQuad) {
-		// Calculate the correct aspect ratio for preview
-		float aspect = float(tex->width) / float(tex->height);
+	if (drawQuad) 
+    {
+		// Calculate the correct aspect ratio for preview. Have to dynamic_cast
+        // because IShader::firstLayer() doesn't return a Texture2D, although
+        // I've never heard of anyone using a cubemap for a light texture.
+        Texture2DPtr tex2D = boost::dynamic_pointer_cast<Texture2D>(tex);
+        float aspect = 1;
+        if (tex2D)
+        {
+            aspect = float(tex2D->getWidth()) / float(tex2D->getHeight());
+        }
+
 		float hfWidth, hfHeight;
 		if (aspect > 1.0) {
 			hfWidth = 0.5*req.width;
@@ -397,7 +406,7 @@ void ShaderSelector::displayLightShaderInfo(IShaderPtr shader, GtkListStore* lis
 	std::string texName = "None";
 	if (first != NULL) {
 		TexturePtr tex = shader->firstLayer()->getTexture();
-		texName = tex->name;
+		texName = tex->getName();
 	}
 
 	GtkTreeIter iter;

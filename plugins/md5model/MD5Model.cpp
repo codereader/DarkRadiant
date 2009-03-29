@@ -119,7 +119,7 @@ void MD5Model::render(RenderStateFlags state) const {
 		if (surfaceShader->isVisible()) {
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();
-			glBindTexture(GL_TEXTURE_2D, tex->texture_number);
+			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 			(*i)->render(state);
 		}
 	}

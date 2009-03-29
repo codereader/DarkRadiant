@@ -114,12 +114,12 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	IShaderPtr shader = GlobalShaderSystem().getShaderForName(self->_texName);
 
 	// This is an "ordinary" texture, take the editor image
-	TexturePtr tex = shader->getEditorImage();
+	Texture2DPtr tex = shader->getEditorImage();
 	if (tex != NULL) {
-		glBindTexture (GL_TEXTURE_2D, tex->texture_number);
+		glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
 		
 		// Calculate the correct aspect ratio for preview
-		float aspect = float(tex->width) / float(tex->height);
+		float aspect = float(tex->getWidth()) / float(tex->getHeight());
 		float hfWidth, hfHeight;
 		if (aspect > 1.0) {
 			hfWidth = 0.5*req.width;
