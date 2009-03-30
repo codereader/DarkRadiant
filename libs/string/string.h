@@ -34,113 +34,88 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/lexical_cast.hpp>
 
-inline std::string intToStr(int i, const std::string& fallBackValue = "") {
-	std::string returnValue;
-	
+inline std::string intToStr(int i, const std::string& fallBackValue = "")
+{
 	try {
-		returnValue = boost::lexical_cast<std::string>(i);
+		return boost::lexical_cast<std::string>(i);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
-inline int strToInt(const std::string& str, int fallBackValue = 0) {
-	int returnValue;
-	
+inline int strToInt(const std::string& str, int fallBackValue = 0)
+{
 	try {
-		returnValue = boost::lexical_cast<int>(str);
+		return boost::lexical_cast<int>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
-inline std::string floatToStr(float f, const std::string& fallBackValue = "") {
-	std::string returnValue;
-	
+inline std::string floatToStr(float f, const std::string& fallBackValue = "")
+{
 	try {
-		returnValue = boost::lexical_cast<std::string>(f);
+		return boost::lexical_cast<std::string>(f);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
-inline float strToFloat(const std::string& str, float fallBackValue = 0) {
-	float returnValue;
-	
+inline float strToFloat(const std::string& str, float fallBackValue = 0)
+{
 	try {
-		returnValue = boost::lexical_cast<float>(str);
+		return boost::lexical_cast<float>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
-inline std::string doubleToStr(double f, const std::string& fallBackValue = "") {
-	std::string returnValue;
-	
+inline std::string doubleToStr(double f, const std::string& fallBackValue = "")
+{
 	try {
-		returnValue = boost::lexical_cast<std::string>(f);
+		return boost::lexical_cast<std::string>(f);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
-inline double strToDouble(const std::string& str, double fallBackValue = 0) {
-	double returnValue;
-	
+inline double strToDouble(const std::string& str, double fallBackValue = 0)
+{
 	try {
-		returnValue = boost::lexical_cast<double>(str);
+		return boost::lexical_cast<double>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
-inline std::string sizetToStr(std::size_t s, const std::string& fallBackValue = "") {
-	std::string returnValue;
-	
+inline std::string sizetToStr(std::size_t s, const std::string& fallBackValue = "")
+{
 	try {
 #ifdef WIN32
-		unsigned long u = static_cast<unsigned long>(s);
-		returnValue = boost::lexical_cast<std::string>(u);
+		return boost::lexical_cast<std::string>(static_cast<unsigned long>(s));
 #else
-		returnValue = boost::lexical_cast<std::string>(s);
+		return boost::lexical_cast<std::string>(s);
 #endif
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
-inline std::size_t strToSizet(const std::string& str, std::size_t fallBackValue = 0) {
-	std::size_t returnValue;
-	
+inline std::size_t strToSizet(const std::string& str, std::size_t fallBackValue = 0)
+{
 	try {
-		returnValue = boost::lexical_cast<std::size_t>(str);
+		return boost::lexical_cast<std::size_t>(str);
 	}
 	catch (boost::bad_lexical_cast e) {
-		returnValue = fallBackValue;
+		return fallBackValue;
 	}
-	
-	return returnValue;
 }
 
 /// \brief Returns true if \p string length is zero.
