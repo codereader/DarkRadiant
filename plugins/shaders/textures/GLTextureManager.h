@@ -19,11 +19,6 @@ class GLTextureManager
 
 private:
 
-	/* greebo: Binds the specified texture to openGL and populates the texture object 
-	 */
-	void textureFromImage(BasicTexture2DPtr texture,
-                          ImagePtr image);
-	
 	// Constructs the fallback textures like "Shader Image Missing"
 	TexturePtr loadStandardTexture(const std::string& filename);
 
