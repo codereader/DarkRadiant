@@ -39,7 +39,7 @@ inline std::string intToStr(int i, const std::string& fallBackValue = "")
 	try {
 		return boost::lexical_cast<std::string>(i);
 	}
-	catch (boost::bad_lexical_cast e) {
+	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
 	}
 }
@@ -49,7 +49,7 @@ inline int strToInt(const std::string& str, int fallBackValue = 0)
 	try {
 		return boost::lexical_cast<int>(str);
 	}
-	catch (boost::bad_lexical_cast e) {
+	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
 	}
 }
@@ -59,7 +59,7 @@ inline std::string floatToStr(float f, const std::string& fallBackValue = "")
 	try {
 		return boost::lexical_cast<std::string>(f);
 	}
-	catch (boost::bad_lexical_cast e) {
+	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
 	}
 }
@@ -69,7 +69,7 @@ inline float strToFloat(const std::string& str, float fallBackValue = 0)
 	try {
 		return boost::lexical_cast<float>(str);
 	}
-	catch (boost::bad_lexical_cast e) {
+	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
 	}
 }
@@ -89,7 +89,7 @@ inline double strToDouble(const std::string& str, double fallBackValue = 0)
 	try {
 		return boost::lexical_cast<double>(str);
 	}
-	catch (boost::bad_lexical_cast e) {
+	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
 	}
 }
@@ -103,7 +103,7 @@ inline std::string sizetToStr(std::size_t s, const std::string& fallBackValue = 
 		return boost::lexical_cast<std::string>(s);
 #endif
 	}
-	catch (boost::bad_lexical_cast e) {
+	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
 	}
 }
@@ -113,7 +113,7 @@ inline std::size_t strToSizet(const std::string& str, std::size_t fallBackValue 
 	try {
 		return boost::lexical_cast<std::size_t>(str);
 	}
-	catch (boost::bad_lexical_cast e) {
+	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
 	}
 }
