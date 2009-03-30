@@ -45,9 +45,13 @@ void Document::addTopLevelNode(const std::string& name) {
 		return; // is not Valid, place an assertion here?
 	}
 
-	_xmlDoc->children = xmlNewDocNode(_xmlDoc, NULL, 
-  									  xmlCharStrdup(name.c_str()), 
-  									  xmlCharStrdup(""));
+	xmlChar* nameStr = xmlCharStrdup(name.c_str());
+	xmlChar* emptyStr = xmlCharStrdup("");
+
+	_xmlDoc->children = xmlNewDocNode(_xmlDoc, NULL, nameStr, emptyStr);
+
+	xmlMemFree(nameStr);
+	xmlMemFree(emptyStr);
 }
 
 Node Document::getTopLevelNode() const {
@@ -96,12 +100,11 @@ bool Document::isValid() const {
 }
 
 // Evaluate an XPath expression and return matching Nodes.
-NodeList Document::findXPath(const std::string& path) const {
+NodeList Document::findXPath(const std::string& path) const
+{
     // Set up the XPath context
-    xmlXPathContextPtr context;
-    xmlXPathObjectPtr result;
-    
-    context = xmlXPathNewContext(_xmlDoc);
+    xmlXPathContextPtr context = xmlXPathNewContext(_xmlDoc);
+
     if (context == NULL) {
         std::cerr << "ERROR: xml::findPath() failed to create XPath context "
                   << "when searching for " << path << std::endl;
@@ -110,7 +113,7 @@ NodeList Document::findXPath(const std::string& path) const {
     
     // Evaluate the expression  
     const xmlChar* xpath = reinterpret_cast<const xmlChar*>(path.c_str());
-    result = xmlXPathEvalExpression(xpath, context);
+    xmlXPathObjectPtr result = xmlXPathEvalExpression(xpath, context);
     xmlXPathFreeContext(context);
 
     if (result == NULL) {
