@@ -28,9 +28,16 @@ Document::~Document() {
 	}
 }
 
-Document Document::create() {
+Document Document::create()
+{
+	xmlChar* versionStr = xmlCharStrdup("1.0");
+
 	// Create a new xmlDocPtr and return the object
-	return Document(xmlNewDoc(xmlCharStrdup("1.0")));
+	xmlDocPtr doc = xmlNewDoc(versionStr);
+
+	xmlMemFree(versionStr);
+
+	return Document(doc);
 }
 
 void Document::addTopLevelNode(const std::string& name) {
