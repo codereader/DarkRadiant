@@ -44,7 +44,7 @@ enum ProjectionAxis {
  * Implementation of Texture for a 2D image texture.
  */
 class BasicTexture2D
-: public Texture2D
+: public Texture
 {
 	// The GL bind number for use in OpenGL calls
 	GLuint texture_number;
@@ -109,8 +109,6 @@ public:
     {
         return texture_number;
     }
-
-    /* Texture2D interface */
     unsigned getWidth() const
     {
         return _width;

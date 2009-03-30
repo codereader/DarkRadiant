@@ -114,7 +114,7 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	IShaderPtr shader = GlobalShaderSystem().getShaderForName(self->_texName);
 
 	// This is an "ordinary" texture, take the editor image
-	Texture2DPtr tex = shader->getEditorImage();
+	TexturePtr tex = shader->getEditorImage();
 	if (tex != NULL) {
 		glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
 		

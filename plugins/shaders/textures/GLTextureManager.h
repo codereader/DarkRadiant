@@ -15,7 +15,7 @@ class GLTextureManager
 	TextureMap _textures;
 	
 	// The fallback textures in case a texture is empty or broken
-	Texture2DPtr _shaderNotFound;
+	TexturePtr _shaderNotFound;
 
 private:
 
@@ -25,7 +25,7 @@ private:
                           ImagePtr image);
 	
 	// Constructs the fallback textures like "Shader Image Missing"
-	Texture2DPtr loadStandardTexture(const std::string& filename);
+	TexturePtr loadStandardTexture(const std::string& filename);
 
 public:
 
@@ -42,14 +42,14 @@ public:
 	 * @moduleNames: The module names used to invoke the correct imageloader.
 	 * 				 This defaults to "BMP".
 	 */
-	Texture2DPtr getBinding(const std::string& fullPath,
+	TexturePtr getBinding(const std::string& fullPath,
 				 		const std::string& moduleNames = "bmp");
 
 	/**
      * \brief
      * Get the "shader not found" texture.
      */
-	Texture2DPtr getShaderNotFound();
+	TexturePtr getShaderNotFound();
 
 	/* greebo: This is some sort of "cleanup" call, which causes
 	 * the TextureManager to go through the list of textures and 

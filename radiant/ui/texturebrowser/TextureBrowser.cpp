@@ -129,7 +129,7 @@ void TextureBrowser::keyChanged(const std::string& key, const std::string& val)
 }
 
 // Return the display width of a texture in the texture browser
-int TextureBrowser::getTextureWidth(Texture2DPtr tex) {
+int TextureBrowser::getTextureWidth(TexturePtr tex) {
     int width;
     if (!m_resizeTextures) {
 		// Don't use uniform size
@@ -147,7 +147,7 @@ int TextureBrowser::getTextureWidth(Texture2DPtr tex) {
     return width;
 }
 
-int TextureBrowser::getTextureHeight(Texture2DPtr tex) {
+int TextureBrowser::getTextureHeight(TexturePtr tex) {
 	int height;
 	if (!m_resizeTextures) {
 		// Don't use uniform size
@@ -185,7 +185,7 @@ void TextureBrowser::setSelectedShader(const std::string& newShader) {
 	focus(shader);
 }
 
-void TextureBrowser::nextTexturePos(TextureLayout& layout, Texture2DPtr tex, int *x, int *y) {
+void TextureBrowser::nextTexturePos(TextureLayout& layout, TexturePtr tex, int *x, int *y) {
 	int nWidth = getTextureWidth(tex);
 	int nHeight = getTextureHeight(tex);
   
@@ -327,7 +327,7 @@ void TextureBrowser::focus(const std::string& name) {
 
     int x, y;
     nextTexturePos(layout, shader->getEditorImage(), &x, &y);
-    Texture2DPtr q = shader->getEditorImage();
+    TexturePtr q = shader->getEditorImage();
     if (!q)
       break;
 
@@ -370,7 +370,7 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 		int x, y;
 		nextTexturePos(layout, shader->getEditorImage(), &x, &y);
 		
-		Texture2DPtr tex = shader->getEditorImage();
+		TexturePtr tex = shader->getEditorImage();
 		if (tex == NULL) {
 			break;
 		}
@@ -457,7 +457,7 @@ void TextureBrowser::draw() {
 
     int x, y;
     nextTexturePos(layout, shader->getEditorImage(), &x, &y);
-    Texture2DPtr q = shader->getEditorImage();
+    TexturePtr q = shader->getEditorImage();
     if (!q)
       break;
 
