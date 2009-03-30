@@ -27,6 +27,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 typedef unsigned char byte;
 
+class Texture;
+typedef boost::shared_ptr<Texture> TexturePtr;
+
 /**
  * \brief
  * Interface for GL bindable texture objects.
@@ -40,10 +43,14 @@ public:
      * Bind this texture to OpenGL.
      *
      * This method invokes the necessary GL calls to bind and upload the
-     * object's texture. It returns a GLuint representing the texture in GL,
-     * which may be used with future calls to glBindTexture().
+     * object's texture. It returns a Texture object representing the texture in
+     * GL.
+     *
+     * \param name
+     * Optional name to give the texture at bind time. This would usually be the
+     * name of the image map, e.g. "textures/blah/bleh".
      */
-    virtual GLuint bindTexture() const = 0;
+    virtual TexturePtr bindTexture(const std::string& name = "") const = 0;
 };
 
 typedef boost::shared_ptr<BindableTexture> BindableTexturePtr;

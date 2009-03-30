@@ -62,12 +62,9 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp)
         {
             // Constructor returned a valid image, now create the texture object
             // and insert this into the map
-            BasicTexture2DPtr texture(new BasicTexture2D(identifier));
+            TexturePtr texture = img->bindTexture(identifier);
             _textures.insert(TextureMap::value_type(identifier, texture));
             
-            // Bind the texture and get the OpenGL id
-            textureFromImage(texture, img);
-
             globalOutputStream() << "[shaders] Loaded texture: " << identifier << "\n";
 
             return texture;
@@ -91,13 +88,11 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath,
 	    ImagePtr img = constructor->construct();
 
 	    // see if the MapExpression returned a valid image
-	    if (img != NULL) {
-			// Constructor returned a valid image, now create the texture object
-            BasicTexture2DPtr basicTex(new BasicTexture2D(fullPath));
-			_textures[fullPath] = basicTex;
-	
-			// Bind the texture and get the OpenGL id
-			textureFromImage(basicTex, img);
+	    if (img != NULL) 
+       {
+            // Constructor returned a valid image, now create the texture object
+            TexturePtr texture = img->bindTexture(fullPath);
+			_textures[fullPath] = texture;
 	
 			globalOutputStream() << "[shaders] Loaded texture: " << fullPath << "\n";
 	    }
@@ -129,7 +124,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
 	// Create the texture path
 	std::string fullpath = GlobalRegistry().get("user/paths/bitmapsPath") + filename;
 	
-	BasicTexture2DPtr returnValue(new BasicTexture2D(fullpath));
+	TexturePtr returnValue;
 	
 	// load the image with the FileLoader (which can handle .bmp in contrast to the DefaultConstructor)
 	TextureConstructorPtr constructor(new FileLoader(fullpath, "bmp"));
@@ -138,7 +133,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
 	if (img != ImagePtr()) {
 		// Bind the (processed) texture and get the OpenGL id
 		// The getProcessed() call may substitute the passed image by another
-		textureFromImage(returnValue, img);
+		returnValue = img->bindTexture(filename);
 	}
 	else {
 		globalErrorStream() << "[shaders] Couldn't load Standard Texture texture: " 
@@ -146,17 +141,6 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
 	}
 	
 	return returnValue;
-}
-
-void GLTextureManager::textureFromImage(BasicTexture2DPtr tex2D, 
-                                        ImagePtr image) 
-{
-	// Download the texture and set the reference number
-	tex2D->setGLTexNum(image->bindTexture());
-
-	// Fill the Texture structure with the metadata
-	tex2D->setWidth(image->getWidth(0));
-	tex2D->setHeight(image->getHeight(0));
 }
 
 } // namespace shaders

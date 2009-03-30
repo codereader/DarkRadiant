@@ -122,7 +122,7 @@ public:
 	}
 
     /* BindableTexture implementation */
-	GLuint bindTexture() const
+	TexturePtr bindTexture(const std::string& name) const
     {
 		GLuint textureNum;
 
@@ -145,7 +145,12 @@ public:
 		// Un-bind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		return textureNum;
+        // Create and return texture object
+        BasicTexture2DPtr texObj(new BasicTexture2D(textureNum, name));
+        texObj->setWidth(getWidth(0));
+        texObj->setHeight(getHeight(0));
+
+		return texObj;
 	}
 
 	bool isPrecompressed() const {
