@@ -43,8 +43,12 @@ NodeList Node::getChildren() const
 // Creates a new child with no content (i.e. <name />)
 Node Node::createChild(const std::string& name)
 {
+	xmlChar* nodeName = xmlCharStrdup(name.c_str());
+
 	// Create a new child under the contained node
-	xmlNodePtr newChild = xmlNewChild(_xmlNode,	NULL, xmlCharStrdup(name.c_str()), NULL);
+	xmlNodePtr newChild = xmlNewChild(_xmlNode,	NULL, nodeName, NULL);
+
+	xmlMemFree(nodeName);
 	
 	// Create a new xml::Node out of this pointer and return it
 	return Node(newChild);
