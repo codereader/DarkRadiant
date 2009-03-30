@@ -360,6 +360,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\Texture.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\version.h"
 			>
 		</File>
