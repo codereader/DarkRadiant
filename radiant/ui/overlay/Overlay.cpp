@@ -42,7 +42,7 @@ Overlay::Overlay()
 }
 
 void Overlay::onRadiantShutdown() {
-	_texture = Texture2DPtr();
+	_texture = TexturePtr();
 	GlobalRegistry().removeKeyObserver(this);
 }
 

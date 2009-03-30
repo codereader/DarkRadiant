@@ -122,9 +122,9 @@ public:
 	void keyChanged(const std::string& key, const std::string& val);
 
 	// Return the display width of a texture in the texture browser
-	int getTextureWidth(Texture2DPtr tex);
+	int getTextureWidth(TexturePtr tex);
 	// Return the display height of a texture in the texture browser
-	int getTextureHeight(Texture2DPtr tex);
+	int getTextureHeight(TexturePtr tex);
 
 	/** greebo: Constructs the TextureBrowser window and retrieves the 
 	 * 			widget for packing into the GroupDialog for instance.
@@ -177,7 +177,7 @@ private:
 	
 	/** greebo: Adjusts the values in <layout> to point at the next position.
 	 */
-	void nextTexturePos(TextureLayout& layout, Texture2DPtr current_texture, int *x, int *y);
+	void nextTexturePos(TextureLayout& layout, TexturePtr current_texture, int *x, int *y);
 	
 	/** greebo: Performs the actual window movement after a mouse scroll.
 	 */

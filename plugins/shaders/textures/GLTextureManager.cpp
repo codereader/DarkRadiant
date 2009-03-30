@@ -80,7 +80,7 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp)
     }
 }
 
-Texture2DPtr GLTextureManager::getBinding(const std::string& fullPath,
+TexturePtr GLTextureManager::getBinding(const std::string& fullPath,
                                           const std::string& moduleNames) 
 {
     // check if the texture has to be loaded
@@ -109,11 +109,11 @@ Texture2DPtr GLTextureManager::getBinding(const std::string& fullPath,
 	}
 
     // Cast should succeed since all single image textures will be Texture2D
-    return boost::dynamic_pointer_cast<Texture2D>(_textures[fullPath]);
+    return _textures[fullPath];
 }
 
 // Return the shader-not-found texture, loading if necessary
-Texture2DPtr GLTextureManager::getShaderNotFound() 
+TexturePtr GLTextureManager::getShaderNotFound() 
 {
 	// Construct the texture if necessary
 	if (!_shaderNotFound) {
@@ -124,7 +124,7 @@ Texture2DPtr GLTextureManager::getShaderNotFound()
 	return _shaderNotFound;				  
 }
 
-Texture2DPtr GLTextureManager::loadStandardTexture(const std::string& filename) 
+TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename) 
 {
 	// Create the texture path
 	std::string fullpath = GlobalRegistry().get("user/paths/bitmapsPath") + filename;

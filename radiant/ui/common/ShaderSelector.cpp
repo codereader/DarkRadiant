@@ -338,15 +338,8 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 	
 	if (drawQuad) 
     {
-		// Calculate the correct aspect ratio for preview. Have to dynamic_cast
-        // because IShader::firstLayer() doesn't return a Texture2D, although
-        // I've never heard of anyone using a cubemap for a light texture.
-        Texture2DPtr tex2D = boost::dynamic_pointer_cast<Texture2D>(tex);
-        float aspect = 1;
-        if (tex2D)
-        {
-            aspect = float(tex2D->getWidth()) / float(tex2D->getHeight());
-        }
+		// Calculate the correct aspect ratio for preview. 
+      float aspect = float(tex->getWidth()) / float(tex->getHeight());
 
 		float hfWidth, hfHeight;
 		if (aspect > 1.0) {

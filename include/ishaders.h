@@ -55,20 +55,6 @@ public:
      * Return the GL texture identifier for this texture.
      */
     virtual GLuint getGLTexNum() const = 0;
-};
-typedef boost::shared_ptr<Texture> TexturePtr;
-
-/**
- * \brief
- * Interface for a 2D GL texture.
- *
- * In addition to implementing Texture, a Texture2D provides methods to return
- * the width and height of the image.
- */
-class Texture2D
-: public Texture
-{
-public:
 
     /**
      * \brief
@@ -82,7 +68,7 @@ public:
      */
     virtual unsigned getHeight() const = 0;
 };
-typedef boost::shared_ptr<Texture2D> Texture2DPtr;
+typedef boost::shared_ptr<Texture> TexturePtr;
 
 class Image;
 
@@ -261,7 +247,7 @@ public:
      * \brief
      * Return the editor image texture for this shader.
      */
-    virtual Texture2DPtr getEditorImage() = 0;
+    virtual TexturePtr getEditorImage() = 0;
 
     /**
      * \brief
@@ -441,7 +427,7 @@ public:
 	 * @param moduleNames
 	 * The space-separated list of image modules (default is "GDK").
 	 */
-	virtual Texture2DPtr loadTextureFromFile(
+	virtual TexturePtr loadTextureFromFile(
 			const std::string& filename,
 			const std::string& moduleNames = "GDK") = 0;
 };

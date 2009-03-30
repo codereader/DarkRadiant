@@ -37,21 +37,21 @@ CShader::~CShader() {
 	GetTextureManager().checkBindings();
 }
 
-Texture2DPtr CShader::getEditorImage() 
+TexturePtr CShader::getEditorImage() 
 {
-	if (!_editorTexture) 
+    if (!_editorTexture) 
     {
-		// Pass the call to the GLTextureManager to realise this image 
-		_editorTexture = boost::dynamic_pointer_cast<Texture2D>(
-            GetTextureManager().getBinding(_template->getTexture())
+        // Pass the call to the GLTextureManager to realise this image 
+        _editorTexture = GetTextureManager().getBinding(
+            _template->getTexture()
         );
         if (!_editorTexture)
         {
             _editorTexture = GetTextureManager().getShaderNotFound();
         }
-	}
+    }
 	
-	return _editorTexture;
+    return _editorTexture;
 }
 
 // Return the falloff texture name
