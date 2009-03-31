@@ -238,9 +238,11 @@
 		</Unit>
 		<Unit filename="..\..\..\w32deps\libxml2\xmlcatalog.c">
 			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="..\..\..\w32deps\libxml2\xmllint.c">
 			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="..\..\..\w32deps\libxml2\xmlmemory.c">
 			<Option compilerVar="CC" />

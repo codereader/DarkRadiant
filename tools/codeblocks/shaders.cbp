@@ -188,6 +188,10 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
+		<Unit filename="..\..\plugins\shaders\NamedBindable.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Unit filename="..\..\plugins\shaders\ShaderDefinition.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
