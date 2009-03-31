@@ -79,12 +79,6 @@ MapExpressionPtr MapExpression::createForString(std::string str) {
 	return createForToken(token);
 }
 
-// Construct a cube map
-MapExpressionPtr MapExpression::createCubeMapForString(const std::string& s)
-{
-    return MapExpressionPtr(new CubeMapExpression(s));
-}
-
 ImagePtr MapExpression::getResampled(ImagePtr input, unsigned int width, unsigned int height) {
 	// Don't process precompressed images
 	if (input->isPrecompressed()) {
@@ -120,7 +114,7 @@ HeightMapExpression::HeightMapExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr HeightMapExpression::getImage() {
+ImagePtr HeightMapExpression::getImage() const {
 	// Get the heightmap from the contained expression
 	ImagePtr heightMap = heightMapExp->getImage();
 	
@@ -137,7 +131,7 @@ ImagePtr HeightMapExpression::getImage() {
 	return normalMap;
 }
 
-std::string HeightMapExpression::getIdentifier() {
+std::string HeightMapExpression::getIdentifier() const {
 	std::string identifier = "_heightmap_";
 	identifier.append(heightMapExp->getIdentifier() + floatToStr(scale));
 	return identifier;
@@ -151,7 +145,7 @@ AddNormalsExpression::AddNormalsExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr AddNormalsExpression::getImage() {
+ImagePtr AddNormalsExpression::getImage() const {
     ImagePtr imgOne = mapExpOne->getImage();
     
     if (imgOne == NULL) return ImagePtr();
@@ -209,7 +203,7 @@ ImagePtr AddNormalsExpression::getImage() {
     return result;
 }
 
-std::string AddNormalsExpression::getIdentifier() {
+std::string AddNormalsExpression::getIdentifier() const {
 	std::string identifier = "_addnormals_";
 	identifier.append(mapExpOne->getIdentifier() + mapExpTwo->getIdentifier());
 	return identifier;
@@ -221,7 +215,7 @@ SmoothNormalsExpression::SmoothNormalsExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr SmoothNormalsExpression::getImage() {
+ImagePtr SmoothNormalsExpression::getImage() const {
 
 	ImagePtr normalMap = mapExp->getImage();
 	
@@ -291,7 +285,7 @@ ImagePtr SmoothNormalsExpression::getImage() {
     return result;
 }
 
-std::string SmoothNormalsExpression::getIdentifier() {
+std::string SmoothNormalsExpression::getIdentifier() const {
 	std::string identifier = "_smoothnormals_";
 	identifier.append(mapExp->getIdentifier());
 	return identifier;
@@ -305,7 +299,7 @@ AddExpression::AddExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr AddExpression::getImage() {
+ImagePtr AddExpression::getImage() const {
     ImagePtr imgOne = mapExpOne->getImage();
     
     if (imgOne == NULL) return ImagePtr();
@@ -350,7 +344,7 @@ ImagePtr AddExpression::getImage() {
 	return result;
 }
 
-std::string AddExpression::getIdentifier() {
+std::string AddExpression::getIdentifier() const {
 	std::string identifier = "_add_";
 	identifier.append(mapExpOne->getIdentifier() + mapExpTwo->getIdentifier());
 	return identifier;
@@ -376,7 +370,7 @@ ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue
 	token.assertNextToken(")");
 }
 
-ImagePtr ScaleExpression::getImage() {
+ImagePtr ScaleExpression::getImage() const {
     ImagePtr img = mapExp->getImage();
     
     if (img == NULL) return ImagePtr();
@@ -424,7 +418,7 @@ ImagePtr ScaleExpression::getImage() {
 	return result;
 }
 
-std::string ScaleExpression::getIdentifier() {
+std::string ScaleExpression::getIdentifier() const {
 	std::string identifier = "_scale_";
 	identifier.append(mapExp->getIdentifier() + floatToStr(scaleRed) + floatToStr(scaleGreen) + floatToStr(scaleBlue) + floatToStr(scaleAlpha));
 	return identifier;
@@ -436,7 +430,7 @@ InvertAlphaExpression::InvertAlphaExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr InvertAlphaExpression::getImage() {
+ImagePtr InvertAlphaExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
 	
 	if (img == NULL) return ImagePtr();
@@ -471,7 +465,7 @@ ImagePtr InvertAlphaExpression::getImage() {
 	return result;
 }
 
-std::string InvertAlphaExpression::getIdentifier() {
+std::string InvertAlphaExpression::getIdentifier() const {
 	std::string identifier = "_invertalpha_";
 	identifier.append(mapExp->getIdentifier());
 	return identifier;
@@ -483,7 +477,7 @@ InvertColorExpression::InvertColorExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr InvertColorExpression::getImage() {
+ImagePtr InvertColorExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
 	
 	if (img == NULL) return ImagePtr();
@@ -518,7 +512,7 @@ ImagePtr InvertColorExpression::getImage() {
 	return result;
 }
 
-std::string InvertColorExpression::getIdentifier() {
+std::string InvertColorExpression::getIdentifier() const {
 	std::string identifier = "_invertcolor_";
 	identifier.append(mapExp->getIdentifier());
 	return identifier;
@@ -530,7 +524,7 @@ MakeIntensityExpression::MakeIntensityExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr MakeIntensityExpression::getImage() {
+ImagePtr MakeIntensityExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
 	
 	if (img == NULL) return ImagePtr();
@@ -565,7 +559,7 @@ ImagePtr MakeIntensityExpression::getImage() {
 	return result;
 }
 
-std::string MakeIntensityExpression::getIdentifier() {
+std::string MakeIntensityExpression::getIdentifier() const {
 	std::string identifier = "_makeintensity_";
 	identifier.append(mapExp->getIdentifier());
 	return identifier;
@@ -577,7 +571,7 @@ MakeAlphaExpression::MakeAlphaExpression (DefTokeniser& token) {
 	token.assertNextToken(")");
 }
 
-ImagePtr MakeAlphaExpression::getImage() {
+ImagePtr MakeAlphaExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
 	
 	if (img == NULL) return ImagePtr();
@@ -612,7 +606,7 @@ ImagePtr MakeAlphaExpression::getImage() {
 	return result;
 }
 
-std::string MakeAlphaExpression::getIdentifier() {
+std::string MakeAlphaExpression::getIdentifier() const {
 	std::string identifier = "_makealpha_";
 	identifier.append(mapExp->getIdentifier());
 	return identifier;
@@ -625,7 +619,7 @@ ImageExpression::ImageExpression (std::string imgName) {
 	_imgName = os::standardPath(imgName).substr(0, imgName.rfind("."));
 }
 
-ImagePtr ImageExpression::getImage() {
+ImagePtr ImageExpression::getImage() const {
 	// Check for some image keywords and load the correct file
 	if (_imgName == "_black") {
 		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK);
@@ -690,43 +684,9 @@ ImagePtr ImageExpression::getImage() {
 	}
 }
 
-std::string ImageExpression::getIdentifier() {
+std::string ImageExpression::getIdentifier() const 
+{
 	return _imgName;
 }
-
-// Cubemap expression
-
-ImagePtr CubeMapExpression::getImage()
-{
-    return ImagePtr();
-}
-
-std::string CubeMapExpression::getIdentifier()
-{
-    return "_cubemap_" + _prefix;
-}
-
-bool CubeMapExpression::isCubeMap() const
-{
-    return true;
-}
-
-MapExpression::ImageVector CubeMapExpression::getCubeMapImages() const
-{
-    ImageVector images;
-
-    // The six images start with _prefix then append _up, _down, _left, _right,
-    // _forward and _back
-    images.push_back(DefaultConstructor(_prefix + "_up").construct());
-    images.push_back(DefaultConstructor(_prefix + "_down").construct());
-    images.push_back(DefaultConstructor(_prefix + "_left").construct());
-    images.push_back(DefaultConstructor(_prefix + "_right").construct());
-    images.push_back(DefaultConstructor(_prefix + "_forward").construct());
-    images.push_back(DefaultConstructor(_prefix + "_back").construct());
-
-    return images;
-}
-
-
 
 } // namespace shaders

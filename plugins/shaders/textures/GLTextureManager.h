@@ -6,7 +6,8 @@
 #include "../MapExpression.h"
 #include "texturelib.h"
 
-namespace shaders {
+namespace shaders 
+{
 
 class GLTextureManager 
 {
@@ -26,9 +27,9 @@ public:
 
     /**
      * \brief
-     * Construct a bound texture from a map expression.
+     * Construct a bound texture from a generic named bindable.
      */
-	TexturePtr getBinding(MapExpressionPtr mapExp);
+	TexturePtr getBinding(NamedBindablePtr bindable);
 	
 	/** greebo: This loads a texture directly from the disk using the
 	 * 			specified <fullPath>.

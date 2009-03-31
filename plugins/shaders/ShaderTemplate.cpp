@@ -168,15 +168,19 @@ void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 {   
     if (token == "map") 
     {
-        _currentLayer->setMapExpression(MapExpression::createForToken(tokeniser));     
+        _currentLayer->setBindableTexture(
+            MapExpression::createForToken(tokeniser)
+        );     
     }
+#if 0
     else if (token == "cameracubemap")
     {
         std::string cubeMapPrefix = tokeniser.nextToken();
-        _currentLayer->setMapExpression(
+        _currentLayer->setBindableTexture(
             MapExpression::createCubeMapForString(cubeMapPrefix)
         );
     }
+#endif
 }
 
 // Search for colour modifications, e.g. red, green, blue, rgb or vertexColor
@@ -231,7 +235,7 @@ void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
 bool ShaderTemplate::saveLayer()
 {
     // Append layer to list of all layers
-    if (_currentLayer->getMapExpression()) {
+    if (_currentLayer->getBindableTexture()) {
         m_layers.push_back(_currentLayer);
     }
     
