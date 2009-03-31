@@ -35,19 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class Image;
 
-/* greebo: A TextureConstructor creates an actual bitmap image
- * that can be used to perform an OpenGL bind.
- * 
- * The image can either be loaded from a disk file (simple)
- * or the result of a MapExpression hierarchy (addnormals and such)
- */
-class TextureConstructor
-{
-public:
-	virtual ImagePtr construct() = 0;
-};
-typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
-
 // Forward declaration
 namespace shaders {
 	

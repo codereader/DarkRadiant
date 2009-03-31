@@ -2,9 +2,6 @@
 
 #include "Texture.h"
 
-class TextureConstructor;
-typedef boost::shared_ptr<TextureConstructor> TextureConstructorPtr;
-
 /**
  * \brief
  * Implementation of Texture for a 2D image texture.
