@@ -35,17 +35,17 @@ void GLTextureManager::checkBindings() {
 	}
 }
 
-TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp) 
+TexturePtr GLTextureManager::getBinding(NamedBindablePtr bindable) 
 {
 	// Check if we got an empty MapExpression, and return the NOT FOUND texture
     // if so
-	if (!mapExp)
+	if (!bindable)
     {
         return getShaderNotFound();
     }
 
     // Check if we already have the texture, otherwise construct it
-    std::string identifier = mapExp->getIdentifier();
+    std::string identifier = bindable->getIdentifier();
     TextureMap::iterator i = _textures.find(identifier);
     if (i != _textures.end()) 
     {
@@ -54,24 +54,18 @@ TexturePtr GLTextureManager::getBinding(MapExpressionPtr mapExp)
     }
     else
     {
-        // This may produce a NULL image if a file can't be found, for example.
-        ImagePtr img = mapExp->getImage();
-
-        // see if the MapExpression returned a valid image
-        if (img != NULL) 
+        // Create and insert texture object, if it is valid
+        TexturePtr texture = bindable->bindTexture(identifier);
+        if (texture)
         {
-            // Constructor returned a valid image, now create the texture object
-            // and insert this into the map
-            TexturePtr texture = img->bindTexture(identifier);
             _textures.insert(TextureMap::value_type(identifier, texture));
-            
             globalOutputStream() << "[shaders] Loaded texture: " << identifier << "\n";
-
             return texture;
         }
-        else {
-            globalErrorStream() << "[shaders] Unable to load texture: " << identifier << "\n";
-            // invalid image produced, return shader not found
+        else
+        {
+            globalOutputStream() << "[shaders] Unable to load texture: "
+                                 << identifier << "\n";
             return getShaderNotFound();
         }
     }

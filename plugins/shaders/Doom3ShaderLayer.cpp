@@ -71,9 +71,9 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
 TexturePtr Doom3ShaderLayer::getTexture() const
 {
     // Bind texture to GL if needed
-    if (!_texture && _mapExpr)
+    if (!_texture && _bindableTex)
     {
-        _texture = GetTextureManager().getBinding(_mapExpr);
+        _texture = GetTextureManager().getBinding(_bindableTex);
     }
 
     return _texture;

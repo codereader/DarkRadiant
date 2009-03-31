@@ -2,6 +2,8 @@
 
 #include <ishaders.h>
 
+#include "NamedBindable.h"
+
 namespace shaders
 {
 
@@ -17,10 +19,10 @@ class Doom3ShaderLayer
 {
 private:
 
-	// The Map Expression for this stage
-	shaders::MapExpressionPtr _mapExpr;
+	// The bindable texture for this stage
+	NamedBindablePtr _bindableTex;
 
-    // The Texture object, created from the map expression
+    // The Texture object, created from the bindable texture
     mutable TexturePtr _texture;
 
     // Layer type (diffuse, bump, specular or nothing)
@@ -39,8 +41,8 @@ public:
 
 	// Constructor
 	Doom3ShaderLayer(ShaderLayer::Type type = ShaderLayer::BLEND,
-                     MapExpressionPtr mapExpr = MapExpressionPtr()) 
-	: _mapExpr(mapExpr),
+                     NamedBindablePtr btex = NamedBindablePtr()) 
+	: _bindableTex(btex),
 	  _type(type), 
 	  _blendFuncStrings("GL_ONE", "GL_ZERO"), 
       _colour(1, 1, 1),
@@ -55,20 +57,20 @@ public:
 
     /**
      * \brief
-     * Set the map expression.
+     * Set the bindable texture object.
      */
-    void setMapExpression(MapExpressionPtr exp)
+    void setBindableTexture(NamedBindablePtr btex)
     {
-        _mapExpr = exp;
+        _bindableTex = btex;
     }
 
     /**
      * \brief
-     * Get the map expression.
+     * Get the bindable texture object.
      */
-    MapExpressionPtr getMapExpression() const
+    BindableTexturePtr getBindableTexture() const
     {
-        return _mapExpr;
+        return _bindableTex;
     }
 
     /**

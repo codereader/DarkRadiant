@@ -5,12 +5,14 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "NamedBindable.h"
 #include "parser/DefTokeniser.h"
 #include "textures/ImageLoaderManager.h"
 
 using parser::DefTokeniser;
 
-namespace shaders {
+namespace shaders 
+{
 
 class MapExpression;
 typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
@@ -23,31 +25,15 @@ typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
  * "heightmap(addnormals(blah, bleh), 1).
  */
 class MapExpression 
+: public NamedBindable
 {
-public: /* TYPES */
-
-    /**
-     * \brief
-     * Vector of ImagePtrs.
-     */
-    typedef std::vector<ImagePtr> ImageVector;
-
 public: /* INTERFACE METHODS */
 
 	/**
      * \brief
      * Construct and return the image created from this map expression.
      */
-	virtual ImagePtr getImage() = 0;
-
-    /**
-     * \brief
-     * Return a text string that uniquely identifies this map expression.
-     *
-     * Each map expression must generate a unique string that identifies it, so
-     * that it can be cached for performance by the GL texture manager.
-     */
-	virtual std::string getIdentifier() = 0;
+	virtual ImagePtr getImage() const = 0;
 
     /**
      * \brief
@@ -62,17 +48,18 @@ public: /* INTERFACE METHODS */
         return false;
     }
 
-    /**
-     * \brief
-     * Return the vector of six cube map images for this cube map expression.
-     *
-     * If this is not a cube map expression, the vector will be empty.
-     */
-    virtual ImageVector getCubeMapImages() const
+public:
+
+    /* BindableTexture interface */
+    TexturePtr bindTexture(const std::string& name) const
     {
-        return ImageVector();
+        ImagePtr img = getImage();
+        if (img)
+            return getImage()->bindTexture(name);
+        else
+            return TexturePtr();
     }
-	
+
 public: /* STATIC CONSTRUCTION METHODS */
 
 	/** Creates the a MapExpression out of the given token. Nested mapexpressions
@@ -89,6 +76,7 @@ public: /* STATIC CONSTRUCTION METHODS */
     static MapExpressionPtr createCubeMapForString(const std::string& str);
 	
 protected:
+
 	/** greebo: Assures that the image is matching the desired dimensions.
 	 * 
 	 * @input: The image to be rescaled. If it doesn't match <width x height>
@@ -99,7 +87,7 @@ protected:
 	 *  
 	 * @returns: the resampled image, this might as well be input.  
 	 */
-	virtual ImagePtr getResampled(ImagePtr input, unsigned int width, unsigned int height);
+	static ImagePtr getResampled(ImagePtr input, unsigned int width, unsigned int height);
 };
 
 // the specific MapExpressions
@@ -108,8 +96,8 @@ class HeightMapExpression : public MapExpression {
 	float scale;
 public:
 	HeightMapExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class AddNormalsExpression : public MapExpression {
@@ -117,16 +105,16 @@ class AddNormalsExpression : public MapExpression {
 	MapExpressionPtr mapExpTwo;
 public:
 	AddNormalsExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class SmoothNormalsExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	SmoothNormalsExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class AddExpression : public MapExpression {
@@ -134,8 +122,8 @@ class AddExpression : public MapExpression {
 	MapExpressionPtr mapExpTwo;
 public:
 	AddExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class ScaleExpression : public MapExpression {
@@ -146,40 +134,40 @@ class ScaleExpression : public MapExpression {
 	float scaleAlpha;
 public:
 	ScaleExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class InvertAlphaExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	InvertAlphaExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class InvertColorExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	InvertColorExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class MakeIntensityExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	MakeIntensityExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class MakeAlphaExpression : public MapExpression {
 	MapExpressionPtr mapExp;
 public:
 	MakeAlphaExpression (DefTokeniser& token);
-	ImagePtr getImage();
-	std::string getIdentifier();
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 class ImageExpression : public MapExpression {
@@ -187,32 +175,8 @@ class ImageExpression : public MapExpression {
 	ImageLoaderList _imageLoaders;
 public:
 	ImageExpression(std::string imgName);
-	ImagePtr getImage();
-	std::string getIdentifier();
-};
-
-/**
- * \brief
- * Map expression that creates a cube map out of six images in a directory.
- */
-class CubeMapExpression
-: public MapExpression
-{
-    // The source prefix. The actual images will be (_prefix + "_up") etc.
-    std::string _prefix;
-
-public:
-
-    // Constructor
-    CubeMapExpression(const std::string& prefix)
-    : _prefix(prefix)
-    { }
-
-    /* MapExpression interface */
-    ImagePtr getImage();
-    std::string getIdentifier();
-    bool isCubeMap() const;
-    ImageVector getCubeMapImages() const;
+	ImagePtr getImage() const;
+	std::string getIdentifier() const;
 };
 
 } // namespace shaders
