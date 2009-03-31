@@ -48,8 +48,15 @@ void Document::addTopLevelNode(const std::string& name) {
 	xmlChar* nameStr = xmlCharStrdup(name.c_str());
 	xmlChar* emptyStr = xmlCharStrdup("");
 
-	_xmlDoc->children = xmlNewDocNode(_xmlDoc, NULL, nameStr, emptyStr);
+	xmlNodePtr root = xmlNewDocNode(_xmlDoc, NULL, nameStr, emptyStr);
+	xmlNodePtr oldRoot = xmlDocSetRootElement(_xmlDoc, root);
 
+	if (oldRoot != NULL) {
+		// Old root element, remove it
+		xmlUnlinkNode(oldRoot);
+		xmlMemFree(oldRoot);
+	}
+	
 	xmlMemFree(nameStr);
 	xmlMemFree(emptyStr);
 }
