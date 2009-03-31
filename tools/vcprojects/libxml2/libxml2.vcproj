@@ -632,15 +632,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\w32deps\libxml2\xmlcatalog.c"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\w32deps\libxml2\xmlIO.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\w32deps\libxml2\xmllint.c"
 			>
 		</File>
 		<File
