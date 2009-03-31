@@ -451,6 +451,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\shaders\NamedBindable.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\shaders\plugin.cpp"
 				>
 			</File>
