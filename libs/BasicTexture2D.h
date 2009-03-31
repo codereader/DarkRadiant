@@ -23,9 +23,6 @@ class BasicTexture2D
 	
 public:
 
-	// The constructor object to retrieve the pixel data for this texture
-	TextureConstructorPtr constructor;
-	
 	// Constructor
 	BasicTexture2D(GLuint texNum = 0, const std::string& name = "") 
    : texture_number(texNum),
