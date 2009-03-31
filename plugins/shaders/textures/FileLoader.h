@@ -19,8 +19,7 @@ namespace shaders {
  * to specify which loaders to use. It's using the GDK image loader by default, which
  * covers a wide range of file formats.
  */
-class FileLoader : 
-	public TextureConstructor
+class FileLoader
 {
 	// The list of ImageLoader modules 
 	ImageLoaderList _imageLoaders;

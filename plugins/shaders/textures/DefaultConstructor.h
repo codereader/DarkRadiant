@@ -14,8 +14,7 @@ namespace shaders {
  * It constructs paths relative to the doom3 mod folder (./textures/...) 
  * and searches for the file formats defined in doom3.game. 
  */
-class DefaultConstructor : 
-	public TextureConstructor
+class DefaultConstructor
 {
 	// The filename of the image to load
 	std::string _filename;
