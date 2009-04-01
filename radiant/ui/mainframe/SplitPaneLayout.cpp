@@ -65,24 +65,21 @@ void SplitPaneLayout::activate() {
 	_splitPane.posVPane1.connect(_splitPane.vertPane1);
 	_splitPane.posVPane2.connect(_splitPane.vertPane2);
 	
-	xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='horizontal']");
-	
-	if (!list.empty()) {
-		_splitPane.posHPane.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists("user/ui/mainFrame/splitPane/pane[@name='horizontal']"))
+	{
+		_splitPane.posHPane.loadFromPath("user/ui/mainFrame/splitPane/pane[@name='horizontal']");
 		_splitPane.posHPane.applyPosition();
 	}
 	
-	list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='vertical1']");
-	
-	if (!list.empty()) {
-		_splitPane.posVPane1.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists("user/ui/mainFrame/splitPane/pane[@name='vertical1']"))
+	{
+		_splitPane.posVPane1.loadFromPath("user/ui/mainFrame/splitPane/pane[@name='vertical1']");
 		_splitPane.posVPane1.applyPosition();
 	}
 	
-	list = GlobalRegistry().findXPath("user/ui/mainFrame/splitPane/pane[@name='vertical2']");
-	
-	if (!list.empty()) {
-		_splitPane.posVPane2.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists("user/ui/mainFrame/splitPane/pane[@name='vertical2']"))
+	{
+		_splitPane.posVPane2.loadFromPath("user/ui/mainFrame/splitPane/pane[@name='vertical2']");
 		_splitPane.posVPane2.applyPosition();
 	}
 	
@@ -124,15 +121,15 @@ void SplitPaneLayout::deactivate() {
 		
 	// Remove all previously stored pane information 
 	GlobalRegistry().deleteXPath(path + "//pane");
+
+	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+	_splitPane.posHPane.saveToPath(path + "/pane[@name='horizontal']");
 	
-	xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-	_splitPane.posHPane.saveToNode(node);
-	
-	node = GlobalRegistry().createKeyWithName(path, "pane", "vertical1");
-	_splitPane.posVPane1.saveToNode(node);
-	
-	node = GlobalRegistry().createKeyWithName(path, "pane", "vertical2");
-	_splitPane.posVPane2.saveToNode(node);
+	GlobalRegistry().createKeyWithName(path, "pane", "vertical1");
+	_splitPane.posVPane1.saveToPath(path + "/pane[@name='vertical1']");
+
+	GlobalRegistry().createKeyWithName(path, "pane", "vertical2");
+	_splitPane.posVPane2.saveToPath(path + "/pane[@name='vertical2']");
 
 	// Delete all active views
 	GlobalXYWnd().destroyViews();

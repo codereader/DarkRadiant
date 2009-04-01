@@ -73,17 +73,15 @@ void RegularLayout::activate() {
 	_regular.posTexCamPane.connect(_regular.texCamPane);
 	
 	// Now load the paned positions from the registry
-	xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='horizontal']");
-
-	if (!list.empty()) {
-		_regular.posHPane.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists("user/ui/mainFrame/regular/pane[@name='horizontal']"))
+	{
+		_regular.posHPane.loadFromPath("user/ui/mainFrame/regular/pane[@name='horizontal']");
 		_regular.posHPane.applyPosition();
 	}
 
-	list = GlobalRegistry().findXPath("user/ui/mainFrame/regular/pane[@name='texcam']");
-
-	if (!list.empty()) {
-		_regular.posTexCamPane.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists("user/ui/mainFrame/regular/pane[@name='texcam']"))
+	{
+		_regular.posTexCamPane.loadFromPath("user/ui/mainFrame/regular/pane[@name='texcam']");
 		_regular.posTexCamPane.applyPosition();
 	}
 	
@@ -113,11 +111,11 @@ void RegularLayout::deactivate() {
 	// Remove all previously stored pane information 
 	GlobalRegistry().deleteXPath(path + "//pane");
 	
-	xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-	_regular.posHPane.saveToNode(node);
+	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+	_regular.posHPane.saveToPath(path + "/pane[@name='horizontal']");
 	
-	node = GlobalRegistry().createKeyWithName(path, "pane", "texcam");
-	_regular.posTexCamPane.saveToNode(node);
+	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
+	_regular.posTexCamPane.saveToPath(path + "/pane[@name='texcam']");
 
 	// Delete all active views
 	GlobalXYWnd().destroyViews();

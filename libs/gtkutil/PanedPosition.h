@@ -3,7 +3,7 @@
 
 #include "gtk/gtkwidget.h"
 #include "gtk/gtkpaned.h"
-#include "xmlutil/Node.h"
+#include <string>
 
 /* greebo: A PanedPosition object keeps track of the divider position.  
  * 
@@ -33,9 +33,8 @@ public:
 	const int getPosition() const;
 	void setPosition(int position);
 	
-	void saveToNode(xml::Node node);
-	
-	void loadFromNode(xml::Node node);
+	void saveToPath(const std::string& path);
+	void loadFromPath(const std::string& path);
 	
 	// Applies the internally stored size/position info to the GtkWindow
 	// The algorithm was adapted from original GtkRadiant code (window.h) 

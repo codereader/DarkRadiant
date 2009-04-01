@@ -62,17 +62,15 @@ void EmbeddedLayout::activate() {
 	posgroupCamPane.connect(groupCamPane);
 	
 	// Now load the paned positions from the registry
-	xml::NodeList list = GlobalRegistry().findXPath("user/ui/mainFrame/embedded/pane[@name='horizontal']");
-
-	if (!list.empty()) {
-		posHPane.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists("user/ui/mainFrame/embedded/pane[@name='horizontal']"))
+	{
+		posHPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='horizontal']");
 		posHPane.applyPosition();
 	}
 
-	list = GlobalRegistry().findXPath("user/ui/mainFrame/embedded/pane[@name='texcam']");
-
-	if (!list.empty()) {
-		posgroupCamPane.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists("user/ui/mainFrame/embedded/pane[@name='texcam']"))
+	{
+		posgroupCamPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='texcam']");
 		posgroupCamPane.applyPosition();
 	}
 	
@@ -120,12 +118,12 @@ void EmbeddedLayout::deactivate() {
 		
 	// Remove all previously stored pane information 
 	GlobalRegistry().deleteXPath(path + "//pane");
+	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+
+	posHPane.saveToPath(path + "/pane[@name='horizontal']");
 	
-	xml::Node node = GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-	posHPane.saveToNode(node);
-	
-	node = GlobalRegistry().createKeyWithName(path, "pane", "texcam");
-	posgroupCamPane.saveToNode(node);
+	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
+	posgroupCamPane.saveToPath(path + "/pane[@name='texcam']");
 
 	// Delete all active views
 	GlobalXYWnd().destroyViews();
