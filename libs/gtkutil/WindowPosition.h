@@ -3,7 +3,7 @@
 
 #include "gtk/gtkwindow.h"
 #include "math/Vector2.h"
-#include "xmlutil/Node.h"
+#include <string>
 
 /* greebo: A WindowPosition object keeps track of the window's size and position. 
  * 
@@ -40,9 +40,10 @@ public:
 
 	void setPosition(int x, int y);
 	void setSize(int width, int height);
-	
-	void saveToNode(xml::Node& node);
-	void loadFromNode(const xml::Node& node);
+
+	// Loads/saves the window position to the given Registry path
+	void saveToPath(const std::string& path);
+	void loadFromPath(const std::string& path);
 	
 	// Applies the internally stored size/position info to the GtkWindow
 	// The algorithm was adapted from original GtkRadiant code (window.h) 

@@ -50,7 +50,7 @@ public:
    bool readyForEvent()
    {
       clock_t currentClk = clock();
-      float diffMillis = (currentClk - _lastClock) / (0.001 * CLOCKS_PER_SEC);
+      float diffMillis = (currentClk - _lastClock) / (0.001f * CLOCKS_PER_SEC);
       if (diffMillis >= _separationTime)
       {
          _lastClock = currentClk;

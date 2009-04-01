@@ -46,6 +46,10 @@ public:
 	// Note that the given key is NOT processed in terms of UTF-8 <-> locale conversion.
 	void set(const std::string& key, const std::string& value);
 	
+	// Sets the attribute of a specified key
+	void setAttribute(const std::string& path, 
+		const std::string& attrName, const std::string& attrValue);
+
 	/* Appends a whole (external) XML file to the XMLRegistry. The toplevel nodes of this file
 	 * are appended to _topLevelNode (e.g. <darkradiant>) if parentKey is set to the empty string "", 
 	 * otherwise they are imported as a child of the specified parentKey

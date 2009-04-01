@@ -31,16 +31,14 @@ void FloatingLayout::activate() {
 	GlobalEventManager().connectAccelGroup(GTK_WINDOW(_floatingCamWnd->getWindow()));
 
 	// Restore the window position from the registry if possible
-	xml::NodeList windowStateList = 
-		GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE);
-	
-	if (!windowStateList.empty()) {
-		_camWndPosition.loadFromNode(windowStateList[0]);
+	if (!GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE).empty())
+	{
+		_camWndPosition.loadFromPath(RKEY_CAMERA_WINDOW_STATE);
 		_camWndPosition.connect(
 			GTK_WINDOW(_floatingCamWnd->getWindow())
 		);
 	}
-  
+	  
 	_floatingCamWnd->show();
 
 	// Connect up the toggle camera event
@@ -99,15 +97,10 @@ void FloatingLayout::deactivate() {
 	GlobalTextureBrowser().destroyWindow();
 
 	// Destroy the camera window
-	if (_floatingCamWnd != NULL) {
+	if (_floatingCamWnd != NULL)
+	{
 		// Save camwnd state
-		// Delete all the current window states from the registry  
-		GlobalRegistry().deleteXPath(RKEY_CAMERA_WINDOW_STATE);
-		
-		// Create a new node
-		xml::Node node(GlobalRegistry().createKey(RKEY_CAMERA_WINDOW_STATE));
-		
-		_camWndPosition.saveToNode(node);
+		_camWndPosition.saveToPath(RKEY_CAMERA_WINDOW_STATE);
 
 		// De-register commands
 		GlobalEventManager().removeEvent("ToggleCameraFullScreen");

@@ -78,6 +78,14 @@ public:
 	/*	Adds a key to the XMLRegistry (without value, just the node)
 	 *  All required parent nodes are created automatically, if they don't exist */
 	xml::Node createKey(const std::string& key);
+
+	// Set the value of the given attribute at the specified <path>.
+	void setAttribute(const std::string& path, 
+					  const std::string& attrName, 
+					  const std::string& attrValue);
+
+	// Loads the string value of the given attribute of the node at <path>.
+	std::string getAttribute(const std::string& path, const std::string& attrName);
 	
 	// Gets a key from the registry, user tree overrides default tree
 	std::string get(const std::string& key);
