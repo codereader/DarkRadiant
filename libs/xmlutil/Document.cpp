@@ -98,7 +98,7 @@ void Document::copyNodes(const NodeList& nodeList) {
 		// Copy the node
 		xmlNodePtr node = xmlCopyNode(nodeList[i].getNodePtr(), 1);
 		// Add this node to the top level node of this document
-		xmlAddChild(_xmlDoc->children, node);
+		xmlAddChild(xmlDocGetRootElement(_xmlDoc), node);
 	}
 }
 
