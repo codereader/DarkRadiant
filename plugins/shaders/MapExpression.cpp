@@ -688,63 +688,78 @@ ImageExpression::ImageExpression (std::string imgName) {
 	_imgName = os::standardPath(imgName).substr(0, imgName.rfind("."));
 }
 
-ImagePtr ImageExpression::getImage() const {
+ImagePtr ImageExpression::getImage() const 
+{
 	// Check for some image keywords and load the correct file
 	if (_imgName == "_black") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
+        );
 	}
 	else if (_imgName == "_cubiclight") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CUBICLIGHT);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CUBICLIGHT
+        );
 	}
 	else if (_imgName == "_currentRender") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CURRENTRENDER);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CURRENTRENDER
+        );
 	}
 	else if (_imgName == "_default") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_DEFAULT);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_DEFAULT
+        );
 	}
 	else if (_imgName == "_flat") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
+        );
 	}
 	else if (_imgName == "_fog") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FOG);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FOG
+        );
 	}
 	else if (_imgName == "_nofalloff") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_NOFALLOFF);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_NOFALLOFF
+        );
 	}
 	else if (_imgName == "_pointlight1") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT1);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT1
+        );
 	}
 	else if (_imgName == "_pointlight2") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT2);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT2
+        );
 	}
 	else if (_imgName == "_pointlight3") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT3);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT3
+        );
 	}
 	else if (_imgName == "_quadratic") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_QUADRATIC);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_QUADRATIC
+        );
 	}
 	else if (_imgName == "_scratch") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SCRATCH);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SCRATCH
+        );
 	}
 	else if (_imgName == "_spotlight") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SPOTLIGHT);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SPOTLIGHT
+        );
 	}
 	else if (_imgName == "_white") {
-		FileLoader d(GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_WHITE);
-		return d.construct();
+		return FileLoader::imageFromFile(
+            GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_WHITE
+        );
 	}
 	else 
     {
