@@ -498,14 +498,6 @@
 				Name="textures"
 				>
 				<File
-					RelativePath="..\..\plugins\shaders\textures\DefaultConstructor.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\shaders\textures\DefaultConstructor.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\plugins\shaders\textures\FileLoader.cpp"
 					>
 				</File>
