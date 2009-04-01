@@ -121,7 +121,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
 	
 	TexturePtr returnValue;
 	
-	// load the image with the FileLoader (which can handle .bmp in contrast to the DefaultConstructor)
+	// load the image with the FileLoader (which can handle .bmp)
 	FileLoader loader(fullpath, "bmp");
 	ImagePtr img = loader.construct();
 	

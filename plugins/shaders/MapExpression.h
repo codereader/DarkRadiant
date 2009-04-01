@@ -170,10 +170,29 @@ public:
 	std::string getIdentifier() const;
 };
 
-class ImageExpression : public MapExpression {
+/**
+ * \brief
+ * MapExpression consisting of a single image name. 
+ *
+ * This is the base for all map expressions.
+ */
+class ImageExpression 
+: public MapExpression 
+{
 	std::string _imgName;
 	ImageLoaderList _imageLoaders;
+
+private:
+
+	// Get the list of ImageLoaders associated with the .game file formats
+	static const ImageLoaderList& getImageLoaders();
+	
+    /* Load an image from the VFS */
+    static ImagePtr loadFromVFS(const std::string& name);
+
 public:
+
+    /* MapExpression interface */
 	ImageExpression(std::string imgName);
 	ImagePtr getImage() const;
 	std::string getIdentifier() const;
