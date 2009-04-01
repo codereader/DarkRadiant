@@ -121,9 +121,8 @@ EntityInspector::EntityInspector()
 
 void EntityInspector::restoreSettings() {
 	// Find the information stored in the registry
-	xml::NodeList list = GlobalRegistry().findXPath(RKEY_PANE_STATE);
-	if (list.size() > 0) {
-		_panedPosition.loadFromNode(list[0]);
+	if (GlobalRegistry().keyExists(RKEY_PANE_STATE)) {
+		_panedPosition.loadFromPath(RKEY_PANE_STATE);
 	}
 	else {
 		// No saved information, apply standard value
@@ -166,10 +165,7 @@ void EntityInspector::createContextMenu() {
 
 void EntityInspector::onRadiantShutdown() {
 	// Remove all previously stored pane information
-	GlobalRegistry().deleteXPath(RKEY_PANE_STATE);
-
-	xml::Node node = GlobalRegistry().createKey(RKEY_PANE_STATE);
-	_panedPosition.saveToNode(node);
+	_panedPosition.saveToPath(RKEY_PANE_STATE);
 }
 
 // Return the singleton EntityInspector instance, creating it if it is not yet

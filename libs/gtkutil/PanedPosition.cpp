@@ -3,6 +3,7 @@
 #include "gtk/gtkvpaned.h"
 #include "gtk/gtkhpaned.h"
 #include "string/string.h"
+#include "iregistry.h"
 
 namespace {
 	const int DEFAULT_POSITION = 200;
@@ -29,12 +30,14 @@ void PanedPosition::setPosition(int position) {
 	_position = position;
 }
 
-void PanedPosition::saveToNode(xml::Node node) {
-	node.setAttributeValue("position", intToStr(_position));
+void PanedPosition::saveToPath(const std::string& path)
+{
+	GlobalRegistry().setAttribute(path, "position", intToStr(_position));
 }
 
-void PanedPosition::loadFromNode(xml::Node node) {
-	_position = strToInt(node.getAttributeValue("position"));
+void PanedPosition::loadFromPath(const std::string& path)
+{
+	_position = strToInt(GlobalRegistry().getAttribute(path, "position"));
 }
 
 // Applies the internally stored size/position info to the GtkWindow
