@@ -79,8 +79,7 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath,
 
 	if (i == _textures.end()) 
     {
-	    FileLoader loader(fullPath, moduleNames);
-	    ImagePtr img = loader.construct();
+	    ImagePtr img = FileLoader::imageFromFile(fullPath, moduleNames);
 
 	    // see if the MapExpression returned a valid image
 	    if (img != NULL) 
@@ -122,8 +121,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
 	TexturePtr returnValue;
 	
 	// load the image with the FileLoader (which can handle .bmp)
-	FileLoader loader(fullpath, "bmp");
-	ImagePtr img = loader.construct();
+	ImagePtr img = FileLoader::imageFromFile(fullpath, "bmp");
 	
 	if (img != ImagePtr()) {
 		// Bind the (processed) texture and get the OpenGL id

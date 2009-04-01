@@ -1,13 +1,10 @@
 #ifndef FILELODER_H_
 #define FILELODER_H_
 
-#include "iradiant.h"
 #include "iimage.h"
-#include "ishaders.h"
 
-#include "ImageLoaderManager.h"
-
-namespace shaders {
+namespace shaders 
+{
 
 /* greebo: This is another simple imageconstructor that loads a given file 
  * from the disk and creates the according Image object (on demand).
@@ -21,18 +18,11 @@ namespace shaders {
  */
 class FileLoader
 {
-	// The list of ImageLoader modules 
-	ImageLoaderList _imageLoaders;
-	
-	// The filename of the image to load
-	std::string _filename;
-
 public:
-	// The default FileLoader constructor (uses the GDK image loader)
-	FileLoader(const std::string& filename, const std::string moduleNames = "GDK");
 	
-	// The actual construct() method as needed by the GLTextureManager
-	ImagePtr construct();
+	// Load an image from the given file
+	static ImagePtr imageFromFile(const std::string& filename,
+                                  const std::string& modules = "GDK");
 };
 
 } // namespace shaders
