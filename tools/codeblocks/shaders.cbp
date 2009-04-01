@@ -236,14 +236,6 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\shaders\textures\DefaultConstructor.cpp">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
-		<Unit filename="..\..\plugins\shaders\textures\DefaultConstructor.h">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
 		<Unit filename="..\..\plugins\shaders\textures\FileLoader.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
