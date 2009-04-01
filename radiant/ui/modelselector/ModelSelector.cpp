@@ -132,8 +132,10 @@ void ModelSelector::onRadiantShutdown() {
 }
 
 // Show the dialog and enter recursive main loop
-ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel, bool showOptions, bool showSkins) {
-
+ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
+                                                bool showOptions,
+                                                bool showSkins) 
+{
 	if (!_populated) {
 		// Attempt to construct the static instance. This could throw an 
 		// exception if the population of models is aborted by the user.
@@ -228,9 +230,14 @@ GtkWidget* ModelSelector::createTreeView()
 	);
 	gtk_tree_view_append_column(_treeView, nameCol);				
 
-    // Set the tree store to sort on this column
+    // Set the tree stores to sort on this column
     gtk_tree_sortable_set_sort_column_id(
         GTK_TREE_SORTABLE(_treeStore),
+        NAME_COLUMN,
+        GTK_SORT_ASCENDING
+    );
+    gtk_tree_sortable_set_sort_column_id(
+        GTK_TREE_SORTABLE(_treeStoreWithSkins),
         NAME_COLUMN,
         GTK_SORT_ASCENDING
     );
