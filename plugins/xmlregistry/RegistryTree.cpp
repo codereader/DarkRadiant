@@ -186,13 +186,37 @@ void RegistryTree::set(const std::string& key, const std::string& value) {
 	// Try to find the node	
 	xml::NodeList nodeList = _tree.findXPath(fullKey);
 	
-	if (nodeList.size() > 0) {
+	if (!nodeList.empty()) {
 		// Set the value
 		nodeList[0].setAttributeValue("value", value);
 	}
 	else {
 		// If the key is still not found, something nasty has happened
-		globalOutputStream() << "XMLRegistry: Critical: Key " << fullKey.c_str() << " not found (it really should be there)!\n";
+		globalOutputStream() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!\n";
+	}
+}
+
+void RegistryTree::setAttribute(const std::string& path, 
+		const std::string& attrName, const std::string& attrValue)
+{
+	// Add the toplevel node to the path if required
+	std::string fullKey = prepareKey(path);
+	
+	// If the key doesn't exist, we have to create an empty one
+	if (!keyExists(fullKey)) {
+		createKey(fullKey);
+	}
+
+	// Try to find the node	
+	xml::NodeList nodeList = _tree.findXPath(fullKey);
+	
+	if (!nodeList.empty()) {
+		// Set the value
+		nodeList[0].setAttributeValue(attrName, attrValue);
+	}
+	else {
+		// If the key is still not found, something nasty has happened
+		globalOutputStream() << "XMLRegistry: Critical: Key " << fullKey << " not found (it really should be there)!\n";
 	}
 }
 
@@ -206,7 +230,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
 	std::string importKey = parentKey;
 	
 	// If an empty parentKey was passed, set it to the default import node
-	if (importKey == "") {
+	if (importKey.empty()) {
 		importKey = _defaultImportNode;
 	}
 	
@@ -225,7 +249,7 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
 		return;
   	}
  
-  	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath.c_str() << "\n";
+	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath << std::endl;
   	
   	// Load the file
 	xml::Document importDoc(importFilePath);
@@ -269,10 +293,10 @@ void RegistryTree::exportToFile(const std::string& key, const std::string& filen
 		// Save the whole document to the specified filename
 		targetDoc.saveToFile(filename);
 		
-		globalOutputStream() << "XMLRegistry: Saved " << key.c_str() << " to " << filename.c_str() << "\n";
+		globalOutputStream() << "XMLRegistry: Saved " << key << " to " << filename << std::endl;
 	}
 	else {
-		globalOutputStream() << "XMLRegistry: Failed to save path " << fullKey.c_str() << "\n";
+		globalOutputStream() << "XMLRegistry: Failed to save path " << fullKey << std::endl;
 	}
 }
 

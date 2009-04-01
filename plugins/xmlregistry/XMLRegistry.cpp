@@ -126,13 +126,36 @@ void XMLRegistry::deleteXPath(const std::string& path) {
 	}
 }
 
-xml::Node XMLRegistry::createKeyWithName(const std::string& path, const std::string& key, const std::string& name) {
+xml::Node XMLRegistry::createKeyWithName(const std::string& path, 
+										 const std::string& key, 
+										 const std::string& name)
+{
 	// The key will be created in the user tree (the default tree is read-only) 
 	return _userTree.createKeyWithName(path, key, name);
 }
 
 xml::Node XMLRegistry::createKey(const std::string& key) {
 	return _userTree.createKey(key);
+}
+
+void XMLRegistry::setAttribute(const std::string& path, 
+	const std::string& attrName, const std::string& attrValue)
+{
+	_userTree.setAttribute(path, attrName, attrValue);
+}
+
+std::string XMLRegistry::getAttribute(const std::string& path, 
+									  const std::string& attrName)
+{
+	// Pass the query to the findXPath method, which queries the user tree first
+	xml::NodeList nodeList = findXPath(path);
+
+	if (nodeList.empty())
+	{
+		return "";
+	}
+
+	return nodeList[0].getAttributeValue(attrName);
 }
 
 std::string XMLRegistry::get(const std::string& key) {
@@ -142,11 +165,10 @@ std::string XMLRegistry::get(const std::string& key) {
 	// Does it even exist?
 	// It may well be the case that this returns two or more nodes that match the key criteria
 	// This function always uses the first one, as the user tree should override the default tree
-	if (nodeList.size() > 0) {
-		// Load the first node and get the value
-		xml::Node node = nodeList[0];
+	if (!nodeList.empty())
+	{
 		// Convert the UTF-8 string back to locale and return
-		return gtkutil::IConv::localeFromUTF8(node.getAttributeValue("value"));
+		return gtkutil::IConv::localeFromUTF8(nodeList[0].getAttributeValue("value"));
 	}
 	else {
 		//globalOutputStream() << "XMLRegistry: GET: Key " << fullKey.c_str() << " not found, returning empty string!\n";

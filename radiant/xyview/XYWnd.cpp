@@ -1556,23 +1556,26 @@ int& XYWnd::dragZoom() {
 	return _dragZoom;
 }
 
-void XYWnd::saveStateToNode(xml::Node& rootNode) {
-	if (_parent != NULL) {
-		if (GTK_WIDGET_VISIBLE(GTK_WIDGET(_parent))) {
-			xml::Node viewNode = rootNode.createChild("view");
-			viewNode.setAttributeValue("type", getViewTypeStr(m_viewType));
-			
-			_windowPosition.readPosition();
-			_windowPosition.saveToNode(viewNode);
-			
-			viewNode.addText(" ");
-		}
-	}
+void XYWnd::saveStateToPath(const std::string& rootPath)
+{
+	if (_parent == NULL || !GTK_WIDGET_VISIBLE(GTK_WIDGET(_parent))) return;
+
+	// Create a new child under the given root path
+	std::string viewNodePath = rootPath + "/view[@name='" + intToStr(_id) + "']";
+
+	// Remove any previously existing nodes with the same name
+	GlobalRegistry().deleteXPath(viewNodePath);
+	GlobalRegistry().createKeyWithName(rootPath, "view", intToStr(_id));
+	
+	_windowPosition.readPosition();
+	_windowPosition.saveToPath(viewNodePath);
+	GlobalRegistry().setAttribute(viewNodePath, "type", getViewTypeStr(m_viewType));
 }
 
-void XYWnd::readStateFromNode(const xml::Node& node) {
+void XYWnd::readStateFromPath(const std::string& path)
+{
 	// Load the sizes from the node
-	_windowPosition.loadFromNode(node);
+	_windowPosition.loadFromPath(path);
 	_windowPosition.applyPosition();
 }
 

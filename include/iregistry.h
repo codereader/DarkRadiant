@@ -106,7 +106,30 @@ public:
 	
 	// Creates a new node named <key> as children of <path> with the name attribute set to <name>
 	// The newly created node is returned after creation
-	virtual xml::Node createKeyWithName(const std::string& path, const std::string& key, const std::string& name) = 0;
+	virtual xml::Node createKeyWithName(const std::string& path, 
+										const std::string& key, 
+										const std::string& name) = 0;
+
+	/**
+	 * greebo: Sets the named attribute of the given node specified by <path>.
+	 *
+	 * @path: The XPath to the node.
+	 * @attrName: The name of the attribute.
+	 * @attrValue: The string value of the attribute.
+	 */
+	virtual void setAttribute(const std::string& path, 
+							  const std::string& attrName, 
+							  const std::string& attrValue) = 0;
+
+	/** 
+	 * greebo: Loads the value of the given attribute at the given path.
+	 *
+	 * @path: The XPath to the node.
+	 * @attrName: The name of the attribute.
+	 *
+	 * @returns: the string value of the attribute.
+	 */
+	virtual std::string getAttribute(const std::string& path, const std::string& attrName) = 0;
 	
 	// Deletes an entire subtree from the registry
 	virtual void deleteXPath(const std::string& path) = 0;

@@ -71,10 +71,12 @@ void XYWndManager::destroy() {
  * the original position. I have no full explanation for this and it is nasty, but the code
  * below seems to work.    
  */
-void XYWndManager::restoreState() {
+void XYWndManager::restoreState()
+{
 	xml::NodeList views = GlobalRegistry().findXPath(RKEY_XYVIEW_ROOT + "//views");
 	
-	if (views.size() > 0) {
+	if (!views.empty())
+	{
 		// Find all <view> tags under the first found <views> tag
 		xml::NodeList viewList = views[0].getNamedChildren("view");
 	
@@ -82,9 +84,13 @@ void XYWndManager::restoreState() {
 			 i != viewList.end();
 			 ++i) 
 		{
+			// Assemble the XPath for the viewstate
+			std::string path = RKEY_XYVIEW_ROOT + 
+				"/views/view[@name='" + i->getAttributeValue("name") + "']"; 
+
 			// Create the view and restore the size
 			XYWndPtr newWnd = createFloatingOrthoView(XY);
-			newWnd->readStateFromNode(*i);
+			newWnd->readStateFromPath(path);
 			
 			const std::string typeStr = i->getAttributeValue("type");
 	
@@ -108,21 +114,24 @@ void XYWndManager::restoreState() {
 	}
 }
 
-void XYWndManager::saveState() {
+void XYWndManager::saveState()
+{
 	// Delete all the current window states from the registry  
 	GlobalRegistry().deleteXPath(RKEY_XYVIEW_ROOT + "//views");
 	
 	// Create a new node
-	xml::Node rootNode(GlobalRegistry().createKey(RKEY_XYVIEW_ROOT + "/views"));
+	std::string rootNodePath(RKEY_XYVIEW_ROOT + "/views");
 	
-	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); ++i) {
+	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); ++i)
+	{
 		// Save each XYView state to the registry
-		i->second->saveStateToNode(rootNode);
+		i->second->saveStateToPath(rootNodePath);
 	}
 }
 
 // Free the allocated XYViews from the heap
-void XYWndManager::destroyViews() {
+void XYWndManager::destroyViews()
+{
 	// Discard the whole list
 	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); /* in-loop incr.*/)
 	{

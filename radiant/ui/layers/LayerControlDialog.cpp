@@ -38,11 +38,7 @@ LayerControlDialog::LayerControlDialog() :
 	populateWindow();
 
 	// Connect the window position tracker
-	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
-	
-	if (windowStateList.size() > 0) {
-		_windowPosition.loadFromNode(windowStateList[0]);
-	}
+	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 	
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
@@ -265,35 +261,24 @@ void LayerControlDialog::registerCommands() {
 
 void LayerControlDialog::init() {
 	// Lookup the stored window information in the registry
-	xml::NodeList list = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
-
-	if (!list.empty()) {
-		xml::Node& node = list[0];
-
-		if (node.getAttributeValue("visible") == "1") {
-			// Show dialog
-			Instance().show();
-		}
+	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
+	{
+		// Show dialog
+		Instance().show();
 	}
 }
 
 void LayerControlDialog::onRadiantShutdown() {
 	globalOutputStream() << "LayerControlDialog shutting down.\n";
 
-	// Delete all the current window states from the registry  
-	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
-	
-	// Create a new node
-	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
-	
 	// Tell the position tracker to save the information
-	_windowPosition.saveToNode(node);
+	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 
 	// Write the visibility status to the registry
 	if (isVisible()) {
-		node.setAttributeValue("visible", "1");
+		GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", "1");
 	}
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)

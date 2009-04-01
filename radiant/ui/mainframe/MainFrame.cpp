@@ -202,11 +202,10 @@ void MainFrame::restoreWindowPosition() {
 	int windowState = GDK_WINDOW_STATE_MAXIMIZED;
 
 	// Connect the window position tracker
-	xml::NodeList windowStateList = GlobalRegistry().findXPath(RKEY_WINDOW_STATE);
-	
-	if (windowStateList.size() > 0) {
-		_windowPosition.loadFromNode(windowStateList[0]);
-		windowState = strToInt(windowStateList[0].getAttributeValue("state"));
+	if (!GlobalRegistry().findXPath(RKEY_WINDOW_STATE).empty())
+	{
+		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
+		windowState = strToInt(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"));
 	}
 	
 #ifdef WIN32
@@ -332,16 +331,11 @@ void MainFrame::create() {
 }
 
 void MainFrame::saveWindowPosition() {
-	// Delete all the current window states from the registry  
-	GlobalRegistry().deleteXPath(RKEY_WINDOW_STATE);
-	
-	// Create a new node
-	xml::Node node(GlobalRegistry().createKey(RKEY_WINDOW_STATE));
-	
 	// Tell the position tracker to save the information
-	_windowPosition.saveToNode(node);
-	node.setAttributeValue(
-		"state", 
+	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
+	GlobalRegistry().setAttribute(
+		RKEY_WINDOW_STATE,
+		"state",
 		intToStr(gdk_window_get_state(GTK_WIDGET(_window)->window))
 	);
 }
