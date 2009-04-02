@@ -37,6 +37,9 @@ private:
     // Vertex colour blend mode
     VertexColourMode _vertexColourMode;
 
+    // Cube map mode
+    CubeMapMode _cubeMapMode;
+
 public:
 
 	// Constructor
@@ -46,7 +49,8 @@ public:
 	  _type(type), 
 	  _blendFuncStrings("GL_ONE", "GL_ZERO"), 
       _colour(1, 1, 1),
-      _vertexColourMode(VERTEX_COLOUR_NONE)
+      _vertexColourMode(VERTEX_COLOUR_NONE),
+      _cubeMapMode(CUBE_MAP_NONE)
 	{ }
 
     /* ShaderLayer implementation */
@@ -54,6 +58,7 @@ public:
     BlendFunc getBlendFunc() const;
     Vector3 getColour() const;
     VertexColourMode getVertexColourMode() const;
+    CubeMapMode getCubeMapMode() const;
 
     /**
      * \brief

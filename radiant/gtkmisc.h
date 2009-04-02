@@ -34,13 +34,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <gtk/gtkmain.h>
 #include <string>
 
-namespace {
-	
-	/* CONSTANTS */
-	const char* EMPTY_ICON = "";
-	
-}
-
 inline void process_gui()
 {
   while(gtk_events_pending())
