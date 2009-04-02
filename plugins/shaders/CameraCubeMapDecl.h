@@ -28,6 +28,10 @@ private:
     // Construct with a prefix
     CameraCubeMapDecl(const std::string& prefix);
 
+    // Load an image from the prefix + direction. Throws runtime_exception if
+    // image not found.
+    ImagePtr loadDirection(const std::string& dir) const;
+
 public:
 
     /* NamedBindable implementation */
