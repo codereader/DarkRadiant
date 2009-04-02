@@ -32,6 +32,9 @@ private:
     // image not found.
     ImagePtr loadDirection(const std::string& dir) const;
 
+    // Bind the given image with the given cube-map direction
+    void bindDirection(GLuint glDir, ImagePtr img) const;
+
 public:
 
     /* NamedBindable implementation */
