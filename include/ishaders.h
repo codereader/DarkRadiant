@@ -153,6 +153,23 @@ public:
      * Get the vertex colour mode for this layer.
      */
     virtual VertexColourMode getVertexColourMode() const = 0;
+
+    /**
+     * \brief
+     * Enumeration of cube map modes for this layer.
+     */
+    enum CubeMapMode
+    {
+        CUBE_MAP_NONE,
+        CUBE_MAP_CAMERA, // cube map in camera space ("cameraCubeMap")
+        CUBE_MAP_OBJECT  // cube map in object space ("cubeMap")
+    };
+
+    /**
+     * \brief
+     * Get the cube map mode for this layer.
+     */
+    virtual CubeMapMode getCubeMapMode() const = 0;
 };
 
 /**

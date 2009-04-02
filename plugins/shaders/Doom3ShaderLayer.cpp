@@ -94,5 +94,10 @@ ShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
     return _vertexColourMode;
 }
 
+ShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
+{
+    return _cubeMapMode;
+}
+
 }
 
