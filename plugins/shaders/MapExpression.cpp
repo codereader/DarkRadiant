@@ -11,7 +11,7 @@
 #include "math/FloatTools.h" // contains float_to_integer() helper
 #include "math/Vector3.h"
 
-#include "textures/FileLoader.h"
+#include "textures/ImageFileLoader.h"
 #include "textures/HeightmapCreator.h"
 #include "textures/TextureManipulator.h"
 
@@ -615,73 +615,8 @@ std::string MakeAlphaExpression::getIdentifier() const {
 
 /* ImageExpression */
 
-namespace
+ImageExpression::ImageExpression(const std::string& imgName)
 {
-	// Registry key holding texture types
-    const char* RKEY_IMAGE_TYPES = "game/filetypes/texture//extension";
-}
-
-// Static accessor for the list of .game-defined ImageLoaders
-const ImageLoaderList& ImageExpression::getImageLoaders() 
-{
-	static ImageLoaderList _imageLoaders;
-	
-	if (_imageLoaders.empty()) 
-	{
-		// Load the texture types from the .game file
-		xml::NodeList texTypes = GlobalRegistry().findXPath(RKEY_IMAGE_TYPES);
-		for (xml::NodeList::const_iterator i = texTypes.begin();
-			 i != texTypes.end();
-			 ++i)
-		{
-			// Get the file extension
-			std::string extension = i->getContent();
-			boost::algorithm::to_upper(extension);
-			
-			// Attempt to obtain an ImageLoader for this extension
-			ImageLoaderPtr loader = GlobalImageLoader(extension);
-			if (loader) {
-				_imageLoaders.push_back(loader);
-			}
-		}
-	}
-	
-	return _imageLoaders;
-}
-
-// Load image from VFS
-ImagePtr ImageExpression::loadFromVFS(const std::string& name)
-{
-	ImagePtr returnValue;
-
-	const ImageLoaderList& loaders = getImageLoaders();
-	for (ImageLoaderList::const_iterator i = loaders.begin();
-		 i != loaders.end();
-		 ++i) 
-	{
-		const ImageLoaderPtr& ldr = *i;
-		
-		// Construct the full name of the image to load, including the 
-		// prefix (e.g. "dds/") and the file extension.
-		std::string fullName = ldr->getPrefix() + name + "." 
-							   + ldr->getExtension();
-		
-		// Try to open the file (will fail if the extension does not fit)
-		ArchiveFilePtr file = GlobalFileSystem().openFile(fullName);
-		
-		// Has the file been loaded?
-		if (file != NULL) {
-			// Try to invoke the imageloader with a reference to the 
-			// ArchiveFile
-			returnValue = ldr->load(*file);
-			break;
-		}
-	}
-	
-	return returnValue;
-}
-
-ImageExpression::ImageExpression (std::string imgName) {
 	// Replace backslashes with forward slashes and strip of 
 	// the file extension of the provided token, and store 
 	// the result in the provided string.
@@ -692,79 +627,79 @@ ImagePtr ImageExpression::getImage() const
 {
 	// Check for some image keywords and load the correct file
 	if (_imgName == "_black") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_BLACK
         );
 	}
 	else if (_imgName == "_cubiclight") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CUBICLIGHT
         );
 	}
 	else if (_imgName == "_currentRender") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_CURRENTRENDER
         );
 	}
 	else if (_imgName == "_default") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_DEFAULT
         );
 	}
 	else if (_imgName == "_flat") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FLAT
         );
 	}
 	else if (_imgName == "_fog") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_FOG
         );
 	}
 	else if (_imgName == "_nofalloff") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_NOFALLOFF
         );
 	}
 	else if (_imgName == "_pointlight1") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT1
         );
 	}
 	else if (_imgName == "_pointlight2") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT2
         );
 	}
 	else if (_imgName == "_pointlight3") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_POINTLIGHT3
         );
 	}
 	else if (_imgName == "_quadratic") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_QUADRATIC
         );
 	}
 	else if (_imgName == "_scratch") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SCRATCH
         );
 	}
 	else if (_imgName == "_spotlight") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_SPOTLIGHT
         );
 	}
 	else if (_imgName == "_white") {
-		return FileLoader::imageFromFile(
+		return ImageFileLoader::imageFromFile(
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_WHITE
         );
 	}
 	else 
     {
         // this is a normal material image, so we load the image from VFS
-		return loadFromVFS(_imgName);
+		return ImageFileLoader::imageFromVFS(_imgName);
 	}
 }
 
