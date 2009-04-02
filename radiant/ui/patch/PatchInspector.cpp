@@ -485,24 +485,29 @@ void PatchInspector::rescanSelection() {
 	update();
 }
 
-void PatchInspector::emitCoords() {
+void PatchInspector::emitCoords()
+{
+	if (_patch == NULL) return;
+
 	// Save the coords into the patch
-	if (_patch != NULL) {
-		int row = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
-		int col = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo)));
-		
-		// Retrieve the controlvertex
-		PatchControl& ctrl = _patch->ctrlAt(row, col);
-		
-		ctrl.m_vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].value)));
-		ctrl.m_vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].value)));
-		ctrl.m_vertex[2] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["z"].value)));
-		
-		ctrl.m_texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].value)));
-		ctrl.m_texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].value)));
-		
-		_patch->controlPointsChanged();
-	}
+	UndoableCommand emitCoordsCmd("patchAdjustControlVertex");
+
+	_patch->undoSave();
+
+	int row = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
+	int col = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo)));
+	
+	// Retrieve the controlvertex
+	PatchControl& ctrl = _patch->ctrlAt(row, col);
+	
+	ctrl.m_vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].value)));
+	ctrl.m_vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].value)));
+	ctrl.m_vertex[2] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["z"].value)));
+	
+	ctrl.m_texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].value)));
+	ctrl.m_texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].value)));
+	
+	_patch->controlPointsChanged();
 }
 
 void PatchInspector::emitTesselation() {
