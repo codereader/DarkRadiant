@@ -6,6 +6,7 @@ modules_LTLIBRARIES = shaders.la
 shaders_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 shaders_la_LDFLAGS = -module -avoid-version $(XML_LIBS) $(GL_LIBS) $(GLU_LIBS)
 shaders_la_SOURCES = ShaderTemplate.cpp \
+                     CameraCubeMapDecl.cpp \
                      CShader.cpp \
                      ShaderLibrary.cpp \
                      MapExpression.cpp \
