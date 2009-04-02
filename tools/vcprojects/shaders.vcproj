@@ -415,6 +415,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\plugins\shaders\CameraCubeMapDecl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\shaders\CameraCubeMapDecl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\shaders\CShader.cpp"
 				>
 			</File>
@@ -498,11 +506,7 @@
 				Name="textures"
 				>
 				<File
-					RelativePath="..\..\plugins\shaders\textures\FileLoader.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\shaders\textures\FileLoader.h"
+					RelativePath="..\..\plugins\shaders\textures\CubeMapTexture.h"
 					>
 				</File>
 				<File
@@ -515,6 +519,14 @@
 				</File>
 				<File
 					RelativePath="..\..\plugins\shaders\textures\HeightmapCreator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\shaders\textures\ImageFileLoader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\shaders\textures\ImageFileLoader.h"
 					>
 				</File>
 				<File
