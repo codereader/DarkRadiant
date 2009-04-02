@@ -160,6 +160,14 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
+		<Unit filename="..\..\plugins\shaders\CameraCubeMapDecl.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\shaders\CameraCubeMapDecl.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Unit filename="..\..\plugins\shaders\Doom3ShaderLayer.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
@@ -236,11 +244,7 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\shaders\textures\FileLoader.cpp">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
-		<Unit filename="..\..\plugins\shaders\textures\FileLoader.h">
+		<Unit filename="..\..\plugins\shaders\textures\CubeMapTexture.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
@@ -253,6 +257,14 @@
 			<Option target="Release Win32" />
 		</Unit>
 		<Unit filename="..\..\plugins\shaders\textures\HeightmapCreator.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\shaders\textures\ImageFileLoader.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\plugins\shaders\textures\ImageFileLoader.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
