@@ -301,52 +301,22 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     current.m_alpharef = _state.m_alpharef;
   }
 
-  {
-    GLint texture0 = 0;
-    GLint texture1 = 0;
-    GLint texture2 = 0;
-    GLint texture3 = 0;
-    GLint texture4 = 0;
-    GLint texture5 = 0;
-    GLint texture6 = 0;
-    GLint texture7 = 0;
-    //if(state & RENDER_TEXTURE_2D) != 0)
-    {
-      texture0 = _state.m_texture;
-      texture1 = _state.m_texture1;
-      texture2 = _state.m_texture2;
-      texture3 = _state.m_texture3;
-      texture4 = _state.m_texture4;
-      texture5 = _state.m_texture5;
-      texture6 = _state.m_texture6;
-      texture7 = _state.m_texture7;
-    }
-
+    // Apply our texture numbers to the current state
     if(GLEW_VERSION_1_3)
     {
-      setTextureState(current.m_texture, texture0, GL_TEXTURE0);
-      setTextureState(current.m_texture1, texture1, GL_TEXTURE1);
-      setTextureState(current.m_texture2, texture2, GL_TEXTURE2);
-      setTextureState(current.m_texture3, texture3, GL_TEXTURE3);
-      setTextureState(current.m_texture4, texture4, GL_TEXTURE4);
-      setTextureState(current.m_texture5, texture5, GL_TEXTURE5);
-      setTextureState(current.m_texture6, texture6, GL_TEXTURE6);
-      setTextureState(current.m_texture7, texture7, GL_TEXTURE7);
+        setTextureState(current.m_texture, _state.m_texture, GL_TEXTURE0);
+        setTextureState(current.m_texture1, _state.m_texture1, GL_TEXTURE1);
+        setTextureState(current.m_texture2, _state.m_texture2, GL_TEXTURE2);
+        setTextureState(current.m_texture3, _state.m_texture3, GL_TEXTURE3);
+        setTextureState(current.m_texture4, _state.m_texture4, GL_TEXTURE4);
+        setTextureState(current.m_texture5, _state.m_texture5, GL_TEXTURE5);
+        setTextureState(current.m_texture6, _state.m_texture6, GL_TEXTURE6);
+        setTextureState(current.m_texture7, _state.m_texture7, GL_TEXTURE7);
     }
     else
     {
-      setTextureState(current.m_texture, texture0);
+        setTextureState(current.m_texture, _state.m_texture);
     }
-  }
-
-
-#if 0
-  if(requiredState & RENDER_TEXTURE_2D && _state.m_colour[3] != current.m_colour[3])
-  {
-    glColor4d(1,1,1,_state.m_colour[3]);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-#endif
 
     // Set the GL colour if it isn't set already
     if (_state.m_colour != current.m_colour)
