@@ -4,6 +4,7 @@
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/ModalProgressDialog.h"
 #include "iradiant.h"
+#include "EventRateLimiter.h"
 
 #include "string/string.h"
 #include <boost/algorithm/string/predicate.hpp>
@@ -31,7 +32,9 @@ class ModelFileFunctor
 	// Progress dialog and model count
 	gtkutil::ModalProgressDialog _progress;
 	int _count;
-	int _guiUpdateInterleave;
+
+    // Event rate limiter for progress dialog
+    EventRateLimiter _evLimiter;
 	
 public:
 	
@@ -43,7 +46,7 @@ public:
 		_populator2(pop2),
 		_progress(GlobalRadiant().getMainWindow(), "Loading models"),
 		_count(0),
-		_guiUpdateInterleave(50)
+		_evLimiter(50)
 	{
 		_progress.setText("Searching");
 	}
@@ -62,7 +65,8 @@ public:
 			_populator.addPath(file);
 			_populator2.addPath(file);
 			
-			if (_count % _guiUpdateInterleave == 0) {
+			if (_evLimiter.readyForEvent()) 
+            {
 				_progress.setText(boost::lexical_cast<std::string>(_count)
 								  + " models loaded");
 			}
