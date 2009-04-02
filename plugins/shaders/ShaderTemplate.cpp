@@ -1,5 +1,6 @@
 #include "ShaderTemplate.h"
 #include "MapExpression.h"
+#include "CameraCubeMapDecl.h"
 
 #include "itextstream.h"
 
@@ -172,15 +173,13 @@ void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
             MapExpression::createForToken(tokeniser)
         );     
     }
-#if 0
     else if (token == "cameracubemap")
     {
         std::string cubeMapPrefix = tokeniser.nextToken();
         _currentLayer->setBindableTexture(
-            MapExpression::createCubeMapForString(cubeMapPrefix)
+            CameraCubeMapDecl::createForPrefix(cubeMapPrefix)
         );
     }
-#endif
 }
 
 // Search for colour modifications, e.g. red, green, blue, rgb or vertexColor

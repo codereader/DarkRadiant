@@ -51,10 +51,11 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 modulesLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(modules_LTLIBRARIES)
 shaders_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
-am_shaders_la_OBJECTS = ShaderTemplate.lo CShader.lo ShaderLibrary.lo \
-	MapExpression.lo ShaderFileLoader.lo plugin.lo \
-	TextureManipulator.lo FileLoader.lo ImageLoaderManager.lo \
-	GLTextureManager.lo Doom3ShaderSystem.lo Doom3ShaderLayer.lo
+am_shaders_la_OBJECTS = ShaderTemplate.lo CameraCubeMapDecl.lo \
+	CShader.lo ShaderLibrary.lo MapExpression.lo \
+	ShaderFileLoader.lo plugin.lo TextureManipulator.lo \
+	FileLoader.lo ImageLoaderManager.lo GLTextureManager.lo \
+	Doom3ShaderSystem.lo Doom3ShaderLayer.lo
 shaders_la_OBJECTS = $(am_shaders_la_OBJECTS)
 shaders_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -219,6 +220,7 @@ modules_LTLIBRARIES = shaders.la
 shaders_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 shaders_la_LDFLAGS = -module -avoid-version $(XML_LIBS) $(GL_LIBS) $(GLU_LIBS)
 shaders_la_SOURCES = ShaderTemplate.cpp \
+                     CameraCubeMapDecl.cpp \
                      CShader.cpp \
                      ShaderLibrary.cpp \
                      MapExpression.cpp \
@@ -301,6 +303,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CShader.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CameraCubeMapDecl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3ShaderLayer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3ShaderSystem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileLoader.Plo@am__quote@
