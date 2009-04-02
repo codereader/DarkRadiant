@@ -57,7 +57,7 @@ inline void setState(unsigned int state,
 
 // GL state enabling/disabling helpers
 
-void OpenGLShaderPass::enableRenderTexture()
+void OpenGLShaderPass::enableTexture2D()
 {
     GlobalOpenGL_debugAssertNoErrors();
 
@@ -69,13 +69,11 @@ void OpenGLShaderPass::enableRenderTexture()
 
     glEnable(GL_TEXTURE_2D);
 
-    //glColor4d(1,1,1,_state.m_colour[3]);
-
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL_debugAssertNoErrors();
 }
 
-void OpenGLShaderPass::disableRenderTexture()
+void OpenGLShaderPass::disableTexture2D()
 {
     if(GLEW_VERSION_1_3)
     {
@@ -186,11 +184,11 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         // RENDER_TEXTURE_2D
         if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
         { 
-            enableRenderTexture();
+            enableTexture2D();
         }
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
         { 
-            disableRenderTexture();
+            disableTexture2D();
         }
 
         // RENDER_BLEND
@@ -470,14 +468,10 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
 
                 // Bind the falloff textures
                 setTextureState(current.m_texture3, attenuation_xy, GL_TEXTURE3);
-                glActiveTexture(GL_TEXTURE3);
-                glBindTexture(GL_TEXTURE_2D, attenuation_xy);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
                 setTextureState(current.m_texture4, attenuation_z, GL_TEXTURE4);
-                glActiveTexture(GL_TEXTURE4);
-                glBindTexture(GL_TEXTURE_2D, attenuation_z);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
