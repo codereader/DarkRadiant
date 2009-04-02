@@ -108,7 +108,7 @@ const std::vector<std::string>& MD5Model::getActiveMaterials() const {
 
 void MD5Model::render(RenderStateFlags state) const {
 	// Render options
-	if (state & RENDER_TEXTURE)
+	if (state & RENDER_TEXTURE_2D)
 		glEnable(GL_TEXTURE_2D);
 	if (state & RENDER_SMOOTH)
 		glShadeModel(GL_SMOOTH);

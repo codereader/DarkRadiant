@@ -297,7 +297,7 @@ inline void aabb_draw_textured(const AABB& aabb)
 
 inline void aabb_draw_solid(const AABB& aabb, RenderStateFlags state)
 {
-  if(state & RENDER_TEXTURE)
+  if(state & RENDER_TEXTURE_2D)
   {
     aabb_draw_textured(aabb);
   }

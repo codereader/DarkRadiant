@@ -248,7 +248,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget,
 	// Render the actual model.
 	glEnable(GL_LIGHTING);
 	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
-	model->render(RENDER_TEXTURE);
+	model->render(RENDER_TEXTURE_2D);
 }
 
 void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, ModelPreview* self) {

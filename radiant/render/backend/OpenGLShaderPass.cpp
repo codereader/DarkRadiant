@@ -183,12 +183,12 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             GlobalOpenGL_debugAssertNoErrors();
         }
 
-        // RENDER_TEXTURE
-        if(changingBitsMask & requiredState & RENDER_TEXTURE)
+        // RENDER_TEXTURE_2D
+        if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
         { 
             enableRenderTexture();
         }
-        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE)
+        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
         { 
             disableRenderTexture();
         }
@@ -310,7 +310,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     GLint texture5 = 0;
     GLint texture6 = 0;
     GLint texture7 = 0;
-    //if(state & RENDER_TEXTURE) != 0)
+    //if(state & RENDER_TEXTURE_2D) != 0)
     {
       texture0 = _state.m_texture;
       texture1 = _state.m_texture1;
@@ -341,7 +341,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
 
 #if 0
-  if(requiredState & RENDER_TEXTURE && _state.m_colour[3] != current.m_colour[3])
+  if(requiredState & RENDER_TEXTURE_2D && _state.m_colour[3] != current.m_colour[3])
   {
     glColor4d(1,1,1,_state.m_colour[3]);
     GlobalOpenGL_debugAssertNoErrors();

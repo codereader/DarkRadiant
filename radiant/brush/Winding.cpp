@@ -79,7 +79,7 @@ void Winding::draw(RenderStateFlags state) const {
 			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
 		}
 
-		if (state & RENDER_TEXTURE) {
+		if (state & RENDER_TEXTURE_2D) {
 			glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord);
 		}
 	}

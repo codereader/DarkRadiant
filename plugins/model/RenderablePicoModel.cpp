@@ -60,7 +60,7 @@ void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
 void RenderablePicoModel::render(RenderStateFlags flags) const {
 	
 	// Render options
-	if (flags & RENDER_TEXTURE)
+	if (flags & RENDER_TEXTURE_2D)
 		glEnable(GL_TEXTURE_2D);
 	if (flags & RENDER_SMOOTH)
 		glShadeModel(GL_SMOOTH);
