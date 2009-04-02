@@ -13,7 +13,7 @@ shaders_la_SOURCES = ShaderTemplate.cpp \
                      ShaderFileLoader.cpp \
                      plugin.cpp \
                      textures/TextureManipulator.cpp \
-                     textures/FileLoader.cpp \
+                     textures/ImageFileLoader.cpp \
                      textures/ImageLoaderManager.cpp \
                      textures/GLTextureManager.cpp \
                      Doom3ShaderSystem.cpp \

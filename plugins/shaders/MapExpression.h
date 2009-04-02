@@ -68,13 +68,6 @@ public: /* STATIC CONSTRUCTION METHODS */
 	static MapExpressionPtr createForToken(DefTokeniser& token);
 	static MapExpressionPtr createForString(std::string str);
 
-    /**
-     * \brief
-     * Create a cube map expression from the given texture path, e.g.
-     * "env/skyboxes/skybox1".
-     */
-    static MapExpressionPtr createCubeMapForString(const std::string& str);
-	
 protected:
 
 	/** greebo: Assures that the image is matching the desired dimensions.
@@ -180,20 +173,11 @@ class ImageExpression
 : public MapExpression 
 {
 	std::string _imgName;
-	ImageLoaderList _imageLoaders;
-
-private:
-
-	// Get the list of ImageLoaders associated with the .game file formats
-	static const ImageLoaderList& getImageLoaders();
-	
-    /* Load an image from the VFS */
-    static ImagePtr loadFromVFS(const std::string& name);
 
 public:
 
     /* MapExpression interface */
-	ImageExpression(std::string imgName);
+	ImageExpression(const std::string& imgName);
 	ImagePtr getImage() const;
 	std::string getIdentifier() const;
 };

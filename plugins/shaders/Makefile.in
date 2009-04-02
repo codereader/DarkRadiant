@@ -54,7 +54,7 @@ shaders_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
 am_shaders_la_OBJECTS = ShaderTemplate.lo CameraCubeMapDecl.lo \
 	CShader.lo ShaderLibrary.lo MapExpression.lo \
 	ShaderFileLoader.lo plugin.lo TextureManipulator.lo \
-	FileLoader.lo ImageLoaderManager.lo GLTextureManager.lo \
+	ImageFileLoader.lo ImageLoaderManager.lo GLTextureManager.lo \
 	Doom3ShaderSystem.lo Doom3ShaderLayer.lo
 shaders_la_OBJECTS = $(am_shaders_la_OBJECTS)
 shaders_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -227,7 +227,7 @@ shaders_la_SOURCES = ShaderTemplate.cpp \
                      ShaderFileLoader.cpp \
                      plugin.cpp \
                      textures/TextureManipulator.cpp \
-                     textures/FileLoader.cpp \
+                     textures/ImageFileLoader.cpp \
                      textures/ImageLoaderManager.cpp \
                      textures/GLTextureManager.cpp \
                      Doom3ShaderSystem.cpp \
@@ -306,8 +306,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CameraCubeMapDecl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3ShaderLayer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3ShaderSystem.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLTextureManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageFileLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageLoaderManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapExpression.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderFileLoader.Plo@am__quote@
@@ -344,12 +344,12 @@ TextureManipulator.lo: textures/TextureManipulator.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TextureManipulator.lo `test -f 'textures/TextureManipulator.cpp' || echo '$(srcdir)/'`textures/TextureManipulator.cpp
 
-FileLoader.lo: textures/FileLoader.cpp
-@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileLoader.lo -MD -MP -MF $(DEPDIR)/FileLoader.Tpo -c -o FileLoader.lo `test -f 'textures/FileLoader.cpp' || echo '$(srcdir)/'`textures/FileLoader.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/FileLoader.Tpo $(DEPDIR)/FileLoader.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='textures/FileLoader.cpp' object='FileLoader.lo' libtool=yes @AMDEPBACKSLASH@
+ImageFileLoader.lo: textures/ImageFileLoader.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ImageFileLoader.lo -MD -MP -MF $(DEPDIR)/ImageFileLoader.Tpo -c -o ImageFileLoader.lo `test -f 'textures/ImageFileLoader.cpp' || echo '$(srcdir)/'`textures/ImageFileLoader.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ImageFileLoader.Tpo $(DEPDIR)/ImageFileLoader.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='textures/ImageFileLoader.cpp' object='ImageFileLoader.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileLoader.lo `test -f 'textures/FileLoader.cpp' || echo '$(srcdir)/'`textures/FileLoader.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ImageFileLoader.lo `test -f 'textures/ImageFileLoader.cpp' || echo '$(srcdir)/'`textures/ImageFileLoader.cpp
 
 ImageLoaderManager.lo: textures/ImageLoaderManager.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ImageLoaderManager.lo -MD -MP -MF $(DEPDIR)/ImageLoaderManager.Tpo -c -o ImageLoaderManager.lo `test -f 'textures/ImageLoaderManager.cpp' || echo '$(srcdir)/'`textures/ImageLoaderManager.cpp

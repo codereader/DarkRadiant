@@ -4,7 +4,7 @@
 #include <utility>
 #include "ShaderTemplate.h"
 #include "Doom3ShaderSystem.h"
-#include "textures/FileLoader.h"
+#include "textures/ImageFileLoader.h"
 #include "parser/DefTokeniser.h"
 
 
