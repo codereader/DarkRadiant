@@ -57,16 +57,20 @@ inline void setState(unsigned int state,
 
 // GL state enabling/disabling helpers
 
-void OpenGLShaderPass::enableTexture2D()
+void OpenGLShaderPass::setTexture0()
 {
-    GlobalOpenGL_debugAssertNoErrors();
-
     if(GLEW_VERSION_1_3)
     {
         glActiveTexture(GL_TEXTURE0);
         glClientActiveTexture(GL_TEXTURE0);
     }
+}
 
+void OpenGLShaderPass::enableTexture2D()
+{
+    GlobalOpenGL_debugAssertNoErrors();
+
+    setTexture0();
     glEnable(GL_TEXTURE_2D);
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -75,12 +79,7 @@ void OpenGLShaderPass::enableTexture2D()
 
 void OpenGLShaderPass::disableTexture2D()
 {
-    if(GLEW_VERSION_1_3)
-    {
-        glActiveTexture(GL_TEXTURE0);
-        glClientActiveTexture(GL_TEXTURE0);
-    }
-
+    setTexture0();
     glDisable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -88,13 +87,22 @@ void OpenGLShaderPass::disableTexture2D()
     GlobalOpenGL_debugAssertNoErrors();
 }
 
+void OpenGLShaderPass::enableTextureCubeMap()
+{
+    setTexture0();
+    glEnable(GL_TEXTURE_CUBE_MAP);
+}
+
+void OpenGLShaderPass::disableTextureCubeMap()
+{
+    glDisable(GL_TEXTURE_CUBE_MAP);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
 void OpenGLShaderPass::enableRenderBlend()
 {
     glEnable(GL_BLEND);
-    if(GLEW_VERSION_1_3)
-    {
-        glActiveTexture(GL_TEXTURE0);
-    }
+    setTexture0();
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     GlobalOpenGL_debugAssertNoErrors();
 }
@@ -102,10 +110,7 @@ void OpenGLShaderPass::enableRenderBlend()
 void OpenGLShaderPass::disableRenderBlend()
 {
     glDisable(GL_BLEND);
-    if(GLEW_VERSION_1_3)
-    {
-        glActiveTexture(GL_TEXTURE0);
-    }
+    setTexture0();
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     GlobalOpenGL_debugAssertNoErrors();
 }
@@ -184,11 +189,25 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         // RENDER_TEXTURE_2D
         if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
         { 
+            // Must not have both 2D and cubemap
+            assert(!(requiredState & RENDER_TEXTURE_CUBEMAP));
             enableTexture2D();
         }
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
         { 
             disableTexture2D();
+        }
+
+        // RENDER_TEXTURE_CUBEMAP
+        if(changingBitsMask & requiredState & RENDER_TEXTURE_CUBEMAP)
+        { 
+            // Must not have both 2D and cubemap
+            assert(!(requiredState & RENDER_TEXTURE_2D));
+            enableTextureCubeMap();
+        }
+        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_CUBEMAP)
+        { 
+            disableTextureCubeMap();
         }
 
         // RENDER_BLEND

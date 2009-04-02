@@ -66,8 +66,13 @@ private:
 
     /* Helper functions to enable/disable particular GL states */
 
+    void setTexture0();
+
     void enableTexture2D();
     void disableTexture2D();
+
+    void enableTextureCubeMap();
+    void disableTextureCubeMap();
 
     void enableRenderBlend();
     void disableRenderBlend();
