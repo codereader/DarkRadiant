@@ -123,7 +123,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         OpenGLState& state = appendDefaultPass();
         state.renderFlags = RENDER_FILL 
                         | RENDER_CULLFACE 
-                        | RENDER_TEXTURE 
+                        | RENDER_TEXTURE_2D 
                         | RENDER_DEPTHTEST 
                         | RENDER_DEPTHWRITE 
                         | RENDER_COLOURWRITE 
@@ -200,7 +200,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
             dbsPass.renderFlags |= RENDER_VCOL_INVERT;
         }
     }
-    
+
     dbsPass.m_depthfunc = GL_LEQUAL;
     dbsPass.m_sort = OpenGLState::eSortMultiFirst;
     dbsPass.m_blend_src = GL_ONE;
@@ -273,7 +273,7 @@ void OpenGLShader::constructEditorPreviewPassFromIShader()
     // Render the editor texture in legacy mode
     state.m_texture = _iShader->getEditorImage()->getGLTexNum();
     state.renderFlags = RENDER_FILL
-                    | RENDER_TEXTURE
+                    | RENDER_TEXTURE_2D
                     |RENDER_DEPTHTEST
                     |RENDER_COLOURWRITE
                     |RENDER_LIGHTING
@@ -324,7 +324,7 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
     OpenGLState& state = appendDefaultPass();
     state.renderFlags = RENDER_FILL
                     | RENDER_BLEND
-                    | RENDER_TEXTURE
+                    | RENDER_TEXTURE_2D
                     | RENDER_DEPTHTEST
                     | RENDER_COLOURWRITE;
 
@@ -338,6 +338,12 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
     if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
     {
       state.renderFlags |= RENDER_DEPTHWRITE;
+    }
+
+    // Cube map mode
+    if (layer->getCubeMapMode() == ShaderLayer::CUBE_MAP_CAMERA)
+    {
+        state.renderFlags |= RENDER_TEXTURE_CUBEMAP;
     }
 
     // Colour modulation

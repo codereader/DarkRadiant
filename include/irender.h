@@ -48,11 +48,12 @@ const unsigned int RENDER_COLOURARRAY = 1 << 15; // glEnableClientState(GL_COLOR
 const unsigned int RENDER_COLOURCHANGE = 1 << 16; // render() is allowed to call glColor*()
 const unsigned int RENDER_MATERIAL_VCOL = 1 << 17; // material requests per-vertex colour
 const unsigned int RENDER_VCOL_INVERT = 1 << 18; // vertex colours should be inverted
-const unsigned int RENDER_TEXTURE = 1 << 19; // glEnable(GL_TEXTURE_2D)
-const unsigned int RENDER_BUMP = 1 << 20;
-const unsigned int RENDER_PROGRAM = 1 << 21;
-const unsigned int RENDER_SCREEN = 1 << 22;
-const unsigned int RENDER_OVERRIDE = 1 << 23;
+const unsigned int RENDER_TEXTURE_2D = 1 << 19; // glEnable(GL_TEXTURE_2D)
+const unsigned int RENDER_TEXTURE_CUBEMAP = 1 << 20; // glEnable(GL_TEXTURE_CUBE_MAP)
+const unsigned int RENDER_BUMP = 1 << 21;
+const unsigned int RENDER_PROGRAM = 1 << 22;
+const unsigned int RENDER_SCREEN = 1 << 23;
+const unsigned int RENDER_OVERRIDE = 1 << 24;
 typedef unsigned int RenderStateFlags;
 
 

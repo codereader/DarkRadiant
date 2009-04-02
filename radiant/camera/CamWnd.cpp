@@ -530,7 +530,7 @@ void CamWnd::Cam_Draw() {
 		case drawTexture:
 			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
-			               | RENDER_TEXTURE
+			               | RENDER_TEXTURE_2D
 			               | RENDER_SMOOTH
 			               | RENDER_SCALED;
 
@@ -539,7 +539,7 @@ void CamWnd::Cam_Draw() {
 		case drawLighting:
 			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
-			               | RENDER_TEXTURE
+			               | RENDER_TEXTURE_2D
 			               | RENDER_SMOOTH
 			               | RENDER_SCALED
 			               | RENDER_BUMP

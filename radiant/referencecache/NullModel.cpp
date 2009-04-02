@@ -90,7 +90,7 @@ const std::vector<std::string>& NullModel::getActiveMaterials() const {
 }
 
 void NullModel::render(RenderStateFlags state) const {
-	if (state & RENDER_TEXTURE) {
+	if (state & RENDER_TEXTURE_2D) {
 		aabb_draw_solid(_aabbLocal, state);
 	}
 	else {

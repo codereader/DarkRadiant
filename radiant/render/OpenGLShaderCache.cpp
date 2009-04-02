@@ -110,7 +110,7 @@ void OpenGLShaderCache::render(RenderStateFlags globalstate,
 		glDisableVertexAttribArrayARB(c_attr_Binormal);
     }
 
-    if (globalstate & RENDER_TEXTURE) {
+    if (globalstate & RENDER_TEXTURE_2D) {
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }
