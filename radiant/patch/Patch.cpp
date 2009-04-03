@@ -2102,30 +2102,39 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
       return;
     }
   }
-  else if  (eType == eBevel)
-  {
-    unsigned char *pIndex;
-    unsigned char pBevIndex[] =
-    {
-      0, 0,
-      2, 0,
-      2, 2,
-    };
+	else if  (eType == eBevel)
+	{
+		std::size_t pBevIndex[] =
+		{
+			0, 0, // y and z mapping of first col
+			0, 2, // y and z mapping of second col
+			2, 2, // y and z mapping of third col
+		};
 
-    setDims(3, 3);
+		setDims(3, 3);
 
-    PatchControl* pCtrl = m_ctrl.data();
-    for(std::size_t h=0; h<3; h++)
-    {
-      pIndex=pBevIndex;
-      for(std::size_t w=0; w<3; w++, pIndex+=2, pCtrl++)
-      {
-        pCtrl->m_vertex[0] = vPos[pIndex[0]][0];
-        pCtrl->m_vertex[1] = vPos[pIndex[1]][1];
-        pCtrl->m_vertex[2] = vPos[h][2];
-      }
-    }
-  }
+		PatchControlIter pCtrl = m_ctrl.begin();
+
+		for (std::size_t h = 0; h < 3; h++)
+		{
+			std::size_t* pIndex = pBevIndex;
+			
+			for (std::size_t w = 0; w < 3; w++, pIndex += 2, pCtrl++)
+			{
+				// The x coordinate stays the same for each row
+				pCtrl->m_vertex.x() = vPos[h].x();
+
+				// Use the same y coordinate for the first two columns
+				// The third column uses the highest y value
+				pCtrl->m_vertex.y() = vPos[pIndex[0]].y();
+
+				// The first column is using the lowest z value
+				// the other two columns use the highest z value
+				// to create an upright bevel
+				pCtrl->m_vertex.z() = vPos[pIndex[1]].z();
+			}
+		}
+	}
   else if(eType == eEndCap)
   {
     unsigned char *pIndex;
