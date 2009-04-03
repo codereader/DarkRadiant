@@ -132,10 +132,17 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 void Face::submitRenderables(RenderableCollector& collector,
                              const Matrix4& localToWorld) const 
 {
-	// Submit this face to the RenderableCollector only if its shader is not filtered
-	if (_faceShader.getGLShader()->getIShader()->isVisible()) 
+    // Get the shader for rendering
+    ShaderPtr glShader = _faceShader.getGLShader();
+    assert(glShader);
+
+    // Submit this face to the RenderableCollector only if its shader is not
+    // filtered
+    if (glShader->getIShader()->isVisible()) 
     {
-		collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
+        collector.SetState(
+            glShader, RenderableCollector::eFullMaterials
+        );
 		collector.addRenderable(*this, localToWorld);
 	}
 }
