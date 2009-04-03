@@ -109,8 +109,6 @@ public:
      */
 	ShaderPtr getGLShader() const;
 
-	unsigned int shaderFlags() const;
-	
 	ContentsFlagsValue getFlags() const;
 	void setFlags(const ContentsFlagsValue& flags);
 
