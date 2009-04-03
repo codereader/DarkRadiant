@@ -21959,8 +21959,8 @@ CPPFLAGS="$USER_CPPFLAGS -DPOSIX"
 # Debug/optimisation
 if [ "$debug_build" != 'no' ]
 then
-    CFLAGS="-g -O0 $CFLAGS"
-    CXXFLAGS="-g -O0 $CXXFLAGS"
+    CFLAGS="-g -O0 -D_DEBUG $CFLAGS"
+    CXXFLAGS="-g -O0 -D_DEBUG $CXXFLAGS"
 else
     CFLAGS="-g -O2 $CFLAGS"
     CXXFLAGS="-g -O2 $CXXFLAGS"
