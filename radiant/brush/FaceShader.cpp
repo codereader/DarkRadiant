@@ -12,9 +12,9 @@ void brush_check_shader(const std::string& name) {
 
 // Constructor
 FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flags) :
+	_inUse(false),
 	_materialName(shader),
 	m_flags(flags),
-	m_instanced(false),
 	m_realised(false)
 {
 	captureShader();
@@ -25,19 +25,20 @@ FaceShader::~FaceShader() {
 	releaseShader();
 }
 
-void FaceShader::instanceAttach() {
-	m_instanced = true;
-	_glShader->incrementUsed();
-}
-
-void FaceShader::instanceDetach() {
-	_glShader->decrementUsed();
-	m_instanced = false;
+void FaceShader::setInUse(bool inUse) 
+{
+	_inUse = inUse;
+    
+    // Update the shader's use count
+    if (inUse)
+        _glShader->incrementUsed();
+    else
+        _glShader->decrementUsed();
 }
 
 void FaceShader::captureShader() {
 	brush_check_shader(_materialName);
-	_glShader = GlobalShaderCache().capture(_materialName.c_str());
+	_glShader = GlobalShaderCache().capture(_materialName);
 	_glShader->attach(*this);
 }
 
@@ -77,13 +78,13 @@ const std::string& FaceShader::getMaterialName() const {
 }
 
 void FaceShader::setMaterialName(const std::string& name) {
-	if (m_instanced) {
+	if (_inUse) {
 		_glShader->decrementUsed();
 	}
 	releaseShader();
 	_materialName = name;
 	captureShader();
-	if (m_instanced) {
+	if (_inUse) {
 		_glShader->incrementUsed();
 	}
 }

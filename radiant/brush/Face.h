@@ -66,7 +66,10 @@ public:
 private:
 	FacePlane m_plane;
 	FacePlane m_planeTransformed;
-	FaceShader m_shader;
+
+    // Face shader, stores material name and GL shader object
+	FaceShader _faceShader;
+
 	FaceTexdef m_texdef;
 	TextureProjection m_texdefTransformed;
 	
