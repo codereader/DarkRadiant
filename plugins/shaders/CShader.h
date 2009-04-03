@@ -115,7 +115,7 @@ public:
 
 }; // class CShader
 
-typedef boost::shared_ptr<CShader> ShaderPtr;
+typedef boost::shared_ptr<CShader> CShaderPtr;
 
 } // namespace shaders
 
