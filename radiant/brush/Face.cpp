@@ -138,6 +138,7 @@ void Face::submitRenderables(RenderableCollector& collector,
 
     // Submit this face to the RenderableCollector only if its shader is not
     // filtered
+    assert(glShader->getIShader());
     if (glShader->getIShader()->isVisible()) 
     {
         collector.SetState(
