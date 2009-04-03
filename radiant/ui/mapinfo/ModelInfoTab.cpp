@@ -5,6 +5,7 @@
 #include "string/string.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/LeftAlignedLabel.h"
 
 namespace ui {
 
@@ -84,6 +85,35 @@ void ModelInfoTab::populateTab() {
 						   SKINCOUNT_COL, i->second.skinCount.size(), 
 						   -1);
 	}
+
+	// The table containing the primitive statistics
+	GtkTable* table = GTK_TABLE(gtk_table_new(2, 2, FALSE));
+	gtk_box_pack_start(GTK_BOX(_widget), GTK_WIDGET(table), FALSE, FALSE, 0);
+	
+	_modelCount = gtkutil::LeftAlignedLabel("");
+	_skinCount = gtkutil::LeftAlignedLabel("");
+	
+	GtkWidget* modelsLabel = gtkutil::LeftAlignedLabel("Models used:");
+	GtkWidget* skinsLabel = gtkutil::LeftAlignedLabel("Named Skins used:");
+	
+	gtk_widget_set_size_request(modelsLabel, 120, -1);
+	gtk_widget_set_size_request(skinsLabel, 120, -1);
+		
+	gtk_table_attach(table, modelsLabel, 0, 1, 0, 1,
+					(GtkAttachOptions) (0),
+					(GtkAttachOptions) (0), 0, 0);
+	gtk_table_attach(table, skinsLabel, 0, 1, 1, 2,
+					(GtkAttachOptions) (0),
+					(GtkAttachOptions) (0), 0, 0);
+	
+	std::string mc = "<b>" + sizetToStr(_modelBreakdown.getMap().size()) + "</b>";
+	std::string sc = "<b>" + sizetToStr(_modelBreakdown.getNumSkins()) + "</b>";
+	
+	gtk_label_set_markup(GTK_LABEL(_modelCount), mc.c_str());
+	gtk_label_set_markup(GTK_LABEL(_skinCount), sc.c_str());
+
+	gtk_table_attach_defaults(table, _modelCount, 1, 2, 0, 1);
+	gtk_table_attach_defaults(table, _skinCount, 1, 2, 1, 2);
 }
 
 } // namespace ui

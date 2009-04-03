@@ -93,8 +93,28 @@ public:
 	}
 
 	// Accessor method to retrieve the entity breakdown map
-	Map getMap() {
+	const Map& getMap() const {
 		return _map;
+	}
+
+	std::size_t getNumSkins() const
+	{
+		std::set<std::string> skinMap;
+
+		// Determine the number of distinct skins
+		for (Map::const_iterator m = _map.begin(); m != _map.end(); ++m)
+		{
+			for (ModelCount::SkinCountMap::const_iterator s = m->second.skinCount.begin();
+				 s != m->second.skinCount.end(); ++s)
+			{
+				if (!s->first.empty())
+				{
+					skinMap.insert(s->first);
+				}
+			}
+		}
+
+		return skinMap.size();
 	}
 	
 	Map::const_iterator begin() const {

@@ -19,6 +19,9 @@ class ModelInfoTab
 	// The treeview containing the above liststore
 	GtkListStore* _listStore;
 	GtkWidget* _treeView;
+
+	GtkWidget* _modelCount;
+	GtkWidget* _skinCount;
 	
 public:
 	// Constructor
