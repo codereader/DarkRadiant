@@ -120,9 +120,3 @@ std::size_t FaceShader::height() const {
 	return 1;
 }
 
-unsigned int FaceShader::shaderFlags() const {
-	if (m_realised) {
-		return _glShader->getFlags();
-	}
-	return 0;
-}
