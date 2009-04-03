@@ -146,8 +146,8 @@ AC_SUBST([AL_LIBS])
 
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
-CFLAGS="$USER_CFLAGS -Wall"
-CXXFLAGS="$USER_CXXFLAGS -Wall"
+CFLAGS="$USER_CFLAGS -Wall -Wno-unused-variable"
+CXXFLAGS="$USER_CXXFLAGS -Wall -Wno-unused-variable"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX"
 
 # Debug/optimisation
