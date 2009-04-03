@@ -67,8 +67,8 @@ public:
 		const_cast<ShaderBreakdown*>(this)->increaseShaderCount(face.GetShader(), true);
 	}
 
-	// Accessor method to retrieve the entity breakdown map
-	Map getMap() {
+	// Accessor method to retrieve the shader breakdown map
+	const Map& getMap() const {
 		return _map;
 	}
 	

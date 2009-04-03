@@ -19,6 +19,8 @@ class ShaderInfoTab
 	// The treeview containing the above liststore
 	GtkListStore* _listStore;
 	GtkWidget* _treeView;
+
+	GtkWidget* _shaderCount;
 	
 public:
 	// Constructor
