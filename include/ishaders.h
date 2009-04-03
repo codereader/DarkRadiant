@@ -409,7 +409,6 @@ inline ShaderSystem& GlobalShaderSystem() {
 	return _shaderSystem;
 }
 
-#define QERApp_Shader_ForName GlobalShaderSystem().getShaderForName
 #define QERApp_ActiveShaders_IteratorBegin GlobalShaderSystem().beginActiveShadersIterator
 #define QERApp_ActiveShaders_IteratorAtEnd GlobalShaderSystem().endActiveShadersIterator
 #define QERApp_ActiveShaders_IteratorCurrent GlobalShaderSystem().dereferenceActiveShadersIterator
