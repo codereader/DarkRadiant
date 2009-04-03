@@ -149,7 +149,7 @@ void FaceInstance::render(RenderableCollector& collector, const VolumeTest& volu
 }
 
 void FaceInstance::testSelect(SelectionTest& test, SelectionIntersection& best) {
-	if (getFace().getShader().state()->getIShader()->isVisible()) {
+	if (getFace().getShader().getGLShader()->getIShader()->isVisible()) {
 		m_face->testSelect(test, best);
 	}
 }

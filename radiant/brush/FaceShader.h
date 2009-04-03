@@ -36,26 +36,35 @@ public:
 
 typedef ReferencePair<FaceShaderObserver> FaceShaderObserverPair;
 
-class FaceShader : public ModuleObserver {
+/**
+ * \brief
+ * Material and shader information for a brush face.
+ */
+class FaceShader : public ModuleObserver 
+{
 public:
 	class SavedState {
 		public:
-		std::string m_shader;
+		std::string _materialName;
 		ContentsFlagsValue m_flags;
 	
 		SavedState(const FaceShader& faceShader) {
-			m_shader = faceShader.getShader();
+			_materialName = faceShader.getMaterialName();
 			m_flags = faceShader.m_flags;
 		}
 	
 		void exportState(FaceShader& faceShader) const {
-			faceShader.setShader(m_shader.c_str());
+			faceShader.setMaterialName(_materialName);
 			faceShader.setFlags(m_flags);
 		}
 	};
 
-	std::string m_shader;
-	ShaderPtr m_state;
+    // The text name of the material
+	std::string _materialName;
+
+    // The Shader used by the renderer
+	ShaderPtr _glShader;
+
 	ContentsFlagsValue m_flags;
 	FaceShaderObserverPair m_observers;
 	bool m_instanced;
@@ -82,10 +91,24 @@ public:
 	void attach(FaceShaderObserver& observer);
 	void detach(FaceShaderObserver& observer);
 
-	const std::string& getShader() const;
-	void setShader(const std::string& name);
+    /**
+     * \brief
+     * Get the material name.
+     */
+	const std::string& getMaterialName() const;
+
+    /**
+     * \brief
+     * Set the material name.
+     */
+	void setMaterialName(const std::string& name);
 	
-	ShaderPtr state() const;
+    /**
+     * \brief
+     * Return the Shader for rendering.
+     */
+	ShaderPtr getGLShader() const;
+
 	unsigned int shaderFlags() const;
 	
 	ContentsFlagsValue getFlags() const;

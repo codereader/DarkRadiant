@@ -70,7 +70,7 @@ void Doom3FaceTokenImporter::importFaceShaderTokens(parser::DefTokeniser& tokeni
         shader = texdef_name_default();
     }
     
-    faceShader.setShader(shader);
+    faceShader.setMaterialName(shader);
 }
 
 void Doom3FaceTokenImporter::importContentsFlagsTokens(parser::DefTokeniser& tok) {
