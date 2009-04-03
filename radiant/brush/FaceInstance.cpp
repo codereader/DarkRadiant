@@ -137,13 +137,17 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& loca
 	return m_face->intersectVolume(volume, localToWorld);
 }
 
-void FaceInstance::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+// Submit renderable geometry
+void FaceInstance::submitRenderables(RenderableCollector& collector,
+                                     const VolumeTest& volume,
+                                     const Matrix4& localToWorld) const 
+{
 	if (m_face->contributes() && intersectVolume(volume, localToWorld)) {
 			collector.PushState();
 			if (selectedComponents()) {
 					collector.Highlight(RenderableCollector::eFace);
 				}
-			m_face->render(collector, localToWorld);
+			m_face->submitRenderables(collector, localToWorld);
 			collector.PopState();
 		}
 }

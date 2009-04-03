@@ -118,7 +118,12 @@ public:
 
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void render(RenderableCollector& collector, const Matrix4& localToWorld) const;
+    /**
+     * \brief
+     * Submit renderable geometry to a RenderableCollector.
+     */
+	void submitRenderables(RenderableCollector& collector,
+                           const Matrix4& localToWorld) const;
 
 	void transform(const Matrix4& matrix, bool mirror);
 

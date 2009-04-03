@@ -414,15 +414,20 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	}
 }
 
-void BrushNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
-	//renderCommon(collector, volume);
-
+void BrushNode::renderSolid(RenderableCollector& collector,
+                            const VolumeTest& volume,
+                            const Matrix4& localToWorld) const 
+{
 	m_lightList->evaluateLights();
 
-	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-			collector.setLights(i->m_lights);
-			i->render(collector, volume, localToWorld);
-		}
+    // Submit the lights and renderable geometry for each face
+	for (FaceInstances::const_iterator i = m_faceInstances.begin();
+         i != m_faceInstances.end();
+         ++i) 
+    {
+        collector.setLights(i->m_lights);
+        i->submitRenderables(collector, volume, localToWorld);
+    }
 
 	renderComponentsSelected(collector, volume, localToWorld);
 }
