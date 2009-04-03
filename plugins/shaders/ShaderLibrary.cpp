@@ -50,7 +50,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
 	}
 }
 
-ShaderPtr ShaderLibrary::findShader(const std::string& name) {
+CShaderPtr ShaderLibrary::findShader(const std::string& name) {
 	// Try to lookup the shader in the active shaders list
 	ShaderMap::iterator i = _shaders.find(name);
 	
@@ -63,7 +63,7 @@ ShaderPtr ShaderLibrary::findShader(const std::string& name) {
 		ShaderDefinition& def = getDefinition(name);
 		
 		// Construct a new shader object with this def and insert it into the map
-		ShaderPtr shader(new CShader(name, def));
+		CShaderPtr shader(new CShader(name, def));
 		
 		_shaders[name] = shader;
 		
