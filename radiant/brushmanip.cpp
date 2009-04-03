@@ -330,6 +330,9 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
       Brush_ConstructSphere(brush, bounds, sides, shader, projection);
     }
     break;
+
+    default:
+        break;
   }
 }
 

@@ -40,7 +40,8 @@ typedef ReferencePair<FaceShaderObserver> FaceShaderObserverPair;
  * \brief
  * Material and shader information for a brush face.
  */
-class FaceShader : public ModuleObserver 
+class FaceShader 
+: public ModuleObserver 
 {
     // In-use flag
     bool _inUse;
