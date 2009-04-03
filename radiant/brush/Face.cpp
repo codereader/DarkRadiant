@@ -48,7 +48,7 @@ Face::Face(
 
 Face::Face(const Face& other, FaceObserver* observer) :
 	m_refcount(0),
-	m_shader(other.m_shader.getShader(), other.m_shader.m_flags),
+	m_shader(other.m_shader.getMaterialName(), other.m_shader.m_flags),
 	m_texdef(m_shader, other.getTexdef().normalised()),
 	m_observer(observer),
 	m_undoable_observer(0),
@@ -129,10 +129,12 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 	return volume.TestPlane(Plane3(plane3().normal(), -plane3().dist()), localToWorld);
 }
 
-void Face::render(RenderableCollector& collector, const Matrix4& localToWorld) const {
+void Face::render(RenderableCollector& collector, const Matrix4& localToWorld) const 
+{
 	// Submit this face to the RenderableCollector only if its shader is not filtered
-	if (m_shader.state()->getIShader()->isVisible()) {
-		collector.SetState(m_shader.state(), RenderableCollector::eFullMaterials);
+	if (m_shader.getGLShader()->getIShader()->isVisible()) 
+    {
+		collector.SetState(m_shader.getGLShader(), RenderableCollector::eFullMaterials);
 		collector.addRenderable(*this, localToWorld);
 	}
 }
@@ -221,11 +223,11 @@ void Face::shaderChanged() {
 }
 
 const std::string& Face::GetShader() const {
-	return m_shader.getShader();
+	return m_shader.getMaterialName();
 }
 void Face::SetShader(const std::string& name) {
 	undoSave();
-	m_shader.setShader(name);
+	m_shader.setMaterialName(name);
 	shaderChanged();
 }
 

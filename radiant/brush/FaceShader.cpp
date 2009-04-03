@@ -12,7 +12,7 @@ void brush_check_shader(const std::string& name) {
 
 // Constructor
 FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flags) :
-	m_shader(shader),
+	_materialName(shader),
 	m_flags(flags),
 	m_instanced(false),
 	m_realised(false)
@@ -27,23 +27,23 @@ FaceShader::~FaceShader() {
 
 void FaceShader::instanceAttach() {
 	m_instanced = true;
-	m_state->incrementUsed();
+	_glShader->incrementUsed();
 }
 
 void FaceShader::instanceDetach() {
-	m_state->decrementUsed();
+	_glShader->decrementUsed();
 	m_instanced = false;
 }
 
 void FaceShader::captureShader() {
-	brush_check_shader(m_shader);
-	m_state = GlobalShaderCache().capture(m_shader.c_str());
-	m_state->attach(*this);
+	brush_check_shader(_materialName);
+	_glShader = GlobalShaderCache().capture(_materialName.c_str());
+	_glShader->attach(*this);
 }
 
 void FaceShader::releaseShader() {
-	m_state->detach(*this);
-	m_state = ShaderPtr();
+	_glShader->detach(*this);
+	_glShader = ShaderPtr();
 }
 
 void FaceShader::realise() {
@@ -72,19 +72,19 @@ void FaceShader::detach(FaceShaderObserver& observer) {
 	m_observers.detach(observer);
 }
 
-const std::string& FaceShader::getShader() const {
-	return m_shader;
+const std::string& FaceShader::getMaterialName() const {
+	return _materialName;
 }
 
-void FaceShader::setShader(const std::string& name) {
+void FaceShader::setMaterialName(const std::string& name) {
 	if (m_instanced) {
-		m_state->decrementUsed();
+		_glShader->decrementUsed();
 	}
 	releaseShader();
-	m_shader = name;
+	_materialName = name;
 	captureShader();
 	if (m_instanced) {
-		m_state->incrementUsed();
+		_glShader->incrementUsed();
 	}
 }
 
@@ -102,27 +102,27 @@ void FaceShader::setFlags(const ContentsFlagsValue& flags) {
 	// greebo: old code // ContentsFlagsValue_assignMasked(m_flags, flags);
 }
 
-ShaderPtr FaceShader::state() const {
-	return m_state;
+ShaderPtr FaceShader::getGLShader() const {
+	return _glShader;
 }
 
 std::size_t FaceShader::width() const {
 	if (m_realised) {
-		return m_state->getIShader()->getEditorImage()->getWidth();
+		return _glShader->getIShader()->getEditorImage()->getWidth();
 	}
 	return 1;
 }
 
 std::size_t FaceShader::height() const {
 	if (m_realised) {
-		return m_state->getIShader()->getEditorImage()->getHeight();
+		return _glShader->getIShader()->getEditorImage()->getHeight();
 	}
 	return 1;
 }
 
 unsigned int FaceShader::shaderFlags() const {
 	if (m_realised) {
-		return m_state->getFlags();
+		return _glShader->getFlags();
 	}
 	return 0;
 }
