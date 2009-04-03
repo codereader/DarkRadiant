@@ -5,6 +5,7 @@
 #include "string/string.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/LeftAlignedLabel.h"
 
 namespace ui {
 
@@ -78,6 +79,25 @@ void ShaderInfoTab::populateTab() {
 						   PATCH_COUNT_COL, i->second.patchCount, 
 						   -1);
 	}
+
+	// The table containing the primitive statistics
+	GtkTable* table = GTK_TABLE(gtk_table_new(1, 2, FALSE));
+	gtk_box_pack_start(GTK_BOX(_widget), GTK_WIDGET(table), FALSE, FALSE, 0);
+	
+	_shaderCount = gtkutil::LeftAlignedLabel("");
+	
+	GtkWidget* shaderLabel = gtkutil::LeftAlignedLabel("Shaders used:");
+	
+	gtk_widget_set_size_request(shaderLabel, 100, -1);
+		
+	gtk_table_attach(table, shaderLabel, 0, 1, 0, 1,
+					(GtkAttachOptions) (0),
+					(GtkAttachOptions) (0), 0, 0);
+	
+	std::string sc = "<b>" + sizetToStr(_shaderBreakdown.getMap().size()) + "</b>";
+	
+	gtk_label_set_markup(GTK_LABEL(_shaderCount), sc.c_str());
+	gtk_table_attach_defaults(table, _shaderCount, 1, 2, 0, 1);
 }
 
 } // namespace ui
