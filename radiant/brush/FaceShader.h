@@ -42,6 +42,15 @@ typedef ReferencePair<FaceShaderObserver> FaceShaderObserverPair;
  */
 class FaceShader : public ModuleObserver 
 {
+    // In-use flag
+    bool _inUse;
+
+private:
+
+    // Shader capture and release
+	void captureShader();
+	void releaseShader();
+
 public:
 	class SavedState {
 		public:
@@ -67,7 +76,6 @@ public:
 
 	ContentsFlagsValue m_flags;
 	FaceShaderObserverPair m_observers;
-	bool m_instanced;
 	bool m_realised;
 
 	// Constructor
@@ -79,12 +87,13 @@ public:
 	// copy-construction not supported
 	FaceShader(const FaceShader& other);
 
-	void instanceAttach();
-	void instanceDetach();
+    /**
+     * \brief
+     * Set whether this FaceShader is in use by a Face or not.
+     */
+	void setInUse(bool isUsed);
 
 	// Shader methods
-	void captureShader();
-	void releaseShader();
 	void realise();
 	void unrealise();
 
