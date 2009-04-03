@@ -3,6 +3,7 @@
 #include "glprogram/ARBDepthFillProgram.h"
 
 #include "os/file.h"
+#include "string/string.h"
 #include "debugging/debugging.h"
 #include "container/array.h"
 #include "stream/filestream.h"
@@ -86,15 +87,20 @@ void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type
 
 	glProgramStringARB(type, GL_PROGRAM_FORMAT_ASCII_ARB, GLsizei(size), buffer.data());
 
-	if (GL_INVALID_OPERATION == glGetError()) {
+    // Check for GL errors and throw exception if there is a problem
+	if (GL_INVALID_OPERATION == glGetError()) 
+    {
 		GLint errPos;
 		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errPos);
 		const GLubyte* errString = glGetString(GL_PROGRAM_ERROR_STRING_ARB);
 
-		globalErrorStream() << reinterpret_cast<const char*>(filename.c_str()) << ":"
-			<< errPos << "\n"<< reinterpret_cast<const char*>(errString);
+        // Construct user-readable error string
+        std::string error("GL program error: ");
+        error += filename + "(" + intToStr(errPos) + "): \n\n";
+        error += std::string(reinterpret_cast<const char*>(errString));
 
-		ERROR_MESSAGE("error in gl program");
+        // Throw exception
+        throw std::logic_error(error);
 	}
 }
 
