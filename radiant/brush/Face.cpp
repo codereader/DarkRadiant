@@ -129,7 +129,8 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 	return volume.TestPlane(Plane3(plane3().normal(), -plane3().dist()), localToWorld);
 }
 
-void Face::render(RenderableCollector& collector, const Matrix4& localToWorld) const 
+void Face::submitRenderables(RenderableCollector& collector,
+                             const Matrix4& localToWorld) const 
 {
 	// Submit this face to the RenderableCollector only if its shader is not filtered
 	if (m_shader.getGLShader()->getIShader()->isVisible()) 

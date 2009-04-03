@@ -104,7 +104,13 @@ public:
 
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+    /**
+     * \brief
+     * Submit renderable geometry to a RenderableCollector.
+     */
+	void submitRenderables(RenderableCollector& collector,
+                           const VolumeTest& volume,
+                           const Matrix4& localToWorld) const;
 
 	void testSelect(SelectionTest& test, SelectionIntersection& best);
 
