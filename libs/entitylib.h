@@ -326,9 +326,9 @@ public:
   RenderableSolidAABB(const AABB& aabb) : m_aabb(aabb)
   {
   }
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
-    aabb_draw_solid(m_aabb, state);
+    aabb_draw_solid(m_aabb, info.getFlags());
   }
 };
 
@@ -339,7 +339,7 @@ public:
   RenderableWireframeAABB(const AABB& aabb) : m_aabb(aabb)
   {
   }
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
     aabb_draw_wire(m_aabb);
   }

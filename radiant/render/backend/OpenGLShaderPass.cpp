@@ -573,7 +573,8 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
         }
 
         // Render the renderable
-        i->renderable->render(current.renderFlags);
+        RenderInfo info(current.renderFlags, viewer);
+        i->renderable->render(info);
     }
 
     // Cleanup

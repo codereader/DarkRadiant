@@ -75,10 +75,10 @@ ShaderPtr OpenGLShaderCache::capture(const std::string& name) {
  * Render all states in the ShaderCache along with their renderables. This
  * is where the actual OpenGL rendering starts.
  */
-void OpenGLShaderCache::render(RenderStateFlags globalstate, 
-			const Matrix4& modelview, 
-			const Matrix4& projection, 
-			const Vector3& viewer)
+void OpenGLShaderCache::render(RenderStateFlags globalstate,
+                               const Matrix4& modelview, 
+                               const Matrix4& projection, 
+                               const Vector3& viewer)
 {
 	// Set the projection and modelview matrices
 	glMatrixMode(GL_PROJECTION);

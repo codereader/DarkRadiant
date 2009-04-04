@@ -241,8 +241,9 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget,
 		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		glColor3f(0, 1, 1);
+
 		// Submit the AABB geometry
-		RenderableAABB(aabb).render(RENDER_DEFAULT);
+		RenderableAABB(aabb).render(RenderInfo());
 	}
 
 	// Render the actual model.

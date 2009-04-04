@@ -15,7 +15,7 @@ public:
   RenderablePatchWireframe(PatchTesselation& tess) : m_tess(tess)
   {
   }
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
     {
   #if NV_DRIVER_BUG
@@ -68,7 +68,7 @@ public:
   RenderablePatchFixedWireframe(PatchTesselation& tess) : m_tess(tess)
   {
   }
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
     glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->vertex);
     const RenderIndex* strip_indices = m_tess.m_indices.data();
@@ -87,7 +87,7 @@ public:
   {
   }
   void RenderNormals() const;
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
 #if 0
     if((state & RENDER_FILL) == 0)
@@ -97,7 +97,7 @@ public:
     else
 #endif
     {
-      if((state & RENDER_BUMP) != 0)
+      if(info.checkFlag(RENDER_BUMP))
       {
         /*if(GlobalShaderCache().useShaderLanguage())
         {

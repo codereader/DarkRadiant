@@ -612,7 +612,7 @@ class RenderablePointArray : public OpenGLRenderable {
 public:
 	RenderablePointArray(const Array<PointVertex>& array, GLenum mode)
 			: m_array(array), m_mode(mode) {}
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 #define NV_DRIVER_BUG 1
 #if NV_DRIVER_BUG
 		glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
@@ -635,7 +635,7 @@ public:
 		_mode(mode)
 	{}
 
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		if (!_vector.empty()) {
 			pointvertex_gl_array(&_vector.front());
 			glDrawArrays(_mode, 0, GLsizei(_vector.size()));
@@ -671,7 +671,7 @@ public:
 	RenderableVertexBuffer(GLenum mode, const VertexBuffer<PointVertex>& vertices)
 			: m_mode(mode), m_vertices(vertices) {}
 
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		pointvertex_gl_array(m_vertices.data());
 		glDrawArrays(m_mode, 0, m_vertices.size());
 	}
@@ -685,7 +685,7 @@ public:
 	RenderableIndexBuffer(GLenum mode, const IndexBuffer& indices, const VertexBuffer<PointVertex>& vertices)
 			: m_mode(mode), m_indices(indices), m_vertices(vertices) {}
 
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 #if 1
 		pointvertex_gl_array(m_vertices.data());
 		glDrawElements(m_mode, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());

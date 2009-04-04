@@ -146,14 +146,14 @@ void RenderablePicoSurface::submitRenderables(RenderableCollector& rend,
 }
 
 // Back-end render function
-void RenderablePicoSurface::render(RenderStateFlags flags) const 
+void RenderablePicoSurface::render(const RenderInfo& info) const 
 {
 	// Invoke appropriate display list
-	if (flags & RENDER_PROGRAM) 
+	if (info.checkFlag(RENDER_PROGRAM))
     {
-        if (flags & RENDER_MATERIAL_VCOL)
+        if (info.checkFlag(RENDER_MATERIAL_VCOL))
         {
-            if (flags & RENDER_VCOL_INVERT)
+            if (info.checkFlag(RENDER_VCOL_INVERT))
             {
                 glCallList(_dlProgramNegVCol);
             }

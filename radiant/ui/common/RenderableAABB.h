@@ -27,7 +27,7 @@ public:
 	
 	/** Render function from OpenGLRenderable interface.
 	 */
-	void render(RenderStateFlags flags) const;
+	void render(const RenderInfo& info) const;
 };
 
 }

@@ -27,7 +27,7 @@ public:
 
 	RenderSpeakerRadii(const Vector3& origin) : m_origin(origin), m_radii() {}
 	
-	void render(RenderStateFlags state) const;
+	void render(const RenderInfo& info) const;
 	const AABB& localAABB();
 
 }; // class RenderSpeakerRadii

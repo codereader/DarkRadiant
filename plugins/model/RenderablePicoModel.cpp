@@ -57,12 +57,12 @@ void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
 }
 
 // OpenGL (back-end) render function
-void RenderablePicoModel::render(RenderStateFlags flags) const {
+void RenderablePicoModel::render(const RenderInfo& info) const {
 	
 	// Render options
-	if (flags & RENDER_TEXTURE_2D)
+	if (info.checkFlag(RENDER_TEXTURE_2D))
 		glEnable(GL_TEXTURE_2D);
-	if (flags & RENDER_SMOOTH)
+	if (info.checkFlag(RENDER_SMOOTH))
 		glShadeModel(GL_SMOOTH);
 	
 	// Iterate over the surfaces, calling the render function on each one
@@ -76,7 +76,7 @@ void RenderablePicoModel::render(RenderStateFlags flags) const {
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
-			(*i)->render(flags);
+			(*i)->render(info.getFlags());
 		}
 	}
 }

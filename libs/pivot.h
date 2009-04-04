@@ -271,7 +271,7 @@ public:
 		m_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
 	}
 
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
     if(m_vertices.size() == 0) return;
     if(m_vertices.data() == 0) return;

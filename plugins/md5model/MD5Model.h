@@ -92,7 +92,7 @@ public:
 	virtual const std::vector<std::string>& getActiveMaterials() const;
 
 	// OpenGLRenderable implementation
-	virtual void render(RenderStateFlags state) const;
+	virtual void render(const RenderInfo& info) const;
 
 private:
 	/**

@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 #include "generic/callbackfwd.h"
 
+#include "math/Vector3.h"
+
 // Rendering states to sort by.
 // Higher bits have the most effect - slowest state changes should be highest.
 
@@ -61,7 +63,6 @@ class AABB;
 class Matrix4;
 
 template<typename Element> class BasicVector3;
-typedef BasicVector3<double> Vector3;
 
 class Shader;
 
@@ -111,10 +112,83 @@ const int c_attr_TexCoord0 = 1;
 const int c_attr_Tangent = 3;
 const int c_attr_Binormal = 4;
 
+/**
+ * \brief
+ * Data object passed to the backend OpenGLRenderable::render() method
+ * containing information about the render pass which may be of use to
+ * renderable objects, including the render flags and various
+ * matrices/coordinates.
+ */
+class RenderInfo
+{
+    // Render flags
+    RenderStateFlags _flags;
+
+    // Viewer location in 3D space
+    Vector3 _viewerLocation;
+
+public:
+
+    /**
+     * \brief
+     * Constructor.
+     */
+    RenderInfo(RenderStateFlags flags = RENDER_DEFAULT,
+               const Vector3& viewer = Vector3(0, 0, 0))
+    : _flags(flags),
+      _viewerLocation(viewer)
+    { }
+
+    /**
+     * \brief
+     * Check if a flag is set
+     */
+    bool checkFlag(unsigned flag) const
+    {
+        return (_flags & flag) != 0;
+    }
+
+    /**
+     * \brief
+     * Get the entire flag bitfield.
+     */
+    RenderStateFlags getFlags() const
+    {
+        return _flags;
+    }
+
+    /**
+     * \brief
+     * Get the viewer location.
+     */
+    const Vector3& getViewerLocation() const
+    {
+        return _viewerLocation;
+    }
+
+};
+
+/**
+ * \brief
+ * Interface for objects which can render themselves in OpenGL.
+ *
+ * This interface is used by the render backend, after renderable objects have
+ * first been submitted using the Renderable interface. The backend render()
+ * function should contain the OpenGL calls necessary to submit vertex, normal
+ * and texture-coordinate data. 
+ *
+ * No GL state changes should occur in render(), other than those specifically
+ * allowed by the render flags (such as glColor() if RENDER_COLOURWRITE is set).
+ */
 class OpenGLRenderable
 {
 public:
-  virtual void render(RenderStateFlags state) const = 0;
+
+    /**
+     * \brief
+     * Submit OpenGL render calls.
+     */
+    virtual void render(const RenderInfo& info) const = 0;
 };
 
 class Matrix4;

@@ -34,7 +34,7 @@ void light_draw_box_lines(const Vector3& origin, const Vector3 points[8]) {
 namespace entity 
 {
 
-void RenderLightRadiiBox::render(RenderStateFlags state) const {
+void RenderLightRadiiBox::render(const RenderInfo& info) const {
 	//draw the bounding box of light based on light_radius key
 	aabb_draw_wire(m_points);
 
@@ -50,7 +50,7 @@ RenderLightProjection::RenderLightProjection(const Vector3& origin, const Vector
 {
 }
 
-void RenderLightProjection::render(RenderStateFlags state) const {
+void RenderLightProjection::render(const RenderInfo& info) const {
 		
 	// greebo: These four define the base area and are always needed to draw the light
 	// Note the minus sign before intersectPlanes (the points have to be mirrored against the origin)

@@ -448,8 +448,8 @@ const TransformNode& Light::getTransformNode() const {
 }
 
 // Backend render function (GL calls)
-void Light::render(RenderStateFlags state) const {
-	light_draw(m_aabb_light, state);
+void Light::render(const RenderInfo& info) const {
+	light_draw(m_aabb_light, info.getFlags());
 }
 
 VolumeIntersectionValue Light::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const {

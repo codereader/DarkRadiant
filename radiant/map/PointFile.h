@@ -50,7 +50,7 @@ public:
 	/*
 	 * OpenGL render function (back-end).
 	 */
-	void render(RenderStateFlags state) const;
+	void render(const RenderInfo& info) const;
 
 	/*
 	 * Solid renderable submission function (front-end)

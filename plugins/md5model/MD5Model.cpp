@@ -106,11 +106,11 @@ const std::vector<std::string>& MD5Model::getActiveMaterials() const {
 	return _surfaceNames;
 }
 
-void MD5Model::render(RenderStateFlags state) const {
+void MD5Model::render(const RenderInfo& info) const {
 	// Render options
-	if (state & RENDER_TEXTURE_2D)
+	if (info.checkFlag(RENDER_TEXTURE_2D))
 		glEnable(GL_TEXTURE_2D);
-	if (state & RENDER_SMOOTH)
+	if (info.checkFlag(RENDER_SMOOTH))
 		glShadeModel(GL_SMOOTH);
 
 	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
@@ -120,7 +120,7 @@ void MD5Model::render(RenderStateFlags state) const {
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
-			(*i)->render(state);
+			(*i)->render(info.getFlags());
 		}
 	}
 }
