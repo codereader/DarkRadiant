@@ -65,9 +65,20 @@ TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
         glGenTextures(1, &texnum);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texnum);
 
+        // Set filtering and mipmapping
+		glTexParameteri(
+            GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR
+        );
+		glTexParameteri(
+            GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR
+        );
+		glTexParameteri(
+            GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE
+        );
+
         // Bind the images
-        bindDirection("_left", GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-        bindDirection("_right", GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+        bindDirection("_right", GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+        bindDirection("_left", GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
         bindDirection("_up", GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
         bindDirection("_down", GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
         bindDirection("_forward", GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
