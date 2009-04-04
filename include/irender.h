@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Vector3.h"
 
+#include "ShaderLayer.h"
+
 // Rendering states to sort by.
 // Higher bits have the most effect - slowest state changes should be highest.
 
@@ -127,6 +129,9 @@ class RenderInfo
     // Viewer location in 3D space
     Vector3 _viewerLocation;
 
+    // Cube map mode
+    ShaderLayer::CubeMapMode _cubeMapMode;
+
 public:
 
     /**
@@ -134,9 +139,11 @@ public:
      * Constructor.
      */
     RenderInfo(RenderStateFlags flags = RENDER_DEFAULT,
-               const Vector3& viewer = Vector3(0, 0, 0))
+               const Vector3& viewer = Vector3(0, 0, 0),
+               ShaderLayer::CubeMapMode cubeMode = ShaderLayer::CUBE_MAP_NONE)
     : _flags(flags),
-      _viewerLocation(viewer)
+      _viewerLocation(viewer),
+      _cubeMapMode(cubeMode)
     { }
 
     /**
@@ -164,6 +171,15 @@ public:
     const Vector3& getViewerLocation() const
     {
         return _viewerLocation;
+    }
+
+    /**
+     * \brief
+     * Get the cube map mode.
+     */
+    ShaderLayer::CubeMapMode getCubeMapMode() const
+    {
+        return _cubeMapMode;
     }
 
 };
