@@ -27,11 +27,7 @@
 					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 				</Linker>
@@ -57,13 +53,12 @@
 					<Add option="/wd4996" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="$(#win_iconv.include)" />
+		</Compiler>
 		<Unit filename="..\..\..\w32deps\win_iconv\include\iconv.h" />
 		<Unit filename="..\..\..\w32deps\win_iconv\src\win_iconv.c">
 			<Option compilerVar="CC" />

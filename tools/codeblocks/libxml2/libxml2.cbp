@@ -30,18 +30,11 @@
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DLIBICONV_PLUG" />
 					<Add option="/DLIBICONV_STATIC" />
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add library="libiconv" />
 					<Add library="kernel32" />
-					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -68,20 +61,20 @@
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DLIBICONV_PLUG" />
 					<Add option="/DLIBICONV_STATIC" />
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add library="libiconv" />
 					<Add library="kernel32" />
-					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(#win_iconv.include)" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
+		</Linker>
 		<Unit filename="..\..\..\w32deps\libxml2\DOCBparser.c">
 			<Option compilerVar="CC" />
 		</Unit>

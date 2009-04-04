@@ -29,16 +29,11 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/D_USE_MATH_DEFINES" />
-					<Add directory="..\..\..\w32deps\vorbis\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\vorbis\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add library="libiconv" />
 					<Add library="kernel32" />
-					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -64,18 +59,19 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/D_USE_MATH_DEFINES" />
-					<Add directory="..\..\..\w32deps\vorbis\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\vorbis\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add library="libiconv" />
 					<Add library="kernel32" />
-					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="$(#vorbis.include)" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
+		</Linker>
 		<Unit filename="..\..\..\w32deps\vorbis\analysis.c">
 			<Option compilerVar="CC" />
 		</Unit>

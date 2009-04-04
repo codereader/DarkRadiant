@@ -27,11 +27,7 @@
 					<Add option='/Fd&quot;..\..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\..\w32deps\zlib\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\zlib\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add library="kernel32" />
@@ -58,16 +54,15 @@
 					<Add option="/wd4996" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\..\w32deps\zlib\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\zlib\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add library="kernel32" />
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="$(#zlib.include)" />
+		</Compiler>
 		<Unit filename="..\..\..\w32deps\zlib\include\crc32.h" />
 		<Unit filename="..\..\..\w32deps\zlib\include\deflate.h" />
 		<Unit filename="..\..\..\w32deps\zlib\include\inffast.h" />

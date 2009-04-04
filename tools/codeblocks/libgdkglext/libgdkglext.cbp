@@ -28,38 +28,10 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DGDK_GL_COMPILATION" />
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\..\w32deps\gtkglext\" />
-					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
-					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\..\w32deps\gtkglext\" />
-					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
-					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add library="pangowin32-1.0" />
-					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -84,40 +56,30 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DGDK_GL_COMPILATION" />
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\..\w32deps\gtkglext\" />
-					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
-					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\..\w32deps\gtkglext\" />
-					<Add directory="..\..\..\w32deps\gtkglext\gdk" />
-					<Add directory="..\..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
-					<Add directory="..\..\..\w32deps\gtk2\include\atk-1.0" />
-				</ResourceCompiler>
 				<Linker>
 					<Add library="pangowin32-1.0" />
-					<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="..\..\..\w32deps\gtk2\lib\" />
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(win_iconv.include)" />
+			<Add directory="$(#gtkglext)" />
+			<Add directory="$(#gtkglext)\gdk" />
+			<Add directory="$(#gtk2.include)\glib-2.0" />
+			<Add directory="$(#gtk2.include)\gtk-2.0" />
+			<Add directory="$(#gtk2.include)\cairo" />
+			<Add directory="$(#gtk2.include)\pango-1.0" />
+			<Add directory="$(#gtk2.include)\atk-1.0" />
+			<Add directory="$(#gtk2.lib)\glib-2.0\include" />
+			<Add directory="$(#gtk2.lib)\gtk-2.0\include" />
+			<Add directory="$(#gtk2.lib)\gtkglext-1.0\include" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\..\build\libs\$(TARGET_NAME)" />
+			<Add directory="$(#gtk2.lib)" />
+		</Linker>
 		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkgl.h" />
 		<Unit filename="..\..\..\w32deps\gtkglext\gdk\gdkglconfig.c">
 			<Option compilerVar="CC" />

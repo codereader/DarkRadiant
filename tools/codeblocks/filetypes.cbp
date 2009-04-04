@@ -32,15 +32,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add option="/INCREMENTAL:NO" />
@@ -53,7 +45,6 @@
 					<Add option="/SUBSYSTEM:WINDOWS" />
 					<Add option="/MACHINE:X86" />
 					<Add option="/ERRORREPORT:PROMPT" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -86,15 +77,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/INCREMENTAL:NO" />
 					<Add option="/NOLOGO" />
@@ -109,7 +92,6 @@
 					<Add option="/LTCG" />
 					<Add option="/MACHINE:X86" />
 					<Add option="/ERRORREPORT:PROMPT" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Clean Install Win32">
@@ -121,6 +103,14 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\build\libs\$(TARGET_NAME)" />
+		</Linker>
 		<Unit filename="..\..\plugins\filetypes\FileTypeRegistry.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />

@@ -33,19 +33,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add option="/INCREMENTAL:NO" />
@@ -61,9 +49,6 @@
 					<Add library="xmlutillib" />
 					<Add library="mathlib" />
 					<Add library="libxml2" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="$(#boost.lib)" />
-					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -96,19 +81,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/INCREMENTAL:NO" />
 					<Add option="/NOLOGO" />
@@ -126,9 +99,6 @@
 					<Add library="xmlutillib" />
 					<Add library="mathlib" />
 					<Add library="libxml2" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="$(#boost.lib)" />
-					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Clean Install Win32">
@@ -140,6 +110,18 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(#win_iconv.include)" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\build\libs\$(TARGET_NAME)" />
+			<Add directory="$(#boost.lib)" />
+			<Add directory="$(#libxml2.lib)" />
+		</Linker>
 		<Unit filename="..\..\plugins\grid\Grid.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />

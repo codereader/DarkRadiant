@@ -31,37 +31,7 @@
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CONSOLE" />
-					<Add directory="..\..\radiant" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\radiant" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add option="/NODEFAULTLIB:LIBCMT" />
@@ -97,11 +67,6 @@
 					<Add library="opengl32" />
 					<Add library="libxml2" />
 					<Add library="scenelib" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="..\..\w32deps\gtk2\lib" />
-					<Add directory="..\..\w32deps\libxml2\lib" />
-					<Add directory="$(#boost.lib)" />
-					<Add directory="..\..\w32deps\glew\lib" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="post_build_event.bat" />
@@ -137,37 +102,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/DNDEBUG" />
 					<Add option="/D_CONSOLE" />
-					<Add directory="..\..\radiant" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\radiant" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/NODEFAULTLIB:LIBCMT" />
 					<Add option="/INCREMENTAL:NO" />
@@ -204,11 +139,6 @@
 					<Add library="opengl32" />
 					<Add library="libxml2" />
 					<Add library="scenelib" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="..\..\w32deps\gtk2\lib" />
-					<Add directory="..\..\w32deps\libxml2\lib" />
-					<Add directory="$(#boost.lib)" />
-					<Add directory="..\..\w32deps\glew\lib" />
 				</Linker>
 				<ExtraCommands>
 					<Add after="post_build_event.bat" />
@@ -223,6 +153,29 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\radiant" />
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+			<Add directory="$(#gtk2.include)\glib-2.0" />
+			<Add directory="$(#gtk2.include)\cairo" />
+			<Add directory="$(#gtk2.include)\pango-1.0" />
+			<Add directory="$(#gtk2.lib)\glib-2.0\include" />
+			<Add directory="$(#gtk2.lib)\gtk-2.0\include" />
+			<Add directory="$(#glew.include)" />
+			<Add directory="$(#win_iconv.include)" />
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(#gtk2.include)\gtk-2.0" />
+			<Add directory="$(#gtk2.include)\atk-1.0" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\build\libs\$(TARGET_NAME)" />
+			<Add directory="$(#gtk2.lib)" />
+			<Add directory="$(#libxml2.lib)" />
+			<Add directory="$(#boost.lib)" />
+			<Add directory="$(#glew.lib)" />
+		</Linker>
 		<Unit filename="..\..\radiant\RadiantModule.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
