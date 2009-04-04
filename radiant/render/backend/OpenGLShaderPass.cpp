@@ -373,6 +373,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         GlobalOpenGL_debugAssertNoErrors();
     }
 
+    // Copy over the cube map mode, but only if RENDER_TEXTURE_CUBEMAP was
+    // enabled
+    if (requiredState & RENDER_TEXTURE_CUBEMAP)
+    {
+        current.cubeMapMode = _state.cubeMapMode;
+    }
+
   if(requiredState & RENDER_BLEND
     && (_state.m_blend_src != current.m_blend_src || _state.m_blend_dst != current.m_blend_dst))
   {
@@ -573,7 +580,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
         }
 
         // Render the renderable
-        RenderInfo info(current.renderFlags, viewer);
+        RenderInfo info(current.renderFlags, viewer, current.cubeMapMode);
         i->renderable->render(info);
     }
 

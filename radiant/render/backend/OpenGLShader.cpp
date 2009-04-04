@@ -341,7 +341,8 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
     }
 
     // Set texture dimensionality (cube map or 2D)
-    if (layer->getCubeMapMode() == ShaderLayer::CUBE_MAP_CAMERA)
+    state.cubeMapMode = layer->getCubeMapMode();
+    if (state.cubeMapMode == ShaderLayer::CUBE_MAP_CAMERA)
     {
         state.renderFlags |= RENDER_TEXTURE_CUBEMAP;
     }
