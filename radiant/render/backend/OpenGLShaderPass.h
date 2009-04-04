@@ -61,7 +61,6 @@ private:
 
 	// Flush out the renderables in the vector and draw them to screen
 	void flushRenderables(OpenGLState& current, 
-						  unsigned int globalstate, 
 						  const Vector3& viewer);
 
     /* Helper functions to enable/disable particular GL states */
@@ -76,6 +75,9 @@ private:
 
     void enableRenderBlend();
     void disableRenderBlend();
+
+    // Apply all OpenGLState textures to texture units
+    void applyAllTextures(OpenGLState& current, unsigned requiredState);
 
 public:
 

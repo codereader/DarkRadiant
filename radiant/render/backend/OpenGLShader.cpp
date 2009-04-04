@@ -176,13 +176,14 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     
     // Set render flags
     dbsPass.renderFlags = RENDER_BLEND
-                       |RENDER_FILL
-                       |RENDER_CULLFACE
-                       |RENDER_DEPTHTEST
-                       |RENDER_COLOURWRITE
-                       |RENDER_SMOOTH
-                       |RENDER_BUMP
-                       |RENDER_PROGRAM;
+                        | RENDER_FILL
+                        | RENDER_TEXTURE_2D
+                        | RENDER_CULLFACE
+                        | RENDER_DEPTHTEST
+                        | RENDER_COLOURWRITE
+                        | RENDER_SMOOTH
+                        | RENDER_BUMP
+                        | RENDER_PROGRAM;
     
     dbsPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
 
@@ -324,7 +325,6 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
     OpenGLState& state = appendDefaultPass();
     state.renderFlags = RENDER_FILL
                     | RENDER_BLEND
-                    | RENDER_TEXTURE_2D
                     | RENDER_DEPTHTEST
                     | RENDER_COLOURWRITE;
 
@@ -340,10 +340,14 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
       state.renderFlags |= RENDER_DEPTHWRITE;
     }
 
-    // Cube map mode
+    // Set texture dimensionality (cube map or 2D)
     if (layer->getCubeMapMode() == ShaderLayer::CUBE_MAP_CAMERA)
     {
         state.renderFlags |= RENDER_TEXTURE_CUBEMAP;
+    }
+    else
+    {
+        state.renderFlags |= RENDER_TEXTURE_2D;
     }
 
     // Colour modulation

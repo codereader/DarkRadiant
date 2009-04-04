@@ -132,6 +132,15 @@ public:
     {
         _texture = tex;
     }
+
+    /**
+     * \brief
+     * Set cube map mode.
+     */
+    void setCubeMapMode(CubeMapMode mode)
+    {
+        _cubeMapMode = mode;
+    }
 };
 
 /**
