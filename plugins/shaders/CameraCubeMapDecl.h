@@ -28,12 +28,8 @@ private:
     // Construct with a prefix
     CameraCubeMapDecl(const std::string& prefix);
 
-    // Load an image from the prefix + direction. Throws runtime_exception if
-    // image not found.
-    ImagePtr loadDirection(const std::string& dir) const;
-
-    // Bind the given image with the given cube-map direction
-    void bindDirection(GLuint glDir, ImagePtr img) const;
+    // Load and bind the given image with the given cube-map direction
+    void bindDirection(const std::string& dir, GLuint glDir) const;
 
 public:
 
