@@ -47,6 +47,7 @@ void CameraCubeMapDecl::bindDirection(GLuint glDir, ImagePtr img) const
         GL_UNSIGNED_BYTE,     //type
         img->getMipMapPixels(0)
     );
+    GlobalOpenGL_debugAssertNoErrors();
 }
 
 /* NamedBindable implementation */
@@ -87,7 +88,6 @@ TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
         return TexturePtr(new CubeMapTexture(texnum, name));
-        //return TexturePtr(new CubeMapTexture(texnum, name));
     }
     catch (const std::runtime_error& e)
     {
