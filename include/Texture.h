@@ -18,6 +18,12 @@ public:
 
     /**
      * \brief
+     * Constant indicating an invalid texture size.
+     */
+    const static unsigned INVALID_SIZE = 0;
+
+    /**
+     * \brief
      * Return the string name of this texture.
      */
     virtual std::string getName() const = 0;
@@ -30,13 +36,15 @@ public:
 
     /**
      * \brief
-     * Return the width of this texture in pixels.
+     * Return the width of this texture in pixels. May return INVALID_SIZE if
+     * this texture does not have a valid size.
      */
     virtual unsigned getWidth() const = 0;
 
     /**
      * \brief
-     * Return the height of this texture in pixels.
+     * Return the height of this texture in pixels. May return INVALID_SIZE if
+     * this texture does not have a valid size.
      */
     virtual unsigned getHeight() const = 0;
 };

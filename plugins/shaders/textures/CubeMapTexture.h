@@ -15,10 +15,6 @@ class CubeMapTexture
     // GL texture number
     GLuint _texNum;
 
-    // Size of the cube map images in pixels. All cube map images are square and
-    // of the same size.
-    unsigned _size;
-
     // Display name
     std::string _name;
 
@@ -46,12 +42,12 @@ public:
 
     unsigned getWidth() const
     {
-        return _size;
+        return INVALID_SIZE;
     }
 
     unsigned getHeight() const
     {
-        return _size;
+        return INVALID_SIZE;
     }
 };
 
