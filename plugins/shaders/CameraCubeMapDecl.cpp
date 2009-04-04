@@ -19,31 +19,29 @@ NamedBindablePtr CameraCubeMapDecl::createForPrefix(const std::string& prefix)
     return NamedBindablePtr(new CameraCubeMapDecl(prefix));
 }
 
-// Load an image for the given direction
-ImagePtr CameraCubeMapDecl::loadDirection(const std::string& dir) const
+// Bind directional image
+void CameraCubeMapDecl::bindDirection(const std::string& dir,
+                                      GLuint glDir) const
 {
+    // Load the image
     ImagePtr img = ImageFileLoader::imageFromVFS(_prefix + dir);
     if (!img)
     {
         throw std::runtime_error(
             "Camera cube map directional image not found: "
-            + dir
+            + _prefix + dir
         );
     }
-    return img;
-}
 
-// Bind directional image
-void CameraCubeMapDecl::bindDirection(GLuint glDir, ImagePtr img) const
-{
+    // Bind the image to OpenGL
     glTexImage2D(
         glDir,
         0,                    //level
-        GL_RGB8,              //internal format
+        GL_RGBA,              //internal format
         img->getWidth(0),   //width
         img->getHeight(0),  //height
         0,                    //border
-        GL_RGB,               //format
+        GL_RGBA,               //format
         GL_UNSIGNED_BYTE,     //type
         img->getMipMapPixels(0)
     );
@@ -62,25 +60,18 @@ TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
     // Load the six images from the prefix
     try
     {
-        ImagePtr left = loadDirection("_left");
-        ImagePtr right = loadDirection("_right");
-        ImagePtr up = loadDirection("_up");
-        ImagePtr down = loadDirection("_down");
-        ImagePtr forward = loadDirection("_forward");
-        ImagePtr back = loadDirection("_back");
-
         // Allocate the GL texture
         GLuint texnum;
         glGenTextures(1, &texnum);
         glBindTexture(GL_TEXTURE_CUBE_MAP, texnum);
 
         // Bind the images
-        bindDirection(GL_TEXTURE_CUBE_MAP_POSITIVE_X, right);
-        bindDirection(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, left);
-        bindDirection(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, up);
-        bindDirection(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, down);
-        bindDirection(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, back);
-        bindDirection(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, forward);
+        bindDirection("_left", GL_TEXTURE_CUBE_MAP_POSITIVE_X);
+        bindDirection("_right", GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
+        bindDirection("_up", GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+        bindDirection("_down", GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+        bindDirection("_forward", GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+        bindDirection("_back", GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
 
         std::cout << "[shaders] bound cubemap texture " << texnum << std::endl;
 
