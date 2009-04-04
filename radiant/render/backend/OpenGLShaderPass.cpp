@@ -16,14 +16,14 @@ inline void setTextureState(GLint& current,
 							GLenum textureUnit,
                             GLenum textureMode)
 {
-  if(texture != current)
-  {
-    glActiveTexture(textureUnit);
-    glClientActiveTexture(textureUnit);
-    glBindTexture(textureMode, texture);
-    GlobalOpenGL_debugAssertNoErrors();
-    current = texture;
-  }
+    if(texture != current)
+    {
+        glActiveTexture(textureUnit);
+        glClientActiveTexture(textureUnit);
+        glBindTexture(textureMode, texture);
+        GlobalOpenGL_debugAssertNoErrors();
+        current = texture;
+    }
 }
 
 // Same as setTextureState() above without texture unit parameter
@@ -119,6 +119,58 @@ void OpenGLShaderPass::disableRenderBlend()
     GlobalOpenGL_debugAssertNoErrors();
 }
 
+// Apply all textures to texture units
+void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
+                                        unsigned requiredState)
+{
+    // Set the texture dimensionality from render flags. There is only a global
+    // mode for all textures, we can't have texture1 as 2D and texture2 as
+    // CUBE_MAP for example.
+    GLenum textureMode = 0;
+    if (requiredState & RENDER_TEXTURE_CUBEMAP) // cube map has priority
+        textureMode = GL_TEXTURE_CUBE_MAP;
+    else if (requiredState & RENDER_TEXTURE_2D)
+        textureMode = GL_TEXTURE_2D;
+
+    // Apply our texture numbers to the current state
+    if (textureMode != 0) // only if one of the RENDER_TEXTURE options
+    {
+        if(GLEW_VERSION_1_3)
+        {
+            setTextureState(
+                current.m_texture, _state.m_texture, GL_TEXTURE0, textureMode
+            );
+            setTextureState(
+                current.m_texture1, _state.m_texture1, GL_TEXTURE1, textureMode
+            );
+            setTextureState(
+                current.m_texture2, _state.m_texture2, GL_TEXTURE2, textureMode
+            );
+            setTextureState(
+                current.m_texture3, _state.m_texture3, GL_TEXTURE3, textureMode
+            );
+            setTextureState(
+                current.m_texture4, _state.m_texture4, GL_TEXTURE4, textureMode
+            );
+            setTextureState(
+                current.m_texture5, _state.m_texture5, GL_TEXTURE5, textureMode
+            );
+            setTextureState(
+                current.m_texture6, _state.m_texture6, GL_TEXTURE6, textureMode
+            );
+            setTextureState(
+                current.m_texture7, _state.m_texture7, GL_TEXTURE7, textureMode
+            );
+        }
+        else
+        {
+            setTextureState(
+                current.m_texture, _state.m_texture, textureMode
+            );
+        }
+    }
+}
+
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
 					              unsigned int globalStateMask) 
@@ -158,11 +210,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         }
     }
 
-    // GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP. Set from render flags. There is
-    // only a global mode for all textures, we can't have texture1 as 2D and
-    // texture2 as CUBE_MAP for example.
-    GLenum textureMode = GL_TEXTURE_2D;
-
     // State changes. Only perform these if changingBitsMask > 0, since if there are
     // no changes required we don't want a whole load of unnecessary bit
     // operations.
@@ -199,10 +246,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         // RENDER_TEXTURE_2D
         if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
         { 
-            // Must not have both 2D and cubemap
-            assert(!(requiredState & RENDER_TEXTURE_CUBEMAP));
             enableTexture2D();
-            textureMode = GL_TEXTURE_2D;
         }
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
         { 
@@ -212,10 +256,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         // RENDER_TEXTURE_CUBEMAP
         if(changingBitsMask & requiredState & RENDER_TEXTURE_CUBEMAP)
         { 
-            // Must not have both 2D and cubemap
-            assert(!(requiredState & RENDER_TEXTURE_2D));
             enableTextureCubeMap();
-            textureMode = GL_TEXTURE_CUBE_MAP;
         }
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_CUBEMAP)
         { 
@@ -330,40 +371,8 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     current.m_alpharef = _state.m_alpharef;
   }
 
-    // Apply our texture numbers to the current state
-    if(GLEW_VERSION_1_3)
-    {
-        setTextureState(
-            current.m_texture, _state.m_texture, GL_TEXTURE0, textureMode
-        );
-        setTextureState(
-            current.m_texture1, _state.m_texture1, GL_TEXTURE1, textureMode
-        );
-        setTextureState(
-            current.m_texture2, _state.m_texture2, GL_TEXTURE2, textureMode
-        );
-        setTextureState(
-            current.m_texture3, _state.m_texture3, GL_TEXTURE3, textureMode
-        );
-        setTextureState(
-            current.m_texture4, _state.m_texture4, GL_TEXTURE4, textureMode
-        );
-        setTextureState(
-            current.m_texture5, _state.m_texture5, GL_TEXTURE5, textureMode
-        );
-        setTextureState(
-            current.m_texture6, _state.m_texture6, GL_TEXTURE6, textureMode
-        );
-        setTextureState(
-            current.m_texture7, _state.m_texture7, GL_TEXTURE7, textureMode
-        );
-    }
-    else
-    {
-        setTextureState(
-            current.m_texture, _state.m_texture, textureMode
-        );
-    }
+    // Apply the GL textures
+    applyAllTextures(current, requiredState);
 
     // Set the GL colour if it isn't set already
     if (_state.m_colour != current.m_colour)
@@ -426,13 +435,13 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 
 // Render the bucket contents
 void OpenGLShaderPass::render(OpenGLState& current, 
-							   unsigned int globalstate, 
+							   unsigned int flagsMask, 
 							   const Vector3& viewer)
 {
 	// Apply our state to the current state object
-	applyState(current, globalstate);
+	applyState(current, flagsMask);
 	
-  if((globalstate & _state.renderFlags & RENDER_SCREEN) != 0)
+  if((flagsMask & _state.renderFlags & RENDER_SCREEN) != 0)
   {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -456,14 +465,13 @@ void OpenGLShaderPass::render(OpenGLState& current,
     glPopMatrix();
   }
 	else if(!_renderables.empty()) {
-		flushRenderables(current, globalstate, viewer);
+		flushRenderables(current, viewer);
 	}
 }
 
 // Flush renderables
-void OpenGLShaderPass::flushRenderables(OpenGLState& current, 
-										 unsigned int globalstate, 
-										 const Vector3& viewer)
+void OpenGLShaderPass::flushRenderables(OpenGLState& current,
+                                        const Vector3& viewer)
 {
 	// Keep a pointer to the last transform matrix used
 	const Matrix4* transform = 0;
@@ -516,6 +524,8 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
                 	lightShader->lightFalloffImage()->getGLTexNum();
 
                 // Bind the falloff textures
+                assert(current.renderFlags & RENDER_TEXTURE_2D);
+
                 setTextureState(
                     current.m_texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
                 );

@@ -86,7 +86,7 @@ TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
         // Unbind and create texture object
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-        return TexturePtr(new CubeMapTexture(0, name));
+        return TexturePtr(new CubeMapTexture(texnum, name));
         //return TexturePtr(new CubeMapTexture(texnum, name));
     }
     catch (const std::runtime_error& e)

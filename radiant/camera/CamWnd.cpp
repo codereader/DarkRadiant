@@ -531,7 +531,6 @@ void CamWnd::Cam_Draw() {
 			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE_2D
-                           | RENDER_TEXTURE_CUBEMAP
 			               | RENDER_SMOOTH
 			               | RENDER_SCALED;
 
@@ -541,6 +540,7 @@ void CamWnd::Cam_Draw() {
 			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE_2D
+                           | RENDER_TEXTURE_CUBEMAP
 			               | RENDER_SMOOTH
 			               | RENDER_SCALED
 			               | RENDER_BUMP

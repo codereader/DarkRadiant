@@ -179,6 +179,7 @@ void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         _currentLayer->setBindableTexture(
             CameraCubeMapDecl::createForPrefix(cubeMapPrefix)
         );
+        _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_CAMERA);
     }
 }
 
