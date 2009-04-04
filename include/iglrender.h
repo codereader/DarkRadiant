@@ -132,14 +132,24 @@ public:
     unsigned int renderFlags;
 
   std::size_t m_sort;
-  GLint m_texture;
-  GLint m_texture1;
-  GLint m_texture2;
-  GLint m_texture3;
-  GLint m_texture4;
-  GLint m_texture5;
-  GLint m_texture6;
-  GLint m_texture7;
+
+    /**
+     * \brief
+     * GL texture numbers to be bound to texture units.
+     *
+     * \{
+     */
+
+    GLint texture0;
+    GLint texture1;
+    GLint texture2;
+    GLint texture3;
+    GLint texture4;
+
+    /**
+     * \}
+     */
+
   Vector4 m_colour;
   GLenum m_blend_src, m_blend_dst;
   GLenum m_depthfunc;
@@ -154,14 +164,11 @@ public:
 	// Default constructor
 	OpenGLState() 
 	: renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
-	  m_texture(0),
-	  m_texture1(0),
-	  m_texture2(0),
-	  m_texture3(0),
-	  m_texture4(0),
-	  m_texture5(0),
-	  m_texture6(0),
-	  m_texture7(0),
+	  texture0(0),
+	  texture1(0),
+	  texture2(0),
+      texture3(0),
+      texture4(0),
 	  m_colour(1, 1, 1, 1),
 	  m_blend_src(GL_SRC_ALPHA),
 	  m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),

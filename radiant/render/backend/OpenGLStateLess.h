@@ -9,44 +9,24 @@
 struct OpenGLStateLess
 {
 	bool operator() (const OpenGLState& self, const OpenGLState& other) const
-	  {
+    {
 	  //! Sort by sort-order override.
 	  if(self.m_sort != other.m_sort)
 	  {
 	    return self.m_sort < other.m_sort;
 	  }
 	  //! Sort by texture handle.
-	  if(self.m_texture != other.m_texture)
+	  if(self.texture0 != other.texture0)
 	  {
-	    return self.m_texture < other.m_texture;
+	    return self.texture0 < other.texture0;
 	  }
-	  if(self.m_texture1 != other.m_texture1)
+	  if(self.texture1 != other.texture1)
 	  {
-	    return self.m_texture1 < other.m_texture1;
+	    return self.texture1 < other.texture1;
 	  }
-	  if(self.m_texture2 != other.m_texture2)
+	  if(self.texture2 != other.texture2)
 	  {
-	    return self.m_texture2 < other.m_texture2;
-	  }
-	  if(self.m_texture3 != other.m_texture3)
-	  {
-	    return self.m_texture3 < other.m_texture3;
-	  }
-	  if(self.m_texture4 != other.m_texture4)
-	  {
-	    return self.m_texture4 < other.m_texture4;
-	  }
-	  if(self.m_texture5 != other.m_texture5)
-	  {
-	    return self.m_texture5 < other.m_texture5;
-	  }
-	  if(self.m_texture6 != other.m_texture6)
-	  {
-	    return self.m_texture6 < other.m_texture6;
-	  }
-	  if(self.m_texture7 != other.m_texture7)
-	  {
-	    return self.m_texture7 < other.m_texture7;
+	    return self.texture2 < other.texture2;
 	  }
 	  //! Sort by state bit-vector.
 	  if(self.renderFlags != other.renderFlags)
@@ -55,7 +35,7 @@ struct OpenGLStateLess
 	  }
 	  //! Comparing address makes sure states are never equal.
 	  return &self < &other;
-	  }
+    }
 };
 
 

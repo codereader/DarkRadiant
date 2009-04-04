@@ -145,31 +145,31 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     // default from the shader system.
     if (triplet.diffuse)
     {
-        dbsPass.m_texture = triplet.diffuse->getTexture()->getGLTexNum();
+        dbsPass.texture0 = triplet.diffuse->getTexture()->getGLTexNum();
     }
     else
     {
-        dbsPass.m_texture = GlobalShaderSystem().getDefaultInteractionTexture(
+        dbsPass.texture0 = GlobalShaderSystem().getDefaultInteractionTexture(
             ShaderLayer::DIFFUSE
         )->getGLTexNum();
     }
     if (triplet.bump)
     {
-        dbsPass.m_texture1 = triplet.bump->getTexture()->getGLTexNum();
+        dbsPass.texture1 = triplet.bump->getTexture()->getGLTexNum();
     }
     else
     {
-        dbsPass.m_texture1 = GlobalShaderSystem().getDefaultInteractionTexture(
+        dbsPass.texture1 = GlobalShaderSystem().getDefaultInteractionTexture(
             ShaderLayer::BUMP
         )->getGLTexNum();
     }
     if (triplet.specular)
     {
-        dbsPass.m_texture2 = triplet.specular->getTexture()->getGLTexNum();
+        dbsPass.texture2 = triplet.specular->getTexture()->getGLTexNum();
     }
     else
     {
-        dbsPass.m_texture2 = GlobalShaderSystem().getDefaultInteractionTexture(
+        dbsPass.texture2 = GlobalShaderSystem().getDefaultInteractionTexture(
             ShaderLayer::SPECULAR
         )->getGLTexNum();
     }
@@ -272,7 +272,7 @@ void OpenGLShader::constructEditorPreviewPassFromIShader()
     OpenGLState& state = appendDefaultPass();
 
     // Render the editor texture in legacy mode
-    state.m_texture = _iShader->getEditorImage()->getGLTexNum();
+    state.texture0 = _iShader->getEditorImage()->getGLTexNum();
     state.renderFlags = RENDER_FILL
                     | RENDER_TEXTURE_2D
                     |RENDER_DEPTHTEST
@@ -329,7 +329,7 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
                     | RENDER_COLOURWRITE;
 
     // Set the texture
-    state.m_texture = layerTex->getGLTexNum();
+    state.texture0 = layerTex->getGLTexNum();
 
     // Get the blend function
     BlendFunc blendFunc = layer->getBlendFunc();
