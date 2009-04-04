@@ -109,6 +109,7 @@ public:
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
 	
+    /* OpenGLRenderable implementation */
 	void render(const RenderInfo& info) const;
 
 	void undoSave();

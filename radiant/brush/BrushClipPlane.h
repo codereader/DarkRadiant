@@ -31,7 +31,7 @@ public:
 
 	void render(const RenderInfo& info) const {
 		if (info.checkFlag(RENDER_FILL)) {
-			m_winding.draw(info.getFlags());
+			m_winding.render(info);
 		}
 		else {
 			m_winding.drawWireframe();

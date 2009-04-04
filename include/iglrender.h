@@ -161,6 +161,12 @@ public:
   GLushort m_linestipple_pattern;
   GLProgram* m_program;
 
+    /**
+     * \brief 
+     * The cube-map texgen mode for rendering.
+     */
+    ShaderLayer::CubeMapMode cubeMapMode;
+
 	// Default constructor
 	OpenGLState() 
 	: renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
@@ -179,7 +185,8 @@ public:
 	  m_pointsize(1),
 	  m_linestipple_factor(1),
 	  m_linestipple_pattern(0xAAAA),
-	  m_program(0)
+	  m_program(0),
+      cubeMapMode(ShaderLayer::CUBE_MAP_NONE)
 	{ }
 };
 

@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "texturelib.h"
 #include "Brush.h"
 
+#include "GLProgramAttributes.h"
+
 namespace {
 	struct indexremap_t {
 		indexremap_t(std::size_t _x, std::size_t _y, std::size_t _z) :
@@ -56,10 +58,22 @@ void Winding::drawWireframe() const {
 	}
 }
 
-void Winding::draw(RenderStateFlags state) const {
-	if (points.size() == 0) {
+void Winding::render(const RenderInfo& info) const 
+{
+    // Do not render if there are no points
+	if (points.empty()) 
+    {
 		return;
 	}
+
+    // If this is part of the skybox, calculate texcoords differently.
+    if (info.getCubeMapMode() == ShaderLayer::CUBE_MAP_CAMERA)
+    {
+        renderAsCameraCubeMap(info.getViewerLocation());
+        return;
+    }
+
+    // Otherwise render normally
 
 	// A shortcut pointer to the first array element to avoid
 	// massive calls to std::vector<>::begin()
@@ -68,23 +82,57 @@ void Winding::draw(RenderStateFlags state) const {
 	// Set the vertex pointer first
 	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
 
-	if ((state & RENDER_BUMP) != 0) {
-		glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.normal);
-		glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.texcoord);
-		glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.tangent);
-		glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.bitangent);
+	if (info.checkFlag(RENDER_BUMP)) 
+    {
+		glVertexAttribPointerARB(
+            ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.normal
+        );
+		glVertexAttribPointerARB(
+            ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.texcoord
+        );
+		glVertexAttribPointerARB(
+            ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.tangent
+        );
+		glVertexAttribPointerARB(
+            ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.bitangent
+        );
 	} 
-	else {
-		if (state & RENDER_LIGHTING) {
+	else 
+    {
+		if (info.checkFlag(RENDER_LIGHTING)) 
+        {
 			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
 		}
 
-		if (state & RENDER_TEXTURE_2D) {
+		if (info.checkFlag(RENDER_TEXTURE_2D)) 
+        {
 			glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord);
 		}
 	}
 	
 	glDrawArrays(GL_POLYGON, 0, GLsizei(numpoints));
+}
+
+// Render with cameraCubeMap coordinates
+void Winding::renderAsCameraCubeMap(const Vector3& viewer) const
+{
+    glBegin(GL_POLYGON);
+
+    for (container_type::const_iterator vertexIter = points.begin();
+         vertexIter != points.end();
+         ++vertexIter)
+    {
+        const Vector3& vertex = vertexIter->vertex;
+
+        // Set texcoord to view vector
+        Vector3 viewVector = vertex - viewer;
+        glTexCoord3dv(viewVector);
+
+        // Submit the point
+        glVertex3dv(vertex);
+    }
+
+    glEnd();
 }
 
 void Winding::testSelect(SelectionTest& test, SelectionIntersection& best) {
