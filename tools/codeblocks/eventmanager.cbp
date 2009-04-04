@@ -33,33 +33,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add option="/INCREMENTAL:NO" />
@@ -78,9 +52,6 @@
 					<Add library="gtk-win32-2.0" />
 					<Add library="gdk-win32-2.0" />
 					<Add library="gobject-2.0" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="..\..\w32deps\gtk2\lib" />
-					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -114,33 +85,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/INCREMENTAL:NO" />
 					<Add option="/NOLOGO" />
@@ -161,9 +106,6 @@
 					<Add library="gtk-win32-2.0" />
 					<Add library="gdk-win32-2.0" />
 					<Add library="gobject-2.0" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="..\..\w32deps\gtk2\lib" />
-					<Add directory="..\..\w32deps\libxml2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Clean Install Win32">
@@ -175,6 +117,25 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(gtk2.include)\gtk-2.0" />
+			<Add directory="$(gtk2.include)\atk-1.0" />
+			<Add directory="$(gtk2.include)\glib-2.0" />
+			<Add directory="$(gtk2.include)\cairo" />
+			<Add directory="$(gtk2.include)\pango-1.0" />
+			<Add directory="$(gtk2.lib)\glib-2.0\include" />
+			<Add directory="$(gtk2.lib)\gtk-2.0\include" />
+			<Add directory="$(#win_iconv.include)" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\build\libs\$(TARGET_NAME)" />
+			<Add directory="$(#gtk2.lib)" />
+			<Add directory="$(#libxml2.lib)" />
+		</Linker>
 		<Unit filename="..\..\plugins\eventmanager\Accelerator.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />

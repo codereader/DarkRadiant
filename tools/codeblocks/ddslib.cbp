@@ -27,15 +27,7 @@
 					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 				</Linker>
@@ -62,17 +54,14 @@
 					<Add option="/wd4244" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-				</ResourceCompiler>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+		</Compiler>
 		<Unit filename="..\..\libs\ddslib\ddslib.cpp" />
 		<Extensions>
 			<code_completion />

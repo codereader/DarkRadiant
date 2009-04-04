@@ -28,15 +28,7 @@
 					<Add option="/wd4996" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 				</Linker>
@@ -62,17 +54,14 @@
 					<Add option="/wd4996" />
 					<Add option="/DWIN32" />
 					<Add option="/D_CRT_SECURE_NO_DEPRECATE" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-				</ResourceCompiler>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+		</Compiler>
 		<Unit filename="..\..\libs\picomodel\lwo\clip.c">
 			<Option compilerVar="CC" />
 		</Unit>

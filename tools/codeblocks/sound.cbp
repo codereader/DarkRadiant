@@ -33,39 +33,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\openal\include" />
-					<Add directory="..\..\w32deps\openal\include\AL" />
-					<Add directory="..\..\w32deps\vorbis\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\openal\include" />
-					<Add directory="..\..\w32deps\openal\include\AL" />
-					<Add directory="..\..\w32deps\vorbis\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add option="/NODEFAULTLIB:LIBCMT" />
@@ -83,10 +51,6 @@
 					<Add library="libvorbis" />
 					<Add library="gtkutillib" />
 					<Add library="gtk-win32-2.0" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="$(#boost.lib)" />
-					<Add directory="..\..\w32deps\openal\lib" />
-					<Add directory="..\..\w32deps\gtk2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -119,39 +83,7 @@
 					<Add option="/DWIN32" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\openal\include" />
-					<Add directory="..\..\w32deps\openal\include\AL" />
-					<Add directory="..\..\w32deps\vorbis\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\openal\include" />
-					<Add directory="..\..\w32deps\openal\include\AL" />
-					<Add directory="..\..\w32deps\vorbis\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/NODEFAULTLIB:LIBCMT" />
 					<Add option="/INCREMENTAL:NO" />
@@ -171,11 +103,6 @@
 					<Add library="libvorbis" />
 					<Add library="gtkutillib" />
 					<Add library="gtk-win32-2.0" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
-					<Add directory="$(#boost.lib)" />
-					<Add directory="..\..\w32deps\openal\lib" />
-					<Add directory="..\..\w32deps\vorbis\lib" />
-					<Add directory="..\..\w32deps\gtk2\lib" />
 				</Linker>
 			</Target>
 			<Target title="Clean Install Win32">
@@ -187,6 +114,29 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(#openal.include)" />
+			<Add directory="$(#openal.include)\AL" />
+			<Add directory="$(#vorbis.include)" />
+			<Add directory="$(#gtk2.include)\gtk-2.0" />
+			<Add directory="$(#gtk2.include)\atk-1.0" />
+			<Add directory="$(#gtk2.include)\glib-2.0" />
+			<Add directory="$(#gtk2.include)\cairo" />
+			<Add directory="$(#gtk2.include)\pango-1.0" />
+			<Add directory="$(#gtk2.lib)\glib-2.0\include" />
+			<Add directory="$(#gtk2.lib)\gtk-2.0\include" />
+			<Add directory="$(#glew.include)" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\build\libs\$(TARGET_NAME)" />
+			<Add directory="$(#boost.lib)" />
+			<Add directory="$(#openal.lib)" />
+			<Add directory="$(#gtk2.lib)" />
+		</Linker>
 		<Unit filename="..\..\plugins\sound\OggFileStream.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />

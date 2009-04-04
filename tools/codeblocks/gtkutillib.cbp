@@ -26,39 +26,7 @@
 					<Add option="/Zi /D_DEBUG" />
 					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/DWIN32" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\w32deps\gtkglext" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\w32deps\gtkglext" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 				</Linker>
@@ -83,44 +51,27 @@
 					<Add option="/Zi" />
 					<Add option='/Fd&quot;..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)\vc80.pdb&quot;' />
 					<Add option="/DWIN32" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\w32deps\gtkglext" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="$(#boost.include)" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\gtk2\include\gtk-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\atk-1.0" />
-					<Add directory="..\..\w32deps\gtk2\include\glib-2.0" />
-					<Add directory="..\..\w32deps\gtk2\include\cairo" />
-					<Add directory="..\..\w32deps\gtk2\include\pango-1.0" />
-					<Add directory="..\..\w32deps\gtk2\lib\glib-2.0\include" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtk-2.0\include" />
-					<Add directory="..\..\w32deps\glew\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-					<Add directory="..\..\w32deps\gtkglext" />
-					<Add directory="..\..\w32deps\gtk2\lib\gtkglext-1.0\include" />
-				</ResourceCompiler>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="/EHc" />
 			<Add option="/EHs" />
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(#gtk2.include)\gtk-2.0" />
+			<Add directory="$(#gtk2.include)\atk-1.0" />
+			<Add directory="$(#gtk2.include)\glib-2.0" />
+			<Add directory="$(#gtk2.include)\cairo" />
+			<Add directory="$(#gtk2.include)\pango-1.0" />
+			<Add directory="$(#gtk2.lib)\glib-2.0\include" />
+			<Add directory="$(#gtk2.lib)\gtk-2.0\include" />
+			<Add directory="$(#glew.include)" />
+			<Add directory="$(#win_iconv.include)" />
+			<Add directory="$(#gtkglext)" />
+			<Add directory="$(#gtk2.lib)\gtkglext-1.0\include" />
 		</Compiler>
 		<Unit filename="..\..\libs\gtkutil\ControlButton.h" />
 		<Unit filename="..\..\libs\gtkutil\DeferredAdjustment.cpp" />

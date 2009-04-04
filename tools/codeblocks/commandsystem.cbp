@@ -32,19 +32,7 @@
 					<Add option="/D_VC80_UPGRADE=0x0710" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="..\..\w32deps\boost\include" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="..\..\w32deps\boost\include" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/DEBUG" />
 					<Add option="/INCREMENTAL:NO" />
@@ -59,7 +47,6 @@
 					<Add option="/ERRORREPORT:PROMPT" />
 					<Add library="xmlutillib" />
 					<Add library="libxml2" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
@@ -94,19 +81,7 @@
 					<Add option="/D_VC80_UPGRADE=0x0710" />
 					<Add option="/D_WINDLL" />
 					<Add option="/D_MBCS" />
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="..\..\w32deps\boost\include" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
 				</Compiler>
-				<ResourceCompiler>
-					<Add directory="..\..\include" />
-					<Add directory="..\..\libs" />
-					<Add directory="..\..\w32deps\boost\include" />
-					<Add directory="..\..\w32deps\libxml2\include" />
-					<Add directory="..\..\w32deps\win_iconv\include" />
-				</ResourceCompiler>
 				<Linker>
 					<Add option="/INCREMENTAL:NO" />
 					<Add option="/pdb:..\..\install\modules\$(PROJECT_NAME).pdb" />
@@ -125,7 +100,6 @@
 					<Add option="/ERRORREPORT:PROMPT" />
 					<Add library="xmlutillib" />
 					<Add library="libxml2" />
-					<Add directory="..\..\build\libs\$(TARGET_NAME)" />
 				</Linker>
 			</Target>
 			<Target title="Clean Install Win32">
@@ -137,6 +111,16 @@
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add directory="..\..\include" />
+			<Add directory="..\..\libs" />
+			<Add directory="$(#boost.include)" />
+			<Add directory="$(#libxml2.include)" />
+			<Add directory="$(#win_iconv.include)" />
+		</Compiler>
+		<Linker>
+			<Add directory="..\..\build\libs\$(TARGET_NAME)" />
+		</Linker>
 		<Unit filename="..\..\plugins\commandsystem\CaseInsensitiveCompare.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
