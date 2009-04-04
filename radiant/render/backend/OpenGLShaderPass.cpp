@@ -138,34 +138,25 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
         if(GLEW_VERSION_1_3)
         {
             setTextureState(
-                current.m_texture, _state.m_texture, GL_TEXTURE0, textureMode
+                current.texture0, _state.texture0, GL_TEXTURE0, textureMode
             );
             setTextureState(
-                current.m_texture1, _state.m_texture1, GL_TEXTURE1, textureMode
+                current.texture1, _state.texture1, GL_TEXTURE1, textureMode
             );
             setTextureState(
-                current.m_texture2, _state.m_texture2, GL_TEXTURE2, textureMode
+                current.texture2, _state.texture2, GL_TEXTURE2, textureMode
             );
             setTextureState(
-                current.m_texture3, _state.m_texture3, GL_TEXTURE3, textureMode
+                current.texture3, _state.texture2, GL_TEXTURE2, textureMode
             );
             setTextureState(
-                current.m_texture4, _state.m_texture4, GL_TEXTURE4, textureMode
-            );
-            setTextureState(
-                current.m_texture5, _state.m_texture5, GL_TEXTURE5, textureMode
-            );
-            setTextureState(
-                current.m_texture6, _state.m_texture6, GL_TEXTURE6, textureMode
-            );
-            setTextureState(
-                current.m_texture7, _state.m_texture7, GL_TEXTURE7, textureMode
+                current.texture4, _state.texture2, GL_TEXTURE2, textureMode
             );
         }
         else
         {
             setTextureState(
-                current.m_texture, _state.m_texture, textureMode
+                current.texture0, _state.texture0, textureMode
             );
         }
     }
@@ -527,13 +518,13 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
                 assert(current.renderFlags & RENDER_TEXTURE_2D);
 
                 setTextureState(
-                    current.m_texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
+                    current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
                 );
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
                 setTextureState(
-                    current.m_texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D
+                    current.texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D
                 );
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
