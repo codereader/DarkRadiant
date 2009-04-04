@@ -352,6 +352,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\ShaderLayer.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\stream_version.h"
 			>
 		</File>
