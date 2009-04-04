@@ -80,7 +80,7 @@ public:
 	 * model selector but not the main renderer, which uses the front-end render
 	 * method.
 	 */
-	void render(RenderStateFlags flags) const;
+	void render(const RenderInfo& info) const;
 
 	/** 
 	 * Return the number of surfaces in this model.

@@ -18,7 +18,7 @@ public:
 		_ray(ray)
 	{}
 
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		arrow_draw(_ray.origin, _ray.direction);
 	}
 };

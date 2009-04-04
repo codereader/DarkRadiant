@@ -217,7 +217,7 @@ public:
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 
-	void render(RenderStateFlags state) const;
+	void render(const RenderInfo& info) const;
 
 	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 	const AABB& localAABB() const;

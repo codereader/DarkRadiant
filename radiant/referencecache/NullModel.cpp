@@ -89,11 +89,13 @@ const std::vector<std::string>& NullModel::getActiveMaterials() const {
 	return _dummyMaterials;
 }
 
-void NullModel::render(RenderStateFlags state) const {
-	if (state & RENDER_TEXTURE_2D) {
-		aabb_draw_solid(_aabbLocal, state);
+void NullModel::render(const RenderInfo& info) const {
+	if (info.checkFlag(RENDER_TEXTURE_2D)) 
+    {
+		aabb_draw_solid(_aabbLocal, info.getFlags());
 	}
-	else {
+	else 
+    {
 		aabb_draw_wire(_aabbLocal);
 	}
 }

@@ -81,7 +81,7 @@ public:
 	}
 	
 	// GL render function (backend)
-  	virtual void render(RenderStateFlags state) const {
+  	virtual void render(const RenderInfo& info) const {
 		// Draw the center point
 	    glBegin(GL_POINTS);
 	    glColor3dv(_colour);

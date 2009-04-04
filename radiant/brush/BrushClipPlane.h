@@ -29,9 +29,9 @@ public:
 		m_winding.updateNormals(m_plane.normal());
 	}
 
-	void render(RenderStateFlags state) const {
-		if ((state & RENDER_FILL) != 0) {
-			m_winding.draw(state);
+	void render(const RenderInfo& info) const {
+		if (info.checkFlag(RENDER_FILL)) {
+			m_winding.draw(info.getFlags());
 		}
 		else {
 			m_winding.drawWireframe();

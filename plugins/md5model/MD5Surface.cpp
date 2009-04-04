@@ -57,11 +57,14 @@ void MD5Surface::updateGeometry() {
 }
 
 // Back-end render
-void MD5Surface::render(RenderStateFlags state) const {
-	if (state & RENDER_BUMP) {
+void MD5Surface::render(const RenderInfo& info) const 
+{
+	if (info.checkFlag(RENDER_BUMP)) 
+    {
 		glCallList(_lightingList);
 	}
-	else {
+	else 
+    {
 		glCallList(_normalList);
 	}
 }

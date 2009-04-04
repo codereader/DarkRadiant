@@ -48,7 +48,7 @@ public:
   	}
   
 	// GL render function
-  	virtual void render(RenderStateFlags state) const {
+  	virtual void render(const RenderInfo& info) const {
 		Vector3 centreWorld = _localCentre + _worldOrigin;
 			
 	    // Draw the center point
@@ -96,7 +96,7 @@ public:
   	~RenderableLightRelative() {}
   	
   	// GL render function
-  	void render(RenderStateFlags state) const {
+  	void render(const RenderInfo& info) const {
   		Vector3 centreWorld = _worldOrigin + _target + _relative;
 		
 	    // Draw the center point

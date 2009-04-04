@@ -547,7 +547,7 @@ void normalquantisation_draw()
 class RenderableNormalQuantisation : public OpenGLRenderable
 {
 public:
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
     normalquantisation_draw();
   }

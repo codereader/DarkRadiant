@@ -150,9 +150,9 @@ void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii rad)
 
 namespace entity {
 
-void RenderSpeakerRadii::render(RenderStateFlags state) const {
+void RenderSpeakerRadii::render(const RenderInfo& info) const {
 	//draw the radii of speaker based on speaker shader/radii keys
-	if((state & RENDER_FILL) != 0) {
+	if(info.checkFlag(RENDER_FILL)) {
 		speakerDrawRadiiFill(m_origin, m_radii);
 	}
 	else {

@@ -100,7 +100,7 @@ public:
     : m_named(named), m_position(position)
   {
   }
-  void render(RenderStateFlags state) const
+  void render(const RenderInfo& info) const
   {
     glRasterPos3dv(m_position);
     GlobalOpenGL().drawString(m_named.name());

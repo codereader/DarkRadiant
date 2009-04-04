@@ -98,7 +98,7 @@ public:
 	/** 
 	 * Render function from OpenGLRenderable
 	 */
-	void render(RenderStateFlags flags) const;
+	void render(const RenderInfo& info) const;
 	
 	/** Return the vertex count for this surface
 	 */

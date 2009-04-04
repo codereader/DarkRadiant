@@ -78,7 +78,7 @@ public:
 	void applySkin(const ModelSkin& skin);
 
     // Back-end render function
-    void render(RenderStateFlags state) const;
+    void render(const RenderInfo& info) const;
 
 	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 

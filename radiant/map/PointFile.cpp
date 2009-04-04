@@ -72,7 +72,7 @@ void PointFile::show(bool show) {
 /*
  * OpenGL render function (back-end).
  */
-void PointFile::render(RenderStateFlags state) const {
+void PointFile::render(const RenderInfo& info) const {
 	glCallList(_displayList);
 }
 

@@ -9,7 +9,7 @@ namespace ui
 
 // OpenGL render function
 
-void RenderableAABB::render(RenderStateFlags flags) const {
+void RenderableAABB::render(const RenderInfo& info) const {
 
 	// Wireframe cuboid
 	glBegin(GL_LINES);

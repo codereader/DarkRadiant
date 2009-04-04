@@ -109,7 +109,7 @@ public:
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
 	
-	void render(RenderStateFlags state) const;
+	void render(const RenderInfo& info) const;
 
 	void undoSave();
 

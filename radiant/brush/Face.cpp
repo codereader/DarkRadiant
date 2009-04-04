@@ -90,8 +90,8 @@ void Face::instanceDetach(MapFile* map) {
 	_faceShader.setInUse(false);
 }
 
-void Face::render(RenderStateFlags state) const {
-	m_winding.draw(state);
+void Face::render(const RenderInfo& info) const {
+	m_winding.draw(info.getFlags());
 }
 
 void Face::undoSave() {

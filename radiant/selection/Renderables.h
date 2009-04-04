@@ -13,7 +13,7 @@ struct RenderableCircle : public OpenGLRenderable {
 
 	RenderableCircle(std::size_t size) : _vertices(size) {}
     
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_vertices.data()->colour);
 		glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &_vertices.data()->vertex);
 		glDrawArrays(GL_LINE_LOOP, 0, GLsizei(_vertices.size()));
@@ -32,7 +32,7 @@ struct RenderableSemiCircle : public OpenGLRenderable {
 
 	RenderableSemiCircle(std::size_t size) : _vertices(size) {}
     
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_vertices.data()->colour);
 		glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &_vertices.data()->vertex);
 		glDrawArrays(GL_LINE_STRIP, 0, GLsizei(_vertices.size()));
@@ -51,7 +51,7 @@ struct RenderableArrowLine : public OpenGLRenderable {
 
 	RenderableArrowLine() {}
     
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_line[0].colour);
 		glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &_line[0].vertex);
 		glDrawArrays(GL_LINES, 0, 2);
@@ -69,7 +69,7 @@ struct RenderableArrowHead : public OpenGLRenderable  {
 
 	RenderableArrowHead(std::size_t size): _vertices(size) {}
     
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(FlatShadedVertex), &_vertices.data()->colour);
 		glVertexPointer(3, GL_DOUBLE, sizeof(FlatShadedVertex), &_vertices.data()->vertex);
 		glNormalPointer(GL_DOUBLE, sizeof(FlatShadedVertex), &_vertices.data()->normal);
@@ -87,7 +87,7 @@ struct RenderableArrowHead : public OpenGLRenderable  {
 struct RenderableQuad : public OpenGLRenderable {
 	PointVertex _quad[4];
 	
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_quad[0].colour);
 		glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &_quad[0].vertex);
 		glDrawArrays(GL_LINE_LOOP, 0, 4);
@@ -105,7 +105,7 @@ struct RenderableQuad : public OpenGLRenderable {
 struct RenderableArrow : public OpenGLRenderable {
 	PointVertex _line[2];
 
-	void render(RenderStateFlags state) const {
+	void render(const RenderInfo& info) const {
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_line[0].colour);
 		glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &_line[0].vertex);
 		glDrawArrays(GL_LINES, 0, 2);
