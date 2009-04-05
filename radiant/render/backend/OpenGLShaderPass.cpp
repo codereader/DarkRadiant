@@ -162,9 +162,31 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
     }
 }
 
+// Set up cube map
+void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
+                                             unsigned requiredState)
+{
+    if (requiredState & RENDER_TEXTURE_CUBEMAP)
+    {
+        // Copy cubemap mode enum to current state object
+        current.cubeMapMode = _state.cubeMapMode;
+
+        // Apply axis transformation to the texture matrix
+        Matrix4 transform(
+            1, 0, 0, 0,
+            0, 0,-1, 0,
+            0, 1, 0, 0,
+            0, 0, 0, 1
+        );
+        glMatrixMode(GL_TEXTURE);
+        glMultMatrixd(transform);
+        glMatrixMode(GL_MODELVIEW);
+    }
+}
+
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
-					              unsigned int globalStateMask) 
+					              unsigned int globalStateMask)
 {
   if(_state.renderFlags & RENDER_OVERRIDE)
   {
@@ -373,12 +395,8 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         GlobalOpenGL_debugAssertNoErrors();
     }
 
-    // Copy over the cube map mode, but only if RENDER_TEXTURE_CUBEMAP was
-    // enabled
-    if (requiredState & RENDER_TEXTURE_CUBEMAP)
-    {
-        current.cubeMapMode = _state.cubeMapMode;
-    }
+    // Set up the cubemap and texgen parameters
+    setUpCubeMapAndTexGen(current, requiredState);
 
   if(requiredState & RENDER_BLEND
     && (_state.m_blend_src != current.m_blend_src || _state.m_blend_dst != current.m_blend_dst))
@@ -433,43 +451,51 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 
 // Render the bucket contents
 void OpenGLShaderPass::render(OpenGLState& current, 
-							   unsigned int flagsMask, 
-							   const Vector3& viewer)
+                              unsigned int flagsMask, 
+                              const Vector3& viewer)
 {
+    // Reset the texture matrix
+    glMatrixMode(GL_TEXTURE);
+    glLoadMatrixd(Matrix4::getIdentity());
+    glMatrixMode(GL_MODELVIEW);
+
 	// Apply our state to the current state object
 	applyState(current, flagsMask);
 	
-  if((flagsMask & _state.renderFlags & RENDER_SCREEN) != 0)
-  {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadMatrixd(Matrix4::getIdentity());
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadMatrixd(Matrix4::getIdentity());
-
-    glBegin(GL_QUADS);
-    glVertex3f(-1, -1, 0);
-    glVertex3f(1, -1, 0);
-    glVertex3f(1, 1, 0);
-    glVertex3f(-1, 1, 0);
-    glEnd();
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-  }
-	else if(!_renderables.empty()) {
-		flushRenderables(current, viewer);
+    // If RENDER_SCREEN is set, just render a quad, otherwise render all
+    // objects.
+    if((flagsMask & _state.renderFlags & RENDER_SCREEN) != 0)
+    {
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadMatrixd(Matrix4::getIdentity());
+        
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadMatrixd(Matrix4::getIdentity());
+        
+        glBegin(GL_QUADS);
+        glVertex3f(-1, -1, 0);
+        glVertex3f(1, -1, 0);
+        glVertex3f(1, 1, 0);
+        glVertex3f(-1, 1, 0);
+        glEnd();
+        
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        
+        glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+    }
+	else if(!_renderables.empty()) 
+    {
+		renderAllContained(current, viewer);
 	}
 }
 
 // Flush renderables
-void OpenGLShaderPass::flushRenderables(OpenGLState& current,
-                                        const Vector3& viewer)
+void OpenGLShaderPass::renderAllContained(OpenGLState& current,
+                                          const Vector3& viewer)
 {
 	// Keep a pointer to the last transform matrix used
 	const Matrix4* transform = 0;
