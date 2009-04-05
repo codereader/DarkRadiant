@@ -965,11 +965,11 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\radiant\render\OpenGLShaderCache.cpp">
+		<Unit filename="..\..\radiant\render\OpenGLRenderSystem.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\radiant\render\OpenGLShaderCache.h">
+		<Unit filename="..\..\radiant\render\OpenGLRenderSystem.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
