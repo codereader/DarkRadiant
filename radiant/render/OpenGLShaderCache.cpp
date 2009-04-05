@@ -296,19 +296,22 @@ void OpenGLShaderCache::changed(LightCullable& cullable) {
 	i->second.lightsChanged();
 }
 
-void OpenGLShaderCache::attach(RendererLight& light) {
+void OpenGLShaderCache::attachLight(RendererLight& light) 
+{
     ASSERT_MESSAGE(m_lights.find(&light) == m_lights.end(), "light could not be attached");
     m_lights.insert(&light);
-    changed(light);
+    lightChanged(light);
 }
 
-void OpenGLShaderCache::detach(RendererLight& light) {
+void OpenGLShaderCache::detachLight(RendererLight& light) 
+{
     ASSERT_MESSAGE(m_lights.find(&light) != m_lights.end(), "light could not be detached");
     m_lights.erase(&light);
-    changed(light);
+    lightChanged(light);
 }
 
-void OpenGLShaderCache::changed(RendererLight& light) {
+void OpenGLShaderCache::lightChanged(RendererLight& light) 
+{
     m_lightsChanged = true;
 }
 

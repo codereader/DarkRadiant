@@ -81,9 +81,10 @@ public:
 	void detach(LightCullable& cullable);
 	void changed(LightCullable& cullable);
 	
-	void attach(RendererLight& light);
-	void detach(RendererLight& light);
-	void changed(RendererLight& light);
+    // Attach and detach light sources
+	void attachLight(RendererLight& light);
+	void detachLight(RendererLight& light);
+	void lightChanged(RendererLight& light);
 
 	void evaluateChanged();
 	typedef MemberCaller<OpenGLShaderCache, &OpenGLShaderCache::evaluateChanged> EvaluateChangedCaller;
