@@ -109,7 +109,7 @@ public:
 	 * Render all Shaders.
 	 */
 	void render(const Matrix4& modelView, const Matrix4& projection) {
-		GlobalShaderCache().render(
+		GlobalRenderSystem().render(
 				_globalState, modelView, projection, _viewer
 		);
 	}

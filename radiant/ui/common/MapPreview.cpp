@@ -144,8 +144,8 @@ void MapPreview::initialisePreview() {
 	// Calculate camera distance so model is appropriately zoomed
 	_camDist = -(20 * 2.0); 
 
-	_stateSelect1 = GlobalShaderCache().capture("$CAM_HIGHLIGHT");
-	_stateSelect2 = GlobalShaderCache().capture("$CAM_OVERLAY");
+	_stateSelect1 = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
+	_stateSelect2 = GlobalRenderSystem().capture("$CAM_OVERLAY");
 }
 
 void MapPreview::draw() {
@@ -195,7 +195,7 @@ void MapPreview::draw() {
 	Node_traverseSubgraph(_root, walker);
 	
 	// Submit renderables directly attached to the ShaderCache
-	GlobalShaderCache().forEachRenderable(
+	GlobalRenderSystem().forEachRenderable(
 		RenderHighlighted::RenderCaller(RenderHighlighted(renderer, view)));
 
 	renderer.render(view.modelView, view.projection);

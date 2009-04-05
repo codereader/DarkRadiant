@@ -79,7 +79,7 @@ public:
 
   void render(const Matrix4& modelview, const Matrix4& projection)
   {
-    GlobalShaderCache().render(m_globalstate, modelview, projection, m_viewer);
+    GlobalRenderSystem().render(m_globalstate, modelview, projection, m_viewer);
   }
 }; // class CamRenderer
 

@@ -198,7 +198,7 @@ GtkWindow* XYWnd::getParent() const {
 }
 
 void XYWnd::captureStates() {
-	_selectedShader = GlobalShaderCache().capture("$XY_OVERLAY");
+	_selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
 }
 
 void XYWnd::releaseStates() {

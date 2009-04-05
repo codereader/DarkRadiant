@@ -363,8 +363,8 @@ public:
 	// Initialise the static member variables of this class, called from >> patchmodule.cpp
 	static void constructStatic(EPatchType type) {
 		Patch::m_type = type;
-		Patch::m_state_ctrl = GlobalShaderCache().capture("$POINT");
-		Patch::m_state_lattice = GlobalShaderCache().capture("$LATTICE");
+		Patch::m_state_ctrl = GlobalRenderSystem().capture("$POINT");
+		Patch::m_state_lattice = GlobalRenderSystem().capture("$LATTICE");
 	}
 
 	// Release the static member variables of this class, called from >> patchmodule.cpp

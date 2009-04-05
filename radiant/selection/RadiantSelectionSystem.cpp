@@ -727,13 +727,13 @@ const Matrix4& RadiantSelectionSystem::GetPivot2World() const {
 }
 
 void RadiantSelectionSystem::constructStatic() {
-	_state = GlobalShaderCache().capture("$POINT");
+	_state = GlobalRenderSystem().capture("$POINT");
 #if defined(DEBUG_SELECTION)
-	g_state_clipped = GlobalShaderCache().capture("$DEBUG_CLIPPED");
+	g_state_clipped = GlobalRenderSystem().capture("$DEBUG_CLIPPED");
 #endif
-	TranslateManipulator::_stateWire = GlobalShaderCache().capture("$WIRE_OVERLAY");
-	TranslateManipulator::_stateFill = GlobalShaderCache().capture("$FLATSHADE_OVERLAY");
-	RotateManipulator::_stateOuter = GlobalShaderCache().capture("$WIRE_OVERLAY");
+	TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
+	TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
+	RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 }
 
 void RadiantSelectionSystem::destroyStatic() {
@@ -940,7 +940,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
 	static StringSet _dependencies;
 	
 	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_GRID);
@@ -969,7 +969,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 		PivotChangedCaller(*this)
 	);
 
-	GlobalShaderCache().attachRenderable(*this);
+	GlobalRenderSystem().attachRenderable(*this);
 }
 
 void RadiantSelectionSystem::shutdownModule() {
@@ -978,7 +978,7 @@ void RadiantSelectionSystem::shutdownModule() {
 	setSelectedAll(false);
 	setSelectedAllComponents(false);
 
-	GlobalShaderCache().detachRenderable(*this);
+	GlobalRenderSystem().detachRenderable(*this);
 	GlobalSceneGraph().removeBoundsChangedCallback(_boundsChangedHandler);
 	
 	destroyStatic();

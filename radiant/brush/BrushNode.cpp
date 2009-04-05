@@ -17,7 +17,7 @@ BrushNode::BrushNode() :
 	m_viewChanged(false)
 {
 	m_brush.attach(*this); // BrushObserver
-	m_lightList = &GlobalShaderCache().attach(*this);
+	m_lightList = &GlobalRenderSystem().attach(*this);
 
 	m_brush.m_lightsChanged = LightsChangedCaller(*this);
 
@@ -54,11 +54,11 @@ BrushNode::BrushNode(const BrushNode& other) :
 	m_viewChanged(false)
 {
 	m_brush.attach(*this); // BrushObserver
-	m_lightList = &GlobalShaderCache().attach(*this);
+	m_lightList = &GlobalRenderSystem().attach(*this);
 }
 
 BrushNode::~BrushNode() {
-	GlobalShaderCache().detach(*this);
+	GlobalRenderSystem().detach(*this);
 	m_brush.detach(*this); // BrushObserver
 }
 
@@ -281,7 +281,7 @@ void BrushNode::uninstantiate(const scene::Path& path) {
 }
 
 void BrushNode::constructStatic() {
-	m_state_selpoint = GlobalShaderCache().capture("$SELPOINT");
+	m_state_selpoint = GlobalRenderSystem().capture("$SELPOINT");
 }
 
 void BrushNode::destroyStatic() {

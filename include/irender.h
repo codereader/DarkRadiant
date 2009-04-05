@@ -268,15 +268,23 @@ public:
  */
 typedef boost::shared_ptr<Shader> ShaderPtr;
 
-const std::string MODULE_SHADERCACHE("ShaderCache");
+const std::string MODULE_RENDERSYSTEM("ShaderCache");
 
-class ShaderCache :
-	public RegisterableModule
+/**
+ * \brief
+ * The main interface for the backend renderer.
+ */
+class RenderSystem
+: public RegisterableModule
 {
 public:
-	/** Capture the given shader, increasing its reference count and
-	 * returning a pointer to the Shader object. The object must be freed
-	 * after use by calling release().
+
+	/** 
+     * \brief
+     * Capture the given shader, increasing its reference count and
+	 * returning a pointer to the Shader object.
+     *
+     * The object must be freed after use by calling release().
 	 * 
 	 * @param name
 	 * The name of the shader to capture.
@@ -287,8 +295,32 @@ public:
 	 
 	virtual ShaderPtr capture(const std::string& name) = 0;
 
-  /*! Render all Shader objects. */
-  virtual void render(RenderStateFlags globalstate, const Matrix4& modelview, const Matrix4& projection, const Vector3& viewer = Vector3(0, 0, 0)) = 0;
+    /**
+     * \brief
+     * Main render method.
+     *
+     * This method traverses all of the OpenGLRenderable objects that have been
+     * submitted to Shader instances, and invokes their render() method to draw
+     * their geometry.
+     *
+     * \param globalFlagsMask
+     * The mask of render flags which are permitted during this render pass. Any
+     * render flag which is 0 in this mask will not be enabled during rendering,
+     * even if the particular shader requests it.
+     *
+     * \param modelview
+     * The modelview transformation matrix to apply before rendering.
+     *
+     * \param projection
+     * The view projection matrix to apply before rendering.
+     *
+     * \param viewer
+     * Location of the viewer in world space.
+     */
+    virtual void render(RenderStateFlags globalFlagsMask,
+                        const Matrix4& modelview,
+                        const Matrix4& projection,
+                        const Vector3& viewer = Vector3(0, 0, 0)) = 0;
 
   virtual void realise() = 0;
   virtual void unrealise() = 0;
@@ -321,14 +353,19 @@ public:
     virtual void extensionsInitialised() = 0;
 };
 
-inline ShaderCache& GlobalShaderCache() {
+/**
+ * \brief
+ * Global accessor method for the RenderSystem instance.
+ */
+inline RenderSystem& GlobalRenderSystem() 
+{
 	// Cache the reference locally
-	static ShaderCache& _shaderCache(
-		*boost::static_pointer_cast<ShaderCache>(
-			module::GlobalModuleRegistry().getModule(MODULE_SHADERCACHE)
+	static RenderSystem& _instance(
+		*boost::static_pointer_cast<RenderSystem>(
+			module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)
 		)
 	);
-	return _shaderCache;
+	return _instance;
 }
 
 #endif

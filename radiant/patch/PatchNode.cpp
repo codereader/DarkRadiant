@@ -18,7 +18,7 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_render_selected(GL_POINTS)
 {
 	m_patch.m_patchDef3 = patchDef3;
-	m_lightList = &GlobalShaderCache().attach(*this);
+	m_lightList = &GlobalRenderSystem().attach(*this);
 
 	m_patch.m_lightsChanged = LightsChangedCaller(*this);
 
@@ -57,7 +57,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_dragPlanes(SelectedChangedComponentCaller(*this)),
 	m_render_selected(GL_POINTS)
 {
-	m_lightList = &GlobalShaderCache().attach(*this);
+	m_lightList = &GlobalRenderSystem().attach(*this);
 
 	m_patch.m_lightsChanged = LightsChangedCaller(*this);
 
@@ -69,7 +69,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 PatchNode::~PatchNode() {
 	m_patch.detach(this); // Patch::Observer
 
-	GlobalShaderCache().detach(*this);
+	GlobalRenderSystem().detach(*this);
 }
 
 void PatchNode::allocate(std::size_t size) {
@@ -310,7 +310,7 @@ bool PatchNode::testLight(const RendererLight& light) const {
 }
 
 void PatchNode::constructStatic() {
-	m_state_selpoint = GlobalShaderCache().capture("$SELPOINT");
+	m_state_selpoint = GlobalRenderSystem().capture("$SELPOINT");
 }
 
 void PatchNode::destroyStatic() {

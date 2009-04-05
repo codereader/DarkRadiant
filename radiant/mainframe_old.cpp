@@ -665,13 +665,13 @@ void RefreshShaders(const cmd::ArgumentList& args) {
 	ui::ScreenUpdateBlocker blocker("Processing...", "Loading Shaders");
 	
 	// Destroy all the OpenGLShader objects
-	GlobalShaderCache().unrealise();
+	GlobalRenderSystem().unrealise();
 	
 	// Reload the Shadersystem
 	GlobalShaderSystem().refresh();
 	
 	// Now realise the OpenGLShader objects again
-	GlobalShaderCache().realise();
+	GlobalRenderSystem().realise();
 	
 	ui::MediaBrowser::getInstance().reloadMedia();
 	GlobalMainFrame().updateAllWindows();

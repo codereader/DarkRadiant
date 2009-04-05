@@ -11,7 +11,7 @@ namespace model {
 PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :  
 	_picoModel(picoModel),
 	_name(picoModel->getFilename()),
-	_lightList(GlobalShaderCache().attach(*this))
+	_lightList(GlobalRenderSystem().attach(*this))
 {
 	Node::setTransformChangedCallback(LightsChangedCaller(*this));
 
@@ -20,7 +20,7 @@ PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
 }
 
 PicoModelNode::~PicoModelNode() {
-	GlobalShaderCache().detach(*this);
+	GlobalRenderSystem().detach(*this);
 }
 
 const IModel& PicoModelNode::getIModel() const {
@@ -160,7 +160,7 @@ void PicoModelNode::skinChanged(const std::string& newSkinName) {
 		_mappedSurfs.push_back(
 			std::make_pair(
 				*i,
-				GlobalShaderCache().capture(mapped)
+				GlobalRenderSystem().capture(mapped)
 			)
 		);
 	}

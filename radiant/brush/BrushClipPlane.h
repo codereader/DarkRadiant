@@ -12,7 +12,7 @@ class BrushClipPlane : public OpenGLRenderable {
 	static ShaderPtr m_state;
 public:
 	static void constructStatic() {
-		m_state = GlobalShaderCache().capture("$CLIPPER_OVERLAY");
+		m_state = GlobalRenderSystem().capture("$CLIPPER_OVERLAY");
 	}
 	static void destroyStatic() {
 		m_state = ShaderPtr();

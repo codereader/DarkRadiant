@@ -68,7 +68,7 @@ public:
      * parameters it uses.
 	 * 
 	 * @param viewer
-	 * Location of the viewer in 3D space.
+	 * Location of the viewer in object space.
 	 * 
 	 * @param localToWorld
 	 * Local to world transformation matrix.

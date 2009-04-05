@@ -99,7 +99,7 @@ public:
     {
       if(info.checkFlag(RENDER_BUMP))
       {
-        /*if(GlobalShaderCache().useShaderLanguage())
+        /*if(GlobalRenderSystem().useShaderLanguage())
         {
           glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->normal);
           glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.m_vertices.data()->texcoord);

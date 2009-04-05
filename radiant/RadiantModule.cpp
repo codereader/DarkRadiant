@@ -210,7 +210,7 @@ const StringSet& RadiantModule::getDependencies() const {
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_ECLASSMANAGER);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
-		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_CLIPPER);
 		_dependencies.insert(MODULE_UIMANAGER);
 	}

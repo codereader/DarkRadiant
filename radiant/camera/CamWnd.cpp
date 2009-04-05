@@ -776,8 +776,8 @@ Camera& CamWnd::getCamera() {
 }
 
 void CamWnd::captureStates() {
-	m_state_select1 = GlobalShaderCache().capture("$CAM_HIGHLIGHT");
-	m_state_select2 = GlobalShaderCache().capture("$CAM_OVERLAY");
+	m_state_select1 = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
+	m_state_select2 = GlobalRenderSystem().capture("$CAM_OVERLAY");
 }
 
 void CamWnd::releaseStates() {

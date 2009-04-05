@@ -22,12 +22,12 @@ PointFile::PointFile() :
 	_curPos(_points.begin()), 
 	_displayList(0)
 {
-	_renderstate = GlobalShaderCache().capture("$POINTFILE");
-	GlobalShaderCache().attachRenderable(*this);
+	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
+	GlobalRenderSystem().attachRenderable(*this);
 }
 
 void PointFile::destroy() {
-	GlobalShaderCache().detachRenderable(*this);
+	GlobalRenderSystem().detachRenderable(*this);
 	_renderstate = ShaderPtr();
 }
 

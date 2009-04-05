@@ -140,7 +140,7 @@ void MD5Surface::testSelect(Selector& selector,
 }
 
 void MD5Surface::captureShader() {
-	_shader = GlobalShaderCache().capture(_shaderName);
+	_shader = GlobalRenderSystem().capture(_shaderName);
 }
 
 MD5Surface::vertices_t& MD5Surface::vertices() {
