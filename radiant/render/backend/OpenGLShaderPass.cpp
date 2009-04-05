@@ -171,10 +171,11 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
         // Copy cubemap mode enum to current state object
         current.cubeMapMode = _state.cubeMapMode;
 
-        // Apply axis transformation to the texture matrix
+        // Apply axis transformation to the texture matrix (swaps Y and Z
+        // coordinates)
         Matrix4 transform(
             1, 0, 0, 0,
-            0, 0,-1, 0,
+            0, 0, 1, 0,
             0, 1, 0, 0,
             0, 0, 0, 1
         );
