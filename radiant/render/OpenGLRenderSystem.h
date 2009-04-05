@@ -21,9 +21,13 @@ typedef std::map<OpenGLStateReference,
 
 namespace render {
 
-class OpenGLShaderCache : 
-	public RenderSystem, 
-	public ModuleObserver
+/**
+ * \brief
+ * Implementation of RenderSystem.
+ */
+class OpenGLRenderSystem 
+: public RenderSystem, 
+  public ModuleObserver
 {
 	// Map of named Shader objects
 	typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
@@ -41,10 +45,11 @@ class OpenGLShaderCache :
 	OpenGLStates _state_sorted;
 
 public:
+
 	/**
 	 * Main constructor.
 	 */
-	OpenGLShaderCache();
+	OpenGLRenderSystem();
 	
 	/* Capture the given shader.
 	 */
@@ -87,7 +92,7 @@ public:
 	void lightChanged(RendererLight& light);
 
 	void evaluateChanged();
-	typedef MemberCaller<OpenGLShaderCache, &OpenGLShaderCache::evaluateChanged> EvaluateChangedCaller;
+	typedef MemberCaller<OpenGLRenderSystem, &OpenGLRenderSystem::evaluateChanged> EvaluateChangedCaller;
 
 	typedef std::set<const Renderable*> Renderables; 
 	Renderables m_renderables;
@@ -110,7 +115,7 @@ public:
 };
 
 // Accessor method to the Singleton module
-OpenGLShaderCache& getOpenGLShaderCache();
+OpenGLRenderSystem& getOpenGLRenderSystem();
 
 } // namespace render
 
