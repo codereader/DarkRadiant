@@ -24,7 +24,7 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
-	GlobalRenderSystem().attach(*this);
+	GlobalRenderSystem().attachLight(*this);
 }
 
 LightNode::LightNode(const LightNode& other) :
@@ -63,11 +63,11 @@ LightNode::LightNode(const LightNode& other) :
 
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
-	GlobalRenderSystem().attach(*this);
+	GlobalRenderSystem().attachLight(*this);
 }
 
 LightNode::~LightNode() {
-	GlobalRenderSystem().detach(*this);
+	GlobalRenderSystem().detachLight(*this);
 	_light.setLightChangedCallback(Callback());
 
 	TargetableNode::destruct();
@@ -95,7 +95,7 @@ AABB LightNode::getSelectAABB() {
 * something like that.
 */ 
 void LightNode::lightChanged() {
-	GlobalRenderSystem().changed(*this);
+	GlobalRenderSystem().lightChanged(*this);
 }
 
 // TransformNode implementation

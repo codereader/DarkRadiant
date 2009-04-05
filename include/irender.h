@@ -68,6 +68,10 @@ template<typename Element> class BasicVector3;
 
 class Shader;
 
+/**
+ * \brief
+ * Interface for a light source in the renderer.
+ */
 class RendererLight
 {
 public:
@@ -88,6 +92,22 @@ public:
 };
 typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 
+/**
+ * \brief
+ * Interface for an object which can test its intersection with a RendererLight.
+ *
+ * Objects which implement this interface define a testLight() function which
+ * determines whether the given light intersects the object. They also provide
+ * methods to allow the renderer to provide the list of lights which will be
+ * illuminating the object, subsequent to the intersection test.
+ *
+ * \todo
+ * This interface seems to exist because of the design decision that lit objects
+ * should maintain a list of lights which illuminate them. This is a poor
+ * design because this should be the responsibility of the renderer. When the
+ * renderer is refactored to process the scene light-by-light this class will
+ * not be necessary.
+ */
 class LightCullable
 {
 public:
@@ -341,9 +361,24 @@ public:
   virtual const LightList& attach(LightCullable& cullable) = 0;
   virtual void detach(LightCullable& cullable) = 0;
   virtual void changed(LightCullable& cullable) = 0;
-  virtual void attach(RendererLight& light) = 0;
-  virtual void detach(RendererLight& light) = 0;
-  virtual void changed(RendererLight& light) = 0;
+
+    /**
+     * \brief
+     * Attach a light source to the renderer.
+     */
+    virtual void attachLight(RendererLight& light) = 0;
+
+    /**
+     * \brief
+     * Detach a light source from the renderer.
+     */
+    virtual void detachLight(RendererLight& light) = 0;
+
+    /**
+     * \brief
+     * Indicate that the given light source has been modified.
+     */
+    virtual void lightChanged(RendererLight& light) = 0;
 
   virtual void attachRenderable(const Renderable& renderable) = 0;
   virtual void detachRenderable(const Renderable& renderable) = 0;
