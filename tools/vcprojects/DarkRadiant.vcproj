@@ -1204,11 +1204,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\render\OpenGLShaderCache.cpp"
+					RelativePath="..\..\radiant\render\OpenGLRenderSystem.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\render\OpenGLShaderCache.h"
+					RelativePath="..\..\radiant\render\OpenGLRenderSystem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\render\RenderStatistics.h"
 					>
 				</File>
 				<Filter
