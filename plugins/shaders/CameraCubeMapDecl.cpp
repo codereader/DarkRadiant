@@ -79,10 +79,10 @@ TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
         // Bind the images
         bindDirection("_right", GL_TEXTURE_CUBE_MAP_POSITIVE_X);
         bindDirection("_left", GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
-        bindDirection("_up", GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
-        bindDirection("_down", GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
-        bindDirection("_forward", GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
-        bindDirection("_back", GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+        bindDirection("_forward", GL_TEXTURE_CUBE_MAP_POSITIVE_Y);
+        bindDirection("_back", GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
+        bindDirection("_up", GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
+        bindDirection("_down", GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
 
         std::cout << "[shaders] bound cubemap texture " << texnum << std::endl;
 
