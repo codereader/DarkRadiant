@@ -159,7 +159,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 		++i)
 	{
 		// Render the OpenGLShaderPass
-		i->second->render(current, globalstate, viewer);
+        i->second->render(current, globalstate, viewer);
 	}
 }
 	
@@ -389,10 +389,10 @@ void OpenGLRenderSystem::shutdownModule() {
 }
 
 // Define the static ShaderCache module
-module::StaticModule<OpenGLRenderSystem> openGLShaderCacheModule;
+module::StaticModule<OpenGLRenderSystem> openGLRenderSystemModule;
 
 OpenGLRenderSystem& getOpenGLRenderSystem() {
-	return *openGLShaderCacheModule.getModule();
+	return *openGLRenderSystemModule.getModule();
 }
 
 } // namespace render

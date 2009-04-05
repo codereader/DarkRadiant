@@ -104,9 +104,12 @@ void Winding::render(const RenderInfo& info) const
 			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
 		}
 
+        // Set texture coordinates
 		if (info.checkFlag(RENDER_TEXTURE_2D)) 
         {
-			glTexCoordPointer(2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord);
+            glTexCoordPointer(
+                2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord
+            );
 		}
 	}
 	
