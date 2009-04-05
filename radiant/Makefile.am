@@ -50,7 +50,7 @@ darkradiant_SOURCES = main.cpp \
 					  render/backend/GLProgramFactory.cpp \
 					  render/backend/OpenGLShaderPass.cpp \
 					  render/OpenGLModule.cpp \
-					  render/OpenGLShaderCache.cpp \
+					  render/OpenGLRenderSystem.cpp \
 					  ui/entitychooser/EntityClassChooser.cpp \
 					  ui/entitychooser/EntityClassTreePopulator.cpp \
 					  ui/texturebrowser/TextureBrowser.cpp \

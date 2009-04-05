@@ -1,7 +1,7 @@
 #include "OpenGLShader.h"
 #include "GLProgramFactory.h"
 #include "OpenGLStateBucketAdd.h"
-#include "render/OpenGLShaderCache.h"
+#include "render/OpenGLRenderSystem.h"
 
 #include "iuimanager.h"
 #include "ishaders.h"
@@ -73,7 +73,7 @@ void OpenGLShader::realise(const std::string& name)
     }
     
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i) {
-    	render::getOpenGLShaderCache().insertSortedState(
+    	render::getOpenGLRenderSystem().insertSortedState(
 			OpenGLStates::value_type(OpenGLStateReference((*i)->state()), 
 									 *i));
     }
@@ -85,7 +85,7 @@ void OpenGLShader::unrealise() {
     m_observers.unrealise();
 
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i) {
-    	render::getOpenGLShaderCache().eraseSortedState(
+    	render::getOpenGLRenderSystem().eraseSortedState(
     		OpenGLStateReference((*i)->state())
     	);
     }

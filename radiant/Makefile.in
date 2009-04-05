@@ -75,7 +75,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-GLProgramFactory.$(OBJEXT) \
 	darkradiant-OpenGLShaderPass.$(OBJEXT) \
 	darkradiant-OpenGLModule.$(OBJEXT) \
-	darkradiant-OpenGLShaderCache.$(OBJEXT) \
+	darkradiant-OpenGLRenderSystem.$(OBJEXT) \
 	darkradiant-EntityClassChooser.$(OBJEXT) \
 	darkradiant-EntityClassTreePopulator.$(OBJEXT) \
 	darkradiant-TextureBrowser.$(OBJEXT) \
@@ -428,7 +428,7 @@ darkradiant_SOURCES = main.cpp \
 					  render/backend/GLProgramFactory.cpp \
 					  render/backend/OpenGLShaderPass.cpp \
 					  render/OpenGLModule.cpp \
-					  render/OpenGLShaderCache.cpp \
+					  render/OpenGLRenderSystem.cpp \
 					  ui/entitychooser/EntityClassChooser.cpp \
 					  ui/entitychooser/EntityClassTreePopulator.cpp \
 					  ui/texturebrowser/TextureBrowser.cpp \
@@ -760,8 +760,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-NullModel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-NullModelNode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLModule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLRenderSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShaderCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OpenGLShaderPass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-OrthoContextMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Overlay.Po@am__quote@
@@ -1323,19 +1323,19 @@ darkradiant-OpenGLModule.obj: render/OpenGLModule.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLModule.obj `if test -f 'render/OpenGLModule.cpp'; then $(CYGPATH_W) 'render/OpenGLModule.cpp'; else $(CYGPATH_W) '$(srcdir)/render/OpenGLModule.cpp'; fi`
 
-darkradiant-OpenGLShaderCache.o: render/OpenGLShaderCache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLShaderCache.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLShaderCache.Tpo -c -o darkradiant-OpenGLShaderCache.o `test -f 'render/OpenGLShaderCache.cpp' || echo '$(srcdir)/'`render/OpenGLShaderCache.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLShaderCache.Tpo $(DEPDIR)/darkradiant-OpenGLShaderCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/OpenGLShaderCache.cpp' object='darkradiant-OpenGLShaderCache.o' libtool=no @AMDEPBACKSLASH@
+darkradiant-OpenGLRenderSystem.o: render/OpenGLRenderSystem.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLRenderSystem.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLRenderSystem.Tpo -c -o darkradiant-OpenGLRenderSystem.o `test -f 'render/OpenGLRenderSystem.cpp' || echo '$(srcdir)/'`render/OpenGLRenderSystem.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLRenderSystem.Tpo $(DEPDIR)/darkradiant-OpenGLRenderSystem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/OpenGLRenderSystem.cpp' object='darkradiant-OpenGLRenderSystem.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLShaderCache.o `test -f 'render/OpenGLShaderCache.cpp' || echo '$(srcdir)/'`render/OpenGLShaderCache.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLRenderSystem.o `test -f 'render/OpenGLRenderSystem.cpp' || echo '$(srcdir)/'`render/OpenGLRenderSystem.cpp
 
-darkradiant-OpenGLShaderCache.obj: render/OpenGLShaderCache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLShaderCache.obj -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLShaderCache.Tpo -c -o darkradiant-OpenGLShaderCache.obj `if test -f 'render/OpenGLShaderCache.cpp'; then $(CYGPATH_W) 'render/OpenGLShaderCache.cpp'; else $(CYGPATH_W) '$(srcdir)/render/OpenGLShaderCache.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLShaderCache.Tpo $(DEPDIR)/darkradiant-OpenGLShaderCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/OpenGLShaderCache.cpp' object='darkradiant-OpenGLShaderCache.obj' libtool=no @AMDEPBACKSLASH@
+darkradiant-OpenGLRenderSystem.obj: render/OpenGLRenderSystem.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLRenderSystem.obj -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLRenderSystem.Tpo -c -o darkradiant-OpenGLRenderSystem.obj `if test -f 'render/OpenGLRenderSystem.cpp'; then $(CYGPATH_W) 'render/OpenGLRenderSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/render/OpenGLRenderSystem.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-OpenGLRenderSystem.Tpo $(DEPDIR)/darkradiant-OpenGLRenderSystem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/OpenGLRenderSystem.cpp' object='darkradiant-OpenGLRenderSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLShaderCache.obj `if test -f 'render/OpenGLShaderCache.cpp'; then $(CYGPATH_W) 'render/OpenGLShaderCache.cpp'; else $(CYGPATH_W) '$(srcdir)/render/OpenGLShaderCache.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLRenderSystem.obj `if test -f 'render/OpenGLRenderSystem.cpp'; then $(CYGPATH_W) 'render/OpenGLRenderSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/render/OpenGLRenderSystem.cpp'; fi`
 
 darkradiant-EntityClassChooser.o: ui/entitychooser/EntityClassChooser.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EntityClassChooser.o -MD -MP -MF $(DEPDIR)/darkradiant-EntityClassChooser.Tpo -c -o darkradiant-EntityClassChooser.o `test -f 'ui/entitychooser/EntityClassChooser.cpp' || echo '$(srcdir)/'`ui/entitychooser/EntityClassChooser.cpp

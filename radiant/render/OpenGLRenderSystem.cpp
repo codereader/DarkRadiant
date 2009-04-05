@@ -1,4 +1,4 @@
-#include "OpenGLShaderCache.h"
+#include "OpenGLRenderSystem.h"
 
 #include "ishaders.h"
 #include "math/matrix.h"
@@ -34,7 +34,7 @@ namespace {
 /**
  * Main constructor.
  */
-OpenGLShaderCache::OpenGLShaderCache() : 
+OpenGLRenderSystem::OpenGLRenderSystem() : 
 	_realised(false),
 	m_lightingEnabled(true),
 	m_lightingSupported(false),
@@ -44,7 +44,7 @@ OpenGLShaderCache::OpenGLShaderCache() :
 	
 /* Capture the given shader.
  */
-ShaderPtr OpenGLShaderCache::capture(const std::string& name) {
+ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
 	// Usual ritual, check cache and return if found, otherwise create/
 	// insert/return.
 	ShaderMap::const_iterator i = _shaders.find(name);
@@ -75,7 +75,7 @@ ShaderPtr OpenGLShaderCache::capture(const std::string& name) {
  * Render all states in the ShaderCache along with their renderables. This
  * is where the actual OpenGL rendering starts.
  */
-void OpenGLShaderCache::render(RenderStateFlags globalstate,
+void OpenGLRenderSystem::render(RenderStateFlags globalstate,
                                const Matrix4& modelview, 
                                const Matrix4& projection, 
                                const Vector3& viewer)
@@ -163,7 +163,7 @@ void OpenGLShaderCache::render(RenderStateFlags globalstate,
 	}
 }
 	
-void OpenGLShaderCache::realise() {
+void OpenGLRenderSystem::realise() {
     if (_realised) {
     	return; // already realised
     }
@@ -186,7 +186,7 @@ void OpenGLShaderCache::realise() {
 	}
 }
 	
-void OpenGLShaderCache::unrealise() {
+void OpenGLRenderSystem::unrealise() {
     if (!_realised) {
     	return;
     }
@@ -210,15 +210,15 @@ void OpenGLShaderCache::unrealise() {
 	}
 }
 
-bool OpenGLShaderCache::lightingEnabled() const {
+bool OpenGLRenderSystem::lightingEnabled() const {
 	return m_lightingEnabled;
 }
 	
-bool OpenGLShaderCache::lightingSupported() const {
+bool OpenGLRenderSystem::lightingSupported() const {
 	return m_lightingSupported;
 }
 	
-void OpenGLShaderCache::setLighting(bool supported, bool enabled) {
+void OpenGLRenderSystem::setLighting(bool supported, bool enabled) {
 	bool refresh = (m_lightingSupported && m_lightingEnabled) != (supported && enabled);
 
 	if (refresh) {
@@ -234,7 +234,7 @@ void OpenGLShaderCache::setLighting(bool supported, bool enabled) {
 	}
 }
 	
-void OpenGLShaderCache::extensionsInitialised() {
+void OpenGLRenderSystem::extensionsInitialised() {
 	setLighting(GLEW_VERSION_1_3 && 
 				GLEW_ARB_vertex_program && 
 				GLEW_ARB_fragment_program && 
@@ -278,44 +278,44 @@ void OpenGLShaderCache::extensionsInitialised() {
 	}
 }
 
-void OpenGLShaderCache::setLightingEnabled(bool enabled) {
+void OpenGLRenderSystem::setLightingEnabled(bool enabled) {
 	setLighting(m_lightingSupported, enabled);
 }
 
-const LightList& OpenGLShaderCache::attach(LightCullable& cullable) {
+const LightList& OpenGLRenderSystem::attach(LightCullable& cullable) {
 	return (*m_lightLists.insert(LightLists::value_type(&cullable, LinearLightList(cullable, m_lights, EvaluateChangedCaller(*this)))).first).second;
 }
 
-void OpenGLShaderCache::detach(LightCullable& cullable) {
+void OpenGLRenderSystem::detach(LightCullable& cullable) {
 	m_lightLists.erase(&cullable);
 }
 
-void OpenGLShaderCache::changed(LightCullable& cullable) {
+void OpenGLRenderSystem::changed(LightCullable& cullable) {
 	LightLists::iterator i = m_lightLists.find(&cullable);
 	ASSERT_MESSAGE(i != m_lightLists.end(), "cullable not attached");
 	i->second.lightsChanged();
 }
 
-void OpenGLShaderCache::attachLight(RendererLight& light) 
+void OpenGLRenderSystem::attachLight(RendererLight& light) 
 {
     ASSERT_MESSAGE(m_lights.find(&light) == m_lights.end(), "light could not be attached");
     m_lights.insert(&light);
     lightChanged(light);
 }
 
-void OpenGLShaderCache::detachLight(RendererLight& light) 
+void OpenGLRenderSystem::detachLight(RendererLight& light) 
 {
     ASSERT_MESSAGE(m_lights.find(&light) != m_lights.end(), "light could not be detached");
     m_lights.erase(&light);
     lightChanged(light);
 }
 
-void OpenGLShaderCache::lightChanged(RendererLight& light) 
+void OpenGLRenderSystem::lightChanged(RendererLight& light) 
 {
     m_lightsChanged = true;
 }
 
-void OpenGLShaderCache::evaluateChanged() {
+void OpenGLRenderSystem::evaluateChanged() {
     if (m_lightsChanged) {
     	m_lightsChanged = false;
     	for (LightLists::iterator i = m_lightLists.begin(); i != m_lightLists.end(); ++i) {
@@ -324,28 +324,28 @@ void OpenGLShaderCache::evaluateChanged() {
 	}
 }
 
-void OpenGLShaderCache::insertSortedState(const OpenGLStates::value_type& val) {
+void OpenGLRenderSystem::insertSortedState(const OpenGLStates::value_type& val) {
 	_state_sorted.insert(val);	
 }
 
-void OpenGLShaderCache::eraseSortedState(const OpenGLStates::key_type& key) {
+void OpenGLRenderSystem::eraseSortedState(const OpenGLStates::key_type& key) {
 	_state_sorted.erase(key);
 }
 
 // renderables
-void OpenGLShaderCache::attachRenderable(const Renderable& renderable) {
+void OpenGLRenderSystem::attachRenderable(const Renderable& renderable) {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "attaching renderable during traversal");
     ASSERT_MESSAGE(m_renderables.find(&renderable) == m_renderables.end(), "renderable could not be attached");
     m_renderables.insert(&renderable);
 }
 
-void OpenGLShaderCache::detachRenderable(const Renderable& renderable) {
+void OpenGLRenderSystem::detachRenderable(const Renderable& renderable) {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "detaching renderable during traversal");
     ASSERT_MESSAGE(m_renderables.find(&renderable) != m_renderables.end(), "renderable could not be detached");
     m_renderables.erase(&renderable);
 }
 
-void OpenGLShaderCache::forEachRenderable(const RenderableCallback& callback) const {
+void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) const {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "for-each during traversal");
     m_traverseRenderablesMutex = true;
     for (Renderables::const_iterator i = m_renderables.begin(); i != m_renderables.end(); ++i) {
@@ -355,12 +355,12 @@ void OpenGLShaderCache::forEachRenderable(const RenderableCallback& callback) co
 }
   
 // RegisterableModule implementation
-const std::string& OpenGLShaderCache::getName() const {
+const std::string& OpenGLRenderSystem::getName() const {
 	static std::string _name(MODULE_RENDERSYSTEM);
 	return _name;
 }
 
-const StringSet& OpenGLShaderCache::getDependencies() const 
+const StringSet& OpenGLRenderSystem::getDependencies() const 
 {
 	static StringSet _dependencies;
 
@@ -372,7 +372,7 @@ const StringSet& OpenGLShaderCache::getDependencies() const
 	return _dependencies;
 }
 
-void OpenGLShaderCache::initialiseModule(const ApplicationContext& ctx) {
+void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "ShaderCache::initialiseModule called.\n";
 	
 	GlobalShaderSystem().attach(*this);
@@ -384,14 +384,14 @@ void OpenGLShaderCache::initialiseModule(const ApplicationContext& ctx) {
 	// happens as soon as the first GL widget has been realised).
 }
 	
-void OpenGLShaderCache::shutdownModule() {
+void OpenGLRenderSystem::shutdownModule() {
 	GlobalShaderSystem().detach(*this);
 }
 
 // Define the static ShaderCache module
-module::StaticModule<OpenGLShaderCache> openGLShaderCacheModule;
+module::StaticModule<OpenGLRenderSystem> openGLShaderCacheModule;
 
-OpenGLShaderCache& getOpenGLShaderCache() {
+OpenGLRenderSystem& getOpenGLRenderSystem() {
 	return *openGLShaderCacheModule.getModule();
 }
 
