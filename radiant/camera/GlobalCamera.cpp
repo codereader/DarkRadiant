@@ -492,7 +492,7 @@ const StringSet& GlobalCameraManager::getDependencies() const {
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_SHADERCACHE);
+		_dependencies.insert(MODULE_RENDERSYSTEM);
 	}
 	
 	return _dependencies;

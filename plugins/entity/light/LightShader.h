@@ -11,7 +11,7 @@ class LightShader {
 	ShaderPtr m_shader;
 	
 	void setDefault() {
-		m_shader = GlobalShaderCache().capture(m_defaultShader);
+		m_shader = GlobalRenderSystem().capture(m_defaultShader);
 	}
 	
 public:
@@ -26,7 +26,7 @@ public:
 			setDefault();
 		}
 		else {
-			m_shader = GlobalShaderCache().capture(value);
+			m_shader = GlobalRenderSystem().capture(value);
 		}
 		SceneChangeNotify();
 	}

@@ -28,7 +28,7 @@ public:
 		_vertex(vertex), 
 		_selectable(observer),
 		_colour(ColourSchemes().getColour("light_vertex_deselected")),
-		_shader(GlobalShaderCache().capture("$BIGPOINT"))
+		_shader(GlobalRenderSystem().capture("$BIGPOINT"))
 	{}
   
 	void setVertex(const Vector3& vertex) {

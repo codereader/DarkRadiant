@@ -314,7 +314,7 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 void Brush::constructStatic() {
 	Face::m_quantise = quantiseFloating;
 
-	m_state_point = GlobalShaderCache().capture("$POINT");
+	m_state_point = GlobalRenderSystem().capture("$POINT");
 }
 
 void Brush::destroyStatic() {

@@ -83,7 +83,7 @@ public:
 		static StringSet _dependencies;
 		
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_SHADERCACHE);
+			_dependencies.insert(MODULE_RENDERSYSTEM);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		}
 		
@@ -133,7 +133,7 @@ public:
 		static StringSet _dependencies;
 		
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_SHADERCACHE);
+			_dependencies.insert(MODULE_RENDERSYSTEM);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		}
 		

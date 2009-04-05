@@ -353,7 +353,7 @@ void OpenGLShaderCache::forEachRenderable(const RenderableCallback& callback) co
   
 // RegisterableModule implementation
 const std::string& OpenGLShaderCache::getName() const {
-	static std::string _name(MODULE_SHADERCACHE);
+	static std::string _name(MODULE_RENDERSYSTEM);
 	return _name;
 }
 

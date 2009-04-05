@@ -52,7 +52,7 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
     _mappedShaderName = _originalShaderName; // no skin at this time
     
     // Capture the shader
-    _shader = GlobalShaderCache().capture(_originalShaderName);
+    _shader = GlobalRenderSystem().capture(_originalShaderName);
     
     // Get the number of vertices and indices, and reserve capacity in our 
     // vectors in advance by populating them with empty structs.
@@ -271,14 +271,14 @@ void RenderablePicoSurface::applySkin(const ModelSkin& skin)
 	std::string remap = skin.getRemap(_originalShaderName);
 	if (remap != "" && remap != _mappedShaderName) { // change to a new shader
 		// Switch shader objects
-		_shader = GlobalShaderCache().capture(remap);
+		_shader = GlobalRenderSystem().capture(remap);
 
 		// Save the remapped shader name
 		_mappedShaderName = remap; 
 	}
 	else if (remap == "" && _mappedShaderName != _originalShaderName) {
 		// No remap, so reset our shader to the original unskinned shader	
-		_shader = GlobalShaderCache().capture(_originalShaderName);
+		_shader = GlobalRenderSystem().capture(_originalShaderName);
 
 		// Reset the remapped shader name
 		_mappedShaderName = _originalShaderName; 

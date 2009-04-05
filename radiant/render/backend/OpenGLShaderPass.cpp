@@ -473,7 +473,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
 {
 	// Keep a pointer to the last transform matrix used
 	const Matrix4* transform = 0;
-	
+
 	glPushMatrix();
 	
 	// Iterate over each transformed renderable in the vector
@@ -491,7 +491,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
       		glPopMatrix();
       		glPushMatrix();
       		glMultMatrixd(*transform);
-      		
+
       		// Determine the face direction
       		if ((current.renderFlags & RENDER_CULLFACE) != 0
       			&& matrix4_handedness(*transform) == MATRIX4_RIGHTHANDED)
@@ -503,6 +503,12 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
       			glFrontFace(GL_CCW);
       		}
     	}
+
+        // Calculate viewer location in object space
+        Matrix4 inverseObjTransform = matrix4_affine_inverse(*transform);
+        Vector3 osViewer = matrix4_transformed_point(
+                inverseObjTransform, viewer
+        );
 
 		// If we are using a lighting program and this renderable is lit, set
 		// up the lighting calculation
@@ -569,7 +575,7 @@ void OpenGLShaderPass::flushRenderables(OpenGLState& current,
                                        ? light->worldOrigin()
                                        : lightBounds.origin + light->offset());
                 current.m_program->applyRenderParams(
-                    viewer,
+                    osViewer,
                     *i->transform,
                     lightOrigin,
                     light->colour(),

@@ -54,7 +54,7 @@ class Colour
 
 	void capture_state() {
 	  	std::string fillCol = (boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str();
-	  	m_state = GlobalShaderCache().capture(fillCol);
+	  	m_state = GlobalRenderSystem().capture(fillCol);
 	}
 
 public:

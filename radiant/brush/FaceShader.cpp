@@ -38,7 +38,7 @@ void FaceShader::setInUse(bool inUse)
 
 void FaceShader::captureShader() {
 	brush_check_shader(_materialName);
-	_glShader = GlobalShaderCache().capture(_materialName);
+	_glShader = GlobalRenderSystem().capture(_materialName);
     assert(_glShader);
 
 	_glShader->attach(*this);

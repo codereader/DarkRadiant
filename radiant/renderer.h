@@ -98,7 +98,7 @@ inline void Scene_Render(RenderableCollector& collector, const VolumeTest& volum
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	// Submit renderables directly attached to the ShaderCache
-	GlobalShaderCache().forEachRenderable(
+	GlobalRenderSystem().forEachRenderable(
 		RenderHighlighted::RenderCaller(RenderHighlighted(collector, volume)));
 }
 

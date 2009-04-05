@@ -108,8 +108,8 @@ OpenGLState& OpenGLShader::appendDefaultPass() {
 bool OpenGLShader::canUseLightingMode() const
 {
     return (
-        GlobalShaderCache().lightingSupported()  // hw supports lighting mode
-    	&& GlobalShaderCache().lightingEnabled()  // user enable lighting mode
+        GlobalRenderSystem().lightingSupported()  // hw supports lighting mode
+    	&& GlobalRenderSystem().lightingEnabled()  // user enable lighting mode
     );
 }
 

@@ -89,7 +89,7 @@ void CameraSettings::importDrawMode(const int mode) {
 	}
 
 	// Notify the shadercache that the lighting mode is enabled/disabled
-	GlobalShaderCache().setLightingEnabled(_cameraDrawMode == drawLighting);
+	GlobalRenderSystem().setLightingEnabled(_cameraDrawMode == drawLighting);
 }
 
 void CameraSettings::keyChanged(const std::string& key, const std::string& val) 

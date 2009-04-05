@@ -22,7 +22,7 @@ typedef std::map<OpenGLStateReference,
 namespace render {
 
 class OpenGLShaderCache : 
-	public ShaderCache, 
+	public RenderSystem, 
 	public ModuleObserver
 {
 	// Map of named Shader objects

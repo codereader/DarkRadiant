@@ -116,6 +116,8 @@ void Winding::render(const RenderInfo& info) const
 // Render with cameraCubeMap coordinates
 void Winding::renderAsCameraCubeMap(const Vector3& viewer) const
 {
+    std::cout << "Winding: viewer is at " << viewer << std::endl;
+
     glBegin(GL_POLYGON);
 
     for (container_type::const_iterator vertexIter = points.begin();
@@ -126,7 +128,9 @@ void Winding::renderAsCameraCubeMap(const Vector3& viewer) const
 
         // Set texcoord to view vector
         Vector3 viewVector = vertex - viewer;
+        viewVector *= 2.0;
         glTexCoord3dv(viewVector);
+        std::cout << "  view vector: " << viewVector << std::endl;
 
         // Submit the point
         glVertex3dv(vertex);

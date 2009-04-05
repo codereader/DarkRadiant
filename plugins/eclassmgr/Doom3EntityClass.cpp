@@ -168,8 +168,8 @@ void Doom3EntityClass::captureColour() {
 	std::string fillCol = (boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
 	std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
 
-	_fillShader = GlobalShaderCache().capture(fillCol);
-	_wireShader = GlobalShaderCache().capture(wireCol);
+	_fillShader = GlobalRenderSystem().capture(fillCol);
+	_wireShader = GlobalRenderSystem().capture(wireCol);
 }
 
 // Release the shaders for the current colour

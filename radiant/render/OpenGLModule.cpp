@@ -54,8 +54,8 @@ void OpenGLModule::sharedContextCreated() {
 			reinterpret_cast<const char*>(glewGetErrorString(err));
 	}
 
-	GlobalShaderCache().extensionsInitialised();
-	GlobalShaderCache().realise();
+	GlobalRenderSystem().extensionsInitialised();
+	GlobalRenderSystem().realise();
 
 	_font = glfont_create("Sans 8");
 	m_font = _font.getDisplayList();
@@ -63,7 +63,7 @@ void OpenGLModule::sharedContextCreated() {
 }
 	
 void OpenGLModule::sharedContextDestroyed() {
-	GlobalShaderCache().unrealise();
+	GlobalRenderSystem().unrealise();
 }
 
 void OpenGLModule::drawString(const std::string& string) const {

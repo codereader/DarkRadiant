@@ -10,7 +10,7 @@ NullModel::NullModel() :
 	_aabbSolid(_aabbLocal), 
 	_aabbWire(_aabbLocal)
 {
-	_state = GlobalShaderCache().capture("");
+	_state = GlobalRenderSystem().capture("");
 }
 
 NullModel::~NullModel() {
