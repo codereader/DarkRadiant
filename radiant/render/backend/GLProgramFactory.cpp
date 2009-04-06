@@ -85,7 +85,7 @@ void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type
 	Array<GLcharARB> buffer(size);
 	size = file.read(reinterpret_cast<StreamBase::byte_type*>(buffer.data()), size);
 
-    assert(glGetError() == GL_NO_ERROR);
+    GlobalOpenGL_debugAssertNoErrors();
 	glProgramStringARB(type, GL_PROGRAM_FORMAT_ASCII_ARB, GLsizei(size), buffer.data());
 
     // Check for GL errors and throw exception if there is a problem

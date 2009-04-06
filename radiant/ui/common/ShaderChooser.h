@@ -8,7 +8,7 @@
 #include <gtk/gtkwidget.h>
 
 // Forward decls
-class IShader;
+class Material;
 
 namespace ui {
 

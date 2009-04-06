@@ -20,8 +20,8 @@ class OpenGLShader
 	typedef std::list<OpenGLShaderPass*> Passes;
 	Passes _shaderPasses;
 
-    // The IShader corresponding to this OpenGLShader
-	IShaderPtr _iShader;
+    // The Material corresponding to this OpenGLShader
+	MaterialPtr _iShader;
 
 	std::size_t m_used;
 	ModuleObservers m_observers;
@@ -66,8 +66,8 @@ private:
     // Shader pass construction helpers
     void appendBlendLayer(ShaderLayerPtr layer);
     void appendInteractionLayer(const DBSTriplet& triplet);
-    void constructLightingPassesFromIShader();
-    void constructEditorPreviewPassFromIShader();
+    void constructLightingPassesFromMaterial();
+    void constructEditorPreviewPassFromMaterial();
 
     // Destroy internal data
 	void destroy();
@@ -128,8 +128,8 @@ public:
 
 	void unrealise();
 
-	// Return the IShader*
-	IShaderPtr getIShader() const {
+	// Return the Material*
+	MaterialPtr getMaterial() const {
 		return _iShader;
 	}
 

@@ -92,7 +92,7 @@ void LightTextureChooser::shaderSelectionChanged(
 	GtkListStore* listStore)
 {
 	// Get the shader, and its image map if possible
-	IShaderPtr shader = _selector.getSelectedShader();
+	MaterialPtr shader = _selector.getSelectedShader();
 	// Pass the call to the static member light shader info
 	ShaderSelector::displayLightShaderInfo(shader, listStore);
 }

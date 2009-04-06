@@ -212,7 +212,7 @@ void TextureBrowser::nextTexturePos(TextureLayout& layout, TexturePtr tex, int *
 }
 
 // if texture_showinuse jump over non in-use textures
-bool TextureBrowser::shaderIsVisible(IShaderPtr shader) 
+bool TextureBrowser::shaderIsVisible(MaterialPtr shader) 
 {
 	if (shader == NULL) {
 		return false;
@@ -255,7 +255,7 @@ void TextureBrowser::evaluateHeight() {
 		
 	    for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
 	    {
-	      IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+	      MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 	
 	      if (!shaderIsVisible(shader))
 	        continue;
@@ -320,7 +320,7 @@ void TextureBrowser::focus(const std::string& name) {
   
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
-    IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+    MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
     if (!shaderIsVisible(shader))
       continue;
@@ -354,7 +354,7 @@ void TextureBrowser::focus(const std::string& name) {
   }
 }
 
-IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
+MaterialPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 	my += getOriginY() - height;
 
 	TextureLayout layout;
@@ -362,7 +362,7 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 		!QERApp_ActiveShaders_IteratorAtEnd(); 
 		QERApp_ActiveShaders_IteratorIncrement())
 	{
-		IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+		MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
 		if (!shaderIsVisible(shader))
 			continue;
@@ -382,11 +382,11 @@ IShaderPtr TextureBrowser::getShaderAtCoords(int mx, int my) {
 		}
 	}
 
-	return IShaderPtr();
+	return MaterialPtr();
 }
 
 void TextureBrowser::selectTextureAt(int mx, int my) {
-	IShaderPtr shader = getShaderAtCoords(mx, my);
+	MaterialPtr shader = getShaderAtCoords(mx, my);
 	
 	if (shader != NULL) {
   		setSelectedShader(shader->getName());
@@ -422,7 +422,7 @@ void TextureBrowser::trackingDelta(int x, int y, unsigned int state, void* data)
 ============
 Texture_Draw
 TTimo: relying on the shaders list to display the textures
-we must query all Texture* to manage and display through the IShaders interface
+we must query all Texture* to manage and display through the Materials interface
 this allows a plugin to completely override the texture system
 ============
 */
@@ -450,7 +450,7 @@ void TextureBrowser::draw() {
   TextureLayout layout;
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
   {
-    IShaderPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+    MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
 
     if (!shaderIsVisible(shader))
       continue;
@@ -591,7 +591,7 @@ void TextureBrowser::openContextMenu() {
 	std::string shaderText = "No shader";
 	
 	if (_popupX > 0 && _popupY > 0) {
-		IShaderPtr shader = getShaderAtCoords(_popupX, _popupY);
+		MaterialPtr shader = getShaderAtCoords(_popupX, _popupY);
 		
 		if (shader != NULL) {
 			shaderText = shader->getName();
@@ -612,7 +612,7 @@ void TextureBrowser::openContextMenu() {
 void TextureBrowser::onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* self) {
 	
 	if (self->_popupX > 0 && self->_popupY > 0) {
-		IShaderPtr shader = self->getShaderAtCoords(self->_popupX, self->_popupY);
+		MaterialPtr shader = self->getShaderAtCoords(self->_popupX, self->_popupY);
 	
 		if (shader != NULL) {
 			// Focus the MediaBrowser selection to the given shader
@@ -751,7 +751,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	// Instantiate a new GLwidget without z-buffering
 	_glWidget = gtkutil::GLWidgetPtr(new gtkutil::GLWidget(false));
 	
-	GlobalShaderSystem().setActiveShadersChangedNotify(
+	GlobalMaterialManager().setActiveShadersChangedNotify(
 		MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(*this)
 	);
 
@@ -839,7 +839,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 }
 
 void TextureBrowser::destroyWindow() {
-	GlobalShaderSystem().setActiveShadersChangedNotify(Callback());
+	GlobalMaterialManager().setActiveShadersChangedNotify(Callback());
 
 	_glWidget = gtkutil::GLWidgetPtr();
 }

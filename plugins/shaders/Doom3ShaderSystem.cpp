@@ -135,7 +135,7 @@ bool Doom3ShaderSystem::isRealised() {
 }
 
 // Return a shader by name
-IShaderPtr Doom3ShaderSystem::getShaderForName(const std::string& name) 
+MaterialPtr Doom3ShaderSystem::getMaterialForName(const std::string& name) 
 {
 	CShaderPtr shader = _library->findShader(name);
 	return shader;
@@ -152,7 +152,7 @@ void Doom3ShaderSystem::beginActiveShadersIterator() {
 bool Doom3ShaderSystem::endActiveShadersIterator() {
 	return _library->getIterator() == _library->end();
 }
-IShaderPtr Doom3ShaderSystem::dereferenceActiveShadersIterator() {
+MaterialPtr Doom3ShaderSystem::dereferenceActiveShadersIterator() {
 	return _library->getIterator()->second;
 }
 void Doom3ShaderSystem::incrementActiveShadersIterator() {

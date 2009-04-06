@@ -74,7 +74,7 @@ void TexturePreviewCombo::refreshInfoTable() {
 	if (_texName.empty())
 		return;
 
-	IShaderPtr shader = GlobalShaderSystem().getShaderForName(_texName);
+	MaterialPtr shader = GlobalMaterialManager().getMaterialForName(_texName);
 	ShaderSelector::displayShaderInfo(shader, _infoStore);
 }
 
@@ -111,7 +111,7 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 		return;
 
 	// Get a reference to the selected shader
-	IShaderPtr shader = GlobalShaderSystem().getShaderForName(self->_texName);
+	MaterialPtr shader = GlobalMaterialManager().getMaterialForName(self->_texName);
 
 	// This is an "ordinary" texture, take the editor image
 	TexturePtr tex = shader->getEditorImage();

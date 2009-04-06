@@ -3,13 +3,6 @@
 #include "texturelib.h"
 #include "shaderlib.h"
 
-// Helper function
-void brush_check_shader(const std::string& name) {
-	if (!shader_valid(name.c_str())) {
-		globalErrorStream() << "brush face has invalid texture name: '" << name.c_str() << "'\n";
-	}
-}
-
 // Constructor
 FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flags) :
 	_inUse(false),
@@ -36,8 +29,10 @@ void FaceShader::setInUse(bool inUse)
         _glShader->decrementUsed();
 }
 
-void FaceShader::captureShader() {
-	brush_check_shader(_materialName);
+void FaceShader::captureShader() 
+{
+    std::cout << "FaceShader::captureShader() name is " << _materialName << std::endl;
+
 	_glShader = GlobalRenderSystem().capture(_materialName);
     assert(_glShader);
 
@@ -111,14 +106,14 @@ ShaderPtr FaceShader::getGLShader() const {
 
 std::size_t FaceShader::width() const {
 	if (m_realised) {
-		return _glShader->getIShader()->getEditorImage()->getWidth();
+		return _glShader->getMaterial()->getEditorImage()->getWidth();
 	}
 	return 1;
 }
 
 std::size_t FaceShader::height() const {
 	if (m_realised) {
-		return _glShader->getIShader()->getEditorImage()->getHeight();
+		return _glShader->getMaterial()->getEditorImage()->getHeight();
 	}
 	return 1;
 }

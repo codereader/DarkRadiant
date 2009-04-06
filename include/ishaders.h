@@ -72,7 +72,7 @@ typedef Vector3 Colour3;
  * more shader layers (including diffusemap, bumpmap and specularmap textures
  * which are handled specially).
  */
-class IShader
+class Material
 {
 public:
   enum EAlphaFunc
@@ -159,14 +159,14 @@ public:
 	virtual void setVisible(bool visible) = 0;
 };
 
-typedef boost::shared_ptr<IShader> IShaderPtr;
+typedef boost::shared_ptr<Material> MaterialPtr;
 
 /**
- * Stream insertion of IShader for debugging purposes.
+ * Stream insertion of Material for debugging purposes.
  */
 inline
-std::ostream& operator<< (std::ostream& os, const IShader& shader) {
-	os << "IShader { name = " << shader.getName()
+std::ostream& operator<< (std::ostream& os, const Material& shader) {
+	os << "Material { name = " << shader.getName()
 	   << ", filename = " << shader.getShaderFileName()
 	   << ", firstlayer = " << shader.firstLayer()
 	   << " }";
@@ -181,7 +181,7 @@ namespace shaders {
 class ShaderVisitor
 {
 public:
-	virtual void visit(const IShaderPtr& shader) = 0;
+	virtual void visit(const MaterialPtr& shader) = 0;
 };
 
 } // namespace shaders
@@ -191,10 +191,17 @@ typedef Callback1<const char*> ShaderNameCallback;
 
 class ModuleObserver;
 
-const std::string MODULE_SHADERSYSTEM("ShaderSystem");
+const std::string MODULE_SHADERSYSTEM("MaterialManager");
 
-class ShaderSystem :
-	public RegisterableModule
+/**
+ * \brief
+ * Interface for the material manager.
+ *
+ * The material manager parses all of the MTR declarations and provides access
+ * to Material objects representing the loaded materials.
+ */
+class MaterialManager 
+: public RegisterableModule
 {
 public:
   // NOTE: shader and texture names used must be full path.
@@ -221,9 +228,9 @@ public:
 	 * The text name of the shader to load.
 	 * 
 	 * @returns
-	 * IShaderPtr shared ptr corresponding to the named shader object.
+	 * MaterialPtr shared ptr corresponding to the named shader object.
 	 */
-	virtual IShaderPtr getShaderForName(const std::string& name) = 0;
+	virtual MaterialPtr getMaterialForName(const std::string& name) = 0;
 
 	virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
 
@@ -235,7 +242,7 @@ public:
   // iterate over the list of active shaders (deprecated functions)
   virtual void beginActiveShadersIterator() = 0;
   virtual bool endActiveShadersIterator() = 0;
-  virtual IShaderPtr dereferenceActiveShadersIterator() = 0;
+  virtual MaterialPtr dereferenceActiveShadersIterator() = 0;
   virtual void incrementActiveShadersIterator() = 0;
 
     // Set the callback to be invoked when the active shaders list has changed
@@ -279,19 +286,19 @@ public:
 			const std::string& moduleNames = "GDK") = 0;
 };
 
-inline ShaderSystem& GlobalShaderSystem() {
+inline MaterialManager& GlobalMaterialManager() {
 	// Cache the reference locally
-	static ShaderSystem& _shaderSystem(
-		*boost::static_pointer_cast<ShaderSystem>(
+	static MaterialManager& _shaderSystem(
+		*boost::static_pointer_cast<MaterialManager>(
 			module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM)
 		)
 	);
 	return _shaderSystem;
 }
 
-#define QERApp_ActiveShaders_IteratorBegin GlobalShaderSystem().beginActiveShadersIterator
-#define QERApp_ActiveShaders_IteratorAtEnd GlobalShaderSystem().endActiveShadersIterator
-#define QERApp_ActiveShaders_IteratorCurrent GlobalShaderSystem().dereferenceActiveShadersIterator
-#define QERApp_ActiveShaders_IteratorIncrement GlobalShaderSystem().incrementActiveShadersIterator
+#define QERApp_ActiveShaders_IteratorBegin GlobalMaterialManager().beginActiveShadersIterator
+#define QERApp_ActiveShaders_IteratorAtEnd GlobalMaterialManager().endActiveShadersIterator
+#define QERApp_ActiveShaders_IteratorCurrent GlobalMaterialManager().dereferenceActiveShadersIterator
+#define QERApp_ActiveShaders_IteratorIncrement GlobalMaterialManager().incrementActiveShadersIterator
 
 #endif

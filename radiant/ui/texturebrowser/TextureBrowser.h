@@ -218,9 +218,9 @@ public:
 private:
 	/** greebo: Returns the shader at the given coords.
 	 * 
-	 * @returns: the IShaderPtr, which may be empty.
+	 * @returns: the MaterialPtr, which may be empty.
 	 */
-	IShaderPtr getShaderAtCoords(int mx, int my);
+	MaterialPtr getShaderAtCoords(int mx, int my);
 	
 	/** greebo: Tries to select the shader at the given coords.
 	 * 			When successful, this applies the shader to the 
@@ -231,7 +231,7 @@ private:
 	/** greebo: Returns true if the given <shader> is visible,
 	 * 			taking filter and showUnused into account. 
 	 */ 
-	bool shaderIsVisible(IShaderPtr shader);
+	bool shaderIsVisible(MaterialPtr shader);
 	
 	// Static GTK Callbacks
 	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self);

@@ -172,7 +172,7 @@ void LightInspector::shaderSelectionChanged(
 	GtkListStore* listStore) 
 {
 	// Get the shader, and its image map if possible
-	IShaderPtr ishader = _texSelector.getSelectedShader();
+	MaterialPtr ishader = _texSelector.getSelectedShader();
 	// Pass the call to the static member of ShaderSelector
 	ShaderSelector::displayLightShaderInfo(ishader, listStore);
 	

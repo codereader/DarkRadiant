@@ -114,8 +114,8 @@ void MD5Model::render(const RenderInfo& info) const {
 		glShadeModel(GL_SMOOTH);
 
 	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
-		// Get the IShader to test the shader name against the filter system
-		IShaderPtr surfaceShader = (*i)->getState()->getIShader();
+		// Get the Material to test the shader name against the filter system
+		MaterialPtr surfaceShader = (*i)->getState()->getMaterial();
 		if (surfaceShader->isVisible()) {
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();

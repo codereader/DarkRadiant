@@ -3,18 +3,18 @@
 namespace script {
 
 void ShaderSystemInterface::foreachShader(shaders::ShaderVisitor& visitor) {
-	GlobalShaderSystem().foreachShader(visitor);
+	GlobalMaterialManager().foreachShader(visitor);
 }
 
-ScriptShader ShaderSystemInterface::getShaderForName(const std::string& name) {
-	return ScriptShader(GlobalShaderSystem().getShaderForName(name));
+ScriptShader ShaderSystemInterface::getMaterialForName(const std::string& name) {
+	return ScriptShader(GlobalMaterialManager().getMaterialForName(name));
 }
 
 // IScriptInterface implementation
 void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
 	// Add the declaration for a Shader object
 	nspace["Shader"] = boost::python::class_<ScriptShader>(
-		"Shader", boost::python::init<const IShaderPtr&>())
+		"Shader", boost::python::init<const MaterialPtr&>())
 		.def("getName", &ScriptShader::getName)
 		.def("getShaderFileName", &ScriptShader::getShaderFileName)
 		.def("getDescription", &ScriptShader::getDescription)
@@ -32,13 +32,13 @@ void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
 	;
 
 	// Add the module declaration to the given python namespace
-	nspace["GlobalShaderSystem"] = boost::python::class_<ShaderSystemInterface>("GlobalShaderSystem")
+	nspace["GlobalMaterialManager"] = boost::python::class_<ShaderSystemInterface>("GlobalMaterialManager")
 		.def("foreachShader", &ShaderSystemInterface::foreachShader)
-		.def("getShaderForName", &ShaderSystemInterface::getShaderForName)
+		.def("getMaterialForName", &ShaderSystemInterface::getMaterialForName)
 	;
 
-	// Now point the Python variable "GlobalShaderSystem" to this instance
-	nspace["GlobalShaderSystem"] = boost::python::ptr(this);
+	// Now point the Python variable "GlobalMaterialManager" to this instance
+	nspace["GlobalMaterialManager"] = boost::python::ptr(this);
 }
 
 } // namespace script

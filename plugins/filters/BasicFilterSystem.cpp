@@ -470,7 +470,7 @@ void BasicFilterSystem::updateScene() {
 void BasicFilterSystem::updateShaders() {
 	// Construct a ShaderVisitor to traverse the shaders
 	ShaderUpdateWalker walker;
-	GlobalShaderSystem().foreachShader(walker);
+	GlobalMaterialManager().foreachShader(walker);
 }
 
 // RegisterableModule implementation

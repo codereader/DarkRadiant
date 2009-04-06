@@ -36,7 +36,7 @@ class TexTool
 	gtkutil::GLWidget _glWidget;
 	
 	// The shader we're working with (shared ptr)
-	IShaderPtr _shader;
+	MaterialPtr _shader;
 	
 	// A reference to the SelectionInfo structure (with the counters)
 	const SelectionInfo& _selectionInfo;

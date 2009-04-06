@@ -88,7 +88,7 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkLis
 	}
 	
 	// Get the shader, and its image map if possible
-	IShaderPtr shader = _selector.getSelectedShader();
+	MaterialPtr shader = _selector.getSelectedShader();
 	// Pass the call to the static member
 	ShaderSelector::displayShaderInfo(shader, listStore);
 }

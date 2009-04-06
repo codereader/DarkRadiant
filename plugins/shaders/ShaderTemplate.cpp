@@ -34,7 +34,7 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std
         m_nFlags |= QER_TRANS;
     } 
     else if (token == "twosided") {
-        m_Cull = IShader::eCullNone;
+        m_Cull = Material::eCullNone;
         m_nFlags |= QER_CULL;
     }
     else if (token == "nodraw") {

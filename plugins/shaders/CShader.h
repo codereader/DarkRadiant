@@ -9,10 +9,10 @@ namespace shaders {
 
 /**
  * \brief
- * Implementation class for IShader.
+ * Implementation class for Material.
  */
 class CShader 
-: public IShader 
+: public Material 
 {
 	ShaderTemplatePtr _template;
 	
@@ -102,7 +102,7 @@ public:
 
 	const ShaderLayer* firstLayer() const;
 
-    /* IShader implementation */
+    /* Material implementation */
 
     const ShaderLayerVector& getAllLayers() const;
 

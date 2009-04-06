@@ -668,7 +668,7 @@ void RefreshShaders(const cmd::ArgumentList& args) {
 	GlobalRenderSystem().unrealise();
 	
 	// Reload the Shadersystem
-	GlobalShaderSystem().refresh();
+	GlobalMaterialManager().refresh();
 	
 	// Now realise the OpenGLShader objects again
 	GlobalRenderSystem().realise();

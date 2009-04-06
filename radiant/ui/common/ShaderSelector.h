@@ -11,8 +11,8 @@ typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 typedef struct _GdkEventExpose GdkEventExpose;
-class IShader;
-typedef boost::shared_ptr<IShader> IShaderPtr;
+class Material;
+typedef boost::shared_ptr<Material> MaterialPtr;
 
 namespace ui
 {
@@ -104,17 +104,17 @@ public:
 	 */
 	void setSelection(const std::string& selection);
 	
-	// Get the selected IShader
-	IShaderPtr getSelectedShader();
+	// Get the selected Material
+	MaterialPtr getSelectedShader();
 	
 	/** greebo: Static info display function (can be used by other UI classes as well
 	 * 			to allow code reuse).
 	 */
-	static void displayShaderInfo(IShaderPtr shader, GtkListStore* listStore);
+	static void displayShaderInfo(MaterialPtr shader, GtkListStore* listStore);
 	
 	/** greebo: Populates the given listStore with the light shader information.
 	 */
-	static void displayLightShaderInfo(IShaderPtr shader, GtkListStore* listStore);
+	static void displayLightShaderInfo(MaterialPtr shader, GtkListStore* listStore);
 	
 private:
 

@@ -12,7 +12,7 @@
 
 void OpenGLShader::destroy() {
 	// Clear the shaderptr, so that the shared_ptr reference count is decreased 
-    _iShader = IShaderPtr();
+    _iShader = MaterialPtr();
 
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
     {
@@ -60,6 +60,8 @@ void OpenGLShader::decrementUsed() {
 
 void OpenGLShader::realise(const std::string& name) 
 {
+    std::cout << "OpenGLShader::realise(" << name << ")" << std::endl;
+
     // Construct the shader passes based on the name
     construct(name);
 
@@ -149,7 +151,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     }
     else
     {
-        dbsPass.texture0 = GlobalShaderSystem().getDefaultInteractionTexture(
+        dbsPass.texture0 = GlobalMaterialManager().getDefaultInteractionTexture(
             ShaderLayer::DIFFUSE
         )->getGLTexNum();
     }
@@ -159,7 +161,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     }
     else
     {
-        dbsPass.texture1 = GlobalShaderSystem().getDefaultInteractionTexture(
+        dbsPass.texture1 = GlobalMaterialManager().getDefaultInteractionTexture(
             ShaderLayer::BUMP
         )->getGLTexNum();
     }
@@ -169,7 +171,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     }
     else
     {
-        dbsPass.texture2 = GlobalShaderSystem().getDefaultInteractionTexture(
+        dbsPass.texture2 = GlobalMaterialManager().getDefaultInteractionTexture(
             ShaderLayer::SPECULAR
         )->getGLTexNum();
     }
@@ -209,7 +211,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 }
 
 // Construct lighting mode render passes
-void OpenGLShader::constructLightingPassesFromIShader()
+void OpenGLShader::constructLightingPassesFromMaterial()
 {
     // Build up and add shader passes for DBS triplets as they are found. A
     // new triplet is found when (1) the same DBS layer type is seen twice, (2)
@@ -267,7 +269,7 @@ void OpenGLShader::constructLightingPassesFromIShader()
 }
 
 // Construct editor-image-only render passes
-void OpenGLShader::constructEditorPreviewPassFromIShader()
+void OpenGLShader::constructEditorPreviewPassFromMaterial()
 {
     OpenGLState& state = appendDefaultPass();
 
@@ -282,7 +284,7 @@ void OpenGLShader::constructEditorPreviewPassFromIShader()
 
     // Handle certain shader flags
     if ((_iShader->getFlags() & QER_CULL) == 0
-        || _iShader->getCull() == IShader::eCullBack)
+        || _iShader->getCull() == Material::eCullBack)
     {
         state.renderFlags |= RENDER_CULLFACE;
     }
@@ -290,21 +292,21 @@ void OpenGLShader::constructEditorPreviewPassFromIShader()
   if((_iShader->getFlags() & QER_ALPHATEST) != 0)
   {
     state.renderFlags |= RENDER_ALPHATEST;
-    IShader::EAlphaFunc alphafunc;
+    Material::EAlphaFunc alphafunc;
     _iShader->getAlphaFunc(&alphafunc, &state.m_alpharef);
     switch(alphafunc)
     {
-    case IShader::eAlways:
+    case Material::eAlways:
       state.m_alphafunc = GL_ALWAYS;
-    case IShader::eEqual:
+    case Material::eEqual:
       state.m_alphafunc = GL_EQUAL;
-    case IShader::eLess:
+    case Material::eLess:
       state.m_alphafunc = GL_LESS;
-    case IShader::eGreater:
+    case Material::eGreater:
       state.m_alphafunc = GL_GREATER;
-    case IShader::eLEqual:
+    case Material::eLEqual:
       state.m_alphafunc = GL_LEQUAL;
-    case IShader::eGEqual:
+    case Material::eGEqual:
       state.m_alphafunc = GL_GEQUAL;
     }
   }
@@ -361,20 +363,21 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
 // Construct a normal shader
 void OpenGLShader::constructNormalShader(const std::string& name)
 {
-    // Obtain the IShader
-    _iShader = GlobalShaderSystem().getShaderForName(name);
+    // Obtain the Material
+    _iShader = GlobalMaterialManager().getMaterialForName(name);
+    assert(_iShader);
 
     // Determine whether we can render this shader in lighting/bump-map mode,
     // and construct the appropriate shader passes
     if (canUseLightingMode()) 
     {
         // Full lighting, DBS and blend modes
-        constructLightingPassesFromIShader();
+        constructLightingPassesFromMaterial();
     }
     else
     {
         // Editor image rendering only
-        constructEditorPreviewPassFromIShader();
+        constructEditorPreviewPassFromMaterial();
     }
 }
 
