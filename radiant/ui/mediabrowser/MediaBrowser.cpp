@@ -337,7 +337,7 @@ void MediaBrowser::populate() {
 	
 	// greebo: Add the Other Materials folder and pass TRUE to indicate this is a special one
 	functor.addFolder(OTHER_MATERIALS_FOLDER, true);
-	GlobalShaderSystem().foreachShaderName(makeCallback1(functor));	
+	GlobalMaterialManager().foreachShaderName(makeCallback1(functor));	
 }
 
 /* gtkutil::PopupMenu callbacks */
@@ -347,7 +347,7 @@ void MediaBrowser::_onLoadInTexView() {
 	// may throw an exception if cancelled by user.
 	TextureDirectoryLoader loader(getSelectedName());
 	try {
-		GlobalShaderSystem().foreachShaderName(makeCallback1(loader));
+		GlobalMaterialManager().foreachShaderName(makeCallback1(loader));
 	}
 	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
 		// Ignore the error and return from the function normally	

@@ -914,8 +914,8 @@ void Patch::TranslateTexture(float s, float t)
 {
   undoSave();
 
-    s = -1 * s / m_state->getIShader()->getEditorImage()->getWidth();
-    t = t / m_state->getIShader()->getEditorImage()->getHeight();
+    s = -1 * s / m_state->getMaterial()->getEditorImage()->getWidth();
+    t = t / m_state->getMaterial()->getEditorImage()->getHeight();
 
 	translateTexCoords(Vector2(s,t));
   
@@ -1073,7 +1073,7 @@ void Patch::NaturalTexture() {
 	 * the scaled texture size in pixels.
 	 */	
 	{
-		float fSize = (float)m_state->getIShader()->getEditorImage()->getWidth() * defaultScale;
+		float fSize = (float)m_state->getMaterial()->getEditorImage()->getWidth() * defaultScale;
   
 		double texBest = 0;
 		double tex = 0;
@@ -1137,7 +1137,7 @@ void Patch::NaturalTexture() {
 	// and calculate the longest distances, convert them to texture coordinates
 	// and apply them to the according texture coordinates.
 	{
-		float fSize = -(float)m_state->getIShader()->getEditorImage()->getHeight() * defaultScale;
+		float fSize = -(float)m_state->getMaterial()->getEditorImage()->getHeight() * defaultScale;
 		
 		double texBest = 0;
 		double tex = 0;
@@ -1893,8 +1893,8 @@ void Patch::ProjectTexture(int nAxis) {
 
 	/* Calculate the conversion factor between world and texture coordinates
 	 * by using the image width/height.*/
-	float fWidth = 1 / (m_state->getIShader()->getEditorImage()->getWidth() * defaultScale);
-	float fHeight = 1 / (m_state->getIShader()->getEditorImage()->getHeight() * -defaultScale);
+	float fWidth = 1 / (m_state->getMaterial()->getEditorImage()->getWidth() * defaultScale);
+	float fHeight = 1 / (m_state->getMaterial()->getEditorImage()->getHeight() * -defaultScale);
 
 	// Cycle through all the control points with an iterator
 	for (PatchControlIter i = m_ctrl.data(); i != m_ctrl.data() + m_ctrl.size(); ++i) {

@@ -6,7 +6,7 @@
 #include <string>
 
 // Forward decls
-class IShader;
+class Material;
 
 namespace ui {
 

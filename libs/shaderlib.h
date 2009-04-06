@@ -55,7 +55,7 @@ inline bool shader_valid(const char* shader)
 
 inline const char* GlobalTexturePrefix_get()
 {
-  return GlobalShaderSystem().getTexturePrefix();
+  return GlobalMaterialManager().getTexturePrefix();
 }
 
 inline const char* shader_get_textureName(const char* name)

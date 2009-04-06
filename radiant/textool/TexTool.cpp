@@ -173,7 +173,7 @@ void TexTool::gridDown() {
 
 void TexTool::onRadiantShutdown() {
 	// Release the shader
-	_shader = IShaderPtr();
+	_shader = MaterialPtr();
 
 	// De-register this as selectionsystem observer
 	GlobalSelectionSystem().removeObserver(this);
@@ -194,7 +194,7 @@ TexTool& TexTool::Instance() {
 
 void TexTool::update() {
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
-	_shader = GlobalShaderSystem().getShaderForName(selectedShader);
+	_shader = GlobalMaterialManager().getMaterialForName(selectedShader);
 }
 
 void TexTool::rescanSelection() {

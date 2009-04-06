@@ -14,13 +14,13 @@ namespace script {
 class ScriptShader
 {
 	// The contained shader (can be NULL)
-	IShaderPtr _shader;
+	MaterialPtr _shader;
 public:
-	ScriptShader(const IShaderPtr& shader) :
+	ScriptShader(const MaterialPtr& shader) :
 		_shader(shader)
 	{}
 
-	operator const IShaderPtr&() const {
+	operator const MaterialPtr&() const {
 		return _shader;
 	}
 
@@ -63,21 +63,21 @@ class ShaderVisitorWrapper :
 	public boost::python::wrapper<shaders::ShaderVisitor>
 {
 public:
-    void visit(const IShaderPtr& shader) {
+    void visit(const MaterialPtr& shader) {
 		// Wrap this method to python
 		this->get_override("visit")(ScriptShader(shader));
 	}
 };
 
 /**
- * greebo: This class provides the script interface for the GlobalShaderSystem module.
+ * greebo: This class provides the script interface for the GlobalMaterialManager module.
  */
 class ShaderSystemInterface :
 	public IScriptInterface
 {
 public:
 	void foreachShader(shaders::ShaderVisitor& visitor);
-	ScriptShader getShaderForName(const std::string& name);
+	ScriptShader getMaterialForName(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);

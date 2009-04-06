@@ -195,7 +195,7 @@ GtkWidget* ShaderSelector::createTreeView() {
 	gtkutil::VFSTreePopulator populator(store);
 	
 	ShaderNameFunctor func(populator, _prefixes);
-	GlobalShaderSystem().foreachShaderName(makeCallback1(func));
+	GlobalMaterialManager().foreachShaderName(makeCallback1(func));
 	
 	// Now visit the created GtkTreeIters to load the actual data into the tree
 	DataInserter inserter;
@@ -269,8 +269,8 @@ GtkWidget* ShaderSelector::createPreview() {
 }
 
 // Get the selected shader
-IShaderPtr ShaderSelector::getSelectedShader() {
-	return GlobalShaderSystem().getShaderForName(getSelection());	
+MaterialPtr ShaderSelector::getSelectedShader() {
+	return GlobalMaterialManager().getMaterialForName(getSelection());	
 }
 
 // Update the attributes table
@@ -312,7 +312,7 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 
 	// Get the selected texture, and set up OpenGL to render it on
 	// the quad.
-	IShaderPtr shader = self->getSelectedShader();
+	MaterialPtr shader = self->getSelectedShader();
 	
 	bool drawQuad = false;
 	TexturePtr tex;
@@ -367,7 +367,7 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 	}
 }
 
-void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStore) 
+void ShaderSelector::displayShaderInfo(MaterialPtr shader, GtkListStore* listStore) 
 {
 	// Update the infostore in the ShaderSelector
 	GtkTreeIter iter;
@@ -393,7 +393,7 @@ void ShaderSelector::displayShaderInfo(IShaderPtr shader, GtkListStore* listStor
 					   -1);
 }
 
-void ShaderSelector::displayLightShaderInfo(IShaderPtr shader, GtkListStore* listStore) {
+void ShaderSelector::displayLightShaderInfo(MaterialPtr shader, GtkListStore* listStore) {
 	
 	const ShaderLayer* first = shader->firstLayer();
 	std::string texName = "None";
@@ -416,7 +416,7 @@ void ShaderSelector::displayLightShaderInfo(IShaderPtr shader, GtkListStore* lis
 					   1, shader->getShaderFileName(),
 					   -1);
 
-	// Light types, from the IShader
+	// Light types, from the Material
 
 	std::string lightType;
 	if (shader->isAmbientLight())

@@ -55,10 +55,10 @@ private:
   float m_fTrans;
 
   // alphafunc stuff
-  IShader::EAlphaFunc m_AlphaFunc;
+  Material::EAlphaFunc m_AlphaFunc;
   float m_AlphaRef;
   // cull stuff
-  IShader::ECull m_Cull;
+  Material::ECull m_Cull;
 
 	std::string _blockContents;
 
@@ -113,7 +113,7 @@ public:
 		return m_fTrans;
 	}
 
-	IShader::EAlphaFunc getAlphaFunc() {
+	Material::EAlphaFunc getAlphaFunc() {
 		if (!_parsed) parseDefinition();
 		return m_AlphaFunc;
 	}
@@ -123,7 +123,7 @@ public:
 		return m_AlphaRef;
 	}
 
-	IShader::ECull getCull() {
+	Material::ECull getCull() {
 		if (!_parsed) parseDefinition();
 		return m_Cull;
 	}

@@ -223,7 +223,7 @@ void OpenGLRenderSystem::setLighting(bool supported, bool enabled) {
 
 	if (refresh) {
 		unrealise();
-		GlobalShaderSystem().setLightingEnabled(supported && enabled);
+		GlobalMaterialManager().setLightingEnabled(supported && enabled);
 	}
 
 	m_lightingSupported = supported;
@@ -375,7 +375,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "ShaderCache::initialiseModule called.\n";
 	
-	GlobalShaderSystem().attach(*this);
+	GlobalMaterialManager().attach(*this);
 	
 	capture("$OVERBRIGHT");
 	
@@ -385,7 +385,7 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx) {
 }
 	
 void OpenGLRenderSystem::shutdownModule() {
-	GlobalShaderSystem().detach(*this);
+	GlobalMaterialManager().detach(*this);
 }
 
 // Define the static ShaderCache module

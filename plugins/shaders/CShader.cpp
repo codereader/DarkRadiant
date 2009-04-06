@@ -77,7 +77,7 @@ TexturePtr CShader::lightFalloffImage() {
 			// Find the default light shader in the ShaderSystem and query its
 			// falloff texture name.
 			std::string defLight = GlobalRegistry().get(DEFAULT_LIGHT_PATH);
-			IShaderPtr defLightShader = GetShaderSystem()->getShaderForName(defLight);
+			MaterialPtr defLightShader = GetShaderSystem()->getMaterialForName(defLight);
 
 			// Cast to a CShader so we can call getFalloffName().
 			CShaderPtr cshaderPtr = boost::static_pointer_cast<CShader>(defLightShader);
@@ -136,7 +136,7 @@ void CShader::getAlphaFunc(EAlphaFunc *func, float *ref) {
 };
 
 // get the cull type
-IShader::ECull CShader::getCull() {
+Material::ECull CShader::getCull() {
 	return _template->getCull();
 };
 
@@ -192,7 +192,7 @@ const ShaderLayerVector& CShader::getAllLayers() const
     return _layers;
 }
 
-/* Required IShader light type predicates */
+/* Required Material light type predicates */
 
 bool CShader::isAmbientLight() const {
 	return _template->isAmbientLight();

@@ -54,7 +54,7 @@ public:
          }
 
 			// Load the shader
-			IShaderPtr ref = GlobalShaderSystem().getShaderForName(shaderName);
+			MaterialPtr ref = GlobalMaterialManager().getMaterialForName(shaderName);
 		}
 	}
 	

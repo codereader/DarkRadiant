@@ -544,7 +544,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 		if (current.m_program != 0 && light != NULL) 
         {
 			// Get the light shader and examine its first (and only valid) layer
-			IShaderPtr lightShader = light->getShader()->getIShader();
+			MaterialPtr lightShader = light->getShader()->getMaterial();
       
 			if (lightShader->firstLayer() != 0) 
             {

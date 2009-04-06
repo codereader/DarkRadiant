@@ -245,7 +245,7 @@ const AABB& PatchNode::getSelectedComponentsBounds() const {
 }
 
 bool PatchNode::isVisible() const {
-	return visible() && m_patch.getState()->getIShader()->isVisible();
+	return visible() && m_patch.getState()->getMaterial()->isVisible();
 }
 
 void PatchNode::setSelected(bool select) {

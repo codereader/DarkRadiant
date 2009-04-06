@@ -13,9 +13,13 @@
 
 namespace shaders {
 
-class Doom3ShaderSystem : 
-	public ShaderSystem, 
-	public VirtualFileSystem::Observer
+/**
+ * \brief
+ * Implementation of the MaterialManager for Doom 3 .
+ */
+class Doom3ShaderSystem 
+: public MaterialManager, 
+  public VirtualFileSystem::Observer
 {
 	// The shaderlibrary stores all the known shaderdefinitions 
 	// as well as the active shaders
@@ -66,13 +70,13 @@ public:
 	bool isRealised();
 
 	// Return a shader by name
-	IShaderPtr getShaderForName(const std::string& name);
+	MaterialPtr getMaterialForName(const std::string& name);
 
 	void foreachShaderName(const ShaderNameCallback& callback);
 
 	void beginActiveShadersIterator();
 	bool endActiveShadersIterator();
-	IShaderPtr dereferenceActiveShadersIterator();
+	MaterialPtr dereferenceActiveShadersIterator();
 	void incrementActiveShadersIterator();
 	
 	void setActiveShadersChangedNotify(const Callback& notify);

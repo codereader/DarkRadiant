@@ -233,12 +233,12 @@ class ModuleObserver;
 
 #include "math/Vector3.h"
 
-class IShader;
-typedef boost::shared_ptr<IShader> IShaderPtr;
+class Material;
+typedef boost::shared_ptr<Material> MaterialPtr;
 
 /**
  * A Shader represents a single material which can be rendered in OpenGL, which
- * may correspond to an actual material (IShader), a raw colour or a special 
+ * may correspond to an actual material (Material), a raw colour or a special 
  * GL shader.
  * 
  * Importantly, a Shader also maintains its own list of OpenGLRenderable objects
@@ -272,13 +272,13 @@ public:
   virtual void attach(ModuleObserver& observer) = 0;
   virtual void detach(ModuleObserver& observer) = 0;
   
-	/** Retrieve the contained IShader from this object.
+	/** Retrieve the contained Material from this object.
 	 * 
 	 * @returns
-	 * An IShader subclass with information about the shader definition
+	 * An Material subclass with information about the shader definition
 	 */
 	 
-	virtual IShaderPtr getIShader() const = 0;
+	virtual MaterialPtr getMaterial() const = 0;
   
   virtual unsigned int getFlags() const = 0;
 };
