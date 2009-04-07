@@ -123,6 +123,30 @@ Vector4 Matrix4::transform(const Vector4& vector4) const
     );
 }
 
+// Transform a plane
+Plane3 Matrix4::transform(const Plane3& plane) const 
+{
+    Plane3 transformed;
+    transformed.a = _m[0] * plane.a + _m[4] * plane.b + _m[8] * plane.c;
+    transformed.b = _m[1] * plane.a + _m[5] * plane.b + _m[9] * plane.c;
+    transformed.c = _m[2] * plane.a + _m[6] * plane.b + _m[10] * plane.c;
+    transformed.d = -(	(-plane.d * transformed.a + _m[12]) * transformed.a + 
+                        (-plane.d * transformed.b + _m[13]) * transformed.b + 
+                        (-plane.d * transformed.c + _m[14]) * transformed.c);
+    return transformed;
+}
+
+// Inverse transform a plane
+Plane3 Matrix4::inverseTransform(const Plane3& plane) const 
+{
+    return Plane3(
+        _m[ 0] * plane.a + _m[ 1] * plane.b + _m[ 2] * plane.c + _m[ 3] * plane.d,
+        _m[ 4] * plane.a + _m[ 5] * plane.b + _m[ 6] * plane.c + _m[ 7] * plane.d,
+        _m[ 8] * plane.a + _m[ 9] * plane.b + _m[10] * plane.c + _m[11] * plane.d,
+        _m[12] * plane.a + _m[13] * plane.b + _m[14] * plane.c + _m[15] * plane.d
+    );
+}
+
 // Return matrix product
 Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs)
 {
