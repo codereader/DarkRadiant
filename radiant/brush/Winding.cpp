@@ -66,15 +66,6 @@ void Winding::render(const RenderInfo& info) const
 		return;
 	}
 
-    // If this is part of the skybox, calculate texcoords differently.
-    if (info.getCubeMapMode() == ShaderLayer::CUBE_MAP_CAMERA)
-    {
-        renderAsCameraCubeMap(info.getViewerLocation());
-        return;
-    }
-
-    // Otherwise render normally
-
 	// A shortcut pointer to the first array element to avoid
 	// massive calls to std::vector<>::begin()
 	const WindingVertex& firstElement = points.front();
@@ -82,8 +73,20 @@ void Winding::render(const RenderInfo& info) const
 	// Set the vertex pointer first
 	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
 
-	if (info.checkFlag(RENDER_BUMP)) 
+    // Check render flags. Multiple flags may be set, so the order matters.
+    if (info.checkFlag(RENDER_TEXTURE_CUBEMAP))
     {
+        // In cube-map mode, we submit the vertex coordinate as the texture
+        // coordinate. The RenderSystem will set the appropriate texture matrix
+        // etc.
+        glTexCoordPointer(
+            3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex
+        );
+    }
+	else if (info.checkFlag(RENDER_BUMP)) 
+    {
+        // Lighting mode, submit normals, tangents and texcoords to the shader
+        // program.
 		glVertexAttribPointerARB(
             ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.normal
         );
@@ -99,12 +102,13 @@ void Winding::render(const RenderInfo& info) const
 	} 
 	else 
     {
+        // Submit normals in lighting mode
 		if (info.checkFlag(RENDER_LIGHTING)) 
         {
 			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
 		}
 
-        // Set texture coordinates
+        // Set texture coordinates in 2D texture mode
 		if (info.checkFlag(RENDER_TEXTURE_2D)) 
         {
             glTexCoordPointer(
@@ -113,29 +117,8 @@ void Winding::render(const RenderInfo& info) const
 		}
 	}
 	
+    // Submit all data to OpenGL
 	glDrawArrays(GL_POLYGON, 0, GLsizei(numpoints));
-}
-
-// Render with cameraCubeMap coordinates
-void Winding::renderAsCameraCubeMap(const Vector3& viewer) const
-{
-    glBegin(GL_POLYGON);
-
-    for (container_type::const_iterator vertexIter = points.begin();
-         vertexIter != points.end();
-         ++vertexIter)
-    {
-        const Vector3& vertex = vertexIter->vertex;
-
-        // Set texcoord to view vector
-        Vector3 viewVector = vertex - viewer;
-        glTexCoord3dv(viewVector);
-
-        // Submit the point
-        glVertex3dv(vertex);
-    }
-
-    glEnd();
 }
 
 void Winding::testSelect(SelectionTest& test, SelectionIntersection& best) {

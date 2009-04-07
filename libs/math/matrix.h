@@ -32,7 +32,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \brief A 4x4 matrix stored in double-precision floating-point.
 class Matrix4
 {
-  double m_elements[16];
+    // Elements of the 4x4 matrix. These appear to be treated COLUMNWISE, i.e.
+    // elements [0] through [3] are the first column, [4] through [7] are the
+    // second column, etc.
+    double m_elements[16];
+
 public:
 
 	// Default constructor

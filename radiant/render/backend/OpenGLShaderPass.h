@@ -58,7 +58,8 @@ private:
 	// in combination with the global state mask, as well as setting
     // relevant GL parameters directly.
 	void applyState(OpenGLState& current,
-                    unsigned int globalStateMask);
+                    unsigned int globalStateMask,
+                    const Vector3& viewer);
 
 	// Render all of our contained TransformedRenderables
 	void renderAllContained(OpenGLState& current, 
@@ -82,7 +83,8 @@ private:
 
     // Set up the cube map texture matrix if necessary
     void setUpCubeMapAndTexGen(OpenGLState& current,
-                               unsigned requiredState);
+                               unsigned requiredState,
+                               const Vector3& viewer);
 
 public:
 
