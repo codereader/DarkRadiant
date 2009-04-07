@@ -31,7 +31,7 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
     matrix4_transform_point(worldToObject, localLight);
 
     Matrix4 local2light(world2light);
-    matrix4_multiply_by_matrix4(local2light, objectToWorld); // local->world->light
+    local2light.multiplyBy(objectToWorld); // local->world->light
 
     // view origin
     glProgramLocalParameter4fARB(

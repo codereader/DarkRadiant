@@ -351,7 +351,7 @@ void Node::evaluateTransform() const {
 		const TransformNode* transformNode = dynamic_cast<const TransformNode*>(this);
 
 		if (transformNode != NULL) {
-			matrix4_multiply_by_matrix4(_local2world, transformNode->localToParent());
+			_local2world.multiplyBy(transformNode->localToParent());
 		}
 
 		_transformMutex = false;

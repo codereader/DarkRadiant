@@ -104,7 +104,7 @@ void Camera::updateModelview() {
 
 	modelview.translateBy(origin);
 	matrix4_rotate_by_euler_xyz_degrees(modelview, radiant_eulerXYZ);
-	matrix4_multiply_by_matrix4(modelview, g_radiant2opengl);
+	modelview.multiplyBy(g_radiant2opengl);
 	matrix4_affine_invert(modelview);
 
 	updateVectors();

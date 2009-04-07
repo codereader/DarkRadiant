@@ -363,13 +363,6 @@ inline Matrix4 matrix4_multiplied_by_matrix4(const Matrix4& self, const Matrix4&
   );
 }
 
-/// \brief Post-multiplies \p self by \p other in-place.
-inline void matrix4_multiply_by_matrix4(Matrix4& self, const Matrix4& other)
-{
-  self = matrix4_multiplied_by_matrix4(self, other);
-}
-
-
 /// \brief Returns \p self pre-multiplied by \p other.
 inline Matrix4 matrix4_premultiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
 {
@@ -864,7 +857,7 @@ inline Matrix4 matrix4_rotation_for_euler_xyz_degrees(const Vector3& euler)
 /// The concatenated rotation occurs before \p self.
 inline void matrix4_rotate_by_euler_xyz_degrees(Matrix4& self, const Vector3& euler)
 {
-  matrix4_multiply_by_matrix4(self, matrix4_rotation_for_euler_xyz_degrees(euler));
+  self.multiplyBy(matrix4_rotation_for_euler_xyz_degrees(euler));
 }
 
 
@@ -1243,7 +1236,7 @@ inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
 /// \brief Scales \p self by \p scale.
 inline void matrix4_scale_by_vec3(Matrix4& self, const Vector3& scale)
 {
-  matrix4_multiply_by_matrix4(self, matrix4_scale_for_vec3(scale));
+  self.multiplyBy(matrix4_scale_for_vec3(scale));
 }
 
 /// \brief Scales \p self by \p scale, using \p pivotpoint.

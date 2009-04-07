@@ -66,7 +66,7 @@ void EclassModel::updateTransform() {
 	m_transform.localToParent() = Matrix4::getIdentity();
 	m_transform.localToParent().translateBy(m_origin);
 
-	matrix4_multiply_by_matrix4(m_transform.localToParent(), rotation_toMatrix(m_rotation));
+	m_transform.localToParent().multiplyBy(rotation_toMatrix(m_rotation));
 	m_transformChanged();
 }
 
