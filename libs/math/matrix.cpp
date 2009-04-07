@@ -123,3 +123,38 @@ Vector4 Matrix4::transform(const Vector4& vector4) const
     );
 }
 
+// Return matrix product
+Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs)
+{
+    return Matrix4(
+        rhs[0] * _m[0] + rhs[1] * _m[4] + rhs[2] * _m[8] + rhs[3] * _m[12],
+        rhs[0] * _m[1] + rhs[1] * _m[5] + rhs[2] * _m[9] + rhs[3] * _m[13],
+        rhs[0] * _m[2] + rhs[1] * _m[6] + rhs[2] * _m[10]+ rhs[3] * _m[14],
+        rhs[0] * _m[3] + rhs[1] * _m[7] + rhs[2] * _m[11]+ rhs[3] * _m[15],
+        rhs[4] * _m[0] + rhs[5] * _m[4] + rhs[6] * _m[8] + rhs[7] * _m[12],
+        rhs[4] * _m[1] + rhs[5] * _m[5] + rhs[6] * _m[9] + rhs[7] * _m[13],
+        rhs[4] * _m[2] + rhs[5] * _m[6] + rhs[6] * _m[10]+ rhs[7] * _m[14],
+        rhs[4] * _m[3] + rhs[5] * _m[7] + rhs[6] * _m[11]+ rhs[7] * _m[15],
+        rhs[8] * _m[0] + rhs[9] * _m[4] + rhs[10]* _m[8] + rhs[11]* _m[12],
+        rhs[8] * _m[1] + rhs[9] * _m[5] + rhs[10]* _m[9] + rhs[11]* _m[13],
+        rhs[8] * _m[2] + rhs[9] * _m[6] + rhs[10]* _m[10]+ rhs[11]* _m[14],
+        rhs[8] * _m[3] + rhs[9] * _m[7] + rhs[10]* _m[11]+ rhs[11]* _m[15],
+        rhs[12]* _m[0] + rhs[13]* _m[4] + rhs[14]* _m[8] + rhs[15]* _m[12],
+        rhs[12]* _m[1] + rhs[13]* _m[5] + rhs[14]* _m[9] + rhs[15]* _m[13],
+        rhs[12]* _m[2] + rhs[13]* _m[6] + rhs[14]* _m[10]+ rhs[15]* _m[14],
+        rhs[12]* _m[3] + rhs[13]* _m[7] + rhs[14]* _m[11]+ rhs[15]* _m[15]
+    );
+}
+
+// Multiply by another matrix, in-place
+void Matrix4::multiplyBy(const Matrix4& other)
+{
+    *this = getMultipliedBy(other);
+}
+
+// Add a translation component
+void Matrix4::translateBy(const Vector3& translation)
+{
+    multiplyBy(getTranslation(translation));
+}
+

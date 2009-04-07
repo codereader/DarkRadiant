@@ -190,7 +190,7 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
         );
 
         // Subtract the viewer position
-        matrix4_translate_by_vec3(transform, -viewer);
+        transform.translateBy(-viewer);
 
         // Apply to the texture matrix
         glMatrixMode(GL_TEXTURE);

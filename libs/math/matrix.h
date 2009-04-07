@@ -252,6 +252,27 @@ public:
 		);
 	}
 	
+    /**
+     * \brief
+     * Return the result of this matrix multiplied by another matrix.
+     */
+    Matrix4 getMultipliedBy(const Matrix4& other);
+
+    /**
+     * \brief
+     * Multiply this matrix by another matrix, in-place.
+     */
+    void multiplyBy(const Matrix4& other);
+
+    /**
+     * \brief
+     * Add a translation component to the transformation represented by this
+     * matrix.
+     *
+     * Equivalent to multiplyBy(Matrix4::getTranslation(translation));
+     */
+    void translateBy(const Vector3& translation);
+
 };
 
 /// \brief Returns true if \p self and \p other are exactly element-wise equal.
