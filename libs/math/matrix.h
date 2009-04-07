@@ -35,7 +35,7 @@ class Matrix4
     // Elements of the 4x4 matrix. These appear to be treated COLUMNWISE, i.e.
     // elements [0] through [3] are the first column, [4] through [7] are the
     // second column, etc.
-    double m_elements[16];
+    double _m[16];
 
 public:
 
@@ -50,18 +50,14 @@ public:
     */
 	static const Matrix4& getIdentity();
 	
-	/** Get a matrix representing the given 3D translation.
+	/** 
+     * \brief
+     * Get a matrix representing the given 3D translation.
 	 * 
 	 * @param translation
 	 * Vector3 representing the translation in 3D space.
 	 */
-	 
-	static Matrix4 getTranslation(const Vector3& translation) {
-		return Matrix4(1, 0, 0, 0,
-						0, 1, 0, 0,
-						0, 0, 1, 0,
-						translation.x(), translation.y(), translation.z(), 1);
-	}
+	static Matrix4 getTranslation(const Vector3& translation);
 	
 	/* greebo: Returns the rotation matrix defined by two three-component 
 	 * vectors.
@@ -70,266 +66,160 @@ public:
 	 */
 	static Matrix4 getRotation(const Vector3& a, const Vector3& b);
 
-	// Custom constructor
+    /**
+     * \brief
+     * Construct a matrix containing the given elements.
+     *
+     * The elements are specified column-wise.
+     */
+    Matrix4(double xx_, double xy_, double xz_, double xw_,
+            double yx_, double yy_, double yz_, double yw_,
+            double zx_, double zy_, double zz_, double zw_,
+            double tx_, double ty_, double tz_, double tw_);
 
-  Matrix4(double xx_, double xy_, double xz_, double xw_,
-    double yx_, double yy_, double yz_, double yw_,
-    double zx_, double zy_, double zz_, double zw_,
-    double tx_, double ty_, double tz_, double tw_)
-  {
-    xx() = xx_;
-    xy() = xy_;
-    xz() = xz_;
-    xw() = xw_;
-    yx() = yx_;
-    yy() = yy_;
-    yz() = yz_;
-    yw() = yw_;
-    zx() = zx_;
-    zy() = zy_;
-    zz() = zz_;
-    zw() = zw_;
-    tx() = tx_;
-    ty() = ty_;
-    tz() = tz_;
-    tw() = tw_;
-  }
+    /**
+     * Return matrix elements
+     * \{
+     */
+    double& xx()             { return _m[0]; }
+    const double& xx() const { return _m[0]; }
+    double& xy()             { return _m[1]; }
+    const double& xy() const { return _m[1]; }
+    double& xz()             { return _m[2]; }
+    const double& xz() const { return _m[2]; }
+    double& xw()             { return _m[3]; }
+    const double& xw() const { return _m[3]; }
+    double& yx()             { return _m[4]; }
+    const double& yx() const { return _m[4]; }
+    double& yy()             { return _m[5]; }
+    const double& yy() const { return _m[5]; }
+    double& yz()             { return _m[6]; }
+    const double& yz() const { return _m[6]; }
+    double& yw()             { return _m[7]; }
+    const double& yw() const { return _m[7]; }
+    double& zx()             { return _m[8]; }
+    const double& zx() const { return _m[8]; }
+    double& zy()             { return _m[9]; }
+    const double& zy() const { return _m[9]; }
+    double& zz()             { return _m[10]; }
+    const double& zz() const { return _m[10]; }
+    double& zw()             { return _m[11]; }
+    const double& zw() const { return _m[11]; }
+    double& tx()             { return _m[12]; }
+    const double& tx() const { return _m[12]; }
+    double& ty()             { return _m[13]; }
+    const double& ty() const { return _m[13]; }
+    double& tz()             { return _m[14]; }
+    const double& tz() const { return _m[14]; }
+    double& tw()             { return _m[15]; }
+    const double& tw() const { return _m[15]; }
+    /**
+     * \}
+     */
 
-  double& xx()
-  {
-    return m_elements[0];
-  }
-  const double& xx() const
-  {
-    return m_elements[0];
-  }
-  double& xy()
-  {
-    return m_elements[1];
-  }
-  const double& xy() const
-  {
-    return m_elements[1];
-  }
-  double& xz()
-  {
-    return m_elements[2];
-  }
-  const double& xz() const
-  {
-    return m_elements[2];
-  }
-  double& xw()
-  {
-    return m_elements[3];
-  }
-  const double& xw() const
-  {
-    return m_elements[3];
-  }
-  double& yx()
-  {
-    return m_elements[4];
-  }
-  const double& yx() const
-  {
-    return m_elements[4];
-  }
-  double& yy()
-  {
-    return m_elements[5];
-  }
-  const double& yy() const
-  {
-    return m_elements[5];
-  }
-  double& yz()
-  {
-    return m_elements[6];
-  }
-  const double& yz() const
-  {
-    return m_elements[6];
-  }
-  double& yw()
-  {
-    return m_elements[7];
-  }
-  const double& yw() const
-  {
-    return m_elements[7];
-  }
-  double& zx()
-  {
-    return m_elements[8];
-  }
-  const double& zx() const
-  {
-    return m_elements[8];
-  }
-  double& zy()
-  {
-    return m_elements[9];
-  }
-  const double& zy() const
-  {
-    return m_elements[9];
-  }
-  double& zz()
-  {
-    return m_elements[10];
-  }
-  const double& zz() const
-  {
-    return m_elements[10];
-  }
-  double& zw()
-  {
-    return m_elements[11];
-  }
-  const double& zw() const
-  {
-    return m_elements[11];
-  }
-  double& tx()
-  {
-    return m_elements[12];
-  }
-  const double& tx() const
-  {
-    return m_elements[12];
-  }
-  double& ty()
-  {
-    return m_elements[13];
-  }
-  const double& ty() const
-  {
-    return m_elements[13];
-  }
-  double& tz()
-  {
-    return m_elements[14];
-  }
-  const double& tz() const
-  {
-    return m_elements[14];
-  }
-  double& tw()
-  {
-    return m_elements[15];
-  }
-  const double& tw() const
-  {
-    return m_elements[15];
-  }
-
-  Vector4& x()
-  {
-    return reinterpret_cast<Vector4&>(xx());
-  }
-  const Vector4& x() const
-  {
-    return reinterpret_cast<const Vector4&>(xx());
-  }
-  Vector4& y()
-  {
-    return reinterpret_cast<Vector4&>(yx());
-  }
-  const Vector4& y() const
-  {
-    return reinterpret_cast<const Vector4&>(yx());
-  }
-  Vector4& z()
-  {
-    return reinterpret_cast<Vector4&>(zx());
-  }
-  const Vector4& z() const
-  {
-    return reinterpret_cast<const Vector4&>(zx());
-  }
-  Vector4& t()
-  {
-    return reinterpret_cast<Vector4&>(tx());
-  }
-  const Vector4& t() const
-  {
-    return reinterpret_cast<const Vector4&>(tx());
-  }
+    /**
+     * Return columns of the matrix as vectors.
+     * \{
+     */
+    Vector4& x()
+    {
+        return reinterpret_cast<Vector4&>(xx());
+    }
+    const Vector4& x() const
+    {
+        return reinterpret_cast<const Vector4&>(xx());
+    }
+    Vector4& y()
+    {
+        return reinterpret_cast<Vector4&>(yx());
+    }
+    const Vector4& y() const
+    {
+        return reinterpret_cast<const Vector4&>(yx());
+    }
+    Vector4& z()
+    {
+        return reinterpret_cast<Vector4&>(zx());
+    }
+    const Vector4& z() const
+    {
+        return reinterpret_cast<const Vector4&>(zx());
+    }
+    Vector4& t()
+    {
+        return reinterpret_cast<Vector4&>(tx());
+    }
+    const Vector4& t() const
+    {
+        return reinterpret_cast<const Vector4&>(tx());
+    }
+    /**
+     * \}
+     */
 
   const double& index(std::size_t i) const
   {
-    return m_elements[i];
+    return _m[i];
   }
   double& index(std::size_t i)
   {
-    return m_elements[i];
+    return _m[i];
   }
   const double& index(std::size_t r, std::size_t c) const
   {
-    return m_elements[(r << 2) + c];
+    return _m[(r << 2) + c];
   }
   double& index(std::size_t r, std::size_t c)
   {
-    return m_elements[(r << 2) + c];
+    return _m[(r << 2) + c];
   }
 
-	/** Cast to double* for use with GL functions that accept a double
+	/** 
+     * Cast to double* for use with GL functions that accept a double
 	 * array, also provides operator[].
 	 */
 	operator double* () {
-		return m_elements;	
+		return _m;	
 	}
 
-	/** Cast to const double* to provide operator[] for const objects.
+	/** 
+     * Cast to const double* to provide operator[] for const objects.
 	 */
 	operator const double* () const {
-		return m_elements;
+		return _m;
 	}
 
-	// Transposes the matrix <self>
-	void transpose() {
-		std::swap(m_elements[1], m_elements[4]); // xy <=> yx
-		std::swap(m_elements[2], m_elements[8]); // xz <=> zx
-		std::swap(m_elements[3], m_elements[12]); // xw <=> tx
-		std::swap(m_elements[6], m_elements[9]); // yz <=> zy
-		std::swap(m_elements[7], m_elements[13]); // yw <=> ty
-		std::swap(m_elements[11], m_elements[14]); // zw <=> tz
-	}
+	/**
+     * \brief
+     * Transpose this matrix in-place.
+     */
+	void transpose();
 	
-	// Returns the transposed matrix of <self>
-	Matrix4 getTransposed() const {
-		return Matrix4(
-			xx(), yx(), zx(), tx(),
-			xy(), yy(), zy(), ty(),
-			xz(), yz(), zz(), tz(),
-			xw(), yw(), zw(), tw()
-		);
-	}
+	/**
+     * \brief
+     * Return a transposed copy of this matrix.
+     */
+	Matrix4 getTransposed() const;
 
-	/** Use this matrix to transform the provided vector and return a new
-	 * vector containing the result.
+	/** 
+     * \brief
+     * Use this matrix to transform the provided vector and return a new vector
+     * containing the result.
 	 * 
-	 * @param vector4
+	 * \param vector4
 	 * The 4-element vector to transform.
 	 */
-	Vector4 transform(const Vector4& vector4) const {
-		return Vector4(
-		    m_elements[0]  * vector4[0] + m_elements[4]  * vector4[1] + m_elements[8]  * vector4[2] + m_elements[12] * vector4[3],
-		    m_elements[1]  * vector4[0] + m_elements[5]  * vector4[1] + m_elements[9]  * vector4[2] + m_elements[13] * vector4[3],
-		    m_elements[2]  * vector4[0] + m_elements[6]  * vector4[1] + m_elements[10] * vector4[2] + m_elements[14] * vector4[3],
-		    m_elements[3]  * vector4[0] + m_elements[7]  * vector4[1] + m_elements[11] * vector4[2] + m_elements[15] * vector4[3]
-		);
-	}
+	Vector4 transform(const Vector4& vector4) const;
 	
-	/** Use this matrix to transform the provided 3-element vector,
-	 * automatically converting the vector to a 4-element homogeneous
-	 * vector with w=1.
+	/** 
+     * \brief
+     * Use this matrix to transform the provided 3-element vector, automatically
+     * converting the vector to a 4-element homogeneous vector with w=1.
 	 * 
-	 * @param vector3
+	 * \param vector3
 	 * The Vector3 to transform.
 	 * 
-	 * @returns
+	 * \returns
 	 * A 4-element vector containing the result.
 	 */
 	Vector4 transform(const Vector3& vector3) const {
@@ -344,21 +234,21 @@ public:
 	 */
 	Plane3 transform(const Plane3& plane) const {
 		Plane3 transformed;
-		transformed.a = m_elements[0] * plane.a + m_elements[4] * plane.b + m_elements[8] * plane.c;
-		transformed.b = m_elements[1] * plane.a + m_elements[5] * plane.b + m_elements[9] * plane.c;
-		transformed.c = m_elements[2] * plane.a + m_elements[6] * plane.b + m_elements[10] * plane.c;
-		transformed.d = -(	(-plane.d * transformed.a + m_elements[12]) * transformed.a + 
-							(-plane.d * transformed.b + m_elements[13]) * transformed.b + 
-							(-plane.d * transformed.c + m_elements[14]) * transformed.c);
+		transformed.a = _m[0] * plane.a + _m[4] * plane.b + _m[8] * plane.c;
+		transformed.b = _m[1] * plane.a + _m[5] * plane.b + _m[9] * plane.c;
+		transformed.c = _m[2] * plane.a + _m[6] * plane.b + _m[10] * plane.c;
+		transformed.d = -(	(-plane.d * transformed.a + _m[12]) * transformed.a + 
+							(-plane.d * transformed.b + _m[13]) * transformed.b + 
+							(-plane.d * transformed.c + _m[14]) * transformed.c);
 		return transformed;
 	}
 	
 	Plane3 inverseTransform(const Plane3& plane) const {
 		return Plane3(
-			m_elements[ 0] * plane.a + m_elements[ 1] * plane.b + m_elements[ 2] * plane.c + m_elements[ 3] * plane.d,
-			m_elements[ 4] * plane.a + m_elements[ 5] * plane.b + m_elements[ 6] * plane.c + m_elements[ 7] * plane.d,
-			m_elements[ 8] * plane.a + m_elements[ 9] * plane.b + m_elements[10] * plane.c + m_elements[11] * plane.d,
-			m_elements[12] * plane.a + m_elements[13] * plane.b + m_elements[14] * plane.c + m_elements[15] * plane.d
+			_m[ 0] * plane.a + _m[ 1] * plane.b + _m[ 2] * plane.c + _m[ 3] * plane.d,
+			_m[ 4] * plane.a + _m[ 5] * plane.b + _m[ 6] * plane.c + _m[ 7] * plane.d,
+			_m[ 8] * plane.a + _m[ 9] * plane.b + _m[10] * plane.c + _m[11] * plane.d,
+			_m[12] * plane.a + _m[13] * plane.b + _m[14] * plane.c + _m[15] * plane.d
 		);
 	}
 	
