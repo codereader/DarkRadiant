@@ -570,7 +570,7 @@ void RadiantSelectionSystem::translate(const Vector3& translation) {
 
 		// Get the current pivot matrix and multiply it by the translation matrix defined by <translation>.
 		_pivot2world = _pivot2worldStart;
-		matrix4_translate_by_vec3(_pivot2world, translation);
+		_pivot2world.translateBy(translation);
 		
 		// Call the according scene graph traversors and pass the translation vector
 		if (Mode() == eComponent) {

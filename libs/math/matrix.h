@@ -687,13 +687,6 @@ inline Vector3 matrix4_get_translation_vec3(const Matrix4& self)
   return self.t().getVector3();
 }
 
-/// \brief Concatenates \p self with \p translation.
-/// The concatenated \p translation occurs before \p self.
-inline void matrix4_translate_by_vec3(Matrix4& self, const Vector3& translation)
-{
-  matrix4_multiply_by_matrix4(self, Matrix4::getTranslation(translation));
-}
-
 /// \brief Returns \p self Concatenated with \p translation.
 /// The concatenated translation occurs before \p self.
 inline Matrix4 matrix4_translated_by_vec3(const Matrix4& self, const Vector3& translation)
@@ -1226,9 +1219,9 @@ inline Vector3 matrix4_get_rotation_euler_zyx_degrees(const Matrix4& self)
 /// \brief Rotate \p self by \p euler angles (degrees) applied in the order (x, y, z), using \p pivotpoint.
 inline void matrix4_pivoted_rotate_by_euler_xyz_degrees(Matrix4& self, const Vector3& euler, const Vector3& pivotpoint)
 {
-  matrix4_translate_by_vec3(self, pivotpoint);
+  self.translateBy(pivotpoint);
   matrix4_rotate_by_euler_xyz_degrees(self, euler);
-  matrix4_translate_by_vec3(self, -pivotpoint);
+  self.translateBy(-pivotpoint);
 }
 
 
@@ -1263,9 +1256,9 @@ inline void matrix4_scale_by_vec3(Matrix4& self, const Vector3& scale)
 /// \brief Scales \p self by \p scale, using \p pivotpoint.
 inline void matrix4_pivoted_scale_by_vec3(Matrix4& self, const Vector3& scale, const Vector3& pivotpoint)
 {
-  matrix4_translate_by_vec3(self, pivotpoint);
+  self.translateBy(pivotpoint);
   matrix4_scale_by_vec3(self, scale);
-  matrix4_translate_by_vec3(self, -pivotpoint);
+  self.translateBy(-pivotpoint);
 }
 
 
@@ -1273,7 +1266,7 @@ inline void matrix4_pivoted_scale_by_vec3(Matrix4& self, const Vector3& scale, c
 /// The transforms are combined in the order: scale, rotate-z, rotate-y, rotate-x, translate.
 inline void matrix4_transform_by_euler_xyz_degrees(Matrix4& self, const Vector3& translation, const Vector3& euler, const Vector3& scale)
 {
-  matrix4_translate_by_vec3(self, translation);
+  self.translateBy(translation);
   matrix4_rotate_by_euler_xyz_degrees(self, euler);
   matrix4_scale_by_vec3(self, scale);
 }
@@ -1281,10 +1274,10 @@ inline void matrix4_transform_by_euler_xyz_degrees(Matrix4& self, const Vector3&
 /// \brief Transforms \p self by \p translation, \p euler and \p scale, using \p pivotpoint.
 inline void matrix4_pivoted_transform_by_euler_xyz_degrees(Matrix4& self, const Vector3& translation, const Vector3& euler, const Vector3& scale, const Vector3& pivotpoint)
 {
-  matrix4_translate_by_vec3(self, pivotpoint + translation);
+  self.translateBy(pivotpoint + translation);
   matrix4_rotate_by_euler_xyz_degrees(self, euler);
   matrix4_scale_by_vec3(self, scale);
-  matrix4_translate_by_vec3(self, -pivotpoint);
+  self.translateBy(-pivotpoint);
 }
 
 /** Stream insertion operator for Matrix4.
