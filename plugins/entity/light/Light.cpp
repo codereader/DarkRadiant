@@ -849,7 +849,7 @@ const Matrix4& Light::projection() const {
 	m_doom3Frustum.back = -m_doom3Frustum.back;
 
 	Matrix4 test(matrix4_from_planes(m_doom3Frustum.left, m_doom3Frustum.right, m_doom3Frustum.bottom, m_doom3Frustum.top, m_doom3Frustum.front, m_doom3Frustum.back));
-	matrix4_multiply_by_matrix4(m_doom3Projection, test);
+	m_doom3Projection.multiplyBy(test);
 
 	m_doom3Frustum.left = m_doom3Frustum.left.getNormalised();
 	m_doom3Frustum.right = m_doom3Frustum.right.getNormalised();

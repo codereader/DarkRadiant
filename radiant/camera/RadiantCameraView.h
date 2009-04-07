@@ -52,7 +52,7 @@ public:
   void setModelview(const Matrix4& modelview)
   {
     m_camera.modelview = modelview;
-    matrix4_multiply_by_matrix4(m_camera.modelview, g_radiant2opengl);
+    m_camera.modelview.multiplyBy(g_radiant2opengl);
     matrix4_affine_invert(m_camera.modelview);
     m_camera.updateVectors();
     update();

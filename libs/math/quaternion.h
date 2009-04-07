@@ -332,7 +332,7 @@ inline Matrix4 matrix4_rotation_for_axisangle(const Vector3& axis, double angle)
 /// \brief Rotates \p self about \p axis by \p angle.
 inline void matrix4_rotate_by_axisangle(Matrix4& self, const Vector3& axis, double angle)
 {
-  matrix4_multiply_by_matrix4(self, matrix4_rotation_for_axisangle(axis, angle));
+  self.multiplyBy(matrix4_rotation_for_axisangle(axis, angle));
 }
 
 /// \brief Rotates \p self about \p axis by \p angle using \p pivotpoint.

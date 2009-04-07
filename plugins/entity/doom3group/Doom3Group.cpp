@@ -397,7 +397,7 @@ void Doom3Group::updateTransform() {
 	m_transform.localToParent() = Matrix4::getIdentity();
 	if (isModel()) {
 		m_transform.localToParent().translateBy(m_origin);
-		matrix4_multiply_by_matrix4(m_transform.localToParent(), rotation_toMatrix(m_rotation));
+		m_transform.localToParent().multiplyBy(rotation_toMatrix(m_rotation));
 	}
 	
 	// Notify the Node about this transformation change	to update the local2World matrix 

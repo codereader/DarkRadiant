@@ -593,7 +593,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
                 if (light->isProjected()) 
                 {
                   world2light = light->projection();
-                  matrix4_multiply_by_matrix4(world2light, light->rotation().getTransposed());
+                  world2light.multiplyBy(light->rotation().getTransposed());
                   
                   // greebo: old code: world2light.translateBy(-lightBounds.origin); // world->lightBounds
                   world2light.translateBy(-(light->offset()));
@@ -603,7 +603,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
                   world2light.translateBy(Vector3(0.5f, 0.5f, 0.5f));
                   matrix4_scale_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
                   matrix4_scale_by_vec3(world2light, Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
-                  matrix4_multiply_by_matrix4(world2light, light->rotation().getTransposed());
+                  world2light.multiplyBy(light->rotation().getTransposed());
                   world2light.translateBy(-lightBounds.origin); // world->lightBounds
                 }
 
