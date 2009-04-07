@@ -780,7 +780,7 @@ const Matrix4& Light::projection() const {
 	
 	m_doom3ProjectionChanged = false;
 	m_doom3Projection = Matrix4::getIdentity();
-	matrix4_translate_by_vec3(m_doom3Projection, Vector3(0.5f, 0.5f, 0));
+	m_doom3Projection.translateBy(Vector3(0.5f, 0.5f, 0));
 	matrix4_scale_by_vec3(m_doom3Projection, Vector3(0.5f, 0.5f, 1));
 
 	Plane3 lightProject[4];

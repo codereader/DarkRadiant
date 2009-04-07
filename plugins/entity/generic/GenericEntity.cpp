@@ -184,7 +184,7 @@ void GenericEntity::construct() {
 
 void GenericEntity::updateTransform() {
 	m_transform.localToParent() = Matrix4::getIdentity();
-	matrix4_translate_by_vec3(m_transform.localToParent(), m_origin);
+	m_transform.localToParent().translateBy(m_origin);
 	m_ray.direction = matrix4_transformed_direction(matrix4_rotation_for_z(degrees_to_radians(m_angle)), Vector3(1, 0, 0));
 	m_transformChanged();
 }
