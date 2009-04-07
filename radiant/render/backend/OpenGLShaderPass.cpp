@@ -91,16 +91,25 @@ void OpenGLShaderPass::disableTexture2D()
     GlobalOpenGL_debugAssertNoErrors();
 }
 
+// Enable cubemap texturing and texcoord array
 void OpenGLShaderPass::enableTextureCubeMap()
 {
     setTexture0();
     glEnable(GL_TEXTURE_CUBE_MAP);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    GlobalOpenGL_debugAssertNoErrors();
 }
 
+// Disable cubemap texturing and texcoord array
 void OpenGLShaderPass::disableTextureCubeMap()
 {
+    setTexture0();
     glDisable(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    GlobalOpenGL_debugAssertNoErrors();
 }
 
 void OpenGLShaderPass::enableRenderBlend()
@@ -164,30 +173,36 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
 
 // Set up cube map
 void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
-                                             unsigned requiredState)
+                                             unsigned requiredState,
+                                             const Vector3& viewer)
 {
     if (requiredState & RENDER_TEXTURE_CUBEMAP)
     {
         // Copy cubemap mode enum to current state object
         current.cubeMapMode = _state.cubeMapMode;
 
-        // Apply axis transformation to the texture matrix (swaps Y and Z
-        // coordinates)
+        // Apply axis transformation (swap Y and Z coordinates)
         Matrix4 transform(
             1, 0, 0, 0,
             0, 0, 1, 0,
             0, 1, 0, 0,
             0, 0, 0, 1
         );
+
+        // Subtract the viewer position
+        matrix4_translate_by_vec3(transform, -viewer);
+
+        // Apply to the texture matrix
         glMatrixMode(GL_TEXTURE);
-        glMultMatrixd(transform);
+        glLoadMatrixd(transform);
         glMatrixMode(GL_MODELVIEW);
     }
 }
 
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
-					              unsigned int globalStateMask)
+					              unsigned int globalStateMask,
+                                  const Vector3& viewer)
 {
   if(_state.renderFlags & RENDER_OVERRIDE)
   {
@@ -397,7 +412,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     }
 
     // Set up the cubemap and texgen parameters
-    setUpCubeMapAndTexGen(current, requiredState);
+    setUpCubeMapAndTexGen(current, requiredState, viewer);
 
   if(requiredState & RENDER_BLEND
     && (_state.m_blend_src != current.m_blend_src || _state.m_blend_dst != current.m_blend_dst))
@@ -461,7 +476,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
     glMatrixMode(GL_MODELVIEW);
 
 	// Apply our state to the current state object
-	applyState(current, flagsMask);
+	applyState(current, flagsMask, viewer);
 	
     // If RENDER_SCREEN is set, just render a quad, otherwise render all
     // objects.

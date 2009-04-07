@@ -124,9 +124,6 @@ public:
 	// Submits this winding to OpenGL
 	void render(const RenderInfo& info) const;
 
-    // Render the winding using cameraCubeMap coordinates
-    void renderAsCameraCubeMap(const Vector3& viewer) const;
-	
 	// Submits the wireframe render commands to OpenGL
 	void drawWireframe() const;
 	
