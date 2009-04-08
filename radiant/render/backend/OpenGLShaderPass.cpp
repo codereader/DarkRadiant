@@ -601,8 +601,8 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
                 else 
                 {
                   world2light.translateBy(Vector3(0.5f, 0.5f, 0.5f));
-                  matrix4_scale_by_vec3(world2light, Vector3(0.5f, 0.5f, 0.5f));
-                  matrix4_scale_by_vec3(world2light, Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
+                  world2light.scaleBy(Vector3(0.5f, 0.5f, 0.5f));
+                  world2light.scaleBy(Vector3(1.0f / lightBounds.extents.x(), 1.0f / lightBounds.extents.y(), 1.0f / lightBounds.extents.z()));
                   world2light.multiplyBy(light->rotation().getTransposed());
                   world2light.translateBy(-lightBounds.origin); // world->lightBounds
                 }

@@ -781,7 +781,7 @@ const Matrix4& Light::projection() const {
 	m_doom3ProjectionChanged = false;
 	m_doom3Projection = Matrix4::getIdentity();
 	m_doom3Projection.translateBy(Vector3(0.5f, 0.5f, 0));
-	matrix4_scale_by_vec3(m_doom3Projection, Vector3(0.5f, 0.5f, 1));
+	m_doom3Projection.scaleBy(Vector3(0.5f, 0.5f, 1));
 
 	Plane3 lightProject[4];
 
@@ -858,7 +858,7 @@ const Matrix4& Light::projection() const {
 	m_doom3Frustum.back = m_doom3Frustum.back.getNormalised();
 	m_doom3Frustum.front = m_doom3Frustum.front.getNormalised();
 	
-	//matrix4_scale_by_vec3(m_doom3Projection, Vector3(1.0 / 128, 1.0 / 128, 1.0 / 128));
+	//m_doom3Projection.scaleBy(Vector3(1.0 / 128, 1.0 / 128, 1.0 / 128));
 	return m_doom3Projection;
 }
 
