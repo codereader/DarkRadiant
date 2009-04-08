@@ -256,13 +256,13 @@ public:
 	
     /**
      * \brief
-     * Return the result of this matrix multiplied by another matrix.
+     * Return the result of this matrix post-multiplied by another matrix.
      */
     Matrix4 getMultipliedBy(const Matrix4& other);
 
     /**
      * \brief
-     * Multiply this matrix by another matrix, in-place.
+     * Post-multiply this matrix by another matrix, in-place.
      */
     void multiplyBy(const Matrix4& other);
 
@@ -274,6 +274,14 @@ public:
      * Equivalent to multiplyBy(Matrix4::getTranslation(translation));
      */
     void translateBy(const Vector3& translation);
+
+    /**
+     * \brief
+     * Add a scale component to the transformation represented by this matrix.
+     *
+     * Equivalent to multiplyBy(Matrix4::getScale(scale));
+     */
+    void scaleBy(const Vector3& scale);
 
 };
 
@@ -1230,17 +1238,11 @@ inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
   );
 }
 
-/// \brief Scales \p self by \p scale.
-inline void matrix4_scale_by_vec3(Matrix4& self, const Vector3& scale)
-{
-  self.multiplyBy(Matrix4::getScale(scale));
-}
-
 /// \brief Scales \p self by \p scale, using \p pivotpoint.
 inline void matrix4_pivoted_scale_by_vec3(Matrix4& self, const Vector3& scale, const Vector3& pivotpoint)
 {
   self.translateBy(pivotpoint);
-  matrix4_scale_by_vec3(self, scale);
+  self.scaleBy(scale);
   self.translateBy(-pivotpoint);
 }
 
@@ -1251,7 +1253,7 @@ inline void matrix4_transform_by_euler_xyz_degrees(Matrix4& self, const Vector3&
 {
   self.translateBy(translation);
   matrix4_rotate_by_euler_xyz_degrees(self, euler);
-  matrix4_scale_by_vec3(self, scale);
+  self.scaleBy(scale);
 }
 
 /// \brief Transforms \p self by \p translation, \p euler and \p scale, using \p pivotpoint.
@@ -1259,7 +1261,7 @@ inline void matrix4_pivoted_transform_by_euler_xyz_degrees(Matrix4& self, const 
 {
   self.translateBy(pivotpoint + translation);
   matrix4_rotate_by_euler_xyz_degrees(self, euler);
-  matrix4_scale_by_vec3(self, scale);
+  self.scaleBy(scale);
   self.translateBy(-pivotpoint);
 }
 

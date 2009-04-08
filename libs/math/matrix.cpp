@@ -193,3 +193,9 @@ void Matrix4::translateBy(const Vector3& translation)
     multiplyBy(getTranslation(translation));
 }
 
+// Add a scale component
+void Matrix4::scaleBy(const Vector3& scale)
+{
+    multiplyBy(getScale(scale));
+}
+
