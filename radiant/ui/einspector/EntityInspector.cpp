@@ -311,21 +311,23 @@ GtkWidget* EntityInspector::createTreeViewPane()
 
 // Retrieve the selected string from the given property in the list store
 
-std::string EntityInspector::getListSelection(int col) {
+std::string EntityInspector::getListSelection(int col) 
+{
 	// Prepare to get the selection
-    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(
+            GTK_TREE_VIEW(_treeView)
+    );
     GtkTreeIter tmpIter;
 
 	// Return the selected string if available, else a blank string
-    if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) {
-        GValue selString = {0, 0};
-        gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &tmpIter, col, &selString);
-        std::string value = g_value_get_string(&selString);
-        g_value_unset(&selString);
-
-        return value;
+    if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) 
+    {
+        return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_listStore), 
+                                             &tmpIter,
+                                             col);
     }
-    else {
+    else 
+    {
     	return "";
     }
 }
