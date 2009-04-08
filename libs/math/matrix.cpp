@@ -66,6 +66,17 @@ Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 	);
 }
 
+// Get a scale matrix
+Matrix4 Matrix4::getScale(const Vector3& scale)
+{
+    return Matrix4(
+        scale[0], 0, 0, 0,
+        0, scale[1], 0, 0,
+        0, 0, scale[2], 0,
+        0, 0, 0,        1
+    );
+}
+
 // Main explicit constructor
 Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
                  double yx_, double yy_, double yz_, double yw_,

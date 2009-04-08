@@ -73,6 +73,15 @@ public:
 
     /**
      * \brief
+     * Get a matrix representing the given scale in 3D space.
+     *
+     * \param scale
+     * Vector3 representing the scale.
+     */
+    static Matrix4 getScale(const Vector3& scale);
+
+    /**
+     * \brief
      * Construct a matrix containing the given elements.
      *
      * The elements are specified column-wise.
@@ -1210,18 +1219,6 @@ inline void matrix4_pivoted_rotate_by_euler_xyz_degrees(Matrix4& self, const Vec
   self.translateBy(-pivotpoint);
 }
 
-
-/// \brief Constructs a pure-scale matrix from \p scale.
-inline Matrix4 matrix4_scale_for_vec3(const Vector3& scale)
-{
-  return Matrix4(
-    scale[0], 0, 0, 0,
-    0, scale[1], 0, 0,
-    0, 0, scale[2], 0,
-    0, 0, 0,        1
-  );
-}
-
 /// \brief Calculates and returns the (x, y, z) scale values that produce the scale component of \p self.
 /// \p self must be affine and orthogonal to produce a meaningful result.
 inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
@@ -1236,7 +1233,7 @@ inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
 /// \brief Scales \p self by \p scale.
 inline void matrix4_scale_by_vec3(Matrix4& self, const Vector3& scale)
 {
-  self.multiplyBy(matrix4_scale_for_vec3(scale));
+  self.multiplyBy(Matrix4::getScale(scale));
 }
 
 /// \brief Scales \p self by \p scale, using \p pivotpoint.
