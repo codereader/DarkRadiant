@@ -123,6 +123,50 @@ Matrix4 Matrix4::getTransposed() const
     );
 }
 
+// Return affine inverse
+Matrix4 Matrix4::getInverse() const
+{
+  Matrix4 result;
+  
+  // determinant of rotation submatrix
+  double det
+    = _m[0] * ( _m[5]*_m[10] - _m[9]*_m[6] )
+    - _m[1] * ( _m[4]*_m[10] - _m[8]*_m[6] )
+    + _m[2] * ( _m[4]*_m[9] - _m[8]*_m[5] );
+
+  // throw exception here if (det*det < 1e-25)
+  
+  // invert rotation submatrix
+  det = 1.0 / det;
+
+  result[0] = (  (_m[5]*_m[10]- _m[6]*_m[9] )*det);
+  result[1] = (- (_m[1]*_m[10]- _m[2]*_m[9] )*det);
+  result[2] = (  (_m[1]*_m[6] - _m[2]*_m[5] )*det);
+  result[3] = 0;
+  result[4] = (- (_m[4]*_m[10]- _m[6]*_m[8] )*det);
+  result[5] = (  (_m[0]*_m[10]- _m[2]*_m[8] )*det);
+  result[6] = (- (_m[0]*_m[6] - _m[2]*_m[4] )*det);
+  result[7] = 0;
+  result[8] = (  (_m[4]*_m[9] - _m[5]*_m[8] )*det);
+  result[9] = (- (_m[0]*_m[9] - _m[1]*_m[8] )*det);
+  result[10]= (  (_m[0]*_m[5] - _m[1]*_m[4] )*det);
+  result[11] = 0;
+
+  // multiply translation part by rotation
+  result[12] = - (_m[12] * result[0] +
+    _m[13] * result[4] +
+    _m[14] * result[8]);
+  result[13] = - (_m[12] * result[1] +
+    _m[13] * result[5] +
+    _m[14] * result[9]);
+  result[14] = - (_m[12] * result[2] +
+    _m[13] * result[6] +
+    _m[14] * result[10]);
+  result[15] = 1;
+
+  return result;
+}
+
 // Transform a vector
 Vector4 Matrix4::transform(const Vector4& vector4) const
 {

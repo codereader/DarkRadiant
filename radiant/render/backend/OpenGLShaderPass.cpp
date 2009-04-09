@@ -547,7 +547,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
     	}
 
         // Calculate viewer location in object space
-        Matrix4 inverseObjTransform = matrix4_affine_inverse(*transform);
+        Matrix4 inverseObjTransform = transform->getInverse();
         Vector3 osViewer = matrix4_transformed_point(
                 inverseObjTransform, viewer
         );
