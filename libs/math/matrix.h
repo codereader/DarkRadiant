@@ -215,6 +215,12 @@ public:
      */
 	Matrix4 getTransposed() const;
 
+    /**
+     * \brief
+     * Return the affine inverse of this transformation matrix.
+     */
+    Matrix4 getInverse() const;
+
 	/** 
      * \brief
      * Use this matrix to transform the provided vector and return a new vector
@@ -539,55 +545,9 @@ inline void matrix4_transform_vector4(const Matrix4& self, Vector4& vector4)
   vector4 = matrix4_transformed_vector4(self, vector4);
 }
 
-
-/// \brief Inverts an affine transform in-place.
-/// Adapted from Graphics Gems 2.
-inline Matrix4 matrix4_affine_inverse(const Matrix4& self)
-{
-  Matrix4 result;
-  
-  // determinant of rotation submatrix
-  double det
-    = self[0] * ( self[5]*self[10] - self[9]*self[6] )
-    - self[1] * ( self[4]*self[10] - self[8]*self[6] )
-    + self[2] * ( self[4]*self[9] - self[8]*self[5] );
-
-  // throw exception here if (det*det < 1e-25)
-  
-  // invert rotation submatrix
-  det = 1.0 / det;
-
-  result[0] = (  (self[5]*self[10]- self[6]*self[9] )*det);
-  result[1] = (- (self[1]*self[10]- self[2]*self[9] )*det);
-  result[2] = (  (self[1]*self[6] - self[2]*self[5] )*det);
-  result[3] = 0;
-  result[4] = (- (self[4]*self[10]- self[6]*self[8] )*det);
-  result[5] = (  (self[0]*self[10]- self[2]*self[8] )*det);
-  result[6] = (- (self[0]*self[6] - self[2]*self[4] )*det);
-  result[7] = 0;
-  result[8] = (  (self[4]*self[9] - self[5]*self[8] )*det);
-  result[9] = (- (self[0]*self[9] - self[1]*self[8] )*det);
-  result[10]= (  (self[0]*self[5] - self[1]*self[4] )*det);
-  result[11] = 0;
-
-  // multiply translation part by rotation
-  result[12] = - (self[12] * result[0] +
-    self[13] * result[4] +
-    self[14] * result[8]);
-  result[13] = - (self[12] * result[1] +
-    self[13] * result[5] +
-    self[14] * result[9]);
-  result[14] = - (self[12] * result[2] +
-    self[13] * result[6] +
-    self[14] * result[10]);
-  result[15] = 1;
-
-  return result;
-}
-
 inline void matrix4_affine_invert(Matrix4& self)
 {
-  self = matrix4_affine_inverse(self);
+  self = self.getInverse();
 }
 
 /// \brief A compile-time-constant integer.

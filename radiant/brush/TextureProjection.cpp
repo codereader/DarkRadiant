@@ -100,9 +100,15 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 	
 	Matrix4 transformed2stTransformed = getBasisForNormal(normalTransformed);
 	
-	Matrix4 stTransformed2identity(matrix4_affine_inverse(matrix4_multiplied_by_matrix4(transformed2stTransformed, identity2transformed)));
+	Matrix4 stTransformed2identity(
+        matrix4_multiplied_by_matrix4(
+            transformed2stTransformed, identity2transformed
+        ).getInverse()
+    );
 	
-	Vector3 originalProjectionAxis(matrix4_affine_inverse(identity2stIdentity).z().getVector3());
+	Vector3 originalProjectionAxis(
+        identity2stIdentity.getInverse().z().getVector3()
+    );
 	
 	Vector3 transformedProjectionAxis(stTransformed2identity.z().getVector3());
 	
