@@ -1,6 +1,6 @@
 #include "SoundPropertyEditor.h"
 #include "PropertyEditorFactory.h"
-#include "SoundChooser.h"
+#include "ui/common/SoundChooser.h"
 
 #include "ientity.h"
 

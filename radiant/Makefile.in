@@ -466,7 +466,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/einspector/PropertyEditorFactory.cpp \
 					  ui/einspector/ClassnamePropertyEditor.cpp \
 					  ui/einspector/ModelPropertyEditor.cpp \
-					  ui/einspector/SoundChooser.cpp \
+					  ui/common/SoundChooser.cpp \
 					  ui/common/ModelPreview.cpp \
 					  ui/common/TexturePreviewCombo.cpp \
 					  ui/common/ShaderSelector.cpp \
@@ -1855,19 +1855,19 @@ darkradiant-ModelPropertyEditor.obj: ui/einspector/ModelPropertyEditor.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ModelPropertyEditor.obj `if test -f 'ui/einspector/ModelPropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/ModelPropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/ModelPropertyEditor.cpp'; fi`
 
-darkradiant-SoundChooser.o: ui/einspector/SoundChooser.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SoundChooser.o -MD -MP -MF $(DEPDIR)/darkradiant-SoundChooser.Tpo -c -o darkradiant-SoundChooser.o `test -f 'ui/einspector/SoundChooser.cpp' || echo '$(srcdir)/'`ui/einspector/SoundChooser.cpp
+darkradiant-SoundChooser.o: ui/common/SoundChooser.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SoundChooser.o -MD -MP -MF $(DEPDIR)/darkradiant-SoundChooser.Tpo -c -o darkradiant-SoundChooser.o `test -f 'ui/common/SoundChooser.cpp' || echo '$(srcdir)/'`ui/common/SoundChooser.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-SoundChooser.Tpo $(DEPDIR)/darkradiant-SoundChooser.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/SoundChooser.cpp' object='darkradiant-SoundChooser.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/SoundChooser.cpp' object='darkradiant-SoundChooser.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SoundChooser.o `test -f 'ui/einspector/SoundChooser.cpp' || echo '$(srcdir)/'`ui/einspector/SoundChooser.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SoundChooser.o `test -f 'ui/common/SoundChooser.cpp' || echo '$(srcdir)/'`ui/common/SoundChooser.cpp
 
-darkradiant-SoundChooser.obj: ui/einspector/SoundChooser.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SoundChooser.obj -MD -MP -MF $(DEPDIR)/darkradiant-SoundChooser.Tpo -c -o darkradiant-SoundChooser.obj `if test -f 'ui/einspector/SoundChooser.cpp'; then $(CYGPATH_W) 'ui/einspector/SoundChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/SoundChooser.cpp'; fi`
+darkradiant-SoundChooser.obj: ui/common/SoundChooser.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SoundChooser.obj -MD -MP -MF $(DEPDIR)/darkradiant-SoundChooser.Tpo -c -o darkradiant-SoundChooser.obj `if test -f 'ui/common/SoundChooser.cpp'; then $(CYGPATH_W) 'ui/common/SoundChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/SoundChooser.cpp'; fi`
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-SoundChooser.Tpo $(DEPDIR)/darkradiant-SoundChooser.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/SoundChooser.cpp' object='darkradiant-SoundChooser.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/SoundChooser.cpp' object='darkradiant-SoundChooser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SoundChooser.obj `if test -f 'ui/einspector/SoundChooser.cpp'; then $(CYGPATH_W) 'ui/einspector/SoundChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/SoundChooser.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SoundChooser.obj `if test -f 'ui/common/SoundChooser.cpp'; then $(CYGPATH_W) 'ui/common/SoundChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/SoundChooser.cpp'; fi`
 
 darkradiant-ModelPreview.o: ui/common/ModelPreview.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ModelPreview.o -MD -MP -MF $(DEPDIR)/darkradiant-ModelPreview.Tpo -c -o darkradiant-ModelPreview.o `test -f 'ui/common/ModelPreview.cpp' || echo '$(srcdir)/'`ui/common/ModelPreview.cpp
