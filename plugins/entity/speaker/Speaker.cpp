@@ -241,8 +241,8 @@ void Speaker::sShaderChanged(const std::string& value) {
 	else {
 		m_stdVal = GlobalSoundManager().getSoundShader(value)->getRadii();
 	}
-	if (!m_minIsSet) _renderableRadii.m_radii.setMin(m_stdVal.getMin());
-	if (!m_maxIsSet) _renderableRadii.m_radii.setMax(m_stdVal.getMax());
+	if (!m_minIsSet) _renderableRadii.setMin(m_stdVal.getMin());
+	if (!m_maxIsSet) _renderableRadii.setMax(m_stdVal.getMax());
 
 	updateAABB();
 }
@@ -251,9 +251,9 @@ void Speaker::sMinChanged(const std::string& value) {
 	m_minIsSet = value.empty() ? false : true;
 	if (m_minIsSet)
 		// we need to parse in metres
-		_renderableRadii.m_radii.setMin(strToFloat(value), true);
+		_renderableRadii.setMin(strToFloat(value), true);
 	else 
-		_renderableRadii.m_radii.setMin(m_stdVal.getMin());
+		_renderableRadii.setMin(m_stdVal.getMin());
 
 	updateAABB();
 }
@@ -262,9 +262,9 @@ void Speaker::sMaxChanged(const std::string& value) {
 	m_maxIsSet = value.empty() ? false : true;
 	if (m_maxIsSet)
 		// we need to parse in metres
-		_renderableRadii.m_radii.setMax(strToFloat(value), true);
+		_renderableRadii.setMax(strToFloat(value), true);
 	else 
-		_renderableRadii.m_radii.setMax(m_stdVal.getMax());
+		_renderableRadii.setMax(m_stdVal.getMax());
 
 	updateAABB();
 }

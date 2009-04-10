@@ -148,7 +148,8 @@ void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii rad)
     sphereDrawFill(origin, rad.getMax(), 16);
 }
 
-namespace entity {
+namespace entity 
+{
 
 void RenderableSpeakerRadii::render(const RenderInfo& info) const 
 {
@@ -169,6 +170,18 @@ const AABB& RenderableSpeakerRadii::localAABB()
 	Vector3 radiiVector (radii, radii, radii);
 	m_aabb_local = AABB (m_aabb_local.getOrigin(), radiiVector);
 	return m_aabb_local;
+}
+
+// Set min
+void RenderableSpeakerRadii::setMin(float min, bool inMetres)
+{
+    m_radii.setMin(min, inMetres);
+}
+
+// Set max
+void RenderableSpeakerRadii::setMax(float max, bool inMetres)
+{
+    m_radii.setMax(max, inMetres);
 }
 
 } // namespace entity
