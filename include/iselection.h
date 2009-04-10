@@ -132,7 +132,15 @@ public:
 	virtual scene::INodePtr ultimateSelected() const = 0;
 	virtual scene::INodePtr penultimateSelected() const = 0;
 
-  virtual void setSelectedAll(bool selected) = 0;
+    /**
+     * \brief
+     * Set the selection status of all objects in the scene.
+     *
+     * \param selected
+     * true to select all objects, false to deselect all objects.
+     */
+    virtual void setSelectedAll(bool selected) = 0;
+
   virtual void setSelectedAllComponents(bool selected) = 0;
 
     /**

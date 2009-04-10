@@ -19,6 +19,7 @@
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"
 #include "ui/modelselector/ModelSelector.h"
+#include "ui/common/SoundChooser.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 #include "ui/layers/LayerContextMenu.h"
 
@@ -448,13 +449,30 @@ void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* se
 void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* self) {
 	UndoableCommand command("addSpeaker");	
 
-    try {
-        Entity_createFromSelection(SPEAKER_CLASSNAME, self->_lastPoint);	
+    // Cancel all selection
+    GlobalSelectionSystem().setSelectedAll(false);
+
+    try 
+    {
+        scene::INodePtr spkNode = Entity_createFromSelection(
+            SPEAKER_CLASSNAME, self->_lastPoint
+        );	
+
+        // Display the Sound Chooser to get a sound shader from the user
+        SoundChooser sChooser;
+        std::string soundShader = sChooser.chooseSound();
+
+        // Set the keyvalue
+        Entity* entity = Node_getEntity(spkNode);
+        assert(entity);
+        entity->setKeyValue("s_shader", soundShader);
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create speaker, classname not found.",
                              GlobalRadiant().getMainWindow());
+        return;
     }
+
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
