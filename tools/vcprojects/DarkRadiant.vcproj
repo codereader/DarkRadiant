@@ -1759,6 +1759,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\common\SoundChooser.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\common\SoundChooser.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\common\SoundShaderPreview.cpp"
 						>
 					</File>
@@ -1888,14 +1896,6 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\ui\einspector\SkinPropertyEditor.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\einspector\SoundChooser.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\einspector\SoundChooser.h"
 						>
 					</File>
 					<File
