@@ -32,7 +32,8 @@ class SpeakerNode :
 {
 	friend class Speaker;
 
-	Speaker m_contained;
+    // The Speaker class itself
+	Speaker _speaker;
 
 public:
 	SpeakerNode(const IEntityClassConstPtr& eclass);
