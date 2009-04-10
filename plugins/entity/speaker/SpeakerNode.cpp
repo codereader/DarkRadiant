@@ -6,9 +6,9 @@ namespace entity {
 
 SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	TransformModifier(Speaker::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	TransformModifier(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
-	m_contained(*this, 
+	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this),
 		EvaluateTransformCaller(*this))
@@ -27,9 +27,9 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	Renderable(other),
 	Cullable(other),
 	Bounded(other),
-	TransformModifier(Speaker::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	TransformModifier(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
-	m_contained(other.m_contained, 
+	_speaker(other._speaker, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this),
@@ -44,29 +44,29 @@ SpeakerNode::~SpeakerNode() {
 
 // Snappable implementation
 void SpeakerNode::snapto(float snap) {
-	m_contained.snapto(snap);
+	_speaker.snapto(snap);
 }
 
 // Bounded implementation
 const AABB& SpeakerNode::localAABB() const {
-	return m_contained.localAABB();
+	return _speaker.localAABB();
 }
 
 // TransformNode implementation
 const Matrix4& SpeakerNode::localToParent() const {
-	return m_contained.getTransformNode().localToParent();
+	return _speaker.getTransformNode().localToParent();
 }
 
 // Cullable implementation
 VolumeIntersectionValue SpeakerNode::intersectVolume(
     const VolumeTest& test, const Matrix4& localToWorld) const
 {
-	return m_contained.intersectVolume(test, localToWorld);
+	return _speaker.intersectVolume(test, localToWorld);
 }
 
 // EntityNode implementation
 Entity& SpeakerNode::getEntity() {
-	return m_contained.getEntity();
+	return _speaker.getEntity();
 }
 
 void SpeakerNode::refreshModel() {
@@ -75,11 +75,11 @@ void SpeakerNode::refreshModel() {
 
 // Namespaced implementation
 /*void SpeakerNode::setNamespace(INamespace& space) {
-	m_contained.getNamespaced().setNamespace(space);
+	_speaker.getNamespaced().setNamespace(space);
 }*/
 
 void SpeakerNode::testSelect(Selector& selector, SelectionTest& test) {
-	m_contained.testSelect(selector, test, localToWorld());
+	_speaker.testSelect(selector, test, localToWorld());
 }
 
 scene::INodePtr SpeakerNode::clone() const {
@@ -89,46 +89,50 @@ scene::INodePtr SpeakerNode::clone() const {
 }
 
 void SpeakerNode::instantiate(const scene::Path& path) {
-	m_contained.instanceAttach(path);
+	_speaker.instanceAttach(path);
 	Node::instantiate(path);
 }
 
 void SpeakerNode::uninstantiate(const scene::Path& path) {
-	m_contained.instanceDetach(path);
+	_speaker.instanceDetach(path);
 	Node::uninstantiate(path);
 }
 
 // Nameable implementation
 std::string SpeakerNode::name() const {
-	return m_contained.getNameable().name();
+	return _speaker.getNameable().name();
 }
 
 void SpeakerNode::attach(const NameCallback& callback) {
-	m_contained.getNameable().attach(callback);
+	_speaker.getNameable().attach(callback);
 }
 
 void SpeakerNode::detach(const NameCallback& callback) {
-	m_contained.getNameable().detach(callback);
+	_speaker.getNameable().detach(callback);
 }
 
-void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
-	m_contained.renderSolid(collector, volume, localToWorld());
+/* Renderable implementation */
+
+void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+{
+	_speaker.renderSolid(collector, volume, localToWorld(), isSelected());
 }
-void SpeakerNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
-	m_contained.renderWireframe(collector, volume, localToWorld());
+void SpeakerNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
+{
+	_speaker.renderWireframe(collector, volume, localToWorld(), isSelected());
 }
 
 void SpeakerNode::evaluateTransform() {
 	if(getType() == TRANSFORM_PRIMITIVE) {
-		m_contained.translate(getTranslation());
-		m_contained.rotate(getRotation());
+		_speaker.translate(getTranslation());
+		_speaker.rotate(getRotation());
 	}
 }
 
 void SpeakerNode::applyTransform() {
-	m_contained.revertTransform();
+	_speaker.revertTransform();
 	evaluateTransform();
-	m_contained.freezeTransform();
+	_speaker.freezeTransform();
 }
 
 } // namespace entity

@@ -19,7 +19,7 @@ Speaker::Speaker(SpeakerNode& node,
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	m_speakerRadii(m_aabb_local.origin),
+	_renderableRadii(m_aabb_local.origin),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
@@ -44,7 +44,7 @@ Speaker::Speaker(const Speaker& other,
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	m_speakerRadii(m_aabb_local.origin),
+	_renderableRadii(m_aabb_local.origin),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
@@ -109,24 +109,42 @@ VolumeIntersectionValue Speaker::intersectVolume(
 	return volume.TestAABB(localAABB(), localToWorld);
 }
 
+// Submit renderables for solid mode
 void Speaker::renderSolid(RenderableCollector& collector, 
-	const VolumeTest& volume, const Matrix4& localToWorld) const
+                          const VolumeTest& volume,
+                          const Matrix4& localToWorld,
+                          bool isSelected) const
 {
 	collector.SetState(m_entity.getEntityClass()->getFillShader(), RenderableCollector::eFullMaterials);
 	collector.addRenderable(m_aabb_solid, localToWorld);
-	if (EntitySettings::InstancePtr()->showAllSpeakerRadii())
-		collector.addRenderable(m_speakerRadii, localToWorld);
+
+    // Submit the speaker radius if we are selected or the "show all speaker
+    // radii" option is set
+	if (isSelected || EntitySettings::InstancePtr()->showAllSpeakerRadii())
+    {
+		collector.addRenderable(_renderableRadii, localToWorld);
+    }
 }
 
+// Submit renderables for wireframe mode
 void Speaker::renderWireframe(RenderableCollector& collector, 
-	const VolumeTest& volume, const Matrix4& localToWorld) const
+                              const VolumeTest& volume,
+                              const Matrix4& localToWorld,
+                              bool isSelected) const
 {
 	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 	collector.addRenderable(m_aabb_wire, localToWorld);
-	if (EntitySettings::InstancePtr()->showAllSpeakerRadii())
-		collector.addRenderable(m_speakerRadii, localToWorld);
+
+    // Submit the speaker radius if we are selected or the "show all speaker
+    // radii" option is set
+	if (isSelected || EntitySettings::InstancePtr()->showAllSpeakerRadii())
+    {
+		collector.addRenderable(_renderableRadii, localToWorld);
+    }
 	
-	if (EntitySettings::InstancePtr()->renderEntityNames()) {
+    // Submit renderable text name if required
+	if (EntitySettings::InstancePtr()->renderEntityNames()) 
+    {
 		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
@@ -194,7 +212,7 @@ void Speaker::construct() {
 void Speaker::updateAABB() {
 	// set the AABB to the biggest AABB the speaker contains
 	m_aabb_border = m_aabb_local;
-	m_aabb_border.includeAABB(m_speakerRadii.localAABB());
+	m_aabb_border.includeAABB(_renderableRadii.localAABB());
 	m_boundsChanged();
 }
 
@@ -223,8 +241,8 @@ void Speaker::sShaderChanged(const std::string& value) {
 	else {
 		m_stdVal = GlobalSoundManager().getSoundShader(value)->getRadii();
 	}
-	if (!m_minIsSet) m_speakerRadii.m_radii.setMin(m_stdVal.getMin());
-	if (!m_maxIsSet) m_speakerRadii.m_radii.setMax(m_stdVal.getMax());
+	if (!m_minIsSet) _renderableRadii.m_radii.setMin(m_stdVal.getMin());
+	if (!m_maxIsSet) _renderableRadii.m_radii.setMax(m_stdVal.getMax());
 
 	updateAABB();
 }
@@ -233,9 +251,9 @@ void Speaker::sMinChanged(const std::string& value) {
 	m_minIsSet = value.empty() ? false : true;
 	if (m_minIsSet)
 		// we need to parse in metres
-		m_speakerRadii.m_radii.setMin(strToFloat(value), true);
+		_renderableRadii.m_radii.setMin(strToFloat(value), true);
 	else 
-		m_speakerRadii.m_radii.setMin(m_stdVal.getMin());
+		_renderableRadii.m_radii.setMin(m_stdVal.getMin());
 
 	updateAABB();
 }
@@ -244,9 +262,9 @@ void Speaker::sMaxChanged(const std::string& value) {
 	m_maxIsSet = value.empty() ? false : true;
 	if (m_maxIsSet)
 		// we need to parse in metres
-		m_speakerRadii.m_radii.setMax(strToFloat(value), true);
+		_renderableRadii.m_radii.setMax(strToFloat(value), true);
 	else 
-		m_speakerRadii.m_radii.setMax(m_stdVal.getMax());
+		_renderableRadii.m_radii.setMax(m_stdVal.getMax());
 
 	updateAABB();
 }

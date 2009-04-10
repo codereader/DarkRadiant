@@ -39,7 +39,9 @@ class Speaker :
 
 	NamedEntity m_named;
 
-	RenderSpeakerRadii m_speakerRadii;
+    // Renderable speaker radii
+	RenderableSpeakerRadii _renderableRadii;
+
 	SoundRadii m_stdVal;
 	bool m_useSpeakerRadii;
 	bool m_minIsSet;
@@ -89,8 +91,15 @@ public:
 
 	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+    // Render functions (invoked by SpeakerNode)
+	void renderSolid(RenderableCollector& collector,
+                     const VolumeTest& volume,
+                     const Matrix4& localToWorld,
+                     bool isSelected) const;
+	void renderWireframe(RenderableCollector& collector,
+                         const VolumeTest& volume,
+                         const Matrix4& localToWorld,
+                         bool isSelected) const;
 
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
