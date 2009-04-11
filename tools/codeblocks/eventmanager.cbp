@@ -122,13 +122,13 @@
 			<Add directory="..\..\libs" />
 			<Add directory="$(#boost.include)" />
 			<Add directory="$(#libxml2.include)" />
-			<Add directory="$(gtk2.include)\gtk-2.0" />
-			<Add directory="$(gtk2.include)\atk-1.0" />
-			<Add directory="$(gtk2.include)\glib-2.0" />
-			<Add directory="$(gtk2.include)\cairo" />
-			<Add directory="$(gtk2.include)\pango-1.0" />
-			<Add directory="$(gtk2.lib)\glib-2.0\include" />
-			<Add directory="$(gtk2.lib)\gtk-2.0\include" />
+			<Add directory="$(#gtk2.include)\gtk-2.0" />
+			<Add directory="$(#gtk2.include)\atk-1.0" />
+			<Add directory="$(#gtk2.include)\glib-2.0" />
+			<Add directory="$(#gtk2.include)\cairo" />
+			<Add directory="$(#gtk2.include)\pango-1.0" />
+			<Add directory="$(#gtk2.lib)\glib-2.0\include" />
+			<Add directory="$(#gtk2.lib)\gtk-2.0\include" />
 			<Add directory="$(#win_iconv.include)" />
 		</Compiler>
 		<Linker>
