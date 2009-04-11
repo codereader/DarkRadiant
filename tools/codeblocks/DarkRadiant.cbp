@@ -1453,6 +1453,14 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
+		<Unit filename="..\..\radiant\ui\common\SoundChooser.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\common\SoundChooser.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Unit filename="..\..\radiant\ui\common\SoundShaderPreview.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
@@ -1578,14 +1586,6 @@
 			<Option target="Release Win32" />
 		</Unit>
 		<Unit filename="..\..\radiant\ui\einspector\SkinPropertyEditor.h">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
-		<Unit filename="..\..\radiant\ui\einspector\SoundChooser.cpp">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
-		<Unit filename="..\..\radiant\ui\einspector\SoundChooser.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
