@@ -674,6 +674,37 @@ const AABB& Light::localAABB() const {
   	return aabb();
 }
 
+/* RendererLight implementation */
+Matrix4 Light::getLightTextureTransformation() const
+{
+    Matrix4 world2light = Matrix4::getIdentity();
+
+    if (isProjected()) 
+    {
+      world2light = projection();
+      world2light.multiplyBy(rotation().getTransposed());
+      
+      // greebo: old code: world2light.translateBy(-lightBounds.origin); // world->lightBounds
+      world2light.translateBy(-offset());
+    }
+    else 
+    {
+        AABB lightBounds = aabb();
+
+        world2light.translateBy(Vector3(0.5f, 0.5f, 0.5f));
+        world2light.scaleBy(Vector3(0.5f, 0.5f, 0.5f));
+        world2light.scaleBy(
+            Vector3(1.0f / lightBounds.extents.x(),
+                    1.0f / lightBounds.extents.y(),
+                    1.0f / lightBounds.extents.z())
+        );
+        world2light.multiplyBy(rotation().getTransposed());
+        world2light.translateBy(-lightBounds.origin); // world->lightBounds
+    }
+
+    return world2light;
+}
+
 /* This is needed for the drag manipulator to check the aabb of the light volume only (excl. the light center)
  */
 const AABB& Light::lightAABB() const {
