@@ -397,11 +397,12 @@ void FaceInstance::connectivityChanged() {
 void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& light) 
 {
 	const Plane3& facePlane = getFace().plane3();
-	Vector3 origin = light.worldOrigin();
 	
 	Plane3 tmp(localToWorld.transform(Plane3(facePlane.normal(), -facePlane.dist())));
 	
-	if (!plane3_test_point(tmp, origin)	|| !plane3_test_point(tmp, origin + light.offset())) {
+	if (!plane3_test_point(tmp, light.worldOrigin())	
+        || !plane3_test_point(tmp, light.getLightOrigin())) 
+    {
 		m_lights.addLight(light);
 	}
 }

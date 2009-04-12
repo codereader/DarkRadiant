@@ -440,7 +440,7 @@ void LightNode::applyTransform() {
 
 Vector3 LightNode::worldOrigin() const
 {
-    return _light.getOrigin();
+    return _light.worldOrigin();
 }
 
 Matrix4 LightNode::getLightTextureTransformation() const
@@ -460,8 +460,8 @@ bool LightNode::testAABB(const AABB& other) const {
 	return _light.testAABB(other);
 }
 
-const Vector3& LightNode::offset() const {
-	return _light.offset();
+Vector3 LightNode::getLightOrigin() const {
+	return _light.getLightOrigin();
 }
 
 const Vector3& LightNode::colour() const {

@@ -78,7 +78,12 @@ public:
 	virtual boost::shared_ptr<Shader> getShader() const = 0;
 
     /**
+     * \brief
      * Return the origin of the light volume in world space.
+     *
+     * This corresponds to the "origin" key of the light object, i.e. the center
+     * of the bounding box for an omni light and the tip of the pyramid for a
+     * projected light.
      */
     virtual Vector3 worldOrigin() const = 0;
 
@@ -97,9 +102,23 @@ public:
     virtual Matrix4 getLightTextureTransformation() const = 0;
 
 	virtual bool testAABB(const AABB& other) const = 0;
-	virtual const Vector3& offset() const = 0;
+
+    /**
+     * \brief
+     * Return the light origin in world space.
+     *
+     * The light origin is the point from which the light rays are considered to
+     * be projected, i.e. the direction from which bump maps will be illuminated
+     * and shadows (if they existed) would be cast.
+     *
+     * For an omindirectional light, this origin is determined from the
+     * "light_center" keyvalue in combination with the bounding box itself,
+     * whereas for a projected light it is always equal to the tip of the
+     * pyramid (the same as worldOrigin()).
+     */
+	virtual Vector3 getLightOrigin() const = 0;
+
 	virtual const Vector3& colour() const = 0;
-	virtual bool isProjected() const = 0;
 };
 typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 

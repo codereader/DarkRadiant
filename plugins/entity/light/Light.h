@@ -164,7 +164,7 @@ class Light :
 
 public:
 
-    Vector3 getOrigin() const
+    Vector3 worldOrigin() const
     {
         return m_aabb_light.origin;
     }
@@ -268,7 +268,7 @@ public:
   	bool testAABB(const AABB& other) const;
 
 	const Matrix4& rotation() const;
-	const Vector3& offset() const;
+	Vector3 getLightOrigin() const;
 	const Vector3& colour() const;
 	
 	Vector3& target();

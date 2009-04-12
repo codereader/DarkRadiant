@@ -451,7 +451,8 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 inline 
 std::ostream& operator<< (std::ostream& os, const RendererLight& light) {
 	os << "RendererLight { origin = " << light.worldOrigin()
-	   << ", offset = " << light.offset() << ", colour = " << light.colour()
+	   << ", lightOrigin = " << light.getLightOrigin() 
+       << ", colour = " << light.colour()
 	   << " }";
 	return os;
 }
@@ -558,13 +559,10 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
             ambient = 1.0;
 
         // Bind the GL program parameters
-        Vector3 lightOrigin = (light->isProjected() 
-                               ? light->worldOrigin()
-                               : light->worldOrigin() + light->offset());
         current.m_program->applyRenderParams(
             osViewer,
             objTransform,
-            lightOrigin,
+            light->getLightOrigin(),
             light->colour(),
             world2light,
             ambient

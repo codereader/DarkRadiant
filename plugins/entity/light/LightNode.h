@@ -147,7 +147,7 @@ public:
 	const AABB& aabb() const;
 	bool testAABB(const AABB& other) const;
 	
-	const Vector3& offset() const;
+	Vector3 getLightOrigin() const;
 	const Matrix4& rotation() const;
 	const Vector3& colour() const;
 
