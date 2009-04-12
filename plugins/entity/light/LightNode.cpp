@@ -464,14 +464,6 @@ const Vector3& LightNode::colour() const {
 	return _light.colour();
 }
 
-bool LightNode::isProjected() const {
-	return _light.isProjected();
-}
-
-const Matrix4& LightNode::projection() const {
-	return _light.projection();
-}
-
 const Matrix4& LightNode::rotation() const {
 	return _light.rotation();
 }

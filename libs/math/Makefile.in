@@ -51,8 +51,8 @@ am__installdirs = "$(DESTDIR)$(pkglibdir)"
 pkglibLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libmath_la_LIBADD =
-am_libmath_la_OBJECTS = matrix.lo line.lo pi.lo aabb.lo quaternion.lo \
-	curve.lo
+am_libmath_la_OBJECTS = matrix.lo frustum.lo line.lo pi.lo aabb.lo \
+	quaternion.lo curve.lo
 libmath_la_OBJECTS = $(am_libmath_la_OBJECTS)
 libmath_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -216,11 +216,12 @@ AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libmath.la
 libmath_la_LDFLAGS = -release @PACKAGE_VERSION@
 libmath_la_SOURCES = matrix.cpp \
-                    line.cpp \
-                    pi.cpp \
-                    aabb.cpp \
-                    quaternion.cpp \
-                    curve.cpp 
+                     frustum.cpp \
+                     line.cpp \
+                     pi.cpp \
+                     aabb.cpp \
+                     quaternion.cpp \
+                     curve.cpp 
 
 all: all-am
 
@@ -293,6 +294,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aabb.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/curve.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frustum.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/line.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/matrix.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pi.Plo@am__quote@

@@ -150,9 +150,6 @@ public:
 	const Matrix4& rotation() const;
 	const Vector3& colour() const;
 
-	bool isProjected() const;
-	const Matrix4& projection() const;
-
 private:
 	void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;	
 

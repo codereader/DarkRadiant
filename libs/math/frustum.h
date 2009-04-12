@@ -363,7 +363,10 @@ inline std::size_t matrix4_clip_line(const Matrix4& self, const Vector3& p0, con
 
 
 
-
+/**
+ * \brief
+ * Object representing a frustum, defined by six planes.
+ */
 struct Frustum
 {
   Plane3 right, left, bottom, top, back, front;
@@ -380,6 +383,12 @@ struct Frustum
     : right(_right), left(_left), bottom(_bottom), top(_top), back(_back), front(_front)
   {
   }
+
+    /**
+     * \brief
+     * Normalise all planes in the frustum.
+     */
+    void normalisePlanes();
 };
 
 inline Frustum frustum_transformed(const Frustum& frustum, const Matrix4& matrix)
