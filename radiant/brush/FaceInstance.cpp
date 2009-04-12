@@ -394,9 +394,10 @@ void FaceInstance::connectivityChanged() {
 	m_selectableEdges.setSelected(false);
 }
 
-void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& light) {
+void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& light) 
+{
 	const Plane3& facePlane = getFace().plane3();
-	const Vector3& origin = light.aabb().origin;
+	Vector3 origin = light.worldOrigin();
 	
 	Plane3 tmp(localToWorld.transform(Plane3(facePlane.normal(), -facePlane.dist())));
 	

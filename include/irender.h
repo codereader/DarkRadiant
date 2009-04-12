@@ -82,7 +82,20 @@ public:
      */
     virtual Vector3 worldOrigin() const = 0;
 
-	virtual const AABB& aabb() const = 0;
+    /**
+     * \brief
+     * Return the world-space to light-texture-space transformation matrix.
+     *
+     * The light texture space is a box, with coordinates [0..1] on each
+     * dimension, representing the texture (UV) coordinates of the light falloff
+     * textures that will be applied to rendered fragments within the light
+     * volume.
+     *
+     * The matrix returned by this method transforms coordinates in world space
+     * into coordinates in light-texture space.
+     */
+    virtual Matrix4 getLightTextureTransformation() const = 0;
+
 	virtual bool testAABB(const AABB& other) const = 0;
 	virtual const Matrix4& rotation() const = 0;
 	virtual const Vector3& offset() const = 0;

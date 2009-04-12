@@ -142,6 +142,7 @@ public:
 
     /* RendererLight implementation */
     Vector3 worldOrigin() const;
+    Matrix4 getLightTextureTransformation() const;
 	ShaderPtr getShader() const;
 	const AABB& aabb() const;
 	bool testAABB(const AABB& other) const;

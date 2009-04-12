@@ -443,6 +443,11 @@ Vector3 LightNode::worldOrigin() const
     return _light.getOrigin();
 }
 
+Matrix4 LightNode::getLightTextureTransformation() const
+{
+    return _light.getLightTextureTransformation();
+}
+
 ShaderPtr LightNode::getShader() const {
 	return _light.getShader();
 }

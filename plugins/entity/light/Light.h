@@ -166,7 +166,7 @@ public:
 
     Vector3 getOrigin() const
     {
-        return m_originKey.m_origin;
+        return m_aabb_light.origin;
     }
 
 	void updateOrigin();
@@ -262,6 +262,8 @@ public:
 
 	void setLightChangedCallback(const Callback& callback);
 
+    // RendererLight implementation
+    Matrix4 getLightTextureTransformation() const;
 	const AABB& aabb() const;
   	bool testAABB(const AABB& other) const;
 
