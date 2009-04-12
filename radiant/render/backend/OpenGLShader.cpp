@@ -60,8 +60,6 @@ void OpenGLShader::decrementUsed() {
 
 void OpenGLShader::realise(const std::string& name) 
 {
-    std::cout << "OpenGLShader::realise(" << name << ")" << std::endl;
-
     // Construct the shader passes based on the name
     construct(name);
 

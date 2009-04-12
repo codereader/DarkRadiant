@@ -31,8 +31,6 @@ void FaceShader::setInUse(bool inUse)
 
 void FaceShader::captureShader() 
 {
-    std::cout << "FaceShader::captureShader() name is " << _materialName << std::endl;
-
 	_glShader = GlobalRenderSystem().capture(_materialName);
     assert(_glShader);
 
