@@ -97,11 +97,9 @@ public:
     virtual Matrix4 getLightTextureTransformation() const = 0;
 
 	virtual bool testAABB(const AABB& other) const = 0;
-	virtual const Matrix4& rotation() const = 0;
 	virtual const Vector3& offset() const = 0;
 	virtual const Vector3& colour() const = 0;
 	virtual bool isProjected() const = 0;
-	virtual const Matrix4& projection() const = 0;
 };
 typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 
