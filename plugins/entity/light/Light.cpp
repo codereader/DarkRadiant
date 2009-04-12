@@ -681,11 +681,11 @@ Matrix4 Light::getLightTextureTransformation() const
 
     if (isProjected()) 
     {
-      world2light = projection();
-      world2light.multiplyBy(rotation().getTransposed());
-      
-      // greebo: old code: world2light.translateBy(-lightBounds.origin); // world->lightBounds
-      world2light.translateBy(-offset());
+        world2light = projection();
+        world2light.multiplyBy(rotation().getTransposed());
+        
+        // greebo: old code: world2light.translateBy(-lightBounds.origin); // world->lightBounds
+        world2light.translateBy(-getLightOrigin());
     }
     else 
     {
@@ -747,18 +747,16 @@ const Matrix4& Light::rotation() const {
 /* greebo: This is needed by the renderer to determine the center of the light. It returns
  * the centerTransformed variable as the lighting should be updated as soon as the light center
  * is dragged.
- * 
- * Note: In order to render projected lights correctly, I made the projection render code to use
- * this method to determine the center of projection, hence the if (isProjected()) clause
  */
-const Vector3& Light::offset() const {
+Vector3 Light::getLightOrigin() const {
 	if (isProjected()) 
     {
-		return _projectionCenter;
+		return worldOrigin();
 	}
 	else 
     {
-		return m_doom3Radius.m_centerTransformed;
+        // AABB origin + light_center, i.e. center in world space
+		return worldOrigin() + m_doom3Radius.m_centerTransformed;
 	}
 }
 const Vector3& Light::colour() const {
