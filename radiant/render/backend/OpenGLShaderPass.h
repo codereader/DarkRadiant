@@ -86,6 +86,12 @@ private:
                                unsigned requiredState,
                                const Vector3& viewer);
 
+    // Set up lighting calculation
+    void setUpLightingCalculation(OpenGLState& current,
+                                  const RendererLight* light,
+                                  const Vector3& viewer,
+                                  const Matrix4& objTransform);
+
 public:
 
 	/**
