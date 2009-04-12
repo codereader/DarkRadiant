@@ -221,7 +221,7 @@ public:
 
 	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 	const AABB& localAABB() const;
-	const AABB& lightAABB() const;
+	AABB lightAABB() const;
 
 	// Note: move this upwards
 	mutable Matrix4 m_projectionOrientation;
@@ -264,7 +264,6 @@ public:
 
     // RendererLight implementation
     Matrix4 getLightTextureTransformation() const;
-	const AABB& aabb() const;
   	bool testAABB(const AABB& other) const;
 
 	const Matrix4& rotation() const;
