@@ -649,7 +649,8 @@ void Light::setLightChangedCallback(const Callback& callback) {
 
 // greebo: This returns the AABB of the WHOLE light (this includes the volume and all its selectable vertices)
 // Used to test the light for selection on mouse click.
-const AABB& Light::aabb() const {
+const AABB& Light::localAABB() const 
+{
 	if (isProjected()) {
 		// start with an empty AABB and include all the projection vertices
 		m_doom3AABB = AABB();
@@ -668,10 +669,6 @@ const AABB& Light::aabb() const {
 		m_doom3AABB.includePoint(m_aabb_light.origin + m_doom3Radius.m_centerTransformed);		
 	}
 	return m_doom3AABB;
-}
-
-const AABB& Light::localAABB() const {
-  	return aabb();
 }
 
 /* RendererLight implementation */
@@ -707,12 +704,13 @@ Matrix4 Light::getLightTextureTransformation() const
 
 /* This is needed for the drag manipulator to check the aabb of the light volume only (excl. the light center)
  */
-const AABB& Light::lightAABB() const {
-	_lightAABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
-  	return _lightAABB;
+AABB Light::lightAABB() const 
+{
+	return AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
 }
   
-bool Light::testAABB(const AABB& other) const {
+bool Light::testAABB(const AABB& other) const 
+{
 	if (isProjected()) {
 		Matrix4 transform = rotation();
 		transform.t().getVector3() = localAABB().origin;
@@ -722,7 +720,7 @@ bool Light::testAABB(const AABB& other) const {
     }
     
 	// test against an AABB which contains the rotated bounds of this light.
-	const AABB& bounds = aabb();
+	const AABB& bounds = localAABB();
 	return aabb_intersects_aabb(other, AABB(
 		bounds.origin,
 		Vector3(

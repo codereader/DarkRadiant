@@ -452,10 +452,6 @@ ShaderPtr LightNode::getShader() const {
 	return _light.getShader();
 }
 
-const AABB& LightNode::aabb() const {
-	return _light.aabb();
-}
-
 bool LightNode::testAABB(const AABB& other) const {
 	return _light.testAABB(other);
 }
