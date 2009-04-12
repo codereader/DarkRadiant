@@ -689,7 +689,7 @@ Matrix4 Light::getLightTextureTransformation() const
     }
     else 
     {
-        AABB lightBounds = aabb();
+        AABB lightBounds = lightAABB();
 
         world2light.translateBy(Vector3(0.5f, 0.5f, 0.5f));
         world2light.scaleBy(Vector3(0.5f, 0.5f, 0.5f));
