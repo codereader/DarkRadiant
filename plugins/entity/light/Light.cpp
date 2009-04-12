@@ -80,7 +80,7 @@ Light::Light(LightNode& node, const Callback& transformChanged, const Callback& 
 	m_renderName(m_named, m_aabb_light.origin),
 	m_useLightOrigin(false),
 	m_useLightRotation(false),
-	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, m_doom3Frustum),
+	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, _frustum),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged),
 	m_evaluateTransform(evaluateTransform)
@@ -105,7 +105,7 @@ Light::Light(const Light& other, LightNode& node, const Callback& transformChang
 	m_renderName(m_named, m_aabb_light.origin),
 	m_useLightOrigin(false),
 	m_useLightRotation(false),
-	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, m_doom3Frustum),
+	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, _frustum),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged),
 	m_evaluateTransform(evaluateTransform)
@@ -711,11 +711,12 @@ AABB Light::lightAABB() const
   
 bool Light::testAABB(const AABB& other) const 
 {
-	if (isProjected()) {
+	if (isProjected()) 
+    {
 		Matrix4 transform = rotation();
-		transform.t().getVector3() = localAABB().origin;
+		//transform.t().getVector3() = localAABB().origin;
 		projection();
-		Frustum frustum(frustum_transformed(m_doom3Frustum, transform));
+		Frustum frustum(frustum_transformed(_frustum, transform));
 		return frustum_test_aabb(frustum, other) != c_volumeOutside;
     }
     
@@ -794,30 +795,25 @@ void Light::projectionChanged()
 	m_doom3ProjectionChanged = true;
 	m_doom3Radius.m_changed();
 
-    // Calculate the projection centre
-	_projectionCenter = m_aabb_light.origin + _lightTargetTransformed;
-
 	SceneChangeNotify();
 }
 
 const Matrix4& Light::projection() const {
 	if (!m_doom3ProjectionChanged) {
-		return m_doom3Projection;
+		return _projection;
 	}
 	
 	m_doom3ProjectionChanged = false;
-	m_doom3Projection = Matrix4::getIdentity();
-	m_doom3Projection.translateBy(Vector3(0.5f, 0.5f, 0));
-	m_doom3Projection.scaleBy(Vector3(0.5f, 0.5f, 1));
+
+    // This transformation remaps the X,Y coordinates from [-1..1] to [0..1],
+    // presumably needed because the up/right vectors extend symmetrically
+    // either side of the target point.
+    _projection = Matrix4::getIdentity();
+	_projection.translateBy(Vector3(0.5f, 0.5f, 0));
+	_projection.scaleBy(Vector3(0.5f, 0.5f, 1));
 
 	Plane3 lightProject[4];
 
-	// If there is a light_start key set, use this, otherwise use the unit vector of the target direction  
-	Vector3 start = m_useLightStart && m_useLightEnd ? _lightStartTransformed : _lightTargetTransformed.getNormalised();
-
-	// If there is no light_end, but a light_start, assume light_end = light_target
-	Vector3 stop = m_useLightStart && m_useLightEnd ? _lightEndTransformed : _lightTargetTransformed;
-	
 	double rLen = _lightRightTransformed.getLength();
 	Vector3 right = _lightRightTransformed / rLen;
 	double uLen = _lightUpTransformed.getLength();
@@ -852,7 +848,19 @@ const Matrix4& Light::projection() const {
 		plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
 	}
 
-	// set the falloff vector
+    // If there is a light_start key set, use this, otherwise use the zero
+    // vector
+    Vector3 start = m_useLightStart && m_useLightEnd 
+                    ? _lightStartTransformed 
+                    : Vector3(0, 0, 0);
+
+    // If there is no light_end, but a light_start, assume light_end =
+    // light_target
+    Vector3 stop = m_useLightStart && m_useLightEnd 
+                   ? _lightEndTransformed 
+                   : _lightTargetTransformed;
+	
+	// Calculate the falloff vector
 	Vector3 falloff = stop - start;
 	double length = falloff.getLength();
 	falloff /= length;
@@ -863,30 +871,35 @@ const Matrix4& Light::projection() const {
 	lightProject[3] = Plane3(falloff, -start.dot(falloff));
 
 	// we want the planes of s=0, s=q, t=0, and t=q
-	m_doom3Frustum.left = lightProject[0];
-	m_doom3Frustum.bottom = lightProject[1];
-	m_doom3Frustum.right = Plane3(lightProject[2].normal() - lightProject[0].normal(), lightProject[2].dist() - lightProject[0].dist());
-	m_doom3Frustum.top = Plane3(lightProject[2].normal() - lightProject[1].normal(), lightProject[2].dist() - lightProject[1].dist());
+	_frustum.left = lightProject[0];
+	_frustum.bottom = lightProject[1];
+	_frustum.right = Plane3(lightProject[2].normal() - lightProject[0].normal(), lightProject[2].dist() - lightProject[0].dist());
+	_frustum.top = Plane3(lightProject[2].normal() - lightProject[1].normal(), lightProject[2].dist() - lightProject[1].dist());
 
 	// we want the planes of s=0 and s=1 for front and rear clipping planes
-	m_doom3Frustum.front = lightProject[3];
+	_frustum.front = lightProject[3];
 
-	m_doom3Frustum.back = lightProject[3];
-	m_doom3Frustum.back.dist() -= 1.0f;
-	m_doom3Frustum.back = -m_doom3Frustum.back;
+	_frustum.back = lightProject[3];
+	_frustum.back.dist() -= 1.0f;
+	_frustum.back = -_frustum.back;
 
-	Matrix4 test(matrix4_from_planes(m_doom3Frustum.left, m_doom3Frustum.right, m_doom3Frustum.bottom, m_doom3Frustum.top, m_doom3Frustum.front, m_doom3Frustum.back));
-	m_doom3Projection.multiplyBy(test);
+    // Calculate the new projection matrix from the frustum planes
+	Matrix4 newProjection(
+        matrix4_from_planes(
+            _frustum.left,
+            _frustum.right,
+            _frustum.bottom,
+            _frustum.top,
+            _frustum.front,
+            _frustum.back
+        )
+    );
+	_projection.multiplyBy(newProjection);
 
-	m_doom3Frustum.left = m_doom3Frustum.left.getNormalised();
-	m_doom3Frustum.right = m_doom3Frustum.right.getNormalised();
-	m_doom3Frustum.bottom = m_doom3Frustum.bottom.getNormalised();
-	m_doom3Frustum.top = m_doom3Frustum.top.getNormalised();
-	m_doom3Frustum.back = m_doom3Frustum.back.getNormalised();
-	m_doom3Frustum.front = m_doom3Frustum.front.getNormalised();
+    // Normalise all frustum planes
+    _frustum.normalisePlanes();
 	
-	//m_doom3Projection.scaleBy(Vector3(1.0 / 128, 1.0 / 128, 1.0 / 128));
-	return m_doom3Projection;
+	return _projection;
 }
 
 ShaderPtr Light::getShader() const {

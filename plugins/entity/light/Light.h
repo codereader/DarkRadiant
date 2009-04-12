@@ -129,8 +129,6 @@ class Light :
 	Vector3 _lightStartTransformed;
 	Vector3 _lightEndTransformed;
 	
-	Vector3 _projectionCenter;
-	
 	Vector3 _colourLightTarget;
 	Vector3 _colourLightUp;
 	Vector3 _colourLightRight;
@@ -146,8 +144,13 @@ class Light :
   mutable AABB m_doom3AABB;
   mutable AABB _lightAABB;
   mutable Matrix4 m_doom3Rotation;
-  mutable Matrix4 m_doom3Projection;
-  mutable Frustum m_doom3Frustum;
+
+    // Projection matrix for projected light
+    mutable Matrix4 _projection;
+
+    // Frustum for projected light (used for rendering the light volume)
+    mutable Frustum _frustum;
+
   mutable bool m_doom3ProjectionChanged;
 
   RenderLightProjection m_renderProjection;
@@ -162,12 +165,12 @@ class Light :
 
 	void construct();
 
-public:
+private:
 
-    Vector3 worldOrigin() const
-    {
-        return m_aabb_light.origin;
-    }
+    // Ensure the start and end points are set to sensible values
+	void checkStartEnd();
+
+public:
 
 	void updateOrigin();
 	void originChanged();
@@ -197,7 +200,6 @@ public:
 	void lightRotationChanged(const std::string& value);
 	typedef MemberCaller1<Light, const std::string&, &Light::lightRotationChanged> LightRotationChangedCaller;
 
-public:
 	// Constructor
 	Light(LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
 	
@@ -262,13 +264,27 @@ public:
 
 	void setLightChangedCallback(const Callback& callback);
 
+    // Is this light projected or omni?
+    bool isProjected() const;
+
+    // Set the projection-changed flag
+	void projectionChanged();
+
+    // Update and return the projection matrix
+	const Matrix4& projection() const;
+
     // RendererLight implementation
+    Vector3 worldOrigin() const
+    {
+        return m_aabb_light.origin;
+    }
+
     Matrix4 getLightTextureTransformation() const;
   	bool testAABB(const AABB& other) const;
-
 	const Matrix4& rotation() const;
 	Vector3 getLightOrigin() const;
 	const Vector3& colour() const;
+	ShaderPtr getShader() const;
 	
 	Vector3& target();
 	Vector3& targetTransformed();
@@ -287,15 +303,8 @@ public:
 	Vector3& colourLightStart();
 	Vector3& colourLightEnd();
 	
-	void checkStartEnd();
 	bool useStartEnd() const;
 	
-	bool isProjected() const;
-	void projectionChanged();
-
-	const Matrix4& projection() const;
-
-	ShaderPtr getShader() const;
 }; // class Light
 
 } // namespace entity
