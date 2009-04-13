@@ -85,7 +85,9 @@ class Light :
 	public Editable,
 	public Snappable
 {
-	Doom3Entity& m_entity;
+    // The parent entity object that uses this light
+	Doom3Entity& _entity;
+
   KeyObserverMap m_keyObservers;
   IdentityTransform m_transform;
 
@@ -202,11 +204,24 @@ public:
 	void lightRotationChanged(const std::string& value);
 	typedef MemberCaller1<Light, const std::string&, &Light::lightRotationChanged> LightRotationChangedCaller;
 
-	// Constructor
-	Light(LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
+	/**
+     * \brief
+     * Main constructor.
+     */
+	Light(Doom3Entity& entity,
+          const Callback& transformChanged,
+          const Callback& boundsChanged,
+          const Callback& evaluateTransform);
 	
-	// Copy Constructor
-	Light(const Light& other, LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform);
+	/**
+     * \brief
+     * Copy constructor.
+     */
+	Light(const Light& other,
+          Doom3Entity& entity,
+          const Callback& transformChanged,
+          const Callback& boundsChanged,
+          const Callback& evaluateTransform);
 	
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);

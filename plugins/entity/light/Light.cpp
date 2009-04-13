@@ -64,16 +64,16 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 // ----- Light Class Implementation -------------------------------------------------
 
 // Constructor
-Light::Light(LightNode& node,
+Light::Light(Doom3Entity& entity,
              const Callback& transformChanged,
              const Callback& boundsChanged,
              const Callback& evaluateTransform) 
 :
-	m_entity(node._entity),
+	_entity(entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_colour(Callback()),
-	m_named(m_entity),
+	m_named(_entity),
 	_renderableRadius(_lightBox.origin),
 	_renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
 	_rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -94,15 +94,15 @@ Light::Light(LightNode& node,
 
 // Copy Constructor
 Light::Light(const Light& other,
-             LightNode& node,
+             Doom3Entity& entity,
              const Callback& transformChanged,
              const Callback& boundsChanged,
              const Callback& evaluateTransform) 
-: m_entity(node._entity),
+: _entity(entity),
   m_originKey(OriginChangedCaller(*this)),
   m_rotationKey(RotationChangedCaller(*this)),
   m_colour(Callback()),
-  m_named(m_entity),
+  m_named(_entity),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
   _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -156,13 +156,13 @@ void Light::construct() {
 	m_doom3ProjectionChanged = true;
 
 	// set the colours to their default values
-	m_doom3Radius.setCenterColour(m_entity.getEntityClass()->getColour());
+	m_doom3Radius.setCenterColour(_entity.getEntityClass()->getColour());
 
-	m_entity.setIsContainer(true);
+	_entity.setIsContainer(true);
 
 	// Load the light colour (might be inherited)
-	m_colour.colourChanged(m_entity.getKeyValue("_color"));
-	m_shader.valueChanged(m_entity.getKeyValue("texture"));
+	m_colour.colourChanged(_entity.getKeyValue("_color"));
+	m_shader.valueChanged(_entity.getKeyValue("texture"));
 }
 
 void Light::updateOrigin() {
@@ -275,7 +275,7 @@ void Light::checkStartEnd() {
 }
 
 void Light::writeLightOrigin() {
-	write_origin(m_lightOrigin, &m_entity, "light_origin");
+	write_origin(m_lightOrigin, &_entity, "light_origin");
 }
 
 void Light::rotationChanged() {
@@ -328,15 +328,15 @@ void Light::updateRenderableRadius() const
 
 void Light::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
-		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_entity.attach(m_keyObservers);
+		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
+		_entity.attach(m_keyObservers);
 	}
 }
 
 void Light::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
-		m_entity.detach(m_keyObservers);
-		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
+		_entity.detach(m_keyObservers);
+		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
@@ -351,7 +351,7 @@ void Light::snapto(float snap) {
 	}
 	else {
 		m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-		m_originKey.write(&m_entity);
+		m_originKey.write(&_entity);
 	}
 }
 
@@ -385,23 +385,23 @@ void Light::freezeTransform() {
 	}
 	else {
 		m_originKey.m_origin = _lightBox.origin;
-		m_originKey.write(&m_entity);
+		m_originKey.write(&_entity);
 	}
     
     if (isProjected()) {
 	    if (m_useLightTarget) {
 			_lightTarget = _lightTargetTransformed;
-			m_entity.setKeyValue("light_target", _lightTarget);
+			_entity.setKeyValue("light_target", _lightTarget);
 		}
 		
 		if (m_useLightUp) {
 			_lightUp = _lightUpTransformed;
-			m_entity.setKeyValue("light_up", _lightUp);
+			_entity.setKeyValue("light_up", _lightUp);
 		}
 		
 		if (m_useLightRight) {
 			_lightRight = _lightRightTransformed;
-			m_entity.setKeyValue("light_right", _lightRight);
+			_entity.setKeyValue("light_right", _lightRight);
 		}
 		
 		// Check the start and end (if the end is "above" the start, for example)
@@ -409,39 +409,39 @@ void Light::freezeTransform() {
 		
 		if (m_useLightStart) {
 			_lightStart = _lightStartTransformed;
-			m_entity.setKeyValue("light_start", _lightStart);
+			_entity.setKeyValue("light_start", _lightStart);
 		}
 		
 		if (m_useLightEnd) {
 			_lightEnd = _lightEndTransformed;
-			m_entity.setKeyValue("light_end", _lightEnd);
+			_entity.setKeyValue("light_end", _lightEnd);
 		}		
     }
     else {
     	// Save the light center to the entity key/values
 		m_doom3Radius.m_center = m_doom3Radius.m_centerTransformed;
-		m_entity.setKeyValue("light_center", m_doom3Radius.m_center);
+		_entity.setKeyValue("light_center", m_doom3Radius.m_center);
     }
 	
 	if(m_useLightRotation) {
 		rotation_assign(m_lightRotation, m_rotation);
-		write_rotation(m_lightRotation, &m_entity, "light_rotation");
+		write_rotation(m_lightRotation, &_entity, "light_rotation");
 	}
 
 	rotation_assign(m_rotationKey.m_rotation, m_rotation);
-	write_rotation(m_rotationKey.m_rotation, &m_entity);
+	write_rotation(m_rotationKey.m_rotation, &_entity);
 
 	if (!isProjected()) {
 		m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
-		write_origin(m_doom3Radius.m_radius, &m_entity, "light_radius");
+		write_origin(m_doom3Radius.m_radius, &_entity, "light_radius");
 	}
 }
 
 entity::Doom3Entity& Light::getEntity() {
-	return m_entity;
+	return _entity;
 }
 const entity::Doom3Entity& Light::getEntity() const {
-	return m_entity;
+	return _entity;
 }
 
 /*Namespaced& Light::getNamespaced() {
@@ -520,10 +520,10 @@ void Light::renderWireframe(RenderableCollector& collector,
 {
 	// Main render, submit the diamond that represents the light entity
 	collector.SetState(
-		m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
+		_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
 	);
 	collector.SetState(
-		m_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
+		_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
 	);
 	collector.addRenderable(*this, localToWorld);
 
