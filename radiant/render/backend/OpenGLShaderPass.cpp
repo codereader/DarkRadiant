@@ -541,14 +541,14 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         setTextureState(
             current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
         );
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
         setTextureState(
             current.texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D
         );
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
         // Get the world-space to light-space transformation matrix
         Matrix4 world2light = light->getLightTextureTransformation();
