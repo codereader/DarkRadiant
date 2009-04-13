@@ -150,7 +150,6 @@
 		<property name="rotation" category="Basic" type="text" />
 		<property name="_color" category="Basic" type="colour" />
 		<property name="falloff" category="Light" type="text" />
-		<property name="light_origin" category="Light" type="vector3" />
 		<property name="light_radius" category="Light" type="vector3" />
 		<property name="light_rotation" category="Light" type="text" />
 		<property name="light_center" category="Light" type="vector3" />

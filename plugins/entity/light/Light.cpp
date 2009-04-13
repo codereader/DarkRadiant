@@ -83,7 +83,6 @@ Light::Light(Doom3Entity& entity,
 	_rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
 	_rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
 	m_renderName(m_named, _lightBox.origin),
-	m_useLightOrigin(false),
 	m_useLightRotation(false),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged),
@@ -112,7 +111,6 @@ Light::Light(const Light& other,
   _rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
   _rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
   m_renderName(m_named, _lightBox.origin),
-  m_useLightOrigin(false),
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
   m_boundsChanged(boundsChanged),
@@ -144,7 +142,6 @@ void Light::construct() {
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("light_radius", Doom3LightRadius::LightRadiusChangedCaller(m_doom3Radius));
 	m_keyObservers.insert("light_center", Doom3LightRadius::LightCenterChangedCaller(m_doom3Radius));
-	m_keyObservers.insert("light_origin", Light::LightOriginChangedCaller(*this));
 	m_keyObservers.insert("light_rotation", Light::LightRotationChangedCaller(*this));
 	m_keyObservers.insert("light_target", Light::LightTargetChangedCaller(*this));
 	m_keyObservers.insert("light_up", Light::LightUpChangedCaller(*this));
@@ -178,16 +175,8 @@ void Light::updateOrigin() {
 }
 
 void Light::originChanged() {
-	_lightBox.origin = m_useLightOrigin ? m_lightOrigin : m_originKey.m_origin;
+	_lightBox.origin = m_originKey.m_origin;
 	updateOrigin();
-}
-
-void Light::lightOriginChanged(const std::string& value) {
-	m_useLightOrigin = (!value.empty());
-	if (m_useLightOrigin) {
-		read_origin(m_lightOrigin, value);
-	}
-	originChanged();
 }
 
 void Light::lightTargetChanged(const std::string& value) {
@@ -274,10 +263,6 @@ void Light::checkStartEnd() {
 	}
 }
 
-void Light::writeLightOrigin() {
-	write_origin(m_lightOrigin, &_entity, "light_origin");
-}
-
 void Light::rotationChanged() {
 	rotation_assign(m_rotation, m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation);
 	GlobalSelectionSystem().pivotChanged();
@@ -345,14 +330,8 @@ void Light::instanceDetach(const scene::Path& path) {
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
  */
 void Light::snapto(float snap) {
-	if (m_useLightOrigin) {
-		m_lightOrigin = origin_snapped(m_lightOrigin, snap);
-		writeLightOrigin();
-	}
-	else {
-		m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-		m_originKey.write(&_entity);
-	}
+    m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
+    m_originKey.write(&_entity);
 }
 
 void Light::setLightRadius(const AABB& aabb) {
@@ -365,7 +344,7 @@ void Light::transformLightRadius(const Matrix4& transform) {
 }
 
 void Light::revertTransform() {
-	_lightBox.origin = m_useLightOrigin ? m_lightOrigin : m_originKey.m_origin;
+	_lightBox.origin = m_originKey.m_origin;
 	rotation_assign(m_rotation, m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation);
 	m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
 	m_doom3Radius.m_centerTransformed = m_doom3Radius.m_center;
@@ -378,15 +357,10 @@ void Light::revertTransform() {
 	_lightEndTransformed = _lightEnd;
 }
 
-void Light::freezeTransform() {
-	if (m_useLightOrigin) {
-		m_lightOrigin = _lightBox.origin;
-		writeLightOrigin();
-	}
-	else {
-		m_originKey.m_origin = _lightBox.origin;
-		m_originKey.write(&_entity);
-	}
+void Light::freezeTransform() 
+{
+    m_originKey.m_origin = _lightBox.origin;
+    m_originKey.write(&_entity);
     
     if (isProjected()) {
 	    if (m_useLightTarget) {
