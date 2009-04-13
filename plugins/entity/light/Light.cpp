@@ -64,23 +64,27 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 // ----- Light Class Implementation -------------------------------------------------
 
 // Constructor
-Light::Light(LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
+Light::Light(LightNode& node,
+             const Callback& transformChanged,
+             const Callback& boundsChanged,
+             const Callback& evaluateTransform) 
+:
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_colour(Callback()),
 	m_named(m_entity),
-	m_radii_box(m_aabb_light.origin),
-	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
-	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
-	_rUp(_lightUpTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightUp),
-	_rRight(_lightRightTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightRight),
-	_rStart(_lightStartTransformed, m_aabb_light.origin, _colourLightStart),
-	_rEnd(_lightEndTransformed, m_aabb_light.origin, _colourLightEnd),
-	m_renderName(m_named, m_aabb_light.origin),
+	_renderableRadius(_lightBox.origin),
+	_renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
+	_rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
+	_rTarget(_lightTargetTransformed, _lightBox.origin, _colourLightTarget),
+	_rUp(_lightUpTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightUp),
+	_rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
+	_rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
+	_rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
+	m_renderName(m_named, _lightBox.origin),
 	m_useLightOrigin(false),
 	m_useLightRotation(false),
-	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, _frustum),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged),
 	m_evaluateTransform(evaluateTransform)
@@ -89,26 +93,30 @@ Light::Light(LightNode& node, const Callback& transformChanged, const Callback& 
 }
 
 // Copy Constructor
-Light::Light(const Light& other, LightNode& node, const Callback& transformChanged, const Callback& boundsChanged, const Callback& evaluateTransform) :
-	m_entity(node._entity),
-	m_originKey(OriginChangedCaller(*this)),
-	m_rotationKey(RotationChangedCaller(*this)),
-	m_colour(Callback()),
-	m_named(m_entity),
-	m_radii_box(m_aabb_light.origin),
-	_rCentre(m_doom3Radius.m_centerTransformed, m_aabb_light.origin, m_doom3Radius._centerColour),
-	_rTarget(_lightTargetTransformed, m_aabb_light.origin, _colourLightTarget),
-	_rUp(_lightUpTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightUp),
-	_rRight(_lightRightTransformed, _lightTargetTransformed, m_aabb_light.origin, _colourLightRight),
-	_rStart(_lightStartTransformed, m_aabb_light.origin, _colourLightStart),
-	_rEnd(_lightEndTransformed, m_aabb_light.origin, _colourLightEnd),
-	m_renderName(m_named, m_aabb_light.origin),
-	m_useLightOrigin(false),
-	m_useLightRotation(false),
-	m_renderProjection(m_aabb_light.origin, _lightStartTransformed, _frustum),
-	m_transformChanged(transformChanged),
-	m_boundsChanged(boundsChanged),
-	m_evaluateTransform(evaluateTransform)
+Light::Light(const Light& other,
+             LightNode& node,
+             const Callback& transformChanged,
+             const Callback& boundsChanged,
+             const Callback& evaluateTransform) 
+: m_entity(node._entity),
+  m_originKey(OriginChangedCaller(*this)),
+  m_rotationKey(RotationChangedCaller(*this)),
+  m_colour(Callback()),
+  m_named(m_entity),
+  _renderableRadius(_lightBox.origin),
+  _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
+  _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
+  _rTarget(_lightTargetTransformed, _lightBox.origin, _colourLightTarget),
+  _rUp(_lightUpTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightUp),
+  _rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
+  _rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
+  _rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
+  m_renderName(m_named, _lightBox.origin),
+  m_useLightOrigin(false),
+  m_useLightRotation(false),
+  m_transformChanged(transformChanged),
+  m_boundsChanged(boundsChanged),
+  m_evaluateTransform(evaluateTransform)
 {
 	construct();
 }
@@ -125,8 +133,8 @@ void Light::construct() {
 	_colourLightEnd = Vector3(0,0,0);
 	
 	default_rotation(m_rotation);
-	m_aabb_light.origin = Vector3(0, 0, 0);
-	default_extents(m_aabb_light.extents);
+	_lightBox.origin = Vector3(0, 0, 0);
+	_lightBox.extents = Vector3(8, 8, 8);
 
 	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
@@ -170,7 +178,7 @@ void Light::updateOrigin() {
 }
 
 void Light::originChanged() {
-	m_aabb_light.origin = m_useLightOrigin ? m_lightOrigin : m_originKey.m_origin;
+	_lightBox.origin = m_useLightOrigin ? m_lightOrigin : m_originKey.m_origin;
 	updateOrigin();
 }
 
@@ -285,32 +293,37 @@ void Light::lightRotationChanged(const std::string& value) {
 
 /* greebo: Calculates the corners of the light radii box and rotates them according the rotation matrix.
  */
-void Light::updateLightRadiiBox() const {
+void Light::updateRenderableRadius() const 
+{
 	// Get the rotation matrix
 	const Matrix4& rotation = rotation_toMatrix(m_rotation);
 	
-	// Calculate the corners of the light radius box and store them into <m_radii_box.m_points>
-	// For the first calculation an AABB with origin 0,0,0 is needed, the vectors get added 
-	// to the origin AFTER they are transformed by the rotation matrix
-	aabb_corners(AABB(Vector3(0, 0, 0), m_doom3Radius.m_radiusTransformed), m_radii_box.m_points);
+    // Calculate the corners of the light radius box and store them into
+    // <_renderableRadius.m_points> For the first calculation an AABB with
+    // origin 0,0,0 is needed, the vectors get added to the origin AFTER they
+    // are transformed by the rotation matrix
+    aabb_corners(
+        AABB(Vector3(0, 0, 0), m_doom3Radius.m_radiusTransformed),
+        _renderableRadius.m_points
+    );
 	
 	// Transform each point with the given rotation matrix and add the vectors to the light origin 
-	matrix4_transform_point(rotation, m_radii_box.m_points[0]);
-	m_radii_box.m_points[0] += m_aabb_light.origin;
-	matrix4_transform_point(rotation, m_radii_box.m_points[1]);
-	m_radii_box.m_points[1] += m_aabb_light.origin;
-	matrix4_transform_point(rotation, m_radii_box.m_points[2]);
-	m_radii_box.m_points[2] += m_aabb_light.origin;
-	matrix4_transform_point(rotation, m_radii_box.m_points[3]);
-	m_radii_box.m_points[3] += m_aabb_light.origin;
-	matrix4_transform_point(rotation, m_radii_box.m_points[4]);
-	m_radii_box.m_points[4] += m_aabb_light.origin;
-	matrix4_transform_point(rotation, m_radii_box.m_points[5]);
-	m_radii_box.m_points[5] += m_aabb_light.origin;
-	matrix4_transform_point(rotation, m_radii_box.m_points[6]);
-	m_radii_box.m_points[6] += m_aabb_light.origin;
-	matrix4_transform_point(rotation, m_radii_box.m_points[7]);
-	m_radii_box.m_points[7] += m_aabb_light.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[0]);
+	_renderableRadius.m_points[0] += _lightBox.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[1]);
+	_renderableRadius.m_points[1] += _lightBox.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[2]);
+	_renderableRadius.m_points[2] += _lightBox.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[3]);
+	_renderableRadius.m_points[3] += _lightBox.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[4]);
+	_renderableRadius.m_points[4] += _lightBox.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[5]);
+	_renderableRadius.m_points[5] += _lightBox.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[6]);
+	_renderableRadius.m_points[6] += _lightBox.origin;
+	matrix4_transform_point(rotation, _renderableRadius.m_points[7]);
+	_renderableRadius.m_points[7] += _lightBox.origin;
 }
 
 void Light::instanceAttach(const scene::Path& path) {
@@ -343,16 +356,16 @@ void Light::snapto(float snap) {
 }
 
 void Light::setLightRadius(const AABB& aabb) {
-	m_aabb_light.origin = aabb.origin;
+	_lightBox.origin = aabb.origin;
 	m_doom3Radius.m_radiusTransformed = aabb.extents;
 }
 
 void Light::transformLightRadius(const Matrix4& transform) {
-	matrix4_transform_point(transform, m_aabb_light.origin);
+	matrix4_transform_point(transform, _lightBox.origin);
 }
 
 void Light::revertTransform() {
-	m_aabb_light.origin = m_useLightOrigin ? m_lightOrigin : m_originKey.m_origin;
+	_lightBox.origin = m_useLightOrigin ? m_lightOrigin : m_originKey.m_origin;
 	rotation_assign(m_rotation, m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation);
 	m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
 	m_doom3Radius.m_centerTransformed = m_doom3Radius.m_center;
@@ -367,11 +380,11 @@ void Light::revertTransform() {
 
 void Light::freezeTransform() {
 	if (m_useLightOrigin) {
-		m_lightOrigin = m_aabb_light.origin;
+		m_lightOrigin = _lightBox.origin;
 		writeLightOrigin();
 	}
 	else {
-		m_originKey.m_origin = m_aabb_light.origin;
+		m_originKey.m_origin = _lightBox.origin;
 		m_originKey.write(&m_entity);
 	}
     
@@ -449,11 +462,11 @@ const TransformNode& Light::getTransformNode() const {
 
 // Backend render function (GL calls)
 void Light::render(const RenderInfo& info) const {
-	light_draw(m_aabb_light, info.getFlags());
+	light_draw(_lightBox, info.getFlags());
 }
 
 VolumeIntersectionValue Light::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const {
-	return volume.TestAABB(m_aabb_light, localToWorld);
+	return volume.TestAABB(_lightBox, localToWorld);
 }
 
 Doom3LightRadius& Light::getDoom3Radius() {
@@ -515,16 +528,19 @@ void Light::renderWireframe(RenderableCollector& collector,
 	collector.addRenderable(*this, localToWorld);
 
 	// Render bounding box if selected or the showAllLighRadii flag is set
-	if (selected || EntitySettings::InstancePtr()->showAllLightRadii()) {
-
-		if (isProjected()) {
-			// greebo: This is not much of an performance impact as the projection gets only recalculated when it has actually changed.
-			projection();
-			collector.addRenderable(m_renderProjection, localToWorld);
+	if (selected || EntitySettings::InstancePtr()->showAllLightRadii()) 
+    {
+		if (isProjected()) 
+        {
+            // greebo: This is not much of an performance impact as the
+            // projection gets only recalculated when it has actually changed.
+            projection();
+			collector.addRenderable(_renderableFrustum, localToWorld);
 		}
-		else {
-			updateLightRadiiBox();
-			collector.addRenderable(m_radii_box, localToWorld);
+		else 
+        {
+			updateRenderableRadius();
+			collector.addRenderable(_renderableRadius, localToWorld);
 		}
 	}
 
@@ -538,14 +554,14 @@ void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& l
 	test.BeginMesh(localToWorld);
 
 	SelectionIntersection best;
-	aabb_testselect(m_aabb_light, test, best);
+	aabb_testselect(_lightBox, test, best);
 	if (best.valid()) {
 		selector.addIntersection(best);
 	}
 }
 
 void Light::translate(const Vector3& translation) {
-	m_aabb_light.origin = origin_translated(m_aabb_light.origin, translation);
+	_lightBox.origin = origin_translated(_lightBox.origin, translation);
 }
 
 /* greebo: This translates the light start with the given <translation>
@@ -639,7 +655,7 @@ void Light::transformChanged() {
 
 const Matrix4& Light::getLocalPivot() const {
 	m_localPivot = rotation_toMatrix(m_rotation);
-	m_localPivot.t().getVector3() = m_aabb_light.origin;
+	m_localPivot.t().getVector3() = _lightBox.origin;
 	return m_localPivot;
 }
 
@@ -654,19 +670,19 @@ const AABB& Light::localAABB() const
 	if (isProjected()) {
 		// start with an empty AABB and include all the projection vertices
 		m_doom3AABB = AABB();
-		m_doom3AABB.includePoint(m_aabb_light.origin);
-		m_doom3AABB.includePoint(m_aabb_light.origin + _lightTargetTransformed);
-		m_doom3AABB.includePoint(m_aabb_light.origin + _lightTargetTransformed + _lightRightTransformed);
-		m_doom3AABB.includePoint(m_aabb_light.origin + _lightTargetTransformed + _lightUpTransformed);
+		m_doom3AABB.includePoint(_lightBox.origin);
+		m_doom3AABB.includePoint(_lightBox.origin + _lightTargetTransformed);
+		m_doom3AABB.includePoint(_lightBox.origin + _lightTargetTransformed + _lightRightTransformed);
+		m_doom3AABB.includePoint(_lightBox.origin + _lightTargetTransformed + _lightUpTransformed);
 		if (useStartEnd()) {
-			m_doom3AABB.includePoint(m_aabb_light.origin + _lightStartTransformed);
-			m_doom3AABB.includePoint(m_aabb_light.origin + _lightEndTransformed);
+			m_doom3AABB.includePoint(_lightBox.origin + _lightStartTransformed);
+			m_doom3AABB.includePoint(_lightBox.origin + _lightEndTransformed);
 		}
 	}
 	else {
-		m_doom3AABB = AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
+		m_doom3AABB = AABB(_lightBox.origin, m_doom3Radius.m_radiusTransformed);
 		// greebo: Make sure the light center (that maybe outside of the light volume) is selectable
-		m_doom3AABB.includePoint(m_aabb_light.origin + m_doom3Radius.m_centerTransformed);		
+		m_doom3AABB.includePoint(_lightBox.origin + m_doom3Radius.m_centerTransformed);		
 	}
 	return m_doom3AABB;
 }
@@ -706,7 +722,7 @@ Matrix4 Light::getLightTextureTransformation() const
  */
 AABB Light::lightAABB() const 
 {
-	return AABB(m_aabb_light.origin, m_doom3Radius.m_radiusTransformed);
+	return AABB(_lightBox.origin, m_doom3Radius.m_radiusTransformed);
 }
   
 bool Light::testAABB(const AABB& other) const 

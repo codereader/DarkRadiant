@@ -99,7 +99,9 @@ class Light :
 	Doom3LightRadius m_doom3Radius;
 
 	// Renderable components of this light
-	RenderLightRadiiBox m_radii_box;
+	RenderLightRadiiBox _renderableRadius;
+    RenderLightProjection _renderableFrustum;
+
 	RenderableLightTarget _rCentre;
 	RenderableLightTarget _rTarget;
 	
@@ -153,11 +155,10 @@ class Light :
 
   mutable bool m_doom3ProjectionChanged;
 
-  RenderLightProjection m_renderProjection;
-
   LightShader m_shader;
 
-  AABB m_aabb_light;
+    // The 8x8 box representing the light object itself
+    AABB _lightBox;
 
   Callback m_transformChanged;
   Callback m_boundsChanged;
@@ -169,6 +170,9 @@ private:
 
     // Ensure the start and end points are set to sensible values
 	void checkStartEnd();
+
+    // Update the bounds of the renderable radius box
+	void updateRenderableRadius() const;
 
 public:
 
@@ -191,8 +195,6 @@ public:
 	typedef MemberCaller1<Light, const std::string&, &Light::lightEndChanged> LightEndChangedCaller;
 
 	void writeLightOrigin();
-
-	void updateLightRadiiBox() const;
 
 	void rotationChanged();
 	typedef MemberCaller<Light, &Light::rotationChanged> RotationChangedCaller;
@@ -276,7 +278,7 @@ public:
     // RendererLight implementation
     Vector3 worldOrigin() const
     {
-        return m_aabb_light.origin;
+        return _lightBox.origin;
     }
 
     Matrix4 getLightTextureTransformation() const;
