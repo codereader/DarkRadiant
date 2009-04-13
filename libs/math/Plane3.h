@@ -160,4 +160,18 @@ public:
 	
 }; // class Plane3
 
+/**
+ * \brief
+ * Stream insertion operator for a plane.
+ */
+inline std::ostream& operator<< (std::ostream& os, const Plane3& plane)
+{
+    os << "Plane3 { " << plane.a << "x + " 
+                      << plane.b << "y + "
+                      << plane.c << "z = "
+                      << plane.d
+       << " }";
+    return os;
+}
+
 #endif /*PLANE3_H_*/
