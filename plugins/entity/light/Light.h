@@ -114,8 +114,6 @@ class Light :
 	RenderableLightTarget _rEnd;
 	RenderableNamedEntity m_renderName;
 
-  Vector3 m_lightOrigin;
-  bool m_useLightOrigin;
   Float9 m_lightRotation;
   bool m_useLightRotation;
 
@@ -176,14 +174,12 @@ private:
     // Update the bounds of the renderable radius box
 	void updateRenderableRadius() const;
 
+	void updateOrigin();
+
 public:
 
-	void updateOrigin();
 	void originChanged();
 	typedef MemberCaller<Light, &Light::originChanged> OriginChangedCaller;
-
-	void lightOriginChanged(const std::string& value);
-	typedef MemberCaller1<Light, const std::string&, &Light::lightOriginChanged> LightOriginChangedCaller;
 
 	void lightTargetChanged(const std::string& value);
 	typedef MemberCaller1<Light, const std::string&, &Light::lightTargetChanged> LightTargetChangedCaller;
