@@ -788,7 +788,9 @@ void Light::projectionChanged()
 	SceneChangeNotify();
 }
 
-const Matrix4& Light::projection() const {
+// Update and return the projection matrix
+const Matrix4& Light::projection() const 
+{
 	if (!m_doom3ProjectionChanged) {
 		return _projection;
 	}
@@ -873,18 +875,14 @@ const Matrix4& Light::projection() const {
 	_frustum.back.dist() -= 1.0f;
 	_frustum.back = -_frustum.back;
 
+    //std::cout << "frustum back = " << _frustum.back << ", front = " << _frustum.front << std::endl;
+
     // Calculate the new projection matrix from the frustum planes
-	Matrix4 newProjection(
-        matrix4_from_planes(
-            _frustum.left,
-            _frustum.right,
-            _frustum.bottom,
-            _frustum.top,
-            _frustum.front,
-            _frustum.back
-        )
-    );
+	Matrix4 newProjection(_frustum.getProjectionMatrix());
 	_projection.multiplyBy(newProjection);
+
+    //std::cout << "new projection:\n" << newProjection << std::endl;
+    //std::cout << "final projection:\n" << _projection << std::endl;
 
     // Normalise all frustum planes
     _frustum.normalisePlanes();

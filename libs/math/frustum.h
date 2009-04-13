@@ -389,6 +389,12 @@ struct Frustum
      * Normalise all planes in the frustum.
      */
     void normalisePlanes();
+
+    /**
+     * \brief
+     * Get the projection matrix corresponding to the planes of this frustum.
+     */
+    Matrix4 getProjectionMatrix() const;
 };
 
 inline Frustum frustum_transformed(const Frustum& frustum, const Matrix4& matrix)

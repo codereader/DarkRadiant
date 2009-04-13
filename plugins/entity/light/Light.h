@@ -50,28 +50,6 @@ inline BasicVector4<double>& plane3_to_vector4(Plane3& self)
   return reinterpret_cast<BasicVector4<double>&>(self);
 }
 
-inline Matrix4 matrix4_from_planes(const Plane3& left, const Plane3& right, const Plane3& bottom, const Plane3& top, const Plane3& front, const Plane3& back)
-{
-  return Matrix4(
-    (right.a - left.a) / 2,
-    (top.a - bottom.a) / 2,
-    (back.a - front.a) / 2,
-    right.a - (right.a - left.a) / 2,
-    (right.b - left.b) / 2,
-    (top.b - bottom.b) / 2,
-    (back.b - front.b) / 2,
-    right.b - (right.b - left.b) / 2,
-    (right.c - left.c) / 2,
-    (top.c - bottom.c) / 2,
-    (back.c - front.c) / 2,
-    right.c - (right.c - left.c) / 2,
-    (right.d - left.d) / 2,
-    (top.d - bottom.d) / 2,
-    (back.d - front.d) / 2,
-    right.d - (right.d - left.d) / 2
-  );
-}
-
 inline void default_extents(Vector3& extents) {
 	extents = Vector3(8,8,8);
 }
