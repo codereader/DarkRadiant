@@ -1227,12 +1227,12 @@ inline void matrix4_pivoted_transform_by_euler_xyz_degrees(Matrix4& self, const 
 
 /** Stream insertion operator for Matrix4.
  */
- 
-inline std::ostream& operator<<(std::ostream& st, const Matrix4& m) {
-	st << "|" << m.xx() << ", " << m.xy() << ", " << m.xz() << ", " << m.xw() << "|\n";
-	st << "|" << m.yx() << ", " << m.yy() << ", " << m.yz() << ", " << m.yw() << "|\n";
-	st << "|" << m.zx() << ", " << m.zy() << ", " << m.zz() << ", " << m.zw() << "|\n";
-	st << "|" << m.tx() << ", " << m.ty() << ", " << m.tz() << ", " << m.tw() << "|\n";
+inline std::ostream& operator<<(std::ostream& st, const Matrix4& m) 
+{
+	st << "|" << m[0] << ", " << m[4] << ", " << m[8] << ", " << m[12] << "|\n";
+	st << "|" << m[1] << ", " << m[5] << ", " << m[9] << ", " << m[13] << "|\n";
+	st << "|" << m[2] << ", " << m[6] << ", " << m[10] << ", " << m[14] << "|\n";
+	st << "|" << m[3] << ", " << m[7] << ", " << m[11] << ", " << m[15] << "|\n";
 	return st;
 }
 
