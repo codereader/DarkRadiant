@@ -284,6 +284,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\libs\math\frustum.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\libs\math\frustum.h"
 			>
 		</File>
