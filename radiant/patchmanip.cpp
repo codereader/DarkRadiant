@@ -871,35 +871,35 @@ EMessageBoxReturn DoCapDlg(ECapDialog* type)
         gtk_table_set_col_spacings(table, 5);
  
         {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_bevel.bmp"));
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_bevel.png"));
           gtk_widget_show(image);
           gtk_table_attach(table, image, 0, 1, 0, 1,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_endcap.bmp"));
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_endcap.png"));
           gtk_widget_show(image);
           gtk_table_attach(table, image, 0, 1, 1, 2,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_ibevel.bmp"));
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_ibevel.png"));
           gtk_widget_show(image);
           gtk_table_attach(table, image, 0, 1, 2, 3,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_iendcap.bmp"));
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_iendcap.png"));
           gtk_widget_show(image);
           gtk_table_attach(table, image, 0, 1, 3, 4,
                             (GtkAttachOptions) (GTK_FILL),
                             (GtkAttachOptions) (0), 0, 0);
         }
         {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_cylinder.bmp"));
+          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_cylinder.png"));
           gtk_widget_show(image);
           gtk_table_attach(table, image, 0, 1, 4, 5,
                             (GtkAttachOptions) (GTK_FILL),
