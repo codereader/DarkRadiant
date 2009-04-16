@@ -182,16 +182,6 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
 	}
 }
 
-// Called upon modifier key press
-void RadiantWindowObserver::onModifierDown(ModifierFlags type) {
-	//_selectObserver.updateState();
-}
-
-// Called upon modifier key release
-void RadiantWindowObserver::onModifierUp(ModifierFlags type) {
-	//_selectObserver.updateState();
-}
-
 void RadiantWindowObserver::onCancel() {
 	
 	// Disconnect the mouseMoved and mouseUp callbacks

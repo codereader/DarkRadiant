@@ -25,14 +25,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gdk/gdkevents.h>
 #include "generic/bitfield.h"
 
-namespace
+/*namespace
 {
   ModifierFlags g_modifier_state = c_modifierNone;
-}
+}*/
 
 typedef std::vector<WindowObserver*> WindowObservers;
 
-inline void WindowObservers_OnModifierDown(WindowObservers& observers, ModifierFlags type)
+/*inline void WindowObservers_OnModifierDown(WindowObservers& observers, ModifierFlags type)
 {
   g_modifier_state = bitfield_enable(g_modifier_state, type);
   for(WindowObservers::iterator i = observers.begin(); i != observers.end(); ++i)
@@ -48,12 +48,12 @@ inline void WindowObservers_OnModifierUp(WindowObservers& observers, ModifierFla
   {
     (*i)->onModifierUp(type);
   }
-}
+}*/
 
 #include <gdk/gdkkeysyms.h>
-#include <iostream>
+//#include <iostream>
 
-gboolean selection_modifier_key_press(GtkWidget* widget, GdkEventKey* event, WindowObservers& observers)
+/*gboolean selection_modifier_key_press(GtkWidget* widget, GdkEventKey* event, WindowObservers& observers)
 {
   switch(event->keyval)
   {
@@ -97,9 +97,9 @@ gboolean selection_modifier_key_release(GtkWidget* widget, GdkEventKey* event, W
     break;
   }
   return FALSE;
-}
+}*/
 
-void WindowObservers_UpdateModifier(WindowObservers& observers, ModifierFlags modifiers, ModifierFlags modifier)
+/*void WindowObservers_UpdateModifier(WindowObservers& observers, ModifierFlags modifiers, ModifierFlags modifier)
 {
   if(!bitfield_enabled(g_modifier_state, modifier) && bitfield_enabled(modifiers, modifier))
   {
@@ -134,20 +134,20 @@ gboolean modifiers_button_release(GtkWidget* widget, GdkEventButton* event, Wind
     WindowObservers_UpdateModifiers(*observers, modifiers_for_state(event->state));
   }
   return FALSE;
-}
+}*/
 
-gboolean modifiers_motion(GtkWidget *widget, GdkEventMotion *event, WindowObservers* observers)
+/*gboolean modifiers_motion(GtkWidget *widget, GdkEventMotion *event, WindowObservers* observers)
 {
   WindowObservers_UpdateModifiers(*observers, modifiers_for_state(event->state));
   return FALSE;
-}
+}*/
 
 
 WindowObservers g_window_observers;
 
 void GlobalWindowObservers_updateModifiers(ModifierFlags modifiers)
 {
-  WindowObservers_UpdateModifiers(g_window_observers, modifiers);
+  //WindowObservers_UpdateModifiers(g_window_observers, modifiers);
 }
 
 void GlobalWindowObservers_add(WindowObserver* observer)
@@ -171,15 +171,15 @@ void GlobalWindowObservers_remove(WindowObserver* observer)
 
 void GlobalWindowObservers_connectTopLevel(GtkWindow* window)
 {
-  g_signal_connect(G_OBJECT(window), "key_press_event", G_CALLBACK(selection_modifier_key_press), &g_window_observers);
-  g_signal_connect(G_OBJECT(window), "key_release_event", G_CALLBACK(selection_modifier_key_release), &g_window_observers);
+  //g_signal_connect(G_OBJECT(window), "key_press_event", G_CALLBACK(selection_modifier_key_press), &g_window_observers);
+  //g_signal_connect(G_OBJECT(window), "key_release_event", G_CALLBACK(selection_modifier_key_release), &g_window_observers);
 }
 
 void GlobalWindowObservers_connectWidget(GtkWidget* widget)
 {
-  g_signal_connect(G_OBJECT(widget), "button_press_event", G_CALLBACK(modifiers_button_press), &g_window_observers);
-  g_signal_connect(G_OBJECT(widget), "button_release_event", G_CALLBACK(modifiers_button_release), &g_window_observers);
-  g_signal_connect(G_OBJECT(widget), "motion_notify_event", G_CALLBACK(modifiers_motion), &g_window_observers);
+  //g_signal_connect(G_OBJECT(widget), "button_press_event", G_CALLBACK(modifiers_button_press), &g_window_observers);
+  //g_signal_connect(G_OBJECT(widget), "button_release_event", G_CALLBACK(modifiers_button_release), &g_window_observers);
+  //g_signal_connect(G_OBJECT(widget), "motion_notify_event", G_CALLBACK(modifiers_motion), &g_window_observers);
 }
 
 

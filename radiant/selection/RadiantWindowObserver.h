@@ -92,10 +92,6 @@ public:
 	 */
   	void onMouseUp(const WindowVector& position, GdkEventButton* event);
   	
-  	// Called upon modifier key press/release, updates the interal bit mask accordingly
-  	void onModifierDown(ModifierFlags type);
-  	void onModifierUp(ModifierFlags type);
-
 	// Cancels the current operation and disconnects the mouse handlers
 	void onCancel();
 
