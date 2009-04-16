@@ -207,9 +207,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-COutRedirector.$(OBJEXT) \
 	darkradiant-StringLogDevice.$(OBJEXT) \
 	darkradiant-LogStreamBuf.$(OBJEXT) \
-	darkradiant-LogFile.$(OBJEXT) \
-	darkradiant-windowobservers.$(OBJEXT) \
-	darkradiant-ModelCache.$(OBJEXT) \
+	darkradiant-LogFile.$(OBJEXT) darkradiant-ModelCache.$(OBJEXT) \
 	darkradiant-NullModel.$(OBJEXT) \
 	darkradiant-NullModelNode.$(OBJEXT)
 darkradiant_OBJECTS = $(am_darkradiant_OBJECTS)
@@ -577,7 +575,6 @@ darkradiant_SOURCES = main.cpp \
 					  log/StringLogDevice.cpp \
 					  log/LogStreamBuf.cpp \
 					  log/LogFile.cpp \
-					  windowobservers.cpp \
 					  referencecache/ModelCache.cpp \
 					  referencecache/NullModel.cpp \
 					  referencecache/NullModelNode.cpp 
@@ -838,7 +835,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-select.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-timer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-view.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-windowobservers.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -3408,20 +3404,6 @@ darkradiant-LogFile.obj: log/LogFile.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='log/LogFile.cpp' object='darkradiant-LogFile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LogFile.obj `if test -f 'log/LogFile.cpp'; then $(CYGPATH_W) 'log/LogFile.cpp'; else $(CYGPATH_W) '$(srcdir)/log/LogFile.cpp'; fi`
-
-darkradiant-windowobservers.o: windowobservers.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-windowobservers.o -MD -MP -MF $(DEPDIR)/darkradiant-windowobservers.Tpo -c -o darkradiant-windowobservers.o `test -f 'windowobservers.cpp' || echo '$(srcdir)/'`windowobservers.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-windowobservers.Tpo $(DEPDIR)/darkradiant-windowobservers.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='windowobservers.cpp' object='darkradiant-windowobservers.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-windowobservers.o `test -f 'windowobservers.cpp' || echo '$(srcdir)/'`windowobservers.cpp
-
-darkradiant-windowobservers.obj: windowobservers.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-windowobservers.obj -MD -MP -MF $(DEPDIR)/darkradiant-windowobservers.Tpo -c -o darkradiant-windowobservers.obj `if test -f 'windowobservers.cpp'; then $(CYGPATH_W) 'windowobservers.cpp'; else $(CYGPATH_W) '$(srcdir)/windowobservers.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-windowobservers.Tpo $(DEPDIR)/darkradiant-windowobservers.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='windowobservers.cpp' object='darkradiant-windowobservers.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-windowobservers.obj `if test -f 'windowobservers.cpp'; then $(CYGPATH_W) 'windowobservers.cpp'; else $(CYGPATH_W) '$(srcdir)/windowobservers.cpp'; fi`
 
 darkradiant-ModelCache.o: referencecache/ModelCache.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ModelCache.o -MD -MP -MF $(DEPDIR)/darkradiant-ModelCache.Tpo -c -o darkradiant-ModelCache.o `test -f 'referencecache/ModelCache.cpp' || echo '$(srcdir)/'`referencecache/ModelCache.cpp
