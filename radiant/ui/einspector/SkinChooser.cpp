@@ -7,6 +7,7 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/VFSTreePopulator.h"
+#include "gtkutil/MultiMonitor.h"
 
 #include <gtk/gtk.h>
 
@@ -35,7 +36,8 @@ namespace {
 // Constructor
 SkinChooser::SkinChooser()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _lastSkin("")
+  _lastSkin(""),
+  _preview(new ModelPreview)
 {
 	// Set up window
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
@@ -48,9 +50,9 @@ SkinChooser::SkinChooser()
 					 this);
 
 	// Set the default size of the window
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
-	gint w = gdk_screen_get_width(scr);
-	
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_widget));
+	gint w = rect.width;
+
 	// Main vbox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
 
@@ -67,8 +69,22 @@ SkinChooser::SkinChooser()
 }
 
 SkinChooser& SkinChooser::Instance() {
-	static SkinChooser _instance;
-	return _instance;
+	// Static instance pointer
+	return *InstancePtr();
+}
+
+SkinChooserPtr& SkinChooser::InstancePtr() {
+	static SkinChooserPtr _instancePtr;
+
+	if (_instancePtr == NULL) {
+		// Not yet instantiated, do it now
+		_instancePtr = SkinChooserPtr(new SkinChooser);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(_instancePtr);
+	}
+
+	return _instancePtr;
 }
 
 // Create the TreeView
@@ -104,8 +120,8 @@ GtkWidget* SkinChooser::createTreeView(gint width) {
 
 // Create the model preview
 GtkWidget* SkinChooser::createPreview(gint size) {
-	_preview.setSize(size);
-	return _preview;
+	_preview->setSize(size);
+	return *_preview;
 }
 
 // Create the buttons panel
@@ -140,13 +156,13 @@ std::string SkinChooser::showAndBlock(const std::string& model,
 	
 	// Show the dialog
 	gtk_widget_show_all(_widget);
-	_preview.initialisePreview();
+	_preview->initialisePreview();
 	
 	// Enter main loop and block
 	gtk_main();
 	
 	// Hide the dialog and return the selection
-	_preview.setModel(""); // release model
+	_preview->setModel(""); // release model
 	gtk_widget_hide(_widget);
 	return _lastSkin;
 }
@@ -252,6 +268,12 @@ std::string SkinChooser::chooseSkin(const std::string& model,
 	return Instance().showAndBlock(model, prev);	
 }
 
+void SkinChooser::onRadiantShutdown() {
+	globalOutputStream() << "SkinChooser shutting down.\n";
+
+	_preview = ModelPreviewPtr();
+}
+
 /* GTK CALLBACKS */
 
 void SkinChooser::_onOK(GtkWidget* widget, SkinChooser* self) {
@@ -276,8 +298,8 @@ void SkinChooser::_onSelChanged(GtkWidget*, SkinChooser* self) {
 															 FULLNAME_COL);
 
 	// Set the model preview to show the model with the selected skin
-	self->_preview.setModel(self->_model);
-	self->_preview.setSkin(skin);
+	self->_preview->setModel(self->_model);
+	self->_preview->setSkin(skin);
 }
 
 bool SkinChooser::_onCloseButton(GtkWidget*, SkinChooser* self) {
