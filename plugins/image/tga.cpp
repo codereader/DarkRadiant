@@ -29,7 +29,6 @@ typedef unsigned char byte;
 
 #include <stdlib.h>
 
-#include "generic/bitfield.h"
 #include "imagelib.h"
 #include "bytestreamutils.h"
 
@@ -386,23 +385,25 @@ RGBAImagePtr LoadTGABuff(const byte* buffer)
     return RGBAImagePtr();
   }
 
-  if(!bitfield_enabled(targa_header.attributes, TGA_FLIP_HORIZONTAL)
-    && !bitfield_enabled(targa_header.attributes, TGA_FLIP_VERTICAL))
+  if ((targa_header.attributes & (TGA_FLIP_HORIZONTAL|TGA_FLIP_VERTICAL)) == 0)
   {
     return Targa_decodeImageData(targa_header, istream, Flip00());
   }
-  if(!bitfield_enabled(targa_header.attributes, TGA_FLIP_HORIZONTAL)
-    && bitfield_enabled(targa_header.attributes, TGA_FLIP_VERTICAL))
+
+  if((targa_header.attributes & TGA_FLIP_HORIZONTAL) == 0 && 
+	 (targa_header.attributes & TGA_FLIP_VERTICAL) != 0)
   {
     return Targa_decodeImageData(targa_header, istream, Flip01());
   }
-  if(bitfield_enabled(targa_header.attributes, TGA_FLIP_HORIZONTAL)
-    && !bitfield_enabled(targa_header.attributes, TGA_FLIP_VERTICAL))
+
+  if ((targa_header.attributes & TGA_FLIP_HORIZONTAL) != 0 && 
+	  (targa_header.attributes & TGA_FLIP_VERTICAL) == 0)
   {
     return Targa_decodeImageData(targa_header, istream, Flip10());
   }
-  if(bitfield_enabled(targa_header.attributes, TGA_FLIP_HORIZONTAL)
-    && bitfield_enabled(targa_header.attributes, TGA_FLIP_VERTICAL))
+
+  if ((targa_header.attributes & TGA_FLIP_HORIZONTAL) != 0 && 
+	  (targa_header.attributes & TGA_FLIP_VERTICAL) != 0)
   {
     return Targa_decodeImageData(targa_header, istream, Flip11());
   }

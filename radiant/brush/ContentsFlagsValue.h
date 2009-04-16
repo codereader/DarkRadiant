@@ -1,8 +1,6 @@
 #ifndef CONTENTSFLAGSVALUE_H_
 #define CONTENTSFLAGSVALUE_H_
 
-#include "generic/bitfield.h"
-
 const unsigned int BRUSH_DETAIL_FLAG = 27;
 const unsigned int BRUSH_DETAIL_MASK = (1 << BRUSH_DETAIL_FLAG);
 
@@ -19,15 +17,15 @@ public:
 	
 	void assignMasked(const ContentsFlagsValue& other) {
 		
-		bool detail = bitfield_enabled(m_contentFlags, BRUSH_DETAIL_MASK);
+		bool detail = (m_contentFlags & BRUSH_DETAIL_MASK) != 0;
 		
 		*this = other;
 		
 		if (detail) {
-		    m_contentFlags = bitfield_enable(m_contentFlags, BRUSH_DETAIL_MASK);
+		    m_contentFlags |= BRUSH_DETAIL_MASK;
 		}
 		else {
-			m_contentFlags = bitfield_disable(m_contentFlags, BRUSH_DETAIL_MASK);
+			m_contentFlags &= ~BRUSH_DETAIL_MASK;
 		}
 	}
 	
