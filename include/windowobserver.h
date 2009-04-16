@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_WINDOWOBSERVER_H)
 #define INCLUDED_WINDOWOBSERVER_H
 
-template<typename Enumeration> class BitFieldValue;
+/*template<typename Enumeration> class BitFieldValue;
 struct ModifierEnumeration;
-typedef BitFieldValue<ModifierEnumeration> ModifierFlags;
+typedef BitFieldValue<ModifierEnumeration> ModifierFlags;*/
 
 #include "math/Vector2.h"
-#include "generic/bitfield.h"
+/*#include "generic/bitfield.h"
 
 struct ModifierEnumeration
 {
@@ -44,7 +44,7 @@ typedef BitFieldValue<ModifierEnumeration> ModifierFlags;
 const ModifierFlags c_modifierNone;
 const ModifierFlags c_modifierShift(ModifierEnumeration::SHIFT);
 const ModifierFlags c_modifierControl(ModifierEnumeration::CONTROL);
-const ModifierFlags c_modifierAlt(ModifierEnumeration::ALT);
+const ModifierFlags c_modifierAlt(ModifierEnumeration::ALT);*/
 
 template<typename Element>
 class BasicVector2;
