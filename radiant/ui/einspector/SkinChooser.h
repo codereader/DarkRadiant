@@ -3,6 +3,7 @@
 
 #include "modelskin.h"
 
+#include "iradiant.h"
 #include "ui/common/ModelPreview.h"
 
 #include <gtk/gtkwidget.h>
@@ -14,11 +15,15 @@
 namespace ui
 {
 
+class SkinChooser;
+typedef boost::shared_ptr<SkinChooser> SkinChooserPtr;
+
 /** Dialog to allow selection of skins for a model entity. Skins are grouped
  * into two toplevel categories - matching skins which are associated with the
  * model, and all skins available.
  */
-class SkinChooser
+class SkinChooser :
+	public RadiantEventListener
 {
 	// Main dialog widget
 	GtkWidget* _widget;
@@ -36,7 +41,7 @@ class SkinChooser
 	std::string _prevSkin;
 
 	// Model preview widget
-	ModelPreview _preview;
+	ModelPreviewPtr _preview;
 
 private:
 
@@ -63,7 +68,13 @@ private:
 	// Contains the static instance
 	static SkinChooser& Instance();
 
+	// This is where the static shared_ptr of the singleton instance is held.
+	static SkinChooserPtr& InstancePtr();
+
 public:
+
+	// RadiantEventListener implementation
+	void onRadiantShutdown();
 
 	/** Display the dialog and return the skin chosen by the user, or an empty
 	 * string if no selection was made. This static method enters are recursive 
