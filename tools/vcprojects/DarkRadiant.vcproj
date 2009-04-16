@@ -528,14 +528,6 @@
 				RelativePath="..\..\radiant\view.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\radiant\windowobservers.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\windowobservers.h"
-				>
-			</File>
 			<Filter
 				Name="brush"
 				>

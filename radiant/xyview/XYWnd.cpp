@@ -19,7 +19,6 @@
 #include "select.h"
 #include "entity.h"
 #include "renderer.h"
-#include "windowobservers.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
@@ -81,9 +80,6 @@ XYWnd::XYWnd(int id) :
 	m_viewType = XY;
 
 	m_entityCreate = false;
-
-	GlobalWindowObservers_add(m_window_observer);
-	GlobalWindowObservers_connectWidget(m_gl_widget);
 
 	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateXORRectangle>(*this));
 	m_window_observer->setView(m_view);
@@ -151,10 +147,8 @@ void XYWnd::destroyXYView() {
 	}
 
 	// This deletes the RadiantWindowObserver from the heap
-	if (m_window_observer != NULL) {
-		// greebo: Unregister the allocated window observer from the global list, before destroying it
-		GlobalWindowObservers_remove(m_window_observer);
-			
+	if (m_window_observer != NULL)
+	{
 		m_window_observer->release();
 		m_window_observer = NULL;
 	}

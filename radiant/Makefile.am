@@ -199,7 +199,6 @@ darkradiant_SOURCES = main.cpp \
 					  log/StringLogDevice.cpp \
 					  log/LogStreamBuf.cpp \
 					  log/LogFile.cpp \
-					  windowobservers.cpp \
 					  referencecache/ModelCache.cpp \
 					  referencecache/NullModel.cpp \
 					  referencecache/NullModelNode.cpp 

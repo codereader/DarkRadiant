@@ -14,7 +14,6 @@
 
 #include "selectable.h"
 #include "selectionlib.h"
-#include "windowobservers.h"
 #include "map/Map.h"
 #include "CamRenderer.h"
 #include "CameraSettings.h"
@@ -260,9 +259,7 @@ CamWnd::CamWnd() :
 	m_freelook_button_release_handler(0)
 {
 	GtkWidget* glWidget = m_gl_widget;
-	GlobalWindowObservers_add(m_window_observer);
-	GlobalWindowObservers_connectWidget(glWidget);
-
+	
 	m_window_observer->setRectangleDrawCallback(updateXORRectangleCallback(*this));
 	m_window_observer->setView(m_view);
 
@@ -315,7 +312,6 @@ CamWnd::~CamWnd() {
 	g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
 	g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
 
-	GlobalWindowObservers_remove(m_window_observer);
 	m_window_observer->release();
 
 	// Notify the camera manager about our destruction

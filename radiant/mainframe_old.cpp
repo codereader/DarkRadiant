@@ -118,7 +118,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "patchmanip.h"
 #include "select.h"
 #include "ui/texturebrowser/TextureBrowser.h"
-#include "windowobservers.h"
 #include "referencecache.h"
 #include "camera/GlobalCamera.h"
 #include "camera/CameraSettings.h"

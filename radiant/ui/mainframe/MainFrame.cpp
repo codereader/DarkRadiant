@@ -14,7 +14,6 @@
 #include "ui/menu/FiltersMenu.h"
 #include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
-#include "windowobservers.h"
 #include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -170,8 +169,6 @@ GtkWindow* MainFrame::createTopLevelWindow() {
 
 	// Tell the XYManager which window the xyviews should be transient for
 	GlobalXYWnd().setGlobalParentWindow(_window);
-
-	GlobalWindowObservers_connectTopLevel(_window);
 
 	// Set the splash window transient to this toplevel
 	gtk_window_set_transient_for(Splash::Instance().getWindow(), _window);
