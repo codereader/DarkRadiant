@@ -670,8 +670,6 @@ Matrix4 Light::getLightTextureTransformation() const
     {
         world2light = projection();
         world2light.multiplyBy(rotation().getTransposed());
-        
-        // greebo: old code: world2light.translateBy(-lightBounds.origin); // world->lightBounds
         world2light.translateBy(-getLightOrigin());
     }
     else 
@@ -875,14 +873,15 @@ const Matrix4& Light::projection() const
 	_frustum.back.dist() -= 1.0f;
 	_frustum.back = -_frustum.back;
 
-    //std::cout << "frustum back = " << _frustum.back << ", front = " << _frustum.front << std::endl;
-
     // Calculate the new projection matrix from the frustum planes
 	Matrix4 newProjection(_frustum.getProjectionMatrix());
 	_projection.multiplyBy(newProjection);
 
-    //std::cout << "new projection:\n" << newProjection << std::endl;
-    //std::cout << "final projection:\n" << _projection << std::endl;
+    // Scale the falloff texture coordinate so that 0.5 is at the apex and 0.0
+    // as at the base of the pyramid.
+    // TODO: I don't like hacking the matrix like this, but all attempts to use
+    // a transformation seemed to affect too many other things.
+    _projection.zz() *= 0.5f;
 
     // Normalise all frustum planes
     _frustum.normalisePlanes();
