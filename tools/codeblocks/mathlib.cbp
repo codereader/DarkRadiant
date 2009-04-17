@@ -68,8 +68,6 @@
 		<Unit filename="..\..\libs\math\aabb.h" />
 		<Unit filename="..\..\libs\math\curve.cpp" />
 		<Unit filename="..\..\libs\math\curve.h" />
-		<Unit filename="..\..\libs\math\expression.cpp" />
-		<Unit filename="..\..\libs\math\expression.h" />
 		<Unit filename="..\..\libs\math\frustum.cpp" />
 		<Unit filename="..\..\libs\math\frustum.h" />
 		<Unit filename="..\..\libs\math\line.cpp" />
