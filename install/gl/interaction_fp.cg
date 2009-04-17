@@ -81,17 +81,20 @@ cg_fragment2final main(cg_vertex2fragment IN,
                       * light_color 
                       * pow(saturate(dot(N, H)), 32);
 	
-	// compute attenuation
+	// Lookup values from attenuation textures
 	float3 attenuation_xy = tex2Dproj(
         attenuationmap_xy,
-        float3(IN.tex_atten_xy_z.x,
-               IN.tex_atten_xy_z.y,
-               IN.tex_atten_xy_z.w)
+        IN.tex_atten_xy_z.xyw
     ).rgb;
 	float3 attenuation_z = tex2D(
         attenuationmap_z,
         float2(IN.tex_atten_xy_z.z, 0.5)
     ).rgb;
+
+    // Set colour to black if the w value is negative, this means we are behind
+    // the origin of a projected light
+    if (IN.tex_atten_xy_z.w <= 0)
+        attenuation_xy.rgb = 0;
 					
     // multiply in vertex colour
     diffuse *= IN.colour;
