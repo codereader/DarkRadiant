@@ -272,14 +272,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\math\expression.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\math\expression.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\math\FloatTools.h"
 			>
 		</File>
