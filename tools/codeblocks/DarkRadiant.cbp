@@ -1969,14 +1969,6 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\radiant\windowobservers.cpp">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
-		<Unit filename="..\..\radiant\windowobservers.h">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
 		<Unit filename="..\..\radiant\xyview\FloatingOrthoView.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
