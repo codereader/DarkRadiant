@@ -37,6 +37,13 @@ class Matrix4
     // second column, etc.
     double _m[16];
 
+private:
+
+    // Initialising constructor
+    Matrix4(double xx_, double xy_, double xz_, double xw_,
+            double yx_, double yy_, double yz_, double yw_,
+            double zx_, double zy_, double zz_, double zw_,
+            double tx_, double ty_, double tz_, double tw_);
 public:
 
     /**
@@ -84,12 +91,24 @@ public:
      * \brief
      * Construct a matrix containing the given elements.
      *
-     * The elements are specified column-wise.
+     * The elements are specified column-wise, starting with the left-most
+     * column.
      */
-    Matrix4(double xx_, double xy_, double xz_, double xw_,
-            double yx_, double yy_, double yz_, double yw_,
-            double zx_, double zy_, double zz_, double zw_,
-            double tx_, double ty_, double tz_, double tw_);
+    static Matrix4 byColumns(double xx, double xy, double xz, double xw,
+                             double yx, double yy, double yz, double yw,
+                             double zx, double zy, double zz, double zw,
+                             double tx, double ty, double tz, double tw);
+
+    /**
+     * \brief
+     * Construct a matrix containing the given elements.
+     *
+     * The elements are specified row-wise, starting with the top row.
+     */
+    static Matrix4 byRows(double xx, double yx, double zx, double tx,
+                          double xy, double yy, double zy, double ty,
+                          double xz, double yz, double zz, double tz,
+                          double xw, double yw, double zw, double tw);
 
     /**
      * Return matrix elements
@@ -366,7 +385,7 @@ inline Matrix4Handedness matrix4_handedness(const Matrix4& self)
 /// \brief Returns \p self post-multiplied by \p other.
 inline Matrix4 matrix4_multiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     other[0] * self[0] + other[1] * self[4] + other[2] * self[8] + other[3] * self[12],
     other[0] * self[1] + other[1] * self[5] + other[2] * self[9] + other[3] * self[13],
     other[0] * self[2] + other[1] * self[6] + other[2] * self[10]+ other[3] * self[14],
@@ -392,7 +411,7 @@ inline Matrix4 matrix4_premultiplied_by_matrix4(const Matrix4& self, const Matri
 #if 1
   return matrix4_multiplied_by_matrix4(other, self);
 #else
-  return Matrix4(
+  return Matrix4::byColumns(
     self[0] * other[0] + self[1] * other[4] + self[2] * other[8] + self[3] * other[12],
     self[0] * other[1] + self[1] * other[5] + self[2] * other[9] + self[3] * other[13],
     self[0] * other[2] + self[1] * other[6] + self[2] * other[10]+ self[3] * other[14],
@@ -429,7 +448,7 @@ inline bool matrix4_is_affine(const Matrix4& transform)
 /// \p self and \p other must be affine.
 inline Matrix4 matrix4_affine_multiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     other[0] * self[0] + other[1] * self[4] + other[2] * self[8],
     other[0] * self[1] + other[1] * self[5] + other[2] * self[9],
     other[0] * self[2] + other[1] * self[6] + other[2] * self[10],
@@ -463,7 +482,7 @@ inline Matrix4 matrix4_affine_premultiplied_by_matrix4(const Matrix4& self, cons
 #if 1
   return matrix4_affine_multiplied_by_matrix4(other, self);
 #else
-  return Matrix4(
+  return Matrix4::byColumns(
     self[0] * other[0] + self[1] * other[4] + self[2] * other[8],
     self[0] * other[1] + self[1] * other[5] + self[2] * other[9],
     self[0] * other[2] + self[1] * other[6] + self[2] * other[10],
@@ -617,7 +636,7 @@ inline Matrix4 matrix4_full_inverse(const Matrix4& self)
 {
   double determinant = 1.0 / matrix4_determinant(self);
 
-  return Matrix4(
+  return Matrix4::byColumns(
     static_cast<double>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<0> >::apply(self) * determinant),
     static_cast<double>(-Matrix4Cofactor< Cofactor4<1>, Cofactor4<0> >::apply(self) * determinant),
     static_cast<double>( Matrix4Cofactor< Cofactor4<2>, Cofactor4<0> >::apply(self) * determinant),
@@ -692,7 +711,7 @@ inline Vector3 euler_degrees_to_radians(const Vector3& euler)
 /// \brief Constructs a pure-rotation matrix about the x axis from sin \p s and cosine \p c of an angle.
 inline Matrix4 matrix4_rotation_for_sincos_x(double s, double c)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     1, 0, 0, 0,
     0, c, s, 0,
     0,-s, c, 0,
@@ -715,7 +734,7 @@ inline Matrix4 matrix4_rotation_for_x_degrees(double x)
 /// \brief Constructs a pure-rotation matrix about the y axis from sin \p s and cosine \p c of an angle.
 inline Matrix4 matrix4_rotation_for_sincos_y(double s, double c)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     c, 0,-s, 0,
     0, 1, 0, 0,
     s, 0, c, 0,
@@ -738,7 +757,7 @@ inline Matrix4 matrix4_rotation_for_y_degrees(double y)
 /// \brief Constructs a pure-rotation matrix about the z axis from sin \p s and cosine \p c of an angle.
 inline Matrix4 matrix4_rotation_for_sincos_z(double s, double c)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     c, s, 0, 0,
    -s, c, 0, 0,
     0, 0, 1, 0,
@@ -792,7 +811,7 @@ inline Matrix4 matrix4_rotation_for_euler_xyz(const Vector3& euler)
   double cz = cos(euler[2]);
   double sz = sin(euler[2]);
 
-  return Matrix4(
+  return Matrix4::byColumns(
     cy*cz,
     cy*sz,
     -sy,
@@ -891,7 +910,7 @@ inline Matrix4 matrix4_rotation_for_euler_yxz(const Vector3& euler)
   double cz = cos(euler[2]);
   double sz = sin(euler[2]);
 
-  return Matrix4(
+  return Matrix4::byColumns(
     cy*cz + sx*sy*-sz,
     cy*sz + sx*sy*cz,
     -cx*sy,
@@ -962,7 +981,7 @@ inline Matrix4 matrix4_rotation_for_euler_zxy(const Vector3& euler)
   double cz = cos(euler[2]);
   double sz = sin(euler[2]);
 
-  return Matrix4(
+  return Matrix4::byColumns(
     cz * cy + sz * sx * sy,
     sz * cx,
     cz * -sy + sz * sx * cy,
@@ -1015,7 +1034,7 @@ inline Matrix4 matrix4_rotation_for_euler_zyx(const Vector3& euler)
   double cz = cos(euler[2]);
   double sz = sin(euler[2]);
 
-  return Matrix4(
+  return Matrix4::byColumns(
     cy*cz,
     sx*sy*cz + cx*sz,
     cx*-sy*cz + sx*sz,

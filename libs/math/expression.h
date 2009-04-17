@@ -508,7 +508,7 @@ inline Matrix4Identity matrix4_identity(const Matrix4& value)
 template<typename Expression>
 inline Matrix4 matrix4_for_expression(const Expression& expression)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     expression.eval(0, 0), expression.eval(0, 1), expression.eval(0, 2), expression.eval(0, 3),
     expression.eval(1, 0), expression.eval(1, 1), expression.eval(1, 2), expression.eval(1, 3),
     expression.eval(2, 0), expression.eval(2, 1), expression.eval(2, 2), expression.eval(2, 3),
@@ -519,7 +519,7 @@ inline Matrix4 matrix4_for_expression(const Expression& expression)
 template<typename Expression>
 inline Matrix4 matrix4_affine_for_expression(const Expression& expression)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     expression.eval(0, 0), expression.eval(0, 1), expression.eval(0, 2), 0,
     expression.eval(1, 0), expression.eval(1, 1), expression.eval(1, 2), 0,
     expression.eval(2, 0), expression.eval(2, 1), expression.eval(2, 2), 0,
