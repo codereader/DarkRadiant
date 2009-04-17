@@ -140,7 +140,7 @@ inline Matrix4 matrix4_rotation_for_quaternion(const Quaternion& quaternion)
   const double zz = quaternion[2] * quaternion[2];
   const double zw = quaternion[2] * quaternion[3];
 
-  return Matrix4(
+  return Matrix4::byColumns(
     static_cast<float>( 1 - 2 * ( yy + zz ) ),
     static_cast<float>(     2 * ( xy + zw ) ),
     static_cast<float>(     2 * ( xz - yw ) ),
@@ -173,7 +173,7 @@ inline Matrix4 matrix4_rotation_for_quaternion(const Quaternion& quaternion)
   const double wy = quaternion[3] * y2;
   const double wz = quaternion[3] * z2;
 
-  return Matrix4(
+  return Matrix4::byColumns(
     static_cast<float>( 1.0 - (yy + zz) ),
     static_cast<float>(xy + wz),
     static_cast<float>(xz - wy),

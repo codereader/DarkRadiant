@@ -38,7 +38,7 @@ const Matrix4& Matrix4::getIdentity()
 // Get a translation matrix for the given vector
 Matrix4 Matrix4::getTranslation(const Vector3& translation)
 {
-    return Matrix4(
+    return Matrix4::byColumns(
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
@@ -58,7 +58,7 @@ Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 	double x = axis.x();
 	double y = axis.y();
 	double z = axis.z(); 
-	return Matrix4(
+	return Matrix4::byColumns(
 		cosPhi + oneMinusCosPhi*x*x, oneMinusCosPhi*x*y - sinPhi*z, oneMinusCosPhi*x*z + sinPhi*y, 0,
 		oneMinusCosPhi*y*x + sinPhi*z, cosPhi + oneMinusCosPhi*y*y, oneMinusCosPhi*y*z - sinPhi*x, 0,
 		oneMinusCosPhi*z*x - sinPhi*y, oneMinusCosPhi*z*y + sinPhi*x, cosPhi + oneMinusCosPhi*z*z, 0,
@@ -69,7 +69,7 @@ Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 // Get a scale matrix
 Matrix4 Matrix4::getScale(const Vector3& scale)
 {
-    return Matrix4(
+    return Matrix4::byColumns(
         scale[0], 0, 0, 0,
         0, scale[1], 0, 0,
         0, 0, scale[2], 0,
@@ -77,7 +77,7 @@ Matrix4 Matrix4::getScale(const Vector3& scale)
     );
 }
 
-// Main explicit constructor
+// Main explicit constructor (private)
 Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
                  double yx_, double yy_, double yz_, double yw_,
                  double zx_, double zy_, double zz_, double zw_,
@@ -99,6 +99,30 @@ Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
     ty() = ty_;
     tz() = tz_;
     tw() = tw_;
+}
+
+// Construct a matrix with given column elements
+Matrix4 Matrix4::byColumns(double xx, double xy, double xz, double xw,
+                           double yx, double yy, double yz, double yw,
+                           double zx, double zy, double zz, double zw,
+                           double tx, double ty, double tz, double tw)
+{
+    return Matrix4(xx, xy, xz, xw,
+                   yx, yy, yz, yw,
+                   zx, zy, zz, zw,
+                   tx, ty, tz, tw);
+}
+
+// Construct a matrix with given row elements
+Matrix4 Matrix4::byRows(double xx, double yx, double zx, double tx,
+                        double xy, double yy, double zy, double ty,
+                        double xz, double yz, double zz, double tz,
+                        double xw, double yw, double zw, double tw)
+{
+    return Matrix4(xx, xy, xz, xw,
+                   yx, yy, yz, yw,
+                   zx, zy, zz, zw,
+                   tx, ty, tz, tw);
 }
 
 // Transpose the matrix in-place
@@ -205,7 +229,7 @@ Plane3 Matrix4::inverseTransform(const Plane3& plane) const
 // Return matrix product
 Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs)
 {
-    return Matrix4(
+    return Matrix4::byColumns(
         rhs[0] * _m[0] + rhs[1] * _m[4] + rhs[2] * _m[8] + rhs[3] * _m[12],
         rhs[0] * _m[1] + rhs[1] * _m[5] + rhs[2] * _m[9] + rhs[3] * _m[13],
         rhs[0] * _m[2] + rhs[1] * _m[6] + rhs[2] * _m[10]+ rhs[3] * _m[14],

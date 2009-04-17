@@ -83,7 +83,7 @@ inline void read_rotation(Float9 rotation, const std::string& value)
 
 inline Matrix4 rotation_toMatrix(const Float9 rotation)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     rotation[0],
     rotation[1],
     rotation[2],

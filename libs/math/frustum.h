@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 inline Matrix4 matrix4_frustum(float left, float right, float bottom, float top, float nearval, float farval)
 {
-  return Matrix4(
+  return Matrix4::byColumns(
     static_cast<float>( (2*nearval) / (right-left) ),
     0,
     0,

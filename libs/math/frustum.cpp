@@ -14,7 +14,7 @@ void Frustum::normalisePlanes()
 // Get a projection matrix from the frustum
 Matrix4 Frustum::getProjectionMatrix() const
 {
-    return Matrix4(
+    return Matrix4::byColumns(
         // col 1
         (right.a - left.a) / 2,
         (top.a - bottom.a) / 2,

@@ -7,14 +7,14 @@
 #include "view.h"
 #include "Camera.h"
 
-const Matrix4 g_radiant2opengl(
+const Matrix4 g_radiant2opengl = Matrix4::byColumns(
   0,-1, 0, 0,
   0, 0, 1, 0,
  -1, 0, 0, 0,
   0, 0, 0, 1
 );
 
-const Matrix4 g_opengl2radiant(
+const Matrix4 g_opengl2radiant = Matrix4::byColumns(
   0, 0,-1, 0,
  -1, 0, 0, 0,
   0, 1, 0, 0,

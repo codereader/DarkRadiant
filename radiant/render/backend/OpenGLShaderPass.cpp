@@ -182,7 +182,7 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
         current.cubeMapMode = _state.cubeMapMode;
 
         // Apply axis transformation (swap Y and Z coordinates)
-        Matrix4 transform(
+        Matrix4 transform = Matrix4::byRows(
             1, 0, 0, 0,
             0, 0, 1, 0,
             0, 1, 0, 0,

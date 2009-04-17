@@ -40,7 +40,7 @@ enum ProjectionAxis {
 };
 
 inline Matrix4 matrix4_rotation_for_vector3(const Vector3& x, const Vector3& y, const Vector3& z) {
-	return Matrix4(
+	return Matrix4::byColumns(
 		x.x(), x.y(), x.z(), 0,
 		y.x(), y.y(), y.z(), 0,
 		z.x(), z.y(), z.z(), 0,
@@ -79,7 +79,7 @@ inline Matrix4 matrix4_swap_axes(const Vector3& from, const Vector3& to) {
 }
 
 inline Matrix4 matrix4_reflection_for_plane(const Plane3& plane) {
-	return Matrix4(
+	return Matrix4::byColumns(
 		1 - (2 * plane.a * plane.a),
 		-2 * plane.a * plane.b,
 		-2 * plane.a * plane.c,
