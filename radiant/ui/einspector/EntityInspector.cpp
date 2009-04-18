@@ -15,6 +15,7 @@
 #include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/SeparatorMenuItem.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/ScrolledFrame.h"
 #include "xmlutil/Document.h"
 #include "signal/signal.h"
 #include "map/Map.h"
@@ -271,12 +272,10 @@ GtkWidget* EntityInspector::createTreeViewPane()
     g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(callbackTreeSelectionChanged), this);
 
     // Embed the TreeView in a scrolled viewport
-    GtkWidget* scrollWin = gtk_scrolled_window_new(NULL, NULL);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollWin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scrollWin), GTK_SHADOW_ETCHED_IN);
-    gtk_widget_set_size_request(scrollWin, TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT);
-    gtk_container_add(GTK_CONTAINER(scrollWin), _treeView);
-
+    GtkWidget* scrollWin = gtkutil::ScrolledFrame(_treeView);
+    gtk_widget_set_size_request(
+        _treeView, TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT
+    );
     gtk_box_pack_start(GTK_BOX(vbx), scrollWin, TRUE, TRUE, 0);
 
 	// Pack in the key and value edit boxes
