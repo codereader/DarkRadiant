@@ -29,7 +29,8 @@ private:
 protected:
 	
 	// Return main widget to parent class
-	GtkWidget* _getInternalWidget() {
+	GtkWidget* _getWidget() const 
+    {
 		return _widget;
 	}
 	

@@ -81,7 +81,6 @@ darkradiant_SOURCES = main.cpp \
 					  ui/einspector/ComboBoxPropertyEditor.cpp \
 					  ui/einspector/AddPropertyDialog.cpp \
 					  ui/einspector/FloatPropertyEditor.cpp \
-					  ui/einspector/PropertyEditor.cpp \
 					  ui/einspector/BooleanPropertyEditor.cpp \
 					  ui/einspector/LightTextureChooser.cpp \
 					  ui/einspector/SoundPropertyEditor.cpp \

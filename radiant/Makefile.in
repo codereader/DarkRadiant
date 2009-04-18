@@ -104,7 +104,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-ComboBoxPropertyEditor.$(OBJEXT) \
 	darkradiant-AddPropertyDialog.$(OBJEXT) \
 	darkradiant-FloatPropertyEditor.$(OBJEXT) \
-	darkradiant-PropertyEditor.$(OBJEXT) \
 	darkradiant-BooleanPropertyEditor.$(OBJEXT) \
 	darkradiant-LightTextureChooser.$(OBJEXT) \
 	darkradiant-SoundPropertyEditor.$(OBJEXT) \
@@ -457,7 +456,6 @@ darkradiant_SOURCES = main.cpp \
 					  ui/einspector/ComboBoxPropertyEditor.cpp \
 					  ui/einspector/AddPropertyDialog.cpp \
 					  ui/einspector/FloatPropertyEditor.cpp \
-					  ui/einspector/PropertyEditor.cpp \
 					  ui/einspector/BooleanPropertyEditor.cpp \
 					  ui/einspector/LightTextureChooser.cpp \
 					  ui/einspector/SoundPropertyEditor.cpp \
@@ -779,7 +777,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PrefPage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PreferenceSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Primitives.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PropertyEditorFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po@am__quote@
@@ -1752,20 +1749,6 @@ darkradiant-FloatPropertyEditor.obj: ui/einspector/FloatPropertyEditor.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/FloatPropertyEditor.cpp' object='darkradiant-FloatPropertyEditor.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FloatPropertyEditor.obj `if test -f 'ui/einspector/FloatPropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/FloatPropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/FloatPropertyEditor.cpp'; fi`
-
-darkradiant-PropertyEditor.o: ui/einspector/PropertyEditor.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-PropertyEditor.o -MD -MP -MF $(DEPDIR)/darkradiant-PropertyEditor.Tpo -c -o darkradiant-PropertyEditor.o `test -f 'ui/einspector/PropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/PropertyEditor.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-PropertyEditor.Tpo $(DEPDIR)/darkradiant-PropertyEditor.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/PropertyEditor.cpp' object='darkradiant-PropertyEditor.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-PropertyEditor.o `test -f 'ui/einspector/PropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/PropertyEditor.cpp
-
-darkradiant-PropertyEditor.obj: ui/einspector/PropertyEditor.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-PropertyEditor.obj -MD -MP -MF $(DEPDIR)/darkradiant-PropertyEditor.Tpo -c -o darkradiant-PropertyEditor.obj `if test -f 'ui/einspector/PropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/PropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/PropertyEditor.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-PropertyEditor.Tpo $(DEPDIR)/darkradiant-PropertyEditor.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/PropertyEditor.cpp' object='darkradiant-PropertyEditor.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-PropertyEditor.obj `if test -f 'ui/einspector/PropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/PropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/PropertyEditor.cpp'; fi`
 
 darkradiant-BooleanPropertyEditor.o: ui/einspector/BooleanPropertyEditor.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-BooleanPropertyEditor.o -MD -MP -MF $(DEPDIR)/darkradiant-BooleanPropertyEditor.Tpo -c -o darkradiant-BooleanPropertyEditor.o `test -f 'ui/einspector/BooleanPropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/BooleanPropertyEditor.cpp
