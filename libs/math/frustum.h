@@ -410,6 +410,22 @@ struct Frustum
     VolumeIntersectionValue testIntersection(const AABB& aabb) const;
 };
 
+/**
+ * \brief
+ * Operator insertion for Frustum.
+ */
+inline std::ostream& operator<< (std::ostream& os, const Frustum& frustum)
+{
+    os << "Frustum { "
+       << "left = " << frustum.left << ", "
+       << "right = " << frustum.right << ", "
+       << "top = " << frustum.top << ", "
+       << "bottom = " << frustum.bottom << ", "
+       << "front = " << frustum.front << ", "
+       << "back = " << frustum.back << " }";
+    return os;
+}
+
 inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
 {
   Vector4 hpoint(matrix4_transformed_vector4(viewproj, Vector4(point, 1.0f)));
