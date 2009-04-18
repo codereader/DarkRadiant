@@ -71,6 +71,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/layers/LayerControlDialog.cpp \
 					  ui/ortho/OrthoContextMenu.cpp \
 					  ui/about/AboutDialog.cpp \
+					  ui/einspector/AnglePropertyEditor.cpp \
 					  ui/einspector/TexturePropertyEditor.cpp \
 					  ui/einspector/EntityInspector.cpp \
 					  ui/einspector/SkinChooser.cpp \

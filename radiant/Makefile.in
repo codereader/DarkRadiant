@@ -94,6 +94,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-LayerControlDialog.$(OBJEXT) \
 	darkradiant-OrthoContextMenu.$(OBJEXT) \
 	darkradiant-AboutDialog.$(OBJEXT) \
+	darkradiant-AnglePropertyEditor.$(OBJEXT) \
 	darkradiant-TexturePropertyEditor.$(OBJEXT) \
 	darkradiant-EntityInspector.$(OBJEXT) \
 	darkradiant-SkinChooser.$(OBJEXT) \
@@ -446,6 +447,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/layers/LayerControlDialog.cpp \
 					  ui/ortho/OrthoContextMenu.cpp \
 					  ui/about/AboutDialog.cpp \
+					  ui/einspector/AnglePropertyEditor.cpp \
 					  ui/einspector/TexturePropertyEditor.cpp \
 					  ui/einspector/EntityInspector.cpp \
 					  ui/einspector/SkinChooser.cpp \
@@ -651,6 +653,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ARBBumpProgram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AboutDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AddPropertyDialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AnglePropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ApplicationContextImpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AutoSaver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BestPoint.Po@am__quote@
@@ -1609,6 +1612,20 @@ darkradiant-AboutDialog.obj: ui/about/AboutDialog.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/about/AboutDialog.cpp' object='darkradiant-AboutDialog.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-AboutDialog.obj `if test -f 'ui/about/AboutDialog.cpp'; then $(CYGPATH_W) 'ui/about/AboutDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/about/AboutDialog.cpp'; fi`
+
+darkradiant-AnglePropertyEditor.o: ui/einspector/AnglePropertyEditor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-AnglePropertyEditor.o -MD -MP -MF $(DEPDIR)/darkradiant-AnglePropertyEditor.Tpo -c -o darkradiant-AnglePropertyEditor.o `test -f 'ui/einspector/AnglePropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/AnglePropertyEditor.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-AnglePropertyEditor.Tpo $(DEPDIR)/darkradiant-AnglePropertyEditor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/AnglePropertyEditor.cpp' object='darkradiant-AnglePropertyEditor.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-AnglePropertyEditor.o `test -f 'ui/einspector/AnglePropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/AnglePropertyEditor.cpp
+
+darkradiant-AnglePropertyEditor.obj: ui/einspector/AnglePropertyEditor.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-AnglePropertyEditor.obj -MD -MP -MF $(DEPDIR)/darkradiant-AnglePropertyEditor.Tpo -c -o darkradiant-AnglePropertyEditor.obj `if test -f 'ui/einspector/AnglePropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/AnglePropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/AnglePropertyEditor.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-AnglePropertyEditor.Tpo $(DEPDIR)/darkradiant-AnglePropertyEditor.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/AnglePropertyEditor.cpp' object='darkradiant-AnglePropertyEditor.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-AnglePropertyEditor.obj `if test -f 'ui/einspector/AnglePropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/AnglePropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/AnglePropertyEditor.cpp'; fi`
 
 darkradiant-TexturePropertyEditor.o: ui/einspector/TexturePropertyEditor.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-TexturePropertyEditor.o -MD -MP -MF $(DEPDIR)/darkradiant-TexturePropertyEditor.Tpo -c -o darkradiant-TexturePropertyEditor.o `test -f 'ui/einspector/TexturePropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/TexturePropertyEditor.cpp
