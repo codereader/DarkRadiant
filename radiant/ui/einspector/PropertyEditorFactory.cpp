@@ -11,6 +11,7 @@
 #include "FloatPropertyEditor.h"
 #include "ModelPropertyEditor.h"
 #include "ClassnamePropertyEditor.h"
+#include "AnglePropertyEditor.h"
 
 namespace ui
 {
@@ -31,6 +32,7 @@ void PropertyEditorFactory::registerClasses() {
 	_peMap["float"] = PropertyEditorPtr(new FloatPropertyEditor());
 	_peMap["model"] = PropertyEditorPtr(new ModelPropertyEditor());
 	_peMap["classname"] = PropertyEditorPtr(new ClassnamePropertyEditor());
+    _peMap["angle"] = PropertyEditorPtr(new AnglePropertyEditor());
 }
 
 // Create a PropertyEditor from the given name.
