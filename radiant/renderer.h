@@ -48,8 +48,8 @@ VolumeIntersectionValue Cullable_testVisible(const scene::INodePtr& node,
 											 VolumeIntersectionValue parent)
 {
 	// Check for partial intersection with the parent
-	if(parent == c_volumePartial) {
-		
+	if(parent == VOLUME_OUTSIDE) 
+    {
 		// Parent has partial visibility, so test this Instance and return
 		// its result
 		CullablePtr cullable = boost::dynamic_pointer_cast<Cullable>(node);

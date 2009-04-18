@@ -25,11 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief View-frustum data types and related operations.
 
-#include "generic/enumeration.h"
 #include "math/matrix.h"
 #include "math/Plane3.h"
 #include "math/aabb.h"
 #include "math/line.h"
+
+#include "VolumeIntersectionValue.h"
 
 inline Matrix4 matrix4_frustum(float left, float right, float bottom, float top, float nearval, float farval)
 {
@@ -432,72 +433,56 @@ inline Frustum frustum_from_viewproj(const Matrix4& viewproj)
   );
 }
 
-struct VolumeIntersection
-{
-  enum Value
-  {
-    OUTSIDE,
-    INSIDE,
-    PARTIAL
-  };
-};
-
-typedef EnumeratedValue<VolumeIntersection> VolumeIntersectionValue;
-
-const VolumeIntersectionValue c_volumeOutside(VolumeIntersectionValue::OUTSIDE);
-const VolumeIntersectionValue c_volumeInside(VolumeIntersectionValue::INSIDE);
-const VolumeIntersectionValue c_volumePartial(VolumeIntersectionValue::PARTIAL);
-
 inline VolumeIntersectionValue frustum_test_aabb(const Frustum& frustum, const AABB& aabb)
 {
-  VolumeIntersectionValue result = c_volumeInside;
+  VolumeIntersectionValue result = VOLUME_INSIDE;
 
   switch(aabb_classify_plane(aabb, frustum.right))
   {
   case 2:
-    return c_volumeOutside;
+    return VOLUME_OUTSIDE;
   case 1:
-    result = c_volumePartial;
+    result = VOLUME_PARTIAL;
   }
 
   switch(aabb_classify_plane(aabb, frustum.left))
   {
   case 2:
-    return c_volumeOutside;
+    return VOLUME_OUTSIDE;
   case 1:
-    result = c_volumePartial;
+    result = VOLUME_PARTIAL;
   }
 
   switch(aabb_classify_plane(aabb, frustum.bottom))
   {
   case 2:
-    return c_volumeOutside;
+    return VOLUME_OUTSIDE;
   case 1:
-    result = c_volumePartial;
+    result = VOLUME_PARTIAL;
   }
 
   switch(aabb_classify_plane(aabb, frustum.top))
   {
   case 2:
-    return c_volumeOutside;
+    return VOLUME_OUTSIDE;
   case 1:
-    result = c_volumePartial;
+    result = VOLUME_PARTIAL;
   }
 
   switch(aabb_classify_plane(aabb, frustum.back))
   {
   case 2:
-    return c_volumeOutside;
+    return VOLUME_OUTSIDE;
   case 1:
-    result = c_volumePartial;
+    result = VOLUME_PARTIAL;
   }
 
   switch(aabb_classify_plane(aabb, frustum.front))
   {
   case 2:
-    return c_volumeOutside;
+    return VOLUME_OUTSIDE;
   case 1:
-    result = c_volumePartial;
+    result = VOLUME_PARTIAL;
   }
 
   return result;
@@ -533,8 +518,8 @@ inline VolumeIntersectionValue frustum_intersects_transformed_aabb(const Frustum
     || plane_contains_oriented_aabb(frustum.top, aabb_world, localToWorld)
     || plane_contains_oriented_aabb(frustum.back, aabb_world, localToWorld)
     || plane_contains_oriented_aabb(frustum.front, aabb_world, localToWorld))
-    return c_volumeOutside;
-  return c_volumeInside;
+    return VOLUME_OUTSIDE;
+  return VOLUME_INSIDE;
 }
 
 inline bool plane3_test_point(const Plane3& plane, const Vector3& point)

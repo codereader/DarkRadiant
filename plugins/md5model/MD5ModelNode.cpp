@@ -122,7 +122,7 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 		 i != _model->end(); 
 		 ++i, ++j, ++k)
 	{
-		if ((*i)->intersectVolume(volume, localToWorld) != c_volumeOutside) {
+		if ((*i)->intersectVolume(volume, localToWorld) != VOLUME_OUTSIDE) {
 			collector.setLights(*j);
 			(*i)->render(collector, localToWorld, k->shader != NULL ? k->shader : (*i)->getState());
 		}

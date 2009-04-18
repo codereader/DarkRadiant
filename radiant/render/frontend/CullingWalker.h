@@ -25,7 +25,7 @@ public:
 		VolumeIntersectionValue visible = Cullable_testVisible(node, 
     														   m_volume, 
     														   parentVisible);
-		if(visible != c_volumeOutside) {
+		if(visible != VOLUME_OUTSIDE) {
 			return m_walker.pre(node);
 		}
 		return true;

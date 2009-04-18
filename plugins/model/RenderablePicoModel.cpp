@@ -169,7 +169,7 @@ void RenderablePicoModel::testSelect(Selector& selector,
 	{
 		// Check volume intersection
 		if ((*i)->intersectVolume(test.getVolume(), localToWorld) 
-				!= c_volumeOutside)
+				!= VOLUME_OUTSIDE)
 		{
 			// Volume intersection passed, delegate the selection test
         	(*i)->testSelect(selector, test, localToWorld);

@@ -704,26 +704,29 @@ bool Light::testAABB(const AABB& other) const
         Matrix4 transform = rotation();
         //transform.t().getVector3() = localAABB().origin;
         projection();
+
         Frustum frustumTrans = _frustum.getTransformedBy(transform);
-        return frustum_test_aabb(frustumTrans, other) != c_volumeOutside;
+        return frustum_test_aabb(frustumTrans, other) != VOLUME_OUTSIDE;
     }
-    
-	// test against an AABB which contains the rotated bounds of this light.
-	const AABB& bounds = localAABB();
-	return aabb_intersects_aabb(other, AABB(
-		bounds.origin,
-		Vector3(
-			static_cast<float>(fabs(m_rotation[0] * bounds.extents[0])
-								+ fabs(m_rotation[3] * bounds.extents[1])
-								+ fabs(m_rotation[6] * bounds.extents[2])),
-			static_cast<float>(fabs(m_rotation[1] * bounds.extents[0])
-								+ fabs(m_rotation[4] * bounds.extents[1])
-								+ fabs(m_rotation[7] * bounds.extents[2])),
-			static_cast<float>(fabs(m_rotation[2] * bounds.extents[0])
-								+ fabs(m_rotation[5] * bounds.extents[1])
-								+ fabs(m_rotation[8] * bounds.extents[2]))
-		)
-	));
+    else
+    {
+        // test against an AABB which contains the rotated bounds of this light.
+        const AABB& bounds = localAABB();
+        return aabb_intersects_aabb(other, AABB(
+            bounds.origin,
+            Vector3(
+                static_cast<float>(fabs(m_rotation[0] * bounds.extents[0])
+                                    + fabs(m_rotation[3] * bounds.extents[1])
+                                    + fabs(m_rotation[6] * bounds.extents[2])),
+                static_cast<float>(fabs(m_rotation[1] * bounds.extents[0])
+                                    + fabs(m_rotation[4] * bounds.extents[1])
+                                    + fabs(m_rotation[7] * bounds.extents[2])),
+                static_cast<float>(fabs(m_rotation[2] * bounds.extents[0])
+                                    + fabs(m_rotation[5] * bounds.extents[1])
+                                    + fabs(m_rotation[8] * bounds.extents[2]))
+            )
+        ));
+    }
 }
 
 const Matrix4& Light::rotation() const {

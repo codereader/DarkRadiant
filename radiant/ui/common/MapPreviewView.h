@@ -49,12 +49,12 @@ public:
 
 	/// \brief Returns the intersection of \p aabb and volume.
 	VolumeIntersectionValue TestAABB(const AABB& aabb) const {
-		return c_volumeInside;
+		return VOLUME_INSIDE;
 	}
 
 	/// \brief Returns the intersection of \p aabb transformed by \p localToWorld and volume.
 	VolumeIntersectionValue TestAABB(const AABB& aabb, const Matrix4& localToWorld) const {
-		return c_volumeInside;
+		return VOLUME_INSIDE;
 	}
 
 	bool fill() const {

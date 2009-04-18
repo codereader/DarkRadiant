@@ -37,7 +37,7 @@ public:
 	{
 		m_renderer.PushState();
 
-	    if (Cullable_testVisible(node, m_volume, parentVisible) != c_volumeOutside)
+	    if (Cullable_testVisible(node, m_volume, parentVisible) != VOLUME_OUTSIDE)
 	    {
 	      RenderablePtr renderable = Node_getRenderable(node);
 	      if(renderable)
