@@ -49,7 +49,6 @@ Array - automatic array memory management \n
 Callback MemberCaller FunctionCaller - callbacks similar to using boost::function with boost::bind \n
 
 \link generic/bitfield.h generic/bitfield.h \endlink - Type-safe bitfield \n
-\link generic/enumeration.h generic/enumeration.h \endlink - Type-safe enumeration \n
 
 DefaultAllocator - Memory allocation using new/delete, compliant with std::allocator interface \n
 
