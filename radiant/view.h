@@ -170,11 +170,13 @@ public:
     debug_count_oriented_plane();
     return viewer_test_transformed_plane(m_viewer, plane, localToWorld);
   }
-  VolumeIntersectionValue TestAABB(const AABB& aabb) const
-  {
-    debug_count_bbox();
-    return frustum_test_aabb(m_frustum, aabb);
-  }
+
+    VolumeIntersectionValue TestAABB(const AABB& aabb) const
+    {
+        debug_count_bbox();
+        return m_frustum.testIntersection(aabb);
+    }
+
   VolumeIntersectionValue TestAABB(const AABB& aabb, const Matrix4& localToWorld) const
   {
     debug_count_oriented_bbox();

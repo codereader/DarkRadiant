@@ -402,7 +402,12 @@ struct Frustum
      * Return a copy of this frustum transformed by the given matrix.
      */
     Frustum getTransformedBy(const Matrix4& transform) const;
-    
+
+    /**
+     * \brief
+     * Test the intersection of this frustum with an AABB.
+     */
+    VolumeIntersectionValue testIntersection(const AABB& aabb) const;
 };
 
 inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
@@ -431,61 +436,6 @@ inline Frustum frustum_from_viewproj(const Matrix4& viewproj)
     Plane3(viewproj[ 3] - viewproj[ 2], viewproj[ 7] - viewproj[ 6], viewproj[11] - viewproj[10], viewproj[15] - viewproj[14]).getNormalised(),
     Plane3(viewproj[ 3] + viewproj[ 2], viewproj[ 7] + viewproj[ 6], viewproj[11] + viewproj[10], viewproj[15] + viewproj[14]).getNormalised()
   );
-}
-
-inline VolumeIntersectionValue frustum_test_aabb(const Frustum& frustum, const AABB& aabb)
-{
-  VolumeIntersectionValue result = VOLUME_INSIDE;
-
-  switch(aabb_classify_plane(aabb, frustum.right))
-  {
-  case 2:
-    return VOLUME_OUTSIDE;
-  case 1:
-    result = VOLUME_PARTIAL;
-  }
-
-  switch(aabb_classify_plane(aabb, frustum.left))
-  {
-  case 2:
-    return VOLUME_OUTSIDE;
-  case 1:
-    result = VOLUME_PARTIAL;
-  }
-
-  switch(aabb_classify_plane(aabb, frustum.bottom))
-  {
-  case 2:
-    return VOLUME_OUTSIDE;
-  case 1:
-    result = VOLUME_PARTIAL;
-  }
-
-  switch(aabb_classify_plane(aabb, frustum.top))
-  {
-  case 2:
-    return VOLUME_OUTSIDE;
-  case 1:
-    result = VOLUME_PARTIAL;
-  }
-
-  switch(aabb_classify_plane(aabb, frustum.back))
-  {
-  case 2:
-    return VOLUME_OUTSIDE;
-  case 1:
-    result = VOLUME_PARTIAL;
-  }
-
-  switch(aabb_classify_plane(aabb, frustum.front))
-  {
-  case 2:
-    return VOLUME_OUTSIDE;
-  case 1:
-    result = VOLUME_PARTIAL;
-  }
-
-  return result;
 }
 
 inline double plane_distance_to_point(const Plane3& plane, const Vector3& point)
