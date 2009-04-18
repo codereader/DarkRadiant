@@ -5,6 +5,7 @@
 #include "iscript.h"
 #include "iscenegraph.h"
 #include "scenelib.h"
+#include "iselection.h"
 
 #include <boost/python.hpp>
 
@@ -67,6 +68,37 @@ public:
 			node->traverse(visitor);
 		}
 	}
+
+	bool isSelected() {
+		scene::INodePtr node = _node.lock();
+		if (node == NULL) return false;
+
+		SelectablePtr selectable = Node_getSelectable(node);
+
+		return (selectable != NULL) ? selectable->isSelected() : false;
+	}
+
+	void setSelected(bool selected) {
+		scene::INodePtr node = _node.lock();
+		if (node == NULL) return;
+
+		SelectablePtr selectable = Node_getSelectable(node);
+
+		if (selectable != NULL) {
+			selectable->setSelected(selected);
+		}
+	}
+
+	void invertSelected(bool selected) {
+		scene::INodePtr node = _node.lock();
+		if (node == NULL) return;
+
+		SelectablePtr selectable = Node_getSelectable(node);
+
+		if (selectable != NULL) {
+			selectable->invertSelected();
+		}
+	}
 };
 
 // Wrap around the scene::NodeVisitor interface
@@ -118,6 +150,9 @@ public:
 			.def("getParent", &ScriptSceneNode::getParent)
 			.def("getNodeType", &ScriptSceneNode::getNodeType)
 			.def("traverse", &ScriptSceneNode::traverse)
+			.def("setSelected", &ScriptSceneNode::setSelected)
+			.def("invertSelected", &ScriptSceneNode::invertSelected)
+			.def("isSelected", &ScriptSceneNode::isSelected)
 		;
 
 		// Expose the scene::NodeVisitor interface
