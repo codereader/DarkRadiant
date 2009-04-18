@@ -1787,6 +1787,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\einspector\AnglePropertyEditor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\einspector\AnglePropertyEditor.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\einspector\BooleanPropertyEditor.cpp"
 						>
 					</File>
