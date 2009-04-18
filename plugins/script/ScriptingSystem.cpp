@@ -351,6 +351,15 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	// Search script folder for commands
 	reloadScripts();
 
+	// Register each script command in the CommandSystem
+	for (ScriptCommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i)
+	{
+		GlobalCommandSystem().addStatement(i->first, "RunScriptCommand " + i->first);
+
+		// Add an event as well (for keyboard shortcuts)
+		GlobalEventManager().addCommand(i->first, i->first);
+	}
+
 	// Bind the reloadscripts command to the menu
 	GlobalEventManager().addCommand("ReloadScripts", "ReloadScripts");
 
