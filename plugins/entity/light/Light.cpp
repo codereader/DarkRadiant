@@ -699,20 +699,29 @@ AABB Light::lightAABB() const
   
 bool Light::testAABB(const AABB& other) const 
 {
+    bool returnVal;
 	if (isProjected()) 
     {
-        Matrix4 transform = rotation();
-        //transform.t().getVector3() = localAABB().origin;
+        // Update the projection, including the Frustum (we don't care about the
+        // projection matrix itself).
         projection();
 
-        Frustum frustumTrans = _frustum.getTransformedBy(transform);
-        return frustumTrans.testIntersection(other) != VOLUME_OUTSIDE;
+        // Construct a transformation with the rotation and translation of the
+        // frustum
+        Matrix4 transRot = Matrix4::getIdentity();
+        transRot.translateBy(worldOrigin());
+        transRot.multiplyBy(rotation());
+
+        // Transform the frustum with the rotate/translate matrix and test its
+        // intersection with the AABB
+        Frustum frustumTrans = _frustum.getTransformedBy(transRot);
+        returnVal = frustumTrans.testIntersection(other) != VOLUME_OUTSIDE;
     }
     else
     {
         // test against an AABB which contains the rotated bounds of this light.
         const AABB& bounds = localAABB();
-        return aabb_intersects_aabb(other, AABB(
+        returnVal = aabb_intersects_aabb(other, AABB(
             bounds.origin,
             Vector3(
                 static_cast<float>(fabs(m_rotation[0] * bounds.extents[0])
@@ -727,6 +736,8 @@ bool Light::testAABB(const AABB& other) const
             )
         ));
     }
+
+    return returnVal;
 }
 
 const Matrix4& Light::rotation() const {
