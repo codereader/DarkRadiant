@@ -24,16 +24,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/shared_ptr.hpp>
 
+#include "VolumeIntersectionValue.h"
+
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
 class Plane3;
 class Matrix4;
 class AABB;
 class Segment;
-
-template<typename Enumeration> class EnumeratedValue;
-struct VolumeIntersection;
-typedef EnumeratedValue<VolumeIntersection> VolumeIntersectionValue;
 
 class VolumeTest
 {

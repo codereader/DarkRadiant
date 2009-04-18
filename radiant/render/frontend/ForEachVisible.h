@@ -32,7 +32,7 @@ public:
 	ForEachVisible(const VolumeTest& volume, const Walker_& walker) : 
 		m_volume(volume), m_walker(walker)
 	{
-		_visStack.push_back(c_volumePartial);
+		_visStack.push_back(VOLUME_OUTSIDE);
 	}
   
 	// Pre-descent walker function
@@ -40,10 +40,10 @@ public:
 		
 		VolumeIntersectionValue visible = (node->visible()) 
 										   ? _visStack.back() 
-										   : c_volumeOutside;
+										   : VOLUME_OUTSIDE;
 
 		// Test for partial visibility
-	    if (visible == c_volumePartial) {
+	    if (visible == VOLUME_OUTSIDE) {
 			visible = m_volume.TestAABB(node->worldAABB());
 	    }
 
@@ -51,7 +51,7 @@ public:
 
 		// Abort descent for invisible instances, otherwise invoke the contained
 		// walker
-		if (visible == c_volumeOutside) {
+		if (visible == VOLUME_OUTSIDE) {
 			return false;
 		}
 		else {
@@ -62,7 +62,7 @@ public:
 	// Post descent function
 	void post(const scene::INodePtr& node) {
 		// If instance was visible, call the contained walker's post-descent
-		if(_visStack.back() != c_volumeOutside) {
+		if(_visStack.back() != VOLUME_OUTSIDE) {
 			m_walker.post(node, _visStack.back());
 		}
 
