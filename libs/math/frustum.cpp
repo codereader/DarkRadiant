@@ -38,3 +38,15 @@ Matrix4 Frustum::getProjectionMatrix() const
     );
 }
 
+// Get a transformed copy of this frustum
+Frustum Frustum::getTransformedBy(const Matrix4& matrix) const
+{
+    return Frustum(
+        matrix.transform(right),
+        matrix.transform(left),
+        matrix.transform(bottom),
+        matrix.transform(top),
+        matrix.transform(back),
+        matrix.transform(front)
+    );
+}
