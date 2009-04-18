@@ -706,7 +706,7 @@ bool Light::testAABB(const AABB& other) const
         projection();
 
         Frustum frustumTrans = _frustum.getTransformedBy(transform);
-        return frustum_test_aabb(frustumTrans, other) != VOLUME_OUTSIDE;
+        return frustumTrans.testIntersection(other) != VOLUME_OUTSIDE;
     }
     else
     {

@@ -50,3 +50,60 @@ Frustum Frustum::getTransformedBy(const Matrix4& matrix) const
         matrix.transform(front)
     );
 }
+
+// Test intersection with an AABB
+VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
+{
+    VolumeIntersectionValue result = VOLUME_INSIDE;
+
+    switch(aabb_classify_plane(aabb, right))
+    {
+    case 2:
+      return VOLUME_OUTSIDE;
+    case 1:
+      result = VOLUME_PARTIAL;
+    }
+
+    switch(aabb_classify_plane(aabb, left))
+    {
+    case 2:
+      return VOLUME_OUTSIDE;
+    case 1:
+      result = VOLUME_PARTIAL;
+    }
+
+    switch(aabb_classify_plane(aabb, bottom))
+    {
+    case 2:
+      return VOLUME_OUTSIDE;
+    case 1:
+      result = VOLUME_PARTIAL;
+    }
+
+    switch(aabb_classify_plane(aabb, top))
+    {
+    case 2:
+      return VOLUME_OUTSIDE;
+    case 1:
+      result = VOLUME_PARTIAL;
+    }
+
+    switch(aabb_classify_plane(aabb, back))
+    {
+    case 2:
+      return VOLUME_OUTSIDE;
+    case 1:
+      result = VOLUME_PARTIAL;
+    }
+
+    switch(aabb_classify_plane(aabb, front))
+    {
+    case 2:
+      return VOLUME_OUTSIDE;
+    case 1:
+      result = VOLUME_PARTIAL;
+    }
+
+    return result;
+}
+
