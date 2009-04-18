@@ -372,6 +372,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\VolumeIntersectionValue.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\warnings.h"
 			>
 		</File>
