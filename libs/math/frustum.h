@@ -395,31 +395,14 @@ struct Frustum
      * Get the projection matrix corresponding to the planes of this frustum.
      */
     Matrix4 getProjectionMatrix() const;
+
+    /**
+     * \brief
+     * Return a copy of this frustum transformed by the given matrix.
+     */
+    Frustum getTransformedBy(const Matrix4& transform) const;
+    
 };
-
-inline Frustum frustum_transformed(const Frustum& frustum, const Matrix4& matrix)
-{
-  return Frustum(
-    matrix.transform(frustum.right),
-    matrix.transform(frustum.left),
-    matrix.transform(frustum.bottom),
-    matrix.transform(frustum.top),
-    matrix.transform(frustum.back),
-    matrix.transform(frustum.front)
-  );
-}
-
-inline Frustum frustum_inverse_transformed(const Frustum& frustum, const Matrix4& matrix)
-{
-  return Frustum(
-    matrix.inverseTransform(frustum.right),
-    matrix.inverseTransform(frustum.left),
-    matrix.inverseTransform(frustum.bottom),
-    matrix.inverseTransform(frustum.top),
-    matrix.inverseTransform(frustum.back),
-    matrix.inverseTransform(frustum.front)
-  );
-}
 
 inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
 {

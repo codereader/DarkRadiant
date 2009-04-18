@@ -701,11 +701,11 @@ bool Light::testAABB(const AABB& other) const
 {
 	if (isProjected()) 
     {
-		Matrix4 transform = rotation();
-		//transform.t().getVector3() = localAABB().origin;
-		projection();
-		Frustum frustum(frustum_transformed(_frustum, transform));
-		return frustum_test_aabb(frustum, other) != c_volumeOutside;
+        Matrix4 transform = rotation();
+        //transform.t().getVector3() = localAABB().origin;
+        projection();
+        Frustum frustumTrans = _frustum.getTransformedBy(transform);
+        return frustum_test_aabb(frustumTrans, other) != c_volumeOutside;
     }
     
 	// test against an AABB which contains the rotated bounds of this light.
