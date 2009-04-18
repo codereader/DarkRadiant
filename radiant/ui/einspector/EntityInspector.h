@@ -106,7 +106,7 @@ private:
 
     // Utility functions to construct the Gtk components
 
-    GtkWidget* createDialogPane(); // bottom widget pane
+    GtkWidget* createPropertyEditorPane(); // bottom widget pane
     GtkWidget* createTreeViewPane(); // tree view for selecting attributes
     void createContextMenu();
 

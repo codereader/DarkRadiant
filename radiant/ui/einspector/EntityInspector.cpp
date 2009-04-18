@@ -36,7 +36,6 @@ namespace {
 
     const int TREEVIEW_MIN_WIDTH = 220;
     const int TREEVIEW_MIN_HEIGHT = 60;
-    const int PROPERTYEDITORPANE_MIN_HEIGHT = 90;
 
     const char* PROPERTY_NODES_XPATH = "game/entityInspector//property";
 
@@ -95,7 +94,7 @@ EntityInspector::EntityInspector()
 
 	GtkWidget* paned = gtkutil::Paned(
 		createTreeViewPane(), // first child
-		createDialogPane(), // second child
+		createPropertyEditorPane(), // second child
 		false // is vertical
 	);
 	gtk_box_pack_start(GTK_BOX(_widget), paned, TRUE, TRUE, 0);
@@ -193,13 +192,12 @@ GtkWidget* EntityInspector::getWidget() {
 }
 
 // Create the dialog pane
-
-GtkWidget* EntityInspector::createDialogPane() {
+GtkWidget* EntityInspector::createPropertyEditorPane() 
+{
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
     _editorFrame = gtk_frame_new(NULL);
     gtk_frame_set_shadow_type(GTK_FRAME(_editorFrame), GTK_SHADOW_NONE);
     gtk_box_pack_start(GTK_BOX(hbx), _editorFrame, TRUE, TRUE, 0);
-    gtk_widget_set_size_request(hbx, 0, PROPERTYEDITORPANE_MIN_HEIGHT);
     return hbx;
 }
 
