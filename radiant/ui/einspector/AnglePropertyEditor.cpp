@@ -48,9 +48,12 @@ AnglePropertyEditor::AnglePropertyEditor(Entity* entity, const std::string& key)
         1, 2
     );
 
-    // Pack table into an hbox and set as the widget
+    // Pack table into an hbox/vbox and set as the widget
+    GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbx), table, TRUE, FALSE, 0);
+
     _widget = gtk_vbox_new(FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(_widget), table, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(_widget), hbx, FALSE, FALSE, 0);
 }
 
 }
