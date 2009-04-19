@@ -48,7 +48,7 @@ VolumeIntersectionValue Cullable_testVisible(const scene::INodePtr& node,
 											 VolumeIntersectionValue parent)
 {
 	// Check for partial intersection with the parent
-	if(parent == VOLUME_OUTSIDE) 
+	if(parent == VOLUME_PARTIAL) 
     {
 		// Parent has partial visibility, so test this Instance and return
 		// its result
