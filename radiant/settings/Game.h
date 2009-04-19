@@ -28,6 +28,11 @@ class Game :
    // user-friendly name
 	std::string _name;
 	
+private:
+
+    // Return the string representing the XPath root for this game node
+    std::string getXPathRoot() const;
+
 public:
 	/** greebo: Constructor, call this with the filename relative to "games/"
 	 */
@@ -36,13 +41,10 @@ public:
 	// Copy Constructor
 	Game(const Game& other);
 	
-	/** greebo: Retrieves the name of the game (e.g. "Doom 3");
-	 */
+    /* IGame implementation */
 	std::string getName() const;
-	
-	/** greebo: Looks up the specified key
-	 */
 	std::string getKeyValue(const std::string& key) const;
+    xml::NodeList getLocalXPath(const std::string& path) const;
 	
 };
 

@@ -67,13 +67,17 @@ std::string Game::getName() const {
 	return _name;
 }
 
-/** greebo: Looks up the specified key
- */
+// Get XPath root query
+std::string Game::getXPathRoot() const
+{
+	return std::string("//game[@name='") + _name + "']";
+}
+
+// Get the specified "keyvalue" for the game. This is basically an attribute on
+// the main <game> node.
 std::string Game::getKeyValue(const std::string& key) const
 {
-	std::string gameXPath = std::string("//game[@name='") + _name + "']";
-	
-	xml::NodeList found = GlobalRegistry().findXPath(gameXPath);
+	xml::NodeList found = GlobalRegistry().findXPath(getXPathRoot());
 	
 	if (!found.empty()) 
     {
@@ -85,6 +89,13 @@ std::string Game::getKeyValue(const std::string& key) const
 				  << "' not found for game type '" << _name << "'";
 		return "";
 	}
+}
+
+// Search a local XPath
+xml::NodeList Game::getLocalXPath(const std::string& localPath) const
+{
+    std::string absolutePath = getXPathRoot() + localPath;
+    return GlobalRegistry().findXPath(absolutePath);
 }
 
 } // namespace game
