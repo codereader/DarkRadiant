@@ -75,12 +75,12 @@ const std::string& Manager::getModPath() const {
 /** greebo: Returns the current Game.
  */
 IGamePtr Manager::currentGame() {
-	if (_currentGameType.empty()) {
+	if (_currentGameName.empty()) {
 		// No game type selected, bail out, the program will crash anyway on module load
 		gtkutil::fatalErrorDialog("GameManager: No game type selected, can't continue.\n", NULL);
 	}
 	
-	return _games[_currentGameType];
+	return _games[_currentGameName];
 }
 
 void Manager::constructPreferences() 
@@ -131,11 +131,13 @@ void Manager::initialise(const std::string& appPath)
 	}
 	
 	// Load the value from the registry, there should be one selected at this point
-	_currentGameType = GlobalRegistry().get(RKEY_GAME_TYPE);
+	_currentGameName = GlobalRegistry().get(RKEY_GAME_TYPE);
 	
 	// The game type should be selected now
-	if (!_currentGameType.empty()) {
-		globalOutputStream() << "GameManager: Selected game type: " << _currentGameType.c_str() << "\n";
+	if (!_currentGameName.empty()) 
+    {
+		globalOutputStream() << "GameManager: Selected game type: " 
+                             << _currentGameName.c_str() << "\n";
 	}
 	else {
 		// No game type selected, bail out, the program would crash anyway on module load
@@ -458,10 +460,6 @@ const Manager::PathList& Manager::getVFSSearchPaths() const {
 
 const std::string& Manager::getEnginePath() const {
 	return _enginePath;
-}
-
-const std::string& Manager::getCurrentGameType() const {
-	return _currentGameType;
 }
 
 /** greebo: Scans the "games/" subfolder for .game description foles.

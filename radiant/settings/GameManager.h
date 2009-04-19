@@ -27,7 +27,8 @@ private:
    // Map of named games
 	GameMap _games;
 
-	std::string _currentGameType;
+    // The name of the current game, e.g. "Doom 3"
+	std::string _currentGameName;
 	
 	// The fs_game argument (usually "darkmod")
 	std::string _fsGame;
@@ -56,6 +57,24 @@ private:
    // Set the map and prefab file paths from the current game information
    void setMapAndPrefabPaths(const std::string& baseGamePath);
 
+	/** greebo: Returns TRUE if the engine path exists and
+	 * 			the fs_game (if it is non-empty) exists as well.
+	 */
+	bool settingsValid() const;
+
+	/** greebo: Get the user engine path (is OS-specific)
+	 */
+	std::string getUserEnginePath();
+
+	/** greebo: Builds the paths (game engine, user game engine) with
+	 * 			respect to the OS we're on.
+	 */
+	void constructPaths();
+
+	/** greebo: Adds the EnginePath and fs_game widgets to the Preference dialog
+	 */
+	void constructPreferences();
+	
 public:
 	Manager();
 
@@ -63,11 +82,6 @@ public:
 	 * 			upon engine path changes.
 	 */
 	void keyChanged(const std::string& key, const std::string& val);
-	
-	/** greebo: Returns TRUE if the engine path exists and
-	 * 			the fs_game (if it is non-empty) exists as well.
-	 */
-	bool settingsValid() const;
 	
 	/** greebo: Reloads the setting from the registry and 
 	 * 			triggers a VFS refresh if the path has changed.
@@ -101,12 +115,6 @@ public:
 	 */
 	virtual IGamePtr currentGame();
 	
-	/** greebo: Returns the type of the currently active game.
-	 * 			This is a convenience method to be used when loading
-	 * 			modules that require a game type like "doom3".
-	 */
-	const std::string& getCurrentGameType() const;
-	
 	/** greebo: Loads the game files and the saved settings.
 	 * 			If no saved game setting is found, the user
 	 * 			is asked to enter the relevant information in a Dialog. 
@@ -125,19 +133,6 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 
-private:
-	/** greebo: Get the user engine path (is OS-specific)
-	 */
-	std::string getUserEnginePath();
-
-	/** greebo: Builds the paths (game engine, user game engine) with
-	 * 			respect to the OS we're on.
-	 */
-	void constructPaths();
-
-	/** greebo: Adds the EnginePath and fs_game widgets to the Preference dialog
-	 */
-	void constructPreferences();
 };
 
 } // namespace game
