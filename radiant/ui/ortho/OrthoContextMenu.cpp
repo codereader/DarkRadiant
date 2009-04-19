@@ -38,6 +38,10 @@ namespace {
     const char* SPEAKER_CLASSNAME = "speaker";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
+    // Angle key for the player start
+    const char* ANGLE_KEY_NAME = "angle";
+    const char* DEFAULT_ANGLE = "90"; // north
+
 	const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
 
     const char* ADD_ENTITY_TEXT = "Create entity...";
@@ -102,17 +106,39 @@ void OrthoContextMenu::displayInstance(const Vector3& point) {
 OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
-	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_ENTITY_ICON), ADD_ENTITY_TEXT);
-	_widgets[WIDGET_ADD_PLAYERSTART] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_PLAYERSTART_ICON), ADD_PLAYERSTART_TEXT);
-	_widgets[WIDGET_MOVE_PLAYERSTART] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(MOVE_PLAYERSTART_ICON), MOVE_PLAYERSTART_TEXT);
-	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT);
-	_widgets[WIDGET_ADD_MONSTERCLIP] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_MONSTERCLIP_ICON), ADD_MONSTERCLIP_TEXT);
-	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT);
-	_widgets[WIDGET_ADD_PREFAB] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_PREFAB_ICON), ADD_PREFAB_TEXT);
-	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT);
-	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT);
-	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT);
-	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT);
+	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(ADD_ENTITY_ICON), ADD_ENTITY_TEXT
+    );
+	_widgets[WIDGET_ADD_PLAYERSTART] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(ADD_PLAYERSTART_ICON), ADD_PLAYERSTART_TEXT
+    );
+	_widgets[WIDGET_MOVE_PLAYERSTART] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(MOVE_PLAYERSTART_ICON), MOVE_PLAYERSTART_TEXT
+    );
+	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT
+    );
+	_widgets[WIDGET_ADD_MONSTERCLIP] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(ADD_MONSTERCLIP_ICON), ADD_MONSTERCLIP_TEXT
+    );
+	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT
+    );
+	_widgets[WIDGET_ADD_PREFAB] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(ADD_PREFAB_ICON), ADD_PREFAB_TEXT
+    );
+	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT
+    );
+	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT
+    );
+	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT
+    );
+	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(
+        GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT
+    );
 
 	IEventPtr ev = GlobalEventManager().findEvent("ParentSelectionToWorldspawn");
 	if (ev != NULL) {
@@ -260,7 +286,8 @@ void OrthoContextMenu::checkAddOptions() {
 	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_MODEL], info.totalCount == 0 ? TRUE : FALSE);
 }
 
-void OrthoContextMenu::checkPlayerStart() {
+void OrthoContextMenu::checkPlayerStart() 
+{
 	// Check if a playerStart already exists
 	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
@@ -372,11 +399,20 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item,
 	}
 }
 
-void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {
+void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self) 
+{
 	UndoableCommand command("addPlayerStart");	
 
-	try {
-		Entity_createFromSelection(PLAYERSTART_CLASSNAME, self->_lastPoint);
+	try 
+    {
+        // Create the player start entity
+		scene::INodePtr playerStartNode = Entity_createFromSelection(
+            PLAYERSTART_CLASSNAME, self->_lastPoint
+        );
+        Entity* playerStart = Node_getEntity(playerStartNode);
+
+        // Set a default angle
+        playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
 	}
 	catch (EntityCreationException e) {
 		gtkutil::errorDialog(e.what(), GlobalRadiant().getMainWindow());
