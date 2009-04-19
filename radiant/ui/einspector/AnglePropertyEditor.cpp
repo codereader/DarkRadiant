@@ -47,6 +47,38 @@ AnglePropertyEditor::AnglePropertyEditor(Entity* entity, const std::string& key)
         0, 1,
         1, 2
     );
+    gtk_table_attach_defaults(
+        GTK_TABLE(table), 
+        gtkutil::IconTextButton(
+            "", GlobalRadiant().getLocalPixbuf("arrow_ne24.png"), false
+        ),
+        2, 3,
+        0, 1
+    );
+    gtk_table_attach_defaults(
+        GTK_TABLE(table), 
+        gtkutil::IconTextButton(
+            "", GlobalRadiant().getLocalPixbuf("arrow_se24.png"), false
+        ),
+        2, 3,
+        2, 3
+    );
+    gtk_table_attach_defaults(
+        GTK_TABLE(table), 
+        gtkutil::IconTextButton(
+            "", GlobalRadiant().getLocalPixbuf("arrow_sw24.png"), false
+        ),
+        0, 1,
+        2, 3
+    );
+    gtk_table_attach_defaults(
+        GTK_TABLE(table), 
+        gtkutil::IconTextButton(
+            "", GlobalRadiant().getLocalPixbuf("arrow_nw24.png"), false
+        ),
+        0, 1,
+        0, 1
+    );
 
     // Pack table into an hbox/vbox and set as the widget
     GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
