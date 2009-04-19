@@ -21,6 +21,7 @@
 		<Unit filename="..\..\include\ShaderLayer.h" />
 		<Unit filename="..\..\include\StringSerialisable.h" />
 		<Unit filename="..\..\include\Texture.h" />
+		<Unit filename="..\..\include\VolumeIntersectionValue.h" />
 		<Unit filename="..\..\include\cullable.h" />
 		<Unit filename="..\..\include\editable.h" />
 		<Unit filename="..\..\include\iarchive.h" />

@@ -1485,6 +1485,14 @@
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\AnglePropertyEditor.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="..\..\radiant\ui\einspector\AnglePropertyEditor.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
 		<Unit filename="..\..\radiant\ui\einspector\BooleanPropertyEditor.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
@@ -1554,10 +1562,6 @@
 			<Option target="Release Win32" />
 		</Unit>
 		<Unit filename="..\..\radiant\ui\einspector\ModelPropertyEditor.h">
-			<Option target="Debug Win32" />
-			<Option target="Release Win32" />
-		</Unit>
-		<Unit filename="..\..\radiant\ui\einspector\PropertyEditor.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
