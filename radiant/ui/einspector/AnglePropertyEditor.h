@@ -2,7 +2,7 @@
 
 #include "PropertyEditor.h"
 
-#include <gtk/gtkwidget.h>
+#include <gtk/gtk.h>
 
 namespace ui
 {
@@ -20,6 +20,28 @@ class AnglePropertyEditor
 {
     // Main widget
     GtkWidget* _widget;
+
+    // Eight directional buttons
+    GtkWidget* _nButton;
+    GtkWidget* _neButton;
+    GtkWidget* _eButton;
+    GtkWidget* _seButton;
+    GtkWidget* _sButton;
+    GtkWidget* _swButton;
+    GtkWidget* _wButton;
+    GtkWidget* _nwButton;
+
+    // Entity and key to edit
+    Entity* _entity;
+    std::string _key;
+
+private:
+
+    // Construct the buttons
+    void constructButtons();
+
+    /* GTK Callbacks */
+    static void _onButtonClick(GtkButton* button, AnglePropertyEditor* self);
 
 protected:
 
