@@ -149,6 +149,10 @@
 		<property name="name" category="Basic" type="text">The displayed name of this entity. This can be arbitrary, but must be unique across the entire map</property>
 		<property name="rotation" category="Basic" type="text" />
 		<property name="_color" category="Basic" type="colour" />
+		<property name="angle" 
+                  category="Basic" 
+                  type="angle" 
+                  options="0,360">The direction this entity initially faces.  Generally applied to AI or player_start entities.</property>
 		<property name="falloff" category="Light" type="text" />
 		<property name="light_radius" category="Light" type="vector3" />
 		<property name="light_rotation" category="Light" type="text" />
@@ -175,16 +179,6 @@
 		<property name="skin" category="Model" type="skin" />
 		<property name="noshadows" category="Model" type="bool" />
 		<property name="solid" category="Model" type="bool" />
-		<property 
-			name="angle" 
-			category="AI" 
-			type="float" 
-			options="0,360"
-		/>
-		<property name="anim" category="AI" type="text" />
-		<property name="neverDormant" category="AI" type="bool" />
-		<property name="patrol" category="AI" type="bool" />
-		<property name="team" category="AI" type="text" />
 		<property name="target" category="Links" type="entity" />
 		<property name="target0" category="Links" type="entity" />
 		<property name="target1" category="Links" type="entity" />
