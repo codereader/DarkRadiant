@@ -9,9 +9,16 @@ namespace game {
 		const std::string GAME_FILE_EXT = ".game";
 	}
 
-/** greebo: A game representation containing the enigne path.
- * 			Offers methods to get the key/values from the game
- * 			description (which is wrapped into the XMLRegistry).
+/**
+ * \brief
+ * Representation of a single .game file, managed by the GameManager.
+ *
+ * A Game is essentially a "view" into the XMLRegistry; it stores no data itself
+ * but automatically queries the registry for values relating to its associated
+ * game.
+ *
+ * This class also contains the code for loading a .game file and importing its
+ * contents into the XMLRegistry.
  */
 class Game :
 	public IGame
@@ -35,11 +42,8 @@ public:
 	
 	/** greebo: Looks up the specified key
 	 */
-	std::string getKeyValue(const std::string& key);
+	std::string getKeyValue(const std::string& key) const;
 	
-	/** greebo: Emits an error if the keyvalue is empty
-	 */
-	std::string getRequiredKeyValue(const std::string& key);
 };
 
 typedef boost::shared_ptr<Game> GamePtr;

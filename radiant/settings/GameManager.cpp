@@ -243,7 +243,7 @@ void Manager::initEnginePath() {
     	;
 	    
 	    enginePath = os::standardPathWithSlash(
-			currentGame()->getRequiredKeyValue(ENGINEPATH_ATTRIBUTE)
+			currentGame()->getKeyValue(ENGINEPATH_ATTRIBUTE)
 		);
 	}
 
@@ -423,14 +423,14 @@ void Manager::updateEnginePath(bool forced)
          // On Windows this will be the same as global engine path
 			std::string userBasePath = os::standardPathWithSlash(
 				getUserEnginePath() // ~/.doom3
-            + currentGame()->getRequiredKeyValue("basegame") // base
+            + currentGame()->getKeyValue("basegame") // base
 			);
 			_vfsSearchPaths.push_back(userBasePath);
 			
 			// Register the base game folder (/usr/local/games/doom3/<basegame>) last
 			// This will always be searched, but *after* the other paths
 			std::string baseGame = os::standardPathWithSlash(
-				_enginePath + currentGame()->getRequiredKeyValue("basegame")
+				_enginePath + currentGame()->getKeyValue("basegame")
 			);
 			_vfsSearchPaths.push_back(baseGame);
 			

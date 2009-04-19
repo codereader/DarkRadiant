@@ -7,23 +7,33 @@
 // String identifier for the game manager module
 const std::string MODULE_GAMEMANAGER("GameManager");
 
-namespace game {
+namespace game 
+{
 
+/**
+ * \brief
+ * Interface for an object representing a single game type.
+ */
 class IGame
 {	
 public:
-	/** greebo: Looks up the specified key
-	 */
-	virtual std::string getKeyValue(const std::string& key) = 0;
 	
-	/** greebo: Emits an error if the keyvalue is empty
+    /**
+     * \brief
+     * Get a string key value from the game file.
+     *
+     * \param key
+     * Name of the key to retrieve. If this key does not exist, a warning is
+     * emitted and the empty string is returned.
 	 */
-	virtual std::string getRequiredKeyValue(const std::string& key) = 0;
+    virtual std::string getKeyValue(const std::string& key) const = 0;
 };
+
 typedef boost::shared_ptr<IGame> IGamePtr;
 
 /**
- * Abstract base class for a registry system
+ * \brief
+ * Interface for the game management module.
  */
 class IGameManager :
 	public RegisterableModule
