@@ -8,14 +8,11 @@ ScriptGame::ScriptGame(const game::IGamePtr& game) :
 	_game(game)
 {}
 
-std::string ScriptGame::getKeyValue(const std::string& key) {
+std::string ScriptGame::getKeyValue(const std::string& key) const
+{
 	return (_game != NULL) ? _game->getKeyValue(key) : "";
 }
 
-
-std::string ScriptGame::getRequiredKeyValue(const std::string& key) {
-	return (_game != NULL) ? _game->getRequiredKeyValue(key) : "";
-}
 
 // -----------------------------------------------
 
@@ -46,7 +43,6 @@ void GameInterface::registerInterface(boost::python::object& nspace) {
 	// Add the Game object declaration
 	nspace["Game"] = boost::python::class_<ScriptGame>("Game", boost::python::init<const game::IGamePtr&>())
 		.def("getKeyValue", &ScriptGame::getKeyValue)
-		.def("getRequiredKeyValue", &ScriptGame::getRequiredKeyValue)
 	;
 
 	// Add the module declaration to the given python namespace

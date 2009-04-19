@@ -15,8 +15,7 @@ class ScriptGame
 public:
 	ScriptGame(const game::IGamePtr& game);
 
-	std::string getKeyValue(const std::string& key);
-	std::string getRequiredKeyValue(const std::string& key);
+	std::string getKeyValue(const std::string& key) const;
 };
 
 class GameInterface :
