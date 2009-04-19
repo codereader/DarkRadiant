@@ -9,8 +9,8 @@
 #include "iradiant.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
-#include "iregistry.h"
 #include "ieclass.h"
+#include "igame.h"
 #include "ientity.h"
 
 #include <gtk/gtk.h>
@@ -34,7 +34,7 @@ namespace {
 	
 	// CONSTANTS
 	const char* ADDPROPERTY_TITLE = "Add property";
-	const std::string PROPERTIES_XPATH = "game/entityInspector//property";
+	const char* PROPERTIES_XPATH = "/entityInspector//property";
 	const char* FOLDER_ICON = "folder16.png";
 	
 	const char* CUSTOM_PROPERTY_TEXT = "Custom properties defined for this "
@@ -204,8 +204,8 @@ public:
 } // namespace
 
 // Populate tree view
-void AddPropertyDialog::populateTreeView() {
-
+void AddPropertyDialog::populateTreeView() 
+{
 	/* DEF-DEFINED PROPERTIES */
 
 	// First add a top-level category named after the entity class, and populate
@@ -229,7 +229,8 @@ void AddPropertyDialog::populateTreeView() {
 	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */
 
 	// Ask the XML registry for the list of properties
-	xml::NodeList propNodes = GlobalRegistry().findXPath(PROPERTIES_XPATH);
+    game::IGamePtr currentGame = GlobalGameManager().currentGame();
+    xml::NodeList propNodes = currentGame->getLocalXPath(PROPERTIES_XPATH);
 	
 	// Cache of property categories to GtkTreeIters, to allow properties
 	// to be parented to top-level categories

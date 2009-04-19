@@ -1,6 +1,7 @@
 #ifndef IGAMEMANAGER_H_
 #define IGAMEMANAGER_H_
 
+#include "xmlutil/Node.h"
 #include "imodule.h"
 #include <list>
 
@@ -27,6 +28,16 @@ public:
      * emitted and the empty string is returned.
 	 */
     virtual std::string getKeyValue(const std::string& key) const = 0;
+
+    /**
+     * \brief
+     * Search an XPath relative to the this game node.
+     *
+     * \param xpath
+     * The <b>relative</b> XPath under the game node, including the initial
+     * forward-slash(es).
+     */
+    virtual xml::NodeList getLocalXPath(const std::string& path) const = 0;
 };
 
 typedef boost::shared_ptr<IGame> IGamePtr;
