@@ -32,7 +32,7 @@ public:
 	ForEachVisible(const VolumeTest& volume, const Walker_& walker) : 
 		m_volume(volume), m_walker(walker)
 	{
-		_visStack.push_back(VOLUME_OUTSIDE);
+		_visStack.push_back(VOLUME_PARTIAL);
 	}
   
 	// Pre-descent walker function
@@ -43,7 +43,7 @@ public:
 										   : VOLUME_OUTSIDE;
 
 		// Test for partial visibility
-	    if (visible == VOLUME_OUTSIDE) {
+	    if (visible == VOLUME_PARTIAL) {
 			visible = m_volume.TestAABB(node->worldAABB());
 	    }
 
