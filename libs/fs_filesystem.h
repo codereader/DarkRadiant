@@ -76,6 +76,11 @@ class GenericFileSystem
     {
       return m_path.c_str();
     }
+
+	const std::string& string() const
+	{
+		return m_path;
+	}
   };
 
   class Entry
@@ -176,9 +181,9 @@ public:
       {
         if(!i->second.is_directory())
         {
-          visitor.file(i->first.c_str());
+          visitor.file(i->first.string());
         }
-        else if(visitor.directory(i->first.c_str(), i->first.depth() - start_depth))
+        else if(visitor.directory(i->first.string(), i->first.depth() - start_depth))
         {
           skip_depth = i->first.depth();
         }

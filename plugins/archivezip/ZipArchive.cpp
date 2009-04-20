@@ -138,18 +138,22 @@ bool ZipArchive::read_record() {
 
 	unsigned int position = istream_read_int32_le(m_istream);
 
-	Array<char> filename(namelength+1);
+	// greebo: Read the filename directly into a newly constructed std::string.
+
+	// I'm not entirely happy about this brute-force casting, but I wanted to 
+	// avoid reading the filename into a temporary char[] array 
+	// only to let its contents end up being copied by the std::string anyway.
+	// Alternative: use a static boost::shared_array here, resized to fit?
+
+	std::string path(namelength, '\0');
 
 	m_istream.read(
-		reinterpret_cast<FileInputStream::byte_type*>(filename.data()),
+		reinterpret_cast<FileInputStream::byte_type*>(const_cast<char*>(path.data())),
 		namelength);
-
-	filename[namelength] = '\0';
 
 	m_istream.seek(extras + comment, FileInputStream::cur);
 
-	std::string path(filename.data());
-	if (path_is_directory(filename.data())) {
+	if (path_is_directory(path.c_str())) {
 		m_filesystem[path] = 0;
 	} 
 	else {
@@ -157,7 +161,7 @@ bool ZipArchive::read_record() {
 		if (!file.is_directory()) {
 			globalOutputStream() << "Warning: zip archive "
 				<< m_name << " contains duplicated file: "
-				<< filename.data() << "\n";
+				<< path << std::endl;
 		} 
 		else {
 			file = new ZipRecord(position, 
