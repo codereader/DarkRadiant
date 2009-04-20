@@ -58,14 +58,11 @@ class GenericFileSystem
 		m_path(path),
 		m_depth(path_get_depth(m_path.c_str()))
 	{}
-    
-    Path(StringRange range) {
-    	// Take the full string range
-    	std::string temp = range.first;
-    	// And truncate it at the given length
-    	m_path = temp.substr(0, range.last - range.first); 
-    	m_depth = path_get_depth(c_str());
-    }
+
+	Path(const char* start, std::size_t length) :
+		m_path(start, length),
+		m_depth(path_get_depth(m_path.c_str()))
+	{}
     
     bool operator<(const Path& other) const
     {
@@ -85,7 +82,7 @@ class GenericFileSystem
   {
     file_type* m_file;
   public:
-    Entry() : m_file(0)
+    Entry() : m_file(NULL)
     {
     }
     Entry(file_type* file) : m_file(file)
@@ -97,7 +94,7 @@ class GenericFileSystem
     }
     bool is_directory() const
     {
-      return file() == 0;
+      return file() == NULL;
     }
   };
 
@@ -118,23 +115,27 @@ public:
     return m_entries.end();
   }
 
-  /// \brief Returns the file at \p path.
-  /// Creates all directories below \p path if they do not exist.
-  /// O(log n) on average.
-  entry_type& operator[](const Path& path)
-  {
-    {
-      const char* end = path_remove_directory(path.c_str());
-      while(end[0] != '\0')
-      {
-        Path dir(StringRange(path.c_str(), end));
-        m_entries.insert(value_type(dir, Entry(0)));
-        end = path_remove_directory(end);
-      }
-    }
+	/// \brief Returns the file at \p path.
+	/// Creates all directories below \p path if they do not exist.
+	/// O(log n) on average.
+	entry_type& operator[](const Path& path)
+	{
+		const char* start = path.c_str();
+		const char* end = path_remove_directory(path.c_str());
 
-    return m_entries[path];
-  }
+		while (end[0] != '\0')
+		{
+			// greebo: Take the substring from start to end
+			Path dir(start, end - start);
+
+			// And insert it as directory (NULL)
+			m_entries.insert(value_type(dir, Entry(NULL)));
+
+			end = path_remove_directory(end);
+		}
+
+		return m_entries[path];
+	}
 
   /// \brief Returns the file at \p path or end() if not found.
   iterator find(const Path& path)
