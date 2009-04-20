@@ -205,26 +205,6 @@ GtkWindow* create_simple_modal_dialog_window(const char* title, ModalDialog& dia
   return window;
 }
 
-RadioHBox RadioHBox_new(StringArrayRange names)
-{
-  GtkHBox* hbox = GTK_HBOX(gtk_hbox_new(TRUE, 4));
-  gtk_widget_show(GTK_WIDGET(hbox));
-
-  GSList* group = 0;
-  GtkRadioButton* radio = 0;
-  for(StringArrayRange::Iterator i = names.first; i != names.last; ++i)
-  {
-    radio = GTK_RADIO_BUTTON(gtk_radio_button_new_with_label(group, *i));
-    gtk_widget_show(GTK_WIDGET(radio));
-    gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(radio), FALSE, FALSE, 0);
-
-    group = gtk_radio_button_get_group(radio);
-  }
-
-  return RadioHBox(hbox, radio);
-}
-
-
 PathEntry PathEntry_new(const std::string& bitmapsPath)
 {
   GtkFrame* frame = GTK_FRAME(gtk_frame_new(NULL));

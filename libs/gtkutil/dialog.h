@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_GTKUTIL_DIALOG_H
 
 #include "generic/callback.h"
-#include "generic/arrayrange.h"
 #include "iradiant.h"
 #include <gtk/gtkenums.h>
 
@@ -92,21 +91,6 @@ gboolean dialog_button_no(GtkWidget *widget, ModalDialog* data);
 gboolean dialog_delete_callback(GtkWidget *widget, GdkEventAny* event, ModalDialog* data);
 
 GtkWindow* create_simple_modal_dialog_window(const char* title, ModalDialog& dialog, GtkWidget* contents);
-
-class RadioHBox
-{
-public:
-  GtkHBox* m_hbox;
-  GtkRadioButton* m_radio;
-  RadioHBox(GtkHBox* hbox, GtkRadioButton* radio) :
-    m_hbox(hbox),
-    m_radio(radio)
-  {
-  }
-};
-
-RadioHBox RadioHBox_new(StringArrayRange names);
-
 
 class PathEntry
 {
