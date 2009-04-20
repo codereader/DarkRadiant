@@ -96,6 +96,12 @@ void SoundShaderPreview::update() {
 				gtk_list_store_set(_listStore, &iter, 
 								   FILENAME_COL, list[i].c_str(),
 								   -1);
+
+				// Pre-select the first sound file, for the user's convenience
+				if (i == 0)
+				{
+					gtk_tree_selection_select_iter(_treeSelection, &iter);
+				}
 			}
 		}
 		else {
