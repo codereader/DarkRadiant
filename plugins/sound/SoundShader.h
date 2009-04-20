@@ -26,16 +26,22 @@ class SoundShader :
 
 	// Whether the raw definition block has been dissected already
 	bool _parsed;
+
+	// The modname (ModResource implementation)
+	std::string _modName;
 	
 public:
 
 	/**
 	 * Constructor.
 	 */
-	SoundShader(const std::string& name, const std::string& blockContents) : 
-		_name(name), 
+	SoundShader(const std::string& name, 
+				const std::string& blockContents,
+				const std::string& modName = "base")
+	:	_name(name), 
 		_blockContents(blockContents),
-		_parsed(false)
+		_parsed(false),
+		_modName(modName)
 	{}
 
 	/**
@@ -62,6 +68,10 @@ public:
 	SoundFileList getSoundFileList() {
 		if (!_parsed) parseDefinition();
 		return _soundFiles;
+	}
+
+	std::string getModName() const {
+		return _modName;
 	}
 
 private:

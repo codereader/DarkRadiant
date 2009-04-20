@@ -2,6 +2,8 @@
 #define ISOUND_H_
 
 #include "imodule.h"
+#include "ModResource.h"
+
 #include <vector>
 #include <boost/function.hpp>
 
@@ -55,8 +57,10 @@ class SoundRadii {
 /**
  * Representation of a single sound or sound shader.
  */
-struct ISoundShader {
-
+class ISoundShader :
+	public ModResource
+{
+public:
 	/**
 	 * Get the name of the shader.
 	 */
