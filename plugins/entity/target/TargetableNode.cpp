@@ -12,8 +12,8 @@ TargetableNode::TargetableNode(Doom3Entity& entity, const scene::Node& node) :
 {}
 
 void TargetableNode::construct() {
-	_d3entity.attach(*this);
-	_d3entity.attach(_targetKeys);
+	_d3entity.attachObserver(this);
+	_d3entity.attachObserver(&_targetKeys);
 
 	RenderableTargetInstances::Instance().attach(*this);
 }
@@ -22,8 +22,8 @@ void TargetableNode::construct() {
 void TargetableNode::destruct() {
 	RenderableTargetInstances::Instance().detach(*this);
 
-	_d3entity.detach(_targetKeys);
-	_d3entity.detach(*this);
+	_d3entity.detachObserver(&_targetKeys);
+	_d3entity.detachObserver(this);
 }
 
 void TargetableNode::setTargetsChanged(const Callback& targetsChanged) {

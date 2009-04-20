@@ -13,12 +13,12 @@ NamespaceManager::NamespaceManager(Doom3Entity& entity) :
 	_updateMutex(false)
 {
 	// Attach <self> to the observed entity
-	_entity.attach(*this);
+	_entity.attachObserver(this);
 }
 
 NamespaceManager::~NamespaceManager() {
 	// Detach <self> from the observed Entity
-	_entity.detach(*this);
+	_entity.detachObserver(this);
 
 	if (_namespace != NULL) {
 		// We're still attached to a namespace, break the connection
