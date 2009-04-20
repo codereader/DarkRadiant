@@ -112,9 +112,10 @@ public:
 	/// Name comparisons are case-insensitive.
 	virtual ArchiveTextFilePtr openTextFile(const std::string& name) = 0;
 	
-  /// Returns true if the file identified by \p name can be opened.
-  /// Name comparisons are case-insensitive.
-  virtual bool containsFile(const char* name) = 0;
+	/// Returns true if the file identified by \p name can be opened.
+	/// Name comparisons are case-insensitive.
+	virtual bool containsFile(const std::string& name) = 0;
+
   /// \brief Performs a depth-first traversal of the archive tree starting at \p root.
   /// Traverses the entire tree if \p root is "".
   /// When a file is encountered, calls \c visitor.file passing the file name.

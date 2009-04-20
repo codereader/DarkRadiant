@@ -89,8 +89,8 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name) {
 	return ArchiveTextFilePtr();
 }
 
-bool ZipArchive::containsFile(const char* name) {
-	ZipFileSystem::iterator i = m_filesystem.find(std::string(name));
+bool ZipArchive::containsFile(const std::string& name) {
+	ZipFileSystem::iterator i = m_filesystem.find(name);
 	return i != m_filesystem.end() && !i->second.is_directory();
 }
 

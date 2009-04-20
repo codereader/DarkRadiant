@@ -46,7 +46,7 @@ public:
 	virtual ArchiveFilePtr openFile(const std::string& name);
 	virtual ArchiveTextFilePtr openTextFile(const std::string& name);
 	
-	bool containsFile(const char* name);
+	bool containsFile(const std::string& name);
 	void forEachFile(VisitorFunc visitor, const std::string& root);
 	
 private:
