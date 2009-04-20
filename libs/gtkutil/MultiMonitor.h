@@ -1,6 +1,7 @@
 #ifndef _GTKUTIL_MULTIMON_H_
 #define _GTKUTIL_MULTIMON_H_
 
+#include <gtk/gtkwindow.h>
 #include <gdk/gdkscreen.h>
 #include <gdk/gdkdisplay.h>
 #include "itextstream.h"

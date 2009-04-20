@@ -6,6 +6,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/MultiMonitor.h"
 
 #include <gtk/gtk.h>
 
@@ -36,10 +37,8 @@ SoundChooser::SoundChooser()
     gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
     
 	// Set the default size of the window
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(_widget));
-	gint w = gdk_screen_get_width(scr);
-	gint h = gdk_screen_get_height(scr);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w / 2, h / 2);
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_widget));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), rect.width / 2, rect.height / 2);
 
     // Delete event
     g_signal_connect(
