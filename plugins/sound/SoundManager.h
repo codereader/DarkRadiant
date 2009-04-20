@@ -54,7 +54,7 @@ public:
 	 * Parse the contents of the given string as a .sndshd file, adding all
 	 * contained shaders to the shader map.
 	 */
-	void parseShadersFrom(std::istream& contents);
+	void parseShadersFrom(std::istream& contents, const std::string& modName);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

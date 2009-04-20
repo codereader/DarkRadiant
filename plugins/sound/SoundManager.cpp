@@ -77,7 +77,8 @@ void SoundManager::stopSound() {
 }
 
 // Accept a string of shaders to parse
-void SoundManager::parseShadersFrom(std::istream& contents) {
+void SoundManager::parseShadersFrom(std::istream& contents, const std::string& modName)
+{
 	// Construct a DefTokeniser to tokenise the string into sound shader decls
 	parser::BasicDefBlockTokeniser<std::istream> tok(contents);
 
@@ -89,7 +90,7 @@ void SoundManager::parseShadersFrom(std::istream& contents) {
 		std::pair<ShaderMap::iterator, bool> result = _shaders.insert(
 			ShaderMap::value_type(
 				block.name, 
-				SoundShaderPtr(new SoundShader(block.name, block.contents))
+				SoundShaderPtr(new SoundShader(block.name, block.contents, modName))
 			)
 		);
 
