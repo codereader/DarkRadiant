@@ -59,7 +59,7 @@ void EclassModel::construct() {
 
 EclassModel::~EclassModel() {
 	m_model.modelChanged("");
-	m_entity.detach(m_keyObservers);
+	m_entity.detachObserver(&m_keyObservers);
 }
 
 void EclassModel::updateTransform() {
@@ -88,7 +88,7 @@ void EclassModel::rotationChanged() {
 void EclassModel::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_entity.attach(m_keyObservers);
+		m_entity.attachObserver(&m_keyObservers);
 		m_model.modelChanged(m_entity.getKeyValue("model"));
 		_owner.skinChanged(m_entity.getKeyValue("skin"));
 	}
@@ -97,17 +97,17 @@ void EclassModel::instanceAttach(const scene::Path& path) {
 void EclassModel::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
 		m_model.modelChanged("");
-		m_entity.detach(m_keyObservers);
+		m_entity.detachObserver(&m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void EclassModel::addKeyObserver(const std::string& key, const KeyObserver& observer) {
-	m_entity.detach(m_keyObservers); // detach first
+	m_entity.detachObserver(&m_keyObservers); // detach first
 
 	m_keyObservers.insert(key, observer);
 
-	m_entity.attach(m_keyObservers); // attach again
+	m_entity.attachObserver(&m_keyObservers); // attach again
 }
 
 void EclassModel::removeKeyObserver(const std::string& key, const KeyObserver& observer) {

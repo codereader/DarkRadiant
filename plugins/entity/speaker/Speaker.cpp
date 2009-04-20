@@ -61,13 +61,13 @@ Speaker::Speaker(const Speaker& other,
 void Speaker::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_entity.attach(m_keyObservers);
+		m_entity.attachObserver(&m_keyObservers);
 	}
 }
 
 void Speaker::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
-		m_entity.detach(m_keyObservers);
+		m_entity.detachObserver(&m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }

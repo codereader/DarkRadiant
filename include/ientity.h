@@ -75,8 +75,8 @@ public:
 	// A container with key => value pairs
 	typedef std::vector< std::pair<std::string, std::string> > KeyValuePairs;
 
-	/** greebo: An Entity::Observer gets notified about key insertions and removals
-	 * 			as well as (optionally) about Entity destruction.
+    /** greebo: An Entity::Observer gets notified about key insertions and
+     * removals as well as (optionally) about Entity destruction.
 	 */
 	class Observer
 	{
@@ -211,8 +211,18 @@ public:
 	virtual bool isModel() const = 0;
 	
   virtual bool isContainer() const = 0;
-  virtual void attach(Observer& observer) = 0;
-  virtual void detach(Observer& observer) = 0;
+
+    /**
+     * \brief
+     * Attach an Entity::Observer to this Entity.
+     */
+    virtual void attachObserver(Observer* observer) = 0;
+
+    /**
+     * \brief
+     * Detach an Entity::Observer from this Entity.
+     */
+    virtual void detachObserver(Observer* observer) = 0;
 };
 
 class IEntityNode

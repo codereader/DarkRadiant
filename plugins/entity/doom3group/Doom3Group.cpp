@@ -313,20 +313,20 @@ void Doom3Group::construct() {
 	m_isModel = false;
 	//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3Doom3Group);
 
-	_entity.attach(m_keyObservers);
+	_entity.attachObserver(&m_keyObservers);
 }
 
 void Doom3Group::destroy() {
-	_entity.detach(m_keyObservers);
+	_entity.detachObserver(&m_keyObservers);
 }
 
 void Doom3Group::addKeyObserver(const std::string& key, const KeyObserver& observer) 
 {
-	_entity.detach(m_keyObservers); // detach first
+	_entity.detachObserver(&m_keyObservers); // detach first
 
 	m_keyObservers.insert(key, observer);
 
-	_entity.attach(m_keyObservers); // attach again
+	_entity.attachObserver(&m_keyObservers); // attach again
 }
 
 void Doom3Group::removeKeyObserver(const std::string& key, const KeyObserver& observer) {

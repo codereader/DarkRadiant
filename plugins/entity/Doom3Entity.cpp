@@ -73,23 +73,28 @@ void Doom3Entity::importState(const KeyValues& keyValues) {
         _keyValueChangedNotify();
 }
 
-void Doom3Entity::attach(Observer& observer) {
+void Doom3Entity::attachObserver(Observer* observer) 
+{
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be attached during iteration");
 	
 	// Add the observer to the internal list
-	_observers.push_back(&observer);
+	_observers.push_back(observer);
 	
 	// Now notify the observer about all the existing keys
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
-		observer.onKeyInsert(i->first, *i->second);
+	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) 
+    {
+		observer->onKeyInsert(i->first, *i->second);
 	}
 }
 
-void Doom3Entity::detach(Observer& observer) {
+void Doom3Entity::detachObserver(Observer* observer) 
+{
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be detached during iteration");
 	
 	// Remove the observer from the list, if it can be found
-	Observers::iterator found = std::find(_observers.begin(), _observers.end(), &observer);
+	Observers::iterator found = std::find(
+        _observers.begin(), _observers.end(), observer
+    );
 	if (found != _observers.end()) {
 		_observers.erase(found);
 	}
@@ -99,8 +104,9 @@ void Doom3Entity::detach(Observer& observer) {
 	}
 	
 	// Now, call onKeyErase() for every spawnarg, so that the observer gets cleanly shut down 
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
-		observer.onKeyErase(i->first, *i->second);
+	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) 
+    {
+		observer->onKeyErase(i->first, *i->second);
 	}
 }
 

@@ -61,8 +61,9 @@ public:
 	void importState(const KeyValues& keyValues);
 	typedef MemberCaller1<Doom3Entity, const KeyValues&, &Doom3Entity::importState> UndoImportCaller;
 
-	void attach(Observer& observer);
-	void detach(Observer& observer);
+    /* Entity implementation */
+	void attachObserver(Observer* observer);
+	void detachObserver(Observer* observer);
 
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
