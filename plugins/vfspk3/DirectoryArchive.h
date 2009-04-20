@@ -22,7 +22,7 @@ public:
 	
 	virtual ArchiveTextFilePtr openTextFile(const std::string& name);
 	
-	virtual bool containsFile(const char* name);
+	virtual bool containsFile(const std::string& name);
 	
 	virtual void forEachFile(VisitorFunc visitor, const std::string& root);
 };
