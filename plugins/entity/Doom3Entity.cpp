@@ -69,7 +69,8 @@ void Doom3Entity::importState(const KeyValues& keyValues) {
 		insert(i->first, i->second);
 	}
 
-	_keyValueChangedNotify();
+	if (_keyValueChangedNotify)
+        _keyValueChangedNotify();
 }
 
 void Doom3Entity::attach(Observer& observer) {
@@ -151,7 +152,8 @@ void Doom3Entity::forEachKeyValue(KeyValueVisitor& visitor) {
 
 /** Set a keyvalue on the entity.
  */
-void Doom3Entity::setKeyValue(const std::string& key, const std::string& value) {
+void Doom3Entity::setKeyValue(const std::string& key, const std::string& value) 
+{
 	if (value.empty()) {
 		// Empty value means: delete the key
 		erase(key);
@@ -160,8 +162,10 @@ void Doom3Entity::setKeyValue(const std::string& key, const std::string& value) 
 		// Non-empty value, "insert" it (will overwrite existing keys - no duplicates)
 		insert(key, value);
 	}
+
 	// Notify the global observer (usually the EntityInspector)
-	_keyValueChangedNotify();
+    if (_keyValueChangedNotify)
+        _keyValueChangedNotify();
 }
 
 /** Retrieve a keyvalue from the entity.

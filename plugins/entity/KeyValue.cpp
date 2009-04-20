@@ -56,8 +56,10 @@ void KeyValue::assign(const std::string& other) {
 	}
 }
 
-void KeyValue::notify() {
-	_keyValueChangedNotify();
+void KeyValue::notify() 
+{
+    if (_keyValueChangedNotify)
+        _keyValueChangedNotify();
 
 	// Store the name locally, to avoid string-copy operations in the loop below
 	std::string value = get();
