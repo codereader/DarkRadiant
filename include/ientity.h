@@ -75,9 +75,13 @@ public:
 	// A container with key => value pairs
 	typedef std::vector< std::pair<std::string, std::string> > KeyValuePairs;
 
-    /** greebo: An Entity::Observer gets notified about key insertions and
-     * removals as well as (optionally) about Entity destruction.
-	 */
+    /**
+     * \brief
+     * Abstract base class for entity observers.
+     *
+     * An entity observer receives notifications when keyvalues are inserted or
+     * deleted on the entity it is observing.
+     */
 	class Observer
 	{
 	public:
@@ -89,13 +93,6 @@ public:
 		/** greebo: This is called when a spawnarg is removed from the observed entity.
 		 */
 		virtual void onKeyErase(const std::string& key, EntityKeyValue& value) = 0;
-		
-		/** greebo: Gets called when the entity is destroyed (i.e. all keyvalues are about
-		 * 			to be removed from the list). 
-		 */
-		virtual void onDestruct() {
-			// Empty default implementation
-		}
 	};
 
 	/**
