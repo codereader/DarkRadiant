@@ -32,11 +32,8 @@ Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	}
 }
 
-Doom3Entity::~Doom3Entity() {
-	for (Observers::iterator i = _observers.begin(); i != _observers.end();) {
-		// post-increment to allow current element to be removed safely
-		(*i++)->onDestruct();
-	}
+Doom3Entity::~Doom3Entity() 
+{
 	ASSERT_MESSAGE(_observers.empty(), "EntityKeyValues::~EntityKeyValues: observers still attached");
 }
 
