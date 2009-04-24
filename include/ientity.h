@@ -88,11 +88,13 @@ public:
 		/** greebo: This gets called when a new spawnarg is added to the entity
 		 * 			key/value list to give the Observer an opportunity to react.
 		 */
-		virtual void onKeyInsert(const std::string& key, EntityKeyValue& value) = 0;
+		virtual void onKeyInsert(const std::string& key, EntityKeyValue& value)
+        { }
 		
 		/** greebo: This is called when a spawnarg is removed from the observed entity.
 		 */
-		virtual void onKeyErase(const std::string& key, EntityKeyValue& value) = 0;
+		virtual void onKeyErase(const std::string& key, EntityKeyValue& value)
+        { }
 	};
 
 	/**
