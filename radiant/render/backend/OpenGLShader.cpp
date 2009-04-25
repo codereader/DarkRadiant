@@ -188,8 +188,11 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     dbsPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
 
     // Set layer vertex colour mode
-    ShaderLayer::VertexColourMode vcolMode = 
-            triplet.diffuse->getVertexColourMode();
+    ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
+    if (triplet.diffuse)
+    {
+        triplet.diffuse->getVertexColourMode();
+    }
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
         // Vertex colours allowed
