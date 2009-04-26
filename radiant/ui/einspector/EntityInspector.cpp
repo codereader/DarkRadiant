@@ -113,13 +113,9 @@ EntityInspector::EntityInspector()
     // Stimulate initial redraw to get the correct status
     requestIdleCallback();
 
-    // Set the function to call when a keyval is changed. This is a requirement
-    // of the EntityCreator interface.
-    GlobalEntityCreator().setKeyValueChangedFunc(
-    	EntityInspector::keyValueChanged);
-
-	// Register self to the SelectionSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
+    // Register self to the SelectionSystem to get notified upon selection
+    // changes.
+    GlobalSelectionSystem().addObserver(this);
 }
 
 void EntityInspector::restoreSettings() 
@@ -450,19 +446,9 @@ void EntityInspector::onGtkIdle()
     }
 }
 
-// Entity keyvalue changed callback
-void EntityInspector::keyValueChanged() {
-
-    // Redraw the entity inspector GUI
-    getInstance().requestIdleCallback();
-
-    // Set the map modified flag
-    if (getInstance()._selectedEntity != NULL)
-    	GlobalMap().setModified(true);
-}
-
 // Selection changed callback
-void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
+void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) 
+{
 	requestIdleCallback();
 }
 

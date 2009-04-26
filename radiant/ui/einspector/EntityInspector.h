@@ -189,9 +189,6 @@ public:
     // Get the Gtk Widget for display in the main application
     GtkWidget* getWidget();
 
-	// Callback used by the EntityCreator when a key value changes on an entity
-    static void keyValueChanged();
-
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
