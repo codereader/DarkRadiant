@@ -24,8 +24,6 @@ namespace entity {
 class Doom3Entity :
 	public Entity
 {
-	static EntityCreator::KeyValueChangedFunc _keyValueChangedNotify;
-
 	IEntityClassConstPtr _eclass;
 
 	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
@@ -54,8 +52,6 @@ public:
 	// Copy constructor
 	Doom3Entity(const Doom3Entity& other);
 	
-	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func);
-
 	void importState(const KeyValues& keyValues);
 	typedef MemberCaller1<Doom3Entity, const KeyValues&, &Doom3Entity::importState> UndoImportCaller;
 

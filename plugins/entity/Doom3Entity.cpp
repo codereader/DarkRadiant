@@ -32,12 +32,6 @@ Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	}
 }
 
-// Static
-void Doom3Entity::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {
-	_keyValueChangedNotify = func;
-	KeyValue::setKeyValueChangedFunc(func);
-}
-
 bool Doom3Entity::isModel() const {
 	std::string name = getKeyValue("name");
 	std::string model = getKeyValue("model");
@@ -60,9 +54,6 @@ void Doom3Entity::importState(const KeyValues& keyValues) {
 	for (KeyValues::const_iterator i = keyValues.begin(); i != keyValues.end(); ++i) {
 		insert(i->first, i->second);
 	}
-
-	if (_keyValueChangedNotify)
-        _keyValueChangedNotify();
 }
 
 void Doom3Entity::attachObserver(Observer* observer) 
@@ -160,10 +151,6 @@ void Doom3Entity::setKeyValue(const std::string& key, const std::string& value)
 		// Non-empty value, "insert" it (will overwrite existing keys - no duplicates)
 		insert(key, value);
 	}
-
-	// Notify the global observer (usually the EntityInspector)
-    if (_keyValueChangedNotify)
-        _keyValueChangedNotify();
 }
 
 /** Retrieve a keyvalue from the entity.

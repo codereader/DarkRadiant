@@ -14,12 +14,6 @@ public:
 	 */
 	scene::INodePtr createEntity(const IEntityClassConstPtr& eclass);
 	
-	/** greebo: Sets the function to call when any keyvalue gets changed.
-	 * 	
-	 * Note: this currently points to the EntityInspector in the radiant core.
-	 */
-	void setKeyValueChangedFunc(KeyValueChangedFunc func);
-	
 	/* Connect two entities using a "target" key.
 	 */
 	void connectEntities(const scene::INodePtr& source, const scene::INodePtr& target);

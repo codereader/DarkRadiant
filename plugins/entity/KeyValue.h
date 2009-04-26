@@ -22,13 +22,11 @@ class KeyValue :
 	std::string _value;
 	std::string _emptyValue;
 	ObservedUndoableObject<std::string> _undo;
-	static EntityCreator::KeyValueChangedFunc _keyValueChangedNotify;
+
 public:
 	KeyValue(const std::string& value, const std::string& empty);
 	
 	~KeyValue();
-
-	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func);
 
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);

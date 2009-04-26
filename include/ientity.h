@@ -290,17 +290,27 @@ public:
 
 const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
 
+/**
+ * \brief
+ * Interface for the entity creator module.
+ */
 class EntityCreator :
 	public RegisterableModule
 {
 public:
-  virtual scene::INodePtr createEntity(const IEntityClassConstPtr& eclass) = 0;
 
-  typedef void (*KeyValueChangedFunc)();
-  virtual void setKeyValueChangedFunc(KeyValueChangedFunc func) = 0;
+    /**
+     * \brief
+     * Create an entity node with the given entity class.
+     */
+    virtual scene::INodePtr createEntity(const IEntityClassConstPtr& eclass) = 0;
 
-	// Connects the two given entities (source will point to target)
-	virtual void connectEntities(const scene::INodePtr& source, const scene::INodePtr& target) = 0;
+    /**
+     * \brief
+     * Connect the two given entity nodes using the "target" system.
+     */
+	virtual void connectEntities(const scene::INodePtr& source,
+                                 const scene::INodePtr& target) = 0;
 };
 
 inline EntityCreator& GlobalEntityCreator() {

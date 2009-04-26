@@ -101,10 +101,6 @@ scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassConstPtr& ecl
 	return node;
 }
 
-void Doom3EntityCreator::setKeyValueChangedFunc(KeyValueChangedFunc func) {
-	Doom3Entity::setKeyValueChangedFunc(func);
-}
-
 /* Connect two entities using a "target" key.
  */
 void Doom3EntityCreator::connectEntities(const scene::INodePtr& source, const scene::INodePtr& target) {
