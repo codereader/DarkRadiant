@@ -1319,7 +1319,8 @@ void Patch::insertRows(std::size_t rowIndex) {
 void Patch::removePoints(bool columns, std::size_t index) {
 	bool rows = !columns; // readability shortcut ;)
 	
-	if (columns && m_width<5 || !columns && m_height < 5) {
+	if ((columns && m_width<5) || (!columns && m_height < 5)) 
+    {
 		throw GenericPatchException("Patch::removePoints: can't remove any more rows/columns.");
 	}
 	

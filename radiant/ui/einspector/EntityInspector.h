@@ -6,6 +6,8 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "iselection.h"
+#include "ientity.h"
+
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 #include "gtkutil/PanedPosition.h"
@@ -49,7 +51,8 @@ typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
 class EntityInspector :
  	public SelectionSystem::Observer,
  	public gtkutil::SingleIdleCallback,
-	public RadiantEventListener
+	public RadiantEventListener,
+    public Entity::Observer
 {
 	// Currently selected entity, this pointer is only non-NULL if the
 	// current entity selection includes exactly 1 entity.
@@ -65,11 +68,16 @@ class EntityInspector :
 	GtkWidget* _showInheritedCheckbox;
 	GtkWidget* _showHelpColumnCheckbox;
 
-    // Key list store and view
-    GtkListStore* _listStore;
-    GtkWidget* _treeView;
+    // View and model for the keyvalue list
+    GtkListStore* _keyValueListStore;
+    GtkWidget* _keyValueTreeView;
 
 	GtkTreeViewColumn* _helpColumn;
+
+    // Cache of GtkTreeIters pointing to keyvalue rows, so we can quickly find
+    // existing keys to change their values
+    typedef std::map<std::string, GtkTreeIter> TreeIterMap;
+    TreeIterMap _keyValueIterMap;
 
 	// Key and value edit boxes. These remain available even for multiple entity
     // selections.
@@ -148,7 +156,10 @@ private:
     void treeSelectionChanged();
 
     // Update our selected entity pointer from the selection system
-    void updateSelectedEntity();
+    void getEntityFromSelectionSystem();
+
+    // Change the selected entity pointer, setting up the observer
+    void changeSelectedEntity(Entity* newEntity);
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();
@@ -187,6 +198,11 @@ public:
 
 	// RadiantEventListener implementation, gets called right before shutdown
 	virtual void onRadiantShutdown();
+
+    /* Entity::Observer implementation */
+    void onKeyInsert(const std::string& key, EntityKeyValue& value);
+    void onKeyChange(const std::string& key, const std::string& value);
+    void onKeyErase(const std::string& key, EntityKeyValue& value);
 
 	// greebo: Tells the inspector to reload the window settings from the registry.
 	void restoreSettings();

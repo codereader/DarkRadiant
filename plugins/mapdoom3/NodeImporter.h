@@ -45,8 +45,8 @@ class NodeImporter {
 	// The progress dialog text for the current entity
 	std::string _dlgEntityText;
 
-   // Event rate limiter for the progress dialog
-   EventRateLimiter _dialogEventLimiter;
+    // Event rate limiter for the progress dialog
+    EventRateLimiter _dialogEventLimiter;
 
 	// The helper module, which will parse the primitive tokens
 	const PrimitiveParser& _parser;
