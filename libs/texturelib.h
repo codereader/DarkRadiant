@@ -103,7 +103,8 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
 	Vector3 first = from;
 	Vector3 second = to;
 
-	if (from.dot(plane.normal()) > 0 == to.dot(plane.normal()) > 0) {
+	if ((from.dot(plane.normal()) > 0) == (to.dot(plane.normal()) > 0)) 
+    {
 		first = -first;
 		second = -second;
 	}

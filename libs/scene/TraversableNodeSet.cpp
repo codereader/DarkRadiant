@@ -143,8 +143,8 @@ void TraversableNodeSet::insert(scene::INodePtr node) {
 /** greebo: scene::Traversable implementation. This removes the node from the local set,
  * 			saves the UndoMemento and notifies the observer.
  */
-void TraversableNodeSet::erase(scene::INodePtr node) {
-	ASSERT_MESSAGE(&node != 0, "TraversableNodeSet::erase: sanity check failed");
+void TraversableNodeSet::erase(scene::INodePtr node) 
+{
 	_undo.save();
 
 	//ASSERT_MESSAGE(_children.find(node) != _children.end(), "TraversableNodeSet::erase - failed to find element");

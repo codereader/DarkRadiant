@@ -400,15 +400,17 @@ void PatchInspector::rescanSelection() {
 		// Get the list of selected patches
 		PatchPtrVector list = selection::algorithm::getSelectedPatches();
 
-		BasicVector2<unsigned int> tess(-1,-1);
+		BasicVector2<unsigned int> tess(UINT_MAX, UINT_MAX);
 		bool tessIsFixed = false;
 		bool tessIsSame = false;
 
 		// Try to find a pair of same tesselation values
-		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i) {
+		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i) 
+        {
 			Patch& p = (*i)->getPatch();
 
-			if (tess.x() == -1) {
+			if (tess.x() == UINT_MAX) 
+            {
 				// Not initialised yet, take these values for starters
 				tessIsSame = true;
 				tessIsFixed = p.subdivionsFixed();
