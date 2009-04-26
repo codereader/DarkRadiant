@@ -32,11 +32,6 @@ Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	}
 }
 
-Doom3Entity::~Doom3Entity() 
-{
-	ASSERT_MESSAGE(_observers.empty(), "EntityKeyValues::~EntityKeyValues: observers still attached");
-}
-
 // Static
 void Doom3Entity::setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func) {
 	_keyValueChangedNotify = func;
@@ -231,6 +226,20 @@ void Doom3Entity::notifyInsert(const std::string& key, KeyValue& value) {
 	_observerMutex = false;
 }
 
+void Doom3Entity::notifyChange(const std::string& k, const std::string& v)
+{
+    _observerMutex = true;
+
+    for (Observers::iterator i = _observers.begin();
+         i != _observers.end();
+         ++i) 
+    {
+		(*i)->onKeyChange(k, v);
+	}
+
+    _observerMutex = false;
+}
+
 void Doom3Entity::notifyErase(const std::string& key, KeyValue& value) {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
@@ -240,18 +249,6 @@ void Doom3Entity::notifyErase(const std::string& key, KeyValue& value) {
 	}
 	
 	_observerMutex = false;
-}
-
-void Doom3Entity::forEachKeyValue_notifyInsert() {
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
-		notifyInsert(i->first, *i->second);
-	}
-}
-
-void Doom3Entity::forEachKeyValue_notifyErase() {
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) {
-		notifyErase(i->first, *i->second);
-	}
 }
 
 void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue) {
@@ -268,13 +265,18 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue) {
 	}
 }
 
-void Doom3Entity::insert(const std::string& key, const std::string& value) {
+void Doom3Entity::insert(const std::string& key, const std::string& value) 
+{
 	// Try to lookup the key in the map
 	KeyValues::iterator i = find(key);
 	
-	if (i != _keyValues.end()) {
+	if (i != _keyValues.end()) 
+    {
 		// Key has been found
 		i->second->assign(value);
+
+        // Notify observers of key change
+        notifyChange(key, value);
 	}
 	else {
 		// No key with that name found, create a new one

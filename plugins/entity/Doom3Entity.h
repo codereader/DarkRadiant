@@ -54,8 +54,6 @@ public:
 	// Copy constructor
 	Doom3Entity(const Doom3Entity& other);
 	
-	~Doom3Entity();
-
 	static void setKeyValueChangedFunc(EntityCreator::KeyValueChangedFunc func);
 
 	void importState(const KeyValues& keyValues);
@@ -95,10 +93,11 @@ public:
 	bool isModel() const;
 
 private:
+
+    // Notification functions
 	void notifyInsert(const std::string& key, KeyValue& value);
+    void notifyChange(const std::string& k, const std::string& v);
 	void notifyErase(const std::string& key, KeyValue& value);
-	void forEachKeyValue_notifyInsert();
-	void forEachKeyValue_notifyErase();
 
 	void insert(const std::string& key, const KeyValuePtr& keyValue);
 

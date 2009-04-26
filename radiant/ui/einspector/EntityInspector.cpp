@@ -62,17 +62,20 @@ namespace {
 // Constructor creates UI components for the EntityInspector dialog
 
 EntityInspector::EntityInspector()
-: _listStore(gtk_list_store_new(N_COLUMNS,
-	    						G_TYPE_STRING,		// property
-	    						G_TYPE_STRING,		// value
-	    						G_TYPE_STRING,		// text colour
-	    						GDK_TYPE_PIXBUF,	// value icon
-	    						G_TYPE_STRING,		// inherited flag
-								GDK_TYPE_PIXBUF,	// help icon
-								G_TYPE_BOOLEAN)),	// has help
-  _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore))),
+: _selectedEntity(NULL),
+  _keyValueListStore(gtk_list_store_new(N_COLUMNS,
+                                        G_TYPE_STRING,		// property
+                                        G_TYPE_STRING,		// value
+                                        G_TYPE_STRING,		// text colour
+                                        GDK_TYPE_PIXBUF,	// value icon
+                                        G_TYPE_STRING,		// inherited flag
+                                        GDK_TYPE_PIXBUF,	// help icon
+                                        G_TYPE_BOOLEAN)),	// has help
+  _keyValueTreeView(
+        gtk_tree_view_new_with_model(GTK_TREE_MODEL(_keyValueListStore))
+   ),
   _helpColumn(NULL),
-  _contextMenu(gtkutil::PopupMenu(_treeView)),
+  _contextMenu(gtkutil::PopupMenu(_keyValueTreeView)),
   _showInherited(false)
 {
     _widget = gtk_vbox_new(FALSE, 0);
@@ -119,7 +122,8 @@ EntityInspector::EntityInspector()
 	GlobalSelectionSystem().addObserver(this);
 }
 
-void EntityInspector::restoreSettings() {
+void EntityInspector::restoreSettings() 
+{
 	// Find the information stored in the registry
 	if (GlobalRegistry().keyExists(RKEY_PANE_STATE)) {
 		_panedPosition.loadFromPath(RKEY_PANE_STATE);
@@ -132,8 +136,95 @@ void EntityInspector::restoreSettings() {
 	_panedPosition.applyPosition();
 }
 
+// Entity::Observer implementation
+
+void EntityInspector::onKeyInsert(const std::string& key,
+                                  EntityKeyValue& value)
+{
+    onKeyChange(key, value.get());
+}
+
+void EntityInspector::onKeyChange(const std::string& key,
+                                  const std::string& value)
+{
+    GtkTreeIter keyValueIter;
+
+    // Check if we already have an iter for this key (i.e. this is a
+    // modification).
+    TreeIterMap::const_iterator i = _keyValueIterMap.find(key);
+    if (i != _keyValueIterMap.end())
+    {
+        keyValueIter = i->second;
+    }
+    else
+    {
+        // Append a new row to the list store and add it to the iter map
+        gtk_list_store_append(_keyValueListStore, &keyValueIter);
+        _keyValueIterMap.insert(TreeIterMap::value_type(key, keyValueIter));
+    }
+
+    // Look up type for this key. First check the property parm map,
+    // then the entity class itself. If nothing is found, leave blank.
+    PropertyParmMap::const_iterator typeIter = getPropertyMap().find(key);
+
+    IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
+    const EntityClassAttribute& attr = eclass->getAttribute(key);
+
+    std::string type;
+    if (typeIter != getPropertyMap().end()) 
+    {
+        type = typeIter->second.type;
+    }
+    else 
+    {
+        // Check the entityclass (which will return blank if not found)
+        type = attr.type;
+    }
+
+    bool hasDescription = !attr.description.empty();
+
+    // Set the values for the row
+    gtk_list_store_set(
+        _keyValueListStore, 
+        &keyValueIter,
+        PROPERTY_NAME_COLUMN, key.c_str(),
+        PROPERTY_VALUE_COLUMN, value.c_str(),
+        TEXT_COLOUR_COLUMN, "black",
+        PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
+        INHERITED_FLAG_COLUMN, "", // not inherited
+        HELP_ICON_COLUMN, hasDescription 
+                          ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) 
+                          : NULL,
+        HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
+        -1
+    );
+}
+
+void EntityInspector::onKeyErase(const std::string& key,
+                                 EntityKeyValue& value)
+{
+    // Look up iter in the TreeIter map, and delete it from the list store
+    TreeIterMap::iterator i = _keyValueIterMap.find(key);
+    if (i != _keyValueIterMap.end())
+    {
+        GtkTreeIter treeIter = i->second;
+
+        // Erase row from tree store
+        gtk_list_store_remove(_keyValueListStore, &treeIter);
+
+        // Erase iter from iter map
+        _keyValueIterMap.erase(i);
+    }
+    else
+    {
+        std::cerr << "EntityInspector: warning: removed key '" << key 
+                  << "' not found in map." << std::endl;
+    }
+}
+
 // Create the context menu
-void EntityInspector::createContextMenu() {
+void EntityInspector::createContextMenu() 
+{
 	_contextMenu.addItem(
 		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property..."),
 		boost::bind(&EntityInspector::_onAddKey, this)
@@ -226,7 +317,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
                                         NULL);
 
 	gtk_tree_view_column_set_sort_column_id(nameCol, PROPERTY_NAME_COLUMN);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), nameCol);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(_keyValueTreeView), nameCol);
 
 	// Create the value column
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
@@ -241,7 +332,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
     									NULL);
 
 	gtk_tree_view_column_set_sort_column_id(valCol, PROPERTY_VALUE_COLUMN);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), valCol);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(_keyValueTreeView), valCol);
 
 	// Help column
 	_helpColumn = gtk_tree_view_column_new();
@@ -261,20 +352,22 @@ GtkWidget* EntityInspector::createTreeViewPane()
 										"pixbuf", HELP_ICON_COLUMN,
 										NULL);
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), _helpColumn);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(_keyValueTreeView), _helpColumn);
 
 	// Connect the tooltip query signal to our custom routine
-	g_object_set(G_OBJECT(_treeView), "has-tooltip", TRUE, NULL);
-	g_signal_connect(G_OBJECT(_treeView), "query-tooltip", G_CALLBACK(_onQueryTooltip), this);
+	g_object_set(G_OBJECT(_keyValueTreeView), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(_keyValueTreeView), "query-tooltip", G_CALLBACK(_onQueryTooltip), this);
 
     // Set up the signals
-    GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+    GtkTreeSelection* selection = gtk_tree_view_get_selection(
+        GTK_TREE_VIEW(_keyValueTreeView)
+    );
     g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(callbackTreeSelectionChanged), this);
 
     // Embed the TreeView in a scrolled viewport
-    GtkWidget* scrollWin = gtkutil::ScrolledFrame(_treeView);
+    GtkWidget* scrollWin = gtkutil::ScrolledFrame(_keyValueTreeView);
     gtk_widget_set_size_request(
-        _treeView, TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT
+        _keyValueTreeView, TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT
     );
     gtk_box_pack_start(GTK_BOX(vbx), scrollWin, TRUE, TRUE, 0);
 
@@ -312,14 +405,14 @@ std::string EntityInspector::getListSelection(int col)
 {
 	// Prepare to get the selection
     GtkTreeSelection* selection = gtk_tree_view_get_selection(
-            GTK_TREE_VIEW(_treeView)
+            GTK_TREE_VIEW(_keyValueTreeView)
     );
     GtkTreeIter tmpIter;
 
 	// Return the selected string if available, else a blank string
     if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) 
     {
-        return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_listStore), 
+        return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_keyValueListStore), 
                                              &tmpIter,
                                              col);
     }
@@ -330,23 +423,17 @@ std::string EntityInspector::getListSelection(int col)
 }
 
 // Redraw the GUI elements
-void EntityInspector::onGtkIdle() {
-
-	// Entity Inspector can only be used on a single entity. Multiple selections
-    // or nothing selected result in a grayed-out dialog, as does the selection
-    // of something that is not an Entity (worldspawn).
-
+void EntityInspector::onGtkIdle() 
+{
     // Update from selection system
-    updateSelectedEntity();
+    getEntityFromSelectionSystem();
 
     if (_selectedEntity != NULL)
     {
         gtk_widget_set_sensitive(_editorFrame, TRUE);
-        gtk_widget_set_sensitive(_treeView, TRUE);
+        gtk_widget_set_sensitive(_keyValueTreeView, TRUE);
         gtk_widget_set_sensitive(_showInheritedCheckbox, TRUE);
         gtk_widget_set_sensitive(_showHelpColumnCheckbox, TRUE);
-
-        refreshTreeModel(); // get values, already have category tree
     }
     else  // no selected entity
     {
@@ -357,11 +444,9 @@ void EntityInspector::onGtkIdle() {
 
         // Disable the dialog and clear the TreeView
         gtk_widget_set_sensitive(_editorFrame, FALSE);
-        gtk_widget_set_sensitive(_treeView, FALSE);
+        gtk_widget_set_sensitive(_keyValueTreeView, FALSE);
         gtk_widget_set_sensitive(_showInheritedCheckbox, FALSE);
         gtk_widget_set_sensitive(_showHelpColumnCheckbox, FALSE);
-
-        gtk_list_store_clear(_listStore);
     }
 }
 
@@ -644,7 +729,8 @@ void EntityInspector::_onEntryActivate(GtkWidget* w, EntityInspector* self) {
 	gtk_widget_grab_focus(self->_keyEntry);
 }
 
-void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) {
+void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) 
+{
 	if (gtk_toggle_button_get_active(b)) {
 		self->_showInherited = true;
 	}
@@ -652,7 +738,7 @@ void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector
 		self->_showInherited = false;
 	}
 	// Refresh list display
-	self->refreshTreeModel();
+//	self->refreshTreeModel();
 }
 
 void EntityInspector::_onToggleShowHelpIcons(GtkToggleButton* b, EntityInspector* self) {
@@ -680,7 +766,7 @@ gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget,
 	if (gtk_tree_view_get_path_at_pos(tv, binX, binY, &path, &column, &cellx, &celly)) {
 		// Get the iter of the row pointed at
 		GtkTreeIter iter;
-		GtkTreeModel* model = GTK_TREE_MODEL(self->_listStore);
+		GtkTreeModel* model = GTK_TREE_MODEL(self->_keyValueListStore);
 		if (gtk_tree_model_get_iter(model, &iter, path)) {
 			// Get the key pointed at
 			bool hasHelp = gtkutil::TreeModel::getBoolean(model, &iter, HAS_HELP_FLAG_COLUMN);
@@ -775,7 +861,7 @@ void EntityInspector::treeSelectionChanged() {
 void EntityInspector::refreshTreeModel() {
 
 	// Clear the existing list
-	gtk_list_store_clear(_listStore);
+	gtk_list_store_clear(_keyValueListStore);
 
 	if (_selectedEntity == NULL) return; // sanity check
 
@@ -862,7 +948,7 @@ void EntityInspector::refreshTreeModel() {
 	};
 
 	// Populate the list view
-	ListPopulateVisitor visitor(_listStore,
+	ListPopulateVisitor visitor(_keyValueListStore,
 								getPropertyMap(),
 								_selectedEntity->getEntityClass(),
                                 _lastKey);
@@ -878,7 +964,7 @@ void EntityInspector::refreshTreeModel() {
     /*GtkTreeIter* lastIter = visitor.getLastIter();
     if (lastIter != NULL) {
         gtk_tree_selection_select_iter(
-            gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView)),
+            gtk_tree_view_get_selection(GTK_TREE_VIEW(_keyValueTreeView)),
             lastIter
         );
     }*/
@@ -934,35 +1020,77 @@ void EntityInspector::appendClassProperties() {
 	};
 
 	// Visit the entity class
-	ClassPropertyVisitor visitor(_listStore);
+	ClassPropertyVisitor visitor(_keyValueListStore);
 	eclass->forEachClassAttribute(visitor);
 }
 
 // Update the selected Entity pointer from the selection system
-void EntityInspector::updateSelectedEntity() {
-
-	_selectedEntity = NULL;
-
+void EntityInspector::getEntityFromSelectionSystem() 
+{
 	// A single entity must be selected
-	if (GlobalSelectionSystem().countSelected() != 1) {
+	if (GlobalSelectionSystem().countSelected() != 1) 
+    {
+        changeSelectedEntity(NULL);
 		return;
 	}
 
 	scene::INodePtr selectedNode = GlobalSelectionSystem().ultimateSelected();
 
-   // The root node must not be selected (this can happen if Invert Selection is
-   // activated with an empty scene, or by direct selection in the entity list).
-	if (selectedNode->isRoot()) {
+    // The root node must not be selected (this can happen if Invert Selection is
+    // activated with an empty scene, or by direct selection in the entity list).
+	if (selectedNode->isRoot()) 
+    {
+        changeSelectedEntity(NULL);
 		return;
 	}
 
-	scene::INodePtr selectedNodeParent = selectedNode->getParent();
+    // Try both the selected node (if an entity is selected) or the parent node
+    // (if a brush is selected).
+    Entity* newSelectedEntity = Node_getEntity(selectedNode);
+    if (newSelectedEntity)
+    {
+        // Node was an entity, use this
+        changeSelectedEntity(newSelectedEntity);
+    }
+    else
+    {
+        // Node was not an entity, try parent instead
+        scene::INodePtr selectedNodeParent = selectedNode->getParent();
+        changeSelectedEntity(Node_getEntity(selectedNodeParent));
+    }
+}
 
-   // Try both the selected node (if an entity is selected) or the parent node
-   // (if a brush is selected).
-   _selectedEntity = Node_getEntity(selectedNode);
-   if (!_selectedEntity)
-      _selectedEntity = Node_getEntity(selectedNodeParent);
+// Change selected entity pointer
+void EntityInspector::changeSelectedEntity(Entity* newEntity)
+{
+    if (newEntity == _selectedEntity)
+    {
+        // No change, do nothing
+        return;
+    }
+    else if (newEntity == NULL)
+    {
+        // New entity is NULL, detach observer
+        assert(_selectedEntity);
+
+        _selectedEntity->detachObserver(this);
+        _selectedEntity = NULL;
+    }
+    else
+    {
+        // Change to different entity
+        assert(newEntity);
+
+        // Detach only if we already have a selected entity
+        if (_selectedEntity)
+        {
+            _selectedEntity->detachObserver(this);
+        }
+
+        // Attach to new entity
+        _selectedEntity = newEntity;
+        _selectedEntity->attachObserver(this);
+    }
 }
 
 void EntityInspector::toggle(const cmd::ArgumentList& args) {

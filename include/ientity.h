@@ -85,14 +85,25 @@ public:
 	class Observer
 	{
 	public:
-		/** greebo: This gets called when a new spawnarg is added to the entity
-		 * 			key/value list to give the Observer an opportunity to react.
-		 */
+
+        /**
+         * \brief
+         * Notification that a new key value has been inserted on the entity.
+         */
 		virtual void onKeyInsert(const std::string& key, EntityKeyValue& value)
         { }
 		
-		/** greebo: This is called when a spawnarg is removed from the observed entity.
-		 */
+        /**
+         * \brief
+         * Notification that a key value has changed on the entity.
+         */
+        virtual void onKeyChange(const std::string& key, const std::string& val)
+        { }
+
+        /**
+         * \brief
+         * Notification that a key value has been removed from the entity.
+         */
 		virtual void onKeyErase(const std::string& key, EntityKeyValue& value)
         { }
 	};
