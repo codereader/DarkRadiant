@@ -69,7 +69,7 @@ class EntityInspector :
 	GtkWidget* _showHelpColumnCheckbox;
 
     // View and model for the keyvalue list
-    GtkListStore* _keyValueListStore;
+    GtkListStore* _kvStore;
     GtkWidget* _keyValueTreeView;
 
 	GtkTreeViewColumn* _helpColumn;
@@ -92,9 +92,6 @@ class EntityInspector :
 
 	// Currently displayed PropertyEditor
 	PropertyEditorPtr _currentPropertyEditor;
-
-    // Whether to show inherited properties or not
-    bool _showInherited;
 
     // The last selected key
     std::string _lastKey;
@@ -147,10 +144,9 @@ private:
 
     static std::string  cleanInputString( const std::string& );
 
-    // Routines to populate the TreeStore with the keyvals attached to the
-    // currently-selected object.
-    void refreshTreeModel();
-    void appendClassProperties();
+    // Add and remove inherited properties from the entity class
+    void addClassProperties();
+    void removeClassProperties();
 
 	// Update the GTK components when a new selection is made in the tree view
     void treeSelectionChanged();

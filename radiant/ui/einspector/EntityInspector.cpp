@@ -63,20 +63,19 @@ namespace {
 
 EntityInspector::EntityInspector()
 : _selectedEntity(NULL),
-  _keyValueListStore(gtk_list_store_new(N_COLUMNS,
-                                        G_TYPE_STRING,		// property
-                                        G_TYPE_STRING,		// value
-                                        G_TYPE_STRING,		// text colour
-                                        GDK_TYPE_PIXBUF,	// value icon
-                                        G_TYPE_STRING,		// inherited flag
-                                        GDK_TYPE_PIXBUF,	// help icon
-                                        G_TYPE_BOOLEAN)),	// has help
+  _kvStore(gtk_list_store_new(N_COLUMNS,
+                              G_TYPE_STRING,		// property
+                              G_TYPE_STRING,		// value
+                              G_TYPE_STRING,		// text colour
+                              GDK_TYPE_PIXBUF,	// value icon
+                              G_TYPE_STRING,		// inherited flag
+                              GDK_TYPE_PIXBUF,	// help icon
+                              G_TYPE_BOOLEAN)),	// has help
   _keyValueTreeView(
-        gtk_tree_view_new_with_model(GTK_TREE_MODEL(_keyValueListStore))
+        gtk_tree_view_new_with_model(GTK_TREE_MODEL(_kvStore))
    ),
   _helpColumn(NULL),
-  _contextMenu(gtkutil::PopupMenu(_keyValueTreeView)),
-  _showInherited(false)
+  _contextMenu(gtkutil::PopupMenu(_keyValueTreeView))
 {
     _widget = gtk_vbox_new(FALSE, 0);
 
@@ -155,7 +154,7 @@ void EntityInspector::onKeyChange(const std::string& key,
     else
     {
         // Append a new row to the list store and add it to the iter map
-        gtk_list_store_append(_keyValueListStore, &keyValueIter);
+        gtk_list_store_append(_kvStore, &keyValueIter);
         _keyValueIterMap.insert(TreeIterMap::value_type(key, keyValueIter));
     }
 
@@ -181,7 +180,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 
     // Set the values for the row
     gtk_list_store_set(
-        _keyValueListStore, 
+        _kvStore, 
         &keyValueIter,
         PROPERTY_NAME_COLUMN, key.c_str(),
         PROPERTY_VALUE_COLUMN, value.c_str(),
@@ -206,7 +205,7 @@ void EntityInspector::onKeyErase(const std::string& key,
         GtkTreeIter treeIter = i->second;
 
         // Erase row from tree store
-        gtk_list_store_remove(_keyValueListStore, &treeIter);
+        gtk_list_store_remove(_kvStore, &treeIter);
 
         // Erase iter from iter map
         _keyValueIterMap.erase(i);
@@ -408,7 +407,7 @@ std::string EntityInspector::getListSelection(int col)
 	// Return the selected string if available, else a blank string
     if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) 
     {
-        return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_keyValueListStore), 
+        return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_kvStore), 
                                              &tmpIter,
                                              col);
     }
@@ -632,7 +631,8 @@ void EntityInspector::_onDeleteKey() {
 		_selectedEntity->setKeyValue(property, "");
 }
 
-bool EntityInspector::_testDeleteKey() {
+bool EntityInspector::_testDeleteKey() 
+{
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
 	if (getListSelection(INHERITED_FLAG_COLUMN) != "1")
@@ -717,14 +717,14 @@ void EntityInspector::_onEntryActivate(GtkWidget* w, EntityInspector* self) {
 
 void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) 
 {
-	if (gtk_toggle_button_get_active(b)) {
-		self->_showInherited = true;
+	if (gtk_toggle_button_get_active(b)) 
+    {
+		self->addClassProperties();
 	}
-	else {
-		self->_showInherited = false;
+	else 
+    {
+		self->removeClassProperties();
 	}
-	// Refresh list display
-//	self->refreshTreeModel();
 }
 
 void EntityInspector::_onToggleShowHelpIcons(GtkToggleButton* b, EntityInspector* self) {
@@ -752,7 +752,7 @@ gboolean EntityInspector::_onQueryTooltip(GtkWidget* widget,
 	if (gtk_tree_view_get_path_at_pos(tv, binX, binY, &path, &column, &cellx, &celly)) {
 		// Get the iter of the row pointed at
 		GtkTreeIter iter;
-		GtkTreeModel* model = GTK_TREE_MODEL(self->_keyValueListStore);
+		GtkTreeModel* model = GTK_TREE_MODEL(self->_kvStore);
 		if (gtk_tree_model_get_iter(model, &iter, path)) {
 			// Get the key pointed at
 			bool hasHelp = gtkutil::TreeModel::getBoolean(model, &iter, HAS_HELP_FLAG_COLUMN);
@@ -843,129 +843,14 @@ void EntityInspector::treeSelectionChanged() {
 
 }
 
-// Main refresh function.
-void EntityInspector::refreshTreeModel() {
-
-	// Clear the existing list
-	gtk_list_store_clear(_keyValueListStore);
-
-	if (_selectedEntity == NULL) return; // sanity check
-
-	// Local functor to enumerate keyvals on object and add them to the list
-	// view.
-
-	class ListPopulateVisitor
-	: public Entity::Visitor
-	{
-		// List store to populate
-		GtkListStore* _store;
-
-		// Property map to look up types
-		const PropertyParmMap& _map;
-
-		// Entity class to check for types
-		IEntityClassConstPtr _eclass;
-
-        // Last selected key to highlight
-        std::string _lastKey;
-
-        // TreeIter to select, if we find the last-selected key
-        GtkTreeIter* _lastIter;
-
-	public:
-
-		// Constructor
-		ListPopulateVisitor(GtkListStore* store,
-							const PropertyParmMap& map,
-							IEntityClassConstPtr cls,
-                            std::string lastKey)
-        : _store(store), _map(map), _eclass(cls), _lastKey(lastKey),
-          _lastIter(NULL)
-		{
-        }
-
-		// Required visit function
-		virtual void visit(const std::string& key, const std::string& value) {
-
-			// Look up type for this key. First check the property parm map,
-			// then the entity class itself. If nothing is found, leave blank.
-			PropertyParmMap::const_iterator typeIter = _map.find(key);
-
-			const EntityClassAttribute& attr = _eclass->getAttribute(key);
-
-			std::string type;
-			if (typeIter != _map.end()) {
-				type = typeIter->second.type;
-			}
-			else {
-				// Check the entityclass (which will return blank if not found)
-				type = attr.type;
-			}
-
-			bool hasDescription = !attr.description.empty();
-
-			// Append the details to the treestore
-			GtkTreeIter iter;
-			gtk_list_store_append(_store, &iter);
-			gtk_list_store_set(
-				_store, &iter,
-				PROPERTY_NAME_COLUMN, key.c_str(),
-				PROPERTY_VALUE_COLUMN, value.c_str(),
-				TEXT_COLOUR_COLUMN, "black",
-				PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
-				INHERITED_FLAG_COLUMN, "", // not inherited
-				HELP_ICON_COLUMN, hasDescription ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) : NULL,
-				HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
-				-1);
-
-            // If this was the last selected key, save the Iter so we can
-            // select it again
-            if (key == _lastKey) {
-                _lastIter = gtk_tree_iter_copy(&iter);
-            }
-
-		}
-
-        // Get the iter pointing to the last-selected key
-        GtkTreeIter* getLastIter() {
-            return _lastIter;
-        }
-
-	};
-
-	// Populate the list view
-	ListPopulateVisitor visitor(_keyValueListStore,
-								getPropertyMap(),
-								_selectedEntity->getEntityClass(),
-                                _lastKey);
-	_selectedEntity->forEachKeyValue(visitor);
-
-	// Add the inherited properties if the toggle is set
-	if (_showInherited) {
-		appendClassProperties();
-	}
-
-    // If we found the last-selected key, select it
-	// greebo: Disabled auto-selection of last highlighted key (issue #1531)
-    /*GtkTreeIter* lastIter = visitor.getLastIter();
-    if (lastIter != NULL) {
-        gtk_tree_selection_select_iter(
-            gtk_tree_view_get_selection(GTK_TREE_VIEW(_keyValueTreeView)),
-            lastIter
-        );
-    }*/
-
-	// Force an update of widgets
-	treeSelectionChanged();
-}
-
 // Append inherited (entityclass) properties
-void EntityInspector::appendClassProperties() {
-
+void EntityInspector::addClassProperties() 
+{
 	// Get the entityclass for the current entity
 	std::string className = _selectedEntity->getKeyValue("classname");
-	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(className,
-																	 true);
+	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
+        className, true
+    );
 
 	// Use a functor to walk the entityclass and add all of its attributes
 	// to the tree
@@ -982,12 +867,12 @@ void EntityInspector::appendClassProperties() {
 		: _store(store) {}
 
 		// Required visitor function
-		void visit(const EntityClassAttribute& a) {
-
+		void visit(const EntityClassAttribute& a) 
+        {
 			// Only add properties with values, we don't want the optional
 			// "editor_var xxx" properties here.
-			if (!a.value.empty()) {
-
+			if (!a.value.empty()) 
+            {
 				bool hasDescription = !a.description.empty();
 
 				GtkTreeIter iter;
@@ -998,7 +883,9 @@ void EntityInspector::appendClassProperties() {
 					TEXT_COLOUR_COLUMN, "#707070",
 					PROPERTY_ICON_COLUMN, NULL,
 					INHERITED_FLAG_COLUMN, "1", // inherited
-					HELP_ICON_COLUMN, hasDescription ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) : NULL,
+					HELP_ICON_COLUMN, hasDescription 
+                                      ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME)
+                                      : NULL,
 					HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
 					-1);
 			}
@@ -1006,8 +893,42 @@ void EntityInspector::appendClassProperties() {
 	};
 
 	// Visit the entity class
-	ClassPropertyVisitor visitor(_keyValueListStore);
+	ClassPropertyVisitor visitor(_kvStore);
 	eclass->forEachClassAttribute(visitor);
+}
+
+// Remove the inherited properties
+void EntityInspector::removeClassProperties()
+{
+    // Iterate over all rows in the list store, removing inherited keys
+    GtkTreeIter iter;
+    gboolean valid = gtk_tree_model_get_iter_first(
+            GTK_TREE_MODEL(_kvStore), &iter
+    );
+    while (valid)
+    {
+        // Get the inherited flag
+        gchar* inheritedCS;
+        gtk_tree_model_get(
+            GTK_TREE_MODEL(_kvStore),
+            &iter,
+            INHERITED_FLAG_COLUMN,
+            &inheritedCS,
+            -1
+        );
+
+        // If this is an inherited row, remove it, otherwise move to the next
+        // row
+        std::string inherited(inheritedCS);
+        if (inherited == "1")
+        {
+            valid = gtk_list_store_remove(_kvStore, &iter);
+        }
+        else
+        {
+            valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(_kvStore), &iter);
+        }
+    }
 }
 
 // Update the selected Entity pointer from the selection system
@@ -1061,6 +982,9 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
 
         _selectedEntity->detachObserver(this);
         _selectedEntity = NULL;
+
+        // Remove any inherited properties
+        removeClassProperties();
     }
     else
     {
@@ -1071,6 +995,7 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
         if (_selectedEntity)
         {
             _selectedEntity->detachObserver(this);
+            removeClassProperties();
         }
 
         // Attach to new entity
