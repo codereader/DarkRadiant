@@ -67,10 +67,10 @@ EntityInspector::EntityInspector()
                               G_TYPE_STRING,		// property
                               G_TYPE_STRING,		// value
                               G_TYPE_STRING,		// text colour
-                              GDK_TYPE_PIXBUF,	// value icon
+                              GDK_TYPE_PIXBUF,	    // value icon
                               G_TYPE_STRING,		// inherited flag
-                              GDK_TYPE_PIXBUF,	// help icon
-                              G_TYPE_BOOLEAN)),	// has help
+                              GDK_TYPE_PIXBUF,	    // help icon
+                              G_TYPE_BOOLEAN)),	    // has help
   _keyValueTreeView(
         gtk_tree_view_new_with_model(GTK_TREE_MODEL(_kvStore))
    ),
@@ -83,16 +83,25 @@ EntityInspector::EntityInspector()
 
 	GtkWidget* topHBox = gtk_hbox_new(FALSE, 6);
 
-	_showInheritedCheckbox = gtk_check_button_new_with_label("Show inherited properties");
-	g_signal_connect(G_OBJECT(_showInheritedCheckbox), "toggled", G_CALLBACK(_onToggleShowInherited), this);
+    // Show inherited properties checkbutton
+    _showInheritedCheckbox = gtk_check_button_new_with_label(
+        "Show inherited properties"
+    );
+	g_signal_connect(
+        G_OBJECT(_showInheritedCheckbox), "toggled",
+        G_CALLBACK(_onToggleShowInherited), this
+    );
+	gtk_box_pack_start(
+        GTK_BOX(topHBox), _showInheritedCheckbox, FALSE, FALSE, 0
+    );
 
 	_showHelpColumnCheckbox = gtk_check_button_new_with_label("Show help icons");
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_showHelpColumnCheckbox), FALSE);
 	g_signal_connect(G_OBJECT(_showHelpColumnCheckbox), "toggled", G_CALLBACK(_onToggleShowHelpIcons), this);
 
-	gtk_box_pack_start(GTK_BOX(topHBox), _showInheritedCheckbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(topHBox), _showHelpColumnCheckbox, FALSE, FALSE, 0);
 
+    // Add checkbutton hbox to main widget
 	gtk_box_pack_start(GTK_BOX(_widget), topHBox, FALSE, FALSE, 0);
 
 	GtkWidget* paned = gtkutil::Paned(
@@ -407,9 +416,9 @@ std::string EntityInspector::getListSelection(int col)
 	// Return the selected string if available, else a blank string
     if (gtk_tree_selection_get_selected(selection, NULL, &tmpIter)) 
     {
-        return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_kvStore), 
-                                             &tmpIter,
-                                             col);
+        return gtkutil::TreeModel::getString(
+            GTK_TREE_MODEL(_kvStore), &tmpIter, col
+        );
     }
     else 
     {
@@ -511,7 +520,7 @@ namespace
 }
 
 
-std::string    EntityInspector::cleanInputString( const std::string &input )
+std::string EntityInspector::cleanInputString(const std::string &input)
 {
     std::string ret = input;
 
@@ -525,8 +534,8 @@ std::string    EntityInspector::cleanInputString( const std::string &input )
 void EntityInspector::setPropertyFromEntries()
 {
 	// Get the key from the entry box
-	std::string key = cleanInputString( std::string( gtk_entry_get_text(GTK_ENTRY(_keyEntry)) ) );
-	std::string val = cleanInputString( std::string( gtk_entry_get_text(GTK_ENTRY(_valEntry)) ) );
+    std::string key = cleanInputString(gtk_entry_get_text(GTK_ENTRY(_keyEntry)));
+    std::string val = cleanInputString(gtk_entry_get_text(GTK_ENTRY(_valEntry)));
 
     // Update the entry boxes
     gtk_entry_set_text( GTK_ENTRY( _keyEntry ), key.c_str() );
@@ -715,7 +724,8 @@ void EntityInspector::_onEntryActivate(GtkWidget* w, EntityInspector* self) {
 	gtk_widget_grab_focus(self->_keyEntry);
 }
 
-void EntityInspector::_onToggleShowInherited(GtkToggleButton* b, EntityInspector* self) 
+void EntityInspector::_onToggleShowInherited(GtkToggleButton* b,
+                                             EntityInspector* self) 
 {
 	if (gtk_toggle_button_get_active(b)) 
     {
@@ -907,19 +917,11 @@ void EntityInspector::removeClassProperties()
     );
     while (valid)
     {
-        // Get the inherited flag
-        gchar* inheritedCS;
-        gtk_tree_model_get(
-            GTK_TREE_MODEL(_kvStore),
-            &iter,
-            INHERITED_FLAG_COLUMN,
-            &inheritedCS,
-            -1
-        );
-
         // If this is an inherited row, remove it, otherwise move to the next
         // row
-        std::string inherited(inheritedCS);
+        std::string inherited = gtkutil::TreeModel::getString(
+            GTK_TREE_MODEL(_kvStore), &iter, INHERITED_FLAG_COLUMN
+        );
         if (inherited == "1")
         {
             valid = gtk_list_store_remove(_kvStore, &iter);
@@ -975,22 +977,8 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
         // No change, do nothing
         return;
     }
-    else if (newEntity == NULL)
-    {
-        // New entity is NULL, detach observer
-        assert(_selectedEntity);
-
-        _selectedEntity->detachObserver(this);
-        _selectedEntity = NULL;
-
-        // Remove any inherited properties
-        removeClassProperties();
-    }
     else
     {
-        // Change to different entity
-        assert(newEntity);
-
         // Detach only if we already have a selected entity
         if (_selectedEntity)
         {
@@ -998,13 +986,27 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
             removeClassProperties();
         }
 
-        // Attach to new entity
         _selectedEntity = newEntity;
-        _selectedEntity->attachObserver(this);
+
+        // Attach to new entity if it is non-NULL
+        if (_selectedEntity)
+        {
+            _selectedEntity->attachObserver(this);
+
+            // Add inherited properties if the checkbox is set
+            gboolean showInherited = gtk_toggle_button_get_active(
+                GTK_TOGGLE_BUTTON(_showInheritedCheckbox)
+            );
+            if (showInherited == TRUE)
+            {
+                addClassProperties();
+            }
+        }
     }
 }
 
-void EntityInspector::toggle(const cmd::ArgumentList& args) {
+void EntityInspector::toggle(const cmd::ArgumentList& args) 
+{
 	GlobalGroupDialog().togglePage("entity");
 }
 
