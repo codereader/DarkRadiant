@@ -9,7 +9,6 @@
 #include "ientity.h"
 
 #include "gtkutil/menu/PopupMenu.h"
-#include "gtkutil/event/SingleIdleCallback.h"
 #include "gtkutil/PanedPosition.h"
 
 #include <gtk/gtkliststore.h>
@@ -50,7 +49,6 @@ typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
  */
 class EntityInspector :
  	public SelectionSystem::Observer,
- 	public gtkutil::SingleIdleCallback,
 	public RadiantEventListener,
     public Entity::Observer
 {
@@ -92,9 +90,6 @@ class EntityInspector :
 
 	// Currently displayed PropertyEditor
 	PropertyEditorPtr _currentPropertyEditor;
-
-    // The last selected key
-    std::string _lastKey;
 
 	// The clipboard for spawnargs
 	struct ClipBoard
@@ -160,16 +155,18 @@ private:
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();
 
-	// Applies the given key/value pair to the selection (works with multiple selected entities)
-	void applyKeyValueToSelection(const std::string& key, const std::string& value);
+    // Applies the given key/value pair to the selection (works with multiple
+    // selected entities)
+    void applyKeyValueToSelection(const std::string& key,
+                                  const std::string& value);
 
 	// Static map of property names to PropertyParms objects
 	const PropertyParmMap& getPropertyMap();
 
-protected:
+    // Update tree view contents and property editor
+    void updateGUIElements();
 
-	// GTK idle callback, used for refreshing display
-	void onGtkIdle();
+protected:
 
 	// Constructor
     EntityInspector();

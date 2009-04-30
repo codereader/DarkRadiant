@@ -119,7 +119,7 @@ EntityInspector::EntityInspector()
     createContextMenu();
 
     // Stimulate initial redraw to get the correct status
-    requestIdleCallback();
+    updateGUIElements();
 
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
@@ -427,7 +427,7 @@ std::string EntityInspector::getListSelection(int col)
 }
 
 // Redraw the GUI elements
-void EntityInspector::onGtkIdle() 
+void EntityInspector::updateGUIElements()
 {
     // Update from selection system
     getEntityFromSelectionSystem();
@@ -457,7 +457,7 @@ void EntityInspector::onGtkIdle()
 // Selection changed callback
 void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) 
 {
-	requestIdleCallback();
+	updateGUIElements();
 }
 
 namespace
@@ -624,11 +624,8 @@ void EntityInspector::_onAddKey()
 
 	// Choose a property, and add to entity with a default value
 	std::string property = AddPropertyDialog::chooseProperty(_selectedEntity);
-    if (!property.empty()) {
-
-        // Save last key, so that it will be automatically selected
-        _lastKey = property;
-
+    if (!property.empty()) 
+    {
         // Add the keyvalue on the entity (triggering the refresh)
 		_selectedEntity->setKeyValue(property, "-");
     }
@@ -807,8 +804,6 @@ void EntityInspector::treeSelectionChanged() {
     // Get the selected key and value in the tree view
     std::string key = getListSelection(PROPERTY_NAME_COLUMN);
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
-    if (!key.empty())
-        _lastKey = key; // save last key
 
     // Get the type for this key if it exists, and the options
     PropertyParmMap::const_iterator tIter = getPropertyMap().find(key);
@@ -864,13 +859,13 @@ void EntityInspector::addClassProperties()
 
 	// Use a functor to walk the entityclass and add all of its attributes
 	// to the tree
-
-	struct ClassPropertyVisitor
+	class ClassPropertyVisitor
 	: public EntityClassAttributeVisitor
 	{
-
 		// List store to populate
 		GtkListStore* _store;
+
+    public:
 
 		// Constructor
 		ClassPropertyVisitor(GtkListStore* store)
