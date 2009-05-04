@@ -3,11 +3,7 @@
 
 #include "GLProgramAttributes.h"
 #include "iglrender.h"
-#include "iregistry.h"
-#include "iradiant.h"
-#include "xmlutil/Document.h"
 #include "math/matrix.h"
-#include "render/backend/GLProgramFactory.h" 
 
 namespace render {
 
