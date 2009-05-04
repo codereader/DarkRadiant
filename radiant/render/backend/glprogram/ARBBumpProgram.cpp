@@ -1,4 +1,8 @@
 #include "ARBBumpProgram.h"
+#include "render/backend/GLProgramFactory.h"
+
+#include "igame.h"
+#include "string/string.h"
 
 namespace render
 {
@@ -14,16 +18,20 @@ namespace
     const int C6_LIGHT_SCALE = 6;
     const int C7_AMBIENT_FACTOR = 7;
 
+    // Lightscale registry path
+    const char* LOCAL_RKEY_LIGHTSCALE = "/defaults/lightScale";
+
 }
 
 // Main construction
 void ARBBumpProgram::create()
 {
 	// Initialise the lightScale value
-	xml::NodeList scaleList = GlobalRegistry().findXPath("game/defaults/lightScale");
-	if (scaleList.size() == 1) {
-		std::stringstream stream(scaleList[0].getContent());
-		stream >> _lightScale;
+    game::IGamePtr currentGame = GlobalGameManager().currentGame();
+    xml::NodeList scaleList = currentGame->getLocalXPath(LOCAL_RKEY_LIGHTSCALE);
+	if (!scaleList.empty()) 
+    {
+		_lightScale = strToDouble(scaleList[0].getContent());
 	}
 	else {
 		_lightScale = 1.0;
