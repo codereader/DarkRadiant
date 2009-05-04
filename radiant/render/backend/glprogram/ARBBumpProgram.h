@@ -28,87 +28,17 @@ private:
     // Vertex colour factor
     float _vertexColFactor;
 	
+    // Vertex and fragment program identifiers
+    GLuint m_vertex_program;
+    GLuint m_fragment_program;
+
 public:
-  GLuint m_vertex_program;
-  GLuint m_fragment_program;
 
-  void create()
-  {
-
-	// Initialise the lightScale value
-	xml::NodeList scaleList = GlobalRegistry().findXPath("game/defaults/lightScale");
-	if (scaleList.size() == 1) {
-		std::stringstream stream(scaleList[0].getContent());
-		stream >> _lightScale;
-	}
-	else {
-		_lightScale = 1.0;
-	}
-
-    glEnable(GL_VERTEX_PROGRAM_ARB);
-    glEnable(GL_FRAGMENT_PROGRAM_ARB);
-
-    {
-      glGenProgramsARB(1, &m_vertex_program);
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
-
-
-        // Create the vertex program
-        GLProgramFactory::createARBProgram(
-            GLProgramFactory::getGLProgramPath(BUMP_VP_FILENAME),
-            GL_VERTEX_PROGRAM_ARB
-        );
-
-      glGenProgramsARB(1, &m_fragment_program);
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
-
-        // Create the fragment program
-        GLProgramFactory::createARBProgram(
-            GLProgramFactory::getGLProgramPath(BUMP_FP_FILENAME),
-            GL_FRAGMENT_PROGRAM_ARB
-        );    
-    }
-
-    glDisable(GL_VERTEX_PROGRAM_ARB);
-    glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-
-  void destroy()
-  {
-    glDeleteProgramsARB(1, &m_vertex_program);
-    glDeleteProgramsARB(1, &m_fragment_program);
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-
-  void enable()
-  {
-    glEnable(GL_VERTEX_PROGRAM_ARB);
-    glEnable(GL_FRAGMENT_PROGRAM_ARB);
-    glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
-    glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
-
-    glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
-    glEnableVertexAttribArrayARB(ATTR_TANGENT);
-    glEnableVertexAttribArrayARB(ATTR_BITANGENT);
-    glEnableVertexAttribArrayARB(ATTR_NORMAL);
-
-    GlobalOpenGL_debugAssertNoErrors();
-  }
-
-  void disable()
-  {
-    glDisable(GL_VERTEX_PROGRAM_ARB);
-    glDisable(GL_FRAGMENT_PROGRAM_ARB);
-
-    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
-    glDisableVertexAttribArrayARB(ATTR_TANGENT);
-    glDisableVertexAttribArrayARB(ATTR_BITANGENT);
-    glDisableVertexAttribArrayARB(ATTR_NORMAL);
-
-    GlobalOpenGL_debugAssertNoErrors();
-  }
+    /* GLProgram implementation */
+    void create();
+    void destroy();
+    void enable();
+    void disable();
 
     // Set render pass parameters
     void applyRenderParams(const Vector3& viewer, 

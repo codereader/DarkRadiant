@@ -16,6 +16,84 @@ namespace
 
 }
 
+// Main construction
+void ARBBumpProgram::create()
+{
+	// Initialise the lightScale value
+	xml::NodeList scaleList = GlobalRegistry().findXPath("game/defaults/lightScale");
+	if (scaleList.size() == 1) {
+		std::stringstream stream(scaleList[0].getContent());
+		stream >> _lightScale;
+	}
+	else {
+		_lightScale = 1.0;
+	}
+
+    glEnable(GL_VERTEX_PROGRAM_ARB);
+    glEnable(GL_FRAGMENT_PROGRAM_ARB);
+
+    {
+      glGenProgramsARB(1, &m_vertex_program);
+      glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
+
+
+        // Create the vertex program
+        GLProgramFactory::createARBProgram(
+            GLProgramFactory::getGLProgramPath(BUMP_VP_FILENAME),
+            GL_VERTEX_PROGRAM_ARB
+        );
+
+      glGenProgramsARB(1, &m_fragment_program);
+      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
+
+        // Create the fragment program
+        GLProgramFactory::createARBProgram(
+            GLProgramFactory::getGLProgramPath(BUMP_FP_FILENAME),
+            GL_FRAGMENT_PROGRAM_ARB
+        );    
+    }
+
+    glDisable(GL_VERTEX_PROGRAM_ARB);
+    glDisable(GL_FRAGMENT_PROGRAM_ARB);
+
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
+void ARBBumpProgram::destroy()
+{
+    glDeleteProgramsARB(1, &m_vertex_program);
+    glDeleteProgramsARB(1, &m_fragment_program);
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
+void ARBBumpProgram::enable()
+{
+    glEnable(GL_VERTEX_PROGRAM_ARB);
+    glEnable(GL_FRAGMENT_PROGRAM_ARB);
+    glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
+    glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
+
+    glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
+    glEnableVertexAttribArrayARB(ATTR_TANGENT);
+    glEnableVertexAttribArrayARB(ATTR_BITANGENT);
+    glEnableVertexAttribArrayARB(ATTR_NORMAL);
+
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
+void ARBBumpProgram::disable()
+{
+    glDisable(GL_VERTEX_PROGRAM_ARB);
+    glDisable(GL_FRAGMENT_PROGRAM_ARB);
+
+    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
+    glDisableVertexAttribArrayARB(ATTR_TANGENT);
+    glDisableVertexAttribArrayARB(ATTR_BITANGENT);
+    glDisableVertexAttribArrayARB(ATTR_NORMAL);
+
+    GlobalOpenGL_debugAssertNoErrors();
+}
+
 void ARBBumpProgram::applyRenderParams(const Vector3& viewer, 
                                        const Matrix4& objectToWorld, 
                                        const Vector3& origin, 
