@@ -2,6 +2,7 @@
 #include "glprogram/ARBBumpProgram.h"
 #include "glprogram/ARBDepthFillProgram.h"
 
+#include "iregistry.h"
 #include "os/file.h"
 #include "string/string.h"
 #include "debugging/debugging.h"
