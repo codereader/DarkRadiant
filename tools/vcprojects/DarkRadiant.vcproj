@@ -1254,6 +1254,10 @@
 							>
 						</File>
 						<File
+							RelativePath="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.cpp"
+							>
+						</File>
+						<File
 							RelativePath="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.h"
 							>
 						</File>
