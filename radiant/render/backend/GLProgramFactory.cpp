@@ -70,8 +70,8 @@ void GLProgramFactory::unrealise() {
 	}
 }
 
-void GLProgramFactory::createARBProgram(const std::string& filename,
-                                        GLenum type) 
+GLuint GLProgramFactory::createARBProgram(const std::string& filename,
+                                          GLenum type) 
 {
     // Get absolute path from filename
     std::string absFileName = getGLProgramPath(filename);
@@ -96,6 +96,11 @@ void GLProgramFactory::createARBProgram(const std::string& filename,
 
     // Bind the program data into OpenGL
     GlobalOpenGL_debugAssertNoErrors();
+
+    GLuint programID;
+    glGenProgramsARB(1, &programID);
+    glBindProgramARB(type, programID);
+
 	glProgramStringARB(
         type, GL_PROGRAM_FORMAT_ASCII_ARB, GLsizei(size), &buffer.front()
     );
@@ -115,6 +120,9 @@ void GLProgramFactory::createARBProgram(const std::string& filename,
         // Throw exception
         throw std::logic_error(error);
 	}
+
+    // Return the new program
+    return programID;
 }
 
 // Get the path of a GL program file
