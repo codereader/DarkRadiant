@@ -6,8 +6,8 @@
 #include "os/file.h"
 #include "string/string.h"
 #include "debugging/debugging.h"
-#include "container/array.h"
-#include "stream/filestream.h"
+
+#include <fstream>
 
 namespace render
 {
@@ -76,11 +76,12 @@ void GLProgramFactory::createARBProgram(const std::string& filename,
     // Get absolute path from filename
     std::string absFileName = getGLProgramPath(filename);
 
+    // Open the file
 	std::size_t size = file_size(absFileName.c_str());
-	FileInputStream file(absFileName);
+	std::ifstream file(absFileName.c_str());
 	
     // Throw an exception if the file could not be found
-	if (file.failed())
+	if (!file.is_open())
     {
         throw std::runtime_error(
             "GLProgramFactory::createARBProgram() failed to open file: "
@@ -88,11 +89,16 @@ void GLProgramFactory::createARBProgram(const std::string& filename,
         );
     }
 	
-	Array<GLcharARB> buffer(size);
-	size = file.read(reinterpret_cast<StreamBase::byte_type*>(buffer.data()), size);
+    // Read the file data into a buffer
+	std::vector<char> buffer(size);
+    assert(buffer.size() == size);
+	file.read(&buffer.front(), size);
 
+    // Bind the program data into OpenGL
     GlobalOpenGL_debugAssertNoErrors();
-	glProgramStringARB(type, GL_PROGRAM_FORMAT_ASCII_ARB, GLsizei(size), buffer.data());
+	glProgramStringARB(
+        type, GL_PROGRAM_FORMAT_ASCII_ARB, GLsizei(size), &buffer.front()
+    );
 
     // Check for GL errors and throw exception if there is a problem
 	if (GL_INVALID_OPERATION == glGetError()) 
