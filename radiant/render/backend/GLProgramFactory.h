@@ -31,6 +31,12 @@ private:
 	// Static instance owner
 	static GLProgramFactory& getInstance();
 	
+    /*
+     * Convenience method to return the full path of a given GL program file on
+     * disk, taking account of platform-dependent differences.
+     */
+    static std::string getGLProgramPath(const std::string& progName);
+
 public:
 
 	/**
@@ -51,20 +57,15 @@ public:
 	static void unrealise();
 	
 	/**
-     * Create an ARB GL Program by calling glProgramStringARB with the contents of
-	 * a file.
-     */
-	static void createARBProgram(const std::string& filename, GLenum type);
-
-    /**
-     * Convenience method to return the full path of a given GL program file on
-     * disk, taking account of platform-dependent differences.
+     * Create an ARB GL Program by calling glProgramStringARB with the contents
+     * of a file.
      *
-     * @param progName
+     * \param filename
      * The filename of the GL program without directory path (e.g.
      * "interaction_fp.arb").
      */
-    static std::string getGLProgramPath(const std::string& progName);
+	static void createARBProgram(const std::string& filename, GLenum type);
+
 };
 
 }

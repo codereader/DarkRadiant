@@ -21,8 +21,7 @@ void ARBDepthFillProgram::create()
       glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
 
       GLProgramFactory::createARBProgram(
-        GLProgramFactory::getGLProgramPath(DEPTHFILL_VP_FILENAME), 
-        GL_VERTEX_PROGRAM_ARB
+        DEPTHFILL_VP_FILENAME, GL_VERTEX_PROGRAM_ARB
       );
 
       // Create the fragment program
@@ -30,8 +29,7 @@ void ARBDepthFillProgram::create()
       glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
       
       GLProgramFactory::createARBProgram(
-        GLProgramFactory::getGLProgramPath(DEPTHFILL_FP_FILENAME), 
-        GL_FRAGMENT_PROGRAM_ARB
+        DEPTHFILL_FP_FILENAME, GL_FRAGMENT_PROGRAM_ARB
       );
     }
 

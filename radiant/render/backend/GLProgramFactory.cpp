@@ -70,16 +70,21 @@ void GLProgramFactory::unrealise() {
 	}
 }
 
-void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type) {
-	std::size_t size = file_size(filename.c_str());
-	FileInputStream file(filename);
+void GLProgramFactory::createARBProgram(const std::string& filename,
+                                        GLenum type) 
+{
+    // Get absolute path from filename
+    std::string absFileName = getGLProgramPath(filename);
+
+	std::size_t size = file_size(absFileName.c_str());
+	FileInputStream file(absFileName);
 	
     // Throw an exception if the file could not be found
 	if (file.failed())
     {
         throw std::runtime_error(
             "GLProgramFactory::createARBProgram() failed to open file: "
-            + filename
+            + absFileName
         );
     }
 	
@@ -98,7 +103,7 @@ void GLProgramFactory::createARBProgram(const std::string& filename, GLenum type
 
         // Construct user-readable error string
         std::string error("GL program error: ");
-        error += filename + "(" + intToStr(errPos) + "): \n\n";
+        error += absFileName + "(" + intToStr(errPos) + "): \n\n";
         error += std::string(reinterpret_cast<const char*>(errString));
 
         // Throw exception
