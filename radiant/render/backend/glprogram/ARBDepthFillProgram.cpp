@@ -15,23 +15,15 @@ void ARBDepthFillProgram::create()
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
-    {
-      // Create the vertex program
-      glGenProgramsARB(1, &m_vertex_program);
-      glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
-
-      GLProgramFactory::createARBProgram(
+    // Create the vertex program
+    m_vertex_program = GLProgramFactory::createARBProgram(
         DEPTHFILL_VP_FILENAME, GL_VERTEX_PROGRAM_ARB
-      );
-
-      // Create the fragment program
-      glGenProgramsARB(1, &m_fragment_program);
-      glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
-      
-      GLProgramFactory::createARBProgram(
+    );
+    
+    // Create the fragment program
+    m_fragment_program = GLProgramFactory::createARBProgram(
         DEPTHFILL_FP_FILENAME, GL_FRAGMENT_PROGRAM_ARB
-      );
-    }
+    );
 
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);

@@ -41,18 +41,12 @@ void ARBBumpProgram::create()
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
     // Create the vertex program
-    glGenProgramsARB(1, &m_vertex_program);
-    glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
-
-    GLProgramFactory::createARBProgram(
+    m_vertex_program = GLProgramFactory::createARBProgram(
         BUMP_VP_FILENAME, GL_VERTEX_PROGRAM_ARB
     );
 
     // Create the fragment program
-    glGenProgramsARB(1, &m_fragment_program);
-    glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
-
-    GLProgramFactory::createARBProgram(
+    m_fragment_program = GLProgramFactory::createARBProgram(
         BUMP_FP_FILENAME, GL_FRAGMENT_PROGRAM_ARB
     );    
 

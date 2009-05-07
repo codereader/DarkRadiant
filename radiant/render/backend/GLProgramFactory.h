@@ -57,14 +57,20 @@ public:
 	static void unrealise();
 	
 	/**
-     * Create an ARB GL Program by calling glProgramStringARB with the contents
-     * of a file.
+     * Create a GL Program from the contents of a file.
      *
      * \param filename
      * The filename of the GL program without directory path (e.g.
      * "interaction_fp.arb").
+     *
+     * \param type
+     * The type of the program to create, either GL_VERTEX_PROGRAM_ARB or
+     * GL_FRAGMENT_PROGRAM_ARB.
+     *
+     * \return
+     * The GL program ID to be used for subsequent binding.
      */
-	static void createARBProgram(const std::string& filename, GLenum type);
+    static GLuint createARBProgram(const std::string& filename, GLenum type);
 
 };
 
