@@ -71,6 +71,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-Namespace.$(OBJEXT) \
 	darkradiant-NamespaceFactory.$(OBJEXT) \
 	darkradiant-ARBBumpProgram.$(OBJEXT) \
+	darkradiant-ARBDepthFillProgram.$(OBJEXT) \
 	darkradiant-OpenGLShader.$(OBJEXT) \
 	darkradiant-GLProgramFactory.$(OBJEXT) \
 	darkradiant-OpenGLShaderPass.$(OBJEXT) \
@@ -422,6 +423,7 @@ darkradiant_SOURCES = main.cpp \
 					  namespace/Namespace.cpp \
 					  namespace/NamespaceFactory.cpp \
 					  render/backend/glprogram/ARBBumpProgram.cpp \
+					  render/backend/glprogram/ARBDepthFillProgram.cpp \
 					  render/backend/OpenGLShader.cpp \
 					  render/backend/GLProgramFactory.cpp \
 					  render/backend/OpenGLShaderPass.cpp \
@@ -651,6 +653,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ARBBumpProgram.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ARBDepthFillProgram.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AboutDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AddPropertyDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AnglePropertyEditor.Po@am__quote@
@@ -1262,6 +1265,20 @@ darkradiant-ARBBumpProgram.obj: render/backend/glprogram/ARBBumpProgram.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/glprogram/ARBBumpProgram.cpp' object='darkradiant-ARBBumpProgram.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ARBBumpProgram.obj `if test -f 'render/backend/glprogram/ARBBumpProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/ARBBumpProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/ARBBumpProgram.cpp'; fi`
+
+darkradiant-ARBDepthFillProgram.o: render/backend/glprogram/ARBDepthFillProgram.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ARBDepthFillProgram.o -MD -MP -MF $(DEPDIR)/darkradiant-ARBDepthFillProgram.Tpo -c -o darkradiant-ARBDepthFillProgram.o `test -f 'render/backend/glprogram/ARBDepthFillProgram.cpp' || echo '$(srcdir)/'`render/backend/glprogram/ARBDepthFillProgram.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ARBDepthFillProgram.Tpo $(DEPDIR)/darkradiant-ARBDepthFillProgram.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/glprogram/ARBDepthFillProgram.cpp' object='darkradiant-ARBDepthFillProgram.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ARBDepthFillProgram.o `test -f 'render/backend/glprogram/ARBDepthFillProgram.cpp' || echo '$(srcdir)/'`render/backend/glprogram/ARBDepthFillProgram.cpp
+
+darkradiant-ARBDepthFillProgram.obj: render/backend/glprogram/ARBDepthFillProgram.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ARBDepthFillProgram.obj -MD -MP -MF $(DEPDIR)/darkradiant-ARBDepthFillProgram.Tpo -c -o darkradiant-ARBDepthFillProgram.obj `if test -f 'render/backend/glprogram/ARBDepthFillProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/ARBDepthFillProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/ARBDepthFillProgram.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ARBDepthFillProgram.Tpo $(DEPDIR)/darkradiant-ARBDepthFillProgram.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/glprogram/ARBDepthFillProgram.cpp' object='darkradiant-ARBDepthFillProgram.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ARBDepthFillProgram.obj `if test -f 'render/backend/glprogram/ARBDepthFillProgram.cpp'; then $(CYGPATH_W) 'render/backend/glprogram/ARBDepthFillProgram.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/glprogram/ARBDepthFillProgram.cpp'; fi`
 
 darkradiant-OpenGLShader.o: render/backend/OpenGLShader.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLShader.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLShader.Tpo -c -o darkradiant-OpenGLShader.o `test -f 'render/backend/OpenGLShader.cpp' || echo '$(srcdir)/'`render/backend/OpenGLShader.cpp
