@@ -21,12 +21,18 @@ private:
 	// The value all lights should be scaled by, obtained from the game description
 	double _lightScale;
 
-    // Vertex colour factor
-    float _vertexColFactor;
-	
+#ifdef RADIANT_USE_GLSL
+
+    // Program object identifier
+    GLuint _programObj;
+
+#else
+
     // Vertex and fragment program identifiers
     GLuint m_vertex_program;
     GLuint m_fragment_program;
+
+#endif
 
 public:
 
