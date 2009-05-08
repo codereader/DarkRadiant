@@ -37,6 +37,10 @@ private:
      */
     static std::string getGLProgramPath(const std::string& progName);
 
+    // Get a vector of chars containing file contents
+    typedef boost::shared_ptr<std::vector<char> > CharBufPtr;
+    static CharBufPtr getFileAsBuffer(const std::string& filename);
+
 public:
 
 	/**
