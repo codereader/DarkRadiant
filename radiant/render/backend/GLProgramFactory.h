@@ -56,6 +56,26 @@ public:
 	 */
 	static void unrealise();
 	
+#ifdef RADIANT_USE_GLSL
+
+    /**
+     * \brief
+     * Create a GLSL shader object using the given source files.
+     *
+     * \param vFile
+     * Relative filename for the vertex shader code.
+     *
+     * \param fFile
+     * Relative filename for the fragment shader code
+     *
+     * \return
+     * The program object id for subsequent binding with glUseProgram().
+     */
+    static GLuint createGLSLProgram(const std::string& vFile,
+                                    const std::string& fFile);
+
+#else
+
 	/**
      * Create a GL Program from the contents of a file.
      *
@@ -71,6 +91,8 @@ public:
      * The GL program ID to be used for subsequent binding.
      */
     static GLuint createARBProgram(const std::string& filename, GLenum type);
+
+#endif
 
 };
 
