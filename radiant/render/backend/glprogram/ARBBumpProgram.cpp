@@ -21,6 +21,15 @@ namespace
     // Lightscale registry path
     const char* LOCAL_RKEY_LIGHTSCALE = "/defaults/lightScale";
 
+    // Filenames of shader code
+#ifdef RADIANT_USE_GLSL
+    const char* BUMP_VP_FILENAME = "interaction_vp.glsl";
+    const char* BUMP_FP_FILENAME = "interaction_fp.glsl";
+#else
+    const char* BUMP_VP_FILENAME = "interaction_vp.arb";
+    const char* BUMP_FP_FILENAME = "interaction_fp.arb";
+#endif
+
 }
 
 // Main construction
@@ -40,7 +49,9 @@ void ARBBumpProgram::create()
 #ifdef RADIANT_USE_GLSL
 
     // Create the program object
-    _programObj = glCreateProgram();
+    _programObj = GLProgramFactory::createGLSLProgram(
+        BUMP_VP_FILENAME, BUMP_FP_FILENAME
+    );
 
 #else
 

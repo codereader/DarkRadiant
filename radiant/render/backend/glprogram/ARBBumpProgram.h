@@ -7,12 +7,6 @@
 
 namespace render {
 
-/* CONSTANTS */
-namespace {
-    const char* BUMP_VP_FILENAME = "interaction_vp.arb";
-    const char* BUMP_FP_FILENAME = "interaction_fp.arb";
-}
-
 class ARBBumpProgram 
 : public GLProgram
 {

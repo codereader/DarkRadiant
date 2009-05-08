@@ -105,7 +105,39 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename)
 GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
                                            const std::string& fFile)
 {
-    return 0;
+    // Create the parent program object
+    GLuint program = glCreateProgram();
+
+    // Create the shader objects
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    // Load the source files and pass the text to OpenGL
+    CharBufPtr vertexSrc = getFileAsBuffer(vFile);
+    CharBufPtr fragSrc = getFileAsBuffer(fFile);
+
+    const char* csVertex = &vertexSrc->front();
+    const char* csFragment = &fragSrc->front();
+
+    glShaderSource(vertexShader, 1, &csVertex, NULL);
+    glShaderSource(fragmentShader, 1, &csFragment, NULL);
+    GlobalOpenGL_debugAssertNoErrors();
+
+    // Compile the shaders
+    glCompileShader(vertexShader);
+    glCompileShader(fragmentShader);
+    GlobalOpenGL_debugAssertNoErrors();
+
+    // Attach and link the program object itself
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragmentShader);
+    GlobalOpenGL_debugAssertNoErrors();
+
+    glLinkProgram(program);
+    GlobalOpenGL_debugAssertNoErrors();
+
+    // Return the linked program
+    return program;
 }
 
 #else
