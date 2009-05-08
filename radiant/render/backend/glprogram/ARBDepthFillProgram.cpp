@@ -6,8 +6,15 @@ namespace render
 
 /* CONSTANTS */
 namespace {
+
+#ifdef RADIANT_USE_GLSL
+    const char* DEPTHFILL_VP_FILENAME = "zfill_vp.glsl";
+    const char* DEPTHFILL_FP_FILENAME = "zfill_fp.glsl";
+#else
     const char* DEPTHFILL_VP_FILENAME = "zfill_vp.glp";
     const char* DEPTHFILL_FP_FILENAME = "zfill_fp.glp";
+#endif
+
 }
 
 void ARBDepthFillProgram::create()
@@ -15,7 +22,9 @@ void ARBDepthFillProgram::create()
 #ifdef RADIANT_USE_GLSL
 
     // Create the program object
-    _programObj = glCreateProgram();
+    _programObj = GLProgramFactory::createGLSLProgram(
+        DEPTHFILL_VP_FILENAME, DEPTHFILL_FP_FILENAME
+    );
 
 #else
 
