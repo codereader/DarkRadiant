@@ -70,6 +70,16 @@ void GLProgramFactory::unrealise() {
 	}
 }
 
+#ifdef RADIANT_USE_GLSL
+
+GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
+                                           const std::string& fFile)
+{
+    return 0;
+}
+
+#else
+
 GLuint GLProgramFactory::createARBProgram(const std::string& filename,
                                           GLenum type) 
 {
@@ -124,6 +134,8 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
     // Return the new program
     return programID;
 }
+
+#endif // RADIANT_USE_GLSL
 
 // Get the path of a GL program file
 std::string GLProgramFactory::getGLProgramPath(const std::string& progName)

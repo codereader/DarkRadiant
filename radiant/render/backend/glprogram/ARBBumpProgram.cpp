@@ -37,6 +37,13 @@ void ARBBumpProgram::create()
 		_lightScale = 1.0;
 	}
 
+#ifdef RADIANT_USE_GLSL
+
+    // Create the program object
+    _programObj = glCreateProgram();
+
+#else
+
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
 
@@ -53,22 +60,33 @@ void ARBBumpProgram::create()
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
+#endif
+
     GlobalOpenGL_debugAssertNoErrors();
 }
 
 void ARBBumpProgram::destroy()
 {
+#ifdef RADIANT_USE_GLSL
+    glDeleteProgram(_programObj);
+#else
     glDeleteProgramsARB(1, &m_vertex_program);
     glDeleteProgramsARB(1, &m_fragment_program);
+#endif
+
     GlobalOpenGL_debugAssertNoErrors();
 }
 
 void ARBBumpProgram::enable()
 {
+#ifdef RADIANT_USE_GLSL
+    glUseProgram(_programObj);
+#else
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
     glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
     glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
+#endif
 
     glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
     glEnableVertexAttribArrayARB(ATTR_TANGENT);
@@ -80,8 +98,12 @@ void ARBBumpProgram::enable()
 
 void ARBBumpProgram::disable()
 {
+#ifdef RADIANT_USE_GLSL
+    glUseProgram(0);
+#else
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
+#endif
 
     glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
     glDisableVertexAttribArrayARB(ATTR_TANGENT);

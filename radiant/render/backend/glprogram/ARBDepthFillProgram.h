@@ -8,8 +8,17 @@ namespace render {
 class ARBDepthFillProgram : 
 	public GLProgram
 {
-  GLuint m_vertex_program;
-  GLuint m_fragment_program;
+#ifdef RADIANT_USE_GLSL
+
+    // Program object
+    GLuint _programObj;
+
+#else
+
+    GLuint m_vertex_program;
+    GLuint m_fragment_program;
+
+#endif
 
 public:
 
