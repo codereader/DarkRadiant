@@ -72,7 +72,8 @@ void GLProgramFactory::unrealise() {
 
 // Get file as a char buffer
 GLProgramFactory::CharBufPtr 
-GLProgramFactory::getFileAsBuffer(const std::string& filename)
+GLProgramFactory::getFileAsBuffer(const std::string& filename,
+                                  bool nullTerminated)
 {
     // Get absolute path from filename
     std::string absFileName = getGLProgramPath(filename);
@@ -90,9 +91,9 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename)
         );
     }
 	
-    // Read the file data into a buffer
-	CharBufPtr buffer(new std::vector<char>(size));
-    assert(buffer->size() == size);
+    // Read the file data into a buffer, adding a NULL terminator if required
+    std::size_t bufSize = (nullTerminated ? size + 1 : size);
+	CharBufPtr buffer(new std::vector<char>(bufSize, 0));
 	file.read(&buffer->front(), size);
 
     // Close file and return buffer
@@ -101,6 +102,31 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename)
 }
 
 #ifdef RADIANT_USE_GLSL
+
+void GLProgramFactory::assertShaderCompiled(GLuint shader)
+{
+    // Get compile status
+    GLint compileStatus;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
+
+    // Throw exception with log if it failed
+    if (compileStatus != GL_TRUE)
+    {
+        GLint logLength;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+
+        // Get log chars in buffer
+        std::vector<char> logBuf(logLength + 1, 0);
+        glGetShaderInfoLog(shader, logBuf.size(), NULL, &logBuf.front());
+
+        // Convert to string and throw exception
+        std::string logStr = std::string(&logBuf.front());
+        throw std::runtime_error(
+            "Failed to compile GLSL shader:\n"
+            + logStr
+        );
+    }
+}
 
 GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
                                            const std::string& fFile)
@@ -112,9 +138,10 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    // Load the source files and pass the text to OpenGL
-    CharBufPtr vertexSrc = getFileAsBuffer(vFile);
-    CharBufPtr fragSrc = getFileAsBuffer(fFile);
+    // Load the source files as NULL-terminated strings and pass the text to
+    // OpenGL
+    CharBufPtr vertexSrc = getFileAsBuffer(vFile, true);
+    CharBufPtr fragSrc = getFileAsBuffer(fFile, true);
 
     const char* csVertex = &vertexSrc->front();
     const char* csFragment = &fragSrc->front();
@@ -125,7 +152,11 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 
     // Compile the shaders
     glCompileShader(vertexShader);
+    assertShaderCompiled(vertexShader);
+
     glCompileShader(fragmentShader);
+    assertShaderCompiled(fragmentShader);
+
     GlobalOpenGL_debugAssertNoErrors();
 
     // Attach and link the program object itself
@@ -134,7 +165,28 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
     GlobalOpenGL_debugAssertNoErrors();
 
     glLinkProgram(program);
-    GlobalOpenGL_debugAssertNoErrors();
+
+    // Check the link status and throw an exception if it failed
+    GLint linkStatus;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    if (linkStatus != GL_TRUE)
+    {
+        // Get log length
+        int logLength;
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+
+        // Get log chars in buffer
+        std::vector<char> logBuf(logLength + 1, 0);
+        glGetProgramInfoLog(program, logBuf.size(), NULL, &logBuf.front());
+
+        // Convert to string and throw exception
+        std::string logStr = std::string(&logBuf.front());
+        throw std::runtime_error(
+            "Failed to construct GLSL program:\n"
+            + logStr
+        );
+
+    }
 
     // Return the linked program
     return program;
@@ -145,8 +197,8 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 GLuint GLProgramFactory::createARBProgram(const std::string& filename,
                                           GLenum type) 
 {
-    // Get the file contents
-    CharBufPtr buffer = getFileAsBuffer(filename);
+    // Get the file contents without NULL terminator
+    CharBufPtr buffer = getFileAsBuffer(filename, false);
 
     // Bind the program data into OpenGL
     GlobalOpenGL_debugAssertNoErrors();
@@ -175,7 +227,8 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
         error += std::string(reinterpret_cast<const char*>(errString));
 
         // Throw exception
-        throw std::logic_error(error);
+        //throw std::logic_error(error);
+        std::cerr << error << std::endl;
 	}
 
     // Return the new program

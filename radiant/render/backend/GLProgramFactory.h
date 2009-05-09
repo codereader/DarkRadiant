@@ -37,9 +37,19 @@ private:
      */
     static std::string getGLProgramPath(const std::string& progName);
 
-    // Get a vector of chars containing file contents
+    // Get a vector of chars containing file contents, with optional
+    // NULL-termination
     typedef boost::shared_ptr<std::vector<char> > CharBufPtr;
-    static CharBufPtr getFileAsBuffer(const std::string& filename);
+    static CharBufPtr getFileAsBuffer(const std::string& filename,
+                                      bool nullTerminated);
+
+#ifdef RADIANT_USE_GLSL
+
+    // Check the status of a shader, and throw exception with the info log if it
+    // is not valid
+    static void assertShaderCompiled(GLuint shader);
+
+#endif
 
 public:
 
@@ -73,7 +83,10 @@ public:
      * Relative filename for the fragment shader code
      *
      * \return
-     * The program object id for subsequent binding with glUseProgram().
+     * The program object id for subsequent binding with glUseProgram(). The
+     * program will be compiled, but not linked. The calling code should bind
+     * any necessary attributes and then call glLinkProgram() to finalise the
+     * link.
      */
     static GLuint createGLSLProgram(const std::string& vFile,
                                     const std::string& fFile);

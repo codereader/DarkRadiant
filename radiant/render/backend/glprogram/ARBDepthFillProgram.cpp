@@ -63,7 +63,10 @@ void ARBDepthFillProgram::destroy()
 
 void ARBDepthFillProgram::enable()
 {
+    GlobalOpenGL_debugAssertNoErrors();
+
 #ifdef RADIANT_USE_GLSL
+    assert(glIsProgram(_programObj));
     glUseProgram(_programObj);
 #else
     glEnable(GL_VERTEX_PROGRAM_ARB);

@@ -53,6 +53,14 @@ void ARBBumpProgram::create()
         BUMP_VP_FILENAME, BUMP_FP_FILENAME
     );
 
+    // Bind vertex attribute locations and link the program
+    glBindAttribLocation(_programObj, ATTR_TEXCOORD, "attr_TexCoord0");
+    glBindAttribLocation(_programObj, ATTR_TANGENT, "attr_Tangent");
+    glBindAttribLocation(_programObj, ATTR_BITANGENT, "attr_Bitangent");
+    glBindAttribLocation(_programObj, ATTR_NORMAL, "attr_Normal");
+    glLinkProgram(_programObj);
+    GlobalOpenGL_debugAssertNoErrors();
+
 #else
 
     glEnable(GL_VERTEX_PROGRAM_ARB);
