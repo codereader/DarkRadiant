@@ -10,10 +10,15 @@ namespace render {
 class ARBBumpProgram 
 : public GLProgram
 {
-private:
-
 	// The value all lights should be scaled by, obtained from the game description
 	double _lightScale;
+
+    // Uniform/program-local parameter IDs.
+    int _locLightOrigin;
+    int _locLightColour;
+    int _locViewOrigin;
+    int _locLightScale;
+    int _locAmbientFactor;
 
 #ifdef RADIANT_USE_GLSL
 
