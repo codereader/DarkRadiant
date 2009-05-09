@@ -26,17 +26,23 @@ void initialiseLogStreams() {
 	GlobalWarningStream().setStream(getGlobalWarningStream());
 	GlobalErrorStream().setStream(getGlobalErrorStream());
 
-	// Redirect std::cout to the log
+#if !defined(POSIX) || !defined(_DEBUG)
+	// Redirect std::cout to the log, except on Linux debug builds where
+    // logging to the console is more useful
 	COutRedirector::init();
+#endif
 
 	// Instantiate a temporary buffer, which copies the log until the
 	// GTK-based console is ready. The buffer's contents will then be copied over
 	StringLogDevice::InstancePtr() = StringLogDevicePtr(new StringLogDevice);
 }
 
-void shutdownStreams() {
+void shutdownStreams() 
+{
+#if !defined(POSIX) || !defined(_DEBUG)
 	// Stop redirecting std::cout
 	COutRedirector::destroy();
+#endif
 }
 
 } // namespace applog
