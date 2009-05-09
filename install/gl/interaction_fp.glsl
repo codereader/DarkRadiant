@@ -28,7 +28,7 @@ uniform sampler2D	u_attenuationmap_z;
 uniform vec3		u_view_origin;
 uniform vec3		u_light_origin;
 uniform vec3		u_light_color;
-uniform float		u_bump_scale;
+uniform float		u_light_scale;
 uniform float		u_specular_exponent;
 
 varying vec3		var_vertex;
@@ -50,7 +50,6 @@ void	main()
 	
 	// compute normal in tangent space from bumpmap
 	vec3 N = 2.0 * (texture2D(u_bumpmap, var_tex_diffuse_bump.pq).xyz - 0.5);
-	N.z *= u_bump_scale;
 	N = normalize(N);
 	
 	// compute the diffuse term
@@ -69,5 +68,6 @@ void	main()
 	gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;
+    gl_FragColor.rgb *= u_light_scale;
 }
 

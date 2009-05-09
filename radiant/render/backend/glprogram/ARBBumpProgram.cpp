@@ -9,6 +9,21 @@ namespace render
 
 namespace
 {
+    // Lightscale registry path
+    const char* LOCAL_RKEY_LIGHTSCALE = "/defaults/lightScale";
+
+#ifdef RADIANT_USE_GLSL
+
+    // Filenames of shader code
+    const char* BUMP_VP_FILENAME = "interaction_vp.glsl";
+    const char* BUMP_FP_FILENAME = "interaction_fp.glsl";
+
+#else
+
+    // Filenames of shader code
+    const char* BUMP_VP_FILENAME = "interaction_vp.arb";
+    const char* BUMP_FP_FILENAME = "interaction_fp.arb";
+
     /* CONSTANT FRAGMENT PROGRAM PARAMETERS
      * These should match what is used by interaction_fp.cg
      */
@@ -18,16 +33,6 @@ namespace
     const int C6_LIGHT_SCALE = 6;
     const int C7_AMBIENT_FACTOR = 7;
 
-    // Lightscale registry path
-    const char* LOCAL_RKEY_LIGHTSCALE = "/defaults/lightScale";
-
-    // Filenames of shader code
-#ifdef RADIANT_USE_GLSL
-    const char* BUMP_VP_FILENAME = "interaction_vp.glsl";
-    const char* BUMP_FP_FILENAME = "interaction_fp.glsl";
-#else
-    const char* BUMP_VP_FILENAME = "interaction_vp.arb";
-    const char* BUMP_FP_FILENAME = "interaction_fp.arb";
 #endif
 
 }
@@ -61,6 +66,45 @@ void ARBBumpProgram::create()
     glLinkProgram(_programObj);
     GlobalOpenGL_debugAssertNoErrors();
 
+    // Set the uniform locations to the correct bound values
+    _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
+    _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
+    _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
+    _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
+
+    // Set up the texture uniforms. The renderer uses fixed texture units for
+    // particular textures, so make sure they are correct here.
+    // Texture 0 - diffuse
+    // Texture 1 - bump
+    // Texture 2 - specular
+    // Texture 3 - XY attenuation map
+    // Texture 4 - Z attenuation map
+    
+    glUseProgram(_programObj);
+    GlobalOpenGL_debugAssertNoErrors();
+
+    GLint samplerLoc;
+
+    samplerLoc = glGetUniformLocation(_programObj, "u_diffusemap");
+    glUniform1i(samplerLoc, 0);
+
+    samplerLoc = glGetUniformLocation(_programObj, "u_bumpmap");
+    glUniform1i(samplerLoc, 1);
+
+    samplerLoc = glGetUniformLocation(_programObj, "u_specularmap");
+    glUniform1i(samplerLoc, 2);
+
+    samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_xy");
+    glUniform1i(samplerLoc, 3);
+
+    samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_z");
+    glUniform1i(samplerLoc, 4);
+
+    GlobalOpenGL_debugAssertNoErrors();
+    glUseProgram(0);
+
+    GlobalOpenGL_debugAssertNoErrors();
+
 #else
 
     glEnable(GL_VERTEX_PROGRAM_ARB);
@@ -78,6 +122,13 @@ void ARBBumpProgram::create()
 
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
+
+    // Set the uniform locations to constants
+    _locLightOrigin = C2_LIGHT_ORIGIN;
+    _locLightColour = C3_LIGHT_COLOR;
+    _locViewOrigin = C4_VIEW_ORIGIN;
+    _locLightScale = C6_LIGHT_SCALE;
+    _locAmbientFactor = C7_AMBIENT_FACTOR;
 
 #endif
 
@@ -149,30 +200,48 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
     Matrix4 local2light(world2light);
     local2light.multiplyBy(objectToWorld); // local->world->light
 
+#ifdef RADIANT_USE_GLSL
+
+    // Bind uniform parameters
+    glUniform3f(
+        _locViewOrigin, viewer.x(), viewer.y(), viewer.z()
+    );
+    glUniform3f(
+        _locLightOrigin, localLight.x(), localLight.y(), localLight.z()
+    );
+    glUniform3f(
+        _locLightColour, colour.x(), colour.y(), colour.z()
+    );
+    glUniform1f(_locLightScale, _lightScale);
+
+#else
+
     // view origin
     glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, C4_VIEW_ORIGIN, viewer.x(), viewer.y(), viewer.z(), 0
+        GL_FRAGMENT_PROGRAM_ARB, _locViewOrigin, viewer.x(), viewer.y(), viewer.z(), 0
     );
 
     // light origin
     glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, C2_LIGHT_ORIGIN, localLight.x(), localLight.y(), localLight.z(), 1
+        GL_FRAGMENT_PROGRAM_ARB, _locLightOrigin, localLight.x(), localLight.y(), localLight.z(), 1
     );
 
     // light colour
     glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, C3_LIGHT_COLOR, colour.x(), colour.y(), colour.z(), 0
+        GL_FRAGMENT_PROGRAM_ARB, _locLightColour, colour.x(), colour.y(), colour.z(), 0
     );
 
 	// light scale
 	glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, C6_LIGHT_SCALE, _lightScale, _lightScale, _lightScale, 0
+        GL_FRAGMENT_PROGRAM_ARB, _locLightScale, _lightScale, _lightScale, _lightScale, 0
     );
 
 	// ambient factor
 	glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, C7_AMBIENT_FACTOR, ambientFactor, 0, 0, 0
+        GL_FRAGMENT_PROGRAM_ARB, _locAmbientFactor, ambientFactor, 0, 0, 0
     );
+
+#endif
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);
