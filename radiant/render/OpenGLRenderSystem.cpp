@@ -218,7 +218,8 @@ bool OpenGLRenderSystem::lightingSupported() const {
 	return m_lightingSupported;
 }
 	
-void OpenGLRenderSystem::setLighting(bool supported, bool enabled) {
+void OpenGLRenderSystem::setLighting(bool supported, bool enabled) 
+{
 	bool refresh = (m_lightingSupported && m_lightingEnabled) != (supported && enabled);
 
 	if (refresh) {
@@ -234,32 +235,37 @@ void OpenGLRenderSystem::setLighting(bool supported, bool enabled) {
 	}
 }
 	
-void OpenGLRenderSystem::extensionsInitialised() {
-	setLighting(GLEW_VERSION_1_3 && 
-				GLEW_ARB_vertex_program && 
-				GLEW_ARB_fragment_program && 
-				GLEW_ARB_shader_objects && 
-				GLEW_ARB_vertex_shader && 
-				GLEW_ARB_fragment_shader && 
-				GLEW_ARB_shading_language_100, 
-				m_lightingEnabled);
+void OpenGLRenderSystem::extensionsInitialised() 
+{
+    // Determine if lighting is available based on GL extensions
 
-    if (!lightingSupported()) {
-    	
-		globalOutputStream() << "Lighting mode requires OpenGL features not supported by your graphics drivers:\n";
+#ifdef RADIANT_USE_GLSL
+    bool lightingExtensionsAvailable = GLEW_VERSION_1_3
+                                       && GLEW_ARB_shader_objects
+                                       && GLEW_ARB_vertex_shader
+                                       && GLEW_ARB_fragment_shader
+                                       && GLEW_ARB_shading_language_100;
+#else
+    bool lightingExtensionsAvailable = GLEW_VERSION_1_3
+                                       && GLEW_ARB_vertex_program
+                                       && GLEW_ARB_fragment_program;
+#endif
+
+    // Set internal flags
+	setLighting(lightingExtensionsAvailable, m_lightingEnabled);
+
+    // Inform the user of missing extensions
+    if (!lightingSupported()) 
+    {
+		globalOutputStream() << "Lighting mode requires OpenGL features not"
+                             << " supported by your graphics drivers:\n";
 		
 		if (!GLEW_VERSION_1_3) {
 			globalOutputStream() << "  GL version 1.3 or better\n";
 		}
 		
-		if (!GLEW_ARB_vertex_program) {
-			globalOutputStream() << "  GL_ARB_vertex_program\n";
-		}
-		
-		if (!GLEW_ARB_fragment_program) {
-			globalOutputStream() << "  GL_ARB_fragment_program\n";
-		}
-		
+#ifdef RADIANT_USE_GLSL
+
 		if (!GLEW_ARB_shader_objects) {
 			globalOutputStream() << "  GL_ARB_shader_objects\n";
 		}
@@ -275,6 +281,19 @@ void OpenGLRenderSystem::extensionsInitialised() {
 		if (!GLEW_ARB_shading_language_100) {
 			globalOutputStream() << "  GL_ARB_shading_language_100\n";
 		}
+
+#else
+
+		if (!GLEW_ARB_vertex_program) {
+			globalOutputStream() << "  GL_ARB_vertex_program\n";
+		}
+		
+		if (!GLEW_ARB_fragment_program) {
+			globalOutputStream() << "  GL_ARB_fragment_program\n";
+		}
+
+#endif
+		
 	}
 }
 

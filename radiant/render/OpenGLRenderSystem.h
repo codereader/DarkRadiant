@@ -44,6 +44,11 @@ class OpenGLRenderSystem
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;
 
+private:
+
+    // Set internal lighting-supported and lighting-enabled flags
+	void setLighting(bool supported, bool enabled);
+	
 public:
 
 	/**
@@ -69,8 +74,6 @@ public:
 
 	bool lightingEnabled() const;
 	bool lightingSupported() const;
-	
-	void setLighting(bool supported, bool enabled);
 	
 	void extensionsInitialised();
 	void setLightingEnabled(bool enabled);
