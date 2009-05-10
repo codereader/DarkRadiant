@@ -29,10 +29,10 @@ AC_ARG_ENABLE([python],
               [python_scripting=$enableval],
               [python_scripting='yes'])
 AC_ARG_ENABLE([glsl],
-              [AS_HELP_STRING([--enable-glsl],
-                              [use GLSL shaders instead of ARB programs])],
+              [AS_HELP_STRING([--disable-glsl],
+                              [use ARB programs instead of GLSL shaders])],
               [use_glsl=$enableval],
-              [use_glsl='no'])
+              [use_glsl='yes'])
 
 if [[ "$darkmod_plugins" != 'no' ]]
 then
@@ -226,14 +226,14 @@ echo "
 Configuration options:"
 
 echo     " Installation prefix: $prefix"
-if [[ "$sound_module" != '' ]]
+if test -n "$sound_module"
 then
     echo " Sound:               yes"
 else
     echo " Sound:               no"
 fi
 
-if [[ "$darkmod_plugins" != 'no' ]]
+if test "$darkmod_plugins" != 'no'
 then
     echo " Darkmod plugins:     yes"
 else
