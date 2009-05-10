@@ -56,9 +56,11 @@ void	main()
 	diffuse.rgb *= u_light_color * u_light_scale * clamp(dot(N, L), 0.0, 1.0);
 	
 	// compute the specular term
-	vec3 specular = texture2D(u_specularmap, var_tex_specular).rgb 
+    float specIntensity = clamp(dot(N, H), 0.0, 1.0);
+    specIntensity = pow(specIntensity, 32.0);
+	vec3 specular = texture2D(u_specularmap, var_tex_specular.xy).rgb 
                     * u_light_color 
-                    * pow(clamp(dot(N, H), 0.0, 1.0), 32);
+                    * specIntensity;
 	
 	// compute attenuation
     vec3 attenuation_xy = vec3(0.0, 0.0, 0.0);
@@ -73,8 +75,8 @@ void	main()
     ).rgb;
 					
 	// compute final color
-	gl_FragColor.rgba = diffuse;
-	//gl_FragColor.rgb += specular;
+    gl_FragColor = diffuse;
+    gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;
 }
