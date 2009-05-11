@@ -45,9 +45,15 @@ private:
 
 #ifdef RADIANT_USE_GLSL
 
+    // Get the program info log as a string
+    static std::string getProgramInfoLog(GLuint program);
+
     // Check the status of a shader, and throw exception with the info log if it
     // is not valid
     static void assertShaderCompiled(GLuint shader);
+
+    // Check the program has linked, throwing exception if failed
+    static void assertProgramLinked(GLuint program);
 
 #endif
 

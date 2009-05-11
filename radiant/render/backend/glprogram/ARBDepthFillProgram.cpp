@@ -22,6 +22,7 @@ void ARBDepthFillProgram::create()
 #ifdef RADIANT_USE_GLSL
 
     // Create the program object
+    std::cout << "[renderer] Creating GLSL depthfill program" << std::endl;
     _programObj = GLProgramFactory::createGLSLProgram(
         DEPTHFILL_VP_FILENAME, DEPTHFILL_FP_FILENAME
     );
