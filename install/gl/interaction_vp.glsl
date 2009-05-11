@@ -51,12 +51,14 @@ void	main()
 	// calc light xy,z attenuation in light space
 	var_tex_atten_xy_z = gl_TextureMatrix[3] * gl_Vertex;
 
-	
 	// construct object-space-to-tangent-space 3x3 matrix
 	var_mat_os2ts = mat3(
          attr_Tangent.x, attr_Bitangent.x, attr_Normal.x,
          attr_Tangent.y, attr_Bitangent.y, attr_Normal.y,
          attr_Tangent.z, attr_Bitangent.z, attr_Normal.z	
     );
+
+    // Pass through vertex colour
+    gl_FrontColor = gl_Color;
 }
 

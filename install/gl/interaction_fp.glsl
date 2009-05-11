@@ -75,7 +75,7 @@ void	main()
     ).rgb;
 					
 	// compute final color
-    gl_FragColor = diffuse;
+    gl_FragColor = diffuse * gl_Color;
     gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;
