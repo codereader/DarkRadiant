@@ -240,11 +240,7 @@ void OpenGLRenderSystem::extensionsInitialised()
     // Determine if lighting is available based on GL extensions
 
 #ifdef RADIANT_USE_GLSL
-    bool lightingExtensionsAvailable = GLEW_VERSION_1_3
-                                       && GLEW_ARB_shader_objects
-                                       && GLEW_ARB_vertex_shader
-                                       && GLEW_ARB_fragment_shader
-                                       && GLEW_ARB_shading_language_100;
+    bool lightingExtensionsAvailable = GLEW_VERSION_2_0;
 #else
     bool lightingExtensionsAvailable = GLEW_VERSION_1_3
                                        && GLEW_ARB_vertex_program
@@ -260,8 +256,8 @@ void OpenGLRenderSystem::extensionsInitialised()
 		globalOutputStream() << "Lighting mode requires OpenGL features not"
                              << " supported by your graphics drivers:\n";
 		
-		if (!GLEW_VERSION_1_3) {
-			globalOutputStream() << "  GL version 1.3 or better\n";
+		if (!GLEW_VERSION_2_0) {
+			globalOutputStream() << "  GL version 2.0 or better\n";
 		}
 		
 #ifdef RADIANT_USE_GLSL

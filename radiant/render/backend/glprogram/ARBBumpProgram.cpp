@@ -54,6 +54,7 @@ void ARBBumpProgram::create()
 #ifdef RADIANT_USE_GLSL
 
     // Create the program object
+    std::cout << "[renderer] Creating GLSL bump program" << std::endl;
     _programObj = GLProgramFactory::createGLSLProgram(
         BUMP_VP_FILENAME, BUMP_FP_FILENAME
     );

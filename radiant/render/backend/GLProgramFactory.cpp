@@ -128,6 +128,53 @@ void GLProgramFactory::assertShaderCompiled(GLuint shader)
     }
 }
 
+std::string GLProgramFactory::getProgramInfoLog(GLuint program)
+{
+    // Get log length
+    int logLength;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
+
+    // Get log chars in buffer
+    std::vector<char> logBuf(logLength + 1, 0);
+    glGetProgramInfoLog(program, logBuf.size(), NULL, &logBuf.front());
+
+    // Convert to string and return
+    std::string logStr = std::string(&logBuf.front());
+    return logStr;
+}
+
+void GLProgramFactory::assertProgramLinked(GLuint program)
+{
+    // Check the link status
+    GLint linkStatus;
+    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+    if (linkStatus != GL_TRUE)
+    {
+        throw std::runtime_error(
+            "Failed to construct GLSL program:\n"
+            + getProgramInfoLog(program)
+        );
+    }
+
+#ifdef _DEBUG
+
+    // Ask GL to validate the program (this means that it will run)
+    glValidateProgram(program);
+
+    // Get the valid status and info log
+    GLint validStatus;
+    glGetProgramiv(program, GL_VALIDATE_STATUS, &validStatus);
+
+    std::string validLog = getProgramInfoLog(program);
+
+    // Output to console
+    std::cout << "[renderer] GLSL program " 
+              << (validStatus == GL_TRUE ? "IS " : "IS NOT ") << "valid.\n";
+    std::cout << "Info:\n" << validLog << std::endl;
+
+#endif
+}
+
 GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
                                            const std::string& fFile)
 {
@@ -167,26 +214,7 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
     glLinkProgram(program);
 
     // Check the link status and throw an exception if it failed
-    GLint linkStatus;
-    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-    if (linkStatus != GL_TRUE)
-    {
-        // Get log length
-        int logLength;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-
-        // Get log chars in buffer
-        std::vector<char> logBuf(logLength + 1, 0);
-        glGetProgramInfoLog(program, logBuf.size(), NULL, &logBuf.front());
-
-        // Convert to string and throw exception
-        std::string logStr = std::string(&logBuf.front());
-        throw std::runtime_error(
-            "Failed to construct GLSL program:\n"
-            + logStr
-        );
-
-    }
+    assertProgramLinked(program);
 
     // Return the linked program
     return program;
