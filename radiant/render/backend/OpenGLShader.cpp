@@ -191,7 +191,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
     if (triplet.diffuse)
     {
-        triplet.diffuse->getVertexColourMode();
+        vcolMode = triplet.diffuse->getVertexColourMode();
     }
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
