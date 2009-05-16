@@ -24,10 +24,12 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	// bitmap path should be used.
     picoShader_t* shader = PicoGetSurfaceShader(surf);
     if (shader != 0) {
-		if (fExt == "lwo") {
+		if (fExt == "lwo") 
+        {
 	    	_originalShaderName = PicoGetShaderName(shader);
 		}
-		else if (fExt == "ase") {
+		else if (fExt == "ase") 
+        {
 			std::string rawMapName = PicoGetShaderMapName(shader);
 			boost::algorithm::replace_all(rawMapName, "\\", "/");
 			
@@ -45,9 +47,6 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 			}
 		}
     }
-    
-    globalOutputStream() << "  RenderablePicoSurface: using shader " 
-    					 << _originalShaderName << "\n";
     
     _mappedShaderName = _originalShaderName; // no skin at this time
     
