@@ -1,3 +1,9 @@
+darkradiant (0.10.0-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- orbweaver <orbweaver3d@gmail.com>  Sat, 16 May 2009 13:21:53 +0100
+
 darkradiant (0.9.12-2) unstable; urgency=low
 
   * Fixed link error in script module that prevented it from loading.

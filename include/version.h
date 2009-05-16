@@ -2,7 +2,7 @@
 #include <config.h>
 #define RADIANT_VERSION PACKAGE_VERSION
 #else
-#define RADIANT_VERSION "0.9.13"
+#define RADIANT_VERSION "0.10.0"
 #endif
 
 #define RADIANT_APPNAME "DarkRadiant"
