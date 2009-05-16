@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [0.9.13])
+AC_INIT([darkradiant], [0.10.0])
 AM_INIT_AUTOMAKE
 
 # Save user flags
@@ -151,12 +151,13 @@ AC_SUBST([AL_LIBS])
 
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
-CFLAGS="$USER_CFLAGS -Wall -Wno-unused-variable"
-CXXFLAGS="$USER_CXXFLAGS -Wall -Wno-unused-variable"
+WARNING_FLAGS="-Wall -Wno-unused-variable"
+CFLAGS="$USER_CFLAGS $WARNING_FLAGS"
+CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX"
 
 # Debug/optimisation
-if [[ "$debug_build" != 'no' ]]
+if test "$debug_build" != 'no' 
 then
     CPPFLAGS="-D_DEBUG $CPPFLAGS"
     CFLAGS="-g -O0 $CFLAGS"
