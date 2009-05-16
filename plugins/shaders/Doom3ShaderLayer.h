@@ -73,7 +73,7 @@ public:
      * \brief
      * Get the bindable texture object.
      */
-    BindableTexturePtr getBindableTexture() const
+    NamedBindablePtr getBindableTexture() const
     {
         return _bindableTex;
     }

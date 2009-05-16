@@ -14,7 +14,7 @@
 namespace shaders
 {
 
-const MapExpressionPtr& ShaderTemplate::getEditorTexture()
+NamedBindablePtr ShaderTemplate::getEditorTexture()
 {
     if (!_parsed) 
         parseDefinition();
@@ -243,8 +243,17 @@ void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
 bool ShaderTemplate::saveLayer()
 {
     // Append layer to list of all layers
-    if (_currentLayer->getBindableTexture()) {
+    if (_currentLayer->getBindableTexture()) 
+    {
         m_layers.push_back(_currentLayer);
+    }
+
+    // If the layer we just saved was a diffusemap layer, and there is no
+    // editorimage, use the diffusemap as editor image
+    if (_currentLayer->getType() == ShaderLayer::DIFFUSE
+        && !_editorTex)
+    {
+        _editorTex = _currentLayer->getBindableTexture();
     }
     
     // Clear the currentLayer structure for possible future layers
