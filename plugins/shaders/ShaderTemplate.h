@@ -153,10 +153,12 @@ public:
 		_blockContents = blockContents;
 	}
 
-	const shaders::MapExpressionPtr& getTexture() {
-		if (!_parsed) parseDefinition();
-		return _editorTex;
-	}
+    /**
+     * \brief
+     * Return the map expression corresponding to the editor preview texture
+     * (qer_editorimage).
+     */
+	const shaders::MapExpressionPtr& getEditorTexture();
 
 	const shaders::MapExpressionPtr& getLightFalloff() {
 		if (!_parsed) parseDefinition();
