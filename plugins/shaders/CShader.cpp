@@ -43,7 +43,7 @@ TexturePtr CShader::getEditorImage()
     {
         // Pass the call to the GLTextureManager to realise this image 
         _editorTexture = GetTextureManager().getBinding(
-            _template->getTexture()
+            _template->getEditorTexture()
         );
         if (!_editorTexture)
         {

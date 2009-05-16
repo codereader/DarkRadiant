@@ -26,16 +26,20 @@ bool ShaderLibrary::addDefinition(const std::string& name,
 	return result.second;
 }
 
-ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
+ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) 
+{
 	// Try to lookup the named definition
 	ShaderDefinitionMap::iterator i = _definitions.find(name);
 	
-	if (i != _definitions.end()) {
+	if (i != _definitions.end()) 
+    {
 		// Return the definition
 		return i->second;
 	}
-	else {
-		globalErrorStream() << "Definition not found: " << name << "\n";
+	else 
+    {
+        globalErrorStream() << "[shaders] ShaderLibrary: definition not found: "
+                            << name << "\n";
 		
 		// Create an empty template with this name
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name, ""));
@@ -50,20 +54,25 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) {
 	}
 }
 
-CShaderPtr ShaderLibrary::findShader(const std::string& name) {
+CShaderPtr ShaderLibrary::findShader(const std::string& name) 
+{
 	// Try to lookup the shader in the active shaders list
 	ShaderMap::iterator i = _shaders.find(name);
 	
-	if (i != _shaders.end()) {
+	if (i != _shaders.end()) 
+    {
 		// A shader has been found, return its pointer
 		return i->second;
 	}
-	else {
-		// No shader has been found, retrieve its definition (may also be a dummy def)
-		ShaderDefinition& def = getDefinition(name);
+	else 
+    {
+        // No shader has been found, retrieve its definition (may also be a
+        // dummy def)
+        ShaderDefinition& def = getDefinition(name);
 		
-		// Construct a new shader object with this def and insert it into the map
-		CShaderPtr shader(new CShader(name, def));
+        // Construct a new shader object with this def and insert it into the
+        // map
+        CShaderPtr shader(new CShader(name, def));
 		
 		_shaders[name] = shader;
 		

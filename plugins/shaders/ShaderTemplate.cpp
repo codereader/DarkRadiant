@@ -14,6 +14,14 @@
 namespace shaders
 {
 
+const MapExpressionPtr& ShaderTemplate::getEditorTexture()
+{
+    if (!_parsed) 
+        parseDefinition();
+
+    return _editorTex;
+}
+
 /*  Searches a token for known shaderflags (e.g. "translucent") and sets the flags
  *  in the member variable m_nFlags
  * 
@@ -97,7 +105,7 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
         m_layers.push_back(layer);
 
         // If there is no editor texture set, use the diffusemap texture instead
-        if (_editorTex)
+        if (!_editorTex)
         {
             _editorTex = difMapExp;
         }
