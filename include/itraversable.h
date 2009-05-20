@@ -18,9 +18,9 @@ public:
 	{
 	public:
 		/// \brief Called when a node is added to the container.
-		virtual void onTraversableInsert(INodePtr node) = 0;
+		virtual void onTraversableInsert(const INodePtr& node) = 0;
 		/// \brief Called when a node is removed from the container.
-		virtual void onTraversableErase(INodePtr node) = 0;
+		virtual void onTraversableErase(const INodePtr& node) = 0;
 	};
 
 	/// \brief Adds a node to the container.

@@ -132,8 +132,8 @@ public:
 	// greebo: This gets called as soon as a scene::Node gets inserted into
 	// the oberved Traversable. This triggers an instantiation call and ensures
 	// that each inserted node is also instantiated.
-	void onTraversableInsert(INodePtr child);
-	void onTraversableErase(INodePtr child);
+	virtual void onTraversableInsert(const INodePtr& child);
+	virtual void onTraversableErase(const INodePtr& child);
 
 	virtual void instantiate(const scene::Path& path);
 	virtual void uninstantiate(const scene::Path& path);
