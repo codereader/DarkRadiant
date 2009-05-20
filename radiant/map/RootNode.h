@@ -65,9 +65,9 @@ public:
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
-	// Override the methods inherited from scene::Node 
-	virtual void addChildNode(const scene::INodePtr& node);
-	virtual void removeChildNode(const scene::INodePtr& node);
+	// Override scene::Traverse::Observer
+	virtual void onTraversableInsert(const scene::INodePtr& child);
+	virtual void onTraversableErase(const scene::INodePtr& child);
 
 	// Cloneable implementation
 	scene::INodePtr clone() const;

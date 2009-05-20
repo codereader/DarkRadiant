@@ -67,20 +67,20 @@ void RootNode::setName(const std::string& name) {
 	_name = name;
 }
 
-void RootNode::addChildNode(const scene::INodePtr& node) {
+void RootNode::onTraversableInsert(const scene::INodePtr& child)
+{
 	// Insert this node into our namespace
-	// greebo: Do this first, otherwise the entity might get registered
-	// with the wrong names (in modules observing the scenegraph)
-	_namespace->connect(node);
-	
-	Node::addChildNode(node);
+	_namespace->connect(child);
+
+	Node::onTraversableInsert(child);
 }
 
-void RootNode::removeChildNode(const scene::INodePtr& node) {
-	Node::removeChildNode(node);
-
+void RootNode::onTraversableErase(const scene::INodePtr& child)
+{
 	// Detach the node from our namespace
-	_namespace->disconnect(node);
+	_namespace->disconnect(child);
+
+	Node::onTraversableErase(child);
 }
 
 void RootNode::instanceAttach(const scene::Path& path) {
