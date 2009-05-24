@@ -72,8 +72,18 @@ void EClassManager::resolveModelInheritance(const std::string& name, IModelDefPt
 		} 
 		else {
 			resolveModelInheritance(i->first, i->second);
-			model->mesh = i->second->mesh;
-			model->skin = i->second->skin;
+
+			// greebo: Only inherit the "mesh" of the parent if the current declaration doesn't have one
+			if (model->mesh.empty())
+			{
+				model->mesh = i->second->mesh;
+			}
+
+			// Only inherit the "skin" of the parent if the current declaration doesn't have one
+			if (model->skin.empty())
+			{
+				model->skin = i->second->skin;
+			}
 		}
 	}
 }
