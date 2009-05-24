@@ -16,6 +16,7 @@
 #include "map/Map.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "settings/GameManager.h" 
+#include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
@@ -476,9 +477,21 @@ public:
 			patch->ctrlAt(2,2).m_vertex = winding[2].vertex;
 			patch->ctrlAt(0,2).m_vertex = winding[3].vertex;
 			patch->ctrlAt(1,2).m_vertex = (patch->ctrlAt(2,2).m_vertex + patch->ctrlAt(0,2).m_vertex)/2;
-			
-			// Set the texture coordinates to something useful
-			patch->NaturalTexture();
+
+			// Use the texture in the clipboard, if it's a decal texture
+			Texturable& clipboard = GlobalShaderClipboard().getSource();
+
+			if (!clipboard.empty())
+			{
+				if (clipboard.getShader().find("decals") != std::string::npos)
+				{
+					patch->SetShader(clipboard.getShader());
+				}
+			}
+
+			// Fit the texture on it
+			patch->SetTextureRepeat(1,1);
+			patch->FlipTexture(1);
 			
 			// Insert the patch into worldspawn
 			scene::INodePtr worldSpawnNode = GlobalMap().getWorldspawn();
