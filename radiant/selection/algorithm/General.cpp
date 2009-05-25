@@ -289,15 +289,28 @@ void invertSelection(const cmd::ArgumentList& args) {
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
 
-class DeleteSelected :
+/**
+ * \brief
+ * SelectionSystem::Visitor which adds all selected nodes to a list, so that
+ * they can subsequently be deleted from the scenegraph.
+ */
+class DeleteSelectedVisitor :
 	public SelectionSystem::Visitor
 {
 	mutable std::set<scene::INodePtr> _eraseList;
-public:
-	// Destructor performs the actual deletion
-	~DeleteSelected() {
-		for (std::set<scene::INodePtr>::iterator i = _eraseList.begin(); i != _eraseList.end(); ++i) {
 
+public:
+
+    /**
+     * \brief
+     * Perform the actual deletion.
+     */
+    void performDeletion()
+    {
+        for (std::set<scene::INodePtr>::iterator i = _eraseList.begin();
+             i != _eraseList.end();
+             ++i) 
+        {
 			scene::INodePtr parent = (*i)->getParent();
 
 			// Remove the childnodes
@@ -310,19 +323,24 @@ public:
 		}
 	}
 
-	void visit(const scene::INodePtr& node) const {
+    /* SelectionSystem::Visitor implementation */
+	void visit(const scene::INodePtr& node) const 
+    {
 		// Check for selected nodes whose parent is not NULL and are not root
-		if (node->getParent() != NULL && !node->isRoot()) {
+		if (node->getParent() != NULL && !node->isRoot()) 
+        {
 			// Found a candidate
 			_eraseList.insert(node);
 		}
 	}
 };
 
-void deleteSelection() {
+void deleteSelection() 
+{
 	// Traverse the scene, deleting all selected nodes
-	DeleteSelected walker;
+	DeleteSelectedVisitor walker;
 	GlobalSelectionSystem().foreachSelected(walker);
+    walker.performDeletion();
 	
 	SceneChangeNotify();
 }
