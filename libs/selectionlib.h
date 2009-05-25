@@ -81,20 +81,40 @@ public:
   }
 };
 
-// greebo: A selectable with an attached callback function that is called upon selection (change)
-// in the case of the PatchInstance the callback points to PatchInstance::selectedChangedComponent()
-class ObservedSelectable : public Selectable
+/**
+ * \brief
+ * Implementation of the Selectable interface which invokes a user-specified
+ * callback function when the selection state is changed.
+ */
+class ObservedSelectable 
+: public Selectable
 {
-  SelectionChangeCallback m_onchanged;
-  bool m_selected;
+    // Callback to invoke on selection changed
+    SelectionChangeCallback m_onchanged;
+
+    // Current selection state
+    bool m_selected;
+
 public:
-  ObservedSelectable(const SelectionChangeCallback& onchanged) : m_onchanged(onchanged), m_selected(false)
-  {
-  }
-  ObservedSelectable(const ObservedSelectable& other) : Selectable(other), m_onchanged(other.m_onchanged), m_selected(false)
-  {
-    setSelected(other.isSelected());
-  }
+
+    /**
+     * \brief
+     * Construct an ObservedSelectable with the given callback function.
+     */
+    ObservedSelectable(const SelectionChangeCallback& onchanged) 
+    : m_onchanged(onchanged), m_selected(false)
+    { }
+
+    /**
+     * \brief
+     * Copy constructor.
+     */
+    ObservedSelectable(const ObservedSelectable& other) 
+    : Selectable(other), m_onchanged(other.m_onchanged), m_selected(false)
+    {
+        setSelected(other.isSelected());
+    }
+
   ObservedSelectable& operator=(const ObservedSelectable& other)
   {
     setSelected(other.isSelected());
@@ -105,15 +125,21 @@ public:
     setSelected(false);
   }
 
-  void setSelected(bool select)
-  {
-    if(select ^ m_selected)
+    /**
+     * \brief
+     * Set the selection state.
+     */
+    void setSelected(bool select)
     {
-      m_selected = select;
-
-      m_onchanged(*this);
+        // Change state and invoke callback only if the new state is different
+        // from the current state
+        if (select ^ m_selected)
+        {
+            m_selected = select;
+            m_onchanged(*this);
+        }
     }
-  }
+
   bool isSelected() const
   {
     return m_selected;
@@ -122,8 +148,6 @@ public:
   	setSelected(!isSelected());
   }
 };
-
-#include "../include/selectable.h"
 
 class OccludeSelector : public Selector
 {
@@ -148,12 +172,21 @@ public:
 	}
 }; // class OccludeSelector
 
+/**
+ * \brief
+ * Subclass of scene::Node which implements the Selectable interface.
+ *
+ * The GlobalSelectionSystem will be notified of selection changes.
+ */
 class SelectableNode : 
 	public scene::Node,
 	public Selectable
 {
+    // ObservedSelectable to store selection state and invoke callback
 	ObservedSelectable _selectable;
+
 public:
+
 	SelectableNode() :
 		_selectable(SelectedChangedCaller(*this))
 	{}
@@ -172,12 +205,23 @@ public:
 		return _selectable;
 	}
 
-	void selectedChanged(const Selectable& selectable) {
-		GlobalSelectionSystem().onSelectedChanged(Node::getSelf(), selectable);
-
-		//selectedChanged(); // TODO?
+    /**
+     * \brief
+     * Callback invoked by the ObservedSelectable when the selection changes.
+     */
+	void selectedChanged(const Selectable& selectable) 
+    {
+		GlobalSelectionSystem().onSelectedChanged(
+            Node::getSelf(), selectable
+        );
 	}
-	typedef MemberCaller1<SelectableNode, const Selectable&, &SelectableNode::selectedChanged> SelectedChangedCaller;
+
+    /**
+     * Callback typedef.
+     */
+	typedef MemberCaller1<
+        SelectableNode, const Selectable&, &SelectableNode::selectedChanged
+    > SelectedChangedCaller;
   
 	// Selectable implementation
 	virtual void setSelected(bool select) {
