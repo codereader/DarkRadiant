@@ -288,6 +288,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\iselectable.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\iselection.h"
 			>
 		</File>
@@ -345,10 +349,6 @@
 		</File>
 		<File
 			RelativePath="..\..\include\nameable.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\include\selectable.h"
 			>
 		</File>
 		<File

@@ -7,7 +7,7 @@
 #include "math/aabb.h"
 #include "math/frustum.h"
 #include "cullable.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "modelskin.h"
 
 namespace md5

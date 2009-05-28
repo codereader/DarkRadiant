@@ -2,7 +2,7 @@
 #define CURVE_BASE_H_
 
 #include "signal/signal.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "math/curve.h"
 #include "math/aabb.h"
 #include "RenderableCurve.h"

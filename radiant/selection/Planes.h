@@ -3,7 +3,7 @@
 
 #include "math/Plane3.h"
 #include <set>
-#include "selectable.h"
+#include "iselectable.h"
 #include "scenelib.h"
 
 // Considers all front planes of selected planeselectables

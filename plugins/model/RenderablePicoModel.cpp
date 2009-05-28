@@ -1,7 +1,7 @@
 #include "RenderablePicoModel.h"
 #include "RenderablePicoSurface.h"
 
-#include "selectable.h"
+#include "iselectable.h"
 #include "texturelib.h"
 #include "ishaders.h"
 #include "ifilter.h"

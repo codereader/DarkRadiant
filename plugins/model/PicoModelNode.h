@@ -2,7 +2,7 @@
 #define PICOMODELNODE_H_
 
 #include "scenelib.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "nameable.h"
 #include "irender.h"
 #include "modelskin.h"

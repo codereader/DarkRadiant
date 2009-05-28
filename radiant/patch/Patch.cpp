@@ -4,7 +4,7 @@
 #include "iuimanager.h"
 #include "shaderlib.h"
 #include "irenderable.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "math/frustum.h"
 #include "stringio.h"
 #include "texturelib.h"

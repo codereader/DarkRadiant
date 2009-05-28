@@ -12,7 +12,7 @@
 #include <time.h>
 #include <boost/format.hpp>
 
-#include "selectable.h"
+#include "iselectable.h"
 #include "selectionlib.h"
 #include "map/Map.h"
 #include "CamRenderer.h"
