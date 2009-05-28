@@ -2,7 +2,7 @@
 
 #include "iselection.h"
 #include "iscenegraph.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "igroupnode.h"
 #include "selectionlib.h"
 #include "gtkutil/dialog.h"

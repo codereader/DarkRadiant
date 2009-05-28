@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_DRAGPLANES_H)
 #define INCLUDED_DRAGPLANES_H
 
-#include "selectable.h"
+#include "iselectable.h"
 #include "selectionlib.h"
 #include "math/aabb.h"
 #include "math/line.h"

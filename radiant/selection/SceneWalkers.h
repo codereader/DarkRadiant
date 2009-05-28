@@ -4,7 +4,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "scenelib.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "editable.h"
 #include "brush/BrushNode.h"
 

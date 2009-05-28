@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iclipper.h"
 #include "irender.h"
-#include "selectable.h"
+#include "iselectable.h"
 
 #include "math/Vector2.h"
 #include "math/Vector3.h"

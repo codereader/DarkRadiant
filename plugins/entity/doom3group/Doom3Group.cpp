@@ -1,7 +1,7 @@
 #include "Doom3Group.h"
 
 #include "iregistry.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "render.h"
 #include "transformlib.h"
 

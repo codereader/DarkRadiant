@@ -2,7 +2,7 @@
 #define PATCHCONTROLINSTANCE_H_
 
 #include "selectionlib.h"
-#include "selectable.h"
+#include "iselectable.h"
 #include "PatchControl.h"
 
 /* greebo: a PatchControlInstance basically consists of two parts: an ObservedSelectable and a PatchControl itself

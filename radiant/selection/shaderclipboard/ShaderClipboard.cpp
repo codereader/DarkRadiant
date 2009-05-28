@@ -1,6 +1,6 @@
 #include "ShaderClipboard.h"
 
-#include "selectable.h"
+#include "iselectable.h"
 #include "iscenegraph.h"
 #include "iuimanager.h"
 #include "ui/mediabrowser/MediaBrowser.h"
