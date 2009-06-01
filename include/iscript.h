@@ -6,6 +6,21 @@
 // Forward decl.
 namespace boost { namespace python { class object; } }
 
+namespace script
+{
+
+struct ExecutionResult
+{
+	// The output of the script
+	std::string	output;
+
+	// whether an error occurred
+	bool	errorOccurred;
+};
+typedef boost::shared_ptr<ExecutionResult> ExecutionResultPtr;
+
+} // namespace script
+
 class IScriptInterface
 {
 public:
@@ -37,6 +52,13 @@ public:
 	 * to the scripts/ folder.
 	 */
 	virtual void executeScriptFile(const std::string& filename) = 0;
+
+	/**
+	 * greebo: Interprets the given string as python script.
+	 *
+	 * @returns: the result object.
+	 */
+	virtual script::ExecutionResultPtr executeString(const std::string& scriptString) = 0;
 };
 typedef boost::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 

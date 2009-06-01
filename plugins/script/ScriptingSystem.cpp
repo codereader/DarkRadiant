@@ -4,6 +4,7 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "igroupdialog.h"
 
 #include "StartupListener.h"
 
@@ -23,6 +24,8 @@
 #include "interfaces/GridInterface.h"
 #include "interfaces/ShaderSystemInterface.h"
 
+#include "ScriptWindow.h"
+
 #include "os/path.h"
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
@@ -32,8 +35,8 @@ namespace fs = boost::filesystem;
 namespace script {
 
 ScriptingSystem::ScriptingSystem() :
-	_outputWriter(false),
-	_errorWriter(true),
+	_outputWriter(false, _outputBuffer),
+	_errorWriter(true, _errorBuffer),
 	_initialised(false)
 {}
 
@@ -90,6 +93,43 @@ void ScriptingSystem::executeScriptFile(const std::string& filename) {
 	}
 }
 
+ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptString)
+{
+	ExecutionResultPtr result(new ExecutionResult);
+
+	result->errorOccurred = false;
+
+	// Clear the output buffers before starting to execute
+	_outputBuffer.clear();
+	_errorBuffer.clear();
+
+	try
+	{
+		// Attempt to run the specified script
+		boost::python::object ignored = boost::python::exec(
+			scriptString.c_str(),
+			_mainNamespace,
+			_globals
+		);
+	}
+	catch (const boost::python::error_already_set&)
+	{
+		result->errorOccurred = true;
+
+		// Dump the error to the console, this will invoke the PythonConsoleWriter
+		PyErr_Print();
+		PyErr_Clear();
+	}
+
+	result->output += _outputBuffer + "\n";
+	result->output += _errorBuffer + "\n";
+
+	_outputBuffer.clear();
+	_errorBuffer.clear();
+
+	return result;
+}
+
 void ScriptingSystem::initialise() {
 	// Add the registered interfaces
 	try {
@@ -124,6 +164,13 @@ void ScriptingSystem::initialise() {
 
 	// Start the init script
 	executeScriptFile("init.py");
+
+	// Add the scripting widget to the groupdialog
+	GlobalGroupDialog().addPage(
+		"ScriptWindow", "Script", "icon_script.png", 
+		ScriptWindow::Instance().getWidget(), 
+		"Script", "console"
+	);
 }
 
 void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args) {
@@ -295,15 +342,15 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	
 	try {
 		// Construct the console writer interface
-		PythonConsoleWriterClass consoleWriter("PythonConsoleWriter", boost::python::init<bool>());
+		PythonConsoleWriterClass consoleWriter("PythonConsoleWriter", boost::python::init<bool, std::string&>());
 		consoleWriter.def("write", &PythonConsoleWriter::write);
 
 		// Declare the interface to python
 		_mainNamespace["PythonConsoleWriter"] = consoleWriter;
 		
 		// Redirect stdio output to our local ConsoleWriter instances
-		boost::python::import("sys").attr("stderr") = _errorWriter;
-		boost::python::import("sys").attr("stdout") = _outputWriter; 
+		boost::python::import("sys").attr("stderr") = boost::python::ptr(&_errorWriter);
+		boost::python::import("sys").attr("stdout") = boost::python::ptr(&_outputWriter);
 	}
 	catch (const boost::python::error_already_set&) {
 		// Dump the error to the console, this will invoke the PythonConsoleWriter

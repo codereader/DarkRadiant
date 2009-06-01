@@ -201,7 +201,9 @@ void GroupDialog::onRadiantShutdown() {
 GtkWidget* GroupDialog::addPage(const std::string& name,
 								const std::string& tabLabel, 
 								const std::string& tabIcon, 
-								GtkWidget* page, const std::string& windowLabel) 
+								GtkWidget* page, 
+								const std::string& windowLabel,
+								const std::string& insertBefore) 
 {
 	// Make sure the notebook is visible before adding pages
 	gtk_widget_show(_notebook);
@@ -220,11 +222,26 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	gtk_widget_show(page);
 	
 	// Create the notebook page
+	gint position = -1;
+
+	if (!insertBefore.empty())
+	{
+		// Find the page with that name
+		for (Pages::const_iterator i = _pages.begin(); i != _pages.end(); ++i) {
+			// Skip the wrong ones
+			if (i->name != insertBefore) continue;
+
+			// Found, extract the tab position and break the loop
+			position = gtk_notebook_page_num(GTK_NOTEBOOK(_notebook), i->page);
+			break;
+		}
+	}
+
 	GtkWidget* notebookPage = gtk_notebook_get_nth_page(
 		GTK_NOTEBOOK(_notebook), 
-		gtk_notebook_insert_page(GTK_NOTEBOOK(_notebook), page, titleWidget, -1)
+		gtk_notebook_insert_page(GTK_NOTEBOOK(_notebook), page, titleWidget, position)
 	);
-	
+
 	// Add this page to the local list
 	Page newPage;
 	newPage.name = name;

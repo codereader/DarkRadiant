@@ -20,6 +20,9 @@ typedef boost::shared_ptr<StartupListener> StartupListenerPtr;
 class ScriptingSystem :
 	public IScriptingSystem
 {
+	std::string _outputBuffer;
+	std::string _errorBuffer;
+
 	PythonConsoleWriter _outputWriter;
 	PythonConsoleWriter _errorWriter;
 
@@ -68,6 +71,9 @@ public:
 
 	// Executes a script file
 	void executeScriptFile(const std::string& filename);
+
+	// Execute the given python script string
+	ExecutionResultPtr executeString(const std::string& scriptString);
 
 	// Runs the named command (or rather the .py file behind it)
 	void executeCommand(const std::string& name);

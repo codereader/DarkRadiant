@@ -7,6 +7,7 @@
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkentry.h>
+#include "gtkutil/ConsoleView.h"
 
 #include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
@@ -26,15 +27,7 @@ class Console :
 	// The widget for packing into a parent window
 	GtkWidget* _vbox;
 
-	GtkWidget* _scrolled;
-	GtkWidget* _textView;
-
-	GtkTextBuffer* _buffer;
-	
-	// The tags for colouring the output text
-	GtkTextTag* _errorTag;
-	GtkTextTag* _warningTag;
-	GtkTextTag* _standardTag;
+	gtkutil::ConsoleView _view;
 
 	// The entry box for console commands
 	CommandEntry _commandEntry;
@@ -72,11 +65,7 @@ public:
 	static Console& Instance();
 
 private:
-	// Static GTK callbacks (ported from GtkRadiant code)
-	static gboolean destroy_set_null(GtkWindow* widget, GtkWidget** p);
-	static void onClearConsole(GtkMenuItem* menuitem, Console* self);
-	static void console_populate_popup(GtkTextView* textview, GtkMenu* menu, Console* self);
-
+	// Static GTK callbacks
 	static void onCmdEntryActivate(GtkEntry* entry, Console* self);
 };
 

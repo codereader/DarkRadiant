@@ -8,20 +8,29 @@ namespace script {
 
 /**
  * greebo: A small helper class for redirecting Python's StdIo output
- * to DarkRadiant's error stream.
+ * to DarkRadiant's global*() streams.
+ *
+ * The output is duplicated to a given string.
  */
 class PythonConsoleWriter {
 
 	// whether to write to output or error stream
 	bool _isErrorLogger;
 
+	// A buffer keeping the messages until read
+	std::string& _outputBuffer;
+
 public:
-	PythonConsoleWriter(bool isErrorLogger) :
-		_isErrorLogger(isErrorLogger)
+	PythonConsoleWriter(bool isErrorLogger, std::string& outputBuffer) :
+		_isErrorLogger(isErrorLogger),
+		_outputBuffer(outputBuffer)
 	{}
 
 	// StdOut redirector
-    void write(const std::string& msg) {
+    void write(const std::string& msg)
+	{
+		_outputBuffer.append(msg);
+
 		// Python doesn't send entire lines, it may send single characters, 
 		// so don't add std::endl each time
 		if (_isErrorLogger) {
