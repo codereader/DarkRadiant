@@ -1,0 +1,81 @@
+#include "ScriptWindow.h"
+
+#include "iscript.h"
+#include "igroupdialog.h"
+#include "iuimanager.h"
+
+#include <gtk/gtk.h>
+#include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/Paned.h"
+#include "gtkutil/TextButton.h"
+#include "gtkutil/nonmodal.h"
+
+namespace script
+{
+
+ScriptWindow::ScriptWindow() :
+	_vbox(gtk_vbox_new(FALSE, 6))
+{
+	// Create the textview, which acts as textbuffer
+	_inTextView = gtk_text_view_new();
+	
+	// Remember the pointers to the textbuffers
+	_inBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_inTextView));
+
+	gtk_widget_set_size_request(_inTextView, 0, -1); // allow shrinking
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_inTextView), GTK_WRAP_WORD);
+	gtk_text_view_set_editable(GTK_TEXT_VIEW(_inTextView), TRUE);
+
+	_inScrolled = gtkutil::ScrolledFrame(_inTextView);
+
+	widget_connect_escape_clear_focus_widget(_inTextView);
+
+	gtk_container_set_focus_chain(GTK_CONTAINER(_inScrolled), NULL);
+
+	GtkWidget* runButton = gtkutil::TextButton("Run Script");
+	g_signal_connect(G_OBJECT(runButton), "clicked", G_CALLBACK(onRunScript), this);
+
+	GtkWidget* buttonBar = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(buttonBar), runButton, FALSE, FALSE, 0);
+
+	GtkWidget* inputVBox = gtk_vbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(inputVBox), _inScrolled, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(inputVBox), buttonBar, FALSE, FALSE, 0);
+
+	// Pack the scrolled textview and the entry box to the vbox
+	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::Paned(inputVBox, _outView, false), TRUE, TRUE, 0);
+	gtk_widget_show_all(_vbox);
+}
+
+void ScriptWindow::toggle(const cmd::ArgumentList& args) {
+	GlobalGroupDialog().togglePage("Script");
+}
+
+GtkWidget* ScriptWindow::getWidget() {
+	return _vbox;
+}
+
+ScriptWindow& ScriptWindow::Instance() {
+	static ScriptWindow _scriptWindow;
+	return _scriptWindow;
+}
+
+void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
+{
+	GtkTextIter start;
+	GtkTextIter end;
+
+	gtk_text_buffer_get_bounds(self->_inBuffer, &start, &end);
+
+	// Extract the script from the input window
+	gchar* text = gtk_text_buffer_get_text(self->_inBuffer, &start, &end, TRUE);
+	std::string scriptString(text);
+	g_free(text);
+	
+	// Run the script
+	script::ExecutionResultPtr result = GlobalScriptingSystem().executeString(scriptString);
+
+	self->_outView.appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::ERROR : gtkutil::ConsoleView::STANDARD);
+}
+
+} // namespace script

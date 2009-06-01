@@ -23,12 +23,15 @@ public:
 	 * @page: the actual page to be added
 	 * @windowLabel: the title string for the groupdialog window 
 	 * 				 displayed when this tab is active
+	 * @insertBefore: specify the name of an already added page to let this page
+	 * be inserted at a specific point in the tab bar.
 	 * 
 	 * @returns: the notebook page widget
 	 */
 	virtual GtkWidget* addPage(const std::string& name, 
 							   const std::string& tabLabel, const std::string& tabIcon, 
-							   GtkWidget* page, const std::string& windowLabel) = 0;
+							   GtkWidget* page, const std::string& windowLabel, 
+							   const std::string& insertBefore = "") = 0;
 
 	/**
 	 * Removes the named page from the TextureBrowser. If the page doesn't exist,

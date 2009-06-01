@@ -67,20 +67,11 @@ public:
 	 */
 	static void construct();
 
-	/** greebo: Adds a page to the group dialog.
-	 * 
-	 * @name: The name of this window (unique, can be used to show the page)
-	 * @tabLabel: The label string to be displayed on the tab
-	 * @tabIcon: The image to be displayed in the tab
-	 * @page: the actual page to be added
-	 * @windowLabel: the title string for the groupdialog window 
-	 * 				 displayed when this tab is active
-	 * 
-	 * @returns: the notebook page widget
-	 */
+	// Documentation: see igroupdialog.h
 	GtkWidget* addPage(const std::string& name, 
 					   const std::string& tabLabel, const std::string& tabIcon, 
-					   GtkWidget* page, const std::string& windowLabel);
+					   GtkWidget* page, const std::string& windowLabel,
+					   const std::string& insertBefore);
 
 	// Removes a given page
 	void removePage(const std::string& name);

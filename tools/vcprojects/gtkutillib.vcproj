@@ -325,6 +325,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\libs\gtkutil\ConsoleView.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\libs\gtkutil\ConsoleView.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\libs\gtkutil\ControlButton.h"
 			>
 		</File>
