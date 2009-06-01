@@ -8,6 +8,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/Paned.h"
 #include "gtkutil/TextButton.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/nonmodal.h"
 
 namespace script
@@ -39,6 +40,7 @@ ScriptWindow::ScriptWindow() :
 	gtk_box_pack_start(GTK_BOX(buttonBar), runButton, FALSE, FALSE, 0);
 
 	GtkWidget* inputVBox = gtk_vbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(inputVBox), gtkutil::LeftAlignedLabel("Python Script Input"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputVBox), _inScrolled, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(inputVBox), buttonBar, FALSE, FALSE, 0);
 
@@ -62,6 +64,9 @@ ScriptWindow& ScriptWindow::Instance() {
 
 void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
 {
+	// Clear the output window before running
+	self->_outView.clear();
+
 	GtkTextIter start;
 	GtkTextIter end;
 
