@@ -3,6 +3,7 @@
 #include "iscript.h"
 #include "igroupdialog.h"
 #include "iuimanager.h"
+#include "iundo.h"
 
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
@@ -10,6 +11,8 @@
 #include "gtkutil/TextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/nonmodal.h"
+
+#include <boost/algorithm/string/replace.hpp>
 
 namespace script
 {
@@ -76,11 +79,28 @@ void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
 	gchar* text = gtk_text_buffer_get_text(self->_inBuffer, &start, &end, TRUE);
 	std::string scriptString(text);
 	g_free(text);
+
+	if (scriptString.empty()) return;
 	
+	UndoableCommand cmd("runScript");
+
 	// Run the script
 	script::ExecutionResultPtr result = GlobalScriptingSystem().executeString(scriptString);
 
-	self->_outView.appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::ERROR : gtkutil::ConsoleView::STANDARD);
+	// Check if the output only consists of whitespace
+	std::string output = boost::algorithm::replace_all_copy(result->output, "\n", "");
+	boost::algorithm::replace_all(output, "\t", "");
+	boost::algorithm::replace_all(output, " ", "");
+
+	if (!result->errorOccurred && output.empty())
+	{
+		// If no output and no error, print at least _something_
+		self->_outView.appendText("OK", gtkutil::ConsoleView::STANDARD);
+	}
+	else
+	{
+		self->_outView.appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::ERROR : gtkutil::ConsoleView::STANDARD);
+	}
 }
 
 } // namespace script
