@@ -134,9 +134,9 @@ class TestShaderVisitor(ShaderVisitor) :
 			print('Found shader: ' + shader.getName() + ' defined in ' + shader.getShaderFileName())
 
 shadervisitor = TestShaderVisitor()
-GlobalShaderSystem.foreachShader(shadervisitor)
+GlobalMaterialManager.foreachShader(shadervisitor)
 
-shader = GlobalShaderSystem.getShaderForName('bc_rat')
+shader = GlobalMaterialManager.getMaterialForName('bc_rat')
 
 if not shader.isNull():
 	print('Shader ' + shader.getName() + ' is defined in ' + shader.getShaderFileName())
