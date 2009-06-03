@@ -8,28 +8,29 @@ AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libgtkutil.la
 libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ $(GTKGLEXT_LIBS) $(GTK_LIBS)
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
-libgtkutil_la_SOURCES = GLWidget.cpp \
-					   PanedPosition.cpp \
-					   VFSTreePopulator.cpp \
-					   messagebox.cpp \
-					   nonmodal.cpp \
-					   Timer.cpp \
-					   WindowPosition.cpp \
-					   idledraw.cpp \
-					   window/PersistentTransientWindow.cpp \
-					   dialog.cpp \
-					   glfont.cpp \
-					   MenuItemAccelerator.cpp \
-					   cursor.cpp \
-					   DeferredAdjustment.cpp \
-					   menu/PopupMenu.cpp \
-					   widget.cpp \
-					   RegistryConnector.cpp \
-					   xorrectangle.cpp \
-					   TreeModel.cpp \
-					   ModalProgressDialog.cpp \
+libgtkutil_la_SOURCES = ConsoleView.cpp \
+						GLWidget.cpp \
+						PanedPosition.cpp \
+						VFSTreePopulator.cpp \
+						messagebox.cpp \
+						nonmodal.cpp \
+						Timer.cpp \
+						WindowPosition.cpp \
+						idledraw.cpp \
+						window/PersistentTransientWindow.cpp \
+						dialog.cpp \
+						glfont.cpp \
+						MenuItemAccelerator.cpp \
+						cursor.cpp \
+						DeferredAdjustment.cpp \
+						menu/PopupMenu.cpp \
+						widget.cpp \
+						RegistryConnector.cpp \
+						xorrectangle.cpp \
+						TreeModel.cpp \
+						ModalProgressDialog.cpp \
 						SerialisableWidgets.cpp \
-					   window.cpp \
-					   clipboard.cpp \
-					   filechooser.cpp \
-					   pointer.cpp
+						window.cpp \
+						clipboard.cpp \
+						filechooser.cpp \
+						pointer.cpp
