@@ -10,6 +10,7 @@ script_la_LDFLAGS = -module -avoid-version \
 script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptCommand.cpp \
 					ScriptModule.cpp \
+					ScriptWindow.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
 					interfaces/RadiantInterface.cpp \
