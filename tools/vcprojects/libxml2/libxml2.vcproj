@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC"
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC;;LIBXML_STATIC"
 				RuntimeLibrary="3"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -104,7 +104,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC"
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC;LIBXML_STATIC"
 				RuntimeLibrary="3"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -165,9 +165,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC"
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC;LIBXML_STATIC"
 				RuntimeLibrary="2"
 				WarningLevel="3"
+				DebugInformationFormat="3"
 				CompileAs="1"
 				DisableSpecificWarnings="4996"
 			/>
@@ -227,7 +228,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC"
+				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBICONV_PLUG;LIBICONV_STATIC;LIBXML_STATIC"
 				RuntimeLibrary="2"
 				WarningLevel="3"
 				CompileAs="1"

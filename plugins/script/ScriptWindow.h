@@ -6,6 +6,7 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktextbuffer.h>
 #include "gtkutil/ConsoleView.h"
+#include "gtkutil/SourceView.h"
 
 namespace script
 {
@@ -19,9 +20,8 @@ class ScriptWindow
 	gtkutil::ConsoleView _outView;
 
 	GtkWidget* _inScrolled;
-	GtkWidget* _inTextView;
-	GtkTextBuffer* _inBuffer;
-	
+	gtkutil::SourceView _view;
+		
 	// Private Constructor
 	ScriptWindow();
 
