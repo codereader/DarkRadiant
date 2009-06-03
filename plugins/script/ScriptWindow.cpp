@@ -17,22 +17,16 @@
 namespace script
 {
 
+	namespace 
+	{
+		const std::string SCRIPT_LANGUAGE_ID("python");
+	}
+
 ScriptWindow::ScriptWindow() :
-	_vbox(gtk_vbox_new(FALSE, 6))
+	_vbox(gtk_vbox_new(FALSE, 6)),
+	_view(SCRIPT_LANGUAGE_ID, false) // allow editing
 {
-	// Create the textview, which acts as textbuffer
-	_inTextView = gtk_text_view_new();
-	
-	// Remember the pointers to the textbuffers
-	_inBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_inTextView));
-
-	gtk_widget_set_size_request(_inTextView, 0, -1); // allow shrinking
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_inTextView), GTK_WRAP_WORD);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(_inTextView), TRUE);
-
-	_inScrolled = gtkutil::ScrolledFrame(_inTextView);
-
-	widget_connect_escape_clear_focus_widget(_inTextView);
+	_inScrolled = gtkutil::ScrolledFrame(_view);
 
 	gtk_container_set_focus_chain(GTK_CONTAINER(_inScrolled), NULL);
 
@@ -70,15 +64,8 @@ void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
 	// Clear the output window before running
 	self->_outView.clear();
 
-	GtkTextIter start;
-	GtkTextIter end;
-
-	gtk_text_buffer_get_bounds(self->_inBuffer, &start, &end);
-
 	// Extract the script from the input window
-	gchar* text = gtk_text_buffer_get_text(self->_inBuffer, &start, &end, TRUE);
-	std::string scriptString(text);
-	g_free(text);
+	std::string scriptString = self->_view.getContents();
 
 	if (scriptString.empty()) return;
 	
