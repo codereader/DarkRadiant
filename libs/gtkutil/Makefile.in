@@ -58,8 +58,8 @@ am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
 	dialog.lo glfont.lo MenuItemAccelerator.lo cursor.lo \
 	DeferredAdjustment.lo PopupMenu.lo widget.lo \
 	RegistryConnector.lo xorrectangle.lo TreeModel.lo \
-	ModalProgressDialog.lo SerialisableWidgets.lo window.lo \
-	clipboard.lo filechooser.lo pointer.lo
+	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
+	window.lo clipboard.lo filechooser.lo pointer.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 libgtkutil_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -121,6 +121,8 @@ GL_LIBS = @GL_LIBS@
 GREP = @GREP@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
+GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
+GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
@@ -222,11 +224,15 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  -I$(top_srcdir)/libs \
 			  $(GTK_CFLAGS) \
 			  $(GTKGLEXT_CFLAGS) \
-			  $(XML_CFLAGS)
+			  $(XML_CFLAGS) \
+			  $(GTKSOURCEVIEW_CFLAGS)
 
 AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libgtkutil.la
-libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ $(GTKGLEXT_LIBS) $(GTK_LIBS)
+libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
+						$(GTKGLEXT_LIBS) $(GTK_LIBS) $(XML_LIBS) \
+						$(GTKSOURCEVIEW_LIBS)
+
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
@@ -250,6 +256,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						TreeModel.cpp \
 						ModalProgressDialog.cpp \
 						SerialisableWidgets.cpp \
+						SourceView.cpp \
 						window.cpp \
 						clipboard.cpp \
 						filechooser.cpp \
@@ -334,6 +341,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PopupMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RegistryConnector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SerialisableWidgets.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Timer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TreeModel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFSTreePopulator.Plo@am__quote@
