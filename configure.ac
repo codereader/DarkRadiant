@@ -119,6 +119,10 @@ then
                  [BOOST_PYTHON_LIBS='-lboost_python'],
                  [script_module=''])
 
+    # GTKSourceView used for syntax highlighting
+    PKG_CHECK_MODULES([GTKSOURCEVIEW], [gtksourceview-2.0], [],
+                      [script_module=''])
+
     AC_SUBST([script_module])
     AC_SUBST([PYTHON_CFLAGS])
     AC_SUBST([PYTHON_LIBS])
