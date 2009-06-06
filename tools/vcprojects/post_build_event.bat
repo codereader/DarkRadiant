@@ -44,3 +44,5 @@ copy ..\..\w32deps\gtk2\bin\libtiff3.dll ..\..\install
 copy ..\..\w32deps\gtk2\bin\zlib1.dll ..\..\install
 
 copy ..\..\w32deps\python\bin\python26.dll ..\..\install
+
+copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install

@@ -48,6 +48,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ddslib", "ddslib.vcproj", "{D42098ED-E192-4DC1-BA1C-80812AB194B4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mapdoom3", "mapdoom3.vcproj", "{3425D3E8-F025-448A-94C8-7EBA6F7A52E5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtkutillib", "gtkutillib.vcproj", "{B6D4B38A-0C39-42CD-8193-75979E1F4D68}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -79,6 +82,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sound", "sound.vcproj", "{1
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "uimanager", "uimanager.vcproj", "{97E454CC-E8B0-4274-AEAE-5157F420C984}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "undo", "undo.vcproj", "{4BCE007A-3FD5-404B-9624-727736437EB0}"
 EndProject
@@ -90,6 +96,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlregistry", "xmlregistry.
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.stimresponse", "dm.stimresponse.vcproj", "{EE9A3B61-58E0-4AA4-8942-6CFCBFAACC3F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.objectives", "dm.objectives.vcproj", "{05E9A613-2108-4843-A567-16B432DAC272}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -97,6 +106,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.objectives", "dm.objecti
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclasstree", "eclasstree.vcproj", "{3B1A6CA3-D76E-4020-860D-1BED3DF7A3BE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenegraph", "scenegraph.vcproj", "{89043465-96F4-4E90-A351-18ECEBD7E6F2}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -104,6 +116,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenegraph", "scenegraph.vc
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "entitylist", "entitylist.vcproj", "{A35C6082-EE2D-4DEB-944B-61CFEB19C5B1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libxml2", "libxml2\libxml2.vcproj", "{6780EE95-8768-4138-A89B-47D3504A6E5D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -112,6 +127,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libxml2", "libxml2\libxml2.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.difficulty", "dm.difficulty.vcproj", "{68B95079-09DF-48F7-BAD9-81C33118BEFD}"
 	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
 		{6780EE95-8768-4138-A89B-47D3504A6E5D} = {6780EE95-8768-4138-A89B-47D3504A6E5D}
 	EndProjectSection
 EndProject
@@ -123,6 +139,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "include", "include.vcproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.conversation", "dm.conversation.vcproj", "{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}"
 	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
 		{6780EE95-8768-4138-A89B-47D3504A6E5D} = {6780EE95-8768-4138-A89B-47D3504A6E5D}
 	EndProjectSection
 EndProject
@@ -139,6 +156,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgdkglext", "libgdkglext\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "script", "script.vcproj", "{979A38FE-BE30-4121-845C-B705461BB1B0}"
 	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
 		{48F648E3-F761-4647-B9A7-63122A0B1F12} = {48F648E3-F761-4647-B9A7-63122A0B1F12}
 	EndProjectSection
 EndProject
