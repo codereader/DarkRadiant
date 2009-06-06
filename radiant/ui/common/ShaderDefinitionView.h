@@ -16,6 +16,9 @@ class ShaderDefinitionView
 	// The top-level widget
 	GtkWidget* _vbox;
 
+	GtkWidget* _materialName;
+	GtkWidget* _filename;
+
 	// The actual code view
 	gtkutil::SourceView _view;
 

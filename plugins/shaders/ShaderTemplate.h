@@ -153,6 +153,11 @@ public:
 		_blockContents = blockContents;
 	}
 
+	const std::string& getBlockContents() const
+	{
+		return _blockContents;
+	}
+
     /**
      * \brief
      * Return the named bindable corresponding to the editor preview texture

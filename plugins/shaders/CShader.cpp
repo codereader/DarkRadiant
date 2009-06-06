@@ -145,6 +145,11 @@ const char* CShader::getShaderFileName() const {
 	return _fileName.c_str();
 }
 
+std::string CShader::getDefinition()
+{
+	return _template->getBlockContents();
+}
+
 // -----------------------------------------
 
 void CShader::realise() {

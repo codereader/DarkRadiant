@@ -36,6 +36,10 @@ public:
 		return (_shader != NULL) ? _shader->getDescription() : "";
 	}
 
+	std::string getDefinition() {
+		return (_shader != NULL) ? _shader->getDefinition() : "";
+	}
+
 	bool isVisible() {
 		return (_shader != NULL) ? _shader->isVisible() : false;
 	}

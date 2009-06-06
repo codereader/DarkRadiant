@@ -117,6 +117,12 @@ public:
   // get shader file name (ie the file where this one is defined)
   virtual const char* getShaderFileName() const = 0;
 
+	/**
+	 * Returns the raw shader definition block, as parsed by the material manager.
+	 * The definition is lacking the outermost curly braces.
+	 */
+	virtual std::string getDefinition() = 0;
+
 	/** Determine whether this is an ambient light shader, i.e. the
 	 * material def contains the global "ambientLight" keyword.
 	 */
