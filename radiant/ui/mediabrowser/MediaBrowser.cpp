@@ -23,6 +23,7 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "ui/common/ShaderDefinitionView.h"
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -43,6 +44,9 @@ namespace {
 
 	const char* APPLY_TEXTURE_TEXT = "Apply to selection";
 	const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
+
+	const char* SHOW_SHADER_DEF_TEXT = "Show Shader Definition";
+	const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
 
 	// TreeStore columns
 	enum {
@@ -131,10 +135,17 @@ MediaBrowser::MediaBrowser()
 		boost::bind(&MediaBrowser::_onApplyToSel, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
+	_popupMenu.addItem(
+		gtkutil::IconTextMenuItem(
+			GlobalRadiant().getLocalPixbuf(SHOW_SHADER_DEF_ICON), 
+			SHOW_SHADER_DEF_TEXT
+		), 
+		boost::bind(&MediaBrowser::_onShowShaderDefinition, this), 
+		boost::bind(&MediaBrowser::_testSingleTexSel, this)
+	);
 
 	// Pack in the TexturePreviewCombo widgets
 	gtk_box_pack_end(GTK_BOX(_widget), _preview, FALSE, FALSE, 0);
-
 }
 
 /* Callback functor for processing shader names */
@@ -374,6 +385,29 @@ bool MediaBrowser::_testSingleTexSel() {
 		return true;
 	else
 		return false;
+}
+
+void MediaBrowser::_onShowShaderDefinition()
+{
+	std::string shaderName = getSelectedName();
+
+	GtkWidget* dialog = gtk_dialog_new_with_buttons("View Shader Definition", GlobalRadiant().getMainWindow(),
+                                         GTK_DIALOG_DESTROY_WITH_PARENT, 
+                                         GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
+                                         NULL);
+
+	GtkWidget* labelWidget = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(labelWidget), shaderName.c_str());
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), labelWidget);
+
+	ShaderDefinitionView view;
+	view.setShader(shaderName);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), view.getWidget());
+
+	gtk_widget_show_all(dialog);
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	
+	gtk_widget_destroy(dialog);
 }
 
 /* GTK CALLBACKS */

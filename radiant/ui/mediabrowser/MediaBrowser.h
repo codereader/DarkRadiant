@@ -45,6 +45,7 @@ private:
 	bool _testLoadInTexView();
 	void _onApplyToSel();
 	void _onLoadInTexView();
+	void _onShowShaderDefinition();
 	
 	/* GTK CALLBACKS */
 	

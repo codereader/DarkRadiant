@@ -6,6 +6,7 @@
 typedef struct _GtkSourceBuffer GtkSourceBuffer;
 typedef struct _GtkSourceView GtkSourceView;
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkSourceLanguageManager GtkSourceLanguageManager;
 
 namespace gtkutil 
 {
@@ -14,6 +15,9 @@ class SourceView
 {
 	GtkSourceView* _view;
 	GtkSourceBuffer* _buffer;
+
+	GtkSourceLanguageManager* _langManager;
+
 public:
 	/**
 	 * Constructs a new sourceview with the given language ID as specified
@@ -22,6 +26,8 @@ public:
 	 * @readOnly: Set this to TRUE to disallow editing of the text buffer.
 	 */
 	SourceView(const std::string& language, bool readOnly);
+
+	~SourceView();
 
 	// Operator-cast to widget for packing into a parent container
 	operator GtkWidget* () const;
