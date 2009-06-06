@@ -408,7 +408,7 @@ void MediaBrowser::_onShowShaderDefinition()
 
 	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalRadiant().getMainWindow());
 	gtk_window_set_default_size(
-		GTK_WINDOW(dialog), gint(rect.width/2), gint(rect.height/2)
+		GTK_WINDOW(dialog), gint(rect.width/2), gint(2*rect.height/3)
 	);
 
 	gtk_widget_show_all(dialog);

@@ -50,6 +50,9 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(_view), TRUE);
 	gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(_view), TRUE);
 
+	// Use a tab size of 4
+	gtk_source_view_set_tab_width(GTK_SOURCE_VIEW(_view), 4);
+
 	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_view));
 
 	_widget = gtkutil::ScrolledFrame(GTK_WIDGET(_view));
