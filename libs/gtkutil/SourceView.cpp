@@ -21,14 +21,14 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	directories[0] = const_cast<gchar*>(langFilesDir.c_str()); // stupid GtkSourceLanguageManager is expecting non-const gchar* pointer...
 	directories[1] = NULL;
 
-	GtkSourceStyleSchemeManager* styleManager = gtk_source_style_scheme_manager_get_default();
-	gtk_source_style_scheme_manager_append_search_path(styleManager, directories[0]);
-	gtk_source_style_scheme_manager_force_rescan(styleManager);
+	GtkSourceStyleSchemeManager* styleSchemeManager = gtk_source_style_scheme_manager_get_default();
+	gtk_source_style_scheme_manager_set_search_path(styleSchemeManager, directories);
+	gtk_source_style_scheme_manager_force_rescan(styleSchemeManager);
 
-	GtkSourceLanguageManager* manager = gtk_source_language_manager_new();
-	gtk_source_language_manager_set_search_path(manager, directories);
+	_langManager = gtk_source_language_manager_new();
+	gtk_source_language_manager_set_search_path(_langManager, directories);
 
-	GtkSourceLanguage* lang = gtk_source_language_manager_get_language(manager, language.c_str());
+	GtkSourceLanguage* lang = gtk_source_language_manager_get_language(_langManager, language.c_str());
 
 	if (lang == NULL)
 	{
@@ -49,6 +49,11 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(_view), TRUE);
 
 	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_view));
+}
+
+SourceView::~SourceView()
+{
+	g_object_unref(_langManager);
 }
 
 SourceView::operator GtkWidget* () const
