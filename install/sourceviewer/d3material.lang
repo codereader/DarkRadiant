@@ -45,6 +45,7 @@
     <style id="builtin-constant"  _name="Builtin Constant"      map-to="def:special-constant"/>
     <style id="builtin-object"    _name="Builtin Object"        map-to="def:type"/>
     <style id="builtin-function"  _name="Builtin Function"      map-to="def:builtin"/>
+	<style id="comment"           _name="Comment"               map-to="def:comment"/>
   </styles>
 
   <default-regex-options case-sensitive="false" />
@@ -170,6 +171,22 @@
         <context ref="double-quoted-raw-string"/>
         <context ref="single-quoted-raw-string"/>
 
+		<!-- Comments -->
+		<context id="comment" style-ref="comment" end-at-line-end="true">
+			<start>//</start>
+			<include>
+			  <context ref="def:in-line-comment"/>
+			</include>
+		</context>
+
+		<context id="comment-multiline" style-ref="comment">
+			<start>/\*</start>
+			<end>\*/</end>
+			<include>
+				<context ref="def:in-comment"/>
+			</include>
+		</context>
+
         <context id="string-conversion" style-ref="string-conversion" end-at-line-end="true">
           <start>`</start>
           <end>`</end>
@@ -265,6 +282,8 @@
 		  <keyword>unsmoothedTangents</keyword>
 		  <keyword>guisurf</keyword>
 		  <keyword>sort</keyword>
+		  <keyword>decal</keyword>
+		  <keyword>reflect</keyword>
 		  <keyword>spectrum</keyword>
 		  <keyword>deform</keyword>
 		  <keyword>decalInfo</keyword>
