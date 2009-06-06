@@ -73,9 +73,9 @@ void ShaderDefinitionView::update()
 	gtk_widget_set_sensitive(_view, TRUE);
 
 	// Surround the definition with curly braces, these are not included
-	std::string definition = _shader + "\n{\n";
+	std::string definition = _shader + "\n{\n\r";
 	definition += material->getDefinition();
-	definition += "\n}";
+	definition += "\n\r}";
 
 	_view.setContents(definition);
 }
