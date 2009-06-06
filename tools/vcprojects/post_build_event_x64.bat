@@ -39,3 +39,5 @@ copy ..\..\w64deps\gtk2\bin\libintl-8.dll ..\..\install
 copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install
 
 copy ..\..\w64deps\python\bin\python26.dll ..\..\install
+
+copy ..\..\w64deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install
