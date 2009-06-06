@@ -47,8 +47,16 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_view), GTK_WRAP_WORD);
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(_view), readOnly ? FALSE : TRUE);
 
-	gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(_view), TRUE);
-	gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(_view), TRUE);
+	gtk_source_view_set_show_line_numbers(_view, TRUE);
+	gtk_source_view_set_auto_indent(_view, TRUE);
+
+	// Use a fixed width font
+	PangoFontDescription* fontDesc = pango_font_description_from_string("Monospace");
+
+	if (fontDesc != NULL)
+	{
+		gtk_widget_modify_font(GTK_WIDGET(_view), fontDesc);
+	}
 
 	// Use a tab size of 4
 	gtk_source_view_set_tab_width(GTK_SOURCE_VIEW(_view), 4);
