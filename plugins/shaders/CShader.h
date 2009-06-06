@@ -42,7 +42,7 @@ public:
 	 */
 	CShader(const std::string& name, const ShaderDefinition& definition);
 
-	virtual ~CShader();
+	~CShader();
 
 	TexturePtr getEditorImage();
 	
@@ -84,7 +84,10 @@ public:
 	const char* getShaderFileName() const;
 
 	// Returns the description string of this material
-	virtual std::string getDescription() const;
+	std::string getDescription() const;
+
+	// returns the raw definition block
+	std::string getDefinition();
 	
 	// -----------------------------------------
 

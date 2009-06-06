@@ -13,6 +13,9 @@ namespace gtkutil
 
 class SourceView
 {
+	// The top-level widget
+	GtkWidget* _widget;
+
 	GtkSourceView* _view;
 	GtkSourceBuffer* _buffer;
 

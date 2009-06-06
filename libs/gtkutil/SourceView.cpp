@@ -2,6 +2,8 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
+
+#include "ScrolledFrame.h"
 #include <gtksourceview/gtksourcelanguagemanager.h>
 #include <gtksourceview/gtksourcestyleschememanager.h>
 #include <gtksourceview/gtksourceview.h>
@@ -49,6 +51,8 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	gtk_source_view_set_auto_indent(GTK_SOURCE_VIEW(_view), TRUE);
 
 	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_view));
+
+	_widget = gtkutil::ScrolledFrame(GTK_WIDGET(_view));
 }
 
 SourceView::~SourceView()
@@ -58,7 +62,7 @@ SourceView::~SourceView()
 
 SourceView::operator GtkWidget* () const
 {
-	return GTK_WIDGET(_view);
+	return _widget;
 }
 
 void SourceView::setContents(const std::string& newContents)

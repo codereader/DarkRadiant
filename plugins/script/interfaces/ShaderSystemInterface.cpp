@@ -18,6 +18,7 @@ void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
 		.def("getName", &ScriptShader::getName)
 		.def("getShaderFileName", &ScriptShader::getShaderFileName)
 		.def("getDescription", &ScriptShader::getDescription)
+		.def("getDefinition", &ScriptShader::getDefinition)
 		.def("isVisible", &ScriptShader::isVisible)
 		.def("isAmbientLight", &ScriptShader::isAmbientLight)
 		.def("isBlendLight", &ScriptShader::isBlendLight)

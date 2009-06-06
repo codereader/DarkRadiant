@@ -9,8 +9,10 @@
 #include "iregistry.h"
 #include "select.h"
 #include "generic/callback.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include "gtkutil/MultiMonitor.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 
@@ -391,22 +393,29 @@ void MediaBrowser::_onShowShaderDefinition()
 {
 	std::string shaderName = getSelectedName();
 
+	// Construct a shader view and pass the shader name
+	ShaderDefinitionView view;
+	view.setShader(shaderName);
+
 	GtkWidget* dialog = gtk_dialog_new_with_buttons("View Shader Definition", GlobalRadiant().getMainWindow(),
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
                                          NULL);
 
-	GtkWidget* labelWidget = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(labelWidget), shaderName.c_str());
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), labelWidget);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 
-	ShaderDefinitionView view;
-	view.setShader(shaderName);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), view.getWidget());
 
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalRadiant().getMainWindow());
+	gtk_window_set_default_size(
+		GTK_WINDOW(dialog), gint(rect.width/2), gint(rect.height/2)
+	);
+
 	gtk_widget_show_all(dialog);
-	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
-	
+
+	// Show and block
+	gtk_dialog_run(GTK_DIALOG(dialog));
+
 	gtk_widget_destroy(dialog);
 }
 

@@ -132,6 +132,8 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib pangocairo-1.0.lib"
 				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w64deps\gtk2\lib"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="$(OutDir)\$(ProjectName).pdb"
 				ImportLibrary="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
