@@ -13,7 +13,11 @@ std::string TreeModel::getString(GtkTreeModel* model,
 	gtk_tree_model_get_value(model, iter, colNo, &val);
 
 	// Create and return the string, and free the GValue
-	std::string retVal = g_value_get_string(&val);
+	const gchar* c = g_value_get_string(&val);
+
+	// greebo: g_value_get_string can return NULL, catch this
+	std::string retVal = (c != NULL) ? c : "";
+
 	g_value_unset(&val);
 	return retVal;
 }
