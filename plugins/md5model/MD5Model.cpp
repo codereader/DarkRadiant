@@ -102,7 +102,7 @@ void MD5Model::updateMaterialList() {
 	}
 }
 
-const std::vector<std::string>& MD5Model::getActiveMaterials() const {
+const model::MaterialList& MD5Model::getActiveMaterials() const {
 	return _surfaceNames;
 }
 

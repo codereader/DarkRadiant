@@ -39,6 +39,7 @@ namespace model {
 	 * or poly count. The interface also inherits from OpenGLRenderable to allow 
 	 * model instances to be used for rendering.
 	 */
+	typedef std::vector<std::string> MaterialList;
 	 
 	class IModel
 	: public OpenGLRenderable,
@@ -81,7 +82,7 @@ namespace model {
 		/** Return a vector of strings listing the active materials used in this
 		 * model, after any skin remaps. The list is owned by the model instance.
 		 */
-		virtual const std::vector<std::string>& getActiveMaterials() const = 0;
+		virtual const MaterialList& getActiveMaterials() const = 0;
 		
 	};
 	

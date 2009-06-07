@@ -34,12 +34,8 @@ GameInterface::PathList GameInterface::getVFSSearchPaths() {
 }
 
 // IScriptInterface implementation
-void GameInterface::registerInterface(boost::python::object& nspace) {
-	// Declare the PathList std::vector to Python
-	boost::python::class_<PathList>("PathList")
-		.def(boost::python::vector_indexing_suite<PathList, true>())
-	;
-
+void GameInterface::registerInterface(boost::python::object& nspace)
+{
 	// Add the Game object declaration
 	nspace["Game"] = boost::python::class_<ScriptGame>("Game", boost::python::init<const game::IGamePtr&>())
 		.def("getKeyValue", &ScriptGame::getKeyValue)

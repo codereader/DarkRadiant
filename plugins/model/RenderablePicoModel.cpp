@@ -136,11 +136,11 @@ void RenderablePicoModel::updateMaterialList() const {
 }
 
 // Return the list of active skins for this model
-const std::vector<std::string>& RenderablePicoModel::getActiveMaterials() const {
+const MaterialList& RenderablePicoModel::getActiveMaterials() const {
 	// If the material list is empty, populate it
 	if (_materialList.empty()) {
 		updateMaterialList();
-	}	
+	}
 	// Return the list
 	return _materialList;
 }
