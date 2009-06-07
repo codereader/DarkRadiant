@@ -573,6 +573,14 @@
 					RelativePath="..\..\plugins\script\interfaces\ShaderSystemInterface.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\SkinInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\SkinInterface.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File

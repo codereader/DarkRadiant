@@ -24,6 +24,7 @@
 #include "interfaces/GridInterface.h"
 #include "interfaces/ShaderSystemInterface.h"
 #include "interfaces/ModelInterface.h"
+#include "interfaces/SkinInterface.h"
 
 #include "ScriptWindow.h"
 
@@ -385,6 +386,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("Grid", GridInterfacePtr(new GridInterface));
 	addInterface("ShaderSystem", ShaderSystemInterfacePtr(new ShaderSystemInterface));
 	addInterface("Model", ModelInterfacePtr(new ModelInterface));
+	addInterface("ModelSkinCacheInterface", ModelSkinCacheInterfacePtr(new ModelSkinCacheInterface));
 
 	GlobalCommandSystem().addCommand(
 		"RunScript", 

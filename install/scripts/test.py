@@ -183,4 +183,11 @@ class ModelFinder(SceneNodeVisitor) :
 walker = ModelFinder()
 GlobalSceneGraph.root().traverse(walker)
 
+# Test the ModelSkinCache interface
+#allSkins = GlobalModelSkinCache.getAllSkins()
+#
+#for skin in allSkins:
+#	modelskin = GlobalModelSkinCache.capture(skin)
+#	print('Skin found: ' + modelskin.getName())
+
 print('')

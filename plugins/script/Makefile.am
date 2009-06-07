@@ -24,4 +24,5 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/FileSystemInterface.cpp \
 					interfaces/GridInterface.cpp \
 					interfaces/ShaderSystemInterface.cpp \
+					interfaces/SkinInterface.cpp \
 					interfaces/GameInterface.cpp
