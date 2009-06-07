@@ -19,6 +19,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/MapInterface.cpp \
 					interfaces/EntityInterface.cpp \
 					interfaces/MathInterface.cpp \
+					interfaces/ModelInterface.cpp \
 					interfaces/CommandSystemInterface.cpp \
 					interfaces/FileSystemInterface.cpp \
 					interfaces/GridInterface.cpp \

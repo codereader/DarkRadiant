@@ -526,6 +526,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\ModelInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\ModelInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\PatchInterface.cpp"
 					>
 				</File>

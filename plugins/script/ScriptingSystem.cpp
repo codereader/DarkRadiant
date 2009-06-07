@@ -23,12 +23,14 @@
 #include "interfaces/FileSystemInterface.h"
 #include "interfaces/GridInterface.h"
 #include "interfaces/ShaderSystemInterface.h"
+#include "interfaces/ModelInterface.h"
 
 #include "ScriptWindow.h"
 
 #include "os/path.h"
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -361,6 +363,11 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 		globalOutputStream() << std::endl;
 	}
 
+	// Declare the std::vector<std::string> object to Python, this is used several times
+	boost::python::class_< std::vector<std::string> >("StringVector")
+		.def(boost::python::vector_indexing_suite<std::vector<std::string>, true>())
+	;
+
 	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", MathInterfacePtr(new MathInterface));
 	addInterface("GameManager", GameInterfacePtr(new GameInterface));
@@ -377,6 +384,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("FileSystem", FileSystemInterfacePtr(new FileSystemInterface));
 	addInterface("Grid", GridInterfacePtr(new GridInterface));
 	addInterface("ShaderSystem", ShaderSystemInterfacePtr(new ShaderSystemInterface));
+	addInterface("Model", ModelInterfacePtr(new ModelInterface));
 
 	GlobalCommandSystem().addCommand(
 		"RunScript", 

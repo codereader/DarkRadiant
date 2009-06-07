@@ -84,7 +84,7 @@ int NullModel::getPolyCount() const {
 	return 0;
 }
 
-const std::vector<std::string>& NullModel::getActiveMaterials() const {
+const MaterialList& NullModel::getActiveMaterials() const {
 	static std::vector<std::string> _dummyMaterials;
 	return _dummyMaterials;
 }

@@ -35,13 +35,22 @@ print('ModelDef mesh for builderforger = ' + modelDef.mesh)
 #GlobalEntityClassManager.forEach(eclassVisitor)
 
 # Test traversing the scenegraph
-#class SceneWalker(SceneNodeVisitor) :
-#	def pre(self, node):
-#		print(node.getNodeType())
-#		return 1
+class SceneWalker(SceneNodeVisitor) :
+	def pre(self, node):
+		print(node.getNodeType())
 
-#walker = SceneWalker()
-#GlobalSceneGraph.root().traverse(walker)
+		# Try to get a model from this node
+		model = node.getModel()
+
+		if not model.isNull():
+			print('Node is a model')
+		else:
+			print('Node is not a model')
+
+		return 1
+
+walker = SceneWalker()
+GlobalSceneGraph.root().traverse(walker)
 
 # Test traversing the current selection
 class Walker(SelectionVisitor) :
@@ -63,6 +72,14 @@ class Walker(SelectionVisitor) :
 			print('Node is a patch')
 		else:
 			print('Node is not a patch')
+		
+		# Try to get a model from this node
+		model = node.getModel()
+
+		if not model.isNull():
+			print('Node is a model')
+		else:
+			print('Node is not a model')
 
 
 visitor = Walker()
@@ -140,5 +157,30 @@ shader = GlobalMaterialManager.getMaterialForName('bc_rat')
 
 if not shader.isNull():
 	print('Shader ' + shader.getName() + ' is defined in ' + shader.getShaderFileName())
+
+# Test finding a model
+class ModelFinder(SceneNodeVisitor) :
+	def pre(self, node):
+		# Try to get a model from this node
+		model = node.getModel()
+
+		if not model.isNull():
+			print('Model information:')
+			print('Filename: ' + model.getFilename())
+			print('Model path: ' + model.getModelPath())
+			print('Surface count: ' + str(model.getSurfaceCount()))
+			print('Vertex count: ' + str(model.getVertexCount()))
+			print('Poly count: ' + str(model.getPolyCount()))
+			
+			materials = model.getActiveMaterials()
+			
+			print('Active Materials:')
+			for material in materials:
+				print(material)
+
+		return 1
+
+walker = ModelFinder()
+GlobalSceneGraph.root().traverse(walker)
 
 print('')

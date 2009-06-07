@@ -30,7 +30,7 @@ public:
 	// Visit each keyvalue, wraps to the contained entity
 	void forEachKeyValue(Entity::Visitor& visitor);
 
-	// Checks if the given SceneNode structure is a BrushNode
+	// Checks if the given SceneNode structure is an EntityNode
 	static bool isEntity(const ScriptSceneNode& node);
 
 	// "Cast" service for Python, returns a ScriptEntityNode. 
