@@ -4,6 +4,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/MultiMonitor.h"
 #include "gtkutil/IconTextColumn.h"
 
 #include "iradiant.h"
@@ -49,17 +50,21 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
   _entity(entity)
 {
 	// Window properties
-	GtkWidget* groupdialog = GlobalGroupDialog().getDialogWindow();
+	GtkWindow* parent = GTK_WINDOW(GlobalGroupDialog().getDialogWindow());
+
+	if (!GTK_IS_WINDOW(parent) || !GTK_WIDGET_VISIBLE(parent))
+	{
+		parent = GlobalRadiant().getMainWindow();
+	}
 	
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GTK_WINDOW(groupdialog));
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), ADDPROPERTY_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
     
     // Set size of dialog
-    gint w, h;
-	gtk_window_get_size(GTK_WINDOW(groupdialog), &w, &h);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w, h);
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(parent);
+    gtk_window_set_default_size(GTK_WINDOW(_widget), rect.width/3, rect.height/3);
     
     // Signals
     g_signal_connect(G_OBJECT(_widget), "delete-event", 
