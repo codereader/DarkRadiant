@@ -114,7 +114,8 @@ int RenderablePicoModel::getPolyCount() const {
 }
 	
 // Apply the given skin to this model
-void RenderablePicoModel::applySkin(const ModelSkin& skin) {
+void RenderablePicoModel::applySkin(const ModelSkin& skin)
+{
 	// Apply the skin to each surface
 	for (SurfaceList::iterator i = _surfVec.begin();
 		 i != _surfVec.end();
@@ -122,6 +123,9 @@ void RenderablePicoModel::applySkin(const ModelSkin& skin) {
 	{
 		(*i)->applySkin(skin);
 	}
+
+	// greebo: Update the active material list after applying this skin
+	updateMaterialList();
 }
 
 // Update the list of active materials
