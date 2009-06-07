@@ -6,7 +6,6 @@
 #include "iundo.h"
 
 #include <gtk/gtk.h>
-#include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/Paned.h"
 #include "gtkutil/TextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -26,7 +25,8 @@ ScriptWindow::ScriptWindow() :
 	_vbox(gtk_vbox_new(FALSE, 6)),
 	_view(SCRIPT_LANGUAGE_ID, false) // allow editing
 {
-	_inScrolled = gtkutil::ScrolledFrame(_view);
+	// The Sourceview is already contained in a scrolled frame
+	_inScrolled = _view;
 
 	gtk_container_set_focus_chain(GTK_CONTAINER(_inScrolled), NULL);
 
