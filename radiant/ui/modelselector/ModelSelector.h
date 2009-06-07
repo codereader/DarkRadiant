@@ -28,6 +28,7 @@ namespace {
 		FULLNAME_COLUMN,	// e.g. "models/darkmod/props/chair1.lwo"
 		SKIN_COLUMN,		// e.e. "chair1_brown_wood", or "" for no skin
 		IMAGE_COLUMN,		// icon to display
+		IS_FOLDER_COLUMN,	// whether this is a folder
 		N_COLUMNS
 	};
 	
@@ -133,6 +134,12 @@ private:
 	static void callbackSelChanged(GtkWidget*, ModelSelector*);
 	static void callbackOK(GtkWidget*, ModelSelector*);
 	static void callbackCancel(GtkWidget*, ModelSelector*);
+
+	// Custom sort function to allow folder-first sort order
+	static gint treeViewSortFunc(GtkTreeModel *model, 
+									GtkTreeIter *a, 
+									GtkTreeIter *b, 
+									gpointer user_data);
 	
 public:
 

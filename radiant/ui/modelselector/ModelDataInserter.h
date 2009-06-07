@@ -52,6 +52,7 @@ public:
 						   FULLNAME_COLUMN, fullPath.c_str(),
 						   SKIN_COLUMN, "",
 						   IMAGE_COLUMN, pixBuf,
+						   IS_FOLDER_COLUMN, isExplicit ? FALSE : TRUE,
 						   -1);
 		
 		if (!_includeSkins) {
@@ -74,6 +75,7 @@ public:
 							   FULLNAME_COLUMN, fullPath.c_str(),
 							   SKIN_COLUMN, i->c_str(),
 							   IMAGE_COLUMN, GlobalRadiant().getLocalPixbuf(SKIN_ICON),
+							   IS_FOLDER_COLUMN, isExplicit ? FALSE : TRUE,
 							   -1);
 		}
 	} 	
