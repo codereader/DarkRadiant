@@ -144,64 +144,65 @@
 		<displayFolderKey value="editor_displayFolder" />
 	</entityChooser>
 	<entityInspector>
-		<property name="origin" category="Basic" type="vector3">The origin of this object in 3D space</property>
-		<property name="classname" category="Basic" type="classname">The classname of this entity. This must be a recognised class defined in one of the DEF files, and governs the overall behaviour of the entity</property>
-		<property name="name" category="Basic" type="text">The displayed name of this entity. This can be arbitrary, but must be unique across the entire map</property>
-		<property name="rotation" category="Basic" type="text" />
-		<property name="_color" category="Basic" type="colour" />
-		<property name="angle" 
+		<property match="origin" category="Basic" type="vector3">The origin of this object in 3D space</property>
+		<property match="classname" category="Basic" type="classname">The classname of this entity. This must be a recognised class defined in one of the DEF files, and governs the overall behaviour of the entity</property>
+		<property match="name" category="Basic" type="text">The displayed name of this entity. This can be arbitrary, but must be unique across the entire map</property>
+		<property match="rotation" category="Basic" type="text" />
+		<property match="_color" category="Basic" type="colour" />
+		<property match="angle" 
                   category="Basic" 
                   type="angle" 
                   options="0,360">The direction this entity initially faces.  Generally applied to AI or player_start entities.</property>
-		<property name="falloff" category="Light" type="text" />
-		<property name="light_radius" category="Light" type="vector3" />
-		<property name="light_rotation" category="Light" type="text" />
-		<property name="light_center" category="Light" type="vector3" />
-		<property name="light_target" category="Light" type="vector3" />
-		<property name="light_up" category="Light" type="vector3" />
-		<property name="light_right" category="Light" type="vector3" />
-		<property name="light_start" category="Light" type="vector3" />
-		<property name="light_end" category="Light" type="vector3" />
-		<property name="parallel" category="Light" type="bool" />
-		<property name="nodiffuse" category="Light" type="bool" />
-		<property name="noshadows" category="Light" type="bool" />
-		<property name="nospecular" category="Light" type="bool" />
+		<property match="falloff" category="Light" type="text" />
+		<property match="light_radius" category="Light" type="vector3" />
+		<property match="light_rotation" category="Light" type="text" />
+		<property match="light_center" category="Light" type="vector3" />
+		<property match="light_target" category="Light" type="vector3" />
+		<property match="light_up" category="Light" type="vector3" />
+		<property match="light_right" category="Light" type="vector3" />
+		<property match="light_start" category="Light" type="vector3" />
+		<property match="light_end" category="Light" type="vector3" />
+		<property match="parallel" category="Light" type="bool" />
+		<property match="nodiffuse" category="Light" type="bool" />
+		<property match="noshadows" category="Light" type="bool" />
+		<property match="nospecular" category="Light" type="bool" />
 		<property 
-			name="texture" 
+			match="texture" 
 			category="Light" 
 			type="texture" 
 			options="lights,fogs" 
 		/>
-		<property name="extinguished" category="Light" type="bool" />
-		<property name="model" category="Model" type="model">The displayed model or particle system for this entity. For a func_static or other entity type which can have brushes as children, this key must be set to the same value as "name" if brushes are used</property>
-		<property name="model_lit" category="Model" type="model">The model or particle system to be used when this entity is lit (i.e. for torches).</property>
-		<property name="model_extinguished" category="Model" type="model">The model or particle system to be used when this torch entity is extinguished.</property>
-		<property name="skin" category="Model" type="skin" />
-		<property name="noshadows" category="Model" type="bool" />
-		<property name="solid" category="Model" type="bool" />
-		<property name="target" category="Links" type="entity" />
-		<property name="target0" category="Links" type="entity" />
-		<property name="target1" category="Links" type="entity" />
-		<property name="target2" category="Links" type="entity" />
-		<property name="target3" category="Links" type="entity" />
-		<property name="target4" category="Links" type="entity" />
-		<property name="target5" category="Links" type="entity" />
-		<property name="target6" category="Links" type="entity" />
-		<property name="target7" category="Links" type="entity" />
-		<property name="target8" category="Links" type="entity" />
-		<property name="target9" category="Links" type="entity" />
-		<property name="target10" category="Links" type="entity" />
-		<property name="bind" category="Links" type="entity" />
-		<property name="bindToJoint" category="Links" type="text" />
-		<property name="s_shader" category="Sound" type="sound" />
-		<property name="s_mindistance" category="Sound" type="text" />
-		<property name="s_maxdistance" category="Sound" type="text" />
-		<property name="s_looping" category="Sound" type="bool" />
-		<property name="s_waitfortrigger" category="Sound" type="bool" />
-		<property name="s_occlusion" category="Sound" type="bool" />
-		<property name="s_omni" category="Sound" type="bool" />
-		<property name="s_volume" category="Sound" type="text" />
-		<property name="s_global" category="Sound" type="bool" />
+		<property match="extinguished" category="Light" type="bool" />
+		<property match="model" category="Model" type="model">The displayed model or particle system for this entity. For a func_static or other entity type which can have brushes as children, this key must be set to the same value as "name" if brushes are used</property>
+		<property match="model_lit" category="Model" type="model">The model or particle system to be used when this entity is lit (i.e. for torches).</property>
+		<property match="model_extinguished" category="Model" type="model">The model or particle system to be used when this torch entity is extinguished.</property>
+		<property match="skin" category="Model" type="skin" />
+		<property match="noshadows" category="Model" type="bool" />
+		<property match="solid" category="Model" type="bool" />
+		<property match="target" category="Links" type="entity" />
+		<property match="target0" category="Links" type="entity" />
+		<property match="target1" category="Links" type="entity" />
+		<property match="target2" category="Links" type="entity" />
+		<property match="target3" category="Links" type="entity" />
+		<property match="target4" category="Links" type="entity" />
+		<property match="target5" category="Links" type="entity" />
+		<property match="target6" category="Links" type="entity" />
+		<property match="target7" category="Links" type="entity" />
+		<property match="target8" category="Links" type="entity" />
+		<property match="target9" category="Links" type="entity" />
+		<property match="target10" category="Links" type="entity" />
+		<property match="bind" category="Links" type="entity" />
+		<property match="bindToJoint" category="Links" type="text" />
+		<property match="s_shader" category="Sound" type="sound" />
+		<property match="snd_.*" category="Sound" type="sound" />
+		<property match="s_mindistance" category="Sound" type="text" />
+		<property match="s_maxdistance" category="Sound" type="text" />
+		<property match="s_looping" category="Sound" type="bool" />
+		<property match="s_waitfortrigger" category="Sound" type="bool" />
+		<property match="s_occlusion" category="Sound" type="bool" />
+		<property match="s_omni" category="Sound" type="bool" />
+		<property match="s_volume" category="Sound" type="text" />
+		<property match="s_global" category="Sound" type="bool" />
 	</entityInspector>
 
 	<!-- Game-specific values for light entities -->

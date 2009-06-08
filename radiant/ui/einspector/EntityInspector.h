@@ -29,12 +29,13 @@ namespace {
 
 	// Data structure to store the type (vector3, text etc) and the options
 	// string for a single property.
-	struct PropertyParms {
+	struct PropertyParms
+	{
 		std::string type;
 		std::string options;
 	};
 
-	// Map of property names to PropertyParms
+	// Map of property names to PropertyParms, mapped like this: regex => parms
 	typedef std::map<std::string, PropertyParms> PropertyParmMap;
 
 }
@@ -102,6 +103,8 @@ class EntityInspector :
 		}
 	} _clipBoard;
 
+	PropertyParmMap _propertyTypes;
+
 private:
 
     // Utility functions to construct the Gtk components
@@ -160,8 +163,11 @@ private:
     void applyKeyValueToSelection(const std::string& key,
                                   const std::string& value);
 
-	// Static map of property names to PropertyParms objects
-	const PropertyParmMap& getPropertyMap();
+	// Initialise the property lookup tables
+	void loadPropertyMap();
+
+	// Returns property type and option for the given entity key
+	PropertyParms getPropertyParmsForKey(const std::string& key);
 
     // Update tree view contents and property editor
     void updateGUIElements();
