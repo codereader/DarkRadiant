@@ -71,11 +71,6 @@ SourceView::~SourceView()
 	g_object_unref(_langManager);
 }
 
-SourceView::operator GtkWidget* () const
-{
-	return _widget;
-}
-
 void SourceView::setContents(const std::string& newContents)
 {
 	gtk_text_buffer_set_text(GTK_TEXT_BUFFER(_buffer), newContents.c_str(), -1);

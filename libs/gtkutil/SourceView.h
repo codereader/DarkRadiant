@@ -2,6 +2,7 @@
 #define GTKUTIL_SOURCEVIEW_H_
 
 #include <string>
+#include "gtkutil/ifc/Widget.h"
 
 typedef struct _GtkSourceBuffer GtkSourceBuffer;
 typedef struct _GtkSourceView GtkSourceView;
@@ -11,7 +12,8 @@ typedef struct _GtkSourceLanguageManager GtkSourceLanguageManager;
 namespace gtkutil 
 {
 
-class SourceView
+class SourceView :
+	public Widget
 {
 	// The top-level widget
 	GtkWidget* _widget;
@@ -32,9 +34,6 @@ public:
 
 	~SourceView();
 
-	// Operator-cast to widget for packing into a parent container
-	operator GtkWidget* () const;
-
 	void setContents(const std::string& newContents);
 
 	// Returns the contents of the source buffer
@@ -42,6 +41,13 @@ public:
 
 	// Clears the contents of the buffer
 	void clear();
+
+protected:
+	// gtkutil::Widget implementation
+	GtkWidget* _getWidget() const
+	{
+		return _widget;
+	}
 };
 
 } // namespace gtkutil
