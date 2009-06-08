@@ -35,7 +35,7 @@ public:
 	/**
 	 * Enumerate sound shaders.
 	 */
-	void forEachShader(SoundShaderVisitor visitor) const;
+	void forEachShader(SoundShaderVisitor& visitor) const;
 	
 	/** greebo: Returns the soundshader with the name <shaderName>   
 	 */

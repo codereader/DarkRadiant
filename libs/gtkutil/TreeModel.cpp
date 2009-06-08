@@ -74,6 +74,21 @@ std::string TreeModel::getSelectedString(GtkTreeSelection* sel, gint colNo)
 	}
 }
 
+bool TreeModel::getSelectedBoolean(GtkTreeSelection* selection, gint colNo)
+{
+	GtkTreeIter iter;
+	GtkTreeModel* model;
+	
+	// Get the selected value by querying the selection object
+	if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
+		return getBoolean(model, &iter, colNo);
+	}
+	else {
+		// Nothing selected, return false
+		return false;
+	}
+}
+
 gboolean TreeModel::equalFuncStringContains(GtkTreeModel* model, 
 										gint column,
 										const gchar* key,

@@ -19,12 +19,12 @@ SoundManager::SoundManager() :
 {}
 
 // Enumerate shaders
-void SoundManager::forEachShader(SoundShaderVisitor visitor) const {
+void SoundManager::forEachShader(SoundShaderVisitor& visitor) const {
 	for (ShaderMap::const_iterator i = _shaders.begin();
 		 i != _shaders.end();
 		 ++i)
 	{
-		visitor(i->second);
+		visitor.visit(i->second);
 	}
 }
 

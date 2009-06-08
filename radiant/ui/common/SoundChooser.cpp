@@ -2,11 +2,12 @@
 
 #include "iradiant.h"
 #include "isound.h"
-#include "gtkutil/TextColumn.h"
+#include "gtkutil/IconTextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/MultiMonitor.h"
+#include "gtkutil/VFSTreePopulator.h"
 
 #include <gtk/gtk.h>
 
@@ -19,15 +20,19 @@ namespace {
 	enum {
 		DISPLAYNAME_COLUMN,
 		SHADERNAME_COLUMN,
+		IS_FOLDER_COLUMN,
+		ICON_COLUMN,
 		N_COLUMNS
 	};	
-	
+
+	const char* const SHADER_ICON = "icon_sound.png";
+	const char* const FOLDER_ICON = "folder16.png";	
 }
 
 // Constructor
 SoundChooser::SoundChooser()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _treeStore(gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING))
+  _treeStore(gtk_tree_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, GDK_TYPE_PIXBUF))
 {
 	// Set up the window
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
@@ -60,28 +65,46 @@ namespace {
 /**
  * Visitor class to enumerate sound shaders and add them to the tree store.
  */
-class SoundShaderFinder
+class SoundShaderPopulator :
+	public SoundShaderVisitor,
+	public gtkutil::VFSTreePopulator,
+	public gtkutil::VFSTreePopulator::Visitor
 {
-	// Tree store to populate
-	GtkTreeStore* _store;
-	
 public:
-
 	// Constructor
-	SoundShaderFinder(GtkTreeStore* store)
-	: _store(store)
-	{ }
+	SoundShaderPopulator(GtkTreeStore* treeStore) :
+		gtkutil::VFSTreePopulator(treeStore)
+	{}
 	
-	// Functor operator
-	void operator() (const ISoundShaderPtr& shader) {
-		GtkTreeIter iter;
-		gtk_tree_store_append(_store, &iter, NULL);
-		gtk_tree_store_set(_store, &iter, 
-						   DISPLAYNAME_COLUMN, shader->getName().c_str(),
-						   SHADERNAME_COLUMN, shader->getName().c_str(),
-						   -1);	
-	}	
-	
+	// Functor operator needed for the forEachShader() call
+	void visit(const ISoundShaderPtr& shader) 
+	{
+		// Construct a "path" into the sound shader tree,
+		// using the mod name as first folder level
+		addPath(shader->getModName() + "/" + shader->getName());
+	}
+
+	// Required visit function
+	void visit(GtkTreeStore* store, GtkTreeIter* iter, 
+			   const std::string& path, bool isExplicit)
+	{
+		// Get the display name by stripping off everything before the last
+		// slash
+		std::string displayName = path.substr(path.rfind("/") + 1);
+
+		// Pixbuf depends on model type
+		GdkPixbuf* pixBuf = isExplicit 
+							? GlobalRadiant().getLocalPixbuf(SHADER_ICON)
+							: GlobalRadiant().getLocalPixbuf(FOLDER_ICON);
+
+		// Fill in the column values
+		gtk_tree_store_set(store, iter,
+						   DISPLAYNAME_COLUMN, displayName.c_str(),
+						   SHADERNAME_COLUMN, displayName.c_str(),
+						   IS_FOLDER_COLUMN, isExplicit ? FALSE : TRUE,
+						   ICON_COLUMN, pixBuf,
+						   -1);
+	}
 };
 
 
@@ -90,20 +113,26 @@ public:
 // Create the tree view
 GtkWidget* SoundChooser::createTreeView() {
 	
-	// Tree view with single text column
+	// Tree view with single text icon column
 	GtkWidget* tv = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv),
-		gtkutil::TextColumn("", DISPLAYNAME_COLUMN, false)
+		gtkutil::IconTextColumn("Shader", DISPLAYNAME_COLUMN, ICON_COLUMN, false)
 	);
 
 	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	g_signal_connect(G_OBJECT(_treeSelection), "changed", 
 					 G_CALLBACK(_onSelectionChange), this);
 
-	// Populate the tree store with sound shaders
-	SoundShaderFinder finder(_treeStore);
-	GlobalSoundManager().forEachShader(finder);
+	// Populate the tree store with sound shaders, using a VFS tree populator
+	SoundShaderPopulator pop(_treeStore);
+
+	// Visit all sound shaders and collect them for later insertion
+	GlobalSoundManager().forEachShader(pop);
+
+	// Let the populator iterate over all collected elements 
+	// and insert them in the treestore
+	pop.forEachNode(pop);
 
 	return gtkutil::ScrolledFrame(tv);	
 }
@@ -162,7 +191,16 @@ void SoundChooser::_onCancel(GtkWidget* w, SoundChooser* self) {
 }
 
 // Tree Selection Change
-void SoundChooser::_onSelectionChange(GtkTreeSelection* selection, SoundChooser* self) {
+void SoundChooser::_onSelectionChange(GtkTreeSelection* selection, SoundChooser* self)
+{
+	bool isFolder = gtkutil::TreeModel::getSelectedBoolean(self->_treeSelection, IS_FOLDER_COLUMN);
+
+	if (isFolder) 
+	{
+		self->_preview.setSoundShader("");
+		return;
+	}
+
 	std::string selectedShader = gtkutil::TreeModel::getSelectedString(
 		self->_treeSelection,
 		SHADERNAME_COLUMN

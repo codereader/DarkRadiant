@@ -88,6 +88,21 @@ public:
 										 gint colNo);
 
 	/**
+	 * Extract the selected boolean from the given column in the TreeModel. The
+	 * selection object will be queried for a selection.
+	 * 
+	 * @param selection
+	 * GtkTreeSelection object to be tested for a selection.
+	 * 
+	 * @param colNo
+	 * The column number to extract data from if the selection is valid.
+	 *
+	 * @returns: the boolean of the selected iter. If nothing is selected,
+	 * the method will return false. 
+	 */
+	static bool getSelectedBoolean(GtkTreeSelection* selection, gint colNo);
+
+	/**
 	 * greebo: Utility callback for use in gtk_tree_view_set_search_equal_func, which 
 	 * enables some sort of "full string" search in treeviews. 
 	 *

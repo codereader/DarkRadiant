@@ -81,7 +81,11 @@ typedef boost::shared_ptr<ISoundShader> ISoundShaderPtr;
 /**
  * Sound shader visitor function typedef.
  */
-typedef boost::function< void (const ISoundShaderPtr&) > SoundShaderVisitor;
+class SoundShaderVisitor
+{
+public:
+	virtual void visit(const ISoundShaderPtr& shader) = 0;
+};
 
 const std::string MODULE_SOUNDMANAGER("SoundManager");
 
@@ -95,7 +99,7 @@ public:
 	/**
 	 * Enumerate each of the sound shaders.
 	 */
-	virtual void forEachShader(SoundShaderVisitor visitor) const = 0;
+	virtual void forEachShader(SoundShaderVisitor& visitor) const = 0;
 	
 	/** greebo: Tries to lookup the SoundShader with the given name,
 	 * 			returns a soundshader with an empty name, if the lookup failed.
