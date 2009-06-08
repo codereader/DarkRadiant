@@ -20,7 +20,7 @@ Console::Console() :
 	_vbox(gtk_vbox_new(FALSE, 6))
 {
 	// Pack the scrolled textview and the entry box to the vbox
-	gtk_box_pack_start(GTK_BOX(_vbox), _view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_vbox), _view.getWidget(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(_vbox), _commandEntry, FALSE, FALSE, 0);
 	gtk_widget_show_all(_vbox);
 

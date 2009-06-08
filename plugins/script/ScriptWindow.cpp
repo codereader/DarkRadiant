@@ -26,7 +26,7 @@ ScriptWindow::ScriptWindow() :
 	_view(SCRIPT_LANGUAGE_ID, false) // allow editing
 {
 	// The Sourceview is already contained in a scrolled frame
-	_inScrolled = _view;
+	_inScrolled = _view.getWidget();
 
 	gtk_container_set_focus_chain(GTK_CONTAINER(_inScrolled), NULL);
 
@@ -42,7 +42,7 @@ ScriptWindow::ScriptWindow() :
 	gtk_box_pack_start(GTK_BOX(inputVBox), buttonBar, FALSE, FALSE, 0);
 
 	// Pack the scrolled textview and the entry box to the vbox
-	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::Paned(inputVBox, _outView, false), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::Paned(inputVBox, _outView.getWidget(), false), TRUE, TRUE, 0);
 	gtk_widget_show_all(_vbox);
 }
 

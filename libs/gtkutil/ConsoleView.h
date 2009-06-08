@@ -3,6 +3,7 @@
 
 #include <string>
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/ifc/Widget.h"
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktextbuffer.h>
 #include <gtk/gtktextview.h>
@@ -20,7 +21,8 @@ namespace gtkutil
  *
  * There are three "modes" available for writing text: STD, WARNING, ERROR
  */
-class ConsoleView
+class ConsoleView :
+	public gtkutil::Widget
 {
 	GtkWidget* _scrolledFrame;
 
@@ -51,8 +53,9 @@ public:
 	// Clears the text buffer
 	void clear();
 
-	// Use this operator to pack this object into a parent container
-	operator GtkWidget* ()
+protected:
+	// gtkutil::Widget implementation
+	GtkWidget* _getWidget() const
 	{
 		return _scrolledFrame;
 	}

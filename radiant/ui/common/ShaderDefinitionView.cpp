@@ -35,7 +35,7 @@ ShaderDefinitionView::ShaderDefinitionView() :
 	gtk_table_attach_defaults(table, _filename, 1, 2, 1, 2);
 
 	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::LeftAlignedLabel("Definition"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_vbox), _view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_vbox), _view.getWidget(), TRUE, TRUE, 0);
 }
 
 void ShaderDefinitionView::setShader(const std::string& shader)
@@ -61,7 +61,7 @@ void ShaderDefinitionView::update()
 		gtk_label_set_markup(GTK_LABEL(_materialName), "");
 		gtk_label_set_markup(GTK_LABEL(_filename), "");
 
-		gtk_widget_set_sensitive(_view, FALSE);
+		gtk_widget_set_sensitive(_view.getWidget(), FALSE);
 
 		return;
 	}
@@ -70,7 +70,7 @@ void ShaderDefinitionView::update()
 	gtk_label_set_markup(GTK_LABEL(_materialName), ("<b>" + material->getName() + "</b>").c_str());
 	gtk_label_set_markup(GTK_LABEL(_filename), (std::string("<b>") + material->getShaderFileName() + "</b>").c_str());
 
-	gtk_widget_set_sensitive(_view, TRUE);
+	gtk_widget_set_sensitive(_view.getWidget(), TRUE);
 
 	// Surround the definition with curly braces, these are not included
 	std::string definition = _shader + "\n{\n\r";
