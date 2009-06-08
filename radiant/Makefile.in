@@ -117,6 +117,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-TexturePreviewCombo.$(OBJEXT) \
 	darkradiant-ShaderSelector.$(OBJEXT) \
 	darkradiant-ShaderChooser.$(OBJEXT) \
+	darkradiant-ShaderDefinitionView.$(OBJEXT) \
 	darkradiant-SoundShaderPreview.$(OBJEXT) \
 	darkradiant-RenderableAABB.$(OBJEXT) \
 	darkradiant-CommandEntry.$(OBJEXT) \
@@ -473,6 +474,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/common/TexturePreviewCombo.cpp \
 					  ui/common/ShaderSelector.cpp \
 					  ui/common/ShaderChooser.cpp \
+					  ui/common/ShaderDefinitionView.cpp \
 					  ui/common/SoundShaderPreview.cpp \
 					  ui/common/RenderableAABB.cpp \
 					  ui/common/CommandEntry.cpp \
@@ -800,6 +802,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Shader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderClipboard.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderDefinitionView.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderInfoTab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderSelector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShortcutChooser.Po@am__quote@
@@ -1939,6 +1942,20 @@ darkradiant-ShaderChooser.obj: ui/common/ShaderChooser.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/ShaderChooser.cpp' object='darkradiant-ShaderChooser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ShaderChooser.obj `if test -f 'ui/common/ShaderChooser.cpp'; then $(CYGPATH_W) 'ui/common/ShaderChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/ShaderChooser.cpp'; fi`
+
+darkradiant-ShaderDefinitionView.o: ui/common/ShaderDefinitionView.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ShaderDefinitionView.o -MD -MP -MF $(DEPDIR)/darkradiant-ShaderDefinitionView.Tpo -c -o darkradiant-ShaderDefinitionView.o `test -f 'ui/common/ShaderDefinitionView.cpp' || echo '$(srcdir)/'`ui/common/ShaderDefinitionView.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ShaderDefinitionView.Tpo $(DEPDIR)/darkradiant-ShaderDefinitionView.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/ShaderDefinitionView.cpp' object='darkradiant-ShaderDefinitionView.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ShaderDefinitionView.o `test -f 'ui/common/ShaderDefinitionView.cpp' || echo '$(srcdir)/'`ui/common/ShaderDefinitionView.cpp
+
+darkradiant-ShaderDefinitionView.obj: ui/common/ShaderDefinitionView.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ShaderDefinitionView.obj -MD -MP -MF $(DEPDIR)/darkradiant-ShaderDefinitionView.Tpo -c -o darkradiant-ShaderDefinitionView.obj `if test -f 'ui/common/ShaderDefinitionView.cpp'; then $(CYGPATH_W) 'ui/common/ShaderDefinitionView.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/ShaderDefinitionView.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/darkradiant-ShaderDefinitionView.Tpo $(DEPDIR)/darkradiant-ShaderDefinitionView.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/ShaderDefinitionView.cpp' object='darkradiant-ShaderDefinitionView.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ShaderDefinitionView.obj `if test -f 'ui/common/ShaderDefinitionView.cpp'; then $(CYGPATH_W) 'ui/common/ShaderDefinitionView.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/ShaderDefinitionView.cpp'; fi`
 
 darkradiant-SoundShaderPreview.o: ui/common/SoundShaderPreview.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SoundShaderPreview.o -MD -MP -MF $(DEPDIR)/darkradiant-SoundShaderPreview.Tpo -c -o darkradiant-SoundShaderPreview.o `test -f 'ui/common/SoundShaderPreview.cpp' || echo '$(srcdir)/'`ui/common/SoundShaderPreview.cpp
