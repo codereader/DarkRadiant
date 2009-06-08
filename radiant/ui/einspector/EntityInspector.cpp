@@ -28,6 +28,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/regex.hpp>
 
 namespace ui {
 
@@ -124,6 +125,9 @@ EntityInspector::EntityInspector()
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
     GlobalSelectionSystem().addObserver(this);
+
+	// initialise the properties
+	loadPropertyMap();
 }
 
 void EntityInspector::restoreSettings() 
@@ -169,20 +173,16 @@ void EntityInspector::onKeyChange(const std::string& key,
 
     // Look up type for this key. First check the property parm map,
     // then the entity class itself. If nothing is found, leave blank.
-    PropertyParmMap::const_iterator typeIter = getPropertyMap().find(key);
+	// Get the type for this key if it exists, and the options
+	PropertyParms parms = getPropertyParmsForKey(key);
 
-    IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
-    const EntityClassAttribute& attr = eclass->getAttribute(key);
+	// Check the entityclass (which will return blank if not found)
+	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
+	const EntityClassAttribute& attr = eclass->getAttribute(key);
 
-    std::string type;
-    if (typeIter != getPropertyMap().end()) 
+    if (parms.type.empty()) 
     {
-        type = typeIter->second.type;
-    }
-    else 
-    {
-        // Check the entityclass (which will return blank if not found)
-        type = attr.type;
+        parms.type = attr.type;
     }
 
     bool hasDescription = !attr.description.empty();
@@ -194,7 +194,7 @@ void EntityInspector::onKeyChange(const std::string& key,
         PROPERTY_NAME_COLUMN, key.c_str(),
         PROPERTY_VALUE_COLUMN, value.c_str(),
         TEXT_COLOUR_COLUMN, "black",
-        PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
+        PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(parms.type),
         INHERITED_FLAG_COLUMN, "", // not inherited
         HELP_ICON_COLUMN, hasDescription 
                           ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) 
@@ -581,38 +581,24 @@ void EntityInspector::applyKeyValueToSelection(const std::string& key, const std
 	}
 }
 
-// Construct and return static PropertyMap instance
-const PropertyParmMap& EntityInspector::getPropertyMap() {
+void EntityInspector::loadPropertyMap()
+{
+	_propertyTypes.clear();
 
-	// Static instance of local class, which queries the XML Registry
-	// upon construction and adds the property nodes to the map.
+	xml::NodeList pNodes = GlobalRegistry().findXPath(PROPERTY_NODES_XPATH);
 
-	struct PropertyMapConstructor
+	for (xml::NodeList::const_iterator iter = pNodes.begin();
+		 iter != pNodes.end();
+		 ++iter)
 	{
-		// Map to construct
-		PropertyParmMap _map;
+		PropertyParms parms;
+		parms.type = iter->getAttributeValue("type");
+		parms.options = iter->getAttributeValue("options");
 
-		// Constructor queries the XML registry
-		PropertyMapConstructor() {
-			xml::NodeList pNodes = GlobalRegistry().findXPath(PROPERTY_NODES_XPATH);
-			for (xml::NodeList::const_iterator iter = pNodes.begin();
-				 iter != pNodes.end();
-				 ++iter)
-			{
-				PropertyParms parms;
-				parms.type = iter->getAttributeValue("type");
-				parms.options = iter->getAttributeValue("options");
-				_map.insert(PropertyParmMap::value_type(iter->getAttributeValue("name"),
-												  		parms));
-			}
-		}
-
-
-	};
-	static PropertyMapConstructor _propMap;
-
-	// Return the constructed map
-	return _propMap._map;
+		_propertyTypes.insert(PropertyParmMap::value_type(
+			iter->getAttributeValue("match"), parms)
+		);
+	}
 }
 
 /* Popup menu callbacks (see gtkutil::PopupMenu) */
@@ -806,30 +792,27 @@ void EntityInspector::treeSelectionChanged() {
     std::string value = getListSelection(PROPERTY_VALUE_COLUMN);
 
     // Get the type for this key if it exists, and the options
-    PropertyParmMap::const_iterator tIter = getPropertyMap().find(key);
-    std::string type = (tIter != getPropertyMap().end()
-    					? tIter->second.type
-    					: "");
-    std::string options = (tIter != getPropertyMap().end()
-    					   ? tIter->second.options
-    					   : "");
+	PropertyParms parms = getPropertyParmsForKey(key);
 
     // If the type was not found, also try looking on the entity class
-    if (type.empty()) {
+    if (parms.type.empty())
+	{
     	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
-		type = eclass->getAttribute(key).type;
+		parms.type = eclass->getAttribute(key).type;
     }
 
 	// Remove the existing PropertyEditor widget, if there is one
 	GtkWidget* existingWidget = gtk_bin_get_child(GTK_BIN(_editorFrame));
    	if (existingWidget != NULL)
+	{
    		gtk_widget_destroy(existingWidget);
+	}
 
     // Construct and add a new PropertyEditor
-    _currentPropertyEditor = PropertyEditorFactory::create(type,
+    _currentPropertyEditor = PropertyEditorFactory::create(parms.type,
                                                            _selectedEntity,
                                                            key,
-                                                           options);
+                                                           parms.options);
 
 	// If the creation was successful (because the PropertyEditor type exists),
 	// add its widget to the editor pane
@@ -845,7 +828,30 @@ void EntityInspector::treeSelectionChanged() {
 		gtk_entry_set_text(GTK_ENTRY(_keyEntry), key.c_str());
 		gtk_entry_set_text(GTK_ENTRY(_valEntry), value.c_str());
 	}
+}
 
+PropertyParms EntityInspector::getPropertyParmsForKey(const std::string& key)
+{
+	PropertyParms returnValue;
+
+	// First, attempt to find the key in the property map
+	for (PropertyParmMap::const_iterator i = _propertyTypes.begin();
+		 i != _propertyTypes.end(); ++i)
+	{
+		if (i->first.empty()) continue; // safety check
+
+		// Try to match the entity key against the regex (i->first)
+		boost::regex expr(i->first);
+		boost::smatch matches;
+		
+		if (!boost::regex_match(key, matches, expr)) continue;
+		
+		// We have a match
+		returnValue.type = i->second.type;
+		returnValue.options = i->second.options;
+	}
+
+	return returnValue;
 }
 
 // Append inherited (entityclass) properties
