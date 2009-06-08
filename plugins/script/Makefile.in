@@ -55,9 +55,9 @@ am_script_la_OBJECTS = ScriptingSystem.lo ScriptCommand.lo \
 	ScriptModule.lo ScriptWindow.lo EClassInterface.lo \
 	BrushInterface.lo RadiantInterface.lo PatchInterface.lo \
 	SelectionInterface.lo MapInterface.lo EntityInterface.lo \
-	MathInterface.lo CommandSystemInterface.lo \
+	MathInterface.lo ModelInterface.lo CommandSystemInterface.lo \
 	FileSystemInterface.lo GridInterface.lo \
-	ShaderSystemInterface.lo GameInterface.lo
+	ShaderSystemInterface.lo SkinInterface.lo GameInterface.lo
 script_la_OBJECTS = $(am_script_la_OBJECTS)
 script_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -239,10 +239,12 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/MapInterface.cpp \
 					interfaces/EntityInterface.cpp \
 					interfaces/MathInterface.cpp \
+					interfaces/ModelInterface.cpp \
 					interfaces/CommandSystemInterface.cpp \
 					interfaces/FileSystemInterface.cpp \
 					interfaces/GridInterface.cpp \
 					interfaces/ShaderSystemInterface.cpp \
+					interfaces/SkinInterface.cpp \
 					interfaces/GameInterface.cpp
 
 all: all-am
@@ -323,6 +325,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GridInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MathInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RadiantInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptCommand.Plo@am__quote@
@@ -331,6 +334,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptingSystem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SelectionInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderSystemInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SkinInterface.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -409,6 +413,13 @@ MathInterface.lo: interfaces/MathInterface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MathInterface.lo `test -f 'interfaces/MathInterface.cpp' || echo '$(srcdir)/'`interfaces/MathInterface.cpp
 
+ModelInterface.lo: interfaces/ModelInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ModelInterface.lo -MD -MP -MF $(DEPDIR)/ModelInterface.Tpo -c -o ModelInterface.lo `test -f 'interfaces/ModelInterface.cpp' || echo '$(srcdir)/'`interfaces/ModelInterface.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/ModelInterface.Tpo $(DEPDIR)/ModelInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/ModelInterface.cpp' object='ModelInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ModelInterface.lo `test -f 'interfaces/ModelInterface.cpp' || echo '$(srcdir)/'`interfaces/ModelInterface.cpp
+
 CommandSystemInterface.lo: interfaces/CommandSystemInterface.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT CommandSystemInterface.lo -MD -MP -MF $(DEPDIR)/CommandSystemInterface.Tpo -c -o CommandSystemInterface.lo `test -f 'interfaces/CommandSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/CommandSystemInterface.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/CommandSystemInterface.Tpo $(DEPDIR)/CommandSystemInterface.Plo
@@ -436,6 +447,13 @@ ShaderSystemInterface.lo: interfaces/ShaderSystemInterface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/ShaderSystemInterface.cpp' object='ShaderSystemInterface.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ShaderSystemInterface.lo `test -f 'interfaces/ShaderSystemInterface.cpp' || echo '$(srcdir)/'`interfaces/ShaderSystemInterface.cpp
+
+SkinInterface.lo: interfaces/SkinInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SkinInterface.lo -MD -MP -MF $(DEPDIR)/SkinInterface.Tpo -c -o SkinInterface.lo `test -f 'interfaces/SkinInterface.cpp' || echo '$(srcdir)/'`interfaces/SkinInterface.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/SkinInterface.Tpo $(DEPDIR)/SkinInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/SkinInterface.cpp' object='SkinInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SkinInterface.lo `test -f 'interfaces/SkinInterface.cpp' || echo '$(srcdir)/'`interfaces/SkinInterface.cpp
 
 GameInterface.lo: interfaces/GameInterface.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GameInterface.lo -MD -MP -MF $(DEPDIR)/GameInterface.Tpo -c -o GameInterface.lo `test -f 'interfaces/GameInterface.cpp' || echo '$(srcdir)/'`interfaces/GameInterface.cpp
