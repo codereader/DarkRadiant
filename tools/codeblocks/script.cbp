@@ -8,9 +8,9 @@
 		<Build>
 			<Target title="Debug Win32">
 				<Option platforms="Windows;" />
-				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
-				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\mathlib.lib;" />
+				<Option output="../../install/modules/$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../build/$(PROJECT_NAME)/$(TARGET_NAME)" />
+				<Option external_deps="../../build/libs/$(TARGET_NAME)/mathlib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -53,9 +53,9 @@
 			</Target>
 			<Target title="Release Win32">
 				<Option platforms="Windows;" />
-				<Option output="..\..\install\modules\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
-				<Option object_output="..\..\build\$(PROJECT_NAME)\$(TARGET_NAME)" />
-				<Option external_deps="..\..\build\libs\$(TARGET_NAME)\mathlib.lib;" />
+				<Option output="../../install/modules/$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../../build/$(PROJECT_NAME)/$(TARGET_NAME)" />
+				<Option external_deps="../../build/libs/$(TARGET_NAME)/mathlib.lib;" />
 				<Option type="3" />
 				<Option compiler="msvc8" />
 				<Option createDefFile="1" />
@@ -111,8 +111,8 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add directory="..\..\include" />
-			<Add directory="..\..\libs" />
+			<Add directory="../../include" />
+			<Add directory="../../libs" />
 			<Add directory="$(#boost.include)" />
 			<Add directory="$(#libxml2.include)" />
 			<Add directory="$(#glew.include)" />
@@ -120,151 +120,175 @@
 			<Add directory="$(#win_iconv.include)" />
 		</Compiler>
 		<Linker>
-			<Add directory="..\..\build\libs\$(TARGET_NAME)" />
+			<Add directory="../../build/libs/$(TARGET_NAME)" />
 			<Add directory="$(#python.lib)" />
 			<Add directory="$(#boost.lib)" />
 		</Linker>
-		<Unit filename="..\..\plugins\script\PythonConsoleWriter.h">
+		<Unit filename="../../plugins/script/PythonConsoleWriter.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\SCriptingSystem.cpp">
+		<Unit filename="../../plugins/script/SCriptingSystem.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\ScriptCommand.cpp">
+		<Unit filename="../../plugins/script/ScriptCommand.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\ScriptCommand.h">
+		<Unit filename="../../plugins/script/ScriptCommand.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\ScriptModule.cpp">
+		<Unit filename="../../plugins/script/ScriptModule.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\ScriptingSystem.h">
+		<Unit filename="../../plugins/script/ScriptWindow.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\StartupListener.h">
+		<Unit filename="../../plugins/script/ScriptWindow.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\BrushInterface.cpp">
+		<Unit filename="../../plugins/script/ScriptingSystem.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\BrushInterface.h">
+		<Unit filename="../../plugins/script/StartupListener.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\CommandSystemInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/BrushInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\CommandSystemInterface.h">
+		<Unit filename="../../plugins/script/interfaces/BrushInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\EClassInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/CommandSystemInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\EClassInterface.h">
+		<Unit filename="../../plugins/script/interfaces/CommandSystemInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\EntityInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/EClassInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\EntityInterface.h">
+		<Unit filename="../../plugins/script/interfaces/EClassInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\FileSystemInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/EntityInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\FileSystemInterface.h">
+		<Unit filename="../../plugins/script/interfaces/EntityInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\GameInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/FileSystemInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\GameInterface.h">
+		<Unit filename="../../plugins/script/interfaces/FileSystemInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\GridInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/GameInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\GridInterface.h">
+		<Unit filename="../../plugins/script/interfaces/GameInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\MapInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/GridInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\MapInterface.h">
+		<Unit filename="../../plugins/script/interfaces/GridInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\MathInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/MapInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\MathInterface.h">
+		<Unit filename="../../plugins/script/interfaces/MapInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\PatchInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/MathInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\PatchInterface.h">
+		<Unit filename="../../plugins/script/interfaces/MathInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\RadiantInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/ModelInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\RadiantInterface.h">
+		<Unit filename="../../plugins/script/interfaces/ModelInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\RegistryInterface.h">
+		<Unit filename="../../plugins/script/interfaces/PatchInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\SceneGraphInterface.h">
+		<Unit filename="../../plugins/script/interfaces/PatchInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\SelectionInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/RadiantInterface.cpp">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\SelectionInterface.h">
+		<Unit filename="../../plugins/script/interfaces/RadiantInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\ShaderSystemInterface.cpp">
+		<Unit filename="../../plugins/script/interfaces/RegistryInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\interfaces\ShaderSystemInterface.h">
+		<Unit filename="../../plugins/script/interfaces/SceneGraphInterface.h">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
-		<Unit filename="..\..\plugins\script\script.def">
+		<Unit filename="../../plugins/script/interfaces/SelectionInterface.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="../../plugins/script/interfaces/SelectionInterface.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="../../plugins/script/interfaces/ShaderSystemInterface.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="../../plugins/script/interfaces/ShaderSystemInterface.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="../../plugins/script/interfaces/SkinInterface.cpp">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="../../plugins/script/interfaces/SkinInterface.h">
+			<Option target="Debug Win32" />
+			<Option target="Release Win32" />
+		</Unit>
+		<Unit filename="../../plugins/script/script.def">
 			<Option target="Debug Win32" />
 			<Option target="Release Win32" />
 		</Unit>
