@@ -19,7 +19,7 @@ Face::Face(FaceObserver* observer) :
 	m_undoable_observer(0),
 	m_map(0)
 {
-	_faceShader.attach(*this);
+	_faceShader.attachObserver(*this);
 	m_plane.copy(Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0));
 	m_texdef.setBasis(m_plane.plane3().normal());
 	planeChanged();
@@ -40,7 +40,7 @@ Face::Face(
 	m_undoable_observer(0),
 	m_map(0)
 {
-	_faceShader.attach(*this);
+	_faceShader.attachObserver(*this);
 	m_plane.copy(p0, p1, p2);
 	m_texdef.setBasis(m_plane.plane3().normal());
 	planeChanged();
@@ -54,7 +54,7 @@ Face::Face(const Face& other, FaceObserver* observer) :
 	m_undoable_observer(0),
 	m_map(0)
 {
-	_faceShader.attach(*this);
+	_faceShader.attachObserver(*this);
 	m_plane.copy(other.m_plane);
 	planepts_assign(m_move_planepts, other.m_move_planepts);
 	m_texdef.setBasis(m_plane.plane3().normal());
@@ -62,7 +62,7 @@ Face::Face(const Face& other, FaceObserver* observer) :
 }
 
 Face::~Face() {
-	_faceShader.detach(*this);
+	_faceShader.detachObserver(*this);
 }
 
 void Face::planeChanged() {

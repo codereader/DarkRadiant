@@ -14,6 +14,7 @@
 #include "PlanePoints.h"
 #include "FacePlane.h"
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 
 const double GRID_MIN = 0.125;
 
@@ -34,7 +35,8 @@ public:
 class Face :
 	public OpenGLRenderable,
 	public Undoable,
-	public FaceShaderObserver
+	public FaceShader::Observer,
+	public boost::noncopyable
 {
 	std::size_t m_refcount;
 
@@ -80,11 +82,6 @@ private:
 	UndoObserver* m_undoable_observer;
 	MapFile* m_map;
 	
-	// assignment not supported
-	Face& operator=(const Face& other);
-	// copy-construction not supported
-	Face(const Face& other);
-
 public:
 
 	// Constructors

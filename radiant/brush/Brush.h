@@ -93,7 +93,7 @@ class Brush :
 	public BrushDoom3
 {
 private:
-	typedef UniqueSet<BrushObserver*> Observers;
+	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
 	UndoObserver* m_undoable_observer;
 	MapFile* m_map;

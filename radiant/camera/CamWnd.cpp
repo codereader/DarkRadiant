@@ -286,6 +286,9 @@ CamWnd::CamWnd() :
 	// Subscribe to the global scene graph update 
 	GlobalSceneGraph().addSceneObserver(this);
 
+	// Let the window observer connect its handlers to the GL widget first (before the eventmanager)
+	m_window_observer->addObservedWidget(m_gl_widget);
+
 	GlobalEventManager().connect(GTK_OBJECT(glWidget));
 }
 
@@ -294,6 +297,8 @@ CamWnd::~CamWnd() {
 	GlobalSceneGraph().removeSceneObserver(this);
 	
 	GtkWidget* glWidget = m_gl_widget; // cast
+
+	m_window_observer->removeObservedWidget(glWidget);
 	
 	// Disconnect self from EventManager
 	GlobalEventManager().disconnect(GTK_OBJECT(glWidget));
@@ -807,13 +812,19 @@ void CamWnd::setContainer(GtkWindow* newParent) {
 		return;
 	}
 
-	if (_parentWidget != NULL) {
+	if (_parentWidget != NULL)
+	{
+		// Parent change, disconnect first
+		m_window_observer->removeObservedWidget(GTK_WIDGET(_parentWidget));
 		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+
 		_parentWidget = NULL;
 	}
 
-	if (newParent != NULL) {
+	if (newParent != NULL)
+	{
 		_parentWidget = newParent;
+		m_window_observer->addObservedWidget(GTK_WIDGET(_parentWidget));
 		GlobalEventManager().connect(GTK_OBJECT(_parentWidget));
 	}
 }

@@ -9,7 +9,6 @@
 #include "editable.h"
 #include "nameable.h"
 #include "iundo.h"
-#include "container/container.h"
 #include "irender.h"
 #include "mapfile.h"
 
@@ -57,7 +56,7 @@ public:
 	};
 
 private:
-	typedef UniqueSet<Observer*> Observers;
+	typedef std::set<Observer*> Observers;
 	Observers m_observers;
 
 	scene::Node* m_node;

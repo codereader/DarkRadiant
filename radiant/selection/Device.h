@@ -2,7 +2,6 @@
 #define DEVICE_H_
 
 #include "math/Vector2.h"
-#include "container/container.h"
 #include "generic/callback.h"
 
 // A vector representing the mouse pointer coordinates
@@ -35,7 +34,5 @@ inline DeviceVector device_constrained(DeviceVector device) {
 
 // greebo: The mouseOperations callbacks, should they really be a global?
 typedef Callback1<DeviceVector> MouseEventCallback;
-extern Single<MouseEventCallback> g_mouseUpCallback;
-extern Single<MouseEventCallback> g_mouseMovedCallback;
 
 #endif /*DEVICE_H_*/

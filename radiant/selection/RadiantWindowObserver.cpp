@@ -9,16 +9,44 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include <iostream>
 
-// mouse callback instances
-Single<MouseEventCallback> g_mouseMovedCallback;
-Single<MouseEventCallback> g_mouseUpCallback;
-
 SelectionSystemWindowObserver* NewWindowObserver() {
   return new RadiantWindowObserver;
 }
 
-void RadiantWindowObserver::setObservedWidget(GtkWidget* observed) {
-	_observedWidget = observed;
+RadiantWindowObserver::RadiantWindowObserver() : 
+	_mouseDown(false),
+	_listenForCancelEvents(false)
+{}
+
+void RadiantWindowObserver::addObservedWidget(GtkWidget* observed)
+{
+	// Connect the keypress event to catch the "cancel" events (ESC)
+	gulong keyPressHandler = g_signal_connect(G_OBJECT(observed), 
+					 					"key-press-event", 
+					 					G_CALLBACK(onKeyPress), 
+					 					this);
+
+	// Remember this keyhandler (for later disconnections)
+	_keyHandlers.insert(KeyHandlerMap::value_type(observed, keyPressHandler));
+}
+
+void RadiantWindowObserver::removeObservedWidget(GtkWidget* observed)
+{
+	KeyHandlerMap::iterator found = _keyHandlers.find(observed);
+	
+	if (found == _keyHandlers.end())
+	{
+		globalWarningStream() << 
+			"RadiantWindowObserver: Cannot remove observed widget, not found." 
+			<< std::endl;
+		return;
+	}
+
+	// Disconnect the key handler
+	g_signal_handler_disconnect(G_OBJECT(observed), found->second);
+
+	// And remove the element from our map
+	_keyHandlers.erase(found);
 }
 
 void RadiantWindowObserver::setView(const View& view) {
@@ -111,25 +139,18 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 			// This is a manipulation operation, register the callbacks
 			// Note: the mouseDown call in the if clause returned already true, 
 			// so a manipulator could be successfully selected
-			g_mouseMovedCallback.insert(MouseEventCallback(ManipulateObserver::MouseMovedCaller(_manipulateObserver)));
-			g_mouseUpCallback.insert(MouseEventCallback(ManipulateObserver::MouseUpCaller(_manipulateObserver)));
+			_mouseMotionCallback = MouseEventCallback(ManipulateObserver::MouseMovedCaller(_manipulateObserver));
+			_mouseUpCallback = MouseEventCallback(ManipulateObserver::MouseUpCaller(_manipulateObserver));
 			
-			if (_observedWidget != NULL) {
-				// Connect the keypress event to catch the "cancel" call
-				_keyPressHandler = g_signal_connect(G_OBJECT(_observedWidget), 
-								 					"key_press_event", 
-								 					G_CALLBACK(onKeyPress), 
-								 					this);
-			}
+			_listenForCancelEvents = true;
 		} 
 		else {
 			// Call the mouseDown method of the selector class, this covers all of the other events
 			_selectObserver.mouseDown(devicePosition);
-			
-			// Register the Selector class mouseDown and mouseUp callBacks  
-			g_mouseMovedCallback.insert(MouseEventCallback(SelectObserver::MouseMovedCaller(_selectObserver)));
-			g_mouseUpCallback.insert(MouseEventCallback(SelectObserver::MouseUpCaller(_selectObserver)));
-			
+
+			_mouseMotionCallback = MouseEventCallback(SelectObserver::MouseMovedCaller(_selectObserver));
+			_mouseUpCallback = MouseEventCallback(SelectObserver::MouseUpCaller(_selectObserver));
+						
 			// greebo: the according actions (toggle face, replace, etc.) are handled in the mouseUp methods.
 		}
 	}
@@ -145,9 +166,10 @@ void RadiantWindowObserver::onMouseMotion(const WindowVector& position, const un
 	_selectObserver.setState(state);
 	
 	/* If the mouse button is currently held, this can be considered a drag, so
-	 * notify the according mouse move callback, if there is one registered */
-	if( _mouseDown && !g_mouseMovedCallback.empty()) {
-  		g_mouseMovedCallback.get()(window_to_normalised_device(position, _width, _height));
+	 * notify the according mouse move callback */
+	if( _mouseDown)
+	{
+		_mouseMotionCallback(window_to_normalised_device(position, _width, _height));
 	}
 }
 
@@ -164,7 +186,8 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
 						 observerEvent == ui::obsToggle || observerEvent == ui::obsToggleFace || 
 						 observerEvent == ui::obsReplace || observerEvent == ui::obsReplaceFace); 
 	
-	if (reactToEvent && !g_mouseUpCallback.empty()) {
+	if (reactToEvent)
+	{
 		// No mouse button is active anymore 
   		_mouseDown = false;
   		
@@ -173,26 +196,25 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
   		_manipulateObserver.setEvent(event);
   		
   		// Get the callback and call it with the arguments
-		g_mouseUpCallback.get()(window_to_normalised_device(position, _width, _height));
+		_mouseUpCallback(window_to_normalised_device(position, _width, _height));
 	}
 	
-	if (_observedWidget != NULL && _keyPressHandler != 0) {
-		g_signal_handler_disconnect(G_OBJECT(_observedWidget), _keyPressHandler);
-		_keyPressHandler = 0;
-	}
+	// Stop listening for cancel events
+	_listenForCancelEvents = false;
+
+	// Disconnect the mouseMoved and mouseUp callbacks, mouse has been released
+	_mouseMotionCallback = MouseEventCallback();
+	_mouseUpCallback = MouseEventCallback();
 }
 
-void RadiantWindowObserver::onCancel() {
-	
+void RadiantWindowObserver::onCancel()
+{
 	// Disconnect the mouseMoved and mouseUp callbacks
-	g_mouseMovedCallback.clear();
-	g_mouseUpCallback.clear();
+	_mouseMotionCallback = MouseEventCallback();
+	_mouseUpCallback = MouseEventCallback();
 	
-	// Disconnect the key handler
-	if (_observedWidget != NULL && _keyPressHandler != 0) {
-		g_signal_handler_disconnect(G_OBJECT(_observedWidget), _keyPressHandler);
-		_keyPressHandler = 0;
-	}
+	// Stop listening for cancel events
+	_listenForCancelEvents = false;
 	
 	// Update the views
 	GlobalSelectionSystem().cancelMove();
@@ -202,8 +224,15 @@ void RadiantWindowObserver::onCancel() {
 gboolean RadiantWindowObserver::onKeyPress(GtkWindow* window, 
 	GdkEventKey* event, RadiantWindowObserver* self) 
 {
+	if (!self->_listenForCancelEvents) 
+	{
+		// Not listening, let the event pass through
+		return false;
+	}
+
 	// Check for ESC and call the onCancel method, if found
-	if (event->keyval == GDK_Escape) {
+	if (event->keyval == GDK_Escape)
+	{
 		self->onCancel();
 		
 		// Don't pass the key event to the event chain 

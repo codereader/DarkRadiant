@@ -2,10 +2,6 @@
 
 #include "ieventmanager.h"
 
-// mouse callback instances
-extern Single<MouseEventCallback> g_mouseMovedCallback;
-extern Single<MouseEventCallback> g_mouseUpCallback;
-
 // Constructor
 SelectObserver::SelectObserver() :
 	_start(0.0f, 0.0f),
@@ -133,8 +129,4 @@ void SelectObserver::mouseMoved(DeviceVector position) {
 void SelectObserver::mouseUp(DeviceVector position) {
 	// Check the result of this (finished) operation, is it a drag or a click?
 	testSelect(device_constrained(position));
-
-	// Unconnect this method from the callbacks
-	g_mouseMovedCallback.clear();
-	g_mouseUpCallback.clear();
 }

@@ -1,11 +1,5 @@
 #include "ManipulateObserver.h"
 
-#include "generic/callback.h"
-
-// mouse callback instances
-extern Single<MouseEventCallback> g_mouseMovedCallback;
-extern Single<MouseEventCallback> g_mouseUpCallback;
-
 // Updates the internal event pointer
 void ManipulateObserver::setEvent(GdkEventButton* event) {
 	_event = event;
@@ -27,8 +21,4 @@ void ManipulateObserver::mouseMoved(DeviceVector position) {
 void ManipulateObserver::mouseUp(DeviceVector position) {
 	// Notify the selectionsystem about the ended operation 
 	GlobalSelectionSystem().endMove();
-	
-	// Unconnect this method from the callbacks
-	g_mouseMovedCallback.clear();
-	g_mouseUpCallback.clear();
 }

@@ -8,16 +8,15 @@
 
 #include "FaceShader.h"
 #include "TextureProjection.h"
+#include <boost/noncopyable.hpp>
 
-class FaceTexdef : public FaceShaderObserver {
-	
-	// not copyable
-	FaceTexdef(const FaceTexdef& other);
-	// not assignable
-	FaceTexdef& operator=(const FaceTexdef& other);
-
+class FaceTexdef : 
+	public FaceShader::Observer,
+	public boost::noncopyable
+{
 public:
-	class SavedState {
+	class SavedState
+	{
 	public:
 		TextureProjection m_projection;
 	

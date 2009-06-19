@@ -83,10 +83,12 @@ XYWnd::XYWnd(int id) :
 
 	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateXORRectangle>(*this));
 	m_window_observer->setView(m_view);
-	
+		
 	gtk_widget_ref(m_gl_widget);
 
-	gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
+	gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | 
+		GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK | GDK_KEY_PRESS_MASK);
+
 	GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
 	gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
 
@@ -114,6 +116,9 @@ XYWnd::XYWnd(int id) :
 	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
 	GlobalCamera().addCameraObserver(this);
 
+	// Let the window observer connect its handlers to the GL widget first (before the event manager)
+	m_window_observer->addObservedWidget(m_gl_widget);
+
 	GlobalEventManager().connect(GTK_OBJECT(m_gl_widget));
 }
 
@@ -134,7 +139,10 @@ void XYWnd::destroyXYView() {
 	// greebo: Remove <self> as CameraObserver from the CamWindow.
 	GlobalCamera().removeCameraObserver(this);
 	
-	if (m_gl_widget != NULL) {
+	if (m_gl_widget != NULL)
+	{
+		m_window_observer->removeObservedWidget(m_gl_widget);
+
 		GlobalEventManager().disconnect(GTK_OBJECT(m_gl_widget));
 		
 		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
@@ -177,14 +185,21 @@ int XYWnd::getHeight() const {
 	return _height;
 }
 
-void XYWnd::setParent(GtkWindow* parent) {
+void XYWnd::setParent(GtkWindow* parent)
+{
+	if (_parent != NULL && parent != _parent)
+	{
+		// Parent change, disconnect first
+		m_window_observer->removeObservedWidget(GTK_WIDGET(_parent));
+	}
+
 	_parent = parent;
 	
 	// Connect the position observer to the new parent
 	_windowPosition.connect(_parent);
 	_windowPosition.applyPosition();
 	
-	m_window_observer->setObservedWidget(GTK_WIDGET(_parent));
+	m_window_observer->addObservedWidget(GTK_WIDGET(_parent));
 }
 
 GtkWindow* XYWnd::getParent() const {

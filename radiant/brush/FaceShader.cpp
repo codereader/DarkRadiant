@@ -3,6 +3,25 @@
 #include "texturelib.h"
 #include "shaderlib.h"
 
+namespace
+{
+
+	// greebo: Two Visitor classes to realise/unrealise an observer set
+	class FaceShaderObserverRealise {
+	public:
+		void operator()(FaceShader::Observer* observer) const {
+			observer->realiseShader();
+		}
+	};
+
+	class FaceShaderObserverUnrealise {
+	public:
+		void operator()(FaceShader::Observer* observer) const {
+			observer->unrealiseShader();
+		}
+	};
+}
+
 // Constructor
 FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flags) :
 	_inUse(false),
@@ -42,30 +61,47 @@ void FaceShader::releaseShader() {
 	_glShader = ShaderPtr();
 }
 
-void FaceShader::realise() {
+void FaceShader::realise()
+{
 	ASSERT_MESSAGE(!m_realised, "FaceTexdef::realise: already realised");
 	m_realised = true;
-	m_observers.forEach(FaceShaderObserverRealise());
+
+	std::for_each(_observers.begin(), _observers.end(), FaceShaderObserverRealise());
 }
 
-void FaceShader::unrealise() {
+void FaceShader::unrealise()
+{
 	ASSERT_MESSAGE(m_realised, "FaceTexdef::unrealise: already unrealised");
-	m_observers.forEach(FaceShaderObserverUnrealise());
+
+	std::for_each(_observers.begin(), _observers.end(), FaceShaderObserverUnrealise());
+	
 	m_realised = false;
 }
 
-void FaceShader::attach(FaceShaderObserver& observer) {
-	m_observers.attach(observer);
-	if (m_realised) {
+void FaceShader::attachObserver(Observer& observer)
+{
+	// Insert the observer into our observer set
+	std::pair<Observers::iterator, bool> result = _observers.insert(&observer);
+
+	ASSERT_MESSAGE(result.second, "FaceShader::attach(): Observer already attached.");
+
+	if (m_realised)
+	{
 		observer.realiseShader();
 	}
 }
 
-void FaceShader::detach(FaceShaderObserver& observer) {
-	if (m_realised) {
+void FaceShader::detachObserver(Observer& observer)
+{
+	if (m_realised)
+	{
 		observer.unrealiseShader();
 	}
-	m_observers.detach(observer);
+
+	ASSERT_MESSAGE(_observers.find(&observer) != _observers.end(), "FaceShader::detach(): Cannot detach non-existing observer.");
+
+	// Remove after unrealising
+	_observers.erase(&observer);
 }
 
 const std::string& FaceShader::getMaterialName() const {
