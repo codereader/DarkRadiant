@@ -51,6 +51,8 @@ void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& n
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
+	_requestSceneGraphChange(false),
+	_requestWorkZoneRecalculation(true),
 	_undoBegun(false),
 	_mode(ePrimitive),
 	_componentMode(eDefault),
@@ -251,6 +253,8 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 	// If the selectable is selected, add it to the local selection list, otherwise remove it 
 	if (isSelected) {
 		_selection.append(node);
+
+		_requestWorkZoneRecalculation = true;
 	}
 	else {
 		_selection.erase(node);
@@ -261,6 +265,11 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 
 	// Check if the number of selected primitives in the list matches the value of the selection counter
 	ASSERT_MESSAGE(_selection.size() == _countPrimitive, "selection-tracking error");
+
+	// Schedule an idle callback
+	requestIdleCallback();
+
+	_requestSceneGraphChange = true;
 }
 
 // greebo: This should be called "onComponentSelectionChanged", as it is a similar function of the above one
@@ -278,6 +287,8 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
 	// If the instance got selected, add it to the list, otherwise remove it
 	if (selectable.isSelected()) {
 		_componentSelection.append(node);
+
+		_requestWorkZoneRecalculation = true;
 	}
     else {
 		_componentSelection.erase(node);
@@ -288,18 +299,24 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
 
 	// Check if the number of selected components in the list matches the value of the selection counter 
 	ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "component selection-tracking error");
+
+	// Schedule an idle callback
+	requestIdleCallback();
+
+	_requestSceneGraphChange = true;
 }
 
 // Returns the last instance in the list (if the list is not empty)
-scene::INodePtr RadiantSelectionSystem::ultimateSelected() const {
+scene::INodePtr RadiantSelectionSystem::ultimateSelected()
+{
 	ASSERT_MESSAGE(_selection.size() > 0, "no instance selected");
 	return _selection.ultimate();
 }
 
 // Returns the instance before the last instance in the list (second from the end)
-scene::INodePtr RadiantSelectionSystem::penultimateSelected() const {
+scene::INodePtr RadiantSelectionSystem::penultimateSelected()
+{
 	ASSERT_MESSAGE(_selection.size() > 1, "only one instance selected");
-	//return *(*(--(--_selection.end())));
 	return _selection.penultimate();
 }
 
@@ -320,7 +337,8 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
 }
 
 // Traverse the current selection and visit them with the given visitor class
-void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
+void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) 
+{
 	for (SelectionListType::const_iterator i = _selection.begin(); 
 		 i != _selection.end(); 
 		 /* in-loop increment */)
@@ -330,7 +348,8 @@ void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) const {
 }
 
 // Traverse the current selection components and visit them with the given visitor class
-void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor) const {
+void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor) 
+{
 	for (SelectionListType::const_iterator i = _componentSelection.begin(); 
 		 i != _componentSelection.end(); 
 		 /* in-loop increment */)
@@ -354,9 +373,6 @@ void RadiantSelectionSystem::startMove() {
  */
 bool RadiantSelectionSystem::SelectManipulator(const View& view, const double device_point[2], const double device_epsilon[2]) {
 	if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent)) {
-#if defined (DEBUG_SELECTION)
-		g_render_clipped.destroy();
-#endif
 
 		// Unselect any currently selected manipulators to be sure
 		_manipulator->setSelected(false);
@@ -428,10 +444,6 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 			deselectAll();
 		}
 	}
-
-#if defined (DEBUG_SELECTION)
-	g_render_clipped.destroy();
-#endif
 
 	{
 		View scissored(view);
@@ -526,10 +538,6 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 			deselectAll();
 		}
 	}
-
-#if defined (DEBUG_SELECTION)
-	g_render_clipped.destroy();
-#endif
 
 	{
 		// Construct the selection test according to the area the user covered with his drag
@@ -705,6 +713,11 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const double device_
 		// Get the manipulatable from the currently active manipulator (done by selection test)
 		// and call the Transform method (can be anything) 
 		_manipulator->GetManipulatable()->Transform(_manip2pivotStart, device2manip, devicePoint[0], devicePoint[1]);
+
+		_requestWorkZoneRecalculation = true;
+		_requestSceneGraphChange = true;
+
+		requestIdleCallback();
 	}
 }
 
@@ -721,16 +734,16 @@ void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, con
 }
 
 // Lets the ConstructPivot() method do the work and returns the result that is stored in the member variable 
-const Matrix4& RadiantSelectionSystem::GetPivot2World() const {
-	ConstructPivot();
+const Matrix4& RadiantSelectionSystem::GetPivot2World() const
+{
+	// Questionable const design - almost everything needs to be declared const here...
+	const_cast<RadiantSelectionSystem*>(this)->ConstructPivot();
+
 	return _pivot2world;
 }
 
 void RadiantSelectionSystem::constructStatic() {
 	_state = GlobalRenderSystem().capture("$POINT");
-#if defined(DEBUG_SELECTION)
-	g_state_clipped = GlobalRenderSystem().capture("$DEBUG_CLIPPED");
-#endif
 	TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 	TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
 	RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
@@ -738,9 +751,6 @@ void RadiantSelectionSystem::constructStatic() {
 
 void RadiantSelectionSystem::destroyStatic() {
 	_state = ShaderPtr();
-#if defined(DEBUG_SELECTION)
-	g_state_clipped = ShaderPtr();
-#endif
 	TranslateManipulator::_stateWire = ShaderPtr();
 	TranslateManipulator::_stateFill = ShaderPtr();
 	RotateManipulator::_stateOuter = ShaderPtr();
@@ -775,8 +785,15 @@ void RadiantSelectionSystem::cancelMove() {
 }
 
 // This actually applies the transformation to the objects
-void RadiantSelectionSystem::freezeTransforms() {
+void RadiantSelectionSystem::freezeTransforms()
+{
 	GlobalSceneGraph().traverse(FreezeTransforms());
+
+	// The selection bounds have possibly changed, request an idle callback
+	_requestWorkZoneRecalculation = true;
+	_requestSceneGraphChange = true;
+
+	requestIdleCallback();
 }
 
 // End the move, this freezes the current transforms
@@ -825,6 +842,14 @@ void RadiantSelectionSystem::endMove() {
 	}
 }
 
+const selection::WorkZone& RadiantSelectionSystem::getWorkZone()
+{
+	// Flush any pending idle callbacks, we need the workzone now
+	flushIdleCallback();
+
+	return _workZone;
+}
+
 void RadiantSelectionSystem::keyChanged(const std::string& key, const std::string& val) 
 {
 	if (!nothingSelected()) {
@@ -839,7 +864,8 @@ void RadiantSelectionSystem::keyChanged(const std::string& key, const std::strin
  *
  * The pivot point is also snapped to the grid.
  */
-void RadiantSelectionSystem::ConstructPivot() const {
+void RadiantSelectionSystem::ConstructPivot()
+{
 	if (!_pivotChanged || _pivotMoving)
 		return;
 		
@@ -852,7 +878,7 @@ void RadiantSelectionSystem::ConstructPivot() const {
 			GlobalRegistry().get(RKEY_ROTATION_PIVOT) == "1") 
 		{
 			// Test, if a single entity is selected
-			const scene::INodePtr& node = ultimateSelected();
+			scene::INodePtr node = ultimateSelected();
 			Entity* entity = Node_getEntity(node);
 			
 			if (entity != NULL) {
@@ -922,12 +948,15 @@ void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const V
 
 		_manipulator->render(collector, volume, GetPivot2World());
 	}
+}
 
-#if defined(DEBUG_SELECTION)
-	collector.SetState(g_state_clipped, RenderableCollector::eWireframeOnly);
-	collector.SetState(g_state_clipped, RenderableCollector::eFullMaterials);
-	collector.addRenderable(g_render_clipped, g_render_clipped.m_world);
-#endif
+void RadiantSelectionSystem::onSceneBoundsChanged()
+{
+	// The bounds of the scenegraph have (possibly) changed
+	pivotChanged();
+
+	_requestWorkZoneRecalculation = true;
+	requestIdleCallback();
 }
 
 // RegisterableModule implementation
@@ -944,6 +973,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_GRID);
+		_dependencies.insert(MODULE_SCENEGRAPH);
 	}
 	
 	return _dependencies;
@@ -966,7 +996,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 	
 	// Connect the bounds changed caller 
 	_boundsChangedHandler =	GlobalSceneGraph().addBoundsChangedCallback(
-		PivotChangedCaller(*this)
+		SceneBoundsChangedCaller(*this)
 	);
 
 	GlobalRenderSystem().attachRenderable(*this);
@@ -982,6 +1012,45 @@ void RadiantSelectionSystem::shutdownModule() {
 	GlobalSceneGraph().removeBoundsChangedCallback(_boundsChangedHandler);
 	
 	destroyStatic();
+}
+
+void RadiantSelectionSystem::onGtkIdle()
+{
+	// System is idle, check for pending tasks
+
+	// Check if we should recalculate the workzone
+	if (_requestWorkZoneRecalculation)
+	{
+		_requestWorkZoneRecalculation = false;
+
+		// Recalculate the workzone based on the current selection
+		BoundsAccumulator walker;
+		foreachSelected(walker);
+
+		AABB bounds = walker.getBounds();
+
+		if (bounds.isValid())
+		{
+			_workZone.max = bounds.origin + bounds.extents;
+			_workZone.min = bounds.origin - bounds.extents;
+		}
+		else
+		{
+			// A zero-sized workzone doesn't make much sense, set to default
+			_workZone.max = Vector3(64,64,64);
+			_workZone.min = Vector3(-64,-64,-64);
+		}
+
+		_workZone.bounds = AABB::createFromMinMax(_workZone.min, _workZone.max);
+	}
+
+	// Check if we should notify the scenegraph
+	if (_requestSceneGraphChange)
+	{
+		_requestSceneGraphChange = false;
+
+		GlobalSceneGraph().sceneChanged();
+	}
 }
 
 // Define the static SelectionSystem module

@@ -53,32 +53,4 @@ public:
 template<typename Type, typename Context>
 Type Static<Type, Context>::m_instance;
 
-
-/// \brief A singleton which is lazily initialised.
-/// The instance is constructed the first time it is referenced, and is never destroyed.
-///
-/// \param Type The singleton object type.
-/// \param Type The type distinguishing this instance from others of the same type.
-///
-/// \dontinclude generic/static.cpp
-/// \skipline LazyStatic example
-/// \until end example
-template<typename Type, typename Context = Null>
-class LazyStatic
-{
-  static Type* m_instance; // this will be initialised to 0 by the CRT, according to the c++ standard
-public:
-  static Type& instance()
-  {
-    if(m_instance == 0)
-    {
-      m_instance = new Type; // allocate using 'new' to get the correct alignment
-    }
-    return *m_instance;
-  }
-};
-
-template<typename Type, typename Context>
-Type* LazyStatic<Type, Context>::m_instance;
-
 #endif

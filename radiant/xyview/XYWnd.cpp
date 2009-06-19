@@ -489,8 +489,10 @@ void XYWnd::NewBrushDrag(int x, int y) {
 
 	int nDim = (m_viewType == XY) ? 2 : (m_viewType == YZ) ? 0 : 1;
 
-	mins[nDim] = float_snapped(Select_getWorkZone().d_work_min[nDim], GlobalGrid().getGridSize());
-	maxs[nDim] = float_snapped(Select_getWorkZone().d_work_max[nDim], GlobalGrid().getGridSize());
+	const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
+
+	mins[nDim] = float_snapped(wz.min[nDim], GlobalGrid().getGridSize());
+	maxs[nDim] = float_snapped(wz.max[nDim], GlobalGrid().getGridSize());
 
 	if (maxs[nDim] <= mins[nDim])
 		maxs[nDim] = mins[nDim] + GlobalGrid().getGridSize();
@@ -986,14 +988,17 @@ void XYWnd::drawGrid() {
 	if (GlobalXYWnd().showWorkzone()) {
 		glColor3dv( ColourSchemes().getColour("workzone") );
 		glBegin( GL_LINES );
-		glVertex2f( xb, Select_getWorkZone().d_work_min[nDim2] );
-		glVertex2f( xe, Select_getWorkZone().d_work_min[nDim2] );
-		glVertex2f( xb, Select_getWorkZone().d_work_max[nDim2] );
-		glVertex2f( xe, Select_getWorkZone().d_work_max[nDim2] );
-		glVertex2f( Select_getWorkZone().d_work_min[nDim1], yb );
-		glVertex2f( Select_getWorkZone().d_work_min[nDim1], ye );
-		glVertex2f( Select_getWorkZone().d_work_max[nDim1], yb );
-		glVertex2f( Select_getWorkZone().d_work_max[nDim1], ye );
+
+		const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
+
+		glVertex2f( xb, wz.min[nDim2] );
+		glVertex2f( xe, wz.min[nDim2] );
+		glVertex2f( xb, wz.max[nDim2] );
+		glVertex2f( xe, wz.max[nDim2] );
+		glVertex2f( wz.min[nDim1], yb );
+		glVertex2f( wz.min[nDim1], ye );
+		glVertex2f( wz.max[nDim1], yb );
+		glVertex2f( wz.max[nDim1], ye );
 		glEnd();
 	}
 }
@@ -1113,7 +1118,7 @@ void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
 
 // can be greatly simplified but per usual i am in a hurry 
 // which is not an excuse, just a fact
-void XYWnd::drawSizeInfo(int nDim1, int nDim2, Vector3& vMinBounds, Vector3& vMaxBounds)
+void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds)
 {
   if (vMinBounds == vMaxBounds) {
     return;
@@ -1418,10 +1423,11 @@ void XYWnd::draw() {
 
 
 	// greebo: Check, if the brush/patch size info should be displayed (if there are any items selected)
-	if (GlobalXYWnd().showSizeInfo() && GlobalSelectionSystem().countSelected() != 0) {
-		Vector3 min, max;
-		Select_GetBounds(min, max);
-		drawSizeInfo(nDim1, nDim2, min, max);
+	if (GlobalXYWnd().showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
+	{
+		const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
+
+		drawSizeInfo(nDim1, nDim2, wz.min, wz.max);
 	}
 
 	if (GlobalXYWnd().showCrossHairs()) {
@@ -1514,8 +1520,10 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 	snapToGrid(point);
 
 	int nDim = (getViewType() == XY) ? 2 : (getViewType() == YZ) ? 0 : 1;
-	float fWorkMid = float_mid(Select_getWorkZone().d_work_min[nDim], Select_getWorkZone().d_work_max[nDim]);
-	point[nDim] = float_snapped(fWorkMid, GlobalGrid().getGridSize());
+
+	const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
+
+	point[nDim] = float_snapped(wz.bounds.getOrigin()[nDim], GlobalGrid().getGridSize());
 }
 
 void XYWnd::onEntityCreate(const std::string& item) {

@@ -60,6 +60,32 @@ public:
 	}
 };
 
+namespace selection
+{
+
+/** 
+ * The selection "WorkZone" defines the bounds of the most 
+ * recent selection. On each selection, the workzone is 
+ * recalculated, nothing happens on deselection.
+ */
+struct WorkZone
+{
+	// The corner points defining the selection workzone
+	Vector3 min;
+	Vector3 max;
+
+	// The bounds of the selection workzone (equivalent to min/max)
+	AABB bounds;
+
+	WorkZone() :
+		min(-64,-64,-64),
+		max(64,64,64),
+		bounds(AABB::createFromMinMax(min, max))
+	{}
+};
+
+} // namespace selection
+
 class SelectableBool : public Selectable
 {
   bool m_selected;

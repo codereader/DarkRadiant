@@ -275,12 +275,10 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
 		if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent) {
 			
 			// Obtain the selection size (its min/max vectors)
-			Vector3 min;
-			Vector3 max;
-			Select_GetBounds(min, max);
+			AABB regionBounds = GlobalSelectionSystem().getWorkZone().bounds;
 			
 			// Set the region
-			GlobalRegion().setRegion(AABB::createFromMinMax(min, max));
+			GlobalRegion().setRegion(regionBounds);
 			
 			// De-select all the selected items
 			GlobalSelectionSystem().setSelectedAll(false);

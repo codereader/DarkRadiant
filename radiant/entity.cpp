@@ -209,8 +209,8 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
 									  + "\", no brushes selected");
     }
 
-    AABB workzone(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 
-    									 Select_getWorkZone().d_work_max));
+	// Get the selection workzone bounds
+	AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
     
     scene::INodePtr node(GlobalEntityCreator().createEntity(entityClass));
     

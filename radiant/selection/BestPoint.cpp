@@ -94,11 +94,6 @@ void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersection& bes
       )
     );
   }
-
-#if defined(DEBUG_SELECTION)
-    if(count >= 2)
-      g_render_clipped.insert(clipped, count);
-#endif
 }
 
 void LineStrip_BestPoint(const Matrix4& local2view, const PointVertex* vertices, const std::size_t size, SelectionIntersection& best) {

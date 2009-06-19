@@ -21,10 +21,6 @@ void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided) {
 
       _far = matrix4_transformed_vector4( screen2world, Vector4(0, 0, 1, 1) ).getProjected();
     }
-
-#if defined(DEBUG_SELECTION)
-    g_render_clipped.construct(_view.GetViewMatrix());
-#endif
 }
 
 void SelectionVolume::TestPoint(const Vector3& point, SelectionIntersection& best) {

@@ -176,10 +176,6 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
       {
         Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldX));
 
-#if defined(DEBUG_SELECTION)
-        g_render_clipped.construct(view.GetViewMatrix());
-#endif
-
         SelectionIntersection best;
         LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
         selector.addSelectable(best, &_selectableX);
@@ -188,10 +184,6 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
       {
         Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldY));
 
-#if defined(DEBUG_SELECTION)
-        g_render_clipped.construct(view.GetViewMatrix());
-#endif
-
         SelectionIntersection best;
         LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
         selector.addSelectable(best, &_selectableY);
@@ -199,10 +191,6 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
 
       {
         Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldZ));
-
-#if defined(DEBUG_SELECTION)
-        g_render_clipped.construct(view.GetViewMatrix());
-#endif
 
         SelectionIntersection best;
         LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
@@ -389,10 +377,6 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
     {
       Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
 
-#if defined(DEBUG_SELECTION)
-      g_render_clipped.construct(view.GetViewMatrix());
-#endif
-
       if(show_x)
       {
         SelectionIntersection best;
@@ -546,10 +530,6 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
 
     {
       Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
-
-#if defined(DEBUG_SELECTION)
-      g_render_clipped.construct(view.GetViewMatrix());
-#endif
 
     {
         SelectionIntersection best;

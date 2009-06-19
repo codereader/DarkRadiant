@@ -61,6 +61,8 @@ typedef SignalHandler1<const Selectable&> SelectionChangeHandler;
 
 class SelectionInfo;
 
+namespace selection { struct WorkZone; }
+
 const std::string MODULE_SELECTIONSYSTEM("SelectionSystem");
 
 class SelectionSystem :
@@ -129,8 +131,8 @@ public:
   virtual void onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable) = 0;
   virtual void onComponentSelection(const scene::INodePtr& node, const Selectable& selectable) = 0;
 
-	virtual scene::INodePtr ultimateSelected() const = 0;
-	virtual scene::INodePtr penultimateSelected() const = 0;
+	virtual scene::INodePtr ultimateSelected() = 0;
+	virtual scene::INodePtr penultimateSelected() = 0;
 
     /**
      * \brief
@@ -165,13 +167,13 @@ public:
      * @brief
      * Use the provided Visitor object to enumerate each selected node.
      */
-    virtual void foreachSelected(const Visitor& visitor) const = 0;
+    virtual void foreachSelected(const Visitor& visitor) = 0;
 
     /**
      * @brief
      * Use the provided Visitor object to enumerate each selected component.
      */
-    virtual void foreachSelectedComponent(const Visitor& visitor) const = 0;
+    virtual void foreachSelectedComponent(const Visitor& visitor) = 0;
 
   virtual void addSelectionChangeCallback(const SelectionChangeHandler& handler) = 0;
 
@@ -190,6 +192,19 @@ public:
   virtual void MoveSelected(const View& view, const double device_point[2]) = 0;
   virtual void endMove() = 0;
   virtual void cancelMove() = 0;
+
+	/**
+	 * Returns the current "work zone", which is defined by the
+	 * currently selected elements. Each time a scene node is selected,
+	 * the workzone is adjusted to surround the current selection.
+	 * Deselecting nodes doesn't change the workzone.
+	 *
+	 * The result is used to determine the "third" component of operations
+	 * performed in the 2D views, like placing an entity.
+	 *
+	 * Note: the struct is defined in selectionlib.h.
+	 */
+	virtual const selection::WorkZone& getWorkZone() = 0;
 };
 
 inline SelectionSystem& GlobalSelectionSystem() {
