@@ -24,7 +24,7 @@ class MD5ModelNode :
 
 	const LightList* _lightList;
 
-	typedef Array<VectorLightList> SurfaceLightLists;
+	typedef std::vector<VectorLightList> SurfaceLightLists;
 	SurfaceLightLists _surfaceLightLists;
 
 	struct Remap {
@@ -32,7 +32,7 @@ class MD5ModelNode :
 		ShaderPtr shader;
 	};
   
-	typedef Array<Remap> SurfaceRemaps;
+	typedef std::vector<Remap> SurfaceRemaps;
 	SurfaceRemaps _surfaceRemaps;
 
 	// The name of this model's skin

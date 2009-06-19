@@ -3,7 +3,7 @@
 
 #include "math/Vector2.h"
 
-/// \brief A 2-float texture-coordinate set.
+/// \brief A 2-component texture-coordinate set.
 class TexCoord2f :
 	public Vector2
 {

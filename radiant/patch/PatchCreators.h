@@ -37,7 +37,7 @@ public:
 		// Retrieve a reference to the patch member variable of this node
 		Patch& patch = *Node_getPatch(node);
 		// Create a PatchControlMatrix with <height> and <width> and the list of control points.
-		return PatchControlMatrix(patch.getHeight(), patch.getWidth(), patch.getControlPoints().data());
+		return PatchControlMatrix(patch.getHeight(), patch.getWidth(), &patch.getControlPoints().front());
 	}
 	
 	// Notify the patch, that the control points have changed, so that the patch class can update itself accordingly

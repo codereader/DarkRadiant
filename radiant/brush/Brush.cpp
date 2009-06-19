@@ -17,13 +17,15 @@ namespace {
 	}
 }
 
-Brush::Brush(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
-	m_node(&node),
+Brush::Brush(const Callback& evaluateTransform, const Callback& boundsChanged) :
 	m_undoable_observer(0),
 	m_map(0),
-	m_render_faces(m_faceCentroidPoints, GL_POINTS),
-	m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
-	m_render_edges(m_uniqueEdgePoints, GL_POINTS),
+	_faceCentroidPoints(GL_POINTS),
+	_uniqueVertexPoints(GL_POINTS),
+	_uniqueEdgePoints(GL_POINTS),
+	//m_render_faces(m_faceCentroidPoints, GL_POINTS),
+	//m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
+	//m_render_edges(m_uniqueEdgePoints, GL_POINTS),
 	m_evaluateTransform(evaluateTransform),
 	m_boundsChanged(boundsChanged),
 	m_planeChanged(false),
@@ -32,13 +34,15 @@ Brush::Brush(scene::Node& node, const Callback& evaluateTransform, const Callbac
 	planeChanged();
 }
 
-Brush::Brush(const Brush& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
-	m_node(&node),
+Brush::Brush(const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	m_undoable_observer(0),
 	m_map(0),
-	m_render_faces(m_faceCentroidPoints, GL_POINTS),
-	m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
-	m_render_edges(m_uniqueEdgePoints, GL_POINTS),
+	_faceCentroidPoints(GL_POINTS),
+	_uniqueVertexPoints(GL_POINTS),
+	_uniqueEdgePoints(GL_POINTS),
+	//m_render_faces(m_faceCentroidPoints, GL_POINTS),
+	//m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
+	//m_render_edges(m_uniqueEdgePoints, GL_POINTS),
 	m_evaluateTransform(evaluateTransform),
 	m_boundsChanged(boundsChanged),
 	m_planeChanged(false),
@@ -56,12 +60,14 @@ Brush::Brush(const Brush& other) :
 	Undoable(other),
 	FaceObserver(other),
 	BrushDoom3(other),
-	m_node(0),
 	m_undoable_observer(0),
 	m_map(0),
-	m_render_faces(m_faceCentroidPoints, GL_POINTS),
-	m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
-	m_render_edges(m_uniqueEdgePoints, GL_POINTS),
+	_faceCentroidPoints(GL_POINTS),
+	_uniqueVertexPoints(GL_POINTS),
+	_uniqueEdgePoints(GL_POINTS),
+	//m_render_faces(	, GL_POINTS),
+	//m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
+	//m_render_edges(m_uniqueEdgePoints, GL_POINTS),
 	m_planeChanged(false),
 	m_transformChanged(false)
 {
@@ -210,13 +216,13 @@ VolumeIntersectionValue Brush::intersectVolume(const VolumeTest& test, const Mat
 void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
 	switch (mode) {
 		case SelectionSystem::eVertex:
-			collector.addRenderable(m_render_vertices, localToWorld);
+			collector.addRenderable(_uniqueVertexPoints, localToWorld);
 			break;
 		case SelectionSystem::eEdge:
-			collector.addRenderable(m_render_edges, localToWorld);
+			collector.addRenderable(_uniqueEdgePoints, localToWorld);
 			break;
 		case SelectionSystem::eFace:
-			collector.addRenderable(m_render_faces, localToWorld);
+			collector.addRenderable(_faceCentroidPoints, localToWorld);
 			break;
 		default:
 			break;
@@ -473,34 +479,37 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
 	buffer[swap].writeToWinding(winding);
 }
 
-void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const {
-	wire.m_faceVertex.resize(m_edge_indices.size());
-	wire.m_vertices = m_uniqueVertexPoints.data();
+void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const
+{
+	wire.m_faceVertex.resize(_edgeIndices.size());
+	wire.m_vertices = &_uniqueVertexPoints.front();
 	wire.m_size = 0;
-	for(std::size_t i = 0; i < m_edge_faces.size(); ++i)
+
+	for(std::size_t i = 0; i < _edgeFaces.size(); ++i)
 	{
-		if (faces_visible[m_edge_faces[i].first]
-			|| faces_visible[m_edge_faces[i].second])
+		if (faces_visible[_edgeFaces[i].first]
+			|| faces_visible[_edgeFaces[i].second])
 		{
-			wire.m_faceVertex[wire.m_size++] = m_edge_indices[i];
+			wire.m_faceVertex[wire.m_size++] = _edgeIndices[i];
 		}
 	}
 }
 
-void Brush::update_faces_wireframe(Array<PointVertex>& wire, const bool* faces_visible) const {
-	std::size_t count = 0;
-	for (std::size_t i = 0; i < m_faceCentroidPoints.size(); ++i) {
-		if (faces_visible[i]) {
-			++count;
-		}
-	}
+void Brush::update_faces_wireframe(RenderablePointVector& wire, 
+								   const std::size_t* visibleFaceIndices, 
+								   std::size_t numVisibleFaces) const
+{
+	assert(numVisibleFaces <= _faceCentroidPoints.size());
 
-	wire.resize(count);
-	Array<PointVertex>::iterator p = wire.begin();
-	for (std::size_t i = 0; i < m_faceCentroidPoints.size(); ++i) {
-		if (faces_visible[i]) {
-			*p++ = m_faceCentroidPoints[i];
-		}
+	// Assure that the pointvector can carry as many faces as are visible
+	wire.resize(numVisibleFaces);
+
+	const std::size_t* visibleFaceIter = visibleFaceIndices;
+	
+	// Pick all the visible face centroids from the vector
+	for (std::size_t i = 0; i < numVisibleFaces; ++i)
+	{
+		wire[i] = _faceCentroidPoints[*visibleFaceIter++];
 	}
 }
 
@@ -761,9 +770,9 @@ public:
 	}
 };
 
-typedef Array<SListNode> ProximalVertexArray;
+typedef std::vector<SListNode> ProximalVertexArray;
 std::size_t ProximalVertexArray_index(const ProximalVertexArray& array, const ProximalVertex& vertex) {
-	return vertex.m_vertices - array.data();
+	return vertex.m_vertices - &array.front();
 }
 
 /// \brief Constructs the face windings and updates anything that depends on them.
@@ -785,17 +794,16 @@ void Brush::buildBRep() {
 
   if(degenerate || faces_size < 4 || faceVerticesCount != (faceVerticesCount>>1)<<1) // sum of vertices for each face of a valid polyhedron is always even
   {
-    m_uniqueVertexPoints.resize(0);
+    _uniqueVertexPoints.resize(0);
 
     vertex_clear();
     edge_clear();
 
-    m_edge_indices.resize(0);
-    m_edge_faces.resize(0);
+    _edgeIndices.resize(0);
+    _edgeFaces.resize(0);
 
-    m_faceCentroidPoints.resize(0);
-    m_uniqueEdgePoints.resize(0);
-    m_uniqueVertexPoints.resize(0);
+    _faceCentroidPoints.resize(0);
+    _uniqueEdgePoints.resize(0);
 
     for(Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i)
     {
@@ -833,7 +841,7 @@ void Brush::buildBRep() {
         {
           for(std::size_t i=0; i<faceVertices.size(); ++i)
           {
-            edgePairs[i].m_next = edgePairs.data() + absoluteIndex(next_edge(m_faces, faceVertices[i]));
+            edgePairs[i].m_next = &edgePairs.front() + absoluteIndex(next_edge(m_faces, faceVertices[i]));
           }
         }
 
@@ -855,23 +863,24 @@ void Brush::buildBRep() {
         }
 
         {
-          m_edge_faces.resize(uniqueEdges.size());
+          _edgeFaces.resize(uniqueEdges.size());
           for(std::size_t i=0; i<uniqueEdges.size(); ++i)
           {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(edgePairs, uniqueEdges[i])];
-            m_edge_faces[i] = EdgeFaces(faceVertex.getFace(), m_faces[faceVertex.getFace()]->getWinding()[faceVertex.getVertex()].adjacent);
+            _edgeFaces[i] = EdgeFaces(faceVertex.getFace(), m_faces[faceVertex.getFace()]->getWinding()[faceVertex.getVertex()].adjacent);
           }
         }
 
         {
-          m_uniqueEdgePoints.resize(uniqueEdges.size());
+          _uniqueEdgePoints.resize(uniqueEdges.size());
+
           for(std::size_t i=0; i<uniqueEdges.size(); ++i)
           {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(edgePairs, uniqueEdges[i])];
 
             const Winding& w = m_faces[faceVertex.getFace()]->getWinding();
             Vector3 edge = vector3_mid(w[faceVertex.getVertex()].vertex, w[w.next(faceVertex.getVertex())].vertex);
-            m_uniqueEdgePoints[i] = PointVertex(edge, colour_vertex);
+            _uniqueEdgePoints[i] = PointVertex(edge, colour_vertex);
           }
         }
 
@@ -892,7 +901,7 @@ void Brush::buildBRep() {
         {
           for(std::size_t i=0; i<faceVertices.size(); ++i)
           {
-            vertexRings[i].m_next = vertexRings.data() + absoluteIndex(next_vertex(m_faces, faceVertices[i]));
+            vertexRings[i].m_next = &vertexRings.front() + absoluteIndex(next_vertex(m_faces, faceVertices[i]));
           }
         }
 
@@ -914,13 +923,14 @@ void Brush::buildBRep() {
         }
 
         {
-          m_uniqueVertexPoints.resize(uniqueVertices.size());
+          _uniqueVertexPoints.resize(uniqueVertices.size());
+
           for(std::size_t i=0; i<uniqueVertices.size(); ++i)
           {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(vertexRings, uniqueVertices[i])];
 
             const Winding& winding = m_faces[faceVertex.getFace()]->getWinding();
-            m_uniqueVertexPoints[i] = PointVertex(winding[faceVertex.getVertex()].vertex, colour_vertex);
+            _uniqueVertexPoints[i] = PointVertex(winding[faceVertex.getVertex()].vertex, colour_vertex);
           }
         }
       }
@@ -932,7 +942,7 @@ void Brush::buildBRep() {
 
       // edge-index list for wireframe rendering
       {
-        m_edge_indices.resize(uniqueEdgeIndices.size());
+        _edgeIndices.resize(uniqueEdgeIndices.size());
 
         for(std::size_t i=0, count=0; i<m_faces.size(); ++i)
         {
@@ -941,8 +951,8 @@ void Brush::buildBRep() {
           {
             const RenderIndex edge_index = uniqueEdgeIndices[count+j];
 
-            m_edge_indices[edge_index].first = uniqueVertexIndices[count + j];
-            m_edge_indices[edge_index].second = uniqueVertexIndices[count + winding.next(j)];
+            _edgeIndices[edge_index].first = uniqueVertexIndices[count + j];
+            _edgeIndices[edge_index].second = uniqueVertexIndices[count + winding.next(j)];
           }
           count += winding.numpoints;
         }
@@ -950,11 +960,12 @@ void Brush::buildBRep() {
     }
 
     {
-      m_faceCentroidPoints.resize(m_faces.size());
+      _faceCentroidPoints.resize(m_faces.size());
+
       for(std::size_t i=0; i<m_faces.size(); ++i)
       {
         m_faces[i]->construct_centroid();
-        m_faceCentroidPoints[i] = PointVertex(m_faces[i]->centroid(), colour_vertex);
+        _faceCentroidPoints[i] = PointVertex(m_faces[i]->centroid(), colour_vertex);
       }
     }
   }

@@ -9,14 +9,6 @@
 
 #include "TransformationVisitors.h"
 
-struct FlatShadedVertex {
-  Vertex3f vertex;
-  Colour4b colour;
-  Normal3f normal;
-
-  FlatShadedVertex() {}
-};
-
 // greebo: These three are needed within a manipulatable. For example, a TranslateAxis manipulatable
 // has a member variable that is Translatable. Upon Transform() the member is translated.
 

@@ -103,7 +103,7 @@ public:
 	virtual void removeObserver(Observer* observer) = 0;
 	
 	// greebo: This finishes the current operation and removes
-	// it immediately adding it to the stack, therefore it never existed. 
+	// it immediately from the stack, therefore it never existed. 
 	virtual void cancel() = 0;
 
 	virtual void trackerAttach(UndoTracker& tracker) = 0;

@@ -84,15 +84,16 @@ RotateManipulator::RotateManipulator(Rotatable& rotatable, std::size_t segments,
     _circleScreen(segments<<3),
     _circleSphere(segments<<3)
 {
-	draw_semicircle(segments, radius, _circleX._vertices.data(), RemapYZX());
-    draw_semicircle(segments, radius, _circleY._vertices.data(), RemapZXY());
-    draw_semicircle(segments, radius, _circleZ._vertices.data(), RemapXYZ());
+	draw_semicircle(segments, radius, &_circleX.front(), RemapYZX());
+    draw_semicircle(segments, radius, &_circleY.front(), RemapZXY());
+    draw_semicircle(segments, radius, &_circleZ.front(), RemapXYZ());
 
-    draw_circle(segments, radius * 1.15f, _circleScreen._vertices.data(), RemapXYZ());
-    draw_circle(segments, radius, _circleSphere._vertices.data(), RemapXYZ());
+	draw_circle(segments, radius * 1.15f, &_circleScreen.front(), RemapXYZ());
+    draw_circle(segments, radius, &_circleSphere.front(), RemapXYZ());
 }
 
-void RotateManipulator::UpdateColours()  {
+void RotateManipulator::UpdateColours()
+{
     _circleX.setColour(colourSelected(g_colour_x, _selectableX.isSelected()));
     _circleY.setColour(colourSelected(g_colour_y, _selectableY.isSelected()));
     _circleZ.setColour(colourSelected(g_colour_z, _selectableZ.isSelected()));
@@ -180,7 +181,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
 #endif
 
         SelectionIntersection best;
-        LineStrip_BestPoint(local2view, _circleX._vertices.data(), _circleX._vertices.size(), best);
+        LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
         selector.addSelectable(best, &_selectableX);
       }
 
@@ -192,7 +193,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
 #endif
 
         SelectionIntersection best;
-        LineStrip_BestPoint(local2view, _circleY._vertices.data(), _circleY._vertices.size(), best);
+        LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
         selector.addSelectable(best, &_selectableY);
       }
 
@@ -204,7 +205,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
 #endif
 
         SelectionIntersection best;
-        LineStrip_BestPoint(local2view, _circleZ._vertices.data(), _circleZ._vertices.size(), best);
+        LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
         selector.addSelectable(best, &_selectableZ);
       }
     }
@@ -214,13 +215,13 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
 
       {
         SelectionIntersection best;
-        LineLoop_BestPoint(local2view, _circleScreen._vertices.data(), _circleScreen._vertices.size(), best);
+        LineLoop_BestPoint(local2view, &_circleScreen.front(), _circleScreen.size(), best);
         selector.addSelectable(best, &_selectableScreen); 
       }
 
       {
         SelectionIntersection best;
-        Circle_BestPoint(local2view, eClipCullCW, _circleSphere._vertices.data(), _circleSphere._vertices.size(), best);
+        Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.front(), _circleSphere.size(), best);
         selector.addSelectable(best, &_selectableSphere); 
       }
     }
@@ -283,14 +284,14 @@ TranslateManipulator::TranslateManipulator(Translatable& translatable, std::size
     _arrowHeadY(3 * 2 * (segments << 3)),
     _arrowHeadZ(3 * 2 * (segments << 3))
 {
-    draw_arrowline(length, _arrowX._line, 0);
-    draw_arrowhead(segments, length, _arrowHeadX._vertices.data(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
-    draw_arrowline(length, _arrowY._line, 1);
-    draw_arrowhead(segments, length, _arrowHeadY._vertices.data(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
-    draw_arrowline(length, _arrowZ._line, 2);
-    draw_arrowhead(segments, length, _arrowHeadZ._vertices.data(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
+    draw_arrowline(length, &_arrowX.front(), 0);
+    draw_arrowhead(segments, length, &_arrowHeadX._vertices.front(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
+    draw_arrowline(length, &_arrowY.front(), 1);
+    draw_arrowhead(segments, length, &_arrowHeadY._vertices.front(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
+    draw_arrowline(length, &_arrowZ.front(), 2);
+    draw_arrowhead(segments, length, &_arrowHeadZ._vertices.front(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
 
-    draw_quad(16, _quadScreen._quad);
+    draw_quad(16, &_quadScreen.front());
 }
 
 void TranslateManipulator::UpdateColours() {
@@ -376,7 +377,7 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
 
       {
         SelectionIntersection best;
-        Quad_BestPoint(local2view, eClipCullCW, _quadScreen._quad, best);
+        Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.front(), best);
         if(best.valid())
         {
           best = SelectionIntersection(0, 0);
@@ -395,24 +396,24 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
       if(show_x)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, _arrowX._line, best);
-        Triangles_BestPoint(local2view, eClipCullCW, _arrowHeadX._vertices.begin(), _arrowHeadX._vertices.end(), best);
+        Line_BestPoint(local2view, &_arrowX.front(), best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadX._vertices.front(), &*(_arrowHeadX._vertices.end()-1)+1, best);
         selector.addSelectable(best, &_selectableX);
       }
 
       if(show_y)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, _arrowY._line, best);
-        Triangles_BestPoint(local2view, eClipCullCW, _arrowHeadY._vertices.begin(), _arrowHeadY._vertices.end(), best);
+        Line_BestPoint(local2view, &_arrowY.front(), best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadY._vertices.front(), &*(_arrowHeadY._vertices.end()-1)+1, best);
         selector.addSelectable(best, &_selectableY);
       }
 
       if(show_z)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, _arrowZ._line, best);
-        Triangles_BestPoint(local2view, eClipCullCW, _arrowHeadZ._vertices.begin(), _arrowHeadZ._vertices.end(), best);
+        Line_BestPoint(local2view, &_arrowZ.front(), best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadZ._vertices.front(), &*(_arrowHeadZ._vertices.end()-1)+1, best);
         selector.addSelectable(best, &_selectableZ);
       }
     }
@@ -511,11 +512,11 @@ ScaleManipulator::ScaleManipulator(Scalable& scalable, std::size_t segments, flo
     _scaleFree(scalable),
     _scaleAxis(scalable)
 {
-    draw_arrowline(length, _arrowX._line, 0);
-    draw_arrowline(length, _arrowY._line, 1);
-    draw_arrowline(length, _arrowZ._line, 2);
+    draw_arrowline(length, &_arrowX.front(), 0);
+    draw_arrowline(length, &_arrowY.front(), 1);
+    draw_arrowline(length, &_arrowZ.front(), 2);
 
-    draw_quad(16, _quadScreen._quad);
+    draw_quad(16, &_quadScreen.front());
 }
 
 void ScaleManipulator::UpdateColours() {
@@ -552,19 +553,19 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
 
     {
         SelectionIntersection best;
-        Line_BestPoint(local2view, _arrowX._line, best);
+        Line_BestPoint(local2view, &_arrowX.front(), best);
         selector.addSelectable(best, &_selectableX);
       }
 
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, _arrowY._line, best);
+        Line_BestPoint(local2view, &_arrowY.front(), best);
         selector.addSelectable(best, &_selectableY);
       }
 
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, _arrowZ._line, best);
+        Line_BestPoint(local2view, &_arrowZ.front(), best);
         selector.addSelectable(best, &_selectableZ);
       }
     }
@@ -574,7 +575,7 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
 
       {
         SelectionIntersection best;
-        Quad_BestPoint(local2view, eClipCullCW, _quadScreen._quad, best);
+        Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.front(), best);
         selector.addSelectable(best, &_selectableScreen);
       }
     }
