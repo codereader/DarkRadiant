@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/matrix.h"
 #include "generic/callback.h"
 #include "stringio.h"
+#include <boost/format.hpp>
 
 const Vector3 ORIGINKEY_IDENTITY = Vector3(0, 0, 0);
 
@@ -34,28 +35,21 @@ inline void default_origin(Vector3& origin)
 {
   origin = ORIGINKEY_IDENTITY;
 }
+
 inline void read_origin(Vector3& origin, const std::string& value)
 {
-  if(!string_parse_vector3(value.c_str(), origin))
-  {
-    default_origin(origin);
-  }
+	// Try to construct a Vector3 from the given string, will fall back to 0,0,0
+	origin = Vector3(value);
 }
+
 inline void write_origin(const Vector3& origin, Entity* entity, const std::string& key)
 {
-  char value[64];
-  sprintf(value, "%g %g %g", origin[0], origin[1], origin[2]);
-  entity->setKeyValue(key, value);
+	entity->setKeyValue(key, (boost::format("%g %g %g") % origin[0] % origin[1] % origin[2]).str());
 }
 
 inline Vector3 origin_translated(const Vector3& origin, const Vector3& translation)
 {
-  return matrix4_get_translation_vec3(
-    matrix4_multiplied_by_matrix4(
-      Matrix4::getTranslation(origin),
-      Matrix4::getTranslation(translation)
-    )
-  );
+	return origin + translation;
 }
 
 inline Vector3 origin_snapped(const Vector3& origin, float snap)
@@ -65,28 +59,26 @@ inline Vector3 origin_snapped(const Vector3& origin, float snap)
 
 class OriginKey
 {
-  Callback m_originChanged;
+	Callback _originChanged;
 public:
-  Vector3 m_origin;
+	Vector3 m_origin;
 
+	OriginKey(const Callback& originChanged) :
+		_originChanged(originChanged), 
+		m_origin(ORIGINKEY_IDENTITY)
+	{}
 
-  OriginKey(const Callback& originChanged)
-    : m_originChanged(originChanged), m_origin(ORIGINKEY_IDENTITY)
-  {
-  }
+	void originChanged(const std::string& value)
+	{
+		read_origin(m_origin, value);
+		_originChanged();
+	}
+	typedef MemberCaller1<OriginKey, const std::string&, &OriginKey::originChanged> OriginChangedCaller;
 
-  void originChanged(const std::string& value)
-  {
-    read_origin(m_origin, value);
-    m_originChanged();
-  }
-  typedef MemberCaller1<OriginKey, const std::string&, &OriginKey::originChanged> OriginChangedCaller;
-
-
-  void write(Entity* entity) const
-  {
-    write_origin(m_origin, entity, "origin");
-  }
+	void write(Entity* entity) const
+	{
+		write_origin(m_origin, entity, "origin");
+	}
 };
 
 #endif

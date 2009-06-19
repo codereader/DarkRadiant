@@ -8,7 +8,8 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	TargetableNode(_entity, *this),
-	_light(_entity, 
+	_light(_entity,
+		   *this,
            Node::TransformChangedCaller(*this), 
            Node::BoundsChangedCaller(*this), 
            EvaluateTransformCaller(*this)),
@@ -34,7 +35,8 @@ LightNode::LightNode(const LightNode& other) :
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	scene::SelectableLight(other),
 	TargetableNode(_entity, *this),
-	_light(other._light, 
+	_light(other._light,
+		   *this,
            _entity,
            Node::TransformChangedCaller(*this), 
            Node::BoundsChangedCaller(*this), 
@@ -231,13 +233,15 @@ void LightNode::snapComponents(float snap) {
 
 void LightNode::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) {
 	test.BeginMesh(localToWorld());
-	// greebo: Make sure to use the lightAABB() for the selection test, excluding the light center
-	m_dragPlanes.selectPlanes(_light.lightAABB(), selector, test, selectedPlaneCallback, rotation());
+	// greebo: Make sure to use the local lightAABB() for the selection test, excluding the light center
+	AABB localLightAABB(Vector3(0,0,0), _light.getDoom3Radius().m_radiusTransformed);
+	m_dragPlanes.selectPlanes(localLightAABB, selector, test, selectedPlaneCallback, rotation());
 }
 
-void LightNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) {
-	// greebo: Make sure to use the lightAABB() for the selection test, excluding the light center
-	m_dragPlanes.selectReversedPlanes(_light.lightAABB(), selector, selectedPlanes, rotation());
+void LightNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
+{
+	AABB localLightAABB(Vector3(0,0,0), _light.getDoom3Radius().m_radiusTransformed);
+	m_dragPlanes.selectReversedPlanes(localLightAABB, selector, selectedPlanes, rotation());
 }
 
 scene::INodePtr LightNode::clone() const {
