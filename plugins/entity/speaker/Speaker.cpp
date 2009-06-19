@@ -1,5 +1,6 @@
 #include "Speaker.h"
 
+#include "itextstream.h"
 #include "iregistry.h"
 #include "irenderable.h"
 #include "isound.h"
@@ -9,6 +10,13 @@
 
 namespace entity {
 
+	namespace 
+	{
+		const std::string KEY_S_MAXDISTANCE("s_maxdistance");
+		const std::string KEY_S_MINDISTANCE("s_mindistance");
+		const std::string KEY_S_SHADER("s_shader");
+	}
+
 Speaker::Speaker(SpeakerNode& node, 
 		const Callback& transformChanged, 
 		const Callback& boundsChanged,
@@ -16,10 +24,8 @@ Speaker::Speaker(SpeakerNode& node,
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_angleKey(AngleChangedCaller(*this)),
-	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	_renderableRadii(m_aabb_local.origin),
+	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
@@ -41,10 +47,8 @@ Speaker::Speaker(const Speaker& other,
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_angleKey(AngleChangedCaller(*this)),
-	m_angle(ANGLEKEY_IDENTITY),
 	m_named(m_entity),
-	_renderableRadii(m_aabb_local.origin),
+	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
@@ -78,10 +82,6 @@ Doom3Entity& Speaker::getEntity() {
 const Doom3Entity& Speaker::getEntity() const {
 	return m_entity;
 }
-
-/*Namespaced& Speaker::getNamespaced() {
-	return m_nameKeys;
-}*/
 
 NamedEntity& Speaker::getNameable() {
 	return m_named;
@@ -161,12 +161,14 @@ void Speaker::testSelect(Selector& selector,
 	}
 }
 
-void Speaker::translate(const Vector3& translation) {
+void Speaker::translate(const Vector3& translation)
+{
 	m_origin = origin_translated(m_origin, translation);
 }
 
-void Speaker::rotate(const Quaternion& rotation) {
-	m_angle = angle_rotated(m_angle, rotation);
+void Speaker::rotate(const Quaternion& rotation)
+{
+	// nothing to rotate here, speakers are symmetric
 }
 
 void Speaker::snapto(float snap) {
@@ -174,16 +176,44 @@ void Speaker::snapto(float snap) {
 	m_originKey.write(&m_entity);
 }
 
-void Speaker::revertTransform() {
+void Speaker::revertTransform()
+{
 	m_origin = m_originKey.m_origin;
-	m_angle = m_angleKey.m_angle;
+
+	_radiiTransformed = _radii;
 }
 
 void Speaker::freezeTransform() {
 	m_originKey.m_origin = m_origin;
 	m_originKey.write(&m_entity);
-	m_angleKey.m_angle = m_angle;
-	m_angleKey.write(&m_entity);
+
+	_radii = _radiiTransformed;
+
+	// Write the s_mindistance/s_maxdistance keyvalues if we have a valid shader
+	if (!m_entity.getKeyValue(KEY_S_SHADER).empty())
+	{
+		// Note: Write the spawnargs in meters
+
+		if (_radii.getMax() != _defaultRadii.getMax())
+		{
+			m_entity.setKeyValue(KEY_S_MAXDISTANCE, floatToStr(_radii.getMax(true)));
+		}
+		else
+		{
+			// Radius is matching default, clear the spawnarg
+			m_entity.setKeyValue(KEY_S_MAXDISTANCE, "");
+		}
+
+		if (_radii.getMin() != _defaultRadii.getMin())
+		{
+			m_entity.setKeyValue(KEY_S_MINDISTANCE, floatToStr(_radii.getMin(true)));
+		}
+		else
+		{
+			// Radius is matching default, clear the spawnarg
+			m_entity.setKeyValue(KEY_S_MINDISTANCE, "");
+		}
+	}
 }
 
 void Speaker::transformChanged() {
@@ -192,79 +222,148 @@ void Speaker::transformChanged() {
 	updateTransform();
 }
 
+void Speaker::setRadiusFromAABB(const AABB& aabb)
+{
+	// Find out which dimension got changed the most
+	Vector3 delta = aabb.getExtents() - localAABB().getExtents();
+
+	double maxTrans;
+
+	// Get the maximum translation component
+	if (fabs(delta.x()) > fabs(delta.y()))
+	{
+		maxTrans = (fabs(delta.x()) > fabs(delta.z())) ? delta.x() : delta.z();
+	}
+	else
+	{
+		maxTrans = (fabs(delta.y()) > fabs(delta.z())) ? delta.y() : delta.z();
+	}
+
+	if (EntitySettings::InstancePtr()->dragResizeEntitiesSymmetrically())
+	{
+		// For a symmetric AABB change, take the extents delta times 2
+		maxTrans *= 2;
+	}
+	else
+	{
+		// Update the origin accordingly
+		m_origin += aabb.origin - localAABB().getOrigin();
+	}
+
+	float oldRadius = _radii.getMax();
+	float newRadius = static_cast<float>(oldRadius + maxTrans);
+
+	float ratio = newRadius / oldRadius;
+
+	// Resize the radii and update the min radius proportionally
+	_radiiTransformed.setMax(newRadius);
+	_radiiTransformed.setMin(_radii.getMin() * ratio);
+
+	updateAABB();
+	updateTransform();
+}
+
 void Speaker::construct() {
 	m_aabb_local = m_entity.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
 	
-	m_ray.origin = m_aabb_local.getOrigin();
-	m_ray.direction[0] = 1;
-	m_ray.direction[1] = 0;
-	m_ray.direction[2] = 0;
-
 	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
-	m_keyObservers.insert("angle", AngleKey::AngleChangedCaller(m_angleKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
-	m_keyObservers.insert("s_shader", Speaker::sShaderChangedCaller(*this));
-	m_keyObservers.insert("s_mindistance", Speaker::sMinChangedCaller(*this));
-	m_keyObservers.insert("s_maxdistance", Speaker::sMaxChangedCaller(*this));
+	m_keyObservers.insert(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
+	m_keyObservers.insert(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));
+	m_keyObservers.insert(KEY_S_MAXDISTANCE, Speaker::sMaxChangedCaller(*this));
 }
 
-void Speaker::updateAABB() {
+void Speaker::updateAABB()
+{
 	// set the AABB to the biggest AABB the speaker contains
 	m_aabb_border = m_aabb_local;
-	m_aabb_border.includeAABB(_renderableRadii.localAABB());
+
+	float radius = _radiiTransformed.getMax();
+	m_aabb_border.extents = Vector3(radius, radius, radius);
+
 	m_boundsChanged();
 }
 
-void Speaker::updateTransform() {
-	m_transform.localToParent() = Matrix4::getIdentity();
-	m_transform.localToParent().translateBy(m_origin);
-	m_ray.direction = matrix4_transformed_direction(matrix4_rotation_for_z(degrees_to_radians(m_angle)), Vector3(1, 0, 0));
+void Speaker::updateTransform()
+{
+	m_transform.localToParent() = Matrix4::getTranslation(m_origin);
 	m_transformChanged();
 }
 
-void Speaker::originChanged() {
+void Speaker::originChanged()
+{
 	m_origin = m_originKey.m_origin;
 	updateTransform();
 }
 
-void Speaker::angleChanged() {
-	m_angle = m_angleKey.m_angle;
-	updateTransform();
-}
+void Speaker::sShaderChanged(const std::string& value)
+{
+	if (value.empty())
+	{
+		_defaultRadii.setMin(0);
+		_defaultRadii.setMax(0);
+	}
+	else
+	{
+		// Non-zero shader set, retrieve the default radii
+		_defaultRadii = GlobalSoundManager().getSoundShader(value)->getRadii();
+	}
 
-void Speaker::sShaderChanged(const std::string& value) {
-	if (value.empty()) {
-		m_stdVal.setMin(0);
-		m_stdVal.setMax(0);
+	// If we haven't overridden our distances yet, adjust these values to defaults
+	if (!m_minIsSet)
+	{
+		_radii.setMin(_defaultRadii.getMin());
 	}
-	else {
-		m_stdVal = GlobalSoundManager().getSoundShader(value)->getRadii();
+
+	if (!m_maxIsSet) 
+	{
+		_radii.setMax(_defaultRadii.getMax());
 	}
-	if (!m_minIsSet) _renderableRadii.setMin(m_stdVal.getMin());
-	if (!m_maxIsSet) _renderableRadii.setMax(m_stdVal.getMax());
+
+	// Store the new values into our working set
+	_radiiTransformed = _radii;
 
 	updateAABB();
 }
 
-void Speaker::sMinChanged(const std::string& value) {
+void Speaker::sMinChanged(const std::string& value)
+{
+	// Check whether the spawnarg got set or removed
 	m_minIsSet = value.empty() ? false : true;
+
 	if (m_minIsSet)
+	{
 		// we need to parse in metres
-		_renderableRadii.setMin(strToFloat(value), true);
+		_radii.setMin(strToFloat(value), true);
+	}
 	else 
-		_renderableRadii.setMin(m_stdVal.getMin());
+	{
+		_radii.setMin(_defaultRadii.getMin());
+	}
+
+	// Store the new value into our working set
+	_radiiTransformed.setMin(_radii.getMin());
 
 	updateAABB();
 }
 
-void Speaker::sMaxChanged(const std::string& value) {
+void Speaker::sMaxChanged(const std::string& value)
+{
 	m_maxIsSet = value.empty() ? false : true;
+
 	if (m_maxIsSet)
+	{
 		// we need to parse in metres
-		_renderableRadii.setMax(strToFloat(value), true);
+		_radii.setMax(strToFloat(value), true);
+	}
 	else 
-		_renderableRadii.setMax(m_stdVal.getMax());
+	{
+		_radii.setMax(_defaultRadii.getMax());
+	}
+
+	// Store the new value into our working set
+	_radiiTransformed.setMax(_radii.getMax());
 
 	updateAABB();
 }

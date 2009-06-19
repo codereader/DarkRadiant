@@ -10,6 +10,9 @@
 // A list of sound files associated to a shader
 typedef std::vector<std::string> SoundFileList;
 
+const float METERS_PER_UNIT = 0.0254f;
+const float UNITS_PER_METER = 1/METERS_PER_UNIT;
+
 // The min and max radii of a sound shader
 class SoundRadii {
 	float minRad, maxRad;
@@ -17,8 +20,8 @@ class SoundRadii {
 	//set sound radii either in metres or in inch on initialization might cause a conversion
 	SoundRadii (float min = 0, float max = 0, bool inMetres = false) {
 		if (inMetres) {
-			minRad = min/0.0254f;
-			maxRad = max/0.0254f;
+			minRad = min * UNITS_PER_METER;
+			maxRad = max * UNITS_PER_METER;
 		}
 		else {
 			minRad = min;
@@ -29,7 +32,7 @@ class SoundRadii {
 	// set the sound radii in metres or in inch, might cause a conversion
 	void setMin(float min, bool inMetres = false) {
 		if (inMetres) {
-			minRad = min/0.0254f;
+			minRad = min * UNITS_PER_METER;
 		}
 		else {
 			minRad = min;
@@ -38,19 +41,19 @@ class SoundRadii {
 
 	void setMax (float max, bool inMetres = false) {
 		if (inMetres) {
-			maxRad = max/0.0254f;
+			maxRad = max * UNITS_PER_METER;
 		}
 		else {
 			maxRad = max;
 		}
 	}
 
-	float getMin() const { 
-		return minRad;
+	float getMin(bool inMetres = false) const { 
+		return (inMetres) ? minRad * METERS_PER_UNIT : minRad;
 	}
 
-	float getMax() const { 
-		return maxRad;
+	float getMax(bool inMetres = false) const { 
+		return (inMetres) ? maxRad * METERS_PER_UNIT : maxRad;
 	}
 };
 

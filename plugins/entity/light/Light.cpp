@@ -360,9 +360,21 @@ void Light::snapto(float snap) {
 
 void Light::setLightRadius(const AABB& aabb)
 {
-	_originTransformed = aabb.origin;
-	//_lightBox.origin = aabb.origin;
-	m_doom3Radius.m_radiusTransformed = aabb.extents;
+	if (EntitySettings::InstancePtr()->dragResizeEntitiesSymmetrically())
+	{
+		// Leave origin unchanged, calculate the new symmetrical radius
+		Vector3 delta = aabb.getExtents() - m_doom3Radius.m_radiusTransformed;
+
+		m_doom3Radius.m_radiusTransformed += delta*2;
+	}
+	else
+	{
+		// Transform the origin together with the radius (pivoted transform)
+		_originTransformed = aabb.origin;
+
+		// Set the new radius
+		m_doom3Radius.m_radiusTransformed = aabb.extents;
+	}
 }
 
 void Light::transformLightRadius(const Matrix4& transform) {

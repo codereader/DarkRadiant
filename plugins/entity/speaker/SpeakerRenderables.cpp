@@ -132,7 +132,7 @@ void sphereDrawWire(const Vector3& origin, float radius, int sides)
   }
 }
 
-void speakerDrawRadiiWire(const Vector3& origin, const SoundRadii rad)
+void speakerDrawRadiiWire(const Vector3& origin, const SoundRadii& rad)
 {
   if(rad.getMin() > 0)
     sphereDrawWire(origin, rad.getMin(), 24);
@@ -140,7 +140,7 @@ void speakerDrawRadiiWire(const Vector3& origin, const SoundRadii rad)
     sphereDrawWire(origin, rad.getMax(), 24);
 }
 
-void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii rad)
+void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii& rad)
 {
   if(rad.getMin() > 0)
     sphereDrawFill(origin, rad.getMin(), 16);
@@ -155,10 +155,10 @@ void RenderableSpeakerRadii::render(const RenderInfo& info) const
 {
 	//draw the radii of speaker based on speaker shader/radii keys
 	if(info.checkFlag(RENDER_FILL)) {
-		speakerDrawRadiiFill(m_origin, m_radii);
+		speakerDrawRadiiFill(Vector3(0,0,0), m_radii);
 	}
 	else {
-		speakerDrawRadiiWire(m_origin, m_radii);
+		speakerDrawRadiiWire(Vector3(0,0,0), m_radii);
 	}
 }
 
@@ -168,12 +168,12 @@ const AABB& RenderableSpeakerRadii::localAABB()
 	// make sure we take the biggest radius (even though the min radius doesn't make much sense)
 	float radii = m_radii.getMin() > m_radii.getMax() ? m_radii.getMin() : m_radii.getMax();
 	Vector3 radiiVector (radii, radii, radii);
-	m_aabb_local = AABB (m_aabb_local.getOrigin(), radiiVector);
+	m_aabb_local = AABB(Vector3(0,0,0), radiiVector);
 	return m_aabb_local;
 }
 
 // Set min
-void RenderableSpeakerRadii::setMin(float min, bool inMetres)
+/*void RenderableSpeakerRadii::setMin(float min, bool inMetres)
 {
     m_radii.setMin(min, inMetres);
 }
@@ -182,6 +182,16 @@ void RenderableSpeakerRadii::setMin(float min, bool inMetres)
 void RenderableSpeakerRadii::setMax(float max, bool inMetres)
 {
     m_radii.setMax(max, inMetres);
+}*/
+
+float RenderableSpeakerRadii::getMin()
+{
+	return m_radii.getMin();
+}
+
+float RenderableSpeakerRadii::getMax()
+{
+	return m_radii.getMax();
 }
 
 } // namespace entity

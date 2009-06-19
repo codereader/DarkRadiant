@@ -10,6 +10,7 @@ namespace {
 	const std::string RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
 	const std::string RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
 	const std::string RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
+	const std::string RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
 }
 
 class EntitySettings;
@@ -33,6 +34,9 @@ class EntitySettings :
 	// TRUE if light radii should be drawn even when not selected
 	bool _showAllLightRadii;
 
+	// TRUE if entities should resize symmetrically on drag-resize operations
+	bool _dragResizeEntitiesSymmetrically;
+
 	// Private constructor
 	EntitySettings();
 public:
@@ -51,6 +55,10 @@ public:
 
 	bool showAllLightRadii() {
 		return _showAllLightRadii;
+	}
+
+	bool dragResizeEntitiesSymmetrically() {
+		return _dragResizeEntitiesSymmetrically;
 	}
 
 	// Container for the singleton (ptr)

@@ -40,6 +40,7 @@
 	<alwaysShowLightVertices value="1"/>
 	<freeModelRotation value="0" />
 	<rotationPivotIsOrigin value="0" />
+	<dragResizeEntitiesSymmetrically value="0" />
 	<transientComponentSelection value="1" />
 	<transformDialog>
 		<window xPosition="150" yPosition="200" width="280" height="242" />
@@ -200,6 +201,7 @@
 			<toggletoolbutton name="texturelock" action="TogTexLock" tooltip="Texture Lock" icon="texture_lock.png"/>
 			<toggletoolbutton name="freemodelrotation" action="ToggleFreeModelRotation" tooltip="Rotate Models independently" icon="free_model_rotation.png" />
 			<toggletoolbutton name="togglerotationpivot" action="ToggleRotationPivot" tooltip="Rotate func_* Entities around origin" icon="rotation_pivot_origin.png" />
+			<toggletoolbutton name="dragresizesymm" action="ToggleDragResizeEntitiesSymmetrically" tooltip="Drag-resize entities symmetrically (leave origin unchanged)" icon="dragresize_symm.png" />
 		<separator/>
 			<toolbutton name="createDecals" action="CreateDecalsForFaces" tooltip="Create Decals for selected Faces" icon="create_decals.png"/>
 	</toolbar>
