@@ -2,59 +2,42 @@
 #define FACESHADER_H_
 
 #include <string>
+#include <set>
 #include "debugging/debugging.h"
-#include "container/container.h"
 #include "moduleobserver.h"
 #include "irender.h"
+#include <boost/noncopyable.hpp>
 
 #include "ContentsFlagsValue.h"
-
-class FaceShaderObserver {
-public:
-	virtual void realiseShader() = 0;
-	virtual void unrealiseShader() = 0;
-};
-
-// ----------------------------------------------------------------------------
-
-// greebo: Two Visitor classes to realise/unrealise a FaceShader
-class FaceShaderObserverRealise {
-public:
-	void operator()(FaceShaderObserver& observer) const {
-		observer.realiseShader();
-	}
-};
-
-class FaceShaderObserverUnrealise {
-public:
-	void operator()(FaceShaderObserver& observer) const {
-		observer.unrealiseShader();
-	}
-};
-
-// ----------------------------------------------------------------------------
-
-typedef ReferencePair<FaceShaderObserver> FaceShaderObserverPair;
 
 /**
  * \brief
  * Material and shader information for a brush face.
  */
-class FaceShader 
-: public ModuleObserver 
+class FaceShader :
+	public ModuleObserver,
+	public boost::noncopyable
 {
     // In-use flag
     bool _inUse;
-
-private:
 
     // Shader capture and release
 	void captureShader();
 	void releaseShader();
 
 public:
-	class SavedState {
-		public:
+	// Observer classes can be attached to FaceShaders to get notified
+	// on realisation/unrealisation
+	class Observer
+	{
+	public:
+		virtual void realiseShader() = 0;
+		virtual void unrealiseShader() = 0;
+	};
+
+	class SavedState
+	{
+	public:
 		std::string _materialName;
 		ContentsFlagsValue m_flags;
 	
@@ -76,7 +59,10 @@ public:
 	ShaderPtr _glShader;
 
 	ContentsFlagsValue m_flags;
-	FaceShaderObserverPair m_observers;
+
+	typedef std::set<Observer*> Observers;
+	Observers _observers;
+
 	bool m_realised;
 
 	// Constructor
@@ -85,9 +71,6 @@ public:
 	// Destructor
 	~FaceShader();
 	
-	// copy-construction not supported
-	FaceShader(const FaceShader& other);
-
     /**
      * \brief
      * Set whether this FaceShader is in use by a Face or not.
@@ -98,8 +81,8 @@ public:
 	void realise();
 	void unrealise();
 
-	void attach(FaceShaderObserver& observer);
-	void detach(FaceShaderObserver& observer);
+	void attachObserver(Observer& observer);
+	void detachObserver(Observer& observer);
 
     /**
      * \brief
@@ -125,6 +108,7 @@ public:
 	// greebo: return the dimensions of the shader image 
 	std::size_t width() const;
 	std::size_t height() const;
+
 }; // class FaceShader
 
 #endif /*FACESHADER_H_*/

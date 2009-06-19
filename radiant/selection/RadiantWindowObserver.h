@@ -18,7 +18,8 @@ class SelectionSystemWindowObserver : public WindowObserver {
 public:
 	virtual void setView(const View& view) = 0;
 	virtual void setRectangleDrawCallback(const RectangleCallback& callback) = 0;
-	virtual void setObservedWidget(GtkWidget* observed) = 0;
+	virtual void addObservedWidget(GtkWidget* observed) = 0;
+	virtual void removeObservedWidget(GtkWidget* observed) = 0;
 };
 
 // ====================================================================================
@@ -30,7 +31,9 @@ public:
  * Note that some calls for button/modifiers could be catched in the XYView / Camview callback methods, so that
  * they never reach the WindowObserver (examples may be a Clipper command). 
  */
-class RadiantWindowObserver : public SelectionSystemWindowObserver {
+class RadiantWindowObserver : 
+	public SelectionSystemWindowObserver
+{
 	// The tolerance when it comes to the construction of selection boxes
 	enum {
 		SELECT_EPSILON = 8,
@@ -42,12 +45,17 @@ class RadiantWindowObserver : public SelectionSystemWindowObserver {
 
 	// This is true, if the "select" mouse button is currently pressed (important to know for drag operations)
   	bool _mouseDown;
+
+	// Whether the key handler should listen for cancel events
+	bool _listenForCancelEvents;
+
+	typedef std::map<GtkWidget*, gulong> KeyHandlerMap;
+	KeyHandlerMap _keyHandlers;
   	
-  	// The handler id for catching keypress events
-  	gulong _keyPressHandler;
-  	
-  	// The widget that is observed (needed to know to catch keypress events)
-  	GtkWidget* _observedWidget;
+  	// A "third-party" event to be called when the mouse moved and/or button is released
+	// Usually points to the Manipulate or Select Observer classes.
+	MouseEventCallback _mouseMotionCallback;
+	MouseEventCallback _mouseUpCallback;
 
 public:
 	// These are the classes that handle the selection- and manipulate-specific mouse actions
@@ -56,11 +64,7 @@ public:
   	ManipulateObserver _manipulateObserver;
 
 	// Constructor
-  	RadiantWindowObserver() : 
-  		_mouseDown(false),
-  		_keyPressHandler(0),
-  		_observedWidget(NULL)
-  	{}
+  	RadiantWindowObserver();
 
   	// Release this window observer, as this class is usually instanced with "new" on the heap
 	void release() {
@@ -71,7 +75,8 @@ public:
 	void setView(const View& view);
 	
 	// Tells the observer which GtkWidget it is actually observing
-	void setObservedWidget(GtkWidget* observed);
+	void addObservedWidget(GtkWidget* observed);
+	void removeObservedWidget(GtkWidget* observed);
 	
 	// Pass the rectangle callback function to the selector subclass
 	void setRectangleDrawCallback(const RectangleCallback& callback);

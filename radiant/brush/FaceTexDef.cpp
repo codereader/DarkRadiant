@@ -7,12 +7,12 @@ FaceTexdef::FaceTexdef(FaceShader& shader, const TextureProjection& projection, 
 	m_projectionInitialised(projectionInitialised),
 	m_scaleApplied(false) 
 {
-	m_shader.attach(*this);
+	m_shader.attachObserver(*this);
 }
 
 // Destructor
 FaceTexdef::~FaceTexdef() {
-	m_shader.detach(*this);
+	m_shader.detachObserver(*this);
 }
 
 void FaceTexdef::addScale() {
