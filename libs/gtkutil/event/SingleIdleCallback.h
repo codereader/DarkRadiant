@@ -40,9 +40,13 @@ private:
 	}
 	
 	// Remove the callback
-	void deregisterCallback() {
-		g_source_remove(_id);
-		_callbacksPending = false;
+	void deregisterCallback()
+	{
+		if (_callbacksPending)
+		{
+			g_source_remove(_id);
+			_callbacksPending = false;
+		}
 	}
 	
 protected:
@@ -51,12 +55,32 @@ protected:
 	 * Request an idle callback. The onGtkIdle() method will be invoked during
 	 * the next GTK idle period.
 	 */
-	void requestIdleCallback() {
+	void requestIdleCallback()
+	{
 		if (_callbacksPending) return; // avoid duplicate registrations
 
 		_callbacksPending = true;
 
 		_id = g_idle_add(_onIdle, this);
+	}
+
+	// TRUE if an idle callback is pending
+	bool callbacksPending() const
+	{
+		return _callbacksPending;
+	}
+
+	// Flushes any pending events, forces a call to onGtkIdle, if necessary
+	void flushIdleCallback()
+	{
+		if (_callbacksPending)
+		{
+			// Cancel the event and force an onGtkIdle() call
+			deregisterCallback();
+
+			// Invoke the idle callback
+			onGtkIdle();
+		}
 	}
 	
 	/**
@@ -68,6 +92,7 @@ protected:
 public:
 
 	SingleIdleCallback() :
+		_id(0),
 		_callbacksPending(false)
 	{}
 

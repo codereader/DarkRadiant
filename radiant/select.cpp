@@ -45,59 +45,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "selection/algorithm/General.h"
 
-select_workzone_t g_select_workzone;
-
-namespace
-{
-  void Selection_UpdateWorkzone()
-  {
-    if(GlobalSelectionSystem().countSelected() != 0)
-    {
-      Select_GetBounds(g_select_workzone.d_work_min, g_select_workzone.d_work_max);
-    }
-  }
-  typedef FreeCaller<Selection_UpdateWorkzone> SelectionUpdateWorkzoneCaller;
-
-  IdleDraw g_idleWorkzone = IdleDraw(SelectionUpdateWorkzoneCaller());
-}
-
-const select_workzone_t& Select_getWorkZone()
-{
-  g_idleWorkzone.flush();
-  return g_select_workzone;
-}
-
-void UpdateWorkzone_ForSelection()
-{
-  g_idleWorkzone.queueDraw();
-}
-
-// update the workzone to the current selection
-void UpdateWorkzone_ForSelectionChanged(const Selectable& selectable)
-{
-  if(selectable.isSelected())
-  {
-    UpdateWorkzone_ForSelection();
-  }
-}
-
-void Select_GetBounds (Vector3& mins, Vector3& maxs)
-{
-	BoundsAccumulator walker;
-	GlobalSelectionSystem().foreachSelected(walker);
-
-	AABB bounds = walker.getBounds();
-
-	if (bounds.isValid()) {
-		maxs = bounds.origin + bounds.extents;
-		mins = bounds.origin - bounds.extents;
-	}
-	else {
-		maxs = Vector3(0,0,0);
-		mins = Vector3(0,0,0);
-	}
-}
-
 void Select_FlipAxis (int axis)
 {
   Vector3 flip(1, 1, 1);
@@ -277,26 +224,4 @@ void Selection_MoveDown(const cmd::ArgumentList& args)
 void Selection_MoveUp(const cmd::ArgumentList& args)
 {
   Selection_NudgeZ(GlobalGrid().getGridSize());
-}
-
-void SceneSelectionChange(const Selectable& selectable)
-{
-  SceneChangeNotify();
-}
-
-SignalHandlerId Selection_boundsChanged;
-
-void Selection_construct()
-{
-  typedef FreeCaller1<const Selectable&, SceneSelectionChange> SceneSelectionChangeCaller;
-  GlobalSelectionSystem().addSelectionChangeCallback(SceneSelectionChangeCaller());
-  typedef FreeCaller1<const Selectable&, UpdateWorkzone_ForSelectionChanged> UpdateWorkzoneForSelectionChangedCaller;
-  GlobalSelectionSystem().addSelectionChangeCallback(UpdateWorkzoneForSelectionChangedCaller());
-  typedef FreeCaller<UpdateWorkzone_ForSelection> UpdateWorkzoneForSelectionCaller;
-  Selection_boundsChanged = GlobalSceneGraph().addBoundsChangedCallback(UpdateWorkzoneForSelectionCaller());
-}
-
-void Selection_destroy()
-{
-  GlobalSceneGraph().removeBoundsChangedCallback(Selection_boundsChanged);
 }

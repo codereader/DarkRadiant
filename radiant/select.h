@@ -23,9 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_SELECT_H
 
 #include "icommandsystem.h"
-#include "math/Vector3.h"
-
-void Select_GetBounds(Vector3& mins, Vector3& maxs);
 
 void Selection_Flipx(const cmd::ArgumentList& args);
 void Selection_Flipy(const cmd::ArgumentList& args);
@@ -36,26 +33,5 @@ void Selection_Rotatez(const cmd::ArgumentList& args);
 
 void Selection_MoveDown(const cmd::ArgumentList& args);
 void Selection_MoveUp(const cmd::ArgumentList& args);
-
-// updating workzone to a given brush (depends on current view)
-
-void Selection_construct();
-void Selection_destroy();
-
-
-struct select_workzone_t
-{
-  // defines the boundaries of the current work area
-  // is used to guess brushes and drop points third coordinate when creating from 2D view
-  Vector3 d_work_min, d_work_max;
-
-  select_workzone_t() :
-    d_work_min(-64.0f,-64.0f,-64.0f),
-    d_work_max( 64.0f, 64.0f, 64.0f)
-  {
-  }
-};
-
-const select_workzone_t& Select_getWorkZone();
 
 #endif

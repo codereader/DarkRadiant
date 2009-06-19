@@ -322,9 +322,8 @@ void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name) {
 
 AABB PatchCreator_getBounds()
 {
-  AABB aabb(AABB::createFromMinMax(Select_getWorkZone().d_work_min, 
-  								   Select_getWorkZone().d_work_max));
-
+	AABB aabb = GlobalSelectionSystem().getWorkZone().bounds;
+ 
   float gridSize = GlobalGrid().getGridSize();
 
   if(aabb.extents[0] == 0)

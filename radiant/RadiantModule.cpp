@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iclipper.h"
 
 #include "entity.h"
-#include "select.h"
 #include "map/AutoSaver.h"
 #include "map/PointFile.h"
 #include "camera/GlobalCamera.h"
@@ -227,7 +226,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     GlobalFiletypes().addType(
     	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
 
-    Selection_construct();
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
     GlobalCamera().construct();
@@ -254,7 +252,6 @@ void RadiantModule::shutdownModule() {
 
 	map::PointFile::Instance().destroy();
     Entity_Destroy();
-    Selection_destroy();
     
     // Remove all the event listeners, otherwise the shared_ptrs 
     // lock the instances. This is just for safety, usually all

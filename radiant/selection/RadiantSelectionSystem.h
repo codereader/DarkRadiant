@@ -5,6 +5,7 @@
 #include "iselection.h"
 #include "selectionlib.h"
 #include "math/matrix.h"
+#include "gtkutil/event/SingleIdleCallback.h"
 #include "signal/signal.h"
 #include "Manipulators.h"
 #include "Selectors.h"
@@ -43,7 +44,8 @@ class RadiantSelectionSystem :
 	public Rotatable,
 	public Scalable,
 	public Renderable,
-	public RegistryKeyObserver
+	public RegistryKeyObserver,
+	protected gtkutil::SingleIdleCallback
 {
 	mutable Matrix4 _pivot2world;
 	Matrix4 _pivot2worldStart;
@@ -55,6 +57,16 @@ class RadiantSelectionSystem :
 	Translation _translation;	// This is a vector3
 	Rotation _rotation;			// This is a quaternion
 	Scale _scale;				// This is a vector3
+
+	// The 3D volume surrounding the most recent selection.
+	selection::WorkZone _workZone;
+
+	// When this is set to TRUE, the idle callback will emit a scenegraph change call
+	// This is to avoid massive calls to GlobalSceneGraph().sceneChanged() on each
+	// and every selection change.
+	mutable bool _requestSceneGraphChange;
+	mutable bool _requestWorkZoneRecalculation;
+
 public:
 	static ShaderPtr _state;
 private:
@@ -86,7 +98,7 @@ private:
 
 	Signal1<const Selectable&> _selectionChangedCallbacks;
 
-	void ConstructPivot() const;
+	void ConstructPivot();
 	mutable bool _pivotChanged;
 	bool _pivotMoving;
 
@@ -110,6 +122,9 @@ public:
 
 	// RegistryKeyObserver implementation
 	void keyChanged(const std::string& key, const std::string& val);
+
+	void onSceneBoundsChanged();
+	typedef MemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::onSceneBoundsChanged> SceneBoundsChangedCaller;
 	
 	void pivotChanged() const;
 	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;
@@ -135,14 +150,14 @@ public:
 	void onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable);
 	void onComponentSelection(const scene::INodePtr& node, const Selectable& selectable);
 	  
-	scene::INodePtr ultimateSelected() const;
-	scene::INodePtr penultimateSelected() const;
+	scene::INodePtr ultimateSelected();
+	scene::INodePtr penultimateSelected();
 	  
 	void setSelectedAll(bool selected);
 	void setSelectedAllComponents(bool selected);
 	
-	void foreachSelected(const Visitor& visitor) const;
-	void foreachSelectedComponent(const Visitor& visitor) const;
+	void foreachSelected(const Visitor& visitor);
+	void foreachSelectedComponent(const Visitor& visitor);
 	
 	void addSelectionChangeCallback(const SelectionChangeHandler& handler);
 	
@@ -177,6 +192,8 @@ public:
 	
 	void endMove();
 	void freezeTransforms();
+
+	const selection::WorkZone& getWorkZone();
 	
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
@@ -191,7 +208,11 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
-	
+
+protected:
+	// Called when GTK is idle to recalculate the workzone (if necessary)
+	virtual void onGtkIdle();
+
 private:
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
 };

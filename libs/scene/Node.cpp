@@ -328,7 +328,12 @@ void Node::boundsChanged() {
 		parent->boundsChanged();
 	}
 
-	GlobalSceneGraph().boundsChanged();
+	if (_isRoot)
+	{
+		// greebo: It's enough if only root nodes call the global scenegraph
+		// as nodes are passing their calls up to their parents anyway
+		GlobalSceneGraph().boundsChanged();
+	}
 }
 
 const Matrix4& Node::localToWorld() const {
