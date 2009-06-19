@@ -16,6 +16,7 @@
 #include "../colour.h"
 #include "../namedentity.h"
 #include "../entity.h"
+#include "../ModelKey.h"
 #include "../Doom3Entity.h"
 
 #include "Renderables.h"
@@ -67,14 +68,19 @@ class Light :
 	Doom3Entity& _entity;
 
   KeyObserverMap m_keyObservers;
-  IdentityTransform m_transform;
+  MatrixTransform m_transform;
 
-  OriginKey m_originKey;
+	OriginKey m_originKey;
+	// The "working" version of the origin
+	Vector3 _originTransformed;
+
   RotationKey m_rotationKey;
   Float9 m_rotation;
   Colour m_colour;
 
   NamedEntity m_named;
+
+	ModelKey _modelKey;
 
 	Doom3LightRadius m_doom3Radius;
 
@@ -122,7 +128,6 @@ class Light :
 	bool m_useLightEnd;
 
   mutable AABB m_doom3AABB;
-  mutable AABB _lightAABB;
   mutable Matrix4 m_doom3Rotation;
 
     // Projection matrix for projected light
@@ -183,6 +188,7 @@ public:
      * Main constructor.
      */
 	Light(Doom3Entity& entity,
+		  LightNode& owner,
           const Callback& transformChanged,
           const Callback& boundsChanged,
           const Callback& evaluateTransform);
@@ -192,6 +198,7 @@ public:
      * Copy constructor.
      */
 	Light(const Light& other,
+		  LightNode& owner,
           Doom3Entity& entity,
           const Callback& transformChanged,
           const Callback& boundsChanged,
@@ -265,10 +272,7 @@ public:
 	const Matrix4& projection() const;
 
     // RendererLight implementation
-    Vector3 worldOrigin() const
-    {
-        return _lightBox.origin;
-    }
+    Vector3 worldOrigin() const;
 
     Matrix4 getLightTextureTransformation() const;
   	bool testAABB(const AABB& other) const;

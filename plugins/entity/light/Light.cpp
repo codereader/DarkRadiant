@@ -65,15 +65,18 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 
 // Constructor
 Light::Light(Doom3Entity& entity,
+			 LightNode& owner,
              const Callback& transformChanged,
              const Callback& boundsChanged,
              const Callback& evaluateTransform) 
 :
 	_entity(entity),
 	m_originKey(OriginChangedCaller(*this)),
+	_originTransformed(ORIGINKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_colour(Callback()),
 	m_named(_entity),
+	_modelKey(owner),
 	_renderableRadius(_lightBox.origin),
 	_renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
 	_rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -93,15 +96,18 @@ Light::Light(Doom3Entity& entity,
 
 // Copy Constructor
 Light::Light(const Light& other,
+			 LightNode& owner,
              Doom3Entity& entity,
              const Callback& transformChanged,
              const Callback& boundsChanged,
              const Callback& evaluateTransform) 
 : _entity(entity),
   m_originKey(OriginChangedCaller(*this)),
+  _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(RotationChangedCaller(*this)),
   m_colour(Callback()),
   m_named(_entity),
+  _modelKey(owner),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
   _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -133,6 +139,7 @@ void Light::construct() {
 	m_rotation.setIdentity();
 	_lightBox.origin = Vector3(0, 0, 0);
 	_lightBox.extents = Vector3(8, 8, 8);
+	_originTransformed = ORIGINKEY_IDENTITY;
 
 	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
@@ -160,6 +167,9 @@ void Light::construct() {
 	// Load the light colour (might be inherited)
 	m_colour.colourChanged(_entity.getKeyValue("_color"));
 	m_shader.valueChanged(_entity.getKeyValue("texture"));
+
+	// Hook the "model" spawnarg to the ModelKey class
+	m_keyObservers.insert("model", ModelKey::ModelChangedCaller(_modelKey));
 }
 
 void Light::updateOrigin() {
@@ -171,11 +181,21 @@ void Light::updateOrigin() {
     if (isProjected())
         projectionChanged();
 
+	// Update the transformation matrix
+	m_transform.localToParent() = Matrix4::getIdentity();
+	m_transform.localToParent().translateBy(worldOrigin());
+	m_transform.localToParent().multiplyBy(m_rotation.getMatrix4());
+
+	// Notify all child nodes
+	m_transformChanged();
+
 	GlobalSelectionSystem().pivotChanged();
 }
 
-void Light::originChanged() {
-	_lightBox.origin = m_originKey.m_origin;
+void Light::originChanged()
+{
+	// The "origin" key has been changed, reset the current working copy to that value
+	_originTransformed = m_originKey.m_origin;
 	updateOrigin();
 }
 
@@ -332,19 +352,28 @@ void Light::instanceDetach(const scene::Path& path) {
 void Light::snapto(float snap) {
     m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
     m_originKey.write(&_entity);
+
+	_originTransformed = m_originKey.m_origin;
+
+	updateOrigin();
 }
 
-void Light::setLightRadius(const AABB& aabb) {
-	_lightBox.origin = aabb.origin;
+void Light::setLightRadius(const AABB& aabb)
+{
+	_originTransformed = aabb.origin;
+	//_lightBox.origin = aabb.origin;
 	m_doom3Radius.m_radiusTransformed = aabb.extents;
 }
 
 void Light::transformLightRadius(const Matrix4& transform) {
-	matrix4_transform_point(transform, _lightBox.origin);
+	matrix4_transform_point(transform, _originTransformed);
 }
 
 void Light::revertTransform() {
-	_lightBox.origin = m_originKey.m_origin;
+	
+	//_lightBox.origin = m_originKey.m_origin;
+	_originTransformed = m_originKey.m_origin;
+
 	m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;
 	m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
 	m_doom3Radius.m_centerTransformed = m_doom3Radius.m_center;
@@ -359,7 +388,7 @@ void Light::revertTransform() {
 
 void Light::freezeTransform() 
 {
-    m_originKey.m_origin = _lightBox.origin;
+    m_originKey.m_origin = _originTransformed;
     m_originKey.write(&_entity);
     
     if (isProjected()) {
@@ -418,9 +447,6 @@ const entity::Doom3Entity& Light::getEntity() const {
 	return _entity;
 }
 
-/*Namespaced& Light::getNamespaced() {
-	return m_nameKeys;
-}*/
 const NamedEntity& Light::getNameable() const {
 	return m_named;
 }
@@ -535,7 +561,7 @@ void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& l
 }
 
 void Light::translate(const Vector3& translation) {
-	_lightBox.origin = origin_translated(_lightBox.origin, translation);
+	_originTransformed = origin_translated(_originTransformed, translation);
 }
 
 /* greebo: This translates the light start with the given <translation>
@@ -694,7 +720,7 @@ Matrix4 Light::getLightTextureTransformation() const
  */
 AABB Light::lightAABB() const 
 {
-	return AABB(_lightBox.origin, m_doom3Radius.m_radiusTransformed);
+	return AABB(_originTransformed, m_doom3Radius.m_radiusTransformed);
 }
   
 bool Light::testAABB(const AABB& other) const 
@@ -905,6 +931,12 @@ const Matrix4& Light::projection() const
 
 ShaderPtr Light::getShader() const {
 	return m_shader.get();
+}
+
+Vector3 Light::worldOrigin() const
+{
+	// return the absolute world origin
+	return _originTransformed;
 }
 
 } // namespace entity 
