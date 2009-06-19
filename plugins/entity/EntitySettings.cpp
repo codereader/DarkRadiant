@@ -7,12 +7,14 @@ namespace entity {
 EntitySettings::EntitySettings() :
 	_renderEntityNames(GlobalRegistry().get(RKEY_SHOW_ENTITY_NAMES) == "1"),
 	_showAllSpeakerRadii(GlobalRegistry().get(RKEY_SHOW_ALL_SPEAKER_RADII) == "1"),
-	_showAllLightRadii(GlobalRegistry().get(RKEY_SHOW_ALL_LIGHT_RADII) == "1")
+	_showAllLightRadii(GlobalRegistry().get(RKEY_SHOW_ALL_LIGHT_RADII) == "1"),
+	_dragResizeEntitiesSymmetrically(GlobalRegistry().get(RKEY_DRAG_RESIZE_SYMMETRICALLY) == "1")
 {
 	// Register this class as keyobserver
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ALL_SPEAKER_RADII);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ALL_LIGHT_RADII);
+	GlobalRegistry().addKeyObserver(this, RKEY_DRAG_RESIZE_SYMMETRICALLY);
 }
 
 EntitySettings::~EntitySettings() {
@@ -44,6 +46,9 @@ void EntitySettings::keyChanged(const std::string& key, const std::string& value
 	}
 	else if (key == RKEY_SHOW_ALL_LIGHT_RADII) {
 		_showAllLightRadii = (value == "1");
+	}
+	else if (key == RKEY_DRAG_RESIZE_SYMMETRICALLY) {
+		_dragResizeEntitiesSymmetrically = (value == "1");
 	}
 
 	// Redraw the scene

@@ -11,7 +11,8 @@ SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this))
+		EvaluateTransformCaller(*this)),
+	_dragPlanes(SelectedChangedComponentCaller(*this))
 {
 	TargetableNode::construct();
 }
@@ -33,7 +34,8 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 		*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this))
+		EvaluateTransformCaller(*this)),
+	_dragPlanes(SelectedChangedComponentCaller(*this))
 {
 	TargetableNode::construct();
 }
@@ -73,13 +75,44 @@ void SpeakerNode::refreshModel() {
 	// Nothing to do
 }
 
-// Namespaced implementation
-/*void SpeakerNode::setNamespace(INamespace& space) {
-	_speaker.getNamespaced().setNamespace(space);
-}*/
+void SpeakerNode::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
+{
+	test.BeginMesh(localToWorld());
+
+	_dragPlanes.selectPlanes(localAABB(), selector, test, selectedPlaneCallback);
+}
+
+void SpeakerNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes)
+{
+	_dragPlanes.selectReversedPlanes(localAABB(), selector, selectedPlanes);
+}
 
 void SpeakerNode::testSelect(Selector& selector, SelectionTest& test) {
 	_speaker.testSelect(selector, test, localToWorld());
+}
+
+void SpeakerNode::selectedChangedComponent(const Selectable& selectable)
+{
+	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
+	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
+}
+
+bool SpeakerNode::isSelectedComponents() const
+{
+	return _dragPlanes.isSelected();
+}
+
+void SpeakerNode::setSelectedComponents(bool select, SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eFace)
+	{
+		_dragPlanes.setSelected(false);
+	}
+}
+
+void SpeakerNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
+{
+	// nothing, planes are selected via selectPlanes()
 }
 
 scene::INodePtr SpeakerNode::clone() const {
@@ -122,14 +155,28 @@ void SpeakerNode::renderWireframe(RenderableCollector& collector, const VolumeTe
 	_speaker.renderWireframe(collector, volume, localToWorld(), isSelected());
 }
 
-void SpeakerNode::evaluateTransform() {
-	if(getType() == TRANSFORM_PRIMITIVE) {
+void SpeakerNode::evaluateTransform()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
 		_speaker.translate(getTranslation());
 		_speaker.rotate(getRotation());
 	}
+	else
+	{
+		// This seems to be a drag operation
+		_dragPlanes.m_bounds = _speaker.localAABB();
+		
+		// Let the dragplanes helper resize our local AABB
+		AABB resizedAABB = _dragPlanes.evaluateResize(getTranslation(), Matrix4::getIdentity());
+
+		// Let the speaker do the rest of the math
+		_speaker.setRadiusFromAABB(resizedAABB);
+	}
 }
 
-void SpeakerNode::applyTransform() {
+void SpeakerNode::applyTransform()
+{
 	_speaker.revertTransform();
 	evaluateTransform();
 	_speaker.freezeTransform();

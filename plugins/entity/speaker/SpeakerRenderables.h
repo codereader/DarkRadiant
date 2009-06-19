@@ -31,8 +31,9 @@ class RenderableSpeakerRadii
 	const Vector3& m_origin;
 	AABB m_aabb_local;
 
-    // SoundRadii object containing min and max radius values
-	SoundRadii m_radii;
+    // SoundRadii reference containing min and max radius values
+	// (the actual instance resides in the Speaker class)
+	const SoundRadii& m_radii;
 
 public:
 
@@ -40,21 +41,26 @@ public:
      * \brief
      * Construct a RenderableSpeakerRadii with the given origin.
      */
-	RenderableSpeakerRadii(const Vector3& origin) 
-    : m_origin(origin)
-    { }
+	RenderableSpeakerRadii(const Vector3& origin, const SoundRadii& radii) : 
+		m_origin(origin),
+		m_radii(radii)
+    {}
 
     /**
      * \brief
      * Set the minimum radius to render.
      */
-    void setMin(float min, bool inMetres = false);
+    //void setMin(float min, bool inMetres = false);
 
     /**
      * \brief
      * Set the maximum radius to render.
      */
-    void setMax(float max, bool inMetres = false);
+    //void setMax(float max, bool inMetres = false);
+
+	// Gets the minimum/maximum values to render
+	float getMin();
+	float getMax();
 	
 	void render(const RenderInfo& info) const;
 	const AABB& localAABB();
