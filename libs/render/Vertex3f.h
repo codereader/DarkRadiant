@@ -3,7 +3,7 @@
 
 #include "math/Vector3.h"
 
-/// \brief A 3-float vertex.
+/// \brief A 3-component vertex.
 class Vertex3f : 
 	public Vector3
 {

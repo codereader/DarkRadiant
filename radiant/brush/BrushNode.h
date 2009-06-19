@@ -78,8 +78,7 @@ class BrushNode :
 	mutable RenderableWireframe m_render_wireframe;
 	mutable RenderablePointVector m_render_selected;
 	mutable AABB m_aabb_component;
-	mutable Array<PointVertex> m_faceCentroidPointsCulled;
-	RenderablePointArray m_render_faces_wireframe;
+	mutable RenderablePointVector _faceCentroidPointsCulled;
 	mutable bool m_viewChanged; // requires re-evaluation of view-dependent cached data
 
 	BrushClipPlane m_clipPlane;

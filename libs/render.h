@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "irender.h"
 #include "igl.h"
 
-#include "container/array.h"
 #include "math/FloatTools.h"
 #include "math/Vector2.h"
 #include "math/pi.h"
@@ -585,6 +584,14 @@ public:
 	}
 };
 
+// A flat-shaded vertex has a position, a colour and a normal vector
+struct FlatShadedVertex
+{
+	Vertex3f vertex;
+	Colour4b colour;
+	Normal3f normal;
+};
+
 const float c_quantise_vertex = 1.f / static_cast<float>(1 << 3);
 
 /// \brief Returns \p v with vertex quantised to a fixed precision.
@@ -606,40 +613,59 @@ inline void pointvertex_gl_array(const PointVertex* array) {
 	glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &array->vertex);
 }
 
-class RenderablePointArray : public OpenGLRenderable {
-	const Array<PointVertex>& m_array;
-	const GLenum m_mode;
-public:
-	RenderablePointArray(const Array<PointVertex>& array, GLenum mode)
-			: m_array(array), m_mode(mode) {}
-	void render(const RenderInfo& info) const {
-#define NV_DRIVER_BUG 1
-#if NV_DRIVER_BUG
-		glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
-		glVertexPointer(3, GL_DOUBLE, 0, 0);
-		glDrawArrays(GL_TRIANGLE_FAN, 0, 0);
-#endif
-
-		pointvertex_gl_array(m_array.data());
-		glDrawArrays(m_mode, 0, GLsizei(m_array.size()));
-	}
-};
-
 class RenderablePointVector : 
 	public OpenGLRenderable
 {
-	std::vector<PointVertex> _vector;
+protected:
+	typedef std::vector<PointVertex> PointVertexVector;
+	PointVertexVector _vector;
 	const GLenum _mode;
+
 public:
 	RenderablePointVector(GLenum mode) : 
 		_mode(mode)
 	{}
 
-	void render(const RenderInfo& info) const {
-		if (!_vector.empty()) {
-			pointvertex_gl_array(&_vector.front());
-			glDrawArrays(_mode, 0, GLsizei(_vector.size()));
+	RenderablePointVector(GLenum mode, std::size_t initialSize) : 
+		_mode(mode),
+		_vector(initialSize)
+	{}
+
+	void render(const RenderInfo& info) const
+	{
+		if (_vector.empty()) return;
+
+		pointvertex_gl_array(&_vector.front());
+		glDrawArrays(_mode, 0, static_cast<GLsizei>(_vector.size()));
+	}
+
+	// Convenience method to set the colour of the whole array
+	void setColour(const Colour4b& colour)
+	{
+		for (PointVertexVector::iterator i = _vector.begin(); i != _vector.end(); ++i)
+		{
+			i->colour = colour;
 		}
+	}
+
+	const PointVertex& operator[](std::size_t i) const
+	{
+		return _vector[i];
+	}
+
+	PointVertex& operator[](std::size_t i)
+	{
+		return _vector[i];
+	}
+
+	PointVertex& front()
+	{
+		return _vector.front();
+	}
+
+	const PointVertex& front() const 
+	{
+		return _vector.front();
 	}
 
 	std::size_t size() const {
@@ -652,6 +678,10 @@ public:
 
 	void clear() {
 		_vector.clear();
+	}
+
+	void resize(std::size_t size) {
+		_vector.resize(size);
 	}
 
 	void reserve(std::size_t size) {

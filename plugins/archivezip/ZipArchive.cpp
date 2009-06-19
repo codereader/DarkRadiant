@@ -2,7 +2,6 @@
 
 #include "iarchive.h"
 #include "archivelib.h"
-#include "container/array.h"
 
 #include "pkzip.h"
 #include "zlibstream.h"

@@ -144,9 +144,9 @@ class ScaleManipulator : public Manipulator {
 private:
   ScaleFree _scaleFree;
   ScaleAxis _scaleAxis;
-  RenderableArrow _arrowX;
-  RenderableArrow _arrowY;
-  RenderableArrow _arrowZ;
+  RenderableArrowLine _arrowX;
+  RenderableArrowLine _arrowY;
+  RenderableArrowLine _arrowZ;
   RenderableQuad _quadScreen;
   SelectableBool _selectableX;
   SelectableBool _selectableY;

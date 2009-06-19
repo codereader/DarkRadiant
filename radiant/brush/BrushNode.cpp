@@ -10,10 +10,10 @@ BrushNode::BrushNode() :
 	BrushTokenImporter(m_brush),
 	BrushTokenExporter(m_brush),
 	TransformModifier(Brush::TransformChangedCaller(m_brush), ApplyTransformCaller(*this)),
-	m_brush(*this, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
+	m_brush(EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
-	m_render_faces_wireframe(m_faceCentroidPointsCulled, GL_POINTS),
+	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false)
 {
 	m_brush.attach(*this); // BrushObserver
@@ -47,10 +47,10 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Cullable(other),
 	Bounded(other),
 	TransformModifier(Brush::TransformChangedCaller(m_brush), ApplyTransformCaller(*this)),
-	m_brush(other.m_brush, *this, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
+	m_brush(other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
-	m_render_faces_wireframe(m_faceCentroidPointsCulled, GL_POINTS),
+	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false)
 {
 	m_brush.attach(*this); // BrushObserver
@@ -360,7 +360,7 @@ void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTes
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace) {
 		evaluateViewDependent(volume, l2w);
-		collector.addRenderable(m_render_faces_wireframe, l2w);
+		collector.addRenderable(_faceCentroidPointsCulled, l2w);
 	}
 	else {
 		m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), collector, volume, l2w);
@@ -393,25 +393,47 @@ void BrushNode::viewChanged() const {
 	m_viewChanged = true;
 }
 
-void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const {
-	if (m_viewChanged) {
-		m_viewChanged = false;
+void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const
+{
+	if (!m_viewChanged) return;
 
-		bool faces_visible[c_brush_maxFaces];
+	m_viewChanged = false;
+
+	// Array of booleans to indicate which faces are visible
+	static bool faces_visible[c_brush_maxFaces];
+
+	// Will hold the indices of all visible faces (from the current viewpoint)
+	static std::size_t visibleFaceIndices[c_brush_maxFaces];
+
+	std::size_t numVisibleFaces(0);
+	bool* j = faces_visible;
+
+	// Iterator to an index of a visible face
+	std::size_t* visibleFaceIter = visibleFaceIndices;
+	std::size_t curFaceIndex = 0;
+
+	for (FaceInstances::const_iterator i = m_faceInstances.begin(); 
+		 i != m_faceInstances.end(); 
+		 ++i, ++j, ++curFaceIndex)
+	{
+		// Check if face is filtered before adding to visibility matrix
+		if (i->getFace().getShader().getGLShader()->getMaterial()->isVisible() && 
+			i->intersectVolume(volume, localToWorld))
 		{
-			bool* j = faces_visible;
-			for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i, ++j) {
-				// Check if face is filtered before adding to visibility matrix
-				if (i->getFace().getShader().getGLShader()->getMaterial()->isVisible())
-					*j = i->intersectVolume(volume, localToWorld);
-				else
-					*j = false;
-			}
-		}
+			*j = true;
 
-		m_brush.update_wireframe(m_render_wireframe, faces_visible);
-		m_brush.update_faces_wireframe(m_faceCentroidPointsCulled, faces_visible);
+			// Store the index of this visible face in the array
+			*visibleFaceIter++ = curFaceIndex;
+			numVisibleFaces++;
+		}
+		else
+		{
+			*j = false;
+		}
 	}
+
+	m_brush.update_wireframe(m_render_wireframe, faces_visible);
+	m_brush.update_faces_wireframe(_faceCentroidPointsCulled, visibleFaceIndices, numVisibleFaces);
 }
 
 void BrushNode::renderSolid(RenderableCollector& collector,

@@ -3,7 +3,6 @@
 
 #include "math/Vector3.h"
 #include <glib/gslist.h>
-#include "container/array.h"
 #include <limits>
 
 struct BezierCurve {
@@ -31,8 +30,8 @@ void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, s
 void BezierInterpolate(BezierCurve *pCurve);
 bool BezierCurve_IsCurved(BezierCurve *pCurve);
 
-inline void BezierCurveTreeArray_deleteAll(Array<BezierCurveTree*>& curveTrees) {
-  for(Array<BezierCurveTree*>::iterator i = curveTrees.begin(); i != curveTrees.end(); ++i) {
+inline void BezierCurveTreeArray_deleteAll(std::vector<BezierCurveTree*>& curveTrees) {
+  for(std::vector<BezierCurveTree*>::iterator i = curveTrees.begin(); i != curveTrees.end(); ++i) {
     BezierCurveTree_Delete(*i);
   }
 }

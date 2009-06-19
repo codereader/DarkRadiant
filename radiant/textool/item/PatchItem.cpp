@@ -31,12 +31,12 @@ void PatchItem::render() {
 	// Get the tesselation and the first
 	PatchTesselation& tess = _sourcePatch.getTesselation();
 	
-	const RenderIndex* strip_indices = tess.m_indices.data();
+	const RenderIndex* strip_indices = &tess.indices.front();
 	
 	for (std::size_t i = 0; i<tess.m_numStrips; i++, strip_indices += tess.m_lenStrips)	{
-		for (unsigned int offset = 0; offset < tess.m_lenStrips; offset++) {
+		for (std::size_t offset = 0; offset < tess.m_lenStrips; offset++) {
 			// Retrieve the mesh vertex from the line strip
-			ArbitraryMeshVertex& meshVertex = tess.m_vertices[*(strip_indices + offset)];
+			ArbitraryMeshVertex& meshVertex = tess.vertices[*(strip_indices + offset)];
 			glVertex2f(meshVertex.texcoord[0], meshVertex.texcoord[1]);
 		}
 	}

@@ -4,28 +4,32 @@
 #include "render.h"
 #include "PatchBezier.h"
 
-/* greebo: This is the structure that represents the tesselation of a patch. Haven't looked too deep into 
- * the whole Bezier stuff so I can't say more, I'm afraid.
+/**
+ * greebo: This is the structure that represents the tesselation of a patch. 
  */
-
-class PatchTesselation {
+struct PatchTesselation
+{
 public:
-  PatchTesselation()
-    : m_numStrips(0), m_lenStrips(0), m_nArrayWidth(0), m_nArrayHeight(0)
-  {
-  }
-  Array<ArbitraryMeshVertex> m_vertices;
-  Array<RenderIndex> m_indices;
-  std::size_t m_numStrips;
-  std::size_t m_lenStrips;
+	PatchTesselation() :
+		m_numStrips(0), 
+		m_lenStrips(0), 
+		m_nArrayWidth(0), 
+		m_nArrayHeight(0)
+	{}
 
-  Array<std::size_t> m_arrayWidth;
-  std::size_t m_nArrayWidth;
-  Array<std::size_t> m_arrayHeight;
-  std::size_t m_nArrayHeight;
+	std::vector<ArbitraryMeshVertex> vertices;
+	std::vector<RenderIndex> indices;
 
-  Array<BezierCurveTree*> m_curveTreeU;
-  Array<BezierCurveTree*> m_curveTreeV;
+	std::size_t m_numStrips;
+	std::size_t m_lenStrips;
+
+	std::vector<std::size_t> arrayWidth;
+	std::size_t m_nArrayWidth;
+	std::vector<std::size_t> arrayHeight;
+	std::size_t m_nArrayHeight;
+
+	std::vector<BezierCurveTree*> curveTreeU;
+	std::vector<BezierCurveTree*> curveTreeV;
 };
 
 #endif /*PATCHTESSELATION_H_*/

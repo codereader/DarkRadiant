@@ -5,8 +5,6 @@
 #include "cullable.h"
 #include "editable.h"
 
-#include "container/array.h"
-
 #include "Face.h"
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
@@ -14,8 +12,6 @@
 class RenderableCollector;
 
 const std::size_t c_brush_maxFaces = 1024;
-
-typedef std::size_t faceIndex_t;
 
 inline double quantiseFloating(double f) {
 	return float_snapped(f, 1.f / (1 << 16));
@@ -49,15 +45,16 @@ inline FaceVertexId next_vertex(const Faces& faces, FaceVertexId faceVertex) {
 	return FaceVertexId(nextEdge.getFace(), faces[nextEdge.getFace()]->getWinding().next(nextEdge.getVertex()));
 }
 
+// greebo: A structure associating a brush edge to two faces
 struct EdgeFaces {
-	faceIndex_t first;
-	faceIndex_t second;
+	std::size_t first;
+	std::size_t second;
 
 	EdgeFaces()
 		: first(c_brush_maxFaces), second(c_brush_maxFaces)
 	{}
 
-	EdgeFaces(const faceIndex_t _first, const faceIndex_t _second)
+	EdgeFaces(const std::size_t _first, const std::size_t _second)
 		: first(_first), second(_second)
 	{}
 };
@@ -96,7 +93,6 @@ class Brush :
 	public BrushDoom3
 {
 private:
-	scene::Node* m_node;
 	typedef UniqueSet<BrushObserver*> Observers;
 	Observers m_observers;
 	UndoObserver* m_undoable_observer;
@@ -107,21 +103,21 @@ private:
 	// ----
 	
 	// cached data compiled from state
-	Array<PointVertex> m_faceCentroidPoints;
-	RenderablePointArray m_render_faces;
-	
-	Array<PointVertex> m_uniqueVertexPoints;
+	RenderablePointVector _faceCentroidPoints;
+	RenderablePointVector _uniqueVertexPoints;
+	RenderablePointVector _uniqueEdgePoints;
+
 	typedef std::vector<SelectableVertex> SelectableVertices;
 	SelectableVertices m_select_vertices;
-	RenderablePointArray m_render_vertices;
 	
-	Array<PointVertex> m_uniqueEdgePoints;
 	typedef std::vector<SelectableEdge> SelectableEdges;
 	SelectableEdges m_select_edges;
-	RenderablePointArray m_render_edges;
 	
-	Array<EdgeRenderIndices> m_edge_indices;
-	Array<EdgeFaces> m_edge_faces;
+	// A list of all edge render indices, one for each unique edge
+	std::vector<EdgeRenderIndices> _edgeIndices;
+
+	// A list of face indices, one for each unique edge
+	std::vector<EdgeFaces> _edgeFaces;
 	
 	AABB m_aabb_local;
 	// ----
@@ -155,8 +151,8 @@ public:
 	static double m_maxWorldCoord;
 	
 	// Constructors
-	Brush(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
-	Brush(const Brush& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Brush(const Callback& evaluateTransform, const Callback& boundsChanged);
+	Brush(const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged);
 	
 	// Copy Constructor
 	Brush(const Brush& other);
@@ -275,7 +271,9 @@ public:
 
 	void update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const;
 
-	void update_faces_wireframe(Array<PointVertex>& wire, const bool* faces_visible) const;
+	void update_faces_wireframe(RenderablePointVector& wire, 
+								const std::size_t* visibleFaceIndices, 
+								std::size_t numVisibleFaces) const;
 
 	/// \brief Makes this brush a deep-copy of the \p other.
 	void copy(const Brush& other);
