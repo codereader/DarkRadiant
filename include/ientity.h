@@ -40,7 +40,7 @@ class EntityKeyValue :
 public:
 	/** greebo: Retrieves the actual value of this key
 	 */
-	virtual std::string get() const = 0;
+	virtual const std::string& get() const = 0;
 	
 	/** greebo: Sets the value of this key
 	 */

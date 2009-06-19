@@ -39,7 +39,7 @@ void KeyValue::detach(const KeyObserver& observer) {
 	}
 }
 
-std::string KeyValue::get() const {
+const std::string& KeyValue::get() const {
 	// Return the <empty> string if the actual value is ""
 	return (_value.empty()) ? _emptyValue : _value;
 }
