@@ -279,7 +279,7 @@ void AddPropertyDialog::populateTreeView()
 		}
 		
 		// Obtain information from the XML node and add it to the treeview
-		std::string name = iter->getAttributeValue("name");
+		std::string name = iter->getAttributeValue("match");
 		std::string type = iter->getAttributeValue("type");
 		std::string description = iter->getContent();
 		
