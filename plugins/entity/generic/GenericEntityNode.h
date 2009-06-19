@@ -57,9 +57,6 @@ public:
 	virtual VolumeIntersectionValue intersectVolume(
 	    const VolumeTest& test, const Matrix4& localToWorld) const;
 
-	// Namespaced implementation
-	//virtual void setNamespace(INamespace& space);
-
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);
 

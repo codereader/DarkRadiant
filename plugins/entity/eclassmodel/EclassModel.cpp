@@ -47,8 +47,9 @@ EclassModel::EclassModel(const EclassModel& other,
 	construct();
 }
 
-void EclassModel::construct() {
-	default_rotation(m_rotation);
+void EclassModel::construct()
+{
+	m_rotation.setIdentity();
 
 	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
@@ -66,7 +67,7 @@ void EclassModel::updateTransform() {
 	m_transform.localToParent() = Matrix4::getIdentity();
 	m_transform.localToParent().translateBy(m_origin);
 
-	m_transform.localToParent().multiplyBy(rotation_toMatrix(m_rotation));
+	m_transform.localToParent().multiplyBy(m_rotation.getMatrix4());
 	m_transformChanged();
 }
 
@@ -81,7 +82,7 @@ void EclassModel::angleChanged() {
 }
 
 void EclassModel::rotationChanged() {
-	rotation_assign(m_rotation, m_rotationKey.m_rotation);
+	m_rotation = m_rotationKey.m_rotation;
 	updateTransform();
 }
 
@@ -164,7 +165,7 @@ void EclassModel::translate(const Vector3& translation) {
 }
 
 void EclassModel::rotate(const Quaternion& rotation) {
-	rotation_rotate(m_rotation, rotation);
+	m_rotation.rotate(rotation);
 }
 
 void EclassModel::snapto(float snap) {
@@ -174,13 +175,13 @@ void EclassModel::snapto(float snap) {
 
 void EclassModel::revertTransform() {
 	m_origin = m_originKey.m_origin;
-	rotation_assign(m_rotation, m_rotationKey.m_rotation);
+	m_rotation = m_rotationKey.m_rotation;
 }
 
 void EclassModel::freezeTransform() {
 	m_originKey.m_origin = m_origin;
 	m_originKey.write(&m_entity);
-	rotation_assign(m_rotationKey.m_rotation, m_rotation);
+	m_rotationKey.m_rotation = m_rotation;
 	m_rotationKey.write(&m_entity, true);
 }
 

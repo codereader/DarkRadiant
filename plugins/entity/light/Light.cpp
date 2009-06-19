@@ -130,7 +130,7 @@ void Light::construct() {
 	_colourLightStart = Vector3(0,0,0);
 	_colourLightEnd = Vector3(0,0,0);
 	
-	default_rotation(m_rotation);
+	m_rotation.setIdentity();
 	_lightBox.origin = Vector3(0, 0, 0);
 	_lightBox.extents = Vector3(8, 8, 8);
 
@@ -264,14 +264,14 @@ void Light::checkStartEnd() {
 }
 
 void Light::rotationChanged() {
-	rotation_assign(m_rotation, m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation);
+	m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;
 	GlobalSelectionSystem().pivotChanged();
 }
 
 void Light::lightRotationChanged(const std::string& value) {
 	m_useLightRotation = (!value.empty());
 	if(m_useLightRotation) {
-		read_rotation(m_lightRotation, value);
+		m_lightRotation.readFromString(value);
 	}
 	rotationChanged();
 }
@@ -281,7 +281,7 @@ void Light::lightRotationChanged(const std::string& value) {
 void Light::updateRenderableRadius() const 
 {
 	// Get the rotation matrix
-	const Matrix4& rotation = rotation_toMatrix(m_rotation);
+	Matrix4 rotation = m_rotation.getMatrix4();
 	
     // Calculate the corners of the light radius box and store them into
     // <_renderableRadius.m_points> For the first calculation an AABB with
@@ -345,7 +345,7 @@ void Light::transformLightRadius(const Matrix4& transform) {
 
 void Light::revertTransform() {
 	_lightBox.origin = m_originKey.m_origin;
-	rotation_assign(m_rotation, m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation);
+	m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;
 	m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
 	m_doom3Radius.m_centerTransformed = m_doom3Radius.m_center;
 	
@@ -398,12 +398,12 @@ void Light::freezeTransform()
     }
 	
 	if(m_useLightRotation) {
-		rotation_assign(m_lightRotation, m_rotation);
-		write_rotation(m_lightRotation, &_entity, "light_rotation");
+		m_lightRotation = m_rotation;
+		m_lightRotation.writeToEntity(&_entity, "light_rotation");
 	}
 
-	rotation_assign(m_rotationKey.m_rotation, m_rotation);
-	write_rotation(m_rotationKey.m_rotation, &_entity);
+	m_rotationKey.m_rotation = m_rotation;
+	m_rotationKey.m_rotation.writeToEntity(&_entity);
 
 	if (!isProjected()) {
 		m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
@@ -617,7 +617,7 @@ void Light::rotate(const Quaternion& rotation) {
 		_lightEndTransformed = rotationMatrix.transform(_lightEnd).getProjected();
 	}
 	else {
-		rotation_rotate(m_rotation, rotation);
+		m_rotation.rotate(rotation);
 	}
 }
 
@@ -628,7 +628,7 @@ void Light::transformChanged() {
 }
 
 const Matrix4& Light::getLocalPivot() const {
-	m_localPivot = rotation_toMatrix(m_rotation);
+	m_localPivot = m_rotation.getMatrix4();
 	m_localPivot.t().getVector3() = _lightBox.origin;
 	return m_localPivot;
 }
@@ -741,7 +741,7 @@ bool Light::testAABB(const AABB& other) const
 }
 
 const Matrix4& Light::rotation() const {
-	m_doom3Rotation = rotation_toMatrix(m_rotation);
+	m_doom3Rotation = m_rotation.getMatrix4();
 	return m_doom3Rotation;
 }
 

@@ -11,6 +11,7 @@
 
 #include "../origin.h"
 #include "../angle.h"
+#include "../rotation.h"
 #include "../namedentity.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
@@ -32,11 +33,20 @@ class GenericEntity :
 
 	OriginKey m_originKey;
 	Vector3 m_origin;
+
+	// The AngleKey wraps around the "angle" spawnarg
 	AngleKey m_angleKey;
+
+	// This is the "working copy" of the angle value
 	float m_angle;
 
+	// The RotationKey takes care of the "rotation" spawnarg
+	RotationKey m_rotationKey;
+
+	// This is the "working copy" of the rotation value
+	Float9 m_rotation;
+
 	NamedEntity m_named;
-	//NamespaceManager m_nameKeys;
 
 	AABB m_aabb_local;
 	Ray m_ray;
@@ -48,6 +58,10 @@ class GenericEntity :
 
 	Callback m_transformChanged;
 	Callback m_evaluateTransform;
+
+	// TRUE if this entity's arrow can be rotated in all directions, 
+	// FALSE if the arrow is caught in the xy plane
+	bool _allow3Drotations;
 public:
 	// Constructor
 	GenericEntity(GenericEntityNode& node, 
@@ -67,7 +81,6 @@ public:
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
-	//Namespaced& getNamespaced();
 	NamedEntity& getNameable();
 	const NamedEntity& getNameable() const;
 	TransformNode& getTransformNode();
@@ -105,6 +118,9 @@ public:
 	
 	void angleChanged();
 	typedef MemberCaller<GenericEntity, &GenericEntity::angleChanged> AngleChangedCaller;
+
+	void rotationChanged();
+	typedef MemberCaller<GenericEntity, &GenericEntity::rotationChanged> RotationChangedCaller;
 };
 
 } // namespace entity

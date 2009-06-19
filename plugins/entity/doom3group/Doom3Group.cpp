@@ -213,7 +213,7 @@ void Doom3Group::rotate(const Quaternion& rotation) {
 		_owner.traverse(rotator);
 	}
 	else {
-		rotation_rotate(m_rotation, rotation);
+		m_rotation.rotate(rotation);
 	}
 }
 
@@ -230,7 +230,7 @@ void Doom3Group::revertTransform() {
 		m_nameOrigin = m_origin;
 	}
 	else {
-		rotation_assign(m_rotation, m_rotationKey.m_rotation);
+		m_rotation = m_rotationKey.m_rotation;
 	}
 	
 	m_renderOrigin.updatePivot();
@@ -247,7 +247,7 @@ void Doom3Group::freezeTransform() {
 		_owner.traverse(freezer);
 	}
 	else {
-		rotation_assign(m_rotationKey.m_rotation, m_rotation);
+		m_rotationKey.m_rotation = m_rotation;
 		m_rotationKey.write(&_entity, isModel());
 	}
 	m_curveNURBS.freezeTransform();
@@ -298,8 +298,9 @@ void Doom3Group::convertCurveType() {
 	}
 }
 
-void Doom3Group::construct() {
-	default_rotation(m_rotation);
+void Doom3Group::construct()
+{
+	m_rotation.setIdentity();
 
 	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("model", Doom3Group::ModelChangedCaller(*this));
@@ -397,7 +398,7 @@ void Doom3Group::updateTransform() {
 	m_transform.localToParent() = Matrix4::getIdentity();
 	if (isModel()) {
 		m_transform.localToParent().translateBy(m_origin);
-		m_transform.localToParent().multiplyBy(rotation_toMatrix(m_rotation));
+		m_transform.localToParent().multiplyBy(m_rotation.getMatrix4());
 	}
 	
 	// Notify the Node about this transformation change	to update the local2World matrix 
@@ -422,7 +423,7 @@ void Doom3Group::originChanged() {
 }
 
 void Doom3Group::rotationChanged() {
-	rotation_assign(m_rotation, m_rotationKey.m_rotation);
+	m_rotation = m_rotationKey.m_rotation;
 	updateTransform();
 }
 
