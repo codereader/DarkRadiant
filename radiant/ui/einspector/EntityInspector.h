@@ -7,6 +7,7 @@
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "ientity.h"
+#include "iundo.h"
 
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/PanedPosition.h"
@@ -51,7 +52,8 @@ typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
 class EntityInspector :
  	public SelectionSystem::Observer,
 	public RadiantEventListener,
-    public Entity::Observer
+    public Entity::Observer,
+	public UndoSystem::Observer
 {
 	// Currently selected entity, this pointer is only non-NULL if the
 	// current entity selection includes exactly 1 entity.
@@ -193,7 +195,12 @@ public:
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	// RadiantEventListener implementation, gets called right before shutdown
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
+
+	// Gets called after an undo operation
+	void postUndo();
+	// Gets called after a redo operation
+	void postRedo();
 
     /* Entity::Observer implementation */
     void onKeyInsert(const std::string& key, EntityKeyValue& value);

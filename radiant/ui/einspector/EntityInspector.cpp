@@ -126,6 +126,10 @@ EntityInspector::EntityInspector()
     // changes.
     GlobalSelectionSystem().addObserver(this);
 
+	// Observe the Undo system for undo/redo operations, to refresh the 
+	// keyvalues when this happens
+	GlobalUndoSystem().addObserver(this);
+
 	// initialise the properties
 	loadPropertyMap();
 }
@@ -261,6 +265,24 @@ void EntityInspector::createContextMenu()
 void EntityInspector::onRadiantShutdown() {
 	// Remove all previously stored pane information
 	_panedPosition.saveToPath(RKEY_PANE_STATE);
+}
+
+void EntityInspector::postUndo()
+{
+	// Clear the previous entity (detaches this class as observer)
+	changeSelectedEntity(NULL);
+
+	// Now rescan the selection and update the stores
+	updateGUIElements();
+}
+
+void EntityInspector::postRedo()
+{
+	// Clear the previous entity (detaches this class as observer)
+	changeSelectedEntity(NULL);
+
+	// Now rescan the selection and update the stores
+	updateGUIElements();
 }
 
 // Return the singleton EntityInspector instance, creating it if it is not yet

@@ -381,9 +381,8 @@ void Light::transformLightRadius(const Matrix4& transform) {
 	matrix4_transform_point(transform, _originTransformed);
 }
 
-void Light::revertTransform() {
-	
-	//_lightBox.origin = m_originKey.m_origin;
+void Light::revertTransform()
+{
 	_originTransformed = m_originKey.m_origin;
 
 	m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;

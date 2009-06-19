@@ -38,7 +38,7 @@ public:
 	typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detach> DetachCaller;
 	
 	// Accessor method, retrieve the actual value
-	std::string get() const;
+	const std::string& get() const;
 	
 	void assign(const std::string& other);
 	typedef MemberCaller1<EntityKeyValue, const std::string&, &EntityKeyValue::assign> AssignCaller;
