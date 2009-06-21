@@ -1591,22 +1591,20 @@ PatchControlIter Patch::getClosestPatchControlToFace(const Face* face)
 	return pBest;
 }
 
-Vector2 Patch::getPatchControlArrayIndices(const PatchControlIter& control) {
-	
+Vector2 Patch::getPatchControlArrayIndices(const PatchControlIter& control)
+{
+	std::size_t count = 0;
+
 	// Go through the patch column per column and find the control vertex
-	PatchControlIter pWidth = m_ctrl.begin();
-	
-	for (std::size_t w=0; w < m_width; w++, pWidth++) {
-		// Create another pointer and set it to the current pWidth pointer
-		// then cycle through the height. This "scans" the patch column-wise.
-		PatchControlIter pHeight = pWidth;
-		
-		// Note the increment of m_width, which relocates the pointer by a whole row each step 
-		for (std::size_t h=0; h<m_height; h++, pHeight+=m_width) {
-			// Compare the pointers to check if we have found the control
-			if (pHeight == control) {
-				return Vector2(w,h);
-			}
+	for (PatchControlIter p = m_ctrl.begin(); p != m_ctrl.end(); ++p, ++count)
+	{
+		// Compare the iterators to check if we have found the control
+		if (p == control)
+		{
+			int row = static_cast<int>(floor(static_cast<float>(count) / m_width));
+			int col = count % m_width;
+
+			return Vector2(col, row);
 		}
 	}
 	
