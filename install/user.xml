@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <user>
-	<version value="0.9.11" />
+	<version value="0.10.0" />
 	<showBuildTime value="1" />
 	<!-- Load the debug.xml for debugging purposes -->
 	<debug value="0" />
@@ -40,7 +40,7 @@
 	<alwaysShowLightVertices value="1"/>
 	<freeModelRotation value="0" />
 	<rotationPivotIsOrigin value="0" />
-	<dragResizeEntitiesSymmetrically value="0" />
+	<dragResizeEntitiesSymmetrically value="1" />
 	<transientComponentSelection value="1" />
 	<transformDialog>
 		<window xPosition="150" yPosition="200" width="280" height="242" />
