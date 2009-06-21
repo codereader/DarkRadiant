@@ -25,7 +25,6 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
-	GlobalRenderSystem().attachLight(*this);
 }
 
 LightNode::LightNode(const LightNode& other) :
@@ -53,11 +52,9 @@ LightNode::LightNode(const LightNode& other) :
 
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
-	GlobalRenderSystem().attachLight(*this);
 }
 
 LightNode::~LightNode() {
-	GlobalRenderSystem().detachLight(*this);
 	_light.setLightChangedCallback(Callback());
 
 	TargetableNode::destruct();
@@ -105,9 +102,20 @@ const AABB& LightNode::localAABB() const {
 	return _light.localAABB();
 }
 
-void LightNode::onRemoveFromScene() {
+void LightNode::onInsertIntoScene()
+{
+	// Call the base class first
+	SelectableNode::onInsertIntoScene();
+
+	GlobalRenderSystem().attachLight(*this);
+}
+
+void LightNode::onRemoveFromScene()
+{
 	// Call the base class first
 	SelectableNode::onRemoveFromScene();
+
+	GlobalRenderSystem().detachLight(*this);
 
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);
@@ -250,12 +258,14 @@ scene::INodePtr LightNode::clone() const {
 	return clone;
 }
 
-void LightNode::instantiate(const scene::Path& path) {
+void LightNode::instantiate(const scene::Path& path)
+{
 	_light.instanceAttach(path);
 	Node::instantiate(path);
 }
 
-void LightNode::uninstantiate(const scene::Path& path) {
+void LightNode::uninstantiate(const scene::Path& path)
+{
 	_light.instanceDetach(path);
 	Node::uninstantiate(path);
 }

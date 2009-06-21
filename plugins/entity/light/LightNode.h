@@ -62,7 +62,8 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 	
-	// override scene::Inode::onRemoveFromScene to deselect the child components
+	// override scene::Inode methods to deselect the child components
+	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
 
 	// TransformNode implementation
