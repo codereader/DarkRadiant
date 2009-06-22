@@ -192,8 +192,8 @@ void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 }
 
 // Search for colour modifications, e.g. red, green, blue, rgb or vertexColor
-void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
-                                           const std::string& token)
+void ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
+                                         const std::string& token)
 {
     if (token == "vertexcolor")
     {
@@ -235,6 +235,12 @@ void ShaderTemplate::parseColourModulation(parser::DefTokeniser& tokeniser,
             currentColour = Vector3(value, value, value);
         }
         _currentLayer->setColour(currentColour);
+    }
+    else if (token == "alphatest")
+    {
+        // Get the alphatest value
+        std::string valueStr = tokeniser.nextToken();
+        _currentLayer->setAlphaTest(strToFloat(valueStr));
     }
 }
 
@@ -303,7 +309,7 @@ void ShaderTemplate::parseDefinition()
                     case 2: // stage level
                         parseBlendType(tokeniser, token_lowercase);
                         parseBlendMaps(tokeniser, token_lowercase);
-                        parseColourModulation(tokeniser, token_lowercase);
+                        parseStageModifiers(tokeniser, token_lowercase);
                         break;
                 }
             } 
