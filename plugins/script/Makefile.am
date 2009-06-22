@@ -6,7 +6,12 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = script.la
 
 script_la_LDFLAGS = -module -avoid-version \
-					$(BOOST_PYTHON_LIBS) $(PYTHON_LIBS) $(GTK_LIBS)
+					$(BOOST_FILESYSTEM_LIBS) \
+                    $(BOOST_PYTHON_LIBS) \
+                    $(PYTHON_LIBS) \
+                    $(GTK_LIBS)
+script_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
+                   $(top_builddir)/libs/gtkutil/libgtkutil.la
 script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptCommand.cpp \
 					ScriptModule.cpp \
