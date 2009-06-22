@@ -40,6 +40,9 @@ private:
     // Cube map mode
     CubeMapMode _cubeMapMode;
 
+    // Alpha test value. -1 means no test, otherwise must be 0 - 1
+    float _alphaTest;
+
 public:
 
 	// Constructor
@@ -50,7 +53,8 @@ public:
 	  _blendFuncStrings("GL_ONE", "GL_ZERO"), 
       _colour(1, 1, 1),
       _vertexColourMode(VERTEX_COLOUR_NONE),
-      _cubeMapMode(CUBE_MAP_NONE)
+      _cubeMapMode(CUBE_MAP_NONE),
+      _alphaTest(-1.0)
 	{ }
 
     /* ShaderLayer implementation */
@@ -140,6 +144,15 @@ public:
     void setCubeMapMode(CubeMapMode mode)
     {
         _cubeMapMode = mode;
+    }
+
+    /**
+     * \brief
+     * Set alphatest value
+     */
+    void setAlphaTest(float alphaTest)
+    {
+        _alphaTest = alphaTest;
     }
 };
 

@@ -185,7 +185,7 @@ private:
 	void parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
 	void parseBlendType(parser::DefTokeniser&, const std::string&);
 	void parseBlendMaps(parser::DefTokeniser&, const std::string&);
-    void parseColourModulation(parser::DefTokeniser&, const std::string&);
+    void parseStageModifiers(parser::DefTokeniser&, const std::string&);
 
 	bool saveLayer();
   
