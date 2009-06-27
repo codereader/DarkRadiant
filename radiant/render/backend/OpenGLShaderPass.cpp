@@ -389,16 +389,20 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     current.m_linestipple_pattern = _state.m_linestipple_pattern;
   }
 
+    // Set up the alpha test parameters
+    if (requiredState & RENDER_ALPHATEST
+        && ( _state.alphaFunc != current.alphaFunc
+            || _state.alphaThreshold != current.alphaThreshold) 
+    )
+    {
+        // Set alpha function in GL
+        glAlphaFunc(_state.alphaFunc, _state.alphaThreshold);
+        GlobalOpenGL_debugAssertNoErrors();
 
-  if(requiredState & RENDER_ALPHATEST
-    && ( _state.m_alphafunc != current.m_alphafunc
-    || _state.m_alpharef != current.m_alpharef ) )
-  {
-    glAlphaFunc(_state.m_alphafunc, _state.m_alpharef);
-    GlobalOpenGL_debugAssertNoErrors();
-    current.m_alphafunc = _state.m_alphafunc;
-    current.m_alpharef = _state.m_alpharef;
-  }
+        // Store state values
+        current.alphaFunc = _state.alphaFunc;
+        current.alphaThreshold = _state.alphaThreshold;
+    }
 
     // Apply the GL textures
     applyAllTextures(current, requiredState);

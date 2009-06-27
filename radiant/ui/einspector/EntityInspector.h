@@ -26,24 +26,8 @@ class Selectable;
 
 namespace ui {
 
-namespace {
-
-	// Data structure to store the type (vector3, text etc) and the options
-	// string for a single property.
-	struct PropertyParms
-	{
-		std::string type;
-		std::string options;
-	};
-
-	// Map of property names to PropertyParms, mapped like this: regex => parms
-	typedef std::map<std::string, PropertyParms> PropertyParmMap;
-
-}
-
 class EntityInspector;
 typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
-
 
 /* The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
@@ -105,6 +89,16 @@ class EntityInspector :
 		}
 	} _clipBoard;
 
+	// Data structure to store the type (vector3, text etc) and the options
+	// string for a single property.
+	struct PropertyParms
+	{
+		std::string type;
+		std::string options;
+	};
+
+	// Map of property names to PropertyParms, mapped like this: regex => parms
+	typedef std::map<std::string, PropertyParms> PropertyParmMap;
 	PropertyParmMap _propertyTypes;
 
 private:

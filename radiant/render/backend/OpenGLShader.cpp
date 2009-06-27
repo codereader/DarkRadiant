@@ -187,11 +187,13 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     
     dbsPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
 
-    // Set layer vertex colour mode
+    // Set layer vertex colour mode and alphatest parameters
     ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
+    double alphaTest = -1;
     if (triplet.diffuse)
     {
         vcolMode = triplet.diffuse->getVertexColourMode();
+        alphaTest = triplet.diffuse->getAlphaTest();
     }
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
@@ -203,6 +205,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
             // Vertex colours are inverted
             dbsPass.renderFlags |= RENDER_VCOL_INVERT;
         }
+    }
+    if (alphaTest > 0)
+    {
+        dbsPass.renderFlags |= RENDER_ALPHATEST;
+        dbsPass.alphaFunc = GL_GEQUAL; // alpha >= threshold
+        dbsPass.alphaThreshold = alphaTest;
     }
 
     dbsPass.m_depthfunc = GL_LEQUAL;
@@ -289,28 +297,6 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     {
         state.renderFlags |= RENDER_CULLFACE;
     }
-
-  if((_iShader->getFlags() & QER_ALPHATEST) != 0)
-  {
-    state.renderFlags |= RENDER_ALPHATEST;
-    Material::EAlphaFunc alphafunc;
-    _iShader->getAlphaFunc(&alphafunc, &state.m_alpharef);
-    switch(alphafunc)
-    {
-    case Material::eAlways:
-      state.m_alphafunc = GL_ALWAYS;
-    case Material::eEqual:
-      state.m_alphafunc = GL_EQUAL;
-    case Material::eLess:
-      state.m_alphafunc = GL_LESS;
-    case Material::eGreater:
-      state.m_alphafunc = GL_GREATER;
-    case Material::eLEqual:
-      state.m_alphafunc = GL_LEQUAL;
-    case Material::eGEqual:
-      state.m_alphafunc = GL_GEQUAL;
-    }
-  }
 
     // Set the GL color to white
     state.m_colour = Vector4(1, 1, 1, 1);
