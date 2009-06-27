@@ -99,5 +99,10 @@ ShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
     return _cubeMapMode;
 }
 
+double Doom3ShaderLayer::getAlphaTest() const
+{
+    return _alphaTest;
+}
+
 }
 

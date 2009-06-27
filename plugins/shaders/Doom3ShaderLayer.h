@@ -63,6 +63,7 @@ public:
     Vector3 getColour() const;
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
+    double getAlphaTest() const;
 
     /**
      * \brief

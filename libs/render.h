@@ -627,8 +627,8 @@ public:
 	{}
 
 	RenderablePointVector(GLenum mode, std::size_t initialSize) : 
-		_mode(mode),
-		_vector(initialSize)
+		_vector(initialSize),
+		_mode(mode)
 	{}
 
 	void render(const RenderInfo& info) const

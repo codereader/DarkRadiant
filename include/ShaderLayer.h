@@ -112,6 +112,16 @@ public:
      * Get the cube map mode for this layer.
      */
     virtual CubeMapMode getCubeMapMode() const = 0;
+
+    /**
+     * \brief
+     * Get the alpha test value for this layer.
+     *
+     * \return
+     * The alpha test value, between 0.0 and 1.0 if it is set. If no alpha test
+     * value is set, -1 will be returned.
+     */
+    virtual double getAlphaTest() const = 0;
 };
 
 /**
