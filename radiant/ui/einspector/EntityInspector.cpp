@@ -852,7 +852,9 @@ void EntityInspector::treeSelectionChanged() {
 	}
 }
 
-PropertyParms EntityInspector::getPropertyParmsForKey(const std::string& key)
+EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
+    const std::string& key
+)
 {
 	PropertyParms returnValue;
 

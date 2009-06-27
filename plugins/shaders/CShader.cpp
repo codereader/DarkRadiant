@@ -129,12 +129,6 @@ bool CShader::IsDefault() const {
 	return _fileName.empty();
 }
 
-// get the alphaFunc
-void CShader::getAlphaFunc(EAlphaFunc *func, float *ref) {
-	*func = _template->getAlphaFunc();
-	*ref = _template->getAlphaRef();
-};
-
 // get the cull type
 Material::ECull CShader::getCull() {
 	return _template->getCull();

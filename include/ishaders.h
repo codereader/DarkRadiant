@@ -53,7 +53,6 @@ enum
   QER_WATER = 1 << 4,
   QER_LAVA = 1 << 5,
   QER_FOG = 1 << 6,
-  QER_ALPHATEST = 1 << 7,
   QER_CULL = 1 << 8,
   QER_AREAPORTAL = 1 << 9,
   QER_CLIP = 1 << 10,
@@ -75,15 +74,7 @@ typedef Vector3 Colour3;
 class Material
 {
 public:
-  enum EAlphaFunc
-  {
-    eAlways,
-    eEqual,
-    eLess,
-    eGreater,
-    eLEqual,
-    eGEqual,
-  };
+
   enum ECull
   {
     eCullNone,
@@ -110,8 +101,6 @@ public:
   virtual float getTrans() const = 0;
   // test if it's a true shader, or a default shader created to wrap around a texture
   virtual bool IsDefault() const = 0;
-  // get the alphaFunc
-  virtual void getAlphaFunc(EAlphaFunc *func, float *ref) = 0;
   // get the cull type
   virtual ECull getCull() = 0;
   // get shader file name (ie the file where this one is defined)

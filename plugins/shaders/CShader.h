@@ -74,9 +74,6 @@ public:
 	// test if it's a true shader, or a default shader created to wrap around a texture
 	bool IsDefault() const;
 	
-	// get the alphaFunc
-	void getAlphaFunc(EAlphaFunc *func, float *ref);
-	
 	// get the cull type
 	ECull getCull();
 	

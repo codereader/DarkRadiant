@@ -153,8 +153,13 @@ public:
   Vector4 m_colour;
   GLenum m_blend_src, m_blend_dst;
   GLenum m_depthfunc;
-  GLenum m_alphafunc;
-  GLfloat m_alpharef;
+
+    // Alpha test function
+    GLenum alphaFunc;
+
+    // Alpha test threshold
+    GLfloat alphaThreshold;
+
   GLfloat m_linewidth;
   GLfloat m_pointsize;
   GLint m_linestipple_factor;
@@ -179,8 +184,8 @@ public:
 	  m_blend_src(GL_SRC_ALPHA),
 	  m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
 	  m_depthfunc(GL_LESS),
-	  m_alphafunc(GL_ALWAYS),
-	  m_alpharef(0),
+	  alphaFunc(GL_ALWAYS),
+	  alphaThreshold(0),
 	  m_linewidth(1),
 	  m_pointsize(1),
 	  m_linestipple_factor(1),
