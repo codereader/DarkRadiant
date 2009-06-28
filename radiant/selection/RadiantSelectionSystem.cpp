@@ -1041,7 +1041,7 @@ void RadiantSelectionSystem::onGtkIdle()
 			_workZone.min = Vector3(-64,-64,-64);
 		}
 
-		_workZone.bounds = AABB::createFromMinMax(_workZone.min, _workZone.max);
+		_workZone.bounds = bounds;
 	}
 
 	// Check if we should notify the scenegraph

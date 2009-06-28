@@ -985,21 +985,25 @@ void XYWnd::drawGrid() {
 
 	// show current work zone?
 	// the work zone is used to place dropped points and brushes
-	if (GlobalXYWnd().showWorkzone()) {
-		glColor3dv( ColourSchemes().getColour("workzone") );
-		glBegin( GL_LINES );
-
+	if (GlobalXYWnd().showWorkzone())
+	{
 		const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
 
-		glVertex2f( xb, wz.min[nDim2] );
-		glVertex2f( xe, wz.min[nDim2] );
-		glVertex2f( xb, wz.max[nDim2] );
-		glVertex2f( xe, wz.max[nDim2] );
-		glVertex2f( wz.min[nDim1], yb );
-		glVertex2f( wz.min[nDim1], ye );
-		glVertex2f( wz.max[nDim1], yb );
-		glVertex2f( wz.max[nDim1], ye );
-		glEnd();
+		if (wz.bounds.isValid())
+		{
+			glColor3dv( ColourSchemes().getColour("workzone") );
+			glBegin( GL_LINES );
+					
+			glVertex2f( xb, wz.min[nDim2] );
+			glVertex2f( xe, wz.min[nDim2] );
+			glVertex2f( xb, wz.max[nDim2] );
+			glVertex2f( xe, wz.max[nDim2] );
+			glVertex2f( wz.min[nDim1], yb );
+			glVertex2f( wz.min[nDim1], ye );
+			glVertex2f( wz.max[nDim1], yb );
+			glVertex2f( wz.max[nDim1], ye );
+			glEnd();
+		}
 	}
 }
 
@@ -1427,7 +1431,10 @@ void XYWnd::draw() {
 	{
 		const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
 
-		drawSizeInfo(nDim1, nDim2, wz.min, wz.max);
+		if (wz.bounds.isValid())
+		{
+			drawSizeInfo(nDim1, nDim2, wz.min, wz.max);
+		}
 	}
 
 	if (GlobalXYWnd().showCrossHairs()) {
