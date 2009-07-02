@@ -42,7 +42,9 @@ ScriptWindow::ScriptWindow() :
 	gtk_box_pack_start(GTK_BOX(inputVBox), buttonBar, FALSE, FALSE, 0);
 
 	// Pack the scrolled textview and the entry box to the vbox
-	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::Paned(inputVBox, _outView.getWidget(), false), TRUE, TRUE, 0);
+	gtkutil::Paned paned(gtkutil::Paned::Vertical, inputVBox, _outView.getWidget());
+
+	gtk_box_pack_start(GTK_BOX(_vbox), paned.getWidget(), TRUE, TRUE, 0);
 	gtk_widget_show_all(_vbox);
 }
 

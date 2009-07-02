@@ -10,6 +10,7 @@
 #include "iundo.h"
 
 #include "gtkutil/menu/PopupMenu.h"
+#include "gtkutil/Paned.h"
 #include "gtkutil/PanedPosition.h"
 
 #include <gtk/gtkliststore.h>
@@ -68,6 +69,9 @@ class EntityInspector :
     // selections.
 	GtkWidget* _keyEntry;
 	GtkWidget* _valEntry;
+
+	// The pane dividing the treeview and the property editors
+	gtkutil::Paned _paned;
 
 	// An object tracking the divider position of the paned view
 	gtkutil::PanedPosition _panedPosition;

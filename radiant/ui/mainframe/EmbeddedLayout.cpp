@@ -21,7 +21,8 @@ std::string EmbeddedLayout::getName() {
 	return EMBEDDED_LAYOUT_NAME;
 }
 
-void EmbeddedLayout::activate() {
+void EmbeddedLayout::activate()
+{
 	// Get the toplevel window
 	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
 
@@ -44,34 +45,35 @@ void EmbeddedLayout::activate() {
 	// Now pack those widgets into the paned widgets
 
 	// First, pack the groupPane and the camera
-    groupCamPane = gtkutil::Paned(camWindow, groupPane, false);
+	gtkutil::Paned groupCamPane(gtkutil::Paned::Vertical, camWindow, groupPane);
+	_groupCamPane = groupCamPane.getWidget();
     
-    // Depending on the viewstyle, pack the xy left or right
-   	horizPane = gtkutil::Paned(groupCamPane, xyView, true);
+	gtkutil::Paned horizPane(gtkutil::Paned::Horizontal, _groupCamPane, xyView);
+	_horizPane = horizPane.getWidget();
     
 	// Retrieve the main container of the main window
 	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(horizPane));
+	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(_horizPane));
 
 	// Set some default values for the width and height
-	gtk_paned_set_position(GTK_PANED(horizPane), 500);
-	gtk_paned_set_position(GTK_PANED(groupCamPane), 350);
+	gtk_paned_set_position(GTK_PANED(_horizPane), 500);
+	gtk_paned_set_position(GTK_PANED(_groupCamPane), 350);
 
 	// Connect the pane position trackers
-	posHPane.connect(horizPane);
-	posgroupCamPane.connect(groupCamPane);
+	_posHPane.connect(_horizPane);
+	_posGroupCamPane.connect(_groupCamPane);
 	
 	// Now load the paned positions from the registry
 	if (GlobalRegistry().keyExists("user/ui/mainFrame/embedded/pane[@name='horizontal']"))
 	{
-		posHPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='horizontal']");
-		posHPane.applyPosition();
+		_posHPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='horizontal']");
+		_posHPane.applyPosition();
 	}
 
 	if (GlobalRegistry().keyExists("user/ui/mainFrame/embedded/pane[@name='texcam']"))
 	{
-		posgroupCamPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='texcam']");
-		posgroupCamPane.applyPosition();
+		_posGroupCamPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='texcam']");
+		_posGroupCamPane.applyPosition();
 	}
 	
 	gtk_widget_show_all(mainContainer);
@@ -120,10 +122,10 @@ void EmbeddedLayout::deactivate() {
 	GlobalRegistry().deleteXPath(path + "//pane");
 	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
 
-	posHPane.saveToPath(path + "/pane[@name='horizontal']");
+	_posHPane.saveToPath(path + "/pane[@name='horizontal']");
 	
 	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
-	posgroupCamPane.saveToPath(path + "/pane[@name='texcam']");
+	_posGroupCamPane.saveToPath(path + "/pane[@name='texcam']");
 
 	// Delete all active views
 	GlobalXYWnd().destroyViews();
@@ -141,7 +143,7 @@ void EmbeddedLayout::deactivate() {
 	GlobalTextureBrowser().destroyWindow();
 
 	// Destroy the widget, so it gets removed from the main container
-	gtk_widget_destroy(GTK_WIDGET(horizPane));
+	gtk_widget_destroy(GTK_WIDGET(_horizPane));
 }
 
 // The creation function, needed by the mainframe layout manager
