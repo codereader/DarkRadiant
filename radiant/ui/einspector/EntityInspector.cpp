@@ -76,6 +76,7 @@ EntityInspector::EntityInspector()
         gtk_tree_view_new_with_model(GTK_TREE_MODEL(_kvStore))
    ),
   _helpColumn(NULL),
+  _paned(gtkutil::Paned::Vertical), // vertical pane
   _contextMenu(gtkutil::PopupMenu(_keyValueTreeView))
 {
     _widget = gtk_vbox_new(FALSE, 0);
@@ -105,14 +106,14 @@ EntityInspector::EntityInspector()
     // Add checkbutton hbox to main widget
 	gtk_box_pack_start(GTK_BOX(_widget), topHBox, FALSE, FALSE, 0);
 
-	GtkWidget* paned = gtkutil::Paned(
-		createTreeViewPane(), // first child
-		createPropertyEditorPane(), // second child
-		false // is vertical
-	);
-	gtk_box_pack_start(GTK_BOX(_widget), paned, TRUE, TRUE, 0);
+	// Pack everything into the paned container
+	_paned.setFirstChild(createTreeViewPane());
+	_paned.setSecondChild(createPropertyEditorPane());
 
-	_panedPosition.connect(paned);
+	gtk_box_pack_start(GTK_BOX(_widget), _paned.getWidget(), TRUE, TRUE, 0);
+
+	_panedPosition.connect(_paned.getWidget());
+
 	// Reload the information from the registry
 	restoreSettings();
 
@@ -1022,7 +1023,8 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
             gboolean showInherited = gtk_toggle_button_get_active(
                 GTK_TOGGLE_BUTTON(_showInheritedCheckbox)
             );
-            if (showInherited == TRUE)
+
+            if (showInherited)
             {
                 addClassProperties();
             }

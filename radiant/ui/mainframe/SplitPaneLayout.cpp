@@ -44,14 +44,28 @@ void SplitPaneLayout::activate() {
     xzWnd->setViewType(XZ);
     GtkWidget* xz = xzWnd->getWidget();
 
+	// Cam / YZ Pane
+	gtkutil::Paned vertPane1(gtkutil::Paned::Vertical);
+
+	vertPane1.setFirstChild(gtkutil::FramedWidget(camera), true); // allow shrinking
+	vertPane1.setSecondChild(gtkutil::FramedWidget(yz), true); // allow shrinking
+
+	gtkutil::Paned vertPane2(gtkutil::Paned::Vertical);
+
+	vertPane2.setFirstChild(gtkutil::FramedWidget(xy), true); // allow shrinking
+	vertPane2.setSecondChild(gtkutil::FramedWidget(xz), true); // allow shrinking
+
 	// Arrange the widgets into the paned views
-	_splitPane.vertPane1 = gtkutil::Paned(gtkutil::FramedWidget(camera), 
-										  gtkutil::FramedWidget(yz), 
-										  false);
-	_splitPane.vertPane2 = gtkutil::Paned(gtkutil::FramedWidget(xy), 
-										  gtkutil::FramedWidget(xz), 
-										  false);
-	_splitPane.horizPane = gtkutil::Paned(_splitPane.vertPane1, _splitPane.vertPane2, true);
+	_splitPane.vertPane1 = vertPane1.getWidget();
+	_splitPane.vertPane2 = vertPane2.getWidget();
+
+	// The overall horizontal pane, containing the other two as children
+	gtkutil::Paned horizPane(gtkutil::Paned::Horizontal);
+
+	horizPane.setFirstChild(_splitPane.vertPane1, true);
+	horizPane.setSecondChild(_splitPane.vertPane2, true);
+
+	_splitPane.horizPane = horizPane.getWidget();
 
 	// Retrieve the main container of the main window
 	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
