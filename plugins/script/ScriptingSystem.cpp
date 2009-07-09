@@ -25,6 +25,7 @@
 #include "interfaces/ShaderSystemInterface.h"
 #include "interfaces/ModelInterface.h"
 #include "interfaces/SkinInterface.h"
+#include "interfaces/SoundInterface.h"
 
 #include "ScriptWindow.h"
 
@@ -387,6 +388,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("ShaderSystem", ShaderSystemInterfacePtr(new ShaderSystemInterface));
 	addInterface("Model", ModelInterfacePtr(new ModelInterface));
 	addInterface("ModelSkinCacheInterface", ModelSkinCacheInterfacePtr(new ModelSkinCacheInterface));
+	addInterface("SoundManager", SoundManagerInterfacePtr(new SoundManagerInterface));
 
 	GlobalCommandSystem().addCommand(
 		"RunScript", 
