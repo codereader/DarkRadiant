@@ -643,7 +643,11 @@ void EntityInspector::_onAddKey()
 void EntityInspector::_onDeleteKey() {
 	std::string property = getListSelection(PROPERTY_NAME_COLUMN);
 	if (!property.empty())
+	{
+		UndoableCommand cmd("deleteProperty");
+
 		_selectedEntity->setKeyValue(property, "");
+	}
 }
 
 bool EntityInspector::_testDeleteKey() 
@@ -677,6 +681,8 @@ void EntityInspector::_onCutKey() {
 	if (!key.empty() && _selectedEntity != NULL) {
 		_clipBoard.key = key;
 		_clipBoard.value = value;
+
+		UndoableCommand cmd("cutProperty");
 
 		// Clear the key after copying
 		_selectedEntity->setKeyValue(key, "");
