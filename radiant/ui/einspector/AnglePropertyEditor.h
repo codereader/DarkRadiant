@@ -74,7 +74,9 @@ public:
         return PropertyEditorPtr(new AnglePropertyEditor(entity, key));
     }
 
-
+private:
+	// Helper method to construct an angle button
+	GtkWidget* constructAngleButton(const std::string& icon, int angleValue);
 };
 
 }
