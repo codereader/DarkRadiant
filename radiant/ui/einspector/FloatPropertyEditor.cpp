@@ -15,11 +15,14 @@
 namespace ui
 {
 
+FloatPropertyEditor::FloatPropertyEditor()
+{}
+
 // Main constructor
 FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 										 const std::string& key,
 										 const std::string& options)
-: _entity(entity),
+: PropertyEditor(entity),
   _key(key)
 {
 	_widget = gtk_vbox_new(FALSE, 6);

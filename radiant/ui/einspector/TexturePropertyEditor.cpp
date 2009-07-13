@@ -16,8 +16,8 @@ namespace ui
 TexturePropertyEditor::TexturePropertyEditor(Entity* entity, 
 											 const std::string& name, 
 											 const std::string& options)
-: _prefixes(options),
-  _entity(entity),
+: PropertyEditor(entity),
+  _prefixes(options),
   _key(name)
 {
 	_widget = gtk_vbox_new(FALSE, 6);

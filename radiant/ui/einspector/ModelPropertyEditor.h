@@ -16,9 +16,6 @@ class ModelPropertyEditor
 	// Main widget
 	GtkWidget* _widget;
 	
-	// Entity to edit
-	Entity* _entity;
-	
 	// Keyvalue to set
 	std::string _key;
 	
@@ -39,7 +36,7 @@ protected:
 public:
 
 	// Default constructor for the map
-	ModelPropertyEditor() { }
+	ModelPropertyEditor();
 	
 	// Main constructor
 	ModelPropertyEditor(Entity* entity, 

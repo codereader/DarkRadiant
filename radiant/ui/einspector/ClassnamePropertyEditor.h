@@ -19,9 +19,6 @@ class ClassnamePropertyEditor
 	// Main widget
 	GtkWidget* _widget;
 	
-	// Entity to edit
-	Entity* _entity;
-	
 	// Keyvalue to set
 	std::string _key;
 	

@@ -31,8 +31,7 @@ class AnglePropertyEditor
     GtkWidget* _wButton;
     GtkWidget* _nwButton;
 
-    // Entity and key to edit
-    Entity* _entity;
+    // Key to edit
     std::string _key;
 
 private:

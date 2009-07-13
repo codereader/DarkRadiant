@@ -13,7 +13,7 @@ namespace ui
 SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 									     const std::string& name,
 									     const std::string& options)
-: _entity(entity),
+: PropertyEditor(entity),
   _key(name)
 {
 	_widget = gtk_vbox_new(FALSE, 0);

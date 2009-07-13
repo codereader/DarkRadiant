@@ -87,6 +87,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/einspector/BooleanPropertyEditor.cpp \
 					  ui/einspector/LightTextureChooser.cpp \
 					  ui/einspector/SoundPropertyEditor.cpp \
+					  ui/einspector/PropertyEditor.cpp \
 					  ui/einspector/PropertyEditorFactory.cpp \
 					  ui/einspector/ClassnamePropertyEditor.cpp \
 					  ui/einspector/ModelPropertyEditor.cpp \
