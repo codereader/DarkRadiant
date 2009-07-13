@@ -587,13 +587,13 @@ void SurfaceInspector::update() {
 
 void SurfaceInspector::postUndo()
 {
-	// Update the LightInspector after an undo operation
+	// Update the SurfaceInspector after an undo operation
 	update();
 }
 
 void SurfaceInspector::postRedo()
 {
-	// Update the LightInspector after a redo operation
+	// Update the SurfaceInspector after a redo operation
 	update();
 }
 
