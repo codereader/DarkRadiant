@@ -66,7 +66,7 @@ std::string ColourPropertyEditor::getSelectedColour() {
 void ColourPropertyEditor::_onColorSet(GtkWidget* w, ColourPropertyEditor* self)
 {
 	// Set the new keyvalue on the entity
-	self->_entity->setKeyValue(self->_key, self->getSelectedColour());	
+	self->setKeyValue(self->_key, self->getSelectedColour());	
 }
 
 	

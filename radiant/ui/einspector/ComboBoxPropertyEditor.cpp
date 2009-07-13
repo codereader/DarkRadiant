@@ -67,7 +67,7 @@ ComboBoxPropertyEditor::ComboBoxPropertyEditor(Entity* entity, const std::string
 void ComboBoxPropertyEditor::onApply(GtkWidget *widget, 
 									 ComboBoxPropertyEditor* self) 
 {
-	self->_entity->setKeyValue(
+	self->setKeyValue(
 		self->_key, 
 		gtk_combo_box_get_active_text(GTK_COMBO_BOX(self->_comboBox))
 	);

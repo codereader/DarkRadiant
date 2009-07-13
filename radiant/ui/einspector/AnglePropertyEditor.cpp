@@ -106,35 +106,35 @@ void AnglePropertyEditor::_onButtonClick(GtkButton* button,
     // Set the numerical value based on which button was clicked
     if (button == GTK_BUTTON(self->_nButton))
     {
-        self->_entity->setKeyValue(self->_key, "90");
+        self->setKeyValue(self->_key, "90");
     }
     else if (button == GTK_BUTTON(self->_neButton))
     {
-        self->_entity->setKeyValue(self->_key, "45");
+        self->setKeyValue(self->_key, "45");
     }
     else if (button == GTK_BUTTON(self->_eButton))
     {
-        self->_entity->setKeyValue(self->_key, "0");
+        self->setKeyValue(self->_key, "0");
     }
     else if (button == GTK_BUTTON(self->_seButton))
     {
-        self->_entity->setKeyValue(self->_key, "315");
+        self->setKeyValue(self->_key, "315");
     }
     else if (button == GTK_BUTTON(self->_sButton))
     {
-        self->_entity->setKeyValue(self->_key, "270");
+        self->setKeyValue(self->_key, "270");
     }
     else if (button == GTK_BUTTON(self->_swButton))
     {
-        self->_entity->setKeyValue(self->_key, "225");
+        self->setKeyValue(self->_key, "225");
     }
     else if (button == GTK_BUTTON(self->_wButton))
     {
-        self->_entity->setKeyValue(self->_key, "180");
+        self->setKeyValue(self->_key, "180");
     }
     else if (button == GTK_BUTTON(self->_nwButton))
     {
-        self->_entity->setKeyValue(self->_key, "135");
+        self->setKeyValue(self->_key, "135");
     }
 }
 

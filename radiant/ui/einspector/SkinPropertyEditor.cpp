@@ -54,7 +54,7 @@ void SkinPropertyEditor::_onBrowseButton(GtkWidget* w,
 	std::string skin = SkinChooser::chooseSkin(modelName, prevSkin);
 	
 	// Apply the key to the entity
-	self->_entity->setKeyValue(self->_key, skin);
+	self->setKeyValue(self->_key, skin);
 }
 
 }

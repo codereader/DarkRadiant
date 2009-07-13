@@ -73,7 +73,7 @@ void ModelPropertyEditor::_onModelButton(GtkWidget* w,
 	);
 
 	if (!result.model.empty()) {
-		self->_entity->setKeyValue(self->_key, result.model);
+		self->setKeyValue(self->_key, result.model);
 	}
 }
 
@@ -85,7 +85,7 @@ void ModelPropertyEditor::_onParticleButton(GtkWidget* w,
 	std::string particle = ParticlesChooser::chooseParticle(currentSelection);
 	
 	if (!particle.empty()) {
-		self->_entity->setKeyValue(self->_key, particle);
+		self->setKeyValue(self->_key, particle);
 	}
 }
 

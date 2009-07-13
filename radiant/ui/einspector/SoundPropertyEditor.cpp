@@ -53,7 +53,7 @@ void SoundPropertyEditor::_onBrowseButton(GtkWidget* w,
 	std::string selection = chooser.chooseSound(); 
 	if (!selection.empty()) {
 		// Apply the change to the entity
-		self->_entity->setKeyValue(self->_key, selection);
+		self->setKeyValue(self->_key, selection);
 	}
 }
 
