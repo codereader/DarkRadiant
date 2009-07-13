@@ -78,8 +78,7 @@ void AnglePropertyEditor::_onButtonClick(GtkButton* button,
     // Get the numerical value off the button
 	gint angle = gint(g_object_get_data(G_OBJECT(button), GLIB_ANGLE_KEY));
 
-	// An angle value of "0" means: delete the spawnarg
-	self->setKeyValue(self->_key, angle != 0 ? intToStr(angle) : "");
+	self->setKeyValue(self->_key, intToStr(angle));
 }
 
 } // namespace ui

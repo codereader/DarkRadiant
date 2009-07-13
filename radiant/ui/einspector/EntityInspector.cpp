@@ -207,6 +207,16 @@ void EntityInspector::onKeyChange(const std::string& key,
         HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
         -1
     );
+
+	// Check if we should update the key/value entry boxes
+	std::string curKey = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
+
+	// If the key in the entry box matches the key which got changed,
+	// update the value accordingly, otherwise leave it alone
+	if (curKey == key)
+	{
+		gtk_entry_set_text(GTK_ENTRY(_valEntry), value.c_str());
+	}
 }
 
 void EntityInspector::onKeyErase(const std::string& key,
