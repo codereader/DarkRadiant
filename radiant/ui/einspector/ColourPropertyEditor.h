@@ -22,9 +22,6 @@ class ColourPropertyEditor
 	// The GtkColorButton
 	GtkWidget* _colorButton;
 	
-	// Entity to edit
-	Entity* _entity;
-	
 	// Name of keyval
 	std::string _key;
 	

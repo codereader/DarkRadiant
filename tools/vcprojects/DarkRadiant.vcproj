@@ -1879,6 +1879,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\einspector\PropertyEditor.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\einspector\PropertyEditor.h"
 						>
 					</File>

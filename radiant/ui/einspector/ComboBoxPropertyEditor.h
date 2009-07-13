@@ -24,9 +24,6 @@ protected:
 	// The combo box
     GtkWidget* _comboBox;
     
-    // Entity to edit
-	Entity* _entity;
-	
 	// Name of keyval
 	std::string _key;
    

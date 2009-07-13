@@ -20,9 +20,6 @@ class BooleanPropertyEditor:
 	// The checkbox
 	GtkWidget* _checkBox;
 	
-	// Entity to edit
-	Entity* _entity;
-	
 	// Key to edit
 	std::string _key;
 	

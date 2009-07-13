@@ -12,7 +12,7 @@ namespace ui
 
 // Constructor
 AnglePropertyEditor::AnglePropertyEditor(Entity* entity, const std::string& key)
-: _entity(entity),
+: PropertyEditor(entity),
   _key(key)
 {
     // Construct a 3x3 table to contain the directional buttons
@@ -137,7 +137,5 @@ void AnglePropertyEditor::_onButtonClick(GtkButton* button,
         self->_entity->setKeyValue(self->_key, "135");
     }
 }
-
-
 
 }

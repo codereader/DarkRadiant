@@ -23,9 +23,6 @@ class Vector3PropertyEditor:
     GtkWidget* _yValue;
     GtkWidget* _zValue;
     
-    // Entity to edit
-    Entity* _entity;
-    
     // Name of key
     std::string _key;
     

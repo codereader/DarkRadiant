@@ -8,7 +8,6 @@
 
 /* FORWARD DECLS */
 class Entity;
-namespace ui { class PropertyEditor; }
 
 namespace ui
 {
@@ -16,6 +15,7 @@ namespace ui
 /** 
  * PropertyEditor shared pointer type.
  */
+class PropertyEditor;
 typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
 
 /**
@@ -27,6 +27,17 @@ typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
 class PropertyEditor
 : public gtkutil::Widget
 {
+protected:
+
+	// The entity being focused (NULL if none there)
+	Entity* _entity;
+
+	// Protected blank constructor
+	PropertyEditor();
+
+	// Protected constructor
+	PropertyEditor(Entity* entity);
+
 public:
 	
 	/**
@@ -46,7 +57,15 @@ public:
     virtual PropertyEditorPtr createNew(Entity* entity, 
 										const std::string& key,
 										const std::string& options) = 0;
-  
+
+protected:
+
+	/**
+	 * greebo: Central method to assign values to the entit(ies) in question.
+	 * This takes care of calling setKeyValue() on the selected entities
+	 * as well as managing the UndoSystem.
+	 */
+	virtual void setProperty(const std::string& key, const std::string& value);
 };
 
 }
