@@ -171,7 +171,7 @@ void Undo(const cmd::ArgumentList& args)
   SceneChangeNotify();
   ui::SurfaceInspector::Instance().update();
   ui::PatchInspector::Instance().update();
-  ui::LightInspector::Instance().update();
+  //ui::LightInspector::Instance().update();
   GlobalShaderClipboard().clear();
 }
 
@@ -181,7 +181,7 @@ void Redo(const cmd::ArgumentList& args)
   SceneChangeNotify();
   ui::SurfaceInspector::Instance().update();
   ui::PatchInspector::Instance().update();
-  ui::LightInspector::Instance().update();
+  //ui::LightInspector::Instance().update();
   GlobalShaderClipboard().clear();
 }
 

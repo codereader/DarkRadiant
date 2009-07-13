@@ -5,7 +5,6 @@
 #include "ieclass.h"
 #include "ishaders.h"
 #include "iregistry.h"
-#include "iundo.h"
 
 #include "scenelib.h"
 #include "gtkutil/IconTextButton.h"
@@ -128,9 +127,6 @@ LightInspector::LightInspector()
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_container_add(GTK_CONTAINER(getWindow()), _mainVBox);
 	
-	// Register to get notified upon selection change
-	GlobalSelectionSystem().addObserver(this);
-	
 	// Propagate shortcuts that are not processed by this window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
@@ -157,6 +153,12 @@ LightInspectorPtr& LightInspector::InstancePtr() {
 
 void LightInspector::onRadiantShutdown()
 {
+	// Hide the window, if we're visible
+	if (isVisible())
+	{
+		hide();
+	}
+
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 	
@@ -339,32 +341,60 @@ void LightInspector::update()
         // Nothing found, disable the dialog
         gtk_widget_set_sensitive(_mainVBox, FALSE);
     }
-	
+}
+
+void LightInspector::postUndo()
+{
+	// Update the LightInspector after an undo operation
+	update();
+}
+
+void LightInspector::postRedo()
+{
+	// Update the LightInspector after a redo operation
+	update();
 }
 
 // Toggle this dialog
-void LightInspector::toggle() {
+void LightInspector::toggle()
+{
 	if (isVisible())
+	{
 		hide();
+	}
 	else
+	{
 		show();
+	}
 }
 
 // Pre-hide callback
-void LightInspector::_preHide() {
+void LightInspector::_preHide()
+{
+	// Remove as observer, an invisible inspector doesn't need to receive events
+	GlobalSelectionSystem().removeObserver(this);
+	GlobalUndoSystem().removeObserver(this);
+	
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
 }
 
 // Pre-show callback
-void LightInspector::_preShow() {
+void LightInspector::_preShow()
+{
+	// Register self as observer to receive events
+	GlobalUndoSystem().addObserver(this);
+	GlobalSelectionSystem().addObserver(this);
+
 	// Restore the position
 	_windowPosition.applyPosition();
-	// Update the widgets
+
+	// Update the widgets before showing
 	update();
 }
 
-void LightInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
+void LightInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
+{
 	update();
 }
 
