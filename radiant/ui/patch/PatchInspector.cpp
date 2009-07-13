@@ -60,9 +60,6 @@ PatchInspector::PatchInspector()
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
 	
-	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
-	
 	// Update the widget status
 	rescanSelection();
 	
@@ -87,8 +84,14 @@ PatchInspectorPtr& PatchInspector::InstancePtr() {
 	return _instancePtr;
 }
 
-void PatchInspector::onRadiantShutdown() {
-	globalOutputStream() << "PatchInspector shutting down.\n";
+void PatchInspector::onRadiantShutdown()
+{
+	globalOutputStream() << "PatchInspector shutting down." << std::endl;
+
+	if (isVisible())
+	{
+		hide();
+	}
 
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
@@ -98,6 +101,18 @@ void PatchInspector::onRadiantShutdown() {
 	
 	// Destroy the transient window
 	destroy();
+}
+
+void PatchInspector::postUndo()
+{
+	// Update the PatchInspector after an undo operation
+	update();
+}
+
+void PatchInspector::postRedo()
+{
+	// Update the PatchInspector after a redo operation
+	update();
 }
 
 PatchInspector& PatchInspector::Instance() {
@@ -348,15 +363,26 @@ void PatchInspector::toggleWindow() {
 }
 
 // Pre-hide callback
-void PatchInspector::_preHide() {
+void PatchInspector::_preHide()
+{
+	// A hidden PatchInspector doesn't need to listen for events
+	GlobalUndoSystem().removeObserver(this);
+	GlobalSelectionSystem().removeObserver(this);
+	
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
 }
 
 // Pre-show callback
-void PatchInspector::_preShow() {
+void PatchInspector::_preShow()
+{
+	// Register self to the SelSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
+	GlobalUndoSystem().addObserver(this);
+
 	// Restore the position
 	_windowPosition.applyPosition();
+
 	// Update the widget values
 	update();
 }

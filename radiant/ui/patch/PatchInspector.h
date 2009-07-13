@@ -5,6 +5,7 @@
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "iradiant.h"
+#include "iundo.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
@@ -25,7 +26,8 @@ typedef boost::shared_ptr<PatchInspector> PatchInspectorPtr;
 class PatchInspector 
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public RadiantEventListener
+  public RadiantEventListener,
+  public UndoSystem::Observer
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -85,9 +87,9 @@ class PatchInspector
 
 private:
 
-	/* TransientWindow callbacks */
-	virtual void _preShow();
-	virtual void _preHide();
+	// TransientWindow callbacks
+	void _preShow();
+	void _preHide();
 	
 	/** greebo: This toggles the visibility of the patch inspector.
 	 * The dialog is constructed only once and never destructed 
@@ -158,11 +160,16 @@ public:
 	// Updates the widgets
 	void update();
 
-	/** greebo: Safely disconnects this dialog from all systems 
-	 * 			(SelectionSystem, EventManager, ...)
-	 * 			Also saves the window state to the registry.
+	/** 
+	 * greebo: Safely disconnects this dialog from all systems 
+	 * (SelectionSystem, EventManager, ...)
+	 * Also saves the window state to the registry.
 	 */
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
+
+	// UndoSystem::Observer implementation
+	void postUndo();
+	void postRedo();
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
