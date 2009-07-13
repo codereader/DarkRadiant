@@ -5,6 +5,7 @@
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "iregistry.h"
+#include "iundo.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/RegistryConnector.h"
@@ -30,7 +31,8 @@ class SurfaceInspector
   public RegistryKeyObserver,
   public SelectionSystem::Observer,
   public ShaderChooser::ChooserClient,
-  public RadiantEventListener
+  public RadiantEventListener,
+  public UndoSystem::Observer
 {
 	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
 
@@ -117,25 +119,30 @@ public:
 	
 	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
 	 */
-	virtual void shaderSelectionChanged(const std::string& shader);
+	void shaderSelectionChanged(const std::string& shader);
 
 	// Command target to toggle the dialog
 	static void toggle(const cmd::ArgumentList& args);
 	
-	/** greebo: RadiantEventListener implementation: Some sort of 
-	 *          "soft" destructor that de-registers this class from the 
-	 *          SelectionSystem, saves the window state, etc.
+	/** 
+	 * greebo: RadiantEventListener implementation: Some sort of 
+	 * "soft" destructor that de-registers this class from the 
+	 * SelectionSystem, saves the window state, etc.
 	 */
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
+
+	// UndoSystem::Observer implementation
+	void postUndo();
+	void postRedo();
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static SurfaceInspectorPtr& InstancePtr();
 	
 	// TransientWindow events
-	virtual void _preShow();
-	virtual void _postShow();
-	virtual void _preHide();
+	void _preShow();
+	void _postShow();
+	void _preHide();
 	
 	/** greebo: This toggles the visibility of the surface dialog.
 	 * The dialog is constructed only once and never destructed 
