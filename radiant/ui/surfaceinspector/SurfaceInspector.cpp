@@ -88,19 +88,20 @@ SurfaceInspector::SurfaceInspector()
 	populateWindow();
 	
 	// Connect the defaultTexScale and texLockButton widgets to "their" registry keys
-   using namespace gtkutil;
+	using namespace gtkutil;
+
 	_connector.addObject(
       RKEY_DEFAULT_TEXTURE_SCALE,
       SerialisableWidgetWrapperPtr(
          new SerialisableSpinButton(_defaultTexScale)
       )
-   );
+	);
 	_connector.addObject(
       RKEY_ENABLE_TEXTURE_LOCK,
       SerialisableWidgetWrapperPtr(
          new SerialisableToggleButton(_texLockButton)
       )
-   );
+	);
 	
 	// Connect the step values to the according registry values
 	_connector.addObject(
@@ -108,31 +109,31 @@ SurfaceInspector::SurfaceInspector()
       SerialisableWidgetWrapperPtr(
          new SerialisableTextEntry(_manipulators[HSHIFT].step)
       )
-   );
+	);
 	_connector.addObject(
       RKEY_VSHIFT_STEP,
       SerialisableWidgetWrapperPtr(
          new SerialisableTextEntry(_manipulators[VSHIFT].step)
       )
-   );
+	);
 	_connector.addObject(
       RKEY_HSCALE_STEP,
       SerialisableWidgetWrapperPtr(
          new SerialisableTextEntry(_manipulators[HSCALE].step)
       )
-   );
+	);
 	_connector.addObject(
       RKEY_VSCALE_STEP,
       SerialisableWidgetWrapperPtr(
          new SerialisableTextEntry(_manipulators[VSCALE].step)
       )
-   );
+	);
 	_connector.addObject(
       RKEY_ROTATION_STEP,
       SerialisableWidgetWrapperPtr(
          new SerialisableTextEntry(_manipulators[ROTATION].step)
       )
-   );
+	);
 	
 	// Load the values from the Registry
 	_connector.importValues();
@@ -143,9 +144,6 @@ SurfaceInspector::SurfaceInspector()
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
-	
-	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
 	
 	// Update the widget status
 	update();
@@ -174,8 +172,14 @@ SurfaceInspectorPtr& SurfaceInspector::InstancePtr() {
 	return _instancePtr;
 }
 
-void SurfaceInspector::onRadiantShutdown() {
+void SurfaceInspector::onRadiantShutdown()
+{
 	globalOutputStream() << "SurfaceInspector shutting down.\n";
+
+	if (isVisible())
+	{
+		hide();
+	}
 
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
@@ -581,6 +585,18 @@ void SurfaceInspector::update() {
 	ui::PatchInspector::Instance().update();
 }
 
+void SurfaceInspector::postUndo()
+{
+	// Update the LightInspector after an undo operation
+	update();
+}
+
+void SurfaceInspector::postRedo()
+{
+	// Update the LightInspector after a redo operation
+	update();
+}
+
 // Gets notified upon selection change
 void SurfaceInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	update();
@@ -681,7 +697,12 @@ void SurfaceInspector::toggle(const cmd::ArgumentList& args) {
 }
 
 // TransientWindow callbacks
-void SurfaceInspector::_preShow() {
+void SurfaceInspector::_preShow()
+{
+	// Register self to the SelSystem to get notified upon selection changes.
+	GlobalSelectionSystem().addObserver(this);
+	GlobalUndoSystem().addObserver(this);
+
 	// Restore the position
 	_windowPosition.applyPosition();
 	// Import the registry keys 
@@ -694,9 +715,13 @@ void SurfaceInspector::_postShow() {
 	gtk_window_set_focus(GTK_WINDOW(getWindow()), NULL);
 }
 
-void SurfaceInspector::_preHide() {
+void SurfaceInspector::_preHide()
+{
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
+
+	GlobalUndoSystem().removeObserver(this);
+	GlobalSelectionSystem().removeObserver(this);
 }
 
 } // namespace ui
