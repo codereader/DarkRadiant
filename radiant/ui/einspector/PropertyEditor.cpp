@@ -14,7 +14,7 @@ PropertyEditor::PropertyEditor(Entity* entity) :
 	_entity(entity)
 {}
 
-void PropertyEditor::setProperty(const std::string& key, const std::string& value)
+void PropertyEditor::setKeyValue(const std::string& key, const std::string& value)
 {
 	if (_entity == NULL) return;
 

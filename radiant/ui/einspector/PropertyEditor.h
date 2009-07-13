@@ -65,7 +65,7 @@ protected:
 	 * This takes care of calling setKeyValue() on the selected entities
 	 * as well as managing the UndoSystem.
 	 */
-	virtual void setProperty(const std::string& key, const std::string& value);
+	virtual void setKeyValue(const std::string& key, const std::string& value);
 };
 
 }

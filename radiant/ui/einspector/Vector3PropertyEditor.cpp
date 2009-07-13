@@ -100,7 +100,7 @@ void Vector3PropertyEditor::_onApply(GtkWidget* w,
 			gtk_spin_button_get_value(GTK_SPIN_BUTTON(self->_zValue)));
 	
 	// Set the key on the entity
-	self->_entity->setKeyValue(self->_key, value);
+	self->setKeyValue(self->_key, value);
 }
 
 }

@@ -2,6 +2,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "ientity.h"
+#include "iundo.h"
 #include "selection/algorithm/Entity.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
@@ -50,9 +51,12 @@ void ClassnamePropertyEditor::_onBrowseButton(GtkWidget* w,
 											  ClassnamePropertyEditor* self)
 {
 	// Use the EntityClassChooser dialog to get a selection from the user
-	std::string selection = EntityClassChooser::chooseEntityClass(); 
+	std::string selection = EntityClassChooser::chooseEntityClass();
 	// Only apply non-empty selections if the classname has actually changed
-	if (!selection.empty() && selection != self->_entity->getKeyValue(self->_key)) {
+	if (!selection.empty() && selection != self->_entity->getKeyValue(self->_key))
+	{
+		UndoableCommand cmd("changeEntityClass");
+
 		// Apply the classname change to the entity, this requires some algorithm
 		selection::algorithm::setEntityClassname(selection);
 	}

@@ -52,7 +52,7 @@ void TexturePropertyEditor::callbackBrowse(GtkWidget* widget,
 	std::string texture = chooser.chooseTexture();
 	if (!texture.empty()) {
 		// Apply the keyvalue immediately
-		self->_entity->setKeyValue(self->_key, texture);
+		self->setKeyValue(self->_key, texture);
 	}
 }
 
