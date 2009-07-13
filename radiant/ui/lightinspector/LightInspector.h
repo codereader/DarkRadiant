@@ -3,6 +3,7 @@
 
 #include "iselection.h"
 #include "icommandsystem.h"
+#include "iundo.h"
 #include "iradiant.h"
 #include "ui/common/ShaderSelector.h"
 #include "gtkutil/WindowPosition.h"
@@ -33,7 +34,8 @@ class LightInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
   public ShaderSelector::Client,
-  public RadiantEventListener
+  public RadiantEventListener,
+  public UndoSystem::Observer
 {
 	// The overall vbox
 	GtkWidget* _mainVBox;
@@ -133,6 +135,10 @@ public:
 	
 	// Update the sensitivity of the widgets
 	void update();
+
+	// UndoSystem::Observer implementation
+	void postUndo();
+	void postRedo();
 	
 	// Safely disconnects this dialog from all the systems
 	// and saves the window size/position to the registry
