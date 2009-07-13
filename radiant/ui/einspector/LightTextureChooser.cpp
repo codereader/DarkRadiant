@@ -6,6 +6,7 @@
 #include "texturelib.h"
 #include "iregistry.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/MultiMonitor.h"
 #include <string>
 
 namespace ui {
@@ -48,10 +49,9 @@ LightTextureChooser::LightTextureChooser()
 	gtk_window_set_title(GTK_WINDOW(_widget), "Choose texture");
 
 	// Set the default size of the window
-	// greebo: TODO: GroupDialog is sometimes hidden, use gtkutil::MultiMonitor methods
-	gint w, h;
-	gtk_window_get_size(GTK_WINDOW(gd), &w, &h);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), w, h);
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_widget));
+	gtk_window_set_default_size(GTK_WINDOW(_widget), 
+		static_cast<gint>(rect.width*0.6f), static_cast<gint>(rect.height*0.6f));
 	
 	// Construct main VBox, and pack in ShaderSelector and buttons panel
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
