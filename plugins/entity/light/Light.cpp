@@ -531,16 +531,23 @@ void Light::renderWireframe(RenderableCollector& collector,
 {
 	// Main render, submit the diamond that represents the light entity
 	collector.SetState(
-		_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
+		m_colour.getWireShader(), RenderableCollector::eWireframeOnly
 	);
 	collector.SetState(
-		_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
+		m_colour.getWireShader(), RenderableCollector::eFullMaterials
 	);
 	collector.addRenderable(*this, localToWorld);
 
 	// Render bounding box if selected or the showAllLighRadii flag is set
 	if (selected || EntitySettings::InstancePtr()->showAllLightRadii()) 
     {
+		collector.SetState(
+			_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
+		);
+		collector.SetState(
+			_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
+		);
+
 		if (isProjected()) 
         {
             // greebo: This is not much of an performance impact as the

@@ -37,7 +37,7 @@ namespace entity
 class Colour
 {
 	Callback _colourChanged;
-	ShaderPtr _shader;
+	ShaderPtr _wireShader;
 
 public:
 	Vector3 m_colour;
@@ -75,18 +75,17 @@ public:
 		);
 	}
 
-	const ShaderPtr& getShader() const
+	const ShaderPtr& getWireShader() const
 	{
-		return _shader;
+		return _wireShader;
 	}
 
 private:
 
 	void captureShader()
 	{
-	  	_shader = GlobalRenderSystem().capture(
-			(boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str()
-		);
+		std::string wireCol = (boost::format("<%g %g %g>") % m_colour[0] % m_colour[1] % m_colour[2]).str();
+		_wireShader = GlobalRenderSystem().capture(wireCol);
 	}
 };
 
