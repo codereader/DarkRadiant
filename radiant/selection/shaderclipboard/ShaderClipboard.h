@@ -1,11 +1,13 @@
 #ifndef SHADERCLIPBOARD_H_
 #define SHADERCLIPBOARD_H_
 
+#include "iundo.h"
 #include "Texturable.h"
 
 namespace selection {
 
-class ShaderClipboard
+class ShaderClipboard :
+	public UndoSystem::Observer
 {
 	// The source and target Texturables
 	Texturable _source;
@@ -41,6 +43,10 @@ public:
 	 * 			or the map is changed.
 	 */
 	void clear();
+
+	// UndoSystem::Observer implementation
+	void postUndo();
+	void postRedo();
 
 private:
 
