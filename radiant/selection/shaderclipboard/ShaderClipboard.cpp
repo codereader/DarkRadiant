@@ -16,6 +16,8 @@ ShaderClipboard::ShaderClipboard() :
 		"icon_texture.png", 
 		IStatusBarManager::POS_SHADERCLIPBOARD
 	);
+
+	GlobalUndoSystem().addObserver(this);
 }
 
 void ShaderClipboard::clear() {
@@ -27,6 +29,22 @@ void ShaderClipboard::clear() {
 	updateStatusText();
 	
 	_updatesDisabled = false;
+}
+
+void ShaderClipboard::postUndo()
+{
+	// Note: there's an issue on the bugtracker regarding this:
+	// it's probably over-cautious to clear the clipboard on undo,
+	// most of the time the user just applied the texture the wron way.
+	// This is just to prevent the brush pointers from ending up invalid
+	// Possible fix: Use scene::INodeWeakPtrs to reference the source,
+	// but this won't cut it for single brush faces.
+	clear();
+}
+
+void ShaderClipboard::postRedo()
+{
+	clear();
 }
 
 Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
