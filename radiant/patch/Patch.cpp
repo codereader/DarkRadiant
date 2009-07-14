@@ -6,7 +6,6 @@
 #include "irenderable.h"
 #include "iselectable.h"
 #include "math/frustum.h"
-#include "stringio.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"

@@ -1,7 +1,7 @@
 #include "Curve.h"
 
+#include "string/string.h"
 #include "parser/Tokeniser.h"
-#include "stringio.h"
 
 namespace entity {
 

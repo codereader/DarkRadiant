@@ -7,7 +7,6 @@
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
-#include "stringio.h"
 
 #include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"

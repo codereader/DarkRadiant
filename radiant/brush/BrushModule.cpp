@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brushmanip.h"
 
 #include "ipreferencesystem.h"
-#include "stringio.h"
 #include "modulesystem/StaticModule.h"
 
 // ---------------------------------------------------------------------------------------

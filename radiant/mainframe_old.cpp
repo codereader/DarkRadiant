@@ -665,8 +665,6 @@ void CallBrushExportOBJ(const cmd::ArgumentList& args) {
 	}
 }
 
-#include "stringio.h"
-
 void MainFrame_Construct()
 {
 	DragMode();
