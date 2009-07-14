@@ -26,66 +26,70 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "irender.h"
 
 #include "generic/callback.h"
-#include "stringio.h"
 
-inline void default_colour(Vector3& colour)
+namespace entity
 {
-  colour = Vector3(1, 1, 1);
-}
-inline void read_colour(Vector3& colour, const std::string& value)
-{
-  if(!string_parse_vector3(value.c_str(), colour))
-  {
-    default_colour(colour);
-  }
-}
-inline void write_colour(const Vector3& colour, Entity* entity)
-{
-  char value[64];
 
-  sprintf(value, "%f %f %f", colour[0], colour[1], colour[2]);
-  entity->setKeyValue("_color", value);
-}
-
+/**
+ * greebo: this is a class encapsulating the "_color" spawnarg
+ * of entity, observing it and maintaining the corresponding shader.
+ */
 class Colour
 {
-  Callback m_colourChanged;
-	ShaderPtr m_state;
-
-	void capture_state() {
-	  	std::string fillCol = (boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str();
-	  	m_state = GlobalRenderSystem().capture(fillCol);
-	}
+	Callback _colourChanged;
+	ShaderPtr _shader;
 
 public:
-  Vector3 m_colour;
+	Vector3 m_colour;
 
-  Colour(const Callback& colourChanged)
-    : m_colourChanged(colourChanged)
-  {
-    default_colour(m_colour);
-    capture_state();
-  }
+	Colour(const Callback& colourChanged) : 
+		_colourChanged(colourChanged),
+		m_colour(1,1,1)
+	{
+		captureShader();
+	}
 
-  void colourChanged(const std::string& value)
-  {
-    read_colour(m_colour, value);
-    capture_state();
+	void colourChanged(const std::string& value)
+	{
+		// Initialise the colour with white, in case the string parse fails
+		m_colour[0] = m_colour[1] = m_colour[2] = 1;
 
-    m_colourChanged();
-  }
-  typedef MemberCaller1<Colour, const std::string&, &Colour::colourChanged> ColourChangedCaller;
+		// Use a stringstream to parse the string
+		std::stringstream strm(value);
 
+		strm << std::skipws;
+		strm >> m_colour.x();
+		strm >> m_colour.y();
+		strm >> m_colour.z();
+		
+		captureShader();
+		_colourChanged();
+	}
+	typedef MemberCaller1<Colour, const std::string&, &Colour::colourChanged> ColourChangedCaller;
 
-  void write(Entity* entity) const
-  {
-    write_colour(m_colour, entity);
-  }
+	void writeToEntity(Entity* entity) const
+	{
+		entity->setKeyValue(
+			"_color", 
+			(boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str()
+		);
+	}
 
-  ShaderPtr state() const
-  {
-    return m_state;
-  }
+	const ShaderPtr& getShader() const
+	{
+		return _shader;
+	}
+
+private:
+
+	void captureShader()
+	{
+	  	_shader = GlobalRenderSystem().capture(
+			(boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str()
+		);
+	}
 };
+
+} // namespace entity
 
 #endif
