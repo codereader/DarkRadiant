@@ -39,7 +39,6 @@ entity_la_SOURCES = origin.cpp \
                     NameKeyObserver.cpp \
                     colour.cpp \
                     entity.cpp \
-                    scale.cpp \
                     KeyValue.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \
