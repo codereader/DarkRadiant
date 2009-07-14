@@ -559,14 +559,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\scale.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\entity\scale.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\entity\SkinChangedWalker.h"
 				>
 			</File>

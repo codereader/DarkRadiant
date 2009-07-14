@@ -171,15 +171,17 @@ public:
 
 	void setFromAngleString(const std::string& value)
 	{
-		float angle;
+		try
+		{
+			float angle = boost::lexical_cast<float>(value);
 
-		if (!string_parse_float(value.c_str(), angle))
-		{
-			setIdentity();
-		}
-		else
-		{
+			// Cast succeeded
 			setFromMatrix4(matrix4_rotation_for_z_degrees(angle));
+		}
+		catch (boost::bad_lexical_cast&)
+		{
+			// Cast failed
+			setIdentity();
 		}
 	}
 };

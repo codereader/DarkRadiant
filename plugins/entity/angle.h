@@ -27,38 +27,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/quaternion.h"
 #include "generic/callback.h"
 #include "stringio.h"
+#include "string/string.h"
 
 const float ANGLEKEY_IDENTITY = 0;
 
-inline void default_angle(float& angle)
+inline float getNormalisedAngle(float angle)
 {
-  angle = ANGLEKEY_IDENTITY;
+	return float_mod(angle, 360.0f);
 }
-inline void normalise_angle(float& angle)
-{
-  angle = static_cast<float>(float_mod(angle, 360.0));
-}
+
 inline void read_angle(float& angle, const std::string& value)
 {
-  if(!string_parse_float(value.c_str(), angle))
-  {
-    angle = 0;
-  }
-  else
-  {
-    normalise_angle(angle);
-  }
+	angle = getNormalisedAngle(strToFloat(value, 0));
 }
+
 inline void write_angle(double angle, Entity* entity)
 {
-  if(angle == 0)
-  {
-    entity->setKeyValue("angle", "");
-  }
-  else
-  {
-    entity->setKeyValue("angle", doubleToStr(angle));
-  }
+	entity->setKeyValue("angle", (angle == 0) ? "" : doubleToStr(angle));
 }
 
 class AngleKey
