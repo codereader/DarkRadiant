@@ -25,7 +25,6 @@ entity_la_SOURCES = origin.cpp \
                     EntityNode.cpp \
                     doom3group/Doom3Group.cpp \
                     doom3group/Doom3GroupNode.cpp \
-                    angles.cpp \
                     curve/CurveCatmullRom.cpp \
                     curve/CurveNURBS.cpp \
                     curve/Curve.cpp \

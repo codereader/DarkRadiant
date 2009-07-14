@@ -423,14 +423,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\angles.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\entity\angles.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\entity\colour.cpp"
 				>
 			</File>
