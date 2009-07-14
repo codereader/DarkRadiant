@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/quaternion.h"
 #include "generic/callback.h"
-#include "stringio.h"
 
 #include "angle.h"
 
@@ -70,7 +69,15 @@ public:
 
 	void readFromString(const std::string& value)
 	{
-		if (!string_parse_vector(value.c_str(), rotation, rotation + 9))
+		std::stringstream strm(value);
+        strm << std::skipws;
+
+		for (int i = 0; i < 9; ++i)
+		{
+			strm >> rotation[i];
+		}
+
+		if (!strm)
 		{
 			// Parsing failed, fall back to the identity matrix
 			setIdentity();
