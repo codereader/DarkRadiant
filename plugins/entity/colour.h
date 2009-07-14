@@ -67,14 +67,6 @@ public:
 	}
 	typedef MemberCaller1<Colour, const std::string&, &Colour::colourChanged> ColourChangedCaller;
 
-	void writeToEntity(Entity* entity) const
-	{
-		entity->setKeyValue(
-			"_color", 
-			(boost::format("(%g %g %g)") % m_colour[0] % m_colour[1] % m_colour[2]).str()
-		);
-	}
-
 	const ShaderPtr& getWireShader() const
 	{
 		return _wireShader;
