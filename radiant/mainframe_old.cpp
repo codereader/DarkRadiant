@@ -165,18 +165,6 @@ void Exit(const cmd::ArgumentList& args) {
 	}
 }
 
-void Undo(const cmd::ArgumentList& args)
-{
-  GlobalUndoSystem().undo();
-  SceneChangeNotify();
-}
-
-void Redo(const cmd::ArgumentList& args)
-{
-  GlobalUndoSystem().redo();
-  SceneChangeNotify();
-}
-
 void Map_ExportSelected(std::ostream& ostream) {
 	GlobalMap().exportSelected(ostream);
 }
@@ -684,8 +672,6 @@ void MainFrame_Construct()
 	DragMode();
 
 	GlobalCommandSystem().addCommand("Exit", Exit);
-	GlobalCommandSystem().addCommand("Undo", Undo);
-	GlobalCommandSystem().addCommand("Redo", Redo);
 	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
 	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
 	GlobalCommandSystem().addCommand("Copy", Copy);
@@ -783,8 +769,6 @@ void MainFrame_Construct()
 	// ----------------------- Bind Events ---------------------------------------
 
 	GlobalEventManager().addCommand("Exit", "Exit");
-	GlobalEventManager().addCommand("Undo", "Undo");
-	GlobalEventManager().addCommand("Redo", "Redo");
 	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
 	

@@ -6,20 +6,24 @@
  * 
  * On undo, the Undoables are called to re-import the states stored in the UndoMementos.  
  */
+#include "imodule.h"
 
+#include "icommandsystem.h"
+#include "ieventmanager.h"
 #include "iregistry.h"
 #include "ipreferencesystem.h"
+#include "iscenegraph.h"
 
 #include <iostream>
 #include <map>
 #include <set>
 
-#include "imodule.h"
-
 #include "SnapShot.h"
 #include "Operation.h"
 #include "Stack.h"
 #include "StackFiller.h"
+
+#include <boost/bind.hpp>
 
 namespace undo {
 
@@ -140,17 +144,17 @@ public:
 
 	void finish(const std::string& command) {
 		if (finishUndo(command)) {
-			globalOutputStream() << command.c_str() << '\n';
+			globalOutputStream() << command << std::endl;
 		}
 	}
 
 	void undo() {
 		if (_undoStack.empty()) {
-			globalOutputStream() << "Undo: no undo available\n";
+			globalOutputStream() << "Undo: no undo available" << std::endl;
 		}
 		else {
 			Operation* operation = _undoStack.back();
-			globalOutputStream() << "Undo: " << operation->_command.c_str() << "\n";
+			globalOutputStream() << "Undo: " << operation->_command << std::endl;
 
 			startRedo();
 			trackersUndo();
@@ -162,16 +166,18 @@ public:
 				Observer* observer = *(i++);
 				observer->postUndo();
 			}
+
+			GlobalSceneGraph().sceneChanged();
 		}
 	}
 
 	void redo() {
 		if (_redoStack.empty()) {
-			globalOutputStream() << "Redo: no redo available\n";
+			globalOutputStream() << "Redo: no redo available" << std::endl;
 		}
 		else {
 			Operation* operation = _redoStack.back();
-			globalOutputStream() << "Redo: " << operation->_command.c_str() << "\n";
+			globalOutputStream() << "Redo: " << operation->_command << std::endl;
 
 			startUndo();
 			trackersRedo();
@@ -183,6 +189,8 @@ public:
 				Observer* observer = *(i++);
 				observer->postRedo();
 			}
+
+			GlobalSceneGraph().sceneChanged();
 		}
 	}
 
@@ -254,13 +262,26 @@ public:
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+			_dependencies.insert(MODULE_COMMANDSYSTEM);
+			_dependencies.insert(MODULE_SCENEGRAPH);
+			_dependencies.insert(MODULE_EVENTMANAGER);
 		}
 
 		return _dependencies;
 	}
 
-	virtual void initialiseModule(const ApplicationContext& ctx) {
-		globalOutputStream() << "UndoSystem::initialiseModule called\n";
+	virtual void initialiseModule(const ApplicationContext& ctx)
+	{
+		globalOutputStream() << "UndoSystem::initialiseModule called" << std::endl;
+
+		// Add commands for console input
+		GlobalCommandSystem().addCommand("Undo", boost::bind(&RadiantUndoSystem::undoCmd, this, _1));
+		GlobalCommandSystem().addCommand("Redo", boost::bind(&RadiantUndoSystem::redoCmd, this, _1));
+
+		// Bind events to commands
+		GlobalEventManager().addCommand("Undo", "Undo");
+		GlobalEventManager().addCommand("Redo", "Redo");
+
 		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
 		
 		// Add self to the key observers to get notified on change
@@ -268,6 +289,18 @@ public:
 		
 		// add the preference settings
 		constructPreferences();
+	}
+
+	// This is connected to the CommandSystem
+	void undoCmd(const cmd::ArgumentList& args)
+	{
+		undo();
+	}
+
+	// This is connected to the CommandSystem
+	void redoCmd(const cmd::ArgumentList& args)
+	{
+		redo();
 	}
 
 private:
