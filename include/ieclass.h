@@ -296,7 +296,9 @@ public:
  * 
  * \ingroup eclass
  */
-class IModelDef {
+class IModelDef :
+	public ModResource
+{
 public:
 	bool resolved;
 	
@@ -309,10 +311,18 @@ public:
 	
 	typedef std::map<std::string, std::string> Anims;
 	Anims anims;
+
+	std::string modName;
 	
 	IModelDef() : 
-		resolved(false)
+		resolved(false),
+		modName("base")
 	{}
+
+	std::string getModName() const
+	{
+		return modName;
+	}
 };
 typedef boost::shared_ptr<IModelDef> IModelDefPtr;
 

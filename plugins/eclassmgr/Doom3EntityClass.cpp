@@ -25,7 +25,8 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _model(""),
   _skin(""),
   _inheritanceResolved(false),
-  _modName("base")
+  _modName("base"),
+  _parseStamp(0)
 {
 	// Set the entity colour to default, if none was specified
 	if (_colour == Vector3(-1, -1, -1)) {
@@ -149,16 +150,16 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute) {
 }
 
 // Static function to create an EntityClass (named constructor idiom)
-IEntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes) {
+Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes) {
 	if (!brushes) {
-		return IEntityClassPtr(new Doom3EntityClass(name, 
+		return Doom3EntityClassPtr(new Doom3EntityClass(name, 
 													Vector3(-1, -1, -1),
 													true, 
 													Vector3(-8, -8, -8),
 													Vector3(8, 8, 8)));
 	}
 	else {
-		return IEntityClassPtr(new Doom3EntityClass(name));
+		return Doom3EntityClassPtr(new Doom3EntityClass(name));
 	}
 }
 
@@ -292,13 +293,33 @@ Doom3EntityClass::getAttributeList(const std::string& name) const {
 	return matches;
 }
 
-void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
-	// Get the (lowercase) entity name
-    const std::string sName = 
-    	boost::algorithm::to_lower_copy(tokeniser.nextToken());
-    
-    // Store the name
-    _name = sName;
+void Doom3EntityClass::clear()
+{
+	// Don't clear the name
+    _isLight = false;
+
+    _colour = Vector3(1,1,1);
+	_colourSpecified = false;
+	releaseColour();
+
+	_fixedSize = false;
+
+	_attributes.clear();
+	_model.clear();
+	_skin.clear();
+	_inheritanceResolved = false;
+
+	_modName = "base";
+
+	// Leave the empty attribute alone
+
+	_inheritanceChain.clear();
+}
+
+void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
+{
+	// Clear this structure first, we might be "refreshing" ourselves from tokens
+	clear();
 
 	// Required open brace (the name has already been parsed by the EClassManager)
     tokeniser.assertNextToken("{");
@@ -373,7 +394,7 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser) {
 		else {
 			// Both type and value are not empty, emit a warning
 			std::cerr << "[eclassmgr] attribute " << key << " already set on entityclass " 
-            		  << sName << std::endl;
+            		  << _name << std::endl;
 		}
     } // while true
 }

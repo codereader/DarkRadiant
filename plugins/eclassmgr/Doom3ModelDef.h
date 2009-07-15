@@ -9,11 +9,46 @@ namespace eclass {
 class Doom3ModelDef :
 	public IModelDef
 {
+	std::size_t _parseStamp;
+
 public:
+	Doom3ModelDef(const std::string& modelDefName) :
+		_parseStamp(0)
+	{
+		name = modelDefName;
+	}
+
+	std::size_t getParseStamp() const
+	{
+		return _parseStamp;
+	}
+
+	void setParseStamp(std::size_t parseStamp)
+	{
+		_parseStamp = parseStamp;
+	}
+
+	void setModName(const std::string& name)
+	{
+		modName = name;
+	}
+
+	void clear()
+	{
+		// Don't clear the name
+
+		resolved = false;
+		mesh.clear();
+		skin.clear();
+		parent.clear();
+		anims.clear();
+		modName = "base";
+	}
+
 	// Reads the data from the given tokens into the member variables
-	void parseFromTokens(parser::DefTokeniser& tokeniser) {
-		// Read the name
-	    name = tokeniser.nextToken();
+	void parseFromTokens(parser::DefTokeniser& tokeniser)
+	{
+		clear();		
 	    
 	    tokeniser.assertNextToken("{");
 
@@ -23,7 +58,8 @@ public:
 	        ANIM    // parsed anim, may get a { ... } block with further info
 	    } state = NONE;
 
-	    while (true) {
+	    while (true)
+		{
 	        const std::string parameter = tokeniser.nextToken();
 
 	        if (parameter == "}") {

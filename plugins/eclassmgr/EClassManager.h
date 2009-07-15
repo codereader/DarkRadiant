@@ -2,9 +2,13 @@
 #define ECLASSMANAGER_H_
 
 #include "ieclass.h"
+#include "icommandsystem.h"
 #include "ifilesystem.h"
 #include "moduleobservers.h"
 #include "generic/callback.h"
+
+#include "Doom3EntityClass.h"
+#include "Doom3ModelDef.h"
 
 namespace eclass {
 
@@ -33,11 +37,15 @@ class EClassManager :
     bool _realised;
 
     // Map of named entity classes
-    typedef std::map<std::string, IEntityClassPtr> EntityClasses;
+    typedef std::map<std::string, Doom3EntityClassPtr> EntityClasses;
     EntityClasses _entityClasses;
     
-    typedef std::map<std::string, IModelDefPtr> Models;
+    typedef std::map<std::string, Doom3ModelDefPtr> Models;
     Models _models;
+
+	// A unique parse pass identifier, used to check when existing
+	// definitions have been parsed
+	std::size_t _curParseStamp;
 
 public:
     // Constructor
@@ -62,6 +70,9 @@ public:
 
     // Find the modeldef with the given name
     virtual IModelDefPtr findModel(const std::string& name) const;
+
+	// Reloads all entityDefs/modelDefs
+	void refreshDefsCmd(const cmd::ArgumentList& args);
     
     // RegisterableModule implementation
 	virtual const std::string& getName() const;	
@@ -76,13 +87,16 @@ public:
 private:
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned 
-	IEntityClassPtr insertUnique(IEntityClassPtr eclass);
+	Doom3EntityClassPtr insertUnique(const Doom3EntityClassPtr& eclass);
 	
 	// Parses the given inputstream for DEFs.
 	void parse(TextInputStream& inStr, const std::string& modDir);
 	
 	// Recursively resolves the inheritance of the model defs
-	void resolveModelInheritance(const std::string& name, IModelDefPtr& model);
+	void resolveModelInheritance(const std::string& name, const Doom3ModelDefPtr& model);
+
+	void parseDefFiles();
+	void resolveInheritance();
 };
 typedef boost::shared_ptr<EClassManager> EClassManagerPtr;
 
