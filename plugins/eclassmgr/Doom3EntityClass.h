@@ -19,6 +19,9 @@ class Shader;
 namespace eclass
 {
 
+class Doom3EntityClass;
+typedef boost::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
+
 /** 
  * Implementation of the IEntityClass interface. This represents a single
  * Doom 3 entity class, such as "light_moveable" or "monster_mancubus".
@@ -66,6 +69,9 @@ class Doom3EntityClass
 	// The list of strings containing the ancestors and this eclass itself.
 	InheritanceChain _inheritanceChain;
 
+	// The time this def has been parsed
+	std::size_t _parseStamp;
+
 private:
 
 	// Capture the shaders corresponding to the current colour
@@ -73,6 +79,9 @@ private:
 	
 	// Release the shaders associated with the current colour
 	void releaseColour();
+
+	// Clear all contents (done before parsing from tokens)
+	void clear();
 
 public:
 
@@ -85,7 +94,7 @@ public:
 	 * @param brushes
 	 * Whether the entity contains brushes or not.
 	 */
-	static IEntityClassPtr create(const std::string& name, bool brushes);
+	static Doom3EntityClassPtr create(const std::string& name, bool brushes);
 	
     /** 
      * Default constructor.
@@ -217,7 +226,7 @@ public:
 	 * A reference to the global map of entity classes, which should be searched
 	 * for the parent entity.
 	 */
-	typedef std::map<std::string, IEntityClassPtr> EntityClasses;
+	typedef std::map<std::string, Doom3EntityClassPtr> EntityClasses;
 	void resolveInheritance(EntityClasses& classmap);
 	
 	/**
@@ -236,6 +245,16 @@ public:
 	
 	// Initialises this class from the given tokens
 	void parseFromTokens(parser::DefTokeniser& tokeniser);
+
+	void setParseStamp(std::size_t parseStamp)
+	{
+		_parseStamp = parseStamp;
+	}
+
+	std::size_t getParseStamp() const
+	{
+		return _parseStamp;
+	}
 
 private:
 	// Rebuilds the inheritance chain (called after inheritance is resolved)
