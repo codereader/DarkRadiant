@@ -120,12 +120,9 @@ void EClassManager::resolveInheritance()
     for (EntityClasses::iterator i = _entityClasses.begin();
          i != _entityClasses.end(); ++i) 
 	{
-		// Get a Doom3EntityClass pointer
-		Doom3EntityClassPtr d3c = boost::static_pointer_cast<Doom3EntityClass>(i->second);
-		
 		// Tell the class to resolve its own inheritance using the given
 		// map as a source for parent lookup
-		d3c->resolveInheritance(_entityClasses);
+		i->second->resolveInheritance(_entityClasses);
 
         // If the entity has a model path ("model" key), lookup the actual
         // model and apply its mesh and skin to this entity.
@@ -137,6 +134,17 @@ void EClassManager::resolveInheritance()
             }
         }
     }
+
+	// greebo: Override the eclass colours of two special entityclasses
+    Vector3 worlspawnColour = ColourSchemes().getColour("default_brush");
+    Vector3 lightColour = ColourSchemes().getColour("light_volumes");
+    
+    IEntityClassPtr light = findOrInsert("light", true);
+	light->setColour(lightColour);
+	
+	IEntityClassPtr worldspawn = findOrInsert("worldspawn", true);
+	worldspawn->setColour(worlspawnColour);
+
 }
 
 void EClassManager::realise()
@@ -149,16 +157,6 @@ void EClassManager::realise()
 
 	parseDefFiles();
 	resolveInheritance();
-    
-    // greebo: Override the eclass colours of two special entityclasses
-    Vector3 worlspawnColour = ColourSchemes().getColour("default_brush");
-    Vector3 lightColour = ColourSchemes().getColour("light_volumes");
-    
-    IEntityClassPtr light = findOrInsert("light", true);
-	light->setColour(lightColour);
-	
-	IEntityClassPtr worldspawn = findOrInsert("worldspawn", true);
-	worldspawn->setColour(worlspawnColour);
 }
 
 // Find an entity class
