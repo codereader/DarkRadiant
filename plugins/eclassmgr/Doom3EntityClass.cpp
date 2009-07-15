@@ -28,15 +28,12 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _modName("base"),
   _parseStamp(0)
 {
-	// Set the entity colour to default, if none was specified
-	if (_colour == Vector3(-1, -1, -1)) {
-		_colour = ColourSchemes().getColour("default_entity");
-	}
 	// Capture the shaders
 	captureColour();		
 }
 
-Doom3EntityClass::~Doom3EntityClass() {
+Doom3EntityClass::~Doom3EntityClass()
+{
 	// Release the shaders
 	releaseColour();
 }
@@ -164,7 +161,13 @@ Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brush
 }
 
 // Capture the shaders for the current colour
-void Doom3EntityClass::captureColour() {
+void Doom3EntityClass::captureColour()
+{
+	// Set the entity colour to default, if none was specified
+	if (_colour == Vector3(-1, -1, -1)) {
+		_colour = ColourSchemes().getColour("default_entity");
+	}
+
 	// Capture fill and wire versions of the entity colour
 	std::string fillCol = (boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
 	std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
@@ -210,18 +213,14 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 
 	// Find the parent entity class
 	EntityClasses::iterator pIter = classmap.find(parName);
-	if (pIter != classmap.end()) {
-		
-		// Get the class object pointer and cast it to a Doom3EntityClass
-		boost::shared_ptr<Doom3EntityClass> par =
-			boost::static_pointer_cast<Doom3EntityClass>(pIter->second);
-
+	if (pIter != classmap.end())
+	{
 		// Recursively resolve inheritance of parent
-		par->resolveInheritance(classmap);
+		pIter->second->resolveInheritance(classmap);
 
 		// Copy attributes from the parent to the child, including editor keys
 		AttributeCopyingVisitor visitor(*this);
-		par->forEachClassAttribute(visitor, true);
+		pIter->second->forEachClassAttribute(visitor, true);
 	}
 	else {
 		std::cout << "[eclassmgr] Warning: Entity class "
@@ -244,6 +243,17 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 		// We have a light
 		setIsLight(true);
 	}
+
+	// (Re)set the colour
+	const EntityClassAttribute& colourAttr = getAttribute("editor_color");
+
+	if (!colourAttr.value.empty())
+	{
+		setColour(Vector3(colourAttr.value));
+	}
+
+	// Update the colour shader
+	captureColour();
 }
 
 // Find a single attribute
@@ -298,7 +308,7 @@ void Doom3EntityClass::clear()
 	// Don't clear the name
     _isLight = false;
 
-    _colour = Vector3(1,1,1);
+    _colour = Vector3(-1,-1,-1);
 	_colourSpecified = false;
 	releaseColour();
 
