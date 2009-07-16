@@ -33,7 +33,7 @@ void MapPositionManager::initialise() {
 			boost::bind(&MapPosition::store, _positions[i].get(), _1)
 		);
 		GlobalCommandSystem().addCommand(
-			SAVE_COMMAND_ROOT + intToStr(i),
+			LOAD_COMMAND_ROOT + intToStr(i),
 			boost::bind(&MapPosition::recall, _positions[i].get(), _1)
 		);
 
