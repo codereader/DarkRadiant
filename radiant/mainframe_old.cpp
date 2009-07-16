@@ -671,6 +671,7 @@ void MainFrame_Construct()
 
 	GlobalCommandSystem().addCommand("Exit", Exit);
 	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
+	GlobalCommandSystem().addCommand("ReloadDefs", ReloadDefs);
 	GlobalCommandSystem().addCommand("ProjectSettings", ui::PrefDialog::showProjectSettings);
 	GlobalCommandSystem().addCommand("Copy", Copy);
 	GlobalCommandSystem().addCommand("Paste", Paste);
@@ -768,6 +769,7 @@ void MainFrame_Construct()
 
 	GlobalEventManager().addCommand("Exit", "Exit");
 	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
+	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
 	
 	GlobalEventManager().addCommand("Copy", "Copy");

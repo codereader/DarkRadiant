@@ -375,6 +375,15 @@ public:
 
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;
+
+	/**
+	 * greebo: This reloads the entityDefs and modelDefs from all files. Does not
+	 * change the scenegraph, only the contents of the EClass objects are
+	 * re-parsed. All IEntityClassPtrs remain valid, no entityDefs are removed.
+	 *
+	 * Note: This is NOT the same as unrealise + realise
+	 */ 
+	virtual void reloadDefs() = 0;
 	
 	/** greebo: Finds the model def with the given name. Might return NULL if not found.
 	 */

@@ -2,6 +2,7 @@
 #include "AttributeCopyingVisitor.h"
 #include "AttributeSuffixComparator.h"
 
+#include "itextstream.h"
 #include "iuimanager.h"
 #include "os/path.h"
 
@@ -223,7 +224,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 		pIter->second->forEachClassAttribute(visitor, true);
 	}
 	else {
-		std::cout << "[eclassmgr] Warning: Entity class "
+		globalWarningStream() << "[eclassmgr] Entity class "
 				  << _name << " specifies parent "
 				  << parName << " which is not found." << std::endl;
 	} 
@@ -403,8 +404,8 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else {
 			// Both type and value are not empty, emit a warning
-			std::cerr << "[eclassmgr] attribute " << key << " already set on entityclass " 
-            		  << _name << std::endl;
+			globalWarningStream() << "[eclassmgr] attribute " << key 
+				<< " already set on entityclass " << _name << std::endl;
 		}
     } // while true
 }

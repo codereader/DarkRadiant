@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/file.h"
 
 #include "gtkutil/filechooser.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "selectionlib.h"
 #include "gtkmisc.h"
 #include "select.h"
@@ -82,6 +83,15 @@ void ReloadSkins(const cmd::ArgumentList& args) {
 	
 	// Refresh the ModelSelector too
 	ui::ModelSelector::refresh();
+}
+
+// This takes care of relading the entityDefs and refreshing the scenegraph
+void ReloadDefs(const cmd::ArgumentList& args)
+{
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Defs");
+
+	GlobalEntityClassManager().reloadDefs();
 }
 
 /*class EntitySetKeyValueSelected : public scene::Graph::Walker

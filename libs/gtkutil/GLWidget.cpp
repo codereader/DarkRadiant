@@ -182,7 +182,7 @@ GdkGLConfig* GLWidget::createGLConfig() {
 		glconfig = gdk_gl_config_new(i->attribs);
 		
 		if (glconfig != NULL) {
-			globalOutputStream() << "OpenGL window configuration: " << i->name << "\n";
+			globalOutputStream() << "OpenGL window configuration: " << i->name << std::endl;
 			return glconfig;
 		}
 	}

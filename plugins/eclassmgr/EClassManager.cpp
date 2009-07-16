@@ -74,7 +74,7 @@ void EClassManager::resolveModelInheritance(const std::string& name, const Doom3
 		
 		if (i == _models.end()) {
 			globalErrorStream() << "model " << name
-					<< " inherits unknown model " << model->parent << "\n";
+				<< " inherits unknown model " << model->parent << std::endl;
 		} 
 		else {
 			resolveModelInheritance(i->first, i->second);
@@ -198,7 +198,7 @@ IModelDefPtr EClassManager::findModel(const std::string& name) const {
 	return (found != _models.end()) ? found->second : Doom3ModelDefPtr();
 }
 
-void EClassManager::refreshDefsCmd(const cmd::ArgumentList& args)
+void EClassManager::reloadDefs()
 {
 	// greebo: Leave all current entityclasses as they are, just invoke the
 	// FileLoader again. It will parse the files again, and look up
@@ -226,7 +226,6 @@ const StringSet& EClassManager::getDependencies() const {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
@@ -238,8 +237,6 @@ void EClassManager::initialiseModule(const ApplicationContext& ctx)
 	
 	GlobalFileSystem().addObserver(*this);
 	realise();
-
-	GlobalCommandSystem().addCommand("RefreshDefs", boost::bind(&EClassManager::refreshDefsCmd, this, _1));
 }
 
 void EClassManager::shutdownModule()
@@ -301,7 +298,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 				if (i->second->getParseStamp() == _curParseStamp)
 				{
 					globalWarningStream() << "[eclassmgr]: EntityDef " 
-						<< sName << " redefined.";
+						<< sName << " redefined" << std::endl;
 				}
 			}
 
@@ -343,7 +340,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 				if (i->second->getParseStamp() == _curParseStamp)
 				{
 					globalWarningStream() << "[eclassmgr]: Model " 
-						<< modelDefName << " redefined.";
+						<< modelDefName << " redefined" << std::endl;
 				}
 			}
 			
@@ -370,7 +367,7 @@ void EClassManager::loadFile(const std::string& filename)
 		parse(file->getInputStream(), file->getModName());
 	}
 		catch (parser::ParseException e) {
-			std::cerr << "[eclassmgr] failed to parse " << filename 
+			globalErrorStream() << "[eclassmgr] failed to parse " << filename 
 					  << " (" << e.what() << ")" << std::endl;
 	}
 }
