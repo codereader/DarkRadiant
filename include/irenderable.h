@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/shared_ptr.hpp>
 
 class Shader;
+typedef boost::shared_ptr<Shader> ShaderPtr;
+
 class OpenGLRenderable;
 class LightList;
 class Matrix4;
@@ -90,7 +92,7 @@ public:
     * used for. Individual RenderableCollector subclasses may ignore this method
     * call if it does not use the render mode they are interested in.
 	 */
-	virtual void SetState(boost::shared_ptr<Shader> state, EStyle mode) = 0;
+	virtual void SetState(const ShaderPtr& state, EStyle mode) = 0;
 	
 	/**
 	 * Submit an OpenGLRenderable object for rendering when the backend render

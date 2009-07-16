@@ -32,12 +32,12 @@ public:
     m_state_stack.push_back(state_type());
   }
 
-  void SetState(ShaderPtr state, EStyle style)
+  void SetState(const ShaderPtr& state, EStyle style)
   {
-    ASSERT_NOTNULL(state);
     if(style == eFullMaterials)
     {
-      m_state_stack.back().m_state = state;
+		ASSERT_NOTNULL(state);
+		m_state_stack.back().m_state = state;
     }
   }
   const EStyle getStyle() const
