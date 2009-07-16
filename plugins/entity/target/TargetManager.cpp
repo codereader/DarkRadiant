@@ -59,11 +59,8 @@ void TargetManager::associateTarget(const std::string& name, const scene::INodeP
 		return;
 	}
 
-	// Doesn't exist yet, create a new target
-	TargetPtr target(new Target);
-
-	// Associate the target
-	target->setNode(node);
+	// Doesn't exist yet, create a new target and associate it
+	TargetPtr target(new Target(node));
 
 	// Insert into the local map and return
 	_targets.insert(TargetList::value_type(name, target));

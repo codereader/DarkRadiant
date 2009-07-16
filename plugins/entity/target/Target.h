@@ -9,13 +9,13 @@ namespace entity {
 
 /**
  * greebo: This is an abstract representation of a target.
- *         In Doom3 maps, a Target can be any map entity, that's
- *         why this object encapsulates a reference to an actual 
- *         scene::INodePtr. 
+ * In Doom3 maps, a Target can be any map entity, that's
+ * why this object encapsulates a reference to an actual 
+ * scene::INodePtr. 
  *
  * Note: Such a Target object can be empty. That's the case for 
- *       entities referring to non-existing entities in their 
- *       "target" spawnarg.
+ * entities referring to non-existing entities in their 
+ * "target" spawnarg.
  *
  * All Targets are owned by the TargetManager class.
  *
@@ -25,7 +25,15 @@ class Target
 {
 	// The actual node this Target refers to (can be NULL)
 	scene::INodeWeakPtr _node;
+
 public:
+	Target()
+	{}
+
+	Target(const scene::INodePtr& node) :
+		_node(node)
+	{}
+
 	scene::INodePtr getNode() const {
 		return _node.lock();
 	}

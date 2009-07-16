@@ -34,7 +34,7 @@ public:
 
 	// Namespaced implementation
 	// Gets/sets the namespace of this named object
-	std::string getName();
+	std::string getName() const;
 	void setNamespace(INamespace* space);
 	INamespace* getNamespace() const;
 	void connectNameObservers();

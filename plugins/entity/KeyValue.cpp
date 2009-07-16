@@ -55,7 +55,7 @@ void KeyValue::assign(const std::string& other) {
 void KeyValue::notify() 
 {
 	// Store the name locally, to avoid string-copy operations in the loop below
-	std::string value = get();
+	const std::string& value = get();
 
 	KeyObservers::reverse_iterator i = _observers.rbegin();
 	while(i != _observers.rend()) {
