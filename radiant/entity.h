@@ -81,4 +81,7 @@ void Entity_Destroy();
 // Triggers a SkinCache refresh
 void ReloadSkins(const cmd::ArgumentList& args);
 
+// Reloads entityDefs and modelDefs
+void ReloadDefs(const cmd::ArgumentList& args);
+
 #endif

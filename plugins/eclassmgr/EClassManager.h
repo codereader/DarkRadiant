@@ -72,7 +72,7 @@ public:
     virtual IModelDefPtr findModel(const std::string& name) const;
 
 	// Reloads all entityDefs/modelDefs
-	void refreshDefsCmd(const cmd::ArgumentList& args);
+	void reloadDefs();
     
     // RegisterableModule implementation
 	virtual const std::string& getName() const;	

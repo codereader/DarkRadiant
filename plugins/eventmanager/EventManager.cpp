@@ -209,7 +209,8 @@ bool EventManager::alreadyRegistered(const std::string& eventName) {
 		return false;
 	}
 	else {
-		globalOutputStream() << "EventManager: Warning: Event " << eventName.c_str() << " already registered!\n";
+		globalWarningStream() << "EventManager: Event " << eventName 
+			<< " already registered!" << std::endl;
 		return true;
 	}
 }
@@ -297,7 +298,8 @@ IEventPtr EventManager::addToggle(const std::string& name, const Callback& onTog
 void EventManager::setToggled(const std::string& name, const bool toggled) {
 	// Check could be placed here by boost::shared_ptr's dynamic_pointer_cast 
 	if (!findEvent(name)->setToggled(toggled)) {
-		std::cout << "EventManager: Warning: Event " << name.c_str() << " is not a Toggle.\n";
+		globalWarningStream() << "EventManager: Event " << name 
+			<< " is not a Toggle." << std::endl;
 	}
 }
 
@@ -311,7 +313,7 @@ void EventManager::connectAccelerator(IAccelerator& accelerator, const std::stri
 	}
 	else {
 		// Command NOT found
-		globalOutputStream() << "EventManager: Unable to connect command: " << command.c_str() << "\n";
+		globalWarningStream() << "EventManager: Unable to connect command: " << command << std::endl;
 	}
 }
 
@@ -331,7 +333,7 @@ void EventManager::disconnectAccelerator(const std::string& command) {
 	}
 	else {
 		// Command NOT found
-		globalOutputStream() << "EventManager: Unable to disconnect command: " << command.c_str() << "\n";
+		globalWarningStream() << "EventManager: Unable to disconnect command: " << command << std::endl;
 	}
 }
 
@@ -447,13 +449,13 @@ void EventManager::loadAccelerators() {
 	
 	if (shortcutList.size() > 0) {
 		globalOutputStream() << "EventManager: Shortcuts found in Registry: " << 
-								static_cast<int>(shortcutList.size()) << "\n";
+			static_cast<int>(shortcutList.size()) << std::endl;
 		for (unsigned int i = 0; i < shortcutList.size(); i++) {
 			const std::string key = shortcutList[i].getAttributeValue("key");
 			
 			if (_debugMode) {
-				std::cout << "Looking up command: " << shortcutList[i].getAttributeValue("command").c_str() << "\n";
-				std::cout << "Key is: >> " << key.c_str() << " << \n";
+				std::cout << "Looking up command: " << shortcutList[i].getAttributeValue("command") << "\n";
+				std::cout << "Key is: >> " << key << " << \n";
 			} 
 			
 			// Try to lookup the command
@@ -475,14 +477,15 @@ void EventManager::loadAccelerators() {
 					}
 				} 
 				else {
-					globalOutputStream() << "EventManager: Warning: Cannot load shortcut definition (command invalid).\n";
+					globalWarningStream() << "EventManager: Cannot load shortcut definition (command invalid)." 
+						<< std::endl;
 				}
 			}
 		}
 	}
 	else {
 		// No accelerator definitions found!
-		globalOutputStream() << "EventManager: No shortcut definitions found...\n";
+		globalWarningStream() << "EventManager: No shortcut definitions found..." << std::endl;
 	}
 }
 
@@ -734,7 +737,7 @@ guint EventManager::getGDKCode(const std::string& keyStr) {
 	guint returnValue = gdk_keyval_to_upper(gdk_keyval_from_name(keyStr.c_str()));
 	
 	if (returnValue == GDK_VoidSymbol) {
-		globalOutputStream() << "EventManager: Warning: Could not recognise key " << keyStr.c_str() << "\n";
+		globalWarningStream() << "EventManager: Could not recognise key " << keyStr << std::endl;
 	}
 
 	return returnValue;

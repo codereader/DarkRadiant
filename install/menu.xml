@@ -19,6 +19,7 @@
 		<menuItem name="refreshModels" caption="_Reload Models" command="RefreshModels" icon="model16red.png" />
 		<menuItem name="reloadSkins" caption="Reload S_kins" command="ReloadSkins" icon="skin16.png" />
 		<menuItem name="refreshShaders" caption="Reload Shaders" command="RefreshShaders" icon="texwindow_flushandreload.png" />
+		<menuItem name="reloadDefs" caption="Reload Defs" command="ReloadDefs" />
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="Select _Game..." command="ProjectSettings" />
 		<menuSeparator />
