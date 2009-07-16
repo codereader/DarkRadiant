@@ -120,7 +120,7 @@ public:
 	/**
 	 * Returns the name of this object.
 	 */
-	virtual std::string getName() = 0;
+	virtual std::string getName() const = 0;
 
 	// Gets/sets the namespace of this named object
 	virtual void setNamespace(INamespace* space) = 0;

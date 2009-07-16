@@ -69,7 +69,8 @@ void NamespaceManager::disconnectNameObservers() {
 	assert(_nameKeyObservers.empty());
 }
 
-std::string NamespaceManager::getName() {
+std::string NamespaceManager::getName() const
+{
 	static std::string nameKey = GlobalRegistry().get(RKEY_NAME_KEY);
 	return _entity.getKeyValue(nameKey);
 }

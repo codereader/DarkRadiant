@@ -53,8 +53,10 @@ public:
 	void connectNameObservers();
 	void disconnectNameObservers();
 
-	// Returns or changes the name of this entity
-	std::string getName();
+	// Returns the name of this entity
+	std::string getName() const;
+
+	// Changes the name of this entity
 	void changeName(const std::string& newName);
 
 	/** 

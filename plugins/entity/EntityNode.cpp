@@ -14,7 +14,7 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_namespaceManager(_entity)
 {}
 
-std::string EntityNode::getName() {
+std::string EntityNode::getName() const {
 	return _namespaceManager.getName();
 }
 
