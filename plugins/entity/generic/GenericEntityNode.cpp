@@ -7,13 +7,10 @@ namespace entity {
 GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	m_contained(*this, 
 		Node::TransformChangedCaller(*this), 
 		EvaluateTransformCaller(*this))
-{
-	TargetableNode::construct();
-}
+{}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
@@ -26,17 +23,13 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	Cullable(other),
 	Bounded(other),
 	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	m_contained(other.m_contained, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
 		EvaluateTransformCaller(*this))
-{
-	TargetableNode::construct();
-}
+{}
 
 GenericEntityNode::~GenericEntityNode() {
-	TargetableNode::destruct();
 }
 
 // Snappable implementation

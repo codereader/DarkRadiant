@@ -24,8 +24,7 @@ class EclassModelNode :
 	public Snappable,
 	public TransformNode,
 	public Renderable,
-	public TransformModifier,
-	public TargetableNode
+	public TransformModifier
 {
 	friend class EclassModel;
 

@@ -6,7 +6,6 @@
 #include "Light.h"
 #include "dragplanes.h"
 #include "../VertexInstance.h"
-#include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 
 namespace entity {
@@ -27,8 +26,7 @@ class LightNode :
 	public Bounded,
 	public TransformModifier,
 	public RendererLight,
-	public scene::SelectableLight,
-	public TargetableNode
+	public scene::SelectableLight
 {
 	friend class Light;
 

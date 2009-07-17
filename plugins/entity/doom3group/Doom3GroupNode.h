@@ -29,8 +29,7 @@ class Doom3GroupNode :
 	public Renderable,
 	public Bounded,
 	public TransformModifier,
-	public CurveNode,
-	public TargetableNode
+	public CurveNode
 {
 	friend class Doom3Group;
 

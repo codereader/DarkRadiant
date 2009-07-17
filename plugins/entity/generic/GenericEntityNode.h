@@ -26,8 +26,7 @@ class GenericEntityNode :
 	public Renderable,
 	public Cullable,
 	public Bounded,
-	public TransformModifier,
-	public TargetableNode
+	public TransformModifier
 {
 	friend class GenericEntity;
 
