@@ -23,23 +23,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_NAMEABLE_H
 
 #include <string>
-#include "generic/callbackfwd.h"
 #include <boost/shared_ptr.hpp>
-
-typedef Callback1<const std::string&> NameCallback;
 
 class Nameable
 {
 public:
 	virtual std::string name() const = 0;
-	
-	virtual void attach(const NameCallback& callback) {
-		// Empty default implementation
-	}
-	
-	virtual void detach(const NameCallback& callback) {
-		// Empty default implementation
-	}
 };
 typedef boost::shared_ptr<Nameable> NameablePtr;
 
