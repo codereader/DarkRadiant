@@ -7,7 +7,7 @@
 #include "nameable.h"
 #include "scenelib.h"
 #include "irenderable.h"
-#include "../namedentity.h"
+#include "../NameKey.h"
 #include "../curve/CurveEditInstance.h"
 #include "../VertexInstance.h"
 #include "../target/TargetableNode.h"

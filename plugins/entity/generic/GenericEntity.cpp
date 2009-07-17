@@ -73,11 +73,11 @@ const Doom3Entity& GenericEntity::getEntity() const {
 	return m_entity;
 }
 
-NamedEntity& GenericEntity::getNameable() {
+NameKey& GenericEntity::getNameable() {
 	return m_named;
 }
 
-const NamedEntity& GenericEntity::getNameable() const {
+const NameKey& GenericEntity::getNameable() const {
 	return m_named;
 }
 
@@ -209,7 +209,7 @@ void GenericEntity::construct() {
 	m_ray.direction = Vector3(1, 0, 0);
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
 
 	if (!_allow3Drotations)
 	{

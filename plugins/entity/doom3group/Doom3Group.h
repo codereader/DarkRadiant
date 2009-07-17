@@ -10,7 +10,7 @@
 #include "../ModelKey.h"
 #include "../origin.h"
 #include "../rotation.h"
-#include "../namedentity.h"
+#include "../NameKey.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
@@ -46,9 +46,9 @@ class Doom3Group
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
 
-	NamedEntity m_named;
+	NameKey m_named;
 	RenderablePivot m_renderOrigin;
-	RenderableNamedEntity m_renderName;
+	RenderableNameKey m_renderName;
 
 	mutable AABB m_curveBounds;
 
@@ -104,8 +104,8 @@ public:
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;
 	//Namespaced& getNamespaced();
-	NamedEntity& getNameable();
-	const NamedEntity& getNameable() const;
+	NameKey& getNameable();
+	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

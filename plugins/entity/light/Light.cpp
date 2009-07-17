@@ -141,7 +141,7 @@ void Light::construct() {
 	_lightBox.extents = Vector3(8, 8, 8);
 	_originTransformed = ORIGINKEY_IDENTITY;
 
-	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 
@@ -458,10 +458,10 @@ const entity::Doom3Entity& Light::getEntity() const {
 	return _entity;
 }
 
-const NamedEntity& Light::getNameable() const {
+const NameKey& Light::getNameable() const {
 	return m_named;
 }
-NamedEntity& Light::getNameable() {
+NameKey& Light::getNameable() {
 	return m_named;
 }
 TransformNode& Light::getTransformNode() {

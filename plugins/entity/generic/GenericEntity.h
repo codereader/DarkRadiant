@@ -12,7 +12,7 @@
 #include "../origin.h"
 #include "../angle.h"
 #include "../rotation.h"
-#include "../namedentity.h"
+#include "../NameKey.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
 
@@ -46,7 +46,7 @@ class GenericEntity :
 	// This is the "working copy" of the rotation value
 	Float9 m_rotation;
 
-	NamedEntity m_named;
+	NameKey m_named;
 
 	AABB m_aabb_local;
 	Ray m_ray;
@@ -54,7 +54,7 @@ class GenericEntity :
 	RenderableArrow m_arrow;
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
-	RenderableNamedEntity m_renderName;
+	RenderableNameKey m_renderName;
 
 	Callback m_transformChanged;
 	Callback m_evaluateTransform;
@@ -81,8 +81,8 @@ public:
 	Doom3Entity& getEntity();
 	const Doom3Entity& getEntity() const;
 
-	NamedEntity& getNameable();
-	const NamedEntity& getNameable() const;
+	NameKey& getNameable();
+	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 
