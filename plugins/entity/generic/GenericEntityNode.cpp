@@ -17,7 +17,6 @@ GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
-	SelectableNode(other),
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),

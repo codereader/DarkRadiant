@@ -17,7 +17,6 @@ namespace entity {
 
 class Doom3GroupNode :
 	public EntityNode,
-	public SelectableNode,
 	public scene::Cloneable,
 	public scene::GroupNode,
 	public Nameable,

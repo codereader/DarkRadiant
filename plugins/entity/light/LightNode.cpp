@@ -29,7 +29,6 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 
 LightNode::LightNode(const LightNode& other) :
 	EntityNode(other),
-	SelectableNode(other),
 	scene::Cloneable(other),
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	scene::SelectableLight(other),

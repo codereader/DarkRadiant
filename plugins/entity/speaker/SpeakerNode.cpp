@@ -19,7 +19,6 @@ SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
-	SelectableNode(other),
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),

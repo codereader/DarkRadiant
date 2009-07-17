@@ -9,6 +9,9 @@ EntityNode::EntityNode(const IEntityClassConstPtr& eclass) :
 {}
 
 EntityNode::EntityNode(const EntityNode& other) :
+	IEntityNode(other),
+	SelectableNode(other),
+	Namespaced(other),
 	_eclass(other._eclass),
 	_entity(other._entity),
 	_namespaceManager(_entity)

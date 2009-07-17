@@ -18,7 +18,6 @@ EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
-	SelectableNode(other),
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),

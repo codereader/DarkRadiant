@@ -26,7 +26,6 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	EntityNode(other),
-	SelectableNode(other),
 	scene::Cloneable(other),
 	scene::GroupNode(other),
 	Nameable(other),
