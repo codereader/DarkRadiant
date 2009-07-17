@@ -3,6 +3,7 @@
 
 #include "ientity.h"
 #include "inamespace.h"
+#include "selectionlib.h"
 #include "NamespaceManager.h"
 
 namespace entity {
@@ -12,6 +13,7 @@ namespace entity {
  */
 class EntityNode :
 	public IEntityNode,
+	public SelectableNode,
 	public Namespaced
 {
 protected:

@@ -18,7 +18,6 @@ namespace entity {
 
 class GenericEntityNode :
 	public EntityNode,
-	public SelectableNode,
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
