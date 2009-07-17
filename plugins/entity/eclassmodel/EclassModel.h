@@ -13,7 +13,7 @@
 #include "../rotation.h"
 #include "../angle.h"
 #include "../ModelKey.h"
-#include "../namedentity.h"
+#include "../NameKey.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 
@@ -38,10 +38,10 @@ class EclassModel :
 	Float9 m_rotation;
 	ModelKey m_model;
 
-	NamedEntity m_named;
+	NameKey m_named;
 	//NamespaceManager m_nameKeys;
 	RenderablePivot m_renderOrigin;
-	RenderableNamedEntity m_renderName;
+	RenderableNameKey m_renderName;
 
 	Callback m_transformChanged;
 	Callback m_evaluateTransform;
@@ -71,8 +71,8 @@ public:
 	const Doom3Entity& getEntity() const;
 
 	//Namespaced& getNamespaced();
-	NamedEntity& getNameable();
-	const NamedEntity& getNameable() const;
+	NameKey& getNameable();
+	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

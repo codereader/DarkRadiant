@@ -105,11 +105,11 @@ const Doom3Entity& Doom3Group::getEntity() const {
 	return n;
 }*/
 
-NamedEntity& Doom3Group::getNameable() {
+NameKey& Doom3Group::getNameable() {
 	return m_named;
 }
 
-const NamedEntity& Doom3Group::getNameable() const {
+const NameKey& Doom3Group::getNameable() const {
 	return m_named;
 }
 
@@ -302,7 +302,7 @@ void Doom3Group::construct()
 {
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("model", Doom3Group::ModelChangedCaller(*this));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));

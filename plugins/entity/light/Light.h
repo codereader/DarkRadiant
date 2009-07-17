@@ -14,7 +14,7 @@
 #include "../origin.h"
 #include "../rotation.h"
 #include "../colour.h"
-#include "../namedentity.h"
+#include "../NameKey.h"
 #include "../entity.h"
 #include "../ModelKey.h"
 #include "../Doom3Entity.h"
@@ -78,7 +78,7 @@ class Light :
   Float9 m_rotation;
   Colour m_colour;
 
-  NamedEntity m_named;
+  NameKey m_named;
 
 	ModelKey _modelKey;
 
@@ -96,7 +96,7 @@ class Light :
 	
 	RenderableLightTarget _rStart;
 	RenderableLightTarget _rEnd;
-	RenderableNamedEntity m_renderName;
+	RenderableNameKey m_renderName;
 
   Float9 m_lightRotation;
   bool m_useLightRotation;
@@ -212,8 +212,8 @@ public:
 	const Doom3Entity& getEntity() const;
 
 	//Namespaced& getNamespaced();
-	NamedEntity& getNameable();
-	const NamedEntity& getNameable() const;
+	NameKey& getNameable();
+	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

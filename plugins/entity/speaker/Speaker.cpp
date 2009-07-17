@@ -83,11 +83,11 @@ const Doom3Entity& Speaker::getEntity() const {
 	return m_entity;
 }
 
-NamedEntity& Speaker::getNameable() {
+NameKey& Speaker::getNameable() {
 	return m_named;
 }
 
-const NamedEntity& Speaker::getNameable() const {
+const NameKey& Speaker::getNameable() const {
 	return m_named;
 }
 
@@ -267,7 +267,7 @@ void Speaker::construct() {
 	m_aabb_local = m_entity.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
 	
-	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 	m_keyObservers.insert(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
 	m_keyObservers.insert(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));

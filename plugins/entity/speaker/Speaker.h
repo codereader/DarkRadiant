@@ -11,7 +11,7 @@
 #include "generic/callback.h"
 
 #include "../origin.h"
-#include "../namedentity.h"
+#include "../NameKey.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "../EntitySettings.h"
@@ -34,7 +34,7 @@ class Speaker :
 	OriginKey m_originKey;
 	Vector3 m_origin;
 
-	NamedEntity m_named;
+	NameKey m_named;
 
 	// The current speaker radii (min / max)
 	SoundRadii _radii;
@@ -58,7 +58,7 @@ class Speaker :
 
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
-	RenderableNamedEntity m_renderName;
+	RenderableNameKey m_renderName;
 
 	Callback m_transformChanged;
 	Callback m_boundsChanged;
@@ -85,8 +85,8 @@ public:
 	const Doom3Entity& getEntity() const;
 
 	//Namespaced& getNamespaced();
-	NamedEntity& getNameable();
-	const NamedEntity& getNameable() const;
+	NameKey& getNameable();
+	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

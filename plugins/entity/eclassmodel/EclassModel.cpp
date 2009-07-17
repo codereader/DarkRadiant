@@ -51,7 +51,7 @@ void EclassModel::construct()
 {
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NamedEntity::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
@@ -126,11 +126,11 @@ const Doom3Entity& EclassModel::getEntity() const {
 	return m_nameKeys;
 }*/
 
-NamedEntity& EclassModel::getNameable() {
+NameKey& EclassModel::getNameable() {
 	return m_named;
 }
 
-const NamedEntity& EclassModel::getNameable() const {
+const NameKey& EclassModel::getNameable() const {
 	return m_named;
 }
 
