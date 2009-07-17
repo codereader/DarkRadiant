@@ -7,7 +7,6 @@ namespace entity {
 Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
@@ -39,7 +38,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	Bounded(other),
 	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	CurveNode(other),
-	TargetableNode(_entity, *this),
 	m_contained(
 		other.m_contained,
 		*this, // Pass <this> as Doom3GroupNode&
@@ -67,13 +65,12 @@ Doom3GroupNode::~Doom3GroupNode() {
 	Callback emptyCallback;
 	m_contained.setTransformChanged(emptyCallback);
 	Node::detachTraverseObserver(this);
-	TargetableNode::destruct();
 }
 
-void Doom3GroupNode::construct() {
+void Doom3GroupNode::construct()
+{
 	m_contained.construct();
 
-	TargetableNode::construct();
 	Node::attachTraverseObserver(this);
 
 	// Attach the callback as keyobserver for the skin key

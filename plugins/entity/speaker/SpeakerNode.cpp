@@ -7,15 +7,12 @@ namespace entity {
 SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this),
 		EvaluateTransformCaller(*this)),
 	_dragPlanes(SelectedChangedComponentCaller(*this))
-{
-	TargetableNode::construct();
-}
+{}
 
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
@@ -28,20 +25,16 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	Cullable(other),
 	Bounded(other),
 	TransformModifier(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	_speaker(other._speaker, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this),
 		EvaluateTransformCaller(*this)),
 	_dragPlanes(SelectedChangedComponentCaller(*this))
-{
-	TargetableNode::construct();
-}
+{}
 
-SpeakerNode::~SpeakerNode() {
-	TargetableNode::destruct();
-}
+SpeakerNode::~SpeakerNode()
+{}
 
 // Snappable implementation
 void SpeakerNode::snapto(float snap) {

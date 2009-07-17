@@ -7,7 +7,6 @@ namespace entity {
 LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	_light(_entity,
 		   *this,
            Node::TransformChangedCaller(*this), 
@@ -21,8 +20,6 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 	_lightEndInstance(VertexInstance(_light.endTransformed(), SelectedChangedComponentCaller(*this))),
 	m_dragPlanes(SelectedChangedComponentCaller(*this))
 {
-	TargetableNode::construct();
-
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
 }
@@ -32,7 +29,6 @@ LightNode::LightNode(const LightNode& other) :
 	scene::Cloneable(other),
 	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	scene::SelectableLight(other),
-	TargetableNode(_entity, *this),
 	_light(other._light,
 		   *this,
            _entity,
@@ -47,16 +43,12 @@ LightNode::LightNode(const LightNode& other) :
 	_lightEndInstance(VertexInstance(_light.endTransformed(), SelectedChangedComponentCaller(*this))),
 	m_dragPlanes(SelectedChangedComponentCaller(*this))
 {
-	TargetableNode::construct();
-
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
 }
 
 LightNode::~LightNode() {
 	_light.setLightChangedCallback(Callback());
-
-	TargetableNode::destruct();
 }
 
 const Matrix4& LightNode::getLocalPivot() const {

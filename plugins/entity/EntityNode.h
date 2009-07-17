@@ -5,6 +5,7 @@
 #include "inamespace.h"
 #include "selectionlib.h"
 #include "NamespaceManager.h"
+#include "target/TargetableNode.h"
 
 namespace entity {
 
@@ -14,7 +15,8 @@ namespace entity {
 class EntityNode :
 	public IEntityNode,
 	public SelectableNode,
-	public Namespaced
+	public Namespaced,
+	public TargetableNode
 {
 protected:
 	// The entity class
@@ -33,6 +35,8 @@ public:
 
 	// Copy constructor
 	EntityNode(const EntityNode& other);
+
+	virtual ~EntityNode();
 
 	// Namespaced implementation
 	// Gets/sets the namespace of this named object

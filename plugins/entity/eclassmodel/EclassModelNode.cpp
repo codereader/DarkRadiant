@@ -6,13 +6,11 @@ EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
 	TransformModifier(EclassModel::TransformChangedCaller(m_contained), 
 					  ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	m_contained(*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this), 
 				EvaluateTransformCaller(*this)),
 	_updateSkin(true)
 {
-	TargetableNode::construct();
 	construct();
 }
 
@@ -25,20 +23,17 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	Renderable(other),
 	TransformModifier(EclassModel::TransformChangedCaller(m_contained), 
 					  ApplyTransformCaller(*this)),
-	TargetableNode(_entity, *this),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this), 
 				EvaluateTransformCaller(*this)),
 	_updateSkin(true)
 {
-	TargetableNode::construct();
 	construct();
 }
 
 EclassModelNode::~EclassModelNode() {
 	destroy();
-	TargetableNode::destruct();
 }
 
 void EclassModelNode::construct() {

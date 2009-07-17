@@ -3,19 +3,30 @@
 namespace entity {
 
 EntityNode::EntityNode(const IEntityClassConstPtr& eclass) :
+	TargetableNode(_entity, *this),
 	_eclass(eclass),
 	_entity(_eclass),
 	_namespaceManager(_entity)
-{}
+{
+	TargetableNode::construct();
+}
 
 EntityNode::EntityNode(const EntityNode& other) :
 	IEntityNode(other),
 	SelectableNode(other),
 	Namespaced(other),
+	TargetableNode(_entity, *this),
 	_eclass(other._eclass),
 	_entity(other._entity),
 	_namespaceManager(_entity)
-{}
+{
+	TargetableNode::construct();
+}
+
+EntityNode::~EntityNode()
+{
+	TargetableNode::destruct();
+}
 
 std::string EntityNode::getName() const {
 	return _namespaceManager.getName();
