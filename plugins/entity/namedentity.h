@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "nameable.h"
 #include "Doom3Entity.h"
 
+typedef Callback1<const std::string&> NameCallback;
+
 #include <set>
 
 class NameCallbackSet

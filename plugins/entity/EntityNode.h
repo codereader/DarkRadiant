@@ -14,7 +14,7 @@ namespace entity {
  */
 class EntityNode :
 	public IEntityNode,
-	public SelectableNode,
+	public SelectableNode, // derives from scene::Node
 	public Namespaced,
 	public TargetableNode
 {

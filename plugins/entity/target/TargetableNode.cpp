@@ -9,7 +9,11 @@ TargetableNode::TargetableNode(Doom3Entity& entity, const scene::Node& node) :
 	_d3entity(entity),
 	_renderableLines(_targetKeys),
 	_node(node)
-{}
+{
+	// Note: don't do anything with _d3Entity here,
+	// the structure is not fully constructed yet at this point.
+	// Execute initialisation code in construct()
+}
 
 void TargetableNode::construct() {
 	_d3entity.attachObserver(this);
