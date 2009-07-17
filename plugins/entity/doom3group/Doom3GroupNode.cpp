@@ -141,14 +141,6 @@ std::string Doom3GroupNode::name() const {
 	return m_contained.getNameable().name();
 }
 
-void Doom3GroupNode::attach(const NameCallback& callback) {
-	m_contained.getNameable().attach(callback);
-}
-
-void Doom3GroupNode::detach(const NameCallback& callback) {
-	m_contained.getNameable().detach(callback);
-}
-
 void Doom3GroupNode::selectionChangedComponent(const Selectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }

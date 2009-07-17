@@ -128,14 +128,6 @@ std::string SpeakerNode::name() const {
 	return _speaker.getNameable().name();
 }
 
-void SpeakerNode::attach(const NameCallback& callback) {
-	_speaker.getNameable().attach(callback);
-}
-
-void SpeakerNode::detach(const NameCallback& callback) {
-	_speaker.getNameable().detach(callback);
-}
-
 /* Renderable implementation */
 
 void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 

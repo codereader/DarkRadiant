@@ -114,14 +114,6 @@ std::string EclassModelNode::name() const {
 	return m_contained.getNameable().name();
 }
 
-void EclassModelNode::attach(const NameCallback& callback) {
-	m_contained.getNameable().attach(callback);
-}
-
-void EclassModelNode::detach(const NameCallback& callback) {
-	m_contained.getNameable().detach(callback);
-}
-
 void EclassModelNode::evaluateTransform() {
 	if (getType() == TRANSFORM_PRIMITIVE) {
 		m_contained.translate(getTranslation());
