@@ -266,14 +266,6 @@ std::string LightNode::name() const {
 	return _light.getNameable().name();
 }
 
-void LightNode::attach(const NameCallback& callback) {
-	_light.getNameable().attach(callback);
-}
-
-void LightNode::detach(const NameCallback& callback) {
-	_light.getNameable().detach(callback);
-}
-
 void LightNode::selectedChangedComponent(const Selectable& selectable) {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);

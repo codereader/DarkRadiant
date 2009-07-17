@@ -66,9 +66,6 @@ public:
 
 	// Nameable implementation
 	virtual std::string name() const;
-	
-	virtual void attach(const NameCallback& callback);
-	virtual void detach(const NameCallback& callback);
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;

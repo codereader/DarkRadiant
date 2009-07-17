@@ -93,14 +93,6 @@ std::string GenericEntityNode::name() const {
 	return m_contained.getNameable().name();
 }
 
-void GenericEntityNode::attach(const NameCallback& callback) {
-	m_contained.getNameable().attach(callback);
-}
-
-void GenericEntityNode::detach(const NameCallback& callback) {
-	m_contained.getNameable().detach(callback);
-}
-
 void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	m_contained.renderSolid(collector, volume, localToWorld());
 }

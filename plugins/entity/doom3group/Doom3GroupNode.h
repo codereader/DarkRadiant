@@ -94,8 +94,6 @@ public:
 
 	// Nameable implementation
 	virtual std::string name() const;
-	virtual void attach(const NameCallback& callback);
-	virtual void detach(const NameCallback& callback);
 
 	// Snappable implementation
 	virtual void snapto(float snap);
