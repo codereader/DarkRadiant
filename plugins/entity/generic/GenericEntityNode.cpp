@@ -6,7 +6,7 @@ namespace entity {
 
 GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	Transformable(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	m_contained(*this, 
 		Node::TransformChangedCaller(*this), 
 		EvaluateTransformCaller(*this))
@@ -21,7 +21,7 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
-	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	Transformable(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	m_contained(other.m_contained, 
 		*this, 
 		Node::TransformChangedCaller(*this), 

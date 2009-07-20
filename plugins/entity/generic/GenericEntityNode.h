@@ -25,7 +25,7 @@ class GenericEntityNode :
 	public SelectionTestable,
 	public Cullable,
 	public Bounded,
-	public TransformModifier
+	public Transformable
 {
 	friend class GenericEntity;
 

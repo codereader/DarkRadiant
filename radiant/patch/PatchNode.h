@@ -30,7 +30,7 @@ class PatchNode :
 	public Renderable,
 	public Cullable,
 	public Bounded,
-	public TransformModifier, // derives from Transformable
+	public Transformable,
 	public Patch::Observer
 {
 	Patch m_patch;
