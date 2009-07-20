@@ -229,7 +229,7 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
     if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {
 		selection::algorithm::deleteSelection();
     
-        TransformablePtr transform = Node_getTransformable(node);
+        ITransformablePtr transform = Node_getTransformable(node);
     
         if (transform != 0) {
             transform->setType(TRANSFORM_PRIMITIVE);
@@ -333,7 +333,7 @@ void createCurve(const std::string& key) {
 		"3 ( 0 0 0  50 50 0  50 100 0 )"
 	);
 	
-	TransformablePtr transformable = Node_getTransformable(curve);
+	ITransformablePtr transformable = Node_getTransformable(curve);
 	if (transformable != NULL) {
 		// Translate the entity to the center of the current workzone
 		transformable->setTranslation(GlobalXYWnd().getActiveXY()->getOrigin());

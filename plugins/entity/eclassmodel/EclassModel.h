@@ -16,6 +16,7 @@
 #include "../NameKey.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
+#include "transformlib.h"
 
 namespace entity {
 

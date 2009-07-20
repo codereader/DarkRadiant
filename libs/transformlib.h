@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_TRANSFORMLIB_H)
 #define INCLUDED_TRANSFORMLIB_H
 
+#include "itransformable.h"
 #include "itransformnode.h"
 #include "math/matrix.h"
 #include "math/quaternion.h"
@@ -60,11 +61,7 @@ public:
 
 #include "generic/callback.h"
 
-typedef Vector3 Translation;
-typedef Quaternion Rotation;
-typedef Vector3 Scale;
-
-inline Matrix4 matrix4_transform_for_components(const Translation& translation, const Rotation& rotation, const Scale& scale)
+inline Matrix4 matrix4_transform_for_components(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 {
   Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
   result.x().getVector3() *= scale.x();
@@ -76,44 +73,20 @@ inline Matrix4 matrix4_transform_for_components(const Translation& translation, 
   return result;
 }
 
-typedef bool TransformModifierType;
-const TransformModifierType TRANSFORM_PRIMITIVE = false;
-const TransformModifierType TRANSFORM_COMPONENT = true;
+const Vector3 c_translation_identity(0, 0, 0);
+const Quaternion c_rotation_identity(c_quaternion_identity);
+const Vector3 c_scale_identity(1, 1, 1);
 
-/// \brief A transformable scene-graph instance.
-///
-/// A transformable instance may be translated, rotated or scaled.
-/// The state of the instanced node's geometrical representation
-/// will be the product of its geometry and the transforms of each
-/// of its instances, applied in the order they appear in a graph
-/// traversal.
-/// Freezing the transform on an instance will cause its transform
-/// to be permanently applied to the geometry of the node.
-class Transformable
+class TransformModifier : public ITransformable
 {
-public:
-	virtual void setType(TransformModifierType type) = 0;
-	virtual void setTranslation(const Translation& value) = 0;
-	virtual void setRotation(const Rotation& value) = 0;
-	virtual void setScale(const Scale& value) = 0;
-	virtual void freezeTransform() = 0;
-	virtual void revertTransform() = 0;
-};
-typedef boost::shared_ptr<Transformable> TransformablePtr;
+	Vector3 m_translation;
+	Quaternion m_rotation;
+	Vector3 m_scale;
 
-const Translation c_translation_identity = Translation(0, 0, 0);
-const Rotation c_rotation_identity = c_quaternion_identity;
-const Scale c_scale_identity = Scale(1, 1, 1);
+	Callback m_changed;
+	Callback m_apply;
 
-
-class TransformModifier : public Transformable
-{
-  Translation m_translation;
-  Rotation m_rotation;
-  Scale m_scale;
-  Callback m_changed;
-  Callback m_apply;
-  TransformModifierType m_type;
+	TransformModifierType m_type;
 public:
 
   TransformModifier(const Callback& changed, const Callback& apply) :
@@ -134,17 +107,17 @@ public:
   {
     return m_type;
   }
-  void setTranslation(const Translation& value)
+  void setTranslation(const Vector3& value)
   {
     m_translation = value;
     m_changed();
   }
-  void setRotation(const Rotation& value)
+  void setRotation(const Quaternion& value)
   {
     m_rotation = value;
     m_changed();
   }
-  void setScale(const Scale& value)
+  void setScale(const Vector3& value)
   {
     m_scale = value;
     m_changed();
@@ -175,15 +148,15 @@ public:
     m_apply();
     m_changed();
   }
-  const Translation& getTranslation() const
+  const Vector3& getTranslation() const
   {
     return m_translation;
   }
-  const Rotation& getRotation() const
+  const Quaternion& getRotation() const
   {
     return m_rotation;
   }
-  const Scale& getScale() const
+  const Vector3& getScale() const
   {
     return m_scale;
   }

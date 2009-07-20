@@ -15,6 +15,7 @@
 #include "../NameKey.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
+#include "transformlib.h"
 
 #include "RenderableArrow.h"
 

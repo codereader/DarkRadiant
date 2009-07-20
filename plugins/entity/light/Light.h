@@ -9,6 +9,7 @@
 #include "render.h"
 #include "irenderable.h"
 #include "math/frustum.h"
+#include "transformlib.h"
 
 #include "../keyobservers.h"
 #include "../origin.h"
