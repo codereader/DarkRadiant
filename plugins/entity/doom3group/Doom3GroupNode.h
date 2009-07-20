@@ -26,7 +26,6 @@ class Doom3GroupNode :
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
-	public Renderable,
 	public Bounded,
 	public TransformModifier,
 	public CurveNode

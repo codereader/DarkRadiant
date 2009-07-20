@@ -22,7 +22,6 @@ class LightNode :
 	public ComponentEditable,
 	public ComponentSnappable,
 	public PlaneSelectable,
-	public Renderable,
 	public Bounded,
 	public TransformModifier,
 	public RendererLight,

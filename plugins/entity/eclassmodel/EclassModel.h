@@ -41,7 +41,6 @@ class EclassModel :
 	NameKey m_named;
 	//NamespaceManager m_nameKeys;
 	RenderablePivot m_renderOrigin;
-	RenderableNameKey m_renderName;
 
 	Callback m_transformChanged;
 	Callback m_evaluateTransform;

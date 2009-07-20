@@ -22,7 +22,6 @@ GenericEntity::GenericEntity(GenericEntityNode& node,
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
@@ -44,7 +43,6 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
@@ -121,10 +119,6 @@ void GenericEntity::renderWireframe(RenderableCollector& collector,
 	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 	collector.addRenderable(m_aabb_wire, localToWorld);
 	renderArrow(collector, volume, localToWorld);
-	
-	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		collector.addRenderable(m_renderName, localToWorld);
-	}
 }
 
 void GenericEntity::testSelect(Selector& selector, 

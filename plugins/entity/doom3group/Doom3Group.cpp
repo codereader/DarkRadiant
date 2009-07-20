@@ -41,7 +41,6 @@ Doom3Group::Doom3Group(
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
-	m_renderName(m_named, m_nameOrigin),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
@@ -64,7 +63,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
-	m_renderName(m_named, m_nameOrigin),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
@@ -160,11 +158,6 @@ void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTes
 	const Matrix4& localToWorld, bool selected) const 
 {
 	renderSolid(collector, volume, localToWorld, selected);
-
-    // Render the name if required
-	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		collector.addRenderable(m_renderName, localToWorld);
-	}
 }
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {

@@ -34,7 +34,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
 	ComponentSnappable(other),
-	Renderable(other),
 	Bounded(other),
 	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	CurveNode(other),
@@ -252,7 +251,10 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
 	}
 }
 
-void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderSolid(collector, volume);
+
 	// greebo: Check if the skin needs updating before rendering.
 	if (_updateSkin) {
 		if (m_contained.isModel()) {
@@ -271,7 +273,10 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 	m_curveCatmullRom.renderComponentsSelected(collector, volume, localToWorld());
 }
 
-void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderWireframe(collector, volume);
+
 	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
 
 	m_curveNURBS.renderComponentsSelected(collector, volume, localToWorld());

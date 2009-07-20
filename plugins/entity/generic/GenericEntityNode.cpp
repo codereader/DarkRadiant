@@ -19,7 +19,6 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
-	Renderable(other),
 	Cullable(other),
 	Bounded(other),
 	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
@@ -93,11 +92,17 @@ std::string GenericEntityNode::name() const {
 	return m_contained.getNameable().name();
 }
 
-void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderSolid(collector, volume);
+
 	m_contained.renderSolid(collector, volume, localToWorld());
 }
 
-void GenericEntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void GenericEntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderWireframe(collector, volume);
+
 	m_contained.renderWireframe(collector, volume, localToWorld());
 }
 

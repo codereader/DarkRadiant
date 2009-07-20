@@ -21,7 +21,6 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
-	Renderable(other),
 	Cullable(other),
 	Bounded(other),
 	TransformModifier(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
@@ -132,10 +131,14 @@ std::string SpeakerNode::name() const {
 
 void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
 {
+	EntityNode::renderSolid(collector, volume);
+
 	_speaker.renderSolid(collector, volume, localToWorld(), isSelected());
 }
 void SpeakerNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
 {
+	EntityNode::renderWireframe(collector, volume);
+
 	_speaker.renderWireframe(collector, volume, localToWorld(), isSelected());
 }
 

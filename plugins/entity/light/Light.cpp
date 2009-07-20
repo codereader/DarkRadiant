@@ -85,7 +85,6 @@ Light::Light(Doom3Entity& entity,
 	_rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
 	_rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
 	_rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
-	m_renderName(m_named, _lightBox.origin),
 	m_useLightRotation(false),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged),
@@ -116,7 +115,6 @@ Light::Light(const Light& other,
   _rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
   _rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
   _rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
-  m_renderName(m_named, _lightBox.origin),
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
   m_boundsChanged(boundsChanged),
@@ -560,11 +558,6 @@ void Light::renderWireframe(RenderableCollector& collector,
 			updateRenderableRadius();
 			collector.addRenderable(_renderableRadius, localToWorld);
 		}
-	}
-
-	// Render the name
-	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
 

@@ -274,12 +274,18 @@ void LightNode::selectedChangedComponent(const Selectable& selectable) {
 /* greebo: This is the method that gets called by renderer.h. It passes the call 
  * on to the Light class render methods. 
  */
-void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderSolid(collector, volume);
+
 	// Pass through to wireframe render
 	renderWireframe(collector, volume);
 }
   
-void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderWireframe(collector, volume);
+
 	const bool lightIsSelected = isSelected();
 	_light.renderWireframe(
 		collector, volume, localToWorld(), lightIsSelected

@@ -6,6 +6,7 @@
 #include "selectionlib.h"
 #include "NamespaceManager.h"
 #include "target/TargetableNode.h"
+#include "NameKey.h"
 
 namespace entity {
 
@@ -16,7 +17,8 @@ class EntityNode :
 	public IEntityNode,
 	public SelectableNode, // derives from scene::Node
 	public Namespaced,
-	public TargetableNode
+	public TargetableNode,
+	public Renderable
 {
 protected:
 	// The entity class
@@ -28,6 +30,13 @@ protected:
 
 	// The class taking care of all the namespace-relevant stuff
 	NamespaceManager _namespaceManager;
+
+	// A helper class observing the "name" keyvalue
+	// Used for rendering the name and as Nameable implementation
+	NameKey _nameKey;
+
+	// The OpenGLRenderable, using the NameKey helper class to retrieve the name
+	RenderableNameKey _renderableName;
 
 public:
 	// The Constructor needs the eclass
@@ -49,6 +58,15 @@ public:
 
 	void attachNames();
 	void detachNames();
+
+	// Renderable implementation, can be overridden by subclasses
+	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+
+private:
+	// Routines used by constructor and destructor, should be non-virtual
+	void construct();
+	void destruct();
 };
 
 } // namespace entity
