@@ -41,14 +41,13 @@ class Doom3Group
 	Vector3 m_origin;
 	
 	// A separate origin for the renderable names and pivot points
-	Vector3 m_nameOrigin;
+	Vector3 m_nameOrigin; // TODO
 	 
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
 
 	NameKey m_named;
 	RenderablePivot m_renderOrigin;
-	RenderableNameKey m_renderName;
 
 	mutable AABB m_curveBounds;
 

@@ -1,14 +1,18 @@
 #include "EntityNode.h"
 
+#include "EntitySettings.h"
+
 namespace entity {
 
 EntityNode::EntityNode(const IEntityClassConstPtr& eclass) :
 	TargetableNode(_entity, *this),
 	_eclass(eclass),
 	_entity(_eclass),
-	_namespaceManager(_entity)
+	_namespaceManager(_entity),
+	_nameKey(_entity),
+	_renderableName(_nameKey)
 {
-	TargetableNode::construct();
+	construct();
 }
 
 EntityNode::EntityNode(const EntityNode& other) :
@@ -18,12 +22,24 @@ EntityNode::EntityNode(const EntityNode& other) :
 	TargetableNode(_entity, *this),
 	_eclass(other._eclass),
 	_entity(other._entity),
-	_namespaceManager(_entity)
+	_namespaceManager(_entity),
+	_nameKey(_entity),
+	_renderableName(_nameKey)
+{
+	construct();
+}
+
+EntityNode::~EntityNode()
+{
+	destruct();
+}
+
+void EntityNode::construct()
 {
 	TargetableNode::construct();
 }
 
-EntityNode::~EntityNode()
+void EntityNode::destruct()
 {
 	TargetableNode::destruct();
 }
@@ -58,6 +74,21 @@ void EntityNode::detachNames() {
 
 void EntityNode::changeName(const std::string& newName) {
 	_namespaceManager.changeName(newName);
+}
+
+void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	// Nothing so far (FIXME)
+}
+
+void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	// Submit renderable text name if required
+	if (EntitySettings::InstancePtr()->renderEntityNames()) 
+    {
+		collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+		collector.addRenderable(_renderableName, _renderableName.getLocalToParent());
+	}
 }
 
 } // namespace entity

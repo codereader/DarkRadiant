@@ -19,7 +19,6 @@ EclassModel::EclassModel(EclassModelNode& owner,
 	m_model(owner),
 	m_named(m_entity),
 	m_renderOrigin(m_origin),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform)
 {
@@ -40,7 +39,6 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_model(owner),
 	m_named(m_entity),
 	m_renderOrigin(m_origin),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
 	m_evaluateTransform(evaluateTransform)
 {
@@ -155,9 +153,6 @@ void EclassModel::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(collector, volume, localToWorld, selected);
-	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		collector.addRenderable(m_renderName, localToWorld);
-	}
 }
 
 void EclassModel::translate(const Vector3& translation) {

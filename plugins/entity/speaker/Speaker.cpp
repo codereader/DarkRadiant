@@ -31,7 +31,6 @@ Speaker::Speaker(SpeakerNode& node,
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged),
 	m_evaluateTransform(evaluateTransform)
@@ -54,7 +53,6 @@ Speaker::Speaker(const Speaker& other,
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged),
 	m_evaluateTransform(evaluateTransform)
@@ -141,12 +139,6 @@ void Speaker::renderWireframe(RenderableCollector& collector,
     {
 		collector.addRenderable(_renderableRadii, localToWorld);
     }
-	
-    // Submit renderable text name if required
-	if (EntitySettings::InstancePtr()->renderEntityNames()) 
-    {
-		collector.addRenderable(m_renderName, localToWorld);
-	}
 }
 
 void Speaker::testSelect(Selector& selector, 

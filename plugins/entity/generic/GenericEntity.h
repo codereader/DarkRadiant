@@ -54,7 +54,6 @@ class GenericEntity :
 	RenderableArrow m_arrow;
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
-	RenderableNameKey m_renderName;
 
 	Callback m_transformChanged;
 	Callback m_evaluateTransform;

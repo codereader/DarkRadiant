@@ -96,7 +96,6 @@ class Light :
 	
 	RenderableLightTarget _rStart;
 	RenderableLightTarget _rEnd;
-	RenderableNameKey m_renderName;
 
   Float9 m_lightRotation;
   bool m_useLightRotation;

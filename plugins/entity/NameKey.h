@@ -60,18 +60,37 @@ public:
 class RenderableNameKey : 
 	public OpenGLRenderable
 {
-  const NameKey& m_named;
-  const Vector3& m_position;
+	const NameKey& _nameKey;
+
+	// The transformation matrix to be passed to the renderer
+	// for some Entity types (D3Group), this can be non-identity
+	Matrix4 _localToParent;
+
+	// Origin is always <0,0,0>, the matrix takes care of the rendering
+	Vector3 _origin;
+	
 public:
-  RenderableNameKey(const NameKey& named, const Vector3& position)
-    : m_named(named), m_position(position)
-  {
-  }
-  void render(const RenderInfo& info) const
-  {
-    glRasterPos3dv(m_position);
-    GlobalOpenGL().drawString(m_named.name());
-  }
+	RenderableNameKey(const NameKey& nameKey) : 
+		_nameKey(nameKey), 
+		_localToParent(Matrix4::getIdentity()),
+		_origin(0,0,0)
+	{}
+
+	void render(const RenderInfo& info) const
+	{
+		glRasterPos3dv(_origin);
+		GlobalOpenGL().drawString(_nameKey.name());
+	}
+
+	const Matrix4& getLocalToParent() const
+	{
+		return _localToParent;
+	}
+
+	void setLocalToParent(const Matrix4& localToParent)
+	{
+		_localToParent = localToParent;
+	}
 };
 
 } // namespace entity

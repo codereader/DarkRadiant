@@ -24,7 +24,6 @@ class SpeakerNode :
 	public Snappable,
 	public TransformNode,
 	public SelectionTestable,
-	public Renderable,
 	public Cullable,
 	public Bounded,
 	public TransformModifier,
