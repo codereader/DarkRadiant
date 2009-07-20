@@ -8,6 +8,7 @@
 
 #include "math/Vector3.h"
 #include "entitylib.h"
+#include "transformlib.h"
 #include "generic/callback.h"
 
 #include "../origin.h"

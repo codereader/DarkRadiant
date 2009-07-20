@@ -3,6 +3,7 @@
 
 #include "ientity.h"
 #include "ieclass.h"
+#include "itransformnode.h"
 #include "scenelib.h"
 #include "iselectable.h"
 #include "editable.h"
@@ -104,7 +105,7 @@ public:
 	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		TransformNodePtr transformNode = Node_getTransformNode(node);
 		if (transformNode != 0) {
-			TransformablePtr transform = Node_getTransformable(node);
+			ITransformablePtr transform = Node_getTransformable(node);
 			if (transform != 0) {
 				transform->freezeTransform(); 
 			}
@@ -121,7 +122,7 @@ public:
 	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
 		TransformNodePtr transformNode = Node_getTransformNode(node);
 		if (transformNode != 0) {
-			TransformablePtr transform = Node_getTransformable(node);
+			ITransformablePtr transform = Node_getTransformable(node);
 			if (transform != 0) {
 				transform->revertTransform(); 
 			}
@@ -140,7 +141,7 @@ public:
 		SelectablePtr selectable = Node_getSelectable(node);
 				
 		if (transformNode != NULL && selectable != NULL && selectable->isSelected()) {
-			TransformablePtr transform = Node_getTransformable(node);
+			ITransformablePtr transform = Node_getTransformable(node);
 			if (transform != NULL) {
 				transform->revertTransform(); 
 			}

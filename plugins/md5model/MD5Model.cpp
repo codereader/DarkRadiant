@@ -4,6 +4,7 @@
 #include "texturelib.h"
 #include "ifilter.h"
 #include "string/string.h"
+#include "math/quaternion.h"
 #include "MD5DataStructures.h"
 
 namespace md5 {

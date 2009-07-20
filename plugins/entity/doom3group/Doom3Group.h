@@ -16,6 +16,7 @@
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
 #include "scene/TraversableNodeSet.h"
+#include "transformlib.h"
 
 namespace entity {
 

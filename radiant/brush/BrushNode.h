@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "EdgeInstance.h"
 #include "VertexInstance.h"
 #include "BrushClipPlane.h"
+#include "transformlib.h"
 
 class BrushInstanceVisitor {
 public:
