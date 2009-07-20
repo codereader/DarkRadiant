@@ -6,7 +6,7 @@ namespace entity {
 
 LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
+	Transformable(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	_light(_entity,
 		   *this,
            Node::TransformChangedCaller(*this), 
@@ -27,7 +27,7 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 LightNode::LightNode(const LightNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
+	Transformable(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	scene::SelectableLight(other),
 	_light(other._light,
 		   *this,

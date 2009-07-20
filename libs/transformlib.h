@@ -77,7 +77,7 @@ const Vector3 c_translation_identity(0, 0, 0);
 const Quaternion c_rotation_identity(c_quaternion_identity);
 const Vector3 c_scale_identity(1, 1, 1);
 
-class TransformModifier : public ITransformable
+class Transformable : public ITransformable
 {
 	Vector3 m_translation;
 	Quaternion m_rotation;
@@ -89,7 +89,7 @@ class TransformModifier : public ITransformable
 	TransformModifierType m_type;
 public:
 
-  TransformModifier(const Callback& changed, const Callback& apply) :
+  Transformable(const Callback& changed, const Callback& apply) :
     m_translation(c_translation_identity),
     m_rotation(c_quaternion_identity),
     m_scale(c_scale_identity),

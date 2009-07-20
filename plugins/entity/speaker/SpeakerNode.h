@@ -26,7 +26,7 @@ class SpeakerNode :
 	public SelectionTestable,
 	public Cullable,
 	public Bounded,
-	public TransformModifier,
+	public Transformable,
 	public PlaneSelectable,
 	public ComponentSelectionTestable
 {

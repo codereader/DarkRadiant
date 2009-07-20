@@ -61,7 +61,7 @@ class BrushNode :
 	public Renderable,
 	public Cullable,
 	public Bounded,
-	public TransformModifier	// inherits from Transformable
+	public Transformable
 {
 	// The actual contained brush (NO reference)
 	Brush m_brush;
@@ -190,7 +190,7 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void viewChanged() const;
 
-	// Gets called by the TransformModifier
+	// Gets called by the Transformable
 	void applyTransform();
 	typedef MemberCaller<BrushNode, &BrushNode::applyTransform> ApplyTransformCaller;
 
