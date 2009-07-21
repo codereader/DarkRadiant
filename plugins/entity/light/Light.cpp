@@ -67,8 +67,7 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 Light::Light(Doom3Entity& entity,
 			 LightNode& owner,
              const Callback& transformChanged,
-             const Callback& boundsChanged,
-             const Callback& evaluateTransform) 
+             const Callback& boundsChanged) 
 :
 	_entity(entity),
 	m_originKey(OriginChangedCaller(*this)),
@@ -87,8 +86,7 @@ Light::Light(Doom3Entity& entity,
 	_rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
 	m_useLightRotation(false),
 	m_transformChanged(transformChanged),
-	m_boundsChanged(boundsChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_boundsChanged(boundsChanged)
 {
 	construct();
 }
@@ -98,8 +96,7 @@ Light::Light(const Light& other,
 			 LightNode& owner,
              Doom3Entity& entity,
              const Callback& transformChanged,
-             const Callback& boundsChanged,
-             const Callback& evaluateTransform) 
+             const Callback& boundsChanged) 
 : _entity(entity),
   m_originKey(OriginChangedCaller(*this)),
   _originTransformed(ORIGINKEY_IDENTITY),
@@ -117,8 +114,7 @@ Light::Light(const Light& other,
   _rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
-  m_boundsChanged(boundsChanged),
-  m_evaluateTransform(evaluateTransform)
+  m_boundsChanged(boundsChanged)
 {
 	construct();
 }
@@ -449,13 +445,6 @@ void Light::freezeTransform()
 	}
 }
 
-entity::Doom3Entity& Light::getEntity() {
-	return _entity;
-}
-const entity::Doom3Entity& Light::getEntity() const {
-	return _entity;
-}
-
 const NameKey& Light::getNameable() const {
 	return m_named;
 }
@@ -656,12 +645,6 @@ void Light::rotate(const Quaternion& rotation) {
 	else {
 		m_rotation.rotate(rotation);
 	}
-}
-
-void Light::transformChanged() {
-	revertTransform();
-	m_evaluateTransform();
-	updateOrigin();
 }
 
 const Matrix4& Light::getLocalPivot() const {

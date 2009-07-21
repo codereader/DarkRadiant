@@ -157,9 +157,9 @@ private:
     // Update the bounds of the renderable radius box
 	void updateRenderableRadius() const;
 
-	void updateOrigin();
-
 public:
+
+	void updateOrigin();
 
 	void originChanged();
 	typedef MemberCaller<Light, &Light::originChanged> OriginChangedCaller;
@@ -190,8 +190,7 @@ public:
 	Light(Doom3Entity& entity,
 		  LightNode& owner,
           const Callback& transformChanged,
-          const Callback& boundsChanged,
-          const Callback& evaluateTransform);
+          const Callback& boundsChanged);
 	
 	/**
      * \brief
@@ -201,17 +200,12 @@ public:
 		  LightNode& owner,
           Doom3Entity& entity,
           const Callback& transformChanged,
-          const Callback& boundsChanged,
-          const Callback& evaluateTransform);
+          const Callback& boundsChanged);
 	
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
-
-	//Namespaced& getNamespaced();
 	NameKey& getNameable();
 	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
@@ -253,9 +247,7 @@ public:
 	void transformLightRadius(const Matrix4& transform);
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<Light, &Light::transformChanged> TransformChangedCaller;
-
+	
 	// note: move this
 	mutable Matrix4 m_localPivot;
 	const Matrix4& getLocalPivot() const;

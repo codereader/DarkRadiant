@@ -130,12 +130,7 @@ public:
   	// Renders the components of this light instance 
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	void evaluateTransform();
-	typedef MemberCaller<LightNode, &LightNode::evaluateTransform> EvaluateTransformCaller;
-	void applyTransform();
-	typedef MemberCaller<LightNode, &LightNode::applyTransform> ApplyTransformCaller;
-
-    /* RendererLight implementation */
+	// RendererLight implementation
     Vector3 worldOrigin() const;
     Matrix4 getLightTextureTransformation() const;
 	ShaderPtr getShader() const;
@@ -145,8 +140,19 @@ public:
 	const Matrix4& rotation() const;
 	const Vector3& colour() const;
 
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
+
 private:
 	void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;	
+
+	void evaluateTransform();
 
 }; // class LightNode
 
