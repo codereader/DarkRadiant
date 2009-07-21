@@ -195,8 +195,6 @@ public:
 	void evaluateBRep() const;
 	
 	void transformChanged();
-	typedef MemberCaller<Brush, &Brush::transformChanged> TransformChangedCaller;
-	
 	void evaluateTransform();
 	
 	const Matrix4& localToParent() const;
