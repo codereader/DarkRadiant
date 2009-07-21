@@ -7,7 +7,6 @@
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :
-	Transformable(Callback(), Callback()),
 	m_patch(*this, 
 			EvaluateTransformCaller(*this), 
 			Node::BoundsChangedCaller(*this)), // create the m_patch member with the node parameters
@@ -47,7 +46,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 	Renderable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(Callback(), Callback()),
+	Transformable(other),
 	Patch::Observer(other),
 	m_patch(other.m_patch, *this, EvaluateTransformCaller(*this), 
 		    Node::BoundsChangedCaller(*this)), // create the patch out of the <other> one

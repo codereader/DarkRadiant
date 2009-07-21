@@ -4,7 +4,6 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Callback(), Callback()),
 	m_contained(*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
@@ -18,7 +17,7 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	Transformable(Callback(), Callback()),
+	Transformable(other),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),

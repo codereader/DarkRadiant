@@ -6,7 +6,6 @@ namespace entity {
 
 Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Callback(), Callback()),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
@@ -34,7 +33,7 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	Bounded(other),
-	Transformable(Callback(), Callback()),
+	Transformable(other),
 	CurveNode(other),
 	m_contained(
 		other.m_contained,
