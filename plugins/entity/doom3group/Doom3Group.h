@@ -134,8 +134,8 @@ public:
 	
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<Doom3Group, &Doom3Group::transformChanged> TransformChangedCaller;
+	/*void transformChanged();
+	typedef MemberCaller<Doom3Group, &Doom3Group::transformChanged> TransformChangedCaller;*/
 	
 	// Translates the origin only (without the children)
 	void translateOrigin(const Vector3& translation);

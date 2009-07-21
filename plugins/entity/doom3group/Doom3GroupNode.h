@@ -128,6 +128,15 @@ public:
 
 	void transformComponents(const Matrix4& matrix);
 
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
+
 private:
 	void construct();
 
