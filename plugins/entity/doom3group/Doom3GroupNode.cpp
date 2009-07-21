@@ -10,8 +10,7 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)		
+		Node::BoundsChangedCaller(*this)
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 SelectionChangedComponentCaller(*this)),
@@ -41,8 +40,7 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 		other.m_contained,
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)		
+		Node::BoundsChangedCaller(*this)
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 SelectionChangedComponentCaller(*this)),
