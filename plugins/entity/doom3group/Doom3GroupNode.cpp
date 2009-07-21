@@ -6,7 +6,7 @@ namespace entity {
 
 Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	Transformable(Callback(), ApplyTransformCaller(*this)),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
@@ -35,7 +35,7 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	Bounded(other),
-	Transformable(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	Transformable(Callback(), ApplyTransformCaller(*this)),
 	CurveNode(other),
 	m_contained(
 		other.m_contained,
@@ -353,6 +353,51 @@ void Doom3GroupNode::refreshModel() {
 
 	// Trigger a skin change
 	skinChanged(m_contained.getEntity().getKeyValue("skin"));
+}
+
+void Doom3GroupNode::_onTransformationChanged()
+{
+	// If this is a container, pass the call to the children and leave the entity unharmed
+	if (!m_contained.isModel())
+	{
+		ChildTransformReverter reverter;
+		traverse(reverter);
+
+		evaluateTransform();
+	}
+	else
+	{
+		// It's a model
+		m_contained.revertTransform();
+		evaluateTransform();
+		m_contained.updateTransform();
+	}
+
+	m_contained.m_curveNURBS.curveChanged();
+	m_contained.m_curveCatmullRom.curveChanged();
+
+	/*if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+		
+		m_contained.translate(getTranslation());
+		m_contained.rotate(getRotation());
+
+		m_contained.updateTransform();
+	}*/
+}
+
+void Doom3GroupNode::_applyTransformation()
+{
+	/*if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+
+		m_contained.translate(getTranslation());
+		m_contained.rotate(getRotation());
+
+		m_contained.freezeTransform();
+	}*/
 }
 
 } // namespace entity

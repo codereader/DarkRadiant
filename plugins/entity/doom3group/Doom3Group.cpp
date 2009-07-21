@@ -250,7 +250,7 @@ void Doom3Group::freezeTransform() {
 	m_curveCatmullRom.saveToEntity(_entity);
 }
 
-void Doom3Group::transformChanged() {
+/*void Doom3Group::transformChanged() {
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!isModel()) {
 		ChildTransformReverter reverter;
@@ -265,7 +265,7 @@ void Doom3Group::transformChanged() {
 	}
 	m_curveNURBS.curveChanged();
 	m_curveCatmullRom.curveChanged();
-}
+}*/
 
 void Doom3Group::appendControlPoints(unsigned int numPoints) {
 	if (!m_curveNURBS.isEmpty()) {
