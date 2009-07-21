@@ -6,7 +6,7 @@ namespace entity {
 
 Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Callback(), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
@@ -35,7 +35,7 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	Bounded(other),
-	Transformable(Callback(), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	CurveNode(other),
 	m_contained(
 		other.m_contained,
@@ -234,10 +234,6 @@ Entity& Doom3GroupNode::getEntity() {
 	return m_contained.getEntity();
 }
 
-/*void Doom3GroupNode::setNamespace(INamespace& space) {
-	m_contained.getNamespaced().setNamespace(space);
-}*/
-
 void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());
 	SelectionIntersection best;
@@ -332,12 +328,6 @@ void Doom3GroupNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void Doom3GroupNode::applyTransform() {
-	m_contained.revertTransform();
-	evaluateTransform();
-	m_contained.freezeTransform();
-}
-
 void Doom3GroupNode::skinChanged(const std::string& value) {
 	if (m_contained.isModel()) {
 		// Instantiate a walker class equipped with the new value
@@ -375,29 +365,13 @@ void Doom3GroupNode::_onTransformationChanged()
 
 	m_contained.m_curveNURBS.curveChanged();
 	m_contained.m_curveCatmullRom.curveChanged();
-
-	/*if (getType() == TRANSFORM_PRIMITIVE)
-	{
-		m_contained.revertTransform();
-		
-		m_contained.translate(getTranslation());
-		m_contained.rotate(getRotation());
-
-		m_contained.updateTransform();
-	}*/
 }
 
 void Doom3GroupNode::_applyTransformation()
 {
-	/*if (getType() == TRANSFORM_PRIMITIVE)
-	{
-		m_contained.revertTransform();
-
-		m_contained.translate(getTranslation());
-		m_contained.rotate(getRotation());
-
-		m_contained.freezeTransform();
-	}*/
+	m_contained.revertTransform();
+	evaluateTransform();
+	m_contained.freezeTransform();
 }
 
 } // namespace entity

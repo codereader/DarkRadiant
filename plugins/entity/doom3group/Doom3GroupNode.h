@@ -62,9 +62,6 @@ public:
 	virtual void insertControlPointsAtSelected();
 	virtual void convertCurveType();
 
-	// Namespaced implementation
-	//virtual void setNamespace(INamespace& space);
-
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
@@ -119,9 +116,6 @@ public:
 
 	void evaluateTransform();
 	typedef MemberCaller<Doom3GroupNode, &Doom3GroupNode::evaluateTransform> EvaluateTransformCaller;
-
-	void applyTransform();
-	typedef MemberCaller<Doom3GroupNode, &Doom3GroupNode::applyTransform> ApplyTransformCaller;
 
 	void skinChanged(const std::string& value);
 	typedef MemberCaller1<Doom3GroupNode, const std::string&, &Doom3GroupNode::skinChanged> SkinChangedCaller;
