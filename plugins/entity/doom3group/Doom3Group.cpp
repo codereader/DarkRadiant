@@ -98,11 +98,6 @@ const Doom3Entity& Doom3Group::getEntity() const {
 	return _entity;
 }
 
-/*Namespaced& Doom3Group::getNamespaced() {
-	static NameSpaced n();
-	return n;
-}*/
-
 NameKey& Doom3Group::getNameable() {
 	return m_named;
 }
@@ -249,23 +244,6 @@ void Doom3Group::freezeTransform() {
 	m_curveCatmullRom.freezeTransform();
 	m_curveCatmullRom.saveToEntity(_entity);
 }
-
-/*void Doom3Group::transformChanged() {
-	// If this is a container, pass the call to the children and leave the entity unharmed
-	if (!isModel()) {
-		ChildTransformReverter reverter;
-		_owner.traverse(reverter);
-		m_evaluateTransform();
-	}
-	else {
-		// It's a model
-		revertTransform();
-		m_evaluateTransform();
-		updateTransform();
-	}
-	m_curveNURBS.curveChanged();
-	m_curveCatmullRom.curveChanged();
-}*/
 
 void Doom3Group::appendControlPoints(unsigned int numPoints) {
 	if (!m_curveNURBS.isEmpty()) {
