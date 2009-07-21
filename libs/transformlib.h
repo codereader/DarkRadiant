@@ -58,9 +58,6 @@ public:
   }
 };
 
-
-#include "generic/callback.h"
-
 inline Matrix4 matrix4_transform_for_components(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 {
   Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
@@ -84,18 +81,13 @@ class Transformable :
 	Quaternion _rotation;
 	Vector3 _scale;
 
-	Callback _changed;
-	Callback _apply;
-
 	TransformModifierType _type;
 public:
 
-	Transformable(const Callback& changed, const Callback& apply) :
+	Transformable() :
 		_translation(c_translation_identity),
 		_rotation(c_quaternion_identity),
 		_scale(c_scale_identity),
-		_changed(changed),
-		_apply(apply),
 		_type(TRANSFORM_PRIMITIVE)
 	{}
     
@@ -112,7 +104,6 @@ public:
 	void setTranslation(const Vector3& value)
 	{
 		_translation = value;
-		_changed();
 
 		_onTransformationChanged();
 	}
@@ -120,7 +111,6 @@ public:
 	void setRotation(const Quaternion& value)
 	{
 		_rotation = value;
-		_changed();
 
 		_onTransformationChanged();
 	}
@@ -128,7 +118,6 @@ public:
 	void setScale(const Vector3& value)
 	{
 		_scale = value;
-		_changed();
 
 		_onTransformationChanged();
 	}
@@ -139,14 +128,12 @@ public:
 			_rotation != c_rotation_identity || 
 			_scale != c_scale_identity)
 		{
-			_apply();
 			_applyTransformation();
 
 			_translation = c_translation_identity;
 			_rotation = c_rotation_identity;
 			_scale = c_scale_identity;
 
-			_changed();
 			_onTransformationChanged();
 		}
 	}
@@ -161,10 +148,7 @@ public:
 		_rotation = c_rotation_identity;
 		_scale = c_scale_identity;
 
-		_apply();
 		_applyTransformation();
-
-		_changed();
 
 		_onTransformationChanged();
 	}

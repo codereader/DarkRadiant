@@ -6,7 +6,6 @@ namespace entity {
 
 SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Callback(), Callback()),
 	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this)),
@@ -22,7 +21,7 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(Callback(), Callback()),
+	Transformable(other),
 	_speaker(other._speaker, 
 		*this, 
 		Node::TransformChangedCaller(*this), 

@@ -6,7 +6,6 @@ namespace entity {
 
 GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Callback(), Callback()),
 	m_contained(*this, 
 		Node::TransformChangedCaller(*this))
 {}
@@ -20,7 +19,7 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(Callback(), Callback()),
+	Transformable(other),
 	m_contained(other.m_contained, 
 		*this, 
 		Node::TransformChangedCaller(*this))
