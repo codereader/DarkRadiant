@@ -10,8 +10,7 @@
 namespace entity {
 
 GenericEntity::GenericEntity(GenericEntityNode& node, 
-		const Callback& transformChanged, 
-		const Callback& evaluateTransform) :
+		const Callback& transformChanged) :
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -23,7 +22,6 @@ GenericEntity::GenericEntity(GenericEntityNode& node,
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
 {
 	construct();
@@ -31,8 +29,7 @@ GenericEntity::GenericEntity(GenericEntityNode& node,
 
 GenericEntity::GenericEntity(const GenericEntity& other, 
 		GenericEntityNode& node, 
-		const Callback& transformChanged, 
-		const Callback& evaluateTransform) :
+		const Callback& transformChanged) :
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -44,7 +41,6 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
 {
 	construct();
@@ -62,13 +58,6 @@ void GenericEntity::instanceDetach(const scene::Path& path) {
 		m_entity.detachObserver(&m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
-}
-
-Doom3Entity& GenericEntity::getEntity() {
-	return m_entity;
-}
-const Doom3Entity& GenericEntity::getEntity() const {
-	return m_entity;
 }
 
 NameKey& GenericEntity::getNameable() {
@@ -189,12 +178,6 @@ void GenericEntity::freezeTransform() {
 		m_angleKey.m_angle = m_angle;
 		m_angleKey.write(&m_entity);
 	}
-}
-
-void GenericEntity::transformChanged() {
-	revertTransform();
-	m_evaluateTransform();
-	updateTransform();
 }
 
 void GenericEntity::construct() {

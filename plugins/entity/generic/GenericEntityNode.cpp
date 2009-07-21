@@ -6,10 +6,9 @@ namespace entity {
 
 GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	m_contained(*this, 
-		Node::TransformChangedCaller(*this), 
-		EvaluateTransformCaller(*this))
+		Node::TransformChangedCaller(*this))
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
@@ -21,15 +20,11 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	m_contained(other.m_contained, 
 		*this, 
-		Node::TransformChangedCaller(*this), 
-		EvaluateTransformCaller(*this))
+		Node::TransformChangedCaller(*this))
 {}
-
-GenericEntityNode::~GenericEntityNode() {
-}
 
 // Snappable implementation
 void GenericEntityNode::snapto(float snap) {
@@ -43,7 +38,7 @@ const Matrix4& GenericEntityNode::localToParent() const {
 
 // EntityNode implementation
 Entity& GenericEntityNode::getEntity() {
-	return m_contained.getEntity();
+	return _entity;
 }
 
 void GenericEntityNode::refreshModel() {
@@ -61,11 +56,6 @@ VolumeIntersectionValue GenericEntityNode::intersectVolume(
 {
 	return m_contained.intersectVolume(test, localToWorld);
 }
-
-// Namespaced implementation
-/*void GenericEntityNode::setNamespace(INamespace& space) {
-	m_contained.getNamespaced().setNamespace(space);
-}*/
 
 void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
 	m_contained.testSelect(selector, test, localToWorld());
@@ -106,17 +96,30 @@ void GenericEntityNode::renderWireframe(RenderableCollector& collector, const Vo
 	m_contained.renderWireframe(collector, volume, localToWorld());
 }
 
-void GenericEntityNode::evaluateTransform() {
-	if(getType() == TRANSFORM_PRIMITIVE) {
+void GenericEntityNode::_onTransformationChanged()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+		
 		m_contained.translate(getTranslation());
 		m_contained.rotate(getRotation());
+
+		m_contained.updateTransform();
 	}
 }
 
-void GenericEntityNode::applyTransform() {
-	m_contained.revertTransform();
-	evaluateTransform();
-	m_contained.freezeTransform();
+void GenericEntityNode::_applyTransformation()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+		
+		m_contained.translate(getTranslation());
+		m_contained.rotate(getRotation());
+
+		m_contained.freezeTransform();
+	}
 }
 
 } // namespace entity

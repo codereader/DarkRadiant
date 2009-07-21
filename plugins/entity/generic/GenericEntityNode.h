@@ -35,8 +35,6 @@ public:
 	GenericEntityNode(const IEntityClassConstPtr& eclass);
 	GenericEntityNode(const GenericEntityNode& other);
 
-	virtual ~GenericEntityNode();
-
 	// Snappable implementation
 	virtual void snapto(float snap);
 
@@ -70,10 +68,14 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	void evaluateTransform();
-	typedef MemberCaller<GenericEntityNode, &GenericEntityNode::evaluateTransform> EvaluateTransformCaller;
-	void applyTransform();
-	typedef MemberCaller<GenericEntityNode, &GenericEntityNode::applyTransform> ApplyTransformCaller;
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
 };
 
 } // namespace entity
