@@ -65,21 +65,16 @@ class GenericEntity :
 public:
 	// Constructor
 	GenericEntity(GenericEntityNode& node, 
-				  const Callback& transformChanged, 
-				  const Callback& evaluateTransform);
+				  const Callback& transformChanged);
 	
 	// Copy constructor
 	GenericEntity(const GenericEntity& other, 
 				  GenericEntityNode& node, 
-				  const Callback& transformChanged, 
-				  const Callback& evaluateTransform);
+				  const Callback& transformChanged);
 
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
-
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
 
 	NameKey& getNameable();
 	const NameKey& getNameable() const;
@@ -103,8 +98,6 @@ public:
 	
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<GenericEntity, &GenericEntity::transformChanged> TransformChangedCaller;
 
 public:
 
