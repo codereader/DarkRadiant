@@ -86,7 +86,7 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	// TransformNode implementation
+	// TransformNode implementation (returns identity)
 	virtual const Matrix4& localToParent() const;
   
   	// MapImporter implementation
@@ -164,12 +164,17 @@ public:
 	// Renders the components of this patch instance, makes use of the Patch::render_component() method 
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	// Apply the transformation to the patch
-	void applyTransform();
-	typedef MemberCaller<PatchNode, &PatchNode::applyTransform> ApplyTransformCaller;
-
 	void evaluateTransform();
 	typedef MemberCaller<PatchNode, &PatchNode::evaluateTransform> EvaluateTransformCaller;
+
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
 
 private:
 	// Transforms the patch components with the given transformation matrix
