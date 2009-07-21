@@ -6,12 +6,11 @@ namespace entity {
 
 LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	_light(_entity,
 		   *this,
            Node::TransformChangedCaller(*this), 
-           Node::BoundsChangedCaller(*this), 
-           EvaluateTransformCaller(*this)),
+           Node::BoundsChangedCaller(*this)),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
 	_lightTargetInstance(VertexInstance(_light.targetTransformed(), SelectedChangedComponentCaller(*this))),
 	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
@@ -27,14 +26,13 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 LightNode::LightNode(const LightNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	Transformable(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	scene::SelectableLight(other),
 	_light(other._light,
 		   *this,
            _entity,
            Node::TransformChangedCaller(*this), 
-           Node::BoundsChangedCaller(*this), 
-           EvaluateTransformCaller(*this)),
+           Node::BoundsChangedCaller(*this)),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
 	_lightTargetInstance(VertexInstance(_light.targetTransformed(), SelectedChangedComponentCaller(*this))),
 	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
@@ -82,7 +80,7 @@ const Matrix4& LightNode::localToParent() const {
 }
 
 Entity& LightNode::getEntity() {
-	return _light.getEntity();
+	return _entity;
 }
 
 void LightNode::refreshModel() {
@@ -422,13 +420,6 @@ void LightNode::evaluateTransform() {
 	}
 }
 
-void LightNode::applyTransform() {
-	_light.revertTransform();
-	evaluateTransform();
-	_light.freezeTransform();
-}
-
-
 Vector3 LightNode::worldOrigin() const
 {
     return _light.worldOrigin();
@@ -457,6 +448,20 @@ const Vector3& LightNode::colour() const {
 
 const Matrix4& LightNode::rotation() const {
 	return _light.rotation();
+}
+
+void LightNode::_onTransformationChanged()
+{
+	_light.revertTransform();
+	evaluateTransform();
+	_light.updateOrigin();
+}
+
+void LightNode::_applyTransformation()
+{
+	_light.revertTransform();
+	evaluateTransform();
+	_light.freezeTransform();
 }
 
 } // namespace entity
