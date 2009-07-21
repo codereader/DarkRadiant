@@ -87,13 +87,6 @@ void Doom3Group::instanceDetach(const scene::Path& path) {
 	}
 }
 
-Doom3Entity& Doom3Group::getEntity() {
-	return _entity;
-}
-const Doom3Entity& Doom3Group::getEntity() const {
-	return _entity;
-}
-
 NameKey& Doom3Group::getNameable() {
 	return m_named;
 }
@@ -279,7 +272,6 @@ void Doom3Group::construct()
 	m_keyObservers.insert(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 
 	m_isModel = false;
-	//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3Doom3Group);
 
 	_entity.attachObserver(&m_keyObservers);
 }
@@ -308,12 +300,9 @@ bool Doom3Group::isModel() const {
 void Doom3Group::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
 		// The model key is not recognised as "name"
-		//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3);
 		m_model.modelChanged(m_modelKey);
 	}
 	else if (!newValue && m_isModel) {
-		// The model key should be recognised as "name" (important for "namespacing")
-		//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3Doom3Group);
 		// Clear the model path
 		m_model.modelChanged("");
 		m_nameOrigin = m_origin;
