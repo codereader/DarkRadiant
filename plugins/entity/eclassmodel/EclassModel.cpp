@@ -7,9 +7,8 @@
 namespace entity {
 
 EclassModel::EclassModel(EclassModelNode& owner, 
-						 const Callback& transformChanged, 
-						 const Callback& evaluateTransform) :
-	_owner(owner),
+						 const Callback& transformChanged)
+:	_owner(owner),
 	m_entity(owner._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -19,17 +18,15 @@ EclassModel::EclassModel(EclassModelNode& owner,
 	m_model(owner),
 	m_named(m_entity),
 	m_renderOrigin(m_origin),
-	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_transformChanged(transformChanged)
 {
 	construct();
 }
 
 EclassModel::EclassModel(const EclassModel& other, 
 						 EclassModelNode& owner,
-						 const Callback& transformChanged, 
-						 const Callback& evaluateTransform) :
-	_owner(owner),	
+						 const Callback& transformChanged)
+:	_owner(owner),	
 	m_entity(owner._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -39,8 +36,7 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_model(owner),
 	m_named(m_entity),
 	m_renderOrigin(m_origin),
-	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_transformChanged(transformChanged)
 {
 	construct();
 }
@@ -113,17 +109,6 @@ void EclassModel::removeKeyObserver(const std::string& key, const KeyObserver& o
 	m_keyObservers.erase(key, observer);
 }
 
-Doom3Entity& EclassModel::getEntity() {
-	return m_entity;
-}
-const Doom3Entity& EclassModel::getEntity() const {
-	return m_entity;
-}
-
-/*Namespaced& EclassModel::getNamespaced() {
-	return m_nameKeys;
-}*/
-
 NameKey& EclassModel::getNameable() {
 	return m_named;
 }
@@ -178,12 +163,6 @@ void EclassModel::freezeTransform() {
 	m_originKey.write(&m_entity);
 	m_rotationKey.m_rotation = m_rotation;
 	m_rotationKey.write(&m_entity, true);
-}
-
-void EclassModel::transformChanged() {
-	revertTransform();
-	m_evaluateTransform();
-	updateTransform();
 }
 
 void EclassModel::modelChanged(const std::string& value) {

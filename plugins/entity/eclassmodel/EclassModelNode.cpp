@@ -4,11 +4,9 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(EclassModel::TransformChangedCaller(m_contained), 
-					  ApplyTransformCaller(*this)),
+	Transformable(Callback(), ApplyTransformCaller(*this)),
 	m_contained(*this, // pass <self> as scene::INode&
-				Node::TransformChangedCaller(*this), 
-				EvaluateTransformCaller(*this)),
+				Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
 {
 	construct();
@@ -20,12 +18,10 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	Transformable(EclassModel::TransformChangedCaller(m_contained), 
-					  ApplyTransformCaller(*this)),
+	Transformable(Callback(), ApplyTransformCaller(*this)),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&
-				Node::TransformChangedCaller(*this), 
-				EvaluateTransformCaller(*this)),
+				Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
 {
 	construct();
@@ -58,15 +54,15 @@ const Matrix4& EclassModelNode::localToParent() const {
 
 // EntityNode implementation
 Entity& EclassModelNode::getEntity() {
-	return m_contained.getEntity();
+	return _entity;
 }
 
 void EclassModelNode::refreshModel() {
 	// Simulate a "model" key change
-	m_contained.modelChanged(m_contained.getEntity().getKeyValue("model"));
+	m_contained.modelChanged(_entity.getKeyValue("model"));
 
 	// Trigger a skin change
-	skinChanged(m_contained.getEntity().getKeyValue("skin"));
+	skinChanged(_entity.getKeyValue("skin"));
 }
 
 void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
@@ -76,7 +72,7 @@ void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
 	// greebo: Check if the skin needs updating before rendering.
 	if (_updateSkin) {
 		// Instantiate a walker class equipped with the new value
-		SkinChangedWalker walker(m_contained.getEntity().getKeyValue("skin"));
+		SkinChangedWalker walker(_entity.getKeyValue("skin"));
 		// Update all children
 		Node_traverseSubgraph(Node::getSelf(), walker);
 
@@ -132,6 +128,19 @@ void EclassModelNode::skinChanged(const std::string& value) {
 	SkinChangedWalker walker(value);
 	// Update all children
 	Node_traverseSubgraph(Node::getSelf(), walker);
+}
+
+void EclassModelNode::_onTransformationChanged()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+		
+		m_contained.translate(getTranslation());
+		m_contained.rotate(getRotation());
+
+		m_contained.updateTransform();
+	}
 }
 
 } // namespace entity

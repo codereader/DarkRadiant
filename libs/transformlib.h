@@ -77,93 +77,124 @@ const Vector3 c_translation_identity(0, 0, 0);
 const Quaternion c_rotation_identity(c_quaternion_identity);
 const Vector3 c_scale_identity(1, 1, 1);
 
-class Transformable : public ITransformable
+class Transformable : 
+	public ITransformable
 {
-	Vector3 m_translation;
-	Quaternion m_rotation;
-	Vector3 m_scale;
+	Vector3 _translation;
+	Quaternion _rotation;
+	Vector3 _scale;
 
-	Callback m_changed;
-	Callback m_apply;
+	Callback _changed;
+	Callback _apply;
 
-	TransformModifierType m_type;
+	TransformModifierType _type;
 public:
 
-  Transformable(const Callback& changed, const Callback& apply) :
-    m_translation(c_translation_identity),
-    m_rotation(c_quaternion_identity),
-    m_scale(c_scale_identity),
-    m_changed(changed),
-    m_apply(apply),
-    m_type(TRANSFORM_PRIMITIVE)
-  {
-  }
+	Transformable(const Callback& changed, const Callback& apply) :
+		_translation(c_translation_identity),
+		_rotation(c_quaternion_identity),
+		_scale(c_scale_identity),
+		_changed(changed),
+		_apply(apply),
+		_type(TRANSFORM_PRIMITIVE)
+	{}
     
-  void setType(TransformModifierType type)
-  {
-    m_type = type;
-  }
-  TransformModifierType getType() const
-  {
-    return m_type;
-  }
-  void setTranslation(const Vector3& value)
-  {
-    m_translation = value;
-    m_changed();
-  }
-  void setRotation(const Quaternion& value)
-  {
-    m_rotation = value;
-    m_changed();
-  }
-  void setScale(const Vector3& value)
-  {
-    m_scale = value;
-    m_changed();
-  }
-  void freezeTransform()
-  {
-    if(m_translation != c_translation_identity
-      || m_rotation != c_rotation_identity
-      || m_scale != c_scale_identity)
-    {
-      m_apply();
-      m_translation = c_translation_identity;
-      m_rotation = c_rotation_identity;
-      m_scale = c_scale_identity;
-      m_changed();
-    }
-  }
+	void setType(TransformModifierType type)
+	{
+		_type = type;
+	}
+
+	TransformModifierType getType() const
+	{
+		return _type;
+	}
+
+	void setTranslation(const Vector3& value)
+	{
+		_translation = value;
+		_changed();
+
+		_onTransformationChanged();
+	}
+
+	void setRotation(const Quaternion& value)
+	{
+		_rotation = value;
+		_changed();
+
+		_onTransformationChanged();
+	}
+
+	void setScale(const Vector3& value)
+	{
+		_scale = value;
+		_changed();
+
+		_onTransformationChanged();
+	}
+
+	void freezeTransform()
+	{
+		if (_translation != c_translation_identity || 
+			_rotation != c_rotation_identity || 
+			_scale != c_scale_identity)
+		{
+			_apply();
+
+			_translation = c_translation_identity;
+			_rotation = c_rotation_identity;
+			_scale = c_scale_identity;
+
+			_changed();
+			_onTransformationChanged();
+		}
+	}
   
-  /* greebo: This reverts the currently active transformation
-   * by setting the scale/rotation/translation to identity and
-   * calling apply()
-   */
-  void revertTransform()
-  {
-    m_translation = c_translation_identity;
-    m_rotation = c_rotation_identity;
-    m_scale = c_scale_identity;
-    m_apply();
-    m_changed();
-  }
-  const Vector3& getTranslation() const
-  {
-    return m_translation;
-  }
-  const Quaternion& getRotation() const
-  {
-    return m_rotation;
-  }
-  const Vector3& getScale() const
-  {
-    return m_scale;
-  }
-  Matrix4 calculateTransform() const
-  {
-    return matrix4_transform_for_components(getTranslation(), getRotation(), getScale());
-  }
+	/* greebo: This reverts the currently active transformation
+	* by setting the scale/rotation/translation to identity and
+	* calling apply()
+	*/
+	void revertTransform()
+	{
+		_translation = c_translation_identity;
+		_rotation = c_rotation_identity;
+		_scale = c_scale_identity;
+
+		_apply();
+		_changed();
+
+		_onTransformationChanged();
+	}
+  
+	const Vector3& getTranslation() const
+	{
+		return _translation;
+	}
+
+	const Quaternion& getRotation() const
+	{
+		return _rotation;
+	}
+
+	const Vector3& getScale() const
+	{
+		return _scale;
+	}
+
+	Matrix4 calculateTransform() const
+	{
+		return matrix4_transform_for_components(getTranslation(), getRotation(), getScale());
+	}
+
+protected:
+	/**
+	 * greebo: Signal method for subclasses. This gets called
+	 * as soon as anything (translation, scale, rotation) is changed.
+	 *
+	 * To be implemented by subclasses
+	 */
+	virtual void _onTransformationChanged()
+	{}
 };
 
 

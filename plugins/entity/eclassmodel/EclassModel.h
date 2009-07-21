@@ -44,21 +44,18 @@ class EclassModel :
 	RenderablePivot m_renderOrigin;
 
 	Callback m_transformChanged;
-	Callback m_evaluateTransform;
 	
 	InstanceCounter m_instanceCounter;
 public:
 	EclassModel(EclassModelNode& owner,
-				const Callback& transformChanged, 
-				const Callback& evaluateTransform);
+				const Callback& transformChanged);
 	
 	// Copy Constructor
 	EclassModel(const EclassModel& other,
 				EclassModelNode& owner, 
-				const Callback& transformChanged, 
-				const Callback& evaluateTransform);
+				const Callback& transformChanged);
 
-	virtual ~EclassModel();
+	~EclassModel();
 
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
@@ -67,10 +64,6 @@ public:
 	void addKeyObserver(const std::string& key, const KeyObserver& observer);
 	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
 
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
-
-	//Namespaced& getNamespaced();
 	NameKey& getNameable();
 	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
@@ -85,8 +78,6 @@ public:
 	
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<EclassModel, &EclassModel::transformChanged> TransformChangedCaller;	
 
 public:
 	void construct();
