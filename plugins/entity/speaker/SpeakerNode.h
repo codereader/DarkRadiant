@@ -42,8 +42,6 @@ public:
 	SpeakerNode(const IEntityClassConstPtr& eclass);
 	SpeakerNode(const SpeakerNode& other);
 
-	virtual ~SpeakerNode();
-
 	// Snappable implementation
 	virtual void snapto(float snap);
 
@@ -89,11 +87,17 @@ public:
 	void selectedChangedComponent(const Selectable& selectable);
 	typedef MemberCaller1<SpeakerNode, const Selectable&, &SpeakerNode::selectedChangedComponent> SelectedChangedComponentCaller;
 
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
+
+private:
 	void evaluateTransform();
-	typedef MemberCaller<SpeakerNode, &SpeakerNode::evaluateTransform> EvaluateTransformCaller;
-	
-	void applyTransform();
-	typedef MemberCaller<SpeakerNode, &SpeakerNode::applyTransform> ApplyTransformCaller;
 };
 
 } // namespace entity
