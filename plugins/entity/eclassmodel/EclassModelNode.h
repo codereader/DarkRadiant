@@ -65,9 +65,6 @@ public:
 	// Nameable implementation
 	virtual std::string name() const;
 
-	void applyTransform();
-	typedef MemberCaller<EclassModelNode, &EclassModelNode::applyTransform> ApplyTransformCaller;
-
 	void skinChanged(const std::string& value);
 	typedef MemberCaller1<EclassModelNode, const std::string&, &EclassModelNode::skinChanged> SkinChangedCaller;
 
@@ -76,9 +73,11 @@ protected:
 	// scale, rotation or translation is changed.
 	void _onTransformationChanged();
 
-private:
-	void evaluateTransform();
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
 
+private:
 	void construct();
 	void destroy();
 };

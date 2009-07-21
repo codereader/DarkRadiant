@@ -140,6 +140,7 @@ public:
 			_scale != c_scale_identity)
 		{
 			_apply();
+			_applyTransformation();
 
 			_translation = c_translation_identity;
 			_rotation = c_rotation_identity;
@@ -161,6 +162,8 @@ public:
 		_scale = c_scale_identity;
 
 		_apply();
+		_applyTransformation();
+
 		_changed();
 
 		_onTransformationChanged();
@@ -194,6 +197,13 @@ protected:
 	 * To be implemented by subclasses
 	 */
 	virtual void _onTransformationChanged()
+	{}
+
+	/**
+	 * greebo: Signal method to be implemented by subclasses.
+	 * Is invoked whenever the transformation is reverted or frozen.
+	 */
+	virtual void _applyTransformation()
 	{}
 };
 

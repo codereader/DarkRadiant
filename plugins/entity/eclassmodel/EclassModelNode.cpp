@@ -4,7 +4,7 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Callback(), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	m_contained(*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
@@ -18,7 +18,7 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
-	Transformable(Callback(), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),
@@ -110,19 +110,6 @@ std::string EclassModelNode::name() const {
 	return m_contained.getNameable().name();
 }
 
-void EclassModelNode::evaluateTransform() {
-	if (getType() == TRANSFORM_PRIMITIVE) {
-		m_contained.translate(getTranslation());
-		m_contained.rotate(getRotation());
-	}
-}
-
-void EclassModelNode::applyTransform() {
-	m_contained.revertTransform();
-	evaluateTransform();
-	m_contained.freezeTransform();
-}
-
 void EclassModelNode::skinChanged(const std::string& value) {
 	// Instantiate a walker class equipped with the new value
 	SkinChangedWalker walker(value);
@@ -140,6 +127,19 @@ void EclassModelNode::_onTransformationChanged()
 		m_contained.rotate(getRotation());
 
 		m_contained.updateTransform();
+	}
+}
+
+void EclassModelNode::_applyTransformation()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+
+		m_contained.translate(getTranslation());
+		m_contained.rotate(getRotation());
+
+		m_contained.freezeTransform();
 	}
 }
 
