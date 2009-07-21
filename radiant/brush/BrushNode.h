@@ -190,16 +190,21 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void viewChanged() const;
 
-	// Gets called by the Transformable
-	void applyTransform();
-	typedef MemberCaller<BrushNode, &BrushNode::applyTransform> ApplyTransformCaller;
-
 	void evaluateTransform();
 	typedef MemberCaller<BrushNode, &BrushNode::evaluateTransform> EvaluateTransformCaller;
 
 	void setClipPlane(const Plane3& plane);
 
 	const BrushInstanceVisitor& forEachFaceInstance(const BrushInstanceVisitor& visitor);
+
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
 
 private:
 	void transformComponents(const Matrix4& matrix);

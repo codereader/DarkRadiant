@@ -9,7 +9,7 @@
 BrushNode::BrushNode() :
 	BrushTokenImporter(m_brush),
 	BrushTokenExporter(m_brush),
-	Transformable(Brush::TransformChangedCaller(m_brush), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	m_brush(EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
@@ -46,7 +46,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Renderable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(Brush::TransformChangedCaller(m_brush), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	m_brush(other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
@@ -506,12 +506,6 @@ void BrushNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void BrushNode::applyTransform() {
-	m_brush.revertTransform();
-	evaluateTransform();
-	m_brush.freezeTransform();
-}
-
 void BrushNode::setClipPlane(const Plane3& plane) {
 	m_clipPlane.setPlane(m_brush, plane);
 }
@@ -521,6 +515,18 @@ const BrushInstanceVisitor& BrushNode::forEachFaceInstance(const BrushInstanceVi
 		visitor.visit(*i);
 	}
 	return visitor;
+}
+
+void BrushNode::_onTransformationChanged()
+{
+	m_brush.transformChanged();
+}
+
+void BrushNode::_applyTransformation()
+{
+	m_brush.revertTransform();
+	evaluateTransform();
+	m_brush.freezeTransform();
 }
 
 ShaderPtr BrushNode::m_state_selpoint;
