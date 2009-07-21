@@ -93,22 +93,22 @@ void Doom3GroupNode::appendControlPoints(unsigned int numPoints) {
 void Doom3GroupNode::removeSelectedControlPoints() {
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.removeSelectedControlPoints();
-		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline, _entity);
 	}
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.removeSelectedControlPoints();
-		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs, _entity);
 	}
 }
 
 void Doom3GroupNode::insertControlPointsAtSelected() {
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.insertControlPointsAtSelected();
-		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline, _entity);
 	}
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.insertControlPointsAtSelected();
-		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs, _entity);
 	}
 }
 
@@ -188,11 +188,11 @@ const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
 void Doom3GroupNode::snapComponents(float snap) {
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.snapto(snap);
-		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs, _entity);
 	}
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.snapto(snap);
-		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline, _entity);
 	}
 	if (_originInstance.isSelected()) {
 		m_contained.snapOrigin(snap);
@@ -229,7 +229,7 @@ const Matrix4& Doom3GroupNode::localToParent() const {
 }
 
 Entity& Doom3GroupNode::getEntity() {
-	return m_contained.getEntity();
+	return _entity;
 }
 
 void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
@@ -253,7 +253,7 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 	if (_updateSkin) {
 		if (m_contained.isModel()) {
 			// Instantiate a walker class equipped with the new value
-			SkinChangedWalker walker(m_contained.getEntity().getKeyValue("skin"));
+			SkinChangedWalker walker(_entity.getKeyValue("skin"));
 			// Update all children
 			Node_traverseSubgraph(Node::getSelf(), walker);
 		}
@@ -337,10 +337,10 @@ void Doom3GroupNode::skinChanged(const std::string& value) {
 
 void Doom3GroupNode::refreshModel() {
 	// Simulate a "model" key change
-	m_contained.modelChanged(m_contained.getEntity().getKeyValue("model"));
+	m_contained.modelChanged(_entity.getKeyValue("model"));
 
 	// Trigger a skin change
-	skinChanged(m_contained.getEntity().getKeyValue("skin"));
+	skinChanged(_entity.getKeyValue("skin"));
 }
 
 void Doom3GroupNode::_onTransformationChanged()

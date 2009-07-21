@@ -93,12 +93,8 @@ public:
 	void addKeyObserver(const std::string& key, const KeyObserver& observer);
 	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
 
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
-
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;
-	//Namespaced& getNamespaced();
 	NameKey& getNameable();
 	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
