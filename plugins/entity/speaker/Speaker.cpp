@@ -19,8 +19,7 @@ namespace entity {
 
 Speaker::Speaker(SpeakerNode& node, 
 		const Callback& transformChanged, 
-		const Callback& boundsChanged,
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -32,8 +31,7 @@ Speaker::Speaker(SpeakerNode& node,
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
-	m_boundsChanged(boundsChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_boundsChanged(boundsChanged)
 {
 	construct();
 }
@@ -41,8 +39,7 @@ Speaker::Speaker(SpeakerNode& node,
 Speaker::Speaker(const Speaker& other, 
 		SpeakerNode& node, 
 		const Callback& transformChanged, 
-		const Callback& boundsChanged,
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -54,8 +51,7 @@ Speaker::Speaker(const Speaker& other,
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
-	m_boundsChanged(boundsChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_boundsChanged(boundsChanged)
 {
 	construct();
 }
@@ -72,13 +68,6 @@ void Speaker::instanceDetach(const scene::Path& path) {
 		m_entity.detachObserver(&m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
-}
-
-Doom3Entity& Speaker::getEntity() {
-	return m_entity;
-}
-const Doom3Entity& Speaker::getEntity() const {
-	return m_entity;
 }
 
 NameKey& Speaker::getNameable() {
@@ -206,12 +195,6 @@ void Speaker::freezeTransform() {
 			m_entity.setKeyValue(KEY_S_MINDISTANCE, "");
 		}
 	}
-}
-
-void Speaker::transformChanged() {
-	revertTransform();
-	m_evaluateTransform();
-	updateTransform();
 }
 
 void Speaker::setRadiusFromAABB(const AABB& aabb)

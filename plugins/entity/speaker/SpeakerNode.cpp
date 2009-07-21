@@ -6,11 +6,10 @@ namespace entity {
 
 SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	Transformable(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)),
+		Node::BoundsChangedCaller(*this)),
 	_dragPlanes(SelectedChangedComponentCaller(*this))
 {}
 
@@ -23,16 +22,12 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
+	Transformable(Callback(), Callback()),
 	_speaker(other._speaker, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)),
+		Node::BoundsChangedCaller(*this)),
 	_dragPlanes(SelectedChangedComponentCaller(*this))
-{}
-
-SpeakerNode::~SpeakerNode()
 {}
 
 // Snappable implementation
@@ -59,7 +54,7 @@ VolumeIntersectionValue SpeakerNode::intersectVolume(
 
 // EntityNode implementation
 Entity& SpeakerNode::getEntity() {
-	return _speaker.getEntity();
+	return _entity;
 }
 
 void SpeakerNode::refreshModel() {
@@ -162,7 +157,14 @@ void SpeakerNode::evaluateTransform()
 	}
 }
 
-void SpeakerNode::applyTransform()
+void SpeakerNode::_onTransformationChanged()
+{
+	_speaker.revertTransform();
+	evaluateTransform();
+	_speaker.updateTransform();
+}
+
+void SpeakerNode::_applyTransformation()
 {
 	_speaker.revertTransform();
 	evaluateTransform();

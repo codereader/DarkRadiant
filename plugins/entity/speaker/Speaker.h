@@ -62,27 +62,22 @@ class Speaker :
 
 	Callback m_transformChanged;
 	Callback m_boundsChanged;
-	Callback m_evaluateTransform;
+
 public:
 	// Constructor
 	Speaker(entity::SpeakerNode& node,
 				  const Callback& transformChanged, 
-				  const Callback& boundsChanged,
-				  const Callback& evaluateTransform);
+				  const Callback& boundsChanged);
 	
 	// Copy constructor
 	Speaker(const Speaker& other, 
 				  SpeakerNode& node, 
 				  const Callback& transformChanged, 
-				  const Callback& boundsChanged,
-				  const Callback& evaluateTransform);
+				  const Callback& boundsChanged);
 
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
-
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
 
 	//Namespaced& getNamespaced();
 	NameKey& getNameable();
@@ -113,8 +108,6 @@ public:
 	
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<Speaker, &Speaker::transformChanged> TransformChangedCaller;
 
 	// greebo: Modifies the speaker radii according to the passed bounding box
 	// this is called during drag-resize operations
