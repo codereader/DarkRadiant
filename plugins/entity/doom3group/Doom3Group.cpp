@@ -30,8 +30,7 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 Doom3Group::Doom3Group(
 		Doom3GroupNode& owner,
 		const Callback& transformChanged, 
-		const Callback& boundsChanged, 
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
 	m_model(owner),
@@ -42,7 +41,6 @@ Doom3Group::Doom3Group(
 	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
@@ -52,8 +50,7 @@ Doom3Group::Doom3Group(
 Doom3Group::Doom3Group(const Doom3Group& other, 
 		Doom3GroupNode& owner,
 		const Callback& transformChanged, 
-		const Callback& boundsChanged, 
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
 	m_model(owner),
@@ -64,7 +61,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {

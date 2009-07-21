@@ -114,9 +114,6 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	void evaluateTransform();
-	typedef MemberCaller<Doom3GroupNode, &Doom3GroupNode::evaluateTransform> EvaluateTransformCaller;
-
 	void skinChanged(const std::string& value);
 	typedef MemberCaller1<Doom3GroupNode, const std::string&, &Doom3GroupNode::skinChanged> SkinChangedCaller;
 
@@ -133,6 +130,8 @@ protected:
 
 private:
 	void construct();
+
+	void evaluateTransform();
 
 }; // class Doom3GroupNode
 
