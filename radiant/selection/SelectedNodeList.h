@@ -2,13 +2,13 @@
 #define SELECTEDNODELIST_H_
 
 #include <map>
-#include "scenelib.h"
+#include "inode.h"
 
 /**
  * greebo: This container adapts a std::multimap to keep track of 
- *         all the selected nodes in the scene. Additionally,
- *         the insertion order is remembered to allow for retrieval
- *         of the ultimate/penultimate selected node.
+ * all the selected nodes in the scene. Additionally,
+ * the insertion order is remembered to allow for retrieval
+ * of the ultimate/penultimate selected node.
  * 
  * It also allows for the same node occuring multiple times in
  * the map at once. On deletion, the node which has been added
@@ -21,13 +21,13 @@
  * which is needed by the RadiantSelectionSystem. 
  */
 class SelectedNodeList :
-	public std::multimap<scene::INodePtr, unsigned long>
+	public std::multimap<scene::INodePtr, std::size_t>
 {
 	// Shortcut typedef
-	typedef std::multimap<scene::INodePtr, unsigned long> MapType;
+	typedef std::multimap<scene::INodePtr, std::size_t> MapType;
 	
 	// This is an ever-incrementing counter, some sort of "insertion time"
-	static unsigned long time; 
+	static std::size_t time; 
 public:
 	/**
 	 * greebo: Returns the element which has been inserted last.
@@ -47,16 +47,16 @@ public:
 	
 	/**
 	 * greebo: Inserts a new element to this container.
-	 *         Multiple insertions of the same elements are 
-	 *         allowed, but their insertion "time" is of course different.
+	 * Multiple insertions of the same elements are 
+	 * allowed, but their insertion "time" is of course different.
 	 */
 	void append(const scene::INodePtr& selected);
 	
 	/**
 	 * greebo: Removes the node which has been selected last
-	 *         from this map. If multiple nodes with the same
-	 *         address exist in the map, only the one with the 
-	 *         highest time is removed, the others are left. 
+	 * from this map. If multiple nodes with the same
+	 * address exist in the map, only the one with the 
+	 * highest time is removed, the others are left. 
 	 */
 	void erase(const scene::INodePtr& selected);
 };

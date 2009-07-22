@@ -27,8 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/matrix.h"
 #include "math/quaternion.h"
 
-#include "itextstream.h"
-
 /// \brief A transform node which has no effect.
 class IdentityTransform : 
 	public TransformNode
@@ -109,7 +107,6 @@ public:
 	void setTranslation(const Vector3& value)
 	{
 		_translation = value;
-		globalOutputStream() << "Setting translation: " << value << std::endl;
 
 		_onTransformationChanged();
 	}
@@ -134,8 +131,6 @@ public:
 			_rotation != c_rotation_identity || 
 			_scale != c_scale_identity)
 		{
-			globalOutputStream() << "Freezing transform: " << _translation << std::endl;
-
 			_applyTransformation();
 
 			_translation = c_translation_identity;
@@ -152,8 +147,6 @@ public:
 	*/
 	void revertTransform()
 	{
-		globalOutputStream() << "Reverting transform: " << _translation << std::endl;
-
 		_translation = c_translation_identity;
 		_rotation = c_rotation_identity;
 		_scale = c_scale_identity;
