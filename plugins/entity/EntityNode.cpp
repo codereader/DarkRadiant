@@ -95,21 +95,27 @@ void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTes
 		EntitySettings::InstancePtr()->renderEntityNames()) 
     {
 		collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
-		collector.addRenderable(_renderableName, _renderableName.getLocalToParent());
+		collector.addRenderable(_renderableName, localToWorld());
 	}
 }
 
 void EntityNode::_onTransformationChanged()
 {
-	_renderableName.revertTransform();
-	_renderableName.translate(getTranslation());
+	/*if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		_renderableName.revertTransform();
+		_renderableName.translate(getTranslation());
+	}*/
 }
 
 void EntityNode::_applyTransformation()
 {
-	_renderableName.revertTransform();
-	_renderableName.translate(getTranslation());
-	_renderableName.freezeTransform();
+	/*if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		_renderableName.revertTransform();
+		_renderableName.translate(getTranslation());
+		_renderableName.freezeTransform();
+	}*/
 }
 
 } // namespace entity
