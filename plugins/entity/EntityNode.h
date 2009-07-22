@@ -18,7 +18,8 @@ class EntityNode :
 	public SelectableNode, // derives from scene::Node
 	public Namespaced,
 	public TargetableNode,
-	public Renderable
+	public Renderable,
+	public Nameable
 {
 protected:
 	// The entity class
@@ -58,6 +59,9 @@ public:
 
 	void attachNames();
 	void detachNames();
+
+	// Nameable implementation
+	virtual std::string name() const;
 
 	// Renderable implementation, can be overridden by subclasses
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;

@@ -13,7 +13,6 @@ namespace entity {
 class LightNode :
 	public EntityNode,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public Editable,
 	public TransformNode,
@@ -120,9 +119,6 @@ public:
 
 	void selectedChangedComponent(const Selectable& selectable);
 	typedef MemberCaller1<LightNode, const Selectable&, &LightNode::selectedChangedComponent> SelectedChangedComponentCaller;
-
-	// Nameable implementation
-	virtual std::string name() const;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;  

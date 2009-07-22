@@ -20,7 +20,6 @@ namespace entity {
 class SpeakerNode :
 	public EntityNode,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public SelectionTestable,
@@ -77,9 +76,6 @@ public:
 	virtual void instantiate(const scene::Path& path);
 	virtual void uninstantiate(const scene::Path& path);
 
-	// Nameable implementation
-	virtual std::string name() const;
-	
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;

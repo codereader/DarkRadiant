@@ -258,11 +258,6 @@ void LightNode::uninstantiate(const scene::Path& path)
 	Node::uninstantiate(path);
 }
 
-// Nameable implementation
-std::string LightNode::name() const {
-	return _light.getNameable().name();
-}
-
 void LightNode::selectedChangedComponent(const Selectable& selectable) {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);

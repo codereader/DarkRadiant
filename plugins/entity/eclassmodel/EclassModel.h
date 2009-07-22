@@ -64,8 +64,6 @@ public:
 	void addKeyObserver(const std::string& key, const KeyObserver& observer);
 	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
 
-	NameKey& getNameable();
-	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

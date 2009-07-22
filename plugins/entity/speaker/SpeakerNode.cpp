@@ -15,7 +15,6 @@ SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
@@ -114,11 +113,6 @@ void SpeakerNode::instantiate(const scene::Path& path) {
 void SpeakerNode::uninstantiate(const scene::Path& path) {
 	_speaker.instanceDetach(path);
 	Node::uninstantiate(path);
-}
-
-// Nameable implementation
-std::string SpeakerNode::name() const {
-	return _speaker.getNameable().name();
 }
 
 /* Renderable implementation */

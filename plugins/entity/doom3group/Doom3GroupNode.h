@@ -19,7 +19,6 @@ class Doom3GroupNode :
 	public EntityNode,
 	public scene::Cloneable,
 	public scene::GroupNode,
-	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public SelectionTestable,
@@ -87,9 +86,6 @@ public:
 
 	// ComponentSnappable implementation
 	void snapComponents(float snap);
-
-	// Nameable implementation
-	virtual std::string name() const;
 
 	// Snappable implementation
 	virtual void snapto(float snap);

@@ -25,7 +25,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
 	scene::GroupNode(other),
-	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
@@ -131,10 +130,6 @@ void Doom3GroupNode::removeOriginFromChildren() {
 		Doom3BrushTranslator translator(-m_contained.getOrigin());
 		traverse(translator);
 	}
-}
-
-std::string Doom3GroupNode::name() const {
-	return m_contained.getNameable().name();
 }
 
 void Doom3GroupNode::selectionChangedComponent(const Selectable& selectable) {
