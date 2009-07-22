@@ -32,7 +32,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
-	TransformNode(other),
 	MapImporter(other),
 	MapExporter(other),
 	IPatchNode(other),
@@ -111,12 +110,7 @@ void PatchNode::snapto(float snap) {
 	m_patch.snapto(snap);
 }
 
-// TransformNode implementation
-const Matrix4& PatchNode::localToParent() const {
-	return Matrix4::getIdentity();
-}	
-  
-  	// MapImporter implementation
+// MapImporter implementation
 bool PatchNode::importTokens(parser::DefTokeniser& tokeniser) {
 	return m_importMap.importTokens(tokeniser);
 }

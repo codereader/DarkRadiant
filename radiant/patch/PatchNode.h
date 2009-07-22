@@ -16,7 +16,7 @@ class PatchNode :
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
-	public TransformNode,
+	public IdentityTransform,
 	public MapImporter,
 	public MapExporter,
 	public IPatchNode,
@@ -86,9 +86,6 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	// TransformNode implementation (returns identity)
-	virtual const Matrix4& localToParent() const;
-  
   	// MapImporter implementation
 	virtual bool importTokens(parser::DefTokeniser& tokeniser);
 	
