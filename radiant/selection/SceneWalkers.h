@@ -30,31 +30,45 @@ inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
 // ----------- The Walker Classes ------------------------------------------------
 
 // Sets the visited instance to <select> (true or false), this is used to select all instances in the graph
-class SelectAllWalker : public scene::Graph::Walker {
+class SelectAllWalker : 
+	public scene::NodeVisitor
+{
 	bool _select;
+
 public:
-	SelectAllWalker(bool select) : _select(select) {}
+	SelectAllWalker(bool select) : 
+		_select(select)
+	{}
   
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node)
+	{
 		Node_setSelected(node, _select);
 		return true;
 	}
 };
 
 // Selects the visited component instances in the graph, according to the current component mode
-class SelectAllComponentWalker : public scene::Graph::Walker {
+class SelectAllComponentWalker : 
+	public scene::NodeVisitor
+{
 	bool _select;
 	SelectionSystem::EComponentMode _mode;
-public:
-	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode)
-		: _select(select), _mode(mode) {}
 
-  	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+public:
+	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode) : 
+		_select(select), 
+		_mode(mode)
+	{}
+
+	bool pre(const scene::INodePtr& node)
+	{
 		ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
 
-		if (componentSelectionTestable != NULL) {
+		if (componentSelectionTestable != NULL)
+		{
 			componentSelectionTestable->setSelectedComponents(_select, _mode);
 		}
+
 		return true;
 	}
 };
@@ -173,26 +187,31 @@ public:
 
 // greebo: Calculates the axis-aligned bounding box of the selection components.
 // The constructor is called with a reference to an AABB variable that is updated during the walk
-// TODO: Remove this class, and use GlobalSelectionSystem().foreach instead
-class BoundsSelectedComponent : public scene::Graph::Walker {
-	AABB& _bounds;
+class ComponentBoundsAccumulator : 
+	public SelectionSystem::Visitor
+{
+	mutable AABB _bounds;
 public:
-	BoundsSelectedComponent(AABB& bounds): _bounds(bounds) {
+	ComponentBoundsAccumulator() 
+	{
 		_bounds = AABB();
 	}
-  
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		SelectablePtr selectable = Node_getSelectable(node);
-		// Only update the aabb variable if the instance is selected
-		if (selectable != 0 && selectable->isSelected()) {
-			ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
-			if (componentEditable != NULL) {
-				_bounds.includeAABB(
-					aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), 
-												node->localToWorld()));
-			}
+
+	virtual void visit(const scene::INodePtr& node) const 
+	{
+		ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
+
+		if (componentEditable != NULL)
+		{
+			_bounds.includeAABB(
+				aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), 
+											node->localToWorld()));
 		}
-		return true;
+	}
+
+	const AABB& getBounds() const
+	{
+		return _bounds;
 	}
 };
 
