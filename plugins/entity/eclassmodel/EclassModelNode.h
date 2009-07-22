@@ -21,8 +21,7 @@ class EclassModelNode :
 	public EntityNode,
 	public scene::Cloneable,
 	public Snappable,
-	public TransformNode,
-	public Transformable
+	public TransformNode
 {
 	friend class EclassModel;
 

@@ -20,7 +20,6 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(other),
 	_speaker(other._speaker, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
@@ -152,6 +151,8 @@ void SpeakerNode::evaluateTransform()
 
 void SpeakerNode::_onTransformationChanged()
 {
+	EntityNode::_onTransformationChanged();
+
 	_speaker.revertTransform();
 	evaluateTransform();
 	_speaker.updateTransform();
@@ -159,6 +160,8 @@ void SpeakerNode::_onTransformationChanged()
 
 void SpeakerNode::_applyTransformation()
 {
+	EntityNode::_applyTransformation();
+
 	_speaker.revertTransform();
 	evaluateTransform();
 	_speaker.freezeTransform();

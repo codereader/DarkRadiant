@@ -23,8 +23,7 @@ class GenericEntityNode :
 	public TransformNode,
 	public SelectionTestable,
 	public Cullable,
-	public Bounded,
-	public Transformable
+	public Bounded
 {
 	friend class GenericEntity;
 
