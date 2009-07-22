@@ -60,14 +60,6 @@ void GenericEntity::instanceDetach(const scene::Path& path) {
 	}
 }
 
-NameKey& GenericEntity::getNameable() {
-	return m_named;
-}
-
-const NameKey& GenericEntity::getNameable() const {
-	return m_named;
-}
-
 TransformNode& GenericEntity::getTransformNode() {
 	return m_transform;
 }
@@ -186,7 +178,7 @@ void GenericEntity::construct() {
 	m_ray.direction = Vector3(1, 0, 0);
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
 
 	if (!_allow3Drotations)
 	{

@@ -87,14 +87,6 @@ void Doom3Group::instanceDetach(const scene::Path& path) {
 	}
 }
 
-NameKey& Doom3Group::getNameable() {
-	return m_named;
-}
-
-const NameKey& Doom3Group::getNameable() const {
-	return m_named;
-}
-
 TransformNode& Doom3Group::getTransformNode() {
 	return m_transform;
 }
@@ -262,7 +254,7 @@ void Doom3Group::construct()
 {
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
 	m_keyObservers.insert("model", Doom3Group::ModelChangedCaller(*this));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));

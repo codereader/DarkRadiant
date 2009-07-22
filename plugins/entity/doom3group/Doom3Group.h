@@ -95,8 +95,6 @@ public:
 
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;
-	NameKey& getNameable();
-	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

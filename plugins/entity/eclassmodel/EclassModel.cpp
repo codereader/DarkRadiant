@@ -45,7 +45,7 @@ void EclassModel::construct()
 {
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
 	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
@@ -107,14 +107,6 @@ void EclassModel::addKeyObserver(const std::string& key, const KeyObserver& obse
 
 void EclassModel::removeKeyObserver(const std::string& key, const KeyObserver& observer) {
 	m_keyObservers.erase(key, observer);
-}
-
-NameKey& EclassModel::getNameable() {
-	return m_named;
-}
-
-const NameKey& EclassModel::getNameable() const {
-	return m_named;
 }
 
 TransformNode& EclassModel::getTransformNode() {

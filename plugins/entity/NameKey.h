@@ -50,11 +50,11 @@ public:
 		return _name;
 	}
 
-	void identifierChanged(const std::string& value)
+	void nameChanged(const std::string& value)
 	{
 		_name = value;
 	}
-	typedef MemberCaller1<NameKey, const std::string&, &NameKey::identifierChanged> IdentifierChangedCaller;
+	typedef MemberCaller1<NameKey, const std::string&, &NameKey::nameChanged> NameChangedCaller;
 };
 
 class RenderableNameKey : 

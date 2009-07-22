@@ -135,7 +135,7 @@ void Light::construct() {
 	_lightBox.extents = Vector3(8, 8, 8);
 	_originTransformed = ORIGINKEY_IDENTITY;
 
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
 	m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 
@@ -445,12 +445,6 @@ void Light::freezeTransform()
 	}
 }
 
-const NameKey& Light::getNameable() const {
-	return m_named;
-}
-NameKey& Light::getNameable() {
-	return m_named;
-}
 TransformNode& Light::getTransformNode() {
 	return m_transform;
 }

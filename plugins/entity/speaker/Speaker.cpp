@@ -70,14 +70,6 @@ void Speaker::instanceDetach(const scene::Path& path) {
 	}
 }
 
-NameKey& Speaker::getNameable() {
-	return m_named;
-}
-
-const NameKey& Speaker::getNameable() const {
-	return m_named;
-}
-
 TransformNode& Speaker::getTransformNode() {
 	return m_transform;
 }
@@ -242,7 +234,7 @@ void Speaker::construct() {
 	m_aabb_local = m_entity.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
 	
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
+	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
 	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
 	m_keyObservers.insert(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
 	m_keyObservers.insert(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));

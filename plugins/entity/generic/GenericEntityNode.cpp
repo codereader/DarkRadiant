@@ -13,7 +13,6 @@ GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
@@ -74,11 +73,6 @@ void GenericEntityNode::instantiate(const scene::Path& path) {
 void GenericEntityNode::uninstantiate(const scene::Path& path) {
 	m_contained.instanceDetach(path);
 	Node::uninstantiate(path);
-}
-
-// Nameable implementation
-std::string GenericEntityNode::name() const {
-	return m_contained.getNameable().name();
 }
 
 void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

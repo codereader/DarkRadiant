@@ -19,7 +19,6 @@ namespace entity {
 class GenericEntityNode :
 	public EntityNode,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public SelectionTestable,
@@ -60,9 +59,6 @@ public:
 	// scene::Instantiable implementation
 	virtual void instantiate(const scene::Path& path);
 	virtual void uninstantiate(const scene::Path& path);
-
-	// Nameable implementation
-	virtual std::string name() const;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;

@@ -20,6 +20,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	SelectableNode(other),
 	Namespaced(other),
 	TargetableNode(_entity, *this),
+	Renderable(other),
+	Nameable(other),
 	_eclass(other._eclass),
 	_entity(other._entity),
 	_namespaceManager(_entity),
@@ -76,6 +78,11 @@ void EntityNode::changeName(const std::string& newName) {
 	_namespaceManager.changeName(newName);
 }
 
+std::string EntityNode::name() const
+{
+	return _nameKey.name();
+}
+
 void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Nothing so far (FIXME)
@@ -84,7 +91,8 @@ void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& v
 void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Submit renderable text name if required
-	if (EntitySettings::InstancePtr()->renderEntityNames()) 
+	if (collector.getStyle() == RenderableCollector::eWireframeOnly && 
+		EntitySettings::InstancePtr()->renderEntityNames()) 
     {
 		collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 		collector.addRenderable(_renderableName, _renderableName.getLocalToParent());

@@ -20,7 +20,6 @@ namespace entity {
 class EclassModelNode :
 	public EntityNode,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public Transformable
@@ -49,9 +48,6 @@ public:
 	virtual Entity& getEntity();
 	virtual void refreshModel();
 
-	// Namespaced implementation
-	//virtual void setNamespace(INamespace& space);
-
 	scene::INodePtr clone() const;
 
 	// scene::Instantiable implementation
@@ -61,9 +57,6 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-
-	// Nameable implementation
-	virtual std::string name() const;
 
 	void skinChanged(const std::string& value);
 	typedef MemberCaller1<EclassModelNode, const std::string&, &EclassModelNode::skinChanged> SkinChangedCaller;

@@ -14,7 +14,6 @@ EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
 	Transformable(other),
@@ -102,11 +101,6 @@ void EclassModelNode::instantiate(const scene::Path& path) {
 void EclassModelNode::uninstantiate(const scene::Path& path) {
 	m_contained.instanceDetach(path);
 	Node::uninstantiate(path);
-}
-
-// Nameable implementation
-std::string EclassModelNode::name() const {
-	return m_contained.getNameable().name();
 }
 
 void EclassModelNode::skinChanged(const std::string& value) {
