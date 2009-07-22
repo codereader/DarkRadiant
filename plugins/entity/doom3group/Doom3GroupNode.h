@@ -26,7 +26,6 @@ class Doom3GroupNode :
 	public ComponentEditable,
 	public ComponentSnappable,
 	public Bounded,
-	public Transformable,
 	public CurveNode
 {
 	friend class Doom3Group;

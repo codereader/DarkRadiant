@@ -18,7 +18,6 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
-	Transformable(other),
 	m_contained(other.m_contained, 
 		*this, 
 		Node::TransformChangedCaller(*this))
@@ -91,6 +90,8 @@ void GenericEntityNode::renderWireframe(RenderableCollector& collector, const Vo
 
 void GenericEntityNode::_onTransformationChanged()
 {
+	EntityNode::_onTransformationChanged();
+
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
@@ -104,6 +105,8 @@ void GenericEntityNode::_onTransformationChanged()
 
 void GenericEntityNode::_applyTransformation()
 {
+	EntityNode::_applyTransformation();
+
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();

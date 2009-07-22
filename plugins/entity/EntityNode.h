@@ -3,7 +3,10 @@
 
 #include "ientity.h"
 #include "inamespace.h"
+
 #include "selectionlib.h"
+#include "transformlib.h"
+
 #include "NamespaceManager.h"
 #include "target/TargetableNode.h"
 #include "NameKey.h"
@@ -19,7 +22,8 @@ class EntityNode :
 	public Namespaced,
 	public TargetableNode,
 	public Renderable,
-	public Nameable
+	public Nameable,
+	public Transformable
 {
 protected:
 	// The entity class
@@ -66,6 +70,15 @@ public:
 	// Renderable implementation, can be overridden by subclasses
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	virtual void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	virtual void _applyTransformation();
 
 private:
 	// Routines used by constructor and destructor, should be non-virtual

@@ -16,7 +16,6 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	scene::Cloneable(other),
 	Snappable(other),
 	TransformNode(other),
-	Transformable(other),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),
@@ -112,6 +111,8 @@ void EclassModelNode::skinChanged(const std::string& value) {
 
 void EclassModelNode::_onTransformationChanged()
 {
+	EntityNode::_onTransformationChanged();
+
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
@@ -125,6 +126,8 @@ void EclassModelNode::_onTransformationChanged()
 
 void EclassModelNode::_applyTransformation()
 {
+	EntityNode::_applyTransformation();
+
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
