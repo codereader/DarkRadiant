@@ -65,6 +65,8 @@ class Light :
 	public Editable,
 	public Snappable
 {
+	friend class LightNode;
+
     // The parent entity object that uses this light
 	Doom3Entity& _entity;
 

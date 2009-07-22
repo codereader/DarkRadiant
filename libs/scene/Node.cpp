@@ -165,7 +165,8 @@ void Node::removeAllChildNodes() {
 	_children.clear();
 }
 
-void Node::traverse(NodeVisitor& visitor) {
+void Node::traverse(NodeVisitor& visitor) const
+{
 	_children.traverse(visitor);
 }
 

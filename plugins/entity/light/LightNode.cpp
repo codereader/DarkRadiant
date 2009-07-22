@@ -83,7 +83,8 @@ Entity& LightNode::getEntity() {
 }
 
 void LightNode::refreshModel() {
-	// Nothing to do
+	// Simulate a "model" key change
+	_light._modelKey.modelChanged(_entity.getKeyValue("model"));
 }
 
 const AABB& LightNode::localAABB() const {
