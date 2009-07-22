@@ -47,7 +47,6 @@ Brush::Brush(const Brush& other, const Callback& evaluateTransform, const Callba
 
 Brush::Brush(const Brush& other) :
 	IBrush(other),
-	TransformNode(other),
 	Bounded(other),
 	Cullable(other),
 	Snappable(other),
@@ -185,10 +184,6 @@ void Brush::evaluateTransform() {
 		revertTransform();
 		m_evaluateTransform();
 	}
-}
-
-const Matrix4& Brush::localToParent() const {
-	return Matrix4::getIdentity();
 }
 
 void Brush::aabbChanged() {

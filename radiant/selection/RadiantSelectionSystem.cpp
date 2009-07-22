@@ -762,7 +762,8 @@ void RadiantSelectionSystem::cancelMove() {
 	_manipulator->setSelected(false);
 
 	// Tell all the scene objects to revert their transformations
-	GlobalSceneGraph().traverse(RevertTransformForSelected());
+	RevertTransformForSelected walker;
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	_pivotMoving = false;
 	pivotChanged();
@@ -787,7 +788,8 @@ void RadiantSelectionSystem::cancelMove() {
 // This actually applies the transformation to the objects
 void RadiantSelectionSystem::freezeTransforms()
 {
-	GlobalSceneGraph().traverse(FreezeTransforms());
+	FreezeTransforms freezer;
+	Node_traverseSubgraph(GlobalSceneGraph().root(), freezer);
 
 	// The selection bounds have possibly changed, request an idle callback
 	_requestWorkZoneRecalculation = true;

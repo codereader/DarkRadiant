@@ -27,47 +27,52 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/matrix.h"
 #include "math/quaternion.h"
 
+#include "itextstream.h"
+
 /// \brief A transform node which has no effect.
-class IdentityTransform : public TransformNode
+class IdentityTransform : 
+	public TransformNode
 {
 public:
-  /// \brief Returns the identity matrix.
-  const Matrix4& localToParent() const
-  {
-    return Matrix4::getIdentity();
-  }
+	/// \brief Returns the identity matrix.
+	const Matrix4& localToParent() const
+	{
+		return Matrix4::getIdentity();
+	}
 };
 
 /// \brief A transform node which stores a generic transformation matrix.
-class MatrixTransform : public TransformNode
+class MatrixTransform : 
+	public TransformNode
 {
-  Matrix4 m_localToParent;
+	Matrix4 m_localToParent;
 public:
-  MatrixTransform() : m_localToParent(Matrix4::getIdentity())
-  {
-  }
+	MatrixTransform() : 
+		m_localToParent(Matrix4::getIdentity())
+	{}
 
-  Matrix4& localToParent()
-  {
-    return m_localToParent;
-  }
-  /// \brief Returns the stored local->parent transform.
-  const Matrix4& localToParent() const
-  {
-    return m_localToParent;
-  }
+	Matrix4& localToParent()
+	{
+		return m_localToParent;
+	}
+
+	/// \brief Returns the stored local->parent transform.
+	const Matrix4& localToParent() const
+	{
+		return m_localToParent;
+	}
 };
 
 inline Matrix4 matrix4_transform_for_components(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 {
-  Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
-  result.x().getVector3() *= scale.x();
-  result.y().getVector3() *= scale.y();
-  result.z().getVector3() *= scale.z();
-  result.tx() = translation.x();
-  result.ty() = translation.y();
-  result.tz() = translation.z();
-  return result;
+	Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
+	result.x().getVector3() *= scale.x();
+	result.y().getVector3() *= scale.y();
+	result.z().getVector3() *= scale.z();
+	result.tx() = translation.x();
+	result.ty() = translation.y();
+	result.tz() = translation.z();
+	return result;
 }
 
 const Vector3 c_translation_identity(0, 0, 0);
@@ -104,6 +109,7 @@ public:
 	void setTranslation(const Vector3& value)
 	{
 		_translation = value;
+		globalOutputStream() << "Setting translation: " << value << std::endl;
 
 		_onTransformationChanged();
 	}
@@ -128,6 +134,8 @@ public:
 			_rotation != c_rotation_identity || 
 			_scale != c_scale_identity)
 		{
+			globalOutputStream() << "Freezing transform: " << _translation << std::endl;
+
 			_applyTransformation();
 
 			_translation = c_translation_identity;
@@ -144,6 +152,8 @@ public:
 	*/
 	void revertTransform()
 	{
+		globalOutputStream() << "Reverting transform: " << _translation << std::endl;
+
 		_translation = c_translation_identity;
 		_rotation = c_rotation_identity;
 		_scale = c_scale_identity;

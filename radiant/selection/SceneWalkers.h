@@ -82,14 +82,12 @@ public:
 		}
 	}
 
-	void visit(const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-
-		if (transformNode == NULL) return;
-		
+	void visit(const scene::INodePtr& node) const
+	{
 		Brush* brush = Node_getBrush(node);
 
-		if (brush != NULL && !brush->hasContributingFaces()) {
+		if (brush != NULL && !brush->hasContributingFaces())
+		{
 			// greebo: Mark this path for removal
 			_eraseList.push_back(node);
 
@@ -100,52 +98,56 @@ public:
 };
 
 // As the name states, all visited instances have their transformations freezed
-class FreezeTransforms : public scene::Graph::Walker {
+class FreezeTransforms : 
+	public scene::NodeVisitor
+{
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-		if (transformNode != 0) {
-			ITransformablePtr transform = Node_getTransformable(node);
-			if (transform != 0) {
-				transform->freezeTransform(); 
-			}
+	bool pre(const scene::INodePtr& node) 
+	{
+		ITransformablePtr transform = Node_getTransformable(node);
+		if (transform != 0)
+		{
+			transform->freezeTransform(); 
 		}
+
 		return true;
 	}
 };
 
 // As the name states, all visited instances have their transformations reverted
 class RevertTransforms : 
-	public scene::Graph::Walker 
+	public scene::NodeVisitor 
 {
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-		if (transformNode != 0) {
-			ITransformablePtr transform = Node_getTransformable(node);
-			if (transform != 0) {
-				transform->revertTransform(); 
-			}
+	bool pre(const scene::INodePtr& node) 
+	{
+		ITransformablePtr transform = Node_getTransformable(node);
+		if (transform != 0)
+		{
+			transform->revertTransform(); 
 		}
+		
 		return true;
 	}
 };
 
 // As the name states, all visited SELECTED instances have their transformations reverted
+// TODO: Remove this class, and use GlobalSelectionSystem().foreach instead
 class RevertTransformForSelected : 
-	public scene::Graph::Walker 
+	public scene::NodeVisitor 
 {
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-		SelectablePtr selectable = Node_getSelectable(node);
-				
-		if (transformNode != NULL && selectable != NULL && selectable->isSelected()) {
+	bool pre(const scene::INodePtr& node) 
+	{
+		if (Node_isSelected(node))
+		{
 			ITransformablePtr transform = Node_getTransformable(node);
-			if (transform != NULL) {
+			if (transform != NULL)
+			{
 				transform->revertTransform(); 
 			}
 		}
+
 		return true;
 	}
 };
@@ -171,6 +173,7 @@ public:
 
 // greebo: Calculates the axis-aligned bounding box of the selection components.
 // The constructor is called with a reference to an AABB variable that is updated during the walk
+// TODO: Remove this class, and use GlobalSelectionSystem().foreach instead
 class BoundsSelectedComponent : public scene::Graph::Walker {
 	AABB& _bounds;
 public:

@@ -45,7 +45,7 @@ class BrushNode :
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
-	public TransformNode,
+	public IdentityTransform,
 	public BrushDoom3,
 	public BrushTokenImporter, // implements MapImporter
 	public BrushTokenExporter, // implements MapExporter
@@ -114,9 +114,6 @@ public:
 	// Cullable implementation
 	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 	
-	// TransformNode implementation
-	virtual const Matrix4& localToParent() const;
-
 	// Selectable implementation
 	virtual bool isSelected() const;
 	virtual void setSelected(bool select);

@@ -62,7 +62,8 @@ void TranslateSelected::visit(const scene::INodePtr& node) const {
 
 // ===================================================================================
 
-void RotateSelected::visit(const scene::INodePtr& node) const {
+void RotateSelected::visit(const scene::INodePtr& node) const
+{
 	TransformNodePtr transformNode = Node_getTransformNode(node);
 	if (transformNode != 0) {
 	  // Upcast the instance onto a Transformable

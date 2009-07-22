@@ -29,7 +29,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
-	TransformNode(other),
 	BrushDoom3(other),
 	BrushTokenImporter(m_brush),
 	BrushTokenExporter(m_brush),
@@ -84,11 +83,6 @@ void BrushNode::snapComponents(float snap) {
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 		i->snapComponents(snap);
 	}
-}
-
-// TransformNode implementation
-const Matrix4& BrushNode::localToParent() const {
-	return m_brush.localToParent();
 }
 
 bool BrushNode::isSelected() const {
