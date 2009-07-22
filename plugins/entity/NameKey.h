@@ -62,53 +62,37 @@ class RenderableNameKey :
 {
 	const NameKey& _nameKey;
 
-	// The transformation matrix to be passed to the renderer
-	// for some Entity types (D3Group), this can be non-identity
-	Matrix4 _localToParent;
-
-	// The "working set" of the matrix
-	Matrix4 _localToParentTransformed;
-
-	// Always 0,0,0
+	// The origin (local entity coordinates)
+	Vector3 _originTransformed;
 	Vector3 _origin;
 	
 public:
 	RenderableNameKey(const NameKey& nameKey) : 
 		_nameKey(nameKey), 
-		_localToParent(Matrix4::getIdentity()),
-		_localToParentTransformed(_localToParent),
+		_originTransformed(0,0,0),
 		_origin(0,0,0)
 	{}
 
+	// We render in local coordinates of the owning entity node
 	void render(const RenderInfo& info) const
 	{
-		glRasterPos3dv(_origin);
+		glRasterPos3dv(_originTransformed);
 		GlobalOpenGL().drawString(_nameKey.name());
-	}
-
-	const Matrix4& getLocalToParent() const
-	{
-		return _localToParentTransformed;
-	}
-
-	void setLocalToParent(const Matrix4& localToParent)
-	{
-		_localToParent = localToParent;
 	}
 
 	void translate(const Vector3& translation)
 	{
-		_localToParentTransformed.translateBy(translation);
+		_originTransformed += translation;
 	}
 
 	void revertTransform()
 	{
-		_localToParentTransformed = _localToParent;
+		_originTransformed = _origin;
 	}
 
 	void freezeTransform()
 	{
-		_localToParent = _localToParentTransformed;
+		_origin = _originTransformed;
 	}
 };
 
