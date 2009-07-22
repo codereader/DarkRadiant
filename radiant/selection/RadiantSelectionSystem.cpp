@@ -321,18 +321,26 @@ scene::INodePtr RadiantSelectionSystem::penultimateSelected()
 }
 
 // Deselect or select all the instances in the scenegraph and notify the manipulator class as well
-void RadiantSelectionSystem::setSelectedAll(bool selected) {
-	GlobalSceneGraph().traverse(SelectAllWalker(selected));
+void RadiantSelectionSystem::setSelectedAll(bool selected)
+{
+	SelectAllWalker walker(selected);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+
 	_manipulator->setSelected(selected);
 }
 
 // Deselect or select all the component instances in the scenegraph and notify the manipulator class as well
 void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
 	// Select all components in the scene, be it vertices, edges or faces
-	GlobalSceneGraph().traverse(SelectAllComponentWalker(selected, SelectionSystem::eVertex));
-	GlobalSceneGraph().traverse(SelectAllComponentWalker(selected, SelectionSystem::eEdge));
-	GlobalSceneGraph().traverse(SelectAllComponentWalker(selected, SelectionSystem::eFace));
-	
+	SelectAllComponentWalker vertexSelector(selected, SelectionSystem::eVertex);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), vertexSelector);
+
+	SelectAllComponentWalker edgeSelector(selected, SelectionSystem::eEdge);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), edgeSelector);
+
+	SelectAllComponentWalker faceSelector(selected, SelectionSystem::eFace);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
+
 	_manipulator->setSelected(selected);
 }
 
@@ -769,11 +777,10 @@ void RadiantSelectionSystem::cancelMove() {
 	pivotChanged();
 	
 	// greebo: Deselect all faces if we are in brush and drag mode
-	if (Mode() == ePrimitive) {
-		if (ManipulatorMode() == eDrag) {
-			GlobalSceneGraph().traverse(SelectAllComponentWalker(false, SelectionSystem::eFace));
-			//Scene_SelectAll_Component(false, SelectionSystem::eFace);
-		}
+	if (Mode() == ePrimitive && ManipulatorMode() == eDrag)
+	{
+		SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+		Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
 	}
 	
 	if (_undoBegun) {
@@ -803,11 +810,10 @@ void RadiantSelectionSystem::endMove() {
 	freezeTransforms();
 
 	// greebo: Deselect all faces if we are in brush and drag mode
-	if (Mode() == ePrimitive) {
-		if (ManipulatorMode() == eDrag) {
-			GlobalSceneGraph().traverse(SelectAllComponentWalker(false, SelectionSystem::eFace));
-			//Scene_SelectAll_Component(false, SelectionSystem::eFace);
-		}
+	if (Mode() == ePrimitive && ManipulatorMode() == eDrag)
+	{
+		SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+		Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
 	}
 	
 	// Remove all degenerated brushes from the scene graph (should emit a warning)
@@ -892,8 +898,12 @@ void RadiantSelectionSystem::ConstructPivot()
 			AABB bounds;
 			
 			// Traverse through the selection and update the <bounds> variable
-			if (Mode() == eComponent) {
-				GlobalSceneGraph().traverse(BoundsSelectedComponent(bounds));
+			if (Mode() == eComponent)
+			{
+				ComponentBoundsAccumulator walker;
+				foreachSelected(walker);
+
+				bounds = walker.getBounds();
 			}
 			else {
 				// greebo: Traverse the current selection to accumulate the AABB
