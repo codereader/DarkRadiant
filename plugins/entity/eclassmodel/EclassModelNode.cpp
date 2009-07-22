@@ -72,7 +72,7 @@ void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
 		// Instantiate a walker class equipped with the new value
 		SkinChangedWalker walker(_entity.getKeyValue("skin"));
 		// Update all children
-		Node_traverseSubgraph(Node::getSelf(), walker);
+		traverse(walker);
 
 		_updateSkin = false;
 	}
@@ -107,7 +107,7 @@ void EclassModelNode::skinChanged(const std::string& value) {
 	// Instantiate a walker class equipped with the new value
 	SkinChangedWalker walker(value);
 	// Update all children
-	Node_traverseSubgraph(Node::getSelf(), walker);
+	traverse(walker);
 }
 
 void EclassModelNode::_onTransformationChanged()

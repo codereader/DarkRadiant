@@ -249,7 +249,7 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 			// Instantiate a walker class equipped with the new value
 			SkinChangedWalker walker(_entity.getKeyValue("skin"));
 			// Update all children
-			Node_traverseSubgraph(Node::getSelf(), walker);
+			traverse(walker);
 		}
 
 		_updateSkin = false;
@@ -325,7 +325,7 @@ void Doom3GroupNode::skinChanged(const std::string& value) {
 		// Instantiate a walker class equipped with the new value
 		SkinChangedWalker walker(value);
 		// Update all children of this node
-		Node_traverseSubgraph(Node::getSelf(), walker);
+		traverse(walker);
 	}
 }
 

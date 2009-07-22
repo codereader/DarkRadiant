@@ -168,7 +168,7 @@ void TraversableNodeSet::clear() {
 	}
 }
 
-void TraversableNodeSet::traverse(scene::NodeVisitor& visitor) {
+void TraversableNodeSet::traverse(scene::NodeVisitor& visitor) const {
 	for (NodeList::const_iterator i = _children.begin();
 		 i != _children.end();)
 	{
