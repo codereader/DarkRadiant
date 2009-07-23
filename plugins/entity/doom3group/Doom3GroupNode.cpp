@@ -16,7 +16,8 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
-	_updateSkin(true)
+	_updateSkin(true),
+	_instantiated(false)
 {
 	construct();
 }
@@ -44,7 +45,8 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
-	_updateSkin(true)
+	_updateSkin(true),
+	_instantiated(false)
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
@@ -199,15 +201,19 @@ scene::INodePtr Doom3GroupNode::clone() const {
 	return clone;
 }
 
-void Doom3GroupNode::instantiate(const scene::Path& path) {
+void Doom3GroupNode::instantiate(const scene::Path& path)
+{
+	_instantiated = true;
+
 	Node::getTraversable().instanceAttach(path_find_mapfile(path.begin(), path.end()));
-	m_contained.instanceAttach(path);
 	EntityNode::instantiate(path);
 }
 
-void Doom3GroupNode::uninstantiate(const scene::Path& path) {
+void Doom3GroupNode::uninstantiate(const scene::Path& path)
+{
+	_instantiated = false;
+
 	Node::getTraversable().instanceDetach(path_find_mapfile(path.begin(), path.end()));
-	m_contained.instanceDetach(path);
 	EntityNode::uninstantiate(path);
 }
 

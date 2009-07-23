@@ -246,18 +246,6 @@ scene::INodePtr LightNode::clone() const {
 	return clone;
 }
 
-void LightNode::instantiate(const scene::Path& path)
-{
-	_light.instanceAttach(path);
-	EntityNode::instantiate(path);
-}
-
-void LightNode::uninstantiate(const scene::Path& path)
-{
-	_light.instanceDetach(path);
-	EntityNode::uninstantiate(path);
-}
-
 void LightNode::selectedChangedComponent(const Selectable& selectable) {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);

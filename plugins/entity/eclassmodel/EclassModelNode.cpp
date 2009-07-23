@@ -94,16 +94,6 @@ scene::INodePtr EclassModelNode::clone() const {
 	return clone;
 }
 
-void EclassModelNode::instantiate(const scene::Path& path) {
-	m_contained.instanceAttach(path);
-	EntityNode::instantiate(path);
-}
-
-void EclassModelNode::uninstantiate(const scene::Path& path) {
-	m_contained.instanceDetach(path);
-	EntityNode::uninstantiate(path);
-}
-
 void EclassModelNode::skinChanged(const std::string& value) {
 	// Instantiate a walker class equipped with the new value
 	SkinChangedWalker walker(value);

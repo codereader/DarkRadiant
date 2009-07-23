@@ -61,16 +61,6 @@ Speaker::~Speaker()
 	destroy();
 }
 
-void Speaker::instanceAttach(const scene::Path& path) {
-	if(++m_instanceCounter.m_count == 1) {
-	}
-}
-
-void Speaker::instanceDetach(const scene::Path& path) {
-	if(--m_instanceCounter.m_count == 0) {
-	}
-}
-
 TransformNode& Speaker::getTransformNode() {
 	return m_transform;
 }

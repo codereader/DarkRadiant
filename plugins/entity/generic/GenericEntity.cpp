@@ -51,16 +51,6 @@ GenericEntity::~GenericEntity()
 	destroy();
 }
 
-void GenericEntity::instanceAttach(const scene::Path& path) {
-	if(++m_instanceCounter.m_count == 1) {
-	}
-}
-
-void GenericEntity::instanceDetach(const scene::Path& path) {
-	if(--m_instanceCounter.m_count == 0) {
-	}
-}
-
 TransformNode& GenericEntity::getTransformNode() {
 	return m_transform;
 }

@@ -64,16 +64,6 @@ scene::INodePtr GenericEntityNode::clone() const {
 	return clone;
 }
 
-void GenericEntityNode::instantiate(const scene::Path& path) {
-	m_contained.instanceAttach(path);
-	EntityNode::instantiate(path);
-}
-
-void GenericEntityNode::uninstantiate(const scene::Path& path) {
-	m_contained.instanceDetach(path);
-	EntityNode::uninstantiate(path);
-}
-
 void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);

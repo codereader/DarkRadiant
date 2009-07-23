@@ -87,22 +87,6 @@ void EclassModel::rotationChanged() {
 	updateTransform();
 }
 
-void EclassModel::instanceAttach(const scene::Path& path) {
-	
-	assert(m_instanceCounter.m_count == 0);
-
-	if (++m_instanceCounter.m_count == 1) {
-		m_model.modelChanged(m_entity.getKeyValue("model"));
-		_owner.skinChanged(m_entity.getKeyValue("skin"));
-	}
-}
-	
-void EclassModel::instanceDetach(const scene::Path& path) {
-	if (--m_instanceCounter.m_count == 0) {
-		m_model.modelChanged("");
-	}
-}
-
 TransformNode& EclassModel::getTransformNode() {
 	return m_transform;
 }

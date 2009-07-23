@@ -55,10 +55,6 @@ public:
 
 	scene::INodePtr clone() const;
 
-	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
-
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;

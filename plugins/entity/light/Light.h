@@ -204,10 +204,6 @@ public:
 
 	~Light();
 	
-	InstanceCounter m_instanceCounter;
-	void instanceAttach(const scene::Path& path);
-	void instanceDetach(const scene::Path& path);
-
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

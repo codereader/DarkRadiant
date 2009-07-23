@@ -42,7 +42,6 @@ class EclassModel :
 
 	Callback m_transformChanged;
 	
-	InstanceCounter m_instanceCounter;
 public:
 	EclassModel(EclassModelNode& owner,
 				const Callback& transformChanged);
