@@ -11,6 +11,7 @@ namespace entity {
 
 GenericEntity::GenericEntity(GenericEntityNode& node, 
 		const Callback& transformChanged) :
+	_owner(node),
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -30,6 +31,7 @@ GenericEntity::GenericEntity(GenericEntityNode& node,
 GenericEntity::GenericEntity(const GenericEntity& other, 
 		GenericEntityNode& node, 
 		const Callback& transformChanged) :
+	_owner(node),
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -46,16 +48,19 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	construct();
 }
 
+GenericEntity::~GenericEntity()
+{
+	destroy();
+}
+
 void GenericEntity::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_entity.attachObserver(&m_keyObservers);
 	}
 }
 
 void GenericEntity::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
-		m_entity.detachObserver(&m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
@@ -178,21 +183,40 @@ void GenericEntity::construct() {
 	m_ray.direction = Vector3(1, 0, 0);
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
+	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
 
 	if (!_allow3Drotations)
 	{
 		// Ordinary rotation (2D around z axis), use angle key observer
-		m_keyObservers.insert("angle", AngleKey::AngleChangedCaller(m_angleKey));
+		_owner.addKeyObserver("angle", AngleKey::AngleChangedCaller(m_angleKey));
 	}
 	else
 	{
 		// Full 3D rotations allowed, observe both keys using the rotation key observer
-		m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-		m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+		_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+		_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	}
 
-	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+}
+
+void GenericEntity::destroy()
+{
+	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
+
+	if (!_allow3Drotations)
+	{
+		// Ordinary rotation (2D around z axis), use angle key observer
+		_owner.removeKeyObserver("angle", AngleKey::AngleChangedCaller(m_angleKey));
+	}
+	else
+	{
+		// Full 3D rotations allowed, observe both keys using the rotation key observer
+		_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+		_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	}
+
+	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 }
 
 void GenericEntity::updateTransform()

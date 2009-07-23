@@ -204,6 +204,8 @@ public:
           Doom3Entity& entity,
           const Callback& transformChanged,
           const Callback& boundsChanged);
+
+	~Light();
 	
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);

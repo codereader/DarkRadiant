@@ -28,8 +28,9 @@ class GenericEntity :
 	public Bounded,
 	public Snappable
 {
+	GenericEntityNode& _owner;
+
 	Doom3Entity& m_entity;
-	KeyObserverMap m_keyObservers;
 	MatrixTransform m_transform;
 
 	OriginKey m_originKey;
@@ -72,6 +73,8 @@ public:
 				  GenericEntityNode& node, 
 				  const Callback& transformChanged);
 
+	~GenericEntity();
+
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
@@ -100,6 +103,7 @@ public:
 public:
 
 	void construct();
+	void destroy();
 
 	void updateTransform();
 	typedef MemberCaller<GenericEntity, &GenericEntity::updateTransform> UpdateTransformCaller;
