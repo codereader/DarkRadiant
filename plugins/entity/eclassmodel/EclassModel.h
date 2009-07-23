@@ -38,8 +38,6 @@ class EclassModel :
 	Float9 m_rotation;
 	ModelKey m_model;
 
-	NameKey m_named;
-	//NamespaceManager m_nameKeys;
 	RenderablePivot m_renderOrigin;
 
 	Callback m_transformChanged;

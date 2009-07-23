@@ -12,7 +12,6 @@
 #include "generic/callback.h"
 
 #include "../origin.h"
-#include "../NameKey.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "../EntitySettings.h"
@@ -35,8 +34,6 @@ class Speaker :
 
 	OriginKey m_originKey;
 	Vector3 m_origin;
-
-	NameKey m_named;
 
 	// The current speaker radii (min / max)
 	SoundRadii _radii;

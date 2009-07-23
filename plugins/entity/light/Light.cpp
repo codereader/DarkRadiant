@@ -75,7 +75,6 @@ Light::Light(Doom3Entity& entity,
 	_originTransformed(ORIGINKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_colour(Callback()),
-	m_named(_entity),
 	_modelKey(owner),
 	_renderableRadius(_lightBox.origin),
 	_renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
@@ -104,7 +103,6 @@ Light::Light(const Light& other,
   _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(RotationChangedCaller(*this)),
   m_colour(Callback()),
-  m_named(_entity),
   _modelKey(owner),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
@@ -142,7 +140,6 @@ void Light::construct() {
 	_lightBox.extents = Vector3(8, 8, 8);
 	_originTransformed = ORIGINKEY_IDENTITY;
 
-	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.addKeyObserver("_color", Colour::ColourChangedCaller(m_colour));
 	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 
@@ -175,7 +172,6 @@ void Light::construct() {
 
 void Light::destroy()
 {
-	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.removeKeyObserver("_color", Colour::ColourChangedCaller(m_colour));
 	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 

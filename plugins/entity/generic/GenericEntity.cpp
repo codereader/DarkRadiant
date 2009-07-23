@@ -18,7 +18,6 @@ GenericEntity::GenericEntity(GenericEntityNode& node,
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(m_entity),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
@@ -38,7 +37,6 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	m_angleKey(AngleChangedCaller(*this)),
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(m_entity),
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
@@ -183,8 +181,6 @@ void GenericEntity::construct() {
 	m_ray.direction = Vector3(1, 0, 0);
 	m_rotation.setIdentity();
 
-	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
-
 	if (!_allow3Drotations)
 	{
 		// Ordinary rotation (2D around z axis), use angle key observer
@@ -202,8 +198,6 @@ void GenericEntity::construct() {
 
 void GenericEntity::destroy()
 {
-	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
-
 	if (!_allow3Drotations)
 	{
 		// Ordinary rotation (2D around z axis), use angle key observer

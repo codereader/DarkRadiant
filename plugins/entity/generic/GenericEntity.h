@@ -12,7 +12,6 @@
 #include "../origin.h"
 #include "../angle.h"
 #include "../rotation.h"
-#include "../NameKey.h"
 #include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "transformlib.h"
@@ -47,8 +46,6 @@ class GenericEntity :
 
 	// This is the "working copy" of the rotation value
 	Float9 m_rotation;
-
-	NameKey m_named;
 
 	AABB m_aabb_local;
 	Ray m_ray;

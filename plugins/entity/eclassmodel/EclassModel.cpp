@@ -16,7 +16,6 @@ EclassModel::EclassModel(EclassModelNode& owner,
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_model(owner),
-	m_named(m_entity),
 	m_renderOrigin(m_origin),
 	m_transformChanged(transformChanged)
 {
@@ -34,7 +33,6 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_angle(ANGLEKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_model(owner),
-	m_named(m_entity),
 	m_renderOrigin(m_origin),
 	m_transformChanged(transformChanged)
 {
@@ -50,7 +48,6 @@ void EclassModel::construct()
 {
 	m_rotation.setIdentity();
 
-	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
@@ -61,7 +58,6 @@ void EclassModel::destroy()
 {
 	m_model.modelChanged("");
 
-	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));

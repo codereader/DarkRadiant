@@ -24,7 +24,6 @@ Speaker::Speaker(SpeakerNode& node,
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_named(m_entity),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -45,7 +44,6 @@ Speaker::Speaker(const Speaker& other,
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_named(m_entity),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -240,7 +238,6 @@ void Speaker::construct()
 	m_aabb_local = m_entity.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
 	
-	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 	_owner.addKeyObserver(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
 	_owner.addKeyObserver(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));
@@ -249,7 +246,6 @@ void Speaker::construct()
 
 void Speaker::destroy()
 {
-	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 	_owner.removeKeyObserver(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
 	_owner.removeKeyObserver(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));
