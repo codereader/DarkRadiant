@@ -121,6 +121,11 @@ Light::Light(const Light& other,
 	construct();
 }
 
+Light::~Light()
+{
+	destroy();
+}
+
 /* greebo: This sets up the keyObservers so that the according classes get notified when any
  * of the key/values are changed. 
  * Note, that the entity key/values are still empty at the point where this method is called.
