@@ -446,8 +446,6 @@ const Matrix4& LightNode::rotation() const {
 
 void LightNode::_onTransformationChanged()
 {
-	EntityNode::_onTransformationChanged();
-
 	_light.revertTransform();
 	evaluateTransform();
 	_light.updateOrigin();
@@ -455,8 +453,6 @@ void LightNode::_onTransformationChanged()
 
 void LightNode::_applyTransformation()
 {
-	EntityNode::_applyTransformation();
-
 	_light.revertTransform();
 	evaluateTransform();
 	_light.freezeTransform();

@@ -99,23 +99,4 @@ void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTes
 	}
 }
 
-void EntityNode::_onTransformationChanged()
-{
-	/*if (getType() == TRANSFORM_PRIMITIVE)
-	{
-		_renderableName.revertTransform();
-		_renderableName.translate(getTranslation());
-	}*/
-}
-
-void EntityNode::_applyTransformation()
-{
-	/*if (getType() == TRANSFORM_PRIMITIVE)
-	{
-		_renderableName.revertTransform();
-		_renderableName.translate(getTranslation());
-		_renderableName.freezeTransform();
-	}*/
-}
-
 } // namespace entity

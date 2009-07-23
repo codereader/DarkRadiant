@@ -340,8 +340,6 @@ void Doom3GroupNode::refreshModel() {
 
 void Doom3GroupNode::_onTransformationChanged()
 {
-	EntityNode::_onTransformationChanged();
-
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!m_contained.isModel())
 	{
@@ -367,8 +365,6 @@ void Doom3GroupNode::_onTransformationChanged()
 
 void Doom3GroupNode::_applyTransformation()
 {
-	EntityNode::_applyTransformation();
-
 	m_contained.revertTransform();
 	evaluateTransform();
 	m_contained.freezeTransform();

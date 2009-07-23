@@ -151,8 +151,6 @@ void SpeakerNode::evaluateTransform()
 
 void SpeakerNode::_onTransformationChanged()
 {
-	EntityNode::_onTransformationChanged();
-
 	_speaker.revertTransform();
 	evaluateTransform();
 	_speaker.updateTransform();
@@ -160,8 +158,6 @@ void SpeakerNode::_onTransformationChanged()
 
 void SpeakerNode::_applyTransformation()
 {
-	EntityNode::_applyTransformation();
-
 	_speaker.revertTransform();
 	evaluateTransform();
 	_speaker.freezeTransform();
