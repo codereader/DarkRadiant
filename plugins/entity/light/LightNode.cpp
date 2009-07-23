@@ -249,13 +249,13 @@ scene::INodePtr LightNode::clone() const {
 void LightNode::instantiate(const scene::Path& path)
 {
 	_light.instanceAttach(path);
-	Node::instantiate(path);
+	EntityNode::instantiate(path);
 }
 
 void LightNode::uninstantiate(const scene::Path& path)
 {
 	_light.instanceDetach(path);
-	Node::uninstantiate(path);
+	EntityNode::uninstantiate(path);
 }
 
 void LightNode::selectedChangedComponent(const Selectable& selectable) {

@@ -106,12 +106,12 @@ scene::INodePtr SpeakerNode::clone() const {
 
 void SpeakerNode::instantiate(const scene::Path& path) {
 	_speaker.instanceAttach(path);
-	Node::instantiate(path);
+	EntityNode::instantiate(path);
 }
 
 void SpeakerNode::uninstantiate(const scene::Path& path) {
 	_speaker.instanceDetach(path);
-	Node::uninstantiate(path);
+	EntityNode::uninstantiate(path);
 }
 
 /* Renderable implementation */
