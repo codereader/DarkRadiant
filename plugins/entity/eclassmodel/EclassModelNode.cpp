@@ -28,14 +28,16 @@ EclassModelNode::~EclassModelNode() {
 	destroy();
 }
 
-void EclassModelNode::construct() {
+void EclassModelNode::construct()
+{
 	// Attach the InstanceSet as Traversable::Observer to the nodeset
 	Node::attachTraverseObserver(this);
-	m_contained.addKeyObserver("skin", SkinChangedCaller(*this));
+	addKeyObserver("skin", SkinChangedCaller(*this));
 }
 
-void EclassModelNode::destroy() {
-	m_contained.removeKeyObserver("skin", SkinChangedCaller(*this));
+void EclassModelNode::destroy()
+{
+	removeKeyObserver("skin", SkinChangedCaller(*this));
 	Node::detachTraverseObserver(this);
 }
 
