@@ -29,7 +29,6 @@ class EclassModel :
 
 	MatrixTransform m_transform;
 	Doom3Entity& m_entity;
-	KeyObserverMap m_keyObservers;
 
 	OriginKey m_originKey;
 	Vector3 m_origin;
@@ -59,10 +58,6 @@ public:
 
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
-
-	// Adds the keyobserver to the KeyObserverMap
-	void addKeyObserver(const std::string& key, const KeyObserver& observer);
-	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
 
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;

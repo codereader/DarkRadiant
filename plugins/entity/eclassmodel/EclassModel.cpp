@@ -41,20 +41,31 @@ EclassModel::EclassModel(const EclassModel& other,
 	construct();
 }
 
+EclassModel::~EclassModel()
+{
+	destroy();
+}
+
 void EclassModel::construct()
 {
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
-	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
-	m_keyObservers.insert("model", ModelChangedCaller(*this));
+	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
+	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.addKeyObserver("model", ModelChangedCaller(*this));
 }
 
-EclassModel::~EclassModel() {
+void EclassModel::destroy()
+{
 	m_model.modelChanged("");
-	m_entity.detachObserver(&m_keyObservers);
+
+	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
+	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.removeKeyObserver("model", ModelChangedCaller(*this));
 }
 
 void EclassModel::updateTransform() {
@@ -83,7 +94,6 @@ void EclassModel::rotationChanged() {
 void EclassModel::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
 		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_entity.attachObserver(&m_keyObservers);
 		m_model.modelChanged(m_entity.getKeyValue("model"));
 		_owner.skinChanged(m_entity.getKeyValue("skin"));
 	}
@@ -92,21 +102,8 @@ void EclassModel::instanceAttach(const scene::Path& path) {
 void EclassModel::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
 		m_model.modelChanged("");
-		m_entity.detachObserver(&m_keyObservers);
 		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
-}
-
-void EclassModel::addKeyObserver(const std::string& key, const KeyObserver& observer) {
-	m_entity.detachObserver(&m_keyObservers); // detach first
-
-	m_keyObservers.insert(key, observer);
-
-	m_entity.attachObserver(&m_keyObservers); // attach again
-}
-
-void EclassModel::removeKeyObserver(const std::string& key, const KeyObserver& observer) {
-	m_keyObservers.erase(key, observer);
 }
 
 TransformNode& EclassModel::getTransformNode() {
