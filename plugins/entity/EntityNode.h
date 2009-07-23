@@ -71,15 +71,6 @@ public:
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
-protected:
-	// Gets called by the Transformable implementation whenever
-	// scale, rotation or translation is changed.
-	virtual void _onTransformationChanged();
-
-	// Called by the Transformable implementation before freezing
-	// or when reverting transformations.
-	virtual void _applyTransformation();
-
 private:
 	// Routines used by constructor and destructor, should be non-virtual
 	void construct();

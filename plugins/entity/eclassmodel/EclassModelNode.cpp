@@ -111,8 +111,6 @@ void EclassModelNode::skinChanged(const std::string& value) {
 
 void EclassModelNode::_onTransformationChanged()
 {
-	EntityNode::_onTransformationChanged();
-
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
@@ -126,8 +124,6 @@ void EclassModelNode::_onTransformationChanged()
 
 void EclassModelNode::_applyTransformation()
 {
-	EntityNode::_applyTransformation();
-
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
