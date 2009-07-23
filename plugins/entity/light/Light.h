@@ -15,7 +15,6 @@
 #include "../origin.h"
 #include "../rotation.h"
 #include "../colour.h"
-#include "../NameKey.h"
 #include "../ModelKey.h"
 #include "../Doom3Entity.h"
 
@@ -80,8 +79,6 @@ class Light :
   RotationKey m_rotationKey;
   Float9 m_rotation;
   Colour m_colour;
-
-  NameKey m_named;
 
 	ModelKey _modelKey;
 

@@ -10,7 +10,6 @@
 #include "../ModelKey.h"
 #include "../origin.h"
 #include "../rotation.h"
-#include "../NameKey.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
@@ -45,7 +44,6 @@ class Doom3Group
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
 
-	NameKey m_named;
 	RenderablePivot m_renderOrigin;
 
 	mutable AABB m_curveBounds;

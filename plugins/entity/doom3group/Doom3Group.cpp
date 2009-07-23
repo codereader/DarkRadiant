@@ -38,7 +38,6 @@ Doom3Group::Doom3Group(
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_transformChanged(transformChanged),
 	m_curveNURBS(boundsChanged),
@@ -58,7 +57,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
 	m_transformChanged(transformChanged),
 	m_curveNURBS(boundsChanged),
@@ -254,7 +252,6 @@ void Doom3Group::construct()
 {
 	m_rotation.setIdentity();
 
-	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.addKeyObserver("model", Doom3Group::ModelChangedCaller(*this));
 	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
@@ -268,7 +265,6 @@ void Doom3Group::construct()
 
 void Doom3Group::destroy()
 {
-	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
 	_owner.removeKeyObserver("model", Doom3Group::ModelChangedCaller(*this));
 	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
