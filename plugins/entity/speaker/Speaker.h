@@ -28,8 +28,9 @@ class Speaker :
 	public Bounded,
 	public Snappable
 {
+	SpeakerNode& _owner;
+
 	Doom3Entity& m_entity;
-	KeyObserverMap m_keyObservers;
 	MatrixTransform m_transform;
 
 	OriginKey m_originKey;
@@ -65,15 +66,17 @@ class Speaker :
 
 public:
 	// Constructor
-	Speaker(entity::SpeakerNode& node,
-				  const Callback& transformChanged, 
-				  const Callback& boundsChanged);
+	Speaker(SpeakerNode& node,
+			const Callback& transformChanged, 
+			const Callback& boundsChanged);
 	
 	// Copy constructor
 	Speaker(const Speaker& other, 
-				  SpeakerNode& node, 
-				  const Callback& transformChanged, 
-				  const Callback& boundsChanged);
+			SpeakerNode& node, 
+			const Callback& transformChanged, 
+			const Callback& boundsChanged);
+
+	~Speaker();
 
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(const scene::Path& path);
@@ -113,6 +116,7 @@ public:
 public:
 
 	void construct();
+	void destroy();
 
 	// updates the AABB according to the SpeakerRadii
 	void updateAABB();
