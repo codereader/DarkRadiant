@@ -63,36 +63,24 @@ class RenderableNameKey :
 	const NameKey& _nameKey;
 
 	// The origin (local entity coordinates)
-	Vector3 _originTransformed;
 	Vector3 _origin;
 	
 public:
 	RenderableNameKey(const NameKey& nameKey) : 
 		_nameKey(nameKey), 
-		_originTransformed(0,0,0),
 		_origin(0,0,0)
 	{}
 
 	// We render in local coordinates of the owning entity node
 	void render(const RenderInfo& info) const
 	{
-		glRasterPos3dv(_originTransformed);
+		glRasterPos3dv(_origin);
 		GlobalOpenGL().drawString(_nameKey.name());
 	}
 
-	void translate(const Vector3& translation)
+	void setOrigin(const Vector3& origin)
 	{
-		_originTransformed += translation;
-	}
-
-	void revertTransform()
-	{
-		_originTransformed = _origin;
-	}
-
-	void freezeTransform()
-	{
-		_origin = _originTransformed;
+		_origin = origin;
 	}
 };
 

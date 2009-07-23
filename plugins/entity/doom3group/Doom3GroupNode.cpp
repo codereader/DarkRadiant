@@ -282,14 +282,16 @@ void Doom3GroupNode::renderComponents(RenderableCollector& collector, const Volu
 	}
 }
 
-void Doom3GroupNode::evaluateTransform() {
-	if (getType() == TRANSFORM_PRIMITIVE) {
+void Doom3GroupNode::evaluateTransform()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
 		m_contained.translate(
 			getTranslation(), 
 			getRotation() != c_quaternion_identity // FALSE for identity rotations 
 		);
 		m_contained.rotate(getRotation());
-		
+
 		// Transform all curves also in primitive mode
 		// pass FALSE to force the transformation of non-selected points
 		Matrix4 transformation = calculateTransform();
@@ -347,6 +349,9 @@ void Doom3GroupNode::_onTransformationChanged()
 		traverse(reverter);
 
 		evaluateTransform();
+
+		// Update the origin when we're in "child primitive" mode
+		_renderableName.setOrigin(m_contained.getOrigin());
 	}
 	else
 	{
@@ -367,6 +372,12 @@ void Doom3GroupNode::_applyTransformation()
 	m_contained.revertTransform();
 	evaluateTransform();
 	m_contained.freezeTransform();
+
+	if (!m_contained.isModel())
+	{
+		// Update the origin when we're in "child primitive" mode
+		_renderableName.setOrigin(m_contained.getOrigin());
+	}
 }
 
 } // namespace entity
