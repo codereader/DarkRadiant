@@ -11,7 +11,6 @@
 #include "math/frustum.h"
 #include "transformlib.h"
 
-#include "../keyobservers.h"
 #include "../origin.h"
 #include "../rotation.h"
 #include "../colour.h"
