@@ -463,11 +463,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\keyobservers.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\entity\keyobservers.h"
+				RelativePath="..\..\plugins\entity\KeyObserverMap.h"
 				>
 			</File>
 			<File

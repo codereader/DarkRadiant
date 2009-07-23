@@ -6,7 +6,6 @@
 #include "entitylib.h"
 #include "pivot.h"
 
-#include "../keyobservers.h"
 #include "../ModelKey.h"
 #include "../origin.h"
 #include "../rotation.h"

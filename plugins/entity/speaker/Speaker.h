@@ -12,7 +12,6 @@
 #include "generic/callback.h"
 
 #include "../origin.h"
-#include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "../EntitySettings.h"
 

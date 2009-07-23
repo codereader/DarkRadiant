@@ -12,7 +12,6 @@
 #include "../origin.h"
 #include "../angle.h"
 #include "../rotation.h"
-#include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "transformlib.h"
 

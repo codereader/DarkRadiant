@@ -11,7 +11,7 @@
 #include "target/TargetableNode.h"
 #include "NameKey.h"
 
-#include "keyobservers.h"
+#include "KeyObserverMap.h"
 
 namespace entity {
 
