@@ -350,16 +350,6 @@ void Light::updateRenderableRadius() const
 	_renderableRadius.m_points[7] += _lightBox.origin;
 }
 
-void Light::instanceAttach(const scene::Path& path) {
-	if(++m_instanceCounter.m_count == 1) {
-	}
-}
-
-void Light::instanceDetach(const scene::Path& path) {
-	if(--m_instanceCounter.m_count == 0) {
-	}
-}
-
 /* greebo: Snaps the current light origin to the grid. 
  * 
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode

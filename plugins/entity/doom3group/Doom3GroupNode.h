@@ -42,6 +42,8 @@ class Doom3GroupNode :
 	// TRUE if the skin needs updating
 	mutable bool _updateSkin;
 
+	bool _instantiated;
+
 	// Private copy constructor, is invoked by clone()
 	Doom3GroupNode(const Doom3GroupNode& other);
 

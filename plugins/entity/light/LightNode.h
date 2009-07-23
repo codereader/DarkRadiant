@@ -112,10 +112,6 @@ public:
 
 	scene::INodePtr clone() const;
 
-	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
-
 	void selectedChangedComponent(const Selectable& selectable);
 	typedef MemberCaller1<LightNode, const Selectable&, &LightNode::selectedChangedComponent> SelectedChangedComponentCaller;
 

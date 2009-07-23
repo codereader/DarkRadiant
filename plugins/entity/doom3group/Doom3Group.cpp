@@ -73,16 +73,6 @@ Vector3& Doom3Group::getOrigin() {
 	return m_origin;
 }
 
-void Doom3Group::instanceAttach(const scene::Path& path) {
-	if (++m_instanceCounter.m_count == 1) {
-	}
-}
-
-void Doom3Group::instanceDetach(const scene::Path& path) {
-	if (--m_instanceCounter.m_count == 0) {
-	}
-}
-
 TransformNode& Doom3Group::getTransformNode() {
 	return m_transform;
 }
@@ -346,8 +336,10 @@ void Doom3Group::updateTransform() {
 	m_transformChanged();
 }
 
-void Doom3Group::translateChildren(const Vector3& childTranslation) {
-	if (m_instanceCounter.m_count > 0) {
+void Doom3Group::translateChildren(const Vector3& childTranslation)
+{
+	if (_owner._instantiated)
+	{
 		ChildTranslator translator(childTranslation);
 		_owner.traverse(translator);
 	}

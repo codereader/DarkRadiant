@@ -42,10 +42,16 @@ void EntityNode::construct()
 	TargetableNode::construct();
 
 	addKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
+
+	// Start observing keyvalues
+	_entity.attachObserver(&_keyObservers);
 }
 
 void EntityNode::destruct()
 {
+	// Stop observing keyvalues
+	_entity.detachObserver(&_keyObservers);
+
 	removeKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
 
 	TargetableNode::destruct();
@@ -53,7 +59,11 @@ void EntityNode::destruct()
 
 void EntityNode::addKeyObserver(const std::string& key, const KeyObserver& observer)
 {
+	_entity.detachObserver(&_keyObservers); // detach first
+
 	_keyObservers.insert(key, observer);
+
+	_entity.attachObserver(&_keyObservers); // attach again
 }
 
 void EntityNode::removeKeyObserver(const std::string& key, const KeyObserver& observer)
@@ -97,18 +107,12 @@ void EntityNode::instantiate(const scene::Path& path)
 {
 	_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 
-	// Start observing keyvalues
-	_entity.attachObserver(&_keyObservers);
-
 	Node::instantiate(path);
 }
 
 void EntityNode::uninstantiate(const scene::Path& path)
 {
 	Node::uninstantiate(path);
-
-	// Stop observing keyvalues
-	_entity.detachObserver(&_keyObservers);
 
 	_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 }

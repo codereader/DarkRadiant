@@ -65,7 +65,6 @@ public:
 	SignalHandlerId m_curveNURBSChanged;
 	CurveCatmullRom m_curveCatmullRom;
 	SignalHandlerId m_curveCatmullRomChanged;
-	InstanceCounter m_instanceCounter;
 
 	/** greebo: The constructor takes the Node as argument
 	 * as well as some callbacks for transformation and bounds changes.
@@ -81,9 +80,6 @@ public:
 			   const Callback& boundsChanged);
 	
 	~Doom3Group();
-
-	void instanceAttach(const scene::Path& path);
-	void instanceDetach(const scene::Path& path);
 
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;

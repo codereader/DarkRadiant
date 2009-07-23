@@ -104,16 +104,6 @@ scene::INodePtr SpeakerNode::clone() const {
 	return clone;
 }
 
-void SpeakerNode::instantiate(const scene::Path& path) {
-	_speaker.instanceAttach(path);
-	EntityNode::instantiate(path);
-}
-
-void SpeakerNode::uninstantiate(const scene::Path& path) {
-	_speaker.instanceDetach(path);
-	EntityNode::uninstantiate(path);
-}
-
 /* Renderable implementation */
 
 void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
