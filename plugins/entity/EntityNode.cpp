@@ -41,12 +41,16 @@ void EntityNode::construct()
 {
 	TargetableNode::construct();
 
+	_keyObservers.insert("name", NameKey::NameChangedCaller(_nameKey));
+
 	_entity.attachObserver(&_keyObservers);
 }
 
 void EntityNode::destruct()
 {
 	_entity.detachObserver(&_keyObservers);
+
+	_keyObservers.erase("name", NameKey::NameChangedCaller(_nameKey));
 
 	TargetableNode::destruct();
 }
