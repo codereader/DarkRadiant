@@ -30,8 +30,6 @@ class Doom3Group
 : public Bounded, 
   public Snappable
 {
-	KeyObserverMap m_keyObservers;
-	
 	Doom3GroupNode& _owner;
 	Doom3Entity& _entity;
 
@@ -88,10 +86,6 @@ public:
 
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
-
-	// Adds/removes the keyobserver to/from the KeyObserverMap
-	void addKeyObserver(const std::string& key, const KeyObserver& observer);
-	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
 
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;

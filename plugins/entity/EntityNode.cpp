@@ -22,6 +22,7 @@ EntityNode::EntityNode(const EntityNode& other) :
 	TargetableNode(_entity, *this),
 	Renderable(other),
 	Nameable(other),
+	Transformable(other),
 	_eclass(other._eclass),
 	_entity(other._entity),
 	_namespaceManager(_entity),

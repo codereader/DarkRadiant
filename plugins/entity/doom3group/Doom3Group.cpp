@@ -254,35 +254,28 @@ void Doom3Group::construct()
 {
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NameKey::NameChangedCaller(m_named));
-	m_keyObservers.insert("model", Doom3Group::ModelChangedCaller(*this));
-	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
-	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	m_keyObservers.insert("name", NameChangedCaller(*this));
-	m_keyObservers.insert(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
-	m_keyObservers.insert(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
+	_owner.addKeyObserver("name", NameKey::NameChangedCaller(m_named));
+	_owner.addKeyObserver("model", Doom3Group::ModelChangedCaller(*this));
+	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("name", NameChangedCaller(*this));
+	_owner.addKeyObserver(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
+	_owner.addKeyObserver(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 
 	m_isModel = false;
-
-	_entity.attachObserver(&m_keyObservers);
 }
 
-void Doom3Group::destroy() {
-	_entity.detachObserver(&m_keyObservers);
-}
-
-void Doom3Group::addKeyObserver(const std::string& key, const KeyObserver& observer) 
+void Doom3Group::destroy()
 {
-	_entity.detachObserver(&m_keyObservers); // detach first
-
-	m_keyObservers.insert(key, observer);
-
-	_entity.attachObserver(&m_keyObservers); // attach again
-}
-
-void Doom3Group::removeKeyObserver(const std::string& key, const KeyObserver& observer) {
-	m_keyObservers.erase(key, observer);
+	_owner.removeKeyObserver("name", NameKey::NameChangedCaller(m_named));
+	_owner.removeKeyObserver("model", Doom3Group::ModelChangedCaller(*this));
+	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("name", NameChangedCaller(*this));
+	_owner.removeKeyObserver(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
+	_owner.removeKeyObserver(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 }
 
 bool Doom3Group::isModel() const {
