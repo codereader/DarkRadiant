@@ -16,7 +16,6 @@
 #include "../rotation.h"
 #include "../colour.h"
 #include "../NameKey.h"
-#include "../entity.h"
 #include "../ModelKey.h"
 #include "../Doom3Entity.h"
 
