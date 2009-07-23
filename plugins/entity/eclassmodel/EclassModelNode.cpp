@@ -96,12 +96,12 @@ scene::INodePtr EclassModelNode::clone() const {
 
 void EclassModelNode::instantiate(const scene::Path& path) {
 	m_contained.instanceAttach(path);
-	Node::instantiate(path);
+	EntityNode::instantiate(path);
 }
 
 void EclassModelNode::uninstantiate(const scene::Path& path) {
 	m_contained.instanceDetach(path);
-	Node::uninstantiate(path);
+	EntityNode::uninstantiate(path);
 }
 
 void EclassModelNode::skinChanged(const std::string& value) {

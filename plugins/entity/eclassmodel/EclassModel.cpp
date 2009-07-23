@@ -88,8 +88,10 @@ void EclassModel::rotationChanged() {
 }
 
 void EclassModel::instanceAttach(const scene::Path& path) {
-	if(++m_instanceCounter.m_count == 1) {
-		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
+	
+	assert(m_instanceCounter.m_count == 0);
+
+	if (++m_instanceCounter.m_count == 1) {
 		m_model.modelChanged(m_entity.getKeyValue("model"));
 		_owner.skinChanged(m_entity.getKeyValue("skin"));
 	}
@@ -98,7 +100,6 @@ void EclassModel::instanceAttach(const scene::Path& path) {
 void EclassModel::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
 		m_model.modelChanged("");
-		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
