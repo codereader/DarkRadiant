@@ -54,7 +54,7 @@ Doom3GroupNode::~Doom3GroupNode() {
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
 	m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
 
-	m_contained.removeKeyObserver("skin", SkinChangedCaller(*this));
+	removeKeyObserver("skin", SkinChangedCaller(*this));
 
 	Callback emptyCallback;
 	m_contained.setTransformChanged(emptyCallback);
@@ -68,7 +68,7 @@ void Doom3GroupNode::construct()
 	Node::attachTraverseObserver(this);
 
 	// Attach the callback as keyobserver for the skin key
-	m_contained.addKeyObserver("skin", SkinChangedCaller(*this));
+	addKeyObserver("skin", SkinChangedCaller(*this));
 
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
 		CurveEditInstance::CurveChangedCaller(m_curveNURBS)
