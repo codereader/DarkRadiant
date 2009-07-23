@@ -312,9 +312,15 @@ void Doom3Group::setIsModel(bool newValue) {
 void Doom3Group::updateIsModel() {
 	if (m_modelKey != m_name && _entity.getKeyValue("classname") != "worldspawn") {
 		setIsModel(true);
+
+		// Set the renderable name back to 0,0,0
+		_owner._renderableName.setOrigin(Vector3(0,0,0));
 	}
 	else {
 		setIsModel(false);
+
+		// Update the renderable name
+		_owner._renderableName.setOrigin(getOrigin());
 	}
 }
 
@@ -364,8 +370,11 @@ void Doom3Group::originChanged() {
 	m_origin = m_originKey.m_origin;
 	updateTransform();
 	// Only non-models should have their origin different than <0,0,0>
-	if (!isModel()) {
+	if (!isModel())
+	{
 		m_nameOrigin = m_origin;
+		// Update the renderable name
+		_owner._renderableName.setOrigin(getOrigin());
 	}
 	m_renderOrigin.updatePivot();
 }
