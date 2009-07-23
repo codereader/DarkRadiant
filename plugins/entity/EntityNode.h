@@ -69,6 +69,10 @@ public:
 	void attachNames();
 	void detachNames();
 
+	// scene::Instantiable implementation
+	virtual void instantiate(const scene::Path& path);
+	virtual void uninstantiate(const scene::Path& path);
+
 	// Nameable implementation
 	virtual std::string name() const;
 
