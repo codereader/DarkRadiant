@@ -439,14 +439,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\entity\entity.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\entity\entity.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\entity\EntityCreator.cpp"
 				>
 			</File>
