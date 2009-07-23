@@ -202,13 +202,13 @@ scene::INodePtr Doom3GroupNode::clone() const {
 void Doom3GroupNode::instantiate(const scene::Path& path) {
 	Node::getTraversable().instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	m_contained.instanceAttach(path);
-	Node::instantiate(path);
+	EntityNode::instantiate(path);
 }
 
 void Doom3GroupNode::uninstantiate(const scene::Path& path) {
 	Node::getTraversable().instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	m_contained.instanceDetach(path);
-	Node::uninstantiate(path);
+	EntityNode::uninstantiate(path);
 }
 
 // Snappable implementation

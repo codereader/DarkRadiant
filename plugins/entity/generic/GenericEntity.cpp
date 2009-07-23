@@ -53,13 +53,11 @@ GenericEntity::~GenericEntity()
 
 void GenericEntity::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
-		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void GenericEntity::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
-		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 

@@ -352,13 +352,11 @@ void Light::updateRenderableRadius() const
 
 void Light::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1) {
-		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void Light::instanceDetach(const scene::Path& path) {
 	if(--m_instanceCounter.m_count == 0) {
-		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 

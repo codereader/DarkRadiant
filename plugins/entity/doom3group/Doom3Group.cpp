@@ -75,13 +75,11 @@ Vector3& Doom3Group::getOrigin() {
 
 void Doom3Group::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
-		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
 void Doom3Group::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
 	}
 }
 
