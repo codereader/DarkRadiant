@@ -39,11 +39,29 @@ EntityNode::~EntityNode()
 void EntityNode::construct()
 {
 	TargetableNode::construct();
+
+	_entity.attachObserver(&_keyObservers);
 }
 
 void EntityNode::destruct()
 {
+	_entity.detachObserver(&_keyObservers);
+
 	TargetableNode::destruct();
+}
+
+void EntityNode::addKeyObserver(const std::string& key, const KeyObserver& observer)
+{
+	_entity.detachObserver(&_keyObservers); // detach first
+
+	_keyObservers.insert(key, observer);
+
+	_entity.attachObserver(&_keyObservers); // attach again
+}
+
+void EntityNode::removeKeyObserver(const std::string& key, const KeyObserver& observer)
+{
+	_keyObservers.erase(key, observer);
 }
 
 std::string EntityNode::getName() const {
