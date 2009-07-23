@@ -66,10 +66,11 @@ class Light :
 {
 	friend class LightNode;
 
+	LightNode& _owner;
+
     // The parent entity object that uses this light
 	Doom3Entity& _entity;
 
-  KeyObserverMap m_keyObservers;
   MatrixTransform m_transform;
 
 	OriginKey m_originKey;
@@ -149,6 +150,7 @@ class Light :
   Callback m_evaluateTransform;
 
 	void construct();
+	void destroy();
 
 private:
 
