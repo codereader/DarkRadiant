@@ -302,7 +302,8 @@ void SkinChooser::_onSelChanged(GtkWidget*, SkinChooser* self) {
 	self->_preview->setSkin(skin);
 }
 
-bool SkinChooser::_onCloseButton(GtkWidget*, SkinChooser* self) {
+gboolean SkinChooser::_onCloseButton(GtkWidget *widget, GdkEvent* ev, SkinChooser* self)
+{
 	// Clear the last skin and quit the main loop
 	self->_lastSkin = self->_prevSkin;
 	gtk_main_quit();
