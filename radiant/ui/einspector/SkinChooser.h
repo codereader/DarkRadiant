@@ -63,7 +63,7 @@ private:
 	static void _onOK(GtkWidget*, SkinChooser*);
 	static void _onCancel(GtkWidget*, SkinChooser*);
 	static void _onSelChanged(GtkWidget*, SkinChooser*);
-	static bool _onCloseButton(GtkWidget*, SkinChooser*);
+	static gboolean _onCloseButton(GtkWidget *widget, GdkEvent* ev, SkinChooser*);
 	
 	// Contains the static instance
 	static SkinChooser& Instance();
