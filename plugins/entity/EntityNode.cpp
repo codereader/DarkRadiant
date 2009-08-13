@@ -10,7 +10,8 @@ EntityNode::EntityNode(const IEntityClassConstPtr& eclass) :
 	_entity(_eclass),
 	_namespaceManager(_entity),
 	_nameKey(_entity),
-	_renderableName(_nameKey)
+	_renderableName(_nameKey),
+	_keyObservers(_entity)
 {
 	construct();
 }
@@ -27,7 +28,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_entity(other._entity),
 	_namespaceManager(_entity),
 	_nameKey(_entity),
-	_renderableName(_nameKey)
+	_renderableName(_nameKey),
+	_keyObservers(_entity)
 {
 	construct();
 }
@@ -42,16 +44,10 @@ void EntityNode::construct()
 	TargetableNode::construct();
 
 	addKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
-
-	// Start observing keyvalues
-	_entity.attachObserver(&_keyObservers);
 }
 
 void EntityNode::destruct()
 {
-	// Stop observing keyvalues
-	_entity.detachObserver(&_keyObservers);
-
 	removeKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
 
 	TargetableNode::destruct();
@@ -59,11 +55,7 @@ void EntityNode::destruct()
 
 void EntityNode::addKeyObserver(const std::string& key, const KeyObserver& observer)
 {
-	_entity.detachObserver(&_keyObservers); // detach first
-
 	_keyObservers.insert(key, observer);
-
-	_entity.attachObserver(&_keyObservers); // attach again
 }
 
 void EntityNode::removeKeyObserver(const std::string& key, const KeyObserver& observer)

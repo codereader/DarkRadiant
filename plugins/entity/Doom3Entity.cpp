@@ -170,6 +170,14 @@ std::string Doom3Entity::getKeyValue(const std::string& key) const {
 	}
 }
 
+Doom3Entity::KeyValuePtr Doom3Entity::findKeyValue(const std::string& key) const
+{
+	// Lookup the key in the map
+	KeyValues::const_iterator i = find(key);
+
+	return (i != _keyValues.end()) ? i->second : KeyValuePtr();
+}
+
 bool Doom3Entity::isInherited(const std::string& key) const {
 	// Check if we have the key in the local keyvalue map
 	bool definedLocally = (find(key) != _keyValues.end());
