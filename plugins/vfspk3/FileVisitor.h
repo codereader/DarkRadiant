@@ -61,7 +61,9 @@ public:
 		if (!_visitAll) 
 		{
 			// The dot must be at the right position
-			if (subname[subname.length() - _extLength - 1] != '.') {
+			if (subname.length() <= _extLength ||
+				subname[subname.length() - _extLength - 1] != '.')
+			{
 				return;
 			}
 
