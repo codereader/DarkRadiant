@@ -84,7 +84,6 @@ public:
 
 class Brush :
 	public IBrush,
-	public TransformNode,
 	public Bounded,
 	public Cullable,
 	public Snappable,
@@ -195,11 +194,7 @@ public:
 	void evaluateBRep() const;
 	
 	void transformChanged();
-	typedef MemberCaller<Brush, &Brush::transformChanged> TransformChangedCaller;
-	
 	void evaluateTransform();
-	
-	const Matrix4& localToParent() const;
 	
 	void aabbChanged();
 	

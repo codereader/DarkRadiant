@@ -20,11 +20,8 @@ namespace entity {
 class EclassModelNode :
 	public EntityNode,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
-	public TransformNode,
-	public Renderable,
-	public TransformModifier
+	public TransformNode
 {
 	friend class EclassModel;
 
@@ -50,29 +47,23 @@ public:
 	virtual Entity& getEntity();
 	virtual void refreshModel();
 
-	// Namespaced implementation
-	//virtual void setNamespace(INamespace& space);
-
 	scene::INodePtr clone() const;
-
-	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	// Nameable implementation
-	virtual std::string name() const;
-
-	void evaluateTransform();
-	typedef MemberCaller<EclassModelNode, &EclassModelNode::evaluateTransform> EvaluateTransformCaller;
-	void applyTransform();
-	typedef MemberCaller<EclassModelNode, &EclassModelNode::applyTransform> ApplyTransformCaller;
-
 	void skinChanged(const std::string& value);
 	typedef MemberCaller1<EclassModelNode, const std::string&, &EclassModelNode::skinChanged> SkinChangedCaller;
+
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
 
 private:
 	void construct();

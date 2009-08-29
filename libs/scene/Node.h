@@ -84,7 +84,7 @@ public:
 	virtual void removeChildNode(const INodePtr& node);
 	virtual bool hasChildNodes() const;
 	
-	virtual void traverse(NodeVisitor& visitor);
+	virtual void traverse(NodeVisitor& visitor) const;
 
 	virtual void setSelf(const INodePtr& self);
 	virtual scene::INodePtr getSelf() const;

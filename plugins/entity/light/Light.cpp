@@ -67,15 +67,14 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state) {
 Light::Light(Doom3Entity& entity,
 			 LightNode& owner,
              const Callback& transformChanged,
-             const Callback& boundsChanged,
-             const Callback& evaluateTransform) 
+             const Callback& boundsChanged) 
 :
+	_owner(owner),
 	_entity(entity),
 	m_originKey(OriginChangedCaller(*this)),
 	_originTransformed(ORIGINKEY_IDENTITY),
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_colour(Callback()),
-	m_named(_entity),
 	_modelKey(owner),
 	_renderableRadius(_lightBox.origin),
 	_renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
@@ -85,11 +84,9 @@ Light::Light(Doom3Entity& entity,
 	_rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
 	_rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
 	_rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
-	m_renderName(m_named, _lightBox.origin),
 	m_useLightRotation(false),
 	m_transformChanged(transformChanged),
-	m_boundsChanged(boundsChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_boundsChanged(boundsChanged)
 {
 	construct();
 }
@@ -99,14 +96,13 @@ Light::Light(const Light& other,
 			 LightNode& owner,
              Doom3Entity& entity,
              const Callback& transformChanged,
-             const Callback& boundsChanged,
-             const Callback& evaluateTransform) 
-: _entity(entity),
+             const Callback& boundsChanged) 
+: _owner(owner),
+  _entity(entity),
   m_originKey(OriginChangedCaller(*this)),
   _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(RotationChangedCaller(*this)),
   m_colour(Callback()),
-  m_named(_entity),
   _modelKey(owner),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
@@ -116,13 +112,16 @@ Light::Light(const Light& other,
   _rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
   _rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
   _rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
-  m_renderName(m_named, _lightBox.origin),
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
-  m_boundsChanged(boundsChanged),
-  m_evaluateTransform(evaluateTransform)
+  m_boundsChanged(boundsChanged)
 {
 	construct();
+}
+
+Light::~Light()
+{
+	destroy();
 }
 
 /* greebo: This sets up the keyObservers so that the according classes get notified when any
@@ -141,21 +140,20 @@ void Light::construct() {
 	_lightBox.extents = Vector3(8, 8, 8);
 	_originTransformed = ORIGINKEY_IDENTITY;
 
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
-	m_keyObservers.insert("_color", Colour::ColourChangedCaller(m_colour));
-	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.addKeyObserver("_color", Colour::ColourChangedCaller(m_colour));
+	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 
-	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	m_keyObservers.insert("light_radius", Doom3LightRadius::LightRadiusChangedCaller(m_doom3Radius));
-	m_keyObservers.insert("light_center", Doom3LightRadius::LightCenterChangedCaller(m_doom3Radius));
-	m_keyObservers.insert("light_rotation", Light::LightRotationChangedCaller(*this));
-	m_keyObservers.insert("light_target", Light::LightTargetChangedCaller(*this));
-	m_keyObservers.insert("light_up", Light::LightUpChangedCaller(*this));
-	m_keyObservers.insert("light_right", Light::LightRightChangedCaller(*this));
-	m_keyObservers.insert("light_start", Light::LightStartChangedCaller(*this));
-	m_keyObservers.insert("light_end", Light::LightEndChangedCaller(*this));
-	m_keyObservers.insert("texture", LightShader::ValueChangedCaller(m_shader));
+	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("light_radius", Doom3LightRadius::LightRadiusChangedCaller(m_doom3Radius));
+	_owner.addKeyObserver("light_center", Doom3LightRadius::LightCenterChangedCaller(m_doom3Radius));
+	_owner.addKeyObserver("light_rotation", Light::LightRotationChangedCaller(*this));
+	_owner.addKeyObserver("light_target", Light::LightTargetChangedCaller(*this));
+	_owner.addKeyObserver("light_up", Light::LightUpChangedCaller(*this));
+	_owner.addKeyObserver("light_right", Light::LightRightChangedCaller(*this));
+	_owner.addKeyObserver("light_start", Light::LightStartChangedCaller(*this));
+	_owner.addKeyObserver("light_end", Light::LightEndChangedCaller(*this));
+	_owner.addKeyObserver("texture", LightShader::ValueChangedCaller(m_shader));
 	m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 	m_doom3ProjectionChanged = true;
 
@@ -169,7 +167,28 @@ void Light::construct() {
 	m_shader.valueChanged(_entity.getKeyValue("texture"));
 
 	// Hook the "model" spawnarg to the ModelKey class
-	m_keyObservers.insert("model", ModelKey::ModelChangedCaller(_modelKey));
+	_owner.addKeyObserver("model", ModelKey::ModelChangedCaller(_modelKey));
+}
+
+void Light::destroy()
+{
+	_owner.removeKeyObserver("_color", Colour::ColourChangedCaller(m_colour));
+	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+
+	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("light_radius", Doom3LightRadius::LightRadiusChangedCaller(m_doom3Radius));
+	_owner.removeKeyObserver("light_center", Doom3LightRadius::LightCenterChangedCaller(m_doom3Radius));
+	_owner.removeKeyObserver("light_rotation", Light::LightRotationChangedCaller(*this));
+	_owner.removeKeyObserver("light_target", Light::LightTargetChangedCaller(*this));
+	_owner.removeKeyObserver("light_up", Light::LightUpChangedCaller(*this));
+	_owner.removeKeyObserver("light_right", Light::LightRightChangedCaller(*this));
+	_owner.removeKeyObserver("light_start", Light::LightStartChangedCaller(*this));
+	_owner.removeKeyObserver("light_end", Light::LightEndChangedCaller(*this));
+	_owner.removeKeyObserver("texture", LightShader::ValueChangedCaller(m_shader));
+
+	// Hook the "model" spawnarg to the ModelKey class
+	_owner.removeKeyObserver("model", ModelKey::ModelChangedCaller(_modelKey));
 }
 
 void Light::updateOrigin() {
@@ -331,20 +350,6 @@ void Light::updateRenderableRadius() const
 	_renderableRadius.m_points[7] += _lightBox.origin;
 }
 
-void Light::instanceAttach(const scene::Path& path) {
-	if(++m_instanceCounter.m_count == 1) {
-		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		_entity.attachObserver(&m_keyObservers);
-	}
-}
-
-void Light::instanceDetach(const scene::Path& path) {
-	if(--m_instanceCounter.m_count == 0) {
-		_entity.detachObserver(&m_keyObservers);
-		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-	}
-}
-
 /* greebo: Snaps the current light origin to the grid. 
  * 
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
@@ -451,19 +456,6 @@ void Light::freezeTransform()
 	}
 }
 
-entity::Doom3Entity& Light::getEntity() {
-	return _entity;
-}
-const entity::Doom3Entity& Light::getEntity() const {
-	return _entity;
-}
-
-const NameKey& Light::getNameable() const {
-	return m_named;
-}
-NameKey& Light::getNameable() {
-	return m_named;
-}
 TransformNode& Light::getTransformNode() {
 	return m_transform;
 }
@@ -560,11 +552,6 @@ void Light::renderWireframe(RenderableCollector& collector,
 			updateRenderableRadius();
 			collector.addRenderable(_renderableRadius, localToWorld);
 		}
-	}
-
-	// Render the name
-	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		collector.addRenderable(m_renderName, localToWorld);
 	}
 }
 
@@ -663,12 +650,6 @@ void Light::rotate(const Quaternion& rotation) {
 	else {
 		m_rotation.rotate(rotation);
 	}
-}
-
-void Light::transformChanged() {
-	revertTransform();
-	m_evaluateTransform();
-	updateOrigin();
 }
 
 const Matrix4& Light::getLocalPivot() const {

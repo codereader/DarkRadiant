@@ -3,9 +3,15 @@
 
 #include "ientity.h"
 #include "inamespace.h"
+
 #include "selectionlib.h"
+#include "transformlib.h"
+
 #include "NamespaceManager.h"
 #include "target/TargetableNode.h"
+#include "NameKey.h"
+
+#include "KeyObserverMap.h"
 
 namespace entity {
 
@@ -16,7 +22,10 @@ class EntityNode :
 	public IEntityNode,
 	public SelectableNode, // derives from scene::Node
 	public Namespaced,
-	public TargetableNode
+	public TargetableNode,
+	public Renderable,
+	public Nameable,
+	public Transformable
 {
 protected:
 	// The entity class
@@ -28,6 +37,16 @@ protected:
 
 	// The class taking care of all the namespace-relevant stuff
 	NamespaceManager _namespaceManager;
+
+	// A helper class observing the "name" keyvalue
+	// Used for rendering the name and as Nameable implementation
+	NameKey _nameKey;
+
+	// The OpenGLRenderable, using the NameKey helper class to retrieve the name
+	RenderableNameKey _renderableName;
+
+	// A helper class managing the collection of KeyObservers attached to the Doom3Entity
+	KeyObserverMap _keyObservers;
 
 public:
 	// The Constructor needs the eclass
@@ -49,6 +68,26 @@ public:
 
 	void attachNames();
 	void detachNames();
+
+	// scene::Instantiable implementation
+	virtual void instantiate(const scene::Path& path);
+	virtual void uninstantiate(const scene::Path& path);
+
+	// Nameable implementation
+	virtual std::string name() const;
+
+	// Renderable implementation, can be overridden by subclasses
+	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+
+	// Adds/removes the keyobserver to/from the KeyObserverMap
+	void addKeyObserver(const std::string& key, const KeyObserver& observer);
+	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
+
+private:
+	// Routines used by constructor and destructor, should be non-virtual
+	void construct();
+	void destruct();
 };
 
 } // namespace entity

@@ -6,19 +6,18 @@ namespace entity {
 
 Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)		
+		Node::BoundsChangedCaller(*this)
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 SelectionChangedComponentCaller(*this)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
-	_updateSkin(true)
+	_updateSkin(true),
+	_instantiated(false)
 {
 	construct();
 }
@@ -27,30 +26,27 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
 	scene::GroupNode(other),
-	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
 	ComponentSnappable(other),
-	Renderable(other),
 	Bounded(other),
-	TransformModifier(Doom3Group::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	CurveNode(other),
 	m_contained(
 		other.m_contained,
 		*this, // Pass <this> as Doom3GroupNode&
 		Node::TransformChangedCaller(*this),
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)		
+		Node::BoundsChangedCaller(*this)
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 SelectionChangedComponentCaller(*this)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
-	_updateSkin(true)
+	_updateSkin(true),
+	_instantiated(false)
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
@@ -60,7 +56,7 @@ Doom3GroupNode::~Doom3GroupNode() {
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
 	m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
 
-	m_contained.removeKeyObserver("skin", SkinChangedCaller(*this));
+	removeKeyObserver("skin", SkinChangedCaller(*this));
 
 	Callback emptyCallback;
 	m_contained.setTransformChanged(emptyCallback);
@@ -74,7 +70,7 @@ void Doom3GroupNode::construct()
 	Node::attachTraverseObserver(this);
 
 	// Attach the callback as keyobserver for the skin key
-	m_contained.addKeyObserver("skin", SkinChangedCaller(*this));
+	addKeyObserver("skin", SkinChangedCaller(*this));
 
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
 		CurveEditInstance::CurveChangedCaller(m_curveNURBS)
@@ -96,22 +92,22 @@ void Doom3GroupNode::appendControlPoints(unsigned int numPoints) {
 void Doom3GroupNode::removeSelectedControlPoints() {
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.removeSelectedControlPoints();
-		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline, _entity);
 	}
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.removeSelectedControlPoints();
-		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs, _entity);
 	}
 }
 
 void Doom3GroupNode::insertControlPointsAtSelected() {
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.insertControlPointsAtSelected();
-		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline, _entity);
 	}
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.insertControlPointsAtSelected();
-		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs, _entity);
 	}
 }
 
@@ -135,10 +131,6 @@ void Doom3GroupNode::removeOriginFromChildren() {
 		Doom3BrushTranslator translator(-m_contained.getOrigin());
 		traverse(translator);
 	}
-}
-
-std::string Doom3GroupNode::name() const {
-	return m_contained.getNameable().name();
 }
 
 void Doom3GroupNode::selectionChangedComponent(const Selectable& selectable) {
@@ -191,11 +183,11 @@ const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
 void Doom3GroupNode::snapComponents(float snap) {
 	if (m_curveNURBS.isSelected()) {
 		m_curveNURBS.snapto(snap);
-		m_curveNURBS.write(curve_Nurbs, m_contained.getEntity());
+		m_curveNURBS.write(curve_Nurbs, _entity);
 	}
 	if (m_curveCatmullRom.isSelected()) {
 		m_curveCatmullRom.snapto(snap);
-		m_curveCatmullRom.write(curve_CatmullRomSpline, m_contained.getEntity());
+		m_curveCatmullRom.write(curve_CatmullRomSpline, _entity);
 	}
 	if (_originInstance.isSelected()) {
 		m_contained.snapOrigin(snap);
@@ -209,16 +201,20 @@ scene::INodePtr Doom3GroupNode::clone() const {
 	return clone;
 }
 
-void Doom3GroupNode::instantiate(const scene::Path& path) {
+void Doom3GroupNode::instantiate(const scene::Path& path)
+{
+	_instantiated = true;
+
 	Node::getTraversable().instanceAttach(path_find_mapfile(path.begin(), path.end()));
-	m_contained.instanceAttach(path);
-	Node::instantiate(path);
+	EntityNode::instantiate(path);
 }
 
-void Doom3GroupNode::uninstantiate(const scene::Path& path) {
+void Doom3GroupNode::uninstantiate(const scene::Path& path)
+{
+	_instantiated = false;
+
 	Node::getTraversable().instanceDetach(path_find_mapfile(path.begin(), path.end()));
-	m_contained.instanceDetach(path);
-	Node::uninstantiate(path);
+	EntityNode::uninstantiate(path);
 }
 
 // Snappable implementation
@@ -232,12 +228,8 @@ const Matrix4& Doom3GroupNode::localToParent() const {
 }
 
 Entity& Doom3GroupNode::getEntity() {
-	return m_contained.getEntity();
+	return _entity;
 }
-
-/*void Doom3GroupNode::setNamespace(INamespace& space) {
-	m_contained.getNamespaced().setNamespace(space);
-}*/
 
 void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());
@@ -252,14 +244,17 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
 	}
 }
 
-void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderSolid(collector, volume);
+
 	// greebo: Check if the skin needs updating before rendering.
 	if (_updateSkin) {
 		if (m_contained.isModel()) {
 			// Instantiate a walker class equipped with the new value
-			SkinChangedWalker walker(m_contained.getEntity().getKeyValue("skin"));
+			SkinChangedWalker walker(_entity.getKeyValue("skin"));
 			// Update all children
-			Node_traverseSubgraph(Node::getSelf(), walker);
+			traverse(walker);
 		}
 
 		_updateSkin = false;
@@ -271,7 +266,10 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 	m_curveCatmullRom.renderComponentsSelected(collector, volume, localToWorld());
 }
 
-void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderWireframe(collector, volume);
+
 	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
 
 	m_curveNURBS.renderComponentsSelected(collector, volume, localToWorld());
@@ -290,14 +288,16 @@ void Doom3GroupNode::renderComponents(RenderableCollector& collector, const Volu
 	}
 }
 
-void Doom3GroupNode::evaluateTransform() {
-	if (getType() == TRANSFORM_PRIMITIVE) {
+void Doom3GroupNode::evaluateTransform()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
 		m_contained.translate(
 			getTranslation(), 
 			getRotation() != c_quaternion_identity // FALSE for identity rotations 
 		);
 		m_contained.rotate(getRotation());
-		
+
 		// Transform all curves also in primitive mode
 		// pass FALSE to force the transformation of non-selected points
 		Matrix4 transformation = calculateTransform();
@@ -327,27 +327,59 @@ void Doom3GroupNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void Doom3GroupNode::applyTransform() {
-	m_contained.revertTransform();
-	evaluateTransform();
-	m_contained.freezeTransform();
-}
-
 void Doom3GroupNode::skinChanged(const std::string& value) {
 	if (m_contained.isModel()) {
 		// Instantiate a walker class equipped with the new value
 		SkinChangedWalker walker(value);
 		// Update all children of this node
-		Node_traverseSubgraph(Node::getSelf(), walker);
+		traverse(walker);
 	}
 }
 
 void Doom3GroupNode::refreshModel() {
 	// Simulate a "model" key change
-	m_contained.modelChanged(m_contained.getEntity().getKeyValue("model"));
+	m_contained.modelChanged(_entity.getKeyValue("model"));
 
 	// Trigger a skin change
-	skinChanged(m_contained.getEntity().getKeyValue("skin"));
+	skinChanged(_entity.getKeyValue("skin"));
+}
+
+void Doom3GroupNode::_onTransformationChanged()
+{
+	// If this is a container, pass the call to the children and leave the entity unharmed
+	if (!m_contained.isModel())
+	{
+		ChildTransformReverter reverter;
+		traverse(reverter);
+
+		evaluateTransform();
+
+		// Update the origin when we're in "child primitive" mode
+		_renderableName.setOrigin(m_contained.getOrigin());
+	}
+	else
+	{
+		// It's a model
+		m_contained.revertTransform();
+		evaluateTransform();
+		m_contained.updateTransform();
+	}
+
+	m_contained.m_curveNURBS.curveChanged();
+	m_contained.m_curveCatmullRom.curveChanged();
+}
+
+void Doom3GroupNode::_applyTransformation()
+{
+	m_contained.revertTransform();
+	evaluateTransform();
+	m_contained.freezeTransform();
+
+	if (!m_contained.isModel())
+	{
+		// Update the origin when we're in "child primitive" mode
+		_renderableName.setOrigin(m_contained.getOrigin());
+	}
 }
 
 } // namespace entity

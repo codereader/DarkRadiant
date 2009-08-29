@@ -19,22 +19,19 @@ namespace entity {
 
 Speaker::Speaker(SpeakerNode& node, 
 		const Callback& transformChanged, 
-		const Callback& boundsChanged,
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
+	_owner(node),
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_named(m_entity),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
-	m_boundsChanged(boundsChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_boundsChanged(boundsChanged)
 {
 	construct();
 }
@@ -42,53 +39,26 @@ Speaker::Speaker(SpeakerNode& node,
 Speaker::Speaker(const Speaker& other, 
 		SpeakerNode& node, 
 		const Callback& transformChanged, 
-		const Callback& boundsChanged,
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
+	_owner(node),
 	m_entity(node._entity),
 	m_originKey(OriginChangedCaller(*this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_named(m_entity),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_renderName(m_named, g_vector3_identity),
 	m_transformChanged(transformChanged),
-	m_boundsChanged(boundsChanged),
-	m_evaluateTransform(evaluateTransform)
+	m_boundsChanged(boundsChanged)
 {
 	construct();
 }
 
-void Speaker::instanceAttach(const scene::Path& path) {
-	if(++m_instanceCounter.m_count == 1) {
-		m_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-		m_entity.attachObserver(&m_keyObservers);
-	}
-}
-
-void Speaker::instanceDetach(const scene::Path& path) {
-	if(--m_instanceCounter.m_count == 0) {
-		m_entity.detachObserver(&m_keyObservers);
-		m_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-	}
-}
-
-Doom3Entity& Speaker::getEntity() {
-	return m_entity;
-}
-const Doom3Entity& Speaker::getEntity() const {
-	return m_entity;
-}
-
-NameKey& Speaker::getNameable() {
-	return m_named;
-}
-
-const NameKey& Speaker::getNameable() const {
-	return m_named;
+Speaker::~Speaker()
+{
+	destroy();
 }
 
 TransformNode& Speaker::getTransformNode() {
@@ -141,12 +111,6 @@ void Speaker::renderWireframe(RenderableCollector& collector,
     {
 		collector.addRenderable(_renderableRadii, localToWorld);
     }
-	
-    // Submit renderable text name if required
-	if (EntitySettings::InstancePtr()->renderEntityNames()) 
-    {
-		collector.addRenderable(m_renderName, localToWorld);
-	}
 }
 
 void Speaker::testSelect(Selector& selector, 
@@ -216,12 +180,6 @@ void Speaker::freezeTransform() {
 	}
 }
 
-void Speaker::transformChanged() {
-	revertTransform();
-	m_evaluateTransform();
-	updateTransform();
-}
-
 void Speaker::setRadiusFromAABB(const AABB& aabb)
 {
 	// Find out which dimension got changed the most
@@ -263,15 +221,23 @@ void Speaker::setRadiusFromAABB(const AABB& aabb)
 	updateTransform();
 }
 
-void Speaker::construct() {
+void Speaker::construct()
+{
 	m_aabb_local = m_entity.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
 	
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
-	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
-	m_keyObservers.insert(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
-	m_keyObservers.insert(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));
-	m_keyObservers.insert(KEY_S_MAXDISTANCE, Speaker::sMaxChangedCaller(*this));
+	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.addKeyObserver(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
+	_owner.addKeyObserver(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));
+	_owner.addKeyObserver(KEY_S_MAXDISTANCE, Speaker::sMaxChangedCaller(*this));
+}
+
+void Speaker::destroy()
+{
+	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.removeKeyObserver(KEY_S_SHADER, Speaker::sShaderChangedCaller(*this));
+	_owner.removeKeyObserver(KEY_S_MINDISTANCE, Speaker::sMinChangedCaller(*this));
+	_owner.removeKeyObserver(KEY_S_MAXDISTANCE, Speaker::sMaxChangedCaller(*this));
 }
 
 void Speaker::updateAABB()

@@ -6,12 +6,10 @@ namespace entity {
 
 LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	_light(_entity,
 		   *this,
            Node::TransformChangedCaller(*this), 
-           Node::BoundsChangedCaller(*this), 
-           EvaluateTransformCaller(*this)),
+           Node::BoundsChangedCaller(*this)),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
 	_lightTargetInstance(VertexInstance(_light.targetTransformed(), SelectedChangedComponentCaller(*this))),
 	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
@@ -27,14 +25,12 @@ LightNode::LightNode(const IEntityClassConstPtr& eclass) :
 LightNode::LightNode(const LightNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	TransformModifier(Light::TransformChangedCaller(_light), ApplyTransformCaller(*this)),
 	scene::SelectableLight(other),
 	_light(other._light,
 		   *this,
            _entity,
            Node::TransformChangedCaller(*this), 
-           Node::BoundsChangedCaller(*this), 
-           EvaluateTransformCaller(*this)),
+           Node::BoundsChangedCaller(*this)),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
 	_lightTargetInstance(VertexInstance(_light.targetTransformed(), SelectedChangedComponentCaller(*this))),
 	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
@@ -82,11 +78,12 @@ const Matrix4& LightNode::localToParent() const {
 }
 
 Entity& LightNode::getEntity() {
-	return _light.getEntity();
+	return _entity;
 }
 
 void LightNode::refreshModel() {
-	// Nothing to do
+	// Simulate a "model" key change
+	_light._modelKey.modelChanged(_entity.getKeyValue("model"));
 }
 
 const AABB& LightNode::localAABB() const {
@@ -249,23 +246,6 @@ scene::INodePtr LightNode::clone() const {
 	return clone;
 }
 
-void LightNode::instantiate(const scene::Path& path)
-{
-	_light.instanceAttach(path);
-	Node::instantiate(path);
-}
-
-void LightNode::uninstantiate(const scene::Path& path)
-{
-	_light.instanceDetach(path);
-	Node::uninstantiate(path);
-}
-
-// Nameable implementation
-std::string LightNode::name() const {
-	return _light.getNameable().name();
-}
-
 void LightNode::selectedChangedComponent(const Selectable& selectable) {
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
@@ -274,12 +254,18 @@ void LightNode::selectedChangedComponent(const Selectable& selectable) {
 /* greebo: This is the method that gets called by renderer.h. It passes the call 
  * on to the Light class render methods. 
  */
-void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderSolid(collector, volume);
+
 	// Pass through to wireframe render
 	renderWireframe(collector, volume);
 }
   
-void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderWireframe(collector, volume);
+
 	const bool lightIsSelected = isSelected();
 	_light.renderWireframe(
 		collector, volume, localToWorld(), lightIsSelected
@@ -416,13 +402,6 @@ void LightNode::evaluateTransform() {
 	}
 }
 
-void LightNode::applyTransform() {
-	_light.revertTransform();
-	evaluateTransform();
-	_light.freezeTransform();
-}
-
-
 Vector3 LightNode::worldOrigin() const
 {
     return _light.worldOrigin();
@@ -451,6 +430,20 @@ const Vector3& LightNode::colour() const {
 
 const Matrix4& LightNode::rotation() const {
 	return _light.rotation();
+}
+
+void LightNode::_onTransformationChanged()
+{
+	_light.revertTransform();
+	evaluateTransform();
+	_light.updateOrigin();
+}
+
+void LightNode::_applyTransformation()
+{
+	_light.revertTransform();
+	evaluateTransform();
+	_light.freezeTransform();
 }
 
 } // namespace entity

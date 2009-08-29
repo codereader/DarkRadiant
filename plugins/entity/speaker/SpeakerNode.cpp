@@ -6,34 +6,25 @@ namespace entity {
 
 SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	TransformModifier(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
 	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)),
+		Node::BoundsChangedCaller(*this)),
 	_dragPlanes(SelectedChangedComponentCaller(*this))
 {}
 
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
-	Renderable(other),
 	Cullable(other),
 	Bounded(other),
-	TransformModifier(Speaker::TransformChangedCaller(_speaker), ApplyTransformCaller(*this)),
 	_speaker(other._speaker, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
-		Node::BoundsChangedCaller(*this),
-		EvaluateTransformCaller(*this)),
+		Node::BoundsChangedCaller(*this)),
 	_dragPlanes(SelectedChangedComponentCaller(*this))
-{}
-
-SpeakerNode::~SpeakerNode()
 {}
 
 // Snappable implementation
@@ -60,7 +51,7 @@ VolumeIntersectionValue SpeakerNode::intersectVolume(
 
 // EntityNode implementation
 Entity& SpeakerNode::getEntity() {
-	return _speaker.getEntity();
+	return _entity;
 }
 
 void SpeakerNode::refreshModel() {
@@ -113,29 +104,18 @@ scene::INodePtr SpeakerNode::clone() const {
 	return clone;
 }
 
-void SpeakerNode::instantiate(const scene::Path& path) {
-	_speaker.instanceAttach(path);
-	Node::instantiate(path);
-}
-
-void SpeakerNode::uninstantiate(const scene::Path& path) {
-	_speaker.instanceDetach(path);
-	Node::uninstantiate(path);
-}
-
-// Nameable implementation
-std::string SpeakerNode::name() const {
-	return _speaker.getNameable().name();
-}
-
 /* Renderable implementation */
 
 void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
 {
+	EntityNode::renderSolid(collector, volume);
+
 	_speaker.renderSolid(collector, volume, localToWorld(), isSelected());
 }
 void SpeakerNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
 {
+	EntityNode::renderWireframe(collector, volume);
+
 	_speaker.renderWireframe(collector, volume, localToWorld(), isSelected());
 }
 
@@ -159,7 +139,14 @@ void SpeakerNode::evaluateTransform()
 	}
 }
 
-void SpeakerNode::applyTransform()
+void SpeakerNode::_onTransformationChanged()
+{
+	_speaker.revertTransform();
+	evaluateTransform();
+	_speaker.updateTransform();
+}
+
+void SpeakerNode::_applyTransformation()
 {
 	_speaker.revertTransform();
 	evaluateTransform();

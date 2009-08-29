@@ -5,7 +5,7 @@ const scene::INodePtr& SelectedNodeList::ultimate() {
 		return end()->first; // return invalid iterator
 	}
 	
-	unsigned long latestTime(0);
+	std::size_t latestTime(0);
 	iterator latest;
 	
 	for (iterator i = begin(); i != end(); i++) {
@@ -23,7 +23,7 @@ const scene::INodePtr& SelectedNodeList::ultimate() const {
 		return end()->first; // return invalid iterator
 	}
 	
-	unsigned long latestTime(0);
+	std::size_t latestTime(0);
 	const_iterator latest;
 	
 	for (const_iterator i = begin(); i != end(); i++) {
@@ -41,8 +41,8 @@ const scene::INodePtr& SelectedNodeList::penultimate() const {
 		return end()->first; // return invalid iterator
 	}
 	
-	unsigned long ultimateTime(0);
-	unsigned long penUltimateTime(0);
+	std::size_t ultimateTime(0);
+	std::size_t penUltimateTime(0);
 	const_iterator ultimate;
 	const_iterator penUltimate;
 	
@@ -68,8 +68,8 @@ const scene::INodePtr& SelectedNodeList::penultimate() {
 		return end()->first; // return invalid iterator
 	}
 	
-	unsigned long ultimateTime(0);
-	unsigned long penUltimateTime(0);
+	std::size_t ultimateTime(0);
+	std::size_t penUltimateTime(0);
 	iterator ultimate;
 	iterator penUltimate;
 	
@@ -97,7 +97,7 @@ void SelectedNodeList::append(const scene::INodePtr& selected) {
 
 void SelectedNodeList::erase(const scene::INodePtr& selected) {
 	iterator last;
-	unsigned long lastTime(0);
+	std::size_t lastTime(0);
 	
 	// Lookup the instance selected last
 	for (iterator it = MapType::find(selected);
@@ -116,4 +116,4 @@ void SelectedNodeList::erase(const scene::INodePtr& selected) {
 	MapType::erase(last);
 }
 
-unsigned long SelectedNodeList::time = 1;
+std::size_t SelectedNodeList::time = 1;

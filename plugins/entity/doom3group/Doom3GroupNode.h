@@ -19,16 +19,13 @@ class Doom3GroupNode :
 	public EntityNode,
 	public scene::Cloneable,
 	public scene::GroupNode,
-	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
-	public Renderable,
 	public Bounded,
-	public TransformModifier,
 	public CurveNode
 {
 	friend class Doom3Group;
@@ -44,6 +41,8 @@ class Doom3GroupNode :
 
 	// TRUE if the skin needs updating
 	mutable bool _updateSkin;
+
+	bool _instantiated;
 
 	// Private copy constructor, is invoked by clone()
 	Doom3GroupNode(const Doom3GroupNode& other);
@@ -62,9 +61,6 @@ public:
 	virtual void removeSelectedControlPoints();
 	virtual void insertControlPointsAtSelected();
 	virtual void convertCurveType();
-
-	// Namespaced implementation
-	//virtual void setNamespace(INamespace& space);
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
@@ -92,9 +88,6 @@ public:
 	// ComponentSnappable implementation
 	void snapComponents(float snap);
 
-	// Nameable implementation
-	virtual std::string name() const;
-
 	// Snappable implementation
 	virtual void snapto(float snap);
 
@@ -118,19 +111,24 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	void evaluateTransform();
-	typedef MemberCaller<Doom3GroupNode, &Doom3GroupNode::evaluateTransform> EvaluateTransformCaller;
-
-	void applyTransform();
-	typedef MemberCaller<Doom3GroupNode, &Doom3GroupNode::applyTransform> ApplyTransformCaller;
-
 	void skinChanged(const std::string& value);
 	typedef MemberCaller1<Doom3GroupNode, const std::string&, &Doom3GroupNode::skinChanged> SkinChangedCaller;
 
 	void transformComponents(const Matrix4& matrix);
 
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
+
 private:
 	void construct();
+
+	void evaluateTransform();
 
 }; // class Doom3GroupNode
 

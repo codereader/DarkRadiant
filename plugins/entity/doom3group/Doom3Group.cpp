@@ -30,8 +30,7 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 Doom3Group::Doom3Group(
 		Doom3GroupNode& owner,
 		const Callback& transformChanged, 
-		const Callback& boundsChanged, 
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
 	m_model(owner),
@@ -39,11 +38,8 @@ Doom3Group::Doom3Group(
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
-	m_renderName(m_named, m_nameOrigin),
 	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
@@ -53,8 +49,7 @@ Doom3Group::Doom3Group(
 Doom3Group::Doom3Group(const Doom3Group& other, 
 		Doom3GroupNode& owner,
 		const Callback& transformChanged, 
-		const Callback& boundsChanged, 
-		const Callback& evaluateTransform) :
+		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
 	m_model(owner),
@@ -62,11 +57,8 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
 	m_rotationKey(RotationChangedCaller(*this)),
-	m_named(_entity),
 	m_renderOrigin(m_nameOrigin),
-	m_renderName(m_named, m_nameOrigin),
 	m_transformChanged(transformChanged),
-	m_evaluateTransform(evaluateTransform),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
@@ -79,38 +71,6 @@ Doom3Group::~Doom3Group() {
 
 Vector3& Doom3Group::getOrigin() {
 	return m_origin;
-}
-
-void Doom3Group::instanceAttach(const scene::Path& path) {
-	if (++m_instanceCounter.m_count == 1) {
-		_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
-	}
-}
-
-void Doom3Group::instanceDetach(const scene::Path& path) {
-	if (--m_instanceCounter.m_count == 0) {
-		_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
-	}
-}
-
-Doom3Entity& Doom3Group::getEntity() {
-	return _entity;
-}
-const Doom3Entity& Doom3Group::getEntity() const {
-	return _entity;
-}
-
-/*Namespaced& Doom3Group::getNamespaced() {
-	static NameSpaced n();
-	return n;
-}*/
-
-NameKey& Doom3Group::getNameable() {
-	return m_named;
-}
-
-const NameKey& Doom3Group::getNameable() const {
-	return m_named;
 }
 
 TransformNode& Doom3Group::getTransformNode() {
@@ -160,11 +120,6 @@ void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTes
 	const Matrix4& localToWorld, bool selected) const 
 {
 	renderSolid(collector, volume, localToWorld, selected);
-
-    // Render the name if required
-	if (EntitySettings::InstancePtr()->renderEntityNames()) {
-		collector.addRenderable(m_renderName, localToWorld);
-	}
 }
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
@@ -257,23 +212,6 @@ void Doom3Group::freezeTransform() {
 	m_curveCatmullRom.saveToEntity(_entity);
 }
 
-void Doom3Group::transformChanged() {
-	// If this is a container, pass the call to the children and leave the entity unharmed
-	if (!isModel()) {
-		ChildTransformReverter reverter;
-		_owner.traverse(reverter);
-		m_evaluateTransform();
-	}
-	else {
-		// It's a model
-		revertTransform();
-		m_evaluateTransform();
-		updateTransform();
-	}
-	m_curveNURBS.curveChanged();
-	m_curveCatmullRom.curveChanged();
-}
-
 void Doom3Group::appendControlPoints(unsigned int numPoints) {
 	if (!m_curveNURBS.isEmpty()) {
 		m_curveNURBS.appendControlPoints(numPoints);
@@ -302,36 +240,26 @@ void Doom3Group::construct()
 {
 	m_rotation.setIdentity();
 
-	m_keyObservers.insert("name", NameKey::IdentifierChangedCaller(m_named));
-	m_keyObservers.insert("model", Doom3Group::ModelChangedCaller(*this));
-	m_keyObservers.insert("origin", OriginKey::OriginChangedCaller(m_originKey));
-	m_keyObservers.insert("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	m_keyObservers.insert("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	m_keyObservers.insert("name", NameChangedCaller(*this));
-	m_keyObservers.insert(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
-	m_keyObservers.insert(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
+	_owner.addKeyObserver("model", Doom3Group::ModelChangedCaller(*this));
+	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.addKeyObserver("name", NameChangedCaller(*this));
+	_owner.addKeyObserver(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
+	_owner.addKeyObserver(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 
 	m_isModel = false;
-	//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3Doom3Group);
-
-	_entity.attachObserver(&m_keyObservers);
 }
 
-void Doom3Group::destroy() {
-	_entity.detachObserver(&m_keyObservers);
-}
-
-void Doom3Group::addKeyObserver(const std::string& key, const KeyObserver& observer) 
+void Doom3Group::destroy()
 {
-	_entity.detachObserver(&m_keyObservers); // detach first
-
-	m_keyObservers.insert(key, observer);
-
-	_entity.attachObserver(&m_keyObservers); // attach again
-}
-
-void Doom3Group::removeKeyObserver(const std::string& key, const KeyObserver& observer) {
-	m_keyObservers.erase(key, observer);
+	_owner.removeKeyObserver("model", Doom3Group::ModelChangedCaller(*this));
+	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+	_owner.removeKeyObserver("name", NameChangedCaller(*this));
+	_owner.removeKeyObserver(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
+	_owner.removeKeyObserver(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 }
 
 bool Doom3Group::isModel() const {
@@ -341,12 +269,9 @@ bool Doom3Group::isModel() const {
 void Doom3Group::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
 		// The model key is not recognised as "name"
-		//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3);
 		m_model.modelChanged(m_modelKey);
 	}
 	else if (!newValue && m_isModel) {
-		// The model key should be recognised as "name" (important for "namespacing")
-		//m_nameKeys.setKeyIsName(NamespaceManager::keyIsNameDoom3Doom3Group);
 		// Clear the model path
 		m_model.modelChanged("");
 		m_nameOrigin = m_origin;
@@ -364,9 +289,15 @@ void Doom3Group::setIsModel(bool newValue) {
 void Doom3Group::updateIsModel() {
 	if (m_modelKey != m_name && _entity.getKeyValue("classname") != "worldspawn") {
 		setIsModel(true);
+
+		// Set the renderable name back to 0,0,0
+		_owner._renderableName.setOrigin(Vector3(0,0,0));
 	}
 	else {
 		setIsModel(false);
+
+		// Update the renderable name
+		_owner._renderableName.setOrigin(getOrigin());
 	}
 }
 
@@ -405,8 +336,10 @@ void Doom3Group::updateTransform() {
 	m_transformChanged();
 }
 
-void Doom3Group::translateChildren(const Vector3& childTranslation) {
-	if (m_instanceCounter.m_count > 0) {
+void Doom3Group::translateChildren(const Vector3& childTranslation)
+{
+	if (_owner._instantiated)
+	{
 		ChildTranslator translator(childTranslation);
 		_owner.traverse(translator);
 	}
@@ -416,8 +349,11 @@ void Doom3Group::originChanged() {
 	m_origin = m_originKey.m_origin;
 	updateTransform();
 	// Only non-models should have their origin different than <0,0,0>
-	if (!isModel()) {
+	if (!isModel())
+	{
 		m_nameOrigin = m_origin;
+		// Update the renderable name
+		_owner._renderableName.setOrigin(getOrigin());
 	}
 	m_renderOrigin.updatePivot();
 }

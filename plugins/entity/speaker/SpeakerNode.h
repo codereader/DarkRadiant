@@ -20,14 +20,11 @@ namespace entity {
 class SpeakerNode :
 	public EntityNode,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public SelectionTestable,
-	public Renderable,
 	public Cullable,
 	public Bounded,
-	public TransformModifier,
 	public PlaneSelectable,
 	public ComponentSelectionTestable
 {
@@ -42,8 +39,6 @@ class SpeakerNode :
 public:
 	SpeakerNode(const IEntityClassConstPtr& eclass);
 	SpeakerNode(const SpeakerNode& other);
-
-	virtual ~SpeakerNode();
 
 	// Snappable implementation
 	virtual void snapto(float snap);
@@ -76,13 +71,6 @@ public:
 
 	scene::INodePtr clone() const;
 
-	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
-
-	// Nameable implementation
-	virtual std::string name() const;
-	
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
@@ -90,11 +78,17 @@ public:
 	void selectedChangedComponent(const Selectable& selectable);
 	typedef MemberCaller1<SpeakerNode, const Selectable&, &SpeakerNode::selectedChangedComponent> SelectedChangedComponentCaller;
 
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
+
+private:
 	void evaluateTransform();
-	typedef MemberCaller<SpeakerNode, &SpeakerNode::evaluateTransform> EvaluateTransformCaller;
-	
-	void applyTransform();
-	typedef MemberCaller<SpeakerNode, &SpeakerNode::applyTransform> ApplyTransformCaller;
 };
 
 } // namespace entity

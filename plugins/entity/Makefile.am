@@ -31,12 +31,10 @@ entity_la_SOURCES = origin.cpp \
                     plugin.cpp \
                     generic/GenericEntity.cpp \
                     generic/GenericEntityNode.cpp \
-                    keyobservers.cpp \
                     NamespaceManager.cpp \
                     KeyValueObserver.cpp \
                     NameKeyObserver.cpp \
                     colour.cpp \
-                    entity.cpp \
                     KeyValue.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \

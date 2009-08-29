@@ -33,9 +33,9 @@ public:
 	 * greebo: Traverses the children of this container, recursively.
 	 * 
 	 * Note: the Traversable itself is not visited, use Node_traverseSubgraph() 
-	 *       for this purpose.
+	 * for this purpose.
 	 */
-	virtual void traverse(NodeVisitor& walker) = 0;
+	virtual void traverse(NodeVisitor& walker) const = 0;
     
 	/// \brief Returns true if the container contains no nodes.
 	virtual bool empty() const = 0;

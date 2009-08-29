@@ -50,28 +50,38 @@ public:
 		return _name;
 	}
 
-	void identifierChanged(const std::string& value)
+	void nameChanged(const std::string& value)
 	{
 		_name = value;
 	}
-	typedef MemberCaller1<NameKey, const std::string&, &NameKey::identifierChanged> IdentifierChangedCaller;
+	typedef MemberCaller1<NameKey, const std::string&, &NameKey::nameChanged> NameChangedCaller;
 };
 
 class RenderableNameKey : 
 	public OpenGLRenderable
 {
-  const NameKey& m_named;
-  const Vector3& m_position;
+	const NameKey& _nameKey;
+
+	// The origin (local entity coordinates)
+	Vector3 _origin;
+	
 public:
-  RenderableNameKey(const NameKey& named, const Vector3& position)
-    : m_named(named), m_position(position)
-  {
-  }
-  void render(const RenderInfo& info) const
-  {
-    glRasterPos3dv(m_position);
-    GlobalOpenGL().drawString(m_named.name());
-  }
+	RenderableNameKey(const NameKey& nameKey) : 
+		_nameKey(nameKey), 
+		_origin(0,0,0)
+	{}
+
+	// We render in local coordinates of the owning entity node
+	void render(const RenderInfo& info) const
+	{
+		glRasterPos3dv(_origin);
+		GlobalOpenGL().drawString(_nameKey.name());
+	}
+
+	void setOrigin(const Vector3& origin)
+	{
+		_origin = origin;
+	}
 };
 
 } // namespace entity

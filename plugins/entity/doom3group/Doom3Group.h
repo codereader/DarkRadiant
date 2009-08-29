@@ -6,16 +6,15 @@
 #include "entitylib.h"
 #include "pivot.h"
 
-#include "../keyobservers.h"
 #include "../ModelKey.h"
 #include "../origin.h"
 #include "../rotation.h"
-#include "../NameKey.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
 #include "scene/TraversableNodeSet.h"
+#include "transformlib.h"
 
 namespace entity {
 
@@ -29,8 +28,6 @@ class Doom3Group
 : public Bounded, 
   public Snappable
 {
-	KeyObserverMap m_keyObservers;
-	
 	Doom3GroupNode& _owner;
 	Doom3Entity& _entity;
 
@@ -40,20 +37,17 @@ class Doom3Group
 	OriginKey m_originKey;
 	Vector3 m_origin;
 	
-	// A separate origin for the renderable names and pivot points
+	// A separate origin for the renderable pivot points
 	Vector3 m_nameOrigin;
 	 
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
 
-	NameKey m_named;
 	RenderablePivot m_renderOrigin;
-	RenderableNameKey m_renderName;
 
 	mutable AABB m_curveBounds;
 
 	Callback m_transformChanged;
-	Callback m_evaluateTransform;
 
 	// The value of the "name" key for this Doom3Group.
 	std::string m_name;
@@ -70,42 +64,24 @@ public:
 	SignalHandlerId m_curveNURBSChanged;
 	CurveCatmullRom m_curveCatmullRom;
 	SignalHandlerId m_curveCatmullRomChanged;
-	InstanceCounter m_instanceCounter;
 
 	/** greebo: The constructor takes the Node as argument
 	 * as well as some callbacks for transformation and bounds changes.
-	 * 
-	 * These callbacks point to and InstanceSet::transformChangedCaller(), for example.  
 	 */
 	Doom3Group(Doom3GroupNode& owner,
 			   const Callback& transformChanged, 
-			   const Callback& boundsChanged, 
-			   const Callback& evaluateTransform);
+			   const Callback& boundsChanged);
 	
 	// Copy constructor
 	Doom3Group(const Doom3Group& other, 
 			   Doom3GroupNode& owner,
 			   const Callback& transformChanged, 
-			   const Callback& boundsChanged, 
-			   const Callback& evaluateTransform);
+			   const Callback& boundsChanged);
 	
 	~Doom3Group();
 
-	void instanceAttach(const scene::Path& path);
-	void instanceDetach(const scene::Path& path);
-
-	// Adds/removes the keyobserver to/from the KeyObserverMap
-	void addKeyObserver(const std::string& key, const KeyObserver& observer);
-	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
-
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
-
 	scene::Traversable& getTraversable();
 	const scene::Traversable& getTraversable() const;
-	//Namespaced& getNamespaced();
-	NameKey& getNameable();
-	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 
@@ -134,8 +110,6 @@ public:
 	
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<Doom3Group, &Doom3Group::transformChanged> TransformChangedCaller;
 	
 	// Translates the origin only (without the children)
 	void translateOrigin(const Vector3& translation);

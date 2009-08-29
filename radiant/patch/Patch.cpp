@@ -98,7 +98,6 @@ Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTran
 
 // Another copy constructor
 Patch::Patch(const Patch& other) :
-	TransformNode(other),
 	Bounded(other),
 	Cullable(other),
 	Snappable(other),
@@ -140,8 +139,6 @@ void Patch::construct() {
 	
 	// Allocate the shader
 	captureShader();
-
-	m_xml_state.push_back(XMLState::eDefault);
 }
 
 // Get the current control point array
@@ -241,12 +238,6 @@ void Patch::onAllocate(std::size_t size) {
 	for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
 		(*i)->allocate(size);
 	}
-}
-
-// For the TransformNode implementation (localToParent() is abstract and needs to be here)
-const Matrix4& Patch::localToParent() const {
-	// Just return the identity matrix
-	return Matrix4::getIdentity();
 }
 
 // Return the interally stored AABB

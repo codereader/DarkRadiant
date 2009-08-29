@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iselection.h"
 #include "itraversable.h"
 #include "itransformnode.h"
+#include "itransformable.h"
 #include "ientity.h"
 #include "ipatch.h"
 #include "ibrush.h"
@@ -40,7 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 #include "math/aabb.h"
-#include "transformlib.h"
 #include "generic/callback.h"
 #include <boost/shared_ptr.hpp>
 
@@ -316,8 +316,8 @@ public:
 	}
 };
 
-inline TransformablePtr Node_getTransformable(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<Transformable>(node);
+inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node) {
+	return boost::dynamic_pointer_cast<ITransformable>(node);
 }
 
 inline scene::SelectableLightPtr Node_getLight(const scene::INodePtr& node) {
@@ -360,7 +360,7 @@ public:
 	{}
 
 	virtual bool pre(const scene::INodePtr& node) {
-		TransformablePtr transformable = Node_getTransformable(node);
+		ITransformablePtr transformable = Node_getTransformable(node);
 
 		if (transformable != NULL) {
 			transformable->setType(TRANSFORM_PRIMITIVE);
@@ -376,7 +376,7 @@ class ChildTransformReverter :
 {
 public:
 	virtual bool pre(const scene::INodePtr& node) {
-		TransformablePtr transformable = Node_getTransformable(node);
+		ITransformablePtr transformable = Node_getTransformable(node);
 
 		if (transformable != NULL) {
 			transformable->revertTransform();
@@ -390,7 +390,7 @@ class ChildTransformFreezer :
 {
 public:
 	virtual bool pre(const scene::INodePtr& node) {
-		TransformablePtr transformable = Node_getTransformable(node);
+		ITransformablePtr transformable = Node_getTransformable(node);
 
 		if (transformable != NULL) {
 			transformable->freezeTransform();
@@ -409,7 +409,7 @@ public:
 	{}
 
 	virtual bool pre(const scene::INodePtr& node) {
-		TransformablePtr transformable = Node_getTransformable(node);
+		ITransformablePtr transformable = Node_getTransformable(node);
 
 		if (transformable != NULL) {
 			transformable->setType(TRANSFORM_PRIMITIVE);
