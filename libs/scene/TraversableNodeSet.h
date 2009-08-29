@@ -75,7 +75,7 @@ public:
 	/** greebo: scene::Traversable implementation. This visits all the child nodes
 	 * 			using the given visitor scene::NodeVisitor.
 	 */
-	void traverse(scene::NodeVisitor& visitor);
+	void traverse(scene::NodeVisitor& visitor) const;
 	
 	/** greebo: scene::Traversable implementation. Returns TRUE if this NodeSet is empty.
 	 */

@@ -7,6 +7,7 @@
 #include "selectionlib.h"
 #include "UndoFileChangeTracker.h"
 #include "scenelib.h"
+#include "transformlib.h"
 
 namespace map {
 

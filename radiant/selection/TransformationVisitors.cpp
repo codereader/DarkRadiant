@@ -2,6 +2,7 @@
 
 #include "editable.h"
 #include "Manipulatables.h"
+#include "transformlib.h"
 
 // greebo: The implementation of those geometric helper functions
 
@@ -52,7 +53,7 @@ void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& l
 // ===================================================================================
 
 void TranslateSelected::visit(const scene::INodePtr& node) const {
-	TransformablePtr transform = Node_getTransformable(node);
+	ITransformablePtr transform = Node_getTransformable(node);
     if(transform != 0) {
     	transform->setType(TRANSFORM_PRIMITIVE);
     	transform->setTranslation(m_translate);
@@ -61,11 +62,12 @@ void TranslateSelected::visit(const scene::INodePtr& node) const {
 
 // ===================================================================================
 
-void RotateSelected::visit(const scene::INodePtr& node) const {
+void RotateSelected::visit(const scene::INodePtr& node) const
+{
 	TransformNodePtr transformNode = Node_getTransformNode(node);
 	if (transformNode != 0) {
 	  // Upcast the instance onto a Transformable
-	  TransformablePtr transform = Node_getTransformable(node);
+	  ITransformablePtr transform = Node_getTransformable(node);
 	  
 	  if(transform != 0) {
 	  	// The object is not scaled or translated
@@ -107,7 +109,7 @@ void ScaleSelected::visit(const scene::INodePtr& node) const {
     TransformNodePtr transformNode = Node_getTransformNode(node);
     if(transformNode != 0)
     {
-      TransformablePtr transform = Node_getTransformable(node);
+      ITransformablePtr transform = Node_getTransformable(node);
       if(transform != 0)
       {
         transform->setType(TRANSFORM_PRIMITIVE);
@@ -138,7 +140,7 @@ void ScaleSelected::visit(const scene::INodePtr& node) const {
 // ====== Component Visitors ==========================================================
 
 void TranslateComponentSelected::visit(const scene::INodePtr& node) const {
-    TransformablePtr transform = Node_getTransformable(node);
+    ITransformablePtr transform = Node_getTransformable(node);
     if(transform != 0)
     {
       transform->setType(TRANSFORM_COMPONENT);
@@ -147,7 +149,7 @@ void TranslateComponentSelected::visit(const scene::INodePtr& node) const {
 }
 
 void RotateComponentSelected::visit(const scene::INodePtr& node) const {
-    TransformablePtr transform = Node_getTransformable(node);
+    ITransformablePtr transform = Node_getTransformable(node);
     if(transform != 0) {
       Vector3 parent_translation;
       translation_for_pivoted_rotation(parent_translation, m_rotate, m_world_pivot, 
@@ -161,7 +163,7 @@ void RotateComponentSelected::visit(const scene::INodePtr& node) const {
 }
 
 void ScaleComponentSelected::visit(const scene::INodePtr& node) const {
-    TransformablePtr transform = Node_getTransformable(node);
+    ITransformablePtr transform = Node_getTransformable(node);
     if(transform != 0) {
       Vector3 parent_translation;
 	  translation_for_pivoted_scale(parent_translation, m_scale, m_world_pivot, node->localToWorld(), Node_getTransformNode(node)->localToParent());

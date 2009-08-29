@@ -8,7 +8,6 @@
 #include "generic/callback.h"
 #include "pivot.h"
 
-#include "../keyobservers.h"
 #include "../origin.h"
 #include "../rotation.h"
 #include "../angle.h"
@@ -16,6 +15,7 @@
 #include "../NameKey.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
+#include "transformlib.h"
 
 namespace entity {
 
@@ -28,7 +28,6 @@ class EclassModel :
 
 	MatrixTransform m_transform;
 	Doom3Entity& m_entity;
-	KeyObserverMap m_keyObservers;
 
 	OriginKey m_originKey;
 	Vector3 m_origin;
@@ -38,41 +37,24 @@ class EclassModel :
 	Float9 m_rotation;
 	ModelKey m_model;
 
-	NameKey m_named;
-	//NamespaceManager m_nameKeys;
 	RenderablePivot m_renderOrigin;
-	RenderableNameKey m_renderName;
 
 	Callback m_transformChanged;
-	Callback m_evaluateTransform;
 	
-	InstanceCounter m_instanceCounter;
 public:
 	EclassModel(EclassModelNode& owner,
-				const Callback& transformChanged, 
-				const Callback& evaluateTransform);
+				const Callback& transformChanged);
 	
 	// Copy Constructor
 	EclassModel(const EclassModel& other,
 				EclassModelNode& owner, 
-				const Callback& transformChanged, 
-				const Callback& evaluateTransform);
+				const Callback& transformChanged);
 
-	virtual ~EclassModel();
+	~EclassModel();
 
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
 
-	// Adds the keyobserver to the KeyObserverMap
-	void addKeyObserver(const std::string& key, const KeyObserver& observer);
-	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
-
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
-
-	//Namespaced& getNamespaced();
-	NameKey& getNameable();
-	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 
@@ -85,8 +67,6 @@ public:
 	
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<EclassModel, &EclassModel::transformChanged> TransformChangedCaller;	
 
 public:
 	void construct();

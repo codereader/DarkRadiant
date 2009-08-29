@@ -7,7 +7,6 @@
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :
-	TransformModifier(Patch::TransformChangedCaller(m_patch), ApplyTransformCaller(*this)),
 	m_patch(*this, 
 			EvaluateTransformCaller(*this), 
 			Node::BoundsChangedCaller(*this)), // create the m_patch member with the node parameters
@@ -33,7 +32,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
-	TransformNode(other),
 	MapImporter(other),
 	MapExporter(other),
 	IPatchNode(other),
@@ -47,7 +45,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 	Renderable(other),
 	Cullable(other),
 	Bounded(other),
-	TransformModifier(Patch::TransformChangedCaller(m_patch), ApplyTransformCaller(*this)),
+	Transformable(other),
 	Patch::Observer(other),
 	m_patch(other.m_patch, *this, EvaluateTransformCaller(*this), 
 		    Node::BoundsChangedCaller(*this)), // create the patch out of the <other> one
@@ -112,12 +110,7 @@ void PatchNode::snapto(float snap) {
 	m_patch.snapto(snap);
 }
 
-// TransformNode implementation
-const Matrix4& PatchNode::localToParent() const {
-	return m_patch.localToParent();
-}	
-  
-  	// MapImporter implementation
+// MapImporter implementation
 bool PatchNode::importTokens(parser::DefTokeniser& tokeniser) {
 	return m_importMap.importTokens(tokeniser);
 }
@@ -412,14 +405,6 @@ void PatchNode::evaluateTransform() {
 	}
 }
 
-void PatchNode::applyTransform() {
-	// First, revert the changes, then recalculate the transformation and then freeze the changes
-	// greebo: Don't know why this has to be done this way (seems a bit weird to me, but perhaps this has its reason)
-	m_patch.revertTransform();
-	evaluateTransform();
-	m_patch.freezeTransform();
-}
-
 void PatchNode::transformComponents(const Matrix4& matrix) {
 	// Are there any selected vertices?
 	if (selectedVertices()) {
@@ -440,6 +425,19 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 	if (m_dragPlanes.isSelected()) { // this should only be true when the transform is a pure translation.
 		m_patch.transform(m_dragPlanes.evaluateTransform(matrix.t().getVector3()));
 	}
+}
+
+void PatchNode::_onTransformationChanged()
+{
+	m_patch.transformChanged();
+}
+
+void PatchNode::_applyTransformation()
+{
+	// First, revert the changes, then recalculate the transformation and then freeze the changes
+	m_patch.revertTransform();
+	evaluateTransform();
+	m_patch.freezeTransform();
 }
 
 // Initialise the shader member variable

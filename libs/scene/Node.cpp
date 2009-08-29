@@ -165,7 +165,8 @@ void Node::removeAllChildNodes() {
 	_children.clear();
 }
 
-void Node::traverse(NodeVisitor& visitor) {
+void Node::traverse(NodeVisitor& visitor) const
+{
 	_children.traverse(visitor);
 }
 
@@ -351,7 +352,7 @@ void Node::evaluateTransform() const {
 			parent->boundsChanged();
 		}
 
-		_local2world = (parent != NULL) ? boost::static_pointer_cast<Node>(parent)->localToWorld() : Matrix4::getIdentity();
+		_local2world = (parent != NULL) ? parent->localToWorld() : Matrix4::getIdentity();
 
 		const TransformNode* transformNode = dynamic_cast<const TransformNode*>(this);
 

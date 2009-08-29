@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "EdgeInstance.h"
 #include "VertexInstance.h"
 #include "BrushClipPlane.h"
+#include "transformlib.h"
 
 class BrushInstanceVisitor {
 public:
@@ -44,7 +45,7 @@ class BrushNode :
 	public scene::Cloneable,
 	public Nameable,
 	public Snappable,
-	public TransformNode,
+	public IdentityTransform,
 	public BrushDoom3,
 	public BrushTokenImporter, // implements MapImporter
 	public BrushTokenExporter, // implements MapExporter
@@ -60,7 +61,7 @@ class BrushNode :
 	public Renderable,
 	public Cullable,
 	public Bounded,
-	public TransformModifier	// inherits from Transformable
+	public Transformable
 {
 	// The actual contained brush (NO reference)
 	Brush m_brush;
@@ -113,9 +114,6 @@ public:
 	// Cullable implementation
 	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 	
-	// TransformNode implementation
-	virtual const Matrix4& localToParent() const;
-
 	// Selectable implementation
 	virtual bool isSelected() const;
 	virtual void setSelected(bool select);
@@ -189,16 +187,21 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void viewChanged() const;
 
-	// Gets called by the TransformModifier
-	void applyTransform();
-	typedef MemberCaller<BrushNode, &BrushNode::applyTransform> ApplyTransformCaller;
-
 	void evaluateTransform();
 	typedef MemberCaller<BrushNode, &BrushNode::evaluateTransform> EvaluateTransformCaller;
 
 	void setClipPlane(const Plane3& plane);
 
 	const BrushInstanceVisitor& forEachFaceInstance(const BrushInstanceVisitor& visitor);
+
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
 
 private:
 	void transformComponents(const Matrix4& matrix);

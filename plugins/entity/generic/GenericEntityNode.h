@@ -19,14 +19,11 @@ namespace entity {
 class GenericEntityNode :
 	public EntityNode,
 	public scene::Cloneable,
-	public Nameable,
 	public Snappable,
 	public TransformNode,
 	public SelectionTestable,
-	public Renderable,
 	public Cullable,
-	public Bounded,
-	public TransformModifier
+	public Bounded
 {
 	friend class GenericEntity;
 
@@ -35,8 +32,6 @@ class GenericEntityNode :
 public:
 	GenericEntityNode(const IEntityClassConstPtr& eclass);
 	GenericEntityNode(const GenericEntityNode& other);
-
-	virtual ~GenericEntityNode();
 
 	// Snappable implementation
 	virtual void snapto(float snap);
@@ -60,21 +55,18 @@ public:
 
 	scene::INodePtr clone() const;
 
-	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
-
-	// Nameable implementation
-	virtual std::string name() const;
-
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	void evaluateTransform();
-	typedef MemberCaller<GenericEntityNode, &GenericEntityNode::evaluateTransform> EvaluateTransformCaller;
-	void applyTransform();
-	typedef MemberCaller<GenericEntityNode, &GenericEntityNode::applyTransform> ApplyTransformCaller;
+protected:
+	// Gets called by the Transformable implementation whenever
+	// scale, rotation or translation is changed.
+	void _onTransformationChanged();
+
+	// Called by the Transformable implementation before freezing
+	// or when reverting transformations.
+	void _applyTransformation();
 };
 
 } // namespace entity

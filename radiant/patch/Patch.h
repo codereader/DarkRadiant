@@ -15,7 +15,6 @@
 #include "PatchConstants.h"
 #include "PatchControl.h"
 #include "PatchTesselation.h"
-#include "PatchXMLState.h"
 #include "PatchRenderables.h"
 #include "brush/TexDef.h"
 #include "brush/FacePlane.h"
@@ -39,14 +38,11 @@ public:
  */
 // parametric surface defined by quadratic bezier control curves
 class Patch :
-	public TransformNode,
 	public Bounded,
 	public Cullable,
 	public Snappable,
 	public Undoable
 {
-	XMLStateVector m_xml_state;
-
 public:
 	// A Patch observer, this is implemented by the PatchNode
 	// to re-allocate the patch control instances.
@@ -174,12 +170,9 @@ public:
 	// Transform this patch as defined by the transformation matrix <matrix>
 	void transform(const Matrix4& matrix);
 	
-	// Called by the transform modifier (owned by the instance) if the transformation gets changed
+	// Called by the PatchNode if the transformation gets changed
 	void transformChanged();
 	
-	// The callback type definition
-	typedef MemberCaller<Patch, &Patch::transformChanged> TransformChangedCaller;
-
 	// Called to evaluate the transform
 	void evaluateTransform();
 

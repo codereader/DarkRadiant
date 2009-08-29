@@ -100,7 +100,7 @@ public:
 	/**
 	 * greebo: Traverses all child nodes using the given visitor.
 	 */
-	virtual void traverse(NodeVisitor& visitor) = 0;
+	virtual void traverse(NodeVisitor& visitor) const = 0;
 
 	/**
 	 * greebo: The INode class holds a boost::weak_ptr of itself.

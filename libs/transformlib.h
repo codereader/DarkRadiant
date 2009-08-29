@@ -22,175 +22,176 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined (INCLUDED_TRANSFORMLIB_H)
 #define INCLUDED_TRANSFORMLIB_H
 
+#include "itransformable.h"
 #include "itransformnode.h"
 #include "math/matrix.h"
 #include "math/quaternion.h"
 
 /// \brief A transform node which has no effect.
-class IdentityTransform : public TransformNode
+class IdentityTransform : 
+	public TransformNode
 {
 public:
-  /// \brief Returns the identity matrix.
-  const Matrix4& localToParent() const
-  {
-    return Matrix4::getIdentity();
-  }
+	/// \brief Returns the identity matrix.
+	const Matrix4& localToParent() const
+	{
+		return Matrix4::getIdentity();
+	}
 };
 
 /// \brief A transform node which stores a generic transformation matrix.
-class MatrixTransform : public TransformNode
+class MatrixTransform : 
+	public TransformNode
 {
-  Matrix4 m_localToParent;
+	Matrix4 m_localToParent;
 public:
-  MatrixTransform() : m_localToParent(Matrix4::getIdentity())
-  {
-  }
+	MatrixTransform() : 
+		m_localToParent(Matrix4::getIdentity())
+	{}
 
-  Matrix4& localToParent()
-  {
-    return m_localToParent;
-  }
-  /// \brief Returns the stored local->parent transform.
-  const Matrix4& localToParent() const
-  {
-    return m_localToParent;
-  }
+	Matrix4& localToParent()
+	{
+		return m_localToParent;
+	}
+
+	/// \brief Returns the stored local->parent transform.
+	const Matrix4& localToParent() const
+	{
+		return m_localToParent;
+	}
 };
 
-
-#include "generic/callback.h"
-
-typedef Vector3 Translation;
-typedef Quaternion Rotation;
-typedef Vector3 Scale;
-
-inline Matrix4 matrix4_transform_for_components(const Translation& translation, const Rotation& rotation, const Scale& scale)
+inline Matrix4 matrix4_transform_for_components(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 {
-  Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
-  result.x().getVector3() *= scale.x();
-  result.y().getVector3() *= scale.y();
-  result.z().getVector3() *= scale.z();
-  result.tx() = translation.x();
-  result.ty() = translation.y();
-  result.tz() = translation.z();
-  return result;
+	Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
+	result.x().getVector3() *= scale.x();
+	result.y().getVector3() *= scale.y();
+	result.z().getVector3() *= scale.z();
+	result.tx() = translation.x();
+	result.ty() = translation.y();
+	result.tz() = translation.z();
+	return result;
 }
 
-typedef bool TransformModifierType;
-const TransformModifierType TRANSFORM_PRIMITIVE = false;
-const TransformModifierType TRANSFORM_COMPONENT = true;
+const Vector3 c_translation_identity(0, 0, 0);
+const Quaternion c_rotation_identity(c_quaternion_identity);
+const Vector3 c_scale_identity(1, 1, 1);
 
-/// \brief A transformable scene-graph instance.
-///
-/// A transformable instance may be translated, rotated or scaled.
-/// The state of the instanced node's geometrical representation
-/// will be the product of its geometry and the transforms of each
-/// of its instances, applied in the order they appear in a graph
-/// traversal.
-/// Freezing the transform on an instance will cause its transform
-/// to be permanently applied to the geometry of the node.
-class Transformable
+class Transformable : 
+	public ITransformable
 {
-public:
-	virtual void setType(TransformModifierType type) = 0;
-	virtual void setTranslation(const Translation& value) = 0;
-	virtual void setRotation(const Rotation& value) = 0;
-	virtual void setScale(const Scale& value) = 0;
-	virtual void freezeTransform() = 0;
-	virtual void revertTransform() = 0;
-};
-typedef boost::shared_ptr<Transformable> TransformablePtr;
+	Vector3 _translation;
+	Quaternion _rotation;
+	Vector3 _scale;
 
-const Translation c_translation_identity = Translation(0, 0, 0);
-const Rotation c_rotation_identity = c_quaternion_identity;
-const Scale c_scale_identity = Scale(1, 1, 1);
-
-
-class TransformModifier : public Transformable
-{
-  Translation m_translation;
-  Rotation m_rotation;
-  Scale m_scale;
-  Callback m_changed;
-  Callback m_apply;
-  TransformModifierType m_type;
+	TransformModifierType _type;
 public:
 
-  TransformModifier(const Callback& changed, const Callback& apply) :
-    m_translation(c_translation_identity),
-    m_rotation(c_quaternion_identity),
-    m_scale(c_scale_identity),
-    m_changed(changed),
-    m_apply(apply),
-    m_type(TRANSFORM_PRIMITIVE)
-  {
-  }
+	Transformable() :
+		_translation(c_translation_identity),
+		_rotation(c_quaternion_identity),
+		_scale(c_scale_identity),
+		_type(TRANSFORM_PRIMITIVE)
+	{}
     
-  void setType(TransformModifierType type)
-  {
-    m_type = type;
-  }
-  TransformModifierType getType() const
-  {
-    return m_type;
-  }
-  void setTranslation(const Translation& value)
-  {
-    m_translation = value;
-    m_changed();
-  }
-  void setRotation(const Rotation& value)
-  {
-    m_rotation = value;
-    m_changed();
-  }
-  void setScale(const Scale& value)
-  {
-    m_scale = value;
-    m_changed();
-  }
-  void freezeTransform()
-  {
-    if(m_translation != c_translation_identity
-      || m_rotation != c_rotation_identity
-      || m_scale != c_scale_identity)
-    {
-      m_apply();
-      m_translation = c_translation_identity;
-      m_rotation = c_rotation_identity;
-      m_scale = c_scale_identity;
-      m_changed();
-    }
-  }
+	void setType(TransformModifierType type)
+	{
+		_type = type;
+	}
+
+	TransformModifierType getType() const
+	{
+		return _type;
+	}
+
+	void setTranslation(const Vector3& value)
+	{
+		_translation = value;
+
+		_onTransformationChanged();
+	}
+
+	void setRotation(const Quaternion& value)
+	{
+		_rotation = value;
+
+		_onTransformationChanged();
+	}
+
+	void setScale(const Vector3& value)
+	{
+		_scale = value;
+
+		_onTransformationChanged();
+	}
+
+	void freezeTransform()
+	{
+		if (_translation != c_translation_identity || 
+			_rotation != c_rotation_identity || 
+			_scale != c_scale_identity)
+		{
+			_applyTransformation();
+
+			_translation = c_translation_identity;
+			_rotation = c_rotation_identity;
+			_scale = c_scale_identity;
+
+			_onTransformationChanged();
+		}
+	}
   
-  /* greebo: This reverts the currently active transformation
-   * by setting the scale/rotation/translation to identity and
-   * calling apply()
-   */
-  void revertTransform()
-  {
-    m_translation = c_translation_identity;
-    m_rotation = c_rotation_identity;
-    m_scale = c_scale_identity;
-    m_apply();
-    m_changed();
-  }
-  const Translation& getTranslation() const
-  {
-    return m_translation;
-  }
-  const Rotation& getRotation() const
-  {
-    return m_rotation;
-  }
-  const Scale& getScale() const
-  {
-    return m_scale;
-  }
-  Matrix4 calculateTransform() const
-  {
-    return matrix4_transform_for_components(getTranslation(), getRotation(), getScale());
-  }
+	/* greebo: This reverts the currently active transformation
+	* by setting the scale/rotation/translation to identity and
+	* calling apply()
+	*/
+	void revertTransform()
+	{
+		_translation = c_translation_identity;
+		_rotation = c_rotation_identity;
+		_scale = c_scale_identity;
+
+		_applyTransformation();
+
+		_onTransformationChanged();
+	}
+  
+	const Vector3& getTranslation() const
+	{
+		return _translation;
+	}
+
+	const Quaternion& getRotation() const
+	{
+		return _rotation;
+	}
+
+	const Vector3& getScale() const
+	{
+		return _scale;
+	}
+
+	Matrix4 calculateTransform() const
+	{
+		return matrix4_transform_for_components(getTranslation(), getRotation(), getScale());
+	}
+
+protected:
+	/**
+	 * greebo: Signal method for subclasses. This gets called
+	 * as soon as anything (translation, scale, rotation) is changed.
+	 *
+	 * To be implemented by subclasses
+	 */
+	virtual void _onTransformationChanged()
+	{}
+
+	/**
+	 * greebo: Signal method to be implemented by subclasses.
+	 * Is invoked whenever the transformation is reverted or frozen.
+	 */
+	virtual void _applyTransformation()
+	{}
 };
 
 

@@ -3,6 +3,7 @@
 
 #include "ientity.h"
 #include "ieclass.h"
+#include "itransformnode.h"
 #include "scenelib.h"
 #include "iselectable.h"
 #include "editable.h"
@@ -29,31 +30,45 @@ inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
 // ----------- The Walker Classes ------------------------------------------------
 
 // Sets the visited instance to <select> (true or false), this is used to select all instances in the graph
-class SelectAllWalker : public scene::Graph::Walker {
+class SelectAllWalker : 
+	public scene::NodeVisitor
+{
 	bool _select;
+
 public:
-	SelectAllWalker(bool select) : _select(select) {}
+	SelectAllWalker(bool select) : 
+		_select(select)
+	{}
   
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+	bool pre(const scene::INodePtr& node)
+	{
 		Node_setSelected(node, _select);
 		return true;
 	}
 };
 
 // Selects the visited component instances in the graph, according to the current component mode
-class SelectAllComponentWalker : public scene::Graph::Walker {
+class SelectAllComponentWalker : 
+	public scene::NodeVisitor
+{
 	bool _select;
 	SelectionSystem::EComponentMode _mode;
-public:
-	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode)
-		: _select(select), _mode(mode) {}
 
-  	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
+public:
+	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode) : 
+		_select(select), 
+		_mode(mode)
+	{}
+
+	bool pre(const scene::INodePtr& node)
+	{
 		ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
 
-		if (componentSelectionTestable != NULL) {
+		if (componentSelectionTestable != NULL)
+		{
 			componentSelectionTestable->setSelectedComponents(_select, _mode);
 		}
+
 		return true;
 	}
 };
@@ -81,14 +96,12 @@ public:
 		}
 	}
 
-	void visit(const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-
-		if (transformNode == NULL) return;
-		
+	void visit(const scene::INodePtr& node) const
+	{
 		Brush* brush = Node_getBrush(node);
 
-		if (brush != NULL && !brush->hasContributingFaces()) {
+		if (brush != NULL && !brush->hasContributingFaces())
+		{
 			// greebo: Mark this path for removal
 			_eraseList.push_back(node);
 
@@ -99,52 +112,56 @@ public:
 };
 
 // As the name states, all visited instances have their transformations freezed
-class FreezeTransforms : public scene::Graph::Walker {
+class FreezeTransforms : 
+	public scene::NodeVisitor
+{
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-		if (transformNode != 0) {
-			TransformablePtr transform = Node_getTransformable(node);
-			if (transform != 0) {
-				transform->freezeTransform(); 
-			}
+	bool pre(const scene::INodePtr& node) 
+	{
+		ITransformablePtr transform = Node_getTransformable(node);
+		if (transform != 0)
+		{
+			transform->freezeTransform(); 
 		}
+
 		return true;
 	}
 };
 
 // As the name states, all visited instances have their transformations reverted
 class RevertTransforms : 
-	public scene::Graph::Walker 
+	public scene::NodeVisitor 
 {
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-		if (transformNode != 0) {
-			TransformablePtr transform = Node_getTransformable(node);
-			if (transform != 0) {
-				transform->revertTransform(); 
-			}
+	bool pre(const scene::INodePtr& node) 
+	{
+		ITransformablePtr transform = Node_getTransformable(node);
+		if (transform != 0)
+		{
+			transform->revertTransform(); 
 		}
+		
 		return true;
 	}
 };
 
 // As the name states, all visited SELECTED instances have their transformations reverted
+// TODO: Remove this class, and use GlobalSelectionSystem().foreach instead
 class RevertTransformForSelected : 
-	public scene::Graph::Walker 
+	public scene::NodeVisitor 
 {
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		TransformNodePtr transformNode = Node_getTransformNode(node);
-		SelectablePtr selectable = Node_getSelectable(node);
-				
-		if (transformNode != NULL && selectable != NULL && selectable->isSelected()) {
-			TransformablePtr transform = Node_getTransformable(node);
-			if (transform != NULL) {
+	bool pre(const scene::INodePtr& node) 
+	{
+		if (Node_isSelected(node))
+		{
+			ITransformablePtr transform = Node_getTransformable(node);
+			if (transform != NULL)
+			{
 				transform->revertTransform(); 
 			}
 		}
+
 		return true;
 	}
 };
@@ -170,25 +187,31 @@ public:
 
 // greebo: Calculates the axis-aligned bounding box of the selection components.
 // The constructor is called with a reference to an AABB variable that is updated during the walk
-class BoundsSelectedComponent : public scene::Graph::Walker {
-	AABB& _bounds;
+class ComponentBoundsAccumulator : 
+	public SelectionSystem::Visitor
+{
+	mutable AABB _bounds;
 public:
-	BoundsSelectedComponent(AABB& bounds): _bounds(bounds) {
+	ComponentBoundsAccumulator() 
+	{
 		_bounds = AABB();
 	}
-  
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		SelectablePtr selectable = Node_getSelectable(node);
-		// Only update the aabb variable if the instance is selected
-		if (selectable != 0 && selectable->isSelected()) {
-			ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
-			if (componentEditable != NULL) {
-				_bounds.includeAABB(
-					aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), 
-												node->localToWorld()));
-			}
+
+	virtual void visit(const scene::INodePtr& node) const 
+	{
+		ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
+
+		if (componentEditable != NULL)
+		{
+			_bounds.includeAABB(
+				aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), 
+											node->localToWorld()));
 		}
-		return true;
+	}
+
+	const AABB& getBounds() const
+	{
+		return _bounds;
 	}
 };
 

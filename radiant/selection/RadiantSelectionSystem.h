@@ -54,9 +54,9 @@ class RadiantSelectionSystem :
 	typedef std::list<Observer*> ObserverList;
 	ObserverList _observers;
 	
-	Translation _translation;	// This is a vector3
-	Rotation _rotation;			// This is a quaternion
-	Scale _scale;				// This is a vector3
+	Vector3 _translation;
+	Quaternion _rotation;
+	Vector3 _scale;
 
 	// The 3D volume surrounding the most recent selection.
 	selection::WorkZone _workZone;

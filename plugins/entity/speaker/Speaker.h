@@ -8,11 +8,10 @@
 
 #include "math/Vector3.h"
 #include "entitylib.h"
+#include "transformlib.h"
 #include "generic/callback.h"
 
 #include "../origin.h"
-#include "../NameKey.h"
-#include "../keyobservers.h"
 #include "../Doom3Entity.h"
 #include "../EntitySettings.h"
 
@@ -27,14 +26,13 @@ class Speaker :
 	public Bounded,
 	public Snappable
 {
+	SpeakerNode& _owner;
+
 	Doom3Entity& m_entity;
-	KeyObserverMap m_keyObservers;
 	MatrixTransform m_transform;
 
 	OriginKey m_originKey;
 	Vector3 m_origin;
-
-	NameKey m_named;
 
 	// The current speaker radii (min / max)
 	SoundRadii _radii;
@@ -58,35 +56,24 @@ class Speaker :
 
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
-	RenderableNameKey m_renderName;
 
 	Callback m_transformChanged;
 	Callback m_boundsChanged;
-	Callback m_evaluateTransform;
+
 public:
 	// Constructor
-	Speaker(entity::SpeakerNode& node,
-				  const Callback& transformChanged, 
-				  const Callback& boundsChanged,
-				  const Callback& evaluateTransform);
+	Speaker(SpeakerNode& node,
+			const Callback& transformChanged, 
+			const Callback& boundsChanged);
 	
 	// Copy constructor
 	Speaker(const Speaker& other, 
-				  SpeakerNode& node, 
-				  const Callback& transformChanged, 
-				  const Callback& boundsChanged,
-				  const Callback& evaluateTransform);
+			SpeakerNode& node, 
+			const Callback& transformChanged, 
+			const Callback& boundsChanged);
 
-	InstanceCounter m_instanceCounter;
-	void instanceAttach(const scene::Path& path);
-	void instanceDetach(const scene::Path& path);
+	~Speaker();
 
-	Doom3Entity& getEntity();
-	const Doom3Entity& getEntity() const;
-
-	//Namespaced& getNamespaced();
-	NameKey& getNameable();
-	const NameKey& getNameable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 
@@ -113,8 +100,6 @@ public:
 	
 	void revertTransform();
 	void freezeTransform();
-	void transformChanged();
-	typedef MemberCaller<Speaker, &Speaker::transformChanged> TransformChangedCaller;
 
 	// greebo: Modifies the speaker radii according to the passed bounding box
 	// this is called during drag-resize operations
@@ -123,6 +108,7 @@ public:
 public:
 
 	void construct();
+	void destroy();
 
 	// updates the AABB according to the SpeakerRadii
 	void updateAABB();

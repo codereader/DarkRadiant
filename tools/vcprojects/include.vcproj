@@ -316,6 +316,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\itransformable.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\itransformnode.h"
 			>
 		</File>

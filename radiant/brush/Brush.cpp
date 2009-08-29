@@ -23,9 +23,6 @@ Brush::Brush(const Callback& evaluateTransform, const Callback& boundsChanged) :
 	_faceCentroidPoints(GL_POINTS),
 	_uniqueVertexPoints(GL_POINTS),
 	_uniqueEdgePoints(GL_POINTS),
-	//m_render_faces(m_faceCentroidPoints, GL_POINTS),
-	//m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
-	//m_render_edges(m_uniqueEdgePoints, GL_POINTS),
 	m_evaluateTransform(evaluateTransform),
 	m_boundsChanged(boundsChanged),
 	m_planeChanged(false),
@@ -40,9 +37,6 @@ Brush::Brush(const Brush& other, const Callback& evaluateTransform, const Callba
 	_faceCentroidPoints(GL_POINTS),
 	_uniqueVertexPoints(GL_POINTS),
 	_uniqueEdgePoints(GL_POINTS),
-	//m_render_faces(m_faceCentroidPoints, GL_POINTS),
-	//m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
-	//m_render_edges(m_uniqueEdgePoints, GL_POINTS),
 	m_evaluateTransform(evaluateTransform),
 	m_boundsChanged(boundsChanged),
 	m_planeChanged(false),
@@ -53,7 +47,6 @@ Brush::Brush(const Brush& other, const Callback& evaluateTransform, const Callba
 
 Brush::Brush(const Brush& other) :
 	IBrush(other),
-	TransformNode(other),
 	Bounded(other),
 	Cullable(other),
 	Snappable(other),
@@ -65,9 +58,6 @@ Brush::Brush(const Brush& other) :
 	_faceCentroidPoints(GL_POINTS),
 	_uniqueVertexPoints(GL_POINTS),
 	_uniqueEdgePoints(GL_POINTS),
-	//m_render_faces(	, GL_POINTS),
-	//m_render_vertices(m_uniqueVertexPoints, GL_POINTS),
-	//m_render_edges(m_uniqueEdgePoints, GL_POINTS),
 	m_planeChanged(false),
 	m_transformChanged(false)
 {
@@ -194,10 +184,6 @@ void Brush::evaluateTransform() {
 		revertTransform();
 		m_evaluateTransform();
 	}
-}
-
-const Matrix4& Brush::localToParent() const {
-	return Matrix4::getIdentity();
 }
 
 void Brush::aabbChanged() {

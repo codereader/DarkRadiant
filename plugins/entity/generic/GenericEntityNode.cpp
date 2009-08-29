@@ -6,31 +6,22 @@ namespace entity {
 
 GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
 	EntityNode(eclass),
-	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	m_contained(*this, 
-		Node::TransformChangedCaller(*this), 
-		EvaluateTransformCaller(*this))
+		Node::TransformChangedCaller(*this))
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
-	Nameable(other),
 	Snappable(other),
 	TransformNode(other),
 	SelectionTestable(other),
-	Renderable(other),
 	Cullable(other),
 	Bounded(other),
-	TransformModifier(GenericEntity::TransformChangedCaller(m_contained), ApplyTransformCaller(*this)),
 	m_contained(other.m_contained, 
 		*this, 
-		Node::TransformChangedCaller(*this), 
-		EvaluateTransformCaller(*this))
+		Node::TransformChangedCaller(*this))
 {}
-
-GenericEntityNode::~GenericEntityNode() {
-}
 
 // Snappable implementation
 void GenericEntityNode::snapto(float snap) {
@@ -44,7 +35,7 @@ const Matrix4& GenericEntityNode::localToParent() const {
 
 // EntityNode implementation
 Entity& GenericEntityNode::getEntity() {
-	return m_contained.getEntity();
+	return _entity;
 }
 
 void GenericEntityNode::refreshModel() {
@@ -63,11 +54,6 @@ VolumeIntersectionValue GenericEntityNode::intersectVolume(
 	return m_contained.intersectVolume(test, localToWorld);
 }
 
-// Namespaced implementation
-/*void GenericEntityNode::setNamespace(INamespace& space) {
-	m_contained.getNamespaced().setNamespace(space);
-}*/
-
 void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
 	m_contained.testSelect(selector, test, localToWorld());
 }
@@ -78,40 +64,44 @@ scene::INodePtr GenericEntityNode::clone() const {
 	return clone;
 }
 
-void GenericEntityNode::instantiate(const scene::Path& path) {
-	m_contained.instanceAttach(path);
-	Node::instantiate(path);
-}
+void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderSolid(collector, volume);
 
-void GenericEntityNode::uninstantiate(const scene::Path& path) {
-	m_contained.instanceDetach(path);
-	Node::uninstantiate(path);
-}
-
-// Nameable implementation
-std::string GenericEntityNode::name() const {
-	return m_contained.getNameable().name();
-}
-
-void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	m_contained.renderSolid(collector, volume, localToWorld());
 }
 
-void GenericEntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void GenericEntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	EntityNode::renderWireframe(collector, volume);
+
 	m_contained.renderWireframe(collector, volume, localToWorld());
 }
 
-void GenericEntityNode::evaluateTransform() {
-	if(getType() == TRANSFORM_PRIMITIVE) {
+void GenericEntityNode::_onTransformationChanged()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+		
 		m_contained.translate(getTranslation());
 		m_contained.rotate(getRotation());
+
+		m_contained.updateTransform();
 	}
 }
 
-void GenericEntityNode::applyTransform() {
-	m_contained.revertTransform();
-	evaluateTransform();
-	m_contained.freezeTransform();
+void GenericEntityNode::_applyTransformation()
+{
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
+		m_contained.revertTransform();
+		
+		m_contained.translate(getTranslation());
+		m_contained.rotate(getRotation());
+
+		m_contained.freezeTransform();
+	}
 }
 
 } // namespace entity
