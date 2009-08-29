@@ -348,67 +348,6 @@ void ToggleFaceMode() {
 	ModeChangeNotify();
 }
 
-enum ENudgeDirection
-{
-  eNudgeUp = 1,
-  eNudgeDown = 3,
-  eNudgeLeft = 0,
-  eNudgeRight = 2,
-};
-
-struct AxisBase
-{
-  Vector3 x;
-  Vector3 y;
-  Vector3 z;
-  AxisBase(const Vector3& x_, const Vector3& y_, const Vector3& z_)
-    : x(x_), y(y_), z(z_)
-  {
-  }
-};
-
-AxisBase AxisBase_forViewType(EViewType viewtype)
-{
-  switch(viewtype)
-  {
-  case XY:
-    return AxisBase(g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z);
-  case XZ:
-    return AxisBase(g_vector3_axis_x, g_vector3_axis_z, g_vector3_axis_y);
-  case YZ:
-    return AxisBase(g_vector3_axis_y, g_vector3_axis_z, g_vector3_axis_x);
-  }
-
-  ERROR_MESSAGE("invalid viewtype");
-  return AxisBase(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0));
-}
-
-Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection direction)
-{
-  switch (direction)
-  {
-  case eNudgeLeft:
-    return -axes.x;
-  case eNudgeUp:
-    return axes.y;
-  case eNudgeRight:
-    return axes.x;
-  case eNudgeDown:
-    return -axes.y;
-  }
-
-  ERROR_MESSAGE("invalid direction");
-  return Vector3(0, 0, 0);
-}
-
-void NudgeSelection(ENudgeDirection direction, float fAmount, EViewType viewtype)
-{
-  AxisBase axes(AxisBase_forViewType(viewtype));
-  Vector3 view_direction(-axes.z);
-  Vector3 nudge(AxisBase_axisForDirection(axes, direction) * fAmount);
-  GlobalSelectionSystem().NudgeManipulator(nudge, view_direction);
-}
-
 // called when the escape key is used (either on the main window or on an inspector)
 void Selection_Deselect(const cmd::ArgumentList& args)
 {
@@ -435,30 +374,6 @@ void Selection_Deselect(const cmd::ArgumentList& args)
       GlobalSelectionSystem().setSelectedAll(false);
     }
   }
-}
-
-void Selection_NudgeUp(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("nudgeSelectedUp");
-  NudgeSelection(eNudgeUp, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
-}
-
-void Selection_NudgeDown(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("nudgeSelectedDown");
-  NudgeSelection(eNudgeDown, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
-}
-
-void Selection_NudgeLeft(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("nudgeSelectedLeft");
-  NudgeSelection(eNudgeLeft, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
-}
-
-void Selection_NudgeRight(const cmd::ArgumentList& args)
-{
-  UndoableCommand undo("nudgeSelectedRight");
-  NudgeSelection(eNudgeRight, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
 }
 
 void ToolChanged() {  
@@ -734,6 +649,13 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("TexScale", selection::algorithm::scaleTexture, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
 	GlobalCommandSystem().addCommand("TexShift", selection::algorithm::shiftTextureCmd, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
 
+	// Add the nudge commands (one general, four specialised ones)
+	GlobalCommandSystem().addCommand("NudgeSelected", selection::algorithm::nudgeSelectedCmd, cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addStatement("SelectNudgeLeft", "NudgeSelected left");
+	GlobalCommandSystem().addStatement("SelectNudgeRight", "NudgeSelected right");
+	GlobalCommandSystem().addStatement("SelectNudgeUp", "NudgeSelected up");
+	GlobalCommandSystem().addStatement("SelectNudgeDown", "NudgeSelected down");
+
 	GlobalCommandSystem().addCommand("NormaliseTexture", selection::algorithm::normaliseTexture);
 
 	GlobalCommandSystem().addCommand("CopyShader", selection::algorithm::pickShaderFromSelection);
@@ -746,11 +668,6 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("MoveSelectionDOWN", Selection_MoveDown);
 	GlobalCommandSystem().addCommand("MoveSelectionUP", Selection_MoveUp);
 	
-	GlobalCommandSystem().addCommand("SelectNudgeLeft", Selection_NudgeLeft);
-	GlobalCommandSystem().addCommand("SelectNudgeRight", Selection_NudgeRight);
-	GlobalCommandSystem().addCommand("SelectNudgeUp", Selection_NudgeUp);
-	GlobalCommandSystem().addCommand("SelectNudgeDown", Selection_NudgeDown);
-
 	GlobalCommandSystem().addCommand("CurveAppendControlPoint", selection::algorithm::appendCurveControlPoint);
 	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", selection::algorithm::removeCurveControlPoints);
 	GlobalCommandSystem().addCommand("CurveInsertControlPoint", selection::algorithm::insertCurveControlPoints);
@@ -879,6 +796,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SelectNudgeDown", "SelectNudgeDown");
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
+	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", selection::algorithm::RKEY_OFFSET_CLONED_OBJECTS);
 	
 	GlobalEventManager().addCommand("CurveAppendControlPoint", "CurveAppendControlPoint");
 	GlobalEventManager().addCommand("CurveRemoveControlPoint", "CurveRemoveControlPoint");
