@@ -46,10 +46,7 @@ scene::INodePtr MD5ModelLoader::loadModel(const std::string& modelName) {
 
 	if (md5Model != NULL) {
 		// Load was successful, construct a modelnode using this resource
-		MD5ModelNodePtr modelNode(new MD5ModelNode(md5Model));
-		modelNode->setSelf(modelNode);
-
-		return modelNode;
+		return MD5ModelNodePtr(new MD5ModelNode(md5Model));
 	}
 	else {
 		globalErrorStream() << "MD5ModelLoader: Cached model is not an MD5Model?\n";

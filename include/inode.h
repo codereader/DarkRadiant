@@ -103,15 +103,9 @@ public:
 	virtual void traverse(NodeVisitor& visitor) const = 0;
 
 	/**
-	 * greebo: The INode class holds a boost::weak_ptr of itself.
-	 * Use these methods to initialise this internal weak ptr by passing
-	 * a shared_ptr to setSelf(). 
-	 *
-	 * The method getSelf() tries to lock the weak_ptr and returns the 
-	 * resulting shared_ptr.
+	 * Returns a shared_ptr to itself.
 	 */
-	virtual void setSelf(const INodePtr& self) = 0;
-	virtual scene::INodePtr getSelf() const = 0;
+	virtual scene::INodePtr getSelf() = 0;
 
 	// Set the parent of this node, is called on insertion in a traversable
 	virtual void setParent(const INodePtr& parent) = 0;

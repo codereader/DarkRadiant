@@ -38,10 +38,7 @@ public:
 		model->setFilename(name);
 
 		// Construct a NullModelNode using this resource
-		NullModelNodePtr modelNode(new NullModelNode(model));
-		modelNode->setSelf(modelNode);
-
-		return modelNode;
+		return NullModelNodePtr(new NullModelNode(model));
 	}
   
   	// Required function, not implemented.

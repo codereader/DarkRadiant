@@ -238,7 +238,7 @@ public:
 	void selectedChanged(const Selectable& selectable) 
     {
 		GlobalSelectionSystem().onSelectedChanged(
-            Node::getSelf(), selectable
+            shared_from_this(), selectable
         );
 	}
 

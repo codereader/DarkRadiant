@@ -74,6 +74,11 @@ Node::Node(const Node& other) :
 	_layers(other._layers)
 {}
 
+scene::INodePtr Node::getSelf()
+{
+	return shared_from_this();
+}
+
 void Node::resetIds() {
 	_maxNodeId = 0;
 }
@@ -139,7 +144,7 @@ void Node::addChildNode(const INodePtr& node) {
 	_children.insert(node);
 
 	// Set the parent of this new node
-	node->setParent(getSelf());
+	node->setParent(shared_from_this());
 
 	// greebo: The bounds most probably change when child nodes are added
 	boundsChanged();
@@ -227,15 +232,6 @@ TraversableNodeSet& Node::getTraversable() {
 	return _children;
 }
 
-void Node::setSelf(const scene::INodePtr& self) {
-	_self = self;
-}
-
-scene::INodePtr Node::getSelf() const {
-	// Try to lock the weak pointer
-	return _self.lock();
-}
-
 void Node::setParent(const INodePtr& parent) {
 	_parent = parent;
 }
@@ -254,10 +250,11 @@ void Node::getPathRecursively(scene::Path& targetPath) {
 	}
 
 	// After passing the call to the parent, add self
-	targetPath.push(getSelf());
+	targetPath.push(shared_from_this());
 }
 
-scene::Path Node::getPath() const {
+scene::Path Node::getPath()
+{
 	scene::Path result;
 
 	scene::INodePtr parent = getParent();
@@ -267,7 +264,7 @@ scene::Path Node::getPath() const {
 	}
 
 	// Finally, add "self" to the path
-	result.push(getSelf());
+	result.push(shared_from_this());
 
 	return result;
 }

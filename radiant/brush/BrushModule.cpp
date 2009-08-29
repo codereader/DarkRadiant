@@ -112,7 +112,6 @@ scene::INodePtr BrushModuleClass::createBrush() {
 
 	if (layer != -1) {
 		scene::INodePtr node(new BrushNode);
-		node->setSelf(node);
 		
 		// Move it to the first visible layer
 		node->moveToLayer(layer);
