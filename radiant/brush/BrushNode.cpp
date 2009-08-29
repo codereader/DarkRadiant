@@ -254,9 +254,7 @@ void BrushNode::translateDoom3Brush(const Vector3& translation) {
 }
 
 scene::INodePtr BrushNode::clone() const {
-	scene::INodePtr clone(new BrushNode(*this));
-	clone->setSelf(clone);
-	return clone;
+	return scene::INodePtr(new BrushNode(*this));
 }
 
 void BrushNode::instantiate(const scene::Path& path) {

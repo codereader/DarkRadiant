@@ -279,9 +279,7 @@ void PatchNode::selectedChangedComponent(const Selectable& selectable) {
 
 // Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
 scene::INodePtr PatchNode::clone() const {
-	scene::INodePtr clone(new PatchNode(*this));
-	clone->setSelf(clone);
-	return clone;
+	return scene::INodePtr(new PatchNode(*this));
 }
 
 void PatchNode::instantiate(const scene::Path& path) {

@@ -241,9 +241,7 @@ void LightNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 }
 
 scene::INodePtr LightNode::clone() const {
-	scene::INodePtr clone(new LightNode(*this));
-	clone->setSelf(clone);
-	return clone;
+	return scene::INodePtr(new LightNode(*this));
 }
 
 void LightNode::selectedChangedComponent(const Selectable& selectable) {
