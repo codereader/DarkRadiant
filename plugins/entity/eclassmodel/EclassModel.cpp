@@ -52,14 +52,11 @@ void EclassModel::construct()
 	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 	_owner.addKeyObserver("model", ModelChangedCaller(*this));
-
-	modelChanged(m_entity.getKeyValue("model"));
-	_owner.skinChanged(m_entity.getKeyValue("skin"));
 }
 
 void EclassModel::destroy()
 {
-	modelChanged("");
+	m_model.modelChanged("");
 
 	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
 	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
