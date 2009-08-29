@@ -52,6 +52,9 @@ class ObjectivesEditor :
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
 
+	// The list of objective eclasses (defined in the registry)
+	std::vector<std::string> _objectiveEClasses;
+
 private:
 
 	// Constructor creates widgets	

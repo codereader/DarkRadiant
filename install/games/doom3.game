@@ -295,6 +295,11 @@
 		<selfEntity value="_SELF" />
 	</stimResponseSystem>
 
+	<objectivesEditor>
+		<objectivesEClass name="atdm:target_addobjectives" />
+		<objectivesEClass name="target_tdm_addobjectives" />
+	</objectivesEditor>
+
 	<conversationSystem>
 		<conversationCommandPrefix value="atdm:conversation_command_" />
 	</conversationSystem>

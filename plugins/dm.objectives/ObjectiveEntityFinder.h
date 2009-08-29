@@ -9,7 +9,7 @@ namespace objectives
 {
 
 /**
- * Visitor class to locate and list any <b>target_addobjectives</b> entities in 
+ * Visitor class to locate and list any <b>atdm:target_addobjectives</b> entities in 
  * the current map.
  *
  * The ObjectiveEntityFinder will visit each scenegraph node in turn, as per the
@@ -26,8 +26,8 @@ namespace objectives
 class ObjectiveEntityFinder
 : public scene::NodeVisitor
 {
-	// Name of entity class we are looking for
-	std::string _className;
+	// List of names of entity class we are looking for
+	std::vector<std::string> _classNames;
 	
 	// GtkListStore to populate with results
 	GtkListStore* _store;
@@ -62,8 +62,8 @@ public:
 	 */
 	ObjectiveEntityFinder(GtkListStore* st, 
 						  ObjectiveEntityMap& map,
-						  const std::string& classname)
-	: _className(classname),
+						  const std::vector<std::string>& classnames)
+	: _classNames(classnames),
 	  _store(st),
 	  _map(map),
 	  _worldSpawn(NULL)
@@ -88,31 +88,38 @@ public:
 			return true;
 
 		// We have an entity at this point
-			
-		// Check for objective entity or worldspawn	
-		if (ePtr->getKeyValue("classname") == _className) 
-		{
-			// Construct the display string
-			std::string name = ePtr->getKeyValue("name");
-			std::string sDisplay = "<b>" + name + "</b> at [ "	
-								   + ePtr->getKeyValue("origin") + " ]";
-			
-			// Add the entity to the list
-			GtkTreeIter iter;
-			gtk_list_store_append(_store, &iter);
-			gtk_list_store_set(_store, &iter, 
-							   0, sDisplay.c_str(),
-							   1, FALSE,				// active at start
-							   2, name.c_str(), 		// raw name
-							   -1);
-							   
-			// Construct an ObjectiveEntity with the node, and add to the map
-			ObjectiveEntityPtr oe(new ObjectiveEntity(node));
-			_map.insert(ObjectiveEntityMap::value_type(name, oe));
-		}
-		else if (ePtr->getKeyValue("classname") == "worldspawn")
+
+		if (ePtr->getKeyValue("classname") == "worldspawn")
 		{
 			_worldSpawn = ePtr;	
+			return false; // Don't traverse worldspawn children
+		}
+			
+		// Check for objective entity or worldspawn
+		for (std::size_t i = 0; i < _classNames.size(); ++i)
+		{
+			if (ePtr->getKeyValue("classname") == _classNames[i]) 
+			{
+				// Construct the display string
+				std::string name = ePtr->getKeyValue("name");
+				std::string sDisplay = "<b>" + name + "</b> at [ "	
+									   + ePtr->getKeyValue("origin") + " ]";
+				
+				// Add the entity to the list
+				GtkTreeIter iter;
+				gtk_list_store_append(_store, &iter);
+				gtk_list_store_set(_store, &iter, 
+								   0, sDisplay.c_str(),
+								   1, FALSE,				// active at start
+								   2, name.c_str(), 		// raw name
+								   -1);
+								   
+				// Construct an ObjectiveEntity with the node, and add to the map
+				ObjectiveEntityPtr oe(new ObjectiveEntity(node));
+				_map.insert(ObjectiveEntityMap::value_type(name, oe));
+
+				break;
+			}
 		}
 		
 		return false; // don't traverse entity children
