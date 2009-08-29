@@ -77,14 +77,6 @@ public:
 	 */
 	std::string getKeyValue(const std::string& key) const;
 
-	/**
-	 * Tries to look up the given keyvalue on this entity. Returns NULL
-	 * if nothing found.
-	 *
-	 * Note that inherited values will not be considered.
-	 */
-	KeyValuePtr findKeyValue(const std::string& key) const;
-
 	// Returns true if the given key is inherited
 	bool isInherited(const std::string& key) const;
 
