@@ -199,7 +199,9 @@ public:
 		_undoStack.clear();
 		_redoStack.clear();
 		trackersClear();
-		_observers.clear();
+
+		// greebo: This is called on map shutdown, so don't clear the observers, 
+		// there are some "persistent" observers like EntityInspector and ShaderClipboard
 	}
 
 	void addObserver(Observer* observer) {
