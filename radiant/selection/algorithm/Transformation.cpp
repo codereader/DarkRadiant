@@ -125,7 +125,7 @@ void selectNode(scene::INodePtr node) {
 
 void cloneSelected(const cmd::ArgumentList& args) {
 	// Check for the correct editing mode (don't clone components)
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive) {
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
 		return;
 	}
 
