@@ -150,10 +150,8 @@ scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const std::st
 	// Remove the old entity node from the parent
 	scene::removeNodeFromParent(oldNode);
 
-	if (node_is_group(newNode)) {
-		// Traverse the child and reparent all primitives to the new entity node
-		parentBrushes(oldNode, newNode);
-	}
+	// Traverse the child and reparent all primitives to the new entity node
+	parentBrushes(oldNode, newNode);
 
 	// Insert the new entity to the parent
 	parent->addChildNode(newNode);

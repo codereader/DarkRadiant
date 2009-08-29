@@ -32,10 +32,10 @@ namespace objectives
 namespace {
 
 	const char* DIALOG_TITLE = "Mission objectives"; 	
-	const char* OBJECTIVE_ENTITY_CLASS = "target_tdm_addobjectives";
-
+	
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+	const std::string RKEY_OBJECTIVE_ENTS = "game/objectivesEditor//objectivesEClass";
 	
 	// WIDGETS ENUM 
 	enum {
@@ -107,6 +107,15 @@ ObjectivesEditor::ObjectivesEditor() :
 	
 	_windowPosition.connect(GTK_WINDOW(getWindow()));
 	_windowPosition.applyPosition();
+
+	_objectiveEClasses.clear();
+
+	xml::NodeList nodes = GlobalRegistry().findXPath(RKEY_OBJECTIVE_ENTS);
+
+	for (xml::NodeList::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	{
+		_objectiveEClasses.push_back(i->getAttributeValue("name"));
+	}
 }
 
 // Create the objects panel (for manipulating the target_addobjectives objects)
@@ -289,7 +298,7 @@ void ObjectivesEditor::populateWidgets() {
 	// entities to the liststore and entity map
 	ObjectiveEntityFinder finder(_objectiveEntityList, 
 								 _entities, 
-								 OBJECTIVE_ENTITY_CLASS);
+								 _objectiveEClasses);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 	
 	// Set the worldspawn entity and populate the active-at-start column
@@ -512,9 +521,21 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel,
 // Add a new objectives entity button
 void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 	
+	if (self->_objectiveEClasses.empty())
+	{
+		// Objective entityclass(es) not defined
+        gtkutil::errorDialog(
+            "Unable to create Objective Entity: classes not defined in registry.",
+            GlobalRadiant().getMainWindow()
+        );
+		return;
+	}
+
+	const std::string& objEClass = self->_objectiveEClasses.front();
+
 	// Obtain the entity class object
 	IEntityClassPtr eclass = 
-		GlobalEntityClassManager().findClass(OBJECTIVE_ENTITY_CLASS);
+		GlobalEntityClassManager().findClass(objEClass);
 		
     if (eclass) 
     {
@@ -535,8 +556,7 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
     {
         // Objective entityclass was not found
         gtkutil::errorDialog(
-            std::string("Unable to create Objective Entity: class '")
-                + OBJECTIVE_ENTITY_CLASS + "' not found.",
+            "Unable to create Objective Entity: class '" + objEClass + "' not found.",
             GlobalRadiant().getMainWindow()
         );
     }

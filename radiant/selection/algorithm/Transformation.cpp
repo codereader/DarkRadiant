@@ -5,12 +5,16 @@
 #include "math/quaternion.h"
 #include "iundo.h"
 #include "imap.h"
+#include "igrid.h"
 #include "inamespace.h"
 #include "iselection.h"
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
+#include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
 #include "map/BasicContainer.h"
+
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace selection {
 	namespace algorithm {
@@ -125,7 +129,7 @@ void selectNode(scene::INodePtr node) {
 
 void cloneSelected(const cmd::ArgumentList& args) {
 	// Check for the correct editing mode (don't clone components)
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive) {
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
 		return;
 	}
 
@@ -161,6 +165,107 @@ void cloneSelected(const cmd::ArgumentList& args) {
 
 	// Finally, move the cloned nodes to their destination and select them
 	cloner.moveClonedNodes(true);
+
+	if (GlobalRegistry().getInt(RKEY_OFFSET_CLONED_OBJECTS) == 1)
+	{
+		// Move the current selection by one grid unit to the "right" and "downwards"
+		nudgeSelected(eNudgeDown);
+		nudgeSelected(eNudgeRight);
+	}
+}
+
+struct AxisBase
+{
+	Vector3 x;
+	Vector3 y;
+	Vector3 z;
+
+	AxisBase(const Vector3& x_, const Vector3& y_, const Vector3& z_) : 
+		x(x_), 
+		y(y_), 
+		z(z_)
+	{}
+};
+
+AxisBase AxisBase_forViewType(EViewType viewtype)
+{
+	switch(viewtype)
+	{
+	case XY:
+		return AxisBase(g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z);
+	case XZ:
+		return AxisBase(g_vector3_axis_x, g_vector3_axis_z, g_vector3_axis_y);
+	case YZ:
+		return AxisBase(g_vector3_axis_y, g_vector3_axis_z, g_vector3_axis_x);
+	}
+
+	ERROR_MESSAGE("invalid viewtype");
+	return AxisBase(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0));
+}
+
+Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection direction)
+{
+	switch (direction)
+	{
+	case eNudgeLeft:
+		return -axes.x;
+	case eNudgeUp:
+		return axes.y;
+	case eNudgeRight:
+		return axes.x;
+	case eNudgeDown:
+		return -axes.y;
+	}
+
+	ERROR_MESSAGE("invalid direction");
+	return Vector3(0, 0, 0);
+}
+
+// Specialised overload, called by the general nudgeSelected() routine
+void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
+{
+	AxisBase axes(AxisBase_forViewType(viewtype));
+
+	Vector3 view_direction(-axes.z);
+	Vector3 nudge(AxisBase_axisForDirection(axes, direction) * amount);
+
+	GlobalSelectionSystem().NudgeManipulator(nudge, view_direction);
+}
+
+void nudgeSelected(ENudgeDirection direction)
+{
+	nudgeSelected(direction, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
+}
+
+void nudgeSelectedCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		globalOutputStream() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
+		return;
+	}
+
+	UndoableCommand undo("nudgeSelected");
+
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+
+	if (arg == "up") {
+		nudgeSelected(eNudgeUp);
+	}
+	else if (arg == "down") {
+		nudgeSelected(eNudgeDown);
+	}
+	else if (arg == "left") {
+		nudgeSelected(eNudgeLeft);
+	}
+	else if (arg == "right") {
+		nudgeSelected(eNudgeRight);
+	}
+	else {
+		// Invalid argument
+		globalOutputStream() << "Usage: nudgeSelected [up|down|left|right]" << std::endl;
+		return;
+	}
 }
 
 	} // namespace algorithm
