@@ -31,10 +31,10 @@ class TargetableNode :
 	std::string _targetName;
 
 	// The node we're associated with
-	scene::Node& _node;
+	const scene::Node& _node;
 
 public:
-	TargetableNode(Doom3Entity& entity, scene::Node& node);
+	TargetableNode(Doom3Entity& entity, const scene::Node& node);
 
 	// Connect this class with the Doom3Entity
 	void construct();
