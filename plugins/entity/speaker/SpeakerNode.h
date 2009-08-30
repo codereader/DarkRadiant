@@ -40,6 +40,9 @@ public:
 	SpeakerNode(const IEntityClassConstPtr& eclass);
 	SpeakerNode(const SpeakerNode& other);
 
+	// Called after the constructor is done
+	void construct();
+
 	// Snappable implementation
 	virtual void snapto(float snap);
 
@@ -90,6 +93,7 @@ protected:
 private:
 	void evaluateTransform();
 };
+typedef boost::shared_ptr<SpeakerNode> SpeakerNodePtr;
 
 } // namespace entity
 

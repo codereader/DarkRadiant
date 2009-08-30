@@ -7,9 +7,7 @@ EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 	m_contained(*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
-{
-	construct();
-}
+{}
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
@@ -20,9 +18,7 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
-{
-	construct();
-}
+{}
 
 EclassModelNode::~EclassModelNode() {
 	destroy();
@@ -30,6 +26,8 @@ EclassModelNode::~EclassModelNode() {
 
 void EclassModelNode::construct()
 {
+	m_contained.construct();
+
 	// Attach the InstanceSet as Traversable::Observer to the nodeset
 	Node::attachTraverseObserver(this);
 	addKeyObserver("skin", SkinChangedCaller(*this));
@@ -88,10 +86,12 @@ void EclassModelNode::renderWireframe(RenderableCollector& collector, const Volu
 	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
 }
 
-scene::INodePtr EclassModelNode::clone() const {
-	scene::INodePtr clone(new EclassModelNode(*this));
-	clone->setSelf(clone);
-	return clone;
+scene::INodePtr EclassModelNode::clone() const
+{
+	EclassModelNodePtr node(new EclassModelNode(*this));
+	node->construct();
+
+	return node;
 }
 
 void EclassModelNode::skinChanged(const std::string& value) {

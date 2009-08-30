@@ -27,6 +27,11 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	_dragPlanes(SelectedChangedComponentCaller(*this))
 {}
 
+void SpeakerNode::construct()
+{
+	_speaker.construct();
+}
+
 // Snappable implementation
 void SpeakerNode::snapto(float snap) {
 	_speaker.snapto(snap);
@@ -98,10 +103,12 @@ void SpeakerNode::testSelectComponents(Selector& selector, SelectionTest& test, 
 	// nothing, planes are selected via selectPlanes()
 }
 
-scene::INodePtr SpeakerNode::clone() const {
-	scene::INodePtr clone(new SpeakerNode(*this));
-	clone->setSelf(clone);
-	return clone;
+scene::INodePtr SpeakerNode::clone() const
+{
+	SpeakerNodePtr node(new SpeakerNode(*this));
+	node->construct();
+
+	return node;
 }
 
 /* Renderable implementation */

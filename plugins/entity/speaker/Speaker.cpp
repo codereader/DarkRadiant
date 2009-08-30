@@ -32,9 +32,7 @@ Speaker::Speaker(SpeakerNode& node,
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged)
-{
-	construct();
-}
+{}
 
 Speaker::Speaker(const Speaker& other, 
 		SpeakerNode& node, 
@@ -52,9 +50,7 @@ Speaker::Speaker(const Speaker& other,
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged)
-{
-	construct();
-}
+{}
 
 Speaker::~Speaker()
 {

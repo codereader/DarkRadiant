@@ -65,10 +65,11 @@ protected:
 	// or when reverting transformations.
 	void _applyTransformation();
 
-private:
+public:
 	void construct();
 	void destroy();
 };
+typedef boost::shared_ptr<EclassModelNode> EclassModelNodePtr;
 
 } // namespace entity
 

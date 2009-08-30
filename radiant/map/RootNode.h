@@ -83,9 +83,7 @@ typedef boost::shared_ptr<RootNode> RootNodePtr;
 } // namespace map
 
 inline scene::INodePtr NewMapRoot(const std::string& name) {
-	scene::INodePtr root(new map::RootNode(name));
-	root->setSelf(root);
-	return root;
+	return scene::INodePtr(new map::RootNode(name));
 }
 
 #endif /*MAPROOTNODE_H_*/

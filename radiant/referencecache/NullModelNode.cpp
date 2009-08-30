@@ -18,7 +18,6 @@ NullModelNodePtr NullModelNode::InstancePtr() {
 	if (_nullModelNode == NULL) {
 		// Not yet instantiated, create a new NullModel
 		_nullModelNode = NullModelNodePtr(new NullModelNode);
-		_nullModelNode->setSelf(_nullModelNode);
 	}
 
 	return _nullModelNode;

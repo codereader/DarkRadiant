@@ -87,9 +87,7 @@ Light::Light(Doom3Entity& entity,
 	m_useLightRotation(false),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged)
-{
-	construct();
-}
+{}
 
 // Copy Constructor
 Light::Light(const Light& other,
@@ -115,9 +113,7 @@ Light::Light(const Light& other,
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
   m_boundsChanged(boundsChanged)
-{
-	construct();
-}
+{}
 
 Light::~Light()
 {

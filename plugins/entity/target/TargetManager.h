@@ -52,19 +52,19 @@ public:
 
 	/**
 	 * greebo: Associates the Target with the given name
-	 *         to the given scene::INodePtr.
+	 *         to the given scene::INode.
 	 *
 	 * The Target will be created if it doesn't exist yet.
 	 */
-	void associateTarget(const std::string& name, const scene::INodePtr& node);
+	void associateTarget(const std::string& name, const scene::INode& node);
 
 	/**
-	 * greebo: Disassociates the Target from the given name. The node pointer
+	 * greebo: Disassociates the Target from the given name. The node
 	 *         must also be passed to allow the manager to check the request.
 	 *         Otherwise it would be possible for cloned nodes to dissociate
 	 *         the target from their source node.
 	 */
-	void clearTarget(const std::string& name, const scene::INodePtr& node);
+	void clearTarget(const std::string& name, const scene::INode& node);
 };
 
 } // namespace entity

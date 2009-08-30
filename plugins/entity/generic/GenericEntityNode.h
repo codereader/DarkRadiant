@@ -33,6 +33,8 @@ public:
 	GenericEntityNode(const IEntityClassConstPtr& eclass);
 	GenericEntityNode(const GenericEntityNode& other);
 
+	void construct();
+
 	// Snappable implementation
 	virtual void snapto(float snap);
 
@@ -68,6 +70,7 @@ protected:
 	// or when reverting transformations.
 	void _applyTransformation();
 };
+typedef boost::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
 } // namespace entity
 
