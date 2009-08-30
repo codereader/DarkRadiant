@@ -63,6 +63,7 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassConstPt
 		node = scene::INodePtr(new GenericEntityNode(eclass));
 	}
 
+	node->setSelf(node);
 	return node;
 }
 

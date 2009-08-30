@@ -196,6 +196,7 @@ void Doom3GroupNode::snapComponents(float snap) {
 
 scene::INodePtr Doom3GroupNode::clone() const {
 	boost::shared_ptr<Doom3GroupNode> clone(new Doom3GroupNode(*this));
+	clone->setSelf(clone);
 	clone->construct();
 	return clone;
 }

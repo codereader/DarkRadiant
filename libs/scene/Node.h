@@ -7,14 +7,12 @@
 #include "TraversableNodeSet.h"
 #include "math/aabb.h"
 #include "generic/callback.h"
-#include <boost/enable_shared_from_this.hpp>
 
 namespace scene {
 
 class Node :
 	public INode,
-	public Traversable::Observer,
-	public boost::enable_shared_from_this<Node>
+	public Traversable::Observer
 {
 public:
 	enum { 
@@ -34,6 +32,9 @@ private:
 	static unsigned long _maxNodeId;
 
 	TraversableNodeSet _children;
+
+	// A weak reference to "self"
+	INodeWeakPtr _self;
 
 	// A weak reference to the parent node
 	INodeWeakPtr _parent;
@@ -84,6 +85,9 @@ public:
 	virtual bool hasChildNodes() const;
 	
 	virtual void traverse(NodeVisitor& visitor) const;
+
+	virtual void setSelf(const INodePtr& self);
+	virtual scene::INodePtr getSelf() const;
 
 	virtual void setParent(const INodePtr& parent);
 	virtual scene::INodePtr getParent() const;
@@ -139,10 +143,7 @@ public:
 	 * ancestors until it reaches the top node, so don't expect this to be
 	 * super fast.
 	 */
-	scene::Path getPath();
-
-	// Returns a shared reference to this node
-	scene::INodePtr getSelf();
+	scene::Path getPath() const;
 
 protected:
 	// Fills in the ancestors and self (in this order) into the given targetPath.

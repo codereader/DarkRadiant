@@ -59,7 +59,9 @@ void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
 }
 
 scene::INodePtr GenericEntityNode::clone() const {
-	return scene::INodePtr(new GenericEntityNode(*this));
+	scene::INodePtr clone(new GenericEntityNode(*this));
+	clone->setSelf(clone);
+	return clone;
 }
 
 void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

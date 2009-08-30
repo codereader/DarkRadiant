@@ -89,7 +89,9 @@ void EclassModelNode::renderWireframe(RenderableCollector& collector, const Volu
 }
 
 scene::INodePtr EclassModelNode::clone() const {
-	return scene::INodePtr(new EclassModelNode(*this));
+	scene::INodePtr clone(new EclassModelNode(*this));
+	clone->setSelf(clone);
+	return clone;
 }
 
 void EclassModelNode::skinChanged(const std::string& value) {

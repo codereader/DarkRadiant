@@ -62,7 +62,10 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 
 	if (picoModel != NULL) {
 		// Load was successful, construct a modelnode using this resource
-		return PicoModelNodePtr(new PicoModelNode(picoModel));
+		PicoModelNodePtr modelNode(new PicoModelNode(picoModel));
+		modelNode->setSelf(modelNode);
+
+		return modelNode;
 	}
 	else {
 		globalErrorStream() << "PicoModelLoader: Cached model is not a PicoModel?\n";

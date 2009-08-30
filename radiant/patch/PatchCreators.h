@@ -68,7 +68,9 @@ class Doom3PatchCreator :
 public:
 	scene::INodePtr createPatch() {
 		// Note the true as function argument: this means that patchDef3 = true in the PatchNode constructor.  
-		return scene::INodePtr(new PatchNode(true));
+		scene::INodePtr node(new PatchNode(true));
+		node->setSelf(node);
+		return node;
 	}
 	
 	// RegisterableModule implementation
@@ -116,7 +118,9 @@ public:
 	scene::INodePtr createPatch() {
 		// The PatchNodeDoom3 constructor normally expects a bool, which defaults to false.
 		// this means that the patch is node def3, but def2
-		return scene::INodePtr(new PatchNode());
+		scene::INodePtr node(new PatchNode());
+		node->setSelf(node);
+		return node;
 	}
 	
 	// RegisterableModule implementation

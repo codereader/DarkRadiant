@@ -99,7 +99,9 @@ void SpeakerNode::testSelectComponents(Selector& selector, SelectionTest& test, 
 }
 
 scene::INodePtr SpeakerNode::clone() const {
-	return scene::INodePtr(new SpeakerNode(*this));
+	scene::INodePtr clone(new SpeakerNode(*this));
+	clone->setSelf(clone);
+	return clone;
 }
 
 /* Renderable implementation */

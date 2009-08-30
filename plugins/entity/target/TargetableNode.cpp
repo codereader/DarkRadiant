@@ -5,7 +5,7 @@
 
 namespace entity {
 
-TargetableNode::TargetableNode(Doom3Entity& entity, scene::Node& node) :
+TargetableNode::TargetableNode(Doom3Entity& entity, const scene::Node& node) :
 	_d3entity(entity),
 	_renderableLines(_targetKeys),
 	_node(node)
