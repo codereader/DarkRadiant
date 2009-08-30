@@ -22,7 +22,6 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	EntityNode(other),
-	scene::Cloneable(other),
 	scene::GroupNode(other),
 	Snappable(other),
 	SelectionTestable(other),
@@ -55,8 +54,7 @@ Doom3GroupNode::~Doom3GroupNode() {
 
 	removeKeyObserver("skin", SkinChangedCaller(*this));
 
-	Callback emptyCallback;
-	m_contained.setTransformChanged(emptyCallback);
+	m_contained.setTransformChanged(Callback());
 	Node::detachTraverseObserver(this);
 }
 

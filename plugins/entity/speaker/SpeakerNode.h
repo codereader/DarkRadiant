@@ -19,7 +19,6 @@ namespace entity {
 
 class SpeakerNode :
 	public EntityNode,
-	public scene::Cloneable,
 	public Snappable,
 	public SelectionTestable,
 	public Cullable,

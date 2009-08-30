@@ -26,7 +26,8 @@ class EntityNode :
 	public Renderable,
 	public Nameable,
 	public Transformable,
-	public MatrixTransform	// influences local2world of child nodes
+	public MatrixTransform,	// influences local2world of child nodes
+	public scene::Cloneable // all entities are cloneable, to be implemented in subclasses
 {
 protected:
 	// The entity class
