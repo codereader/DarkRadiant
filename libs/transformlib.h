@@ -43,21 +43,21 @@ public:
 class MatrixTransform : 
 	public TransformNode
 {
-	Matrix4 m_localToParent;
+	Matrix4 _localToParent;
 public:
 	MatrixTransform() : 
-		m_localToParent(Matrix4::getIdentity())
+		_localToParent(Matrix4::getIdentity())
 	{}
 
 	Matrix4& localToParent()
 	{
-		return m_localToParent;
+		return _localToParent;
 	}
 
 	/// \brief Returns the stored local->parent transform.
 	const Matrix4& localToParent() const
 	{
-		return m_localToParent;
+		return _localToParent;
 	}
 };
 

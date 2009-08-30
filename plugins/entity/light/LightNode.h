@@ -15,7 +15,6 @@ class LightNode :
 	public scene::Cloneable,
 	public Snappable,
 	public Editable,
-	public TransformNode,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
@@ -61,9 +60,6 @@ public:
 	// override scene::Inode methods to deselect the child components
 	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
-
-	// TransformNode implementation
-	virtual const Matrix4& localToParent() const;
 
 	// Editable implementation
 	virtual const Matrix4& getLocalPivot() const;

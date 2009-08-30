@@ -60,11 +60,12 @@ void EclassModel::destroy()
 	_owner.removeKeyObserver("model", ModelChangedCaller(*this));
 }
 
-void EclassModel::updateTransform() {
-	m_transform.localToParent() = Matrix4::getIdentity();
-	m_transform.localToParent().translateBy(m_origin);
+void EclassModel::updateTransform()
+{
+	_owner.localToParent() = Matrix4::getIdentity();
+	_owner.localToParent().translateBy(m_origin);
 
-	m_transform.localToParent().multiplyBy(m_rotation.getMatrix4());
+	_owner.localToParent().multiplyBy(m_rotation.getMatrix4());
 	m_transformChanged();
 }
 
@@ -81,14 +82,6 @@ void EclassModel::angleChanged() {
 void EclassModel::rotationChanged() {
 	m_rotation = m_rotationKey.m_rotation;
 	updateTransform();
-}
-
-TransformNode& EclassModel::getTransformNode() {
-	return m_transform;
-}
-
-const TransformNode& EclassModel::getTransformNode() const {
-	return m_transform;
 }
 
 void EclassModel::renderSolid(RenderableCollector& collector, 

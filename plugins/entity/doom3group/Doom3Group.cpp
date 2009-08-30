@@ -73,14 +73,6 @@ Vector3& Doom3Group::getOrigin() {
 	return m_origin;
 }
 
-TransformNode& Doom3Group::getTransformNode() {
-	return m_transform;
-}
-
-const TransformNode& Doom3Group::getTransformNode() const {
-	return m_transform;
-}
-
 const AABB& Doom3Group::localAABB() const {
 	m_curveBounds = m_curveNURBS.getBounds();
 	m_curveBounds.includeAABB(m_curveCatmullRom.getBounds());
@@ -329,11 +321,14 @@ void Doom3Group::setTransformChanged(Callback& callback) {
 	m_transformChanged = callback;
 }
 
-void Doom3Group::updateTransform() {
-	m_transform.localToParent() = Matrix4::getIdentity();
-	if (isModel()) {
-		m_transform.localToParent().translateBy(m_origin);
-		m_transform.localToParent().multiplyBy(m_rotation.getMatrix4());
+void Doom3Group::updateTransform()
+{
+	_owner.localToParent() = Matrix4::getIdentity();
+
+	if (isModel())
+	{
+		_owner.localToParent().translateBy(m_origin);
+		_owner.localToParent().multiplyBy(m_rotation.getMatrix4());
 	}
 	
 	// Notify the Node about this transformation change	to update the local2World matrix 

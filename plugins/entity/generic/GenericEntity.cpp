@@ -47,14 +47,6 @@ GenericEntity::~GenericEntity()
 	destroy();
 }
 
-TransformNode& GenericEntity::getTransformNode() {
-	return m_transform;
-}
-
-const TransformNode& GenericEntity::getTransformNode() const {
-	return m_transform;
-}
-
 const AABB& GenericEntity::localAABB() const {
 	return m_aabb_local;
 }
@@ -200,7 +192,7 @@ void GenericEntity::destroy()
 
 void GenericEntity::updateTransform()
 {
-	m_transform.localToParent() = Matrix4::getTranslation(m_origin);
+	_owner.localToParent() = Matrix4::getTranslation(m_origin);
 
 	if (_allow3Drotations)
 	{

@@ -20,7 +20,6 @@ class Doom3GroupNode :
 	public scene::Cloneable,
 	public scene::GroupNode,
 	public Snappable,
-	public TransformNode,
 	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
@@ -66,9 +65,6 @@ public:
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
-
-	// TransformNode implementation
-	virtual const Matrix4& localToParent() const;
 
 	/** greebo: Tests the contained Doom3Group for selection. 
 	 * 

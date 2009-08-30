@@ -26,7 +26,6 @@ class EclassModel :
 {
 	EclassModelNode& _owner;
 
-	MatrixTransform m_transform;
 	Doom3Entity& m_entity;
 
 	OriginKey m_originKey;
@@ -54,9 +53,6 @@ public:
 
 	void instanceAttach(const scene::Path& path);
 	void instanceDetach(const scene::Path& path);
-
-	TransformNode& getTransformNode();
-	const TransformNode& getTransformNode() const;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
