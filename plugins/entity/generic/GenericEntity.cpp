@@ -101,8 +101,9 @@ void GenericEntity::testSelect(Selector& selector,
 	}
 }
 
-void GenericEntity::translate(const Vector3& translation) {
-	m_origin = origin_translated(m_origin, translation);
+void GenericEntity::translate(const Vector3& translation)
+{
+	m_origin += translation;
 }
 
 void GenericEntity::rotate(const Quaternion& rotation)

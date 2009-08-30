@@ -133,12 +133,15 @@ void Doom3Group::snapOrigin(float snap) {
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3Group::translateOrigin(const Vector3& translation) {
-	m_origin = origin_translated(m_originKey.m_origin, translation);
+void Doom3Group::translateOrigin(const Vector3& translation)
+{
+	m_origin = m_originKey.m_origin + translation;
+
 	// Only non-models should have their rendered origin different than <0,0,0>
 	if (!isModel()) {
 		m_nameOrigin = m_origin;
 	}
+
 	m_renderOrigin.updatePivot();
 }
 
@@ -150,8 +153,9 @@ void Doom3Group::translate(const Vector3& translation, bool rotation) {
 	// a pivoted rotation, translate the origin as well (this is a bit hacky)
 	// This also applies for models, which should always have the 
 	// rotation-translation applied (except for freeModelRotation set to TRUE)
-	if (!rotation || (isModel() && !freeModelRotation)) {
-		m_origin = origin_translated(m_originKey.m_origin, translation);
+	if (!rotation || (isModel() && !freeModelRotation))
+	{
+		m_origin = m_originKey.m_origin + translation;
 	}
 	
 	// Only non-models should have their rendered origin different than <0,0,0>

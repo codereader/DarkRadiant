@@ -30,27 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 const Vector3 ORIGINKEY_IDENTITY = Vector3(0, 0, 0);
 
-inline void default_origin(Vector3& origin)
-{
-  origin = ORIGINKEY_IDENTITY;
-}
-
-inline void read_origin(Vector3& origin, const std::string& value)
-{
-	// Try to construct a Vector3 from the given string, will fall back to 0,0,0
-	origin = Vector3(value);
-}
-
-inline void write_origin(const Vector3& origin, Entity* entity, const std::string& key)
-{
-	entity->setKeyValue(key, (boost::format("%g %g %g") % origin[0] % origin[1] % origin[2]).str());
-}
-
-inline Vector3 origin_translated(const Vector3& origin, const Vector3& translation)
-{
-	return origin + translation;
-}
-
 inline Vector3 origin_snapped(const Vector3& origin, float snap)
 {
   return vector3_snapped(origin, snap);
@@ -69,14 +48,17 @@ public:
 
 	void originChanged(const std::string& value)
 	{
-		read_origin(m_origin, value);
+		// Try to construct a Vector3 from the given string, will fall back to 0,0,0
+		m_origin = Vector3(value);
+
 		_originChanged();
 	}
 	typedef MemberCaller1<OriginKey, const std::string&, &OriginKey::originChanged> OriginChangedCaller;
 
 	void write(Entity* entity) const
 	{
-		write_origin(m_origin, entity, "origin");
+		// Use Vector3's std::string operator cast
+		entity->setKeyValue("origin", m_origin);
 	}
 };
 

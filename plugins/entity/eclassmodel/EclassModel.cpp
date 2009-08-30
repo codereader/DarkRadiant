@@ -106,8 +106,9 @@ void EclassModel::renderWireframe(RenderableCollector& collector,
 	renderSolid(collector, volume, localToWorld, selected);
 }
 
-void EclassModel::translate(const Vector3& translation) {
-	m_origin = origin_translated(m_origin, translation);
+void EclassModel::translate(const Vector3& translation)
+{
+	m_origin += translation;
 }
 
 void EclassModel::rotate(const Quaternion& rotation) {
