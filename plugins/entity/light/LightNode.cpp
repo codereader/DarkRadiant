@@ -1,5 +1,7 @@
 #include "LightNode.h"
 
+#include "../EntitySettings.h"
+
 namespace entity {
 
 // --------- LightNode implementation ------------------------------------
@@ -320,14 +322,16 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	}
 }
 
-void LightNode::renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const {
+void LightNode::renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const
+{
 	// greebo: We are not in component selection mode (and the light is still selected), 
 	// check if we should draw the center of the light anyway
 	if (selected 
 		&& GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex
-		&& GlobalRegistry().get("user/ui/alwaysShowLightVertices") == "1") 
+		&& EntitySettings::InstancePtr()->alwaysShowLightVertices())
 	{
-		if (_light.isProjected()) {
+		if (_light.isProjected())
+		{
 			// Cache registry values to reduce number of queries
 			Vector3 colourStartEndInactive = ColourSchemes().getColour("light_startend_deselected");
 			Vector3 colourVertexInactive = ColourSchemes().getColour("light_vertex_normal");
@@ -341,7 +345,8 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 			// Render the projection points
 			_light.renderProjectionPoints(collector, volume, localToWorld());
 		} 
-		else {
+		else
+		{
 			const_cast<Light&>(_light).getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_normal"));
 			_light.renderLightCentre(collector, volume, localToWorld());
 		}
