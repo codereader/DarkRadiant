@@ -277,10 +277,8 @@ void LayerControlDialog::onRadiantShutdown() {
 	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
 
 	// Write the visibility status to the registry
-	if (isVisible()) {
-		GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", "1");
-	}
-
+	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", isVisible() ? "1" : "0");
+	
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	destroy();
 }
