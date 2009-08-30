@@ -204,7 +204,14 @@ void Speaker::setRadiusFromAABB(const AABB& aabb)
 		m_origin += aabb.origin - localAABB().getOrigin();
 	}
 
-	float oldRadius = _radii.getMax();
+	float oldRadius = _radii.getMax() > 0 ? _radii.getMax() : _radii.getMin();
+
+	// Prevent division by zero
+	if (oldRadius == 0)
+	{
+		oldRadius = 1;
+	}
+
 	float newRadius = static_cast<float>(oldRadius + maxTrans);
 
 	float ratio = newRadius / oldRadius;
