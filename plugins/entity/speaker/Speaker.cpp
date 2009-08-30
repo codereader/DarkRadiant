@@ -123,7 +123,7 @@ void Speaker::testSelect(Selector& selector,
 
 void Speaker::translate(const Vector3& translation)
 {
-	m_origin = origin_translated(m_origin, translation);
+	m_origin += translation;
 }
 
 void Speaker::rotate(const Quaternion& rotation)

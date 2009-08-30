@@ -216,36 +216,49 @@ void Light::originChanged()
 
 void Light::lightTargetChanged(const std::string& value) {
 	m_useLightTarget = (!value.empty());
-	if (m_useLightTarget) {
-		read_origin(_lightTarget, value);
+
+	if (m_useLightTarget)
+	{
+		_lightTarget = Vector3(value);
 	}
+
 	_lightTargetTransformed = _lightTarget;
 	projectionChanged();
 }
 
 void Light::lightUpChanged(const std::string& value) {
 	m_useLightUp = (!value.empty());
-	if (m_useLightUp) {
-		read_origin(_lightUp, value);
+
+	if (m_useLightUp)
+	{
+		_lightUp = Vector3(value);
 	}
+
 	_lightUpTransformed = _lightUp;
 	projectionChanged();
 }
 
-void Light::lightRightChanged(const std::string& value) {
+void Light::lightRightChanged(const std::string& value)
+{
 	m_useLightRight = (!value.empty());
-	if (m_useLightRight) {
-		read_origin(_lightRight, value);
+
+	if (m_useLightRight)
+	{
+		_lightRight = Vector3(value);
 	}
+
 	_lightRightTransformed = _lightRight;
 	projectionChanged();
 }
 
 void Light::lightStartChanged(const std::string& value) {
 	m_useLightStart = (!value.empty());
-	if (m_useLightStart) {
-		read_origin(_lightStart, value);
+
+	if (m_useLightStart)
+	{
+		_lightStart = Vector3(value);
 	}
+
 	_lightStartTransformed = _lightStart;
 	
 	// If the light_end key is still unused, set it to a reasonable value
@@ -258,8 +271,10 @@ void Light::lightStartChanged(const std::string& value) {
 
 void Light::lightEndChanged(const std::string& value) {
 	m_useLightEnd = (!value.empty());
-	if (m_useLightEnd) {
-		read_origin(_lightEnd, value);
+
+	if (m_useLightEnd)
+	{
+		_lightEnd = Vector3(value);
 	}
 	
 	_lightEndTransformed = _lightEnd;
@@ -448,7 +463,8 @@ void Light::freezeTransform()
 
 	if (!isProjected()) {
 		m_doom3Radius.m_radius = m_doom3Radius.m_radiusTransformed;
-		write_origin(m_doom3Radius.m_radius, &_entity, "light_radius");
+
+		_entity.setKeyValue("light_radius", m_doom3Radius.m_radius);
 	}
 }
 
@@ -561,8 +577,9 @@ void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& l
 	}
 }
 
-void Light::translate(const Vector3& translation) {
-	_originTransformed = origin_translated(_originTransformed, translation);
+void Light::translate(const Vector3& translation)
+{
+	_originTransformed += translation;
 }
 
 /* greebo: This translates the light start with the given <translation>
