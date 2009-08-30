@@ -26,36 +26,55 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "generic/callback.h"
 #include <map>
 #include <string>
-#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
+/**
+ * Comaparator to allow for case-insensitive search in std::multimap
+ */
+struct CaseInsensitiveKeyCompare : 
+	public std::binary_function<std::string, std::string, bool>
+{
+	bool operator()(const std::string &s1, const std::string &s2) const
+	{
+		return boost::algorithm::ilexicographical_compare(s1, s2);
+	}
+};
 
 class KeyObserverMap : 
 	public Entity::Observer
 {
-	typedef std::multimap<std::string, KeyObserver> KeyObservers;
+	// A map using case-insensitive comparison
+	typedef std::multimap<std::string, KeyObserver, CaseInsensitiveKeyCompare> KeyObservers;
 	KeyObservers _keyObservers;
 
 public:
-	void insert(const std::string& key, const KeyObserver& observer) {
-		std::string lowercaseKey = boost::to_lower_copy(key);
-		_keyObservers.insert(KeyObservers::value_type(lowercaseKey, observer));
+	void insert(const std::string& key, const KeyObserver& observer)
+	{
+		_keyObservers.insert(KeyObservers::value_type(key, observer));
 	}
 
-	void erase(const std::string& key, const KeyObserver& observer) {
-		for (KeyObservers::iterator i = _keyObservers.begin(); i != _keyObservers.end(); ) {
-			if (i->first == key && i->second == observer) {
+	void erase(const std::string& key, const KeyObserver& observer)
+	{
+		for (KeyObservers::iterator i = _keyObservers.find(key); 
+			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
+			 /* in-loop increment */)
+		{
+			if (i->second == observer)
+			{
 				_keyObservers.erase(i++);
 			}
-			else {
-				i++;
+			else
+			{
+				++i;
 			}
 		}
 	}
 	
 	// Entity::Observer implementation, gets called on key insert
-	void onKeyInsert(const std::string& key, EntityKeyValue& value) {
-		std::string lowercaseKey = boost::to_lower_copy(key);
-		for (KeyObservers::const_iterator i = _keyObservers.find(lowercaseKey); 
-			 i != _keyObservers.end() && i->first == lowercaseKey; 
+	void onKeyInsert(const std::string& key, EntityKeyValue& value)
+	{
+		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
+			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
 			 ++i)
 		{
 			value.attach(i->second);
@@ -63,10 +82,10 @@ public:
 	}
 	
 	// Entity::Observer implementation, gets called on Key erase	
-	void onKeyErase(const std::string& key, EntityKeyValue& value) {
-		std::string lowercaseKey = boost::to_lower_copy(key);
-		for (KeyObservers::const_iterator i = _keyObservers.find(lowercaseKey); 
-			 i != _keyObservers.end() && i->first == lowercaseKey; 
+	void onKeyErase(const std::string& key, EntityKeyValue& value)
+	{
+		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
+			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
 			 ++i)
 		{
 			value.detach(i->second);
