@@ -25,7 +25,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	scene::Cloneable(other),
 	scene::GroupNode(other),
 	Snappable(other),
-	TransformNode(other),
 	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
@@ -219,11 +218,6 @@ void Doom3GroupNode::uninstantiate(const scene::Path& path)
 // Snappable implementation
 void Doom3GroupNode::snapto(float snap) {
 	m_contained.snapto(snap);
-}
-
-// TransformNode implementation
-const Matrix4& Doom3GroupNode::localToParent() const {
-	return m_contained.getTransformNode().localToParent();
 }
 
 Entity& Doom3GroupNode::getEntity() {

@@ -16,7 +16,6 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
 	Snappable(other),
-	TransformNode(other),
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
@@ -40,11 +39,6 @@ void SpeakerNode::snapto(float snap) {
 // Bounded implementation
 const AABB& SpeakerNode::localAABB() const {
 	return _speaker.localAABB();
-}
-
-// TransformNode implementation
-const Matrix4& SpeakerNode::localToParent() const {
-	return _speaker.getTransformNode().localToParent();
 }
 
 // Cullable implementation

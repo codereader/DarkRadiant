@@ -29,7 +29,6 @@ class GenericEntity :
 	GenericEntityNode& _owner;
 
 	Doom3Entity& m_entity;
-	MatrixTransform m_transform;
 
 	OriginKey m_originKey;
 	Vector3 m_origin;
@@ -70,9 +69,6 @@ public:
 				  const Callback& transformChanged);
 
 	~GenericEntity();
-
-	TransformNode& getTransformNode();
-	const TransformNode& getTransformNode() const;
 
 	const AABB& localAABB() const;
 

@@ -34,16 +34,15 @@ void light_vertices(const AABB& aabb_light, Vector3 points[6]) {
 /* greebo: light_draw() gets called by the render() function of the Light class.
  * It basically draws the small diamond representing the light origin 
  */
-void light_draw(const AABB& aabb_light, RenderStateFlags state) {
-  Vector3 points[6];
+void light_draw(const AABB& aabb_light, RenderStateFlags state)
+{
+	Vector3 points[6];
   
-  // Revert the light "diamond" to default extents for drawing
-  AABB tempAABB;
-  tempAABB.origin = aabb_light.origin;
-  tempAABB.extents = Vector3(8,8,8);
+	// Revert the light "diamond" to default extents for drawing
+	AABB tempAABB(aabb_light.origin, Vector3(8,8,8));
    
-   // Calculate the light vertices of this bounding box and store them into <points>
-  light_vertices(tempAABB, points);
+	// Calculate the light vertices of this bounding box and store them into <points>
+	light_vertices(tempAABB, points);
 
   	// greebo: Draw the small cube representing the light origin.
     typedef unsigned int index_t;
@@ -197,9 +196,9 @@ void Light::updateOrigin() {
         projectionChanged();
 
 	// Update the transformation matrix
-	m_transform.localToParent() = Matrix4::getIdentity();
-	m_transform.localToParent().translateBy(worldOrigin());
-	m_transform.localToParent().multiplyBy(m_rotation.getMatrix4());
+	_owner.localToParent() = Matrix4::getIdentity();
+	_owner.localToParent().translateBy(worldOrigin());
+	_owner.localToParent().multiplyBy(m_rotation.getMatrix4());
 
 	// Notify all child nodes
 	m_transformChanged();
@@ -466,13 +465,6 @@ void Light::freezeTransform()
 
 		_entity.setKeyValue("light_radius", m_doom3Radius.m_radius);
 	}
-}
-
-TransformNode& Light::getTransformNode() {
-	return m_transform;
-}
-const TransformNode& Light::getTransformNode() const {
-	return m_transform;
 }
 
 // Backend render function (GL calls)

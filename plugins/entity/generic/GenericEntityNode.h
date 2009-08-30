@@ -20,7 +20,6 @@ class GenericEntityNode :
 	public EntityNode,
 	public scene::Cloneable,
 	public Snappable,
-	public TransformNode,
 	public SelectionTestable,
 	public Cullable,
 	public Bounded
@@ -37,9 +36,6 @@ public:
 
 	// Snappable implementation
 	virtual void snapto(float snap);
-
-	// TransformNode implementation
-	virtual const Matrix4& localToParent() const;
 
 	// EntityNode implementation
 	virtual Entity& getEntity();

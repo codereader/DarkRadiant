@@ -31,8 +31,6 @@ class Doom3Group
 	Doom3GroupNode& _owner;
 	Doom3Entity& _entity;
 
-	MatrixTransform m_transform;
-
 	ModelKey m_model;
 	OriginKey m_originKey;
 	Vector3 m_origin;

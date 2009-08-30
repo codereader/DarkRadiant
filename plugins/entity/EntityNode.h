@@ -25,7 +25,8 @@ class EntityNode :
 	public TargetableNode,
 	public Renderable,
 	public Nameable,
-	public Transformable
+	public Transformable,
+	public MatrixTransform	// influences local2world of child nodes
 {
 protected:
 	// The entity class

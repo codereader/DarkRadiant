@@ -57,14 +57,6 @@ Speaker::~Speaker()
 	destroy();
 }
 
-TransformNode& Speaker::getTransformNode() {
-	return m_transform;
-}
-
-const TransformNode& Speaker::getTransformNode() const {
-	return m_transform;
-}
-
 const AABB& Speaker::localAABB() const {
 	return m_aabb_border;
 }
@@ -256,7 +248,7 @@ void Speaker::updateAABB()
 
 void Speaker::updateTransform()
 {
-	m_transform.localToParent() = Matrix4::getTranslation(m_origin);
+	_owner.localToParent() = Matrix4::getTranslation(m_origin);
 	m_transformChanged();
 }
 

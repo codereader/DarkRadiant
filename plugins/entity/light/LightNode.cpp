@@ -79,11 +79,6 @@ void LightNode::lightChanged() {
 	GlobalRenderSystem().lightChanged(*this);
 }
 
-// TransformNode implementation
-const Matrix4& LightNode::localToParent() const {
-	return _light.getTransformNode().localToParent();
-}
-
 Entity& LightNode::getEntity() {
 	return _entity;
 }

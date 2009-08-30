@@ -14,7 +14,6 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
 	Snappable(other),
-	TransformNode(other),
 	SelectionTestable(other),
 	Cullable(other),
 	Bounded(other),
@@ -31,11 +30,6 @@ void GenericEntityNode::construct()
 // Snappable implementation
 void GenericEntityNode::snapto(float snap) {
 	m_contained.snapto(snap);
-}
-
-// TransformNode implementation
-const Matrix4& GenericEntityNode::localToParent() const {
-	return m_contained.getTransformNode().localToParent();
 }
 
 // EntityNode implementation

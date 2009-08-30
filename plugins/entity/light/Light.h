@@ -69,8 +69,6 @@ class Light :
     // The parent entity object that uses this light
 	Doom3Entity& _entity;
 
-  MatrixTransform m_transform;
-
 	OriginKey m_originKey;
 	// The "working" version of the origin
 	Vector3 _originTransformed;
@@ -203,9 +201,6 @@ public:
 
 	~Light();
 	
-	TransformNode& getTransformNode();
-	const TransformNode& getTransformNode() const;
-
 	void render(const RenderInfo& info) const;
 
 	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;

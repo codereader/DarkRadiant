@@ -13,7 +13,6 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
 	scene::Cloneable(other),
 	Snappable(other),
-	TransformNode(other),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),
@@ -42,11 +41,6 @@ void EclassModelNode::destroy()
 // Snappable implementation
 void EclassModelNode::snapto(float snap) {
 	m_contained.snapto(snap);
-}
-
-// TransformNode implementation
-const Matrix4& EclassModelNode::localToParent() const {
-	return m_contained.getTransformNode().localToParent();
 }
 
 // EntityNode implementation
