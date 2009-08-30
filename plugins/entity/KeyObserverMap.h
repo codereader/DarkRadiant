@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
 
+namespace entity
+{
+
 /**
  * Comaparator to allow for case-insensitive search in std::multimap
  */
@@ -47,10 +50,32 @@ class KeyObserverMap :
 	typedef std::multimap<std::string, KeyObserver, CaseInsensitiveKeyCompare> KeyObservers;
 	KeyObservers _keyObservers;
 
+	// The observed entity
+	Doom3Entity& _entity;
+
 public:
+	KeyObserverMap(Doom3Entity& entity) :
+		_entity(entity)
+	{
+		// Start observing the entity
+		_entity.attachObserver(this);
+	}
+
+	~KeyObserverMap()
+	{
+		_entity.detachObserver(this);
+	}
+
+	/** 
+	 * greebo: This registers a key for observation. As soon as the key gets inserted in the
+	 * entity's spawnargs, the given observer is attached to the entity's keyvalue.
+	 */
 	void insert(const std::string& key, const KeyObserver& observer)
 	{
 		_keyObservers.insert(KeyObservers::value_type(key, observer));
+
+		// Call the observer right now with the current keyvalue as argument
+		observer(_entity.getKeyValue(key));
 	}
 
 	void erase(const std::string& key, const KeyObserver& observer)
@@ -92,5 +117,7 @@ public:
 		}
 	}
 };
+
+} // namespace entity
 
 #endif
