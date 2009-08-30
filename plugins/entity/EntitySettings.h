@@ -11,6 +11,7 @@ namespace {
 	const std::string RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
 	const std::string RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
 	const std::string RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
+	const std::string RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
 }
 
 class EntitySettings;
@@ -37,6 +38,9 @@ class EntitySettings :
 	// TRUE if entities should resize symmetrically on drag-resize operations
 	bool _dragResizeEntitiesSymmetrically;
 
+	// TRUE if lights should always render their components
+	bool _alwaysShowLightVertices;
+
 	// Private constructor
 	EntitySettings();
 public:
@@ -59,6 +63,10 @@ public:
 
 	bool dragResizeEntitiesSymmetrically() {
 		return _dragResizeEntitiesSymmetrically;
+	}
+
+	bool alwaysShowLightVertices() {
+		return _alwaysShowLightVertices;
 	}
 
 	// Container for the singleton (ptr)
