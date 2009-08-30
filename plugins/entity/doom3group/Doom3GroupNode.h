@@ -51,6 +51,8 @@ public:
 	Doom3GroupNode(const IEntityClassConstPtr& eclass);
 	~Doom3GroupNode();
 	
+	void construct();
+
 	// EntityNode implementation
 	virtual Entity& getEntity();
 	virtual void refreshModel();
@@ -126,11 +128,10 @@ protected:
 	void _applyTransformation();
 
 private:
-	void construct();
-
 	void evaluateTransform();
 
 }; // class Doom3GroupNode
+typedef boost::shared_ptr<Doom3GroupNode> Doom3GroupNodePtr;
 
 } // namespace entity
 

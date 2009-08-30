@@ -23,6 +23,11 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 		Node::TransformChangedCaller(*this))
 {}
 
+void GenericEntityNode::construct()
+{
+	m_contained.construct();
+}
+
 // Snappable implementation
 void GenericEntityNode::snapto(float snap) {
 	m_contained.snapto(snap);
@@ -58,10 +63,12 @@ void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
 	m_contained.testSelect(selector, test, localToWorld());
 }
 
-scene::INodePtr GenericEntityNode::clone() const {
-	scene::INodePtr clone(new GenericEntityNode(*this));
-	clone->setSelf(clone);
-	return clone;
+scene::INodePtr GenericEntityNode::clone() const
+{
+	GenericEntityNodePtr node(new GenericEntityNode(*this));
+	node->construct();
+
+	return node;
 }
 
 void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

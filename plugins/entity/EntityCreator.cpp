@@ -42,29 +42,43 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassConstPt
 	
 	// Otherwise create the correct entity subclass based on the entity class
 	// parameters.
-	scene::INodePtr node;
+	scene::INodePtr returnValue;
 
 	if (eclass->isLight()) {
-		node = scene::INodePtr(new LightNode(eclass));
+		LightNodePtr node(new LightNode(eclass));
+		node->construct();
+
+		returnValue = node;
 	}
 	else if (!eclass->isFixedSize()) {
 		// Variable size entity
-		node = scene::INodePtr(new entity::Doom3GroupNode(eclass));
+		Doom3GroupNodePtr node(new Doom3GroupNode(eclass));
+		node->construct();
+
+		returnValue = node;
 	}
 	else if (!eclass->getAttribute("model").value.empty()) {
 		// Fixed size, has model path
-		node = scene::INodePtr(new EclassModelNode(eclass));
+		EclassModelNodePtr node(new EclassModelNode(eclass));
+		node->construct();
+
+		returnValue = node;
 	}
 	else if (eclass->getName() == "speaker") {
-		node = scene::INodePtr(new SpeakerNode(eclass));
+		SpeakerNodePtr node(new SpeakerNode(eclass));
+		node->construct();
+
+		returnValue = node;
 	}
 	else {
 		// Fixed size, no model path
-		node = scene::INodePtr(new GenericEntityNode(eclass));
+		GenericEntityNodePtr node(new GenericEntityNode(eclass));
+		node->construct();
+
+		returnValue = node;
 	}
 
-	node->setSelf(node);
-	return node;
+	return returnValue;
 }
 
 scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassConstPtr& eclass) {

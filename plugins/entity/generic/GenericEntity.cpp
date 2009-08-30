@@ -23,9 +23,7 @@ GenericEntity::GenericEntity(GenericEntityNode& node,
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
-{
-	construct();
-}
+{}
 
 GenericEntity::GenericEntity(const GenericEntity& other, 
 		GenericEntityNode& node, 
@@ -42,9 +40,7 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	m_aabb_wire(m_aabb_local),
 	m_transformChanged(transformChanged),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
-{
-	construct();
-}
+{}
 
 GenericEntity::~GenericEntity()
 {

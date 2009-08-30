@@ -39,7 +39,7 @@ TargetPtr TargetManager::getTarget(const std::string name) {
 	return target;
 }
 
-void TargetManager::associateTarget(const std::string& name, const scene::INodePtr& node) {
+void TargetManager::associateTarget(const std::string& name, const scene::INode& node) {
 	if (name.empty()) {
 		return; // don't associate empty names
 	}
@@ -68,13 +68,13 @@ void TargetManager::associateTarget(const std::string& name, const scene::INodeP
 	_targets.insert(TargetList::value_type(name, target));
 }
 
-void TargetManager::clearTarget(const std::string& name, const scene::INodePtr& node) {
+void TargetManager::clearTarget(const std::string& name, const scene::INode& node) {
 	// Locate and clear the named target
 	TargetList::iterator found = _targets.find(name);
 
 	if (found != _targets.end()) {
 		// Found, check the pointer if the request is ok
-		if (found->second->getNode() == node) {
+		if (found->second->getNode() == &node) {
 			// Yes, the node is matching too, clear the target
 			found->second->clear();
 		}

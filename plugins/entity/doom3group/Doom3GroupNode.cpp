@@ -18,9 +18,7 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
 	_updateSkin(true),
 	_instantiated(false)
-{
-	construct();
-}
+{}
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	EntityNode(other),
@@ -194,10 +192,11 @@ void Doom3GroupNode::snapComponents(float snap) {
 	}
 }
 
-scene::INodePtr Doom3GroupNode::clone() const {
-	boost::shared_ptr<Doom3GroupNode> clone(new Doom3GroupNode(*this));
-	clone->setSelf(clone);
+scene::INodePtr Doom3GroupNode::clone() const
+{
+	Doom3GroupNodePtr clone(new Doom3GroupNode(*this));
 	clone->construct();
+
 	return clone;
 }
 

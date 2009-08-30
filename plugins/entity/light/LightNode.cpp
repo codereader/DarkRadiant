@@ -43,6 +43,11 @@ LightNode::LightNode(const LightNode& other) :
 	_light.setLightChangedCallback(LightChangedCaller(*this));
 }
 
+void LightNode::construct()
+{
+	_light.construct();
+}
+
 LightNode::~LightNode() {
 	_light.setLightChangedCallback(Callback());
 }
@@ -240,10 +245,12 @@ void LightNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 	m_dragPlanes.selectReversedPlanes(localLightAABB, selector, selectedPlanes, rotation());
 }
 
-scene::INodePtr LightNode::clone() const {
-	scene::INodePtr clone(new LightNode(*this));
-	clone->setSelf(clone);
-	return clone;
+scene::INodePtr LightNode::clone() const
+{
+	LightNodePtr node(new LightNode(*this));
+	node->construct();
+
+	return node;
 }
 
 void LightNode::selectedChangedComponent(const Selectable& selectable) {

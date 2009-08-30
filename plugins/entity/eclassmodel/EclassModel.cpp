@@ -18,9 +18,7 @@ EclassModel::EclassModel(EclassModelNode& owner,
 	m_model(owner),
 	m_renderOrigin(m_origin),
 	m_transformChanged(transformChanged)
-{
-	construct();
-}
+{}
 
 EclassModel::EclassModel(const EclassModel& other, 
 						 EclassModelNode& owner,
@@ -35,9 +33,7 @@ EclassModel::EclassModel(const EclassModel& other,
 	m_model(owner),
 	m_renderOrigin(m_origin),
 	m_transformChanged(transformChanged)
-{
-	construct();
-}
+{}
 
 EclassModel::~EclassModel()
 {
@@ -52,6 +48,8 @@ void EclassModel::construct()
 	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
 	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 	_owner.addKeyObserver("model", ModelChangedCaller(*this));
+
+	m_model.modelChanged(m_entity.getKeyValue("model"));
 }
 
 void EclassModel::destroy()

@@ -47,6 +47,8 @@ public:
 	LightNode(const IEntityClassConstPtr& eclass);
 	LightNode(const LightNode& other);
 
+	void construct();
+
 	virtual ~LightNode();
 	
 	// EntityNode implementation
@@ -146,6 +148,7 @@ private:
 	void evaluateTransform();
 
 }; // class LightNode
+typedef boost::shared_ptr<LightNode> LightNodePtr;
 
 } // namespace entity
 
