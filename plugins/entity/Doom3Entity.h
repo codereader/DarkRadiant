@@ -35,7 +35,7 @@ class Doom3Entity :
 	typedef std::vector<KeyValuePair> KeyValues;
 	KeyValues _keyValues;
 
-	typedef std::vector<Observer*> Observers;
+	typedef std::set<Observer*> Observers;
 	Observers _observers;
 
 	ObservedUndoableObject<KeyValues> _undo;
