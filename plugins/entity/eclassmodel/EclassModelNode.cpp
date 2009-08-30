@@ -11,7 +11,6 @@ EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
-	scene::Cloneable(other),
 	Snappable(other),
 	m_contained(other.m_contained, 
 				*this, // pass <self> as scene::INode&

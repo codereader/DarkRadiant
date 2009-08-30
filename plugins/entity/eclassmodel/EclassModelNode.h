@@ -19,7 +19,6 @@ namespace entity {
 
 class EclassModelNode :
 	public EntityNode,
-	public scene::Cloneable,
 	public Snappable
 {
 	friend class EclassModel;

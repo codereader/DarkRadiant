@@ -12,7 +12,6 @@ namespace entity {
 
 class LightNode :
 	public EntityNode,
-	public scene::Cloneable,
 	public Snappable,
 	public Editable,
 	public SelectionTestable,

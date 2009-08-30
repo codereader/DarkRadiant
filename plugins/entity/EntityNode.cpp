@@ -24,6 +24,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	Renderable(other),
 	Nameable(other),
 	Transformable(other),
+	MatrixTransform(other),
+	scene::Cloneable(other),
 	_eclass(other._eclass),
 	_entity(other._entity),
 	_namespaceManager(_entity),
