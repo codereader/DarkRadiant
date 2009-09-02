@@ -4,7 +4,7 @@
 
 namespace entity {
 
-GenericEntityNode::GenericEntityNode(const IEntityClassConstPtr& eclass) :
+GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(*this, 
 		Node::TransformChangedCaller(*this))

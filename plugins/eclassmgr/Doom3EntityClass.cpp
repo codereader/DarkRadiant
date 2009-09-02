@@ -43,6 +43,19 @@ const std::string& Doom3EntityClass::getName() const {
 	return _name;
 }
 
+void Doom3EntityClass::addObserver(Observer* observer)
+{
+	_observers.insert(observer);
+}
+
+void Doom3EntityClass::removeObserver(Observer* observer)
+{
+	// Double-check in debug builds
+	assert(_observers.find(observer) != _observers.end());
+
+	_observers.erase(observer);
+}
+
 /** Query whether this entity has a fixed size.
  */
 bool Doom3EntityClass::isFixedSize() const {
@@ -408,6 +421,12 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 				<< " already set on entityclass " << _name << std::endl;
 		}
     } // while true
+
+	// Notify the observers
+	for (Observers::const_iterator i = _observers.begin(); i != _observers.end(); ++i)
+	{
+		(*i)->OnEClassReload();
+	}
 }
 
 const IEntityClass::InheritanceChain& Doom3EntityClass::getInheritanceChain() {

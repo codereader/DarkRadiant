@@ -4,7 +4,7 @@
 
 namespace entity {
 
-EntityNode::EntityNode(const IEntityClassConstPtr& eclass) :
+EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	TargetableNode(_entity, *this),
 	_eclass(eclass),
 	_entity(_eclass),
@@ -43,6 +43,8 @@ EntityNode::~EntityNode()
 
 void EntityNode::construct()
 {
+	_eclass->addObserver(this);
+
 	TargetableNode::construct();
 
 	addKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
@@ -53,6 +55,8 @@ void EntityNode::destruct()
 	removeKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
 
 	TargetableNode::destruct();
+
+	_eclass->removeObserver(this);
 }
 
 void EntityNode::addKeyObserver(const std::string& key, const KeyObserver& observer)
@@ -130,6 +134,12 @@ void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTes
 		collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 		collector.addRenderable(_renderableName, localToWorld());
 	}
+}
+
+void EntityNode::OnEClassReload()
+{
+	// Let the keyobservers reload their values
+	_keyObservers.refreshObservers();
 }
 
 } // namespace entity

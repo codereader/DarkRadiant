@@ -138,7 +138,23 @@ public:
 	 * Example: "atdm:ai_base" | "atdm:ai_humanoid" | "atdm:ai_builder_guard"
 	 */ 
 	typedef std::list<std::string> InheritanceChain;
+
+	// An EntityClassObserver gets notified whenever the eclass contents 
+	// get changed, possibly due to a reload of the declarations in the .def files.
+	class Observer
+	{
+	public:
+		/**
+		 * greebo: Gets called as soon as the contents of the eclass
+		 * get changed, which is true for the "reloadDefs" command.
+		 */
+		virtual void OnEClassReload() = 0;
+	};
     
+	// Adds/removes an eclass observer
+	virtual void addObserver(Observer* observer) = 0;
+	virtual void removeObserver(Observer* observer) = 0;
+
 	/** 
 	 * Get this entity class' name.
 	 */

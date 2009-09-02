@@ -35,7 +35,7 @@ class SpeakerNode :
 	DragPlanes _dragPlanes;
 
 public:
-	SpeakerNode(const IEntityClassConstPtr& eclass);
+	SpeakerNode(const IEntityClassPtr& eclass);
 	SpeakerNode(const SpeakerNode& other);
 
 	// Called after the constructor is done

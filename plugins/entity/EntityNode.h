@@ -27,11 +27,12 @@ class EntityNode :
 	public Nameable,
 	public Transformable,
 	public MatrixTransform,	// influences local2world of child nodes
-	public scene::Cloneable // all entities are cloneable, to be implemented in subclasses
+	public scene::Cloneable, // all entities are cloneable, to be implemented in subclasses
+	public IEntityClass::Observer
 {
 protected:
 	// The entity class
-	IEntityClassConstPtr _eclass;
+	IEntityClassPtr _eclass;
 
 	// The actual entity (which contains the key/value pairs)
 	// TODO: Rename this to "spawnargs"?
@@ -52,7 +53,7 @@ protected:
 
 public:
 	// The Constructor needs the eclass
-	EntityNode(const IEntityClassConstPtr& eclass);
+	EntityNode(const IEntityClassPtr& eclass);
 
 	// Copy constructor
 	EntityNode(const EntityNode& other);
@@ -85,6 +86,8 @@ public:
 	// Adds/removes the keyobserver to/from the KeyObserverMap
 	void addKeyObserver(const std::string& key, const KeyObserver& observer);
 	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
+
+	virtual void OnEClassReload();
 
 private:
 	// Routines used by constructor and destructor, should be non-virtual
