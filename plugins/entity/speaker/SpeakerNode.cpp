@@ -4,7 +4,7 @@
 
 namespace entity {
 
-SpeakerNode::SpeakerNode(const IEntityClassConstPtr& eclass) :
+SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 

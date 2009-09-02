@@ -29,7 +29,7 @@ class EclassModelNode :
 
 public:
 	// Constructor
-	EclassModelNode(const IEntityClassConstPtr& eclass);
+	EclassModelNode(const IEntityClassPtr& eclass);
 	// Copy Constructor
 	EclassModelNode(const EclassModelNode& other);
 

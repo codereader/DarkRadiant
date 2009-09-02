@@ -30,7 +30,7 @@ namespace entity {
 		}
 	}
 
-scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassConstPtr& eclass) {
+scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& eclass) {
 	
 	// Null entityclass check
 	if (!eclass) {
@@ -81,7 +81,7 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassConstPt
 	return returnValue;
 }
 
-scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassConstPtr& eclass) {
+scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass) {
 	scene::INodePtr node = getEntityForEClass(eclass);
 	Entity* entity = Node_getEntity(node);
 	assert(entity != NULL);

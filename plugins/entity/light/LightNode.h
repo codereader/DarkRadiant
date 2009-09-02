@@ -42,7 +42,7 @@ class LightNode :
 	mutable AABB m_aabb_component;
 	
 public:
-	LightNode(const IEntityClassConstPtr& eclass);
+	LightNode(const IEntityClassPtr& eclass);
 	LightNode(const LightNode& other);
 
 	void construct();

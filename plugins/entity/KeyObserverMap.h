@@ -94,6 +94,16 @@ public:
 			}
 		}
 	}
+
+	void refreshObservers()
+	{
+		for (KeyObservers::const_iterator i = _keyObservers.begin(); 
+			i != _keyObservers.end(); ++i)
+		{
+			// Call the observer once again with the entity value
+			i->second(_entity.getKeyValue(i->first));
+		}
+	}
 	
 	// Entity::Observer implementation, gets called on key insert
 	void onKeyInsert(const std::string& key, EntityKeyValue& value)

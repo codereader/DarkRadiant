@@ -12,7 +12,7 @@ class Doom3EntityCreator :
 public:
 	/** greebo: Creates an entity for the given EntityClass
 	 */
-	scene::INodePtr createEntity(const IEntityClassConstPtr& eclass);
+	scene::INodePtr createEntity(const IEntityClassPtr& eclass);
 	
 	/* Connect two entities using a "target" key.
 	 */
@@ -27,7 +27,7 @@ public:
 private:
 	/** greebo: Creates the right entity for the entityclass.
 	 */
-	scene::INodePtr getEntityForEClass(const IEntityClassConstPtr& eclass);
+	scene::INodePtr getEntityForEClass(const IEntityClassPtr& eclass);
 };
 typedef boost::shared_ptr<Doom3EntityCreator> Doom3EntityCreatorPtr;
 

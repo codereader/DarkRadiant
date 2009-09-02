@@ -46,7 +46,7 @@ class Doom3GroupNode :
 	Doom3GroupNode(const Doom3GroupNode& other);
 
 public:
-	Doom3GroupNode(const IEntityClassConstPtr& eclass);
+	Doom3GroupNode(const IEntityClassPtr& eclass);
 	~Doom3GroupNode();
 	
 	void construct();

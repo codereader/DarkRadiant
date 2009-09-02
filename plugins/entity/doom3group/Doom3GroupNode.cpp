@@ -4,7 +4,7 @@
 
 namespace entity {
 
-Doom3GroupNode::Doom3GroupNode(const IEntityClassConstPtr& eclass) :
+Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&

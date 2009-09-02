@@ -2,7 +2,7 @@
 
 namespace entity {
 
-EclassModelNode::EclassModelNode(const IEntityClassConstPtr& eclass) :
+EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(*this, // pass <self> as scene::INode&
 				Node::TransformChangedCaller(*this)),

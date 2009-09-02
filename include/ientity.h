@@ -303,7 +303,7 @@ public:
      * \brief
      * Create an entity node with the given entity class.
      */
-    virtual scene::INodePtr createEntity(const IEntityClassConstPtr& eclass) = 0;
+    virtual scene::INodePtr createEntity(const IEntityClassPtr& eclass) = 0;
 
     /**
      * \brief

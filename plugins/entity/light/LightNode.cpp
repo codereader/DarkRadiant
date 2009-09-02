@@ -6,7 +6,7 @@ namespace entity {
 
 // --------- LightNode implementation ------------------------------------
 
-LightNode::LightNode(const IEntityClassConstPtr& eclass) :
+LightNode::LightNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	_light(_entity,
 		   *this,

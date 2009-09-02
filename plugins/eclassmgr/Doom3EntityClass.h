@@ -72,6 +72,9 @@ class Doom3EntityClass
 	// The time this def has been parsed
 	std::size_t _parseStamp;
 
+	typedef std::set<IEntityClass::Observer*> Observers;
+	Observers _observers;
+
 private:
 
 	// Capture the shaders corresponding to the current colour
@@ -113,12 +116,15 @@ public:
     				 
     /** Destructor.
      */
-	virtual ~Doom3EntityClass();
+	~Doom3EntityClass();
     
     /** Return the name of this entity class.
      */
 	const std::string& getName() const;
 	
+	void addObserver(Observer* observer);
+	void removeObserver(Observer* observer);
+
 	/** Query whether this entity has a fixed size.
 	 */
 	bool isFixedSize() const;
