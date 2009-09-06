@@ -34,7 +34,7 @@ bool ScriptEntityNode::isInherited(const std::string& key) {
 
 ScriptEntityClass ScriptEntityNode::getEntityClass() {
 	Entity* entity = Node_getEntity(*this);
-	return ScriptEntityClass(entity != NULL ? entity->getEntityClass() : IEntityClassConstPtr());
+	return ScriptEntityClass(entity != NULL ? entity->getEntityClass() : IEntityClassPtr());
 }
 
 bool ScriptEntityNode::isModel() {

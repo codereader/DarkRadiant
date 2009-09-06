@@ -13,15 +13,15 @@ namespace script {
  */
 class ScriptEntityClass
 {
-	IEntityClassConstPtr _eclass;
+	IEntityClassPtr _eclass;
 	EntityClassAttribute _emptyAttribute;
 
 public:
-	ScriptEntityClass(const IEntityClassConstPtr& eclass) :
+	ScriptEntityClass(const IEntityClassPtr& eclass) :
 		_eclass(eclass)
 	{}
 
-	operator const IEntityClassConstPtr&() const {
+	operator const IEntityClassPtr&() const {
 		return _eclass;
 	}
 

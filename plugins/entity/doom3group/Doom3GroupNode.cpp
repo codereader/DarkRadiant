@@ -54,7 +54,8 @@ Doom3GroupNode::~Doom3GroupNode() {
 
 	removeKeyObserver("skin", SkinChangedCaller(*this));
 
-	m_contained.setTransformChanged(Callback());
+	Callback cb;
+	m_contained.setTransformChanged(cb);
 	Node::detachTraverseObserver(this);
 }
 
