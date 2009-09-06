@@ -24,7 +24,7 @@ namespace entity {
 class Doom3Entity :
 	public Entity
 {
-	IEntityClassConstPtr _eclass;
+	IEntityClassPtr _eclass;
 
 	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
 	
@@ -47,7 +47,7 @@ class Doom3Entity :
 
 public:
 	// Constructor, pass the according entity class
-	Doom3Entity(const IEntityClassConstPtr& eclass);
+	Doom3Entity(const IEntityClassPtr& eclass);
 	
 	// Copy constructor
 	Doom3Entity(const Doom3Entity& other);
@@ -64,7 +64,7 @@ public:
 
 	/** Return the EntityClass associated with this entity.
 	 */
-	IEntityClassConstPtr getEntityClass() const;
+	IEntityClassPtr getEntityClass() const;
 
 	void forEachKeyValue(Visitor& visitor) const;
 	void forEachKeyValue(KeyValueVisitor& visitor);

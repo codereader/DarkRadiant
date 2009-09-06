@@ -8,7 +8,7 @@
 
 namespace entity {
 
-Doom3Entity::Doom3Entity(const IEntityClassConstPtr& eclass) :
+Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
 	_undo(_keyValues, UndoImportCaller(*this)),
 	_instanced(false),
@@ -123,7 +123,7 @@ void Doom3Entity::instanceDetach(MapFile* map) {
 
 /** Return the EntityClass associated with this entity.
  */
-IEntityClassConstPtr Doom3Entity::getEntityClass() const {
+IEntityClassPtr Doom3Entity::getEntityClass() const {
 	return _eclass;
 }
 

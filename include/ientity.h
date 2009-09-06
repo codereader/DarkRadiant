@@ -152,7 +152,7 @@ public:
 	/**
 	 * Return the entity class object for this entity.
 	 */
-	virtual IEntityClassConstPtr getEntityClass() const = 0;
+	virtual IEntityClassPtr getEntityClass() const = 0;
   
 	/**
 	 * Enumerate key values on this entity using a Entity::Visitor class.
