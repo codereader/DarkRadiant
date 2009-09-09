@@ -9,6 +9,14 @@
 		<fs_game value="darkmod" />
 	</game>
   <ui>
+  	<commandsystem>
+		<binds>
+			<bind name="SelectNudgeLeft" value="NudgeSelected left" readonly="1" />
+			<bind name="SelectNudgeRight" value="NudgeSelected right" readonly="1" />
+			<bind name="SelectNudgeUp" value="NudgeSelected up" readonly="1" />
+			<bind name="SelectNudgeDown" value="NudgeSelected down" readonly="1" />
+		</binds>
+	</commandsystem>
 	<map>
 		<numMRU value="5" />
 		<loadLastMap value="0" />

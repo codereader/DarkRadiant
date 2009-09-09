@@ -649,10 +649,6 @@ void MainFrame_Construct()
 
 	// Add the nudge commands (one general, four specialised ones)
 	GlobalCommandSystem().addCommand("NudgeSelected", selection::algorithm::nudgeSelectedCmd, cmd::ARGTYPE_STRING);
-	GlobalCommandSystem().addStatement("SelectNudgeLeft", "NudgeSelected left");
-	GlobalCommandSystem().addStatement("SelectNudgeRight", "NudgeSelected right");
-	GlobalCommandSystem().addStatement("SelectNudgeUp", "NudgeSelected up");
-	GlobalCommandSystem().addStatement("SelectNudgeDown", "NudgeSelected down");
 
 	GlobalCommandSystem().addCommand("NormaliseTexture", selection::algorithm::normaliseTexture);
 
