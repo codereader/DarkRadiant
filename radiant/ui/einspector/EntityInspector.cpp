@@ -336,8 +336,8 @@ void EntityInspector::initialiseModule(const ApplicationContext& ctx)
 
 // Return the Gtk widget for the EntityInspector dialog.
 
-GtkWidget* EntityInspector::getWidget() {
-	gtk_widget_show_all(_widget);
+GtkWidget* EntityInspector::_getWidget() const
+{
     return _widget;
 }
 

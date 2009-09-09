@@ -84,7 +84,7 @@ class EntityInspector :
 	gtkutil::PopupMenuPtr _contextMenu;
 
 	// Currently displayed PropertyEditor
-	PropertyEditorPtr _currentPropertyEditor;
+	IPropertyEditorPtr _currentPropertyEditor;
 
 	// The clipboard for spawnargs
 	struct ClipBoard
@@ -177,12 +177,13 @@ private:
     // Update tree view contents and property editor
     void updateGUIElements();
 
+protected:
+	// Get the Gtk Widget for display in the main application
+    GtkWidget* _getWidget() const;
+
 public:
 	// Constructor
     EntityInspector();
-
-    // Get the Gtk Widget for display in the main application
-    GtkWidget* getWidget();
 
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */

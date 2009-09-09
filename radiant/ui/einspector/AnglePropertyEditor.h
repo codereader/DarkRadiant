@@ -67,7 +67,7 @@ public:
     AnglePropertyEditor(Entity* entity, const std::string& key);
 
     /* PropertyEditor implementation */
-    PropertyEditorPtr createNew(Entity* entity, 
+    IPropertyEditorPtr createNew(Entity* entity, 
                                 const std::string& key,
                                 const std::string& options)
     {
