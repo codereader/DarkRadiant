@@ -36,7 +36,7 @@ void PropertyEditorFactory::registerClasses() {
 }
 
 // Create a PropertyEditor from the given name.
-PropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
+IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 											  	Entity* entity,
 											  	const std::string& key,
 											  	const std::string& options) 

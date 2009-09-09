@@ -51,7 +51,7 @@ public:
 	Vector3PropertyEditor();
 	
 	// Create a new TextPropertyEditor
-    virtual PropertyEditorPtr createNew(Entity* entity, 
+    virtual IPropertyEditorPtr createNew(Entity* entity, 
     									const std::string& name, 
     									const std::string& options) 
 	{

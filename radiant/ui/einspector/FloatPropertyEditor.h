@@ -53,7 +53,7 @@ public:
 	/**
 	 * Virtual PropertyEditor clone method.
 	 */
-	PropertyEditorPtr createNew(Entity* entity, 
+	IPropertyEditorPtr createNew(Entity* entity, 
     							const std::string& name, 
     							const std::string& options)
 	{

@@ -24,14 +24,14 @@ class PropertyEditorFactory
    // Mapping from classnames to PropertyEditor child instances. The child
    // instance's createNew() function will be used to create a new object of
    // the correct type.
-   typedef std::map<std::string, PropertyEditorPtr> PropertyEditorMap;
+   typedef std::map<std::string, IPropertyEditorPtr> PropertyEditorMap;
    static PropertyEditorMap _peMap; 
     
 public:
 
     // Create a new PropertyEditor with the provided classname to manage the
     // given Entity object and key name.
-    static PropertyEditorPtr create(const std::string& className, 
+    static IPropertyEditorPtr create(const std::string& className, 
     								Entity* entity,
     								const std::string& key,
     								const std::string& options);
