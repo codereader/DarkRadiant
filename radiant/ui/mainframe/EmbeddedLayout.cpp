@@ -5,13 +5,13 @@
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
+#include "ientityinspector.h"
 
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/Paned.h"
 #include <gtk/gtkvbox.h>
 
 #include "camera/GlobalCamera.h"
-#include "ui/einspector/EntityInspector.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
 
@@ -80,7 +80,7 @@ void EmbeddedLayout::activate()
 
 	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
 	// the position info from the Registry once again.
-	ui::EntityInspector::getInstance().restoreSettings();
+	GlobalEntityInspector().restoreSettings();
 
 	// Reparent the notebook to our local pane (after the other widgets have been realised)
 	GlobalGroupDialog().reparentNotebook(groupPane);

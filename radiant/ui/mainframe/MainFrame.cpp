@@ -9,12 +9,12 @@
 #include "ipreferencesystem.h"
 #include "iregistry.h"
 #include "igrid.h"
+#include "ientityinspector.h"
 
 #include "ui/splash/Splash.h"
 #include "ui/menu/FiltersMenu.h"
 #include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
-#include "ui/einspector/EntityInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/layers/LayerControlDialog.h"
@@ -287,7 +287,7 @@ void MainFrame::create() {
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
-    	EntityInspector::getInstance().getWidget(), // page widget
+    	GlobalEntityInspector().getWidget(), // page widget
     	"Entity"
     );
 

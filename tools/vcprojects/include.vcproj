@@ -156,6 +156,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\ientityinspector.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\ieventmanager.h"
 			>
 		</File>
