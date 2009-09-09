@@ -100,15 +100,15 @@ void CommandSystem::saveBinds() {
 	// Delete all previous binds
 	GlobalRegistry().deleteXPath(RKEY_COMMANDSYSTEM_BINDS + "//bind");
 
-	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
+	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i)
+	{
 		// Check if this is actually a statement
 		StatementPtr st = boost::dynamic_pointer_cast<Statement>(i->second);
 
 		if (st == NULL || st->isReadonly()) continue; // not a statement or readonly
 
-		xml::Node node = GlobalRegistry().createKey(RKEY_COMMANDSYSTEM_BINDS + "/bind");
+		xml::Node node = GlobalRegistry().createKeyWithName(RKEY_COMMANDSYSTEM_BINDS, "bind", i->first);
 		
-		node.setAttributeValue("name", i->first);
 		node.setAttributeValue("value", st->getValue());
 	}
 }
