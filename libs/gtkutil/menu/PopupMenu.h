@@ -4,6 +4,7 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkmenuitem.h>
 #include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 #include <list>
 
 namespace gtkutil
@@ -115,9 +116,8 @@ public:
 	 */
 	void show();
 };
+typedef boost::shared_ptr<PopupMenu> PopupMenuPtr;
 
-
-
-}
+} // namespace gtkutil
 
 #endif /*POPUPMENU_H_*/

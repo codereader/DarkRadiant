@@ -4,6 +4,7 @@
 #include "gtk/gtkhpaned.h"
 #include "gtk/gtkvpaned.h"
 #include "ifc/Widget.h"
+#include <boost/shared_ptr.hpp>
 
 namespace gtkutil
 {
@@ -68,6 +69,7 @@ protected:
 		return _paned;
 	}
 };
+typedef boost::shared_ptr<Paned> PanedPtr;
 	
 } // namespace gtkutil
 

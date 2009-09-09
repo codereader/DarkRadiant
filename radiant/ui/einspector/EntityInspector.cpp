@@ -5,9 +5,11 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "iregistry.h"
+#include "ieventmanager.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 
+#include "modulesystem/StaticModule.h"
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
@@ -60,25 +62,29 @@ namespace {
 
 }
 
-// Constructor creates UI components for the EntityInspector dialog
+EntityInspector::EntityInspector() : 
+	_selectedEntity(NULL),
+	_kvStore(NULL),
+	_keyValueTreeView(NULL),
+	_helpColumn(NULL)
+{}
 
-EntityInspector::EntityInspector()
-: _selectedEntity(NULL),
-  _kvStore(gtk_list_store_new(N_COLUMNS,
+void EntityInspector::construct()
+{
+	_kvStore = gtk_list_store_new(N_COLUMNS,
                               G_TYPE_STRING,		// property
                               G_TYPE_STRING,		// value
                               G_TYPE_STRING,		// text colour
                               GDK_TYPE_PIXBUF,	    // value icon
                               G_TYPE_STRING,		// inherited flag
                               GDK_TYPE_PIXBUF,	    // help icon
-                              G_TYPE_BOOLEAN)),	    // has help
-  _keyValueTreeView(
-        gtk_tree_view_new_with_model(GTK_TREE_MODEL(_kvStore))
-   ),
-  _helpColumn(NULL),
-  _paned(gtkutil::Paned::Vertical), // vertical pane
-  _contextMenu(gtkutil::PopupMenu(_keyValueTreeView))
-{
+                              G_TYPE_BOOLEAN);	    // has help
+  
+	_keyValueTreeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_kvStore));
+
+	_paned = gtkutil::PanedPtr(new gtkutil::Paned(gtkutil::Paned::Vertical)); // vertical pane
+	_contextMenu = gtkutil::PopupMenuPtr(new gtkutil::PopupMenu(_keyValueTreeView));
+
     _widget = gtk_vbox_new(FALSE, 0);
 
 	// Pack in GUI components
@@ -107,12 +113,12 @@ EntityInspector::EntityInspector()
 	gtk_box_pack_start(GTK_BOX(_widget), topHBox, FALSE, FALSE, 0);
 
 	// Pack everything into the paned container
-	_paned.setFirstChild(createTreeViewPane());
-	_paned.setSecondChild(createPropertyEditorPane());
+	_paned->setFirstChild(createTreeViewPane());
+	_paned->setSecondChild(createPropertyEditorPane());
 
-	gtk_box_pack_start(GTK_BOX(_widget), _paned.getWidget(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), _paned->getWidget(), TRUE, TRUE, 0);
 
-	_panedPosition.connect(_paned.getWidget());
+	_panedPosition.connect(_paned->getWidget());
 
 	// Reload the information from the registry
 	restoreSettings();
@@ -244,29 +250,29 @@ void EntityInspector::onKeyErase(const std::string& key,
 // Create the context menu
 void EntityInspector::createContextMenu() 
 {
-	_contextMenu.addItem(
+	_contextMenu->addItem(
 		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property..."),
 		boost::bind(&EntityInspector::_onAddKey, this)
 	);
-	_contextMenu.addItem(
+	_contextMenu->addItem(
 		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property"),
 		boost::bind(&EntityInspector::_onDeleteKey, this),
 		boost::bind(&EntityInspector::_testDeleteKey, this)
 	);
 
-	_contextMenu.addItem(gtkutil::SeparatorMenuItem(), gtkutil::PopupMenu::Callback());
+	_contextMenu->addItem(gtkutil::SeparatorMenuItem(), gtkutil::PopupMenu::Callback());
 
-	_contextMenu.addItem(
+	_contextMenu->addItem(
 		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy Spawnarg"),
 		boost::bind(&EntityInspector::_onCopyKey, this),
 		boost::bind(&EntityInspector::_testCopyKey, this)
 	);
-	_contextMenu.addItem(
+	_contextMenu->addItem(
 		gtkutil::StockIconMenuItem(GTK_STOCK_CUT, "Cut Spawnarg"),
 		boost::bind(&EntityInspector::_onCutKey, this),
 		boost::bind(&EntityInspector::_testCutKey, this)
 	);
-	_contextMenu.addItem(
+	_contextMenu->addItem(
 		gtkutil::StockIconMenuItem(GTK_STOCK_PASTE, "Paste Spawnarg"),
 		boost::bind(&EntityInspector::_onPasteKey, this),
 		boost::bind(&EntityInspector::_testPasteKey, this)
@@ -296,21 +302,36 @@ void EntityInspector::postRedo()
 	updateGUIElements();
 }
 
-// Return the singleton EntityInspector instance, creating it if it is not yet
-// created. Single-threaded design.
-EntityInspector& EntityInspector::getInstance() {
-	// Check if this is a first-time call
-    if (getInstancePtr() == NULL) {
-		getInstancePtr() = EntityInspectorPtr(new EntityInspector);
-		GlobalRadiant().addEventListener(getInstancePtr());
-	}
-
-    return *getInstancePtr();
+const std::string& EntityInspector::getName() const
+{
+	static std::string _name(MODULE_ENTITYINSPECTOR);
+	return _name;
 }
 
-EntityInspectorPtr& EntityInspector::getInstancePtr() {
-	static EntityInspectorPtr _instancePtr;
-	return _instancePtr;
+const StringSet& EntityInspector::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
+		_dependencies.insert(MODULE_UNDOSYSTEM);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+	}
+
+	return _dependencies;
+}
+
+void EntityInspector::initialiseModule(const ApplicationContext& ctx)
+{
+	construct();
+
+	GlobalRadiant().addEventListener(shared_from_this());
+
+	GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
+	GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
 }
 
 // Return the Gtk widget for the EntityInspector dialog.
@@ -1052,5 +1073,8 @@ void EntityInspector::toggle(const cmd::ArgumentList& args)
 {
 	GlobalGroupDialog().togglePage("entity");
 }
+
+// Define the static EntityInspector module
+module::StaticModule<EntityInspector> entityInspectorModule;
 
 } // namespace ui

@@ -39,7 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/patch/PatchInspector.h"
 #include "textool/TexTool.h"
 #include "brushexport/BrushExportOBJ.h"
-#include "ui/einspector/EntityInspector.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/menu/FiltersMenu.h"
@@ -608,7 +607,6 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
 	GlobalCommandSystem().addCommand("ToggleConsole", ui::Console::toggle);
 
-	GlobalCommandSystem().addCommand("ToggleEntityInspector", ui::EntityInspector::toggle);
 	GlobalCommandSystem().addCommand("ToggleMediaBrowser", ui::MediaBrowser::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", ui::LightInspector::toggleInspector);
 	GlobalCommandSystem().addCommand("SurfaceInspector", ui::SurfaceInspector::toggle);
@@ -711,8 +709,6 @@ void MainFrame_Construct()
 	
 	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
 	
-	// Entity inspector (part of Group Dialog)
-	GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
 	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 	GlobalEventManager().addCommand("ToggleLightInspector",	"ToggleLightInspector");
 	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
