@@ -236,6 +236,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\imodelpreview.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\imodule.h"
 			>
 		</File>

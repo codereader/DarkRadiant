@@ -2,6 +2,7 @@
 #define MODELPREVIEW_H_
 
 #include "imodel.h"
+#include "imodelpreview.h"
 #include "math/matrix.h"
 
 #include <gtk/gtk.h>
@@ -21,7 +22,8 @@ namespace ui
  * model itself.
  */
 
-class ModelPreview
+class ModelPreview :
+	public IModelPreview
 {
 	// Top-level widget
 	GtkWidget* _widget;

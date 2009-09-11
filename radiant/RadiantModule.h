@@ -62,6 +62,8 @@ public:
 	virtual void setStatusText(const std::string& statusText);
 	
 	virtual void updateAllWindows();
+
+	virtual ui::IModelPreviewPtr createModelPreview();
 	
 	virtual void addEventListener(RadiantEventListenerPtr listener);
 	
