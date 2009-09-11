@@ -334,6 +334,11 @@ void EntityInspector::initialiseModule(const ApplicationContext& ctx)
 	GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");
 }
 
+void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor)
+{
+	PropertyEditorFactory::registerPropertyEditor(key, editor);
+}
+
 // Return the Gtk widget for the EntityInspector dialog.
 
 GtkWidget* EntityInspector::_getWidget() const
