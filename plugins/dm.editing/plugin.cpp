@@ -6,6 +6,8 @@
 #include "icommandsystem.h"
 #include "itextstream.h"
 
+#include "AIHeadPropertyEditor.h"
+
 class EditingModule : 
 	public RegisterableModule
 {
@@ -19,7 +21,9 @@ public:
 	virtual const StringSet& getDependencies() const {
 		static StringSet _dependencies;
 
-		if (_dependencies.empty()) {
+		if (_dependencies.empty())
+		{
+			_dependencies.insert(MODULE_ENTITYINSPECTOR);
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
@@ -31,6 +35,11 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
 		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+
+		// Associated "def_head" with an empty property editor instance
+		GlobalEntityInspector().registerPropertyEditor(
+			"def_head", ui::IPropertyEditorPtr(new ui::AIHeadPropertyEditor())
+		);
 		
 		/*// Add the callback event
 		GlobalCommandSystem().addCommand("DifficultyEditor",  ui::DifficultyDialog::showDialog);

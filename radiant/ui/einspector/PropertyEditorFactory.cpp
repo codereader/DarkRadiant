@@ -76,7 +76,7 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 		if (!boost::regex_match(key, matches, expr)) continue;
 		
 		// We have a match
-		return i->second;
+		return i->second->createNew(entity, key, options);
 	}
 
 	// No custom editor found, search for the named property editor type
