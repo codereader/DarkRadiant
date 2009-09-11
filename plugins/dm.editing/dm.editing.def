@@ -1,0 +1,7 @@
+; dm.editing.def : Declares the module parameters for the DLL.
+
+LIBRARY      "dm.editing"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1
