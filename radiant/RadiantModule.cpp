@@ -40,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "ui/common/ModelPreview.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -133,6 +134,11 @@ void RadiantModule::setStatusText(const std::string& statusText) {
 void RadiantModule::updateAllWindows() {
 	GlobalCamera().update();
 	GlobalXYWnd().updateAllViews();
+}
+
+ui::IModelPreviewPtr RadiantModule::createModelPreview()
+{
+	return ui::IModelPreviewPtr(new ui::ModelPreview);
 }
 	
 void RadiantModule::addEventListener(RadiantEventListenerPtr listener) {

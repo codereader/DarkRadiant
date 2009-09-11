@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define IRADIANT_H_
 
 #include "imodule.h"
+#include "imodelpreview.h"
 #include <boost/weak_ptr.hpp>
 
 // ========================================
@@ -126,6 +127,9 @@ public:
 	virtual void setStatusText(const std::string& statusText) = 0;
 	
 	virtual void updateAllWindows() = 0;
+
+	// Creates a new model preview (GL view with draggable viewpoint, zoom and filter functionality)
+	virtual ui::IModelPreviewPtr createModelPreview() = 0;
 	
 	// Registers/de-registers an event listener class
 	virtual void addEventListener(RadiantEventListenerPtr listener) = 0;
