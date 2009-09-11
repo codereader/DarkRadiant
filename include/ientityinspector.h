@@ -48,6 +48,12 @@ class IEntityInspector :
 	public gtkutil::Widget
 {
 public:
+	/**
+	 * Registers the given property editor and associates it with the given entity key.
+	 * (The string key is interpreted as regular expression.)
+	 */
+	virtual void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor) = 0;
+
 	// Lets the EntityInspector restore its settings from the Registry
 	virtual void restoreSettings() = 0;
 };

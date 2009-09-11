@@ -1,6 +1,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "iradiant.h"
+#include "itextstream.h" 
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
 #include "EntityPropertyEditor.h"
@@ -13,11 +14,14 @@
 #include "ClassnamePropertyEditor.h"
 #include "AnglePropertyEditor.h"
 
+#include <boost/regex.hpp>
+
 namespace ui
 {
 
 // Initialisation
 PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
+PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_customEditors;
 
 // Register the classes
 void PropertyEditorFactory::registerClasses() {
@@ -35,6 +39,19 @@ void PropertyEditorFactory::registerClasses() {
     _peMap["angle"] = PropertyEditorPtr(new AnglePropertyEditor());
 }
 
+void PropertyEditorFactory::registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor)
+{
+	std::pair<PropertyEditorMap::iterator, bool> result = _customEditors.insert(
+		PropertyEditorMap::value_type(key, editor)
+	);
+
+	if (!result.second)
+	{
+		globalWarningStream() << "Could not register property editor for key " << key <<
+			", is already associated." << std::endl;;
+	}
+}
+
 // Create a PropertyEditor from the given name.
 IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 											  	Entity* entity,
@@ -46,7 +63,23 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
         registerClasses();
     }
 
-	// Search for the named property editor type
+	// greebo: First, search the custom editors for a match
+	for (PropertyEditorMap::const_iterator i = _customEditors.begin();
+		 i != _customEditors.end(); ++i)
+	{
+		if (i->first.empty()) continue; // skip empty keys
+
+		// Try to match the entity key against the regex (i->first)
+		boost::regex expr(i->first);
+		boost::smatch matches;
+		
+		if (!boost::regex_match(key, matches, expr)) continue;
+		
+		// We have a match
+		return i->second;
+	}
+
+	// No custom editor found, search for the named property editor type
 	PropertyEditorMap::iterator iter(_peMap.find(className));
 
 	// If the type is not found, return NULL otherwise create a new instance of
