@@ -126,7 +126,7 @@ ModelSelector::ModelSelector()
 	gtk_box_pack_start(GTK_BOX(hbx), leftVbx, TRUE, TRUE, 0);
 	
 	GtkWidget* previewBox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(previewBox), *_modelPreview, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(previewBox), _modelPreview->getWidget(), FALSE, FALSE, 0);
 	
 	gtk_box_pack_start(GTK_BOX(hbx), previewBox, FALSE, FALSE, 0);
 	

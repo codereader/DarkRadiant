@@ -99,7 +99,7 @@ EntityClassChooser::EntityClassChooser()
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbx, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), *_modelPreview, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _modelPreview->getWidget(), FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(_widget), hbox);
 
