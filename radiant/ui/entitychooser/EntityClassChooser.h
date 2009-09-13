@@ -62,7 +62,7 @@ class EntityClassChooser :
 	std::string _selectedName;
 
 	// Model preview widget
-	ModelPreviewPtr _modelPreview;
+	IModelPreviewPtr _modelPreview;
 
 private:
 

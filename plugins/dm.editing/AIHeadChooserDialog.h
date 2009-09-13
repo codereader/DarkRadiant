@@ -59,6 +59,7 @@ public:
 private:
 	// Override base class _preDestroy
 	void _preDestroy();
+	void _postShow();
 	
 	void populateHeadStore();
 
