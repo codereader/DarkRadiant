@@ -40,33 +40,34 @@ namespace shaders {
 MapExpressionPtr MapExpression::createForToken(DefTokeniser& token) {
 	// Switch on the first keyword, to determine what kind of expression this
 	// is.
-	std::string type = boost::algorithm::to_lower_copy(token.nextToken());
+	// Tr3B: don't convert image names to lower because Unix filesystems are case sensitive
+	std::string type = token.nextToken();
 
-	if (type == "heightmap") {
+	if (boost::iequals(type, "heightmap")) {
 		return MapExpressionPtr(new HeightMapExpression (token));
 	}
-	else if (type == "addnormals") {
+	else if (boost::iequals(type, "addnormals")) {
 		return MapExpressionPtr(new AddNormalsExpression (token));
 	}
-	else if (type == "smoothnormals") {
+	else if (boost::iequals(type, "smoothnormals")) {
 		return MapExpressionPtr(new SmoothNormalsExpression (token));
 	}
-	else if (type == "add") {
+	else if (boost::iequals(type, "add")) {
 		return MapExpressionPtr(new AddExpression (token));
 	}
-	else if (type == "scale") {
+	else if (boost::iequals(type, "scale")) {
 		return MapExpressionPtr(new ScaleExpression (token));
 	}
-	else if (type == "invertalpha") {
+	else if (boost::iequals(type, "invertalpha")) {
 		return MapExpressionPtr(new InvertAlphaExpression (token));
 	}
-	else if (type == "invertcolor") {
+	else if (boost::iequals(type, "invertcolor")) {
 		return MapExpressionPtr(new InvertColorExpression (token));
 	}
-	else if (type == "makeintensity") {
+	else if (boost::iequals(type, "makeintensity")) {
 		return MapExpressionPtr(new MakeIntensityExpression (token));
 	}
-	else if (type == "makealpha") {
+	else if (boost::iequals(type, "makealpha")) {
 		return MapExpressionPtr(new MakeAlphaExpression (token));
 	}
 	else {
