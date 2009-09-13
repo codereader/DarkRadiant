@@ -1592,7 +1592,7 @@ Vector2 Patch::getPatchControlArrayIndices(const PatchControlIter& control)
 		if (p == control)
 		{
 			int row = static_cast<int>(floor(static_cast<float>(count) / m_width));
-			int col = count % m_width;
+			int col = static_cast<int>(count % m_width);
 
 			return Vector2(col, row);
 		}
