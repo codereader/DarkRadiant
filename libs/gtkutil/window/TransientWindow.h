@@ -21,7 +21,7 @@ class TransientWindow
 	// Whether this window should be hidden rather than destroyed
 	bool _hideOnDelete;
 	
-private:
+protected:
 	
 	/* Customisable virtuals implemented by subclasses */
 	
@@ -33,6 +33,8 @@ private:
 	
 	virtual void _preDestroy() { }
 	virtual void _postDestroy() { }
+
+private:
 	
 	// GTK delete callback
 	static gboolean _onDelete(GtkWidget* w, GdkEvent* e, TransientWindow* self) 

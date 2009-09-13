@@ -20,7 +20,7 @@ class BlockingTransientWindow
 	// Is window shown? If so, we need to exit the main loop when destroyed
 	bool _isShown;
 	
-private:
+protected:
 	
 	// Called after the dialog is shown. Enter the recursive main loop.
 	virtual void _postShow() {
