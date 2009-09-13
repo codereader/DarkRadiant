@@ -176,6 +176,16 @@ void AIHeadChooserDialog::_preDestroy()
 {
 	// Clear the model preview cache
 	_preview->clear();
+
+	BlockingTransientWindow::_preDestroy();
+}
+
+void AIHeadChooserDialog::_postShow()
+{
+	// Initialise the GL widget after the widgets have been shown
+	_preview->initialisePreview();
+
+	BlockingTransientWindow::_postShow();
 }
 
 void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
@@ -194,13 +204,21 @@ void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
 		// Set the panel text with the usage information
 		self->_selectedHead = gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN); 
 
-		// TODO: Update Preview
-		//_preview->setModel(self->_selectedHead);
+		// Lookup the IEntityClass instance
+		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(self->_selectedHead);	
+
+		if (eclass != NULL)
+		{
+			self->_preview->setModel(eclass->getAttribute("model").value);
+			self->_preview->setSkin(eclass->getAttribute("skin").value);
+		}
 	}
 	else
 	{
 		self->_selectedHead = "";
 		self->_preview->setModel("");
+
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_OKBUTTON], FALSE);
 	}
 }
 

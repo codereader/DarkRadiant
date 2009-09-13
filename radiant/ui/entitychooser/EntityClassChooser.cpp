@@ -38,7 +38,7 @@ EntityClassChooserPtr& EntityClassChooser::InstancePtr() {
 void EntityClassChooser::onRadiantShutdown() {
 	globalOutputStream() << "EntityClassChooser shutting down.\n";
 
-	_modelPreview = ModelPreviewPtr();
+	_modelPreview = IModelPreviewPtr();
 }
 
 // Show the dialog
@@ -71,7 +71,7 @@ EntityClassChooser::EntityClassChooser()
   _selection(NULL),
   _okButton(NULL),
   _selectedName(""),
-  _modelPreview(new ModelPreview)
+  _modelPreview(GlobalRadiant().createModelPreview())
 {
 	GtkWindow* mainWindow = GlobalRadiant().getMainWindow();
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), mainWindow);
