@@ -38,21 +38,8 @@ public:
 
 		// Associated "def_head" with an empty property editor instance
 		GlobalEntityInspector().registerPropertyEditor(
-			"def_head", ui::IPropertyEditorPtr(new ui::AIHeadPropertyEditor())
+			ui::DEF_HEAD_KEY, ui::IPropertyEditorPtr(new ui::AIHeadPropertyEditor())
 		);
-		
-		/*// Add the callback event
-		GlobalCommandSystem().addCommand("DifficultyEditor",  ui::DifficultyDialog::showDialog);
-		GlobalEventManager().addCommand("DifficultyEditor", "DifficultyEditor");
-	
-		// Add the menu item
-		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.add("main/map", 	// menu location path
-				"DifficultyEditor", // name
-				ui::menuItem,	// type
-				"Difficulty...",	// caption
-				"stimresponse.png",	// icon
-				"DifficultyEditor"); // event name*/
 	}
 };
 typedef boost::shared_ptr<EditingModule> EditingModulePtr;

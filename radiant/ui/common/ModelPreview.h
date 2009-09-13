@@ -107,7 +107,7 @@ public:
 	
 	/** Operator cast to GtkWidget*, for packing into the parent window.
 	 */
-	operator GtkWidget* () {
+	GtkWidget* getWidget() {
 		return _widget;
 	}
 	

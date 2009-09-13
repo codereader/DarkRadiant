@@ -5,16 +5,20 @@
 #include <gtk/gtkbutton.h>
 #include "ieclass.h"
 #include "iradiant.h"
+#include "ientity.h"
+
+#include "AIHeadChooserDialog.h"
 
 namespace ui
 {
 
 AIHeadPropertyEditor::AIHeadPropertyEditor() :
-	_widget(NULL)
+	_widget(NULL),
+	_entity(NULL)
 {}
 
-AIHeadPropertyEditor::AIHeadPropertyEditor(Entity* entity, 
-	const std::string& key, const std::string& options)
+AIHeadPropertyEditor::AIHeadPropertyEditor(Entity* entity, const std::string& key, const std::string& options) :
+	_entity(entity)
 {
 	_widget = gtk_hbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
@@ -22,9 +26,6 @@ AIHeadPropertyEditor::AIHeadPropertyEditor(Entity* entity,
 	// Horizontal box contains the browse button
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
-
-	// Check if the liststore is populated
-	FindAvailableHeads();
 
 	// Browse button for models
 	GtkWidget* browseButton = gtk_button_new_with_label("Choose AI head...");
@@ -52,46 +53,18 @@ IPropertyEditorPtr AIHeadPropertyEditor::createNew(Entity* entity,
 
 void AIHeadPropertyEditor::onChooseButton(GtkWidget* button, AIHeadPropertyEditor* self)
 {
+	// Construct a new head chooser dialog
+	AIHeadChooserDialog dialog;
 
-}
+	dialog.setSelectedHead(self->_entity->getKeyValue(DEF_HEAD_KEY));
 
-namespace
-{
+	// Show and block
+	dialog.show();
 
-class HeadEClassFinder :
-	public EntityClassVisitor
-{
-	AIHeadPropertyEditor::HeadList& _list;
-
-public:
-	HeadEClassFinder(AIHeadPropertyEditor::HeadList& list) :
-		_list(list)
-	{}
-
-	void visit(IEntityClassPtr eclass)
+	if (dialog.getResult() == AIHeadChooserDialog::RESULT_OK)
 	{
-		if (eclass->getAttribute("editor_head").value == "1")
-		{
-			_list.insert(eclass->getName());
-		}
+		self->_entity->setKeyValue(DEF_HEAD_KEY, dialog.getSelectedHead());
 	}
-};
-
-} // namespace
-
-void AIHeadPropertyEditor::FindAvailableHeads()
-{
-	if (!_availableHeads.empty())
-	{
-		return;
-	}
-
-	// Instantiate a finder class and traverse all eclasses
-	HeadEClassFinder visitor(_availableHeads);
-	GlobalEntityClassManager().forEach(visitor);
 }
-
-// Init static class member
-AIHeadPropertyEditor::HeadList AIHeadPropertyEditor::_availableHeads;
 
 } // namespace ui

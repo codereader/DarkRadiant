@@ -121,7 +121,7 @@ GtkWidget* SkinChooser::createTreeView(gint width) {
 // Create the model preview
 GtkWidget* SkinChooser::createPreview(gint size) {
 	_preview->setSize(size);
-	return *_preview;
+	return _preview->getWidget();
 }
 
 // Create the buttons panel

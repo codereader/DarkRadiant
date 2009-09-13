@@ -7,17 +7,18 @@
 namespace ui
 {
 
+	namespace
+	{
+		const std::string DEF_HEAD_KEY = "def_head";
+	}
+
 class AIHeadPropertyEditor :
 	public IPropertyEditor
 {
-public:
-	typedef std::set<std::string> HeadList;
-
-private:
 	// The top-level widget
 	GtkWidget* _widget;
 
-	static HeadList _availableHeads;
+	Entity* _entity;
 
 protected:
 	// gtkutil::Widget impl.
@@ -38,9 +39,6 @@ public:
 								const std::string& options);
 
 private:
-	// Searches all entity classes for available heads
-	static void FindAvailableHeads();
-
 	static void onChooseButton(GtkWidget* button, AIHeadPropertyEditor* self);
 };
 
