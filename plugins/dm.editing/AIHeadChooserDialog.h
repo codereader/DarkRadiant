@@ -64,6 +64,7 @@ private:
 	void populateHeadStore();
 
 	GtkWidget* createButtonPanel();
+	GtkWidget* createDescriptionPanel();
 
 	// Searches all entity classes for available heads
 	static void findAvailableHeads();
