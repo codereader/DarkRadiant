@@ -30,6 +30,7 @@ namespace ui
 		{
 			WIDGET_HEADVIEW,
 			WIDGET_OKBUTTON,
+			WIDGET_DESCRIPTION,
 		};
 	}
 
@@ -72,8 +73,12 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 
 	// Right: the treeview
 	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(GTK_WIDGET(headsView)), TRUE, TRUE, 0);
-	// Left: the preview
-	gtk_box_pack_start(GTK_BOX(hbx), _preview->getWidget(), FALSE, FALSE, 0);
+	// Left: the preview and the description
+	GtkWidget* vbox2 = gtk_vbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(vbox2), _preview->getWidget(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), createDescriptionPanel(), FALSE, FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(hbx), vbox2, FALSE, FALSE, 0);
 
 	// Topmost: the tree plus preview
 	gtk_box_pack_start(GTK_BOX(vbox), hbx, TRUE, TRUE, 0);
@@ -155,6 +160,18 @@ GtkWidget* AIHeadChooserDialog::createButtonPanel()
 	return gtkutil::RightAlignment(hbx);
 }
 
+GtkWidget* AIHeadChooserDialog::createDescriptionPanel()
+{
+	// Create a GtkTextView
+	GtkWidget* textView = gtk_text_view_new();
+	_widgets[WIDGET_DESCRIPTION] = textView;
+
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textView), GTK_WRAP_WORD);
+	gtk_text_view_set_editable(GTK_TEXT_VIEW(textView), FALSE);
+
+	return gtkutil::ScrolledFrame(textView);	
+}
+
 void AIHeadChooserDialog::onCancel(GtkWidget* widget, 
 									AIHeadChooserDialog* self) 
 {
@@ -200,6 +217,7 @@ void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
 	{
 		// Make the OK button active 
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_OKBUTTON], TRUE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DESCRIPTION], TRUE);
 
 		// Set the panel text with the usage information
 		self->_selectedHead = gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN); 
@@ -211,6 +229,28 @@ void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
 		{
 			self->_preview->setModel(eclass->getAttribute("model").value);
 			self->_preview->setSkin(eclass->getAttribute("skin").value);
+
+			// Update the usage panel
+			GtkTextView* textView = GTK_TEXT_VIEW(self->_widgets[WIDGET_DESCRIPTION]);
+			GtkTextBuffer* buf = gtk_text_view_get_buffer(textView);
+			
+			// Create the concatenated usage string
+			std::string usage = "";
+			EntityClassAttributeList usageAttrs = eclass->getAttributeList("editor_usage");
+			for (EntityClassAttributeList::const_iterator i = usageAttrs.begin();
+				 i != usageAttrs.end();
+				 ++i)
+			{
+				// Add only explicit (non-inherited) usage strings
+				if (!i->inherited) {
+					if (!usage.empty())
+						usage += std::string("\n") + i->value;
+					else
+						usage += i->value;
+				}
+			}
+			
+			gtk_text_buffer_set_text(buf, usage.c_str(), -1);
 		}
 	}
 	else
@@ -219,6 +259,7 @@ void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
 		self->_preview->setModel("");
 
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_OKBUTTON], FALSE);
+		gtk_widget_set_sensitive(self->_widgets[WIDGET_DESCRIPTION], FALSE);
 	}
 }
 
