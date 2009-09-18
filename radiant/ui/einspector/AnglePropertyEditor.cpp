@@ -5,6 +5,7 @@
 #include "string/string.h"
 
 #include "gtkutil/IconTextButton.h"
+#include "gtkutil/pointer.h"
 
 #include <gtk/gtk.h>
 
@@ -76,7 +77,7 @@ void AnglePropertyEditor::_onButtonClick(GtkButton* button,
                                          AnglePropertyEditor* self)
 {
     // Get the numerical value off the button
-	gint angle = gint(g_object_get_data(G_OBJECT(button), GLIB_ANGLE_KEY));
+	gint angle = gpointer_to_int(g_object_get_data(G_OBJECT(button), GLIB_ANGLE_KEY));
 
 	self->setKeyValue(self->_key, intToStr(angle));
 }
