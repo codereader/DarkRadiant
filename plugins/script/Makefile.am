@@ -6,6 +6,7 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = script.la
 
 script_la_LDFLAGS = -module -avoid-version \
+					$(BOOST_SYSTEM_LIBS) \
 					$(BOOST_FILESYSTEM_LIBS) \
                     $(BOOST_PYTHON_LIBS) \
                     $(PYTHON_LIBS) \
