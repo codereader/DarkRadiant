@@ -101,6 +101,12 @@ AC_CHECK_LIB([boost_filesystem], [main],
              [AC_MSG_ERROR([Boost.Filesystem not found])])
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
+# Boost.System
+AC_CHECK_LIB([boost_system], [main],
+             [BOOST_SYSTEM_LIBS='-lboost_system'],
+             [AC_MSG_ERROR([Boost.System not found])])
+AC_SUBST([BOOST_SYSTEM_LIBS])
+
 # Boost.Python if required
 if test "$python_scripting" = 'yes'
 then
