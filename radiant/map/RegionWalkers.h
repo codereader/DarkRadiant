@@ -21,7 +21,7 @@ inline void excludeNode(scene::INodePtr node, bool exclude) {
 /** greebo: Sets/resets the exclude bit on the visited node
  */
 class ExcludeAllWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	bool _exclude;
 public:
@@ -29,8 +29,9 @@ public:
 		_exclude(exclude) 
 	{}
 	
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		excludeNode(path.top(), _exclude);
+	bool pre(const scene::INodePtr& node)
+	{
+		excludeNode(node, _exclude);
 
 		return true;
 	}
@@ -41,7 +42,7 @@ public:
  * All the objects outside the bounds get their status set to the opposite.
  */
 class ExcludeRegionedWalker : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 	bool _exclude;
 	// The reference to the currently active region bounds
@@ -53,8 +54,8 @@ public:
 		_regionAABB(regionAABB)
 	{}
 	
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		
+	bool pre(const scene::INodePtr& node)
+	{
 		// Check whether the instance is within the region
 		bool contained = aabb_intersects_aabb(
 			node->worldAABB(),

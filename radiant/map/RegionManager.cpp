@@ -34,7 +34,7 @@ namespace map {
 		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
 		
 		class AABBCollectorVisible : 
-			public scene::Graph::Walker
+			public scene::NodeVisitor
 		{
 			AABB& _targetAABB;
 		public:
@@ -42,18 +42,23 @@ namespace map {
 				_targetAABB(targetAABB)
 			{}
 			
-			bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-				if (node->visible()) {
+			bool pre(const scene::INodePtr& node)
+			{
+				if (node->visible())
+				{
 					_targetAABB.includeAABB(node->worldAABB());
 				}
+
 				return true;
 			}
 		};
 		
-		AABB getVisibleBounds() {
+		AABB getVisibleBounds()
+		{
 			AABB returnValue;
+			AABBCollectorVisible collector(returnValue);
 			
-			GlobalSceneGraph().traverse(AABBCollectorVisible(returnValue));
+			Node_traverseSubgraph(GlobalSceneGraph().root(), collector);
 			
 			return returnValue;
 		}
@@ -82,7 +87,8 @@ void RegionManager::disable() {
 	_bounds.extents -= Vector3(1,1,1)*64;
 	
 	// Disable the exclude bit on all the scenegraph nodes
-	GlobalSceneGraph().traverse(ExcludeAllWalker(false));
+	ExcludeAllWalker walker(false);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
 
 void RegionManager::enable() {
@@ -93,7 +99,8 @@ void RegionManager::enable() {
 	_active = true;
 	
 	// Show all elements within the current region / hide the outsiders
-	GlobalSceneGraph().traverse(ExcludeRegionedWalker(false, _bounds));
+	ExcludeRegionedWalker walker(false, _bounds);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 }
 
 void RegionManager::clear() {
