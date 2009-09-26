@@ -120,7 +120,7 @@ inline const Functor& Brush_ForEachFaceInstance(BrushInstance& brush, const Func
 template<typename Functor>
 inline const Functor& Scene_forEachBrush(scene::Graph& graph, const Functor& functor) {
 	NodeWalker< InstanceApply<BrushNode, Functor> > walker(functor);
-	graph.traverse(walker);
+	Node_traverseSubgraph(graph.root(), walker);
 	return functor;
 }
 
