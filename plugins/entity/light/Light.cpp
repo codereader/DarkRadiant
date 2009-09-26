@@ -750,17 +750,19 @@ bool Light::testAABB(const AABB& other) const
     else
     {
         // test against an AABB which contains the rotated bounds of this light.
-        const AABB& bounds = localAABB();
+        AABB bounds = localAABB();
+		bounds.origin += worldOrigin();
+
         returnVal = aabb_intersects_aabb(other, AABB(
             bounds.origin,
             Vector3(
-                static_cast<float>(fabs(m_rotation[0] * bounds.extents[0])
+                static_cast<double>(fabs(m_rotation[0] * bounds.extents[0])
                                     + fabs(m_rotation[3] * bounds.extents[1])
                                     + fabs(m_rotation[6] * bounds.extents[2])),
-                static_cast<float>(fabs(m_rotation[1] * bounds.extents[0])
+                static_cast<double>(fabs(m_rotation[1] * bounds.extents[0])
                                     + fabs(m_rotation[4] * bounds.extents[1])
                                     + fabs(m_rotation[7] * bounds.extents[2])),
-                static_cast<float>(fabs(m_rotation[2] * bounds.extents[0])
+                static_cast<double>(fabs(m_rotation[2] * bounds.extents[0])
                                     + fabs(m_rotation[5] * bounds.extents[1])
                                     + fabs(m_rotation[8] * bounds.extents[2]))
             )
