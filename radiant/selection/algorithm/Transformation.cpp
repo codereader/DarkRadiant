@@ -56,7 +56,7 @@ void scaleSelected(const Vector3& scaleXYZ) {
  * 5) Move the nodes into the target scenegraph (using moveClonedNodes())
  */
 class SelectionCloner : 
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 public:
 	// This maps cloned nodes to the parent nodes they should be inserted in
@@ -78,30 +78,37 @@ public:
 		return _cloneRoot;
 	}
 
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		if (path.size() == 1) {
+	bool pre(const scene::INodePtr& node)
+	{
+		// Don't clone root items
+		if (node->isRoot())
+		{
 			return true;
 		}
-
-		// Don't clone the root item
-		if (!node->isRoot() && Node_isSelected(node)) {
+		
+		if (Node_isSelected(node))
+		{
+			// Don't traverse children of cloned nodes
 			return false;
 		}
 
 		return true;
 	}
 
-	void post(const scene::Path& path, const scene::INodePtr& node) const {
-		if (path.size() == 1) {
+	void post(const scene::INodePtr& node) 
+	{
+		if (node->isRoot())
+		{
 			return;
 		}
 
-		if (!node->isRoot() && Node_isSelected(node)) {
+		if (Node_isSelected(node))
+		{
 			// Clone the current node
 			scene::INodePtr clone = map::Node_Clone(node);
 			
 			// Add the cloned node and its parent to the list 
-			_cloned.insert(Map::value_type(clone, path.parent()));
+			_cloned.insert(Map::value_type(clone, node->getParent()));
 
 			// Insert this node in the root
 			_cloneRoot->addChildNode(clone);
@@ -139,7 +146,7 @@ void cloneSelected(const cmd::ArgumentList& args) {
 	SelectionCloner::Map cloned;
 	
 	SelectionCloner cloner;
-	GlobalSceneGraph().traverse(cloner);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), cloner);
 
 	// Create a new namespace and move all cloned nodes into it
 	INamespacePtr clonedNamespace = GlobalNamespaceFactory().createNamespace();
