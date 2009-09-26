@@ -57,34 +57,7 @@ namespace scene
   {
   public:
 	  
-	/**
-	 * Interface for a visitor class which will be passed each node in the
-	 * scenegraph in turn.
-	 */
-    class Walker
-    {
-    public:
-      
-      /**
-       * Called before traversing the first child node of 'node'. This
-       * method must be overridden by Walker subclasses. 
-       * 
-       * @return
-       * false to abort the traversal and prevent visiting children of the
-       * current node, true to continue.
-       */
-      virtual bool pre(const Path& path, const INodePtr& node) const = 0;
-      
-      /** 
-       * Called after traversing the last child node of 'node'. This
-       * method has an empty default implementation and need not be overridden
-       * by subclasses.
-       */
-      virtual void post(const Path& path, const INodePtr& node) const
-      { }
-    };
-    
-    /* greebo: Derive from this class to get notified on scene changes 
+	/* greebo: Derive from this class to get notified on scene changes 
      */
     class Observer 
     {
@@ -105,12 +78,6 @@ namespace scene
     virtual void insert_root(INodePtr root) = 0;
     /// \brief Clears the root-node of the graph.
     virtual void erase_root() = 0;
-    /// \brief Traverses all nodes in the graph depth-first, starting from the root node.
-    virtual void traverse(const Walker& walker) = 0;
-    /// \brief Traverses all nodes in the graph depth-first, starting from 'start'.
-    virtual void traverse_subgraph(const Walker& walker, const Path& start) = 0;
-    /// \brief Returns the instance at the location identified by 'path', or 0 if it does not exist.
-    //virtual scene::Instance* find(const Path& path) = 0;
 
 	// greebo: Adds a node to the scenegraph
 	virtual void insert(const scene::INodePtr& node) = 0;

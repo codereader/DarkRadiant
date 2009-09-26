@@ -59,53 +59,6 @@ void SceneGraph::boundsChanged() {
     m_boundsChanged();
 }
 
-void SceneGraph::traverse(const Walker& walker) {
-	if (_root == NULL) return;
-
-	scene::Path path;
-	path.push(_root);
-
-	traverse_subgraph(walker, path);
-}
-
-class WalkerAdaptor :
-	public scene::NodeVisitor
-{
-	const scene::Graph::Walker& _walker; // the legacy walker
-
-	scene::Path _path;
-public:
-	WalkerAdaptor(const scene::Graph::Walker& walker, const scene::Path& start) :
-		_walker(walker)
-	{
-		// We're starting with the given path
-		_path = start;
-	}
-
-	virtual bool pre(const scene::INodePtr& node) {
-		// Add this element to the path
-		_path.push(node);
-
-		// Pass the call to the contained walker object
-		return _walker.pre(_path, node);
-	}
-
-	virtual void post(const scene::INodePtr& node) {
-		_walker.post(_path, node);
-		_path.pop();
-	}
-};
-
-void SceneGraph::traverse_subgraph(const Walker& walker, const scene::Path& start) {
-	// greebo: Create an adaptor class to stay compatible with old code
-	scene::Path startPath(start);
-	// We start with the parent path already in the walker
-	startPath.pop(); 
-
-	WalkerAdaptor visitor(walker, startPath);
-	Node_traverseSubgraph(start.top(), visitor);
-}
-
 void SceneGraph::insert(const scene::INodePtr& node) {
     // Notify the graph tree model about the change
 	sceneChanged();

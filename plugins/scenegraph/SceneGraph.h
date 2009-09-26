@@ -69,9 +69,6 @@ public:
 	// Note: these are the WorkZone and the SelectionSystem, AFAIK
 	void boundsChanged();
 
-	void traverse(const Walker& walker);
-	void traverse_subgraph(const Walker& walker, const scene::Path& start);
-
 	void insert(const scene::INodePtr& node);
 	void erase(const scene::INodePtr& node);
 
