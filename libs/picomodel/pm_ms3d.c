@@ -346,19 +346,27 @@ static picoModel_t *_ms3d_load( PM_PARAMS_LOAD )
 				TMsVertex   *vertex;
 				unsigned int vertexIndex;
 				picoVec2_t   texCoord;
+				picoVec3_t	 vertexXYZ;
+				picoVec3_t	 vertexNormals;
 
 				/* get ptr to vertex data */
 				vertexIndex = triangle->vertexIndices[ m ];
 				vertex = (TMsVertex *)(ptrToVerts + (sizeof(TMsVertex) * vertexIndex));
 
 				/* store vertex origin */
-				PicoSetSurfaceXYZ( surface,vertexIndex,vertex->xyz );
+				vertexXYZ[0] = vertex->xyz[0];
+				vertexXYZ[1] = vertex->xyz[1];
+				vertexXYZ[2] = vertex->xyz[2];
+				PicoSetSurfaceXYZ( surface,vertexIndex,vertexXYZ );
 
 				/* store vertex color */
 				PicoSetSurfaceColor( surface,0,vertexIndex,white );
 
 				/* store vertex normal */
-				PicoSetSurfaceNormal( surface,vertexIndex,triangle->vertexNormals[ m ] );
+				vertexNormals[0] = triangle->vertexNormals[ m ][0];
+				vertexNormals[1] = triangle->vertexNormals[ m ][1];
+				vertexNormals[2] = triangle->vertexNormals[ m ][2];
+				PicoSetSurfaceNormal( surface,vertexIndex,vertexNormals );
 
 				/* store current face vertex index */
 				PicoSetSurfaceIndex( surface,(k * 3 + (2 - m)),(picoIndex_t)vertexIndex );
