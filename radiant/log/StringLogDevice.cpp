@@ -24,17 +24,19 @@ void StringLogDevice::writeLog(const std::string& outputStr, ELogLevel level) {
 	};
 }
 
-std::string StringLogDevice::getString(ELogLevel level) {
-	switch (level) {
+std::string StringLogDevice::getString(ELogLevel level)
+{
+	switch (level)
+	{
 		case SYS_ERROR:
 			return  _errorStream.str();
 		case SYS_WARNING:
 			return  _warningStream.str();
 		case SYS_STANDARD:
 			return _logStream.str();
+		default:
+			return _logStream.str();
 	};
-
-	return "";
 }
 
 void StringLogDevice::destroy() {
