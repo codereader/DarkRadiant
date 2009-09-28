@@ -224,6 +224,8 @@ TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(ShaderLayer::Type t)
             GlobalRegistry().get(RKEY_BITMAPS_PATH) + IMAGE_FLAT
         );
         break;
+	default:
+		break;
     }
 
     return defaultTex;

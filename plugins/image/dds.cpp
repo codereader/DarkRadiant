@@ -81,7 +81,8 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 	DDSImagePtr image(new DDSImage(size));
 
 	// Set the format of this DDS image
-	switch (pixelFormat) {
+	switch (pixelFormat)
+	{
 		case DDS_PF_DXT1:
 			image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
 			break;
@@ -90,6 +91,8 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 			break;
 		case DDS_PF_DXT5:
 			image->setFormat(GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
+			break;
+		default:
 			break;
 	};
 
