@@ -70,7 +70,7 @@ static int add_clip( char *s, lwClip **clist, int *nclips )
    clip->saturation.val = 1.0f;
    clip->gamma.val = 1.0f;
 
-   if ( p = strstr( s, "(sequence)" )) {
+   if ( (p = strstr( s, "(sequence)" ))) {
       p[ -1 ] = 0;
       clip->type = ID_ISEQ;
       clip->source.seq.prefix = s;
@@ -196,6 +196,8 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj )
    unsigned short sz;
    int pos, rlen, i;
 
+   tex = NULL;
+   shdr = NULL;
 
    /* allocate the Surface structure */
 
@@ -353,6 +355,8 @@ lwSurface *lwGetSurface5( picoMemStream_t *fp, int cksize, lwObject *obj )
 
          case ID_TFLG:
             flags = getU2( fp );
+
+			i = 0; // greebo: initialise to fix compiler warnings
 
             if ( flags & 1 ) i = 0;
             if ( flags & 2 ) i = 1;
