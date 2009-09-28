@@ -475,8 +475,9 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 	/* -------------------------------------------------
 	mdc loading
 	------------------------------------------------- */
-
-
+	vertexComp = NULL;
+	mdcCompVert = NULL;
+	
 	/* set as mdc */
 	bb = (picoByte_t*) buffer;
 	mdc	= (mdc_t*) buffer;

@@ -666,8 +666,8 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD )
 			int ivt[ 4 ], has_vt = 0;
 			int ivn[ 4 ], has_vn = 0;
 			int have_quad = 0;
-			int slashcount;
-			int doubleslash;
+			int slashcount = 0;
+			int doubleslash = 0;
 			int i;
 
 			/* group defs *must* come before faces */
