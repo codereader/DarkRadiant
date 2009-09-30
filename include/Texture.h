@@ -20,7 +20,7 @@ public:
      * \brief
      * Constant indicating an invalid texture size.
      */
-    const static unsigned INVALID_SIZE = 0;
+    const static std::size_t INVALID_SIZE = 0;
 
     /**
      * \brief
@@ -39,14 +39,14 @@ public:
      * Return the width of this texture in pixels. May return INVALID_SIZE if
      * this texture does not have a valid size.
      */
-    virtual unsigned getWidth() const = 0;
+    virtual std::size_t getWidth() const = 0;
 
     /**
      * \brief
      * Return the height of this texture in pixels. May return INVALID_SIZE if
      * this texture does not have a valid size.
      */
-    virtual unsigned getHeight() const = 0;
+    virtual std::size_t getHeight() const = 0;
 };
 typedef boost::shared_ptr<Texture> TexturePtr;
 

@@ -46,7 +46,7 @@ public:
      * \brief
      * Set the image width.
      */
-    void setWidth(unsigned width)
+    void setWidth(std::size_t width)
     {
         _width = width;
     }
@@ -55,7 +55,7 @@ public:
      * \brief
      * Set the image height.
      */
-    void setHeight(unsigned height)
+    void setHeight(std::size_t height)
     {
         _height = height;
     }
@@ -69,11 +69,11 @@ public:
     {
         return texture_number;
     }
-    unsigned getWidth() const
+    std::size_t getWidth() const
     {
         return _width;
     }
-    unsigned getHeight() const
+    std::size_t getHeight() const
     {
         return _height;
     }

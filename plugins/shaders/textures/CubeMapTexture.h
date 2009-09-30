@@ -40,12 +40,12 @@ public:
         return _texNum;
     }
 
-    unsigned getWidth() const
+    std::size_t getWidth() const
     {
         return INVALID_SIZE;
     }
 
-    unsigned getHeight() const
+    std::size_t getHeight() const
     {
         return INVALID_SIZE;
     }
