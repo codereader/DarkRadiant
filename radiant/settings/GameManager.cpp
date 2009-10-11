@@ -137,7 +137,7 @@ void Manager::initialise(const std::string& appPath)
 	if (!_currentGameName.empty()) 
     {
 		globalOutputStream() << "GameManager: Selected game type: " 
-                             << _currentGameName.c_str() << "\n";
+                             << _currentGameName << std::endl;
 	}
 	else {
 		// No game type selected, bail out, the program would crash anyway on module load
@@ -217,14 +217,14 @@ void Manager::initEnginePath() {
 		
 		globalOutputStream() << "GameManager: Querying Windows Registry for game path: "
 							 << "HKEY_LOCAL_MACHINE\\"
-							 << regKey << "\\" << regValue << "\n";
+							 << regKey << "\\" << regValue << std::endl;
 		  
 		// Query the Windows Registry for a default installation path
 		// This will return "" for non-Windows environments
 		enginePath = Win32Registry::getKeyValue(regKey, regValue);
 		
 		globalOutputStream() << "GameManager: Windows Registry returned result: "
-							 << enginePath << "\n";  	
+							 << enginePath << std::endl;  	
 	}
 	
 	// If the engine path is still empty, consult the .game file for a fallback value
@@ -350,7 +350,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    else { // fsGameBase is not empty
       mapPath = _modBasePath + mapFolder;
    }
-   globalOutputStream() << "GameManager: Map path set to " << mapPath << "\n";
+   globalOutputStream() << "GameManager: Map path set to " << mapPath << std::endl;
    os::makeDirectory(mapPath);
 
    // Save the map path to the registry
@@ -363,7 +363,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
    // Replace the "maps/" with "prefabs/"
    boost::algorithm::replace_last(prefabPath, mapFolder, pfbFolder);
    // Store the path into the registry
-   globalOutputStream() << "GameManager: Prefab path set to " << prefabPath << "\n";
+   globalOutputStream() << "GameManager: Prefab path set to " << prefabPath << std::endl;
    GlobalRegistry().set(RKEY_PREFAB_PATH, prefabPath);
 }
 
@@ -425,10 +425,10 @@ void Manager::updateEnginePath(bool forced)
 			}
 			
 			// On UNIX this is the user-local enginepath, e.g. ~/.doom3/base/
-         // On Windows this will be the same as global engine path
+			// On Windows this will be the same as global engine path
 			std::string userBasePath = os::standardPathWithSlash(
-				getUserEnginePath() // ~/.doom3
-            + currentGame()->getKeyValue("basegame") // base
+				getUserEnginePath() + // ~/.doom3
+				currentGame()->getKeyValue("basegame") // base
 			);
 			_vfsSearchPaths.push_back(userBasePath);
 			
@@ -437,18 +437,23 @@ void Manager::updateEnginePath(bool forced)
 			std::string baseGame = os::standardPathWithSlash(
 				_enginePath + currentGame()->getKeyValue("basegame")
 			);
-			_vfsSearchPaths.push_back(baseGame);
+
+			// greebo: Avoid double-registering the same path (in Windows)
+			if (baseGame != userBasePath)
+			{
+				_vfsSearchPaths.push_back(baseGame);
+			}
 			
 			// Update map and prefab paths
 			setMapAndPrefabPaths(userBasePath);
 
 			_enginePathInitialised = true;
 			
-			globalOutputStream() << "VFS Search Path priority is: \n"; 
+			globalOutputStream() << "VFS Search Path priority is: " << std::endl; 
 			for (PathList::iterator i = _vfsSearchPaths.begin();
 				i != _vfsSearchPaths.end(); ++i) 
 			{
-				globalOutputStream() << "- " << (*i) << "\n";
+				globalOutputStream() << "- " << (*i) << std::endl;
 			}
 
 			if (enginePathWasInitialised)
@@ -477,17 +482,18 @@ const std::string& Manager::getEnginePath() const {
 void Manager::loadGameFiles(const std::string& appPath) 
 {
 	std::string gamePath = appPath + "games/";
-	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath << '\n';
+	globalOutputStream() << "GameManager: Scanning for game description files: " << gamePath << std::endl;
 
 	// Invoke a GameFileLoader functor on every file in the games/ dir.
 	GameFileLoader gameFileLoader(_games, gamePath);
 	Directory_forEach(gamePath.c_str(), gameFileLoader);
 	
-	globalOutputStream() << "GameManager: Found game definitions:\n";
-	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++) {
-		globalOutputStream() << "  " << i->first << "\n";
+	globalOutputStream() << "GameManager: Found game definitions: " << std::endl;
+	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
+	{
+		globalOutputStream() << "  " << i->first << std::endl;
 	}
-	globalOutputStream() << "\n";
+	globalOutputStream() << std::endl;
 }
 
 } // namespace game
