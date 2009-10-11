@@ -707,6 +707,9 @@ void SurfaceInspector::_preShow()
 	_windowPosition.applyPosition();
 	// Import the registry keys 
 	_connector.importValues();
+
+	// Re-scan the selection
+	update();
 }
 
 void SurfaceInspector::_postShow() {
