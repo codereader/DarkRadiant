@@ -8,6 +8,7 @@
 #include "iregistry.h"
 
 #include "gtkutil/dialog.h"
+#include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/EntryAbortedException.h"
 
 #include "layers/LayerSystem.h"
@@ -26,8 +27,6 @@ LayerControlDialog::LayerControlDialog() :
 	gtk_table_set_row_spacings(GTK_TABLE(_controlContainer), 3);
 	gtk_table_set_col_spacings(GTK_TABLE(_controlContainer), 3);
 
-	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(
 		GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG
 	);
@@ -47,7 +46,9 @@ LayerControlDialog::LayerControlDialog() :
 void LayerControlDialog::populateWindow() {
 	// Create the "master" vbox 
 	GtkWidget* overallVBox = gtk_vbox_new(FALSE, 6);
-	gtk_container_add(GTK_CONTAINER(getWindow()), overallVBox);
+	gtk_container_set_border_width(GTK_CONTAINER(overallVBox), 12);
+
+	gtk_container_add(GTK_CONTAINER(getWindow()), gtkutil::ScrolledFrame(overallVBox, true));
 
 	// Add the LayerControl vbox to the window
 	gtk_box_pack_start(GTK_BOX(overallVBox), _controlContainer, FALSE, FALSE, 0);
