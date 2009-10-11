@@ -348,7 +348,7 @@ void CamWnd::updateXORRectangle(Rectangle area) {
 }
 
 void CamWnd::changeFloor(const bool up) {
-	float current = m_Camera.origin[2] - 48;
+	float current = m_Camera.getOrigin()[2] - 48;
 	float bestUp;
 	float bestDown;
 	FloorHeightWalker walker(current, bestUp, bestDown);
@@ -362,7 +362,8 @@ void CamWnd::changeFloor(const bool up) {
 		current = bestDown;
 	}
 
-	m_Camera.origin[2] = current + 48;
+	const Vector3& org = m_Camera.getOrigin();
+	m_Camera.setOrigin(Vector3(org[0], org[1], current + 48));
 
 	m_Camera.updateModelview();
 	update();
