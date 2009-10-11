@@ -70,7 +70,8 @@ Doom3FileSystem::Doom3FileSystem() :
 	_numDirectories(0)
 {}
 
-void Doom3FileSystem::initDirectory(const std::string& inputPath) {
+void Doom3FileSystem::initDirectory(const std::string& inputPath)
+{
     if (_numDirectories == (VFS_MAXDIRS-1)) {
 		return;
     }
@@ -107,7 +108,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath) {
 		return; // nothing found
 	}
 	
-	globalOutputStream() << "[vfs] searched directory: " << path.c_str() << "\n";
+	globalOutputStream() << "[vfs] searched directory: " << path << std::endl;
 	
 	// Get the ArchiveLoader and try to load each file
 	ArchiveLoader& archiveModule = GlobalArchive("PK4");  
@@ -119,20 +120,34 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath) {
 	}
 }
 
-void Doom3FileSystem::initialise() {
-    globalOutputStream() << "filesystem initialised\n";
+void Doom3FileSystem::initialise()
+{
+	globalOutputStream() << "filesystem initialised" << std::endl;
+
+	// Get the VFS search paths from the game manager
+	const game::IGameManager::PathList& paths = 
+		GlobalGameManager().getVFSSearchPaths();
+	
+	// Initialise the paths, in the given order
+	for (game::IGameManager::PathList::const_iterator i = paths.begin();
+		 i != paths.end(); i++)
+	{
+		initDirectory(*i);
+	}
     
-    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i)
+	{
     	(*i)->onFileSystemInitialise();
     }
 }
 
 void Doom3FileSystem::shutdown() {
-	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); i++) {
+	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i)
+	{
     	(*i)->onFileSystemShutdown();
     }
 	
-	globalOutputStream() << "filesystem shutdown\n";
+	globalOutputStream() << "filesystem shutdown" << std::endl;
 	
 	_archives.clear();
 	_numDirectories = 0;
@@ -161,7 +176,7 @@ int Doom3FileSystem::getFileCount(const std::string& filename) {
 
 ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
 	if (filename.find("\\") != std::string::npos) {
-		globalErrorStream() << "Filename contains backslash: " << filename.c_str() << "\n";
+		globalErrorStream() << "Filename contains backslash: " << filename << std::endl;
 		return ArchiveFilePtr();
 	}
 	
@@ -272,7 +287,7 @@ void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::strin
 		entry.is_pakfile = true;
 		_archives.push_back(entry);
 		
-		globalOutputStream() << "[vfs] pak file: " << filename.c_str() << "\n";
+		globalOutputStream() << "[vfs] pak file: " << filename << std::endl;
 	}
 }
 
@@ -293,19 +308,9 @@ const StringSet& Doom3FileSystem::getDependencies() const {
 	return _dependencies;
 }
 
-void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "VFS::initialiseModule called\n";
-	
-	// Get the VFS search paths from the game manager
-	const game::IGameManager::PathList& paths = 
-		GlobalGameManager().getVFSSearchPaths();
-	
-	// Initialise the paths, in the given order
-	for (game::IGameManager::PathList::const_iterator i = paths.begin();
-		 i != paths.end(); i++)
-	{
-		initDirectory(*i);
-	}
+void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << "VFS::initialiseModule called" << std::endl;
 	
 	initialise();
 }

@@ -378,10 +378,14 @@ void Manager::updateEnginePath(bool forced)
 	std::string newFSGameBase = GlobalRegistry().get(RKEY_FS_GAME_BASE);
 	
 	// Only update if any settings were changed, or if this is a "forced" update
-	if (newPath != _enginePath || newFSGame != _fsGame || newFSGameBase != _fsGameBase || forced) {
+	if (newPath != _enginePath || newFSGame != _fsGame || newFSGameBase != _fsGameBase || forced)
+	{
+		bool enginePathWasInitialised = _enginePathInitialised;
+
 		// Check, if the engine path was already initialised in this session
 		// If yes, shutdown the virtual filesystem.
-		if (_enginePathInitialised) {
+		if (enginePathWasInitialised)
+		{
 			GlobalFileSystem().shutdown();
 			GlobalRegistry().set(RKEY_MAP_PATH, "");
 			_enginePathInitialised = false;
@@ -396,7 +400,8 @@ void Manager::updateEnginePath(bool forced)
 		// Reconstruct the paths basing on these two, the _modBasePath may be out of date
 		constructPaths();
 		
-		if (!_enginePathInitialised) {
+		if (!_enginePathInitialised)
+		{
 			if (!_fsGame.empty()) {
 				// We have a MOD, register this directory first
 				_vfsSearchPaths.push_back(_modPath);
@@ -434,17 +439,22 @@ void Manager::updateEnginePath(bool forced)
 			);
 			_vfsSearchPaths.push_back(baseGame);
 			
-         // Update map and prefab paths
-         setMapAndPrefabPaths(userBasePath);
+			// Update map and prefab paths
+			setMapAndPrefabPaths(userBasePath);
 
 			_enginePathInitialised = true;
 			
 			globalOutputStream() << "VFS Search Path priority is: \n"; 
 			for (PathList::iterator i = _vfsSearchPaths.begin();
-              i != _vfsSearchPaths.end();
-              i++) 
-         {
+				i != _vfsSearchPaths.end(); ++i) 
+			{
 				globalOutputStream() << "- " << (*i) << "\n";
+			}
+
+			if (enginePathWasInitialised)
+			{
+				// Re-initialise the filesystem, if we were initialised before
+				GlobalFileSystem().initialise();
 			}
 		}
 	}
