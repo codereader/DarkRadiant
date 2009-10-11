@@ -83,9 +83,25 @@ Vector2 FaceItem::getCentroid() const {
 	return texCentroid;
 }
 
-bool FaceItem::testSelect(const Rectangle& rectangle) {
-	// Check if the centroid is within the rectangle
-	return rectangle.contains(getCentroid());
+bool FaceItem::testSelect(const Rectangle& rectangle)
+{
+	Vector2 texCentroid;
+
+	for (Winding::iterator i = _winding.begin(); i != _winding.end(); ++i)
+	{
+		if (rectangle.contains(i->texcoord))
+		{
+			return true;
+		}
+
+		// Otherwise, just continue summing up the texcoords for the centroid check
+		texCentroid += i->texcoord;
+	}
+
+	// Take the average value of all the winding texcoords to retrieve the centroid
+	texCentroid /= _winding.numpoints;
+	
+	return rectangle.contains(texCentroid);
 }
 
 void FaceItem::snapSelectedToGrid(float grid) {
