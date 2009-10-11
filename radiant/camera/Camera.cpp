@@ -5,12 +5,15 @@
 #include "GlobalCamera.h"
 #include "CameraSettings.h"
 
+Vector3 Camera::_prevOrigin(0,0,0);
+Vector3 Camera::_prevAngles(0,0,0);
+
 Camera::Camera(View* view, const Callback& update) : 
+	_origin(_prevOrigin), // Use previous origin for camera position
+	_angles(_prevAngles),
 	width(0),
 	height(0),
 	timing(false),
-	origin(0, 0, 0),
-	angles(0, 0, 0),
 	color(0, 0, 0),
 	movementflags(0),
 	m_keymove_handler(0),
@@ -26,18 +29,18 @@ void Camera::keyControl(float dtime) {
 	
 	// Update angles
 	if (movementflags & MOVE_ROTLEFT)
-		angles[CAMERA_YAW] += 15 * dtime* angleSpeed;
+		_angles[CAMERA_YAW] += 15 * dtime* angleSpeed;
 	if (movementflags & MOVE_ROTRIGHT)
-		angles[CAMERA_YAW] -= 15 * dtime * angleSpeed;
+		_angles[CAMERA_YAW] -= 15 * dtime * angleSpeed;
 	if (movementflags & MOVE_PITCHUP) {
-		angles[CAMERA_PITCH] += 15 * dtime* angleSpeed;
-		if (angles[CAMERA_PITCH] > 90)
-			angles[CAMERA_PITCH] = 90;
+		_angles[CAMERA_PITCH] += 15 * dtime* angleSpeed;
+		if (_angles[CAMERA_PITCH] > 90)
+			_angles[CAMERA_PITCH] = 90;
 	}
 	if (movementflags & MOVE_PITCHDOWN) {
-		angles[CAMERA_PITCH] -= 15 * dtime * angleSpeed;
-		if (angles[CAMERA_PITCH] < -90)
-			angles[CAMERA_PITCH] = -90;
+		_angles[CAMERA_PITCH] -= 15 * dtime * angleSpeed;
+		if (_angles[CAMERA_PITCH] < -90)
+			_angles[CAMERA_PITCH] = -90;
 	}
 
 	updateModelview();
@@ -45,17 +48,17 @@ void Camera::keyControl(float dtime) {
 
 	// Update position
 	if (movementflags & MOVE_FORWARD)
-		origin += forward * (dtime * movementSpeed);
+		_origin += forward * (dtime * movementSpeed);
 	if (movementflags & MOVE_BACK)
-		origin += forward * (-dtime * movementSpeed);
+		_origin += forward * (-dtime * movementSpeed);
 	if (movementflags & MOVE_STRAFELEFT)
-		origin += right * (-dtime * movementSpeed);
+		_origin += right * (-dtime * movementSpeed);
 	if (movementflags & MOVE_STRAFERIGHT)
-		origin += right * (dtime * movementSpeed);
+		_origin += right * (dtime * movementSpeed);
 	if (movementflags & MOVE_UP)
-		origin += g_vector3_axis_z * (dtime * movementSpeed);
+		_origin += g_vector3_axis_z * (dtime * movementSpeed);
 	if (movementflags & MOVE_DOWN)
-		origin += g_vector3_axis_z * (-dtime * movementSpeed);
+		_origin += g_vector3_axis_z * (-dtime * movementSpeed);
 
 	updateModelview();
 }
@@ -96,13 +99,17 @@ void Camera::keyMove() {
 	GlobalCamera().movedNotify();
 }
 
-void Camera::updateModelview() {
+void Camera::updateModelview()
+{
+	_prevAngles = _angles;
+	_prevOrigin = _origin;
+
 	modelview = Matrix4::getIdentity();
 
 	// roll, pitch, yaw
-	Vector3 radiant_eulerXYZ(0, -angles[CAMERA_PITCH], angles[CAMERA_YAW]);
+	Vector3 radiant_eulerXYZ(0, -_angles[CAMERA_PITCH], _angles[CAMERA_YAW]);
 
-	modelview.translateBy(origin);
+	modelview.translateBy(_origin);
 	matrix4_rotate_by_euler_xyz_degrees(modelview, radiant_eulerXYZ);
 	modelview.multiplyBy(g_radiant2opengl);
 	matrix4_affine_invert(modelview);
@@ -140,31 +147,31 @@ void Camera::freeMove(int dx, int dy) {
 		const float strafespeed = GlobalEventManager().MouseEvents().getCameraStrafeSpeed();
 		const float forwardStrafeFactor = GlobalEventManager().MouseEvents().getCameraForwardStrafeFactor();
 
-		origin -= vright * strafespeed * dx;
+		_origin -= vright * strafespeed * dx;
 
 		if (m_strafe_forward) {
-			origin += vpn * strafespeed * dy * forwardStrafeFactor;
+			_origin += vpn * strafespeed * dy * forwardStrafeFactor;
 		} else {
-			origin += vup * strafespeed * dy;
+			_origin += vup * strafespeed * dy;
 		}
 	} else { // free rotation
 		const float dtime = 0.1f;
 
 		const float zAxisFactor = getCameraSettings()->invertMouseVerticalAxis() ? -1.0f : 1.0f;
 
-		angles[CAMERA_PITCH] += dy * dtime * angleSpeed * zAxisFactor;
+		_angles[CAMERA_PITCH] += dy * dtime * angleSpeed * zAxisFactor;
 
-		angles[CAMERA_YAW] += dx * dtime * angleSpeed;
+		_angles[CAMERA_YAW] += dx * dtime * angleSpeed;
 
-		if (angles[CAMERA_PITCH] > 90)
-			angles[CAMERA_PITCH] = 90;
-		else if (angles[CAMERA_PITCH] < -90)
-			angles[CAMERA_PITCH] = -90;
+		if (_angles[CAMERA_PITCH] > 90)
+			_angles[CAMERA_PITCH] = 90;
+		else if (_angles[CAMERA_PITCH] < -90)
+			_angles[CAMERA_PITCH] = -90;
 
-		if (angles[CAMERA_YAW] >= 360)
-			angles[CAMERA_YAW] -=360;
-		else if (angles[CAMERA_YAW] <= 0)
-			angles[CAMERA_YAW] +=360;
+		if (_angles[CAMERA_YAW] >= 360)
+			_angles[CAMERA_YAW] -=360;
+		else if (_angles[CAMERA_YAW] <= 0)
+			_angles[CAMERA_YAW] +=360;
 	}
 
 	updateModelview();
@@ -197,36 +204,42 @@ void Camera::mouseControl(int x, int y) {
 			xf = 0;
 	}
 
-	origin += forward * (yf * 0.1f* movementSpeed);
-	angles[CAMERA_YAW] += xf * -0.1f * movementSpeed;
+	_origin += forward * (yf * 0.1f* movementSpeed);
+	_angles[CAMERA_YAW] += xf * -0.1f * movementSpeed;
 
 	updateModelview();
 }
 
-void Camera::setAngles(const Vector3& newAngles) {
-	angles = newAngles;
-	updateModelview();
-	m_update();
-	GlobalCamera().movedNotify();
-}
+void Camera::setAngles(const Vector3& newAngles)
+{
+	_angles = newAngles;
+	_prevAngles = _angles;
 
-Vector3 Camera::getAngles() const {
-	return angles;
-}
-
-void Camera::setOrigin(const Vector3& newOrigin) {
-	origin = newOrigin;
 	updateModelview();
 	m_update();
 	GlobalCamera().movedNotify();
 }
 
-Vector3 Camera::getOrigin() const {
-	return origin;
+const Vector3& Camera::getAngles() const {
+	return _angles;
+}
+
+void Camera::setOrigin(const Vector3& newOrigin)
+{
+	_origin = newOrigin;
+	_prevOrigin = _origin;
+
+	updateModelview();
+	m_update();
+	GlobalCamera().movedNotify();
+}
+
+const Vector3& Camera::getOrigin() const {
+	return _origin;
 }
 
 void Camera::moveUpdateAxes() {
-	double ya = degrees_to_radians(angles[CAMERA_YAW]);
+	double ya = degrees_to_radians(_angles[CAMERA_YAW]);
 
 	// the movement matrix is kept 2d
 	forward[0] = static_cast<float>(cos(ya));

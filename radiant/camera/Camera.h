@@ -25,15 +25,18 @@ const unsigned int MOVE_PITCHUP = 1 << 8;
 const unsigned int MOVE_PITCHDOWN = 1 << 9;
 const unsigned int MOVE_ALL = MOVE_FORWARD|MOVE_BACK|MOVE_ROTRIGHT|MOVE_ROTLEFT|MOVE_STRAFERIGHT|MOVE_STRAFELEFT|MOVE_UP|MOVE_DOWN|MOVE_PITCHUP|MOVE_PITCHDOWN;
 
-class Camera {
+class Camera
+{
+	static Vector3 _prevOrigin;
+	static Vector3 _prevAngles;
+
+	Vector3 _origin;
+	Vector3 _angles;
 
 public:
 	int width, height;
 
 	bool timing;
-
-	Vector3 origin;
-	Vector3 angles;
 
 	Vector3 color;   // background
 
@@ -80,10 +83,10 @@ public:
 	void freemoveUpdateAxes();
 	void moveUpdateAxes();
 
-	Vector3 getOrigin() const;
+	const Vector3& getOrigin() const;
 	void setOrigin(const Vector3& newOrigin);
 
-	Vector3 getAngles() const;
+	const Vector3& getAngles() const;
 	void setAngles(const Vector3& newAngles);
 
 	void mouseMove(int x, int y);
