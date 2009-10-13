@@ -217,9 +217,13 @@ void EntityInspector::onKeyChange(const std::string& key,
 	// Check if we should update the key/value entry boxes
 	std::string curKey = gtk_entry_get_text(GTK_ENTRY(_keyEntry));
 
+	std::string selectedKey = getListSelection(PROPERTY_NAME_COLUMN);
+
 	// If the key in the entry box matches the key which got changed,
-	// update the value accordingly, otherwise leave it alone
-	if (curKey == key)
+	// update the value accordingly, otherwise leave it alone. This is to fix
+	// the entry boxes not being updated when a PropertyEditor is changing the value.
+	// Therefore only do this if the selectedKey is matching too.
+	if (curKey == key && selectedKey == key)
 	{
 		gtk_entry_set_text(GTK_ENTRY(_valEntry), value.c_str());
 	}
