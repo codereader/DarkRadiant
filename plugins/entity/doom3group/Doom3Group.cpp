@@ -236,6 +236,8 @@ void Doom3Group::construct()
 {
 	m_rotation.setIdentity();
 
+	m_isModel = false;
+
 	_owner.addKeyObserver("model", Doom3Group::ModelChangedCaller(*this));
 	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
 	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
@@ -244,7 +246,7 @@ void Doom3Group::construct()
 	_owner.addKeyObserver(curve_Nurbs, CurveNURBS::CurveChangedCaller(m_curveNURBS));
 	_owner.addKeyObserver(curve_CatmullRomSpline, CurveCatmullRom::CurveChangedCaller(m_curveCatmullRom));
 
-	m_isModel = false;
+	updateIsModel();
 }
 
 void Doom3Group::destroy()
