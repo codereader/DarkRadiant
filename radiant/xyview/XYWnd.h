@@ -84,8 +84,8 @@ class XYWnd :
 	int m_entityCreate_x, m_entityCreate_y;
 	bool m_entityCreate;
 	
-  	// Save the current event state
-  	GdkEventButton* _event;
+  	// Save the current button state
+  	guint _eventState;
   	
   	guint m_move_focusOut;
 	guint m_zoom_focusOut;
@@ -197,9 +197,6 @@ public:
 
 	int& dragZoom();
 
-  	// Save the current GDK event state
-  	void setEvent(GdkEventButton* event);
-  
 	// The method handling the different mouseUp situations according to <event>
 	void mouseUp(int x, int y, GdkEventButton* event);
 

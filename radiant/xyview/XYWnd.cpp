@@ -162,10 +162,6 @@ void XYWnd::destroyXYView() {
 	}
 }
 
-void XYWnd::setEvent(GdkEventButton* event) {
-	_event = event;
-}
-
 void XYWnd::setScale(float f) {
 	m_fScale = f;
 	updateProjection();
@@ -289,7 +285,7 @@ void XYWnd::chaseMouse() {
 
 	//globalOutputStream() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
 
-	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _event->state);
+	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _eventState);
   
 	// greebo: Restart the timer
 	_chaseMouseTimer.start();
@@ -1619,7 +1615,7 @@ gboolean XYWnd::callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XY
 		GlobalXYWnd().setActiveXY(self->_id);
 
 		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
-		self->setEvent(event);
+		self->_eventState = event->state;
 		
 		// Pass the GdkEventButton* to the XYWnd class, the boolean <true> is passed but never used
 		self->mouseDown(static_cast<int>(event->x), static_cast<int>(event->y), event);
@@ -1636,7 +1632,7 @@ gboolean XYWnd::callbackButtonRelease(GtkWidget* widget, GdkEventButton* event, 
 		self->mouseUp(static_cast<int>(event->x), static_cast<int>(event->y), event);
 
 		// Clear the buttons that the button_release has been called with
-		self->setEvent(event);
+		self->_eventState = event->state;
 	}
 	return FALSE;
 }
