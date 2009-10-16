@@ -381,6 +381,15 @@ void Light::setLightRadius(const AABB& aabb)
 		Vector3 delta = aabb.getExtents() - m_doom3Radius.m_radiusTransformed;
 
 		m_doom3Radius.m_radiusTransformed += delta*2;
+
+		// Constrain the values to barely non-zero limits (issue #1969)
+		for (int i = 0; i < 3; ++i)
+		{
+			if (m_doom3Radius.m_radiusTransformed[i] < 0.01)
+			{
+				m_doom3Radius.m_radiusTransformed[i] = 0.01;
+			}
+		}
 	}
 	else
 	{
