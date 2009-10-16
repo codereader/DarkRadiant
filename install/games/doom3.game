@@ -194,7 +194,7 @@
 		<property match="bind" category="Links" type="entity" />
 		<property match="bindToJoint" category="Links" type="text" />
 		<property match="s_shader" category="Sound" type="sound" />
-		<property match="snd_.*" category="Sound" type="sound" />
+		<property match="snd_.*" category="Sound" type="sound" hidden="1" />
 		<property match="s_mindistance" category="Sound" type="text" />
 		<property match="s_maxdistance" category="Sound" type="text" />
 		<property match="s_looping" category="Sound" type="bool" />
