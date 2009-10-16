@@ -247,6 +247,12 @@ void AddPropertyDialog::populateTreeView()
 		 iter != propNodes.end();
 		 ++iter)
 	{
+		// Skip hidden properties
+		if (iter->getAttributeValue("hidden") == "1")
+		{
+			continue;
+		}
+
 		GtkTreeIter t;
 
 		// If this property has a category, look up the top-level parent iter
