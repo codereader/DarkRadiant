@@ -819,6 +819,11 @@ void CamWnd::setContainer(GtkWindow* newParent) {
 		m_window_observer->removeObservedWidget(GTK_WIDGET(_parentWidget));
 		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
 
+		if (m_bFreeMove)
+		{
+			disableFreeMove();
+		}
+
 		_parentWidget = NULL;
 	}
 
