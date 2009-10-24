@@ -267,7 +267,7 @@ void _pico_first_token( char *str )
 	if( !str || !*str )
 		return;
 	while( *str && !isspace( *str ) )
-		*str++;
+		str++;
 	*str = '\0';
 }
 
@@ -762,8 +762,8 @@ picoParser_t *_pico_new_parser( picoByte_t *buffer, int bufSize )
 		return NULL;
 	}
 	/* setup */
-	p->buffer 	= buffer;
-	p->cursor 	= buffer;
+	p->buffer 	= (char*)buffer;
+	p->cursor 	= (char*)buffer;
 	p->bufSize	= bufSize;
 	p->max    	= p->buffer + bufSize;
 	p->curLine = 1; /* sea: new */
