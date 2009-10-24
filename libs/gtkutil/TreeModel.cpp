@@ -9,7 +9,7 @@ std::string TreeModel::getString(GtkTreeModel* model,
 								 gint colNo) 
 {
 	// Get a GValue
-	GValue val = {0, 0};
+	GValue val = {0, {0,0} };
 	gtk_tree_model_get_value(model, iter, colNo, &val);
 
 	// Create and return the string, and free the GValue
@@ -25,7 +25,7 @@ std::string TreeModel::getString(GtkTreeModel* model,
 // Extract a boolean from a TreeModel
 bool TreeModel::getBoolean(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
 	// Get a GValue
-	GValue val = {0, 0};
+	GValue val = {0, {0,0} };
 	gtk_tree_model_get_value(model, iter, colNo, &val);
 
 	// Create and return the string, and free the GValue
@@ -37,7 +37,7 @@ bool TreeModel::getBoolean(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
 // Extract a boolean from a TreeModel
 int TreeModel::getInt(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
 	// Get a GValue
-	GValue val = {0, 0};
+	GValue val = {0, {0,0} };
 	gtk_tree_model_get_value(model, iter, colNo, &val);
 
 	// Create and return the string, and free the GValue
@@ -49,7 +49,7 @@ int TreeModel::getInt(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
 // Extract a boolean from a TreeModel
 gpointer TreeModel::getPointer(GtkTreeModel* model, GtkTreeIter* iter, gint colNo) {
 	// Get a GValue
-	GValue val = {0, 0};
+	GValue val = {0, {0,0} };
 	gtk_tree_model_get_value(model, iter, colNo, &val);
 
 	// Create and return the string, and free the GValue
