@@ -33,6 +33,8 @@ class PatchNode :
 	public Transformable,
 	public Patch::Observer
 {
+	DragPlanes m_dragPlanes;
+
 	Patch m_patch;
 	PatchDoom3TokenImporter m_importMap;
 	PatchDoom3TokenExporter m_exportMap;
@@ -43,8 +45,6 @@ class PatchNode :
 	// The patch control instances
 	typedef std::vector<PatchControlInstance> PatchControlInstances;
 	PatchControlInstances m_ctrl_instances;
-
-	DragPlanes m_dragPlanes;
 
 	// An array of renderable points
 	mutable RenderablePointVector m_render_selected;
