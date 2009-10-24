@@ -7,13 +7,13 @@
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :
+	m_dragPlanes(SelectedChangedComponentCaller(*this)),
 	m_patch(*this, 
 			EvaluateTransformCaller(*this), 
 			Node::BoundsChangedCaller(*this)), // create the m_patch member with the node parameters
 	m_importMap(m_patch),
 	m_exportMap(m_patch),
 	_selectable(SelectedChangedCaller(*this)),
-	m_dragPlanes(SelectedChangedComponentCaller(*this)),
 	m_render_selected(GL_POINTS)
 {
 	m_patch.m_patchDef3 = patchDef3;
@@ -47,12 +47,12 @@ PatchNode::PatchNode(const PatchNode& other) :
 	Bounded(other),
 	Transformable(other),
 	Patch::Observer(other),
+	m_dragPlanes(SelectedChangedComponentCaller(*this)),
 	m_patch(other.m_patch, *this, EvaluateTransformCaller(*this), 
 		    Node::BoundsChangedCaller(*this)), // create the patch out of the <other> one
 	m_importMap(m_patch),
 	m_exportMap(m_patch),
 	_selectable(SelectedChangedCaller(*this)),
-	m_dragPlanes(SelectedChangedComponentCaller(*this)),
 	m_render_selected(GL_POINTS)
 {
 	m_lightList = &GlobalRenderSystem().attach(*this);
