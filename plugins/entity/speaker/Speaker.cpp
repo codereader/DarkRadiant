@@ -204,13 +204,17 @@ void Speaker::setRadiusFromAABB(const AABB& aabb)
 		oldRadius = 1;
 	}
 
-	float newRadius = static_cast<float>(oldRadius + maxTrans);
+	float newMax = static_cast<float>(oldRadius + maxTrans);
 
-	float ratio = newRadius / oldRadius;
+	float ratio = newMax / oldRadius;
+	float newMin = _radii.getMin() * ratio;
+
+	if (newMax < 0) newMax = 0.02f;
+	if (newMin < 0) newMin = 0.01f;
 
 	// Resize the radii and update the min radius proportionally
-	_radiiTransformed.setMax(newRadius);
-	_radiiTransformed.setMin(_radii.getMin() * ratio);
+	_radiiTransformed.setMax(newMax);
+	_radiiTransformed.setMin(newMin);
 
 	updateAABB();
 	updateTransform();
