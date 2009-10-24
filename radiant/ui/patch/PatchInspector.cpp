@@ -383,15 +383,16 @@ void PatchInspector::_preShow()
 	// Restore the position
 	_windowPosition.applyPosition();
 
-	// Update the widget values
-	update();
+	// Check for selection changes before showing the dialog again
+	rescanSelection();
 }
 
 void PatchInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
 	rescanSelection();
 }
 
-void PatchInspector::rescanSelection() {
+void PatchInspector::rescanSelection()
+{
 	// Check if there is one distinct patch selected
 	bool sensitive = (_selectionInfo.patchCount == 1);
 
