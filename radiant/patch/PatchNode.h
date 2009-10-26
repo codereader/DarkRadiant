@@ -35,10 +35,6 @@ class PatchNode :
 {
 	DragPlanes m_dragPlanes;
 
-	Patch m_patch;
-	PatchDoom3TokenImporter m_importMap;
-	PatchDoom3TokenExporter m_exportMap;
-
 	// The attached selectable
 	ObservedSelectable _selectable;
 
@@ -48,6 +44,10 @@ class PatchNode :
 
 	// An array of renderable points
 	mutable RenderablePointVector m_render_selected;
+
+	Patch m_patch;
+	PatchDoom3TokenImporter m_importMap;
+	PatchDoom3TokenExporter m_exportMap;
 	
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable) 
 	mutable AABB m_aabb_component;
