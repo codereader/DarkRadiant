@@ -18,8 +18,8 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	// Set the search path to the language and style files
 	gchar* directories[2];
 
-#if defined(POSIX) && defined(PKGLIBDIR)
-	std::string langFilesDir = std::string(PKGLIBDIR) + "/sourceviewer/";
+#if defined(POSIX) && defined(PKGDATADIR)
+	std::string langFilesDir = std::string(PKGDATADIR) + "/sourceviewer/";
 #else
 	std::string langFilesDir = GlobalRegistry().get(RKEY_APP_PATH) + "sourceviewer/";
 #endif
