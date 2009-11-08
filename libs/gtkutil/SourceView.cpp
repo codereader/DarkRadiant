@@ -18,7 +18,11 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	// Set the search path to the language and style files
 	gchar* directories[2];
 
+#if defined(POSIX) && defined(PKGLIBDIR)
+	std::string langFilesDir = std::string(PKGLIBDIR) + "/sourceviewer/";
+#else
 	std::string langFilesDir = GlobalRegistry().get(RKEY_APP_PATH) + "sourceviewer/";
+#endif
 
 	directories[0] = const_cast<gchar*>(langFilesDir.c_str()); // stupid GtkSourceLanguageManager is expecting non-const gchar* pointer...
 	directories[1] = NULL;
@@ -34,7 +38,7 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 
 	if (lang == NULL)
 	{
-		globalErrorStream() << "SourceView: Cannot find language " << language << std::endl;
+		globalErrorStream() << "SourceView: Cannot find language " << language << " in " << langFilesDir << std::endl;
 	}
 
 	// Remember the pointers to the textbuffers
