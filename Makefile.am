@@ -24,9 +24,9 @@ glprogs_DATA = $(top_srcdir)/install/gl/*
 
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
-scripts_DATA = $(top_srcdir)/install/scripts/*
+scripts_DATA = $(top_srcdir)/install/scripts/*.py
 commandsdir = $(scriptsdir)/commands
-commands_DATA = $(top_srcdir)/install/scripts/commands/*
+commands_DATA = $(top_srcdir)/install/scripts/commands/*.py
 
 # Install sourceviewer synax and colour files
 sourceviewerdir = $(pkglibdir)/sourceviewer
