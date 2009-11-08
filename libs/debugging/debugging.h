@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define STR2(x)	STR(x)
 #define FILE_LINE __FILE__ ":" STR2(__LINE__)
 
-#if defined(_DEBUG) || 1
+#if defined(_DEBUG)
 #define DEBUG_ASSERTS
 #endif
 
