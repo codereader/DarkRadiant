@@ -162,7 +162,7 @@ void ColourSchemeEditor::selectActiveScheme() {
 		
 		do {
 			// Get the value
-			GValue val = {0, 0};
+			GValue val = {0, {{0}}};
 			gtk_tree_model_get_value(GTK_TREE_MODEL(_listStore), &iter, 0, &val);
 			// Get the string
 			std::string name = g_value_get_string(&val);
