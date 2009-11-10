@@ -34,10 +34,10 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
   _inputStream(&importInfo.inputStream),
   _tok(_inputStream),
   _infoFile(infoFile),
-  _dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
   _entityCount(0),
   _primitiveCount(0),
   _layerInfoCount(0),
+  _dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
   _parser(parser),
   _debug(GlobalRegistry().get("user/debug") == "1")
 {

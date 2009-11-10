@@ -317,7 +317,7 @@ void FilterEditor::updateWidgetSensitivity() {
 
 	if (_selectedRule != -1) {
 
-		bool lastSelected = (_selectedRule + 1 >= _filter.rules.size() || _filter.rules.size() <= 1);
+		bool lastSelected = (_selectedRule + 1 >= static_cast<int>(_filter.rules.size()) || _filter.rules.size() <= 1);
 		bool firstSelected = (_selectedRule <= 0 || _filter.rules.size() <= 1);
 
 		gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_RULE_UP_BUTTON], firstSelected ? FALSE : TRUE);
@@ -351,7 +351,7 @@ void FilterEditor::onRegexEdited(GtkCellRendererText* renderer, gchar* path, gch
 		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_ruleStore), &iter, COL_INDEX);
 		
 		// Update the criterion
-		assert(index >= 0 && index < self->_filter.rules.size());
+		assert(index >= 0 && index < static_cast<int>(self->_filter.rules.size()));
 
 		self->_filter.rules[index].match = new_text;
 
@@ -371,7 +371,7 @@ void FilterEditor::onTypeEdited(GtkCellRendererText* renderer, gchar* path, gcha
 		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_ruleStore), &iter, COL_INDEX);
 		
 		// Update the criterion
-		assert(index >= 0 && index < self->_filter.rules.size());
+		assert(index >= 0 && index < static_cast<int>(self->_filter.rules.size()));
 
 		self->_filter.rules[index].type = new_text;
 
@@ -392,7 +392,7 @@ void FilterEditor::onActionEdited(GtkCellRendererText* renderer, gchar* path, gc
 		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_ruleStore), &iter, COL_INDEX);
 		
 		// Update the criterion
-		assert(index >= 0 && index < self->_filter.rules.size());
+		assert(index >= 0 && index < static_cast<int>(self->_filter.rules.size()));
 
 		// Update the bool flag
 		self->_filter.rules[index].show = (std::string(new_text) == "show");
@@ -446,7 +446,7 @@ void FilterEditor::onMoveRuleUp(GtkWidget* widget, FilterEditor* self) {
 }
 
 void FilterEditor::onMoveRuleDown(GtkWidget* widget, FilterEditor* self) {
-	if (self->_selectedRule < self->_filter.rules.size() - 1) {
+	if (self->_selectedRule < static_cast<int>(self->_filter.rules.size()) - 1) {
 		FilterRule temp = self->_filter.rules[self->_selectedRule + 1];
 		self->_filter.rules[self->_selectedRule + 1] = self->_filter.rules[self->_selectedRule];
 		self->_filter.rules[self->_selectedRule] = temp;
