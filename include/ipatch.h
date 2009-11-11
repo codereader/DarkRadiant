@@ -241,10 +241,10 @@ public:
 /* greebo: A PatchControl consists of a vertex and a set of texture coordinates.
  * Multiple PatchControls form a PatchControlArray or (together with width and height) a PatchControlMatrix.
  */
-class PatchControl {
-public:
-	Vector3 m_vertex;	// The coordinates of the control point
-	Vector2 m_texcoord;	// The texture coordinates of this point
+struct PatchControl
+{
+	Vector3 vertex;		// The coordinates of the control point
+	Vector2 texcoord;	// The texture coordinates of this point
 };
 
 // greebo: This is a matrix of patch controls. Width and Height are needed to construct such a structure

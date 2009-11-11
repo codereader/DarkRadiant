@@ -304,7 +304,7 @@ void Patch::transform(const Matrix4& matrix) {
 		 i != m_ctrlTransformed.end(); 
 		 ++i) 
 	{
-		matrix4_transform_point(matrix, i->m_vertex);
+		matrix4_transform_point(matrix, i->vertex);
 	}
 	
 	// Check the handedness of the matrix and invert it if needed
@@ -360,7 +360,7 @@ void Patch::snapto(float snap) {
 	undoSave();
 
 	for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-		vector3_snap(i->m_vertex, snap);
+		vector3_snap(i->vertex, snap);
 	}
 
 	controlPointsChanged();
@@ -499,11 +499,11 @@ bool Patch::isValid() const
 
   for(PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
   {
-    if(!double_valid((*i).m_vertex.x())
-      || !double_valid((*i).m_vertex.y())
-      || !double_valid((*i).m_vertex.z())
-      || !double_valid((*i).m_texcoord.x())
-      || !double_valid((*i).m_texcoord.y()))
+    if(!double_valid((*i).vertex.x())
+      || !double_valid((*i).vertex.y())
+      || !double_valid((*i).vertex.z())
+      || !double_valid((*i).texcoord.x())
+      || !double_valid((*i).texcoord.y()))
     {
       globalErrorStream() << "patch has invalid control points\n";
       return false;
@@ -526,12 +526,12 @@ bool Patch::isDegenerate() const {
 	for (PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 		
 		// Skip the first comparison
-		if (i != m_ctrl.begin() && !vector3_equal_epsilon(i->m_vertex, prev, 0.0001)) {
+		if (i != m_ctrl.begin() && !vector3_equal_epsilon(i->vertex, prev, 0.0001)) {
 			return false;
 		}
 
 		// Remember the coords of this vertex
-		prev = i->m_vertex;
+		prev = i->vertex;
 	}
 
 	// The loop went through, all vertices the same
@@ -572,7 +572,7 @@ void Patch::UpdateCachedData()
     UniqueVertexBuffer<PointVertex> inserter(m_ctrl_vertices);
     for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
     {
-      ctrl_indices.insert(inserter.insert(pointvertex_quantised(PointVertex(reinterpret_cast<const Vertex3f&>((*i).m_vertex), colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
+      ctrl_indices.insert(inserter.insert(pointvertex_quantised(PointVertex(reinterpret_cast<const Vertex3f&>((*i).vertex), colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
     }
   }
   {
@@ -688,7 +688,7 @@ void Patch::Redisperse(EMatrixMajor mt)
     {
       p2 = p1+col_stride;
       p3 = p2+col_stride;
-      p2->m_vertex = vector3_mid(p1->m_vertex, p3->m_vertex);
+      p2->vertex = vector3_mid(p1->vertex, p3->vertex);
       p1 = p3;
     }
   }
@@ -767,8 +767,8 @@ void Patch::appendPoints(bool columns, bool beginning) {
 			 oldCol++, newCol++) 
 		{
 			// Copy the control vertex from the old patch to the new patch
-			ctrlAt(newRow, newCol).m_vertex = oldCtrl[oldRow*oldWidth + oldCol].m_vertex;		
-			ctrlAt(newRow, newCol).m_texcoord = oldCtrl[oldRow*oldWidth + oldCol].m_texcoord;
+			ctrlAt(newRow, newCol).vertex = oldCtrl[oldRow*oldWidth + oldCol].vertex;		
+			ctrlAt(newRow, newCol).texcoord = oldCtrl[oldRow*oldWidth + oldCol].texcoord;
 		}
 	}
 	
@@ -787,18 +787,18 @@ void Patch::appendPoints(bool columns, bool beginning) {
 		for (std::size_t row = 0; row < m_height; row++) {
 			// The distance of the two neighbouring columns, 
 			// this is taken as extrapolation value
-			Vector3 vertexDiff = ctrlAt(row, newCol2 + neighbour).m_vertex - 
-								 ctrlAt(row, newCol2 + 2*neighbour).m_vertex;
-			Vector2 texDiff = ctrlAt(row, newCol2 + neighbour).m_texcoord -
-							  ctrlAt(row, newCol2 + 2*neighbour).m_texcoord;
+			Vector3 vertexDiff = ctrlAt(row, newCol2 + neighbour).vertex - 
+								 ctrlAt(row, newCol2 + 2*neighbour).vertex;
+			Vector2 texDiff = ctrlAt(row, newCol2 + neighbour).texcoord -
+							  ctrlAt(row, newCol2 + 2*neighbour).texcoord;
 			
 			// Extrapolate the values of the nearest column
-			ctrlAt(row, newCol2).m_vertex = ctrlAt(row, newCol2 + neighbour).m_vertex + vertexDiff;
-			ctrlAt(row, newCol2).m_texcoord = ctrlAt(row, newCol2 + neighbour).m_texcoord + texDiff;
+			ctrlAt(row, newCol2).vertex = ctrlAt(row, newCol2 + neighbour).vertex + vertexDiff;
+			ctrlAt(row, newCol2).texcoord = ctrlAt(row, newCol2 + neighbour).texcoord + texDiff;
 			
 			// Extrapolate once again linearly from the nearest column to the outermost column
-			ctrlAt(row, newCol1).m_vertex = ctrlAt(row, newCol2).m_vertex + vertexDiff;
-			ctrlAt(row, newCol1).m_texcoord = ctrlAt(row, newCol2).m_texcoord + texDiff;
+			ctrlAt(row, newCol1).vertex = ctrlAt(row, newCol2).vertex + vertexDiff;
+			ctrlAt(row, newCol1).texcoord = ctrlAt(row, newCol2).texcoord + texDiff;
 		}
 	}
 	else {
@@ -816,18 +816,18 @@ void Patch::appendPoints(bool columns, bool beginning) {
 		for (std::size_t col = 0; col < m_width; col++) {
 			// The distance of the two neighbouring rows, 
 			// this is taken as extrapolation value
-			Vector3 vertexDiff = ctrlAt(newRow2 + neighbour, col).m_vertex - 
-								 ctrlAt(newRow2 + 2*neighbour, col).m_vertex;
-			Vector2 texDiff = ctrlAt(newRow2 + neighbour, col).m_texcoord -
-							  ctrlAt(newRow2 + 2*neighbour, col).m_texcoord;
+			Vector3 vertexDiff = ctrlAt(newRow2 + neighbour, col).vertex - 
+								 ctrlAt(newRow2 + 2*neighbour, col).vertex;
+			Vector2 texDiff = ctrlAt(newRow2 + neighbour, col).texcoord -
+							  ctrlAt(newRow2 + 2*neighbour, col).texcoord;
 			
 			// Extrapolate the values of the nearest row
-			ctrlAt(newRow2, col).m_vertex = ctrlAt(newRow2 + neighbour, col).m_vertex + vertexDiff;
-			ctrlAt(newRow2, col).m_texcoord = ctrlAt(newRow2 + neighbour, col).m_texcoord + texDiff;
+			ctrlAt(newRow2, col).vertex = ctrlAt(newRow2 + neighbour, col).vertex + vertexDiff;
+			ctrlAt(newRow2, col).texcoord = ctrlAt(newRow2 + neighbour, col).texcoord + texDiff;
 			
 			// Extrapolate once again linearly from the nearest row to the outermost row
-			ctrlAt(newRow1, col).m_vertex = ctrlAt(newRow2, col).m_vertex + vertexDiff;
-			ctrlAt(newRow1, col).m_texcoord = ctrlAt(newRow2, col).m_texcoord + texDiff;
+			ctrlAt(newRow1, col).vertex = ctrlAt(newRow2, col).vertex + vertexDiff;
+			ctrlAt(newRow1, col).texcoord = ctrlAt(newRow2, col).texcoord + texDiff;
 		}
 	}
 	
@@ -860,14 +860,14 @@ Patch* Patch::MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirs
   {
     for (i=0; i<width; i++)
     {
-      p[(bFirst) ? i : (width-1) - i] = ctrlAt(nIndex, i).m_vertex;
+      p[(bFirst) ? i : (width-1) - i] = ctrlAt(nIndex, i).vertex;
     }
   }
   else
   {
     for (i=0; i<width; i++)
     {
-      p[(bFirst) ? i : (width-1) - i] = ctrlAt(i, nIndex).m_vertex;
+      p[(bFirst) ? i : (width-1) - i] = ctrlAt(i, nIndex).vertex;
     }
   }
 
@@ -884,7 +884,7 @@ void Patch::FlipTexture(int nAxis)
 
   for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
   {
-    i->m_texcoord[nAxis] = -i->m_texcoord[nAxis];
+    i->texcoord[nAxis] = -i->texcoord[nAxis];
   }
   
   controlPointsChanged();
@@ -896,7 +896,7 @@ void Patch::FlipTexture(int nAxis)
 void Patch::translateTexCoords(Vector2 translation) {
 	// Cycle through all control points and shift them in texture space
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-    	i->m_texcoord += translation;
+    	i->texcoord += translation;
   	}
 }
 
@@ -918,8 +918,8 @@ void Patch::ScaleTexture(float s, float t)
 
   for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
   {
-    (*i).m_texcoord[0] *= s;
-    (*i).m_texcoord[1] *= t;
+    (*i).texcoord[0] *= s;
+    (*i).texcoord[1] *= t;
   }
 
   controlPointsChanged();
@@ -934,10 +934,10 @@ void Patch::RotateTexture(float angle)
     
   for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
   {
-    const float x = (*i).m_texcoord[0];
-    const float y = (*i).m_texcoord[1];
-    (*i).m_texcoord[0] = (x * c) - (y * s);
-    (*i).m_texcoord[1] = (y * c) + (x * s);
+    const float x = (*i).texcoord[0];
+    const float y = (*i).texcoord[1];
+    (*i).texcoord[0] = (x * c) - (y * s);
+    (*i).texcoord[1] = (y * c) + (x * s);
   }
 
   controlPointsChanged();
@@ -972,8 +972,8 @@ void Patch::SetTextureRepeat(float s, float t) {
 		// and increment it by sIncr at each step. 
 		for (w=0, sc = 0.0f; w<m_width; w++, sc+=sIncr) {
 			// Set the texture coordinates
-			pDest->m_texcoord[0] = sc;
-			pDest->m_texcoord[1] = tc;
+			pDest->texcoord[0] = sc;
+			pDest->texcoord[1] = tc;
 			// Set the pointer to the next control point
 			pDest++;
 		}
@@ -1013,14 +1013,14 @@ void Patch::CapTexture() {
   Vector3 normal(g_vector3_identity);
 
   {
-    Vector3 tmp( (p2.m_vertex - m_ctrl[0].m_vertex).crossProduct(p3.m_vertex - m_ctrl[0].m_vertex) );
+    Vector3 tmp( (p2.vertex - m_ctrl[0].vertex).crossProduct(p3.vertex - m_ctrl[0].vertex) );
     if(tmp != g_vector3_identity)
     {
       normal += tmp;
     }
   }
   {
-    Vector3 tmp( (p1.m_vertex - p3.m_vertex).crossProduct(m_ctrl[0].m_vertex - p3.m_vertex) );
+    Vector3 tmp( (p1.vertex - p3.vertex).crossProduct(m_ctrl[0].vertex - p3.vertex) );
     if(tmp != g_vector3_identity)
     {
       normal += tmp;
@@ -1076,7 +1076,7 @@ void Patch::NaturalTexture() {
 			{
 				// Set the x-coord (or better s-coord?) of the texture to tex.
 				// For the first width cycle this is tex=0, so the texture is not shifted at the first vertex
-				ctrlAt(h, w).m_texcoord[0] = static_cast<float>(tex);
+				ctrlAt(h, w).texcoord[0] = static_cast<float>(tex);
 			}
 
 			// If we reached the last row (m_width - 1) we are finished (all coordinates are applied)
@@ -1089,7 +1089,7 @@ void Patch::NaturalTexture() {
 				for (std::size_t h = 0; h < m_height; h++)
 				{
 					// v is the vector pointing from one control point to the next neighbour
-					Vector3 v = ctrlAt(h, w).m_vertex - ctrlAt(h, w+1).m_vertex;
+					Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h, w+1).vertex;
 					
 					// translate the distance in world coordinates into texture coords 
 					// (i.e. divide it by the scaled texture size) and add it to the
@@ -1127,7 +1127,7 @@ void Patch::NaturalTexture() {
 			// During each row, we cycle through every height point
 	       	for (std::size_t w = 0; w < m_width; w++)
 			{
-				ctrlAt(h, w).m_texcoord[1] = static_cast<float>(tex);
+				ctrlAt(h, w).texcoord[1] = static_cast<float>(tex);
 			}
 	
 			if (h + 1 == m_height)
@@ -1135,7 +1135,7 @@ void Patch::NaturalTexture() {
 	
 			for (std::size_t w = 0; w < m_width; w++)
 			{
-				Vector3 v = ctrlAt(h, w).m_vertex - ctrlAt(h+1, w).m_vertex;
+				Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h+1, w).vertex;
 
 				double length = tex + (v.getLength() / fSize);
 
@@ -1159,7 +1159,7 @@ void Patch::AccumulateBBox()
 
   for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
   {
-    m_aabb_local.includePoint(i->m_vertex);
+    m_aabb_local.includePoint(i->vertex);
   }
 
   m_boundsChanged();
@@ -1195,35 +1195,35 @@ void Patch::insertColumns(std::size_t colIndex) {
 			// Is this the insert point?
 			if (oldCol == colIndex) {
 				// Left column (to be interpolated)
-				ctrlAt(row, newCol).m_vertex = float_mid(
-					oldCtrl[row*oldWidth + oldCol - 1].m_vertex,
-					oldCtrl[row*oldWidth + oldCol].m_vertex
+				ctrlAt(row, newCol).vertex = float_mid(
+					oldCtrl[row*oldWidth + oldCol - 1].vertex,
+					oldCtrl[row*oldWidth + oldCol].vertex
 				);
-				ctrlAt(row, newCol).m_texcoord = float_mid(
-					oldCtrl[row*oldWidth + oldCol - 1].m_texcoord,
-					oldCtrl[row*oldWidth + oldCol].m_texcoord
+				ctrlAt(row, newCol).texcoord = float_mid(
+					oldCtrl[row*oldWidth + oldCol - 1].texcoord,
+					oldCtrl[row*oldWidth + oldCol].texcoord
 				);
 				
 				// Set the newCol counter to the middle column
 				newCol++;
-				ctrlAt(row, newCol).m_vertex = oldCtrl[row*oldWidth + oldCol].m_vertex;		
-				ctrlAt(row, newCol).m_texcoord = oldCtrl[row*oldWidth + oldCol].m_texcoord;
+				ctrlAt(row, newCol).vertex = oldCtrl[row*oldWidth + oldCol].vertex;		
+				ctrlAt(row, newCol).texcoord = oldCtrl[row*oldWidth + oldCol].texcoord;
 				
 				// Set newCol to the right column (to be interpolated)
 				newCol++;
-				ctrlAt(row, newCol).m_vertex = float_mid(
-					oldCtrl[row*oldWidth + oldCol].m_vertex,
-					oldCtrl[row*oldWidth + oldCol + 1].m_vertex
+				ctrlAt(row, newCol).vertex = float_mid(
+					oldCtrl[row*oldWidth + oldCol].vertex,
+					oldCtrl[row*oldWidth + oldCol + 1].vertex
 				);
-				ctrlAt(row, newCol).m_texcoord = float_mid(
-					oldCtrl[row*oldWidth + oldCol].m_texcoord,
-					oldCtrl[row*oldWidth + oldCol + 1].m_texcoord
+				ctrlAt(row, newCol).texcoord = float_mid(
+					oldCtrl[row*oldWidth + oldCol].texcoord,
+					oldCtrl[row*oldWidth + oldCol + 1].texcoord
 				);
 			}
 			else {
 				// No special column, just copy the control vertex
-				ctrlAt(row, newCol).m_vertex = oldCtrl[row*oldWidth + oldCol].m_vertex;		
-				ctrlAt(row, newCol).m_texcoord = oldCtrl[row*oldWidth + oldCol].m_texcoord;
+				ctrlAt(row, newCol).vertex = oldCtrl[row*oldWidth + oldCol].vertex;		
+				ctrlAt(row, newCol).texcoord = oldCtrl[row*oldWidth + oldCol].texcoord;
 			}
 		}
 	} 
@@ -1258,35 +1258,35 @@ void Patch::insertRows(std::size_t rowIndex) {
 			// Is this the insert point?
 			if (oldRow == rowIndex) {
 				// the column above the insert point (to be interpolated)
-				ctrlAt(newRow, col).m_vertex = float_mid(
-					oldCtrl[(oldRow-1)*oldWidth + col].m_vertex,
-					oldCtrl[oldRow*oldWidth + col].m_vertex
+				ctrlAt(newRow, col).vertex = float_mid(
+					oldCtrl[(oldRow-1)*oldWidth + col].vertex,
+					oldCtrl[oldRow*oldWidth + col].vertex
 				);
-				ctrlAt(newRow, col).m_texcoord = float_mid(
-					oldCtrl[(oldRow-1)*oldWidth + col].m_texcoord,
-					oldCtrl[oldRow*oldWidth + col].m_texcoord
+				ctrlAt(newRow, col).texcoord = float_mid(
+					oldCtrl[(oldRow-1)*oldWidth + col].texcoord,
+					oldCtrl[oldRow*oldWidth + col].texcoord
 				);
 				
 				// Set the newRow counter to the middle row
 				newRow++;
-				ctrlAt(newRow, col).m_vertex = oldCtrl[oldRow*oldWidth + col].m_vertex;		
-				ctrlAt(newRow, col).m_texcoord = oldCtrl[oldRow*oldWidth + col].m_texcoord;
+				ctrlAt(newRow, col).vertex = oldCtrl[oldRow*oldWidth + col].vertex;		
+				ctrlAt(newRow, col).texcoord = oldCtrl[oldRow*oldWidth + col].texcoord;
 				
 				// Set newRow to the lower column (to be interpolated)
 				newRow++;
-				ctrlAt(newRow, col).m_vertex = float_mid(
-					oldCtrl[oldRow*oldWidth + col].m_vertex,
-					oldCtrl[(oldRow+1)*oldWidth + col].m_vertex
+				ctrlAt(newRow, col).vertex = float_mid(
+					oldCtrl[oldRow*oldWidth + col].vertex,
+					oldCtrl[(oldRow+1)*oldWidth + col].vertex
 				);
-				ctrlAt(newRow, col).m_texcoord = float_mid(
-					oldCtrl[oldRow*oldWidth + col].m_texcoord,
-					oldCtrl[(oldRow+1)*oldWidth + col].m_texcoord
+				ctrlAt(newRow, col).texcoord = float_mid(
+					oldCtrl[oldRow*oldWidth + col].texcoord,
+					oldCtrl[(oldRow+1)*oldWidth + col].texcoord
 				);
 			}
 			else {
 				// No special column, just copy the control vertex
-				ctrlAt(newRow, col).m_vertex = oldCtrl[oldRow*oldWidth + col].m_vertex;		
-				ctrlAt(newRow, col).m_texcoord = oldCtrl[oldRow*oldWidth + col].m_texcoord;
+				ctrlAt(newRow, col).vertex = oldCtrl[oldRow*oldWidth + col].vertex;		
+				ctrlAt(newRow, col).texcoord = oldCtrl[oldRow*oldWidth + col].texcoord;
 			}
 		}
 	} 
@@ -1342,8 +1342,8 @@ void Patch::removePoints(bool columns, std::size_t index) {
 			}
 			
 			// Copy the control vertex from the old patch to the new patch
-			ctrlAt(newRow, newCol).m_vertex = oldCtrl[oldRow*oldWidth + oldCol].m_vertex;		
-			ctrlAt(newRow, newCol).m_texcoord = oldCtrl[oldRow*oldWidth + oldCol].m_texcoord;
+			ctrlAt(newRow, newCol).vertex = oldCtrl[oldRow*oldWidth + oldCol].vertex;		
+			ctrlAt(newRow, newCol).texcoord = oldCtrl[oldRow*oldWidth + oldCol].texcoord;
 		}
 	}
 }
@@ -1355,30 +1355,30 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
   case eCapIBevel:
     {
       setDims(3, 3);
-      m_ctrl[0].m_vertex = p[0];
-      m_ctrl[1].m_vertex = p[1];
-      m_ctrl[2].m_vertex = p[1];
-      m_ctrl[3].m_vertex = p[1];
-      m_ctrl[4].m_vertex = p[1];
-      m_ctrl[5].m_vertex = p[1];
-      m_ctrl[6].m_vertex = p[2];
-      m_ctrl[7].m_vertex = p[1];
-      m_ctrl[8].m_vertex = p[1];
+      m_ctrl[0].vertex = p[0];
+      m_ctrl[1].vertex = p[1];
+      m_ctrl[2].vertex = p[1];
+      m_ctrl[3].vertex = p[1];
+      m_ctrl[4].vertex = p[1];
+      m_ctrl[5].vertex = p[1];
+      m_ctrl[6].vertex = p[2];
+      m_ctrl[7].vertex = p[1];
+      m_ctrl[8].vertex = p[1];
     }
     break;
   case eCapBevel:
     {
       setDims(3, 3);
       Vector3 p3(p[2] + (p[0] - p[1]));
-      m_ctrl[0].m_vertex = p3;
-      m_ctrl[1].m_vertex = p3;
-      m_ctrl[2].m_vertex = p[2];
-      m_ctrl[3].m_vertex = p3;
-      m_ctrl[4].m_vertex = p3;
-      m_ctrl[5].m_vertex = p[1];
-      m_ctrl[6].m_vertex = p3;
-      m_ctrl[7].m_vertex = p3;
-      m_ctrl[8].m_vertex = p[0];
+      m_ctrl[0].vertex = p3;
+      m_ctrl[1].vertex = p3;
+      m_ctrl[2].vertex = p[2];
+      m_ctrl[3].vertex = p3;
+      m_ctrl[4].vertex = p3;
+      m_ctrl[5].vertex = p[1];
+      m_ctrl[6].vertex = p3;
+      m_ctrl[7].vertex = p3;
+      m_ctrl[8].vertex = p[0];
     }
     break;
   case eCapEndCap:
@@ -1386,35 +1386,35 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       Vector3 p5(vector3_mid(p[0], p[4]));
 
       setDims(3, 3);
-      m_ctrl[0].m_vertex = p[0];
-      m_ctrl[1].m_vertex = p5;
-      m_ctrl[2].m_vertex = p[4];
-      m_ctrl[3].m_vertex = p[1];
-      m_ctrl[4].m_vertex = p[2];
-      m_ctrl[5].m_vertex = p[3];
-      m_ctrl[6].m_vertex = p[2];
-      m_ctrl[7].m_vertex = p[2];
-      m_ctrl[8].m_vertex = p[2];
+      m_ctrl[0].vertex = p[0];
+      m_ctrl[1].vertex = p5;
+      m_ctrl[2].vertex = p[4];
+      m_ctrl[3].vertex = p[1];
+      m_ctrl[4].vertex = p[2];
+      m_ctrl[5].vertex = p[3];
+      m_ctrl[6].vertex = p[2];
+      m_ctrl[7].vertex = p[2];
+      m_ctrl[8].vertex = p[2];
     }
     break;
   case eCapIEndCap:
     {
       setDims(5, 3);
-      m_ctrl[0].m_vertex = p[4];
-      m_ctrl[1].m_vertex = p[3];
-      m_ctrl[2].m_vertex = p[2];
-      m_ctrl[3].m_vertex = p[1];
-      m_ctrl[4].m_vertex = p[0];
-      m_ctrl[5].m_vertex = p[3];
-      m_ctrl[6].m_vertex = p[3];
-      m_ctrl[7].m_vertex = p[2];
-      m_ctrl[8].m_vertex = p[1];
-      m_ctrl[9].m_vertex = p[1];
-      m_ctrl[10].m_vertex = p[3];
-      m_ctrl[11].m_vertex = p[3];
-      m_ctrl[12].m_vertex = p[2];
-      m_ctrl[13].m_vertex = p[1];
-      m_ctrl[14].m_vertex = p[1];
+      m_ctrl[0].vertex = p[4];
+      m_ctrl[1].vertex = p[3];
+      m_ctrl[2].vertex = p[2];
+      m_ctrl[3].vertex = p[1];
+      m_ctrl[4].vertex = p[0];
+      m_ctrl[5].vertex = p[3];
+      m_ctrl[6].vertex = p[3];
+      m_ctrl[7].vertex = p[2];
+      m_ctrl[8].vertex = p[1];
+      m_ctrl[9].vertex = p[1];
+      m_ctrl[10].vertex = p[3];
+      m_ctrl[11].vertex = p[3];
+      m_ctrl[12].vertex = p[2];
+      m_ctrl[13].vertex = p[1];
+      m_ctrl[14].vertex = p[1];
     }
     break;
   case eCapCylinder:
@@ -1440,7 +1440,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
         PatchControlIter pCtrl = m_ctrl.begin();
         for(std::size_t i = 0; i != m_height; ++i, pCtrl += m_width)
         {
-          pCtrl->m_vertex = p[i];
+          pCtrl->vertex = p[i];
         }
       }
       {
@@ -1448,7 +1448,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
         std::size_t h = m_height - 1;
         for(std::size_t i = 0; i != m_height; ++i, pCtrl += m_width)
         {
-          pCtrl->m_vertex = p[h + (h - i)];
+          pCtrl->vertex = p[h + (h - i)];
         }
       }
 
@@ -1484,7 +1484,7 @@ PatchControlIter Patch::getClosestPatchControlToPoint(const Vector3& point) {
 	for (unsigned int i = 0; i < 4; i++) {
 		
 		// Calculate the distance of the current vertex
-		double candidateDist = (corners[i]->m_vertex - point).getLength();
+		double candidateDist = (corners[i]->vertex - point).getLength();
 		
 		// Compare the distance to the currently closest one
 		if (candidateDist < closestDist || pBest == end()) {
@@ -1514,14 +1514,14 @@ PatchControlIter Patch::getClosestPatchControlToPatch(const Patch& patch) {
 	for (PatchControlConstIter i = patch.begin(); i != patch.end(); ++i)
 	{
 		// Retrieve the vertex
-		const Vector3& patchVertex = i->m_vertex;
+		const Vector3& patchVertex = i->vertex;
 		
 		// Get the nearest control point to the current otherpatch vertex
 		PatchControlIter candidate = getClosestPatchControlToPoint(patchVertex);
 		
 		if (candidate != end())
 		{
-			double candidateDist = (patchVertex - candidate->m_vertex).getLength();
+			double candidateDist = (patchVertex - candidate->vertex).getLength();
 			
 			// If we haven't found a best patch control so far or 
 			// the candidate distance is even better, save it! 
@@ -1564,7 +1564,7 @@ PatchControlIter Patch::getClosestPatchControlToFace(const Face* face)
 			
 			if (candidate != end())
 			{
-				double candidateDist = (faceVertex - candidate->m_vertex).getLength();
+				double candidateDist = (faceVertex - candidate->vertex).getLength();
 				
 				// If we haven't found a best patch control so far or 
 				// the candidate distance is even better, save it! 
@@ -1679,8 +1679,8 @@ void Patch::pasteTextureNatural(const Face* face) {
 		PatchControl& nextRow = m_ctrl[(patchWidth*hStart) + (wStart + wIncr)];
 		
 		// Calculate the world direction of these control points and extract a base
-		Vector3 widthVector = (nextRow.m_vertex - startControl->m_vertex);
-		Vector3 heightVector = (nextColumn.m_vertex - startControl->m_vertex);
+		Vector3 widthVector = (nextRow.vertex - startControl->vertex);
+		Vector3 heightVector = (nextColumn.vertex - startControl->vertex);
 
 		if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f) {
 			gtkutil::errorDialog("Sorry. Patch is not suitable for this kind of operation.",
@@ -1700,7 +1700,7 @@ void Patch::pasteTextureNatural(const Face* face) {
 		
 		// Initialise the starting point
 		PatchControl* prevColumn = startControl; 
-		Vector3 prevColumnVirtualVertex = prevColumn->m_vertex;
+		Vector3 prevColumnVirtualVertex = prevColumn->vertex;
 		
 		for (int w = wStart; w != wEnd; w += wIncr) {
 			
@@ -1708,7 +1708,7 @@ void Patch::pasteTextureNatural(const Face* face) {
 			PatchControl* curColumn = &m_ctrl[(patchWidth*hStart) + w];
 			
 			// The distance between the last column and this column
-			double xyzColDist = (curColumn->m_vertex - prevColumn->m_vertex).getLength();
+			double xyzColDist = (curColumn->vertex - prevColumn->vertex).getLength();
 			
 			// The vector pointing to the next control point, if it *was* a completely planar patch
 			Vector3 curColumnVirtualVertex = prevColumnVirtualVertex + widthBase * xyzColDist;
@@ -1724,13 +1724,13 @@ void Patch::pasteTextureNatural(const Face* face) {
 				PatchControl* control = &m_ctrl[(patchWidth*h) + w];
 				
 				// The distance between the last and the current vertex
-				double xyzRowDist = (control->m_vertex - prevRow->m_vertex).getLength();
+				double xyzRowDist = (control->vertex - prevRow->vertex).getLength();
 			
 				// The vector pointing to the next control point, if it *was* a completely planar patch
 				Vector3 virtualControlVertex = prevRowVirtualVertex + heightBase * xyzRowDist;
 				
 				// Project the virtual vertex onto the brush faceplane and transform it into texture space 
-				control->m_texcoord = getProjectedTextureCoords(virtualControlVertex, plane, worldToTexture);
+				control->texcoord = getProjectedTextureCoords(virtualControlVertex, plane, worldToTexture);
 				
 				// Update the variables for the next loop
 				prevRow = control;
@@ -1760,12 +1760,12 @@ void Patch::pasteTextureNatural(Patch& sourcePatch) {
 	
 	PatchControlIter refControl = sourcePatch.getClosestPatchControlToPatch(*this);
 	
-	Vector2 texDiff = refControl->m_texcoord - nearestControl->m_texcoord;
+	Vector2 texDiff = refControl->texcoord - nearestControl->texcoord;
 	
 	for (int col = 0; col < patchWidth; col++) {
 		for (int row = 0; row < patchHeight; row++) {
 			// Substract the texture coord difference from each control vertex
-			ctrlAt(row, col).m_texcoord += texDiff;
+			ctrlAt(row, col).texcoord += texDiff;
 		}
 	}
 	
@@ -1795,7 +1795,7 @@ void Patch::pasteTextureProjected(const Face* face) {
 		// Cycle through all the control points with an iterator
 		for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 			// Project the vertex onto the face plane and transform it into texture space
-			i->m_texcoord = getProjectedTextureCoords(i->m_vertex, plane, worldToTexture);
+			i->texcoord = getProjectedTextureCoords(i->vertex, plane, worldToTexture);
 		}
 	
 		// Notify the patch about the change
@@ -1821,7 +1821,7 @@ void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
 				 other != otherPatch->end(); 
 				 ++other, ++self) 
 			{
-				self->m_texcoord = other->m_texcoord;
+				self->texcoord = other->texcoord;
 			}
 			
 			// Notify the patch about the change
@@ -1882,8 +1882,8 @@ void Patch::ProjectTexture(int nAxis) {
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument) 
 		// and apply the appropriate texture coordinate 
-		i->m_texcoord[0] = i->m_vertex[s] * fWidth;
-		i->m_texcoord[1] = i->m_vertex[t] * fHeight;
+		i->texcoord[0] = i->vertex[s] * fWidth;
+		i->texcoord[1] = i->vertex[t] * fHeight;
 	}
 
 	// Notify the patch about the change
@@ -1930,7 +1930,7 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
     vTmp[x]=vStart[x];
     for (std::size_t w=0; w<m_width; w++, ++pCtrl)
     {
-      pCtrl->m_vertex = vTmp;
+      pCtrl->vertex = vTmp;
       vTmp[x]+=xAdj;
     }
     vTmp[y]+=yAdj;
@@ -2006,9 +2006,9 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
       PatchControlIter pCtrl = pStart;
       for(std::size_t w=0; w<8; w++, pCtrl++)
       {
-        pCtrl->m_vertex[0] = vPos[pIndex[0]][0];
-        pCtrl->m_vertex[1] = vPos[pIndex[1]][1];
-        pCtrl->m_vertex[2] = vPos[h][2];
+        pCtrl->vertex[0] = vPos[pIndex[0]][0];
+        pCtrl->vertex[1] = vPos[pIndex[1]][1];
+        pCtrl->vertex[2] = vPos[h][2];
         pIndex+=2;
       }
     }
@@ -2020,7 +2020,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
         PatchControlIter pCtrl = m_ctrl.begin();
         for(std::size_t h=0; h<3; h++, pCtrl+=9)
         {
-          pCtrl[8].m_vertex = pCtrl[0].m_vertex;
+          pCtrl[8].vertex = pCtrl[0].vertex;
         }
       }
       break;
@@ -2031,7 +2031,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
         PatchControlIter pCtrl = m_ctrl.begin();
         for (std::size_t h=0; h<3; h++, pCtrl+=9)
         {
-          pCtrl[0].m_vertex = pCtrl[8].m_vertex;
+          pCtrl[0].vertex = pCtrl[8].vertex;
         }
       }
       break;
@@ -2040,16 +2040,16 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
         PatchControlIter pCtrl = m_ctrl.begin();
         for (std::size_t h=0; h<2; h++, pCtrl+=9)
         {
-          pCtrl[0].m_vertex = pCtrl[8].m_vertex;
+          pCtrl[0].vertex = pCtrl[8].vertex;
         }
       }
       {
         PatchControlIter pCtrl=m_ctrl.begin() + 9*2;
         for (std::size_t w=0; w<9; w++, pCtrl++)
         {
-          pCtrl->m_vertex[0] = vPos[1][0];
-          pCtrl->m_vertex[1] = vPos[1][1];
-          pCtrl->m_vertex[2] = vPos[2][2];
+          pCtrl->vertex[0] = vPos[1][0];
+          pCtrl->vertex[1] = vPos[1][1];
+          pCtrl->vertex[2] = vPos[2][2];
         }
       }
       break;
@@ -2058,25 +2058,25 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
         PatchControlIter pCtrl = m_ctrl.begin() + 9;
         for (std::size_t h=0; h<3; h++, pCtrl+=9)
         {
-          pCtrl[0].m_vertex = pCtrl[8].m_vertex;
+          pCtrl[0].vertex = pCtrl[8].vertex;
         }
       }
       {
         PatchControlIter pCtrl = m_ctrl.begin();
         for (std::size_t w=0; w<9; w++, pCtrl++)
         {
-          pCtrl->m_vertex[0] = vPos[1][0];
-          pCtrl->m_vertex[1] = vPos[1][1];
-          pCtrl->m_vertex[2] = vPos[2][2];
+          pCtrl->vertex[0] = vPos[1][0];
+          pCtrl->vertex[1] = vPos[1][1];
+          pCtrl->vertex[2] = vPos[2][2];
         }
       }
       {
         PatchControlIter pCtrl = m_ctrl.begin() + (9*4);
         for (std::size_t w=0; w<9; w++, pCtrl++)
         {
-          pCtrl->m_vertex[0] = vPos[1][0];
-          pCtrl->m_vertex[1] = vPos[1][1];
-          pCtrl->m_vertex[2] = vPos[2][2];
+          pCtrl->vertex[0] = vPos[1][0];
+          pCtrl->vertex[1] = vPos[1][1];
+          pCtrl->vertex[2] = vPos[2][2];
         }
       }
     default:
@@ -2104,16 +2104,16 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
 			for (std::size_t w = 0; w < 3; w++, pIndex += 2, pCtrl++)
 			{
 				// The x coordinate stays the same for each row
-				pCtrl->m_vertex.x() = vPos[h].x();
+				pCtrl->vertex.x() = vPos[h].x();
 
 				// Use the same y coordinate for the first two columns
 				// The third column uses the highest y value
-				pCtrl->m_vertex.y() = vPos[pIndex[0]].y();
+				pCtrl->vertex.y() = vPos[pIndex[0]].y();
 
 				// The first column is using the lowest z value
 				// the other two columns use the highest z value
 				// to create an upright bevel
-				pCtrl->m_vertex.z() = vPos[pIndex[1]].z();
+				pCtrl->vertex.z() = vPos[pIndex[1]].z();
 			}
 		}
 	}
@@ -2137,9 +2137,9 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
       pIndex=pEndIndex;
       for(std::size_t w=0; w<5; w++, pIndex+=2, pCtrl++)
       {
-        pCtrl->m_vertex[0] = vPos[pIndex[0]][0];
-        pCtrl->m_vertex[1] = vPos[pIndex[1]][1];
-        pCtrl->m_vertex[2] = vPos[h][2];
+        pCtrl->vertex[0] = vPos[pIndex[0]][0];
+        pCtrl->vertex[1] = vPos[pIndex[1]][1];
+        pCtrl->vertex[2] = vPos[h][2];
       }
     }
   }
@@ -2228,29 +2228,29 @@ unsigned int subarray_get_degen(PatchControlIter subarray, std::size_t strideU, 
 
   p1 = subarray;
   p2 = p1 + strideU;
-  if(p1->m_vertex == p2->m_vertex)
+  if(p1->vertex == p2->vertex)
     nDegen |= DEGEN_0a;
   p1 = p2;
   p2 = p1 + strideU;
-  if(p1->m_vertex == p2->m_vertex)
+  if(p1->vertex == p2->vertex)
     nDegen |= DEGEN_0b;
 
   p1 = subarray + strideV;
   p2 = p1 + strideU;
-  if(p1->m_vertex == p2->m_vertex)
+  if(p1->vertex == p2->vertex)
     nDegen |= DEGEN_1a;
   p1 = p2;
   p2 = p1 + strideU;
-  if(p1->m_vertex == p2->m_vertex)
+  if(p1->vertex == p2->vertex)
     nDegen |= DEGEN_1b;
 
   p1 = subarray + (strideV << 1);
   p2 = p1 + strideU;
-  if(p1->m_vertex == p2->m_vertex)
+  if(p1->vertex == p2->vertex)
     nDegen |= DEGEN_2a;
   p1 = p2;
   p2 = p1 + strideU;
-  if(p1->m_vertex == p2->m_vertex)
+  if(p1->vertex == p2->vertex)
     nDegen |= DEGEN_2b;
 
   return nDegen;
@@ -2290,25 +2290,25 @@ inline PatchControl QuadraticBezier_evaluate(const PatchControl* firstPoint, dou
 
   {
     double weight = BernsteinPolynomial<Zero, Two>::apply(t);
-    result.m_vertex += firstPoint[0].m_vertex * weight;
-    result.m_texcoord += firstPoint[0].m_texcoord * weight;
+    result.vertex += firstPoint[0].vertex * weight;
+    result.texcoord += firstPoint[0].texcoord * weight;
     denominator += weight;
   }
   {
     double weight = BernsteinPolynomial<One, Two>::apply(t);
-    result.m_vertex += firstPoint[1].m_vertex * weight;
-    result.m_texcoord += firstPoint[1].m_texcoord * weight;
+    result.vertex += firstPoint[1].vertex * weight;
+    result.texcoord += firstPoint[1].texcoord * weight;
     denominator += weight;
   }
   {
     double weight = BernsteinPolynomial<Two, Two>::apply(t);
-    result.m_vertex  += firstPoint[2].m_vertex * weight;
-    result.m_texcoord += firstPoint[2].m_texcoord * weight;
+    result.vertex  += firstPoint[2].vertex * weight;
+    result.texcoord += firstPoint[2].texcoord * weight;
     denominator += weight;
   }
 
-  result.m_vertex /= denominator;
-  result.m_texcoord /= denominator;
+  result.vertex /= denominator;
+  result.texcoord /= denominator;
   return result;
 }
 
@@ -2332,12 +2332,12 @@ void normalise_safe(Vector3& normal)
 
 inline void QuadraticBezier_evaluate(const PatchControl& a, const PatchControl& b, const PatchControl& c, double t, PatchControl& point, PatchControl& left, PatchControl& right)
 {
-  left.m_vertex = vector3_linear_interpolated(a.m_vertex, b.m_vertex, t);
-  left.m_texcoord = vector2_linear_interpolated(a.m_texcoord, b.m_texcoord, t);
-  right.m_vertex = vector3_linear_interpolated(b.m_vertex, c.m_vertex, t);
-  right.m_texcoord = vector2_linear_interpolated(b.m_texcoord, c.m_texcoord, t);
-  point.m_vertex = vector3_linear_interpolated(left.m_vertex, right.m_vertex, t);
-  point.m_texcoord = vector2_linear_interpolated(left.m_texcoord, right.m_texcoord, t);
+  left.vertex = vector3_linear_interpolated(a.vertex, b.vertex, t);
+  left.texcoord = vector2_linear_interpolated(a.texcoord, b.texcoord, t);
+  right.vertex = vector3_linear_interpolated(b.vertex, c.vertex, t);
+  right.texcoord = vector2_linear_interpolated(b.texcoord, c.texcoord, t);
+  point.vertex = vector3_linear_interpolated(left.vertex, right.vertex, t);
+  point.texcoord = vector2_linear_interpolated(left.texcoord, right.texcoord, t);
 }
 
 void Patch::TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices, 
@@ -2385,28 +2385,28 @@ void Patch::TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices,
         PatchControl down;
         QuadraticBezier_evaluate(pointY[0], pointY[1], pointY[2], tU, point, up, down);
 
-        p->vertex = Vertex3f(point.m_vertex);
-        p->texcoord = point.m_texcoord;
+        p->vertex = Vertex3f(point.vertex);
+        p->texcoord = point.texcoord;
 
         ArbitraryMeshVertex a, b, c;
 
-        a.vertex = Vertex3f(left.m_vertex);
-        a.texcoord = left.m_texcoord;
-        b.vertex = Vertex3f(right.m_vertex);
-        b.texcoord = right.m_texcoord;
+        a.vertex = Vertex3f(left.vertex);
+        a.texcoord = left.texcoord;
+        b.vertex = Vertex3f(right.vertex);
+        b.texcoord = right.texcoord;
 
         if(i != 0)
         {
-          c.vertex = Vertex3f(up.m_vertex);
-          c.texcoord = up.m_texcoord;
+          c.vertex = Vertex3f(up.vertex);
+          c.texcoord = up.texcoord;
         }
         else
         {
-          c.vertex = Vertex3f(down.m_vertex);
-          c.texcoord = down.m_texcoord;
+          c.vertex = Vertex3f(down.vertex);
+          c.texcoord = down.texcoord;
         }
 
-        Vector3 normal = (right.m_vertex - left.m_vertex).crossProduct(up.m_vertex - down.m_vertex).getNormalised();
+        Vector3 normal = (right.vertex - left.vertex).crossProduct(up.vertex - down.vertex).getNormalised();
 
         Vector3 tangent, bitangent;
         ArbitraryMeshTriangle_calcTangents(a, b, c, tangent, bitangent);
@@ -2867,9 +2867,9 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
         // directly taken from one row of control points
         {
           BezierCurve* pCurve = new BezierCurve;
-          pCurve->crd = (p1+strideU)->m_vertex;
-          pCurve->left = p1->m_vertex;
-          pCurve->right = (p1+(strideU<<1))->m_vertex;
+          pCurve->crd = (p1+strideU)->vertex;
+          pCurve->left = p1->vertex;
+          pCurve->right = (p1+(strideU<<1))->vertex;
           pCurveList = g_slist_prepend(pCurveList, pCurve);
         }
 
@@ -2884,13 +2884,13 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
         // interpolated from three columns of control points
         {
           BezierCurve* pCurve = new BezierCurve;
-          pCurve->crd = vector3_mid((p1+strideU)->m_vertex, (p3+strideU)->m_vertex);
-          pCurve->left = vector3_mid(p1->m_vertex, p3->m_vertex);
-          pCurve->right = vector3_mid((p1+(strideU<<1))->m_vertex, (p3+(strideU<<1))->m_vertex);
+          pCurve->crd = vector3_mid((p1+strideU)->vertex, (p3+strideU)->vertex);
+          pCurve->left = vector3_mid(p1->vertex, p3->vertex);
+          pCurve->right = vector3_mid((p1+(strideU<<1))->vertex, (p3+(strideU<<1))->vertex);
     
-          pCurve->crd = vector3_mid(pCurve->crd, (p2+strideU)->m_vertex);
-          pCurve->left = vector3_mid(pCurve->left, p2->m_vertex);
-          pCurve->right = vector3_mid(pCurve->right, (p2+(strideU<<1))->m_vertex);
+          pCurve->crd = vector3_mid(pCurve->crd, (p2+strideU)->vertex);
+          pCurve->left = vector3_mid(pCurve->left, p2->vertex);
+          pCurve->right = vector3_mid(pCurve->right, (p2+(strideU<<1))->vertex);
           pCurveList = g_slist_prepend(pCurveList, pCurve);
         }
 
@@ -2939,8 +2939,8 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 
 inline void vertex_assign_ctrl(ArbitraryMeshVertex& vertex, const PatchControl& ctrl)
 {
-  vertex.vertex = Vertex3f(ctrl.m_vertex);
-  vertex.texcoord = ctrl.m_texcoord;
+  vertex.vertex = Vertex3f(ctrl.vertex);
+  vertex.texcoord = ctrl.texcoord;
 }
 
 inline void vertex_clear_normal(ArbitraryMeshVertex& vertex)
@@ -3316,64 +3316,64 @@ void Patch::BuildVertexArray()
         // set up tangents for each of the 12 edges if they were not degenerate
         if(!(nFlagsX & DEGEN_0a))
         {
-          tangentX[0] = subMatrix[0][1]->m_vertex - subMatrix[0][0]->m_vertex;
-          tangentS[0] = subMatrix[0][1]->m_texcoord - subMatrix[0][0]->m_texcoord;
+          tangentX[0] = subMatrix[0][1]->vertex - subMatrix[0][0]->vertex;
+          tangentS[0] = subMatrix[0][1]->texcoord - subMatrix[0][0]->texcoord;
         }
         if(!(nFlagsX & DEGEN_0b))
         {
-          tangentX[1] = subMatrix[0][2]->m_vertex - subMatrix[0][1]->m_vertex;
-          tangentS[1] = subMatrix[0][2]->m_texcoord - subMatrix[0][1]->m_texcoord;
+          tangentX[1] = subMatrix[0][2]->vertex - subMatrix[0][1]->vertex;
+          tangentS[1] = subMatrix[0][2]->texcoord - subMatrix[0][1]->texcoord;
         }
         if(!(nFlagsX & DEGEN_1a))
         {
-          tangentX[2] = subMatrix[1][1]->m_vertex - subMatrix[1][0]->m_vertex;
-          tangentS[2] = subMatrix[1][1]->m_texcoord - subMatrix[1][0]->m_texcoord;
+          tangentX[2] = subMatrix[1][1]->vertex - subMatrix[1][0]->vertex;
+          tangentS[2] = subMatrix[1][1]->texcoord - subMatrix[1][0]->texcoord;
         }
         if(!(nFlagsX & DEGEN_1b))
         {
-          tangentX[3] = subMatrix[1][2]->m_vertex - subMatrix[1][1]->m_vertex;
-          tangentS[3] = subMatrix[1][2]->m_texcoord - subMatrix[1][1]->m_texcoord;
+          tangentX[3] = subMatrix[1][2]->vertex - subMatrix[1][1]->vertex;
+          tangentS[3] = subMatrix[1][2]->texcoord - subMatrix[1][1]->texcoord;
         }
         if(!(nFlagsX & DEGEN_2a))
         {
-          tangentX[4] = subMatrix[2][1]->m_vertex - subMatrix[2][0]->m_vertex;
-          tangentS[4] = subMatrix[2][1]->m_texcoord - subMatrix[2][0]->m_texcoord;
+          tangentX[4] = subMatrix[2][1]->vertex - subMatrix[2][0]->vertex;
+          tangentS[4] = subMatrix[2][1]->texcoord - subMatrix[2][0]->texcoord;
         }
         if(!(nFlagsX & DEGEN_2b))
         {
-          tangentX[5] = subMatrix[2][2]->m_vertex - subMatrix[2][1]->m_vertex;
-          tangentS[5] = subMatrix[2][2]->m_texcoord - subMatrix[2][1]->m_texcoord;
+          tangentX[5] = subMatrix[2][2]->vertex - subMatrix[2][1]->vertex;
+          tangentS[5] = subMatrix[2][2]->texcoord - subMatrix[2][1]->texcoord;
         }
 
         if(!(nFlagsY & DEGEN_0a))
         {
-          tangentY[0] = subMatrix[1][0]->m_vertex - subMatrix[0][0]->m_vertex;
-          tangentT[0] = subMatrix[1][0]->m_texcoord - subMatrix[0][0]->m_texcoord;
+          tangentY[0] = subMatrix[1][0]->vertex - subMatrix[0][0]->vertex;
+          tangentT[0] = subMatrix[1][0]->texcoord - subMatrix[0][0]->texcoord;
         }
         if(!(nFlagsY & DEGEN_0b))
         {
-          tangentY[1] = subMatrix[2][0]->m_vertex - subMatrix[1][0]->m_vertex;
-          tangentT[1] = subMatrix[2][0]->m_texcoord - subMatrix[1][0]->m_texcoord;
+          tangentY[1] = subMatrix[2][0]->vertex - subMatrix[1][0]->vertex;
+          tangentT[1] = subMatrix[2][0]->texcoord - subMatrix[1][0]->texcoord;
         }
         if(!(nFlagsY & DEGEN_1a))
         {
-          tangentY[2] = subMatrix[1][1]->m_vertex - subMatrix[0][1]->m_vertex;
-          tangentT[2] = subMatrix[1][1]->m_texcoord - subMatrix[0][1]->m_texcoord;
+          tangentY[2] = subMatrix[1][1]->vertex - subMatrix[0][1]->vertex;
+          tangentT[2] = subMatrix[1][1]->texcoord - subMatrix[0][1]->texcoord;
         }
         if(!(nFlagsY & DEGEN_1b))
         {
-          tangentY[3] = subMatrix[2][1]->m_vertex - subMatrix[1][1]->m_vertex;
-          tangentT[3] = subMatrix[2][1]->m_texcoord - subMatrix[1][1]->m_texcoord;
+          tangentY[3] = subMatrix[2][1]->vertex - subMatrix[1][1]->vertex;
+          tangentT[3] = subMatrix[2][1]->texcoord - subMatrix[1][1]->texcoord;
         }
         if(!(nFlagsY & DEGEN_2a))
         {
-          tangentY[4] = subMatrix[1][2]->m_vertex - subMatrix[0][2]->m_vertex;
-          tangentT[4] = subMatrix[1][2]->m_texcoord - subMatrix[0][2]->m_texcoord;
+          tangentY[4] = subMatrix[1][2]->vertex - subMatrix[0][2]->vertex;
+          tangentT[4] = subMatrix[1][2]->texcoord - subMatrix[0][2]->texcoord;
         }
         if(!(nFlagsY & DEGEN_2b))
         {
-          tangentY[5] = subMatrix[2][2]->m_vertex - subMatrix[1][2]->m_vertex;
-          tangentT[5] = subMatrix[2][2]->m_texcoord - subMatrix[1][2]->m_texcoord;
+          tangentY[5] = subMatrix[2][2]->vertex - subMatrix[1][2]->vertex;
+          tangentT[5] = subMatrix[2][2]->texcoord - subMatrix[1][2]->texcoord;
         }
 
         // set up remaining edge tangents by borrowing the tangent from the closest parallel non-degenerate edge
@@ -3488,8 +3488,8 @@ void Patch::BuildVertexArray()
             TesselateSubMatrix( m_tess.curveTreeU[i>>1], m_tess.curveTreeV[j>>1],
                                 offStartX, offStartY, offEndX, offEndY, // array offsets
                                 nFlagsX, nFlagsY,
-                                subMatrix[1][0]->m_vertex, subMatrix[1][1]->m_vertex, subMatrix[1][2]->m_vertex,
-                                subMatrix[1][0]->m_texcoord, subMatrix[1][1]->m_texcoord, subMatrix[1][2]->m_texcoord,
+                                subMatrix[1][0]->vertex, subMatrix[1][1]->vertex, subMatrix[1][2]->vertex,
+                                subMatrix[1][0]->texcoord, subMatrix[1][1]->texcoord, subMatrix[1][2]->texcoord,
                                 false );
           }
           else if(!leafY)
@@ -3497,8 +3497,8 @@ void Patch::BuildVertexArray()
             TesselateSubMatrix( m_tess.curveTreeV[j>>1], m_tess.curveTreeU[i>>1],
                                 offStartY, offStartX, offEndY, offEndX, // array offsets
                                 nFlagsY, nFlagsX,
-                                subMatrix[0][1]->m_vertex, subMatrix[1][1]->m_vertex, subMatrix[2][1]->m_vertex,
-                                subMatrix[0][1]->m_texcoord, subMatrix[1][1]->m_texcoord, subMatrix[2][1]->m_texcoord,
+                                subMatrix[0][1]->vertex, subMatrix[1][1]->vertex, subMatrix[2][1]->vertex,
+                                subMatrix[0][1]->texcoord, subMatrix[1][1]->texcoord, subMatrix[2][1]->texcoord,
                                 true );
           }
         }
@@ -3558,7 +3558,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 				// Take the one neighbour vertex
 				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col-1);
 				// Only fill one of the rowTangents
-				colTangent[0] = neighbour.m_vertex - curCtrl.m_vertex;
+				colTangent[0] = neighbour.vertex - curCtrl.vertex;
 				// Reverse it, as it faces the other direction
 				colTangent[0] *= -1;
 			}
@@ -3567,7 +3567,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 				// Take the one neighbour vertex
 				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col+1);
 				// Only fill one of the rowTangents
-				colTangent[0] = neighbour.m_vertex - curCtrl.m_vertex;
+				colTangent[0] = neighbour.vertex - curCtrl.vertex;
 			}
 			// We are in between, two normals tangents can be calculated
 			else {
@@ -3576,8 +3576,8 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 				const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col-1);
 				
 				// Calculate both available tangents
-				colTangent[0] = neighbour1.m_vertex - curCtrl.m_vertex;
-				colTangent[1] = neighbour2.m_vertex - curCtrl.m_vertex;
+				colTangent[0] = neighbour1.vertex - curCtrl.vertex;
+				colTangent[1] = neighbour2.vertex - curCtrl.vertex;
 				
 				// Reverse the second one
 				colTangent[1] *= -1;
@@ -3589,7 +3589,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
 			
 			// Calculate the tangent vector to the next row
-			Vector3 rowTangent = rowNeighbour.m_vertex - curCtrl.m_vertex;
+			Vector3 rowTangent = rowNeighbour.vertex - curCtrl.vertex;
 			// Reverse it accordingly
 			rowTangent *= (row == m_height-1) ? -1 : +1;
 			
@@ -3632,10 +3632,10 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			}
 			
 			// Store the new coordinates into this patch at the current coords
-			ctrlAt(row, col).m_vertex = curCtrl.m_vertex + normal*thickness;
+			ctrlAt(row, col).vertex = curCtrl.vertex + normal*thickness;
 			
 			// Clone the texture cooordinates of the source patch
-			ctrlAt(row, col).m_texcoord = curCtrl.m_texcoord;
+			ctrlAt(row, col).texcoord = curCtrl.texcoord;
 		}
 	}
 	
@@ -3709,14 +3709,14 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 	int col = 0;
 	// Now go through the control vertices with these calculated stepsize 
 	for (int idx = start; idx <= end; idx += incr, col++) {
-		Vector3 sourceCoord = sourceCtrl[idx].m_vertex;
-		Vector3 targetCoord = targetCtrl[idx].m_vertex;
+		Vector3 sourceCoord = sourceCtrl[idx].vertex;
+		Vector3 targetCoord = targetCtrl[idx].vertex;
 		Vector3 middleCoord = (sourceCoord + targetCoord) / 2;
 		
 		// Now assign the vertex coordinates
-		ctrlAt(0, col).m_vertex = sourceCoord;
-		ctrlAt(1, col).m_vertex = middleCoord;
-		ctrlAt(2, col).m_vertex = targetCoord;
+		ctrlAt(0, col).vertex = sourceCoord;
+		ctrlAt(1, col).vertex = middleCoord;
+		ctrlAt(2, col).vertex = targetCoord;
 	}
 	
 	if (wallIndex == 0 || wallIndex == 3) {
@@ -3744,7 +3744,7 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 	PatchControlIter refControl = sourcePatch.getClosestPatchControlToPatch(*this);
 	
 	// Get the distance in texture space
-	Vector2 texDiff = refControl->m_texcoord - nearestControl->m_texcoord;
+	Vector2 texDiff = refControl->texcoord - nearestControl->texcoord;
 	
 	// The floored values
 	Vector2 floored(floor(fabs(texDiff[0])), floor(fabs(texDiff[1])));
@@ -3757,7 +3757,7 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 	// Now shift all the texture vertices in the right direction, so that this patch
 	// is getting as close as possible to the origin in texture space.
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-		i->m_texcoord += shift;
+		i->texcoord += shift;
 	}
 	
 	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
@@ -3776,12 +3776,12 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 					// Get the other control
 					const PatchControl& other = sourcePatch.ctrlAt(srcRow, srcCol);
 					
-					float dist = (other.m_vertex - self.m_vertex).getLength();
+					float dist = (other.vertex - self.vertex).getLength();
 					
 					// Allow the coords to be a _bit_ distant  
 					if (fabs(dist) < 0.005f) {
 						// Assimilate the texture coordinates
-						self.m_texcoord = other.m_texcoord;
+						self.texcoord = other.texcoord;
 					}
 				}
 			}
@@ -3802,13 +3802,13 @@ void Patch::normaliseTexture() {
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument) 
 		// and apply the appropriate texture coordinate
-		if (i->m_texcoord.getLength() < nearestControl->m_texcoord.getLength()) {
+		if (i->texcoord.getLength() < nearestControl->texcoord.getLength()) {
 			nearestControl = i;
 		}
 	}
 	
 	// Get the nearest texcoord
-	Vector2 texcoord = nearestControl->m_texcoord;
+	Vector2 texcoord = nearestControl->texcoord;
 	
 	// The floored values
 	Vector2 floored(floor(fabs(texcoord[0])), floor(fabs(texcoord[1])));
@@ -3826,7 +3826,7 @@ void Patch::normaliseTexture() {
 		// Now shift all the texture vertices in the right direction, so that this patch
 		// is getting as close as possible to the origin in texture space.
 		for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-			i->m_texcoord += shift;
+			i->texcoord += shift;
 		}
 		
 		// Notify the patch about the change

@@ -345,11 +345,11 @@ void PatchInspector::loadControlVertex() {
 		
 		_updateActive = true;
 		
-		gtk_entry_set_text(GTK_ENTRY(_coords["x"].value), floatToStr(ctrl.m_vertex[0]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["y"].value), floatToStr(ctrl.m_vertex[1]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["z"].value), floatToStr(ctrl.m_vertex[2]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["s"].value), floatToStr(ctrl.m_texcoord[0]).c_str());
-		gtk_entry_set_text(GTK_ENTRY(_coords["t"].value), floatToStr(ctrl.m_texcoord[1]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["x"].value), floatToStr(ctrl.vertex[0]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["y"].value), floatToStr(ctrl.vertex[1]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["z"].value), floatToStr(ctrl.vertex[2]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["s"].value), floatToStr(ctrl.texcoord[0]).c_str());
+		gtk_entry_set_text(GTK_ENTRY(_coords["t"].value), floatToStr(ctrl.texcoord[1]).c_str());
 		
 		_updateActive = false;
 	}
@@ -529,12 +529,12 @@ void PatchInspector::emitCoords()
 	// Retrieve the controlvertex
 	PatchControl& ctrl = _patch->ctrlAt(row, col);
 	
-	ctrl.m_vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].value)));
-	ctrl.m_vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].value)));
-	ctrl.m_vertex[2] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["z"].value)));
+	ctrl.vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].value)));
+	ctrl.vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].value)));
+	ctrl.vertex[2] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["z"].value)));
 	
-	ctrl.m_texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].value)));
-	ctrl.m_texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].value)));
+	ctrl.texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].value)));
+	ctrl.texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].value)));
 	
 	_patch->controlPointsChanged();
 }

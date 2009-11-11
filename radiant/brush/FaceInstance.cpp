@@ -266,9 +266,9 @@ void FaceInstance::update_move_planepts_vertex(std::size_t index) {
 	m_face->update_move_planepts_vertex(index, m_face->m_move_planepts);
 }
 
-void FaceInstance::update_move_planepts_vertex2(std::size_t index, std::size_t other) {
-	const std::size_t numpoints = m_face->getWinding().numpoints;
-	ASSERT_MESSAGE(index < numpoints, "select_vertex: invalid index");
+void FaceInstance::update_move_planepts_vertex2(std::size_t index, std::size_t other)
+{
+	ASSERT_MESSAGE(index < m_face->getWinding().numpoints, "select_vertex: invalid index");
 
 	const std::size_t opposite = m_face->getWinding().opposite(index, other);
 
@@ -336,9 +336,9 @@ bool FaceInstance::selected_vertex(std::size_t index) const {
 	return VertexSelection_find(m_vertexSelection, getFace().getWinding()[index].adjacent) != m_vertexSelection.end();
 }
 
-void FaceInstance::update_move_planepts_edge(std::size_t index) {
-	std::size_t numpoints = m_face->getWinding().numpoints;
-	ASSERT_MESSAGE(index < numpoints, "select_edge: invalid index");
+void FaceInstance::update_move_planepts_edge(std::size_t index)
+{
+	ASSERT_MESSAGE(index < m_face->getWinding().numpoints, "select_edge: invalid index");
 
 	std::size_t adjacent = m_face->getWinding().next(index);
 	std::size_t opposite = m_face->getWinding().opposite(index);

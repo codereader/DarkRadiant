@@ -13,7 +13,7 @@ AABB PatchVertexItem::getExtents() {
 	AABB returnValue;
 	
 	returnValue.origin = Vector3(
-		_patchControl.m_texcoord[0], _patchControl.m_texcoord[1], 0
+		_patchControl.texcoord[0], _patchControl.texcoord[1], 0
 	);
 	returnValue.extents = Vector3(0.001f, 0.001f, 0);
 	
@@ -32,36 +32,36 @@ void PatchVertexItem::render() {
 	}
 	
 	// Draw one single point at the given coords
-	glVertex2f(_patchControl.m_texcoord[0], _patchControl.m_texcoord[1]);
+	glVertex2f(_patchControl.texcoord[0], _patchControl.texcoord[1]);
 	
 	glEnd();
 }
 
 void PatchVertexItem::transform(const Matrix4& matrix) {
 	// Pick the translation components from the matrix and apply the translation
-	_patchControl.m_texcoord += Vector2(matrix.tx(), matrix.ty());
+	_patchControl.texcoord += Vector2(matrix.tx(), matrix.ty());
 }
 
 bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
-	return rectangle.contains(_patchControl.m_texcoord);
+	return rectangle.contains(_patchControl.texcoord);
 }
 
 void PatchVertexItem::snapSelectedToGrid(float grid) {
 	if (_selected) {
-		_patchControl.m_texcoord[0] = float_snapped(_patchControl.m_texcoord[0], grid);
-		_patchControl.m_texcoord[1] = float_snapped(_patchControl.m_texcoord[1], grid);
+		_patchControl.texcoord[0] = float_snapped(_patchControl.texcoord[0], grid);
+		_patchControl.texcoord[1] = float_snapped(_patchControl.texcoord[1], grid);
 	}
 }
 
 void PatchVertexItem::moveSelectedTo(const Vector2& targetCoords) {
 	if (_selected) {
-		_patchControl.m_texcoord = targetCoords;
+		_patchControl.texcoord = targetCoords;
 	}
 }
 
 void PatchVertexItem::flipSelected(const int& axis) {
 	if (_selected) {
-		_patchControl.m_texcoord[axis] = -_patchControl.m_texcoord[axis];
+		_patchControl.texcoord[axis] = -_patchControl.texcoord[axis];
 	}
 }
 

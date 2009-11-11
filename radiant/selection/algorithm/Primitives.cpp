@@ -482,18 +482,18 @@ public:
 			patch->setFixedSubdivisions(true, BasicVector2<unsigned int>(1,1));
 			
 			// Set the coordinates
-			patch->ctrlAt(0,0).m_vertex = winding[0].vertex;
-			patch->ctrlAt(2,0).m_vertex = winding[1].vertex;
-			patch->ctrlAt(1,0).m_vertex = (patch->ctrlAt(0,0).m_vertex + patch->ctrlAt(2,0).m_vertex)/2;
+			patch->ctrlAt(0,0).vertex = winding[0].vertex;
+			patch->ctrlAt(2,0).vertex = winding[1].vertex;
+			patch->ctrlAt(1,0).vertex = (patch->ctrlAt(0,0).vertex + patch->ctrlAt(2,0).vertex)/2;
 			
-			patch->ctrlAt(0,1).m_vertex = (winding[0].vertex + winding[3].vertex)/2;
-			patch->ctrlAt(2,1).m_vertex = (winding[1].vertex + winding[2].vertex)/2;
+			patch->ctrlAt(0,1).vertex = (winding[0].vertex + winding[3].vertex)/2;
+			patch->ctrlAt(2,1).vertex = (winding[1].vertex + winding[2].vertex)/2;
 			
-			patch->ctrlAt(1,1).m_vertex = (patch->ctrlAt(0,1).m_vertex + patch->ctrlAt(2,1).m_vertex)/2;
+			patch->ctrlAt(1,1).vertex = (patch->ctrlAt(0,1).vertex + patch->ctrlAt(2,1).vertex)/2;
 			
-			patch->ctrlAt(2,2).m_vertex = winding[2].vertex;
-			patch->ctrlAt(0,2).m_vertex = winding[3].vertex;
-			patch->ctrlAt(1,2).m_vertex = (patch->ctrlAt(2,2).m_vertex + patch->ctrlAt(0,2).m_vertex)/2;
+			patch->ctrlAt(2,2).vertex = winding[2].vertex;
+			patch->ctrlAt(0,2).vertex = winding[3].vertex;
+			patch->ctrlAt(1,2).vertex = (patch->ctrlAt(2,2).vertex + patch->ctrlAt(0,2).vertex)/2;
 
 			// Use the texture in the clipboard, if it's a decal texture
 			Texturable& clipboard = GlobalShaderClipboard().getSource();

@@ -34,7 +34,7 @@ public:
 	// Check if the control is selected by using the given SelectionTest
 	void testSelect(Selector& selector, SelectionTest& test) {
 		SelectionIntersection best;
-		test.TestPoint(m_ctrl->m_vertex, best);
+		test.TestPoint(m_ctrl->vertex, best);
 		
 		// If there is a control point that can be selected, add the Selectable to the selector
 		if (best.valid()) {
@@ -44,7 +44,7 @@ public:
 	
 	// Snaps the control vertex to the grid
 	void snapto(float snap) {
-		vector3_snap(m_ctrl->m_vertex, snap);
+		vector3_snap(m_ctrl->vertex, snap);
 	}
 };
 
