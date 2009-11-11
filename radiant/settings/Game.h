@@ -40,6 +40,9 @@ public:
 	
 	// Copy Constructor
 	Game(const Game& other);
+
+	// Destructor
+	virtual ~Game() {}
 	
     /* IGame implementation */
 	std::string getName() const;

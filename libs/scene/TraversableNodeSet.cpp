@@ -6,6 +6,7 @@
 
 // An ObserverFunctor does something with the given <observer> and the given <node> 
 struct ObserverFunctor {
+    virtual ~ObserverFunctor() {}
 	virtual void operator() (scene::Traversable::Observer& observer, scene::INodePtr node) = 0;
 };
 

@@ -67,6 +67,11 @@ public:
 	};
 
 	/**
+	 * Destructor
+	 */
+	virtual ~RenderableCollector() {}
+
+	/**
 	 * Push a Shader onto the internal shader stack. This is an OpenGL-style
 	 * push, which does not accept an argument but duplicates the topmost
 	 * stack value. The new value should be set with SetState().
@@ -144,6 +149,11 @@ class VolumeTest;
 class Renderable
 {
 public:
+	/**
+	 * Destructor
+	 */
+	virtual ~Renderable() {}
+
 	/** Submit renderable geometry when rendering takes place in Solid mode.
 	 */
 	virtual void renderSolid(RenderableCollector& collector, 

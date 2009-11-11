@@ -20,6 +20,11 @@ namespace scene {
 class Filterable
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~Filterable() {}
+
 	/**
 	 * Return the filtered state of this object. Returns true if the object is
 	 * hidden due to filtering, and false if it is visible.
@@ -46,6 +51,11 @@ typedef boost::weak_ptr<INode> INodeWeakPtr;
 class NodeVisitor 
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~NodeVisitor() {}
+
 	/**
 	 * greebo: Gets called before the children are traversed.
 	 * Return TRUE to traverse the children, FALSE to prevent this.
@@ -68,6 +78,11 @@ class INode :
 	public Instantiable
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~INode() {}
+
 	/** greebo: Returns true, if the node is the root element
 	 * 			of the scenegraph.
 	 */

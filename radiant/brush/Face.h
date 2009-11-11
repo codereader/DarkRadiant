@@ -26,6 +26,7 @@ typedef std::vector<FacePtr> Faces;
 
 class FaceObserver {
 public:
+    virtual ~FaceObserver() {}
 	virtual void planeChanged() = 0;
 	virtual void connectivityChanged() = 0;
 	virtual void shaderChanged() = 0;
@@ -48,6 +49,8 @@ class Face :
 
 		SavedState(const Face& face) : m_planeState(face.getPlane()), m_texdefState(face.getTexdef()), m_shaderState(face.getShader())
 		{}
+
+		virtual ~SavedState() {}
 
 		void exportState(Face& face) const {
 			m_planeState.exportState(face.getPlane());
@@ -93,7 +96,7 @@ public:
 	Face(const Face& other, FaceObserver* observer);
 	
 	// Destructor
-	~Face();
+	virtual ~Face();
 
 	void planeChanged();
 	

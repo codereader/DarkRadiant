@@ -38,7 +38,7 @@ public:
 	FaceTexdef(FaceShader& shader, const TextureProjection& projection, bool projectionInitialised = true);
 	
 	// Destructor
-	~FaceTexdef();
+	virtual ~FaceTexdef();
 
 	// Remove the scaling of the texture coordinates
 	void addScale();

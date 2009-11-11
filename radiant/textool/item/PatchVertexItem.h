@@ -15,6 +15,8 @@ class PatchVertexItem :
 public:
 	PatchVertexItem(PatchControl& patchControl);
 
+	virtual ~PatchVertexItem() {}
+
 	// Gets the AABB of this object in texture space
 	virtual AABB getExtents();
 

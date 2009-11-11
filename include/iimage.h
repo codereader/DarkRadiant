@@ -37,6 +37,7 @@ typedef boost::shared_ptr<Texture> TexturePtr;
 class BindableTexture
 {
 public:
+    virtual ~BindableTexture() {}
 
     /**
      * \brief

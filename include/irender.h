@@ -75,6 +75,7 @@ class Shader;
 class RendererLight
 {
 public:
+    virtual ~RendererLight() {}
 	virtual boost::shared_ptr<Shader> getShader() const = 0;
 
     /**
@@ -141,6 +142,7 @@ typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 class LightCullable
 {
 public:
+    virtual ~LightCullable() {}
 	virtual bool testLight(const RendererLight& light) const = 0;
 	virtual void insertLight(const RendererLight& light) {}
 	virtual void clearLights() {}
@@ -155,6 +157,7 @@ typedef Callback1<const RendererLight&> RendererLightCallback;
 class LightList
 {
 public:
+  virtual ~LightList() {}
   virtual void evaluateLights() const = 0;
   virtual void lightsChanged() const = 0;
   virtual void forEachLight(const RendererLightCallback& callback) const = 0;
@@ -249,6 +252,7 @@ public:
 class OpenGLRenderable
 {
 public:
+    virtual ~OpenGLRenderable() {}
 
     /**
      * \brief
@@ -278,6 +282,7 @@ typedef boost::shared_ptr<Material> MaterialPtr;
 class Shader
 {
 public:
+    virtual ~Shader() {}
 	
 	/**
 	 * Attach a renderable object to this Shader, which will be rendered using

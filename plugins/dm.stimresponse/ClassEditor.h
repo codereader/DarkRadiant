@@ -58,6 +58,10 @@ public:
 	/** greebo: Constructs the shared widgets, but does not pack them
 	 */
 	ClassEditor(StimTypes& stimTypes);
+
+	/** destructor
+	 */
+	virtual ~ClassEditor() {}
 	
 	/** greebo: Operator cast to widget to pack this page into
 	 * 			a notebook tab or other parent widget.

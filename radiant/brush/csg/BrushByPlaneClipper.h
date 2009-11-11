@@ -36,7 +36,7 @@ public:
 							  const TextureProjection& projection, EBrushSplit split);
 
 	// The destructor performs the node deletions and insertions
-	~BrushByPlaneClipper();
+	virtual ~BrushByPlaneClipper();
 
 	// SelectionSystem::Visitor implementation
 	void visit(const scene::INodePtr& node) const;

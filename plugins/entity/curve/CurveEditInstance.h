@@ -23,12 +23,14 @@ public:
 	class ControlPointFunctor
 	{
 	public:
+	    virtual ~ControlPointFunctor() {}
 		virtual void operator()(Vector3& point, const Vector3& original) = 0;
 	};
 	
 	class ControlPointConstFunctor
 	{
 	public:
+	    virtual ~ControlPointConstFunctor() {}
 		virtual void operator()(const Vector3& point, const Vector3& original) = 0;
 	};
 	

@@ -228,6 +228,7 @@ class VolumeTest;
 class SelectionTest
 {
 public:
+  virtual ~SelectionTest() {}
   virtual void BeginMesh(const Matrix4& localToWorld, bool twoSided = false) = 0;
   virtual const VolumeTest& getVolume() const = 0;
   virtual const Vector3& getNear() const = 0;
@@ -247,6 +248,7 @@ class Selectable;
 class Selector
 {
 public:
+  virtual ~Selector() {}
   virtual void pushSelectable(Selectable& selectable) = 0;
   virtual void popSelectable() = 0;
   virtual void addIntersection(const SelectionIntersection& intersection) = 0;
@@ -271,6 +273,7 @@ class VolumeTest;
 class SelectionTestable
 {
 public:
+    virtual ~SelectionTestable() {}
 	virtual void testSelect(Selector& selector, SelectionTest& test) = 0;
 };
 typedef boost::shared_ptr<SelectionTestable> SelectionTestablePtr;
@@ -281,6 +284,7 @@ inline SelectionTestablePtr Node_getSelectionTestable(const scene::INodePtr& nod
 
 class ComponentSelectionTestable {
 public:
+    virtual ~ComponentSelectionTestable() {}
 	virtual bool isSelectedComponents() const = 0;
 	virtual void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) = 0;
 	virtual void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) = 0;
@@ -297,12 +301,14 @@ typedef Callback1<const Plane3&> PlaneCallback;
 class SelectedPlanes
 {
 public:
+  virtual ~SelectedPlanes() {}
   virtual bool contains(const Plane3& plane) const = 0;
 };
 
 class PlaneSelectable
 {
 public:
+    virtual ~PlaneSelectable() {}
 	virtual void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) = 0;
 	virtual void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) = 0;
 };

@@ -18,6 +18,11 @@ namespace game
 class IGame
 {	
 public:
+    /**
+	 * \brief
+	 * Destructor
+	 */
+	virtual ~IGame() {}
 	
     /**
      * \brief

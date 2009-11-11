@@ -54,6 +54,12 @@ public:
 
     /**
      * \brief
+	 * Destructor
+	 */
+	virtual ~ShaderLayer() {}
+
+    /**
+     * \brief
      * Return the layer type.
      */
     virtual Type getType() const = 0;

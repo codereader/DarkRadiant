@@ -21,6 +21,12 @@ protected:
 
 public:
 
+    /**
+     * \brief
+     * Destructor
+     */
+    virtual ~Widget() {}
+
     /** 
      * \brief 
      * Return the GtkWidget for packing into the parent window.

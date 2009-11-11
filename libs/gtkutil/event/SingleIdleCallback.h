@@ -100,7 +100,7 @@ public:
 	 * Destructor. De-registers the callback from GTK, so that the method will
 	 * not be invoked after the object is destroyed.
 	 */
-	~SingleIdleCallback() {
+	virtual ~SingleIdleCallback() {
 		deregisterCallback();
 	}
 };

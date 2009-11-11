@@ -40,6 +40,7 @@ struct Pivot2World {
 class Manipulator
 {
 public:
+    virtual ~Manipulator() {}
 	// This returns a pointer to a manipulatable of this manipulator (this may point to the RadiantSelectionSystem itself) 
   	virtual Manipulatable* GetManipulatable() = 0;
   	virtual void testSelect(const View& view, const Matrix4& pivot2world) {}

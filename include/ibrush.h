@@ -102,6 +102,7 @@ public:
 class IBrush
 {
 public:
+    virtual ~IBrush() {}
 	// Returns the number of faces for this brush
 	virtual std::size_t size() const = 0;
 };
@@ -110,6 +111,7 @@ class Brush;
 class IBrushNode
 {
 public:
+    virtual ~IBrushNode() {}
 	/** greebo: Retrieves the contained Brush from the BrushNode
 	 */
 	virtual Brush& getBrush() = 0;

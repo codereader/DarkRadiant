@@ -31,6 +31,9 @@ public:
 	// Copy Constructor
 	Accelerator(const Accelerator& other);
 
+	// Destructor
+	virtual ~Accelerator() {}
+
 	// Returns true if the key/modifier combination matches this accelerator
 	bool match(const unsigned int& key, const unsigned int& modifiers) const;
 	

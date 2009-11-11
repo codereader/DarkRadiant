@@ -33,6 +33,7 @@ namespace selection {
 	 */ 
 	class PrimitiveVisitor {
 	public:
+	    virtual ~PrimitiveVisitor() {}
 		virtual void visit(Patch& patch) {}
 		virtual void visit(Face& face) {}
 		virtual void visit(Brush& brush) {}

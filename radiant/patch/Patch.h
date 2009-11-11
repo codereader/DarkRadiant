@@ -48,6 +48,7 @@ public:
 	// to re-allocate the patch control instances.
 	class Observer {
 		public:
+		    virtual ~Observer() {}
 			virtual void allocate(std::size_t size) = 0;
 	};
 

@@ -12,6 +12,7 @@ namespace script {
 class FileVisitor
 {
 public:
+    virtual ~FileVisitor() {}
 	virtual void visit(const std::string& filename) = 0;
 };
 

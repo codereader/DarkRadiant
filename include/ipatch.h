@@ -281,6 +281,7 @@ class Patch;
 class IPatchNode
 {
 public:
+    virtual ~IPatchNode() {}
 	/** greebo: Retrieves the actual patch from a PatchNode
 	 */
 	virtual Patch& getPatch() = 0;

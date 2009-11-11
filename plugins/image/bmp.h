@@ -42,6 +42,8 @@ class BMPLoader :
 	public ImageLoader
 {
 public:
+    virtual ~BMPLoader() {}
+
 	/* greebo: This loads the file and returns the pointer to 
 	 * the allocated Image object (or an empty pointer, if the load failed). 
 	 */

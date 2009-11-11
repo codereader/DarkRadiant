@@ -21,6 +21,9 @@ protected:
 
 public:
 	CommandArgumentItem(const conversation::ArgumentInfo& argInfo, GtkTooltips* tooltips);
+
+	// destructor
+	virtual ~CommandArgumentItem() {}
 	
 	/**
 	 * greebo: This retrieves the string representation of the current 

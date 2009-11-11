@@ -81,6 +81,8 @@ public:
     eCullBack,
   };
 
+  virtual ~Material() {}
+
     /**
      * \brief
      * Return the editor image texture for this shader.
@@ -176,6 +178,7 @@ namespace shaders {
 class ShaderVisitor
 {
 public:
+    virtual ~ShaderVisitor() {}
 	virtual void visit(const MaterialPtr& shader) = 0;
 };
 

@@ -31,6 +31,11 @@ namespace {
  */
 class ApplicationContext {
 public:
+
+    /**
+	 * Destructor
+	 */
+	virtual ~ApplicationContext() {}
 	
 	/**
 	 * Return the application path of the current Radiant instance.
@@ -97,6 +102,11 @@ typedef std::set<std::string> StringSet;
 class RegisterableModule {
 public:
 	
+    /**
+	 * Destructor
+	 */
+	virtual ~RegisterableModule() {}
+	
 	/**
 	 * Return the name of this module. This must be globally unique across all
 	 * modules; the modulesystem will throw a logic_error if two modules attempt
@@ -157,6 +167,11 @@ typedef boost::shared_ptr<RegisterableModule> RegisterableModulePtr;
  */
 class IModuleRegistry {
 public:
+	
+    /**
+	 * Destructor
+	 */
+	virtual ~IModuleRegistry() {}
 	
 	/**
 	 * Register a RegisterableModule. The name and dependencies are retrieved

@@ -15,6 +15,8 @@ public:
 		_infoFile(infoFile)
 	{}
 
+	virtual ~AssignLayerMappingWalker() {}
+
 	bool pre(const scene::INodePtr& node) {
 		if (Node_isModel(node)) {
 			// We have a model, assign the layers of the parent

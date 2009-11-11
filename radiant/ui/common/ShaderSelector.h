@@ -45,6 +45,8 @@ public:
 	class Client
 	{
 	public:
+	    /// destructor
+		virtual ~Client() {}
 		/** greebo: This gets invoked upon selection changed to allow the client
 		 * 			class to display custom information in the selector's liststore.  
 		 */

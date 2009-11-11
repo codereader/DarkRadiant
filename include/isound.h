@@ -87,6 +87,7 @@ typedef boost::shared_ptr<ISoundShader> ISoundShaderPtr;
 class SoundShaderVisitor
 {
 public:
+    virtual ~SoundShaderVisitor() {}
 	virtual void visit(const ISoundShaderPtr& shader) = 0;
 };
 

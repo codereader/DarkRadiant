@@ -38,6 +38,7 @@ class EntityKeyValue :
 	public NameObserver
 {
 public:
+    virtual ~EntityKeyValue() {}
 	/** greebo: Retrieves the actual value of this key
 	 */
 	virtual const std::string& get() const = 0;
@@ -85,6 +86,7 @@ public:
 	class Observer
 	{
 	public:
+	    virtual ~Observer() {}
 
         /**
          * \brief
@@ -116,6 +118,7 @@ public:
 	 */
 	struct Visitor 
 	{
+		virtual ~Visitor() {}
 		/**
 		 * The visit function which must be implemented by subclasses.
 		 * 
@@ -136,6 +139,7 @@ public:
 	 */
 	struct KeyValueVisitor 
 	{
+		virtual ~KeyValueVisitor() {}
 		/**
 		 * The visit function which must be implemented by subclasses.
 		 * 
@@ -148,6 +152,8 @@ public:
     	virtual void visit(const std::string& key, 
     					   EntityKeyValue& value) = 0;
 	};
+
+	virtual ~Entity() {}
 
 	/**
 	 * Return the entity class object for this entity.
@@ -238,6 +244,7 @@ public:
 class IEntityNode
 {
 public:
+    virtual ~IEntityNode() {}
 	/** greebo: Temporary workaround for entity-containing nodes.
 	 * 			This is only used by Node_getEntity to retrieve the 
 	 * 			contained entity from a node.
@@ -278,6 +285,8 @@ public:
 	EntityCopyingVisitor(Entity& entity) : 
 		_entity(entity)
 	{}
+
+	virtual ~EntityCopyingVisitor() {}
 	
 	// Required visit function, copies keyvalues (except classname) between
 	// entities
@@ -298,6 +307,7 @@ class EntityCreator :
 	public RegisterableModule
 {
 public:
+    virtual ~EntityCreator() {}
 
     /**
      * \brief

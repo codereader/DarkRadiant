@@ -176,6 +176,7 @@ class SkinTreeVisitor
 : public gtkutil::VFSTreePopulator::Visitor
 {
 public:
+    virtual ~SkinTreeVisitor() {}
 
 	// Required visit function
 	void visit(GtkTreeStore* store, 

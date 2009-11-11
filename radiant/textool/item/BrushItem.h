@@ -16,6 +16,9 @@ public:
 	// Constructor, allocates all child FacItems
 	BrushItem(Brush& sourceBrush); 
 
+    // destructor
+	virtual ~BrushItem() {}
+
 	/** greebo: Saves the undoMemento of this brush,
 	 * 			so that the operation can be undone later.
 	 */

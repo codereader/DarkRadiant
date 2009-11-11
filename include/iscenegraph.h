@@ -62,6 +62,9 @@ namespace scene
     class Observer 
     {
     public:
+		// destructor
+		virtual ~Observer() {}
+
     	// Gets called when anything in the scenegraph changes
     	virtual void onSceneGraphChange() {}
     	
@@ -105,6 +108,8 @@ namespace scene
   class Cloneable
   {
   public:
+    /// \brief destructor
+    virtual ~Cloneable() {}
     /// \brief Returns a copy of itself.
     virtual scene::INodePtr clone() const = 0;
   };

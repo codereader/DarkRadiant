@@ -19,6 +19,11 @@ class NameObserver;
 class INamespace
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~INamespace() {}
+
 	/** 
 	 * greebo: Call this to put the given scene::Node and all its
 	 * children into this Namespace. This will search for Namespaced
@@ -117,6 +122,11 @@ typedef boost::shared_ptr<INamespace> INamespacePtr;
 class Namespaced
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~Namespaced() {}
+
 	/**
 	 * Returns the name of this object.
 	 */

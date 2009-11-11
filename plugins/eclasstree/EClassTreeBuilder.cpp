@@ -16,6 +16,7 @@ namespace ui {
 			public gtkutil::VFSTreePopulator::Visitor
 		{
 		public:
+		    virtual ~EClassTreeVisitor() {}
 			// Required visit function
 			void visit(GtkTreeStore* store, 
 					   GtkTreeIter* it, 

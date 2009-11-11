@@ -18,6 +18,8 @@ class FaceItem :
 public:
 	FaceItem(Face& _sourceFace); 
 
+	virtual ~FaceItem() {}
+
 	// Gets the AABB of this object in texture space
 	virtual AABB getExtents();
 

@@ -39,6 +39,7 @@ class SpecifierPanel
 : public gtkutil::EditorWidget
 {
 public:
+    virtual ~SpecifierPanel() {}
 	
 	/**
 	 * Create a SpecifierPanel subclass of the same type as this one.

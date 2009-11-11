@@ -9,6 +9,7 @@ class Matrix4;
 class TransformNode
 {
 public:
+    virtual ~TransformNode() {}
 	/// \brief Returns the transform which maps the node's local-space into the local-space of its parent node.
 	virtual const Matrix4& localToParent() const  = 0;
 };

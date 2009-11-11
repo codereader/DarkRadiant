@@ -19,6 +19,7 @@ typedef Vector4 Quaternion;
 class ITransformable
 {
 public:
+    virtual ~ITransformable() {}
 	virtual void setType(TransformModifierType type) = 0;
 	virtual void setTranslation(const Vector3& value) = 0;
 	virtual void setRotation(const Quaternion& value) = 0;

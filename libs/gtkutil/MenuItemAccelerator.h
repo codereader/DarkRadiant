@@ -38,6 +38,9 @@ public:
 							const std::string& accelLabel,
 							GdkPixbuf* icon,
 							bool isToggle);
+
+	// destructor
+	virtual ~TextMenuItemAccelerator() {}
 	
 	// Operator cast to GtkWidget* for packing into a menu
 	virtual operator GtkWidget* ();

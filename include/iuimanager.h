@@ -10,6 +10,7 @@ typedef struct _GtkToolbar GtkToolbar;
 
 class IColourSchemeManager {
 public:
+    virtual ~IColourSchemeManager() {}
 	// greebo: Returns the named colour, returns <0,0,0> if not found
 	virtual Vector3 getColour(const std::string& colourName) = 0;
 };
@@ -33,6 +34,10 @@ namespace ui {
 class IMenuManager
 {
 public:
+    /** Destructor
+	 */
+    virtual ~IMenuManager() {}
+
 	/** greebo: Retrieves the menuitem widget specified by the path.
 	 * 
 	 * Example: get("main/file/open") delivers the widget for the "Open..." command.
@@ -95,6 +100,7 @@ public:
 class IToolbarManager
 {
 public:
+    virtual ~IToolbarManager() {}
 	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
 };
 
@@ -117,6 +123,11 @@ public:
 		POS_GRID			= 50,
 		POS_BACK			= 9000,
 	};
+
+	/**
+	 * Destructor
+	 */
+	virtual ~IStatusBarManager() {}
 
 	/**
 	 * Get the status bar widget, for packing into the main window.

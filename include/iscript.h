@@ -24,6 +24,7 @@ typedef boost::shared_ptr<ExecutionResult> ExecutionResultPtr;
 class IScriptInterface
 {
 public:
+    virtual ~IScriptInterface() {}
 	/**
 	 * This method gets invoked by the Scripting System to let this class
 	 * add its interface to the Python context.

@@ -19,6 +19,9 @@ protected:
 
 public:
 	EffectArgumentItem(ResponseEffect::Argument& arg, GtkTooltips* tooltips);
+
+	// destructor
+	virtual ~EffectArgumentItem() {}
 	
 	/** greebo: This retrieves the string representation of the
 	 * 			current value of this row. This has to be

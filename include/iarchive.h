@@ -46,6 +46,8 @@ class InputStream;
 class ArchiveFile
 {
 public:
+    /// \brief destructor
+	virtual ~ArchiveFile() {}
 	/// \brief Returns the size of the file data in bytes.
 	virtual std::size_t size() const = 0;
 	/// \brief Returns the path to this file (relative to the filesystem root)
@@ -93,6 +95,7 @@ public:
 	class Visitor
 	{
 	public:
+	    virtual ~Visitor() {}
 		virtual void visit(const std::string& name) = 0;
 	};
 
@@ -103,6 +106,9 @@ public:
 		eDirectories = 0x02,
 		eFilesAndDirectories = 0x03,
 	};
+
+	/// \brief destructor
+	virtual ~Archive() {}
 
 	/// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
 	/// Name comparisons are case-insensitive.

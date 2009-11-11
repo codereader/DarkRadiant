@@ -45,6 +45,9 @@ public:
 		setSecondChild(secondChild, false);
 	}
 
+	// Destructor
+	virtual ~Paned() {}
+
 	// Sets the first child to this paned view
 	void setFirstChild(GtkWidget* child, bool allowShrinkBelowRequisition = false)
 	{

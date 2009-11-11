@@ -7,6 +7,11 @@
 class IMainFrameLayout
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~IMainFrameLayout() {}
+
 	/**
 	 * Each MainFrame layout has a unique name.
 	 */

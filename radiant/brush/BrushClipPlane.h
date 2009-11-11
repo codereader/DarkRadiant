@@ -11,6 +11,8 @@ class BrushClipPlane : public OpenGLRenderable {
 	Winding m_winding;
 	static ShaderPtr m_state;
 public:
+    virtual ~BrushClipPlane() {}
+
 	static void constructStatic() {
 		m_state = GlobalRenderSystem().capture("$CLIPPER_OVERLAY");
 	}

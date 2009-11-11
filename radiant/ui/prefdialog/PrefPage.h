@@ -16,6 +16,7 @@ public:
 	class Visitor 
 	{
 	public:
+	    virtual ~Visitor() {}
 		virtual void visit(PrefPagePtr prefPage) = 0;
 	};
 

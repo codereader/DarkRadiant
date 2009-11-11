@@ -10,6 +10,11 @@ class Path;
 class Instantiable
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~Instantiable() {}
+
 	/**
 	 * greebo: Notifies this instantiable about the instantiation. The given 
 	 *         path refers to the position in the scenegraph this item is 

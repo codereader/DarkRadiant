@@ -30,6 +30,8 @@ class MapFileChooserPreview :
 public:
 	MapFileChooserPreview();
 
+	virtual ~MapFileChooserPreview() {}
+
 	// Retrieve the preview widget for packing into the dialog
 	GtkWidget* getPreviewWidget();
 

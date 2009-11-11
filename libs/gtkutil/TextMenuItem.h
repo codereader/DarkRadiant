@@ -24,6 +24,9 @@ public:
 	TextMenuItem(const std::string& text)
 	: _label(text)
 	{}
+
+	// Destructor
+	virtual ~TextMenuItem() {}
 	
 	// Operator cast to GtkWidget* for packing into a menu
 	virtual operator GtkWidget* () {

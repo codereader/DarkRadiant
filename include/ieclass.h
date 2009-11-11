@@ -103,6 +103,7 @@ typedef std::vector<EntityClassAttribute> EntityClassAttributeList;
  * \ingroup eclass
  */
 struct EntityClassAttributeVisitor {
+    virtual ~EntityClassAttributeVisitor() {}
 	
 	/** 
 	 * Visit function.
@@ -144,6 +145,7 @@ public:
 	class Observer
 	{
 	public:
+	    virtual ~Observer() {}
 		/**
 		 * greebo: Gets called as soon as the contents of the eclass
 		 * get changed, which is true for the "reloadDefs" command.
@@ -350,6 +352,7 @@ typedef boost::shared_ptr<IModelDef> IModelDefPtr;
 class EntityClassVisitor
 {
 public:
+    virtual ~EntityClassVisitor() {}
 	virtual void visit(IEntityClassPtr eclass) = 0;
 };
 

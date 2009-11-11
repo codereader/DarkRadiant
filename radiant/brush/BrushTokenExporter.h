@@ -40,6 +40,7 @@ class BrushTokenExporter :
 
 public:
 	BrushTokenExporter(const Brush& brush);
+	virtual ~BrushTokenExporter() {}
 
 	// Required export function
 	virtual void exportTokens(std::ostream& os) const;

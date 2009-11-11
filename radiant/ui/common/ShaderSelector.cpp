@@ -133,6 +133,8 @@ namespace {
 							   IMAGE_COL, pixBuf,
 							   -1);
 		} 	
+		public:
+		virtual ~DataInserter() {}
 	};
 
 	class ShaderNameFunctor 

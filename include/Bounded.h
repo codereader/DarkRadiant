@@ -12,6 +12,7 @@ class AABB;
 class Bounded
 {
 public:
+    virtual ~Bounded() {}
 	/**
 	 * Return the local AABB for this object.
 	 */

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class StreamBase
 {
 public:
+  virtual ~StreamBase() {}
   typedef std::size_t size_type;
   typedef unsigned char byte_type;
 };
@@ -62,6 +63,7 @@ public:
     end,
   };
 
+  virtual ~SeekableStream() {}
   /// \brief Sets the current \p position of the stream relative to the start.
   virtual position_type seek(position_type position) = 0;
   /// \brief Sets the current \p position of the stream relative to either the start, end or current position.

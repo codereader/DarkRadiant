@@ -37,6 +37,10 @@ class Matrix4;
 class GLProgram
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~GLProgram() {}
 	
 	/**
 	 * Create this program using glGenProgramsARB and siblings. This needs the

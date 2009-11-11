@@ -52,6 +52,9 @@ class BrushModuleClass :
 	bool _textureLockEnabled;
 	
 public:
+    // destructor
+	virtual ~BrushModuleClass() {}
+
 	// This constructs the brush preferences, initialises static variables, etc.
 	void construct();
 	

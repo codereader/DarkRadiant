@@ -69,6 +69,7 @@ public:
 	 */ 
 	class Observer {
 	public:
+	    virtual ~Observer() {}
 		
 		/**
 		 * Notification of VFS initialisation.

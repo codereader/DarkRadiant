@@ -12,6 +12,7 @@ class TargetKeyCollection :
 public:
 	class Visitor {
 	public:
+	    virtual ~Visitor() {}
 		// Gets called with each Target contained in the TargetKeys object
 		virtual void visit(const TargetPtr& target) = 0;
 	};

@@ -14,6 +14,10 @@ namespace applog {
  */
 class LogDevice {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~LogDevice() {}
 	/**
 	 * greebo: This method gets called by the Writer with 
 	 * a logging string as argument.

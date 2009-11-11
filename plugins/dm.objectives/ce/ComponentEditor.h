@@ -39,6 +39,10 @@ typedef boost::shared_ptr<ComponentEditor> ComponentEditorPtr;
 class ComponentEditor
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~ComponentEditor() {}
 	
 	/**
 	 * Return a GtkWidget* for packing into the parent dialog.

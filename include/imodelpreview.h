@@ -25,6 +25,11 @@ namespace ui
 class IModelPreview
 {
 public:
+    /**
+	 * Destructor
+	 */
+    virtual ~IModelPreview() {}
+
 	/** 
 	 * Set the pixel size of the IModelPreview widget. The widget is always 
 	 * square. 

@@ -15,6 +15,11 @@
 class Texture
 {
 public:
+    /**
+     * \brief
+	 * Destructor
+	 */
+	virtual ~Texture() {}
 
     /**
      * \brief
