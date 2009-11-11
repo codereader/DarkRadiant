@@ -732,15 +732,16 @@ void bulgePatch(const cmd::ArgumentList& args) {
 			UndoableCommand cmd("BulgePatch");
 
 			// Cycle through all patches and apply the bulge algorithm
-			for (PatchPtrVector::iterator p = patches.begin(); p != patches.end(); p++) {
+			for (PatchPtrVector::iterator p = patches.begin(); p != patches.end(); ++p)
+			{
 				Patch& patch = (*p)->getPatch();
 
 				patch.undoSave();
 
-				for (PatchControlIter i = patch.begin(); i != patch.end(); i++) {
+				for (PatchControlIter i = patch.begin(); i != patch.end(); ++i) {
 					PatchControl& control = *i;
 					int randomNumber = int(maxValue * (float(std::rand()) / float(RAND_MAX)));
-					control.m_vertex.set(control.m_vertex.x(), control.m_vertex.y(), control.m_vertex.z() + randomNumber);
+					control.vertex.set(control.vertex.x(), control.vertex.y(), control.vertex.z() + randomNumber);
 				}
 
 				patch.controlPointsChanged();

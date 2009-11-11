@@ -232,7 +232,7 @@ const AABB& PatchNode::getSelectedComponentsBounds() const {
 	// Cycle through all the instances and extend the bounding box by using the selected control points
 	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
 		if (i->m_selectable.isSelected()) {
-			m_aabb_component.includePoint(i->m_ctrl->m_vertex);
+			m_aabb_component.includePoint(i->m_ctrl->vertex);
 		}
 	}
 
@@ -369,7 +369,7 @@ void PatchNode::update_selected() const {
 		if (i->m_selectable.isSelected()) {
 			const Colour4b colour_selected(0, 0, 0, 255);
 			// Add this patch control instance to the render list
-			m_render_selected.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(ctrl->m_vertex), colour_selected));
+			m_render_selected.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(ctrl->vertex), colour_selected));
 		}
 	}
 }
@@ -415,7 +415,7 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 		// greebo: Have to investigate this further, why there are actually two iterators needed  
 		for (PatchNode::PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl) {
 			if (i->m_selectable.isSelected()) {
-				matrix4_transform_point(matrix, ctrl->m_vertex);
+				matrix4_transform_point(matrix, ctrl->vertex);
 			}
 		}
 		m_patch.UpdateCachedData();
