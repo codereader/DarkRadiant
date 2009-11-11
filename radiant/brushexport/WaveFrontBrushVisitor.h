@@ -34,7 +34,9 @@ public:
 		vertices(0),
 		exported(0)
     {}
-    
+
+	virtual ~CExportFormatWavefront() {}
+
     // Visitor function, called for each brush
     void visit(const scene::INodePtr& node)
     {

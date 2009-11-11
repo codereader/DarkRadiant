@@ -53,6 +53,7 @@ public:
 	class Preview
 	{
 	public:
+		virtual ~Preview() {}
 		// Retrieve the preview widget for packing into the dialog
 		virtual GtkWidget* getPreviewWidget() = 0;
 

@@ -58,6 +58,7 @@ class AABB;
  */
 class BrushDoom3 {
 public:
+    virtual ~BrushDoom3() {}
 	/** greebo: Translates the brush about the given <translation> vector.
 	 */
 	virtual void translateDoom3Brush(const Vector3& translation) = 0;
@@ -275,6 +276,7 @@ inline void addNodeToContainer(const scene::INodePtr& node, const scene::INodePt
 // cast an instance onto a light and identify it as such.
 class SelectableLight {
 public:
+    virtual ~SelectableLight() {}
 	/** greebo: Get the AABB of the Light "Diamond" representation.
 	 */
 	virtual AABB getSelectAABB() = 0;

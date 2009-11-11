@@ -8,9 +8,13 @@ public:
 	class Observer
 	{
 	public:
+		virtual ~Observer() {}
 		// Gets called by the Counter class on count change
 		virtual void countChanged() = 0;
 	};
+
+    /** Destructor */
+	virtual ~ICounter() {}
 
 	/** greebo: Decrements/increments the counter.
 	 */

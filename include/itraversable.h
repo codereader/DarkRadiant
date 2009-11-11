@@ -17,11 +17,16 @@ public:
 	class Observer
 	{
 	public:
+	    /// destructor
+		virtual ~Observer() {}
 		/// \brief Called when a node is added to the container.
 		virtual void onTraversableInsert(const INodePtr& node) = 0;
 		/// \brief Called when a node is removed from the container.
 		virtual void onTraversableErase(const INodePtr& node) = 0;
 	};
+
+	/// destructor
+	virtual ~Traversable() {}
 
 	/// \brief Adds a node to the container.
 	virtual void insert(INodePtr node) = 0;

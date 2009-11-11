@@ -30,6 +30,9 @@ public:
 			contents.clear();
 		}
 	};
+
+    /** Destructor */
+	virtual ~BlockTokeniser() {}
 	
     /** 
      * Test if this DefTokeniser has more blocks to return.

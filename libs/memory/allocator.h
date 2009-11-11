@@ -60,7 +60,7 @@ public:
   template<typename Other> DefaultAllocator(const DefaultAllocator<Other>&)
   {
   }
-  ~DefaultAllocator()
+  virtual ~DefaultAllocator()
   {
   }
 

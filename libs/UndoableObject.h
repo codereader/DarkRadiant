@@ -16,6 +16,7 @@ class UndoableObject : public Undoable
 
 public:
 	UndoableObject(Copyable& object);
+	virtual ~UndoableObject() {}
 
   void instanceAttach(MapFile* map);
   void instanceDetach(MapFile* map);

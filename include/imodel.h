@@ -97,6 +97,7 @@ namespace model {
 	 */
 	class ModelNode {
 	public:
+	    virtual ~ModelNode() {}
 		// Returns the contained IModel
 		virtual const IModel& getIModel() const = 0;
 	};

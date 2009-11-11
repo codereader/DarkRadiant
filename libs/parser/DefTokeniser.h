@@ -307,6 +307,11 @@ public:
  */
 class DefTokeniser {
 public:
+
+    /**
+	 * Destructor
+	 */
+	virtual ~DefTokeniser() {}
 	
     /** 
      * Test if this DefTokeniser has more tokens to return.

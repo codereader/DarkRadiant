@@ -35,6 +35,7 @@ namespace parser { class DefTokeniser; }
 class MapImporter
 {
 public:
+    virtual ~MapImporter() {}
     virtual bool importTokens(parser::DefTokeniser& tokeniser) = 0;
 };
 typedef boost::shared_ptr<MapImporter> MapImporterPtr;
@@ -44,6 +45,7 @@ typedef boost::shared_ptr<MapImporter> MapImporterPtr;
 class MapExporter
 {
 public:
+    virtual ~MapExporter() {}
 	/** Export this Node's state to the provided output stream.
 	 */
 	virtual void exportTokens(std::ostream& os) const = 0;
@@ -73,6 +75,7 @@ class MapFormat :
 	public RegisterableModule
 {
 public:
+    virtual ~MapFormat() {}
 	/**
 	 * Read the contents of the given streams (which are contained in MapImportInfo)
 	 * and add them as children to the given root node (also in MapImportInfo).
@@ -101,6 +104,7 @@ typedef boost::shared_ptr<INamespace> INamespacePtr;
 class IMapRootNode
 {
 public:
+    virtual ~IMapRootNode() {}
 	/** 
 	 * greebo: Returns the namespace of this root. 
 	 */

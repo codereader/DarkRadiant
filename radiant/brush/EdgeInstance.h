@@ -36,6 +36,8 @@ public:
 		return *this;
 	}
 
+	virtual ~EdgeInstance() {}
+
 	void setSelected(bool select) {
 		select_edge(select);
 	}

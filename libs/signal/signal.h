@@ -11,6 +11,7 @@ namespace ListDetail
 {
   struct ListNodeBase
   {
+    virtual ~ListNodeBase() {}
     ListNodeBase* next;
     ListNodeBase* prev;
   };
@@ -284,6 +285,7 @@ class SignalBase
   SignalList events;
 
 public:
+  virtual ~SignalBase() {}
 
   typedef Functor handler_type;
   typedef Handle< Opaque<Functor> > handler_id_type;

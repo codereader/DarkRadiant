@@ -62,6 +62,9 @@ namespace ui {
 class IEvent
 {
 public:
+    // destructor
+	virtual ~IEvent() {}
+
 	// Handles the incoming keyUp / keyDown calls
 	virtual void keyUp() = 0;
 	virtual void keyDown() = 0;
@@ -92,6 +95,9 @@ typedef boost::shared_ptr<IEvent> IEventPtr;
 class IAccelerator
 {
 public:
+    // destructor
+	virtual ~IAccelerator() {}
+
 	// Get/set the GDK key value
 	virtual void setKey(const unsigned int& key) = 0;
 	virtual unsigned int getKey() const = 0;
@@ -107,6 +113,9 @@ public:
 // Event visitor class
 class IEventVisitor {
 public:
+    // destructor
+	virtual ~IEventVisitor() {}
+
 	virtual void visit(const std::string& eventName, IEventPtr event) = 0;
 };
 
@@ -114,6 +123,9 @@ public:
  */
 class IMouseEvents {
 public:
+    // destructor
+	virtual ~IMouseEvents() {}
+
 	// Return the ObserverEvent type for a given GdkEventButton
 	virtual ui::CamViewEvent getCameraViewEvent(GdkEventButton* event) = 0;
 

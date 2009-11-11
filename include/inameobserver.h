@@ -13,6 +13,7 @@
 class NameObserver
 {
 public:
+    virtual ~NameObserver() {}
 	/** 
 	 * greebo: This is the "change" event, which gets issued by the Namespace.
 	 * The old name as well as the new name is passed along.

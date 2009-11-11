@@ -28,6 +28,9 @@ class PointFile :
 public:
 	// Constructor
 	PointFile();
+
+	// Destructor
+	virtual ~PointFile() {}
 	
 	/** greebo: Accessor method containing the singleton instance.
 	 */

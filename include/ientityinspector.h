@@ -23,6 +23,7 @@ class IPropertyEditor :
 	public gtkutil::Widget
 {
 public:
+    virtual ~IPropertyEditor() {}
 	/**
 	 * Clone method for virtual construction. This method must create a new
 	 * PropertyEditor of the same type as the derive class which is implementing

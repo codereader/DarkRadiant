@@ -6,6 +6,10 @@
 class CurveNode
 {
 public:
+    /** destructor
+	 */
+	virtual ~CurveNode() {}
+
 	/** greebo: Returns true if the curve has 0 control points.
 	 */
 	virtual bool hasEmptyCurve() = 0;

@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class Nameable
 {
 public:
+    virtual ~Nameable() {}
 	virtual std::string name() const = 0;
 };
 typedef boost::shared_ptr<Nameable> NameablePtr;

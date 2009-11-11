@@ -28,6 +28,8 @@ public:
 		_includeSkins(includeSkins)
 	{}
 
+	virtual ~ModelDataInserter() {}
+
 	// Required visit function
 	void visit(GtkTreeStore* store, 
 			   GtkTreeIter* iter, 

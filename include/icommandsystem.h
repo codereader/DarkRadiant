@@ -259,6 +259,8 @@ public:
 	class Visitor
 	{
 	public:
+		// destructor
+		virtual ~Visitor() {}
 		// Gets invoked for each command
 		virtual void visit(const std::string& commandName) = 0;
 	};

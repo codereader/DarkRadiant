@@ -25,6 +25,7 @@ namespace {
  */
 class RegistryKeyObserver {
 public:
+    virtual ~RegistryKeyObserver() {}
 
     /**
      * @brief Key change notification callback.

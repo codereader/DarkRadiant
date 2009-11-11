@@ -37,6 +37,7 @@ class BrushTokenImporter :
 	Brush& _brush;
 public:
 	BrushTokenImporter(Brush& brush);
+	virtual ~BrushTokenImporter() {}
 	
     /**
      * Required token import method.

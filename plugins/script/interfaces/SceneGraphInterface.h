@@ -23,6 +23,9 @@ public:
 		_node(node)
 	{}
 
+	virtual ~ScriptSceneNode()
+	{}
+
 	operator scene::INodePtr() const {
 		return _node.lock();
 	}

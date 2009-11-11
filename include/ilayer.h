@@ -48,6 +48,7 @@ public:
 	// Visitor class for use with the foreachLayer() method
 	class Visitor {
 	public:
+	    virtual ~Visitor() {}
 		virtual void visit(int layerID, std::string layerName) = 0;
 	};
 

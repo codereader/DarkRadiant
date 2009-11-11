@@ -15,6 +15,11 @@ namespace parser {
 class StringTokeniser
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~StringTokeniser() {}
+
 	/** Test if this StringTokeniser has more tokens to return.
      * 
      * @returns

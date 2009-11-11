@@ -21,6 +21,8 @@ public:
 		_observer(observer), 
 		_count(0)
 	{}
+
+	virtual ~Counter() {}
 	
 	void increment() {
 		++_count;
@@ -56,6 +58,8 @@ public:
 		_counters[counterPatches] = CounterPtr(new Counter(this));
 		_counters[counterEntities] = CounterPtr(new Counter(this));	
 	}
+
+	virtual ~CounterManager() {}
 	
 	ICounter& get(CounterType counter) {
 		if (_counters.find(counter) == _counters.end()) {

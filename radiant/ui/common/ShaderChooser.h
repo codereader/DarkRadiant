@@ -28,6 +28,8 @@ public:
 	class ChooserClient
 	{
 	public:
+	    // destructor
+		virtual ~ChooserClient() {}
 		// greebo: This gets invoked upon selection changed to allow the client to react.
 		virtual void shaderSelectionChanged(const std::string& shader) = 0;
 	};

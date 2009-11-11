@@ -31,6 +31,8 @@ public:
 		edge(edge_), 
 		adjacent(adjacent_)
 	{}
+
+	virtual ~FixedWindingVertex() {}
 };
 
 /**
@@ -44,6 +46,8 @@ public:
 	FixedWinding() {
 		reserve(MAX_POINTS_ON_WINDING);
 	}
+
+	virtual ~FixedWinding() {}
 	
 	// Writes the FixedWinding data into the given Winding
 	void writeToWinding(Winding& winding);

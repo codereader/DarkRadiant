@@ -30,6 +30,10 @@ class ModuleObserver;
 class ModelSkin
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~ModelSkin() {}
 
 	/** 
 	 * greebo: Returns the name of this skin.
@@ -48,6 +52,9 @@ typedef boost::shared_ptr<ModelSkin> ModelSkinPtr;
 class SkinnedModel
 {
 public:
+    // destructor
+	virtual ~SkinnedModel() {}
+
 	// greebo: Updates the model's surface remaps. Pass the new skin name (can be empty).
 	virtual void skinChanged(const std::string& newSkinName) = 0;
 

@@ -9,6 +9,7 @@ namespace map {
 class PrimitiveParser
 {
 public:
+    virtual ~PrimitiveParser() {}
 	/**
 	 * Creates and returns a primitive node according to the encountered token.
 	 */

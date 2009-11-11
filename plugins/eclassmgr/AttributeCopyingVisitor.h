@@ -24,6 +24,8 @@ public:
 	: _target(target)
 	{ }
 
+	virtual ~AttributeCopyingVisitor() {}
+
 	// Required visit function
 	void visit(const EntityClassAttribute& attr) {
 

@@ -28,7 +28,7 @@ public:
 	 */
 	LogFile(const std::string& filename);
 
-	~LogFile();
+	virtual ~LogFile();
 
 	/** 
 	 * Use this to write a string to the logfile. This usually gets

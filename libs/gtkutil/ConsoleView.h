@@ -38,6 +38,7 @@ class ConsoleView :
 
 public:
 	ConsoleView();
+	virtual ~ConsoleView() {}
 
 	// The text modes determining the colour
 	enum ETextMode

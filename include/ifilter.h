@@ -53,6 +53,7 @@ typedef std::vector<FilterRule> FilterRules;
  * FilterSystem.
  */
 struct IFilterVisitor {
+    virtual ~IFilterVisitor() {}
 	// Visit function
 	virtual void visit(const std::string& filterName) = 0;
 };
@@ -68,6 +69,7 @@ public:
 	class Observer
 	{
 	public:
+	    virtual ~Observer() {}
 		// Get notified when a filter is added or its enabled status changes
 		virtual void onFiltersChanged() = 0;
 	};

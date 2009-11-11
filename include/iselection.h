@@ -38,6 +38,9 @@ class View;
 class Selectable
 {
 public:
+    // destructor
+	virtual ~Selectable() {}
+
 	// Set the selection status of this object
 	virtual void setSelected(bool select) = 0;
 
@@ -106,6 +109,7 @@ public:
 	class Observer 
 	{
 	public:
+		virtual ~Observer() {}
 		/** greebo: This gets called upon selection change.
 		 * 	
 		 * @instance: The instance that got affected (this may also be the parent brush of a FaceInstance).
@@ -155,6 +159,7 @@ public:
 	class Visitor
 	{
 	public:
+		virtual ~Visitor() {}
 
         /**
          * @brief

@@ -195,7 +195,7 @@ public:
 		_after(after)
 	{}
 
-	~SubtractBrushesFromUnselected() {
+	virtual ~SubtractBrushesFromUnselected() {
 		for (std::list<scene::INodePtr>::iterator i = _deleteList.begin();
 			 i != _deleteList.end(); i++)
 		{
@@ -450,6 +450,8 @@ public:
 	BrushSetClipPlane(const Plane3& plane) : 
 		_plane(plane)
 	{}
+
+	virtual ~BrushSetClipPlane() {}
 
 	void visit(const scene::INodePtr& node) const {
 		BrushNodePtr brush = boost::dynamic_pointer_cast<BrushNode>(node);

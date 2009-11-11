@@ -13,6 +13,7 @@ namespace selection {
 class CurveNodeProcessor
 {
 public:
+    virtual ~CurveNodeProcessor() {}
 	virtual void operator() (CurveNode& curve) = 0;
 };
 

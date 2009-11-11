@@ -31,6 +31,7 @@ public:
 	class Observer
 	{
 	public:
+		virtual ~Observer() {}
 		virtual void realiseShader() = 0;
 		virtual void unrealiseShader() = 0;
 	};
@@ -69,7 +70,7 @@ public:
 	FaceShader(const std::string& shader, const ContentsFlagsValue& flags = ContentsFlagsValue(0, 0, 0, false));
 	
 	// Destructor
-	~FaceShader();
+	virtual ~FaceShader();
 	
     /**
      * \brief

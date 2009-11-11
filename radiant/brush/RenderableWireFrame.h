@@ -33,6 +33,8 @@ public:
 	std::vector<EdgeRenderIndices> m_faceVertex;
 	std::size_t m_size;
 	const PointVertex* m_vertices;
+
+	virtual ~RenderableWireframe() {}
 };
 
 #endif /*RENDERABLEWIREFRAME_H_*/

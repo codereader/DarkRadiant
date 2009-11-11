@@ -51,6 +51,8 @@ private:
 	void notifyObservers();
 	
 public:
+    virtual ~BasicFilterSystem() {}
+
 	void addObserver(const ObserverPtr& observer);
 	void removeObserver(const ObserverPtr& observer);
 

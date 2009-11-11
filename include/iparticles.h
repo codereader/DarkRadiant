@@ -9,6 +9,10 @@
  */
 class IParticleDef {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~IParticleDef() {}
 	
 	/**
 	 * Get the name of the particle system.

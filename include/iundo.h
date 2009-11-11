@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class UndoMemento
 {
 public:
+    virtual ~UndoMemento() {}
 	virtual void release() = 0;
 };
 
@@ -55,6 +56,7 @@ public:
 class Undoable
 {
 public:
+    virtual ~Undoable() {}
 	virtual UndoMemento* exportState() const = 0;
 	virtual void importState(const UndoMemento* state) = 0;
 };
@@ -62,12 +64,14 @@ public:
 class UndoObserver
 {
 public:
+    virtual ~UndoObserver() {}
 	virtual void save(Undoable* undoable) = 0;
 };
 
 class UndoTracker
 {
 public:
+    virtual ~UndoTracker() {}
 	virtual void clear() = 0;
 	virtual void begin() = 0;
 	virtual void undo() = 0;
@@ -92,6 +96,7 @@ public:
 
 	class Observer {
 	public:
+	    virtual ~Observer() {}
 		// Gets called after an undo operation is fully completed, allows objects to refresh their state
 		virtual void postUndo() = 0;
 		// Gets called after a redo operation is fully completed, allows objects to refresh their state

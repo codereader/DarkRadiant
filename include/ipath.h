@@ -36,6 +36,10 @@ public:
 		push(initialElement);
 	}
 
+	// Destructor
+	virtual ~Path()
+	{}
+
 	// Accessor method to retrieve the last element inserted.
 	INodePtr& top() {
 		return back();

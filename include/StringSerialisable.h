@@ -10,6 +10,11 @@
 class StringSerialisable
 {
 public:
+   /**
+	* \brief
+	* Destructor
+	*/
+   virtual ~StringSerialisable() {}
 
    /**
     * \brief

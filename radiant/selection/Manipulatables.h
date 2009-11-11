@@ -16,16 +16,19 @@
 
 class Rotatable {
   public:
+    virtual ~Rotatable() {}
   	virtual void rotate(const Quaternion& rotation) = 0;
 };
 
 class Translatable {
   public:
+    virtual ~Translatable() {}
   	virtual void translate(const Vector3& translation) = 0;
 };
 
 class Scalable {
   public:
+    virtual ~Scalable() {}
   	virtual void scale(const Vector3& scaling) = 0;
 };
 
@@ -34,6 +37,7 @@ class Scalable {
 // A manipulatable object, as the name states.
 class Manipulatable {
   public:
+    virtual ~Manipulatable() {}
   	virtual void Construct(const Matrix4& device2manip, const float x, const float y) = 0;
   	
   	// greebo: An abstract Transform() method, the implementation has to decide which operations 

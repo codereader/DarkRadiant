@@ -71,7 +71,7 @@ public:
 
 	/** Destroy the VFSTreePopulator and all temporary data.
 	 */
-	~VFSTreePopulator();
+	virtual ~VFSTreePopulator();
 	
 	/** Add a single VFS string to the tree, which will be split automatically
 	 * and inserted at the correct place in the tree.
@@ -81,6 +81,7 @@ public:
 	/** Visitor interface.
 	 */
 	struct Visitor {
+		virtual ~Visitor() {}
 		
 		/**
 		 * Visit callback function, called for each node in the tree.

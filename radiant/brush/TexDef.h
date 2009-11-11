@@ -11,6 +11,9 @@ public:
 	
 	// Constructs a TexDef out of the given transformation matrix plus width/height
 	TexDef(double width, double height, const Matrix4& transform);
+
+	// Destructor
+	virtual ~TexDef() {}
 	
 	void shift(double s, double t);
 	void scale(double s, double t);

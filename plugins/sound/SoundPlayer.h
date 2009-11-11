@@ -35,7 +35,7 @@ public:
 	/** 
 	 * greebo: Destroys the alut context
 	 */
-	~SoundPlayer();
+	virtual ~SoundPlayer();
 
 	/** greebo: Call this with the ArchiveFile object containing
 	 * 			the file to be played.

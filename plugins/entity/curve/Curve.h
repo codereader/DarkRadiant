@@ -32,6 +32,8 @@ protected:
 	Signal0 _curveChanged;
 public:
 	Curve(const Callback& boundsChanged);
+
+	virtual ~Curve() {}
 	
 	// "Curve changed" signal stuff
 	SignalHandlerId connect(const SignalHandler& curveChanged);

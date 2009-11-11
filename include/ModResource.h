@@ -12,6 +12,10 @@
 class ModResource
 {
 public:
+    /**
+	 * Destructor
+	 */
+    virtual ~ModResource() {}
     
     /**
      * Return the name of the mod which owns this resource object. Objects that

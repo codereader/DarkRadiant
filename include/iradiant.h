@@ -86,6 +86,10 @@ enum CounterType {
  */
 class RadiantEventListener {
 public:
+    /** Destructor
+	 */
+	virtual ~RadiantEventListener() {}
+
 	/** This gets called AFTER the MainFrame window has been constructed.
 	 */
 	virtual void onRadiantStartup() {}

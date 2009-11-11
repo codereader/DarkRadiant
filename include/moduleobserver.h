@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class ModuleObserver
 {
 public:
+  virtual ~ModuleObserver() {}
   virtual void unrealise() = 0;
   virtual void realise() = 0;
 };

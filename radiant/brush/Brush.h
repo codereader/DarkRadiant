@@ -61,6 +61,7 @@ struct EdgeFaces {
 
 class BrushObserver {
 public:
+    virtual ~BrushObserver() {}
 	virtual void reserve(std::size_t size) = 0;
 	virtual void clear() = 0;
 	virtual void push_back(Face& face) = 0;
@@ -79,6 +80,7 @@ public:
 
 class BrushVisitor {
 public:
+    virtual ~BrushVisitor() {}
 	virtual void visit(Face& face) const = 0;
 };
 
@@ -133,6 +135,7 @@ public:
 	class BrushUndoMemento : public UndoMemento {
 	public:
 		BrushUndoMemento(const Faces& faces) : m_faces(faces) {}
+		virtual ~BrushUndoMemento() {}
 		
 		void release() {
 			delete this;
@@ -157,7 +160,7 @@ public:
 	Brush(const Brush& other);
 	
 	// Destructor
-	~Brush();
+	virtual ~Brush();
 	
 	// assignment not supported
 	Brush& operator=(const Brush& other);

@@ -9,6 +9,11 @@ namespace cmd {
 class Executable
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~Executable() {}
+
 	/** 
 	 * greebo: Execute this object with the given set of arguments.
 	 */

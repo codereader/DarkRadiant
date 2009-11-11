@@ -36,6 +36,8 @@ class Segment;
 class VolumeTest
 {
 public:
+  /// \brief destructor
+  virtual ~VolumeTest() {}
 
   /// \brief Returns true if \p point intersects volume.
   virtual bool TestPoint(const Vector3& point) const = 0;
@@ -60,6 +62,7 @@ public:
 class Cullable
 {
 public:
+    virtual ~Cullable() {}
 	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const = 0;
 };
 typedef boost::shared_ptr<Cullable> CullablePtr;

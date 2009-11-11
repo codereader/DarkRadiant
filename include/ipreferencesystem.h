@@ -39,6 +39,9 @@ typedef std::vector<std::string> IconDescriptionList;
 class PreferencesPage
 {
 public:
+    // destructor
+	virtual ~PreferencesPage() {}
+
 	/** greebo: Allows to set a custom title of this page. The default title 
 	 * 			upon construction is "guessed" by adding a " Settings" to 
 	 * 			the page name, "Settings/Patch" gets assigned 

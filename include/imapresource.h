@@ -9,9 +9,12 @@ class IMapResource
 public:
 	class Observer {
 	public:
+	    virtual ~Observer() {}
 		virtual void onResourceRealise() = 0;
 		virtual void onResourceUnrealise() = 0;
 	};
+
+	virtual ~IMapResource() {}
 
 	// Renames this map resource to the new path
 	virtual void rename(const std::string& fullPath) = 0;

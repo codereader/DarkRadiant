@@ -13,6 +13,8 @@ public:
 	CExporter(std::ofstream& file)
       : m_exporter(file)
     {}
+
+	virtual ~CExporter() {}
     
     void visit(const scene::INodePtr& node) const {
 		m_exporter.visit(node);

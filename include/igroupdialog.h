@@ -15,6 +15,11 @@ typedef struct _GtkWidget GtkWidget;
 class IGroupDialog 
 {
 public:
+    /**
+	 * Destructor
+	 */
+	virtual ~IGroupDialog() {}
+
 	/** Adds a page to the group dialog.
 	 * 
 	 * @name: The name of this window (unique, can be used to show the page)

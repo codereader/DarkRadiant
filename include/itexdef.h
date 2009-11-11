@@ -34,6 +34,8 @@ public:
 	double	_rotate;
 	double	_scale[2];
 
+	virtual ~GenericTextureDefinition() {}
+
 	// Test the texture definition for insanely large values
 	virtual bool isSane() const = 0;
 	virtual Matrix4 getTransform(double width, double height) const = 0;

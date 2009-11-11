@@ -107,6 +107,7 @@ public:
   explicit BindFirstOpaque(FirstBound firstBound) : firstBound(firstBound)
   {
   }
+  virtual ~BindFirstOpaque() {}
   result_type operator()() const
   {
     return Caller::call(firstBound);
@@ -136,6 +137,7 @@ public:
   explicit BindFirstOpaque1(FirstBound firstBound) : firstBound(firstBound)
   {
   }
+  virtual ~BindFirstOpaque1() {}
   result_type operator()(first_argument_type a1) const
   {
     return Caller::call(firstBound, a1);
@@ -166,6 +168,7 @@ public:
   explicit BindFirstOpaque2(FirstBound firstBound) : firstBound(firstBound)
   {
   }
+  virtual ~BindFirstOpaque2() {}
   result_type operator()(first_argument_type a1, second_argument_type a2) const
   {
     return Caller::call(firstBound, a1, a2);
@@ -197,6 +200,7 @@ public:
   explicit BindFirstOpaque3(FirstBound firstBound) : firstBound(firstBound)
   {
   }
+  virtual ~BindFirstOpaque3() {}
   result_type operator()(first_argument_type a1, second_argument_type a2, third_argument_type a3) const
   {
     return Caller::call(firstBound, a1, a2, a3);
@@ -223,6 +227,9 @@ class CallbackBase
 public:
   typedef Thunk_ Thunk;
   CallbackBase(void* environment, Thunk function) : m_environment(environment), m_thunk(function)
+  {
+  }
+  virtual ~CallbackBase ()
   {
   }
   void* getEnvironment() const
@@ -281,6 +288,7 @@ public:
   {
     return Base::getThunk()(Base::getEnvironment());
   }
+  virtual ~Callback0() {}
 };
 
 template<typename Caller>
