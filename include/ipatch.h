@@ -136,9 +136,12 @@ public:
     virtual ~IPatchNode() {}
 
 	/** 
-	 * greebo: Retrieves the actual patch from a PatchNode
+	 * greebo: Retrieves the actual patch from a PatchNode, only works from within the main module.
 	 */
-	virtual Patch& getPatch() = 0;
+	virtual Patch& getPatchInternal() = 0;
+
+	// Get access to the patch interface
+	virtual IPatch& getPatch() = 0;
 };
 typedef boost::shared_ptr<IPatchNode> IPatchNodePtr;
 
@@ -154,7 +157,7 @@ inline Patch* Node_getPatch(const scene::INodePtr& node)
 
 	if (patchNode != NULL)
 	{
-		return &patchNode->getPatch();;
+		return &patchNode->getPatchInternal();;
 	}
 
 	return NULL;
