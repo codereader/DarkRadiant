@@ -124,6 +124,14 @@ public:
 		return patchNode->getPatch().isDegenerate();
 	}
 
+	void controlPointsChanged()
+	{
+		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		if (patchNode == NULL) return;
+
+		patchNode->getPatch().controlPointsChanged();
+	}
+
 	// Shader handling
 	const std::string& getShader() const 
 	{
@@ -203,7 +211,7 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 		.def("getWidth", &ScriptPatchNode::getWidth)
 		.def("getHeight", &ScriptPatchNode::getHeight)
 		.def("ctrlAt", &ScriptPatchNode::ctrlAt, 
-			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
+			boost::python::return_internal_reference<>())
 		.def("insertColumns", &ScriptPatchNode::insertColumns)
 		.def("insertRows", &ScriptPatchNode::insertRows)
 		.def("removePoints", &ScriptPatchNode::removePoints)
@@ -216,6 +224,7 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 		.def("subdivionsFixed", &ScriptPatchNode::subdivionsFixed)
 		.def("getSubdivisions", &ScriptPatchNode::getSubdivisions)
 		.def("setFixedSubdivisions", &ScriptPatchNode::setFixedSubdivisions)
+		.def("controlPointsChanged", &ScriptPatchNode::controlPointsChanged)
 	;
 
 	// Add the "isPatch" and "getPatch" method to all ScriptSceneNodes
