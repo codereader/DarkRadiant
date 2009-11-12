@@ -20,17 +20,6 @@
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
 
-// This is thrown by the internal patch routines
-class GenericPatchException :
-	public std::runtime_error
-{
-public:
-	// Constructor
-	GenericPatchException(const std::string& what):
-		std::runtime_error(what) 
-	{}
-};
-
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch 
  * is handled here (unselected control points, tesselation lines, shader). 
  * 
