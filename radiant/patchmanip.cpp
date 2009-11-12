@@ -56,7 +56,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
   GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
 
   Patch* patch = Node_getPatch(node);
-  patch->SetShader(shader);
+  patch->setShader(shader);
 
   patch->ConstructPrefab(aabb, eType, axis, width, height);
   patch->controlPointsChanged();
@@ -96,7 +96,7 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
 	assert(capPatch != NULL);
 
     patch.MakeCap(capPatch, type, ROW, true);
-    capPatch->SetShader(shader);
+    capPatch->setShader(shader);
 
 	// greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
 	if (!capPatch->isDegenerate()) {
@@ -116,7 +116,7 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
 	assert(capPatch != NULL);
     
     patch.MakeCap(capPatch, type, ROW, false);
-    capPatch->SetShader(shader);
+    capPatch->setShader(shader);
 
 	// greebo: Avoid creating "degenerate" patches (all vertices merged in one 3D point)
 	if (!capPatch->isDegenerate()) {
@@ -281,7 +281,7 @@ public:
   }
   void operator()(Patch& patch) const
   {
-    patch.SetShader(m_name);
+    patch.setShader(m_name);
   }
 };
 
@@ -306,7 +306,7 @@ public:
 
 		Patch* patch = Node_getPatch(node);
 
-		if (patch != NULL && shader_equal(patch->GetShader(), _name)) {
+		if (patch != NULL && shader_equal(patch->getShader(), _name)) {
 			Node_setSelected(node, true);
 			return false;
 		}

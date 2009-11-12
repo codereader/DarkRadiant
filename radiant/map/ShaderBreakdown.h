@@ -48,7 +48,7 @@ public:
 		Patch* patch = Node_getPatch(node);
 
 		if (patch != NULL) {
-			increaseShaderCount(patch->GetShader(), false);
+			increaseShaderCount(patch->getShader(), false);
 			return false;
 		}
 
