@@ -212,7 +212,7 @@ void TexTool::rescanSelection() {
 			for (std::size_t i = 0; i < patchList.size(); i++) {
 				// Allocate a new PatchItem on the heap (shared_ptr)
 				textool::TexToolItemPtr patchItem(
-					new textool::PatchItem(patchList[i]->getPatch())
+					new textool::PatchItem(patchList[i]->getPatchInternal())
 				);
 				
 				// Add it to the list

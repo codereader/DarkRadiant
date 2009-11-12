@@ -99,7 +99,11 @@ VolumeIntersectionValue PatchNode::intersectVolume(
 	return m_patch.intersectVolume(test, localToWorld);
 }
 
-Patch& PatchNode::getPatch() {
+Patch& PatchNode::getPatchInternal() {
+	return m_patch;
+}
+
+IPatch& PatchNode::getPatch() {
 	return m_patch;
 }
 

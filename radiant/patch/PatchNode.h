@@ -81,7 +81,8 @@ public:
 	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	// IPatchNode implementation
-	virtual Patch& getPatch();
+	Patch& getPatchInternal();
+	IPatch& getPatch();
 
 	// Snappable implementation
 	virtual void snapto(float snap);

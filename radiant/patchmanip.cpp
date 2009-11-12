@@ -584,7 +584,7 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 	Patch* targetPatch = Node_getPatch(node);
 
 	// Create the opposite patch with the given thickness = distance
-	targetPatch->createThickenedOpposite(sourcePatch->getPatch(), thickness, axis);
+	targetPatch->createThickenedOpposite(sourcePatch->getPatchInternal(), thickness, axis);
 
 	// Select the newly created patch
 	Node_setSelected(node, true);
@@ -607,7 +607,7 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 			Patch* wallPatch = Node_getPatch(nodes[i]);
 			
 			// Create the wall patch by passing i as wallIndex
-			wallPatch->createThickenedWall(sourcePatch->getPatch(), *targetPatch, i);
+			wallPatch->createThickenedWall(sourcePatch->getPatchInternal(), *targetPatch, i);
 			
 			// Now select the newly created patch
 			Node_setSelected(nodes[i], true);
@@ -734,7 +734,7 @@ void bulgePatch(const cmd::ArgumentList& args) {
 			// Cycle through all patches and apply the bulge algorithm
 			for (PatchPtrVector::iterator p = patches.begin(); p != patches.end(); ++p)
 			{
-				Patch& patch = (*p)->getPatch();
+				Patch& patch = (*p)->getPatchInternal();
 
 				patch.undoSave();
 

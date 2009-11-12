@@ -434,7 +434,7 @@ void PatchInspector::rescanSelection()
 		// Try to find a pair of same tesselation values
 		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i) 
         {
-			Patch& p = (*i)->getPatch();
+			Patch& p = (*i)->getPatchInternal();
 
 			if (tess.x() == UINT_MAX) 
             {
@@ -480,7 +480,7 @@ void PatchInspector::rescanSelection()
 		gtk_widget_set_sensitive(_tesselation.horizLabel, tessIsFixed);
 		
 		if (_selectionInfo.patchCount == 1) {
-			_patch = &(list[0]->getPatch());
+			_patch = &(list[0]->getPatchInternal());
 			_patchRows = _patch->getHeight();
 			_patchCols = _patch->getWidth();
 			
