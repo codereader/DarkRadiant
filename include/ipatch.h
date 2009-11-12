@@ -24,9 +24,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imodule.h"
 
+#include <stdexcept>
 #include "inode.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
+
+// This is thrown by the internal patch routines
+class GenericPatchException :
+	public std::runtime_error
+{
+public:
+	// Constructor
+	GenericPatchException(const std::string& what):
+		std::runtime_error(what) 
+	{}
+};
 
 /* greebo: A PatchControl consists of a vertex and a set of texture coordinates.
  * Multiple PatchControls form a PatchControlArray or (together with width and height) a PatchControlMatrix.
@@ -49,6 +61,39 @@ public:
 	// Get the patch dimensions
 	virtual std::size_t getWidth() const = 0;
 	virtual std::size_t getHeight() const = 0;
+
+	// Return a defined patch control vertex at <row>,<col>
+	virtual PatchControl& ctrlAt(std::size_t row, std::size_t col) = 0;
+	virtual const PatchControl& ctrlAt(std::size_t row, std::size_t col) const = 0;
+
+	/** 
+	 * greebo: Inserts two columns before and after the column with index <colIndex>.
+ 	 * Throws an GenericPatchException if an error occurs.
+ 	 */
+ 	virtual void insertColumns(std::size_t colIndex) = 0;
+ 	
+ 	/** 
+	 * greebo: Inserts two rows before and after the row with index <rowIndex>.
+ 	 * Throws an GenericPatchException if an error occurs.
+ 	 */
+ 	virtual void insertRows(std::size_t rowIndex) = 0;
+
+	/** 
+	 * greebo: Removes columns or rows right before and after the col/row 
+ 	 * with the given index, reducing the according dimension by 2.
+ 	 */
+ 	virtual void removePoints(bool columns, std::size_t index) = 0;
+ 	
+ 	/** 
+	 * greebo: Appends two rows or columns at the beginning or the end.
+ 	 */
+ 	virtual void appendPoints(bool columns, bool beginning) = 0;
+
+	// Check if the patch has invalid control points or width/height are zero
+	virtual bool isValid() const = 0;
+
+	// Check whether all control vertices are in the same 3D spot (with minimal tolerance)
+	virtual bool isDegenerate() const = 0;
 
 	// Shader handling
 	virtual const std::string& getShader() const = 0;
