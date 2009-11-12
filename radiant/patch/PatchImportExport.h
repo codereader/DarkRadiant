@@ -18,10 +18,10 @@ inline void Patch_importShader(Patch& patch, parser::DefTokeniser& tokeniser) {
 
     std::string texture = tokeniser.nextToken();
     if (texture == "NULL") {
-        patch.SetShader(texdef_name_default());
+        patch.setShader(texdef_name_default());
     }
     else {
-        patch.SetShader(GlobalTexturePrefix_get() + texture);
+        patch.setShader(GlobalTexturePrefix_get() + texture);
     }
 }
 
@@ -30,10 +30,10 @@ inline void PatchDoom3_importShader(Patch& patch,
 {
     std::string texture = tokeniser.nextToken();
     if (texture == "_default") {
-        patch.SetShader(texdef_name_default());
+        patch.setShader(texdef_name_default());
     }
     else {
-        patch.SetShader(texture);
+        patch.setShader(texture);
     }
 }
 
@@ -150,7 +150,7 @@ inline void Patch_exportHeader(const Patch& patch, std::ostream& os)
 
 inline void PatchDoom3_exportShader(const Patch& patch, std::ostream& os)
 {
-	const std::string& shaderName = patch.GetShader();
+	const std::string& shaderName = patch.getShader();
 
     if (shaderName.empty()) {
         os << "\"_default\"";

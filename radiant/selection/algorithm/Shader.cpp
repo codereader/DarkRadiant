@@ -69,7 +69,7 @@ public:
 	
 	void operator()(Patch& patch) const {
 		
-		std::string foundShader = patch.GetShader();
+		std::string foundShader = patch.getShader();
 			
 		if (foundShader != "$NONE" && _shader != "$NONE" && 
 			_shader != foundShader) 
@@ -161,7 +161,7 @@ public:
 	{}
 	
 	virtual void visit(Patch& patch) {
-		patch.SetShader(_shader);
+		patch.setShader(_shader);
 	}
 
 	virtual void visit(Face& face) {
@@ -202,7 +202,7 @@ void applyClipboardPatchToFace(Face& target) {
 	projection.constructDefault();
 	
 	// Copy just the shader name, the rest is default value
-	target.SetShader(source.patch->GetShader());
+	target.SetShader(source.patch->getShader());
 	target.SetTexdef(projection);
 	target.SetFlags(ContentsFlagsValue(0, 0, 0, false));
 }
@@ -232,7 +232,7 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 				// Copy Face >> Patch
 				
 				// Set the shader name first
-			 	target.patch->SetShader(source.face->GetShader());
+			 	target.patch->setShader(source.face->GetShader());
 			 	
 			 	// Either paste the texture projected or naturally
 			 	if (projected) {
@@ -260,7 +260,7 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 			}
 			else if (target.isPatch() && !entireBrush) {
 				// Copy patch >> patch
-			 	target.patch->SetShader(source.patch->GetShader());
+			 	target.patch->setShader(source.patch->getShader());
 			 	target.patch->pasteTextureNatural(*source.patch);
 			}
 		}
@@ -278,7 +278,7 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 				target.face->SetShader(source.getShader());
 			}
 			else if (target.isPatch() && !entireBrush) {
-				target.patch->SetShader(source.getShader());
+				target.patch->setShader(source.getShader());
 			}
 		}
 	}
@@ -907,8 +907,8 @@ public:
 	}
 	
 	void operator()(Patch& patch) const {
-		if (patch.GetShader() == _find) {
-			patch.SetShader(_replace);
+		if (patch.getShader() == _find) {
+			patch.setShader(_replace);
 			_counter++;
 		}
 	}

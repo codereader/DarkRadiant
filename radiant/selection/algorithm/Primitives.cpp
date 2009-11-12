@@ -502,7 +502,7 @@ public:
 			{
 				if (clipboard.getShader().find("decals") != std::string::npos)
 				{
-					patch->SetShader(clipboard.getShader());
+					patch->setShader(clipboard.getShader());
 				}
 			}
 

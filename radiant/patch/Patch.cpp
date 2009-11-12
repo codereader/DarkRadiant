@@ -70,6 +70,11 @@ Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callbac
 
 // Copy constructor	(create this patch from another patch)
 Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
+	IPatch(other),
+	Bounded(other),
+	Cullable(other),
+	Snappable(other),
+	Undoable(other),
 	m_node(&node),
 	m_shader(texdef_name_default()),
 	m_undoable_observer(0),
@@ -92,12 +97,13 @@ Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTran
 	m_subdivisions_y = other.m_subdivisions_y;
 	setDims(other.m_width, other.m_height);
 	copy_ctrl(m_ctrl.begin(), other.m_ctrl.begin(), other.m_ctrl.begin()+(m_width*m_height));
-	SetShader(other.m_shader);
+	setShader(other.m_shader);
 	controlPointsChanged();
 }
 
 // Another copy constructor
 Patch::Patch(const Patch& other) :
+	IPatch(other),
 	Bounded(other),
 	Cullable(other),
 	Snappable(other),
@@ -121,7 +127,7 @@ Patch::Patch(const Patch& other) :
 	m_subdivisions_y = other.m_subdivisions_y;
 	setDims(other.m_width, other.m_height);
 	copy_ctrl(m_ctrl.begin(), other.m_ctrl.begin(), other.m_ctrl.begin()+(m_width*m_height));
-	SetShader(other.m_shader);
+	setShader(other.m_shader);
 	controlPointsChanged();
 }
 
@@ -366,16 +372,14 @@ void Patch::snapto(float snap) {
 	controlPointsChanged();
 }
 
-const std::string& Patch::GetShader() const {
+const std::string& Patch::getShader() const {
 	return m_shader;
 }
 
-void Patch::SetShader(const std::string& name) {
-		ASSERT_NOTNULL(name.c_str());
-  
-  		// return, if the shader is the same as the currently used 
-	if (shader_equal(m_shader, name))
-		return;
+void Patch::setShader(const std::string& name)
+{  
+  	// return, if the shader is the same as the currently used 
+	if (shader_equal(m_shader, name)) return;
 
 	undoSave();
 
@@ -449,7 +453,7 @@ void Patch::importState(const UndoMemento* state) {
 	{
 		m_width = other.m_width;
 		m_height = other.m_height;
-		SetShader(other.m_shader);
+		setShader(other.m_shader);
 		m_ctrl = other.m_ctrl;
 		onAllocate(m_ctrl.size());
 		m_patchDef3 = other.m_patchDef3;
@@ -473,8 +477,8 @@ void Patch::releaseShader() {
 }
 
 void Patch::check_shader() {
-	if (!shader_valid(GetShader().c_str())) {
-		globalErrorStream() << "patch has invalid texture name: '" << GetShader().c_str() << "'\n";
+	if (!shader_valid(getShader().c_str())) {
+		globalErrorStream() << "patch has invalid texture name: '" << getShader() << "'\n";
 	}
 }
 
@@ -3521,7 +3525,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 	setFixedSubdivisions(sourcePatch.subdivionsFixed(), sourcePatch.getSubdivisions());
 	
 	// Copy the shader from the source patch
-	SetShader(sourcePatch.GetShader());
+	setShader(sourcePatch.getShader());
 	
 	// if extrudeAxis == 0,0,0 the patch is extruded along its vertex normals
 	Vector3 extrudeAxis(0,0,0);
@@ -3648,7 +3652,7 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 								const int& wallIndex) 
 {
 	// Copy the shader from the source patch
-	SetShader(sourcePatch.GetShader());
+	setShader(sourcePatch.getShader());
 	
 	// The start and end control vertex indices
 	int start = 0;

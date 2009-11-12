@@ -38,6 +38,7 @@ public:
  */
 // parametric surface defined by quadratic bezier control curves
 class Patch :
+	public IPatch,
 	public Bounded,
 	public Cullable,
 	public Snappable,
@@ -198,15 +199,11 @@ public:
 	// Renders the normals (indicated by lines) of this patch
 	void RenderNormals(RenderStateFlags state) const;
 
-	void popElement(const char* name);
-	
-	std::size_t write(const char* buffer, std::size_t length);
-
 	void UpdateCachedData();
 
 	// Gets the shader name or sets the shader to <name>
-	const std::string& GetShader() const;
-	void SetShader(const std::string& name);
+	const std::string& getShader() const;
+	void setShader(const std::string& name);
 	
 	// As the name states: get the shader flags of the m_state shader
 	int getShaderFlags() const;

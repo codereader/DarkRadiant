@@ -37,6 +37,24 @@ struct PatchControl
 	Vector2 texcoord;	// The texture coordinates of this point
 };
 
+// The abstract base class for a Doom3-compatible patch
+class IPatch
+{
+public:
+	virtual ~IPatch() {}
+
+	// Resizes the patch to the given dimensions
+	virtual void setDims(std::size_t width, std::size_t height) = 0;
+	
+	// Get the patch dimensions
+	virtual std::size_t getWidth() const = 0;
+	virtual std::size_t getHeight() const = 0;
+
+	// Shader handling
+	virtual const std::string& getShader() const = 0;
+	virtual void setShader(const std::string& name) = 0;
+};
+
 /* greebo: the abstract base class for a patch-creating class.
  * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.   
  */
