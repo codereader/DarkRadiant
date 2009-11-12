@@ -49,6 +49,8 @@ struct PatchControl
 	Vector2 texcoord;	// The texture coordinates of this point
 };
 
+typedef BasicVector2<unsigned int> Subdivisions;
+
 // The abstract base class for a Doom3-compatible patch
 class IPatch
 {
@@ -98,6 +100,22 @@ public:
 	// Shader handling
 	virtual const std::string& getShader() const = 0;
 	virtual void setShader(const std::string& name) = 0;
+
+	/** 
+	 * greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
+	 */
+	virtual bool subdivionsFixed() const = 0;
+	
+	/** greebo: Returns the x,y subdivision values (for tesselation)
+	 */
+	virtual Subdivisions getSubdivisions() const = 0;
+	
+	/** greebo: Sets the subdivision of this patch
+	 * 
+	 * @isFixed: TRUE, if this patch should be a patchDef3 (fixed tesselation)
+	 * @divisions: a two-component vector containing the desired subdivisions
+	 */
+	virtual void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) = 0;
 };
 
 /* greebo: the abstract base class for a patch-creating class.
@@ -124,13 +142,13 @@ public:
 };
 typedef boost::shared_ptr<IPatchNode> IPatchNodePtr;
 
-inline bool Node_isPatch(scene::INodePtr node)
+inline bool Node_isPatch(const scene::INodePtr& node)
 {
 	return boost::dynamic_pointer_cast<IPatchNode>(node) != NULL;
 }
 
 // Casts a node onto a patch
-inline Patch* Node_getPatch(scene::INodePtr node)
+inline Patch* Node_getPatch(const scene::INodePtr& node)
 {
 	IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
 

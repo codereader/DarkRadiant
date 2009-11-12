@@ -3669,8 +3669,8 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
 
 	bool sourceTesselationFixed = sourcePatch.subdivionsFixed();
-	BasicVector2<unsigned int> sourceTesselationX(sourcePatch.getSubdivisions().x(), 1);
-	BasicVector2<unsigned int> sourceTesselationY(sourcePatch.getSubdivisions().y(), 1);
+	Subdivisions sourceTesselationX(sourcePatch.getSubdivisions().x(), 1);
+	Subdivisions sourceTesselationY(sourcePatch.getSubdivisions().y(), 1);
 	
 	// Determine which of the four edges have to be connected
 	// and calculate the start, end & stepsize for the following loop
@@ -3838,16 +3838,16 @@ void Patch::normaliseTexture() {
 	}
 }
 
-BasicVector2<unsigned int> Patch::getSubdivisions() const {
-	return BasicVector2<unsigned int>(m_subdivisions_x, m_subdivisions_y);
+Subdivisions Patch::getSubdivisions() const {
+	return Subdivisions(m_subdivisions_x, m_subdivisions_y);
 }
 
-void Patch::setFixedSubdivisions(bool isFixed, BasicVector2<unsigned int> divisions) {
+void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) {
 	undoSave();
 		
 	m_patchDef3 = isFixed;
-	m_subdivisions_x = divisions[0];
-	m_subdivisions_y = divisions[1];
+	m_subdivisions_x = divisions.x();
+	m_subdivisions_y = divisions.y();
 	
 	if (m_subdivisions_x == 0) {
 		m_subdivisions_x = 4;
