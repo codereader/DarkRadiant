@@ -198,6 +198,32 @@ class SoundShaderWalker(SoundShaderVisitor) :
 walker = SoundShaderWalker()
 GlobalSoundManager.forEachShader(walker)
 
+# Test patch manipulation
+class PatchManipulator(SceneNodeVisitor) :
+	def pre(self, node):
+		# Try to get a patch from this node
+		patch = node.getPatch()
+
+		if not patch.isNull():
+			print('Patch information:')
+			print('Dimensions: ' + str(patch.getWidth()) + 'x' + str(patch.getHeight()))
+			
+			w = 0
+			while w < patch.getWidth():
+				h = 0
+				while h < patch.getHeight():
+					# Push the vertex around a bit
+					ctrl = patch.ctrlAt(h,w)
+					ctrl.vertex += Vector3(0,0,10*(h-w))
+					h += 1
+				w += 1
+			
+			patch.controlPointsChanged()
+
+		return 1
+
+walker = PatchManipulator()
+GlobalSceneGraph.root().traverse(walker)
 
 print('')
 
