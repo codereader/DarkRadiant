@@ -91,6 +91,9 @@ public:
  	 */
  	virtual void appendPoints(bool columns, bool beginning) = 0;
 
+	// Updates the patch tesselation matrix, call this everytime you're done with your PatchControl changes
+	virtual void controlPointsChanged() = 0;
+
 	// Check if the patch has invalid control points or width/height are zero
 	virtual bool isValid() const = 0;
 

@@ -63,6 +63,14 @@ public:
 		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
 		if (patchNode == NULL) return _emptyPatchControl;
 
+		IPatch& patch = patchNode->getPatch();
+
+		if (row > patch.getHeight() || col > patch.getWidth()) 
+		{
+			globalErrorStream() << "One or more patch control indices out of bounds: " << row << "," << col << std::endl;
+			return _emptyPatchControl;
+		}
+		
 		return patchNode->getPatch().ctrlAt(row, col);
 	}
 
@@ -178,7 +186,7 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 		.def_readwrite("texcoord", &PatchControl::texcoord)
 	;
 
-	nspace["Subdivisions"] = boost::python::class_<Vector2>("Subdivisions", 
+	nspace["Subdivisions"] = boost::python::class_<Subdivisions>("Subdivisions", 
 		boost::python::init<unsigned int, unsigned int>())
 		.def(boost::python::init<const Subdivisions&>())
 		// greebo: Pick the correct overload - this is hard to read, but it is necessary
