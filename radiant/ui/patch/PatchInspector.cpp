@@ -427,7 +427,7 @@ void PatchInspector::rescanSelection()
 		// Get the list of selected patches
 		PatchPtrVector list = selection::algorithm::getSelectedPatches();
 
-		BasicVector2<unsigned int> tess(UINT_MAX, UINT_MAX);
+		Subdivisions tess(UINT_MAX, UINT_MAX);
 		bool tessIsFixed = false;
 		bool tessIsSame = false;
 
@@ -445,7 +445,7 @@ void PatchInspector::rescanSelection()
 			}
 			else {
 				// We already have a pair of divisions, compare
-				BasicVector2<unsigned int> otherTess = p.getSubdivisions();
+				Subdivisions otherTess = p.getSubdivisions();
 
 				if (tessIsFixed != p.subdivionsFixed() || otherTess != tess) {
 					// Our journey ends here, we cannot find a pair of tesselations 
@@ -542,7 +542,7 @@ void PatchInspector::emitCoords()
 void PatchInspector::emitTesselation() {
 	UndoableCommand setFixedTessCmd("patchSetFixedTesselation");
 
-	BasicVector2<unsigned int> tess(
+	Subdivisions tess(
 		gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.horiz)),
 		gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(_tesselation.vert))
 	);

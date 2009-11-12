@@ -479,7 +479,7 @@ public:
 			
 			// Set the tesselation of that 3x3 patch
 			patch->setDims(3,3);
-			patch->setFixedSubdivisions(true, BasicVector2<unsigned int>(1,1));
+			patch->setFixedSubdivisions(true, Subdivisions(1,1));
 			
 			// Set the coordinates
 			patch->ctrlAt(0,0).vertex = winding[0].vertex;
