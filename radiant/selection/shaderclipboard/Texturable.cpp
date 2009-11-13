@@ -43,7 +43,7 @@ bool Texturable::isShader() const {
 
 std::string Texturable::getShader() const {
 	if (isFace()) {
-		return face->GetShader();
+		return face->getShader();
 	}
 	else if (isPatch()) {
 		return patch->getShader();
@@ -85,7 +85,7 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 				 ++i) 
 			{
 				// Check for filtered faces, don't select them
-				if (!GlobalFilterSystem().isVisible("texture", (*i)->GetShader())) {
+				if (!GlobalFilterSystem().isVisible("texture", (*i)->getShader())) {
 					continue;
 				}
 				

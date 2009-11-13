@@ -64,7 +64,7 @@ public:
 
 	// Brushvisitor implementation
 	void visit(Face& face) const {
-		const_cast<ShaderBreakdown*>(this)->increaseShaderCount(face.GetShader(), true);
+		const_cast<ShaderBreakdown*>(this)->increaseShaderCount(face.getShader(), true);
 	}
 
 	// Accessor method to retrieve the shader breakdown map

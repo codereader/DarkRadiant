@@ -56,7 +56,7 @@ public:
 
 	void operator()(FaceInstance& face) const {
 		
-		std::string foundShader = face.getFace().GetShader();
+		const std::string& foundShader = face.getFace().getShader();
 			
 		if (foundShader != "$NONE" && _shader != "$NONE" && 
 			_shader != foundShader) 
@@ -69,7 +69,7 @@ public:
 	
 	void operator()(Patch& patch) const {
 		
-		std::string foundShader = patch.getShader();
+		const std::string& foundShader = patch.getShader();
 			
 		if (foundShader != "$NONE" && _shader != "$NONE" && 
 			_shader != foundShader) 
@@ -165,7 +165,7 @@ public:
 	}
 
 	virtual void visit(Face& face) {
-		face.SetShader(_shader);
+		face.setShader(_shader);
 	}
 };
 
@@ -202,7 +202,7 @@ void applyClipboardPatchToFace(Face& target) {
 	projection.constructDefault();
 	
 	// Copy just the shader name, the rest is default value
-	target.SetShader(source.patch->getShader());
+	target.setShader(source.patch->getShader());
 	target.SetTexdef(projection);
 	target.SetFlags(ContentsFlagsValue(0, 0, 0, false));
 }
@@ -232,7 +232,7 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 				// Copy Face >> Patch
 				
 				// Set the shader name first
-			 	target.patch->setShader(source.face->GetShader());
+			 	target.patch->setShader(source.face->getShader());
 			 	
 			 	// Either paste the texture projected or naturally
 			 	if (projected) {
@@ -271,11 +271,11 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 					 i != target.brush->end(); 
 					 i++) 
 				{
-					(*i)->SetShader(source.getShader());
+					(*i)->setShader(source.getShader());
 				}
 			}
 			else if (target.isFace() && !entireBrush) {
-				target.face->SetShader(source.getShader());
+				target.face->setShader(source.getShader());
 			}
 			else if (target.isPatch() && !entireBrush) {
 				target.patch->setShader(source.getShader());
@@ -468,8 +468,8 @@ Vector2 getSelectedFaceShaderSize() {
 		// Get the last selected face instance from the global
 		FaceInstance& faceInstance = g_SelectedFaceInstances.last();
 		
-		returnValue[0] = faceInstance.getFace().getShader().width();
-		returnValue[1] = faceInstance.getFace().getShader().height();
+		returnValue[0] = faceInstance.getFace().getFaceShader().width();
+		returnValue[1] = faceInstance.getFace().getFaceShader().height();
 	}
 	
 	return returnValue;
@@ -491,7 +491,7 @@ public:
 	}
 
 	virtual void visit(Face& face) {
-		face.FitTexture(_repeatS, _repeatT);
+		face.fitTexture(_repeatS, _repeatT);
 	}
 };
 
@@ -618,7 +618,7 @@ public:
 	}
 
 	virtual void visit(Face& face) {
-		face.ShiftTexdef(_shift[0], _shift[1]);
+		face.shiftTexdef(_shift[0], _shift[1]);
 	}
 };
 
@@ -657,7 +657,7 @@ public:
 	}
 
 	virtual void visit(Face& face) {
-		face.ScaleTexdef(_scale[0], _scale[1]);
+		face.scaleTexdef(_scale[0], _scale[1]);
 	}
 };
 
@@ -709,7 +709,7 @@ public:
 	}
 
 	virtual void visit(Face& face) {
-		face.RotateTexdef(_angle);
+		face.rotateTexdef(_angle);
 	}
 };
 
@@ -892,16 +892,16 @@ public:
 	}
 	
 	void operator()(Face& face) const {
-		if (face.GetShader() == _find) {
-			face.SetShader(_replace);
+		if (face.getShader() == _find) {
+			face.setShader(_replace);
 			_counter++;
 		}
 	}
 
 	// BrushInstanceVisitor implementation
 	virtual void visit(FaceInstance& face) const {
-		if (face.getFace().GetShader() == _find) {
-			face.getFace().SetShader(_replace);
+		if (face.getFace().getShader() == _find) {
+			face.getFace().setShader(_replace);
 			_counter++;
 		}
 	}

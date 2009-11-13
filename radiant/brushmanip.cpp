@@ -380,7 +380,7 @@ public:
   FaceSetShader(const std::string& name) : m_name(name) {}
   
   void operator()(Face& face) const {
-    face.SetShader(m_name);
+    face.setShader(m_name);
   }
 };
 
@@ -486,7 +486,7 @@ public:
   }
   void operator()(FaceInstance& face) const
   {
-    if(shader_equal(face.getFace().GetShader(), m_name))
+    if(shader_equal(face.getFace().getShader(), m_name))
     {
       face.setSelected(SelectionSystem::eFace, true);
     }

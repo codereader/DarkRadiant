@@ -111,7 +111,7 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush* brush) const {
 	// greebo: Get the most used shader of this brush
 	for (Brush::const_iterator i = brush->begin(); i != brush->end(); i++) {
 		// Get the shadername
-		const std::string& shader = (*i)->GetShader();
+		const std::string& shader = (*i)->getShader();
 
 		// Insert counter, if necessary
 		if (shaderCount.find(shader) == shaderCount.end()) {
