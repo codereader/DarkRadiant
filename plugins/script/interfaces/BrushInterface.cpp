@@ -22,6 +22,69 @@ public:
 		return (brush != NULL) ? brush->getNumFaces() : 0;
 	}
 
+	// Get a reference to the face by index in [0..getNumFaces).
+	/*IFace& getFace(std::size_t index)
+	{
+	}*/
+
+	// Returns true when this brush has no faces
+	bool empty() const
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return true;
+
+		return brushNode->getIBrush().empty();
+	}
+
+	// Returns true if any face of the brush contributes to the final B-Rep.
+	bool hasContributingFaces() const
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return true;
+
+		return brushNode->getIBrush().hasContributingFaces();
+	}
+
+	// Removes faces that do not contribute to the brush. 
+	// This is useful for cleaning up after CSG operations on the brush.
+	// Note: removal of empty faces is not performed during direct brush manipulations, 
+	// because it would make a manipulation irreversible if it created an empty face.
+	void removeEmptyFaces()
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return;
+
+		brushNode->getIBrush().removeEmptyFaces();
+	}
+
+	// Sets the shader of all faces to the given name
+	void setShader(const std::string& newShader)
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return;
+
+		brushNode->getIBrush().setShader(newShader);
+	}
+
+	// Returns TRUE if any of the faces has the given shader
+	bool hasShader(const std::string& name)
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return false;
+
+		return brushNode->getIBrush().hasShader(name);
+	}
+
+	// Saves the current state to the undo stack.
+	// Call this before manipulating the brush to make your action undo-able.
+	void undoSave() 
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return;
+
+		brushNode->getIBrush().undoSave();
+	}
+
 	// Checks if the given SceneNode structure is a BrushNode
 	static bool isBrush(const ScriptSceneNode& node) {
 		return Node_isBrush(node);
@@ -50,6 +113,12 @@ void BrushInterface::registerInterface(boost::python::object& nspace) {
 	nspace["BrushNode"] = boost::python::class_<ScriptBrushNode, 
 		boost::python::bases<ScriptSceneNode> >("BrushNode", boost::python::init<const scene::INodePtr&>() )
 		.def("getNumFaces", &ScriptBrushNode::getNumFaces)
+		.def("empty", &ScriptBrushNode::empty)
+		.def("hasContributingFaces", &ScriptBrushNode::hasContributingFaces)
+		.def("removeEmptyFaces", &ScriptBrushNode::getNumFaces)
+		.def("setShader", &ScriptBrushNode::setShader)
+		.def("hasShader", &ScriptBrushNode::hasShader)
+		.def("undoSave", &ScriptBrushNode::undoSave)
 	;
 
 	// Add the "isBrush" and "getBrush" method to all ScriptSceneNodes
