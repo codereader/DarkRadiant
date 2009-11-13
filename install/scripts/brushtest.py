@@ -16,8 +16,8 @@ class BrushManipulator(SceneNodeVisitor) :
 				print('Face #' + str(i) +' has shader ' + face.getShader())
 				winding = face.getWinding()
 
-				#for w in winding:
-				#	print('w.vertex=' + w.vertex)
+				for w in winding:
+					print('w.vertex=' + str(w.vertex.x()) + ',' + str(w.vertex.y()) + ',' + str(w.vertex.z()))
 				i += 1
 			
 		return 1
