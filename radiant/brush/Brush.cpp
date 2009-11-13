@@ -68,6 +68,12 @@ Brush::~Brush() {
 	ASSERT_MESSAGE(m_observers.empty(), "Brush::~Brush: observers still attached");
 }
 
+IFace& Brush::getFace(std::size_t index)
+{
+	assert(index < m_faces.size());
+	return *m_faces[index];
+}
+
 void Brush::translateDoom3Brush(const Vector3& translation) {
 	transform(Matrix4::getTranslation(translation));
 	freezeTransform();
