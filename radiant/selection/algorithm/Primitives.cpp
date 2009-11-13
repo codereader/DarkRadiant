@@ -624,7 +624,7 @@ void makeVisportal(const cmd::ArgumentList& args) {
 		Brush& brush = brushes[i]->getBrush();
 
 		// don't allow empty brushes
-		if (brush.size() == 0) continue; 
+		if (brush.getNumFaces() == 0) continue; 
 		
 		// Set all faces to nodraw first
 		brush.setShader(GlobalRegistry().get(RKEY_NODRAW_SHADER));

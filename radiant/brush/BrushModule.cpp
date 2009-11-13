@@ -91,21 +91,6 @@ void BrushModuleClass::toggleTextureLock() {
 
 // ------------ BrushCreator implementation --------------------------------------------
 
-void BrushFaceData_fromFace(const BrushFaceDataCallback& callback, Face& face) {
-	  _QERFaceData faceData;
-	  faceData.m_p0 = face.getPlane().planePoints()[0];
-	  faceData.m_p1 = face.getPlane().planePoints()[1];
-	  faceData.m_p2 = face.getPlane().planePoints()[2];
-	  faceData.m_shader = face.GetShader();
-	  faceData.m_texdef = face.getTexdef().m_projection.m_texdef;
-	  faceData.contents = face.getShader().m_flags.m_contentFlags;
-	  faceData.flags = face.getShader().m_flags.m_surfaceFlags;
-	  faceData.value = face.getShader().m_flags.m_value;
-	  callback(faceData);
-}
-typedef ConstReferenceCaller1<BrushFaceDataCallback, Face&, BrushFaceData_fromFace> BrushFaceDataFromFaceCaller;
-typedef Callback1<Face&> FaceCallback;
-
 scene::INodePtr BrushModuleClass::createBrush() {
 	// Determine the first visible layer
 	int layer = GlobalLayerSystem().getFirstVisibleLayer();
@@ -119,16 +104,6 @@ scene::INodePtr BrushModuleClass::createBrush() {
 	}
 	
 	return scene::INodePtr();
-}
-
-void BrushModuleClass::Brush_forEachFace(scene::INodePtr brush, const BrushFaceDataCallback& callback) {
-	::Brush_forEachFace(*Node_getBrush(brush), FaceCallback(BrushFaceDataFromFaceCaller(callback)));
-}
-
-// Adds a face plan to the given brush
-bool BrushModuleClass::Brush_addFace(scene::INodePtr brush, const _QERFaceData& faceData) {
-	Node_getBrush(brush)->undoSave();
-	return Node_getBrush(brush)->addPlane(faceData.m_p0, faceData.m_p1, faceData.m_p2, faceData.m_shader, TextureProjection(faceData.m_texdef, BrushPrimitTexDef(), Vector3(0, 0, 0), Vector3(0, 0, 0))) != 0;
 }
 
 // RegisterableModule implementation
@@ -153,7 +128,7 @@ const StringSet& BrushModuleClass::getDependencies() const {
 }
 
 void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "BrushModuleClass::initialiseModule called.\n";
+	globalOutputStream() << "BrushModuleClass::initialiseModule called." << std::endl;
 	
 	construct();
 	
@@ -166,7 +141,7 @@ void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
 }
 
 void BrushModuleClass::shutdownModule() {
-	globalOutputStream() << "BrushModuleClass::shutdownModule called.\n";
+	globalOutputStream() << "BrushModuleClass::shutdownModule called." << std::endl;
 	destroy();
 }
 

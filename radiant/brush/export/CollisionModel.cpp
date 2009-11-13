@@ -237,7 +237,7 @@ void CollisionModel::addBrush(Brush& brush) {
 	BrushStruc b;
 
 	// The number of faces
-	b.numFaces = brush.size();
+	b.numFaces = brush.getNumFaces();
 	
 	// Get the AABB of this brush
 	AABB brushAABB = brush.localAABB();

@@ -395,7 +395,8 @@ void Brush::clear() {
 	}
 }
 
-std::size_t Brush::size() const {
+std::size_t Brush::getNumFaces() const
+{
 	return m_faces.size();
 }
 

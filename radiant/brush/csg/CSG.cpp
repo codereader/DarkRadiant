@@ -147,7 +147,7 @@ BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane) {
 bool Brush_subtract(const Brush& brush, const Brush& other, BrushVector& ret_fragments) {
 	if (aabb_intersects_aabb(brush.localAABB(), other.localAABB())) {
 		BrushVector fragments;
-		fragments.reserve(other.size());
+		fragments.reserve(other.getNumFaces());
 		Brush back(brush);
 
 		for (Brush::const_iterator i(other.begin()); i != other.end(); ++i) {
