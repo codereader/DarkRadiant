@@ -103,12 +103,106 @@ public:
 	}
 };
 
+class ScriptFace
+{
+	IFace* _face;
+	static std::string _emptyShader;
+public:
+	ScriptFace() :
+		_face(NULL)
+	{}
+
+	ScriptFace(IFace& face) :
+		_face(&face)
+	{}
+
+	void undoSave()
+	{
+		if (_face == NULL) return;
+		_face->undoSave();
+	}
+
+	const std::string& getShader() const 
+	{
+		if (_face == NULL) return _emptyShader;
+		return _face->getShader();
+	}
+
+	void setShader(const std::string& name) 
+	{
+		if (_face == NULL) return;
+		_face->setShader(name);
+	}
+
+	void shiftTexdef(float s, float t) 
+	{
+		if (_face == NULL) return;
+		_face->shiftTexdef(s, t);
+	}
+
+	void scaleTexdef(float s, float t) 
+	{
+		if (_face == NULL) return;
+		_face->scaleTexdef(s, t);
+	}
+
+	void rotateTexdef(float angle) 
+	{
+		if (_face == NULL) return;
+		_face->rotateTexdef(angle);
+	}
+
+	void fitTexture(float s_repeat, float t_repeat)
+	{
+		if (_face == NULL) return;
+		_face->fitTexture(s_repeat, t_repeat);
+	}
+
+	void flipTexture(unsigned int flipAxis) 
+	{
+		if (_face == NULL) return;
+		_face->flipTexture(flipAxis);
+	}
+	
+	void normaliseTexture() 
+	{
+		if (_face == NULL) return;
+		_face->normaliseTexture();
+	}
+
+	/*IWinding& getWinding() 
+	{
+		if (_face == NULL) return;
+		_face->setShader(name);
+	}*/
+};
+
+std::string ScriptFace::_emptyShader;
+
 ScriptSceneNode BrushInterface::createBrush() {
 	// Create a new brush and return the script scene node
 	return ScriptSceneNode(GlobalBrushCreator().createBrush());
 }
 
-void BrushInterface::registerInterface(boost::python::object& nspace) {
+void BrushInterface::registerInterface(boost::python::object& nspace)
+{
+	// Define a "Face" interface
+	nspace["Face"] = boost::python::class_<ScriptFace>("Face", boost::python::init<>())
+		.def(boost::python::init<IFace&>())
+		.def("undoSave", &ScriptFace::undoSave)
+		.def("getShader", &ScriptFace::getShader, 
+			boost::python::return_value_policy<boost::python::copy_const_reference>())
+		.def("setShader", &IFace::setShader)
+		.def("shiftTexdef", &IFace::shiftTexdef)
+		.def("scaleTexdef", &IFace::scaleTexdef)
+		.def("rotateTexdef", &IFace::rotateTexdef)
+		.def("fitTexture", &IFace::fitTexture)
+		.def("flipTexture", &IFace::flipTexture)
+		.def("normaliseTexture", &IFace::normaliseTexture)
+//		.def("getWinding", &IFace::getWinding)
+		// TODO: getWinding
+	;
+
 	// Define a BrushNode interface
 	nspace["BrushNode"] = boost::python::class_<ScriptBrushNode, 
 		boost::python::bases<ScriptSceneNode> >("BrushNode", boost::python::init<const scene::INodePtr&>() )
