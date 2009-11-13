@@ -18,6 +18,9 @@ class BrushManipulator(SceneNodeVisitor) :
 
 				for w in winding:
 					print('w.vertex=' + str(w.vertex.x()) + ',' + str(w.vertex.y()) + ',' + str(w.vertex.z()))
+
+				face.fitTexture(1,1)
+
 				i += 1
 			
 		return 1

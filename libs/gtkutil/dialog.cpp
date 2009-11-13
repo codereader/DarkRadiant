@@ -223,7 +223,7 @@ PathEntry PathEntry_new(const std::string& bitmapsPath)
   // browse button
   GtkButton* button = GTK_BUTTON(gtk_button_new());
   
-  std::string fullFileName = bitmapsPath + "ellipsis.bmp";
+  std::string fullFileName = bitmapsPath + "ellipsis.png";
   GtkWidget* image = gtk_image_new_from_pixbuf(
   	gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
   );
