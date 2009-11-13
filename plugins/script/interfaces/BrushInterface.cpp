@@ -19,7 +19,7 @@ public:
 
 		IBrush* brush = Node_getIBrush(node);
 
-		return (brush != NULL) ? brush->size() : 0;
+		return (brush != NULL) ? brush->getNumFaces() : 0;
 	}
 
 	// Checks if the given SceneNode structure is a BrushNode

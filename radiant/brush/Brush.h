@@ -253,7 +253,7 @@ public:
 
 	void clear();
 	
-	std::size_t size() const;
+	std::size_t getNumFaces() const;
 	
 	bool empty() const;
 
@@ -316,7 +316,7 @@ typedef std::vector<Brush*> BrushVector;
  * Stream insertion for Brush objects.
  */
 inline std::ostream& operator<< (std::ostream& os, const Brush& b) {
-    os << "Brush { size = " << b.size() << ", localAABB = " << b.localAABB()
+	os << "Brush { size = " << b.getNumFaces() << ", localAABB = " << b.localAABB()
        << " }";
     return os;
 }
