@@ -51,25 +51,27 @@ namespace {
 	}
 }
 
-void Winding::drawWireframe() const {
-	if (points.size() > 0) {
-		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &points.front().vertex);
-		glDrawArrays(GL_LINE_LOOP, 0, GLsizei(numpoints));
+void Winding::drawWireframe() const
+{
+	if (!empty())
+	{
+		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &front().vertex);
+		glDrawArrays(GL_LINE_LOOP, 0, GLsizei(size()));
 	}
 }
 
 void Winding::render(const RenderInfo& info) const 
 {
     // Do not render if there are no points
-	if (points.empty()) 
+	if (empty()) 
     {
 		return;
 	}
 
 	// A shortcut pointer to the first array element to avoid
 	// massive calls to std::vector<>::begin()
-	const WindingVertex& firstElement = points.front();
-		
+	const WindingVertex& firstElement = front();
+	
 	// Set the vertex pointer first
 	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
 
@@ -118,37 +120,45 @@ void Winding::render(const RenderInfo& info) const
 	}
 	
     // Submit all data to OpenGL
-	glDrawArrays(GL_POLYGON, 0, GLsizei(numpoints));
+	glDrawArrays(GL_POLYGON, 0, GLsizei(size()));
 }
 
-void Winding::testSelect(SelectionTest& test, SelectionIntersection& best) {
-	if (numpoints > 0) {
-		test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&points.front().vertex), sizeof(WindingVertex)), numpoints, best);
-	}
+void Winding::testSelect(SelectionTest& test, SelectionIntersection& best)
+{
+	if (empty()) return;
+
+	test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&front().vertex), sizeof(WindingVertex)), size(), best);
 }
 
-void Winding::updateNormals(const Vector3& normal) {
+void Winding::updateNormals(const Vector3& normal)
+{
 	// Copy all normals into the winding vertices
-	for (iterator i = begin(); i != end(); i++) {
+	for (iterator i = begin(); i != end(); ++i)
+	{
 		i->normal = normal;
 	}
 }
 
-AABB Winding::aabb() const {
+AABB Winding::aabb() const
+{
 	AABB returnValue;
 	
-	for (const_iterator i = begin(); i != end(); i++) {
+	for (const_iterator i = begin(); i != end(); ++i)
+	{
 		returnValue.includePoint(i->vertex);
 	}
 	
 	return returnValue;
 }
 
-bool Winding::testPlane(const Plane3& plane, bool flipped) const {
+bool Winding::testPlane(const Plane3& plane, bool flipped) const
+{
 	const int test = (flipped) ? ePlaneBack : ePlaneFront;
 	
-	for (const_iterator i = begin(); i != end(); ++i) {
-		if (test == classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)) {
+	for (const_iterator i = begin(); i != end(); ++i)
+	{
+		if (test == classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON))
+		{
 			return false;
 		}
 	}
@@ -156,17 +166,20 @@ bool Winding::testPlane(const Plane3& plane, bool flipped) const {
 	return true;
 }
 
-BrushSplitType Winding::classifyPlane(const Plane3& plane) const {
+BrushSplitType Winding::classifyPlane(const Plane3& plane) const
+{
 	BrushSplitType split;
 	
-	for (const_iterator i = begin(); i != end(); ++i) {
+	for (const_iterator i = begin(); i != end(); ++i)
+	{
 		++split.counts[classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)];
 	}
 	
 	return split;
 }
 
-PlaneClassification Winding::classifyDistance(const double distance, const double epsilon) {
+PlaneClassification Winding::classifyDistance(const double distance, const double epsilon)
+{
 	if (distance > epsilon) {
 		return ePlaneFront;
 	}
@@ -178,14 +191,18 @@ PlaneClassification Winding::classifyDistance(const double distance, const doubl
 	return ePlaneOn;
 }
 
-bool Winding::planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2) {
+bool Winding::planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2)
+{
 	return !w1.testPlane(plane2, false) || !w2.testPlane(plane1, false);
 }
 
-std::size_t Winding::findAdjacent(std::size_t face) const {
-	for (std::size_t i = 0; i < numpoints; ++i) {
+std::size_t Winding::findAdjacent(std::size_t face) const
+{
+	for (std::size_t i = 0; i < size(); ++i)
+	{
 		ASSERT_MESSAGE((*this)[i].adjacent != c_brush_maxFaces, "edge connectivity data is invalid");
-		if ((*this)[i].adjacent == face) {
+		if ((*this)[i].adjacent == face)
+		{
 			return i;
 		}
 	}
@@ -193,15 +210,17 @@ std::size_t Winding::findAdjacent(std::size_t face) const {
 	return c_brush_maxFaces;
 }
 
-std::size_t Winding::opposite(const std::size_t index, const std::size_t other) const {
-	ASSERT_MESSAGE(index < numpoints && other < numpoints, "Winding::opposite: index out of range");
+std::size_t Winding::opposite(const std::size_t index, const std::size_t other) const
+{
+	ASSERT_MESSAGE(index < size() && other < size(), "Winding::opposite: index out of range");
 	
 	double dist_best = 0;
 	std::size_t index_best = c_brush_maxFaces;
 
 	Ray edge(ray_for_points((*this)[index].vertex, (*this)[other].vertex));
 
-	for (std::size_t i=0; i < numpoints; ++i) {
+	for (std::size_t i=0; i < size(); ++i)
+	{
 		if (i == index || i == other) {
 			continue;
 		}
@@ -217,18 +236,21 @@ std::size_t Winding::opposite(const std::size_t index, const std::size_t other) 
 	return index_best;
 }
 
-std::size_t Winding::opposite(std::size_t index) const {
+std::size_t Winding::opposite(std::size_t index) const
+{
 	return opposite(index, next(index));
 }
 	
-Vector3 Winding::centroid(const Plane3& plane) const {
+Vector3 Winding::centroid(const Plane3& plane) const
+{
 	Vector3 centroid(0,0,0);
 	
 	double area2 = 0, x_sum = 0, y_sum = 0;
 	const ProjectionAxis axis = projectionaxis_for_normal(plane.normal());
 	const indexremap_t remap = indexremap_for_projectionaxis(axis);
 	
-	for (std::size_t i = numpoints - 1, j = 0; j < numpoints; i	= j, ++j) {
+	for (std::size_t i = size() - 1, j = 0; j < size(); i = j, ++j)
+	{
 		const double ai = (*this)[i].vertex[remap.x]
 				* (*this)[j].vertex[remap.y] - (*this)[j].vertex[remap.x]
 				* (*this)[i].vertex[remap.y];
@@ -252,10 +274,12 @@ Vector3 Winding::centroid(const Plane3& plane) const {
 	return centroid;
 }
 
-void Winding::printConnectivity() {
-	for (iterator i = begin(); i != end(); ++i) {
+void Winding::printConnectivity()
+{
+	for (iterator i = begin(); i != end(); ++i)
+	{
 		std::size_t vertexIndex = std::distance(begin(), i);
 		globalOutputStream() << "vertex: " << vertexIndex
-			<< " adjacent: " << i->adjacent << "\n";
+			<< " adjacent: " << i->adjacent << std::endl;
 	}
 }

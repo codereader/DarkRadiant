@@ -201,7 +201,7 @@ void Face::updateWinding() {
 }
 
 void Face::update_move_planepts_vertex(std::size_t index, PlanePoints planePoints) {
-	std::size_t numpoints = getWinding().numpoints;
+	std::size_t numpoints = getWinding().size();
 	ASSERT_MESSAGE(index < numpoints, "update_move_planepts_vertex: invalid index");
 	
 	std::size_t opposite = getWinding().opposite(index);
@@ -404,7 +404,7 @@ const FaceShader& Face::getFaceShader() const {
 }
 
 bool Face::contributes() const {
-	return m_winding.numpoints > 2;
+	return m_winding.size() > 2;
 }
 
 bool Face::is_bounded() const {

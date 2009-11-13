@@ -148,7 +148,7 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 	
 // Fits a texture to a brush face
 void TextureProjection::fitTexture(std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat) {
-	if (w.numpoints < 3) {
+	if (w.size() < 3) {
 		return;
 	}
 
@@ -245,7 +245,7 @@ Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix
 void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const {
 	
 	// Quit, if we have less than three points (degenerate brushes?) 
-	if (w.numpoints < 3) {
+	if (w.size() < 3) {
 		return;
 	}
 	
