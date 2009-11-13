@@ -197,18 +197,18 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 {
 	// Define a WindingVertex structure
 	nspace["WindingVertex"] = boost::python::class_<WindingVertex>("WindingVertex", boost::python::init<>())
-		.def_readwrite("vertex", &WindingVertex::vertex)
-		.def_readwrite("texcoord", &WindingVertex::texcoord)
-		.def_readwrite("tangent", &WindingVertex::tangent)
-		.def_readwrite("bitangent", &WindingVertex::bitangent)
-		.def_readwrite("normal", &WindingVertex::normal)
-		.def_readwrite("adjacent", &WindingVertex::adjacent)
+		.def_readonly("vertex", &WindingVertex::vertex)
+		.def_readonly("texcoord", &WindingVertex::texcoord)
+		.def_readonly("tangent", &WindingVertex::tangent)
+		.def_readonly("bitangent", &WindingVertex::bitangent)
+		.def_readonly("normal", &WindingVertex::normal)
+		.def_readonly("adjacent", &WindingVertex::adjacent)
 	;
 
-	// Declare the IWinding vector TODO
-	/*boost::python::class_<std::vector<VectorSet> >("Winding")
-		.def(boost::python::vector_indexing_suite<std::vector<VectorSet> >())
-	;*/
+	// Declare the IWinding vector
+	boost::python::class_<IWinding>("Winding")
+		.def(boost::python::vector_indexing_suite<IWinding>())
+	;
 
 	// Define a "Face" interface
 	nspace["Face"] = boost::python::class_<ScriptFace>("Face", boost::python::init<>())

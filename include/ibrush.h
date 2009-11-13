@@ -29,6 +29,15 @@ struct WindingVertex
 	Vector3 bitangent;		// The bitangent
 	Vector3 normal;			// The normals
 	std::size_t adjacent;	// The index of the adjacent WindingVertex
+
+	// greebo: This operator is needed to enable scripting support 
+	// using boost::python's vector_indexing_suite.
+	bool operator==(const WindingVertex& other) const
+	{
+		return (vertex == other.vertex && texcoord == other.texcoord &&
+			    tangent == other.tangent && bitangent == other.bitangent &&
+				normal == other.normal && adjacent == other.adjacent);
+	}
 };
 
 // A Winding consists of several connected WindingVertex objects, 
