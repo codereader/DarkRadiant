@@ -19,6 +19,9 @@ typedef std::set<int> LayerList;
 class Layered
 {
 public:
+	// Destructor
+	virtual ~Layered() {}
+
 	/**
      * Add this object to the layer with the given ID.
      */
