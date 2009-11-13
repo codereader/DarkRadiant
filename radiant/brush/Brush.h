@@ -130,6 +130,9 @@ private:
 	mutable bool m_transformChanged; // transform evaluation required
 	// ----
 
+	// assignment not supported => private
+	Brush& operator=(const Brush& other);
+
 public:  
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
 	class BrushUndoMemento : public UndoMemento {
@@ -161,9 +164,6 @@ public:
 	
 	// Destructor
 	virtual ~Brush();
-	
-	// assignment not supported
-	Brush& operator=(const Brush& other);
 	
 	/** greebo: This translates the brush about the given translation vector,
 	 * this is used by the Doom3Group entity to add/substract the origin from

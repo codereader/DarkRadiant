@@ -24,6 +24,28 @@ public:
 
 	// Returns the number of faces for this brush
 	virtual std::size_t getNumFaces() const = 0;
+
+	// Returns true when this brush has no faces
+	virtual bool empty() const = 0;
+
+	// Returns true if any face of the brush contributes to the final B-Rep.
+	virtual bool hasContributingFaces() const = 0;
+
+	// Removes faces that do not contribute to the brush. 
+	// This is useful for cleaning up after CSG operations on the brush.
+	// Note: removal of empty faces is not performed during direct brush manipulations, 
+	// because it would make a manipulation irreversible if it created an empty face.
+	virtual void removeEmptyFaces() = 0;
+
+	// Sets the shader of all faces to the given name
+	virtual void setShader(const std::string& newShader) = 0;
+
+	// Returns TRUE if any of the faces has the given shader
+	virtual bool hasShader(const std::string& name) = 0;
+
+	// Saves the current state to the undo stack.
+	// Call this before manipulating the brush to make your action undo-able.
+	virtual void undoSave() = 0;
 };
 
 // Forward-declare the Brush object, only accessible from main binary
