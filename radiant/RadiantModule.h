@@ -64,6 +64,10 @@ public:
 	virtual void updateAllWindows();
 
 	virtual ui::IModelPreviewPtr createModelPreview();
+	virtual ui::IFileChooserPtr createFileChooser(const std::string& title, 
+												bool open, 
+												const std::string& pattern = "",
+												const std::string& defaultExt = "");
 	
 	virtual void addEventListener(RadiantEventListenerPtr listener);
 	

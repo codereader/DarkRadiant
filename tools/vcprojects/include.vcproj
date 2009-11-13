@@ -164,6 +164,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\ifilechooser.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\ifilesystem.h"
 			>
 		</File>

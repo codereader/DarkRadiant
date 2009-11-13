@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ModelPreview.h"
+#include "gtkutil/filechooser.h"
 
 #include "modulesystem/StaticModule.h"
 
@@ -139,6 +140,14 @@ void RadiantModule::updateAllWindows() {
 ui::IModelPreviewPtr RadiantModule::createModelPreview()
 {
 	return ui::IModelPreviewPtr(new ui::ModelPreview);
+}
+
+ui::IFileChooserPtr RadiantModule::createFileChooser(const std::string& title, 
+	bool open, const std::string& pattern, const std::string& defaultExt)
+{
+	return ui::IFileChooserPtr(new gtkutil::FileChooser(
+		GTK_WIDGET(getMainWindow()),
+		title, open, pattern, defaultExt));
 }
 	
 void RadiantModule::addEventListener(RadiantEventListenerPtr listener) {
