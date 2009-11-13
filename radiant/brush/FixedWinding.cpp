@@ -48,13 +48,14 @@ namespace {
 	}
 }
 
-void FixedWinding::writeToWinding(Winding& winding) {
+void FixedWinding::writeToWinding(Winding& winding)
+{
 	// First, set the target winding to the same size as <self>
 	winding.resize(size());
-	winding.numpoints = size();
 	
 	// Now copy stuff from this to the target winding
-	for (std::size_t i = 0; i < size(); ++i) {
+	for (std::size_t i = 0; i < size(); ++i)
+	{
 		winding[i].vertex[0] = (*this)[i].vertex[0];
 		winding[i].vertex[1] = (*this)[i].vertex[1];
 		winding[i].vertex[2] = (*this)[i].vertex[2];

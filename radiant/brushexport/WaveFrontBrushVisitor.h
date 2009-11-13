@@ -75,7 +75,7 @@ public:
     {
       size_t v_start = vertices;
       const Winding& w(face.getWinding());
-      for(size_t i = 0; i < w.numpoints; ++i)
+      for (size_t i = 0; i < w.size(); ++i)
       {
         // Write coordinates into the export buffers
         _vertexBuf += "v " + std::string(w[i].vertex) + "\n";

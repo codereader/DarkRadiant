@@ -78,7 +78,7 @@ Vector2 FaceItem::getCentroid() const {
 	}
 	
 	// Take the average value of all the winding texcoords to retrieve the centroid
-	texCentroid /= _winding.numpoints;
+	texCentroid /= _winding.size();
 	
 	return texCentroid;
 }
@@ -99,7 +99,7 @@ bool FaceItem::testSelect(const Rectangle& rectangle)
 	}
 
 	// Take the average value of all the winding texcoords to retrieve the centroid
-	texCentroid /= _winding.numpoints;
+	texCentroid /= _winding.size();
 	
 	return rectangle.contains(texCentroid);
 }

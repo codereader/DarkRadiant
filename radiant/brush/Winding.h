@@ -29,88 +29,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iclipper.h"
 #include "irender.h"
 #include "iselectable.h"
+#include "ibrush.h"
 
 #include "math/Vector2.h"
 #include "math/Vector3.h"
-
-class WindingVertex
-{
-public:
-	Vector3 vertex;
-	Vector2 texcoord;
-	Vector3 tangent;
-	Vector3 bitangent;
-	Vector3 normal;
-	std::size_t adjacent;
-};
 
 const double ON_EPSILON	= 1.0 / (1 << 8);
 
 class SelectionIntersection;
 
-class Winding
+// The Winding structure extends the abstract IWinding class
+// by a few methods for rendering and selection tests.
+class Winding :
+	public IWinding
 {
 public:
-	typedef std::vector<WindingVertex> container_type;
-
-	std::size_t numpoints;
-	container_type points;
-
-	typedef container_type::iterator iterator;
-	typedef container_type::const_iterator const_iterator;
-
-	Winding() :
-		numpoints(0)
-	{}
-	
-	Winding(std::size_t size) :
-		numpoints(0), points(size)
-	{}
-	
-	void resize(std::size_t size) {
-		points.resize(size);
-		numpoints = 0;
-	}
-
-	iterator begin() {
-		return points.begin();
-	}
-	const_iterator begin() const {
-		return points.begin();
-	}
-	iterator end() {
-		return points.end();
-	}
-	const_iterator end() const {
-		return points.end();
-	}
-
-	WindingVertex& operator[](std::size_t index) {
-		//ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
-		return points[index];
-	}
-	
-	const WindingVertex& operator[](std::size_t index) const {
-		//ASSERT_MESSAGE(index < points.size(), "winding: index out of bounds");
-		return points[index];
-	}
-
-	std::size_t size() const {
-		return points.size();
-	}
-
-	void push_back(const WindingVertex& point) {
-		points[numpoints] = point;
-		++numpoints;
-	}
-	
-	// The new (valid) iterator is returned after deletion
-	iterator erase(iterator point) {
-		points.erase(point++);
-		--numpoints;
-		return point;
-	}
-  
 	/** greebo: Calculates the AABB of this winding
 	 */
 	AABB aabb() const;
@@ -128,13 +61,15 @@ public:
 	void drawWireframe() const;
 	
 	// Wraps the given index around if it's larger than the size of this winding
-	inline std::size_t wrap(std::size_t i) const {
-		ASSERT_MESSAGE(numpoints != 0, "Winding_wrap: empty winding");
-		return i % numpoints;
+	inline std::size_t wrap(std::size_t i) const
+	{
+		assert(!empty());
+		return i % size();
 	}
 	
 	// Returns the next winding index (wraps around)
-	inline std::size_t next(std::size_t i) const {
+	inline std::size_t next(std::size_t i) const
+	{
 		return wrap(++i);
 	}
 	

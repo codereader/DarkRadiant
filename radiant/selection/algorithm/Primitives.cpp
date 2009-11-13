@@ -529,7 +529,7 @@ public:
 		const Winding& winding = faceInstance.getFace().getWinding();
 
 		// For now, only windings with four edges are supported
-		if (winding.numpoints == 4) {
+		if (winding.size() == 4) {
 			_faceInstances.push_back(&faceInstance);
 		}
 		else {

@@ -4,6 +4,10 @@
 #include "inode.h"
 #include "imodule.h"
 
+#include "math/Vector2.h"
+#include "math/Vector3.h"
+#include <vector>
+
 const std::string RKEY_ENABLE_TEXTURE_LOCK("user/ui/brush/textureLock");
 
 class BrushCreator :
@@ -15,6 +19,21 @@ public:
 	// Call this when the clip plane colours should be updated.
 	virtual void clipperColourChanged() = 0;
 };
+
+// The structure defining a single corner point of an IWinding
+struct WindingVertex
+{
+	Vector3 vertex;			// The 3D coordinates of the point
+	Vector2 texcoord;		// The UV coordinates
+	Vector3 tangent;		// The tangent
+	Vector3 bitangent;		// The bitangent
+	Vector3 normal;			// The normals
+	std::size_t adjacent;	// The index of the adjacent WindingVertex
+};
+
+// A Winding consists of several connected WindingVertex objects, 
+// each of which holding information about a single corner point.
+typedef std::vector<WindingVertex> IWinding;
 
 // Interface for a face plane
 class IFace
@@ -45,11 +64,12 @@ public:
 	// Flips the texture by the given flipAxis (0 == x-axis, 1 == y-axis)
 	virtual void flipTexture(unsigned int flipAxis) = 0;
 	
-	/** 
-	 * greebo: This translates the texture as much towards 
-	 * the origin in texture space as possible. The face appearance stays unchanged.  
-	 */
+	// This translates the texture as much towards the origin in texture space as possible without changing the world appearance.
 	virtual void normaliseTexture() = 0;
+
+	// Get access to the actual Winding object
+	virtual IWinding& getWinding() = 0;
+	virtual const IWinding& getWinding() const = 0;
 };
 
 // Brush Interface

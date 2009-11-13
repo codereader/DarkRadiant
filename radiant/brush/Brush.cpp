@@ -251,7 +251,7 @@ void Brush::freezeTransform() {
 std::size_t Brush::absoluteIndex(FaceVertexId faceVertex) {
 	std::size_t index = 0;
 	for(std::size_t i = 0; i < faceVertex.getFace(); ++i) {
-		index += m_faces[i]->getWinding().numpoints;
+		index += m_faces[i]->getWinding().size();
 	}
 	return index + faceVertex.getVertex();
 }
@@ -584,7 +584,7 @@ void Brush::removeDegenerateFaces() {
 	for (std::size_t i = 0;  i < m_faces.size(); ++i) {
 		Winding& degen = m_faces[i]->getWinding();
   
-		if (degen.numpoints == 2) {
+		if (degen.size() == 2) {
 			/*std::cout << "Removed degenerate face: " << Vector3(m_faces[i]->getPlane().plane3().normal()) 
 								<< " - " << float(m_faces[i]->getPlane().plane3().dist()) << "\n";*/
 			
@@ -618,7 +618,7 @@ void Brush::removeDuplicateEdges() {
 		//if(m_faces[i]->contributes())
 			{
 				Winding& winding = m_faces[i]->getWinding();
-				for (std::size_t j = 0; j != winding.numpoints;) {
+				for (std::size_t j = 0; j != winding.size();) {
 					std::size_t next = winding.next(j);
 					if (winding[j].adjacent == winding[next].adjacent) {
 						winding.erase(winding.begin() + next);
@@ -781,7 +781,7 @@ void Brush::buildBRep() {
     if ((*i)->contributes()) {
       ++faces_size;
     }
-    faceVerticesCount += (*i)->getWinding().numpoints;
+    faceVerticesCount += (*i)->getWinding().size();
   }
 
   if(degenerate || faces_size < 4 || faceVerticesCount != (faceVerticesCount>>1)<<1) // sum of vertices for each face of a valid polyhedron is always even
@@ -812,7 +812,7 @@ void Brush::buildBRep() {
       {
         for(std::size_t i = 0; i != m_faces.size(); ++i)
         {
-          for(std::size_t j = 0; j < m_faces[i]->getWinding().numpoints; ++j)
+          for(std::size_t j = 0; j < m_faces[i]->getWinding().size(); ++j)
           {
             faceVertices.push_back(FaceVertexId(i, j));
           }
@@ -939,14 +939,14 @@ void Brush::buildBRep() {
         for(std::size_t i=0, count=0; i<m_faces.size(); ++i)
         {
           const Winding& winding = m_faces[i]->getWinding();
-          for(std::size_t j = 0; j < winding.numpoints; ++j)
+          for(std::size_t j = 0; j < winding.size(); ++j)
           {
             const RenderIndex edge_index = uniqueEdgeIndices[count+j];
 
             _edgeIndices[edge_index].first = uniqueVertexIndices[count + j];
             _edgeIndices[edge_index].second = uniqueVertexIndices[count + winding.next(j)];
           }
-          count += winding.numpoints;
+          count += winding.size();
         }
       }
     }
