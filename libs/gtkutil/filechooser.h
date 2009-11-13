@@ -25,11 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// GTK+ file-chooser dialogs.
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkFileChooser GtkFileChooser;
-
+#include "ifilechooser.h"
 #include <string>
 #include <boost/shared_ptr.hpp>
+
+typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkFileChooser GtkFileChooser;
 
 /// \brief Prompts the user to browse for a directory.
 /// The prompt window will be transient to \p parent.
@@ -39,33 +40,9 @@ char* dir_dialog(GtkWidget *parent, const char* title = "Choose Directory", cons
 
 namespace gtkutil {
 
-class FileChooser	
+class FileChooser :
+	public ui::IFileChooser
 {
-public:
-	/**
-	 * greebo: A Preview class can be attached to a FileChooser (in "open" mode), 
-	 * to allow for adding and updating a preview widget to the dialog.
-	 * The Preview object must provide two methods, one for retrieving
-	 * the preview widget for addition to the dialog, and one
-	 * update method which gets called as soon as the dialog emits the 
-	 * selection change signal.
-	 */
-	class Preview
-	{
-	public:
-		virtual ~Preview() {}
-		// Retrieve the preview widget for packing into the dialog
-		virtual GtkWidget* getPreviewWidget() = 0;
-
-		/**
-		 * Gets called whenever the user changes the file selection.
-		 * Note: this method must call the setPreviewActive() method on the
-		 * FileChooser class to indicate whether the widget is active or not.
-		 */
-		virtual void onFileSelectionChanged(const std::string& newFileName, FileChooser& fileChooser) = 0;
-	};
-	typedef boost::shared_ptr<Preview> PreviewPtr;
-
 private:
 	// Parent widget
 	GtkWidget* _parent;

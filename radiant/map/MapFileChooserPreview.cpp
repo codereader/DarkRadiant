@@ -46,7 +46,7 @@ GtkWidget* MapFileChooserPreview::getPreviewWidget() {
  * FileChooser class to indicate whether the widget is active or not.
  */
 void MapFileChooserPreview::onFileSelectionChanged(
-	const std::string& newFileName, gtkutil::FileChooser& fileChooser)
+	const std::string& newFileName, ui::IFileChooser& fileChooser)
 {
 	// Attempt to load file
 	/*bool success = */setMapName(newFileName);
