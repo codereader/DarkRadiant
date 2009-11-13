@@ -1,8 +1,88 @@
 #include "BrushInterface.h"
 
 #include "ibrush.h"
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace script {
+
+class ScriptFace
+{
+	IFace* _face;
+	static std::string _emptyShader;
+	static IWinding _emptyWinding;
+
+public:
+	ScriptFace() :
+		_face(NULL)
+	{}
+
+	ScriptFace(IFace& face) :
+		_face(&face)
+	{}
+
+	void undoSave()
+	{
+		if (_face == NULL) return;
+		_face->undoSave();
+	}
+
+	const std::string& getShader() const 
+	{
+		if (_face == NULL) return _emptyShader;
+		return _face->getShader();
+	}
+
+	void setShader(const std::string& name) 
+	{
+		if (_face == NULL) return;
+		_face->setShader(name);
+	}
+
+	void shiftTexdef(float s, float t) 
+	{
+		if (_face == NULL) return;
+		_face->shiftTexdef(s, t);
+	}
+
+	void scaleTexdef(float s, float t) 
+	{
+		if (_face == NULL) return;
+		_face->scaleTexdef(s, t);
+	}
+
+	void rotateTexdef(float angle) 
+	{
+		if (_face == NULL) return;
+		_face->rotateTexdef(angle);
+	}
+
+	void fitTexture(float s_repeat, float t_repeat)
+	{
+		if (_face == NULL) return;
+		_face->fitTexture(s_repeat, t_repeat);
+	}
+
+	void flipTexture(unsigned int flipAxis) 
+	{
+		if (_face == NULL) return;
+		_face->flipTexture(flipAxis);
+	}
+	
+	void normaliseTexture() 
+	{
+		if (_face == NULL) return;
+		_face->normaliseTexture();
+	}
+
+	IWinding& getWinding() 
+	{
+		if (_face == NULL) return _emptyWinding;
+		return _face->getWinding();
+	}
+};
+
+std::string ScriptFace::_emptyShader;
+IWinding ScriptFace::_emptyWinding;
 
 class ScriptBrushNode :
 	public ScriptSceneNode
@@ -23,9 +103,14 @@ public:
 	}
 
 	// Get a reference to the face by index in [0..getNumFaces).
-	/*IFace& getFace(std::size_t index)
+	ScriptFace getFace(std::size_t index)
 	{
-	}*/
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return ScriptFace();
+
+		IBrush& brush = brushNode->getIBrush();
+		return (index < brush.getNumFaces()) ? ScriptFace(brush.getFace(index)) : ScriptFace();
+	}
 
 	// Returns true when this brush has no faces
 	bool empty() const
@@ -103,82 +188,6 @@ public:
 	}
 };
 
-class ScriptFace
-{
-	IFace* _face;
-	static std::string _emptyShader;
-public:
-	ScriptFace() :
-		_face(NULL)
-	{}
-
-	ScriptFace(IFace& face) :
-		_face(&face)
-	{}
-
-	void undoSave()
-	{
-		if (_face == NULL) return;
-		_face->undoSave();
-	}
-
-	const std::string& getShader() const 
-	{
-		if (_face == NULL) return _emptyShader;
-		return _face->getShader();
-	}
-
-	void setShader(const std::string& name) 
-	{
-		if (_face == NULL) return;
-		_face->setShader(name);
-	}
-
-	void shiftTexdef(float s, float t) 
-	{
-		if (_face == NULL) return;
-		_face->shiftTexdef(s, t);
-	}
-
-	void scaleTexdef(float s, float t) 
-	{
-		if (_face == NULL) return;
-		_face->scaleTexdef(s, t);
-	}
-
-	void rotateTexdef(float angle) 
-	{
-		if (_face == NULL) return;
-		_face->rotateTexdef(angle);
-	}
-
-	void fitTexture(float s_repeat, float t_repeat)
-	{
-		if (_face == NULL) return;
-		_face->fitTexture(s_repeat, t_repeat);
-	}
-
-	void flipTexture(unsigned int flipAxis) 
-	{
-		if (_face == NULL) return;
-		_face->flipTexture(flipAxis);
-	}
-	
-	void normaliseTexture() 
-	{
-		if (_face == NULL) return;
-		_face->normaliseTexture();
-	}
-
-	/*IWinding& getWinding() 
-	{
-		if (_face == NULL) return;
-		_face->setShader(name);
-	}*/
-};
-
-std::string ScriptFace::_emptyShader;
-
 ScriptSceneNode BrushInterface::createBrush() {
 	// Create a new brush and return the script scene node
 	return ScriptSceneNode(GlobalBrushCreator().createBrush());
@@ -186,21 +195,36 @@ ScriptSceneNode BrushInterface::createBrush() {
 
 void BrushInterface::registerInterface(boost::python::object& nspace)
 {
+	// Define a WindingVertex structure
+	nspace["WindingVertex"] = boost::python::class_<WindingVertex>("WindingVertex", boost::python::init<>())
+		.def_readwrite("vertex", &WindingVertex::vertex)
+		.def_readwrite("texcoord", &WindingVertex::texcoord)
+		.def_readwrite("tangent", &WindingVertex::tangent)
+		.def_readwrite("bitangent", &WindingVertex::bitangent)
+		.def_readwrite("normal", &WindingVertex::normal)
+		.def_readwrite("adjacent", &WindingVertex::adjacent)
+	;
+
+	// Declare the IWinding vector TODO
+	/*boost::python::class_<std::vector<VectorSet> >("Winding")
+		.def(boost::python::vector_indexing_suite<std::vector<VectorSet> >())
+	;*/
+
 	// Define a "Face" interface
 	nspace["Face"] = boost::python::class_<ScriptFace>("Face", boost::python::init<>())
 		.def(boost::python::init<IFace&>())
 		.def("undoSave", &ScriptFace::undoSave)
 		.def("getShader", &ScriptFace::getShader, 
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
-		.def("setShader", &IFace::setShader)
-		.def("shiftTexdef", &IFace::shiftTexdef)
-		.def("scaleTexdef", &IFace::scaleTexdef)
-		.def("rotateTexdef", &IFace::rotateTexdef)
-		.def("fitTexture", &IFace::fitTexture)
-		.def("flipTexture", &IFace::flipTexture)
-		.def("normaliseTexture", &IFace::normaliseTexture)
-//		.def("getWinding", &IFace::getWinding)
-		// TODO: getWinding
+		.def("setShader", &ScriptFace::setShader)
+		.def("shiftTexdef", &ScriptFace::shiftTexdef)
+		.def("scaleTexdef", &ScriptFace::scaleTexdef)
+		.def("rotateTexdef", &ScriptFace::rotateTexdef)
+		.def("fitTexture", &ScriptFace::fitTexture)
+		.def("flipTexture", &ScriptFace::flipTexture)
+		.def("normaliseTexture", &ScriptFace::normaliseTexture)
+		.def("getWinding", &ScriptFace::getWinding, 
+			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 	;
 
 	// Define a BrushNode interface
@@ -213,6 +237,7 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 		.def("setShader", &ScriptBrushNode::setShader)
 		.def("hasShader", &ScriptBrushNode::hasShader)
 		.def("undoSave", &ScriptBrushNode::undoSave)
+		.def("getFace", &ScriptBrushNode::getFace)
 	;
 
 	// Add the "isBrush" and "getBrush" method to all ScriptSceneNodes
