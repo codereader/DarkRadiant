@@ -61,6 +61,9 @@ public:
 	// Returns the number of faces for this brush
 	virtual std::size_t getNumFaces() const = 0;
 
+	// Get a reference to the face by index in [0..getNumFaces).
+	virtual IFace& getFace(std::size_t index) = 0;
+
 	// Returns true when this brush has no faces
 	virtual bool empty() const = 0;
 
