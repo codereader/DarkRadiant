@@ -150,14 +150,14 @@ void Brush::setShader(const std::string& newShader) {
 	undoSave();
 
 	for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-		(*i)->SetShader(newShader);
+		(*i)->setShader(newShader);
 	}
 }
 
 bool Brush::hasShader(const std::string& name) {
 	// Traverse the faces
 	for (Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i) {
-		if (shader_equal((*i)->GetShader(), name)) {
+		if (shader_equal((*i)->getShader(), name)) {
 			return true;
 		}
 	}

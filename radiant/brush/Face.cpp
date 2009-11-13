@@ -47,6 +47,10 @@ Face::Face(
 }
 
 Face::Face(const Face& other, FaceObserver* observer) :
+	IFace(other),
+	OpenGLRenderable(other),
+	Undoable(other),
+	FaceShader::Observer(other),
 	m_refcount(0),
 	_faceShader(other._faceShader.getMaterialName(), other._faceShader.m_flags),
 	m_texdef(_faceShader, other.getTexdef().normalised()),
@@ -242,10 +246,13 @@ void Face::shaderChanged() {
 	SceneChangeNotify();
 }
 
-const std::string& Face::GetShader() const {
+const std::string& Face::getShader() const 
+{
 	return _faceShader.getMaterialName();
 }
-void Face::SetShader(const std::string& name) {
+
+void Face::setShader(const std::string& name)
+{
 	undoSave();
 	_faceShader.setMaterialName(name);
 	shaderChanged();
@@ -277,9 +284,9 @@ void Face::applyShaderFromFace(const Face& other) {
 	TextureProjection projection;
 	other.GetTexdef(projection);	
 	
-	SetShader(other.GetShader());
+	setShader(other.getShader());
 	SetTexdef(projection);
-	SetFlags(other.getShader().m_flags);
+	SetFlags(other.getFaceShader().m_flags);
 
 	// The list of shared vertices
 	std::vector<Winding::const_iterator> thisVerts, otherVerts;
@@ -304,11 +311,11 @@ void Face::applyShaderFromFace(const Face& other) {
 	Vector2 dist = thisVerts[0]->texcoord - otherVerts[0]->texcoord;
 
 	// Scale the translation (ShiftTexDef() is scaling this down again, yes this is weird).
-	dist[0] *= getShader().width();
-	dist[1] *= getShader().height();
+	dist[0] *= getFaceShader().width();
+	dist[1] *= getFaceShader().height();
 
 	// Shift the texture to match
-	ShiftTexdef(dist.x(), dist.y());
+	shiftTexdef(dist.x(), dist.y());
 }
 
 void Face::GetFlags(ContentsFlagsValue& flags) const {
@@ -321,25 +328,25 @@ void Face::SetFlags(const ContentsFlagsValue& flags) {
 	m_observer->shaderChanged();
 }
 
-void Face::ShiftTexdef(float s, float t) {
+void Face::shiftTexdef(float s, float t) {
 	undoSave();
 	m_texdef.shift(s, t);
 	texdefChanged();
 }
 
-void Face::ScaleTexdef(float s, float t) {
+void Face::scaleTexdef(float s, float t) {
 	undoSave();
 	m_texdef.scale(s, t);
 	texdefChanged();
 }
 
-void Face::RotateTexdef(float angle) {
+void Face::rotateTexdef(float angle) {
 	undoSave();
 	m_texdef.rotate(angle);
 	texdefChanged();
 }
 
-void Face::FitTexture(float s_repeat, float t_repeat) {
+void Face::fitTexture(float s_repeat, float t_repeat) {
 	undoSave();
 	m_texdef.fit(m_plane.plane3().normal(), m_winding, s_repeat, t_repeat);
 	texdefChanged();
@@ -389,10 +396,10 @@ FaceTexdef& Face::getTexdef() {
 const FaceTexdef& Face::getTexdef() const {
 	return m_texdef;
 }
-FaceShader& Face::getShader() {
+FaceShader& Face::getFaceShader() {
 	return _faceShader;
 }
-const FaceShader& Face::getShader() const {
+const FaceShader& Face::getFaceShader() const {
 	return _faceShader;
 }
 

@@ -633,7 +633,7 @@ void makeVisportal(const cmd::ArgumentList& args) {
 		LargestFaceFinder finder;
 		brush.forEachFace(finder);
 		
-		finder.getLargestFace().SetShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
+		finder.getLargestFace().setShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
 	}
 }
 

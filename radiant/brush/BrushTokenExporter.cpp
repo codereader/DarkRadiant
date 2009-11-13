@@ -68,7 +68,7 @@ void Doom3FaceTokenExporter::exportTexDefTokens(std::ostream& os) const {
 }
 
 void Doom3FaceTokenExporter::exportFaceShaderTokens(std::ostream& os) const {
-	const FaceShader& faceShader = _face.getShader();
+	const FaceShader& faceShader = _face.getFaceShader();
 	const std::string& shaderName = faceShader.getMaterialName();
 	
 	if (shaderName.empty()) {
@@ -80,7 +80,7 @@ void Doom3FaceTokenExporter::exportFaceShaderTokens(std::ostream& os) const {
 }
 
 void Doom3FaceTokenExporter::exportContentsFlagsTokens(std::ostream& os) const {
-	const FaceShader& faceShader = _face.getShader();
+	const FaceShader& faceShader = _face.getFaceShader();
 	
 	os << faceShader.m_flags.m_contentFlags << " ";
 	os << faceShader.m_flags.m_surfaceFlags << " ";

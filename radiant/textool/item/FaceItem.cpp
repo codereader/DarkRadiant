@@ -60,14 +60,14 @@ void FaceItem::transform(const Matrix4& matrix) {
 	Vector2 translation(matrix.tx(), matrix.ty());
 	
 	// Scale the translation with the shader image dimensions
-	translation[0] *= _sourceFace.getShader().width();
-	translation[1] *= _sourceFace.getShader().height();
+	translation[0] *= _sourceFace.getFaceShader().width();
+	translation[1] *= _sourceFace.getFaceShader().height();
 	
 	// Invert the s-translation, the ShiftTexDef does it inversely for some reason. 
 	translation[0] *= -1;
 	
 	// Shift the texdef accordingly
-	_sourceFace.ShiftTexdef(translation[0], translation[1]);
+	_sourceFace.shiftTexdef(translation[0], translation[1]);
 }
 
 Vector2 FaceItem::getCentroid() const {

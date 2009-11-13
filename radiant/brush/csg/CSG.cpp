@@ -348,8 +348,8 @@ bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
 				if (face1.plane3() == face2.plane3()) {
 					// if the texture/shader references should be the same but are not
 					if (!onlyshape && !shader_equal(
-                            face1.getShader().getMaterialName(),
-                            face2.getShader().getMaterialName()
+                            face1.getFaceShader().getMaterialName(),
+                            face2.getFaceShader().getMaterialName()
                         )) 
                     {
 						return false;

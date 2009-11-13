@@ -16,6 +16,42 @@ public:
 	virtual void clipperColourChanged() = 0;
 };
 
+// Interface for a face plane
+class IFace
+{
+public:
+	// Destructor
+	virtual ~IFace() {}
+
+	// Submits the current state to the UndoSystem, to make further actions undo-able
+	virtual void undoSave() = 0;
+
+	// Shader accessors
+	virtual const std::string& getShader() const = 0;
+	virtual void setShader(const std::string& name) = 0;
+
+	// Shifts the texture by the given s,t amount in texture space
+	virtual void shiftTexdef(float s, float t) = 0;
+
+	// Scales the tex def by the given factors in texture space
+	virtual void scaleTexdef(float s, float t) = 0;
+
+	// Rotates the texture by the given angle
+	virtual void rotateTexdef(float angle) = 0;
+
+	// Fits the texture on this face
+	virtual void fitTexture(float s_repeat, float t_repeat) = 0;
+
+	// Flips the texture by the given flipAxis (0 == x-axis, 1 == y-axis)
+	virtual void flipTexture(unsigned int flipAxis) = 0;
+	
+	/** 
+	 * greebo: This translates the texture as much towards 
+	 * the origin in texture space as possible. The face appearance stays unchanged.  
+	 */
+	virtual void normaliseTexture() = 0;
+};
+
 // Brush Interface
 class IBrush
 {

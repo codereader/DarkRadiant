@@ -62,7 +62,7 @@ void Doom3FaceTokenImporter::importTexDefTokens(parser::DefTokeniser& tokeniser)
 }
 
 void Doom3FaceTokenImporter::importFaceShaderTokens(parser::DefTokeniser& tokeniser) {
-	FaceShader& faceShader = _face.getShader();
+	FaceShader& faceShader = _face.getFaceShader();
 	
     std::string shader = tokeniser.nextToken();
 
@@ -74,7 +74,7 @@ void Doom3FaceTokenImporter::importFaceShaderTokens(parser::DefTokeniser& tokeni
 }
 
 void Doom3FaceTokenImporter::importContentsFlagsTokens(parser::DefTokeniser& tok) {
-	FaceShader& faceShader = _face.getShader();
+	FaceShader& faceShader = _face.getFaceShader();
 	
 	// parse the optional contents/flags/value
 	faceShader.m_flags.m_contentFlags = strToInt(tok.nextToken());
