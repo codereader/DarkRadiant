@@ -142,7 +142,6 @@ darkradiant_SOURCES = main.cpp \
 					  modulesystem/DynamicLibraryLoader.cpp \
 					  modulesystem/ModuleLoader.cpp \
 					  modulesystem/ModuleRegistry.cpp \
-					  brushexport/BrushExportOBJ.cpp \
 					  gtkdlgs.cpp \
 					  select.cpp \
 					  selection/SelectedNodeList.cpp \

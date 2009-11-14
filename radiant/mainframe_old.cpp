@@ -38,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/patch/PatchInspector.h"
 #include "textool/TexTool.h"
-#include "brushexport/BrushExportOBJ.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/menu/FiltersMenu.h"
@@ -570,15 +569,6 @@ void RefreshShaders(const cmd::ArgumentList& args) {
 	GlobalMainFrame().updateAllWindows();
 }
 
-void CallBrushExportOBJ(const cmd::ArgumentList& args) {
-	if (GlobalSelectionSystem().countSelected() != 0) {
-		export_selected(GlobalRadiant().getMainWindow());
-	}
-	else {
-		gtk_MessageBox(GTK_WIDGET(GlobalRadiant().getMainWindow()), "No Brushes Selected!", "Error", eMB_OK, eMB_ICONERROR);
-	}
-}
-
 void MainFrame_Construct()
 {
 	DragMode();
@@ -667,7 +657,6 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("CurveInsertControlPoint", selection::algorithm::insertCurveControlPoints);
 	GlobalCommandSystem().addCommand("CurveConvertType", selection::algorithm::convertCurveTypes);
 
-	GlobalCommandSystem().addCommand("BrushExportOBJ", CallBrushExportOBJ);
 	GlobalCommandSystem().addCommand("BrushExportCM", selection::algorithm::createCMFromSelection);
 	
 	GlobalCommandSystem().addCommand("CreateDecalsForFaces", selection::algorithm::createDecalsForSelectedFaces);
@@ -795,7 +784,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("CurveInsertControlPoint", "CurveInsertControlPoint");
 	GlobalEventManager().addCommand("CurveConvertType", "CurveConvertType");
 	
-	GlobalEventManager().addCommand("BrushExportOBJ", "BrushExportOBJ");
 	GlobalEventManager().addCommand("BrushExportCM", "BrushExportCM");
 	
 	GlobalEventManager().addCommand("CreateDecalsForFaces", "CreateDecalsForFaces");
