@@ -1,0 +1,7 @@
+; wavefront.def : Declares the module parameters for the DLL.
+
+LIBRARY      "WAVEFRONT"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1
