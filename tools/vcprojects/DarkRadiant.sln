@@ -169,6 +169,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgtksourceview", "libgtks
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.editing", "dm.editing.vcproj", "{3552912C-32C9-4D59-9E65-357AD147A1FC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wavefront", "wavefront.vcproj", "{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -537,6 +539,14 @@ Global
 		{3552912C-32C9-4D59-9E65-357AD147A1FC}.Release|Win32.Build.0 = Release|Win32
 		{3552912C-32C9-4D59-9E65-357AD147A1FC}.Release|x64.ActiveCfg = Release|x64
 		{3552912C-32C9-4D59-9E65-357AD147A1FC}.Release|x64.Build.0 = Release|x64
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Debug|Win32.Build.0 = Debug|Win32
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Debug|x64.ActiveCfg = Debug|x64
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Debug|x64.Build.0 = Debug|x64
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Release|Win32.ActiveCfg = Release|Win32
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Release|Win32.Build.0 = Release|Win32
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Release|x64.ActiveCfg = Release|x64
+		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
