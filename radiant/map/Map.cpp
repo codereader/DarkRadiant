@@ -418,6 +418,7 @@ void Map::load(const std::string& filename) {
 
 	// Reset all layers before loading the file
 	GlobalLayerSystem().reset();
+	GlobalSelectionSystem().setSelectedAll(false);
 
 	{
 		ScopeTimer timer("map load");
