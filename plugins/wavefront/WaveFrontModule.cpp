@@ -80,7 +80,7 @@ void WaveFrontModule::initialiseModule(const ApplicationContext& ctx)
 
 	// Add the menu item
 	IMenuManager& mm = GlobalUIManager().getMenuManager();
-	mm.insert("main/file/saveas", 	// menu location path
+	mm.insert("main/file/createCM", 	// menu location path
 			"ExportSelectedAsOBJ", // name
 			ui::menuItem,	// type
 			"Export Selection as OBJ",	// caption

@@ -765,26 +765,6 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="brushexport"
-				>
-				<File
-					RelativePath="..\..\radiant\brushexport\BrushExportOBJ.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\brushexport\BrushExportOBJ.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\brushexport\Exporter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\brushexport\WaveFrontBrushVisitor.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="camera"
 				>
 				<File
