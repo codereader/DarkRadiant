@@ -2844,21 +2844,24 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
     return;
   }
 
-	std::vector<std::size_t> arrayLength(length);
+	std::vector<std::size_t> arrayLength;
 	std::vector<BezierCurveTree*> pCurveTree(length);
 
-  std::size_t nArrayLength = 1;
+	std::size_t nArrayLength = 1;
 
-  if(m_patchDef3)
+	if (m_patchDef3)
+	{
+		// This is a patch using fixed tesselation (patchDef3)
+		std::size_t subdivisions = (major == ROW) ? m_subdivisions_x : m_subdivisions_y;
+
+		// Assign the fixed number of tesselations to each column
+		arrayLength.resize(length, subdivisions);
+		nArrayLength += subdivisions * length;
+	}
+	else
   {
-	  for(std::vector<std::size_t>::iterator i = arrayLength.begin(); i != arrayLength.end(); ++i)
-    {
-      *i = (major == ROW) ? m_subdivisions_x : m_subdivisions_y;
-      nArrayLength += *i;
-    }
-  }
-  else
-  {
+	  arrayLength.resize(length);
+
     // create a list of the horizontal control curves in each column of sub-patches
     // adaptively tesselate each horizontal control curve in the list
     // create a binary tree representing the combined tesselation of the list
