@@ -19,6 +19,10 @@ struct BezierCurve
 		left(left_),
 		right(right_)
 	{}
+
+	// Returns true if the given set of coordinates satisfies the "curved" condition
+	// This is determined by comparing the directions of the various deltas
+	bool isCurved() const;
 };
 
 const std::size_t BEZIERCURVETREE_MAX_INDEX = std::numeric_limits<std::size_t>::max();
@@ -36,23 +40,36 @@ public:
 	BezierCurveTree* left;
 	BezierCurveTree* right;
 
+	BezierCurveTree() :
+		left(NULL),
+		right(NULL)
+	{}
+
+	~BezierCurveTree()
+	{
+		delete left;	// it's safe to pass NULL to delete
+		delete right;
+	}
+
 	// Returns TRUE when no more subdivisions are available beyond this depth
 	bool isLeaf() const
 	{
 		return left == NULL && right == NULL;
 	}
+
+	// Sets up the indices of this part of the curve tree
+	// Recursively calls setup() on the children if available
+	// The index is returned unchanged if no children are set up.
+	std::size_t setup(std::size_t idx, std::size_t stride);
 };
 
-std::size_t BezierCurveTree_Setup(BezierCurveTree *pCurve, std::size_t index, std::size_t stride);
-void BezierCurveTree_Delete(BezierCurveTree *pCurve);
 void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, std::size_t depth = 0);
 
 void BezierInterpolate(BezierCurve *pCurve);
-bool BezierCurve_IsCurved(BezierCurve *pCurve);
 
 inline void BezierCurveTreeArray_deleteAll(std::vector<BezierCurveTree*>& curveTrees) {
   for(std::vector<BezierCurveTree*>::iterator i = curveTrees.begin(); i != curveTrees.end(); ++i) {
-    BezierCurveTree_Delete(*i);
+     delete *i;
   }
 }
 
