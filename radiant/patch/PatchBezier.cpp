@@ -129,60 +129,59 @@ const std::size_t PATCH_MAX_SUBDIVISION_DEPTH = 16;
 
 void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, std::size_t depth)
 {
-	GSList *pLeftList = 0;
-	GSList *pRightList = 0;
+	GSList* leftList = NULL;
+	GSList* rightList = NULL;
 	
-	BezierCurve *pCurve, *pLeftCurve, *pRightCurve;
-
-	bool bSplit = false;
+	bool listSplit = false;
 
 	// Traverse the list and interpolate all curves which satisfy the "isCurved" condition
-	for (GSList *l = pCurveList; l; l = l->next)
+	for (GSList *l = pCurveList; l != NULL; l = l->next)
 	{
-		pCurve = (BezierCurve *)(l->data);
+		BezierCurve* curve = static_cast<BezierCurve*>(l->data);
 
-		if (bSplit || pCurve->isCurved())
+		if (listSplit || curve->isCurved())
 		{
 			// Set the flag to TRUE to indicate that we already subdivided one part of this list
 			// All other parts will be subdivided too
-			bSplit = true;
+			listSplit = true;
 
 			// Split this curve in two, by allocating two new curves
-			pLeftCurve = new BezierCurve;
-			pRightCurve = new BezierCurve;
+			BezierCurve* leftCurve = new BezierCurve;
+			BezierCurve* rightCurve = new BezierCurve;
 
 			// Let the current curve submit interpolation data to the newly allocated curves
-			pCurve->interpolate(pLeftCurve, pRightCurve);
+			curve->interpolate(leftCurve, rightCurve);
 
 			// Add the new curves to the allocated list
-			pLeftList = g_slist_prepend(pLeftList, pLeftCurve);
-			pRightList = g_slist_prepend(pRightList, pRightCurve);
+			leftList = g_slist_prepend(leftList, leftCurve);
+			rightList = g_slist_prepend(rightList, rightCurve);
 		}
 	}
 
-  if(pLeftList != 0 && pRightList != 0 && depth != PATCH_MAX_SUBDIVISION_DEPTH)
-  {
-    pTree->left = new BezierCurveTree;
-    pTree->right = new BezierCurveTree;
-    BezierCurveTree_FromCurveList(pTree->left, pLeftList, depth + 1);
-    BezierCurveTree_FromCurveList(pTree->right, pRightList, depth + 1);
+	// If we have a subdivision in this list, enter to the next level of recursion
+	if (leftList != NULL && rightList != NULL && depth != PATCH_MAX_SUBDIVISION_DEPTH)
+	{
+		// Allocate two new tree nodes for the left and right part
+		pTree->left = new BezierCurveTree;
+		pTree->right = new BezierCurveTree;
 
-    for(GSList* l = pLeftList; l != 0; l = g_slist_next(l))
-    {
-      delete (BezierCurve*)l->data;
-    }
+		BezierCurveTree_FromCurveList(pTree->left, leftList, depth + 1);
+		BezierCurveTree_FromCurveList(pTree->right, rightList, depth + 1);
 
-    for(GSList* l = pRightList; l != 0; l = g_slist_next(l))
-    {
-      delete (BezierCurve*)l->data;
-    }
-    
-    g_slist_free(pLeftList);
-    g_slist_free(pRightList);
-  }
-  else
-  {
-    pTree->left = 0;
-    pTree->right = 0;
-  }
+		// Free the left and right lists from this level recursion
+		for (GSList* l = leftList; l != 0; l = g_slist_next(l))
+		{
+			delete (BezierCurve*)l->data;
+		}
+
+		for (GSList* l = rightList; l != 0; l = g_slist_next(l))
+		{
+			delete (BezierCurve*)l->data;
+		}
+
+		g_slist_free(leftList);
+		g_slist_free(rightList);
+	}
+
+	// If no subdivisions have been calculated, just leave this tree node, children are NULL by default
 }
