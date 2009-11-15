@@ -2475,28 +2475,28 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
                       texcoord_1_1,
                       texRight);
 
-    if(!BezierCurveTree_isLeaf(BY))
+	if(!BY->isLeaf())
     {
       m_tess.vertices[BX->index + BY->index].texcoord = texTmp;
     }
 
   
-    if(!BezierCurveTree_isLeaf(BX->left))
+	if(!BX->left->isLeaf())
     {
       m_tess.vertices[BX->left->index + offStartY].texcoord = texcoord_0_0;
       m_tess.vertices[BX->left->index + offEndY].texcoord = texcoord_2_0;
 
-      if(!BezierCurveTree_isLeaf(BY))
+	  if(!BY->isLeaf())
       {
         m_tess.vertices[BX->left->index + BY->index].texcoord = texcoord_1_0;
       }
     }
-    if(!BezierCurveTree_isLeaf(BX->right))
+	if(!BX->right->isLeaf())
     {
       m_tess.vertices[BX->right->index + offStartY].texcoord = texcoord_0_1;
       m_tess.vertices[BX->right->index + offEndY].texcoord = texcoord_2_1;
 
-      if(!BezierCurveTree_isLeaf(BY))
+	  if(!BY->isLeaf())
       {
         m_tess.vertices[BX->right->index + BY->index].texcoord = texcoord_1_1;
       }
@@ -2527,28 +2527,28 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
                      vertex_1_1,
                      right );
 
-    if(!BezierCurveTree_isLeaf(BY))
+	if(!BY->isLeaf())
     {
       m_tess.vertices[BX->index + BY->index].vertex = tmp;
     }
 
   
-    if(!BezierCurveTree_isLeaf(BX->left))
+	if(!BX->left->isLeaf())
     {
       m_tess.vertices[BX->left->index + offStartY].vertex = vertex_0_0;
       m_tess.vertices[BX->left->index + offEndY].vertex = vertex_2_0;
 
-      if(!BezierCurveTree_isLeaf(BY))
+	  if(!BY->isLeaf())
       {
         m_tess.vertices[BX->left->index + BY->index].vertex = vertex_1_0;
       }
     }
-    if(!BezierCurveTree_isLeaf(BX->right))
+	if(!BX->right->isLeaf())
     {
       m_tess.vertices[BX->right->index + offStartY].vertex = vertex_0_1;
       m_tess.vertices[BX->right->index + offEndY].vertex = vertex_2_1;
 
-      if(!BezierCurveTree_isLeaf(BY))
+	  if(!BY->isLeaf())
       {
         m_tess.vertices[BX->right->index + BY->index].vertex = vertex_1_1;
       }
@@ -2739,7 +2739,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
   newFlagsX |= (nFlagsX & SPLIT);
   newFlagsX |= (nFlagsX & AVERAGE);
       
-  if(!BezierCurveTree_isLeaf(BY))
+  if(!BY->isLeaf())
   {
     {
       int nTemp = newFlagsY;
@@ -2783,7 +2783,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
   }
   else
   {
-    if(!BezierCurveTree_isLeaf(BX->left))
+	  if(!BX->left->isLeaf())
     {
       TesselateSubMatrix( BX->left,  BY,
                           offStartX, offStartY,
@@ -2794,7 +2794,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
                           bTranspose );
     }
 
-    if(!BezierCurveTree_isLeaf(BX->right))
+	  if(!BX->right->isLeaf())
     {
       TesselateSubMatrix( BX->right, BY,
                           BX->index, offStartY,
@@ -2859,67 +2859,78 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 		nArrayLength += subdivisions * length;
 	}
 	else
-  {
-	  arrayLength.resize(length);
+	{
+		// Resize the array and calculate the values
+		arrayLength.resize(length);
 
-    // create a list of the horizontal control curves in each column of sub-patches
-    // adaptively tesselate each horizontal control curve in the list
-    // create a binary tree representing the combined tesselation of the list
-    for(std::size_t i = 0; i != length; ++i)
-    {
-      PatchControlIter p1 = m_ctrlTransformed.begin() + (i * 2 * strideU);
-      GSList* pCurveList = 0;
-      for(std::size_t j = 0; j < cross; j += 2)
-      {
-        // directly taken from one row of control points
-        {
-          BezierCurve* pCurve = new BezierCurve;
-          pCurve->crd = (p1+strideU)->vertex;
-          pCurve->left = p1->vertex;
-          pCurve->right = (p1+(strideU<<1))->vertex;
-          pCurveList = g_slist_prepend(pCurveList, pCurve);
-        }
+		// create a list of the horizontal control curves in each column of sub-patches
+		// adaptively tesselate each horizontal control curve in the list
+		// create a binary tree representing the combined tesselation of the list
+		for (std::size_t i = 0; i != length; ++i)
+		{
+			PatchControlIter p1 = m_ctrlTransformed.begin() + (i * 2 * strideU);
 
-        if(j+2 >= cross)
-        {
-          break;
-        }
+			GSList* pCurveList = 0;
 
-		PatchControlIter p2 = p1 + strideV;
-        PatchControlIter p3 = p2 + strideV;
-        
-        // interpolated from three columns of control points
-        {
-          BezierCurve* pCurve = new BezierCurve;
-          pCurve->crd = vector3_mid((p1+strideU)->vertex, (p3+strideU)->vertex);
-          pCurve->left = vector3_mid(p1->vertex, p3->vertex);
-          pCurve->right = vector3_mid((p1+(strideU<<1))->vertex, (p3+(strideU<<1))->vertex);
-    
-          pCurve->crd = vector3_mid(pCurve->crd, (p2+strideU)->vertex);
-          pCurve->left = vector3_mid(pCurve->left, p2->vertex);
-          pCurve->right = vector3_mid(pCurve->right, (p2+(strideU<<1))->vertex);
-          pCurveList = g_slist_prepend(pCurveList, pCurve);
-        }
+			for (std::size_t j = 0; j < cross; j += 2)
+			{
+				// directly taken from one row of control points
+				{
+					BezierCurve* pCurve = new BezierCurve(
+						(p1+strideU)->vertex,		// crd
+						p1->vertex,					// left
+						(p1+(strideU<<1))->vertex	// right
+					);
+					
+					pCurveList = g_slist_prepend(pCurveList, pCurve);
+				}
 
-        p1 = p3;
-      }
+				// Skip the rest if this is the last turn
+				if (j+2 >= cross) break;
 
-      pCurveTree[i] = new BezierCurveTree;
-      BezierCurveTree_FromCurveList(pCurveTree[i], pCurveList);
-      for(GSList* l = pCurveList; l != 0; l = g_slist_next(l))
-      {
-        delete static_cast<BezierCurve*>((*l).data);
-      }
-      g_slist_free(pCurveList);
+				PatchControlIter p2 = p1 + strideV;
+				PatchControlIter p3 = p2 + strideV;
 
-      // set up array indices for binary tree
-      // accumulate subarray width
-	  std::size_t l = BezierCurveTree_Setup(pCurveTree[i], nArrayLength, nArrayStride) - (nArrayLength - 1);
-      arrayLength[i] = l;
-      // accumulate total array width
-      nArrayLength += l;
-    }
-  }
+				// interpolated from three columns of control points
+				{
+					BezierCurve* pCurve = new BezierCurve(
+						vector3_mid((p1+strideU)->vertex, (p3+strideU)->vertex),			// crd
+						vector3_mid(p1->vertex, p3->vertex),								// left
+						vector3_mid((p1+(strideU<<1))->vertex, (p3+(strideU<<1))->vertex)	// right
+					);
+
+					pCurve->crd = vector3_mid(pCurve->crd, (p2+strideU)->vertex);
+					pCurve->left = vector3_mid(pCurve->left, p2->vertex);
+					pCurve->right = vector3_mid(pCurve->right, (p2+(strideU<<1))->vertex);
+
+					pCurveList = g_slist_prepend(pCurveList, pCurve);
+				}
+
+				p1 = p3;
+			}
+
+			// Sort the curve list into a BezierCurveTree
+			pCurveTree[i] = new BezierCurveTree;
+
+			BezierCurveTree_FromCurveList(pCurveTree[i], pCurveList);
+
+			// The curve list is not needed anymore, free it
+			for (GSList* l = pCurveList; l != NULL; l = g_slist_next(l))
+			{
+				delete static_cast<BezierCurve*>(l->data);
+			}
+
+			g_slist_free(pCurveList);
+
+			// set up array indices for binary tree
+			// accumulate subarray width
+			std::size_t l = BezierCurveTree_Setup(pCurveTree[i], nArrayLength, nArrayStride) - (nArrayLength - 1);
+			arrayLength[i] = l;
+
+			// accumulate total array width
+			nArrayLength += l;
+		}
+	}
 
   switch(major)
   {
@@ -3251,14 +3262,14 @@ void Patch::BuildVertexArray()
     for(std::size_t j = 0, offStartY = 0; j+1 < m_height; j += 2, pCtrl += (strideU + strideV))
     {
       // set up array offsets for this sub-patch
-      const bool leafY = (m_patchDef3) ? false : BezierCurveTree_isLeaf(m_tess.curveTreeV[j>>1]);
+		const bool leafY = (m_patchDef3) ? false : m_tess.curveTreeV[j>>1]->isLeaf();
       const std::size_t offMidY = (m_patchDef3) ? 0 : m_tess.curveTreeV[j>>1]->index;
       const std::size_t widthY = m_tess.arrayHeight[j>>1] * m_tess.m_nArrayWidth;
       const std::size_t offEndY = offStartY + widthY;
 
       for(std::size_t i = 0, offStartX = 0; i+1 < m_width; i += 2, pCtrl += (strideU << 1))
       {
-        const bool leafX = (m_patchDef3) ? false : BezierCurveTree_isLeaf(m_tess.curveTreeU[i>>1]);
+		  const bool leafX = (m_patchDef3) ? false : m_tess.curveTreeU[i>>1]->isLeaf();
         const std::size_t offMidX = (m_patchDef3) ? 0 : m_tess.curveTreeU[i>>1]->index;
         const std::size_t widthX = m_tess.arrayWidth[i>>1];
         const std::size_t offEndX = offStartX + widthX;

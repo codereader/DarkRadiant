@@ -31,8 +31,10 @@ public:
 
         if(i == m_tess.curveTreeV.size()) break;
 
-        if(!BezierCurveTree_isLeaf(m_tess.curveTreeV[i]))
-          glDrawArrays(GL_LINE_STRIP, GLint(m_tess.curveTreeV[i]->index), GLsizei(m_tess.m_nArrayWidth));
+        if (!m_tess.curveTreeV[i]->isLeaf())
+		{
+			glDrawArrays(GL_LINE_STRIP, GLint(m_tess.curveTreeV[i]->index), GLsizei(m_tess.m_nArrayWidth));
+		}
 
         n += (m_tess.arrayHeight[i]*m_tess.m_nArrayWidth);
       
@@ -49,7 +51,7 @@ public:
 
         if(i == m_tess.curveTreeU.size()) break;
 
-        if(!BezierCurveTree_isLeaf(m_tess.curveTreeU[i]))
+		if(!m_tess.curveTreeU[i]->isLeaf())
         {
 			glVertexPointer(3, GL_DOUBLE, GLsizei(n), &m_tess.vertices[m_tess.curveTreeU[i]->index].vertex);
           glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_tess.m_nArrayHeight));
