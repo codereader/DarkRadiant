@@ -16,93 +16,108 @@ void BezierInterpolate(BezierCurve *pCurve) {
 	pCurve->crd = vector3_mid(pCurve->left, pCurve->right);
 }
 
-bool BezierCurve_IsCurved(BezierCurve *pCurve) {
-  Vector3 vTemp(pCurve->right - pCurve->left);
-  Vector3 v1(pCurve->crd - pCurve->left);
-  Vector3 v2(pCurve->right - pCurve->crd);
+bool BezierCurve::isCurved() const
+{
+	// Calculate the deltas
+	Vector3 vTemp(right - left);
+	Vector3 v1(crd - left);
+	
+	if (v1 == g_vector3_identity || vTemp == v1) // return 0 if 1->2 == 0 or 1->2 == 1->3
+	{
+		return false;
+	}
 
-  if(v1 == g_vector3_identity || vTemp == v1) // return 0 if 1->2 == 0 or 1->2 == 1->3
-    return false;
+	Vector3 v2(right - crd);
 
-  v1.normalise();
-  v2.normalise();
-  
-  if (v1 == v2) {
-    return false;
-  }
-  
-  Vector3 v3(vTemp);
-  const double width = v3.getLength();
-  v3 *= 1.0 / width;
+	v1.normalise();
+	v2.normalise();
 
-  if (v1 == v3 && v2 == v3) {
-    return false;
-  }
-  
-  const double angle = acos(v1.dot(v2)) / c_pi;
+	if (v1 == v2)
+	{
+		// All points are on the same line
+		return false;
+	}
 
-  const double index = width * angle;
+	Vector3 v3(vTemp);
+	const double width = v3.getLength();
+	
+	v3 *= 1.0 / width;
 
-  static float subdivideThreshold = GlobalRegistry().getFloat(RKEY_PATCH_SUBDIVIDE_THRESHOLD);
+	if (v1 == v3 && v2 == v3)
+	{
+		return false;
+	}
 
-  if (index > subdivideThreshold) {
+	// The points are not on the same line, determine the angle
+	const double angle = acos(v1.dot(v2)) / c_pi;
+
+	const double index = width * angle;
+
+	static float subdivideThreshold = GlobalRegistry().getFloat(RKEY_PATCH_SUBDIVIDE_THRESHOLD);
+
+	if (index > subdivideThreshold)
+	{
 		return true;
-  }
-  return false;
+	}
+
+	return false;
 }
 
-std::size_t BezierCurveTree_Setup(BezierCurveTree *pCurve, std::size_t index, std::size_t stride) {
-  if(pCurve) {
-    if(pCurve->left && pCurve->right) {
-      index = BezierCurveTree_Setup(pCurve->left, index, stride);
-      pCurve->index = index*stride;
-      index++;
-      index = BezierCurveTree_Setup(pCurve->right, index, stride);
-    }
-    else {
-      pCurve->index = BEZIERCURVETREE_MAX_INDEX;
-    }
-  }
-  
-  return index;
-}
+std::size_t BezierCurveTree::setup(std::size_t idx, std::size_t stride)
+{
+	if (left != NULL && right != NULL)
+	{
+		idx = left->setup(idx, stride);
 
-void BezierCurveTree_Delete(BezierCurveTree *pCurve) {
-  if(pCurve) {
-    BezierCurveTree_Delete(pCurve->left);
-    BezierCurveTree_Delete(pCurve->right);
-    delete pCurve;
-  }
+		// Store new index
+		index = idx*stride;
+
+		idx++;
+		idx = right->setup(idx, stride);
+	}
+	else
+	{
+		// Either left or right is NULL, assign leaf index
+		index = BEZIERCURVETREE_MAX_INDEX;
+	}
+
+	// idx will be returned unchanged if no children have been setup
+	return idx;
 }
 
 const std::size_t PATCH_MAX_SUBDIVISION_DEPTH = 16;
 
-void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, std::size_t depth) {
-  GSList *pLeftList = 0;
-  GSList *pRightList = 0;
-  BezierCurve *pCurve, *pLeftCurve, *pRightCurve;
-  bool bSplit = false;
+void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, std::size_t depth)
+{
+	GSList *pLeftList = 0;
+	GSList *pRightList = 0;
+	
+	BezierCurve *pCurve, *pLeftCurve, *pRightCurve;
 
-  for (GSList *l = pCurveList; l; l = l->next)
-  {
-    pCurve = (BezierCurve *)(l->data);
-    if(bSplit || BezierCurve_IsCurved(pCurve))
-    {
-      bSplit = true;
-      pLeftCurve = new BezierCurve;
-      pRightCurve = new BezierCurve;
-      pLeftCurve->left = pCurve->left;
-      pRightCurve->right = pCurve->right;
-      BezierInterpolate(pCurve);
-      pLeftCurve->crd = pCurve->left;
-      pRightCurve->crd = pCurve->right;
-      pLeftCurve->right = pCurve->crd;
-      pRightCurve->left = pCurve->crd;
+	bool bSplit = false;
 
-      pLeftList = g_slist_prepend(pLeftList, pLeftCurve);
-      pRightList = g_slist_prepend(pRightList, pRightCurve);
-    }
-  }
+	// Traverse the list and interpolate all curves which satisfy the "isCurved" condition
+	for (GSList *l = pCurveList; l; l = l->next)
+	{
+		pCurve = (BezierCurve *)(l->data);
+
+		if (bSplit || pCurve->isCurved())
+		{
+			bSplit = true;
+			pLeftCurve = new BezierCurve;
+			pRightCurve = new BezierCurve;
+			pLeftCurve->left = pCurve->left;
+			pRightCurve->right = pCurve->right;
+			BezierInterpolate(pCurve);
+			pLeftCurve->crd = pCurve->left;
+			pRightCurve->crd = pCurve->right;
+			pLeftCurve->right = pCurve->crd;
+			pRightCurve->left = pCurve->crd;
+
+			pLeftList = g_slist_prepend(pLeftList, pLeftCurve);
+			pRightList = g_slist_prepend(pRightList, pRightCurve);
+		}
+	}
 
   if(pLeftList != 0 && pRightList != 0 && depth != PATCH_MAX_SUBDIVISION_DEPTH)
   {

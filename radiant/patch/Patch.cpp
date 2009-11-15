@@ -2924,7 +2924,7 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 
 			// set up array indices for binary tree
 			// accumulate subarray width
-			std::size_t l = BezierCurveTree_Setup(pCurveTree[i], nArrayLength, nArrayStride) - (nArrayLength - 1);
+			std::size_t l = pCurveTree[i]->setup(nArrayLength, nArrayStride) - (nArrayLength - 1);
 			arrayLength[i] = l;
 
 			// accumulate total array width
