@@ -23,6 +23,10 @@ struct BezierCurve
 	// Returns true if the given set of coordinates satisfies the "curved" condition
 	// This is determined by comparing the directions of the various deltas
 	bool isCurved() const;
+
+	// Interpolates the curve values and writes them to <leftCurve> and <rightCurve> 
+	// which will form two new (connected) segments interpolating the current one.
+	void interpolate(BezierCurve* leftCurve, BezierCurve* rightCurve) const;
 };
 
 const std::size_t BEZIERCURVETREE_MAX_INDEX = std::numeric_limits<std::size_t>::max();
