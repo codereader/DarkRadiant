@@ -569,9 +569,45 @@ void RefreshShaders(const cmd::ArgumentList& args) {
 	GlobalMainFrame().updateAllWindows();
 }
 
+#include "debugging/ScopedDebugTimer.h"
+
+void BenchmarkPatches(const cmd::ArgumentList& args) {
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", "Performing Patch Benchmark");
+	
+	scene::INodePtr node = GlobalPatchCreator(DEF2).createPatch();
+	Patch* patch = Node_getPatch(node);
+	GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
+
+	patch->setDims(15, 15);
+
+	// Retrieve the boundaries 
+	AABB bounds(Vector3(-512, -512, 0), Vector3(512, 512, 0));
+	patch->ConstructPrefab(bounds, ePlane, GlobalXYWnd().getActiveViewType(), 15, 15);
+
+	for (PatchControlIter i = patch->begin(); i != patch->end(); ++i)
+	{
+		PatchControl& control = *i;
+		int randomNumber = int(250 * (float(std::rand()) / float(RAND_MAX)));
+		control.vertex.set(control.vertex.x(), control.vertex.y(), control.vertex.z() + randomNumber);
+	}
+
+	patch->controlPointsChanged();
+
+	{
+		ScopedDebugTimer timer("Benchmark");
+		for (std::size_t i = 0; i < 200; i++)
+		{
+			patch->UpdateCachedData();
+		}
+	}
+}
+
 void MainFrame_Construct()
 {
 	DragMode();
+
+	GlobalCommandSystem().addCommand("BenchmarkPatches", BenchmarkPatches);
 
 	GlobalCommandSystem().addCommand("Exit", Exit);
 	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);

@@ -5,23 +5,43 @@
 #include <glib/gslist.h>
 #include <limits>
 
-struct BezierCurve {
-  Vector3 crd;
-  Vector3 left;
-  Vector3 right;
+struct BezierCurve
+{
+	Vector3 crd;
+	Vector3 left;
+	Vector3 right;
+
+	BezierCurve()
+	{}
+
+	BezierCurve(const Vector3& crd_, const Vector3& left_, const Vector3& right_) :
+		crd(crd_),
+		left(left_),
+		right(right_)
+	{}
 };
 
 const std::size_t BEZIERCURVETREE_MAX_INDEX = std::numeric_limits<std::size_t>::max();
 
-struct BezierCurveTree {
-  std::size_t index;
-  BezierCurveTree* left;
-  BezierCurveTree* right;
-};
+/** 
+ * greebo: A BezierCurveTree represents a node in the binary subdivision tree.
+ * If left and right are both NULL, this node is a leaf and no further subdivisions
+ * are available for this part of the patch. The index variable holds the depth of this node.
+ * A leaf carries BEZIERCURVETREE_MAX_INDEX as index.
+ */
+class BezierCurveTree
+{
+public:
+	std::size_t index;
+	BezierCurveTree* left;
+	BezierCurveTree* right;
 
-inline bool BezierCurveTree_isLeaf(const BezierCurveTree* node) {
-  return node->left == 0 && node->right == 0;
-}
+	// Returns TRUE when no more subdivisions are available beyond this depth
+	bool isLeaf() const
+	{
+		return left == NULL && right == NULL;
+	}
+};
 
 std::size_t BezierCurveTree_Setup(BezierCurveTree *pCurve, std::size_t index, std::size_t stride);
 void BezierCurveTree_Delete(BezierCurveTree *pCurve);
