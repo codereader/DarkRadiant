@@ -63,6 +63,46 @@ bool BezierCurve::isCurved() const
 	return false;
 }
 
+/**
+ * greebo: The vertex interpolation works like this: 
+ *
+ * The original segment is LEFT >> CRD >> RIGHT, which will be sudivided into two segments: "left" and "right".
+ *
+ * The "left" segment will be LEFT >> ip_left >> ip_crd
+ * The "right" segment will be ip_crd >> ip_right >> RIGHT
+ *
+ * In the end, the two segments will still be using the LEFT and RIGHT vertices (which is important as these are the
+ * "fixed" control points of the patch, but the CRD one will be disregarded.
+ 
+   LEFT O 
+        |   
+        |
+        | 
+        |
+        |
+        |
+ip_left X
+        |\
+        | \
+        |  \
+        |   X  ip_crd
+        |    \
+        |     \
+    CRD O------X------O RIGHT
+             ip_right
+*/
+void BezierCurve::interpolate(BezierCurve* leftCurve, BezierCurve* rightCurve) const
+{
+	// The left and right vertices are the anchors
+	leftCurve->left = left;
+	rightCurve->right = right;
+
+	// The mid-point of the current curve 
+	leftCurve->crd = vector3_mid(left, crd);		// ip_left
+	rightCurve->crd = vector3_mid(crd, right);		// ip_right
+	leftCurve->right = rightCurve->left = vector3_mid(leftCurve->crd, rightCurve->crd); // ip_crd
+}
+
 std::size_t BezierCurveTree::setup(std::size_t idx, std::size_t stride)
 {
 	if (left != NULL && right != NULL)
@@ -103,17 +143,18 @@ void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, s
 
 		if (bSplit || pCurve->isCurved())
 		{
+			// Set the flag to TRUE to indicate that we already subdivided one part of this list
+			// All other parts will be subdivided too
 			bSplit = true;
+
+			// Split this curve in two, by allocating two new curves
 			pLeftCurve = new BezierCurve;
 			pRightCurve = new BezierCurve;
-			pLeftCurve->left = pCurve->left;
-			pRightCurve->right = pCurve->right;
-			BezierInterpolate(pCurve);
-			pLeftCurve->crd = pCurve->left;
-			pRightCurve->crd = pCurve->right;
-			pLeftCurve->right = pCurve->crd;
-			pRightCurve->left = pCurve->crd;
 
+			// Let the current curve submit interpolation data to the newly allocated curves
+			pCurve->interpolate(pLeftCurve, pRightCurve);
+
+			// Add the new curves to the allocated list
 			pLeftList = g_slist_prepend(pLeftList, pLeftCurve);
 			pRightList = g_slist_prepend(pRightList, pRightCurve);
 		}
