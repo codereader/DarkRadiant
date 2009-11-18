@@ -216,6 +216,9 @@ public:
 
 	PatchTesselation& getTesselation();
 
+	// Returns a copy of the tesselated geometry
+	PatchMesh getTesselatedPatchMesh() const;
+
 	// Get the current control point array
 	PatchControlArray& getControlPoints();	
 	const PatchControlArray& getControlPoints() const;

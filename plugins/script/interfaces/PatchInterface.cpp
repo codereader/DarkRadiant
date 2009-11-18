@@ -1,6 +1,7 @@
 #include "PatchInterface.h"
 
 #include "ipatch.h"
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace script {
 
@@ -55,6 +56,14 @@ public:
 		if (patchNode == NULL) return -1;
 
 		return patchNode->getPatch().getHeight();
+	}
+
+	PatchMesh getTesselatedPatchMesh() const
+	{
+		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		if (patchNode == NULL) return PatchMesh();
+
+		return patchNode->getPatch().getTesselatedPatchMesh();
 	}
 
 	// Return a defined patch control vertex at <row>,<col>
@@ -204,6 +213,25 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 	;
 
+	nspace["PatchMeshVertex"] = boost::python::class_<PatchMesh::Vertex>("PatchMeshVertex", 
+		boost::python::init<>())
+		.def_readwrite("vertex", &PatchMesh::Vertex::vertex)
+		.def_readwrite("texcoord", &PatchMesh::Vertex::texcoord)
+		.def_readwrite("normal", &PatchMesh::Vertex::normal)
+	;
+
+	// Declare the PatchMesh::Vertex vector
+	boost::python::class_<std::vector<PatchMesh::Vertex> >("PatchMeshVertices")
+		.def(boost::python::vector_indexing_suite<std::vector<PatchMesh::Vertex>, true>())
+	;
+
+	nspace["PatchMesh"] = boost::python::class_<PatchMesh>("PatchMesh", 
+		boost::python::init<>())
+		.def_readonly("width", &PatchMesh::width)
+		.def_readonly("height", &PatchMesh::height)
+		.def_readonly("vertices", &PatchMesh::vertices)
+	;
+
 	// Define a PatchNode interface
 	nspace["PatchNode"] = boost::python::class_<ScriptPatchNode, 
 		boost::python::bases<ScriptSceneNode> >("PatchNode", boost::python::init<const scene::INodePtr&>() )
@@ -225,6 +253,7 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 		.def("getSubdivisions", &ScriptPatchNode::getSubdivisions)
 		.def("setFixedSubdivisions", &ScriptPatchNode::setFixedSubdivisions)
 		.def("controlPointsChanged", &ScriptPatchNode::controlPointsChanged)
+		.def("getTesselatedPatchMesh", &ScriptPatchNode::getTesselatedPatchMesh)
 	;
 
 	// Add the "isPatch" and "getPatch" method to all ScriptSceneNodes
