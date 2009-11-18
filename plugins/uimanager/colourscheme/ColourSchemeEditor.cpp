@@ -222,9 +222,9 @@ GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const
 	
 	  GdkColor tempColour;
 	  Vector3 tempColourVector = colour;
-	  tempColour.red 	= static_cast<unsigned int>(GDK_FULL_INTENSITY * tempColourVector[0]);
-	  tempColour.green 	= static_cast<unsigned int>(GDK_FULL_INTENSITY * tempColourVector[1]);
-	  tempColour.blue 	= static_cast<unsigned int>(GDK_FULL_INTENSITY * tempColourVector[2]);
+	  tempColour.red 	= static_cast<guint16>(GDK_FULL_INTENSITY * tempColourVector[0]);
+	  tempColour.green 	= static_cast<guint16>(GDK_FULL_INTENSITY * tempColourVector[1]);
+	  tempColour.blue 	= static_cast<guint16>(GDK_FULL_INTENSITY * tempColourVector[2]);
 	
 	  // Create the colour button 
 	  GtkWidget* button = gtk_color_button_new_with_color(&tempColour);

@@ -72,6 +72,7 @@ public:
 	 * @parent: The parent GtkWidget
 	 * @title: The dialog title.
 	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
+	 * @browseFolders: if TRUE the dialog is asking the user for directories only.
 	 * @pattern: the type "map", "prefab", this determines the file extensions.
 	 * @defaultExt: The default extension appended when the user enters 
 	 *              filenames without extension.
@@ -79,6 +80,7 @@ public:
 	FileChooser(GtkWidget* parent, 
 				const std::string& title, 
 				bool open, 
+				bool browseFolders,
 				const std::string& pattern = "",
 				const std::string& defaultExt = "");
 

@@ -47,7 +47,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry) {
 
-	gtkutil::FileChooser fileChooser(gtk_widget_get_toplevel(widget), "Choose File", true);
+	gtkutil::FileChooser fileChooser(gtk_widget_get_toplevel(widget), "Choose File", true, false);
 
 	fileChooser.setCurrentPath(gtk_entry_get_text(entry));
 

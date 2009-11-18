@@ -47,7 +47,7 @@ std::string MapFileManager::selectFile(bool open,
 	
 	// Display a file chooser dialog to get a new path
 	gtkutil::FileChooser fileChooser(GTK_WIDGET(GlobalRadiant().getMainWindow()),
-		title, open, type, defaultExt);
+		title, open, false, type, defaultExt);
 
 	fileChooser.setCurrentFile(defaultFile);
 	fileChooser.setCurrentPath(_lastDirs[type]);
