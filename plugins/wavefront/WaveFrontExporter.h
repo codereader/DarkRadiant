@@ -31,6 +31,7 @@ public:
 
 private:
 	void exportBrush(IBrush& brush);
+	void exportPatch(IPatch& patch);
 };
 
 } // namespace exporter
