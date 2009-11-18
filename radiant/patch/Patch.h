@@ -114,9 +114,6 @@ public:
 
 	static int m_CycleCapIndex;// = 0;
 	
-	// The patch type
-	static EPatchType m_type;
-
 	// Constructor
 	Patch(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
 	
@@ -343,8 +340,8 @@ public:
 	void importState(const UndoMemento* state);
 
 	// Initialise the static member variables of this class, called from >> patchmodule.cpp
-	static void constructStatic(EPatchType type) {
-		Patch::m_type = type;
+	static void constructStatic()
+	{
 		Patch::m_state_ctrl = GlobalRenderSystem().capture("$POINT");
 		Patch::m_state_lattice = GlobalRenderSystem().capture("$LATTICE");
 	}

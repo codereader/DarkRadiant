@@ -1,12 +1,6 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
-// Possible patch types, should be Doom 3 anyway
-enum EPatchType {
-  ePatchTypeQuake3,
-  ePatchTypeDoom3,
-};
-
 // Minimum height and width of a patch
 #define MIN_PATCH_WIDTH 3
 #define MIN_PATCH_HEIGHT 3

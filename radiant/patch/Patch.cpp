@@ -41,7 +41,6 @@ inline bool double_valid(double f) {
 // Initialise the shader state variables and the patch type
 ShaderPtr Patch::m_state_ctrl;
 ShaderPtr Patch::m_state_lattice;
-EPatchType Patch::m_type;
 
 // Initialise the cycle cap index member variable
 int Patch::m_CycleCapIndex = 0;
