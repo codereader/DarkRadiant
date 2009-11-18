@@ -60,6 +60,60 @@ void WaveFrontExporter::exportBrush(IBrush& brush)
     ++_exportedBrushes;
 }
 
+void WaveFrontExporter::exportPatch(IPatch& patch)
+{
+	_output << "\ng " << "Patch" << _exportedPatches << "\n";
+
+	std::string vertexBuf;
+	std::string texCoordBuf;
+	std::string faceBuf;
+
+	// Get hold of the fully tesselated patch mesh, not just the control vertices
+	PatchMesh mesh = patch.getTesselatedPatchMesh();
+
+	// Remember the vertex count offset
+	std::size_t firstVertex = _vertexCount;
+
+	for (std::size_t h = 0; h < mesh.height; ++h)
+	{
+		for (std::size_t w = 0; w < mesh.width; ++w)
+		{
+			const PatchMesh::Vertex& v = mesh.vertices[mesh.width*h + w];
+
+			// Write coordinates into the export buffers
+			vertexBuf += "v " + std::string(v.vertex) + "\n";
+			texCoordBuf += "vt " + std::string(v.texcoord) + "\n";
+
+			// Count the exported vertices
+			++_vertexCount;
+
+			// Starting from the second row, we're gathering the faces
+			if (h > 0 && w > 0)
+			{
+				// Gather the indices forming a quad	
+				std::size_t v1 = 1 + firstVertex + h*mesh.width + w;
+				std::size_t v2 = 1 + firstVertex + (h-1)*mesh.width + w;
+				std::size_t v3 = 1 + firstVertex + (h-1)*mesh.width + (w-1);
+				std::size_t v4 = 1 + firstVertex + h*mesh.width + (w-1);
+				
+				// Construct the quad
+				faceBuf += "f";
+				faceBuf += " " + sizetToStr(v1) + "/" + sizetToStr(v1);
+				faceBuf += " " + sizetToStr(v4) + "/" + sizetToStr(v4);
+				faceBuf += " " + sizetToStr(v3) + "/" + sizetToStr(v3);
+				faceBuf += " " + sizetToStr(v2) + "/" + sizetToStr(v2);
+				faceBuf += "\n";
+			}
+		}
+	}
+
+	_output << vertexBuf << "\n";
+    _output << texCoordBuf << "\n";
+    _output << faceBuf << "\n";
+
+    ++_exportedPatches;
+}
+
 void WaveFrontExporter::visit(const scene::INodePtr& node) const
 {
 	IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
@@ -75,6 +129,7 @@ void WaveFrontExporter::visit(const scene::INodePtr& node) const
 
 	if (patchNode != NULL)
 	{
+		const_cast<WaveFrontExporter&>(*this).exportPatch(patchNode->getPatch());
 		return;
 	}
 }
