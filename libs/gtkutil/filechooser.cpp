@@ -65,7 +65,7 @@ char* dir_dialog(GtkWidget* parent, const char* title, const char* path) {
 namespace gtkutil {
 
 FileChooser::FileChooser(GtkWidget* parent, const std::string& title, 
-						 bool open, const std::string& pattern,
+						 bool open, bool browseFolders, const std::string& pattern,
 						 const std::string& defaultExt) :
 	_parent(parent),
 	_dialog(NULL),
@@ -84,19 +84,19 @@ FileChooser::FileChooser(GtkWidget* parent, const std::string& title,
 
 	if (_open) {
 		_dialog = gtk_file_chooser_dialog_new(_title.c_str(),
-											 GTK_WINDOW(_parent),
-											 GTK_FILE_CHOOSER_ACTION_OPEN,
-											 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-											 GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-											 NULL);
+			GTK_WINDOW(_parent),
+			browseFolders ? GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER : GTK_FILE_CHOOSER_ACTION_OPEN,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+			NULL);
 	}
 	else {
 		_dialog = gtk_file_chooser_dialog_new(title.c_str(),
-											 GTK_WINDOW(_parent),
-											 GTK_FILE_CHOOSER_ACTION_SAVE,
-											 GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-											 GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-											 NULL);
+			GTK_WINDOW(_parent),
+			browseFolders ? GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER : GTK_FILE_CHOOSER_ACTION_SAVE,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+			GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+			NULL);
 	}
 
 	// Set the Enter key to activate the default response
