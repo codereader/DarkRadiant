@@ -319,12 +319,6 @@ inline bool operator==(const Matrix4& self, const Matrix4& other)
     && self.tx() == other.tx() && self.ty() == other.ty() && self.tz() == other.tz() && self.tw() == other.tw();
 }
 
-/// \brief Returns true if \p self and \p other are exactly element-wise equal.
-inline bool matrix4_equal(const Matrix4& self, const Matrix4& other)
-{
-  return self == other;
-}
-
 /// \brief Returns true if \p self and \p other are element-wise equal within \p epsilon.
 inline bool matrix4_equal_epsilon(const Matrix4& self, const Matrix4& other, double epsilon)
 {
