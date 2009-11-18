@@ -49,6 +49,32 @@ struct PatchControl
 	Vector2 texcoord;	// The texture coordinates of this point
 };
 
+/**
+ * A structure representing the fully tesselated patch
+ * Can be acquired through the IPatch interface for 
+ * exporting the geometry to an external app.
+ */
+struct PatchMesh
+{
+	struct Vertex
+	{
+		Vector3 vertex;		// 3D position
+		Vector2 texcoord;	// UV coordinates
+		Vector3 normal;		// Normal vector
+
+		// Needed for boost::python::vectorindexing_suite
+		bool operator==(const Vertex& other) const
+		{
+			return (vertex == other.vertex && texcoord == other.texcoord && normal == other.normal);
+		}
+	};
+
+	std::size_t width;	// width of this mesh
+	std::size_t height; // height of this mesh
+	
+	std::vector<PatchMesh::Vertex> vertices;	// the actual geometry
+};
+
 typedef BasicVector2<unsigned int> Subdivisions;
 
 // The abstract base class for a Doom3-compatible patch
@@ -67,6 +93,9 @@ public:
 	// Return a defined patch control vertex at <row>,<col>
 	virtual PatchControl& ctrlAt(std::size_t row, std::size_t col) = 0;
 	virtual const PatchControl& ctrlAt(std::size_t row, std::size_t col) const = 0;
+
+	// Returns a copy of the fully tesselated patch geometry (slow!)
+	virtual PatchMesh getTesselatedPatchMesh() const = 0;
 
 	/** 
 	 * greebo: Inserts two columns before and after the column with index <colIndex>.

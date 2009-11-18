@@ -1900,6 +1900,28 @@ PatchTesselation& Patch::getTesselation() {
 	return m_tess;
 }
 
+PatchMesh Patch::getTesselatedPatchMesh() const
+{
+	PatchMesh mesh;
+
+	mesh.width = m_tess.m_nArrayWidth;
+	mesh.height = m_tess.m_nArrayHeight;
+
+	for (std::vector<ArbitraryMeshVertex>::const_iterator i = m_tess.vertices.begin();
+		i != m_tess.vertices.end(); ++i)
+	{
+		PatchMesh::Vertex v;
+
+		v.vertex = i->vertex;
+		v.texcoord = i->texcoord;
+		v.normal = i->normal;
+
+		mesh.vertices.push_back(v);
+	}
+	
+	return mesh;
+}
+
 void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height)
 {
   setDims(width, height);
