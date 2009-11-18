@@ -50,7 +50,7 @@ public:
 		page->appendEntry("Patch Subdivide Threshold", RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 
 		// Initialise the static member variables of the Patch and PatchNode classes
-		Patch::constructStatic(ePatchTypeDoom3);
+		Patch::constructStatic();
 		PatchNode::constructStatic();
 	}
 	
