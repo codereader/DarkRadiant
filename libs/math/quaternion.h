@@ -50,7 +50,7 @@ inline void quaternion_multiply_by_quaternion(Quaternion& quaternion, const Quat
 /// \brief Constructs a quaternion which rotates between two points on the unit-sphere, \p from and \p to.
 inline Quaternion quaternion_for_unit_vectors(const Vector3& from, const Vector3& to)
 {
-  return Quaternion(from.crossProduct(to), static_cast<float>(from.dot(to)));
+  return Quaternion(from.crossProduct(to), from.dot(to));
 }
 
 /** greebo: This yields a rotation quat for the given euler angles.
@@ -76,26 +76,26 @@ inline Quaternion quaternion_for_euler_xyz_degrees(const Vector3& eulerXYZ) {
 inline Quaternion quaternion_for_axisangle(const Vector3& axis, double angle)
 {
   angle *= 0.5;
-  float sa = static_cast<float>(sin(angle));
-  return Quaternion(axis[0] * sa, axis[1] * sa, axis[2] * sa, static_cast<float>(cos(angle)));
+  double sa = sin(angle);
+  return Quaternion(axis[0] * sa, axis[1] * sa, axis[2] * sa, cos(angle));
 }
 
 inline Quaternion quaternion_for_x(double angle)
 {
   angle *= 0.5;
-  return Quaternion(static_cast<float>(sin(angle)), 0, 0, static_cast<float>(cos(angle)));
+  return Quaternion(sin(angle), 0, 0, cos(angle));
 }
 
 inline Quaternion quaternion_for_y(double angle)
 {
   angle *= 0.5;
-  return Quaternion(0, static_cast<float>(sin(angle)), 0, static_cast<float>(cos(angle)));
+  return Quaternion(0, sin(angle), 0, cos(angle));
 }
 
 inline Quaternion quaternion_for_z(double angle)
 {
   angle *= 0.5;
-  return Quaternion(0, 0, static_cast<float>(sin(angle)), static_cast<float>(cos(angle)));
+  return Quaternion(0, 0, sin(angle), cos(angle));
 }
 
 inline Quaternion quaternion_inverse(const Quaternion& quaternion)
@@ -112,10 +112,10 @@ inline Quaternion quaternion_normalised(const Quaternion& quaternion)
 {
   const double n = (1.0 / (quaternion[0] * quaternion[0] + quaternion[1] * quaternion[1] + quaternion[2] * quaternion[2] + quaternion[3] * quaternion[3]));
   return Quaternion(
-    static_cast<float>(quaternion[0] * n),
-    static_cast<float>(quaternion[1] * n),
-    static_cast<float>(quaternion[2] * n),
-    static_cast<float>(quaternion[3] * n)
+    quaternion[0] * n,
+    quaternion[1] * n,
+    quaternion[2] * n,
+    quaternion[3] * n
   );
 }
 
@@ -174,17 +174,17 @@ inline Matrix4 matrix4_rotation_for_quaternion(const Quaternion& quaternion)
   const double wz = quaternion[3] * z2;
 
   return Matrix4::byColumns(
-    static_cast<float>( 1.0 - (yy + zz) ),
-    static_cast<float>(xy + wz),
-    static_cast<float>(xz - wy),
+    1.0 - (yy + zz),
+    xy + wz,
+    xz - wy,
     0,
-    static_cast<float>(xy - wz),
-    static_cast<float>( 1.0 - (xx + zz) ),
-    static_cast<float>(yz + wx),
+    xy - wz,
+    1.0 - (xx + zz),
+    yz + wx,
     0,
-    static_cast<float>(xz + wy),
-    static_cast<float>(yz - wx),
-    static_cast<float>( 1.0 - (xx + yy) ),
+    xz + wy,
+    yz - wx,
+    1.0 - (xx + yy),
     0,
     0,
     0,
@@ -242,10 +242,10 @@ inline Quaternion quaternion_for_matrix4_rotation(const Matrix4& matrix4)
   {
     double S = 0.5 / sqrt(trace);
     return Quaternion(
-      static_cast<float>((transposed[9] - transposed[6]) * S),
-      static_cast<float>((transposed[2] - transposed[8]) * S),
-      static_cast<float>((transposed[4] - transposed[1]) * S),
-      static_cast<float>(0.25 / S)
+      (transposed[9] - transposed[6]) * S,
+      (transposed[2] - transposed[8]) * S,
+      (transposed[4] - transposed[1]) * S,
+      0.25 / S
     );
   }
 
@@ -253,10 +253,10 @@ inline Quaternion quaternion_for_matrix4_rotation(const Matrix4& matrix4)
   {
     double S = 2.0 * sqrt(1.0 + transposed[0] - transposed[5] - transposed[10]);
     return Quaternion(
-      static_cast<float>(0.25 / S),
-      static_cast<float>((transposed[1] + transposed[4]) / S),
-      static_cast<float>((transposed[2] + transposed[8]) / S),
-      static_cast<float>((transposed[6] + transposed[9]) / S)
+      0.25 / S,
+      (transposed[1] + transposed[4]) / S,
+      (transposed[2] + transposed[8]) / S,
+      (transposed[6] + transposed[9]) / S
     );
   }
   
@@ -264,19 +264,19 @@ inline Quaternion quaternion_for_matrix4_rotation(const Matrix4& matrix4)
   {
     double S = 2.0 * sqrt(1.0 + transposed[5] - transposed[0] - transposed[10]);
     return Quaternion(
-      static_cast<float>((transposed[1] + transposed[4]) / S),
-      static_cast<float>(0.25 / S),
-      static_cast<float>((transposed[6] + transposed[9]) / S),
-      static_cast<float>((transposed[2] + transposed[8]) / S)
+      (transposed[1] + transposed[4]) / S,
+      0.25 / S,
+      (transposed[6] + transposed[9]) / S,
+      (transposed[2] + transposed[8]) / S
     );
   }
 
   double S = 2.0 * sqrt(1.0 + transposed[10] - transposed[0] - transposed[5]);
   return Quaternion(
-    static_cast<float>((transposed[2] + transposed[8]) / S),
-    static_cast<float>((transposed[6] + transposed[9]) / S),
-    static_cast<float>(0.25 / S),
-    static_cast<float>((transposed[1] + transposed[4]) / S)
+    (transposed[2] + transposed[8]) / S,
+    (transposed[6] + transposed[9]) / S,
+    0.25 / S,
+    (transposed[1] + transposed[4]) / S
   );
 }
 
@@ -317,9 +317,9 @@ inline Vector3 quaternion_transformed_point(const Quaternion& quaternion, const 
   double zw2 = quaternion.z() * quaternion.w() * 2;
 
 	return Vector3(
-    static_cast<float>(ww * point.x() + yw2 * point.z() - zw2 * point.y() + xx * point.x() + xy2 * point.y() + xz2 * point.z() - zz * point.x() - yy * point.x()),
-    static_cast<float>(xy2 * point.x() + yy * point.y() + yz2 * point.z() + zw2 * point.x() - zz * point.y() + ww * point.y() - xw2 * point.z() - xx * point.y()),
-    static_cast<float>(xz2 * point.x() + yz2 * point.y() + zz * point.z() - yw2 * point.x() - yy * point.z() + xw2 * point.y() - xx * point.z() + ww * point.z())
+    ww * point.x() + yw2 * point.z() - zw2 * point.y() + xx * point.x() + xy2 * point.y() + xz2 * point.z() - zz * point.x() - yy * point.x(),
+    xy2 * point.x() + yy * point.y() + yz2 * point.z() + zw2 * point.x() - zz * point.y() + ww * point.y() - xw2 * point.z() - xx * point.y(),
+    xz2 * point.x() + yz2 * point.y() + zz * point.z() - yw2 * point.x() - yy * point.z() + xw2 * point.y() - xx * point.z() + ww * point.z()
   );
 }
 
