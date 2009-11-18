@@ -1140,6 +1140,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\patch\PatchRenderables.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\patch\PatchRenderables.h"
 					>
 				</File>

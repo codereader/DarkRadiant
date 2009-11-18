@@ -619,6 +619,8 @@ void Patch::UpdateCachedData()
   }
 #endif
 
+  m_render_solid.update();
+
   SceneChangeNotify();
 }
 
