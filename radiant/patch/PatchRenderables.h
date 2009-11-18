@@ -81,58 +81,29 @@ public:
   }
 };
 
-class RenderablePatchSolid : public OpenGLRenderable
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+
+//#define PATCHES_USE_VBO
+
+class RenderablePatchSolid : 
+	public OpenGLRenderable
 {
-  PatchTesselation& m_tess;
+	PatchTesselation& m_tess;
+
+	// Vertex buffer objects
+	GLuint _vboData;
+	GLuint _vboIdx;
+
 public:
-  RenderablePatchSolid(PatchTesselation& tess) : m_tess(tess)
-  {
-  }
-  void RenderNormals() const;
-  void render(const RenderInfo& info) const
-  {
-#if 0
-    if((state & RENDER_FILL) == 0)
-    {
-      RenderablePatchWireframe(m_tess).render(state);
-    }
-    else
-#endif
-    {
-      if(info.checkFlag(RENDER_BUMP))
-      {
-        /*if(GlobalRenderSystem().useShaderLanguage())
-        {
-          glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.data()->normal);
-          glVertexAttribPointerARB(c_attr_TexCoord0, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.data()->texcoord);
-          glVertexAttribPointerARB(c_attr_Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.data()->tangent);
-          glVertexAttribPointerARB(c_attr_Binormal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.data()->bitangent);
-        }
-        else
-        {*/
-          glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);
-          glVertexAttribPointerARB(8, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
-          glVertexAttribPointerARB(9, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().tangent);
-          glVertexAttribPointerARB(10, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().bitangent);
-        /*}*/
-      }
-      else
-      {
-        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);
-        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
-      }
-      glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
-      const RenderIndex* strip_indices = &m_tess.indices.front();
-      for(std::size_t i = 0; i<m_tess.m_numStrips; i++, strip_indices += m_tess.m_lenStrips)
-      {
-        glDrawElements(GL_QUAD_STRIP, GLsizei(m_tess.m_lenStrips), RenderIndexTypeID, strip_indices);
-      }
-    }
- 
-#if defined(_DEBUG)
-    RenderNormals();
-#endif
-  }
+	RenderablePatchSolid(PatchTesselation& tess);
+
+	// Updates rendering structures
+	void update();
+
+	// Implementation is in Patch.cpp
+	void RenderNormals() const;
+
+	void render(const RenderInfo& info) const;
 };
 
 #endif /*PATCH_RENDERABLES_H_*/
