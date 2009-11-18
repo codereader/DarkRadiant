@@ -369,6 +369,18 @@ class IEntityClassManager :
 	public RegisterableModule
 {
 public:
+	class Observer
+	{
+	public:
+		virtual ~Observer() {}
+
+		// Gets invoked after the module reloaded the .def files
+		virtual void onEClassReload() {} // empty default impl.
+	};
+
+	// Add or remove an observer to get notified on eclass events
+	virtual void addObserver(Observer* observer) = 0;
+	virtual void removeObserver(Observer* observer) = 0;
 
 	/**
 	 * Return the IEntityClass corresponding to the given name, creating it if

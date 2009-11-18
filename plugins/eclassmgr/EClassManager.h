@@ -47,9 +47,16 @@ class EClassManager :
 	// definitions have been parsed
 	std::size_t _curParseStamp;
 
+	typedef std::set<IEntityClassManager::Observer*> Observers;
+	Observers _observers;
+
 public:
     // Constructor
 	EClassManager(); 
+
+	// Add or remove an observer to get notified on eclass events
+	virtual void addObserver(IEntityClassManager::Observer* observer);
+	virtual void removeObserver(IEntityClassManager::Observer* observer);
     
     // Get a named entity class, creating if necessary
     virtual IEntityClassPtr findOrInsert(const std::string& name,

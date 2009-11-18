@@ -1,7 +1,6 @@
 #include "EntityClassChooser.h"
 #include "EntityClassTreePopulator.h"
 
-#include "ieclass.h"
 #include "iregistry.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/TreeModel.h"
@@ -35,10 +34,19 @@ EntityClassChooserPtr& EntityClassChooser::InstancePtr() {
 	return _instancePtr;
 }
 
-void EntityClassChooser::onRadiantShutdown() {
-	globalOutputStream() << "EntityClassChooser shutting down.\n";
+void EntityClassChooser::onRadiantShutdown()
+{
+	globalOutputStream() << "EntityClassChooser shutting down." << std::endl;
+
+	GlobalEntityClassManager().removeObserver(this);
 
 	_modelPreview = IModelPreviewPtr();
+}
+
+void EntityClassChooser::onEClassReload()
+{
+	// Reload the class tree
+	loadEntityClasses();
 }
 
 // Show the dialog
@@ -106,20 +114,33 @@ EntityClassChooser::EntityClassChooser()
 	// Signals
 	g_signal_connect(_widget, "delete-event", G_CALLBACK(callbackHide), this);
 
+	// Register to the eclass manager
+	GlobalEntityClassManager().addObserver(this);
+}
+
+void EntityClassChooser::loadEntityClasses()
+{
+	// Clear the tree store first
+	gtk_tree_store_clear(_treeStore);
+
+	// Populate it with the list of entity
+	// classes by using a visitor class.
+	EntityClassTreePopulator visitor(_treeStore);
+	GlobalEntityClassManager().forEach(visitor);
 }
 
 // Create the tree view
 
 GtkWidget* EntityClassChooser::createTreeView() {
 
-	// Set up the TreeModel, and populate it with the list of entity
-	// classes by using a visitor class.
+	// Set up the TreeModel, 
 	_treeStore = gtk_tree_store_new(N_COLUMNS, 
 									G_TYPE_STRING,		// name
 									GDK_TYPE_PIXBUF,	// icon
 									G_TYPE_BOOLEAN);	// directory flag
-	EntityClassTreePopulator visitor(_treeStore);
-	GlobalEntityClassManager().forEach(visitor);
+	
+	// Populate the model
+	loadEntityClasses();
 	
 	// Construct the tree view widget with the now-populated model
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
