@@ -83,7 +83,7 @@ void WaveFrontModule::initialiseModule(const ApplicationContext& ctx)
 	mm.insert("main/file/createCM", 	// menu location path
 			"ExportSelectedAsOBJ", // name
 			ui::menuItem,	// type
-			"Export Selection as OBJ",	// caption
+			"Export Selection as OBJ...",	// caption
 			"",	// icon
 			"ExportSelectedAsOBJ"); // event name
 }
