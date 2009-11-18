@@ -23,6 +23,16 @@ EClassManager::EClassManager() :
 	_curParseStamp(0)
 {}
 
+void EClassManager::addObserver(IEntityClassManager::Observer* observer)
+{
+	_observers.insert(observer);
+}
+
+void EClassManager::removeObserver(IEntityClassManager::Observer* observer)
+{
+	_observers.erase(observer);
+}
+
 // Get a named entity class, creating if necessary
 IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_brushes) {
 	// Return an error if no name is given
@@ -210,6 +220,11 @@ void EClassManager::reloadDefs()
 
 	// Resolve the eclass inheritance again
 	resolveInheritance();
+
+	for (Observers::const_iterator i = _observers.begin(); i != _observers.end(); ++i)
+	{
+		(*i)->onEClassReload();
+	}
 }
 
 // RegisterableModule implementation

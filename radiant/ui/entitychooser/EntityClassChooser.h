@@ -3,6 +3,7 @@
 
 #include <gtk/gtk.h>
 #include "iradiant.h"
+#include "ieclass.h"
 
 #include "ui/common/ModelPreview.h"
 #include "math/Vector3.h"
@@ -39,7 +40,8 @@ typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
  * of a class to create at the current location. 
  */
 class EntityClassChooser :
-	public RadiantEventListener
+	public RadiantEventListener,
+	public IEntityClassManager::Observer
 {
 	// Main dialog window
 	GtkWidget* _widget;
@@ -100,6 +102,9 @@ private:
 
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityClassChooserPtr& InstancePtr();
+
+	// Loads or reloads the entity class tree
+	void loadEntityClasses();
 	
 public:
 	
@@ -112,6 +117,9 @@ public:
 
 	// RadiantEventListener implementation
 	void onRadiantShutdown();
+
+	// EntityClassManager::Observer impl.
+	void onEClassReload();
 };
 
 } // namespace ui
