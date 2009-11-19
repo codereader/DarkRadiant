@@ -32,7 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "gdk/gdkkeysyms.h"
 #include "gtkutil/dialog.h"
-#include "gtkdlgs.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "select.h"
 #include "igrid.h"

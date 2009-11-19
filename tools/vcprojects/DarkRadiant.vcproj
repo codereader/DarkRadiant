@@ -441,14 +441,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\gtkdlgs.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\gtkdlgs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\main.cpp"
 				>
 			</File>
