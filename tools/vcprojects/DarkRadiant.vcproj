@@ -2335,6 +2335,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="brush"
+					>
+					<File
+						RelativePath="..\..\radiant\ui\brush\QuerySidesDialog.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\brush\QuerySidesDialog.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="xyview"

@@ -63,6 +63,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/mapinfo/ModelInfoTab.cpp \
 					  ui/mediabrowser/MediaBrowser.cpp \
 					  ui/particles/ParticlesChooser.cpp \
+					  ui/brush/QuerySidesDialog.cpp \
 					  ui/overlay/OverlayDialog.cpp \
 					  ui/overlay/Overlay.cpp \
 					  ui/splash/Splash.cpp \

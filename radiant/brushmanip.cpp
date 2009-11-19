@@ -25,9 +25,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 
+#include "gtkutil/dialog.h"
 #include "gtkutil/widget.h"
 #include "brush/BrushNode.h"
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "ui/brush/QuerySidesDialog.h"
 #include "gtkdlgs.h"
 #include "shaderlib.h"
 
@@ -671,37 +673,6 @@ TestNormalQuantisation g_testNormalQuantisation;
 
 #endif
 
-#if 0
-class TestSelectableObserver : public observer_template<const Selectable&>
-{
-public:
-  void notify(const Selectable& arguments)
-  {
-    bool bleh = arguments.isSelected();
-  }
-};
-
-inline void test_bleh()
-{
-  TestSelectableObserver test;
-  ObservableSelectableInstance< SingleObservable< SelectionChangeCallback > > bleh;
-  bleh.attach(test);
-  bleh.setSelected(true);
-  bleh.detach(test);
-}
-
-class TestBleh
-{
-public:
-  TestBleh()
-  {
-    test_bleh();
-  }
-};
-
-const TestBleh testbleh;
-#endif
-
 void brushMakeSided(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
 		return;
@@ -719,22 +690,16 @@ void brushMakeSided(const cmd::ArgumentList& args) {
 	Scene_BrushConstructPrefab(GlobalSceneGraph(), eBrushPrism, numSides, GlobalTextureBrowser().getSelectedShader());
 }
 
-inline int axis_for_viewtype(int viewtype)
+void brushMakePrefab(const cmd::ArgumentList& args)
 {
-  switch(viewtype)
-  {
-    case XY:
-      return 2;
-    case XZ:
-      return 1;
-    case YZ:
-      return 0;
-  }
-  return 2;
-}
-
-void brushMakePrefab(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
+		return;
+	}
+
+	if (GlobalSelectionSystem().getSelectionInfo().brushCount != 1)
+	{
+		// Display a modal error dialog	
+		gtkutil::errorDialog("Exactly one brush must be selected for this operation.", GlobalRadiant().getMainWindow());
 		return;
 	}
 
@@ -744,7 +709,43 @@ void brushMakePrefab(const cmd::ArgumentList& args) {
 	if (input >= eBrushCuboid && input < eNumPrefabTypes) {
 		// Boundary checks passed
 		EBrushPrefab type = static_cast<EBrushPrefab>(input);
-		DoSides(type, axis_for_viewtype(GetViewAxis()));
+
+		int minSides = 3;
+		int maxSides = c_brushPrism_maxSides;
+
+		switch (type)
+		{
+		case eBrushCuboid:
+			// Cuboids don't need to query the number of sides
+			Scene_BrushConstructPrefab(GlobalSceneGraph(), type, 0, GlobalTextureBrowser().getSelectedShader());
+			return;
+
+		case eBrushPrism:
+			minSides = c_brushPrism_minSides;
+			maxSides = c_brushPrism_maxSides;
+			break;
+
+		case eBrushCone:
+			minSides = c_brushCone_minSides;
+			maxSides = c_brushCone_maxSides;
+			break;
+
+		case eBrushSphere: 
+			minSides = c_brushSphere_minSides;
+			maxSides = c_brushSphere_maxSides;
+			break;
+		default:
+			maxSides = 9999;
+		};
+
+		ui::QuerySidesDialog dialog(minSides, maxSides);
+
+		int sides = dialog.queryNumberOfSides();
+
+		if (sides != -1)
+		{
+			Scene_BrushConstructPrefab(GlobalSceneGraph(), type, sides, GlobalTextureBrowser().getSelectedShader());
+		}
 	}
 	else {
 		globalErrorStream() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl 
