@@ -38,5 +38,5 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						SourceView.cpp \
 						window.cpp \
 						clipboard.cpp \
-						filechooser.cpp \
+						FileChooser.cpp \
 						pointer.cpp

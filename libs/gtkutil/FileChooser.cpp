@@ -1,4 +1,4 @@
-#include "filechooser.h"
+#include "FileChooser.h"
 
 #include "ifiletypes.h"
 

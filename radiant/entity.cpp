@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "os/path.h"
 #include "os/file.h"
 
-#include "gtkutil/filechooser.h"
+#include "gtkutil/FileChooser.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "selectionlib.h"
 #include "gtkmisc.h"
