@@ -142,7 +142,6 @@ darkradiant_SOURCES = main.cpp \
 					  modulesystem/DynamicLibraryLoader.cpp \
 					  modulesystem/ModuleLoader.cpp \
 					  modulesystem/ModuleRegistry.cpp \
-					  gtkdlgs.cpp \
 					  select.cpp \
 					  selection/SelectedNodeList.cpp \
 					  selection/shaderclipboard/ShaderClipboard.cpp \

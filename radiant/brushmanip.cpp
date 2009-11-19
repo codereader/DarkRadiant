@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushNode.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/brush/QuerySidesDialog.h"
-#include "gtkdlgs.h"
 #include "shaderlib.h"
 
 #include "brush/BrushVisit.h"

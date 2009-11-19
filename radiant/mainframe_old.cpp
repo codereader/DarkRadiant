@@ -111,7 +111,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/csg/CSG.h"
 #include "log/Console.h"
 #include "entity.h"
-#include "gtkdlgs.h"
 #include "patchmanip.h"
 #include "select.h"
 #include "ui/texturebrowser/TextureBrowser.h"
