@@ -35,7 +35,7 @@ public:
 private:
 	// The callback for the buttons
 	static void callbackClose(GtkWidget* widget, AboutDialog* self);
-}; // class CommandListDialog
+}; // class AboutDialog
 
 } // namespace ui
 
