@@ -2,6 +2,7 @@
 #define PREFPAGE_H_
 
 #include "ipreferencesystem.h"
+#include "gtkutil/ifc/Widget.h"
 #include "gtkutil/RegistryConnector.h"
 
 namespace ui {
@@ -43,6 +44,9 @@ private:
 	
 	// The reference to the dialog's connector object
 	gtkutil::RegistryConnector& _connector;
+
+	// A list of heap-allocated Widets, to be destroyed on PrefPage destruction
+	std::list<gtkutil::WidgetPtr> _widgets;
 
 public:
 	/** greebo: Constructor

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gtk/gtkwidget.h>
+#include <boost/shared_ptr.hpp>
 
 namespace gtkutil
 {
@@ -42,6 +43,7 @@ public:
        return w;
     }
 };
+typedef boost::shared_ptr<Widget> WidgetPtr;
 
-}
+} // namespace gtkutil
 
