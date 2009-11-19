@@ -139,6 +139,25 @@ public:
 
 		return returnValue;
 	}
+
+	/** 
+	 * greebo: Converts the given filename to UTF-8. 
+	 * Returns an empty string if the conversion fails.
+	 */
+	static std::string filenameToUTF8(const std::string& input)
+	{
+		gsize bytes_written = 0;
+		GError* gerror = 0;
+
+		char *const buf = g_filename_to_utf8(input.data(), static_cast<gssize>(input.size()), 0, &bytes_written, &gerror);
+
+		if (gerror) return "";
+		
+		std::string returnValue(buf, bytes_written);
+		g_free(buf);
+
+		return returnValue;
+	}
 };
 
 } // namespace gtkutil

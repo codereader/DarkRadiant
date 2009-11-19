@@ -39,44 +39,54 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "os/path.h"
 
+#include "gtkutil/IConv.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/filechooser.h"
 
 // =============================================================================
 // File dialog
 
-void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry) {
-
+void button_clicked_entry_browse_file(GtkWidget* widget, GtkEntry* entry)
+{
 	gtkutil::FileChooser fileChooser(gtk_widget_get_toplevel(widget), "Choose File", true, false);
 
 	fileChooser.setCurrentPath(gtk_entry_get_text(entry));
 
 	std::string filename = fileChooser.display();
-		//file_dialog(gtk_widget_get_toplevel(widget), TRUE, "Choose File", gtk_entry_get_text(entry));
 
 	if (GTK_IS_WINDOW(gtk_widget_get_toplevel(widget))) {
 		gtk_window_present(GTK_WINDOW(gtk_widget_get_toplevel(widget)));
 	}
 
-	if(!filename.empty()) {
+	if (!filename.empty())
+	{
+		filename = gtkutil::IConv::filenameToUTF8(filename);
 		gtk_entry_set_text(entry, filename.c_str());
 	}
 }
 
-void button_clicked_entry_browse_directory(GtkWidget* widget, GtkEntry* entry) {
-	const char* text = gtk_entry_get_text(entry);
-	char *dir = dir_dialog(gtk_widget_get_toplevel(widget), "Choose Directory", path_is_absolute(text) ? text : "" );
+void button_clicked_entry_browse_directory(GtkWidget* widget, GtkEntry* entry)
+{
+	gtkutil::FileChooser fileChooser(gtk_widget_get_toplevel(widget), "Choose Directory", true, true);
+
+	std::string curEntry = gtk_entry_get_text(entry);
+
+	if (!path_is_absolute(curEntry.c_str())) 
+	{
+		curEntry.clear();
+	}
+
+	fileChooser.setCurrentPath(curEntry);
+
+	std::string filename = fileChooser.display();
 
 	if (GTK_IS_WINDOW(gtk_widget_get_toplevel(widget))) {
 		gtk_window_present(GTK_WINDOW(gtk_widget_get_toplevel(widget)));
 	}
 
-	if(dir != 0) {
-		gchar* converted = g_filename_to_utf8(dir, -1, 0, 0, 0);
-		gtk_entry_set_text(entry, converted);
-		g_free(dir);
-		g_free(converted);
+	if (!filename.empty())
+	{
+		filename = gtkutil::IConv::filenameToUTF8(filename);
+		gtk_entry_set_text(entry, filename.c_str());
 	}
 }
-
-
