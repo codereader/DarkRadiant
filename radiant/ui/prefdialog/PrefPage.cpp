@@ -7,6 +7,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/PathEntry.h"
 #include "gtkutil/SerialisableWidgets.h"
 
 #include <iostream>
@@ -222,25 +223,24 @@ GtkWidget* PrefPage::appendLabel(const std::string& caption) {
 }
 
 // greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
-GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories) {
-	PathEntry pathEntry = PathEntry_new(GlobalRegistry().get(RKEY_BITMAPS_PATH));
-	g_signal_connect(
-		G_OBJECT(pathEntry.m_button), 
-		"clicked", 
-		G_CALLBACK(browseDirectories ? button_clicked_entry_browse_directory : button_clicked_entry_browse_file), 
-		pathEntry.m_entry
+GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories)
+{
+	gtkutil::PathEntryPtr entry(new gtkutil::PathEntry(browseDirectories));
+
+	// Store the shared_ptr in a local structure, to prevent destruction
+	_widgets.push_back(entry);
+	
+	// Connect the registry key to the newly created input field
+	using namespace gtkutil;
+
+	_connector.addObject(
+		registryKey,
+		SerialisableWidgetWrapperPtr(
+			new SerialisableTextEntry(GTK_WIDGET(entry->getEntryWidget()))
+		)
 	);
 
-	// Connect the registry key to the newly created input field
-   using namespace gtkutil;
-	_connector.addObject(
-      registryKey,
-      SerialisableWidgetWrapperPtr(
-         new SerialisableTextEntry(GTK_WIDGET(pathEntry.m_entry))
-      )
-   );
-
-	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(pathEntry.m_frame));
+	GtkTable* row = DialogRow_new(name.c_str(), entry->getWidget());
 	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
 
 	return GTK_WIDGET(row);

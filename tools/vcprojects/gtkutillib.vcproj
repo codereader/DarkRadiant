@@ -485,6 +485,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\libs\gtkutil\PathEntry.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\libs\gtkutil\PathEntry.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\libs\gtkutil\pointer.cpp"
 			>
 		</File>
