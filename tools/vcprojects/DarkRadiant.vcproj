@@ -449,14 +449,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\gtkmisc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\radiant\gtkmisc.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\main.cpp"
 				>
 			</File>

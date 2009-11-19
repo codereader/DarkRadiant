@@ -5,7 +5,6 @@
 #include "math/matrix.h"
 #include "timer.h"
 #include "gtkutil/cursor.h"
-#include "gtkmisc.h"
 #include "generic/callback.h"
 #include "view.h"
 

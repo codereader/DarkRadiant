@@ -92,22 +92,6 @@ gboolean dialog_delete_callback(GtkWidget *widget, GdkEventAny* event, ModalDial
 
 GtkWindow* create_simple_modal_dialog_window(const char* title, ModalDialog& dialog, GtkWidget* contents);
 
-class PathEntry
-{
-public:
-  GtkFrame* m_frame;
-  GtkEntry* m_entry;
-  GtkButton* m_button;
-  PathEntry(GtkFrame* frame, GtkEntry* entry, GtkButton* button) :
-    m_frame(frame),
-    m_entry(entry),
-    m_button(button)
-  {
-  }
-};
-
-PathEntry PathEntry_new(const std::string& bitmapsPath);
-
 GtkLabel* DialogLabel_new(const char* name);
 GtkTable* DialogRow_new(const char* name, GtkWidget* widget);
 typedef struct _GtkVBox GtkVBox;

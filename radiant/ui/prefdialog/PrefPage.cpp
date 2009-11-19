@@ -13,7 +13,6 @@
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include "gtkmisc.h"
 #include "modulesystem/ApplicationContextImpl.h"
 
 namespace ui {

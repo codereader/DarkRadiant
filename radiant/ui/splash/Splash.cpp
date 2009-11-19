@@ -4,7 +4,6 @@
 #include "gtkutil/LeftAlignedLabel.h"
 
 #include "modulesystem/ModuleRegistry.h"
-#include "gtkmisc.h" // for process_gui()
 
 namespace ui {
 	
@@ -82,7 +81,11 @@ void Splash::hide() {
 void Splash::queueDraw() {
 	// Trigger a (re)draw, just to make sure that it gets displayed
 	gtk_widget_queue_draw(GTK_WIDGET(_window));
-	process_gui();
+	
+	while(gtk_events_pending())
+	{
+		gtk_main_iteration();
+	}
 }
 
 Splash& Splash::Instance() {

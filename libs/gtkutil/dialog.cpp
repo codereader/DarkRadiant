@@ -205,43 +205,6 @@ GtkWindow* create_simple_modal_dialog_window(const char* title, ModalDialog& dia
   return window;
 }
 
-PathEntry PathEntry_new(const std::string& bitmapsPath)
-{
-  GtkFrame* frame = GTK_FRAME(gtk_frame_new(NULL));
-  gtk_widget_show(GTK_WIDGET(frame));
-  gtk_frame_set_shadow_type(frame, GTK_SHADOW_IN);
-
-  // path entry
-  GtkHBox* hbox = GTK_HBOX(gtk_hbox_new(FALSE, 0));
-  gtk_widget_show(GTK_WIDGET(hbox));
-
-  GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-  gtk_entry_set_has_frame(entry, FALSE);
-  gtk_widget_show(GTK_WIDGET(entry));
-  gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(entry), TRUE, TRUE, 0);
-
-  // browse button
-  GtkButton* button = GTK_BUTTON(gtk_button_new());
-  
-  std::string fullFileName = bitmapsPath + "ellipsis.png";
-  GtkWidget* image = gtk_image_new_from_pixbuf(
-  	gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
-  );
-  gtk_container_add(GTK_CONTAINER(button), image);
-  gtk_widget_show(GTK_WIDGET(button));
-  gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-
-  gtk_container_add(GTK_CONTAINER(frame), GTK_WIDGET(hbox));
-
-  return PathEntry(frame, entry, button);
-}
-
-void PathEntry_setPath(PathEntry& self, const char* path)
-{
-  gtk_entry_set_text(self.m_entry, path);
-}
-typedef ReferenceCaller1<PathEntry, const char*, PathEntry_setPath> PathEntrySetPathCaller;
-
 GtkLabel* DialogLabel_new(const char* name)
 {
   GtkLabel* label = GTK_LABEL(gtk_label_new(name));

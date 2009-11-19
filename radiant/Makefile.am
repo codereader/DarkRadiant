@@ -135,7 +135,6 @@ darkradiant_SOURCES = main.cpp \
 					  layers/LayerCommandTarget.cpp \
 					  layers/LayerSystem.cpp \
 					  referencecache.cpp \
-					  gtkmisc.cpp \
 					  view.cpp \
 					  modulesystem/DynamicLibrary.cpp \
 					  modulesystem/ApplicationContextImpl.cpp \
