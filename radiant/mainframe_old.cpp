@@ -112,7 +112,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "log/Console.h"
 #include "entity.h"
 #include "gtkdlgs.h"
-#include "gtkmisc.h"
 #include "patchmanip.h"
 #include "select.h"
 #include "ui/texturebrowser/TextureBrowser.h"
