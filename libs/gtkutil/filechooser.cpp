@@ -1,24 +1,3 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
- 
-This file is part of GtkRadiant.
- 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
- 
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
- 
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 #include "filechooser.h"
 
 #include "ifiletypes.h"
@@ -37,32 +16,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "messagebox.h"
 #include <boost/algorithm/string/predicate.hpp>
 
-char* dir_dialog(GtkWidget* parent, const char* title, const char* path) {
-	GtkWidget* dialog = gtk_file_chooser_dialog_new(title,
-	                    GTK_WINDOW(parent),
-	                    GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-	                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-	                    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-	                    NULL);
-
-	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER_ON_PARENT);
-
-	if(!string_empty(path)) {
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), path);
-	}
-
-	char* filename = 0;
-	if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
-		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	}
-
-	gtk_widget_destroy(dialog);
-
-	return filename;
-}
-
-namespace gtkutil {
+namespace gtkutil
+{
 
 FileChooser::FileChooser(GtkWidget* parent, const std::string& title, 
 						 bool open, bool browseFolders, const std::string& pattern,
@@ -244,4 +199,3 @@ void FileChooser::onUpdatePreview(GtkFileChooser* chooser, FileChooser* self) {
 }
 
 } // namespace gtkutil
-
