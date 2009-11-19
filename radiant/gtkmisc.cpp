@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gtkutil/IConv.h"
 #include "gtkutil/dialog.h"
-#include "gtkutil/filechooser.h"
+#include "gtkutil/FileChooser.h"
 
 // =============================================================================
 // File dialog

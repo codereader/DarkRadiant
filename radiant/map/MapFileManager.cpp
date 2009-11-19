@@ -4,7 +4,7 @@
 #include "ifiletypes.h"
 #include "modulesystem/ApplicationContextImpl.h"
 #include "iradiant.h"
-#include "gtkutil/filechooser.h"
+#include "gtkutil/FileChooser.h"
 #include "gtkutil/IConv.h"
 #include "os/path.h"
 #include "MapFileChooserPreview.h"

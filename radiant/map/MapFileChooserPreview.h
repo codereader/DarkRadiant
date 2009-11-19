@@ -5,7 +5,7 @@
 
 #include "ui/common/MapPreview.h"
 
-#include "gtkutil/filechooser.h"
+#include "gtkutil/FileChooser.h"
 #include <boost/shared_ptr.hpp>
 
 namespace map {

@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "ui/common/ModelPreview.h"
-#include "gtkutil/filechooser.h"
+#include "gtkutil/FileChooser.h"
 
 #include "modulesystem/StaticModule.h"
 
