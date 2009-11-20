@@ -57,6 +57,9 @@ class Doom3Group
 	// brushes).
 	bool m_isModel;
 
+	// A matrix transforming local entity coordinates to world coordinates
+	Matrix4 _originToWorld;
+
 public:
 	CurveNURBS m_curveNURBS;
 	SignalHandlerId m_curveNURBSChanged;
@@ -86,6 +89,8 @@ public:
 	const AABB& localAABB() const;
 	
 	Vector3& getOrigin();
+
+	const Matrix4& getOriginToWorld() const;
 	
 	// Curve-related methods
 	void appendControlPoints(unsigned int numPoints);

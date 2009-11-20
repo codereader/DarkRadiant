@@ -145,13 +145,21 @@ void Doom3GroupNode::setSelectedComponents(bool selected, SelectionSystem::EComp
 	}
 }
 
-void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
-	if (mode == SelectionSystem::eVertex) {
+void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
+{
+	if (mode == SelectionSystem::eVertex)
+	{
 		test.BeginMesh(localToWorld());
+				
+		_originInstance.testSelect(selector, test);
+
+		if (!m_contained.isModel())
+		{
+			test.BeginMesh(m_contained.getOriginToWorld());
+		}
+
 		m_curveNURBS.testSelect(selector, test);
 		m_curveCatmullRom.testSelect(selector, test);
-		
-		_originInstance.testSelect(selector, test);
 	}
 }
 
@@ -254,8 +262,8 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 
 	m_contained.renderSolid(collector, volume, localToWorld(), isSelected());
 
-	m_curveNURBS.renderComponentsSelected(collector, volume, localToWorld());
-	m_curveCatmullRom.renderComponentsSelected(collector, volume, localToWorld());
+	m_curveNURBS.renderComponentsSelected(collector, volume, m_contained.isModel() ? localToWorld() : m_contained.getOriginToWorld());
+	m_curveCatmullRom.renderComponentsSelected(collector, volume, m_contained.isModel() ? localToWorld() : m_contained.getOriginToWorld());
 }
 
 void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
@@ -264,14 +272,19 @@ void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const Volum
 
 	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
 
-	m_curveNURBS.renderComponentsSelected(collector, volume, localToWorld());
-	m_curveCatmullRom.renderComponentsSelected(collector, volume, localToWorld());
+	m_curveNURBS.renderComponentsSelected(collector, volume, m_contained.isModel() ? localToWorld() : m_contained.getOriginToWorld());
+	m_curveCatmullRom.renderComponentsSelected(collector, volume, m_contained.isModel() ? localToWorld() : m_contained.getOriginToWorld());
 }
 
-void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const {
-	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
-		m_curveNURBS.renderComponents(collector, volume, localToWorld());
-		m_curveCatmullRom.renderComponents(collector, volume, localToWorld());
+void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
+	{
+		m_curveNURBS.renderComponents(collector, volume, 
+			m_contained.isModel() ? localToWorld() : m_contained.getOriginToWorld());
+
+		m_curveCatmullRom.renderComponents(collector, volume, 
+			m_contained.isModel() ? localToWorld() : m_contained.getOriginToWorld());
 		
 		// Register the renderable with OpenGL
 		if (!m_contained.isModel()) {
@@ -290,11 +303,10 @@ void Doom3GroupNode::evaluateTransform()
 		);
 		m_contained.rotate(getRotation());
 
-		// Transform all curves also in primitive mode
-		// pass FALSE to force the transformation of non-selected points
-		Matrix4 transformation = calculateTransform();
-		m_curveNURBS.transform(transformation, false);
-		m_curveCatmullRom.transform(transformation, false);
+		// Don't transform curves in primitive mode
+		// Matrix4 transformation = calculateTransform();
+		//m_curveNURBS.transform(transformation, false);
+		//m_curveCatmullRom.transform(transformation, false);
 	}
 	else {
 		// Transform the components only
