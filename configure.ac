@@ -90,20 +90,20 @@ AC_SUBST([GL_LIBS])
 AC_SUBST([GLU_LIBS])
 
 # Boost.Regex
-AC_CHECK_LIB([boost_regex], [main],
-             [REGEX_LIBS='-lboost_regex'],
+AC_CHECK_LIB([boost_regex-mt], [main],
+             [REGEX_LIBS='-lboost_regex-mt'],
              [AC_MSG_ERROR([Boost.Regex not found])])
 AC_SUBST([REGEX_LIBS])
 
 # Boost.Filesystem
-AC_CHECK_LIB([boost_filesystem], [main],
-             [BOOST_FILESYSTEM_LIBS='-lboost_filesystem'],
+AC_CHECK_LIB([boost_filesystem-mt], [main],
+             [BOOST_FILESYSTEM_LIBS='-lboost_filesystem-mt'],
              [AC_MSG_ERROR([Boost.Filesystem not found])])
 AC_SUBST([BOOST_FILESYSTEM_LIBS])
 
 # Boost.System
-AC_CHECK_LIB([boost_system], [main],
-             [BOOST_SYSTEM_LIBS='-lboost_system'],
+AC_CHECK_LIB([boost_system-mt], [main],
+             [BOOST_SYSTEM_LIBS='-lboost_system-mt'],
              [AC_MSG_ERROR([Boost.System not found])])
 AC_SUBST([BOOST_SYSTEM_LIBS])
 
@@ -122,8 +122,8 @@ then
     AC_CHECK_HEADER([boost/python.hpp],
                     [script_module='script'],
                     [script_module=''])
-    AC_CHECK_LIB([boost_python], [main],
-                 [BOOST_PYTHON_LIBS='-lboost_python'],
+    AC_CHECK_LIB([boost_python-mt], [main],
+                 [BOOST_PYTHON_LIBS='-lboost_python-mt'],
                  [script_module=''])
 
     # GTKSourceView used for syntax highlighting

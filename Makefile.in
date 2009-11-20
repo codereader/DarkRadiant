@@ -84,9 +84,11 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(applicationsdir)" \
 	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" \
 	"$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" \
-	"$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)"
+	"$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" \
+	"$(DESTDIR)$(sourceviewerdir)"
 DATA = $(applications_DATA) $(bitmaps_DATA) $(commands_DATA) \
-	$(game_DATA) $(glprogs_DATA) $(pkgdata_DATA) $(scripts_DATA)
+	$(game_DATA) $(glprogs_DATA) $(pkgdata_DATA) $(scripts_DATA) \
+	$(sourceviewer_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -202,6 +204,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
@@ -303,9 +306,13 @@ glprogs_DATA = $(top_srcdir)/install/gl/*
 
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
-scripts_DATA = $(top_srcdir)/install/scripts/*
+scripts_DATA = $(top_srcdir)/install/scripts/*.py
 commandsdir = $(scriptsdir)/commands
-commands_DATA = $(top_srcdir)/install/scripts/commands/*
+commands_DATA = $(top_srcdir)/install/scripts/commands/*.py
+
+# Install sourceviewer synax and colour files
+sourceviewerdir = $(pkglibdir)/sourceviewer
+sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -512,6 +519,26 @@ uninstall-scriptsDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(scriptsdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(scriptsdir)" && rm -f $$files
+install-sourceviewerDATA: $(sourceviewer_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(sourceviewerdir)" || $(MKDIR_P) "$(DESTDIR)$(sourceviewerdir)"
+	@list='$(sourceviewer_DATA)'; test -n "$(sourceviewerdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(sourceviewerdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(sourceviewerdir)" || exit $$?; \
+	done
+
+uninstall-sourceviewerDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(sourceviewer_DATA)'; test -n "$(sourceviewerdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(sourceviewerdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(sourceviewerdir)" && rm -f $$files
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -827,7 +854,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -879,7 +906,8 @@ info-am:
 
 install-data-am: install-applicationsDATA install-bitmapsDATA \
 	install-commandsDATA install-gameDATA install-glprogsDATA \
-	install-pkgdataDATA install-scriptsDATA
+	install-pkgdataDATA install-scriptsDATA \
+	install-sourceviewerDATA
 
 install-dvi: install-dvi-recursive
 
@@ -928,7 +956,7 @@ ps-am:
 uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	uninstall-commandsDATA uninstall-gameDATA \
 	uninstall-glprogsDATA uninstall-pkgdataDATA \
-	uninstall-scriptsDATA
+	uninstall-scriptsDATA uninstall-sourceviewerDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
 	ctags-recursive install-am install-strip tags-recursive
@@ -946,15 +974,15 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	install-exec-am install-gameDATA install-glprogsDATA \
 	install-html install-html-am install-info install-info-am \
 	install-man install-pdf install-pdf-am install-pkgdataDATA \
-	install-ps install-ps-am install-scriptsDATA install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am \
-	uninstall-applicationsDATA uninstall-bitmapsDATA \
-	uninstall-commandsDATA uninstall-gameDATA \
-	uninstall-glprogsDATA uninstall-pkgdataDATA \
-	uninstall-scriptsDATA
+	install-ps install-ps-am install-scriptsDATA \
+	install-sourceviewerDATA install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
+	uninstall uninstall-am uninstall-applicationsDATA \
+	uninstall-bitmapsDATA uninstall-commandsDATA \
+	uninstall-gameDATA uninstall-glprogsDATA uninstall-pkgdataDATA \
+	uninstall-scriptsDATA uninstall-sourceviewerDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

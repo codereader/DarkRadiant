@@ -89,6 +89,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-ModelInfoTab.$(OBJEXT) \
 	darkradiant-MediaBrowser.$(OBJEXT) \
 	darkradiant-ParticlesChooser.$(OBJEXT) \
+	darkradiant-QuerySidesDialog.$(OBJEXT) \
 	darkradiant-OverlayDialog.$(OBJEXT) \
 	darkradiant-Overlay.$(OBJEXT) darkradiant-Splash.$(OBJEXT) \
 	darkradiant-MRUMenuItem.$(OBJEXT) darkradiant-MRU.$(OBJEXT) \
@@ -157,14 +158,13 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-LayerCommandTarget.$(OBJEXT) \
 	darkradiant-LayerSystem.$(OBJEXT) \
 	darkradiant-referencecache.$(OBJEXT) \
-	darkradiant-gtkmisc.$(OBJEXT) darkradiant-view.$(OBJEXT) \
+	darkradiant-view.$(OBJEXT) \
 	darkradiant-DynamicLibrary.$(OBJEXT) \
 	darkradiant-ApplicationContextImpl.$(OBJEXT) \
 	darkradiant-DynamicLibraryLoader.$(OBJEXT) \
 	darkradiant-ModuleLoader.$(OBJEXT) \
 	darkradiant-ModuleRegistry.$(OBJEXT) \
-	darkradiant-BrushExportOBJ.$(OBJEXT) \
-	darkradiant-gtkdlgs.$(OBJEXT) darkradiant-select.$(OBJEXT) \
+	darkradiant-select.$(OBJEXT) \
 	darkradiant-SelectedNodeList.$(OBJEXT) \
 	darkradiant-ShaderClipboard.$(OBJEXT) \
 	darkradiant-Texturable.$(OBJEXT) \
@@ -191,6 +191,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-Patch.$(OBJEXT) darkradiant-PatchNode.$(OBJEXT) \
 	darkradiant-PatchModule.$(OBJEXT) \
 	darkradiant-PatchBezier.$(OBJEXT) \
+	darkradiant-PatchRenderables.$(OBJEXT) \
 	darkradiant-RootNode.$(OBJEXT) \
 	darkradiant-MapPosition.$(OBJEXT) \
 	darkradiant-FindMapElements.$(OBJEXT) \
@@ -313,6 +314,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
@@ -455,6 +457,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/mapinfo/ModelInfoTab.cpp \
 					  ui/mediabrowser/MediaBrowser.cpp \
 					  ui/particles/ParticlesChooser.cpp \
+					  ui/brush/QuerySidesDialog.cpp \
 					  ui/overlay/OverlayDialog.cpp \
 					  ui/overlay/Overlay.cpp \
 					  ui/splash/Splash.cpp \
@@ -527,15 +530,12 @@ darkradiant_SOURCES = main.cpp \
 					  layers/LayerCommandTarget.cpp \
 					  layers/LayerSystem.cpp \
 					  referencecache.cpp \
-					  gtkmisc.cpp \
 					  view.cpp \
 					  modulesystem/DynamicLibrary.cpp \
 					  modulesystem/ApplicationContextImpl.cpp \
 					  modulesystem/DynamicLibraryLoader.cpp \
 					  modulesystem/ModuleLoader.cpp \
 					  modulesystem/ModuleRegistry.cpp \
-					  brushexport/BrushExportOBJ.cpp \
-					  gtkdlgs.cpp \
 					  select.cpp \
 					  selection/SelectedNodeList.cpp \
 					  selection/shaderclipboard/ShaderClipboard.cpp \
@@ -569,6 +569,7 @@ darkradiant_SOURCES = main.cpp \
 					  patch/PatchNode.cpp \
 					  patch/PatchModule.cpp \
 					  patch/PatchBezier.cpp \
+                      patch/PatchRenderables.cpp \
 					  map/RootNode.cpp \
 					  map/MapPosition.cpp \
 					  map/FindMapElements.cpp \
@@ -697,7 +698,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BooleanPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Brush.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushByPlaneClipper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushExportOBJ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushNode.Po@am__quote@
@@ -809,6 +809,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PatchItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PatchModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PatchNode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PatchRenderables.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PatchThickenDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PatchVertexItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Planes.Po@am__quote@
@@ -819,6 +820,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Primitives.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-PropertyEditorFactory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-QuerySidesDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantSelectionSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantWindowObserver.Po@am__quote@
@@ -865,8 +867,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-XYWnd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-brushmanip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-entity.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-gtkdlgs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-gtkmisc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-mainframe_old.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-patchmanip.Po@am__quote@
@@ -1525,6 +1525,20 @@ darkradiant-ParticlesChooser.obj: ui/particles/ParticlesChooser.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/particles/ParticlesChooser.cpp' object='darkradiant-ParticlesChooser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ParticlesChooser.obj `if test -f 'ui/particles/ParticlesChooser.cpp'; then $(CYGPATH_W) 'ui/particles/ParticlesChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/particles/ParticlesChooser.cpp'; fi`
+
+darkradiant-QuerySidesDialog.o: ui/brush/QuerySidesDialog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-QuerySidesDialog.o -MD -MP -MF $(DEPDIR)/darkradiant-QuerySidesDialog.Tpo -c -o darkradiant-QuerySidesDialog.o `test -f 'ui/brush/QuerySidesDialog.cpp' || echo '$(srcdir)/'`ui/brush/QuerySidesDialog.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-QuerySidesDialog.Tpo $(DEPDIR)/darkradiant-QuerySidesDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/brush/QuerySidesDialog.cpp' object='darkradiant-QuerySidesDialog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-QuerySidesDialog.o `test -f 'ui/brush/QuerySidesDialog.cpp' || echo '$(srcdir)/'`ui/brush/QuerySidesDialog.cpp
+
+darkradiant-QuerySidesDialog.obj: ui/brush/QuerySidesDialog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-QuerySidesDialog.obj -MD -MP -MF $(DEPDIR)/darkradiant-QuerySidesDialog.Tpo -c -o darkradiant-QuerySidesDialog.obj `if test -f 'ui/brush/QuerySidesDialog.cpp'; then $(CYGPATH_W) 'ui/brush/QuerySidesDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/brush/QuerySidesDialog.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-QuerySidesDialog.Tpo $(DEPDIR)/darkradiant-QuerySidesDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/brush/QuerySidesDialog.cpp' object='darkradiant-QuerySidesDialog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-QuerySidesDialog.obj `if test -f 'ui/brush/QuerySidesDialog.cpp'; then $(CYGPATH_W) 'ui/brush/QuerySidesDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/brush/QuerySidesDialog.cpp'; fi`
 
 darkradiant-OverlayDialog.o: ui/overlay/OverlayDialog.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OverlayDialog.o -MD -MP -MF $(DEPDIR)/darkradiant-OverlayDialog.Tpo -c -o darkradiant-OverlayDialog.o `test -f 'ui/overlay/OverlayDialog.cpp' || echo '$(srcdir)/'`ui/overlay/OverlayDialog.cpp
@@ -2534,20 +2548,6 @@ darkradiant-referencecache.obj: referencecache.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-referencecache.obj `if test -f 'referencecache.cpp'; then $(CYGPATH_W) 'referencecache.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache.cpp'; fi`
 
-darkradiant-gtkmisc.o: gtkmisc.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-gtkmisc.o -MD -MP -MF $(DEPDIR)/darkradiant-gtkmisc.Tpo -c -o darkradiant-gtkmisc.o `test -f 'gtkmisc.cpp' || echo '$(srcdir)/'`gtkmisc.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-gtkmisc.Tpo $(DEPDIR)/darkradiant-gtkmisc.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gtkmisc.cpp' object='darkradiant-gtkmisc.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-gtkmisc.o `test -f 'gtkmisc.cpp' || echo '$(srcdir)/'`gtkmisc.cpp
-
-darkradiant-gtkmisc.obj: gtkmisc.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-gtkmisc.obj -MD -MP -MF $(DEPDIR)/darkradiant-gtkmisc.Tpo -c -o darkradiant-gtkmisc.obj `if test -f 'gtkmisc.cpp'; then $(CYGPATH_W) 'gtkmisc.cpp'; else $(CYGPATH_W) '$(srcdir)/gtkmisc.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-gtkmisc.Tpo $(DEPDIR)/darkradiant-gtkmisc.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gtkmisc.cpp' object='darkradiant-gtkmisc.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-gtkmisc.obj `if test -f 'gtkmisc.cpp'; then $(CYGPATH_W) 'gtkmisc.cpp'; else $(CYGPATH_W) '$(srcdir)/gtkmisc.cpp'; fi`
-
 darkradiant-view.o: view.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-view.o -MD -MP -MF $(DEPDIR)/darkradiant-view.Tpo -c -o darkradiant-view.o `test -f 'view.cpp' || echo '$(srcdir)/'`view.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-view.Tpo $(DEPDIR)/darkradiant-view.Po
@@ -2631,34 +2631,6 @@ darkradiant-ModuleRegistry.obj: modulesystem/ModuleRegistry.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='modulesystem/ModuleRegistry.cpp' object='darkradiant-ModuleRegistry.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ModuleRegistry.obj `if test -f 'modulesystem/ModuleRegistry.cpp'; then $(CYGPATH_W) 'modulesystem/ModuleRegistry.cpp'; else $(CYGPATH_W) '$(srcdir)/modulesystem/ModuleRegistry.cpp'; fi`
-
-darkradiant-BrushExportOBJ.o: brushexport/BrushExportOBJ.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-BrushExportOBJ.o -MD -MP -MF $(DEPDIR)/darkradiant-BrushExportOBJ.Tpo -c -o darkradiant-BrushExportOBJ.o `test -f 'brushexport/BrushExportOBJ.cpp' || echo '$(srcdir)/'`brushexport/BrushExportOBJ.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-BrushExportOBJ.Tpo $(DEPDIR)/darkradiant-BrushExportOBJ.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='brushexport/BrushExportOBJ.cpp' object='darkradiant-BrushExportOBJ.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-BrushExportOBJ.o `test -f 'brushexport/BrushExportOBJ.cpp' || echo '$(srcdir)/'`brushexport/BrushExportOBJ.cpp
-
-darkradiant-BrushExportOBJ.obj: brushexport/BrushExportOBJ.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-BrushExportOBJ.obj -MD -MP -MF $(DEPDIR)/darkradiant-BrushExportOBJ.Tpo -c -o darkradiant-BrushExportOBJ.obj `if test -f 'brushexport/BrushExportOBJ.cpp'; then $(CYGPATH_W) 'brushexport/BrushExportOBJ.cpp'; else $(CYGPATH_W) '$(srcdir)/brushexport/BrushExportOBJ.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-BrushExportOBJ.Tpo $(DEPDIR)/darkradiant-BrushExportOBJ.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='brushexport/BrushExportOBJ.cpp' object='darkradiant-BrushExportOBJ.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-BrushExportOBJ.obj `if test -f 'brushexport/BrushExportOBJ.cpp'; then $(CYGPATH_W) 'brushexport/BrushExportOBJ.cpp'; else $(CYGPATH_W) '$(srcdir)/brushexport/BrushExportOBJ.cpp'; fi`
-
-darkradiant-gtkdlgs.o: gtkdlgs.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-gtkdlgs.o -MD -MP -MF $(DEPDIR)/darkradiant-gtkdlgs.Tpo -c -o darkradiant-gtkdlgs.o `test -f 'gtkdlgs.cpp' || echo '$(srcdir)/'`gtkdlgs.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-gtkdlgs.Tpo $(DEPDIR)/darkradiant-gtkdlgs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gtkdlgs.cpp' object='darkradiant-gtkdlgs.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-gtkdlgs.o `test -f 'gtkdlgs.cpp' || echo '$(srcdir)/'`gtkdlgs.cpp
-
-darkradiant-gtkdlgs.obj: gtkdlgs.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-gtkdlgs.obj -MD -MP -MF $(DEPDIR)/darkradiant-gtkdlgs.Tpo -c -o darkradiant-gtkdlgs.obj `if test -f 'gtkdlgs.cpp'; then $(CYGPATH_W) 'gtkdlgs.cpp'; else $(CYGPATH_W) '$(srcdir)/gtkdlgs.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-gtkdlgs.Tpo $(DEPDIR)/darkradiant-gtkdlgs.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gtkdlgs.cpp' object='darkradiant-gtkdlgs.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-gtkdlgs.obj `if test -f 'gtkdlgs.cpp'; then $(CYGPATH_W) 'gtkdlgs.cpp'; else $(CYGPATH_W) '$(srcdir)/gtkdlgs.cpp'; fi`
 
 darkradiant-select.o: select.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-select.o -MD -MP -MF $(DEPDIR)/darkradiant-select.Tpo -c -o darkradiant-select.o `test -f 'select.cpp' || echo '$(srcdir)/'`select.cpp
@@ -3121,6 +3093,20 @@ darkradiant-PatchBezier.obj: patch/PatchBezier.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='patch/PatchBezier.cpp' object='darkradiant-PatchBezier.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-PatchBezier.obj `if test -f 'patch/PatchBezier.cpp'; then $(CYGPATH_W) 'patch/PatchBezier.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchBezier.cpp'; fi`
+
+darkradiant-PatchRenderables.o: patch/PatchRenderables.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-PatchRenderables.o -MD -MP -MF $(DEPDIR)/darkradiant-PatchRenderables.Tpo -c -o darkradiant-PatchRenderables.o `test -f 'patch/PatchRenderables.cpp' || echo '$(srcdir)/'`patch/PatchRenderables.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-PatchRenderables.Tpo $(DEPDIR)/darkradiant-PatchRenderables.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='patch/PatchRenderables.cpp' object='darkradiant-PatchRenderables.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-PatchRenderables.o `test -f 'patch/PatchRenderables.cpp' || echo '$(srcdir)/'`patch/PatchRenderables.cpp
+
+darkradiant-PatchRenderables.obj: patch/PatchRenderables.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-PatchRenderables.obj -MD -MP -MF $(DEPDIR)/darkradiant-PatchRenderables.Tpo -c -o darkradiant-PatchRenderables.obj `if test -f 'patch/PatchRenderables.cpp'; then $(CYGPATH_W) 'patch/PatchRenderables.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchRenderables.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-PatchRenderables.Tpo $(DEPDIR)/darkradiant-PatchRenderables.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='patch/PatchRenderables.cpp' object='darkradiant-PatchRenderables.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-PatchRenderables.obj `if test -f 'patch/PatchRenderables.cpp'; then $(CYGPATH_W) 'patch/PatchRenderables.cpp'; else $(CYGPATH_W) '$(srcdir)/patch/PatchRenderables.cpp'; fi`
 
 darkradiant-RootNode.o: map/RootNode.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RootNode.o -MD -MP -MF $(DEPDIR)/darkradiant-RootNode.Tpo -c -o darkradiant-RootNode.o `test -f 'map/RootNode.cpp' || echo '$(srcdir)/'`map/RootNode.cpp
