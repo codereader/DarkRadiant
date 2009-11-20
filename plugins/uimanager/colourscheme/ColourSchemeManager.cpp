@@ -5,6 +5,8 @@
 
 namespace ui {
 
+const std::string COLOURSCHEME_VERSION = "1.0";
+
 /*	returns true, if the scheme called <name> exists
  */ 
 bool ColourSchemeManager::schemeExists(const std::string& name) {
@@ -44,22 +46,22 @@ void ColourSchemeManager::setActive(const std::string& name) {
 /*	Dumps the current in-memory content of the colourschemes to globalOutputStream() 
  */
 void ColourSchemeManager::dump() {
-	globalOutputStream() << "Dump: Number of schemes: " << static_cast<int>(_colourSchemes.size()) << "\n";
+	globalOutputStream() << "Dump: Number of schemes: " << _colourSchemes.size() << std::endl;
 	
 	for (ColourSchemeMap::iterator it = _colourSchemes.begin(); it != _colourSchemes.end(); it++) {
-		globalOutputStream() << "Dump: Schemename: " << it->first.c_str() << "\n";
+		globalOutputStream() << "Dump: Schemename: " << it->first << std::endl;
 		
 		// Retrieve the list with all the ColourItems of this scheme
 		ColourItemMap& colourMap = _colourSchemes[it->first].getColourMap();
 	
 		globalOutputStream() << "Dump: Number of ColourItems: " << 
-								static_cast<int>(colourMap.size()) << "\n";
+								colourMap.size() << std::endl;
 	
 		// Cycle through all the ColourItems and save them into the registry	
 		for (ColourItemMap::iterator c = colourMap.begin(); c != colourMap.end(); c++) {
-			globalOutputStream() << "Dump: Colourname: " << c->first.c_str() << ", ";
+			globalOutputStream() << "Dump: Colourname: " << c->first << ", ";
 			std::string colourValue = c->second;
-			globalOutputStream() << "Dump: Colourvalue: " << colourValue.c_str() << "\n";
+			globalOutputStream() << "Dump: Colourvalue: " << colourValue << std::endl;
 		}
 	}
 }
@@ -89,7 +91,9 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 	std::string basePath = "user/ui/colourschemes";
 	
 	// Re-create the schemeNode
-	xml::Node schemeNode = GlobalRegistry().createKeyWithName(basePath, "scheme", name);
+	xml::Node schemeNode = GlobalRegistry().createKeyWithName(basePath, "colourscheme", name);
+
+	schemeNode.setAttributeValue("version", COLOURSCHEME_VERSION);
 	
 	// Set the readonly attribute if necessary
 	if (_colourSchemes[name].isReadOnly()) {
@@ -102,7 +106,7 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 	}
 		
 	// This will be the path where all the <colour> nodes are added to
-	std::string schemePath = basePath + "/scheme[@name='" + name + "']";
+	std::string schemePath = basePath + "/colourscheme[@name='" + name + "']";
 		
 	// Retrieve the list with all the ColourItems of this scheme
 	ColourItemMap& colourMap = _colourSchemes[name].getColourMap();
@@ -120,13 +124,16 @@ void ColourSchemeManager::saveScheme(const std::string& name) {
 	}
 }
 
-void ColourSchemeManager::saveColourSchemes() {
+void ColourSchemeManager::saveColourSchemes()
+{
 	// Delete all existing schemes from the registry
-	GlobalRegistry().deleteXPath("user/ui/colourschemes//scheme");
+	GlobalRegistry().deleteXPath("user/ui/colourschemes//colourscheme");
 	
 	// Save all schemes that are stored in memory 
-	for (ColourSchemeMap::iterator it = _colourSchemes.begin(); it != _colourSchemes.end(); it++) {
-		if (it->first != "") {
+	for (ColourSchemeMap::iterator it = _colourSchemes.begin(); 
+		it != _colourSchemes.end(); ++it)
+	{
+		if (!it->first.empty()) {
 			// Save the scheme whose name is stored in it->first
 			saveScheme(it->first);
 		}
@@ -137,39 +144,48 @@ void ColourSchemeManager::saveColourSchemes() {
 	restoreColourSchemes();
 }
 
-void ColourSchemeManager::loadColourSchemes() {
+void ColourSchemeManager::loadColourSchemes()
+{
 	std::string schemeName = "";
 	
 	// load from XMLRegistry
-	globalOutputStream() << "ColourSchemeManager: Loading colour schemes...\n";
+	globalOutputStream() << "ColourSchemeManager: Loading colour schemes..." << std::endl;
 	
 	// Find all <scheme> nodes
-	xml::NodeList schemeNodes = GlobalRegistry().findXPath("user/ui/colourschemes/scheme");
+	xml::NodeList schemeNodes = GlobalRegistry().findXPath(
+		"user/ui/colourschemes/colourscheme[@version='" + COLOURSCHEME_VERSION + "']"
+	);
 	
-	if (schemeNodes.size()>0) {
+	if (!schemeNodes.empty())
+	{
 		// Cycle through all found scheme nodes	
-		for (unsigned int i = 0; i < schemeNodes.size(); i++) {
+		for (std::size_t i = 0; i < schemeNodes.size(); i++)
+		{
 			schemeName = schemeNodes[i].getAttributeValue("name");
 			
 			// If the scheme is already in the list, skip it
-			if (!schemeExists(schemeName)) {
+			if (!schemeExists(schemeName))
+			{
 				// Construct the ColourScheme class from the xml::node
 				_colourSchemes[schemeName] = ColourScheme(schemeNodes[i]);
 				
 				// Check, if this is the currently active scheme
-				if (schemeNodes[i].getAttributeValue("active") == "1") {
+				if (schemeNodes[i].getAttributeValue("active") == "1")
+				{
 					_activeScheme = schemeName;
 				}
 			}
 		}
 		
 		// If there isn't any active scheme yet, take the last one as active scheme
-		if (_activeScheme == "" && schemeNodes.size() > 0) {
+		if (_activeScheme.empty() && !schemeNodes.empty())
+		{
 			_activeScheme = schemeName;
 		}
 	} 
-	else {
-		globalOutputStream() << "ColourSchemeManager: No schemes found...\n";
+	else
+	{
+		globalOutputStream() << "ColourSchemeManager: No schemes found..." << std::endl;
 	}
 }
 
@@ -180,7 +196,7 @@ void ColourSchemeManager::copyScheme(const std::string& fromName, const std::str
 		_colourSchemes[toName].setReadOnly(false);
 	}
 	else {
-		globalOutputStream() << "ColourSchemeManager: Scheme " << fromName.c_str() << " does not exist!\n";
+		globalOutputStream() << "ColourSchemeManager: Scheme " << fromName << " does not exist!" << std::endl;
 	}
 }
 
