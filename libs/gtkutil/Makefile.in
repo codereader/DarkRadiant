@@ -74,9 +74,9 @@ am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
 	WindowPosition.lo idledraw.lo PersistentTransientWindow.lo \
 	dialog.lo glfont.lo MenuItemAccelerator.lo cursor.lo \
 	DeferredAdjustment.lo PopupMenu.lo widget.lo \
-	RegistryConnector.lo xorrectangle.lo TreeModel.lo \
+	RegistryConnector.lo xorrectangle.lo PathEntry.lo TreeModel.lo \
 	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
-	window.lo clipboard.lo filechooser.lo pointer.lo
+	window.lo clipboard.lo FileChooser.lo pointer.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 libgtkutil_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -170,6 +170,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
@@ -248,6 +249,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  -I$(top_srcdir)/libs \
+			  -DPKGLIBDIR='"$(pkglibdir)"' \
+			  -DPKGDATADIR='"$(pkgdatadir)"' \
 			  $(GTK_CFLAGS) \
 			  $(GTKGLEXT_CFLAGS) \
 			  $(XML_CFLAGS) \
@@ -279,13 +282,14 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						widget.cpp \
 						RegistryConnector.cpp \
 						xorrectangle.cpp \
+						PathEntry.cpp \
 						TreeModel.cpp \
 						ModalProgressDialog.cpp \
 						SerialisableWidgets.cpp \
 						SourceView.cpp \
 						window.cpp \
 						clipboard.cpp \
-						filechooser.cpp \
+						FileChooser.cpp \
 						pointer.cpp
 
 all: all-am
@@ -364,10 +368,12 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ConsoleView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DeferredAdjustment.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileChooser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PanedPosition.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PopupMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RegistryConnector.Plo@am__quote@
@@ -380,7 +386,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clipboard.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cursor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dialog.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filechooser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/glfont.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/idledraw.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messagebox.Plo@am__quote@
