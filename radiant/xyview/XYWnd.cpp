@@ -62,7 +62,6 @@ XYWnd::XYWnd(int id) :
 	_zoomStarted(false),
 	_chaseMouseHandler(0),
 	m_window_observer(NewWindowObserver()),
-	m_XORRectangle(m_gl_widget),
 	_isActive(false),
 	_parent(NULL)
 {
@@ -1483,6 +1482,49 @@ void XYWnd::draw() {
 		drawCameraIcon(cam->getCameraOrigin(), cam->getCameraAngles());
 	}
 
+	// Draw the selection drag rectangle
+
+	const rectangle_t& rect = _dragRectangle;
+	globalOutputStream() << "Rectangle: x=" << 
+		rect.x << ", y=" << rect.y << " - w=" << rect.w << ",h=" << rect.h << std::endl;
+
+	if (!_dragRectangle.empty())
+	{
+		glMatrixMode (GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, _width, 0, _height, 0, 1);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		// Define the blend function for transparency
+		glEnable(GL_BLEND);
+		glBlendColor(0,0,0,0.2f);
+		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+		
+		glColor3f(0.3f, 0, 0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		// The transparent fill rectangle
+		glBegin(GL_QUADS);
+		glVertex2f(_dragRectangle.x, _dragRectangle.y);
+		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y); 
+		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y + _dragRectangle.h);
+		glVertex2f(_dragRectangle.x, _dragRectangle.y + _dragRectangle.h);
+		glEnd();
+
+		// The solid borders
+		glBlendColor(0,0,0,0.8f);
+		glBegin(GL_LINE_LOOP);
+		glVertex2f(_dragRectangle.x, _dragRectangle.y);
+		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y); 
+		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y + _dragRectangle.h);
+		glVertex2f(_dragRectangle.x, _dragRectangle.y + _dragRectangle.h);
+		glEnd();
+
+		glDisable(GL_BLEND);
+	}
+
 	if (GlobalXYWnd().showOutline()) {
 		if (isActive()) {
 			glMatrixMode (GL_PROJECTION);
@@ -1536,9 +1578,12 @@ void XYWnd::onEntityCreate(const std::string& item) {
 	Entity_createFromSelection(item.c_str(), point);
 }
 
-void XYWnd::updateXORRectangle(Rectangle area) {
-	if(GTK_WIDGET_VISIBLE(getWidget())) {
-		m_XORRectangle.set(rectangle_from_area(area.min, area.max, getWidth(), getHeight()));
+void XYWnd::updateXORRectangle(Rectangle area)
+{
+	if(GTK_WIDGET_VISIBLE(getWidget()))
+	{
+		_dragRectangle = rectangle_from_area(area.min, area.max, getWidth(), getHeight());
+		queueDraw();
 	}
 }
 
@@ -1679,8 +1724,6 @@ gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* 
 		GlobalOpenGL_debugAssertNoErrors();
 		self->draw();
 		GlobalOpenGL_debugAssertNoErrors();
-
-		self->m_XORRectangle.set(rectangle_t());
 	}
 
 	return FALSE;

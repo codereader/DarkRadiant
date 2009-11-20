@@ -38,6 +38,11 @@ public:
   double y;
   double w;
   double h;
+
+  bool empty() const
+  {
+	  return (w == 0 && h == 0);
+  }
 };
 
 struct Coord2D
