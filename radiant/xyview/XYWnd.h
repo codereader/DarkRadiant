@@ -78,7 +78,8 @@ class XYWnd :
 	EViewType m_viewType;
 
 	SelectionSystemWindowObserver* m_window_observer;
-	XORRectangle m_XORRectangle;
+	rectangle_t _dragRectangle;
+
 	gtkutil::WindowPosition _windowPosition;
 
 	int m_entityCreate_x, m_entityCreate_y;
