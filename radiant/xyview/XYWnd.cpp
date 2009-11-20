@@ -1483,11 +1483,6 @@ void XYWnd::draw() {
 	}
 
 	// Draw the selection drag rectangle
-
-	const rectangle_t& rect = _dragRectangle;
-	globalOutputStream() << "Rectangle: x=" << 
-		rect.x << ", y=" << rect.y << " - w=" << rect.w << ",h=" << rect.h << std::endl;
-
 	if (!_dragRectangle.empty())
 	{
 		glMatrixMode (GL_PROJECTION);

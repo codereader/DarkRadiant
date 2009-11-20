@@ -55,10 +55,10 @@ class CamWnd :
 
 	SignalHandlerId _mapValidHandle;
 
+	rectangle_t _dragRectangle;
+
 public:
 	SelectionSystemWindowObserver* m_window_observer;
-
-	XORRectangle m_XORRectangle;
 
 	DeferredDraw m_deferredDraw;
 	DeferredMotion m_deferred_motion;
