@@ -168,6 +168,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgtksourceview", "libgtks
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.editing", "dm.editing.vcproj", "{3552912C-32C9-4D59-9E65-357AD147A1FC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B6D4B38A-0C39-42CD-8193-75979E1F4D68} = {B6D4B38A-0C39-42CD-8193-75979E1F4D68}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wavefront", "wavefront.vcproj", "{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}"
 EndProject

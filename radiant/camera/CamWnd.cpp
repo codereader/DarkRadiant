@@ -249,7 +249,6 @@ CamWnd::CamWnd() :
 	m_gl_widget(true),
 	_parentWidget(NULL),
 	m_window_observer(NewWindowObserver()),
-	m_XORRectangle(m_gl_widget),
 	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
 	m_deferred_motion(selection_motion, m_window_observer),
 	m_selection_button_press_handler(0),
@@ -341,9 +340,12 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 	}
 }
 
-void CamWnd::updateXORRectangle(Rectangle area) {
-	if (GTK_WIDGET_VISIBLE(static_cast<GtkWidget*>(m_gl_widget))) {
-		m_XORRectangle.set(rectangle_from_area(area.min, area.max, m_Camera.width, m_Camera.height));
+void CamWnd::updateXORRectangle(Rectangle area)
+{
+	if (GTK_WIDGET_VISIBLE(static_cast<GtkWidget*>(m_gl_widget)))
+	{
+		_dragRectangle = rectangle_from_area(area.min, area.max, m_Camera.width, m_Camera.height);
+		queueDraw();
 	}
 }
 
@@ -591,17 +593,13 @@ void CamWnd::Cam_Draw() {
 	glDisable(GL_BLEND);
 
 	glMatrixMode(GL_PROJECTION);
-
 	glLoadIdentity();
-
 	glOrtho(0, (float)m_Camera.width, 0, (float)m_Camera.height, -100, 100);
 
 	glScalef(1, -1, 1);
-
 	glTranslatef(0, -(float)m_Camera.height, 0);
 
 	glMatrixMode(GL_MODELVIEW);
-
 	glLoadIdentity();
 
 	if (GLEW_VERSION_1_3) {
@@ -646,6 +644,44 @@ void CamWnd::Cam_Draw() {
 
 	GlobalOpenGL().drawString(Cull_GetStats());
 
+	// Draw the selection drag rectangle
+	if (!_dragRectangle.empty())
+	{
+		// Define the blend function for transparency
+		glEnable(GL_BLEND);
+		glBlendColor(0,0,0,0.2f);
+		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+		
+		Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
+		glColor3dv(dragBoxColour);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		// Correct the glScale and glTranslate calls above
+		rectangle_t rect = _dragRectangle;
+		rect.y = m_Camera.height - rect.y;
+		rect.h *= -1;
+
+		// The transparent fill rectangle
+		glBegin(GL_QUADS);
+		glVertex2f(rect.x, rect.y + rect.h);
+		glVertex2f(rect.x + rect.w, rect.y + rect.h);
+		glVertex2f(rect.x + rect.w, rect.y);
+		glVertex2f(rect.x, rect.y);
+		glEnd();
+
+		// The solid borders
+		glColor3f(0.9f,0.9f,0.9f);
+		glBlendColor(0,0,0,0.8f);
+		glBegin(GL_LINE_LOOP);
+		glVertex2f(rect.x, rect.y + rect.h);
+		glVertex2f(rect.x + rect.w, rect.y + rect.h);
+		glVertex2f(rect.x + rect.w, rect.y);
+		glVertex2f(rect.x, rect.y);
+		glEnd();
+
+		glDisable(GL_BLEND);
+	}
+
 	// bind back to the default texture so that we don't have problems
 	// elsewhere using/modifying texture maps between contexts
 	glBindTexture( GL_TEXTURE_2D, 0 );
@@ -661,8 +697,6 @@ void CamWnd::draw() {
 		GlobalOpenGL_debugAssertNoErrors();
 		Cam_Draw();
 		GlobalOpenGL_debugAssertNoErrors();
-
-		m_XORRectangle.set(rectangle_t());
 	}
 
 	m_drawing = false;
