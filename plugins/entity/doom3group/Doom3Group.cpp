@@ -40,6 +40,7 @@ Doom3Group::Doom3Group(
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_renderOrigin(m_nameOrigin),
 	m_transformChanged(transformChanged),
+	_originToWorld(Matrix4::getIdentity()),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
@@ -59,6 +60,7 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_rotationKey(RotationChangedCaller(*this)),
 	m_renderOrigin(m_nameOrigin),
 	m_transformChanged(transformChanged),
+	_originToWorld(Matrix4::getIdentity()),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {
@@ -73,11 +75,22 @@ Vector3& Doom3Group::getOrigin() {
 	return m_origin;
 }
 
+const Matrix4& Doom3Group::getOriginToWorld() const
+{
+	return _originToWorld;
+}
+
 const AABB& Doom3Group::localAABB() const {
 	m_curveBounds = m_curveNURBS.getBounds();
 	m_curveBounds.includeAABB(m_curveCatmullRom.getBounds());
+
+	if (!m_isModel)
+	{
+		m_curveBounds.origin += m_origin;
+	}
 	
-	if (m_curveBounds.isValid() || !m_isModel) {
+	if (m_curveBounds.isValid() || !m_isModel)
+	{
 		// Include the origin as well, it might be offset
 		// Only do this, if the curve has valid bounds OR we have a non-Model, 
 		// otherwise we include the origin for models
@@ -99,12 +112,16 @@ void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& v
 	collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 	collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials);
 
-	if (!m_curveNURBS.isEmpty()) {
-		m_curveNURBS.renderSolid(collector, volume, localToWorld);
+	if (!m_curveNURBS.isEmpty())
+	{
+		// For non-models we need to translate the curve into func_static space
+		m_curveNURBS.renderSolid(collector, volume, m_isModel ? localToWorld : _originToWorld);
 	}
 	
-	if (!m_curveCatmullRom.isEmpty()) {
-		m_curveCatmullRom.renderSolid(collector, volume, localToWorld);
+	if (!m_curveCatmullRom.isEmpty())
+	{
+		// For non-models we need to translate the curve into func_static space
+		m_curveCatmullRom.renderSolid(collector, volume, m_isModel ? localToWorld : _originToWorld);
 	}
 }
 
@@ -114,7 +131,14 @@ void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTes
 	renderSolid(collector, volume, localToWorld, selected);
 }
 
-void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
+void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best)
+{
+	if (!m_isModel)
+	{
+		// Non-models need to translate the curve points before testing
+		test.BeginMesh(_originToWorld);
+	}
+
 	m_curveNURBS.testSelect(selector, test, best);
 	m_curveCatmullRom.testSelect(selector, test, best);
 }
@@ -135,6 +159,9 @@ void Doom3Group::translateOrigin(const Vector3& translation)
 	}
 
 	m_renderOrigin.updatePivot();
+
+	// Update _originToWorld matrix
+	_originToWorld = Matrix4::getTranslation(m_origin);
 }
 
 void Doom3Group::translate(const Vector3& translation, bool rotation) {
@@ -156,6 +183,9 @@ void Doom3Group::translate(const Vector3& translation, bool rotation) {
 	}
 	m_renderOrigin.updatePivot();
 	translateChildren(translation);
+
+	// Update _originToWorld matrix
+	_originToWorld = Matrix4::getTranslation(m_origin);
 }
 
 void Doom3Group::rotate(const Quaternion& rotation) {
@@ -187,6 +217,9 @@ void Doom3Group::revertTransform() {
 	m_renderOrigin.updatePivot();
 	m_curveNURBS.revertTransform();
 	m_curveCatmullRom.revertTransform();
+
+	// Update _originToWorld matrix
+	_originToWorld = Matrix4::getTranslation(m_origin);
 }
 
 void Doom3Group::freezeTransform() {
@@ -206,6 +239,9 @@ void Doom3Group::freezeTransform() {
 	
 	m_curveCatmullRom.freezeTransform();
 	m_curveCatmullRom.saveToEntity(_entity);
+
+	// Update _originToWorld matrix
+	_originToWorld = Matrix4::getTranslation(m_origin);
 }
 
 void Doom3Group::appendControlPoints(unsigned int numPoints) {
