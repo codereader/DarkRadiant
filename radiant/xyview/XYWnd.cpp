@@ -1502,7 +1502,8 @@ void XYWnd::draw() {
 		glBlendColor(0,0,0,0.2f);
 		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 		
-		glColor3f(0.3f, 0, 0);
+		Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
+		glColor3dv(dragBoxColour);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// The transparent fill rectangle
