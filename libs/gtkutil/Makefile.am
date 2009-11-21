@@ -31,7 +31,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						menu/PopupMenu.cpp \
 						widget.cpp \
 						RegistryConnector.cpp \
-						xorrectangle.cpp \
 						PathEntry.cpp \
 						TreeModel.cpp \
 						ModalProgressDialog.cpp \

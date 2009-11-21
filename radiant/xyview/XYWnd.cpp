@@ -1328,20 +1328,16 @@ void XYWnd::updateModelview() {
 	m_view.Construct(m_projection, m_modelview, _width, _height);
 }
 
-void XYWnd::draw() {
-	//
+void XYWnd::draw()
+{
 	// clear
-	//
 	glViewport(0, 0, _width, _height);
 	Vector3 colourGridBack = ColourSchemes().getColour("grid_background");
 	glClearColor (colourGridBack[0], colourGridBack[1], colourGridBack[2], 0);
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	//
 	// set up viewpoint
-	//
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixd(m_projection);
 
@@ -1420,8 +1416,7 @@ void XYWnd::draw() {
 
 	GlobalOpenGL_debugAssertNoErrors();
 
-
-	// greebo: Check, if the brush/patch size info should be displayed (if there are any items selected)
+	// greebo: Check, if the size info should be displayed (if there are any items selected)
 	if (GlobalXYWnd().showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
 	{
 		const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
@@ -1494,7 +1489,7 @@ void XYWnd::draw() {
 
 		// Define the blend function for transparency
 		glEnable(GL_BLEND);
-		glBlendColor(0,0,0,0.2f);
+		glBlendColor(0, 0, 0, 0.2f);
 		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 		
 		Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
@@ -1503,19 +1498,19 @@ void XYWnd::draw() {
 
 		// The transparent fill rectangle
 		glBegin(GL_QUADS);
-		glVertex2f(_dragRectangle.x, _dragRectangle.y);
-		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y); 
-		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y + _dragRectangle.h);
-		glVertex2f(_dragRectangle.x, _dragRectangle.y + _dragRectangle.h);
+		glVertex2f(_dragRectangle.min.x(), _dragRectangle.min.y());
+		glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y()); 
+		glVertex2f(_dragRectangle.max.x(), _dragRectangle.max.y());
+		glVertex2f(_dragRectangle.min.x(), _dragRectangle.max.y());
 		glEnd();
 
 		// The solid borders
-		glBlendColor(0,0,0,0.8f);
+		glBlendColor(0, 0, 0, 0.8f);
 		glBegin(GL_LINE_LOOP);
-		glVertex2f(_dragRectangle.x, _dragRectangle.y);
-		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y); 
-		glVertex2f(_dragRectangle.x + _dragRectangle.w, _dragRectangle.y + _dragRectangle.h);
-		glVertex2f(_dragRectangle.x, _dragRectangle.y + _dragRectangle.h);
+		glVertex2f(_dragRectangle.min.x(), _dragRectangle.min.y());
+		glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y()); 
+		glVertex2f(_dragRectangle.max.x(), _dragRectangle.max.y());
+		glVertex2f(_dragRectangle.min.x(), _dragRectangle.max.y());
 		glEnd();
 
 		glDisable(GL_BLEND);
@@ -1578,7 +1573,10 @@ void XYWnd::updateDragRectangle(Rectangle area)
 {
 	if(GTK_WIDGET_VISIBLE(getWidget()))
 	{
-		_dragRectangle = rectangle_from_area(area.min, area.max, getWidth(), getHeight());
+		// Take the rectangle and convert it to screen coordinates
+		_dragRectangle = area;
+		_dragRectangle.toScreenCoords(getWidth(), getHeight());
+
 		queueDraw();
 	}
 }

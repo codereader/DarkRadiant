@@ -608,14 +608,6 @@
 			RelativePath="..\..\libs\gtkutil\WindowPosition.h"
 			>
 		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\xorrectangle.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\xorrectangle.h"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

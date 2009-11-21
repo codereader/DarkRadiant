@@ -4,7 +4,6 @@
 #include "iscenegraph.h"
 #include "irender.h"
 #include "gtkutil/GLWidget.h"
-#include "gtkutil/xorrectangle.h"
 #include "gtkutil/WindowPosition.h"
 #include "selection/RadiantWindowObserver.h"
 
@@ -55,7 +54,7 @@ class CamWnd :
 
 	SignalHandlerId _mapValidHandle;
 
-	rectangle_t _dragRectangle;
+	Rectangle _dragRectangle;
 
 public:
 	SelectionSystemWindowObserver* m_window_observer;
