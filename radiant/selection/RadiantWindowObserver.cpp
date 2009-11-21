@@ -54,7 +54,8 @@ void RadiantWindowObserver::setView(const View& view) {
 	_manipulateObserver._view = &view;
 }
 
-void RadiantWindowObserver::setRectangleDrawCallback(const RectangleCallback& callback) {
+void RadiantWindowObserver::setRectangleDrawCallback(const Rectangle::Callback& callback)
+{
 	_selectObserver._windowUpdate = callback;
 }
 

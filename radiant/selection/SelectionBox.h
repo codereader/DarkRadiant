@@ -1,8 +1,8 @@
 #ifndef SELECTIONBOX_H_
 #define SELECTIONBOX_H_
 
-#include "generic/callbackfwd.h"
 #include "math/Vector2.h"
+#include <boost/function.hpp>
 
 class Rectangle
 {
@@ -30,6 +30,9 @@ public:
 		max = device2screen(max, width, height);
 	}
 
+	// Public typedef
+	typedef boost::function<void (const Rectangle&)> Callback;
+
 private:
 	Vector2 device2screen(const Vector2& coord, std::size_t width, std::size_t height)
 	{
@@ -39,8 +42,6 @@ private:
 		);
 	}
 };
-
-typedef Callback1<Rectangle> RectangleCallback;
 
 // greebo: This returns the coordinates of a rectangle at the mouse position with edge length 2*epsilon 
 inline Rectangle SelectionBoxForPoint(const double device_point[2], const double device_epsilon[2])

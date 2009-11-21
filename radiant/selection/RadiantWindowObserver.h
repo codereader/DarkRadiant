@@ -17,7 +17,7 @@ typedef struct _GtkWidget GtkWidget;
 class SelectionSystemWindowObserver : public WindowObserver {
 public:
 	virtual void setView(const View& view) = 0;
-	virtual void setRectangleDrawCallback(const RectangleCallback& callback) = 0;
+	virtual void setRectangleDrawCallback(const Rectangle::Callback& callback) = 0;
 	virtual void addObservedWidget(GtkWidget* observed) = 0;
 	virtual void removeObservedWidget(GtkWidget* observed) = 0;
 };
@@ -79,7 +79,7 @@ public:
 	void removeObservedWidget(GtkWidget* observed);
 	
 	// Pass the rectangle callback function to the selector subclass
-	void setRectangleDrawCallback(const RectangleCallback& callback);
+	void setRectangleDrawCallback(const Rectangle::Callback& callback);
 	
 	// greebo: This is called if the window size changes (camera, orthoview)
 	void onSizeChanged(int width, int height);
