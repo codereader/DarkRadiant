@@ -12,7 +12,6 @@
 #include "math/Vector4.h"
 #include "gtkutil/cursor.h"
 #include "gtkutil/window.h"
-#include "gtkutil/xorrectangle.h"
 #include "gtkutil/WindowPosition.h"
 #include "xmlutil/Node.h"
 #include "timer.h"
@@ -78,7 +77,7 @@ class XYWnd :
 	EViewType m_viewType;
 
 	SelectionSystemWindowObserver* m_window_observer;
-	rectangle_t _dragRectangle;
+	Rectangle _dragRectangle;
 
 	gtkutil::WindowPosition _windowPosition;
 

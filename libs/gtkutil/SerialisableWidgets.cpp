@@ -3,6 +3,8 @@
 #include "string/string.h"
 
 #include <gtk/gtk.h>
+#include "TreeModel.h"
+
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 
@@ -89,12 +91,8 @@ void SerialisableToggleButton::importFromString(const std::string& str)
 
 std::string SerialisableToggleButton::exportToString() const
 {
-   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_getWidget())) == TRUE)
-      return "1";
-   else 
-      return "0";
+	return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_getWidget())) ? "1" : "0";
 }
-
 
 // SerialisableComboBox_Index
 
@@ -137,19 +135,19 @@ void SerialisableComboBox_Text::importFromString(const std::string& str)
    GtkTreeIter iter;
    GtkTreeModel* model = gtk_combo_box_get_model(GTK_COMBO_BOX(_getWidget()));
    for (gboolean validIter = gtk_tree_model_get_iter_first(model, &iter);
-        validIter == TRUE;
+        validIter;
         validIter = gtk_tree_model_iter_next(model, &iter))
    {
-      // Get the string value
-      gchar* treeVal;
-      gtk_tree_model_get(model, &iter, 0, &treeVal, -1);
-
-      // Check if this is the right string
-      index++;
-      if (std::string(treeVal) == str)
-      {
-         break;
-      }
+	   // Get the string value
+	   std::string treeVal = TreeModel::getString(model, &iter, 0);
+      
+	   // Check if this is the right string
+	   index++;
+	   
+	   if (treeVal == str)
+	   {
+		   break;
+	   }
    };
 
    if (index == -1)

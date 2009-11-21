@@ -41,8 +41,7 @@ Rectangle SelectObserver::getDeviceArea() const {
 	}
 	// ...otherwise return the null area
 	else {
-		Rectangle default_area = { { 0, 0, }, { 0, 0, }, };
-		return default_area;
+		return Rectangle();
 	}
 }
 

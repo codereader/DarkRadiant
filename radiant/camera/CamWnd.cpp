@@ -344,7 +344,10 @@ void CamWnd::updateDragRectangle(Rectangle area)
 {
 	if (GTK_WIDGET_VISIBLE(static_cast<GtkWidget*>(m_gl_widget)))
 	{
-		_dragRectangle = rectangle_from_area(area.min, area.max, m_Camera.width, m_Camera.height);
+		// Get the rectangle and convert it to screen coordinates
+		_dragRectangle = area;
+		_dragRectangle.toScreenCoords(m_Camera.width, m_Camera.height);
+
 		queueDraw();
 	}
 }
@@ -446,10 +449,6 @@ bool CamWnd::freeMoveEnabled() const {
 
 void CamWnd::Cam_Draw() {
 	glViewport(0, 0, m_Camera.width, m_Camera.height);
-#if 0
-	GLint viewprt[4];
-	glGetIntegerv (GL_VIEWPORT, viewprt);
-#endif
 
 	// enable depth buffer writes
 	glDepthMask(GL_TRUE);
@@ -649,7 +648,7 @@ void CamWnd::Cam_Draw() {
 	{
 		// Define the blend function for transparency
 		glEnable(GL_BLEND);
-		glBlendColor(0,0,0,0.2f);
+		glBlendColor(0, 0, 0, 0.2f);
 		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 		
 		Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
@@ -657,26 +656,31 @@ void CamWnd::Cam_Draw() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		// Correct the glScale and glTranslate calls above
-		rectangle_t rect = _dragRectangle;
-		rect.y = m_Camera.height - rect.y;
-		rect.h *= -1;
+		Rectangle rect = _dragRectangle;
+
+		double width = rect.max.x() - rect.min.x();
+		double height = rect.max.y() - rect.min.y();
+
+		rect.min.y() = m_Camera.height - rect.min.y();
+		height *= -1;
 
 		// The transparent fill rectangle
 		glBegin(GL_QUADS);
-		glVertex2f(rect.x, rect.y + rect.h);
-		glVertex2f(rect.x + rect.w, rect.y + rect.h);
-		glVertex2f(rect.x + rect.w, rect.y);
-		glVertex2f(rect.x, rect.y);
+		glVertex2d(rect.min.x(), rect.min.y() + height);
+		glVertex2d(rect.min.x() + width, rect.min.y() + height);
+		glVertex2d(rect.min.x() + width, rect.min.y());
+		glVertex2d(rect.min.x(), rect.min.y());
 		glEnd();
 
 		// The solid borders
-		glColor3f(0.9f,0.9f,0.9f);
-		glBlendColor(0,0,0,0.8f);
+		glColor3f(0.9f, 0.9f, 0.9f);
+		glBlendColor(0, 0, 0, 0.8f);
+
 		glBegin(GL_LINE_LOOP);
-		glVertex2f(rect.x, rect.y + rect.h);
-		glVertex2f(rect.x + rect.w, rect.y + rect.h);
-		glVertex2f(rect.x + rect.w, rect.y);
-		glVertex2f(rect.x, rect.y);
+		glVertex2d(rect.min.x(), rect.min.y() + height);
+		glVertex2d(rect.min.x() + width, rect.min.y() + height);
+		glVertex2d(rect.min.x() + width, rect.min.y());
+		glVertex2d(rect.min.x(), rect.min.y());
 		glEnd();
 
 		glDisable(GL_BLEND);
