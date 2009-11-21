@@ -32,6 +32,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
+#include <boost/bind.hpp>
 
 inline float Betwixt(float f1, float f2) {
 	return (f1 + f2) * 0.5f;
@@ -80,7 +81,7 @@ XYWnd::XYWnd(int id) :
 
 	m_entityCreate = false;
 
-	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateDragRectangle>(*this));
+	m_window_observer->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
 	m_window_observer->setView(m_view);
 		
 	gtk_widget_ref(m_gl_widget);
@@ -1569,7 +1570,7 @@ void XYWnd::onEntityCreate(const std::string& item) {
 	Entity_createFromSelection(item.c_str(), point);
 }
 
-void XYWnd::updateDragRectangle(Rectangle area)
+void XYWnd::updateSelectionBox(const Rectangle& area)
 {
 	if(GTK_WIDGET_VISIBLE(getWidget()))
 	{

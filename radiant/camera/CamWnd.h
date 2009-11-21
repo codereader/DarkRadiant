@@ -90,8 +90,7 @@ public:
 
 	Camera& getCamera();
 	
-	void updateDragRectangle(Rectangle area);
-	typedef MemberCaller1<CamWnd, Rectangle, &CamWnd::updateDragRectangle> updateDragRectangleCallback;
+	void updateSelectionBox(const Rectangle& area);
 	
 	Vector3 getCameraOrigin() const;
 	void setCameraOrigin(const Vector3& origin);

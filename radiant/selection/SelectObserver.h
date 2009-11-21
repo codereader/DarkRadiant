@@ -9,6 +9,7 @@
 #include "Device.h"
 #include "SelectionBox.h"
 #include "view.h"
+#include <boost/function.hpp>
 
 /* greebo: This is the class that handles the selection-related mouse operations, like Alt-Shift-Click,
  * Selection toggles and drag selections. All the other modifier combinations that might occur are ignored,
@@ -26,7 +27,7 @@ public:
 	std::size_t _unmovedReplaces;
 	
 	const View* _view;
-	RectangleCallback _windowUpdate;
+	Rectangle::Callback _windowUpdate;
 	
 	GdkEventButton* _event;
 	unsigned int _state;

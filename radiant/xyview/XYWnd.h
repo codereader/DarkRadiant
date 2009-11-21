@@ -154,7 +154,7 @@ public:
 	
 	void mouseToPoint(int x, int y, Vector3& point);
 	
-	void updateDragRectangle(Rectangle area);
+	void updateSelectionBox(const Rectangle& area);
 	
 	void beginMove();
 	void endMove();
