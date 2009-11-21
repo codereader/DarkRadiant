@@ -1,5 +1,7 @@
 #include "TreeModel.h"
 
+#include <boost/algorithm/string/find.hpp>
+
 namespace gtkutil
 {
 
@@ -98,8 +100,11 @@ gboolean TreeModel::equalFuncStringContains(GtkTreeModel* model,
 	// Retrieve the eclass string from the model
 	std::string str = getString(model, iter, column);
 
+	// Use a case-insensitive search
+	boost::iterator_range<std::string::iterator> range = boost::algorithm::ifind_first(str, key);
+
 	// Returning FALSE means "match".
-	return (str.find(key) != std::string::npos) ? FALSE: TRUE;
+	return (!range.empty()) ? FALSE: TRUE;
 }
 
 TreeModel::SelectionFinder::SelectionFinder(const std::string& selection, int column) : 
