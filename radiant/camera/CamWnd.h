@@ -91,8 +91,8 @@ public:
 
 	Camera& getCamera();
 	
-	void updateXORRectangle(Rectangle area);
-	typedef MemberCaller1<CamWnd, Rectangle, &CamWnd::updateXORRectangle> updateXORRectangleCallback;
+	void updateDragRectangle(Rectangle area);
+	typedef MemberCaller1<CamWnd, Rectangle, &CamWnd::updateDragRectangle> updateDragRectangleCallback;
 	
 	Vector3 getCameraOrigin() const;
 	void setCameraOrigin(const Vector3& origin);
@@ -100,7 +100,7 @@ public:
 	Vector3 getCameraAngles() const;
 	void setCameraAngles(const Vector3& angles);
 
-	// greebo: This measures the rendering time during a 360� turn of the camera.
+	// greebo: This measures the rendering time during a 360° turn of the camera.
 	void benchmark();
 	
 	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards

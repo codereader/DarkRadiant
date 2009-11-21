@@ -80,7 +80,7 @@ XYWnd::XYWnd(int id) :
 
 	m_entityCreate = false;
 
-	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateXORRectangle>(*this));
+	m_window_observer->setRectangleDrawCallback(MemberCaller1<XYWnd, Rectangle, &XYWnd::updateDragRectangle>(*this));
 	m_window_observer->setView(m_view);
 		
 	gtk_widget_ref(m_gl_widget);
@@ -1574,7 +1574,7 @@ void XYWnd::onEntityCreate(const std::string& item) {
 	Entity_createFromSelection(item.c_str(), point);
 }
 
-void XYWnd::updateXORRectangle(Rectangle area)
+void XYWnd::updateDragRectangle(Rectangle area)
 {
 	if(GTK_WIDGET_VISIBLE(getWidget()))
 	{

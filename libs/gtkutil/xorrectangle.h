@@ -66,7 +66,7 @@ inline rectangle_t rectangle_from_area(const double min[2], const double max[2],
   return rectangle_t(botleft.x, botleft.y, topright.x - botleft.x, topright.y - botleft.y);
 }
 
-class XORRectangle
+/*class XORRectangle
 {
 
   rectangle_t m_rectangle;
@@ -124,7 +124,7 @@ public:
       draw();
     }
   }
-};
+};*/
 
 
 #endif

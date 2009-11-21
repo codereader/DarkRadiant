@@ -259,7 +259,7 @@ CamWnd::CamWnd() :
 {
 	GtkWidget* glWidget = m_gl_widget;
 	
-	m_window_observer->setRectangleDrawCallback(updateXORRectangleCallback(*this));
+	m_window_observer->setRectangleDrawCallback(updateDragRectangleCallback(*this));
 	m_window_observer->setView(m_view);
 
 	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
@@ -340,7 +340,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 	}
 }
 
-void CamWnd::updateXORRectangle(Rectangle area)
+void CamWnd::updateDragRectangle(Rectangle area)
 {
 	if (GTK_WIDGET_VISIBLE(static_cast<GtkWidget*>(m_gl_widget)))
 	{
