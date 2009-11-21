@@ -379,16 +379,18 @@ void RadiantSelectionSystem::startMove() {
 /* greebo: This is called by the ManipulateObserver class on the mouseDown event. It checks, if a manipulator
  * can be selected where the mouse is pointing to.
  */
-bool RadiantSelectionSystem::SelectManipulator(const View& view, const double device_point[2], const double device_epsilon[2]) {
-	if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent)) {
-
+bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& device_point, const Vector2& device_epsilon)
+{
+	if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
+	{
 		// Unselect any currently selected manipulators to be sure
 		_manipulator->setSelected(false);
 
 		// Test, if the current manipulator can be selected
-		if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent)) {
+		if (!nothingSelected() || (ManipulatorMode() == eDrag && Mode() == eComponent))
+		{
 			View scissored(view);
-			ConstructSelectionTest(scissored, SelectionBoxForPoint(device_point, device_epsilon));
+			ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
 			
 			// The manipulator class checks on its own, if any of its components can be selected
 			_manipulator->testSelect(scissored, GetPivot2World());
@@ -437,8 +439,8 @@ void RadiantSelectionSystem::deselectAll() {
  * to the modifiers that are held down (Alt-Shift, etc.)
  */
 void RadiantSelectionSystem::SelectPoint(const View& view, 
-										 const double device_point[2], 
-										 const double device_epsilon[2], 
+										 const Vector2& device_point, 
+										 const Vector2& device_epsilon, 
 										 SelectionSystem::EModifier modifier, 
 										 bool face) 
 {
@@ -456,7 +458,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 	{
 		View scissored(view);
 		// Construct a selection test according to a small box with 2*epsilon edge length
-		ConstructSelectionTest(scissored, SelectionBoxForPoint(device_point, device_epsilon));
+		ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
 
 		// Create a new SelectionPool instance and fill it with possible candidates
 		SelectionVolume volume(scissored);

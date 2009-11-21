@@ -33,6 +33,13 @@ public:
 	// Public typedef
 	typedef boost::function<void (const Rectangle&)> Callback;
 
+	// Constructs a Rectangle centered at the given point, with edge length 2*epsilon
+	// This is used to construct small rectangles at some mouse coordinates for selection tests
+	static Rectangle ConstructFromPoint(const Vector2& point, const Vector2& epsilon)
+	{
+		return Rectangle(point - epsilon, point + epsilon);
+	}
+
 private:
 	Vector2 device2screen(const Vector2& coord, std::size_t width, std::size_t height)
 	{
@@ -42,17 +49,6 @@ private:
 		);
 	}
 };
-
-// greebo: This returns the coordinates of a rectangle at the mouse position with edge length 2*epsilon 
-inline Rectangle SelectionBoxForPoint(const double device_point[2], const double device_epsilon[2])
-{
-  Rectangle selection_box;
-  selection_box.min[0] = device_point[0] - device_epsilon[0];
-  selection_box.min[1] = device_point[1] - device_epsilon[1];
-  selection_box.max[0] = device_point[0] + device_epsilon[0];
-  selection_box.max[1] = device_point[1] + device_epsilon[1];
-  return selection_box;
-}
 
 /* greebo: Returns the coordinates of the selected rectangle,
  * it is assured that the min values are smaller than the max values */ 

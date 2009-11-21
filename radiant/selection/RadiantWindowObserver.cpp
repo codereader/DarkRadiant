@@ -88,7 +88,7 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 
 		// Check the target object 
 		View scissored(*_selectObserver._view);
-		ConstructSelectionTest(scissored, SelectionBoxForPoint(&devicePosition[0], &_selectObserver._epsilon[0]));
+		ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(devicePosition, _selectObserver._epsilon));
 		SelectionVolume volume(scissored);
 		
 		// Do we have a camera view (fill() == true)?
