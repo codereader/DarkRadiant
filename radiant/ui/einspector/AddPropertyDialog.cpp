@@ -82,6 +82,8 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
     
     // Populate the tree view with properties
     populateTreeView();
+
+	updateUsagePanel();
 }
 
 // Construct the tree view
@@ -101,6 +103,9 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
 	g_signal_connect(G_OBJECT(_selection), "changed", 
 					 G_CALLBACK(_onSelectionChanged), this);
+
+	// Allow multiple selections
+	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_MULTIPLE);
 	
 	// Display name column with icon
     gtk_tree_view_append_column(
@@ -300,7 +305,7 @@ void AddPropertyDialog::populateTreeView()
 
 // Static method to create and show an instance, and return the chosen
 // property to calling function.
-std::string AddPropertyDialog::chooseProperty(Entity* entity) {
+AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity) {
 	
 	// Construct a dialog and show the main widget
 	AddPropertyDialog dialog(entity);
@@ -310,24 +315,62 @@ std::string AddPropertyDialog::chooseProperty(Entity* entity) {
 	gtk_main();
 	
 	// Return the last selection to calling process
-	return dialog._selectedProperty;
+	return dialog._selectedProperties;
+}
+
+void AddPropertyDialog::updateUsagePanel()
+{
+	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageTextView));
+
+	if (_selectedProperties.size() != 1)
+	{
+		gtk_text_buffer_set_text(buf, "", -1);
+		gtk_widget_set_sensitive(GTK_WIDGET(_usageTextView), FALSE);
+	}
+	else
+	{
+		// Load the description
+		GList* list = gtk_tree_selection_get_selected_rows(_selection, NULL);
+
+		if (list != NULL)
+		{
+			GtkTreePath* path = static_cast<GtkTreePath*>(list->data);
+
+			GtkTreeIter iter;
+			if (gtk_tree_model_get_iter(GTK_TREE_MODEL(_treeStore), &iter, path))
+			{
+				std::string desc = gtkutil::TreeModel::getString(GTK_TREE_MODEL(_treeStore), &iter, DESCRIPTION_COLUMN);
+				gtk_text_buffer_set_text(buf, desc.c_str() , -1);
+			}
+
+			// Free the path during traversal, not needed anymore
+			gtk_tree_path_free(path);
+		}
+
+		g_list_free(list);
+
+		gtk_widget_set_sensitive(GTK_WIDGET(_usageTextView), TRUE);
+	}
 }
 
 /* GTK CALLBACKS */
 
-void AddPropertyDialog::_onDelete(GtkWidget* w, GdkEvent* e, AddPropertyDialog* self) {
-	self->_selectedProperty = "";
+void AddPropertyDialog::_onDelete(GtkWidget* w, GdkEvent* e, AddPropertyDialog* self)
+{
+	self->_selectedProperties.clear();
 	gtk_widget_destroy(self->_widget);
 	gtk_main_quit(); // exit recursive main loop	
 }
 
-void AddPropertyDialog::_onOK(GtkWidget* w, AddPropertyDialog* self) {
+void AddPropertyDialog::_onOK(GtkWidget* w, AddPropertyDialog* self)
+{
 	gtk_widget_destroy(self->_widget);
 	gtk_main_quit(); // exit recursive main loop	
 }
 
-void AddPropertyDialog::_onCancel(GtkWidget* w, AddPropertyDialog* self) {
-	self->_selectedProperty = "";
+void AddPropertyDialog::_onCancel(GtkWidget* w, AddPropertyDialog* self)
+{
+	self->_selectedProperties.clear();
 	gtk_widget_destroy(self->_widget);
 	gtk_main_quit(); // exit recursive main loop	
 }
@@ -335,19 +378,31 @@ void AddPropertyDialog::_onCancel(GtkWidget* w, AddPropertyDialog* self) {
 void AddPropertyDialog::_onSelectionChanged(GtkWidget* w, 
 											AddPropertyDialog* self) 
 {
-	using gtkutil::TreeModel;
+	self->_selectedProperties.clear();
 	
-	// Update the selected property
-	self->_selectedProperty = 
-		TreeModel::getSelectedString(self->_selection, PROPERTY_NAME_COLUMN);
-											  
-	// Display the description in the text view
-	std::string desc = TreeModel::getSelectedString(self->_selection,
-													DESCRIPTION_COLUMN);
-	GtkTextBuffer* buf = 
-		gtk_text_view_get_buffer(GTK_TEXT_VIEW(self->_usageTextView));
-	gtk_text_buffer_set_text(buf, desc.c_str() , -1);
+	GList* list = gtk_tree_selection_get_selected_rows(self->_selection, NULL);
 
+	while (list != NULL)
+	{
+		GtkTreePath* path = static_cast<GtkTreePath*>(list->data);
+
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(self->_treeStore), &iter, path))
+		{
+			self->_selectedProperties.push_back(
+				gtkutil::TreeModel::getString(GTK_TREE_MODEL(self->_treeStore), &iter, PROPERTY_NAME_COLUMN)
+			);
+		}
+
+		// Free the path during traversal, not needed anymore
+		gtk_tree_path_free(path);
+
+		list = list->next;
+	}
+
+	g_list_free(list);
+
+	self->updateUsagePanel();
 }
 
-}
+} // namespace ui

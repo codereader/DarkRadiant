@@ -20,6 +20,10 @@ namespace ui
 
 class AddPropertyDialog
 {
+public:
+	typedef std::vector<std::string> PropertyList;
+
+private:
 	// Main dialog widget
 	GtkWidget* _widget;
 	
@@ -31,8 +35,8 @@ class AddPropertyDialog
 	// Text view for displaying usage info
 	GtkWidget* _usageTextView;
 	
-	// The selected property
-	std::string _selectedProperty;
+	// The selected properties
+	PropertyList _selectedProperties;
 	
 	// Target entity to query for existing spawnargs
 	Entity* _entity;
@@ -46,6 +50,8 @@ private:
 	
 	// Populate tree view with properties
 	void populateTreeView();
+
+	void updateUsagePanel();
 	
 	/* GTK CALLBACKS */
 	
@@ -69,9 +75,9 @@ public:
 	 * The Entity to be queried for spawnargs.
 	 * 
 	 * @returns
-	 * String name of the chosen property (e.g. "light_radius").
+	 * String list of the chosen properties (e.g. "light_radius").
 	 */
-	static std::string chooseProperty(Entity* entity);
+	static PropertyList chooseProperty(Entity* entity);
 
 };
 

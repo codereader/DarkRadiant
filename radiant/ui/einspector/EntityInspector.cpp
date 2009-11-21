@@ -672,11 +672,18 @@ void EntityInspector::_onAddKey()
 	IEntityClassConstPtr ec = _selectedEntity->getEntityClass();
 
 	// Choose a property, and add to entity with a default value
-	std::string property = AddPropertyDialog::chooseProperty(_selectedEntity);
-    if (!property.empty()) 
-    {
-        // Add the keyvalue on the entity (triggering the refresh)
-		_selectedEntity->setKeyValue(property, "-");
+	AddPropertyDialog::PropertyList properties = AddPropertyDialog::chooseProperty(_selectedEntity);
+
+	for (std::size_t i = 0; i < properties.size(); ++i)
+	{
+		const std::string& key = properties[i];
+
+		// Add all keys, skipping existing ones to not overwrite any values on the entity
+		if (_selectedEntity->getKeyValue(key) == "" || _selectedEntity->isInherited(key))
+		{
+			// Add the keyvalue on the entity (triggering the refresh)
+			_selectedEntity->setKeyValue(key, "-");
+		}
     }
 }
 
