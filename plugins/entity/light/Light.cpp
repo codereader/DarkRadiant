@@ -546,12 +546,13 @@ void Light::renderWireframe(RenderableCollector& collector,
 	// Render bounding box if selected or the showAllLighRadii flag is set
 	if (selected || EntitySettings::InstancePtr()->showAllLightRadii()) 
     {
+		/* greebo: uncomment this to let the light volume box render in the default colour
 		collector.SetState(
-			_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
+			m_colour->getWireShader(), RenderableCollector::eWireframeOnly
 		);
 		collector.SetState(
-			_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
-		);
+			m_colour->getWireShader(), RenderableCollector::eFullMaterials
+		);*/
 
 		if (isProjected()) 
         {
