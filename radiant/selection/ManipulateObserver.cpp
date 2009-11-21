@@ -17,7 +17,7 @@ bool ManipulateObserver::mouseDown(DeviceVector position)
  */
 void ManipulateObserver::mouseMoved(DeviceVector position)
 {
-	GlobalSelectionSystem().MoveSelected(*_view, &position[0]);
+	GlobalSelectionSystem().MoveSelected(*_view, position);
 }
 
 // The mouse operation is finished, update the selection and unconnect the callbacks

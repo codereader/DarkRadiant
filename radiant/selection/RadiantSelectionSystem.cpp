@@ -535,8 +535,8 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
  * any of the selection modifiers. Possible selection candidates are determined and selected/deselected
  */
 void RadiantSelectionSystem::SelectArea(const View& view, 
-										const double device_point[2], 
-										const double device_delta[2], 
+										const Vector2& device_point, 
+										const Vector2& device_delta, 
 										SelectionSystem::EModifier modifier, bool face) 
 {
 	// If we are in replace mode, deselect all the components or previous selections
@@ -552,7 +552,7 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 	{
 		// Construct the selection test according to the area the user covered with his drag
 		View scissored(view);
-		ConstructSelectionTest(scissored, SelectionBoxForArea(device_point, device_delta));
+		ConstructSelectionTest(scissored, Rectangle::ConstructFromArea(device_point, device_delta));
 		
 		SelectionVolume volume(scissored);
 		// The posssible candidates go here
@@ -687,7 +687,8 @@ void RadiantSelectionSystem::scaleSelected(const Vector3& scaling) {
 /* greebo: This "moves" the current selection. It calculates the device manipulation matrix
  * and passes it to the currently active Manipulator.
  */
-void RadiantSelectionSystem::MoveSelected(const View& view, const double device_point[2]) {
+void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devicePoint)
+{
 	// Check, if the active manipulator is selected in the first place
 	if (_manipulator->isSelected()) {
 		// Initalise the undo system, if not yet done
@@ -699,10 +700,11 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const double device_
 		Matrix4 device2manip;
 		ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 		
-		Vector2 devicePoint(device_point[0], device_point[1]);
+		Vector2 constrainedDevicePoint(devicePoint);
 		
 		// Constrain the movement to the axes, if the modifier is held
-		if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0) {
+		if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
+		{
 			// Get the movement delta relative to the start point
 			Vector2 delta = devicePoint - _deviceStart;
 			
@@ -717,12 +719,12 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const double device_
 			}
 			
 			// Add the modified delta to the start point, constrained to one axis 
-			devicePoint = _deviceStart + delta;
+			constrainedDevicePoint = _deviceStart + delta;
 		}
 		
 		// Get the manipulatable from the currently active manipulator (done by selection test)
 		// and call the Transform method (can be anything) 
-		_manipulator->GetManipulatable()->Transform(_manip2pivotStart, device2manip, devicePoint[0], devicePoint[1]);
+		_manipulator->GetManipulatable()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
 
 		_requestWorkZoneRecalculation = true;
 		_requestSceneGraphChange = true;

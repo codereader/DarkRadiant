@@ -36,11 +36,12 @@ Rectangle SelectObserver::getDeviceArea() const {
 	DeviceVector delta(_current - _start);
 
 	// If the user is selecting or dragging, the SelectionBox is returned...
-	if (selecting() && fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y()) {
-		return SelectionBoxForArea(&_start[0], &delta[0]);
+	if (selecting() && fabs(delta.x()) > _epsilon.x() && fabs(delta.y()) > _epsilon.y())
+	{
+		return Rectangle::ConstructFromArea(_start, delta);
 	}
-	// ...otherwise return the null area
-	else {
+	else // ...otherwise return the null area
+	{
 		return Rectangle();
 	}
 }
