@@ -102,18 +102,18 @@ scene::INodePtr RootNode::clone() const {
 	return scene::INodePtr(new RootNode(*this));
 }
 
-void RootNode::instantiate()
+void RootNode::onInsertIntoScene()
 {
-	Node::instantiate();
+	Node::onInsertIntoScene();
 
 	instanceAttach(scene::findMapFile(getSelf()));
 }
 
-void RootNode::uninstantiate()
+void RootNode::onRemoveFromScene()
 {
 	instanceDetach(scene::findMapFile(getSelf()));
 
-	Node::uninstantiate();
+	Node::onRemoveFromScene();
 }
 
 } // namespace map

@@ -131,8 +131,9 @@ public:
 	virtual void onTraversableInsert(const INodePtr& child);
 	virtual void onTraversableErase(const INodePtr& child);
 
-	virtual void instantiate();
-	virtual void uninstantiate();
+	// Gets called when this node is inserted into a scene graph
+	virtual void onInsertIntoScene();
+	virtual void onRemoveFromScene();
 
 	/**
 	 * greebo: Constructs the scene path to this node. This will walk up the

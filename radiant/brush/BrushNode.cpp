@@ -189,16 +189,6 @@ void BrushNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
 	}
 }
 
-void BrushNode::onRemoveFromScene() {
-	// De-select this node
-	setSelected(false);
-
-	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
-	setSelectedComponents(false, SelectionSystem::eEdge);
-	setSelectedComponents(false, SelectionSystem::eFace);
-}
-
 const AABB& BrushNode::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
 
@@ -257,20 +247,28 @@ scene::INodePtr BrushNode::clone() const {
 	return scene::INodePtr(new BrushNode(*this));
 }
 
-void BrushNode::instantiate()
+void BrushNode::onInsertIntoScene()
 {
+	// De-select this node
+	setSelected(false);
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+	setSelectedComponents(false, SelectionSystem::eEdge);
+	setSelectedComponents(false, SelectionSystem::eFace);
+
 	m_brush.instanceAttach(scene::findMapFile(getSelf()));
 	GlobalRadiant().getCounter(counterBrushes).increment();
 
-	Node::instantiate();
+	Node::onInsertIntoScene();
 }
 
-void BrushNode::uninstantiate()
+void BrushNode::onRemoveFromScene()
 {
 	GlobalRadiant().getCounter(counterBrushes).decrement();
 	m_brush.instanceDetach(scene::findMapFile(getSelf()));
 
-	Node::uninstantiate();
+	Node::onRemoveFromScene();
 }
 
 void BrushNode::constructStatic() {

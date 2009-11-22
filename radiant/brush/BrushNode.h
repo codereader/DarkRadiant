@@ -129,6 +129,7 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
 
 	// ComponentEditable implementation
@@ -159,10 +160,6 @@ public:
 
 	static void constructStatic();
 	static void destroyStatic();
-	
-	// scene::Instantiable implementation
-	virtual void instantiate();
-	virtual void uninstantiate();
 	
 	// BrushObserver implementation
 	void clear();

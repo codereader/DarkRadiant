@@ -202,12 +202,12 @@ void Node::onTraversableErase(const INodePtr& child)
 	child->boundsChanged();
 }
 
-void Node::instantiate()
+void Node::onInsertIntoScene()
 {
 	_instantiated = true;
 }
 
-void Node::uninstantiate()
+void Node::onRemoveFromScene()
 {
 	_instantiated = false;
 }

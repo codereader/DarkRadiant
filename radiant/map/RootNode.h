@@ -73,9 +73,8 @@ public:
 	// Cloneable implementation
 	scene::INodePtr clone() const;
 
-	// scene::Instantiable implementation
-	virtual void instantiate();
-	virtual void uninstantiate();
+	virtual void onInsertIntoScene();
+	virtual void onRemoveFromScene();
 
 };
 typedef boost::shared_ptr<RootNode> RootNodePtr;
