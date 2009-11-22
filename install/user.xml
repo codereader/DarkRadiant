@@ -122,7 +122,7 @@
 		<window xPosition="50" yPosition="530" width="250" height="400" />
 	</entityList>
 	<multiMonitor>
-		<startOnPrimaryMonitor value="0" />
+		<startMonitorNum value="0" />
 	</multiMonitor>
 	<xyview>
 		<views name="default">
