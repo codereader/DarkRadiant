@@ -161,8 +161,8 @@ public:
 	static void destroyStatic();
 	
 	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
+	virtual void instantiate();
+	virtual void uninstantiate();
 	
 	// BrushObserver implementation
 	void clear();

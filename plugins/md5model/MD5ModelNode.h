@@ -55,10 +55,6 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
-	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
-
 	// Cullable implementation
 	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 

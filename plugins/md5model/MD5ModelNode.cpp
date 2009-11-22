@@ -55,14 +55,6 @@ const AABB& MD5ModelNode::localAABB() const {
 	return _model->localAABB();
 }
 
-void MD5ModelNode::instantiate(const scene::Path& path) {
-	Node::instantiate(path);
-}
-
-void MD5ModelNode::uninstantiate(const scene::Path& path) {
-	Node::uninstantiate(path);
-}
-
 // Cullable implementation
 VolumeIntersectionValue MD5ModelNode::intersectVolume(
 	const VolumeTest& test, const Matrix4& localToWorld) const

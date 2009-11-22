@@ -63,8 +63,8 @@ public:
 	void setName(const std::string& name);
   
 	InstanceCounter m_instanceCounter;
-	void instanceAttach(const scene::Path& path);
-	void instanceDetach(const scene::Path& path);
+	void instanceAttach(MapFile* map);
+	void instanceDetach(MapFile* map);
 
 	// Override scene::Traverse::Observer
 	virtual void onTraversableInsert(const scene::INodePtr& child);
@@ -74,8 +74,8 @@ public:
 	scene::INodePtr clone() const;
 
 	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
+	virtual void instantiate();
+	virtual void uninstantiate();
 
 };
 typedef boost::shared_ptr<RootNode> RootNodePtr;

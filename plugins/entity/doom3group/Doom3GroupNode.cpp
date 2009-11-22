@@ -206,20 +206,20 @@ scene::INodePtr Doom3GroupNode::clone() const
 	return clone;
 }
 
-void Doom3GroupNode::instantiate(const scene::Path& path)
+void Doom3GroupNode::instantiate()
 {
 	_instantiated = true;
 
-	Node::getTraversable().instanceAttach(scene::findMapFile(path.top()));
-	EntityNode::instantiate(path);
+	Node::getTraversable().instanceAttach(scene::findMapFile(getSelf()));
+	EntityNode::instantiate();
 }
 
-void Doom3GroupNode::uninstantiate(const scene::Path& path)
+void Doom3GroupNode::uninstantiate()
 {
 	_instantiated = false;
 
-	Node::getTraversable().instanceDetach(scene::findMapFile(path.top()));
-	EntityNode::uninstantiate(path);
+	Node::getTraversable().instanceDetach(scene::findMapFile(getSelf()));
+	EntityNode::uninstantiate();
 }
 
 // Snappable implementation

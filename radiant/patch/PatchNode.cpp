@@ -288,18 +288,21 @@ scene::INodePtr PatchNode::clone() const {
 	return scene::INodePtr(new PatchNode(*this));
 }
 
-void PatchNode::instantiate(const scene::Path& path) {
-	m_patch.instanceAttach(path);
+void PatchNode::instantiate()
+{
+	m_patch.instanceAttach(scene::findMapFile(getSelf()));
 	GlobalRadiant().getCounter(counterPatches).increment();
 
-	Node::instantiate(path);
+	Node::instantiate();
 }
 
-void PatchNode::uninstantiate(const scene::Path& path) {
+void PatchNode::uninstantiate()
+{
 	GlobalRadiant().getCounter(counterPatches).decrement();
-	m_patch.instanceDetach(path);
 
-	Node::uninstantiate(path);
+	m_patch.instanceDetach(scene::findMapFile(getSelf()));
+
+	Node::uninstantiate();
 }
 
 bool PatchNode::testLight(const RendererLight& light) const {

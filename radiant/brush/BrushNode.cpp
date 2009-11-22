@@ -257,18 +257,20 @@ scene::INodePtr BrushNode::clone() const {
 	return scene::INodePtr(new BrushNode(*this));
 }
 
-void BrushNode::instantiate(const scene::Path& path) {
-	m_brush.instanceAttach(path);
+void BrushNode::instantiate()
+{
+	m_brush.instanceAttach(scene::findMapFile(getSelf()));
 	GlobalRadiant().getCounter(counterBrushes).increment();
 
-	Node::instantiate(path);
+	Node::instantiate();
 }
 
-void BrushNode::uninstantiate(const scene::Path& path) {
+void BrushNode::uninstantiate()
+{
 	GlobalRadiant().getCounter(counterBrushes).decrement();
-	m_brush.instanceDetach(path);
+	m_brush.instanceDetach(scene::findMapFile(getSelf()));
 
-	Node::uninstantiate(path);
+	Node::uninstantiate();
 }
 
 void BrushNode::constructStatic() {

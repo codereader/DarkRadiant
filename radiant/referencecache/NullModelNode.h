@@ -32,9 +32,6 @@ public:
 	// Accessor to the singleton instance
 	static NullModelNodePtr InstancePtr();
 
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
-
 	virtual const IModel& getIModel() const;
 
 	void testSelect(Selector& selector, SelectionTest& test);

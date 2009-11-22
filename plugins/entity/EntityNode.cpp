@@ -101,18 +101,18 @@ void EntityNode::changeName(const std::string& newName) {
 	_namespaceManager.changeName(newName);
 }
 
-void EntityNode::instantiate(const scene::Path& path)
+void EntityNode::instantiate()
 {
-	_entity.instanceAttach(scene::findMapFile(path.top()));
+	_entity.instanceAttach(scene::findMapFile(getSelf()));
 
-	Node::instantiate(path);
+	Node::instantiate();
 }
 
-void EntityNode::uninstantiate(const scene::Path& path)
+void EntityNode::uninstantiate()
 {
-	Node::uninstantiate(path);
+	Node::uninstantiate();
 
-	_entity.instanceDetach(scene::findMapFile(path.top()));
+	_entity.instanceDetach(scene::findMapFile(getSelf()));
 }
 
 std::string EntityNode::name() const

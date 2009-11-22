@@ -123,9 +123,9 @@ public:
 	
 	InstanceCounter m_instanceCounter;
 
-	void instanceAttach(const scene::Path& path);	
+	void instanceAttach(MapFile* map);
 	// Remove the attached instance and decrease the counters
-	void instanceDetach(const scene::Path& path);
+	void instanceDetach(MapFile* map);
 
 	// Attaches an observer (doh!)
 	void attach(Observer* observer);

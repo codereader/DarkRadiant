@@ -23,14 +23,6 @@ NullModelNodePtr NullModelNode::InstancePtr() {
 	return _nullModelNode;
 }
 
-void NullModelNode::instantiate(const scene::Path& path) {
-	Node::instantiate(path);
-}
-
-void NullModelNode::uninstantiate(const scene::Path& path) {
-	Node::uninstantiate(path);
-}
-  
 const IModel& NullModelNode::getIModel() const {
 	return *_nullModel;
 }

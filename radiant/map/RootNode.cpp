@@ -83,15 +83,18 @@ void RootNode::onTraversableErase(const scene::INodePtr& child)
 	Node::onTraversableErase(child);
 }
 
-void RootNode::instanceAttach(const scene::Path& path) {
+void RootNode::instanceAttach(MapFile* map)
+{
 	if (++m_instanceCounter.m_count == 1) {
-		Node::instanceAttach(scene::findMapFile(path.top()));
+		Node::instanceAttach(map);
 	}
 }
 
-void RootNode::instanceDetach(const scene::Path& path) {
-	if (--m_instanceCounter.m_count == 0) {
-		Node::instanceDetach(scene::findMapFile(path.top()));
+void RootNode::instanceDetach(MapFile* map)
+{
+	if (--m_instanceCounter.m_count == 0)
+	{
+		Node::instanceDetach(map);
 	}
 }
 
@@ -99,14 +102,18 @@ scene::INodePtr RootNode::clone() const {
 	return scene::INodePtr(new RootNode(*this));
 }
 
-void RootNode::instantiate(const scene::Path& path) {
-	Node::instantiate(path);
-	instanceAttach(path);
+void RootNode::instantiate()
+{
+	Node::instantiate();
+
+	instanceAttach(scene::findMapFile(getSelf()));
 }
 
-void RootNode::uninstantiate(const scene::Path& path) {
-	instanceDetach(path);
-	Node::uninstantiate(path);
+void RootNode::uninstantiate()
+{
+	instanceDetach(scene::findMapFile(getSelf()));
+
+	Node::uninstantiate();
 }
 
 } // namespace map

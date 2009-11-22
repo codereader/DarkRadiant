@@ -37,14 +37,6 @@ VolumeIntersectionValue PicoModelNode::intersectVolume(
 	return _picoModel->intersectVolume(test, localToWorld);
 }
 
-void PicoModelNode::instantiate(const scene::Path& path) {
-	Node::instantiate(path);
-}
-
-void PicoModelNode::uninstantiate(const scene::Path& path) {
-	Node::uninstantiate(path);
-}
-
 // SelectionTestable implementation
 void PicoModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_picoModel->testSelect(selector, test, localToWorld());
