@@ -45,15 +45,13 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	if (newRoot != NULL)
 	{
 		// New root not NULL, "instantiate" the whole scene
-		Path path;
-		InstanceSubgraphWalker instanceWalker(path);
+		InstanceSubgraphWalker instanceWalker;
 		Node_traverseSubgraph(newRoot, instanceWalker);
 	}
 	else
 	{
 		// "Uninstantiate" the whole scene
-		Path path;
-		UninstanceSubgraphWalker walker(path);
+		UninstanceSubgraphWalker walker;
 		Node_traverseSubgraph(_root, walker);
 	}
 

@@ -179,25 +179,23 @@ void Node::traverse(NodeVisitor& visitor) const
 // greebo: This gets called as soon as a scene::Node gets inserted into
 // the oberved Traversable. This triggers an instantiation call and ensures
 // that each inserted node is also instantiated.
-void Node::onTraversableInsert(const INodePtr& child) {
+void Node::onTraversableInsert(const INodePtr& child)
+{
 	if (!_instantiated) return;
 
-	Path parentPath = getPath();
+	child->setParent(getSelf());
 	
-	child->setParent(parentPath.top());
-	
-	InstanceSubgraphWalker visitor(parentPath);
+	InstanceSubgraphWalker visitor;
 	Node_traverseSubgraph(child, visitor);
 
 	child->boundsChanged();
 }
 
-void Node::onTraversableErase(const INodePtr& child) {
+void Node::onTraversableErase(const INodePtr& child)
+{
 	if (!_instantiated) return;
 
-	Path childPath = getPath();
-	
-	UninstanceSubgraphWalker visitor(childPath);
+	UninstanceSubgraphWalker visitor;
 	Node_traverseSubgraph(child, visitor);
 
 	child->setParent(scene::INodePtr());
