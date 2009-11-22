@@ -567,6 +567,7 @@ void RefreshShaders(const cmd::ArgumentList& args) {
 	GlobalMainFrame().updateAllWindows();
 }
 
+#if 0
 #include "debugging/ScopedDebugTimer.h"
 
 void BenchmarkPatches(const cmd::ArgumentList& args) {
@@ -601,11 +602,60 @@ void BenchmarkPatches(const cmd::ArgumentList& args) {
 	}
 }
 
+#include "render/frontend/ForEachVisible.h"
+
+void BenchmarkScenegraph(const cmd::ArgumentList& args)
+{
+	if (args.empty())
+	{
+		globalErrorStream() << "Usage: BenchmarkScenegraph <iterations>" << std::endl;
+		return;
+	}
+
+	int iterations = args[0].getInt();
+
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", "Performing Scenegraph Benchmark");
+	
+	class Walker
+	{
+	public:
+		bool pre(const scene::INodePtr& node, 
+			 VolumeIntersectionValue parentVisible) const
+		{
+			return true;
+		}
+
+		void post(const scene::INodePtr& node, 
+			 VolumeIntersectionValue parentVisible) const {}
+
+	} walker;
+
+	View& view = GlobalCamera().getActiveCamWnd()->m_view;
+	scene::INodePtr root = GlobalSceneGraph().root();
+
+	if (root == NULL)
+	{
+		return;
+	}
+
+	ScopedDebugTimer timer("Full traversals: " + intToStr(iterations));
+	for (int i = 0; i < iterations; ++i)
+	{
+		ForEachVisible<Walker> w(view, walker);
+		Node_traverseSubgraph(root, w);
+	}
+}
+#endif
+
 void MainFrame_Construct()
 {
 	DragMode();
 
+#if 0
 	GlobalCommandSystem().addCommand("BenchmarkPatches", BenchmarkPatches);
+	GlobalCommandSystem().addCommand("BenchmarkScenegraph", BenchmarkScenegraph, cmd::ARGTYPE_INT);
+#endif
 
 	GlobalCommandSystem().addCommand("Exit", Exit);
 	GlobalCommandSystem().addCommand("ReloadSkins", ReloadSkins);
