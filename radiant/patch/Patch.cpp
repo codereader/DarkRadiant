@@ -205,14 +205,14 @@ void Patch::instanceAttach(const scene::Path& path) {
 		// Notify the shader that one more instance is using this
 		m_state->incrementUsed();
 		
-		m_map = path_find_mapfile(path.begin(), path.end());
+		m_map = scene::findMapFile(path.top());
 		
 		// Attach the UndoObserver to this patch
 		m_undoable_observer = GlobalUndoSystem().observer(this);
 	}
 	else {
 		// The counter is now >1, throw an error
-		ASSERT_MESSAGE(path_find_mapfile(path.begin(), path.end()) == m_map, "node is instanced across more than one file");
+		ASSERT_MESSAGE(scene::findMapFile(path.top()) == m_map, "node is instanced across more than one file");
 	}
 }
 

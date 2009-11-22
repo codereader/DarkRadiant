@@ -103,7 +103,7 @@ void EntityNode::changeName(const std::string& newName) {
 
 void EntityNode::instantiate(const scene::Path& path)
 {
-	_entity.instanceAttach(path_find_mapfile(path.begin(), path.end()));
+	_entity.instanceAttach(scene::findMapFile(path.top()));
 
 	Node::instantiate(path);
 }
@@ -112,7 +112,7 @@ void EntityNode::uninstantiate(const scene::Path& path)
 {
 	Node::uninstantiate(path);
 
-	_entity.instanceDetach(path_find_mapfile(path.begin(), path.end()));
+	_entity.instanceDetach(scene::findMapFile(path.top()));
 }
 
 std::string EntityNode::name() const
