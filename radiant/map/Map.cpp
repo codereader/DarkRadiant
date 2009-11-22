@@ -163,7 +163,7 @@ void Map::onResourceRealise() {
 	}
 
 	// Take the new node and insert it as map root
-	GlobalSceneGraph().insert_root(m_resource->getNode());
+	GlobalSceneGraph().setRoot(m_resource->getNode());
 
 	AutoSaver().clearChanges();
 
@@ -178,7 +178,7 @@ void Map::onResourceUnrealise() {
 
       GlobalUndoSystem().clear();
 
-      GlobalSceneGraph().erase_root();
+	  GlobalSceneGraph().setRoot(scene::INodePtr());
     }
 }
   

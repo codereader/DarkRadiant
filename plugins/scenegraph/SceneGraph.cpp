@@ -4,17 +4,20 @@
 #include "scene/InstanceWalkers.h"
 #include "scenelib.h"
 
-void SceneGraph::addSceneObserver(scene::Graph::Observer* observer) {
+namespace scene
+{
+
+void SceneGraph::addSceneObserver(Graph::Observer* observer) {
 	if (observer != NULL) {
 		// Add the passed observer to the list
 		_sceneObservers.push_back(observer);
 	}
 }
 
-void SceneGraph::removeSceneObserver(scene::Graph::Observer* observer) {
+void SceneGraph::removeSceneObserver(Graph::Observer* observer) {
 	// Cycle through the list of observers and call the moved method
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
-		scene::Graph::Observer* registered = *i;
+		Graph::Observer* registered = *i;
 		
 		if (registered == observer) {
 			_sceneObservers.erase(i);
@@ -25,41 +28,45 @@ void SceneGraph::removeSceneObserver(scene::Graph::Observer* observer) {
 
 void SceneGraph::sceneChanged() {
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
-		scene::Graph::Observer* observer = *i;
+		Graph::Observer* observer = *i;
 		observer->onSceneGraphChange();
 	}
 }
 
-scene::INodePtr SceneGraph::root() {
-	ASSERT_MESSAGE(_root != NULL, "scenegraph root does not exist");
+const INodePtr& SceneGraph::root() const
+{
 	return _root;
 }
   
-void SceneGraph::insert_root(scene::INodePtr root) {
+void SceneGraph::setRoot(const INodePtr& newRoot)
+{
 	ASSERT_MESSAGE(_root == NULL, "scenegraph root already exists");
 
-	scene::Path path;
-	scene::InstanceSubgraphWalker instanceWalker(path);
-    Node_traverseSubgraph(root, instanceWalker);
+	if (newRoot != NULL)
+	{
+		// New root not NULL, "instantiate" the whole scene
+		Path path;
+		InstanceSubgraphWalker instanceWalker(path);
+		Node_traverseSubgraph(newRoot, instanceWalker);
+	}
+	else
+	{
+		// "Uninstantiate" the whole scene
+		Path path;
+		UninstanceSubgraphWalker walker(path);
+		Node_traverseSubgraph(_root, walker);
+	}
 
-	_root = root;
+	_root = newRoot;
 }
   
-void SceneGraph::erase_root() {
-    ASSERT_MESSAGE(_root != NULL, "scenegraph root does not exist");
-
-    scene::Path path;
-	scene::UninstanceSubgraphWalker walker(path);
-    Node_traverseSubgraph(_root, walker);
-
-	_root = scene::INodePtr();
-}
-
-void SceneGraph::boundsChanged() {
+void SceneGraph::boundsChanged()
+{
     m_boundsChanged();
 }
 
-void SceneGraph::insert(const scene::INodePtr& node) {
+void SceneGraph::insert(const INodePtr& node)
+{
     // Notify the graph tree model about the change
 	sceneChanged();
 
@@ -71,8 +78,8 @@ void SceneGraph::insert(const scene::INodePtr& node) {
 	}
 }
 
-void SceneGraph::erase(const scene::INodePtr& node) {
-
+void SceneGraph::erase(const INodePtr& node)
+{
 	// Fire the onRemove event on the Node
 	node->onRemoveFromScene();
 
@@ -107,8 +114,10 @@ void SceneGraph::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "SceneGraph::initialiseModule called\n";
 }
 
+} // namespace scene
+
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(SceneGraphPtr(new SceneGraph));
+	registry.registerModule(scene::SceneGraphPtr(new scene::SceneGraph));
 	
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
