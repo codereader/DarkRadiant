@@ -122,13 +122,13 @@ void Brush::forEachFace_instanceDetach(MapFile* map) const {
 void Brush::instanceAttach(const scene::Path& path) {
 	if(++m_instanceCounter.m_count == 1)
 	{
-		m_map = path_find_mapfile(path.begin(), path.end());
+		m_map = scene::findMapFile(path.top());
 		m_undoable_observer = GlobalUndoSystem().observer(this);
 		forEachFace_instanceAttach(m_map);
 	}
 	else
 	{
-		ASSERT_MESSAGE(path_find_mapfile(path.begin(), path.end()) == m_map, "node is instanced across more than one file");
+		ASSERT_MESSAGE(scene::findMapFile(path.top()) == m_map, "node is instanced across more than one file");
 	}
 }
 

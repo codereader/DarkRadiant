@@ -1,5 +1,6 @@
 #include "UndoableObject.h"
 
+#include "scene/TraversableNodeSet.h"
 #include "undolib.h"
 
 template<>

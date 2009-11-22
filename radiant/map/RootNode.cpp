@@ -85,13 +85,13 @@ void RootNode::onTraversableErase(const scene::INodePtr& child)
 
 void RootNode::instanceAttach(const scene::Path& path) {
 	if (++m_instanceCounter.m_count == 1) {
-		Node::instanceAttach(path_find_mapfile(path.begin(), path.end()));
+		Node::instanceAttach(scene::findMapFile(path.top()));
 	}
 }
 
 void RootNode::instanceDetach(const scene::Path& path) {
 	if (--m_instanceCounter.m_count == 0) {
-		Node::instanceDetach(path_find_mapfile(path.begin(), path.end()));
+		Node::instanceDetach(scene::findMapFile(path.top()));
 	}
 }
 

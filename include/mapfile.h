@@ -41,34 +41,31 @@ public:
 };
 typedef boost::shared_ptr<MapFile> MapFilePtr;
 
-#include "scenelib.h"
-
-inline MapFilePtr Node_getMapFile(scene::INodePtr node) {
+inline MapFilePtr Node_getMapFile(const scene::INodePtr& node)
+{
 	return boost::dynamic_pointer_cast<MapFile>(node);
 }
 
-template<typename Iterator>
-inline MapFile* path_find_mapfile(Iterator first, Iterator last)
+namespace scene
 {
-  Iterator i = last;
-  for(;;)
-  {
-    --i;
 
-    MapFilePtr map = Node_getMapFile(*i);
-    if (map != NULL) {
-      return map.get();
-    }
+inline MapFile* findMapFile(INodePtr node)
+{
+	while (node != NULL)
+	{
+		 MapFilePtr map = Node_getMapFile(node);
 
-    if(i == first)
-    {
-      break;
-    }
-  }
-  ERROR_MESSAGE("failed to find parent mapfile for path");
-  return 0;
+		 if (map != NULL)
+		 {
+			 return map.get();
+		 }
+
+		 node = node->getParent();
+	}
+
+	return NULL;
 }
 
-
+} // namespace scene
 
 #endif

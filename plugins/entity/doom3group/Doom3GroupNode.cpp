@@ -210,7 +210,7 @@ void Doom3GroupNode::instantiate(const scene::Path& path)
 {
 	_instantiated = true;
 
-	Node::getTraversable().instanceAttach(path_find_mapfile(path.begin(), path.end()));
+	Node::getTraversable().instanceAttach(scene::findMapFile(path.top()));
 	EntityNode::instantiate(path);
 }
 
@@ -218,7 +218,7 @@ void Doom3GroupNode::uninstantiate(const scene::Path& path)
 {
 	_instantiated = false;
 
-	Node::getTraversable().instanceDetach(path_find_mapfile(path.begin(), path.end()));
+	Node::getTraversable().instanceDetach(scene::findMapFile(path.top()));
 	EntityNode::uninstantiate(path);
 }
 

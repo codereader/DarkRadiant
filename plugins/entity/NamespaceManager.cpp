@@ -1,6 +1,7 @@
 #include "NamespaceManager.h"
 
 #include "iregistry.h"
+#include "itextstream.h"
 
 namespace entity {
 
