@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "scenelib.h"
 #include "imodule.h"
 
+namespace scene
+{
+
 /** 
  * Implementing class for the scenegraph.
  * 
@@ -35,9 +38,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * \see scene::Graph
  */
 class SceneGraph : 
-	public scene::Graph
+	public Graph
 {
-	typedef std::list<scene::Graph::Observer*> ObserverList;
+	typedef std::list<Graph::Observer*> ObserverList;
 	ObserverList _sceneObservers;
 
 	Signal0 m_boundsChanged;
@@ -54,27 +57,28 @@ public:
 	/** greebo: Adds/removes an observer from the scenegraph,
 	 * 			to get notified upon insertions/deletions
 	 */
-	void addSceneObserver(scene::Graph::Observer* observer);
-	void removeSceneObserver(scene::Graph::Observer* observer);
+	void addSceneObserver(Graph::Observer* observer);
+	void removeSceneObserver(Graph::Observer* observer);
 
 	// Triggers a call to all the connected Scene::Graph::Observers
 	void sceneChanged();
 
 	// Root node accessor methods
-	scene::INodePtr root();
-	void insert_root(scene::INodePtr root);
-	void erase_root();
+	const INodePtr& root() const;
+	void setRoot(const INodePtr& newRoot);
 
 	// greebo: Emits the "bounds changed" signal to all connected observers
 	// Note: these are the WorkZone and the SelectionSystem, AFAIK
 	void boundsChanged();
 
-	void insert(const scene::INodePtr& node);
-	void erase(const scene::INodePtr& node);
+	void insert(const INodePtr& node);
+	void erase(const INodePtr& node);
 
 	SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged);
 	void removeBoundsChangedCallback(SignalHandlerId id);
 };
 typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
+
+} // namespace scene
 
 #endif
