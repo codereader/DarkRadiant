@@ -208,10 +208,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\iinstantiable.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\ilayer.h"
 			>
 		</File>

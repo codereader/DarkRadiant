@@ -221,14 +221,6 @@ void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
 	}
 }
 
-void PatchNode::onRemoveFromScene() {
-	// De-select this node
-	setSelected(false);
-
-	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
-}
-
 const AABB& PatchNode::getSelectedComponentsBounds() const {
 	// Create a new axis aligned bounding box
 	m_aabb_component = AABB();
@@ -288,21 +280,27 @@ scene::INodePtr PatchNode::clone() const {
 	return scene::INodePtr(new PatchNode(*this));
 }
 
-void PatchNode::instantiate()
+void PatchNode::onInsertIntoScene()
 {
 	m_patch.instanceAttach(scene::findMapFile(getSelf()));
 	GlobalRadiant().getCounter(counterPatches).increment();
 
-	Node::instantiate();
+	Node::onInsertIntoScene();
 }
 
-void PatchNode::uninstantiate()
+void PatchNode::onRemoveFromScene()
 {
+	// De-select this node
+	setSelected(false);
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+
 	GlobalRadiant().getCounter(counterPatches).decrement();
 
 	m_patch.instanceDetach(scene::findMapFile(getSelf()));
 
-	Node::uninstantiate();
+	Node::onRemoveFromScene();
 }
 
 bool PatchNode::testLight(const RendererLight& light) const {

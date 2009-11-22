@@ -2,7 +2,6 @@
 #define INODE_H_
 
 #include "ilayer.h"
-#include "iinstantiable.h"
 
 #include <set>
 #include <string>
@@ -74,8 +73,7 @@ public:
  */
 class INode :
 	public Layered,
-	public Filterable,
-	public Instantiable
+	public Filterable
 {
 public:
     /**
@@ -129,14 +127,14 @@ public:
 	/**
 	 * greebo: Gets called after the node has been inserted into the scene.
 	 */
-	virtual void onInsertIntoScene() {} // empty default implementation
+	virtual void onInsertIntoScene() = 0;
 
 	/**
 	 * greebo: This gets called by the SceneGraph before the Node is actually 
 	 * removed from the scene. This gives the node the opportunity to 
 	 * change its "selected" status or anything else.
 	 */
-	virtual void onRemoveFromScene() {} // empty default implementation
+	virtual void onRemoveFromScene() = 0;
 
 	// Call this if the node gets changed in any way or gets inserted somewhere.
 	virtual void boundsChanged() = 0;

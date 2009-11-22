@@ -77,6 +77,7 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
 
 	// ComponentEditable implementation
@@ -92,10 +93,6 @@ public:
 	typedef MemberCaller1<Doom3GroupNode, const Selectable&, &Doom3GroupNode::selectionChangedComponent> SelectionChangedComponentCaller;
 
 	scene::INodePtr clone() const;
-
-	// scene::Instantiable implementation
-	virtual void instantiate();
-	virtual void uninstantiate();
 
 	/** greebo: Call this right before map save to let the child
 	 * brushes have their origin recalculated. 

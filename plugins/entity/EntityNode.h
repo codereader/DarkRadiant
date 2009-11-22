@@ -72,9 +72,8 @@ public:
 	void attachNames();
 	void detachNames();
 
-	// scene::Instantiable implementation
-	virtual void instantiate();
-	virtual void uninstantiate();
+	virtual void onInsertIntoScene();
+	virtual void onRemoveFromScene();
 
 	// Nameable implementation
 	virtual std::string name() const;

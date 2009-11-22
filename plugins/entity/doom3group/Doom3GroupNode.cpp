@@ -163,14 +163,6 @@ void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& tes
 	}
 }
 
-void Doom3GroupNode::onRemoveFromScene() {
-	// Call the base class first
-	SelectableNode::onRemoveFromScene();
-
-	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
-}
-
 const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
 	
@@ -206,20 +198,28 @@ scene::INodePtr Doom3GroupNode::clone() const
 	return clone;
 }
 
-void Doom3GroupNode::instantiate()
+void Doom3GroupNode::onInsertIntoScene()
 {
 	_instantiated = true;
 
 	Node::getTraversable().instanceAttach(scene::findMapFile(getSelf()));
-	EntityNode::instantiate();
+
+	EntityNode::onInsertIntoScene();
 }
 
-void Doom3GroupNode::uninstantiate()
+void Doom3GroupNode::onRemoveFromScene()
 {
+	// Call the base class first
+	SelectableNode::onRemoveFromScene();
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+
 	_instantiated = false;
 
 	Node::getTraversable().instanceDetach(scene::findMapFile(getSelf()));
-	EntityNode::uninstantiate();
+
+	EntityNode::onRemoveFromScene();
 }
 
 // Snappable implementation

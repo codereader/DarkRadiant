@@ -108,6 +108,7 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
 
 	// Create the axis aligned bounding box of the selected components
@@ -127,10 +128,6 @@ public:
 	
 	// Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
 	scene::INodePtr clone() const;
-
-	// scene::Instantiable implementation
-	virtual void instantiate();
-	virtual void uninstantiate();
 
 	// Set the selection status. As this is an ObservedSelectable, the onChanged callback is performed automatically.
 	virtual void setSelected(bool select);
