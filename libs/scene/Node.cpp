@@ -204,11 +204,13 @@ void Node::onTraversableErase(const INodePtr& child) {
 	child->boundsChanged();
 }
 
-void Node::instantiate(const scene::Path& path) {
+void Node::instantiate()
+{
 	_instantiated = true;
 }
 
-void Node::uninstantiate(const scene::Path& path) {
+void Node::uninstantiate()
+{
 	_instantiated = false;
 }
 

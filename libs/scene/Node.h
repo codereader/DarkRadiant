@@ -131,8 +131,8 @@ public:
 	virtual void onTraversableInsert(const INodePtr& child);
 	virtual void onTraversableErase(const INodePtr& child);
 
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
+	virtual void instantiate();
+	virtual void uninstantiate();
 
 	/**
 	 * greebo: Constructs the scene path to this node. This will walk up the

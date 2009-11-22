@@ -70,10 +70,6 @@ public:
 	}
 	typedef MemberCaller<PicoModelNode, &PicoModelNode::lightsChanged> LightsChangedCaller;
 
-	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
-
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);
 

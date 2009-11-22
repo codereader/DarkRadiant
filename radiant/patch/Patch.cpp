@@ -200,24 +200,20 @@ void Patch::setDims (std::size_t w, std::size_t h)
   }
 }
 
-void Patch::instanceAttach(const scene::Path& path) {
+void Patch::instanceAttach(MapFile* map) {
 	if (++m_instanceCounter.m_count == 1) {
 		// Notify the shader that one more instance is using this
 		m_state->incrementUsed();
 		
-		m_map = scene::findMapFile(path.top());
+		m_map = map;
 		
 		// Attach the UndoObserver to this patch
 		m_undoable_observer = GlobalUndoSystem().observer(this);
 	}
-	else {
-		// The counter is now >1, throw an error
-		ASSERT_MESSAGE(scene::findMapFile(path.top()) == m_map, "node is instanced across more than one file");
-	}
 }
 
 // Remove the attached instance and decrease the counters
-void Patch::instanceDetach(const scene::Path& path) {
+void Patch::instanceDetach(MapFile* map) {
 	if(--m_instanceCounter.m_count == 0) {
 		m_map = 0;
 		m_undoable_observer = 0;

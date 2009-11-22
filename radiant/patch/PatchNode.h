@@ -129,8 +129,8 @@ public:
 	scene::INodePtr clone() const;
 
 	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
+	virtual void instantiate();
+	virtual void uninstantiate();
 
 	// Set the selection status. As this is an ObservedSelectable, the onChanged callback is performed automatically.
 	virtual void setSelected(bool select);

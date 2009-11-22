@@ -183,8 +183,8 @@ public:
 	
 	InstanceCounter m_instanceCounter;
 	
-	void instanceAttach(const scene::Path& path);
-	void instanceDetach(const scene::Path& path);
+	void instanceAttach(MapFile* map);
+	void instanceDetach(MapFile* map);
 	
 	// observer
 	void planeChanged();

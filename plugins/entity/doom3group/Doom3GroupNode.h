@@ -94,8 +94,8 @@ public:
 	scene::INodePtr clone() const;
 
 	// scene::Instantiable implementation
-	virtual void instantiate(const scene::Path& path);
-	virtual void uninstantiate(const scene::Path& path);
+	virtual void instantiate();
+	virtual void uninstantiate();
 
 	/** greebo: Call this right before map save to let the child
 	 * brushes have their origin recalculated. 
