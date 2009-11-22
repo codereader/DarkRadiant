@@ -2,11 +2,12 @@
 #define CLONEALLWALKER_H_
 
 #include "inode.h"
-#include "itraversable.h"
 
-namespace map {
+namespace map
+{
 
-inline scene::CloneablePtr Node_getCloneable(scene::INodePtr node) {
+inline scene::CloneablePtr Node_getCloneable(const scene::INodePtr& node)
+{
 	return boost::dynamic_pointer_cast<scene::Cloneable>(node);
 }
 
@@ -14,14 +15,12 @@ inline scene::CloneablePtr Node_getCloneable(scene::INodePtr node) {
  * greebo: Attempts to clone the given node. Returns the cloned node
  * on success or an empty INodePtr if the node is not cloneable.
  */
-inline scene::INodePtr cloneSingleNode(scene::INodePtr node) {
+inline scene::INodePtr cloneSingleNode(const scene::INodePtr& node)
+{
 	scene::CloneablePtr cloneable = Node_getCloneable(node);
-	if (cloneable != NULL) {
-		return cloneable->clone();
-	}
-  
-	// Return an empty node
-	return scene::INodePtr();
+
+	// Return an empty node if not cloneable
+	return (cloneable != NULL) ? cloneable->clone() : scene::INodePtr();
 }
 
 class CloneAll : 
@@ -29,11 +28,12 @@ class CloneAll :
 {
 	scene::Path _path;
 public:
-	CloneAll(scene::INodePtr root) : 
+	CloneAll(const scene::INodePtr& root) : 
 		_path(root)
 	{}
 	
-	virtual bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node)
+	{
 		if (node->isRoot()) {
 			return false;
 		}
@@ -44,7 +44,8 @@ public:
 		return true;
 	}
 
-	virtual void post(const scene::INodePtr& node) {
+	void post(const scene::INodePtr& node)
+	{
 		if (node->isRoot()) {
 			return;
 		}
@@ -63,7 +64,8 @@ public:
  *
  * @returns: the cloned node (which might own cloned children).
  */
-inline scene::INodePtr Node_Clone(scene::INodePtr node) {
+inline scene::INodePtr Node_Clone(const scene::INodePtr& node)
+{
 	scene::INodePtr clone = cloneSingleNode(node);
 
 	CloneAll visitor(clone);
