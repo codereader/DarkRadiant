@@ -42,13 +42,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 {
 	ASSERT_MESSAGE(_root == NULL, "scenegraph root already exists");
 
-	if (newRoot != NULL)
-	{
-		// New root not NULL, "instantiate" the whole scene
-		InstanceSubgraphWalker instanceWalker;
-		Node_traverseSubgraph(newRoot, instanceWalker);
-	}
-	else
+	if (_root != NULL)
 	{
 		// "Uninstantiate" the whole scene
 		UninstanceSubgraphWalker walker;
@@ -56,6 +50,13 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	}
 
 	_root = newRoot;
+
+	if (_root != NULL)
+	{
+		// New root not NULL, "instantiate" the whole scene
+		InstanceSubgraphWalker instanceWalker;
+		Node_traverseSubgraph(_root, instanceWalker);
+	}
 }
   
 void SceneGraph::boundsChanged()
