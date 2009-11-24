@@ -20,6 +20,8 @@
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
 
+class PatchNode;
+
 /* greebo: The patch class itself, represented by control vertices. The basic rendering of the patch 
  * is handled here (unselected control points, tesselation lines, shader). 
  * 
@@ -33,20 +35,8 @@ class Patch :
 	public Snappable,
 	public Undoable
 {
-public:
-	// A Patch observer, this is implemented by the PatchNode
-	// to re-allocate the patch control instances.
-	class Observer {
-		public:
-		    virtual ~Observer() {}
-			virtual void allocate(std::size_t size) = 0;
-	};
-
 private:
-	typedef std::set<Observer*> Observers;
-	Observers m_observers;
-
-	scene::Node* m_node;
+	PatchNode& _node;
 
 	AABB m_aabb_local; // local bbox
 
@@ -118,23 +108,16 @@ public:
 	static int m_CycleCapIndex;// = 0;
 	
 	// Constructor
-	Patch(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged);
 	
 	// Copy constructors (create this patch from another patch)
-	Patch(const Patch& other);
-	Patch(const Patch& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged);
 	
 	InstanceCounter m_instanceCounter;
 
 	void instanceAttach(MapFile* map);
 	// Remove the attached instance and decrease the counters
 	void instanceDetach(MapFile* map);
-
-	// Attaches an observer (doh!)
-	void attach(Observer* observer);
-	
-	// Detach the previously attached observer
-	void detach(Observer* observer);
 
 	// Allocate callback: pass the allocate call to all the observers
 	void onAllocate(std::size_t size);

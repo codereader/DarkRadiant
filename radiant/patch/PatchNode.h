@@ -30,8 +30,7 @@ class PatchNode :
 	public Renderable,
 	public Cullable,
 	public Bounded,
-	public Transformable,
-	public Patch::Observer
+	public Transformable
 {
 	DragPlanes m_dragPlanes;
 

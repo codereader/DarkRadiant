@@ -14,6 +14,7 @@
 #include "ui/patch/PatchInspector.h"
 
 #include "PatchSavedState.h"
+#include "PatchNode.h"
 
 // ====== Helper Functions ==================================================================
 
@@ -50,8 +51,8 @@ int Patch::m_CycleCapIndex = 0;
 	}
 
 // Constructor
-Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
-	m_node(&node),
+Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
+	_node(node),
 	m_shader(texdef_name_default()),
 	m_undoable_observer(0),
 	m_map(0),
@@ -69,13 +70,13 @@ Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callbac
 }
 
 // Copy constructor	(create this patch from another patch)
-Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	IPatch(other),
 	Bounded(other),
 	Cullable(other),
 	Snappable(other),
 	Undoable(other),
-	m_node(&node),
+	_node(node),
 	m_shader(texdef_name_default()),
 	m_undoable_observer(0),
 	m_map(0),
@@ -93,37 +94,6 @@ Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTran
 	construct();
 
 	// Copy over the definitions from the <other> patch  
-	m_patchDef3 = other.m_patchDef3;
-	m_subdivisions_x = other.m_subdivisions_x;
-	m_subdivisions_y = other.m_subdivisions_y;
-	setDims(other.m_width, other.m_height);
-	copy_ctrl(m_ctrl.begin(), other.m_ctrl.begin(), other.m_ctrl.begin()+(m_width*m_height));
-	setShader(other.m_shader);
-	controlPointsChanged();
-}
-
-// Another copy constructor
-Patch::Patch(const Patch& other) :
-	IPatch(other),
-	Bounded(other),
-	Cullable(other),
-	Snappable(other),
-	Undoable(other),
-	m_undoable_observer(0),
-	m_map(0),
-	m_render_solid(m_tess),
-	m_render_wireframe(m_tess),
-	m_render_wireframe_fixed(m_tess),
-	m_render_ctrl(GL_POINTS, m_ctrl_vertices),
-	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
-	m_transformChanged(false),
-	m_evaluateTransform(other.m_evaluateTransform),
-	m_boundsChanged(other.m_boundsChanged),
-	_tesselationChanged(true)
-{
-	// Copy over the definitions from the other patch
-	m_bOverlay = false;
-
 	m_patchDef3 = other.m_patchDef3;
 	m_subdivisions_x = other.m_subdivisions_x;
 	m_subdivisions_y = other.m_subdivisions_y;
@@ -225,23 +195,10 @@ void Patch::instanceDetach(MapFile* map) {
 	}
 }
 
-// Attaches an observer (doh!)
-void Patch::attach(Observer* observer) {
-	observer->allocate(m_width * m_height);
-	// Add this to the internal list
-	m_observers.insert(observer);
-}
-
-// Detach the previously attached observer
-void Patch::detach(Observer* observer) {
-	m_observers.erase(observer);
-}
-
 // Allocate callback: pass the allocate call to all the observers
-void Patch::onAllocate(std::size_t size) {
-	for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
-		(*i)->allocate(size);
-	}
+void Patch::onAllocate(std::size_t size)
+{
+	_node.allocate(size);
 }
 
 // Return the interally stored AABB
@@ -512,9 +469,6 @@ Patch::~Patch() {
 
 	// Release the shader
 	releaseShader();
-	
-	// Check if any observers for this patch remain
-	ASSERT_MESSAGE(m_observers.empty(), "Patch::~Patch: observers still attached");
 }
 
 bool Patch::isValid() const
