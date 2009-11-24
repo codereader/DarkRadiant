@@ -23,8 +23,6 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_patch.m_lightsChanged = LightsChangedCaller(*this);
 
 	Node::setTransformChangedCallback(LightsChangedCaller(*this));
-
-	m_patch.attach(this); // Patch::Observer
 }
   
 // Copy Constructor
@@ -47,7 +45,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	Cullable(other),
 	Bounded(other),
 	Transformable(other),
-	Patch::Observer(other),
 	m_dragPlanes(SelectedChangedComponentCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
@@ -62,13 +59,10 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_patch.m_lightsChanged = LightsChangedCaller(*this);
 
 	Node::setTransformChangedCallback(LightsChangedCaller(*this));
-
-	m_patch.attach(this); // Patch::Observer
 }
 
-PatchNode::~PatchNode() {
-	m_patch.detach(this); // Patch::Observer
-
+PatchNode::~PatchNode()
+{
 	GlobalRenderSystem().detach(*this);
 }
 
