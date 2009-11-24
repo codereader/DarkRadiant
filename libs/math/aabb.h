@@ -55,6 +55,16 @@ public:
 	 */
 	static AABB createFromMinMax(const Vector3& min, const Vector3& max);
 
+	bool operator==(const AABB& other) const
+	{
+		return (origin == other.origin && extents == other.extents);
+	}
+
+	bool operator!=(const AABB& other) const
+	{
+		return !operator==(other);
+	}
+
 	/** Determine whether this AABB is valid.
 	 */
 	bool isValid() const;
