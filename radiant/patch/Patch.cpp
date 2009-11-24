@@ -548,7 +548,7 @@ void Patch::updateTesselation()
   BuildTesselationCurves(ROW);
   BuildTesselationCurves(COL);
   BuildVertexArray();
-  AccumulateBBox();
+  updateAABB();
 
   IndexBuffer ctrl_indices;
 
@@ -558,7 +558,7 @@ void Patch::updateTesselation()
     UniqueVertexBuffer<PointVertex> inserter(m_ctrl_vertices);
     for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
     {
-      ctrl_indices.insert(inserter.insert(pointvertex_quantised(PointVertex(reinterpret_cast<const Vertex3f&>((*i).vertex), colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
+      ctrl_indices.insert(inserter.insert(pointvertex_quantised(PointVertex(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
     }
   }
   {
@@ -915,15 +915,15 @@ void Patch::RotateTexture(float angle)
 {
   undoSave();
 
-  const float s = static_cast<float>(sin(degrees_to_radians(angle)));
-  const float c = static_cast<float>(cos(degrees_to_radians(angle)));
+  const double s = sin(degrees_to_radians(angle));
+  const double c = cos(degrees_to_radians(angle));
     
   for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
   {
-    const float x = (*i).texcoord[0];
-    const float y = (*i).texcoord[1];
-    (*i).texcoord[0] = (x * c) - (y * s);
-    (*i).texcoord[1] = (y * c) + (x * s);
+    const double x = i->texcoord[0];
+    const double y = i->texcoord[1];
+    i->texcoord[0] = (x * c) - (y * s);
+    i->texcoord[1] = (y * c) + (x * s);
   }
 
   controlPointsChanged();
@@ -931,13 +931,8 @@ void Patch::RotateTexture(float angle)
 
 /* greebo: Tile the selected texture on the patch (s times t)
  */
-void Patch::SetTextureRepeat(float s, float t) {
-	std::size_t w, h;
-	float sIncr, tIncr, sc, tc;
-	
-	// The pointer to cycle through the control points
-	PatchControlIter pDest;
-
+void Patch::SetTextureRepeat(float s, float t)
+{
 	// Save the current patch state to the undoMemento
 	undoSave();
 
@@ -945,18 +940,24 @@ void Patch::SetTextureRepeat(float s, float t) {
 	 * If we have a 4x4 patch and want to tile it 3x3, the distance
 	 * from one control point to the next one has to cover 3/4 of a full texture,
 	 * hence texture_x_repeat/patch_width and texture_y_repeat/patch_height.*/ 
-	sIncr = s / (float)(m_width - 1);
-	tIncr = t / (float)(m_height - 1);
+	float sIncr = s / static_cast<float>(m_width - 1);
+	float tIncr = t / static_cast<float>(m_height - 1);
 
 	// Set the pointer to the first control point
-	pDest = m_ctrl.begin();
-	
+	PatchControlIter pDest = m_ctrl.begin();
+
+	float tc = 0;
+
 	// Cycle through the patch matrix (row per row)
 	// Increment the <tc> counter by <tIncr> increment
-	for (h=0, tc = 0.0f; h<m_height; h++, tc+=tIncr) {
+	for (std::size_t h=0; h < m_height; h++, tc += tIncr)
+	{
+		float sc = 0;
+
 		// Cycle through the row points: reset sc to zero 
 		// and increment it by sIncr at each step. 
-		for (w=0, sc = 0.0f; w<m_width; w++, sc+=sIncr) {
+		for (std::size_t w = 0; w < m_width; w++, sc += sIncr)
+		{
 			// Set the texture coordinates
 			pDest->texcoord[0] = sc;
 			pDest->texcoord[1] = tc;
@@ -1123,7 +1124,7 @@ void Patch::NaturalTexture() {
 	controlPointsChanged();
 }
 
-void Patch::AccumulateBBox()
+void Patch::updateAABB()
 {
 	AABB aabb;
 

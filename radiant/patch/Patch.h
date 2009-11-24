@@ -366,7 +366,7 @@ private:
 	// greebo: checks, if the shader name is valid
 	void check_shader();
 
-	void AccumulateBBox();
+	void updateAABB();
   
 	void TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices, 
 								 std::size_t strideX, std::size_t strideY, 
