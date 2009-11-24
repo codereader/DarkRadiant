@@ -62,7 +62,8 @@ Patch::Patch(scene::Node& node, const Callback& evaluateTransform, const Callbac
 	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
 	m_evaluateTransform(evaluateTransform),
-	m_boundsChanged(boundsChanged)
+	m_boundsChanged(boundsChanged),
+	_tesselationChanged(true)
 {
 	construct();
 }
@@ -85,7 +86,8 @@ Patch::Patch(const Patch& other, scene::Node& node, const Callback& evaluateTran
 	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
 	m_evaluateTransform(evaluateTransform),
-	m_boundsChanged(boundsChanged)
+	m_boundsChanged(boundsChanged),
+	_tesselationChanged(true)
 {
 	// Initalise the default values
 	construct();
@@ -116,7 +118,8 @@ Patch::Patch(const Patch& other) :
 	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
 	m_evaluateTransform(other.m_evaluateTransform),
-	m_boundsChanged(other.m_boundsChanged)
+	m_boundsChanged(other.m_boundsChanged),
+	_tesselationChanged(true)
 {
 	// Copy over the definitions from the other patch
 	m_bOverlay = false;
@@ -251,14 +254,23 @@ VolumeIntersectionValue Patch::intersectVolume(const VolumeTest& test, const Mat
 }
 
 // Render functions: solid mode
-void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+{
+	// Defer the tesselation calculation to the last minute
+	const_cast<Patch&>(*this).updateTesselation();
+
 	collector.SetState(m_state, RenderableCollector::eFullMaterials);
 	collector.addRenderable(m_render_solid, localToWorld);
 }
 
 // Render functions for WireFrame rendering
-void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+{
+	// Defer the tesselation calculation to the last minute
+	const_cast<Patch&>(*this).updateTesselation();
+
 	collector.SetState(m_state, RenderableCollector::eFullMaterials);
+
 	if (m_patchDef3) {
 		collector.addRenderable(m_render_wireframe_fixed, localToWorld);
 	}
@@ -268,7 +280,11 @@ void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& v
 }
 
 // greebo: This renders the patch components, namely the lattice and the corner controls
-void Patch::render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
+void Patch::render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+{
+	// Defer the tesselation calculation to the last minute
+	const_cast<Patch&>(*this).updateTesselation();
+
 	collector.SetState(m_state_lattice, RenderableCollector::eWireframeOnly);
 	collector.SetState(m_state_lattice, RenderableCollector::eFullMaterials);
 	collector.addRenderable(m_render_lattice, localToWorld);
@@ -284,7 +300,11 @@ const ShaderPtr& Patch::getState() const {
 
 // Implementation of the abstract method of SelectionTestable
 // Called to test if the patch can be selected by the mouse pointer
-void Patch::testSelect(Selector& selector, SelectionTest& test) {
+void Patch::testSelect(Selector& selector, SelectionTest& test)
+{
+	// ensure the tesselation is up to date
+	updateTesselation();
+
 	SelectionIntersection best;
 	IndexPointer::index_type* pIndex = &m_tess.indices.front();
 	
@@ -299,7 +319,8 @@ void Patch::testSelect(Selector& selector, SelectionTest& test) {
 }
 
 // Transform this patch as defined by the transformation matrix <matrix>
-void Patch::transform(const Matrix4& matrix) {
+void Patch::transform(const Matrix4& matrix)
+{
 	// Cycle through all the patch control vertices and transform the points
 	for (PatchControlIter i = m_ctrlTransformed.begin(); 
 		 i != m_ctrlTransformed.end(); 
@@ -309,24 +330,29 @@ void Patch::transform(const Matrix4& matrix) {
 	}
 	
 	// Check the handedness of the matrix and invert it if needed
-	if(matrix4_handedness(matrix) == MATRIX4_LEFTHANDED) {
+	if(matrix4_handedness(matrix) == MATRIX4_LEFTHANDED)
+	{
 		PatchControlArray_invert(m_ctrlTransformed, m_width, m_height);
 	}
 	
-	UpdateCachedData();
+	// Mark this patch as changed
+	transformChanged();
 }
 
-// Called if the patch has changed, so that the scene graph can be updated
-void Patch::transformChanged() {
+// Called if the patch has changed, so that the dirty flags are set
+void Patch::transformChanged()
+{
 	m_transformChanged = true;
 	m_lightsChanged();
-	SceneChangeNotify();
+	_tesselationChanged = true;
 }
 
 // Called to evaluate the transform
-void Patch::evaluateTransform() {
+void Patch::evaluateTransform()
+{
 	// Only do something, if the patch really has changed
-	if (m_transformChanged) {
+	if (m_transformChanged)
+	{
 		m_transformChanged = false;
 		revertTransform();
 		m_evaluateTransform();
@@ -334,30 +360,32 @@ void Patch::evaluateTransform() {
 }
 
 // Revert the changes, fall back to the saved state in <m_ctrl>
-void Patch::revertTransform() {
+void Patch::revertTransform()
+{
 	m_ctrlTransformed = m_ctrl;
 }
 
 // Apply the transformed control array, save it into <m_ctrl> and overwrite the old values
-void Patch::freezeTransform() {
+void Patch::freezeTransform()
+{
 	undoSave();
 	evaluateTransform();
-	// Check if the sizes of the patch control arrays match
-	ASSERT_MESSAGE(m_ctrlTransformed.size() == m_ctrl.size(), "Patch::freeze: size mismatch");
-	
-	// Save the control array over <m_ctrl>
-	std::copy(m_ctrlTransformed.begin(), m_ctrlTransformed.end(), m_ctrl.begin());
+
+	// Save the transformed working set array over m_ctrl
+	m_ctrl = m_ctrlTransformed;
 }
 
 // callback for changed control points
-void Patch::controlPointsChanged() {
+void Patch::controlPointsChanged()
+{
 	transformChanged();
 	evaluateTransform();
-	UpdateCachedData();
+	updateTesselation();
 }
 
 // Snaps the control points to the grid
-void Patch::snapto(float snap) {
+void Patch::snapto(float snap)
+{
 	undoSave();
 
 	for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
@@ -537,8 +565,13 @@ bool Patch::isDegenerate() const {
 	return true;
 }
 
-void Patch::UpdateCachedData()
+void Patch::updateTesselation()
 {
+	// Only do something if the tesselation has actually changed
+	if (!_tesselationChanged) return;
+
+	_tesselationChanged = false;
+
   m_ctrl_vertices.clear();
   m_lattice_indices.clear();
 
@@ -615,8 +648,6 @@ void Patch::UpdateCachedData()
 #endif
 
   m_render_solid.update();
-
-  SceneChangeNotify();
 }
 
 void Patch::InvertMatrix()
@@ -984,22 +1015,6 @@ void Patch::SetTextureRepeat(float s, float t) {
 	controlPointsChanged();
 }
 
-/*
-void Patch::SetTextureInfo(TexDef *pt)
-{
-  if(pt->getShift()[0] || pt->getShift()[1])
-    TranslateTexture (pt->getShift()[0], pt->getShift()[1]);
-  else if(pt->getScale()[0] || pt->getScale()[1])
-  {
-    if(pt->getScale()[0] == 0.0f) pt->setScale(0, 1.0f);
-    if(pt->getScale()[1] == 0.0f) pt->setScale(1, 1.0f);
-    ScaleTexture (pt->getScale()[0], pt->getScale()[1]);
-  }
-  else if(pt->rotate)
-    RotateTexture (pt->rotate);
-}
-*/
-
 inline int texture_axis(const Vector3& normal)
 {
   // axis dominance order: Z, X, Y
@@ -1156,15 +1171,21 @@ void Patch::NaturalTexture() {
 
 void Patch::AccumulateBBox()
 {
-  m_aabb_local = AABB();
+	AABB aabb;
 
-  for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
-  {
-    m_aabb_local.includePoint(i->vertex);
-  }
+	for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
+	{
+		aabb.includePoint(i->vertex);
+	}
 
-  m_boundsChanged();
-  m_lightsChanged();
+	// greebo: Only trigger the callbacks if the bounds actually changed
+	if (m_aabb_local != aabb)
+	{
+		m_aabb_local = aabb;
+		
+		m_boundsChanged();
+		m_lightsChanged();
+	}
 }
 
 // Inserts two columns before and after the column having the index <colIndex>
@@ -1891,12 +1912,19 @@ void Patch::ProjectTexture(int nAxis) {
 	controlPointsChanged();
 }
 
-PatchTesselation& Patch::getTesselation() {
+PatchTesselation& Patch::getTesselation()
+{
+	// Ensure the tesselation is up to date
+	updateTesselation();
+
 	return m_tess;
 }
 
 PatchMesh Patch::getTesselatedPatchMesh() const
 {
+	// Ensure the tesselation is up to date
+	const_cast<Patch&>(*this).updateTesselation();
+
 	PatchMesh mesh;
 
 	mesh.width = m_tess.m_nArrayWidth;
@@ -2183,6 +2211,8 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
 
 void Patch::RenderDebug(RenderStateFlags state) const
 {
+	const_cast<Patch&>(*this).updateTesselation();
+
   for (std::size_t i = 0; i<m_tess.m_numStrips; i++)
   {
     glBegin(GL_QUAD_STRIP);
