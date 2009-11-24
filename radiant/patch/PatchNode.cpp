@@ -399,35 +399,50 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	}
 }
 
-void PatchNode::evaluateTransform() {
-	Matrix4 matrix(calculateTransform());
+void PatchNode::evaluateTransform()
+{
+	Matrix4 matrix = calculateTransform();
 
-	if (getType() == TRANSFORM_PRIMITIVE) {
+	// Avoid transform calls when an identity matrix is passed,
+	// this equality check is cheaper than all the stuff going on in transform().
+	if (matrix == Matrix4::getIdentity()) return;
+
+	if (getType() == TRANSFORM_PRIMITIVE)
+	{
 		m_patch.transform(matrix);
 	}
-	else {
+	else
+	{
 		transformComponents(matrix);
 	}
 }
 
 void PatchNode::transformComponents(const Matrix4& matrix) {
 	// Are there any selected vertices?
-	if (selectedVertices()) {
+	if (selectedVertices())
+	{
 		// Set the iterator to the start of the (transformed) control points array 
 		PatchControlIter ctrl = m_patch.getControlPointsTransformed().begin();
 		
 		// Cycle through the patch control instances and transform the selected ones
 		// greebo: Have to investigate this further, why there are actually two iterators needed  
-		for (PatchNode::PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl) {
-			if (i->m_selectable.isSelected()) {
+		for (PatchNode::PatchControlInstances::iterator i = m_ctrl_instances.begin(); 
+			 i != m_ctrl_instances.end(); ++i, ++ctrl)
+		{
+			if (i->m_selectable.isSelected())
+			{
 				matrix4_transform_point(matrix, ctrl->vertex);
 			}
 		}
-		m_patch.UpdateCachedData();
+
+		// mark this patch transform as dirty
+		m_patch.transformChanged();
 	}
 
 	// Also, check if there are any drag planes selected
-	if (m_dragPlanes.isSelected()) { // this should only be true when the transform is a pure translation.
+	// this should only be true when the transform is a pure translation.
+	if (m_dragPlanes.isSelected())
+	{ 
 		m_patch.transform(m_dragPlanes.evaluateTransform(matrix.t().getVector3()));
 	}
 }

@@ -101,6 +101,9 @@ private:
 	bool m_bOverlay;
 
 	bool m_transformChanged;
+
+	// TRUE if the patch tesselation needs an update
+	bool _tesselationChanged;
 	
 	// Callback functions when the patch gets changed
 	Callback m_evaluateTransform;
@@ -184,8 +187,6 @@ public:
 	void RenderDebug(RenderStateFlags state) const;
 	// Renders the normals (indicated by lines) of this patch
 	void RenderNormals(RenderStateFlags state) const;
-
-	void UpdateCachedData();
 
 	// Gets the shader name or sets the shader to <name>
 	const std::string& getShader() const;
@@ -370,6 +371,8 @@ public:
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change
 	static void textureChanged();
+
+	void updateTesselation();
 
 	// greebo: this allocates the shader with the passed name 
 	void captureShader();
