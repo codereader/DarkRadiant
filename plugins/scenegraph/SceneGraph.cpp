@@ -40,8 +40,6 @@ const INodePtr& SceneGraph::root() const
   
 void SceneGraph::setRoot(const INodePtr& newRoot)
 {
-	ASSERT_MESSAGE(_root == NULL, "scenegraph root already exists");
-
 	if (_root != NULL)
 	{
 		// "Uninstantiate" the whole scene
