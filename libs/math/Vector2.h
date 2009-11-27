@@ -26,6 +26,9 @@ class BasicVector2 {
 	Element _v[2];
 	
 public:
+	// Public typedef to read the type of our elements
+	typedef Element ElementType;
+
 	// Constructor with no arguments
   	BasicVector2() {
   		_v[0] = 0;

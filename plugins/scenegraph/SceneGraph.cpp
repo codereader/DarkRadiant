@@ -67,6 +67,9 @@ void SceneGraph::insert(const INodePtr& node)
     // Notify the graph tree model about the change
 	sceneChanged();
 
+	// Insert this node into our SP tree
+	_spacePartition->link(node);
+
 	// Call the onInsert event on the node
 	node->onInsertIntoScene();
 	
@@ -77,6 +80,8 @@ void SceneGraph::insert(const INodePtr& node)
 
 void SceneGraph::erase(const INodePtr& node)
 {
+	_spacePartition->unLink(node);
+
 	// Fire the onRemove event on the Node
 	node->onRemoveFromScene();
 
@@ -96,6 +101,12 @@ void SceneGraph::removeBoundsChangedCallback(SignalHandlerId id) {
     m_boundsChanged.disconnect(id);
 }
 
+void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
+{
+	_spacePartition->unLink(node);
+	_spacePartition->link(node);
+}
+
 // RegisterableModule implementation
 const std::string& SceneGraph::getName() const {
 	static std::string _name(MODULE_SCENEGRAPH);
@@ -103,12 +114,21 @@ const std::string& SceneGraph::getName() const {
 }
 
 const StringSet& SceneGraph::getDependencies() const {
-	static StringSet _dependencies; // no dependencies
+	static StringSet _dependencies;
+
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_SPACE_PARTITION_FACTORY);
+	}
+
 	return _dependencies;
 }
 
-void SceneGraph::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "SceneGraph::initialiseModule called\n";
+void SceneGraph::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << "SceneGraph::initialiseModule called" << std::endl;
+
+	_spacePartition = GlobalSpacePartitionSystemFactory().create();
 }
 
 } // namespace scene
