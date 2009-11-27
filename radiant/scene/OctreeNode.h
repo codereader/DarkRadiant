@@ -1,11 +1,14 @@
 #ifndef _OCTREE_NODE_H_
 #define _OCTREE_NODE_H_
 
+#include "inode.h"
 #include "ispacepartition.h"
 #include <boost/weak_ptr.hpp>
 
 namespace scene
 {
+	// The number of members, before the node tries to subdivide itself
+	const std::size_t SUBDIVISION_THRESHOLD = 32;
 
 class OctreeNode;
 typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
@@ -27,7 +30,9 @@ protected:
 public:
 	// Default constructor (invalid bounds)
 	OctreeNode()
-	{}
+	{
+		_members.reserve(SUBDIVISION_THRESHOLD);
+	}
 
 	// Construct a node using bounds
 	OctreeNode(const AABB& bounds) :
@@ -120,6 +125,50 @@ public:
 		// Just overwrite the target's child list, the assertion above makes sure nothing is overwritten
 		target._children.swap(_children);
 		_children.clear();
+	}
+
+	// Links the given scene object into the tree
+	void linkRecursively(const scene::INodePtr& sceneNode)
+	{
+		// If this is a leaf, just link the node here
+		if (isLeaf())
+		{
+			_members.push_back(sceneNode);
+
+			// Check subdivision threshold
+			if (_members.size() >= SUBDIVISION_THRESHOLD)
+			{
+				// This leaf has enough members to justify a further subdivision
+				// TODO
+			}
+
+			return;
+		}
+
+		const AABB& bounds = sceneNode->worldAABB();
+
+		// If the AABB is not valid, just link it here
+		if (!bounds.isValid()) 
+		{
+			_members.push_back(sceneNode);
+			return;
+		}
+
+		// This node has children, check if this object fits into one of our children
+		for (std::size_t i = 0; i < 8; ++i)
+		{
+			OctreeNode& child = static_cast<OctreeNode&>(*_children[i]);
+
+			if (child.getBounds().contains(bounds))
+			{
+				// Node fits exactly into one of the children
+				child.linkRecursively(sceneNode);
+				return;
+			}
+		}
+
+		// Node didn't fit into any of the children, link it here
+		_members.push_back(sceneNode);
 	}
 
 	void render(const RenderInfo& info) const
