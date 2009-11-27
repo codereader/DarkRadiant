@@ -10,6 +10,7 @@ namespace scene
 {
 	// The number of members, before the node tries to subdivide itself
 	const std::size_t SUBDIVISION_THRESHOLD = 32;
+	const std::size_t MIN_NODE_SIZE = 128;
 
 class OctreeNode;
 typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
@@ -19,6 +20,9 @@ class OctreeNode :
 	public boost::enable_shared_from_this<OctreeNode>
 {
 protected:
+	// The owning octree
+	Octree& _owner;
+
 	AABB _bounds;
 
 	ISPNodeWeakPtr _parent;
@@ -31,14 +35,16 @@ protected:
 
 public:
 	// Default constructor (invalid bounds)
-	OctreeNode(const OctreeNodePtr& parent = OctreeNodePtr()) :
+	OctreeNode(Octree& owner, const OctreeNodePtr& parent = OctreeNodePtr()) :
+		_owner(owner),
 		_parent(parent)
 	{
 		_members.reserve(SUBDIVISION_THRESHOLD);
 	}
 
 	// Construct a node using bounds
-	OctreeNode(const AABB& bounds, const OctreeNodePtr& parent = OctreeNodePtr()) :
+	OctreeNode(Octree& owner, const AABB& bounds, const OctreeNodePtr& parent = OctreeNodePtr()) :
+		_owner(owner),
 		_bounds(bounds),
 		_parent(parent)
 	{
@@ -46,7 +52,9 @@ public:
 	}
 
 	// Construct a node using AABB components
-	OctreeNode(const Vector3& origin, const Vector3& extents, const OctreeNodePtr& parent = OctreeNodePtr()) :
+	OctreeNode(Octree& owner, const Vector3& origin, const Vector3& extents, 
+			   const OctreeNodePtr& parent = OctreeNodePtr()) :
+		_owner(owner),
 		_bounds(origin, extents),
 		_parent(parent)
 	{
@@ -96,20 +104,21 @@ public:
 		Vector3 y(0, childExtents.y(), 0);
 		Vector3 z(0, 0, childExtents.z());
 
+
 		Vector3 baseUpper = _bounds.origin + z;
 		Vector3 baseLower = _bounds.origin - z;
 
 		// Upper half of the cube
-		_children[0] = OctreeNodePtr(new OctreeNode(baseUpper + x + y, childExtents, shared_from_this()));
-		_children[1] = OctreeNodePtr(new OctreeNode(baseUpper + x - y, childExtents, shared_from_this()));
-		_children[2] = OctreeNodePtr(new OctreeNode(baseUpper - x - y, childExtents, shared_from_this()));
-		_children[3] = OctreeNodePtr(new OctreeNode(baseUpper - x + y, childExtents, shared_from_this()));
+		_children[0] = OctreeNodePtr(new OctreeNode(_owner, baseUpper + x + y, childExtents, shared_from_this()));
+		_children[1] = OctreeNodePtr(new OctreeNode(_owner, baseUpper + x - y, childExtents, shared_from_this()));
+		_children[2] = OctreeNodePtr(new OctreeNode(_owner, baseUpper - x - y, childExtents, shared_from_this()));
+		_children[3] = OctreeNodePtr(new OctreeNode(_owner, baseUpper - x + y, childExtents, shared_from_this()));
 
 		// Lower half of the cube
-		_children[4] = OctreeNodePtr(new OctreeNode(baseLower + x + y, childExtents, shared_from_this()));
-		_children[5] = OctreeNodePtr(new OctreeNode(baseLower + x - y, childExtents, shared_from_this()));
-		_children[6] = OctreeNodePtr(new OctreeNode(baseLower - x - y, childExtents, shared_from_this()));
-		_children[7] = OctreeNodePtr(new OctreeNode(baseLower - x + y, childExtents, shared_from_this()));
+		_children[4] = OctreeNodePtr(new OctreeNode(_owner, baseLower + x + y, childExtents, shared_from_this()));
+		_children[5] = OctreeNodePtr(new OctreeNode(_owner, baseLower + x - y, childExtents, shared_from_this()));
+		_children[6] = OctreeNodePtr(new OctreeNode(_owner, baseLower - x - y, childExtents, shared_from_this()));
+		_children[7] = OctreeNodePtr(new OctreeNode(_owner, baseLower - x + y, childExtents, shared_from_this()));
 	}
 
 	// Indexing operator to retrieve a certain child
@@ -128,7 +137,17 @@ public:
 	{
 		assert(isLeaf() || target.isLeaf());
 
+		// Copy all members from here to the target
 		target._members.insert(target._members.end(), _members.begin(), _members.end());
+
+		// Notify the Octree about the relocation
+		for (ISPNode::MemberList::iterator i = _members.begin(); i != _members.end(); ++i)
+		{
+			_owner.notifyUnlink(*i, this);
+			_owner.notifyLink(*i, &target);
+		}
+
+		// Clear our own member list
 		_members.clear();
 
 		// Just overwrite the target's child list, the assertion above makes sure nothing is overwritten
@@ -136,35 +155,29 @@ public:
 		_children.clear();
 	}
 
+	void addMember(const scene::INodePtr& sceneNode)
+	{
+		// Add to the internal list
+		_members.push_back(sceneNode);
+
+		// Notify the Octree to update lookup caches
+		_owner.notifyLink(sceneNode, this);
+	}
+
 	// Links the given scene object into the tree
 	OctreeNode* linkRecursively(const scene::INodePtr& sceneNode)
 	{
-		// If this is a leaf, just link the node here
-		if (isLeaf())
-		{
-			_members.push_back(sceneNode);
-
-			// Check subdivision threshold
-			if (_members.size() >= SUBDIVISION_THRESHOLD)
-			{
-				// This leaf has enough members to justify a further subdivision
-				// TODO
-			}
-
-			return this;
-		}
-
 		const AABB& bounds = sceneNode->worldAABB();
 
 		// If the AABB is not valid, just link it here
 		if (!bounds.isValid()) 
 		{
-			_members.push_back(sceneNode);
+			addMember(sceneNode);
 			return this;
 		}
 
 		// This node has children, check if this object fits into one of our children
-		for (std::size_t i = 0; i < 8; ++i)
+		for (std::size_t i = 0, size = _children.size(); i < size; ++i)
 		{
 			OctreeNode& child = static_cast<OctreeNode&>(*_children[i]);
 
@@ -176,7 +189,31 @@ public:
 		}
 
 		// Node didn't fit into any of the children, link it here
-		_members.push_back(sceneNode);
+		addMember(sceneNode);
+
+		// If this is a leaf, check if we exceeded the subdivision threshold
+		if (isLeaf() && _members.size() >= SUBDIVISION_THRESHOLD && _bounds.extents.x() > MIN_NODE_SIZE)
+		{
+			// This leaf has enough members to justify a further subdivision, create 8 child nodes
+			subdivide();
+
+			// We cannot use the original _members vector in the loop below (iterator invalidation)...
+			ISPNode::MemberList oldList;
+
+			// ... so move the member list here
+			oldList.swap(_members);
+
+			// Cycle through all the members and distribute them over the children
+			for (ISPNode::MemberList::iterator i = oldList.begin(); i != oldList.end(); ++i)
+			{
+				// Notify the owner about the re-link
+				_owner.notifyUnlink(*i, this);
+
+				// Call ourselves. The fact that we have 8 children now ensures that we won't be 
+				// going down the same code path here again
+				linkRecursively(*i);
+			}
+		}
 
 		return this;
 	}
@@ -187,8 +224,13 @@ public:
 		{
 			if (*i == sceneNode)
 			{
+				// Remove from the members list
 				_members.erase(i);
-				return;
+
+				// Let the Octree know about this
+				_owner.notifyUnlink(sceneNode, this);
+
+				break;
 			}
 		}
 	}

@@ -3,18 +3,20 @@
 #include "inode.h"
 #include "iregistry.h"
 
+#include "OctreeNode.h"
+
 namespace scene
 {
 
 namespace
 {
-	const double START_SIZE = 128.0;
+	const double START_SIZE = 512.0;
 
 	const AABB START_AABB(Vector3(0,0,0), Vector3(START_SIZE, START_SIZE, START_SIZE));
 }
 
 Octree::Octree() :
-	_root(new OctreeNode(START_AABB)),
+	_root(new OctreeNode(*this, START_AABB)),
 	_shader(GlobalRenderSystem().capture("[1 0 0]"))
 {
 	GlobalRenderSystem().attachRenderable(*this);
@@ -27,10 +29,21 @@ Octree::~Octree()
 
 ISPNodePtr Octree::link(const scene::INodePtr& sceneNode)
 {
+	// Make sure the root node is large enough
+	ensureRootSize(sceneNode);
+
+	// Root node size is adjusted, let's link the node into the smallest encompassing octant
+	_root->linkRecursively(sceneNode);
+
+	return ISPNodePtr();
+}
+
+void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
+{
 	// Check if sceneNode exceeds the root node's bounds
 	const AABB& aabb = sceneNode->worldAABB();
 
-	if (!aabb.isValid()) return ISPNodePtr();
+	if (!aabb.isValid()) return; // skip this for invalid bounds
 
 	while (!_root->getBounds().contains(aabb))
 	{
@@ -45,7 +58,7 @@ ISPNodePtr Octree::link(const scene::INodePtr& sceneNode)
 		}
 
 		// Allocate a new root node and subdivide it once
-		OctreeNodePtr newRootPtr(new OctreeNode(newBounds));
+		OctreeNodePtr newRootPtr(new OctreeNode(*this, newBounds));
 
 		OctreeNode& newRoot = *newRootPtr;
 		newRoot.subdivide();
@@ -70,14 +83,6 @@ ISPNodePtr Octree::link(const scene::INodePtr& sceneNode)
 
 						if (newNode.getBounds() == oldRoot[old].getBounds())
 						{
-							const ISPNode::MemberList& list = oldRoot[old].getMembers();
-
-							// Update the mapping
-							for (ISPNode::MemberList::const_iterator m = list.begin(); m != list.end(); ++m)
-							{
-								_nodeMapping[*m] = &newNode;
-							}
-
 							oldRoot[old].relocateContentsTo(newNode);
 							break;
 						}
@@ -88,13 +93,6 @@ ISPNodePtr Octree::link(const scene::INodePtr& sceneNode)
 
 		_root = newRootPtr;
 	}
-
-	// Root node size is adjusted, let's link the node into the smallest encompassing octant
-	OctreeNode* node = _root->linkRecursively(sceneNode);
-
-	_nodeMapping[sceneNode] = node;
-
-	return ISPNodePtr();
 }
 
 // Unlink this node from the SP tree
@@ -104,9 +102,8 @@ void Octree::unLink(const scene::INodePtr& sceneNode)
 
 	if (found != _nodeMapping.end())
 	{
+		// Lookup successful, unlink the node (will fire notifyUnlink())
 		found->second->unlink(sceneNode);
-
-		_nodeMapping.erase(found);
 	}
 }
 
@@ -133,6 +130,22 @@ void Octree::renderWireframe(RenderableCollector& collector, const VolumeTest& v
 void Octree::render(const RenderInfo& info) const
 {
 	_root->render(info);
+}
+
+void Octree::notifyLink(const scene::INodePtr& sceneNode, OctreeNode* node)
+{
+	_nodeMapping[sceneNode] = node;
+}
+
+void Octree::notifyUnlink(const scene::INodePtr& sceneNode, OctreeNode* node)
+{
+	// Remove the node from the lookup table, if found
+	NodeMapping::iterator found = _nodeMapping.find(sceneNode);
+
+	if (found != _nodeMapping.end())
+	{
+		_nodeMapping.erase(found);
+	}
 }
 
 } // namespace scene
