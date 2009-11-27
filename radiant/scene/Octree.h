@@ -4,6 +4,7 @@
 #include "ispacepartition.h"
 #include "irender.h"
 #include "irenderable.h"
+#include <map>
 
 #include "OctreeNode.h"
 
@@ -20,6 +21,10 @@ private:
 	OctreeNodePtr _root;
 
 	ShaderPtr _shader;
+
+	// Maps scene nodes against octree nodes, for fast lookup during unlink
+	typedef std::map<INodePtr, OctreeNode*> NodeMapping;
+	NodeMapping _nodeMapping;
 
 public:
 	Octree();

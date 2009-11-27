@@ -1,0 +1,138 @@
+#include "Octree.h"
+
+#include "inode.h"
+#include "iregistry.h"
+
+namespace scene
+{
+
+namespace
+{
+	const double START_SIZE = 1024.0;
+
+	const AABB START_AABB(Vector3(0,0,0), Vector3(START_SIZE, START_SIZE, START_SIZE));
+}
+
+Octree::Octree() :
+	_root(new OctreeNode(START_AABB)),
+	_shader(GlobalRenderSystem().capture("[1 0 0]"))
+{
+	GlobalRenderSystem().attachRenderable(*this);
+}
+
+Octree::~Octree()
+{
+	GlobalRenderSystem().detachRenderable(*this);
+}
+
+ISPNodePtr Octree::link(const scene::INodePtr& sceneNode)
+{
+	// Check if sceneNode exceeds the root node's bounds
+	const AABB& aabb = sceneNode->worldAABB();
+
+	if (!aabb.isValid()) return ISPNodePtr();
+
+	while (!_root->getBounds().contains(aabb))
+	{
+		// The bounding box of this node exceed the root node's bounds, we need to extend the tree bounds
+		AABB newBounds = _root->getBounds();
+		newBounds.extents *= 2;
+
+		// Don't go beyond the map limits
+		if (newBounds.extents.x() > GlobalRegistry().getFloat("game/defaults/maxWorldCoord"))
+		{
+			break;
+		}
+
+		// Allocate a new root node and subdivide it once
+		OctreeNodePtr newRootPtr(new OctreeNode(newBounds));
+
+		OctreeNode& newRoot = *newRootPtr;
+		newRoot.subdivide();
+
+		OctreeNode& oldRoot = *_root;
+
+		if (!_root->isLeaf())
+		{
+			// Move the children of the old root into the new root
+			// Each octant of the old root will be added to one child of the new root
+			for (std::size_t i = 0; i < 8; ++i)
+			{
+				// Subdivide each of the new children
+				newRoot[i].subdivide();
+
+				// Find out which of the new subdivisions is matching the children of the old root
+				for (std::size_t j = 0; j < 8; ++j)
+				{
+					for (std::size_t old = 0; old < 8; ++old)
+					{
+						OctreeNode& newNode = newRoot[i][j];
+
+						if (newNode.getBounds() == oldRoot[old].getBounds())
+						{
+							const ISPNode::MemberList& list = oldRoot[old].getMembers();
+
+							// Update the mapping
+							for (ISPNode::MemberList::const_iterator m = list.begin(); m != list.end(); ++m)
+							{
+								_nodeMapping[*m] = &newNode;
+							}
+
+							oldRoot[old].relocateContentsTo(newNode);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		_root = newRootPtr;
+	}
+
+	// Root node size is adjusted, let's link the node into the smallest encompassing octant
+	OctreeNode* node = _root->linkRecursively(sceneNode);
+
+	_nodeMapping[sceneNode] = node;
+
+	return ISPNodePtr();
+}
+
+// Unlink this node from the SP tree
+void Octree::unLink(const scene::INodePtr& sceneNode)
+{
+	NodeMapping::iterator found = _nodeMapping.find(sceneNode);
+
+	if (found != _nodeMapping.end())
+	{
+		found->second->unlink(sceneNode);
+
+		_nodeMapping.erase(found);
+	}
+}
+
+// Returns the root node of this SP tree
+ISPNodePtr Octree::getRoot() const
+{
+	return _root;
+}
+
+void Octree::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+{
+	collector.SetState(_shader, RenderableCollector::eFullMaterials);
+
+	collector.addRenderable(*this, Matrix4::getIdentity());
+}
+
+void Octree::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
+{
+	collector.SetState(_shader, RenderableCollector::eWireframeOnly);
+
+	collector.addRenderable(*this, Matrix4::getIdentity());
+}
+
+void Octree::render(const RenderInfo& info) const
+{
+	_root->render(info);
+}
+
+} // namespace scene
