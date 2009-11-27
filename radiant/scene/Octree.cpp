@@ -8,7 +8,7 @@ namespace scene
 
 namespace
 {
-	const double START_SIZE = 1024.0;
+	const double START_SIZE = 128.0;
 
 	const AABB START_AABB(Vector3(0,0,0), Vector3(START_SIZE, START_SIZE, START_SIZE));
 }

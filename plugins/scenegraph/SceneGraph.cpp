@@ -40,6 +40,11 @@ const INodePtr& SceneGraph::root() const
   
 void SceneGraph::setRoot(const INodePtr& newRoot)
 {
+	if (_root == newRoot)
+	{
+		return;
+	}
+
 	if (_root != NULL)
 	{
 		// "Uninstantiate" the whole scene
@@ -48,6 +53,9 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	}
 
 	_root = newRoot;
+
+	// Refresh the space partition class
+	_spacePartition = GlobalSpacePartitionSystemFactory().create();
 
 	if (_root != NULL)
 	{

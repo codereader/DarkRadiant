@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "ispacepartition.h"
 #include <boost/weak_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 namespace scene
 {
@@ -14,7 +15,8 @@ class OctreeNode;
 typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
 
 class OctreeNode : 
-	public ISPNode
+	public ISPNode,
+	public boost::enable_shared_from_this<OctreeNode>
 {
 protected:
 	AABB _bounds;
@@ -29,20 +31,27 @@ protected:
 
 public:
 	// Default constructor (invalid bounds)
-	OctreeNode()
+	OctreeNode(const OctreeNodePtr& parent = OctreeNodePtr()) :
+		_parent(parent)
 	{
 		_members.reserve(SUBDIVISION_THRESHOLD);
 	}
 
 	// Construct a node using bounds
-	OctreeNode(const AABB& bounds) :
-		_bounds(bounds)
-	{}
+	OctreeNode(const AABB& bounds, const OctreeNodePtr& parent = OctreeNodePtr()) :
+		_bounds(bounds),
+		_parent(parent)
+	{
+		_members.reserve(SUBDIVISION_THRESHOLD);
+	}
 
 	// Construct a node using AABB components
-	OctreeNode(const Vector3& origin, const Vector3& extents) :
-		_bounds(origin, extents)
-	{}
+	OctreeNode(const Vector3& origin, const Vector3& extents, const OctreeNodePtr& parent = OctreeNodePtr()) :
+		_bounds(origin, extents),
+		_parent(parent)
+	{
+		_members.reserve(SUBDIVISION_THRESHOLD);
+	}
 
 	// Get the parent node (can be NULL for the root node)
 	ISPNodePtr getParent() const 
@@ -91,16 +100,16 @@ public:
 		Vector3 baseLower = _bounds.origin - z;
 
 		// Upper half of the cube
-		_children[0] = OctreeNodePtr(new OctreeNode(baseUpper + x + y, childExtents));
-		_children[1] = OctreeNodePtr(new OctreeNode(baseUpper + x - y, childExtents));
-		_children[2] = OctreeNodePtr(new OctreeNode(baseUpper - x - y, childExtents));
-		_children[3] = OctreeNodePtr(new OctreeNode(baseUpper - x + y, childExtents));
+		_children[0] = OctreeNodePtr(new OctreeNode(baseUpper + x + y, childExtents, shared_from_this()));
+		_children[1] = OctreeNodePtr(new OctreeNode(baseUpper + x - y, childExtents, shared_from_this()));
+		_children[2] = OctreeNodePtr(new OctreeNode(baseUpper - x - y, childExtents, shared_from_this()));
+		_children[3] = OctreeNodePtr(new OctreeNode(baseUpper - x + y, childExtents, shared_from_this()));
 
 		// Lower half of the cube
-		_children[4] = OctreeNodePtr(new OctreeNode(baseLower + x + y, childExtents));
-		_children[5] = OctreeNodePtr(new OctreeNode(baseLower + x - y, childExtents));
-		_children[6] = OctreeNodePtr(new OctreeNode(baseLower - x - y, childExtents));
-		_children[7] = OctreeNodePtr(new OctreeNode(baseLower - x + y, childExtents));
+		_children[4] = OctreeNodePtr(new OctreeNode(baseLower + x + y, childExtents, shared_from_this()));
+		_children[5] = OctreeNodePtr(new OctreeNode(baseLower + x - y, childExtents, shared_from_this()));
+		_children[6] = OctreeNodePtr(new OctreeNode(baseLower - x - y, childExtents, shared_from_this()));
+		_children[7] = OctreeNodePtr(new OctreeNode(baseLower - x + y, childExtents, shared_from_this()));
 	}
 
 	// Indexing operator to retrieve a certain child
@@ -189,43 +198,48 @@ public:
 		float numItems = _members.size() > 2 ? 1 : (_members.size() > 0 ? 0.6 : 0);
 		glColor3f(numItems, numItems, numItems);
 
+		AABB rb(_bounds);
+
+		// Extend the renderbounds *slightly* so that the lines don't overlap
+		rb.extents *= 1.02f;
+
 		// Wireframe cuboid
 		glBegin(GL_LINES);
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() +  _bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() +  rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
 
-			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
-			glVertex3f(_bounds.origin.x() + -_bounds.extents.x(), _bounds.origin.y() + -_bounds.extents.y(), _bounds.origin.z() + -_bounds.extents.z());
+			glVertex3f(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
+			glVertex3f(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
 		glEnd();
 
 		for (std::size_t i = 0; i < _children.size(); ++i)
