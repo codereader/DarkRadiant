@@ -97,6 +97,9 @@ public:
 	virtual SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged) = 0;
 	/// \brief Remove a \p callback to be invoked when the bounds of any instance in the scene change.
 	virtual void removeBoundsChangedCallback(SignalHandlerId id) = 0;
+
+	// A specific node has changed its bounds
+	virtual void nodeBoundsChanged(const scene::INodePtr& node) = 0;
 };
 
   class Cloneable

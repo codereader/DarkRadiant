@@ -312,6 +312,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\ispacepartition.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\itexdef.h"
 			>
 		</File>

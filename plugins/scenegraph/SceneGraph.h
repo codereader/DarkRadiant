@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/signal.h"
 #include "scenelib.h"
 #include "imodule.h"
+#include "ispacepartition.h"
 
 namespace scene
 {
@@ -47,6 +48,9 @@ class SceneGraph :
 	
 	// The root-element, the scenegraph starts here
 	scene::INodePtr _root;
+
+	// The space partitioning system
+	ISpacePartitionSystemPtr _spacePartition;
 
 public:	
 	// RegisterableModule implementation
@@ -76,6 +80,8 @@ public:
 
 	SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged);
 	void removeBoundsChangedCallback(SignalHandlerId id);
+
+	void nodeBoundsChanged(const scene::INodePtr& node);
 };
 typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
 
