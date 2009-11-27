@@ -6,10 +6,11 @@
 #include "irenderable.h"
 #include <map>
 
-#include "OctreeNode.h"
-
 namespace scene 
 {
+
+class OctreeNode;
+typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
 
 class Octree :
 	public ISpacePartitionSystem,
@@ -44,6 +45,13 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	void render(const RenderInfo& info) const;
+
+	// Callback used by the OctreeNodes to let the tree update its caching structures
+	void notifyLink(const scene::INodePtr& sceneNode, OctreeNode* node);
+	void notifyUnlink(const scene::INodePtr& sceneNode, OctreeNode* node);
+
+private:
+	void ensureRootSize(const scene::INodePtr& sceneNode);
 };
 
 } // namespace scene
