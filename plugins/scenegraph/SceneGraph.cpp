@@ -131,6 +131,11 @@ void SceneGraph::initialiseModule(const ApplicationContext& ctx)
 	_spacePartition = GlobalSpacePartitionSystemFactory().create();
 }
 
+void SceneGraph::shutdownModule()
+{
+	_spacePartition = ISpacePartitionSystemPtr();
+}
+
 } // namespace scene
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {

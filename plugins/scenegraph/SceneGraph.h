@@ -54,9 +54,10 @@ class SceneGraph :
 
 public:	
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+	void shutdownModule();
   
 	/** greebo: Adds/removes an observer from the scenegraph,
 	 * 			to get notified upon insertions/deletions
