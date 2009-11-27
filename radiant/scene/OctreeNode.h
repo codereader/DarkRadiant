@@ -128,7 +128,7 @@ public:
 	}
 
 	// Links the given scene object into the tree
-	void linkRecursively(const scene::INodePtr& sceneNode)
+	OctreeNode* linkRecursively(const scene::INodePtr& sceneNode)
 	{
 		// If this is a leaf, just link the node here
 		if (isLeaf())
@@ -142,7 +142,7 @@ public:
 				// TODO
 			}
 
-			return;
+			return this;
 		}
 
 		const AABB& bounds = sceneNode->worldAABB();
@@ -151,7 +151,7 @@ public:
 		if (!bounds.isValid()) 
 		{
 			_members.push_back(sceneNode);
-			return;
+			return this;
 		}
 
 		// This node has children, check if this object fits into one of our children
@@ -161,18 +161,34 @@ public:
 
 			if (child.getBounds().contains(bounds))
 			{
-				// Node fits exactly into one of the children
-				child.linkRecursively(sceneNode);
-				return;
+				// Node fits exactly into one of the children, enter recursion
+				return child.linkRecursively(sceneNode);
 			}
 		}
 
 		// Node didn't fit into any of the children, link it here
 		_members.push_back(sceneNode);
+
+		return this;
+	}
+
+	void unlink(const scene::INodePtr& sceneNode)
+	{
+		for (ISPNode::MemberList::iterator i = _members.begin(); i != _members.end(); ++i)
+		{
+			if (*i == sceneNode)
+			{
+				_members.erase(i);
+				return;
+			}
+		}
 	}
 
 	void render(const RenderInfo& info) const
 	{
+		float numItems = _members.size() > 2 ? 1 : (_members.size() > 0 ? 0.6 : 0);
+		glColor3f(numItems, numItems, numItems);
+
 		// Wireframe cuboid
 		glBegin(GL_LINES);
 			glVertex3f(_bounds.origin.x() + _bounds.extents.x(), _bounds.origin.y() + _bounds.extents.y(), _bounds.origin.z() + _bounds.extents.z());
