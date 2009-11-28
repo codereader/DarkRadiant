@@ -52,6 +52,9 @@ class SceneGraph :
 	// The space partitioning system
 	ISpacePartitionSystemPtr _spacePartition;
 
+	std::size_t _visitedSPNodes;
+	std::size_t _skippedSPNodes;
+
 public:	
 	// RegisterableModule implementation
 	const std::string& getName() const;
@@ -83,6 +86,12 @@ public:
 	void removeBoundsChangedCallback(SignalHandlerId id);
 
 	void nodeBoundsChanged(const scene::INodePtr& node);
+
+	void foreachNodeInVolume(const VolumeTest& volume, Walker& walker);
+
+private:
+	// Recursive method used to descend the SpacePartition tree, returns FALSE if the walker signaled stop
+	bool foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker);
 };
 typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
 
