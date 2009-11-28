@@ -33,10 +33,10 @@ public:
 	~Octree();
 
 	// Links this node into the SP tree. Returns the node it ends up being associated with
-	ISPNodePtr link(const scene::INodePtr& sceneNode);
+	void link(const scene::INodePtr& sceneNode);
 
 	// Unlink this node from the SP tree
-	void unLink(const scene::INodePtr& sceneNode);
+	bool unLink(const scene::INodePtr& sceneNode);
 
 	// Returns the root node of this SP tree
 	ISPNodePtr getRoot() const;

@@ -193,6 +193,54 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
 
 // ==================================================================================
 
+void SelectionTestWalker::printNodeName(const scene::INodePtr& node)
+{
+	globalOutputStream() << "Node: " << nodetype_get_name(node_get_nodetype(node)) << " ";
+
+	if (node_get_nodetype(node) == eNodeEntity)
+	{
+		globalOutputStream() << " - " << Node_getEntity(node)->getKeyValue("name"); 
+	}
+
+	globalOutputStream() << std::endl;
+}
+
+bool EntitySelector::visit(const scene::INodePtr& node)
+{
+	// Skip non-entities
+	Entity* entity = Node_getEntity(node);
+
+	if (entity == NULL || entity->getKeyValue("classname") == "worldspawn") // don't select worldspawn
+	{
+		return true; // continue walking
+	}
+
+	// Comment out to hide debugging output
+	//printNodeName(node);
+
+	// Check if the node is selectable
+	SelectablePtr selectable = Node_getSelectable(node);
+
+    if (selectable == NULL)
+	{
+    	return true; // skip
+    }
+
+	_selector.pushSelectable(*selectable);
+
+	// Test the entity for selection, this will add an intersection to the selector
+    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(_selector, _test);
+    }
+
+	_selector.popSelectable();
+
+	return true;
+}
+
 bool testselect_entity_visible::pre(const scene::INodePtr& node) {
     SelectablePtr selectable = Node_getSelectable(node);
     if(selectable != NULL && Node_isEntity(node)) {

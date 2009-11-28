@@ -27,15 +27,13 @@ Octree::~Octree()
 	GlobalRenderSystem().detachRenderable(*this);
 }
 
-ISPNodePtr Octree::link(const scene::INodePtr& sceneNode)
+void Octree::link(const scene::INodePtr& sceneNode)
 {
 	// Make sure the root node is large enough
 	ensureRootSize(sceneNode);
 
 	// Root node size is adjusted, let's link the node into the smallest encompassing octant
 	_root->linkRecursively(sceneNode);
-
-	return ISPNodePtr();
 }
 
 void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
@@ -96,7 +94,7 @@ void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
 }
 
 // Unlink this node from the SP tree
-void Octree::unLink(const scene::INodePtr& sceneNode)
+bool Octree::unLink(const scene::INodePtr& sceneNode)
 {
 	NodeMapping::iterator found = _nodeMapping.find(sceneNode);
 
@@ -104,7 +102,10 @@ void Octree::unLink(const scene::INodePtr& sceneNode)
 	{
 		// Lookup successful, unlink the node (will fire notifyUnlink())
 		found->second->unlink(sceneNode);
+		return true;
 	}
+	
+	return false;
 }
 
 // Returns the root node of this SP tree
@@ -134,7 +135,10 @@ void Octree::render(const RenderInfo& info) const
 
 void Octree::notifyLink(const scene::INodePtr& sceneNode, OctreeNode* node)
 {
-	_nodeMapping[sceneNode] = node;
+	std::pair<NodeMapping::iterator, bool> result = 
+		_nodeMapping.insert(NodeMapping::value_type(sceneNode, node));
+
+	assert(result.second);
 }
 
 void Octree::notifyUnlink(const scene::INodePtr& sceneNode, OctreeNode* node)
