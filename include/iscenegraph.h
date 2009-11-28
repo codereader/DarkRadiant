@@ -40,6 +40,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // String identifier for the registry module
 const std::string MODULE_SCENEGRAPH("SceneGraph");
 
+class VolumeTest;
+
 namespace scene
 {
 /** 
@@ -100,6 +102,18 @@ public:
 
 	// A specific node has changed its bounds
 	virtual void nodeBoundsChanged(const scene::INodePtr& node) = 0;
+
+	// A walker class to be used in "foreachNodeInVolume"
+	class Walker
+	{
+	public:
+		virtual ~Walker() {}
+
+		// Called for each visited node, returns TRUE if traversal should continue
+		virtual bool visit(const INodePtr& node) = 0;
+	};
+
+	virtual void foreachNodeInVolume(const VolumeTest& volume, Walker& walker) = 0;
 };
 
   class Cloneable

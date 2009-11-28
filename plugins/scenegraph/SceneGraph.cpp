@@ -4,6 +4,8 @@
 #include "scene/InstanceWalkers.h"
 #include "scenelib.h"
 
+#include "cullable.h"
+
 namespace scene
 {
 
@@ -113,6 +115,58 @@ void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 {
 	_spacePartition->unLink(node);
 	_spacePartition->link(node);
+}
+
+void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
+{
+	// Descend the SpacePartition tree and call the walker for each (partially) visible member
+	ISPNodePtr root = _spacePartition->getRoot();
+
+	_visitedSPNodes = 0;
+	_skippedSPNodes = 0;
+
+	foreachNodeInVolume_r(*root, volume, walker);
+
+	globalOutputStream() << "SceneGraph::foreachNodeInVolume: visited: " << _visitedSPNodes << 
+		", skipped: " << _skippedSPNodes << std::endl;
+}
+
+bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker)
+{
+	const ISPNode::NodeList& children = node.getChildNodes();
+
+	for (ISPNode::NodeList::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		_visitedSPNodes++;
+
+		if (volume.TestAABB((*i)->getBounds()) == VOLUME_OUTSIDE) 
+		{
+			// Skip this node, not visible
+			_skippedSPNodes++;
+			continue;
+		}
+	
+		// This node has at least partial intersection, visit all members
+		const ISPNode::MemberList& members = (*i)->getMembers();
+
+		for (ISPNode::MemberList::const_iterator m = members.begin(); m != members.end(); ++m)
+		{
+			// We're done, as soon as the walker returns FALSE
+			if (!walker.visit(*m))
+			{
+				return false;
+			}
+		}
+
+		// Traverse all the children too, enter recursion
+		if (!foreachNodeInVolume_r(**i, volume, walker))
+		{
+			// The walker returned false somewhere in the recursion depths, propagate this message 
+			return false;
+		}
+	}
+
+	return true; // continue traversal
 }
 
 // RegisterableModule implementation
