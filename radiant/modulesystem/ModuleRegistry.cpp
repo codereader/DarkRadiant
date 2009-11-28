@@ -74,8 +74,8 @@ void ModuleRegistry::registerModule(RegisterableModulePtr module) {
 }
 
 // Initialise the module (including dependencies, if necessary)
-void ModuleRegistry::initialiseModuleRecursive(const std::string& name) {
-
+void ModuleRegistry::initialiseModuleRecursive(const std::string& name) 
+{
 	// Check if the module exists at all
 	if (_uninitialisedModules.find(name) == _uninitialisedModules.end()) {
 		throw std::logic_error(
@@ -94,25 +94,33 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name) {
 		ModulesMap::value_type(name, _uninitialisedModules[name])
 	);
 	
-	globalOutputStream() << "Initialising module: " << name << "\n";
+	globalOutputStream() << "ModuleRegistry: "
+                         << "preparing to initialise module: " 
+                         << name << std::endl;
 	
 	// Create a shortcut to the module
 	RegisterableModulePtr module = _uninitialisedModules[name];
 	const StringSet& dependencies = module->getDependencies();
 
-	// Debug builds should ensure that the dependencies don't reference the module itself directly 
-	assert(dependencies.find(name) == dependencies.end());
+    // Debug builds should ensure that the dependencies don't reference the
+    // module itself directly 
+    assert(dependencies.find(name) == dependencies.end());
 	
 	// Initialise the dependencies first
 	for (StringSet::const_iterator i = dependencies.begin(); 
 		 i != dependencies.end(); i++)
 	{
+        globalOutputStream() << "   " << name << " needs dependency " 
+                             << *i << std::endl;
 		initialiseModuleRecursive(*i);
 	}
 
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.65f;
 	
 	ui::Splash::Instance().setProgressAndText("Initialising Module: " + name, _progress);
+
+    globalOutputStream() << "ModuleRegistry: dependencies satisfied, "
+                         << "invoking initialiser for " << name << std::endl;
 
 	// Initialise the module itself, now that the dependencies are ready
 	module->initialiseModule(_context);
