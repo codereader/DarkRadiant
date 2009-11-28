@@ -43,6 +43,30 @@ public:
 
 // --------------------------------------------------------------------------------
 
+// Base class for SelectionTesters, provides some convenience methods
+class SelectionTestWalker :
+	public scene::Graph::Walker
+{
+protected:
+	void printNodeName(const scene::INodePtr& node);
+};
+
+class EntitySelector :
+	public SelectionTestWalker
+{
+private:
+	Selector& _selector;
+	SelectionTest& _test;
+
+public:
+	EntitySelector(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
+	{}
+
+	bool visit(const scene::INodePtr& node);
+};
+
 class testselect_entity_visible : public scene::NodeVisitor {
   Selector& _selector;
   SelectionTest& _test;

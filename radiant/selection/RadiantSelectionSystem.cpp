@@ -100,30 +100,45 @@ void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool i
 	}
 }
 
-void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode) {
+void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test, 
+											 const View& view, SelectionSystem::EMode mode, 
+											 SelectionSystem::EComponentMode componentMode)
+{
 	// The (temporary) storage pool
 	SelectionPool selector;
 	SelectionPool sel2;
-	switch(mode) {
+
+	switch(mode)
+	{
 		case eEntity:
 		{
-			testselect_entity_visible entityTest(selector, test);
+			// Instantiate a walker class which is specialised for selecting entities
+			EntitySelector entityTester(selector, test);
 
-			Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
+			// Traverse the visible nodes
+			GlobalSceneGraph().foreachNodeInVolume(view, entityTester);
+
+			//testselect_entity_visible entityTest(selector, test);
+			//Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
+
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
 				targetList.push_back(i->second);
 			}
 		}
 		break;
+
 		case ePrimitive:
+		{
 			// Do we have a camera view (filled rendering?)
-			if (view.fill() || !GlobalXYWnd().higherEntitySelectionPriority()) {
+			if (view.fill() || !GlobalXYWnd().higherEntitySelectionPriority())
+			{
 				// Test for any visible elements (primitives, entities), but don't select child primitives
 				testselect_any_visible anyVisible(selector, test, false);
 
 				Scene_forEachVisible(GlobalSceneGraph(), view, anyVisible); 
 			}
-			else {
+			else
+			{
 				// We have an orthoview, here, select entities first
 				// First, obtain all the selectable entities
 				testselect_entity_visible entityTest(selector, test);
@@ -150,12 +165,16 @@ void RadiantSelectionSystem::Scene_TestSelect(SelectablesList& targetList, Selec
 					targetList.push_back(i->second);
 				}
 			}
+		}
 		break;
+
 		case eComponent:
+		{
 			Scene_TestSelect_Component_Selected(selector, test, view, componentMode);
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
 				targetList.push_back(i->second);
 			}
+		}
 		break;
 	} // switch
 }
@@ -474,7 +493,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 			}
 		}
 		else {
-			Scene_TestSelect(candidates, volume, scissored, Mode(), ComponentMode());
+			testSelectScene(candidates, volume, scissored, Mode(), ComponentMode());
 		}
 		
 		// Was the selection test successful (have we found anything to select)?
@@ -569,7 +588,7 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 			}
 		}
 		else {
-			Scene_TestSelect(candidates, volume, scissored, Mode(), ComponentMode());
+			testSelectScene(candidates, volume, scissored, Mode(), ComponentMode());
 		}
 		
 		// Cycle through the selection pool and toggle the candidates, but only if we are in toggle mode

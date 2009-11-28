@@ -79,6 +79,11 @@ void EclassModelNode::renderWireframe(RenderableCollector& collector, const Volu
 	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
 }
 
+void EclassModelNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	m_contained.testSelect(selector, test);
+}
+
 scene::INodePtr EclassModelNode::clone() const
 {
 	EclassModelNodePtr node(new EclassModelNode(*this));

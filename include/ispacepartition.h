@@ -48,10 +48,10 @@ public:
 	virtual ~ISpacePartitionSystem() {}
 
 	// Links this node into the SP tree. Returns the node it ends up being associated with
-	virtual ISPNodePtr link(const scene::INodePtr& sceneNode) = 0;
+	virtual void link(const scene::INodePtr& sceneNode) = 0;
 
-	// Unlink this node from the SP tree
-	virtual void unLink(const scene::INodePtr& sceneNode) = 0;
+	// Unlink this node from the SP tree, returns true if found
+	virtual bool unLink(const scene::INodePtr& sceneNode) = 0;
 
 	// Returns the root node of this SP tree
 	virtual ISPNodePtr getRoot() const = 0;

@@ -113,8 +113,11 @@ void SceneGraph::removeBoundsChangedCallback(SignalHandlerId id) {
 
 void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 {
-	_spacePartition->unLink(node);
-	_spacePartition->link(node);
+	if (_spacePartition->unLink(node))
+	{
+		// unlink returned true, so the given node was linked before => re-link it
+		_spacePartition->link(node);
+	}
 }
 
 void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
