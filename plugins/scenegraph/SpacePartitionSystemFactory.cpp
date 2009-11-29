@@ -2,7 +2,6 @@
 
 #include "irender.h"
 #include "itextstream.h"
-#include "modulesystem/StaticModule.h"
 
 #include "Octree.h"
 
@@ -36,8 +35,5 @@ ISpacePartitionSystemPtr SpacePartitionSystemFactory::create()
 {
 	return ISpacePartitionSystemPtr(new Octree);
 }
-
-// Define a static SpacePartitionSystemFactory module 
-module::StaticModule<SpacePartitionSystemFactory> staticSpacePartitionSystemFactoryModule;
 
 } // namespace scene

@@ -17,6 +17,7 @@ public:
 
 	virtual ISpacePartitionSystemPtr create();
 };
+typedef boost::shared_ptr<SpacePartitionSystemFactory> SpacePartitionSystemFactoryPtr;
 
 } // namespace scene
 
