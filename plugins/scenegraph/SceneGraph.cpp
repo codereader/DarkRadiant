@@ -130,8 +130,8 @@ void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
 
 	foreachNodeInVolume_r(*root, volume, walker);
 
-	globalOutputStream() << "SceneGraph::foreachNodeInVolume: visited: " << _visitedSPNodes << 
-		", skipped: " << _skippedSPNodes << std::endl;
+	//globalOutputStream() << "SceneGraph::foreachNodeInVolume: visited: " << _visitedSPNodes << 
+	//	", skipped: " << _skippedSPNodes << std::endl;
 }
 
 bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker)
