@@ -1,5 +1,7 @@
 #include "SelectionTest.h"
 
+#include "igroupnode.h"
+#include "entitylib.h"
 #include "renderer.h"
 
 inline SelectionIntersection select_point_from_clipped(Vector4& clipped) {
@@ -205,21 +207,42 @@ void SelectionTestWalker::printNodeName(const scene::INodePtr& node)
 	globalOutputStream() << std::endl;
 }
 
+scene::INodePtr SelectionTestWalker::getEntityNode(const scene::INodePtr& node)
+{
+	return (Node_isEntity(node)) ? node : scene::INodePtr();
+}
+
+scene::INodePtr SelectionTestWalker::getParentGroupEntity(const scene::INodePtr& node)
+{
+	scene::INodePtr parent = node->getParent();
+
+	return (Node_getGroupNode(parent) != NULL) ? parent : scene::INodePtr();
+}
+
+bool SelectionTestWalker::entityIsWorldspawn(const scene::INodePtr& node)
+{
+	return node_is_worldspawn(node);
+}
+
 bool EntitySelector::visit(const scene::INodePtr& node)
 {
-	// Skip non-entities
-	Entity* entity = Node_getEntity(node);
+	// Check directly for an entity
+	scene::INodePtr entity = getEntityNode(node);
 
-	if (entity == NULL || entity->getKeyValue("classname") == "worldspawn") // don't select worldspawn
+	if (entity == NULL)
 	{
-		return true; // continue walking
+		// Second chance check: is the parent a group node?
+		entity = getParentGroupEntity(node);
 	}
+
+	// Skip worldspawn in any case
+	if (entity == NULL || entityIsWorldspawn(entity)) return true;
 
 	// Comment out to hide debugging output
 	//printNodeName(node);
 
-	// Check if the node is selectable
-	SelectablePtr selectable = Node_getSelectable(node);
+	// The entity is the selectable, but the actual node will be tested for selection
+	SelectablePtr selectable = Node_getSelectable(entity);
 
     if (selectable == NULL)
 	{
@@ -241,7 +264,7 @@ bool EntitySelector::visit(const scene::INodePtr& node)
 	return true;
 }
 
-bool testselect_entity_visible::pre(const scene::INodePtr& node) {
+/*bool testselect_entity_visible::pre(const scene::INodePtr& node) {
     SelectablePtr selectable = Node_getSelectable(node);
     if(selectable != NULL && Node_isEntity(node)) {
     	_selector.pushSelectable(*selectable);
@@ -266,7 +289,7 @@ void testselect_entity_visible::post(const scene::INodePtr& node) {
     		_selector.popSelectable();
     	}
     }
-}
+}*/
 
 bool testselect_primitive_visible::pre(const scene::INodePtr& node) {
     SelectablePtr selectable = Node_getSelectable(node);
