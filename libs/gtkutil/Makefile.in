@@ -74,7 +74,7 @@ am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
 	WindowPosition.lo idledraw.lo PersistentTransientWindow.lo \
 	dialog.lo glfont.lo MenuItemAccelerator.lo cursor.lo \
 	DeferredAdjustment.lo PopupMenu.lo widget.lo \
-	RegistryConnector.lo xorrectangle.lo PathEntry.lo TreeModel.lo \
+	RegistryConnector.lo PathEntry.lo TreeModel.lo \
 	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
 	window.lo clipboard.lo FileChooser.lo pointer.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
@@ -281,7 +281,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						menu/PopupMenu.cpp \
 						widget.cpp \
 						RegistryConnector.cpp \
-						xorrectangle.cpp \
 						PathEntry.cpp \
 						TreeModel.cpp \
 						ModalProgressDialog.cpp \
@@ -393,7 +392,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pointer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/widget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/window.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xorrectangle.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
