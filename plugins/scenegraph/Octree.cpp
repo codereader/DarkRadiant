@@ -1,7 +1,6 @@
 #include "Octree.h"
 
 #include "inode.h"
-#include "iregistry.h"
 
 #include "OctreeNode.h"
 
@@ -11,13 +10,15 @@ namespace scene
 namespace
 {
 	const double START_SIZE = 512.0;
+	const double MAX_WORLD_COORD = 65536;
 
 	const AABB START_AABB(Vector3(0,0,0), Vector3(START_SIZE, START_SIZE, START_SIZE));
 }
 
-Octree::Octree() :
-	_root(new OctreeNode(*this, START_AABB))
-{}
+Octree::Octree()
+{
+	_root = OctreeNodePtr(new OctreeNode(*this, START_AABB));
+}
 
 Octree::~Octree()
 {
@@ -48,7 +49,7 @@ void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
 		newBounds.extents *= 2;
 
 		// Don't go beyond the map limits
-		if (newBounds.extents.x() > GlobalRegistry().getFloat("game/defaults/maxWorldCoord"))
+		if (newBounds.extents.x() > MAX_WORLD_COORD)
 		{
 			break;
 		}
