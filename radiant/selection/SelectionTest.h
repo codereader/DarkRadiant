@@ -92,23 +92,20 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
-/** greebo: Tests for any primitives/entities matching the selectiontest
- */
-class testselect_any_visible : 
-	public scene::NodeVisitor 
+class AnySelector :
+	public SelectionTestWalker
 {
+private:
 	Selector& _selector;
 	SelectionTest& _test;
-	bool _selectChildPrimitives;
+
 public:
-	testselect_any_visible(Selector& selector, SelectionTest& test, bool selectChildPrimitives) : 
-		_selector(selector), 
-		_test(test),
-		_selectChildPrimitives(selectChildPrimitives)
+	AnySelector(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
 	{}
 
-	bool pre(const scene::INodePtr& node);  
-	void post(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node);
 };
 
 class testselect_component_visible : public scene::NodeVisitor {

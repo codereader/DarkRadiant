@@ -129,9 +129,8 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 			if (view.fill() || !GlobalXYWnd().higherEntitySelectionPriority())
 			{
 				// Test for any visible elements (primitives, entities), but don't select child primitives
-				testselect_any_visible anyVisible(selector, test, false);
-
-				Scene_forEachVisible(GlobalSceneGraph(), view, anyVisible); 
+				AnySelector anyTester(selector, test);
+				GlobalSceneGraph().foreachNodeInVolume(view, anyTester);
 			}
 			else
 			{
