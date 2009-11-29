@@ -116,10 +116,8 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 			EntitySelector entityTester(selector, test);
 			GlobalSceneGraph().foreachNodeInVolume(view, entityTester);
 
-			//testselect_entity_visible entityTest(selector, test);
-			//Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
-
-			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+			{
 				targetList.push_back(i->second);
 			}
 		}
@@ -143,11 +141,9 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 				EntitySelector entityTester(selector, test);
 				GlobalSceneGraph().foreachNodeInVolume(view, entityTester);
 
-				//testselect_entity_visible entityTest(selector, test);
-				//Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
-
-				// Now, retrieve all the selectable primitives (and don't select child primitives (false)) 
-				Scene_TestSelect_Primitive(sel2, test, view, false);
+				// Now retrieve all the selectable primitives 
+				PrimitiveSelector primitiveTester(sel2, test);
+				GlobalSceneGraph().foreachNodeInVolume(view, primitiveTester);
 			}
 		
 			// Add the first selection crop to the target vector

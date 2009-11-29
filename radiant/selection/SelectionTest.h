@@ -76,33 +76,20 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
-/*class testselect_entity_visible : public scene::NodeVisitor {
-  Selector& _selector;
-  SelectionTest& _test;
-public:
-  testselect_entity_visible(Selector& selector, SelectionTest& test)
-    : _selector(selector), _test(test) {}
+class PrimitiveSelector :
+	public SelectionTestWalker
+{
+private:
+	Selector& _selector;
+	SelectionTest& _test;
 
-  bool pre(const scene::INodePtr& node);  
-  void post(const scene::INodePtr& node);
-};*/
-
-class testselect_primitive_visible : public scene::NodeVisitor {
-  Selector& _selector;
-  SelectionTest& _test;
-	bool _selectChildPrimitives;
 public:
-	/** greebo: Set the selectChildPrimitives bool to TRUE if child primitives of entities like func_static
-	 * should be selected as well. This should be set to TRUE for Manipulator checks.
-	 */
-	testselect_primitive_visible(Selector& selector, SelectionTest& test, bool selectChildPrimitives) : 
-		_selector(selector), 
-		_test(test),
-		_selectChildPrimitives(selectChildPrimitives) 
+	PrimitiveSelector(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
 	{}
 
-  bool pre(const scene::INodePtr& node);
-  void post(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node);
 };
 
 /** greebo: Tests for any primitives/entities matching the selectiontest
@@ -148,7 +135,6 @@ public:
 
 // --------------------------------------------------------------------------------
 
-void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume, bool selectChildPrimitives = true);
 void Scene_TestSelect_Component(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
 void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
 
