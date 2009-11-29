@@ -3,25 +3,31 @@
 
 class RenderHighlighted
 {
-  RenderableCollector& m_renderer;
-  const VolumeTest& m_volume;
+private:
+	// The collector which is sorting our renderables
+	RenderableCollector& _collector;
+
+	// The view we're using for culling
+	const VolumeTest& _volume;
+
 public:
-  RenderHighlighted(RenderableCollector& collector, const VolumeTest& volume)
-    : m_renderer(collector), m_volume(volume)
-  {
-  }
+	RenderHighlighted(RenderableCollector& collector, const VolumeTest& volume) : 
+		_collector(collector), 
+		_volume(volume)
+	{}
   
 	// Render function, instructs the Renderable object to submit its geometry
 	// to the contained RenderableCollector.
-	void render(const Renderable& renderable) const {
-	    switch(m_renderer.getStyle())
+	void render(const Renderable& renderable) const
+	{
+	    switch(_collector.getStyle())
 	    {
 	    case RenderableCollector::eFullMaterials:
-	      renderable.renderSolid(m_renderer, m_volume);
-	      break;
+			renderable.renderSolid(_collector, _volume);
+			break;
 	    case RenderableCollector::eWireframeOnly:
-	      renderable.renderWireframe(m_renderer, m_volume);
-	      break;
+			renderable.renderWireframe(_collector, _volume);
+			break;
 	    }      
 	}
   
@@ -35,34 +41,36 @@ public:
 	bool pre(const scene::INodePtr& node, 
 			 VolumeIntersectionValue parentVisible) const
 	{
-		m_renderer.PushState();
+		_collector.PushState();
 
-	    if (Cullable_testVisible(node, m_volume, parentVisible) != VOLUME_OUTSIDE)
+		if (Cullable_testVisible(node, _volume, parentVisible) != VOLUME_OUTSIDE)
 	    {
-	      RenderablePtr renderable = Node_getRenderable(node);
-	      if(renderable)
-	      {
-	        renderable->viewChanged();
-	      }
-	
-	      if (Node_isSelected(node))
-	      {
-	        if(GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-	        {
-	          m_renderer.Highlight(RenderableCollector::eFace);
-	        }
-	        else if(renderable)
-	        {
-	          renderable->renderComponents(m_renderer, m_volume);
-	        }
-	        m_renderer.Highlight(RenderableCollector::ePrimitive);
-	      }
-	        
-	      if(renderable)
-	      {
-	        render(*renderable);    
-	      }
-	    }
+			RenderablePtr renderable = Node_getRenderable(node);
+
+			if (renderable != NULL)
+			{
+				renderable->viewChanged();
+			}
+
+			if (Node_isSelected(node))
+			{
+				if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
+				{
+					_collector.Highlight(RenderableCollector::eFace);
+				}
+				else if (renderable != NULL)
+				{
+					renderable->renderComponents(_collector, _volume);
+				}
+
+				_collector.Highlight(RenderableCollector::ePrimitive);
+			}
+
+			if (renderable != NULL)
+			{
+				render(*renderable);    
+			}
+		}
 
 		return true;
 	}
@@ -71,7 +79,7 @@ public:
 	void post(const scene::INodePtr& node, 
 			  VolumeIntersectionValue parentVisible) const
 	{
-    	m_renderer.PopState();
+		_collector.PopState();
   	}
 };
 
