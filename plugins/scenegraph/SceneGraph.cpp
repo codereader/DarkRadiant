@@ -174,6 +174,11 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 	return true; // continue traversal
 }
 
+ISpacePartitionSystemPtr SceneGraph::getSpacePartition()
+{
+	return _spacePartition;
+}
+
 // RegisterableModule implementation
 const std::string& SceneGraph::getName() const {
 	static std::string _name(MODULE_SCENEGRAPH);

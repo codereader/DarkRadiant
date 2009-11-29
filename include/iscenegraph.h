@@ -44,6 +44,10 @@ class VolumeTest;
 
 namespace scene
 {
+
+class ISpacePartitionSystem;
+typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
+
 /** 
 * A scene-graph - a Directed Acyclic Graph (DAG).
 *
@@ -114,6 +118,9 @@ public:
 	};
 
 	virtual void foreachNodeInVolume(const VolumeTest& volume, Walker& walker) = 0;
+
+	// Returns the associated spacepartition
+	virtual ISpacePartitionSystemPtr getSpacePartition() = 0;
 };
 
   class Cloneable

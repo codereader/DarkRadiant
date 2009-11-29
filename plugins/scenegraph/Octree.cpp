@@ -16,16 +16,11 @@ namespace
 }
 
 Octree::Octree() :
-	_root(new OctreeNode(*this, START_AABB)),
-	_shader(GlobalRenderSystem().capture("[1 0 0]"))
-{
-	GlobalRenderSystem().attachRenderable(*this);
-}
+	_root(new OctreeNode(*this, START_AABB))
+{}
 
 Octree::~Octree()
 {
-	GlobalRenderSystem().detachRenderable(*this);
-
 	_nodeMapping.clear();
 	_root = OctreeNodePtr();
 }
@@ -125,25 +120,6 @@ bool Octree::unLink(const scene::INodePtr& sceneNode)
 ISPNodePtr Octree::getRoot() const
 {
 	return _root;
-}
-
-void Octree::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
-{
-	collector.SetState(_shader, RenderableCollector::eFullMaterials);
-
-	collector.addRenderable(*this, Matrix4::getIdentity());
-}
-
-void Octree::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
-{
-	collector.SetState(_shader, RenderableCollector::eWireframeOnly);
-
-	collector.addRenderable(*this, Matrix4::getIdentity());
-}
-
-void Octree::render(const RenderInfo& info) const
-{
-	_root->render(info);
 }
 
 void Octree::notifyLink(const scene::INodePtr& sceneNode, OctreeNode* node)
