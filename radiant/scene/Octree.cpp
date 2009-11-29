@@ -25,6 +25,9 @@ Octree::Octree() :
 Octree::~Octree()
 {
 	GlobalRenderSystem().detachRenderable(*this);
+
+	_nodeMapping.clear();
+	_root = OctreeNodePtr();
 }
 
 void Octree::link(const scene::INodePtr& sceneNode)
@@ -59,11 +62,20 @@ void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
 		OctreeNodePtr newRootPtr(new OctreeNode(*this, newBounds));
 
 		OctreeNode& newRoot = *newRootPtr;
-		newRoot.subdivide();
-
 		OctreeNode& oldRoot = *_root;
 
-		if (!_root->isLeaf())
+		// Re-link the members of the old root node
+		// Note: this might be inaccurate, as some members of the old root could be 
+		// re-linked to some children of the new root. But we don't want to call
+		// link again, as this can lead to re-entering of the evaluateBounds() function
+		// in scene::Node in some cases.
+		oldRoot.relocateMembersTo(newRoot);
+
+		// Now, subdivide the new root node, after we moved the members
+		newRoot.subdivide();
+		
+		// Check if the old root had children
+		if (!oldRoot.isLeaf())
 		{
 			// Move the children of the old root into the new root
 			// Each octant of the old root will be added to one child of the new root
@@ -81,7 +93,8 @@ void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
 
 						if (newNode.getBounds() == oldRoot[old].getBounds())
 						{
-							oldRoot[old].relocateContentsTo(newNode);
+							oldRoot[old].relocateMembersTo(newNode);
+							oldRoot[old].relocateChildrenTo(newNode);
 							break;
 						}
 					}
@@ -146,9 +159,20 @@ void Octree::notifyUnlink(const scene::INodePtr& sceneNode, OctreeNode* node)
 	// Remove the node from the lookup table, if found
 	NodeMapping::iterator found = _nodeMapping.find(sceneNode);
 
-	if (found != _nodeMapping.end())
+	assert(found != _nodeMapping.end());
+	
+	_nodeMapping.erase(found);
+}
+
+void Octree::notifyErase(OctreeNode* node)
+{
+	// Remove the node from the lookup table, if found
+	for (NodeMapping::iterator i = _nodeMapping.begin(); i != _nodeMapping.end(); ++i)
 	{
-		_nodeMapping.erase(found);
+		if (i->second == node)
+		{
+			int i = 6;
+		}
 	}
 }
 

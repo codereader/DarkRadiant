@@ -61,6 +61,13 @@ public:
 		_members.reserve(SUBDIVISION_THRESHOLD);
 	}
 
+#ifdef _DEBUG
+	~OctreeNode()
+	{
+		_owner.notifyErase(this);
+	}
+#endif
+
 	// Get the parent node (can be NULL for the root node)
 	ISPNodePtr getParent() const 
 	{
@@ -104,7 +111,6 @@ public:
 		Vector3 y(0, childExtents.y(), 0);
 		Vector3 z(0, 0, childExtents.z());
 
-
 		Vector3 baseUpper = _bounds.origin + z;
 		Vector3 baseLower = _bounds.origin - z;
 
@@ -130,13 +136,9 @@ public:
 		return static_cast<OctreeNode&>(*_children[index]);
 	}
 
-	// This method moves all the contents (members and children) of this node to the "other" target node
-	// If this node has children, the target node must be a leaf (this method won't override existing children)
-	// Members will be moved to the end of the target's memberlist.
-	void relocateContentsTo(OctreeNode& target)
+	// This method moves all the contents (members) of this node to the "other" target node
+	void relocateMembersTo(OctreeNode& target)
 	{
-		assert(isLeaf() || target.isLeaf());
-
 		// Copy all members from here to the target
 		target._members.insert(target._members.end(), _members.begin(), _members.end());
 
@@ -149,14 +151,25 @@ public:
 
 		// Clear our own member list
 		_members.clear();
+	}
+
+	// This method moves all the children of this node to the "other" target node
+	// If this node has children, the target node must be a leaf (this method won't override existing children)
+	void relocateChildrenTo(OctreeNode& target)
+	{
+		assert(isLeaf() || target.isLeaf());
 
 		// Just overwrite the target's child list, the assertion above makes sure nothing is overwritten
 		target._children.swap(_children);
 		_children.clear();
+
+		target.reparentChildren();
 	}
 
 	void addMember(const scene::INodePtr& sceneNode)
 	{
+		assert(std::find(_members.begin(), _members.end(), sceneNode) == _members.end());
+
 		// Add to the internal list
 		_members.push_back(sceneNode);
 
@@ -226,13 +239,12 @@ public:
 			{
 				// Remove from the members list
 				_members.erase(i);
-
-				// Let the Octree know about this
-				_owner.notifyUnlink(sceneNode, this);
-
 				break;
 			}
 		}
+
+		// Let the Octree know about this, regardless whether we found it or not (the Octree relies on this)
+		_owner.notifyUnlink(sceneNode, this);
 	}
 
 	void render(const RenderInfo& info) const
@@ -287,6 +299,18 @@ public:
 		for (std::size_t i = 0; i < _children.size(); ++i)
 		{
 			static_cast<OctreeNode&>(*_children[i]).render(info);
+		}
+	}
+
+private:
+
+	void reparentChildren()
+	{
+		ISPNodePtr self = shared_from_this();
+
+		for (std::size_t i = 0; i < _children.size(); ++i)
+		{
+			static_cast<OctreeNode&>(*_children[i])._parent = self;
 		}
 	}
 };
