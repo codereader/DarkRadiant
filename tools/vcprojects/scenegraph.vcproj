@@ -434,14 +434,6 @@
 				RelativePath="..\..\plugins\scenegraph\SceneGraph.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\plugins\scenegraph\SpacePartitionSystemFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\scenegraph\SpacePartitionSystemFactory.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\scenegraph\scenegraph.def"

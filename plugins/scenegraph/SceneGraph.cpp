@@ -5,7 +5,7 @@
 #include "scenelib.h"
 
 #include "cullable.h"
-#include "SpacePartitionSystemFactory.h"
+#include "Octree.h"
 
 namespace scene
 {
@@ -58,7 +58,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	_root = newRoot;
 
 	// Refresh the space partition class
-	_spacePartition = GlobalSpacePartitionSystemFactory().create();
+	_spacePartition = ISpacePartitionSystemPtr(new Octree);
 
 	if (_root != NULL)
 	{
@@ -181,13 +181,7 @@ const std::string& SceneGraph::getName() const {
 }
 
 const StringSet& SceneGraph::getDependencies() const {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_SPACE_PARTITION_FACTORY);
-	}
-
+	static StringSet _dependencies; // no deps
 	return _dependencies;
 }
 
@@ -195,7 +189,7 @@ void SceneGraph::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "SceneGraph::initialiseModule called" << std::endl;
 
-	_spacePartition = GlobalSpacePartitionSystemFactory().create();
+	_spacePartition = ISpacePartitionSystemPtr(new Octree);
 }
 
 void SceneGraph::shutdownModule()
@@ -208,7 +202,6 @@ void SceneGraph::shutdownModule()
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(scene::SceneGraphPtr(new scene::SceneGraph));
-	registry.registerModule(scene::SpacePartitionSystemFactoryPtr(new scene::SpacePartitionSystemFactory));
 	
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
