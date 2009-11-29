@@ -2,6 +2,30 @@
 #define FOREACHVISIBLE_H_
 
 #include <inode.h>
+#include "iscenegraph.h"
+
+template<typename Walker_>
+class ForEachVisibleWalker :
+	public scene::Graph::Walker
+{
+private:
+	// Contained walker that will be called for each visible instance
+	const Walker_& m_walker;
+
+public:
+	// Constructor
+	ForEachVisibleWalker(const Walker_& walker) : 
+		m_walker(walker)
+	{}
+
+	bool visit(const scene::INodePtr& node)
+	{
+		m_walker.pre(node, VOLUME_PARTIAL);
+		m_walker.post(node, VOLUME_PARTIAL);
+
+		return true;
+	}
+};
 
 /**
  * Scenegraph walker class which applies the given walker object to objects
