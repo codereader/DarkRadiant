@@ -114,8 +114,6 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 		{
 			// Instantiate a walker class which is specialised for selecting entities
 			EntitySelector entityTester(selector, test);
-
-			// Traverse the visible nodes
 			GlobalSceneGraph().foreachNodeInVolume(view, entityTester);
 
 			//testselect_entity_visible entityTest(selector, test);
@@ -140,10 +138,14 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 			else
 			{
 				// We have an orthoview, here, select entities first
-				// First, obtain all the selectable entities
-				testselect_entity_visible entityTest(selector, test);
 
-				Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
+				// First, obtain all the selectable entities
+				EntitySelector entityTester(selector, test);
+				GlobalSceneGraph().foreachNodeInVolume(view, entityTester);
+
+				//testselect_entity_visible entityTest(selector, test);
+				//Scene_forEachVisible(GlobalSceneGraph(), view, entityTest);
+
 				// Now, retrieve all the selectable primitives (and don't select child primitives (false)) 
 				Scene_TestSelect_Primitive(sel2, test, view, false);
 			}

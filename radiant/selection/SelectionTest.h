@@ -49,6 +49,15 @@ class SelectionTestWalker :
 {
 protected:
 	void printNodeName(const scene::INodePtr& node);
+
+	// Returns non-NULL if the given node is an Entity
+	scene::INodePtr getEntityNode(const scene::INodePtr& node);
+
+	// Returns non-NULL if the given node's parent is a GroupNode
+	scene::INodePtr getParentGroupEntity(const scene::INodePtr& node);
+
+	// Returns true if the node is worldspawn
+	bool entityIsWorldspawn(const scene::INodePtr& node);
 };
 
 class EntitySelector :
@@ -67,7 +76,7 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
-class testselect_entity_visible : public scene::NodeVisitor {
+/*class testselect_entity_visible : public scene::NodeVisitor {
   Selector& _selector;
   SelectionTest& _test;
 public:
@@ -76,7 +85,7 @@ public:
 
   bool pre(const scene::INodePtr& node);  
   void post(const scene::INodePtr& node);
-};
+};*/
 
 class testselect_primitive_visible : public scene::NodeVisitor {
   Selector& _selector;
