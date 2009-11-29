@@ -164,16 +164,15 @@ void Octree::notifyUnlink(const scene::INodePtr& sceneNode, OctreeNode* node)
 	_nodeMapping.erase(found);
 }
 
+#ifdef _DEBUG
 void Octree::notifyErase(OctreeNode* node)
 {
 	// Remove the node from the lookup table, if found
 	for (NodeMapping::iterator i = _nodeMapping.begin(); i != _nodeMapping.end(); ++i)
 	{
-		if (i->second == node)
-		{
-			int i = 6;
-		}
+		assert(i->second != node);
 	}
 }
+#endif
 
 } // namespace scene

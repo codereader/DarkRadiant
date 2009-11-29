@@ -58,29 +58,6 @@ public:
 };
 typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
 
-class ISpacePartitionSystemFactory :
-	public RegisterableModule
-{
-public:
-	virtual ~ISpacePartitionSystemFactory() {}
-
-	// Creates a new space partition system for use in a scene
-	virtual ISpacePartitionSystemPtr create() = 0;
-};
-
 } // namespace scene
-
-const std::string MODULE_SPACE_PARTITION_FACTORY("Space Partition System Factory");
-
-inline scene::ISpacePartitionSystemFactory& GlobalSpacePartitionSystemFactory()
-{
-	// Cache the reference locally
-	static scene::ISpacePartitionSystemFactory& _factory(
-		*boost::static_pointer_cast<scene::ISpacePartitionSystemFactory>(
-			module::GlobalModuleRegistry().getModule(MODULE_SPACE_PARTITION_FACTORY)
-		)
-	);
-	return _factory;
-}
 
 #endif /* _ISPACE_PARTITION_H_ */

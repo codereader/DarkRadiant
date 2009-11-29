@@ -50,7 +50,9 @@ public:
 	void notifyLink(const scene::INodePtr& sceneNode, OctreeNode* node);
 	void notifyUnlink(const scene::INodePtr& sceneNode, OctreeNode* node);
 
+#ifdef _DEBUG
 	void notifyErase(OctreeNode* node);
+#endif
 
 private:
 	void ensureRootSize(const scene::INodePtr& sceneNode);

@@ -249,7 +249,7 @@ public:
 
 	void render(const RenderInfo& info) const
 	{
-		float numItems = _members.size() > 2 ? 1 : (_members.size() > 0 ? 0.6 : 0);
+		float numItems = _members.size() > 2 ? 1 : (_members.size() > 0 ? 0.6f : 0);
 		glColor3f(numItems, numItems, numItems);
 
 		AABB rb(_bounds);
