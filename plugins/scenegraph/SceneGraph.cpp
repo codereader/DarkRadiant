@@ -5,6 +5,7 @@
 #include "scenelib.h"
 
 #include "cullable.h"
+#include "SpacePartitionSystemFactory.h"
 
 namespace scene
 {
@@ -204,8 +205,10 @@ void SceneGraph::shutdownModule()
 
 } // namespace scene
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
 	registry.registerModule(scene::SceneGraphPtr(new scene::SceneGraph));
+	registry.registerModule(scene::SpacePartitionSystemFactoryPtr(new scene::SpacePartitionSystemFactory));
 	
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

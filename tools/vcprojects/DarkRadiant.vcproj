@@ -2580,30 +2580,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="scene"
-				>
-				<File
-					RelativePath="..\..\radiant\scene\Octree.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\scene\Octree.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\scene\OctreeNode.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\scene\SpacePartitionSystemFactory.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\scene\SpacePartitionSystemFactory.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\radiant\darkradiant.rc"
