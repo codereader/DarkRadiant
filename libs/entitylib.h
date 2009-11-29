@@ -419,7 +419,7 @@ inline Entity* Scene_FindEntityByClass(const std::string& className) {
 
 /* Check if a node is the worldspawn.
  */
-inline bool node_is_worldspawn(scene::INodePtr node) {
+inline bool node_is_worldspawn(const scene::INodePtr& node) {
 	Entity* entity = Node_getEntity(node);
 	return entity != 0 && entity->getKeyValue("classname") == "worldspawn";
 }
