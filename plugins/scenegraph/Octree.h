@@ -2,8 +2,6 @@
 #define _OCTREE_H_
 
 #include "ispacepartition.h"
-#include "irender.h"
-#include "irenderable.h"
 #include <map>
 
 namespace scene 
@@ -13,15 +11,11 @@ class OctreeNode;
 typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
 
 class Octree :
-	public ISpacePartitionSystem,
-	public Renderable,
-	public OpenGLRenderable
+	public ISpacePartitionSystem
 {
 private:
 	// The root node of this SP
 	OctreeNodePtr _root;
-
-	ShaderPtr _shader;
 
 	// Maps scene nodes against octree nodes, for fast lookup during unlink
 	typedef std::map<INodePtr, OctreeNode*> NodeMapping;
@@ -40,11 +34,6 @@ public:
 
 	// Returns the root node of this SP tree
 	ISPNodePtr getRoot() const;
-
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-
-	void render(const RenderInfo& info) const;
 
 	// Callback used by the OctreeNodes to let the tree update its caching structures
 	void notifyLink(const scene::INodePtr& sceneNode, OctreeNode* node);

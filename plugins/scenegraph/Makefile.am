@@ -6,6 +6,5 @@ modules_LTLIBRARIES = scenegraph.la
 scenegraph_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la
 scenegraph_la_LDFLAGS = -module -avoid-version
 scenegraph_la_SOURCES = SceneGraph.cpp \
-						SpacePartitionSystemFactory.cpp \
 						Octree.cpp
 
