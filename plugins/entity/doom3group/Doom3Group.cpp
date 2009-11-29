@@ -133,6 +133,14 @@ void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTes
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best)
 {
+	// Pass the call down to the model node, if applicable
+	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(m_model.getNode());
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(selector, test);
+    }
+
 	if (!m_isModel)
 	{
 		// Non-models need to translate the curve points before testing

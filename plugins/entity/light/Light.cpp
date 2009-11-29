@@ -569,7 +569,16 @@ void Light::renderWireframe(RenderableCollector& collector,
 	}
 }
 
-void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {
+void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
+{
+	// Pass the call down to the model node, if applicable
+	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(_modelKey.getNode());
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(selector, test);
+    }
+
 	test.BeginMesh(localToWorld);
 
 	SelectionIntersection best;
