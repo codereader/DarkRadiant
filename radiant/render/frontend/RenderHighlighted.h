@@ -43,6 +43,13 @@ public:
 	{
 		_collector.PushState();
 
+		Entity* entity = Node_getEntity(node->getParent());
+
+		if (entity != NULL)
+		{
+			_collector.SetState(entity->getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+		}
+
 		if (Cullable_testVisible(node, _volume, parentVisible) != VOLUME_OUTSIDE)
 	    {
 			RenderablePtr renderable = Node_getRenderable(node);
