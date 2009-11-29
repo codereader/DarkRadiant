@@ -136,12 +136,25 @@ void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
 
 bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker)
 {
+	_visitedSPNodes++;
+
+	// Visit all members
+	const ISPNode::MemberList& members = node.getMembers();
+
+	for (ISPNode::MemberList::const_iterator m = members.begin(); m != members.end(); ++m)
+	{
+		// We're done, as soon as the walker returns FALSE
+		if (!walker.visit(*m))
+		{
+			return false;
+		}
+	}
+
+	// Now consider the children
 	const ISPNode::NodeList& children = node.getChildNodes();
 
 	for (ISPNode::NodeList::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		_visitedSPNodes++;
-
 		if (volume.TestAABB((*i)->getBounds()) == VOLUME_OUTSIDE) 
 		{
 			// Skip this node, not visible
@@ -149,18 +162,6 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 			continue;
 		}
 	
-		// This node has at least partial intersection, visit all members
-		const ISPNode::MemberList& members = (*i)->getMembers();
-
-		for (ISPNode::MemberList::const_iterator m = members.begin(); m != members.end(); ++m)
-		{
-			// We're done, as soon as the walker returns FALSE
-			if (!walker.visit(*m))
-			{
-				return false;
-			}
-		}
-
 		// Traverse all the children too, enter recursion
 		if (!foreachNodeInVolume_r(**i, volume, walker))
 		{
