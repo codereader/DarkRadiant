@@ -79,6 +79,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-OpenGLShaderPass.$(OBJEXT) \
 	darkradiant-OpenGLModule.$(OBJEXT) \
 	darkradiant-OpenGLRenderSystem.$(OBJEXT) \
+	darkradiant-SpacePartitionRenderer.$(OBJEXT) \
 	darkradiant-EntityClassChooser.$(OBJEXT) \
 	darkradiant-EntityClassTreePopulator.$(OBJEXT) \
 	darkradiant-TextureBrowser.$(OBJEXT) \
@@ -447,6 +448,7 @@ darkradiant_SOURCES = main.cpp \
 					  render/backend/OpenGLShaderPass.cpp \
 					  render/OpenGLModule.cpp \
 					  render/OpenGLRenderSystem.cpp \
+					  render/debug/SpacePartitionRenderer.cpp \
 					  ui/entitychooser/EntityClassChooser.cpp \
 					  ui/entitychooser/EntityClassTreePopulator.cpp \
 					  ui/texturebrowser/TextureBrowser.cpp \
@@ -844,6 +846,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SoundChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SoundPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SoundShaderPreview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SpacePartitionRenderer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Splash.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SplitPaneLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-StartupMapLoader.Po@am__quote@
@@ -1385,6 +1388,20 @@ darkradiant-OpenGLRenderSystem.obj: render/OpenGLRenderSystem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/OpenGLRenderSystem.cpp' object='darkradiant-OpenGLRenderSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLRenderSystem.obj `if test -f 'render/OpenGLRenderSystem.cpp'; then $(CYGPATH_W) 'render/OpenGLRenderSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/render/OpenGLRenderSystem.cpp'; fi`
+
+darkradiant-SpacePartitionRenderer.o: render/debug/SpacePartitionRenderer.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SpacePartitionRenderer.o -MD -MP -MF $(DEPDIR)/darkradiant-SpacePartitionRenderer.Tpo -c -o darkradiant-SpacePartitionRenderer.o `test -f 'render/debug/SpacePartitionRenderer.cpp' || echo '$(srcdir)/'`render/debug/SpacePartitionRenderer.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SpacePartitionRenderer.Tpo $(DEPDIR)/darkradiant-SpacePartitionRenderer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/debug/SpacePartitionRenderer.cpp' object='darkradiant-SpacePartitionRenderer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SpacePartitionRenderer.o `test -f 'render/debug/SpacePartitionRenderer.cpp' || echo '$(srcdir)/'`render/debug/SpacePartitionRenderer.cpp
+
+darkradiant-SpacePartitionRenderer.obj: render/debug/SpacePartitionRenderer.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SpacePartitionRenderer.obj -MD -MP -MF $(DEPDIR)/darkradiant-SpacePartitionRenderer.Tpo -c -o darkradiant-SpacePartitionRenderer.obj `if test -f 'render/debug/SpacePartitionRenderer.cpp'; then $(CYGPATH_W) 'render/debug/SpacePartitionRenderer.cpp'; else $(CYGPATH_W) '$(srcdir)/render/debug/SpacePartitionRenderer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SpacePartitionRenderer.Tpo $(DEPDIR)/darkradiant-SpacePartitionRenderer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/debug/SpacePartitionRenderer.cpp' object='darkradiant-SpacePartitionRenderer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SpacePartitionRenderer.obj `if test -f 'render/debug/SpacePartitionRenderer.cpp'; then $(CYGPATH_W) 'render/debug/SpacePartitionRenderer.cpp'; else $(CYGPATH_W) '$(srcdir)/render/debug/SpacePartitionRenderer.cpp'; fi`
 
 darkradiant-EntityClassChooser.o: ui/entitychooser/EntityClassChooser.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EntityClassChooser.o -MD -MP -MF $(DEPDIR)/darkradiant-EntityClassChooser.Tpo -c -o darkradiant-EntityClassChooser.o `test -f 'ui/entitychooser/EntityClassChooser.cpp' || echo '$(srcdir)/'`ui/entitychooser/EntityClassChooser.cpp
