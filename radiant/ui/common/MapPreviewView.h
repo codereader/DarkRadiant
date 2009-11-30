@@ -1,7 +1,6 @@
 #ifndef _MAP_PREVIEW_VIEW_H_
 #define _MAP_PREVIEW_VIEW_H_
 
-#include "cullable.h"
 #include "math/matrix.h"
 
 namespace ui {

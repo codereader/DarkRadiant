@@ -16,7 +16,6 @@ class MD5ModelNode :
 	public SelectionTestable,
 	public LightCullable,
 	public Renderable,
-	public Cullable,
 	public Bounded,
 	public SkinnedModel
 {
@@ -54,9 +53,6 @@ public:
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
-
-	// Cullable implementation
-	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	// Nameable implementation
 	virtual std::string name() const;

@@ -51,12 +51,6 @@ const AABB& GenericEntity::localAABB() const {
 	return m_aabb_local;
 }
 
-VolumeIntersectionValue GenericEntity::intersectVolume(
-	const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-	return volume.TestAABB(localAABB(), localToWorld);
-}
-
 void GenericEntity::renderArrow(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {

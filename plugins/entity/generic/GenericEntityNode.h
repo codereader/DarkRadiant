@@ -20,7 +20,6 @@ class GenericEntityNode :
 	public EntityNode,
 	public Snappable,
 	public SelectionTestable,
-	public Cullable,
 	public Bounded
 {
 	friend class GenericEntity;
@@ -42,10 +41,6 @@ public:
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
-
-	// Cullable implementation
-	virtual VolumeIntersectionValue intersectVolume(
-	    const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);

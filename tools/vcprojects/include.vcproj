@@ -104,10 +104,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\cullable.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\editable.h"
 			>
 		</File>
@@ -345,6 +341,10 @@
 		</File>
 		<File
 			RelativePath="..\..\include\iundo.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\ivolumetest.h"
 			>
 		</File>
 		<File

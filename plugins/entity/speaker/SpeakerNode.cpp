@@ -16,7 +16,6 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	SelectionTestable(other),
-	Cullable(other),
 	Bounded(other),
 	_speaker(other._speaker, 
 		*this, 
@@ -38,13 +37,6 @@ void SpeakerNode::snapto(float snap) {
 // Bounded implementation
 const AABB& SpeakerNode::localAABB() const {
 	return _speaker.localAABB();
-}
-
-// Cullable implementation
-VolumeIntersectionValue SpeakerNode::intersectVolume(
-    const VolumeTest& test, const Matrix4& localToWorld) const
-{
-	return _speaker.intersectVolume(test, localToWorld);
 }
 
 // EntityNode implementation

@@ -17,12 +17,6 @@ NullModel::~NullModel() {
 	_state = ShaderPtr();
 }
 
-VolumeIntersectionValue NullModel::intersectVolume(
-	const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-	return volume.TestAABB(_aabbLocal, localToWorld);
-}
-
 const AABB& NullModel::localAABB() const {
 	return _aabbLocal;
 }

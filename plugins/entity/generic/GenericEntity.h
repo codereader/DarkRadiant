@@ -2,7 +2,6 @@
 #define GENERICENTITY_H_
 
 #include "Bounded.h"
-#include "cullable.h"
 #include "editable.h"
 
 #include "math/Vector3.h"
@@ -22,7 +21,6 @@ namespace entity {
 class GenericEntityNode;
 
 class GenericEntity :
-	public Cullable,
 	public Bounded,
 	public Snappable
 {
@@ -71,8 +69,6 @@ public:
 	~GenericEntity();
 
 	const AABB& localAABB() const;
-
-	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void renderArrow(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;

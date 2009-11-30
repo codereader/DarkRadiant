@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_CULLABLE_H)
 #define INCLUDED_CULLABLE_H
 
-#include <boost/shared_ptr.hpp>
-
 #include "VolumeIntersectionValue.h"
 
 template<typename Element> class BasicVector3;
@@ -58,13 +56,5 @@ public:
   virtual const Matrix4& GetProjection() const = 0;
   virtual const Matrix4& GetModelview() const = 0;
 };
-
-class Cullable
-{
-public:
-    virtual ~Cullable() {}
-	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const = 0;
-};
-typedef boost::shared_ptr<Cullable> CullablePtr;
 
 #endif

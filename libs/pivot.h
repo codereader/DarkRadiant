@@ -220,7 +220,6 @@ inline void Pivot2World_viewplaneSpace(Matrix4& manip2world, const Matrix4& pivo
 
 
 #include "irenderable.h"
-#include "cullable.h"
 #include "render.h"
 
 const Colour4b g_colour_x(255, 0, 0, 255);

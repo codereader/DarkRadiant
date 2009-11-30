@@ -48,7 +48,6 @@ Brush::Brush(const Brush& other, const Callback& evaluateTransform, const Callba
 Brush::Brush(const Brush& other) :
 	IBrush(other),
 	Bounded(other),
-	Cullable(other),
 	Snappable(other),
 	Undoable(other),
 	FaceObserver(other),
@@ -198,10 +197,6 @@ void Brush::aabbChanged() {
 const AABB& Brush::localAABB() const {
 	evaluateBRep();
 	return m_aabb_local;
-}
-
-VolumeIntersectionValue Brush::intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const {
-	return test.TestAABB(m_aabb_local, localToWorld);
 }
 
 void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {

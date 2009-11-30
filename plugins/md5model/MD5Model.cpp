@@ -1,5 +1,6 @@
 #include "MD5Model.h"
 
+#include "ivolumetest.h"
 #include "ishaders.h"
 #include "texturelib.h"
 #include "ifilter.h"
@@ -38,19 +39,15 @@ void MD5Model::updateAABB() {
 	}
 }
 
-VolumeIntersectionValue MD5Model::intersectVolume(
-	const VolumeTest& test, const Matrix4& localToWorld) const
-{
-	return test.TestAABB(_aabb_local, localToWorld);
-}
-
 const AABB& MD5Model::localAABB() const {
 	return _aabb_local;
 }
 
 void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {
-	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
-		if ((*i)->intersectVolume(test.getVolume(), localToWorld) != VOLUME_OUTSIDE) {
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		if (test.getVolume().TestAABB((*i)->localAABB(), localToWorld) != VOLUME_OUTSIDE)
+		{
 			(*i)->testSelect(selector, test, localToWorld);
 		}
 	}

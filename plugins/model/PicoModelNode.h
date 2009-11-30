@@ -19,7 +19,6 @@ class PicoModelNode :
 	public SelectionTestable,
 	public LightCullable,
 	public Renderable,
-	public Cullable,
 	public Bounded,
 	public SkinnedModel
 {
@@ -72,10 +71,6 @@ public:
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);
-
-	// Cullable implementation
-	virtual VolumeIntersectionValue intersectVolume(
-		const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	virtual std::string name() const;
   

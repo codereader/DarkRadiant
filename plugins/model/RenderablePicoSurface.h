@@ -3,7 +3,6 @@
 
 #include "GLProgramAttributes.h"
 #include "picomodel.h"
-#include "cullable.h"
 #include "render.h"
 #include "math/aabb.h"
 
@@ -25,8 +24,7 @@ namespace model
  */
 
 class RenderablePicoSurface
-: public OpenGLRenderable,
-  public Cullable
+: public OpenGLRenderable
 {
 	// Name of the material this surface is using, both originally and after a 
 	// skin remap.
@@ -139,12 +137,6 @@ public:
 	 */
 	void applySkin(const ModelSkin& skin);
 	
-	/**
-	 * Perform a volume intersection (AABB) test on this surface.
-	 */
-	VolumeIntersectionValue intersectVolume(const VolumeTest& test,
-									 		const Matrix4& localToWorld) const;
-									 		
 	/** 
 	 * Perform a selection test on this surface.
 	 */

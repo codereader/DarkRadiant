@@ -1231,10 +1231,6 @@
 					Name="frontend"
 					>
 					<File
-						RelativePath="..\..\radiant\render\frontend\ForEachVisible.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\radiant\render\frontend\RenderHighlighted.h"
 						>
 					</File>

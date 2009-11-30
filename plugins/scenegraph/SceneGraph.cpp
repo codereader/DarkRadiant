@@ -1,10 +1,10 @@
 #include "SceneGraph.h"
 
-#include "debugging/debugging.h"
+#include "ivolumetest.h"
+
 #include "scene/InstanceWalkers.h"
 #include "scenelib.h"
 
-#include "cullable.h"
 #include "Octree.h"
 
 namespace scene

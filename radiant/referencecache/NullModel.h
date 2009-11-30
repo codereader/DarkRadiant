@@ -2,15 +2,13 @@
 #define _NULLMODEL_H_
 
 #include "imodel.h"
-#include "cullable.h"
 #include "math/aabb.h"
 #include "entitylib.h"
 
 namespace model {
 
 class NullModel :
-	public IModel,
-	public Cullable
+	public IModel
 {
 	ShaderPtr _state;
 	AABB _aabbLocal;
@@ -23,8 +21,6 @@ public:
 	NullModel();
 	virtual ~NullModel();
 
-	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
-	
 	const AABB& localAABB() const;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;

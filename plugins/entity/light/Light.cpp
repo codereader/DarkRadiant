@@ -481,10 +481,6 @@ void Light::render(const RenderInfo& info) const {
 	light_draw(_lightBox, info.getFlags());
 }
 
-VolumeIntersectionValue Light::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const {
-	return volume.TestAABB(_lightBox, localToWorld);
-}
-
 Doom3LightRadius& Light::getDoom3Radius() {
 	return m_doom3Radius;
 }

@@ -3,7 +3,6 @@
 
 #include "ieclass.h"
 #include "Bounded.h"
-#include "cullable.h"
 #include "editable.h"
 
 #include "math/Vector3.h"
@@ -22,7 +21,6 @@ namespace entity {
 class SpeakerNode;
 
 class Speaker :
-	public Cullable,
 	public Bounded,
 	public Snappable
 {
@@ -74,8 +72,6 @@ public:
 	~Speaker();
 
 	const AABB& localAABB() const;
-
-	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
     // Render functions (invoked by SpeakerNode)
 	void renderSolid(RenderableCollector& collector,

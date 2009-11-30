@@ -2,7 +2,6 @@
 #define RENDERABLEPICOMODEL_H_
 
 #include "imodel.h"
-#include "cullable.h"
 #include "picomodel.h"
 #include "math/aabb.h"
 
@@ -31,8 +30,7 @@ typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
  * binds its texture(s) and submits its geometry via OpenGL calls.
  */
 class RenderablePicoModel
-: public IModel,
-  public Cullable
+: public IModel
 {
 	// Vector of renderable surfaces for this model
 	SurfaceList _surfVec;
@@ -127,16 +125,6 @@ public:
 	 */
 	void applySkin(const ModelSkin& skin);
 
-	/**
-	 * Test this model for intersection with the provided VolumeTest. This is
-	 * a simple AABB check. Defined in Cullable interface.
-	 * 
-	 * @returns
-	 * VolumeIntersectionValue enumeration with the intersection result.
-	 */
-	VolumeIntersectionValue intersectVolume(const VolumeTest&,
-											const Matrix4&) const;
-											
 	/**
 	 * Selection test. Test each surface against the SelectionTest object and
 	 * if the surface is selected, add it to the selector.

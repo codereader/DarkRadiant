@@ -21,7 +21,6 @@ class SpeakerNode :
 	public EntityNode,
 	public Snappable,
 	public SelectionTestable,
-	public Cullable,
 	public Bounded,
 	public PlaneSelectable,
 	public ComponentSelectionTestable
@@ -50,10 +49,6 @@ public:
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
-
-	// Cullable implementation
-	virtual VolumeIntersectionValue intersectVolume(
-	    const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	// PlaneSelectable implementation
 	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);

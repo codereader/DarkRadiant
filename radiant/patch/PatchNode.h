@@ -28,7 +28,6 @@ class PatchNode :
 	public PlaneSelectable,
 	public LightCullable,
 	public Renderable,
-	public Cullable,
 	public Bounded,
 	public Transformable
 {
@@ -74,10 +73,7 @@ public:
 	typedef MemberCaller<PatchNode, &PatchNode::lightsChanged> LightsChangedCaller;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const;
-
-	// Cullable implementation
-	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
+	const AABB& localAABB() const;
 
 	// IPatchNode implementation
 	Patch& getPatchInternal();
