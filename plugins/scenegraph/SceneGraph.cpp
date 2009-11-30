@@ -91,7 +91,7 @@ void SceneGraph::insert(const INodePtr& node)
 
 void SceneGraph::erase(const INodePtr& node)
 {
-	_spacePartition->unLink(node);
+	_spacePartition->unlink(node);
 
 	// Fire the onRemove event on the Node
 	node->onRemoveFromScene();
@@ -114,7 +114,7 @@ void SceneGraph::removeBoundsChangedCallback(SignalHandlerId id) {
 
 void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 {
-	if (_spacePartition->unLink(node))
+	if (_spacePartition->unlink(node))
 	{
 		// unlink returned true, so the given node was linked before => re-link it
 		_spacePartition->link(node);

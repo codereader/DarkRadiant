@@ -28,6 +28,9 @@ Octree::~Octree()
 
 void Octree::link(const scene::INodePtr& sceneNode)
 {
+	// Make sure we don't do double-links
+	assert(_nodeMapping.find(sceneNode) == _nodeMapping.end());
+
 	// Make sure the root node is large enough
 	ensureRootSize(sceneNode);
 
@@ -103,7 +106,7 @@ void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
 }
 
 // Unlink this node from the SP tree
-bool Octree::unLink(const scene::INodePtr& sceneNode)
+bool Octree::unlink(const scene::INodePtr& sceneNode)
 {
 	NodeMapping::iterator found = _nodeMapping.find(sceneNode);
 
