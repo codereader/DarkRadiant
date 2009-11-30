@@ -76,10 +76,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="mathlib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps/glew/lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -171,10 +172,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="mathlib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/glew/lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -264,10 +266,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="mathlib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps/glew/lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -361,10 +364,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="mathlib.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/zlib\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/glew/lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -410,6 +414,18 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath="..\..\plugins\scenegraph\Octree.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\scenegraph\Octree.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\scenegraph\OctreeNode.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\plugins\scenegraph\SceneGraph.cpp"
 				>

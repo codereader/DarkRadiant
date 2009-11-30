@@ -64,6 +64,8 @@ public:
 	void revertTransform();
 	void freezeTransform();
 
+	void testSelect(Selector& selector, SelectionTest& test);
+
 public:
 	void construct();
 	void destroy();

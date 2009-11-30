@@ -105,7 +105,6 @@ private:
 	// The coordinates of the mouse pointer when the manipulation starts
 	Vector2 _deviceStart;
 
-	void Scene_TestSelect(SelectablesList& targetList, SelectionTest& test, const View& view, SelectionSystem::EMode mode, SelectionSystem::EComponentMode componentMode);
 	bool nothingSelected() const;
 	
 	SignalHandlerId _boundsChangedHandler;
@@ -212,6 +211,11 @@ public:
 protected:
 	// Called when GTK is idle to recalculate the workzone (if necessary)
 	virtual void onGtkIdle();
+
+	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
+	void testSelectScene(SelectablesList& targetList, SelectionTest& test, 
+						 const View& view, SelectionSystem::EMode mode, 
+						 SelectionSystem::EComponentMode componentMode);
 
 private:
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);

@@ -291,6 +291,9 @@ void Node::evaluateBounds() const {
 
 		_boundsMutex = false;
 		_boundsChanged = false;
+
+		// Now that our bounds are re-calculated, notify the scenegraph
+		GlobalSceneGraph().nodeBoundsChanged(const_cast<Node*>(this)->shared_from_this());
 	}
 }
 

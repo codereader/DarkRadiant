@@ -5,6 +5,7 @@
 #include "inamespace.h"
 #include "modelskin.h"
 #include "ientity.h"
+#include "iselection.h"
 
 #include "scenelib.h"
 #include "scene/TraversableNodeSet.h"
@@ -19,7 +20,8 @@ namespace entity {
 
 class EclassModelNode :
 	public EntityNode,
-	public Snappable
+	public Snappable,
+	public SelectionTestable
 {
 	friend class EclassModel;
 
@@ -47,6 +49,9 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+
+	// SelectionTestable
+	void testSelect(Selector& selector, SelectionTest& test);
 
 	void skinChanged(const std::string& value);
 	typedef MemberCaller1<EclassModelNode, const std::string&, &EclassModelNode::skinChanged> SkinChangedCaller;

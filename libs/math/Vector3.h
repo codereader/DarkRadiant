@@ -32,6 +32,8 @@ class BasicVector3 {
 	Element _v[3];
   
 public:
+	// Public typedef to read the type of our elements
+	typedef Element ElementType;
 
 	/**
 	 * Default constructor. Initialise Vector with all zeroes.
