@@ -63,27 +63,6 @@ VolumeIntersectionValue Cullable_testVisible(const scene::INodePtr& node,
 	return parent;
 }
 
-#include "render/frontend/CullingWalker.h"
-
-/**
- * Enumeration function for visible objects in the scene. Calls the Functor
- * object on each visible object after performing a volume intersection test
- * with the supplied VolumeTest.
- *
- * DEPRECATED: Only used by SelectionTest algorithms, which should be refactored. (TODO)
- */
-template<typename Functor>
-inline void Scene_forEachVisible(scene::Graph& graph, 
-								 const VolumeTest& volume, 
-								 Functor& functor)
-{
-	CullingWalker<Functor> cullingWalker(volume, functor);
-
-	ForEachVisible< CullingWalker<Functor> > walker(volume, cullingWalker);
-
-	Node_traverseSubgraph(graph.root(), walker);
-}
-
 #include "render/frontend/RenderHighlighted.h"
 
 /**
