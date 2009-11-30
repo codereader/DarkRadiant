@@ -5,9 +5,21 @@
 #include "irender.h"
 #include "irenderable.h"
 
+#include "math/matrix.h"
+#include "math/aabb.h"
+
 namespace render 
 {
 
+/**
+ * greebo: This is a renderable helper object which can be used
+ * to render any space partition system implementing the ISPacepartitionSystem interface.
+ * 
+ * Instantiate such a class and pass the Shader and the SpacePartition system to the
+ * setShader() and setSpacePartition() methods to enable rendering.
+ *
+ * This object can be directly attached to the GlobalRenderSystem().
+ */
 class RenderableSpacePartition :
 	public Renderable,
 	public OpenGLRenderable
@@ -20,10 +32,6 @@ private:
 	scene::ISpacePartitionSystemPtr _spacePartition;
 
 public:
-	// Pass the spacepartition to render to the constructor
-	RenderableSpacePartition()
-	{}
-
 	void setSpacePartition(const scene::ISpacePartitionSystemPtr& spacePartition)
 	{
 		_spacePartition = spacePartition;

@@ -3,18 +3,37 @@
 
 #include "inode.h"
 #include "ispacepartition.h"
+#include "math/aabb.h"
+
 #include <boost/weak_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+
+#include "Octree.h"
 
 namespace scene
 {
 	// The number of members, before the node tries to subdivide itself
 	const std::size_t SUBDIVISION_THRESHOLD = 32;
-	const std::size_t MIN_NODE_SIZE = 128;
+	const std::size_t MIN_NODE_EXTENTS = 128;
 
 class OctreeNode;
 typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
 
+/**
+ * greebo: An OctreeNode is the atomic unit part of an Octree.
+ * 
+ * Each OctreeNode is axis-aligned and has valid bounds at all times,
+ * and can have either 0 or exactly 8 children of equal size.
+ *
+ * The linkRecursively() method can be used to pass down scene::INodes and
+ * add them as members to the one OctreeNode which is suiting them best.
+ * 
+ * The link/unlink events are communicated to the owning Octree such that
+ * it has a chance to maintain its lookup table (the NodeMapping).
+ *
+ * Once a leaf OctreeNode exceeds a given amount of members (SUBDIVISION_THRESHOLD)
+ * it will subdivide itself and re-link its members into its children.
+ */
 class OctreeNode : 
 	public ISPNode,
 	public boost::enable_shared_from_this<OctreeNode>
@@ -23,8 +42,10 @@ protected:
 	// The owning octree
 	Octree& _owner;
 
+	// Our bounds (which should be valid at all times
 	AABB _bounds;
 
+	// The parent node
 	ISPNodeWeakPtr _parent;
 
 	// The child nodes (8 or 0)
@@ -34,20 +55,15 @@ protected:
 	MemberList _members;
 
 public:
-	// Default constructor (invalid bounds)
-	OctreeNode(Octree& owner, const OctreeNodePtr& parent = OctreeNodePtr()) :
-		_owner(owner),
-		_parent(parent)
-	{
-		_members.reserve(SUBDIVISION_THRESHOLD);
-	}
-
-	// Construct a node using bounds
+	// Construct a node using bounds, owning Octree and parent node
 	OctreeNode(Octree& owner, const AABB& bounds, const OctreeNodePtr& parent = OctreeNodePtr()) :
 		_owner(owner),
 		_bounds(bounds),
 		_parent(parent)
 	{
+		assert(_bounds.isValid()); // require valid bounds
+
+		// Pre-allocate memory for our members
 		_members.reserve(SUBDIVISION_THRESHOLD);
 	}
 
@@ -62,6 +78,7 @@ public:
 	}
 
 #ifdef _DEBUG
+	// In debug builds, notify the owning octree about our deletion
 	~OctreeNode()
 	{
 		_owner.notifyErase(this);
@@ -104,6 +121,7 @@ public:
 		// Allocate 8 nodes
 		_children.resize(8);
 
+		// Each child node has half the extents of this node
 		Vector3 childExtents = _bounds.extents * 0.5;
 
 		// Construct delta-vectors, pointing in each room direction
@@ -204,8 +222,10 @@ public:
 		// Node didn't fit into any of the children, link it here
 		addMember(sceneNode);
 
-		// If this is a leaf, check if we exceeded the subdivision threshold
-		if (isLeaf() && _members.size() >= SUBDIVISION_THRESHOLD && _bounds.extents.x() > MIN_NODE_SIZE)
+		// If this is a leaf, check if we exceeded the subdivision threshold and are large enough
+		if (isLeaf() && 
+			_members.size() >= SUBDIVISION_THRESHOLD && 
+			_bounds.extents.x() > MIN_NODE_EXTENTS)
 		{
 			// This leaf has enough members to justify a further subdivision, create 8 child nodes
 			subdivide();
@@ -233,22 +253,21 @@ public:
 
 	void unlink(const scene::INodePtr& sceneNode)
 	{
-		for (ISPNode::MemberList::iterator i = _members.begin(); i != _members.end(); ++i)
-		{
-			if (*i == sceneNode)
-			{
-				// Remove from the members list
-				_members.erase(i);
-				break;
-			}
-		}
+		// Lookup the node in the members list (rather slow lookup)
+		ISPNode::MemberList::iterator found = 
+			std::find(_members.begin(), _members.end(), sceneNode);
 
+		if (found != _members.end())
+		{
+			_members.erase(found);
+		}
+		
 		// Let the Octree know about this, regardless whether we found it or not (the Octree relies on this)
 		_owner.notifyUnlink(sceneNode, this);
 	}
 
 private:
-
+	// Tells each children who their parent is
 	void reparentChildren()
 	{
 		ISPNodePtr self = shared_from_this();
