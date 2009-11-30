@@ -52,7 +52,7 @@ public:
 	void visit(const std::string& name)
 	{
 		// The name should start with the directory, "def/" for instance.
-		assert(name.substr(0, _dirPrefixLength) == _directory);
+		assert(boost::algorithm::to_lower_copy(name.substr(0, _dirPrefixLength)) == _directory);
 
 		// Cut off the base directory prefix
 		std::string subname = name.substr(_dirPrefixLength);
