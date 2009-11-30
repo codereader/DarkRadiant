@@ -1,7 +1,10 @@
 #ifndef RENDERHIGHLIGHTED_H_
 #define RENDERHIGHLIGHTED_H_
 
-class RenderHighlighted
+#include "iscenegraph.h"
+
+class RenderHighlighted :
+	public scene::Graph::Walker
 {
 private:
 	// The collector which is sorting our renderables
@@ -37,12 +40,14 @@ public:
 							   const Renderable&, 
 							   &RenderHighlighted::render> RenderCaller;
 
-	// Pre-descent function called by ForEachVisible walker.
-	bool pre(const scene::INodePtr& node, 
-			 VolumeIntersectionValue parentVisible) const
+	// scene::Graph::Walker implementation, tells each node to submit its OpenGLRenderables
+	bool visit(const scene::INodePtr& node)
 	{
 		_collector.PushState();
 
+		// greebo: Fix for primitive nodes: as we don't traverse the scenegraph nodes
+		// top-down anymore, we need to set the shader state of our parent entity ourselves.
+		// Otherwise we're in for NULL-states when rendering worldspawn brushes.
 		Entity* entity = Node_getEntity(node->getParent());
 
 		if (entity != NULL)
@@ -50,44 +55,37 @@ public:
 			_collector.SetState(entity->getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 		}
 
-		if (Cullable_testVisible(node, _volume, parentVisible) != VOLUME_OUTSIDE)
-	    {
-			RenderablePtr renderable = Node_getRenderable(node);
+		RenderablePtr renderable = Node_getRenderable(node);
 
-			if (renderable != NULL)
-			{
-				renderable->viewChanged();
-			}
-
-			if (Node_isSelected(node))
-			{
-				if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
-				{
-					_collector.Highlight(RenderableCollector::eFace);
-				}
-				else if (renderable != NULL)
-				{
-					renderable->renderComponents(_collector, _volume);
-				}
-
-				_collector.Highlight(RenderableCollector::ePrimitive);
-			}
-
-			if (renderable != NULL)
-			{
-				render(*renderable);    
-			}
+		if (renderable != NULL)
+		{
+			renderable->viewChanged();
 		}
+
+		if (Node_isSelected(node))
+		{
+			if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
+			{
+				_collector.Highlight(RenderableCollector::eFace);
+			}
+			else if (renderable != NULL)
+			{
+				renderable->renderComponents(_collector, _volume);
+			}
+
+			_collector.Highlight(RenderableCollector::ePrimitive);
+		}
+
+		if (renderable != NULL)
+		{
+			render(*renderable);    
+		}
+
+		_collector.PopState();
 
 		return true;
 	}
-  
-  	// Post-descent function, called from ForEachVisible
-	void post(const scene::INodePtr& node, 
-			  VolumeIntersectionValue parentVisible) const
-	{
-		_collector.PopState();
-  	}
+
 };
 
 #endif /*RENDERHIGHLIGHTED_H_*/

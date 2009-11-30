@@ -4,6 +4,15 @@
 #include <inode.h>
 #include "iscenegraph.h"
 
+/**
+ * greebo: Scene Graph Walker used for traversing the map, visiting
+ * only nodes that are at least partially visible. 
+ *
+ * This is an adapter class to allow the use of legacy walkers which
+ * are based on pre() and post() methods, rather than a simple visit().
+ * New code shouldn't need to use this template, rather use the
+ * GlobalSceneGraph().foreachNodeInVolume() method directly.
+ */
 template<typename Walker_>
 class ForEachVisibleWalker :
 	public scene::Graph::Walker
@@ -23,7 +32,7 @@ public:
 		m_walker.pre(node, VOLUME_PARTIAL);
 		m_walker.post(node, VOLUME_PARTIAL);
 
-		return true;
+		return true; // continue traversal
 	}
 };
 
