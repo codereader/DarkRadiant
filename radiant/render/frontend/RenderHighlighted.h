@@ -1,7 +1,10 @@
 #ifndef RENDERHIGHLIGHTED_H_
 #define RENDERHIGHLIGHTED_H_
 
+#include "ientity.h"
+#include "ieclass.h"
 #include "iscenegraph.h"
+#include "scenelib.h"
 
 class RenderHighlighted :
 	public scene::Graph::Walker
@@ -55,7 +58,7 @@ public:
 			_collector.SetState(entity->getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 		}
 
-		RenderablePtr renderable = Node_getRenderable(node);
+		RenderablePtr renderable = getRenderable(node);
 
 		if (renderable != NULL)
 		{
@@ -86,6 +89,11 @@ public:
 		return true;
 	}
 
+private:
+	RenderablePtr getRenderable(const scene::INodePtr& node)
+	{
+		return boost::dynamic_pointer_cast<Renderable>(node);
+	}
 };
 
 #endif /*RENDERHIGHLIGHTED_H_*/
