@@ -167,8 +167,11 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
 		case eComponent:
 		{
-			Scene_TestSelect_Component_Selected(selector, test, view, componentMode);
-			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
+			ComponentSelector selectionTester(selector, test, componentMode);
+			GlobalSceneGraph().foreachNodeInVolume(view, selectionTester);
+
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+			{
 				targetList.push_back(i->second);
 			}
 		}
@@ -480,12 +483,17 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 		SelectionVolume volume(scissored);
 		// The possible candidates are stored in the SelectablesSet
 		SelectablesList candidates;
-		if (face) {
+
+		if (face)
+		{
 			SelectionPool selector;
-			Scene_TestSelect_Component(selector, volume, scissored, eFace);
+
+			ComponentSelector selectionTester(selector, volume, eFace);
+			GlobalSceneGraph().foreachNodeInVolume(scissored, selectionTester);
 			
 			// Load them all into the vector
-			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); i++) {
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+			{
 				candidates.push_back(i->second);
 			}
 		}
@@ -576,11 +584,14 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 		
 		SelectablesList candidates;
 		
-		if (face) {
-			Scene_TestSelect_Component(pool, volume, scissored, eFace);
-			
+		if (face)
+		{
+			ComponentSelector selectionTester(pool, volume, eFace);
+			GlobalSceneGraph().foreachNodeInVolume(scissored, selectionTester);
+
 			// Load them all into the vector
-			for (SelectionPool::iterator i = pool.begin(); i != pool.end(); i++) {
+			for (SelectionPool::iterator i = pool.begin(); i != pool.end(); ++i)
+			{
 				candidates.push_back(i->second);
 			}
 		}

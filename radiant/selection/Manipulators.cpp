@@ -648,9 +648,6 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 		EntitySelector selectionTester(booleanSelector, test);
 		GlobalSceneGraph().foreachNodeInVolume(view, selectionTester);
 
-		//testselect_entity_visible tester(booleanSelector, test);
-		//Scene_forEachVisible(GlobalSceneGraph(), view, tester);
-
 		// Check, if an entity could be found
       	if (booleanSelector.isSelected()) {
         	selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
@@ -659,24 +656,31 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
     }
     else
     {
-      BestSelector bestSelector;
-      Scene_TestSelect_Component_Selected(bestSelector, test, view, GlobalSelectionSystem().ComponentMode());
-      for(std::list<Selectable*>::iterator i = bestSelector.best().begin(); i != bestSelector.best().end(); ++i)
-      {
-      	/** greebo: Disabled this, it caused the currently selected patch vertices being deselected.
-      	 */
-      	if (GlobalRegistry().get(RKEY_TRANSIENT_COMPONENT_SELECTION) == "1") {
-      		if(!(*i)->isSelected()) {
-          		GlobalSelectionSystem().setSelectedAllComponents(false);
-      		}
-      	}
-        _selected = false;
-        selector.addSelectable(SelectionIntersection(0, 0), (*i));
-        _dragSelectable.setSelected(true);
-      }
-    }
+		BestSelector bestSelector;
 
-	for(SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
+		ComponentSelector selectionTester(bestSelector, test, GlobalSelectionSystem().ComponentMode());
+		GlobalSelectionSystem().foreachSelected(selectionTester);
+
+		for (std::list<Selectable*>::iterator i = bestSelector.best().begin(); 
+			 i != bestSelector.best().end(); ++i)
+		{
+			// greebo: Disabled this, it caused the currently selected patch vertices being deselected.
+			if (GlobalRegistry().get(RKEY_TRANSIENT_COMPONENT_SELECTION) == "1")
+			{
+				if (!(*i)->isSelected())
+				{
+					GlobalSelectionSystem().setSelectedAllComponents(false);
+				}
+			}
+		
+			_selected = false;
+			selector.addSelectable(SelectionIntersection(0, 0), (*i));
+			_dragSelectable.setSelected(true);
+		}
+	}
+
+	for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+	{
 		i->second->setSelected(true);
 	}
 }
