@@ -4,7 +4,7 @@
 #include "TargetKeyCollection.h"
 #include "render.h"
 #include "irenderable.h"
-#include "cullable.h"
+#include "ivolumetest.h"
 #include "math/line.h"
 
 namespace entity {
@@ -41,7 +41,9 @@ public:
 		}
 
 		Vector3 targetPosition = target->getPosition();
-		if (_volume.TestLine(segment_for_startend(_worldPosition, targetPosition))) {
+
+		if (_volume.TestLine(segment_for_startend(_worldPosition, targetPosition)))
+		{
 			// Take the mid-point
 			Vector3 mid((_worldPosition + targetPosition) * 0.5f);
 

@@ -43,10 +43,4 @@ const AABB& NullModelNode::localAABB() const {
 	return _nullModel->localAABB();
 }
 
-VolumeIntersectionValue NullModelNode::intersectVolume(
-	const VolumeTest& test, const Matrix4& localToWorld) const
-{
-	return _nullModel->intersectVolume(test, localToWorld);
-}
-
 } // namespace model

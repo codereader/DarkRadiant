@@ -60,7 +60,6 @@ class BrushNode :
 	public PlaneSelectable,
 	public LightCullable,
 	public Renderable,
-	public Cullable,
 	public Bounded,
 	public Transformable
 {
@@ -112,9 +111,6 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
-	// Cullable implementation
-	virtual VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
-	
 	// Selectable implementation
 	virtual bool isSelected() const;
 	virtual void setSelected(bool select);

@@ -3,7 +3,6 @@
 
 #include "igl.h"
 #include "irender.h"
-#include "cullable.h"
 #include "scenelib.h"
 #include "editable.h"
 #include "render.h"
@@ -57,7 +56,6 @@ class LightNode;
 
 class Light :
 	public OpenGLRenderable,
-	public Cullable,
 	public Bounded,
 	public Editable,
 	public Snappable
@@ -203,7 +201,6 @@ public:
 	
 	void render(const RenderInfo& info) const;
 
-	VolumeIntersectionValue intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 	const AABB& localAABB() const;
 	AABB lightAABB() const;
 

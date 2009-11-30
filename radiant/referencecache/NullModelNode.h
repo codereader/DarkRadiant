@@ -3,7 +3,6 @@
 
 #include "scenelib.h"
 #include "Bounded.h"
-#include "cullable.h"
 #include "irenderable.h"
 
 #include "NullModel.h"
@@ -18,7 +17,6 @@ class NullModelNode :
 	public SelectionTestable,
 	public Renderable,
 	public Bounded,
-	public Cullable,
 	public ModelNode
 {
 	NullModelPtr _nullModel;
@@ -41,10 +39,6 @@ public:
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
-
-	// Cullable implementation
-	virtual VolumeIntersectionValue intersectVolume(
-		const VolumeTest& test, const Matrix4& localToWorld) const;
 };
 
 } // namespace model

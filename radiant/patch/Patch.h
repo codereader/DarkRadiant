@@ -5,7 +5,6 @@
 
 #include "transformlib.h"
 #include "scenelib.h"
-#include "cullable.h"
 #include "editable.h"
 #include "nameable.h"
 #include "iundo.h"
@@ -31,7 +30,6 @@ class PatchNode;
 class Patch :
 	public IPatch,
 	public Bounded,
-	public Cullable,
 	public Snappable,
 	public Undoable
 {
@@ -127,8 +125,6 @@ public:
 	
 	// Return the interally stored AABB
 	const AABB& localAABB() const;
-	
-	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 	
 	// Render functions: solid mode, wireframe mode and components 
 	void render_solid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;

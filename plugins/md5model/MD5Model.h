@@ -2,7 +2,6 @@
 #define MD5MODEL_H_
 
 #include "imodel.h"
-#include "cullable.h"
 #include "math/aabb.h"
 #include <vector>
 #include "generic/callbackfwd.h"
@@ -14,7 +13,6 @@ namespace md5 {
 
 // generic model node
 class MD5Model :
-	public Cullable,
 	public model::IModel
 {
 	typedef std::vector<MD5SurfacePtr> SurfaceList;
@@ -52,9 +50,6 @@ public:
 	void parseFromTokens(parser::DefTokeniser& tok);
 
 	void updateAABB();
-
-	VolumeIntersectionValue intersectVolume(
-			const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	virtual const AABB& localAABB() const;
 

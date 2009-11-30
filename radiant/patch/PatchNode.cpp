@@ -42,7 +42,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	PlaneSelectable(other),
 	LightCullable(other),
 	Renderable(other),
-	Cullable(other),
 	Bounded(other),
 	Transformable(other),
 	m_dragPlanes(SelectedChangedComponentCaller(*this)),
@@ -85,12 +84,6 @@ const AABB& PatchNode::localAABB() const {
 
 std::string PatchNode::name() const {
 	return "Patch";
-}
-
-VolumeIntersectionValue PatchNode::intersectVolume(
-	const VolumeTest& test, const Matrix4& localToWorld) const
-{
-	return m_patch.intersectVolume(test, localToWorld);
 }
 
 Patch& PatchNode::getPatchInternal() {

@@ -1,5 +1,6 @@
 #include "BrushNode.h"
 
+#include "ivolumetest.h"
 #include "ifilter.h"
 #include "iradiant.h"
 #include "icounter.h"
@@ -42,7 +43,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	PlaneSelectable(other),
 	LightCullable(other),
 	Renderable(other),
-	Cullable(other),
 	Bounded(other),
 	Transformable(other),
 	m_brush(other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
@@ -58,12 +58,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 BrushNode::~BrushNode() {
 	GlobalRenderSystem().detach(*this);
 	m_brush.detach(*this); // BrushObserver
-}
-
-VolumeIntersectionValue BrushNode::intersectVolume(
-	const VolumeTest& test, const Matrix4& localToWorld) const
-{
-	return m_brush.intersectVolume(test, localToWorld);
 }
 
 void BrushNode::lightsChanged() {

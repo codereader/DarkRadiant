@@ -284,14 +284,6 @@ void RenderablePicoSurface::applySkin(const ModelSkin& skin)
 	}
 }
 
-// Perform volume intersection test on this surface's geometry
-VolumeIntersectionValue RenderablePicoSurface::intersectVolume(
-	const VolumeTest& test, 
-	const Matrix4& localToWorld) const
-{
-	return test.TestAABB(_localAABB, localToWorld);
-}
-
 // Perform selection test for this surface
 void RenderablePicoSurface::testSelect(Selector& selector, 
 									   SelectionTest& test,

@@ -1,6 +1,7 @@
 #include "RenderablePicoModel.h"
 #include "RenderablePicoSurface.h"
 
+#include "ivolumetest.h"
 #include "iselectable.h"
 #include "texturelib.h"
 #include "ishaders.h"
@@ -149,16 +150,6 @@ const MaterialList& RenderablePicoModel::getActiveMaterials() const {
 	return _materialList;
 }
 	
-// Perform volume intersection test
-VolumeIntersectionValue 
-RenderablePicoModel::intersectVolume(const VolumeTest& test,
-									 const Matrix4& localToWorld) const
-{
-	// Simple AABB intersection check between the test volume and the local
-	// AABB
-	return test.TestAABB(_localAABB, localToWorld);
-}
-
 // Perform selection test
 void RenderablePicoModel::testSelect(Selector& selector,
 									 SelectionTest& test,
@@ -172,8 +163,7 @@ void RenderablePicoModel::testSelect(Selector& selector,
     	 ++i)
 	{
 		// Check volume intersection
-		if ((*i)->intersectVolume(test.getVolume(), localToWorld) 
-				!= VOLUME_OUTSIDE)
+		if (test.getVolume().TestAABB((*i)->getAABB(), localToWorld) != VOLUME_OUTSIDE)
 		{
 			// Volume intersection passed, delegate the selection test
         	(*i)->testSelect(selector, test, localToWorld);

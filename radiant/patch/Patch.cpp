@@ -73,7 +73,6 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback&
 Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	IPatch(other),
 	Bounded(other),
-	Cullable(other),
 	Snappable(other),
 	Undoable(other),
 	_node(node),
@@ -204,10 +203,6 @@ void Patch::onAllocate(std::size_t size)
 // Return the interally stored AABB
 const AABB& Patch::localAABB() const {
 	return m_aabb_local;
-}
-
-VolumeIntersectionValue Patch::intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const {
-	return test.TestAABB(m_aabb_local, localToWorld);
 }
 
 // Render functions: solid mode

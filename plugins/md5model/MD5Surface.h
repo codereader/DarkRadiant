@@ -6,7 +6,6 @@
 #include "irenderable.h"
 #include "math/aabb.h"
 #include "math/frustum.h"
-#include "cullable.h"
 #include "iselectable.h"
 #include "modelskin.h"
 
@@ -79,8 +78,6 @@ public:
 
     // Back-end render function
     void render(const RenderInfo& info) const;
-
-	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 
 	const AABB& localAABB() const;
 

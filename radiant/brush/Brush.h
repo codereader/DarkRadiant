@@ -2,7 +2,6 @@
 #define BRUSH_BRUSH_H_
 
 #include "scenelib.h"
-#include "cullable.h"
 #include "editable.h"
 
 #include "Face.h"
@@ -87,7 +86,6 @@ public:
 class Brush :
 	public IBrush,
 	public Bounded,
-	public Cullable,
 	public Snappable,
 	public Undoable,
 	public FaceObserver,
@@ -204,8 +202,6 @@ public:
 	void aabbChanged();
 	
 	const AABB& localAABB() const;
-	
-	VolumeIntersectionValue intersectVolume(const VolumeTest& test, const Matrix4& localToWorld) const;
 	
 	void renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	

@@ -1,5 +1,6 @@
 #include "MD5Surface.h"
 
+#include "ivolumetest.h"
 #include "GLProgramAttributes.h"
 
 namespace md5
@@ -163,12 +164,6 @@ std::string MD5Surface::getShader() const {
 
 ShaderPtr MD5Surface::getState() const {
 	return _shader;
-}
-
-VolumeIntersectionValue MD5Surface::intersectVolume(
-		const VolumeTest& test, const Matrix4& localToWorld) const
-{
-	return test.TestAABB(_aabb_local, localToWorld);
 }
 
 void MD5Surface::applySkin(const ModelSkin& skin) {

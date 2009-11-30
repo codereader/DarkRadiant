@@ -14,7 +14,6 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	SelectionTestable(other),
-	Cullable(other),
 	Bounded(other),
 	m_contained(other.m_contained, 
 		*this, 
@@ -43,13 +42,6 @@ void GenericEntityNode::refreshModel() {
 // Bounded implementation
 const AABB& GenericEntityNode::localAABB() const {
 	return m_contained.localAABB();
-}
-
-// Cullable implementation
-VolumeIntersectionValue GenericEntityNode::intersectVolume(
-    const VolumeTest& test, const Matrix4& localToWorld) const
-{
-	return m_contained.intersectVolume(test, localToWorld);
 }
 
 void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
