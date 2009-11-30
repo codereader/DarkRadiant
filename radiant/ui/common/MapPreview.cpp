@@ -207,8 +207,6 @@ void MapPreview::draw() {
 		}
 	} adaptor(renderHighlightWalker);
 
-	//ForEachVisible<RenderHighlighted> walker(view, renderHighlightWalker);
-
 	// Submit renderables from this map root
 	Node_traverseSubgraph(_root, adaptor);
 	

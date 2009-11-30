@@ -5,12 +5,15 @@
 #include "irenderable.h"
 #include "render/frontend/RenderHighlighted.h"
 
+namespace render
+{
+
 /**
  * Scene render function. Uses the visibility walkers to traverse the scene
  * graph and submit all visible objects to the provided RenderableCollector.
  */
-inline void Scene_Render(RenderableCollector& collector, const VolumeTest& volume) {
-
+inline void collectRenderablesInScene(RenderableCollector& collector, const VolumeTest& volume)
+{
 	// Instantiate a new walker class
 	RenderHighlighted renderHighlightWalker(collector, volume);
 
@@ -21,5 +24,7 @@ inline void Scene_Render(RenderableCollector& collector, const VolumeTest& volum
 	GlobalRenderSystem().forEachRenderable(
 		RenderHighlighted::RenderCaller(RenderHighlighted(collector, volume)));
 }
+
+} // namespace render
 
 #endif /* _RENDERER_H_ */

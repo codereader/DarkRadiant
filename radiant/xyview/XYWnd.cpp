@@ -1381,7 +1381,7 @@ void XYWnd::draw()
 		XYRenderer renderer(globalstate, _selectedShader.get());
 
 		// First pass (scenegraph traversal)
-		Scene_Render(renderer, m_view);
+		render::collectRenderablesInScene(renderer, m_view);
 		
 		// Second pass (GL calls)
 		renderer.render(m_modelview, m_projection);
