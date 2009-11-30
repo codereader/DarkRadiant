@@ -189,10 +189,28 @@ void MapPreview::draw() {
 
 	// Instantiate a new walker class
 	RenderHighlighted renderHighlightWalker(renderer, view);
-	ForEachVisible<RenderHighlighted> walker(view, renderHighlightWalker);
+
+	// Small helper class to use scene::Graph::Walkers for direct traversal
+	class RenderAdaptor :
+		public scene::NodeVisitor
+	{
+		scene::Graph::Walker& _walker;
+	public:
+		RenderAdaptor(scene::Graph::Walker& walker) :
+			_walker(walker)
+		{}
+
+		bool pre(const scene::INodePtr& node)
+		{
+			_walker.visit(node);
+			return true;
+		}
+	} adaptor(renderHighlightWalker);
+
+	//ForEachVisible<RenderHighlighted> walker(view, renderHighlightWalker);
 
 	// Submit renderables from this map root
-	Node_traverseSubgraph(_root, walker);
+	Node_traverseSubgraph(_root, adaptor);
 	
 	// Submit renderables directly attached to the ShaderCache
 	GlobalRenderSystem().forEachRenderable(
