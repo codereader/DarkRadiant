@@ -4,6 +4,9 @@
 /**
  * Walker wrapper class which invokes its child walker for instances which pass
  * a Cullable::intersectVolume test.
+ *
+ * Deprecated: Use GlobalSceneGraph().foreachNodeInVolume() and let your
+ * walker derive from scene::Graph::Walker.
  */
 template<typename _Walker>
 class CullingWalker

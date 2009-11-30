@@ -108,7 +108,19 @@ public:
 	 * @param other
 	 * The other AABB to include.
 	 */
-	void includeAABB(const AABB& other);	 
+	void includeAABB(const AABB& other);
+
+	// Returns true if this AABB contains the other AABB (all dimensions)
+	bool contains(const AABB& other) const 
+	{
+		// Return true if all coordinates of <other> are contained within these bounds
+		return (origin[0] + extents[0] >= other.origin[0] + other.extents[0]) &&
+			   (origin[0] - extents[0] <= other.origin[0] - other.extents[0]) &&
+			   (origin[1] + extents[1] >= other.origin[1] + other.extents[1]) &&
+			   (origin[1] - extents[1] <= other.origin[1] - other.extents[1]) &&
+			   (origin[2] + extents[2] >= other.origin[2] + other.extents[2]) &&
+			   (origin[2] - extents[2] <= other.origin[2] - other.extents[2]);
+	}
 };
 
 /**

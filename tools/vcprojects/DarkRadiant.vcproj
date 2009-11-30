@@ -1243,6 +1243,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="debug"
+					>
+					<File
+						RelativePath="..\..\radiant\render\debug\SpacePartitionRenderer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\render\debug\SpacePartitionRenderer.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="selection"

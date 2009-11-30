@@ -43,52 +43,69 @@ public:
 
 // --------------------------------------------------------------------------------
 
-class testselect_entity_visible : public scene::NodeVisitor {
-  Selector& _selector;
-  SelectionTest& _test;
-public:
-  testselect_entity_visible(Selector& selector, SelectionTest& test)
-    : _selector(selector), _test(test) {}
-
-  bool pre(const scene::INodePtr& node);  
-  void post(const scene::INodePtr& node);
-};
-
-class testselect_primitive_visible : public scene::NodeVisitor {
-  Selector& _selector;
-  SelectionTest& _test;
-	bool _selectChildPrimitives;
-public:
-	/** greebo: Set the selectChildPrimitives bool to TRUE if child primitives of entities like func_static
-	 * should be selected as well. This should be set to TRUE for Manipulator checks.
-	 */
-	testselect_primitive_visible(Selector& selector, SelectionTest& test, bool selectChildPrimitives) : 
-		_selector(selector), 
-		_test(test),
-		_selectChildPrimitives(selectChildPrimitives) 
-	{}
-
-  bool pre(const scene::INodePtr& node);
-  void post(const scene::INodePtr& node);
-};
-
-/** greebo: Tests for any primitives/entities matching the selectiontest
- */
-class testselect_any_visible : 
-	public scene::NodeVisitor 
+// Base class for SelectionTesters, provides some convenience methods
+class SelectionTestWalker :
+	public scene::Graph::Walker
 {
+protected:
+	void printNodeName(const scene::INodePtr& node);
+
+	// Returns non-NULL if the given node is an Entity
+	scene::INodePtr getEntityNode(const scene::INodePtr& node);
+
+	// Returns non-NULL if the given node's parent is a GroupNode
+	scene::INodePtr getParentGroupEntity(const scene::INodePtr& node);
+
+	// Returns true if the node is worldspawn
+	bool entityIsWorldspawn(const scene::INodePtr& node);
+};
+
+class EntitySelector :
+	public SelectionTestWalker
+{
+private:
 	Selector& _selector;
 	SelectionTest& _test;
-	bool _selectChildPrimitives;
+
 public:
-	testselect_any_visible(Selector& selector, SelectionTest& test, bool selectChildPrimitives) : 
-		_selector(selector), 
-		_test(test),
-		_selectChildPrimitives(selectChildPrimitives)
+	EntitySelector(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
 	{}
 
-	bool pre(const scene::INodePtr& node);  
-	void post(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node);
+};
+
+class PrimitiveSelector :
+	public SelectionTestWalker
+{
+private:
+	Selector& _selector;
+	SelectionTest& _test;
+
+public:
+	PrimitiveSelector(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
+	{}
+
+	bool visit(const scene::INodePtr& node);
+};
+
+class AnySelector :
+	public SelectionTestWalker
+{
+private:
+	Selector& _selector;
+	SelectionTest& _test;
+
+public:
+	AnySelector(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
+	{}
+
+	bool visit(const scene::INodePtr& node);
 };
 
 class testselect_component_visible : public scene::NodeVisitor {
@@ -115,7 +132,6 @@ public:
 
 // --------------------------------------------------------------------------------
 
-void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume, bool selectChildPrimitives = true);
 void Scene_TestSelect_Component(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
 void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
 

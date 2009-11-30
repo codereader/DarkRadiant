@@ -129,4 +129,15 @@ void EclassModel::modelChanged(const std::string& value) {
 	m_model.modelChanged(value);
 }
 
+void EclassModel::testSelect(Selector& selector, SelectionTest& test)
+{
+	// Pass the call down to the model node, if applicable
+	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(m_model.getNode());
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(selector, test);
+    }
+}
+
 } // namespace entity

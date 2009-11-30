@@ -2,6 +2,7 @@
 #define FOREACHVISIBLE_H_
 
 #include <inode.h>
+#include "iscenegraph.h"
 
 /**
  * Scenegraph walker class which applies the given walker object to objects

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "signal/signal.h"
 #include "scenelib.h"
 #include "imodule.h"
+#include "ispacepartition.h"
 
 namespace scene
 {
@@ -48,11 +49,18 @@ class SceneGraph :
 	// The root-element, the scenegraph starts here
 	scene::INodePtr _root;
 
+	// The space partitioning system
+	ISpacePartitionSystemPtr _spacePartition;
+
+	std::size_t _visitedSPNodes;
+	std::size_t _skippedSPNodes;
+
 public:	
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+	void shutdownModule();
   
 	/** greebo: Adds/removes an observer from the scenegraph,
 	 * 			to get notified upon insertions/deletions
@@ -76,6 +84,15 @@ public:
 
 	SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged);
 	void removeBoundsChangedCallback(SignalHandlerId id);
+
+	void nodeBoundsChanged(const scene::INodePtr& node);
+
+	void foreachNodeInVolume(const VolumeTest& volume, Walker& walker);
+
+	ISpacePartitionSystemPtr getSpacePartition();
+private:
+	// Recursive method used to descend the SpacePartition tree, returns FALSE if the walker signaled stop
+	bool foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker);
 };
 typedef boost::shared_ptr<SceneGraph> SceneGraphPtr;
 

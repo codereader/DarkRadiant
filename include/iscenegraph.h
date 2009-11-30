@@ -40,8 +40,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // String identifier for the registry module
 const std::string MODULE_SCENEGRAPH("SceneGraph");
 
+class VolumeTest;
+
 namespace scene
 {
+
+class ISpacePartitionSystem;
+typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
+
 /** 
 * A scene-graph - a Directed Acyclic Graph (DAG).
 *
@@ -97,6 +103,24 @@ public:
 	virtual SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged) = 0;
 	/// \brief Remove a \p callback to be invoked when the bounds of any instance in the scene change.
 	virtual void removeBoundsChangedCallback(SignalHandlerId id) = 0;
+
+	// A specific node has changed its bounds
+	virtual void nodeBoundsChanged(const scene::INodePtr& node) = 0;
+
+	// A walker class to be used in "foreachNodeInVolume"
+	class Walker
+	{
+	public:
+		virtual ~Walker() {}
+
+		// Called for each visited node, returns TRUE if traversal should continue
+		virtual bool visit(const INodePtr& node) = 0;
+	};
+
+	virtual void foreachNodeInVolume(const VolumeTest& volume, Walker& walker) = 0;
+
+	// Returns the associated spacepartition
+	virtual ISpacePartitionSystemPtr getSpacePartition() = 0;
 };
 
   class Cloneable

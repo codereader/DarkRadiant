@@ -1,5 +1,7 @@
 #include "SelectionTest.h"
 
+#include "igroupnode.h"
+#include "entitylib.h"
 #include "renderer.h"
 
 inline SelectionIntersection select_point_from_clipped(Vector4& clipped) {
@@ -193,129 +195,150 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
 
 // ==================================================================================
 
-bool testselect_entity_visible::pre(const scene::INodePtr& node) {
-    SelectablePtr selectable = Node_getSelectable(node);
-    if(selectable != NULL && Node_isEntity(node)) {
-    	_selector.pushSelectable(*selectable);
-    }
+void SelectionTestWalker::printNodeName(const scene::INodePtr& node)
+{
+	globalOutputStream() << "Node: " << nodetype_get_name(node_get_nodetype(node)) << " ";
 
-    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-    if(selectionTestable) {
-      selectionTestable->testSelect(_selector, _test);
-    }
-
-    return true;
-}
-
-void testselect_entity_visible::post(const scene::INodePtr& node) {
-	SelectablePtr selectable = Node_getSelectable(node);
-    if (selectable != NULL && Node_isEntity(node)) {
-    	// Get the Entity from this node
-    	Entity* entity = Node_getEntity(node);
-    	
-    	// Don't select the worldspawn entity
-    	if (entity != NULL && entity->getKeyValue("classname") != "worldspawn") {
-    		_selector.popSelectable();
-    	}
-    }
-}
-
-bool testselect_primitive_visible::pre(const scene::INodePtr& node) {
-    SelectablePtr selectable = Node_getSelectable(node);
-    if (selectable != NULL && !Node_isEntity(node)) {
-    	_selector.pushSelectable(*selectable);
-    }
-
-    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-    if (selectionTestable && !Node_isEntity(node)) {
-		selectionTestable->testSelect(_selector, _test);
-    }
-    
-    return true;
-}
-
-void testselect_primitive_visible::post(const scene::INodePtr& node) {
-	SelectablePtr selectable = Node_getSelectable(node);
-
-    if (selectable != NULL && !Node_isEntity(node)) {
-    	
-		scene::INodePtr parentNode = node->getParent();
-
-    	if (parentNode != NULL) {
-			// Get the parent entity of this object, if there is one
-    		Entity* parent = Node_getEntity(parentNode);
-    	
-	    	if (parent != NULL) {
-	    		if (parent->getKeyValue("classname") == "worldspawn" || _selectChildPrimitives) {
-	    			 _selector.popSelectable();
-	    		}
-	    	}
-    	}
-    }
-}
-
-bool testselect_any_visible::pre(const scene::INodePtr& node) {
-    SelectablePtr selectable = Node_getSelectable(node);
-
-    if (selectable != NULL) {
-    	
-		scene::INodePtr parentNode = node->getParent();
-
-    	if (parentNode != NULL) {
-    	  	// Get the parent entity of this object, if there is one
-    		Entity* parent = Node_getEntity(parentNode);
-    		
-    		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
-    			// Non-worldspawn entity found, don't add it unless specified to do so
-    			if (_selectChildPrimitives) {
-    				_selector.pushSelectable(*selectable);
-    			}			
-    		}
-    		else {
-				// This is a worldspawn child, add it
-    			_selector.pushSelectable(*selectable);
-    		}
-    	}
-    	else {
-    	   	_selector.pushSelectable(*selectable);
-    	}
-    }
-
-    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-    if (selectionTestable != NULL) {
-		selectionTestable->testSelect(_selector, _test);
-    }
-    
-    return true;
-}
-
-void testselect_any_visible::post(const scene::INodePtr& node) {
-	SelectablePtr selectable = Node_getSelectable(node);
-
-    if (selectable == NULL) {
-		return;
+	if (node_get_nodetype(node) == eNodeEntity)
+	{
+		globalOutputStream() << " - " << Node_getEntity(node)->getKeyValue("name"); 
 	}
 
-	scene::INodePtr parentNode = node->getParent();
+	globalOutputStream() << std::endl;
+}
 
-	if (parentNode != NULL) {
-	  	// Get the parent entity of this object, if there is one
-		Entity* parent = Node_getEntity(parentNode);
-		
-		if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
-			// Non-worldspawn entity found, add it if specified
-			if (_selectChildPrimitives) {
-				_selector.popSelectable();
-			}
-   		}
-		else {
-			// This is a child of worldspawn, pop it
-			_selector.popSelectable();
+scene::INodePtr SelectionTestWalker::getEntityNode(const scene::INodePtr& node)
+{
+	return (Node_isEntity(node)) ? node : scene::INodePtr();
+}
+
+scene::INodePtr SelectionTestWalker::getParentGroupEntity(const scene::INodePtr& node)
+{
+	scene::INodePtr parent = node->getParent();
+
+	return (Node_getGroupNode(parent) != NULL) ? parent : scene::INodePtr();
+}
+
+bool SelectionTestWalker::entityIsWorldspawn(const scene::INodePtr& node)
+{
+	return node_is_worldspawn(node);
+}
+
+bool EntitySelector::visit(const scene::INodePtr& node)
+{
+	// Check directly for an entity
+	scene::INodePtr entity = getEntityNode(node);
+
+	if (entity == NULL)
+	{
+		// Second chance check: is the parent a group node?
+		entity = getParentGroupEntity(node);
+	}
+
+	// Skip worldspawn in any case
+	if (entity == NULL || entityIsWorldspawn(entity)) return true;
+
+	// Comment out to hide debugging output
+	//printNodeName(node);
+
+	// The entity is the selectable, but the actual node will be tested for selection
+	SelectablePtr selectable = Node_getSelectable(entity);
+
+    if (selectable == NULL)
+	{
+    	return true; // skip
+    }
+
+	_selector.pushSelectable(*selectable);
+
+	// Test the entity for selection, this will add an intersection to the selector
+    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(_selector, _test);
+    }
+
+	_selector.popSelectable();
+
+	return true;
+}
+
+bool PrimitiveSelector::visit(const scene::INodePtr& node)
+{
+	// Skip all entities
+	if (Node_isEntity(node)) return true;
+
+	SelectablePtr selectable = Node_getSelectable(node);
+
+    if (selectable == NULL) return true; // skip non-selectables
+
+	_selector.pushSelectable(*selectable);
+
+	// Test the entity for selection, this will add an intersection to the selector
+    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(_selector, _test);
+    }
+
+	_selector.popSelectable();
+
+	return true;
+}
+
+bool AnySelector::visit(const scene::INodePtr& node)
+{
+	scene::INodePtr entity = getEntityNode(node);
+
+	scene::INodePtr candidate;
+
+	if (entity != NULL)
+	{
+		// skip worldspawn
+		if (entityIsWorldspawn(entity)) return true;
+
+		// Use this entity as selectable
+		candidate = entity;
+	}
+	else if (Node_isPrimitive(node))
+	{
+		// Primitives are ok, check for func_static children
+		scene::INodePtr parentEntity = getParentGroupEntity(node);
+
+		if (parentEntity != NULL)
+		{
+			// If this node is a child of worldspawn, it can be directly selected
+			// Otherwise this node is a child primitve of a non-worldspawn entity, 
+			// in which case we want to select the parent entity
+			candidate = (entityIsWorldspawn(parentEntity)) ? node : parentEntity;
+		}
+		else
+		{
+			// A primitive without parent group entity? Error?
+			return true; // skip
 		}
 	}
-	else {
-	   	_selector.popSelectable();
-	}
+
+	// The entity is the selectable, but the actual node will be tested for selection
+	SelectablePtr selectable = Node_getSelectable(candidate);
+
+    if (selectable == NULL) return true; // skip unselectable nodes
+
+	_selector.pushSelectable(*selectable);
+
+	// Test the entity for selection, this will add an intersection to the selector
+    SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(_selector, _test);
+    }
+
+	_selector.popSelectable();
+
+	return true;
 }
 
 bool testselect_component_visible::pre(const scene::INodePtr& node) {
@@ -340,11 +363,6 @@ bool testselect_component_visible_selected::pre(const scene::INodePtr& node) {
 }
 
 // ==================================================================================
-
-void Scene_TestSelect_Primitive(Selector& selector, SelectionTest& test, const VolumeTest& volume, bool selectChildPrimitives) {
-	testselect_primitive_visible tester(selector, test, selectChildPrimitives);
-	Scene_forEachVisible(GlobalSceneGraph(), volume, tester);
-}
 
 void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode) {
 	testselect_component_visible_selected tester(selector, test, componentMode);
