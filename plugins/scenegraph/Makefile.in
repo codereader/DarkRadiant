@@ -69,7 +69,7 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 scenegraph_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/scene/libscenegraph.la
-am_scenegraph_la_OBJECTS = SceneGraph.lo
+am_scenegraph_la_OBJECTS = SceneGraph.lo Octree.lo
 scenegraph_la_OBJECTS = $(am_scenegraph_la_OBJECTS)
 scenegraph_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -245,7 +245,9 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = scenegraph.la
 scenegraph_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la
 scenegraph_la_LDFLAGS = -module -avoid-version
-scenegraph_la_SOURCES = SceneGraph.cpp
+scenegraph_la_SOURCES = SceneGraph.cpp \
+						Octree.cpp
+
 all: all-am
 
 .SUFFIXES:
@@ -320,6 +322,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Octree.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SceneGraph.Plo@am__quote@
 
 .cpp.o:
