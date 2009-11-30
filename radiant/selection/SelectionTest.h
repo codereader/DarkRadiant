@@ -60,6 +60,8 @@ protected:
 	bool entityIsWorldspawn(const scene::INodePtr& node);
 };
 
+// A Selector which is testing for entities. This successfully
+// checks for selections of child primitives of func_* entities too.
 class EntitySelector :
 	public SelectionTestWalker
 {
@@ -76,6 +78,7 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
+// A Selector looking for worldspawn primitives only. 
 class PrimitiveSelector :
 	public SelectionTestWalker
 {
@@ -92,6 +95,9 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
+// A selector testing for all kinds of selectable items, entities and primitives.
+// Worldspawn primitives are selected directly, for child primitives of func_* ents
+// the selection will be "relayed" to the parent entity.
 class AnySelector :
 	public SelectionTestWalker
 {
@@ -108,34 +114,34 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
-class testselect_component_visible : public scene::NodeVisitor {
-  Selector& _selector;
-  SelectionTest& _test;
-  SelectionSystem::EComponentMode _mode;
+// A class seeking for components, can be used either to traverse the
+// selectionsystem or the scene graph as a whole.
+class ComponentSelector :
+	public SelectionTestWalker,
+	public SelectionSystem::Visitor
+{
+private:
+	Selector& _selector;
+	SelectionTest& _test;
+	SelectionSystem::EComponentMode _mode;
+
 public:
-  testselect_component_visible(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
-    : _selector(selector), _test(test), _mode(mode) {}
-  
-  bool pre(const scene::INodePtr& node);
+	ComponentSelector(Selector& selector, SelectionTest& test, 
+					  SelectionSystem::EComponentMode mode) :
+		_selector(selector), 
+		_test(test), 
+		_mode(mode)
+	{}
+
+	// scene::Graph::Walker implementation
+	bool visit(const scene::INodePtr& node);
+
+	// SelectionSystem::Visitor implementation
+	void visit(const scene::INodePtr& node) const;
 };
 
-class testselect_component_visible_selected : public scene::NodeVisitor {
-  Selector& _selector;
-  SelectionTest& _test;
-  SelectionSystem::EComponentMode _mode;
-public:
-  testselect_component_visible_selected(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
-    : _selector(selector), _test(test), _mode(mode) {}
-  
-  bool pre(const scene::INodePtr& node);
-};
-
-// --------------------------------------------------------------------------------
-
-void Scene_TestSelect_Component(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
-void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode);
-
-inline void ConstructSelectionTest(View& view, const Rectangle selection_box) {
+inline void ConstructSelectionTest(View& view, const Rectangle& selection_box)
+{
 	view.EnableScissor(selection_box.min[0], selection_box.max[0], 
 					   selection_box.min[1], selection_box.max[1]);
 }

@@ -341,35 +341,26 @@ bool AnySelector::visit(const scene::INodePtr& node)
 	return true;
 }
 
-bool testselect_component_visible::pre(const scene::INodePtr& node) {
-	ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
+// scene::Graph::Walker
+bool ComponentSelector::visit(const scene::INodePtr& node)
+{
+	ComponentSelectionTestablePtr testable = Node_getComponentSelectionTestable(node);
 
-	if (componentSelectionTestable != NULL) {
-		componentSelectionTestable->testSelectComponents(_selector, _test, _mode);
+	if (testable != NULL)
+	{
+		testable->testSelectComponents(_selector, _test, _mode);
     }
 
-    return true;
+	return true;
 }
 
-bool testselect_component_visible_selected::pre(const scene::INodePtr& node) {
-    if (Node_isSelected(node)) {
-		ComponentSelectionTestablePtr componentSelectionTestable = Node_getComponentSelectionTestable(node);
-		if (componentSelectionTestable != NULL) {
-			componentSelectionTestable->testSelectComponents(_selector, _test, _mode);
-		}
-	}
+// SelectionSystem::Visitor
+void ComponentSelector::visit(const scene::INodePtr& node) const
+{
+	ComponentSelectionTestablePtr testable = Node_getComponentSelectionTestable(node);
 
-    return true;
-}
-
-// ==================================================================================
-
-void Scene_TestSelect_Component_Selected(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode) {
-	testselect_component_visible_selected tester(selector, test, componentMode);
-	Scene_forEachVisible(GlobalSceneGraph(), volume, tester);
-}
-
-void Scene_TestSelect_Component(Selector& selector, SelectionTest& test, const VolumeTest& volume, SelectionSystem::EComponentMode componentMode) {
-	testselect_component_visible tester(selector, test, componentMode);
-	Scene_forEachVisible(GlobalSceneGraph(), volume, tester);
+	if (testable != NULL)
+	{
+		testable->testSelectComponents(_selector, _test, _mode);
+    }
 }
