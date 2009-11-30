@@ -5,38 +5,6 @@
 #include "iscenegraph.h"
 
 /**
- * greebo: Scene Graph Walker used for traversing the map, visiting
- * only nodes that are at least partially visible. 
- *
- * This is an adapter class to allow the use of legacy walkers which
- * are based on pre() and post() methods, rather than a simple visit().
- * New code shouldn't need to use this template, rather use the
- * GlobalSceneGraph().foreachNodeInVolume() method directly.
- */
-template<typename Walker_>
-class ForEachVisibleWalker :
-	public scene::Graph::Walker
-{
-private:
-	// Contained walker that will be called for each visible instance
-	const Walker_& m_walker;
-
-public:
-	// Constructor
-	ForEachVisibleWalker(const Walker_& walker) : 
-		m_walker(walker)
-	{}
-
-	bool visit(const scene::INodePtr& node)
-	{
-		m_walker.pre(node, VOLUME_PARTIAL);
-		m_walker.post(node, VOLUME_PARTIAL);
-
-		return true; // continue traversal
-	}
-};
-
-/**
  * Scenegraph walker class which applies the given walker object to objects
  * in the scene graph depending on their intersection with the provided 
  * VolumeTest object. The walker is called on objects whose intersection test

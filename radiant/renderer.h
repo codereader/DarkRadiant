@@ -92,11 +92,9 @@ inline void Scene_Render(RenderableCollector& collector, const VolumeTest& volum
 
 	// Instantiate a new walker class
 	RenderHighlighted renderHighlightWalker(collector, volume);
-	//ForEachVisibleWalker<RenderHighlighted> walker(renderHighlightWalker);
 
 	// Submit renderables from scene graph
 	GlobalSceneGraph().foreachNodeInVolume(volume, renderHighlightWalker);
-	//Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 	
 	// Submit renderables directly attached to the ShaderCache
 	GlobalRenderSystem().forEachRenderable(
