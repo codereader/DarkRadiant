@@ -285,11 +285,12 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     // Render the editor texture in legacy mode
     state.texture0 = _iShader->getEditorImage()->getGLTexNum();
     state.renderFlags = RENDER_FILL
-                    | RENDER_TEXTURE_2D
-                    |RENDER_DEPTHTEST
-                    |RENDER_COLOURWRITE
-                    |RENDER_LIGHTING
-                    |RENDER_SMOOTH;
+                      | RENDER_TEXTURE_2D
+                      | RENDER_DEPTHTEST
+                      | RENDER_COLOURWRITE
+                      | RENDER_LIGHTING
+                      | RENDER_SMOOTH
+                      | RENDER_BLEND;
 
     // Handle certain shader flags
     if ((_iShader->getFlags() & QER_CULL) == 0

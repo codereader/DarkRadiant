@@ -45,10 +45,6 @@ TexturePtr CShader::getEditorImage()
         _editorTexture = GetTextureManager().getBinding(
             _template->getEditorTexture()
         );
-        if (!_editorTexture)
-        {
-            _editorTexture = GetTextureManager().getShaderNotFound();
-        }
     }
 	
     return _editorTexture;
