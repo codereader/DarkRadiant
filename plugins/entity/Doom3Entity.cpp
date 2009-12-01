@@ -194,6 +194,13 @@ Entity::KeyValuePairs Doom3Entity::getKeyValuePairs(const std::string& prefix) c
 	return list;
 }
 
+EntityKeyValuePtr Doom3Entity::getEntityKeyValue(const std::string& key)
+{
+	KeyValues::const_iterator found = find(key);
+
+	return (found != _keyValues.end()) ? found->second : EntityKeyValuePtr();
+}
+
 bool Doom3Entity::isContainer() const {
 	return _isContainer;
 }

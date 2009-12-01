@@ -88,6 +88,11 @@ public:
 	
 	bool isModel() const;
 
+	// Returns the actual pointer to a KeyValue (or NULL if not found), 
+	// not just the string like getKeyValue() does.
+	// Only returns non-NULL for non-inherited keyvalues.
+	EntityKeyValuePtr getEntityKeyValue(const std::string& key);
+
 private:
 
     // Notification functions
