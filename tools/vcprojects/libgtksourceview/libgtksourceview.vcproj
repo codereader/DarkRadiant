@@ -183,7 +183,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include/gtksourceview&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/libiconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBXML_STATIC;DR_GTK_SOURCEVIEW_DLL"
+				PreprocessorDefinitions="NDEBUG;WIN32;_CRT_SECURE_NO_DEPRECATE;LIBXML_STATIC;DR_GTK_SOURCEVIEW_DLL"
 				RuntimeLibrary="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -253,7 +253,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include/gtksourceview&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;LIBXML_STATIC;DR_GTK_SOURCEVIEW_DLL"
+				PreprocessorDefinitions="NDEBUG;WIN32;_CRT_SECURE_NO_DEPRECATE;LIBXML_STATIC;DR_GTK_SOURCEVIEW_DLL"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				WarningLevel="3"
