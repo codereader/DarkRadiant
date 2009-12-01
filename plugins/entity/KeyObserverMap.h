@@ -74,6 +74,15 @@ public:
 	{
 		_keyObservers.insert(KeyObservers::value_type(key, observer));
 
+		// Check if the entity already has such a (non-inherited) spawnarg
+		EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key);
+
+		if (keyValue != NULL)
+		{
+			// Attach an observer to a the given KeyValue
+			keyValue->attach(observer);
+		}
+
 		// Call the observer right now with the current keyvalue as argument
 		observer(_entity.getKeyValue(key));
 	}

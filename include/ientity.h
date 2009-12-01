@@ -53,6 +53,7 @@ public:
 	virtual void attach(const KeyObserver& observer) = 0;
 	virtual void detach(const KeyObserver& observer) = 0;
 };
+typedef boost::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 
 /**
  * Interface for a map entity. The Entity is the main building block of a
