@@ -105,12 +105,12 @@ void EntityNode::onInsertIntoScene()
 {
 	_entity.instanceAttach(scene::findMapFile(getSelf()));
 
-	Node::onInsertIntoScene();
+	SelectableNode::onInsertIntoScene();
 }
 
 void EntityNode::onRemoveFromScene()
 {
-	Node::onRemoveFromScene();
+	SelectableNode::onRemoveFromScene();
 
 	_entity.instanceDetach(scene::findMapFile(getSelf()));
 }

@@ -94,7 +94,7 @@ const AABB& LightNode::localAABB() const {
 void LightNode::onInsertIntoScene()
 {
 	// Call the base class first
-	SelectableNode::onInsertIntoScene();
+	EntityNode::onInsertIntoScene();
 
 	GlobalRenderSystem().attachLight(*this);
 }
@@ -102,7 +102,7 @@ void LightNode::onInsertIntoScene()
 void LightNode::onRemoveFromScene()
 {
 	// Call the base class first
-	SelectableNode::onRemoveFromScene();
+	EntityNode::onRemoveFromScene();
 
 	GlobalRenderSystem().detachLight(*this);
 
