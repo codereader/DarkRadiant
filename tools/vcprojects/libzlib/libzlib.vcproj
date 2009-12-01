@@ -163,7 +163,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/zlib/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
+				PreprocessorDefinitions="NDEBUG;WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
 				WarningLevel="3"
 				CompileAs="1"
@@ -224,7 +224,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../w32deps/zlib/include&quot;"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
+				PreprocessorDefinitions="NDEBUG;WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="2"
 				WarningLevel="3"
 				CompileAs="1"
