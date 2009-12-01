@@ -51,8 +51,13 @@ public:
 	// Required visit function 
 	void visit(const std::string& name)
 	{
-		// The name should start with the directory, "def/" for instance.
+#ifdef OS_CASE_INSENSITIVE
+		// The name should start with the directory, "def/" for instance, case-insensitively.
 		assert(boost::algorithm::to_lower_copy(name.substr(0, _dirPrefixLength)) == _directory);
+#else
+		// Linux: The name should start with the directory, "def/" for instance, including case.
+		assert(name.substr(0, _dirPrefixLength) == _directory);
+#endif
 
 		// Cut off the base directory prefix
 		std::string subname = name.substr(_dirPrefixLength);
