@@ -1,6 +1,7 @@
 #ifndef _ISPACE_PARTITION_H_
 #define _ISPACE_PARTITION_H_
 
+#include <list>
 #include <vector>
 #include "imodule.h"
 
@@ -43,7 +44,7 @@ public:
 	typedef std::vector<ISPNodePtr> NodeList;
 
 	// The members
-	typedef std::vector<INodePtr> MemberList;
+	typedef std::list<INodePtr> MemberList;
 
 	// Get the parent node (can be NULL for the root node)
 	virtual ISPNodePtr getParent() const = 0;

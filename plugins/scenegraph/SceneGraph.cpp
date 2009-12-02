@@ -10,6 +10,11 @@
 namespace scene
 {
 
+SceneGraph::SceneGraph() :
+	_visitedSPNodes(0),
+	_skippedSPNodes(0)
+{}
+
 void SceneGraph::addSceneObserver(Graph::Observer* observer) {
 	if (observer != NULL) {
 		// Add the passed observer to the list
@@ -114,6 +119,8 @@ void SceneGraph::removeBoundsChangedCallback(SignalHandlerId id) {
 
 void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 {
+	assert(_visitedSPNodes == 0); // Disallow this during traversal
+
 	if (_spacePartition->unlink(node))
 	{
 		// unlink returned true, so the given node was linked before => re-link it
@@ -133,6 +140,9 @@ void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
 
 	//globalOutputStream() << "SceneGraph::foreachNodeInVolume: visited: " << _visitedSPNodes << 
 	//	", skipped: " << _skippedSPNodes << std::endl;
+
+	_visitedSPNodes = 0;
+	_skippedSPNodes = 0;
 }
 
 bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker)
@@ -142,10 +152,11 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 	// Visit all members
 	const ISPNode::MemberList& members = node.getMembers();
 
-	for (ISPNode::MemberList::const_iterator m = members.begin(); m != members.end(); ++m)
+	for (ISPNode::MemberList::const_iterator m = members.begin(); 
+		 m != members.end(); /* in-loop increment */)
 	{
 		// We're done, as soon as the walker returns FALSE
-		if (!walker.visit(*m))
+		if (!walker.visit(*m++))
 		{
 			return false;
 		}

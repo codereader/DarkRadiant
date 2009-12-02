@@ -56,6 +56,8 @@ class SceneGraph :
 	std::size_t _skippedSPNodes;
 
 public:	
+	SceneGraph();
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;

@@ -62,9 +62,6 @@ public:
 		_parent(parent)
 	{
 		assert(_bounds.isValid()); // require valid bounds
-
-		// Pre-allocate memory for our members
-		_members.reserve(SUBDIVISION_THRESHOLD);
 	}
 
 	// Construct a node using AABB components
@@ -73,9 +70,7 @@ public:
 		_owner(owner),
 		_bounds(origin, extents),
 		_parent(parent)
-	{
-		_members.reserve(SUBDIVISION_THRESHOLD);
-	}
+	{}
 
 #ifdef _DEBUG
 	// In debug builds, notify the owning octree about our deletion
