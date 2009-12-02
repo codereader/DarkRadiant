@@ -28,6 +28,7 @@
 #include "interfaces/SoundInterface.h"
 
 #include "ScriptWindow.h"
+#include "SceneNodeBuffer.h"
 
 #include "os/path.h"
 #include <boost/filesystem.hpp>
@@ -421,10 +422,16 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 			"Reload Scripts",	// caption
 			"",	// icon
 			"ReloadScripts"); // event name
+
+	SceneNodeBuffer::Instance().clear();
 }
 
-void ScriptingSystem::shutdownModule() {
-	globalOutputStream() << getName() << "::shutdownModule called.\n";
+void ScriptingSystem::shutdownModule()
+{
+	globalOutputStream() << getName() << "::shutdownModule called." << std::endl;
+
+	// Clear the buffer so that nodes finally get destructed
+	SceneNodeBuffer::Instance().clear();
 
 	_scriptPath.clear();
 	_startupListener = StartupListenerPtr();

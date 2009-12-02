@@ -1,6 +1,7 @@
 #include "BrushInterface.h"
 
 #include "ibrush.h"
+#include "../SceneNodeBuffer.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace script {
@@ -188,9 +189,16 @@ public:
 	}
 };
 
-ScriptSceneNode BrushInterface::createBrush() {
+ScriptSceneNode BrushInterface::createBrush()
+{
 	// Create a new brush and return the script scene node
-	return ScriptSceneNode(GlobalBrushCreator().createBrush());
+	scene::INodePtr node = GlobalBrushCreator().createBrush();
+
+	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// as ScriptSceneNodes are using weak_ptrs.
+	SceneNodeBuffer::Instance().push_back(node);
+
+	return ScriptSceneNode(node);
 }
 
 void BrushInterface::registerInterface(boost::python::object& nspace)

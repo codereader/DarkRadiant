@@ -419,6 +419,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\script\SceneNodeBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\script\SceneNodeBuffer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\script\ScriptCommand.cpp"
 				>
 			</File>
