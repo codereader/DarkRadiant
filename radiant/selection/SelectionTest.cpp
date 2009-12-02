@@ -3,6 +3,7 @@
 #include "igroupnode.h"
 #include "entitylib.h"
 #include "renderer.h"
+#include "imodel.h"
 
 inline SelectionIntersection select_point_from_clipped(Vector4& clipped) {
   return SelectionIntersection(clipped[2] / clipped[3], static_cast<float>(Vector3(clipped[0] / clipped[3], clipped[1] / clipped[3], 0).getLengthSquared()));
@@ -231,6 +232,12 @@ bool EntitySelector::visit(const scene::INodePtr& node)
 
 	if (entity == NULL)
 	{
+		// Skip any models, the parent entity is taking care of the selection test
+		if (Node_isModel(node))
+		{
+			return true;
+		}
+
 		// Second chance check: is the parent a group node?
 		entity = getParentGroupEntity(node);
 	}
