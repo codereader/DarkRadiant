@@ -130,6 +130,12 @@ void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 
 void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
 {
+	// Acquire the worldAABB() of the scenegraph root - if any node got changed in the graph
+	// the scenegraph's root bounds are marked as "dirty" and the bounds will be re-calculated
+	// which in turn might trigger a re-link in the Octree. We want to avoid that the Octree
+	// changes during traversal so let's call this now. If nothing got changed, this call is very cheap.
+	if (_root != NULL) _root->worldAABB();
+
 	// Descend the SpacePartition tree and call the walker for each (partially) visible member
 	ISPNodePtr root = _spacePartition->getRoot();
 
