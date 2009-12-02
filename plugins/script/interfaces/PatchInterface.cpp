@@ -1,6 +1,7 @@
 #include "PatchInterface.h"
 
 #include "ipatch.h"
+#include "../SceneNodeBuffer.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace script {
@@ -187,14 +188,28 @@ public:
 const std::string ScriptPatchNode::_emptyShader;
 PatchControl ScriptPatchNode::_emptyPatchControl;
 
-ScriptSceneNode PatchInterface::createPatchDef2() {
+ScriptSceneNode PatchInterface::createPatchDef2()
+{
 	// Create a new patch and return the script scene node
-	return ScriptSceneNode(GlobalPatchCreator(DEF2).createPatch());
+	scene::INodePtr node = GlobalPatchCreator(DEF2).createPatch();
+
+	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// as ScriptSceneNodes are using weak_ptrs.
+	SceneNodeBuffer::Instance().push_back(node);
+
+	return ScriptSceneNode(node);
 }
 
-ScriptSceneNode PatchInterface::createPatchDef3() {
+ScriptSceneNode PatchInterface::createPatchDef3()
+{
 	// Create a new patch and return the script scene node
-	return ScriptSceneNode(GlobalPatchCreator(DEF3).createPatch());
+	scene::INodePtr node = GlobalPatchCreator(DEF3).createPatch();
+
+	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// as ScriptSceneNodes are using weak_ptrs.
+	SceneNodeBuffer::Instance().push_back(node);
+
+	return ScriptSceneNode(node);
 }
 
 void PatchInterface::registerInterface(boost::python::object& nspace) {

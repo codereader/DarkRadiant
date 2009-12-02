@@ -3,6 +3,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 
+#include "../SceneNodeBuffer.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace script {
@@ -75,8 +76,15 @@ ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 }
 
 // Creates a new entity for the given entityclass
-ScriptSceneNode EntityInterface::createEntity(const ScriptEntityClass& eclass) {
-	return ScriptSceneNode(GlobalEntityCreator().createEntity(eclass));
+ScriptSceneNode EntityInterface::createEntity(const ScriptEntityClass& eclass)
+{
+	scene::INodePtr node = GlobalEntityCreator().createEntity(eclass);
+
+	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// as ScriptSceneNodes are using weak_ptrs.
+	SceneNodeBuffer::Instance().push_back(node);
+
+	return ScriptSceneNode(node);
 }
 
 // Creates a new entity for the given entityclass
@@ -89,7 +97,13 @@ ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
 		return ScriptSceneNode(scene::INodePtr());
 	}
 
-	return ScriptSceneNode(GlobalEntityCreator().createEntity(eclass));
+	scene::INodePtr node = GlobalEntityCreator().createEntity(eclass);
+
+	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// as ScriptSceneNodes are using weak_ptrs.
+	SceneNodeBuffer::Instance().push_back(node);
+
+	return ScriptSceneNode(node);
 }
 
 void EntityInterface::registerInterface(boost::python::object& nspace) {
