@@ -51,7 +51,9 @@ public:
 		// greebo: Fix for primitive nodes: as we don't traverse the scenegraph nodes
 		// top-down anymore, we need to set the shader state of our parent entity ourselves.
 		// Otherwise we're in for NULL-states when rendering worldspawn brushes.
-		Entity* entity = Node_getEntity(node->getParent());
+		scene::INodePtr parent = node->getParent();
+
+		Entity* entity = Node_getEntity(parent);
 
 		if (entity != NULL)
 		{
@@ -65,7 +67,7 @@ public:
 			renderable->viewChanged();
 		}
 
-		if (Node_isSelected(node))
+		if (Node_isSelected(node) || Node_isSelected(parent))
 		{
 			if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
 			{
