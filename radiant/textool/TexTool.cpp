@@ -422,7 +422,7 @@ textool::TexToolItemVec
 	for (std::size_t i = 0; i < _items.size(); i++) {
 		// Get the list from each item
 		textool::TexToolItemVec found = 
-			_items[i]->getSelectableChilds(rectangle);
+			_items[i]->getSelectableChildren(rectangle);
 		
 		// and append the vector to the existing vector
 		selectables.insert(selectables.end(), found.begin(), found.end());
