@@ -14,7 +14,8 @@ FaceItem::FaceItem(Face& sourceFace) :
 AABB FaceItem::getExtents() {
 	AABB returnValue;
 	
-	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
+	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	{
 		returnValue.includePoint(Vector3(i->texcoord[0], i->texcoord[1], 0));
 	}
 	
@@ -35,7 +36,8 @@ void FaceItem::render() {
 	
 	glBegin(GL_TRIANGLE_FAN);
 	
-	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
+	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	{
 		glVertex2f(i->texcoord[0], i->texcoord[1]);
 	}
 	
@@ -44,7 +46,8 @@ void FaceItem::render() {
 	
 	glPointSize(5);
 	glBegin(GL_POINTS);
-	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
+	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	{
 		glVertex2f(i->texcoord[0], i->texcoord[1]);
 	}
 	
@@ -73,7 +76,8 @@ void FaceItem::transform(const Matrix4& matrix) {
 Vector2 FaceItem::getCentroid() const {
 	Vector2 texCentroid;
 	 
-	for (Winding::iterator i = _winding.begin(); i != _winding.end(); i++) {
+	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	{
 		texCentroid += i->texcoord;
 	}
 	
@@ -87,7 +91,7 @@ bool FaceItem::testSelect(const Rectangle& rectangle)
 {
 	Vector2 texCentroid;
 
-	for (Winding::iterator i = _winding.begin(); i != _winding.end(); ++i)
+	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
 	{
 		if (rectangle.contains(i->texcoord))
 		{
