@@ -185,6 +185,7 @@ private:
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
 	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self);
 	static gboolean triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool* self);
+	static void onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TexTool* self);
 	
 	// The callbacks for capturing the mouse events
 	static gboolean onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self);

@@ -120,6 +120,10 @@ void TexTool::populateWindow() {
 	g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
 	g_signal_connect(G_OBJECT(glWidget), "key_press_event", G_CALLBACK(onKeyPress), this);
 	g_signal_connect(G_OBJECT(glWidget), "scroll_event", G_CALLBACK(onMouseScroll), this);
+
+	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is 
+	// often called for subsets of the widget and the size info in there is therefore not reliable.
+	g_signal_connect(G_OBJECT(glWidget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
 	
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(glWidget));
@@ -685,18 +689,16 @@ void TexTool::drawGrid() {
 	}
 }
 
-gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self) {
+gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self)
+{
 	// Update the information about the current selection 
 	self->update();
 	
 	// Activate the GL widget
 	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 	
-	// Store the window dimensions for later calculations
-	self->_windowDims = Vector2(event->area.width, event->area.height);
-	
 	// Initialise the viewport
-	glViewport(0, 0, event->area.width, event->area.height);
+	glViewport(0, 0, self->_windowDims[0], self->_windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
@@ -796,6 +798,15 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	}
 	
 	return false;
+}
+
+void TexTool::onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TexTool* self)
+{
+	// Store the window dimensions for later calculations
+	self->_windowDims = Vector2(allocation->width, allocation->height);
+
+	// Queue an expose event
+	gtk_widget_queue_draw(widget);
 }
 
 gboolean TexTool::triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool* self) {
