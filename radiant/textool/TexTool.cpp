@@ -61,7 +61,7 @@ TexTool::TexTool()
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 	
 	g_signal_connect(G_OBJECT(getWindow()), "focus-in-event", G_CALLBACK(triggerRedraw), this);
-	g_signal_connect(G_OBJECT(getWindow()), "key_press_event", G_CALLBACK(onKeyPress), this);
+	g_signal_connect(G_OBJECT(getWindow()), "key-press-event", G_CALLBACK(onKeyPress), this);
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connect(GTK_OBJECT(getWindow()));
@@ -447,20 +447,25 @@ textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords) {
 	return getSelectables(testRectangle);
 }
 
-void TexTool::beginOperation() {
+void TexTool::beginOperation()
+{
 	// Start an undo recording session
 	GlobalUndoSystem().start();
 	
 	// Tell all the items to save their memento
-	for (std::size_t i = 0; i < _items.size(); i++) {
+	for (std::size_t i = 0; i < _items.size(); i++)
+	{
 		_items[i]->beginTransformation();
 	}
 }
 
-void TexTool::endOperation(const std::string& commandName) {
-	for (std::size_t i = 0; i < _items.size(); i++) {
+void TexTool::endOperation(const std::string& commandName)
+{
+	for (std::size_t i = 0; i < _items.size(); i++)
+	{
 		_items[i]->endTransformation();
 	}
+
 	GlobalUndoSystem().finish(commandName);
 }
 
@@ -518,18 +523,22 @@ void TexTool::doMouseUp(const Vector2& coords, GdkEventButton* event) {
 	draw();
 }
 
-void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event) {
-	if (_dragRectangle) {
+void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event)
+{
+	if (_dragRectangle)
+	{
 		_selectionRectangle.bottomRight = coords;
 		draw();
 	}
-	else if (_manipulatorMode) {
+	else if (_manipulatorMode)
+	{
 		Vector2 delta = coords - _manipulateRectangle.topLeft;
 		
 		// Snap the operations to the grid
 		Vector3 snapped(0,0,0);
 		
-		if (_gridActive) {
+		if (_gridActive)
+		{
 			snapped[0] = (fabs(delta[0]) > 0.0f) ? 
 				floor(fabs(delta[0]) / _grid)*_grid * delta[0]/fabs(delta[0]) : 
 				0.0f;
@@ -543,14 +552,16 @@ void TexTool::doMouseMove(const Vector2& coords, GdkEventMotion* event) {
 			snapped[1] = delta[1]; 
 		}
 		
-		if (snapped.getLength() > 0) {
+		if (snapped.getLength() > 0)
+		{
 			// Create the transformation matrix
 			Matrix4 transform = Matrix4::getTranslation(snapped);
 			
 			// Transform the selected
 			// The transformSelected() call is propagated down the entire tree
 			// of available items (e.g. PatchItem > PatchVertexItems)
-			for (std::size_t i = 0; i < _items.size(); i++) {
+			for (std::size_t i = 0; i < _items.size(); i++)
+			{
 				_items[i]->transformSelected(transform);
 			}
 			
@@ -576,13 +587,14 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 	_dragRectangle = false;
 	_viewOriginMove = false;
 	
-	if (observerEvent == ui::obsManipulate) {
+	if (observerEvent == ui::obsManipulate)
+	{
 		// Get the list of selectables of this point
-		textool::TexToolItemVec selectables;
-		selectables = getSelectables(coords);
+		textool::TexToolItemVec selectables = getSelectables(coords);
 		
 		// Any selectables under the mouse pointer?
-		if (selectables.size() > 0) {
+		if (!selectables.empty())
+		{
 			// Activate the manipulator mode
 			_manipulatorMode = true;
 			_manipulateRectangle.topLeft = coords; 
@@ -592,7 +604,8 @@ void TexTool::doMouseDown(const Vector2& coords, GdkEventButton* event) {
 			beginOperation();
 		}
 	}
-	else if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle) {
+	else if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle)
+	{
 		// Start a drag or click operation
 		_dragRectangle = true;
 		_selectionRectangle.topLeft = coords;

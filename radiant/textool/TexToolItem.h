@@ -19,7 +19,7 @@ class ItemVisitor
 {
 public:
     virtual ~ItemVisitor() {}
-	virtual void visit(TexToolItemPtr texToolItem) = 0;	
+	virtual void visit(const TexToolItemPtr& texToolItem) = 0;	
 };
 
 /** greebo: A TexToolItem is an object that...
@@ -46,11 +46,13 @@ protected:
 	TexToolItemVec _children;
 
 public:
+	virtual ~TexToolItem() {}
+
 	/** greebo: Adds the given TexToolItem as child of this Item.
 	 * 
 	 * Any transformations will affect the children as well. 
 	 */
-	virtual void addChild(TexToolItemPtr child);
+	virtual void addChild(const TexToolItemPtr& child);
 	
 	/** greebo: Returns the vector of children of this object.
 	 * 
@@ -119,7 +121,7 @@ public:
 		_selected(selected)
 	{}
 
-	void visit(TexToolItemPtr texToolItem) {
+	void visit(const TexToolItemPtr& texToolItem) {
 		texToolItem->setSelected(_selected);
 	}
 };
@@ -135,7 +137,7 @@ public:
 		_counter(counter)
 	{}
 
-	void visit(TexToolItemPtr texToolItem) {
+	void visit(const TexToolItemPtr& texToolItem) {
 		if (texToolItem->isSelected()) {
 			_counter++;
 		}

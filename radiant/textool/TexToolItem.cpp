@@ -2,7 +2,7 @@
 
 namespace textool {
 
-void TexToolItem::addChild(TexToolItemPtr child) {
+void TexToolItem::addChild(const TexToolItemPtr& child) {
 	_children.push_back(child);
 }
 

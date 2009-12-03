@@ -1607,6 +1607,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\textool\item\FaceVertexItem.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\textool\item\FaceVertexItem.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\textool\item\PatchItem.cpp"
 						>
 					</File>
