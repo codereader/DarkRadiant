@@ -31,7 +31,7 @@ void FaceItem::render() {
 		glColor3f(1, 0.5f, 0);
 	}
 	else {
-		glColor3f(1, 1, 1);
+		glColor3f(0.8f, 0.8f, 0.8f);
 	}
 	
 	glBegin(GL_TRIANGLE_FAN);

@@ -63,7 +63,7 @@ public:
 	/** greebo: Returns a list of selectable items that correspond
 	 * to the given coords. 
 	 */
-	virtual TexToolItemVec getSelectableChilds(const Rectangle& rectangle);
+	virtual TexToolItemVec getSelectableChildren(const Rectangle& rectangle);
 	
 	/** greebo: Default transform implementation: transform all children.
 	 */
