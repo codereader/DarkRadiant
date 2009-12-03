@@ -4,12 +4,22 @@
 #include "brush/Face.h"
 #include "brush/Winding.h"
 
+#include "FaceVertexItem.h"
+
 namespace textool {
 
 FaceItem::FaceItem(Face& sourceFace) : 
 	_sourceFace(sourceFace),
 	_winding(sourceFace.getWinding())
-{}
+{
+	// Allocate a vertex item for each winding vertex
+	for (Winding::iterator i = _winding.begin(); i != _winding.end(); ++i)
+	{
+		_children.push_back(
+			TexToolItemPtr(new FaceVertexItem(_sourceFace, *i))
+		);
+	}
+}
 
 AABB FaceItem::getExtents() {
 	AABB returnValue;
@@ -22,7 +32,8 @@ AABB FaceItem::getExtents() {
 	return returnValue;
 }
 
-void FaceItem::render() {
+void FaceItem::render()
+{
 	glEnable(GL_BLEND);
 	glBlendColor(0,0,0, 0.3f);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
@@ -46,16 +57,19 @@ void FaceItem::render() {
 	
 	glPointSize(5);
 	glBegin(GL_POINTS);
-	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+	/*for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
 	{
 		glVertex2f(i->texcoord[0], i->texcoord[1]);
-	}
+	}*/
 	
 	glColor3f(1, 1, 1);
 	Vector2 centroid = getCentroid();
 	glVertex2f(centroid[0], centroid[1]);
 	
 	glEnd();
+
+	// Now invoke the default render method (calls render() on all children)
+	TexToolItem::render();
 }
 
 void FaceItem::transform(const Matrix4& matrix) {
@@ -93,10 +107,10 @@ bool FaceItem::testSelect(const Rectangle& rectangle)
 
 	for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
 	{
-		if (rectangle.contains(i->texcoord))
+		/*if (rectangle.contains(i->texcoord))
 		{
 			return true;
-		}
+		}*/
 
 		// Otherwise, just continue summing up the texcoords for the centroid check
 		texCentroid += i->texcoord;
