@@ -147,6 +147,11 @@ GLWidget::GLWidget(bool zBuffer, const std::string& debugName)
 : _widget(gtk_drawing_area_new()),
   _zBuffer(zBuffer)
 {
+#ifdef DEBUG_GL_WIDGETS
+    std::cout << "GLWidget: constructed with name '" << debugName << "'" 
+              << std::endl;
+#endif
+
     // Name the widget
     if (!debugName.empty())
     {
@@ -219,8 +224,12 @@ void GLWidget::swapBuffers(GtkWidget* widget)
 	gdk_gl_drawable_swap_buffers(gldrawable);
 }
 
-gboolean GLWidget::onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_toplevel, GLWidget* self) {
-	if (previous_toplevel == NULL && !gtk_widget_is_gl_capable(widget)) {
+gboolean GLWidget::onHierarchyChanged(GtkWidget* widget,
+                                      GtkWidget* previous_toplevel,
+                                      GLWidget* self) 
+{
+	if (previous_toplevel == NULL && !gtk_widget_is_gl_capable(widget)) 
+    {
 		// Create a new GL config structure
 		GdkGLConfig* glconfig = (self->_zBuffer) ? createGLConfigWithDepth() : createGLConfig();
 		assert(glconfig != NULL);
@@ -234,20 +243,30 @@ gboolean GLWidget::onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_top
 		);
 
 		gtk_widget_realize(widget);
-		
-		// Shared not set yet?
-		if (_shared == 0) {
-			_shared = widget;
-		}
 	}
 
 	return FALSE;
 }
 
-gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) {
+gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) 
+{
 	if (++_realisedWidgets == 1) {
 		_shared = widget;
 		gtk_widget_ref(_shared);
+
+#ifdef DEBUG_GL_WIDGETS
+        std::cout << "GLWidget: created shared context using ";
+        if (gdk_gl_context_is_direct(
+                gtk_widget_get_gl_context(_shared)
+            ) == TRUE)
+        {
+            std::cout << "DIRECT rendering" << std::endl;
+        }
+        else
+        {
+            std::cout << "INDIRECT rendering" << std::endl;
+        }
+#endif
 
 		makeCurrent(_shared);
 		GlobalOpenGL().contextValid = true;
