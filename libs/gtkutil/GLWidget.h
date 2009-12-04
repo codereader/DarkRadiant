@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_GTKUTIL_GLWIDGET_H
 
 #include <boost/shared_ptr.hpp>
+#include <string>
 
 // Forward declarations
 typedef struct _GdkGLConfig GdkGLConfig;
@@ -32,11 +33,11 @@ typedef gint   gboolean;
 
 namespace gtkutil {
 
-class GLWidget {
-	
+class GLWidget 
+{
 	// The actual widget, a GTK drawing area
 	GtkWidget* _widget;
-	
+
 	// TRUE, if this GL widget has depth-buffering enabled 
 	bool _zBuffer;
 	
@@ -47,8 +48,9 @@ class GLWidget {
 	static int _realisedWidgets;
 
 public:
+
 	// Constructor, pass TRUE to enable depth-buffering
-	GLWidget(bool zBuffer);
+    GLWidget(bool zBuffer, const std::string& debugName = std::string());
 	
 	// Operator cast to GtkWidget*, for packing into parent containers
 	operator GtkWidget*() const;

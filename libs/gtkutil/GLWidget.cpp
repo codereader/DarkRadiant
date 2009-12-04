@@ -143,10 +143,16 @@ const config_t configs_with_depth[] =
 };
 
 // Constructor, pass TRUE to enable depth-buffering
-GLWidget::GLWidget(bool zBuffer) :
-	_widget(gtk_drawing_area_new()),
-	_zBuffer(zBuffer)
+GLWidget::GLWidget(bool zBuffer, const std::string& debugName) 
+: _widget(gtk_drawing_area_new()),
+  _zBuffer(zBuffer)
 {
+    // Name the widget
+    if (!debugName.empty())
+    {
+        gtk_widget_set_name(_widget, debugName.c_str());
+    }
+
 	g_signal_connect(G_OBJECT(_widget), "hierarchy-changed", G_CALLBACK(onHierarchyChanged), this);
 	g_signal_connect(G_OBJECT(_widget), "realize", G_CALLBACK(onRealise), this);
 	g_signal_connect(G_OBJECT(_widget), "unrealize", G_CALLBACK(onUnRealise), this);
@@ -191,13 +197,24 @@ GdkGLConfig* GLWidget::createGLConfig() {
 	return gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGBA | GDK_GL_MODE_DOUBLE));
 }
 
-bool GLWidget::makeCurrent(GtkWidget* widget) {
+bool GLWidget::makeCurrent(GtkWidget* widget) 
+{
+#ifdef DEBUG_GL_WIDGETS
+    std::cout << "GLWidget: widget '" << gtk_widget_get_name(widget)
+              << "' made current." << std::endl;
+#endif
+
 	 GdkGLContext* glcontext = gtk_widget_get_gl_context(widget);
 	 GdkGLDrawable* gldrawable = gtk_widget_get_gl_drawable(widget);
 	 return gdk_gl_drawable_gl_begin(gldrawable, glcontext) ? true : false;
 }
 
-void GLWidget::swapBuffers(GtkWidget* widget) {
+void GLWidget::swapBuffers(GtkWidget* widget) 
+{
+#ifdef DEBUG_GL_WIDGETS
+    std::cout << "GLWidget: widget '" << gtk_widget_get_name(widget)
+              << "' swapped buffers." << std::endl;
+#endif
 	GdkGLDrawable* gldrawable = gtk_widget_get_gl_drawable(widget);
 	gdk_gl_drawable_swap_buffers(gldrawable);
 }
