@@ -65,6 +65,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "debugging/debugging.h"
 
 #include <gtk/gtkmain.h>
+#include <gtk/gtkgl.h>
 
 #include "os/file.h"
 #include "os/path.h"
@@ -187,6 +188,9 @@ int main (int argc, char* argv[]) {
 	// Initialise GTK
 	gtk_disable_setlocale();
 	gtk_init(&argc, &argv);
+
+    // Initialise GTKGLExt
+    gtk_gl_init(&argc, &argv);
 
 	{
 		// Create the radiant.pid file in the settings folder 
