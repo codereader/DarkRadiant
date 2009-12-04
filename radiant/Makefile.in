@@ -153,6 +153,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-GlobalXYWnd.$(OBJEXT) \
 	darkradiant-TexToolItem.$(OBJEXT) \
 	darkradiant-BrushItem.$(OBJEXT) darkradiant-FaceItem.$(OBJEXT) \
+	darkradiant-FaceVertexItem.$(OBJEXT) \
 	darkradiant-PatchItem.$(OBJEXT) \
 	darkradiant-PatchVertexItem.$(OBJEXT) \
 	darkradiant-TexTool.$(OBJEXT) \
@@ -526,6 +527,7 @@ darkradiant_SOURCES = main.cpp \
 					  textool/TexToolItem.cpp \
 					  textool/item/BrushItem.cpp \
 					  textool/item/FaceItem.cpp \
+					  textool/item/FaceVertexItem.cpp \
 					  textool/item/PatchItem.cpp \
 					  textool/item/PatchVertexItem.cpp \
 					  textool/TexTool.cpp \
@@ -737,6 +739,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FacePlane.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FaceShader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FaceTexDef.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FaceVertexItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FilterDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FilterEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-FiltersMenu.Po@am__quote@
@@ -2480,6 +2483,20 @@ darkradiant-FaceItem.obj: textool/item/FaceItem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='textool/item/FaceItem.cpp' object='darkradiant-FaceItem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FaceItem.obj `if test -f 'textool/item/FaceItem.cpp'; then $(CYGPATH_W) 'textool/item/FaceItem.cpp'; else $(CYGPATH_W) '$(srcdir)/textool/item/FaceItem.cpp'; fi`
+
+darkradiant-FaceVertexItem.o: textool/item/FaceVertexItem.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FaceVertexItem.o -MD -MP -MF $(DEPDIR)/darkradiant-FaceVertexItem.Tpo -c -o darkradiant-FaceVertexItem.o `test -f 'textool/item/FaceVertexItem.cpp' || echo '$(srcdir)/'`textool/item/FaceVertexItem.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-FaceVertexItem.Tpo $(DEPDIR)/darkradiant-FaceVertexItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='textool/item/FaceVertexItem.cpp' object='darkradiant-FaceVertexItem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FaceVertexItem.o `test -f 'textool/item/FaceVertexItem.cpp' || echo '$(srcdir)/'`textool/item/FaceVertexItem.cpp
+
+darkradiant-FaceVertexItem.obj: textool/item/FaceVertexItem.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FaceVertexItem.obj -MD -MP -MF $(DEPDIR)/darkradiant-FaceVertexItem.Tpo -c -o darkradiant-FaceVertexItem.obj `if test -f 'textool/item/FaceVertexItem.cpp'; then $(CYGPATH_W) 'textool/item/FaceVertexItem.cpp'; else $(CYGPATH_W) '$(srcdir)/textool/item/FaceVertexItem.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-FaceVertexItem.Tpo $(DEPDIR)/darkradiant-FaceVertexItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='textool/item/FaceVertexItem.cpp' object='darkradiant-FaceVertexItem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FaceVertexItem.obj `if test -f 'textool/item/FaceVertexItem.cpp'; then $(CYGPATH_W) 'textool/item/FaceVertexItem.cpp'; else $(CYGPATH_W) '$(srcdir)/textool/item/FaceVertexItem.cpp'; fi`
 
 darkradiant-PatchItem.o: textool/item/PatchItem.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-PatchItem.o -MD -MP -MF $(DEPDIR)/darkradiant-PatchItem.Tpo -c -o darkradiant-PatchItem.o `test -f 'textool/item/PatchItem.cpp' || echo '$(srcdir)/'`textool/item/PatchItem.cpp

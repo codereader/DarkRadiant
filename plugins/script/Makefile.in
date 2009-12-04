@@ -70,13 +70,13 @@ LTLIBRARIES = $(modules_LTLIBRARIES)
 script_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la
 am_script_la_OBJECTS = ScriptingSystem.lo ScriptCommand.lo \
-	ScriptModule.lo ScriptWindow.lo EClassInterface.lo \
-	BrushInterface.lo RadiantInterface.lo PatchInterface.lo \
-	SelectionInterface.lo MapInterface.lo EntityInterface.lo \
-	MathInterface.lo ModelInterface.lo CommandSystemInterface.lo \
-	FileSystemInterface.lo GridInterface.lo \
-	ShaderSystemInterface.lo SkinInterface.lo SoundInterface.lo \
-	GameInterface.lo
+	ScriptModule.lo ScriptWindow.lo SceneNodeBuffer.lo \
+	EClassInterface.lo BrushInterface.lo RadiantInterface.lo \
+	PatchInterface.lo SelectionInterface.lo MapInterface.lo \
+	EntityInterface.lo MathInterface.lo ModelInterface.lo \
+	CommandSystemInterface.lo FileSystemInterface.lo \
+	GridInterface.lo ShaderSystemInterface.lo SkinInterface.lo \
+	SoundInterface.lo GameInterface.lo
 script_la_OBJECTS = $(am_script_la_OBJECTS)
 script_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -267,6 +267,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptCommand.cpp \
 					ScriptModule.cpp \
 					ScriptWindow.cpp \
+					SceneNodeBuffer.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
 					interfaces/RadiantInterface.cpp \
@@ -370,6 +371,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RadiantInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SceneNodeBuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptCommand.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptModule.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptWindow.Plo@am__quote@
