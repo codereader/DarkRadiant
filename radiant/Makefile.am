@@ -131,6 +131,7 @@ darkradiant_SOURCES = main.cpp \
 					  textool/TexToolItem.cpp \
 					  textool/item/BrushItem.cpp \
 					  textool/item/FaceItem.cpp \
+					  textool/item/FaceVertexItem.cpp \
 					  textool/item/PatchItem.cpp \
 					  textool/item/PatchVertexItem.cpp \
 					  textool/TexTool.cpp \
