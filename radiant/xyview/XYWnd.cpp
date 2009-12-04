@@ -53,7 +53,7 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 // Constructors
 XYWnd::XYWnd(int id) :
 	_id(id),
-	_glWidget(false),
+	_glWidget(false, "XYWnd"),
 	m_gl_widget(static_cast<GtkWidget*>(_glWidget)),
 	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
 	m_deferred_motion(callbackMouseMotion, this),

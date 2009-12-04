@@ -21,7 +21,7 @@ namespace ui
 
 TexturePreviewCombo::TexturePreviewCombo()
 : _widget(gtk_hbox_new(FALSE, 0)),
-  _glWidget(false),
+  _glWidget(false, "TexturePreviewCombo"),
   _texName(""),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _infoView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore))),

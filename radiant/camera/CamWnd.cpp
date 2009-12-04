@@ -248,7 +248,7 @@ CamWnd::CamWnd() :
 	m_cameraview(m_Camera, &m_view, CamWndUpdate(*this)),
 	m_drawing(false),
 	m_bFreeMove(false),
-	m_gl_widget(true),
+	m_gl_widget(true, "CamWnd"),
 	_parentWidget(NULL),
 	m_window_observer(NewWindowObserver()),
 	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),

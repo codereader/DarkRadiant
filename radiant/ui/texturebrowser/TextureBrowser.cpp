@@ -749,7 +749,9 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	m_parent = parent;
 
 	// Instantiate a new GLwidget without z-buffering
-	_glWidget = gtkutil::GLWidgetPtr(new gtkutil::GLWidget(false));
+	_glWidget = gtkutil::GLWidgetPtr(
+        new gtkutil::GLWidget(false, "TextureBrowser")
+    );
 	
 	GlobalMaterialManager().setActiveShadersChangedNotify(
 		MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(*this)
