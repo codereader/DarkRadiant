@@ -123,13 +123,14 @@ void BrushPrimitTexDef::addScale(std::size_t width, std::size_t height) {
 // compute a fake shift scale rot representation from the texture matrix
 // these shift scale rot values are to be understood in the local axis base
 // Note: this code looks similar to Texdef_fromTransform, but the algorithm is slightly different.
-TexDef BrushPrimitTexDef::getFakeTexCoords() const {
+TexDef BrushPrimitTexDef::getFakeTexCoords() const
+{
 	TexDef texdef;
 
-	texdef._scale[0] = static_cast<double>(1.0 / Vector2(coords[0][0], coords[1][0]).getLength());
-	texdef._scale[1] = static_cast<double>(1.0 / Vector2(coords[0][1], coords[1][1]).getLength());
+	texdef._scale[0] = 1.0 / Vector2(coords[0][0], coords[1][0]).getLength();
+	texdef._scale[1] = 1.0 / Vector2(coords[0][1], coords[1][1]).getLength();
 	
-	texdef._rotate = -static_cast<double>(radians_to_degrees(arctangent_yx(coords[1][0], coords[0][0])));
+	texdef._rotate = -radians_to_degrees(arctangent_yx(coords[1][0], coords[0][0]));
 	
 	texdef._shift[0] = -coords[0][2];
 	texdef._shift[1] = coords[1][2];
@@ -137,12 +138,14 @@ TexDef BrushPrimitTexDef::getFakeTexCoords() const {
 	// determine whether or not an axis is flipped using a 2d cross-product
 	double cross = Vector2(coords[0][0], coords[0][1]).crossProduct(Vector2(coords[1][0], coords[1][1]));
 	
-	if (cross < 0) {
+	if (cross < 0)
+	{
 		// This is a bit of a compromise when using BPs--since we don't know *which* axis was flipped,
 		// we pick one (rather arbitrarily) using the following convention: If the X-axis is between
 		// 0 and 180, we assume it's the Y-axis that flipped, otherwise we assume it's the X-axis and
 		// subtract out 180 degrees to compensate.
-		if (texdef._rotate >= 180.0f) {
+		if (texdef._rotate >= 180.0f)
+		{
 		      texdef._rotate -= 180.0f;
 		      texdef._scale[0] = -texdef._scale[0];
 		}

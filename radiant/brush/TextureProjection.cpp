@@ -218,11 +218,10 @@ Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix
 	// to retrieve the final transformation that transforms vertex
 	// coordinates into the texture plane.   
 	{
-		Matrix4 xyz2st; 
 		// we don't care if it's not normalised...
 		
 		// Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
-		xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
+		Matrix4 xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
 		
 		// Transform the basis vectors with the according texture scale, rotate and shift operations
 		// These are contained in the local2tex matrix, so the matrices have to be multiplied. 
@@ -257,11 +256,10 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
 	// to retrieve the final transformation that transforms brush vertex
 	// coordinates into the texture plane.   
 	{
-		Matrix4 xyz2st; 
 		// we don't care if it's not normalised...
 		
 		// Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
-		xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
+		Matrix4 xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
 		
 		// Transform the basis vectors with the according texture scale, rotate and shift operations
 		// These are contained in the local2tex matrix, so the matrices have to be multiplied. 
