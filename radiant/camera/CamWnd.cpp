@@ -303,9 +303,6 @@ CamWnd::~CamWnd() {
 	
 	// Disconnect self from EventManager
 	GlobalEventManager().disconnect(GTK_OBJECT(glWidget));
-	if (_parentWidget != NULL) {
-		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
-	}
 
 	GlobalMap().removeValidCallback(_mapValidHandle);
 	
