@@ -17,10 +17,10 @@ DialogManager::~DialogManager()
 	_dialogs.clear();
 }
 
-IDialogPtr DialogManager::createDialog()
+IDialogPtr DialogManager::createDialog(const std::string& title, IDialog::Type type)
 {
 	// Allocate a new dialog
-	DialogPtr dialog(new Dialog(++_highestIndex, *this));
+	DialogPtr dialog(new Dialog(++_highestIndex, *this, title, type));
 
 	// Store it in the local map so that references are held
 	_dialogs[dialog->getId()] = dialog;
