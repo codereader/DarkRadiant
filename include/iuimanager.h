@@ -171,8 +171,13 @@ public:
 	virtual GtkWidget* getElement(const std::string& name) = 0;
 };
 
-// Forward declaration, see igroupdialog.h for definition
-class IGroupDialog;
+// Forward declaration
+class IGroupDialog;		// see igroupdialog.h for definition
+
+namespace ui
+{
+class IDialogManager;	// see idialogmanager.h for definition
+}
 
 const std::string MODULE_UIMANAGER("UIManager");
 
@@ -190,6 +195,7 @@ public:
 	virtual IColourSchemeManager& getColourSchemeManager() = 0;
 	virtual IGroupDialog& getGroupDialog() = 0;
 	virtual IStatusBarManager& getStatusBarManager() = 0;
+	virtual ui::IDialogManager& getDialogManager() = 0;
 };
 
 // This is the accessor for the UI manager
