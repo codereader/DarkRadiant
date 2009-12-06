@@ -3,10 +3,12 @@
 
 #include "imodule.h"
 #include "iuimanager.h"
+#include "idialogmanager.h"
 
 #include "MenuManager.h"
 #include "ToolbarManager.h"
 #include "StatusBarManager.h"
+#include "DialogManager.h"
 #include "colourscheme/ColourSchemeManager.h"
 #include <iostream>
 
@@ -27,6 +29,8 @@ class UIManager :
 
 	UIManagerShutdownListenerPtr _shutdownListener;
 
+	DialogManagerPtr _dialogManager;
+
 public:
 
 	/** greebo: Retrieves the helper class to manipulate the menu.
@@ -40,6 +44,8 @@ public:
 	IGroupDialog& getGroupDialog();
 
 	IStatusBarManager& getStatusBarManager();
+
+	IDialogManager& getDialogManager();
 
 	// Called on radiant shutdown
 	void clear();

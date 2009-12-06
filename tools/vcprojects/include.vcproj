@@ -144,6 +144,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\idialogmanager.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\ieclass.h"
 			>
 		</File>

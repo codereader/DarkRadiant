@@ -12,6 +12,11 @@
 
 namespace ui {
 
+IDialogManager& UIManager::getDialogManager()
+{
+	return *_dialogManager;
+}
+
 IMenuManager& UIManager::getMenuManager() {
 	return _menuManager;
 }
@@ -32,8 +37,10 @@ IStatusBarManager& UIManager::getStatusBarManager() {
 	return _statusBarManager;
 }
 
-void UIManager::clear() {
+void UIManager::clear()
+{
 	_menuManager.clear();
+	_dialogManager = DialogManagerPtr();
 }
 
 const std::string& UIManager::getName() const {
@@ -41,7 +48,8 @@ const std::string& UIManager::getName() const {
 	return _name;
 }
 
-const StringSet& UIManager::getDependencies() const {
+const StringSet& UIManager::getDependencies() const
+{
 	static StringSet _dependencies;
 
 	if (_dependencies.empty()) {
@@ -54,8 +62,12 @@ const StringSet& UIManager::getDependencies() const {
 	return _dependencies;
 }
 
-void UIManager::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "UIManager::initialiseModule called\n";
+void UIManager::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << "UIManager::initialiseModule called" << std::endl;
+
+	_dialogManager = DialogManagerPtr(new DialogManager);
+
 	_menuManager.loadFromRegistry();
 	_toolbarManager.initialise();
 	ColourSchemeManager::Instance().loadColourSchemes();

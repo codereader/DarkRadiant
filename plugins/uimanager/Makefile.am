@@ -12,6 +12,7 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
                        StatusBarManager.cpp \
+					   DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
                        MenuManager.cpp
