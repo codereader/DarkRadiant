@@ -22,15 +22,24 @@ private:
 
 	IDialog::Result _result;
 
+	// The dialog type
+	IDialog::Type _type;
+
 	// Packing container, direct child of the GtkWindow
 	GtkWidget* _vbox;
+	GtkWidget* _buttonHBox;
+
+	// Whether all widgets have been created
+	bool _constructed;
 
 public:
-	Dialog(std::size_t id, DialogManager& owner);
+	Dialog(std::size_t id, DialogManager& owner, const std::string& title, IDialog::Type type);
 
 	std::size_t getId() const;
 
 	virtual void setTitle(const std::string& title);
+
+	virtual void setDialogType(IDialog::Type type);
 
 	// Enter the main loop
 	virtual Result run();
@@ -40,11 +49,14 @@ public:
 	virtual void destroy();
 
 private:
-	GtkWidget* createButtons();
+	// Used for lazy construction of this dialog's widgets, called right before blocking
+	void construct();
+
+	void createButtons();
 
 	// GTK Callbacks
-	static void onOK(GtkWidget* widget, Dialog* self);
-	static void onCancel(GtkWidget* widget, Dialog* self);
+	static void onPositive(GtkWidget* widget, Dialog* self);
+	static void onNegative(GtkWidget* widget, Dialog* self);
 };
 typedef boost::shared_ptr<Dialog> DialogPtr;
 

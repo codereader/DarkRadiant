@@ -24,7 +24,7 @@ public:
 	virtual ~DialogManager();
 
 	// Create a new dialog
-	IDialogPtr createDialog();
+	IDialogPtr createDialog(const std::string& title, IDialog::Type type);
 
 	// Called by the Dialog classes to allow the DialogManager to clear its resources
 	void notifyDestroy(std::size_t id);
