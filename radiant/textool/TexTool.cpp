@@ -34,9 +34,8 @@ namespace ui {
 	namespace {
 		const std::string WINDOW_TITLE = "Texture Tool";
 		
-		const std::string RKEY_ROOT = "user/ui/textures/texTool/";
-		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-		const std::string RKEY_GRID_STATE = RKEY_ROOT + "gridActive";
+		const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
+		const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
 		
 		const float DEFAULT_ZOOM_FACTOR = 1.5f;
 		const float ZOOM_MODIFIER = 1.25f;
