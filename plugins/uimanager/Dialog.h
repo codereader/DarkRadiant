@@ -22,6 +22,9 @@ private:
 
 	IDialog::Result _result;
 
+	// Packing container, direct child of the GtkWindow
+	GtkWidget* _vbox;
+
 public:
 	Dialog(std::size_t id, DialogManager& owner);
 
@@ -35,6 +38,13 @@ public:
 	// Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
 	// calling any methods on this object results in undefined behavior.
 	virtual void destroy();
+
+private:
+	GtkWidget* createButtons();
+
+	// GTK Callbacks
+	static void onOK(GtkWidget* widget, Dialog* self);
+	static void onCancel(GtkWidget* widget, Dialog* self);
 };
 typedef boost::shared_ptr<Dialog> DialogPtr;
 
