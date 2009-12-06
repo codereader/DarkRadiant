@@ -2,6 +2,7 @@
 #define FACE_VERTEX_ITEM_H_
 
 #include "brush/Face.h"
+#include "math/aabb.h"
 #include "textool/TexToolItem.h"
 
 namespace textool
@@ -37,6 +38,12 @@ public:
 
 	// RenderableItem implementation
 	virtual void render();
+
+private:
+	Vector2 getTexCentroid();
+
+	// Returns the bounds in UV space of the whole winding
+	AABB getTexAABB();
 }; 
 	
 } // namespace textool

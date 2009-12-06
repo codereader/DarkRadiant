@@ -93,6 +93,7 @@
 		</surfaceInspector>
 		<texTool>
 			<gridActive value="1" />
+			<faceVertexScalePivotIsCentroid value="0" />
 		</texTool>
 	</textures>
 	<grid>
