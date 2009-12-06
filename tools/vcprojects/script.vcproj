@@ -478,6 +478,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\DialogInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\DialogInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\EClassInterface.cpp"
 					>
 				</File>
