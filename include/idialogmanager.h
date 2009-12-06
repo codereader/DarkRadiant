@@ -17,7 +17,7 @@ public:
 
 	enum Result
 	{
-		RESULT_CANCELED = 0,
+		RESULT_CANCELLED = 0,
 		RESULT_OK,
 	};
 
@@ -26,6 +26,10 @@ public:
 	 * Returns the Dialog::Result, corresponding to the user's action.
 	 */
 	virtual Result run() = 0;
+
+	// Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
+	// calling any methods on this object results in undefined behavior.
+	virtual void destroy() = 0;
 };
 typedef boost::shared_ptr<IDialog> IDialogPtr;
 
@@ -35,7 +39,12 @@ public:
 	// Virtual destructor
 	virtual ~IDialogManager() {}
 
-	// Create a new dialog
+	// Create a new dialog. Note that the DialogManager will hold a reference
+	// to this dialog internally until destroy() is called on the dialog object.
+	// This allows scripts to reference the Dialog class without holding the 
+	// shared_ptr on their own or using wrapper classes doing so.
+	// Dialogs will be cleared at radiant shutdown at the latest, but it's recommended
+	// to call Dialog::destroy() when you're done using it.
 	virtual IDialogPtr createDialog() = 0;
 };
 
