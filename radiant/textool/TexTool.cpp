@@ -978,6 +978,7 @@ void TexTool::registerCommands() {
 	GlobalEventManager().addCommand("TexToolFlipT", "TexToolFlipT");
 	GlobalEventManager().addCommand("TexToolSelectRelated", "TexToolSelectRelated");
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
+	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);
 }
 
 } // namespace ui
