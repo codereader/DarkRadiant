@@ -152,6 +152,14 @@ public:
 		else
 			return false;
 	}
+
+	/**
+	 * Sets the window title.
+	 */
+	void setTitle(const std::string& title)
+	{
+		gtk_window_set_title(GTK_WINDOW(_window), title.c_str());
+	}
 	
 	/**
 	 * Destroy the window. If the window is currently visible, the hide()

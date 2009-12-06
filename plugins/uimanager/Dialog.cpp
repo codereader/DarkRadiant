@@ -1,11 +1,13 @@
 #include "Dialog.h"
 
+#include "iradiant.h"
 #include "DialogManager.h"
 
 namespace ui
 {
 
 Dialog::Dialog(std::size_t id, DialogManager& owner) :
+	gtkutil::BlockingTransientWindow("DarkRadiant", GlobalRadiant().getMainWindow()),
 	_id(id),
 	_owner(owner)
 {}
@@ -13,6 +15,12 @@ Dialog::Dialog(std::size_t id, DialogManager& owner) :
 std::size_t Dialog::getId() const
 {
 	return _id;
+}
+
+void Dialog::setTitle(const std::string& title)
+{
+	// Dispatch this call to the base class
+	gtkutil::BlockingTransientWindow::setTitle(title);
 }
 
 IDialog::Result Dialog::run()
