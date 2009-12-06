@@ -46,8 +46,10 @@ bool PatchVertexItem::testSelect(const Rectangle& rectangle) {
 	return rectangle.contains(_patchControl.texcoord);
 }
 
-void PatchVertexItem::snapSelectedToGrid(float grid) {
-	if (_selected) {
+void PatchVertexItem::snapSelectedToGrid(float grid)
+{
+	if (_selected)
+	{
 		_patchControl.texcoord[0] = float_snapped(_patchControl.texcoord[0], grid);
 		_patchControl.texcoord[1] = float_snapped(_patchControl.texcoord[1], grid);
 	}

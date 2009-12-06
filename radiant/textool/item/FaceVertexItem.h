@@ -8,6 +8,8 @@
 namespace textool
 {
 
+class FaceItem;
+
 class FaceVertexItem :
 	public TexToolItem
 {
@@ -16,12 +18,11 @@ class FaceVertexItem :
 
 	WindingVertex& _windingVertex;
 
-	// Saved texture coords
-	Vector2 _saved;
+	FaceItem& _parent;
 
 public:
 	// Constructor, allocates all child FacItems
-	FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex); 
+	FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex, FaceItem& parent); 
 
     // destructor
 	virtual ~FaceVertexItem() {}
@@ -35,6 +36,8 @@ public:
 	virtual void transform(const Matrix4& matrix);
 
 	virtual bool testSelect(const Rectangle& rectangle);
+
+	virtual void snapSelectedToGrid(float grid);
 
 	// RenderableItem implementation
 	virtual void render();
