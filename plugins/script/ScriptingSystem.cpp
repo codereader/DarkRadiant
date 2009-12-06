@@ -26,6 +26,7 @@
 #include "interfaces/ModelInterface.h"
 #include "interfaces/SkinInterface.h"
 #include "interfaces/SoundInterface.h"
+#include "interfaces/DialogInterface.h"
 
 #include "ScriptWindow.h"
 #include "SceneNodeBuffer.h"
@@ -390,6 +391,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	addInterface("Model", ModelInterfacePtr(new ModelInterface));
 	addInterface("ModelSkinCacheInterface", ModelSkinCacheInterfacePtr(new ModelSkinCacheInterface));
 	addInterface("SoundManager", SoundManagerInterfacePtr(new SoundManagerInterface));
+	addInterface("DialogInterface", DialogManagerInterfacePtr(new DialogManagerInterface));
 
 	GlobalCommandSystem().addCommand(
 		"RunScript", 
