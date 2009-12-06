@@ -21,6 +21,11 @@ Dialog::Dialog(std::size_t id, DialogManager& owner, const std::string& title, I
 	_buttonHBox(gtk_hbox_new(FALSE, 6)),
 	_constructed(false)
 {
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+	gtk_container_add(GTK_CONTAINER(getWindow()), _vbox);
+
 	// Pack the button hbox into the window, so that its position in the hbox is reserved
 	gtk_box_pack_end(GTK_BOX(_vbox), _buttonHBox, FALSE, FALSE, 0);
 }
