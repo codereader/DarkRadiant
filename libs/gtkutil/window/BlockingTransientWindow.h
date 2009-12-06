@@ -27,10 +27,22 @@ protected:
 		_isShown = true;
 		gtk_main();
 	}
-	
+
 	// Called after the dialog is destroyed. Exit the main loop if required.
-	virtual void _postDestroy() {
-		if (_isShown) {
+	virtual void _postDestroy()
+	{
+		if (_isShown)
+		{
+			gtk_main_quit();
+			_isShown = false;
+		}
+	}
+
+	// greebo: When hidden, this dialog should break the gtk_main loop too
+	virtual void _postHide()
+	{
+		if (_isShown)
+		{
 			gtk_main_quit();
 			_isShown = false;
 		}
