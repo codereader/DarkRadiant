@@ -164,8 +164,8 @@ private:
 	void updateStatusText(GdkEventKey* event, bool keyPress);
 	
 	// The GTK keypress callbacks
-	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, gpointer data);	
-	static gboolean onKeyRelease(GtkWindow* window, GdkEventKey* event, gpointer data);
+	static gboolean onKeyPress(GtkWidget* widget, GdkEventKey* event, gpointer data);	
+	static gboolean onKeyRelease(GtkWidget* widget, GdkEventKey* event, gpointer data);
 	
 	guint getGDKCode(const std::string& keyStr);
 	
