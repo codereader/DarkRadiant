@@ -16,7 +16,7 @@ FaceItem::FaceItem(Face& sourceFace) :
 	for (Winding::iterator i = _winding.begin(); i != _winding.end(); ++i)
 	{
 		_children.push_back(
-			TexToolItemPtr(new FaceVertexItem(_sourceFace, *i))
+			TexToolItemPtr(new FaceVertexItem(_sourceFace, *i, *this))
 		);
 	}
 }
@@ -122,8 +122,10 @@ bool FaceItem::testSelect(const Rectangle& rectangle)
 	return rectangle.contains(texCentroid);
 }
 
-void FaceItem::snapSelectedToGrid(float grid) {
-	if (_selected) {
+void FaceItem::snapSelectedToGrid(float grid)
+{
+	if (_selected)
+	{
 		Vector2 centroid = getCentroid();
 		
 		Vector2 snapped(
@@ -140,6 +142,9 @@ void FaceItem::snapSelectedToGrid(float grid) {
 		// Do the transformation
 		transform(matrix);
 	}
+
+	// Let the base class call the method on our children
+	TexToolItem::snapSelectedToGrid(grid);
 }
 
 void FaceItem::flipSelected(const int& axis) {

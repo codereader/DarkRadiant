@@ -3,6 +3,8 @@
 #include "iregistry.h"
 #include "../TexTool.h"
 
+#include "FaceItem.h"
+
 namespace textool
 {
 
@@ -19,15 +21,15 @@ namespace textool
 	}
 
 // Constructor, allocates all child FacItems
-FaceVertexItem::FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex) :
+FaceVertexItem::FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex, FaceItem& parent) :
 	_sourceFace(sourceFace),
-	_windingVertex(windingVertex)
+	_windingVertex(windingVertex),
+	_parent(parent)
 {}
 
 void FaceVertexItem::beginTransformation()
 {
 	_sourceFace.undoSave();
-	_saved = _windingVertex.texcoord;
 }
 
 bool FaceVertexItem::testSelect(const Rectangle& rectangle)
@@ -121,6 +123,30 @@ void FaceVertexItem::transform(const Matrix4& matrix)
 	_sourceFace.getTexdef().m_projection.setTransform(1, 1, texTransform);
 
 	_sourceFace.texdefChanged();
+}
+
+void FaceVertexItem::snapSelectedToGrid(float grid)
+{
+	if (_selected)
+	{
+		// Calculate how far we need to move our vertex
+		Vector2 snapped = _windingVertex.texcoord;
+
+		snapped[0] = float_snapped(snapped[0], grid);
+		snapped[1] = float_snapped(snapped[1], grid);
+
+		Vector2 translation = snapped - _windingVertex.texcoord;
+
+		if (translation.getLength() == 0)
+		{
+			return; // nothing to do
+		}
+
+		Matrix4 matrix = Matrix4::getTranslation(Vector3(translation.x(), translation.y(), 0));
+		
+		// Do the transformation
+		_parent.transform(matrix);
+	}
 }
 
 void FaceVertexItem::render()
