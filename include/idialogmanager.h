@@ -21,6 +21,9 @@ public:
 		RESULT_OK,
 	};
 
+	// Sets the dialog title
+	virtual void setTitle(const std::string& title) = 0;
+
 	/**
 	 * Run the dialog an enter the main loop (block the application).
 	 * Returns the Dialog::Result, corresponding to the user's action.

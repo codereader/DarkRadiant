@@ -2,6 +2,7 @@
 #define _UI_DIALOG_H_
 
 #include "idialogmanager.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 namespace ui
 {
@@ -9,7 +10,8 @@ namespace ui
 class DialogManager;
 
 class Dialog :
-	public IDialog
+	public IDialog,
+	public gtkutil::BlockingTransientWindow
 {
 private:
 	// The unique ID of this dialog
@@ -24,6 +26,8 @@ public:
 	Dialog(std::size_t id, DialogManager& owner);
 
 	std::size_t getId() const;
+
+	virtual void setTitle(const std::string& title);
 
 	// Enter the main loop
 	virtual Result run();
