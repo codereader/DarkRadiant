@@ -1,7 +1,8 @@
 #include "CustomStimEditor.h"
 
+#include "idialogmanager.h"
+
 #include <gtk/gtk.h>
-#include "gtkutil/messagebox.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -253,17 +254,18 @@ int CustomStimEditor::getIdFromSelection() {
 	return (anythingSelected) ? gtkutil::TreeModel::getInt(model, &iter, ST_ID_COL) : -1;
 }
 
-void CustomStimEditor::removeStimType() {
-	EMessageBoxReturn returnValue = gtk_MessageBox(
-		_parentWindow, 
+void CustomStimEditor::removeStimType()
+{
+	IDialogPtr dialog = GlobalDialogManager().createMessageBox("Delete Custom Stim",
 		"Beware that other entities <i>might</i> still be using this stim type.\n"
-		"Do you really want to delete this custom stim?", 
-		"Delete Custom Stim", eMB_YESNO, eMB_ICONQUESTION
-	);
-	
-	if (returnValue == eIDYES) {
+		"Do you really want to delete this custom stim?", ui::IDialog::MESSAGE_ASK);
+
+	if (dialog->run() == IDialog::RESULT_YES)
+	{
 		_stimTypes.remove(getIdFromSelection());
 	}
+
+	dialog->destroy();
 }
 
 void CustomStimEditor::onAddStimType(GtkWidget* button, CustomStimEditor* self) {

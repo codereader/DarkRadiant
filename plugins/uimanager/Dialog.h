@@ -37,6 +37,7 @@ public:
 
 	// Enter the main loop
 	virtual Result run();
+	virtual Result runAndDestroy();
 
 	// Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
 	// calling any methods on this object results in undefined behavior.

@@ -28,6 +28,7 @@ void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 	dialog
 		.def("setTitle", &ScriptDialog::setTitle)
 		.def("run", &ScriptDialog::run)
+		.def("runAndDestroy", &ScriptDialog::runAndDestroy)
 		.def("destroy", &ScriptDialog::destroy)
 	;
 

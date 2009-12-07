@@ -53,6 +53,15 @@ IDialog::Result Dialog::run()
 	return _result;
 }
 
+IDialog::Result Dialog::runAndDestroy()
+{
+	IDialog::Result result = run();
+
+	destroy();
+
+	return result;
+}
+
 // Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
 // calling any methods on this object results in undefined behavior.
 void Dialog::destroy()
