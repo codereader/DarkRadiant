@@ -16,6 +16,7 @@ Dialog::Dialog(std::size_t id, DialogManager& owner, const std::string& title) :
 	gtkutil::BlockingTransientWindow(title, GlobalRadiant().getMainWindow()),
 	_id(id),
 	_owner(owner),
+	_result(RESULT_CANCELLED),
 	_vbox(gtk_vbox_new(FALSE, 6)),
 	_constructed(false)
 {
@@ -56,8 +57,12 @@ IDialog::Result Dialog::run()
 // calling any methods on this object results in undefined behavior.
 void Dialog::destroy()
 {
-	// Destroy this window
-	BlockingTransientWindow::destroy();
+	// Prevent double-destruction
+	if (getWindow() != NULL)
+	{
+		// Destroy this window
+		BlockingTransientWindow::destroy();
+	}
 
 	// Nofity the manager, this will clear ourselves as soon as the last reference is gone
 	// which might happen right after this call
