@@ -6,6 +6,7 @@
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkstock.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "gtkutil/LeftalignedLabel.h"
 
@@ -17,8 +18,11 @@ MessageBox::MessageBox(std::size_t id, DialogManager& owner,
 					   IDialog::MessageType type) :
 	Dialog(id, owner, title),
 	_text(text),
-	_type(type)
-{}
+	_type(type),
+	_accelGroup(gtk_accel_group_new())
+{
+	gtk_window_add_accel_group(GTK_WINDOW(getWindow()), _accelGroup);
+}
 
 // Constructs the dialog (adds buttons, text and icons)
 void MessageBox::construct()
@@ -81,6 +85,10 @@ GtkWidget* MessageBox::createButtons()
 		GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 		g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOK), this);
 		gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, FALSE, FALSE, 0);
+
+		mapKeyToButton(GDK_O, okButton);
+		mapKeyToButton(GDK_Return, okButton);
+		mapKeyToButton(GDK_Escape, okButton);
 	}
 	else if (_type == MESSAGE_ASK)
 	{
@@ -89,10 +97,16 @@ GtkWidget* MessageBox::createButtons()
 		g_signal_connect(G_OBJECT(yesButton), "clicked", G_CALLBACK(onYes), this);
 		gtk_box_pack_end(GTK_BOX(buttonHBox), yesButton, FALSE, FALSE, 0);
 
+		mapKeyToButton(GDK_Y, yesButton);
+		mapKeyToButton(GDK_Return, yesButton);
+		
 		// NO button
 		GtkWidget* noButton = gtk_button_new_from_stock(GTK_STOCK_NO);
 		g_signal_connect(G_OBJECT(noButton), "clicked", G_CALLBACK(onNo), this);
 		gtk_box_pack_end(GTK_BOX(buttonHBox), noButton, FALSE, FALSE, 0);
+
+		mapKeyToButton(GDK_Escape, noButton);
+		mapKeyToButton(GDK_N, noButton);
 	}
 	else
 	{
@@ -100,6 +114,11 @@ GtkWidget* MessageBox::createButtons()
 	}
 	
 	return buttonHBox;
+}
+
+void MessageBox::mapKeyToButton(guint key, GtkWidget* button)
+{
+	gtk_widget_add_accelerator(button, "clicked", _accelGroup, key, (GdkModifierType)0, (GtkAccelFlags)0);
 }
 
 void MessageBox::onYes(GtkWidget* widget, MessageBox* self)
