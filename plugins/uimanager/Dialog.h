@@ -13,7 +13,7 @@ class Dialog :
 	public IDialog,
 	public gtkutil::BlockingTransientWindow
 {
-private:
+protected:
 	// The unique ID of this dialog
 	const std::size_t _id;
 
@@ -22,24 +22,18 @@ private:
 
 	IDialog::Result _result;
 
-	// The dialog type
-	IDialog::Type _type;
-
 	// Packing container, direct child of the GtkWindow
 	GtkWidget* _vbox;
-	GtkWidget* _buttonHBox;
 
 	// Whether all widgets have been created
 	bool _constructed;
 
 public:
-	Dialog(std::size_t id, DialogManager& owner, const std::string& title, IDialog::Type type);
+	Dialog(std::size_t id, DialogManager& owner, const std::string& title);
 
 	std::size_t getId() const;
 
 	virtual void setTitle(const std::string& title);
-
-	virtual void setDialogType(IDialog::Type type);
 
 	// Enter the main loop
 	virtual Result run();
@@ -48,15 +42,15 @@ public:
 	// calling any methods on this object results in undefined behavior.
 	virtual void destroy();
 
-private:
-	// Used for lazy construction of this dialog's widgets, called right before blocking
-	void construct();
+protected:
+	// Constructs the dialog (is invoked right before entering the main loop)
+	virtual void construct();
 
-	void createButtons();
+	virtual GtkWidget* createButtons();
 
 	// GTK Callbacks
-	static void onPositive(GtkWidget* widget, Dialog* self);
-	static void onNegative(GtkWidget* widget, Dialog* self);
+	static void onOK(GtkWidget* widget, Dialog* self);
+	static void onCancel(GtkWidget* widget, Dialog* self);
 };
 typedef boost::shared_ptr<Dialog> DialogPtr;
 

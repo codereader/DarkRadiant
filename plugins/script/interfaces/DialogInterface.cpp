@@ -5,9 +5,16 @@
 namespace script
 {
 
-ScriptDialog DialogManagerInterface::createDialog(const std::string& title, ui::IDialog::Type type)
+ScriptDialog DialogManagerInterface::createDialog(const std::string& title)
 {
-	return ScriptDialog(GlobalUIManager().getDialogManager().createDialog(title, type));
+	return ScriptDialog(GlobalUIManager().getDialogManager().createDialog(title));
+}
+
+ScriptDialog DialogManagerInterface::createMessageBox(const std::string& title, 
+													  const std::string& text, 
+													  ui::IDialog::MessageType type)
+{
+	return ScriptDialog(GlobalUIManager().getDialogManager().createMessageBox(title, text, type));
 }
 
 // IScriptInterface implementation
@@ -20,7 +27,6 @@ void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 	// Add the methods to the dialog object
 	dialog
 		.def("setTitle", &ScriptDialog::setTitle)
-		.def("setDialogType", &ScriptDialog::setDialogType)
 		.def("run", &ScriptDialog::run)
 		.def("destroy", &ScriptDialog::destroy)
 	;
@@ -40,16 +46,18 @@ void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 		.export_values()
 	;
 
-	boost::python::enum_<ui::IDialog::Type>("Type")
-		.value("OK", ui::IDialog::DIALOG_OK)
-		.value("OK_CANCEL", ui::IDialog::DIALOG_OK_CANCEL)
-		.value("YES_NO", ui::IDialog::DIALOG_YES_NO)
+	boost::python::enum_<ui::IDialog::MessageType>("MessageType")
+		.value("CONFIRM", ui::IDialog::MESSAGE_CONFIRM)
+		.value("ASK", ui::IDialog::MESSAGE_ASK)
+		.value("WARNING", ui::IDialog::MESSAGE_WARNING)
+		.value("ERROR", ui::IDialog::MESSAGE_ERROR)
 		.export_values()
 	;
 
 	// Add the module declaration to the given python namespace
 	nspace["GlobalDialogManager"] = boost::python::class_<DialogManagerInterface>("GlobalDialogManager")
 		.def("createDialog", &DialogManagerInterface::createDialog)
+		.def("createMessageBox", &DialogManagerInterface::createMessageBox)
 	;
 
 	// Now point the Python variable "GlobalDialogManager" to this instance
