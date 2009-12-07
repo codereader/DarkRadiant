@@ -14,6 +14,7 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        StatusBarManager.cpp \
 					   DialogManager.cpp \
 					   Dialog.cpp \
+					   MessageBox.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
                        MenuManager.cpp

@@ -23,11 +23,6 @@ public:
 		if (_dialog != NULL) _dialog->setTitle(title);
 	}
 
-	void setDialogType(ui::IDialog::Type type)
-	{
-		if (_dialog != NULL) _dialog->setDialogType(type);
-	}
-
 	ui::IDialog::Result run()
 	{
 		return (_dialog != NULL) ? _dialog->run() : ui::IDialog::RESULT_CANCELLED;
@@ -46,7 +41,8 @@ class DialogManagerInterface :
 	public IScriptInterface
 {
 public:
-	ScriptDialog createDialog(const std::string& title, ui::IDialog::Type type);
+	ScriptDialog createDialog(const std::string& title);
+	ScriptDialog createMessageBox(const std::string& title, const std::string& text, ui::IDialog::MessageType type);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);

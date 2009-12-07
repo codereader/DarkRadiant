@@ -12,22 +12,17 @@
 namespace ui
 {
 
-Dialog::Dialog(std::size_t id, DialogManager& owner, const std::string& title, IDialog::Type type) :
+Dialog::Dialog(std::size_t id, DialogManager& owner, const std::string& title) :
 	gtkutil::BlockingTransientWindow(title, GlobalRadiant().getMainWindow()),
 	_id(id),
 	_owner(owner),
-	_type(type),
 	_vbox(gtk_vbox_new(FALSE, 6)),
-	_buttonHBox(gtk_hbox_new(FALSE, 6)),
 	_constructed(false)
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 
 	gtk_container_add(GTK_CONTAINER(getWindow()), _vbox);
-
-	// Pack the button hbox into the window, so that its position in the hbox is reserved
-	gtk_box_pack_end(GTK_BOX(_vbox), _buttonHBox, FALSE, FALSE, 0);
 }
 
 std::size_t Dialog::getId() const
@@ -38,25 +33,16 @@ std::size_t Dialog::getId() const
 void Dialog::setTitle(const std::string& title)
 {
 	// Dispatch this call to the base class
-	gtkutil::BlockingTransientWindow::setTitle(title);
-}
-
-void Dialog::setDialogType(IDialog::Type type)
-{
-	if (_constructed) 
-	{
-		globalWarningStream() << "Cannot set type, dialog has already been constructed/shown." << std::endl;
-		return;
-	}
-
-	_type = type;
+	BlockingTransientWindow::setTitle(title);
 }
 
 IDialog::Result Dialog::run()
 {
-	// Check if we've constructed the dialog already
 	if (!_constructed)
 	{
+		_constructed = true;
+
+		// Call the virtual method, gives subclasses a chance to do their stuff
 		construct();
 	}
 
@@ -82,54 +68,37 @@ void Dialog::destroy()
 
 void Dialog::construct()
 {
-	if (_constructed) return;
-
-	_constructed = true;
-
-	// Create the buttons, according to this dialog's type
-	createButtons();
+	// Pack the buttons
+	gtk_box_pack_end(GTK_BOX(_vbox), createButtons(), FALSE, FALSE, 0);
 }
 
-void Dialog::createButtons()
+GtkWidget* Dialog::createButtons()
 {
-	if (_type == DIALOG_OK || DIALOG_OK_CANCEL)
-	{
-		GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-		g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onPositive), this);
-		gtk_box_pack_end(GTK_BOX(_buttonHBox), okButton, FALSE, FALSE, 0);
+	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 6);
 
-		if (_type == DIALOG_OK_CANCEL)
-		{
-			GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-			g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onNegative), this);
-			gtk_box_pack_end(GTK_BOX(_buttonHBox), cancelButton, FALSE, FALSE, 0);
-		}
-	}
-	else if (_type == DIALOG_YES_NO)
-	{
-		GtkWidget* yesButton = gtk_button_new_from_stock(GTK_STOCK_YES);
-		g_signal_connect(G_OBJECT(yesButton), "clicked", G_CALLBACK(onPositive), this);
-		gtk_box_pack_end(GTK_BOX(_buttonHBox), yesButton, FALSE, FALSE, 0);
+	// Pack the button hbox into the window
+	gtk_box_pack_end(GTK_BOX(_vbox), buttonHBox, FALSE, FALSE, 0);
 
-		GtkWidget* noButton = gtk_button_new_from_stock(GTK_STOCK_NO);
-		g_signal_connect(G_OBJECT(noButton), "clicked", G_CALLBACK(onNegative), this);
-		gtk_box_pack_end(GTK_BOX(_buttonHBox), noButton, FALSE, FALSE, 0);
-	}
-	else
-	{
-		globalErrorStream() << "Invalid Dialog type encountered" << std::endl;
-	}
+	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOK), this);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, FALSE, FALSE, 0);
+
+	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 0);
+
+	return buttonHBox;
 }
 
-void Dialog::onNegative(GtkWidget* widget, Dialog* self)
+void Dialog::onCancel(GtkWidget* widget, Dialog* self)
 {
-	self->_result = (self->_type == DIALOG_YES_NO) ? RESULT_NO : RESULT_CANCELLED;
+	self->_result = RESULT_CANCELLED;
 	self->hide(); // breaks gtk_main()
 }
 
-void Dialog::onPositive(GtkWidget* widget, Dialog* self)
+void Dialog::onOK(GtkWidget* widget, Dialog* self)
 {
-	self->_result = (self->_type == DIALOG_YES_NO) ? RESULT_YES : RESULT_OK;
+	self->_result = RESULT_OK;
 	self->hide(); // breaks gtk_main()
 }
 

@@ -455,6 +455,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\uimanager\MessageBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\uimanager\MessageBox.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\uimanager\ShutdownListener.h"
 				>
 			</File>
