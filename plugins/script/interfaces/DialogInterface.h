@@ -28,6 +28,11 @@ public:
 		return (_dialog != NULL) ? _dialog->run() : ui::IDialog::RESULT_CANCELLED;
 	}
 
+	ui::IDialog::Result runAndDestroy()
+	{
+		return (_dialog != NULL) ? _dialog->runAndDestroy() : ui::IDialog::RESULT_CANCELLED;
+	}
+
 	void destroy()
 	{
 		if (_dialog != NULL) _dialog->destroy();

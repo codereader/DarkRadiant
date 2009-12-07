@@ -1,6 +1,7 @@
 #ifndef _IDIALOG_MANAGER_H_
 #define _IDIALOG_MANAGER_H_
 
+#include "iuimanager.h"
 #include <boost/shared_ptr.hpp>
 
 namespace ui
@@ -44,6 +45,9 @@ public:
 	// Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
 	// calling any methods on this object results in undefined behavior.
 	virtual void destroy() = 0;
+
+	// Convenience method, does run() and destroy() in a sequence
+	virtual Result runAndDestroy() = 0;
 };
 typedef boost::shared_ptr<IDialog> IDialogPtr;
 
@@ -81,5 +85,11 @@ public:
 };
 
 } // namespace ui
+
+// Shortcut method
+inline ui::IDialogManager& GlobalDialogManager()
+{
+	return GlobalUIManager().getDialogManager();
+}
 
 #endif /* _IDIALOG_MANAGER_H_ */
