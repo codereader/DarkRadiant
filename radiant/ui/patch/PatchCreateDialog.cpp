@@ -3,6 +3,7 @@
 #include "iradiant.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#include "gtkutil/ComboBox.h"
 #include "string/string.h"
 
 namespace {
@@ -119,8 +120,8 @@ bool PatchCreateDialog::queryPatchDimensions(int& width, int& height,
 		
 	if (response == GTK_RESPONSE_OK) {
 		// Retrieve the width/height from the widgets
-		width = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_comboWidth)));
-		height = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_comboHeight)));
+		width = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_comboWidth)));
+		height = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_comboHeight)));
 		
 		removeBrush = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox)) ? true : false;
 		

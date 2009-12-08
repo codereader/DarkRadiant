@@ -51,25 +51,39 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 	// Push the widgets into the dialog, resize the table to fit
 	gtk_table_resize(GTK_TABLE(_elementsTable), numRows, 2);
 
-	// The label (first column)
-	gtk_table_attach(
-		GTK_TABLE(_elementsTable), element->getLabel(),
-		0, 1, numRows-1, numRows,
-		GTK_FILL, (GtkAttachOptions)0, 0, 0
-	);
+	GtkWidget* first = element->getLabel();
+	GtkWidget* second = element->getWidget();
 
-	// The edit widgets (second column)
-	gtk_table_attach_defaults(
-		GTK_TABLE(_elementsTable), element->getWidget(),
-		1, 2, numRows-1, numRows // index starts with 1, hence the -1
-	);
+	if (first != second)
+	{
+		// The label (first column)
+		gtk_table_attach(
+			GTK_TABLE(_elementsTable), first,
+			0, 1, numRows-1, numRows,
+			GTK_FILL, (GtkAttachOptions)0, 0, 0
+		);
+
+		// The edit widgets (second column)
+		gtk_table_attach_defaults(
+			GTK_TABLE(_elementsTable), second,
+			1, 2, numRows-1, numRows // index starts with 1, hence the -1
+		);
+	}
+	else
+	{
+		// One single widget, spanning over two columns
+		gtk_table_attach_defaults(
+			GTK_TABLE(_elementsTable), first,
+			0, 2, numRows-1, numRows // index starts with 1, hence the -1
+		);
+	}
 
 	return handle;
 }
 
 ui::IDialog::Handle Dialog::addLabel(const std::string& text)
 {
-	return 0;
+	return addElement(DialogElementPtr(new DialogLabel(text)));
 }
 
 ui::IDialog::Handle Dialog::addComboBox(const std::string& label, const ComboBoxOptions& options)
@@ -79,7 +93,7 @@ ui::IDialog::Handle Dialog::addComboBox(const std::string& label, const ComboBox
 
 ui::IDialog::Handle Dialog::addEntryBox(const std::string& label)
 {
-	return 0;
+	return addElement(DialogElementPtr(new DialogEntryBox(label)));
 }
 
 ui::IDialog::Handle Dialog::addPathEntry(const std::string& label, bool foldersOnly)
@@ -99,12 +113,30 @@ ui::IDialog::Handle Dialog::addCheckbox(const std::string& label)
 
 void Dialog::setElementValue(const ui::IDialog::Handle& handle, const std::string& value)
 {
+	ElementMap::iterator i = _elements.find(handle);
 
+	if (i == _elements.end())
+	{
+		globalErrorStream() << "Dialog: cannot find element with handle " << handle << std::endl;
+		return;
+	}
+
+	// Import the data from the string into the widget
+	i->second->importFromString(value);
 }
 
 std::string Dialog::getElementValue(const ui::IDialog::Handle& handle)
 {
-	return "";
+	ElementMap::iterator i = _elements.find(handle);
+
+	if (i == _elements.end())
+	{
+		globalErrorStream() << "Dialog: cannot find element with handle " << handle << std::endl;
+		return "";
+	}
+
+	// Export the widget's contents to a string
+	return i->second->exportToString();
 }
 
 ui::IDialog::Result Dialog::run()
@@ -142,6 +174,12 @@ GtkWidget* Dialog::createButtons()
 	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 0);
 
 	return buttonHBox;
+}
+
+void Dialog::_onDeleteEvent()
+{
+	_result = ui::IDialog::RESULT_CANCELLED;
+	hide(); // breaks gtk_main()
 }
 
 void Dialog::onCancel(GtkWidget* widget, Dialog* self)

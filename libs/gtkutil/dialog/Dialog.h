@@ -61,6 +61,9 @@ protected:
 
 	ui::IDialog::Handle addElement(const DialogElementPtr& element);
 
+	// Override TransientWindow behaviour to hide this dialog instead of destroying it
+	virtual void _onDeleteEvent();
+
 	// GTK Callbacks
 	static void onOK(GtkWidget* widget, Dialog* self);
 	static void onCancel(GtkWidget* widget, Dialog* self);

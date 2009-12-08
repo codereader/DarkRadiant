@@ -3,11 +3,9 @@
 
 #include "../ifc/Widget.h"
 #include "../SerialisableWidgets.h"
+#include "../LeftAlignedLabel.h"
 
-#include <gtk/gtklabel.h>
 #include <gtk/gtkcombobox.h>
-
-#include <boost/enable_shared_from_this.hpp>
 
 namespace gtkutil
 {
@@ -19,7 +17,7 @@ namespace gtkutil
  */
 class DialogElement :
 	public StringSerialisable,
-	public virtual Widget
+	public Widget
 {
 protected:
 	GtkWidget* _label;
@@ -27,38 +25,18 @@ protected:
 	// The widget carrying the value
 	GtkWidget* _widget;
 
-	// Each subclass is responsible of setting this member to a
-	// StringSerialisable object wrapping the value _widget.
-	StringSerialisablePtr _serialisable;
-
 protected:
 	// Protected constructor, to be called by subclasses
 	DialogElement(const std::string& label) :
-		_label(gtk_label_new("")),
+		_label(LeftAlignedLabel(label)),
 		_widget(NULL)
-	{
-		gtk_label_set_markup(GTK_LABEL(_label), label.c_str());
-	}
+	{}
 
 public:
 	// Retrieve the label
 	virtual GtkWidget* getLabel() const
 	{
 		return _label;
-	}
-
-	// Implement the string serialisable interface, wrapping to the _serialisable member
-	virtual std::string exportToString() const 
-	{
-		return (_serialisable != NULL) ? _serialisable->exportToString() : "";
-	}
-
-	virtual void importFromString(const std::string& str)
-	{
-		if (_serialisable != NULL) 
-		{
-			_serialisable->importFromString(str);
-		}
 	}
 
 protected:
@@ -68,11 +46,64 @@ protected:
 		return _widget;
 	}
 
+	// Subclasses needed to call this to allow _getWidget() to work
 	void setWidget(GtkWidget* widget)
 	{
 		_widget = widget;
 	}
 };
+
+// -----------------------------------------------------------------------
+
+class DialogEntryBox :
+	public DialogElement,
+	public SerialisableTextEntry
+{
+public:
+	DialogEntryBox(const std::string& label) :
+		DialogElement(label),
+		SerialisableTextEntry(gtk_entry_new())
+	{
+		DialogElement::setWidget(SerialisableTextEntry::getWidget());
+	}
+
+	// Implementation of StringSerialisable, wrapping to base class 
+	virtual std::string exportToString() const 
+	{
+		return SerialisableTextEntry::exportToString();
+	}
+
+	virtual void importFromString(const std::string& str)
+	{
+		SerialisableTextEntry::importFromString(str);
+	}
+};
+
+// -----------------------------------------------------------------------
+
+class DialogLabel :
+	public DialogElement
+{
+public:
+	DialogLabel(const std::string& label) :
+		DialogElement(label)
+	{
+		DialogElement::setWidget(getLabel());
+	}
+
+	// Implementation of StringSerialisable, wrapping to base class 
+	virtual std::string exportToString() const 
+	{
+		return gtk_label_get_text(GTK_LABEL(getLabel()));
+	}
+
+	virtual void importFromString(const std::string& str)
+	{
+		gtk_label_set_markup(GTK_LABEL(getLabel()), str.c_str());
+	}
+};
+
+// -----------------------------------------------------------------------
 
 /**
  * Creates a new GTK ComboBox carrying the values passed to the constructor
@@ -102,7 +133,7 @@ public:
 		}
 	}
 
-	// Override DialogElement implementation of StringSerialisable, wrapping to private 
+	// Implementation of StringSerialisable, wrapping to private 
 	virtual std::string exportToString() const 
 	{
 		return SerialisableComboBox_Text::exportToString();
@@ -112,13 +143,6 @@ public:
 	{
 		SerialisableComboBox_Text::importFromString(str);
 	}
-
-protected:
-   virtual GtkWidget* _getWidget() const
-   {
-	   // Wrap to private implementation
-	   return SerialisableComboBox_Text::_getWidget();
-   }
 };
 typedef boost::shared_ptr<DialogComboBox> DialogComboBoxPtr;
 

@@ -8,6 +8,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/ComboBox.h"
 #include "ClassNameStore.h"
 
 namespace ui {
@@ -336,7 +337,7 @@ void DifficultyEditor::saveSetting() {
 	difficulty::SettingPtr setting(new difficulty::Setting);
 
 	// Load the widget contents
-	setting->className = gtk_combo_box_get_active_text(GTK_COMBO_BOX(_classCombo));
+	setting->className = gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_classCombo));
 	setting->spawnArg = gtk_entry_get_text(GTK_ENTRY(_spawnArgEntry));
 	setting->argument = gtk_entry_get_text(GTK_ENTRY(_argumentEntry));
 

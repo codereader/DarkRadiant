@@ -5,6 +5,7 @@
 #include "scenelib.h"
 
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/ComboBox.h"
 
 #include <gtk/gtk.h>
 
@@ -69,7 +70,7 @@ void ComboBoxPropertyEditor::onApply(GtkWidget *widget,
 {
 	self->setKeyValue(
 		self->_key, 
-		gtk_combo_box_get_active_text(GTK_COMBO_BOX(self->_comboBox))
+		gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(self->_comboBox))
 	);
 }
 

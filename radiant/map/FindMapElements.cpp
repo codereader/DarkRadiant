@@ -177,8 +177,28 @@ void GetSelectionIndex(int *ent, int *brush)
 	*ent = static_cast<int>(count_entity);
 }
 
+#include "idialogmanager.h"
+
 void DoFind(const cmd::ArgumentList& args)
 {
+	ui::IDialogPtr d = GlobalDialogManager().createDialog("Test");
+
+	ui::IDialog::ComboBoxOptions options;
+	options.push_back("Option 1");
+	options.push_back("Option 2");
+	options.push_back("Option 3");
+
+	ui::IDialog::Handle comboHandle = d->addComboBox("Testcombo", options);
+	ui::IDialog::Handle entryHandle = d->addEntryBox("Testentry");
+	ui::IDialog::Handle labelHandle = d->addLabel("Testlabel with many many characters...");
+
+	d->run();
+
+	globalOutputStream() << "Combobox: " << d->getElementValue(comboHandle) << std::endl;
+	globalOutputStream() << "Entry: " << d->getElementValue(entryHandle) << std::endl;
+
+	return;
+
   ModalDialog dialog;
   GtkEntry* entity;
   GtkEntry* brush;

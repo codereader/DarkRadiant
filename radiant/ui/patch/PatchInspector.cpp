@@ -13,6 +13,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/SerialisableWidgets.h"
+#include "gtkutil/ComboBox.h"
 
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
@@ -338,8 +339,8 @@ void PatchInspector::update() {
 
 void PatchInspector::loadControlVertex() {
 	if (_patch != NULL) {
-		int row = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
-		int col = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo)));
+		int row = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
+		int col = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.colCombo)));
 		
 		// Retrieve the controlvertex
 		const PatchControl& ctrl = _patch->ctrlAt(row, col);
@@ -524,8 +525,8 @@ void PatchInspector::emitCoords()
 
 	_patch->undoSave();
 
-	int row = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
-	int col = strToInt(gtk_combo_box_get_active_text(GTK_COMBO_BOX(_vertexChooser.colCombo)));
+	int row = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
+	int col = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.colCombo)));
 	
 	// Retrieve the controlvertex
 	PatchControl& ctrl = _patch->ctrlAt(row, col);
