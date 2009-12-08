@@ -4,6 +4,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "itransformnode.h"
+#include "itextstream.h"
 #include "scenelib.h"
 #include "iselectable.h"
 #include "editable.h"

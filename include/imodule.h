@@ -2,6 +2,7 @@
 #define IMODULE_H_
 
 #include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
 
 #include <string>
 #include <set>
@@ -22,6 +23,10 @@ namespace {
 	const std::string RKEY_MAP_PATH = "user/paths/mapPath";
 	const std::string RKEY_PREFAB_PATH = "user/paths/prefabPath";
 }
+
+// A function taking an error title and an error message string, invoked in debug builds
+// for things like ASSERT_MESSAGE and ERROR_MESSAGE
+typedef boost::function<void (const std::string&, const std::string&)> ErrorHandlingFunction;
 
 /**
  * Provider for various information that may be required by modules during
@@ -81,6 +86,11 @@ public:
 	 * Sets up the paths and stores them into the registry.
 	 */
 	virtual void savePathsToRegistry() const = 0;
+
+	/**
+	 * Retrieve a function pointer which can handle assertions and runtime errors
+	 */
+	virtual const ErrorHandlingFunction& getErrorHandlingFunction() const = 0;
 };
 
 /**

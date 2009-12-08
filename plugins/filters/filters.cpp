@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "BasicFilterSystem.h"
 #include "itextstream.h"
+#include "debugging/debugging.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(filters::BasicFilterSystemPtr(new filters::BasicFilterSystem));
@@ -30,4 +31,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

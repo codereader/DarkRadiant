@@ -2,6 +2,7 @@
 
 #include "Brush.h"
 #include "Winding.h"
+#include "itextstream.h"
 
 namespace {
 	inline bool float_is_largest_absolute(double axis, double other) {

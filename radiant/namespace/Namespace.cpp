@@ -2,6 +2,7 @@
 
 #include "scenelib.h"
 #include <list>
+#include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 
 class ConnectNamespacedWalker : 

@@ -1,5 +1,6 @@
 #include "Curve.h"
 
+#include "itextstream.h"
 #include "string/string.h"
 #include "parser/Tokeniser.h"
 

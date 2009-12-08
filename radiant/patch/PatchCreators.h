@@ -4,6 +4,7 @@
 #include "ipatch.h"
 #include "ifilter.h"
 #include "ipreferencesystem.h"
+#include "itextstream.h"
 
 namespace {
 	const std::string RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";

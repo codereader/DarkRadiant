@@ -1,6 +1,7 @@
 #include "OpenGLRenderSystem.h"
 
 #include "ishaders.h"
+#include "itextstream.h"
 #include "math/matrix.h"
 #include "modulesystem/StaticModule.h"
 #include "backend/GLProgramFactory.h"

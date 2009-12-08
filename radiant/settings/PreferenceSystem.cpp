@@ -1,6 +1,7 @@
 #include "PreferenceSystem.h"
 
 #include "ipreferencesystem.h"
+#include "itextstream.h"
 #include "imodule.h"
 #include "iregistry.h"
 

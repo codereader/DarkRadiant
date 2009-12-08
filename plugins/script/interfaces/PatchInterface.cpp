@@ -1,6 +1,7 @@
 #include "PatchInterface.h"
 
 #include "ipatch.h"
+#include "itextstream.h"
 #include "../SceneNodeBuffer.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 

@@ -3,6 +3,7 @@
 
 #include "imodel.h"
 #include "ifilesystem.h"
+#include "itextstream.h"
 #include "os/path.h"
 
 #include "NullModelNode.h"

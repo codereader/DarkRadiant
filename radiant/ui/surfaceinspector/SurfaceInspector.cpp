@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
+#include "itextstream.h"
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/IconTextButton.h"

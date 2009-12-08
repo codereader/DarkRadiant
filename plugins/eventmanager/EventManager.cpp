@@ -25,6 +25,7 @@
 #include "KeyEvent.h"
 #include "SaveEventVisitor.h"
 
+#include "debugging/debugging.h"
 #include <iostream>
 
 #include <boost/algorithm/string/classification.hpp>
@@ -789,4 +790,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

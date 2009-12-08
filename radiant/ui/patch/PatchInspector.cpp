@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "ieventmanager.h"
+#include "itextstream.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>

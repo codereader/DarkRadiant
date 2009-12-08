@@ -1,6 +1,7 @@
 #include "OpenGLModule.h"
 
 #include "irender.h"
+#include "itextstream.h"
 #include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
 
@@ -25,10 +26,10 @@ void OpenGLModule::assertNoErrors() {
 		const std::string& errorString = getGLErrorString(error);
 		
 		if (error == GL_OUT_OF_MEMORY) {
-			ERROR_MESSAGE("OpenGL out of memory error: " << errorString.c_str());
+			ERROR_MESSAGE("OpenGL out of memory error: " + errorString);
 		}
 		else {
-			ERROR_MESSAGE("OpenGL error: " << errorString.c_str());
+			ERROR_MESSAGE("OpenGL error: " + errorString);
 		}
 
 		error = glGetError();

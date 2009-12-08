@@ -1,5 +1,6 @@
 #include "CurveEditInstance.h"
 
+#include "itextstream.h"
 #include "CurveControlPointFunctors.h"
 
 namespace entity {

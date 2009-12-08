@@ -1,6 +1,7 @@
 #include "GLTextureManager.h"
 
 #include "iradiant.h"
+#include "itextstream.h"
 #include "texturelib.h"
 #include "igl.h"
 #include "ImageFileLoader.h"

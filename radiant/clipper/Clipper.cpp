@@ -2,6 +2,7 @@
 
 #include "iradiant.h"
 #include "ipreferencesystem.h"
+#include "itextstream.h"
 #include "iundo.h"
 #include "ieventmanager.h"
 #include "iscenegraph.h"

@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkwidget.h>
 #include "generic/callback.h"
 #include "warnings.h"
-#include "debugging/debugging.h"
+#include "itextstream.h"
 
 inline void widget_set_visible(GtkWidget* widget, bool shown)
 {

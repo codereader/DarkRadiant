@@ -2,11 +2,11 @@
 
 #include <iostream>
 #include <utility>
+#include "itextstream.h"
 #include "ShaderTemplate.h"
 #include "Doom3ShaderSystem.h"
 #include "textures/ImageFileLoader.h"
 #include "parser/DefTokeniser.h"
-
 
 namespace shaders {
 

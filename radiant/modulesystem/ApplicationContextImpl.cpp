@@ -6,6 +6,7 @@
 #include "iregistry.h"
 #include "os/path.h"
 #include "os/dir.h"
+#include "log/PopupErrorHandler.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -221,6 +222,22 @@ void ApplicationContextImpl::savePathsToRegistry() const {
 	GlobalRegistry().set(RKEY_HOME_PATH, _homePath);
 	GlobalRegistry().set(RKEY_SETTINGS_PATH, _settingsPath);
 	GlobalRegistry().set(RKEY_BITMAPS_PATH, _bitmapsPath);
+}
+
+const ErrorHandlingFunction& ApplicationContextImpl::getErrorHandlingFunction() const
+{
+	return _errorHandler;
+}
+
+void ApplicationContextImpl::initErrorHandler()
+{
+#ifdef _DEBUG
+	// Use the PopupErrorHandler, which displays a GTK popup box
+	_errorHandler = radiant::PopupErrorHandler::HandleError;
+
+	// Initialise the function pointer in our binary's scope
+	GlobalErrorHandler() = _errorHandler;
+#endif
 }
 
 } // namespace module

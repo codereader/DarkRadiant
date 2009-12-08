@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <map>
+#include "itextstream.h"
+#include "debugging/debugging.h"
 #include "imodule.h"
 #include "icommandsystem.h"
 #include "iradiant.h"
@@ -222,4 +224,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

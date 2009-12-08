@@ -1,6 +1,7 @@
 #include "DifficultySettingsManager.h"
 
 #include "ieclass.h"
+#include "itextstream.h"
 #include "entitylib.h"
 #include "scenelib.h"
 #include "iregistry.h"

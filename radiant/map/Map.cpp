@@ -255,7 +255,7 @@ const MapFormat& Map::getFormatForFile(const std::string& filename) {
 	// Acquire the module from the ModuleRegistry
 	RegisterableModulePtr mapLoader = module::GlobalModuleRegistry().getModule(moduleName);
 	
-	ASSERT_MESSAGE(mapLoader != NULL, "map format not found for file " << filename.c_str());
+	ASSERT_MESSAGE(mapLoader != NULL, "map format not found for file " + filename);
 	return *static_cast<MapFormat*>(mapLoader.get());
 }
 

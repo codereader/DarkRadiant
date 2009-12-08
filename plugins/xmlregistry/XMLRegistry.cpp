@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include "itextstream.h"
 
 #include "os/file.h"
 #include "os/path.h"

@@ -20,12 +20,18 @@ class ApplicationContextImpl :
 
 	// Command line arguments
 	std::vector<std::string> _cmdLineArgs;
+
+	// A function pointer to a global error handler, used for ASSERT_MESSAGE
+	ErrorHandlingFunction _errorHandler;
 	
 public:
 	/**
 	 * Initialises the context with the arguments given to main().
 	 */
 	void initialise(int argc, char* argv[]);
+
+	// Initialises the function handling pointers for debug builds
+	void initErrorHandler();
 	
 	/**
 	 * Return the application path of the current Radiant instance.
@@ -65,6 +71,8 @@ public:
 
 	// Exports/deletes the paths to/from the registry
 	virtual void savePathsToRegistry() const;
+
+	virtual const ErrorHandlingFunction& getErrorHandlingFunction() const;
 	
 private:
 	// Sets up the bitmap path and settings path

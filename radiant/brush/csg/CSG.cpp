@@ -2,6 +2,7 @@
 
 #include <map>
 
+#include "itextstream.h"
 #include "iundo.h"
 #include "igrid.h"
 #include "iradiant.h"

@@ -57,6 +57,9 @@ public:
 	
 	// Called by main() to initialise the application/settings paths
 	void initialiseContext(int argc, char* argv[]);
+
+	// Points the ASSERT_MESSAGE function to our GTK popup handler
+	void initErrorHandler();
 	
 	// Contains the singleton instance
 	static ModuleRegistry& Instance();

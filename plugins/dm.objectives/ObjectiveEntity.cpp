@@ -2,6 +2,7 @@
 #include "ObjectiveKeyExtractor.h"
 #include "TargetList.h"
 
+#include "itextstream.h"
 #include "scenelib.h"
 #include "ientity.h"
 

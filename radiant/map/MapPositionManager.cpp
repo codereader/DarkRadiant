@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iregistry.h"
+#include "itextstream.h"
 #include "icommandsystem.h"
 #include "map/Map.h"
 #include "entitylib.h"

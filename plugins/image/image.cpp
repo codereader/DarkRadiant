@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pcx.h"
 #include "dds.h"
 #include "ImageGDK.h"
+#include "debugging/debugging.h"
 
 typedef boost::shared_ptr<TGALoader> TGALoaderPtr;
 typedef boost::shared_ptr<JPGLoader> JPGLoaderPtr;
@@ -50,4 +51,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

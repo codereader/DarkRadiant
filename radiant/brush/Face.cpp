@@ -2,6 +2,7 @@
 
 #include "ivolumetest.h"
 #include "ifilter.h"
+#include "itextstream.h"
 #include "irenderable.h"
 
 #include "shaderlib.h"
