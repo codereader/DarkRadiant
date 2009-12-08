@@ -7,7 +7,7 @@
 #include <gtk/gtkwidget.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "gtkutil/messagebox.h"
+#include "idialogmanager.h"
 
 namespace ui {
 
@@ -113,13 +113,12 @@ bool ShortcutChooser::retrieveShortcut(const std::string& commandName) {
 				message += commandName + "</b> instead?";
 				
 				// Fire up the dialog to ask the user what action to take
-				EMessageBoxReturn result = gtk_MessageBox(GTK_WIDGET(_parent), 
-														  message.c_str(), 
-														  "Overwrite existing shortcut?", 
-														  eMB_YESNO, eMB_ICONQUESTION);
-				
+				IDialogPtr popup = GlobalDialogManager().createMessageBox(
+					"Overwrite existing shortcut?", message, ui::IDialog::MESSAGE_ASK);
+
 				// Only react on "YES"
-				if (result == eIDYES) {
+				if (popup->run() == ui::IDialog::RESULT_YES)
+				{
 					// Disconnect both the found command and the new command
 					GlobalEventManager().disconnectAccelerator(foundEventName);
 					GlobalEventManager().disconnectAccelerator(commandName);
