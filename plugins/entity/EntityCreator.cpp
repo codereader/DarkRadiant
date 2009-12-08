@@ -185,8 +185,7 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 	LightShader::m_defaultShader = GlobalRegistry().get("game/defaults/lightShader");
 
 	// Construct Doom3Group stuff
-	CurveEditInstance::StaticShaders::instance().controlsShader = GlobalRenderSystem().capture("$POINT");
-	CurveEditInstance::StaticShaders::instance().selectedShader = GlobalRenderSystem().capture("$SELPOINT");
+	CurveEditInstance::initialiseShaders();
 
 	RenderablePivot::StaticShader::instance() = GlobalRenderSystem().capture("$PIVOT");
 

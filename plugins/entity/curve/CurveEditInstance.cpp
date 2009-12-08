@@ -5,6 +5,9 @@
 
 namespace entity {
 
+// Initialise the static member
+CurveEditInstance::CurveShaders CurveEditInstance::_shaders;
+
 CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged) :
 	_curve(curve),
     _selectionChanged(selectionChanged),
@@ -12,8 +15,7 @@ CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangeCallback
     _controlPoints(_curve.getControlPoints()),
     m_controlsRender(GL_POINTS),
     m_selectedRender(GL_POINTS)
-  {
-  }
+{}
 
 void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test) {
     ASSERT_MESSAGE(_controlPointsTransformed.size() == _selectables.size(), "curve instance mismatch");
@@ -26,6 +28,12 @@ void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test) {
 			Selector_add(selector, *i, best);
 		}
     }
+}
+
+void CurveEditInstance::initialiseShaders()
+{
+	_shaders.controlsShader = GlobalRenderSystem().capture("$POINT");
+	_shaders.selectedShader = GlobalRenderSystem().capture("$SELPOINT");
 }
 
 bool CurveEditInstance::isSelected() const {
@@ -144,8 +152,8 @@ void CurveEditInstance::updateSelected() const {
 void CurveEditInstance::renderComponents(RenderableCollector& collector, 
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-    collector.SetState(StaticShaders::instance().controlsShader, RenderableCollector::eWireframeOnly);
-    collector.SetState(StaticShaders::instance().controlsShader, RenderableCollector::eFullMaterials);
+    collector.SetState(_shaders.controlsShader, RenderableCollector::eWireframeOnly);
+    collector.SetState(_shaders.controlsShader, RenderableCollector::eFullMaterials);
     collector.addRenderable(m_controlsRender, localToWorld);
 }
 
@@ -156,8 +164,8 @@ void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
     if(!m_selectedRender.empty())
     {
       collector.Highlight(RenderableCollector::ePrimitive, false);
-      collector.SetState(StaticShaders::instance().selectedShader, RenderableCollector::eWireframeOnly);
-      collector.SetState(StaticShaders::instance().selectedShader, RenderableCollector::eFullMaterials);
+      collector.SetState(_shaders.selectedShader, RenderableCollector::eWireframeOnly);
+      collector.SetState(_shaders.selectedShader, RenderableCollector::eFullMaterials);
       collector.addRenderable(m_selectedRender, localToWorld);
     }
 }
