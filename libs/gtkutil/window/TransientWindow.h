@@ -34,15 +34,25 @@ protected:
 	virtual void _preDestroy() { }
 	virtual void _postDestroy() { }
 
+	virtual void _onDeleteEvent() 
+	{
+		if (_hideOnDelete)
+		{
+			hide();
+		}
+		else
+		{
+			destroy();
+		}
+	}
+
 private:
 	
 	// GTK delete callback
 	static gboolean _onDelete(GtkWidget* w, GdkEvent* e, TransientWindow* self) 
 	{
-		if (self->_hideOnDelete)
-			self->hide();
-		else
-			self->destroy();
+		// Invoke the virtual function
+		self->_onDeleteEvent();
 		return TRUE;
 	}
 	

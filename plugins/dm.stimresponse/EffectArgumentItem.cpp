@@ -4,6 +4,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/ComboBox.h"
 #include "string/string.h"
 
 EffectArgumentItem::EffectArgumentItem(
@@ -116,7 +117,7 @@ EntityArgument::EntityArgument(
 }
 
 std::string EntityArgument::getValue() {
-	return gtk_combo_box_get_active_text(GTK_COMBO_BOX(_comboBox));
+	return gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_comboBox));
 }
 
 GtkWidget* EntityArgument::getEditWidget() {

@@ -4,6 +4,7 @@
 
 #include <gtk/gtk.h>
 #include "TreeModel.h"
+#include "ComboBox.h"
 
 #include <boost/lexical_cast.hpp>
 #include <iostream>
@@ -164,9 +165,7 @@ void SerialisableComboBox_Text::importFromString(const std::string& str)
 
 std::string SerialisableComboBox_Text::exportToString() const
 {
-   return gtk_combo_box_get_active_text(
-      GTK_COMBO_BOX(_getWidget())
-   );
+	return gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_getWidget()));
 }
 
 }
