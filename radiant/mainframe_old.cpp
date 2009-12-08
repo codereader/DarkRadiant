@@ -102,7 +102,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/FramedWidget.h"
-#include "gtkutil/messagebox.h"
 #include "gtkutil/dialog.h"
 
 #include "map/AutoSaver.h"

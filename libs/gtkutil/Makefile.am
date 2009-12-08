@@ -17,7 +17,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
-						messagebox_legacy.cpp \
 						nonmodal.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
