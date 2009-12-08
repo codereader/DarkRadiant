@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Winding.h"
 #include "igl.h"
+#include "itextstream.h"
 #include <algorithm>
 #include "FixedWinding.h"
 #include "math/line.h"

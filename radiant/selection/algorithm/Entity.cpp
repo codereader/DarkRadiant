@@ -3,6 +3,7 @@
 #include "selectionlib.h"
 #include "iradiant.h"
 #include "iregistry.h"
+#include "itextstream.h"
 #include "entitylib.h"
 #include "gtkutil/dialog.h"
 

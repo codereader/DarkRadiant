@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifilesystem.h"
 #include <stdio.h>
 #include "picomodel.h"
+#include "debugging/debugging.h"
 typedef unsigned char byte;
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -104,4 +105,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

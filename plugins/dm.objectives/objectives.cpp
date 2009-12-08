@@ -10,6 +10,7 @@
 #include "itextstream.h"
 
 #include "generic/callback.h"
+#include "debugging/debugging.h"
 
 #include "ce/ComponentEditorFactory.h"
 #include <iostream>
@@ -87,4 +88,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

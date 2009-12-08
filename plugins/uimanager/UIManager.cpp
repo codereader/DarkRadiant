@@ -9,6 +9,7 @@
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
 #include "ShutdownListener.h"
+#include "debugging/debugging.h"
 
 namespace ui {
 
@@ -89,4 +90,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

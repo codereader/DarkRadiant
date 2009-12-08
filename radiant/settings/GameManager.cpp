@@ -1,6 +1,7 @@
 #include "GameManager.h"
 
 #include "iregistry.h"
+#include "itextstream.h"
 #include "ifilesystem.h"
 #include "settings/PreferenceSystem.h"
 #include "ui/prefdialog/PrefDialog.h"

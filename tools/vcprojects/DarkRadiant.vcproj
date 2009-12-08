@@ -2584,6 +2584,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\log\PopupErrorHandler.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\log\StringLogDevice.cpp"
 					>
 				</File>

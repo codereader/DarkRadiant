@@ -201,6 +201,11 @@ void ModuleRegistry::initialiseContext(int argc, char* argv[]) {
 	_context.initialise(argc, argv);
 }
 
+void ModuleRegistry::initErrorHandler()
+{
+	_context.initErrorHandler();
+}
+
 std::string ModuleRegistry::getModuleList(const std::string& separator) {
 	std::string returnValue;
 	

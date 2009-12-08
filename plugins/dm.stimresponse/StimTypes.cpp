@@ -1,6 +1,7 @@
 #include "StimTypes.h"
 
 #include "iradiant.h"
+#include "itextstream.h"
 #include "iregistry.h"
 #include "string/string.h"
 #include "gtkutil/TreeModel.h"

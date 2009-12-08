@@ -3,6 +3,7 @@
 
 #include "Curve.h"
 #include "selectionlib.h"
+#include "generic/static.h"
 
 namespace entity {
 	

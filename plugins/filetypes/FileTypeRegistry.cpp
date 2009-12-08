@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "os/path.h"
+#include "debugging/debugging.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
@@ -97,4 +98,7 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
+
+	// Set up the assertion handler
+	GlobalErrorHandler() = registry.getApplicationContext().getErrorHandlingFunction();
 }

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iradiant.h"
 
+#include "itextstream.h"
 #include "ifilter.h"
 #include "igame.h"
 #include "ilayer.h"

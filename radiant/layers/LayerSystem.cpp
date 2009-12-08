@@ -1,6 +1,7 @@
 #include "LayerSystem.h"
 
 #include "ieventmanager.h"
+#include "itextstream.h"
 #include "icommandsystem.h"
 #include "scene/Node.h"
 #include "modulesystem/StaticModule.h"

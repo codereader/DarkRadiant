@@ -2,6 +2,7 @@
 
 #include "iselection.h"
 #include "iscenegraph.h"
+#include "itextstream.h"
 #include "iselectable.h"
 #include "igroupnode.h"
 #include "selectionlib.h"

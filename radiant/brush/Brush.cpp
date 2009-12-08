@@ -3,6 +3,7 @@
 #include "math/frustum.h"
 #include "signal/signal.h"
 #include "irenderable.h"
+#include "itextstream.h"
 #include "iuimanager.h"
 #include "shaderlib.h"
 

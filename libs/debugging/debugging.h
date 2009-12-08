@@ -1,34 +1,15 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+#ifndef _DEBUGGING_FUNCTIONS_H_
+#define _DEBUGGING_FUNCTIONS_H_
 
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_DEBUGGING_DEBUGGING_H)
-#define INCLUDED_DEBUGGING_DEBUGGING_H
-
-/// \file
 /// \brief Debugging macros for fatal error/assert messages.
 
-#include "itextstream.h"
-#include "warnings.h"
-#include "generic/static.h"
+#if defined(_DEBUG)
+#define DEBUG_ASSERTS
+#endif
 
+#if defined(DEBUG_ASSERTS)
+
+// Define the breakpoint function, to fire up the debugger
 #if defined(_MSC_VER) && defined(_M_IX86)
 #define DEBUGGER_BREAKPOINT() __asm { int 3 }
 #elif defined(_MSC_VER) && defined(_WIN64)
@@ -45,100 +26,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define STR2(x)	STR(x)
 #define FILE_LINE __FILE__ ":" STR2(__LINE__)
 
-#if defined(_DEBUG)
-#define DEBUG_ASSERTS
-#endif
+#include "imodule.h" // for the ErrorHandlingFunction typedef
 
-class DebugMessageHandler
+// This method holds a function pointer which can do some error display (like popups)
+inline ErrorHandlingFunction& GlobalErrorHandler()
 {
-public:
-  virtual ~DebugMessageHandler() {}
-  virtual std::ostream& getOutputStream() = 0;
-  virtual bool handleMessage() = 0;
-};
-
-class NullDebugMessageHandler : public NullOutputStream, public DebugMessageHandler
-{
-public:
-  virtual ~NullDebugMessageHandler()
-  {
-  }
-  virtual std::ostream& getOutputStream()
-  {
-    return *this;
-  }
-  virtual bool handleMessage()
-  {
-    return false;
-  }
-};
-
-class DefaultDebugMessageHandler : public DebugMessageHandler
-{
-public:
-  virtual ~DefaultDebugMessageHandler()
-  {
-  }
-  virtual std::ostream& getOutputStream()
-  {
-    return globalErrorStream();
-  }
-  virtual bool handleMessage()
-  {
-#if defined(_DEBUG)
-    return false; // send debug-break
-#else
-    return true;
-#endif
-  }
-};
-
-class DebugMessageHandlerRef : public DefaultDebugMessageHandler
-{
-  DebugMessageHandler* m_handler;
-public:
-  DebugMessageHandlerRef()
-    : m_handler(this)
-  {
-  }
-  virtual ~DebugMessageHandlerRef()
-  {
-  }
-  void setHandler(DebugMessageHandler& handler)
-  {
-    m_handler = &handler;
-  }
-  DebugMessageHandler& getHandler()
-  {
-    return *m_handler;
-  }
-};
-
-typedef Static<DebugMessageHandlerRef> GlobalDebugMessageHandler;
-
-inline DebugMessageHandler& globalDebugMessageHandler()
-{
-  return GlobalDebugMessageHandler::instance().getHandler();
+	static ErrorHandlingFunction _func;
+	return _func;
 }
-
-#if defined(DEBUG_ASSERTS)
 
 /// \brief Sends a \p message to the current debug-message-handler text-output-stream if \p condition evaluates to false.
 #define ASSERT_MESSAGE(condition, message)\
-if(!(condition))\
-{\
-  globalDebugMessageHandler().getOutputStream() << FILE_LINE "\nassertion failure: " << message << "\n";\
-  if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); }\
-} else\
+	if(!(condition)) { GlobalErrorHandler()("DarkRadiant - Assertion Failure", std::string(FILE_LINE) + "\nAssertion failure: " + message + "\nBreak into the debugger?"); }
 
 /// \brief Sends a \p message to the current debug-message-handler text-output-stream.
 #define ERROR_MESSAGE(message)\
-globalDebugMessageHandler().getOutputStream() << FILE_LINE "\nruntime error: " << message << "\n";\
-if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); } else\
+{ GlobalErrorHandler()("DarkRadiant - Runtime Error", std::string(FILE_LINE) + "\nRuntime Error: " + message + "\nBreak into the debugger?"); }
 
 #define ASSERT_NOTNULL(ptr) ASSERT_MESSAGE(ptr != 0, "pointer \"" #ptr "\" is null")
 
-#else
+#else // Release Builds
 
 #define ASSERT_MESSAGE(condition, message)
 #define ERROR_MESSAGE(message)
@@ -146,4 +53,4 @@ if(!globalDebugMessageHandler().handleMessage()) { DEBUGGER_BREAKPOINT(); } else
 
 #endif
 
-#endif
+#endif /* _DEBUGGING_FUNCTIONS_H_ */

@@ -1,6 +1,7 @@
 #include "SelectionTest.h"
 
 #include "igroupnode.h"
+#include "itextstream.h"
 #include "entitylib.h"
 #include "renderer.h"
 #include "imodel.h"

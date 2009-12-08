@@ -2,6 +2,7 @@
 
 #include <set>
 #include "igroupnode.h"
+#include "itextstream.h"
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "entitylib.h"

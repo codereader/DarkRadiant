@@ -3,6 +3,7 @@
 
 #include "mapfile.h"
 #include "undolib.h"
+#include "itextstream.h"
 
 class UndoFileChangeTracker : 
 	public UndoTracker, 

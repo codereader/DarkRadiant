@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief Curve data types and related operations.
 
-#include "debugging/debugging.h"
 #include <vector>
 #include "math/matrix.h"
 

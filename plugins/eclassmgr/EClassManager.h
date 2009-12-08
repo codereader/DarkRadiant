@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "icommandsystem.h"
 #include "ifilesystem.h"
+#include "itextstream.h"
 #include "moduleobservers.h"
 #include "generic/callback.h"
 

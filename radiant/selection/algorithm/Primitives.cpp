@@ -4,6 +4,7 @@
 
 #include "igroupnode.h"
 #include "ientity.h"
+#include "itextstream.h"
 #include "iundo.h"
 #include "itraversable.h"
 #include "brush/BrushModule.h"

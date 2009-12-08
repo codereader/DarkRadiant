@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "mapfile.h"
+#include "itextstream.h"
 #include "iscenegraph.h"
 #include "imainframe.h"
 #include "iradiant.h"

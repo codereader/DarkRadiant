@@ -4,6 +4,7 @@
 #include "ShaderUpdateWalker.h"
 
 #include "iradiant.h"
+#include "itextstream.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
