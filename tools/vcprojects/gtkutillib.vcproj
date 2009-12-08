@@ -320,6 +320,26 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="dialog"
+			>
+			<File
+				RelativePath="..\..\libs\gtkutil\dialog\Dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libs\gtkutil\dialog\Dialog.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libs\gtkutil\dialog\MessageBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\libs\gtkutil\dialog\MessageBox.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\libs\gtkutil\clipboard.cpp"
 			>
@@ -357,11 +377,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\dialog.cpp"
+			RelativePath="..\..\libs\gtkutil\dialog.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\dialog.h"
+			RelativePath="..\..\libs\gtkutil\dialog_legacy.cpp"
 			>
 		</File>
 		<File
@@ -445,11 +465,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\messagebox.cpp"
+			RelativePath="..\..\libs\gtkutil\messagebox.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\messagebox.h"
+			RelativePath="..\..\libs\gtkutil\messagebox_legacy.cpp"
 			>
 		</File>
 		<File

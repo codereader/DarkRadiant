@@ -2,58 +2,61 @@
 
 #include "itextstream.h"
 
-#include "MessageBox.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 namespace ui
 {
 
-DialogManager::DialogManager() :
-	_highestIndex(0)
-{}
-
 DialogManager::~DialogManager()
 {
-	globalOutputStream() << "DialogManager: " << _dialogs.size() 
-		<< " dialogs still in memory at shutdown." << std::endl;
-
-	_dialogs.clear();
+	if (!_dialogs.empty())
+	{
+		globalOutputStream() << "DialogManager: " << _dialogs.size() 
+			<< " dialogs still in memory at shutdown." << std::endl;
+		_dialogs.clear();
+	}
 }
 
-IDialogPtr DialogManager::createDialog(const std::string& title)
+IDialogPtr DialogManager::createDialog(const std::string& title, GtkWindow* parent)
 {
-	// Allocate a new dialog
-	DialogPtr dialog(new Dialog(++_highestIndex, *this, title));
+	cleanupOldDialogs();
 
-	// Store it in the local map so that references are held
-	_dialogs[dialog->getId()] = dialog;
+	// Allocate a new dialog
+	gtkutil::DialogPtr dialog(new gtkutil::Dialog(title, parent));
+
+	_dialogs.push_back(dialog);
 
 	return dialog;
 }
 
 IDialogPtr DialogManager::createMessageBox(const std::string& title, 
 										   const std::string& text, 
-										   IDialog::MessageType type)
+										   IDialog::MessageType type, 
+										   GtkWindow* parent)
 {
+	cleanupOldDialogs();
+
 	// Allocate a new dialog
-	MessageBoxPtr box(new MessageBox(++_highestIndex, *this, title, text, type));
+	gtkutil::MessageBoxPtr box(new gtkutil::MessageBox(title, text, type, parent));
 
 	// Store it in the local map so that references are held
-	_dialogs[box->getId()] = box;
+	_dialogs.push_back(box);
 
 	return box;
 }
 
-void DialogManager::notifyDestroy(std::size_t id)
+void DialogManager::cleanupOldDialogs()
 {
-	DialogMap::iterator found = _dialogs.find(id);
-
-	if (found != _dialogs.end())
+	for (Dialogs::iterator i = _dialogs.begin(); i != _dialogs.end(); /* in-loop increment */)
 	{
-		_dialogs.erase(found);
-	}
-	else
-	{
-		globalWarningStream() << "Cannot destroy dialog with id " << id << ", not found in map." << std::endl;
+		if (i->unique())
+		{
+			_dialogs.erase(i++);
+		}
+		else
+		{
+			++i;
+		}
 	}
 }
 

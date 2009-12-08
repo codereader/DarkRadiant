@@ -17,13 +17,15 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
-						messagebox.cpp \
+						messagebox_legacy.cpp \
 						nonmodal.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
 						idledraw.cpp \
 						window/PersistentTransientWindow.cpp \
-						dialog.cpp \
+						dialog/Dialog.cpp \
+						dialog/MessageBox.cpp \
+						dialog_legacy.cpp \
 						glfont.cpp \
 						MenuItemAccelerator.cpp \
 						cursor.cpp \

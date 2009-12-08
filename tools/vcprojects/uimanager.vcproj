@@ -415,14 +415,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\uimanager\Dialog.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\uimanager\Dialog.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\uimanager\DialogManager.cpp"
 				>
 			</File>
@@ -452,14 +444,6 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\uimanager\MenuManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\uimanager\MessageBox.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\uimanager\MessageBox.h"
 				>
 			</File>
 			<File
