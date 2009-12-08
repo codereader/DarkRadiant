@@ -3,13 +3,10 @@
 #include <gtk/gtkmain.h>
 
 #include "imodule.h"
-#include "iradiant.h"
-#include "iregistry.h"
 #include "itextstream.h"
 #include "version.h"
 
 #include "string/string.h"
-#include "gtkutil/messagebox.h"
 #include "LogWriter.h"
 #include "modulesystem/ModuleRegistry.h"
 
@@ -27,8 +24,7 @@ LogFile::LogFile(const std::string& filename) :
 		LogWriter::Instance().attach(this);
 	}
 	else {
-		gtk_MessageBox(0, "Failed to create log file, check write permissions in Radiant directory.\n",
-			"LogFile Error", eMB_OK, eMB_ICONERROR );
+		std::cerr << "Failed to create log file, check write permissions in Radiant directory." << std::endl;
 	}
 }
 
@@ -57,19 +53,19 @@ void LogFile::create(const std::string& filename) {
 		InstancePtr() = LogFilePtr(new LogFile(filename));
 
 		// Write the initialisation info to the logfile.
-		globalOutputStream() << "Started logging to " << InstancePtr()->_logFilename << "\n";
+		globalOutputStream() << "Started logging to " << InstancePtr()->_logFilename << std::endl;
 
 		time_t localtime;
 		time(&localtime);
 		globalOutputStream() << "Today is: " << ctime(&localtime) 
-			                 << "This is " << RADIANT_APPNAME_FULL << "\n";
+			                 << "This is " << RADIANT_APPNAME_FULL << std::endl;
         
 		// Output the GTK+ version to the logfile
         std::string gtkVersion = intToStr(gtk_major_version) + "."; 
 		gtkVersion += intToStr(gtk_minor_version) + "."; 
 		gtkVersion += intToStr(gtk_micro_version);
 
-        globalOutputStream() << "GTK+ Version: " << gtkVersion << "\n";
+        globalOutputStream() << "GTK+ Version: " << gtkVersion << std::endl;
 	}
 }
 
