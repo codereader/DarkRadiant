@@ -25,10 +25,11 @@ public:
 	// Possible message types (used for IDialogManager::createMessageBox())
 	enum MessageType
 	{
-		MESSAGE_CONFIRM,	// Just a plain message with an OK button
-		MESSAGE_ASK,		// Queries Yes/No from the user
-		MESSAGE_WARNING,	// Displays a warning message
-		MESSAGE_ERROR,		// Displays an error message
+		MESSAGE_CONFIRM,		// Just a plain message with an OK button
+		MESSAGE_ASK,			// Queries Yes/No from the user
+		MESSAGE_WARNING,		// Displays a warning message
+		MESSAGE_ERROR,			// Displays an error message
+		MESSAGE_YESNOCANCEL,	// Has three options: Yes, No or Cancel
 	};
 
 	// Sets the dialog title

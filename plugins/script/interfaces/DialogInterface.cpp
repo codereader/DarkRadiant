@@ -50,6 +50,7 @@ void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 		.value("ASK", ui::IDialog::MESSAGE_ASK)
 		.value("WARNING", ui::IDialog::MESSAGE_WARNING)
 		.value("ERROR", ui::IDialog::MESSAGE_ERROR)
+		.value("YESNOCANCEL", ui::IDialog::MESSAGE_YESNOCANCEL)
 		.export_values()
 	;
 

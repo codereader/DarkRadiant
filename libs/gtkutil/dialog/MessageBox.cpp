@@ -9,6 +9,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "gtkutil/LeftalignedLabel.h"
+#include "gtkutil/RightAlignment.h"
 
 namespace gtkutil
 {
@@ -101,15 +102,39 @@ GtkWidget* MessageBox::createButtons()
 		g_signal_connect(G_OBJECT(noButton), "clicked", G_CALLBACK(onNo), this);
 		gtk_box_pack_end(GTK_BOX(buttonHBox), noButton, FALSE, FALSE, 0);
 
-		mapKeyToButton(GDK_Escape, noButton);
 		mapKeyToButton(GDK_N, noButton);
+		mapKeyToButton(GDK_Escape, noButton);
+	}
+	else if (_type == MESSAGE_YESNOCANCEL)
+	{
+		// YES button
+		GtkWidget* yesButton = gtk_button_new_from_stock(GTK_STOCK_YES);
+		g_signal_connect(G_OBJECT(yesButton), "clicked", G_CALLBACK(onYes), this);
+		gtk_box_pack_start(GTK_BOX(buttonHBox), yesButton, FALSE, FALSE, 0);
+
+		mapKeyToButton(GDK_Y, yesButton);
+		mapKeyToButton(GDK_Return, yesButton);
+		
+		// NO button
+		GtkWidget* noButton = gtk_button_new_from_stock(GTK_STOCK_NO);
+		g_signal_connect(G_OBJECT(noButton), "clicked", G_CALLBACK(onNo), this);
+		gtk_box_pack_start(GTK_BOX(buttonHBox), noButton, FALSE, FALSE, 0);
+		mapKeyToButton(GDK_N, noButton);
+
+		// Cancel button
+		GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+		g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+		gtk_box_pack_start(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 0);
+
+		mapKeyToButton(GDK_Escape, cancelButton);
+		mapKeyToButton(GDK_C, cancelButton);
 	}
 	else
 	{
 		globalErrorStream() << "Invalid message type encountered: " << _type << std::endl;
 	}
 	
-	return buttonHBox;
+	return gtkutil::RightAlignment(buttonHBox);
 }
 
 void MessageBox::mapKeyToButton(guint key, GtkWidget* button)
