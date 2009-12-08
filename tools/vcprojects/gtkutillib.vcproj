@@ -332,6 +332,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libs\gtkutil\dialog\DialogElements.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libs\gtkutil\dialog\MessageBox.cpp"
 				>
 			</File>
