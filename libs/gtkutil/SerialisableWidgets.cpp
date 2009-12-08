@@ -24,7 +24,7 @@ void SerialisableAdjustment::importFromString(const std::string& str)
 
 std::string SerialisableAdjustment::exportToString() const
 {
-   return floatToStr(gtk_adjustment_get_value(GTK_ADJUSTMENT(_adjustment)));
+   return doubleToStr(gtk_adjustment_get_value(GTK_ADJUSTMENT(_adjustment)));
 }
 
 // Text entry
@@ -56,7 +56,7 @@ void SerialisableSpinButton::importFromString(const std::string& str)
 
 std::string SerialisableSpinButton::exportToString() const
 {
-   return floatToStr(gtk_spin_button_get_value(GTK_SPIN_BUTTON(_getWidget())));
+   return doubleToStr(gtk_spin_button_get_value(GTK_SPIN_BUTTON(_getWidget())));
 }
 
 // Scale widget
@@ -72,7 +72,7 @@ void SerialisableScaleWidget::importFromString(const std::string& str)
 
 std::string SerialisableScaleWidget::exportToString() const
 {
-   return floatToStr(gtk_range_get_value(GTK_RANGE(_getWidget())));
+   return doubleToStr(gtk_range_get_value(GTK_RANGE(_getWidget())));
 }
 
 // Toggle button
