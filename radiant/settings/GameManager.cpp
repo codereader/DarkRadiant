@@ -9,7 +9,7 @@
 #include "os/path.h"
 #include "GameFileLoader.h"
 #include "gtkutil/dialog.h"
-#include "gtkutil/messagebox.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
@@ -258,7 +258,8 @@ void Manager::initEnginePath() {
 	constructPaths();
 	
 	// Check loop, continue, till the user specifies a valid setting
-	while (!settingsValid()) {
+	while (!settingsValid())
+	{
 		// Engine path doesn't exist, ask the user
 		ui::PrefDialog::showModal("Game");
 		
@@ -282,7 +283,14 @@ void Manager::initEnginePath() {
 			}
 
 			msg += "Do you want to correct these settings?";
-			if (gtk_MessageBox(0, msg.c_str(), "Invalid Settings", eMB_YESNO, eMB_ICONQUESTION) == eIDNO) {
+
+			gtkutil::MessageBox msgBox("Invalid Settings", msg, ui::IDialog::MESSAGE_ASK);
+
+			// Center the dialog, the preference page dialog is hidden
+			gtk_window_set_position(GTK_WINDOW(msgBox.getWindow()), GTK_WIN_POS_CENTER);
+
+			if (msgBox.run() == ui::IDialog::RESULT_NO)
+			{
 				break;
 			}
 		}

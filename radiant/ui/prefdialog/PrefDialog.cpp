@@ -179,6 +179,11 @@ PrefDialog& PrefDialog::Instance() {
 	return *InstancePtr();
 }
 
+GtkWindow* PrefDialog::getWindow()
+{
+	return GTK_WINDOW(_dialog);
+}
+
 void PrefDialog::selectPage() {
 	// Get the widget* pointer from the current selection
 	GtkTreeIter iter;
