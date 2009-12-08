@@ -1,7 +1,7 @@
 #ifndef _PID_FILE_H_
 #define _PID_FILE_H_
 
-#include "gtkutil/messagebox.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "settings/PreferenceSystem.h"
 #include "modulesystem/ModuleRegistry.h"
 
@@ -19,27 +19,27 @@ class PIDFile
 	std::string _filename;
 
 public:
-	PIDFile(const std::string& filename) {
+	PIDFile(const std::string& filename)
+	{
 		module::ModuleRegistry& registry = module::ModuleRegistry::Instance();
 		_filename = registry.getApplicationContext().getSettingsPath() + filename;
 
 		FILE* pid = fopen(_filename.c_str(), "r");
 		
 		// Check for an existing radiant.pid file
-		if (pid != NULL) {
+		if (pid != NULL)
+		{
 			fclose(pid);
 
-			if (remove(_filename.c_str()) == -1) {
-				std::string msg = "WARNING: Could not delete " + _filename;
-				gtk_MessageBox(NULL, msg.c_str(), "DarkRadiant", eMB_OK, eMB_ICONERROR);
-			}
+			removePIDFile();
 
 			std::string msg("Radiant failed to start properly the last time it was run.\n");
 			msg += "The failure may be related to invalid preference settings.\n";
 			msg += "Do you want to rename your local user.xml file and restore the default settings?";
 
-			if (gtk_MessageBox(0, msg.c_str(), "Radiant - Startup Failure", 
-				   eMB_YESNO, eMB_ICONQUESTION) == eIDYES) 
+			gtkutil::MessageBox box("DarkRadiant - Startup Failure", msg, ui::IDialog::MESSAGE_ASK);
+
+			if (box.run() == ui::IDialog::RESULT_YES) 
 			{
 				resetPreferences();
 			}
@@ -47,15 +47,25 @@ public:
 
 		// create a primary .pid for global init run
 		pid = fopen(_filename.c_str(), "w");
-		if (pid) {
+
+		if (pid)
+		{
 			fclose(pid);
 		}
 	};
 
-	~PIDFile() {
-		if (remove(_filename.c_str()) == -1) {
-			std::string msg = "WARNING: Could not delete " + _filename;
-			gtk_MessageBox(NULL, msg.c_str(), "DarkRadiant", eMB_OK, eMB_ICONERROR );
+	~PIDFile()
+	{
+		removePIDFile();
+	}
+
+private:
+	void removePIDFile()
+	{
+		if (remove(_filename.c_str()) == -1)
+		{
+			gtkutil::MessageBox box("DarkRadiant", "WARNING: Could not delete " + _filename, ui::IDialog::MESSAGE_ERROR);
+			box.run();
 		}
 	}
 };

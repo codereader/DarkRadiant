@@ -75,6 +75,7 @@ DefaultAllocator - Memory allocation using new/delete, compliant with std::alloc
 #include "log/LogStream.h"
 #include "map/Map.h"
 #include "mainframe_old.h"
+#include "gtkutil/messagebox.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "settings/GameManager.h"
 #include "ui/splash/Splash.h"

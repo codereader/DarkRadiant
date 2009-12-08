@@ -286,9 +286,6 @@ void Manager::initEnginePath() {
 
 			gtkutil::MessageBox msgBox("Invalid Settings", msg, ui::IDialog::MESSAGE_ASK);
 
-			// Center the dialog, the preference page dialog is hidden
-			gtk_window_set_position(GTK_WINDOW(msgBox.getWindow()), GTK_WIN_POS_CENTER);
-
 			if (msgBox.run() == ui::IDialog::RESULT_NO)
 			{
 				break;
