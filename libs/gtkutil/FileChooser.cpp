@@ -13,7 +13,7 @@
 #include "os/file.h"
 
 #include "MultiMonitor.h"
-#include "messagebox.h"
+#include "dialog/MessageBox.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace gtkutil
@@ -161,16 +161,20 @@ std::string FileChooser::display() {
 			return fileName;
 		}
 
+		if (!file_exists(fileName.c_str()))
+		{
+			return fileName;
+		}
+
 		// If file exists, ask for overwrite
 		std::string askTitle = _title;
 		askTitle += (!fileName.empty()) ? ": " + os::getFilename(fileName) : "";
 
-		if (!file_exists(fileName.c_str()) || 
-			 gtk_MessageBox(_parent,
-		                    "The specified file already exists.\nDo you want to replace it?",
-		                    askTitle.c_str(),
-		                    eMB_NOYES,
-		                    eMB_ICONQUESTION) == eIDYES)
+		gtkutil::MessageBox box(askTitle, 
+			"The file " + os::getFilename(fileName) + " already exists.\nDo you want to replace it?",
+			ui::IDialog::MESSAGE_ASK, GTK_WINDOW(_dialog));
+
+		if (box.run() == ui::IDialog::RESULT_YES)
 		{
 			return fileName;
 		}
