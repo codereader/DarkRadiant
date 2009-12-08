@@ -75,9 +75,6 @@ GtkWidget* MessageBox::createButtons()
 {
 	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 6);
 
-	// Pack the button hbox into the window
-	gtk_box_pack_end(GTK_BOX(_vbox), buttonHBox, FALSE, FALSE, 0);
-
 	if (_type == MESSAGE_CONFIRM || _type == MESSAGE_WARNING || _type == MESSAGE_ERROR)
 	{
 		// Add an OK button

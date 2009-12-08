@@ -19,7 +19,7 @@ typedef boost::shared_ptr<PrefDialog> PrefDialogPtr;
 class PrefDialog :
 	public RadiantEventListener
 {
-	// The dialo window
+	// The dialog window
 	GtkWidget* _dialog;
 	
 	// The dialog outermost vbox
@@ -49,6 +49,8 @@ public:
 
 	// Retrieve a reference to the static instance of this dialog
 	static PrefDialog& Instance();
+
+	GtkWindow* getWindow();
 
 	/** greebo: Toggles the window visibility
 	 */

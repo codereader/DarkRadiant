@@ -3,9 +3,9 @@
 #include <gtk/gtk.h>
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/messagebox.h"
+#include "idialogmanager.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/EntryAbortedException.h"
 
 #include "layers/LayerSystem.h"
@@ -115,17 +115,20 @@ void LayerControl::onToggle(GtkToggleButton* togglebutton, LayerControl* self) {
 	);
 }
 
-void LayerControl::onDelete(GtkWidget* button, LayerControl* self) {
+void LayerControl::onDelete(GtkWidget* button, LayerControl* self)
+{
 	// Ask the about the deletion
 	std::string msg = "Do you really want to delete this layer?\n<b>" + 
 		scene::getLayerSystem().getLayerName(self->_layerID) + "</b>";
 
-	EMessageBoxReturn returnValue = gtk_MessageBox(
-		GTK_WIDGET(GlobalRadiant().getMainWindow()), 
-		msg.c_str(), "Delete Layer", eMB_YESNO, eMB_ICONQUESTION
+	GtkWindow* topLevel = GTK_WINDOW(gtk_widget_get_toplevel(button));
+
+	IDialogPtr box = GlobalDialogManager().createMessageBox(
+		"Confirm Layer Deletion", msg, IDialog::MESSAGE_ASK, topLevel
 	);
-	
-	if (returnValue == eIDYES) {
+
+	if (box->run() == IDialog::RESULT_YES)
+	{
 		scene::getLayerSystem().deleteLayer(
 			scene::getLayerSystem().getLayerName(self->_layerID)
 		);
