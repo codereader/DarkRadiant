@@ -10,13 +10,12 @@
 
 #include "gtkutil/LeftalignedLabel.h"
 
-namespace ui
+namespace gtkutil
 {
 
-MessageBox::MessageBox(std::size_t id, DialogManager& owner, 
-					   const std::string& title, const std::string& text,
-					   IDialog::MessageType type) :
-	Dialog(id, owner, title),
+MessageBox::MessageBox(const std::string& title, const std::string& text,
+					   IDialog::MessageType type, GtkWindow* parent) :
+	Dialog(title, parent),
 	_text(text),
 	_type(type),
 	_accelGroup(gtk_accel_group_new())
@@ -123,14 +122,14 @@ void MessageBox::mapKeyToButton(guint key, GtkWidget* button)
 
 void MessageBox::onYes(GtkWidget* widget, MessageBox* self)
 {
-	self->_result = RESULT_YES;
+	self->_result = ui::IDialog::RESULT_YES;
 	self->hide(); // breaks gtk_main()
 }
 
 void MessageBox::onNo(GtkWidget* widget, MessageBox* self)
 {
-	self->_result = RESULT_NO;
+	self->_result = ui::IDialog::RESULT_NO;
 	self->hide(); // breaks gtk_main()
 }
 
-} // namespace ui
+} // namespace gtkutil

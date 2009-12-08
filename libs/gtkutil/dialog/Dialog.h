@@ -2,25 +2,19 @@
 #define _UI_DIALOG_H_
 
 #include "idialogmanager.h"
-#include "gtkutil/window/BlockingTransientWindow.h"
+#include "../window/BlockingTransientWindow.h"
 
-namespace ui
+namespace gtkutil
 {
 
 class DialogManager;
 
 class Dialog :
-	public IDialog,
-	public gtkutil::BlockingTransientWindow
+	public ui::IDialog,
+	public BlockingTransientWindow
 {
 protected:
-	// The unique ID of this dialog
-	const std::size_t _id;
-
-	// The owning manager
-	DialogManager& _owner;
-
-	IDialog::Result _result;
+	ui::IDialog::Result _result;
 
 	// Packing container, direct child of the GtkWindow
 	GtkWidget* _vbox;
@@ -29,19 +23,12 @@ protected:
 	bool _constructed;
 
 public:
-	Dialog(std::size_t id, DialogManager& owner, const std::string& title);
-
-	std::size_t getId() const;
+	Dialog(const std::string& title, GtkWindow* parent = NULL);
 
 	virtual void setTitle(const std::string& title);
 
 	// Enter the main loop
-	virtual Result run();
-	virtual Result runAndDestroy();
-
-	// Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
-	// calling any methods on this object results in undefined behavior.
-	virtual void destroy();
+	virtual ui::IDialog::Result run();
 
 protected:
 	// Constructs the dialog (is invoked right before entering the main loop)
@@ -55,6 +42,6 @@ protected:
 };
 typedef boost::shared_ptr<Dialog> DialogPtr;
 
-} // namespace ui
+} // namespace gtkutil
 
 #endif /* _UI_DIALOG_H_ */

@@ -2,13 +2,13 @@
 
 #include "ifilter.h"
 #include "iradiant.h"
+#include "idialogmanager.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
-#include "gtkutil/messagebox.h"
 #include <gtk/gtk.h>
 #include "ui/menu/FiltersMenu.h"
 
@@ -295,9 +295,13 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 		return;
 	}
 
-	if (workingCopy->rules.empty()) {
+	if (workingCopy->rules.empty())
+	{
 		// Empty ruleset, notify user
-		gtk_MessageBox(self->getWindow(), "No rules defined for this filter, cannot insert.", "Empty Filter", eMB_OK, eMB_ICONASTERISK);
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Empty Filter",
+			"No rules defined for this filter, cannot insert.", ui::IDialog::MESSAGE_ERROR);
+
+		dialog->run();
 		return;
 	}
 
@@ -305,9 +309,13 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 		FilterMap::value_type(workingCopy->name, workingCopy)
 	);
 
-	if (!result.second) {
+	if (!result.second)
+	{
 		// Empty ruleset, notify user
-		gtk_MessageBox(self->getWindow(), "Cannot add, filter with same name already exists.", "Name Conflict", eMB_OK, eMB_ICONASTERISK);
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Name Conflict",
+			"Cannot add, filter with same name already exists.", ui::IDialog::MESSAGE_ERROR);
+
+		dialog->run();
 		return;
 	}
 
@@ -348,11 +356,14 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 		return;
 	}
 
-	if (workingCopy.rules.empty()) {
+	if (workingCopy.rules.empty())
+	{
 		// Empty ruleset, ask user for deletion
-		EMessageBoxReturn rv = gtk_MessageBox(self->getWindow(), "No rules defined for this filter. Delete it?", "Empty Filter", eMB_YESNO, eMB_ICONQUESTION);
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Empty Filter",
+			"No rules defined for this filter. Delete it?", ui::IDialog::MESSAGE_ASK);
 
-		if (rv == eIDYES) {
+		if (dialog->run() == IDialog::RESULT_YES)
+		{
 			// Move the object from _filters to _deletedfilters
 			self->_deletedFilters.insert(*f);
 			self->_filters.erase(f);

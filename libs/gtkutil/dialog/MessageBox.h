@@ -5,7 +5,7 @@
 
 typedef struct _GtkAccelGroup GtkAccelGroup;
 
-namespace ui
+namespace gtkutil
 {
 
 /**
@@ -22,17 +22,17 @@ protected:
 	std::string _text;
 
 	// The message type
-	IDialog::MessageType _type;
+	ui::IDialog::MessageType _type;
 
 	// Keyboard accel group used to map ENTER and ESC to buttons
 	GtkAccelGroup* _accelGroup;
 
 public:
 	// Constructs a new messageBox using the given title and text
-	MessageBox(std::size_t id, DialogManager& owner, 
-			   const std::string& title, 
+	MessageBox(const std::string& title, 
 			   const std::string& text, 
-			   IDialog::MessageType type);
+			   ui::IDialog::MessageType type,
+			   GtkWindow* parent = NULL);
 
 protected:
 	// Constructs the dialog (adds buttons, text and icons)
@@ -52,6 +52,6 @@ protected:
 };
 typedef boost::shared_ptr<MessageBox> MessageBoxPtr;
 
-} // namespace ui
+} // namespace gtkutil
 
 #endif /* _UI_MESSAGEBOX_H_ */

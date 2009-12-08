@@ -264,8 +264,6 @@ void CustomStimEditor::removeStimType()
 	{
 		_stimTypes.remove(getIdFromSelection());
 	}
-
-	dialog->destroy();
 }
 
 void CustomStimEditor::onAddStimType(GtkWidget* button, CustomStimEditor* self) {

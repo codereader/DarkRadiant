@@ -4,13 +4,11 @@
 #include "iuimanager.h"
 #include <boost/shared_ptr.hpp>
 
+typedef struct _GtkWindow GtkWindow;
+
 namespace ui
 {
 
-/**
- * Abstract dialog class, represents a modal window parented to 
- * DarkRadiant's top-level window.
- */ 
 class IDialog
 {
 public:
@@ -41,13 +39,6 @@ public:
 	 * Returns the Dialog::Result, corresponding to the user's action.
 	 */
 	virtual Result run() = 0;
-
-	// Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
-	// calling any methods on this object results in undefined behavior.
-	virtual void destroy() = 0;
-
-	// Convenience method, does run() and destroy() in a sequence
-	virtual Result runAndDestroy() = 0;
 };
 typedef boost::shared_ptr<IDialog> IDialogPtr;
 
@@ -59,18 +50,17 @@ public:
 
 	/**
 	 * Create a new dialog. Note that the DialogManager will hold a reference
-	 * to this dialog internally until destroy() is called on the dialog object.
-	 * This allows scripts to reference the Dialog class without holding the 
-	 * shared_ptr on their own or using wrapper classes doing so.
-	 * Dialogs will be cleared at radiant shutdown at the latest, but it's recommended
-	 * to call Dialog::destroy() when you're done using it.
+	 * to this dialog internally to allow scripts to reference the Dialog class 
+	 * without holding the shared_ptr on their own or using wrapper classes doing so.
 	 *
 	 * Every dialog features an OK and a Cancel button by default.
 	 *
 	 * @title: The string displayed on the dialog's window bar.
 	 * @type: the dialog type to create, determines e.g. which buttons are shown.
+	 * @parent: optional top-level widget this dialog should be parented to, defaults to
+	 *			GlobalRadiant().getMainWindow().
 	 */
-	virtual IDialogPtr createDialog(const std::string& title) = 0;
+	virtual IDialogPtr createDialog(const std::string& title, GtkWindow* parent = NULL) = 0;
 
 	/**
 	 * Create a simple message box, which can either notify the user about something,
@@ -80,8 +70,11 @@ public:
 	 * @title: The string displayed on the message box window bar.
 	 * @text: The text/question to be displayed.
 	 * @type: the message type this dialog represents.
+	 * @parent: optional top-level widget this dialog should be parented to, defaults to
+	 *			GlobalRadiant().getMainWindow().
 	 */
-	virtual IDialogPtr createMessageBox(const std::string& title, const std::string& text, IDialog::MessageType type) = 0;
+	virtual IDialogPtr createMessageBox(const std::string& title, const std::string& text, 
+										IDialog::MessageType type, GtkWindow* parent = NULL) = 0;
 };
 
 } // namespace ui

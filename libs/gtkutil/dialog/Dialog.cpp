@@ -7,15 +7,12 @@
 
 #include "itextstream.h"
 #include "iradiant.h"
-#include "DialogManager.h"
 
-namespace ui
+namespace gtkutil
 {
 
-Dialog::Dialog(std::size_t id, DialogManager& owner, const std::string& title) :
-	gtkutil::BlockingTransientWindow(title, GlobalRadiant().getMainWindow()),
-	_id(id),
-	_owner(owner),
+Dialog::Dialog(const std::string& title, GtkWindow* parent) :
+	BlockingTransientWindow(title, parent != NULL ? parent : GlobalRadiant().getMainWindow()),
 	_result(RESULT_CANCELLED),
 	_vbox(gtk_vbox_new(FALSE, 6)),
 	_constructed(false)
@@ -26,18 +23,13 @@ Dialog::Dialog(std::size_t id, DialogManager& owner, const std::string& title) :
 	gtk_container_add(GTK_CONTAINER(getWindow()), _vbox);
 }
 
-std::size_t Dialog::getId() const
-{
-	return _id;
-}
-
 void Dialog::setTitle(const std::string& title)
 {
 	// Dispatch this call to the base class
 	BlockingTransientWindow::setTitle(title);
 }
 
-IDialog::Result Dialog::run()
+ui::IDialog::Result Dialog::run()
 {
 	if (!_constructed)
 	{
@@ -51,33 +43,6 @@ IDialog::Result Dialog::run()
 	show();
 
 	return _result;
-}
-
-IDialog::Result Dialog::runAndDestroy()
-{
-	IDialog::Result result = run();
-
-	destroy();
-
-	return result;
-}
-
-// Frees this dialog and all its allocated resources.  Once a dialog as been destroyed, 
-// calling any methods on this object results in undefined behavior.
-void Dialog::destroy()
-{
-	// Prevent double-destruction
-	if (getWindow() != NULL)
-	{
-		// Destroy this window
-		BlockingTransientWindow::destroy();
-	}
-
-	// Nofity the manager, this will clear ourselves as soon as the last reference is gone
-	// which might happen right after this call
-	_owner.notifyDestroy(_id);
-
-	// Do not call any other member methods after this point
 }
 
 void Dialog::construct()
@@ -106,14 +71,14 @@ GtkWidget* Dialog::createButtons()
 
 void Dialog::onCancel(GtkWidget* widget, Dialog* self)
 {
-	self->_result = RESULT_CANCELLED;
-	self->hide(); // breaks gtk_main()
+	self->_result = ui::IDialog::RESULT_CANCELLED;
+	self->destroy(); // breaks gtk_main()
 }
 
 void Dialog::onOK(GtkWidget* widget, Dialog* self)
 {
-	self->_result = RESULT_OK;
-	self->hide(); // breaks gtk_main()
+	self->_result = ui::IDialog::RESULT_OK;
+	self->destroy(); // breaks gtk_main()
 }
 
-} // namespace ui
+} // namespace gtkutil
