@@ -35,6 +35,33 @@ public:
 	// Sets the dialog title
 	virtual void setTitle(const std::string& title) = 0;
 
+	// A handle to access dialog elements after addition
+	typedef std::size_t Handle;
+	typedef std::vector<std::string> ComboBoxOptions;
+
+	// ------------------- Elements -----------------------
+
+	/**
+	 * Adds a simple label at the current position in the dialog.
+	 * A unique handle is returned to allow for later value retrieval.
+	 * The elements are inserted in the order of calls, top to bottom.
+	 * In case of errors an invalid handle (==0) is returned.
+	 */
+	virtual Handle addLabel(const std::string& text) = 0;
+	virtual Handle addComboBox(const std::string& label, const ComboBoxOptions& options) = 0;
+	virtual Handle addEntryBox(const std::string& label) = 0;
+	virtual Handle addPathEntry(const std::string& label, bool foldersOnly = false) = 0;
+	virtual Handle addSpinButton(const std::string& label, double min, double max, double step) = 0;
+	virtual Handle addCheckbox(const std::string& label) = 0;
+
+	// ----------------- Element Value --------------------
+
+	// Retrieve or set an element's value by string
+	virtual void setElementValue(const Handle& handle, const std::string& value) = 0;
+	virtual std::string getElementValue(const Handle& handle) = 0;
+
+	// ----------------------------------------------------
+
 	/**
 	 * Run the dialog an enter the main loop (block the application).
 	 * Returns the Dialog::Result, corresponding to the user's action.
