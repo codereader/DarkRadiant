@@ -3,17 +3,14 @@
 
 #include "Curve.h"
 #include "selectionlib.h"
-#include "generic/static.h"
 
 namespace entity {
-	
-	const Colour4b colour_vertex(0, 255, 0, 255);
-	const Colour4b colour_selected(0, 0, 255, 255);
-	
-	struct CurveShaders {
-		ShaderPtr controlsShader;
-		ShaderPtr selectedShader;
-	};
+
+	namespace
+	{
+		const Colour4b colour_vertex(0, 255, 0, 255);
+		const Colour4b colour_selected(0, 0, 255, 255);
+	}
 
 /** greebo: This class is wrapped around a Curve class to manage 
  * 			all the selection and transformation operations. 
@@ -48,11 +45,20 @@ private:
 	RenderablePointVector m_controlsRender;
 	mutable RenderablePointVector m_selectedRender;
 
+	struct CurveShaders
+	{
+		ShaderPtr controlsShader;
+		ShaderPtr selectedShader;
+	};
+
+	static CurveShaders _shaders;
+
 public:
-	typedef Static<CurveShaders> StaticShaders;
 
 	// Constructor
 	CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged);
+
+	static void initialiseShaders();
 
 	// Traversal functions, these cycle through all (selected) control points
 	void forEach(ControlPointFunctor& functor);
