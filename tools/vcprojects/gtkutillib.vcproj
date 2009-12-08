@@ -465,14 +465,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\messagebox.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\messagebox_legacy.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\ModalProgressDialog.cpp"
 			>
 		</File>
