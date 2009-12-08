@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_PIVOT_H
 
 #include "math/matrix.h"
-#include "generic/static.h"
 
 inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2screen)
 {
@@ -226,58 +225,60 @@ const Colour4b g_colour_x(255, 0, 0, 255);
 const Colour4b g_colour_y(0, 255, 0, 255);
 const Colour4b g_colour_z(0, 0, 255, 255);
 
-class Shader;
-
-class RenderablePivot : public OpenGLRenderable
+class RenderablePivot : 
+	public OpenGLRenderable
 {
-  VertexBuffer<PointVertex> m_vertices;
-  const Vector3& _pivot;
+	VertexBuffer<PointVertex> _vertices;
+	const Vector3& _pivot;
+
 public:
-  mutable Matrix4 m_localToWorld;
-  typedef Static<ShaderPtr> StaticShader;
-  static ShaderPtr getShader()
-  {
-    return StaticShader::instance();
-  }
+	mutable Matrix4 m_localToWorld;
 
-  RenderablePivot(const Vector3& pivot) :
-  	_pivot(pivot)
-  {
-    m_vertices.reserve(6);
+	static ShaderPtr& StaticShader()
+	{
+		static ShaderPtr _shader;
+		return _shader;
+	}
 
-	m_vertices.push_back(PointVertex(_pivot, g_colour_x));
-	m_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
+	RenderablePivot(const Vector3& pivot) :
+		_pivot(pivot)
+	{
+		_vertices.reserve(6);
 
-	m_vertices.push_back(PointVertex(_pivot, g_colour_y));
-	m_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
+		_vertices.push_back(PointVertex(_pivot, g_colour_x));
+		_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
 
-	m_vertices.push_back(PointVertex(_pivot, g_colour_z));
-	m_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
-  }
+		_vertices.push_back(PointVertex(_pivot, g_colour_y));
+		_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
+
+		_vertices.push_back(PointVertex(_pivot, g_colour_z));
+		_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
+	}
 
 	/** greebo: Updates the renderable vertex array to the given pivot point 
 	 */
-	void updatePivot() {
-		m_vertices.clear();
+	void updatePivot()
+	{
+		_vertices.clear();
 		
-		m_vertices.push_back(PointVertex(_pivot, g_colour_x));
-		m_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
+		_vertices.push_back(PointVertex(_pivot, g_colour_x));
+		_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
 
-		m_vertices.push_back(PointVertex(_pivot, g_colour_y));
-		m_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
+		_vertices.push_back(PointVertex(_pivot, g_colour_y));
+		_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
 
-		m_vertices.push_back(PointVertex(_pivot, g_colour_z));
-		m_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
+		_vertices.push_back(PointVertex(_pivot, g_colour_z));
+		_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
 	}
 
-  void render(const RenderInfo& info) const
-  {
-    if(m_vertices.size() == 0) return;
-    if(m_vertices.data() == 0) return;
-    glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &m_vertices.data()->vertex);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &m_vertices.data()->colour);
-    glDrawArrays(GL_LINES, 0, m_vertices.size());
-  }
+	void render(const RenderInfo& info) const
+	{
+		if(_vertices.size() == 0) return;
+
+		glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &_vertices.data()->vertex);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_vertices.data()->colour);
+		glDrawArrays(GL_LINES, 0, _vertices.size());
+	}
 
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
   {
@@ -287,8 +288,8 @@ public:
     //Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
     collector.Highlight(RenderableCollector::ePrimitive, false);
-    collector.SetState(getShader(), RenderableCollector::eWireframeOnly);
-    collector.SetState(getShader(), RenderableCollector::eFullMaterials);
+    collector.SetState(StaticShader(), RenderableCollector::eWireframeOnly);
+    collector.SetState(StaticShader(), RenderableCollector::eFullMaterials);
     collector.addRenderable(*this, localToWorld);
 
     collector.PopState();
