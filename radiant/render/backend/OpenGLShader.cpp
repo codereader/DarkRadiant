@@ -10,6 +10,8 @@
 #include "generic/callback.h"
 #include "texturelib.h"
 
+#include <cstdio>
+
 void OpenGLShader::destroy() {
 	// Clear the shaderptr, so that the shared_ptr reference count is decreased 
     _iShader = MaterialPtr();

@@ -71,12 +71,13 @@ script_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la
 am_script_la_OBJECTS = ScriptingSystem.lo ScriptCommand.lo \
 	ScriptModule.lo ScriptWindow.lo SceneNodeBuffer.lo \
-	EClassInterface.lo BrushInterface.lo RadiantInterface.lo \
-	PatchInterface.lo SelectionInterface.lo MapInterface.lo \
-	EntityInterface.lo MathInterface.lo ModelInterface.lo \
-	CommandSystemInterface.lo FileSystemInterface.lo \
-	GridInterface.lo ShaderSystemInterface.lo SkinInterface.lo \
-	SoundInterface.lo GameInterface.lo
+	DialogInterface.lo EClassInterface.lo BrushInterface.lo \
+	RadiantInterface.lo PatchInterface.lo SelectionInterface.lo \
+	MapInterface.lo EntityInterface.lo MathInterface.lo \
+	ModelInterface.lo CommandSystemInterface.lo \
+	FileSystemInterface.lo GridInterface.lo \
+	ShaderSystemInterface.lo SkinInterface.lo SoundInterface.lo \
+	GameInterface.lo
 script_la_OBJECTS = $(am_script_la_OBJECTS)
 script_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -268,6 +269,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptModule.cpp \
 					ScriptWindow.cpp \
 					SceneNodeBuffer.cpp \
+               interfaces/DialogInterface.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
 					interfaces/RadiantInterface.cpp \
@@ -361,6 +363,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BrushInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CommandSystemInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DialogInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EClassInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EntityInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileSystemInterface.Plo@am__quote@
@@ -401,6 +404,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+DialogInterface.lo: interfaces/DialogInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DialogInterface.lo -MD -MP -MF $(DEPDIR)/DialogInterface.Tpo -c -o DialogInterface.lo `test -f 'interfaces/DialogInterface.cpp' || echo '$(srcdir)/'`interfaces/DialogInterface.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/DialogInterface.Tpo $(DEPDIR)/DialogInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/DialogInterface.cpp' object='DialogInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DialogInterface.lo `test -f 'interfaces/DialogInterface.cpp' || echo '$(srcdir)/'`interfaces/DialogInterface.cpp
 
 EClassInterface.lo: interfaces/EClassInterface.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT EClassInterface.lo -MD -MP -MF $(DEPDIR)/EClassInterface.Tpo -c -o EClassInterface.lo `test -f 'interfaces/EClassInterface.cpp' || echo '$(srcdir)/'`interfaces/EClassInterface.cpp

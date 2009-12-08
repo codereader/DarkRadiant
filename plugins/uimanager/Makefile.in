@@ -72,8 +72,8 @@ uimanager_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_uimanager_la_OBJECTS = MenuItem.lo GroupDialog.lo ColourScheme.lo \
 	ColourSchemeEditor.lo ColourSchemeManager.lo \
-	StatusBarManager.lo ToolbarManager.lo UIManager.lo \
-	MenuManager.lo
+	StatusBarManager.lo DialogManager.lo ToolbarManager.lo \
+	UIManager.lo MenuManager.lo
 uimanager_la_OBJECTS = $(am_uimanager_la_OBJECTS)
 uimanager_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -257,6 +257,7 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
                        StatusBarManager.cpp \
+					   DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
                        MenuManager.cpp
@@ -338,6 +339,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColourScheme.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColourSchemeEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColourSchemeManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DialogManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuManager.Plo@am__quote@
