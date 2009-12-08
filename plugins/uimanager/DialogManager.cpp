@@ -1,6 +1,7 @@
 #include "DialogManager.h"
 
 #include "itextstream.h"
+#include "iradiant.h"
 
 #include "gtkutil/dialog/MessageBox.h"
 
@@ -21,6 +22,11 @@ IDialogPtr DialogManager::createDialog(const std::string& title, GtkWindow* pare
 {
 	cleanupOldDialogs();
 
+	if (parent == NULL)
+	{
+		parent = GlobalRadiant().getMainWindow();
+	}
+
 	// Allocate a new dialog
 	gtkutil::DialogPtr dialog(new gtkutil::Dialog(title, parent));
 
@@ -35,6 +41,12 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 										   GtkWindow* parent)
 {
 	cleanupOldDialogs();
+
+	// Use the main window if no parent specified
+	if (parent == NULL)
+	{
+		parent = GlobalRadiant().getMainWindow();
+	}
 
 	// Allocate a new dialog
 	gtkutil::MessageBoxPtr box(new gtkutil::MessageBox(title, text, type, parent));

@@ -6,13 +6,12 @@
 #include <gtk/gtkstock.h>
 
 #include "itextstream.h"
-#include "iradiant.h"
 
 namespace gtkutil
 {
 
 Dialog::Dialog(const std::string& title, GtkWindow* parent) :
-	BlockingTransientWindow(title, parent != NULL ? parent : GlobalRadiant().getMainWindow()),
+	BlockingTransientWindow(title, parent),
 	_result(RESULT_CANCELLED),
 	_vbox(gtk_vbox_new(FALSE, 6)),
 	_constructed(false)

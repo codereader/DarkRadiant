@@ -21,6 +21,12 @@ MessageBox::MessageBox(const std::string& title, const std::string& text,
 	_type(type),
 	_accelGroup(gtk_accel_group_new())
 {
+	// Center the popup when no parent window is specified
+	if (parent == NULL)
+	{
+		gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER);
+	}
+
 	gtk_window_add_accel_group(GTK_WINDOW(getWindow()), _accelGroup);
 }
 
