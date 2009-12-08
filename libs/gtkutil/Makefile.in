@@ -70,13 +70,13 @@ LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libgtkutil_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
-	VFSTreePopulator.lo messagebox.lo nonmodal.lo Timer.lo \
-	WindowPosition.lo idledraw.lo PersistentTransientWindow.lo \
-	dialog.lo glfont.lo MenuItemAccelerator.lo cursor.lo \
-	DeferredAdjustment.lo PopupMenu.lo widget.lo \
-	RegistryConnector.lo PathEntry.lo TreeModel.lo \
-	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
-	window.lo clipboard.lo FileChooser.lo pointer.lo
+	VFSTreePopulator.lo nonmodal.lo Timer.lo WindowPosition.lo \
+	idledraw.lo PersistentTransientWindow.lo Dialog.lo \
+	MessageBox.lo dialog_legacy.lo glfont.lo \
+	MenuItemAccelerator.lo cursor.lo DeferredAdjustment.lo \
+	PopupMenu.lo widget.lo RegistryConnector.lo PathEntry.lo \
+	TreeModel.lo ModalProgressDialog.lo SerialisableWidgets.lo \
+	SourceView.lo window.lo clipboard.lo FileChooser.lo pointer.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 libgtkutil_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -267,13 +267,14 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
-						messagebox.cpp \
 						nonmodal.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
 						idledraw.cpp \
 						window/PersistentTransientWindow.cpp \
-						dialog.cpp \
+						dialog/Dialog.cpp \
+						dialog/MessageBox.cpp \
+						dialog_legacy.cpp \
 						glfont.cpp \
 						MenuItemAccelerator.cpp \
 						cursor.cpp \
@@ -367,9 +368,11 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ConsoleView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DeferredAdjustment.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Dialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileChooser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PanedPosition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathEntry.Plo@am__quote@
@@ -384,10 +387,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WindowPosition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clipboard.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cursor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dialog_legacy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/glfont.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/idledraw.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messagebox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nonmodal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pointer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/widget.Plo@am__quote@
@@ -420,6 +422,20 @@ PersistentTransientWindow.lo: window/PersistentTransientWindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='window/PersistentTransientWindow.cpp' object='PersistentTransientWindow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PersistentTransientWindow.lo `test -f 'window/PersistentTransientWindow.cpp' || echo '$(srcdir)/'`window/PersistentTransientWindow.cpp
+
+Dialog.lo: dialog/Dialog.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Dialog.lo -MD -MP -MF $(DEPDIR)/Dialog.Tpo -c -o Dialog.lo `test -f 'dialog/Dialog.cpp' || echo '$(srcdir)/'`dialog/Dialog.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Dialog.Tpo $(DEPDIR)/Dialog.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='dialog/Dialog.cpp' object='Dialog.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Dialog.lo `test -f 'dialog/Dialog.cpp' || echo '$(srcdir)/'`dialog/Dialog.cpp
+
+MessageBox.lo: dialog/MessageBox.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MessageBox.lo -MD -MP -MF $(DEPDIR)/MessageBox.Tpo -c -o MessageBox.lo `test -f 'dialog/MessageBox.cpp' || echo '$(srcdir)/'`dialog/MessageBox.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/MessageBox.Tpo $(DEPDIR)/MessageBox.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='dialog/MessageBox.cpp' object='MessageBox.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MessageBox.lo `test -f 'dialog/MessageBox.cpp' || echo '$(srcdir)/'`dialog/MessageBox.cpp
 
 PopupMenu.lo: menu/PopupMenu.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PopupMenu.lo -MD -MP -MF $(DEPDIR)/PopupMenu.Tpo -c -o PopupMenu.lo `test -f 'menu/PopupMenu.cpp' || echo '$(srcdir)/'`menu/PopupMenu.cpp

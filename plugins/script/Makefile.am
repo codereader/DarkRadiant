@@ -18,6 +18,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptModule.cpp \
 					ScriptWindow.cpp \
 					SceneNodeBuffer.cpp \
+               interfaces/DialogInterface.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
 					interfaces/RadiantInterface.cpp \

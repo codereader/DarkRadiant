@@ -8,7 +8,7 @@
 #include <gtk/gtkstock.h>
 #include <gdk/gdkkeysyms.h>
 
-#include "gtkutil/LeftalignedLabel.h"
+#include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
 
 namespace gtkutil
