@@ -3,6 +3,7 @@
 #include <ostream>
 #include "itextstream.h"
 #include "iscenegraph.h"
+#include "idialogmanager.h"
 #include "ieventmanager.h"
 #include "iundo.h"
 #include "ifilesystem.h"
@@ -17,7 +18,6 @@
 #include "os/path.h"
 #include "MapImportInfo.h"
 #include "MapExportInfo.h"
-#include "gtkutil/messagebox.h"
 #include "gtkutil/IConv.h"
 
 #include "referencecache.h"
@@ -590,33 +590,37 @@ bool Map::saveSelected(const std::string& filename) {
 	return success;
 }
 
-bool Map::askForSave(const std::string& title) {
-	if (!isModified()) {
+bool Map::askForSave(const std::string& title)
+{
+	if (!isModified())
+	{
 		// Map is not modified, return positive
 		return true;
 	}
 
 	// Ask the user
-	EMessageBoxReturn result = gtk_MessageBox(
-		GTK_WIDGET(GlobalRadiant().getMainWindow()), 
-		"The current map has changed since it was last saved."
-		"\nDo you want to save the current map before continuing?", 
-		title.c_str(), 
-		eMB_YESNOCANCEL, eMB_ICONQUESTION
-	);
+	ui::IDialogPtr msgBox = GlobalDialogManager().createMessageBox(
+		title, "The current map has changed since it was last saved."
+		"\nDo you want to save the current map before continuing?", ui::IDialog::MESSAGE_YESNOCANCEL);
+
+	ui::IDialog::Result result = msgBox->run();
 	
-	if (result == eIDCANCEL) {
+	if (result == ui::IDialog::RESULT_CANCELLED)
+	{
 		return false;
 	}
 	
-	if (result == eIDYES) {
+	if (result == ui::IDialog::RESULT_YES)
+	{
 		// The user wants to save the map
-	    if (isUnnamed()) {
+	    if (isUnnamed())
+		{
 	    	// Map still unnamed, try to save the map with a new name
 	    	// and take the return value from the other routine.
 			return saveAs();
 	    }
-	    else {
+	    else
+		{
 	    	// Map is named, save it
 			save();
 	    }
