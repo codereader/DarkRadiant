@@ -187,7 +187,7 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 	// Construct Doom3Group stuff
 	CurveEditInstance::initialiseShaders();
 
-	RenderablePivot::StaticShader::instance() = GlobalRenderSystem().capture("$PIVOT");
+	RenderablePivot::StaticShader() = GlobalRenderSystem().capture("$PIVOT");
 
 	GlobalRenderSystem().attachRenderable(RenderableTargetInstances::Instance());
 
