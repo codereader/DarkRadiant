@@ -5,6 +5,8 @@
 #include "../window/BlockingTransientWindow.h"
 #include <map>
 
+typedef struct _GtkAccelGroup GtkAccelGroup;
+
 namespace gtkutil
 {
 
@@ -25,6 +27,9 @@ protected:
 
 	// The table carrying the elements
 	GtkWidget* _elementsTable;
+
+	// Keyboard accel group used to map ENTER and ESC to buttons
+	GtkAccelGroup* _accelGroup;
 
 	// Whether all widgets have been created
 	bool _constructed;
@@ -58,6 +63,8 @@ protected:
 	virtual void construct();
 
 	virtual GtkWidget* createButtons();
+
+	void mapKeyToButton(guint key, GtkWidget* button);
 
 	ui::IDialog::Handle addElement(const DialogElementPtr& element);
 

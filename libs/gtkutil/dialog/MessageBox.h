@@ -3,8 +3,6 @@
 
 #include "Dialog.h"
 
-typedef struct _GtkAccelGroup GtkAccelGroup;
-
 namespace gtkutil
 {
 
@@ -24,9 +22,6 @@ protected:
 	// The message type
 	ui::IDialog::MessageType _type;
 
-	// Keyboard accel group used to map ENTER and ESC to buttons
-	GtkAccelGroup* _accelGroup;
-
 public:
 	// Constructs a new messageBox using the given title and text
 	MessageBox(const std::string& title, 
@@ -43,8 +38,6 @@ protected:
 
 	// Creates an icon from stock (notification, warning, error)
 	GtkWidget* createIcon();
-
-	void mapKeyToButton(guint key, GtkWidget* button);
 
 	// GTK Callbacks, additional to the ones defined in the base class
 	static void onYes(GtkWidget* widget, MessageBox* self);

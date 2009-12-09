@@ -5,6 +5,7 @@
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkstock.h>
 #include <gtk/gtktable.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "itextstream.h"
 
@@ -18,11 +19,18 @@ Dialog::Dialog(const std::string& title, GtkWindow* parent) :
 	_result(RESULT_CANCELLED),
 	_vbox(gtk_vbox_new(FALSE, 6)),
 	_elementsTable(gtk_table_new(1,1,FALSE)),
+	_accelGroup(gtk_accel_group_new()),
 	_constructed(false),
 	_highestUsedHandle(0)
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+
+	// Center the popup when no parent window is specified
+	if (parent == NULL)
+	{
+		gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER);
+	}
 
 	gtk_container_add(GTK_CONTAINER(getWindow()), _vbox);
 
@@ -30,6 +38,8 @@ Dialog::Dialog(const std::string& title, GtkWindow* parent) :
     gtk_table_set_row_spacings(GTK_TABLE(_elementsTable), 6);
 
 	gtk_box_pack_start(GTK_BOX(_vbox), _elementsTable, TRUE, TRUE, 0);
+
+	gtk_window_add_accel_group(GTK_WINDOW(getWindow()), _accelGroup);
 }
 
 void Dialog::setTitle(const std::string& title)
@@ -169,11 +179,22 @@ GtkWidget* Dialog::createButtons()
 	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOK), this);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, FALSE, FALSE, 0);
 
+	mapKeyToButton(GDK_O, okButton);
+	mapKeyToButton(GDK_Return, okButton);
+
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 0);
 
+	mapKeyToButton(GDK_C, cancelButton);
+	mapKeyToButton(GDK_Escape, cancelButton);
+
 	return buttonHBox;
+}
+
+void Dialog::mapKeyToButton(guint key, GtkWidget* button)
+{
+	gtk_widget_add_accelerator(button, "clicked", _accelGroup, key, (GdkModifierType)0, (GtkAccelFlags)0);
 }
 
 void Dialog::_onDeleteEvent()
