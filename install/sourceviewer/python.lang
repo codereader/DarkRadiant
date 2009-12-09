@@ -305,6 +305,25 @@
           <keyword>OverflowWarning</keyword>
           <keyword>RuntimeWarning</keyword>
           <keyword>FutureWarning</keyword>
+
+		  <!-- DarkRadiant-specific objects -->
+		  <keyword>GlobalDialogManager</keyword>
+		  <keyword>GlobalModelSkinCache</keyword>
+		  <keyword>GlobalSoundManager</keyword>
+		  <keyword>GlobalMaterialManager</keyword>
+		  <keyword>GlobalSelectionSystem</keyword>
+		  <keyword>GlobalSceneGraph</keyword>
+		  <keyword>GlobalRegistry</keyword>
+		  <keyword>Radiant</keyword>
+		  <keyword>GlobalPatchCreator</keyword>
+		  <keyword>GlobalMap</keyword>
+		  <keyword>GlobalGrid</keyword>
+		  <keyword>GlobalGameManager</keyword>
+		  <keyword>GlobalFileSystem</keyword>
+		  <keyword>GlobalEntityCreator</keyword>
+		  <keyword>GlobalEntityClassManager</keyword>
+		  <keyword>GlobalCommandSystem</keyword>
+		  <keyword>GlobalBrushCreator</keyword>
         </context>
 
         <context id="builtin-function" style-ref="builtin-function">
