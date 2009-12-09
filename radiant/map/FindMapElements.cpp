@@ -149,137 +149,49 @@ public:
 	}
 };
 
-void GetSelectionIndex(int *ent, int *brush)
+void GetSelectionIndex(std::size_t& ent, std::size_t& brush)
 {
-	std::size_t count_brush = 0;
-	std::size_t count_entity = 0;
-
-	if (GlobalSelectionSystem().countSelected() != 0) {
+	if (GlobalSelectionSystem().countSelected() != 0)
+	{
 		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
 		scene::INodePtr parent = node->getParent();
 
 		if (Node_isEntity(node)) {
 			// Selection is an entity, find its index
-			EntityFindIndexWalker walker(node, count_entity);
+			EntityFindIndexWalker walker(node, ent);
 			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 		}
 		else if (Node_isPrimitive(node)) {
 			// Node is a primitive, find parent entity and child index
-			EntityFindIndexWalker walker(parent, count_entity);
+			EntityFindIndexWalker walker(parent, ent);
 			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
-			PrimitiveFindIndexWalker brushWalker(node, count_brush);
+			PrimitiveFindIndexWalker brushWalker(node, brush);
 			Node_traverseSubgraph(parent, brushWalker);
 		}
 	}
-
-	*brush = static_cast<int>(count_brush);
-	*ent = static_cast<int>(count_entity);
 }
 
 #include "idialogmanager.h"
 
 void DoFind(const cmd::ArgumentList& args)
 {
-	ui::IDialogPtr d = GlobalDialogManager().createDialog("Test");
+	ui::IDialogPtr dialog = GlobalDialogManager().createDialog("Find Brush");
 
-	ui::IDialog::ComboBoxOptions options;
-	options.push_back("Option 1");
-	options.push_back("Option 2");
-	options.push_back("Option 3");
+	ui::IDialog::Handle entityEntry = dialog->addEntryBox("Entity:");
+	ui::IDialog::Handle brushEntry = dialog->addEntryBox("Brush:");
 
-	ui::IDialog::Handle comboHandle = d->addComboBox("Testcombo", options);
-	ui::IDialog::Handle entryHandle = d->addEntryBox("Testentry");
-	ui::IDialog::Handle labelHandle = d->addLabel("Testlabel with many many characters...");
+	std::size_t ent(0), br(0);
+	GetSelectionIndex(ent, br);
 
-	d->run();
-
-	globalOutputStream() << "Combobox: " << d->getElementValue(comboHandle) << std::endl;
-	globalOutputStream() << "Entry: " << d->getElementValue(entryHandle) << std::endl;
-
-	return;
-
-  ModalDialog dialog;
-  GtkEntry* entity;
-  GtkEntry* brush;
-
-  GtkWindow* window = create_dialog_window(GlobalRadiant().getMainWindow(), "Find Brush", G_CALLBACK(dialog_delete_callback), &dialog);
-
-  GtkAccelGroup* accel = gtk_accel_group_new();
-  gtk_window_add_accel_group(window, accel);
-
-  {
-    GtkVBox* vbox = create_dialog_vbox(4, 4);
-    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(vbox));
-    {
-      GtkTable* table = create_dialog_table(2, 2, 4, 4);
-      gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(table), TRUE, TRUE, 0);
-      {
-        GtkWidget* label = gtk_label_new ("Entity number");
-        gtk_widget_show (label);
-        gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1,
-                          (GtkAttachOptions) (0),
-                          (GtkAttachOptions) (0), 0, 0);
-      }
-      {
-        GtkWidget* label = gtk_label_new ("Brush number");
-        gtk_widget_show (label);
-        gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2,
-                          (GtkAttachOptions) (0),
-                          (GtkAttachOptions) (0), 0, 0);
-      }
-      {
-        GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-        gtk_widget_show(GTK_WIDGET(entry));
-        gtk_table_attach(table, GTK_WIDGET(entry), 1, 2, 0, 1,
-                          (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                          (GtkAttachOptions) (0), 0, 0);
-        gtk_widget_grab_focus(GTK_WIDGET(entry));
-        entity = entry;
-      }
-      {
-        GtkEntry* entry = GTK_ENTRY(gtk_entry_new());
-        gtk_widget_show(GTK_WIDGET(entry));
-        gtk_table_attach(table, GTK_WIDGET(entry), 1, 2, 1, 2,
-                          (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
-                          (GtkAttachOptions) (0), 0, 0);
-
-        brush = entry;
-      }
-    }
-    {
-      GtkHBox* hbox = create_dialog_hbox(4);
-      gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(hbox), TRUE, TRUE, 0);
-      {
-        GtkButton* button = create_dialog_button("Find", G_CALLBACK(dialog_button_ok), &dialog);
-        gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-        widget_make_default(GTK_WIDGET(button));
-        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel, GDK_Return, (GdkModifierType)0, (GtkAccelFlags)0);
-      }
-      {
-        GtkButton* button = create_dialog_button("Close", G_CALLBACK(dialog_button_cancel), &dialog);
-        gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel, GDK_Escape, (GdkModifierType)0, (GtkAccelFlags)0);
-      }
-    }
-  }
-
-  // Initialize dialog
-  char buf[16];
-  int ent(0), br(0);
-
-  GetSelectionIndex (&ent, &br);
-  sprintf (buf, "%i", ent);
-  gtk_entry_set_text(entity, buf);
-  sprintf (buf, "%i", br);
-  gtk_entry_set_text(brush, buf);
-
-  if(modal_dialog_show(window, dialog) == eIDOK)
-  {
-    const char *entstr = gtk_entry_get_text(entity);
-    const char *brushstr = gtk_entry_get_text(brush);
-    SelectBrush (atoi(entstr), atoi(brushstr));
-  }
-
-  gtk_widget_destroy(GTK_WIDGET(window));
+	dialog->setElementValue(entityEntry, intToStr(ent));
+	dialog->setElementValue(brushEntry, intToStr(br));
+	
+	if (dialog->run() == ui::IDialog::RESULT_OK)
+	{
+		std::string entityValue = dialog->getElementValue(entityEntry);
+		std::string brushValue = dialog->getElementValue(brushEntry);
+		
+		SelectBrush(strToInt(entityValue), strToInt(brushValue));
+	}
 }
