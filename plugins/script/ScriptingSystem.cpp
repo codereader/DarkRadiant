@@ -368,7 +368,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	}
 
 	// Declare the std::vector<std::string> object to Python, this is used several times
-	boost::python::class_< std::vector<std::string> >("StringVector")
+	_mainNamespace["StringVector"] = boost::python::class_< std::vector<std::string> >("StringVector")
 		.def(boost::python::vector_indexing_suite<std::vector<std::string>, true>())
 	;
 

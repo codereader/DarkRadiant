@@ -27,6 +27,46 @@ public:
 	{
 		return (_dialog != NULL) ? _dialog->run() : ui::IDialog::RESULT_CANCELLED;
 	}
+
+	ui::IDialog::Handle addLabel(const std::string& text)
+	{
+		return (_dialog != NULL) ? _dialog->addLabel(text) : ui::INVALID_HANDLE;
+	}
+
+	ui::IDialog::Handle addComboBox(const std::string& label, const ui::IDialog::ComboBoxOptions& options)
+	{
+		return (_dialog != NULL) ? _dialog->addComboBox(label, options) : ui::INVALID_HANDLE;
+	}
+
+	ui::IDialog::Handle addEntryBox(const std::string& label)
+	{
+		return (_dialog != NULL) ? _dialog->addEntryBox(label) : ui::INVALID_HANDLE;
+	}
+
+	ui::IDialog::Handle addPathEntry(const std::string& label, bool foldersOnly = false)
+	{
+		return (_dialog != NULL) ? _dialog->addPathEntry(label, foldersOnly) : ui::INVALID_HANDLE;
+	}
+
+	ui::IDialog::Handle addSpinButton(const std::string& label, double min, double max, double step)
+	{
+		return (_dialog != NULL) ? _dialog->addSpinButton(label, min, max, step) : ui::INVALID_HANDLE;
+	}
+
+	ui::IDialog::Handle addCheckbox(const std::string& label)
+	{
+		return (_dialog != NULL) ? _dialog->addCheckbox(label) : ui::INVALID_HANDLE;
+	}
+
+	void setElementValue(const ui::IDialog::Handle& handle, const std::string& value)
+	{
+		if (_dialog != NULL) _dialog->setElementValue(handle, value);
+	}
+
+	std::string getElementValue(const ui::IDialog::Handle& handle) 
+	{
+		return (_dialog != NULL) ? _dialog->getElementValue(handle) : "";
+	}
 };
 
 /**
