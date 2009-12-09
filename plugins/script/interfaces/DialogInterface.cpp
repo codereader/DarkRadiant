@@ -2,6 +2,8 @@
 
 #include "iuimanager.h"
 
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
 namespace script
 {
 
@@ -20,6 +22,15 @@ ScriptDialog DialogManagerInterface::createMessageBox(const std::string& title,
 // IScriptInterface implementation
 void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 {
+	// Add the module declaration to the given python namespace
+	nspace["GlobalDialogManager"] = boost::python::class_<DialogManagerInterface>("GlobalDialogManager")
+		.def("createDialog", &DialogManagerInterface::createDialog)
+		.def("createMessageBox", &DialogManagerInterface::createMessageBox)
+	;
+
+	// Now point the Python variable "GlobalDialogManager" to this instance
+	nspace["GlobalDialogManager"] = boost::python::ptr(this);
+
 	// Add the declaration for the IDialog class
 	boost::python::class_<ScriptDialog> dialog("Dialog", 
 		boost::python::init<const ui::IDialogPtr&>());
@@ -28,6 +39,14 @@ void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 	dialog
 		.def("setTitle", &ScriptDialog::setTitle)
 		.def("run", &ScriptDialog::run)
+		.def("addLabel", &ScriptDialog::addLabel)
+		.def("addComboBox", &ScriptDialog::addComboBox)
+		.def("addEntryBox", &ScriptDialog::addEntryBox)
+		.def("addPathEntry", &ScriptDialog::addPathEntry)
+		.def("addSpinButton", &ScriptDialog::addSpinButton)
+		.def("addCheckbox", &ScriptDialog::addCheckbox)
+		.def("getElementValue", &ScriptDialog::getElementValue)
+		.def("setElementValue", &ScriptDialog::setElementValue)
 	;
 
 	// Register the dialog class name
@@ -53,15 +72,6 @@ void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 		.value("YESNOCANCEL", ui::IDialog::MESSAGE_YESNOCANCEL)
 		.export_values()
 	;
-
-	// Add the module declaration to the given python namespace
-	nspace["GlobalDialogManager"] = boost::python::class_<DialogManagerInterface>("GlobalDialogManager")
-		.def("createDialog", &DialogManagerInterface::createDialog)
-		.def("createMessageBox", &DialogManagerInterface::createMessageBox)
-	;
-
-	// Now point the Python variable "GlobalDialogManager" to this instance
-	nspace["GlobalDialogManager"] = boost::python::ptr(this);
 }
 
 

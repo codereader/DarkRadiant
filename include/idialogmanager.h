@@ -70,6 +70,8 @@ public:
 };
 typedef boost::shared_ptr<IDialog> IDialogPtr;
 
+const IDialog::Handle INVALID_HANDLE = 0;
+
 class IDialogManager
 {
 public:
