@@ -98,17 +98,17 @@ ui::IDialog::Handle Dialog::addEntryBox(const std::string& label)
 
 ui::IDialog::Handle Dialog::addPathEntry(const std::string& label, bool foldersOnly)
 {
-	return 0;
+	return addElement(DialogElementPtr(new DialogPathEntry(label, foldersOnly)));
 }
 
 ui::IDialog::Handle Dialog::addSpinButton(const std::string& label, double min, double max, double step)
 {
-	return 0;
+	return addElement(DialogElementPtr(new DialogSpinButton(label, min, max, step)));
 }
 
 ui::IDialog::Handle Dialog::addCheckbox(const std::string& label)
 {
-	return 0;
+	return addElement(DialogElementPtr(new DialogCheckBox(label)));
 }
 
 void Dialog::setElementValue(const ui::IDialog::Handle& handle, const std::string& value)
