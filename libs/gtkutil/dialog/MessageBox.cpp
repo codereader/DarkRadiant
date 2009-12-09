@@ -18,17 +18,8 @@ MessageBox::MessageBox(const std::string& title, const std::string& text,
 					   IDialog::MessageType type, GtkWindow* parent) :
 	Dialog(title, parent),
 	_text(text),
-	_type(type),
-	_accelGroup(gtk_accel_group_new())
-{
-	// Center the popup when no parent window is specified
-	if (parent == NULL)
-	{
-		gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER);
-	}
-
-	gtk_window_add_accel_group(GTK_WINDOW(getWindow()), _accelGroup);
-}
+	_type(type)
+{}
 
 // Constructs the dialog (adds buttons, text and icons)
 void MessageBox::construct()
@@ -141,11 +132,6 @@ GtkWidget* MessageBox::createButtons()
 	}
 	
 	return gtkutil::RightAlignment(buttonHBox);
-}
-
-void MessageBox::mapKeyToButton(guint key, GtkWidget* button)
-{
-	gtk_widget_add_accelerator(button, "clicked", _accelGroup, key, (GdkModifierType)0, (GtkAccelFlags)0);
 }
 
 void MessageBox::onYes(GtkWidget* widget, MessageBox* self)

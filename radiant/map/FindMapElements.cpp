@@ -2,7 +2,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include "gtkutil/dialog.h"
+#include "idialogmanager.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
 #include "scenelib.h"
@@ -172,8 +172,6 @@ void GetSelectionIndex(std::size_t& ent, std::size_t& brush)
 	}
 }
 
-#include "idialogmanager.h"
-
 void DoFind(const cmd::ArgumentList& args)
 {
 	ui::IDialogPtr dialog = GlobalDialogManager().createDialog("Find Brush");
@@ -184,8 +182,8 @@ void DoFind(const cmd::ArgumentList& args)
 	std::size_t ent(0), br(0);
 	GetSelectionIndex(ent, br);
 
-	dialog->setElementValue(entityEntry, intToStr(ent));
-	dialog->setElementValue(brushEntry, intToStr(br));
+	dialog->setElementValue(entityEntry, sizetToStr(ent));
+	dialog->setElementValue(brushEntry, sizetToStr(br));
 	
 	if (dialog->run() == ui::IDialog::RESULT_OK)
 	{
