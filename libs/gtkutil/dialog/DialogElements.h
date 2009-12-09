@@ -4,8 +4,11 @@
 #include "../ifc/Widget.h"
 #include "../SerialisableWidgets.h"
 #include "../LeftAlignedLabel.h"
+#include "../PathEntry.h"
 
 #include <gtk/gtkcombobox.h>
+#include <gtk/gtkspinbutton.h>
+#include <gtk/gtkcheckbutton.h>
 
 namespace gtkutil
 {
@@ -76,6 +79,84 @@ public:
 	virtual void importFromString(const std::string& str)
 	{
 		SerialisableTextEntry::importFromString(str);
+	}
+};
+
+// -----------------------------------------------------------------------
+
+class DialogSpinButton :
+	public DialogElement,
+	public SerialisableSpinButton
+{
+public:
+	DialogSpinButton(const std::string& label, double min, double max, double step) :
+		DialogElement(label),
+		SerialisableSpinButton(gtk_spin_button_new_with_range(min, max, step))
+	{
+		DialogElement::setWidget(SerialisableSpinButton::getWidget());
+	}
+
+	// Implementation of StringSerialisable, wrapping to base class 
+	virtual std::string exportToString() const 
+	{
+		return SerialisableSpinButton::exportToString();
+	}
+
+	virtual void importFromString(const std::string& str)
+	{
+		SerialisableSpinButton::importFromString(str);
+	}
+};
+
+// -----------------------------------------------------------------------
+
+class DialogPathEntry :
+	public PathEntry,
+	public DialogElement
+{
+public:
+	DialogPathEntry(const std::string& label, bool foldersOnly) :
+		PathEntry(foldersOnly),
+		DialogElement(label)
+	{
+		DialogElement::setWidget(PathEntry::getWidget());
+	}
+
+	// Implementation of StringSerialisable, wrapping to base class 
+	virtual std::string exportToString() const 
+	{
+		return PathEntry::getValue();
+	}
+
+	virtual void importFromString(const std::string& str)
+	{
+		PathEntry::setValue(str);
+	}
+};
+
+// -----------------------------------------------------------------------
+
+class DialogCheckBox :
+	public DialogElement,
+	public SerialisableToggleButton
+{
+public:
+	DialogCheckBox(const std::string& label) :
+		DialogElement(""), // empty label, the description is included in the toggle button
+		SerialisableToggleButton(gtk_check_button_new_with_label(label.c_str()))
+	{
+		DialogElement::setWidget(SerialisableToggleButton::getWidget());
+	}
+
+	// Implementation of StringSerialisable, wrapping to base class 
+	virtual std::string exportToString() const 
+	{
+		return SerialisableToggleButton::exportToString();
+	}
+
+	virtual void importFromString(const std::string& str)
+	{
+		SerialisableToggleButton::importFromString(str);
 	}
 };
 
