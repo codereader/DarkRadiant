@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/surfaceinspector/SurfaceInspector.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/General.h"
+#include "ui/patch/CapDialog.h"
 
 void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std::string& shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
 {
@@ -145,7 +146,7 @@ public:
 	}
 };
 
-enum ECapDialog {
+/*enum ECapDialog {
   PATCHCAP_BEVEL = 0,
   PATCHCAP_ENDCAP,
   PATCHCAP_INVERTED_BEVEL,
@@ -153,11 +154,26 @@ enum ECapDialog {
   PATCHCAP_CYLINDER
 };
 
-EMessageBoxReturn DoCapDlg(ECapDialog *type);
+EMessageBoxReturn DoCapDlg(ECapDialog *type);*/
 
 void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 {
-  ECapDialog nType;
+	ui::PatchCapDialog dialog;
+
+	if (dialog.run() == ui::IDialog::RESULT_OK)
+	{
+		PatchCollector collector;
+		GlobalSelectionSystem().foreachSelected(collector);
+
+		NodeVector& patchNodes = collector.getPatchNodes();
+
+		for (NodeVector::const_iterator i = patchNodes.begin(); 
+			 i != patchNodes.end(); ++i)
+		{
+			Patch_makeCaps(*Node_getPatch(*i), (*i)->getParent(), dialog.getSelectedCapType(), shader);
+		}
+	}
+  /*ECapDialog nType;
 
   if(DoCapDlg(&nType) == eIDOK)
   {
@@ -191,7 +207,7 @@ void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
     for (NodeVector::const_iterator i = patchNodes.begin(); i != patchNodes.end(); ++i) {
 		Patch_makeCaps(*Node_getPatch(*i), (*i)->getParent(), eType, shader);
     }
-  }
+  }*/
 }
 
 Patch* Scene_GetUltimateSelectedVisiblePatch()
@@ -836,8 +852,16 @@ void Patch_registerCommands() {
 #include "gtkutil/dialog.h"
 #include "gtkutil/widget.h"
 
-EMessageBoxReturn DoCapDlg(ECapDialog* type)
+#include "ui/patch/CapDialog.h"
+
+/*EMessageBoxReturn DoCapDlg(ECapDialog* type)
 {
+	ui::PatchCapDialog dialog;
+
+	if (dialog.run() == ui::IDialog::RESULT_OK)
+	{
+	}
+
   ModalDialog dialog;
   ModalDialogButton ok_button(dialog, eIDOK);
   ModalDialogButton cancel_button(dialog, eIDCANCEL);
@@ -996,4 +1020,4 @@ EMessageBoxReturn DoCapDlg(ECapDialog* type)
   gtk_widget_destroy(GTK_WIDGET(window));
 
   return ret;
-}
+}*/

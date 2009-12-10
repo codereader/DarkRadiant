@@ -14,11 +14,12 @@ const std::size_t MAX_PATCH_HEIGHT = 99;
 
 // The cap types for a patch
 enum EPatchCap {
-  eCapBevel,
-  eCapEndCap,
-  eCapIBevel,
-  eCapIEndCap,
-  eCapCylinder,
+	eCapBevel,
+	eCapEndCap,
+	eCapIBevel,
+	eCapIEndCap,
+	eCapCylinder,
+	eNumCapTypes
 };
 
 // The pre-defined patch types
