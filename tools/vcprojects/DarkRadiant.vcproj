@@ -2127,6 +2127,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\ui\patch\CapDialog.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\patch\CapDialog.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\ui\patch\PatchCreateDialog.cpp"
 						>
 					</File>

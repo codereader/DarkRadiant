@@ -109,6 +109,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/transform/TransformDialog.cpp \
 					  ui/modelselector/ModelSelector.cpp \
 					  ui/surfaceinspector/SurfaceInspector.cpp \
+					  ui/patch/CapDialog.cpp \
 					  ui/patch/PatchThickenDialog.cpp \
 					  ui/patch/PatchInspector.cpp \
 					  ui/patch/PatchCreateDialog.cpp \
