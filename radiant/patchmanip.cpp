@@ -146,18 +146,15 @@ public:
 	}
 };
 
-/*enum ECapDialog {
-  PATCHCAP_BEVEL = 0,
-  PATCHCAP_ENDCAP,
-  PATCHCAP_INVERTED_BEVEL,
-  PATCHCAP_INVERTED_ENDCAP,
-  PATCHCAP_CYLINDER
-};
-
-EMessageBoxReturn DoCapDlg(ECapDialog *type);*/
-
 void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 {
+	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
+	{
+		gtkutil::errorDialog("Cannot create caps, no patches selected.", 
+			GlobalRadiant().getMainWindow());
+		return;
+	}
+
 	ui::PatchCapDialog dialog;
 
 	if (dialog.run() == ui::IDialog::RESULT_OK)
@@ -173,41 +170,6 @@ void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 			Patch_makeCaps(*Node_getPatch(*i), (*i)->getParent(), dialog.getSelectedCapType(), shader);
 		}
 	}
-  /*ECapDialog nType;
-
-  if(DoCapDlg(&nType) == eIDOK)
-  {
-    EPatchCap eType;
-    switch(nType)
-    {
-    case PATCHCAP_INVERTED_BEVEL:
-      eType = eCapIBevel;
-      break;
-    case PATCHCAP_BEVEL:
-      eType = eCapBevel;
-      break;
-    case PATCHCAP_INVERTED_ENDCAP:
-      eType = eCapIEndCap;
-      break;
-    case PATCHCAP_ENDCAP:
-      eType = eCapEndCap;
-      break;
-    case PATCHCAP_CYLINDER:
-      eType = eCapCylinder;
-      break;
-    default:
-      ERROR_MESSAGE("invalid patch cap type");
-      return;
-    }
-  
-	PatchCollector collector;
-	GlobalSelectionSystem().foreachSelected(collector);
-	NodeVector& patchNodes = collector.getPatchNodes();
-
-    for (NodeVector::const_iterator i = patchNodes.begin(); i != patchNodes.end(); ++i) {
-		Patch_makeCaps(*Node_getPatch(*i), (*i)->getParent(), eType, shader);
-    }
-  }*/
 }
 
 Patch* Scene_GetUltimateSelectedVisiblePatch()
@@ -842,182 +804,3 @@ void Patch_registerCommands() {
 	GlobalEventManager().addCommand("StitchPatchTexture", "StitchPatchTexture");
 	GlobalEventManager().addCommand("BulgePatch", "BulgePatch");
 }
-
-#include <gtk/gtkbox.h>
-#include <gtk/gtktable.h>
-#include <gtk/gtktogglebutton.h>
-#include <gtk/gtkradiobutton.h>
-#include <gtk/gtkcombobox.h>
-#include <gtk/gtklabel.h>
-#include "gtkutil/dialog.h"
-#include "gtkutil/widget.h"
-
-#include "ui/patch/CapDialog.h"
-
-/*EMessageBoxReturn DoCapDlg(ECapDialog* type)
-{
-	ui::PatchCapDialog dialog;
-
-	if (dialog.run() == ui::IDialog::RESULT_OK)
-	{
-	}
-
-  ModalDialog dialog;
-  ModalDialogButton ok_button(dialog, eIDOK);
-  ModalDialogButton cancel_button(dialog, eIDCANCEL);
-  GtkWidget* bevel;
-  GtkWidget* ibevel;
-  GtkWidget* endcap;
-  GtkWidget* iendcap;
-  GtkWidget* cylinder;
- 
-  GtkWindow* window = create_modal_dialog_window(GlobalRadiant().getMainWindow(), "Cap", dialog);
-
-  GtkAccelGroup *accel_group = gtk_accel_group_new();
-  gtk_window_add_accel_group(window, accel_group);
-
-  {
-    GtkHBox* hbox = create_dialog_hbox(4, 4);
-    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(hbox));
-
-    {
-      // Gef: Added a vbox to contain the toggle buttons
-      GtkVBox* radio_vbox = create_dialog_vbox(4);
-      gtk_container_add(GTK_CONTAINER(hbox), GTK_WIDGET(radio_vbox));
-      
-      {
-        GtkTable* table = GTK_TABLE(gtk_table_new(5, 2, FALSE));
-        gtk_widget_show(GTK_WIDGET(table));
-        gtk_box_pack_start(GTK_BOX(radio_vbox), GTK_WIDGET(table), TRUE, TRUE, 0);
-        gtk_table_set_row_spacings(table, 5);
-        gtk_table_set_col_spacings(table, 5);
- 
-        {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_bevel.png"));
-          gtk_widget_show(image);
-          gtk_table_attach(table, image, 0, 1, 0, 1,
-                            (GtkAttachOptions) (GTK_FILL),
-                            (GtkAttachOptions) (0), 0, 0);
-        }
-        {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_endcap.png"));
-          gtk_widget_show(image);
-          gtk_table_attach(table, image, 0, 1, 1, 2,
-                            (GtkAttachOptions) (GTK_FILL),
-                            (GtkAttachOptions) (0), 0, 0);
-        }
-        {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_ibevel.png"));
-          gtk_widget_show(image);
-          gtk_table_attach(table, image, 0, 1, 2, 3,
-                            (GtkAttachOptions) (GTK_FILL),
-                            (GtkAttachOptions) (0), 0, 0);
-        }
-        {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_iendcap.png"));
-          gtk_widget_show(image);
-          gtk_table_attach(table, image, 0, 1, 3, 4,
-                            (GtkAttachOptions) (GTK_FILL),
-                            (GtkAttachOptions) (0), 0, 0);
-        }
-        {
-          GtkWidget* image = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf("cap_cylinder.png"));
-          gtk_widget_show(image);
-          gtk_table_attach(table, image, 0, 1, 4, 5,
-                            (GtkAttachOptions) (GTK_FILL),
-                            (GtkAttachOptions) (0), 0, 0);
-        }
-
-        GSList* group = 0;
-        {
-          GtkWidget* button = gtk_radio_button_new_with_label (group, "Bevel");
-          gtk_widget_show (button);
-          gtk_table_attach(table, button, 1, 2, 0, 1,
-                            (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
-                            (GtkAttachOptions) (0), 0, 0);
-          group = gtk_radio_button_group (GTK_RADIO_BUTTON (button));
-
-          bevel = button;
-        }
-        {
-          GtkWidget* button = gtk_radio_button_new_with_label (group, "Endcap");
-          gtk_widget_show (button);
-          gtk_table_attach(table, button, 1, 2, 1, 2,
-                            (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
-                            (GtkAttachOptions) (0), 0, 0);
-          group = gtk_radio_button_group (GTK_RADIO_BUTTON (button));
-
-          endcap = button;
-        }
-        {
-          GtkWidget* button = gtk_radio_button_new_with_label (group, "Inverted Bevel");
-          gtk_widget_show (button);
-          gtk_table_attach(table, button, 1, 2, 2, 3,
-                            (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
-                            (GtkAttachOptions) (0), 0, 0);
-          group = gtk_radio_button_group (GTK_RADIO_BUTTON (button));
-
-          ibevel = button;
-        }
-        {
-          GtkWidget* button = gtk_radio_button_new_with_label (group, "Inverted Endcap");
-          gtk_widget_show (button);
-          gtk_table_attach(table, button, 1, 2, 3, 4,
-                            (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
-                            (GtkAttachOptions) (0), 0, 0);
-          group = gtk_radio_button_group (GTK_RADIO_BUTTON (button));
-
-          iendcap = button;
-        }
-        {
-          GtkWidget* button = gtk_radio_button_new_with_label (group, "Cylinder");
-          gtk_widget_show (button);
-          gtk_table_attach(table, button, 1, 2, 4, 5,
-                            (GtkAttachOptions) (GTK_FILL | GTK_EXPAND),
-                            (GtkAttachOptions) (0), 0, 0);
-          group = gtk_radio_button_group (GTK_RADIO_BUTTON (button));
-
-          cylinder = button;
-        }
-      }
-    }
-    
-    {
-      GtkVBox* vbox = create_dialog_vbox(4);
-      gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), FALSE, FALSE, 0);
-      {
-        GtkButton* button = create_modal_dialog_button("OK", ok_button);
-        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-        widget_make_default(GTK_WIDGET(button));
-        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel_group, GDK_Return, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-      }
-      {
-        GtkButton* button = create_modal_dialog_button("Cancel", cancel_button);
-        gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-        gtk_widget_add_accelerator(GTK_WIDGET(button), "clicked", accel_group, GDK_Escape, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
-      }
-    }
-  }
-
-  // Initialize dialog
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (bevel), TRUE);
-  
-  EMessageBoxReturn ret = modal_dialog_show(window, dialog);
-  if (ret == eIDOK)
-  {
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (bevel)))
-      *type = PATCHCAP_BEVEL;
-    else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(endcap)))
-      *type = PATCHCAP_ENDCAP;
-    else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(ibevel)))
-      *type = PATCHCAP_INVERTED_BEVEL;
-    else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(iendcap)))
-      *type = PATCHCAP_INVERTED_ENDCAP;
-    else if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cylinder)))
-      *type = PATCHCAP_CYLINDER;
-  }
-
-  gtk_widget_destroy(GTK_WIDGET(window));
-
-  return ret;
-}*/
