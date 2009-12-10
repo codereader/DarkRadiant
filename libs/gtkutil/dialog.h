@@ -2,16 +2,7 @@
 #define _GTKUTIL_DIALOG_H_
 
 #include <string>
-
 typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkLabel GtkLabel;
-typedef struct _GtkTable GtkTable;
-typedef struct _GtkVBox GtkVBox;
-typedef struct _GtkWidget GtkWidget;
-
-GtkLabel* DialogLabel_new(const char* name);
-GtkTable* DialogRow_new(const char* name, GtkWidget* widget);
-void DialogVBox_packRow(GtkVBox* vbox, GtkWidget* row);
 
 namespace gtkutil
 {
