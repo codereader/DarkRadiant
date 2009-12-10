@@ -69,6 +69,8 @@ void PatchCapDialog::addItemToTable(GtkTable* table, const std::string& image, g
 
 EPatchCap PatchCapDialog::getSelectedCapType()
 {
+	if (_result != RESULT_OK) return eNumCapTypes;
+
 	for (RadioButtons::const_iterator i = _radioButtons.begin(); 
 		 i != _radioButtons.end(); ++i)
 	{
