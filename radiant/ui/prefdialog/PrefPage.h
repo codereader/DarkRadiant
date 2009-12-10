@@ -120,6 +120,9 @@ public:
 	 * @returns: the shared_ptr to the PrefPage, can be empty on error.
 	 */
 	PrefPagePtr createOrFindPage(const std::string& path);
+
+private:
+	void appendNamedWidget(const std::string& name, GtkWidget* widget);
 };
 
 } // namespace ui

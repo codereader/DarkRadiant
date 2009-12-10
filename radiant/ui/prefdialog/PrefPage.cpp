@@ -102,7 +102,7 @@ GtkWidget* PrefPage::appendCheckBox(const std::string& name,
       SerialisableWidgetWrapperPtr(new SerialisableToggleButton(check))
    );
 	
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(DialogRow_new(name.c_str(), check)));
+	appendNamedWidget(name, check);
 	return check;
 }
 
@@ -134,8 +134,7 @@ void PrefPage::appendSlider(const std::string& name, const std::string& registry
 	int digits = (step_increment < 1.0f) ? 2 : 0; 
 	gtk_scale_set_digits(GTK_SCALE (scale), digits);
 	
-	GtkTable* row = DialogRow_new(name.c_str(), alignment);
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
+	appendNamedWidget(name, alignment);
 }
 
 /* greebo: Use this to add a dropdown selection box with the given list of strings as captions. The value
@@ -182,8 +181,7 @@ void PrefPage::appendCombo(const std::string& name,
     gtk_container_add(GTK_CONTAINER(alignment), combo->getWidget());
 	
 	// Add the widget to the dialog row
-	GtkTable* row = DialogRow_new(name.c_str(), alignment);
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
+	appendNamedWidget(name, alignment);
 }
 
 /* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
@@ -206,8 +204,7 @@ GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& reg
       SerialisableWidgetWrapperPtr(new SerialisableTextEntry(entry))
    );
 
-	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(alignment));
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
+	appendNamedWidget(name, GTK_WIDGET(alignment));
 	return GTK_WIDGET(entry);
 }
 
@@ -216,8 +213,8 @@ GtkWidget* PrefPage::appendEntry(const std::string& name, const std::string& reg
 GtkWidget* PrefPage::appendLabel(const std::string& caption) {
 	GtkLabel* label = GTK_LABEL(gtk_label_new(""));
 	gtk_label_set_markup(label, caption.c_str());
-		
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(label));
+	
+	gtk_box_pack_start(GTK_BOX(_vbox), GTK_WIDGET(label), FALSE, FALSE, 0);
 	return GTK_WIDGET(label);
 }
 
@@ -239,10 +236,8 @@ GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string&
 		)
 	);
 
-	GtkTable* row = DialogRow_new(name.c_str(), entry->getWidget());
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
-
-	return GTK_WIDGET(row);
+	appendNamedWidget(name, entry->getWidget());
+	return entry->getWidget();
 }
 
 GtkSpinButton* Spinner_new(double value, double lower, double upper, int fraction) {
@@ -271,10 +266,8 @@ GtkWidget* PrefPage::appendSpinner(const std::string& name, const std::string& r
 	GtkSpinButton* spin = Spinner_new(value, lower, upper, fraction);
 	gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(spin));
 	
-	GtkTable* row = DialogRow_new(name.c_str(), GTK_WIDGET(alignment));
-	
 	// Connect the registry key to the newly created input field
-   using namespace gtkutil;
+	using namespace gtkutil;
 	_connector.addObject(
       registryKey,
       SerialisableWidgetWrapperPtr(
@@ -282,7 +275,7 @@ GtkWidget* PrefPage::appendSpinner(const std::string& name, const std::string& r
       )
    );
 
-	DialogVBox_packRow(GTK_VBOX(_vbox), GTK_WIDGET(row));
+	appendNamedWidget(name, alignment);
 	return GTK_WIDGET(spin);
 }
 
@@ -327,6 +320,24 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 		// We have found a leaf, return the child page		
 		return child;
 	}
+}
+
+void PrefPage::appendNamedWidget(const std::string& name, GtkWidget* widget)
+{
+	GtkTable* table = GTK_TABLE(gtk_table_new(1, 3, TRUE));
+
+	gtk_table_set_col_spacings(table, 4);
+	gtk_table_set_row_spacings(table, 0);
+
+	gtk_table_attach(table, gtkutil::LeftAlignedLabel(name), 0, 1, 0, 1,
+      (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
+      (GtkAttachOptions) (0), 0, 0);
+
+	gtk_table_attach(table, widget, 1, 3, 0, 1,
+      (GtkAttachOptions) (GTK_EXPAND|GTK_FILL),
+      (GtkAttachOptions) (0), 0, 0);
+
+	gtk_box_pack_start(GTK_BOX(_vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
 }
 
 } // namespace ui
