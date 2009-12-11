@@ -226,18 +226,18 @@
 	</subMenu>
 
 	<subMenu name="patch" caption="_Patch">
-		<menuItem name="simplePatch" caption="Simple patch mesh" command="SimplePatchMesh" />
+		<menuItem name="simplePatch" caption="Create Simple Patch Mesh" command="SimplePatchMesh" />
 		<menuSeparator />
-		<menuItem name="endcap" caption="End cap" command="PatchEndCap" />
-		<menuItem name="bevel" caption="Bevel" command="PatchBevel" />
+		<menuItem name="endcap" caption="Create End cap" command="PatchEndCap" />
+		<menuItem name="bevel" caption="Create Bevel" command="PatchBevel" />
 		<menuSeparator />
-		<menuItem name="cone" caption="Cone" command="PatchCone" />
-		<menuItem name="cylinder" caption="Cylinder" command="PatchCylinder" />
+		<menuItem name="cone" caption="Create Cone" command="PatchCone" />
+		<menuItem name="cylinder" caption="Create Cylinder" command="PatchCylinder" />
 
 		<subMenu name="moreCylinders" caption="More cylinders">
-			<menuItem name="denseCylinder" caption="Dense Cylinder" command="PatchDenseCylinder" />
-			<menuItem name="veryDenseCylinder" caption="Very Dense Cylinder" command="PatchVeryDenseCylinder" />
-			<menuItem name="squareCylinder" caption="Square Cylinder" command="PatchSquareCylinder" />
+			<menuItem name="denseCylinder" caption="Create Dense Cylinder" command="PatchDenseCylinder" />
+			<menuItem name="veryDenseCylinder" caption="Create Very Dense Cylinder" command="PatchVeryDenseCylinder" />
+			<menuItem name="squareCylinder" caption="Create Square Cylinder" command="PatchSquareCylinder" />
 		</subMenu>
 
 		<menuSeparator />
