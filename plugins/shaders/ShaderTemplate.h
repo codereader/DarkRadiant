@@ -105,11 +105,6 @@ public:
 		return m_nFlags;
 	}
 
-	float getTrans() {
-		if (!_parsed) parseDefinition();
-		return m_fTrans;
-	}
-
 	Material::ECull getCull() {
 		if (!_parsed) parseDefinition();
 		return m_Cull;
