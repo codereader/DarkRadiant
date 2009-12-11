@@ -133,6 +133,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-TransformDialog.$(OBJEXT) \
 	darkradiant-ModelSelector.$(OBJEXT) \
 	darkradiant-SurfaceInspector.$(OBJEXT) \
+	darkradiant-CapDialog.$(OBJEXT) \
 	darkradiant-PatchThickenDialog.$(OBJEXT) \
 	darkradiant-PatchInspector.$(OBJEXT) \
 	darkradiant-PatchCreateDialog.$(OBJEXT) \
@@ -505,6 +506,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/transform/TransformDialog.cpp \
 					  ui/modelselector/ModelSelector.cpp \
 					  ui/surfaceinspector/SurfaceInspector.cpp \
+					  ui/patch/CapDialog.cpp \
 					  ui/patch/PatchThickenDialog.cpp \
 					  ui/patch/PatchInspector.cpp \
 					  ui/patch/PatchCreateDialog.cpp \
@@ -714,6 +716,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CamWnd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Camera.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CameraSettings.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CapDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ClassnamePropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ClipPoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Clipper.Po@am__quote@
@@ -2175,6 +2178,20 @@ darkradiant-SurfaceInspector.obj: ui/surfaceinspector/SurfaceInspector.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/surfaceinspector/SurfaceInspector.cpp' object='darkradiant-SurfaceInspector.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SurfaceInspector.obj `if test -f 'ui/surfaceinspector/SurfaceInspector.cpp'; then $(CYGPATH_W) 'ui/surfaceinspector/SurfaceInspector.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/surfaceinspector/SurfaceInspector.cpp'; fi`
+
+darkradiant-CapDialog.o: ui/patch/CapDialog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CapDialog.o -MD -MP -MF $(DEPDIR)/darkradiant-CapDialog.Tpo -c -o darkradiant-CapDialog.o `test -f 'ui/patch/CapDialog.cpp' || echo '$(srcdir)/'`ui/patch/CapDialog.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-CapDialog.Tpo $(DEPDIR)/darkradiant-CapDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/patch/CapDialog.cpp' object='darkradiant-CapDialog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CapDialog.o `test -f 'ui/patch/CapDialog.cpp' || echo '$(srcdir)/'`ui/patch/CapDialog.cpp
+
+darkradiant-CapDialog.obj: ui/patch/CapDialog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CapDialog.obj -MD -MP -MF $(DEPDIR)/darkradiant-CapDialog.Tpo -c -o darkradiant-CapDialog.obj `if test -f 'ui/patch/CapDialog.cpp'; then $(CYGPATH_W) 'ui/patch/CapDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/patch/CapDialog.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-CapDialog.Tpo $(DEPDIR)/darkradiant-CapDialog.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/patch/CapDialog.cpp' object='darkradiant-CapDialog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CapDialog.obj `if test -f 'ui/patch/CapDialog.cpp'; then $(CYGPATH_W) 'ui/patch/CapDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/patch/CapDialog.cpp'; fi`
 
 darkradiant-PatchThickenDialog.o: ui/patch/PatchThickenDialog.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-PatchThickenDialog.o -MD -MP -MF $(DEPDIR)/darkradiant-PatchThickenDialog.Tpo -c -o darkradiant-PatchThickenDialog.o `test -f 'ui/patch/PatchThickenDialog.cpp' || echo '$(srcdir)/'`ui/patch/PatchThickenDialog.cpp
