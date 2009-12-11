@@ -37,6 +37,11 @@ CShader::~CShader() {
 	GetTextureManager().checkBindings();
 }
 
+Material::SortRequest CShader::getSortRequest() const
+{
+    return Material::SORT_OPAQUE;
+}
+
 TexturePtr CShader::getEditorImage() 
 {
     if (!_editorTexture) 
@@ -113,11 +118,6 @@ void CShader::SetInUse(bool bInUse) {
 // get the shader flags
 int CShader::getFlags() const {
 	return _template->getFlags();
-}
-
-// get the transparency value
-float CShader::getTrans() const {
-	return _template->getTrans();
 }
 
 // test if it's a true shader, or a default shader created to wrap around a texture

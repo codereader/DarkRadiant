@@ -21,7 +21,7 @@ class OpenGLShader
 	Passes _shaderPasses;
 
     // The Material corresponding to this OpenGLShader
-	MaterialPtr _iShader;
+	MaterialPtr _material;
 
 	std::size_t m_used;
 	ModuleObservers m_observers;
@@ -100,7 +100,7 @@ public:
 
   bool realised() const
   {
-    return _iShader != 0;
+    return _material != 0;
   }
 
   void attach(ModuleObserver& observer)
@@ -129,8 +129,9 @@ public:
 	void unrealise();
 
 	// Return the Material*
-	MaterialPtr getMaterial() const {
-		return _iShader;
+	MaterialPtr getMaterial() const 
+    {
+		return _material;
 	}
 
 	unsigned int getFlags() const;

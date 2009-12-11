@@ -44,6 +44,9 @@ public:
 
 	~CShader();
 
+    /* Material implementation */
+
+    SortRequest getSortRequest() const;
 	TexturePtr getEditorImage();
 	
 	// Return the light falloff texture (Z dimension).
@@ -67,9 +70,6 @@ public:
 	
 	// get the shader flags
 	int getFlags() const;
-	
-	// get the transparency value
-	float getTrans() const;
 	
 	// test if it's a true shader, or a default shader created to wrap around a texture
 	bool IsDefault() const;

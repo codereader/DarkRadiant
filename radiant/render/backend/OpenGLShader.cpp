@@ -14,7 +14,7 @@
 
 void OpenGLShader::destroy() {
 	// Clear the shaderptr, so that the shared_ptr reference count is decreased 
-    _iShader = MaterialPtr();
+    _material = MaterialPtr();
 
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
     {
@@ -47,16 +47,16 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 }
 
 void OpenGLShader::incrementUsed() {
-    if(++m_used == 1 && _iShader != 0)
+    if(++m_used == 1 && _material != 0)
     { 
-      _iShader->SetInUse(true);
+      _material->SetInUse(true);
     }
 }
 
 void OpenGLShader::decrementUsed() {
-    if(--m_used == 0 && _iShader != 0)
+    if(--m_used == 0 && _material != 0)
     {
-      _iShader->SetInUse(false);
+      _material->SetInUse(false);
     }
 }
 
@@ -65,12 +65,12 @@ void OpenGLShader::realise(const std::string& name)
     // Construct the shader passes based on the name
     construct(name);
 
-    if (_iShader != NULL) {
+    if (_material != NULL) {
 		// greebo: Check the filtersystem whether we're filtered
-		_iShader->setVisible(GlobalFilterSystem().isVisible("texture", name));
+		_material->setVisible(GlobalFilterSystem().isVisible("texture", name));
 
 		if (m_used != 0) {
-			_iShader->SetInUse(true);
+			_material->SetInUse(true);
 		}
     }
     
@@ -96,7 +96,7 @@ void OpenGLShader::unrealise() {
 }
 
 unsigned int OpenGLShader::getFlags() const {
-    return _iShader->getFlags();
+    return _material->getFlags();
 }
 
 // Append a default shader pass onto the back of the state list
@@ -230,7 +230,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     // least one DBS layer then reach the end of the layers.
 
     DBSTriplet triplet;
-    const ShaderLayerVector& allLayers = _iShader->getAllLayers();
+    const ShaderLayerVector& allLayers = _material->getAllLayers();
     for (ShaderLayerVector::const_iterator i = allLayers.begin();
          i != allLayers.end();
          ++i)
@@ -285,7 +285,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     OpenGLState& state = appendDefaultPass();
 
     // Render the editor texture in legacy mode
-    state.texture0 = _iShader->getEditorImage()->getGLTexNum();
+    state.texture0 = _material->getEditorImage()->getGLTexNum();
     state.renderFlags = RENDER_FILL
                       | RENDER_TEXTURE_2D
                       | RENDER_DEPTHTEST
@@ -295,8 +295,8 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
                       | RENDER_BLEND;
 
     // Handle certain shader flags
-    if ((_iShader->getFlags() & QER_CULL) == 0
-        || _iShader->getCull() == Material::eCullBack)
+    if ((_material->getFlags() & QER_CULL) == 0
+        || _material->getCull() == Material::eCullBack)
     {
         state.renderFlags |= RENDER_CULLFACE;
     }
@@ -306,7 +306,16 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 
     // Opaque blending, write to depth buffer
     state.renderFlags |= RENDER_DEPTHWRITE;
-    state.m_sort = OpenGLState::eSortFullbright;
+
+    // Sort position
+    if (_material->getSortRequest() == Material::SORT_DECAL)
+    {
+        state.m_sort = OpenGLState::eSortOverlayFirst;
+    }
+    else
+    {
+        state.m_sort = OpenGLState::eSortFullbright;
+    }
 }
 
 // Append a blend (non-interaction) layer
@@ -354,8 +363,8 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
 void OpenGLShader::constructNormalShader(const std::string& name)
 {
     // Obtain the Material
-    _iShader = GlobalMaterialManager().getMaterialForName(name);
-    assert(_iShader);
+    _material = GlobalMaterialManager().getMaterialForName(name);
+    assert(_material);
 
     // Determine whether we can render this shader in lighting/bump-map mode,
     // and construct the appropriate shader passes

@@ -81,6 +81,16 @@ public:
     eCullBack,
   };
 
+    /**
+     * \brief
+     * Requested sort position from material declaration (e.g. "sort decal").
+     */
+    enum SortRequest
+    {
+        SORT_OPAQUE,
+        SORT_DECAL
+    };
+
   virtual ~Material() {}
 
     /**
@@ -99,14 +109,18 @@ public:
   virtual void SetInUse(bool bInUse) = 0;
   // get the editor flags (QER_NOCARVE QER_TRANS)
   virtual int getFlags() const = 0;
-  // get the transparency value
-  virtual float getTrans() const = 0;
   // test if it's a true shader, or a default shader created to wrap around a texture
   virtual bool IsDefault() const = 0;
   // get the cull type
   virtual ECull getCull() = 0;
   // get shader file name (ie the file where this one is defined)
   virtual const char* getShaderFileName() const = 0;
+
+    /**
+     * \brief
+     * Return the requested sort position of this material.
+     */
+    virtual SortRequest getSortRequest() const = 0;
 
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.
