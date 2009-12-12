@@ -47,6 +47,7 @@ public:
     /* Material implementation */
 
     SortRequest getSortRequest() const;
+    float getPolygonOffset() const;
 	TexturePtr getEditorImage();
 	
 	// Return the light falloff texture (Z dimension).

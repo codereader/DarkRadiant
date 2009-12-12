@@ -39,6 +39,7 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
     else if (token == "decal_macro") {
         m_nFlags |= QER_TRANS;
         _sortReq = Material::SORT_DECAL;
+        _polygonOffset = 1.0f;
     } 
     else if (token == "twosided") {
         m_Cull = Material::eCullNone;

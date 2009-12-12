@@ -316,6 +316,9 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     {
         state.m_sort = OpenGLState::eSortFullbright;
     }
+
+    // Polygon offset
+    state.polygonOffset = _material->getPolygonOffset();
 }
 
 // Append a blend (non-interaction) layer

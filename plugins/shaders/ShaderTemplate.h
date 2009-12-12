@@ -59,6 +59,9 @@ private:
     // Sort position (e.g. sort decal)
     Material::SortRequest _sortReq;
 
+    // Polygon offset
+    float _polygonOffset;
+
 	std::string _blockContents;
 
 	// Whether the block has been parsed
@@ -77,6 +80,7 @@ public:
       ambientLight(false),
       blendLight(false),
       _sortReq(Material::SORT_OPAQUE),
+      _polygonOffset(0.0f),
 	  _blockContents(blockContents),
 	  _parsed(false)
 	{
@@ -135,6 +139,11 @@ public:
     Material::SortRequest getSortRequest() const
     {
         return _sortReq;
+    }
+
+    float getPolygonOffset() const
+    {
+        return _polygonOffset;
     }
 
 	// Sets the raw block definition contents, will be parsed on demand
