@@ -27,19 +27,18 @@ NamedBindablePtr ShaderTemplate::getEditorTexture()
  * 
  *  Note: input "token" has to be lowercase for the keywords to be recognized
  */
-void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser, const std::string& token) 
+void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
+                                      const std::string& token) 
 {   
     if (token == "qer_trans") {
-        m_fTrans = boost::lexical_cast<float>(tokeniser.nextToken());
         m_nFlags |= QER_TRANS;
     }
     else if (token == "translucent") {
-        m_fTrans = 1;
         m_nFlags |= QER_TRANS;
     } 
     else if (token == "decal_macro") {
-        m_fTrans = 1;
         m_nFlags |= QER_TRANS;
+        _sortReq = Material::SORT_DECAL;
     } 
     else if (token == "twosided") {
         m_Cull = Material::eCullNone;

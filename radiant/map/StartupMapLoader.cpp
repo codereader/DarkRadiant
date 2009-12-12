@@ -11,14 +11,20 @@
 
 namespace map {
 
-void StartupMapLoader::onRadiantStartup() {
+void StartupMapLoader::onRadiantStartup() 
+{
 	std::string mapToLoad = "";
 
-	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
+    const ApplicationContext::ArgumentList& args(
+        module::getRegistry().getApplicationContext().getCmdLineArgs()
+    );
 
-	for (std::size_t i = 0; i < ctx.getNumCmdLineArgs(); ++i) {
+    for (ApplicationContext::ArgumentList::const_iterator i = args.begin();
+         i != args.end(); 
+         ++i) 
+    {
 		// Investigate the i-th argument
-		std::string candidate = ctx.getCmdLineArg(i);
+		std::string candidate = *i;
 
 		if (os::getExtension(candidate) != "map") continue;
 

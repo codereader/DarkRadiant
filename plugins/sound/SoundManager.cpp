@@ -38,7 +38,7 @@ bool SoundManager::playSound(const std::string& fileName) {
 	if (file != NULL) {
 		// File found, play it
 		std::cout << "Found file: " << name << std::endl;
-		_soundPlayer.play(*file);
+		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
 	
@@ -54,7 +54,7 @@ bool SoundManager::playSound(const std::string& fileName) {
 	file = GlobalFileSystem().openFile(name);
 	if (file != NULL) {
 		std::cout << "Found file: " << name << std::endl;
-		_soundPlayer.play(*file);
+		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
 	
@@ -64,7 +64,7 @@ bool SoundManager::playSound(const std::string& fileName) {
 	file = GlobalFileSystem().openFile(name);
 	if (file != NULL) {
 		std::cout << "Found file: " << name << std::endl;
-		_soundPlayer.play(*file);
+		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
 	
@@ -73,7 +73,7 @@ bool SoundManager::playSound(const std::string& fileName) {
 }
 
 void SoundManager::stopSound() {
-	_soundPlayer.stop();
+	if (_soundPlayer) _soundPlayer->stop();
 }
 
 // Accept a string of shaders to parse
@@ -123,7 +123,8 @@ const StringSet& SoundManager::getDependencies() const {
 	return _dependencies;
 }
 
-void SoundManager::initialiseModule(const ApplicationContext& ctx) {
+void SoundManager::initialiseModule(const ApplicationContext& ctx) 
+{
 	globalOutputStream() << "SoundManager::initialiseModule called\n";
 	// Pass a SoundFileLoader to the filesystem
 	SoundFileLoader loader(*this);
@@ -139,6 +140,23 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx) {
 	}
 
 	globalOutputStream() << _shaders.size() << " sound shaders found." << std::endl;
+
+    // Create the SoundPlayer if sound is not disabled
+    const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
+    ApplicationContext::ArgumentList::const_iterator found(
+        std::find(args.begin(), args.end(), "--disable-sound")
+    );
+    if (found == args.end())
+    {
+        globalOutputStream() << "SoundManager: initialising sound playback"
+                             << std::endl;
+        _soundPlayer = boost::shared_ptr<SoundPlayer>(new SoundPlayer);
+    }
+    else
+    {
+        globalOutputStream() << "SoundManager: sound ouput disabled" 
+                             << std::endl;
+    }
 }
 
 } // namespace sound
