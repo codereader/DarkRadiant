@@ -132,6 +132,11 @@ public:
 		return blendLight;
 	}
 
+    Material::SortRequest getSortRequest() const
+    {
+        return _sortReq;
+    }
+
 	// Sets the raw block definition contents, will be parsed on demand
 	void setBlockContents(const std::string& blockContents) {
 		_blockContents = blockContents;

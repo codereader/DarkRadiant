@@ -39,7 +39,7 @@ CShader::~CShader() {
 
 Material::SortRequest CShader::getSortRequest() const
 {
-    return Material::SORT_OPAQUE;
+    return _template->getSortRequest();
 }
 
 TexturePtr CShader::getEditorImage() 
