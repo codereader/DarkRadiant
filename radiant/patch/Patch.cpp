@@ -2002,7 +2002,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
       return;
     }
 
-    for(std::size_t h=0; h<3; h++, pStart+=9)
+    for(std::size_t h=0; h<3; h++)
     {
       pIndex = pCylIndex;
       PatchControlIter pCtrl = pStart;
@@ -2013,6 +2013,10 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
         pCtrl->vertex[2] = vPos[h][2];
         pIndex+=2;
       }
+
+	  // Go to the next line, but only do that if we're not at the last one already
+	  // to not increment the pStart iterator beyond the end of the container
+	  if (h < 2) pStart+=9;
     }
 
     switch(eType)
@@ -2020,9 +2024,12 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
     case eSqCylinder:
       {
         PatchControlIter pCtrl = m_ctrl.begin();
-        for(std::size_t h=0; h<3; h++, pCtrl+=9)
+        for(std::size_t h=0; h<3; h++)
         {
           pCtrl[8].vertex = pCtrl[0].vertex;
+
+		  // Go to the next line
+		  if (h < 2) pCtrl+=9;
         }
       }
       break;
@@ -2031,18 +2038,23 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
     case eCylinder:
       {
         PatchControlIter pCtrl = m_ctrl.begin();
-        for (std::size_t h=0; h<3; h++, pCtrl+=9)
+        for (std::size_t h=0; h<3; h++)
         {
           pCtrl[0].vertex = pCtrl[8].vertex;
+
+		  // Go to the next line
+		  if (h < 2) pCtrl+=9;
         }
       }
       break;
     case eCone:
       {
         PatchControlIter pCtrl = m_ctrl.begin();
-        for (std::size_t h=0; h<2; h++, pCtrl+=9)
+        for (std::size_t h=0; h<2; h++)
         {
           pCtrl[0].vertex = pCtrl[8].vertex;
+		  // Go to the next line
+		  if (h < 1) pCtrl+=9;
         }
       }
       {
@@ -2058,9 +2070,11 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
     case eSphere:
       {
         PatchControlIter pCtrl = m_ctrl.begin() + 9;
-        for (std::size_t h=0; h<3; h++, pCtrl+=9)
+        for (std::size_t h=0; h<3; h++)
         {
           pCtrl[0].vertex = pCtrl[8].vertex;
+		  // Go to the next line
+		  if (h < 2) pCtrl+=9;
         }
       }
       {
