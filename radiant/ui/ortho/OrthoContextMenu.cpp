@@ -482,7 +482,9 @@ void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* se
 	GlobalMap().loadPrefabAt(self->_lastPoint);
 }
 
-void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* self) {
+void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, 
+                                          OrthoContextMenu* self) 
+{
 	UndoableCommand command("addSpeaker");	
 
     // Cancel all selection
@@ -502,6 +504,10 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, OrthoContextMenu* s
         Entity* entity = Node_getEntity(spkNode);
         assert(entity);
         entity->setKeyValue("s_shader", soundShader);
+
+        // Set a default min and max radius
+        entity->setKeyValue("s_mindistance", "16");
+        entity->setKeyValue("s_maxdistance", "32");
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create speaker, classname not found.",
