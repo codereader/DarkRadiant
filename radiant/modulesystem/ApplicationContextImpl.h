@@ -48,21 +48,7 @@ public:
 	 */
 	virtual const std::string& getBitmapsPath() const;
 
-	/**
-	 * Returns the number of command line arguments specified at
-	 * application start. Note that the 0th argument (the executable path)
-	 * is not included/counted here.
-	 */
-	virtual std::size_t getNumCmdLineArgs() const;
-
-	/**
-	 * Returns the Nth command line argument as specified at
-	 * application start. Note that the 0th argument (the executable path)
-	 * is not accessible here.
-	 * 
-	 * @returns: the nth command line argument, or "" if the index is invalid.
-	 */
-	virtual std::string getCmdLineArg(std::size_t index) const;	
+	const ArgumentList& getCmdLineArgs() const;	
 	
 	// Return the global stream references
 	virtual std::ostream& getOutputStream() const;

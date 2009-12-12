@@ -168,11 +168,15 @@ void Manager::constructPaths() {
 	_enginePath = os::standardPathWithSlash(_enginePath);
 
 	// Read command line parameters, these override any existing preference setting
-	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
-
-	for (std::size_t i = 0; i < ctx.getNumCmdLineArgs(); ++i) {
+    const ApplicationContext::ArgumentList& args(
+        module::getRegistry().getApplicationContext().getCmdLineArgs()
+    );
+    for (ApplicationContext::ArgumentList::const_iterator i = args.begin(); 
+         i != args.end(); 
+         ++i) 
+    {
 		// get the argument and investigate it
-		std::string arg = ctx.getCmdLineArg(i);
+		std::string arg = *i;
 
 		if (boost::algorithm::istarts_with(arg, "fs_game=")) {
 			GlobalRegistry().set(RKEY_FS_GAME, arg.substr(8));

@@ -52,10 +52,12 @@ private:
 	std::string description;
 
   int m_nFlags;
-  float m_fTrans;
 
   // cull stuff
   Material::ECull m_Cull;
+
+    // Sort position (e.g. sort decal)
+    Material::SortRequest _sortReq;
 
 	std::string _blockContents;
 
@@ -74,11 +76,11 @@ public:
       fogLight(false),
       ambientLight(false),
       blendLight(false),
+      _sortReq(Material::SORT_OPAQUE),
 	  _blockContents(blockContents),
 	  _parsed(false)
 	{
     	m_nFlags = 0;
-    	m_fTrans = 1.0f;    
 	}
 
 	/**

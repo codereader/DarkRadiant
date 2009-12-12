@@ -34,12 +34,10 @@ const std::string& ApplicationContextImpl::getBitmapsPath() const {
 	return _bitmapsPath;
 }
 
-std::size_t ApplicationContextImpl::getNumCmdLineArgs() const {
-	return _cmdLineArgs.size();
-}
-
-std::string ApplicationContextImpl::getCmdLineArg(std::size_t index) const {
-	return (index < _cmdLineArgs.size()) ? _cmdLineArgs[index] : "";
+const ApplicationContext::ArgumentList& 
+ApplicationContextImpl::getCmdLineArgs() const 
+{
+	return _cmdLineArgs;
 }
 
 std::ostream& ApplicationContextImpl::getOutputStream() const {
