@@ -234,7 +234,7 @@ public:
  	 */
  	void appendPoints(bool columns, bool beginning);
  
-	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3);
+	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
 	void InvertMatrix();
 	void TransposeMatrix();

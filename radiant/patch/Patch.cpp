@@ -1941,7 +1941,7 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
   NaturalTexture();
 }
 
-void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std::size_t width, std::size_t height)
+void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width, std::size_t height)
 {
   Vector3 vPos[3];
     
@@ -1954,7 +1954,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
   
   if(eType == ePlane)
   {
-    constructPlane(aabb, axis, width, height);
+    constructPlane(aabb, viewType, width, height);
   }
   else if(eType == eSqCylinder
     || eType == eCylinder
@@ -2102,35 +2102,54 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, int axis, std:
   }
 	else if  (eType == eBevel)
 	{
-		std::size_t pBevIndex[] =
+		std::size_t constDim = 0;
+		std::size_t dim1 = 0;
+		std::size_t dim2 = 0;
+
+		switch (viewType)
 		{
-			0, 0, // y and z mapping of first col
-			0, 2, // y and z mapping of second col
-			2, 2, // y and z mapping of third col
+		case YZ:
+			constDim = 1;	// y
+			dim1 = 2;		// z
+			dim2 = 0;		// x
+			break;
+		case XZ:
+			constDim = 0;	// x
+			dim1 = 2;		// z
+			dim2 = 1;		// y
+			break;
+		case XY:
+			constDim = 0;	// x
+			dim1 = 1;		// y
+			dim2 = 2;		// z
+			break;
 		};
+
+		std::size_t lowlowhigh[3] = { 0, 0, 2 }; 
+		std::size_t lowhighhigh[3] = { 0, 2, 2 }; 
 
 		setDims(3, 3);
 
-		PatchControlIter pCtrl = m_ctrl.begin();
+		PatchControlIter ctrl = m_ctrl.begin();
 
-		for (std::size_t h = 0; h < 3; h++)
+		for (std::size_t h = 0; h < 3; ++h)
 		{
-			std::size_t* pIndex = pBevIndex;
-			
-			for (std::size_t w = 0; w < 3; w++, pIndex += 2, pCtrl++)
+			for (std::size_t w = 0; w < 3; ++w, ++ctrl)
 			{
-				// The x coordinate stays the same for each row
-				pCtrl->vertex.x() = vPos[h].x();
+				// One of the dimensions stays constant per row
+				ctrl->vertex[constDim] = vPos[h][constDim];
 
-				// Use the same y coordinate for the first two columns
-				// The third column uses the highest y value
-				pCtrl->vertex.y() = vPos[pIndex[0]].y();
+				// One dimension goes like "low", "low", "high" in a row
+				ctrl->vertex[dim1] = vPos[ lowlowhigh[w] ][dim1];
 
-				// The first column is using the lowest z value
-				// the other two columns use the highest z value
-				// to create an upright bevel
-				pCtrl->vertex.z() = vPos[pIndex[1]].z();
+				// One dimension goes like "low", "high", "high" in a row
+				ctrl->vertex[dim2] = vPos[ lowhighhigh[w] ][dim2];
 			}
+		}
+
+		if (viewType == XZ)
+		{
+			InvertMatrix();
 		}
 	}
   else if(eType == eEndCap)

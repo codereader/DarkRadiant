@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/algorithm/General.h"
 #include "ui/patch/CapDialog.h"
 
-void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std::string& shader, EPatchPrefab eType, int axis, std::size_t width = 3, std::size_t height = 3)
+void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std::string& shader, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3)
 {
   GlobalSelectionSystem().setSelectedAll(false);
 
@@ -57,7 +57,7 @@ void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std
   Patch* patch = Node_getPatch(node);
   patch->setShader(shader);
 
-  patch->ConstructPrefab(aabb, eType, axis, width, height);
+  patch->ConstructPrefab(aabb, eType, viewType, width, height);
   patch->controlPointsChanged();
 
 	Node_setSelected(node, true);
