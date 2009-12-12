@@ -42,6 +42,11 @@ Material::SortRequest CShader::getSortRequest() const
     return _template->getSortRequest();
 }
 
+float CShader::getPolygonOffset() const
+{
+    return _template->getPolygonOffset();
+}
+
 TexturePtr CShader::getEditorImage() 
 {
     if (!_editorTexture) 

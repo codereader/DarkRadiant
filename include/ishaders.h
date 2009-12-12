@@ -122,6 +122,12 @@ public:
      */
     virtual SortRequest getSortRequest() const = 0;
 
+    /**
+     * \brief
+     * Return a polygon offset if one is defined. The default is 0.
+     */
+    virtual float getPolygonOffset() const = 0;
+
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.
 	 * The definition is lacking the outermost curly braces.

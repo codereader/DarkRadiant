@@ -135,7 +135,17 @@ public:
      */
     unsigned int renderFlags;
 
-  std::size_t m_sort;
+    /**
+     * \brief
+     * Sort position.
+     */
+    std::size_t m_sort;
+
+    /**
+     * \brief
+     * Polygon offset.
+     */
+    float polygonOffset;
 
     /**
      * \brief
@@ -179,6 +189,7 @@ public:
 	// Default constructor
 	OpenGLState() 
 	: renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
+      polygonOffset(0.0f),
 	  texture0(0),
 	  texture1(0),
 	  texture2(0),
