@@ -139,6 +139,8 @@
 		<bindKey value="bind" />
 		<playerHeight value="64" />
 		<nameKey value="name" />
+        <speakerMinRadius value="24" />
+        <speakerMaxRadius value="32" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

@@ -34,6 +34,11 @@ class OrthoContextMenu
 	LayerContextMenuPtr _moveToLayerSubmenu;
 	LayerContextMenuPtr _removeFromLayerSubmenu;
 
+private:
+
+    static std::string getRegistryKeyWithDefault(const std::string&,
+                                                 const std::string&);
+
 	// Enable or disable the "convert to static" option based on the number
 	// of selected brushes.
 	void checkConvertStatic();

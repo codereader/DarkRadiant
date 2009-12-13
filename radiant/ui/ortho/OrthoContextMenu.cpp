@@ -42,7 +42,9 @@ namespace {
     const char* ANGLE_KEY_NAME = "angle";
     const char* DEFAULT_ANGLE = "90"; // north
 
-	const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
+	const char* RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
+    const char* RKEY_SPEAKERMINRADIUS = "game/defaults/speakerMinRadius";
+    const char* RKEY_SPEAKERMAXRADIUS = "game/defaults/speakerMaxRadius";
 
     const char* ADD_ENTITY_TEXT = "Create entity...";
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
@@ -92,6 +94,7 @@ namespace {
 		WIDGET_DELETE_FROM_LAYER,
 		WIDGET_CREATE_LAYER,
 	};
+
 }
 
 // Static class function to display the singleton instance.
@@ -377,6 +380,18 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 	}
 }
 
+// Get a registry key with a default value
+std::string OrthoContextMenu::getRegistryKeyWithDefault(
+    const std::string& key, const std::string& defaultVal
+)
+{
+    std::string value = GlobalRegistry().get(key);
+    if (value.empty())
+        return defaultVal;
+    else
+        return value;
+}
+
 /* GTK CALLBACKS */
 
 void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, 
@@ -506,8 +521,14 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
         entity->setKeyValue("s_shader", soundShader);
 
         // Set a default min and max radius
-        entity->setKeyValue("s_mindistance", "16");
-        entity->setKeyValue("s_maxdistance", "32");
+        entity->setKeyValue(
+            "s_mindistance",
+            getRegistryKeyWithDefault(RKEY_SPEAKERMINRADIUS, "16")
+        );
+        entity->setKeyValue(
+            "s_maxdistance",
+            getRegistryKeyWithDefault(RKEY_SPEAKERMAXRADIUS, "32")
+        );
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create speaker, classname not found.",
