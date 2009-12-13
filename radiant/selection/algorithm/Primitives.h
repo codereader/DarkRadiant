@@ -24,11 +24,11 @@ typedef std::vector<Face*> FacePtrVector;
 namespace selection {
 
 	/**
-	 * greebo: This class defines a primitve visitor interface.
-	 *         Such a class can be passed to the routine
-	 *         ForEachSelectedPrimitive() to traverse all
-	 *         selected Faces/Brushes/Patches in the map,
-	 *         including child primitives of selected entities.
+	 * greebo: This class defines a primitive visitor interface.
+	 * Such a class can be passed to the routine
+	 * ForEachSelectedPrimitive() to traverse all
+	 * selected Faces/Brushes/Patches in the map,
+	 * including child primitives of selected entities.
 	 */ 
 	class PrimitiveVisitor {
 	public:

@@ -9,6 +9,7 @@
 #include "FaceShader.h"
 #include "TextureProjection.h"
 #include <boost/noncopyable.hpp>
+#include "selection/algorithm/Shader.h"
 
 class FaceTexdef : 
 	public FaceShader::Observer,
@@ -57,6 +58,9 @@ public:
 
 	// Mirrors the texture around the given axis
 	void flipTexture(unsigned int flipAxis);
+
+	// Aligns this texture to the given edge
+	void alignTexture(EAlignType align, const Winding& winding);
 
 	// greebo: Calculate the texture coordinates and save them into the winding points
 	void emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld);

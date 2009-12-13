@@ -9,6 +9,14 @@ class TextureProjection;
 class Face;
 class SelectionTest;
 
+enum EAlignType
+{
+	ALIGN_TOP,
+	ALIGN_BOTTOM,
+	ALIGN_LEFT,
+	ALIGN_RIGHT,
+};
+
 namespace selection {
 	namespace algorithm {
 	
@@ -97,6 +105,11 @@ namespace selection {
 	 */
 	void flipTextureS(const cmd::ArgumentList& args);
 	void flipTextureT(const cmd::ArgumentList& args);
+
+	void alignTexture(EAlignType align);
+
+	// Aligns the texture of the current objets so that the image border aligns with a world edge
+	void alignTextureCmd(const cmd::ArgumentList& args);
 	
 	/** greebo: Applies the texture "naturally" to the selected
 	 * primitives. Natural makes use of the currently active default scale. 

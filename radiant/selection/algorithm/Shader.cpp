@@ -846,6 +846,94 @@ void shiftTextureCmd(const cmd::ArgumentList& args) {
 	}
 }
 
+/** 
+ * greebo: Aligns the texture of the visited faces/patches
+ * to the given edge.
+ */
+class TextureAligner :
+	public PrimitiveVisitor
+{
+	const EAlignType _align;
+public:
+	TextureAligner(EAlignType align) : 
+		_align(align) 
+	{}
+	
+	void visit(Patch& patch)
+	{
+		// TODO
+	}
+
+	void visit(Face& face)
+	{
+		face.alignTexture(_align);
+	}
+};
+
+void alignTexture(EAlignType align)
+{
+	std::string command("alignTexture: ");
+	command += "edge=";
+
+	switch (align)
+	{
+	case ALIGN_TOP:
+		command += "top";
+		break;
+	case ALIGN_BOTTOM:
+		command += "bottom";
+		break;
+	case ALIGN_LEFT:
+		command += "left";
+		break;
+	case ALIGN_RIGHT:
+		command += "right";
+		break;
+	};
+	
+	UndoableCommand undo(command);
+	
+	// Instantiate an aligner class and traverse the selection
+	TextureAligner aligner(align);
+	forEachSelectedPrimitive(aligner);
+	
+	SceneChangeNotify();
+	// Update the Texture Tools
+	ui::SurfaceInspector::Instance().update();
+}
+
+void alignTextureCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		globalOutputStream() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
+		return;
+	}
+
+	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
+	
+	if (arg == "top")
+	{
+		alignTexture(ALIGN_TOP);
+	}
+	else if (arg == "bottom")
+	{
+		alignTexture(ALIGN_BOTTOM);
+	}
+	if (arg == "left")
+	{
+		alignTexture(ALIGN_LEFT);
+	}
+	if (arg == "right")
+	{
+		alignTexture(ALIGN_RIGHT);
+	}
+	else
+	{
+		globalOutputStream() << "Usage: TexAlign [top|bottom|left|right]" << std::endl;
+	}
+}
+
 /** greebo: Normalises the texture of the visited faces/patches.
  */
 class TextureNormaliser :

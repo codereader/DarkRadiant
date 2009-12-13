@@ -15,6 +15,7 @@
 #include "FacePlane.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
+#include "selection/algorithm/Shader.h"
 
 const double GRID_MIN = 0.125;
 
@@ -174,6 +175,7 @@ public:
 	void rotateTexdef(float angle);
 	void fitTexture(float s_repeat, float t_repeat);
 	void flipTexture(unsigned int flipAxis);
+	void alignTexture(EAlignType align);
 	
 	/** greebo: This translates the texture as much towards 
 	 * 	the origin as possible. The face appearance stays unchanged.  

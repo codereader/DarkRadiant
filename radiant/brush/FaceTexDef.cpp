@@ -72,6 +72,11 @@ void FaceTexdef::flipTexture(unsigned int flipAxis) {
 	m_projection.flipTexture(flipAxis);
 }
 
+void FaceTexdef::alignTexture(EAlignType align, const Winding& winding)
+{
+	m_projection.alignTexture(align, winding);
+}
+
 void FaceTexdef::emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld) {
 	// old code // m_projection.emitTextureCoordinates(m_shader.width(), m_shader.height(), winding, normal, localToWorld);
 	m_projection.emitTextureCoordinates(winding, normal, localToWorld);
