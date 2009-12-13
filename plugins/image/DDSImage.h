@@ -132,15 +132,20 @@ public:
 
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 
-		for (unsigned int i = 0; i < _mipMapInfo.size(); ++i) {
+		for (std::size_t i = 0; i < _mipMapInfo.size(); ++i)
+		{
 			const MipMapInfo& mipMap = _mipMapInfo[i];
 
-			glCompressedTexImage2D(GL_TEXTURE_2D, i, _format, 
-				mipMap.width, mipMap.height, 0, 
-				mipMap.size, _pixelData + mipMap.offset );
+			glCompressedTexImage2D(GL_TEXTURE_2D, static_cast<GLint>(i), _format, 
+				static_cast<GLsizei>(mipMap.width), 
+				static_cast<GLsizei>(mipMap.height), 
+				0, 
+				static_cast<GLsizei>(mipMap.size), 
+				_pixelData + mipMap.offset
+			);
 		}
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, _mipMapInfo.size() - 1);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(_mipMapInfo.size() - 1));
 
 		// Un-bind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);

@@ -81,7 +81,8 @@ MapExpressionPtr MapExpression::createForString(std::string str) {
 	return createForToken(token);
 }
 
-ImagePtr MapExpression::getResampled(ImagePtr input, unsigned int width, unsigned int height) {
+ImagePtr MapExpression::getResampled(const ImagePtr& input, std::size_t width, std::size_t height)
+{
 	// Don't process precompressed images
 	if (input->isPrecompressed()) {
 		globalWarningStream() << "Cannot resample precompressed texture." << std::endl;
@@ -152,8 +153,8 @@ ImagePtr AddNormalsExpression::getImage() const {
     
     if (imgOne == NULL) return ImagePtr();
 
-    unsigned int width = imgOne->getWidth(0);
-    unsigned int height = imgOne->getHeight(0);
+    std::size_t width = imgOne->getWidth(0);
+    std::size_t height = imgOne->getHeight(0);
 
     ImagePtr imgTwo = mapExpTwo->getImage();
 
@@ -175,32 +176,34 @@ ImagePtr AddNormalsExpression::getImage() const {
     byte* pixOut = result->getMipMapPixels(0);
 
     // iterate through the pixels
-    for( int y = 0; y < static_cast<int>(height); y++ ) {
-	for( int x = 0; x < static_cast<int>(width); x++ ) {
-	    // create the two vectors
-	    Vector3 vectorOne(
-	    	static_cast<double>(pixOne[0]), 
-	    	static_cast<double>(pixOne[1]), 
-	    	static_cast<double>(pixOne[2])
-	    );
-	    Vector3 vectorTwo(
-	    	static_cast<double>(pixTwo[0]), 
-	    	static_cast<double>(pixTwo[1]), 
-	    	static_cast<double>(pixTwo[2])
-	    );
-	    // Take the mean value of the two vectors
-	    Vector3 vectorOut = (vectorOne + vectorTwo) * 0.5;
+    for( std::size_t y = 0; y < height; y++ )
+	{
+		for( std::size_t x = 0; x < width; x++ )
+		{
+			// create the two vectors
+			Vector3 vectorOne(
+    			static_cast<double>(pixOne[0]), 
+    			static_cast<double>(pixOne[1]), 
+    			static_cast<double>(pixOne[2])
+			);
+			Vector3 vectorTwo(
+    			static_cast<double>(pixTwo[0]), 
+    			static_cast<double>(pixTwo[1]), 
+    			static_cast<double>(pixTwo[2])
+			);
+			// Take the mean value of the two vectors
+			Vector3 vectorOut = (vectorOne + vectorTwo) * 0.5;
 
-	    pixOut[0] = float_to_integer(vectorOut.x());
-	    pixOut[1] = float_to_integer(vectorOut.y());
-	    pixOut[2] = float_to_integer(vectorOut.z());
-	    pixOut[3] = 255;
+			pixOut[0] = float_to_integer(vectorOut.x());
+			pixOut[1] = float_to_integer(vectorOut.y());
+			pixOut[2] = float_to_integer(vectorOut.z());
+			pixOut[3] = 255;
 
-	    // advance the pixel pointer
-	    pixOne += 4;
-	    pixTwo += 4;
-	    pixOut += 4;
-	}
+			// advance the pixel pointer
+			pixOne += 4;
+			pixTwo += 4;
+			pixOut += 4;
+		}
     }
     return result;
 }
@@ -229,8 +232,8 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 		return normalMap;
 	}
 	 
-	unsigned int width = normalMap->getWidth(0);
-	unsigned int height = normalMap->getHeight(0);
+	std::size_t width = normalMap->getWidth(0);
+	std::size_t height = normalMap->getHeight(0);
 	 
 	ImagePtr result (new RGBAImage(width, height));
  
@@ -258,8 +261,8 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 	const float perKernelSize = 1.0f/kernelSize;
 
 	// iterate through the pixels
-	for( int y = 0; y < static_cast<int>(height); y++) {
-		for( int x = 0; x < static_cast<int>(width); x++) {
+	for( std::size_t y = 0; y < height; y++) {
+		for( std::size_t x = 0; x < width; x++) {
 			//the new normal vector for this pixel
 			Vector3 smoothVector(0,0,0);
 
@@ -306,8 +309,8 @@ ImagePtr AddExpression::getImage() const {
     
     if (imgOne == NULL) return ImagePtr();
 
-    unsigned int width = imgOne->getWidth(0);
-    unsigned int height = imgOne->getHeight(0);
+    std::size_t width = imgOne->getWidth(0);
+    std::size_t height = imgOne->getHeight(0);
 
 	ImagePtr imgTwo = mapExpTwo->getImage();
 	
@@ -329,8 +332,10 @@ ImagePtr AddExpression::getImage() const {
     byte* pixOut = result->getMipMapPixels(0);
 
     // iterate through the pixels
-    for( int y = 0; y < static_cast<int>(height); y++) {
-		for( int x = 0; x < static_cast<int>(width); x++) {
+    for( std::size_t y = 0; y < height; y++)
+	{
+		for( std::size_t x = 0; x < width; x++)
+		{
 			// add the colors
 			pixOut[0] = float_to_integer((static_cast<float>(pixOne[0]) + pixTwo[0]) * 0.5f);
 			pixOut[1] = float_to_integer((static_cast<float>(pixOne[1]) + pixTwo[1]) * 0.5f);
@@ -383,8 +388,8 @@ ImagePtr ScaleExpression::getImage() const {
 		return img;
 	}
 
-    unsigned int width = img->getWidth(0);
-    unsigned int height = img->getHeight(0);
+    std::size_t width = img->getWidth(0);
+    std::size_t height = img->getHeight(0);
     
     if (scaleRed < 0 || scaleGreen < 0 || scaleBlue < 0 || scaleAlpha < 0) {
 		std::cout << "[shaders] ScaleExpression: Invalid scale values found.\n";
@@ -397,8 +402,10 @@ ImagePtr ScaleExpression::getImage() const {
     byte* out = result->getMipMapPixels(0);
 
     // iterate through the pixels
-    for( int y = 0; y < static_cast<int>(height); y++) {
-		for( int x = 0; x < static_cast<int>(width); x++) {
+    for( std::size_t y = 0; y < height; ++y)
+	{
+		for( std::size_t x = 0; x < width; ++x)
+		{
 			// prevent negative values and check for values >255
 			int red = float_to_integer(static_cast<float>(in[0]) * scaleRed);
 			out[0] = (red>255) ? 255 : red;
@@ -443,8 +450,8 @@ ImagePtr InvertAlphaExpression::getImage() const {
 		return img;
 	}
 
-	unsigned int width = img->getWidth(0);
-	unsigned int height = img->getHeight(0);
+	std::size_t width = img->getWidth(0);
+	std::size_t height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
 
@@ -452,8 +459,10 @@ ImagePtr InvertAlphaExpression::getImage() const {
 	byte* out = result->getMipMapPixels(0);
 
 	// iterate through the pixels
-	for( int y = 0; y < static_cast<int>(height); y++) {
-		for( int x = 0; x < static_cast<int>(width); x++) {
+	for( std::size_t y = 0; y < height; ++y)
+	{
+		for( std::size_t x = 0; x < width; ++x)
+		{
 			out[0] = in[0];
 			out[1] = in[1];
 			out[2] = in[2];
@@ -464,6 +473,7 @@ ImagePtr InvertAlphaExpression::getImage() const {
 			out += 4;
 		}
 	}
+
 	return result;
 }
 
@@ -490,8 +500,8 @@ ImagePtr InvertColorExpression::getImage() const {
 		return img;
 	}
 
-	unsigned int width = img->getWidth(0);
-	unsigned int height = img->getHeight(0);
+	std::size_t width = img->getWidth(0);
+	std::size_t height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
  
@@ -499,8 +509,8 @@ ImagePtr InvertColorExpression::getImage() const {
 	byte* out = result->getMipMapPixels(0);
 
 	// iterate through the pixels
-	for( int y = 0; y < static_cast<int>(height); y++) {
-		for( int x = 0; x < static_cast<int>(width); x++) {
+	for( std::size_t y = 0; y < height; y++) {
+		for( std::size_t x = 0; x < width; x++) {
 			out[0] = 255 - in[0];
 			out[1] = 255 - in[1];
 			out[2] = 255 - in[2];
@@ -511,6 +521,7 @@ ImagePtr InvertColorExpression::getImage() const {
 			out += 4;
 		}
 	}
+
 	return result;
 }
 
@@ -537,8 +548,8 @@ ImagePtr MakeIntensityExpression::getImage() const {
 		return img;
 	}
 
-	unsigned int width = img->getWidth(0);
-	unsigned int height = img->getHeight(0);
+	std::size_t width = img->getWidth(0);
+	std::size_t height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
  
@@ -546,8 +557,10 @@ ImagePtr MakeIntensityExpression::getImage() const {
 	byte* out = result->getMipMapPixels(0);
 	
 	// iterate through the pixels
-	for( int y = 0; y < static_cast<int>(height); y++) {
-		for( int x = 0; x < static_cast<int>(width); x++) {
+	for( std::size_t y = 0; y < height; ++y)
+	{
+		for( std::size_t x = 0; x < width; ++x)
+		{
 			out[0] = in[0];
 			out[1] = in[0];
 			out[2] = in[0];
@@ -558,6 +571,7 @@ ImagePtr MakeIntensityExpression::getImage() const {
 			out += 4;
 		}
 	}
+
 	return result;
 }
 
@@ -584,8 +598,8 @@ ImagePtr MakeAlphaExpression::getImage() const {
 		return img;
 	}
 
-	unsigned int width = img->getWidth(0);
-	unsigned int height = img->getHeight(0);
+	std::size_t width = img->getWidth(0);
+	std::size_t height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
 
@@ -593,8 +607,10 @@ ImagePtr MakeAlphaExpression::getImage() const {
 	byte* out = result->getMipMapPixels(0);
 
 	// iterate through the pixels
-	for( int y = 0; y < static_cast<int>(height); y++) {
-		for( int x = 0; x < static_cast<int>(width); x++) {
+	for( std::size_t y = 0; y < height; y++)
+	{
+		for( std::size_t x = 0; x < width; x++)
+		{
 			out[0] = 255;
 			out[1] = 255;
 			out[2] = 255;
@@ -605,6 +621,7 @@ ImagePtr MakeAlphaExpression::getImage() const {
 			out += 4;
 		}
 	}
+
 	return result;
 }
 
