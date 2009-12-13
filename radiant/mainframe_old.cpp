@@ -674,6 +674,8 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("TexScale", selection::algorithm::scaleTexture, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
 	GlobalCommandSystem().addCommand("TexShift", selection::algorithm::shiftTextureCmd, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
 
+	GlobalCommandSystem().addCommand("TexAlign", selection::algorithm::alignTextureCmd, cmd::ARGTYPE_STRING);
+
 	// Add the nudge commands (one general, four specialised ones)
 	GlobalCommandSystem().addCommand("NudgeSelected", selection::algorithm::nudgeSelectedCmd, cmd::ARGTYPE_STRING);
 
@@ -795,6 +797,10 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("TexShiftDown", "TexShiftDown");
 	GlobalEventManager().addCommand("TexShiftLeft", "TexShiftLeft");
 	GlobalEventManager().addCommand("TexShiftRight", "TexShiftRight");
+	GlobalEventManager().addCommand("TexAlignTop", "TexAlignTop");
+	GlobalEventManager().addCommand("TexAlignBottom", "TexAlignBottom");
+	GlobalEventManager().addCommand("TexAlignLeft", "TexAlignLeft");
+	GlobalEventManager().addCommand("TexAlignRight", "TexAlignRight");
 
 	GlobalEventManager().addCommand("NormaliseTexture", "NormaliseTexture");
 

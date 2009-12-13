@@ -209,6 +209,11 @@ void TextureProjection::flipTexture(unsigned int flipAxis) {
 	m_brushprimit_texdef = BrushPrimitTexDef(texdef);
 }
 
+void TextureProjection::alignTexture(EAlignType align, const Winding& winding)
+{
+	
+}
+
 Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const {
 	// Get the transformation matrix, that contains the shift, scale and rotation 
 	// of the texture in "condensed" form (as matrix components).

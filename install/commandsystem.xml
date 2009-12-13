@@ -26,5 +26,9 @@
 		<bind name="TexShiftDown" value="TexShift down" readonly="1" />
 		<bind name="TexShiftLeft" value="TexShift left" readonly="1" />
 		<bind name="TexShiftRight" value="TexShift right" readonly="1" />
+		<bind name="TexAlignTop" value="TexAlign top" readonly="1" />
+		<bind name="TexAlignBottom" value="TexAlign bottom" readonly="1" />
+		<bind name="TexAlignLeft" value="TexAlign left" readonly="1" />
+		<bind name="TexAlignRight" value="TexAlign right" readonly="1" />
 	</binds>
 </commandsystem>

@@ -6,6 +6,7 @@
 #include "math/aabb.h"
 #include "iregistry.h"
 #include "BrushPrimitTexDef.h"
+#include "selection/algorithm/Shader.h"
 
 /* greebo: A texture projection contains the texture definition
  * as well as the brush primitive texture definition. 
@@ -67,6 +68,9 @@ public:
 	 * @flipAxis: 0 = flip x, 1 = flip y
 	 */
 	void flipTexture(unsigned int flipAxis);
+
+	// Aligns this texture to the given edge of the winding
+	void alignTexture(EAlignType align, const Winding& winding);
 	
 	// greebo: Looks like this method saves the texture definitions into the brush winding points
 	void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;

@@ -359,6 +359,13 @@ void Face::flipTexture(unsigned int flipAxis) {
 	texdefChanged();
 }
 
+void Face::alignTexture(EAlignType align)
+{
+	undoSave();
+	m_texdef.alignTexture(align, m_winding);
+	texdefChanged();
+}
+
 void Face::EmitTextureCoordinates() {
 	m_texdefTransformed.emitTextureCoordinates(m_winding, plane3().normal(), Matrix4::getIdentity());
 }

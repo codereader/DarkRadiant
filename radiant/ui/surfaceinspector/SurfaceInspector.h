@@ -71,6 +71,15 @@ class SurfaceInspector
 		GtkWidget* flipY;
 		GtkWidget* label;
 	} _flipTexture;
+
+	struct AlignTextureWidgets {
+		GtkWidget* hbox;
+		GtkWidget* top;
+		GtkWidget* bottom;
+		GtkWidget* left;
+		GtkWidget* right;
+		GtkWidget* label;
+	} _alignTexture;
 	
 	struct ApplyTextureWidgets {
 		GtkWidget* hbox;
