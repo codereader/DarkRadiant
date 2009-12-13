@@ -71,7 +71,7 @@ void DifficultyPanel::populateFromObjective(const Objective& obj) {
 		// See if this level appears in the difficulty string, if yes => toggled
 		gtk_toggle_button_set_active(
 			GTK_TOGGLE_BUTTON(_toggles[i]),
-			(std::find(parts.begin(), parts.end(), intToStr(i)) != parts.end()) ? TRUE : FALSE
+			(std::find(parts.begin(), parts.end(), sizetToStr(i)) != parts.end()) ? TRUE : FALSE
 		);
 	}
 
@@ -107,7 +107,7 @@ void DifficultyPanel::writeToObjective(Objective& obj) {
 				GTK_TOGGLE_BUTTON(_toggles[i])))
 			{
 				std::string prefix = (!obj.difficultyLevels.empty()) ? " " : "";
-				obj.difficultyLevels += prefix + intToStr(i);
+				obj.difficultyLevels += prefix + sizetToStr(i);
 			}
 		}
 	}

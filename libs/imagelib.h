@@ -94,7 +94,8 @@ public:
 
 		// Download the image to OpenGL
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, 
-			getWidth(0), getHeight(0), GL_RGBA, GL_UNSIGNED_BYTE, 
+			static_cast<GLint>(getWidth(0)), static_cast<GLint>(getHeight(0)), 
+			GL_RGBA, GL_UNSIGNED_BYTE, 
 			getMipMapPixels(0)
 		);
 

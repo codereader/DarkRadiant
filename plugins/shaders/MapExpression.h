@@ -80,7 +80,7 @@ protected:
 	 *  
 	 * @returns: the resampled image, this might as well be input.  
 	 */
-	static ImagePtr getResampled(ImagePtr input, unsigned int width, unsigned int height);
+	static ImagePtr getResampled(const ImagePtr& input, std::size_t width, std::size_t height);
 };
 
 // the specific MapExpressions
