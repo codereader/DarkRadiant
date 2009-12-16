@@ -18,10 +18,10 @@ class TextureManipulator :
 	float _gamma;
 	
 	// Gets filled in by an OpenGL query
-	int _maxTextureSize;
+	std::size_t _maxTextureSize;
 	
 	// The image reduction indicator (3 = no reduction, 0 = 12.5%)
-	int _textureQuality;
+	std::size_t _textureQuality;
 
 protected:
 	// this is a singleton
@@ -63,7 +63,7 @@ private:
 
 	// Returns the gamma corrected image taken from <input>
 	// (Does not allocate new memory)
-	ImagePtr processGamma(ImagePtr input);
+	ImagePtr processGamma(const ImagePtr& input);
 	
 	/* greebo: This ensures that the image has dimensions that 
 	 * match a power of two. If it does not, the according length is
