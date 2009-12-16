@@ -24,9 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 #include "math/Vector3.h"
+#include "math/Vector2.h"
 #include "math/matrix.h"
 #include "math/Plane3.h"
 #include "igl.h"
+#include <vector>
 
 #include "iimage.h"
 #include "ishaders.h"
@@ -276,6 +278,26 @@ inline double arctangent_yx(double y, double x) {
 	else {
 		return -c_half_pi;
 	}
+}
+
+// Returns the index of the one edge which points "most" into the given direction, <direction> should be normalised
+inline std::size_t findBestEdgeForDirection(const Vector2& direction, const std::vector<Vector2>& edges)
+{
+	double best = -LONG_MAX;
+	std::size_t bestIndex = 0;
+
+	for (std::size_t i = 0; i < edges.size(); ++i)
+	{
+		double dot = direction.dot(edges[i]);
+
+		if (dot <= best) continue;
+		
+		// Found a new best edge
+		bestIndex = i;
+		best = dot;
+	}
+	
+	return bestIndex;
 }
 
 #endif

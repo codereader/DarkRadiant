@@ -264,6 +264,9 @@ public:
 	void NaturalTexture();
 	void ProjectTexture(int nAxis);
 
+	// Aligns the patch texture along the given side/border - if possible
+	void alignTexture(EAlignType align);
+
 	/* greebo: This basically projects all the patch vertices into the brush plane and 
 	 * transforms the projected coordinates into the texture plane space */
 	void pasteTextureProjected(const Face* face);

@@ -1,5 +1,6 @@
 #include "TextureProjection.h"
 
+#include "texturelib.h"
 #include <limits>
 
 // Assigns an <other> projection to this one
@@ -209,26 +210,6 @@ void TextureProjection::flipTexture(unsigned int flipAxis) {
 	}
 	
 	m_brushprimit_texdef = BrushPrimitTexDef(texdef);
-}
-
-// Returns the index of the one edge which points "most" into the given direction, <direction> should be normalised
-inline std::size_t findBestEdgeForDirection(const Vector2& direction, const std::vector<Vector2>& edges)
-{
-	double best = -LONG_MAX;
-	std::size_t bestIndex = 0;
-
-	for (std::size_t i = 0; i < edges.size(); ++i)
-	{
-		double dot = direction.dot(edges[i]);
-
-		if (dot <= best) continue;
-		
-		// Found a new best edge
-		bestIndex = i;
-		best = dot;
-	}
-	
-	return bestIndex;
 }
 
 void TextureProjection::alignTexture(EAlignType align, const Winding& winding)

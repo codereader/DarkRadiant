@@ -1863,6 +1863,91 @@ void Patch::ProjectTexture(int nAxis) {
 	controlPointsChanged();
 }
 
+void Patch::alignTexture(EAlignType align)
+{
+	if (isDegenerate()) return;
+
+	// A 5x3 patch has (5-1)x2 + (3-1)x2 edges at the border
+
+	// The edges in texture space, sorted the same as in the winding
+	std::vector<Vector2> texEdges;
+	std::vector<Vector2> texCoords;
+
+	// Calculate all edges in texture space
+	for (std::size_t h = 0; h < m_height-1; ++h)
+	{
+		for (std::size_t w = 0; w < m_width-1; ++w)
+		{
+			texEdges.push_back(ctrlAt(0, w).texcoord - ctrlAt(0, w+1).texcoord);
+			texCoords.push_back(ctrlAt(0,w).texcoord);
+
+			texEdges.push_back(ctrlAt(m_height-1, w+1).texcoord - ctrlAt(m_height-1, w).texcoord);
+			texCoords.push_back(ctrlAt(m_height-1, w+1).texcoord);
+		}
+
+		texEdges.push_back(ctrlAt(h, 0).texcoord - ctrlAt(h+1, 0).texcoord);
+		texCoords.push_back(ctrlAt(h, 0).texcoord);
+
+		texEdges.push_back(ctrlAt(h+1, m_width-1).texcoord - ctrlAt(h, m_width-1).texcoord);
+		texCoords.push_back(ctrlAt(h+1, m_width-1).texcoord);
+	}
+
+	// Find the edge which is nearest to the s,t base vector, to classify them as "top" or "left"
+	std::size_t bottomEdge = findBestEdgeForDirection(Vector2(1,0), texEdges);
+	std::size_t leftEdge = findBestEdgeForDirection(Vector2(0,1), texEdges);
+	std::size_t rightEdge = findBestEdgeForDirection(Vector2(0,-1), texEdges);
+	std::size_t topEdge = findBestEdgeForDirection(Vector2(-1,0), texEdges);
+
+	// The bottom edge is the one with the larger T texture coordinate
+	if (texCoords[topEdge].y() > texCoords[bottomEdge].y())
+	{
+		std::swap(topEdge, bottomEdge);
+	}
+
+	// The right edge is the one with the larger S texture coordinate
+	if (texCoords[rightEdge].x() < texCoords[leftEdge].x())
+	{
+		std::swap(rightEdge, leftEdge);
+	}
+
+	// Find the winding vertex index we're calculating the delta for
+	std::size_t coordIndex = 0;
+	// The dimension to move (1 for top/bottom, 0 for left right)
+	std::size_t dim = 0;
+	
+	switch (align)
+	{
+	case ALIGN_TOP: 
+		coordIndex = topEdge;
+		dim = 1;
+		break;
+	case ALIGN_BOTTOM:
+		coordIndex = bottomEdge;
+		dim = 1;
+		break;
+	case ALIGN_LEFT:
+		coordIndex = leftEdge;
+		dim = 0;
+		break;
+	case ALIGN_RIGHT:
+		coordIndex = rightEdge;
+		dim = 0;
+		break;
+	};
+
+	Vector2 snapped = texCoords[coordIndex];
+	
+	// Snap the dimension we're going to change only (s for left/right, t for top/bottom)
+	snapped[dim] = float_snapped(snapped[dim], 1.0);
+	
+	Vector2 delta = snapped - texCoords[coordIndex];
+
+	// Shift the texture such that we hit the snapped coordinate
+	translateTexCoords(delta);
+
+	controlPointsChanged();
+}
+
 PatchTesselation& Patch::getTesselation()
 {
 	// Ensure the tesselation is up to date
