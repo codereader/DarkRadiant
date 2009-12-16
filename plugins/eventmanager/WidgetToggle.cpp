@@ -1,12 +1,9 @@
 #include "WidgetToggle.h"
 
 WidgetToggle::WidgetToggle() :
-	Toggle(MemberCaller<WidgetToggle, &WidgetToggle::doNothing>(*this))
+	Toggle(Callback())
 {}
 	
-	// Dummy callback for the Toggle base class, we don't need any callbacks...
-void WidgetToggle::doNothing() {}
-
 /* This method only adds the widget to the show/hide list if the widget
  * is NOT of type GtkCheckMenuItem/GtkToggleToolButtons. Any other
  * widgets are added to the show/hide list */
