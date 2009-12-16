@@ -11,7 +11,7 @@ namespace {
 	static byte *row1 = NULL, *row2 = NULL;
 	static std::size_t rowsize = 0;
 	
-	const int MAX_TEXTURE_QUALITY = 3;
+	const std::size_t MAX_TEXTURE_QUALITY = 3;
 	
 	const std::string RKEY_TEXTURES_QUALITY = "user/ui/textures/quality";
 	const std::string RKEY_TEXTURES_GAMMA = "user/ui/textures/gamma";
@@ -69,7 +69,8 @@ Colour3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 	int pixelCount = 0;
 	
 	// Go over all the pixels and change their value accordingly
-	for (int i = 0; i < (numPixels*4); i += incr*4, pixelCount++) {
+	for (std::size_t i = 0; i < (numPixels*4); i += incr*4, pixelCount++)
+	{
 		// Sum up the RGBA values 
 		returnValue[0] += pixels[i];
 		returnValue[1] += (pixels + 1)[i];
@@ -107,11 +108,11 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 	ImagePtr output;
 	
 	// Determine the next larger power of two
-	int gl_width = 1;
+	std::size_t gl_width = 1;
 	while (gl_width < width)
 		gl_width <<= 1;
 	
-	int gl_height = 1;
+	std::size_t gl_height = 1;
 	while (gl_height < height)
 		gl_height <<= 1;
 	
@@ -131,8 +132,11 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 	}
 	
 	// Now retrieve the maximum texture size opengl can handle
-	if (_maxTextureSize == 0) {
-		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &_maxTextureSize);
+	if (_maxTextureSize == 0)
+	{
+		int temp;
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &temp);
+		_maxTextureSize = temp;
 		
 		// If the value is still zero, fill it to some default value of 1024
 		if (_maxTextureSize == 0) {
@@ -141,13 +145,13 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 	}
 	
 	// Determine the target dimensions
-	int qualityReduction = MAX_TEXTURE_QUALITY - _textureQuality;
-	int targetWidth = std::min(gl_width >> qualityReduction, _maxTextureSize);
-	int targetHeight = std::min(gl_height >> qualityReduction, _maxTextureSize);
+	std::size_t qualityReduction = MAX_TEXTURE_QUALITY - _textureQuality;
+	std::size_t targetWidth = std::min(gl_width >> qualityReduction, _maxTextureSize);
+	std::size_t targetHeight = std::min(gl_height >> qualityReduction, _maxTextureSize);
 	
 	// Reduce the image to the next smaller power of two until it fits the openGL max texture size
-	while (gl_width > targetWidth || gl_height > targetHeight) {
-		
+	while (gl_width > targetWidth || gl_height > targetHeight)
+	{
 		mipReduce(output->getMipMapPixels(0), output->getMipMapPixels(0), 
 				  gl_width, gl_height, targetWidth, targetHeight);
 
@@ -161,7 +165,7 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 }
 
 // resample texture gamma according to user settings
-ImagePtr TextureManipulator::processGamma(ImagePtr input) {
+ImagePtr TextureManipulator::processGamma(const ImagePtr& input) {
 	
 	// Don't do unnecessary work here...
 	if (_gamma == 1.0f) {
@@ -219,10 +223,10 @@ void TextureManipulator::calculateGammaTable() {
 void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out, 
 							 std::size_t inwidth, std::size_t outwidth, int bytesperpixel) 
 {
-	int   j, xi, oldx = 0, f, fstep, lerp;
+	std::size_t j, xi, oldx = 0, f, lerp;
 #define LERPBYTE(i) out[i] = (byte) ((((row2[i] - row1[i]) * lerp) >> 16) + row1[i])
 
-	fstep = (int) (inwidth * 65536.0f / outwidth);
+	std::size_t fstep = static_cast<std::size_t>(inwidth * 65536.0f / outwidth);
 	std::size_t endx = (inwidth - 1);
 	if (bytesperpixel == 4) {
 		for (j = 0,f = 0;j < outwidth;j++, f += fstep) {
