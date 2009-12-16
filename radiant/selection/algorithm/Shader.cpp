@@ -861,7 +861,7 @@ public:
 	
 	void visit(Patch& patch)
 	{
-		// TODO
+		patch.alignTexture(_align);
 	}
 
 	void visit(Face& face)
