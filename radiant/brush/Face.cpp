@@ -12,8 +12,8 @@
 #include "BrushModule.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
 
-Face::Face(FaceObserver* observer) :
-	m_refcount(0),
+Face::Face(Brush& owner, FaceObserver* observer) :
+	_owner(owner),
 	_faceShader(texdef_name_default()),
 	m_texdef(_faceShader, TextureProjection(), false),
 	m_observer(observer),
@@ -27,6 +27,7 @@ Face::Face(FaceObserver* observer) :
 }
 
 Face::Face(
+    Brush& owner, 
 	const Vector3& p0,
 	const Vector3& p1,
 	const Vector3& p2,
@@ -34,7 +35,7 @@ Face::Face(
 	const TextureProjection& projection,
 	FaceObserver* observer
 ) :
-	m_refcount(0),
+	_owner(owner),
 	_faceShader(shader),
 	m_texdef(_faceShader, projection),
 	m_observer(observer),
@@ -47,12 +48,12 @@ Face::Face(
 	planeChanged();
 }
 
-Face::Face(const Face& other, FaceObserver* observer) :
+Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
 	IFace(other),
 	OpenGLRenderable(other),
 	Undoable(other),
 	FaceShader::Observer(other),
-	m_refcount(0),
+	_owner(owner),
 	_faceShader(other._faceShader.getMaterialName(), other._faceShader.m_flags),
 	m_texdef(_faceShader, other.getTexdef().normalised()),
 	m_observer(observer),
@@ -68,6 +69,11 @@ Face::Face(const Face& other, FaceObserver* observer) :
 
 Face::~Face() {
 	_faceShader.detachObserver(*this);
+}
+
+Brush& Face::getBrush()
+{
+	return _owner;
 }
 
 void Face::planeChanged() {

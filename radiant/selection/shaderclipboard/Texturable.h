@@ -21,11 +21,19 @@ public:
 	Patch* patch;
 	std::string shader;
 
+	// The source node. For faces, this is the parent brush node
+	// This is a weak reference to allow for deletion checks
+	scene::INodeWeakPtr node;
+
 	// Constructor
 	Texturable();
 	
 	// True, if all the data is NULL or empty
 	bool empty() const;
+
+	// Checks if this source is still valid and clears this structure if not
+	// Returns false if the structure has been changed after this call
+	bool checkValid();
 	
 	// True according to the pointer state
 	bool isPatch() const;

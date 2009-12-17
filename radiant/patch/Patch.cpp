@@ -173,6 +173,11 @@ void Patch::setDims (std::size_t w, std::size_t h)
   }
 }
 
+PatchNode& Patch::getOwner()
+{
+	return _node;
+}
+
 void Patch::instanceAttach(MapFile* map) {
 	if (++m_instanceCounter.m_count == 1) {
 		// Notify the shader that one more instance is using this

@@ -25,16 +25,41 @@ void Texturable::clear() {
 }
 
 // True, if all the pointers are NULL
-bool Texturable::empty() const {
-	return (patch == NULL && face == NULL && brush == NULL && shader.empty());
+bool Texturable::empty() const
+{
+	if (patch != NULL || face != NULL || brush != NULL)
+	{
+		// For primitive types, return true if the node has been removed
+		return (node.lock() == NULL);
+	}
+
+	// For non-primitives (all source pointers NULL), check the shader
+	return shader.empty();
 }
 
-bool Texturable::isPatch() const {
-	return (patch != NULL);
+bool Texturable::checkValid()
+{
+	// For non-pure shader strings, check if the node has been removed
+	if (patch != NULL || face != NULL || brush != NULL)
+	{
+		if (node.lock() == NULL)
+		{
+			clear();
+			return false; // changed
+		}
+	}
+
+	// no change
+	return true;
+}
+
+bool Texturable::isPatch() const
+{
+	return (node.lock() != NULL && patch != NULL);
 }
 
 bool Texturable::isFace() const {
-	return (face != NULL);
+	return (node.lock() != NULL && face != NULL);
 }
 
 bool Texturable::isShader() const {
@@ -104,6 +129,7 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 					_texturable.face = (*i).get();
 					_texturable.brush = brush;
 					_texturable.patch = NULL;
+					_texturable.node = node;
 				}
 			}
 		}
@@ -126,6 +152,7 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 							_texturable.brush = NULL;
 							_texturable.face = NULL;
 							_texturable.patch = patch;
+							_texturable.node = node;
 						}
 					}
 				}

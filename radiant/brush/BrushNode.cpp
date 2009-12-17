@@ -10,7 +10,7 @@
 BrushNode::BrushNode() :
 	BrushTokenImporter(m_brush),
 	BrushTokenExporter(m_brush),
-	m_brush(EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
+	m_brush(*this, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
@@ -45,7 +45,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Renderable(other),
 	Bounded(other),
 	Transformable(other),
-	m_brush(other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
+	m_brush(*this, other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),

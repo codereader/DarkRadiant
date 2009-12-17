@@ -8,6 +8,8 @@
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
 
+#include <boost/noncopyable.hpp>
+
 class RenderableCollector;
 
 const std::size_t c_brush_maxFaces = 1024;
@@ -83,15 +85,20 @@ public:
 	virtual void visit(Face& face) const = 0;
 };
 
+class BrushNode;
+
 class Brush :
 	public IBrush,
 	public Bounded,
 	public Snappable,
 	public Undoable,
 	public FaceObserver,
-	public BrushDoom3
+	public BrushDoom3,
+	public boost::noncopyable
 {
 private:
+	BrushNode& _owner;
+
 	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
 	UndoObserver* m_undoable_observer;
@@ -128,9 +135,6 @@ private:
 	mutable bool m_transformChanged; // transform evaluation required
 	// ----
 
-	// assignment not supported => private
-	Brush& operator=(const Brush& other);
-
 public:  
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
 	class BrushUndoMemento : public UndoMemento {
@@ -154,11 +158,8 @@ public:
 	static double m_maxWorldCoord;
 	
 	// Constructors
-	Brush(const Callback& evaluateTransform, const Callback& boundsChanged);
-	Brush(const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged);
-	
-	// Copy Constructor
-	Brush(const Brush& other);
+	Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged);
+	Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged);
 	
 	// Destructor
 	virtual ~Brush();
