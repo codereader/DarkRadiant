@@ -73,10 +73,16 @@ XYWnd::XYWnd(int id) :
 	_width = 0;
 	_height = 0;
 
-	m_vOrigin[0] = 0;
-	m_vOrigin[1] = 20;
-	m_vOrigin[2] = 46;
-	m_fScale = 1;
+	// Try to retrieve a recently used origin and scale from the registry
+	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
+	m_vOrigin = Vector3(GlobalRegistry().getAttribute(recentPath, "origin"));
+	m_fScale = strToDouble(GlobalRegistry().getAttribute(recentPath, "scale"));
+
+	if (m_fScale == 0)
+	{
+		m_fScale = 1;
+	}
+
 	m_viewType = XY;
 
 	m_entityCreate = false;
@@ -123,13 +129,20 @@ XYWnd::XYWnd(int id) :
 }
 
 // Destructor
-XYWnd::~XYWnd() {
+XYWnd::~XYWnd()
+{
 	// Destroy the widgets now, not all XYWnds are FloatingOrthoViews,
 	// which calls destroyXYView() in their _preDestroy event.
 	// Double-calls don't harm, so this is safe to do.
 	destroyXYView();
 
 	GlobalMap().removeValidCallback(_validCallbackHandle);
+
+	// Store the current position and scale to the registry, so that it may be
+	// picked up again when creating XYViews after switching layouts
+	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
+	GlobalRegistry().setAttribute(recentPath, "origin", m_vOrigin);
+	GlobalRegistry().setAttribute(recentPath, "scale", doubleToStr(m_fScale));
 }
 
 void XYWnd::destroyXYView() {
