@@ -5,6 +5,9 @@
 #include "settings/PreferenceSystem.h"
 #include "modulesystem/ModuleRegistry.h"
 
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string/replace.hpp>
+
 #define PID_FILENAME "darkradiant.pid"
 
 namespace applog {
@@ -34,16 +37,18 @@ public:
 			removePIDFile();
 
 #ifndef _DEBUG
+			boost::filesystem::path path = registry.getApplicationContext().getSettingsPath();
+			path /= "darkradiant.log";
+			std::string logPath = path.file_string();
+			boost::algorithm::replace_all(logPath, "\\\\", "\\");
+			boost::algorithm::replace_all(logPath, "//", "/");
+
 			std::string msg("Radiant failed to start properly the last time it was run.\n");
-			msg += "The failure may be related to invalid preference settings.\n";
-			msg += "Do you want to rename your local user.xml file and restore the default settings?";
+			msg += "If this is happening again, you might want to check the log file in\n";
+			msg += "<b>" + logPath + "</b>";
 
-			gtkutil::MessageBox box("DarkRadiant - Startup Failure", msg, ui::IDialog::MESSAGE_ASK);
-
-			if (box.run() == ui::IDialog::RESULT_YES) 
-			{
-				resetPreferences();
-			}
+			gtkutil::MessageBox box("DarkRadiant - Startup Failure", msg, ui::IDialog::MESSAGE_CONFIRM);
+			box.run();
 #endif
 		}
 
