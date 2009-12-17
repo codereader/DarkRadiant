@@ -52,6 +52,11 @@ Brush::~Brush() {
 	ASSERT_MESSAGE(m_observers.empty(), "Brush::~Brush: observers still attached");
 }
 
+BrushNode& Brush::getBrushNode()
+{
+	return _owner;
+}
+
 IFace& Brush::getFace(std::size_t index)
 {
 	assert(index < m_faces.size());
