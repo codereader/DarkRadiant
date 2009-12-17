@@ -106,7 +106,7 @@ bool BrushTokenImporter::importTokens(parser::DefTokeniser& tokeniser) {
         else if (token == "(") { // FACE
 
             // Add a new Face to the brush and get a reference to it
-            _brush.push_back(FacePtr(new Face(&_brush)));
+            _brush.push_back(FacePtr(new Face(_brush, &_brush)));
             Face& face = *_brush.back();
 
             Doom3FaceTokenImporter importer(face);

@@ -18,7 +18,8 @@ namespace {
 	}
 }
 
-Brush::Brush(const Callback& evaluateTransform, const Callback& boundsChanged) :
+Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
+	_owner(owner),
 	m_undoable_observer(0),
 	m_map(0),
 	_faceCentroidPoints(GL_POINTS),
@@ -32,7 +33,8 @@ Brush::Brush(const Callback& evaluateTransform, const Callback& boundsChanged) :
 	planeChanged();
 }
 
-Brush::Brush(const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
+Brush::Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged) :
+	_owner(owner),
 	m_undoable_observer(0),
 	m_map(0),
 	_faceCentroidPoints(GL_POINTS),
@@ -40,24 +42,6 @@ Brush::Brush(const Brush& other, const Callback& evaluateTransform, const Callba
 	_uniqueEdgePoints(GL_POINTS),
 	m_evaluateTransform(evaluateTransform),
 	m_boundsChanged(boundsChanged),
-	m_planeChanged(false),
-	m_transformChanged(false)
-{
-	copy(other);
-}
-
-Brush::Brush(const Brush& other) :
-	IBrush(other),
-	Bounded(other),
-	Snappable(other),
-	Undoable(other),
-	FaceObserver(other),
-	BrushDoom3(other),
-	m_undoable_observer(0),
-	m_map(0),
-	_faceCentroidPoints(GL_POINTS),
-	_uniqueVertexPoints(GL_POINTS),
-	_uniqueEdgePoints(GL_POINTS),
 	m_planeChanged(false),
 	m_transformChanged(false)
 {
@@ -288,7 +272,7 @@ FacePtr Brush::addFace(const Face& face) {
 		return FacePtr();
 	}
 	undoSave();
-	push_back(FacePtr(new Face(face, this)));
+	push_back(FacePtr(new Face(*this, face, this)));
 	planeChanged();
 	return m_faces.back();
 }
@@ -299,7 +283,7 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 		return FacePtr();
 	}
 	undoSave();
-	push_back(FacePtr(new Face(p0, p1, p2, shader, projection, this)));
+	push_back(FacePtr(new Face(*this, p0, p1, p2, shader, projection, this)));
 	planeChanged();
 	return m_faces.back();
 }
