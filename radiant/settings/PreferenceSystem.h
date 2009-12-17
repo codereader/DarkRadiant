@@ -11,8 +11,4 @@ class IPreferenceSystem;
  */
 IPreferenceSystem& GetPreferenceSystem();
 
-/** greebo: Renames the user.xml in the settings folder.
- */
-void resetPreferences();
-
 #endif /*PREFERENCESYSTEM_H_*/
