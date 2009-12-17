@@ -400,7 +400,16 @@ void MainFrame::updateAllWindows() {
 	GlobalXYWnd().updateAllViews();
 }
 
-void MainFrame::applyLayout(const std::string& name) {
+void MainFrame::applyLayout(const std::string& name)
+{
+	if (getCurrentLayout() == name)
+	{
+		// nothing to do
+		globalOutputStream() << "MainFrame: Won't activate layout " << name 
+			<< ", is already active." << std::endl;
+		return;
+	}
+
 	// Set or clear?
 	if (!name.empty()) {
 		// Try to find that new layout
