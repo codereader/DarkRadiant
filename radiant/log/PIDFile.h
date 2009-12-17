@@ -33,6 +33,7 @@ public:
 
 			removePIDFile();
 
+#ifndef _DEBUG
 			std::string msg("Radiant failed to start properly the last time it was run.\n");
 			msg += "The failure may be related to invalid preference settings.\n";
 			msg += "Do you want to rename your local user.xml file and restore the default settings?";
@@ -43,6 +44,7 @@ public:
 			{
 				resetPreferences();
 			}
+#endif
 		}
 
 		// create a primary .pid for global init run
