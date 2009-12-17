@@ -164,6 +164,9 @@ public:
 	// Destructor
 	virtual ~Brush();
 
+	// BrushNode
+	BrushNode& getBrushNode();
+
 	virtual IFace& getFace(std::size_t index);
 	
 	/** greebo: This translates the brush about the given translation vector,

@@ -7,6 +7,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 
 #include "patch/PatchNode.h"
+#include "brush/BrushNode.h"
 
 namespace selection {
 
@@ -123,7 +124,7 @@ void ShaderClipboard::setSource(Patch& sourcePatch) {
 	
 	_source.clear();
 	_source.patch = &sourcePatch;
-	_source.node = sourcePatch.getOwner().shared_from_this();
+	_source.node = sourcePatch.getPatchNode().shared_from_this();
 	
 	updateMediaBrowsers();
 }
@@ -133,7 +134,7 @@ void ShaderClipboard::setSource(Face& sourceFace) {
 	
 	_source.clear();
 	_source.face = &sourceFace;
-	// TODO: Find owning brush node
+	_source.node = sourceFace.getBrush().getBrushNode().shared_from_this();
 	
 	updateMediaBrowsers();
 }

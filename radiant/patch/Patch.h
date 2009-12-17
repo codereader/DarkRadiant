@@ -111,7 +111,7 @@ public:
 	// Copy constructors (create this patch from another patch)
 	Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged);
 
-	PatchNode& getOwner();
+	PatchNode& getPatchNode();
 	
 	InstanceCounter m_instanceCounter;
 

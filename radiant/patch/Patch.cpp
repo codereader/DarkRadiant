@@ -173,7 +173,7 @@ void Patch::setDims (std::size_t w, std::size_t h)
   }
 }
 
-PatchNode& Patch::getOwner()
+PatchNode& Patch::getPatchNode()
 {
 	return _node;
 }

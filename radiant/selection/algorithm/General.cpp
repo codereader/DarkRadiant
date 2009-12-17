@@ -349,8 +349,6 @@ void deleteSelectionCmd(const cmd::ArgumentList& args) {
 	UndoableCommand undo("deleteSelected");
 
 	deleteSelection();
-
-	GlobalShaderClipboard().clear();
 }
 
 /**
