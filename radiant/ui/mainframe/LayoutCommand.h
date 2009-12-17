@@ -23,31 +23,24 @@ namespace ui {
 
 /**
  * This little class represents a "command target", providing 
- * a callback for toggling a certain layout. The class
+ * a callback for activating a certain layout. The class
  * registers itself with the EventManager on construction.
  */
 class LayoutCommand
 {
 	std::string _layoutName;
+
+	std::string _activateCommand;
 public:
 	LayoutCommand(const std::string& layoutName) :
 		_layoutName(layoutName) 
 	{
+		_activateCommand = "ActivateLayout" + _layoutName;
 		GlobalCommandSystem().addCommand(
-			std::string("ToggleLayout") + _layoutName,
-			boost::bind(&LayoutCommand::toggleLayout, this, _1)
-		);
-		GlobalEventManager().addCommand(
-			std::string("ToggleLayout") + _layoutName,
-			std::string("ToggleLayout") + _layoutName
-		);
-
-		std::string activateEventName = "ActivateLayout" + _layoutName;
-		GlobalCommandSystem().addCommand(
-			activateEventName,
+			_activateCommand,
 			boost::bind(&LayoutCommand::activateLayout, this, _1)
 		);
-		GlobalEventManager().addCommand(activateEventName, activateEventName);
+		GlobalEventManager().addCommand(_activateCommand, _activateCommand);
 
 		// Add commands to menu
 		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
@@ -63,37 +56,24 @@ public:
 		}
 
 		// Add the item
-		menuManager.add(MENU_LAYOUTS_PATH, _layoutName, menuItem, _layoutName, "", activateEventName);
+		menuManager.add(MENU_LAYOUTS_PATH, _layoutName, menuItem, _layoutName, "", _activateCommand);
 	}
 
-	~LayoutCommand(){
+	~LayoutCommand()
+	{
 		// Remove command from menu
 		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 		menuManager.remove(MENU_LAYOUTS_PATH + "/" + _layoutName);
 
-		// Remove the events
-		GlobalEventManager().removeEvent(std::string("ToggleLayout") + _layoutName);
-		GlobalEventManager().removeEvent(std::string("ActivateLayout") + _layoutName);
-
-		GlobalCommandSystem().removeCommand(std::string("ToggleLayout") + _layoutName);
-		GlobalCommandSystem().removeCommand(std::string("ToggleLayout") + _layoutName);
+		// Remove event and command
+		GlobalEventManager().removeEvent(_activateCommand);
+		GlobalCommandSystem().removeCommand(_activateCommand);
 	}
 
 	// Command target for activating the layout
-	void activateLayout(const cmd::ArgumentList& args) {
+	void activateLayout(const cmd::ArgumentList& args)
+	{
 		GlobalMainFrame().applyLayout(_layoutName);
-	}
-
-	// Command target for toggling the layout
-	void toggleLayout(const cmd::ArgumentList& args) {
-		// Check if active
-		if (GlobalMainFrame().getCurrentLayout() == _layoutName) {
-			// Remove the active layout
-			GlobalMainFrame().applyLayout("");
-		}
-		else {
-			GlobalMainFrame().applyLayout(_layoutName);
-		}
 	}
 };
 typedef boost::shared_ptr<LayoutCommand> LayoutCommandPtr;
