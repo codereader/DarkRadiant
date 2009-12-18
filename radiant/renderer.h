@@ -18,7 +18,7 @@ inline void collectRenderablesInScene(RenderableCollector& collector, const Volu
 	RenderHighlighted renderHighlightWalker(collector, volume);
 
 	// Submit renderables from scene graph
-	GlobalSceneGraph().foreachNodeInVolume(volume, renderHighlightWalker);
+	GlobalSceneGraph().foreachVisibleNodeInVolume(volume, renderHighlightWalker);
 	
 	// Submit renderables directly attached to the ShaderCache
 	GlobalRenderSystem().forEachRenderable(

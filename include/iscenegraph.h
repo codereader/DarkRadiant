@@ -117,7 +117,11 @@ public:
 		virtual bool visit(const INodePtr& node) = 0;
 	};
 
+	// Visit each scene node in the given volume using the given walker class, even hidden ones
 	virtual void foreachNodeInVolume(const VolumeTest& volume, Walker& walker) = 0;
+
+	// Same as above, but culls any hidden nodes
+	virtual void foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker) = 0;
 
 	// Returns the associated spacepartition
 	virtual ISpacePartitionSystemPtr getSpacePartition() = 0;

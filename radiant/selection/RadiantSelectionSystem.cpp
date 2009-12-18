@@ -114,7 +114,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 		{
 			// Instantiate a walker class which is specialised for selecting entities
 			EntitySelector entityTester(selector, test);
-			GlobalSceneGraph().foreachNodeInVolume(view, entityTester);
+			GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
 
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
 			{
@@ -130,7 +130,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 			{
 				// Test for any visible elements (primitives, entities), but don't select child primitives
 				AnySelector anyTester(selector, test);
-				GlobalSceneGraph().foreachNodeInVolume(view, anyTester);
+				GlobalSceneGraph().foreachVisibleNodeInVolume(view, anyTester);
 			}
 			else
 			{
@@ -138,11 +138,11 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
 				// First, obtain all the selectable entities
 				EntitySelector entityTester(selector, test);
-				GlobalSceneGraph().foreachNodeInVolume(view, entityTester);
+				GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
 
 				// Now retrieve all the selectable primitives 
 				PrimitiveSelector primitiveTester(sel2, test);
-				GlobalSceneGraph().foreachNodeInVolume(view, primitiveTester);
+				GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
 			}
 		
 			// Add the first selection crop to the target vector
@@ -168,7 +168,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 		case eComponent:
 		{
 			ComponentSelector selectionTester(selector, test, componentMode);
-			GlobalSceneGraph().foreachNodeInVolume(view, selectionTester);
+			GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
 
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
 			{
@@ -489,7 +489,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 			SelectionPool selector;
 
 			ComponentSelector selectionTester(selector, volume, eFace);
-			GlobalSceneGraph().foreachNodeInVolume(scissored, selectionTester);
+			GlobalSceneGraph().foreachVisibleNodeInVolume(scissored, selectionTester);
 			
 			// Load them all into the vector
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
@@ -587,7 +587,7 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 		if (face)
 		{
 			ComponentSelector selectionTester(pool, volume, eFace);
-			GlobalSceneGraph().foreachNodeInVolume(scissored, selectionTester);
+			GlobalSceneGraph().foreachVisibleNodeInVolume(scissored, selectionTester);
 
 			// Load them all into the vector
 			for (SelectionPool::iterator i = pool.begin(); i != pool.end(); ++i)
