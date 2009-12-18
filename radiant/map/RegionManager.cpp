@@ -16,7 +16,6 @@
 #include "select.h"
 
 #include "brushmanip.h" // Construct_RegionBrushes()
-#include "referencecache.h"
 #include "RegionWalkers.h"
 #include "MapFileManager.h"
 #include "xyview/GlobalXYWnd.h"
@@ -24,6 +23,7 @@
 #include "ui/mru/MRU.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/General.h"
+#include "map/MapResource.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -333,10 +333,10 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args) {
 		
 		// Save the map and pass the RegionManager::traverseRegion functor 
 		// that assures that only regioned items are traversed
-		MapResource_saveFile(Map::getFormatForFile(filename),
+		MapResource::saveFile(Map::getFormatForFile(filename),
 							 GlobalSceneGraph().root(),
   							 RegionManager::traverseRegion,
-  							 filename.c_str());
+  							 filename);
 		
 		// Remove the region brushes
 		GlobalRegion().removeRegionBrushes();
