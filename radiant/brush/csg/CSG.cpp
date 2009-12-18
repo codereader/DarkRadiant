@@ -6,6 +6,7 @@
 #include "iundo.h"
 #include "igrid.h"
 #include "iradiant.h"
+#include "iregistry.h"
 #include "iselection.h"
 #include "scenelib.h"
 #include "shaderlib.h"
@@ -17,104 +18,80 @@
 #include "selection/algorithm/Primitives.h"
 
 #include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include "BrushByPlaneClipper.h"
 
 namespace brush {
 namespace algorithm {
 
-typedef std::vector<BrushNodePtr> BrushNodes;
+const std::string RKEY_EMIT_CSG_SUBTRACT_WARNING("user/ui/brush/emitCSGSubtractWarning");
 
-void Face_makeBrush(Face& face, const BrushNodePtr& source, float offset, bool makeRoom)
+class FaceMakeBrush :
+	public BrushVisitor
 {
-	if (!face.contributes())
-	{
-		return;
-	}
-
-	scene::INodePtr parent = source->getParent();
-
-	scene::INodePtr newNode = GlobalBrushCreator().createBrush();
-	BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(newNode);
-	assert(brushNode != NULL);
-
-	// Move the child brushes to the same layer as their source
-	scene::assignNodeToLayers(brushNode, source->getLayers());
-
-	// Copy all faces from the source brush
-	brushNode->getBrush().copy(source->getBrush());
-
-	// Add the child to the same parent as the source brush
-	parent->addChildNode(brushNode);
-
-	Node_setSelected(brushNode, true);
-
-	FacePtr newFace = brushNode->getBrush().addFace(face);
-
-	if (newFace != 0)
-	{
-		newFace->flipWinding();
-		newFace->getPlane().offset(offset);
-		newFace->planeChanged();
-  
-		if (makeRoom)
-		{
-			// Retrieve the normal vector of the "source" face
-			brushNode->getBrush().transform(
-				Matrix4::getTranslation(face.getPlane().plane3().normal()*offset)
-			);
-			brushNode->getBrush().freezeTransform();
-		}
-	}
-}
-
-class FaceMakeBrush
-{
+private:
 	const BrushNodePtr& _brush;
 	float _offset;
 	bool _makeRoom;
+
 public:
+
 	FaceMakeBrush(const BrushNodePtr& brush, float offset, bool makeRoom = false) : 
 		_brush(brush), 
 		_offset(offset), 
 		_makeRoom(makeRoom)
 	{}
 
-	void operator()(Face& face) const
+	void visit(Face& face) const
 	{
-		Face_makeBrush(face, _brush, _offset, _makeRoom);
-	}
-};
+		if (!face.contributes())
+		{
+			return;
+		}
 
-void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
-{
-	// Hollow the brush using the current grid size
-	Brush_forEachFace(
-		sourceBrush->getBrush(), 
-		FaceMakeBrush(sourceBrush, GlobalGrid().getGridSize(), makeRoom)
-	);
-
-	/*scene::INodePtr parent = sourceBrush->getParent();
-
-	for (BrushVector::const_iterator i = out.begin(); i != out.end(); ++i) {
-		(*i)->removeEmptyFaces();
+		scene::INodePtr parent = _brush->getParent();
 
 		scene::INodePtr newNode = GlobalBrushCreator().createBrush();
 		BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(newNode);
 		assert(brushNode != NULL);
 
 		// Move the child brushes to the same layer as their source
-		scene::assignNodeToLayers(brushNode, sourceBrush->getLayers());
+		scene::assignNodeToLayers(brushNode, _brush->getLayers());
 
-		brushNode->getBrush().copy(*(*i));
+		// Copy all faces from the source brush
+		brushNode->getBrush().copy(_brush->getBrush());
 
-		delete (*i);
-		
 		// Add the child to the same parent as the source brush
 		parent->addChildNode(brushNode);
 
 		Node_setSelected(brushNode, true);
-	}*/
+
+		FacePtr newFace = brushNode->getBrush().addFace(face);
+
+		if (newFace != 0)
+		{
+			newFace->flipWinding();
+			newFace->getPlane().offset(_offset);
+			newFace->planeChanged();
+	  
+			if (_makeRoom)
+			{
+				// Retrieve the normal vector of the "source" face
+				brushNode->getBrush().transform(
+					Matrix4::getTranslation(face.getPlane().plane3().normal()*_offset)
+				);
+				brushNode->getBrush().freezeTransform();
+			}
+		}
+	}
+};
+
+void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
+{
+	// Hollow the brush using the current grid size
+	FaceMakeBrush visitor(sourceBrush, GlobalGrid().getGridSize(), makeRoom);
+	sourceBrush->getBrush().forEachFace(visitor);
 
 	// Now unselect and remove the source brush from the scene
 	scene::removeNodeFromParent(sourceBrush);
@@ -128,7 +105,8 @@ void hollowSelectedBrushes(const cmd::ArgumentList& args) {
 
 	// Cycle through the brushes and hollow them
 	// We assume that all these selected brushes are visible as well.
-	for (std::size_t i = 0; i < brushes.size(); i++) {
+	for (std::size_t i = 0; i < brushes.size(); ++i)
+	{
 		hollowBrush(brushes[i], false);
 	}
 
@@ -143,7 +121,8 @@ void makeRoomForSelectedBrushes(const cmd::ArgumentList& args) {
 
 	// Cycle through the brushes and hollow them
 	// We assume that all these selected brushes are visible as well.
-	for (std::size_t i = 0; i < brushes.size(); i++) {
+	for (std::size_t i = 0; i < brushes.size(); ++i)
+	{
 		hollowBrush(brushes[i], true);
 	}
 
@@ -313,7 +292,22 @@ public:
 	}
 };
 
-void subtractBrushesFromUnselected(const cmd::ArgumentList& args) {
+void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
+{
+	if (GlobalRegistry().get(RKEY_EMIT_CSG_SUBTRACT_WARNING) == "1")
+	{
+		gtkutil::MessageBox box("This Is Not Dromed Warning", 
+			"Note: be careful when using the CSG tool, as you might end up\n"
+			"with a unnecessary number of tiny brushes and/or leaks.\n"
+			"This popup will not be shown again.", ui::IDialog::MESSAGE_CONFIRM,
+			GlobalRadiant().getMainWindow());
+		
+		box.run();
+
+		// Disable this warning
+		GlobalRegistry().set(RKEY_EMIT_CSG_SUBTRACT_WARNING, "0");
+	}
+
 	// Collect all selected brushes
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 	
