@@ -23,6 +23,9 @@ private:
 	
 	GtkWidget* _menu;
 
+	typedef std::map<std::string, int> SortedLayerMap;
+	SortedLayerMap _sortedLayers;
+
 public:
 	LayerContextMenu(OnSelectionFunc& onSelection);
 
@@ -33,6 +36,9 @@ public:
 	void visit(int layerID, std::string layerName);
 
 private:
+	// Creates the menu items
+	void createMenuItems();
+
 	// GTK Callback for menu selections
 	static void onClick(GtkMenuItem* menuitem, LayerContextMenu* self);
 };
