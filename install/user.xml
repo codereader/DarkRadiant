@@ -163,6 +163,7 @@
 	</clipper>
 	<brush>
 		<textureLock value="1" />
+		<emitCSGSubtractWarning value="1" />
 	</brush>
 	<patch>
 		<subdivideThreshold value="2" />
