@@ -5,6 +5,7 @@
 #include "ieclass.h"
 #include "ishaders.h"
 #include "iregistry.h"
+#include "iuimanager.h"
 
 #include "scenelib.h"
 #include "gtkutil/IconTextButton.h"
@@ -197,7 +198,7 @@ GtkWidget* LightInspector::createPointLightPanel()
 {
 	// Create the point light togglebutton
 	_pointLightToggle = gtkutil::IconTextButton("Omni", 
-		GlobalRadiant().getLocalPixbuf("pointLight32.png"),
+		GlobalUIManager().getLocalPixbuf("pointLight32.png"),
 		true
 	);
 	g_signal_connect(G_OBJECT(_pointLightToggle), 
@@ -216,7 +217,7 @@ GtkWidget* LightInspector::createPointLightPanel()
 GtkWidget* LightInspector::createProjectedPanel() {
 	// Create the projected light togglebutton
 	_projLightToggle = gtkutil::IconTextButton("Projected", 
-		GlobalRadiant().getLocalPixbuf("projLight32.png"),
+		GlobalUIManager().getLocalPixbuf("projLight32.png"),
 		true
 	);
 	g_signal_connect(G_OBJECT(_projLightToggle), 

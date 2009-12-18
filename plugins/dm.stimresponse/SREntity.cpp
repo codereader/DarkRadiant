@@ -1,6 +1,6 @@
 #include "SREntity.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "ieclass.h"
@@ -213,9 +213,9 @@ void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter
 	
 	gtk_list_store_set(targetListStore, iter, 
 						INDEX_COL, sr.getIndex(),
-						CLASS_COL, GlobalRadiant().getLocalPixbufWithMask(classIcon),
+						CLASS_COL, GlobalUIManager().getLocalPixbufWithMask(classIcon),
 						CAPTION_COL, stimTypeStr.c_str(),
-						ICON_COL, GlobalRadiant().getLocalPixbufWithMask(stimType.icon),
+						ICON_COL, GlobalUIManager().getLocalPixbufWithMask(stimType.icon),
 						INHERIT_COL, sr.inherited(),
 						COLOUR_COLUMN, (sr.inherited() ? "#707070" : "#000000"),
 						-1);

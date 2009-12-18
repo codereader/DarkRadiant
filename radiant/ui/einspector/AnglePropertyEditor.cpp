@@ -1,6 +1,6 @@
 #include "AnglePropertyEditor.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "ientity.h"
 #include "string/string.h"
 
@@ -50,7 +50,7 @@ GtkWidget* AnglePropertyEditor::constructAngleButton(
 	const std::string& icon, int angleValue)
 {
 	GtkWidget* w = gtkutil::IconTextButton(
-        "", GlobalRadiant().getLocalPixbuf(icon), false
+        "", GlobalUIManager().getLocalPixbuf(icon), false
     );
 
     g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(_onButtonClick), this);

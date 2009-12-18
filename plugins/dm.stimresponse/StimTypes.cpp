@@ -1,6 +1,6 @@
 #include "StimTypes.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "itextstream.h"
 #include "iregistry.h"
 #include "string/string.h"
@@ -222,7 +222,7 @@ void StimTypes::add(int id,
 						ST_ID_COL, id,
 						ST_CAPTION_COL, _stimTypes[id].caption.c_str(),
 						ST_CAPTION_PLUS_ID_COL, captionPlusId.c_str(),
-						ST_ICON_COL, GlobalRadiant().getLocalPixbufWithMask(newStimType.icon),
+						ST_ICON_COL, GlobalUIManager().getLocalPixbufWithMask(newStimType.icon),
 						ST_NAME_COL, _stimTypes[id].name.c_str(),
 						ST_CUSTOM_COL, custom,
 						-1);

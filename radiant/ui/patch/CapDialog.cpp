@@ -53,7 +53,7 @@ PatchCapDialog::PatchCapDialog() :
 
 void PatchCapDialog::addItemToTable(GtkTable* table, const std::string& image, guint row, EPatchCap type)
 {
-	GtkWidget* img = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf(image));
+	GtkWidget* img = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbuf(image));
 	gtk_table_attach(table, img, 0, 1, row, row+1, 
 					 GtkAttachOptions(GTK_FILL), (GtkAttachOptions)0, 0, 0);
 

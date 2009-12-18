@@ -1,6 +1,8 @@
 #ifndef MODELDATAINSERTER_H_
 #define MODELDATAINSERTER_H_
 
+#include "iuimanager.h"
+
 namespace ui
 {
 
@@ -45,8 +47,8 @@ public:
 					   
 		// Pixbuf depends on model type
 		GdkPixbuf* pixBuf = isExplicit 
-							? GlobalRadiant().getLocalPixbuf(MODEL_ICON)
-							: GlobalRadiant().getLocalPixbuf(FOLDER_ICON);
+							? GlobalUIManager().getLocalPixbuf(MODEL_ICON)
+							: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
 
 		// Fill in the column values
 		gtk_tree_store_set(store, iter, 
@@ -76,7 +78,7 @@ public:
 							   NAME_COLUMN, i->c_str(),
 							   FULLNAME_COLUMN, fullPath.c_str(),
 							   SKIN_COLUMN, i->c_str(),
-							   IMAGE_COLUMN, GlobalRadiant().getLocalPixbuf(SKIN_ICON),
+							   IMAGE_COLUMN, GlobalUIManager().getLocalPixbuf(SKIN_ICON),
 							   IS_FOLDER_COLUMN, isExplicit ? FALSE : TRUE,
 							   -1);
 		}

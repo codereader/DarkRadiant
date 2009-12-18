@@ -40,33 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // this API does not depend on gtk+ or glib
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
-typedef struct _GdkPixbuf GdkPixbuf;
-
-enum EMessageBoxType
-{
-  eMB_OK,
-  eMB_OKCANCEL,
-  eMB_YESNO,
-  eMB_YESNOCANCEL,
-  eMB_NOYES,
-};
-
-enum EMessageBoxIcon
-{
-  eMB_ICONDEFAULT,
-  eMB_ICONERROR,
-  eMB_ICONWARNING,
-  eMB_ICONQUESTION,
-  eMB_ICONASTERISK,
-};
-
-enum EMessageBoxReturn
-{
-  eIDOK,
-  eIDCANCEL,
-  eIDYES,
-  eIDNO,
-};
 
 enum CounterType {
 	counterBrushes,
@@ -117,11 +90,6 @@ public:
 	/** Return the main application GtkWindow.
 	 */
 	virtual GtkWindow* getMainWindow() = 0;
-	
-	// Convenience functions to load a local image (from the bitmaps directory)
-	// and return a GdkPixBuf for use by certain GTK widgets (e.g. TreeView).
-	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) = 0;
-	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) = 0;
 	
 	// Returns the Counter object of the given type
 	virtual ICounter& getCounter(CounterType counter) = 0;

@@ -1,7 +1,8 @@
 #include "SoundChooser.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "isound.h"
+#include "iradiant.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
@@ -94,8 +95,8 @@ public:
 
 		// Pixbuf depends on model type
 		GdkPixbuf* pixBuf = isExplicit 
-							? GlobalRadiant().getLocalPixbuf(SHADER_ICON)
-							: GlobalRadiant().getLocalPixbuf(FOLDER_ICON);
+							? GlobalUIManager().getLocalPixbuf(SHADER_ICON)
+							: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
 
 		// Fill in the column values
 		gtk_tree_store_set(store, iter,

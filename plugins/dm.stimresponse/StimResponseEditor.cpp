@@ -5,6 +5,7 @@
 #include "iscenegraph.h"
 #include "itextstream.h"
 #include "iradiant.h"
+#include "iuimanager.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -103,7 +104,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* stimLabelHBox = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(
     	GTK_BOX(stimLabelHBox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(ICON_STIM + SUFFIX_EXTENSION)), 
+    	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(ICON_STIM + SUFFIX_EXTENSION)), 
     	FALSE, FALSE, 3
     );
 	gtk_box_pack_start(GTK_BOX(stimLabelHBox), gtk_label_new("Stims"), FALSE, FALSE, 3);
@@ -111,7 +112,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* responseLabelHBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(
     	GTK_BOX(responseLabelHBox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(ICON_RESPONSE + SUFFIX_EXTENSION)), 
+    	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(ICON_RESPONSE + SUFFIX_EXTENSION)), 
     	FALSE, FALSE, 0
     );
 	gtk_box_pack_start(GTK_BOX(responseLabelHBox), gtk_label_new("Responses"), FALSE, FALSE, 3);
@@ -119,7 +120,7 @@ void StimResponseEditor::populateWindow() {
 	GtkWidget* customLabelHBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(
     	GTK_BOX(customLabelHBox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(ICON_CUSTOM_STIM)), 
+    	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(ICON_CUSTOM_STIM)), 
     	FALSE, FALSE, 0
     );
 	gtk_box_pack_start(GTK_BOX(customLabelHBox), gtk_label_new("Custom Stims"), FALSE, FALSE, 3);

@@ -1,6 +1,6 @@
 #include "DifficultyEditor.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
@@ -29,7 +29,7 @@ DifficultyEditor::DifficultyEditor(const std::string& label,
 
 	gtk_box_pack_start(
     	GTK_BOX(_labelHBox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(DIFF_ICON)), 
+    	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(DIFF_ICON)), 
     	FALSE, FALSE, 3
     );
 	gtk_box_pack_start(GTK_BOX(_labelHBox), _label, FALSE, FALSE, 3);

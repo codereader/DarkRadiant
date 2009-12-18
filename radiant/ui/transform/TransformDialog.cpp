@@ -1,6 +1,7 @@
 #include "TransformDialog.h"
 
 #include "iregistry.h"
+#include "iuimanager.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
 #include "string/string.h"
@@ -224,13 +225,13 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 		GtkWidget* hbox = gtk_hbox_new(true, 0);
 		
 		entryRow.smaller = ControlButtonPtr(
-			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_left.png"))
+			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
 		);
 		gtk_widget_set_size_request(*entryRow.smaller, 15, 24);
 		gtk_box_pack_start(GTK_BOX(hbox), *entryRow.smaller, false, false, 0);
 		
 		entryRow.larger = ControlButtonPtr(
-			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_right.png"))
+			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
 		);
 		gtk_widget_set_size_request(*entryRow.larger, 15, 24);
 		gtk_box_pack_start(GTK_BOX(hbox), *entryRow.larger, false, false, 0); 

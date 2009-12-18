@@ -208,7 +208,7 @@ void EntityInspector::onKeyChange(const std::string& key,
         PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(parms.type),
         INHERITED_FLAG_COLUMN, "", // not inherited
         HELP_ICON_COLUMN, hasDescription 
-                          ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME) 
+                          ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME) 
                           : NULL,
         HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
         -1
@@ -407,7 +407,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
 	gtk_tree_view_column_set_spacing(_helpColumn, 3);
 	gtk_tree_view_column_set_visible(_helpColumn, FALSE);
 
-	GdkPixbuf* helpIcon = GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME);
+	GdkPixbuf* helpIcon = GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME);
 	if (helpIcon != NULL) {
 		gtk_tree_view_column_set_fixed_width(_helpColumn, gdk_pixbuf_get_width(helpIcon));
 	}
@@ -973,7 +973,7 @@ void EntityInspector::addClassProperties()
 					PROPERTY_ICON_COLUMN, NULL,
 					INHERITED_FLAG_COLUMN, "1", // inherited
 					HELP_ICON_COLUMN, hasDescription 
-                                      ? GlobalRadiant().getLocalPixbuf(HELP_ICON_NAME)
+                                      ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
                                       : NULL,
 					HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
 					-1);

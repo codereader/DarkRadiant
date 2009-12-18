@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "ieventmanager.h"
 #include "iradiant.h"
+#include "iuimanager.h"
 
 namespace ui {
 
@@ -75,7 +76,7 @@ GtkWidget* MapInfoDialog::createTabLabel(const std::string& label, const std::st
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 3);
 	gtk_box_pack_start(
     	GTK_BOX(hbox), 
-    	gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(iconName)), 
+    	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(iconName)), 
     	FALSE, FALSE, 3
     );
 	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(label.c_str()), FALSE, FALSE, 3);
