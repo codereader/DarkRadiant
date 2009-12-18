@@ -64,13 +64,8 @@ public:
 	virtual void updateAllWindows();
 
 	virtual ui::IModelPreviewPtr createModelPreview();
-	virtual ui::IFileChooserPtr createFileChooser(const std::string& title, 
-												bool open, bool browseFolders, 
-												const std::string& pattern = "",
-												const std::string& defaultExt = "");
 	
 	virtual void addEventListener(RadiantEventListenerPtr listener);
-	
 	virtual void removeEventListener(RadiantEventListenerPtr listener);
 	
 	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
