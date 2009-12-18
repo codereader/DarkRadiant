@@ -1,6 +1,6 @@
 #include "PropertyEditorFactory.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "itextstream.h" 
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
@@ -98,7 +98,7 @@ GdkPixbuf* PropertyEditorFactory::getPixbufFor(const std::string& type) {
 	if (type.empty()) return NULL;
 
 	std::string iconName = "icon_" + type + ".png";
-	return GlobalRadiant().getLocalPixbuf(iconName);	
+	return GlobalUIManager().getLocalPixbuf(iconName);	
 }
 
 }

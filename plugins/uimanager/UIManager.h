@@ -11,6 +11,7 @@
 #include "DialogManager.h"
 #include "colourscheme/ColourSchemeManager.h"
 #include <iostream>
+#include <map>
 
 namespace ui {
 
@@ -20,6 +21,7 @@ typedef boost::shared_ptr<UIManagerShutdownListener> UIManagerShutdownListenerPt
 class UIManager :
 	public IUIManager
 {
+private:
 	// Local helper class taking care of the menu
 	MenuManager _menuManager;
 	
@@ -30,6 +32,10 @@ class UIManager :
 	UIManagerShutdownListenerPtr _shutdownListener;
 
 	DialogManagerPtr _dialogManager;
+
+	typedef std::map<std::string, GdkPixbuf*> PixBufMap;
+	PixBufMap _localPixBufs;
+	PixBufMap _localPixBufsWithMask;
 
 public:
 
@@ -47,13 +53,17 @@ public:
 
 	IDialogManager& getDialogManager();
 
+	GdkPixbuf* getLocalPixbuf(const std::string& fileName);
+	GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName);
+
 	// Called on radiant shutdown
 	void clear();
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+	void shutdownModule();
 }; // class UIManager
 typedef boost::shared_ptr<ui::UIManager> UIManagerPtr;
 

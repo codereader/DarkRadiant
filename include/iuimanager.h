@@ -171,13 +171,11 @@ public:
 	virtual GtkWidget* getElement(const std::string& name) = 0;
 };
 
-// Forward declaration
-class IGroupDialog;		// see igroupdialog.h for definition
+// Forward declarations
+typedef struct _GdkPixbuf GdkPixbuf;
 
-namespace ui
-{
-class IDialogManager;	// see idialogmanager.h for definition
-}
+class IGroupDialog;		// see igroupdialog.h for definition
+namespace ui { class IDialogManager; }	// see idialogmanager.h for definition
 
 const std::string MODULE_UIMANAGER("UIManager");
 
@@ -196,6 +194,11 @@ public:
 	virtual IGroupDialog& getGroupDialog() = 0;
 	virtual IStatusBarManager& getStatusBarManager() = 0;
 	virtual ui::IDialogManager& getDialogManager() = 0;
+
+	// Convenience functions to load a local image (from the bitmaps directory)
+	// and return a GdkPixBuf for use by certain GTK widgets (e.g. TreeView).
+	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) = 0;
+	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) = 0;
 };
 
 // This is the accessor for the UI manager

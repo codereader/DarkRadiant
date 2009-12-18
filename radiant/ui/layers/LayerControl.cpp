@@ -93,7 +93,7 @@ void LayerControl::update() {
 	std::string imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
 	gtk_button_set_image(
 		GTK_BUTTON(_widgets[WIDGET_TOGGLE]), 
-		gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbufWithMask(imageName))
+		gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(imageName))
 	);
 
 	// Don't allow deleting or renaming layer 0

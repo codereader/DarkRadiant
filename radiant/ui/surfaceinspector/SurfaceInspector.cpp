@@ -4,6 +4,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
 #include "itextstream.h"
+#include "iuimanager.h"
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/IconTextButton.h"
@@ -303,7 +304,7 @@ void SurfaceInspector::populateWindow()
 	g_signal_connect(G_OBJECT(_shaderEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
 	
 	// Create the icon button to open the ShaderChooser
-	_selectShaderButton = gtkutil::IconTextButton("", GlobalRadiant().getLocalPixbuf(FOLDER_ICON), false);
+	_selectShaderButton = gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON), false);
 	// Override the size request
 	gtk_widget_set_size_request(_selectShaderButton, -1, -1); 
 	g_signal_connect(G_OBJECT(_selectShaderButton), "clicked", G_CALLBACK(onShaderSelect), this);
@@ -473,13 +474,13 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 		GtkWidget* vbox = gtk_vbox_new(TRUE, 0);
 		
 		manipRow.larger = ControlButtonPtr(
-			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_up.png"))
+			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_up.png"))
 		);
 		gtk_widget_set_size_request(*manipRow.larger, 30, 12);
 		gtk_box_pack_start(GTK_BOX(vbox), *manipRow.larger, FALSE, FALSE, 0);
 		
 		manipRow.smaller = ControlButtonPtr(
-			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_down.png"))
+			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_down.png"))
 		);
 		gtk_widget_set_size_request(*manipRow.smaller, 30, 12);
 		gtk_box_pack_start(GTK_BOX(vbox), *manipRow.smaller, FALSE, FALSE, 0);
@@ -490,13 +491,13 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 		GtkWidget* hbox = gtk_hbox_new(TRUE, 0);
 		
 		manipRow.smaller = ControlButtonPtr(
-			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_left.png"))
+			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
 		);
 		gtk_widget_set_size_request(*manipRow.smaller, 15, 24);
 		gtk_box_pack_start(GTK_BOX(hbox), *manipRow.smaller, FALSE, FALSE, 0);
 		
 		manipRow.larger = ControlButtonPtr(
-			new gtkutil::ControlButton(GlobalRadiant().getLocalPixbuf("arrow_right.png"))
+			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
 		);
 		gtk_widget_set_size_request(*manipRow.larger, 15, 24);
 		gtk_box_pack_start(GTK_BOX(hbox), *manipRow.larger, FALSE, FALSE, 0);

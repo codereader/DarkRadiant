@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/CounterManager.h"
 #include "iradiant.h"
 
-typedef struct _GdkPixbuf GdkPixbuf;
-
 namespace radiant {
 
 /**
@@ -40,10 +38,6 @@ class RadiantModule :
 	typedef std::set<RadiantEventListenerWeakPtr> EventListenerList;
 	EventListenerList _eventListeners;
 
-	typedef std::map<std::string, GdkPixbuf*> PixBufMap;
-	PixBufMap _localPixBufs;
-	PixBufMap _localPixBufsWithMask;
-
 	GtkWindow* _mainWindow;
 
 public:
@@ -52,10 +46,6 @@ public:
 	virtual GtkWindow* getMainWindow();
 	// Sets the main window (may only be called by mainframe).
 	void setMainWindow(GtkWindow* mainWindow);
-	
-	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName);
-	
-	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName);
 	
 	virtual ICounter& getCounter(CounterType counter);
 	

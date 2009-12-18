@@ -1,6 +1,6 @@
 #include "ShaderSelector.h"
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
@@ -124,8 +124,8 @@ namespace {
 
 			// Pixbuf depends on node type
 			GdkPixbuf* pixBuf = isExplicit 
-								? GlobalRadiant().getLocalPixbuf(TEXTURE_ICON)
-								: GlobalRadiant().getLocalPixbuf(FOLDER_ICON);
+								? GlobalUIManager().getLocalPixbuf(TEXTURE_ICON)
+								: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
 			// Fill in the column values
 			gtk_tree_store_set(store, iter, 
 							   NAME_COL, displayName.c_str(),

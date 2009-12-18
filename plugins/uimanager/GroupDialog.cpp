@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "iregistry.h"
 #include "iradiant.h"
+#include "iuimanager.h"
 #include "ieventmanager.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include <iostream>
@@ -209,7 +210,7 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	gtk_widget_show(_notebook);
 	
 	// Create the icon GtkImage and tab label
-	GtkWidget* icon = gtk_image_new_from_pixbuf(GlobalRadiant().getLocalPixbuf(tabIcon));
+	GtkWidget* icon = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbuf(tabIcon));
 	GtkWidget* label = gtk_label_new(tabLabel.c_str());
 
 	// Pack into an hbox to create the title widget	

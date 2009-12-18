@@ -4,6 +4,7 @@
 #include "igl.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "iuimanager.h"
 #include "version.h"
 #include "string/string.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -34,7 +35,7 @@ void AboutDialog::populateWindow() {
 	GtkWidget* topHBox = gtk_hbox_new(FALSE, 12);
 	
 	GtkWidget* image = gtk_image_new_from_pixbuf(
-		GlobalRadiant().getLocalPixbuf("logo.png")
+		GlobalUIManager().getLocalPixbuf("logo.png")
 	);
 	gtk_box_pack_start(GTK_BOX(topHBox), image, FALSE, FALSE, 0);
 	

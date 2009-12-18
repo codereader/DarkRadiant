@@ -1,6 +1,7 @@
 #include "EClassTreeBuilder.h"
 
 #include "itextstream.h"
+#include "iuimanager.h"
 #include "EClassTree.h"
 
 namespace ui {
@@ -27,7 +28,7 @@ namespace ui {
 				std::string displayPath = path.substr(path.rfind("/") + 1);
 				
 				// Get the icon, either folder or skin
-				GdkPixbuf* pixBuf = GlobalRadiant().getLocalPixbuf(ENTITY_ICON);
+				GdkPixbuf* pixBuf = GlobalUIManager().getLocalPixbuf(ENTITY_ICON);
 				
 				gtk_tree_store_set(store, it, 
 								   NAME_COLUMN, displayPath.c_str(),

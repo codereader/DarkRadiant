@@ -8,6 +8,7 @@
 #include "entity.h" // Entity_createFromSelection()
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
+#include "iuimanager.h"
 #include "map/Map.h"
 
 #include <gtk/gtk.h>
@@ -110,37 +111,37 @@ OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
 	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(ADD_ENTITY_ICON), ADD_ENTITY_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), ADD_ENTITY_TEXT
     );
 	_widgets[WIDGET_ADD_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(ADD_PLAYERSTART_ICON), ADD_PLAYERSTART_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), ADD_PLAYERSTART_TEXT
     );
 	_widgets[WIDGET_MOVE_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(MOVE_PLAYERSTART_ICON), MOVE_PLAYERSTART_TEXT
+        GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), MOVE_PLAYERSTART_TEXT
     );
 	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT
     );
 	_widgets[WIDGET_ADD_MONSTERCLIP] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(ADD_MONSTERCLIP_ICON), ADD_MONSTERCLIP_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), ADD_MONSTERCLIP_TEXT
     );
 	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT
     );
 	_widgets[WIDGET_ADD_PREFAB] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(ADD_PREFAB_ICON), ADD_PREFAB_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), ADD_PREFAB_TEXT
     );
 	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT
     );
 	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT
+        GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT
     );
 	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT
+        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT
     );
 	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(
-        GlobalRadiant().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT
+        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT
     );
 
 	IEventPtr ev = GlobalEventManager().findEvent("ParentSelectionToWorldspawn");
@@ -149,19 +150,19 @@ OrthoContextMenu::OrthoContextMenu()
 	}
 
 	// "Add to layer" submenu
-	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
-	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), MOVE_TO_LAYER_TEXT);
-	_widgets[WIDGET_DELETE_FROM_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), REMOVE_FROM_LAYER_TEXT);
+	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
+	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), MOVE_TO_LAYER_TEXT);
+	_widgets[WIDGET_DELETE_FROM_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), REMOVE_FROM_LAYER_TEXT);
 
 	// Add a "Create New Layer" item and connect it to the corresponding event
-	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(LAYER_ICON), CREATE_LAYER_TEXT);
+	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), CREATE_LAYER_TEXT);
 	ev = GlobalEventManager().findEvent("CreateNewLayer");
 	if (ev != NULL) {
 		ev->connectWidget(_widgets[WIDGET_CREATE_LAYER]);
 	}
 
 	// Add a "Make Visportal" item and connect it to the corresponding event
-	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalRadiant().getLocalPixbuf(MAKE_VISPORTAL_ICON), MAKE_VISPORTAL);
+	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), MAKE_VISPORTAL);
 	ev = GlobalEventManager().findEvent("MakeVisportal");
 	if (ev != NULL) {
 		ev->connectWidget(_widgets[WIDGET_MAKE_VISPORTAL]);

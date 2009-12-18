@@ -2,7 +2,7 @@
 
 #include <gtk/gtk.h>
 
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/pointer.h"
 #include "layers/LayerSystem.h"
@@ -27,7 +27,7 @@ LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 void LayerContextMenu::visit(int layerID, std::string layerName) {
 	// Create a new menuitem
 	GtkWidget* menuItem = gtkutil::IconTextMenuItem(
-		GlobalRadiant().getLocalPixbuf(LAYER_ICON), layerName);
+		GlobalUIManager().getLocalPixbuf(LAYER_ICON), layerName);
 
 	// Connect the "onclick" signal
 	g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(onClick), this);

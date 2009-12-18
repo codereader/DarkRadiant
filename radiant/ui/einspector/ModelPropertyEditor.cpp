@@ -5,7 +5,7 @@
 #include "ui/particles/ParticlesChooser.h"
 
 #include "ientity.h"
-#include "iradiant.h"
+#include "iuimanager.h"
 
 #include <gtk/gtk.h>
 
@@ -47,7 +47,7 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 	gtk_button_set_image(
 		GTK_BUTTON(particleButton),
 		gtk_image_new_from_pixbuf(
-			GlobalRadiant().getLocalPixbuf("particle16.png")
+			GlobalUIManager().getLocalPixbuf("particle16.png")
 		)
 	);
 	g_signal_connect(G_OBJECT(particleButton), 
