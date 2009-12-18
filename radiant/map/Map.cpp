@@ -20,7 +20,6 @@
 #include "MapExportInfo.h"
 #include "gtkutil/IConv.h"
 
-#include "referencecache.h"
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/GlobalCamera.h"
@@ -31,6 +30,7 @@
 #include "map/PointFile.h"
 #include "map/RegionManager.h"
 #include "map/RootNode.h"
+#include "map/MapResource.h"
 #include "map/algorithm/Clone.h"
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
@@ -560,11 +560,11 @@ bool Map::saveDirect(const std::string& filename) {
 	
 	_saveInProgress = true;
 
-	bool result = MapResource_saveFile(
+	bool result = MapResource::saveFile(
 		getFormatForFile(filename), 
 		GlobalSceneGraph().root(), 
 		map::traverse, // TraversalFunc 
-		filename.c_str()
+		filename
 	);
 	
 	_saveInProgress = false;
@@ -580,10 +580,12 @@ bool Map::saveSelected(const std::string& filename) {
 	
 	_saveInProgress = true;
 
-	bool success = MapResource_saveFile(Map::getFormatForFile(filename), 
-  							  GlobalSceneGraph().root(), 
-  							  map::traverseSelected, // TraversalFunc
-  							  filename.c_str());
+	bool success = MapResource::saveFile(
+		Map::getFormatForFile(filename), 
+		GlobalSceneGraph().root(), 
+		map::traverseSelected, // TraversalFunc
+		filename
+	);
 
 	_saveInProgress = false;
 

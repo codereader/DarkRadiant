@@ -6,7 +6,6 @@
 #include "imodelcache.h"
 #include "ieclass.h"
 #include "os/path.h"
-#include "referencecache.h"
 #include "math/aabb.h"
 #include "modelskin.h"
 
