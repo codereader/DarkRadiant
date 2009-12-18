@@ -25,6 +25,9 @@ public:
 	IDialogPtr createMessageBox(const std::string& title, const std::string& text, 
 								IDialog::MessageType type, GtkWindow* parent = NULL);
 
+	IFileChooserPtr createFileChooser(const std::string& title, bool open, bool browseFolders, 
+									  const std::string& pattern, const std::string& defaultExt);
+
 private:
 	void cleanupOldDialogs();
 };

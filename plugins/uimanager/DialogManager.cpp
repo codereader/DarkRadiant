@@ -4,6 +4,7 @@
 #include "iradiant.h"
 
 #include "gtkutil/dialog/MessageBox.h"
+#include "gtkutil/FileChooser.h"
 
 namespace ui
 {
@@ -56,6 +57,15 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 
 	return box;
 }
+
+IFileChooserPtr DialogManager::createFileChooser(const std::string& title, 
+	bool open, bool browseFolders, const std::string& pattern, const std::string& defaultExt)
+{
+	return IFileChooserPtr(new gtkutil::FileChooser(
+		GTK_WIDGET(GlobalRadiant().getMainWindow()),
+		title, open, browseFolders, pattern, defaultExt));
+}
+
 
 void DialogManager::cleanupOldDialogs()
 {

@@ -72,6 +72,9 @@ typedef boost::shared_ptr<IDialog> IDialogPtr;
 
 const IDialog::Handle INVALID_HANDLE = 0;
 
+class IFileChooser;
+typedef boost::shared_ptr<IFileChooser> IFileChooserPtr;
+
 class IDialogManager
 {
 public:
@@ -105,6 +108,21 @@ public:
 	 */
 	virtual IDialogPtr createMessageBox(const std::string& title, const std::string& text, 
 										IDialog::MessageType type, GtkWindow* parent = NULL) = 0;
+
+	/**
+	 * Acquire a new filechooser instance with the given parameters.
+	 *
+	 * @title: The dialog title.
+	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
+	 * @browseFolders: if TRUE this is asking for folders, not files.
+	 * @pattern: the type "map", "prefab", this determines the file extensions.
+	 * @defaultExt: The default extension appended when the user enters 
+	 *              filenames without extension.
+ 	 */
+	virtual ui::IFileChooserPtr createFileChooser(const std::string& title, 
+												bool open, bool browseFolders, 
+												const std::string& pattern = "",
+												const std::string& defaultExt = "") = 0;
 };
 
 } // namespace ui

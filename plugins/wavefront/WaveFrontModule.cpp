@@ -4,7 +4,8 @@
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
-#include "iradiant.h"
+#include "ifilechooser.h"
+#include "idialogmanager.h"
 #include "iregistry.h"
 #include "selectionlib.h"
 #include <boost/bind.hpp>
@@ -25,7 +26,9 @@ void WaveFrontModule::exportSelectionAsOBJ(const cmd::ArgumentList& args)
 	}
 	
 	// Query the filename from the user
-	ui::IFileChooserPtr chooser = GlobalRadiant().createFileChooser("Save as Obj", false, "*.obj", ".obj");
+	ui::IFileChooserPtr chooser = GlobalDialogManager().createFileChooser(
+		"Save as Obj", false, "*.obj", ".obj"
+	);
 
 	chooser->setCurrentPath(GlobalRegistry().get(RKEY_MAP_PATH));
 
@@ -55,7 +58,6 @@ const StringSet& WaveFrontModule::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_UIMANAGER);

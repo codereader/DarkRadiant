@@ -142,14 +142,6 @@ ui::IModelPreviewPtr RadiantModule::createModelPreview()
 	return ui::IModelPreviewPtr(new ui::ModelPreview);
 }
 
-ui::IFileChooserPtr RadiantModule::createFileChooser(const std::string& title, 
-	bool open, bool browseFolders, const std::string& pattern, const std::string& defaultExt)
-{
-	return ui::IFileChooserPtr(new gtkutil::FileChooser(
-		GTK_WIDGET(getMainWindow()),
-		title, open, browseFolders, pattern, defaultExt));
-}
-	
 void RadiantModule::addEventListener(RadiantEventListenerPtr listener) {
 	_eventListeners.insert(RadiantEventListenerWeakPtr(listener));
 }
