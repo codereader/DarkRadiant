@@ -131,6 +131,20 @@ void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)
 
 void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
 {
+	if (_root != NULL) _root->worldAABB();
+
+	// Descend the SpacePartition tree and call the walker for each (partially) visible member
+	ISPNodePtr root = _spacePartition->getRoot();
+
+	_visitedSPNodes = _skippedSPNodes = 0;
+
+	foreachNodeInVolume_r(*root, volume, walker, true);
+
+	_visitedSPNodes = _skippedSPNodes = 0;
+}
+
+void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker)
+{
 	// Acquire the worldAABB() of the scenegraph root - if any node got changed in the graph
 	// the scenegraph's root bounds are marked as "dirty" and the bounds will be re-calculated
 	// which in turn might trigger a re-link in the Octree. We want to avoid that the Octree
@@ -140,19 +154,14 @@ void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
 	// Descend the SpacePartition tree and call the walker for each (partially) visible member
 	ISPNodePtr root = _spacePartition->getRoot();
 
-	_visitedSPNodes = 0;
-	_skippedSPNodes = 0;
+	_visitedSPNodes = _skippedSPNodes = 0;
 
-	foreachNodeInVolume_r(*root, volume, walker);
+	foreachNodeInVolume_r(*root, volume, walker, false);
 
-	//globalOutputStream() << "SceneGraph::foreachNodeInVolume: visited: " << _visitedSPNodes << 
-	//	", skipped: " << _skippedSPNodes << std::endl;
-
-	_visitedSPNodes = 0;
-	_skippedSPNodes = 0;
+	_visitedSPNodes = _skippedSPNodes = 0;
 }
 
-bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker)
+bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, Walker& walker, bool visitHidden)
 {
 	_visitedSPNodes++;
 
@@ -162,6 +171,13 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 	for (ISPNode::MemberList::const_iterator m = members.begin(); 
 		 m != members.end(); /* in-loop increment */)
 	{
+		// Skip hidden nodes, if specified
+		if (!visitHidden && !(*m)->visible())
+		{
+			++m;
+			continue;
+		}
+
 		// We're done, as soon as the walker returns FALSE
 		if (!walker.visit(*m++))
 		{
@@ -182,7 +198,7 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 		}
 	
 		// Traverse all the children too, enter recursion
-		if (!foreachNodeInVolume_r(**i, volume, walker))
+		if (!foreachNodeInVolume_r(**i, volume, walker, visitHidden))
 		{
 			// The walker returned false somewhere in the recursion depths, propagate this message 
 			return false;
