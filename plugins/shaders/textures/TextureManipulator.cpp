@@ -63,7 +63,7 @@ Colour3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 		incr = 1;
 	
 	// Set the pixel pointer to the very first pixel
-	unsigned char* pixels = input->getMipMapPixels(0);
+	byte* pixels = input->getMipMapPixels(0);
 	
 	Colour3 returnValue;
 	int pixelCount = 0;
@@ -103,7 +103,7 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 	
 	std::size_t width = input->getWidth(0);
 	std::size_t height = input->getHeight(0);
-	unsigned char* sourcePixels = input->getMipMapPixels(0);
+	byte* sourcePixels = input->getMipMapPixels(0);
 	
 	ImagePtr output;
 	
@@ -176,7 +176,7 @@ ImagePtr TextureManipulator::processGamma(const ImagePtr& input) {
 	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
 	
 	// Set the pixel pointer to the very first pixel
-	unsigned char* pixels = input->getMipMapPixels(0);
+	byte* pixels = input->getMipMapPixels(0);
 	
 	// Go over all the pixels and change their value accordingly
 	for (std::size_t i = 0; i < (numPixels*4); i += 4)
@@ -473,10 +473,10 @@ void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth
 
 // in can be the same as out
 void TextureManipulator::mipReduce(byte *in, byte *out, 
-								   int width, int height, 
-								   int destwidth, int destheight) 
+								   std::size_t width, std::size_t height, 
+								   std::size_t destwidth, std::size_t destheight) 
 {
-	int x, y, width2, height2, nextrow;
+	std::size_t x, y, width2, height2, nextrow;
 	if (width > destwidth) {
 		if (height > destheight) {
 			// reduce both

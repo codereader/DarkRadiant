@@ -46,8 +46,8 @@ public:
 						 void *outdata, std::size_t outwidth, std::size_t outheight, int bytesperpixel);
 
 	void mipReduce(byte *in, byte *out, 
-				   int width, int height, 
-				   int destwidth, int destheight);
+				   std::size_t width, std::size_t height, 
+				   std::size_t destwidth, std::size_t destheight);
 
 	/* greebo: Returns the readily fabricated pixel data, that passed
 	 * a bunch of stages (gamma calculation, mip reduction, stretching) 
