@@ -38,15 +38,7 @@ class RadiantModule :
 	typedef std::set<RadiantEventListenerWeakPtr> EventListenerList;
 	EventListenerList _eventListeners;
 
-	GtkWindow* _mainWindow;
-
 public:
-	RadiantModule();
-	
-	virtual GtkWindow* getMainWindow();
-	// Sets the main window (may only be called by mainframe).
-	void setMainWindow(GtkWindow* mainWindow);
-	
 	virtual ICounter& getCounter(CounterType counter);
 	
 	virtual void updateAllWindows();

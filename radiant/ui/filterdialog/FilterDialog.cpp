@@ -1,7 +1,7 @@
 #include "FilterDialog.h"
 
 #include "ifilter.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "idialogmanager.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
@@ -38,7 +38,7 @@ namespace ui {
 	}
 
 FilterDialog::FilterDialog() :
-	BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
+	BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_filterStore(gtk_list_store_new(NUM_COLUMNS, 
 									G_TYPE_STRING,		// name
 									G_TYPE_STRING,		// state

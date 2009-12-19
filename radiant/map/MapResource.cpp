@@ -5,6 +5,7 @@
 #include <iostream>
 #include "ifiletypes.h"
 #include "ifilesystem.h"
+#include "imainframe.h"
 #include "iregistry.h"
 #include "map/Map.h"
 #include "map/RootNode.h"
@@ -149,7 +150,7 @@ bool MapResource::saveBackup() {
 		else {
 			globalErrorStream() << "map path is not writeable: " << fullpath << "\n";
 			// File is write-protected
-			gtkutil::errorDialog(std::string("File is write-protected: ") + fullpath, GlobalRadiant().getMainWindow());
+			gtkutil::errorDialog(std::string("File is write-protected: ") + fullpath, GlobalMainFrame().getTopLevelWindow());
 			return false;
 		}
 	}
@@ -376,7 +377,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	{
 		// File is write-protected
 		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::errorDialog(std::string("File is write-protected: ") + filename, GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog(std::string("File is write-protected: ") + filename, GlobalMainFrame().getTopLevelWindow());
 		return false;
 	}
 
@@ -393,7 +394,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	if (file_exists(auxFilename.c_str()) && !file_writeable(auxFilename.c_str())) {
 		// File is write-protected
 		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::errorDialog(std::string("File is write-protected: ") + auxFilename, GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog(std::string("File is write-protected: ") + auxFilename, GlobalMainFrame().getTopLevelWindow());
 		return false;
 	}
 

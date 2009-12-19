@@ -3,6 +3,7 @@
 #include "igl.h"
 #include "iscenegraph.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
 #include <fstream>
 #include <iostream>
 
@@ -106,7 +107,7 @@ void PointFile::parse() {
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
 		gtkutil::errorDialog("Could not open pointfile:\n\n" + pfName,
-			GlobalRadiant().getMainWindow());
+			GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 

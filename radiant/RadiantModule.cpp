@@ -49,18 +49,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace radiant {
 
-RadiantModule::RadiantModule() :
-	_mainWindow(NULL)
-{}
-	
-GtkWindow* RadiantModule::getMainWindow() {
-	return _mainWindow;
-}
-
-void RadiantModule::setMainWindow(GtkWindow* mainWindow) {
-	_mainWindow = mainWindow;
-}
-	
 ICounter& RadiantModule::getCounter(CounterType counter) {
 	// Pass the call to the helper class
 	return _counters.get(counter);

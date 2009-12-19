@@ -7,7 +7,7 @@
 #include "util/ObjectivesException.h"
 
 #include "iscenegraph.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iregistry.h"
 #include "ieclass.h"
 #include "ientity.h"
@@ -55,7 +55,7 @@ namespace {
 
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor() :
-	gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalRadiant().getMainWindow()),
+	gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_objectiveEntityList(gtk_list_store_new(3, 
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
@@ -368,7 +368,7 @@ void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args) {
 	catch (ObjectivesException e) {
 		gtkutil::errorDialog(
 			std::string("Exception occurred: ") + e.what(), 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 
 		if (GTK_IS_WIDGET(_instance.getWindow())) {
@@ -526,7 +526,7 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 		// Objective entityclass(es) not defined
         gtkutil::errorDialog(
             "Unable to create Objective Entity: classes not defined in registry.",
-            GlobalRadiant().getMainWindow()
+            GlobalMainFrame().getTopLevelWindow()
         );
 		return;
 	}
@@ -557,7 +557,7 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
         // Objective entityclass was not found
         gtkutil::errorDialog(
             "Unable to create Objective Entity: class '" + objEClass + "' not found.",
-            GlobalRadiant().getMainWindow()
+            GlobalMainFrame().getTopLevelWindow()
         );
     }
 }

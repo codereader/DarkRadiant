@@ -6,6 +6,7 @@
 #include "ientity.h"
 #include "itextstream.h"
 #include "iundo.h"
+#include "imainframe.h"
 #include "itraversable.h"
 #include "brush/BrushModule.h"
 #include "brush/BrushVisit.h"
@@ -322,7 +323,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 				}
 				else {
 					gtkutil::errorDialog("Couldn't save to file: " + cmPath.string(),
-						 GlobalRadiant().getMainWindow());
+						 GlobalMainFrame().getTopLevelWindow());
 				}
 			}
 			catch (boost::filesystem::filesystem_error f) {
@@ -340,7 +341,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 		}
 	}
 	else {
-		gtkutil::errorDialog(ERRSTR_WRONG_SELECTION, GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog(ERRSTR_WRONG_SELECTION, GlobalMainFrame().getTopLevelWindow());
 	}
 }
 
@@ -471,7 +472,7 @@ public:
 			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
 			
 			if (patchNode == NULL) {
-				gtkutil::errorDialog("Could not create patch.", GlobalRadiant().getMainWindow());
+				gtkutil::errorDialog("Could not create patch.", GlobalMainFrame().getTopLevelWindow());
 				return;
 			}
 			
@@ -546,7 +547,7 @@ public:
 void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Sanity check	
 	if (g_SelectedFaceInstances.empty()) {
-		gtkutil::errorDialog("No faces selected.", GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog("No faces selected.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 	
@@ -566,7 +567,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	if (unsuitableWindings > 0) {
 		gtkutil::errorDialog(
 			intToStr(unsuitableWindings) + " faces were not suitable (had more than 4 vertices).", 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
 }
@@ -613,7 +614,7 @@ void makeVisportal(const cmd::ArgumentList& args) {
 	BrushPtrVector brushes = getSelectedBrushes();
 
 	if (brushes.size() <= 0) {
-		gtkutil::errorDialog("No brushes selected.", GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog("No brushes selected.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 	

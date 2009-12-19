@@ -9,6 +9,7 @@
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 #include "map/Map.h"
 
 #include <gtk/gtk.h>
@@ -410,7 +411,7 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item,
 			Entity_createFromSelection(cName.c_str(), self->_lastPoint);
 		}
 		catch (EntityCreationException e) {
-			gtkutil::errorDialog(e.what(), GlobalRadiant().getMainWindow());
+			gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 }
@@ -431,7 +432,7 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
 	}
 	catch (EntityCreationException e) {
-		gtkutil::errorDialog(e.what(), GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 
@@ -489,7 +490,7 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create light, classname not found.",
-                             GlobalRadiant().getMainWindow());
+                             GlobalMainFrame().getTopLevelWindow());
     }
 }
 
@@ -533,7 +534,7 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create speaker, classname not found.",
-                             GlobalRadiant().getMainWindow());
+                             GlobalMainFrame().getTopLevelWindow());
         return;
     }
 
@@ -576,7 +577,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
             }
             catch (EntityCreationException e) {
                 gtkutil::errorDialog("Unable to create model, classname not found.",
-                                     GlobalRadiant().getMainWindow());
+                                     GlobalMainFrame().getTopLevelWindow());
             }
 		}
 		
@@ -584,7 +585,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 	else {
 		gtkutil::errorDialog(
             "Either nothing or exactly one brush must be selected for model creation",
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
         );
 	}
 

@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "brushmanip.h"
 
+#include "imainframe.h"
 #include "iclipper.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
@@ -698,7 +699,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount != 1)
 	{
 		// Display a modal error dialog	
-		gtkutil::errorDialog("Exactly one brush must be selected for this operation.", GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog("Exactly one brush must be selected for this operation.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 

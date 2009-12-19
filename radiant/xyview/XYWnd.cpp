@@ -553,14 +553,14 @@ void XYWnd::beginMove() {
 		endMove();
 	}
 	_moveStarted = true;
-	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalRadiant().getMainWindow(), callbackMoveDelta, this);
+	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow(), callbackMoveDelta, this);
 	m_move_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackMoveFocusOut), this);
 }
 
 
 void XYWnd::endMove() {
 	_moveStarted = false;
-	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalRadiant().getMainWindow());
+	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow());
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
 }
 
@@ -570,13 +570,13 @@ void XYWnd::beginZoom() {
 	}
 	_zoomStarted = true;
 	_dragZoom = 0;
-	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalRadiant().getMainWindow(), callbackZoomDelta, this);
+	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow(), callbackZoomDelta, this);
 	m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackZoomFocusOut), this);
 }
 
 void XYWnd::endZoom() {
 	_zoomStarted = false;
-	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalRadiant().getMainWindow());
+	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow());
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
 }
 

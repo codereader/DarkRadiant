@@ -4,7 +4,7 @@
 #include "iundo.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "selectionlib.h"
@@ -40,7 +40,7 @@ namespace {
 }
 
 StimResponseEditor::StimResponseEditor() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
 	_responseEditor(getWindow(), _stimTypes),
@@ -240,7 +240,7 @@ void StimResponseEditor::showDialog(const cmd::ArgumentList& args) {
 	}
 	else {
 		// Exactly one entity must be selected.
-		gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

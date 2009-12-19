@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 
 #include "ieclass.h"
+#include "imainframe.h"
 #include "selectionlib.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -25,7 +26,7 @@ namespace ui {
 	}
 
 EClassTree::EClassTree() :
-	gtkutil::BlockingTransientWindow(ECLASSTREE_TITLE, GlobalRadiant().getMainWindow())
+	gtkutil::BlockingTransientWindow(ECLASSTREE_TITLE, GlobalMainFrame().getTopLevelWindow())
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);

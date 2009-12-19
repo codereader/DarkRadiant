@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
 #include "selectionlib.h"
 #include "string/string.h"
 
@@ -45,7 +46,7 @@ namespace ui {
 	}
 
 TransformDialog::TransformDialog() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Set the default border width in accordance to the HIG

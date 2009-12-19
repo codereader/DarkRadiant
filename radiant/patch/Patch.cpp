@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 #include "shaderlib.h"
 #include "irenderable.h"
 #include "itextstream.h"
@@ -1662,7 +1663,7 @@ void Patch::pasteTextureNatural(const Face* face) {
 
 		if (widthVector.getLength() == 0.0f || heightVector.getLength() == 0.0f) {
 			gtkutil::errorDialog("Sorry. Patch is not suitable for this kind of operation.",
-								 GlobalRadiant().getMainWindow());
+								 GlobalMainFrame().getTopLevelWindow());
 			return;
 		}
 		

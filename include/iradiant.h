@@ -87,10 +87,6 @@ class IRadiant :
 	public RegisterableModule
 {
 public:
-	/** Return the main application GtkWindow.
-	 */
-	virtual GtkWindow* getMainWindow() = 0;
-	
 	// Returns the Counter object of the given type
 	virtual ICounter& getCounter(CounterType counter) = 0;
 	

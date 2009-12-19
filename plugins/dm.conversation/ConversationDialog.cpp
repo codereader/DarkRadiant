@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "iundo.h"
 #include "ieclass.h"
+#include "imainframe.h"
 #include "iscenegraph.h"
 #include "string/string.h"
 
@@ -45,7 +46,7 @@ namespace {
 }
 
 ConversationDialog::ConversationDialog() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_convEntityList(gtk_list_store_new(2, 
   									  G_TYPE_STRING, 		// display text
   									  G_TYPE_STRING)),		// entity name
@@ -359,7 +360,7 @@ void ConversationDialog::onAddEntity(GtkWidget* w, ConversationDialog* self) {
         gtkutil::errorDialog(
             std::string("Unable to create conversation Entity: class '")
                 + CONVERSATION_ENTITY_CLASS + "' not found.",
-            GlobalRadiant().getMainWindow()
+            GlobalMainFrame().getTopLevelWindow()
         );
     }
 }

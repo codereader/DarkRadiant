@@ -1,7 +1,7 @@
 #include "FindShader.h"
 
 #include "ieventmanager.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 
 #include "gtkutil/LeftAlignedLabel.h"
@@ -32,7 +32,7 @@ namespace ui {
 	}
 
 FindAndReplaceShader::FindAndReplaceShader() :
-	gtkutil::BlockingTransientWindow(FINDDLG_WINDOW_TITLE, GlobalRadiant().getMainWindow())
+	gtkutil::BlockingTransientWindow(FINDDLG_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
 {
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), FINDDLG_DEFAULT_SIZE_X, FINDDLG_DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);

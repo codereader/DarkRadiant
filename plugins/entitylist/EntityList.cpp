@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iregistry.h"
+#include "imainframe.h"
 #include "nameable.h"
 #include <gtk/gtk.h>
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -23,7 +24,7 @@ namespace ui {
 	}
 
 EntityList::EntityList() : 
-	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
 	_callbackActive(false)
 {
 	// Set the default border width in accordance to the HIG

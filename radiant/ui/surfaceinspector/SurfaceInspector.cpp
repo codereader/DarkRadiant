@@ -5,6 +5,7 @@
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/IconTextButton.h"
@@ -82,7 +83,7 @@ namespace ui {
 	}
 
 SurfaceInspector::SurfaceInspector() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
   _callbackActive(false),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {

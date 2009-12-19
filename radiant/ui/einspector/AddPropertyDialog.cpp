@@ -7,7 +7,7 @@
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/IconTextColumn.h"
 
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "ieclass.h"
@@ -54,7 +54,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
 
 	if (!GTK_IS_WINDOW(parent) || !GTK_WIDGET_VISIBLE(parent))
 	{
-		parent = GlobalRadiant().getMainWindow();
+		parent = GlobalMainFrame().getTopLevelWindow();
 	}
 	
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);

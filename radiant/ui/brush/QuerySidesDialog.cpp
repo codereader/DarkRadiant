@@ -1,6 +1,6 @@
 #include "QuerySidesDialog.h"
 
-#include "iradiant.h"
+#include "imainframe.h"
 
 #include <gtk/gtkvbox.h>
 #include <gtk/gtkhbox.h>
@@ -18,7 +18,7 @@ namespace ui
 	}
 
 QuerySidesDialog::QuerySidesDialog(int numSidesMin, int numSidesMax) :
-	BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
+	BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_entry(NULL),
 	_result(NUM_RESULTS),
 	_numSides(-1),

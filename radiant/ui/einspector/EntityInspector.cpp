@@ -8,6 +8,7 @@
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
+#include "imainframe.h"
 
 #include "modulesystem/StaticModule.h"
 #include "selectionlib.h"
@@ -626,7 +627,7 @@ void EntityInspector::applyKeyValueToSelection(const std::string& key, const std
             {
 				// name exists, cancel the change
 				gtkutil::errorDialog("The name " + val + " already exists in this map!",
-					GlobalRadiant().getMainWindow());
+					GlobalMainFrame().getTopLevelWindow());
 				return;
 			}
 		}

@@ -2,6 +2,7 @@
 #include "EntityClassTreePopulator.h"
 
 #include "iregistry.h"
+#include "imainframe.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -81,7 +82,7 @@ EntityClassChooser::EntityClassChooser()
   _selectedName(""),
   _modelPreview(GlobalRadiant().createModelPreview())
 {
-	GtkWindow* mainWindow = GlobalRadiant().getMainWindow();
+	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), mainWindow);
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);

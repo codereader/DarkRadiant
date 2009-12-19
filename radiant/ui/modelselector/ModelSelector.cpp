@@ -10,6 +10,7 @@
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "iregistry.h"
+#include "imainframe.h"
 
 #include <cstdlib>
 #include <cmath>
@@ -82,7 +83,7 @@ ModelSelector::ModelSelector()
 	);
 
 	// Window properties
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), MODELSELECTOR_TITLE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
