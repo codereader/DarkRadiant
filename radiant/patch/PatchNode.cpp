@@ -270,7 +270,7 @@ scene::INodePtr PatchNode::clone() const {
 void PatchNode::onInsertIntoScene()
 {
 	m_patch.instanceAttach(scene::findMapFile(getSelf()));
-	GlobalRadiant().getCounter(counterPatches).increment();
+	GlobalCounters().getCounter(counterPatches).increment();
 
 	Node::onInsertIntoScene();
 }
@@ -283,7 +283,7 @@ void PatchNode::onRemoveFromScene()
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);
 
-	GlobalRadiant().getCounter(counterPatches).decrement();
+	GlobalCounters().getCounter(counterPatches).decrement();
 
 	m_patch.instanceDetach(scene::findMapFile(getSelf()));
 

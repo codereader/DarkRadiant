@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_PLUGIN_H)
 #define INCLUDED_PLUGIN_H
 
-#include "map/CounterManager.h"
 #include "iradiant.h"
 
 namespace radiant {
@@ -33,18 +32,14 @@ namespace radiant {
 class RadiantModule :
 	public IRadiant
 {
-	map::CounterManager _counters;
-	
 	typedef std::set<RadiantEventListenerWeakPtr> EventListenerList;
 	EventListenerList _eventListeners;
 
 public:
-	virtual ICounter& getCounter(CounterType counter);
+	ui::IModelPreviewPtr createModelPreview();
 	
-	virtual ui::IModelPreviewPtr createModelPreview();
-	
-	virtual void addEventListener(RadiantEventListenerPtr listener);
-	virtual void removeEventListener(RadiantEventListenerPtr listener);
+	void addEventListener(RadiantEventListenerPtr listener);
+	void removeEventListener(RadiantEventListenerPtr listener);
 	
 	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
 	void broadcastShutdownEvent();
@@ -53,13 +48,10 @@ public:
 	void broadcastStartupEvent();
 	
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	
-	virtual const StringSet& getDependencies() const;
-	
-	virtual void initialiseModule(const ApplicationContext& ctx);
-	
-	virtual void shutdownModule();
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+	void shutdownModule();
 };
 typedef boost::shared_ptr<RadiantModule> RadiantModulePtr;
 
