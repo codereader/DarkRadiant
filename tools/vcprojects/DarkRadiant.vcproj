@@ -831,6 +831,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\CounterManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\CounterManager.h"
 					>
 				</File>

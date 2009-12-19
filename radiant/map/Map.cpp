@@ -436,9 +436,9 @@ void Map::load(const std::string& filename) {
 	globalOutputStream() << "--- LoadMapFile ---\n";
 	globalOutputStream() << m_name << "\n";
   
-	globalOutputStream() << GlobalRadiant().getCounter(counterBrushes).get() << " brushes\n";
-	globalOutputStream() << GlobalRadiant().getCounter(counterPatches).get() << " patches\n";
-	globalOutputStream() << GlobalRadiant().getCounter(counterEntities).get() << " entities\n";
+	globalOutputStream() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
+	globalOutputStream() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
+	globalOutputStream() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
 
 	// Move the view to a start position
 	gotoStartPosition();

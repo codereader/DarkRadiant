@@ -107,7 +107,7 @@ void Doom3Entity::forEachKeyValue_instanceDetach(MapFile* map) {
 }
 
 void Doom3Entity::instanceAttach(MapFile* map) {
-	GlobalRadiant().getCounter(counterEntities).increment();
+	GlobalCounters().getCounter(counterEntities).increment();
 	
 	_instanced = true;
 	forEachKeyValue_instanceAttach(map);
@@ -115,7 +115,7 @@ void Doom3Entity::instanceAttach(MapFile* map) {
 }
 
 void Doom3Entity::instanceDetach(MapFile* map) {
-	GlobalRadiant().getCounter(counterEntities).decrement();
+	GlobalCounters().getCounter(counterEntities).decrement();
 
 	_undo.instanceDetach(map);
 	forEachKeyValue_instanceDetach(map);

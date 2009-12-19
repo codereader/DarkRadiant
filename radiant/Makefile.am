@@ -184,6 +184,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapFileManager.cpp \
 					  map/MapFileChooserPreview.cpp \
 					  map/algorithm/Traverse.cpp \
+					  map/CounterManager.cpp \
 					  map/RegionManager.cpp \
 					  map/PointFile.cpp \
 					  map/MapPositionManager.cpp \

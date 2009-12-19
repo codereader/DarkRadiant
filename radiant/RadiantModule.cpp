@@ -47,13 +47,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "mainframe_old.h"
 
-namespace radiant {
+namespace radiant
+{
 
-ICounter& RadiantModule::getCounter(CounterType counter) {
-	// Pass the call to the helper class
-	return _counters.get(counter);
-}
-	
 ui::IModelPreviewPtr RadiantModule::createModelPreview()
 {
 	return ui::IModelPreviewPtr(new ui::ModelPreview);
@@ -157,8 +153,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     GlobalTextureBrowser().construct();
     Entity_Construct();
     map::AutoSaver().init();
-
-	_counters.init();
 }
 
 void RadiantModule::shutdownModule() {

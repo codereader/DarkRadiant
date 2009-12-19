@@ -252,14 +252,14 @@ void BrushNode::onInsertIntoScene()
 	setSelectedComponents(false, SelectionSystem::eFace);
 
 	m_brush.instanceAttach(scene::findMapFile(getSelf()));
-	GlobalRadiant().getCounter(counterBrushes).increment();
+	GlobalCounters().getCounter(counterBrushes).increment();
 
 	Node::onInsertIntoScene();
 }
 
 void BrushNode::onRemoveFromScene()
 {
-	GlobalRadiant().getCounter(counterBrushes).decrement();
+	GlobalCounters().getCounter(counterBrushes).decrement();
 	m_brush.instanceDetach(scene::findMapFile(getSelf()));
 
 	Node::onRemoveFromScene();
