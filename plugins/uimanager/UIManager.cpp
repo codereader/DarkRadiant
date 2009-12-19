@@ -139,6 +139,13 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 	_shutdownListener = UIManagerShutdownListenerPtr(new UIManagerShutdownListener(*this));
 	GlobalRadiant().addEventListener(_shutdownListener);
+
+	// Add the statusbar command text item
+	_statusBarManager.addTextElement(
+		STATUSBAR_COMMAND, 
+		"",  // no icon
+		IStatusBarManager::POS_COMMAND
+	);
 }
 
 void UIManager::shutdownModule()

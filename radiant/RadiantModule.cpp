@@ -141,7 +141,6 @@ const StringSet& RadiantModule::getDependencies() const {
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_CLIPPER);
-		_dependencies.insert(MODULE_UIMANAGER);
 	}
 	
 	return _dependencies;
@@ -164,13 +163,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     GlobalTextureBrowser().construct();
     Entity_Construct();
     map::AutoSaver().init();
-
-	// Add the statusbar command text item
-	GlobalUIManager().getStatusBarManager().addTextElement(
-		STATUSBAR_COMMAND, 
-		"",  // no icon
-		IStatusBarManager::POS_COMMAND
-	);
 
 	_counters.init();
 }
