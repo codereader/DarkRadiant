@@ -66,12 +66,8 @@ ICounter& RadiantModule::getCounter(CounterType counter) {
 	return _counters.get(counter);
 }
 	
-void RadiantModule::setStatusText(const std::string& statusText) {
-	// Pass the call
-	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
-}
-	
-void RadiantModule::updateAllWindows() {
+void RadiantModule::updateAllWindows()
+{
 	GlobalCamera().update();
 	GlobalXYWnd().updateAllViews();
 }

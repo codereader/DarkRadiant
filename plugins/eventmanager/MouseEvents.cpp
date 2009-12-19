@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "iselection.h"
 
 #include "gdk/gdkkeys.h"
@@ -571,7 +571,8 @@ std::string MouseEventManager::getShortButtonName(const std::string& longName) {
 	} 
 }
 
-void MouseEventManager::updateStatusText(GdkEventKey* event) {
+void MouseEventManager::updateStatusText(GdkEventKey* event)
+{
 	_activeFlags = _modifiers.getKeyboardFlags(event->state);
 	
 	std::string statusText("");
@@ -600,5 +601,6 @@ void MouseEventManager::updateStatusText(GdkEventKey* event) {
 		}
 	}
 	
-	GlobalRadiant().setStatusText(statusText);
+	// Pass the call
+	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }

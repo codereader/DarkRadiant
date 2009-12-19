@@ -49,8 +49,6 @@ public:
 	
 	virtual ICounter& getCounter(CounterType counter);
 	
-	virtual void setStatusText(const std::string& statusText);
-	
 	virtual void updateAllWindows();
 
 	virtual ui::IModelPreviewPtr createModelPreview();
