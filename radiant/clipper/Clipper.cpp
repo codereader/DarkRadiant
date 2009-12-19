@@ -1,9 +1,9 @@
 #include "Clipper.h"
 
-#include "iradiant.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 #include "iundo.h"
+#include "imainframe.h"
 #include "ieventmanager.h"
 #include "iscenegraph.h"
 #include "iselection.h"
@@ -137,7 +137,7 @@ void Clipper::splitBrushes(const Vector3& p0,
 	Vector3 planePoints[3] = {p0, p1, p2};
 	
 	brush::algorithm::splitBrushesByPlane(planePoints, shader, split);
-	GlobalRadiant().updateAllWindows();
+	GlobalMainFrame().updateAllWindows();
 }
 
 void Clipper::setClipPlane(const Plane3& plane) {
@@ -160,13 +160,13 @@ void Clipper::update() {
 		}
 		setClipPlane(Plane3(planepts));
 	}
-	GlobalRadiant().updateAllWindows();
+	GlobalMainFrame().updateAllWindows();
 }
 
 void Clipper::flipClip() {
 	_switch = !_switch;
 	update();
-	GlobalRadiant().updateAllWindows();
+	GlobalMainFrame().updateAllWindows();
 }
 
 void Clipper::reset() {
@@ -251,10 +251,10 @@ const StringSet& Clipper::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_RADIANT);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;

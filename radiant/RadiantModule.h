@@ -41,8 +41,6 @@ class RadiantModule :
 public:
 	virtual ICounter& getCounter(CounterType counter);
 	
-	virtual void updateAllWindows();
-
 	virtual ui::IModelPreviewPtr createModelPreview();
 	
 	virtual void addEventListener(RadiantEventListenerPtr listener);

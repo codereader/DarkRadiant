@@ -288,7 +288,7 @@ void ColourSchemeEditor::updateColourSelectors() {
 
 void ColourSchemeEditor::updateWindows() {
 	// Call the update, so all colours can be previewed
-	GlobalRadiant().updateAllWindows();
+	GlobalMainFrame().updateAllWindows();
 	GlobalBrushCreator().clipperColourChanged();
 	SceneChangeNotify();
 }

@@ -1,6 +1,6 @@
 #include "EntitySettings.h"
 
-#include "iradiant.h"
+#include "imainframe.h"
 
 namespace entity {
 
@@ -59,7 +59,7 @@ void EntitySettings::keyChanged(const std::string& key, const std::string& value
 	}
 
 	// Redraw the scene
-	GlobalRadiant().updateAllWindows();
+	GlobalMainFrame().updateAllWindows();
 }
 
 } // namespace entity
