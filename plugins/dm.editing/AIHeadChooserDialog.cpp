@@ -1,5 +1,6 @@
 #include "AIHeadChooserDialog.h"
 
+#include "imainframe.h"
 #include "iradiant.h"
 #include "ieclass.h"
 
@@ -35,7 +36,7 @@ namespace ui
 	}
 
 AIHeadChooserDialog::AIHeadChooserDialog() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_headStore(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING)),
 	_result(RESULT_CANCEL)
 {
@@ -46,7 +47,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-	GtkWindow* mainWindow = GlobalRadiant().getMainWindow();
+	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
 
 	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
 	gtk_window_set_default_size(

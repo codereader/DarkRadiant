@@ -2,7 +2,7 @@
 
 #include <gtk/gtk.h>
 #include "iregistry.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -18,7 +18,7 @@ namespace ui {
 	}
 
 GroupDialog::GroupDialog() : 
-	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
 	_currentPage(0)
 {
 	// Create all the widgets and pack them into the window

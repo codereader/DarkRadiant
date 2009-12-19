@@ -1,7 +1,7 @@
 #include "DialogManager.h"
 
 #include "itextstream.h"
-#include "iradiant.h"
+#include "imainframe.h"
 
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/FileChooser.h"
@@ -25,7 +25,7 @@ IDialogPtr DialogManager::createDialog(const std::string& title, GtkWindow* pare
 
 	if (parent == NULL)
 	{
-		parent = GlobalRadiant().getMainWindow();
+		parent = GlobalMainFrame().getTopLevelWindow();
 	}
 
 	// Allocate a new dialog
@@ -46,7 +46,7 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 	// Use the main window if no parent specified
 	if (parent == NULL)
 	{
-		parent = GlobalRadiant().getMainWindow();
+		parent = GlobalMainFrame().getTopLevelWindow();
 	}
 
 	// Allocate a new dialog
@@ -62,7 +62,7 @@ IFileChooserPtr DialogManager::createFileChooser(const std::string& title,
 	bool open, bool browseFolders, const std::string& pattern, const std::string& defaultExt)
 {
 	return IFileChooserPtr(new gtkutil::FileChooser(
-		GTK_WIDGET(GlobalRadiant().getMainWindow()),
+		GTK_WIDGET(GlobalMainFrame().getTopLevelWindow()),
 		title, open, browseFolders, pattern, defaultExt));
 }
 

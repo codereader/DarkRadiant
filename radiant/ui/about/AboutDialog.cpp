@@ -3,7 +3,7 @@
 #include <gtk/gtk.h>
 #include "igl.h"
 #include "iregistry.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "version.h"
 #include "string/string.h"
@@ -20,7 +20,7 @@ namespace ui {
 	}
 
 AboutDialog::AboutDialog() :
-	BlockingTransientWindow(CMDLISTDLG_WINDOW_TITLE, GlobalRadiant().getMainWindow())
+	BlockingTransientWindow(CMDLISTDLG_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);

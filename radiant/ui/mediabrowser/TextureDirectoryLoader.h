@@ -1,7 +1,7 @@
 #ifndef TEXTUREDIRECTORYLOADER_H_
 #define TEXTUREDIRECTORYLOADER_H_
 
-#include "iradiant.h"
+#include "imainframe.h"
 #include "ishaders.h"
 
 #include "gtkutil/ModalProgressDialog.h"
@@ -34,7 +34,7 @@ public:
 	// Constructor sets the directory to search
 	TextureDirectoryLoader(const std::string& directory)
 	: _searchDir(directory + "/"),
-	  _dialog(GlobalRadiant().getMainWindow(), "Loading textures"),
+	  _dialog(GlobalMainFrame().getTopLevelWindow(), "Loading textures"),
      _evLimiter(100)
 	{}
 	

@@ -4,6 +4,7 @@
 
 #include "RadiantModule.h"
 #include "iuimanager.h"
+#include "idialogmanager.h"
 #include "igroupdialog.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
@@ -177,19 +178,15 @@ GtkWindow* MainFrame::createTopLevelWindow()
 	{
 		GlobalEventManager().disconnect(GTK_OBJECT(_window));
 
-		// Clear the module as well
-		radiant::getGlobalRadiant()->setMainWindow(NULL);
-
 		gtk_widget_hide(GTK_WIDGET(_window));
 		gtk_widget_destroy(GTK_WIDGET(_window));
+
+		_window = NULL;
 	}
 
 	// Create a new window
 	_window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 	
-	// Let the radiant module know about the new toplevel
-	radiant::getGlobalRadiant()->setMainWindow(_window);
-
 	// Tell the XYManager which window the xyviews should be transient for
 	GlobalXYWnd().setGlobalParentWindow(_window);
 

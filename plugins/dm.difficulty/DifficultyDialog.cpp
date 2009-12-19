@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "iundo.h"
+#include "imainframe.h"
 #include "iscenegraph.h"
 #include "string/string.h"
 #include "gtkutil/RightAlignment.h"
@@ -20,7 +21,7 @@ namespace {
 }
 
 DifficultyDialog::DifficultyDialog() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow())
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
 {
 	// Load the settings
 	_settingsManager.loadSettings();

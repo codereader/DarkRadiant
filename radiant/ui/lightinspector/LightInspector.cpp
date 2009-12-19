@@ -6,6 +6,8 @@
 #include "ishaders.h"
 #include "iregistry.h"
 #include "iuimanager.h"
+#include "iradiant.h"
+#include "imainframe.h"
 
 #include "scenelib.h"
 #include "gtkutil/IconTextButton.h"
@@ -62,7 +64,7 @@ namespace {
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector() 
-: gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, GlobalRadiant().getMainWindow(), true),
+: gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
   _isProjected(false),
   _texSelector(this, getPrefixList(), true),
   _updateActive(false)

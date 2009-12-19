@@ -3,7 +3,7 @@
 
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/ModalProgressDialog.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "EventRateLimiter.h"
 
 #include "string/string.h"
@@ -44,7 +44,7 @@ public:
 	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) : 
 		_populator(pop),
 		_populator2(pop2),
-		_progress(GlobalRadiant().getMainWindow(), "Loading models"),
+		_progress(GlobalMainFrame().getTopLevelWindow(), "Loading models"),
 		_count(0),
 		_evLimiter(50)
 	{

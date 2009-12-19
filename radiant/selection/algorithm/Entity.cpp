@@ -1,7 +1,7 @@
 #include "Entity.h"
 
 #include "selectionlib.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "entitylib.h"
@@ -51,7 +51,7 @@ public:
 				_entities.insert(node);
 			}
 			else {
-				gtkutil::errorDialog("Cannot change classname of worldspawn entity.", GlobalRadiant().getMainWindow());
+				gtkutil::errorDialog("Cannot change classname of worldspawn entity.", GlobalMainFrame().getTopLevelWindow());
 			}
 		}
 	}
@@ -93,12 +93,12 @@ void bindEntities(const cmd::ArgumentList& args) {
 		}
 		else {
 			gtkutil::errorDialog("Critical: Cannot find selected entities.",
-				GlobalRadiant().getMainWindow());
+				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
 		gtkutil::errorDialog("Exactly two entities must be selected.",
-			GlobalRadiant().getMainWindow());
+			GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

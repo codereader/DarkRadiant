@@ -1,7 +1,7 @@
 #include "SkinChooser.h"
 
-#include "iradiant.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 #include "modelskin.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -41,7 +41,7 @@ SkinChooser::SkinChooser()
   _preview(new ModelPreview)
 {
 	// Set up window
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalRadiant().getMainWindow());
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), WINDOW_TITLE.c_str());

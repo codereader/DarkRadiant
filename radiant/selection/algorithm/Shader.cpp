@@ -1,5 +1,6 @@
 #include "Shader.h"
 
+#include "imainframe.h"
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
@@ -302,7 +303,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	
 	if (target.isPatch() && entireBrush) {
 		gtkutil::errorDialog("Can't paste shader to entire brush.\nTarget is not a brush.",
-			GlobalRadiant().getMainWindow());
+			GlobalMainFrame().getTopLevelWindow());
 	}
 	else {
 		// Pass the call to the algorithm function taking care of all the IFs
@@ -337,19 +338,19 @@ void pasteTextureCoords(SelectionTest& test) {
 		}
 		else {
 			gtkutil::errorDialog("Can't paste Texture Coordinates.\nTarget patch dimensions must match.",
-					GlobalRadiant().getMainWindow());
+					GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
 		if (source.isPatch()) {
 		 	// Nothing to do, this works for patches only
 		 	gtkutil::errorDialog("Can't paste Texture Coordinates from patches to faces.",
-							 GlobalRadiant().getMainWindow());
+							 GlobalMainFrame().getTopLevelWindow());
 		}
 		else {
 			// Nothing to do, this works for patches only
 		 	gtkutil::errorDialog("Can't paste Texture Coordinates from faces.",
-							 GlobalRadiant().getMainWindow());
+							 GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	
@@ -371,7 +372,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 		}
 		catch (InvalidSelectionException e) {
 			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve patch.",
-		 		GlobalRadiant().getMainWindow());
+		 		GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else if (selectedFaceCount() == 1) {
@@ -381,13 +382,13 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 		}
 		catch (InvalidSelectionException e) {
 			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve face.",
-		 		GlobalRadiant().getMainWindow());
+		 		GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
 		// Nothing to do, this works for patches only
 		gtkutil::errorDialog("Can't copy Shader. Please select a single face or patch.",
-			 GlobalRadiant().getMainWindow());
+			 GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

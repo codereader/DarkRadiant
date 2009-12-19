@@ -1,7 +1,7 @@
 #include "MediaBrowser.h"
 #include "TextureDirectoryLoader.h"
 
-#include "iradiant.h"
+#include "imainframe.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
@@ -397,7 +397,7 @@ void MediaBrowser::_onShowShaderDefinition()
 	ShaderDefinitionView view;
 	view.setShader(shaderName);
 
-	GtkWidget* dialog = gtk_dialog_new_with_buttons("View Shader Definition", GlobalRadiant().getMainWindow(),
+	GtkWidget* dialog = gtk_dialog_new_with_buttons("View Shader Definition", GlobalMainFrame().getTopLevelWindow(),
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
                                          NULL);
@@ -406,7 +406,7 @@ void MediaBrowser::_onShowShaderDefinition()
 
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), view.getWidget());
 
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalRadiant().getMainWindow());
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 	gtk_window_set_default_size(
 		GTK_WINDOW(dialog), gint(rect.width/2), gint(2*rect.height/3)
 	);

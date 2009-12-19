@@ -2,7 +2,7 @@
 
 #include "icurve.h"
 #include "iundo.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "gtkutil/dialog.h"
 #include "selectionlib.h"
 
@@ -105,7 +105,7 @@ void appendCurveControlPoint(const cmd::ArgumentList& args) {
 	else {
 		gtkutil::errorDialog(
 			"Can't append curve point - no entities with curve selected.", 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
 }
@@ -116,7 +116,7 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 	{
 		gtkutil::errorDialog(
 			"Can't remove curve points - must be in vertex editing mode.", 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 		return;
 	}
@@ -137,7 +137,7 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 	else {
 		gtkutil::errorDialog(
 			"Can't remove curve points - no entities with curves selected.", 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
 }
@@ -148,7 +148,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 	{
 		gtkutil::errorDialog(
 			"Can't insert curve points - must be in vertex editing mode.", 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 		return;
 	}
@@ -169,7 +169,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 	else {
 		gtkutil::errorDialog(
 			"Can't insert curve points - no entities with curves selected.", 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
 }
@@ -191,7 +191,7 @@ void convertCurveTypes(const cmd::ArgumentList& args) {
 	else {
 		gtkutil::errorDialog(
 			"Can't convert curves - no entities with curves selected.", 
-			GlobalRadiant().getMainWindow()
+			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
 }

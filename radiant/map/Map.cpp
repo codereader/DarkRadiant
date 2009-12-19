@@ -11,6 +11,7 @@
 #include "ifilter.h"
 #include "icounter.h"
 #include "iradiant.h"
+#include "imainframe.h"
 #include "imapresource.h"
 
 #include "stream/textfilestream.h"
@@ -206,7 +207,7 @@ void Map::updateTitle() {
 		title += " *";
 	}
 
-	gtk_window_set_title(GlobalRadiant().getMainWindow(), title.c_str());
+	gtk_window_set_title(GlobalMainFrame().getTopLevelWindow(), title.c_str());
 }
 
 void Map::setMapName(const std::string& newName) {

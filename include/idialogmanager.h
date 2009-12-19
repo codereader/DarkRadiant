@@ -91,7 +91,7 @@ public:
 	 * @title: The string displayed on the dialog's window bar.
 	 * @type: the dialog type to create, determines e.g. which buttons are shown.
 	 * @parent: optional top-level widget this dialog should be parented to, defaults to
-	 *			GlobalRadiant().getMainWindow().
+	 *			GlobalMainFrame().getMainWindow().
 	 */
 	virtual IDialogPtr createDialog(const std::string& title, GtkWindow* parent = NULL) = 0;
 
@@ -104,7 +104,7 @@ public:
 	 * @text: The text/question to be displayed.
 	 * @type: the message type this dialog represents.
 	 * @parent: optional top-level widget this dialog should be parented to, defaults to
-	 *			GlobalRadiant().getMainWindow().
+	 *			GlobalMainFrame().getMainWindow().
 	 */
 	virtual IDialogPtr createMessageBox(const std::string& title, const std::string& text, 
 										IDialog::MessageType type, GtkWindow* parent = NULL) = 0;

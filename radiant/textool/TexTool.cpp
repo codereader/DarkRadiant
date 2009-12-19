@@ -2,6 +2,7 @@
 
 #include "ieventmanager.h"
 #include "iregistry.h"
+#include "imainframe.h"
 #include "igl.h"
 #include "iundo.h"
 #include "iuimanager.h"
@@ -47,7 +48,7 @@ namespace ui {
 	}
 
 TexTool::TexTool() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
   _glWidget(true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _zoomFactor(DEFAULT_ZOOM_FACTOR),

@@ -2,6 +2,7 @@
 
 #include "imap.h"
 #include "iradiant.h"
+#include "imainframe.h"
 #include "iregistry.h"
 #include "ieclass.h"
 #include "string/string.h"
@@ -47,7 +48,7 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
    {
 		_dialog = gtkutil::ModalProgressDialogPtr(
 			new gtkutil::ModalProgressDialog(
-            GlobalRadiant().getMainWindow(), "Loading map"
+            GlobalMainFrame().getTopLevelWindow(), "Loading map"
          )
 		);
 	}
@@ -74,7 +75,7 @@ bool NodeImporter::parse() {
 			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) 
          {
 				gtkutil::errorDialog(
-               "Map loading cancelled", GlobalRadiant().getMainWindow()
+               "Map loading cancelled", GlobalMainFrame().getTopLevelWindow()
             );
 
 				// Clear out the root node, otherwise we end up with half a map
@@ -93,7 +94,7 @@ bool NodeImporter::parse() {
 		catch (std::runtime_error e) {
 			gtkutil::errorDialog(
 				"Failed on entity " + sizetToStr(_entityCount) + "\n\n" + e.what(), 
-				GlobalRadiant().getMainWindow()
+				GlobalMainFrame().getTopLevelWindow()
 			);
 
 			// Clear out the root node, otherwise we end up with half a map

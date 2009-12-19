@@ -4,6 +4,7 @@
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -46,7 +47,7 @@ namespace ui {
 	}
 
 PatchInspector::PatchInspector() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalRadiant().getMainWindow(), true),
+: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _patchRows(0),
   _patchCols(0),

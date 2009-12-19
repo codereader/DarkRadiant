@@ -2,7 +2,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include "iradiant.h"
+#include "imainframe.h"
 #include "string/string.h"
 
 namespace {
@@ -18,7 +18,7 @@ namespace ui {
 BulgePatchDialog::BulgePatchDialog() :
 	_dialog(NULL)
 {
-	GtkWindow* parent = GlobalRadiant().getMainWindow();
+	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create the new dialog window with OK and CANCEL button    
   	_dialog = gtk_dialog_new_with_buttons(WINDOW_TITLE, parent,

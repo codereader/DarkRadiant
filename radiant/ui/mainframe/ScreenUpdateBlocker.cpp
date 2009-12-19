@@ -8,7 +8,7 @@
 namespace ui {
 
 ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::string& message) :
-	TransientWindow(title, GlobalRadiant().getMainWindow()),
+	TransientWindow(title, GlobalMainFrame().getTopLevelWindow()),
 	_grabbedFocus(false),
 	_focusHandler(0)
 {
@@ -48,7 +48,7 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	// Register for the "is-active" changed event, to display this dialog
 	// as soon as Radiant is getting the focus again
 	_focusHandler = g_signal_connect(
-		G_OBJECT(GlobalRadiant().getMainWindow()), 
+		G_OBJECT(GlobalMainFrame().getTopLevelWindow()), 
 		"notify::is-active", 
 		G_CALLBACK(onMainWindowFocus), 
 		this
@@ -58,7 +58,7 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 ScreenUpdateBlocker::~ScreenUpdateBlocker() {
 	// Remove the signal handler again
 	if (_focusHandler != 0) {
-		g_signal_handler_disconnect(G_OBJECT(GlobalRadiant().getMainWindow()), _focusHandler);
+		g_signal_handler_disconnect(G_OBJECT(GlobalMainFrame().getTopLevelWindow()), _focusHandler);
 	}
 
 	// Remove the event blocker, if appropriate

@@ -1,6 +1,6 @@
 #include "PatchCreateDialog.h"
 
-#include "iradiant.h"
+#include "imainframe.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "gtkutil/ComboBox.h"
@@ -23,7 +23,7 @@ namespace {
 namespace ui {
 
 PatchCreateDialog::PatchCreateDialog() :
-	_parent(GlobalRadiant().getMainWindow()),
+	_parent(GlobalMainFrame().getTopLevelWindow()),
 	_dialog(NULL)
 {
 	// Create the new dialog window with OK and CANCEL button    

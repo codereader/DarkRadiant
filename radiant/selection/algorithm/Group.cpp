@@ -2,6 +2,7 @@
 
 #include <set>
 #include "igroupnode.h"
+#include "imainframe.h"
 #include "itextstream.h"
 #include "selectionlib.h"
 #include "scenelib.h"
@@ -234,7 +235,7 @@ public:
 			gtkutil::errorDialog(
 				"failed - " + nodetype_get_name(type) + " cannot be parented to " + 
 				nodetype_get_name(contains) + " container.\n", 
-				GlobalRadiant().getMainWindow()
+				GlobalMainFrame().getTopLevelWindow()
 			);
 		}
 	}
@@ -258,7 +259,7 @@ void parentSelection(const cmd::ArgumentList& args) {
 		gtkutil::errorDialog("Cannot reparent primitives to entity. "
 							 "Please select at least one brush/patch and exactly one entity."
 							 "(The entity has to be selected last.)", 
-							 GlobalRadiant().getMainWindow());
+							 GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

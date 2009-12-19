@@ -2,8 +2,8 @@
 
 #include "iregistry.h"
 #include "ifiletypes.h"
+#include "imainframe.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include "iradiant.h"
 #include "gtkutil/FileChooser.h"
 #include "gtkutil/IConv.h"
 #include "os/path.h"
@@ -46,7 +46,7 @@ std::string MapFileManager::selectFile(bool open,
 	boost::algorithm::erase_all(defaultExt, "*");
 	
 	// Display a file chooser dialog to get a new path
-	gtkutil::FileChooser fileChooser(GTK_WIDGET(GlobalRadiant().getMainWindow()),
+	gtkutil::FileChooser fileChooser(GTK_WIDGET(GlobalMainFrame().getTopLevelWindow()),
 		title, open, false, type, defaultExt);
 
 	fileChooser.setCurrentFile(defaultFile);

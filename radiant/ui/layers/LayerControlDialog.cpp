@@ -6,6 +6,7 @@
 #include "ieventmanager.h"
 #include "ilayer.h"
 #include "iregistry.h"
+#include "imainframe.h"
 
 #include "gtkutil/dialog.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -21,7 +22,7 @@ namespace ui {
 	}
 
 LayerControlDialog::LayerControlDialog() :
-	PersistentTransientWindow("Layers", GlobalRadiant().getMainWindow(), true),
+	PersistentTransientWindow("Layers", GlobalMainFrame().getTopLevelWindow(), true),
 	_controlContainer(gtk_table_new(1, 3, FALSE))
 {
 	gtk_table_set_row_spacings(GTK_TABLE(_controlContainer), 3);
@@ -224,7 +225,7 @@ void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
 					"Enter Name", 
 					"Enter Layer Name", 
 					"",
-					GlobalRadiant().getMainWindow()
+					GlobalMainFrame().getTopLevelWindow()
 				);
 			}
 			catch (gtkutil::EntryAbortedException e) {
@@ -234,7 +235,7 @@ void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
 
 		if (layerName.empty()) {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog("Cannot create layer with empty name.", GlobalRadiant().getMainWindow());
+			gtkutil::errorDialog("Cannot create layer with empty name.", GlobalMainFrame().getTopLevelWindow());
 			continue;
 		}
 
@@ -248,7 +249,7 @@ void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
 		}
 		else {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog("This name already exists.", GlobalRadiant().getMainWindow());
+			gtkutil::errorDialog("This name already exists.", GlobalMainFrame().getTopLevelWindow());
 			continue; 
 		}
 	}

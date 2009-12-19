@@ -6,6 +6,7 @@
 #include "iundo.h"
 #include "igrid.h"
 #include "iradiant.h"
+#include "imainframe.h"
 #include "iregistry.h"
 #include "iselection.h"
 #include "scenelib.h"
@@ -300,7 +301,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 			"Note: be careful when using the CSG tool, as you might end up\n"
 			"with a unnecessary number of tiny brushes and/or leaks.\n"
 			"This popup will not be shown again.", ui::IDialog::MESSAGE_CONFIRM,
-			GlobalRadiant().getMainWindow());
+			GlobalMainFrame().getTopLevelWindow());
 		
 		box.run();
 
@@ -313,7 +314,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 	
 	if (brushes.empty()) {
 		globalOutputStream() << "CSG Subtract: No brushes selected.\n";
-		gtkutil::errorDialog("CSG Subtract: No brushes selected.", GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog("CSG Subtract: No brushes selected.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
@@ -423,13 +424,13 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 
 	if (brushes.empty()) {
 		globalOutputStream() << "CSG Merge: No brushes selected.\n";
-		gtkutil::errorDialog("CSG Merge: No brushes selected.", GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog("CSG Merge: No brushes selected.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
 	if (brushes.size() < 2) {
 		globalOutputStream() << "CSG Merge: At least two brushes have to be selected.\n";
-		gtkutil::errorDialog("CSG Merge: At least two brushes have to be selected.", GlobalRadiant().getMainWindow());
+		gtkutil::errorDialog("CSG Merge: At least two brushes have to be selected.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 

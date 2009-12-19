@@ -1,6 +1,6 @@
 #include "CapDialog.h"
 
-#include "iradiant.h"
+#include "imainframe.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -23,7 +23,7 @@ namespace
 }
 
 PatchCapDialog::PatchCapDialog() :
-	gtkutil::Dialog(WINDOW_TITLE, GlobalRadiant().getMainWindow()),
+	gtkutil::Dialog(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_radioButtonGroup(NULL)
 {
 	// Add a homogeneous hbox 

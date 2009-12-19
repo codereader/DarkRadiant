@@ -1,9 +1,10 @@
 #include "ColourSchemeEditor.h"
 #include "ColourSchemeManager.h"
 #include "iregistry.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "ibrush.h"
 #include "iscenegraph.h"
+#include "iradiant.h"
 
 #include <gtk/gtk.h>
 
@@ -19,7 +20,7 @@ namespace ui {
 	}
 
 ColourSchemeEditor::ColourSchemeEditor() :
-	BlockingTransientWindow(EDITOR_WINDOW_TITLE, GlobalRadiant().getMainWindow())
+	BlockingTransientWindow(EDITOR_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
 {	
     gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_default_size(GTK_WINDOW(getWindow()), EDITOR_DEFAULT_SIZE_X, EDITOR_DEFAULT_SIZE_Y);
