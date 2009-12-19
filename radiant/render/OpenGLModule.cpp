@@ -5,9 +5,15 @@
 #include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
 
+#include "gtkutil/GLWidget.h"
+#include <gtk/gtkwidget.h>
+#include <gtk/gtkglwidget.h>
+
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
-	_font(0, 0)
+	_font(0, 0),
+	_sharedContext(NULL),
+	_realisedGLWidgets(0)
 {
 	// Populate the error list
 	_errorList[GL_NO_ERROR] = "GL_NO_ERROR - no error";
@@ -19,7 +25,8 @@ OpenGLModule::OpenGLModule() :
 	_errorList[GL_OUT_OF_MEMORY] = "GL_OUT_OF_MEMORY - There is not enough memory left to execute the function.";
 }
 
-void OpenGLModule::assertNoErrors() {
+void OpenGLModule::assertNoErrors()
+{
 #ifdef _DEBUG
 	GLenum error = glGetError();
 	while (error != GL_NO_ERROR) {
@@ -37,7 +44,8 @@ void OpenGLModule::assertNoErrors() {
 #endif
 }
 
-void OpenGLModule::sharedContextCreated() {
+void OpenGLModule::sharedContextCreated()
+{
 	// report OpenGL information
 	globalOutputStream() << "GL_VENDOR: "
 		<< reinterpret_cast<const char*>(glGetString(GL_VENDOR)) << "\n";
@@ -63,8 +71,63 @@ void OpenGLModule::sharedContextCreated() {
 	m_fontHeight = _font.getPixelHeight();
 }
 	
-void OpenGLModule::sharedContextDestroyed() {
+void OpenGLModule::sharedContextDestroyed()
+{
 	GlobalRenderSystem().unrealise();
+}
+
+GtkWidget* OpenGLModule::getGLContextWidget()
+{
+	return _sharedContext;
+}
+
+GtkWidget* OpenGLModule::registerGLWidget(GtkWidget* widget)
+{
+	if (++_realisedGLWidgets == 1)
+	{
+		_sharedContext = widget;
+		gtk_widget_ref(_sharedContext);
+
+		// Create a context
+		gtkutil::GLWidget::makeCurrent(_sharedContext);
+
+#ifdef DEBUG_GL_WIDGETS
+        std::cout << "GLWidget: created shared context using ";
+
+        if (gdk_gl_context_is_direct(
+                gtk_widget_get_gl_context(_sharedContext)
+            ) == TRUE)
+        {
+            std::cout << "DIRECT rendering" << std::endl;
+        }
+        else
+        {
+            std::cout << "INDIRECT rendering" << std::endl;
+        }
+#endif
+
+		contextValid = true;
+
+		sharedContextCreated();
+	}
+
+	return _sharedContext;
+}
+
+void OpenGLModule::unregisterGLWidget(GtkWidget* widget)
+{
+	assert(_realisedGLWidgets > 0);
+
+	if (--_realisedGLWidgets == 0)
+	{
+		// This was the last active GL widget
+		contextValid = false;
+
+		sharedContextDestroyed();
+
+		gtk_widget_unref(_sharedContext);
+		_sharedContext = NULL;
+	}
 }
 
 void OpenGLModule::drawString(const std::string& string) const {

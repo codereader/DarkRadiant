@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imodule.h"
 
+typedef struct _GtkWidget GtkWidget;
+
 const std::string MODULE_OPENGL("OpenGL");
 
 class OpenGLBinding :
@@ -46,12 +48,19 @@ public:
 	/// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
 	virtual void assertNoErrors() = 0;
 	
-	// This is called by the gtkutil::GLWidget class, when at least one shared
-	// widget carrying the context exists
-	virtual void sharedContextCreated() = 0;
-	
-	// The counterpart of the above call
-	virtual void sharedContextDestroyed() = 0;
+	// Returns the shared context widget holding the GL context
+	virtual GtkWidget* getGLContextWidget() = 0;
+
+	/**
+	 * Registers a GL widget, which triggers GL context creation if necessary.
+	 *
+	 * @returns: the widget holding the GL context. This might be the same widget
+	 * as the one passed in the arguments.
+	 */
+	virtual GtkWidget* registerGLWidget(GtkWidget* widget) = 0;
+
+	// Notifies the GL module that a GLWidget has been destroyed
+	virtual void unregisterGLWidget(GtkWidget* widget) = 0;
 
 	GLuint m_font;
 	int m_fontHeight;

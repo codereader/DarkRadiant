@@ -234,10 +234,12 @@ gboolean GLWidget::onHierarchyChanged(GtkWidget* widget,
 		GdkGLConfig* glconfig = (self->_zBuffer) ? createGLConfigWithDepth() : createGLConfig();
 		assert(glconfig != NULL);
 
+		GtkWidget* context = GlobalOpenGL().getGLContextWidget();
+
 		gtk_widget_set_gl_capability(
 			widget, 
 			glconfig, 
-			_shared != NULL ? gtk_widget_get_gl_context(_shared) : NULL, 
+			context != NULL ? gtk_widget_get_gl_context(context) : NULL, 
 			TRUE, 
 			GDK_GL_RGBA_TYPE
 		);
@@ -250,47 +252,16 @@ gboolean GLWidget::onHierarchyChanged(GtkWidget* widget,
 
 gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) 
 {
-	if (++_realisedWidgets == 1) {
-		_shared = widget;
-		gtk_widget_ref(_shared);
-
-#ifdef DEBUG_GL_WIDGETS
-        std::cout << "GLWidget: created shared context using ";
-        if (gdk_gl_context_is_direct(
-                gtk_widget_get_gl_context(_shared)
-            ) == TRUE)
-        {
-            std::cout << "DIRECT rendering" << std::endl;
-        }
-        else
-        {
-            std::cout << "INDIRECT rendering" << std::endl;
-        }
-#endif
-
-		makeCurrent(_shared);
-		GlobalOpenGL().contextValid = true;
-
-		GlobalOpenGL().sharedContextCreated();
-	}
+	self->_context = GlobalOpenGL().registerGLWidget(widget);
 
 	return FALSE;
 }
 
-gint GLWidget::onUnRealise(GtkWidget* widget, GLWidget* self) {
-	if (--_realisedWidgets == 0) {
-		GlobalOpenGL().contextValid = false;
-
-		GlobalOpenGL().sharedContextDestroyed();
-
-		gtk_widget_unref(_shared);
-		_shared = NULL;
-	}
+gint GLWidget::onUnRealise(GtkWidget* widget, GLWidget* self)
+{
+	GlobalOpenGL().unregisterGLWidget(widget);
 
 	return FALSE;
 }
-
-GtkWidget* GLWidget::_shared = NULL;
-int GLWidget::_realisedWidgets = 0;
 
 } // namespace gtkutil

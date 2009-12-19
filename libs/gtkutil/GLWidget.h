@@ -40,13 +40,10 @@ class GLWidget
 
 	// TRUE, if this GL widget has depth-buffering enabled 
 	bool _zBuffer;
-	
-	// The (singleton) widget holding the context
-	static GtkWidget* _shared;
-	
-	// Holds the number of realised GL widgets
-	static int _realisedWidgets;
 
+	// (Shared) widget holding the context, managed in the OpenGLModule
+	GtkWidget* _context;
+	
 public:
 
 	// Constructor, pass TRUE to enable depth-buffering
