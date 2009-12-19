@@ -54,12 +54,6 @@ ICounter& RadiantModule::getCounter(CounterType counter) {
 	return _counters.get(counter);
 }
 	
-void RadiantModule::updateAllWindows()
-{
-	GlobalCamera().update();
-	GlobalXYWnd().updateAllViews();
-}
-
 ui::IModelPreviewPtr RadiantModule::createModelPreview()
 {
 	return ui::IModelPreviewPtr(new ui::ModelPreview);

@@ -90,8 +90,6 @@ public:
 	// Returns the Counter object of the given type
 	virtual ICounter& getCounter(CounterType counter) = 0;
 	
-	virtual void updateAllWindows() = 0;
-
 	// Creates a new model preview (GL view with draggable viewpoint, zoom and filter functionality)
 	virtual ui::IModelPreviewPtr createModelPreview() = 0;
 

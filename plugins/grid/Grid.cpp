@@ -6,7 +6,7 @@
 #include "debugging/debugging.h"
 #include "imodule.h"
 #include "icommandsystem.h"
-#include "iradiant.h"
+#include "imainframe.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "iuimanager.h"
@@ -40,7 +40,7 @@ public:
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_MAINFRAME);
 		}
 
 		return _dependencies;
@@ -210,7 +210,7 @@ public:
 		
 		gridChangeNotify();
 
-		GlobalRadiant().updateAllWindows();
+		GlobalMainFrame().updateAllWindows();
 	}
 
 }; // class GridManager
