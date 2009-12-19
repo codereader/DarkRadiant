@@ -91,7 +91,7 @@ void FilterDialog::save() {
 	GlobalFilterSystem().update();
 
 	// Re-build the filters menu
-	ui::FiltersMenu::addItems();
+	ui::FiltersMenu::addItemsToMainMenu();
 }
 
 void FilterDialog::loadFilters() {

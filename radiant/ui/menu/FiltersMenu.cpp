@@ -79,12 +79,13 @@ FiltersMenu::operator GtkWidget*() {
 }
 
 // Construct GTK widgets
-void FiltersMenu::addItems() {
+void FiltersMenu::addItemsToMainMenu()
+{
 	// Get the menu manager
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// remove any items first
-	removeItems();
+	removeItemsFromMainMenu();
 
 	// Create the toplevel menu item
 	menuManager.insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME, 
@@ -98,7 +99,8 @@ void FiltersMenu::addItems() {
 	menuManager.add(MENU_PATH, "EditFilters", menuItem, "Edit Filters...", MENU_ICON, "EditFiltersDialog");
 }
 
-void FiltersMenu::removeItems() {
+void FiltersMenu::removeItemsFromMainMenu()
+{
 	// Get the menu manager
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 

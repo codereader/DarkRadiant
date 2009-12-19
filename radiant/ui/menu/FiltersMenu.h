@@ -36,12 +36,12 @@ public:
 	/** Public service method. Adds the menuitems to the global Menu.
 	 *  Should be called by the Mainframe window only (and only once).
 	 */
-	static void addItems();
+	static void addItemsToMainMenu();
 
 	/**
 	 * Removes all filter menu items from the menu.
 	 */
-	static void removeItems();
+	static void removeItemsFromMainMenu();
 };
 
 }

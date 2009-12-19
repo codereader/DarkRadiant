@@ -247,9 +247,10 @@ void MainFrame::restoreWindowPosition()
 	}
 }
 
-GtkWidget* MainFrame::createMenuBar() {
+GtkWidget* MainFrame::createMenuBar()
+{
 	// Create the Filter menu entries before adding the menu bar
-    FiltersMenu::addItems();
+    FiltersMenu::addItemsToMainMenu();
     
     // Return the "main" menubar from the UIManager
     return GlobalUIManager().getMenuManager().get("main");
