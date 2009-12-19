@@ -7,6 +7,15 @@
 #define DEBUG_ASSERTS
 #endif
 
+#include "imodule.h" // for the ErrorHandlingFunction typedef
+
+// This method holds a function pointer which can do some error display (like popups)
+inline ErrorHandlingFunction& GlobalErrorHandler()
+{
+	static ErrorHandlingFunction _func;
+	return _func;
+}
+
 #if defined(DEBUG_ASSERTS)
 
 // Define the breakpoint function, to fire up the debugger
@@ -25,15 +34,6 @@
 #define STR(x)	#x
 #define STR2(x)	STR(x)
 #define FILE_LINE __FILE__ ":" STR2(__LINE__)
-
-#include "imodule.h" // for the ErrorHandlingFunction typedef
-
-// This method holds a function pointer which can do some error display (like popups)
-inline ErrorHandlingFunction& GlobalErrorHandler()
-{
-	static ErrorHandlingFunction _func;
-	return _func;
-}
 
 /// \brief Sends a \p message to the current debug-message-handler text-output-stream if \p condition evaluates to false.
 #define ASSERT_MESSAGE(condition, message)\
