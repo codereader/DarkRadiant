@@ -41,6 +41,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions=" /MP"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;"
 				RuntimeLibrary="3"
@@ -158,6 +159,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions=" /MP"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG"
 				RuntimeLibrary="2"

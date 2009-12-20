@@ -46,12 +46,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHs"
+				AdditionalOptions="/EHs /MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;"
 				StringPooling="true"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -237,7 +237,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHsc"
+				AdditionalOptions="/EHsc /MP"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"

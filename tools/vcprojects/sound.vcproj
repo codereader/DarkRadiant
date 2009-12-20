@@ -46,12 +46,12 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHs"
+				AdditionalOptions="/EHs /MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/openal/include&quot;;&quot;$(SolutionDir)/../../w32deps/openal/include/AL&quot;;&quot;$(SolutionDir)/../../w32deps/vorbis/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;"
 				StringPooling="true"
-				MinimalRebuild="true"
+				MinimalRebuild="false"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="3"
@@ -239,7 +239,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHsc"
+				AdditionalOptions="/EHsc /MP"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
