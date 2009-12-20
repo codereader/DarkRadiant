@@ -50,6 +50,7 @@ inline ErrorHandlingFunction& GlobalErrorHandler()
 #define ASSERT_MESSAGE(condition, message)
 #define ERROR_MESSAGE(message)
 #define ASSERT_NOTNULL(ptr)
+#define DEBUGGER_BREAKPOINT()
 
 #endif
 
