@@ -114,11 +114,50 @@ void selectAllOfType(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
-inline void hideNode(scene::INodePtr node, bool hide) {
-	if (hide) {
+class HideSubgraphWalker : 
+	public scene::NodeVisitor
+{
+public:
+	bool pre(const scene::INodePtr& node)
+	{
+		node->enable(scene::Node::eHidden);
+		return true;
+	}
+};
+
+class ShowSubgraphWalker : 
+	public scene::NodeVisitor
+{
+public:
+	bool pre(const scene::INodePtr& node)
+	{
+		node->disable(scene::Node::eHidden);
+		return true;
+	}
+};
+
+inline void hideSubgraph(const scene::INodePtr& node, bool hide)
+{
+	if (hide)
+	{
+		HideSubgraphWalker walker;
+		Node_traverseSubgraph(node, walker);
+	}
+	else
+	{
+		ShowSubgraphWalker walker;
+		Node_traverseSubgraph(node, walker);
+	}
+}
+
+inline void hideNode(const scene::INodePtr& node, bool hide)
+{
+	if (hide)
+	{
 		node->enable(scene::Node::eHidden);
 	}
-	else {
+	else
+	{
 		node->disable(scene::Node::eHidden);
 	}
 }
@@ -133,8 +172,9 @@ public:
 		_hide(hide)
 	{}
 
-	void visit(const scene::INodePtr& node) const {
-		hideNode(node, _hide);
+	void visit(const scene::INodePtr& node) const
+	{
+		hideSubgraph(node, _hide);
 	}
 };
 
@@ -160,15 +200,18 @@ public:
 		_hide(hide)
 	{}
 
-	bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node)
+	{
 		// Check the selection status
 		bool isSelected = Node_isSelected(node);
 
 		// greebo: Don't check root nodes for selected state
-		if (!node->isRoot() && isSelected) {
+		if (!node->isRoot() && isSelected)
+		{
 			// We have a selected instance, "remember" this by setting the parent 
 			// stack element to TRUE
-			if (_stack.size() > 0) {
+			if (!_stack.empty())
+			{
 				_stack.top() = true;
 			}
 		}
@@ -180,14 +223,15 @@ public:
 		return !isSelected;
 	}
 
-	void post(const scene::INodePtr& node) {
+	void post(const scene::INodePtr& node)
+	{
 		// greebo: We've traversed this subtree, now check if we had selected children
 		if (!node->isRoot() && 
-			_stack.size() > 0 && _stack.top() == false && 
+			!_stack.empty() && _stack.top() == false && 
 			!Node_isSelected(node))
 		{
-			// No selected child instances, hide this node
-			hideNode(node, _hide);
+			// No selected child nodes, hide this node
+			hideSubgraph(node, _hide);
 		}
 
 		// Go upwards again, one level
