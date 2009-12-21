@@ -299,7 +299,8 @@ void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth
 	}
 
 	if (bytesperpixel == 4) {
-		std::size_t i, j, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth4 = inwidth*4, outwidth4 = outwidth*4;
+		std::size_t i, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth4 = inwidth*4, outwidth4 = outwidth*4;
+		long j;
 		byte *inrow, *out;
 		out = (byte *)outdata;
 		fstep = (int) (inheight * 65536.0f / outheight);
@@ -324,7 +325,7 @@ void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth
 					resampleTextureLerpLine(inrow + inwidth4, row2, inwidth, outwidth, bytesperpixel);
 					oldy = yi;
 				}
-				j = outwidth - 4;
+				j = static_cast<long>(outwidth - 4);
 				while (j >= 0) {
 					LERPBYTE( 0);
 					LERPBYTE( 1);
@@ -387,7 +388,8 @@ void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth
 		}
 	}
 	else if (bytesperpixel == 3) {
-		std::size_t i, j, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth3 = inwidth * 3, outwidth3 = outwidth * 3;
+		std::size_t i, yi, oldy, f, fstep, lerp, endy = (inheight-1), inwidth3 = inwidth * 3, outwidth3 = outwidth * 3;
+		long j;
 		byte *inrow, *out;
 		out = (byte *)outdata;
 		fstep = (int) (inheight*65536.0f/outheight);
@@ -411,7 +413,7 @@ void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth
 					resampleTextureLerpLine(inrow + inwidth3, row2, inwidth, outwidth, bytesperpixel);
 					oldy = yi;
 				}
-				j = outwidth - 4;
+				j = static_cast<long>(outwidth - 4);
 				while (j >= 0) {
 					LERPBYTE( 0);
 					LERPBYTE( 1);
