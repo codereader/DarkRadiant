@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Plane3.h"
 #include "igl.h"
 #include <vector>
+#include <limits>
 
 #include "iimage.h"
 #include "ishaders.h"
