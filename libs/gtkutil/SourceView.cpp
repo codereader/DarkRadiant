@@ -90,6 +90,11 @@ std::string SourceView::getContents()
 	// Extract the script from the input window
 	gchar* text = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(_buffer), &start, &end, TRUE);
 
+	if (text == NULL)
+	{
+		return std::string("");
+	}
+
 	// Convert to std::string, free the GLIB stuff and return
 	std::string contents(text);
 	g_free(text);
