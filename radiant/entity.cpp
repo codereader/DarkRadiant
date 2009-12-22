@@ -92,77 +92,8 @@ void ReloadDefs(const cmd::ArgumentList& args)
 	GlobalEntityClassManager().reloadDefs();
 }
 
-/*class EntitySetKeyValueSelected : public scene::Graph::Walker
+void Entity_connectSelected(const cmd::ArgumentList& args)
 {
-  const char* m_key;
-  const char* m_value;
-public:
-  EntitySetKeyValueSelected(const char* key, const char* value)
-    : m_key(key), m_value(value)
-  {
-  }
-  bool pre(const scene::Path& path, const scene::INodePtr& node) const
-  {
-    return true;
-  }
-  void post(const scene::Path& path, const scene::INodePtr& node) const
-  {
-    Entity* entity = Node_getEntity(node);
-    if(entity != NULL && (node->childSelected() || Node_getSelectable(node)->isSelected()))
-    {
-      entity->setKeyValue(m_key, m_value);
-    }
-  }
-};*/
-
-// Documentation: see header
-scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const std::string& classname) {
-	// Make a copy of this node first
-	scene::INodePtr oldNode(node); 
-
-	// greebo: First, get the eclass
-	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
-		classname, 
-		node_is_group(oldNode) // whether this entity has child primitives
-	);
-
-	// must not fail, findOrInsert always returns non-NULL
-	assert(eclass != NULL); 
-
-	// Create a new entity with the given class
-	scene::INodePtr newNode(GlobalEntityCreator().createEntity(eclass));
-
-	Entity* oldEntity = Node_getEntity(oldNode);
-	Entity* newEntity = Node_getEntity(newNode);
-	assert(newEntity != NULL); // must not be NULL
-
-	// Instantiate a visitor that copies all spawnargs to the new node
-	EntityCopyingVisitor visitor(*newEntity);
-	// Traverse the old entity with this walker
-	oldEntity->forEachKeyValue(visitor);
-
-	// The old node must not be the root node (size of path >= 2)
-	scene::INodePtr parent = oldNode->getParent();
-	assert(parent != NULL);
-	
-	// Remove the old entity node from the parent
-	scene::removeNodeFromParent(oldNode);
-
-	// Traverse the child and reparent all primitives to the new entity node
-	parentBrushes(oldNode, newNode);
-
-	// Insert the new entity to the parent
-	parent->addChildNode(newNode);
-
-	return newNode;
-}
-
-void Scene_EntitySetKeyValue_Selected(const char* key, const char* value)
-{
-	//GlobalSceneGraph().traverse(EntitySetKeyValueSelected(key, value)); // TODO?
-}
-
-void Entity_connectSelected(const cmd::ArgumentList& args) {
 	if (GlobalSelectionSystem().countSelected() == 2) {
 		GlobalEntityCreator().connectEntities(
 			GlobalSelectionSystem().penultimateSelected(),	// source

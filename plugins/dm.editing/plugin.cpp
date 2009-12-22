@@ -5,9 +5,11 @@
 #include "ientityinspector.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
+#include "imainframe.h"
 #include "debugging/debugging.h"
 
 #include "AIHeadPropertyEditor.h"
+#include "FixupMapDialog.h"
 
 class EditingModule : 
 	public RegisterableModule
@@ -28,6 +30,7 @@ public:
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
+			_dependencies.insert(MODULE_MAINFRAME);
 		}
 
 		return _dependencies;
@@ -40,6 +43,16 @@ public:
 		// Associated "def_head" with an empty property editor instance
 		GlobalEntityInspector().registerPropertyEditor(
 			ui::DEF_HEAD_KEY, ui::IPropertyEditorPtr(new ui::AIHeadPropertyEditor())
+		);
+
+		GlobalCommandSystem().addCommand("FixupMapDialog", ui::FixupMapDialog::RunDialog);
+		GlobalEventManager().addCommand("FixupMapDialog", "FixupMapDialog");
+
+		GlobalUIManager().getMenuManager().add("main/map",
+			"FixupMapDialog", ui::menuItem, 
+			"Fixup Map...", // caption
+			"", // icon
+			"FixupMapDialog"
 		);
 	}
 };

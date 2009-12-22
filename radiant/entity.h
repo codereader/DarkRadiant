@@ -62,19 +62,6 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
 
 void Scene_EntitySetKeyValue_Selected(const char* key, const char* value);
 
-/**
- * greebo: Changes the classname of the given instance. This is a nontrivial
- *         operation, as the Entity needs to be created afresh and all the
- *         spawnargs need to be copied over. Child primitives need to be 
- *         considered as well.
- * 
- * @node: The entity node to change the classname of.
- * @classname: The new classname
- * 
- * @returns: The new entity node.
- */
-scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const std::string& classname);
-
 void Entity_Construct();
 void Entity_Destroy();
 

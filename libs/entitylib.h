@@ -424,4 +424,57 @@ inline bool node_is_worldspawn(const scene::INodePtr& node) {
 	return entity != 0 && entity->getKeyValue("classname") == "worldspawn";
 }
 
+/**
+ * greebo: Changing the entity classname is a non-trivial operation in DarkRadiant, as
+ * the actual c++ class of an entity is depending on it. Changing the classname
+ * therefore means 1) to recreate a new entity 2) to copy all spawnargs over from the old one
+ * and 3) re-parent any child nodes to the new entity.
+ *
+ * @node: The entity node to change the classname of.
+ * @classname: The new classname.
+ * 
+ * @returns: The new entity node.
+ */
+inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const std::string& classname)
+{
+	// Make a copy of this node first
+	scene::INodePtr oldNode(node); 
+
+	// greebo: First, get the eclass
+	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
+		classname, 
+		node_is_group(oldNode) // whether this entity has child primitives
+	);
+
+	// must not fail, findOrInsert always returns non-NULL
+	assert(eclass != NULL); 
+
+	// Create a new entity with the given class
+	scene::INodePtr newNode(GlobalEntityCreator().createEntity(eclass));
+
+	Entity* oldEntity = Node_getEntity(oldNode);
+	Entity* newEntity = Node_getEntity(newNode);
+	assert(newEntity != NULL); // must not be NULL
+
+	// Instantiate a visitor that copies all spawnargs to the new node
+	EntityCopyingVisitor visitor(*newEntity);
+	// Traverse the old entity with this walker
+	oldEntity->forEachKeyValue(visitor);
+
+	// The old node must not be the root node (size of path >= 2)
+	scene::INodePtr parent = oldNode->getParent();
+	assert(parent != NULL);
+	
+	// Remove the old entity node from the parent
+	scene::removeNodeFromParent(oldNode);
+
+	// Traverse the child and reparent all primitives to the new entity node
+	parentBrushes(oldNode, newNode);
+
+	// Insert the new entity to the parent
+	parent->addChildNode(newNode);
+
+	return newNode;
+}
+
 #endif

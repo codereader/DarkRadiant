@@ -9,4 +9,6 @@ dm_editing_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
 dm_editing_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
 dm_editing_la_SOURCES = plugin.cpp \
 						AIHeadPropertyEditor.cpp \
+						FixupMap.cpp \
+						FixupMapDialog.cpp \
 						AIHeadChooserDialog.cpp
