@@ -265,8 +265,16 @@ void Speaker::sShaderChanged(const std::string& value)
 	}
 	else
 	{
-		// Non-zero shader set, retrieve the default radii
-		_defaultRadii = GlobalSoundManager().getSoundShader(value)->getRadii();
+		if (module::RegistryReference::Instance().getRegistry().moduleExists(MODULE_SOUNDMANAGER))
+		{
+			// Non-zero shader set, retrieve the default radii
+			_defaultRadii = GlobalSoundManager().getSoundShader(value)->getRadii();
+		}
+		else
+		{
+			_defaultRadii.setMin(0);
+			_defaultRadii.setMax(0);
+		}
 	}
 
 	// If we haven't overridden our distances yet, adjust these values to defaults

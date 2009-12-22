@@ -3,6 +3,7 @@
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "ibrush.h"
+#include "isound.h"
 #include "ieventmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "entity.h" // Entity_createFromSelection()
@@ -11,6 +12,7 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "map/Map.h"
+#include "modulesystem/ModuleRegistry.h"
 
 #include <gtk/gtk.h>
 
@@ -513,24 +515,27 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
             SPEAKER_CLASSNAME, self->_lastPoint
         );	
 
-        // Display the Sound Chooser to get a sound shader from the user
-        SoundChooser sChooser;
-        std::string soundShader = sChooser.chooseSound();
+		if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
+		{
+			// Display the Sound Chooser to get a sound shader from the user
+			SoundChooser sChooser;
+			std::string soundShader = sChooser.chooseSound();
 
-        // Set the keyvalue
-        Entity* entity = Node_getEntity(spkNode);
-        assert(entity);
-        entity->setKeyValue("s_shader", soundShader);
+			// Set the keyvalue
+			Entity* entity = Node_getEntity(spkNode);
+			assert(entity);
+			entity->setKeyValue("s_shader", soundShader);
 
-        // Set a default min and max radius
-        entity->setKeyValue(
-            "s_mindistance",
-            getRegistryKeyWithDefault(RKEY_SPEAKERMINRADIUS, "16")
-        );
-        entity->setKeyValue(
-            "s_maxdistance",
-            getRegistryKeyWithDefault(RKEY_SPEAKERMAXRADIUS, "32")
-        );
+			// Set a default min and max radius
+			entity->setKeyValue(
+				"s_mindistance",
+				getRegistryKeyWithDefault(RKEY_SPEAKERMINRADIUS, "16")
+			);
+			entity->setKeyValue(
+				"s_maxdistance",
+				getRegistryKeyWithDefault(RKEY_SPEAKERMAXRADIUS, "32")
+			);
+		}
     }
     catch (EntityCreationException e) {
         gtkutil::errorDialog("Unable to create speaker, classname not found.",
