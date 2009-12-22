@@ -42,8 +42,16 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	}
 
 	// Remember the pointers to the textbuffers
-	_buffer = gtk_source_buffer_new_with_language(lang);
-	gtk_source_buffer_set_highlight_syntax(_buffer, TRUE);
+	if (lang != NULL)
+	{
+		_buffer = gtk_source_buffer_new_with_language(lang);
+		gtk_source_buffer_set_highlight_syntax(_buffer, TRUE);
+	}
+	else
+	{
+		_buffer = gtk_source_buffer_new(NULL);
+		gtk_source_buffer_set_highlight_syntax(_buffer, FALSE);
+	}
 
 	_view = GTK_SOURCE_VIEW(gtk_source_view_new_with_buffer(_buffer));
 
