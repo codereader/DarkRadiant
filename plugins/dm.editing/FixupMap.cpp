@@ -6,6 +6,7 @@
 #include "iscenegraph.h"
 #include "iundo.h"
 #include "imainframe.h"
+#include "ieclass.h"
 
 #include "gtkutil/dialog/MessageBox.h"
 #include "os/file.h"
@@ -14,14 +15,11 @@
 
 #include "ShaderReplacer.h"
 #include "SpawnargReplacer.h"
+#include "ClassnameReplacer.h"
+#include "DeprecatedEclassCollector.h"
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
-
-namespace
-{
-	const std::string MATERIAL_PREFIX("MATERIAL: ");
-}
 
 FixupMap::FixupMap(const std::string& filename) :
 	_filename(filename),
@@ -34,6 +32,9 @@ FixupMap::Result FixupMap::perform()
 
 	// Load contents
 	loadFixupFile();
+
+	// Load deprecated entities
+	loadDeprecatedEntities();
 
 	// Instantiate a line tokeniser
 	parser::BasicStringTokeniser tokeniser(_contents, "\n\r");
@@ -92,6 +93,18 @@ void FixupMap::performFixup(const std::string& line)
 		replaceShader(oldShader, newShader);
 		return;
 	}
+
+	expr = boost::regex("^" + ENTITYDEF_PREFIX + "(.*)\\s=>\\s(.*)$");
+	
+	if (boost::regex_match(line, matches, expr))
+	{
+		// Fixup a specific entitydef
+		std::string oldDef = matches[1];
+		std::string newDef = matches[2];
+
+		replaceEntityDef(oldDef, newDef);
+		return;
+	}
 	
 	// No specific prefix, this can be everything: spawnarg or texture
 	expr = boost::regex("^(.*)\\s=>\\s(.*)$");
@@ -110,10 +123,22 @@ void FixupMap::performFixup(const std::string& line)
 	}
 }
 
+void FixupMap::replaceEntityDef(const std::string& oldDef, const std::string& newDef)
+{
+	ClassnameReplacer replacer(oldDef, newDef);
+	GlobalSceneGraph().root()->traverse(replacer);
+
+	replacer.processEntities();
+
+	_result.replacedEntities += replacer.getEclassCount();
+}
+
 void FixupMap::replaceSpawnarg(const std::string& oldVal, const std::string& newVal)
 {
 	SpawnargReplacer replacer(oldVal, newVal);
 	GlobalSceneGraph().root()->traverse(replacer);
+
+	replacer.processEntities();
 
 	_result.replacedModels += replacer.getModelCount();
 	_result.replacedEntities += replacer.getEclassCount();
@@ -160,4 +185,14 @@ void FixupMap::loadFixupFile()
 	input.close();
 
 	_contents = &buffer.front();
+}
+
+void FixupMap::loadDeprecatedEntities()
+{
+	// Traverse all eclasses and collect replacements
+	DeprecatedEclassCollector collector;
+	GlobalEntityClassManager().forEach(collector);
+
+	_contents += "\n";
+	_contents += collector.getFixupCode();
 }

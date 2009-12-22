@@ -49,11 +49,13 @@ public:
 
 private:
 	void loadFixupFile();
+	void loadDeprecatedEntities();
 
 	void performFixup(const std::string& line);
 
 	void replaceShader(const std::string& oldShader, const std::string& newShader);
 	void replaceSpawnarg(const std::string& oldVal, const std::string& newVal);
+	void replaceEntityDef(const std::string& oldDef, const std::string& newDef);
 };
 
 #endif /* _FIXUP_MAP_H_ */

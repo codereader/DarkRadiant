@@ -430,6 +430,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.editing\ClassnameReplacer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\DeprecatedEclassCollector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.editing\FixupMap.cpp"
 				>
 			</File>
