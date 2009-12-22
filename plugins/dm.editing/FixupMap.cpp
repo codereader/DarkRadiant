@@ -15,7 +15,6 @@
 
 #include "ShaderReplacer.h"
 #include "SpawnargReplacer.h"
-#include "ClassnameReplacer.h"
 #include "DeprecatedEclassCollector.h"
 
 #include <boost/regex.hpp>
@@ -102,7 +101,8 @@ void FixupMap::performFixup(const std::string& line)
 		std::string oldDef = matches[1];
 		std::string newDef = matches[2];
 
-		replaceEntityDef(oldDef, newDef);
+		// Search all spawnargs
+		replaceSpawnarg(oldDef, newDef);
 		return;
 	}
 	
@@ -121,16 +121,6 @@ void FixupMap::performFixup(const std::string& line)
 		replaceSpawnarg(oldStr, newStr);
 		return;
 	}
-}
-
-void FixupMap::replaceEntityDef(const std::string& oldDef, const std::string& newDef)
-{
-	ClassnameReplacer replacer(oldDef, newDef);
-	GlobalSceneGraph().root()->traverse(replacer);
-
-	replacer.processEntities();
-
-	_result.replacedEntities += replacer.getEclassCount();
 }
 
 void FixupMap::replaceSpawnarg(const std::string& oldVal, const std::string& newVal)
