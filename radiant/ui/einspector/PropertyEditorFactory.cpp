@@ -1,5 +1,6 @@
 #include "PropertyEditorFactory.h"
 
+#include "isound.h"
 #include "iuimanager.h"
 #include "itextstream.h" 
 #include "Vector3PropertyEditor.h"
@@ -14,6 +15,7 @@
 #include "ClassnamePropertyEditor.h"
 #include "AnglePropertyEditor.h"
 
+#include "modulesystem/ModuleRegistry.h"
 #include <boost/regex.hpp>
 
 namespace ui
@@ -32,7 +34,12 @@ void PropertyEditorFactory::registerClasses() {
 	_peMap["texture"] = PropertyEditorPtr(new TexturePropertyEditor());
 	_peMap["mat"] = PropertyEditorPtr(new TexturePropertyEditor());
 	_peMap["skin"] = PropertyEditorPtr(new SkinPropertyEditor());
-	_peMap["sound"] = PropertyEditorPtr(new SoundPropertyEditor());
+
+	if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
+	{
+		_peMap["sound"] = PropertyEditorPtr(new SoundPropertyEditor());
+	}
+
 	_peMap["float"] = PropertyEditorPtr(new FloatPropertyEditor());
 	_peMap["model"] = PropertyEditorPtr(new ModelPropertyEditor());
 	_peMap["classname"] = PropertyEditorPtr(new ClassnamePropertyEditor());
