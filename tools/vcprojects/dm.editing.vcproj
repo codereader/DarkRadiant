@@ -430,7 +430,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.editing\FixupMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\FixupMap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\FixupMapDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\FixupMapDialog.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.editing\plugin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\ShaderReplacer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\SpawnargReplacer.h"
 				>
 			</File>
 		</Filter>

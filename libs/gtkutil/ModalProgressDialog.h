@@ -74,6 +74,13 @@ public:
 	 * will throw an exception to indicate an aborted operation.
 	 */
 	void setText(const std::string& text);
+
+	/** 
+	 * Set the text to display in the label, and the completed fraction of the progress bar. 
+	 * If the user has clicked the Cancel button since the last update, this method
+	 * will throw an exception to indicate an aborted operation.
+	 */
+	void setTextAndFraction(const std::string& text, double fraction);
 };
 typedef boost::shared_ptr<ModalProgressDialog> ModalProgressDialogPtr;
 

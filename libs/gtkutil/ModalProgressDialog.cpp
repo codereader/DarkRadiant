@@ -63,6 +63,24 @@ void ModalProgressDialog::setText(const std::string& text) {
 	handleEvents();
 }
 
+// Set the label text
+void ModalProgressDialog::setTextAndFraction(const std::string& text, double fraction)
+{
+	// If the aborted flag is set, throw an exception here
+	if (_aborted) {
+		throw OperationAbortedException("Operation cancelled by user");
+	}
+
+	// Set the text
+	gtk_label_set_markup(GTK_LABEL(_label), text.c_str());
+	
+	// Pulse the progress bar
+	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(_progressBar), fraction);
+	
+	// Handle GTK events to make changes visible
+	handleEvents();
+}
+
 // Handle GTK events
 void ModalProgressDialog::handleEvents() {
 	while (gtk_events_pending())
