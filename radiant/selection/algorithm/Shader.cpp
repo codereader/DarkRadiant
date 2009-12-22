@@ -13,7 +13,7 @@
 #include "brush/BrushVisit.h"
 #include "brush/TextureProjection.h"
 #include "patch/PatchSceneWalk.h"
-#include "patch/Patch.h"
+#include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
@@ -406,6 +406,8 @@ public:
 	virtual void visit(Patch& patch) {
 		Texturable target;
 		target.patch = &patch;
+		target.node = patch.getPatchNode().shared_from_this();
+
 		// Apply the shader (projected, not to the entire brush)
 		applyClipboardToTexturable(target, !_natural, false);
 	}
@@ -413,6 +415,8 @@ public:
 	virtual void visit(Face& face) {
 		Texturable target;
 		target.face = &face;
+		target.node = face.getBrush().getBrushNode().shared_from_this();
+
 		// Apply the shader (projected, not to the entire brush)
 		applyClipboardToTexturable(target, !_natural, false);
 	}
