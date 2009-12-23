@@ -60,12 +60,12 @@ public:
 	/** greebo: scene::Traversable implementation, this inserts a child node, saves the Undo state
 	 * 			and notifies the observer (if there is one)
 	 */ 
-	void insert(scene::INodePtr node);
+	void insert(const scene::INodePtr& node);
 	
 	/** greebo: scene::Traversable implementation. This removes the node from the local set,
 	 * 			saves the UndoMemento and notifies the observer.
 	 */
-	void erase(scene::INodePtr node);
+	void erase(const scene::INodePtr& node);
 
 	/** 
 	 * Removes all nodes from this container. Notifies the observers.
