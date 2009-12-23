@@ -126,7 +126,7 @@ void TraversableNodeSet::detach(Observer* observer) {
 /** greebo: scene::Traversable implementation, this inserts a child node, saves the Undo state
  * 			and notifies the observer (if there is one)
  */ 
-void TraversableNodeSet::insert(scene::INodePtr node) {
+void TraversableNodeSet::insert(const scene::INodePtr& node) {
 	// Submit the UndoMemento to the UndoSystem
 	_undo.save();
 
@@ -144,7 +144,7 @@ void TraversableNodeSet::insert(scene::INodePtr node) {
 /** greebo: scene::Traversable implementation. This removes the node from the local set,
  * 			saves the UndoMemento and notifies the observer.
  */
-void TraversableNodeSet::erase(scene::INodePtr node) 
+void TraversableNodeSet::erase(const scene::INodePtr& node) 
 {
 	_undo.save();
 
@@ -162,11 +162,11 @@ void TraversableNodeSet::erase(scene::INodePtr node)
     }
 }
 
-void TraversableNodeSet::clear() {
-	// Remove each child until empty
-	while (!_children.empty()) {
-		erase(*_children.begin());
-	}
+void TraversableNodeSet::clear()
+{
+	_undo.save();
+	notifyEraseAll();
+	_children.clear();
 }
 
 void TraversableNodeSet::traverse(scene::NodeVisitor& visitor) const {

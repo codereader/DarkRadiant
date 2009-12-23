@@ -29,10 +29,10 @@ public:
 	virtual ~Traversable() {}
 
 	/// \brief Adds a node to the container.
-	virtual void insert(INodePtr node) = 0;
+	virtual void insert(const INodePtr& node) = 0;
 	
 	/// \brief Removes a node from the container.
-	virtual void erase(INodePtr node) = 0;
+	virtual void erase(const INodePtr& node) = 0;
     
 	/**
 	 * greebo: Traverses the children of this container, recursively.
