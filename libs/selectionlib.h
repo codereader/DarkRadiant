@@ -263,8 +263,11 @@ public:
 	}
 
 	// override scene::Inode::onRemoveFromScene to de-select self
-	virtual void onRemoveFromScene() {
+	virtual void onRemoveFromScene()
+	{
 		setSelected(false);
+
+		Node::onRemoveFromScene();
 	}
 };
 
