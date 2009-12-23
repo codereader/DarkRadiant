@@ -50,6 +50,13 @@ void Dialog::setTitle(const std::string& title)
 
 ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 {
+	GtkWidget* first = element->getLabel();
+	GtkWidget* second = element->getWidget();
+
+	if (first == NULL && second == NULL) return ui::INVALID_HANDLE;
+
+	// At least one of the widgets is non-NULL
+
 	// Acquire a new handle
 	Handle handle = ++_highestUsedHandle;
 	
@@ -61,27 +68,44 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 	// Push the widgets into the dialog, resize the table to fit
 	gtk_table_resize(GTK_TABLE(_elementsTable), numRows, 2);
 
-	GtkWidget* first = element->getLabel();
-	GtkWidget* second = element->getWidget();
-
 	if (first != second)
 	{
-		// The label (first column)
-		gtk_table_attach(
-			GTK_TABLE(_elementsTable), first,
-			0, 1, numRows-1, numRows,
-			GTK_FILL, (GtkAttachOptions)0, 0, 0
-		);
+		// Widgets are not equal, check for NULL-ness
+		if (second == NULL)
+		{
+			// One single widget, spanning over two columns
+			gtk_table_attach_defaults(
+				GTK_TABLE(_elementsTable), first,
+				0, 2, numRows-1, numRows // index starts with 1, hence the -1
+			);
+		}
+		else if (first == NULL)
+		{
+			// One single widget, spanning over two columns
+			gtk_table_attach_defaults(
+				GTK_TABLE(_elementsTable), second,
+				0, 2, numRows-1, numRows // index starts with 1, hence the -1
+			);
+		}
+		else // Both are non-NULL
+		{
+			// The label (first column)
+			gtk_table_attach(
+				GTK_TABLE(_elementsTable), first,
+				0, 1, numRows-1, numRows,
+				GTK_FILL, (GtkAttachOptions)0, 0, 0
+			);
 
-		// The edit widgets (second column)
-		gtk_table_attach_defaults(
-			GTK_TABLE(_elementsTable), second,
-			1, 2, numRows-1, numRows // index starts with 1, hence the -1
-		);
+			// The edit widgets (second column)
+			gtk_table_attach_defaults(
+				GTK_TABLE(_elementsTable), second,
+				1, 2, numRows-1, numRows // index starts with 1, hence the -1
+			);
+		}
 	}
-	else
+	else // The widgets are the same, non-NULL
 	{
-		// One single widget, spanning over two columns
+		// Make it span over two columns
 		gtk_table_attach_defaults(
 			GTK_TABLE(_elementsTable), first,
 			0, 2, numRows-1, numRows // index starts with 1, hence the -1

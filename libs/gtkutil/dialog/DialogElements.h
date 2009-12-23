@@ -1,6 +1,7 @@
 #ifndef _DIALOG_ELEMENTS_H_
 #define _DIALOG_ELEMENTS_H_
 
+#include "idialogmanager.h"
 #include "../ifc/Widget.h"
 #include "../SerialisableWidgets.h"
 #include "../LeftAlignedLabel.h"
@@ -29,7 +30,19 @@ protected:
 	GtkWidget* _widget;
 
 protected:
-	// Protected constructor, to be called by subclasses
+	/**
+	 * Protected constructor, to be called by subclasses
+	 * Creates an element without a label.
+	 */
+	DialogElement() :
+		_label(NULL),
+		_widget(NULL)
+	{}
+
+	/**
+	 * Protected constructor, to be called by subclasses
+	 * @label: the name of this element, to be displayed next to it.
+	 */
 	DialogElement(const std::string& label) :
 		_label(LeftAlignedLabel(label)),
 		_widget(NULL)
@@ -165,22 +178,25 @@ public:
 class DialogLabel :
 	public DialogElement
 {
+protected:
+	GtkWidget* _label;
 public:
 	DialogLabel(const std::string& label) :
-		DialogElement(label)
+		DialogElement(), // no standard label
+		_label(gtkutil::LeftAlignedLabel(label))
 	{
-		DialogElement::setWidget(getLabel());
+		DialogElement::setWidget(_label);
 	}
 
 	// Implementation of StringSerialisable, wrapping to base class 
 	virtual std::string exportToString() const 
 	{
-		return gtk_label_get_text(GTK_LABEL(getLabel()));
+		return gtk_label_get_text(GTK_LABEL(_label));
 	}
 
 	virtual void importFromString(const std::string& str)
 	{
-		gtk_label_set_markup(GTK_LABEL(getLabel()), str.c_str());
+		gtk_label_set_markup(GTK_LABEL(_label), str.c_str());
 	}
 };
 

@@ -59,7 +59,7 @@
 		<menuItem name="preferences" caption="Pre_ferences" command="Preferences" />
 	</subMenu>
 
-	<subMenu name="view" caption="Vi_ew">
+	<subMenu name="view" caption="V_iew">
 		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
 		<menuItem name="cameraview" caption="Camera View" command="ToggleCamera" />
 		<menuItem name="layercontrols" caption="Layers" command="ToggleLayerControlDialog" />
