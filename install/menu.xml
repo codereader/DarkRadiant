@@ -59,7 +59,7 @@
 		<menuItem name="preferences" caption="Pre_ferences" command="Preferences" />
 	</subMenu>
 
-	<subMenu name="view" caption="_View">
+	<subMenu name="view" caption="Vi_ew">
 		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
 		<menuItem name="cameraview" caption="Camera View" command="ToggleCamera" />
 		<menuItem name="layercontrols" caption="Layers" command="ToggleLayerControlDialog" />
@@ -130,7 +130,7 @@
 		<menuItem name="backgroundimage" caption="Background Image..." command="OverlayDialog" icon="bgimage16.png" />
 	</subMenu>
 
-	<subMenu name="modify" caption="_Modify">
+	<subMenu name="modify" caption="Mo_dify">
 
 		<subMenu name="components" caption="Components">
 			<menuItem name="edges" caption="_Edges" command="DragEdges" icon="modify_edges.png" />
