@@ -6,15 +6,21 @@
 namespace ui {
 
 /**
- * Property editor which displays an editable combo box populated with all of the other
- * Entities in the map. This is used for properties like "target" and "bind" which
+ * Property editor which displays a button opening a separate dialog, filled with the
+ * entities in the map. This is used for properties like "target" and "bind" which
  * should reference a different entity.
  */
 class EntityPropertyEditor:
-    public ComboBoxPropertyEditor
+    public PropertyEditor
 {    	
-public:
+protected:
+	// Main widget
+	GtkWidget* _widget;
+	
+	// Keyvalue to set
+	std::string _key;
 
+public:
     // Construct a EntityPropertyEditor with an entity and key to edit
     EntityPropertyEditor(Entity* entity, const std::string& name);
     
@@ -30,9 +36,15 @@ public:
         return PropertyEditorPtr(new EntityPropertyEditor(entity, name));
     }
 
+protected:
+	// Return main widget to parent class
+	GtkWidget* _getWidget() const 
+    {
+		return _widget;
+	}
+
 private:
-    // Populate the combo box by traversing the scenegraph for Entities
-    void populateComboBox();
+    static void _onBrowseButton(GtkWidget* w, EntityPropertyEditor* self);
 };
 
 }

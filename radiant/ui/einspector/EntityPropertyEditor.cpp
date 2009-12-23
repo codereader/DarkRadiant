@@ -4,63 +4,68 @@
 #include "ientity.h"
 #include "scenelib.h"
 
+#include "PropertyEditorFactory.h"
 #include <gtk/gtk.h>
+
+#include "ui/common/EntityChooser.h"
 
 namespace ui {
 
 // Blank ctor
 EntityPropertyEditor::EntityPropertyEditor() :
-	ComboBoxPropertyEditor()
+	PropertyEditor()
 {}
 
 // Constructor. Create the GTK widgets here
 
 EntityPropertyEditor::EntityPropertyEditor(Entity* entity, const std::string& name) :
-   ComboBoxPropertyEditor(entity, name)
+	PropertyEditor(entity),
+	_key(name)
 {
-	populateComboBox();
+	_widget = gtk_vbox_new(FALSE, 0);
+
+	// Horizontal box contains the browse button
+	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
+	
+	// Browse button
+	GtkWidget* browseButton = gtk_button_new_with_label(
+		"Choose target entity..."
+	);
+	gtk_button_set_image(
+		GTK_BUTTON(browseButton),
+		gtk_image_new_from_pixbuf(
+			PropertyEditorFactory::getPixbufFor("entity")
+		)
+	);
+			
+	g_signal_connect(G_OBJECT(browseButton), 
+					 "clicked", 
+					 G_CALLBACK(_onBrowseButton), 
+					 this);
+	gtk_box_pack_start(GTK_BOX(hbx), browseButton, TRUE, FALSE, 0);
+	
+	// Pack hbox into vbox (to limit vertical size), then edit frame
+	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), vbx, TRUE, TRUE, 0);
 }
 
-// Traverse the scenegraph to populate the combo box
-void EntityPropertyEditor::populateComboBox() {
+/* GTK CALLBACKS */
 
-    // Create a scenegraph walker to traverse the graph
-  
-    struct EntityFinder: 
-		public scene::NodeVisitor
+void EntityPropertyEditor::_onBrowseButton(GtkWidget* w, EntityPropertyEditor* self)
+{
+	// Use a new dialog window to get a selection from the user
+	std::string selection = EntityChooser::ChooseEntity(self->_entity->getKeyValue(self->_key));
+
+	// Only apply non-empty selections if the classname has actually changed
+	if (!selection.empty() && selection != self->_entity->getKeyValue(self->_key))
 	{
-        // List store to add to
-        GtkTreeModel* _store;
-        
-        // Constructor
-		EntityFinder(GtkWidget* box) :
-			_store(gtk_combo_box_get_model(GTK_COMBO_BOX(box)))
-		{}
-            
-        // Visit function
-        bool pre(const scene::INodePtr& node) {
-			// Check for an entity
-            Entity* entity = Node_getEntity(node);
+		UndoableCommand cmd("changeKeyValue");
 
-            if (entity != NULL) {
-				// Get the entity name
-                std::string entName = entity->getKeyValue("name");
-
-				// Append the name to the list store
-                GtkTreeIter iter;
-                gtk_list_store_append(GTK_LIST_STORE(_store), &iter);
-                gtk_list_store_set(GTK_LIST_STORE(_store), &iter, 
-                				   0, entName.c_str(), 
-                				   -1);
-
-                return false; // don't traverse children if entity found
-            }
-            
-            return true; // traverse children otherwise
-        }
-    } finder(_comboBox);
-
-	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
+		// Apply the change
+		self->_entity->setKeyValue(self->_key, selection);
+	}
 }
 
 } // namespace ui

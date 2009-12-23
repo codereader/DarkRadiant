@@ -58,6 +58,9 @@ public:
 	// Enter the main loop
 	virtual ui::IDialog::Result run();
 
+	// Add a custom DialogElement
+	ui::IDialog::Handle addElement(const DialogElementPtr& element);
+
 protected:
 	// Constructs the dialog (is invoked right before entering the main loop)
 	virtual void construct();
@@ -65,8 +68,6 @@ protected:
 	virtual GtkWidget* createButtons();
 
 	void mapKeyToButton(guint key, GtkWidget* button);
-
-	ui::IDialog::Handle addElement(const DialogElementPtr& element);
 
 	// Override TransientWindow behaviour to hide this dialog instead of destroying it
 	virtual void _onDeleteEvent();
