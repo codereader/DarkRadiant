@@ -243,14 +243,6 @@ scene::INodePtr BrushNode::clone() const {
 
 void BrushNode::onInsertIntoScene()
 {
-	// De-select this node
-	setSelected(false);
-
-	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
-	setSelectedComponents(false, SelectionSystem::eEdge);
-	setSelectedComponents(false, SelectionSystem::eFace);
-
 	m_brush.instanceAttach(scene::findMapFile(getSelf()));
 	GlobalCounters().getCounter(counterBrushes).increment();
 
@@ -259,6 +251,14 @@ void BrushNode::onInsertIntoScene()
 
 void BrushNode::onRemoveFromScene()
 {
+	// De-select this node
+	setSelected(false);
+
+	// De-select all child components as well
+	setSelectedComponents(false, SelectionSystem::eVertex);
+	setSelectedComponents(false, SelectionSystem::eEdge);
+	setSelectedComponents(false, SelectionSystem::eFace);
+
 	GlobalCounters().getCounter(counterBrushes).decrement();
 	m_brush.instanceDetach(scene::findMapFile(getSelf()));
 
