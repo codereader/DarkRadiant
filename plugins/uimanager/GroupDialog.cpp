@@ -224,6 +224,7 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	
 	// Create the notebook page
 	gint position = -1;
+	Pages::const_iterator insertIter = _pages.end();
 
 	if (!insertBefore.empty())
 	{
@@ -234,6 +235,7 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 
 			// Found, extract the tab position and break the loop
 			position = gtk_notebook_page_num(GTK_NOTEBOOK(_notebook), i->page);
+			insertIter = i;
 			break;
 		}
 	}
@@ -249,7 +251,7 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	newPage.page = notebookPage;
 	newPage.title = windowLabel;
 	
-	_pages.push_back(newPage);
+	_pages.insert(insertIter, newPage);
 
 	return notebookPage;
 }
