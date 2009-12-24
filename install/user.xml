@@ -115,6 +115,9 @@
 			<pane name="vertical1" position="250" />
 			<pane name="vertical2" position="250" />
 		</splitPane>
+		<floating>
+			<groupDialogVisible value="1" />
+		</floating>
 	</mainFrame>
 	<groupDialog>
 		<window xPosition="50" yPosition="530" width="350" height="200" />

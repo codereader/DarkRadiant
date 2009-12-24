@@ -78,6 +78,9 @@ void EmbeddedLayout::activate()
 	
 	gtk_widget_show_all(mainContainer);
 
+	// This is needed to fix a weirdness when re-parenting the entity inspector
+	GlobalGroupDialog().showDialogWindow();
+
 	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
 	// the position info from the Registry once again.
 	GlobalEntityInspector().restoreSettings();
@@ -85,14 +88,8 @@ void EmbeddedLayout::activate()
 	// Reparent the notebook to our local pane (after the other widgets have been realised)
 	GlobalGroupDialog().reparentNotebook(groupPane);
 
-	// Hide the camera toggle option for non-floating views
-    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
-	// Hide the console/texture browser toggles for non-floating/non-split views
-	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
-}
-
-GtkWidget* EmbeddedLayout::createGroupPane() {
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+	// Hide the floating window again
+	GlobalGroupDialog().hideDialogWindow();
 
 	// Create the texture window
 	GtkWidget* texWindow = gtkutil::FramedWidget(
@@ -108,6 +105,14 @@ GtkWidget* EmbeddedLayout::createGroupPane() {
     	"Texture Browser"
     );
 
+	// Hide the camera toggle option for non-floating views
+    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
+	// Hide the console/texture browser toggles for non-floating/non-split views
+	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
+}
+
+GtkWidget* EmbeddedLayout::createGroupPane() {
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
 	return vbox;
 }
 
