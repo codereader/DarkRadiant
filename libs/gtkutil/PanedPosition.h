@@ -32,6 +32,12 @@ public:
 
 	const int getPosition() const;
 	void setPosition(int position);
+
+	// Sets the position to the smallest possible value and applies it
+	void applyMinPosition();
+
+	// Sets the position to the largest possible value and applies it
+	void applyMaxPosition();
 	
 	void saveToPath(const std::string& path);
 	void loadFromPath(const std::string& path);

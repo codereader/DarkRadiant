@@ -48,6 +48,28 @@ void PanedPosition::applyPosition() {
 	}
 }
 
+void PanedPosition::applyMinPosition()
+{
+	if (_paned == NULL) return;
+
+	int pos;
+	g_object_get(_paned, "min-position", &pos, NULL);
+
+	setPosition(pos);
+	applyPosition();
+}
+
+void PanedPosition::applyMaxPosition()
+{
+	if (_paned == NULL) return;
+
+	int pos;
+	g_object_get(_paned, "max-position", &pos, NULL);
+
+	setPosition(pos);
+	applyPosition();
+}
+
 // Reads the position from the GtkPaned and normalises it to the paned size
 void PanedPosition::readPosition() {
 	if (_paned != NULL) {

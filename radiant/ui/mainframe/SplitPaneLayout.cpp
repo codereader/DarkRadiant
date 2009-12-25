@@ -14,7 +14,15 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
 
+#include <boost/bind.hpp>
+
 namespace ui {
+
+	namespace
+	{
+		const std::string RKEY_SPLITPANE_ROOT = "user/ui/mainFrame/splitPane";
+		const std::string RKEY_SPLITPANE_TEMP_ROOT = RKEY_SPLITPANE_ROOT + "/temp";
+	}
 
 std::string SplitPaneLayout::getName() {
 	return SPLITPANE_LAYOUT_NAME;
@@ -79,23 +87,8 @@ void SplitPaneLayout::activate() {
 	_splitPane.posVPane1.connect(_splitPane.vertPane1);
 	_splitPane.posVPane2.connect(_splitPane.vertPane2);
 	
-	if (GlobalRegistry().keyExists("user/ui/mainFrame/splitPane/pane[@name='horizontal']"))
-	{
-		_splitPane.posHPane.loadFromPath("user/ui/mainFrame/splitPane/pane[@name='horizontal']");
-		_splitPane.posHPane.applyPosition();
-	}
-	
-	if (GlobalRegistry().keyExists("user/ui/mainFrame/splitPane/pane[@name='vertical1']"))
-	{
-		_splitPane.posVPane1.loadFromPath("user/ui/mainFrame/splitPane/pane[@name='vertical1']");
-		_splitPane.posVPane1.applyPosition();
-	}
-	
-	if (GlobalRegistry().keyExists("user/ui/mainFrame/splitPane/pane[@name='vertical2']"))
-	{
-		_splitPane.posVPane2.loadFromPath("user/ui/mainFrame/splitPane/pane[@name='vertical2']");
-		_splitPane.posVPane2.applyPosition();
-	}
+	// Attempt to restore this layout's state
+	restoreStateFromPath(RKEY_SPLITPANE_ROOT);
 	
     {      
 		GtkWidget* textureBrowser = gtkutil::FramedWidget(
@@ -124,26 +117,34 @@ void SplitPaneLayout::activate() {
 
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
+
+	// Add the toggle max/min command for floating windows
+	GlobalCommandSystem().addCommand("ToggleCameraFullScreen", 
+		boost::bind(&SplitPaneLayout::toggleCameraFullScreen, this, _1)
+	);
+	GlobalEventManager().addCommand("ToggleCameraFullScreen", "ToggleCameraFullScreen");
 }
 
-void SplitPaneLayout::deactivate() {
+void SplitPaneLayout::deactivate()
+{
+	if (GlobalRegistry().keyExists(RKEY_SPLITPANE_TEMP_ROOT))
+	{
+		// We're maximised, restore the size first
+		restorePanePositions();
+	}
+
+	// De-register commands
+	GlobalEventManager().removeEvent("ToggleCameraFullScreen");
+	GlobalCommandSystem().removeCommand("ToggleCameraFullScreen");
+
 	// Show the camera toggle option again
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
 
-	// Save the splitplane info
-	std::string path("user/ui/mainFrame/splitPane");
-		
-	// Remove all previously stored pane information 
-	GlobalRegistry().deleteXPath(path + "//pane");
+	// Remove all previously saved pane information 
+	GlobalRegistry().deleteXPath(RKEY_SPLITPANE_ROOT + "//pane");
 
-	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-	_splitPane.posHPane.saveToPath(path + "/pane[@name='horizontal']");
-	
-	GlobalRegistry().createKeyWithName(path, "pane", "vertical1");
-	_splitPane.posVPane1.saveToPath(path + "/pane[@name='vertical1']");
-
-	GlobalRegistry().createKeyWithName(path, "pane", "vertical2");
-	_splitPane.posVPane2.saveToPath(path + "/pane[@name='vertical2']");
+	// Save the pane info
+	saveStateToPath(RKEY_SPLITPANE_ROOT);
 
 	// Delete all active views
 	GlobalXYWnd().destroyViews();
@@ -160,6 +161,71 @@ void SplitPaneLayout::deactivate() {
 
 	// Destroy the widget, so it gets removed from the main container
 	gtk_widget_destroy(GTK_WIDGET(_splitPane.horizPane));
+}
+
+void SplitPaneLayout::maximiseCameraSize()
+{
+	// Save the current state to the registry
+	saveStateToPath(RKEY_SPLITPANE_TEMP_ROOT);
+
+	// Maximise the pane positions
+	_splitPane.posHPane.applyMaxPosition();
+	_splitPane.posVPane1.applyMaxPosition();
+}
+
+void SplitPaneLayout::restorePanePositions()
+{
+	// Restore state
+	restoreStateFromPath(RKEY_SPLITPANE_TEMP_ROOT);
+
+	// Remove all previously stored pane information
+	GlobalRegistry().deleteXPath(RKEY_SPLITPANE_TEMP_ROOT);
+}
+
+void SplitPaneLayout::restoreStateFromPath(const std::string& path)
+{
+	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
+	{
+		_splitPane.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
+		_splitPane.posHPane.applyPosition();
+	}
+	
+	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical1']"))
+	{
+		_splitPane.posVPane1.loadFromPath(path + "/pane[@name='vertical1']");
+		_splitPane.posVPane1.applyPosition();
+	}
+	
+	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical2']"))
+	{
+		_splitPane.posVPane2.loadFromPath(path + "/pane[@name='vertical2']");
+		_splitPane.posVPane2.applyPosition();
+	}
+}
+
+void SplitPaneLayout::saveStateToPath(const std::string& path)
+{
+	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+	_splitPane.posHPane.saveToPath(path + "/pane[@name='horizontal']");
+	
+	GlobalRegistry().createKeyWithName(path, "pane", "vertical1");
+	_splitPane.posVPane1.saveToPath(path + "/pane[@name='vertical1']");
+
+	GlobalRegistry().createKeyWithName(path, "pane", "vertical2");
+	_splitPane.posVPane2.saveToPath(path + "/pane[@name='vertical2']");
+}
+
+void SplitPaneLayout::toggleCameraFullScreen(const cmd::ArgumentList& args)
+{
+	if (GlobalRegistry().keyExists(RKEY_SPLITPANE_TEMP_ROOT))
+	{
+		restorePanePositions();
+	}
+	else
+	{
+		// No saved info found in registry, maximise cam
+		maximiseCameraSize();
+	}
 }
 
 // The creation function, needed by the mainframe layout manager
