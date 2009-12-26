@@ -12,12 +12,20 @@ void WidgetToggle::connectWidget(GtkWidget* widget) {
 	Toggle::connectWidget(widget);
 	
 	// Any other widgets are added to the list
-	if (!GTK_IS_CHECK_MENU_ITEM(widget) && !GTK_IS_TOGGLE_TOOL_BUTTON(widget) && widget != NULL) {
+	if (!GTK_IS_CHECK_MENU_ITEM(widget) && !GTK_IS_TOGGLE_TOOL_BUTTON(widget) && widget != NULL)
+	{
 		// No special widget, add it to the list
 		_widgets.push_back(widget);
 
-		updateWidgets();
+		// Register to be updated when the visibility of this object changes
+		g_signal_connect(widget, "notify::visible", G_CALLBACK(onVisibilityChange), this);
 	}
+
+	// Read the toggled state from the connected widget
+	readToggleStateFromWidgets();
+
+	// Update the "regular" widgets now, like check menu items, etc.
+	Toggle::updateWidgets();
 }
 
 void WidgetToggle::disconnectWidget(GtkWidget* widget) { 
@@ -28,6 +36,24 @@ void WidgetToggle::disconnectWidget(GtkWidget* widget) {
 
 	if (i != _widgets.end()) {
 		_widgets.erase(i);
+	}
+}
+
+void WidgetToggle::readToggleStateFromWidgets()
+{
+	for (WidgetList::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */)
+	{
+		if (GTK_IS_WIDGET(*i))
+		{
+			_toggled = (GTK_WIDGET_VISIBLE(*i)) ? true : false;
+
+			++i;
+		}
+		else
+		{
+			// Not a valid widget anymore, remove from the list
+			_widgets.erase(i++);
+		}
 	}
 }
 
@@ -67,5 +93,26 @@ void WidgetToggle::hideWidgets() {
 			// Not a valid widget anymore, remove from the list
 			_widgets.erase(i++);
 		}
+	}
+}
+
+void WidgetToggle::visibilityChanged()
+{
+	// Read the state from the connected widgets
+	readToggleStateFromWidgets();
+
+	// Update check menu items etc.
+	Toggle::updateWidgets();
+}
+
+void WidgetToggle::onVisibilityChange(GtkWidget* widget, void* dummy, WidgetToggle* self)
+{
+	if (self->_callbackActive) return;
+
+	// Confirm that the widget's visibility has actually changed
+	if (GTK_IS_WIDGET(widget) && GTK_WIDGET_VISIBLE(widget) != self->_toggled)
+	{
+		// Update self
+		self->visibilityChanged();
 	}
 }
