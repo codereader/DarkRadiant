@@ -1,6 +1,7 @@
 #ifndef _MAINFRAME_H_
 #define _MAINFRAME_H_
 
+#include "icommandsystem.h"
 #include "imainframe.h"
 #include "imainframelayout.h"
 #include "gtkutil/WindowPosition.h"
@@ -41,6 +42,9 @@ public:
 	// Apply the named viewstyle
 	void applyLayout(const std::string& name);
 	std::string getCurrentLayout();
+
+	// Command to toggle the current layout's camera fullscreen mode
+	void toggleFullscreenCameraView(const cmd::ArgumentList& args);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

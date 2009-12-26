@@ -39,10 +39,19 @@ public:
 	virtual std::string getName();
 	virtual void activate();
 	virtual void deactivate();
+	virtual void toggleFullscreenCameraView();
 
 	// The creation function, needed by the mainframe layout manager
 	static RegularLayoutPtr CreateRegularLeftInstance();
 	static RegularLayoutPtr CreateRegularInstance();
+
+private:
+	void maximiseCameraSize();
+	void restorePanePositions();
+
+	// Saves the state of this window layout to the given XMLRegistry path (without trailing slash)
+	void restoreStateFromPath(const std::string& path);
+	void saveStateToPath(const std::string& path);
 };
 
 } // namespace ui

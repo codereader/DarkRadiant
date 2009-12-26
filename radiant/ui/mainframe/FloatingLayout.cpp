@@ -12,7 +12,6 @@
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
-#include <boost/bind.hpp>
 
 namespace ui {
 
@@ -52,13 +51,6 @@ void FloatingLayout::activate() {
 	else {
 		globalErrorStream() << "Could not connect ToggleCamera event\n";
 	}
-
-	// Add the toggle max/min command for floating windows
-	GlobalCommandSystem().addCommand("ToggleCameraFullScreen", 
-		boost::bind(&FloatingLayout::toggleCameraFullScreen, this, _1)
-	);
-
-	GlobalEventManager().addCommand("ToggleCameraFullScreen", "ToggleCameraFullScreen");
 
 	GtkWidget* page = gtkutil::FramedWidget(
 		GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalGroupDialog().getDialogWindow()))
@@ -109,12 +101,13 @@ void FloatingLayout::deactivate()
 	// Destroy the camera window
 	if (_floatingCamWnd != NULL)
 	{
+		if (_floatingCamWnd->isFullscreen())
+		{
+			_floatingCamWnd->setFullscreen(false);
+		}
+
 		// Save camwnd state
 		_camWndPosition.saveToPath(RKEY_CAMERA_WINDOW_STATE);
-
-		// De-register commands
-		GlobalEventManager().removeEvent("ToggleCameraFullScreen");
-		GlobalCommandSystem().removeCommand("ToggleCameraFullScreen");
 
 		IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
 		if (!ev->empty()) {
@@ -129,7 +122,8 @@ void FloatingLayout::deactivate()
 	}
 }
 
-void FloatingLayout::toggleCameraFullScreen(const cmd::ArgumentList& args) {
+void FloatingLayout::toggleFullscreenCameraView()
+{
 	_floatingCamWnd->toggleFullscreen();
 }
 

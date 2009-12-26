@@ -16,6 +16,7 @@ typedef boost::shared_ptr<EmbeddedLayout> EmbeddedLayoutPtr;
 class EmbeddedLayout :
 	public IMainFrameLayout
 {
+private:
 	// The camera view
 	CamWndPtr _camWnd;
 
@@ -25,14 +26,12 @@ class EmbeddedLayout :
 	gtkutil::PanedPosition _posHPane;
 	gtkutil::PanedPosition _posGroupCamPane;
 
-	// Whether the cam is left or right
-	bool _regularLeft;
-
 public:
 	// IMainFrameLayout implementation
 	virtual std::string getName();
 	virtual void activate();
 	virtual void deactivate();
+	virtual void toggleFullscreenCameraView();
 
 	// The creation function, needed by the mainframe layout manager
 	static EmbeddedLayoutPtr CreateInstance();
@@ -40,6 +39,13 @@ public:
 private:
 	// Return the group pane
 	GtkWidget* createGroupPane();
+
+	void maximiseCameraSize();
+	void restorePanePositions();
+
+	// Saves the state of this window layout to the given XMLRegistry path (without trailing slash)
+	void restoreStateFromPath(const std::string& path);
+	void saveStateToPath(const std::string& path);
 };
 
 } // namespace ui

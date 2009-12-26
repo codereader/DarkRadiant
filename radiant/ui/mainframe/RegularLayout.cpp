@@ -16,6 +16,12 @@
 
 namespace ui {
 
+	namespace
+	{
+		const std::string RKEY_REGULAR_ROOT = "user/ui/mainFrame/regular";
+		const std::string RKEY_REGULAR_TEMP_ROOT = RKEY_REGULAR_ROOT + "/temp";
+	}
+
 RegularLayout::RegularLayout(bool regularLeft) :
 	_regularLeft(regularLeft)
 {}
@@ -84,18 +90,8 @@ void RegularLayout::activate() {
 	_regular.posHPane.connect(_regular.horizPane);
 	_regular.posTexCamPane.connect(_regular.texCamPane);
 	
-	// Now load the paned positions from the registry
-	if (GlobalRegistry().keyExists("user/ui/mainFrame/regular/pane[@name='horizontal']"))
-	{
-		_regular.posHPane.loadFromPath("user/ui/mainFrame/regular/pane[@name='horizontal']");
-		_regular.posHPane.applyPosition();
-	}
-
-	if (GlobalRegistry().keyExists("user/ui/mainFrame/regular/pane[@name='texcam']"))
-	{
-		_regular.posTexCamPane.loadFromPath("user/ui/mainFrame/regular/pane[@name='texcam']");
-		_regular.posTexCamPane.applyPosition();
-	}
+	// Now attempt to load the paned positions from the registry
+	restoreStateFromPath(RKEY_REGULAR_ROOT);
 	
     GlobalGroupDialog().showDialogWindow();
 
@@ -118,16 +114,11 @@ void RegularLayout::deactivate() {
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
 
-	std::string path("user/ui/mainFrame/regular");
-		
 	// Remove all previously stored pane information 
-	GlobalRegistry().deleteXPath(path + "//pane");
+	GlobalRegistry().deleteXPath(RKEY_REGULAR_ROOT + "//pane");
 	
-	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-	_regular.posHPane.saveToPath(path + "/pane[@name='horizontal']");
-	
-	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
-	_regular.posTexCamPane.saveToPath(path + "/pane[@name='texcam']");
+	// Save pane info
+	saveStateToPath(RKEY_REGULAR_ROOT);
 
 	// Delete all active views
 	GlobalXYWnd().destroyViews();
@@ -142,6 +133,71 @@ void RegularLayout::deactivate() {
 
 	// Destroy the widget, so it gets removed from the main container
 	gtk_widget_destroy(GTK_WIDGET(_regular.horizPane));
+}
+
+void RegularLayout::maximiseCameraSize()
+{
+	// Save the current state to the registry
+	saveStateToPath(RKEY_REGULAR_TEMP_ROOT);
+
+	// Maximise the camera
+	if (_regularLeft)
+	{
+		_regular.posHPane.applyMaxPosition();
+	}
+	else
+	{
+		_regular.posHPane.applyMinPosition();
+	}
+
+	_regular.posTexCamPane.applyMaxPosition();
+}
+
+void RegularLayout::restorePanePositions()
+{
+	// Restore state
+	restoreStateFromPath(RKEY_REGULAR_TEMP_ROOT);
+
+	// Remove all previously stored pane information
+	GlobalRegistry().deleteXPath(RKEY_REGULAR_TEMP_ROOT);
+}
+
+void RegularLayout::restoreStateFromPath(const std::string& path)
+{
+	// Now load the paned positions from the registry
+	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
+	{
+		_regular.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
+		_regular.posHPane.applyPosition();
+	}
+
+	if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
+	{
+		_regular.posTexCamPane.loadFromPath(path + "/pane[@name='texcam']");
+		_regular.posTexCamPane.applyPosition();
+	}
+}
+
+void RegularLayout::saveStateToPath(const std::string& path)
+{
+	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+	_regular.posHPane.saveToPath(path + "/pane[@name='horizontal']");
+	
+	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
+	_regular.posTexCamPane.saveToPath(path + "/pane[@name='texcam']");
+}
+
+void RegularLayout::toggleFullscreenCameraView()
+{
+	if (GlobalRegistry().keyExists(RKEY_REGULAR_TEMP_ROOT))
+	{
+		restorePanePositions();
+	}
+	else
+	{
+		// No saved info found in registry, maximise cam
+		maximiseCameraSize();
+	}
 }
 
 // The creation function, needed by the mainframe layout manager

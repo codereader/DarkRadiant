@@ -27,8 +27,7 @@ public:
 	virtual std::string getName();
 	virtual void activate();
 	virtual void deactivate();
-
-	void toggleCameraFullScreen(const cmd::ArgumentList& args);
+	virtual void toggleFullscreenCameraView();
 
 	// The creation function, needed by the mainframe layout manager
 	static FloatingLayoutPtr CreateInstance();
