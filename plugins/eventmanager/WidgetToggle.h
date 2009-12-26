@@ -43,6 +43,12 @@ private:
 	void showWidgets();
 	void hideWidgets();
 
+	void readToggleStateFromWidgets();
+
+	void visibilityChanged();
+	static void onVisibilityChange(GtkWidget* widget, void* dummy, WidgetToggle* self);
+
+
 }; // class WidgetToggle
 
 #endif /*WIDGETTOGGLE_H_*/
