@@ -695,9 +695,16 @@ void Map::loadPrefabAt(const Vector3& targetCoords) {
 	    
 	    // Now import the prefab (imported items get selected)
 	    import(filename);
+
+		// Switch texture lock on
+		bool prevTexLockState = GlobalBrush()->textureLockEnabled();
+		GlobalBrush()->setTextureLock(true);
 	    
 	    // Translate the selection to the given point
 	    GlobalSelectionSystem().translateSelected(targetCoords);
+
+		// Revert to previous state
+		GlobalBrush()->setTextureLock(false);
 	}
 }
 
