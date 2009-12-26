@@ -14,8 +14,6 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
 
-#include <boost/bind.hpp>
-
 namespace ui {
 
 	namespace
@@ -117,12 +115,6 @@ void SplitPaneLayout::activate() {
 
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
-
-	// Add the toggle max/min command for floating windows
-	GlobalCommandSystem().addCommand("ToggleCameraFullScreen", 
-		boost::bind(&SplitPaneLayout::toggleCameraFullScreen, this, _1)
-	);
-	GlobalEventManager().addCommand("ToggleCameraFullScreen", "ToggleCameraFullScreen");
 }
 
 void SplitPaneLayout::deactivate()
@@ -132,10 +124,6 @@ void SplitPaneLayout::deactivate()
 		// We're maximised, restore the size first
 		restorePanePositions();
 	}
-
-	// De-register commands
-	GlobalEventManager().removeEvent("ToggleCameraFullScreen");
-	GlobalCommandSystem().removeCommand("ToggleCameraFullScreen");
 
 	// Show the camera toggle option again
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
@@ -215,7 +203,7 @@ void SplitPaneLayout::saveStateToPath(const std::string& path)
 	_splitPane.posVPane2.saveToPath(path + "/pane[@name='vertical2']");
 }
 
-void SplitPaneLayout::toggleCameraFullScreen(const cmd::ArgumentList& args)
+void SplitPaneLayout::toggleFullscreenCameraView()
 {
 	if (GlobalRegistry().keyExists(RKEY_SPLITPANE_TEMP_ROOT))
 	{

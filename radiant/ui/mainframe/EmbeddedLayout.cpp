@@ -15,7 +15,14 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
 
-namespace ui {
+namespace ui
+{
+
+	namespace
+	{
+		const std::string RKEY_EMBEDDED_ROOT = "user/ui/mainFrame/embedded";
+		const std::string RKEY_EMBEDDED_TEMP_ROOT = RKEY_EMBEDDED_ROOT + "/temp";
+	}
 
 std::string EmbeddedLayout::getName() {
 	return EMBEDDED_LAYOUT_NAME;
@@ -45,10 +52,16 @@ void EmbeddedLayout::activate()
 	// Now pack those widgets into the paned widgets
 
 	// First, pack the groupPane and the camera
-	gtkutil::Paned groupCamPane(gtkutil::Paned::Vertical, camWindow, groupPane);
+	gtkutil::Paned groupCamPane(gtkutil::Paned::Vertical);
+	groupCamPane.setFirstChild(camWindow, true);	// allow shrinking
+	groupCamPane.setSecondChild(groupPane, false);	// no shrinking
+
 	_groupCamPane = groupCamPane.getWidget();
     
-	gtkutil::Paned horizPane(gtkutil::Paned::Horizontal, _groupCamPane, xyView);
+	gtkutil::Paned horizPane(gtkutil::Paned::Horizontal);
+	horizPane.setFirstChild(_groupCamPane, false);	// no shrinking
+	horizPane.setSecondChild(xyView, true);			// allow shrinking
+
 	_horizPane = horizPane.getWidget();
     
 	// Retrieve the main container of the main window
@@ -62,19 +75,9 @@ void EmbeddedLayout::activate()
 	// Connect the pane position trackers
 	_posHPane.connect(_horizPane);
 	_posGroupCamPane.connect(_groupCamPane);
-	
-	// Now load the paned positions from the registry
-	if (GlobalRegistry().keyExists("user/ui/mainFrame/embedded/pane[@name='horizontal']"))
-	{
-		_posHPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='horizontal']");
-		_posHPane.applyPosition();
-	}
 
-	if (GlobalRegistry().keyExists("user/ui/mainFrame/embedded/pane[@name='texcam']"))
-	{
-		_posGroupCamPane.loadFromPath("user/ui/mainFrame/embedded/pane[@name='texcam']");
-		_posGroupCamPane.applyPosition();
-	}
+	// Attempt to restore this layout's state
+	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
 	
 	gtk_widget_show_all(mainContainer);
 
@@ -121,16 +124,11 @@ void EmbeddedLayout::deactivate() {
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
 
-	std::string path("user/ui/mainFrame/embedded");
-		
 	// Remove all previously stored pane information 
-	GlobalRegistry().deleteXPath(path + "//pane");
-	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
-
-	_posHPane.saveToPath(path + "/pane[@name='horizontal']");
+	GlobalRegistry().deleteXPath(RKEY_EMBEDDED_ROOT + "//pane");
 	
-	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
-	_posGroupCamPane.saveToPath(path + "/pane[@name='texcam']");
+	// Save pane info
+	saveStateToPath(RKEY_EMBEDDED_ROOT);
 
 	// Delete all active views
 	GlobalXYWnd().destroyViews();
@@ -149,6 +147,63 @@ void EmbeddedLayout::deactivate() {
 
 	// Destroy the widget, so it gets removed from the main container
 	gtk_widget_destroy(GTK_WIDGET(_horizPane));
+}
+
+void EmbeddedLayout::maximiseCameraSize()
+{
+	// Save the current state to the registry
+	saveStateToPath(RKEY_EMBEDDED_TEMP_ROOT);
+
+	// Maximise the camera
+	_posHPane.applyMaxPosition();
+	_posGroupCamPane.applyMaxPosition();
+}
+
+void EmbeddedLayout::restorePanePositions()
+{
+	// Restore state
+	restoreStateFromPath(RKEY_EMBEDDED_TEMP_ROOT);
+
+	// Remove all previously stored pane information
+	GlobalRegistry().deleteXPath(RKEY_EMBEDDED_TEMP_ROOT);
+}
+
+void EmbeddedLayout::restoreStateFromPath(const std::string& path)
+{
+	// Now load the paned positions from the registry
+	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
+	{
+		_posHPane.loadFromPath(path + "/pane[@name='horizontal']");
+		_posHPane.applyPosition();
+	}
+
+	if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
+	{
+		_posGroupCamPane.loadFromPath(path + "/pane[@name='texcam']");
+		_posGroupCamPane.applyPosition();
+	}
+}
+
+void EmbeddedLayout::saveStateToPath(const std::string& path)
+{
+	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
+	_posHPane.saveToPath(path + "/pane[@name='horizontal']");
+	
+	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
+	_posGroupCamPane.saveToPath(path + "/pane[@name='texcam']");
+}
+
+void EmbeddedLayout::toggleFullscreenCameraView()
+{
+	if (GlobalRegistry().keyExists(RKEY_EMBEDDED_TEMP_ROOT))
+	{
+		restorePanePositions();
+	}
+	else
+	{
+		// No saved info found in registry, maximise cam
+		maximiseCameraSize();
+	}
 }
 
 // The creation function, needed by the mainframe layout manager

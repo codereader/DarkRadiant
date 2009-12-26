@@ -36,6 +36,7 @@
 #include "ui/mainframe/EmbeddedLayout.h"
 
 #include "modulesystem/StaticModule.h"
+#include <boost/bind.hpp>
 
 	namespace {
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
@@ -67,6 +68,7 @@ const StringSet& MainFrame::getDependencies() const {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 	}
 	
@@ -96,11 +98,25 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	page->appendCombo("Start DarkRadiant on monitor", RKEY_MULTIMON_START_MONITOR, list);
+
+	// Add the toggle max/min command for floating windows
+	GlobalCommandSystem().addCommand("ToggleFullScreenCamera", 
+		boost::bind(&MainFrame::toggleFullscreenCameraView, this, _1)
+	);
+	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
 }
 
 void MainFrame::shutdownModule()
 {
 	globalOutputStream() << "MainFrame::shutdownModule called." << std::endl;
+}
+
+void MainFrame::toggleFullscreenCameraView(const cmd::ArgumentList& args)
+{
+	if (_currentLayout == NULL) return;
+
+	// Issue the call
+	_currentLayout->toggleFullscreenCameraView();
 }
 
 void MainFrame::construct()

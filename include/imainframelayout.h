@@ -28,6 +28,16 @@ public:
 	 * from the MainFrame.
 	 */
 	virtual void deactivate() = 0;
+
+	/**
+	 * greebo: Each layout should implement this command to maximise
+	 * the camera view and restore it again at the next call. The layout
+	 * is activated with a un-maximised camera view, so the first call
+	 * to this method will maximise it. On deactivation, the layout should
+	 * take care of un-maxmising the camview (if necessary) before saving
+	 * its state.
+	 */
+	virtual void toggleFullscreenCameraView() = 0;
 };
 typedef boost::shared_ptr<IMainFrameLayout> IMainFrameLayoutPtr;
 
