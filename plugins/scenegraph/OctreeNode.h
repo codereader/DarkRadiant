@@ -225,10 +225,21 @@ public:
 			// This leaf has enough members to justify a further subdivision, create 8 child nodes
 			subdivide();
 
+			// To avoid concurrent nodeBoundsChanged() calls during this operation, evaluate all
+			// child bounds before trying to re-distribute them over the new childnodes.
+			for (ISPNode::MemberList::iterator i = _members.begin(); i != _members.end(); /* in-loop */)
+			{
+				(*i++)->worldAABB();
+			}
+
+			// At this point, all child bounds are calculated, some children might have re-located 
+			// themselves to a different node already, so it's possible that the number of members is 
+			// below SUBDIVISION_THRESHOLD now. We cannot rely on this, so let's continue anyway.
+
 			// We cannot use the original _members vector in the loop below (iterator invalidation)...
 			ISPNode::MemberList oldList;
 
-			// ... so move the member list here
+			// ... so create a temporary copy on the stack
 			oldList.swap(_members);
 
 			// Cycle through all the members and distribute them over the children
