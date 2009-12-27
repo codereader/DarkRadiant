@@ -418,11 +418,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\eclassmgr\AttributeSuffixComparator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\eclassmgr\Doom3EntityClass.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\plugins\eclassmgr\Doom3EntityClass.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\eclassmgr\Doom3ModelDef.h"
 				>
 			</File>
 			<File

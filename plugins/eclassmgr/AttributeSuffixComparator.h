@@ -46,12 +46,10 @@ public:
 			// Perform the comparison and return
 			return ix < iy;
 		}
-		catch (boost::bad_lexical_cast e) {
-			std::cerr 
-				<< "[eclassmgr] AttributeSuffixComparator: cannot compare '"
-				<< x.name << "' with '" << y.name << "' at position " 
-				<< _startPos << ": invalid integer." << std::endl;
-			return false;
+		catch (boost::bad_lexical_cast&)
+		{
+			// greebo: Non-numeric operands, use ordinary string comparison
+			return sx < sy;
 		}
 		
 	}
