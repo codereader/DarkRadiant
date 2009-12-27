@@ -97,6 +97,7 @@ TexToolPtr& TexTool::InstancePtr() {
 void TexTool::keyChanged(const std::string& key, const std::string& val) 
 {
 	_gridActive = (val == "1");
+
 	draw();
 }
 
@@ -156,7 +157,7 @@ void TexTool::_preHide() {
 // Pre-show callback
 void TexTool::_preShow() {
 	// Trigger an update of the current selection
-	rescanSelection();
+	queueUpdate();
 	// Restore the position
 	_windowPosition.applyPosition();
 }
@@ -196,19 +197,17 @@ TexTool& TexTool::Instance() {
 	return *InstancePtr();
 }
 
-void TexTool::update() {
+void TexTool::update()
+{
 	std::string selectedShader = selection::algorithm::getShaderFromSelection();
 	_shader = GlobalMaterialManager().getMaterialForName(selectedShader);
-}
 
-void TexTool::rescanSelection() {
-	update();
-	
 	// Clear the list to remove all the previously allocated items
 	_items.clear();
 	
 	// Does the selection use one single shader?
-	if (std::string(_shader->getName()) != "") {
+	if (!_shader->getName().empty())
+	{
 		if (_selectionInfo.patchCount > 0) {
 			// One single named shader, get the selection list
 			PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
@@ -255,9 +254,27 @@ void TexTool::rescanSelection() {
 	recalculateVisibleTexSpace();
 }
 
-void TexTool::selectionChanged(const scene::INodePtr& node, bool isComponent) {
-	rescanSelection();
+void TexTool::draw()
+{
+	// Redraw
+	gtk_widget_queue_draw(_glWidget);
+}
+
+void TexTool::onGtkIdle()
+{
+	update();
 	draw();
+}
+
+void TexTool::queueUpdate()
+{
+	// Request a callback once the application is idle
+	requestIdleCallback();
+}
+
+void TexTool::selectionChanged(const scene::INodePtr& node, bool isComponent)
+{
+	queueUpdate();
 }
 
 void TexTool::flipSelected(int axis) {
@@ -358,11 +375,6 @@ void TexTool::recalculateVisibleTexSpace() {
 	// Normalise the plane to be square
 	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
 	_texSpaceAABB.extents[1] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
-}
-
-void TexTool::draw() {
-	// Redraw
-	gtk_widget_queue_draw(_glWidget);
 }
 
 AABB& TexTool::getExtents() {
@@ -704,9 +716,9 @@ void TexTool::drawGrid() {
 
 gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self)
 {
-	// Update the information about the current selection 
-	self->update();
-	
+	// Perform any pending updates
+	self->flushIdleCallback();
+
 	// Activate the GL widget
 	gtkutil::GLWidgetSentry sentry(self->_glWidget);
 	
@@ -723,8 +735,8 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glDisable(GL_BLEND);
 	
 	// Do nothing, if the shader name is empty
-	std::string shaderName = self->_shader->getName(); 
-	if (shaderName == "") {
+	if (self->_shader == NULL || self->_shader->getName().empty())
+	{
 		return false;
 	}
 	
@@ -824,7 +836,7 @@ void TexTool::onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TexTo
 
 gboolean TexTool::triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool* self) {
 	// Trigger a redraw
-	self->draw();
+	gtk_widget_queue_draw(self->_glWidget);
 	return false;
 }
 

@@ -5,6 +5,7 @@
 #include "gtk/gtkwidget.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/event/SingleIdleCallback.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "math/Vector3.h"
 #include "math/aabb.h"
@@ -34,7 +35,8 @@ class TexTool
 : public gtkutil::PersistentTransientWindow,
   public RegistryKeyObserver,
   public SelectionSystem::Observer,
-  public RadiantEventListener
+  public RadiantEventListener,
+  public gtkutil::SingleIdleCallback
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -147,11 +149,6 @@ private:
 	 */
 	void update();
 	
-	/** greebo: Removes all selectable items and rescans the scene
-	 * 			for selected brushes/faces/patches.
-	 */
-	void rescanSelection();
-	
 	/** greebo: Passes the given visitor to every Item in the hierarchy.
 	 */
 	void foreachItem(textool::ItemVisitor& visitor);
@@ -227,11 +224,17 @@ public:
 	/** greebo: Updates the GL window
 	 */
 	void draw();
+
+	// Request a deferred update of the UI elements (is performed when GTK is idle)
+	void queueUpdate();
 	
 	/** greebo: Increases/Decreases the grid size.
 	 */
 	void gridUp();
 	void gridDown();
+
+	// Idle callback, used for deferred updates
+	void onGtkIdle();
 	
 	/** greebo: Snaps the current TexTool selection to the active grid.
 	 */

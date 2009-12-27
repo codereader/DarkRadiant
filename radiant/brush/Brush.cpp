@@ -10,6 +10,7 @@
 #include "BrushModule.h"
 #include "Face.h"
 #include "FixedWinding.h"
+#include "ui/surfaceinspector/SurfaceInspector.h"
 
 namespace {
 	/// \brief Returns true if edge (\p x, \p y) is smaller than the epsilon used to classify winding points against a plane.
@@ -136,8 +137,12 @@ void Brush::planeChanged() {
 	m_lightsChanged();
 }
 
-void Brush::shaderChanged() {
+void Brush::shaderChanged()
+{
 	planeChanged();
+
+	// Queue an UI update of the texture tools
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void Brush::setShader(const std::string& newShader) {

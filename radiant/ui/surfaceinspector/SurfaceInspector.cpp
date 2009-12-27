@@ -590,8 +590,20 @@ void SurfaceInspector::updateTexDef() {
 	gtk_entry_set_text(GTK_ENTRY(_manipulators[ROTATION].value), floatToStr(texdef._rotate).c_str());
 }
 
-void SurfaceInspector::update() {
-	
+void SurfaceInspector::onGtkIdle()
+{
+	// Perform the pending update
+	update();
+}
+
+void SurfaceInspector::queueUpdate()
+{
+	// Request an idle callback to perform the update when GTK is idle
+	requestIdleCallback();
+}
+
+void SurfaceInspector::update()
+{
 	bool valueSensitivity = false;
 	bool fitSensitivity = (_selectionInfo.totalCount > 0);
 	bool flipSensitivity = (_selectionInfo.totalCount > 0);
@@ -636,7 +648,7 @@ void SurfaceInspector::update() {
 	
 	// Update the TexTool instance as well
 	ui::TexTool::Instance().draw();
-	ui::PatchInspector::Instance().update();
+	ui::PatchInspector::Instance().queueUpdate();
 }
 
 void SurfaceInspector::postUndo()

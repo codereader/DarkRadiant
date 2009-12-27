@@ -181,7 +181,7 @@ void applyShaderToSelection(const std::string& shaderName) {
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 /** greebo: Applies the shader from the clipboard's face to the given <target> face
@@ -312,7 +312,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void pasteTextureCoords(SelectionTest& test) {
@@ -356,7 +356,7 @@ void pasteTextureCoords(SelectionTest& test) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void pickShaderFromSelection(const cmd::ArgumentList& args) {
@@ -435,7 +435,7 @@ void pasteShaderToSelection(const cmd::ArgumentList& args) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
@@ -452,7 +452,7 @@ void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 TextureProjection getSelectedTextureProjection() {
@@ -510,7 +510,7 @@ void fitTexture(const float& repeatS, const float& repeatT) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 /** greebo: Flips the visited object about the axis given to the constructor.
@@ -592,7 +592,7 @@ void naturalTexture(const cmd::ArgumentList& args) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void applyTextureProjectionToFaces(TextureProjection& projection) {
@@ -604,7 +604,7 @@ void applyTextureProjectionToFaces(TextureProjection& projection) {
 
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 /** greebo: Translates the texture of the visited faces/patches
@@ -641,7 +641,7 @@ void shiftTexture(const Vector2& shift) {
 		
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 /** greebo: Scales the texture of the visited faces/patches
@@ -695,7 +695,7 @@ void scaleTexture(const Vector2& scale) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 /** greebo: Rotates the texture of the visited faces/patches
@@ -731,7 +731,7 @@ void rotateTexture(const float& angle) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void shiftTextureLeft() {
@@ -904,7 +904,7 @@ void alignTexture(EAlignType align)
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void alignTextureCmd(const cmd::ArgumentList& args)
@@ -962,7 +962,7 @@ void normaliseTexture(const cmd::ArgumentList& args) {
 	
 	SceneChangeNotify();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 /** greebo: This replaces the shader of the visited face/patch with <replace>

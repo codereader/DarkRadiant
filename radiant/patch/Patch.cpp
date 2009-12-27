@@ -4010,7 +4010,7 @@ bool Patch::subdivionsFixed() const {
 	return m_patchDef3;
 }
 
-void Patch::textureChanged() {
-	ui::SurfaceInspector::Instance().update(); // Triggers TexTool update
-	ui::PatchInspector::Instance().update();
+void Patch::textureChanged()
+{
+	ui::SurfaceInspector::Instance().queueUpdate(); // Triggers TexTool and PatchInspector update
 }
