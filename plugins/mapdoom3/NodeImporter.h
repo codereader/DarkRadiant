@@ -22,7 +22,10 @@ class NodeImporter {
 	// The container which will hold the imported nodes
 	scene::INodePtr _root;
 	
-	std::istream _inputStream;
+	std::istream& _inputStream;
+
+	// The size of the input file
+	long _fileSize;
 
 	// The tokeniser used to split the stream into pieces
 	parser::BasicDefTokeniser<std::istream> _tok;
@@ -85,6 +88,10 @@ private:
 
 	// Check if the entity with the given number should be inserted (debug)
 	bool checkEntityNum();
+
+private:
+	// Gets the ratio of read bytes vs. total bytes in the input stream
+	double getProgressFraction();
 };
 
 } // namespace map

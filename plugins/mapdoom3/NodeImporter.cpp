@@ -32,7 +32,8 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
 						   InfoFile& infoFile, 
 						   const PrimitiveParser& parser) 
 : _root(importInfo.root),
-  _inputStream(&importInfo.inputStream),
+  _inputStream(importInfo.inputStream),
+  _fileSize(importInfo.inputStreamSize),
   _tok(_inputStream),
   _infoFile(infoFile),
   _entityCount(0),
@@ -45,7 +46,7 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
 	bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
 
 	if (showProgressDialog) 
-   {
+	{
 		_dialog = gtkutil::ModalProgressDialogPtr(
 			new gtkutil::ModalProgressDialog(
             GlobalMainFrame().getTopLevelWindow(), "Loading map"
@@ -70,13 +71,14 @@ bool NodeImporter::parse() {
       {
 			try 
          {
-				_dialog->setText("Loading entity " + sizetToStr(_entityCount));
+				_dialog->setTextAndFraction("Loading entity " + sizetToStr(_entityCount), getProgressFraction());
 			}
-			catch (gtkutil::ModalProgressDialog::OperationAbortedException e) 
+			catch (gtkutil::ModalProgressDialog::OperationAbortedException&) 
          {
 				gtkutil::errorDialog(
-               "Map loading cancelled", GlobalMainFrame().getTopLevelWindow()
-            );
+					"Map loading cancelled", 
+					GlobalMainFrame().getTopLevelWindow()
+				);
 
 				// Clear out the root node, otherwise we end up with half a map
 				scene::NodeRemover remover;
@@ -91,7 +93,7 @@ bool NodeImporter::parse() {
 		try {
 			parseEntity();
 		}
-		catch (std::runtime_error e) {
+		catch (std::runtime_error& e) {
 			gtkutil::errorDialog(
 				"Failed on entity " + sizetToStr(_entityCount) + "\n\n" + e.what(), 
 				GlobalMainFrame().getTopLevelWindow()
@@ -119,13 +121,13 @@ bool NodeImporter::parseMapVersion() {
         _tok.assertNextToken(VERSION);
         version = boost::lexical_cast<float>(_tok.nextToken());
     }
-    catch (parser::ParseException e) {
+    catch (parser::ParseException& e) {
         globalErrorStream() 
             << "[mapdoom3] Unable to parse map version: " 
             << e.what() << "\n";
         return false;
     }
-    catch (boost::bad_lexical_cast e) {
+    catch (boost::bad_lexical_cast& e) {
         globalErrorStream() 
             << "[mapdoom3] Unable to parse map version: " 
             << e.what() << "\n";
@@ -148,8 +150,9 @@ void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity)
     // Update the dialog
     if (_dialog && _dialogEventLimiter.readyForEvent()) 
     {
-        _dialog->setText(
-            _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount)
+        _dialog->setTextAndFraction(
+            _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount),
+			getProgressFraction()
         );
     }
 
@@ -318,6 +321,12 @@ void NodeImporter::insertEntity(const scene::INodePtr& entity) {
 	
 	// Insert the node into the given root
 	_root->addChildNode(entity);
+}
+
+double NodeImporter::getProgressFraction()
+{
+	long readBytes = static_cast<long>(_inputStream.tellg());
+	return static_cast<double>(readBytes) / _fileSize;
 }
 
 } // namespace map

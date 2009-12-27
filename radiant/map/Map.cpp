@@ -822,8 +822,10 @@ void Map::importSelected(TextInputStream& in) {
 	BasicContainerPtr root(new BasicContainer);
 	
 	// Pass an empty stringstream to the importer
+	std::istream str(&in);
+
 	std::istringstream dummyStream;
-	MapImportInfo importInfo(in, dummyStream);
+	MapImportInfo importInfo(str, dummyStream);
 	importInfo.root = root;
 
 	const MapFormat& format = getFormat();
