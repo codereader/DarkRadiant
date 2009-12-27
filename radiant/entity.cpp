@@ -150,8 +150,9 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
 	AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
     
     scene::INodePtr node(GlobalEntityCreator().createEntity(entityClass));
-    
-    GlobalSceneGraph().root()->addChildNode(node);
+	Entity* entity = Node_getEntity(node);
+
+	GlobalSceneGraph().root()->addChildNode(node);
     
     if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {
 		selection::algorithm::deleteSelection();
@@ -171,11 +172,9 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
     
         Node_setSelected(node, true);
     }
-    else { // brush-based entity
-    	
-    	Entity* entity = Node_getEntity(node);
-    	
-    	// Add selected brushes as children of non-fixed entity
+    else // brush-based entity
+	{ 
+		// Add selected brushes as children of non-fixed entity
 		entity->setKeyValue("model", entity->getKeyValue("name"));
 
 		// Take the selection center as new origin
@@ -201,14 +200,28 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
 	
     // Set the light radius and origin
 
-    if (entityClass->isLight() && primitivesSelected) {
+    if (entityClass->isLight() && primitivesSelected)
+	{
         AABB bounds(Doom3Light_getBounds(workzone));    
-        Node_getEntity(node)->setKeyValue("origin", bounds.getOrigin());
-        Node_getEntity(node)->setKeyValue("light_radius", bounds.getExtents());
+        entity->setKeyValue("origin", bounds.getOrigin());
+        entity->setKeyValue("light_radius", bounds.getExtents());
     }
     
     // Flag the map as unsaved after creating the entity
     GlobalMap().setModified(true);
+
+	// Check for auto-setting key values
+	EntityClassAttributeList list = entityClass->getAttributeList("editor_setKeyValue");
+
+	if (!list.empty())
+	{
+		for (EntityClassAttributeList::const_iterator i = list.begin(); i != list.end(); ++i)
+		{
+			// Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
+			std::string key = i->name.substr(i->name.find_first_of(' ') + 1, 18);
+			entity->setKeyValue(key, i->value);
+		}
+	}
     
 	// Return the new node
 	return node;
