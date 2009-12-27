@@ -331,6 +331,7 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 	globalOutputStream() << "Open file " << filename.c_str() << " for read...";
 
 	TextFileInputStream file(filename);
+	std::istream mapStream(&file);
 
 	std::string infoFilename(filename.substr(0, filename.rfind('.')));
 	infoFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
@@ -347,7 +348,7 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 		// Create an import information structure
 		if (infoFileStream.is_open()) {
 			// Infostream is open, call the MapFormat
-			MapImportInfo importInfo(file, infoFileStream);
+			MapImportInfo importInfo(mapStream, infoFileStream);
 			importInfo.root = root;
 
 			return format.readGraph(importInfo);
@@ -355,7 +356,7 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 		else {
 			// No active infostream, pass a dummy stream
 			std::istringstream emptyStream;
-			MapImportInfo importInfo(file, emptyStream);
+			MapImportInfo importInfo(mapStream, emptyStream);
 			importInfo.root = root;
 
 			return format.readGraph(importInfo);

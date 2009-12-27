@@ -49,6 +49,36 @@ public:
   {
     return fread(buffer, 1, length, m_file);
   }
+
+	// greebo: Override default std::streambuf::seekoff() method to provide buffer positioning capabilities
+	virtual std::streampos seekoff(std::streamoff off, 
+								   std::ios_base::seekdir way, 
+								   std::ios_base::openmode which = std::ios_base::in | std::ios_base::out)
+	{
+		if (way == std::ios_base::beg)
+		{
+			if (fseek(m_file, static_cast<long>(off), SEEK_SET))
+			{
+				return std::streampos(-1); // error
+			}
+		}
+		else if (way == std::ios_base::cur)
+		{
+			if (fseek(m_file, static_cast<long>(off), SEEK_CUR))
+			{
+				return std::streampos(-1); // error
+			}
+		}
+		else if (way == std::ios_base::end)
+		{
+			if (fseek(m_file, static_cast<long>(off), SEEK_END))
+			{
+				return std::streampos(-1); // error
+			}
+		}
+
+		return std::streampos(ftell(m_file));
+	}
 };
 
 #endif
