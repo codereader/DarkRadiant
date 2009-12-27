@@ -90,28 +90,20 @@ scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass) 
 	
 	// If this is not a worldspawn or unrecognised entity, generate a unique
 	// name for it
-	if (eclass->getName().size() > 0 && 
-		eclass->getName() != "worldspawn" && 
-		eclass->getName() != "UNKNOWN_CLASS")
+	const std::string& eclassName = eclass->getName();
+
+	if (!eclassName.empty() && 
+		eclassName != "worldspawn" && 
+		eclassName != "UNKNOWN_CLASS")
 	{
 		/* Clean up the name of the entity that is about the created
 		 * so that nothing bad can happen (for example, the colon character 
 		 * seems to be causing problems in Doom 3 Scripting)
 		 */
 		std::string entityName = 
-			boost::algorithm::replace_all_copy(eclass->getName(), ":", "_") + "_1";
+			boost::algorithm::replace_all_copy(eclassName, ":", "_") + "_1";
 
 		entity->setKeyValue("name", entityName);
-	}
-
-	// Check for auto-setting key values
-	EntityClassAttributeList list = eclass->getAttributeList("editor_setKeyValue");
-
-	if (!list.empty()) {
-		for (EntityClassAttributeList::const_iterator i = list.begin(); i != list.end(); ++i) {
-			// Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
-			entity->setKeyValue(i->name.substr(i->name.find_first_of(' ') + 1, 18), i->value);
-		}
 	}
 
 	return node;
