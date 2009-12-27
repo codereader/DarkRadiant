@@ -65,11 +65,15 @@ public:
 		if (entity != NULL)
 		{
 			IEntityClassConstPtr eclass = entity->getEntityClass();
+			bool entityClassVisible = GlobalFilterSystem().isVisible("entityclass", eclass->getName());
 
 			Node_traverseSubgraph(
 				node, 
-				GlobalFilterSystem().isVisible("entityclass", eclass->getName()) ? _showWalker : _hideWalker
+				entityClassVisible ? _showWalker : _hideWalker
 			);
+
+			// If the entity class is hidden, don't traverse the child nodes
+			return entityClassVisible;
 		}
 		
 		// greebo: Update visibility of PatchInstances
