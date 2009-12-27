@@ -244,10 +244,9 @@ void Face::testSelect_centroid(SelectionTest& test, SelectionIntersection& best)
 	test.TestPoint(m_centroid, best);
 }
 
-void Face::shaderChanged() {
+void Face::shaderChanged()
+{
 	EmitTextureCoordinates();
-	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
 	m_observer->shaderChanged();
 	planeChanged();
 	SceneChangeNotify();
@@ -273,7 +272,7 @@ void Face::texdefChanged() {
 	revertTexdef();
 	EmitTextureCoordinates();
 	// Update the Texture Tools
-	ui::SurfaceInspector::Instance().update();
+	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 void Face::GetTexdef(TextureProjection& projection) const {

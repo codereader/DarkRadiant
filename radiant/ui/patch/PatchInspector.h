@@ -9,6 +9,7 @@
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
+#include "gtkutil/event/SingleIdleCallback.h"
 
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkTable GtkTable;
@@ -27,7 +28,8 @@ class PatchInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
   public RadiantEventListener,
-  public UndoSystem::Observer
+  public UndoSystem::Observer,
+  public gtkutil::SingleIdleCallback
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -157,8 +159,8 @@ public:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
-	// Updates the widgets
-	void update();
+	// Request a deferred update of the UI elements (is performed when GTK is idle)
+	void queueUpdate();
 
 	/** 
 	 * greebo: Safely disconnects this dialog from all systems 
@@ -171,7 +173,13 @@ public:
 	void postUndo();
 	void postRedo();
 
+	// Idle callback, used for deferred updates
+	void onGtkIdle();
+
 private:
+	// Updates the widgets (this is private, use queueUpdate() instead)
+	void update();
+
 	// This is where the static shared_ptr of the singleton instance is held.
 	static PatchInspectorPtr& InstancePtr();
 

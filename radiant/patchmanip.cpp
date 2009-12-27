@@ -689,7 +689,7 @@ void stitchPatchTextures(const cmd::ArgumentList& args) {
 		
 		SceneChangeNotify();
 		// Update the Texture Tools
-		ui::SurfaceInspector::Instance().update();
+		ui::SurfaceInspector::Instance().queueUpdate();
 	}
 	else {
 		gtkutil::errorDialog("Cannot stitch patch textures. \nExactly 2 patches must be selected.",

@@ -9,6 +9,7 @@
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/RegistryConnector.h"
+#include "gtkutil/event/SingleIdleCallback.h"
 #include "ui/common/ShaderChooser.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
@@ -32,7 +33,8 @@ class SurfaceInspector
   public SelectionSystem::Observer,
   public ShaderChooser::ChooserClient,
   public RadiantEventListener,
-  public UndoSystem::Observer
+  public UndoSystem::Observer,
+  public gtkutil::SingleIdleCallback
 {
 	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
 
@@ -124,7 +126,7 @@ public:
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 	
 	// Updates the widgets
-	void update();
+	void queueUpdate();
 	
 	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
 	 */
@@ -144,7 +146,13 @@ public:
 	void postUndo();
 	void postRedo();
 
+	// Idle callback, used for deferred updates
+	void onGtkIdle();
+
 private:
+	// Updates the widgets (this is private, use queueUpdate() instead)
+	void update();
+
 	// This is where the static shared_ptr of the singleton instance is held.
 	static SurfaceInspectorPtr& InstancePtr();
 	
