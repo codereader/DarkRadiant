@@ -704,7 +704,7 @@ void Map::loadPrefabAt(const Vector3& targetCoords) {
 	    GlobalSelectionSystem().translateSelected(targetCoords);
 
 		// Revert to previous state
-		GlobalBrush()->setTextureLock(false);
+		GlobalBrush()->setTextureLock(prevTexLockState);
 	}
 }
 
