@@ -168,7 +168,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 		case eComponent:
 		{
 			ComponentSelector selectionTester(selector, test, componentMode);
-			GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
+			foreachSelected(selectionTester);
 
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
 			{
