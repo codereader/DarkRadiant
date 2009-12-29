@@ -81,7 +81,7 @@ public:
 
 	const AABB& localAABB() const;
 
-	void render(RenderableCollector& collector, const Matrix4& localToWorld, const ShaderPtr& state) const;
+	void render(RenderableCollector& collector, const Matrix4& localToWorld, ShaderPtr state) const;
 	void render(RenderableCollector& collector, const Matrix4& localToWorld) const;
 
 	// Test for selection
