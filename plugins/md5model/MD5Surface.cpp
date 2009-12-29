@@ -187,8 +187,9 @@ const AABB& MD5Surface::localAABB() const {
 	return _aabb_local;
 }
 
-void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, ShaderPtr state) const {
-	collector.SetState(state, RenderableCollector::eFullMaterials);
+void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, const ShaderPtr& state) const
+{
+	collector.SetState(state, collector.getStyle());
 	collector.addRenderable(*this, localToWorld);
 }
 
