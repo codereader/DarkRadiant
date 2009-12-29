@@ -79,7 +79,8 @@ public:
 		if (_stateStack.back()._highlight & ePrimitive) {
 			_selectedShader->addRenderable(renderable, localToWorld);
 		}
-		else {
+		else if (_stateStack.back()._state != NULL)
+		{
 			_stateStack.back()._state->addRenderable(renderable, localToWorld);
 		}
 	}

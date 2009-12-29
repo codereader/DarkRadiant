@@ -106,7 +106,7 @@ void PicoModelNode::submitRenderables(RenderableCollector& collector,
 				// to make sure the texture is not filtered
 				MaterialPtr surfaceShader = i->second->getMaterial();
 				if (surfaceShader->isVisible()) { 
-					collector.SetState(i->second, collector.getStyle());
+					collector.SetState(i->second, RenderableCollector::eFullMaterials);
 					collector.addRenderable(*i->first, localToWorld);
 				}
 			}			
