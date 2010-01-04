@@ -126,6 +126,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-SoundShaderPreview.$(OBJEXT) \
 	darkradiant-RenderableAABB.$(OBJEXT) \
 	darkradiant-CommandEntry.$(OBJEXT) \
+	darkradiant-EntityChooser.$(OBJEXT) \
 	darkradiant-MapPreview.$(OBJEXT) \
 	darkradiant-FiltersMenu.$(OBJEXT) \
 	darkradiant-PrefPage.$(OBJEXT) \
@@ -159,9 +160,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-PatchVertexItem.$(OBJEXT) \
 	darkradiant-TexTool.$(OBJEXT) \
 	darkradiant-LayerCommandTarget.$(OBJEXT) \
-	darkradiant-LayerSystem.$(OBJEXT) \
-	darkradiant-referencecache.$(OBJEXT) \
-	darkradiant-view.$(OBJEXT) \
+	darkradiant-LayerSystem.$(OBJEXT) darkradiant-view.$(OBJEXT) \
 	darkradiant-DynamicLibrary.$(OBJEXT) \
 	darkradiant-ApplicationContextImpl.$(OBJEXT) \
 	darkradiant-DynamicLibraryLoader.$(OBJEXT) \
@@ -201,6 +200,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-MapFileManager.$(OBJEXT) \
 	darkradiant-MapFileChooserPreview.$(OBJEXT) \
 	darkradiant-Traverse.$(OBJEXT) \
+	darkradiant-CounterManager.$(OBJEXT) \
 	darkradiant-RegionManager.$(OBJEXT) \
 	darkradiant-PointFile.$(OBJEXT) \
 	darkradiant-MapPositionManager.$(OBJEXT) \
@@ -499,6 +499,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/common/SoundShaderPreview.cpp \
 					  ui/common/RenderableAABB.cpp \
 					  ui/common/CommandEntry.cpp \
+					  ui/common/EntityChooser.cpp \
 					  ui/common/MapPreview.cpp \
 					  ui/menu/FiltersMenu.cpp \
 					  ui/prefdialog/PrefPage.cpp \
@@ -535,7 +536,6 @@ darkradiant_SOURCES = main.cpp \
 					  textool/TexTool.cpp \
 					  layers/LayerCommandTarget.cpp \
 					  layers/LayerSystem.cpp \
-					  referencecache.cpp \
 					  view.cpp \
 					  modulesystem/DynamicLibrary.cpp \
 					  modulesystem/ApplicationContextImpl.cpp \
@@ -582,6 +582,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/MapFileManager.cpp \
 					  map/MapFileChooserPreview.cpp \
 					  map/algorithm/Traverse.cpp \
+					  map/CounterManager.cpp \
 					  map/RegionManager.cpp \
 					  map/PointFile.cpp \
 					  map/MapPositionManager.cpp \
@@ -726,11 +727,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandEntry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Console.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CounterManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Curves.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-DynamicLibrary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-DynamicLibraryLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EmbeddedLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Entity.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityClassChooser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityClassTreePopulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EntityInfoTab.Po@am__quote@
@@ -879,7 +882,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-mainframe_old.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-patchmanip.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-referencecache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-select.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-timer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-view.Po@am__quote@
@@ -2081,6 +2083,20 @@ darkradiant-CommandEntry.obj: ui/common/CommandEntry.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CommandEntry.obj `if test -f 'ui/common/CommandEntry.cpp'; then $(CYGPATH_W) 'ui/common/CommandEntry.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/CommandEntry.cpp'; fi`
 
+darkradiant-EntityChooser.o: ui/common/EntityChooser.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EntityChooser.o -MD -MP -MF $(DEPDIR)/darkradiant-EntityChooser.Tpo -c -o darkradiant-EntityChooser.o `test -f 'ui/common/EntityChooser.cpp' || echo '$(srcdir)/'`ui/common/EntityChooser.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-EntityChooser.Tpo $(DEPDIR)/darkradiant-EntityChooser.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/EntityChooser.cpp' object='darkradiant-EntityChooser.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-EntityChooser.o `test -f 'ui/common/EntityChooser.cpp' || echo '$(srcdir)/'`ui/common/EntityChooser.cpp
+
+darkradiant-EntityChooser.obj: ui/common/EntityChooser.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-EntityChooser.obj -MD -MP -MF $(DEPDIR)/darkradiant-EntityChooser.Tpo -c -o darkradiant-EntityChooser.obj `if test -f 'ui/common/EntityChooser.cpp'; then $(CYGPATH_W) 'ui/common/EntityChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/EntityChooser.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-EntityChooser.Tpo $(DEPDIR)/darkradiant-EntityChooser.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/common/EntityChooser.cpp' object='darkradiant-EntityChooser.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-EntityChooser.obj `if test -f 'ui/common/EntityChooser.cpp'; then $(CYGPATH_W) 'ui/common/EntityChooser.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/common/EntityChooser.cpp'; fi`
+
 darkradiant-MapPreview.o: ui/common/MapPreview.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapPreview.o -MD -MP -MF $(DEPDIR)/darkradiant-MapPreview.Tpo -c -o darkradiant-MapPreview.o `test -f 'ui/common/MapPreview.cpp' || echo '$(srcdir)/'`ui/common/MapPreview.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-MapPreview.Tpo $(DEPDIR)/darkradiant-MapPreview.Po
@@ -2584,20 +2600,6 @@ darkradiant-LayerSystem.obj: layers/LayerSystem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='layers/LayerSystem.cpp' object='darkradiant-LayerSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LayerSystem.obj `if test -f 'layers/LayerSystem.cpp'; then $(CYGPATH_W) 'layers/LayerSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/layers/LayerSystem.cpp'; fi`
-
-darkradiant-referencecache.o: referencecache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-referencecache.o -MD -MP -MF $(DEPDIR)/darkradiant-referencecache.Tpo -c -o darkradiant-referencecache.o `test -f 'referencecache.cpp' || echo '$(srcdir)/'`referencecache.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-referencecache.Tpo $(DEPDIR)/darkradiant-referencecache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='referencecache.cpp' object='darkradiant-referencecache.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-referencecache.o `test -f 'referencecache.cpp' || echo '$(srcdir)/'`referencecache.cpp
-
-darkradiant-referencecache.obj: referencecache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-referencecache.obj -MD -MP -MF $(DEPDIR)/darkradiant-referencecache.Tpo -c -o darkradiant-referencecache.obj `if test -f 'referencecache.cpp'; then $(CYGPATH_W) 'referencecache.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-referencecache.Tpo $(DEPDIR)/darkradiant-referencecache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='referencecache.cpp' object='darkradiant-referencecache.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-referencecache.obj `if test -f 'referencecache.cpp'; then $(CYGPATH_W) 'referencecache.cpp'; else $(CYGPATH_W) '$(srcdir)/referencecache.cpp'; fi`
 
 darkradiant-view.o: view.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-view.o -MD -MP -MF $(DEPDIR)/darkradiant-view.Tpo -c -o darkradiant-view.o `test -f 'view.cpp' || echo '$(srcdir)/'`view.cpp
@@ -3242,6 +3244,20 @@ darkradiant-Traverse.obj: map/algorithm/Traverse.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/Traverse.cpp' object='darkradiant-Traverse.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Traverse.obj `if test -f 'map/algorithm/Traverse.cpp'; then $(CYGPATH_W) 'map/algorithm/Traverse.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/Traverse.cpp'; fi`
+
+darkradiant-CounterManager.o: map/CounterManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CounterManager.o -MD -MP -MF $(DEPDIR)/darkradiant-CounterManager.Tpo -c -o darkradiant-CounterManager.o `test -f 'map/CounterManager.cpp' || echo '$(srcdir)/'`map/CounterManager.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-CounterManager.Tpo $(DEPDIR)/darkradiant-CounterManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/CounterManager.cpp' object='darkradiant-CounterManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CounterManager.o `test -f 'map/CounterManager.cpp' || echo '$(srcdir)/'`map/CounterManager.cpp
+
+darkradiant-CounterManager.obj: map/CounterManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CounterManager.obj -MD -MP -MF $(DEPDIR)/darkradiant-CounterManager.Tpo -c -o darkradiant-CounterManager.obj `if test -f 'map/CounterManager.cpp'; then $(CYGPATH_W) 'map/CounterManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/CounterManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-CounterManager.Tpo $(DEPDIR)/darkradiant-CounterManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/CounterManager.cpp' object='darkradiant-CounterManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CounterManager.obj `if test -f 'map/CounterManager.cpp'; then $(CYGPATH_W) 'map/CounterManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/CounterManager.cpp'; fi`
 
 darkradiant-RegionManager.o: map/RegionManager.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RegionManager.o -MD -MP -MF $(DEPDIR)/darkradiant-RegionManager.Tpo -c -o darkradiant-RegionManager.o `test -f 'map/RegionManager.cpp' || echo '$(srcdir)/'`map/RegionManager.cpp
