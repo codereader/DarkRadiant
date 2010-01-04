@@ -7,6 +7,7 @@
 #include "ieventmanager.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include <iostream>
+#include <vector>
 
 namespace ui {
 	
@@ -224,12 +225,13 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	
 	// Create the notebook page
 	gint position = -1;
-	Pages::const_iterator insertIter = _pages.end();
+	Pages::iterator insertIter = _pages.end();
 
 	if (!insertBefore.empty())
 	{
 		// Find the page with that name
-		for (Pages::const_iterator i = _pages.begin(); i != _pages.end(); ++i) {
+		for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i) 
+        {
 			// Skip the wrong ones
 			if (i->name != insertBefore) continue;
 
