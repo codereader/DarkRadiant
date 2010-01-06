@@ -10,6 +10,7 @@ del *.pdb /S /Q
 del *.lib /S /Q
 del *.suo /S /Q
 del *.pgd /S /Q
+del darkradiant.desktop.in
 
 cd ..
 cd DarkRadiant\tools\innosetup
