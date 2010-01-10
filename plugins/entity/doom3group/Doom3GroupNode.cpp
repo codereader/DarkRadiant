@@ -227,10 +227,6 @@ void Doom3GroupNode::snapto(float snap) {
 	m_contained.snapto(snap);
 }
 
-Entity& Doom3GroupNode::getEntity() {
-	return _entity;
-}
-
 void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());
 	SelectionIntersection best;

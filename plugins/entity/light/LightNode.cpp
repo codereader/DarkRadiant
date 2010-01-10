@@ -78,10 +78,6 @@ void LightNode::lightChanged() {
 	GlobalRenderSystem().lightChanged(*this);
 }
 
-Entity& LightNode::getEntity() {
-	return _entity;
-}
-
 void LightNode::refreshModel() {
 	// Simulate a "model" key change
 	_light._modelKey.modelChanged(_entity.getKeyValue("model"));

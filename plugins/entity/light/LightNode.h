@@ -23,8 +23,6 @@ class LightNode :
 	public RendererLight,
 	public scene::SelectableLight
 {
-	friend class Light;
-
 	Light _light;
 
 	// The (draggable) light center instance
@@ -50,7 +48,6 @@ public:
 	virtual ~LightNode();
 	
 	// EntityNode implementation
-	virtual Entity& getEntity();
 	virtual void refreshModel();
 
 	// Bounded implementation
