@@ -41,7 +41,6 @@ public:
 	virtual void snapto(float snap);
 
 	// EntityNode implementation
-	virtual Entity& getEntity();
 	virtual void refreshModel();
 
 	scene::INodePtr clone() const;

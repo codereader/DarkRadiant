@@ -39,11 +39,6 @@ const AABB& SpeakerNode::localAABB() const {
 	return _speaker.localAABB();
 }
 
-// EntityNode implementation
-Entity& SpeakerNode::getEntity() {
-	return _entity;
-}
-
 void SpeakerNode::refreshModel() {
 	// Nothing to do
 }

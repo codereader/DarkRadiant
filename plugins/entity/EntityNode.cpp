@@ -69,6 +69,11 @@ void EntityNode::removeKeyObserver(const std::string& key, const KeyObserver& ob
 	_keyObservers.erase(key, observer);
 }
 
+Entity& EntityNode::getEntity()
+{
+	return _entity;
+}
+
 std::string EntityNode::getName() const {
 	return _namespaceManager.getName();
 }

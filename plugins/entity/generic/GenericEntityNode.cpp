@@ -31,10 +31,6 @@ void GenericEntityNode::snapto(float snap) {
 }
 
 // EntityNode implementation
-Entity& GenericEntityNode::getEntity() {
-	return _entity;
-}
-
 void GenericEntityNode::refreshModel() {
 	// nothing to do
 }

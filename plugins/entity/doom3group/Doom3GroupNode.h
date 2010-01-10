@@ -47,12 +47,11 @@ class Doom3GroupNode :
 
 public:
 	Doom3GroupNode(const IEntityClassPtr& eclass);
-	~Doom3GroupNode();
+	virtual ~Doom3GroupNode();
 	
 	void construct();
 
 	// EntityNode implementation
-	virtual Entity& getEntity();
 	virtual void refreshModel();
 
 	// CurveNode implementation

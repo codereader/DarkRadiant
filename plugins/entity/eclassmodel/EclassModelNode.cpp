@@ -4,8 +4,7 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_contained(*this, // pass <self> as scene::INode&
-				Node::TransformChangedCaller(*this)),
+	m_contained(*this, Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
 {}
 
@@ -13,7 +12,7 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	m_contained(other.m_contained, 
-				*this, // pass <self> as scene::INode&
+				*this, 
 				Node::TransformChangedCaller(*this)),
 	_updateSkin(true)
 {}
@@ -43,10 +42,6 @@ void EclassModelNode::snapto(float snap) {
 }
 
 // EntityNode implementation
-Entity& EclassModelNode::getEntity() {
-	return _entity;
-}
-
 void EclassModelNode::refreshModel() {
 	// Simulate a "model" key change
 	m_contained.modelChanged(_entity.getKeyValue("model"));

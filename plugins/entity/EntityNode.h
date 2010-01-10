@@ -60,6 +60,9 @@ public:
 
 	virtual ~EntityNode();
 
+	// IEntityNode implementation
+	Entity& getEntity();
+
 	// Namespaced implementation
 	// Gets/sets the namespace of this named object
 	std::string getName() const;

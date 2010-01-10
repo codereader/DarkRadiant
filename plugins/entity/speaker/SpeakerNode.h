@@ -44,7 +44,6 @@ public:
 	virtual void snapto(float snap);
 
 	// EntityNode implementation
-	virtual Entity& getEntity();
 	virtual void refreshModel();
 
 	// Bounded implementation
