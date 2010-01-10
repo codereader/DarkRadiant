@@ -312,8 +312,15 @@ void Light::checkStartEnd() {
 	}
 }
 
-void Light::rotationChanged() {
+void Light::rotationChanged()
+{
 	m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;
+
+	// Update the transformation matrix
+	_owner.localToParent() = Matrix4::getIdentity();
+	_owner.localToParent().translateBy(worldOrigin());
+	_owner.localToParent().multiplyBy(m_rotation.getMatrix4());
+
 	GlobalSelectionSystem().pivotChanged();
 }
 
