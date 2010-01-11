@@ -274,8 +274,10 @@ const AABB& Node::worldAABB() const {
 	return _bounds;
 }
 
-void Node::evaluateBounds() const {
-	if(_boundsChanged) {
+void Node::evaluateBounds() const
+{
+	if (_boundsChanged)
+	{
 		ASSERT_MESSAGE(!_boundsMutex, "re-entering bounds evaluation");
 		_boundsMutex = true;
 
@@ -313,7 +315,7 @@ void Node::evaluateChildBounds() const {
 		AABBAccumulateWalker accumulator(_childBounds);
 
 		// greebo: traverse the children of this node
-		const_cast<Node*>(this)->traverse(accumulator);
+		traverse(accumulator);
 		
 		_childBoundsMutex = false;
 		_childBoundsChanged = false;
