@@ -47,9 +47,12 @@ LightNode::LightNode(const LightNode& other) :
 void LightNode::construct()
 {
 	_light.construct();
+	Node::attachTraverseObserver(this);
 }
 
-LightNode::~LightNode() {
+LightNode::~LightNode()
+{
+	Node::detachTraverseObserver(this);
 	_light.setLightChangedCallback(Callback());
 }
 
