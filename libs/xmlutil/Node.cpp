@@ -48,7 +48,7 @@ Node Node::createChild(const std::string& name)
 	// Create a new child under the contained node
 	xmlNodePtr newChild = xmlNewChild(_xmlNode,	NULL, nodeName, NULL);
 
-	xmlMemFree(nodeName);
+	xmlFree(nodeName);
 	
 	// Create a new xml::Node out of this pointer and return it
 	return Node(newChild);
@@ -79,8 +79,8 @@ void Node::setAttributeValue(const std::string& key, const std::string& value)
 
 	xmlSetProp(_xmlNode, k, v);
 
-	xmlMemFree(k);
-	xmlMemFree(v);
+	xmlFree(k);
+	xmlFree(v);
 }
 
 // Return the value of a given attribute, or throw AttributeNotFoundException
