@@ -35,7 +35,7 @@ Document Document::create()
 	// Create a new xmlDocPtr and return the object
 	xmlDocPtr doc = xmlNewDoc(versionStr);
 
-	xmlMemFree(versionStr);
+	xmlFree(versionStr);
 
 	return Document(doc);
 }
@@ -51,14 +51,15 @@ void Document::addTopLevelNode(const std::string& name) {
 	xmlNodePtr root = xmlNewDocNode(_xmlDoc, NULL, nameStr, emptyStr);
 	xmlNodePtr oldRoot = xmlDocSetRootElement(_xmlDoc, root);
 
-	if (oldRoot != NULL) {
+	if (oldRoot != NULL) 
+    {
 		// Old root element, remove it
 		xmlUnlinkNode(oldRoot);
-		xmlMemFree(oldRoot);
+		xmlFreeNode(oldRoot);
 	}
 	
-	xmlMemFree(nameStr);
-	xmlMemFree(emptyStr);
+	xmlFree(nameStr);
+	xmlFree(emptyStr);
 }
 
 Node Document::getTopLevelNode() const {
