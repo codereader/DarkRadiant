@@ -2,7 +2,7 @@
 
 inline Plane3 Plane3_applyTranslation(const Plane3& plane, const Vector3& translation) {
 	Plane3 tmp = Plane3(plane.normal(), -plane.dist()).getTranslated(translation);
-	return Plane3(tmp.normal(), -tmp.dist());
+	return Plane3(tmp.a, tmp.b, tmp.c, -tmp.d);
 }
 
 // Constructor and copy constructor
@@ -81,7 +81,11 @@ void FacePlane::offset(float offset) {
 	}
 }
 
-void FacePlane::updateTranslated() {
+void FacePlane::updateTranslated()
+{
+	/*Plane3 tmp = Plane3(m_plane.normal(), -m_plane.dist()).getTranslated(m_funcStaticOrigin);
+	m_planeCached = Plane3(tmp.a, tmp.b, tmp.c, -tmp.d);*/
+
 	m_planeCached = Plane3_applyTranslation(m_plane, m_funcStaticOrigin);
 }
 
