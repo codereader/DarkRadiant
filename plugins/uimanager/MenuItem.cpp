@@ -325,7 +325,7 @@ void MenuItem::construct() {
 	}
 	
 	if (_widget != NULL) {
-		gtk_widget_show(_widget);
+		gtk_widget_show_all(_widget);
 	}
 	
 	_constructed = true;

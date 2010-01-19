@@ -136,7 +136,8 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 	return result;
 }
 
-void ScriptingSystem::initialise() {
+void ScriptingSystem::initialise()
+{
 	// Add the registered interfaces
 	try {
 		for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
@@ -220,7 +221,8 @@ void ScriptingSystem::executeCommand(const std::string& name) {
 	executeScriptFile(found->second->getFilename());
 }
 
-void ScriptingSystem::loadCommandScript(const std::string& scriptFilename) {
+void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
+{
 	try
 	{
 		// Create a new dictionary for the initialisation routine
@@ -272,7 +274,8 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename) {
 	}
 }
 
-void ScriptingSystem::reloadScripts() {
+void ScriptingSystem::reloadScripts()
+{
 	// Release all previously allocated commands
 	_commands.clear();
 
@@ -302,6 +305,11 @@ void ScriptingSystem::reloadScripts() {
 	}
 
 	globalOutputStream() << "ScriptModule: Found " << _commands.size() << " commands." << std::endl;
+
+	// Re-create the script menu
+	_scriptMenu.reset();
+
+	_scriptMenu = ui::ScriptMenuPtr(new ui::ScriptMenu(_commands));
 }
 
 // RegisterableModule implementation
@@ -323,8 +331,9 @@ const StringSet& ScriptingSystem::getDependencies() const {
 	return _dependencies;
 }
 
-void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << getName() << "::initialiseModule called.\n";
+void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	_startupListener = StartupListenerPtr(new StartupListener(*this));
@@ -340,7 +349,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 	// start the python interpreter
 	Py_Initialize();
 
-	globalOutputStream() << getName() << ": Python interpreter initialised.\n";
+	globalOutputStream() << getName() << ": Python interpreter initialised." << std::endl;
 
 	// Initialise the boost::python objects
 	_mainModule = boost::python::import("__main__");
@@ -431,6 +440,8 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx) {
 void ScriptingSystem::shutdownModule()
 {
 	globalOutputStream() << getName() << "::shutdownModule called." << std::endl;
+
+	_scriptMenu = ui::ScriptMenuPtr();
 
 	// Clear the buffer so that nodes finally get destructed
 	SceneNodeBuffer::Instance().clear();

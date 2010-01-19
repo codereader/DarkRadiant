@@ -442,6 +442,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\script\ScriptMenu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\script\ScriptMenu.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\script\ScriptModule.cpp"
 				>
 			</File>
