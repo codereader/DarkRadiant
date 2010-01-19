@@ -10,6 +10,7 @@
 #include "icommandsystem.h"
 
 #include "ScriptCommand.h"
+#include "ScriptMenu.h"
 
 namespace script {
 
@@ -20,6 +21,7 @@ typedef boost::shared_ptr<StartupListener> StartupListenerPtr;
 class ScriptingSystem :
 	public IScriptingSystem
 {
+private:
 	std::string _outputBuffer;
 	std::string _errorBuffer;
 
@@ -42,8 +44,9 @@ class ScriptingSystem :
 	std::string _scriptPath;
 
 	// All named script commands (pointing to .py files)
-	typedef std::map<std::string, ScriptCommandPtr> ScriptCommandMap;
 	ScriptCommandMap _commands;
+
+	ui::ScriptMenuPtr _scriptMenu;
 
 public:
 	ScriptingSystem();

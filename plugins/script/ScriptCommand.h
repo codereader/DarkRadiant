@@ -2,6 +2,7 @@
 #define _SCRIPT_COMMAND_H_
 
 #include <string>
+#include <map>
 #include <boost/shared_ptr.hpp>
 
 namespace script {
@@ -27,6 +28,9 @@ public:
 	}
 };
 typedef boost::shared_ptr<ScriptCommand> ScriptCommandPtr;
+
+// A mapping of named script commands
+typedef std::map<std::string, ScriptCommandPtr> ScriptCommandMap;
 
 } // namespace script
 

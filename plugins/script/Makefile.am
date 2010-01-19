@@ -16,6 +16,7 @@ script_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
 script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptCommand.cpp \
 					ScriptModule.cpp \
+					ScriptMenu.cpp \
 					ScriptWindow.cpp \
 					SceneNodeBuffer.cpp \
                interfaces/DialogInterface.cpp \
