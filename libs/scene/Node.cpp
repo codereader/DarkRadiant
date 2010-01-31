@@ -173,7 +173,10 @@ void Node::removeAllChildNodes() {
 
 void Node::traverse(NodeVisitor& visitor) const
 {
-	_children.traverse(visitor);
+	if (!_children.empty())
+	{
+		_children.traverse(visitor);
+	}
 }
 
 // traverse observer
