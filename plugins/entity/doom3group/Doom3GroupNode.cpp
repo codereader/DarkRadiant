@@ -56,14 +56,11 @@ Doom3GroupNode::~Doom3GroupNode() {
 
 	Callback cb;
 	m_contained.setTransformChanged(cb);
-	Node::detachTraverseObserver(this);
 }
 
 void Doom3GroupNode::construct()
 {
 	m_contained.construct();
-
-	Node::attachTraverseObserver(this);
 
 	// Attach the callback as keyobserver for the skin key
 	addKeyObserver("skin", SkinChangedCaller(*this));

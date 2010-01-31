@@ -7,7 +7,6 @@
 #include "itextstream.h"
 #include "iundo.h"
 #include "imainframe.h"
-#include "itraversable.h"
 #include "brush/BrushModule.h"
 #include "brush/BrushVisit.h"
 #include "patch/PatchSceneWalk.h"

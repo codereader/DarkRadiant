@@ -13,7 +13,6 @@ namespace scene {
 
 class Node :
 	public INode,
-	public Traversable::Observer,
 	public boost::enable_shared_from_this<Node>
 {
 public:
@@ -150,9 +149,6 @@ protected:
 	void getPathRecursively(scene::Path& targetPath);
 
 	TraversableNodeSet& getTraversable();
-
-	virtual void attachTraverseObserver(scene::Traversable::Observer* observer);
-	virtual void detachTraverseObserver(scene::Traversable::Observer* observer);
 
 	virtual void instanceAttach(MapFile* mapfile);
 	virtual void instanceDetach(MapFile* mapfile);

@@ -118,7 +118,11 @@ public:
 
 	// Adds the cloned nodes to their designated parents. Pass TRUE to select the nodes.
 	void moveClonedNodes(bool select) {
-		for (Map::iterator i = _cloned.begin(); i != _cloned.end(); i++) {
+		for (Map::iterator i = _cloned.begin(); i != _cloned.end(); ++i)
+		{
+			// Remove the child from the basic container first
+			_cloneRoot->removeChildNode(i->first);
+
 			// Add the node to its parent
 			i->second->addChildNode(i->first);
 

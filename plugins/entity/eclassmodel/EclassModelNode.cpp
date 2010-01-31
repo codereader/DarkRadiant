@@ -25,15 +25,12 @@ void EclassModelNode::construct()
 {
 	m_contained.construct();
 
-	// Attach the InstanceSet as Traversable::Observer to the nodeset
-	Node::attachTraverseObserver(this);
 	addKeyObserver("skin", SkinChangedCaller(*this));
 }
 
 void EclassModelNode::destroy()
 {
 	removeKeyObserver("skin", SkinChangedCaller(*this));
-	Node::detachTraverseObserver(this);
 }
 
 // Snappable implementation

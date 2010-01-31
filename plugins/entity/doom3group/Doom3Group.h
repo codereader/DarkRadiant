@@ -81,8 +81,6 @@ public:
 	
 	~Doom3Group();
 
-	scene::Traversable& getTraversable();
-	const scene::Traversable& getTraversable() const;
 	TransformNode& getTransformNode();
 	const TransformNode& getTransformNode() const;
 

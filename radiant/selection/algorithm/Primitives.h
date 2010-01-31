@@ -6,7 +6,6 @@
 #include <vector>
 #include "iscenegraph.h"
 #include "icommandsystem.h"
-#include "itraversable.h"
 #include "iselection.h"
 #include "ipatch.h"
 
