@@ -66,9 +66,9 @@ public:
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
 
-	// Override scene::Traverse::Observer
-	virtual void onTraversableInsert(const scene::INodePtr& child);
-	virtual void onTraversableErase(const scene::INodePtr& child);
+	// Override scene::Node methods
+	virtual void onChildAdded(const scene::INodePtr& child);
+	virtual void onChildRemoved(const scene::INodePtr& child);
 
 	// Cloneable implementation
 	scene::INodePtr clone() const;

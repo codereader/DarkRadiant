@@ -123,12 +123,10 @@ public:
 
 	void setTransformChangedCallback(const Callback& callback);
 
-	// traverse observer
 	// greebo: This gets called as soon as a scene::Node gets inserted into
-	// the oberved Traversable. This triggers an instantiation call and ensures
-	// that each inserted node is also instantiated.
-	virtual void onTraversableInsert(const INodePtr& child);
-	virtual void onTraversableErase(const INodePtr& child);
+	// the TraversableNodeSet. This triggers an instantiation call on the child node.
+	virtual void onChildAdded(const INodePtr& child);
+	virtual void onChildRemoved(const INodePtr& child);
 
 	// Gets called when this node is inserted into a scene graph
 	virtual void onInsertIntoScene();

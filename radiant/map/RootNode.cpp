@@ -61,20 +61,20 @@ void RootNode::setName(const std::string& name) {
 	_name = name;
 }
 
-void RootNode::onTraversableInsert(const scene::INodePtr& child)
+void RootNode::onChildAdded(const scene::INodePtr& child)
 {
 	// Insert this node into our namespace
 	_namespace->connect(child);
 
-	Node::onTraversableInsert(child);
+	Node::onChildAdded(child);
 }
 
-void RootNode::onTraversableErase(const scene::INodePtr& child)
+void RootNode::onChildRemoved(const scene::INodePtr& child)
 {
 	// Detach the node from our namespace
 	_namespace->disconnect(child);
 
-	Node::onTraversableErase(child);
+	Node::onChildRemoved(child);
 }
 
 void RootNode::instanceAttach(MapFile* map)

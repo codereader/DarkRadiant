@@ -11,31 +11,31 @@ namespace scene
 // An ObserverFunctor does something with the given owner and a given child <node> 
 struct ObserverFunctor {
     virtual ~ObserverFunctor() {}
-	virtual void operator() (Node& owner, const INodePtr& node) = 0; // TODO: Pass ref-to-const instead of value
+	virtual void operator() (Node& owner, const INodePtr& node) = 0;
 };
 
-// This calls onTraversableErase() on the given <observer>
+// This calls onChildRemoved() on the given <observer>
 struct ObserverEraseFunctor :
 	public ObserverFunctor
 {
 	void operator() (Node& owner, const INodePtr& node)
 	{
-		owner.onTraversableErase(node);
+		owner.onChildRemoved(node);
 	}
 };
 
-// This calls onTraversableInsert() on owner for the given child node
+// This calls onChildAdded() on owner for the given child node
 struct ObserverInsertFunctor :
 	public ObserverFunctor
 {
 	void operator() (Node& owner, const INodePtr& node)
 	{
-		owner.onTraversableInsert(node);
+		owner.onChildAdded(node);
 	}
 };
 
 /** greebo: This iterator is required by the std::set_difference algorithm and 
- * is used to call	owning node's onTraversableInsert() or onTraversableErase() 
+ * is used to call	owning node's onChildAdded() or onChildRemoved() 
  * as soon as the assignment operator is invoked by the set_difference algorithm.
  * 
  * Note: The operator++ is apparently necessary, but is not doing anything, as this iterator
@@ -92,7 +92,7 @@ void TraversableNodeSet::insert(const INodePtr& node)
 	_children.push_back(node);
 
 	// Notify the owner (note: this usually triggers instantiation of the node)
-	_owner.onTraversableInsert(node);
+	_owner.onChildAdded(node);
 }
 
 void TraversableNodeSet::erase(const INodePtr& node) 
@@ -100,7 +100,7 @@ void TraversableNodeSet::erase(const INodePtr& node)
 	undoSave();
 
 	// Notify the Observer before actually removing the node 
-	_owner.onTraversableErase(node);
+	_owner.onChildRemoved(node);
 
 	// Lookup the node and remove it from the list
 	NodeList::iterator i = std::find(_children.begin(), _children.end(), node);
@@ -188,7 +188,7 @@ void TraversableNodeSet::notifyInsertAll()
 {
 	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
 	{
-		_owner.onTraversableInsert(*i);
+		_owner.onChildAdded(*i);
 	}
 }
 
@@ -196,7 +196,7 @@ void TraversableNodeSet::notifyEraseAll()
 {
 	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
 	{
-		_owner.onTraversableErase(*i);
+		_owner.onChildRemoved(*i);
 	}
 }
 
@@ -214,7 +214,7 @@ void TraversableNodeSet::notifyDifferent(const NodeList& before, const NodeList&
 	ObserverInsertFunctor insertFunctor;
 
 	// greebo: Now find all the nodes that exist in <_children>, but not in <other> and 
-	// call the EraseFunctor for each of them (the iterator calls onTraversableErase() on the given observer). 
+	// call the EraseFunctor for each of them (the iterator calls onChildRemoved() on the given observer). 
 	std::set_difference(
 		before_sorted.begin(), before_sorted.end(), 
 		after_sorted.begin(), after_sorted.end(), 
@@ -222,7 +222,7 @@ void TraversableNodeSet::notifyDifferent(const NodeList& before, const NodeList&
 	);
 	
 	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>, 
-	// these have to be added, that's why the onTraversableInsert() method is called for each of them  
+	// these have to be added, that's why the onChildAdded() method is called for each of them  
 	std::set_difference(
 		after_sorted.begin(), after_sorted.end(), 
 		before_sorted.begin(), before_sorted.end(), 
