@@ -88,40 +88,49 @@ unsigned long Node::getNewId() {
 	return ++_maxNodeId;
 }
 
-bool Node::isRoot() const {
+bool Node::isRoot() const
+{
 	return _isRoot;
 }
 
-void Node::setIsRoot(bool isRoot) {
+void Node::setIsRoot(bool isRoot)
+{
 	_isRoot = isRoot;
 }
 
-void Node::enable(unsigned int state) {
+void Node::enable(unsigned int state)
+{
 	_state |= state;
 }
 
-void Node::disable(unsigned int state) {
+void Node::disable(unsigned int state)
+{
 	_state &= ~state;
 }
 
-bool Node::visible() const {
+bool Node::visible() const
+{
 	return _state == eVisible;
 }
 
-bool Node::excluded() const {
+bool Node::excluded() const
+{
 	return (_state & eExcluded) != 0;
 }
 
-void Node::addToLayer(int layerId) {
+void Node::addToLayer(int layerId)
+{
 	_layers.insert(layerId);
 }
 
-void Node::moveToLayer(int layerId) {
+void Node::moveToLayer(int layerId)
+{
 	_layers.clear();
 	_layers.insert(layerId);
 }
 
-void Node::removeFromLayer(int layerId) {
+void Node::removeFromLayer(int layerId)
+{
 	// Look up the layer ID and remove it from the list
 	LayerList::iterator found = _layers.find(layerId);
 
@@ -135,39 +144,38 @@ void Node::removeFromLayer(int layerId) {
 	}
 }
 
-LayerList Node::getLayers() const {
+LayerList Node::getLayers() const
+{
 	return _layers;
 }
 
-void Node::addChildNode(const INodePtr& node) {
+void Node::addChildNode(const INodePtr& node)
+{
 	// Add the node to the TraversableNodeSet, this triggers an 
-	// Node::onTraversableInsert() event
+	// Node::onChildAdded() event, where the parent of the child is set
 	_children.insert(node);
-
-	// Set the parent of this new node
-	node->setParent(shared_from_this());
 
 	// greebo: The bounds most probably change when child nodes are added
 	boundsChanged();
 }
 
-void Node::removeChildNode(const INodePtr& node) {
+void Node::removeChildNode(const INodePtr& node)
+{
 	// Remove the node from the TraversableNodeSet, this triggers an 
-	// Node::onTraversableErase() event
+	// Node::onChildRemoved() event
 	_children.erase(node);
-
-	// Set the parent of this node to NULL
-	node->setParent(INodePtr());
 
 	// greebo: The bounds are likely to change when child nodes are removed
 	boundsChanged();
 }
 
-bool Node::hasChildNodes() const {
+bool Node::hasChildNodes() const
+{
 	return !_children.empty();
 }
 
-void Node::removeAllChildNodes() {
+void Node::removeAllChildNodes()
+{
 	_children.clear();
 }
 
@@ -179,31 +187,24 @@ void Node::traverse(NodeVisitor& visitor) const
 	}
 }
 
-// traverse observer
-// greebo: This gets called as soon as a scene::Node gets inserted into
-// the oberved Traversable. This triggers an instantiation call and ensures
-// that each inserted node is also instantiated.
-void Node::onTraversableInsert(const INodePtr& child)
+void Node::onChildAdded(const INodePtr& child)
 {
+	child->setParent(shared_from_this());
+
 	if (!_instantiated) return;
 
-	child->setParent(getSelf());
-	
 	InstanceSubgraphWalker visitor;
 	Node_traverseSubgraph(child, visitor);
-
-	child->boundsChanged();
 }
 
-void Node::onTraversableErase(const INodePtr& child)
+void Node::onChildRemoved(const INodePtr& child)
 {
+	child->setParent(scene::INodePtr());
+	
 	if (!_instantiated) return;
 
 	UninstanceSubgraphWalker visitor;
 	Node_traverseSubgraph(child, visitor);
-
-	child->setParent(scene::INodePtr());
-	child->boundsChanged();
 }
 
 void Node::onInsertIntoScene()
