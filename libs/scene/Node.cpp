@@ -152,11 +152,9 @@ LayerList Node::getLayers() const
 void Node::addChildNode(const INodePtr& node)
 {
 	// Add the node to the TraversableNodeSet, this triggers an 
-	// Node::onChildAdded() event, where the parent of the child is set
+	// Node::onChildAdded() event, where the parent of the new 
+	// child is set, among other things
 	_children.insert(node);
-
-	// greebo: The bounds most probably change when child nodes are added
-	boundsChanged();
 }
 
 void Node::removeChildNode(const INodePtr& node)
@@ -164,9 +162,6 @@ void Node::removeChildNode(const INodePtr& node)
 	// Remove the node from the TraversableNodeSet, this triggers an 
 	// Node::onChildRemoved() event
 	_children.erase(node);
-
-	// greebo: The bounds are likely to change when child nodes are removed
-	boundsChanged();
 }
 
 bool Node::hasChildNodes() const
@@ -191,6 +186,9 @@ void Node::onChildAdded(const INodePtr& child)
 {
 	child->setParent(shared_from_this());
 
+	// greebo: The bounds most probably change when child nodes are added
+	boundsChanged();
+
 	if (!_instantiated) return;
 
 	InstanceSubgraphWalker visitor;
@@ -200,6 +198,9 @@ void Node::onChildAdded(const INodePtr& child)
 void Node::onChildRemoved(const INodePtr& child)
 {
 	child->setParent(scene::INodePtr());
+
+	// greebo: The bounds are likely to change when child nodes are removed
+	boundsChanged();
 	
 	if (!_instantiated) return;
 
