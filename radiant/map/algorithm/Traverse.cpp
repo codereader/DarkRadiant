@@ -1,6 +1,5 @@
 #include "Traverse.h"
 
-#include "itraversable.h"
 #include "scenelib.h"
 
 namespace map {

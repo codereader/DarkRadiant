@@ -336,10 +336,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\itraversable.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\iuimanager.h"
 			>
 		</File>

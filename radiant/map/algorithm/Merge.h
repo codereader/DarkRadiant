@@ -2,7 +2,6 @@
 #define MERGE_H_
 
 #include "iscenegraph.h"
-#include "itraversable.h"
 #include "scenelib.h"
 
 namespace map {

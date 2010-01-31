@@ -5,5 +5,4 @@ libscenegraph_la_LDFLAGS = -release @PACKAGE_VERSION@
 libscenegraph_la_LIBADD = $(top_builddir)/libs/math/libmath.la
 libscenegraph_la_SOURCES = InstanceWalkers.cpp \
 			 			  TraversableNodeSet.cpp \
-						  Node.cpp \
-                          ../UndoableObject.cpp
+						  Node.cpp

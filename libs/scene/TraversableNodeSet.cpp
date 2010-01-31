@@ -3,43 +3,48 @@
 #include "debugging/debugging.h"
 #include <algorithm>
 #include "scenelib.h"
+#include "undolib.h"
 
-// An ObserverFunctor does something with the given <observer> and the given <node> 
+namespace scene
+{
+
+// An ObserverFunctor does something with the given owner and a given child <node> 
 struct ObserverFunctor {
     virtual ~ObserverFunctor() {}
-	virtual void operator() (scene::Traversable::Observer& observer, scene::INodePtr node) = 0;
+	virtual void operator() (Node& owner, const INodePtr& node) = 0; // TODO: Pass ref-to-const instead of value
 };
 
 // This calls onTraversableErase() on the given <observer>
 struct ObserverEraseFunctor :
 	public ObserverFunctor
 {
-	virtual void operator() (scene::Traversable::Observer& _observer, scene::INodePtr node) {
-		_observer.onTraversableErase(node);
+	void operator() (Node& owner, const INodePtr& node)
+	{
+		owner.onTraversableErase(node);
 	}
 };
 
-// This calls onTraversableInsert() on the given <observer>
+// This calls onTraversableInsert() on owner for the given child node
 struct ObserverInsertFunctor :
 	public ObserverFunctor
 {
-	virtual void operator() (scene::Traversable::Observer& _observer, scene::INodePtr node) {
-		_observer.onTraversableInsert(node);
+	void operator() (Node& owner, const INodePtr& node)
+	{
+		owner.onTraversableInsert(node);
 	}
 };
 
 /** greebo: This iterator is required by the std::set_difference algorithm and 
- * 			is used to call	scene::Traversable::Observer::onTraversableInsert() or 
- * 			onTraversableErase() as soon as	the assignment operator is invoked by 
- * 			the set_difference algorithm.
+ * is used to call	owning node's onTraversableInsert() or onTraversableErase() 
+ * as soon as the assignment operator is invoked by the set_difference algorithm.
  * 
  * Note: The operator++ is apparently necessary, but is not doing anything, as this iterator
- * 		 is only "fake" and is only used to trigger the observer call. 
+ * is only "fake" and is only used to trigger the observer call. 
  */
 class ObserverOutputIterator 
 {
 protected:
-	scene::Traversable::Observer* _observer;
+	Node& _owner;
 	ObserverFunctor& _functor;
 public:
 	typedef std::output_iterator_tag iterator_category;
@@ -48,15 +53,15 @@ public:
 	typedef void pointer;
 	typedef void reference;
 
-	ObserverOutputIterator(scene::Traversable::Observer* observer, ObserverFunctor& functor) : 
-		_observer(observer),
+	ObserverOutputIterator(Node& owner, ObserverFunctor& functor) : 
+		_owner(owner),
 		_functor(functor)
 	{}
 	
 	// This function is invoked by the std::set_difference algorithm
-	ObserverOutputIterator& operator=(const scene::INodePtr node) {
+	ObserverOutputIterator& operator=(const INodePtr& node) {
 		// Pass the call to the functor
-		_functor(*_observer, node); 
+		_functor(_owner, node); 
 		return *this;
 	}
 	
@@ -66,110 +71,55 @@ public:
 };
 
 // Default constructor, creates an empty set
-TraversableNodeSet::TraversableNodeSet() : 
-	_undo(*this), 
-	_observer(NULL)
+TraversableNodeSet::TraversableNodeSet(Node& owner) : 
+	_owner(owner),
+	_undoObserver(NULL),
+	_map(NULL)
 {}
 
-// Copy Constructor, copies all the nodes from the other set, but not the Observer
-TraversableNodeSet::TraversableNodeSet(const TraversableNodeSet& other) : 
-	scene::Traversable(other), 
-	_undo(*this), 
-	_observer(NULL)
-{
-	_children = other._children;
-	notifyInsertAll();
-}
-
 // Destructor
-TraversableNodeSet::~TraversableNodeSet() {
+TraversableNodeSet::~TraversableNodeSet()
+{
 	notifyEraseAll();
 }
 
-/** greebo: This assignment operator is invoked by the UndoableObject
- * 			as soon as the user hits Undo or Redo.
- */
-TraversableNodeSet& TraversableNodeSet::operator=(const TraversableNodeSet& other) {
-	// Copy the local container into a temporary one for later comparison
-	NodeList before(_children);
-
-	// Copy the other container over
-	_children = other._children;
-
-	// Notify the observer on the difference of the two sets
-	// Use the previously saved container for comparison
-	if (_observer != NULL) {
-		notifyDifferent(before, other._children);
-	}
-	
-	return *this;
-}
-
-/** greebo: Attaches an Observer to this set, which gets immediately notified
- * 			about all the existing child nodes.
- */
-void TraversableNodeSet::attach(Observer* observer) {
-	ASSERT_MESSAGE(_observer == 0, "TraversableNodeSet::attach: observer cannot be attached");
-	_observer = observer;
-	notifyInsertAll();
-}
-
-/** greebo: Detaches the Observer from this set. This also triggers an erase() call
- * 			for all the existing child nodes on the observer.
- */
-void TraversableNodeSet::detach(Observer* observer) {
-	ASSERT_MESSAGE(_observer == observer, "TraversableNodeSet::detach: observer cannot be detached");
-	notifyEraseAll();
-	_observer = NULL;
-}
-
-/** greebo: scene::Traversable implementation, this inserts a child node, saves the Undo state
- * 			and notifies the observer (if there is one)
- */ 
-void TraversableNodeSet::insert(const scene::INodePtr& node) {
+void TraversableNodeSet::insert(const INodePtr& node)
+{
 	// Submit the UndoMemento to the UndoSystem
-	_undo.save();
-
-	//ASSERT_MESSAGE(_children.find(node) == _children.end(), "TraversableNodeSet::insert - element already exists");
+	undoSave();
 
 	// Insert the child node at the end of the list
 	_children.push_back(node);
 
-	// Notify the observer (note: this usually triggers instantiation of the node)
-	if (_observer != NULL) {
-		_observer->onTraversableInsert(node);
-	}
+	// Notify the owner (note: this usually triggers instantiation of the node)
+	_owner.onTraversableInsert(node);
 }
 
-/** greebo: scene::Traversable implementation. This removes the node from the local set,
- * 			saves the UndoMemento and notifies the observer.
- */
-void TraversableNodeSet::erase(const scene::INodePtr& node) 
+void TraversableNodeSet::erase(const INodePtr& node) 
 {
-	_undo.save();
-
-	//ASSERT_MESSAGE(_children.find(node) != _children.end(), "TraversableNodeSet::erase - failed to find element");
+	undoSave();
 
 	// Notify the Observer before actually removing the node 
-	if (_observer != NULL) {
-		_observer->onTraversableErase(node);
-	}
+	_owner.onTraversableErase(node);
 
 	// Lookup the node and remove it from the list
 	NodeList::iterator i = std::find(_children.begin(), _children.end(), node);
-    if (i != _children.end()) {
+
+    if (i != _children.end())
+	{
         _children.erase(i);
     }
 }
 
 void TraversableNodeSet::clear()
 {
-	_undo.save();
+	undoSave();
 	notifyEraseAll();
 	_children.clear();
 }
 
-void TraversableNodeSet::traverse(scene::NodeVisitor& visitor) const {
+void TraversableNodeSet::traverse(NodeVisitor& visitor) const
+{
 	for (NodeList::const_iterator i = _children.begin();
 		 i != _children.end();)
 	{
@@ -179,48 +129,82 @@ void TraversableNodeSet::traverse(scene::NodeVisitor& visitor) const {
 	}
 }
 
-/** greebo: scene::Traversable implementation. Returns TRUE if this NodeSet is empty.
- */
-bool TraversableNodeSet::empty() const {
+bool TraversableNodeSet::empty() const
+{
 	return _children.empty();
 }
 
-void TraversableNodeSet::instanceAttach(MapFile* map) {
-	_undo.instanceAttach(map);
+void TraversableNodeSet::instanceAttach(MapFile* map)
+{
+	_map = map;
+    _undoObserver = GlobalUndoSystem().observer(this);
 }
 
-void TraversableNodeSet::instanceDetach(MapFile* map) {
-	_undo.instanceDetach(map);
+void TraversableNodeSet::instanceDetach(MapFile* map)
+{
+	_map = NULL;
+    _undoObserver = NULL;
+	GlobalUndoSystem().release(this);
 }
 
-void TraversableNodeSet::notifyInsertAll() {
-	if (_observer != NULL) {
-		for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i) {
-			_observer->onTraversableInsert(*i);
-		}
+void TraversableNodeSet::undoSave()
+{
+    if (_map != NULL)
+	{
+		_map->changed();
+	}
+
+    if (_undoObserver != NULL)
+	{
+		_undoObserver->save(this);
 	}
 }
 
-void TraversableNodeSet::notifyEraseAll() {
-	if (_observer != NULL) {
-		for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i) {
-			_observer->onTraversableErase(*i);
-		}
+UndoMemento* TraversableNodeSet::exportState() const
+{
+	// Copy the current list of children and return the UndoMemento
+	return new BasicUndoMemento<NodeList>(_children);
+}
+
+void TraversableNodeSet::importState(const UndoMemento* state)
+{
+	undoSave();
+
+	// Import the child set from the state
+	const NodeList& other = static_cast<const BasicUndoMemento<NodeList>*>(state)->get();
+
+	// Copy the current container into a temporary one for later comparison
+	NodeList before(_children);
+
+	// Import the state, overwriting the current set
+	_children = other;
+
+	// Notify the owner on the difference of the two sets
+	// Use the previously saved container for comparison
+	notifyDifferent(before, other);
+}
+
+void TraversableNodeSet::notifyInsertAll()
+{
+	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
+	{
+		_owner.onTraversableInsert(*i);
 	}
 }
 
-/// \brief Calls \p observer->\c insert for each node that exists only in \p other and \p observer->\c erase for each node that exists only in \p self
+void TraversableNodeSet::notifyEraseAll()
+{
+	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
+	{
+		_owner.onTraversableErase(*i);
+	}
+}
 
-/** greebo: This calls onTraversableInsert() and onTraversableErase() only for the nodes that exclusively exist 
- * 			in one of the input sets <before> and <after>. All nodes existing only in <other> will 
- * 			trigger a call onTraversableInsert() on the observer.
- * 
- * 	Note: this does not change the input sets, it calls the Observer only. 
- */
-void TraversableNodeSet::notifyDifferent(const NodeList& before, const NodeList& after) {
+void TraversableNodeSet::notifyDifferent(const NodeList& before, const NodeList& after)
+{
 	// greebo: Copy the values from the source sets <_children> and <other> into temporary vectors
-	std::vector<scene::INodePtr> before_sorted(before.begin(), before.end());
-	std::vector<scene::INodePtr> after_sorted(after.begin(), after.end());
+	std::vector<INodePtr> before_sorted(before.begin(), before.end());
+	std::vector<INodePtr> after_sorted(after.begin(), after.end());
 
 	// greebo: Now sort these, the set_difference algorithm requires the sets to be sorted
 	std::sort(before_sorted.begin(), before_sorted.end());
@@ -234,7 +218,7 @@ void TraversableNodeSet::notifyDifferent(const NodeList& before, const NodeList&
 	std::set_difference(
 		before_sorted.begin(), before_sorted.end(), 
 		after_sorted.begin(), after_sorted.end(), 
-		ObserverOutputIterator(_observer, eraseFunctor)
+		ObserverOutputIterator(_owner, eraseFunctor)
 	);
 	
 	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>, 
@@ -242,6 +226,8 @@ void TraversableNodeSet::notifyDifferent(const NodeList& before, const NodeList&
 	std::set_difference(
 		after_sorted.begin(), after_sorted.end(), 
 		before_sorted.begin(), before_sorted.end(), 
-		ObserverOutputIterator(_observer, insertFunctor)
+		ObserverOutputIterator(_owner, insertFunctor)
 	);
 }
+
+} // namespace scene

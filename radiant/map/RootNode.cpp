@@ -7,9 +7,6 @@ RootNode::RootNode(const std::string& name) :
 {
 	// Apply root status to this node
 	setIsRoot(true);
-	// Attach ourselves as scene::Traversable::Observer 
-	// to the TraversableNodeset >> triggers instantiate calls.
-	attachTraverseObserver(this);
 
 	GlobalUndoSystem().trackerAttach(m_changeTracker);
 
@@ -22,9 +19,6 @@ RootNode::~RootNode() {
 	// Override the default release() method
 	GlobalUndoSystem().trackerDetach(m_changeTracker);
 	
-	// Remove ourselves as observer from the TraversableNodeSet
-	detachTraverseObserver(this);
-
 	// Remove all child nodes to trigger their destruction
 	removeAllChildNodes();
 }

@@ -1,7 +1,7 @@
 #ifndef TRAVERSE_
 #define TRAVERSE_
 
-#include "itraversable.h"
+#include "inode.h"
 
 namespace map {
 

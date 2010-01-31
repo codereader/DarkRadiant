@@ -46,6 +46,7 @@ Node::Node() :
 	_state(eVisible),
 	_isRoot(false),
 	_id(getNewId()), // Get new auto-incremented ID
+	_children(*this),
 	_boundsChanged(true),
 	_boundsMutex(false),
 	_childBoundsChanged(true),
@@ -61,10 +62,10 @@ Node::Node() :
 
 Node::Node(const Node& other) :
 	INode(other),
-	Traversable::Observer(other),
 	_state(other._state),
 	_isRoot(other._isRoot),
 	_id(getNewId()),	// ID is incremented on copy
+	_children(*this),
 	_boundsChanged(true),
 	_boundsMutex(false),
 	_childBoundsChanged(true),
@@ -156,7 +157,7 @@ void Node::removeChildNode(const INodePtr& node) {
 	_children.erase(node);
 
 	// Set the parent of this node to NULL
-	node->setParent(scene::INodePtr());
+	node->setParent(INodePtr());
 
 	// greebo: The bounds are likely to change when child nodes are removed
 	boundsChanged();
@@ -212,14 +213,6 @@ void Node::onRemoveFromScene()
 	_instantiated = false;
 }
 
-void Node::attachTraverseObserver(scene::Traversable::Observer* observer) {
-	_children.attach(observer);
-}
-
-void Node::detachTraverseObserver(scene::Traversable::Observer* observer) {
-	_children.detach(observer);
-}
-
 void Node::instanceAttach(MapFile* mapfile) {
 	_children.instanceAttach(mapfile);
 }
@@ -240,8 +233,9 @@ scene::INodePtr Node::getParent() const {
 	return _parent.lock();
 }
 
-void Node::getPathRecursively(scene::Path& targetPath) {
-	scene::INodePtr parent = getParent();
+void Node::getPathRecursively(Path& targetPath)
+{
+	INodePtr parent = getParent();
 
 	assert(parent.get() != this); // avoid loopbacks
 
@@ -253,11 +247,11 @@ void Node::getPathRecursively(scene::Path& targetPath) {
 	targetPath.push(shared_from_this());
 }
 
-scene::Path Node::getPath()
+Path Node::getPath()
 {
-	scene::Path result;
+	Path result;
 
-	scene::INodePtr parent = getParent();
+	INodePtr parent = getParent();
 	if (parent != NULL) {
 		// We have a parent, walk up the ancestry
 		boost::static_pointer_cast<Node>(parent)->getPathRecursively(result);
@@ -326,7 +320,7 @@ void Node::boundsChanged() {
 	_boundsChanged = true;
 	_childBoundsChanged = true;
 
-	scene::INodePtr parent = _parent.lock();
+	INodePtr parent = _parent.lock();
 	if (parent != NULL) {
 		parent->boundsChanged();
 	}
@@ -349,7 +343,7 @@ void Node::evaluateTransform() const {
 		//ASSERT_MESSAGE(!_transformMutex, "re-entering transform evaluation");
 		_transformMutex = true;
 
-		scene::INodePtr parent = _parent.lock();
+		INodePtr parent = _parent.lock();
 		if (parent != NULL) {
 			parent->boundsChanged();
 		}
