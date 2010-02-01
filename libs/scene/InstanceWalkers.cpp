@@ -9,7 +9,23 @@ bool InstanceSubgraphWalker::pre(const scene::INodePtr& node)
 	// greebo: Register this new node with the scenegraph 
 	GlobalSceneGraph().insert(node);
 
+	_nodeStack.push(node);
+
 	return true;
+}
+
+void InstanceSubgraphWalker::post(const INodePtr& node)
+{
+	_nodeStack.pop();
+
+	if (!_nodeStack.empty())
+	{
+		if (node->getParent() != _nodeStack.top())
+		{
+			// Parent-child mismatch, adjust
+			node->setParent(_nodeStack.top());
+		}
+	}
 }
 
 // ==============================================================================================

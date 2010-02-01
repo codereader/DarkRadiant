@@ -24,9 +24,13 @@ class Node;
  */
 class TraversableNodeSet :
 	public Undoable,
-	public boost::noncopyable
+	public boost::noncopyable,
+	public UndoSystem::Observer
 {
+public:
 	typedef std::list<INodePtr> NodeList;
+
+private:
 	NodeList _children;
 	
 	// The owning node which gets notified upon insertion/deletion of child nodes 
@@ -34,6 +38,9 @@ class TraversableNodeSet :
 
 	UndoObserver* _undoObserver;
 	MapFile* _map;
+
+	// A list collecting nodes for insertion in postUndo/postRedo
+	NodeList _undoInsertBuffer;
 
 public:
 	// Default constructor, creates an empty set
@@ -74,21 +81,20 @@ public:
 	UndoMemento* exportState() const;
 	void importState(const UndoMemento* state);
 
+	// UndoSystem::Observer implementation
+	void postUndo();
+	void postRedo();
+
 private:
 	// Sends the current state to the undosystem
 	void undoSave();
 
+	// Calls the owning node for each node in the undo insert buffer,
+	// this is called right after an undo operation
+	void processInsertBuffer();
+
 	void notifyInsertAll();	
 	void notifyEraseAll();
-	
-	/** 
-	 * greebo: This calls insertChild() and eraseChild() only for the nodes that exclusively exist 
-	 * in one of the input sets <before> and <after>. All nodes existing only in <other> will 
-	 * trigger a call insertChild() on the owning node.
-	 * 
-	 * 	Note: this does not change the input sets, it calls the Observer only. 
-	 */
-	void notifyDifferent(const NodeList& before, const NodeList& other);
 };
 
 } // namespace scene

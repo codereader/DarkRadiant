@@ -24,13 +24,21 @@ struct ObserverEraseFunctor :
 	}
 };
 
-// This calls onChildAdded() on owner for the given child node
-struct ObserverInsertFunctor :
+// Adds all visited nodes to the public list "nodes"
+class CollectNodesFunctor :
 	public ObserverFunctor
 {
+private:
+	TraversableNodeSet::NodeList& _target;
+
+public:
+	CollectNodesFunctor(TraversableNodeSet::NodeList& target) :
+		_target(target)
+	{}
+
 	void operator() (Node& owner, const INodePtr& node)
 	{
-		owner.onChildAdded(node);
+		_target.push_back(node);
 	}
 };
 
@@ -174,14 +182,72 @@ void TraversableNodeSet::importState(const UndoMemento* state)
 	const NodeList& other = static_cast<const BasicUndoMemento<NodeList>*>(state)->get();
 
 	// Copy the current container into a temporary one for later comparison
-	NodeList before(_children);
+	std::vector<INodePtr> before_sorted(_children.begin(), _children.end());
+	std::vector<INodePtr> after_sorted(other.begin(), other.end());
+
+	// greebo: Now sort these, the set_difference algorithm requires the sets to be sorted
+	std::sort(before_sorted.begin(), before_sorted.end());
+	std::sort(after_sorted.begin(), after_sorted.end());
 
 	// Import the state, overwriting the current set
 	_children = other;
 
-	// Notify the owner on the difference of the two sets
-	// Use the previously saved container for comparison
-	notifyDifferent(before, other);
+	// Now, handle the difference of <before> and <after>
+	// The owning node needs to know about all nodes which are removed in <after>, these are
+	// instantly removed from the scenegraph
+	ObserverEraseFunctor eraseFunctor;
+	
+	// greebo: Now find all the nodes that exist in <_children>, but not in <other> and 
+	// call the EraseFunctor for each of them (the iterator calls onChildRemoved() on the owning node). 
+	std::set_difference(
+		before_sorted.begin(), before_sorted.end(), 
+		after_sorted.begin(), after_sorted.end(), 
+		ObserverOutputIterator(_owner, eraseFunctor)
+	);
+
+	// A special treatment is necessary for insertions of new nodes, as calling onChildAdded
+	// right away might lead to double-insertions into the scenegraph (in case the same node 
+	// has not been removed from another node yet - a race condition during undo).
+	// Therefore, collect all nodes that need to be added and process them in postUndo/postRedo.
+	CollectNodesFunctor collectFunctor(_undoInsertBuffer);
+	
+	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>, 
+	// these have to be added, that's why the onChildAdded() method is called for each of them  
+	std::set_difference(
+		after_sorted.begin(), after_sorted.end(), 
+		before_sorted.begin(), before_sorted.end(), 
+		ObserverOutputIterator(_owner, collectFunctor)
+	);
+
+	if (!_undoInsertBuffer.empty())
+	{
+		// Register to get notified when the undo operation is complete
+		GlobalUndoSystem().addObserver(this);
+	}
+}
+
+void TraversableNodeSet::postUndo()
+{
+	processInsertBuffer();
+	GlobalUndoSystem().removeObserver(this);
+}
+
+void TraversableNodeSet::postRedo()
+{
+	processInsertBuffer();
+	GlobalUndoSystem().removeObserver(this);
+}
+
+void TraversableNodeSet::processInsertBuffer()
+{
+	for (NodeList::const_iterator i = _undoInsertBuffer.begin(); 
+		 i != _undoInsertBuffer.end(); ++i)
+	{
+		_owner.onChildAdded(*i);
+	}
+
+	// Clear the buffer after this operation
+	_undoInsertBuffer.clear();
 }
 
 void TraversableNodeSet::notifyInsertAll()
@@ -198,36 +264,6 @@ void TraversableNodeSet::notifyEraseAll()
 	{
 		_owner.onChildRemoved(*i);
 	}
-}
-
-void TraversableNodeSet::notifyDifferent(const NodeList& before, const NodeList& after)
-{
-	// greebo: Copy the values from the source sets <_children> and <other> into temporary vectors
-	std::vector<INodePtr> before_sorted(before.begin(), before.end());
-	std::vector<INodePtr> after_sorted(after.begin(), after.end());
-
-	// greebo: Now sort these, the set_difference algorithm requires the sets to be sorted
-	std::sort(before_sorted.begin(), before_sorted.end());
-	std::sort(after_sorted.begin(), after_sorted.end());
-
-	ObserverEraseFunctor eraseFunctor;
-	ObserverInsertFunctor insertFunctor;
-
-	// greebo: Now find all the nodes that exist in <_children>, but not in <other> and 
-	// call the EraseFunctor for each of them (the iterator calls onChildRemoved() on the given observer). 
-	std::set_difference(
-		before_sorted.begin(), before_sorted.end(), 
-		after_sorted.begin(), after_sorted.end(), 
-		ObserverOutputIterator(_owner, eraseFunctor)
-	);
-	
-	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>, 
-	// these have to be added, that's why the onChildAdded() method is called for each of them  
-	std::set_difference(
-		after_sorted.begin(), after_sorted.end(), 
-		before_sorted.begin(), before_sorted.end(), 
-		ObserverOutputIterator(_owner, insertFunctor)
-	);
 }
 
 } // namespace scene

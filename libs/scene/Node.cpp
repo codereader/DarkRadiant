@@ -162,6 +162,9 @@ void Node::removeChildNode(const INodePtr& node)
 	// Remove the node from the TraversableNodeSet, this triggers an 
 	// Node::onChildRemoved() event
 	_children.erase(node);
+
+	// Clear out the parent, this is not done in onChildRemoved().
+	node->setParent(INodePtr());
 }
 
 bool Node::hasChildNodes() const
@@ -184,7 +187,11 @@ void Node::traverse(NodeVisitor& visitor) const
 
 void Node::onChildAdded(const INodePtr& child)
 {
-	child->setParent(shared_from_this());
+	// Double-check the parent of this new child node
+	if (child->getParent().get() != this)
+	{
+		child->setParent(shared_from_this());
+	}
 
 	// greebo: The bounds most probably change when child nodes are added
 	boundsChanged();
@@ -197,8 +204,8 @@ void Node::onChildAdded(const INodePtr& child)
 
 void Node::onChildRemoved(const INodePtr& child)
 {
-	child->setParent(scene::INodePtr());
-
+	// Don't change the parent node of the new child on erase
+		
 	// greebo: The bounds are likely to change when child nodes are removed
 	boundsChanged();
 	

@@ -2,6 +2,7 @@
 #define SCENE_INSTANCE_WALKERS_H_
 
 #include "inode.h"
+#include <stack>
 
 namespace scene
 {
@@ -14,8 +15,11 @@ namespace scene
 class InstanceSubgraphWalker : 
 	public scene::NodeVisitor
 {
+private:
+	std::stack<INodePtr> _nodeStack;
 public:
-	bool pre(const scene::INodePtr& node);
+	bool pre(const INodePtr& node);
+	void post(const INodePtr& node); 
 };
 
 /** 
