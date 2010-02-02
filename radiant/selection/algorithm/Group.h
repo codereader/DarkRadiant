@@ -8,7 +8,7 @@
 namespace selection {
 	namespace algorithm {
 	
-	class ParentSelectedPrimitivesToEntityWalker : 
+	class ParentPrimitivesToEntityWalker : 
 		public SelectionSystem::Visitor,
 		public scene::NodeVisitor
 	{
@@ -23,7 +23,7 @@ namespace selection {
 		mutable std::set<scene::INodePtr> _oldParents;
 
 	public:
-		ParentSelectedPrimitivesToEntityWalker(const scene::INodePtr& parent) :
+		ParentPrimitivesToEntityWalker(const scene::INodePtr& parent) :
 			_parent(parent)
 		{}
 
@@ -38,6 +38,49 @@ namespace selection {
 
 		// scene::NodeVisitor implementation
 		bool pre(const scene::INodePtr& node);
+	};
+
+	// Collects all groupnodes
+	class GroupNodeCollector : 
+		public SelectionSystem::Visitor
+	{
+	public:
+		typedef std::list<scene::INodePtr> GroupNodeList;
+
+	private:
+		mutable GroupNodeList _groupNodes;
+
+	public:
+		void visit(const scene::INodePtr& node) const;
+
+		const GroupNodeList& getList() const
+		{
+			return _groupNodes;
+		}
+	};
+
+	// Checks the current selection to see whether it consists of
+	// group nodes only.
+	class GroupNodeChecker : 
+		public SelectionSystem::Visitor
+	{
+		mutable bool _onlyGroups;
+		mutable std::size_t _numGroups;
+		mutable scene::INodePtr _firstGroupNode;
+	public:
+		GroupNodeChecker();
+
+		void visit(const scene::INodePtr& node) const;
+
+		// Returns true if the current selection consists of group nodes only
+		// Returns false if any selected node is a non-group or if nothing is selected.
+		bool onlyGroupsAreSelected() const;
+
+		// Returns the number of group nodes in the current selection
+		std::size_t selectedGroupCount() const;
+
+		// Returns the first group node of the selection or NULL if nothing selected
+		scene::INodePtr getFirstSelectedGroupNode() const;
 	};
 
 	/** greebo: This reparents the child primitives of an entity container like func_static
@@ -73,6 +116,14 @@ namespace selection {
 	 *         that is child of worldspawn. 
 	 */
 	void expandSelectionToEntities(const cmd::ArgumentList& args);
+
+	/**
+	 * greebo: Merges all selected group nodes (func_* entities). 
+	 * After this operation only the first group node is preserved 
+	 * and all child primitives are parented to it. 
+	 * The other group nodes are removed from the scene.
+	 */
+	void mergeSelectedEntities(const cmd::ArgumentList& args);
 
 	} // namespace algorithm
 } // namespace selection
