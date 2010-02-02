@@ -14,74 +14,6 @@ namespace selection {
 
 namespace algorithm {
 
-/**
- * greebo: This walker traverses a subgraph and reparents all
- * found primitives to the given parent node. After traversal
- * all parent nodes (old and new ones) are updated in terms of
- * their layer visibility state.
- *
- * TODO: Redundant code - merge into ParentSelectedPrimitivesToEntityWalker!
- */
-class ReparentToEntityWalker : 
-	public scene::NodeVisitor
-{
-	// The new parent
-	scene::INodePtr _newParent;
-
-	// The old parent nodes are updated after rearrangement
-	std::set<scene::INodePtr> _nodesToUpdate;
-public:
-	ReparentToEntityWalker(scene::INodePtr parent) : 
-		_newParent(parent) 
-	{
-		// The new parent will be updated too
-		_nodesToUpdate.insert(_newParent);
-	}
-
-	~ReparentToEntityWalker() {
-		scene::UpdateNodeVisibilityWalker updater;
-		for (std::set<scene::INodePtr>::iterator i = _nodesToUpdate.begin();
-			 i != _nodesToUpdate.end(); i++)
-		{
-			Node_traverseSubgraph(*i, updater);
-		}
-	}
-	
-	bool pre(const scene::INodePtr& node) {
-		if (node != _newParent && Node_isPrimitive(node)) {
-			// Don't traverse the children, it's sufficient, if
-			// this node alone is re-parented 
-			return false;
-		}
-		return true;
-	}
-	
-	void post(const scene::INodePtr& node) {
-		if (node != _newParent && Node_isPrimitive(node)) {
-			// Retrieve the current parent of the visited node
-			scene::INodePtr parent = node->getParent();
-
-			// Check, if there is work to do in the first place 
-			if (parent != _newParent) {
-				// Copy the shared_ptr
-				scene::INodePtr child(node);
-
-				// Delete the node from the old parent
-				parent->removeChildNode(child);
-
-				// Mark this parent node for a visibility update
-				_nodesToUpdate.insert(parent);
-				
-				// and insert it as child of the given parent (passed in the constructor) 
-				_newParent->addChildNode(child);
-				
-				// Select the reparented child
-				Node_setSelected(child, true);
-			}
-		}
-	}
-};
-
 void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
 	UndoableCommand cmd("revertToWorldspawn");
 
@@ -130,21 +62,16 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
 		Entity* parent = Node_getEntity(groupNode);
 	
 		if (parent == NULL) continue; // not an entity
-		
-		// Cycle through all the children and reparent them to the worldspawn node
-		ReparentToEntityWalker reparentor(worldspawnNode);
+
+		ParentSelectedPrimitivesToEntityWalker reparentor(worldspawnNode);
 		groupNode->traverse(reparentor);
 
-    	// At this point, all the child primitives have been selected by the walker
-    	
-    	// Check if the old parent entity node is empty
-		if (!groupNode->hasChildNodes()) {
-    		// Remove this node from its parent, it's not needed anymore
-			scene::removeNodeFromParent(groupNode);
-    	}
-    	else {
-    		globalErrorStream() << "Error while reparenting, cannot delete old parent (not empty)\n"; 
-    	}
+		// Perform the reparenting, this also checks for empty parent nodes
+		// being left behind after this operation
+		reparentor.reparent();
+
+		// Select the reparented primitives after moving them to worldspawn
+		reparentor.selectReparentedPrimitives();
 	}
 
 	// Flag the map as changed
@@ -166,6 +93,18 @@ void ParentSelectedPrimitivesToEntityWalker::reparent()
 	globalOutputStream() << "Reparented " << _childrenToReparent.size() 
 		<< " primitives." << std::endl;
 
+	// Update parent node/subgraph visibility after reparenting
+	scene::UpdateNodeVisibilityWalker updater;
+
+	// Update the new parent too
+	Node_traverseSubgraph(_parent, updater);
+
+	for (std::set<scene::INodePtr>::iterator i = _oldParents.begin();
+		 i != _oldParents.end(); i++)
+	{
+		Node_traverseSubgraph(*i, updater);
+	}
+
 	// Now check if any parents were left behind empty
 	for (std::set<scene::INodePtr>::iterator i = _oldParents.begin();
 		 i != _oldParents.end(); i++)
@@ -180,10 +119,17 @@ void ParentSelectedPrimitivesToEntityWalker::reparent()
 		}
 	}
 
-	_childrenToReparent.clear();
-
 	// Update the scene
 	SceneChangeNotify();
+}
+
+void ParentSelectedPrimitivesToEntityWalker::selectReparentedPrimitives()
+{
+	for (std::list<scene::INodePtr>::iterator i = _childrenToReparent.begin();
+		 i != _childrenToReparent.end(); i++)
+	{
+		Node_setSelected(*i, true);
+	}
 }
 	
 void ParentSelectedPrimitivesToEntityWalker::visit(const scene::INodePtr& node) const
@@ -199,6 +145,23 @@ void ParentSelectedPrimitivesToEntityWalker::visit(const scene::INodePtr& node) 
 		// Mark the entity for later emptiness check
 		_oldParents.insert(node->getParent());
 	}
+}
+
+bool ParentSelectedPrimitivesToEntityWalker::pre(const scene::INodePtr& node)
+{
+	// Don't reparent nodes to themselves
+	if (_parent != node && Node_isPrimitive(node))
+	{
+		// Got a child, add it to the list
+		_childrenToReparent.push_back(node);
+
+		// Mark the entity for later emptiness check
+		_oldParents.insert(node->getParent());
+
+		return false; // don't traverse primitives any further
+	}
+
+	return true;
 }
 
 // re-parents the selected brushes/patches
