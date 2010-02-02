@@ -9,7 +9,8 @@ namespace selection {
 	namespace algorithm {
 	
 	class ParentSelectedPrimitivesToEntityWalker : 
-		public SelectionSystem::Visitor
+		public SelectionSystem::Visitor,
+		public scene::NodeVisitor
 	{
 	private:
 		// The target parent node
@@ -29,8 +30,14 @@ namespace selection {
 		// Call this to perform the actual reparenting after traversal
 		void reparent();
 
+		// Selects all primitives which are to be reparented
+		void selectReparentedPrimitives();
+
 		// SelectionSystem::Visitor implementation
 		void visit(const scene::INodePtr& node) const;
+
+		// scene::NodeVisitor implementation
+		bool pre(const scene::INodePtr& node);
 	};
 
 	/** greebo: This reparents the child primitives of an entity container like func_static
