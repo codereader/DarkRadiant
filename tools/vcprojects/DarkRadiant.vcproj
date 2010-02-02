@@ -917,10 +917,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\map\ParentSelectedPrimitivesToEntityWalker.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\radiant\map\PointFile.cpp"
 					>
 				</File>
