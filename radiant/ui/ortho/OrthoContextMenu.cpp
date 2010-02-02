@@ -71,6 +71,8 @@ namespace {
     const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
 	const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = "Revert part to worldspawn";
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
+	const char* MERGE_ENTITIES_ICON = "cmenu_merge_entities.png";
+	const char* MERGE_ENTITIES_TEXT = "Merge Entities";
 	const char* MAKE_VISPORTAL = "Make Visportal";
 	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
 
@@ -92,6 +94,7 @@ namespace {
 		WIDGET_CONVERT_STATIC,
 		WIDGET_REVERT_WORLDSPAWN,
 		WIDGET_REVERT_PARTIAL,
+		WIDGET_MERGE_ENTITIES,
 		WIDGET_MAKE_VISPORTAL,
 		WIDGET_ADD_TO_LAYER,
 		WIDGET_MOVE_TO_LAYER,
@@ -143,6 +146,9 @@ OrthoContextMenu::OrthoContextMenu()
 	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT
     );
+	_widgets[WIDGET_MERGE_ENTITIES] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), MERGE_ENTITIES_TEXT
+    );
 	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT
     );
@@ -177,6 +183,12 @@ OrthoContextMenu::OrthoContextMenu()
 		ev->connectWidget(_widgets[WIDGET_REVERT_WORLDSPAWN]);
 	}
 
+	// Connect the "Revert to Worldspawn" menu item to the corresponding event
+	ev = GlobalEventManager().findEvent("MergeSelectedEntities");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_MERGE_ENTITIES]);
+	}
+
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ENTITY]), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PLAYERSTART]), "activate", G_CALLBACK(callbackAddPlayerStart), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_PLAYERSTART]), "activate", G_CALLBACK(callbackMovePlayerStart), this);
@@ -199,6 +211,7 @@ OrthoContextMenu::OrthoContextMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CONVERT_STATIC]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_WORLDSPAWN]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_PARTIAL]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MERGE_ENTITIES]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MAKE_VISPORTAL]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CREATE_LAYER]);
@@ -313,6 +326,7 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	bool sensitive = false;
+	bool mergeVisible = false;
 	
 	// Only entities are allowed to be selected, but they have to be groupnodes
 	if (info.totalCount > 0 && info.totalCount == info.entityCount) {
@@ -321,6 +335,16 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 		GlobalSelectionSystem().foreachSelected(walker);
 
 		sensitive = walker.onlyGroupsAreSelected();
+		mergeVisible = walker.onlyGroupsAreSelected() && walker.selectedGroupCount() > 1;
+	}
+
+	if (mergeVisible)
+	{
+		gtk_widget_show_all(_widgets[WIDGET_MERGE_ENTITIES]);
+	}
+	else
+	{
+		gtk_widget_hide_all(_widgets[WIDGET_MERGE_ENTITIES]);
 	}
 	
 	if (sensitive) {

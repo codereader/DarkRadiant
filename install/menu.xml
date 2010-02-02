@@ -41,7 +41,7 @@
 		<menuSeparator />
 		<menuItem name="parent" caption="Rep_arent Primitives" command="ParentSelection" />
 		<menuItem name="parenttoworldspawn" caption="Reparent Primitives to _Worldspawn" command="ParentSelectionToWorldspawn" />
-		<menuItem name="mergeentities" caption="Merge selected Entities" command="MergeSelectedEntities" />
+		<menuItem name="mergeentities" caption="Merge selected Entities" command="MergeSelectedEntities" icon="cmenu_merge_entities.png" />
 		<menuSeparator />
 		<menuItem name="copyShader" caption="Copy Shader" command="CopyShader" />
 		<menuItem name="pasteShader" caption="Paste Shader" command="PasteShader" />
