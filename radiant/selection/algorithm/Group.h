@@ -2,10 +2,37 @@
 #define SELECTIONGROUP_H_
 
 #include "icommandsystem.h"
+#include "iselection.h"
+#include <list>
 
 namespace selection {
 	namespace algorithm {
 	
+	class ParentSelectedPrimitivesToEntityWalker : 
+		public SelectionSystem::Visitor
+	{
+	private:
+		// The target parent node
+		const scene::INodePtr _parent;
+
+		// The list of children to reparent
+		mutable std::list<scene::INodePtr> _childrenToReparent;
+
+		// Old parents will be checked for emptiness afterwards
+		mutable std::set<scene::INodePtr> _oldParents;
+
+	public:
+		ParentSelectedPrimitivesToEntityWalker(const scene::INodePtr& parent) :
+			_parent(parent)
+		{}
+
+		// Call this to perform the actual reparenting after traversal
+		void reparent();
+
+		// SelectionSystem::Visitor implementation
+		void visit(const scene::INodePtr& node) const;
+	};
+
 	/** greebo: This reparents the child primitives of an entity container like func_static
 	 * back to worldspawn and deletes the entity thereafter.  
 	 */

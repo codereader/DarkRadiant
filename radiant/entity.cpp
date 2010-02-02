@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "xyview/GlobalXYWnd.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/General.h"
+#include "selection/algorithm/Group.h"
 #include "selection/algorithm/Entity.h"
 #include "ui/modelselector/ModelSelector.h"
 
@@ -119,8 +120,6 @@ AABB Doom3Light_getBounds(AABB aabb)
 	return aabb;
 }
 
-#include "map/ParentSelectedPrimitivesToEntityWalker.h"
-
 /** 
  * Create an instance of the given entity at the given position, and return
  * the Node containing the new entity.
@@ -190,8 +189,9 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
         }
                 
         // Parent the selected primitives to the new node
-		ParentSelectedPrimitivesToEntityWalker walker(node);
+		selection::algorithm::ParentSelectedPrimitivesToEntityWalker walker(node);
 		GlobalSelectionSystem().foreachSelected(walker);
+		walker.reparent();
 
 	    // De-select the children and select the newly created parent entity
 	    GlobalSelectionSystem().setSelectedAll(false);
