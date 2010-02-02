@@ -189,7 +189,7 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
         }
                 
         // Parent the selected primitives to the new node
-		selection::algorithm::ParentSelectedPrimitivesToEntityWalker walker(node);
+		selection::algorithm::ParentPrimitivesToEntityWalker walker(node);
 		GlobalSelectionSystem().foreachSelected(walker);
 		walker.reparent();
 

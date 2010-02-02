@@ -317,28 +317,7 @@ void OrthoContextMenu::checkRevertToWorldspawn() {
 	// Only entities are allowed to be selected, but they have to be groupnodes
 	if (info.totalCount > 0 && info.totalCount == info.entityCount) {
 
-		// Check the selection using a local walker
-		class GroupNodeChecker : 
-			public SelectionSystem::Visitor
-		{
-			mutable bool _onlyGroups;
-		public:
-			GroupNodeChecker() :
-				_onlyGroups(true)
-			{}
-
-			void visit(const scene::INodePtr& node) const {
-				if (!node_is_group(node)) {
-					_onlyGroups = false;
-				}
-			}
-
-			bool onlyGroupsAreSelected() const {
-				return _onlyGroups;
-			}
-		};
-		
-		GroupNodeChecker walker;
+		selection::algorithm::GroupNodeChecker walker;
 		GlobalSelectionSystem().foreachSelected(walker);
 
 		sensitive = walker.onlyGroupsAreSelected();

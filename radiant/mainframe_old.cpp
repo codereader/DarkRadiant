@@ -628,6 +628,7 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("SelectTouching", selection::algorithm::selectTouching);
 	GlobalCommandSystem().addCommand("SelectCompleteTall", selection::algorithm::selectCompleteTall);
 	GlobalCommandSystem().addCommand("ExpandSelectionToEntities", selection::algorithm::expandSelectionToEntities);
+	GlobalCommandSystem().addCommand("MergeSelectedEntities", selection::algorithm::mergeSelectedEntities);
 	GlobalCommandSystem().addCommand("SelectChildren", selection::algorithm::selectChildren);
 
 	GlobalCommandSystem().addCommand("Preferences", ui::PrefDialog::toggle);
@@ -718,6 +719,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("DeleteSelection", "DeleteSelection");
 	GlobalEventManager().addCommand("ParentSelection", "ParentSelection");
 	GlobalEventManager().addCommand("ParentSelectionToWorldspawn", "ParentSelectionToWorldspawn");
+	GlobalEventManager().addCommand("MergeSelectedEntities", "MergeSelectedEntities");
 
 	GlobalEventManager().addCommand("UnSelectSelection", "UnSelectSelection");
 	GlobalEventManager().addCommand("InvertSelection", "InvertSelection");

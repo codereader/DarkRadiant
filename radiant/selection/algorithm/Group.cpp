@@ -14,27 +14,9 @@ namespace selection {
 
 namespace algorithm {
 
-void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
+void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
+{
 	UndoableCommand cmd("revertToWorldspawn");
-
-	typedef std::list<scene::INodePtr> GroupNodeList;
-
-	// Collect all groupnodes
-	class GroupNodeCollector : 
-		public SelectionSystem::Visitor
-	{
-		mutable GroupNodeList _groupNodes;
-	public:
-		void visit(const scene::INodePtr& node) const {
-			if (node_is_group(node)) {
-				_groupNodes.push_back(node);
-			}
-		}
-
-		const GroupNodeList& getList() const {
-			return _groupNodes;
-		}
-	}; 
 
 	GroupNodeCollector walker;
 	GlobalSelectionSystem().foreachSelected(walker);
@@ -54,7 +36,7 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
 		return; // worldspawn not an entity?
 	}
 
-	for (GroupNodeList::const_iterator i = walker.getList().begin(); 
+	for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin(); 
 		 i != walker.getList().end(); ++i)
 	{
 		const scene::INodePtr& groupNode = *i;
@@ -63,7 +45,7 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
 	
 		if (parent == NULL) continue; // not an entity
 
-		ParentSelectedPrimitivesToEntityWalker reparentor(worldspawnNode);
+		ParentPrimitivesToEntityWalker reparentor(worldspawnNode);
 		groupNode->traverse(reparentor);
 
 		// Perform the reparenting, this also checks for empty parent nodes
@@ -78,7 +60,7 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args) {
 	GlobalMap().setModified(true);	
 }
 
-void ParentSelectedPrimitivesToEntityWalker::reparent()
+void ParentPrimitivesToEntityWalker::reparent()
 {
 	for (std::list<scene::INodePtr>::iterator i = _childrenToReparent.begin();
 		 i != _childrenToReparent.end(); i++)
@@ -123,7 +105,7 @@ void ParentSelectedPrimitivesToEntityWalker::reparent()
 	SceneChangeNotify();
 }
 
-void ParentSelectedPrimitivesToEntityWalker::selectReparentedPrimitives()
+void ParentPrimitivesToEntityWalker::selectReparentedPrimitives()
 {
 	for (std::list<scene::INodePtr>::iterator i = _childrenToReparent.begin();
 		 i != _childrenToReparent.end(); i++)
@@ -132,7 +114,7 @@ void ParentSelectedPrimitivesToEntityWalker::selectReparentedPrimitives()
 	}
 }
 	
-void ParentSelectedPrimitivesToEntityWalker::visit(const scene::INodePtr& node) const
+void ParentPrimitivesToEntityWalker::visit(const scene::INodePtr& node) const
 {
 	// Don't reparent instances to themselves
 	if (_parent == node) return;
@@ -147,7 +129,7 @@ void ParentSelectedPrimitivesToEntityWalker::visit(const scene::INodePtr& node) 
 	}
 }
 
-bool ParentSelectedPrimitivesToEntityWalker::pre(const scene::INodePtr& node)
+bool ParentPrimitivesToEntityWalker::pre(const scene::INodePtr& node)
 {
 	// Don't reparent nodes to themselves
 	if (_parent != node && Node_isPrimitive(node))
@@ -164,6 +146,51 @@ bool ParentSelectedPrimitivesToEntityWalker::pre(const scene::INodePtr& node)
 	return true;
 }
 
+void GroupNodeCollector::visit(const scene::INodePtr& node) const
+{
+	if (node_is_group(node))
+	{
+		_groupNodes.push_back(node);
+	}
+}
+
+GroupNodeChecker::GroupNodeChecker() :
+	_onlyGroups(true),
+	_numGroups(0)
+{}
+
+void GroupNodeChecker::visit(const scene::INodePtr& node) const
+{
+	if (!node_is_group(node))
+	{
+		_onlyGroups = false;
+	}
+	else
+	{
+		_numGroups++;
+
+		if (_firstGroupNode == NULL)
+		{
+			_firstGroupNode = node;
+		}
+	}
+}
+
+bool GroupNodeChecker::onlyGroupsAreSelected() const
+{
+	return _numGroups > 0 && _onlyGroups;
+}
+
+std::size_t GroupNodeChecker::selectedGroupCount() const
+{
+	return _numGroups;
+}
+
+scene::INodePtr GroupNodeChecker::getFirstSelectedGroupNode() const
+{
+	return _firstGroupNode;
+}
+
 // re-parents the selected brushes/patches
 void parentSelection(const cmd::ArgumentList& args) {
 	// Retrieve the selection information structure
@@ -173,7 +200,7 @@ void parentSelection(const cmd::ArgumentList& args) {
 		UndoableCommand undo("parentSelectedPrimitives");
 		
 		// Take the last selected item (this should be an entity)
-		ParentSelectedPrimitivesToEntityWalker visitor(
+		ParentPrimitivesToEntityWalker visitor(
 			GlobalSelectionSystem().ultimateSelected()
 		);
 		GlobalSelectionSystem().foreachSelected(visitor);
@@ -194,7 +221,7 @@ void parentSelectionToWorldspawn(const cmd::ArgumentList& args) {
 	if (world == NULL) return;
 
 	// Take the last selected item (this should be an entity)
-	ParentSelectedPrimitivesToEntityWalker visitor(world);
+	ParentPrimitivesToEntityWalker visitor(world);
 	GlobalSelectionSystem().foreachSelected(visitor);
 	visitor.reparent();
 }
@@ -286,6 +313,45 @@ public:
 void expandSelectionToEntities(const cmd::ArgumentList& args) {
 	ExpandSelectionToEntitiesWalker walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+}
+
+void mergeSelectedEntities(const cmd::ArgumentList& args)
+{
+	// Check the current selection, must consist of group nodes only
+	GroupNodeChecker walker;
+	GlobalSelectionSystem().foreachSelected(walker);
+
+	if (walker.onlyGroupsAreSelected() && walker.selectedGroupCount() > 1)
+	{
+		UndoableCommand cmd("mergeEntities");
+
+		scene::INodePtr newParent = walker.getFirstSelectedGroupNode();
+
+		// Gather all group nodes in the selection
+		GroupNodeCollector walker;
+		GlobalSelectionSystem().foreachSelected(walker);
+
+		// Traverse all group nodes using a ParentPrimitivesToEntityWalker
+		for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin(); 
+			 i != walker.getList().end(); ++i)
+		{
+			if (*i == newParent) continue;
+
+			ParentPrimitivesToEntityWalker reparentor(newParent);
+			(*i)->traverse(reparentor);
+
+			reparentor.reparent();
+		}
+
+		globalOutputStream() << walker.getList().size() << " group nodes merged." << std::endl;
+	}
+	else
+	{
+		gtkutil::errorDialog("Cannot merge entities, "
+							 "the selection must consist of func_* entities only.\n"
+							 "(The first selected entity will be preserved.)", 
+							 GlobalMainFrame().getTopLevelWindow());
+	}
 }
 
 } // namespace algorithm
