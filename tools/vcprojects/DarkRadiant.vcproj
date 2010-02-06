@@ -881,6 +881,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\MapFormatManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\MapFormatManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\MapPosition.cpp"
 					>
 				</File>
