@@ -1,7 +1,7 @@
 #ifndef DOOM3MAPFORMAT_H_
 #define DOOM3MAPFORMAT_H_
 
-#include "imap.h"
+#include "imapformat.h"
 #include "PrimitiveParser.h"
 
 namespace map {

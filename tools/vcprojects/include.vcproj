@@ -224,6 +224,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\imapformat.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\imapresource.h"
 			>
 		</File>
