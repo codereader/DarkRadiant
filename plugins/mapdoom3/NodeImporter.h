@@ -8,8 +8,6 @@
 #include "gtkutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 
-#include "PrimitiveParser.h"
-
 namespace map {
 
 class InfoFile;
@@ -51,16 +49,12 @@ class NodeImporter {
     // Event rate limiter for the progress dialog
     EventRateLimiter _dialogEventLimiter;
 
-	// The helper module, which will parse the primitive tokens
-	const PrimitiveParser& _parser;
-
 	// TRUE if we're in debugging parse mode
 	bool _debug;
 
 public:
 	NodeImporter(const MapImportInfo& importInfo, 
-		         InfoFile& infoFile, 
-				 const PrimitiveParser& parser);
+		         InfoFile& infoFile);
 
 	// Start parsing, this should not "leak" any exceptions
 	// Returns TRUE if the parsing succeeded without errors or exceptions.

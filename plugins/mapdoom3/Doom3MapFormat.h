@@ -2,7 +2,6 @@
 #define DOOM3MAPFORMAT_H_
 
 #include "imapformat.h"
-#include "PrimitiveParser.h"
 
 namespace map {
 
@@ -15,8 +14,7 @@ namespace map {
 	}
 
 class Doom3MapFormat : 
-	public MapFormat,
-	public PrimitiveParser
+	public MapFormat
 {
 public:
 	// RegisterableModule implementation
@@ -24,11 +22,6 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	
-	/**
-	 * Parse a primitive from the given token stream.
-	 */
-	scene::INodePtr parsePrimitive(parser::DefTokeniser& tokeniser) const;
-  
     /**
      * Read tokens from a map stream and create entities accordingly.
      */

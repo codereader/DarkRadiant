@@ -454,13 +454,37 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\mapdoom3\PrimitiveParser.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\mapdoom3\Tokens.h"
 				>
 			</File>
+			<Filter
+				Name="primitiveparsers"
+				>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\mapdoom3\mapdoom3.def"

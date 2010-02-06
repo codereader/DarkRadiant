@@ -6,9 +6,24 @@
 namespace map
 {
 
-MapFormatPtr MapFormatManager::getMapFormat(const std::string& name)
+void MapFormatManager::registerPrimitiveParser(const PrimitiveParserPtr& parser)
 {
-	return MapFormatPtr();
+	std::pair<ParserMap::iterator, bool> result = _parsers.insert(
+		ParserMap::value_type(parser->getKeyword(), parser)
+	);
+	
+	if (!result.second)
+	{
+		globalErrorStream() << "Could not register primitive parser for keyword " 
+			<< parser->getKeyword() << ". The keyword is already associated." << std::endl;
+	}
+}
+
+PrimitiveParserPtr MapFormatManager::getPrimitiveParser(const std::string& keyword)
+{
+	ParserMap::const_iterator found = _parsers.find(keyword);
+
+	return (found != _parsers.end()) ? found->second : PrimitiveParserPtr();
 }
 
 // RegisterableModule implementation

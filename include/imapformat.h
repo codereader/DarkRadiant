@@ -10,6 +10,8 @@ class INode;
 typedef boost::shared_ptr<INode> INodePtr;
 }
 
+namespace parser { class DefTokeniser; }
+
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
  */
@@ -23,6 +25,35 @@ namespace map
 // files libs/MapExportInfo.h and libs/MapImportInfo.h.
 class MapExportInfo;
 class MapImportInfo;
+
+/**
+ * A Primitive parser is able to create a primitive (brush, patch) from a given token stream.
+ * The initial token, e.g. "brushDef3" is already parsed when the stream is passed to the
+ * parse method.
+ *
+ * Such a class should not change its "state" during the parse() calls - the map parser
+ * is calling the same instance of this PrimitiveParser over and over, one call for each
+ * primitive, so when returning from the parse() method the class should be ready 
+ * to process the next primitive.
+ */
+class PrimitiveParser
+{
+public:
+    virtual ~PrimitiveParser() {}
+
+	/**
+	 * Returns the primitive keyword of this parser, e.g. "brushDef3". When the Map parser
+	 * encounters this keyword, the stream is passed along to the parse() method to create
+	 * a scene node from it.
+	 */
+	virtual const std::string& getKeyword() const = 0;
+
+	/**
+	 * Creates and returns a primitive node according to the encountered token.
+	 */
+    virtual scene::INodePtr parse(parser::DefTokeniser& tok) const = 0;
+};
+typedef boost::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
 
 /** 
  * Map Format interface. Each map format is able to traverse the scene graph and write
@@ -39,14 +70,14 @@ public:
 	 *
 	 * @returns: TRUE on success, FALSE if parsing errors occurred.
 	 */
-	virtual bool readGraph(const map::MapImportInfo& importInfo) const = 0;
+	virtual bool readGraph(const MapImportInfo& importInfo) const = 0;
 
 	/** Traverse the scene graph and write contents into the provided output stream.
 	 * 
 	 * @param exportInfo
 	 * The MapExportInfo structure, which contains the ostream references and such.
 	 */
-	virtual void writeGraph(const map::MapExportInfo& exportInfo) const = 0;
+	virtual void writeGraph(const MapExportInfo& exportInfo) const = 0;
 };
 typedef boost::shared_ptr<MapFormat> MapFormatPtr;
 
@@ -59,9 +90,15 @@ class IMapFormatManager :
 {
 public:
 	/**
-	 * Returns a parser which can handle the named map format.
+	 * Registers a primitive parser. The "primitive type" variable
+	 * refers to the keyword encountered when parsing a map, like brushDef3.
 	 */
-	virtual MapFormatPtr getMapFormat(const std::string& name) = 0;
+	virtual void registerPrimitiveParser(const PrimitiveParserPtr& parser) = 0;
+
+	/**
+	 * Returns a primitive parser for the given keyword, returns NULL if none found.
+	 */
+	virtual PrimitiveParserPtr getPrimitiveParser(const std::string& keyword) = 0;
 };
 typedef boost::shared_ptr<IMapFormatManager> IMapFormatManagerPtr;
 

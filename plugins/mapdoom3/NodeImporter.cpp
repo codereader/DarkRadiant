@@ -21,16 +21,11 @@ namespace map {
 
 	namespace {
 		const std::string RKEY_MAP_LOAD_STATUS_INTERLEAVE = "user/ui/map/loadStatusInterleave";
-
-		inline MapImporterPtr Node_getMapImporter(scene::INodePtr node) {
-			return boost::dynamic_pointer_cast<MapImporter>(node);
-		}
 	}
 
 // Constructor
 NodeImporter::NodeImporter(const MapImportInfo& importInfo, 
-						   InfoFile& infoFile, 
-						   const PrimitiveParser& parser) 
+						   InfoFile& infoFile) 
 : _root(importInfo.root),
   _inputStream(importInfo.inputStream),
   _fileSize(importInfo.inputStreamSize),
@@ -40,7 +35,6 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo,
   _primitiveCount(0),
   _layerInfoCount(0),
   _dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
-  _parser(parser),
   _debug(GlobalRegistry().get("user/debug") == "1")
 {
 	bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
@@ -157,17 +151,29 @@ void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity)
     }
 
     _primitiveCount++;
-    
-    // Try to parse the primitive, throwing exception if failed
-    scene::INodePtr primitive(_parser.parsePrimitive(_tok));
 
-    if (!primitive || !Node_getMapImporter(primitive)->importTokens(_tok)) {
+	std::string primitiveKeyword = _tok.nextToken();
+
+	// Get a parser for this keyword
+	PrimitiveParserPtr parser = GlobalMapFormatManager().getPrimitiveParser(primitiveKeyword);
+
+	if (parser == NULL)
+	{
+		throw parser::ParseException("Unknown primitive type: " + primitiveKeyword);
+	}
+
+	// Try to parse the primitive, throwing exception if failed
+    scene::INodePtr primitive = parser->parse(_tok);
+
+    if (!primitive)
+	{
         throw std::runtime_error("Primitive #" + sizetToStr(_primitiveCount) 
                                  + ": parse error\n");
     }
     
     // Now add the primitive as a child of the entity
-    if (Node_getEntity(parentEntity)->isContainer()) {
+    if (Node_getEntity(parentEntity)->isContainer())
+	{
         parentEntity->addChildNode(primitive);
     }
 }
