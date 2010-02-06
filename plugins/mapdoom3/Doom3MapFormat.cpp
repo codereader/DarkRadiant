@@ -19,6 +19,10 @@
 #include "InfoFile.h"
 #include "AssignLayerMappingWalker.h"
 
+#include "primitiveparsers/BrushDef3.h"
+#include "primitiveparsers/PatchDef2.h"
+#include "primitiveparsers/PatchDef3.h"
+
 #include <boost/lexical_cast.hpp>
 
 namespace map {
@@ -44,13 +48,20 @@ const StringSet& Doom3MapFormat::getDependencies() const {
 		_dependencies.insert(MODULE_PATCH + DEF2);
 		_dependencies.insert(MODULE_PATCH + DEF3);
 		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_MAPFORMATMANAGER);
 	}
 
 	return _dependencies;
 }
 
-void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "MapDoom3API::initialiseModule called.\n";
+void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
+
+	// Add our primitive parsers to the global format registry
+	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
 	
 	GlobalFiletypes().addType(
 		"map", getName(), FileTypePattern("Doom 3 map", "*.map"));
@@ -68,23 +79,6 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx) {
 		"prefab", getName(), FileTypePattern("Doom 3 region", "*.reg"));
 }
 
-scene::INodePtr Doom3MapFormat::parsePrimitive(parser::DefTokeniser& tokeniser) const {
-    std::string primitive = tokeniser.nextToken();
-    
-    if (primitive == "patchDef3") {
-        return GlobalPatchCreator(DEF3).createPatch();
-    }
-    else if (primitive == "patchDef2") {
-        return GlobalPatchCreator(DEF2).createPatch();
-    }
-    else if(primitive == "brushDef3") {
-    	return GlobalBrushCreator().createBrush();
-    }
-    else {
-        return scene::INodePtr();
-    }
-}
-
 bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 	assert(importInfo.root != NULL);
 
@@ -95,12 +89,12 @@ bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
 		// Start parsing, this will throw if any errors occur
 		infoFile.parse();
 	}
-	catch (parser::ParseException e) {
-        globalErrorStream() << "[mapdoom3] Unable to parse info file: " << e.what() << "\n";
+	catch (parser::ParseException& e) {
+		globalErrorStream() << "[mapdoom3] Unable to parse info file: " << e.what() << std::endl;
     }
 
 	// Construct a MapImporter that will do the map parsing
-	NodeImporter importer(importInfo, infoFile, *this);
+	NodeImporter importer(importInfo, infoFile);
 
 	if (importer.parse()) {
 		// Create the layers according to the data found in the map information file

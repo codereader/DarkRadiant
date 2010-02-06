@@ -254,7 +254,8 @@ void MapResource::reload() {
 	realise();
 }
 
-MapFormatPtr MapResource::getMapFormat() {
+MapFormatPtr MapResource::getMapFormat()
+{
 	// Get a loader module name for this type, if possible. If none is 
 	// found, try again with the "map" type, since we might be loading a 
 	// map with a different extension
@@ -278,15 +279,18 @@ MapFormatPtr MapResource::getMapFormat() {
 		} 
 		else {
 			globalErrorStream() << "ERROR: Map type incorrectly registered: \""
-				<< moduleName.c_str() << "\"\n";
+				<< moduleName << "\"" << std::endl;
 			return MapFormatPtr();
 		}
 	} 
-    else {
-    	globalErrorStream() << "Map loader module not found.\n";
-		if (!_type.empty()) {
+    else
+	{
+		globalErrorStream() << "Map loader module not found." << std::endl;
+
+		if (!_type.empty())
+		{
 			globalErrorStream() << "Type is not supported: \""
-				<< _name.c_str() << "\"\n";
+				<< _name << "\"" << std::endl;
 		}
 		return MapFormatPtr();
 	}
