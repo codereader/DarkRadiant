@@ -2,7 +2,7 @@
 #define MAPRESOURCE_H_
 
 #include "imapresource.h"
-#include "imap.h"
+#include "imapformat.h"
 #include "imodel.h"
 #include "generic/callback.h"
 #include <set>

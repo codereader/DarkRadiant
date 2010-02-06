@@ -3,6 +3,7 @@
 
 #include "inode.h"
 #include "imap.h"
+#include "imapformat.h"
 #include "inamespace.h"
 #include "imapresource.h"
 #include "icommandsystem.h"

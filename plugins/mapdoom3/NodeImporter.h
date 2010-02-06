@@ -3,7 +3,7 @@
 
 #include <map>
 #include "inode.h"
-#include "imap.h"
+#include "imapformat.h"
 #include "parser/DefTokeniser.h"
 #include "gtkutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"

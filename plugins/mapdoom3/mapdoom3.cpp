@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Doom3MapFormat.h"
 
+#include "imapformat.h"
 #include "itextstream.h"
 #include "debugging/debugging.h"
 
