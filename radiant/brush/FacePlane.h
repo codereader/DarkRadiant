@@ -8,13 +8,10 @@
 
 class FacePlane {
 	
-	PlanePoints m_planepts;
 	Plane3 m_planeCached;
 	Plane3 m_plane;
 
 public:
-	Vector3 m_funcStaticOrigin;
-
 	class SavedState
 	{
 	public:
@@ -44,9 +41,6 @@ public:
 	void updateTranslated();
 	
 	void updateSource();
-
-	PlanePoints& planePoints();
-	const PlanePoints& planePoints() const;
 	
 	const Plane3& plane3() const;
 	void setDoom3Plane(const Plane3& plane);
