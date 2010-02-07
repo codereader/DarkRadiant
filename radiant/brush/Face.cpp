@@ -430,6 +430,11 @@ const Plane3& Face::plane3() const {
 	return m_planeTransformed.plane3();
 }
 
+const Plane3& Face::getPlane3() const
+{
+	return m_plane.getDoom3Plane();
+}
+
 FacePlane& Face::getPlane() {
 	return m_plane;
 }
@@ -443,6 +448,12 @@ FaceTexdef& Face::getTexdef() {
 const FaceTexdef& Face::getTexdef() const {
 	return m_texdef;
 }
+
+Matrix4 Face::getTexDefMatrix() const
+{
+	return m_texdef.m_projection.m_brushprimit_texdef.getTransform();
+}
+
 FaceShader& Face::getFaceShader() {
 	return _faceShader;
 }

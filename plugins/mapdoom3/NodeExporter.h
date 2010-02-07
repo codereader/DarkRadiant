@@ -28,8 +28,8 @@ class NodeExporter :
 	// Number of entities written (map global)
 	std::size_t _entityCount;
 	
-	// Number of brushes written for the current entity (entity local)
-	std::size_t _brushCount;
+	// Number of primitives written for the current entity (entity local)
+	std::size_t _primitiveCount;
 
 	// Number of node-to-layer mappings written
 	std::size_t _layerInfoCount;

@@ -36,7 +36,6 @@ darkradiant_SOURCES = main.cpp \
 					  brush/FaceShader.cpp \
 					  brush/csg/BrushByPlaneClipper.cpp \
 					  brush/csg/CSG.cpp \
-					  brush/BrushTokenExporter.cpp \
 					  brush/FacePlane.cpp \
 					  camera/Camera.cpp \
 					  camera/GlobalCamera.cpp \

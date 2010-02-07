@@ -3,26 +3,24 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "ieclass.h"
+#include "ibrush.h"
+#include "ipatch.h"
 #include "ientity.h"
 #include "ilayer.h"
 #include "imodel.h"
 
 #include "Tokens.h"
 #include "Doom3MapFormat.h"
+#include "primitivewriters\BrushDef3Exporter.h"
+#include "primitivewriters\PatchDefExporter.h"
 
 namespace map {
-
-	namespace {
-		inline MapExporterPtr Node_getMapExporter(scene::INodePtr node) {
-			return boost::dynamic_pointer_cast<MapExporter>(node);
-		}
-	}
 
 NodeExporter::NodeExporter(std::ostream& mapStream, std::ostream& infoStream) : 
 	_mapStream(mapStream), 
 	_infoStream(infoStream),
 	_entityCount(0),
-	_brushCount(0),
+	_primitiveCount(0),
 	_layerInfoCount(0)
 {
 	// Check the game file to see whether we need dummy brushes or not
@@ -50,7 +48,7 @@ NodeExporter::~NodeExporter() {
 	// Write the closing braces of the information file
 	_infoStream << "}\n";
 
-	globalOutputStream() << _layerInfoCount << " node-to-layer mappings written.\n";
+	globalOutputStream() << _layerInfoCount << " node-to-layer mappings written." << std::endl;
 }
 
 // Pre-descent callback
@@ -66,12 +64,13 @@ bool NodeExporter::pre(const scene::INodePtr& node) {
 	// called at either level.
     Entity* entity = Node_getEntity(node);
 
-	if (entity != NULL) { // ENTITY
+	if (entity != NULL)
+	{
 		// Push the entity
 		_entityStack.push_back(entity);
 
     	// Write out the entity number comment
-		_mapStream << "// entity " << _entityCount++ << "\n";
+		_mapStream << "// entity " << _entityCount++ << std::endl;
 
 		// Entity opening brace
 		_mapStream << "{\n";
@@ -79,22 +78,41 @@ bool NodeExporter::pre(const scene::INodePtr& node) {
 		// Entity key values
 		exportEntity(*entity);
 
-		// Reset the brush count 
-		_brushCount = 0;
+		// Reset the primitive count 
+		_primitiveCount = 0;
+
+		return true; // traverse deeper
     }
-    else  { // BRUSH
+    else // Primitive
+	{
 		// No entity flag to stack
 		_entityStack.push_back(NULL);
 
-    	// Get the brush token exporter
-		MapExporterPtr exporter = Node_getMapExporter(node);
-		if(exporter != 0) {
+		// Check if node is a brush or a patch
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(node);
 
-			// Brush count comment
-	        _mapStream << "// primitive " << _brushCount++ << "\n";
+		if (brushNode != NULL)
+		{
+			// Primitive count comment
+			_mapStream << "// primitive " << _primitiveCount++ << std::endl;
 
-			// Pass the ostream to the primitive's contained tokenexporter
-			exporter->exportTokens(_mapStream);
+			// Export brush here _mapStream
+			BrushDef3Exporter::exportBrush(_mapStream, brushNode->getIBrush());
+
+			return false; // don't traverse brushes
+		}
+
+		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+
+		if (patchNode != NULL)
+		{
+			// Primitive count comment
+			_mapStream << "// primitive " << _primitiveCount++ << std::endl;
+
+			// Export patch here _mapStream
+			PatchDefExporter::exportPatch(_mapStream, patchNode->getPatch());
+
+			return false; // don't traverse patches
 		}
     }
 
@@ -102,7 +120,8 @@ bool NodeExporter::pre(const scene::INodePtr& node) {
 }
   
 // Post-descent callback
-void NodeExporter::post(const scene::INodePtr& node) {
+void NodeExporter::post(const scene::INodePtr& node)
+{
 	// Check if we are popping an entity
 	Entity* ent = _entityStack.back();
 

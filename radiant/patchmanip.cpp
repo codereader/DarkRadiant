@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/dialog.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "select.h"
+#include "shaderlib.h"
 #include "igrid.h"
 #include "patch/PatchNode.h"
 #include "patch/PatchSceneWalk.h"

@@ -6,7 +6,6 @@
 #include "iscenegraph.h"
 #include "imap.h"
 #include "Patch.h"
-#include "PatchImportExport.h"
 #include "selectionlib.h"
 #include "PatchControlInstance.h"
 #include "dragplanes.h"
@@ -17,7 +16,6 @@ class PatchNode :
 	public Nameable,
 	public Snappable,
 	public IdentityTransform,
-	public MapExporter,
 	public IPatchNode,
 	public Selectable,
 	public SelectionTestable,
@@ -43,7 +41,6 @@ class PatchNode :
 	mutable RenderablePointVector m_render_selected;
 
 	Patch m_patch;
-	PatchDoom3TokenExporter m_exportMap;
 	
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable) 
 	mutable AABB m_aabb_component;
@@ -79,9 +76,6 @@ public:
 
 	// Snappable implementation
 	virtual void snapto(float snap);
-
-	// MapExporter implementation
-	virtual void exportTokens(std::ostream& os) const;
 
 	// Test the Patch instance for selection (SelectionTestable)
 	void testSelect(Selector& selector, SelectionTest& test);
