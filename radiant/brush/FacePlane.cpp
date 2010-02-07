@@ -6,12 +6,10 @@ inline Plane3 Plane3_applyTranslation(const Plane3& plane, const Vector3& transl
 }
 
 // Constructor and copy constructor
-FacePlane::FacePlane() : 
-	m_funcStaticOrigin(0, 0, 0)
+FacePlane::FacePlane()
 {}
 
-FacePlane::FacePlane(const FacePlane& other) : 
-	m_funcStaticOrigin(0, 0, 0)
+FacePlane::FacePlane(const FacePlane& other)
 {
 	m_plane = other.m_plane;
 	updateTranslated();
@@ -48,25 +46,12 @@ void FacePlane::offset(float offset)
 
 void FacePlane::updateTranslated()
 {
-	/*Plane3 tmp = Plane3(m_plane.normal(), -m_plane.dist()).getTranslated(m_funcStaticOrigin);
-	m_planeCached = Plane3(tmp.a, tmp.b, tmp.c, -tmp.d);*/
-
-	m_planeCached = Plane3_applyTranslation(m_plane, m_funcStaticOrigin);
+	m_planeCached = m_plane;
 }
 
 void FacePlane::updateSource()
 {
-	m_plane = Plane3_applyTranslation(m_planeCached, -m_funcStaticOrigin);
-}
-
-PlanePoints& FacePlane::planePoints()
-{
-	return m_planepts;
-}
-
-const PlanePoints& FacePlane::planePoints() const
-{
-	return m_planepts;
+	m_plane = m_planeCached;
 }
 
 const Plane3& FacePlane::plane3() const
