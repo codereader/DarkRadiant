@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "TexDef.h"
 #include "ibrush.h"
 #include "Brush.h"
-#include "BrushTokenImporter.h"
 #include "BrushTokenExporter.h"
 #include "nameable.h"
 #include "selectionlib.h"
@@ -48,7 +47,6 @@ class BrushNode :
 	public Snappable,
 	public IdentityTransform,
 	public BrushDoom3,
-	public BrushTokenImporter, // implements MapImporter
 	public BrushTokenExporter, // implements MapExporter
 	public IBrushNode,
 	public Selectable,

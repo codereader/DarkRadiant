@@ -17,7 +17,6 @@ class PatchNode :
 	public Nameable,
 	public Snappable,
 	public IdentityTransform,
-	public MapImporter,
 	public MapExporter,
 	public IPatchNode,
 	public Selectable,
@@ -44,7 +43,6 @@ class PatchNode :
 	mutable RenderablePointVector m_render_selected;
 
 	Patch m_patch;
-	PatchDoom3TokenImporter m_importMap;
 	PatchDoom3TokenExporter m_exportMap;
 	
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable) 
@@ -82,9 +80,6 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-  	// MapImporter implementation
-	virtual bool importTokens(parser::DefTokeniser& tokeniser);
-	
 	// MapExporter implementation
 	virtual void exportTokens(std::ostream& os) const;
 
