@@ -31,18 +31,6 @@ const std::string RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMa
 // Forward declaration
 namespace parser { class DefTokeniser; }
 
-/** A type of Node whose state can be written to an output stream.
- */
-class MapExporter
-{
-public:
-    virtual ~MapExporter() {}
-	/** Export this Node's state to the provided output stream.
-	 */
-	virtual void exportTokens(std::ostream& os) const = 0;
-};
-typedef boost::shared_ptr<MapExporter> MapExporterPtr;
-
 // Namespace forward declaration
 class INamespace;
 typedef boost::shared_ptr<INamespace> INamespacePtr;

@@ -493,6 +493,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="primitivewriters"
+				>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitivewriters\BrushDef3Exporter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitivewriters\PatchDefExporter.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\mapdoom3\mapdoom3.def"

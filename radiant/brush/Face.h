@@ -200,12 +200,17 @@ public:
 	Winding& getWinding();
 	
 	const Plane3& plane3() const;
-	
+
+	// Returns the Doom 3 plane
+	const Plane3& getPlane3() const;
+		
 	FacePlane& getPlane();
 	const FacePlane& getPlane() const;
 	
 	FaceTexdef& getTexdef();
 	const FaceTexdef& getTexdef() const;
+	Matrix4 getTexDefMatrix() const;
+
 	FaceShader& getFaceShader();
 	const FaceShader& getFaceShader() const;
 	

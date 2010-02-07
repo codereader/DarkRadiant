@@ -13,7 +13,6 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_patch(*this, 
 			EvaluateTransformCaller(*this), 
 			Node::BoundsChangedCaller(*this)), // create the m_patch member with the node parameters
-	m_exportMap(m_patch),
 	m_lightList(NULL)
 {
 	m_patch.m_patchDef3 = patchDef3;
@@ -30,7 +29,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	scene::Cloneable(other),
 	Nameable(other),
 	Snappable(other),
-	MapExporter(other),
 	IPatchNode(other),
 	Selectable(other),
 	SelectionTestable(other),
@@ -47,7 +45,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_render_selected(GL_POINTS),
 	m_patch(other.m_patch, *this, EvaluateTransformCaller(*this), 
 		    Node::BoundsChangedCaller(*this)), // create the patch out of the <other> one
-	m_exportMap(m_patch),
 	m_lightList(NULL)
 {
 	m_lightList = &GlobalRenderSystem().attach(*this);
@@ -98,11 +95,6 @@ void PatchNode::lightsChanged() {
 // Snappable implementation
 void PatchNode::snapto(float snap) {
 	m_patch.snapto(snap);
-}
-
-// MapExporter implementation
-void PatchNode::exportTokens(std::ostream& os) const {
-	m_exportMap.exportTokens(os);
 }
 
 bool PatchNode::selectedVertices() {

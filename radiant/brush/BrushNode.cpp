@@ -8,7 +8,6 @@
 
 // Constructor
 BrushNode::BrushNode() :
-	BrushTokenExporter(m_brush),
 	m_brush(*this, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),
 	m_render_selected(GL_POINTS),
@@ -30,7 +29,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Nameable(other),
 	Snappable(other),
 	BrushDoom3(other),
-	BrushTokenExporter(m_brush),
 	IBrushNode(other),
 	Selectable(other),
 	BrushObserver(other),

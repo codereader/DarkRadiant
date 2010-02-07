@@ -545,14 +545,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\brush\BrushTokenExporter.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\brush\BrushTokenExporter.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\radiant\brush\BrushVisit.h"
 					>
 				</File>
@@ -1098,10 +1090,6 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\patch\PatchCreators.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\patch\PatchImportExport.h"
 					>
 				</File>
 				<File
