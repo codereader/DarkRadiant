@@ -15,33 +15,19 @@ class FacePlane {
 public:
 	Vector3 m_funcStaticOrigin;
 
-	static bool isDoom3Plane() {
-		return true;
-	}
+	class SavedState
+	{
+	public:
+		Plane3 m_plane;
 
-	class SavedState {
-		public:
-			PlanePoints m_planepts;
-			Plane3 m_plane;
+		SavedState(const FacePlane& facePlane) :
+			m_plane(facePlane.m_plane)
+		{}
 
-		SavedState(const FacePlane& facePlane) {
-			if (facePlane.isDoom3Plane()) {
-				m_plane = facePlane.m_plane;
-			}
-			else {
-				planepts_assign(m_planepts, facePlane.planePoints());
-			}
-		}
-
-		void exportState(FacePlane& facePlane) const {
-			if (facePlane.isDoom3Plane()) {
-				facePlane.m_plane = m_plane;
-				facePlane.updateTranslated();
-			}
-			else {
-				planepts_assign(facePlane.planePoints(), m_planepts);
-				facePlane.MakePlane();
-			}
+		void exportState(FacePlane& facePlane) const
+		{
+			facePlane.m_plane = m_plane;
+			facePlane.updateTranslated();
 		}
 	}; // class SavedState
 
@@ -49,7 +35,6 @@ public:
 	FacePlane();
 	FacePlane(const FacePlane& other);
 
-	void MakePlane();
 	void reverse();
 
 	void transform(const Matrix4& matrix, bool mirror);
