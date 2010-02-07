@@ -24,6 +24,7 @@
 #include "primitiveparsers/PatchDef3.h"
 
 #include <boost/lexical_cast.hpp>
+#include "primitiveparsers/BrushDef.h"
 
 namespace map {
 
@@ -62,6 +63,7 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
 	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
 	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
 	
 	GlobalFiletypes().addType(
 		"map", getName(), FileTypePattern("Doom 3 map", "*.map"));
