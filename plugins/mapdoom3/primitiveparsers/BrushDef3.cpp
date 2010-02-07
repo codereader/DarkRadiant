@@ -86,9 +86,7 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			std::string shader = tok.nextToken();
 
 			// Parse Contents Flags (and ignore them)
-			tok.nextToken();
-			tok.nextToken();
-			tok.nextToken();
+			tok.skipTokens(3);
 
 			// Finally, add the new face to the brush
 			IFace& face = brush.addFace(plane, texdef, shader);

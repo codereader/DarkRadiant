@@ -1,13 +1,13 @@
 #ifndef ParserPatchDef3_h__
 #define ParserPatchDef3_h__
 
-#include "imapformat.h"
+#include "Patch.h"
 
 namespace map
 {
 	
 class PatchDef3Parser :
-	public PrimitiveParser
+	public PatchParser
 {
 public:
 	const std::string& getKeyword() const;
