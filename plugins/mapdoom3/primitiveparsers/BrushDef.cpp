@@ -1,4 +1,4 @@
-#include "BrushDef3.h"
+#include "BrushDef.h"
 
 #include "imap.h"
 #include "ibrush.h"
@@ -9,27 +9,27 @@
 namespace map
 {
 
-const std::string& BrushDef3Parser::getKeyword() const
+const std::string& BrushDefParser::getKeyword() const
 {
-	static std::string _keyword("brushDef3");
+	static std::string _keyword("brushDef");
 	return _keyword;
 }
 
 /* 
 // Example Primitive
 {
-brushDef3
+brushDef
 {
-( 0 0 1 -604 ) ( ( 0.015625 0 255.9375 ) ( 0 0.015625 0 ) ) "textures/darkmod/stone/brick/blocks_brown" 0 0 0
-( 0 1 0 -1528 ) ( ( 0.015625 0 0 ) ( 0 0.015625 1 ) ) "textures/darkmod/stone/brick/blocks_brown" 0 0 0
-( 1 0 0 -1312 ) ( ( 0.015625 0 255.9375 ) ( 0 0.015625 1 ) ) "textures/darkmod/stone/brick/blocks_brown" 0 0 0
-( 0 0 -1 -0 ) ( ( 0.015625 0 255.9375 ) ( 0 0.015625 0 ) ) "textures/darkmod/stone/brick/blocks_brown" 0 0 0
-( -1 0 0 -1264 ) ( ( 0.015625 0 0.0625 ) ( 0 0.015625 1 ) ) "textures/darkmod/stone/brick/blocks_brown" 0 0 0
-( -0 -1 -0 1524 ) ( ( 0.015625 0 0 ) ( 0 0.015625 1 ) ) "textures/darkmod/stone/brick/blocks_brown" 0 0 0
+( -1216 -464 232 ) ( -1088 -464 232 ) ( -1088 -80 120 ) ( ( 0.031250 0 14 ) ( -0.000009 0.031250 4.471550 ) ) common/caulk 134217728 4 0
+( -1088 -464 248 ) ( -1216 -464 248 ) ( -1216 -80 136 ) ( ( 0 -0.031373 -0.147059 ) ( 0.007812 0 0.049020 ) ) common/caulk 134217728 0 0
+( -1088 -560 120 ) ( -1088 -560 136 ) ( -1088 -80 136 ) ( ( 0.031250 0 16.500000 ) ( 0 0.031250 0.250000 ) ) common/caulk 134217728 4 0
+( -1088 -80 136 ) ( -1216 -80 136 ) ( -1216 -80 8 ) ( ( 0.031250 0 2 ) ( 0 0.031250 0.250000 ) ) common/caulk 134217728 4 0
+( -1216 -400 136 ) ( -1216 -400 120 ) ( -1216 -80 120 ) ( ( 0.031250 0 -16.500000 ) ( 0 0.031250 0.250000 ) ) common/caulk 134217728 4 0
+( -1088 -464 232 ) ( -1216 -464 232 ) ( -1216 -464 248 ) ( ( 0.031250 0 -2 ) ( 0 0.031250 0.250000 ) ) common/caulk 134217728 4 0
 }
 }
 */
-scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
+scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 {
 	// Create a new brush
 	scene::INodePtr node = GlobalBrushCreator().createBrush();
@@ -54,15 +54,20 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 		}
 		else if (token == "(") // FACE
 		{ 
-			// Construct a plane and parse its values
-			Plane3 plane;
-
-			plane.a = strToDouble(tok.nextToken());
-			plane.b = strToDouble(tok.nextToken());
-			plane.c = strToDouble(tok.nextToken());
-			plane.d = -strToDouble(tok.nextToken()); // negate d
-
+			// Parse three 3D points to construct a plane
+			Vector3 p1(strToDouble(tok.nextToken()), strToDouble(tok.nextToken()), strToDouble(tok.nextToken()));
 			tok.assertNextToken(")");
+			tok.assertNextToken("(");
+			
+			Vector3 p2(strToDouble(tok.nextToken()), strToDouble(tok.nextToken()), strToDouble(tok.nextToken()));
+			tok.assertNextToken(")");
+			tok.assertNextToken("(");
+
+			Vector3 p3(strToDouble(tok.nextToken()), strToDouble(tok.nextToken()), strToDouble(tok.nextToken()));
+			tok.assertNextToken(")");
+
+			// Construct the plane from the three points
+			Plane3 plane(p1, p2, p3);
 
 			// Parse TexDef
 			Matrix4 texdef;
@@ -93,7 +98,7 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 		}
 		else {
 			throw parser::ParseException(
-				"BrushDef3Parser: invalid token '" + token + "'"
+				"BrushDefParser: invalid token '" + token + "'"
 			);
 		}
 	}

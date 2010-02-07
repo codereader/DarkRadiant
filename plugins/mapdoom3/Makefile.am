@@ -12,6 +12,7 @@ mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       InfoFile.cpp \
                       mapdoom3.cpp \
                       NodeExporter.cpp \
+					  primitiveparsers/BrushDef.cpp \
 					  primitiveparsers/BrushDef3.cpp \
 					  primitiveparsers/Patch.cpp \
 					  primitiveparsers/PatchDef2.cpp \

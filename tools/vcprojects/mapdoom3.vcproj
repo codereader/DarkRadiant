@@ -461,6 +461,14 @@
 				Name="primitiveparsers"
 				>
 				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp"
 					>
 				</File>
