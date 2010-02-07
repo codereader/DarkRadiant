@@ -14,7 +14,7 @@
  * This section looks like it could do with some reorganising.
  */
 
-inline void Patch_importShader(Patch& patch, parser::DefTokeniser& tokeniser) {
+/*inline void Patch_importShader(Patch& patch, parser::DefTokeniser& tokeniser) {
 
     std::string texture = tokeniser.nextToken();
     if (texture == "NULL") {
@@ -138,7 +138,7 @@ public:
 
         return true;
     }
-};
+};*/
 
 inline void Patch_exportHeader(const Patch& patch, std::ostream& os)
 {

@@ -553,14 +553,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\brush\BrushTokenImporter.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\radiant\brush\BrushTokenImporter.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\radiant\brush\BrushVisit.h"
 					>
 				</File>
