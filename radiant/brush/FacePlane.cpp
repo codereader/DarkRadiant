@@ -1,83 +1,54 @@
 #include "FacePlane.h"
 
-inline Plane3 Plane3_applyTranslation(const Plane3& plane, const Vector3& translation) {
-	Plane3 tmp = Plane3(plane.normal(), -plane.dist()).getTranslated(translation);
-	return Plane3(tmp.a, tmp.b, tmp.c, -tmp.d);
-}
-
 // Constructor and copy constructor
 FacePlane::FacePlane()
 {}
 
-FacePlane::FacePlane(const FacePlane& other)
-{
-	m_plane = other.m_plane;
-	updateTranslated();
-}
+FacePlane::FacePlane(const FacePlane& other) :
+	m_plane(other.m_plane)
+{}
 
 void FacePlane::reverse()
 {
-	m_planeCached = -m_plane;
-	updateSource();
+	m_plane.reverse();
 }
 
 void FacePlane::transform(const Matrix4& matrix, bool mirror)
 {
 	// Prepare the plane to be transformed (negate the distance)
-	m_planeCached.dist() = -m_planeCached.dist();
+	m_plane.dist() = -m_plane.dist();
 	
 	// Transform the plane
-	m_planeCached = matrix.transform(m_planeCached);
+	m_plane = matrix.transform(m_plane);
 	
 	// Re-negate the distance
-	m_planeCached.dist() = -m_planeCached.dist();
+	m_plane.dist() = -m_plane.dist();
 	
 	// Now normalise the plane, otherwise the next transformation will screw up
-	m_planeCached = m_planeCached.getNormalised(); 
-	
-	updateSource();
+	m_plane.normalise(); 
 }
 
 void FacePlane::offset(float offset)
 {
-	m_planeCached.d += offset;
-	updateSource();
+	m_plane.d += offset;
 }
 
-void FacePlane::updateTranslated()
-{
-	m_planeCached = m_plane;
-}
-
-void FacePlane::updateSource()
-{
-	m_plane = m_planeCached;
-}
-
-const Plane3& FacePlane::plane3() const
-{
-	return m_planeCached;
-}
-
-void FacePlane::setDoom3Plane(const Plane3& plane)
+void FacePlane::setPlane(const Plane3& plane)
 {
 	m_plane = plane;
-	updateTranslated();
 }
 
-const Plane3& FacePlane::getDoom3Plane() const
+const Plane3& FacePlane::getPlane() const
 {
 	return m_plane;
 }
 
 void FacePlane::copy(const FacePlane& other)
 {
-	m_planeCached = other.m_plane;
-	updateSource();
+	m_plane = other.m_plane;
 }
 
 void FacePlane::copy(const Vector3& p0, const Vector3& p1, const Vector3& p2)
 {
-	m_planeCached = Plane3(p2, p1, p0);
-	updateSource();
+	m_plane = Plane3(p2, p1, p0);
 }
