@@ -469,6 +469,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\Patch.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\Patch.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.cpp"
 					>
 				</File>
