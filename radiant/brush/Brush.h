@@ -167,7 +167,10 @@ public:
 	// BrushNode
 	BrushNode& getBrushNode();
 
-	virtual IFace& getFace(std::size_t index);
+	IFace& getFace(std::size_t index);
+
+	IFace& addFace(const Plane3& plane);
+	IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader);
 	
 	/** greebo: This translates the brush about the given translation vector,
 	 * this is used by the Doom3Group entity to add/substract the origin from

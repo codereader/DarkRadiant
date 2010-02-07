@@ -48,6 +48,40 @@ Face::Face(
 	planeChanged();
 }
 
+Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
+	_owner(owner),
+	_faceShader(""),
+	m_texdef(_faceShader, TextureProjection()),
+	m_observer(observer),
+	m_undoable_observer(NULL),
+	m_map(NULL)
+{
+	_faceShader.attachObserver(*this);
+	m_plane.setDoom3Plane(plane);
+	m_texdef.setBasis(m_plane.plane3().normal());
+	planeChanged();
+}
+
+Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef, 
+		   const std::string& shader, FaceObserver* observer) :
+	_owner(owner),
+	_faceShader(shader),
+	m_texdef(_faceShader, TextureProjection()),
+	m_observer(observer),
+	m_undoable_observer(NULL),
+	m_map(NULL)
+{
+	_faceShader.attachObserver(*this);
+	m_plane.setDoom3Plane(plane);
+	m_texdef.setBasis(m_plane.plane3().normal());
+
+	m_texdef.m_projection.m_brushprimit_texdef = BrushPrimitTexDef(texdef);
+	m_texdef.m_projectionInitialised = true;
+	m_texdef.m_scaleApplied = true;
+	
+	planeChanged();
+}
+
 Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
 	IFace(other),
 	OpenGLRenderable(other),

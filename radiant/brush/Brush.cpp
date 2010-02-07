@@ -64,6 +64,24 @@ IFace& Brush::getFace(std::size_t index)
 	return *m_faces[index];
 }
 
+IFace& Brush::addFace(const Plane3& plane)
+{
+	// Allocate a new Face
+	undoSave();
+	push_back(FacePtr(new Face(*this, plane, this)));
+
+	return *m_faces.back();
+}
+
+IFace& Brush::addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader) 
+{
+	// Allocate a new Face
+	undoSave();
+	push_back(FacePtr(new Face(*this, plane, texDef, shader, this)));
+
+	return *m_faces.back();
+}
+
 void Brush::translateDoom3Brush(const Vector3& translation) {
 	transform(Matrix4::getTranslation(translation));
 	freezeTransform();

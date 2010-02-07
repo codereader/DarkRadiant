@@ -8,6 +8,9 @@
 #include "math/Vector3.h"
 #include <vector>
 
+class Matrix4;
+class Plane3;
+
 const std::string RKEY_ENABLE_TEXTURE_LOCK("user/ui/brush/textureLock");
 
 class BrushCreator :
@@ -92,6 +95,12 @@ public:
 
 	// Get a reference to the face by index in [0..getNumFaces).
 	virtual IFace& getFace(std::size_t index) = 0;
+
+	// Add a new face to this brush, using the given plane object, returns a reference to the new face
+	virtual IFace& addFace(const Plane3& plane) = 0;
+
+	// Add a new face to this brush, using the given plane, texdef matrix and shader name
+	virtual IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader) = 0;
 
 	// Returns true when this brush has no faces
 	virtual bool empty() const = 0;
