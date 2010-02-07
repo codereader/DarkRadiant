@@ -80,7 +80,7 @@ public:
 			{
 				// Retrieve the normal vector of the "source" face
 				brushNode->getBrush().transform(
-					Matrix4::getTranslation(face.getPlane().plane3().normal()*_offset)
+					Matrix4::getTranslation(face.getPlane().getPlane().normal()*_offset)
 				);
 				brushNode->getBrush().freezeTransform();
 			}

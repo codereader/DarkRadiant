@@ -1624,7 +1624,7 @@ void Patch::pasteTextureNatural(const Face* face) {
 		int patchWidth = static_cast<int>(m_width);
 		
 		// Get the plane and its normalised normal vector of the face
-		Plane3 plane = face->getPlane().plane3().getNormalised();
+		Plane3 plane = face->getPlane().getPlane().getNormalised();
 		Vector3 faceNormal = plane.normal();
 		
 		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
@@ -1763,7 +1763,7 @@ void Patch::pasteTextureProjected(const Face* face) {
 	
 	if (face != NULL) {
 		// Get the normal vector of the face
-		Plane3 plane = face->getPlane().plane3().getNormalised();
+		Plane3 plane = face->getPlane().getPlane().getNormalised();
 		
 		// Get the (already normalised) facePlane normal
 		Vector3 faceNormal = plane.normal();

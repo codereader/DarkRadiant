@@ -22,7 +22,7 @@ Face::Face(Brush& owner, FaceObserver* observer) :
 {
 	_faceShader.attachObserver(*this);
 	m_plane.copy(Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0));
-	m_texdef.setBasis(m_plane.plane3().normal());
+	m_texdef.setBasis(m_plane.getPlane().normal());
 	planeChanged();
 }
 
@@ -44,7 +44,7 @@ Face::Face(
 {
 	_faceShader.attachObserver(*this);
 	m_plane.copy(p0, p1, p2);
-	m_texdef.setBasis(m_plane.plane3().normal());
+	m_texdef.setBasis(m_plane.getPlane().normal());
 	planeChanged();
 }
 
@@ -57,8 +57,8 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 	m_map(NULL)
 {
 	_faceShader.attachObserver(*this);
-	m_plane.setDoom3Plane(plane);
-	m_texdef.setBasis(m_plane.plane3().normal());
+	m_plane.setPlane(plane);
+	m_texdef.setBasis(m_plane.getPlane().normal());
 	planeChanged();
 }
 
@@ -72,8 +72,8 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 	m_map(NULL)
 {
 	_faceShader.attachObserver(*this);
-	m_plane.setDoom3Plane(plane);
-	m_texdef.setBasis(m_plane.plane3().normal());
+	m_plane.setPlane(plane);
+	m_texdef.setBasis(m_plane.getPlane().normal());
 
 	m_texdef.m_projection.m_brushprimit_texdef = BrushPrimitTexDef(texdef);
 	m_texdef.m_projectionInitialised = true;
@@ -97,7 +97,7 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
 	_faceShader.attachObserver(*this);
 	m_plane.copy(other.m_plane);
 	planepts_assign(m_move_planepts, other.m_move_planepts);
-	m_texdef.setBasis(m_plane.plane3().normal());
+	m_texdef.setBasis(m_plane.getPlane().normal());
 	planeChanged();
 }
 
@@ -206,7 +206,7 @@ void Face::submitRenderables(RenderableCollector& collector,
 
 void Face::transform(const Matrix4& matrix, bool mirror) {
 	if (GlobalBrush()->textureLockEnabled()) {
-		m_texdefTransformed.transformLocked(_faceShader.width(), _faceShader.height(), m_plane.plane3(), matrix);
+		m_texdefTransformed.transformLocked(_faceShader.width(), _faceShader.height(), m_plane.getPlane(), matrix);
 	}
 
 	// Transform the FacePlane using the given matrix
@@ -238,7 +238,7 @@ void Face::freezeTransform() {
 }
 
 void Face::updateWinding() {
-	m_winding.updateNormals(m_plane.plane3().normal());
+	m_winding.updateNormals(m_plane.getPlane().normal());
 }
 
 void Face::update_move_planepts_vertex(std::size_t index, PlanePoints planePoints) {
@@ -264,7 +264,7 @@ void Face::snapto(float snap) {
 		assign_planepts(planePoints);
 		freezeTransform();
 		SceneChangeNotify();
-		if (!m_plane.plane3().isValid()) {
+		if (!m_plane.getPlane().isValid()) {
 			globalErrorStream() << "WARNING: invalid plane after snap to grid\n";
 		}
 	}
@@ -388,7 +388,7 @@ void Face::rotateTexdef(float angle) {
 
 void Face::fitTexture(float s_repeat, float t_repeat) {
 	undoSave();
-	m_texdef.fit(m_plane.plane3().normal(), m_winding, s_repeat, t_repeat);
+	m_texdef.fit(m_plane.getPlane().normal(), m_winding, s_repeat, t_repeat);
 	texdefChanged();
 }
 
@@ -427,12 +427,12 @@ Winding& Face::getWinding() {
 
 const Plane3& Face::plane3() const {
 	m_observer->evaluateTransform();
-	return m_planeTransformed.plane3();
+	return m_planeTransformed.getPlane();
 }
 
 const Plane3& Face::getPlane3() const
 {
-	return m_plane.getDoom3Plane();
+	return m_plane.getPlane();
 }
 
 FacePlane& Face::getPlane() {

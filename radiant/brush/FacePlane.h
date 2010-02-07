@@ -6,9 +6,9 @@
 #include "math/matrix.h"
 #include "PlanePoints.h"
 
-class FacePlane {
-	
-	Plane3 m_planeCached;
+class FacePlane
+{
+private:
 	Plane3 m_plane;
 
 public:
@@ -24,7 +24,6 @@ public:
 		void exportState(FacePlane& facePlane) const
 		{
 			facePlane.m_plane = m_plane;
-			facePlane.updateTranslated();
 		}
 	}; // class SavedState
 
@@ -38,13 +37,8 @@ public:
 	
 	void offset(float offset);
 
-	void updateTranslated();
-	
-	void updateSource();
-	
-	const Plane3& plane3() const;
-	void setDoom3Plane(const Plane3& plane);
-	const Plane3& getDoom3Plane() const;
+	void setPlane(const Plane3& plane);
+	const Plane3& getPlane() const;
 
 	void copy(const FacePlane& other);
 	void copy(const Vector3& p0, const Vector3& p1, const Vector3& p2);

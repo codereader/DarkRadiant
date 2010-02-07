@@ -95,10 +95,31 @@ public:
 	
 	/* greebo: This normalises the plane by turning the normal vector into a unit vector (dividing it by its length)
 	 * and scaling the distance down by the same amount */  
-	Plane3 getNormalised() const {
-		double rmagnitude = sqrt(a*a + b*b + c*c); // the length of the normal vector
-  		return Plane3(a / rmagnitude, b / rmagnitude, c / rmagnitude, d / rmagnitude);
+	Plane3 getNormalised() const
+	{
+		double rmagnitudeInv = 1 / sqrt(a*a + b*b + c*c); // the length of the normal vector
+  		return Plane3(a * rmagnitudeInv, b * rmagnitudeInv, c * rmagnitudeInv, d * rmagnitudeInv);
   	}
+
+	// Normalises this Plane3 object in-place
+	void normalise()
+	{
+		double rmagnitudeInv = 1 / sqrt(a*a + b*b + c*c); // the length of the normal vector
+
+		a *= rmagnitudeInv;
+		b *= rmagnitudeInv;
+		c *= rmagnitudeInv;
+		d *= rmagnitudeInv;
+	}
+
+	// Reverses this plane, by negating all components
+	void reverse()
+	{
+		a = -a;
+		b = -b;
+		c = -c;
+		d = -d;
+	}
   	
   	Plane3 getTranslated(const Vector3& translation) const {
 		double distTransformed = -( (-d * a + translation.x()) * a + 
