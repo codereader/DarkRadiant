@@ -59,7 +59,7 @@ public:
     // The Shader used by the renderer
 	ShaderPtr _glShader;
 
-	ContentsFlagsValue m_flags;
+	ContentsFlagsValue m_flags; // TODO: Remove this
 
 	typedef std::set<Observer*> Observers;
 	Observers _observers;
