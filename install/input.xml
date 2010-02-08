@@ -90,8 +90,8 @@
 		<shortcut command="SelectNudgeUp" key="Up" modifiers="ALT" />
 		<shortcut command="SelectNudgeDown" key="Down" modifiers="ALT" />
 		<shortcut command="CenterView" key="End" />
-		<shortcut command="CubicClipZoomIn" key="plus" modifiers="CONTROL" />
-		<shortcut command="CubicClipZoomOut" key="minus" modifiers="CONTROL" />
+		<shortcut command="CubicClipZoomIn" key="KP_Divide" />
+		<shortcut command="CubicClipZoomOut" key="KP_Multiply" />
 		<shortcut command="UpFloor" key="Prior" />
 		<shortcut command="DownFloor" key="Next" />
 		<shortcut command="TogglePreview" key="F3" />
