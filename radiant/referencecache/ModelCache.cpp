@@ -3,9 +3,11 @@
 #include "ifilesystem.h"
 #include "imodel.h"
 #include "ifiletypes.h"
+#include "iselection.h"
 #include "ieventmanager.h"
 
 #include <iostream>
+#include <set>
 #include "os/path.h"
 #include "os/file.h"
 
@@ -32,6 +34,59 @@ namespace {
 			}
 
 			return true;
+		}
+	};
+
+	class ModelFinder :
+		public SelectionSystem::Visitor,
+		public scene::NodeVisitor
+	{
+	public:
+		typedef std::set<IEntityNodePtr> Entities;
+		typedef std::set<std::string> ModelPaths;
+
+	private:
+		// All the model path of the selected modelnodes
+		mutable ModelPaths _modelNames;
+		// All the selected entities with modelnodes as child
+		mutable Entities _entities;
+
+	public:
+		bool pre(const scene::INodePtr& node)
+		{
+			ModelNodePtr model = Node_getModel(node);
+
+			if (model != NULL)
+			{
+				_modelNames.insert(model->getIModel().getModelPath());
+
+				IEntityNodePtr ent = 
+					boost::dynamic_pointer_cast<IEntityNode>(node->getParent());
+
+				if (ent != NULL)
+				{
+					_entities.insert(ent);
+				}
+
+				return false;
+			}
+
+			return true;
+		}
+
+		void visit(const scene::INodePtr& node) const
+		{
+			Node_traverseSubgraph(node, *const_cast<ModelFinder*>(this));
+		}
+
+		const Entities& getEntities() const
+		{
+			return _entities;
+		}
+
+		const ModelPaths& getModelPaths() const
+		{
+			return _modelNames;
 		}
 	};
 
@@ -142,7 +197,8 @@ void ModelCache::clear() {
 	_enabled = true;
 }
 
-void ModelCache::refreshModels(const cmd::ArgumentList& args) {
+void ModelCache::refreshModels(const cmd::ArgumentList& args)
+{
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Models");
 	
@@ -155,6 +211,39 @@ void ModelCache::refreshModels(const cmd::ArgumentList& args) {
 		
 	// greebo: Reload the modelselector too
 	ui::ModelSelector::refresh();
+}
+
+void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
+{
+	// Disable screen updates for the scope of this function
+	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Models");
+	
+	// Find all models in the current selection
+	ModelFinder walker;
+	GlobalSelectionSystem().foreachSelected(walker);
+
+	// Remove the selected models from the cache
+	ModelFinder::ModelPaths models = walker.getModelPaths();
+
+	for (ModelFinder::ModelPaths::const_iterator i = models.begin();
+		 i != models.end(); ++i)
+	{
+		ModelMap::iterator found = _modelMap.find(*i);
+
+		if (found != _modelMap.end())
+		{
+			_modelMap.erase(found);
+		}
+	}
+
+	// Traverse the entities and submit a refresh call
+	ModelFinder::Entities entities = walker.getEntities();
+
+	for (ModelFinder::Entities::const_iterator i = entities.begin();
+		 i != entities.end(); ++i)
+	{
+		(*i)->refreshModel();
+	}
 }
 
 // RegisterableModule implementation
@@ -171,6 +260,7 @@ const StringSet& ModelCache::getDependencies() const {
 		_dependencies.insert(MODULE_MODELLOADER + "LWO");
 		_dependencies.insert(MODULE_MODELLOADER + "MD5MESH");
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 	}
 
 	return _dependencies;
@@ -183,7 +273,12 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx) {
 		"RefreshModels", 
 		boost::bind(&ModelCache::refreshModels, this, _1)
 	);
+	GlobalCommandSystem().addCommand(
+		"RefreshSelectedModels", 
+		boost::bind(&ModelCache::refreshSelectedModels, this, _1)
+	);
 	GlobalEventManager().addCommand("RefreshModels", "RefreshModels");
+	GlobalEventManager().addCommand("RefreshSelectedModels", "RefreshSelectedModels");
 }
 
 void ModelCache::shutdownModule() {
