@@ -277,6 +277,16 @@ bool PrimitiveSelector::visit(const scene::INodePtr& node)
 	// Skip all entities
 	if (Node_isEntity(node)) return true;
 
+	// Node is not an entity, check parent
+	scene::INodePtr parent = getParentGroupEntity(node);
+
+	if (parent != NULL && !entityIsWorldspawn(parent))
+	{
+		// Don't select primitives of non-worldspawn entities,
+		// the EntitySelector is taking care of that case
+		return true;
+	}
+
 	SelectablePtr selectable = Node_getSelectable(node);
 
     if (selectable == NULL) return true; // skip non-selectables
