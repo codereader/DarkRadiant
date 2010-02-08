@@ -280,19 +280,28 @@ public:
 		_mode(mode)
 	{}
 	
-	bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node)
+	{
+		// Ignore hidden nodes
+		if (!node->visible()) return false;
+
+		Entity* entity = Node_getEntity(node);
+
 		// Check if we have a selectable
 		SelectablePtr selectable = Node_getSelectable(node);
 
-		if (selectable) {
-			switch (_mode) {
+		if (selectable != NULL)
+		{
+			switch (_mode)
+			{
 				case SelectionSystem::eEntity:
-					if (Node_isEntity(node) != 0) {
-						_selectable = node->visible() ? selectable : SelectablePtr();
+					if (entity != NULL && entity->getKeyValue("classname") != "worldspawn")
+					{
+						_selectable = selectable;
 					}
 					break;
 				case SelectionSystem::ePrimitive:
-					_selectable = node->visible() ? selectable : SelectablePtr();
+					_selectable = selectable;
 					break;
 				case SelectionSystem::eComponent:
 					// Check if we have a componentselectiontestable instance
@@ -300,16 +309,15 @@ public:
 						Node_getComponentSelectionTestable(node);
 
 					// Only add it to the list if the instance has components and is already selected
-					if (compSelTestable != NULL && selectable->isSelected()) {
-						_selectable = node->visible() ? selectable : SelectablePtr();
+					if (compSelTestable != NULL && selectable->isSelected())
+					{
+						_selectable = selectable;
 					}
 					break;
 			}
 		}
 		
 		// Do we have a groupnode? If yes, don't traverse the children
-		Entity* entity = Node_getEntity(node);
-
 		if (entity != NULL && node_is_group(node) && 
 			entity->getKeyValue("classname") != "worldspawn") 
 		{
@@ -320,8 +328,10 @@ public:
 		return true;
 	}
 	
-	void post(const scene::INodePtr& node) {
-		if (_selectable != NULL) {
+	void post(const scene::INodePtr& node)
+	{
+		if (_selectable != NULL)
+		{
 			_selectable->invertSelected();
 			_selectable = SelectablePtr();
 		}
