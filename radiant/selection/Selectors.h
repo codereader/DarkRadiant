@@ -24,6 +24,9 @@ class SelectionPool : public Selector {
   SelectionIntersection	_intersection;
   Selectable* 			_selectable;
 
+	// A set of all current Selectable* candidates, to prevent double-insertions
+	std::set<Selectable*> _currentSelectables;
+
 public:
 
 	/** greebo: This is called before an entity/patch/brush is 
@@ -57,9 +60,13 @@ public:
 	/** greebo: This makes sure that only valid Intersections get added, otherwise
 	 * 			we would add Selectables that haven't passed the test.
 	 */
-	void addSelectable(const SelectionIntersection& intersection, Selectable* selectable) {
-		if (intersection.valid()) {
+	void addSelectable(const SelectionIntersection& intersection, Selectable* selectable)
+	{
+		if (intersection.valid() && 
+			_currentSelectables.find(selectable) == _currentSelectables.end())
+		{
 			_pool.insert(SelectableSortedSet::value_type(intersection, selectable));
+			_currentSelectables.insert(selectable);
 		}
 	}
 
