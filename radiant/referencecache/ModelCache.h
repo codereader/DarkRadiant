@@ -36,6 +36,8 @@ public:
 
 	// Command target: this reloads all models in the map
 	void refreshModels(const cmd::ArgumentList& args);
+	// Command target: this reloads all selected models in the map
+	void refreshSelectedModels(const cmd::ArgumentList& args);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
