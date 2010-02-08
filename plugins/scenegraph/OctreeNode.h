@@ -227,9 +227,16 @@ public:
 
 			// To avoid concurrent nodeBoundsChanged() calls during this operation, evaluate all
 			// child bounds before trying to re-distribute them over the new childnodes.
-			for (ISPNode::MemberList::iterator i = _members.begin(); i != _members.end(); /* in-loop */)
+			// Do this in a copy of the members list, it is not guaranteed for the iterators 
+			// to stay valid during traversal.
 			{
-				(*i++)->worldAABB();
+				ISPNode::MemberList temp = _members;
+			
+				for (ISPNode::MemberList::iterator i = temp.begin(); 
+					 i != temp.end(); /* in-loop */)
+				{
+					(*i++)->worldAABB();
+				}
 			}
 
 			// At this point, all child bounds are calculated, some children might have re-located 
