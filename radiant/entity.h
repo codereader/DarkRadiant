@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_ENTITY_H
 
 #include "icommandsystem.h"
-#include "scenelib.h"
+#include "inode.h"
 
 // CONSTANTS
 
@@ -31,8 +31,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // since the grid is usually a multiple of 8.
 
 const float DEFAULT_LIGHT_RADIUS = 320;
-
-//
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
@@ -49,21 +47,23 @@ public:
 	: std::runtime_error(what) {}
 };
 
+namespace entity
+{
 
-/** Create an instance of the given entity at the given position, and return
+/** 
+ * Create an instance of the given entity at the given position, and return
  * the Node containing the new entity. If the incorrect number of brushes
  * is selected, an EntityCreationException will be thrown.
  * 
  * @returns
- * A NodeSmartReference containing the new entity.
+ * A scene::INodePtr containing the new entity.
  */
+scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3& origin);
 
-scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& origin);
+// Registers all commands and events
+void registerCommands();
 
-void Scene_EntitySetKeyValue_Selected(const char* key, const char* value);
-
-void Entity_Construct();
-void Entity_Destroy();
+}
 
 // Triggers a SkinCache refresh
 void ReloadSkins(const cmd::ArgumentList& args);

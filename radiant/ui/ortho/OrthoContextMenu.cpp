@@ -413,9 +413,9 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item,
 		// Create the entity. We might get an EntityCreationException if the 
 		// wrong number of brushes is selected.
 		try {
-			Entity_createFromSelection(cName.c_str(), self->_lastPoint);
+			entity::createEntityFromSelection(cName, self->_lastPoint);
 		}
-		catch (EntityCreationException e) {
+		catch (EntityCreationException& e) {
 			gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
 		}
 	}
@@ -428,7 +428,7 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
 	try 
     {
         // Create the player start entity
-		scene::INodePtr playerStartNode = Entity_createFromSelection(
+		scene::INodePtr playerStartNode = entity::createEntityFromSelection(
             PLAYERSTART_CLASSNAME, self->_lastPoint
         );
         Entity* playerStart = Node_getEntity(playerStartNode);
@@ -436,7 +436,7 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
         // Set a default angle
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
 	}
-	catch (EntityCreationException e) {
+	catch (EntityCreationException& e) {
 		gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
 	}
 }
@@ -491,9 +491,9 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
 	UndoableCommand command("addLight");	
 
     try {
-    	Entity_createFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
+    	entity::createEntityFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
     }
-    catch (EntityCreationException e) {
+    catch (EntityCreationException&) {
         gtkutil::errorDialog("Unable to create light, classname not found.",
                              GlobalMainFrame().getTopLevelWindow());
     }
@@ -514,7 +514,7 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
 
     try 
     {
-        scene::INodePtr spkNode = Entity_createFromSelection(
+        scene::INodePtr spkNode = entity::createEntityFromSelection(
             SPEAKER_CLASSNAME, self->_lastPoint
         );	
 
@@ -540,7 +540,7 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
 			);
 		}
     }
-    catch (EntityCreationException e) {
+    catch (EntityCreationException&) {
         gtkutil::errorDialog("Unable to create speaker, classname not found.",
                              GlobalMainFrame().getTopLevelWindow());
         return;
@@ -561,7 +561,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 		// If a model was selected, create the entity and set its model key
 		if (!ms.model.empty()) {
 			try {
-				scene::INodePtr modelNode = Entity_createFromSelection(
+				scene::INodePtr modelNode = entity::createEntityFromSelection(
 					MODEL_CLASSNAME, 
 					self->_lastPoint
 				);
@@ -583,7 +583,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 					Scene_BrushResize(*theBrush, brushAABB, clipShader);
 				}
             }
-            catch (EntityCreationException e) {
+            catch (EntityCreationException&) {
                 gtkutil::errorDialog("Unable to create model, classname not found.",
                                      GlobalMainFrame().getTopLevelWindow());
             }
@@ -604,7 +604,7 @@ void OrthoContextMenu::callbackConvertToStatic(GtkMenuItem* item, OrthoContextMe
 
 	// Create a func_static entity. Only brushes can be selected if this menu item is
 	// enabled.
-	Entity_createFromSelection(MODEL_CLASSNAME, self->_lastPoint);	
+	entity::createEntityFromSelection(MODEL_CLASSNAME, self->_lastPoint);	
 }
 
 void OrthoContextMenu::callbackAddToLayer(int layerID) {

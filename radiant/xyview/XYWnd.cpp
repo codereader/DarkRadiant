@@ -1576,13 +1576,6 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 	point[nDim] = float_snapped(wz.bounds.getOrigin()[nDim], GlobalGrid().getGridSize());
 }
 
-void XYWnd::onEntityCreate(const std::string& item) {
-	UndoableCommand undo("entityCreate -class " + item);
-	Vector3 point;
-	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
-	Entity_createFromSelection(item.c_str(), point);
-}
-
 void XYWnd::updateSelectionBox(const Rectangle& area)
 {
 	if(GTK_WIDGET_VISIBLE(getWidget()))
