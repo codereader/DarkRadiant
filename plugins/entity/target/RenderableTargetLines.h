@@ -36,7 +36,7 @@ public:
 	{}
 
 	virtual void visit(const TargetPtr& target) {
-		if (target->isEmpty()) {
+		if (target->isEmpty() || !target->isVisible()) {
 			return;
 		}
 

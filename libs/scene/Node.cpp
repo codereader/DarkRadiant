@@ -110,7 +110,8 @@ void Node::disable(unsigned int state)
 
 bool Node::visible() const
 {
-	return _state == eVisible;
+	// Only instantiated nodes can be considered visible
+	return _state == eVisible && _instantiated;
 }
 
 bool Node::excluded() const
