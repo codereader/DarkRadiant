@@ -1,6 +1,7 @@
 #include "EntityNode.h"
 
 #include "EntitySettings.h"
+#include "target/RenderableTargetInstances.h"
 
 namespace entity {
 
@@ -110,6 +111,9 @@ void EntityNode::onInsertIntoScene()
 {
 	_entity.instanceAttach(scene::findMapFile(getSelf()));
 
+	// Register our TargetableNode, now that we're in the scene
+	RenderableTargetInstances::Instance().attach(*this);
+
 	SelectableNode::onInsertIntoScene();
 }
 
@@ -117,6 +121,7 @@ void EntityNode::onRemoveFromScene()
 {
 	SelectableNode::onRemoveFromScene();
 
+	RenderableTargetInstances::Instance().detach(*this);
 	_entity.instanceDetach(scene::findMapFile(getSelf()));
 }
 

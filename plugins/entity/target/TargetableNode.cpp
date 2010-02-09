@@ -1,7 +1,6 @@
 #include "TargetableNode.h"
 
 #include "TargetManager.h"
-#include "RenderableTargetInstances.h"
 
 namespace entity {
 
@@ -15,17 +14,15 @@ TargetableNode::TargetableNode(Doom3Entity& entity, scene::Node& node) :
 	// Execute initialisation code in construct()
 }
 
-void TargetableNode::construct() {
+void TargetableNode::construct()
+{
 	_d3entity.attachObserver(this);
 	_d3entity.attachObserver(&_targetKeys);
-
-	RenderableTargetInstances::Instance().attach(*this);
 }
 
 // Disconnect this class from the entity
-void TargetableNode::destruct() {
-	RenderableTargetInstances::Instance().detach(*this);
-
+void TargetableNode::destruct()
+{
 	_d3entity.detachObserver(&_targetKeys);
 	_d3entity.detachObserver(this);
 }

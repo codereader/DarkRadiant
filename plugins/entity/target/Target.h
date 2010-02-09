@@ -43,7 +43,11 @@ public:
 	}
 
 	bool isEmpty() const {
-		return getNode() == NULL;
+		return _node == NULL;
+	}
+
+	bool isVisible() const {
+		return _node != NULL && _node->visible();
 	}
 
 	void clear() {
