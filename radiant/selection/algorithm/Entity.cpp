@@ -102,5 +102,20 @@ void bindEntities(const cmd::ArgumentList& args) {
 	}
 }
 
+void connectSelectedEntities(const cmd::ArgumentList& args)
+{
+	if (GlobalSelectionSystem().countSelected() == 2)
+	{
+		GlobalEntityCreator().connectEntities(
+			GlobalSelectionSystem().penultimateSelected(),	// source
+			GlobalSelectionSystem().ultimateSelected()		// target
+		);
+	}
+	else
+	{
+		globalErrorStream() << "connectSelectedEntities: exactly two instances must be selected\n";
+	}
+}
+
 	} // namespace algorithm
 } // namespace selection

@@ -184,8 +184,6 @@ public:
 	void EntityCreate_MouseMove(int x, int y);
 	void EntityCreate_MouseUp(int x, int y);
 	
-	void onEntityCreate(const std::string& item);
-	
 	virtual void setViewType(EViewType n);
 	EViewType getViewType() const;
 	

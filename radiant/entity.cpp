@@ -93,19 +93,6 @@ void ReloadDefs(const cmd::ArgumentList& args)
 	GlobalEntityClassManager().reloadDefs();
 }
 
-void Entity_connectSelected(const cmd::ArgumentList& args)
-{
-	if (GlobalSelectionSystem().countSelected() == 2) {
-		GlobalEntityCreator().connectEntities(
-			GlobalSelectionSystem().penultimateSelected(),	// source
-			GlobalSelectionSystem().ultimateSelected()		// target
-		);
-	}
-	else {
-		globalErrorStream() << "entityConnectSelected: exactly two instances must be selected\n";
-	}
-}
-
 // Function to return an AABB based on the current workzone AABB (retrieved
 // from the currently selected brushes), or to use the default light radius
 // if the workzone AABB is not valid or none is available.
@@ -120,21 +107,24 @@ AABB Doom3Light_getBounds(AABB aabb)
 	return aabb;
 }
 
+namespace entity
+{
+
 /** 
  * Create an instance of the given entity at the given position, and return
  * the Node containing the new entity.
  * 
  * @returns: the scene::INodePtr referring to the new entity.
  */
-scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& origin) {
+scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3& origin)
+{
 	// Obtain the structure containing the selection counts
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
     IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(name, true);
 
     // TODO: to be replaced by inheritance-based class detection
-    bool isModel = (info.totalCount == 0 
-                    && string_equal_nocase(name, "func_static"));
+    bool isModel = (info.totalCount == 0 && name == "func_static");
     
     // Some entities are based on the size of the currently-selected primitive(s)
     bool primitivesSelected = info.brushCount > 0 || info.patchCount > 0;
@@ -227,8 +217,6 @@ scene::INodePtr Entity_createFromSelection(const char* name, const Vector3& orig
 	return node;
 }
 
-namespace entity {
-
 /** greebo: Creates a new entity with an attached curve
  * 
  * @key: The curve type: pass either "curve_CatmullRomSpline" or "curve_Nurbs".
@@ -289,10 +277,9 @@ void createCurveCatmullRom(const cmd::ArgumentList& args) {
 	createCurve(GlobalRegistry().get(RKEY_CURVE_CATMULLROM_KEY));
 }
 
-} // namespace entity
-
-void Entity_Construct() {
-	GlobalCommandSystem().addCommand("ConnectSelection", Entity_connectSelected);
+void registerCommands()
+{
+	GlobalCommandSystem().addCommand("ConnectSelection", selection::algorithm::connectSelectedEntities);
 	GlobalCommandSystem().addCommand("BindSelection", selection::algorithm::bindEntities);
 	GlobalCommandSystem().addCommand("CreateCurveNURBS", entity::createCurveNURBS);
 	GlobalCommandSystem().addCommand("CreateCurveCatmullRom", entity::createCurveCatmullRom);
@@ -304,7 +291,4 @@ void Entity_Construct() {
 	GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
 }
 
-void Entity_Destroy()
-{
-}
-
+} // namespace entity

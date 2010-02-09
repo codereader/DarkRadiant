@@ -151,7 +151,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     GlobalXYWnd().construct();
 	ui::MediaBrowser::registerPreferences();
     GlobalTextureBrowser().construct();
-    Entity_Construct();
+	entity::registerCommands();
     map::AutoSaver().init();
 }
 
@@ -161,7 +161,6 @@ void RadiantModule::shutdownModule() {
 	GlobalFileSystem().shutdown();
 
 	map::PointFile::Instance().destroy();
-    Entity_Destroy();
     
     // Remove all the event listeners, otherwise the shared_ptrs 
     // lock the instances. This is just for safety, usually all
