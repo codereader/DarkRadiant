@@ -1,9 +1,10 @@
 #include "itextstream.h"
 #include "debugging/debugging.h"
+#include "FontManager.h"
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	//registry.registerModule(shaders::Doom3ShaderSystemPtr(new shaders::Doom3ShaderSystem));
+	registry.registerModule(fonts::FontManagerPtr(new fonts::FontManager));
 	
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

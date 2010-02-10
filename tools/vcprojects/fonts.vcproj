@@ -414,6 +414,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\plugins\fonts\FontManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\fonts\FontManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\fonts\plugin.cpp"
 				>
 			</File>
