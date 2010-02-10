@@ -1,0 +1,5 @@
+
+namespace readable
+{
+
+} //namespace readable

@@ -174,6 +174,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.editing", "dm.editing.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wavefront", "wavefront.vcproj", "{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.gui", "dm.gui.vcproj", "{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -550,6 +552,12 @@ Global
 		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Release|Win32.Build.0 = Release|Win32
 		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Release|x64.ActiveCfg = Release|x64
 		{9F3C61EC-51A7-4737-89EA-CBECBD8559F7}.Release|x64.Build.0 = Release|x64
+		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Debug|Win32.Build.0 = Debug|Win32
+		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Debug|x64.ActiveCfg = Debug|Win32
+		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Release|Win32.ActiveCfg = Release|Win32
+		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Release|Win32.Build.0 = Release|Win32
+		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
