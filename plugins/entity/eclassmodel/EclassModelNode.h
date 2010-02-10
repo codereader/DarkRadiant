@@ -29,6 +29,8 @@ class EclassModelNode :
 
 	mutable bool _updateSkin;
 
+	AABB _localAABB;
+
 public:
 	// Constructor
 	EclassModelNode(const IEntityClassPtr& eclass);
@@ -42,6 +44,9 @@ public:
 
 	// EntityNode implementation
 	virtual void refreshModel();
+
+	// Bounded implementation
+	virtual const AABB& localAABB() const;
 
 	scene::INodePtr clone() const;
 

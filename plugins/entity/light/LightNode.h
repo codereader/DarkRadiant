@@ -19,7 +19,6 @@ class LightNode :
 	public ComponentEditable,
 	public ComponentSnappable,
 	public PlaneSelectable,
-	public Bounded,
 	public RendererLight,
 	public scene::SelectableLight
 {

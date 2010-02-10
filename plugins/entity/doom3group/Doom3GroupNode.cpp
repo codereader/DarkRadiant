@@ -28,7 +28,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
 	ComponentSnappable(other),
-	Bounded(other),
 	CurveNode(other),
 	m_contained(
 		other.m_contained,

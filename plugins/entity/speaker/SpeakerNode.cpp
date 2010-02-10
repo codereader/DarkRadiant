@@ -16,7 +16,6 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	SelectionTestable(other),
-	Bounded(other),
 	_speaker(other._speaker, 
 		*this, 
 		Node::TransformChangedCaller(*this), 
