@@ -19,8 +19,7 @@ namespace entity {
 class GenericEntityNode :
 	public EntityNode,
 	public Snappable,
-	public SelectionTestable,
-	public Bounded
+	public SelectionTestable
 {
 	friend class GenericEntity;
 

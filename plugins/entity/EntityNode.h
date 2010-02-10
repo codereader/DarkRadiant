@@ -3,6 +3,7 @@
 
 #include "ientity.h"
 #include "inamespace.h"
+#include "Bounded.h"
 
 #include "selectionlib.h"
 #include "transformlib.h"
@@ -28,7 +29,8 @@ class EntityNode :
 	public Transformable,
 	public MatrixTransform,	// influences local2world of child nodes
 	public scene::Cloneable, // all entities are cloneable, to be implemented in subclasses
-	public IEntityClass::Observer
+	public IEntityClass::Observer,
+	public Bounded // all entities have a local AABB
 {
 protected:
 	// The entity class

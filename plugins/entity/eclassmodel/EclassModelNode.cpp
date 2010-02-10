@@ -5,7 +5,8 @@ namespace entity {
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(*this, Node::TransformChangedCaller(*this)),
-	_updateSkin(true)
+	_updateSkin(true),
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
@@ -14,7 +15,8 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	m_contained(other.m_contained, 
 				*this, 
 				Node::TransformChangedCaller(*this)),
-	_updateSkin(true)
+	_updateSkin(true),
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
 EclassModelNode::~EclassModelNode() {
@@ -45,6 +47,11 @@ void EclassModelNode::refreshModel() {
 
 	// Trigger a skin change
 	skinChanged(_entity.getKeyValue("skin"));
+}
+
+const AABB& EclassModelNode::localAABB() const
+{
+	return _localAABB;
 }
 
 void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

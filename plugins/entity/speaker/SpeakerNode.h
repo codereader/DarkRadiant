@@ -21,7 +21,6 @@ class SpeakerNode :
 	public EntityNode,
 	public Snappable,
 	public SelectionTestable,
-	public Bounded,
 	public PlaneSelectable,
 	public ComponentSelectionTestable
 {
