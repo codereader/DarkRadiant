@@ -176,6 +176,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wavefront", "wavefront.vcpr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.gui", "dm.gui.vcproj", "{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fonts", "fonts.vcproj", "{6AC36DFF-0208-4770-B09D-3174FB433C51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -560,6 +562,14 @@ Global
 		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Release|Win32.Build.0 = Release|Win32
 		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Release|x64.ActiveCfg = Release|x64
 		{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}.Release|x64.Build.0 = Release|x64
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Debug|Win32.Build.0 = Debug|Win32
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Debug|x64.ActiveCfg = Debug|x64
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Debug|x64.Build.0 = Debug|x64
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Release|Win32.ActiveCfg = Release|Win32
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Release|Win32.Build.0 = Release|Win32
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Release|x64.ActiveCfg = Release|x64
+		{6AC36DFF-0208-4770-B09D-3174FB433C51}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
