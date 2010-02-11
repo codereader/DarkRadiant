@@ -3,6 +3,7 @@
 #include "os/path.h"
 #include <boost/regex.hpp>
 
+#include "itextstream.h"
 #include "FontManager.h"
 
 namespace fonts 
@@ -20,12 +21,24 @@ void FontLoader::operator() (const std::string& filename)
 	{
 		// Get the font name and resolution from the match
 		std::string fontname = matches[1];
-		std::string resolution = matches[2];
+		std::string resolutionStr = matches[2];
 
-		// Create the font (if not done yet), acquire the info structure
-		FontInfoPtr font = _manager.findOrCreateFontInfo(fontname);
+		int r = strToInt(resolutionStr);
 
-		// TODO: load the info
+		if (r >= Resolution12 && r < NumResolutions)
+		{
+			Resolution resolution = static_cast<Resolution>(r);
+
+			// Create the font (if not done yet), acquire the info structure
+			FontInfoPtr font = _manager.findOrCreateFontInfo(fontname);
+
+			// Load the DAT file and create the glyph info
+			font->glyphSets[resolution] = GlyphSet::createFromDatFile(fullPath);
+		}
+		else
+		{
+			globalWarningStream() << "FontLoader: ignoring DAT: " << filename << std::endl;
+		}
 	}
 }
 

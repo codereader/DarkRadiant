@@ -107,7 +107,11 @@ private:
 	typedef std::map<std::string, FontInfoPtr> FontMap;
 	FontMap _fonts;
 
+	std::string _curLanguage;
+
 public:
+	FontManager();
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;

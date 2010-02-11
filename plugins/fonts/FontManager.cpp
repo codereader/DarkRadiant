@@ -25,6 +25,10 @@ in game descriptor";
 in game descriptor";
 }
 
+FontManager::FontManager() :
+	_curLanguage("english")
+{}
+
 const std::string& FontManager::getName() const
 {
 	static std::string _name(MODULE_FONTMANAGER);
@@ -76,10 +80,10 @@ void FontManager::reloadFonts()
 	}
 
 	// Get the language from the registry
-	std::string language = "english";
+	_curLanguage = "english";
 
 	// Load the DAT files from the VFS
-	std::string path = os::standardPathWithSlash(nlBasePath[0].getContent()) + language;
+	std::string path = os::standardPathWithSlash(nlBasePath[0].getContent()) + _curLanguage;
 	std::string extension = nlExt[0].getContent();
 
 	// Instantiate a visitor to traverse the VFS
@@ -91,12 +95,28 @@ void FontManager::reloadFonts()
 
 FontInfoPtr FontManager::findFontInfo(const std::string& name)
 {
-	return FontInfoPtr();
+	FontMap::const_iterator found = _fonts.find(name);
+	
+	return (found != _fonts.end()) ? found->second: FontInfoPtr();
 }
 
 FontInfoPtr FontManager::findOrCreateFontInfo(const std::string& name)
 {
-	return FontInfoPtr();
+	FontMap::iterator i = _fonts.find(name);
+	
+	if (i == _fonts.end())
+	{
+		FontInfoPtr font(new FontInfo(name, _curLanguage));
+
+		// Doesn't exist yet, create now
+		std::pair<FontMap::iterator, bool> result = _fonts.insert(
+			FontMap::value_type(name, font)
+		);
+
+		i = result.first;
+	}
+
+	return i->second;
 }
 
 } // namespace fonts
