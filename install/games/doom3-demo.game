@@ -115,6 +115,10 @@
 			<basepath>materials</basepath>
 			<extension>mtr</extension>
 		</shaders>
+		<fonts>
+			<basepath>fonts</basepath>
+			<extension>dat</extension>
+		</fonts>
 	</filesystem>
 	<defaults>
 		<lightShader value="lights/defaultPointLight" />

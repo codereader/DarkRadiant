@@ -35,8 +35,9 @@ public:
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			//_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
+			_dependencies.insert(MODULE_IMAGELOADER + "TGA");
+			_dependencies.insert(MODULE_IMAGELOADER + "DDS");
 			//_dependencies.insert(MODULE_MAINFRAME);
-			//_dependencies.insert(MODULE_IMAGELOADER);				//breaks the program
 		}
 
 		return _dependencies;
@@ -64,7 +65,7 @@ public:
 
 		try
 		{
-			readable::FontReaderPtr test(new readable::FontLoader("dm.gui_testing/fontImage_48.com"));
+			readable::FontReaderPtr test(new readable::FontLoader("D:\\Data\\baumannm\\darkmod\\d3\\darkmod\\fonts\\english\\andrew_script\\fontImage_48.dat"));
 		}
 		catch (...)
 		{
