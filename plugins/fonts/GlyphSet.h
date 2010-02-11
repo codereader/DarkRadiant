@@ -25,7 +25,8 @@ class GlyphSet
 private:
 	// Private constructor, initialises this class using 
 	// the Q3-style info structure (as read in from the .DAT file)
-	GlyphSet(const q3font::Q3FontInfo& q3info, Resolution resolution_);
+	GlyphSet(const q3font::Q3FontInfo& q3info, const std::string& fontname, 
+		const std::string& language, Resolution resolution_);
 
 public:
 	// 12, 24, 48
@@ -34,11 +35,13 @@ public:
 	// each set has 256 glyphs
 	GlyphInfoPtr glyphs[q3font::GLYPH_COUNT_PER_FONT];
 
-	// the number of textures used by this set
-	std::size_t numTextures;
+	// VFS paths to the textures (file extension and dds/ prefix are omitted)
+	std::vector<std::string> textures;
 
 	// Public named constructor
 	static GlyphSetPtr createFromDatFile(const std::string& vfsPath, 
+										 const std::string& fontname,
+										 const std::string& language,
 										 Resolution resolution);
 };
 typedef boost::shared_ptr<GlyphSet> GlyphSetPtr;

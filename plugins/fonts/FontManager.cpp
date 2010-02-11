@@ -61,6 +61,11 @@ void FontManager::shutdownModule()
 {
 }
 
+const std::string& FontManager::getCurLanguage()
+{
+	return _curLanguage;
+}
+
 void FontManager::reloadFonts()
 {
 	_fonts.clear();
