@@ -19,16 +19,6 @@ enum Resolution
 	NumResolutions
 };
 
-namespace q3font
-{
-	// Default values of Quake 3 sourcecode. Don't change!
-	const int SHADER_NAME_LENGTH = 32;
-	const int GLYPH_COUNT_PER_FONT = 256;
-	const int FONT_NAME_LENGTH = 64;
-
-	struct Q3FontInfo;
-}
-
 // Each font resolution has its own set of glyphs
 class GlyphSet
 {
