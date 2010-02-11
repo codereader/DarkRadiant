@@ -10,7 +10,6 @@
 //#include "iimage.h"
 #include "ifilesystem.h"
 
-//#include "AIHeadPropertyEditor.h"
 #include "ReadableEditorDialog.h"
 #include "FontLoader.h"
 
@@ -30,14 +29,10 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);		//????????????????????? necessary?
-			//_dependencies.insert(MODULE_ENTITYINSPECTOR);
 			_dependencies.insert(MODULE_EVENTMANAGER);
-			//_dependencies.insert(MODULE_UIMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_IMAGELOADER + "TGA");
 			_dependencies.insert(MODULE_IMAGELOADER + "DDS");
-			//_dependencies.insert(MODULE_MAINFRAME);
 		}
 
 		return _dependencies;
@@ -46,12 +41,6 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
 		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
-		
-		/* ???
-		// Associated "def_head" with an empty property editor instance
-		GlobalEntityInspector().registerPropertyEditor(
-			ui::DEF_HEAD_KEY, ui::IPropertyEditorPtr(new ui::AIHeadPropertyEditor())
-		);//*/
 
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
 		GlobalEventManager().addCommand("ReadableEditorDialog", "ReadableEditorDialog");
@@ -62,15 +51,6 @@ public:
 			"", // icon
 			"ReadableEditorDialog"
 		);
-
-		try
-		{
-			readable::FontReaderPtr test(new readable::FontLoader("D:\\Data\\baumannm\\darkmod\\d3\\darkmod\\fonts\\english\\andrew_script\\fontImage_48.dat"));
-		}
-		catch (...)
-		{
-
-		}
 	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;
