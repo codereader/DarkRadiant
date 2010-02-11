@@ -8,22 +8,35 @@ namespace fonts
 {
 
 // Construct a glyphset from Q3 info
-GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info, Resolution resolution_) :
+GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info, 
+				   const std::string& fontname, 
+				   const std::string& language, 
+				   Resolution resolution_) :
 	resolution(resolution_)
 {
-	std::set<std::string> textureNames;
+	std::set<std::string> temp;
 
 	// Construct all the glyphs
 	for (std::size_t i = 0; i < q3font::GLYPH_COUNT_PER_FONT; ++i)
 	{
 		glyphs[i] = GlyphInfoPtr(new GlyphInfo(q3info.glyphs[i]));
-		textureNames.insert(glyphs[i]->texture);
+
+		// Memorise unique texture names
+		temp.insert(glyphs[i]->texture);
 	}
 
-	numTextures = textureNames.size();
+	// Now construct the full texture paths, VFS-compatible
+	for (std::set<std::string>::const_iterator i = temp.begin();
+		 i != temp.end(); ++i)
+	{
+		textures.push_back("fonts/" + language + "/" + fontname + "/" + *i);
+	}
 }
 
-GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath, Resolution resolution)
+GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath, 
+										const std::string& fontname,
+										const std::string& language, 
+										Resolution resolution)
 {
 	ArchiveFilePtr file = GlobalFileSystem().openFile(vfsPath);
 
@@ -46,7 +59,7 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath, Resolution r
 	);
 
 	// Construct a glyph set using the loaded info
-	GlyphSetPtr glyphSet(new GlyphSet(*buf, resolution));
+	GlyphSetPtr glyphSet(new GlyphSet(*buf, fontname, language, resolution));
 
 	globalOutputStream() << "FontLoader: "  << vfsPath << " loaded successfully." << std::endl;
 		
