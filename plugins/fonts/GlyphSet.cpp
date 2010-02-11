@@ -9,6 +9,7 @@ namespace fonts
 
 namespace q3font
 {
+
 	// Default values of Quake 3 sourcecode. Don't change!
 	struct glyphInfo_t
 	{
@@ -34,9 +35,17 @@ namespace q3font
 		char name[q3font::FONT_NAME_LENGTH];
 	};
 	typedef boost::shared_ptr<Q3FontInfo> Q3FontInfoPtr;
+
+} // namespace q3font
+
+// Construct a glyphset from Q3 info
+GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info, Resolution resolution_) :
+	resolution(resolution_)
+{
+	// TODO
 }
 
-GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath)
+GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath, Resolution resolution)
 {
 	ArchiveFilePtr file = GlobalFileSystem().openFile(vfsPath);
 
@@ -58,8 +67,8 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath)
 		sizeof(q3font::Q3FontInfo)
 	);
 
-	// TODO: Now translate the info into our glyph set
-	GlyphSetPtr glyphSet(new GlyphSet);
+	// Construct a glyph set using the loaded info
+	GlyphSetPtr glyphSet(new GlyphSet(*buf, resolution));
 
 	globalOutputStream() << "FontLoader: "  << vfsPath << " loaded successfully." << std::endl;
 		
