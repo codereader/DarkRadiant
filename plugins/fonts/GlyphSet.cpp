@@ -7,42 +7,20 @@
 namespace fonts
 {
 
-namespace q3font
-{
-
-	// Default values of Quake 3 sourcecode. Don't change!
-	struct glyphInfo_t
-	{
-		int height;       // number of scan lines
-		int top;          // top of glyph in buffer
-		int bottom;       // bottom of glyph in buffer
-		int pitch;        // width for copying
-		int xSkip;        // x adjustment
-		int imageWidth;   // width of actual image
-		int imageHeight;  // height of actual image
-		float s;          // x offset in image where glyph starts
-		float t;          // y offset in image where glyph starts
-		float s2;
-		float t2;
-		int glyph;		  // handle to the shader with the glyph
-		char shaderName[q3font::SHADER_NAME_LENGTH];
-	};
-
-	struct Q3FontInfo
-	{
-		glyphInfo_t glyphs[q3font::GLYPH_COUNT_PER_FONT];
-		float glyphScale;
-		char name[q3font::FONT_NAME_LENGTH];
-	};
-	typedef boost::shared_ptr<Q3FontInfo> Q3FontInfoPtr;
-
-} // namespace q3font
-
 // Construct a glyphset from Q3 info
 GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info, Resolution resolution_) :
 	resolution(resolution_)
 {
-	// TODO
+	std::set<std::string> textureNames;
+
+	// Construct all the glyphs
+	for (std::size_t i = 0; i < q3font::GLYPH_COUNT_PER_FONT; ++i)
+	{
+		glyphs[i] = GlyphInfoPtr(new GlyphInfo(q3info.glyphs[i]));
+		textureNames.insert(glyphs[i]->texture);
+	}
+
+	numTextures = textureNames.size();
 }
 
 GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath, Resolution resolution)
