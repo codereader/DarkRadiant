@@ -25,10 +25,23 @@ void FontLoader::operator() (const std::string& filename)
 
 		int r = strToInt(resolutionStr);
 
-		if (r >= Resolution12 && r < NumResolutions)
-		{
-			Resolution resolution = static_cast<Resolution>(r);
+		Resolution resolution = NumResolutions;
 
+		switch (r)
+		{
+		case 12:
+			resolution = Resolution12;
+			break;
+		case 24:
+			resolution = Resolution24;
+			break;
+		case 48:
+			resolution = Resolution48;
+			break;
+		};
+
+		if (resolution != NumResolutions)
+		{
 			// Create the font (if not done yet), acquire the info structure
 			FontInfoPtr font = _manager.findOrCreateFontInfo(fontname);
 
