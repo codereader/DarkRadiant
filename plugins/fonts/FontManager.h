@@ -8,11 +8,13 @@
 #include <map>
 #include <boost/shared_array.hpp>
 
+#include "FontInfo.h"
+
 namespace fonts
 {
 
 //Quake 3 font related typedefs:
-namespace q3font
+/*namespace q3font
 {
 
 namespace
@@ -52,7 +54,7 @@ typedef struct {
 typedef boost::shared_ptr<q3font::fontInfo_t> Q3FontInfoPtr;
 typedef boost::shared_array<ImagePtr> ImagePtrArray;
 
-/* Container-class for Glyphs.*/
+// Container-class for Glyphs.
 class GlyphInfo
 {
 public:
@@ -71,7 +73,7 @@ public:
 
 	GlyphInfo() {}
 
-	/* Contructor with all attributes */
+	// Contructor with all attributes 
 	GlyphInfo(int height, int top, int bottom, int pitch, int xSkip,
 		int imageWidth, int imageHeight, float s, float t, float s2, float t2,
 		std::string shaderName) :
@@ -80,10 +82,10 @@ public:
 		_s(s), _t(t), _s2(s2), _t2(t2),
 		_textureIndex(strToInt(shaderName.substr(shaderName.length()-8,1))) {} //dirty
 };
-typedef boost::shared_ptr<GlyphInfo> GlyphInfoPtr;
+typedef boost::shared_ptr<GlyphInfo> GlyphInfoPtr;*/
 
 /* Container-class for Fonts.*/
-class FontInfo
+/*class FontInfo
 {
 public:
 	GlyphInfoPtr _glyphs[q3font::GlyphCountPerFont];
@@ -96,7 +98,7 @@ public:
 	FontInfo() {};
 	FontInfo(float glyphScale, std::string name);
 };
-typedef boost::shared_ptr<FontInfo> FontInfoPtr;
+typedef boost::shared_ptr<FontInfo> FontInfoPtr;*/
 
 class FontManager :
 	public IFontManager
@@ -111,6 +113,14 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
+
+	// Returns the info structure of a specific font (current language),
+	// returns NULL if no font info is available yet
+	FontInfoPtr findFontInfo(const std::string& name);
+
+	// Returns the info structure of a specific font (current language),
+	// always returns non-NULL, non-existent fonts are created on the fly
+	FontInfoPtr findOrCreateFontInfo(const std::string& name);
 
 private:
 	void reloadFonts();

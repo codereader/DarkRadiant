@@ -9,7 +9,7 @@
 #include "xmlutil/MissingXMLNodeException.h"
 #include "generic/callback.h"
 
-#include "FontFinder.h"
+#include "FontLoader.h"
 
 namespace fonts
 {
@@ -83,10 +83,20 @@ void FontManager::reloadFonts()
 	std::string extension = nlExt[0].getContent();
 
 	// Instantiate a visitor to traverse the VFS
-	FontFinder finder(path);
-	GlobalFileSystem().forEachFile(path, extension, makeCallback1(finder), 2);
+	FontLoader loader(path, *this);
+	GlobalFileSystem().forEachFile(path, extension, makeCallback1(loader), 2);
 
 	globalOutputStream() << _fonts.size() << " fonts registered." << std::endl;
+}
+
+FontInfoPtr FontManager::findFontInfo(const std::string& name)
+{
+	return FontInfoPtr();
+}
+
+FontInfoPtr FontManager::findOrCreateFontInfo(const std::string& name)
+{
+	return FontInfoPtr();
 }
 
 } // namespace fonts
