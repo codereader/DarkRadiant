@@ -6,4 +6,5 @@ modules_LTLIBRARIES = fonts.la
 fonts_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 fonts_la_LDFLAGS = -module -avoid-version $(XML_LIBS) $(GL_LIBS) $(GLU_LIBS)
 fonts_la_SOURCES = plugin.cpp \
+					FontLoader.cpp \
 					FontManager.cpp
