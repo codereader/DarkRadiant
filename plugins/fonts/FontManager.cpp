@@ -79,7 +79,7 @@ void FontManager::reloadFonts()
 		throw xml::MissingXMLNodeException(MISSING_EXTENSION_NODE);
 	}
 
-	// Get the language from the registry
+	// TODO: Get the language from the registry
 	_curLanguage = "english";
 
 	// Load the DAT files from the VFS
