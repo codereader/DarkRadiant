@@ -434,6 +434,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\fonts\GlyphInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\fonts\GlyphSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\fonts\GlyphSet.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\fonts\plugin.cpp"
 				>
 			</File>
