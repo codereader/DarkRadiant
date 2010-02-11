@@ -84,7 +84,7 @@ void FontManager::reloadFonts()
 
 	// Instantiate a visitor to traverse the VFS
 	FontFinder finder(path);
-	GlobalFileSystem().forEachFile(path, extension, makeCallback1(finder), 1);
+	GlobalFileSystem().forEachFile(path, extension, makeCallback1(finder), 2);
 
 	globalOutputStream() << _fonts.size() << " fonts registered." << std::endl;
 }
