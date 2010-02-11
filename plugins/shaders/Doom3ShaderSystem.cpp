@@ -6,10 +6,10 @@
 #include "ipreferencesystem.h"
 
 #include "xmlutil/Node.h"
+#include "xmlutil/MissingXMLNodeException.h"
 
 #include "ShaderDefinition.h"
 #include "ShaderFileLoader.h"
-#include "MissingXMLNodeException.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -67,12 +67,12 @@ void Doom3ShaderSystem::loadMaterialFiles()
 	xml::NodeList nlShaderPath = 
 		GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
 	if (nlShaderPath.empty())
-		throw MissingXMLNodeException(MISSING_BASEPATH_NODE);
+		throw xml::MissingXMLNodeException(MISSING_BASEPATH_NODE);
 
 	xml::NodeList nlShaderExt = 
 		GlobalRegistry().findXPath("game/filesystem/shaders/extension");
 	if (nlShaderExt.empty())
-		throw MissingXMLNodeException(MISSING_EXTENSION_NODE);
+		throw xml::MissingXMLNodeException(MISSING_EXTENSION_NODE);
 
 	// Load the shader files from the VFS
 	std::string sPath = nlShaderPath[0].getContent();
