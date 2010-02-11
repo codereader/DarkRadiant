@@ -25,11 +25,18 @@ namespace q3font
 	const int SHADER_NAME_LENGTH = 32;
 	const int GLYPH_COUNT_PER_FONT = 256;
 	const int FONT_NAME_LENGTH = 64;
+
+	struct Q3FontInfo;
 }
 
 // Each font resolution has its own set of glyphs
 class GlyphSet
 {
+private:
+	// Private constructor, initialises this class using 
+	// the Q3-style info structure (as read in from the .DAT file)
+	GlyphSet(const q3font::Q3FontInfo& q3info, Resolution resolution_);
+
 public:
 	// 12, 24, 48
 	Resolution resolution;
@@ -41,7 +48,8 @@ public:
 	std::size_t numTextures;
 
 	// Public named constructor
-	static GlyphSetPtr createFromDatFile(const std::string& vfsPath);
+	static GlyphSetPtr createFromDatFile(const std::string& vfsPath, 
+										 Resolution resolution);
 };
 typedef boost::shared_ptr<GlyphSet> GlyphSetPtr;
 

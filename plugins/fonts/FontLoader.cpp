@@ -46,7 +46,7 @@ void FontLoader::operator() (const std::string& filename)
 			FontInfoPtr font = _manager.findOrCreateFontInfo(fontname);
 
 			// Load the DAT file and create the glyph info
-			font->glyphSets[resolution] = GlyphSet::createFromDatFile(fullPath);
+			font->glyphSets[resolution] = GlyphSet::createFromDatFile(fullPath, resolution);
 		}
 		else
 		{
