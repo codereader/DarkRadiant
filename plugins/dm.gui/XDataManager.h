@@ -14,18 +14,17 @@ namespace readable
 	typedef std::vector<std::string> StringList;
 
 	///////////////////////////// XData:
-	// XData Containers.
+	// XData base-class. (Container)
 	class XData
 	{
 	public:
-		bool _twoSided;
 		std::string _name;
 		int _numPages;
 		StringList _guiPage;
 		std::string _sndPageTurn;
 
 		XData(std::string name) : _name(name) { }
-		XData(bool twoSided, std::string name) : _twoSided(twoSided), _name(name) { }
+		virtual ~XData() {};
 	};
 	typedef boost::shared_ptr<XData> XDataPtr;
 	typedef std::vector<XDataPtr> XDataPtrList;
@@ -36,8 +35,10 @@ namespace readable
 		StringList _pageTitle;
 		StringList _pageBody;
 
-		OneSidedXData(std::string name) : XData(false, name) { }
+		OneSidedXData(std::string name) : XData(name) { }
+		~OneSidedXData() {}
 	};
+	typedef boost::shared_ptr<OneSidedXData> OneSidedXDataPtr;
 
 	class TwoSidedXData : public XData
 	{
@@ -47,8 +48,10 @@ namespace readable
 		StringList _pageLeftBody;
 		StringList _pageRightBody;
 
-		TwoSidedXData(std::string name) : XData(true, name) { }
+		TwoSidedXData(std::string name) : XData(name) { }
+		~TwoSidedXData() {}
 	};
+	typedef boost::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
 
 	enum FileStatus
 	{
@@ -58,7 +61,14 @@ namespace readable
 		AllOk
 	};
 
-
+	enum ExporterCommands
+	{
+		Normal,
+		Merge,
+		MergeAndOverwriteExisting,
+		Overwrite,
+		OverwriteMultDef		
+	};
 
 	///////////////////////////// XDataManager:
 	// Small static class that imports and exports XData.
@@ -68,21 +78,22 @@ namespace readable
 		static void trimLeadingSpaces(std::string& String);
 		static std::string getLineFormatted(boost::filesystem::ifstream* FileStream);
 		static std::string getLineFormatted(boost::filesystem::ifstream* FileStream, char Delimiter);
-		static std::string gotoNextSymbol(boost::filesystem::ifstream* FileStream);	//to be implemented
-		static std::string getNextWord(boost::filesystem::ifstream* FileStream); //to be implemented
+		//static std::string gotoNextSymbol(boost::filesystem::ifstream* FileStream);	//to be implemented
+		//static std::string getNextWord(boost::filesystem::ifstream* FileStream); //to be implemented
 		//static void deQuote(std::string& String); //to be implemented. Possibly unnecessary?
+		static std::string generateXDataDef(const XData& Data);
 		static int _lineCount;
 	public:
 		/* Imports a list of XData objects from the File specified by Filename. Throws
 		runtime_error exceptions on filesystemerrors, syntax errors and general exceptions.*/
-		static XDataPtrList importXData(std::string FileName);
+		static XDataPtrList importXData(const std::string& FileName);
 
 		/* Exports the XData class formated properly into the File specified in 
 		Filename. If the file already exists this function can overwrite the file or merge.
 		If the definition contained in XData already exists, it can be merged into the file,
 		replacing the old one. Throws corresponding runtime_error exceptions in these cases
 		and if the file to be overwritten contains more than one definitions.*/
-		static FileStatus exportXData(std::string FileName, XData Data, bool merge, bool overwrite);
+		static FileStatus exportXData(const std::string& FileName, const XData& Data, const ExporterCommands& cmd);
 	};
 
 
