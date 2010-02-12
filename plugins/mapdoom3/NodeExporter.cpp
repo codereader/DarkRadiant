@@ -11,8 +11,8 @@
 
 #include "Tokens.h"
 #include "Doom3MapFormat.h"
-#include "primitivewriters\BrushDef3Exporter.h"
-#include "primitivewriters\PatchDefExporter.h"
+#include "primitivewriters/BrushDef3Exporter.h"
+#include "primitivewriters/PatchDefExporter.h"
 
 namespace map {
 
