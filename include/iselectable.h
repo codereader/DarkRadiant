@@ -88,7 +88,7 @@ class VertexPointer
 {
   typedef const unsigned char* byte_pointer;
 public:
-  typedef float elem_type;
+	typedef Vector3::ElementType elem_type;
   typedef const elem_type* pointer;
   typedef const elem_type& reference;
 
