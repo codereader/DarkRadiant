@@ -54,13 +54,13 @@ public:
 		const Plane3& plane = face.getPlane3();
 
 		stream << "( ";
-		writeDoubleSafe(plane.a, stream);
+		writeDoubleSafe(plane.normal().x(), stream);
 		stream << " ";
-		writeDoubleSafe(plane.b, stream);
+		writeDoubleSafe(plane.normal().y(), stream);
 		stream << " ";
-		writeDoubleSafe(plane.c, stream);
+		writeDoubleSafe(plane.normal().z(), stream);
 		stream << " ";
-		writeDoubleSafe(-plane.d, stream); // negate d
+		writeDoubleSafe(-plane.dist(), stream); // negate d
 		stream << " ";
 		stream << ") ";
 

@@ -61,10 +61,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-BrushPrimitTexDef.$(OBJEXT) \
 	darkradiant-FaceShader.$(OBJEXT) \
 	darkradiant-BrushByPlaneClipper.$(OBJEXT) \
-	darkradiant-CSG.$(OBJEXT) \
-	darkradiant-BrushTokenExporter.$(OBJEXT) \
-	darkradiant-FacePlane.$(OBJEXT) \
-	darkradiant-BrushTokenImporter.$(OBJEXT) \
+	darkradiant-CSG.$(OBJEXT) darkradiant-FacePlane.$(OBJEXT) \
 	darkradiant-Camera.$(OBJEXT) \
 	darkradiant-GlobalCamera.$(OBJEXT) \
 	darkradiant-CameraSettings.$(OBJEXT) \
@@ -208,6 +205,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-AutoSaver.$(OBJEXT) \
 	darkradiant-StartupMapLoader.$(OBJEXT) \
 	darkradiant-MapResourceManager.$(OBJEXT) \
+	darkradiant-MapFormatManager.$(OBJEXT) \
 	darkradiant-entity.$(OBJEXT) darkradiant-ClipPoint.$(OBJEXT) \
 	darkradiant-Clipper.$(OBJEXT) darkradiant-timer.$(OBJEXT) \
 	darkradiant-mainframe_old.$(OBJEXT) \
@@ -433,9 +431,7 @@ darkradiant_SOURCES = main.cpp \
 					  brush/FaceShader.cpp \
 					  brush/csg/BrushByPlaneClipper.cpp \
 					  brush/csg/CSG.cpp \
-					  brush/BrushTokenExporter.cpp \
 					  brush/FacePlane.cpp \
-					  brush/BrushTokenImporter.cpp \
 					  camera/Camera.cpp \
 					  camera/GlobalCamera.cpp \
 					  camera/CameraSettings.cpp \
@@ -591,6 +587,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/AutoSaver.cpp \
 					  map/StartupMapLoader.cpp \
 					  map/MapResourceManager.cpp \
+					  map/MapFormatManager.cpp \
 					  entity.cpp \
 					  clipper/ClipPoint.cpp \
 					  clipper/Clipper.cpp \
@@ -709,8 +706,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushModule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushNode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushPrimitTexDef.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushTokenExporter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BrushTokenImporter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BulgePatchDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-COutRedirector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CSG.Po@am__quote@
@@ -786,6 +781,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileChooserPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFormatManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapInfoDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPosition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPositionManager.Po@am__quote@
@@ -1159,20 +1155,6 @@ darkradiant-CSG.obj: brush/csg/CSG.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CSG.obj `if test -f 'brush/csg/CSG.cpp'; then $(CYGPATH_W) 'brush/csg/CSG.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/csg/CSG.cpp'; fi`
 
-darkradiant-BrushTokenExporter.o: brush/BrushTokenExporter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-BrushTokenExporter.o -MD -MP -MF $(DEPDIR)/darkradiant-BrushTokenExporter.Tpo -c -o darkradiant-BrushTokenExporter.o `test -f 'brush/BrushTokenExporter.cpp' || echo '$(srcdir)/'`brush/BrushTokenExporter.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-BrushTokenExporter.Tpo $(DEPDIR)/darkradiant-BrushTokenExporter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='brush/BrushTokenExporter.cpp' object='darkradiant-BrushTokenExporter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-BrushTokenExporter.o `test -f 'brush/BrushTokenExporter.cpp' || echo '$(srcdir)/'`brush/BrushTokenExporter.cpp
-
-darkradiant-BrushTokenExporter.obj: brush/BrushTokenExporter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-BrushTokenExporter.obj -MD -MP -MF $(DEPDIR)/darkradiant-BrushTokenExporter.Tpo -c -o darkradiant-BrushTokenExporter.obj `if test -f 'brush/BrushTokenExporter.cpp'; then $(CYGPATH_W) 'brush/BrushTokenExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/BrushTokenExporter.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-BrushTokenExporter.Tpo $(DEPDIR)/darkradiant-BrushTokenExporter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='brush/BrushTokenExporter.cpp' object='darkradiant-BrushTokenExporter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-BrushTokenExporter.obj `if test -f 'brush/BrushTokenExporter.cpp'; then $(CYGPATH_W) 'brush/BrushTokenExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/BrushTokenExporter.cpp'; fi`
-
 darkradiant-FacePlane.o: brush/FacePlane.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-FacePlane.o -MD -MP -MF $(DEPDIR)/darkradiant-FacePlane.Tpo -c -o darkradiant-FacePlane.o `test -f 'brush/FacePlane.cpp' || echo '$(srcdir)/'`brush/FacePlane.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-FacePlane.Tpo $(DEPDIR)/darkradiant-FacePlane.Po
@@ -1186,20 +1168,6 @@ darkradiant-FacePlane.obj: brush/FacePlane.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='brush/FacePlane.cpp' object='darkradiant-FacePlane.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FacePlane.obj `if test -f 'brush/FacePlane.cpp'; then $(CYGPATH_W) 'brush/FacePlane.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/FacePlane.cpp'; fi`
-
-darkradiant-BrushTokenImporter.o: brush/BrushTokenImporter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-BrushTokenImporter.o -MD -MP -MF $(DEPDIR)/darkradiant-BrushTokenImporter.Tpo -c -o darkradiant-BrushTokenImporter.o `test -f 'brush/BrushTokenImporter.cpp' || echo '$(srcdir)/'`brush/BrushTokenImporter.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-BrushTokenImporter.Tpo $(DEPDIR)/darkradiant-BrushTokenImporter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='brush/BrushTokenImporter.cpp' object='darkradiant-BrushTokenImporter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-BrushTokenImporter.o `test -f 'brush/BrushTokenImporter.cpp' || echo '$(srcdir)/'`brush/BrushTokenImporter.cpp
-
-darkradiant-BrushTokenImporter.obj: brush/BrushTokenImporter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-BrushTokenImporter.obj -MD -MP -MF $(DEPDIR)/darkradiant-BrushTokenImporter.Tpo -c -o darkradiant-BrushTokenImporter.obj `if test -f 'brush/BrushTokenImporter.cpp'; then $(CYGPATH_W) 'brush/BrushTokenImporter.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/BrushTokenImporter.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-BrushTokenImporter.Tpo $(DEPDIR)/darkradiant-BrushTokenImporter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='brush/BrushTokenImporter.cpp' object='darkradiant-BrushTokenImporter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-BrushTokenImporter.obj `if test -f 'brush/BrushTokenImporter.cpp'; then $(CYGPATH_W) 'brush/BrushTokenImporter.cpp'; else $(CYGPATH_W) '$(srcdir)/brush/BrushTokenImporter.cpp'; fi`
 
 darkradiant-Camera.o: camera/Camera.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Camera.o -MD -MP -MF $(DEPDIR)/darkradiant-Camera.Tpo -c -o darkradiant-Camera.o `test -f 'camera/Camera.cpp' || echo '$(srcdir)/'`camera/Camera.cpp
@@ -3370,6 +3338,20 @@ darkradiant-MapResourceManager.obj: map/MapResourceManager.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/MapResourceManager.cpp' object='darkradiant-MapResourceManager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapResourceManager.obj `if test -f 'map/MapResourceManager.cpp'; then $(CYGPATH_W) 'map/MapResourceManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapResourceManager.cpp'; fi`
+
+darkradiant-MapFormatManager.o: map/MapFormatManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapFormatManager.o -MD -MP -MF $(DEPDIR)/darkradiant-MapFormatManager.Tpo -c -o darkradiant-MapFormatManager.o `test -f 'map/MapFormatManager.cpp' || echo '$(srcdir)/'`map/MapFormatManager.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-MapFormatManager.Tpo $(DEPDIR)/darkradiant-MapFormatManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/MapFormatManager.cpp' object='darkradiant-MapFormatManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapFormatManager.o `test -f 'map/MapFormatManager.cpp' || echo '$(srcdir)/'`map/MapFormatManager.cpp
+
+darkradiant-MapFormatManager.obj: map/MapFormatManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapFormatManager.obj -MD -MP -MF $(DEPDIR)/darkradiant-MapFormatManager.Tpo -c -o darkradiant-MapFormatManager.obj `if test -f 'map/MapFormatManager.cpp'; then $(CYGPATH_W) 'map/MapFormatManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFormatManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-MapFormatManager.Tpo $(DEPDIR)/darkradiant-MapFormatManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/MapFormatManager.cpp' object='darkradiant-MapFormatManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapFormatManager.obj `if test -f 'map/MapFormatManager.cpp'; then $(CYGPATH_W) 'map/MapFormatManager.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFormatManager.cpp'; fi`
 
 darkradiant-entity.o: entity.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-entity.o -MD -MP -MF $(DEPDIR)/darkradiant-entity.Tpo -c -o darkradiant-entity.o `test -f 'entity.cpp' || echo '$(srcdir)/'`entity.cpp

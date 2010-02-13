@@ -18,10 +18,7 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 	SelectionTest& test, SelectionIntersection& best) 
 {
 	test.TestLineStrip(
-	    VertexPointer(
-	        reinterpret_cast<VertexPointer::pointer>(&first->vertex),
-	        sizeof(PointVertex)
-	    ),
+	    VertexPointer(&first->vertex, sizeof(PointVertex)),
 	    IndexPointer::index_type(count),
 	    best
 	);

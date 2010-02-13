@@ -81,16 +81,18 @@ inline void assign_if_closer(SelectionIntersection& best, const SelectionInterse
   }
 }
 
-
-
-
+/**
+ * greebo: A helper class allowing to traverse a sequence of Vector3
+ * objects in memory. The Vector3 objects can have a certain distance
+ * (stride) which is passed to the constructor. Incrementing the contained
+ * iterator object moves from one Vector3 to the next in memory.
+ */
 class VertexPointer
 {
-  typedef const unsigned char* byte_pointer;
+	typedef const unsigned char* byte_pointer;
 public:
-  typedef float elem_type;
-  typedef const elem_type* pointer;
-  typedef const elem_type& reference;
+	typedef const Vector3* vector_pointer;
+	typedef const Vector3& vector_reference;
 
   class iterator
   {
@@ -128,16 +130,16 @@ public:
       m_iter += m_stride;
       return tmp;
     }
-    reference operator*() const
+    vector_reference operator*() const
     {
-      return *reinterpret_cast<pointer>(m_iter);
+      return *reinterpret_cast<vector_pointer>(m_iter);
     }
   private:
     byte_pointer m_iter;
     std::size_t m_stride;
   };
 
-  VertexPointer(pointer vertices, std::size_t stride)
+  VertexPointer(vector_pointer vertices, std::size_t stride)
     : m_vertices(reinterpret_cast<byte_pointer>(vertices)), m_stride(stride) {}
 
   iterator begin() const
@@ -145,14 +147,17 @@ public:
     return iterator(m_vertices, m_stride);
   }
 
-  reference operator[](std::size_t i) const
+  vector_reference operator[](std::size_t i) const
   {
-    return *reinterpret_cast<pointer>(m_vertices + m_stride*i);
+    return *reinterpret_cast<vector_pointer>(m_vertices + m_stride*i);
   }
 
 private:
-  byte_pointer m_vertices;
-  std::size_t m_stride;
+    // The address of the first Vector3 object
+	byte_pointer m_vertices;
+
+	// The distance (in bytes) to the next object in memory
+	std::size_t m_stride;
 };
 
 class IndexPointer

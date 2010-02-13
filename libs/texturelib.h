@@ -83,21 +83,21 @@ inline Matrix4 matrix4_swap_axes(const Vector3& from, const Vector3& to) {
 
 inline Matrix4 matrix4_reflection_for_plane(const Plane3& plane) {
 	return Matrix4::byColumns(
-		1 - (2 * plane.a * plane.a),
-		-2 * plane.a * plane.b,
-		-2 * plane.a * plane.c,
+		1 - (2 * plane.normal().x() * plane.normal().x()),
+		-2 * plane.normal().x() * plane.normal().y(),
+		-2 * plane.normal().x() * plane.normal().z(),
 		0,
-		-2 * plane.b * plane.a,
-		1 - (2 * plane.b * plane.b),
-		-2 * plane.b * plane.c,
+		-2 * plane.normal().y() * plane.normal().x(),
+		1 - (2 * plane.normal().y() * plane.normal().y()),
+		-2 * plane.normal().y() * plane.normal().z(),
 		0,
-		-2 * plane.c * plane.a,
-		-2 * plane.c * plane.b,
-		1 - (2 * plane.c * plane.c),
+		-2 * plane.normal().z() * plane.normal().x(),
+		-2 * plane.normal().z() * plane.normal().y(),
+		1 - (2 * plane.normal().z() * plane.normal().z()),
 		0,
-		-2 * plane.d * plane.a,
-		-2 * plane.d * plane.b,
-		-2 * plane.d * plane.c,
+		-2 * plane.dist() * plane.normal().x(),
+		-2 * plane.dist() * plane.normal().y(),
+		-2 * plane.dist() * plane.normal().z(),
 		1
 	);
 }
@@ -127,9 +127,9 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
 	
 	Matrix4 tmp = matrix4_reflection_for_plane(plane);
 	
-	swap.tx() = -(-2 * plane.a * plane.d);
-	swap.ty() = -(-2 * plane.b * plane.d);
-	swap.tz() = -(-2 * plane.c * plane.d);
+	swap.tx() = -(-2 * plane.normal().x() * plane.dist());
+	swap.ty() = -(-2 * plane.normal().y() * plane.dist());
+	swap.tz() = -(-2 * plane.normal().z() * plane.dist());
 	
 	return swap;
 }

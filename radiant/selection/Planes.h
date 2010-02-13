@@ -42,32 +42,32 @@ class PlaneLess
 {
 public:
   bool operator()(const Plane3& plane, const Plane3& other) const {
-    if(plane.a < other.a) {
+    if(plane.normal().x() < other.normal().x()) {
       return true;
     }
-    if(other.a < plane.a) {
+    if(other.normal().x() < plane.normal().x()) {
       return false;
     }
 
-    if(plane.b < other.b) {
+    if(plane.normal().y() < other.normal().y()) {
       return true;
     }
-    if(other.b < plane.b) {
+    if(other.normal().y() < plane.normal().y()) {
       return false;
     }
     
-    if(plane.c < other.c) {
+    if(plane.normal().z() < other.normal().z()) {
       return true;
     }
-    if(other.c < plane.c) {
+    if(other.normal().z() < plane.normal().z()) {
       return false;
     }
 
-    if(plane.d < other.d) {
+    if(plane.dist() < other.dist()) {
       return true;
     }
     
-    if(other.d < plane.d) {
+    if(other.dist() < plane.dist()) {
       return false;
     }
 
