@@ -7,6 +7,8 @@ namespace readable
 		const int MAX_PAGE_COUNT = 20;
 	}
 
+//XData implementations:
+
 	XDataPtrList XData::importXDataFromFile(const std::string& FileName)
 	{
 		/* ToDO:
@@ -67,18 +69,17 @@ namespace readable
 			4) Possibly throw syntax-exception if numPages hasn't been defined or reconstruct from the content-vectors.
 			5) Try/catch blocks around direct vector access to prevent vector subscript out of range	done
 			6) Collect general syntax errors in a struct for a return-value... Also in subclass. Add function that scrolls out to the next definition.	done
-			7) Fix detection of exceeding content-dimensions.*/
+			7) Fix detection of exceeding content-dimensions.	done
+			8) When guiPages is set, the other vectors should be resized as well.
+			9) Pages might be discarded during resize.*/
 
 		std::string name = tok.nextToken();
 		
 		XDataParse NewXData;
 
-		TwoSidedXDataPtr NewXData_two(new TwoSidedXData(name));
-		OneSidedXDataPtr NewXData_one(new OneSidedXData(name));
-
 		std::string ErrorString;
 
-		int numPages = 0;
+		int numPages = MAX_PAGE_COUNT;
 		std::string sndPageTurn = "";
 		StringList guiPage;
 		guiPage.resize(MAX_PAGE_COUNT,"");
@@ -92,42 +93,125 @@ namespace readable
 			jumpOutOfBrackets(tok,1);
 			return NewXData;
 		}
-		
-		bool created = false;
-		bool twosided = false;
 
 		std::string token = tok.nextToken();
 		while (token != "}")
 		{
-			if (token == "num_pages")
+			if (token.substr(0,4) == "page")
 			{
+				//Check Syntax
 				tok.skipTokens(1);
-				std::string number = tok.nextToken();
 				try
-				{					
-					numPages = boost::lexical_cast<int>(number);	//throws
-				}
-				catch(...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
+					tok.assertNextToken("{");		//throws when syntax error
+				}
+				catch (...)
+				{
+					NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Jumping to next XData definition...\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;
 				}
-				guiPage.resize(numPages, "");
-			}
-			else if (token == "import")			//Not yet supported...
-			{
-				NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". Found an import-statement, which is not yet supported. Jumping to next definition...\n");
-				jumpOutOfBrackets(tok,1);
-				NewXData.xData.reset();
-				return NewXData;
-			}
-			else if (token == "snd_page_turn")
-			{
-				tok.skipTokens(1);
-				sndPageTurn = tok.nextToken();
-			}
+
+				//Acquire PageIndex
+				int PageIndex;
+				char number = token.c_str()[4];
+				try
+				{
+					PageIndex = boost::lexical_cast<int>(number)-1;	//can throw...
+				}
+				catch (...)
+				{
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number. Jumping to next XData definition...\n");;
+					jumpOutOfBrackets(tok,2);
+					NewXData.xData.reset();
+					return NewXData;
+				}
+
+				//Check PageIndex-Range
+				std::string content = parseText(tok);
+				if (PageIndex >= numPages )
+				{
+					if (content.length() > 2) //numPages is raised automatically, if a page with content is detected...
+					{
+						numPages = PageIndex+1;
+						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. Raising numPages to " + number +"...\n");
+						//resize vectors:
+						guiPage.resize(numPages,"");
+						if (NewXData.xData)
+							NewXData.xData->resizeVectors(numPages);
+					}
+					else
+						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. However, this page does not contain any text and is discarded...\n");
+				}
+
+				//Create the XData object
+				if (!NewXData.xData)
+				{
+					if (token.substr(6,4) == "left" || token.substr(6,5) == "right") //TwoSided
+					{
+						NewXData.xData = XDataPtr(new TwoSidedXData(name));
+						NewXData.xData->resizeVectors(numPages);
+					}
+					else //OneSided
+					{
+						NewXData.xData = XDataPtr(new OneSidedXData(name));
+						NewXData.xData->resizeVectors(numPages);
+					}
+				}
+
+				//Write the content into the XData object
+				if (PageIndex < numPages)
+				{	
+					SideChooser side;
+					if (token.find("left",6) != std::string::npos)	//SideChooser is discarded on OneSidedXData...
+						side = Left;
+					else
+						side = Right;
+					if (token.find("body",6) != std::string::npos)
+						NewXData.xData->setContent(Body, PageIndex, side, content);
+					else
+						NewXData.xData->setContent(Title, PageIndex, side, content);
+
+					/*
+					if (twosided)
+					{
+					if (token.substr(6,4) == "left")
+					{
+					if(token.find("body",11) != std::string::npos)
+					{
+					NewXData_two->_pageLeftBody[PageIndex]= content;
+					}
+					else	//title
+					{
+					NewXData_two->_pageLeftTitle[PageIndex]= content;
+					}
+					}
+					else	//right side
+					{
+					if (token.find("body",11) != std::string::npos)
+					{
+					NewXData_two->_pageRightBody[PageIndex]= content;
+					}
+					else	//title
+					{
+					NewXData_two->_pageRightTitle[PageIndex]= content;
+					}	
+					}
+					}
+					else	//onesided
+					{
+					if (token.substr(6,4) == "body")
+					{
+					NewXData_one->_pageBody[PageIndex]= content;
+					}
+					else	//title
+					{
+					NewXData_one->_pageTitle[PageIndex]= content;
+					}
+					}//*/
+				}
+			} //end: page
 			else if (token.substr(0,8) == "gui_page")
 			{
 				tok.skipTokens(1);
@@ -144,129 +228,44 @@ namespace readable
 					NewXData.xData.reset();
 					return NewXData;	
 				}
-				if (guiNumber < guiPage.size())
+				if (guiNumber < guiPage.size())			//Maybe the guiPage should be stored anyway, because we don't know yet, whether numPages will be raised by pagedefinitions...
 					guiPage[ guiNumber ] = tok.nextToken();
 				else
 					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
 			}
-			else if (token.find("page",0) != std::string::npos)
+			else if (token == "num_pages")	//Also resize the other vectors here... Maybe check if a page with a higher number has already been added and warn accordingly.
 			{
 				tok.skipTokens(1);
+				std::string number = tok.nextToken();
 				try
-				{
-					tok.assertNextToken("{");		//throws when syntax error
+				{					
+					numPages = boost::lexical_cast<int>(number);	//throws
 				}
-				catch (...)
+				catch(...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Jumping to next XData definition...\n");
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;
 				}
-				int PageIndex;
-				char number = token.c_str()[4];
-				try
-				{
-					PageIndex = boost::lexical_cast<int>(number)-1;	//can throw...
-				}
-				catch (...)
-				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number. Jumping to next XData definition...\n");;
-					jumpOutOfBrackets(tok,2);
-					NewXData.xData.reset();
-					return NewXData;
-				}
-				std::string content = parseText(tok);
-				if (PageIndex >= numPages )	//prevents overshooting vectorrange.
-				{
-					if (content.length() > 2) //Only raise numPages, if there is actual content on that page.
-					{
-						numPages = PageIndex+1;
-						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. Raising numPages to " + number +"...\n");
-						guiPage.resize(numPages,"");
-						if (created)
-						{
-							if (twosided)
-							{
-								NewXData_two->_pageLeftBody.resize(numPages,"");
-								NewXData_two->_pageLeftTitle.resize(numPages,"");
-								NewXData_two->_pageRightBody.resize(numPages,"");
-								NewXData_two->_pageRightTitle.resize(numPages,"");
-							}
-							else
-							{
-								NewXData_one->_pageBody.resize(numPages,"");
-								NewXData_one->_pageTitle.resize(numPages,"");
-							}
-						}
-					}
-					else
-						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. However, this page does not contain any text and is discarded...\n");
-				}
-				if (PageIndex < numPages)
-				{
-					if (!created)
-					{
-						int pageCount = MAX_PAGE_COUNT;
-						if (numPages > 0)
-							pageCount = numPages;
-						if (token.substr(6,4) == "left" || token.substr(6,5) == "right") //TwoSided
-						{
-							NewXData.xData = NewXData_two;
-							twosided = true;
-							NewXData_two->_pageLeftBody.resize(pageCount,"");
-							NewXData_two->_pageLeftTitle.resize(pageCount,"");
-							NewXData_two->_pageRightBody.resize(pageCount,"");
-							NewXData_two->_pageRightTitle.resize(pageCount,"");
-						}
-						else //OneSided
-						{
-							NewXData.xData = NewXData_one;
-							NewXData_one->_pageBody.resize(pageCount,"");
-							NewXData_one->_pageTitle.resize(pageCount,"");
-						}
-						created = true;
-					}
-					
-					if (twosided)
-					{
-						if (token.substr(6,4) == "left")
-						{
-							if(token.find("body",11) != std::string::npos)
-							{
-								NewXData_two->_pageLeftBody[PageIndex]= content;
-							}
-							else	//title
-							{
-								NewXData_two->_pageLeftTitle[PageIndex]= content;
-							}
-						}
-						else	//right side
-						{
-							if (token.find("body",11) != std::string::npos)
-							{
-								NewXData_two->_pageRightBody[PageIndex]= content;
-							}
-							else	//title
-							{
-								NewXData_two->_pageRightTitle[PageIndex]= content;
-							}	
-						}
-					}
-					else	//onesided
-					{
-						if (token.substr(6,4) == "body")
-						{
-							NewXData_one->_pageBody[PageIndex]= content;
-						}
-						else	//title
-						{
-							NewXData_one->_pageTitle[PageIndex]= content;
-						}
-					}
-				}
-			} //end: page
-
+				//resize vectors:
+				guiPage.resize(numPages, "");
+				if (NewXData.xData)
+					NewXData.xData->resizeVectors(numPages);
+			}
+			else if (token == "import")			//Not yet supported...
+			{
+				NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". Found an import-statement, which is not yet supported. Jumping to next definition...\n");
+				jumpOutOfBrackets(tok,1);
+				NewXData.xData.reset();
+				return NewXData;
+			}
+			else if (token == "snd_page_turn")
+			{
+				tok.skipTokens(1);
+				sndPageTurn = tok.nextToken();
+			}
+			
 			token = tok.nextToken();
 		}
 
@@ -276,7 +275,8 @@ namespace readable
 		NewXData.xData->_sndPageTurn = sndPageTurn;
 
 		//Throw syntax exception if numPages wasn't definined?
-
+		
+		/*
 		if (twosided)	//resize, because numPages is not necessarily defined in the beginning.
 		{
 			if (NewXData_two->_pageLeftBody.size() != numPages)		//check if this really works.
@@ -294,7 +294,7 @@ namespace readable
 				NewXData_one->_pageBody.resize(numPages,"");
 				NewXData_one->_pageTitle.resize(numPages,"");
 			}
-		}
+		}//*/
 
 		return NewXData;
 	}
@@ -333,109 +333,12 @@ namespace readable
 		//			vectors should be of the size _numPages)
 
 		std::stringstream xDataDef;
-		xDataDef << _name << "\n" << "{" << "\n" << "\tprecache" << "\n" << "\t\"num_pages\"\t: \"" << _numPages << "\"\n\n";
-		if ( const TwoSidedXData* TwoSidedXD = dynamic_cast<const TwoSidedXData*>(this) )
-		{
-			std::stringstream ss;
-			std::string TempString;
-			for (int n = 1; n <= TwoSidedXD->_numPages; n++)
-			{
-				//Left Title:
-				xDataDef << "\t\"page" << n << "_left_title\" :\n\t{\n";
-				if (TwoSidedXD->_pageLeftTitle[n-1] != "")
-				{
-					ss.clear();
-					ss << TwoSidedXD->_pageLeftTitle[n-1];
-					while ( std::getline(ss, TempString) )	//replace "\n"
-					{
-						xDataDef << "\t\t\"" << TempString << "\"\n";
-					}
-					xDataDef << "\t}\n";
-				}
-				else
-					xDataDef << "\t\t\"\"\n\t}\n";
-				//Left Body:
-				xDataDef << "\t\"page" << n << "_left_body\" :\n\t{\n";
-				if (TwoSidedXD->_pageLeftBody[n-1] != "")
-				{
-					ss.clear();		// ????
-					ss << TwoSidedXD->_pageLeftBody[n-1];
-					while ( std::getline(ss, TempString) )
-					{
-						xDataDef << "\t\t\"" << TempString << "\"\n";
-					}
-					xDataDef << "\t}\n";
-				}
-				else
-					xDataDef << "\t\t\"\"\n\t}\n";
-				//Right Title:
-				xDataDef << "\t\"page" << n << "_right_title\" :\n\t{\n";
-				if (TwoSidedXD->_pageRightTitle[n-1] != "")
-				{
-					ss.clear();
-					ss << TwoSidedXD->_pageRightTitle[n-1];
-					while ( std::getline(ss, TempString) )
-					{
-						xDataDef << "\t\t\"" << TempString << "\"\n";
-					}
-					xDataDef << "\t}\n";
-				}
-				else
-					xDataDef << "\t\t\"\"\n\t}\n";
-				//Right Body:
-				xDataDef << "\t\"page" << n << "_right_body\" :\n\t{\n";
-				if (TwoSidedXD->_pageRightBody[n-1] != "")
-				{
-					ss.clear();
-					ss << TwoSidedXD->_pageRightBody[n-1];
-					while ( std::getline(ss, TempString) )
-					{
-						xDataDef << "\t\t\"" << TempString << "\"\n";
-					}
-					xDataDef << "\t}\n";
-				}
-				else
-					xDataDef << "\t\t\"\"\n\t}\n";
-			}
+		xDataDef << _name << "\n" << "{" << "\n" << "\tprecache" << "\n" << "\t\"num_pages\"\t: \"" << _numPages << "\"\n";
 
-		}
-		else	//OneSided
-		{
-			const OneSidedXData* OneSidedXD(dynamic_cast<const OneSidedXData*>(this));
-			std::stringstream ss;
-			std::string TempString;
-			for (int n = 1; n <= OneSidedXD->_numPages; n++)
-			{
-				//Title
-				xDataDef << "\t\"page" << n << "_title\" :\n\t{\n";
-				if (OneSidedXD->_pageTitle[n-1] != "")
-				{
-					ss.clear();
-					ss << OneSidedXD->_pageTitle[n-1];
-					while ( std::getline(ss, TempString) )	//replace "\n"
-					{
-						xDataDef << "\t\t\"" << TempString << "\"\n";
-					}
-					xDataDef << "\t}\n";
-				}
-				else
-					xDataDef << "\t\t\"\"\n\t}\n";				
-				//Body:
-				xDataDef << "\t\"page" << n << "_body\" :\n\t{\n";
-				if (OneSidedXD->_pageBody[n-1] != "")
-				{
-					ss.clear();
-					ss << OneSidedXD->_pageBody[n-1];
-					while ( std::getline(ss, TempString) )
-					{
-						xDataDef << "\t\t\"" << TempString << "\"\n";
-					}
-					xDataDef << "\t}\n";
-				}
-				else
-					xDataDef << "\t\t\"\"\n\t}\n";
-			}
-		}
+		std::stringstream ss;
+		std::string TempString;
+
+		xDataDef << getContentDef();
 
 		for (int n=1; n<=_numPages; n++)
 		{
@@ -483,6 +386,218 @@ namespace readable
 		file.close();
 
 		return AllOk;
+	}
+
+
+	
+	void XData::resizeVectors(const int& TargetSize)
+	{
+		_guiPage.resize(TargetSize, "");
+	}
+
+//TwoSidedXData implementations:
+
+	void TwoSidedXData::resizeVectors(const int& TargetSize)
+	{
+		XData::resizeVectors(TargetSize);
+		_pageLeftBody.resize(TargetSize, "");
+		_pageLeftTitle.resize(TargetSize, "");
+		_pageRightBody.resize(TargetSize, "");
+		_pageRightTitle.resize(TargetSize, "");
+	}
+
+	void TwoSidedXData::setContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
+	{
+		switch (cc)
+		{
+		case Title:
+			switch (Side)
+			{
+			case Left:
+				_pageLeftTitle[PageIndex] = content;
+				break;
+			default:
+				_pageRightTitle[PageIndex] = content;
+			}
+			break;
+		default:
+			switch (Side)
+			{
+			case Left:
+				_pageLeftBody[PageIndex] = content;
+				break;
+			default:
+				_pageRightBody[PageIndex] = content;
+			}
+		}
+	}
+
+	std::string TwoSidedXData::getContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
+	{
+		switch (cc)
+		{
+		case Title:
+			switch (Side)
+			{
+			case Left:
+				return _pageLeftTitle[PageIndex];
+			default:
+				return _pageRightTitle[PageIndex];
+			}
+		default:
+			switch (Side)
+			{
+			case Left:
+				return _pageLeftBody[PageIndex];
+			default:
+				return _pageRightBody[PageIndex];
+			}
+		}
+	}
+
+	std::string TwoSidedXData::getContentDef()
+	{
+		std::stringstream xDataDef;
+		std::stringstream ss;
+		std::string TempString;
+
+		for (int n = 0; n < _numPages; n++)
+		{
+			//Page Left Title
+			xDataDef << "\t\"page" << n+1 << "_left_title\"\t:\n\t{\n";
+			if (_pageLeftTitle[n] != "")
+			{
+				ss << _pageLeftTitle[n];
+				while ( std::getline(ss, TempString) )	//replace "\n"
+				{
+					xDataDef << "\t\t\"" << TempString << "\"\n";
+				}
+				xDataDef << "\t}\n";
+			}
+			else
+				xDataDef << "\t\t\"\"\n\t}\n";
+
+			//Page Left Body
+			xDataDef << "\t\"page" << n+1 << "_left_body\"\t:\n\t{\n";
+			if (_pageLeftBody[n] != "")
+			{
+				ss.clear();
+				ss << _pageLeftBody[n];
+				while ( std::getline(ss, TempString) )	//replace "\n"
+				{
+					xDataDef << "\t\t\"" << TempString << "\"\n";
+				}
+				xDataDef << "\t}\n";
+			}
+			else
+				xDataDef << "\t\t\"\"\n\t}\n";
+
+			//Page Right Title
+			xDataDef << "\t\"page" << n+1 << "_right_title\"\t:\n\t{\n";
+			if (_pageRightTitle[n] != "")
+			{
+				ss.clear();
+				ss << _pageRightTitle[n];
+				while ( std::getline(ss, TempString) )	//replace "\n"
+				{
+					xDataDef << "\t\t\"" << TempString << "\"\n";
+				}
+				xDataDef << "\t}\n";
+			}
+			else
+				xDataDef << "\t\t\"\"\n\t}\n";
+
+			//Page Right Body
+			xDataDef << "\t\"page" << n+1 << "_right_body\"\t:\n\t{\n";
+			if (_pageRightBody[n] != "")
+			{
+				ss.clear();
+				ss << _pageRightBody[n];
+				while ( std::getline(ss, TempString) )	//replace "\n"
+				{
+					xDataDef << "\t\t\"" << TempString << "\"\n";
+				}
+				xDataDef << "\t}\n";
+			}
+			else
+				xDataDef << "\t\t\"\"\n\t}\n";
+
+		}
+		return xDataDef.str();
+	}
+
+//OneSidedXData implementations:
+
+	void OneSidedXData::resizeVectors(const int& TargetSize)
+	{
+		XData::resizeVectors(TargetSize);
+		_pageBody.resize(TargetSize, "");
+		_pageTitle.resize(TargetSize, "");
+	}
+
+	void OneSidedXData::setContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
+	{
+		switch (cc)
+		{
+		case Title:
+			_pageTitle[PageIndex] = content;
+			break;
+		case Body:
+		default:
+			_pageBody[PageIndex] = content;
+		}
+	}
+
+	std::string OneSidedXData::getContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
+	{
+		switch (cc)
+		{
+		case Title:
+			return _pageTitle[PageIndex];
+		default:
+			return _pageBody[PageIndex];
+		}
+	}
+
+	std::string OneSidedXData::getContentDef()
+	{
+		std::stringstream xDataDef;
+		std::stringstream ss;
+		std::string TempString;
+
+		for (int n = 0; n < _numPages; n++)
+		{
+			//Title
+			xDataDef << "\t\"page" << n+1 << "_title\"\t:\n\t{\n";
+			if (_pageTitle[n] != "")
+			{
+				ss << _pageTitle[n];
+				while ( std::getline(ss, TempString) )	//replace "\n"
+				{
+					xDataDef << "\t\t\"" << TempString << "\"\n";
+				}
+				xDataDef << "\t}\n";
+			}
+			else
+				xDataDef << "\t\t\"\"\n\t}\n";
+
+			//Body
+			xDataDef << "\t\"page" << n+1 << "_body\"\t:\n\t{\n";
+			if (_pageBody[n] != "")
+			{
+				ss.clear();
+				ss << _pageBody[n];
+				while ( std::getline(ss, TempString) )	//replace "\n"
+				{
+					xDataDef << "\t\t\"" << TempString << "\"\n";
+				}
+				xDataDef << "\t}\n";
+			}
+			else
+				xDataDef << "\t\t\"\"\n\t}\n";
+		}
+
+		return xDataDef.str();
 	}
 
 } // namespace readable
