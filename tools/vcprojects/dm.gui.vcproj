@@ -414,14 +414,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\dm.gui\FontLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\FontLoader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\dm.gui\GuiLoader.cpp"
 				>
 			</File>
@@ -446,11 +438,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\dm.gui\XDataManager.cpp"
+				RelativePath="..\..\plugins\dm.gui\XData.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\dm.gui\XDataManager.h"
+				RelativePath="..\..\plugins\dm.gui\XData.h"
 				>
 			</File>
 		</Filter>
