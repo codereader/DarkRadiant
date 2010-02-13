@@ -50,7 +50,7 @@ public:
 
 		//Testbench for xdata importer/exporter:
 		readable::XDataPtrList testing = readable::XData::importXDataFromFile("dm.gui_testing/training_mission.xd");
-		testing[1]->xport("dm.gui_testing/training_mission_exported.xd", readable::Normal);
+		testing[3]->xport("dm.gui_testing/training_mission_exported.xd", readable::Normal);
 		testing[0]->xport("dm.gui_testing/training_mission_exported2.xd", readable::Normal);
 	}
 };
