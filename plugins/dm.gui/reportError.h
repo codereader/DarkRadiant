@@ -1,4 +1,9 @@
+#ifndef REPORT_ERROR_H
+#define REPORT_ERROR_H
+
 #include <iostream>
+
+//Enable printf debug-output
 #define printfDebug
 
 namespace readable
@@ -12,3 +17,5 @@ namespace readable
 		throw std::runtime_error(ErrorMessage);
 	}
 }
+
+#endif

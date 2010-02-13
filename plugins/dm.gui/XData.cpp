@@ -1,4 +1,4 @@
-#include "XDataManager.h"
+#include "XData.h"
 
 namespace readable
 {
@@ -7,7 +7,7 @@ namespace readable
 		const int MAX_PAGE_COUNT = 20;
 	}
 
-	XDataPtrList XDataManager::importXData(const std::string& FileName)
+	XDataPtrList XData::importXDataFromFile(const std::string& FileName)
 	{
 		/* ToDO:
 			1) Proper error reporting. */
@@ -57,7 +57,7 @@ namespace readable
 		return ReturnVector;
 	} // XDataManager::importXData
 
-	XDataParse XDataManager::parseXDataDef(parser::DefTokeniser& tok)
+	XDataParse XData::parseXDataDef(parser::DefTokeniser& tok)
 	{
 		/* TODO:
 			1) Support for import-directive
@@ -297,7 +297,7 @@ namespace readable
 		return NewXData;
 	}
 
-	std::string XDataManager::parseText(parser::DefTokeniser& tok)
+	std::string XData::parseText(parser::DefTokeniser& tok)
 	{
 		std::stringstream out;
 		std::string token = tok.nextToken();
@@ -309,7 +309,7 @@ namespace readable
 		return out.str();
 	}
 
-	void XDataManager::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)	//not tested.
+	void XData::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)	//not tested.
 	{
 		while ( tok.hasMoreTokens() && CurrentDepth > 0)
 		{
@@ -322,7 +322,7 @@ namespace readable
 	}
 
 
-	inline std::string XDataManager::generateXDataDef(const XData& Data)
+	std::string XData::generateXDataDef()
 	{
 		//ToDo: 1) Howto handle '"' in String?
 		//		2) Non-shared_ptr allowed in this case?
@@ -331,8 +331,8 @@ namespace readable
 		//			vectors should be of the size _numPages)
 
 		std::stringstream xDataDef;
-		xDataDef << Data._name << "\n" << "{" << "\n" << "\tprecache" << "\n" << "\t\"num_pages\"\t: \"" << Data._numPages << "\"\n\n";
-		if ( const TwoSidedXData* TwoSidedXD = dynamic_cast<const TwoSidedXData*>(&Data) )
+		xDataDef << _name << "\n" << "{" << "\n" << "\tprecache" << "\n" << "\t\"num_pages\"\t: \"" << _numPages << "\"\n\n";
+		if ( const TwoSidedXData* TwoSidedXD = dynamic_cast<const TwoSidedXData*>(this) )
 		{
 			std::stringstream ss;
 			std::string TempString;
@@ -399,7 +399,7 @@ namespace readable
 		}
 		else	//OneSided
 		{
-			const OneSidedXData* OneSidedXD(dynamic_cast<const OneSidedXData*>(&Data));
+			const OneSidedXData* OneSidedXD(dynamic_cast<const OneSidedXData*>(this));
 			std::stringstream ss;
 			std::string TempString;
 			for (int n = 1; n <= OneSidedXD->_numPages; n++)
@@ -435,17 +435,17 @@ namespace readable
 			}
 		}
 
-		for (int n=1; n<=Data._numPages; n++)
+		for (int n=1; n<=_numPages; n++)
 		{
-			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << Data._guiPage[n-1] << "\"\n";
+			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n-1] << "\"\n";
 		}
-		xDataDef << "\t\"snd_page_turn\"\t: \"" << Data._sndPageTurn << "\"\n}\n\n";//*/
+		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n";//*/
 		
 		return xDataDef.str();		//Does this support enough characters??
 	}
 
 
-	FileStatus XDataManager::exportXData(const std::string& FileName, const XData& Data, const ExporterCommands& cmd)
+	FileStatus XData::xport(const std::string& FileName, const ExporterCommands& cmd)
 	{
 		boost::filesystem::path Path(FileName);
 		
@@ -478,7 +478,7 @@ namespace readable
 
 		//Write the definition into the file.
 		boost::filesystem::ofstream file(Path, std::ios_base::out);
-		file << generateXDataDef(Data);
+		file << generateXDataDef();
 		file.close();
 
 		return AllOk;
