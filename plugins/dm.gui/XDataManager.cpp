@@ -53,6 +53,7 @@ namespace readable
 		if (ErrorList.size() > 0)
 			std::cerr << "[XDataManager::importXData] Import finished with " << ErrorList.size() << " errors/warnings. " << ReturnVector.size() << " XData-definitions imported." << std::endl;
 
+		file.close();
 		return ReturnVector;
 	} // XDataManager::importXData
 
@@ -326,7 +327,7 @@ namespace readable
 		//ToDo: 1) Howto handle '"' in String?
 		//		2) Non-shared_ptr allowed in this case?
 		//		3) Possibly check if e.g. the vectorsize of TwoSidedXD->_pageLeftTitle is smaller than _numPages.
-		//			So that now exceptions are thrown. (Depends on how XData objects are generated. Basically all
+		//			So that no exceptions are thrown. (Depends on how XData objects are generated. Basically all
 		//			vectors should be of the size _numPages)
 
 		std::stringstream xDataDef;
@@ -456,6 +457,7 @@ namespace readable
 			case Merge: 
 				//Check if definition already exists. If it does not, append the definition to the file.
 				//If it does: return DefinitionExists
+
 				break;
 			case MergeAndOverwriteExisting: 
 				//Find the old definition in the target file and delete it. Append the new definition.
@@ -477,6 +479,7 @@ namespace readable
 		//Write the definition into the file.
 		boost::filesystem::ofstream file(Path, std::ios_base::out);
 		file << generateXDataDef(Data);
+		file.close();
 
 		return AllOk;
 	}

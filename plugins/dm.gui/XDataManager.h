@@ -25,7 +25,6 @@ namespace readable
 		StringList _guiPage;
 		std::string _sndPageTurn;
 
-		//XData(std::string name) : _name(name) { }
 		virtual ~XData() {};
 	};
 	typedef boost::shared_ptr<XData> XDataPtr;
