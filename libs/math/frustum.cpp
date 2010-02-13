@@ -16,25 +16,25 @@ Matrix4 Frustum::getProjectionMatrix() const
 {
     return Matrix4::byColumns(
         // col 1
-        (right.a - left.a) / 2,
-        (top.a - bottom.a) / 2,
-        (back.a - front.a) / 2,
-        right.a - (right.a - left.a) / 2,
+        (right.normal().x() - left.normal().x()) / 2,
+        (top.normal().x() - bottom.normal().x()) / 2,
+        (back.normal().x() - front.normal().x()) / 2,
+        right.normal().x() - (right.normal().x() - left.normal().x()) / 2,
         // col 2
-        (right.b - left.b) / 2,
-        (top.b - bottom.b) / 2,
-        (back.b - front.b) / 2,
-        right.b - (right.b - left.b) / 2,
+        (right.normal().y() - left.normal().y()) / 2,
+        (top.normal().y() - bottom.normal().y()) / 2,
+        (back.normal().y() - front.normal().y()) / 2,
+        right.normal().y() - (right.normal().y() - left.normal().y()) / 2,
         // col 3
-        (right.c - left.c) / 2,
-        (top.c - bottom.c) / 2,
-        (back.c - front.c) / 2,
-        right.c - (right.c - left.c) / 2,
+        (right.normal().z() - left.normal().z()) / 2,
+        (top.normal().z() - bottom.normal().z()) / 2,
+        (back.normal().z() - front.normal().z()) / 2,
+        right.normal().z() - (right.normal().z() - left.normal().z()) / 2,
         // col 4
-        (right.d - left.d) / 2,
-        (top.d - bottom.d) / 2,
-        (back.d - front.d) / 2,
-        right.d - (right.d - left.d) / 2
+        (right.dist() - left.dist()) / 2,
+        (top.dist() - bottom.dist()) / 2,
+        (back.dist() - front.dist()) / 2,
+        right.dist() - (right.dist() - left.dist()) / 2
     );
 }
 
