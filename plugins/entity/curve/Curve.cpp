@@ -12,10 +12,7 @@ namespace entity {
 			SelectionTest& test, SelectionIntersection& best) 
 		{
 			test.TestLineStrip(
-			    VertexPointer(
-			        reinterpret_cast<VertexPointer::pointer>(&first->vertex),
-			        sizeof(PointVertex)
-			    ),
+			    VertexPointer(&first->vertex, sizeof(PointVertex)),
 			    IndexPointer::index_type(count),
 			    best
 			);
