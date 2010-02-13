@@ -9,6 +9,9 @@ namespace readable
 
 	XDataPtrList XDataManager::importXData(const std::string& FileName)
 	{
+		/* ToDO:
+			1) Proper error reporting. */
+
 		XDataPtrList ReturnVector;
 		boost::filesystem::path Path(FileName);
 
@@ -43,8 +46,12 @@ namespace readable
 					ErrorList.push_back(parsed.error_msg[n]);
 		}
 
+		//temporary
 		for (int n = 0; n<ErrorList.size(); n++)
 			std::cerr << ErrorList[n];
+
+		if (ErrorList.size() > 0)
+			std::cerr << "[XDataManager::importXData] Import finished with " << ErrorList.size() << " errors/warnings. " << ReturnVector.size() << " XData-definitions imported." << std::endl;
 
 		return ReturnVector;
 	} // XDataManager::importXData
@@ -55,10 +62,10 @@ namespace readable
 			1) Support for import-directive
 			2) This is pretty ugly code. There's gotta be a better way to do this than with two separate shared pointers. 
 				The default resize to MAX_PAGE_COUNT is also uncool.
-			3) Add try/catch blocks.
+			3) Add try/catch blocks.	done
 			4) Possibly throw syntax-exception if numPages hasn't been defined or reconstruct from the content-vectors.
-			5) Try/catch blocks around direct vector access to prevent vector subscript out of range
-			6) Collect general syntax errors in a struct for a return-value... Also in subclass. Add function that scrolls out to the next definition.
+			5) Try/catch blocks around direct vector access to prevent vector subscript out of range	done
+			6) Collect general syntax errors in a struct for a return-value... Also in subclass. Add function that scrolls out to the next definition.	done
 			7) Fix detection of exceeding content-dimensions.*/
 
 		std::string name = tok.nextToken();
@@ -169,7 +176,7 @@ namespace readable
 				std::string content = parseText(tok);
 				if (PageIndex >= numPages )	//prevents overshooting vectorrange.
 				{
-					if (content.length() > 2)
+					if (content.length() > 2) //Only raise numPages, if there is actual content on that page.
 					{
 						numPages = PageIndex+1;
 						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. Raising numPages to " + number +"...\n");
@@ -190,6 +197,8 @@ namespace readable
 							}
 						}
 					}
+					else
+						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. However, this page does not contain any text and is discarded...\n");
 				}
 				if (PageIndex < numPages)
 				{
@@ -299,7 +308,7 @@ namespace readable
 		return out.str();
 	}
 
-	void XDataManager::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)
+	void XDataManager::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)	//not tested.
 	{
 		while ( tok.hasMoreTokens() && CurrentDepth > 0)
 		{
