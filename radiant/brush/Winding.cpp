@@ -128,7 +128,7 @@ void Winding::testSelect(SelectionTest& test, SelectionIntersection& best)
 {
 	if (empty()) return;
 
-	test.TestPolygon(VertexPointer(reinterpret_cast<VertexPointer::pointer>(&front().vertex), sizeof(WindingVertex)), size(), best);
+	test.TestPolygon(VertexPointer(&front().vertex, sizeof(WindingVertex)), size(), best);
 }
 
 void Winding::updateNormals(const Vector3& normal)

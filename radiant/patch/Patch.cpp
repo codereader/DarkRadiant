@@ -21,7 +21,7 @@
 // ====== Helper Functions ==================================================================
 
 inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex* array) {
-  return VertexPointer(VertexPointer::pointer(&array->vertex), sizeof(ArbitraryMeshVertex));
+  return VertexPointer(&array->vertex, sizeof(ArbitraryMeshVertex));
 }
 
 inline const Colour4b colour_for_index(std::size_t i, std::size_t width) {

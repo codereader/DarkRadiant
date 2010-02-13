@@ -8,7 +8,7 @@ namespace md5
 
 inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex* array)
 {
-  return VertexPointer(VertexPointer::pointer(&array->vertex), sizeof(ArbitraryMeshVertex));
+  return VertexPointer(&array->vertex, sizeof(ArbitraryMeshVertex));
 }
 
 // Constructor

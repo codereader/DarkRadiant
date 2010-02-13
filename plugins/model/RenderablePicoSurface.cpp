@@ -305,8 +305,7 @@ void RenderablePicoSurface::testSelect(Selector& selector,
 		SelectionIntersection result;
 
 		test.TestTriangles(
-			VertexPointer(VertexPointer::pointer(&_vertices[0].vertex), 
-						  sizeof(ArbitraryMeshVertex)),
+			VertexPointer(&_vertices[0].vertex, sizeof(ArbitraryMeshVertex)),
       		IndexPointer(&_indices[0], 
       					 IndexPointer::index_type(_indices.size())),
 			result

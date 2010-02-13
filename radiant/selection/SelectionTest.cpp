@@ -42,9 +42,9 @@ void SelectionVolume::TestPolygon(const VertexPointer& vertices, std::size_t cou
       BestPoint(
         matrix4_clip_triangle(
           _local2view,
-          reinterpret_cast<const Vector3&>(vertices[0]),
-          reinterpret_cast<const Vector3&>(vertices[i+1]),
-          reinterpret_cast<const Vector3&>(vertices[i+2]),
+          vertices[0],
+          vertices[i+1],
+          vertices[i+2],
           clipped
         ),
         clipped,
@@ -63,8 +63,8 @@ void SelectionVolume::TestLineLoop(const VertexPointer& vertices, std::size_t co
       BestPoint(
         matrix4_clip_line(
           _local2view,
-          reinterpret_cast<const Vector3&>((*prev)),
-          reinterpret_cast<const Vector3&>((*i)),
+          *prev,
+          *i,
           clipped
         ),
         clipped,
@@ -83,8 +83,8 @@ void SelectionVolume::TestLineStrip(const VertexPointer& vertices, std::size_t c
       BestPoint(
         matrix4_clip_line(
           _local2view,
-          reinterpret_cast<const Vector3&>((*i)),
-          reinterpret_cast<const Vector3&>((*next)),
+          *i,
+          *next,
           clipped
         ),
         clipped,
@@ -103,8 +103,8 @@ void SelectionVolume::TestLines(const VertexPointer& vertices, std::size_t count
       BestPoint(
         matrix4_clip_line(
           _local2view,
-          reinterpret_cast<const Vector3&>((*i)),
-          reinterpret_cast<const Vector3&>((*(i+1))),
+          *i,
+          *(i+1),
           clipped
         ),
         clipped,
@@ -121,9 +121,9 @@ void SelectionVolume::TestTriangles(const VertexPointer& vertices, const IndexPo
       BestPoint(
         matrix4_clip_triangle(
           _local2view,
-          reinterpret_cast<const Vector3&>(vertices[*i]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+1)]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+2)]),
+          vertices[*i],
+          vertices[*(i+1)],
+          vertices[*(i+2)],
           clipped
         ),
         clipped,
@@ -140,9 +140,9 @@ void SelectionVolume::TestQuads(const VertexPointer& vertices, const IndexPointe
       BestPoint(
         matrix4_clip_triangle(
           _local2view,
-          reinterpret_cast<const Vector3&>(vertices[*i]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+1)]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+3)]),
+          vertices[*i],
+          vertices[*(i+1)],
+          vertices[*(i+3)],
           clipped
         ),
         clipped,
@@ -152,9 +152,9 @@ void SelectionVolume::TestQuads(const VertexPointer& vertices, const IndexPointe
 	    BestPoint(
         matrix4_clip_triangle(
           _local2view,
-          reinterpret_cast<const Vector3&>(vertices[*(i+1)]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+2)]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+3)]),
+          vertices[*(i+1)],
+          vertices[*(i+2)],
+          vertices[*(i+3)],
           clipped
         ),
         clipped,
@@ -171,9 +171,9 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
       BestPoint(
         matrix4_clip_triangle(
           _local2view,
-          reinterpret_cast<const Vector3&>(vertices[*i]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+1)]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+2)]),
+          vertices[*i],
+          vertices[*(i+1)],
+          vertices[*(i+2)],
           clipped
         ),
         clipped,
@@ -183,9 +183,9 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
       BestPoint(
         matrix4_clip_triangle(
           _local2view,
-          reinterpret_cast<const Vector3&>(vertices[*(i+2)]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+1)]),
-          reinterpret_cast<const Vector3&>(vertices[*(i+3)]),
+          vertices[*(i+2)],
+          vertices[*(i+1)],
+          vertices[*(i+3)],
           clipped
         ),
         clipped,

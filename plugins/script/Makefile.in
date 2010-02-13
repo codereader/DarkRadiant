@@ -70,11 +70,11 @@ LTLIBRARIES = $(modules_LTLIBRARIES)
 script_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la
 am_script_la_OBJECTS = ScriptingSystem.lo ScriptCommand.lo \
-	ScriptModule.lo ScriptWindow.lo SceneNodeBuffer.lo \
-	DialogInterface.lo EClassInterface.lo BrushInterface.lo \
-	RadiantInterface.lo PatchInterface.lo SelectionInterface.lo \
-	MapInterface.lo EntityInterface.lo MathInterface.lo \
-	ModelInterface.lo CommandSystemInterface.lo \
+	ScriptModule.lo ScriptMenu.lo ScriptWindow.lo \
+	SceneNodeBuffer.lo DialogInterface.lo EClassInterface.lo \
+	BrushInterface.lo RadiantInterface.lo PatchInterface.lo \
+	SelectionInterface.lo MapInterface.lo EntityInterface.lo \
+	MathInterface.lo ModelInterface.lo CommandSystemInterface.lo \
 	FileSystemInterface.lo GridInterface.lo \
 	ShaderSystemInterface.lo SkinInterface.lo SoundInterface.lo \
 	GameInterface.lo
@@ -267,6 +267,7 @@ script_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
 script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptCommand.cpp \
 					ScriptModule.cpp \
+					ScriptMenu.cpp \
 					ScriptWindow.cpp \
 					SceneNodeBuffer.cpp \
                interfaces/DialogInterface.cpp \
@@ -376,6 +377,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RadiantInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SceneNodeBuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptCommand.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptModule.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptingSystem.Plo@am__quote@

@@ -143,7 +143,8 @@ inline void aabb_testselect(const AABB& aabb, SelectionTest& test, SelectionInte
 
   Vector3 points[8];
   aabb_corners(aabb, points);
-  test.TestQuads(VertexPointer(reinterpret_cast<VertexPointer::pointer>(points), sizeof(Vector3)), IndexPointer(indices, 24), best);
+  VertexPointer pointer(points, sizeof(Vector3));
+  test.TestQuads(pointer, IndexPointer(indices, 24), best);
 }
 
 inline void aabb_draw_wire(const Vector3 points[8])
