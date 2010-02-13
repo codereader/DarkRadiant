@@ -36,8 +36,30 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 		// Return the definition
 		return i->second;
 	}
-	else 
-    {
+	
+	// The shader definition hasn't been found, let's check if the name
+	// refers to a file in the VFS
+	ImagePtr img = ImageFileLoader::imageFromVFS(name);
+
+	if (img != NULL)
+	{
+		// Create a new template with this name
+		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name, ""));
+
+		// Add a diffuse layer to that template, using the given texture path
+		MapExpressionPtr imgExpr(new ImageExpression(name));
+		shaderTemplate->addLayer(ShaderLayer::DIFFUSE, imgExpr);
+
+		// Take this empty shadertemplate and create a ShaderDefinition
+		ShaderDefinition def(shaderTemplate, "");
+
+		// Insert the shader definition and set the iterator to it
+		i = _definitions.insert(ShaderDefinitionMap::value_type(name, def)).first;
+
+		return i->second;
+	}
+	else
+	{
         globalWarningStream() << "[shaders] ShaderLibrary: definition not found: "
 			<< name << std::endl;
 
