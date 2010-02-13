@@ -9,4 +9,5 @@ fonts_la_SOURCES = plugin.cpp \
 					FontLoader.cpp \
 					GlyphInfo.cpp \
 					GlyphSet.cpp \
+					RenderableFont.cpp \
 					FontManager.cpp
