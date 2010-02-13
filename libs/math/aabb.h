@@ -184,9 +184,9 @@ inline unsigned int aabb_classify_plane(const AABB& aabb, const Plane3& plane)
 {
   double distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
   
-  if(fabs(distance_origin) < (fabs(plane.a * aabb.extents[0])
-    + fabs(plane.b * aabb.extents[1])
-    + fabs(plane.c * aabb.extents[2])))
+  if(fabs(distance_origin) < (fabs(plane.normal().x() * aabb.extents[0])
+    + fabs(plane.normal().y() * aabb.extents[1])
+    + fabs(plane.normal().z() * aabb.extents[2])))
   {
     return 1; // partially inside
   }

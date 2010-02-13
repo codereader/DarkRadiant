@@ -57,10 +57,10 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			// Construct a plane and parse its values
 			Plane3 plane;
 
-			plane.a = strToDouble(tok.nextToken());
-			plane.b = strToDouble(tok.nextToken());
-			plane.c = strToDouble(tok.nextToken());
-			plane.d = -strToDouble(tok.nextToken()); // negate d
+			plane.normal().x() = strToDouble(tok.nextToken());
+			plane.normal().y() = strToDouble(tok.nextToken());
+			plane.normal().z() = strToDouble(tok.nextToken());
+			plane.dist() = -strToDouble(tok.nextToken()); // negate d
 
 			tok.assertNextToken(")");
 

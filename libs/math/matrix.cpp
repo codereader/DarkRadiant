@@ -206,12 +206,12 @@ Vector4 Matrix4::transform(const Vector4& vector4) const
 Plane3 Matrix4::transform(const Plane3& plane) const 
 {
     Plane3 transformed;
-    transformed.a = _m[0] * plane.a + _m[4] * plane.b + _m[8] * plane.c;
-    transformed.b = _m[1] * plane.a + _m[5] * plane.b + _m[9] * plane.c;
-    transformed.c = _m[2] * plane.a + _m[6] * plane.b + _m[10] * plane.c;
-    transformed.d = -(	(-plane.d * transformed.a + _m[12]) * transformed.a + 
-                        (-plane.d * transformed.b + _m[13]) * transformed.b + 
-                        (-plane.d * transformed.c + _m[14]) * transformed.c);
+    transformed.normal().x() = _m[0] * plane.normal().x() + _m[4] * plane.normal().y() + _m[8] * plane.normal().z();
+    transformed.normal().y() = _m[1] * plane.normal().x() + _m[5] * plane.normal().y() + _m[9] * plane.normal().z();
+    transformed.normal().z() = _m[2] * plane.normal().x() + _m[6] * plane.normal().y() + _m[10] * plane.normal().z();
+    transformed.dist() = -(	(-plane.dist() * transformed.normal().x() + _m[12]) * transformed.normal().x() + 
+                        (-plane.dist() * transformed.normal().y() + _m[13]) * transformed.normal().y() + 
+                        (-plane.dist() * transformed.normal().z() + _m[14]) * transformed.normal().z());
     return transformed;
 }
 
@@ -219,10 +219,10 @@ Plane3 Matrix4::transform(const Plane3& plane) const
 Plane3 Matrix4::inverseTransform(const Plane3& plane) const 
 {
     return Plane3(
-        _m[ 0] * plane.a + _m[ 1] * plane.b + _m[ 2] * plane.c + _m[ 3] * plane.d,
-        _m[ 4] * plane.a + _m[ 5] * plane.b + _m[ 6] * plane.c + _m[ 7] * plane.d,
-        _m[ 8] * plane.a + _m[ 9] * plane.b + _m[10] * plane.c + _m[11] * plane.d,
-        _m[12] * plane.a + _m[13] * plane.b + _m[14] * plane.c + _m[15] * plane.d
+        _m[ 0] * plane.normal().x() + _m[ 1] * plane.normal().y() + _m[ 2] * plane.normal().z() + _m[ 3] * plane.dist(),
+        _m[ 4] * plane.normal().x() + _m[ 5] * plane.normal().y() + _m[ 6] * plane.normal().z() + _m[ 7] * plane.dist(),
+        _m[ 8] * plane.normal().x() + _m[ 9] * plane.normal().y() + _m[10] * plane.normal().z() + _m[11] * plane.dist(),
+        _m[12] * plane.normal().x() + _m[13] * plane.normal().y() + _m[14] * plane.normal().z() + _m[15] * plane.dist()
     );
 }
 
