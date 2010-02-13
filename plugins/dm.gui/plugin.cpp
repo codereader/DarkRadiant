@@ -1,18 +1,13 @@
 #include "imodule.h"
 
 #include "ieventmanager.h"
-//#include "iuimanager.h"
-//#include "ientityinspector.h"
-//#include "icommandsystem.h"
 #include "itextstream.h"
-//#include "imainframe.h"
 #include "debugging/debugging.h"
 //#include "iimage.h"
 #include "ifilesystem.h"
 
 #include "ReadableEditorDialog.h"
-//#include "FontLoader.h"
-#include "XDataManager.h"
+#include "XData.h"
 
 class GuiModule : 
 	public RegisterableModule
@@ -53,7 +48,7 @@ public:
 			"ReadableEditorDialog"
 		);
 
-		//Testbench for xdata importer:
+		//Testbench for xdata importer/exporter:
 		readable::XDataPtrList testing = readable::XData::importXDataFromFile("dm.gui_testing/training_mission.xd");
 		testing[1]->xport("dm.gui_testing/training_mission_exported.xd", readable::Normal);
 		testing[0]->xport("dm.gui_testing/training_mission_exported2.xd", readable::Normal);

@@ -70,7 +70,6 @@ namespace readable
 			7) Fix detection of exceeding content-dimensions.*/
 
 		std::string name = tok.nextToken();
-		//XDataPtr NewXData;
 		
 		XDataParse NewXData;
 
@@ -119,7 +118,10 @@ namespace readable
 			}
 			else if (token == "import")			//Not yet supported...
 			{
-				while(tok.nextToken() != "}") {}
+				NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". Found an import-statement, which is not yet supported. Jumping to next definition...\n");
+				jumpOutOfBrackets(tok,1);
+				NewXData.xData.reset();
+				return NewXData;
 			}
 			else if (token == "snd_page_turn")
 			{
@@ -301,7 +303,7 @@ namespace readable
 	{
 		std::stringstream out;
 		std::string token = tok.nextToken();
-		while (token != "}")		//Need to count entering variables!!!!
+		while (token != "}")
 		{
 			out << token << std::endl;
 			token = tok.nextToken();
@@ -457,7 +459,6 @@ namespace readable
 			case Merge: 
 				//Check if definition already exists. If it does not, append the definition to the file.
 				//If it does: return DefinitionExists
-
 				break;
 			case MergeAndOverwriteExisting: 
 				//Find the old definition in the target file and delete it. Append the new definition.
