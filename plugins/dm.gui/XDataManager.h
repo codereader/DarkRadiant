@@ -6,7 +6,9 @@
 
 #include "itextstream.h"
 
+#include "parser/DefTokeniser.h"
 #include "reportError.h"
+#include <stdio.h>
 
 
 namespace readable
@@ -23,7 +25,7 @@ namespace readable
 		StringList _guiPage;
 		std::string _sndPageTurn;
 
-		XData(std::string name) : _name(name) { }
+		//XData(std::string name) : _name(name) { }
 		virtual ~XData() {};
 	};
 	typedef boost::shared_ptr<XData> XDataPtr;
@@ -35,7 +37,7 @@ namespace readable
 		StringList _pageTitle;
 		StringList _pageBody;
 
-		OneSidedXData(std::string name) : XData(name) { }
+		OneSidedXData(std::string name) { _name=name; }
 		~OneSidedXData() {}
 	};
 	typedef boost::shared_ptr<OneSidedXData> OneSidedXDataPtr;
@@ -48,7 +50,7 @@ namespace readable
 		StringList _pageLeftBody;
 		StringList _pageRightBody;
 
-		TwoSidedXData(std::string name) : XData(name) { }
+		TwoSidedXData(std::string name) { _name=name; }
 		~TwoSidedXData() {}
 	};
 	typedef boost::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
@@ -70,19 +72,21 @@ namespace readable
 		OverwriteMultDef		
 	};
 
+	struct XDataParse
+	{
+		XDataPtr xData;
+		StringList error_msg;
+	};
+
 	///////////////////////////// XDataManager:
 	// Small static class that imports and exports XData.
 	class XDataManager
 	{
 	private:
-		static void trimLeadingSpaces(std::string& String);
-		static std::string getLineFormatted(boost::filesystem::ifstream* FileStream);
-		static std::string getLineFormatted(boost::filesystem::ifstream* FileStream, char Delimiter);
-		//static std::string gotoNextSymbol(boost::filesystem::ifstream* FileStream);	//to be implemented
-		//static std::string getNextWord(boost::filesystem::ifstream* FileStream); //to be implemented
-		//static void deQuote(std::string& String); //to be implemented. Possibly unnecessary?
 		static std::string generateXDataDef(const XData& Data);
-		static int _lineCount;
+		static XDataParse parseXDataDef(parser::DefTokeniser& tok);
+		static std::string parseText(parser::DefTokeniser& tok);
+		static void jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth);
 	public:
 		/* Imports a list of XData objects from the File specified by Filename. Throws
 		runtime_error exceptions on filesystemerrors, syntax errors and general exceptions.*/

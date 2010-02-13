@@ -53,6 +53,13 @@ public:
 			"ReadableEditorDialog"
 		);
 
+		//Testbench for xdata importer:
+		readable::XDataPtrList testing = readable::XDataManager::importXData("dm.gui_testing/training_mission.xd");
+		readable::XDataManager::exportXData("dm.gui_testing/training_mission_exported.xd", *testing[3], readable::Normal);
+
+
+
+		/*
 		//Temporary Testbench for exporter:
 		readable::OneSidedXDataPtr test(new readable::OneSidedXData("test_onesided"));
 		test->_guiPage.push_back("guitest_page1");
@@ -78,7 +85,7 @@ public:
 		test2->_pageLeftBody.push_back("");
 		test2->_pageRightBody.push_back("");
 		test2->_pageRightBody.push_back("right2: this is a text\nwith new lines\n\t and tabs");
-		readable::XDataManager::exportXData("dm.gui_testing/test_twosided.xd", *test2, readable::Normal);
+		readable::XDataManager::exportXData("dm.gui_testing/test_twosided.xd", *test2, readable::Normal); //*/
 	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;
