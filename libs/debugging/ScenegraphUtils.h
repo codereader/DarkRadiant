@@ -6,6 +6,7 @@
 #include "nameable.h"
 #include "scenelib.h"
 #include "string/string.h"
+#include "itextstream.h"
 
 // greebo: Return information about the given node
 inline std::string getNodeInfo(const scene::INodePtr& node) {
@@ -54,19 +55,19 @@ inline std::ostream& operator<<(std::ostream& st, const scene::Path& path) {
 }
 
 class SceneGraphDumper :
-	public scene::Graph::Walker
+	public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::Path& path, const scene::INodePtr& node) const {
-		globalOutputStream() << getPathInfo(path).c_str() << "\n";
-		std::cout << getPathInfo(path) << "\n";
+	bool pre(const scene::INodePtr& node)
+	{
+		globalOutputStream() << getNodeInfo(node) << "\n";
 		return true;
 	}
 };
 
 inline void dumpSceneGraph() {
 	SceneGraphDumper dumper;
-	GlobalSceneGraph().traverse(dumper);
+	GlobalSceneGraph().root()->traverse(dumper);
 }
 
 #endif /*SCENEGRAPHUTILS_H_*/

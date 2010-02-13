@@ -19,131 +19,137 @@
 #include "FloatTools.h"
 #include "Vector3.h"
 
-namespace {
+namespace
+{
 	// Some constants for "equality" check. 
 	const double EPSILON_NORMAL = 0.0001f;
 	const double EPSILON_DIST = 0.02;
 }
 
-class Plane3 {
+class Plane3
+{
+private:
+	Vector3 _normal; // normal vector
+	double _dist;		// distance
 	
 public:
-	// <a,b,d> are the components of the normal vector, <d> is the distance.
-	double a, b, c, d;
-
 	// Constructor with no arguments
 	Plane3() {}
 	
 	// Constructor which expects four numbers, the first three are the components of the normal vector. 
-  	Plane3(double _a, double _b, double _c, double _d)
-  		: a(_a), b(_b), c(_c), d(_d) {}
+  	Plane3(double nx, double ny, double nz, double dist) : 
+		_normal(nx, ny, nz), 
+		_dist(dist)
+	{}
   	
   	// Construct a plane from any BasicVector3 and the distance <dist>
 	template<typename Element>
-  	Plane3(const BasicVector3<Element>& normal, double dist)
-    	: a(normal.x()), b(normal.y()), c(normal.z()), d(dist)
+  	Plane3(const BasicVector3<Element>& normal, double dist) : 
+		_normal(normal), 
+		_dist(dist)
   	{}
  
  	// Construct a plane from three points <p0>, <p1> and <p2>
 	template<typename Element>
-  	Plane3(const BasicVector3<Element>& p0, const BasicVector3<Element>& p1, const BasicVector3<Element>& p2) {
-  		BasicVector3<Element> normal = (p1 - p0).crossProduct(p2 - p0).getNormalised();
-  		a = normal.x();
-  		b = normal.y();
-  		c = normal.z();
-  		d = p0.dot(normal);
-	}
+	Plane3(const BasicVector3<Element>& p0, const BasicVector3<Element>& p1, const BasicVector3<Element>& p2) :
+		_normal((p1 - p0).crossProduct(p2 - p0).getNormalised()),
+		_dist(p0.dot(_normal))
+	{}
 	
 	// Construct a plane from three points (same as above, just with an array as argument
 	template<typename Element>
-	Plane3(const BasicVector3<Element> points[3]) {
-		BasicVector3<Element> normal = (points[1] - points[0]).crossProduct(points[2] - points[0]).getNormalised();
-  		a = normal.x();
-  		b = normal.y();
-  		c = normal.z();
-  		d = points[0].dot(normal);
-	}
+	Plane3(const BasicVector3<Element> points[3]) :
+		_normal((points[1] - points[0]).crossProduct(points[2] - points[0]).getNormalised()),
+		_dist(points[0].dot(_normal))
+	{}
 	
 	//	The negation operator for this plane - the normal vector components and the distance are negated 
-	Plane3 operator- () const {
-		return Plane3(-a, -b, -c, -d);
+	Plane3 operator- () const
+	{
+		return Plane3(-_normal, -_dist);
 	}
 	
-	/* greebo: Note that planes are considered equal if their normal vectors and
+	/**
+	 * greebo: Note that planes are considered equal if their normal vectors and
 	 * distances don't differ more than an epsilon value.
 	 */
-	bool operator== (const Plane3& other) const {
-  		return vector3_equal_epsilon(this->normal(), other.normal(), EPSILON_NORMAL)
-	  		   && float_equal_epsilon(d, other.d, EPSILON_DIST);
+	bool operator== (const Plane3& other) const
+	{
+  		return vector3_equal_epsilon(_normal, other._normal, EPSILON_NORMAL) && 
+			   float_equal_epsilon(_dist, other._dist, EPSILON_DIST);
 	}
 
 	// Returns the normal vector of this plane
-  	BasicVector3<double>& normal() {
-    	return reinterpret_cast<BasicVector3<double>&>(*this);
+  	Vector3& normal()
+	{
+    	return _normal;
   	}
-	const BasicVector3<double>& normal() const {
-		return reinterpret_cast<const BasicVector3<double>&>(*this);
+
+	const Vector3& normal() const
+	{
+		return _normal;
 	}
 	
 	// Returns the distance of the plane (where the plane intersects the z-axis)
-	double& dist() {
-		return d;
+	double& dist()
+	{
+		return _dist;
 	}
-	const double& dist() const {
-		return d;
+
+	const double& dist() const
+	{
+		return _dist;
 	}
 	
 	/* greebo: This normalises the plane by turning the normal vector into a unit vector (dividing it by its length)
 	 * and scaling the distance down by the same amount */  
 	Plane3 getNormalised() const
 	{
-		double rmagnitudeInv = 1 / sqrt(a*a + b*b + c*c); // the length of the normal vector
-  		return Plane3(a * rmagnitudeInv, b * rmagnitudeInv, c * rmagnitudeInv, d * rmagnitudeInv);
+		double rmagnitudeInv = 1 / _normal.getLength();
+  		return Plane3(_normal * rmagnitudeInv, _dist * rmagnitudeInv);
   	}
 
 	// Normalises this Plane3 object in-place
 	void normalise()
 	{
-		double rmagnitudeInv = 1 / sqrt(a*a + b*b + c*c); // the length of the normal vector
+		double rmagnitudeInv = 1 / _normal.getLength();
 
-		a *= rmagnitudeInv;
-		b *= rmagnitudeInv;
-		c *= rmagnitudeInv;
-		d *= rmagnitudeInv;
+		_normal *= rmagnitudeInv;
+		_dist *= rmagnitudeInv;
 	}
 
 	// Reverses this plane, by negating all components
 	void reverse()
 	{
-		a = -a;
-		b = -b;
-		c = -c;
-		d = -d;
+		_normal = -_normal;
+		_dist = -_dist;
 	}
   	
-  	Plane3 getTranslated(const Vector3& translation) const {
-		double distTransformed = -( (-d * a + translation.x()) * a + 
-									(-d * b + translation.y()) * b + 
-              	  					(-d * c + translation.z()) * c );
-		return Plane3(a, b, c, distTransformed);
+  	Plane3 getTranslated(const Vector3& translation) const
+	{
+		double distTransformed = -( (-_dist * _normal.x() + translation.x()) * _normal.x() + 
+									(-_dist * _normal.y() + translation.y()) * _normal.y() + 
+              	  					(-_dist * _normal.z() + translation.z()) * _normal.z() );
+		return Plane3(_normal, distTransformed);
 	}
   	
   	// Checks if the floats of this plane are valid, returns true if this is the case
-  	bool isValid() const {
-		return float_equal_epsilon(this->normal().dot(this->normal()), 1.0, 0.01);
+  	bool isValid() const
+	{
+		return float_equal_epsilon(_normal.dot(_normal), 1.0, 0.01);
 	}
   	
   	/* greebo: Use this to calculate the projection of a <pointToProject> onto this plane.
   	 * 
   	 * @returns: the Vector3 pointing to the point on the plane with the shortest
   	 * distance from the passed <pointToProject> */
-  	Vector3 getProjection(const Vector3& pointToProject) const {
-  	
+  	Vector3 getProjection(const Vector3& pointToProject) const
+	{
   		// Get the normal vector of this plane and normalise it 
-  		Vector3 n = normal().getNormalised();
+  		Vector3 n = _normal.getNormalised();
   		
   		// Retrieve a point of the plane
-  		Vector3 planePoint = n*dist();
+  		Vector3 planePoint = n*_dist;
   		
   		// Calculate the projection and return it  		
   		return pointToProject + planePoint - n*pointToProject.dot(n);
@@ -151,14 +157,16 @@ public:
   	
   	/** greebo: Returns the distance to the given point.
   	 */
-  	double distanceToPoint(const Vector3& point) const {
-  		return point.dot(normal()) - dist();
+  	double distanceToPoint(const Vector3& point) const
+	{
+  		return point.dot(_normal) - _dist;
   	}
   	
   	/* greebo: This calculates the intersection point of three planes. 
 	 * Returns <0,0,0> if no intersection point could be found, otherwise returns the coordinates of the intersection point 
 	 * (this may also be 0,0,0) */
-	static Vector3 intersect(const Plane3& plane1, const Plane3& plane2, const Plane3& plane3) {
+	static Vector3 intersect(const Plane3& plane1, const Plane3& plane2, const Plane3& plane3)
+	{
 		const Vector3& n1 = plane1.normal();
 		const Vector3& n2 = plane2.normal();
 		const Vector3& n3 = plane3.normal();
@@ -170,10 +178,12 @@ public:
 		double denom = n1.dot(n2n3);
 		
 		// Check if the denominator is zero (which would mean that no intersection is to be found
-		if (denom != 0) {
+		if (denom != 0)
+		{
 			return (n2n3*plane1.dist() + n3n1*plane2.dist() + n1n2*plane3.dist()) / denom;
 		}
-		else {
+		else
+		{
 			// No intersection could be found, return <0,0,0>
 			return Vector3(0,0,0);
 		}
@@ -187,10 +197,10 @@ public:
  */
 inline std::ostream& operator<< (std::ostream& os, const Plane3& plane)
 {
-    os << "Plane3 { " << plane.a << "x + " 
-                      << plane.b << "y + "
-                      << plane.c << "z = "
-                      << plane.d
+    os << "Plane3 { " << plane.normal().x() << "x + " 
+                      << plane.normal().y() << "y + "
+                      << plane.normal().z() << "z = "
+                      << plane.dist()
        << " }";
     return os;
 }

@@ -30,7 +30,7 @@ void FacePlane::transform(const Matrix4& matrix, bool mirror)
 
 void FacePlane::offset(float offset)
 {
-	m_plane.d += offset;
+	m_plane.dist() += offset;
 }
 
 void FacePlane::setPlane(const Plane3& plane)

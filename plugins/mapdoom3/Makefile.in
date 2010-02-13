@@ -70,7 +70,8 @@ LTLIBRARIES = $(modules_LTLIBRARIES)
 mapdoom3_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_mapdoom3_la_OBJECTS = Doom3MapFormat.lo NodeImporter.lo InfoFile.lo \
-	mapdoom3.lo NodeExporter.lo
+	mapdoom3.lo NodeExporter.lo BrushDef.lo BrushDef3.lo Patch.lo \
+	PatchDef2.lo PatchDef3.lo
 mapdoom3_la_OBJECTS = $(am_mapdoom3_la_OBJECTS)
 mapdoom3_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -254,7 +255,12 @@ mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       NodeImporter.cpp \
                       InfoFile.cpp \
                       mapdoom3.cpp \
-                      NodeExporter.cpp
+                      NodeExporter.cpp \
+					  primitiveparsers/BrushDef.cpp \
+					  primitiveparsers/BrushDef3.cpp \
+					  primitiveparsers/Patch.cpp \
+					  primitiveparsers/PatchDef2.cpp \
+					  primitiveparsers/PatchDef3.cpp
 
 all: all-am
 
@@ -330,10 +336,15 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BrushDef.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BrushDef3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3MapFormat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InfoFile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NodeExporter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NodeImporter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Patch.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchDef2.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchDef3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapdoom3.Plo@am__quote@
 
 .cpp.o:
@@ -356,6 +367,41 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+BrushDef.lo: primitiveparsers/BrushDef.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BrushDef.lo -MD -MP -MF $(DEPDIR)/BrushDef.Tpo -c -o BrushDef.lo `test -f 'primitiveparsers/BrushDef.cpp' || echo '$(srcdir)/'`primitiveparsers/BrushDef.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/BrushDef.Tpo $(DEPDIR)/BrushDef.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='primitiveparsers/BrushDef.cpp' object='BrushDef.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BrushDef.lo `test -f 'primitiveparsers/BrushDef.cpp' || echo '$(srcdir)/'`primitiveparsers/BrushDef.cpp
+
+BrushDef3.lo: primitiveparsers/BrushDef3.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BrushDef3.lo -MD -MP -MF $(DEPDIR)/BrushDef3.Tpo -c -o BrushDef3.lo `test -f 'primitiveparsers/BrushDef3.cpp' || echo '$(srcdir)/'`primitiveparsers/BrushDef3.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/BrushDef3.Tpo $(DEPDIR)/BrushDef3.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='primitiveparsers/BrushDef3.cpp' object='BrushDef3.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o BrushDef3.lo `test -f 'primitiveparsers/BrushDef3.cpp' || echo '$(srcdir)/'`primitiveparsers/BrushDef3.cpp
+
+Patch.lo: primitiveparsers/Patch.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Patch.lo -MD -MP -MF $(DEPDIR)/Patch.Tpo -c -o Patch.lo `test -f 'primitiveparsers/Patch.cpp' || echo '$(srcdir)/'`primitiveparsers/Patch.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Patch.Tpo $(DEPDIR)/Patch.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='primitiveparsers/Patch.cpp' object='Patch.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Patch.lo `test -f 'primitiveparsers/Patch.cpp' || echo '$(srcdir)/'`primitiveparsers/Patch.cpp
+
+PatchDef2.lo: primitiveparsers/PatchDef2.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PatchDef2.lo -MD -MP -MF $(DEPDIR)/PatchDef2.Tpo -c -o PatchDef2.lo `test -f 'primitiveparsers/PatchDef2.cpp' || echo '$(srcdir)/'`primitiveparsers/PatchDef2.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PatchDef2.Tpo $(DEPDIR)/PatchDef2.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='primitiveparsers/PatchDef2.cpp' object='PatchDef2.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PatchDef2.lo `test -f 'primitiveparsers/PatchDef2.cpp' || echo '$(srcdir)/'`primitiveparsers/PatchDef2.cpp
+
+PatchDef3.lo: primitiveparsers/PatchDef3.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PatchDef3.lo -MD -MP -MF $(DEPDIR)/PatchDef3.Tpo -c -o PatchDef3.lo `test -f 'primitiveparsers/PatchDef3.cpp' || echo '$(srcdir)/'`primitiveparsers/PatchDef3.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/PatchDef3.Tpo $(DEPDIR)/PatchDef3.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='primitiveparsers/PatchDef3.cpp' object='PatchDef3.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PatchDef3.lo `test -f 'primitiveparsers/PatchDef3.cpp' || echo '$(srcdir)/'`primitiveparsers/PatchDef3.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
