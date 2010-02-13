@@ -3,6 +3,7 @@
 
 #include "GlyphInfo.h"
 #include <boost/shared_ptr.hpp>
+#include <map>
 
 namespace fonts
 {
@@ -35,14 +36,21 @@ public:
 	// each set has 256 glyphs
 	GlyphInfoPtr glyphs[q3font::GLYPH_COUNT_PER_FONT];
 
-	// VFS paths to the textures (file extension and dds/ prefix are omitted)
-	std::vector<std::string> textures;
+	// Texture names => VFS path mapping
+	// The texture name is the string as found in each Glyph
+	// This map is used to acquire the shaders in realiseShaders()
+	// File extension and dds/ prefix are omitted in the VFS paths
+	typedef std::map<std::string, std::string> TexturePathMap;
+	TexturePathMap textures;
 
 	// Public named constructor
 	static GlyphSetPtr createFromDatFile(const std::string& vfsPath, 
 										 const std::string& fontname,
 										 const std::string& language,
 										 Resolution resolution);
+
+	// Ensures that each glyph has a valid Shader
+	void realiseShaders();
 };
 typedef boost::shared_ptr<GlyphSet> GlyphSetPtr;
 

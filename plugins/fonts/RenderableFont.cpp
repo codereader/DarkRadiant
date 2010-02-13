@@ -3,11 +3,26 @@
 namespace fonts
 {
 
-RenderableFont::RenderableFont(const FontInfoPtr& font) :
-	_font(font)
+RenderableFont::RenderableFont(const FontInfoPtr& font, Resolution res) :
+	_font(font),
+	_resolution(res)
 {
 	// Ensure the font we're using is realised, i.e. all shaders are constructed
-	
+	realiseFontShaders();
+}
+
+void RenderableFont::setResolution(Resolution res)
+{
+	if (_resolution != res)
+	{
+		_resolution = res;
+		realiseFontShaders();
+	}
+}
+
+void RenderableFont::realiseFontShaders()
+{
+	_font->glyphSets[_resolution]->realiseShaders();
 }
 
 void RenderableFont::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
