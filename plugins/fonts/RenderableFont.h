@@ -19,9 +19,15 @@ private:
 	// The font we're rendering
 	FontInfoPtr _font;
 
+	// The resolution we're working with
+	Resolution _resolution;
+
 public:
-	// Construct a renderable for the given font
-	RenderableFont(const FontInfoPtr& font);
+	// Construct a renderable for the given font in the given resolution
+	RenderableFont(const FontInfoPtr& font, Resolution res);
+
+	// Change the resolution of this font
+	void setResolution(Resolution res);
 
 	// Renderable implementation, adds OpenGLRenderables to the collector
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
@@ -35,6 +41,9 @@ public:
 	void renderText(const std::string& text, 
 					const Vector3& areaTopLeft, 
 					const Vector3& areaBottomRight);
+
+private:
+	void realiseFontShaders();
 };
 
 } // namespace fonts

@@ -81,7 +81,7 @@ void ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
         fogLight = true;
     }
     else if (!fogLight && token == "lightfalloffimage") {
-        _lightFalloff = shaders::MapExpression::createForToken(tokeniser);
+        _lightFalloff = MapExpression::createForToken(tokeniser);
     }
 }
 
@@ -95,40 +95,15 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
     }
     else if (token == "diffusemap") 
     {
-        // Parse the map expression
-        MapExpressionPtr difMapExp = MapExpression::createForToken(tokeniser);
-
-        // Add the diffuse layer
-        Doom3ShaderLayerPtr layer(
-            new Doom3ShaderLayer(ShaderLayer::DIFFUSE, difMapExp)
-        );
-        m_layers.push_back(layer);
-
-        // If there is no editor texture set, use the diffusemap texture instead
-        if (!_editorTex)
-        {
-            _editorTex = difMapExp;
-        }
+        addLayer(ShaderLayer::DIFFUSE, MapExpression::createForToken(tokeniser));
     }
     else if (token == "specularmap") 
     {
-        Doom3ShaderLayerPtr layer(
-            new Doom3ShaderLayer(
-                ShaderLayer::SPECULAR, 
-                MapExpression::createForToken(tokeniser)
-            )
-        );
-        m_layers.push_back(layer);
+		addLayer(ShaderLayer::SPECULAR, MapExpression::createForToken(tokeniser));
     }
     else if (token == "bumpmap") 
     {
-        Doom3ShaderLayerPtr layer(
-            new Doom3ShaderLayer(
-                ShaderLayer::BUMP,
-                MapExpression::createForToken(tokeniser)
-            )
-        );
-        m_layers.push_back(layer);
+		addLayer(ShaderLayer::BUMP, MapExpression::createForToken(tokeniser));
     }
 }
 
@@ -315,10 +290,24 @@ void ShaderTemplate::parseDefinition()
             } 
         }
     }
-    catch (parser::ParseException p) {
+    catch (parser::ParseException& p) {
         globalErrorStream() << "Error while parsing shader " << _name << ": "
             << p.what() << std::endl;
     }
+}
+
+void ShaderTemplate::addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr)
+{
+	// Add the layer
+	m_layers.push_back(
+		Doom3ShaderLayerPtr(new Doom3ShaderLayer(type, mapExpr))
+	);
+
+	// If there is no editor texture set, use the diffusemap texture instead
+	if (type == ShaderLayer::DIFFUSE && !_editorTex)
+	{
+		_editorTex = mapExpr;
+	}
 }
 
 }

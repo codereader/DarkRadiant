@@ -29,7 +29,7 @@ GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info,
 	for (std::set<std::string>::const_iterator i = temp.begin();
 		 i != temp.end(); ++i)
 	{
-		textures.push_back("fonts/" + language + "/" + fontname + "/" + *i);
+		textures[*i] = "fonts/" + language + "/" + fontname + "/" + *i;
 	}
 }
 
@@ -64,6 +64,18 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 	globalOutputStream() << "FontLoader: "  << vfsPath << " loaded successfully." << std::endl;
 		
 	return glyphSet;
+}
+
+void GlyphSet::realiseShaders()
+{
+	// For each glyph, acquire the appropriate shader
+	for (std::size_t i = 0; i < q3font::GLYPH_COUNT_PER_FONT; ++i)
+	{
+		TexturePathMap::const_iterator found = textures.find(glyphs[i]->texture);
+		assert(found != textures.end());
+
+		glyphs[i]->shader = GlobalMaterialManager().getMaterialForName(found->second);
+	}
 }
 
 } // namespace fonts
