@@ -2,35 +2,10 @@
 
 namespace readable
 {
-	inline void XDataManager::trimLeadingSpaces(std::string& String)
+	namespace
 	{
-		int i;
-		for (i = 0; String.c_str()[i] == ' ' || String.c_str()[i] == '\t' || String.c_str()[i] == '\n'; i++) { }	//_lineCount needs to be updated.
-		String.erase(0, i-1);
+		const int MAX_PAGE_COUNT = 20;
 	}
-
-	inline std::string XDataManager::getLineFormatted(boost::filesystem::ifstream* FileStream, char Delimiter)
-	{
-		std::string ReadString;
-		try
-		{
-			std::getline(*FileStream, ReadString, Delimiter);		//Check if this function can really throw.
-		}
-		catch (...)
-		{
-			reportError("[XDataManager::ImportXData] Failed to read line.");
-		}
-		trimLeadingSpaces(ReadString);
-		_lineCount += 1;
-		return ReadString;
-	}
-
-	inline std::string XDataManager::getLineFormatted(boost::filesystem::ifstream* FileStream)
-	{
-		return getLineFormatted(FileStream, '\n');
-	}
-
-	int XDataManager::_lineCount = 0;
 
 	XDataPtrList XDataManager::importXData(const std::string& FileName)
 	{
@@ -54,44 +29,287 @@ namespace readable
 			reportError("[XDataManager::importXData] Failed to open file: " + FileName + "\n");
 		}
 
-		std::string LineString;
-		_lineCount = 0;
-		//Start importing file...
-		while (!file.eof())
+		StringList ErrorList;
+
+		parser::BasicDefTokeniser<std::istream> tok(file);
+
+		while (tok.hasMoreTokens())
 		{
-			if ( (LineString = getLineFormatted(&file)) != "")	//Wrong if comments are possible inside xdata...
-			{
-				XDataPtr NewXData(new XData(LineString));
-			//First Bracket pair
-				LineString = getLineFormatted(&file, '{');	// '{' is discarded
-				if (LineString != "")	//Syntax error
-				{
-					reportError("[XDataManager::importXData] Syntax-error in " + FileName + " at Line: " + boost::lexical_cast<std::string>(_lineCount) + "\n");
-				}
-				file.ignore(1000,'\n'); //Goto next line (DIRTY!!!!!)
-
-				// Do some decoding...
-
-				//Replace with defTokeniser
-
-						//std::string GotoNextSymbol(..) function possibly better...
-						//std::string GetNextWord(...) . Sollte eventuell auch ":" ignorieren. Multiple delimiters ("\n", " " und "\t")
-						//in body: nach abschlieﬂenden quotes ein ignore bis \n
-
-
-				LineString = getLineFormatted(&file, '{');	// '{' is discarded
-				if (LineString != "")	//Syntax error
-				{
-					reportError("[XDataManager::importXData] Syntax-error in " + FileName + " at Line: " + boost::lexical_cast<std::string>(_lineCount) + "\n");
-				}
-				file.ignore(1000,'\n');
-			//End of first Bracket pair.
-				ReturnVector.push_back(NewXData);
-			}
+			XDataParse parsed = parseXDataDef(tok);
+			if (parsed.xData)
+				ReturnVector.push_back(parsed.xData);
+			if (parsed.error_msg.size()>0)
+				for (int n=0; n<parsed.error_msg.size(); n++)
+					ErrorList.push_back(parsed.error_msg[n]);
 		}
+
+		for (int n = 0; n<ErrorList.size(); n++)
+			std::cerr << ErrorList[n];
 
 		return ReturnVector;
 	} // XDataManager::importXData
+
+	XDataParse XDataManager::parseXDataDef(parser::DefTokeniser& tok)
+	{
+		/* TODO:
+			1) Support for import-directive
+			2) This is pretty ugly code. There's gotta be a better way to do this than with two separate shared pointers. 
+				The default resize to MAX_PAGE_COUNT is also uncool.
+			3) Add try/catch blocks.
+			4) Possibly throw syntax-exception if numPages hasn't been defined or reconstruct from the content-vectors.
+			5) Try/catch blocks around direct vector access to prevent vector subscript out of range
+			6) Collect general syntax errors in a struct for a return-value... Also in subclass. Add function that scrolls out to the next definition.
+			7) Fix detection of exceeding content-dimensions.*/
+
+		std::string name = tok.nextToken();
+		//XDataPtr NewXData;
+		
+		XDataParse NewXData;
+
+		TwoSidedXDataPtr NewXData_two(new TwoSidedXData(name));
+		OneSidedXDataPtr NewXData_one(new OneSidedXData(name));
+
+		std::string ErrorString;
+
+		int numPages = 0;
+		std::string sndPageTurn = "";
+		StringList guiPage;
+		guiPage.resize(MAX_PAGE_COUNT,"");
+		try
+		{
+			tok.assertNextToken("{");		//throws when syntax error
+		}
+		catch (...)
+		{
+			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ". '{' expected. Jumping to next XData definition...\n");
+			jumpOutOfBrackets(tok,1);
+			return NewXData;
+		}
+		
+		bool created = false;
+		bool twosided = false;
+
+		std::string token = tok.nextToken();
+		while (token != "}")
+		{
+			if (token == "num_pages")
+			{
+				tok.skipTokens(1);
+				std::string number = tok.nextToken();
+				try
+				{					
+					numPages = boost::lexical_cast<int>(number);	//throws
+				}
+				catch(...)
+				{
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
+					jumpOutOfBrackets(tok,1);
+					NewXData.xData.reset();
+					return NewXData;
+				}
+				guiPage.resize(numPages, "");
+			}
+			else if (token == "import")			//Not yet supported...
+			{
+				while(tok.nextToken() != "}") {}
+			}
+			else if (token == "snd_page_turn")
+			{
+				tok.skipTokens(1);
+				sndPageTurn = tok.nextToken();
+			}
+			else if (token.substr(0,8) == "gui_page")
+			{
+				tok.skipTokens(1);
+				std::string number = token.substr(token.length()-1,1);
+				int guiNumber;
+				try
+				{
+					guiNumber = boost::lexical_cast<int>(number)-1;
+				}
+				catch (...)
+				{
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", gui_page statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
+					jumpOutOfBrackets(tok,1);
+					NewXData.xData.reset();
+					return NewXData;	
+				}
+				if (guiNumber < guiPage.size())
+					guiPage[ guiNumber ] = tok.nextToken();
+				else
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
+			}
+			else if (token.find("page",0) != std::string::npos)
+			{
+				tok.skipTokens(1);
+				try
+				{
+					tok.assertNextToken("{");		//throws when syntax error
+				}
+				catch (...)
+				{
+					NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Jumping to next XData definition...\n");
+					jumpOutOfBrackets(tok,1);
+					NewXData.xData.reset();
+					return NewXData;
+				}
+				int PageIndex;
+				char number = token.c_str()[4];
+				try
+				{
+					PageIndex = boost::lexical_cast<int>(number)-1;	//can throw...
+				}
+				catch (...)
+				{
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number. Jumping to next XData definition...\n");;
+					jumpOutOfBrackets(tok,2);
+					NewXData.xData.reset();
+					return NewXData;
+				}
+				std::string content = parseText(tok);
+				if (PageIndex >= numPages )	//prevents overshooting vectorrange.
+				{
+					if (content.length() > 2)
+					{
+						numPages = PageIndex+1;
+						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. Raising numPages to " + number +"...\n");
+						guiPage.resize(numPages,"");
+						if (created)
+						{
+							if (twosided)
+							{
+								NewXData_two->_pageLeftBody.resize(numPages,"");
+								NewXData_two->_pageLeftTitle.resize(numPages,"");
+								NewXData_two->_pageRightBody.resize(numPages,"");
+								NewXData_two->_pageRightTitle.resize(numPages,"");
+							}
+							else
+							{
+								NewXData_one->_pageBody.resize(numPages,"");
+								NewXData_one->_pageTitle.resize(numPages,"");
+							}
+						}
+					}
+				}
+				if (PageIndex < numPages)
+				{
+					if (!created)
+					{
+						int pageCount = MAX_PAGE_COUNT;
+						if (numPages > 0)
+							pageCount = numPages;
+						if (token.substr(6,4) == "left" || token.substr(6,5) == "right") //TwoSided
+						{
+							NewXData.xData = NewXData_two;
+							twosided = true;
+							NewXData_two->_pageLeftBody.resize(pageCount,"");
+							NewXData_two->_pageLeftTitle.resize(pageCount,"");
+							NewXData_two->_pageRightBody.resize(pageCount,"");
+							NewXData_two->_pageRightTitle.resize(pageCount,"");
+						}
+						else //OneSided
+						{
+							NewXData.xData = NewXData_one;
+							NewXData_one->_pageBody.resize(pageCount,"");
+							NewXData_one->_pageTitle.resize(pageCount,"");
+						}
+						created = true;
+					}
+					
+					if (twosided)
+					{
+						if (token.substr(6,4) == "left")
+						{
+							if(token.find("body",11) != std::string::npos)
+							{
+								NewXData_two->_pageLeftBody[PageIndex]= content;
+							}
+							else	//title
+							{
+								NewXData_two->_pageLeftTitle[PageIndex]= content;
+							}
+						}
+						else	//right side
+						{
+							if (token.find("body",11) != std::string::npos)
+							{
+								NewXData_two->_pageRightBody[PageIndex]= content;
+							}
+							else	//title
+							{
+								NewXData_two->_pageRightTitle[PageIndex]= content;
+							}	
+						}
+					}
+					else	//onesided
+					{
+						if (token.substr(6,4) == "body")
+						{
+							NewXData_one->_pageBody[PageIndex]= content;
+						}
+						else	//title
+						{
+							NewXData_one->_pageTitle[PageIndex]= content;
+						}
+					}
+				}
+			} //end: page
+
+			token = tok.nextToken();
+		}
+
+		//cleaning up:
+		NewXData.xData->_guiPage = guiPage;
+		NewXData.xData->_numPages = numPages;
+		NewXData.xData->_sndPageTurn = sndPageTurn;
+
+		//Throw syntax exception if numPages wasn't definined?
+
+		if (twosided)	//resize, because numPages is not necessarily defined in the beginning.
+		{
+			if (NewXData_two->_pageLeftBody.size() != numPages)		//check if this really works.
+			{
+				NewXData_two->_pageLeftBody.resize(numPages,"");
+				NewXData_two->_pageRightBody.resize(numPages,"");
+				NewXData_two->_pageLeftTitle.resize(numPages,"");
+				NewXData_two->_pageRightTitle.resize(numPages,"");
+			}			
+		}
+		else
+		{
+			if (NewXData_one->_pageBody.size() != numPages)
+			{
+				NewXData_one->_pageBody.resize(numPages,"");
+				NewXData_one->_pageTitle.resize(numPages,"");
+			}
+		}
+
+		return NewXData;
+	}
+
+	std::string XDataManager::parseText(parser::DefTokeniser& tok)
+	{
+		std::stringstream out;
+		std::string token = tok.nextToken();
+		while (token != "}")		//Need to count entering variables!!!!
+		{
+			out << token << std::endl;
+			token = tok.nextToken();
+		}
+		return out.str();
+	}
+
+	void XDataManager::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)
+	{
+		while ( tok.hasMoreTokens() && CurrentDepth > 0)
+		{
+			std::string token = tok.nextToken();
+			if (token == "{")
+				CurrentDepth += 1;
+			else if (token == "}")
+				CurrentDepth -= 1;
+		}
+	}
 
 
 	inline std::string XDataManager::generateXDataDef(const XData& Data)
@@ -239,11 +457,11 @@ namespace readable
 				break;
 			case OverwriteMultDef:
 				//Replace the file no matter what.
-				boost::filesystem::ofstream file(Path, std::ios_base::out);
-				file << generateXDataDef(Data);			//Necessary: Check if writing was successful and throw exception otherwise.
+				//boost::filesystem::ofstream file(Path, std::ios_base::out);
+				//file << generateXDataDef(Data);			//Necessary: Check if writing was successful and throw exception otherwise.
 				return AllOk;
 				break;
-			default: return FileExists;
+			default: break; //return FileExists;
 			}
 		}
 
