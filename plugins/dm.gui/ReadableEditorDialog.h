@@ -19,6 +19,9 @@ public:
 	ReadableEditorDialog();
 
 	static void RunDialog(const cmd::ArgumentList& args);
+
+protected:
+	virtual void _postShow();
 };
 
 } // namespace ui

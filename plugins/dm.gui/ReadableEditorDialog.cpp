@@ -37,6 +37,14 @@ ReadableEditorDialog::ReadableEditorDialog() :
 	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
 }
 
+void ReadableEditorDialog::_postShow()
+{
+	// Initialise the GL widget after the widgets have been shown
+	_guiView->initialiseView();
+
+	BlockingTransientWindow::_postShow();
+}
+
 void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
 {
 	ReadableEditorDialog dialog;

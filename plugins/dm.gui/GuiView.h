@@ -40,12 +40,21 @@ public:
 		// TODO
 	}
 
+	/** 
+	 * Initialise the GL view. This clears the window and sets up the 
+	 * initial matrices.
+	 */
+	void initialiseView();
+
 protected:
 	// Widget implementation
 	virtual GtkWidget* _getWidget() const
 	{
 		return _widget;
 	}
+
+private:
+	static void onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self);
 };
 typedef boost::shared_ptr<GuiView> GuiViewPtr;
 
