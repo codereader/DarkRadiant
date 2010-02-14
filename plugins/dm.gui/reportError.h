@@ -18,4 +18,4 @@ namespace readable
 	}
 }
 
-#endif
+#endif	//REPORT_ERROR_H

@@ -4,14 +4,14 @@ namespace readable
 {
 	namespace
 	{
-		const int MAX_PAGE_COUNT = 20;
-		const std::string DEFAULT_TWOSIDED_LAYOUT = "guis/readables/books/book_calig_mac_humaine.gui";
-		const std::string DEFAULT_ONESIDED_LAYOUT = "guis/readables/sheets/sheet_paper_hand_nancy.gui";
-		const std::string DEFAULT_SNDPAGETURN = "readable_page_turn";
+		const int			MAX_PAGE_COUNT			= 20;
+		const std::string	DEFAULT_TWOSIDED_LAYOUT = "guis/readables/books/book_calig_mac_humaine.gui";
+		const std::string	DEFAULT_ONESIDED_LAYOUT = "guis/readables/sheets/sheet_paper_hand_nancy.gui";
+		const std::string	DEFAULT_SNDPAGETURN		= "readable_page_turn";
 	}
 
 //XData implementations:
-
+//->import:
 	XDataPtrList XData::importXDataFromFile(const std::string& FileName)
 	{
 		/* ToDO:
@@ -84,7 +84,8 @@ namespace readable
 			12)Only resize in the end depending on numPages and maxPageCount, to prevent dataloss.								->done
 			13)ErrorMessage when numPages has been raised																		->done
 			14)Maybe add a default guiPage layout for OneSided and TwoSided Objects if no guiPage layout has been defined.		->done
-			15)Check if guiPage statements are available for every page.														->done*/
+			15)Check if guiPage statements are available for every page.														->done
+			16)nextToken() can throw if no tokens are available. Think of something to catch that.*/
 
 		std::string name = tok.nextToken();
 		
@@ -279,7 +280,6 @@ namespace readable
 		NewXData.xData->_numPages = numPages;
 		NewXData.xData->_sndPageTurn = sndPageTurn;
 
-
 		NewXData.xData->resizeVectors(numPages);
 
 		return NewXData;
@@ -289,7 +289,7 @@ namespace readable
 	{
 		std::stringstream out;
 		std::string token = tok.nextToken();
-		while (token != "}")
+		while (tok.hasMoreTokens() && token != "}")
 		{
 			out << token << std::endl;
 			token = tok.nextToken();
@@ -297,95 +297,15 @@ namespace readable
 		return out.str();
 	}
 
-	void XData::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)	//not tested.
-	{
-		while ( tok.hasMoreTokens() && CurrentDepth > 0)
-		{
-			std::string token = tok.nextToken();
-			if (token == "{")
-				CurrentDepth += 1;
-			else if (token == "}")
-				CurrentDepth -= 1;
-		}
-	}
-
-
-	std::string XData::generateXDataDef()
-	{
-		//ToDo: 1) Howto handle '"' in String?
-		//		2) Non-shared_ptr allowed in this case?
-		//		3) Possibly check if e.g. the vectorsize of TwoSidedXD->_pageLeftTitle is smaller than _numPages.
-		//			So that no exceptions are thrown. (Depends on how XData objects are generated. Basically all
-		//			vectors should be of the size _numPages)
-
-		std::stringstream xDataDef;
-		xDataDef << _name << "\n" << "{" << "\n" << "\tprecache" << "\n" << "\t\"num_pages\"\t: \"" << _numPages << "\"\n";
-
-		std::stringstream ss;
-		std::string TempString;
-
-		xDataDef << getContentDef();
-
-		for (int n=1; n<=_numPages; n++)
-		{
-			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n-1] << "\"\n";
-		}
-		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n";//*/
-		
-		return xDataDef.str();		//Does this support enough characters??
-	}
-
-
-
-	int XData::getDefLength(boost::filesystem::fstream& file)
-	{
-		char ch;
-		while (!file.eof())
-		{
-			file.get(ch);
-			if (ch == '{')
-			{
-				int BracketCount = 1;
-				while (BracketCount > 0)
-				{
-					file.get(ch);
-					if (ch == '{')
-						BracketCount += 1;
-					else if (ch == '}')
-						BracketCount -= 1;
-				}
-				return ((int)file.tellg() - definitionStart + 1);
-			}
-		}
-		return 0;	//no appropriate bracketstructure was found.
-	}
-
-	std::string XData::getDefinitionNameFromXD(const boost::filesystem::path& Path)
-	{
-		std::string ReturnString;
-		boost::filesystem::ifstream file(Path, std::ios_base::in);
-		parser::BasicDefTokeniser<std::istream> tok(file);
-		bool FirstDef = true;
-		while (tok.hasMoreTokens())
-		{
-			if (FirstDef)
-				ReturnString = tok.nextToken();
-			else
-				return "";
-			FirstDef = false;
-			while (tok.nextToken() != "{") {}
-			jumpOutOfBrackets(tok, 1);
-		}
-		return ReturnString;
-	}
-
+//->export:	
 	FileStatus XData::xport(const std::string& FileName, const ExporterCommands& cmd)
 	{
 		/* ToDo:
 			1) Need to handle return 0 of getDefLength().
 			2) Test all possibilities.
 			3) Do I need to check fstream.open for success, as well as the write process? 
-			4) Does String support enough characters? */
+			4) Does String support enough characters? 
+			5) Handle the exception of getDefinitionNameFromXD(). */
 
 		boost::filesystem::path Path(FileName);		
 		if (boost::filesystem::exists(Path))
@@ -433,7 +353,10 @@ namespace readable
 				//Warn if the target file contains multiple definitions: return MultipleDefinitions. 
 				//Warn if the definition in the target file does not match the current definition: return DefinitionMisMatch
 				//else overwrite existing file.
-					std::string DefName = getDefinitionNameFromXD(Path);
+					std::string DefName;
+					try	{ DefName = getDefinitionNameFromXD(Path); }
+					catch (...) { /*Do Something...*/ }
+
 					if (DefName == _name)	//Definition will be overwritten...
 						break;
 					else if (DefName == "")	//MultipleDefinitions exist
@@ -456,11 +379,121 @@ namespace readable
 	}
 
 
-	
+	std::string XData::generateXDataDef()
+	{
+		//ToDo: 1) Howto handle '"' in String?				->done
+		//		2) Non-shared_ptr allowed in this case?		->removed.
+		//		3) Possibly check if e.g. the vectorsize of TwoSidedXD->_pageLeftTitle is smaller than _numPages.
+		//			So that no exceptions are thrown. (Depends on how XData objects are generated. Basically all
+		//			vectors should be of the size _numPages)	->fixed by resizeVectors-method
+
+		std::stringstream xDataDef;
+		xDataDef << _name << "\n" << "{" << "\n" << "\tprecache" << "\n" << "\t\"num_pages\"\t: \"" << _numPages << "\"\n";
+
+		std::stringstream ss;
+		std::string TempString;
+
+		xDataDef << getContentDef();
+
+		for (int n=1; n<=_numPages; n++)
+		{
+			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n-1] << "\"\n";
+		}
+		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n";//*/
+
+		return xDataDef.str();		//Does this support enough characters??
+	}
+
+	int XData::getDefLength(boost::filesystem::fstream& file)
+	{
+		/* ToDo:
+			1) Have to check if getpointer is raised after get() or before get() with reference to the returnvalue.*/
+		char ch;
+		while (!file.eof())
+		{
+			file.get(ch);
+			if (ch == '{')
+			{
+				int BracketCount = 1;
+				while (!file.eof() && BracketCount > 0)
+				{
+					file.get(ch);
+					if (ch == '{')
+						BracketCount += 1;
+					else if (ch == '}')
+						BracketCount -= 1;
+				}
+				return ((int)file.tellg() - definitionStart);
+			}
+		}
+		return 0;	//no appropriate bracketstructure was found.
+	}
+
+	std::string XData::getDefinitionNameFromXD(const boost::filesystem::path& Path)
+	{
+		/* ToDo:
+			1) Better use assertNextToken("{") here and let the caller catch.	->done*/
+		std::string ReturnString;
+		boost::filesystem::ifstream file(Path, std::ios_base::in);
+		parser::BasicDefTokeniser<std::istream> tok(file);
+		bool FirstDef = true;
+		while (tok.hasMoreTokens())
+		{
+			if (FirstDef)
+				ReturnString = tok.nextToken();
+			else
+				return "";
+			FirstDef = false;
+			tok.assertNextToken("{");
+			jumpOutOfBrackets(tok, 1);
+		}
+		return ReturnString;
+	}
+
+	std::string XData::generateTextDef(std::string String)
+	{
+		/* ToDo:
+			1) Possibly check if Quotecount per line is even and warn otherwise, because uneven quotecounts seem to be discarded.*/
+		std::stringstream ss;
+		std::stringstream xDataDef;
+		std::string TempString;
+		xDataDef << "\t{\n";
+		if (String != "")
+		{
+			ss << String;
+			while ( std::getline(ss, TempString) )	//replace "\n" and add an escape-character before quotes.
+			{
+				int QuotePos = -2;
+				while ( (QuotePos = TempString.find("\"",QuotePos+2) ) != std::string::npos )
+				{
+					TempString.insert(QuotePos, "\\");
+				}
+				xDataDef << "\t\t\"" << TempString << "\"\n";
+			}
+			xDataDef << "\t}\n";
+		}
+		else
+			xDataDef << "\t\t\"\"\n\t}\n";
+		return xDataDef.str();
+	}
+//->general:
 	void XData::resizeVectors(const int& TargetSize)
 	{
 		_guiPage.resize(TargetSize, "");
 	}
+
+	void XData::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)	//not tested.
+	{
+		while ( tok.hasMoreTokens() && CurrentDepth > 0)
+		{
+			std::string token = tok.nextToken();
+			if (token == "{")
+				CurrentDepth += 1;
+			else if (token == "}")
+				CurrentDepth -= 1;
+		}
+	}
+
 
 //TwoSidedXData implementations:
 
@@ -525,70 +558,24 @@ namespace readable
 	std::string TwoSidedXData::getContentDef()
 	{
 		std::stringstream xDataDef;
-		std::stringstream ss;
-		std::string TempString;
 
 		for (int n = 0; n < _numPages; n++)
 		{
 			//Page Left Title
-			xDataDef << "\t\"page" << n+1 << "_left_title\"\t:\n\t{\n";
-			if (_pageLeftTitle[n] != "")
-			{
-				ss << _pageLeftTitle[n];
-				while ( std::getline(ss, TempString) )	//replace "\n"
-				{
-					xDataDef << "\t\t\"" << TempString << "\"\n";
-				}
-				xDataDef << "\t}\n";
-			}
-			else
-				xDataDef << "\t\t\"\"\n\t}\n";
+			xDataDef << "\t\"page" << n+1 << "_left_title\"\t:\n";
+			xDataDef << generateTextDef(_pageLeftTitle[n]);
 
 			//Page Left Body
-			xDataDef << "\t\"page" << n+1 << "_left_body\"\t:\n\t{\n";
-			if (_pageLeftBody[n] != "")
-			{
-				ss.clear();
-				ss << _pageLeftBody[n];
-				while ( std::getline(ss, TempString) )	//replace "\n"
-				{
-					xDataDef << "\t\t\"" << TempString << "\"\n";
-				}
-				xDataDef << "\t}\n";
-			}
-			else
-				xDataDef << "\t\t\"\"\n\t}\n";
+			xDataDef << "\t\"page" << n+1 << "_left_body\"\t:\n";
+			xDataDef << generateTextDef(_pageLeftBody[n]);
 
 			//Page Right Title
-			xDataDef << "\t\"page" << n+1 << "_right_title\"\t:\n\t{\n";
-			if (_pageRightTitle[n] != "")
-			{
-				ss.clear();
-				ss << _pageRightTitle[n];
-				while ( std::getline(ss, TempString) )	//replace "\n"
-				{
-					xDataDef << "\t\t\"" << TempString << "\"\n";
-				}
-				xDataDef << "\t}\n";
-			}
-			else
-				xDataDef << "\t\t\"\"\n\t}\n";
+			xDataDef << "\t\"page" << n+1 << "_right_title\"\t:\n";
+			xDataDef << generateTextDef(_pageRightTitle[n]);
 
 			//Page Right Body
-			xDataDef << "\t\"page" << n+1 << "_right_body\"\t:\n\t{\n";
-			if (_pageRightBody[n] != "")
-			{
-				ss.clear();
-				ss << _pageRightBody[n];
-				while ( std::getline(ss, TempString) )	//replace "\n"
-				{
-					xDataDef << "\t\t\"" << TempString << "\"\n";
-				}
-				xDataDef << "\t}\n";
-			}
-			else
-				xDataDef << "\t\t\"\"\n\t}\n";
-
+			xDataDef << "\t\"page" << n+1 << "_right_body\"\t:\n";
+			xDataDef << generateTextDef(_pageRightBody[n]);
 		}
 		return xDataDef.str();
 	}
@@ -629,39 +616,16 @@ namespace readable
 	std::string OneSidedXData::getContentDef()
 	{
 		std::stringstream xDataDef;
-		std::stringstream ss;
-		std::string TempString;
 
 		for (int n = 0; n < _numPages; n++)
 		{
 			//Title
-			xDataDef << "\t\"page" << n+1 << "_title\"\t:\n\t{\n";
-			if (_pageTitle[n] != "")
-			{
-				ss << _pageTitle[n];
-				while ( std::getline(ss, TempString) )	//replace "\n"
-				{
-					xDataDef << "\t\t\"" << TempString << "\"\n";
-				}
-				xDataDef << "\t}\n";
-			}
-			else
-				xDataDef << "\t\t\"\"\n\t}\n";
+			xDataDef << "\t\"page" << n+1 << "_title\"\t:\n";
+			xDataDef << generateTextDef(_pageTitle[n]);
 
 			//Body
-			xDataDef << "\t\"page" << n+1 << "_body\"\t:\n\t{\n";
-			if (_pageBody[n] != "")
-			{
-				ss.clear();
-				ss << _pageBody[n];
-				while ( std::getline(ss, TempString) )	//replace "\n"
-				{
-					xDataDef << "\t\t\"" << TempString << "\"\n";
-				}
-				xDataDef << "\t}\n";
-			}
-			else
-				xDataDef << "\t\t\"\"\n\t}\n";
+			xDataDef << "\t\"page" << n+1 << "_body\"\t:\n";
+			xDataDef << generateTextDef(_pageBody[n]);
 		}
 
 		return xDataDef.str();

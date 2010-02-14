@@ -65,10 +65,11 @@ namespace readable
 		std::string generateXDataDef();
 		int getDefLength(boost::filesystem::fstream& file);
 		int definitionStart;
-		std::string getDefinitionNameFromXD(const boost::filesystem::path& Path);
+		std::string getDefinitionNameFromXD(const boost::filesystem::path& Path);	//can throw
 	
 	protected:
 		virtual std::string getContentDef() = 0;	//can throw
+		std::string generateTextDef(std::string String);
 	//Attributes:
 		std::string _name;
 		int _numPages;
