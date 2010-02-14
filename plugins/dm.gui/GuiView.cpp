@@ -8,8 +8,7 @@ namespace gui
 {
 
 GuiView::GuiView() :
-	_glWidget(new gtkutil::GLWidget(true, "GUI")),
-	_renderer(*_glWidget)
+	_glWidget(new gtkutil::GLWidget(true, "GUI"))
 {
 	// Construct the widgets
 	_widget = gtk_hbox_new(FALSE, 6);
@@ -67,11 +66,7 @@ void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(*self->_glWidget);
 
-	// Set up the render
-	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// TODO
+	self->_renderer.render();
 }
 
 }

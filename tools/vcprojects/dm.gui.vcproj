@@ -414,6 +414,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\plugins\dm.gui\Gui.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\Gui.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\GuiLoader.cpp"
 				>
 			</File>

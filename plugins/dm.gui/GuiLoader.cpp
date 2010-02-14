@@ -1,6 +1,6 @@
 #include "GuiLoader.h"
 
-namespace readable
+namespace gui
 {
 
-} //namespace readable
+} //namespace
