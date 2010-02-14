@@ -10,14 +10,12 @@ namespace gui
 class GuiRenderer :
 	public boost::noncopyable
 {
-private:
-	// The target GL widget
-	gtkutil::GLWidget& _glWidget;
-
 public:
-	// Construct a new renderer, taking the target GL widget as argument
-	GuiRenderer(gtkutil::GLWidget& glWidget);
+	// Construct a new renderer
+	GuiRenderer();
 
+	// Starts rendering the attached GUI
+	// The GL context must be set before calling this method
 	void render();
 };
 

@@ -1,5 +1,9 @@
+#ifndef GuiLoader_h__
+#define GuiLoader_h__
 
-namespace readable
+namespace gui
 {
 
-} //namespace readable
+} //namespace
+
+#endif // GuiLoader_h__
