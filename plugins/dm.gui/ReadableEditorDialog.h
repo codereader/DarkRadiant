@@ -3,22 +3,20 @@
 
 #include "icommandsystem.h"
 
-#include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/dialog/DialogElements.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
+#include "GuiView.h"
 
 namespace ui
 {
 
 class ReadableEditorDialog :
-	public gtkutil::Dialog
+	public gtkutil::BlockingTransientWindow
 {
 private:
-	IDialog::Handle _pathEntry;
+	gui::GuiViewPtr _guiView;
 
 public:
 	ReadableEditorDialog();
-
-	//std::string getFixupFilePath();
 
 	static void RunDialog(const cmd::ArgumentList& args);
 };
