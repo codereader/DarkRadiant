@@ -22,6 +22,7 @@ namespace readable
 		FileExists,
 		DefinitionExists,
 		MultipleDefinitions,
+		DefinitionMismatch,
 		AllOk
 	};
 	enum ExporterCommands
@@ -32,7 +33,7 @@ namespace readable
 		Overwrite,
 		OverwriteMultDef		
 	};
-	struct XDataParse
+	struct XDataParse		//replace with std::map ?
 	{
 		XDataPtr xData;
 		StringList error_msg;
@@ -62,7 +63,9 @@ namespace readable
 		static std::string parseText(parser::DefTokeniser& tok);
 		static void jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth);
 		std::string generateXDataDef();
-		
+		int getDefLength(boost::filesystem::fstream& file);
+		int definitionStart;
+		std::string getDefinitionNameFromXD(const boost::filesystem::path& Path);
 	
 	protected:
 		virtual std::string getContentDef() = 0;	//can throw
@@ -106,9 +109,13 @@ namespace readable
 
 		/* Exports the XData class formated properly into the File specified in 
 		Filename. If the file already exists this function can overwrite the file or merge.
-		If the definition contained in XData already exists, it can be merged into the file,
-		replacing the old one. Throws corresponding runtime_error exceptions in these cases
-		and if the file to be overwritten contains more than one definitions.*/
+		-Merge: If the definition already exists, DefinitionExists is returned. This definition
+			can be overwritten using the command MergeAndOverWriteExisting. Otherwise the definition
+			is appended.
+		-Overwrite: Returns DefinitionMismatch if the definition in the targetfile does not match
+			the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
+			is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the
+			file no matter what.*/
 		FileStatus xport(const std::string& FileName, const ExporterCommands& cmd);
 
 		/* Imports a list of XData objects from the File specified by Filename. Throws

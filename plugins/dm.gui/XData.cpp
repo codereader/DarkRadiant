@@ -336,26 +336,110 @@ namespace readable
 	}
 
 
+
+	int XData::getDefLength(boost::filesystem::fstream& file)
+	{
+		char ch;
+		while (!file.eof())
+		{
+			file.get(ch);
+			if (ch == '{')
+			{
+				int BracketCount = 1;
+				while (BracketCount > 0)
+				{
+					file.get(ch);
+					if (ch == '{')
+						BracketCount += 1;
+					else if (ch == '}')
+						BracketCount -= 1;
+				}
+				return ((int)file.tellg() - definitionStart + 1);
+			}
+		}
+		return 0;	//no appropriate bracketstructure was found.
+	}
+
+	std::string XData::getDefinitionNameFromXD(const boost::filesystem::path& Path)
+	{
+		std::string ReturnString;
+		boost::filesystem::ifstream file(Path, std::ios_base::in);
+		parser::BasicDefTokeniser<std::istream> tok(file);
+		bool FirstDef = true;
+		while (tok.hasMoreTokens())
+		{
+			if (FirstDef)
+				ReturnString = tok.nextToken();
+			else
+				return "";
+			FirstDef = false;
+			while (tok.nextToken() != "{") {}
+			jumpOutOfBrackets(tok, 1);
+		}
+		return ReturnString;
+	}
+
 	FileStatus XData::xport(const std::string& FileName, const ExporterCommands& cmd)
 	{
-		boost::filesystem::path Path(FileName);
-		
+		/* ToDo:
+			1) Need to handle return 0 of getDefLength().
+			2) Test all possibilities.
+			3) Do I need to check fstream.open for success, as well as the write process? 
+			4) Does String support enough characters? */
+
+		boost::filesystem::path Path(FileName);		
 		if (boost::filesystem::exists(Path))
 		{
-			//Need to check out DefTokeniser and see if I do these things with help of that class or manually.
 			switch (cmd)
 			{
-			case Merge: 
-				//Check if definition already exists. If it does not, append the definition to the file.
-				//If it does: return DefinitionExists
-				break;
+			case Merge:
+				{
+				//Check if definition already exists and return DefinitionExists. If it does not, append the definition to the file.
+					boost::filesystem::fstream file(Path, std::ios_base::in | std::ios_base::out);
+					std::stringstream ss;
+					ss << file;
+					definitionStart = ss.str().find(_name,0);
+					if (definitionStart != std::string::npos)
+					{
+						file.close();
+						return DefinitionExists;
+					}
+					file.seekg(std::ios_base::end);
+					file << generateXDataDef();
+					file.close();
+					return AllOk;
+				}
 			case MergeAndOverwriteExisting: 
+				{	
 				//Find the old definition in the target file and delete it. Append the new definition.
-				break;
+				//definitionStart has been set in the first iteration of this method.
+					boost::filesystem::fstream file(Path, std::ios_base::in);
+					file.seekg(definitionStart);
+					int DefLength = getDefLength(file);							//Need to handle return 0
+					file.seekg(0);
+					std::stringstream ss;
+					ss << file;
+					file.close();
+					std::string OutString = ss.str();							//Does string support enough characters for this operation?
+					OutString.erase(definitionStart, DefLength);
+					OutString.insert(definitionStart, generateXDataDef());
+					file.open(Path, std::ios_base::out | std::ios_base::trunc);
+					file << OutString;
+					file.close();
+					return AllOk;
+				}
 			case Overwrite: 
+				{
 				//Warn if the target file contains multiple definitions: return MultipleDefinitions. 
+				//Warn if the definition in the target file does not match the current definition: return DefinitionMisMatch
 				//else overwrite existing file.
-				break;
+					std::string DefName = getDefinitionNameFromXD(Path);
+					if (DefName == _name)	//Definition will be overwritten...
+						break;
+					else if (DefName == "")	//MultipleDefinitions exist
+						return MultipleDefinitions;
+					return DefinitionMismatch;
+				}
 			case OverwriteMultDef:
 				//Replace the file no matter what.
 				break;
@@ -364,7 +448,7 @@ namespace readable
 		}
 
 		//Write the definition into the file.
-		boost::filesystem::ofstream file(Path, std::ios_base::out);		//check if file open was successful?
+		boost::filesystem::ofstream file(Path, std::ios_base::out | std::ios_base::trunc);		//check if file open was successful?
 		file << generateXDataDef();
 		file.close();
 
