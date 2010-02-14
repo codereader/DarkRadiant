@@ -430,6 +430,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.gui\GuiManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\GuiManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\GuiRenderer.cpp"
 				>
 			</File>
