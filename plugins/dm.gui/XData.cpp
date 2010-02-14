@@ -5,6 +5,9 @@ namespace readable
 	namespace
 	{
 		const int MAX_PAGE_COUNT = 20;
+		const std::string DEFAULT_TWOSIDED_LAYOUT = "guis/readables/books/book_calig_mac_humaine.gui";
+		const std::string DEFAULT_ONESIDED_LAYOUT = "guis/readables/sheets/sheet_paper_hand_nancy.gui";
+		const std::string DEFAULT_SNDPAGETURN = "readable_page_turn";
 	}
 
 //XData implementations:
@@ -64,23 +67,35 @@ namespace readable
 		/* TODO:
 			1) Support for import-directive
 			2) This is pretty ugly code. There's gotta be a better way to do this than with two separate shared pointers. 
-				The default resize to MAX_PAGE_COUNT is also uncool.
-			3) Add try/catch blocks.	done
-			4) Possibly throw syntax-exception if numPages hasn't been defined or reconstruct from the content-vectors.
-			5) Try/catch blocks around direct vector access to prevent vector subscript out of range	done
-			6) Collect general syntax errors in a struct for a return-value... Also in subclass. Add function that scrolls out to the next definition.	done
-			7) Fix detection of exceeding content-dimensions.	done
-			8) When guiPages is set, the other vectors should be resized as well.
-			9) Pages might be discarded during resize.*/
+				The default resize to MAX_PAGE_COUNT is also uncool.															->done
+			3) Add try/catch blocks.																							->done
+			4) Possibly throw syntax-exception if numPages hasn't been defined or reconstruct from the content-vectors or 
+				set it automatically depending on the maxPageCount variable.													->done
+			5) Try/catch blocks around direct vector access to prevent vector subscript out of range							->done
+			6) Collect general syntax errors in a struct for a return-value... Also in subclass. Add function 
+				that scrolls out to the next definition.																		->done
+			7) Fix detection of exceeding content-dimensions.																	->done
+			8) When guiPages is set, the other vectors should be resized as well.												->done
+			9) Pages might be discarded during resize. Maintain a maxPageCount variable... Page-creation conditions possibly 
+				have to be revisited. maxPageCount should only be raised for pages that have content.							->done
+			10)If GuiPageCount is exceeded, the gui page should be stored anyway, because numPages might be raised later. 
+				Resize the vector in the end and store it in the XData object. Errormessage should also be handled differently then.	->done
+			11)Have to check the new virtual methods for possible exceptions.
+			12)Only resize in the end depending on numPages and maxPageCount, to prevent dataloss.								->done
+			13)ErrorMessage when numPages has been raised																		->done
+			14)Maybe add a default guiPage layout for OneSided and TwoSided Objects if no guiPage layout has been defined.		->done
+			15)Check if guiPage statements are available for every page.														->done*/
 
 		std::string name = tok.nextToken();
 		
 		XDataParse NewXData;
+		StringList guiPageError;
+		int maxPageCount = 0;
+		int maxGuiNumber = 0;
+		std::string guiPageDef = "";
 
-		std::string ErrorString;
-
-		int numPages = MAX_PAGE_COUNT;
-		std::string sndPageTurn = "";
+		int numPages = 0;
+		std::string sndPageTurn = DEFAULT_SNDPAGETURN;
 		StringList guiPage;
 		guiPage.resize(MAX_PAGE_COUNT,"");
 		try
@@ -99,6 +114,21 @@ namespace readable
 		{
 			if (token.substr(0,4) == "page")
 			{
+				//Now that it is known, whether we are dealing with a Two- or OneSidedXDataObject, create the XData object.
+				if (!NewXData.xData)
+				{
+					if (token.find("left",6) != std::string::npos || token.find("right",6) != std::string::npos) //TwoSided
+					{
+						NewXData.xData = XDataPtr(new TwoSidedXData(name));
+						NewXData.xData->resizeVectors(MAX_PAGE_COUNT);
+					}
+					else //OneSided
+					{
+						NewXData.xData = XDataPtr(new OneSidedXData(name));
+						NewXData.xData->resizeVectors(MAX_PAGE_COUNT);
+					}
+				}
+
 				//Check Syntax
 				tok.skipTokens(1);
 				try
@@ -132,85 +162,34 @@ namespace readable
 				std::string content = parseText(tok);
 				if (PageIndex >= numPages )
 				{
-					if (content.length() > 2) //numPages is raised automatically, if a page with content is detected...
+					if (content.length() > 1) //numPages is raised automatically, if a page with content is detected...		//unclean
 					{
 						numPages = PageIndex+1;
 						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. Raising numPages to " + number +"...\n");
-						//resize vectors:
-						guiPage.resize(numPages,"");
-						if (NewXData.xData)
-							NewXData.xData->resizeVectors(numPages);
 					}
 					else
+					{
 						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. However, this page does not contain any text and is discarded...\n");
+						token = tok.nextToken();
+						continue;
+					}
 				}
 
-				//Create the XData object
-				if (!NewXData.xData)
-				{
-					if (token.substr(6,4) == "left" || token.substr(6,5) == "right") //TwoSided
-					{
-						NewXData.xData = XDataPtr(new TwoSidedXData(name));
-						NewXData.xData->resizeVectors(numPages);
-					}
-					else //OneSided
-					{
-						NewXData.xData = XDataPtr(new OneSidedXData(name));
-						NewXData.xData->resizeVectors(numPages);
-					}
-				}
+				//Refresh the maxPageCount variable if this page has content.
+				if (content.length() > 1)		//unclean
+					if (maxPageCount < PageIndex+1)
+						maxPageCount = PageIndex+1;
 
 				//Write the content into the XData object
-				if (PageIndex < numPages)
-				{	
-					SideChooser side;
-					if (token.find("left",6) != std::string::npos)	//SideChooser is discarded on OneSidedXData...
-						side = Left;
-					else
-						side = Right;
-					if (token.find("body",6) != std::string::npos)
-						NewXData.xData->setContent(Body, PageIndex, side, content);
-					else
-						NewXData.xData->setContent(Title, PageIndex, side, content);
-
-					/*
-					if (twosided)
-					{
-					if (token.substr(6,4) == "left")
-					{
-					if(token.find("body",11) != std::string::npos)
-					{
-					NewXData_two->_pageLeftBody[PageIndex]= content;
-					}
-					else	//title
-					{
-					NewXData_two->_pageLeftTitle[PageIndex]= content;
-					}
-					}
-					else	//right side
-					{
-					if (token.find("body",11) != std::string::npos)
-					{
-					NewXData_two->_pageRightBody[PageIndex]= content;
-					}
-					else	//title
-					{
-					NewXData_two->_pageRightTitle[PageIndex]= content;
-					}	
-					}
-					}
-					else	//onesided
-					{
-					if (token.substr(6,4) == "body")
-					{
-					NewXData_one->_pageBody[PageIndex]= content;
-					}
-					else	//title
-					{
-					NewXData_one->_pageTitle[PageIndex]= content;
-					}
-					}//*/
-				}
+				SideChooser side;
+				if (token.find("left",6) != std::string::npos)	//SideChooser is discarded on OneSidedXData...
+					side = Left;
+				else
+					side = Right;
+				if (token.find("body",6) != std::string::npos)
+					NewXData.xData->setContent(Body, PageIndex, side, content);
+				else
+					NewXData.xData->setContent(Title, PageIndex, side, content);
 			} //end: page
 			else if (token.substr(0,8) == "gui_page")
 			{
@@ -228,12 +207,14 @@ namespace readable
 					NewXData.xData.reset();
 					return NewXData;	
 				}
-				if (guiNumber < guiPage.size())			//Maybe the guiPage should be stored anyway, because we don't know yet, whether numPages will be raised by pagedefinitions...
-					guiPage[ guiNumber ] = tok.nextToken();
-				else
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
+				if (maxGuiNumber < guiNumber)
+					maxGuiNumber = guiNumber;
+				guiPageDef = tok.nextToken();
+				guiPage[ guiNumber ] = guiPageDef;		//could throw if guiNumber >= MAX_PAGE_COUNT
+				if (guiNumber >= numPages)
+					guiPageError.push_back("[XDataManager::importXData] Error in definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
 			}
-			else if (token == "num_pages")	//Also resize the other vectors here... Maybe check if a page with a higher number has already been added and warn accordingly.
+			else if (token == "num_pages")
 			{
 				tok.skipTokens(1);
 				std::string number = tok.nextToken();
@@ -248,10 +229,6 @@ namespace readable
 					NewXData.xData.reset();
 					return NewXData;
 				}
-				//resize vectors:
-				guiPage.resize(numPages, "");
-				if (NewXData.xData)
-					NewXData.xData->resizeVectors(numPages);
 			}
 			else if (token == "import")			//Not yet supported...
 			{
@@ -270,31 +247,40 @@ namespace readable
 		}
 
 		//cleaning up:
+		if (maxPageCount > numPages) //corrects a faulty numPages value
+		{
+			numPages = maxPageCount;
+			NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name
+				+ ". The specified numPages statement did not match the amount of pages with content.\n\tnumPages has been raised to " 
+				+ boost::lexical_cast<std::string>(numPages) + ".");
+		}
+		if ( maxGuiNumber+1 > numPages)		//Append missing GUI-errormessages... Until now, it wasn't clear how many guipages are actually discarded.
+		{
+			int diff = maxGuiNumber + 1 - maxPageCount;
+			for (int n = guiPageError.size()-diff; n<guiPageError.size(); n++)
+			{
+				NewXData.error_msg.push_back(guiPageError[n]);
+			}
+		}
+		// Check if guiPage-statements for all pages are available.
+		if (guiPageDef == "")
+		{
+			if (NewXData.xData->getPageLayout() == TwoSided)
+				guiPageDef = DEFAULT_TWOSIDED_LAYOUT; 
+			else
+				guiPageDef = DEFAULT_ONESIDED_LAYOUT;
+		}
+		for (int n=0; n<numPages; n++ )
+		{
+			if (guiPage[n] == "")
+				guiPage[n] = guiPageDef;
+		}
 		NewXData.xData->_guiPage = guiPage;
 		NewXData.xData->_numPages = numPages;
 		NewXData.xData->_sndPageTurn = sndPageTurn;
 
-		//Throw syntax exception if numPages wasn't definined?
-		
-		/*
-		if (twosided)	//resize, because numPages is not necessarily defined in the beginning.
-		{
-			if (NewXData_two->_pageLeftBody.size() != numPages)		//check if this really works.
-			{
-				NewXData_two->_pageLeftBody.resize(numPages,"");
-				NewXData_two->_pageRightBody.resize(numPages,"");
-				NewXData_two->_pageLeftTitle.resize(numPages,"");
-				NewXData_two->_pageRightTitle.resize(numPages,"");
-			}			
-		}
-		else
-		{
-			if (NewXData_one->_pageBody.size() != numPages)
-			{
-				NewXData_one->_pageBody.resize(numPages,"");
-				NewXData_one->_pageTitle.resize(numPages,"");
-			}
-		}//*/
+
+		NewXData.xData->resizeVectors(numPages);
 
 		return NewXData;
 	}
