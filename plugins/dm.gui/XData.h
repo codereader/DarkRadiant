@@ -10,6 +10,8 @@
 #include "reportError.h"
 #include <stdio.h>
 
+/* ToDo:
+	1) Use VFS instead of boost::filesystem for importer. */
 
 namespace readable
 {
