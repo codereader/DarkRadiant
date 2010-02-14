@@ -21,6 +21,8 @@ GuiView::GuiView() :
 		GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | 
 		GDK_POINTER_MOTION_MASK);
 	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onGLDraw), this);
+
+	setGui("guis/tdm_objectives.gui");
 }
 
 void GuiView::initialiseView()

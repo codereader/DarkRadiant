@@ -4,6 +4,9 @@
 #include "gtkutil/ifc/Widget.h"
 #include "gtkutil/GLWidget.h"
 #include "GuiRenderer.h"
+#include "Gui.h"
+
+#include "GuiManager.h"
 
 namespace gui
 {
@@ -27,17 +30,21 @@ private:
 	GuiRenderer _renderer;
 
 	// The GUI to render
-	// GuiPtr _gui;
+	GuiPtr _gui;
 
 public:
 	GuiView();
 
-	// Sets the GUI to render 
-	// (TODO: replace this with a setGui(const GuiPtr& gui) method)
-	// This class shouldn't be responsible of loading the GUI file
+	// Sets the GUI to render (by VFS path)
 	void setGui(const std::string& gui)
 	{
-		// TODO
+		_gui = GuiManager::Instance().getGui(gui);
+	}
+
+	// Sets the GUI to render (can be NULL to clear this view)
+	void setGui(const GuiPtr& gui)
+	{
+		_gui = gui;
 	}
 
 	/** 
