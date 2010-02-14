@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "debugging/debugging.h"
 //#include "iimage.h"
+#include "iuimanager.h"
 #include "ifilesystem.h"
 
 #include "ReadableEditorDialog.h"
