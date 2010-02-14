@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib opengl32.lib glu32.lib pango-1.0.lib pangowin32-1.0.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w64deps\gtk2\lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w32deps\gtk2\lib"
 				ModuleDefinitionFile="$(SolutionDir)\..\..\w32deps\gtkglext\gdk\gdkglext.def"
 				GenerateDebugInformation="true"
 			/>
@@ -202,7 +202,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib opengl32.lib glu32.lib pango-1.0.lib pangowin32-1.0.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w64deps\gtk2\lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w32deps\gtk2\lib"
 				ModuleDefinitionFile="$(SolutionDir)\..\..\w32deps\gtkglext\gdk\gdkglext.def"
 				GenerateDebugInformation="true"
 			/>
