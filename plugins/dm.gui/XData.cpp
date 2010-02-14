@@ -22,23 +22,16 @@ namespace readable
 
 		//Check if file exists and its extension.
 		if (Path.extension() != ".xd")
-		{
 			reportError("[XDataManager::importXData] FileExtension is not .xd: " + FileName + "\n");
-		}
 		if (!boost::filesystem::exists(Path))
-		{
 			reportError("[XDataManager::importXData] Specified file does not exist: " + FileName + "\n");
-		}
 		
 		//Open File and check for sucess.
 		boost::filesystem::ifstream file(Path, std::ios_base::in);
 		if (file.is_open() == false)
-		{
 			reportError("[XDataManager::importXData] Failed to open file: " + FileName + "\n");
-		}
 
 		StringList ErrorList;
-
 		parser::BasicDefTokeniser<std::istream> tok(file);
 
 		while (tok.hasMoreTokens())
@@ -85,7 +78,8 @@ namespace readable
 			13)ErrorMessage when numPages has been raised																		->done
 			14)Maybe add a default guiPage layout for OneSided and TwoSided Objects if no guiPage layout has been defined.		->done
 			15)Check if guiPage statements are available for every page.														->done
-			16)nextToken() can throw if no tokens are available. Think of something to catch that.*/
+			16)nextToken() can throw if no tokens are available. Think of something to catch that.
+			17)Check how the DefTokeniser reacts on escaped quotes. */
 
 		std::string name = tok.nextToken();
 		
@@ -99,10 +93,7 @@ namespace readable
 		std::string sndPageTurn = DEFAULT_SNDPAGETURN;
 		StringList guiPage;
 		guiPage.resize(MAX_PAGE_COUNT,"");
-		try
-		{
-			tok.assertNextToken("{");		//throws when syntax error
-		}
+		try	{ tok.assertNextToken("{"); }		//throws when syntax error
 		catch (...)
 		{
 			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ". '{' expected. Jumping to next XData definition...\n");
@@ -132,10 +123,7 @@ namespace readable
 
 				//Check Syntax
 				tok.skipTokens(1);
-				try
-				{
-					tok.assertNextToken("{");		//throws when syntax error
-				}
+				try { tok.assertNextToken("{"); }		//throws when syntax error
 				catch (...)
 				{
 					NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Jumping to next XData definition...\n");
@@ -147,10 +135,7 @@ namespace readable
 				//Acquire PageIndex
 				int PageIndex;
 				char number = token.c_str()[4];
-				try
-				{
-					PageIndex = boost::lexical_cast<int>(number)-1;	//can throw...
-				}
+				try { PageIndex = boost::lexical_cast<int>(number)-1; }	//can throw...
 				catch (...)
 				{
 					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number. Jumping to next XData definition...\n");;
@@ -197,10 +182,7 @@ namespace readable
 				tok.skipTokens(1);
 				std::string number = token.substr(token.length()-1,1);
 				int guiNumber;
-				try
-				{
-					guiNumber = boost::lexical_cast<int>(number)-1;
-				}
+				try	{ guiNumber = boost::lexical_cast<int>(number)-1; }
 				catch (...)
 				{
 					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", gui_page statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
@@ -219,10 +201,7 @@ namespace readable
 			{
 				tok.skipTokens(1);
 				std::string number = tok.nextToken();
-				try
-				{					
-					numPages = boost::lexical_cast<int>(number);	//throws
-				}
+				try { numPages = boost::lexical_cast<int>(number); }	//throws
 				catch(...)
 				{
 					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
