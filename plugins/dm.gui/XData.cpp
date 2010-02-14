@@ -47,12 +47,12 @@ namespace readable
 			if (parsed.xData)
 				ReturnVector.push_back(parsed.xData);
 			if (parsed.error_msg.size()>0)
-				for (int n=0; n<parsed.error_msg.size(); n++)
+				for (unsigned int n=0; n<parsed.error_msg.size(); n++)
 					ErrorList.push_back(parsed.error_msg[n]);
 		}
 
 		//temporary
-		for (int n = 0; n<ErrorList.size(); n++)
+		for (unsigned int n = 0; n<ErrorList.size(); n++)
 			std::cerr << ErrorList[n];
 
 		if (ErrorList.size() > 0)
@@ -257,7 +257,7 @@ namespace readable
 		if ( maxGuiNumber+1 > numPages)		//Append missing GUI-errormessages... Until now, it wasn't clear how many guipages are actually discarded.
 		{
 			int diff = maxGuiNumber + 1 - maxPageCount;
-			for (int n = guiPageError.size()-diff; n<guiPageError.size(); n++)
+			for (unsigned int n = guiPageError.size()-diff; n<guiPageError.size(); n++)
 			{
 				NewXData.error_msg.push_back(guiPageError[n]);
 			}
@@ -358,16 +358,13 @@ namespace readable
 				break;
 			case OverwriteMultDef:
 				//Replace the file no matter what.
-				//boost::filesystem::ofstream file(Path, std::ios_base::out);
-				//file << generateXDataDef(Data);			//Necessary: Check if writing was successful and throw exception otherwise.
-				return AllOk;
 				break;
-			default: break; //return FileExists;
+			default: return FileExists;
 			}
 		}
 
 		//Write the definition into the file.
-		boost::filesystem::ofstream file(Path, std::ios_base::out);
+		boost::filesystem::ofstream file(Path, std::ios_base::out);		//check if file open was successful?
 		file << generateXDataDef();
 		file.close();
 

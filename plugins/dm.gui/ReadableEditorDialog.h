@@ -1,5 +1,5 @@
-#ifndef _FIXUP_MAP_DIALOG_H_
-#define _FIXUP_MAP_DIALOG_H_
+#ifndef _READABLE_EDITOR_DIALOG_H_
+#define _READABLE_EDITOR_DIALOG_H_
 
 #include "icommandsystem.h"
 
@@ -26,4 +26,4 @@ protected:
 
 } // namespace ui
 
-#endif /* _FIXUP_MAP_DIALOG_H_ */
+#endif /* _READABLE_EDITOR_DIALOG_H_ */
