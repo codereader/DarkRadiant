@@ -50,9 +50,29 @@ public:
 		);
 
 		//Testbench for xdata importer/exporter:
-		readable::XDataPtrList testing = readable::XData::importXDataFromFile("dm.gui_testing/training_mission.xd");
+		readable::XDataPtrList testing;
+		std::string filename;
+		/*
+		testing = readable::XData::importXDataFromFile("dm.gui_testing/training_mission.xd");
 		testing[3]->xport("dm.gui_testing/training_mission_exported.xd", readable::Normal);
-		testing[0]->xport("dm.gui_testing/training_mission_exported2.xd", readable::Normal);
+		testing[0]->xport("dm.gui_testing/training_mission_exported2.xd", readable::Normal);//*/
+		/*
+		filename = "dm.gui_testing/missing_all_one.xd";
+		testing = readable::XData::importXDataFromFile(filename);
+		testing[0]->xport(filename + ".txt", readable::Normal);
+		filename = "dm.gui_testing/missing_all_two.xd";
+		testing = readable::XData::importXDataFromFile(filename);
+		testing[0]->xport(filename + ".txt", readable::Normal);//*/
+		filename = "dm.gui_testing/num_guip_one.xd";
+		testing = readable::XData::importXDataFromFile(filename);
+		//testing[0]->xport(filename + ".txt", readable::Normal);
+		/*filename = "dm.gui_testing/num_guip_two.xd";
+		testing = readable::XData::importXDataFromFile(filename);
+		testing[0]->xport(filename + ".txt", readable::Normal);
+		filename = "dm.gui_testing/quote_test.xd";
+		testing = readable::XData::importXDataFromFile(filename);
+		testing[0]->xport(filename + ".txt", readable::Normal);//*/
+
 	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;
