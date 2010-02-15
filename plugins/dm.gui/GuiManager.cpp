@@ -4,7 +4,9 @@
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "parser/DefTokeniser.h"
-#include <boost/shared_array.hpp>
+#include "stream/DeclFileInputStream.h"
+
+#include "Gui.h"
 
 namespace gui
 {
@@ -31,63 +33,23 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 
 GuiPtr GuiManager::loadGui(const std::string& guiPath)
 {
-	// Load the complete source of one GUI into memory
-	// This is outsourced into its own method, as #include statements need to be resolved.
-	// This process could be changed into live parsing if we had a special inputstream taking
-	// care of the #includes on the fly (FIXME).
-	std::string guiSource = loadGuiSource(guiPath);
+	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(guiPath);
 
-	// Couldn't load file, result is empty, return NULL
-	if (guiSource.empty()) return GuiPtr();
+	if (file == NULL) return GuiPtr();
 
-	parser::BasicDefTokeniser<std::string> tokeniser(guiSource);
+	// Construct a new Declaration File Stream, which is able to handle #includes
+	DeclFileInputStream stream(file);
+	std::istream is(&stream);
 
-	return GuiPtr();
+	parser::BasicDefTokeniser<std::istream> tokeniser(is);
+
+	return Gui::createFromTokens(tokeniser);
 }
 
 GuiManager& GuiManager::Instance()
 {
 	static GuiManager _instance;
 	return _instance;
-}
-
-std::string GuiManager::loadGuiSource(const std::string& guiPath)
-{
-	std::string returnValue;
-
-	returnValue = loadFile(guiPath);
-
-	// TODO: Resolve #include statements or implement smart InputStream
-
-	return returnValue;
-}
-
-std::string GuiManager::loadFile(const std::string& vfsPath)
-{
-	std::string returnValue;
-
-	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(vfsPath);
-
-	if (file == NULL) return returnValue;
-
-	TextInputStream& stream = file->getInputStream();
-
-	const std::size_t BUF_SIZE = 8192;
-	boost::shared_array<char> buffer(new char[BUF_SIZE+1]);
-
-	while (true)
-	{
-		std::size_t bytesRead = stream.read(buffer.get(), BUF_SIZE);
-
-		if (bytesRead == 0) break;
-
-		// NULL-terminate the string
-		buffer[bytesRead] = '\0';
-
-		returnValue += buffer.get();
-	}
-
-	return returnValue;
 }
 
 } // namespace gui

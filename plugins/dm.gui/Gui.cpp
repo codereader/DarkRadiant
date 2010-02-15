@@ -7,4 +7,14 @@ Gui::Gui()
 {
 }
 
+GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
+{
+	while (tokeniser.hasMoreTokens())
+	{
+		tokeniser.nextToken();
+	}
+
+	return GuiPtr();
+}
+
 } // namespace
