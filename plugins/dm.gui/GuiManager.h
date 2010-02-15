@@ -33,8 +33,6 @@ public:
 
 private:
 	GuiPtr loadGui(const std::string& guiPath);
-	std::string loadGuiSource(const std::string& guiPath);
-	std::string loadFile(const std::string& vfsPath);
 };
 
 } // namespace
