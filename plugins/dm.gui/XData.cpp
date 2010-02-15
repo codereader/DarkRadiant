@@ -33,12 +33,15 @@ namespace readable
 
 		StringList ErrorList;
 		parser::BasicDefTokeniser<std::istream> tok(file);
+		unsigned int ErrorCount = 0;
 
 		while (tok.hasMoreTokens())
 		{
 			XDataParse parsed = parseXDataDef(tok);
 			if (parsed.xData)
 				ReturnVector.push_back(parsed.xData);
+			else
+				ErrorCount += 1;
 			if (parsed.error_msg.size()>0)
 				for (unsigned int n=0; n<parsed.error_msg.size(); n++)
 					ErrorList.push_back(parsed.error_msg[n]);
@@ -49,7 +52,7 @@ namespace readable
 			std::cerr << ErrorList[n];
 
 		if (ErrorList.size() > 0)
-			std::cerr << "[XDataManager::importXData] Import finished with " << ErrorList.size() << " errors/warnings. " << ReturnVector.size() << " XData-definitions imported." << std::endl;
+			std::cerr << "[XDataManager::importXData] Import finished with " << ErrorList.size() << " error(s)/warning(s). " << ReturnVector.size() << " XData-definition(s) successfully imported, but failed to import at least " << ErrorCount << " definitions." << std::endl;
 
 		file.close();
 		return ReturnVector;
@@ -79,7 +82,8 @@ namespace readable
 			14)Maybe add a default guiPage layout for OneSided and TwoSided Objects if no guiPage layout has been defined.		->done
 			15)Check if guiPage statements are available for every page.														->done
 			16)nextToken() can throw if no tokens are available. Think of something to catch that.
-			17)Check how the DefTokeniser reacts on escaped quotes. */
+			17)Check how the DefTokeniser reacts on escaped quotes.																->done
+			18)Warnings for missing statements.																					->done*/
 
 		std::string name = tok.nextToken();
 		
@@ -90,13 +94,14 @@ namespace readable
 		std::string guiPageDef = "";
 
 		int numPages = 0;
-		std::string sndPageTurn = DEFAULT_SNDPAGETURN;
+		std::string sndPageTurn = "";
 		StringList guiPage;
 		guiPage.resize(MAX_PAGE_COUNT,"");
 		try	{ tok.assertNextToken("{"); }		//throws when syntax error
 		catch (...)
 		{
-			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ". '{' expected. Jumping to next XData definition...\n");
+			while (tok.nextToken() != "{") {}
+			NewXData.error_msg.push_back("[XDataManager::importXData] Syntaxerror in definition: " + name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			jumpOutOfBrackets(tok,1);
 			return NewXData;
 		}
@@ -126,7 +131,7 @@ namespace readable
 				try { tok.assertNextToken("{"); }		//throws when syntax error
 				catch (...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Jumping to next XData definition...\n");
+					NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;
@@ -138,7 +143,7 @@ namespace readable
 				try { PageIndex = boost::lexical_cast<int>(number)-1; }	//can throw...
 				catch (...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number. Jumping to next XData definition...\n");;
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");;
 					jumpOutOfBrackets(tok,2);
 					NewXData.xData.reset();
 					return NewXData;
@@ -151,11 +156,11 @@ namespace readable
 					if (content.length() > 1) //numPages is raised automatically, if a page with content is detected...		//unclean
 					{
 						numPages = PageIndex+1;
-						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. Raising numPages to " + number +"...\n");
+						NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name + ", " + token + " statement.\n\tnumPages not (yet) specified or too low. Raising numPages to " + number +"...\n");
 					}
 					else
 					{
-						NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement.\n\tnumPages does not match the actual amount of pages defined in this XData-Def. However, this page does not contain any text and is discarded...\n");
+						NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name + ", " + token + " statement.\n\tnumPages not (yet) specified or too low. However, this page does not contain any text and is discarded...\n");
 						token = tok.nextToken();
 						continue;
 					}
@@ -185,7 +190,7 @@ namespace readable
 				try	{ guiNumber = boost::lexical_cast<int>(number)-1; }
 				catch (...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", gui_page statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", gui_page statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;	
@@ -195,7 +200,7 @@ namespace readable
 				guiPageDef = tok.nextToken();
 				guiPage[ guiNumber ] = guiPageDef;		//could throw if guiNumber >= MAX_PAGE_COUNT
 				if (guiNumber >= numPages)
-					guiPageError.push_back("[XDataManager::importXData] Error in definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
+					guiPageError.push_back("[XDataManager::importXData] Warning for definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
 			}
 			else if (token == "num_pages")
 			{
@@ -204,17 +209,24 @@ namespace readable
 				try { numPages = boost::lexical_cast<int>(number); }	//throws
 				catch(...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number. Jumping to next XData definition...\n");
+					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;
 				}
+				if (maxPageCount > numPages) //corrects a faulty numPages value
+				{
+					numPages = maxPageCount;
+					NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name
+						+ ". The specified numPages statement did not match the amount of pages with content.\n\tnumPages is set to " 
+						+ boost::lexical_cast<std::string>(numPages) + ".\n");
+				}
 			}
 			else if (token == "import")			//Not yet supported...
 			{
-				importDirective(tok, NewXData, name);	//!!!!!!!!!!!!!!!!!!
+				//importDirective(tok, NewXData, name);	//!!!!!!!!!!!!!!!!!!
 
-				NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". Found an import-statement, which is not yet supported. Jumping to next definition...\n");
+				NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". Found an import-statement, which is not yet supported.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				NewXData.xData.reset();
 				return NewXData;
@@ -229,13 +241,6 @@ namespace readable
 		}
 
 		//cleaning up:
-		if (maxPageCount > numPages) //corrects a faulty numPages value
-		{
-			numPages = maxPageCount;
-			NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name
-				+ ". The specified numPages statement did not match the amount of pages with content.\n\tnumPages has been raised to " 
-				+ boost::lexical_cast<std::string>(numPages) + ".");
-		}
 		if ( maxGuiNumber+1 > numPages)		//Append missing GUI-errormessages... Until now, it wasn't clear how many guipages are actually discarded.
 		{
 			int diff = maxGuiNumber + 1 - maxPageCount;
@@ -243,10 +248,12 @@ namespace readable
 			{
 				NewXData.error_msg.push_back(guiPageError[n]);
 			}
-		}
+		}//*/
 		// Check if guiPage-statements for all pages are available.
 		if (guiPageDef == "")
 		{
+			NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name
+				+ ". guiPage-statement(s) missing. Setting default value...\n");
 			if (NewXData.xData->getPageLayout() == TwoSided)
 				guiPageDef = DEFAULT_TWOSIDED_LAYOUT; 
 			else
@@ -256,10 +263,17 @@ namespace readable
 		{
 			if (guiPage[n] == "")
 				guiPage[n] = guiPageDef;
-		}
+		}//*/
 		NewXData.xData->_guiPage = guiPage;
 		NewXData.xData->_numPages = numPages;
-		NewXData.xData->_sndPageTurn = sndPageTurn;
+		if (sndPageTurn == "")
+		{
+			NewXData.xData->_sndPageTurn = DEFAULT_SNDPAGETURN;
+			NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name
+				+ ". sndPageTurn-statement missing. Setting default value...\n");
+		}
+		else
+			NewXData.xData->_sndPageTurn = sndPageTurn;
 
 		NewXData.xData->resizeVectors(numPages);
 
@@ -272,7 +286,11 @@ namespace readable
 		std::string token = tok.nextToken();
 		while (tok.hasMoreTokens() && token != "}")
 		{
-			out << token << std::endl;
+			if (token.c_str()[token.length()-1] == '\\')	//support for escaped quotes in texts...
+				token = token.substr(0,token.length()-1) + "\"";
+			else
+				token = token + "\n";
+			out << token;	
 			token = tok.nextToken();
 		}
 		return out.str();
@@ -285,7 +303,7 @@ namespace readable
 		try { tok.assertNextToken("{");	}	//can throw
 		catch(...)
 		{
-			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. '{' expected. Jumping to next XData definition...\n");
+			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			jumpOutOfBrackets(tok,1);
 			NewXData.xData.reset();
 			//return NewXData;		//replace with throwing??
@@ -303,7 +321,7 @@ namespace readable
 		try { tok.assertNextToken("from"); }
 		catch (...)
 		{
-			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. 'from' expected. Jumping to next XData definition...\n");
+			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. 'from' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			jumpOutOfBrackets(tok,1);
 			NewXData.xData.reset();
 			//return NewXData;		//replace with throwing??
