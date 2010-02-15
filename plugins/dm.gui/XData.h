@@ -9,9 +9,11 @@
 #include "parser/DefTokeniser.h"
 #include "reportError.h"
 #include <stdio.h>
+#include <map>
 
 /* ToDo:
-	1) Use VFS instead of boost::filesystem for importer. */
+	1) Use VFS instead of boost::filesystem for importer. 
+	2) import-directive support for exporter. */
 
 namespace readable
 {
@@ -55,19 +57,26 @@ namespace readable
 		TwoSided,
 		OneSided
 	};
+	typedef std::map<std::string, std::string> StringMap;
 
 	///////////////////////////// XData:
 	// XData base-class for importing, exporting and managing XData.
 	class XData
 	{
 	private:
+	//Methods for import:
 		static XDataParse parseXDataDef(parser::DefTokeniser& tok);
 		static std::string parseText(parser::DefTokeniser& tok);
 		static void jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth);
+		static void importDirective(parser::DefTokeniser& tok, XDataParse& NewXData, const std::string name);
+		static StringMap grabAllDefinitions();	//not yet implemented...
+		static StringMap& getDefMap();
+	//Methods for export:
 		std::string generateXDataDef();
 		int getDefLength(boost::filesystem::fstream& file);
 		int definitionStart;
 		std::string getDefinitionNameFromXD(const boost::filesystem::path& Path);	//can throw
+		
 	
 	protected:
 		virtual std::string getContentDef() = 0;	//can throw
@@ -77,6 +86,7 @@ namespace readable
 		int _numPages;
 		StringList _guiPage;
 		std::string _sndPageTurn;
+		//static StringMap XDataDefMap;
 
 	public:
 

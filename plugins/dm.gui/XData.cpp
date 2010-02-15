@@ -212,6 +212,8 @@ namespace readable
 			}
 			else if (token == "import")			//Not yet supported...
 			{
+				importDirective(tok, NewXData, name);	//!!!!!!!!!!!!!!!!!!
+
 				NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". Found an import-statement, which is not yet supported. Jumping to next definition...\n");
 				jumpOutOfBrackets(tok,1);
 				NewXData.xData.reset();
@@ -275,6 +277,68 @@ namespace readable
 		}
 		return out.str();
 	}
+
+
+	void XData::importDirective(parser::DefTokeniser& tok, XDataParse& NewXData, const std::string name)
+	{
+		std::string token;
+		try { tok.assertNextToken("{");	}	//can throw
+		catch(...)
+		{
+			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. '{' expected. Jumping to next XData definition...\n");
+			jumpOutOfBrackets(tok,1);
+			NewXData.xData.reset();
+			//return NewXData;		//replace with throwing??
+		}
+		StringList SourceStatement;
+		StringList DestStatement;
+		token = tok.nextToken();
+		while (token != "}")
+		{
+			SourceStatement.push_back(token);
+			tok.skipTokens(1);	//Should be "->"
+			DestStatement.push_back(tok.nextToken());
+			token = tok.nextToken();
+		}
+		try { tok.assertNextToken("from"); }
+		catch (...)
+		{
+			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. 'from' expected. Jumping to next XData definition...\n");
+			jumpOutOfBrackets(tok,1);
+			NewXData.xData.reset();
+			//return NewXData;		//replace with throwing??
+		}
+		std::string SourceDef = tok.nextToken();
+
+		StringMap::iterator it = getDefMap().find(SourceDef);
+		if (it != getDefMap().end())
+		{
+			std::string FileName = it->second;
+
+			/*	-VFS: open file...
+				-Search definition and cut it to a stringstream. (No DefTokeniser)
+				-Use the DefTokeniser to identify the statements and grab their contents. Store them in the Source-vector or a temporary string.
+				-Identify where the elements should go and store them.*/
+		}
+		else
+		{
+			//Definition has not been found: throw/return something
+		}
+	}
+
+	StringMap& XData::getDefMap()
+	{
+		static StringMap XDataDefMap = grabAllDefinitions();
+		return XDataDefMap;
+	}
+
+	StringMap XData::grabAllDefinitions()
+	{
+		//Traverse all xd files, parse all Definition names as the key value and their file as the mapped value
+		StringMap temp;
+		return temp;
+	}
+
 
 //->export:	
 	FileStatus XData::xport(const std::string& FileName, const ExporterCommands& cmd)
