@@ -2,14 +2,6 @@
 
 namespace readable
 {
-	namespace
-	{
-		const int			MAX_PAGE_COUNT			= 20;
-		const std::string	DEFAULT_TWOSIDED_LAYOUT = "guis/readables/books/book_calig_mac_humaine.gui";
-		const std::string	DEFAULT_ONESIDED_LAYOUT = "guis/readables/sheets/sheet_paper_hand_nancy.gui";
-		const std::string	DEFAULT_SNDPAGETURN		= "readable_page_turn";
-	}
-
 //XData implementations:
 //->import:
 	XDataPtrList XData::importXDataFromFile(const std::string& FileName)
@@ -96,7 +88,7 @@ namespace readable
 		int numPages = 0;
 		std::string sndPageTurn = "";
 		StringList guiPage;
-		guiPage.resize(MAX_PAGE_COUNT,"");
+		guiPage.resize(MAX_PAGE_COUNT,"");		//see MAX_PAGE_COUNT declaration in header-file for explanation.
 		try	{ tok.assertNextToken("{"); }		//throws when syntax error
 		catch (...)
 		{
@@ -178,9 +170,9 @@ namespace readable
 				else
 					side = Right;
 				if (token.find("body",6) != std::string::npos)
-					NewXData.xData->setContent(Body, PageIndex, side, content);
+					NewXData.xData->setPageContent(Body, PageIndex, side, content);
 				else
-					NewXData.xData->setContent(Title, PageIndex, side, content);
+					NewXData.xData->setPageContent(Title, PageIndex, side, content);
 			} //end: page
 			else if (token.substr(0,8) == "gui_page")
 			{
@@ -595,7 +587,7 @@ namespace readable
 		_pageRightTitle.resize(TargetSize, "");
 	}
 
-	void TwoSidedXData::setContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
+	void TwoSidedXData::setPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
 	{
 		switch (cc)
 		{
@@ -621,7 +613,7 @@ namespace readable
 		}
 	}
 
-	std::string TwoSidedXData::getContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
+	std::string TwoSidedXData::getPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
 	{
 		switch (cc)
 		{
@@ -678,7 +670,7 @@ namespace readable
 		_pageTitle.resize(TargetSize, "");
 	}
 
-	void OneSidedXData::setContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
+	void OneSidedXData::setPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
 	{
 		switch (cc)
 		{
@@ -691,7 +683,7 @@ namespace readable
 		}
 	}
 
-	std::string OneSidedXData::getContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
+	std::string OneSidedXData::getPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
 	{
 		switch (cc)
 		{
