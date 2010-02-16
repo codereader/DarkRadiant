@@ -33,7 +33,7 @@ namespace readable
 	{
 		Normal,
 		Merge,
-		MergeAndOverwriteExisting,
+		MergeOverwriteExisting,
 		Overwrite,
 		OverwriteMultDef		
 	};

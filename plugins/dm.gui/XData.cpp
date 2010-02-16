@@ -376,21 +376,20 @@ namespace readable
 			case Merge:
 				{
 				//Check if definition already exists and return DefinitionExists. If it does not, append the definition to the file.
-					boost::filesystem::fstream file(Path, std::ios_base::in | std::ios_base::out);
+					boost::filesystem::fstream file(Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
 					std::stringstream ss;
-					ss << file;
-					definitionStart = ss.str().find(_name,0);
+					ss << file.rdbuf();
+					definitionStart = ss.str().find(_name,0);		//A name of a readable could be contained in another name. Check that...
 					if (definitionStart != std::string::npos)
 					{
 						file.close();
 						return DefinitionExists;
 					}
-					file.seekg(std::ios_base::end);
 					file << generateXDataDef();
 					file.close();
 					return AllOk;
 				}
-			case MergeAndOverwriteExisting: 
+			case MergeOverwriteExisting: 
 				{	
 				//Find the old definition in the target file and delete it. Append the new definition.
 				//definitionStart has been set in the first iteration of this method.
@@ -460,7 +459,7 @@ namespace readable
 		{
 			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n-1] << "\"\n";
 		}
-		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n";//*/
+		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n\n";//*/
 
 		return xDataDef.str();		//Does this support enough characters??
 	}
@@ -470,15 +469,18 @@ namespace readable
 		/* ToDo:
 			1) Have to check if getpointer is raised after get() or before get() with reference to the returnvalue.*/
 		char ch;
+		int bla;
+		if (file.is_open())
 		while (!file.eof())
 		{
-			file.get(ch);
+			bla = file.tellg();
+			ch = file.get();
 			if (ch == '{')
 			{
 				int BracketCount = 1;
 				while (!file.eof() && BracketCount > 0)
 				{
-					file.get(ch);
+					ch = file.get();
 					if (ch == '{')
 						BracketCount += 1;
 					else if (ch == '}')

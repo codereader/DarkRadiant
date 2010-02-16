@@ -56,22 +56,62 @@ public:
 		testing = readable::XData::importXDataFromFile("dm.gui_testing/training_mission.xd");
 		testing[3]->xport("dm.gui_testing/training_mission_exported.xd", readable::Normal);
 		testing[0]->xport("dm.gui_testing/training_mission_exported2.xd", readable::Normal);//*/
-		/*
+		//*
 		filename = "dm.gui_testing/missing_all_one.xd";
 		testing = readable::XData::importXDataFromFile(filename);
-		testing[0]->xport(filename + ".txt", readable::Normal);
+		if (testing[0])
+		{
+			if (testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge) == readable::DefinitionExists)
+				printf("Definition exists...\n");
+			//if (testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge) == readable::DefinitionExists)
+			//	printf("Definition exists...\n");
+			testing[0]->setContent(readable::Title, 1, readable::Right, "OVERWRITE WORKED...");
+			testing[0]->xport("dm.gui_testing/mergetest.xd", readable::MergeOverwriteExisting);
+		}//*/
 		filename = "dm.gui_testing/missing_all_two.xd";
 		testing = readable::XData::importXDataFromFile(filename);
-		testing[0]->xport(filename + ".txt", readable::Normal);//*/
+		if (testing[0])
+		{
+			readable::FileStatus test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);//*/
+			switch (test)
+			{
+			case readable::DefinitionExists: printf("Definition exists...\n"); break;
+			case readable::DefinitionMismatch: printf("Definition Misnatch.\n"); break;
+			case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
+			case readable::AllOk: printf("All Ok...\n"); break;
+			default: break;
+			}
+			test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Overwrite);
+			switch (test)
+			{
+			case readable::DefinitionExists: printf("Definition exists...\n"); break;
+			case readable::DefinitionMismatch: printf("Definition Misnatch.\n"); break;
+			case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
+			case readable::AllOk: printf("All Ok...\n"); break;
+			default: break;
+			}
+			test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::OverwriteMultDef);
+			switch (test)
+			{
+			case readable::DefinitionExists: printf("Definition exists...\n"); break;
+			case readable::DefinitionMismatch: printf("Definition Misnatch.\n"); break;
+			case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
+			case readable::AllOk: printf("All Ok...\n"); break;
+			default: break;
+			}
+		}/*
 		filename = "dm.gui_testing/num_guip_one.xd";
 		testing = readable::XData::importXDataFromFile(filename);
-		//testing[0]->xport(filename + ".txt", readable::Normal);
-		/*filename = "dm.gui_testing/num_guip_two.xd";
+		if (testing[0])
+			testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
+		filename = "dm.gui_testing/num_guip_two.xd";
 		testing = readable::XData::importXDataFromFile(filename);
-		testing[0]->xport(filename + ".txt", readable::Normal);
+		if (testing[0])
+			testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
 		filename = "dm.gui_testing/quote_test.xd";
 		testing = readable::XData::importXDataFromFile(filename);
-		testing[0]->xport(filename + ".txt", readable::Normal);//*/
+		if (testing[0])
+			testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);//*/
 
 	}
 };
