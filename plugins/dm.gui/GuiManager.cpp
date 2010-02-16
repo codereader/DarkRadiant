@@ -3,8 +3,7 @@
 #include "iarchive.h"
 #include "ifilesystem.h"
 #include "itextstream.h"
-#include "parser/DefTokeniser.h"
-#include "stream/DeclFileInputStream.h"
+#include "parser/CodeTokeniser.h"
 
 #include "Gui.h"
 
@@ -37,11 +36,8 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 
 	if (file == NULL) return GuiPtr();
 
-	// Construct a new Declaration File Stream, which is able to handle #includes
-	DeclFileInputStream stream(file);
-	std::istream is(&stream);
-
-	parser::BasicDefTokeniser<std::istream> tokeniser(is);
+	// Construct a Code Tokeniser, which is able to handle #includes
+	parser::CodeTokeniser tokeniser(file);
 
 	return Gui::createFromTokens(tokeniser);
 }
