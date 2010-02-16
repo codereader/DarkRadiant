@@ -26,10 +26,12 @@ private:
 		std::istream inputStream;
 		BasicDefTokeniser<std::istream> tokeniser;
 
-		ParseNode(const ArchiveTextFilePtr& archive_) :
+		ParseNode(const ArchiveTextFilePtr& archive_,
+					const char* delims, 
+					const char* keptDelims) :
 			archive(archive_),
 			inputStream(&archive->getInputStream()),
-			tokeniser(inputStream)
+			tokeniser(inputStream, delims, keptDelims)
 		{}
 	};
 	typedef boost::shared_ptr<ParseNode> ParseNodePtr;
@@ -50,14 +52,21 @@ private:
 	typedef std::map<std::string, std::string> DefinitionMap;
 	DefinitionMap _definitions;
 
+	const char* _delims;
+	const char* _keptDelims;
+
 public:
 
     /** 
      * Construct a CodeTokeniser with the given text file from the VFS.
      */
-    CodeTokeniser(const ArchiveTextFilePtr& file)
+	CodeTokeniser(const ArchiveTextFilePtr& file,
+				  const char* delims = " \t\n\v\r", 
+				  const char* keptDelims = "{}()") :
+		_delims(delims),
+		_keptDelims(keptDelims)
     {
-		_nodes.push_back(ParseNodePtr(new ParseNode(file)));
+		_nodes.push_back(ParseNodePtr(new ParseNode(file, _delims, _keptDelims)));
 		_curNode = _nodes.begin();
 
 		_visitedFiles.insert(file->getName());
@@ -103,7 +112,16 @@ private:
 				continue;
 			}
 
-			// Not a preprocessor token, break the loop
+			// Found a non-preprocessor token
+
+			// Check if this is matching a preprocessor definition
+			DefinitionMap::const_iterator found = _definitions.find(_nextToken);
+			
+			if (found != _definitions.end())
+			{
+				_nextToken = found->second;
+			}
+
 			break;
 		}
 	}
@@ -124,7 +142,10 @@ private:
 				if (result.second)
 				{
 					// Push a new parse node and switch
-					_curNode = _nodes.insert(_curNode, ParseNodePtr(new ParseNode(file)));
+					_curNode = _nodes.insert(
+						_curNode, 
+						ParseNodePtr(new ParseNode(file, _delims, _keptDelims))
+					);
 				}
 				else
 				{
