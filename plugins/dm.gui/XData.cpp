@@ -15,21 +15,21 @@ namespace readable
 	XDataPtrList XData::importXDataFromFile(const std::string& FileName)
 	{
 		/* ToDO:
-			1) Proper error reporting. */
+			1) Proper error reporting. A summary should be displayed in the GUI later.*/
 
 		XDataPtrList ReturnVector;
 		boost::filesystem::path Path(FileName);
 
 		//Check if file exists and its extension.
 		if (Path.extension() != ".xd")
-			reportError("[XDataManager::importXData] FileExtension is not .xd: " + FileName + "\n");
+			reportError("[XData::importXDataFromFile] FileExtension is not .xd: " + FileName + "\n");
 		if (!boost::filesystem::exists(Path))
-			reportError("[XDataManager::importXData] Specified file does not exist: " + FileName + "\n");
+			reportError("[XData::importXDataFromFile] Specified file does not exist: " + FileName + "\n");
 		
 		//Open File and check for sucess.
 		boost::filesystem::ifstream file(Path, std::ios_base::in);
 		if (file.is_open() == false)
-			reportError("[XDataManager::importXData] Failed to open file: " + FileName + "\n");
+			reportError("[XData::importXDataFromFile] Failed to open file: " + FileName + "\n");
 
 		StringList ErrorList;
 		parser::BasicDefTokeniser<std::istream> tok(file);
@@ -52,11 +52,11 @@ namespace readable
 			std::cerr << ErrorList[n];
 
 		if (ErrorList.size() > 0)
-			std::cerr << "[XDataManager::importXData] Import finished with " << ErrorList.size() << " error(s)/warning(s). " << ReturnVector.size() << " XData-definition(s) successfully imported, but failed to import at least " << ErrorCount << " definitions." << std::endl;
+			std::cerr << "[XData::importXDataFromFile] Import finished with " << ErrorList.size() << " error(s)/warning(s). " << ReturnVector.size() << " XData-definition(s) successfully imported, but failed to import at least " << ErrorCount << " definitions." << std::endl;
 
 		file.close();
 		return ReturnVector;
-	} // XDataManager::importXData
+	} // XData::importXDataFromFile
 
 	XDataParse XData::parseXDataDef(parser::DefTokeniser& tok)
 	{
@@ -101,7 +101,7 @@ namespace readable
 		catch (...)
 		{
 			while (tok.nextToken() != "{") {}
-			NewXData.error_msg.push_back("[XDataManager::importXData] Syntaxerror in definition: " + name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+			NewXData.error_msg.push_back("[XData::importXDataFromFile] Syntaxerror in definition: " + name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			jumpOutOfBrackets(tok,1);
 			return NewXData;
 		}
@@ -131,7 +131,7 @@ namespace readable
 				try { tok.assertNextToken("{"); }		//throws when syntax error
 				catch (...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+					NewXData.error_msg.push_back("[XData::importXDataFromFile] Syntax error in definition: " + name + ", " + token +" statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;
@@ -143,7 +143,7 @@ namespace readable
 				try { PageIndex = boost::lexical_cast<int>(number)-1; }	//can throw...
 				catch (...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");;
+					NewXData.error_msg.push_back("[XData::importXDataFromFile] Error in definition: " + name + ", " + token + " statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");;
 					jumpOutOfBrackets(tok,2);
 					NewXData.xData.reset();
 					return NewXData;
@@ -156,11 +156,11 @@ namespace readable
 					if (content.length() > 1) //numPages is raised automatically, if a page with content is detected...		//unclean
 					{
 						numPages = PageIndex+1;
-						NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name + ", " + token + " statement.\n\tnumPages not (yet) specified or too low. Raising numPages to " + number +"...\n");
+						NewXData.error_msg.push_back("[XData::importXDataFromFile] Warning for definition: " + name + ", " + token + " statement.\n\tnumPages not (yet) specified or too low. Raising numPages to " + number +"...\n");
 					}
 					else
 					{
-						NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name + ", " + token + " statement.\n\tnumPages not (yet) specified or too low. However, this page does not contain any text and is discarded...\n");
+						NewXData.error_msg.push_back("[XData::importXDataFromFile] Warning for definition: " + name + ", " + token + " statement.\n\tnumPages not (yet) specified or too low. However, this page does not contain any text and is discarded...\n");
 						token = tok.nextToken();
 						continue;
 					}
@@ -190,7 +190,7 @@ namespace readable
 				try	{ guiNumber = boost::lexical_cast<int>(number)-1; }
 				catch (...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", gui_page statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+					NewXData.error_msg.push_back("[XData::importXDataFromFile] Error in definition: " + name + ", gui_page statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;	
@@ -200,7 +200,7 @@ namespace readable
 				guiPageDef = tok.nextToken();
 				guiPage[ guiNumber ] = guiPageDef;		//could throw if guiNumber >= MAX_PAGE_COUNT
 				if (guiNumber >= numPages)
-					guiPageError.push_back("[XDataManager::importXData] Warning for definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
+					guiPageError.push_back("[XData::importXDataFromFile] Warning for definition: " + name + ". More guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
 			}
 			else if (token == "num_pages")
 			{
@@ -209,7 +209,7 @@ namespace readable
 				try { numPages = boost::lexical_cast<int>(number); }	//throws
 				catch(...)
 				{
-					NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+					NewXData.error_msg.push_back("[XData::importXDataFromFile] Error in definition: " + name + ", num_pages statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 					jumpOutOfBrackets(tok,1);
 					NewXData.xData.reset();
 					return NewXData;
@@ -217,7 +217,7 @@ namespace readable
 				if (maxPageCount > numPages) //corrects a faulty numPages value
 				{
 					numPages = maxPageCount;
-					NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name
+					NewXData.error_msg.push_back("[XData::importXDataFromFile] Warning for definition: " + name
 						+ ". The specified numPages statement did not match the amount of pages with content.\n\tnumPages is set to " 
 						+ boost::lexical_cast<std::string>(numPages) + ".\n");
 				}
@@ -226,7 +226,7 @@ namespace readable
 			{
 				//importDirective(tok, NewXData, name);	//!!!!!!!!!!!!!!!!!!
 
-				NewXData.error_msg.push_back("[XDataManager::importXData] Error in definition: " + name + ". Found an import-statement, which is not yet supported.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				NewXData.error_msg.push_back("[XData::importXDataFromFile] Error in definition: " + name + ". Found an import-statement, which is not yet supported.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				NewXData.xData.reset();
 				return NewXData;
@@ -252,7 +252,7 @@ namespace readable
 		// Check if guiPage-statements for all pages are available.
 		if (guiPageDef == "")
 		{
-			NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name
+			NewXData.error_msg.push_back("[XData::importXDataFromFile] Warning for definition: " + name
 				+ ". guiPage-statement(s) missing. Setting default value...\n");
 			if (NewXData.xData->getPageLayout() == TwoSided)
 				guiPageDef = DEFAULT_TWOSIDED_LAYOUT; 
@@ -269,7 +269,7 @@ namespace readable
 		if (sndPageTurn == "")
 		{
 			NewXData.xData->_sndPageTurn = DEFAULT_SNDPAGETURN;
-			NewXData.error_msg.push_back("[XDataManager::importXData] Warning for definition: " + name
+			NewXData.error_msg.push_back("[XData::importXDataFromFile] Warning for definition: " + name
 				+ ". sndPageTurn-statement missing. Setting default value...\n");
 		}
 		else
@@ -299,11 +299,12 @@ namespace readable
 
 	void XData::importDirective(parser::DefTokeniser& tok, XDataParse& NewXData, const std::string name)
 	{
+		//WIP
 		std::string token;
 		try { tok.assertNextToken("{");	}	//can throw
 		catch(...)
 		{
-			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+			NewXData.error_msg.push_back("[XData::importXDataFromFile] Syntax error in definition: " + name + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			jumpOutOfBrackets(tok,1);
 			NewXData.xData.reset();
 			//return NewXData;		//replace with throwing??
@@ -321,7 +322,7 @@ namespace readable
 		try { tok.assertNextToken("from"); }
 		catch (...)
 		{
-			NewXData.error_msg.push_back("[XDataManager::importXData] Syntax error in definition: " + name + ", import-statement. 'from' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+			NewXData.error_msg.push_back("[XData::importXDataFromFile] Syntax error in definition: " + name + ", import-statement. 'from' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			jumpOutOfBrackets(tok,1);
 			NewXData.xData.reset();
 			//return NewXData;		//replace with throwing??
@@ -352,6 +353,7 @@ namespace readable
 
 	StringMap XData::grabAllDefinitions()
 	{
+		//WIP
 		//Traverse all xd files, parse all Definition names as the key value and their file as the mapped value
 		StringMap temp;
 		return temp;
@@ -362,11 +364,11 @@ namespace readable
 	FileStatus XData::xport(const std::string& FileName, const ExporterCommands& cmd)
 	{
 		/* ToDo:
-			1) Need to handle return 0 of getDefLength().
-			2) Test all possibilities.
-			3) Do I need to check fstream.open for success, as well as the write process? 
+			1) Need to handle return 0 of getDefLength().			->done
+			2) Test all possibilities.								->done
+			3) Do I need to check fstream.open for success, as well as the write process?	->done
 			4) Does String support enough characters? 
-			5) Handle the exception of getDefinitionNameFromXD(). */
+			5) Handle the exception of getDefinitionNameFromXD().	->done */
 
 		boost::filesystem::path Path(FileName);		
 		if (boost::filesystem::exists(Path))
@@ -377,13 +379,23 @@ namespace readable
 				{
 				//Check if definition already exists and return DefinitionExists. If it does not, append the definition to the file.
 					boost::filesystem::fstream file(Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+					if (!file.is_open())
+						return OpenFailed;
 					std::stringstream ss;
-					ss << file.rdbuf();
-					definitionStart = ss.str().find(_name,0);		//A name of a readable could be contained in another name. Check that...
-					if (definitionStart != std::string::npos)
+					ss << file.rdbuf();		//is this the quickest way to read a whole file?
+					std::string String = ss.str();
+					int DefPos = String.find(_name,0);
+					while (DefPos != std::string::npos)	//A name of a readable could be contained in another readable's name. Check that...
 					{
-						file.close();
-						return DefinitionExists;
+						char before = String.c_str()[DefPos-1];		//what happens if -1 is accessed? 
+						char after = String.c_str()[DefPos+_name.length()];
+						if ((DefPos == 0 || before == ' ' || before == '\t' || before == '\n') && (DefPos+_name.length() == file.end || after == ' ' || after == '\t' || after == '\n'))	//other delimiters necessary?
+						{
+							definitionStart = DefPos;
+							file.close();
+							return DefinitionExists;
+						}
+						DefPos = String.find(_name,DefPos+_name.length());
 					}
 					file << generateXDataDef();
 					file.close();
@@ -394,16 +406,22 @@ namespace readable
 				//Find the old definition in the target file and delete it. Append the new definition.
 				//definitionStart has been set in the first iteration of this method.
 					boost::filesystem::fstream file(Path, std::ios_base::in);
+					if (!file.is_open())
+						return OpenFailed;
 					file.seekg(definitionStart);
-					int DefLength = getDefLength(file);							//Need to handle return 0
+					int DefLength = getDefLength(file);
+					if (DefLength == 0)		//If the definitionlength can't be obtained, the merge fails.
+						return MergeFailed;
 					file.seekg(0);
 					std::stringstream ss;
-					ss << file;
+					ss << file.rdbuf();
 					file.close();
 					std::string OutString = ss.str();							//Does string support enough characters for this operation?
 					OutString.erase(definitionStart, DefLength);
 					OutString.insert(definitionStart, generateXDataDef());
 					file.open(Path, std::ios_base::out | std::ios_base::trunc);
+					if (!file.is_open())
+						return OpenFailed;
 					file << OutString;
 					file.close();
 					return AllOk;
@@ -414,9 +432,15 @@ namespace readable
 				//Warn if the definition in the target file does not match the current definition: return DefinitionMisMatch
 				//else overwrite existing file.
 					std::string DefName;
-					try	{ DefName = getDefinitionNameFromXD(Path); }
-					catch (...) { /*Do Something...*/ }
-
+					boost::filesystem::ifstream file(Path, std::ios_base::in);
+					if (!file.is_open())
+						return OpenFailed;
+					try	{ DefName = getDefinitionNameFromXD(file); }
+					catch (...) 
+					{
+						std::cerr << "[XData::xport] Syntax error in file " << FileName << ". Overwriting the file..." << std::endl;
+						break;
+					}
 					if (DefName == _name)	//Definition will be overwritten...
 						break;
 					else if (DefName == "")	//MultipleDefinitions exist
@@ -432,6 +456,8 @@ namespace readable
 
 		//Write the definition into the file.
 		boost::filesystem::ofstream file(Path, std::ios_base::out | std::ios_base::trunc);		//check if file open was successful?
+		if (!file.is_open())
+			return OpenFailed;
 		file << generateXDataDef();
 		file.close();
 
@@ -459,7 +485,7 @@ namespace readable
 		{
 			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n-1] << "\"\n";
 		}
-		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n\n";//*/
+		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n\n\n";//*/
 
 		return xDataDef.str();		//Does this support enough characters??
 	}
@@ -467,7 +493,7 @@ namespace readable
 	int XData::getDefLength(boost::filesystem::fstream& file)
 	{
 		/* ToDo:
-			1) Have to check if getpointer is raised after get() or before get() with reference to the returnvalue.*/
+			1) Have to check if getpointer is raised after get() or before get() with reference to the returnvalue.		->done*/
 		char ch;
 		int bla;
 		if (file.is_open())
@@ -492,12 +518,12 @@ namespace readable
 		return 0;	//no appropriate bracketstructure was found.
 	}
 
-	std::string XData::getDefinitionNameFromXD(const boost::filesystem::path& Path)
+	std::string XData::getDefinitionNameFromXD(boost::filesystem::ifstream& file)
 	{
 		/* ToDo:
 			1) Better use assertNextToken("{") here and let the caller catch.	->done*/
 		std::string ReturnString;
-		boost::filesystem::ifstream file(Path, std::ios_base::in);
+		//boost::filesystem::ifstream file(Path, std::ios_base::in);
 		parser::BasicDefTokeniser<std::istream> tok(file);
 		bool FirstDef = true;
 		while (tok.hasMoreTokens())
