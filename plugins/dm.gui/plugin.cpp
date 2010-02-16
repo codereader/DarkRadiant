@@ -136,7 +136,7 @@ public:
 				case readable::AllOk: printf("All Ok...\n"); break;
 				default: break;
 				}
-				testing[0]->setContent(readable::Title, 1, readable::Right, "MergeAndOverwrite works...");
+				testing[0]->setPageContent(readable::Title, 1, readable::Right, "MergeAndOverwrite works...");
 				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::MergeOverwriteExisting);
 				printf(testing[0]->getName().c_str()); printf(": ");
 				switch (test)
