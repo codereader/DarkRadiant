@@ -1,15 +1,18 @@
 #include <string>
 #include <vector>
+#include <stdio.h>
+#include <map>
 #include "boost/filesystem/fstream.hpp"
 #include "boost/lexical_cast.hpp"
 #include <boost/shared_ptr.hpp>
 
 #include "itextstream.h"
-
+#include "ifilesystem.h"
+#include "iarchive.h"
 #include "parser/DefTokeniser.h"
+
 #include "reportError.h"
-#include <stdio.h>
-#include <map>
+
 
 /* ToDo:
 	1) Use VFS instead of boost::filesystem for importer. 
@@ -22,11 +25,14 @@ namespace readable
 		/* All vectors of XData-objects are initialized with this size so that no sorting is necessary, which
 			would otherwise be necessary when e.g. page2_body was defined before page1_body and a simple
 			vector.push_back(..) was used to store the data instead of a direct access using an Index. */
-		const int			MAX_PAGE_COUNT			= 20;
+		const int	MAX_PAGE_COUNT			= 20;
 
-		const std::string	DEFAULT_TWOSIDED_LAYOUT = "guis/readables/books/book_calig_mac_humaine.gui";
-		const std::string	DEFAULT_ONESIDED_LAYOUT = "guis/readables/sheets/sheet_paper_hand_nancy.gui";
-		const std::string	DEFAULT_SNDPAGETURN		= "readable_page_turn";
+		const char*	DEFAULT_TWOSIDED_LAYOUT = "guis/readables/books/book_calig_mac_humaine.gui";
+		const char*	DEFAULT_ONESIDED_LAYOUT = "guis/readables/sheets/sheet_paper_hand_nancy.gui";
+		const char*	DEFAULT_SNDPAGETURN		= "readable_page_turn";
+
+		const char* XDATA_DIR				= "xdata/";
+		const char* XDATA_EXT				= "xd";
 	}
 	typedef std::vector<std::string> StringList;
 	typedef std::map<std::string, std::string> StringMap;
@@ -87,19 +93,19 @@ namespace readable
 		virtual PageLayout getPageLayout() = 0;
 
 		/* Exports the XData class formated properly into the File specified in 
-		Filename. If the file already exists this function can overwrite the file or merge.
-		If the file cannot be opened, OpenFailed is returned.
-		-Merge: If the definition already exists, DefinitionExists is returned. This definition
-		can be overwritten using the command MergeOverWriteExisting. Otherwise the definition
-		is appended. MergeOverwriteExisting can fail and returns MergeFailed then.
-		-Overwrite: Returns DefinitionMismatch if the definition in the target-file does not match
-		the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
-		is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the
-		file no matter what. If the target-file has Syntax errors, it is overwritten...*/
+		Filename (absolute Filepath). If the file already exists this function can overwrite the
+		file or merge. If the file cannot be opened, OpenFailed is returned.
+			-Merge: If the definition already exists, DefinitionExists is returned. This definition
+			can be overwritten using the command MergeOverWriteExisting. Otherwise the definition
+			is appended. MergeOverwriteExisting can fail and returns MergeFailed then.
+			-Overwrite: Returns DefinitionMismatch if the definition in the target-file does not match
+			the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
+			is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the
+			file no matter what. If the target-file has Syntax errors, it is overwritten...*/
 		FileStatus xport(const std::string& FileName, const ExporterCommands& cmd);
 
-		/* Imports a list of XData objects from the File specified by Filename. Throws
-		runtime_error exceptions on filesystem-errors, syntax errors and general exceptions.*/
+		/* Imports a list of XData objects from the File specified by Filename (just the name, not the path).
+		Throws runtime_error exceptions on filesystem-errors, syntax errors and general exceptions.*/
 		static XDataPtrList importXDataFromFile(const std::string& FileName);
 
 		virtual ~XData() {};

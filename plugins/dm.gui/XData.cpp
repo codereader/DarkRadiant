@@ -7,24 +7,21 @@ namespace readable
 	XDataPtrList XData::importXDataFromFile(const std::string& FileName)
 	{
 		/* ToDO:
-			1) Proper error reporting. A summary should be displayed in the GUI later.*/
+			1) Proper error reporting. A summary should be displayed in the GUI later.
+			2) Maybe check FileExtension again.				->done*/
 
 		XDataPtrList ReturnVector;
-		boost::filesystem::path Path(FileName);
-
-		//Check if file exists and its extension.
-		if (Path.extension() != ".xd")
-			reportError("[XData::importXDataFromFile] FileExtension is not .xd: " + FileName + "\n");
-		if (!boost::filesystem::exists(Path))
-			reportError("[XData::importXDataFromFile] Specified file does not exist: " + FileName + "\n");
 		
-		//Open File and check for sucess.
-		boost::filesystem::ifstream file(Path, std::ios_base::in);
-		if (file.is_open() == false)
+		// Attempt to open the file in text mode
+		ArchiveTextFilePtr file = 
+			GlobalFileSystem().openTextFile(XDATA_DIR + FileName);
+		if (file == NULL)
 			reportError("[XData::importXDataFromFile] Failed to open file: " + FileName + "\n");
+		
+		std::istream is(&(file->getInputStream()));
+		parser::BasicDefTokeniser<std::istream> tok(is);
 
-		StringList ErrorList;
-		parser::BasicDefTokeniser<std::istream> tok(file);
+		StringList ErrorList;		
 		unsigned int ErrorCount = 0;
 
 		while (tok.hasMoreTokens())
@@ -46,7 +43,7 @@ namespace readable
 		if (ErrorList.size() > 0)
 			std::cerr << "[XData::importXDataFromFile] Import finished with " << ErrorList.size() << " error(s)/warning(s). " << ReturnVector.size() << " XData-definition(s) successfully imported, but failed to import at least " << ErrorCount << " definitions." << std::endl;
 
-		file.close();
+		//file.close();
 		return ReturnVector;
 	} // XData::importXDataFromFile
 
@@ -376,7 +373,7 @@ namespace readable
 					std::stringstream ss;
 					ss << file.rdbuf();		//is this the quickest way to read a whole file?
 					std::string String = ss.str();
-					int DefPos = String.find(_name,0);
+					int DefPos = String.find(_name);
 					while (DefPos != std::string::npos)	//A name of a readable could be contained in another readable's name. Check that...
 					{
 						char before = String.c_str()[DefPos-1];		//what happens if -1 is accessed? 
