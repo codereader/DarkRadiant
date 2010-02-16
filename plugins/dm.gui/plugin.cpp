@@ -28,6 +28,7 @@ public:
 		{
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 			//_dependencies.insert(MODULE_IMAGELOADER + "TGA");
 			//_dependencies.insert(MODULE_IMAGELOADER + "DDS");
 		}
@@ -53,16 +54,15 @@ public:
 		readable::XDataPtrList testing;
 		std::string filename;
 		readable::FileStatus test;
-		if (boost::filesystem::exists("dm.gui_testing/mergetest.xd"))
-			boost::filesystem::remove("dm.gui_testing/mergetest.xd");//*/
+		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd"))
+			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd");//*/
 		try
 		{
 			/*
-			testing = readable::XData::importXDataFromFile("dm.gui_testing/training_mission.xd");
-			testing[3]->xport("dm.gui_testing/training_mission_exported.xd", readable::Normal);
-			testing[0]->xport("dm.gui_testing/training_mission_exported2.xd", readable::Normal);//*/
-			//*
-
+			testing = readable::XDataLoader::importXDataFromFile("training_mission.xd");
+			testing[3]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Normal);
+			testing[0]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);//*/
+			/*
 			filename = "dm.gui_testing/missing_all_one.xd";
 			testing = readable::XData::importXDataFromFile(filename);
 			if (testing[0])
@@ -77,12 +77,12 @@ public:
 				case readable::AllOk: printf("All Ok...\n"); break;
 				default: break;
 				}
-			}//*/
+			}
 			filename = "dm.gui_testing/missing_all_two.xd";
 			testing = readable::XData::importXDataFromFile(filename);
 			if (testing[0])
 			{
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);//*/
+				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
 				printf(testing[0]->getName().c_str()); printf(": ");
 				switch (test)
 				{
@@ -92,7 +92,6 @@ public:
 				case readable::AllOk: printf("All Ok...\n"); break;
 				default: break;
 				}
-				/*
 				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Overwrite);
 				switch (test)
 				{
@@ -110,7 +109,7 @@ public:
 				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
 				case readable::AllOk: printf("All Ok...\n"); break;
 				default: break;
-				}//*/
+				}
 			}
 			filename = "dm.gui_testing/num_guip_one.xd";
 			testing = readable::XData::importXDataFromFile(filename);
@@ -167,7 +166,7 @@ public:
 			testing = readable::XData::importXDataFromFile(filename);
 			if (testing[0])
 			{
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);//*/
+				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
 				printf(testing[0]->getName().c_str()); printf(": ");
 				switch (test)
 				{
@@ -177,9 +176,10 @@ public:
 				case readable::AllOk: printf("All Ok...\n"); break;
 				default: break;
 				}
-			}
+			}//*/
 		}
-		catch(...) {}
+		catch(std::runtime_error e) { printf(e.what()); }
+		catch (...) {}
 	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;
