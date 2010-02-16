@@ -294,6 +294,7 @@ public:
     
 };
 
+const char* const WHITESPACE = " \t\n\v\r";
 
 /**
  * DefTokeniser abstract base class. This class provides a unified interface to
@@ -305,9 +306,9 @@ public:
  * while default implementations of assertNextToken() and skipTokens() are 
  * provided that make use of the former two methods.
  */
-class DefTokeniser {
+class DefTokeniser
+{
 public:
-
     /**
 	 * Destructor
 	 */
@@ -396,7 +397,7 @@ public:
      * own right.
      */
     BasicDefTokeniser(const ContainerT& str, 
-                      const char* delims = " \t\n\v\r", 
+                      const char* delims = WHITESPACE, 
                       const char* keptDelims = "{}()")
     : _tok(str, DefTokeniserFunc(delims, keptDelims)),
       _tokIter(_tok.begin())
@@ -475,7 +476,7 @@ public:
      * own right.
      */
     BasicDefTokeniser(std::istream& str, 
-                      const char* delims = " \t\n\v\r", 
+                      const char* delims = WHITESPACE, 
                       const char* keptDelims = "{}()")
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
