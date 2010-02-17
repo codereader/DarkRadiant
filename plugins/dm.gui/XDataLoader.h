@@ -55,7 +55,8 @@ namespace readable
 
 	public:
 		/* Imports a list of XData objects from the File specified by Filename (just the name, not the path).
-		Throws runtime_error exceptions on filesystem-errors, syntax errors and general exceptions.*/
+		Throws runtime_error exceptions if opening the file failed or if its extension is not xd. Every other
+		error-output is linked to the cerr-console.*/
 		XDataPtrList import(const std::string& FileName);
 
 		// Required type for the Callback to work.

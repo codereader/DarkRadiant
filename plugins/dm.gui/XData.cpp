@@ -166,7 +166,6 @@ namespace readable
 		/* ToDo:
 			1) Better use assertNextToken("{") here and let the caller catch.	->done*/
 		std::string ReturnString;
-		//boost::filesystem::ifstream file(Path, std::ios_base::in);
 		parser::BasicDefTokeniser<std::istream> tok(file);
 		bool FirstDef = true;
 		while (tok.hasMoreTokens())
