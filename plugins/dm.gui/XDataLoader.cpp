@@ -45,7 +45,7 @@ namespace readable
 		if (ErrorList.size() > 0)
 			std::cerr << "[XDataLoader::import] Import finished with " << ErrorList.size() << " error(s)/warning(s). " << ReturnVector.size() << " XData-definition(s) successfully imported, but failed to import at least " << ErrorCount << " definitions." << std::endl;
 		else
-			GlobalOutputStream() << "[XDataLoader::import] " << ReturnVector.size() << " XData-definition(s) successfully imported.\n";
+			globalOutputStream() << "[XDataLoader::import] " << ReturnVector.size() << " XData-definition(s) successfully imported.\n";
 
 		return ReturnVector;
 	} // XDataLoader::import
