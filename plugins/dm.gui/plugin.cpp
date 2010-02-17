@@ -55,16 +55,17 @@ public:
 		readable::XDataPtrList testing;
 		std::string filename;
 		readable::FileStatus test;
-		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd"))
-			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd");//*/
+		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/imptest_exported.xd"))
+			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/imptest_exported.xd");//*/
 		try
 		{
 			//Newest tests:
 			readable::XDataLoader* loader = new readable::XDataLoader();
-			loader->refreshDefMap();
-			testing = loader->import("training_mission.xd");
-			testing[3]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Normal);
-			testing[0]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);
+			//loader->refreshDefMap();
+			testing = loader->import("import_test.xd");
+			if (!testing.empty())
+				testing[0]->xport("D:/games/Doom 3/darkmod/xdata/imptest_exported.xd", readable::Normal);
+			//testing[0]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);
 			delete loader;
 		}
 		catch(std::runtime_error e) { printf(e.what()); }
