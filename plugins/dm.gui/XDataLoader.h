@@ -41,17 +41,25 @@ namespace readable
 	class XDataLoader
 	{
 	/* ToDo:
-		1) Maybe add a public method for refreshing DefMap*/
+		1) Maybe add a public method for refreshing DefMap.
+		2) When a definition couldn't be found refresh the DefMap and try again.
+		3) Put the Functor operator and all that stuff into a new class and add a const method pointer, as well as a folder (by Constructor).
+		4) Test importing of slash-separated lines. 
+		5) Hide operater() in private using friend statements. 
+		6) replace XDataParse by pair. 
+		7) StoreContent(), ReadLine(), ReadMultiLine() Methods. */
+
+		
 
 	public:
 		/* Imports a list of XData objects from the File specified by Filename (just the name, not the path).
 		Throws runtime_error exceptions on filesystem-errors, syntax errors and general exceptions.*/
 		XDataPtrList import(const std::string& FileName);
 
-		// Required type
+		// Required type for the Callback to work.
 		typedef const std::string& first_argument_type;
 
-		// Functor operator
+		// Functor operator: Adds all definitions found in the target file to the DefMap.
 		void operator() (const std::string& filename);
 
 		void refreshDefMap();
@@ -59,13 +67,16 @@ namespace readable
 	private:
 		StringMap DefMap;
 
+		/**/
+		void StoreContent(const std::string& Where, parser::DefTokeniser& tok);
+
 		/* Parses a single definition from a stream into an XData object an generates warning and error messages. */
 		XDataParse parseXDataDef(parser::DefTokeniser& tok);
 
 		/* Parses the content between cambered brackets of page-statements. */
 		std::string parseText(parser::DefTokeniser& tok);
 
-		/* Handles and import-directive. */
+		/* Handles an import-directive. */
 		void importDirective(parser::DefTokeniser& tok, XDataParse& NewXData, const std::string name);
 
 		/* Generates a map that stores all definitions found in all .xd-files and the corresponding .xd-file. */
@@ -73,6 +84,8 @@ namespace readable
 
 		/* Used to jump out of a definition. Can lead to undefined behavior on Syntax-errors. */
 		void jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth);
+
+	//Helper-variables for import.
 
 	};
 }

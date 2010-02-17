@@ -3,6 +3,11 @@
 
 namespace readable
 {
+	void XDataLoader::StoreContent(const std::string& Where, parser::DefTokeniser& tok)
+	{
+
+	}
+
 	XDataPtrList XDataLoader::import(const std::string& FileName)
 	{
 		/* ToDO:
