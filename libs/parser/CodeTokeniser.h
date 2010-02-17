@@ -4,6 +4,10 @@
 #include "iarchive.h"
 #include "DefTokeniser.h"
 #include <list>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 namespace parser
 {
@@ -587,11 +591,36 @@ private:
 					<< includeFile << " in " << (*_curNode)->archive->getName() << std::endl;
 			}
 		}
-		else if (_nextToken == "#define")
+		else if (boost::algorithm::starts_with(_nextToken, "#define"))
 		{
-			std::string key = (*_curNode)->tokeniser.nextToken();
-			std::string value = (*_curNode)->tokeniser.nextToken();
+			if (_nextToken.length() <= 7)
+			{
+				globalWarningStream() << "Invalid #define statement: " 
+					<< " in " << (*_curNode)->archive->getName() << std::endl;
+				return;
+			}
 
+			// Replace tabs with spaces
+			std::replace(_nextToken.begin(), _nextToken.end(), '\t', ' ');
+
+			// Cut off the "#define " (including space)
+			std::string key = _nextToken.substr(8);
+
+			std::size_t firstSpace = key.find(' ');
+
+			if (firstSpace == std::string::npos)
+			{
+				globalWarningStream() << "Invalid #define statement: " << _nextToken
+					<< " in " << (*_curNode)->archive->getName() << std::endl;
+				return;
+			}
+
+			// Extract the value and trim it (everything after the space)
+			std::string value = key.substr(firstSpace + 1);
+			boost::algorithm::trim(value);
+
+			key = key.substr(0, firstSpace);
+			
 			std::pair<DefinitionMap::iterator, bool> result = _definitions.insert(
 				DefinitionMap::value_type(key, value)
 			);
