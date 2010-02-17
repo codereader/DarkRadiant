@@ -9,6 +9,7 @@
 
 #include "ReadableEditorDialog.h"
 #include "XData.h"
+#include "XDataLoader.h"
 
 class GuiModule : 
 	public RegisterableModule
@@ -58,125 +59,13 @@ public:
 			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd");//*/
 		try
 		{
-			/*
-			testing = readable::XDataLoader::importXDataFromFile("training_mission.xd");
+			//Newest tests:
+			readable::XDataLoader* loader = new readable::XDataLoader();
+			loader->refreshDefMap();
+			testing = loader->import("training_mission.xd");
 			testing[3]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Normal);
-			testing[0]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);//*/
-			/*
-			filename = "dm.gui_testing/missing_all_one.xd";
-			testing = readable::XData::importXDataFromFile(filename);
-			if (testing[0])
-			{
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
-				printf(testing[0]->getName().c_str()); printf(": ");
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Mismatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-			}
-			filename = "dm.gui_testing/missing_all_two.xd";
-			testing = readable::XData::importXDataFromFile(filename);
-			if (testing[0])
-			{
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
-				printf(testing[0]->getName().c_str()); printf(": ");
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Mismatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Overwrite);
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Misnatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::OverwriteMultDef);
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Misnatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-			}
-			filename = "dm.gui_testing/num_guip_one.xd";
-			testing = readable::XData::importXDataFromFile(filename);
-			if (testing[0])
-			{
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
-				printf(testing[0]->getName().c_str()); printf(": ");
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Mismatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
-				printf(testing[0]->getName().c_str()); printf(": ");
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Mismatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-				testing[0]->setPageContent(readable::Title, 1, readable::Right, "MergeAndOverwrite works...");
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::MergeOverwriteExisting);
-				printf(testing[0]->getName().c_str()); printf(": ");
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Mismatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-			}
-			filename = "dm.gui_testing/num_guip_two.xd";
-			testing = readable::XData::importXDataFromFile(filename);
-			if (testing[0])
-			{
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
-				printf(testing[0]->getName().c_str()); printf(": ");
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Mismatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-			}
-			filename = "dm.gui_testing/quote_test.xd";
-			testing = readable::XData::importXDataFromFile(filename);
-			if (testing[0])
-			{
-				test = testing[0]->xport("dm.gui_testing/mergetest.xd", readable::Merge);
-				printf(testing[0]->getName().c_str()); printf(": ");
-				switch (test)
-				{
-				case readable::DefinitionExists: printf("Definition exists...\n"); break;
-				case readable::DefinitionMismatch: printf("Definition Mismatch.\n"); break;
-				case readable::MultipleDefinitions: printf("Multiple Definitions...\n"); break;
-				case readable::AllOk: printf("All Ok...\n"); break;
-				default: break;
-				}
-			}//*/
+			testing[0]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);
+			delete loader;
 		}
 		catch(std::runtime_error e) { printf(e.what()); }
 		catch (...) {}
