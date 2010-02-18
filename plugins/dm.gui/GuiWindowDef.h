@@ -56,6 +56,9 @@ public:
 	// The scale for rendering the font
 	float textscale;
 
+	// The text alignment (left, right, center)
+	int textalign;
+
 	// No mouse events for this window
 	bool noevents;
 
@@ -82,6 +85,7 @@ public:
 		matcolor(1,1,1,1),
 		rotate(0),
 		textscale(1),
+		textalign(0),
 		noclip(false),
 		notime(false),
 		time(0)
@@ -94,6 +98,7 @@ public:
 private:
 	Vector4 parseVector4(parser::DefTokeniser& tokeniser);
 	float parseFloat(parser::DefTokeniser& tokeniser);
+	int parseInt(parser::DefTokeniser& tokeniser);
 	std::string parseString(parser::DefTokeniser& tokeniser);
 	bool parseBool(parser::DefTokeniser& tokeniser);
 };
