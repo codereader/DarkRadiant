@@ -27,7 +27,7 @@ namespace readable
 						char after = String.c_str()[DefPos+_name.length()];
 						if ((DefPos == 0 || before == ' ' || before == '\t' || before == '\n') && (DefPos+_name.length() == file.end || after == ' ' || after == '\t' || after == '\n'))	//other delimiters necessary?
 						{
-							definitionStart = DefPos;
+							_definitionStart = DefPos;
 							file.close();
 							return DefinitionExists;
 						}
@@ -40,11 +40,11 @@ namespace readable
 			case MergeOverwriteExisting: 
 				{	
 				//Find the old definition in the target file and delete it. Append the new definition.
-				//definitionStart has been set in the first iteration of this method.
+				//_definitionStart has been set in the first iteration of this method.
 					boost::filesystem::fstream file(Path, std::ios_base::in);
 					if (!file.is_open())
 						return OpenFailed;
-					file.seekg(definitionStart);
+					file.seekg(_definitionStart);
 					int DefLength = getDefLength(file);
 					if (DefLength == 0)		//If the definitionlength can't be obtained, the merge fails.
 						return MergeFailed;
@@ -53,8 +53,8 @@ namespace readable
 					ss << file.rdbuf();
 					file.close();
 					std::string OutString = ss.str();							//Does string support enough characters for this operation?
-					OutString.erase(definitionStart, DefLength);
-					OutString.insert(definitionStart, generateXDataDef());
+					OutString.erase(_definitionStart, DefLength);
+					OutString.insert(_definitionStart, generateXDataDef());
 					file.open(Path, std::ios_base::out | std::ios_base::trunc);
 					if (!file.is_open())
 						return OpenFailed;
@@ -120,7 +120,7 @@ namespace readable
 		return xDataDef.str();		//Does this support enough characters??
 	}
 
-	const int XData::getDefLength(boost::filesystem::fstream& file) const
+	const std::size_t XData::getDefLength(boost::filesystem::fstream& file) const
 	{
 		char ch;
 		int bla;
@@ -140,7 +140,7 @@ namespace readable
 					else if (ch == '}')
 						BracketCount -= 1;
 				}
-				return ((int)file.tellg() - definitionStart);
+				return ((int)file.tellg() - _definitionStart);
 			}
 		}
 		return 0;	//no appropriate bracketstructure was found.

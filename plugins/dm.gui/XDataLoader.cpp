@@ -3,11 +3,50 @@
 
 namespace readable
 {
+	XDataPtr XDataLoader::importSingleDef(const std::string& filename, const std::string& definitionName)
+	{
+		XDataPtrList ReturnVector;
+
+		//Check fileextension:
+		if (filename.substr( filename.rfind(".")+1 ) != "xd")
+			reportError("[XDataLoader::import] Fileextension is not .xd: " + filename + "\n");
+
+		// Attempt to open the file in text mode
+		ArchiveTextFilePtr file = 
+			GlobalFileSystem().openTextFile(XDATA_DIR + filename);
+		if (file == NULL)
+			reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
+
+		std::istream is(&(file->getInputStream()));
+		parser::BasicDefTokeniser<std::istream> tok(is);
+
+		_errorList.clear();
+		_newXData.reset();
+
+		while (tok.hasMoreTokens() && !parseXDataDef(tok,definitionName)) {}
+
+		if (!_newXData)
+		{
+			_errorList.push_back("[XDataLoader::importSingleDef] Failed to load " + definitionName + ".\n");
+			std::cerr << _errorList[0];	
+		}
+		else
+		{
+			_errorList.push_back("[XDataLoader::importSingleDef] " + definitionName + " loaded successfully with " 
+				+ boost::lexical_cast<std::string>(_errorList.size()) + " error(s)/warning(s).\n");
+			for (unsigned int n=0; n<_errorList.size()-1; n++)
+				std::cerr << _errorList[n];
+			if (_errorList.size() > 1)
+				std::cerr << _errorList[_errorList.size()-1];
+			else
+				globalOutputStream() << _errorList[0];
+		}
+
+		return _newXData;
+	}
+
 	XDataPtrList XDataLoader::import(const std::string& filename)
 	{
-		/* ToDO:
-		1) Proper error reporting. A summary should be displayed in the GUI later.*/
-
 		XDataPtrList ReturnVector;
 
 		//Check fileextension:
@@ -45,18 +84,36 @@ namespace readable
 		//temporary
 		for (unsigned int n = 0; n < _errorList.size()-1; n++)
 			std::cerr << _errorList[n];
-		if (ErrorCount == 0)
-			globalOutputStream() << _errorList[_errorList.size()-1];
+		if (_errorList.size() == 1)	//No errors.
+			globalOutputStream() << _errorList[0];
 		else
 			std::cerr << _errorList[_errorList.size()-1];
 
 		return ReturnVector;
 	} // XDataLoader::import
 
-	bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok)
+	bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::string& definitionName)
 	{
+		_name = tok.nextToken();
+
+		//Check Syntax:
+		try	{ tok.assertNextToken("{"); }
+		catch (...)
+		{
+			while (tok.nextToken() != "{") {}
+			_errorList.push_back("[XDataLoader::import] Syntaxerror in definition: " + _name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+			jumpOutOfBrackets(tok,1);
+			return false;
+		}
+
+		//Check if every definition shall be parsed or only a specific one:
+		if (!definitionName.empty() && _name != definitionName)
+		{
+			jumpOutOfBrackets(tok,1);
+			return false;
+		}
+
 		//Initialization:
-		_name = tok.nextToken();		
 		_newXData.reset();		
 		_guiPageError.clear();
 		_maxPageCount = 0;
@@ -66,16 +123,6 @@ namespace readable
 		_sndPageTurn = "";
 		_guiPage.clear();
 		_guiPage.resize(MAX_PAGE_COUNT,"");		//see MAX_PAGE_COUNT declaration in XData.h for explanation.
-
-		//Start Parsing:
-		try	{ tok.assertNextToken("{"); }
-		catch (...)
-		{
-			while (tok.nextToken() != "{") {}
-			_errorList.push_back("[XDataLoader::import] Syntaxerror in definition: " + _name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-			jumpOutOfBrackets(tok,1);
-			return false;
-		}
 
 		//Parse-Loop:
 		while (tok.hasMoreTokens())
@@ -96,6 +143,7 @@ namespace readable
 				_errorList.push_back(_guiPageError[n]);
 			}
 		}
+
 		// Check if _guiPage-statements for all pages are available.
 		if (_guiPageDef == "")
 		{
@@ -317,7 +365,7 @@ namespace readable
 			StringMap::iterator it = _defMap.find(SourceDef);
 			if (it == _defMap.end())		//If the definition couldn't be found, refresh the _defMap and try again.
 			{
-				generateDefMap();
+				retrieveXdInfo();
 				it = _defMap.find(SourceDef);
 			}
 			if (it == _defMap.end())
@@ -435,14 +483,25 @@ namespace readable
 
 
 		
-	void XDataLoader::generateDefMap()
+	void XDataLoader::retrieveXdInfo()
 	{
+		_defMap.clear();
+		_definitionList.clear();
+		_fileSet.clear();
+		_duplicatedDefs.clear();
 		ScopedDebugTimer timer("XData definitions parsed: ");
 		GlobalFileSystem().forEachFile(
 			XDATA_DIR, 
 			XDATA_EXT,
 			makeCallback1(*this),
 			99);
+
+		//Generate the sorted vector-list of definitions and files:		
+		for (StringMap::iterator it = _defMap.begin(); it != _defMap.end(); it++)
+		{
+			_definitionList.push_back(it->first);
+		}
+		return;
 	}
 
 	void XDataLoader::operator() (const std::string& filename)
@@ -452,7 +511,8 @@ namespace readable
 			GlobalFileSystem().openTextFile(XDATA_DIR + filename);
 
 		if (file != NULL) {		
-			// File is open, so parse the tokens
+			// File is open, so add the file to the _fileSet-set and parse the tokens
+			_fileSet.insert(filename);
 			try 
 			{
 				std::istream is(&(file->getInputStream()));
@@ -464,7 +524,15 @@ namespace readable
 					tok.assertNextToken("{");
 					std::pair<StringMap::iterator,bool> ret = _defMap.insert(StringMap::value_type(tempstring,filename));
 					if (!ret.second)
+					{
 						std::cerr << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined in " << ret.first->second << ".\n";
+						std::vector<std::string> tempvector;
+						tempvector.push_back(ret.first->second);
+						tempvector.push_back(filename);
+						std::pair<DuplicatedDefsMap::iterator,bool> duplRet = _duplicatedDefs.insert(DuplicatedDefsMap::value_type(tempstring,tempvector));
+						if (!duplRet.second)
+							duplRet.first->second.push_back(filename);
+					}
 					jumpOutOfBrackets(tok, 1);
 				}
 			}
