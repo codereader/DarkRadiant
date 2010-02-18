@@ -73,7 +73,7 @@ public:
 
 	// All child windowDefs of this window
 	typedef std::vector<GuiWindowDefPtr> ChildWindows;
-	ChildWindows _children;
+	ChildWindows children;
 
 	// Default constructor
 	GuiWindowDef() :
