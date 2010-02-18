@@ -91,7 +91,7 @@ namespace readable
 		void setName(const std::string& name) { _name = name; }
 
 		/* numPages-statement. Resizes vectors accordingly. Attention: If numPages is lowered, data will obviously be discarded. */
-		const int getNumPages() const { return _numPages; }
+		const std::size_t getNumPages() const { return _numPages; }
 		void setNumPages(std::size_t numPages)
 		{
 			_numPages = numPages;
@@ -125,7 +125,7 @@ namespace readable
 		const std::string generateXDataDef() const;
 
 		/* Returns the length of the current definition. The get-pointer has to be at the beginning of that definition. Returns 0 on Syntax errors. */
-		const int getDefLength(boost::filesystem::fstream& file) const;
+		const std::size_t getDefLength(boost::filesystem::fstream& file) const;
 
 		/* Returns the definition-name found in the file or "" if multiple definitions where found. Used by the xport()-method in the overwrite-command for checking for a DefinitionMatch or MultipleDefinitions.*/
 		const std::string getDefinitionNameFromXD(boost::filesystem::ifstream& file) const;
@@ -144,11 +144,11 @@ namespace readable
 		const std::string generateTextDef(const std::string& rawString) const;
 
 		//Attributes:
-		std::string _name;			//name of the XData-Definition
+		std::string	_name;			//name of the XData-Definition
 		std::size_t _numPages;				//numPages-statement
-		StringList _guiPage;		//guiPage-statements
+		StringList	_guiPage;		//guiPage-statements
 		std::string _sndPageTurn;	//sndPageTurn-statement
-		std::size_t definitionStart;		//Marks the start of a definition in an .xd-File. Used by the xport()-method.
+		std::size_t _definitionStart;		//Marks the start of a definition in an .xd-File. Used by the xport()-method.
 	};
 	typedef boost::shared_ptr<XData> XDataPtr;
 
@@ -157,8 +157,8 @@ namespace readable
 	{
 	private:
 	//page contents
-		StringList _pageTitle;
-		StringList _pageBody;
+		StringList	_pageTitle;
+		StringList	_pageBody;
 	//end of page contents
 		const std::string getContentDef() const;
 		void resizeVectors(std::size_t targetSize);
@@ -183,10 +183,10 @@ namespace readable
 	{
 	private:
 	//page contents:
-		StringList _pageLeftTitle;
-		StringList _pageRightTitle;
-		StringList _pageLeftBody;
-		StringList _pageRightBody;
+		StringList	_pageLeftTitle;
+		StringList	_pageRightTitle;
+		StringList	_pageLeftBody;
+		StringList	_pageRightBody;
 	//end of page contents
 		const std::string getContentDef() const;
 		void resizeVectors(std::size_t targetSize);
