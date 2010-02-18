@@ -3,84 +3,61 @@
 
 namespace readable
 {
-	XDataPtrList XDataLoader::import(const std::string& FileName)
+	XDataPtrList XDataLoader::import(const std::string& filename)
 	{
 		/* ToDO:
-		1) Proper error reporting. A summary should be displayed in the GUI later.
-		2) Maybe check FileExtension again.				->done*/
+		1) Proper error reporting. A summary should be displayed in the GUI later.*/
 
 		XDataPtrList ReturnVector;
 
 		//Check fileextension:
-		if (FileName.substr( FileName.rfind(".")+1 ) != "xd")
-			reportError("[XDataLoader::import] Fileextension is not .xd: " + FileName + "\n");
+		if (filename.substr( filename.rfind(".")+1 ) != "xd")
+			reportError("[XDataLoader::import] Fileextension is not .xd: " + filename + "\n");
 
 		// Attempt to open the file in text mode
 		ArchiveTextFilePtr file = 
-			GlobalFileSystem().openTextFile(XDATA_DIR + FileName);
+			GlobalFileSystem().openTextFile(XDATA_DIR + filename);
 		if (file == NULL)
-			reportError("[XDataLoader::import] Failed to open file: " + FileName + "\n");
+			reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
 
 		std::istream is(&(file->getInputStream()));
 		parser::BasicDefTokeniser<std::istream> tok(is);
 
-		StringList ErrorList;		
+		_errorList.clear();
+
 		unsigned int ErrorCount = 0;
 
 		while (tok.hasMoreTokens())
 		{
 			if (parseXDataDef(tok))
-				ReturnVector.push_back(_NewXData.xData);
+				ReturnVector.push_back(_newXData);
 			else
 				ErrorCount += 1;
-			if (_NewXData.error_msg.size()>0)
-				for (unsigned int n=0; n<_NewXData.error_msg.size(); n++)
-					ErrorList.push_back(_NewXData.error_msg[n]);
 		}
+		
+		_errorList.push_back(
+			"[XDataLoader::import] Import finished with " + boost::lexical_cast<std::string>(_errorList.size()) 
+			+ " error(s)/warning(s). " + boost::lexical_cast<std::string>(ReturnVector.size()) 
+			+ " XData-definition(s) successfully imported, but failed to import at least " 
+			+ boost::lexical_cast<std::string>(ErrorCount) + " definitions.\n"
+			);
 
 		//temporary
-		for (unsigned int n = 0; n<ErrorList.size(); n++)
-			std::cerr << ErrorList[n];
-
-		if (ErrorList.size() > 0)
-			std::cerr << "[XDataLoader::import] Import finished with " << ErrorList.size() << " error(s)/warning(s). " << ReturnVector.size() << " XData-definition(s) successfully imported, but failed to import at least " << ErrorCount << " definitions." << std::endl;
+		for (unsigned int n = 0; n < _errorList.size()-1; n++)
+			std::cerr << _errorList[n];
+		if (ErrorCount == 0)
+			globalOutputStream() << _errorList[_errorList.size()-1];
 		else
-			globalOutputStream() << "[XDataLoader::import] " << ReturnVector.size() << " XData-definition(s) successfully imported.\n";
+			std::cerr << _errorList[_errorList.size()-1];
 
 		return ReturnVector;
 	} // XDataLoader::import
 
 	bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok)
 	{
-		/* TODO:
-		1) Support for import-directive								->done
-		2) This is pretty ugly code. There's gotta be a better way to do this than with two separate shared pointers. 
-		The default resize to MAX_PAGE_COUNT is also uncool.															->done
-		3) Add try/catch blocks.																							->done
-		4) Possibly throw syntax-exception if _numPages hasn't been defined or reconstruct from the content-vectors or 
-		set it automatically depending on the _maxPageCount variable.													->done
-		5) Try/catch blocks around direct vector access to prevent vector subscript out of range							->done
-		6) Collect general syntax errors in a struct for a return-value... Also in subclass. Add function 
-		that scrolls out to the next definition.																		->done
-		7) Fix detection of exceeding content-dimensions.																	->done
-		8) When guiPages is set, the other vectors should be resized as well.												->done
-		9) Pages might be discarded during resize. Maintain a _maxPageCount variable... Page-creation conditions possibly 
-		have to be revisited. _maxPageCount should only be raised for pages that have content.							->done
-		10)If GuiPageCount is exceeded, the gui page should be stored anyway, because _numPages might be raised later. 
-		Resize the vector in the end and store it in the XData object. Errormessage should also be handled differently then.	->done
-		11)Have to check the new virtual methods for possible exceptions.				->done
-		12)Only resize in the end depending on _numPages and _maxPageCount, to prevent dataloss.								->done
-		13)ErrorMessage when _numPages has been raised																		->done
-		14)Maybe add a default _guiPage layout for OneSided and TwoSided Objects if no _guiPage layout has been defined.		->done
-		15)Check if _guiPage statements are available for every page.														->done
-		16)nextToken() can throw if no tokens are available. Think of something to catch that.								->done
-		17)Check how the DefTokeniser reacts on escaped quotes.																->done
-		18)Warnings for missing statements.																					->done*/
-
 		//Initialization:
 		_name = tok.nextToken();		
-		_NewXData.error_msg.clear();
-		_NewXData.xData.reset();		
+		_newXData.reset();		
 		_guiPageError.clear();
 		_maxPageCount = 0;
 		_maxGuiNumber = 0;
@@ -88,14 +65,14 @@ namespace readable
 		_numPages = 0;
 		_sndPageTurn = "";
 		_guiPage.clear();
-		_guiPage.resize(MAX_PAGE_COUNT,"");		//see MAX_PAGE_COUNT declaration in header-file for explanation.
+		_guiPage.resize(MAX_PAGE_COUNT,"");		//see MAX_PAGE_COUNT declaration in XData.h for explanation.
 
 		//Start Parsing:
-		try	{ tok.assertNextToken("{"); }		//throws when syntax error
+		try	{ tok.assertNextToken("{"); }
 		catch (...)
 		{
 			while (tok.nextToken() != "{") {}
-			_NewXData.error_msg.push_back("[XDataLoader::import] Syntaxerror in definition: " + _name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+			_errorList.push_back("[XDataLoader::import] Syntaxerror in definition: " + _name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			jumpOutOfBrackets(tok,1);
 			return false;
 		}
@@ -106,7 +83,7 @@ namespace readable
 			std::string token = tok.nextToken();
 			if (token == "}")
 				break;
-			if (!StoreContent(token, tok, _name))
+			if (!storeContent(token, tok, _name))
 				return false;
 		}
 
@@ -116,79 +93,72 @@ namespace readable
 			int diff = _maxGuiNumber + 1 - _maxPageCount;
 			for (unsigned int n = _guiPageError.size()-diff; n<_guiPageError.size(); n++)
 			{
-				_NewXData.error_msg.push_back(_guiPageError[n]);
+				_errorList.push_back(_guiPageError[n]);
 			}
 		}
 		// Check if _guiPage-statements for all pages are available.
 		if (_guiPageDef == "")
 		{
-			_NewXData.error_msg.push_back("[XDataLoader::import] Warning for definition: " + _name
+			_errorList.push_back("[XDataLoader::import] Warning for definition: " + _name
 				+ ". _guiPage-statement(s) missing. Setting default value...\n");
-			if (_NewXData.xData->getPageLayout() == TwoSided)
+			if (_newXData->getPageLayout() == TwoSided)
 				_guiPageDef = DEFAULT_TWOSIDED_LAYOUT; 
 			else
 				_guiPageDef = DEFAULT_ONESIDED_LAYOUT;
 		}
-		for (int n=0; n<_numPages; n++ )
+		for (std::size_t n=0; n<_numPages; n++ )
 		{
 			if (_guiPage[n] == "")
 				_guiPage[n] = _guiPageDef;
 		}
 
 		//Store values:
-		_NewXData.xData->setGuiPage(_guiPage);
-		_NewXData.xData->setNumPages(_numPages);
-		_NewXData.xData->resizeVectors(_numPages);
+		_newXData->setGuiPage(_guiPage);
+		_newXData->setNumPages(_numPages);
 
 		//Use default sndPageTurn if the statement was missing:
 		if (_sndPageTurn == "")
 		{
-			_NewXData.xData->setSndPageTurn(DEFAULT_SNDPAGETURN);
-			_NewXData.error_msg.push_back("[XDataLoader::import] Warning for definition: " + _name
+			_newXData->setSndPageTurn(DEFAULT_SNDPAGETURN);
+			_errorList.push_back("[XDataLoader::import] Warning for definition: " + _name
 				+ ". _sndPageTurn-statement missing. Setting default value...\n");
 		}
 		else
-			_NewXData.xData->setSndPageTurn(_sndPageTurn);		
+			_newXData->setSndPageTurn(_sndPageTurn);		
 
 		return true;
 	}
 
-	bool XDataLoader::StoreContent(const std::string& Where, parser::DefTokeniser& tok, const std::string& DefName)
+	bool XDataLoader::storeContent(const std::string& statement, parser::DefTokeniser& tok, const std::string& defName)
 	{
 		//page-statement:
-		if (Where.substr(0,4) == "page")
+		if (statement.substr(0,4) == "page")
 		{
 			//Now that it is known, whether we are dealing with a Two- or OneSidedXDataObject, create the XData object.
-			if (!_NewXData.xData)
+			if (!_newXData)
 			{
-				if (Where.find("left",6) != std::string::npos || Where.find("right",6) != std::string::npos) //TwoSided
-				{
-					_NewXData.xData = XDataPtr(new TwoSidedXData(_name));
-					_NewXData.xData->resizeVectors(MAX_PAGE_COUNT);
-				}
-				else //OneSided
-				{
-					_NewXData.xData = XDataPtr(new OneSidedXData(_name));
-					_NewXData.xData->resizeVectors(MAX_PAGE_COUNT);
-				}
+				if (statement.find("left",6) != std::string::npos || statement.find("right",6) != std::string::npos) //TwoSided
+					_newXData = XDataPtr(new TwoSidedXData(_name));
+				else
+					_newXData = XDataPtr(new OneSidedXData(_name));
 			}
 
 			//Acquire PageIndex
-			int PageIndex;
-			char number = Where.c_str()[4];
-			try { PageIndex = boost::lexical_cast<int>(number)-1; }	//can throw...
+			std::size_t PageIndex;
+			char number = statement.c_str()[4];
+			try { PageIndex = boost::lexical_cast<int>(number)-1; }
 			catch (...)
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ", " + Where + " statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");;
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ", " + statement + " statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");;
 				jumpOutOfBrackets(tok,2);
 				return false;
 			}			
 
 			//Read content
 			std::string content;
-			if (!ReadLines(tok, content))
+			if (!readLines(tok, content))
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ". Failed to read content of " + Where + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
@@ -199,11 +169,11 @@ namespace readable
 				if (content.length() > 1) //_numPages is raised automatically, if a page with content is detected...		//unclean
 				{
 					_numPages = PageIndex+1;
-					_NewXData.error_msg.push_back("[XDataLoader::import] Warning for definition: " + DefName + ", " + Where + " statement.\n\tnumPages not (yet) specified or too low. Raising _numPages to " + number +"...\n");
+					_errorList.push_back("[XDataLoader::import] Warning for definition: " + defName + ", " + statement + " statement.\n\tnumPages not (yet) specified or too low. Raising _numPages to " + number +"...\n");
 				}
 				else
 				{
-					_NewXData.error_msg.push_back("[XDataLoader::import] Warning for definition: " + DefName + ", " + Where + " statement.\n\tnumPages not (yet) specified or too low. However, this page does not contain any text and is discarded...\n");
+					_errorList.push_back("[XDataLoader::import] Warning for definition: " + defName + ", " + statement + " statement.\n\tnumPages not (yet) specified or too low. However, this page does not contain any text and is discarded...\n");
 					return true;
 				}
 			}
@@ -214,27 +184,27 @@ namespace readable
 					_maxPageCount = PageIndex+1;
 
 			//Write the content into the XData object
-			SideChooser side;
-			if (Where.find("left",6) != std::string::npos)	//SideChooser is discarded on OneSidedXData...
+			Side side;
+			if (statement.find("left",6) != std::string::npos)	//Side is discarded on OneSidedXData...
 				side = Left;
 			else
 				side = Right;
-			if (Where.find("body",6) != std::string::npos)
-				_NewXData.xData->setPageContent(Body, PageIndex, side, content);			//could throw if PageIndex >= MAX_PAGE_COUNT
+			if (statement.find("body",6) != std::string::npos)
+				_newXData->setPageContent(Body, PageIndex, side, content);			//could throw if PageIndex >= MAX_PAGE_COUNT
 			else
-				_NewXData.xData->setPageContent(Title, PageIndex, side, content);
+				_newXData->setPageContent(Title, PageIndex, side, content);
 
 		}
 		//gui_page statement
-		else if (Where.substr(0,8) == "gui_page")
+		else if (statement.substr(0,8) == "gui_page")
 		{
 			//Acquire gui_page number:
-			std::string number = Where.substr(Where.length()-1,1);
-			int guiNumber;
+			std::string number = statement.substr(statement.length()-1,1);
+			std::size_t guiNumber;
 			try	{ guiNumber = boost::lexical_cast<int>(number)-1; }
 			catch (...)
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ", gui_page statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ", gui_page statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;	
 			}
@@ -242,9 +212,9 @@ namespace readable
 				_maxGuiNumber = guiNumber;
 
 			//Get the GuiPageDef:
-			if (!ReadLines(tok, _guiPageDef))
+			if (!readLines(tok, _guiPageDef))
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ". Failed to read content of " + Where + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;	
 			}
@@ -252,23 +222,23 @@ namespace readable
 
 			//Append error-message if _numPages is exceeded.
 			if (guiNumber >= _numPages)
-				_guiPageError.push_back("[XDataLoader::import] Warning for definition: " + DefName + ". More _guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
+				_guiPageError.push_back("[XDataLoader::import] Warning for definition: " + defName + ". More _guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
 		}
 		//num_pages statement
-		else if (Where == "num_pages")
+		else if (statement == "num_pages")
 		{
 			//Get num_pages:
 			std::string number;
-			if (!ReadLines(tok, number))
+			if (!readLines(tok, number))
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ". Failed to read content of " + Where + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
-			try { _numPages = boost::lexical_cast<int>(number); }	//throws
+			try { _numPages = boost::lexical_cast<int>(number); }
 			catch(...)
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ", num_pages statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ", num_pages statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
@@ -277,30 +247,30 @@ namespace readable
 			if (_maxPageCount > _numPages)
 			{
 				_numPages = _maxPageCount;
-				_NewXData.error_msg.push_back("[XDataLoader::import] Warning for definition: " + DefName
+				_errorList.push_back("[XDataLoader::import] Warning for definition: " + defName
 					+ ". The specified _numPages statement did not match the amount of pages with content.\n\tnumPages is set to " 
 					+ boost::lexical_cast<std::string>(_numPages) + ".\n");
 			}
 		}
 		//snd_page_turn statement
-		else if (Where == "snd_page_turn")
+		else if (statement == "snd_page_turn")
 		{
-			if (!ReadLines(tok, _sndPageTurn))
+			if (!readLines(tok, _sndPageTurn))
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ". Failed to read content of " + Where + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
 		}
 		//import statement
-		else if (Where == "import")
+		else if (statement == "import")
 		{
 			//Enter content brackets
 			std::string token;
-			try { tok.assertNextToken("{");	}	//can throw
+			try { tok.assertNextToken("{");	}
 			catch(...)
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Syntax error in definition: " + DefName + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
@@ -321,7 +291,7 @@ namespace readable
 			}
 			catch (...)
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ". Failed to read content of " + Where + " statement. Probably Syntax-error.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement. Probably Syntax-error.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
@@ -330,7 +300,7 @@ namespace readable
 			try { tok.assertNextToken("from"); }
 			catch (...)
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Syntax error in definition: " + DefName + ", import-statement. 'from' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. 'from' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
@@ -338,21 +308,21 @@ namespace readable
 			try	{ SourceDef = tok.nextToken(); }
 			catch (...)
 			{
-				_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ". Failed to read content of " + Where + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
 
-			//Check where the Definition is stored in the DefMap
-			StringMap::iterator it = DefMap.find(SourceDef);			//gotta test if this works when DefMap is empty.
-			if (it == DefMap.end())		//If the definition couldn't be found, refresh the DefMap and try again.
+			//Check where the Definition is stored in the _defMap
+			StringMap::iterator it = _defMap.find(SourceDef);
+			if (it == _defMap.end())		//If the definition couldn't be found, refresh the _defMap and try again.
 			{
-				grabAllDefinitions();
-				it = DefMap.find(SourceDef);
+				generateDefMap();
+				it = _defMap.find(SourceDef);
 			}
-			if (it == DefMap.end())
+			if (it == _defMap.end())
 			{
-				_NewXData.error_msg.push_back("[XData::import] Error in definition: " + DefName + ". Found an import-statement, but not the corresponding definition.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
@@ -362,7 +332,7 @@ namespace readable
 				GlobalFileSystem().openTextFile(XDATA_DIR + it->second);
 			if (file == NULL)
 			{
-				_NewXData.error_msg.push_back("[XData::import] Error in definition: " + DefName + ". Found an import-statement, but failed to open the corresponding file: " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to open the corresponding file: " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 				jumpOutOfBrackets(tok,1);
 				return false;
 			}
@@ -371,8 +341,8 @@ namespace readable
 			ss << &(file->getInputStream());
 			ss << ss.str().substr( ss.str().find(SourceDef) );
 			std::istream is(ss.rdbuf());
-			//Import-Loop: Find the SourceStatement in the file and pass the DefTokeniser to StoreContent
-			for (int n = 0; n < SourceStatement.size(); n++)
+			//Import-Loop: Find the SourceStatement in the file and pass the DefTokeniser to storeContent
+			for (std::size_t n = 0; n < SourceStatement.size(); n++)
 			{
 				is.seekg(0);
 				parser::BasicDefTokeniser<std::istream> ImpTok(is);
@@ -381,7 +351,7 @@ namespace readable
 				{	
 					while (ImpTok.nextToken() != "{") {}
 					int BracketDepth = 1;
-					std::string BracketToken = ImpTok.nextToken(); //can throw
+					std::string BracketToken = ImpTok.nextToken();
 					while ( BracketToken != SourceStatement[n])
 					{
 						if (BracketToken == "{")
@@ -390,7 +360,7 @@ namespace readable
 							BracketDepth -= 1;
 						if (BracketDepth == 0)	 //Sourcestatement is not in the current definition
 						{
-							_NewXData.error_msg.push_back("[XData::import] Error in definition: " + DefName + ". Found an import-statement, but couldn't find the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+							_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 							jumpOutOfBrackets(tok,1);
 							return false;
 						}
@@ -399,13 +369,13 @@ namespace readable
 				}
 				catch (...)
 				{
-					_NewXData.error_msg.push_back("[XDataLoader::import] Error in definition: " + DefName + ". Found an import-statement, but couldn't read the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n");
+					_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Found an import-statement, but couldn't read the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n");
 					jumpOutOfBrackets(tok,1);
 					return false;
 				}
-				if (!StoreContent(DestStatement[n],ImpTok,SourceDef))
+				if (!storeContent(DestStatement[n],ImpTok,SourceDef))
 				{
-					_NewXData.error_msg.push_back("[XData::import] Error in definition: " + DefName + ". Found an import-statement, but failed to parse the corresponding statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+					_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to parse the corresponding statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 					jumpOutOfBrackets(tok,1);
 					return false;
 				}
@@ -415,11 +385,8 @@ namespace readable
 		return true;
 	}
 
-	inline bool XDataLoader::ReadLines(parser::DefTokeniser& tok, std::string& What)
+	inline bool XDataLoader::readLines(parser::DefTokeniser& tok, std::string& what) const
 	{
-		/* ToDo:
-			1) Check how parsing slash-separated linebreaks work.			->done*/
-
 		std::stringstream out;
 		std::string token;
 
@@ -427,12 +394,12 @@ namespace readable
 		try
 		{
 			tok.skipTokens(1);			//Skip ":"
-			What = tok.nextToken();			//can throw
-			if (What != "{" )	//Parsing SingleLine Content
+			what = tok.nextToken();
+			if (what != "{" )	//Parsing SingleLine Content
 				return true;
 
 			//Parse MultiLine Content.
-			token = tok.nextToken();		//can throw
+			token = tok.nextToken();
 			while (token != "}")
 			{
 				if (token == "/")		//newlines can also be signalized by slashed. Ignore them
@@ -445,30 +412,30 @@ namespace readable
 				else
 					token = token + "\n";
 				out << token;	
-				token = tok.nextToken();		//can throw
+				token = tok.nextToken();
 			}
 		}
 		catch (...) { return false; }
-		What = out.str();
+		what = out.str();
 		return true;
 	}
 
 
-	void XDataLoader::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)	//not tested.
+	void XDataLoader::jumpOutOfBrackets(parser::DefTokeniser& tok, std::size_t currentDepth) const
 	{
-		while ( tok.hasMoreTokens() && CurrentDepth > 0)
+		while ( tok.hasMoreTokens() && currentDepth > 0)
 		{
 			std::string token = tok.nextToken();
 			if (token == "{")
-				CurrentDepth += 1;
+				currentDepth += 1;
 			else if (token == "}")
-				CurrentDepth -= 1;
+				currentDepth -= 1;
 		}
 	}
 
 
 		
-	void XDataLoader::grabAllDefinitions()
+	void XDataLoader::generateDefMap()
 	{
 		ScopedDebugTimer timer("XData definitions parsed: ");
 		GlobalFileSystem().forEachFile(
@@ -495,7 +462,7 @@ namespace readable
 				{
 					std::string tempstring = tok.nextToken();
 					tok.assertNextToken("{");
-					std::pair<StringMap::iterator,bool> ret = DefMap.insert(StringMap::value_type(tempstring,filename));		//What happens if the same definition exists multiple times?
+					std::pair<StringMap::iterator,bool> ret = _defMap.insert(StringMap::value_type(tempstring,filename));
 					if (!ret.second)
 						std::cerr << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined in " << ret.first->second << ".\n";
 					jumpOutOfBrackets(tok, 1);

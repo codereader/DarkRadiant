@@ -4,16 +4,9 @@ namespace readable
 {
 //XData implementations:
 //->export:	
-	FileStatus XData::xport(const std::string& FileName, const ExporterCommands& cmd)
+	readable::FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 	{
-		/* ToDo:
-			1) Need to handle return 0 of getDefLength().			->done
-			2) Test all possibilities.								->done
-			3) Do I need to check fstream.open for success, as well as the write process?	->done
-			4) Does String support enough characters? 
-			5) Handle the exception of getDefinitionNameFromXD().	->done */
-
-		boost::filesystem::path Path(FileName);		
+		boost::filesystem::path Path(filename);		
 		if (boost::filesystem::exists(Path))
 		{
 			switch (cmd)
@@ -27,7 +20,7 @@ namespace readable
 					std::stringstream ss;
 					ss << file.rdbuf();		//is this the quickest way to read a whole file?
 					std::string String = ss.str();
-					int DefPos = String.find(_name);
+					std::size_t DefPos = String.find(_name);
 					while (DefPos != std::string::npos)	//A name of a readable could be contained in another readable's name. Check that...
 					{
 						char before = String.c_str()[DefPos-1];		//what happens if -1 is accessed? 
@@ -81,7 +74,7 @@ namespace readable
 					try	{ DefName = getDefinitionNameFromXD(file); }
 					catch (...) 
 					{
-						std::cerr << "[XData::xport] Syntax error in file " << FileName << ". Overwriting the file..." << std::endl;
+						std::cerr << "[XData::xport] Syntax error in file " << filename << ". Overwriting the file..." << std::endl;
 						break;
 					}
 					if (DefName == _name)	//Definition will be overwritten...
@@ -98,7 +91,7 @@ namespace readable
 		}
 
 		//Write the definition into the file.
-		boost::filesystem::ofstream file(Path, std::ios_base::out | std::ios_base::trunc);		//check if file open was successful?
+		boost::filesystem::ofstream file(Path, std::ios_base::out | std::ios_base::trunc);
 		if (!file.is_open())
 			return OpenFailed;
 		file << generateXDataDef();
@@ -108,14 +101,8 @@ namespace readable
 	}
 
 
-	std::string XData::generateXDataDef()
+	const std::string XData::generateXDataDef() const
 	{
-		//ToDo: 1) Howto handle '"' in String?				->done
-		//		2) Non-shared_ptr allowed in this case?		->removed.
-		//		3) Possibly check if e.g. the vectorsize of TwoSidedXD->_pageLeftTitle is smaller than _numPages.
-		//			So that no exceptions are thrown. (Depends on how XData objects are generated. Basically all
-		//			vectors should be of the size _numPages)	->fixed by resizeVectors-method
-
 		std::stringstream xDataDef;
 		xDataDef << _name << "\n" << "{" << "\n" << "\tprecache" << "\n" << "\t\"num_pages\"\t: \"" << _numPages << "\"\n";
 
@@ -124,32 +111,30 @@ namespace readable
 
 		xDataDef << getContentDef();
 
-		for (int n=1; n<=_numPages; n++)
+		for (std::size_t n=0; n<_numPages; n++)
 		{
-			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n-1] << "\"\n";
+			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n] << "\"\n";
 		}
 		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n\n\n";//*/
 
 		return xDataDef.str();		//Does this support enough characters??
 	}
 
-	int XData::getDefLength(boost::filesystem::fstream& file)
+	const int XData::getDefLength(boost::filesystem::fstream& file) const
 	{
-		/* ToDo:
-			1) Have to check if getpointer is raised after get() or before get() with reference to the returnvalue.		->done*/
 		char ch;
 		int bla;
 		if (file.is_open())
 		while (!file.eof())
 		{
 			bla = file.tellg();
-			ch = file.get();
+			ch = (char)file.get();
 			if (ch == '{')
 			{
 				int BracketCount = 1;
 				while (!file.eof() && BracketCount > 0)
 				{
-					ch = file.get();
+					ch = (char)file.get();
 					if (ch == '{')
 						BracketCount += 1;
 					else if (ch == '}')
@@ -161,10 +146,8 @@ namespace readable
 		return 0;	//no appropriate bracketstructure was found.
 	}
 
-	std::string XData::getDefinitionNameFromXD(boost::filesystem::ifstream& file)
+	const std::string XData::getDefinitionNameFromXD(boost::filesystem::ifstream& file) const
 	{
-		/* ToDo:
-			1) Better use assertNextToken("{") here and let the caller catch.	->done*/
 		std::string ReturnString;
 		parser::BasicDefTokeniser<std::istream> tok(file);
 		bool FirstDef = true;
@@ -181,7 +164,7 @@ namespace readable
 		return ReturnString;
 	}
 
-	std::string XData::generateTextDef(std::string String)
+	const std::string XData::generateTextDef(const std::string& rawString) const
 	{
 		/* ToDo:
 			1) Possibly check if Quotecount per line is even and warn otherwise, because uneven quotecounts seem to be discarded.*/
@@ -189,15 +172,16 @@ namespace readable
 		std::stringstream xDataDef;
 		std::string TempString;
 		xDataDef << "\t{\n";
-		if (String != "")
+		if (rawString != "")
 		{
-			ss << String;
+			ss << rawString;
 			while ( std::getline(ss, TempString) )	//replace "\n" and add an escape-character before quotes.
 			{
-				int QuotePos = -2;
-				while ( (QuotePos = TempString.find("\"",QuotePos+2) ) != std::string::npos )
+				std::size_t QuotePos = TempString.find("\"",0);
+				while ( QuotePos != std::string::npos )
 				{
 					TempString.insert(QuotePos, "\\");
+					QuotePos = TempString.find("\"",QuotePos+2);
 				}
 				xDataDef << "\t\t\"" << TempString << "\"\n";
 			}
@@ -208,88 +192,91 @@ namespace readable
 		return xDataDef.str();
 	}
 //->general:
-	void XData::resizeVectors(const int& TargetSize)
+	void XData::resizeVectors(std::size_t targetSize)
 	{
-		_guiPage.resize(TargetSize, "");
+		_guiPage.resize(targetSize, "");
 	}
 	
-	void XData::jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth)	//not tested.
+	void XData::jumpOutOfBrackets(parser::DefTokeniser& tok, int currentDepth) const
 	{
-		while ( tok.hasMoreTokens() && CurrentDepth > 0)
+		while ( tok.hasMoreTokens() && currentDepth > 0)
 		{
 			std::string token = tok.nextToken();
 			if (token == "{")
-				CurrentDepth += 1;
+				currentDepth += 1;
 			else if (token == "}")
-				CurrentDepth -= 1;
+				currentDepth -= 1;
 		}
 	}
 
 //TwoSidedXData implementations:
 
-	void TwoSidedXData::resizeVectors(const int& TargetSize)
+	void TwoSidedXData::resizeVectors(std::size_t targetSize)
 	{
-		XData::resizeVectors(TargetSize);
-		_pageLeftBody.resize(TargetSize, "");
-		_pageLeftTitle.resize(TargetSize, "");
-		_pageRightBody.resize(TargetSize, "");
-		_pageRightTitle.resize(TargetSize, "");
+		XData::resizeVectors(targetSize);
+		_pageLeftBody.resize(targetSize, "");
+		_pageLeftTitle.resize(targetSize, "");
+		_pageRightBody.resize(targetSize, "");
+		_pageRightTitle.resize(targetSize, "");
 	}
 
-	void TwoSidedXData::setPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
+	void TwoSidedXData::setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content)
 	{
+		if (pageIndex >= _numPages)
+			throw std::runtime_error("Page Index out of bounds.");
 		switch (cc)
 		{
 		case Title:
-			switch (Side)
+			switch (side)
 			{
 			case Left:
-				_pageLeftTitle[PageIndex] = content;
+				_pageLeftTitle[pageIndex] = content;
 				break;
 			default:
-				_pageRightTitle[PageIndex] = content;
+				_pageRightTitle[pageIndex] = content;
 			}
 			break;
 		default:
-			switch (Side)
+			switch (side)
 			{
 			case Left:
-				_pageLeftBody[PageIndex] = content;
+				_pageLeftBody[pageIndex] = content;
 				break;
 			default:
-				_pageRightBody[PageIndex] = content;
+				_pageRightBody[pageIndex] = content;
 			}
 		}
 	}
 
-	std::string TwoSidedXData::getPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
+	const std::string& TwoSidedXData::getPageContent(ContentType cc, std::size_t pageIndex, Side side) const
 	{
+		if (pageIndex >= _numPages)
+			throw std::runtime_error("Page Index out of bounds.");
 		switch (cc)
 		{
 		case Title:
-			switch (Side)
+			switch (side)
 			{
 			case Left:
-				return _pageLeftTitle[PageIndex];
+				return _pageLeftTitle[pageIndex];
 			default:
-				return _pageRightTitle[PageIndex];
+				return _pageRightTitle[pageIndex];
 			}
 		default:
-			switch (Side)
+			switch (side)
 			{
 			case Left:
-				return _pageLeftBody[PageIndex];
+				return _pageLeftBody[pageIndex];
 			default:
-				return _pageRightBody[PageIndex];
+				return _pageRightBody[pageIndex];
 			}
 		}
 	}
 
-	std::string TwoSidedXData::getContentDef()
+	const std::string TwoSidedXData::getContentDef() const
 	{
 		std::stringstream xDataDef;
-
-		for (int n = 0; n < _numPages; n++)
+		for (std::size_t n = 0; n < _numPages; n++)
 		{
 			//Page Left Title
 			xDataDef << "\t\"page" << n+1 << "_left_title\"\t:\n";
@@ -312,42 +299,46 @@ namespace readable
 
 //OneSidedXData implementations:
 
-	void OneSidedXData::resizeVectors(const int& TargetSize)
+	void OneSidedXData::resizeVectors(std::size_t targetSize)
 	{
-		XData::resizeVectors(TargetSize);
-		_pageBody.resize(TargetSize, "");
-		_pageTitle.resize(TargetSize, "");
+		XData::resizeVectors(targetSize);
+		_pageBody.resize(targetSize, "");
+		_pageTitle.resize(targetSize, "");
 	}
 
-	void OneSidedXData::setPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content)
+	void OneSidedXData::setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content)
 	{
+		if (pageIndex >= _numPages)
+			throw std::runtime_error("Page Index out of bounds.");
 		switch (cc)
 		{
 		case Title:
-			_pageTitle[PageIndex] = content;
+			_pageTitle[pageIndex] = content;
 			break;
 		case Body:
 		default:
-			_pageBody[PageIndex] = content;
+			_pageBody[pageIndex] = content;
 		}
 	}
 
-	std::string OneSidedXData::getPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side)
+	const std::string& OneSidedXData::getPageContent(ContentType cc, std::size_t pageIndex, Side side) const
 	{
+		if (pageIndex >= _numPages)
+			throw std::runtime_error("Page Index out of bounds.");
 		switch (cc)
 		{
 		case Title:
-			return _pageTitle[PageIndex];
+			return _pageTitle[pageIndex];
 		default:
-			return _pageBody[PageIndex];
+			return _pageBody[pageIndex];
 		}
 	}
 
-	std::string OneSidedXData::getContentDef()
+	const std::string OneSidedXData::getContentDef() const
 	{
 		std::stringstream xDataDef;
 
-		for (int n = 0; n < _numPages; n++)
+		for (std::size_t n = 0; n < _numPages; n++)
 		{
 			//Title
 			xDataDef << "\t\"page" << n+1 << "_title\"\t:\n";
