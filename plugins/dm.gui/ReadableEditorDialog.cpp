@@ -24,11 +24,11 @@ ReadableEditorDialog::ReadableEditorDialog() :
 	_guiView(new gui::GuiView)
 {
 	// Set size of the window, default size is too narrow for path entries
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
+	/*GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
 		GlobalMainFrame().getTopLevelWindow()
-	);
+	);*/
 
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), static_cast<gint>(rect.width*0.4f), -1);
+	//gtk_window_set_default_size(GTK_WINDOW(getWindow()), static_cast<gint>(rect.width*0.4f), -1);
 
 	// Add a vbox for the dialog elements
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
