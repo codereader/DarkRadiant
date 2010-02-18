@@ -37,7 +37,8 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 	if (file == NULL) return GuiPtr();
 
 	// Construct a Code Tokeniser, which is able to handle #includes
-	parser::CodeTokeniser tokeniser(file, parser::WHITESPACE, "{}(),");
+	std::string whiteSpace = std::string(parser::WHITESPACE) + ",";
+	parser::CodeTokeniser tokeniser(file, whiteSpace.c_str(), "{}(),");
 
 	return Gui::createFromTokens(tokeniser);
 }

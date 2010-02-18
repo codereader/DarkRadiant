@@ -3,6 +3,10 @@
 #include "parser/DefTokeniser.h"
 #include "string/string.h"
 #include "itextstream.h"
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace gui
 {
@@ -17,6 +21,19 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 		std::string token = tokeniser.nextToken();
 
 		if (token == ",") continue;
+
+		if (token.find(',') != std::string::npos)
+		{
+			std::vector<std::string> parts;
+			boost::algorithm::split(parts, token, boost::algorithm::is_any_of(","));
+
+			for (std::size_t i = 0; i < parts.size(); ++i)
+			{
+				comp.push_back(boost::algorithm::trim_copy(parts[i]));
+			}
+
+			continue;
+		}
 
 		// TODO: Catch GUI expressions
 
@@ -36,6 +53,13 @@ float GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
 	// TODO: Catch GUI expressions
 
 	return strToFloat(tokeniser.nextToken());
+}
+
+int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
+{
+	// TODO: Catch GUI expressions
+
+	return strToInt(tokeniser.nextToken());
 }
 
 std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
@@ -67,6 +91,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 	while (tokeniser.hasMoreTokens())
 	{
 		std::string token = tokeniser.nextToken();
+		boost::algorithm::to_lower(token);
 
 		if (token == "rect")
 		{
@@ -75,6 +100,10 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "visible")
 		{
 			visible = parseBool(tokeniser);
+		}
+		else if (token == "notime")
+		{
+			notime = parseBool(tokeniser);
 		}
 		else if (token == "forecolor")
 		{
@@ -100,11 +129,27 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			text = parseString(tokeniser);
 		}
+		else if (token == "font")
+		{
+			font = tokeniser.nextToken();
+		}
+		else if (token == "textscale")
+		{
+			textscale = parseFloat(tokeniser);
+		}
+		else if (token == "textalign")
+		{
+			textalign = parseInt(tokeniser);
+		}
 		else if (token == "background")
 		{
 			background = parseString(tokeniser);
 		}
 		else if (token == "noevents")
+		{
+			noevents = parseBool(tokeniser);
+		}
+		else if (token == "modal")
 		{
 			noevents = parseBool(tokeniser);
 		}
@@ -119,6 +164,89 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			window->constructFromTokens(tokeniser);
 
 			addWindow(window);
+		}
+		else if (token == "onTime")
+		{
+			// TODO
+			std::string time = tokeniser.nextToken();
+			tokeniser.assertNextToken("{");
+
+			std::size_t depth = 1;
+
+			while (tokeniser.hasMoreTokens() && depth > 0)
+			{
+				std::string token = tokeniser.nextToken();
+				if (token == "}") depth--;
+				if (token == "{") depth++;
+			}
+		}
+		else if (token == "onNamedEvent")
+		{
+			// TODO
+			std::string eventName = tokeniser.nextToken();
+			tokeniser.assertNextToken("{");
+
+			std::size_t depth = 1;
+
+			while (tokeniser.hasMoreTokens() && depth > 0)
+			{
+				std::string token = tokeniser.nextToken();
+				if (token == "}") depth--;
+				if (token == "{") depth++;
+			}
+		}
+		else if (token == "onEsc")
+		{
+			// TODO
+			tokeniser.assertNextToken("{");
+
+			std::size_t depth = 1;
+
+			while (tokeniser.hasMoreTokens() && depth > 0)
+			{
+				std::string token = tokeniser.nextToken();
+				if (token == "}") depth--;
+				if (token == "{") depth++;
+			}
+		}
+		else if (token == "onMouseEnter" || token == "onMouseExit")
+		{
+			// TODO
+			tokeniser.assertNextToken("{");
+
+			std::size_t depth = 1;
+
+			while (tokeniser.hasMoreTokens() && depth > 0)
+			{
+				std::string token = tokeniser.nextToken();
+				if (token == "}") depth--;
+				if (token == "{") depth++;
+			}
+		}
+		else if (token == "onAction")
+		{
+			// TODO
+			tokeniser.assertNextToken("{");
+
+			std::size_t depth = 1;
+
+			while (tokeniser.hasMoreTokens() && depth > 0)
+			{
+				std::string token = tokeniser.nextToken();
+				if (token == "}") depth--;
+				if (token == "{") depth++;
+			}
+		}
+		else if (token == "float" || token == "definefloat")
+		{
+			// TODO: Add variable
+			std::string variableName = tokeniser.nextToken();
+		}
+		else if (token == "definevec4")
+		{
+			// TODO: Add variable
+			std::string variableName = tokeniser.nextToken();
+			parseVector4(tokeniser);
 		}
 		else if (token == "}")
 		{
