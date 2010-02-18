@@ -15,6 +15,11 @@
 
 namespace readable
 {
+	/* All vectors of XData-objects are initialized with this size so that no sorting is necessary, which
+	would otherwise be necessary when e.g. page2_body was defined before page1_body and a simple
+	vector.push_back(..) was used to store the data instead of a direct access using an Index. */
+	const std::size_t	MAX_PAGE_COUNT			= 20;
+
 	typedef std::vector<std::string> StringList;
 
 	enum FileStatus
@@ -27,7 +32,7 @@ namespace readable
 		OpenFailed,
 		AllOk
 	};
-	enum ExporterCommands
+	enum ExporterCommand
 	{
 		Normal,
 		Merge,
@@ -35,12 +40,12 @@ namespace readable
 		Overwrite,
 		OverwriteMultDef		
 	};
-	enum SideChooser
+	enum Side
 	{
 		Left,
 		Right
 	};
-	enum ContentChooser
+	enum ContentType
 	{
 		Title,
 		Body
@@ -57,11 +62,8 @@ namespace readable
 	{
 	public:
 	//Methods:
-		/* Resizes all vectors to TargetSize. */
-		virtual void resizeVectors(const int& TargetSize);
-
 		/* Returns the PageLayout of the object: TwoSided or OneSided */
-		virtual PageLayout getPageLayout() = 0;
+		virtual const PageLayout getPageLayout() const = 0;
 
 		/* Exports the XData class formated properly into the File specified in 
 		Filename (absolute Filepath). If the file already exists this function can overwrite the
@@ -73,64 +75,80 @@ namespace readable
 			the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
 			is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the
 			file no matter what. If the target-file has Syntax errors, it is overwritten...*/
-		FileStatus xport(const std::string& FileName, const ExporterCommands& cmd);
+		FileStatus xport(const std::string& filename, ExporterCommand cmd);
 
 		virtual ~XData() {};
 
 	//Getters and Setters for Attributes:
 
 		/* The page-contents of the Two- and OneSided XData-objects. cc defines whether Title or Body shall be accessed.
-		The SideChooser-parameter is discarded on OneSidedXData-objects.*/
-		virtual std::string getPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side) = 0;	//can throw: vector subscript dimensions exceeded.
-		virtual void setPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content) = 0;	//can throw: vector subscript dimensions exceeded.
+		The Side-parameter is discarded on OneSidedXData-objects. Throws std::runtime_error when index out of bounds. */
+		virtual const std::string& getPageContent(ContentType cc, std::size_t pageIndex, Side side) const = 0;
+		virtual void setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content) = 0;
 
 		/* The name of the XData-Definition */
-		std::string getName() { return _name; }
+		const std::string& getName() const { return _name; }
 		void setName(const std::string& name) { _name = name; }
 
-		/* numPages-statement */
-		int getNumPages() { return _numPages; }
-		void setNumPages(const int& numPages) { _numPages = numPages; }
+		/* numPages-statement. Resizes vectors accordingly. Attention: If numPages is lowered, data will obviously be discarded. */
+		const int getNumPages() const { return _numPages; }
+		void setNumPages(std::size_t numPages)
+		{
+			_numPages = numPages;
+			resizeVectors(numPages);
+		}
 
 		/* guiPage-statement. Methods for accessing a whole StringList or single VectorElements. */
-		StringList getGuiPage() { return _guiPage; }
-		std::string getGuiPage(int Index) { return _guiPage[Index]; }	//can throw: vector subscript dimensions exceeded.
+		const StringList& getGuiPage() const { return _guiPage; }
+		const std::string& getGuiPage(std::size_t index) const
+		{
+			if (index >= _numPages)
+				throw std::runtime_error("GUI Page Index out of bounds.");
+			return _guiPage[index];
+		}
 		void setGuiPage(const StringList& guiPage) { _guiPage = guiPage; }
-		void setGuiPage(const std::string& guiPage, int Index) { _guiPage[Index] = guiPage; }	//can throw: vector subscript dimensions exceeded.
+		void setGuiPage(const std::string& guiPage, std::size_t index) 
+		{ 
+			if (index >= _numPages)
+				throw std::runtime_error("GUI Page Index out of bounds.");
+			_guiPage[index] = guiPage;
+		}
 
 		/* sndPageTurn-statement. */
-		std::string getSndPageTurn() { return _sndPageTurn; }
+		const std::string& getSndPageTurn() const{ return _sndPageTurn; }
 		void setSndPageTurn(const std::string& sndPageTurn) { _sndPageTurn = sndPageTurn; }
 
 	private:
 	//Methods for export:
 
 		/* Generates the XData-Definition for the XData-object. */
-		std::string generateXDataDef();
+		const std::string generateXDataDef() const;
 
 		/* Returns the length of the current definition. The get-pointer has to be at the beginning of that definition. Returns 0 on Syntax errors. */
-		int getDefLength(boost::filesystem::fstream& file);
+		const int getDefLength(boost::filesystem::fstream& file) const;
 
 		/* Returns the definition-name found in the file or "" if multiple definitions where found. Used by the xport()-method in the overwrite-command for checking for a DefinitionMatch or MultipleDefinitions.*/
-		std::string getDefinitionNameFromXD(boost::filesystem::ifstream& file);	//can throw
+		const std::string getDefinitionNameFromXD(boost::filesystem::ifstream& file) const;
 
 		/* Used to jump out of a definition. Can lead to undefined behavior on Syntax-errors. */
-		void jumpOutOfBrackets(parser::DefTokeniser& tok, int CurrentDepth);
+		void jumpOutOfBrackets(parser::DefTokeniser& tok, int currentDepth) const;
 
 	protected:
+		/* Resizes all vectors to TargetSize. */
+		virtual void resizeVectors(std::size_t targetSize);
 
 		/* Returns the OneSided or TwoSided Page-content-definition of an XData object*/
-		virtual std::string getContentDef() = 0;	//can throw
+		virtual const std::string getContentDef() const = 0;
 
 		/* Generates the XData-compatible definition for Multi-line strings and adds escape-characters before quotes. */
-		std::string generateTextDef(std::string String);
+		const std::string generateTextDef(const std::string& rawString) const;
 
 		//Attributes:
 		std::string _name;			//name of the XData-Definition
-		int _numPages;				//numPages-statement
+		std::size_t _numPages;				//numPages-statement
 		StringList _guiPage;		//guiPage-statements
 		std::string _sndPageTurn;	//sndPageTurn-statement
-		int definitionStart;		//Marks the start of a definition in an .xd-File. Used by the xport()-method.
+		std::size_t definitionStart;		//Marks the start of a definition in an .xd-File. Used by the xport()-method.
 	};
 	typedef boost::shared_ptr<XData> XDataPtr;
 
@@ -142,18 +160,21 @@ namespace readable
 		StringList _pageTitle;
 		StringList _pageBody;
 	//end of page contents
-		std::string getContentDef();
-	public:
+		const std::string getContentDef() const;
+		void resizeVectors(std::size_t targetSize);
+	public:		
 
-		void resizeVectors(const int& TargetSize);
+		void setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content);
 
-		void setPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content);
+		const std::string& getPageContent(ContentType cc, std::size_t pageIndex, Side side) const;
 
-		std::string getPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side);
+		const PageLayout getPageLayout() const { return OneSided; }
 
-		PageLayout getPageLayout() { return OneSided; }
-
-		OneSidedXData(std::string name) { _name=name; }
+		OneSidedXData(const std::string& name) 
+		{ 
+			_name = name;
+			resizeVectors(MAX_PAGE_COUNT);
+		}
 		~OneSidedXData() {}
 	};
 	typedef boost::shared_ptr<OneSidedXData> OneSidedXDataPtr;
@@ -167,18 +188,21 @@ namespace readable
 		StringList _pageLeftBody;
 		StringList _pageRightBody;
 	//end of page contents
-		std::string getContentDef();
+		const std::string getContentDef() const;
+		void resizeVectors(std::size_t targetSize);
 	public:
 
-		void resizeVectors(const int& TargetSize);
+		void setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content);
 
-		void setPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side, const std::string& content);
+		const std::string& getPageContent(ContentType cc, std::size_t pageIndex, Side side) const;
 
-		std::string getPageContent(const ContentChooser& cc, const int& PageIndex, const SideChooser& Side);
+		const PageLayout getPageLayout() const { return TwoSided; }
 
-		PageLayout getPageLayout() { return TwoSided; }
-
-		TwoSidedXData(std::string name) { _name=name; }
+		TwoSidedXData(const std::string& name)
+		{ 
+			_name=name;
+			resizeVectors(MAX_PAGE_COUNT);
+		}
 		~TwoSidedXData() {}
 	};
 	typedef boost::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
