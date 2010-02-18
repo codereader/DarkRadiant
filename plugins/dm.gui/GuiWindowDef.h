@@ -101,6 +101,8 @@ private:
 	int parseInt(parser::DefTokeniser& tokeniser);
 	std::string parseString(parser::DefTokeniser& tokeniser);
 	bool parseBool(parser::DefTokeniser& tokeniser);
+
+	std::string getExpression(parser::DefTokeniser& tokeniser);
 };
 
 

@@ -11,6 +11,29 @@
 namespace gui
 {
 
+// Returns a GUI expression, which can be a number, a string or a formula ("gui::objVisible" == 1).
+std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
+{
+	std::string returnValue = tokeniser.nextToken();
+
+	if (returnValue == "(")
+	{
+		// Assemble token until closing brace found
+		std::size_t depth = 1;
+		
+		while (depth > 0 && tokeniser.hasMoreTokens())
+		{
+			std::string token = tokeniser.nextToken();
+
+			if (token == ")") depth--;
+
+			returnValue += token;
+		}
+	}
+
+	return returnValue;
+}
+
 Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 {
 	// Collect tokens until all four components are parsed
@@ -18,7 +41,7 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 
 	while (comp.size() < 4 && tokeniser.hasMoreTokens())
 	{
-		std::string token = tokeniser.nextToken();
+		std::string token = getExpression(tokeniser);
 
 		if (token == ",") continue;
 
@@ -52,28 +75,28 @@ float GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
 {
 	// TODO: Catch GUI expressions
 
-	return strToFloat(tokeniser.nextToken());
+	return strToFloat(getExpression(tokeniser));
 }
 
 int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
 {
 	// TODO: Catch GUI expressions
 
-	return strToInt(tokeniser.nextToken());
+	return strToInt(getExpression(tokeniser));
 }
 
 std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
 {
 	// TODO: Catch GUI expressions
 
-	return tokeniser.nextToken();
+	return getExpression(tokeniser);
 }
 
 bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
 {
 	// TODO: Catch GUI expressions
 
-	return strToInt(tokeniser.nextToken()) != 0;
+	return strToInt(getExpression(tokeniser)) != 0;
 }
 
 void GuiWindowDef::addWindow(const GuiWindowDefPtr& window)
@@ -157,7 +180,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			menugui = parseBool(tokeniser);
 		}
-		else if (token == "windowDef")
+		else if (token == "windowdef")
 		{
 			// Child windowdef
 			GuiWindowDefPtr window(new GuiWindowDef);
@@ -165,7 +188,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 			addWindow(window);
 		}
-		else if (token == "onTime")
+		else if (token == "ontime")
 		{
 			// TODO
 			std::string time = tokeniser.nextToken();
@@ -180,7 +203,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 				if (token == "{") depth++;
 			}
 		}
-		else if (token == "onNamedEvent")
+		else if (token == "onnamedevent")
 		{
 			// TODO
 			std::string eventName = tokeniser.nextToken();
@@ -195,7 +218,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 				if (token == "{") depth++;
 			}
 		}
-		else if (token == "onEsc")
+		else if (token == "onesc")
 		{
 			// TODO
 			tokeniser.assertNextToken("{");
@@ -209,7 +232,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 				if (token == "{") depth++;
 			}
 		}
-		else if (token == "onMouseEnter" || token == "onMouseExit")
+		else if (token == "onmouseenter" || token == "onmouseexit")
 		{
 			// TODO
 			tokeniser.assertNextToken("{");
@@ -223,7 +246,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 				if (token == "{") depth++;
 			}
 		}
-		else if (token == "onAction")
+		else if (token == "onaction")
 		{
 			// TODO
 			tokeniser.assertNextToken("{");
