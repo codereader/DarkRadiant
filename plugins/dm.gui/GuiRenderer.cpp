@@ -28,12 +28,6 @@ void GuiRenderer::render()
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Fetch the desktop windowDef and render it
-	render(_gui->getDesktop());
-}
-
-void GuiRenderer::render(const GuiWindowDefPtr& window)
-{
 	// set up viewpoint
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -48,31 +42,62 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	// Tell openGL to draw front and back of the polygons in textured mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	glColor3f(1, 1, 1);
+	if (_gui != NULL)
+	{
+		// Fetch the desktop windowDef and render it
+		render(_gui->getDesktop());
+	}
+}
+
+void GuiRenderer::render(const GuiWindowDefPtr& window)
+{
+	if (window == NULL) return;
+
+	if (!window->visible) return;
+
+	glColor4dv(window->backcolor);
+
+	// Background quad
+	glBegin(GL_QUADS);
+	glVertex2d(window->rect[0], window->rect[1]);	// Upper left
+	glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
+	glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
+	glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
+	glEnd();
 
 	// Acquire the texture number of the active texture
-	MaterialPtr shader = GlobalMaterialManager().getMaterialForName("textures/darkmod/stone/flat/ceramic_mosaic_decorative01");
-	TexturePtr tex = shader->getEditorImage();
-	glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
+	if (!window->background.empty() && window->backgroundShader == NULL)
+	{
+		MaterialPtr shader = GlobalMaterialManager().getMaterialForName(window->background);
+		TexturePtr tex = shader->getEditorImage();
+		glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
-	// Draw the background texture
-	glEnable(GL_TEXTURE_2D);
-	glBegin(GL_QUADS);
+		// Draw the textured quad
+		glColor3f(1, 1, 1);
+		glEnable(GL_TEXTURE_2D);
+		glBegin(GL_QUADS);
 
-	glTexCoord2f(0,0);
-	glVertex2f(0,0);	// Upper left
+		glTexCoord2f(0,0);
+		glVertex2d(window->rect[0], window->rect[1]);	// Upper left
 
-	glTexCoord2f(1,0);
-	glVertex2f(640,0);	// Upper right
+		glTexCoord2f(1,0);
+		glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
 
-	glTexCoord2f(1,1);
-	glVertex2f(640,480);	// Lower right
+		glTexCoord2f(1,1);
+		glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
 
-	glTexCoord2f(0,1);
-	glVertex2f(0, 480);	// Lower left
+		glTexCoord2f(0,1);
+		glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
 
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+	}
+
+	for (GuiWindowDef::ChildWindows::const_iterator i = window->children.begin();
+		 i != window->children.end(); ++i)
+	{
+		render(*i);
+	}
 }
 
 } // namespace

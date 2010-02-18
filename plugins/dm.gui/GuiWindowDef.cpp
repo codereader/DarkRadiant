@@ -101,7 +101,7 @@ bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
 
 void GuiWindowDef::addWindow(const GuiWindowDefPtr& window)
 {
-	_children.push_back(window);
+	children.push_back(window);
 }
 
 void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
