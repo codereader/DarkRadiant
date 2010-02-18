@@ -19,13 +19,14 @@ typedef boost::shared_ptr<Gui> GuiPtr;
 class Gui
 {
 private:
-	typedef std::vector<GuiWindowDefPtr> WindowDefs;
-	WindowDefs _windows;
+	// The desktop window
+	GuiWindowDefPtr _desktop;
 
 public:
 	Gui();
 
-	void addWindow(const GuiWindowDefPtr& window);
+	const GuiWindowDefPtr& getDesktop() const;
+	void setDesktop(const GuiWindowDefPtr& newDesktop);
 
 	// Takes the given token stream and attempts to construct a GUI object from it
 	// Returns NULL on failure

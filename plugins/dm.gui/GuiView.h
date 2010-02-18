@@ -38,14 +38,11 @@ public:
 	// Sets the GUI to render (by VFS path)
 	void setGui(const std::string& gui)
 	{
-		_gui = GuiManager::Instance().getGui(gui);
+		setGui(GuiManager::Instance().getGui(gui));
 	}
 
 	// Sets the GUI to render (can be NULL to clear this view)
-	void setGui(const GuiPtr& gui)
-	{
-		_gui = gui;
-	}
+	void setGui(const GuiPtr& gui);
 
 	/** 
 	 * Initialise the GL view. This clears the window and sets up the 

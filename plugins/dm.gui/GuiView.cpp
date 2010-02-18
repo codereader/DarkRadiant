@@ -25,6 +25,12 @@ GuiView::GuiView() :
 	setGui("guis/mainmenu.gui");
 }
 
+void GuiView::setGui(const GuiPtr& gui)
+{
+	_gui = gui;
+	_renderer.setGui(gui);
+}
+
 void GuiView::initialiseView()
 {
 	// Grab the GL widget with sentry object

@@ -1,4 +1,5 @@
 #include "Gui.h"
+#include "itextstream.h"
 
 namespace gui
 {
@@ -7,9 +8,14 @@ Gui::Gui()
 {
 }
 
-void Gui::addWindow(const GuiWindowDefPtr& window)
+const GuiWindowDefPtr& Gui::getDesktop() const
 {
-	_windows.push_back(window);
+	return _desktop;
+}
+
+void Gui::setDesktop(const GuiWindowDefPtr& newDesktop)
+{
+	_desktop = newDesktop;
 }
 
 GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
@@ -22,11 +28,17 @@ GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
 
 		if (token == "windowDef")
 		{
-			// Construct a new window and add it to the list
-			GuiWindowDefPtr window(new GuiWindowDef);
-			window->constructFromTokens(tokeniser);
+			if (gui->getDesktop() == NULL)
+			{
+				GuiWindowDefPtr desktop(new GuiWindowDef);
+				desktop->constructFromTokens(tokeniser);
 
-			gui->addWindow(window);
+				gui->setDesktop(desktop);
+			}
+			else
+			{
+				globalErrorStream() << "Cannot define multiple top-level windowDefs" << std::endl;
+			}
 		}
 	}
 
