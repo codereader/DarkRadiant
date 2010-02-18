@@ -1,8 +1,10 @@
 #ifndef Gui_h__
 #define Gui_h__
 
+#include <map>
 #include <boost/shared_ptr.hpp>
 #include "parser/DefTokeniser.h"
+#include "GuiWindowDef.h"
 
 namespace gui
 {
@@ -16,8 +18,14 @@ typedef boost::shared_ptr<Gui> GuiPtr;
  */
 class Gui
 {
+private:
+	typedef std::vector<GuiWindowDefPtr> WindowDefs;
+	WindowDefs _windows;
+
 public:
 	Gui();
+
+	void addWindow(const GuiWindowDefPtr& window);
 
 	// Takes the given token stream and attempts to construct a GUI object from it
 	// Returns NULL on failure
