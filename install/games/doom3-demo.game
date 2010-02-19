@@ -138,6 +138,10 @@
 		<bindKey value="bind" />
 		<playerHeight value="64" />
 		<nameKey value="name" />
+		<speakerMinRadius value="24" />
+        <speakerMaxRadius value="32" />
+		<guiSmallFontLimit value="0.15" />
+		<guiMediumFontLimit value="0.30" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />
