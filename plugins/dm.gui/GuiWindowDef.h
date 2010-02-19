@@ -1,8 +1,9 @@
 #ifndef GuiWindowDef_h__
 #define GuiWindowDef_h__
 
-#include "irender.h"
+#include "ishaders.h"
 #include "math/Vector4.h"
+#include "RenderableText.h"
 
 namespace parser { class DefTokeniser; }
 
@@ -18,6 +19,16 @@ typedef boost::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
  */
 class GuiWindowDef
 {
+private:
+	// The renderable text object for submission to a Renderer
+	RenderableText _renderableText;
+
+	// Whether the text has changed
+	bool _textChanged;
+
+	// The text to be rendered in this window (private, use getText() and setText())
+	std::string _text;
+
 public:
 	// Public properties
 
@@ -45,10 +56,7 @@ public:
 	std::string background;
 
 	// background shader (NULL until realised)
-	ShaderPtr backgroundShader;
-
-	// The text to be rendered in this window
-	std::string text;
+	MaterialPtr backgroundShader;
 
 	// The name of the font
 	std::string font;
@@ -77,6 +85,8 @@ public:
 
 	// Default constructor
 	GuiWindowDef() :
+		_renderableText(*this),
+		_textChanged(true),
 		visible(true),
 		forecolor(1,1,1,1),
 		hovercolor(1,1,1,1),
@@ -94,6 +104,12 @@ public:
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
 
 	void addWindow(const GuiWindowDefPtr& window);
+
+	const std::string& getText() const;
+	void setText(const std::string& newText);
+
+	// Get the renderable text object containing the OpenGLRenderables
+	RenderableText& getRenderableText();
 
 private:
 	Vector4 parseVector4(parser::DefTokeniser& tokeniser);

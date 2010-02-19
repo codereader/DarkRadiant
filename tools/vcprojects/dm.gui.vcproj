@@ -474,6 +474,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.gui\RenderableText.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\RenderableText.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\reportError.h"
 				>
 			</File>

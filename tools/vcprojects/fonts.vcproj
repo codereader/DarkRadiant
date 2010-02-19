@@ -453,14 +453,6 @@
 				RelativePath="..\..\plugins\fonts\plugin.cpp"
 				>
 			</File>
-			<File
-				RelativePath="..\..\plugins\fonts\RenderableFont.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\fonts\RenderableFont.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\fonts\fonts.def"
