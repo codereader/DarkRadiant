@@ -61,6 +61,7 @@ public:
 		{
 			//Newest tests:
 			readable::XDataLoader* loader = new readable::XDataLoader();
+			loader->retrieveXdInfo();
 			//testing = loader->import("import_test.xd");
 			testing.push_back(loader->importSingleDef("training_mission.xd", "trainer_stealth_flashbombs"));
 			if (!testing.empty())
