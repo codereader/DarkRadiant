@@ -82,9 +82,12 @@ void RenderableText::recompile()
 				words.pop_front();
 			}
 
-			// Line finished, proceed to next
-			// TODO: consider textalign
-			curLine->offset(Vector2(0, lineHeight * lines.size()));
+			// Line finished, consider alignment and vertical offset
+			curLine->offset(Vector2(
+				getAlignmentCorrection(curLine->getWidth()), // horizontal correction
+				lineHeight * lines.size()					 // vertical correction
+			));
+
 			lines.push_back(curLine);
 
 			// Allocate a new line, and proceed
@@ -94,7 +97,9 @@ void RenderableText::recompile()
 		// Add that line we started
 		if (!curLine->empty())
 		{
-			curLine->offset(Vector2(0, lineHeight * lines.size()));
+			curLine->offset(
+				Vector2(getAlignmentCorrection(curLine->getWidth()), lineHeight * lines.size())
+			);
 			lines.push_back(curLine);
 		}
 	}
@@ -130,6 +135,26 @@ void RenderableText::recompile()
 	{
 		i->second->compile();
 	}
+}
+
+double RenderableText::getAlignmentCorrection(double lineWidth)
+{
+	double xoffset = 0;
+
+	switch (_owner.textalign)
+	{
+	case 0: // left
+		xoffset = 0;
+		break;
+	case 1: // center
+		xoffset = (_owner.rect[2] - lineWidth) / 2;
+		break;
+	case 2: // right
+		xoffset = _owner.rect[2] - lineWidth;
+		break;
+	};
+
+	return xoffset;
 }
 
 void RenderableText::ensureFont()

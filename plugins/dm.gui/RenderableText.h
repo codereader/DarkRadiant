@@ -39,6 +39,10 @@ public:
 private:
 	void realiseFontShaders();
 	void ensureFont();
+
+	// Calculates the horizontal alignment correction for the given line width
+	// relative to the (default) left-aligned state
+	double getAlignmentCorrection(double lineWidth);
 };
 
 } // namespace

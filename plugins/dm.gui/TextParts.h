@@ -129,6 +129,11 @@ public:
 		return _chars;
 	}
 
+	double getWidth() const
+	{
+		return _charWidth;
+	}
+
 	// Add a word to this line
 	// returns TRUE on success, FALSE if the word is too wide to fit in this line
 	bool addWord(const std::string& w, fonts::IGlyphSet& glyphs, bool noclip = false)
