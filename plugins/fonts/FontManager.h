@@ -33,7 +33,7 @@ public:
 
 	// Returns the info structure of a specific font (current language),
 	// returns NULL if no font info is available yet
-	FontInfoPtr findFontInfo(const std::string& name);
+	IFontInfoPtr findFontInfo(const std::string& name);
 
 	// Returns the info structure of a specific font (current language),
 	// always returns non-NULL, non-existent fonts are created on the fly

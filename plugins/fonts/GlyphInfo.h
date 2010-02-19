@@ -1,6 +1,7 @@
 #ifndef _GLYPH_INFO_H_
 #define _GLYPH_INFO_H_
 
+#include "ifonts.h"
 #include <boost/shared_ptr.hpp>
 #include "ishaders.h"
 
@@ -12,7 +13,6 @@ namespace q3font
 
 	// Default values of Quake 3 sourcecode. Don't change!
 	const int SHADER_NAME_LENGTH = 32;
-	const int GLYPH_COUNT_PER_FONT = 256;
 	const int FONT_NAME_LENGTH = 64;
 
 	struct Q3GlyphInfo
@@ -43,26 +43,10 @@ namespace q3font
 } // namespace q3font
 
 // Container-class for Glyphs.
-class GlyphInfo
+class GlyphInfo :
+	public IGlyphInfo
 {
 public:
-	int height;       // number of scan lines
-	int top;          // top of glyph in buffer
-	int bottom;       // bottom of glyph in buffer
-	int pitch;        // width for copying
-	int xSkip;        // x adjustment
-	int imageWidth;   // width of actual image
-	int imageHeight;  // height of actual image
-	float s;          // x offset in image where glyph starts
-	float t;          // y offset in image where glyph starts
-	float s2;
-	float t2;
-	std::string texture; // the texture name without extension, e.g. carleton_1_24
-
-	// The material this glyph is associated with 
-	// this is NULL until the font is actually used
-	MaterialPtr shader;
-
 	// Construct a GlyphInfo from a given Q3GlyphInfo structure
 	// as read from a font DAT file
 	GlyphInfo(const q3font::Q3GlyphInfo& q3glyph);
