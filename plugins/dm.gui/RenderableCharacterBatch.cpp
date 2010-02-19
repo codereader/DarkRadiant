@@ -51,7 +51,7 @@ void RenderableCharacterBatch::compile()
 	GlobalOpenGL_debugAssertNoErrors();
 }
 
-void RenderableCharacterBatch::render(const RenderInfo& info) const
+void RenderableCharacterBatch::render() const
 {
 	glBindBuffer(GL_ARRAY_BUFFER, _vboData);
 	

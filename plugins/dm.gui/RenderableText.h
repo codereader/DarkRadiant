@@ -31,7 +31,7 @@ public:
 	// Construct a renderable for the text in the given windowDef
 	RenderableText(const GuiWindowDef& owner);
 
-	void submitRenderables(RenderableCollector& collector);
+	void render();
 	
 	// Re-construct this structure, called when the text in the owning windowDef has been changed
 	void recompile();
