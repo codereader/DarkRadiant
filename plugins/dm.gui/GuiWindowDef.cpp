@@ -32,6 +32,9 @@ std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 		}
 	}
 
+	//  Strip quotes
+	boost::algorithm::trim_if(returnValue, boost::algorithm::is_any_of("\""));
+
 	return returnValue;
 }
 
@@ -155,7 +158,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "font")
 		{
-			font = tokeniser.nextToken();
+			font = parseString(tokeniser);
 
 			// Cut off the "fonts/" part
 			boost::algorithm::replace_first(font, "fonts/", "");

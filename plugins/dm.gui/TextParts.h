@@ -101,11 +101,13 @@ public:
 
 class TextLine
 {
+public:
+	typedef std::vector<TextChar> Chars;
+
 private:
 	// The width of the current line
 	const double _lineWidth;
 
-	typedef std::vector<TextChar> Chars;
 	Chars _chars;
 
 	// The total width of all characters
@@ -120,6 +122,11 @@ public:
 	bool empty() const
 	{
 		return _chars.empty();
+	}
+
+	const Chars& getChars() const
+	{
+		return _chars;
 	}
 
 	// Add a word to this line

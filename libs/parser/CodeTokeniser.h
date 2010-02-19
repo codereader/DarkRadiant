@@ -181,7 +181,7 @@ public:
 					}
 					else if (*next == '*')
 					{
-						// This is the second forward slash, we're in line comment mode now
+						// This is a star, we're in block comment mode now
 						_state = COMMENT_DELIM;
 						++next;
 						continue;
@@ -190,7 +190,6 @@ public:
 					{
 						// False alarm, add the first slash and this character
 						tok += '/';
-						tok += *next;
 
 						// Switch back to DEFINE mode
 						_state = AFTER_DEFINE;
@@ -538,7 +537,8 @@ private:
 
 			_nextToken = (*_curNode)->tokeniser.nextToken();
 
-			if (!_nextToken.empty() && _nextToken[0] == '#')
+			// Don't treat #strNNNN as preprocessor tokens
+			if (!_nextToken.empty() && _nextToken[0] == '#' && !boost::algorithm::starts_with(_nextToken, "#str"))
 			{
 				// A pre-processor token is ahead
 				handlePreprocessorToken();
