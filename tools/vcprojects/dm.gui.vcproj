@@ -474,6 +474,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.gui\RenderableCharacterBatch.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\RenderableCharacterBatch.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\RenderableText.cpp"
 				>
 			</File>

@@ -34,6 +34,8 @@ void RenderableText::renderWireframe(RenderableCollector& collector, const Volum
 
 void RenderableText::recompile()
 {
+	_charBatches.clear();
+	
 	ensureFont();
 
 	if (_font == NULL) return; // Rendering not possible
@@ -91,6 +93,38 @@ void RenderableText::recompile()
 			curLine->offset(Vector2(0, lineHeight * lines.size()));
 			lines.push_back(curLine);
 		}
+	}
+
+	// Now sort the aligned characters into separate renderables, one per shader
+	for (TextLines::const_iterator line = lines.begin(); line != lines.end(); ++line)
+	{
+		// Move the lines into our GUI rectangle
+		(*line)->offset(Vector2(_owner.rect[0], _owner.rect[1]));
+
+		for (TextLine::Chars::const_iterator c = (*line)->getChars().begin();
+			 c != (*line)->getChars().end(); ++c)
+		{
+			CharBatches::iterator batch = _charBatches.find(c->glyph->shader);
+
+			if (batch == _charBatches.end())
+			{
+				RenderableCharacterBatchPtr b(new RenderableCharacterBatch);
+
+				std::pair<CharBatches::iterator, bool> result = _charBatches.insert(
+					CharBatches::value_type(c->glyph->shader, b)
+				);
+
+				batch = result.first;
+			}
+
+			batch->second->addGlyph(*c);
+		}
+	}
+
+	// Compile the vertex buffer objects
+	for (CharBatches::iterator i = _charBatches.begin(); i != _charBatches.end(); ++i)
+	{
+		i->second->compile();
 	}
 }
 

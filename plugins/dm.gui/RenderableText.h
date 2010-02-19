@@ -3,6 +3,8 @@
 
 #include "irenderable.h"
 #include "ifonts.h"
+#include <map>
+#include "RenderableCharacterBatch.h"
 
 namespace gui
 {
@@ -16,8 +18,9 @@ private:
 	// The owning windowDef
 	const GuiWindowDef& _owner;
 
-	// The current state (used during front end rendering)
-	mutable MaterialPtr _curState;
+	// The character soup, arranged into OpenGLRenderables, sorted by Material
+	typedef std::map<MaterialPtr, RenderableCharacterBatchPtr> CharBatches;
+	CharBatches _charBatches;
 
 	// The font we're rendering
 	fonts::IFontInfoPtr _font;
