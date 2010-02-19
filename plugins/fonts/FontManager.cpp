@@ -98,7 +98,7 @@ void FontManager::reloadFonts()
 	globalOutputStream() << _fonts.size() << " fonts registered." << std::endl;
 }
 
-FontInfoPtr FontManager::findFontInfo(const std::string& name)
+IFontInfoPtr FontManager::findFontInfo(const std::string& name)
 {
 	FontMap::const_iterator found = _fonts.find(name);
 	

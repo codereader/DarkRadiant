@@ -10,8 +10,10 @@ namespace fonts
  * Holds information about one specific font.
  * A font consists of one to several resolutions.
  */
-struct FontInfo
+class FontInfo :
+	public IFontInfo
 {
+public:
 	std::string name;		// The name of the font, e.g. "carleton"
 	std::string language;	// The language of this font
 	
@@ -22,6 +24,23 @@ struct FontInfo
 		name(name_),
 		language(language_)
 	{}
+
+	const std::string& getName() const 
+	{
+		return name;
+	}
+
+	// The language of this font
+	const std::string& getLanguage() const 
+	{
+		return language;
+	}
+
+	// Returns the glyphset for the specified resolution
+	IGlyphSetPtr getGlyphSet(Resolution resolution) 
+	{
+		return glyphSets[resolution];
+	}
 };
 typedef boost::shared_ptr<FontInfo> FontInfoPtr;
 
