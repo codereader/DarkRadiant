@@ -38,6 +38,7 @@ public:
 
 private:
 	void realiseFontShaders();
+	void ensureFont();
 };
 
 } // namespace

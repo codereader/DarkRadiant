@@ -486,6 +486,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.gui\TextParts.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\XData.cpp"
 				>
 			</File>
