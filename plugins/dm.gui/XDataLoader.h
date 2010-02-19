@@ -25,7 +25,7 @@ namespace readable
 	typedef std::map<std::string, std::string> StringMap;
 	typedef std::set<std::string> StringSet;
 	typedef std::vector<XDataPtr> XDataPtrList;
-	typedef std::map<std::string, std::vector<std::string>> DuplicatedDefsMap;
+	typedef std::map<std::string, std::vector<std::string> > DuplicatedDefsMap;
 
 	///////////////////////////// XDataLoader
 	// Class for importing XData from files.
