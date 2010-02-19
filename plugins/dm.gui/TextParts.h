@@ -23,14 +23,17 @@ public:
 	// The 4 coordinates, marking the quad (3D and UV)
 	Vertex2D coords[4];
 
-	TextChar(unsigned char c, fonts::IGlyphSet& glyphs)
+	float _fontScale;
+
+	TextChar(unsigned char c, fonts::IGlyphSet& glyphs, float fontScale) :
+		_fontScale(fontScale)
 	{
 		glyph = glyphs.getGlyph(static_cast<std::size_t>(c));
 
-		coords[0].vertex = Vector2(0, -glyph->top);
-		coords[1].vertex = Vector2(glyph->imageWidth, -glyph->top);
-		coords[2].vertex = Vector2(glyph->imageWidth, -glyph->top + glyph->imageHeight);
-		coords[3].vertex = Vector2(0, -glyph->top + glyph->imageHeight);
+		coords[0].vertex = Vector2(0, -glyph->top * _fontScale);
+		coords[1].vertex = Vector2(glyph->imageWidth * _fontScale, -glyph->top * _fontScale);
+		coords[2].vertex = Vector2(glyph->imageWidth * _fontScale, (-glyph->top + glyph->imageHeight) * _fontScale);
+		coords[3].vertex = Vector2(0, (-glyph->top + glyph->imageHeight) * _fontScale);
 
 		coords[0].texcoord = Vector2(glyph->s, glyph->t);
 		coords[1].texcoord = Vector2(glyph->s2, glyph->t);
@@ -40,7 +43,7 @@ public:
 
 	double getWidth() const
 	{
-		return glyph->xSkip;
+		return glyph->xSkip * _fontScale;
 	}
 
 	// Offsets all coordinates by the given vector
@@ -79,14 +82,14 @@ public:
 
 	// Named constructor, creates a word out of the given string for the given glyphset
 	// The word is positioned at 0,0 after construction.
-	static TextWord createForString(const std::string& string, fonts::IGlyphSet& glyphs)
+	static TextWord createForString(const std::string& string, fonts::IGlyphSet& glyphs, float fontScale)
 	{
 		TextWord result;
 		Vector2 wordPos(0,0);
 
 		for (std::string::const_iterator i = string.begin(); i != string.end(); ++i)
 		{
-			result.push_back(TextChar(*i, glyphs));
+			result.push_back(TextChar(*i, glyphs, fontScale));
 
 			// Move character to position in word
 			result.back().offset(wordPos);
@@ -113,10 +116,14 @@ private:
 	// The total width of all characters
 	double _charWidth;
 
+	// The font scale of this line
+	float _fontScale;
+
 public:
-	TextLine(double width) :
+	TextLine(double width, float fontScale) :
 		_lineWidth(width),
-		_charWidth(0)
+		_charWidth(0),
+		_fontScale(fontScale)
 	{}
 
 	bool empty() const
@@ -144,7 +151,7 @@ public:
 		word += (!_chars.empty()) ? " " : "";
 		
 		// Generate the word
-		TextWord tw = TextWord::createForString(word, glyphs);
+		TextWord tw = TextWord::createForString(word, glyphs, _fontScale);
 		return addWord(tw, noclip);
 	}
 
