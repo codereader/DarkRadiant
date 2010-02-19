@@ -27,10 +27,10 @@ public:
 	{
 		glyph = glyphs.getGlyph(static_cast<std::size_t>(c));
 
-		coords[0].vertex = Vector2(0, 0);
-		coords[1].vertex = Vector2(glyph->imageWidth, 0);
-		coords[2].vertex = Vector2(glyph->imageWidth, glyph->imageHeight);
-		coords[3].vertex = Vector2(0, glyph->imageHeight);
+		coords[0].vertex = Vector2(0, -glyph->top);
+		coords[1].vertex = Vector2(glyph->imageWidth, -glyph->top);
+		coords[2].vertex = Vector2(glyph->imageWidth, -glyph->top + glyph->imageHeight);
+		coords[3].vertex = Vector2(0, -glyph->top + glyph->imageHeight);
 
 		coords[0].texcoord = Vector2(glyph->s, glyph->t);
 		coords[1].texcoord = Vector2(glyph->s2, glyph->t);
@@ -40,7 +40,7 @@ public:
 
 	double getWidth() const
 	{
-		return coords[2].vertex.x() - coords[0].vertex.x();
+		return glyph->xSkip;
 	}
 
 	// Offsets all coordinates by the given vector
