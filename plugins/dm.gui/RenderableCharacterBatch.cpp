@@ -55,12 +55,10 @@ void RenderableCharacterBatch::render(const RenderInfo& info) const
 {
 	glBindBuffer(GL_ARRAY_BUFFER, _vboData);
 	
-	glClientActiveTexture(GL_TEXTURE0);
-
-	glVertexPointer(2, GL_DOUBLE, sizeof(Vertex2D), BUFFER_OFFSET(0));
 	glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex2D), BUFFER_OFFSET(sizeof(double)*2));
-	
-	glDrawArrays(GL_QUADS, 0, _verts.size());
+	glVertexPointer(2, GL_DOUBLE, sizeof(Vertex2D), BUFFER_OFFSET(0));
+		
+	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_verts.size()));
 
 	GlobalOpenGL_debugAssertNoErrors();
 

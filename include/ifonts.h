@@ -2,6 +2,7 @@
 #define ifonts_h__
 
 #include "imodule.h"
+#include "irenderable.h"
 
 class Material;
 typedef boost::shared_ptr<Material> MaterialPtr;
@@ -33,9 +34,9 @@ public:
 	float t2;
 	std::string texture; // the texture name without extension, e.g. carleton_1_24
 
-	// The material this glyph is associated with 
+	// The shader this glyph is associated with 
 	// this is NULL until the font is actually used
-	MaterialPtr shader;
+	ShaderPtr shader;
 };
 typedef boost::shared_ptr<IGlyphInfo> IGlyphInfoPtr;
 

@@ -12,6 +12,23 @@
 namespace gui
 {
 
+GuiWindowDef::GuiWindowDef() :
+	_renderableText(*this),
+	_textChanged(true),
+	visible(true),
+	forecolor(1,1,1,1),
+	hovercolor(1,1,1,1),
+	backcolor(0,0,0,0),
+	bordercolor(0,0,0,0),
+	matcolor(1,1,1,1),
+	rotate(0),
+	textscale(1),
+	textalign(0),
+	noclip(false),
+	notime(false),
+	time(0)
+{}
+
 // Returns a GUI expression, which can be a number, a string or a formula ("gui::objVisible" == 1).
 std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 {

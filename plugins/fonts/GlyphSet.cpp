@@ -3,6 +3,7 @@
 #include "idatastream.h"
 #include "iarchive.h"
 #include "ifilesystem.h"
+#include "irender.h"
 
 namespace fonts
 {
@@ -74,7 +75,7 @@ void GlyphSet::realiseShaders()
 		TexturePathMap::const_iterator found = textures.find(glyphs[i]->texture);
 		assert(found != textures.end());
 
-		glyphs[i]->shader = GlobalMaterialManager().getMaterialForName(found->second);
+		glyphs[i]->shader = GlobalRenderSystem().capture(found->second);
 	}
 }
 

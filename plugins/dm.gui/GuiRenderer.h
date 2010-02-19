@@ -23,24 +23,11 @@ private:
 	Vector2 _viewPortBottomRight;
 
 	// Renderer State 
-	struct State
-	{
-		bool highlight;
+	typedef std::vector<const OpenGLRenderable*> RenderableList;
+	typedef std::map<ShaderPtr, RenderableList> ShaderBuckets;
+	ShaderBuckets _buckets;
 
-		// The actual shader. This is a raw pointer for performance, since we
-		// know that the Shader will exist for the lifetime of this render
-		// operation.
-		Shader* state;
-
-		// Constructor
-		State() : 
-			highlight(false), 
-			state(NULL) 
-		{}
-	};
-
-	typedef std::vector<State> StateStack;
-	StateStack _stateStack;
+	ShaderPtr _curState;
 
 public:
 	// Construct a new renderer
@@ -65,6 +52,8 @@ public:
 
 private:
 	void render(const GuiWindowDefPtr& window);
+
+	void flushRenderables();
 };
 
 }
