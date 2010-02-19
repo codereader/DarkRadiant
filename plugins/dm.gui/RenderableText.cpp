@@ -1,6 +1,7 @@
 #include "RenderableText.h"
 
 #include "itextstream.h"
+#include "iregistry.h"
 
 #include "math/matrix.h"
 #include <vector>
@@ -13,6 +14,12 @@
 
 namespace gui
 {
+
+	namespace
+	{
+		const std::string RKEY_SMALLFONT_LIMIT("game/defaults/guiSmallFontLimit");
+		const std::string RKEY_MEDIUMFONT_LIMIT("game/defaults/guiMediumFontLimit");
+	}
 
 RenderableText::RenderableText(const GuiWindowDef& owner) :
 	_owner(owner)
@@ -170,8 +177,19 @@ void RenderableText::ensureFont()
 		return;
 	}
 
-	// Determine resolution (TODO: Use owner textscale to determine resolution)
-	_resolution = fonts::Resolution24;
+	// Determine resolution
+	if (_owner.textscale <= GlobalRegistry().getFloat(RKEY_SMALLFONT_LIMIT))
+	{
+		_resolution = fonts::Resolution12;
+	}
+	else if (_owner.textscale <= GlobalRegistry().getFloat(RKEY_MEDIUMFONT_LIMIT))
+	{
+		_resolution = fonts::Resolution24;
+	}
+	else 
+	{
+		_resolution = fonts::Resolution48;
+	}
 
 	// Ensure that the font shaders are realised
 	realiseFontShaders();
