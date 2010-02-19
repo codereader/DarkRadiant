@@ -523,15 +523,11 @@ namespace readable
 					std::string tempstring = tok.nextToken();
 					tok.assertNextToken("{");
 					std::pair<StringMap::iterator,bool> ret = _defMap.insert(StringMap::value_type(tempstring,filename));
-					if (!ret.second)
+					if (!ret.second)	//Definition already exists.
 					{
 						std::cerr << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined in " << ret.first->second << ".\n";
-						std::vector<std::string> tempvector;
-						tempvector.push_back(ret.first->second);
-						tempvector.push_back(filename);
-						std::pair<DuplicatedDefsMap::iterator,bool> duplRet = _duplicatedDefs.insert(DuplicatedDefsMap::value_type(tempstring,tempvector));
-						if (!duplRet.second)
-							duplRet.first->second.push_back(filename);
+						std::pair<DuplicatedDefsMap::iterator,bool> duplRet = _duplicatedDefs.insert(DuplicatedDefsMap::value_type(tempstring,std::vector<std::string>(1,ret.first->second)));
+						duplRet.first->second.push_back(filename);
 					}
 					jumpOutOfBrackets(tok, 1);
 				}
