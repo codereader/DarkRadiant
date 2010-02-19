@@ -533,6 +533,7 @@ private:
 			if (_curNode == _nodes.end())
 			{
 				_nextToken.clear();
+				break;
 			}
 
 			_nextToken = (*_curNode)->tokeniser.nextToken();

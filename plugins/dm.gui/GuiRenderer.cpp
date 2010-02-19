@@ -42,11 +42,16 @@ void GuiRenderer::render()
 	// Tell openGL to draw front and back of the polygons in textured mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	if (_gui != NULL)
 	{
 		// Fetch the desktop windowDef and render it
 		render(_gui->getDesktop());
 	}
+
+	glDisable(GL_BLEND);
 }
 
 void GuiRenderer::render(const GuiWindowDefPtr& window)
@@ -55,25 +60,28 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 
 	if (!window->visible) return;
 
-	glColor4dv(window->backcolor);
+	if (window->backcolor[3] > 0)
+	{
+		glColor4dv(window->backcolor);
 
-	// Background quad
-	glBegin(GL_QUADS);
-	glVertex2d(window->rect[0], window->rect[1]);	// Upper left
-	glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
-	glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
-	glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
-	glEnd();
+		// Background quad
+		glBegin(GL_QUADS);
+		glVertex2d(window->rect[0], window->rect[1]);	// Upper left
+		glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
+		glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
+		glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
+		glEnd();
+	}
 
 	// Acquire the texture number of the active texture
-	if (!window->background.empty() && window->backgroundShader == NULL)
+	if (!window->background.empty() && window->backgroundShader == NULL && window->matcolor[3] > 0)
 	{
 		MaterialPtr shader = GlobalMaterialManager().getMaterialForName(window->background);
 		TexturePtr tex = shader->getEditorImage();
 		glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
 		// Draw the textured quad
-		glColor3f(1, 1, 1);
+		glColor4dv(window->matcolor);
 		glEnable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS);
 
@@ -91,6 +99,12 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
+	}
+
+	// Render the text
+	if (!window->text.empty())
+	{
+		
 	}
 
 	for (GuiWindowDef::ChildWindows::const_iterator i = window->children.begin();

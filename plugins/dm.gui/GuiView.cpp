@@ -22,7 +22,7 @@ GuiView::GuiView() :
 		GDK_POINTER_MOTION_MASK);
 	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onGLDraw), this);
 
-	setGui("guis/mainmenu.gui");
+	setGui("guis/tdm_objectives.gui");
 }
 
 void GuiView::setGui(const GuiPtr& gui)
