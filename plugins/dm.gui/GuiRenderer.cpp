@@ -116,7 +116,8 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	// Render the text
 	if (!window->getText().empty())
 	{
-		// TODO: Acquire new RenderableText here.
+		RenderableText& text = window->getRenderableText();
+
 		// Add RenderableText to RenderableCollector
 
 		// Flush bucket

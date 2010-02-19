@@ -10,6 +10,7 @@
 #include "ReadableEditorDialog.h"
 #include "XData.h"
 #include "XDataLoader.h"
+#include "GuiManager.h"
 
 class GuiModule : 
 	public RegisterableModule
@@ -50,6 +51,9 @@ public:
 			"", // icon
 			"ReadableEditorDialog"
 		);
+
+		gui::GuiManager::Instance().getGui("guis/mainmenu.gui");
+		return;
 
 		//Testbench for xdata importer/exporter:
 		readable::XDataPtrList testing;
