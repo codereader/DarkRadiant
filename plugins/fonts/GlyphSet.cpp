@@ -13,24 +13,25 @@ GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info,
 				   const std::string& fontname, 
 				   const std::string& language, 
 				   Resolution resolution_) :
-	resolution(resolution_)
+	resolution(resolution_),
+	_glyphScale(q3info.glyphScale)
 {
 	std::set<std::string> temp;
 
 	// Construct all the glyphs
 	for (std::size_t i = 0; i < q3font::GLYPH_COUNT_PER_FONT; ++i)
 	{
-		glyphs[i] = GlyphInfoPtr(new GlyphInfo(q3info.glyphs[i]));
+		_glyphs[i] = GlyphInfoPtr(new GlyphInfo(q3info.glyphs[i]));
 
 		// Memorise unique texture names
-		temp.insert(glyphs[i]->texture);
+		temp.insert(_glyphs[i]->texture);
 	}
 
 	// Now construct the full texture paths, VFS-compatible
 	for (std::set<std::string>::const_iterator i = temp.begin();
 		 i != temp.end(); ++i)
 	{
-		textures[*i] = "fonts/" + language + "/" + fontname + "/" + *i;
+		_textures[*i] = "fonts/" + language + "/" + fontname + "/" + *i;
 	}
 }
 
@@ -72,10 +73,10 @@ void GlyphSet::realiseShaders()
 	// For each glyph, acquire the appropriate shader
 	for (std::size_t i = 0; i < q3font::GLYPH_COUNT_PER_FONT; ++i)
 	{
-		TexturePathMap::const_iterator found = textures.find(glyphs[i]->texture);
-		assert(found != textures.end());
+		TexturePathMap::const_iterator found = _textures.find(_glyphs[i]->texture);
+		assert(found != _textures.end());
 
-		glyphs[i]->shader = GlobalRenderSystem().capture(found->second);
+		_glyphs[i]->shader = GlobalRenderSystem().capture(found->second);
 	}
 }
 

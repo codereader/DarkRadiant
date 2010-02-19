@@ -21,10 +21,12 @@ private:
 	// This map is used to acquire the shaders in realiseShaders()
 	// File extension and dds/ prefix are omitted in the VFS paths
 	typedef std::map<std::string, std::string> TexturePathMap;
-	TexturePathMap textures;
+	TexturePathMap _textures;
+
+	float _glyphScale;
 
 	// each set has 256 glyphs
-	GlyphInfoPtr glyphs[q3font::GLYPH_COUNT_PER_FONT];
+	GlyphInfoPtr _glyphs[q3font::GLYPH_COUNT_PER_FONT];
 
 	// Private constructor, initialises this class using 
 	// the Q3-style info structure (as read in from the .DAT file)
@@ -49,7 +51,12 @@ public:
 	IGlyphInfoPtr getGlyph(std::size_t glyphIndex) const
 	{
 		assert(glyphIndex < q3font::GLYPH_COUNT_PER_FONT);
-		return glyphs[glyphIndex];
+		return _glyphs[glyphIndex];
+	}
+
+	float getGlyphScale() const
+	{
+		return _glyphScale;
 	}
 
 	// Ensures that each glyph has a valid Shader

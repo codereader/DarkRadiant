@@ -59,6 +59,9 @@ public:
 	// each set has 256 glyphs (q3font::GLYPH_COUNT_PER_FONT)
 	virtual IGlyphInfoPtr getGlyph(std::size_t glyphIndex) const = 0;
 
+	// Gets the scale for calculating the render font size
+	virtual float getGlyphScale() const = 0;
+
 	// Ensures that each glyph has a valid Shader
 	virtual void realiseShaders() = 0;
 };
