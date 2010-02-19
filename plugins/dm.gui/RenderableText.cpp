@@ -60,6 +60,11 @@ void RenderableText::recompile()
 	std::vector<std::string> paragraphs;
 	boost::algorithm::split(paragraphs, text, boost::algorithm::is_any_of("\n"));
 
+	fonts::IGlyphSet& glyphSet = *_font->getGlyphSet(_resolution);
+
+	// Calculate the final scale of the glyphs
+	float scale = _owner.textscale * glyphSet.getGlyphScale();
+
 	double lineHeight = 16;
 
 	for (std::size_t p = 0; p < paragraphs.size(); ++p)
@@ -69,11 +74,11 @@ void RenderableText::recompile()
 		boost::algorithm::split(words, text, boost::algorithm::is_any_of(" \t"));
 
 		// Add the words to lines
-		TextLinePtr curLine(new TextLine(_owner.rect[2]));
+		TextLinePtr curLine(new TextLine(_owner.rect[2], scale));
 
 		while (!words.empty())
 		{
-			bool added = curLine->addWord(words.front(), *_font->getGlyphSet(_resolution));
+			bool added = curLine->addWord(words.front(), glyphSet);
 
 			if (added)
 			{
@@ -85,7 +90,7 @@ void RenderableText::recompile()
 			if (curLine->empty())
 			{
 				// Line empty, but still not fitting, force it
-				curLine->addWord(words.front(), *_font->getGlyphSet(_resolution), true);
+				curLine->addWord(words.front(), glyphSet, true);
 				words.pop_front();
 			}
 
@@ -98,7 +103,7 @@ void RenderableText::recompile()
 			lines.push_back(curLine);
 
 			// Allocate a new line, and proceed
-			curLine = TextLinePtr(new TextLine(_owner.rect[2]));
+			curLine = TextLinePtr(new TextLine(_owner.rect[2], scale));
 		}
 
 		// Add that line we started
