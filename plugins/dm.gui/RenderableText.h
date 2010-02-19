@@ -11,15 +11,14 @@ namespace gui
 
 class GuiWindowDef;
 
-class RenderableText :
-	public Renderable
+class RenderableText
 {
 private:
 	// The owning windowDef
 	const GuiWindowDef& _owner;
 
-	// The character soup, arranged into OpenGLRenderables, sorted by Material
-	typedef std::map<MaterialPtr, RenderableCharacterBatchPtr> CharBatches;
+	// The character soup, arranged into OpenGLRenderables, sorted by shader
+	typedef std::map<ShaderPtr, RenderableCharacterBatchPtr> CharBatches;
 	CharBatches _charBatches;
 
 	// The font we're rendering
@@ -32,10 +31,8 @@ public:
 	// Construct a renderable for the text in the given windowDef
 	RenderableText(const GuiWindowDef& owner);
 
-	// Renderable implementation, adds OpenGLRenderables to the collector
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-
+	void submitRenderables(RenderableCollector& collector);
+	
 	// Re-construct this structure, called when the text in the owning windowDef has been changed
 	void recompile();
 

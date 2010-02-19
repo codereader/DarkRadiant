@@ -12,7 +12,7 @@ namespace gui
 struct Vertex2D
 {
 	Vector2 vertex;
-	Vector2 texcoords;
+	Vector2 texcoord;
 };
 
 class TextChar
@@ -32,10 +32,10 @@ public:
 		coords[2].vertex = Vector2(glyph->imageWidth, glyph->imageHeight);
 		coords[3].vertex = Vector2(0, glyph->imageHeight);
 
-		coords[0].texcoords = Vector2(glyph->s, glyph->t);
-		coords[1].texcoords = Vector2(glyph->s2, glyph->t);
-		coords[2].texcoords = Vector2(glyph->s2, glyph->t2);
-		coords[3].texcoords = Vector2(glyph->s, glyph->t2);
+		coords[0].texcoord = Vector2(glyph->s, glyph->t);
+		coords[1].texcoord = Vector2(glyph->s2, glyph->t);
+		coords[2].texcoord = Vector2(glyph->s2, glyph->t2);
+		coords[3].texcoord = Vector2(glyph->s, glyph->t2);
 	}
 
 	double getWidth() const

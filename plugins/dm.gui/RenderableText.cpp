@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 
+#include "math/matrix.h"
 #include <vector>
 #include <list>
 #include <boost/algorithm/string/split.hpp>
@@ -22,14 +23,19 @@ void RenderableText::realiseFontShaders()
 	_font->getGlyphSet(_resolution)->realiseShaders();
 }
 
-void RenderableText::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableText::submitRenderables(RenderableCollector& collector)
 {
-	// TODO
-}
+	// Add each renderable character batch to the collector
+	for (CharBatches::const_iterator i = _charBatches.begin(); i != _charBatches.end(); ++i)
+	{
+		collector.PushState();
 
-void RenderableText::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	renderSolid(collector, volume);
+		collector.Highlight(RenderableCollector::ePrimitive, false);
+		collector.SetState(i->first, RenderableCollector::eFullMaterials);
+		collector.addRenderable(*i->second, Matrix4::getIdentity());
+
+		collector.PopState();
+	}
 }
 
 void RenderableText::recompile()

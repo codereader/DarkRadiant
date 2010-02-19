@@ -3,6 +3,7 @@
 #include "igl.h"
 #include "ifonts.h"
 #include "ishaders.h"
+#include "math/matrix.h"
 
 namespace gui
 {
@@ -10,13 +11,7 @@ namespace gui
 GuiRenderer::GuiRenderer() :
 	_viewPortTopLeft(0,0),
 	_viewPortBottomRight(640, 480)
-{
-	// Reserve space in the vector to avoid reallocation delays
-	_stateStack.reserve(8);
-
-	// We start with an empty state
-	_stateStack.push_back(State());
-}
+{}
 
 void GuiRenderer::setGui(const GuiPtr& gui)
 {
@@ -116,11 +111,41 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	// Render the text
 	if (!window->getText().empty())
 	{
-		RenderableText& text = window->getRenderableText();
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-		// Add RenderableText to RenderableCollector
+		glEnable(GL_TEXTURE_2D);
+		glColor4dv(window->forecolor);
+		
+		window->getRenderableText().submitRenderables(*this);
 
-		// Flush bucket
+		flushRenderables();
+
+		glDisable(GL_TEXTURE_2D);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		/*glBindTexture(GL_TEXTURE_2D, _buckets.begin()->first->getMaterial()->getEditorImage()->getGLTexNum());
+
+		glBegin(GL_QUADS);
+
+		glTexCoord2f(0, 0);
+		glVertex2d(0, 0);	// Upper left
+		//glVertex2d(window->rect[0], window->rect[1]);	// Upper left
+
+		glTexCoord2f(1, 0);
+		glVertex2d(640, 0);
+		//glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
+
+		glTexCoord2f(1, 1);
+		glVertex2d(640, 480);
+		//glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
+
+		glTexCoord2f(0, 1);
+		glVertex2d(0, 480);
+		//glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
+
+		glEnd();*/
 	}
 
 	for (GuiWindowDef::ChildWindows::const_iterator i = window->children.begin();
@@ -130,28 +155,50 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	}
 }
 
+void GuiRenderer::flushRenderables()
+{
+	RenderInfo info;
+
+	for (ShaderBuckets::iterator i = _buckets.begin(); i != _buckets.end(); ++i)
+	{
+		// Switch to this shader
+		glBindTexture(GL_TEXTURE_2D, i->first->getMaterial()->getEditorImage()->getGLTexNum());
+
+		const RenderableList& renderables = i->second;
+
+		for (RenderableList::const_iterator r = renderables.begin(); r != renderables.end(); ++r)
+		{
+			(*r)->render(info);
+		}
+	}
+
+	_buckets.clear();
+}
+
 void GuiRenderer::PushState()
 {
-	_stateStack.push_back(_stateStack.back());
+	// nothing
 }
 
 void GuiRenderer::PopState()
 {
-	_stateStack.pop_back();
+	_curState.reset();
 }
 
 void GuiRenderer::SetState(const ShaderPtr& state, EStyle mode)
 {
-	_stateStack.back().state = state.get();
+	_curState = state;
 }
 
 void GuiRenderer::addRenderable(const OpenGLRenderable& renderable, const Matrix4& world)
 {
-	// Sort the renderable into one of our shader buckets
-	if (_stateStack.back().state != NULL)
+	if (_buckets.find(_curState) == _buckets.end())
 	{
-		//_stateStack.back().state->addRenderable(renderable, localToWorld);
+		_buckets[_curState] = RenderableList();
 	}
+
+	// Sort the renderable into one of our shader buckets
+	_buckets[_curState].push_back(&renderable);
 }
 
 const RenderableCollector::EStyle GuiRenderer::getStyle() const
@@ -161,14 +208,7 @@ const RenderableCollector::EStyle GuiRenderer::getStyle() const
 
 void GuiRenderer::Highlight(EHighlightMode mode, bool bEnable)
 {
-	if (bEnable) 
-	{
-		_stateStack.back().highlight |= mode;
-	}
-	else
-	{
-		_stateStack.back().highlight &= ~mode;
-	}
+	// Nothing
 }
 
 } // namespace
