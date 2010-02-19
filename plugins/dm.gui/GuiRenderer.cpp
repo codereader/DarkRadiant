@@ -1,6 +1,7 @@
 #include "GuiRenderer.h"
 
 #include "igl.h"
+#include "ifonts.h"
 #include "ishaders.h"
 
 namespace gui
@@ -9,7 +10,13 @@ namespace gui
 GuiRenderer::GuiRenderer() :
 	_viewPortTopLeft(0,0),
 	_viewPortBottomRight(640, 480)
-{}
+{
+	// Reserve space in the vector to avoid reallocation delays
+	_stateStack.reserve(8);
+
+	// We start with an empty state
+	_stateStack.push_back(State());
+}
 
 void GuiRenderer::setGui(const GuiPtr& gui)
 {
@@ -73,11 +80,16 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 		glEnd();
 	}
 
-	// Acquire the texture number of the active texture
-	if (!window->background.empty() && window->backgroundShader == NULL && window->matcolor[3] > 0)
+	// Realise background shader if necessary
+	if (!window->background.empty() && window->backgroundShader == NULL)
 	{
-		MaterialPtr shader = GlobalMaterialManager().getMaterialForName(window->background);
-		TexturePtr tex = shader->getEditorImage();
+		window->backgroundShader = GlobalMaterialManager().getMaterialForName(window->background);
+	}
+
+	// Acquire the texture number of the active texture
+	if (window->matcolor[3] > 0 && window->backgroundShader != NULL)
+	{
+		TexturePtr tex = window->backgroundShader->getEditorImage();
 		glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
 		// Draw the textured quad
@@ -102,15 +114,59 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	}
 
 	// Render the text
-	if (!window->text.empty())
+	if (!window->getText().empty())
 	{
-		
+		// TODO: Acquire new RenderableText here.
+		// Add RenderableText to RenderableCollector
+
+		// Flush bucket
 	}
 
 	for (GuiWindowDef::ChildWindows::const_iterator i = window->children.begin();
 		 i != window->children.end(); ++i)
 	{
 		render(*i);
+	}
+}
+
+void GuiRenderer::PushState()
+{
+	_stateStack.push_back(_stateStack.back());
+}
+
+void GuiRenderer::PopState()
+{
+	_stateStack.pop_back();
+}
+
+void GuiRenderer::SetState(const ShaderPtr& state, EStyle mode)
+{
+	_stateStack.back().state = state.get();
+}
+
+void GuiRenderer::addRenderable(const OpenGLRenderable& renderable, const Matrix4& world)
+{
+	// Sort the renderable into one of our shader buckets
+	if (_stateStack.back().state != NULL)
+	{
+		//_stateStack.back().state->addRenderable(renderable, localToWorld);
+	}
+}
+
+const RenderableCollector::EStyle GuiRenderer::getStyle() const
+{
+	return eFullMaterials;
+}
+
+void GuiRenderer::Highlight(EHighlightMode mode, bool bEnable)
+{
+	if (bEnable) 
+	{
+		_stateStack.back().highlight |= mode;
+	}
+	else
+	{
+		_stateStack.back().highlight &= ~mode;
 	}
 }
 

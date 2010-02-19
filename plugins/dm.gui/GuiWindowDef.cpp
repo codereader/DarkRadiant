@@ -7,6 +7,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 namespace gui
 {
@@ -150,11 +151,14 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		}
 		else if (token == "text")
 		{
-			text = parseString(tokeniser);
+			setText(parseString(tokeniser));
 		}
 		else if (token == "font")
 		{
 			font = tokeniser.nextToken();
+
+			// Cut off the "fonts/" part
+			boost::algorithm::replace_first(font, "fonts/", "");
 		}
 		else if (token == "textscale")
 		{
@@ -280,6 +284,31 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			globalWarningStream() << "Unknown token encountered in GUI: " << token << std::endl;
 		}
 	}
+}
+
+const std::string& GuiWindowDef::getText() const
+{
+	return _text;
+}
+
+void GuiWindowDef::setText(const std::string& newText)
+{
+	_text = newText;
+	_textChanged = true;
+}
+
+RenderableText& GuiWindowDef::getRenderableText()
+{
+	if (_textChanged)
+	{
+		// Text has changed, refresh the renderable
+		_textChanged = false;
+
+		// (Re-)compile the renderable
+		_renderableText.recompile();
+	}
+
+	return _renderableText;
 }
 
 }
