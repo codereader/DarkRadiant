@@ -23,18 +23,16 @@ void RenderableText::realiseFontShaders()
 	_font->getGlyphSet(_resolution)->realiseShaders();
 }
 
-void RenderableText::submitRenderables(RenderableCollector& collector)
+void RenderableText::render()
 {
 	// Add each renderable character batch to the collector
 	for (CharBatches::const_iterator i = _charBatches.begin(); i != _charBatches.end(); ++i)
 	{
-		collector.PushState();
+		// Switch to this shader
+		glBindTexture(GL_TEXTURE_2D, i->first->getMaterial()->getEditorImage()->getGLTexNum());
 
-		collector.Highlight(RenderableCollector::ePrimitive, false);
-		collector.SetState(i->first, RenderableCollector::eFullMaterials);
-		collector.addRenderable(*i->second, Matrix4::getIdentity());
-
-		collector.PopState();
+		// Submit geometry
+		i->second->render();
 	}
 }
 

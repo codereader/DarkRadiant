@@ -15,8 +15,7 @@ namespace gui
  * all referencing the same font texture. The geometry of the characters
  * is arranged into a vertex buffer object on compile().
  */
-class RenderableCharacterBatch :
-	public OpenGLRenderable
+class RenderableCharacterBatch
 {
 private:
 	// The local vertex buffer
@@ -37,7 +36,7 @@ public:
 	void compile();
 
 	// OpenGLRenderable implementation
-	void render(const RenderInfo& info) const;
+	void render() const;
 };
 typedef boost::shared_ptr<RenderableCharacterBatch> RenderableCharacterBatchPtr;
 
