@@ -5,7 +5,7 @@
 #include <map>
 #include "generic/callback.h"
 
-#include "reportError.h"
+//#include "reportError.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -34,18 +34,22 @@ namespace readable
 	/* ToDo:
 		1) Maybe add detection of \n in xdata files as a error/warning. 
 			(Basically not necessary because everything is exported correctly and it would decrease performance.) 
-		2) Multiple Stage Import-directive support. Probably need a recursive method for this.*/
+		2) Multiple Stage Import-directive support. Probably need a recursive method for this.
+		3) Replace XDataPtrList with a XDataPtrSet with custom Allocator and weak-sorter. 
+		4) Possibly have import methods return bool and pass a target reference.	->done
+		5) Replace DefMap with a multiMap, to allow editing of all readables but still warn about duplicates. 
+		6) Add local reportError-Method and change the cerr output of import methods.	->done*/
 
 	public:
 		/* Imports a list of XData objects from the File specified by Filename (just the name, not the path).
-		Throws runtime_error exceptions if opening the file failed or if its extension is not xd. Every other
-		error-output is linked to the cerr-console, but can be retrieved using getImportSummary() */
-		XDataPtrList import(const std::string& filename);
+		Returns false if import failed. The import-breaking error-message is the last element of _errorList, which can
+		be retrieved by calling getImportSummary() and also stores other errors and warnings. */
+		const bool import(const std::string& filename, XDataPtrList& target);
 
-		/* Imports a single Definition from the specified file. Throws runtime_error exceptions if opening the 
-		file failed or if its extension is not xd. Every other error-output is linked to the cerr-console, 
-		but can be retrieved using getImportSummary(). Returns Null-pointer if import failed. */
-		XDataPtr importSingleDef(const std::string& filename, const std::string& definitionName);
+		/* Imports a single Definition from the specified file. Returns false if import failed. The import-breaking 
+		error-message is the last element of _errorList, which can be retrieved by calling getImportSummary() 
+		and also stores other errors and warnings. */
+		const bool importSingleDef(const std::string& filename, const std::string& definitionName, XDataPtr& target);
 	
 	//Getters:
 		/* Returns StringVector with errors and warnings of the last import process 
@@ -88,19 +92,34 @@ namespace readable
 		typedef const std::string& first_argument_type;
 
 	private:
+		/* Issues the ErrorMessage to the cerr console and appends it to the _errorList. Returns always false, so that it can be used after a return statement. */
+		inline const bool reportError(const std::string& ErrorMessage)
+		{
+			std::cerr << ErrorMessage;
+			_errorList.push_back(ErrorMessage);
+			return false;
+		}
+
+		/* Additionally to what the upper version of reportError(..) does, this method also tries to jump to the next definition by calling jumpOutOfBrackets. */
+		inline const bool reportError(parser::DefTokeniser& tok, const std::string& ErrorMessage, std::size_t currentDepth = 1)
+		{ 
+			reportError(ErrorMessage);
+			jumpOutOfBrackets(tok, currentDepth);
+			return false; 
+		}
 
 		/* Checks where the content following in the tokenizer has to be stored. DefName is the name of the
 		definition for whom content is parsed and is just used for error-messages. */
-		bool storeContent(const std::string& statement, parser::DefTokeniser& tok, const std::string& defName);
+		const bool storeContent(const std::string& statement, parser::DefTokeniser& tok, const std::string& defName);
 
 		/* Parses a single definition from a stream into an XData object and generates warning and error messages. */
-		bool parseXDataDef(parser::DefTokeniser& tok, const std::string& definitionName = "");
+		const bool parseXDataDef(parser::DefTokeniser& tok, const std::string& definitionName = "");
 
 		/* Skips the ":" and parses the following SingleLine or MultiLine content into What.*/
-		bool readLines(parser::DefTokeniser& tok, std::string& what) const;
+		const bool readLines(parser::DefTokeniser& tok, std::string& what) const;
 
 		/* Used to jump out of a definition. Can lead to undefined behavior on Syntax-errors. */
-		void jumpOutOfBrackets(parser::DefTokeniser& tok, std::size_t currentDepth) const;
+		void jumpOutOfBrackets(parser::DefTokeniser& tok, std::size_t currentDepth = 1) const;
 
 	//General Member variables:
 		StringList			_errorList;
