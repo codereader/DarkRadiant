@@ -124,11 +124,21 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
+	// Push the translation before rendering the children, so that they
+	// can continue rendering in local coordinates, but the results appear relative to 
+	// this parent windowDef
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glTranslated(window->rect[0], window->rect[1], 0);
+
 	for (GuiWindowDef::ChildWindows::const_iterator i = window->children.begin();
 		 i != window->children.end(); ++i)
 	{
 		render(*i);
 	}
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 }
 
 } // namespace
