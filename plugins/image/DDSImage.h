@@ -130,6 +130,9 @@ public:
 		glGenTextures(1, &textureNum);
 		glBindTexture(GL_TEXTURE_2D, textureNum);
 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 
 		for (std::size_t i = 0; i < _mipMapInfo.size(); ++i)
