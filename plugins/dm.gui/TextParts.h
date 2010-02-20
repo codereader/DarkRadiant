@@ -145,14 +145,22 @@ public:
 	// returns TRUE on success, FALSE if the word is too wide to fit in this line
 	bool addWord(const std::string& w, fonts::IGlyphSet& glyphs, bool noclip = false)
 	{
-		std::string word(w);
-
 		// If we already have some characters, add a space
-		word += (!_chars.empty()) ? " " : "";
+		std::string word = _chars.empty() ? w : " " + w;;
 		
 		// Generate the word
 		TextWord tw = TextWord::createForString(word, glyphs, _fontScale);
 		return addWord(tw, noclip);
+	}
+
+	// Adds a single character to this sentence
+	// returns TRUE if the character fits, FALSE otherwise (character not added on FALSE).
+	// Override the noclip argument with true to ignore width checks
+	bool addChar(const char c, fonts::IGlyphSet& glyphs, bool noclip = false)
+	{
+		// Generate the character
+		TextChar tc(c, glyphs, _fontScale);
+		return addChar(tc, noclip);
 	}
 
 	// Offsets all character coordinates by the given vector
@@ -165,6 +173,29 @@ public:
 	}
 
 private:
+	bool addChar(TextChar& ch, bool noclip)
+	{
+		// Check the word length
+		double remainingWidth = _lineWidth - _charWidth;
+		double charWidth = ch.getWidth();
+
+		if (!noclip && charWidth > remainingWidth)
+		{
+			return false;
+		}
+
+		// Move the word to the current position
+		ch.offset(Vector2(_charWidth, 0));
+
+		// Append the characters to our own vector
+		_chars.push_back(ch);
+
+		// Increase horizontal position
+		_charWidth += charWidth;
+
+		return true;
+	}
+
 	bool addWord(TextWord& word, bool noclip)
 	{
 		// Check the word length
