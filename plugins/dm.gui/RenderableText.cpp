@@ -66,12 +66,14 @@ void RenderableText::recompile()
 	// Calculate the final scale of the glyphs
 	float scale = _owner.textscale * glyphSet.getGlyphScale();
 
-	// Calculate the line height
-	// This is based on a series of measurements using the Carleton font.
-	double lineHeight = lrint(_owner.textscale * 51 + 5);
+	// We need the maximum glyph height of the highest resolution font to calculate the line width
+	std::size_t maxGlyphHeight = _font->getGlyphSet(fonts::Resolution48)->getMaxGlyphHeight();
+
+	// Calculate the line height, this is usually max glyph height + 5 pixels
+	double lineHeight = lrint(_owner.textscale * maxGlyphHeight + 5);
 
 	// The distance from the top of the rectangle to the baseline
-	double startingBaseLine = lrint(_owner.textscale * 51 + 2);
+	double startingBaseLine = lrint(_owner.textscale * maxGlyphHeight + 2);
 
 	for (std::size_t p = 0; p < paragraphs.size(); ++p)
 	{
@@ -150,21 +152,32 @@ void RenderableText::recompile()
 
 			lines.push_back(curLine);
 
-			// Allocate a new line, and proceed
-			curLine = TextLinePtr(new TextLine(_owner.rect[2], scale));
+			// Allocate a new line, but only if we have any more words in this paragraph
+			if (!words.empty())
+			{
+				curLine = TextLinePtr(new TextLine(_owner.rect[2], scale));
+			}
+			else
+			{
+				curLine = TextLinePtr();
+			}
 		}
 
-		// Trim any extra space from the end of the line
-		curLine->removeTrailingSpace();
+		if (curLine != NULL)
+		{
+			// Trim any extra space from the end of the line
+			curLine->removeTrailingSpace();
 
-		// Add that line we started, even if it's an empty one
-		curLine->offset(
-			Vector2(
-				getAlignmentCorrection(curLine->getWidth()), 
-				lineHeight * lines.size() +  + startingBaseLine
-			)
-		);
-		lines.push_back(curLine);
+			// Add that line we started, even if it's an empty one
+			curLine->offset(
+				Vector2(
+					getAlignmentCorrection(curLine->getWidth()), 
+					lineHeight * lines.size() +  + startingBaseLine
+				)
+			);
+
+			lines.push_back(curLine);
+		}
 	}
 
 	// Now sort the aligned characters into separate renderables, one per shader

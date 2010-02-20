@@ -25,6 +25,10 @@ private:
 
 	float _glyphScale;
 
+	// Maximum size of a glyph in this set
+	std::size_t _maxGlyphWidth;
+	std::size_t _maxGlyphHeight;
+
 	// each set has 256 glyphs
 	GlyphInfoPtr _glyphs[q3font::GLYPH_COUNT_PER_FONT];
 
@@ -57,6 +61,16 @@ public:
 	float getGlyphScale() const
 	{
 		return _glyphScale;
+	}
+
+	std::size_t getMaxGlyphWidth() const
+	{
+		return _maxGlyphWidth;
+	}
+
+	std::size_t getMaxGlyphHeight() const
+	{
+		return _maxGlyphHeight;
 	}
 
 	// Ensures that each glyph has a valid Shader
