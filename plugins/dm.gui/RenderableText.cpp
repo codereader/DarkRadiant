@@ -11,6 +11,7 @@
 
 #include "TextParts.h"
 #include "GuiWindowDef.h"
+#include "math/FloatTools.h"
 
 namespace gui
 {
@@ -65,7 +66,12 @@ void RenderableText::recompile()
 	// Calculate the final scale of the glyphs
 	float scale = _owner.textscale * glyphSet.getGlyphScale();
 
-	double lineHeight = 16;
+	// Calculate the line height
+	// This is based on a series of measurements using the Carleton font.
+	double lineHeight = lrint(_owner.textscale * 51 + 5);
+
+	// The distance from the top of the rectangle to the baseline
+	double startingBaseLine = lrint(_owner.textscale * 51 + 2);
 
 	for (std::size_t p = 0; p < paragraphs.size(); ++p)
 	{
@@ -97,7 +103,7 @@ void RenderableText::recompile()
 			// Line finished, consider alignment and vertical offset
 			curLine->offset(Vector2(
 				getAlignmentCorrection(curLine->getWidth()), // horizontal correction
-				lineHeight * lines.size()					 // vertical correction
+				lineHeight * lines.size() + startingBaseLine // vertical correction
 			));
 
 			lines.push_back(curLine);
@@ -110,7 +116,10 @@ void RenderableText::recompile()
 		if (!curLine->empty())
 		{
 			curLine->offset(
-				Vector2(getAlignmentCorrection(curLine->getWidth()), lineHeight * lines.size())
+				Vector2(
+					getAlignmentCorrection(curLine->getWidth()), 
+					lineHeight * lines.size() +  + startingBaseLine
+				)
 			);
 			lines.push_back(curLine);
 		}
@@ -156,10 +165,12 @@ double RenderableText::getAlignmentCorrection(double lineWidth)
 	switch (_owner.textalign)
 	{
 	case 0: // left
-		xoffset = 0;
+		// Somehow D3 adds a 2 pixel offset to the left
+		xoffset = 2; 
 		break;
 	case 1: // center
-		xoffset = (_owner.rect[2] - lineWidth) / 2;
+		// Somehow D3 adds a 1 pixel offset to the left
+		xoffset = 1 + (_owner.rect[2] - lineWidth) / 2;
 		break;
 	case 2: // right
 		xoffset = _owner.rect[2] - lineWidth;
