@@ -77,7 +77,7 @@ void RenderableText::recompile()
 	{
 		// Split the paragraphs into words
 		std::list<std::string> words;
-		boost::algorithm::split(words, text, boost::algorithm::is_any_of(" \t"));
+		boost::algorithm::split(words, paragraphs[p], boost::algorithm::is_any_of(" \t"));
 
 		// Add the words to lines
 		TextLinePtr curLine(new TextLine(_owner.rect[2], scale));
@@ -95,9 +95,33 @@ void RenderableText::recompile()
 			// Not added
 			if (curLine->empty())
 			{
-				// Line empty, but still not fitting, force it
-				curLine->addWord(words.front(), glyphSet, true);
+				// Line empty, but still not fitting, do it character-wise
+				std::string word = words.front();
 				words.pop_front();
+
+				while (!word.empty())
+				{
+					// Take the first character
+					if (curLine->addChar(word[0], glyphSet))
+					{
+						// Character added, remove from string
+						word.erase(0, 1);
+						continue;
+					}
+					else
+					{
+						// Not enough space, add one more character then break
+						curLine->addChar(word[0], glyphSet, true);
+						word.erase(0, 1);
+						break;
+					}
+				}
+
+				// add the rest of the word to the front of the queue
+				if (!word.empty())
+				{
+					words.push_front(word);
+				}
 			}
 
 			// Line finished, consider alignment and vertical offset
@@ -112,17 +136,14 @@ void RenderableText::recompile()
 			curLine = TextLinePtr(new TextLine(_owner.rect[2], scale));
 		}
 
-		// Add that line we started
-		if (!curLine->empty())
-		{
-			curLine->offset(
-				Vector2(
-					getAlignmentCorrection(curLine->getWidth()), 
-					lineHeight * lines.size() +  + startingBaseLine
-				)
-			);
-			lines.push_back(curLine);
-		}
+		// Add that line we started, even if it's an empty one
+		curLine->offset(
+			Vector2(
+				getAlignmentCorrection(curLine->getWidth()), 
+				lineHeight * lines.size() +  + startingBaseLine
+			)
+		);
+		lines.push_back(curLine);
 	}
 
 	// Now sort the aligned characters into separate renderables, one per shader
