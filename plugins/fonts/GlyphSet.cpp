@@ -14,7 +14,9 @@ GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info,
 				   const std::string& language, 
 				   Resolution resolution_) :
 	resolution(resolution_),
-	_glyphScale(q3info.glyphScale)
+	_glyphScale(q3info.glyphScale),
+	_maxGlyphWidth(0),
+	_maxGlyphHeight(0)
 {
 	std::set<std::string> temp;
 
@@ -22,6 +24,17 @@ GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info,
 	for (std::size_t i = 0; i < q3font::GLYPH_COUNT_PER_FONT; ++i)
 	{
 		_glyphs[i] = GlyphInfoPtr(new GlyphInfo(q3info.glyphs[i]));
+
+		// Check max glyph width and height
+		if (_glyphs[i]->imageHeight > _maxGlyphHeight)
+		{
+			_maxGlyphHeight = _glyphs[i]->imageHeight;
+		}
+
+		if (_glyphs[i]->imageWidth > _maxGlyphWidth)
+		{
+			_maxGlyphWidth = _glyphs[i]->imageWidth;
+		}
 
 		// Memorise unique texture names
 		temp.insert(_glyphs[i]->texture);

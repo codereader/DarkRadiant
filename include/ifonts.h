@@ -62,6 +62,12 @@ public:
 	// Gets the scale for calculating the render font size
 	virtual float getGlyphScale() const = 0;
 
+	// Gets the maximum width of a glyph in this set
+	virtual std::size_t getMaxGlyphWidth() const = 0;
+
+	// Gets the maximum height of a glyph in this set
+	virtual std::size_t getMaxGlyphHeight() const = 0;
+
 	// Ensures that each glyph has a valid Shader
 	virtual void realiseShaders() = 0;
 };
