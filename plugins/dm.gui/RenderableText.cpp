@@ -77,6 +77,13 @@ void RenderableText::recompile()
 
 	for (std::size_t p = 0; p < paragraphs.size(); ++p)
 	{
+		// Check if more lines are possible, if at least one line is in the rectangle
+		if (!lines.empty())
+		{
+			double curYPos = lineHeight * lines.size() + startingBaseLine;
+			if (curYPos > _owner.rect[3]) break;
+		}
+		
 		// Split the paragraphs into words
 		std::list<std::string> words;
 		boost::algorithm::split(words, paragraphs[p], boost::algorithm::is_any_of(" \t"));
@@ -152,14 +159,17 @@ void RenderableText::recompile()
 
 			lines.push_back(curLine);
 
+			// Clear the current line
+			curLine = TextLinePtr();
+
+			// Check if more lines are possible
+			double curYPos = lineHeight * lines.size() + startingBaseLine;
+			if (curYPos > _owner.rect[3]) break;
+
 			// Allocate a new line, but only if we have any more words in this paragraph
 			if (!words.empty())
 			{
 				curLine = TextLinePtr(new TextLine(_owner.rect[2], scale));
-			}
-			else
-			{
-				curLine = TextLinePtr();
 			}
 		}
 
