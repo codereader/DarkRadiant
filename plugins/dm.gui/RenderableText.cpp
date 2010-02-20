@@ -84,11 +84,26 @@ void RenderableText::recompile()
 
 		while (!words.empty())
 		{
+			// Empty words are stemming from an extra space character, re-add that
+			if (words.front().empty()) 
+			{
+				curLine->addChar(' ', glyphSet, true);
+				words.pop_front();
+				continue;
+			}
+
 			bool added = curLine->addWord(words.front(), glyphSet);
 
 			if (added)
 			{
 				words.pop_front();
+
+				if (!words.empty())
+				{
+					// Add a space after each word (noclipped) if more words are following
+					curLine->addChar(' ', glyphSet, true);
+				}
+				
 				continue;
 			}
 
@@ -123,7 +138,10 @@ void RenderableText::recompile()
 					words.push_front(word);
 				}
 			}
-
+			
+			// Trim any extra space from the end of the line
+			curLine->removeTrailingSpace();
+			
 			// Line finished, consider alignment and vertical offset
 			curLine->offset(Vector2(
 				getAlignmentCorrection(curLine->getWidth()), // horizontal correction
@@ -135,6 +153,9 @@ void RenderableText::recompile()
 			// Allocate a new line, and proceed
 			curLine = TextLinePtr(new TextLine(_owner.rect[2], scale));
 		}
+
+		// Trim any extra space from the end of the line
+		curLine->removeTrailingSpace();
 
 		// Add that line we started, even if it's an empty one
 		curLine->offset(
