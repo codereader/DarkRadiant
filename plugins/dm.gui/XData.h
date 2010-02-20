@@ -10,8 +10,7 @@
 #include "parser/DefTokeniser.h"
 
 /* ToDo:
-	1) Use VFS instead of boost::filesystem for importer. ->done
-	2) import-directive support for exporter? */
+	*/
 
 namespace readable
 {
@@ -60,6 +59,12 @@ namespace readable
 	// XData base-class for exporting, storing and managing XData.
 	class XData
 	{
+	/* ToDo:
+		1) Use VFS instead of boost::filesystem for importer. ->done
+		2) import-directive support for exporter? 
+		3) Use references instead of return values.
+		4) definitionStart shouldn't be a private variable.*/
+
 	public:
 	//Methods:
 		/* Returns the PageLayout of the object: TwoSided or OneSided */

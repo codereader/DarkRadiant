@@ -3,96 +3,99 @@
 
 namespace readable
 {
-	XDataPtr XDataLoader::importSingleDef(const std::string& filename, const std::string& definitionName)
+	const bool XDataLoader::importSingleDef( const std::string& filename, const std::string& definitionName, XDataPtr& target )
 	{
-		XDataPtrList ReturnVector;
-
-		//Check fileextension:
-		if (filename.substr( filename.rfind(".")+1 ) != "xd")
-			reportError("[XDataLoader::import] Fileextension is not .xd: " + filename + "\n");
-
-		// Attempt to open the file in text mode
-		ArchiveTextFilePtr file = 
-			GlobalFileSystem().openTextFile(XDATA_DIR + filename);
-		if (file == NULL)
-			reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
-
-		std::istream is(&(file->getInputStream()));
-		parser::BasicDefTokeniser<std::istream> tok(is);
-
+		//Initialization:
 		_errorList.clear();
 		_newXData.reset();
 
+		//Check fileextension:
+		if (filename.substr( filename.rfind(".")+1 ) != "xd")
+			return reportError("[XDataLoader::import] Fileextension is not .xd: " + filename + "\n");
+
+		// Attempt to open the file in text mode and retrieve DefTokeniser
+		ArchiveTextFilePtr file = 
+			GlobalFileSystem().openTextFile(XDATA_DIR + filename);
+		if (file == NULL)
+			return reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
+		std::istream is(&(file->getInputStream()));
+		parser::BasicDefTokeniser<std::istream> tok(is);
+
+		//Parse the desired definition:
 		while (tok.hasMoreTokens() && !parseXDataDef(tok,definitionName)) {}
 
+		//Summarizing report:
 		if (!_newXData)
-		{
-			_errorList.push_back("[XDataLoader::importSingleDef] Failed to load " + definitionName + ".\n");
-			std::cerr << _errorList[0];	
-		}
+			return reportError("[XDataLoader::importSingleDef] Failed to load " + definitionName + ".\n");
 		else
 		{
 			_errorList.push_back("[XDataLoader::importSingleDef] " + definitionName + " loaded successfully with " 
 				+ boost::lexical_cast<std::string>(_errorList.size()) + " error(s)/warning(s).\n");
-			for (unsigned int n=0; n<_errorList.size()-1; n++)
-				std::cerr << _errorList[n];
+			//for (unsigned int n=0; n<_errorList.size()-1; n++)
+			//	std::cerr << _errorList[n];
+			//Summary output:
 			if (_errorList.size() > 1)
 				std::cerr << _errorList[_errorList.size()-1];
 			else
 				globalOutputStream() << _errorList[0];
 		}
 
-		return _newXData;
+		target = _newXData;
+		return true;
 	}
 
-	XDataPtrList XDataLoader::import(const std::string& filename)
+	const bool XDataLoader::import( const std::string& filename, XDataPtrList& target )
 	{
-		XDataPtrList ReturnVector;
+		//initialization:
+		_errorList.clear();
+		target.clear();
+		unsigned int ErrorCount = 0;
 
 		//Check fileextension:
 		if (filename.substr( filename.rfind(".")+1 ) != "xd")
-			reportError("[XDataLoader::import] Fileextension is not .xd: " + filename + "\n");
+			return reportError("[XDataLoader::import] Fileextension is not .xd: " + filename + "\n");
 
-		// Attempt to open the file in text mode
+		// Attempt to open the file in text mode and retrieve DefTokeniser
 		ArchiveTextFilePtr file = 
 			GlobalFileSystem().openTextFile(XDATA_DIR + filename);
 		if (file == NULL)
-			reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
+			return reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
 
 		std::istream is(&(file->getInputStream()));
 		parser::BasicDefTokeniser<std::istream> tok(is);
 
-		_errorList.clear();
-
-		unsigned int ErrorCount = 0;
-
+		//Parse Loop:
 		while (tok.hasMoreTokens())
 		{
 			if (parseXDataDef(tok))
-				ReturnVector.push_back(_newXData);
+				target.push_back(_newXData);
 			else
 				ErrorCount += 1;
 		}
 		
+		//Write summary
 		_errorList.push_back(
 			"[XDataLoader::import] Import finished with " + boost::lexical_cast<std::string>(_errorList.size()) 
-			+ " error(s)/warning(s). " + boost::lexical_cast<std::string>(ReturnVector.size()) 
+			+ " error(s)/warning(s). " + boost::lexical_cast<std::string>(target.size()) 
 			+ " XData-definition(s) successfully imported, but failed to import at least " 
 			+ boost::lexical_cast<std::string>(ErrorCount) + " definitions.\n"
 			);
 
-		//temporary
-		for (unsigned int n = 0; n < _errorList.size()-1; n++)
-			std::cerr << _errorList[n];
+		//Summary output:
+		//for (unsigned int n = 0; n < _errorList.size()-1; n++)
+		//	std::cerr << _errorList[n];
 		if (_errorList.size() == 1)	//No errors.
 			globalOutputStream() << _errorList[0];
 		else
 			std::cerr << _errorList[_errorList.size()-1];
 
-		return ReturnVector;
+		if (target.size() == 0)
+			return false;
+
+		return true;
 	} // XDataLoader::import
 
-	bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::string& definitionName)
+	const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::string& definitionName)
 	{
 		_name = tok.nextToken();
 
@@ -101,15 +104,13 @@ namespace readable
 		catch (...)
 		{
 			while (tok.nextToken() != "{") {}
-			_errorList.push_back("[XDataLoader::import] Syntaxerror in definition: " + _name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-			jumpOutOfBrackets(tok,1);
-			return false;
+			return reportError(tok, "[XDataLoader::import] Syntaxerror in definition: " + _name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 		}
 
 		//Check if every definition shall be parsed or only a specific one:
 		if (!definitionName.empty() && _name != definitionName)
 		{
-			jumpOutOfBrackets(tok,1);
+			jumpOutOfBrackets(tok);
 			return false;
 		}
 
@@ -140,14 +141,14 @@ namespace readable
 			int diff = _maxGuiNumber + 1 - _maxPageCount;
 			for (unsigned int n = _guiPageError.size()-diff; n<_guiPageError.size(); n++)
 			{
-				_errorList.push_back(_guiPageError[n]);
+				reportError(_guiPageError[n]);
 			}
 		}
 
 		// Check if _guiPage-statements for all pages are available.
 		if (_guiPageDef == "")
 		{
-			_errorList.push_back("[XDataLoader::import] Warning for definition: " + _name
+			reportError("[XDataLoader::import] Warning for definition: " + _name
 				+ ". _guiPage-statement(s) missing. Setting default value...\n");
 			if (_newXData->getPageLayout() == TwoSided)
 				_guiPageDef = DEFAULT_TWOSIDED_LAYOUT; 
@@ -168,7 +169,7 @@ namespace readable
 		if (_sndPageTurn == "")
 		{
 			_newXData->setSndPageTurn(DEFAULT_SNDPAGETURN);
-			_errorList.push_back("[XDataLoader::import] Warning for definition: " + _name
+			reportError("[XDataLoader::import] Warning for definition: " + _name
 				+ ". _sndPageTurn-statement missing. Setting default value...\n");
 		}
 		else
@@ -177,7 +178,7 @@ namespace readable
 		return true;
 	}
 
-	bool XDataLoader::storeContent(const std::string& statement, parser::DefTokeniser& tok, const std::string& defName)
+	const bool XDataLoader::storeContent(const std::string& statement, parser::DefTokeniser& tok, const std::string& defName)
 	{
 		//page-statement:
 		if (statement.substr(0,4) == "page")
@@ -197,19 +198,13 @@ namespace readable
 			try { PageIndex = boost::lexical_cast<int>(number)-1; }
 			catch (...)
 			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ", " + statement + " statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");;
-				jumpOutOfBrackets(tok,2);
-				return false;
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ", " + statement + " statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}			
 
 			//Read content
 			std::string content;
 			if (!readLines(tok, content))
-			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
-			}
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 
 			//Check PageIndex-Range
 			if (PageIndex >= _numPages )
@@ -217,11 +212,11 @@ namespace readable
 				if (content.length() > 1) //_numPages is raised automatically, if a page with content is detected...		//unclean
 				{
 					_numPages = PageIndex+1;
-					_errorList.push_back("[XDataLoader::import] Warning for definition: " + defName + ", " + statement + " statement.\n\tnumPages not (yet) specified or too low. Raising _numPages to " + number +"...\n");
+					reportError("[XDataLoader::import] Warning for definition: " + defName + ", " + statement + " statement.\n\tnumPages not (yet) specified or too low. Raising _numPages to " + number +"...\n");
 				}
 				else
 				{
-					_errorList.push_back("[XDataLoader::import] Warning for definition: " + defName + ", " + statement + " statement.\n\tnumPages not (yet) specified or too low. However, this page does not contain any text and is discarded...\n");
+					reportError("[XDataLoader::import] Warning for definition: " + defName + ", " + statement + " statement.\n\tnumPages not (yet) specified or too low. However, this page does not contain any text and is discarded...\n");
 					return true;
 				}
 			}
@@ -252,20 +247,14 @@ namespace readable
 			try	{ guiNumber = boost::lexical_cast<int>(number)-1; }
 			catch (...)
 			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ", gui_page statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;	
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ", gui_page statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 			if (_maxGuiNumber < guiNumber)
 				_maxGuiNumber = guiNumber;
 
 			//Get the GuiPageDef:
 			if (!readLines(tok, _guiPageDef))
-			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;	
-			}
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");	
 			_guiPage[ guiNumber ] = _guiPageDef;		//could throw if guiNumber >= MAX_PAGE_COUNT
 
 			//Append error-message if _numPages is exceeded.
@@ -278,24 +267,18 @@ namespace readable
 			//Get num_pages:
 			std::string number;
 			if (!readLines(tok, number))
-			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
-			}
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			try { _numPages = boost::lexical_cast<int>(number); }
 			catch(...)
 			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ", num_pages statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ", num_pages statement. '" + number + "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 
 			//Correct a faulty _numPages value
 			if (_maxPageCount > _numPages)
 			{
 				_numPages = _maxPageCount;
-				_errorList.push_back("[XDataLoader::import] Warning for definition: " + defName
+				reportError("[XDataLoader::import] Warning for definition: " + defName
 					+ ". The specified _numPages statement did not match the amount of pages with content.\n\tnumPages is set to " 
 					+ boost::lexical_cast<std::string>(_numPages) + ".\n");
 			}
@@ -304,11 +287,7 @@ namespace readable
 		else if (statement == "snd_page_turn")
 		{
 			if (!readLines(tok, _sndPageTurn))
-			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
-			}
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 		}
 		//import statement
 		else if (statement == "import")
@@ -318,9 +297,7 @@ namespace readable
 			try { tok.assertNextToken("{");	}
 			catch(...)
 			{
-				_errorList.push_back("[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
+				return reportError(tok, "[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 
 			//Get Source- and DestStatements
@@ -339,26 +316,20 @@ namespace readable
 			}
 			catch (...)
 			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement. Probably Syntax-error.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement. Probably Syntax-error.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 
 			//Get Name of Source-Definition
 			try { tok.assertNextToken("from"); }
 			catch (...)
 			{
-				_errorList.push_back("[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. 'from' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
+				return reportError(tok, "[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. 'from' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 			std::string SourceDef;
 			try	{ SourceDef = tok.nextToken(); }
 			catch (...)
 			{
-				_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
+				return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 
 			//Check where the Definition is stored in the _defMap
@@ -369,21 +340,14 @@ namespace readable
 				it = _defMap.find(SourceDef);
 			}
 			if (it == _defMap.end())
-			{
-				_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
-			}
+				return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 
 			//Open the file
 			ArchiveTextFilePtr file = 
 				GlobalFileSystem().openTextFile(XDATA_DIR + it->second);
 			if (file == NULL)
-			{
-				_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to open the corresponding file: " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-				jumpOutOfBrackets(tok,1);
-				return false;
-			}
+				return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to open the corresponding file: " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+
 			//Find the Definition in the File:
 			std::stringstream ss;
 			ss << &(file->getInputStream());
@@ -407,33 +371,23 @@ namespace readable
 						else if (BracketToken == "}")
 							BracketDepth -= 1;
 						if (BracketDepth == 0)	 //Sourcestatement is not in the current definition
-						{
-							_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-							jumpOutOfBrackets(tok,1);
-							return false;
-						}
+							return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 						BracketToken = ImpTok.nextToken();
 					}
 				}
 				catch (...)
 				{
-					_errorList.push_back("[XDataLoader::import] Error in definition: " + defName + ". Found an import-statement, but couldn't read the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n");
-					jumpOutOfBrackets(tok,1);
-					return false;
+					return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Found an import-statement, but couldn't read the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n");
 				}
 				if (!storeContent(DestStatement[n],ImpTok,SourceDef))
-				{
-					_errorList.push_back("[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to parse the corresponding statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-					jumpOutOfBrackets(tok,1);
-					return false;
-				}
+					return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to parse the corresponding statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 		}
 
 		return true;
 	}
 
-	inline bool XDataLoader::readLines(parser::DefTokeniser& tok, std::string& what) const
+	inline const bool XDataLoader::readLines(parser::DefTokeniser& tok, std::string& what) const
 	{
 		std::stringstream out;
 		std::string token;
@@ -529,7 +483,7 @@ namespace readable
 						std::pair<DuplicatedDefsMap::iterator,bool> duplRet = _duplicatedDefs.insert(DuplicatedDefsMap::value_type(tempstring,std::vector<std::string>(1,ret.first->second)));
 						duplRet.first->second.push_back(filename);
 					}
-					jumpOutOfBrackets(tok, 1);
+					jumpOutOfBrackets(tok);
 				}
 			}
 			catch (parser::ParseException e) 

@@ -56,22 +56,18 @@ public:
 		return;
 
 		//Testbench for xdata importer/exporter:
-		readable::XDataPtrList testing;
+		readable::XDataPtr testpi;
 		std::string filename;
-		readable::FileStatus test;
-		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/imptest_exported.xd"))
-			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/imptest_exported.xd");//*/
+		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd"))
+			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd");//*/
 		try
 		{
 			//Newest tests:
 			readable::XDataLoader* loader = new readable::XDataLoader();
 			loader->retrieveXdInfo();
-			//testing = loader->import("import_test.xd");
-			testing.push_back(loader->importSingleDef("training_mission.xd", "trainer_stealth_flashbombs"));
-			if (!testing.empty())
-				if (testing[0])
-					testing[0]->xport("D:/games/Doom 3/darkmod/xdata/single_imp.xd", readable::Normal);
-			//testing[0]->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);
+			if ( loader->importSingleDef("training_mission.xd", "trainer_machine_warning",testpi) )
+				if (testpi)
+					testpi->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Normal);
 			delete loader;
 		}
 		catch(std::runtime_error e) { printf(e.what()); }
