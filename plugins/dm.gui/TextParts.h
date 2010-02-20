@@ -17,15 +17,20 @@ struct Vertex2D
 
 class TextChar
 {
+private:
+	// The actual character
+	char _char;
+
+	// The font scale needed for the width calculation
+	float _fontScale;
 public:
 	fonts::IGlyphInfoPtr glyph;
 
 	// The 4 coordinates, marking the quad (3D and UV)
 	Vertex2D coords[4];
 
-	float _fontScale;
-
 	TextChar(unsigned char c, fonts::IGlyphSet& glyphs, float fontScale) :
+		_char(c),
 		_fontScale(fontScale)
 	{
 		glyph = glyphs.getGlyph(static_cast<std::size_t>(c));
@@ -53,6 +58,11 @@ public:
 		coords[1].vertex += off;
 		coords[2].vertex += off;
 		coords[3].vertex += off;
+	}
+
+	char getChar() const
+	{
+		return _char;
 	}
 };
 
@@ -143,14 +153,10 @@ public:
 
 	// Add a word to this line
 	// returns TRUE on success, FALSE if the word is too wide to fit in this line
-	bool addWord(const std::string& w, fonts::IGlyphSet& glyphs, bool noclip = false)
+	bool addWord(const std::string& word, fonts::IGlyphSet& glyphs, bool noclip = false)
 	{
-		// If we already have some characters, add a space
-		std::string word = _chars.empty() ? w : " " + w;;
-		
 		// Generate the word
-		TextWord tw = TextWord::createForString(word, glyphs, _fontScale);
-		return addWord(tw, noclip);
+		return addWord(TextWord::createForString(word, glyphs, _fontScale), noclip);
 	}
 
 	// Adds a single character to this sentence
@@ -169,6 +175,18 @@ public:
 		for (Chars::iterator i = _chars.begin(); i != _chars.end(); ++i)
 		{
 			i->offset(off);
+		}
+	}
+
+	// If the line ends with a single space, this method will remove it
+	void removeTrailingSpace()
+	{
+		if (_chars.empty()) return;
+
+		if (_chars.rbegin()->getChar() == ' ')
+		{
+			_charWidth -= _chars.rbegin()->getWidth();
+			_chars.pop_back();
 		}
 	}
 
