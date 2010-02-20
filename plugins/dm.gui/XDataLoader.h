@@ -22,10 +22,10 @@ namespace readable
 		const std::string	XDATA_EXT				= "xd";
 	}
 
-	typedef std::map<std::string, std::string> StringMap;
+	//typedef std::map<std::string, std::string> StringMap;
 	typedef std::set<std::string> StringSet;
-	typedef std::vector<XDataPtr> XDataPtrList;
-	typedef std::map<std::string, std::vector<std::string> > DuplicatedDefsMap;
+	typedef std::multimap<std::string, XDataPtr> XDataMap;
+	typedef std::map<std::string, std::vector<std::string> > StringVectorMap;
 
 	///////////////////////////// XDataLoader
 	// Class for importing XData from files.
@@ -35,16 +35,18 @@ namespace readable
 		1) Maybe add detection of \n in xdata files as a error/warning. 
 			(Basically not necessary because everything is exported correctly and it would decrease performance.) 
 		2) Multiple Stage Import-directive support. Probably need a recursive method for this.
-		3) Replace XDataPtrList with a XDataPtrSet with custom Allocator and weak-sorter. 
-		4) Possibly have import methods return bool and pass a target reference.	->done
-		5) Replace DefMap with a multiMap, to allow editing of all readables but still warn about duplicates. 
-		6) Add local reportError-Method and change the cerr output of import methods.	->done*/
+		3) Replace XDataList with a XDataPtrSet with custom Allocator and weak-sorter.			->nope, map instead.
+		4) Possibly have import methods return bool and pass a target reference.				->done
+		5) Replace DefMap with a multiMap, to allow editing of all readables but still warn about duplicates.	->done
+		6) Add local reportError-Method and change the cerr output of import methods.			->done
+		7) import-directive should give a warning if a definition has been definined in multiple files. If importing failed
+			the definition in the next file should be tried. */
 
 	public:
-		/* Imports a list of XData objects from the File specified by Filename (just the name, not the path).
+		/* Imports a MultiMap of XData-Pointers sorted by name from the specified File (just the name, not the path).
 		Returns false if import failed. The import-breaking error-message is the last element of _errorList, which can
 		be retrieved by calling getImportSummary() and also stores other errors and warnings. */
-		const bool import(const std::string& filename, XDataPtrList& target);
+		const bool import(const std::string& filename, XDataMap& target);
 
 		/* Imports a single Definition from the specified file. Returns false if import failed. The import-breaking 
 		error-message is the last element of _errorList, which can be retrieved by calling getImportSummary() 
@@ -58,7 +60,7 @@ namespace readable
 
 		/* Returns Map of duplicated definitions. (Data might be outdated, maybe use retrieveXdInfo() before)
 		Key Value = DefinitionNames, Mapped Value = StringVector of corresponding filenames.*/
-		const DuplicatedDefsMap& getDuplicateDefinitions() const
+		const StringVectorMap& getDuplicateDefinitions() const
 		{ 
 			if (_duplicatedDefs.empty())
 				throw std::runtime_error("No Data available. Call retrieveXdInfo() before.");
@@ -73,12 +75,13 @@ namespace readable
 			return _fileSet;
 		}
 
-		/* Returns sorted StringVector of all Definitions found. (Data might be outdated, maybe use retrieveXdInfo() before)*/
-		const StringList& getDefinitionList() const
+		/* Returns a map of all Definitions and their corresponding filenames found in the VFS. The filenames are stored
+		in a vector in case a definition exists multiple times. (Data might be outdated, maybe use retrieveXdInfo() before)*/
+		const StringVectorMap& getDefinitionList() const
 		{
-			if (_definitionList.empty())
+			if (_defMap.empty())
 				throw std::runtime_error("No Data available. Call retrieveXdInfo() before.");
-			return _definitionList;
+			return _defMap;
 		}
 
 		/* Retrieves all XData-related information found in the VFS. */
@@ -123,10 +126,9 @@ namespace readable
 
 	//General Member variables:
 		StringList			_errorList;
-		StringMap			_defMap;
-		StringList			_definitionList;
+		StringVectorMap		_defMap;
 		StringSet			_fileSet;
-		DuplicatedDefsMap	_duplicatedDefs;
+		StringVectorMap		_duplicatedDefs;
 
 	//Helper-variables for import:
 		XDataPtr			_newXData;
