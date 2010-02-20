@@ -60,10 +60,9 @@ namespace readable
 	class XData
 	{
 	/* ToDo:
-		1) Use VFS instead of boost::filesystem for importer. ->done
-		2) import-directive support for exporter? 
-		3) Use references instead of return values.
-		4) definitionStart shouldn't be a private variable.*/
+		1) import-directive support for exporter? 
+		2) Use references instead of return values.		->nah, this looks better. :)
+		3) definitionStart shouldn't be a private variable. ->unclean.*/
 
 	public:
 	//Methods:

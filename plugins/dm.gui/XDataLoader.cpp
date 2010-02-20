@@ -44,7 +44,7 @@ namespace readable
 		return true;
 	}
 
-	const bool XDataLoader::import( const std::string& filename, XDataPtrList& target )
+	const bool XDataLoader::import( const std::string& filename, XDataMap& target )
 	{
 		//initialization:
 		_errorList.clear();
@@ -68,7 +68,7 @@ namespace readable
 		while (tok.hasMoreTokens())
 		{
 			if (parseXDataDef(tok))
-				target.push_back(_newXData);
+				target.insert(XDataMap::value_type(_newXData->getName(),_newXData));
 			else
 				ErrorCount += 1;
 		}
@@ -333,7 +333,7 @@ namespace readable
 			}
 
 			//Check where the Definition is stored in the _defMap
-			StringMap::iterator it = _defMap.find(SourceDef);
+			StringVectorMap::iterator it = _defMap.find(SourceDef);
 			if (it == _defMap.end())		//If the definition couldn't be found, refresh the _defMap and try again.
 			{
 				retrieveXdInfo();
@@ -344,9 +344,9 @@ namespace readable
 
 			//Open the file
 			ArchiveTextFilePtr file = 
-				GlobalFileSystem().openTextFile(XDATA_DIR + it->second);
+				GlobalFileSystem().openTextFile(XDATA_DIR + it->second[0]);
 			if (file == NULL)
-				return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to open the corresponding file: " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+				return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to open the corresponding file: " + it->second[0] + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 
 			//Find the Definition in the File:
 			std::stringstream ss;
@@ -371,16 +371,16 @@ namespace readable
 						else if (BracketToken == "}")
 							BracketDepth -= 1;
 						if (BracketDepth == 0)	 //Sourcestatement is not in the current definition
-							return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+							return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second[0] + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 						BracketToken = ImpTok.nextToken();
 					}
 				}
 				catch (...)
 				{
-					return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Found an import-statement, but couldn't read the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n");
+					return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Found an import-statement, but couldn't read the desired statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second[0] + ".\n");
 				}
 				if (!storeContent(DestStatement[n],ImpTok,SourceDef))
-					return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to parse the corresponding statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+					return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to parse the corresponding statement: " + SourceStatement[n] +", in definition " + SourceDef + ", in file " + it->second[0] + ".\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
 		}
 
@@ -440,7 +440,6 @@ namespace readable
 	void XDataLoader::retrieveXdInfo()
 	{
 		_defMap.clear();
-		_definitionList.clear();
 		_fileSet.clear();
 		_duplicatedDefs.clear();
 		ScopedDebugTimer timer("XData definitions parsed: ");
@@ -449,13 +448,6 @@ namespace readable
 			XDATA_EXT,
 			makeCallback1(*this),
 			99);
-
-		//Generate the sorted vector-list of definitions and files:		
-		for (StringMap::iterator it = _defMap.begin(); it != _defMap.end(); it++)
-		{
-			_definitionList.push_back(it->first);
-		}
-		return;
 	}
 
 	void XDataLoader::operator() (const std::string& filename)
@@ -476,12 +468,15 @@ namespace readable
 				{
 					std::string tempstring = tok.nextToken();
 					tok.assertNextToken("{");
-					std::pair<StringMap::iterator,bool> ret = _defMap.insert(StringMap::value_type(tempstring,filename));
+					std::pair<StringVectorMap::iterator,bool> ret = _defMap.insert( StringVectorMap::value_type(tempstring, StringList(1,filename) ) );
 					if (!ret.second)	//Definition already exists.
 					{
-						std::cerr << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined in " << ret.first->second << ".\n";
-						std::pair<DuplicatedDefsMap::iterator,bool> duplRet = _duplicatedDefs.insert(DuplicatedDefsMap::value_type(tempstring,std::vector<std::string>(1,ret.first->second)));
-						duplRet.first->second.push_back(filename);
+						ret.first->second.push_back(filename);
+						std::cerr << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined at least once. First in " << ret.first->second[0] << ".\n";
+						//Create an entry in the _duplicatedDefs map with the original file. If entry already exists, insert will fail.
+						std::pair<StringVectorMap::iterator,bool> duplRet = _duplicatedDefs.insert( StringVectorMap::value_type(tempstring, StringList(1,ret.first->second[0]) ) );
+						//The new file is appended to the vector.
+						duplRet.first->second.push_back(filename);						
 					}
 					jumpOutOfBrackets(tok);
 				}
