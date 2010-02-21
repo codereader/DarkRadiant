@@ -24,6 +24,8 @@ GuiWindowDef::GuiWindowDef() :
 	rotate(0),
 	textscale(1),
 	textalign(0),
+	textalignx(0),
+	textaligny(0),
 	noclip(false),
 	notime(false),
 	time(0)
@@ -187,6 +189,14 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "textalign")
 		{
 			textalign = parseInt(tokeniser);
+		}
+		else if (token == "textalignx")
+		{
+			textalignx = parseFloat(tokeniser);
+		}
+		else if (token == "textaligny")
+		{
+			textaligny = parseFloat(tokeniser);
 		}
 		else if (token == "background")
 		{

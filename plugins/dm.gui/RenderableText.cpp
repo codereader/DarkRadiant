@@ -73,7 +73,7 @@ void RenderableText::recompile()
 	double lineHeight = lrint(_owner.textscale * maxGlyphHeight + 5);
 
 	// The distance from the top of the rectangle to the baseline
-	double startingBaseLine = lrint(_owner.textscale * maxGlyphHeight + 2);
+	double startingBaseLine = lrint(_owner.textscale * maxGlyphHeight + 2) + _owner.textaligny;
 
 	for (std::size_t p = 0; p < paragraphs.size(); ++p)
 	{
@@ -89,7 +89,7 @@ void RenderableText::recompile()
 		boost::algorithm::split(words, paragraphs[p], boost::algorithm::is_any_of(" \t"));
 
 		// Add the words to lines
-		TextLinePtr curLine(new TextLine(_owner.rect[2], scale));
+		TextLinePtr curLine(new TextLine(_owner.rect[2] - _owner.textalignx, scale));
 
 		while (!words.empty())
 		{
@@ -153,7 +153,7 @@ void RenderableText::recompile()
 			
 			// Line finished, consider alignment and vertical offset
 			curLine->offset(Vector2(
-				getAlignmentCorrection(curLine->getWidth()), // horizontal correction
+				getAlignmentCorrection(curLine->getWidth()) + _owner.textalignx, // horizontal correction
 				lineHeight * lines.size() + startingBaseLine // vertical correction
 			));
 
@@ -169,7 +169,7 @@ void RenderableText::recompile()
 			// Allocate a new line, but only if we have any more words in this paragraph
 			if (!words.empty())
 			{
-				curLine = TextLinePtr(new TextLine(_owner.rect[2], scale));
+				curLine = TextLinePtr(new TextLine(_owner.rect[2] - _owner.textalignx, scale));
 			}
 		}
 
@@ -181,7 +181,7 @@ void RenderableText::recompile()
 			// Add that line we started, even if it's an empty one
 			curLine->offset(
 				Vector2(
-					getAlignmentCorrection(curLine->getWidth()), 
+					getAlignmentCorrection(curLine->getWidth()) + _owner.textalignx, 
 					lineHeight * lines.size() +  + startingBaseLine
 				)
 			);

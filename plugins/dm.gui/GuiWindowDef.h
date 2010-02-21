@@ -67,6 +67,10 @@ public:
 	// The text alignment (left, right, center)
 	int textalign;
 
+	// Text offsets
+	float textalignx;
+	float textaligny;
+
 	// No mouse events for this window
 	bool noevents;
 
