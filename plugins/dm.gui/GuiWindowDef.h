@@ -71,6 +71,10 @@ public:
 	float textalignx;
 	float textaligny;
 
+	// Force a specific aspect ratio
+	float forceaspectwidth;
+	float forceaspectheight;
+
 	// No mouse events for this window
 	bool noevents;
 

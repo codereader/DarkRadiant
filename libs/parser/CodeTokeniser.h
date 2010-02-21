@@ -10,6 +10,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include "Tokeniser.h"
 
 namespace parser
 {
@@ -203,6 +204,7 @@ public:
 					// Search for EOL
 					if (*next == '\r' || *next == '\n')
 					{
+						tok += '\n'; // add the line break to the token
 						_state = AFTER_DEFINE;
 					}
 					
@@ -544,15 +546,19 @@ private:
 
 	NodeList::iterator _curNode;
 
-	// The next token which is not a pre-processor token
-	std::string _nextToken;
-
 	// A set of visited files to catch infinite include loops
 	typedef std::list<std::string> FileNameStack;
 	FileNameStack _fileStack;
 
-	typedef std::map<std::string, std::string> DefinitionMap;
+	typedef std::list<std::string> StringList;
+
+	// A map associating #define names with a one or more sub-tokens
+	typedef std::map<std::string, StringList> DefinitionMap;
 	DefinitionMap _definitions;
+
+	// A small local buffer which is needed to properly resolve #define statements
+	// which could consist of several tokens themselves
+	StringList _tokenBuffer;
 
 	const char* _delims;
 	const char* _keptDelims;
@@ -573,25 +579,35 @@ public:
 
 		_fileStack.push_back(file->getName());
 
-		loadNextRealToken();
+		fillTokenBuffer();
 	}
         
     bool hasMoreTokens()
 	{
-		return !_nextToken.empty();
+		return !_tokenBuffer.empty();
     }
 
     std::string nextToken()
 	{
-		std::string temp = _nextToken;
+		if (_tokenBuffer.empty())
+		{
+			throw ParseException("No more tokens.");
+		}
 
-		loadNextRealToken();
+		std::string temp = _tokenBuffer.front();
+		_tokenBuffer.pop_front();
+
+		// Keep the buffer filled
+		if (_tokenBuffer.empty())
+		{
+			fillTokenBuffer();
+		}
 
 		return temp;
     }
     
 private:
-	void loadNextRealToken()
+	void fillTokenBuffer()
 	{
 		while (_curNode != _nodes.end())
 		{
@@ -599,41 +615,62 @@ private:
 			{
 				_fileStack.pop_back();
 				++_curNode;
-			}
-
-			if (_curNode == _nodes.end())
-			{
-				_nextToken.clear();
-				break;
-			}
-
-			_nextToken = (*_curNode)->tokeniser.nextToken();
-
-			// Don't treat #strNNNN as preprocessor tokens
-			if (!_nextToken.empty() && _nextToken[0] == '#' && !boost::algorithm::starts_with(_nextToken, "#str"))
-			{
-				// A pre-processor token is ahead
-				handlePreprocessorToken();
 				continue;
 			}
 
-			// Found a non-preprocessor token
+			std::string token = (*_curNode)->tokeniser.nextToken();
 
-			// Check if this is matching a preprocessor definition
-			DefinitionMap::const_iterator found = _definitions.find(_nextToken);
-			
-			if (found != _definitions.end())
+			// Don't treat #strNNNN as preprocessor tokens
+			if (!token.empty() && 
+				token[0] == '#' && 
+				!boost::algorithm::starts_with(token, "#str"))
 			{
-				_nextToken = found->second;
+				// A pre-processor token is ahead
+				handlePreprocessorToken(token);
+				continue;
 			}
 
-			break;
+			_tokenBuffer.push_front(token);
+
+			// Found a non-preprocessor token
+
+			while (!_tokenBuffer.empty())
+			{
+				// Exit if the first buffer token is processed
+				if (!processFirstBufferToken())
+				{
+					return;
+				}
+			}
 		}
 	}
 
-	void handlePreprocessorToken()
+	// Checks if the first token in the buffer is to be replaced by some #define
+	// Returns true if the token got processed (the buffer is changed then)
+	bool processFirstBufferToken()
 	{
-		if (_nextToken == "#include")
+		if (_tokenBuffer.empty()) return false;
+
+		// Check if this is matching a preprocessor definition
+		DefinitionMap::const_iterator found = _definitions.find(_tokenBuffer.front());
+
+		if (found != _definitions.end())
+		{
+			// Remove the token
+			_tokenBuffer.pop_front();
+
+			// Replace the token by the #defined contents
+			_tokenBuffer.insert(_tokenBuffer.begin(), found->second.begin(), found->second.end());
+
+			return true;
+		}
+
+		return false;
+	}
+
+	void handlePreprocessorToken(const std::string& token)
+	{
+		if (token == "#include")
 		{
 			std::string includeFile = (*_curNode)->tokeniser.nextToken();
 
@@ -666,9 +703,11 @@ private:
 					<< includeFile << " in " << (*_curNode)->archive->getName() << std::endl;
 			}
 		}
-		else if (boost::algorithm::starts_with(_nextToken, "#define"))
+		else if (boost::algorithm::starts_with(token, "#define"))
 		{
-			if (_nextToken.length() <= 7)
+			std::string defineToken = token;
+
+			if (defineToken.length() <= 7)
 			{
 				globalWarningStream() << "Invalid #define statement: " 
 					<< " in " << (*_curNode)->archive->getName() << std::endl;
@@ -676,10 +715,10 @@ private:
 			}
 
 			// Replace tabs with spaces
-			std::replace(_nextToken.begin(), _nextToken.end(), '\t', ' ');
+			std::replace(defineToken.begin(), defineToken.end(), '\t', ' ');
 
 			// Cut off the "#define " (including space)
-			std::string key = _nextToken.substr(8);
+			std::string key = defineToken.substr(8);
 
 			std::size_t firstSpace = key.find(' ');
 
@@ -688,9 +727,18 @@ private:
 			boost::algorithm::trim(value);
 
 			key = key.substr(0, firstSpace);
-			
+
+			// Instantiate a local stringtokeniser to split up the #defined string
+			StringList valueList;
+			BasicStringTokeniser tokeniser(value, _delims);
+
+			while (tokeniser.hasMoreTokens())
+			{
+				valueList.push_back(tokeniser.nextToken());
+			}
+
 			std::pair<DefinitionMap::iterator, bool> result = _definitions.insert(
-				DefinitionMap::value_type(key, value)
+				DefinitionMap::value_type(key, valueList)
 			);
 
 			if (!result.second)
@@ -699,12 +747,12 @@ private:
 					<< " in " << (*_curNode)->archive->getName() << std::endl;
 			}
 		}
-		else if (_nextToken == "#undef")
+		else if (token == "#undef")
 		{
 			std::string key = (*_curNode)->tokeniser.nextToken();
 			_definitions.erase(key);
 		}
-		else if (_nextToken == "#ifdef")
+		else if (token == "#ifdef")
 		{
 			std::string key = (*_curNode)->tokeniser.nextToken();
 			DefinitionMap::const_iterator found = _definitions.find(key);
@@ -714,7 +762,7 @@ private:
 				skipInactivePreprocessorBlock();
 			}
 		}
-		else if (_nextToken == "#ifndef")
+		else if (token == "#ifndef")
 		{
 			DefinitionMap::const_iterator found = _definitions.find(
 				(*_curNode)->tokeniser.nextToken());
@@ -724,12 +772,12 @@ private:
 				skipInactivePreprocessorBlock();
 			}
 		}
-		else if (_nextToken == "#else")
+		else if (token == "#else")
 		{
 			// We have an #else during active parsing, an inactive preprocessor block is ahead
 			skipInactivePreprocessorBlock();
 		}
-		else if (_nextToken == "#if")
+		else if (token == "#if")
 		{
 			(*_curNode)->tokeniser.skipTokens(1);
 		}
