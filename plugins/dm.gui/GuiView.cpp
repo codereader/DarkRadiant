@@ -23,6 +23,7 @@ GuiView::GuiView() :
 	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onGLDraw), this);
 
 	setGui("guis/readables/books/book_calig_camberic.gui");
+	//setGui("guis/tdm_objectives.gui");
 }
 
 void GuiView::setGui(const GuiPtr& gui)
