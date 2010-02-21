@@ -22,7 +22,11 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 	// GUI not buffered, try to load afresh
 	GuiPtr gui = loadGui(guiPath);
 
-	if (gui == NULL)
+	if (gui != NULL)
+	{
+		// TODO: Insert gui into cache
+	}
+	else
 	{
 		globalWarningStream() << "Could not find GUI: " << guiPath << std::endl;
 	}
@@ -37,10 +41,20 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 	if (file == NULL) return GuiPtr();
 
 	// Construct a Code Tokeniser, which is able to handle #includes
-	std::string whiteSpace = std::string(parser::WHITESPACE) + ",";
-	parser::CodeTokeniser tokeniser(file, whiteSpace.c_str(), "{}(),");
+	try
+	{
+		std::string whiteSpace = std::string(parser::WHITESPACE) + ",";
+		parser::CodeTokeniser tokeniser(file, whiteSpace.c_str(), "{}(),");
 
-	return Gui::createFromTokens(tokeniser);
+		return Gui::createFromTokens(tokeniser);
+	}
+	catch (parser::ParseException& p)
+	{
+		globalErrorStream() << "Error while parsing " << guiPath << ": "
+			<< p.what() << std::endl;
+
+		return GuiPtr();
+	}
 }
 
 GuiManager& GuiManager::Instance()

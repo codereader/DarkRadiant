@@ -206,6 +206,10 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			noevents = parseBool(tokeniser);
 		}
+		else if (token == "nocursor")
+		{
+			nocursor = parseBool(tokeniser);
+		}
 		else if (token == "modal")
 		{
 			noevents = parseBool(tokeniser);
@@ -241,6 +245,20 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			// TODO
 			std::string eventName = tokeniser.nextToken();
+			tokeniser.assertNextToken("{");
+
+			std::size_t depth = 1;
+
+			while (tokeniser.hasMoreTokens() && depth > 0)
+			{
+				std::string token = tokeniser.nextToken();
+				if (token == "}") depth--;
+				if (token == "{") depth++;
+			}
+		}
+		else if (token == "onevent")
+		{
+			// TODO
 			tokeniser.assertNextToken("{");
 
 			std::size_t depth = 1;

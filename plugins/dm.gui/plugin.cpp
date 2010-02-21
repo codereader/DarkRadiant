@@ -52,7 +52,6 @@ public:
 			"ReadableEditorDialog"
 		);
 
-		gui::GuiManager::Instance().getGui("guis/mainmenu.gui");
 		return;
 
 		//Testbench for xdata importer/exporter:
