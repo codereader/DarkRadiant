@@ -87,6 +87,9 @@ public:
 	// Don't display the cursor
 	bool nocursor;
 
+	// Don't wrap words at rectangle borders
+	bool nowrap;
+
 	// The window time (0..infinity)
 	std::size_t time;
 

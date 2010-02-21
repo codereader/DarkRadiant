@@ -30,6 +30,8 @@ GuiWindowDef::GuiWindowDef() :
 	forceaspectheight(480),
 	noclip(false),
 	notime(false),
+	nocursor(false),
+	nowrap(false),
 	time(0)
 {}
 
@@ -223,6 +225,10 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "noclip")
 		{
 			noclip = parseBool(tokeniser);
+		}
+		else if (token == "nowrap")
+		{
+			nowrap = parseBool(tokeniser);
 		}
 		else if (token == "modal")
 		{

@@ -101,7 +101,8 @@ void RenderableText::recompile()
 				continue;
 			}
 
-			bool added = curLine->addWord(words.front(), glyphSet);
+			// If nowrap set to true, force words into this line
+			bool added = curLine->addWord(words.front(), glyphSet, _owner.nowrap);
 
 			if (added)
 			{
