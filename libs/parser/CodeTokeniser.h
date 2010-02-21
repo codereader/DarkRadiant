@@ -728,23 +728,24 @@ private:
 
 			key = key.substr(0, firstSpace);
 
-			// Instantiate a local stringtokeniser to split up the #defined string
-			StringList valueList;
-			BasicStringTokeniser tokeniser(value, _delims);
-
-			while (tokeniser.hasMoreTokens())
-			{
-				valueList.push_back(tokeniser.nextToken());
-			}
-
 			std::pair<DefinitionMap::iterator, bool> result = _definitions.insert(
-				DefinitionMap::value_type(key, valueList)
+				DefinitionMap::value_type(key, StringList())
 			);
 
 			if (!result.second)
 			{
 				globalWarningStream() << "Redefinition of " << key 
 					<< " in " << (*_curNode)->archive->getName() << std::endl;
+
+				result.first->second.clear();
+			}
+
+			// Instantiate a local stringtokeniser to split up the #defined string
+			BasicStringTokeniser tokeniser(value, _delims);
+
+			while (tokeniser.hasMoreTokens())
+			{
+				result.first->second.push_back(tokeniser.nextToken());
 			}
 		}
 		else if (token == "#undef")
