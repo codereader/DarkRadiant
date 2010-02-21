@@ -3,7 +3,9 @@
 
 #include "iarchive.h"
 #include "DefTokeniser.h"
+
 #include <list>
+
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -21,6 +23,8 @@ class CodeTokeniserFunc
         SEARCHING,        // haven't found anything yet
         TOKEN_STARTED,    // found the start of a possible multi-char token
 		AFTER_DEFINE,	  // after parsing a #define command
+		AFTER_DEFINE_BACKSLASH,		// after a #define token, encountering a backslash
+		AFTER_DEFINE_SEARCHING_FOR_EOL,	// after a #define token, after encountering a backslash
 		AFTER_DEFINE_FORWARDSLASH,	// after parsing when encountering a forward slash
         QUOTED,         // inside quoted text, no tokenising
 		AFTER_CLOSING_QUOTE, // right after a quoted text, checking for backslash
@@ -158,6 +162,13 @@ public:
                         ++next;
                         return true;
                     }
+					else if (*next == '\\') 
+					{
+						// Found a backslash, this can be used to connect lines
+						_state = AFTER_DEFINE_BACKSLASH;
+						++next;
+						continue;
+					}
 					else if (*next == '/')
 					{
 						// This could be a (line) comment starting here
@@ -170,6 +181,33 @@ public:
                         ++next;
                         continue; // do nothing
                     }
+				case AFTER_DEFINE_BACKSLASH:
+					// Skip delimiters
+					if (!isDelim(*next))
+					{
+						// False alarm, not a delimiter after the backslash
+						tok += '\\';
+						tok += *next;
+
+						_state = AFTER_DEFINE;
+						++next;
+						continue;
+					}
+					
+					// Skip delimiters until next line break
+					_state = AFTER_DEFINE_SEARCHING_FOR_EOL;
+
+					// FALL THROUGH to AFTER_DEFINE_SEARCHING_FOR_EOL
+
+				case AFTER_DEFINE_SEARCHING_FOR_EOL:
+					// Search for EOL
+					if (*next == '\r' || *next == '\n')
+					{
+						_state = AFTER_DEFINE;
+					}
+					
+					++next;
+					continue;
 
 				case AFTER_DEFINE_FORWARDSLASH:
 					if (*next == '/')
@@ -510,8 +548,8 @@ private:
 	std::string _nextToken;
 
 	// A set of visited files to catch infinite include loops
-	typedef std::set<std::string> FileSet;
-	FileSet _visitedFiles;
+	typedef std::list<std::string> FileNameStack;
+	FileNameStack _fileStack;
 
 	typedef std::map<std::string, std::string> DefinitionMap;
 	DefinitionMap _definitions;
@@ -533,7 +571,7 @@ public:
 		_nodes.push_back(ParseNodePtr(new ParseNode(file, _delims, _keptDelims)));
 		_curNode = _nodes.begin();
 
-		_visitedFiles.insert(file->getName());
+		_fileStack.push_back(file->getName());
 
 		loadNextRealToken();
 	}
@@ -559,6 +597,7 @@ private:
 		{
 			if (!(*_curNode)->tokeniser.hasMoreTokens())
 			{
+				_fileStack.pop_back();
 				++_curNode;
 			}
 
@@ -603,11 +642,13 @@ private:
 			if (file != NULL)
 			{
 				// Catch infinite recursions
-				std::pair<FileSet::iterator, bool> result = _visitedFiles.insert(file->getName());
+				FileNameStack::const_iterator found = std::find(_fileStack.begin(), _fileStack.end(), file->getName());
 
-				if (result.second)
+				if (found == _fileStack.end())
 				{
 					// Push a new parse node and switch
+					_fileStack.push_back(file->getName());
+
 					_curNode = _nodes.insert(
 						_curNode, 
 						ParseNodePtr(new ParseNode(file, _delims, _keptDelims))
@@ -642,15 +683,8 @@ private:
 
 			std::size_t firstSpace = key.find(' ');
 
-			if (firstSpace == std::string::npos)
-			{
-				globalWarningStream() << "Invalid #define statement: " << _nextToken
-					<< " in " << (*_curNode)->archive->getName() << std::endl;
-				return;
-			}
-
-			// Extract the value and trim it (everything after the space)
-			std::string value = key.substr(firstSpace + 1);
+			// Extract the value (can be empty) and trim it (everything after the space)
+			std::string value = (firstSpace == std::string::npos) ? "" : key.substr(firstSpace + 1);
 			boost::algorithm::trim(value);
 
 			key = key.substr(0, firstSpace);
@@ -677,7 +711,7 @@ private:
 
 			if (found == _definitions.end())
 			{
-				skipUntilMatchingEndif();
+				skipInactivePreprocessorBlock();
 			}
 		}
 		else if (_nextToken == "#ifndef")
@@ -687,8 +721,13 @@ private:
 
 			if (found != _definitions.end())
 			{
-				skipUntilMatchingEndif();
+				skipInactivePreprocessorBlock();
 			}
+		}
+		else if (_nextToken == "#else")
+		{
+			// We have an #else during active parsing, an inactive preprocessor block is ahead
+			skipInactivePreprocessorBlock();
 		}
 		else if (_nextToken == "#if")
 		{
@@ -696,14 +735,14 @@ private:
 		}
 	}
 
-	void skipUntilMatchingEndif()
+	void skipInactivePreprocessorBlock()
 	{
 		// Not defined, skip everything until matching #endif
 		for (std::size_t level = 1; level > 0;)
 		{
 			if (!(*_curNode)->tokeniser.hasMoreTokens())
 			{
-				globalWarningStream() << "No matching #endif for #ifdef in "
+				globalWarningStream() << "No matching #endif for #if(n)def in "
 					<< (*_curNode)->archive->getName() << std::endl;
 			}
 
@@ -716,6 +755,11 @@ private:
 			else if (token == "#ifdef" || token == "#ifndef" || token == "#if")
 			{
 				level++;
+			}
+			else if (token == "#else" && level == 1)
+			{
+				// Matching #else, break the loop
+				break;
 			}
 		}
 	}

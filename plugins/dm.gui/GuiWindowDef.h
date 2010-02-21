@@ -80,6 +80,9 @@ public:
 	// Whether time is running for this windowDef
 	bool notime;
 
+	// Don't display the cursor
+	bool nocursor;
+
 	// The window time (0..infinity)
 	std::size_t time;
 
