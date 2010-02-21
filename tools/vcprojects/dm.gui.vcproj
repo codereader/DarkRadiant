@@ -414,54 +414,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\dm.gui\Gui.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\Gui.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiLoader.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiRenderer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiRenderer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiView.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiView.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiWindowDef.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\GuiWindowDef.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\dm.gui\plugin.cpp"
 				>
 			</File>
@@ -474,27 +426,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\dm.gui\RenderableCharacterBatch.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\RenderableCharacterBatch.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\RenderableText.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\RenderableText.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\dm.gui\reportError.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\dm.gui\TextParts.h"
 				>
 			</File>
 			<File
@@ -513,6 +445,70 @@
 				RelativePath="..\..\plugins\dm.gui\XDataLoader.h"
 				>
 			</File>
+			<Filter
+				Name="gui"
+				>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\Gui.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\Gui.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiRenderer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiRenderer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiView.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiView.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiWindowDef.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\GuiWindowDef.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\RenderableCharacterBatch.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\RenderableCharacterBatch.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\RenderableText.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\RenderableText.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.gui\gui\TextParts.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\..\plugins\dm.gui\dm.gui.def"

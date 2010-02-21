@@ -4,7 +4,7 @@
 #include "icommandsystem.h"
 
 #include "gtkutil/window/BlockingTransientWindow.h"
-#include "GuiView.h"
+#include "gui/GuiView.h"
 
 namespace ui
 {
