@@ -10,7 +10,7 @@
 #include "ReadableEditorDialog.h"
 #include "XData.h"
 #include "XDataLoader.h"
-#include "GuiManager.h"
+#include "gui/GuiManager.h"
 
 class GuiModule : 
 	public RegisterableModule
