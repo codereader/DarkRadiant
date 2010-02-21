@@ -20,11 +20,16 @@ private:
 	Vector2 _viewPortTopLeft;
 	Vector2 _viewPortBottomRight;
 
+	// Whether invisible windowDefs should be rendered anyway
+	bool _ignoreVisibility;
+
 public:
 	// Construct a new renderer
 	GuiRenderer();
 
 	void setGui(const GuiPtr& gui);
+
+	void setIgnoreVisibility(bool ignoreVisibility);
 
 	// Starts rendering the attached GUI
 	// The GL context must be set before calling this method
