@@ -26,6 +26,8 @@ GuiWindowDef::GuiWindowDef() :
 	textalign(0),
 	textalignx(0),
 	textaligny(0),
+	forceaspectwidth(640),
+	forceaspectheight(480),
 	noclip(false),
 	notime(false),
 	time(0)
@@ -198,6 +200,14 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			textaligny = parseFloat(tokeniser);
 		}
+		else if (token == "forceaspectwidth")
+		{
+			forceaspectwidth = parseFloat(tokeniser);
+		}
+		else if (token == "forceaspectheight")
+		{
+			forceaspectheight = parseFloat(tokeniser);
+		}
 		else if (token == "background")
 		{
 			background = parseString(tokeniser);
@@ -209,6 +219,10 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "nocursor")
 		{
 			nocursor = parseBool(tokeniser);
+		}
+		else if (token == "noclip")
+		{
+			noclip = parseBool(tokeniser);
 		}
 		else if (token == "modal")
 		{
