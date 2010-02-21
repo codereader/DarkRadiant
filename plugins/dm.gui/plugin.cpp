@@ -3,9 +3,11 @@
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "debugging/debugging.h"
-//#include "iimage.h"
+#include "iregistry.h"
 #include "iuimanager.h"
 #include "ifilesystem.h"
+#include "irender.h"
+#include "igl.h"
 
 #include "ReadableEditorDialog.h"
 #include "XData.h"
@@ -22,7 +24,6 @@ public:
 		return _name;
 	}
 	
-
 	virtual const StringSet& getDependencies() const {
 		static StringSet _dependencies;
 
@@ -31,8 +32,9 @@ public:
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-			//_dependencies.insert(MODULE_IMAGELOADER + "TGA");
-			//_dependencies.insert(MODULE_IMAGELOADER + "DDS");
+			_dependencies.insert(MODULE_XMLREGISTRY);
+			_dependencies.insert(MODULE_RENDERSYSTEM);
+			_dependencies.insert(MODULE_OPENGL);
 		}
 
 		return _dependencies;

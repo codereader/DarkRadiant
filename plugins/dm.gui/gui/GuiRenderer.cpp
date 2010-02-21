@@ -10,12 +10,18 @@ namespace gui
 
 GuiRenderer::GuiRenderer() :
 	_viewPortTopLeft(0,0),
-	_viewPortBottomRight(640, 480)
+	_viewPortBottomRight(640, 480),
+	_ignoreVisibility(false)
 {}
 
 void GuiRenderer::setGui(const GuiPtr& gui)
 {
 	_gui = gui;
+}
+
+void GuiRenderer::setIgnoreVisibility(bool ignoreVisibility)
+{
+	_ignoreVisibility = ignoreVisibility;
 }
 
 void GuiRenderer::render()
@@ -60,7 +66,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 {
 	if (window == NULL) return;
 
-	if (!window->visible) return;
+	if (!window->visible && !_ignoreVisibility) return;
 
 	if (window->backcolor[3] > 0)
 	{
@@ -82,13 +88,20 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	}
 
 	// Acquire the texture number of the active texture
-	if (window->matcolor[3] > 0 && window->backgroundShader != NULL)
+	if (window->backgroundShader != NULL && (window->matcolor[3] > 0 || _ignoreVisibility))
 	{
 		TexturePtr tex = window->backgroundShader->getEditorImage();
 		glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
 		// Draw the textured quad
 		glColor4dv(window->matcolor);
+
+		// Render background image as opaque if _ignoreVisibility is set to true
+		if (_ignoreVisibility && window->matcolor[3] <= 0)
+		{
+			glColor4d(window->matcolor[0], window->matcolor[1], window->matcolor[2], 1);
+		}
+
 		glEnable(GL_TEXTURE_2D);
 		glBegin(GL_QUADS);
 
@@ -116,6 +129,12 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 
 		glEnable(GL_TEXTURE_2D);
 		glColor4dv(window->forecolor);
+
+		// Render text as opaque if _ignoreVisibility is set to true
+		if (_ignoreVisibility && window->forecolor[3] <= 0)
+		{
+			glColor4d(window->forecolor[0], window->forecolor[1], window->forecolor[2], 1);
+		}
 		
 		window->getRenderableText().render();
 

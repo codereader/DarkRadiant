@@ -22,6 +22,9 @@ GuiView::GuiView() :
 		GDK_POINTER_MOTION_MASK);
 	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onGLDraw), this);
 
+	// Ignore visibility flag and turn invisible background images to visible ones
+	_renderer.setIgnoreVisibility(true);
+
 	setGui("guis/readables/books/book_calig_camberic.gui");
 	//setGui("guis/tdm_objectives.gui");
 }
@@ -47,27 +50,9 @@ void GuiView::initialiseView()
 	// Set up the camera
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(60, 1, 0.1, 10000);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-
-	// Set up the lights
-	/*glEnable(GL_LIGHTING);
-
-	glEnable(GL_LIGHT0);
-	GLfloat l0Amb[] = { 0.3f, 0.3f, 0.3f, 1.0f };
-	GLfloat l0Dif[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat l0Pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-	glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
-	glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
-
-	glEnable(GL_LIGHT1);
-	GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
-	glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);*/
 }
 
 void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
