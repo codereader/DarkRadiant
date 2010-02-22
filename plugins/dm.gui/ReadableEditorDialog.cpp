@@ -1,6 +1,5 @@
 #include "ReadableEditorDialog.h"
 
-#include "ieclass.h"
 #include "ientity.h"
 #include "iregistry.h"
 #include "selectionlib.h"
@@ -33,6 +32,7 @@ namespace
 	{
 		WIDGET_EDIT_PANE,
 		WIDGET_READABLE_NAME,
+		WIDGET_XDATA_NAME,
 		WIDGET_SAVEBUTTON,
 	};
 }
@@ -68,6 +68,18 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
+
+	// Load the initial values from the entity
+	initControlsFromEntity();
+}
+
+void ReadableEditorDialog::initControlsFromEntity()
+{
+	// Inv_name
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_READABLE_NAME]), _entity->getKeyValue("inv_name").c_str());
+
+	// Xdata contents
+	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), _entity->getKeyValue("xdata_contents").c_str());
 }
 
 GtkWidget* ReadableEditorDialog::createEditPane()
@@ -97,7 +109,7 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 
 	// XData Name
 	GtkWidget* xdataNameEntry = gtk_entry_new();
-	_widgets[WIDGET_READABLE_NAME] = nameEntry;
+	_widgets[WIDGET_XDATA_NAME] = nameEntry;
 
 	// Reserve space for 40 characters
 	gtk_entry_set_width_chars(GTK_ENTRY(xdataNameEntry), 40);
@@ -148,21 +160,13 @@ void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
 		// Check the entity type
 		Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
 
-		if (entity != NULL)
+		if (entity != NULL && entity->getKeyValue("editor_readable") == "1")
 		{
-			// Check the base class of this entity
-			std::string readableBaseClass = GlobalRegistry().get(RKEY_READABLE_BASECLASS);
+			// Show the dialog
+			ReadableEditorDialog dialog(entity);
+			dialog.show();
 
-			const IEntityClass::InheritanceChain chain = entity->getEntityClass()->getInheritanceChain();
-
-			if (std::find(chain.begin(), chain.end(), readableBaseClass) != chain.end())
-			{
-				// Show the dialog
-				ReadableEditorDialog dialog(entity);
-				dialog.show();
-
-				return;
-			}
+			return;
 		}
 	}
 
