@@ -47,7 +47,7 @@ public:
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
 		GlobalEventManager().addCommand("ReadableEditorDialog", "ReadableEditorDialog");
 
-		GlobalUIManager().getMenuManager().add("main/view",
+		GlobalUIManager().getMenuManager().add("main/entity",
 			"ReadableEditorDialog", ui::menuItem, 
 			"Readable Editor", // caption
 			"", // icon
