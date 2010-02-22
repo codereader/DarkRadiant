@@ -64,12 +64,15 @@ public:
 			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd");
 		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/training_mission_exported_singleDef.xd"))
 			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported_singleDef.xd");
+		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/imp_test_exp.xd"))
+			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/imp_test_exp.xd");
 		try
 		{
 			//Newest tests:
 			readable::XDataLoader* loader = new readable::XDataLoader();
-			loader->retrieveXdInfo();
-			if ( loader->importSingleDef("training_mission.xd", "trainer_machine_warning",testpi) )
+			if ( loader->import("import_test.xd", testmap) )
+				testmap.begin()->second->xport("D:/games/Doom 3/darkmod/xdata/imp_test_exp.xd", readable::Normal);
+			/*if ( loader->importSingleDef("training_mission.xd", "trainer_machine_warning",testpi) )
 				if (testpi)
 					testpi->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported_singleDef.xd", readable::Normal);
 			if ( loader->import("training_mission.xd", testmap) )
@@ -78,7 +81,7 @@ public:
 				{
 					it->second->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);
 				}
-			}
+			}//*/
 			delete loader;
 		}
 		catch(std::runtime_error e) { printf(e.what()); }
