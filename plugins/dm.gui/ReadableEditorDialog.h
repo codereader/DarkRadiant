@@ -44,6 +44,8 @@ protected:
 	virtual void _postShow();
 
 private:
+	void save();
+
 	void initControlsFromEntity();
 
 	GtkWidget* createEditPane();
