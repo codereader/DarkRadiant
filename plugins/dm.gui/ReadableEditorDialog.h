@@ -7,6 +7,8 @@
 #include "gui/GuiView.h"
 #include <map>
 
+class Entity;
+
 namespace ui
 {
 
@@ -29,8 +31,12 @@ private:
 
 	Result _result;
 
+	// The entity we're working with
+	Entity* _entity;
+
 public:
-	ReadableEditorDialog();
+	// Pass the working entity to the constructor
+	ReadableEditorDialog(Entity* entity);
 
 	static void RunDialog(const cmd::ArgumentList& args);
 

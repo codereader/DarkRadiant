@@ -319,4 +319,8 @@
 		<appTypeIgnore value="_IGNORE" />
 		<difficultyMenuEclass value="difficultyMenu" />
 	</difficulty>
+
+	<readables>
+		<readableBaseClass value="atdm:readable_base" />
+	</readables>
 </game>

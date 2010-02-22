@@ -1,10 +1,15 @@
 #include "ReadableEditorDialog.h"
 
+#include "ieclass.h"
+#include "ientity.h"
+#include "iregistry.h"
+#include "selectionlib.h"
 #include "imainframe.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/FramedWidget.h"
+#include "gtkutil/dialog.h"
 
 #include <gtk/gtk.h>
 
@@ -18,6 +23,11 @@ namespace
 {
 	const std::string WINDOW_TITLE("Readable Editor");
 
+	const std::string RKEY_READABLE_BASECLASS("game/readables/readableBaseClass");
+
+	const char* const NO_ENTITY_ERROR = "Cannot run Readable Editor on this selection.\n"
+		"Please select a single readable entity."; 
+
 	// Widget handles for use in the _widgets std::map
 	enum
 	{
@@ -27,10 +37,11 @@ namespace
 	};
 }
 
-ReadableEditorDialog::ReadableEditorDialog() :
+ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_guiView(new gui::GuiView),
-	_result(RESULT_CANCEL)
+	_result(RESULT_CANCEL),
+	_entity(entity)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -129,8 +140,34 @@ void ReadableEditorDialog::_postShow()
 
 void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
 {
-	ReadableEditorDialog dialog;
-	dialog.show();
+	// Check prerequisites
+	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+	if (info.entityCount == 1 && info.totalCount == info.entityCount)
+	{
+		// Check the entity type
+		Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+
+		if (entity != NULL)
+		{
+			// Check the base class of this entity
+			std::string readableBaseClass = GlobalRegistry().get(RKEY_READABLE_BASECLASS);
+
+			const IEntityClass::InheritanceChain chain = entity->getEntityClass()->getInheritanceChain();
+
+			if (std::find(chain.begin(), chain.end(), readableBaseClass) != chain.end())
+			{
+				// Show the dialog
+				ReadableEditorDialog dialog(entity);
+				dialog.show();
+
+				return;
+			}
+		}
+	}
+
+	// Exactly one redable entity must be selected.
+	gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalMainFrame().getTopLevelWindow());
 }
 
 void ReadableEditorDialog::onCancel(GtkWidget* widget, ReadableEditorDialog* self) 
