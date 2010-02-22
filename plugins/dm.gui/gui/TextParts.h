@@ -156,7 +156,8 @@ public:
 	bool addWord(const std::string& word, fonts::IGlyphSet& glyphs, bool noclip = false)
 	{
 		// Generate the word
-		return addWord(TextWord::createForString(word, glyphs, _fontScale), noclip);
+		TextWord tw = TextWord::createForString(word, glyphs, _fontScale);
+		return addWord(tw, noclip);
 	}
 
 	// Adds a single character to this sentence

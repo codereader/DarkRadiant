@@ -5,6 +5,7 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gui/GuiView.h"
+#include <map>
 
 namespace ui
 {
@@ -12,8 +13,21 @@ namespace ui
 class ReadableEditorDialog :
 	public gtkutil::BlockingTransientWindow
 {
+public:
+	enum Result
+	{
+		RESULT_OK,
+		RESULT_CANCEL,
+		NUM_RESULTS,
+	};
+
 private:
 	gui::GuiViewPtr _guiView;
+
+	// A container for storing enumerated widgets
+	std::map<int, GtkWidget*> _widgets;
+
+	Result _result;
 
 public:
 	ReadableEditorDialog();
@@ -22,6 +36,13 @@ public:
 
 protected:
 	virtual void _postShow();
+
+private:
+	GtkWidget* createEditPane();
+	GtkWidget* createButtonPanel();
+
+	static void onCancel(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onSave(GtkWidget* widget, ReadableEditorDialog* self);
 };
 
 } // namespace ui
