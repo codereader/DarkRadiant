@@ -80,6 +80,19 @@ void ReadableEditorDialog::initControlsFromEntity()
 
 	// Xdata contents
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), _entity->getKeyValue("xdata_contents").c_str());
+
+	// TODO: Load xdata
+}
+
+void ReadableEditorDialog::save()
+{
+	// Name
+	_entity->setKeyValue("inv_name", gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_READABLE_NAME])));
+
+	// Xdata contents
+	_entity->setKeyValue("xdata_contents", gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME])));
+
+	// TODO: Save xdata
 }
 
 GtkWidget* ReadableEditorDialog::createEditPane()
@@ -185,7 +198,7 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 {
 	self->_result = RESULT_OK;
 
-	// TODO: Save stuff to target entity
+	self->save();
 
 	// Done, just destroy the window
 	self->destroy();
