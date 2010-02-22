@@ -113,7 +113,7 @@ namespace readable
 
 		for (std::size_t n=0; n<_numPages; n++)
 		{
-			xDataDef << "\t\"gui_page" << n << "\"\t: \"" << _guiPage[n] << "\"\n";
+			xDataDef << "\t\"gui_page" << n+1 << "\"\t: \"" << _guiPage[n] << "\"\n";
 		}
 		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n\n\n";//*/
 
