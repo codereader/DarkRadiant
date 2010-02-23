@@ -114,7 +114,7 @@ namespace readable
 			return false; 
 		}
 
-		const bool importDirective(parser::DefTokeniser& tok, const std::string& defName, StringPairList& importContent);
+		const bool importDirective(const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent);
 
 		/* Parses the contents of the import-statement. */
 		const bool getImportParameters(parser::DefTokeniser& tok, StringMap& statements, std::string& sourceDef, const std::string& defName);
