@@ -18,12 +18,12 @@ namespace readable
 					if (!file.is_open())
 						return OpenFailed;
 					std::stringstream ss;
-					ss << file.rdbuf();		//is this the quickest way to read a whole file?
+					ss << file.rdbuf();
 					std::string String = ss.str();
 					std::size_t DefPos = String.find(_name);
 					while (DefPos != std::string::npos)	//A name of a readable could be contained in another readable's name. Check that...
 					{
-						char before = String.c_str()[DefPos-1];		//what happens if -1 is accessed? 
+						char before = String.c_str()[DefPos-1];
 						char after = String.c_str()[DefPos+_name.length()];
 						if ((DefPos == 0 || before == ' ' || before == '\t' || before == '\n') && (DefPos+_name.length() == file.end || after == ' ' || after == '\t' || after == '\n'))	//other delimiters necessary?
 						{
@@ -52,7 +52,7 @@ namespace readable
 					std::stringstream ss;
 					ss << file.rdbuf();
 					file.close();
-					std::string OutString = ss.str();							//Does string support enough characters for this operation?
+					std::string OutString = ss.str();
 					OutString.erase(_definitionStart, DefLength);
 					OutString.insert(_definitionStart, generateXDataDef());
 					file.open(Path, std::ios_base::out | std::ios_base::trunc);
@@ -117,7 +117,7 @@ namespace readable
 		}
 		xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n\n\n";//*/
 
-		return xDataDef.str();		//Does this support enough characters??
+		return xDataDef.str();
 	}
 
 	const std::size_t XData::getDefLength(boost::filesystem::fstream& file) const
@@ -166,8 +166,6 @@ namespace readable
 
 	const std::string XData::generateTextDef(const std::string& rawString) const
 	{
-		/* ToDo:
-			1) Possibly check if Quotecount per line is even and warn otherwise, because uneven quotecounts seem to be discarded.*/
 		std::stringstream ss;
 		std::stringstream xDataDef;
 		std::string TempString;

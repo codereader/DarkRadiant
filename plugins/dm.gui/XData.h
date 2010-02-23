@@ -9,9 +9,6 @@
 #include <iostream>
 #include "parser/DefTokeniser.h"
 
-/* ToDo:
-	*/
-
 namespace readable
 {
 	/* All vectors of XData-objects are initialized with this size so that no sorting is necessary, which
@@ -143,11 +140,11 @@ namespace readable
 		const std::string generateTextDef(const std::string& rawString) const;
 
 		//Attributes:
-		std::string	_name;			//name of the XData-Definition
-		std::size_t _numPages;				//numPages-statement
-		StringList	_guiPage;		//guiPage-statements
-		std::string _sndPageTurn;	//sndPageTurn-statement
-		std::size_t _definitionStart;		//Marks the start of a definition in an .xd-File. Used by the xport()-method.
+		std::string	_name;				//name of the XData-Definition
+		std::size_t _numPages;			//numPages-statement
+		StringList	_guiPage;			//guiPage-statements
+		std::string _sndPageTurn;		//sndPageTurn-statement
+		std::size_t _definitionStart;	//Marks the start of a definition in an .xd-File. Used by the xport()-method.
 	};
 	typedef boost::shared_ptr<XData> XDataPtr;
 

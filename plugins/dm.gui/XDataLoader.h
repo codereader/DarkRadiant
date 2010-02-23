@@ -5,8 +5,6 @@
 #include <map>
 #include "generic/callback.h"
 
-//#include "reportError.h"
-
 #include "debugging/ScopedDebugTimer.h"
 
 
@@ -103,9 +101,9 @@ namespace readable
 		}
 
 		/* Opens the file in which sourceDef is contained, while handling duplicate definitions.
-		-statements: Key value = Statements in sourceDef, Mapped value = Statement in the calling definition to whom the imported content shall be parsed.
-		-defName: Name of the definition that has induced the recursiveImport. This is just used for error reporting.
-		-importContent: Vector of stringpairs. First = Name of the destination Statement in the calling definition, Second = Imported Content. */
+			-statements: Key value = Statements in sourceDef, Mapped value = Statement in the calling definition to whom the imported content shall be parsed.
+			-defName: Name of the definition that has induced the recursiveImport. This is just used for error reporting.
+			-importContent: Vector of stringpairs. First = Name of the destination Statement in the calling definition, Second = Imported Content. */
 		const bool recursiveImport(const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent);
 
 		/* Parses the contents of the import-statement. */
