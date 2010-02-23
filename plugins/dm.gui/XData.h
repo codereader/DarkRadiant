@@ -59,11 +59,6 @@ namespace readable
 	// XData base-class for exporting, storing and managing XData.
 	class XData
 	{
-	/* ToDo:
-		1) import-directive support for exporter? 
-		2) Use references instead of return values.		->nah, this looks better. :)
-		3) definitionStart shouldn't be a private variable. ->unclean.*/
-
 	public:
 	//Methods:
 		/* Returns the PageLayout of the object: TwoSided or OneSided */

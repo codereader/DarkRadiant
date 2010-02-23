@@ -243,7 +243,6 @@ namespace readable
 				_newXData->setPageContent(Body, PageIndex, side, readContent);			//could throw if PageIndex >= MAX_PAGE_COUNT
 			else
 				_newXData->setPageContent(Title, PageIndex, side, readContent);
-			return true;
 		}
 		//gui_page statement
 		else if (statement.substr(0,8) == "gui_page")
@@ -274,13 +273,11 @@ namespace readable
 			//Append error-message if _numPages is exceeded.
 			if (guiNumber >= _numPages)
 				_guiPageError.push_back("[XDataLoader::import] Warning for definition: " + defName + ". More _guiPage statements, than pages. Discarding statement for Page " + number + ".\n");
-			return true;
 		}
 		//num_pages statement
 		else if (statement == "num_pages")
 		{
 			//Get num_pages:
-			
 			if (tok != NULL)
 			{
 				std::string number;
@@ -309,7 +306,6 @@ namespace readable
 					+ ". The specified _numPages statement did not match the amount of pages with content.\n\tnumPages is set to " 
 					+ boost::lexical_cast<std::string>(_numPages) + ".\n");
 			}
-			return true;
 		}
 		//snd_page_turn statement
 		else if (statement == "snd_page_turn")
@@ -321,148 +317,159 @@ namespace readable
 			}
 			else
 				_sndPageTurn = content;
-			return true;
 		}
 		//import statement
-		else if (statement == "import")		//Only works with def tokeniser.
+		else if (statement == "import")
 		{
 			StringPairList importedData;
-
 			std::string SourceDef;
 			StringMap statements;
 
-			if (tok == NULL)
+			if (tok == NULL)	//Only works with def tokeniser.
 				return false;
 
-			if (!getImportParameters(*tok, statements, SourceDef, defName))
+			if (!getImportParameters(*tok, statements, SourceDef, defName))	//jumps out of def by itself.
 				return false;
 
-			if (!importDirective(SourceDef, statements, defName, importedData))
+			retrieveXdInfo();				//refresh defmap. Prevents faulty imports.
+			if (!recursiveImport(SourceDef, statements, defName, importedData))
 			{
-				jumpOutOfBrackets(*tok);		//????
-				return false;				//check if I have to jump out of import directive...
+				_errorList[_errorList.size()-1] += "\tTrying to Jump to next XData definition. Might lead to furthers errors.\n";
+				jumpOutOfBrackets(*tok);
+				return false;
 			}
 
-			for (int n=0; n < importedData.size(); n++)
+			for (std::size_t n=0; n < importedData.size(); n++)
 			{
 				if (!storeContent(importedData[n].first, NULL, defName, importedData[n].second))
 					return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ". Import-statement failed.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 			}
-			return true;
 		}
-
 		return true;
 	}
 
-	const bool XDataLoader::importDirective( const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent)
+	const bool XDataLoader::recursiveImport( const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent)
 	{
 		//Check where the Definition is stored in the _defMap
 		StringVectorMap::iterator it = _defMap.find(sourceDef);
-		if (it == _defMap.end())		//If the definition couldn't be found, refresh the _defMap and try again.
+		it = _defMap.find(sourceDef);
+		if (it == _defMap.end())		//Definition not found!!
+			return reportError("[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n");
+		std::size_t FileCount = it->second.size();
+		if (FileCount > 1)				//Definition contained in multiple files.
+			reportError(
+				"[XData::import] Warning for definition: " + defName 
+				+ ". Found an import-statement and the referenced definition exists multiple times.\n"
+				);
+
+		//Try every file the definition is stored in. If import of none succeeded, the import failed.
+		for (std::size_t k = 0; k < FileCount; k++)
 		{
-			retrieveXdInfo();
-			it = _defMap.find(sourceDef);
-		}
-		if (it == _defMap.end())		//JUMP OUT OF DEF
-			return reportError("[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
-
-		std::size_t FileCount = it->second.size();	//amount of duplicates.
-		if (FileCount > 1)
-			reportError("[XData::import] Warning for definition: " + defName + ". Found an import-statement");
-
-		bool importSuccess = false;
-
-		for (int k = 0; k < FileCount; k++)
-		{
+			//Init
 			StringMap StmtsCpy = statements;
 			StringMap ImpStmts;
 			std::string ImpSrcDef = "";
+			int BracketDepth = 1;
 
 			//Open the file
 			ArchiveTextFilePtr file = 
 				GlobalFileSystem().openTextFile(XDATA_DIR + it->second[k]);
-			if (file == NULL)												//JUMP OUT OF DEF!!
-				return reportError("[XData::import] Error in definition: " + defName + ". Found an import-statement, but failed to open the corresponding file: " + it->second[k] + ".\n");
+			if (file == NULL)
+				return reportError(
+					"[XData::import] Error in definition: " + defName
+					+ ". Found an import-statement, but failed to open the corresponding file: " + it->second[k] + ".\n"
+					);
 
-			//Find the Definition in the File:
+			//Find the Source-Definition in the File:
 			std::istream is(&(file->getInputStream()));
 			parser::BasicDefTokeniser<std::istream> ImpTok(is);
-			std::string test;
-
-			while (true)	//make sure its really the definition name and not just a word in some random text.
+			while (true)	
 			{
-				while ( ImpTok.hasMoreTokens() && (test = ImpTok.nextToken()) != sourceDef) {}
-				//Move into brackets of the definition and count entering and leaving brackets afterwards, so that the end of the definition can be identified.
-				try 
-				{ 
-					ImpTok.assertNextToken("{");			//can throw
-					break; 
-				}
-				catch (...)
-				{
-					if (!ImpTok.hasMoreTokens())
-						return false; 
-					continue;
-				}			//errormsg
-			}	
-			
-			int BracketDepth = 1;
+				while ( ImpTok.nextToken() != sourceDef) {}
+				if ( ImpTok.nextToken() == "{")
+					break;
+			}
 
-			//Import-Loop: Find the SourceStatements in the definition and parse the contents.
+			//Import-Loop: Find the SourceStatements in the definition and parse the contents. 
+			//Further Import-directives possibly have to be handled recursively...
 			while (ImpTok.hasMoreTokens())
 			{
-				try
+				//Find SourceStatements or further import-statements. Count entering and leaving brackets to identify definition end.
+				std::string token = ImpTok.nextToken();
+				StringMap::iterator StIt = StmtsCpy.find(token);
+				if (StIt != StmtsCpy.end())
 				{
-					//find statements
-					std::string token = ImpTok.nextToken();
-					StringMap::iterator StIt = StmtsCpy.find(token);
-					if (StIt != StmtsCpy.end())
+					//Token found that matches the Source statement. Parse it and delete statement from StmtsCpy afterwards.
+					std::string StmtCtnt;
+					if (readLines(ImpTok, StmtCtnt))
 					{
-						//handle parsing statements here and store them in importContent. Delete statement from StmtsCpy afterwards.
-						std::string StmtCtnt;
-						if (readLines(ImpTok, StmtCtnt))	//This makes the word found is actually an statement, because readLines returns false if no ":" follows
-						{
-							importContent.push_back(StringPairList::value_type(StIt->second, StmtCtnt));		//Store destination statement and statement-content.
-							StmtsCpy.erase(StIt);
-						}
-						else 
-							continue;
+						importContent.push_back( StringPairList::value_type(
+							StIt->second, 
+							StmtCtnt
+							));
+						StmtsCpy.erase(StIt);
 					}
-					else if (token == "{")
-						BracketDepth += 1;
-					else if (token == "}")
-						BracketDepth -= 1;
-					else if (token == "import")
+					else if (!ImpTok.hasMoreTokens())
 					{
-						if (!getImportParameters(ImpTok, ImpStmts, ImpSrcDef, defName))	//failed to retrieve import parameters. Don't perform import.
-							ImpSrcDef = "";
+						//Syntaxerror!
+						std::string errMSG = "[XData::import] Error in definition: " + defName 
+							+ ". Found an import-statement, but an sytax-error occured in the definition " 
+							+ sourceDef + ", in sourcefile " + it->second[k] + ".\n";
+						if ( (FileCount > 1) && (k+1 < FileCount) )
+							errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
+						reportError(errMSG);
+						break;
 					}
-					if (StmtsCpy.size() == 0)	// all statements found.
-						return true;
-					if (BracketDepth == 0)	 //Sourcestatement is not in the current definition
+					else
+						//The found token was not an actual statement.
+						continue;
+				}
+				else if (token == "{")
+					BracketDepth += 1;
+				else if (token == "}")
+					BracketDepth -= 1;
+				else if (token == "import")
+				{
+					//getImportParameters fails on syntax errors or EOF (which is an syntax-error as well), so go on with next file.
+					if (!getImportParameters(ImpTok, ImpStmts, ImpSrcDef, defName))
 					{
-						if (ImpSrcDef != "")	//import statement found.
+						std::string errMSG = "[XData::import] Error in definition: " + defName 
+							+ ". Found an import-statement, but an sytax-error occured in the definition " 
+							+ sourceDef + ", in sourcefile " + it->second[k] + ".\n";
+						if ( (FileCount > 1) && (k < FileCount-1) )
+							errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
+						reportError(errMSG);
+						break;
+					}
+				}
+				if (StmtsCpy.size() == 0)
+					//Success: Return!
+					return true;
+				if (BracketDepth == 0)
+				{
+					//Not all Source-statements have been found in the definition. If an import statement has been found
+					//check if all requested statements would be imported by it.
+					if (ImpSrcDef != "")
+					{
+						StringMap ChkStmts = StmtsCpy;
+						StringMap RecoverStatements;
+						for (StringMap::iterator impCheck = ImpStmts.begin(); impCheck != ImpStmts.end(); impCheck++)
 						{
-							//Check if all necessary statements are defined.
-							StringMap StmtsChk = StmtsCpy;
-							StringMap RecoverStatements;
-							for (StringMap::iterator impCheck = ImpStmts.begin(); impCheck != ImpStmts.end(); impCheck++)
+							StringMap::iterator temp = ChkStmts.find(impCheck->second);
+							if (temp != ChkStmts.end())
 							{
-								StringMap::iterator temp = StmtsChk.find(impCheck->second);
-								if (temp != StmtsChk.end())
-								{
-									StmtsChk.erase(temp);
-									RecoverStatements.insert(*impCheck);
-								}
+								ChkStmts.erase(temp);
+								RecoverStatements.insert(*impCheck);
 							}
-							if (StmtsChk.size() != 0) //not all statements found!!
-								break;
-							//import:
+						}
+						if (ChkStmts.size() == 0)
+						{
+							//All necessary statements found in import-directive.
 							StringPairList imported;
-							if (importDirective(ImpSrcDef,RecoverStatements,sourceDef,imported))
+							if (recursiveImport(ImpSrcDef,RecoverStatements,sourceDef,imported))
 							{
-								//store imported contents.
-								for (int u = 0; u < imported.size(); u++)
+								//Success! Store imported contents and return!
+								for (std::size_t u = 0; u < imported.size(); u++)
 								{
 									importContent.push_back( StringPairList::value_type(
 										StmtsCpy.find(imported[u].first)->second,
@@ -471,26 +478,31 @@ namespace readable
 								}
 								return true;
 							}
-							else break;
-						}
-						else
-						{
-							std::string errMSG = "[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find all referenced statements in the definition " + sourceDef + ", in sourcefile " + StIt->second[k] + ".\n";
-							if ( (FileCount > 1) && (k < FileCount-1) )
-								errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
-							reportError(errMSG);
-							break;
+							else
+							{
+								std::string errMSG = "[XData::import] Error in definition: " + defName 
+									+ ". Found an import-statement, but failed to import the requested statements of definition " 
+									+ sourceDef + ", in sourcefile " + it->second[k] + ".\n";
+								if ( (FileCount > 1) && (k < FileCount-1) )
+									errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
+								reportError(errMSG);
+								break;
+							}
 						}
 					}
-				}
-				catch (...) { printf("ARGH!\n"); }	//!!!!!!!!!
+					//No import-statement found or not all requested definitions in import statement. Move on with next file.
+					std::string errMSG = "[XData::import] Error in definition: " + defName 
+						+ ". Found an import-statement, but couldn't find all referenced statements in the definition " 
+						+ sourceDef + ", in sourcefile " + it->second[k] + ".\n";
+					if ( (FileCount > 1) && (k < FileCount-1) )
+						errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
+					reportError(errMSG);
+					break;
+				} //End of definition was reached!
+			} //End of Import-Loop
+		} //End of File-duplicate-Loop
 
-			}
-		}
-		
-		//import failed... Jump out of definition?
-
-		return false;
+		return reportError("[XData::import] Error in definition: " + defName + ". Import-statement failed.\n");
 	}
 
 	const bool XDataLoader::getImportParameters(parser::DefTokeniser& tok, StringMap& statements, std::string& sourceDef, const std::string& defName)
@@ -501,7 +513,7 @@ namespace readable
 		try { tok.assertNextToken("{");	}
 		catch(...)
 		{
-			return reportError(tok, "[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+			return reportError(tok, "[XDataLoader::import] Syntax error in definition: " + defName + ", import-statement. '{' expected. Undefined behavior!\n");
 		}
 
 		//Get Source- and DestStatements
@@ -517,7 +529,7 @@ namespace readable
 		}
 		catch (...)
 		{
-			return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of import-statement. Probably Syntax-error.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+			return reportError(tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of import-statement. Probably Syntax-error.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n", 2);
 		}
 
 		//Get Name of Source-Definition

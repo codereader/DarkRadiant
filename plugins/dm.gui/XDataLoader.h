@@ -33,18 +33,6 @@ namespace readable
 	// Class for importing XData from files.
 	class XDataLoader
 	{
-	/* ToDo:
-		1) Maybe add detection of \n in xdata files as a error/warning. 
-			(Basically not necessary because everything is exported correctly and it would decrease performance.) 
-		2) Multiple Stage Import-directive support. Probably need a recursive method for this.
-		3) Replace XDataList with a XDataPtrSet with custom Allocator and weak-sorter.			->nope, map instead.
-		4) Possibly have import methods return bool and pass a target reference.				->done
-		5) Replace DefMap with a multiMap, to allow editing of all readables but still warn about duplicates.	->done
-		6) Add local reportError-Method and change the cerr output of import methods.			->done
-		7) import-directive should give a warning if a definition has been definined in multiple files. If importing failed
-			the definition in the next file should be tried. 
-		8) grabImportParameters-method for import-directive. */
-
 	public:
 		/* Imports a MultiMap of XData-Pointers sorted by name from the specified File (just the name, not the path).
 		Returns false if import failed. The import-breaking error-message is the last element of _errorList, which can
@@ -114,17 +102,22 @@ namespace readable
 			return false; 
 		}
 
-		const bool importDirective(const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent);
+		/* Opens the file in which sourceDef is contained, while handling duplicate definitions.
+		-statements: Key value = Statements in sourceDef, Mapped value = Statement in the calling definition to whom the imported content shall be parsed.
+		-defName: Name of the definition that has induced the recursiveImport. This is just used for error reporting.
+		-importContent: Vector of stringpairs. First = Name of the destination Statement in the calling definition, Second = Imported Content. */
+		const bool recursiveImport(const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent);
 
 		/* Parses the contents of the import-statement. */
 		const bool getImportParameters(parser::DefTokeniser& tok, StringMap& statements, std::string& sourceDef, const std::string& defName);
 
 		/* Checks where the content following in the tokenizer has to be stored. DefName is the name of the
-		definition for whom content is parsed and is just used for error-messages. If tok is NULL, the string content is stored. The
-		import-directive however is only compatible with DefTokeniser. */
+		definition for whom content is parsed and is just used for error-messages. If tok is NULL, the string content is stored. This 
+		is only induced by the import-directive, which on the contrary must have tok!= NULL. */
 		const bool storeContent(const std::string& statement, parser::DefTokeniser* tok, const std::string& defName, const std::string& content = "");
 
-		/* Parses a single definition from a stream into an XData object and generates warning and error messages. */
+		/* Parses a single definition from a stream into an XData object and generates warning and error messages. If definitionName
+		is defined, only matching definitions will be parsed and return false otherwise. */
 		const bool parseXDataDef(parser::DefTokeniser& tok, const std::string& definitionName = "");
 
 		/* Skips the ":" and parses the following SingleLine or MultiLine content into What.*/
