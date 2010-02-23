@@ -54,7 +54,7 @@ public:
 			"ReadableEditorDialog"
 		);
 
-		return;
+		//return;
 
 		//Testbench for xdata importer/exporter:
 		readable::XDataPtr testpi;

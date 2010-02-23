@@ -328,11 +328,20 @@ namespace readable
 		{
 			StringPairList importedData;
 
+			std::string SourceDef;
+			StringMap statements;
+
 			if (tok == NULL)
 				return false;
 
-			if (!importDirective(*tok,defName,importedData))
+			if (!getImportParameters(*tok, statements, SourceDef, defName))
+				return false;
+
+			if (!importDirective(SourceDef, statements, defName, importedData))
+			{
+				jumpOutOfBrackets(*tok);		//????
 				return false;				//check if I have to jump out of import directive...
+			}
 
 			for (int n=0; n < importedData.size(); n++)
 			{
@@ -345,23 +354,17 @@ namespace readable
 		return true;
 	}
 
-	const bool XDataLoader::importDirective(parser::DefTokeniser& tok, const std::string& defName, StringPairList& importContent)
+	const bool XDataLoader::importDirective( const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent)
 	{
-		std::string SourceDef;
-		StringMap statements;
-
-		if (!getImportParameters(tok, statements, SourceDef, defName))
-			return false;
-
 		//Check where the Definition is stored in the _defMap
-		StringVectorMap::iterator it = _defMap.find(SourceDef);
+		StringVectorMap::iterator it = _defMap.find(sourceDef);
 		if (it == _defMap.end())		//If the definition couldn't be found, refresh the _defMap and try again.
 		{
 			retrieveXdInfo();
-			it = _defMap.find(SourceDef);
+			it = _defMap.find(sourceDef);
 		}
-		if (it == _defMap.end())
-			return reportError(tok, "[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
+		if (it == _defMap.end())		//JUMP OUT OF DEF
+			return reportError("[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 
 		std::size_t FileCount = it->second.size();	//amount of duplicates.
 		if (FileCount > 1)
@@ -371,6 +374,10 @@ namespace readable
 
 		for (int k = 0; k < FileCount; k++)
 		{
+			StringMap StmtsCpy = statements;
+			StringMap ImpStmts;
+			std::string ImpSrcDef = "";
+
 			//Open the file
 			ArchiveTextFilePtr file = 
 				GlobalFileSystem().openTextFile(XDATA_DIR + it->second[k]);
@@ -380,14 +387,25 @@ namespace readable
 			//Find the Definition in the File:
 			std::istream is(&(file->getInputStream()));
 			parser::BasicDefTokeniser<std::istream> ImpTok(is);
-			while ( ImpTok.nextToken() != SourceDef) {}
+			std::string test;
 
-			StringMap StmtsCpy = statements;
-			StringMap ImpStmts;
-			std::string ImpSrcDef = "";
-
-			//Move into brackets of the definition and count entering and leaving brackets afterwards, so that the end of the definition can be identified.
-			ImpTok.assertNextToken("{");		//can throw
+			while (true)	//make sure its really the definition name and not just a word in some random text.
+			{
+				while ( ImpTok.hasMoreTokens() && (test = ImpTok.nextToken()) != sourceDef) {}
+				//Move into brackets of the definition and count entering and leaving brackets afterwards, so that the end of the definition can be identified.
+				try 
+				{ 
+					ImpTok.assertNextToken("{");			//can throw
+					break; 
+				}
+				catch (...)
+				{
+					if (!ImpTok.hasMoreTokens())
+						return false; 
+					continue;
+				}			//errormsg
+			}	
+			
 			int BracketDepth = 1;
 
 			//Import-Loop: Find the SourceStatements in the definition and parse the contents.
@@ -408,10 +426,7 @@ namespace readable
 							StmtsCpy.erase(StIt);
 						}
 						else 
-						{
 							continue;
-						}
-
 					}
 					else if (token == "{")
 						BracketDepth += 1;
@@ -419,20 +434,56 @@ namespace readable
 						BracketDepth -= 1;
 					else if (token == "import")
 					{
-						if (!getImportParameters(tok, ImpStmts, ImpSrcDef, defName))
-						{
-							//failed to retrieve import parameters. Don't perform import.
-						}
+						if (!getImportParameters(ImpTok, ImpStmts, ImpSrcDef, defName))	//failed to retrieve import parameters. Don't perform import.
+							ImpSrcDef = "";
 					}
 					if (StmtsCpy.size() == 0)	// all statements found.
 						return true;
 					if (BracketDepth == 0)	 //Sourcestatement is not in the current definition
 					{
-						//check if import directive has been found and perform import. (Multi-stage import)
-						return reportError("[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find all referenced statements in the definition" + SourceDef + ", in sourcefile " + it->second[k] + ".\n");
+						if (ImpSrcDef != "")	//import statement found.
+						{
+							//Check if all necessary statements are defined.
+							StringMap StmtsChk = StmtsCpy;
+							StringMap RecoverStatements;
+							for (StringMap::iterator impCheck = ImpStmts.begin(); impCheck != ImpStmts.end(); impCheck++)
+							{
+								StringMap::iterator temp = StmtsChk.find(impCheck->second);
+								if (temp != StmtsChk.end())
+								{
+									StmtsChk.erase(temp);
+									RecoverStatements.insert(*impCheck);
+								}
+							}
+							if (StmtsChk.size() != 0) //not all statements found!!
+								break;
+							//import:
+							StringPairList imported;
+							if (importDirective(ImpSrcDef,RecoverStatements,sourceDef,imported))
+							{
+								//store imported contents.
+								for (int u = 0; u < imported.size(); u++)
+								{
+									importContent.push_back( StringPairList::value_type(
+										StmtsCpy.find(imported[u].first)->second,
+										imported[u].second
+										));									
+								}
+								return true;
+							}
+							else break;
+						}
+						else
+						{
+							std::string errMSG = "[XData::import] Error in definition: " + defName + ". Found an import-statement, but couldn't find all referenced statements in the definition " + sourceDef + ", in sourcefile " + StIt->second[k] + ".\n";
+							if ( (FileCount > 1) && (k < FileCount-1) )
+								errMSG += "\tThe referenced definition has been found in multiple files. Trying next file...\n";
+							reportError(errMSG);
+							break;
+						}
 					}
 				}
-				catch (...) { printf("ARGH!\n"); }
+				catch (...) { printf("ARGH!\n"); }	//!!!!!!!!!
 
 			}
 		}
