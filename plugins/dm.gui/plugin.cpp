@@ -53,39 +53,6 @@ public:
 			"", // icon
 			"ReadableEditorDialog"
 		);
-
-		//return;
-
-		//Testbench for xdata importer/exporter:
-		readable::XDataPtr testpi;
-		readable::XDataMap testmap;
-		std::string filename;
-		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd"))
-			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd");
-		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/training_mission_exported_singleDef.xd"))
-			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/training_mission_exported_singleDef.xd");
-		if (boost::filesystem::exists("D:/games/Doom 3/darkmod/xdata/imp_test_exp.xd"))
-			boost::filesystem::remove("D:/games/Doom 3/darkmod/xdata/imp_test_exp.xd");
-		try
-		{
-			//Newest tests:
-			readable::XDataLoader* loader = new readable::XDataLoader();
-			if ( loader->import("import_test.xd", testmap) )
-				testmap.begin()->second->xport("D:/games/Doom 3/darkmod/xdata/imp_test_exp.xd", readable::Normal);
-			/*if ( loader->importSingleDef("training_mission.xd", "trainer_machine_warning",testpi) )
-				if (testpi)
-					testpi->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported_singleDef.xd", readable::Normal);
-			if ( loader->import("training_mission.xd", testmap) )
-			{
-				for ( readable::XDataMap::iterator it = testmap.begin(); it != testmap.end(); it++)
-				{
-					it->second->xport("D:/games/Doom 3/darkmod/xdata/training_mission_exported.xd", readable::Merge);
-				}
-			}//*/
-			delete loader;
-		}
-		catch(std::runtime_error e) { printf(e.what()); }
-		catch (...) {}
 	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;
