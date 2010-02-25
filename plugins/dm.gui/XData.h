@@ -65,8 +65,8 @@ namespace readable
 		Filename (absolute Filepath). If the file already exists this function can overwrite the
 		file or merge. If the file cannot be opened, OpenFailed is returned.
 			-Merge: If the definition already exists, DefinitionExists is returned. This definition
-			can be overwritten using the command MergeOverWriteExisting. Otherwise the definition
-			is appended. MergeOverwriteExisting can fail and returns MergeFailed then.
+			can be overwritten using the command MergeOverWriteExisting AFTER using Merge-cmd. Otherwise 
+			the definition is appended. MergeOverwriteExisting can fail and returns MergeFailed then.
 			-Overwrite: Returns DefinitionMismatch if the definition in the target-file does not match
 			the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
 			is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the

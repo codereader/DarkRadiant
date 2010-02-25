@@ -3,33 +3,62 @@
 
 namespace readable
 {
-	const bool XDataLoader::importSingleDef( const std::string& filename, const std::string& definitionName, XDataPtr& target )
+	const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& target, const std::string& filename )
 	{
-		//Initialization:
+		// Initialization:
 		_errorList.clear();
 		_newXData.reset();
+		target.clear();
+		StringList files;
 
-		//Check fileextension:
-		if (filename.substr( filename.rfind(".")+1 ) != "xd")
-			return reportError("[XDataLoader::import] Fileextension is not .xd: " + filename + "\n");
-
-		// Attempt to open the file in text mode and retrieve DefTokeniser
-		ArchiveTextFilePtr file = 
-			GlobalFileSystem().openTextFile(XDATA_DIR + filename);
-		if (file == NULL)
-			return reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
-		std::istream is(&(file->getInputStream()));
-		parser::BasicDefTokeniser<std::istream> tok(is);
-
-		//Parse the desired definition:
-		while (tok.hasMoreTokens() && !parseXDataDef(tok,definitionName)) {}
-
-		//Summarizing report:
-		if (!_newXData)
-			return reportError("[XDataLoader::importSingleDef] Failed to load " + definitionName + ".\n");
+		if (filename != "")
+		{
+			//Check fileextension:
+			if (filename.substr( filename.rfind(".")+1 ) != "xd")
+				return reportError("[XDataLoader::import] Error: File-extension is not .xd: " + filename + "\n");
+			files.push_back(filename);
+		}
 		else
 		{
-			_errorList.push_back("[XDataLoader::importSingleDef] " + definitionName + " loaded successfully with " 
+			//Find the files in which the definition can be found.
+			retrieveXdInfo();
+			StringVectorMap::iterator it = _defMap.find(definitionName);
+			if (it == _defMap.end())
+				return reportError("[XDataLoader::importDef] Error: Specified definition " + definitionName + " not found.\n");
+			files = it->second;
+			if (files.size() > 1)				//Definition contained in multiple files.
+				reportError("[XData::import] Warning: The requested definition " + definitionName + " exists in multiple files.\n");
+		}
+
+		// Parse the requested definition from all files:
+		for (std::size_t n = 0; n < files.size(); n++)
+		{
+			// Attempt to open the file in text mode and retrieve DefTokeniser
+			ArchiveTextFilePtr file = 
+				GlobalFileSystem().openTextFile(XDATA_DIR + files[n]);
+			if (file == NULL)
+				return reportError("[XDataLoader::importDef] Error: Failed to open file " + files[n] + "\n");
+			std::istream is(&(file->getInputStream()));
+			parser::BasicDefTokeniser<std::istream> tok(is);
+
+			// Parse the desired definition:
+			while (tok.hasMoreTokens() && !parseXDataDef(tok,definitionName)) {}
+			if (_newXData)
+				target.insert(XDataMap::value_type(files[n],_newXData));
+			else
+				reportError("[XDataLoader::importDef] Error: Failed to load " + definitionName + " from file " + files[n] + ".\n");
+		}
+
+		//Summarizing report:
+		if (target.size() == 0)
+		{
+			if (filename == "")
+				reportError("[XDataLoader::importDef] Error: Failed to load " + definitionName + ".\n");
+			return false;
+		}
+		else
+		{
+			_errorList.push_back("[XDataLoader::importDef] " + definitionName + " loaded successfully with " 
 				+ boost::lexical_cast<std::string>(_errorList.size()) + " error(s)/warning(s).\n");
 			//Summary output:
 			if (_errorList.size() > 1)
@@ -38,7 +67,6 @@ namespace readable
 				globalOutputStream() << _errorList[0];
 		}
 
-		target = _newXData;
 		return true;
 	}
 
@@ -94,6 +122,7 @@ namespace readable
 	const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::string& definitionName)
 	{
 		_name = tok.nextToken();
+		_newXData.reset();
 
 		//Check Syntax:
 		try	{ tok.assertNextToken("{"); }
@@ -110,8 +139,7 @@ namespace readable
 			return false;
 		}
 
-		//Initialization:
-		_newXData.reset();		
+		//Initialization:	
 		_guiPageError.clear();
 		_maxPageCount = 0;
 		_maxGuiNumber = 0;
@@ -375,7 +403,6 @@ namespace readable
 	{
 		//Check where the Definition is stored in the _defMap
 		StringVectorMap::iterator it = _defMap.find(sourceDef);
-		it = _defMap.find(sourceDef);
 		if (it == _defMap.end())		//Definition not found!!
 			return reportError("[XData::import] Error in definition: " + defName + ". Found an import-statement, but not the corresponding definition.\n");
 		std::size_t FileCount = it->second.size();
