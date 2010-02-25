@@ -7,6 +7,8 @@
 #include "gui/GuiView.h"
 #include <map>
 
+#include "XDataLoader.h"
+
 class Entity;
 
 namespace ui
@@ -33,6 +35,12 @@ private:
 
 	// The entity we're working with
 	Entity* _entity;
+
+	// The XData-definition of the entity
+	readable::XDataPtr _xData;
+
+	// The filename of the XData definition
+	std::string _xdFilename;
 
 public:
 	// Pass the working entity to the constructor

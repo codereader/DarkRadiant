@@ -10,8 +10,6 @@
 #include "igl.h"
 
 #include "ReadableEditorDialog.h"
-#include "XData.h"
-#include "XDataLoader.h"
 #include "gui/GuiManager.h"
 
 class GuiModule : 

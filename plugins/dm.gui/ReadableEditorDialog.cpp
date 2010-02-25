@@ -81,7 +81,37 @@ void ReadableEditorDialog::initControlsFromEntity()
 	// Xdata contents
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), _entity->getKeyValue("xdata_contents").c_str());
 
-	// TODO: Load xdata
+	// Load xdata
+	if (_entity->getKeyValue("xdata_contents") == "")
+	{
+		//Key has not been set yet. Set _xdFilename to the mapfilename.
+		_xdFilename = GlobalMap().getMapName();
+		_xdFilename = _xdFilename.substr(0, _xdFilename.rfind(".")+1 ) + "xd";	//might lead to weird behaviour if mapname was not defined yet.
+	}
+	else
+	{
+		readable::XDataLoaderPtr xdLoader(new readable::XDataLoader());
+		readable::XDataMap xdMap;
+		if ( xdLoader->importDef(_entity->getKeyValue("xdata_contents"),xdMap) )
+		{
+			if (xdMap.size() > 1)
+			{
+				// The requested definition has been defined in multiple files. 
+				// A chooser should pop up, allowing the mapper to pick the right file.
+				// Optimally, the preview renderer would already show the selected definition.
+			}
+			else
+			{
+				_xdFilename = xdMap.begin()->first;
+				_xData = xdMap.begin()->second;			
+			}
+		}
+		else
+		{
+			// import failed. Popup with errormessage.
+			std::string errMsg = xdLoader->getImportSummary()[ xdLoader->getImportSummary().size() - 1 ];
+		}
+	}
 }
 
 void ReadableEditorDialog::save()
@@ -92,7 +122,16 @@ void ReadableEditorDialog::save()
 	// Xdata contents
 	_entity->setKeyValue("xdata_contents", gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME])));
 
-	// TODO: Save xdata
+	// Save xdata
+	if ( _xData && _xData->xport( GlobalRegistry().get(RKEY_ENGINE_PATH) + "xdata/" + _xdFilename, readable::Merge) == readable::DefinitionExists)
+	{
+		switch ( _xData->xport( GlobalRegistry().get(RKEY_ENGINE_PATH) + "xdata/" + _xdFilename, readable::MergeOverwriteExisting) )
+		{
+		case readable::OpenFailed: break;
+		case readable::MergeFailed: break;
+		default: break; //success!
+		}
+	}
 }
 
 GtkWidget* ReadableEditorDialog::createEditPane()
