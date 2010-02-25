@@ -1,3 +1,6 @@
+#ifndef XDATALOADER_H
+#define XDATALOADER_H
+
 #include "XData.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
@@ -145,4 +148,7 @@ namespace readable
 		std::string			_sndPageTurn;
 		StringList			_guiPage;
 	};
+	typedef boost::shared_ptr<XDataLoader> XDataLoaderPtr;
 }
+
+#endif XDATALOADER_H
