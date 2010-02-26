@@ -11,9 +11,9 @@
 
 namespace readable
 {
-	/* All vectors of XData-objects are initialized with this size so that no sorting is necessary, which
-	would otherwise be necessary when e.g. page2_body was defined before page1_body and a simple
-	vector.push_back(..) was used to store the data instead of a direct access using an Index. */
+	// All vectors of XData-objects are initialized with this size so that no sorting is necessary, which
+	// would otherwise be necessary when e.g. page2_body was defined before page1_body and a simple
+	// vector.push_back(..) was used to store the data instead of a direct access using an Index.
 	const std::size_t	MAX_PAGE_COUNT			= 20;
 
 	typedef std::vector<std::string> StringList;
@@ -58,35 +58,36 @@ namespace readable
 	{
 	public:
 	//Methods:
-		/* Returns the PageLayout of the object: TwoSided or OneSided */
+		// Returns the PageLayout of the object: TwoSided or OneSided
 		virtual const PageLayout getPageLayout() const = 0;
 
-		/* Exports the XData class formated properly into the File specified in 
-		Filename (absolute Filepath). If the file already exists this function can overwrite the
-		file or merge. If the file cannot be opened, OpenFailed is returned.
-			-Merge: If the definition already exists, DefinitionExists is returned. This definition
-			can be overwritten using the command MergeOverWriteExisting AFTER using Merge-cmd. Otherwise 
-			the definition is appended. MergeOverwriteExisting can fail and returns MergeFailed then.
-			-Overwrite: Returns DefinitionMismatch if the definition in the target-file does not match
-			the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
-			is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the
-			file no matter what. If the target-file has Syntax errors, it is overwritten...*/
+		// Exports the XData class formated properly into the File specified in 
+		// Filename (absolute Filepath). If the file already exists this function can overwrite the
+		// file or merge. If the file cannot be opened, OpenFailed is returned.
+		// 	-Merge: If the definition already exists, DefinitionExists is returned (can also return OpenFailed).
+		// 	This definition	can be overwritten using the command MergeOverWriteExisting AFTER using Merge-cmd. 
+		// 	Otherwise the definition is appended. MergeOverwriteExisting can fail and returns MergeFailed or OpenFailed.
+		// 	-Overwrite: Returns DefinitionMismatch if the definition in the target-file does not match
+		// 	the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
+		// 	is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the
+		// 	file no matter what. With both commands OpenFailed can be returned. 
+		// 	If the target-file has Syntax errors, it is overwritten...
 		FileStatus xport(const std::string& filename, ExporterCommand cmd);
 
 		virtual ~XData() {};
 
 	//Getters and Setters for Attributes:
 
-		/* The page-contents of the Two- and OneSided XData-objects. cc defines whether Title or Body shall be accessed.
-		The Side-parameter is discarded on OneSidedXData-objects. Throws std::runtime_error when index out of bounds. */
+		// The page-contents of the Two- and OneSided XData-objects. cc defines whether Title or Body shall be accessed.
+		// The Side-parameter is discarded on OneSidedXData-objects. Throws std::runtime_error when index out of bounds.
 		virtual const std::string& getPageContent(ContentType cc, std::size_t pageIndex, Side side) const = 0;
 		virtual void setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content) = 0;
 
-		/* The name of the XData-Definition */
+		// The name of the XData-Definition
 		const std::string& getName() const { return _name; }
 		void setName(const std::string& name) { _name = name; }
 
-		/* numPages-statement. Resizes vectors accordingly. Attention: If numPages is lowered, data will obviously be discarded. */
+		// numPages-statement. Resizes vectors accordingly. Attention: If numPages is lowered, data will obviously be discarded.
 		const std::size_t getNumPages() const { return _numPages; }
 		void setNumPages(std::size_t numPages)
 		{
@@ -94,7 +95,7 @@ namespace readable
 			resizeVectors(numPages);
 		}
 
-		/* guiPage-statement. Methods for accessing a whole StringList or single VectorElements. */
+		// guiPage-statement. Methods for accessing a whole StringList or single VectorElements.
 		const StringList& getGuiPage() const { return _guiPage; }
 		const std::string& getGuiPage(std::size_t index) const
 		{
@@ -110,33 +111,34 @@ namespace readable
 			_guiPage[index] = guiPage;
 		}
 
-		/* sndPageTurn-statement. */
+		// sndPageTurn-statement.
 		const std::string& getSndPageTurn() const{ return _sndPageTurn; }
 		void setSndPageTurn(const std::string& sndPageTurn) { _sndPageTurn = sndPageTurn; }
 
 	private:
 	//Methods for export:
 
-		/* Generates the XData-Definition for the XData-object. */
+		// Generates the XData-Definition for the XData-object.
 		const std::string generateXDataDef() const;
 
-		/* Returns the length of the current definition. The get-pointer has to be at the beginning of that definition. Returns 0 on Syntax errors. */
+		// Returns the length of the current definition. The get-pointer has to be at the beginning of that definition. Returns 0 on Syntax errors.
 		const std::size_t getDefLength(boost::filesystem::fstream& file) const;
 
-		/* Returns the definition-name found in the file or "" if multiple definitions where found. Used by the xport()-method in the overwrite-command for checking for a DefinitionMatch or MultipleDefinitions.*/
+		// Returns the definition-name found in the file or "" if multiple definitions where found. 
+		// Used by the xport()-method in the overwrite-command for checking for a DefinitionMatch or MultipleDefinitions.
 		const std::string getDefinitionNameFromXD(boost::filesystem::ifstream& file) const;
 
-		/* Used to jump out of a definition. Can lead to undefined behavior on Syntax-errors. */
+		// Used to jump out of a definition. Can lead to undefined behavior on Syntax-errors.
 		void jumpOutOfBrackets(parser::DefTokeniser& tok, int currentDepth) const;
 
 	protected:
-		/* Resizes all vectors to TargetSize. */
+		// Resizes all vectors to TargetSize.
 		virtual void resizeVectors(std::size_t targetSize);
 
-		/* Returns the OneSided or TwoSided Page-content-definition of an XData object*/
+		// Returns the OneSided or TwoSided Page-content-definition of an XData object.
 		virtual const std::string getContentDef() const = 0;
 
-		/* Generates the XData-compatible definition for Multi-line strings and adds escape-characters before quotes. */
+		// Generates the XData-compatible definition for Multi-line strings and adds escape-characters before quotes.
 		const std::string generateTextDef(const std::string& rawString) const;
 
 		//Attributes:

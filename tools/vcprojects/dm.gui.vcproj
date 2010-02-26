@@ -441,6 +441,14 @@
 				RelativePath="..\..\plugins\dm.gui\XDataLoader.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\XdFileChooserDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\XdFileChooserDialog.h"
+				>
+			</File>
 			<Filter
 				Name="gui"
 				>

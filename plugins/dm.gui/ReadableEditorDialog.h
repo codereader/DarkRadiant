@@ -14,6 +14,7 @@ class Entity;
 namespace ui
 {
 
+
 class ReadableEditorDialog :
 	public gtkutil::BlockingTransientWindow
 {
