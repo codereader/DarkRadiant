@@ -663,7 +663,7 @@ namespace readable
 		_defMap.clear();
 		_fileSet.clear();
 		_duplicatedDefs.clear();
-		ScopedDebugTimer timer("XData definitions parsed: ");
+		//ScopedDebugTimer timer("XData definitions parsed: ");
 		GlobalFileSystem().forEachFile(
 			XDATA_DIR, 
 			XDATA_EXT,

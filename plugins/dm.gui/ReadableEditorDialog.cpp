@@ -14,6 +14,8 @@
 
 #include "string/string.h"
 
+#include "XdFileChooserDialog.h"
+#include "imap.h"
 
 namespace ui
 {
@@ -35,6 +37,7 @@ namespace
 		WIDGET_XDATA_NAME,
 		WIDGET_SAVEBUTTON,
 	};
+
 }
 
 ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
@@ -85,8 +88,9 @@ void ReadableEditorDialog::initControlsFromEntity()
 	if (_entity->getKeyValue("xdata_contents") == "")
 	{
 		//Key has not been set yet. Set _xdFilename to the mapfilename.
-		_xdFilename = GlobalMap().getMapName();
-		_xdFilename = _xdFilename.substr(0, _xdFilename.rfind(".")+1 ) + "xd";	//might lead to weird behaviour if mapname was not defined yet.
+		_xdFilename = GlobalMapModule().getMapName();
+		std::size_t nameStartPos = _xdFilename.rfind("/")+1;
+		_xdFilename = _xdFilename.substr( nameStartPos, _xdFilename.rfind(".")+1-nameStartPos ) + "xd";	//might lead to weird behavior if mapname has not been defined yet.
 	}
 	else
 	{
@@ -96,9 +100,19 @@ void ReadableEditorDialog::initControlsFromEntity()
 		{
 			if (xdMap.size() > 1)
 			{
-				// The requested definition has been defined in multiple files. 
-				// A chooser should pop up, allowing the mapper to pick the right file.
+				// The requested definition has been defined in multiple files. Use the XdFileChooserDialog to pick a file.
 				// Optimally, the preview renderer would already show the selected definition.
+				readable::XDataMap::iterator ChosenIt = xdMap.end();
+				XdFileChooserDialog fcDialog(&ChosenIt, &xdMap);
+				fcDialog.show();
+				if (ChosenIt == xdMap.end())
+				{
+					//User clicked cancel. The window will be destroyed in _postShow()... (unclean!!!!!!!!!!!!!)
+					_xdFilename = "";
+					return;
+				}
+				_xdFilename = ChosenIt->first;
+				_xData = ChosenIt->second;
 			}
 			else
 			{
@@ -108,8 +122,11 @@ void ReadableEditorDialog::initControlsFromEntity()
 		}
 		else
 		{
-			// import failed. Popup with errormessage.
-			std::string errMsg = xdLoader->getImportSummary()[ xdLoader->getImportSummary().size() - 1 ];
+			//Import failed. Display the errormessage and use the default filename.
+			gtkutil::errorDialog( xdLoader->getImportSummary()[xdLoader->getImportSummary().size()-1] , GlobalMainFrame().getTopLevelWindow());
+			_xdFilename = GlobalMapModule().getMapName();
+			std::size_t nameStartPos = _xdFilename.rfind("/")+1;
+			_xdFilename = _xdFilename.substr( nameStartPos, _xdFilename.rfind(".")+1-nameStartPos ) + "xd";	//might lead to weird behavior if mapname has not been defined yet.
 		}
 	}
 }
@@ -123,15 +140,30 @@ void ReadableEditorDialog::save()
 	_entity->setKeyValue("xdata_contents", gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME])));
 
 	// Save xdata
-	if ( _xData && _xData->xport( GlobalRegistry().get(RKEY_ENGINE_PATH) + "xdata/" + _xdFilename, readable::Merge) == readable::DefinitionExists)
+	if (!_xData)	//temp until editfiels properly fleshed out.
 	{
-		switch ( _xData->xport( GlobalRegistry().get(RKEY_ENGINE_PATH) + "xdata/" + _xdFilename, readable::MergeOverwriteExisting) )
+		_xData = readable::XDataPtr(new readable::OneSidedXData(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]))));
+		_xData->setNumPages(1);
+	}
+	std::string path_ = GlobalRegistry().get(RKEY_ENGINE_PATH) + "darkmod/xdata/" + _xdFilename;
+	readable::FileStatus fst = _xData->xport( path_, readable::Merge);
+	if ( fst == readable::DefinitionExists)
+	{
+		switch ( _xData->xport( path_, readable::MergeOverwriteExisting) )
 		{
-		case readable::OpenFailed: break;
-		case readable::MergeFailed: break;
+		case readable::OpenFailed: 
+			gtkutil::errorDialog( "Failed to open " + _xdFilename + " for saving." , GlobalMainFrame().getTopLevelWindow());
+			break;
+		case readable::MergeFailed: 
+			gtkutil::errorDialog( "Merging failed, because the length of the definition to be overwritten could not be retrieved.", 
+				GlobalMainFrame().getTopLevelWindow()
+				);
+			break;
 		default: break; //success!
 		}
 	}
+	else if (fst == readable::OpenFailed)
+		gtkutil::errorDialog( "Failed to open " + _xdFilename + " for saving." , GlobalMainFrame().getTopLevelWindow());
 }
 
 GtkWidget* ReadableEditorDialog::createEditPane()
@@ -161,7 +193,7 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 
 	// XData Name
 	GtkWidget* xdataNameEntry = gtk_entry_new();
-	_widgets[WIDGET_XDATA_NAME] = nameEntry;
+	_widgets[WIDGET_XDATA_NAME] = xdataNameEntry;
 
 	// Reserve space for 40 characters
 	gtk_entry_set_width_chars(GTK_ENTRY(xdataNameEntry), 40);
@@ -196,6 +228,11 @@ GtkWidget* ReadableEditorDialog::createButtonPanel()
 
 void ReadableEditorDialog::_postShow()
 {
+	if (_xdFilename == "")
+	{
+		this->destroy();
+		return;
+	}
 	// Initialise the GL widget after the widgets have been shown
 	_guiView->initialiseView();
 
