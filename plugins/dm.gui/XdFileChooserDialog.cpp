@@ -26,14 +26,14 @@ XdFileChooserDialog::XdFileChooserDialog(readable::XDataMap::iterator* fileItera
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Create topLabel and button
-	GtkWidget* topLabel = gtkutil::LeftAlignedLabel("The requested definition has been found in multiple Files. Choose the file...");
+	GtkWidget* topLabel = gtkutil::LeftAlignedLabel("The requested definition has been found in multiple Files. Choose the file:");
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 
 	// Create the list of files:
 	GtkListStore* listStore = gtk_list_store_new(1, G_TYPE_STRING);
 	_treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(listStore));
 
-	GtkTreeViewColumn* fileCol = gtkutil::TextColumn("Files", 0);		//Would be better without the column-title
+	GtkTreeViewColumn* fileCol = gtkutil::TextColumn("Files", 0);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeview), fileCol);
 
 	// Append all xdMap-entries to the list.
@@ -43,6 +43,7 @@ XdFileChooserDialog::XdFileChooserDialog(readable::XDataMap::iterator* fileItera
 		gtk_list_store_append(listStore, &iter);
 		gtk_list_store_set(listStore, &iter, 0, it->first.c_str(), -1);
 	}
+	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeview), false);
 	gtk_widget_show(_treeview);
 
 	g_object_unref(G_OBJECT(listStore));
