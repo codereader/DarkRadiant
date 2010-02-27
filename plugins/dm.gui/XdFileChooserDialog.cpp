@@ -3,6 +3,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include <gtk/gtk.h>
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/TreeModel.h"
 #include "imainframe.h"
 
 namespace ui
@@ -67,18 +68,10 @@ void XdFileChooserDialog::storeSelection()
 	select = gtk_tree_view_get_selection ( GTK_TREE_VIEW (_treeview) );
 	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
 
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	gchar *file;
+	std::string selStr = gtkutil::TreeModel::getSelectedString(select,0);
+	if (selStr != "")
+		*_fileIterator = _xdMap->find(selStr);
 
-	if (gtk_tree_selection_get_selected (select, &model, &iter))
-	{
-		gtk_tree_model_get (model, &iter, 0, &file, -1);
-
-		*_fileIterator = _xdMap->find(file);
-
-		g_free (file);
-	}
 }
 
 void XdFileChooserDialog::onOk(GtkWidget* widget, XdFileChooserDialog* self)

@@ -25,7 +25,7 @@ namespace readable
 	}
 
 	typedef std::set<std::string> StringSet;
-	typedef std::multimap<std::string, XDataPtr> XDataMap;
+	typedef std::map<std::string, XDataPtr> XDataMap;
 	typedef std::map<std::string, std::vector<std::string> > StringVectorMap;
 	typedef std::map<std::string, std::string > StringMap;
 	typedef std::vector<std::pair<std::string, std::string>> StringPairList;
