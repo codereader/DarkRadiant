@@ -9,6 +9,8 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/LeftAlignment.h"
 
 #include <gtk/gtk.h>
 
@@ -28,6 +30,12 @@ namespace
 
 	const char* const NO_ENTITY_ERROR = "Cannot run Readable Editor on this selection.\n"
 		"Please select a single readable entity."; 
+
+	const std::string LABEL_PAGE_RELATED("Page related statements");
+
+	const gint LABEL_WIDTH = 20;
+
+	const gint LABEL_HEIGHT = 15;
 
 	// Widget handles for use in the _widgets std::map
 	enum
@@ -198,7 +206,7 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 
 	GtkWidget* nameLabel = gtkutil::LeftAlignedLabel("Inventory Name:");
 
-	gtk_table_attach_defaults(table, nameLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach(table, nameLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, nameEntry, 1, 2, curRow, curRow+1);
 
 	curRow++;
@@ -206,9 +214,6 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 	// XData Name
 	GtkWidget* xdataNameEntry = gtk_entry_new();
 	_widgets[WIDGET_XDATA_NAME] = xdataNameEntry;
-
-	// Reserve space for 40 characters
-	gtk_entry_set_width_chars(GTK_ENTRY(xdataNameEntry), 40);
 
 	GtkWidget* xDataNameLabel = gtkutil::LeftAlignedLabel("XData Name:");
 
@@ -220,10 +225,10 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 		);
 
 	GtkWidget* hboxXd = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(hboxXd), GTK_WIDGET(xdataNameEntry), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxXd), GTK_WIDGET(xdataNameEntry), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hboxXd), GTK_WIDGET(browseXdButton), FALSE, FALSE, 0);
 
-	gtk_table_attach_defaults(table, xDataNameLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach(table, xDataNameLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, hboxXd, 1, 2, curRow, curRow+1);
 
 	curRow++;
@@ -234,7 +239,7 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 
 	GtkWidget* numPagesLabel = gtkutil::LeftAlignedLabel("Number of Pages:");
 
-	gtk_table_attach_defaults(table, numPagesLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach(table, numPagesLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, numPagesEntry, 1, 2, curRow, curRow+1);
 
 	curRow++;
@@ -244,7 +249,7 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 	_widgets[WIDGET_PAGETURN_SND] = pageTurnEntry;
 	GtkWidget* pageTurnLabel = gtkutil::LeftAlignedLabel("Pageturn Sound:");
 
-	gtk_table_attach_defaults(table, pageTurnLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach(table, pageTurnLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, pageTurnEntry, 1, 2, curRow, curRow+1);
 
 	curRow++;
@@ -261,7 +266,7 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 	gtk_box_pack_start(GTK_BOX(hboxPL), GTK_WIDGET(TwoSidedRadio), FALSE, FALSE, 0);
 
 	// Add the Page Layout interface to the table:
-	gtk_table_attach_defaults(table, PageLayoutLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach(table, PageLayoutLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, hboxPL, 1, 2, curRow, curRow+1);
 
 	curRow++;
@@ -294,74 +299,90 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(currPageContainer), FALSE, FALSE, 0);
 
-	// Add a frame for page related edits and add it to the vbox
-	GtkWidget* pageFrame = gtk_frame_new("Page related");
-	gtk_box_pack_start(GTK_BOX(vbox), pageFrame, TRUE, TRUE, 6);
+	// Add a label for page related edits and add it to the vbox
+	GtkWidget* pageRelatedLabel = gtkutil::LeftAlignedLabel(
+		std::string("<span weight=\"bold\">") + LABEL_PAGE_RELATED + "</span>"
+		);
+	gtk_box_pack_start(GTK_BOX(vbox), pageRelatedLabel, FALSE, FALSE, 0);
 
-	// Add a gui chooser
-	GtkWidget* guiEntry = gtk_entry_new();
-	_widgets[WIDGET_GUI_ENTRY] = guiEntry;
-	gtk_entry_set_width_chars(GTK_ENTRY(guiEntry), 40);
+	// Add a gui chooser with a browse-button
 	GtkWidget* guiLabel = gtkutil::LeftAlignedLabel("Gui Definition:");
 
-	// Add a browse-button
+	GtkWidget* guiEntry = gtk_entry_new();
+	_widgets[WIDGET_GUI_ENTRY] = guiEntry;
+
 	GtkWidget* browseGuiButton = gtk_button_new_with_label("");
 	gtk_button_set_image(GTK_BUTTON(browseGuiButton), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR) );
 	g_signal_connect(
 		G_OBJECT(browseGuiButton), "clicked", G_CALLBACK(onBrowseGui), this
 		);
 
-	// Add the elements to an hbox.
-	GtkWidget* hboxGui = gtk_hbox_new(FALSE, 6);
+	// Add the elements to an hbox
+	GtkWidget* hboxGui = gtk_hbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(hboxGui), GTK_WIDGET(guiLabel), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hboxGui), GTK_WIDGET(guiEntry), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hboxGui), GTK_WIDGET(browseGuiButton), FALSE, FALSE, 0);
-	
-	// Add the hbox to a vbox and add that to the frame.
-	GtkWidget* vboxPR = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vboxPR), GTK_WIDGET(hboxGui), FALSE, FALSE, 6);
-	gtk_container_add(GTK_CONTAINER(pageFrame), vboxPR);
 
-	// Page title and body edit fields: Create a 3x3 table, stuff it inside and hbox and add it to vboxPR
-	GtkTable* tablePE = GTK_TABLE(gtk_table_new(3, 3, FALSE));
+	// Pack it into an alignment so that it's indented.
+	GtkWidget* alignment = gtkutil::LeftAlignment(GTK_WIDGET(hboxGui), 18, 1.0); 
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(alignment), FALSE, FALSE, 0);
+
+	// Page title and body edit fields: Create a 3x3 table
+	GtkTable* tablePE = GTK_TABLE(gtk_table_new(4, 3, FALSE));
 	gtk_table_set_row_spacings(tablePE, 6);
-	gtk_table_set_col_spacings(tablePE, 6);
-	gtk_box_pack_start(GTK_BOX(vboxPR), GTK_WIDGET(tablePE), TRUE, TRUE, 6);
+	gtk_table_set_col_spacings(tablePE, 12);
+
+	// Pack it into an alignment and add it to vbox
+	GtkWidget* alignmentTable = gtkutil::LeftAlignment(GTK_WIDGET(tablePE), 18, 1.0);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(alignmentTable), TRUE, TRUE, 0);
 	curRow = 0;
 
-	// Create "left" and "right" and add them to the first row of the table
-	GtkWidget* twoSidedLabel = gtkutil::LeftAlignedLabel("");
-	gtk_table_attach_defaults(tablePE, twoSidedLabel, 0, 1, curRow, curRow+1);
+	// Create "left" and "right" labels and add them to the first row of the table
 	GtkWidget* pageLeftLabel = gtk_label_new("Left");
 	gtk_label_set_justify(GTK_LABEL(pageLeftLabel), GTK_JUSTIFY_CENTER);
 	_widgets[WIDGET_PAGE_LEFT] = pageLeftLabel;
-	gtk_table_attach_defaults(tablePE, pageLeftLabel, 1, 2, curRow, curRow+1);
+	
 	GtkWidget* pageRightLabel = gtk_label_new("Right");
 	gtk_label_set_justify(GTK_LABEL(pageRightLabel), GTK_JUSTIFY_CENTER);
 	_widgets[WIDGET_PAGE_LEFT] = pageLeftLabel;
-	gtk_table_attach_defaults(tablePE, pageRightLabel, 2, 3, curRow, curRow+1);
+
+	gtk_table_attach(tablePE, pageLeftLabel, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(tablePE, pageRightLabel, 2, 3, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+
 	curRow++;
 
 	// Create "title" label and title-edit fields and add them to the second row of the table
-	GtkWidget* titleLabel = gtkutil::LeftAlignedLabel("Title:");
+	GtkWidget* titleLabel = gtkutil::LeftAlignedLabel("Title:");	
+
 	GtkWidget* textViewTitle = gtk_text_view_new();
-	_widgets[WIDGET_PAGE_TITLE] = textViewTitle;
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewTitle), GTK_WRAP_WORD);
+	_widgets[WIDGET_PAGE_TITLE] = textViewTitle;	
+
 	GtkWidget* textViewRightTitle = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightTitle), GTK_WRAP_WORD);
 	_widgets[WIDGET_PAGE_RIGHT_TITLE] = textViewRightTitle;
-	gtk_table_attach_defaults(tablePE, titleLabel, 0, 1, curRow, curRow+1);
-	gtk_table_attach_defaults(tablePE, textViewTitle, 1, 2, curRow, curRow+1);
-	gtk_table_attach_defaults(tablePE, textViewRightTitle, 2, 3, curRow, curRow+1);
+
+	gtk_table_attach(tablePE, titleLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach(tablePE, gtkutil::ScrolledFrame(GTK_WIDGET(textViewTitle)), 1, 2, curRow, curRow+1, GtkAttachOptions(GTK_FILL | GTK_EXPAND), GTK_FILL, 0, 0);
+	gtk_table_attach(tablePE, gtkutil::ScrolledFrame(GTK_WIDGET(textViewRightTitle)), 2, 3, curRow, curRow+1, GtkAttachOptions(GTK_FILL |GTK_EXPAND), GTK_FILL, 0, 0);
+
 	curRow++;
 
 	// Create "body" label and body-edit fields and add them to the third row of the table
 	GtkWidget* bodyLabel = gtkutil::LeftAlignedLabel("Body:");
+
 	GtkWidget* textViewBody = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewBody), GTK_WRAP_WORD);
 	_widgets[WIDGET_PAGE_BODY] = textViewBody;
+
 	GtkWidget* textViewRightBody = gtk_text_view_new();
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightBody), GTK_WRAP_WORD);
 	_widgets[WIDGET_PAGE_RIGHT_BODY] = textViewRightBody;
-	gtk_table_attach_defaults(tablePE, bodyLabel, 0, 1, curRow, curRow+1);
-	gtk_table_attach_defaults(tablePE, textViewBody, 1, 2, curRow, curRow+1);
-	gtk_table_attach_defaults(tablePE, textViewRightBody, 2, 3, curRow, curRow+1);
+
+	gtk_table_attach(tablePE, bodyLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	gtk_table_attach_defaults(tablePE, gtkutil::ScrolledFrame(GTK_WIDGET(textViewBody)), 1, 2, curRow, curRow+1);
+	gtk_table_attach_defaults(tablePE, gtkutil::ScrolledFrame(GTK_WIDGET(textViewRightBody)), 2, 3, curRow, curRow+1);
+
 	curRow++;
 
 	return vbox;
