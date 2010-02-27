@@ -8,6 +8,7 @@
 #include "ifilesystem.h"
 #include "irender.h"
 #include "igl.h"
+#include "imap.h"
 
 #include "ReadableEditorDialog.h"
 #include "gui/GuiManager.h"
@@ -33,6 +34,7 @@ public:
 			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_RENDERSYSTEM);
 			_dependencies.insert(MODULE_OPENGL);
+			_dependencies.insert(MODULE_MAP);
 		}
 
 		return _dependencies;

@@ -62,6 +62,10 @@ private:
 
 	static void onCancel(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onSave(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onBrowseXd(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onPrevPage(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onNextPage(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self);
 };
 
 } // namespace ui

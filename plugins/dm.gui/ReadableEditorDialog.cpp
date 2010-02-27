@@ -36,6 +36,16 @@ namespace
 		WIDGET_READABLE_NAME,
 		WIDGET_XDATA_NAME,
 		WIDGET_SAVEBUTTON,
+		WIDGET_NUMPAGES,
+		WIDGET_CURRENT_PAGE,
+		WIDGET_PAGETURN_SND,
+		WIDGET_GUI_ENTRY,
+		WIDGET_PAGE_LEFT,
+		WIDGET_PAGE_RIGHT,
+		WIDGET_PAGE_TITLE,
+		WIDGET_PAGE_RIGHT_TITLE,
+		WIDGET_PAGE_BODY,
+		WIDGET_PAGE_RIGHT_BODY,
 	};
 
 }
@@ -168,12 +178,14 @@ void ReadableEditorDialog::save()
 
 GtkWidget* ReadableEditorDialog::createEditPane()
 {
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	// To Do:
+	//	1) Need to connect the radiobutton signal
 
+	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 	_widgets[WIDGET_EDIT_PANE] = vbox;
 
 	// Create the table for the widget alignment
-	GtkTable* table = GTK_TABLE(gtk_table_new(2, 2, FALSE));
+	GtkTable* table = GTK_TABLE(gtk_table_new(5, 2, FALSE));
 	gtk_table_set_row_spacings(table, 6);
 	gtk_table_set_col_spacings(table, 6);
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
@@ -200,8 +212,157 @@ GtkWidget* ReadableEditorDialog::createEditPane()
 
 	GtkWidget* xDataNameLabel = gtkutil::LeftAlignedLabel("XData Name:");
 
+	// Add a browse-button.
+	GtkWidget* browseXdButton = gtk_button_new_with_label("");
+	gtk_button_set_image(GTK_BUTTON(browseXdButton), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR) );
+	g_signal_connect(
+		G_OBJECT(browseXdButton), "clicked", G_CALLBACK(onBrowseXd), this
+		);
+
+	GtkWidget* hboxXd = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hboxXd), GTK_WIDGET(xdataNameEntry), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxXd), GTK_WIDGET(browseXdButton), FALSE, FALSE, 0);
+
 	gtk_table_attach_defaults(table, xDataNameLabel, 0, 1, curRow, curRow+1);
-	gtk_table_attach_defaults(table, xdataNameEntry, 1, 2, curRow, curRow+1);
+	gtk_table_attach_defaults(table, hboxXd, 1, 2, curRow, curRow+1);
+
+	curRow++;
+
+	// Page count
+	GtkWidget* numPagesEntry = gtk_entry_new();
+	_widgets[WIDGET_NUMPAGES] = numPagesEntry;
+
+	GtkWidget* numPagesLabel = gtkutil::LeftAlignedLabel("Number of Pages:");
+
+	gtk_table_attach_defaults(table, numPagesLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach_defaults(table, numPagesEntry, 1, 2, curRow, curRow+1);
+
+	curRow++;
+
+	// Pageturn Sound
+	GtkWidget* pageTurnEntry = gtk_entry_new();
+	_widgets[WIDGET_PAGETURN_SND] = pageTurnEntry;
+	GtkWidget* pageTurnLabel = gtkutil::LeftAlignedLabel("Pageturn Sound:");
+
+	gtk_table_attach_defaults(table, pageTurnLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach_defaults(table, pageTurnEntry, 1, 2, curRow, curRow+1);
+
+	curRow++;
+
+	// Page Layout:
+	GtkWidget* PageLayoutLabel = gtkutil::LeftAlignedLabel("Page layout:");
+	GtkWidget* OneSidedRadio = gtk_radio_button_new_with_label( NULL, "One-sided" );
+	GSList* PageLayoutGroup = gtk_radio_button_get_group( GTK_RADIO_BUTTON(OneSidedRadio) );
+	GtkWidget* TwoSidedRadio = gtk_radio_button_new_with_label( PageLayoutGroup, "Two-sided" );
+	
+	// Add the radiobuttons to an hbox
+	GtkWidget* hboxPL = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hboxPL), GTK_WIDGET(OneSidedRadio), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxPL), GTK_WIDGET(TwoSidedRadio), FALSE, FALSE, 0);
+
+	// Add the Page Layout interface to the table:
+	gtk_table_attach_defaults(table, PageLayoutLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach_defaults(table, hboxPL, 1, 2, curRow, curRow+1);
+
+	curRow++;
+
+	// Page Switcher
+	GtkWidget* prevPage = gtk_button_new_with_label("");
+	gtk_button_set_image(GTK_BUTTON(prevPage), gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_SMALL_TOOLBAR) );
+	g_signal_connect(
+		G_OBJECT(prevPage), "clicked", G_CALLBACK(onPrevPage), this
+		);
+	GtkWidget* nextPage = gtk_button_new_with_label("");
+	gtk_button_set_image(GTK_BUTTON(nextPage), gtk_image_new_from_stock(GTK_STOCK_GO_FORWARD, GTK_ICON_SIZE_SMALL_TOOLBAR) );
+	g_signal_connect(
+		G_OBJECT(nextPage), "clicked", G_CALLBACK(onNextPage), this
+		);
+	GtkWidget* currPageLabel = gtkutil::LeftAlignedLabel("Current Page:");
+	GtkWidget* currPageDisplay = gtkutil::LeftAlignedLabel("1");
+	_widgets[WIDGET_CURRENT_PAGE] = currPageDisplay;
+
+	// Add the elements to an hbox
+	GtkWidget* hboxPS = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(prevPage), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(currPageLabel), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(currPageDisplay), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(nextPage), FALSE, FALSE, 0);
+
+	// Align the hbox to the center
+	GtkWidget* currPageContainer = gtk_alignment_new(0.5,1,0,0);
+	gtk_container_add(GTK_CONTAINER(currPageContainer), hboxPS);
+
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(currPageContainer), FALSE, FALSE, 0);
+
+	// Add a frame for page related edits and add it to the vbox
+	GtkWidget* pageFrame = gtk_frame_new("Page related");
+	gtk_box_pack_start(GTK_BOX(vbox), pageFrame, TRUE, TRUE, 6);
+
+	// Add a gui chooser
+	GtkWidget* guiEntry = gtk_entry_new();
+	_widgets[WIDGET_GUI_ENTRY] = guiEntry;
+	gtk_entry_set_width_chars(GTK_ENTRY(guiEntry), 40);
+	GtkWidget* guiLabel = gtkutil::LeftAlignedLabel("Gui Definition:");
+
+	// Add a browse-button
+	GtkWidget* browseGuiButton = gtk_button_new_with_label("");
+	gtk_button_set_image(GTK_BUTTON(browseGuiButton), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR) );
+	g_signal_connect(
+		G_OBJECT(browseGuiButton), "clicked", G_CALLBACK(onBrowseGui), this
+		);
+
+	// Add the elements to an hbox.
+	GtkWidget* hboxGui = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hboxGui), GTK_WIDGET(guiLabel), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxGui), GTK_WIDGET(guiEntry), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hboxGui), GTK_WIDGET(browseGuiButton), FALSE, FALSE, 0);
+	
+	// Add the hbox to a vbox and add that to the frame.
+	GtkWidget* vboxPR = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vboxPR), GTK_WIDGET(hboxGui), FALSE, FALSE, 6);
+	gtk_container_add(GTK_CONTAINER(pageFrame), vboxPR);
+
+	// Page title and body edit fields: Create a 3x3 table, stuff it inside and hbox and add it to vboxPR
+	GtkTable* tablePE = GTK_TABLE(gtk_table_new(3, 3, FALSE));
+	gtk_table_set_row_spacings(tablePE, 6);
+	gtk_table_set_col_spacings(tablePE, 6);
+	gtk_box_pack_start(GTK_BOX(vboxPR), GTK_WIDGET(tablePE), TRUE, TRUE, 6);
+	curRow = 0;
+
+	// Create "left" and "right" and add them to the first row of the table
+	GtkWidget* twoSidedLabel = gtkutil::LeftAlignedLabel("");
+	gtk_table_attach_defaults(tablePE, twoSidedLabel, 0, 1, curRow, curRow+1);
+	GtkWidget* pageLeftLabel = gtk_label_new("Left");
+	gtk_label_set_justify(GTK_LABEL(pageLeftLabel), GTK_JUSTIFY_CENTER);
+	_widgets[WIDGET_PAGE_LEFT] = pageLeftLabel;
+	gtk_table_attach_defaults(tablePE, pageLeftLabel, 1, 2, curRow, curRow+1);
+	GtkWidget* pageRightLabel = gtk_label_new("Right");
+	gtk_label_set_justify(GTK_LABEL(pageRightLabel), GTK_JUSTIFY_CENTER);
+	_widgets[WIDGET_PAGE_LEFT] = pageLeftLabel;
+	gtk_table_attach_defaults(tablePE, pageRightLabel, 2, 3, curRow, curRow+1);
+	curRow++;
+
+	// Create "title" label and title-edit fields and add them to the second row of the table
+	GtkWidget* titleLabel = gtkutil::LeftAlignedLabel("Title:");
+	GtkWidget* textViewTitle = gtk_text_view_new();
+	_widgets[WIDGET_PAGE_TITLE] = textViewTitle;
+	GtkWidget* textViewRightTitle = gtk_text_view_new();
+	_widgets[WIDGET_PAGE_RIGHT_TITLE] = textViewRightTitle;
+	gtk_table_attach_defaults(tablePE, titleLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach_defaults(tablePE, textViewTitle, 1, 2, curRow, curRow+1);
+	gtk_table_attach_defaults(tablePE, textViewRightTitle, 2, 3, curRow, curRow+1);
+	curRow++;
+
+	// Create "body" label and body-edit fields and add them to the third row of the table
+	GtkWidget* bodyLabel = gtkutil::LeftAlignedLabel("Body:");
+	GtkWidget* textViewBody = gtk_text_view_new();
+	_widgets[WIDGET_PAGE_BODY] = textViewBody;
+	GtkWidget* textViewRightBody = gtk_text_view_new();
+	_widgets[WIDGET_PAGE_RIGHT_BODY] = textViewRightBody;
+	gtk_table_attach_defaults(tablePE, bodyLabel, 0, 1, curRow, curRow+1);
+	gtk_table_attach_defaults(tablePE, textViewBody, 1, 2, curRow, curRow+1);
+	gtk_table_attach_defaults(tablePE, textViewRightBody, 2, 3, curRow, curRow+1);
+	curRow++;
 
 	return vbox;
 }
@@ -278,6 +439,26 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 
 	// Done, just destroy the window
 	self->destroy();
+}
+
+void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* self) 
+{
+
+}
+
+void ReadableEditorDialog::onNextPage(GtkWidget* widget, ReadableEditorDialog* self) 
+{
+
+}
+
+void ReadableEditorDialog::onPrevPage(GtkWidget* widget, ReadableEditorDialog* self) 
+{
+
+}
+
+void ReadableEditorDialog::onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self) 
+{
+
 }
 
 } // namespace ui
