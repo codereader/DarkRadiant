@@ -6,7 +6,7 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gui/GuiView.h"
 #include <map>
-
+#include <gtk/gtk.h>
 #include "XDataLoader.h"
 
 class Entity;
@@ -66,6 +66,7 @@ private:
 	static void onPrevPage(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onNextPage(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self);
+
 };
 
 } // namespace ui
