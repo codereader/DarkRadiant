@@ -3,12 +3,16 @@
 
 #include "ishaders.h"
 #include "math/Vector4.h"
+
 #include "RenderableText.h"
+#include "GuiScript.h"
 
 namespace parser { class DefTokeniser; }
 
 namespace gui
 {
+
+class Gui;
 
 class GuiWindowDef;
 typedef boost::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
@@ -20,6 +24,9 @@ typedef boost::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
 class GuiWindowDef
 {
 private:
+	// The owning GUI
+	Gui& _owner;
+
 	// The renderable text object for submission to a Renderer
 	RenderableText _renderableText;
 
@@ -28,6 +35,10 @@ private:
 
 	// The text to be rendered in this window (private, use getText() and setText())
 	std::string _text;
+
+	// The mapping between time and GUI scripts
+	typedef std::multimap<std::size_t, GuiScriptPtr> TimedEventMap;
+	TimedEventMap _timedEvents;
 
 public:
 	// Public properties
@@ -98,7 +109,7 @@ public:
 	ChildWindows children;
 
 	// Default constructor
-	GuiWindowDef();
+	GuiWindowDef(Gui& owner);
 
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
 
@@ -109,6 +120,12 @@ public:
 
 	// Get the renderable text object containing the OpenGLRenderables
 	RenderableText& getRenderableText();
+
+	/** 
+	 * greebo: This is some sort of "think" method, giving this windowDef
+	 * a chance to handle timed events.
+	 */
+	void update(const std::size_t timeStep);
 
 private:
 	Vector4 parseVector4(parser::DefTokeniser& tokeniser);
