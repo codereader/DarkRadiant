@@ -30,7 +30,7 @@ GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
 		{
 			if (gui->getDesktop() == NULL)
 			{
-				GuiWindowDefPtr desktop(new GuiWindowDef);
+				GuiWindowDefPtr desktop(new GuiWindowDef(*gui));
 				desktop->constructFromTokens(tokeniser);
 
 				gui->setDesktop(desktop);

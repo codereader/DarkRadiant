@@ -3,6 +3,8 @@
 #include "parser/DefTokeniser.h"
 #include "string/string.h"
 #include "itextstream.h"
+
+#include <limits>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -12,7 +14,8 @@
 namespace gui
 {
 
-GuiWindowDef::GuiWindowDef() :
+GuiWindowDef::GuiWindowDef(Gui& owner) :
+	_owner(owner),
 	_renderableText(*this),
 	_textChanged(true),
 	visible(true),
@@ -241,96 +244,68 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 		else if (token == "windowdef")
 		{
 			// Child windowdef
-			GuiWindowDefPtr window(new GuiWindowDef);
+			GuiWindowDefPtr window(new GuiWindowDef(_owner));
 			window->constructFromTokens(tokeniser);
 
 			addWindow(window);
 		}
 		else if (token == "ontime")
 		{
-			// TODO
-			std::string time = tokeniser.nextToken();
-			tokeniser.assertNextToken("{");
+			std::string timeStr = tokeniser.nextToken();
 
-			std::size_t depth = 1;
+			// Check the time for validity
+			std::size_t time = strToSizet(timeStr, std::numeric_limits<std::size_t>::max());
 
-			while (tokeniser.hasMoreTokens() && depth > 0)
+			if (time == std::numeric_limits<std::size_t>::max())
 			{
-				std::string token = tokeniser.nextToken();
-				if (token == "}") depth--;
-				if (token == "{") depth++;
+				globalWarningStream() << "Invalid time encountered in onTime event in " 
+					<< name << ": " << timeStr << std::endl;
 			}
+
+			// Allocate a new GuiScript
+			GuiScriptPtr script(new GuiScript(*this));
+
+			script->constructFromTokens(tokeniser);
+
+			_timedEvents.insert(TimedEventMap::value_type(time, script));
 		}
 		else if (token == "onnamedevent")
 		{
-			// TODO
 			std::string eventName = tokeniser.nextToken();
-			tokeniser.assertNextToken("{");
 
-			std::size_t depth = 1;
+			// Parse the script
+			GuiScriptPtr script(new GuiScript(*this));
+			script->constructFromTokens(tokeniser);
 
-			while (tokeniser.hasMoreTokens() && depth > 0)
-			{
-				std::string token = tokeniser.nextToken();
-				if (token == "}") depth--;
-				if (token == "{") depth++;
-			}
+			// TODO: Save event
 		}
 		else if (token == "onevent")
 		{
+			GuiScriptPtr script(new GuiScript(*this));
+			script->constructFromTokens(tokeniser);
+
 			// TODO
-			tokeniser.assertNextToken("{");
-
-			std::size_t depth = 1;
-
-			while (tokeniser.hasMoreTokens() && depth > 0)
-			{
-				std::string token = tokeniser.nextToken();
-				if (token == "}") depth--;
-				if (token == "{") depth++;
-			}
 		}
 		else if (token == "onesc")
 		{
+			GuiScriptPtr script(new GuiScript(*this));
+			script->constructFromTokens(tokeniser);
+
 			// TODO
-			tokeniser.assertNextToken("{");
-
-			std::size_t depth = 1;
-
-			while (tokeniser.hasMoreTokens() && depth > 0)
-			{
-				std::string token = tokeniser.nextToken();
-				if (token == "}") depth--;
-				if (token == "{") depth++;
-			}
 		}
 		else if (token == "onmouseenter" || token == "onmouseexit")
 		{
+			GuiScriptPtr script(new GuiScript(*this));
+			script->constructFromTokens(tokeniser);
+
 			// TODO
-			tokeniser.assertNextToken("{");
-
-			std::size_t depth = 1;
-
-			while (tokeniser.hasMoreTokens() && depth > 0)
-			{
-				std::string token = tokeniser.nextToken();
-				if (token == "}") depth--;
-				if (token == "{") depth++;
-			}
 		}
 		else if (token == "onaction")
 		{
+			GuiScriptPtr script(new GuiScript(*this));
+			script->constructFromTokens(tokeniser);
+
 			// TODO
-			tokeniser.assertNextToken("{");
-
-			std::size_t depth = 1;
-
-			while (tokeniser.hasMoreTokens() && depth > 0)
-			{
-				std::string token = tokeniser.nextToken();
-				if (token == "}") depth--;
-				if (token == "{") depth++;
-			}
 		}
 		else if (token == "float" || token == "definefloat")
 		{
@@ -377,6 +352,17 @@ RenderableText& GuiWindowDef::getRenderableText()
 	}
 
 	return _renderableText;
+}
+
+void GuiWindowDef::update(const std::size_t timeStep)
+{
+	std::size_t oldTime = time;
+
+	// Update this windowDef's time
+	time += timeStep;
+
+	// Check events to handle
+
 }
 
 }
