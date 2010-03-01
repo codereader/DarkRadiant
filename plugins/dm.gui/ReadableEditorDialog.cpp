@@ -11,6 +11,7 @@
 #include "gtkutil/dialog.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignment.h"
+#include "gtkutil/StockIconMenuItem.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -66,6 +67,11 @@ namespace ui
 			WIDGET_PAGE_RIGHT_BODY_SCROLLED,
 			WIDGET_SHIFT_RIGHT,
 			WIDGET_SHIFT_LEFT,
+			WIDGET_MENU_SHIFT_RIGHT,
+			WIDGET_MENU_SHIFT_LEFT,
+			WIDGET_MENU_APPEND,
+			WIDGET_MENU_PREPEND,
+			WIDGET_MENU_TOOLS,
 		};
 
 	}
@@ -98,7 +104,91 @@ namespace ui
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
 
+		createMenus();
+
 		gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
+	}
+
+	void ReadableEditorDialog::createMenus()
+	{
+		// Shift right Menu
+		GtkWidget* mSR = gtk_menu_new();
+
+		GtkWidget* appSR = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
+		g_signal_connect(
+			G_OBJECT(appSR), "activate", G_CALLBACK(onMenuAppendShift), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), appSR);
+
+		GtkWidget* disSR = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard content");
+		g_signal_connect(
+			G_OBJECT(disSR), "activate", G_CALLBACK(onMenuDiscardLast), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), disSR);
+
+		gtk_widget_show_all(mSR);
+		_widgets[WIDGET_MENU_SHIFT_RIGHT] = mSR;
+
+		// Shift left Menu
+		GtkWidget* mSL = gtk_menu_new();
+
+		GtkWidget* appSL = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
+		g_signal_connect(
+			G_OBJECT(appSL), "activate", G_CALLBACK(onMenuAppendShift), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), appSL);
+
+		GtkWidget* disSl = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard content");
+		g_signal_connect(
+			G_OBJECT(disSl), "activate", G_CALLBACK(onMenuDiscardFirst), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), disSl);
+
+		gtk_widget_show_all(mSL);
+		_widgets[WIDGET_MENU_SHIFT_LEFT] = mSL;
+
+		// Append Menu
+		GtkWidget* mApp = gtk_menu_new();
+
+		GtkWidget* append = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
+		g_signal_connect(
+			G_OBJECT(append), "activate", G_CALLBACK(onMenuAppend), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mApp), append);
+
+		gtk_widget_show_all(mApp);
+		_widgets[WIDGET_MENU_APPEND] = mApp;
+
+		// Prepend Menu
+		GtkWidget* mPre = gtk_menu_new();
+
+		GtkWidget* prepend = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
+		g_signal_connect(
+			G_OBJECT(prepend), "activate", G_CALLBACK(onMenuPrepend), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mPre), prepend);
+
+		gtk_widget_show_all(mPre);
+		_widgets[WIDGET_MENU_PREPEND] = mPre;
+
+		// Tools Menu
+		GtkWidget* mTools = gtk_menu_new();
+
+		GtkWidget* impSum = gtkutil::StockIconMenuItem(GTK_STOCK_DND, "Show last XData import summary");
+		g_signal_connect(
+			G_OBJECT(impSum), "activate", G_CALLBACK(onImpSum), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mTools), impSum);
+
+		GtkWidget* dupDef = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Show duplicated definitions");
+		g_signal_connect(
+			G_OBJECT(dupDef), "activate", G_CALLBACK(onDupDef), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mTools), dupDef);
+
+		gtk_widget_show_all(mTools);
+		_widgets[WIDGET_MENU_TOOLS] = mTools;
+
 	}
 
 	GtkWidget* ReadableEditorDialog::createEditPane()
@@ -356,17 +446,23 @@ namespace ui
 
 		curRow++;
 
-		// Create "title" label and title-edit fields and add them to the second row of the table
+		// Create "title" label and title-textViews and add them to the second row of the table. Add the key-press-event.
 		GtkWidget* titleLabel = gtkutil::LeftAlignedLabel("Title:");	
 
 		GtkWidget* textViewTitle = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewTitle), GTK_WRAP_WORD);
-		_widgets[WIDGET_PAGE_TITLE] = textViewTitle;	
+		_widgets[WIDGET_PAGE_TITLE] = textViewTitle;
+		g_signal_connect(
+			G_OBJECT(textViewTitle), "key-press-event", G_CALLBACK(onKeyPress), this
+			);
 
 		GtkWidget* textViewRightTitle = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightTitle), GTK_WRAP_WORD);
 		_bufferRightTitle = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewRightTitle));
 		_widgets[WIDGET_PAGE_RIGHT_TITLE] = textViewRightTitle;
+		g_signal_connect(
+			G_OBJECT(textViewRightTitle), "key-press-event", G_CALLBACK(onKeyPress), this
+			);
 		_widgets[WIDGET_PAGE_RIGHT_TITLE_SCROLLED] = gtkutil::ScrolledFrame(textViewRightTitle);
 
 		gtk_table_attach(tablePE, titleLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
@@ -375,17 +471,23 @@ namespace ui
 
 		curRow++;
 
-		// Create "body" label and body-edit fields and add them to the third row of the table
+		// Create "body" label and body-textViews and add them to the third row of the table. Add the key-press-event.
 		GtkWidget* bodyLabel = gtkutil::LeftAlignedLabel("Body:");
 
 		GtkWidget* textViewBody = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewBody), GTK_WRAP_WORD);
 		_widgets[WIDGET_PAGE_BODY] = textViewBody;
+		g_signal_connect(
+			G_OBJECT(textViewBody), "key-press-event", G_CALLBACK(onKeyPress), this
+			);
 
 		GtkWidget* textViewRightBody = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightBody), GTK_WRAP_WORD);
 		_bufferRightBody = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewRightBody));
 		_widgets[WIDGET_PAGE_RIGHT_BODY] = textViewRightBody;
+		g_signal_connect(
+			G_OBJECT(textViewRightBody), "key-press-event", G_CALLBACK(onKeyPress), this
+			);
 		_widgets[WIDGET_PAGE_RIGHT_BODY_SCROLLED] = gtkutil::ScrolledFrame(textViewRightBody);
 
 		gtk_table_attach(tablePE, bodyLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
@@ -411,8 +513,15 @@ namespace ui
 			G_OBJECT(_widgets[WIDGET_SAVEBUTTON]), "clicked", G_CALLBACK(onSave), this
 		);
 
+		GtkWidget* toolsButton = gtk_button_new_with_label("Tools");
+		gtk_button_set_image(GTK_BUTTON(toolsButton), gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_SMALL_TOOLBAR) );
+		g_signal_connect(
+			G_OBJECT(toolsButton), "clicked", G_CALLBACK(onToolsClicked), this
+			);
+
 		gtk_box_pack_end(GTK_BOX(hbx), _widgets[WIDGET_SAVEBUTTON], TRUE, TRUE, 0);
 		gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+		gtk_box_pack_end(GTK_BOX(hbx), toolsButton, TRUE, TRUE, 18);
 
 		return gtkutil::RightAlignment(hbx);
 	}
@@ -428,7 +537,6 @@ namespace ui
 		}
 
 		// Initialize proper editing controls.
-		toggleTwoSidedEditing( _xData->getPageLayout() == XData::TwoSided );
 		populateControlsFromXData();
 
 		// Initialise the GL widget after the widgets have been shown
@@ -586,29 +694,23 @@ namespace ui
 		gtk_label_set_text(GTK_LABEL(_widgets[WIDGET_CURRENT_PAGE]), boost::lexical_cast<std::string>(pageIndex+1).c_str() );
 
 		// Update page statements textviews from xData
-		std::string getString = _xData->getPageContent(XData::Title, pageIndex, XData::Left);
-		gtk_text_buffer_set_text( GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[WIDGET_PAGE_TITLE]))), getString.c_str(), getString.size() );
-		getString = _xData->getPageContent(XData::Body, pageIndex, XData::Left);
-		gtk_text_buffer_set_text( GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[WIDGET_PAGE_BODY]))), getString.c_str(), getString.size() );
+		setTextViewAndScroll( WIDGET_PAGE_TITLE, _xData->getPageContent(XData::Title, pageIndex, XData::Left) );
+		setTextViewAndScroll( WIDGET_PAGE_BODY, _xData->getPageContent(XData::Body, pageIndex, XData::Left) );
 		if (_xData->getPageLayout() == XData::TwoSided)
 		{
-			getString = _xData->getPageContent(XData::Title, pageIndex, XData::Right);
-			gtk_text_buffer_set_text( GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[WIDGET_PAGE_RIGHT_TITLE]))), getString.c_str(), getString.size() );
-			getString = _xData->getPageContent(XData::Body, pageIndex, XData::Right);
-			gtk_text_buffer_set_text( GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[WIDGET_PAGE_RIGHT_BODY]))), getString.c_str(), getString.size() );
+			setTextViewAndScroll( WIDGET_PAGE_RIGHT_TITLE, _xData->getPageContent(XData::Title, pageIndex, XData::Right ));
+			setTextViewAndScroll( WIDGET_PAGE_RIGHT_BODY, _xData->getPageContent(XData::Body, pageIndex, XData::Right) );
 			// Update Gui statement entry from xData
-			getString = _xData->getGuiPage(pageIndex);
-			if (getString != "")
-				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), getString.c_str());
+			if (_xData->getGuiPage(pageIndex) != "")
+				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), _xData->getGuiPage(pageIndex).c_str());
 			else
 				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_TWOSIDED_GUI);
 		}
 		else
 		{
 			// Update Gui statement entry from xData
-			getString = _xData->getGuiPage(pageIndex);
-			if (getString != "")
-				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), getString.c_str());
+			if (_xData->getGuiPage(pageIndex) != "")
+				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), _xData->getGuiPage(pageIndex).c_str());
 			else
 				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_ONESIDED_GUI);
 		}
@@ -632,6 +734,7 @@ namespace ui
 
 	void ReadableEditorDialog::populateControlsFromXData()
 	{
+		toggleTwoSidedEditing(_xData->getPageLayout() == XData::TwoSided);
 		showPage(0);
 
 		gtk_entry_set_text( GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), _xData->getName().c_str() );
@@ -650,6 +753,7 @@ namespace ui
 	void ReadableEditorDialog::checkXDataUniqueness()
 	{
 		std::string xdn = gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]));
+		_xData->setName(xdn);	//neccessary to prevent FocusOut be called upon pressing enter in the entry.
 		_xdLoader->retrieveXdInfo();
 		XData::StringVectorMap::const_iterator it = _xdLoader->getDefinitionList().find(xdn);
 		if (it != _xdLoader->getDefinitionList().end())
@@ -694,7 +798,7 @@ namespace ui
 					message = _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size()-1];
 				}				
 			}
-			//Dialog RESULT_NO! Make a different name suggestion!
+			//Dialog RESULT_NO or import failed! Make a different name suggestion!
 			std::string suggestion;
 			for (int n=1; n>0; n++)
 			{
@@ -704,6 +808,7 @@ namespace ui
 					break;
 			}
 			gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), suggestion.c_str());
+			_xData->setName(suggestion);
 			popup = GlobalDialogManager().createMessageBox(
 				"XData has been renamed.", 
 				message + "To avoid duplicated XData definitions, the current definition has been renamed to " + suggestion + ".", 
@@ -764,10 +869,8 @@ namespace ui
 				showPage(0);
 				return;
 			}
-			showPage(_currentPageIndex-1);
-			_xData->setNumPages(_currentPageIndex);
 			gtk_spin_button_set_value(GTK_SPIN_BUTTON(_widgets[WIDGET_NUMPAGES]), _currentPageIndex );
-			_currentPageIndex -= 1;
+			//_currentPageIndex -= 1;
 		}
 		else
 		{
@@ -804,6 +907,7 @@ namespace ui
 
 	void ReadableEditorDialog::shiftLeft()
 	{
+		storeCurrentPage();
 		for (std::size_t n = 0; n < _xData->getNumPages()-1; n++)
 		{
 			_xData->setPageContent(XData::Title, n, XData::Left,
@@ -827,6 +931,7 @@ namespace ui
 
 	void ReadableEditorDialog::shiftRight()
 	{
+		storeCurrentPage();
 		for (std::size_t n = _xData->getNumPages()-1; n>0; n--)
 		{
 			_xData->setPageContent(XData::Title, n, XData::Right,
@@ -878,7 +983,8 @@ namespace ui
 			self->storeCurrentPage();
 			self->showPage(self->_currentPageIndex+1);
 		}
-		// else insert-new-page-popup
+		else
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_APPEND]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 	}
 
 	void ReadableEditorDialog::onPrevPage(GtkWidget* widget, ReadableEditorDialog* self) 
@@ -888,7 +994,31 @@ namespace ui
 			self->storeCurrentPage();
 			self->showPage(self->_currentPageIndex-1);
 		}
-		// else insert-new-page-popup
+		else
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_PREPEND]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	}
+
+	void ReadableEditorDialog::onFirstPage(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		if (self->_currentPageIndex != 0)
+		{
+			self->storeCurrentPage();
+			self->showPage(0);
+		}
+		else
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_PREPEND]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	}
+
+	void ReadableEditorDialog::onLastPage(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		
+		if (self->_currentPageIndex != self->_xData->getNumPages()-1)
+		{
+			self->storeCurrentPage();
+			self->showPage(self->_xData->getNumPages()-1);
+		}
+		else
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_APPEND]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 	}
 
 	void ReadableEditorDialog::onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self) 
@@ -902,7 +1032,6 @@ namespace ui
 		{
 			// Convert TwoSided XData to OneSided and refresh controls
 			self->storeXData();
-			self->toggleTwoSidedEditing(false);
 			self->_xData->togglePageLayout(self->_xData);
 			self->populateControlsFromXData();
 		}
@@ -915,7 +1044,6 @@ namespace ui
 		{
 			// Convert OneSided XData to TwoSided and refresh controls
 			self->storeXData();
-			self->toggleTwoSidedEditing(true);
 			self->_xData->togglePageLayout(self->_xData);
 			self->populateControlsFromXData();			
 		}
@@ -924,14 +1052,33 @@ namespace ui
 
 	gboolean ReadableEditorDialog::onFocusOut(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self)
 	{
-		self->checkXDataUniqueness();
+		if (self->_xData->getName() != gtk_entry_get_text(GTK_ENTRY(self->_widgets[WIDGET_XDATA_NAME])))
+			// Only check uniqueness if the file has not been imported yet.
+			self->checkXDataUniqueness();
 		return FALSE;
 	}
 
 	gboolean ReadableEditorDialog::onKeyPress(GtkWidget *widget, GdkEventKey* event, ReadableEditorDialog* self)
 	{
 		bool xdWidget = false;
-		if (widget == self->_widgets[WIDGET_NUMPAGES])
+
+		if (widget == self->_widgets[WIDGET_PAGE_TITLE])
+		{
+			// Update _guiView here...
+		}
+		else if (widget == self->_widgets[WIDGET_PAGE_RIGHT_TITLE])
+		{
+			// Update _guiView here...
+		}
+		else if (widget == self->_widgets[WIDGET_PAGE_BODY])
+		{
+			// Update _guiView here...
+		}
+		else if (widget == self->_widgets[WIDGET_PAGE_RIGHT_BODY])
+		{
+			// Update _guiView here...
+		}
+		else if (widget == self->_widgets[WIDGET_NUMPAGES])
 		{
 			if (event->keyval != GDK_Escape)
 				return FALSE;
@@ -964,39 +1111,47 @@ namespace ui
 				case GDK_KP_Enter:
 					if (xdWidget)
 						self->checkXDataUniqueness();
-					return TRUE;
+					return FALSE;
 				default: return FALSE;
 			}
 		}
-		return TRUE;
+		return FALSE;
 	}
 
 	void ReadableEditorDialog::onShiftLeft(GtkWidget* widget, ReadableEditorDialog* self)
 	{
-		self->shiftLeft();
+		if ( (self->_xData->getPageContent(XData::Title, 0, XData::Left) != "") 
+			|| (self->_xData->getPageContent(XData::Body, 0, XData::Left) != "") )
+		{
+			//The last page has content. Show the popup menu:
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_LEFT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+		}
+		else
+			self->shiftLeft();
 	}
+
 	void ReadableEditorDialog::onShiftRight(GtkWidget* widget, ReadableEditorDialog* self)
 	{
-		self->shiftRight();
+		if ( (self->_xData->getPageContent(XData::Title, self->_xData->getNumPages()-1, XData::Right) != "") 
+			|| (self->_xData->getPageContent(XData::Body, self->_xData->getNumPages()-1, XData::Right) != "") )
+		{
+			//The last page has content. Show the popup menu:
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_RIGHT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+		}
+		else
+			self->shiftRight();
 	}
+
 	void ReadableEditorDialog::onInsert(GtkWidget* widget, ReadableEditorDialog* self)
 	{
 		self->insertPage();
 	}
+
 	void ReadableEditorDialog::onDelete(GtkWidget* widget, ReadableEditorDialog* self)
 	{
 		self->deletePage();
 	}
-	void ReadableEditorDialog::onFirstPage(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->storeCurrentPage();
-		self->showPage(0);
-	}
-	void ReadableEditorDialog::onLastPage(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->storeCurrentPage();
-		self->showPage(self->_xData->getNumPages()-1);
-	}
+	
 
 	void ReadableEditorDialog::onValueChanged(GtkWidget* widget, ReadableEditorDialog* self)
 	{
@@ -1004,6 +1159,80 @@ namespace ui
 		self->_xData->setNumPages( nNP );
 		if (self->_currentPageIndex >= nNP )
 			self->showPage(nNP-1);
+	}
+
+	void ReadableEditorDialog::onMenuAppendShift(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
+		self->shiftRight();
+	}
+
+	void ReadableEditorDialog::onMenuDiscardLast(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->shiftRight();
+	}
+
+	void ReadableEditorDialog::onMenuDiscardFirst(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->shiftLeft();
+	}
+
+	void ReadableEditorDialog::onMenuAppend(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
+		self->showPage(self->_currentPageIndex+1);
+	}
+
+	void ReadableEditorDialog::onMenuPrepend(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->insertPage();
+	}
+
+	void ReadableEditorDialog::onToolsClicked(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_TOOLS]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	}
+
+	void ReadableEditorDialog::onImpSum(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		XData::StringList summary = self->_xdLoader->getImportSummary();
+		if (summary.size() == 0)
+			gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GlobalMainFrame().getTopLevelWindow() );
+		else
+		{
+			std::string sum = "";
+			for (std::size_t n = 0; n < summary.size(); n++)
+			{
+				sum += summary[n];
+			}
+			IDialogPtr dialog = GlobalDialogManager().createMessageBox("XData import summary", sum, ui::IDialog::MESSAGE_CONFIRM);
+			dialog->run();
+		}
+	}
+
+	void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->_xdLoader->retrieveXdInfo();
+		XData::StringVectorMap dupDefs;
+		try { dupDefs = self->_xdLoader->getDuplicateDefinitions(); }
+		catch (...)
+		{
+			IDialogPtr dialog = GlobalDialogManager().createMessageBox("Duplicated XData definitions", "There are no duplicated definitions!", ui::IDialog::MESSAGE_CONFIRM);
+			dialog->run();
+			return;
+		}
+		std::string out;
+		for (XData::StringVectorMap::iterator it = dupDefs.begin(); it != dupDefs.end(); it++)
+		{
+			out += it->first + " has been defined in:\n\t";
+			for (std::size_t n = 0; n < it->second.size()-1; n++)
+			{
+				out += it->second[n] + ", ";
+			}
+			out += it->second[it->second.size()-1] + ".\n\n";
+		}
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Duplicated XData definitions", out, ui::IDialog::MESSAGE_CONFIRM);
+		dialog->run();
 	}
 
 } // namespace ui
