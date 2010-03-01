@@ -12,14 +12,10 @@
 //#include "debugging/ScopedDebugTimer.h"
 
 
-namespace readable
+namespace XData
 {
 	namespace
 	{
-		const std::string	DEFAULT_TWOSIDED_LAYOUT = "guis/readables/books/book_calig_mac_humaine.gui";
-		const std::string	DEFAULT_ONESIDED_LAYOUT = "guis/readables/sheets/sheet_paper_hand_nancy.gui";
-		const std::string	DEFAULT_SNDPAGETURN		= "readable_page_turn";
-
 		const std::string	XDATA_DIR				= "xdata/";
 		const std::string	XDATA_EXT				= "xd";
 	}

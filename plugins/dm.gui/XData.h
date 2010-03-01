@@ -9,12 +9,19 @@
 #include <iostream>
 #include "parser/DefTokeniser.h"
 
-namespace readable
+namespace XData
 {
-	// All vectors of XData-objects are initialized with this size so that no sorting is necessary, which
-	// would otherwise be necessary when e.g. page2_body was defined before page1_body and a simple
-	// vector.push_back(..) was used to store the data instead of a direct access using an Index.
-	const std::size_t	MAX_PAGE_COUNT			= 20;
+	namespace
+	{
+		// All vectors of XData-objects are initialized with this size so that no sorting is necessary, which
+		// would otherwise be necessary when e.g. page2_body was defined before page1_body and a simple
+		// vector.push_back(..) was used to store the data instead of a direct access using an Index.
+		const std::size_t	MAX_PAGE_COUNT			= 20;
+
+		const char*			DEFAULT_TWOSIDED_GUI	= "guis/readables/books/book_calig_mac_humaine.gui";
+		const char*			DEFAULT_ONESIDED_GUI	= "guis/readables/sheets/sheet_paper_hand_nancy.gui";
+		const char*			DEFAULT_SNDPAGETURN		= "readable_page_turn";
+	}
 
 	typedef std::vector<std::string> StringList;
 
@@ -52,6 +59,9 @@ namespace readable
 		OneSided
 	};
 
+	class XData;
+	typedef boost::shared_ptr<XData> XDataPtr;
+
 	///////////////////////////// XData:
 	// XData base-class for exporting, storing and managing XData.
 	class XData
@@ -73,6 +83,11 @@ namespace readable
 		// 	file no matter what. With both commands OpenFailed can be returned. 
 		// 	If the target-file has Syntax errors, it is overwritten...
 		FileStatus xport(const std::string& filename, ExporterCommand cmd);
+
+		// Creates a OneSided XData object of an TwoSided XData object and vice versa without discarding any actual page
+		// contents. numPages is adjusted accordingly and default guiPage-statements are applied. The result is stored
+		// in target.
+		virtual void togglePageLayout(XDataPtr& target) const = 0;
 
 		virtual ~XData() {};
 
@@ -148,7 +163,6 @@ namespace readable
 		std::string _sndPageTurn;		//sndPageTurn-statement
 		std::size_t _definitionStart;	//Marks the start of a definition in an .xd-File. Used by the xport()-method.
 	};
-	typedef boost::shared_ptr<XData> XDataPtr;
 
 
 	class OneSidedXData : public XData
@@ -167,6 +181,8 @@ namespace readable
 		const std::string& getPageContent(ContentType cc, std::size_t pageIndex, Side side) const;
 
 		const PageLayout getPageLayout() const { return OneSided; }
+
+		void togglePageLayout(XDataPtr& target) const;
 
 		OneSidedXData(const std::string& name) 
 		{ 
@@ -196,6 +212,8 @@ namespace readable
 
 		const PageLayout getPageLayout() const { return TwoSided; }
 
+		void togglePageLayout(XDataPtr& target) const;
+
 		TwoSidedXData(const std::string& name)
 		{ 
 			_name=name;
@@ -205,6 +223,6 @@ namespace readable
 	};
 	typedef boost::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
 
-} //namespace readable
+} //namespace XData
 
 #endif XDATA_H
