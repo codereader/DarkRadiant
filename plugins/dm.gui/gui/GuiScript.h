@@ -22,6 +22,9 @@ public:
 	// Construct this script from a token stream. 
 	// It expects the initial opening brace as first token.
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
+
+private:
+	std::string getExpression(parser::DefTokeniser& tokeniser);
 };
 typedef boost::shared_ptr<GuiScript> GuiScriptPtr;
 
