@@ -9,10 +9,10 @@ class XdFileChooserDialog :
 {
 private:
 	// Pointer to an iterator to the chosen file
-	readable::XDataMap::iterator* _fileIterator;
+	XData::XDataMap::iterator* _fileIterator;
 
 	// Pointer to an XdataMap
-	readable::XDataMap* _xdMap;
+	XData::XDataMap* _xdMap;
 
 	// A container for storing enumerated widgets
 	GtkWidget* _treeview;
@@ -21,7 +21,7 @@ private:
 	void storeSelection();
 public:
 
-	XdFileChooserDialog(readable::XDataMap::iterator* fileIterator, readable::XDataMap* xdMap);
+	XdFileChooserDialog(XData::XDataMap::iterator* fileIterator, XData::XDataMap* xdMap);
 
 	static void onOk(GtkWidget* widget, XdFileChooserDialog* self);
 };

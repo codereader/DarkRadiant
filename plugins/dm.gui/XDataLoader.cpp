@@ -1,7 +1,7 @@
 #include "XDataLoader.h"
 
 
-namespace readable
+namespace XData
 {
 	const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& target, const std::string& filename )
 	{
@@ -175,9 +175,9 @@ namespace readable
 			reportError("[XDataLoader::import] Warning for definition: " + _name
 				+ ". _guiPage-statement(s) missing. Setting default value...\n");
 			if (_newXData->getPageLayout() == TwoSided)
-				_guiPageDef = DEFAULT_TWOSIDED_LAYOUT; 
+				_guiPageDef = DEFAULT_TWOSIDED_GUI; 
 			else
-				_guiPageDef = DEFAULT_ONESIDED_LAYOUT;
+				_guiPageDef = DEFAULT_ONESIDED_GUI;
 		}
 		for (std::size_t n=0; n<_numPages; n++ )
 		{

@@ -14,7 +14,7 @@ namespace
 	const std::string WINDOW_TITLE("Choose a file...");
 }
 
-XdFileChooserDialog::XdFileChooserDialog(readable::XDataMap::iterator* fileIterator, readable::XDataMap* xdMap) : 
+XdFileChooserDialog::XdFileChooserDialog(XData::XDataMap::iterator* fileIterator, XData::XDataMap* xdMap) : 
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_fileIterator(fileIterator),
 	_xdMap(xdMap)
@@ -38,7 +38,7 @@ XdFileChooserDialog::XdFileChooserDialog(readable::XDataMap::iterator* fileItera
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeview), fileCol);
 
 	// Append all xdMap-entries to the list.
-	for (readable::XDataMap::const_iterator it = xdMap->begin(); it != xdMap->end(); it++)
+	for (XData::XDataMap::const_iterator it = xdMap->begin(); it != xdMap->end(); it++)
 	{
 		GtkTreeIter iter;
 		gtk_list_store_append(listStore, &iter);

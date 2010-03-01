@@ -1,10 +1,10 @@
 #include "XData.h"
 
-namespace readable
+namespace XData
 {
 //XData implementations:
 //->export:	
-	readable::FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
+	FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 	{
 		boost::filesystem::path Path(filename);		
 		if (boost::filesystem::exists(Path))
@@ -21,7 +21,7 @@ namespace readable
 					ss << file.rdbuf();
 					std::string String = ss.str();
 					std::size_t DefPos = String.find(_name);
-					while (DefPos != std::string::npos)	//A name of a readable could be contained in another readable's name. Check that...
+					while (DefPos != std::string::npos)	//A name of a XData could be contained in another XData's name. Check that...
 					{
 						char before = String.c_str()[DefPos-1];
 						char after = String.c_str()[DefPos+_name.length()];
@@ -192,7 +192,10 @@ namespace readable
 //->general:
 	void XData::resizeVectors(std::size_t targetSize)
 	{
-		_guiPage.resize(targetSize, "");
+		std::string fill = "";
+		if (_guiPage.size() > 0)
+			fill = _guiPage[_guiPage.size()-1];
+		_guiPage.resize(targetSize, fill);
 	}
 	
 	void XData::jumpOutOfBrackets(parser::DefTokeniser& tok, int currentDepth) const
@@ -295,6 +298,30 @@ namespace readable
 		return xDataDef.str();
 	}
 
+	void TwoSidedXData::togglePageLayout(XDataPtr& target) const
+	{
+		XDataPtr newXData(new OneSidedXData(_name));
+		newXData->setNumPages(_numPages*2);	//delete last page if no content later.
+		newXData->setSndPageTurn(_sndPageTurn);
+
+		// Add default guiPage to all guiPage-entries.
+		newXData->setGuiPage( StringList( newXData->getNumPages(), DEFAULT_ONESIDED_GUI) );
+
+		// Reshuffle the TwoSided pages contents into the OneSided page contents.
+		for (std::size_t n = 0; n < _numPages; n++)
+		{
+			newXData->setPageContent(Title, 2*n, Left, _pageLeftTitle[n] );
+			newXData->setPageContent(Body, 2*n, Left, _pageLeftBody[n] );
+			newXData->setPageContent(Title, 2*n+1, Left, _pageRightTitle[n]	);
+			newXData->setPageContent(Body, 2*n+1, Left, _pageRightBody[n] );
+		}
+
+		if ( (_pageRightTitle[_numPages-1] == "") && (_pageRightBody[_numPages-1] == "") )
+			// Last page is empty. Set new numpages accordingly.
+			newXData->setNumPages(newXData->getNumPages()-1);
+
+		target = newXData;
+	}
 //OneSidedXData implementations:
 
 	void OneSidedXData::resizeVectors(std::size_t targetSize)
@@ -350,4 +377,32 @@ namespace readable
 		return xDataDef.str();
 	}
 
-} // namespace readable
+	void OneSidedXData::togglePageLayout(XDataPtr& target) const
+	{
+		XDataPtr newXData(new TwoSidedXData(_name));
+		newXData->setNumPages( (_numPages+1)/2);
+		newXData->setSndPageTurn(_sndPageTurn);
+
+		// Add default guiPage to all guiPage-entries.
+		newXData->setGuiPage( StringList( newXData->getNumPages(), DEFAULT_TWOSIDED_GUI) );
+
+		// Reshuffle the TwoSided pages contents into the OneSided page contents.
+		for (std::size_t n = 0; n < newXData->getNumPages()-1; n++)
+		{
+			newXData->setPageContent(Title, n, Left, _pageTitle[2*n] );
+			newXData->setPageContent(Body, n, Left, _pageBody[2*n] );
+			newXData->setPageContent(Title, n, Right, _pageTitle[2*n+1]	);
+			newXData->setPageContent(Body, n, Right, _pageBody[2*n+1] );
+		}
+		newXData->setPageContent(Title, newXData->getNumPages()-1, Left, _pageTitle[2*(newXData->getNumPages()-1)] );
+		newXData->setPageContent(Body, newXData->getNumPages()-1, Left, _pageBody[2*(newXData->getNumPages()-1)] );
+		if ( (_numPages % 2) == 0)
+		{
+			// Prevent vector subscript exceeded.
+			newXData->setPageContent(Title, newXData->getNumPages()-1, Right, _pageTitle[_numPages-1] );
+			newXData->setPageContent(Body, newXData->getNumPages()-1, Right, _pageBody[_numPages-1] );
+		}
+
+		target = newXData;
+	}
+} // namespace XData
