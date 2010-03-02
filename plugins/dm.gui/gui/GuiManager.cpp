@@ -4,11 +4,28 @@
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "parser/CodeTokeniser.h"
+#include "generic/callback.h"
 
 #include "Gui.h"
 
 namespace gui
 {
+
+void GuiManager::refreshGuiDefinitions()
+{
+	GlobalFileSystem().forEachFile(
+		GUI_DIR,
+		GUI_EXT,
+		makeCallback1(*this),
+		99);
+}
+
+const GuiManager::GuiMap& GuiManager::getGuiDefinitions()
+{
+	if (_guis.empty())
+		throw std::runtime_error("GuiMap is empty.");
+	return _guis;
+}
 
 GuiPtr GuiManager::getGui(const std::string& guiPath)
 {
@@ -24,7 +41,7 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 
 	if (gui != NULL)
 	{
-		// TODO: Insert gui into cache
+		_guis[guiPath] = gui;
 	}
 	else
 	{

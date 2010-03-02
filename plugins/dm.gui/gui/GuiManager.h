@@ -8,6 +8,12 @@
 namespace gui
 {
 
+namespace
+{
+	std::string GUI_DIR("guis/");
+	std::string GUI_EXT("gui");
+}
+
 class Gui;
 typedef boost::shared_ptr<Gui> GuiPtr;
 
@@ -18,18 +24,31 @@ typedef boost::shared_ptr<Gui> GuiPtr;
 class GuiManager :
 	public boost::noncopyable
 {
+public:
+	typedef std::map<std::string, GuiPtr> GuiMap;
+	typedef GuiMap::iterator GuiMapIter;
+
 private:
 	// The table of all loaded Gui, sorted by VFS path
-	typedef std::map<std::string, GuiPtr> GuiMap;
 	GuiMap _guis;
 
 public:
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
 	GuiPtr getGui(const std::string& guiPath);
+	void operator() (const std::string& guiPath) { getGui(guiPath); }
+
+	// Retrieves all available GUI definitions and stores them in _guis.
+	void refreshGuiDefinitions();
+
+	// Getter for _guis. Throws runtime_error if _guis is empty.
+	const GuiMap& getGuiDefinitions();
 
 	// Provides access to the singleton
 	static GuiManager& Instance();
+
+	// Required typedef for the Callback to work.
+	typedef const std::string& first_argument_type;
 
 private:
 	GuiPtr loadGui(const std::string& guiPath);
