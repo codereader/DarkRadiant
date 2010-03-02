@@ -148,6 +148,57 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 	pushStatement(st);
 }
 
+void GuiScript::parseShowCursorStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: showCursor <bool>
+	StatementPtr st(new Statement(Statement::ST_SHOW_CURSOR));
+
+	st->args.push_back(getExpression(tokeniser)); // boolean
+	tokeniser.assertNextToken(";");
+
+	pushStatement(st);
+}
+
+void GuiScript::parseResetCinematicStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: resetCinematics
+	StatementPtr st(new Statement(Statement::ST_RESET_CINEMATICS));
+	tokeniser.assertNextToken(";");
+
+	pushStatement(st);
+}
+
+void GuiScript::parseLocalSoundStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: localSound <sound>
+	StatementPtr st(new Statement(Statement::ST_LOCALSOUND));
+
+	st->args.push_back(getExpression(tokeniser)); // sound
+	tokeniser.assertNextToken(";");
+
+	pushStatement(st);
+}
+
+void GuiScript::parseRunScriptStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: runScript <function>
+	StatementPtr st(new Statement(Statement::ST_RUNSCRIPT));
+
+	st->args.push_back(getExpression(tokeniser)); // function
+	tokeniser.assertNextToken(";");
+
+	pushStatement(st);
+}
+
+void GuiScript::parseEvalRegsStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: evalRegs
+	StatementPtr st(new Statement(Statement::ST_EVALREGS));
+	tokeniser.assertNextToken(";");
+
+	pushStatement(st);
+}
+
 void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& tokeniser)
 {
 	if (token == "}")
@@ -186,31 +237,31 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 	}
 	else if (token == "endgame")
 	{
-		// TODO
+		parseEndGameStatement(tokeniser);
 	}
 	else if (token == "resettime")
 	{
-		// TODO
+		parseResetTimeStatement(tokeniser);
 	}
 	else if (token == "resetcinematics")
 	{
-		// TODO
+		parseResetCinematicStatement(tokeniser);
 	}
 	else if (token == "showcursor")
 	{
-		// TODO
+		parseShowCursorStatement(tokeniser);
 	}
 	else if (token == "localsound")
 	{
-		// TODO
+		parseLocalSoundStatement(tokeniser);
 	}
 	else if (token == "runscript")
 	{
-		// TODO
+		parseRunScriptStatement(tokeniser);
 	}
 	else if (token == "evalregs")
 	{
-		// Nothing
+		parseEvalRegsStatement(tokeniser);
 	}
 	else if (token == ";")
 	{
