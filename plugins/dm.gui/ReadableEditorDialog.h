@@ -54,6 +54,9 @@ private:
 	// The index of the current page.
 	std::size_t _currentPageIndex;
 
+	// Has the XData name been specified?
+	bool xdNameSpecified;
+
 public:
 	// Pass the working entity to the constructor
 	ReadableEditorDialog(Entity* entity);
@@ -69,6 +72,9 @@ private:
 
 	// Retrieves information from the entity and imports xdata. If the user cancels, the window is destroyed in _postshow
 	bool initControlsFromEntity();
+
+	// Imports the definition defName. Deals with duplicated filenames.
+	bool importXD(const std::string& defName);
 
 	// _show_ TwoSided editing-interface.
 	void toggleTwoSidedEditing(bool show);
