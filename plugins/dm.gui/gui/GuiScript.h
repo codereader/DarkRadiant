@@ -40,7 +40,7 @@ struct Statement
 	typedef std::list<std::string> Arguments;
 	Arguments args;
 
-	// The jump destination used by ST_IF
+	// The jump destination used by ST_IF and ST_JMP
 	std::size_t jmpDest;
 
 	Statement(Type type_) :
@@ -62,6 +62,9 @@ private:
 
 	// The instruction pointer
 	std::size_t _ip;
+
+	// Current block level for parsing the code
+	std::size_t _curLevel;
 
 public:
 	GuiScript(GuiWindowDef& owner);
