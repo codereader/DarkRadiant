@@ -92,6 +92,9 @@ private:
 	void parseIfStatement(parser::DefTokeniser& tokeniser);
 	void parseSetStatement(parser::DefTokeniser& tokeniser);
 	void parseTransitionStatement(parser::DefTokeniser& tokeniser);
+	void parseSetFocusStatement(parser::DefTokeniser& tokeniser);
+	void parseEndGameStatement(parser::DefTokeniser& tokeniser);
+	void parseResetTimeStatement(parser::DefTokeniser& tokeniser);
 };
 typedef boost::shared_ptr<GuiScript> GuiScriptPtr;
 
