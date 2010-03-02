@@ -3,12 +3,12 @@
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "debugging/debugging.h"
-#include "iregistry.h"
 #include "iuimanager.h"
 #include "ifilesystem.h"
 #include "irender.h"
 #include "igl.h"
 #include "imap.h"
+#include "igame.h"
 
 #include "ReadableEditorDialog.h"
 #include "gui/GuiManager.h"
@@ -31,10 +31,10 @@ public:
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_RENDERSYSTEM);
 			_dependencies.insert(MODULE_OPENGL);
 			_dependencies.insert(MODULE_MAP);
+			_dependencies.insert(MODULE_GAMEMANAGER);
 		}
 
 		return _dependencies;
