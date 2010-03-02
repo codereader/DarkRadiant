@@ -5,6 +5,7 @@
 #include "GuiWindowDef.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace gui
 {
@@ -95,6 +96,58 @@ void GuiScript::parseTransitionStatement(parser::DefTokeniser& tokeniser)
 	pushStatement(st);
 }
 
+void GuiScript::parseSetFocusStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: setFocus <window>
+	StatementPtr st(new Statement(Statement::ST_SET_FOCUS));
+
+	st->args.push_back(getExpression(tokeniser)); // window
+	tokeniser.assertNextToken(";");
+
+	pushStatement(st);
+}
+
+void GuiScript::parseEndGameStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: endGame
+	StatementPtr st(new Statement(Statement::ST_ENDGAME));
+	tokeniser.assertNextToken(";");
+
+	pushStatement(st);
+}
+
+void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
+{
+	// Prototype: resetTime [<window>] [<time>]
+	StatementPtr st(new Statement(Statement::ST_RESET_TIME));
+
+	std::string token = tokeniser.nextToken();
+
+	if (token != ";")
+	{
+		// Check if this is a numeric token
+		try
+        {
+			// Try to cast the string to a number, throws
+			boost::lexical_cast<std::size_t>(token);
+
+			// Cast succeeded this is just the time for the current window
+			st->args.push_back(token);
+
+			tokeniser.assertNextToken(";");
+        }
+		catch (boost::bad_lexical_cast&)
+        {
+            // Not a number, must be window plus time
+			st->args.push_back(token); // window
+			st->args.push_back(getExpression(tokeniser)); // time
+			tokeniser.assertNextToken(";");
+        }
+	}
+
+	pushStatement(st);
+}
+
 void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& tokeniser)
 {
 	if (token == "}")
@@ -111,8 +164,6 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 		{
 			std::string token = tokeniser.nextToken();
 			boost::algorithm::to_lower(token);
-
-			if (token == "}") break; // statement finished
 
 			switchOnToken(token, tokeniser);
 		}
@@ -131,7 +182,7 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 	}
 	else if (token == "setfocus")
 	{
-		// TODO
+		parseSetFocusStatement(tokeniser);
 	}
 	else if (token == "endgame")
 	{
