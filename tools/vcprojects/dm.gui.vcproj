@@ -414,6 +414,18 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\..\plugins\dm.gui\GuiInserter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\GuiSelector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.gui\GuiSelector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\plugin.cpp"
 				>
 			</File>

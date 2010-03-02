@@ -4,14 +4,15 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <map>
+#include "string/string.h"
 
 namespace gui
 {
 
 namespace
 {
-	std::string GUI_DIR("guis/");
-	std::string GUI_EXT("gui");
+	const std::string GUI_DIR("guis/");
+	const std::string GUI_EXT("gui");
 }
 
 class Gui;
@@ -26,7 +27,6 @@ class GuiManager :
 {
 public:
 	typedef std::map<std::string, GuiPtr> GuiMap;
-	typedef GuiMap::iterator GuiMapIter;
 
 private:
 	// The table of all loaded Gui, sorted by VFS path
@@ -36,7 +36,7 @@ public:
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
 	GuiPtr getGui(const std::string& guiPath);
-	void operator() (const std::string& guiPath) { getGui(guiPath); }
+	void operator() (const std::string& guiPath) { getGui( GUI_DIR + guiPath ); }
 
 	// Retrieves all available GUI definitions and stores them in _guis.
 	void refreshGuiDefinitions();
