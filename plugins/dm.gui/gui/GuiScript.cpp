@@ -10,7 +10,9 @@ namespace gui
 {
 
 GuiScript::GuiScript(GuiWindowDef& owner) :
-	_owner(owner)
+	_owner(owner),
+	_ip(0),
+	_curLevel(0)
 {}
 
 void GuiScript::parseIfStatement(parser::DefTokeniser& tokeniser)
@@ -35,13 +37,23 @@ void GuiScript::parseIfStatement(parser::DefTokeniser& tokeniser)
 	if (nextToken == "else")
 	{
 		// There is an "else" block, so we need to add a JMP statement before proceeding
-		// TODO
+		StatementPtr jmpStatement(new Statement(Statement::ST_JMP));
+		pushStatement(jmpStatement);
+
+		// Set the original IF jump position to this else
+		ifStatement->jmpDest = getCurPosition();
+
+		// As next step, parse the code in the else block
+		parseStatement(tokeniser);
+
+		// Finally, position the jump at the location right after the else block
+		jmpStatement->jmpDest = getCurPosition();
 	}
 	else
 	{
 		// No else, execution falls through, but we need to set the jump destination first
 		ifStatement->jmpDest = getCurPosition();
-		
+
 		switchOnToken(nextToken, tokeniser);
 	}
 }
@@ -85,10 +97,25 @@ void GuiScript::parseTransitionStatement(parser::DefTokeniser& tokeniser)
 
 void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& tokeniser)
 {
-	if (token == "{") 
+	if (token == "}")
 	{
+		assert(_curLevel > 0);
+		_curLevel--;
+	}
+	if (token == "{")
+	{
+		std::size_t blockLevel = ++_curLevel;
+
 		// Another block, a group of statements, enter recursion
-		parseStatement(tokeniser);
+		while (tokeniser.hasMoreTokens() && _curLevel == blockLevel)
+		{
+			std::string token = tokeniser.nextToken();
+			boost::algorithm::to_lower(token);
+
+			if (token == "}") break; // statement finished
+
+			switchOnToken(token, tokeniser);
+		}
 	}
 	else if (token == "set")
 	{
@@ -134,10 +161,6 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 	{
 		// Nothing
 	}
-	else if (token == "}") 
-	{
-		// do nothing, statement complete
-	}
 	else if (token == ";")
 	{
 		// A single semicolon is also a valid statement, do nothing
@@ -151,6 +174,11 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 
 void GuiScript::parseStatement(parser::DefTokeniser& tokeniser)
 {
+	if (!tokeniser.hasMoreTokens())
+	{
+		return;
+	}
+
 	std::string token = tokeniser.nextToken();
 	boost::algorithm::to_lower(token);
 
