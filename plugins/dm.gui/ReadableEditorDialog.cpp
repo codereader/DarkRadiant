@@ -19,9 +19,11 @@
 
 #include "string/string.h"
 
-#include "XdFileChooserDialog.h"
 #include "imap.h"
 #include "idialogmanager.h"
+
+#include "XdFileChooserDialog.h"
+#include "XDataSelector.h"
 
 namespace ui
 {
@@ -120,7 +122,7 @@ namespace ui
 			);
 		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), appSR);
 
-		GtkWidget* disSR = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard content");
+		GtkWidget* disSR = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
 		g_signal_connect(
 			G_OBJECT(disSR), "activate", G_CALLBACK(onMenuDiscardLast), this
 			);
@@ -138,7 +140,7 @@ namespace ui
 			);
 		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), appSL);
 
-		GtkWidget* disSl = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard content");
+		GtkWidget* disSl = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
 		g_signal_connect(
 			G_OBJECT(disSl), "activate", G_CALLBACK(onMenuDiscardFirst), this
 			);
@@ -618,7 +620,12 @@ namespace ui
 		_xdFilename = GlobalMapModule().getMapName();
 		std::size_t nameStartPos = _xdFilename.rfind("/")+1;
 		_xdFilename = _xdFilename.substr( nameStartPos, _xdFilename.rfind(".")-nameStartPos );	//might lead to weird behavior if mapname has not been defined yet.
-		_xData.reset(new XData::OneSidedXData("readables/" + _xdFilename + "/<enter name>"));
+		std::string xdn = "readables/" + _xdFilename + "/<Name_Here>";
+		xdNameSpecified = false;
+		if (_entity->getKeyValue("name").find("book") == std::string::npos)
+			_xData.reset(new XData::OneSidedXData(xdn));
+		else
+			_xData.reset(new XData::TwoSidedXData(xdn));
 		_xdFilename += ".xd";
 		_xData->setNumPages(1);
 
@@ -789,6 +796,7 @@ namespace ui
 						_xdFilename = xdMap.begin()->first;
 						_xData = xdMap.begin()->second;
 					}
+					xdNameSpecified = true;
 					populateControlsFromXData();
 					return;
 				}
@@ -815,6 +823,7 @@ namespace ui
 				IDialog::MESSAGE_CONFIRM
 				);
 			popup->run();
+			xdNameSpecified = true;
 		}
 	}
 
@@ -952,6 +961,10 @@ namespace ui
 
 		showPage(_currentPageIndex);
 	}
+
+
+
+	
 // Callback Methods:
 
 	void ReadableEditorDialog::onCancel(GtkWidget* widget, ReadableEditorDialog* self) 
@@ -963,17 +976,56 @@ namespace ui
 
 	void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self) 
 	{
-		self->_result = RESULT_OK;
+		if (self->xdNameSpecified)
+		{
+			self->_result = RESULT_OK;
 
-		self->save();
+			self->save();
 
-		// Done, just destroy the window
-		self->destroy();
+			// Done, just destroy the window
+			self->destroy();
+		}
+		else
+			gtkutil::errorDialog("Please specify an XData name first!", GlobalMainFrame().getTopLevelWindow() );
 	}
 
 	void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* self) 
 	{
-		//FileChooser for xd-files
+		// FileChooser for xd-files
+		self->_xdLoader->retrieveXdInfo();
+		std::string res = XDataSelector::run(self->_xdLoader->getDefinitionList());
+		if (res == "")
+			return;
+		
+		// Import the file:
+		XData::XDataMap xdMap;
+		if ( self->_xdLoader->importDef(res,xdMap) )
+		{
+			if (xdMap.size() > 1)
+			{
+				// The requested definition has been defined in multiple files. Use the XdFileChooserDialog to pick a file.
+				// Optimally, the preview renderer would already show the selected definition.
+				XData::XDataMap::iterator ChosenIt = xdMap.end();
+				XdFileChooserDialog fcDialog(&ChosenIt, &xdMap);
+				fcDialog.show();
+				if (ChosenIt == xdMap.end())
+				{
+					//User clicked cancel. The window will be destroyed in _postShow()...
+					return;
+				}
+				self->_xdFilename = ChosenIt->first;
+				self->_xData = ChosenIt->second;
+			}
+			else
+			{
+				self->_xdFilename = xdMap.begin()->first;
+				self->_xData = xdMap.begin()->second;
+			}
+			self->populateControlsFromXData();
+			return;
+		}
+		//Import failed. Display the errormessage and use the default filename.
+		gtkutil::errorDialog( self->_xdLoader->getImportSummary()[self->_xdLoader->getImportSummary().size()-1]  , GlobalMainFrame().getTopLevelWindow());
 	}
 
 	void ReadableEditorDialog::onNextPage(GtkWidget* widget, ReadableEditorDialog* self) 
