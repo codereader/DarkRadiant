@@ -721,6 +721,9 @@ namespace ui
 			else
 				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_ONESIDED_GUI);
 		}
+
+		// Tell the renderer which GUI to display
+		_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
 	}
 
 

@@ -24,9 +24,6 @@ GuiView::GuiView() :
 
 	// Ignore visibility flag and turn invisible background images to visible ones
 	_renderer.setIgnoreVisibility(true);
-
-	setGui("guis/readables/books/book_calig_camberic.gui");
-	//setGui("guis/tdm_objectives.gui");
 }
 
 void GuiView::setGui(const GuiPtr& gui)
