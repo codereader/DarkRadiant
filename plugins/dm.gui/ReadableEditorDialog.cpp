@@ -85,12 +85,10 @@ namespace ui
 		gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 		_guiView(new gui::GuiView),
 		_result(RESULT_CANCEL),
-		_entity(entity)
+		_entity(entity),
+		_currentPageIndex(0),
+		_xdLoader(new XData::XDataLoader())
 	{
-		// Initialization:
-		_xdLoader.reset(new XData::XDataLoader());
-		_currentPageIndex = 0;
-
 		// Set the default border width in accordance to the HIG
 		gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 		gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -101,8 +99,15 @@ namespace ui
 		// The vbox is split horizontally, left are the controls, right is the preview
 		GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
 
+		// Create the editPane:
+		GtkWidget* vboxEP = gtk_vbox_new(FALSE, 6);
+		_widgets[WIDGET_EDIT_PANE] = vboxEP;
+		gtk_box_pack_start(GTK_BOX(vboxEP), createGeneralPropertiesInterface(), FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vboxEP), createPageOperationsInterface(), FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vboxEP), createPageRelatedInterface(), TRUE, TRUE, 0);
+
 		// The hbox contains the controls
-		gtk_box_pack_start(GTK_BOX(hbox), createEditPane(), TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), vboxEP, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(hbox), gtkutil::FramedWidget(_guiView->getWidget()), FALSE, FALSE, 0);
 
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
@@ -159,94 +164,10 @@ namespace ui
 //////////////////////////////////////////////////////////////////////////////
 // UI Creation:
 
-	void ReadableEditorDialog::createMenus()
-	{
-		// Shift right Menu
-		GtkWidget* mSR = gtk_menu_new();
-
-		GtkWidget* appSR = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
-		g_signal_connect(
-			G_OBJECT(appSR), "activate", G_CALLBACK(onMenuAppendShift), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), appSR);
-
-		GtkWidget* disSR = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
-		g_signal_connect(
-			G_OBJECT(disSR), "activate", G_CALLBACK(onMenuDiscardLast), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), disSR);
-
-		gtk_widget_show_all(mSR);
-		_widgets[WIDGET_MENU_SHIFT_RIGHT] = mSR;
-
-		// Shift left Menu
-		GtkWidget* mSL = gtk_menu_new();
-
-		GtkWidget* appSL = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
-		g_signal_connect(
-			G_OBJECT(appSL), "activate", G_CALLBACK(onMenuAppendShift), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), appSL);
-
-		GtkWidget* disSl = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
-		g_signal_connect(
-			G_OBJECT(disSl), "activate", G_CALLBACK(onMenuDiscardFirst), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), disSl);
-
-		gtk_widget_show_all(mSL);
-		_widgets[WIDGET_MENU_SHIFT_LEFT] = mSL;
-
-		// Append Menu
-		GtkWidget* mApp = gtk_menu_new();
-
-		GtkWidget* append = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
-		g_signal_connect(
-			G_OBJECT(append), "activate", G_CALLBACK(onMenuAppend), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mApp), append);
-
-		gtk_widget_show_all(mApp);
-		_widgets[WIDGET_MENU_APPEND] = mApp;
-
-		// Prepend Menu
-		GtkWidget* mPre = gtk_menu_new();
-
-		GtkWidget* prepend = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
-		g_signal_connect(
-			G_OBJECT(prepend), "activate", G_CALLBACK(onMenuPrepend), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mPre), prepend);
-
-		gtk_widget_show_all(mPre);
-		_widgets[WIDGET_MENU_PREPEND] = mPre;
-
-		// Tools Menu
-		GtkWidget* mTools = gtk_menu_new();
-
-		GtkWidget* impSum = gtkutil::StockIconMenuItem(GTK_STOCK_DND, "Show last XData import summary");
-		g_signal_connect(
-			G_OBJECT(impSum), "activate", G_CALLBACK(onImpSum), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mTools), impSum);
-
-		GtkWidget* dupDef = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Show duplicated definitions");
-		g_signal_connect(
-			G_OBJECT(dupDef), "activate", G_CALLBACK(onDupDef), this
-			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mTools), dupDef);
-
-		gtk_widget_show_all(mTools);
-		_widgets[WIDGET_MENU_TOOLS] = mTools;
-
-	}
-
-	GtkWidget* ReadableEditorDialog::createEditPane()
+	GtkWidget* ReadableEditorDialog::createGeneralPropertiesInterface()
 	{
 		GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
-		_widgets[WIDGET_EDIT_PANE] = vbox;
-	
-	// GENERAL PROPERTIES:
+
 		// Add a Headline-label
 		GtkWidget* generalPropertiesLabel = gtkutil::LeftAlignedLabel(
 			std::string("<span weight=\"bold\">") + LABEL_GENERAL_PROPERTIES + "</span>"
@@ -261,7 +182,7 @@ namespace ui
 		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(alignmentMT), FALSE, FALSE, 0);
 
 		int curRow = 0;
-		
+
 		// Readable Name
 		GtkWidget* nameEntry = gtk_entry_new();
 		_widgets[WIDGET_READABLE_NAME] = nameEntry;
@@ -356,9 +277,13 @@ namespace ui
 		gtk_table_attach(table, pageTurnLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 		gtk_table_attach_defaults(table, pageTurnEntry, 1, 2, curRow, curRow+1);
 
-		curRow++;
+		return vbox;
+	}
 
-	// PAGE OPERATION:
+	GtkWidget* ReadableEditorDialog::createPageOperationsInterface()
+	{
+		GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+
 		// Add a label for page operations
 		GtkWidget* pageOperationsLabel = gtkutil::LeftAlignedLabel(
 			std::string("<span weight=\"bold\">") + LABEL_PAGE_OPERATIONS + "</span>"
@@ -441,9 +366,15 @@ namespace ui
 		GtkWidget* currPageContainer = gtk_alignment_new(0.5,1,0,0);
 		gtk_container_add(GTK_CONTAINER(currPageContainer), hboxPS);
 
-		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(currPageContainer), FALSE, FALSE, 0);		
+		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(currPageContainer), FALSE, FALSE, 0);
 
-	// PAGE RELATED:
+		return vbox;
+	}
+
+	GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
+	{
+		GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+
 		// Add a label for page related edits and add it to the vbox
 		GtkWidget* pageRelatedLabel = gtkutil::LeftAlignedLabel(
 			std::string("<span weight=\"bold\">") + LABEL_PAGE_RELATED + "</span>"
@@ -480,13 +411,13 @@ namespace ui
 		// Pack it into an alignment and add it to vbox
 		GtkWidget* alignmentTable = gtkutil::LeftAlignment(GTK_WIDGET(tablePE), 18, 1.0);
 		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(alignmentTable), TRUE, TRUE, 0);
-		curRow = 0;
+		gint curRow = 0;
 
 		// Create "left" and "right" labels and add them to the first row of the table
 		GtkWidget* pageLeftLabel = gtk_label_new("Left");
 		gtk_label_set_justify(GTK_LABEL(pageLeftLabel), GTK_JUSTIFY_CENTER);
 		_widgets[WIDGET_PAGE_LEFT] = pageLeftLabel;
-		
+
 		GtkWidget* pageRightLabel = gtk_label_new("Right");
 		gtk_label_set_justify(GTK_LABEL(pageRightLabel), GTK_JUSTIFY_CENTER);
 		_widgets[WIDGET_PAGE_RIGHT] = pageRightLabel;
@@ -542,10 +473,91 @@ namespace ui
 		gtk_table_attach_defaults(tablePE, gtkutil::ScrolledFrame(textViewBody), 1, 2, curRow, curRow+1);
 		gtk_table_attach_defaults(tablePE, _widgets[WIDGET_PAGE_RIGHT_BODY_SCROLLED], 2, 3, curRow, curRow+1);
 
-		curRow++;
-
 		return vbox;
 	}
+
+	void ReadableEditorDialog::createMenus()
+	{
+		// Shift right Menu
+		GtkWidget* mSR = gtk_menu_new();
+
+		GtkWidget* appSR = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
+		g_signal_connect(
+			G_OBJECT(appSR), "activate", G_CALLBACK(onMenuAppendShift), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), appSR);
+
+		GtkWidget* disSR = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
+		g_signal_connect(
+			G_OBJECT(disSR), "activate", G_CALLBACK(onMenuDiscardLast), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), disSR);
+
+		gtk_widget_show_all(mSR);
+		_widgets[WIDGET_MENU_SHIFT_RIGHT] = mSR;
+
+		// Shift left Menu
+		GtkWidget* mSL = gtk_menu_new();
+
+		GtkWidget* appSL = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
+		g_signal_connect(
+			G_OBJECT(appSL), "activate", G_CALLBACK(onMenuAppendShift), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), appSL);
+
+		GtkWidget* disSl = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
+		g_signal_connect(
+			G_OBJECT(disSl), "activate", G_CALLBACK(onMenuDiscardFirst), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), disSl);
+
+		gtk_widget_show_all(mSL);
+		_widgets[WIDGET_MENU_SHIFT_LEFT] = mSL;
+
+		// Append Menu
+		GtkWidget* mApp = gtk_menu_new();
+
+		GtkWidget* append = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
+		g_signal_connect(
+			G_OBJECT(append), "activate", G_CALLBACK(onMenuAppend), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mApp), append);
+
+		gtk_widget_show_all(mApp);
+		_widgets[WIDGET_MENU_APPEND] = mApp;
+
+		// Prepend Menu
+		GtkWidget* mPre = gtk_menu_new();
+
+		GtkWidget* prepend = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
+		g_signal_connect(
+			G_OBJECT(prepend), "activate", G_CALLBACK(onMenuPrepend), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mPre), prepend);
+
+		gtk_widget_show_all(mPre);
+		_widgets[WIDGET_MENU_PREPEND] = mPre;
+
+		// Tools Menu
+		GtkWidget* mTools = gtk_menu_new();
+
+		GtkWidget* impSum = gtkutil::StockIconMenuItem(GTK_STOCK_DND, "Show last XData import summary");
+		g_signal_connect(
+			G_OBJECT(impSum), "activate", G_CALLBACK(onImpSum), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mTools), impSum);
+
+		GtkWidget* dupDef = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Show duplicated definitions");
+		g_signal_connect(
+			G_OBJECT(dupDef), "activate", G_CALLBACK(onDupDef), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mTools), dupDef);
+
+		gtk_widget_show_all(mTools);
+		_widgets[WIDGET_MENU_TOOLS] = mTools;
+
+	}
+
 
 	GtkWidget* ReadableEditorDialog::createButtonPanel()
 	{
