@@ -75,6 +75,11 @@ const std::string& Manager::getModPath() const {
 	return (!_modPath.empty()) ? _modPath : _modBasePath;
 }
 
+const std::string& Manager::getModBasePath() const
+{
+	return _modBasePath;
+}
+
 /** greebo: Returns the current Game.
  */
 IGamePtr Manager::currentGame() {

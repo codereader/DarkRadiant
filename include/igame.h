@@ -55,9 +55,23 @@ class IGameManager :
 	public RegisterableModule
 {
 public:
-	/** greebo: Gets the mod path (e.g. ~/.doom3/darkmod/).
+	// Returns the setting for fs_game
+	virtual const std::string& getFSGame() const = 0;
+
+	// Returns the setting for fs_game_base (can be empty)
+	virtual const std::string& getFSGameBase() const = 0;
+
+	/**
+	 * greebo: Gets the mod path (e.g. ~/.doom3/gathers/). 
+	 * Returns the mod base path if the mod path itself is empty. 
 	 */
 	virtual const std::string& getModPath() const = 0;
+
+	/** 
+	 * greebo: Returns the mod base path (e.g. ~/.doom3/darkmod/), 
+	 * can be an empty string if fs_game_base is not set.
+	 */
+	virtual const std::string& getModBasePath() const = 0;
 	
 	/** greebo: Returns the current Game (shared_ptr).
 	 */
