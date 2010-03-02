@@ -99,6 +99,9 @@ private:
 
 	// Ui Creation:
 	GtkWidget* createEditPane();
+	GtkWidget* createGeneralPropertiesInterface();
+	GtkWidget* createPageOperationsInterface();
+	GtkWidget* createPageRelatedInterface();
 	GtkWidget* createButtonPanel();
 	void createMenus();
 
