@@ -20,6 +20,7 @@
 #include "string/string.h"
 
 #include "imap.h"
+#include "igame.h"
 #include "idialogmanager.h"
 
 #include "XdFileChooserDialog.h"
@@ -78,7 +79,8 @@ namespace ui
 
 	}
 
-// UI creation:
+//////////////////////////////////////////////////////////////////////////////
+// Public and protected methods:
 	ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 		gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 		_guiView(new gui::GuiView),
@@ -110,6 +112,52 @@ namespace ui
 
 		gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
 	}
+
+		void ReadableEditorDialog::_postShow()
+		{
+			// Load the initial values from the entity
+			if (!initControlsFromEntity())
+			{
+				// User clicked cancel, so destroy the window.
+				this->destroy();
+				return;
+			}
+
+			// Initialize proper editing controls.
+			populateControlsFromXData();
+
+			// Initialise the GL widget after the widgets have been shown
+			_guiView->initialiseView();
+
+			BlockingTransientWindow::_postShow();
+		}
+
+		void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
+		{
+			// Check prerequisites
+			const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+			if (info.entityCount == 1 && info.totalCount == info.entityCount)
+			{
+				// Check the entity type
+				Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+
+				if (entity != NULL && entity->getKeyValue("editor_readable") == "1")
+				{
+					// Show the dialog
+					ReadableEditorDialog dialog(entity);
+					dialog.show();
+
+					return;
+				}
+			}
+
+			// Exactly one redable entity must be selected.
+			gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalMainFrame().getTopLevelWindow());
+		}
+
+//////////////////////////////////////////////////////////////////////////////
+// UI Creation:
 
 	void ReadableEditorDialog::createMenus()
 	{
@@ -195,12 +243,10 @@ namespace ui
 
 	GtkWidget* ReadableEditorDialog::createEditPane()
 	{
-		// To Do:
-		//	1) Need to connect the radiobutton signal
-
 		GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 		_widgets[WIDGET_EDIT_PANE] = vbox;
-
+	
+	// GENERAL PROPERTIES:
 		// Add a Headline-label
 		GtkWidget* generalPropertiesLabel = gtkutil::LeftAlignedLabel(
 			std::string("<span weight=\"bold\">") + LABEL_GENERAL_PROPERTIES + "</span>"
@@ -312,6 +358,7 @@ namespace ui
 
 		curRow++;
 
+	// PAGE OPERATION:
 		// Add a label for page operations
 		GtkWidget* pageOperationsLabel = gtkutil::LeftAlignedLabel(
 			std::string("<span weight=\"bold\">") + LABEL_PAGE_OPERATIONS + "</span>"
@@ -396,6 +443,7 @@ namespace ui
 
 		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(currPageContainer), FALSE, FALSE, 0);		
 
+	// PAGE RELATED:
 		// Add a label for page related edits and add it to the vbox
 		GtkWidget* pageRelatedLabel = gtkutil::LeftAlignedLabel(
 			std::string("<span weight=\"bold\">") + LABEL_PAGE_RELATED + "</span>"
@@ -460,7 +508,6 @@ namespace ui
 
 		GtkWidget* textViewRightTitle = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightTitle), GTK_WRAP_WORD);
-		_bufferRightTitle = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewRightTitle));
 		_widgets[WIDGET_PAGE_RIGHT_TITLE] = textViewRightTitle;
 		g_signal_connect(
 			G_OBJECT(textViewRightTitle), "key-press-event", G_CALLBACK(onKeyPress), this
@@ -485,7 +532,6 @@ namespace ui
 
 		GtkWidget* textViewRightBody = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightBody), GTK_WRAP_WORD);
-		_bufferRightBody = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewRightBody));
 		_widgets[WIDGET_PAGE_RIGHT_BODY] = textViewRightBody;
 		g_signal_connect(
 			G_OBJECT(textViewRightBody), "key-press-event", G_CALLBACK(onKeyPress), this
@@ -528,50 +574,9 @@ namespace ui
 		return gtkutil::RightAlignment(hbx);
 	}
 
-	void ReadableEditorDialog::_postShow()
-	{
-		// Load the initial values from the entity
-		if (!initControlsFromEntity())
-		{
-			// User clicked cancel, so destroy the window.
-			this->destroy();
-			return;
-		}
-
-		// Initialize proper editing controls.
-		populateControlsFromXData();
-
-		// Initialise the GL widget after the widgets have been shown
-		_guiView->initialiseView();
-
-		BlockingTransientWindow::_postShow();
-	}
-
-	void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
-	{
-		// Check prerequisites
-		const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-
-		if (info.entityCount == 1 && info.totalCount == info.entityCount)
-		{
-			// Check the entity type
-			Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
-
-			if (entity != NULL && entity->getKeyValue("editor_readable") == "1")
-			{
-				// Show the dialog
-				ReadableEditorDialog dialog(entity);
-				dialog.show();
-
-				return;
-			}
-		}
-
-		// Exactly one redable entity must be selected.
-		gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalMainFrame().getTopLevelWindow());
-	}
-
-// private Methods:
+	
+//////////////////////////////////////////////////////////////////////////////
+// Private Methods:
 
 	bool ReadableEditorDialog::initControlsFromEntity()
 	{
@@ -584,35 +589,18 @@ namespace ui
 		// Load xdata
 		if (_entity->getKeyValue("xdata_contents") != "")
 		{
-			XData::XDataMap xdMap;
-			if ( _xdLoader->importDef(_entity->getKeyValue("xdata_contents"),xdMap) )
+			switch ( 
+				XdFileChooserDialog::import( _entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader)
+				)
 			{
-				if (xdMap.size() > 1)
-				{
-					// The requested definition has been defined in multiple files. Use the XdFileChooserDialog to pick a file.
-					// Optimally, the preview renderer would already show the selected definition.
-					XData::XDataMap::iterator ChosenIt = xdMap.end();
-					XdFileChooserDialog fcDialog(&ChosenIt, &xdMap);
-					fcDialog.show();
-					if (ChosenIt == xdMap.end())
-					{
-						//User clicked cancel. The window will be destroyed in _postShow()...
-						return false;
-					}
-					_xdFilename = ChosenIt->first;
-					_xData = ChosenIt->second;
-				}
-				else
-				{
-					_xdFilename = xdMap.begin()->first;
-					_xData = xdMap.begin()->second;
-				}
-				return true;
-			}
-			else
-			{
-				//Import failed. Display the errormessage and use the default filename.
-				gtkutil::errorDialog( _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size()-1] + "\nCreating a new XData definition..." , GlobalMainFrame().getTopLevelWindow());
+				case XdFileChooserDialog::RESULT_CANCEL:
+					return false;
+				case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+					gtkutil::errorDialog( _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size()-1] + "\nCreating a new XData definition..." , GlobalMainFrame().getTopLevelWindow());
+					break;
+				default:	//Import success
+					_xdNameSpecified = true;
+					return true;
 			}
 		}
 
@@ -621,7 +609,7 @@ namespace ui
 		std::size_t nameStartPos = _xdFilename.rfind("/")+1;
 		_xdFilename = _xdFilename.substr( nameStartPos, _xdFilename.rfind(".")-nameStartPos );	//might lead to weird behavior if mapname has not been defined yet.
 		std::string xdn = "readables/" + _xdFilename + "/<Name_Here>";
-		xdNameSpecified = false;
+		_xdNameSpecified = false;
 		if (_entity->getKeyValue("name").find("book") == std::string::npos)
 			_xData.reset(new XData::OneSidedXData(xdn));
 		else
@@ -642,7 +630,7 @@ namespace ui
 
 		// Save xdata
 		storeXData();
-		std::string path_ = GlobalRegistry().get(RKEY_ENGINE_PATH) + "darkmod/xdata/" + _xdFilename;
+		std::string path_ = GlobalGameManager().getModPath() + XData::XDATA_DIR + _xdFilename;
 		XData::FileStatus fst = _xData->xport( path_, XData::Merge);
 		if ( fst == XData::DefinitionExists)
 		{
@@ -730,12 +718,12 @@ namespace ui
 		_xData->setGuiPage( gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])), _currentPageIndex);
 
 		// On OneSidedXData the Side-enum is discarded, so it's save to call this method
-		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Left, readTextBuffer(GTK_TEXT_VIEW(_widgets[WIDGET_PAGE_TITLE])));
-		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Left, readTextBuffer(GTK_TEXT_VIEW(_widgets[WIDGET_PAGE_BODY])));
+		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Left, readTextBuffer(WIDGET_PAGE_TITLE));
+		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Left, readTextBuffer(WIDGET_PAGE_BODY));
 		if (_xData->getPageLayout() == XData::TwoSided)
 		{
-			_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right, readTextBuffer(_bufferRightTitle));
-			_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right, readTextBuffer(_bufferRightBody));
+			_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right, readTextBuffer(WIDGET_PAGE_RIGHT_TITLE));
+			_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right, readTextBuffer(WIDGET_PAGE_RIGHT_BODY));
 		}
 	}
 
@@ -773,39 +761,22 @@ namespace ui
 
 			if (popup->run() == ui::IDialog::RESULT_YES)
 			{
-				XData::XDataMap xdMap;
-				if ( _xdLoader->importDef(xdn,xdMap) )
+				switch ( 
+					XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader)
+					)
 				{
-					if (xdMap.size() > 1)
-					{
-						// The requested definition has been defined in multiple files. Use the XdFileChooserDialog to pick a file.
-						// Optimally, the preview renderer would already show the selected definition.
-						XData::XDataMap::iterator ChosenIt = xdMap.end();
-						XdFileChooserDialog fcDialog(&ChosenIt, &xdMap);
-						fcDialog.show();
-						if (ChosenIt == xdMap.end())
-						{
-							//User clicked cancel.
-							return;
-						}
-						_xdFilename = ChosenIt->first;
-						_xData = ChosenIt->second;
-					}
-					else
-					{
-						_xdFilename = xdMap.begin()->first;
-						_xData = xdMap.begin()->second;
-					}
-					xdNameSpecified = true;
+				case XdFileChooserDialog::RESULT_CANCEL:
+					return;
+				case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+					message = _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size()-1];
+					break;
+				default:	//Import success
+					_xdNameSpecified = true;
 					populateControlsFromXData();
 					return;
-				}
-				else
-				{
-					//Import failed. Store the error message and move on to suggesting another XData name.
-					message = _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size()-1];
-				}				
+				}			
 			}
+
 			//Dialog RESULT_NO or import failed! Make a different name suggestion!
 			std::string suggestion;
 			for (int n=1; n>0; n++)
@@ -823,7 +794,7 @@ namespace ui
 				IDialog::MESSAGE_CONFIRM
 				);
 			popup->run();
-			xdNameSpecified = true;
+			_xdNameSpecified = true;
 		}
 	}
 
@@ -964,8 +935,9 @@ namespace ui
 
 
 
-	
-// Callback Methods:
+
+//////////////////////////////////////////////////////////////////////////////
+// Callback Methods for Signals:
 
 	void ReadableEditorDialog::onCancel(GtkWidget* widget, ReadableEditorDialog* self) 
 	{
@@ -976,7 +948,7 @@ namespace ui
 
 	void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self) 
 	{
-		if (self->xdNameSpecified)
+		if (self->_xdNameSpecified)
 		{
 			self->_result = RESULT_OK;
 
@@ -998,35 +970,20 @@ namespace ui
 			return;
 		
 		// Import the file:
-		XData::XDataMap xdMap;
-		if ( self->_xdLoader->importDef(res,xdMap) )
+		switch (XdFileChooserDialog::import(res, self->_xData, self->_xdFilename, self->_xdLoader))
 		{
-			if (xdMap.size() > 1)
-			{
-				// The requested definition has been defined in multiple files. Use the XdFileChooserDialog to pick a file.
-				// Optimally, the preview renderer would already show the selected definition.
-				XData::XDataMap::iterator ChosenIt = xdMap.end();
-				XdFileChooserDialog fcDialog(&ChosenIt, &xdMap);
-				fcDialog.show();
-				if (ChosenIt == xdMap.end())
-				{
-					//User clicked cancel. The window will be destroyed in _postShow()...
-					return;
-				}
-				self->_xdFilename = ChosenIt->first;
-				self->_xData = ChosenIt->second;
-			}
-			else
-			{
-				self->_xdFilename = xdMap.begin()->first;
-				self->_xData = xdMap.begin()->second;
-			}
-			self->populateControlsFromXData();
-			return;
+			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
+				gtkutil::errorDialog( self->_xdLoader->getImportSummary()[self->_xdLoader->getImportSummary().size()-1]  , GlobalMainFrame().getTopLevelWindow());
+				return;
+			case XdFileChooserDialog::RESULT_OK:
+				self->_xdNameSpecified = true;
+				self->populateControlsFromXData();
+				return;
+			default:
+				return;
 		}
-		//Import failed. Display the errormessage and use the default filename.
-		gtkutil::errorDialog( self->_xdLoader->getImportSummary()[self->_xdLoader->getImportSummary().size()-1]  , GlobalMainFrame().getTopLevelWindow());
 	}
+
 
 	void ReadableEditorDialog::onNextPage(GtkWidget* widget, ReadableEditorDialog* self) 
 	{
@@ -1077,6 +1034,126 @@ namespace ui
 	{
 
 	}
+
+	void ReadableEditorDialog::onShiftLeft(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		if ( (self->_xData->getPageContent(XData::Title, 0, XData::Left) != "") 
+			|| (self->_xData->getPageContent(XData::Body, 0, XData::Left) != "") )
+		{
+			//The last page has content. Show the popup menu:
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_LEFT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+		}
+		else
+			self->shiftLeft();
+	}
+
+	void ReadableEditorDialog::onShiftRight(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		if ( (self->_xData->getPageContent(XData::Title, self->_xData->getNumPages()-1, XData::Right) != "") 
+			|| (self->_xData->getPageContent(XData::Body, self->_xData->getNumPages()-1, XData::Right) != "") )
+		{
+			//The last page has content. Show the popup menu:
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_RIGHT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+		}
+		else
+			self->shiftRight();
+	}
+
+	void ReadableEditorDialog::onInsert(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->insertPage();
+	}
+
+	void ReadableEditorDialog::onDelete(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->deletePage();
+	}	
+
+	void ReadableEditorDialog::onValueChanged(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		std::size_t nNP =  gtk_spin_button_get_value_as_int( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]) );
+		self->_xData->setNumPages( nNP );
+		if (self->_currentPageIndex >= nNP )
+			self->showPage(nNP-1);
+	}
+
+	void ReadableEditorDialog::onMenuAppendShift(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
+		self->shiftRight();
+	}
+
+	void ReadableEditorDialog::onMenuDiscardLast(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->shiftRight();
+	}
+
+	void ReadableEditorDialog::onMenuDiscardFirst(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->shiftLeft();
+	}
+
+	void ReadableEditorDialog::onMenuAppend(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
+		self->showPage(self->_currentPageIndex+1);
+	}
+
+	void ReadableEditorDialog::onMenuPrepend(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->insertPage();
+	}
+
+	void ReadableEditorDialog::onToolsClicked(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_TOOLS]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	}
+
+	void ReadableEditorDialog::onImpSum(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		XData::StringList summary = self->_xdLoader->getImportSummary();
+		if (summary.size() == 0)
+			gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GlobalMainFrame().getTopLevelWindow() );
+		else
+		{
+			std::string sum = "";
+			for (std::size_t n = 0; n < summary.size(); n++)
+			{
+				sum += summary[n];
+			}
+			IDialogPtr dialog = GlobalDialogManager().createMessageBox("XData import summary", sum, ui::IDialog::MESSAGE_CONFIRM);
+			dialog->run();
+		}
+	}
+
+	void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->_xdLoader->retrieveXdInfo();
+		XData::StringVectorMap dupDefs;
+		try { dupDefs = self->_xdLoader->getDuplicateDefinitions(); }
+		catch (...)
+		{
+			IDialogPtr dialog = GlobalDialogManager().createMessageBox("Duplicated XData definitions", "There are no duplicated definitions!", ui::IDialog::MESSAGE_CONFIRM);
+			dialog->run();
+			return;
+		}
+		std::string out;
+		for (XData::StringVectorMap::iterator it = dupDefs.begin(); it != dupDefs.end(); it++)
+		{
+			out += it->first + " has been defined in:\n\t";
+			for (std::size_t n = 0; n < it->second.size()-1; n++)
+			{
+				out += it->second[n] + ", ";
+			}
+			out += it->second[it->second.size()-1] + ".\n\n";
+		}
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Duplicated XData definitions", out, ui::IDialog::MESSAGE_CONFIRM);
+		dialog->run();
+	}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// Callback Methods for Events:
 
 	gboolean ReadableEditorDialog::onOneSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self) 
 	{
@@ -1170,121 +1247,5 @@ namespace ui
 		return FALSE;
 	}
 
-	void ReadableEditorDialog::onShiftLeft(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		if ( (self->_xData->getPageContent(XData::Title, 0, XData::Left) != "") 
-			|| (self->_xData->getPageContent(XData::Body, 0, XData::Left) != "") )
-		{
-			//The last page has content. Show the popup menu:
-			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_LEFT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
-		}
-		else
-			self->shiftLeft();
-	}
-
-	void ReadableEditorDialog::onShiftRight(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		if ( (self->_xData->getPageContent(XData::Title, self->_xData->getNumPages()-1, XData::Right) != "") 
-			|| (self->_xData->getPageContent(XData::Body, self->_xData->getNumPages()-1, XData::Right) != "") )
-		{
-			//The last page has content. Show the popup menu:
-			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_RIGHT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
-		}
-		else
-			self->shiftRight();
-	}
-
-	void ReadableEditorDialog::onInsert(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->insertPage();
-	}
-
-	void ReadableEditorDialog::onDelete(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->deletePage();
-	}
 	
-
-	void ReadableEditorDialog::onValueChanged(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		int nNP =  gtk_spin_button_get_value_as_int( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]) );
-		self->_xData->setNumPages( nNP );
-		if (self->_currentPageIndex >= nNP )
-			self->showPage(nNP-1);
-	}
-
-	void ReadableEditorDialog::onMenuAppendShift(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
-		self->shiftRight();
-	}
-
-	void ReadableEditorDialog::onMenuDiscardLast(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->shiftRight();
-	}
-
-	void ReadableEditorDialog::onMenuDiscardFirst(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->shiftLeft();
-	}
-
-	void ReadableEditorDialog::onMenuAppend(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
-		self->showPage(self->_currentPageIndex+1);
-	}
-
-	void ReadableEditorDialog::onMenuPrepend(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->insertPage();
-	}
-
-	void ReadableEditorDialog::onToolsClicked(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_TOOLS]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
-	}
-
-	void ReadableEditorDialog::onImpSum(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		XData::StringList summary = self->_xdLoader->getImportSummary();
-		if (summary.size() == 0)
-			gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GlobalMainFrame().getTopLevelWindow() );
-		else
-		{
-			std::string sum = "";
-			for (std::size_t n = 0; n < summary.size(); n++)
-			{
-				sum += summary[n];
-			}
-			IDialogPtr dialog = GlobalDialogManager().createMessageBox("XData import summary", sum, ui::IDialog::MESSAGE_CONFIRM);
-			dialog->run();
-		}
-	}
-
-	void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->_xdLoader->retrieveXdInfo();
-		XData::StringVectorMap dupDefs;
-		try { dupDefs = self->_xdLoader->getDuplicateDefinitions(); }
-		catch (...)
-		{
-			IDialogPtr dialog = GlobalDialogManager().createMessageBox("Duplicated XData definitions", "There are no duplicated definitions!", ui::IDialog::MESSAGE_CONFIRM);
-			dialog->run();
-			return;
-		}
-		std::string out;
-		for (XData::StringVectorMap::iterator it = dupDefs.begin(); it != dupDefs.end(); it++)
-		{
-			out += it->first + " has been defined in:\n\t";
-			for (std::size_t n = 0; n < it->second.size()-1; n++)
-			{
-				out += it->second[n] + ", ";
-			}
-			out += it->second[it->second.size()-1] + ".\n\n";
-		}
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Duplicated XData definitions", out, ui::IDialog::MESSAGE_CONFIRM);
-		dialog->run();
-	}
-
 } // namespace ui

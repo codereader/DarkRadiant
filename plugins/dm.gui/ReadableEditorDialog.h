@@ -48,14 +48,11 @@ private:
 	// The xData loader
 	XData::XDataLoaderPtr _xdLoader;
 
-	// Text Buffers for Right Title and Right Body:
-	GtkTextBuffer *_bufferRightTitle, *_bufferRightBody;
-
 	// The index of the current page.
 	std::size_t _currentPageIndex;
 
 	// Has the XData name been specified?
-	bool xdNameSpecified;
+	bool _xdNameSpecified;
 
 public:
 	// Pass the working entity to the constructor
@@ -73,9 +70,6 @@ private:
 	// Retrieves information from the entity and imports xdata. If the user cancels, the window is destroyed in _postshow
 	bool initControlsFromEntity();
 
-	// Imports the definition defName. Deals with duplicated filenames.
-	bool importXD(const std::string& defName);
-
 	// _show_ TwoSided editing-interface.
 	void toggleTwoSidedEditing(bool show);
 
@@ -87,7 +81,7 @@ private:
 
 	// Updates the page related inputs and the preview renderer. Also adds default guis.
 	// Warning: Contents are overwritten. storeCurrentPage() should be called beforehand.
-	void showPage(std::size_t pageIndex);	//updates _guiView!!!!!!!!!!!!!!!!
+	void showPage(std::size_t pageIndex);		//updates _guiView!!!!!!!!!!!!!!!!
 
 	// Populates the controls with the information in the xdata object. Adds a default snd_page_turn, if not defined.
 	void populateControlsFromXData();
@@ -137,16 +131,12 @@ private:
 	static gboolean onFocusOut(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
 	static gboolean onKeyPress(GtkWidget *widget, GdkEventKey *event, ReadableEditorDialog* self);	//updates _guiView!!!!!!!!!!!!!!!!
 
-	// Read Text from a given TextBuffer or TextView Widget.
-	inline std::string readTextBuffer(GtkTextBuffer* buffer)
+	// Helper Methods:
+
+	// Read Text from a given TextView Widget identified by its widget enumerator.
+	inline std::string readTextBuffer(int wEnum)
 	{
-		GtkTextIter start, end;
-		gtk_text_buffer_get_bounds(buffer,&start,&end);
-		return gtk_text_buffer_get_text(buffer,&start,&end, TRUE);
-	}
-	inline std::string readTextBuffer(GtkTextView* view)
-	{
-		GtkTextBuffer* buffer = gtk_text_view_get_buffer(view);
+		GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[wEnum]));
 		GtkTextIter start, end;
 		gtk_text_buffer_get_bounds(buffer,&start,&end);
 		return gtk_text_buffer_get_text(buffer,&start,&end, TRUE);
