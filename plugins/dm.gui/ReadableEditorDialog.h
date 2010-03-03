@@ -163,7 +163,7 @@ private:
 	void setTextViewAndScroll(int wEnum, std::string text)
 	{
 		GtkTextBuffer* bfr = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[wEnum])));
-		gtk_text_buffer_set_text( bfr, text.c_str(), text.size() );
+		gtk_text_buffer_set_text(bfr, text.c_str(), static_cast<gint>(text.size()));
 		GtkTextIter ending;
 		gtk_text_buffer_get_end_iter( bfr, &ending );
 		GtkTextMark* pMarkEnd = gtk_text_buffer_create_mark(bfr, "", &ending,FALSE);

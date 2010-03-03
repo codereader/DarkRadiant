@@ -90,14 +90,15 @@ void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
 
 	double width = self->_windowDims[0];
 	double height = self->_windowDims[1];
+	double aspectRatio = static_cast<double>(DEFAULT_WIDTH) / DEFAULT_HEIGHT;
 
-	if (width / height > static_cast<double>(DEFAULT_WIDTH) / DEFAULT_HEIGHT)
+	if (width / height > aspectRatio)
 	{
-		width = static_cast<double>(DEFAULT_WIDTH) / DEFAULT_HEIGHT * height;
+		width = height * aspectRatio;
 	}
 	else
 	{
-		height = static_cast<double>(DEFAULT_HEIGHT) / DEFAULT_WIDTH * width;
+		height = width / aspectRatio;
 	}
 
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
