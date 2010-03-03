@@ -88,7 +88,19 @@ void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(*self->_glWidget);
 
-	glViewport(0, 0, static_cast<GLsizei>(self->_windowDims[0]), static_cast<GLsizei>(self->_windowDims[1]));
+	double width = self->_windowDims[0];
+	double height = self->_windowDims[1];
+
+	if (width / height > static_cast<double>(DEFAULT_WIDTH) / DEFAULT_HEIGHT)
+	{
+		width = static_cast<double>(DEFAULT_WIDTH) / DEFAULT_HEIGHT * height;
+	}
+	else
+	{
+		height = static_cast<double>(DEFAULT_HEIGHT) / DEFAULT_WIDTH * width;
+	}
+
+	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 
 	// Set up the scale
 	glMatrixMode(GL_MODELVIEW);
