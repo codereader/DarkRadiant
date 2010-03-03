@@ -15,8 +15,8 @@ namespace ui
 	namespace
 	{
 		const std::string WINDOW_TITLE("Choose an XData Definition...");
-		gint WIDGET_WIDTH = 350;
-		gint WIDGET_HEIGHT = 700;
+		const gint WINDOW_WIDTH = 400;
+		const gint WINDOW_HEIGHT = 500;
 	}
 
 	XDataSelector::XDataSelector(const XData::StringVectorMap& files) :
@@ -26,6 +26,8 @@ namespace ui
 		_result("")
 	{
 		fillTree();
+
+		gtk_window_set_default_size(GTK_WINDOW(getWindow()), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		// Set the default border width in accordance to the HIG
 		gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -86,8 +88,6 @@ namespace ui
 		// Use the TreeModel's full string search function
 		gtk_tree_view_set_search_equal_func(_treeView, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
 
-		gtk_widget_set_size_request(GTK_WIDGET(_treeView), WIDGET_WIDTH, WIDGET_WIDTH);
-
 		// Pack treeview into a scrolled window and frame, and return
 		return gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));
 	}
@@ -125,7 +125,6 @@ namespace ui
 	void XDataSelector::onCancel(GtkWidget* widget, XDataSelector* self)
 	{
 		self->destroy();
-		self->_result = "";
 	}
 
 	void XDataSelector::onOk(GtkWidget* widget, XDataSelector* self)

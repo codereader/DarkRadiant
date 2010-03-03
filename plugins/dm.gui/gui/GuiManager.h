@@ -52,11 +52,8 @@ public:
 	// Operator used for callback by refreshGuiDefinitions.
 	void operator() (const std::string& guiPath) { loadGui( GUI_DIR + guiPath ); }
 
-	// Retrieves all available GUI definitions and stores them in _guis.
-	void refreshGuiDefinitions();
-
 	// Getter for _guis. Throws runtime_error if _guis is empty.
-	const GuiMap& getGuiDefinitions() const;
+	const GuiMap& getGuiDefinitions();
 
 	// Checks the appearance of a given guiPath or gui. If an IMPORT_FAIlURE is the case,
 	// a proper error-message is to be found in the last element of getErrorList().
@@ -74,6 +71,9 @@ public:
 
 private:
 	GuiPtr loadGui(const std::string& guiPath);
+
+	// Retrieves all available GUI definitions and stores them in _guis.
+	const GuiMap& refreshGuiDefinitions();
 };
 
 } // namespace

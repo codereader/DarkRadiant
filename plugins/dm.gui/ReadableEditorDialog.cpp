@@ -25,6 +25,7 @@
 
 #include "XdFileChooserDialog.h"
 #include "XDataSelector.h"
+#include "GuiSelector.h"
 
 namespace ui
 {
@@ -640,7 +641,7 @@ namespace ui
 		storeCurrentPage();
 	}
 
-	void ReadableEditorDialog::toggleTwoSidedEditing(bool show)
+	void ReadableEditorDialog::toggleTwoSidedEditingInterface(bool show)
 	{
 		if (show)
 		{
@@ -690,12 +691,15 @@ namespace ui
 		updateGuiView();
 	}
 
-	void ReadableEditorDialog::updateGuiView()
+	void ReadableEditorDialog::updateGuiView(const char* guiPath, const char* xDataPath)
 	{
 		if (_xData == NULL) return;
 
 		// Tell the renderer which GUI to display
-		_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
+		if (guiPath == NULL)
+			_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
+		else
+			_guiView->setGui(guiPath);
 
 		const gui::GuiPtr& gui = _guiView->getGui();
 
@@ -704,21 +708,35 @@ namespace ui
 		// Initialise the time of this GUI
 		gui->initTime(0);
 
+		// If the name of an xData object is passed it will be rendered instead of the current
+		// xData object, to enable previewing of XData definitions induced by the XDataSelector.
+		std::size_t pageindex = _currentPageIndex;
+		XData::XDataPtr xd = _xData;
+		if (xDataPath != NULL)
+		{
+			XData::XDataMap xdMap;
+			if (_xdLoader->importDef(xDataPath, xdMap))
+			{
+				xd = xdMap.begin()->second;
+				pageindex = 0;
+			}
+		}
+
 		// Load data from xdata into the GUI's state variables
-		if (_xData->getPageLayout() == XData::OneSided)
+		if (xd->getPageLayout() == XData::OneSided)
 		{
 			// One-sided has title and body
-			gui->setStateString("title", _xData->getPageContent(XData::Title, _currentPageIndex, XData::Left));
-			gui->setStateString("body", _xData->getPageContent(XData::Body, _currentPageIndex, XData::Left));
+			gui->setStateString("title", xd->getPageContent(XData::Title, pageindex, XData::Left));
+			gui->setStateString("body", xd->getPageContent(XData::Body, pageindex, XData::Left));
 		}
 		else
 		{
 			// Two-sided has four important state strings
-			gui->setStateString("left_title", _xData->getPageContent(XData::Title, _currentPageIndex, XData::Left));
-			gui->setStateString("left_body", _xData->getPageContent(XData::Body, _currentPageIndex, XData::Left));
+			gui->setStateString("left_title", xd->getPageContent(XData::Title, pageindex, XData::Left));
+			gui->setStateString("left_body", xd->getPageContent(XData::Body, pageindex, XData::Left));
 
-			gui->setStateString("right_title", _xData->getPageContent(XData::Title, _currentPageIndex, XData::Right));
-			gui->setStateString("right_body", _xData->getPageContent(XData::Body, _currentPageIndex, XData::Right));
+			gui->setStateString("right_title", xd->getPageContent(XData::Title, pageindex, XData::Right));
+			gui->setStateString("right_body", xd->getPageContent(XData::Body, pageindex, XData::Right));
 		}
 		
 		// Run the first frame
@@ -744,7 +762,7 @@ namespace ui
 
 	void ReadableEditorDialog::populateControlsFromXData()
 	{
-		toggleTwoSidedEditing(_xData->getPageLayout() == XData::TwoSided);
+		toggleTwoSidedEditingInterface(_xData->getPageLayout() == XData::TwoSided);
 		showPage(0);
 
 		gtk_entry_set_text( GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), _xData->getName().c_str() );
@@ -899,54 +917,6 @@ namespace ui
 		}
 	}
 
-/*	void ReadableEditorDialog::shiftLeft()
-	{
-		storeCurrentPage();
-		for (std::size_t n = 0; n < _xData->getNumPages()-1; n++)
-		{
-			_xData->setPageContent(XData::Title, n, XData::Left,
-				_xData->getPageContent(XData::Title, n, XData::Right) );
-			_xData->setPageContent(XData::Title, n, XData::Right,
-				_xData->getPageContent(XData::Title, n+1, XData::Left) );
-			_xData->setPageContent(XData::Body, n, XData::Left,
-				_xData->getPageContent(XData::Body, n, XData::Right) );
-			_xData->setPageContent(XData::Body, n, XData::Right,
-				_xData->getPageContent(XData::Body, n+1, XData::Left) );
-		}
-		_xData->setPageContent(XData::Title, _xData->getNumPages()-1, XData::Left,
-			_xData->getPageContent(XData::Title, _xData->getNumPages()-1, XData::Right) );
-		_xData->setPageContent(XData::Body, _xData->getNumPages()-1, XData::Left,
-			_xData->getPageContent(XData::Body, _xData->getNumPages()-1, XData::Right) );
-		_xData->setPageContent(XData::Title, _xData->getNumPages()-1, XData::Right, "");
-		_xData->setPageContent(XData::Body, _xData->getNumPages()-1, XData::Right, "");
-
-		showPage(_currentPageIndex);
-	}
-
-	void ReadableEditorDialog::shiftRight()
-	{
-		storeCurrentPage();
-		for (std::size_t n = _xData->getNumPages()-1; n>0; n--)
-		{
-			_xData->setPageContent(XData::Title, n, XData::Right,
-				_xData->getPageContent(XData::Title, n, XData::Left) );
-			_xData->setPageContent(XData::Title, n, XData::Left,
-				_xData->getPageContent(XData::Title, n-1, XData::Right) );
-			_xData->setPageContent(XData::Body, n, XData::Right,
-				_xData->getPageContent(XData::Body, n, XData::Left) );
-			_xData->setPageContent(XData::Body, n, XData::Left,
-				_xData->getPageContent(XData::Body, n-1, XData::Right) );
-		}
-		_xData->setPageContent(XData::Title, 0, XData::Right,
-			_xData->getPageContent(XData::Title, 0, XData::Left) );
-		_xData->setPageContent(XData::Body, 0, XData::Right,
-			_xData->getPageContent(XData::Body, 0, XData::Left) );
-		_xData->setPageContent(XData::Title, 0, XData::Left, "");
-		_xData->setPageContent(XData::Body, 0, XData::Left, "");
-
-		showPage(_currentPageIndex);
-	}*/
-
 
 	void ReadableEditorDialog::deleteSide(bool rightSide)
 	{
@@ -1040,6 +1010,25 @@ namespace ui
 		showPage(_currentPageIndex);
 	}
 
+	void ReadableEditorDialog::useOneSidedEditing()
+	{
+		if (_xData->getPageLayout() != XData::OneSided)
+			toggleLayout();
+	}
+
+	void ReadableEditorDialog::useTwoSidedEditing()
+	{
+		if (_xData->getPageLayout() != XData::TwoSided)
+			toggleLayout();
+	}
+
+	void ReadableEditorDialog::toggleLayout()
+	{
+		// Convert OneSided XData to TwoSided and vice versa and refresh controls
+		storeXData();
+		_xData->togglePageLayout(_xData);
+		populateControlsFromXData();	
+	}
 
 
 
@@ -1169,7 +1158,11 @@ namespace ui
 
 	void ReadableEditorDialog::onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self) 
 	{
-
+		std::string guiName = GuiSelector::run( self->_xData->getPageLayout() == XData::TwoSided, self );
+		if (guiName != "")
+			gtk_entry_set_text(GTK_ENTRY(self->_widgets[WIDGET_GUI_ENTRY]), guiName.c_str());
+		else
+			self->updateGuiView();
 	}
 
 
@@ -1262,25 +1255,13 @@ namespace ui
 
 	gboolean ReadableEditorDialog::onOneSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self) 
 	{
-		if (self->_xData->getPageLayout() != XData::OneSided)
-		{
-			// Convert TwoSided XData to OneSided and refresh controls
-			self->storeXData();
-			self->_xData->togglePageLayout(self->_xData);
-			self->populateControlsFromXData();
-		}
+		self->useOneSidedEditing();
 		return FALSE;
 	}
 
 	gboolean ReadableEditorDialog::onTwoSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self) 
 	{
-		if (self->_xData->getPageLayout() != XData::TwoSided)
-		{
-			// Convert OneSided XData to TwoSided and refresh controls
-			self->storeXData();
-			self->_xData->togglePageLayout(self->_xData);
-			self->populateControlsFromXData();			
-		}
+		self->useTwoSidedEditing();
 		return FALSE;
 	}
 

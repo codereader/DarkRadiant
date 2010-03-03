@@ -11,7 +11,7 @@
 namespace gui
 {
 
-void GuiManager::refreshGuiDefinitions()
+const GuiManager::GuiMap&  GuiManager::refreshGuiDefinitions()
 {
 	_guis.clear();
 	_errorList.clear();
@@ -20,10 +20,13 @@ void GuiManager::refreshGuiDefinitions()
 		GUI_EXT,
 		makeCallback1(*this),
 		99);
+
+	return _guis;
 }
 
-const GuiManager::GuiMap& GuiManager::getGuiDefinitions() const
+const GuiManager::GuiMap& GuiManager::getGuiDefinitions()
 {
+	static GuiMap guis = refreshGuiDefinitions();	// Make sure this is only called once.
 	if (_guis.empty())
 		throw std::runtime_error("GuiMap is empty.");
 	return _guis;
@@ -39,8 +42,11 @@ const GuiManager::GuiAppearance GuiManager::checkGuiAppearance(const std::string
 
 const GuiManager::GuiAppearance GuiManager::checkGuiAppearance(const GuiPtr& gui)
 {
-	// ToDo: Check whether the given gui is a readable and its page-layout.
-	return ONE_SIDED_READABLE;
+	if (gui->findWindowDef("title"))
+		return ONE_SIDED_READABLE;
+	if (gui->findWindowDef("leftTitle"))
+		return TWO_SIDED_READABLE;
+	return NO_READABLE;
 }
 
 GuiPtr GuiManager::getGui(const std::string& guiPath)

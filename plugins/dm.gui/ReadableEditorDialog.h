@@ -60,6 +60,13 @@ public:
 
 	static void RunDialog(const cmd::ArgumentList& args);
 
+	// Switch between the editing modes
+	void useOneSidedEditing();
+	void useTwoSidedEditing();
+
+	// Updates the GUI preview (text updates). Public so that XDataSelector and GuiSelector can access it.
+	void updateGuiView(const char* guiPath = NULL, const char* xDataPath = NULL );
+
 protected:
 	virtual void _postShow();
 
@@ -71,7 +78,10 @@ private:
 	bool initControlsFromEntity();
 
 	// _show_ TwoSided editing-interface.
-	void toggleTwoSidedEditing(bool show);
+	void toggleTwoSidedEditingInterface(bool show);
+
+	// toggles the layout of the xdata object and updates the interface.
+	void toggleLayout();
 
 	// Stores the contents of the current page inside the xData-object.
 	void storeCurrentPage();
@@ -110,11 +120,11 @@ private:
 	static void onCancel(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onSave(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onBrowseXd(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onFirstPage(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onPrevPage(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onNextPage(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onLastPage(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onInsert(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onDelete(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onValueChanged(GtkWidget* widget, ReadableEditorDialog* self);
@@ -158,9 +168,6 @@ private:
 		GtkTextMark* pMarkEnd = gtk_text_buffer_create_mark(bfr, "", &ending,FALSE);
 		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(_widgets[wEnum]), pMarkEnd, 0, FALSE, 0, 0);	//for some strange reason scroll to iter does not work...
 	}
-
-	// Updates the GUI preview (text updates)
-	void updateGuiView();
 };
 
 } // namespace ui
