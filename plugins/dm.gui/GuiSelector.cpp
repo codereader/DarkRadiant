@@ -146,23 +146,23 @@ namespace ui
 	GtkWidget* GuiSelector::createOneSidedTreeView()
 	{
 		// Create the treeview
-		_treeViewOne = GTK_TREE_VIEW(
+		GtkTreeView* treeViewOne = GTK_TREE_VIEW(
 			gtk_tree_view_new_with_model(GTK_TREE_MODEL(getOneSidedStore()))
 			);
-		gtk_tree_view_set_headers_visible(_treeViewOne, FALSE);
+		gtk_tree_view_set_headers_visible(treeViewOne, FALSE);
 
 		// Add the selection and connect the signal
-		_selectOne = gtk_tree_view_get_selection ( _treeViewOne );
-		gtk_tree_selection_set_mode(_selectOne, GTK_SELECTION_SINGLE);
+		GtkTreeSelection* select = gtk_tree_view_get_selection ( treeViewOne );
+		gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 		g_signal_connect(
-			_selectOne, "changed", G_CALLBACK(onSelectionChanged), this
+			select, "changed", G_CALLBACK(onSelectionChanged), this
 			);
 
 		// Single visible column, containing the directory/model name and the icon
 		GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
 			"Model Path", NAME_COLUMN, IMAGE_COLUMN
 			);
-		gtk_tree_view_append_column(_treeViewOne, nameCol);				
+		gtk_tree_view_append_column(treeViewOne, nameCol);				
 
 		// Set the tree stores to sort on this column
 		gtk_tree_sortable_set_sort_column_id(
@@ -181,9 +181,9 @@ namespace ui
 			);
 
 		// Use the TreeModel's full string search function
-		gtk_tree_view_set_search_equal_func(_treeViewOne, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+		gtk_tree_view_set_search_equal_func(treeViewOne, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
 
-		GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(_treeViewOne));
+		GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(treeViewOne));
 		gtk_widget_show_all(scrolledFrame);
 		gtk_container_set_border_width(GTK_CONTAINER(scrolledFrame), 12);
 
@@ -194,23 +194,23 @@ namespace ui
 	GtkWidget* GuiSelector::createTwoSidedTreeView()
 	{
 		// Create the treeview
-		_treeViewTwo = GTK_TREE_VIEW(
+		GtkTreeView* treeViewTwo = GTK_TREE_VIEW(
 			gtk_tree_view_new_with_model(GTK_TREE_MODEL(getTwoSidedStore()))
 			);
-		gtk_tree_view_set_headers_visible(_treeViewTwo, FALSE);
+		gtk_tree_view_set_headers_visible(treeViewTwo, FALSE);
 
 		// Add selection and connect signal
-		_selectTwo = gtk_tree_view_get_selection ( _treeViewTwo );
-		gtk_tree_selection_set_mode(_selectTwo, GTK_SELECTION_SINGLE);
+		GtkTreeSelection* select = gtk_tree_view_get_selection ( treeViewTwo );
+		gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 		g_signal_connect(
-			_selectTwo, "changed", G_CALLBACK(onSelectionChanged), this
+			select, "changed", G_CALLBACK(onSelectionChanged), this
 			);
 
 		// Single visible column, containing the directory/model name and the icon
 		GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
 			"Model Path", NAME_COLUMN, IMAGE_COLUMN
 			);
-		gtk_tree_view_append_column(_treeViewTwo, nameCol);				
+		gtk_tree_view_append_column(treeViewTwo, nameCol);				
 
 		// Set the tree stores to sort on this column
 		gtk_tree_sortable_set_sort_column_id(
@@ -229,9 +229,9 @@ namespace ui
 			);
 
 		// Use the TreeModel's full string search function
-		gtk_tree_view_set_search_equal_func(_treeViewTwo, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+		gtk_tree_view_set_search_equal_func(treeViewTwo, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
 
-		GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(_treeViewTwo));
+		GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(treeViewTwo));
 		gtk_widget_show_all(scrolledFrame);
 		gtk_container_set_border_width(GTK_CONTAINER(scrolledFrame), 12);
 

@@ -10,9 +10,6 @@ namespace ui
 		public gtkutil::BlockingTransientWindow
 	{
 	private:
-		// ...and their treeViews
-		GtkTreeView *_treeViewOne, *_treeViewTwo;
-
 		// The name that was picked.
 		std::string _name;
 
@@ -22,9 +19,6 @@ namespace ui
 		// Static treestores. These are likely not to change during runtime and creating the treestores takes some time...
 		GtkTreeStore* getOneSidedStore();
 		GtkTreeStore* getTwoSidedStore();
-
-		// The selections of the trees.
-		GtkTreeSelection *_selectOne, *_selectTwo;
 
 		// Pointer to the calling ReadableEditorDialog
 		ReadableEditorDialog* _editorDialog;
