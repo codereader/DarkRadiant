@@ -695,15 +695,13 @@ namespace ui
 	{
 		// If the name of an xData object is passed it will be rendered instead of the current
 		// xData object, to enable previewing of XData definitions induced by the XDataSelector.
-		std::size_t pageindex = _currentPageIndex;
-		XData::XDataPtr xd = _xData;
 		if (xDataPath != NULL)
 		{
+			XData::XDataPtr xd;
 			XData::XDataMap xdMap;
 			if (_xdLoader->importDef(xDataPath, xdMap))
 			{
 				xd = xdMap.begin()->second;
-				pageindex = 0;
 				_guiView->setGui(xd->getGuiPage(0));
 			}
 			else
@@ -711,47 +709,79 @@ namespace ui
 				gtkutil::errorDialog("Failed to import XData definition for Preview.", GlobalMainFrame().getTopLevelWindow());
 				return;
 			}
-		}
-		else if (guiPath == NULL)
-		{
-			_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
+
+			const gui::GuiPtr& gui = _guiView->getGui();
+			if (gui == NULL)
+			{
+				gtkutil::errorDialog("Failed to load Gui Definition.", GlobalMainFrame().getTopLevelWindow());
+				return;
+			}
+
+			// Load data from xdata into the GUI's state variables
+			if (xd->getPageLayout() == XData::OneSided)
+			{
+				// One-sided has title and body
+				gui->setStateString("title", xd->getPageContent(XData::Title, 0, XData::Left));
+				gui->setStateString("body", xd->getPageContent(XData::Body, 0, XData::Left));
+			}
+			else
+			{
+				// Two-sided has four important state strings
+				gui->setStateString("left_title", xd->getPageContent(XData::Title, 0, XData::Left));
+				gui->setStateString("left_body", xd->getPageContent(XData::Body, 0, XData::Left));
+
+				gui->setStateString("right_title", xd->getPageContent(XData::Title, 0, XData::Right));
+				gui->setStateString("right_body", xd->getPageContent(XData::Body, 0, XData::Right));
+			}
+
+			// Initialise the time of this GUI
+			gui->initTime(0);
+
+			// Run the first frame
+			gui->update(16);
 		}
 		else
 		{
-			_guiView->setGui(guiPath);
-		}
-		if (xd == NULL) return;		
+			if (guiPath == NULL)
+			{
+				_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
+			}
+			else
+			{
+				_guiView->setGui(guiPath);
+			}	
 
-		const gui::GuiPtr& gui = _guiView->getGui();
+			const gui::GuiPtr& gui = _guiView->getGui();
 
-		if (gui == NULL)
-		{
-			gtkutil::errorDialog("Failed to load Gui Definition.", GlobalMainFrame().getTopLevelWindow());
-			return;
-		}
+			if (gui == NULL)
+			{
+				gtkutil::errorDialog("Failed to load Gui Definition.", GlobalMainFrame().getTopLevelWindow());
+				return;
+			}
 
-		// Initialise the time of this GUI
-		gui->initTime(0);
+			// Load data from xdata into the GUI's state variables
+			if (_xData->getPageLayout() == XData::OneSided)
+			{
+				// One-sided has title and body
+				gui->setStateString("title", readTextBuffer(WIDGET_PAGE_TITLE));
+				gui->setStateString("body", readTextBuffer(WIDGET_PAGE_BODY));
+			}
+			else
+			{
+				// Two-sided has four important state strings
+				gui->setStateString("left_title", readTextBuffer(WIDGET_PAGE_TITLE));
+				gui->setStateString("left_body", readTextBuffer(WIDGET_PAGE_BODY));
 
-		// Load data from xdata into the GUI's state variables
-		if (xd->getPageLayout() == XData::OneSided)
-		{
-			// One-sided has title and body
-			gui->setStateString("title", xd->getPageContent(XData::Title, pageindex, XData::Left));
-			gui->setStateString("body", xd->getPageContent(XData::Body, pageindex, XData::Left));
-		}
-		else
-		{
-			// Two-sided has four important state strings
-			gui->setStateString("left_title", xd->getPageContent(XData::Title, pageindex, XData::Left));
-			gui->setStateString("left_body", xd->getPageContent(XData::Body, pageindex, XData::Left));
+				gui->setStateString("right_title", readTextBuffer(WIDGET_PAGE_RIGHT_TITLE));
+				gui->setStateString("right_body", readTextBuffer(WIDGET_PAGE_RIGHT_BODY));
+			}
 
-			gui->setStateString("right_title", xd->getPageContent(XData::Title, pageindex, XData::Right));
-			gui->setStateString("right_body", xd->getPageContent(XData::Body, pageindex, XData::Right));
-		}
-		
-		// Run the first frame
-		gui->update(16);
+			// Initialise the time of this GUI
+			gui->initTime(0);
+
+			// Run the first frame
+			gui->update(16);
+		}		
 
 		_guiView->redraw();
 	}
@@ -1287,7 +1317,7 @@ namespace ui
 	void ReadableEditorDialog::onTextChanged(GtkTextBuffer* textbuffer, ReadableEditorDialog* self)
 	{
 		// Update the preview
-		self->storeCurrentPage();
+		//self->storeCurrentPage();
 		self->updateGuiView();
 	}
 
