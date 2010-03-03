@@ -1,4 +1,5 @@
 #include "iuimanager.h"
+#include "gtkutil/VFSTreePopulator.h"
 
 namespace ui
 {
@@ -10,7 +11,7 @@ namespace ui
 		// Treestore enum
 		enum {
 			NAME_COLUMN,		// e.g. "bla"
-			FULLNAME_COLUMN,	// e.g. "xdata/readables/bla"
+			FULLNAME_COLUMN,	// e.g. "guis/readables/bla"
 			IMAGE_COLUMN,		// icon to display
 			IS_FOLDER_COLUMN,	// whether this is a folder
 			N_COLUMNS
