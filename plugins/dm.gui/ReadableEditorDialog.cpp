@@ -104,7 +104,7 @@ namespace ui
 
 		// The hbox contains the controls
 		gtk_box_pack_start(GTK_BOX(hbox), vboxEP, TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(hbox), gtkutil::FramedWidget(_guiView->getWidget()), TRUE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), gtkutil::FramedWidget(_guiView->getWidget()), TRUE, TRUE, 0);
 
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
