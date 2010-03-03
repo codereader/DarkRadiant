@@ -376,7 +376,7 @@ void GuiWindowDef::update(const std::size_t timeStep, bool updateChildren)
 			oldTime++;
 		}
 
-		// Check events whose time is within (oldTime..time]
+		// Check events whose time is within [oldTime..time]
 		for (TimedEventMap::const_iterator i = _timedEvents.lower_bound(oldTime);
 			 i != _timedEvents.end() && i != _timedEvents.upper_bound(time); ++i)
 		{
