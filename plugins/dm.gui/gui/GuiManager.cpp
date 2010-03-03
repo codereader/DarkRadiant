@@ -13,6 +13,8 @@ namespace gui
 
 void GuiManager::refreshGuiDefinitions()
 {
+	_guis.clear();
+	_errorList.clear();
 	GlobalFileSystem().forEachFile(
 		GUI_DIR,
 		GUI_EXT,
@@ -20,11 +22,25 @@ void GuiManager::refreshGuiDefinitions()
 		99);
 }
 
-const GuiManager::GuiMap& GuiManager::getGuiDefinitions()
+const GuiManager::GuiMap& GuiManager::getGuiDefinitions() const
 {
 	if (_guis.empty())
 		throw std::runtime_error("GuiMap is empty.");
 	return _guis;
+}
+
+const GuiManager::GuiAppearance GuiManager::checkGuiAppearance(const std::string& guiPath)
+{
+	GuiPtr request = getGui(guiPath);
+	if (!request)
+		return IMPORT_FAILURE;
+	return checkGuiAppearance(request);
+}
+
+const GuiManager::GuiAppearance GuiManager::checkGuiAppearance(const GuiPtr& gui)
+{
+	// ToDo: Check whether the given gui is a readable and its page-layout.
+	return ONE_SIDED_READABLE;
 }
 
 GuiPtr GuiManager::getGui(const std::string& guiPath)
@@ -37,25 +53,21 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 	}
 
 	// GUI not buffered, try to load afresh
-	GuiPtr gui = loadGui(guiPath);
-
-	if (gui != NULL)
-	{
-		_guis[guiPath] = gui;
-	}
-	else
-	{
-		globalWarningStream() << "Could not find GUI: " << guiPath << std::endl;
-	}
-
-	return gui;
+	return loadGui(guiPath);
 }
 
 GuiPtr GuiManager::loadGui(const std::string& guiPath)
 {
 	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(guiPath);
 
-	if (file == NULL) return GuiPtr();
+	if (file == NULL)
+	{
+		std::string errMSG = "Could not open file: " + guiPath + "\n";
+		_errorList.push_back(errMSG);
+		globalErrorStream() << errMSG;
+
+		return GuiPtr();
+	}
 
 	// Construct a Code Tokeniser, which is able to handle #includes
 	try
@@ -63,12 +75,17 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 		std::string whiteSpace = std::string(parser::WHITESPACE) + ",";
 		parser::CodeTokeniser tokeniser(file, whiteSpace.c_str(), "{}(),;");
 
-		return Gui::createFromTokens(tokeniser);
+		GuiPtr gui = Gui::createFromTokens(tokeniser);
+		if (gui)
+			_guis[guiPath] = gui;
+
+		return gui;
 	}
 	catch (parser::ParseException& p)
 	{
-		globalErrorStream() << "Error while parsing " << guiPath << ": "
-			<< p.what() << std::endl;
+		std::string errMSG = "Error while parsing " + guiPath + ": " + p.what() + "\n";
+		_errorList.push_back(errMSG);
+		globalErrorStream() << errMSG;
 
 		return GuiPtr();
 	}

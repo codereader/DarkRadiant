@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include "string/string.h"
+#include <vector>
 
 namespace gui
 {
@@ -27,22 +28,43 @@ class GuiManager :
 {
 public:
 	typedef std::map<std::string, GuiPtr> GuiMap;
+	typedef std::vector<std::string> StringList;
+
+	enum GuiAppearance
+	{
+		ONE_SIDED_READABLE,
+		TWO_SIDED_READABLE,
+		NO_READABLE,
+		IMPORT_FAILURE,
+	};
 
 private:
 	// The table of all loaded Gui, sorted by VFS path
 	GuiMap _guis;
 
+	// A List of all the errors occuring lastly.
+	StringList _errorList;
 public:
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
 	GuiPtr getGui(const std::string& guiPath);
-	void operator() (const std::string& guiPath) { getGui( GUI_DIR + guiPath ); }
+
+	// Operator used for callback by refreshGuiDefinitions.
+	void operator() (const std::string& guiPath) { loadGui( GUI_DIR + guiPath ); }
 
 	// Retrieves all available GUI definitions and stores them in _guis.
 	void refreshGuiDefinitions();
 
 	// Getter for _guis. Throws runtime_error if _guis is empty.
-	const GuiMap& getGuiDefinitions();
+	const GuiMap& getGuiDefinitions() const;
+
+	// Checks the appearance of a given guiPath or gui. If an IMPORT_FAIlURE is the case,
+	// a proper error-message is to be found in the last element of getErrorList().
+	const GuiAppearance checkGuiAppearance(const std::string& guiPath);
+	const GuiAppearance checkGuiAppearance(const GuiPtr& gui);
+
+	// Returns the _errorList for use in a GUI.
+	const StringList& getErrorList() { return _errorList; }
 
 	// Provides access to the singleton
 	static GuiManager& Instance();

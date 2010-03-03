@@ -93,10 +93,6 @@ private:
 	void insertPage();
 	void deletePage();
 
-	// Shifting of twosided readables
-	//void shiftRight();
-	//void shiftLeft();
-
 	// Inserts a page on the right or left side of the current page.
 	void insertSide(bool rightSide);
 
