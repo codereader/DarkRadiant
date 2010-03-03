@@ -36,20 +36,9 @@ void GuiView::setGui(const GuiPtr& gui)
 	}
 }
 
-void GuiView::initTime(const std::size_t time)
+const GuiPtr& GuiView::getGui()
 {
-	if (_gui != NULL)
-	{
-		_gui->initTime(time);
-	}
-}
-
-void GuiView::update(const std::size_t timestep)
-{
-	if (_gui != NULL)
-	{
-		_gui->update(timestep);
-	}
+	return _gui;
 }
 
 void GuiView::initialiseView()

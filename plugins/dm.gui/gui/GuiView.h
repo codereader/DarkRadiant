@@ -44,11 +44,8 @@ public:
 	// Sets the GUI to render (can be NULL to clear this view)
 	void setGui(const GuiPtr& gui);
 
-	// Initialises the GUI time of all windowDefs
-	void initTime(const std::size_t time);
-
-	// Runs all windowDef events due within (time .. time + timeStep]
-	void update(const std::size_t timestep);
+	// Returns the current GUI (can be NULL)
+	const GuiPtr& getGui();
 
 	/** 
 	 * Initialise the GL view. This clears the window and sets up the 
