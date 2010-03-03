@@ -9,24 +9,20 @@
 #include <map>
 #include "generic/callback.h"
 
-//#include "debugging/ScopedDebugTimer.h"
-
-
 namespace XData
 {
 	namespace
 	{
-		const std::string	XDATA_DIR				= "xdata/";
-		const std::string	XDATA_EXT				= "xd";
+		const std::string XDATA_DIR = "xdata/";
+		const std::string XDATA_EXT = "xd";
 	}
 
 	typedef std::set<std::string> StringSet;
 	typedef std::map<std::string, XDataPtr> XDataMap;
 	typedef std::map<std::string, std::vector<std::string> > StringVectorMap;
 	typedef std::map<std::string, std::string > StringMap;
-	typedef std::vector<std::pair<std::string, std::string>> StringPairList;
+	typedef std::vector<std::pair<std::string, std::string> > StringPairList;
 
-	///////////////////////////// XDataLoader
 	// Class for importing XData from files.
 	class XDataLoader
 	{
@@ -48,14 +44,20 @@ namespace XData
 	//Getters:
 		// Returns StringVector with errors and warnings of the last import process 
 		// as well as a brief summary in the last element of the vector.
-		const StringList& getImportSummary() const { return _errorList; }
+		const StringList& getImportSummary() const
+		{ 
+			return _errorList;
+		}
 
 		// Returns Map of duplicated definitions. (Data might be outdated, maybe use retrieveXdInfo() before)
 		// Key Value = DefinitionNames, Mapped Value = StringVector of corresponding filenames.
 		const StringVectorMap& getDuplicateDefinitions() const
 		{ 
 			if (_duplicatedDefs.empty())
+			{
 				throw std::runtime_error("No Data available. Call retrieveXdInfo() before.");
+			}
+
 			return _duplicatedDefs;
 		}
 
@@ -88,7 +90,7 @@ namespace XData
 
 	private:
 		// Issues the ErrorMessage to the cerr console and appends it to the _errorList. Returns always false, so that it can be used after a return statement.
-		inline const bool reportError(const std::string& ErrorMessage)
+		const bool reportError(const std::string& ErrorMessage)
 		{
 			std::cerr << ErrorMessage;
 			_errorList.push_back(ErrorMessage);
@@ -96,7 +98,7 @@ namespace XData
 		}
 
 		// Additionally to what the upper version of reportError(..) does, this method also tries to jump to the next definition by calling jumpOutOfBrackets.
-		inline const bool reportError(parser::DefTokeniser& tok, const std::string& ErrorMessage, std::size_t currentDepth = 1)
+		const bool reportError(parser::DefTokeniser& tok, const std::string& ErrorMessage, std::size_t currentDepth = 1)
 		{ 
 			reportError(ErrorMessage);
 			jumpOutOfBrackets(tok, currentDepth);
