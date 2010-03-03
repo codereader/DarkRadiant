@@ -723,6 +723,8 @@ namespace ui
 		
 		// Run the first frame
 		gui->update(16);
+
+		_guiView->redraw();
 	}
 
 	void ReadableEditorDialog::storeCurrentPage()
@@ -1296,19 +1298,23 @@ namespace ui
 
 		if (widget == self->_widgets[WIDGET_PAGE_TITLE])
 		{
-			// Update _guiView here...
+			self->storeCurrentPage();
+			self->updateGuiView();
 		}
 		else if (widget == self->_widgets[WIDGET_PAGE_RIGHT_TITLE])
 		{
-			// Update _guiView here...
+			self->storeCurrentPage();
+			self->updateGuiView();
 		}
 		else if (widget == self->_widgets[WIDGET_PAGE_BODY])
 		{
-			// Update _guiView here...
+			self->storeCurrentPage();
+			self->updateGuiView();
 		}
 		else if (widget == self->_widgets[WIDGET_PAGE_RIGHT_BODY])
 		{
-			// Update _guiView here...
+			self->storeCurrentPage();
+			self->updateGuiView();
 		}
 		else if (widget == self->_widgets[WIDGET_NUMPAGES])
 		{

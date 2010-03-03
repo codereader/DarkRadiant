@@ -411,6 +411,9 @@ std::string GuiScript::getValueFromExpression(const std::string& expr)
 
 void GuiScript::execute()
 {
+	// Go back to the beginning
+	_ip = 0;
+
 	while (_ip < _statements.size())
 	{
 		const Statement& st = getStatement(_ip++);

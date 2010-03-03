@@ -26,6 +26,11 @@ GuiView::GuiView() :
 	_renderer.setIgnoreVisibility(true);
 }
 
+void GuiView::redraw()
+{
+	gtk_widget_queue_draw(*_glWidget);
+}
+
 void GuiView::setGui(const GuiPtr& gui)
 {
 	// Check for equality

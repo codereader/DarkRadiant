@@ -53,6 +53,9 @@ public:
 	 */
 	void initialiseView();
 
+	// Triggers a redraw
+	void redraw();
+
 protected:
 	// Widget implementation
 	virtual GtkWidget* _getWidget() const
