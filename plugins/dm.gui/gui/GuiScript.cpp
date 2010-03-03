@@ -5,6 +5,7 @@
 #include "GuiWindowDef.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace gui
@@ -23,8 +24,7 @@ void GuiScript::parseIfStatement(parser::DefTokeniser& tokeniser)
 	StatementPtr ifStatement(new Statement(Statement::ST_IF));
 
 	tokeniser.assertNextToken("(");
-	ifStatement->args.push_back(getExpression(tokeniser)); // condition
-	tokeniser.assertNextToken(")");
+	ifStatement->args.push_back(getIfExpression(tokeniser)); // condition
 
 	// Add the statement at the current position
 	pushStatement(ifStatement);
@@ -128,11 +128,14 @@ void GuiScript::parseResetTimeStatement(parser::DefTokeniser& tokeniser)
 		// Check if this is a numeric token
 		try
         {
+			// Remove quotes from string before checking numerics
+			std::string trimmed = boost::algorithm::trim_copy_if(token, boost::algorithm::is_any_of("\""));
+
 			// Try to cast the string to a number, throws
-			boost::lexical_cast<std::size_t>(token);
+			boost::lexical_cast<std::size_t>(trimmed);
 
 			// Cast succeeded this is just the time for the current window
-			st->args.push_back(token);
+			st->args.push_back(trimmed);
 
 			tokeniser.assertNextToken(";");
         }
@@ -206,7 +209,7 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 		assert(_curLevel > 0);
 		_curLevel--;
 	}
-	if (token == "{")
+	else if (token == "{")
 	{
 		std::size_t blockLevel = ++_curLevel;
 
@@ -299,7 +302,7 @@ void GuiScript::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 std::size_t GuiScript::getCurPosition()
 {
-	return _statements.size() - 1;
+	return _statements.size();
 }
 
 std::size_t GuiScript::pushStatement(const StatementPtr& statement)
@@ -312,6 +315,35 @@ std::size_t GuiScript::pushStatement(const StatementPtr& statement)
 std::string GuiScript::getExpression(parser::DefTokeniser& tokeniser)
 {
 	return tokeniser.nextToken();
+}
+
+std::string GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
+{
+	std::string rv;
+
+	std::size_t level = 1;
+	
+	while (tokeniser.hasMoreTokens() && level > 0)
+	{
+		std::string token = tokeniser.nextToken();
+
+		if (token == ")")
+		{
+			level--;
+		}
+		else if (token == "(")
+		{
+			level++;
+		}
+
+		if (level > 0)
+		{
+			rv += (rv.empty()) ? "" : " ";
+			rv += token;
+		}
+	}
+
+	return rv;
 }
 
 } // namespace
