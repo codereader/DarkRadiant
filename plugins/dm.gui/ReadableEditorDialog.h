@@ -94,13 +94,18 @@ private:
 	void deletePage();
 
 	// Shifting of twosided readables
-	void shiftRight();
-	void shiftLeft();
+	//void shiftRight();
+	//void shiftLeft();
+
+	// Inserts a page on the right or left side of the current page.
+	void insertSide(bool rightSide);
+
+	// Deletes the left or right side of the current page.
+	void deleteSide(bool rightSide);
 
 	// Ui Creation:
 	GtkWidget* createEditPane();
 	GtkWidget* createGeneralPropertiesInterface();
-	GtkWidget* createPageOperationsInterface();
 	GtkWidget* createPageRelatedInterface();
 	GtkWidget* createButtonPanel();
 	void createMenus();
@@ -114,19 +119,21 @@ private:
 	static void onNextPage(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onLastPage(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onShiftLeft(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onShiftRight(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onInsert(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onDelete(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onValueChanged(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onMenuAppendShift(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onMenuDiscardLast(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onMenuDiscardFirst(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onMenuAppend(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onMenuPrepend(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onToolsClicked(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onImpSum(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onDupDef(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onInsertWhole(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onInsertLeft(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onInsertRight(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onDeleteWhole(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onDeleteLeft(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onDeleteRight(GtkWidget* widget, ReadableEditorDialog* self);
+
 	
 	// Callback methods for Events:
 	static gboolean onOneSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
