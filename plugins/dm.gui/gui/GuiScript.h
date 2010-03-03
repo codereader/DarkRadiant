@@ -81,6 +81,7 @@ public:
 private:
 	// Interprets the given string and returns the target object
 	VariablePtr getVariableFromExpression(const std::string& expr);
+	std::string getValueFromExpression(const std::string& expr);
 
 	const Statement& getStatement(std::size_t index);
 

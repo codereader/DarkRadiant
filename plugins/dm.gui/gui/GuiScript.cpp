@@ -398,6 +398,17 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 	}
 }
 
+std::string GuiScript::getValueFromExpression(const std::string& expr)
+{
+	if (boost::algorithm::starts_with(expr, "$gui::"))
+	{
+		// This is the value of a GUI state variable
+		return _owner.getGui().getStateString(expr.substr(6));
+	}
+
+	return expr;
+}
+
 void GuiScript::execute()
 {
 	while (_ip < _statements.size())
@@ -415,9 +426,11 @@ void GuiScript::execute()
 			if (st.args.size() == 2)
 			{
 				// Try to find the target variable
-				VariablePtr v = getVariableFromExpression(st.args[0]);
+				VariablePtr var = getVariableFromExpression(st.args[0]);
+
+				std::string value = getValueFromExpression(st.args[1]);
 				
-				if (v == NULL || !v->assignValueFromString(st.args[1]))
+				if (var == NULL || !var->assignValueFromString(value))
 				{
 					globalWarningStream() << "Cannot assign value " << 
 						st.args[1] << " to variable " << st.args[1] << std::endl;
@@ -425,14 +438,25 @@ void GuiScript::execute()
 			}
 			break;
 		case Statement::ST_TRANSITION:
+			break;
 		case Statement::ST_IF:
+			// TODO: Evaluate expression, for now just perform the jump
+			_ip = st.jmpDest;
+			break;
 		case Statement::ST_SET_FOCUS:
+			break;
 		case Statement::ST_ENDGAME:
+			break;
 		case Statement::ST_RESET_TIME:
+			break;
 		case Statement::ST_SHOW_CURSOR:
+			break;
 		case Statement::ST_RESET_CINEMATICS:
+			break;
 		case Statement::ST_LOCALSOUND:
+			break;
 		case Statement::ST_RUNSCRIPT:
+			break;
 		case Statement::ST_EVALREGS:
 			break;
 		};

@@ -16,11 +16,18 @@ WindowDefVariable::WindowDefVariable(GuiWindowDef& windowDef,
 // Assign a value to this Variable (returns TRUE on success)
 bool WindowDefVariable::assignValueFromString(const std::string& val)
 {
-	if (_name == "")
-	{
-	}
+	if (_name.empty()) return false;
 
-	return true;
+	if (_name == "text")
+	{
+		_windowDef.setText(val);
+		return true;
+	}
+	else
+	{
+		// TODO
+		return false;
+	}
 }
 
 GuiStateVariable::GuiStateVariable(Gui& gui, const std::string& key) :
