@@ -695,14 +695,32 @@ namespace ui
 		// Tell the renderer which GUI to display
 		_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
 
+		const gui::GuiPtr& gui = _guiView->getGui();
+
+		if (gui == NULL) return;
+
 		// Initialise the time of this GUI
-		_guiView->initTime(0);
+		gui->initTime(0);
 
 		// Load data from xdata into the GUI's state variables
-		// TODO
+		if (_xData->getPageLayout() == XData::OneSided)
+		{
+			// One-sided has title and body
+			gui->setStateString("title", _xData->getPageContent(XData::Title, _currentPageIndex, XData::Left));
+			gui->setStateString("body", _xData->getPageContent(XData::Body, _currentPageIndex, XData::Left));
+		}
+		else
+		{
+			// Two-sided has four important state strings
+			gui->setStateString("left_title", _xData->getPageContent(XData::Title, _currentPageIndex, XData::Left));
+			gui->setStateString("left_body", _xData->getPageContent(XData::Body, _currentPageIndex, XData::Left));
 
+			gui->setStateString("right_title", _xData->getPageContent(XData::Title, _currentPageIndex, XData::Right));
+			gui->setStateString("right_body", _xData->getPageContent(XData::Body, _currentPageIndex, XData::Right));
+		}
+		
 		// Run the first frame
-		_guiView->update(16);
+		gui->update(16);
 	}
 
 	void ReadableEditorDialog::storeCurrentPage()

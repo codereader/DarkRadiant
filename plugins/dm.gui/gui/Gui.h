@@ -22,11 +22,21 @@ private:
 	// The desktop window
 	GuiWindowDefPtr _desktop;
 
+	// The global GUI state variables
+	typedef std::map<std::string, std::string> GuiState;
+	GuiState _state;
+
 public:
 	Gui();
 
 	const GuiWindowDefPtr& getDesktop() const;
 	void setDesktop(const GuiWindowDefPtr& newDesktop);
+
+	// Sets the given state variable (gui::<key> = <value>)
+	void setStateString(const std::string& key, const std::string& value);
+
+	// Returns the state string "gui::<key>" or an empty string if non-existent
+	std::string getStateString(const std::string& key);
 
 	// Sets up the time of the entire GUI (all windowDefs)
 	void initTime(const std::size_t time);

@@ -45,6 +45,18 @@ GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
 	return gui;
 }
 
+void Gui::setStateString(const std::string& key, const std::string& value)
+{
+	_state[key] = value;
+}
+
+std::string Gui::getStateString(const std::string& key)
+{
+	GuiState::const_iterator i = _state.find(key);
+	
+	return (i != _state.end()) ? i->second : "";
+}
+
 void Gui::initTime(const std::size_t time)
 {
 	if (_desktop != NULL)
