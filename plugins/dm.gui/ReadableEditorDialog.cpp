@@ -42,7 +42,7 @@ namespace ui
 
 		const std::string LABEL_PAGE_RELATED("Page Editing:");
 
-		const std::string LABEL_GENERAL_PROPERTIES("General properties:");
+		const std::string LABEL_GENERAL_PROPERTIES("General Properties:");
 
 		const int MIN_ENTRY_WIDTH = 35;
 
@@ -693,21 +693,6 @@ namespace ui
 
 	void ReadableEditorDialog::updateGuiView(const char* guiPath, const char* xDataPath)
 	{
-		if (_xData == NULL) return;
-
-		// Tell the renderer which GUI to display
-		if (guiPath == NULL)
-			_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
-		else
-			_guiView->setGui(guiPath);
-
-		const gui::GuiPtr& gui = _guiView->getGui();
-
-		if (gui == NULL) return;
-
-		// Initialise the time of this GUI
-		gui->initTime(0);
-
 		// If the name of an xData object is passed it will be rendered instead of the current
 		// xData object, to enable previewing of XData definitions induced by the XDataSelector.
 		std::size_t pageindex = _currentPageIndex;
@@ -719,8 +704,34 @@ namespace ui
 			{
 				xd = xdMap.begin()->second;
 				pageindex = 0;
+				_guiView->setGui(xd->getGuiPage(0));
+			}
+			else
+			{
+				gtkutil::errorDialog("Failed to import XData definition for Preview.", GlobalMainFrame().getTopLevelWindow());
+				return;
 			}
 		}
+		else if (guiPath == NULL)
+		{
+			_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
+		}
+		else
+		{
+			_guiView->setGui(guiPath);
+		}
+		if (xd == NULL) return;		
+
+		const gui::GuiPtr& gui = _guiView->getGui();
+
+		if (gui == NULL)
+		{
+			gtkutil::errorDialog("Failed to load Gui Definition.", GlobalMainFrame().getTopLevelWindow());
+			return;
+		}
+
+		// Initialise the time of this GUI
+		gui->initTime(0);
 
 		// Load data from xdata into the GUI's state variables
 		if (xd->getPageLayout() == XData::OneSided)
