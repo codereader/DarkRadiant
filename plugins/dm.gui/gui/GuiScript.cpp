@@ -6,10 +6,16 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
 namespace gui
 {
+
+bool Variable::assignValueFromString(const std::string& val)
+{
+	return true;
+}
 
 GuiScript::GuiScript(GuiWindowDef& owner) :
 	_owner(owner),
@@ -64,8 +70,8 @@ void GuiScript::parseSetStatement(parser::DefTokeniser& tokeniser)
 	// Prototype: set [window::]<variable> <value>
 	StatementPtr st(new Statement(Statement::ST_SET));
 
-	st->args.push_back(getExpression(tokeniser));
-	st->args.push_back(getExpression(tokeniser));
+	st->args.push_back(getExpression(tokeniser)); // variable
+	st->args.push_back(getExpression(tokeniser)); // value
 
 	tokeniser.assertNextToken(";");
 
@@ -352,6 +358,45 @@ const Statement& GuiScript::getStatement(std::size_t index)
 	return *_statements[index];
 }
 
+VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
+{
+	if (boost::algorithm::starts_with(expr, "gui::"))
+	{
+		// Is a GUI state variable
+		return VariablePtr(new GuiStateVariable(
+			_owner.getGui().shared_from_this(), 
+			expr.substr(5)
+		));
+	}
+	
+	// Not a gui:: variable, check if a namespace has been specified
+	std::size_t ddPos = expr.find("::");
+
+	GuiWindowDefPtr windowDef;
+	
+	if (ddPos != std::string::npos)
+	{
+		// Retrieve the windowDef name
+		std::string windowDefName = expr.substr(0, ddPos);
+
+		// Look up the windowDef
+		windowDef = _owner.getGui().findWindowDef(windowDefName);
+
+		if (windowDef == NULL)
+		{
+			globalWarningStream() << "GUI Script: unknown windowDef " << windowDefName << std::endl;
+		}
+
+		// Cut off the "<windowDef>::" from the name
+		return VariablePtr(new WindowDefVariable(windowDef, expr.substr(ddPos+2)));
+	}
+	else
+	{
+		// Use the owner windowDef if no namespace was defined
+		return VariablePtr(new WindowDefVariable(_owner.shared_from_this(), expr));
+	}
+}
+
 void GuiScript::execute()
 {
 	while (_ip < _statements.size())
@@ -366,7 +411,11 @@ void GuiScript::execute()
 			_ip = st.jmpDest;
 			break;
 		case Statement::ST_SET:
-			// TODO
+			if (st.args.size() == 2)
+			{
+				// Try to find the target variable
+				VariablePtr v = getVariableFromExpression(st.args[0]);
+			}
 			break;
 		case Statement::ST_TRANSITION:
 		case Statement::ST_IF:
