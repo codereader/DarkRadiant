@@ -3,7 +3,6 @@
 
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include "parser/DefTokeniser.h"
 #include "GuiWindowDef.h"
 
@@ -20,8 +19,7 @@ typedef boost::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
  * greebo: This class represents a single D3 GUI. It holds all
  * the windowDefs and the source code behind.
  */
-class Gui :
-	public boost::enable_shared_from_this<Gui>
+class Gui
 {
 private:
 	// The desktop window
