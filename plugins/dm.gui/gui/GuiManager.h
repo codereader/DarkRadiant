@@ -12,7 +12,7 @@ namespace gui
 
 namespace
 {
-	const std::string GUI_DIR("guis/");
+	const std::string GUI_DIR("guis/readables/");
 	const std::string GUI_EXT("gui");
 }
 

@@ -9,7 +9,6 @@
 
 
 
-
 namespace ui
 {
 	namespace
@@ -19,9 +18,10 @@ namespace ui
 		const gint WINDOW_HEIGHT = 500;
 	}
 
-	XDataSelector::XDataSelector(const XData::StringVectorMap& files) :
+	XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog) :
 		gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 		_store(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING,	G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
+		_editorDialog(editorDialog),
 		_files(files),
 		_result("")
 	{
@@ -42,6 +42,12 @@ namespace ui
 		gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
 	}
 
+	std::string XDataSelector::run(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog)
+	{
+		XDataSelector dialog(files, editorDialog);
+		dialog.show();
+		return dialog._result;
+	}
 
 	void XDataSelector::fillTree()
 	{
@@ -58,10 +64,17 @@ namespace ui
 	GtkWidget* XDataSelector::createTreeView()
 	{
 		// Create the treeview
-		_treeView = GTK_TREE_VIEW(
+		GtkTreeView* _treeView = GTK_TREE_VIEW(
 			gtk_tree_view_new_with_model(GTK_TREE_MODEL(_store))
 			);
 		gtk_tree_view_set_headers_visible(_treeView, FALSE);
+
+		// Add the selection and connect the signal
+		GtkTreeSelection* select = gtk_tree_view_get_selection ( _treeView );
+		gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
+		g_signal_connect(
+			select, "changed", G_CALLBACK(onSelectionChanged), this
+			);
 
 		// Single visible column, containing the directory/model name and the icon
 		GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
@@ -115,36 +128,33 @@ namespace ui
 		return alignment;
 	}
 
-	std::string XDataSelector::run(const XData::StringVectorMap& files)
-	{
-		XDataSelector dialog(files);
-		dialog.show();
-		return dialog._result;
-	}
-
 	void XDataSelector::onCancel(GtkWidget* widget, XDataSelector* self)
 	{
+		self->_result = "";
 		self->destroy();
 	}
 
 	void XDataSelector::onOk(GtkWidget* widget, XDataSelector* self)
 	{
-		GtkTreeSelection *select;
-		select = gtk_tree_view_get_selection ( GTK_TREE_VIEW (self->_treeView) );
-		gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
-
-		//Check if folder is selected.
-		if (gtkutil::TreeModel::getSelectedBoolean(select, IS_FOLDER_COLUMN))
+		if (self->_result == "")
 		{
 			gtkutil::errorDialog("You have selected a folder. Please select an XData Definition!", GlobalMainFrame().getTopLevelWindow() );
 			return;
 		}
 
-		// Get the treeview selection
-		self->_result = gtkutil::TreeModel::getSelectedString(select,FULLNAME_COLUMN);
-
 		// Everything done. Destroy the window!
 		self->destroy();
+	}
+
+	void XDataSelector::onSelectionChanged(GtkTreeSelection *treeselection, XDataSelector* self)
+	{
+		if (!gtkutil::TreeModel::getSelectedBoolean(treeselection, IS_FOLDER_COLUMN))
+		{
+			self->_result = gtkutil::TreeModel::getSelectedString(treeselection,FULLNAME_COLUMN);
+			self->_editorDialog->updateGuiView( NULL, self->_result.c_str() );
+		}
+		else
+			self->_result = "";
 	}
 
 	gint XDataSelector::treeViewSortFunc(GtkTreeModel *model, 

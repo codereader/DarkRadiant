@@ -1176,7 +1176,7 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 	// FileChooser for xd-files
 	self->_xdLoader->retrieveXdInfo();
 
-	std::string res = XDataSelector::run(self->_xdLoader->getDefinitionList());
+	std::string res = XDataSelector::run(self->_xdLoader->getDefinitionList(), self);
 
 	if (res.empty())
 	{
