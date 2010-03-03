@@ -45,4 +45,32 @@ GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
 	return gui;
 }
 
+void Gui::initTime(const std::size_t time)
+{
+	if (_desktop != NULL)
+	{
+		_desktop->initTime(time, true);
+	}
+}
+
+void Gui::update(const std::size_t timestep)
+{
+	if (_desktop != NULL)
+	{
+		// Recursively update child windowDefs
+		_desktop->update(timestep, true);
+	}
+}
+
+GuiWindowDefPtr Gui::findWindowDef(const std::string& name)
+{
+	// Handle "Desktop" right here
+	if (name == "Desktop")
+	{
+		return _desktop;
+	}
+
+	return (_desktop != NULL) ? _desktop->findWindowDef(name) : GuiWindowDefPtr();
+}
+
 } // namespace

@@ -108,12 +108,17 @@ public:
 	typedef std::vector<GuiWindowDefPtr> ChildWindows;
 	ChildWindows children;
 
+public:
 	// Default constructor
 	GuiWindowDef(Gui& owner);
 
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
 
 	void addWindow(const GuiWindowDefPtr& window);
+
+	// Recursively looks for a named child windowDef
+	// Returns NULL if not found
+	GuiWindowDefPtr findWindowDef(const std::string& name);
 
 	const std::string& getText() const;
 	void setText(const std::string& newText);
@@ -124,8 +129,13 @@ public:
 	/** 
 	 * greebo: This is some sort of "think" method, giving this windowDef
 	 * a chance to handle timed events.
+	 *
+	 * @updateChildren: recursively updates child windowDef if true
 	 */
-	void update(const std::size_t timeStep);
+	void update(const std::size_t timeStep, bool updateChildren = true);
+
+	// Initialises the time of this windowDef and all children
+	void initTime(const std::size_t time, bool updateChildren = true);
 
 private:
 	Vector4 parseVector4(parser::DefTokeniser& tokeniser);

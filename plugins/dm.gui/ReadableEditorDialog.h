@@ -139,12 +139,12 @@ private:
 	static gboolean onOneSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
 	static gboolean onTwoSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
 	static gboolean onFocusOut(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
-	static gboolean onKeyPress(GtkWidget *widget, GdkEventKey *event, ReadableEditorDialog* self);	//updates _guiView!!!!!!!!!!!!!!!!
+	static gboolean onKeyPress(GtkWidget *widget, GdkEventKey *event, ReadableEditorDialog* self);
 
 	// Helper Methods:
 
 	// Read Text from a given TextView Widget identified by its widget enumerator.
-	inline std::string readTextBuffer(int wEnum)
+	std::string readTextBuffer(int wEnum)
 	{
 		GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[wEnum]));
 		GtkTextIter start, end;
@@ -153,7 +153,7 @@ private:
 	}
 
 	// Sets the text of a TextView identified by its widget enumerator and scrolls it to the end.
-	inline void setTextViewAndScroll(int wEnum, std::string text)
+	void setTextViewAndScroll(int wEnum, std::string text)
 	{
 		GtkTextBuffer* bfr = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[wEnum])));
 		gtk_text_buffer_set_text( bfr, text.c_str(), text.size() );
@@ -162,6 +162,9 @@ private:
 		GtkTextMark* pMarkEnd = gtk_text_buffer_create_mark(bfr, "", &ending,FALSE);
 		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(_widgets[wEnum]), pMarkEnd, 0, FALSE, 0, 0);	//for some strange reason scroll to iter does not work...
 	}
+
+	// Updates the GUI preview (text updates)
+	void updateGuiView();
 };
 
 } // namespace ui

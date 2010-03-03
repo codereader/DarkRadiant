@@ -346,4 +346,9 @@ std::string GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
 	return rv;
 }
 
+void GuiScript::execute()
+{
+	// TODO
+}
+
 } // namespace
