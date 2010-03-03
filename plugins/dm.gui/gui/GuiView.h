@@ -3,6 +3,7 @@
 
 #include "gtkutil/ifc/Widget.h"
 #include "gtkutil/GLWidget.h"
+#include "math/Vector2.h"
 #include "GuiRenderer.h"
 #include "Gui.h"
 
@@ -31,6 +32,9 @@ private:
 
 	// The GUI to render
 	GuiPtr _gui;
+
+	// The dimensions of the GL widget in pixels.
+	Vector2 _windowDims;
 
 public:
 	GuiView();
@@ -64,6 +68,7 @@ protected:
 	}
 
 private:
+	static void onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, GuiView* self);
 	static void onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self);
 };
 typedef boost::shared_ptr<GuiView> GuiViewPtr;

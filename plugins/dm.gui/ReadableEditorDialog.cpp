@@ -104,7 +104,7 @@ namespace ui
 
 		// The hbox contains the controls
 		gtk_box_pack_start(GTK_BOX(hbox), vboxEP, TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(hbox), gtkutil::FramedWidget(_guiView->getWidget()), FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hbox), gtkutil::FramedWidget(_guiView->getWidget()), TRUE, FALSE, 0);
 
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
@@ -391,15 +391,15 @@ namespace ui
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewTitle), GTK_WRAP_WORD);
 		_widgets[WIDGET_PAGE_TITLE] = textViewTitle;
 		g_signal_connect(
-			G_OBJECT(textViewTitle), "key-press-event", G_CALLBACK(onKeyPress), this
-			);
+			G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewTitle))), "changed", G_CALLBACK(onTextChanged), this
+		);
 
 		GtkWidget* textViewRightTitle = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightTitle), GTK_WRAP_WORD);
 		_widgets[WIDGET_PAGE_RIGHT_TITLE] = textViewRightTitle;
 		g_signal_connect(
-			G_OBJECT(textViewRightTitle), "key-press-event", G_CALLBACK(onKeyPress), this
-			);
+			G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewRightTitle))), "changed", G_CALLBACK(onTextChanged), this
+		);
 		_widgets[WIDGET_PAGE_RIGHT_TITLE_SCROLLED] = gtkutil::ScrolledFrame(textViewRightTitle);
 
 		gtk_table_attach(tablePE, titleLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
@@ -415,15 +415,15 @@ namespace ui
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewBody), GTK_WRAP_WORD);
 		_widgets[WIDGET_PAGE_BODY] = textViewBody;
 		g_signal_connect(
-			G_OBJECT(textViewBody), "key-press-event", G_CALLBACK(onKeyPress), this
-			);
+			G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewBody))), "changed", G_CALLBACK(onTextChanged), this
+		);
 
 		GtkWidget* textViewRightBody = gtk_text_view_new();
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewRightBody), GTK_WRAP_WORD);
 		_widgets[WIDGET_PAGE_RIGHT_BODY] = textViewRightBody;
 		g_signal_connect(
-			G_OBJECT(textViewRightBody), "key-press-event", G_CALLBACK(onKeyPress), this
-			);
+			G_OBJECT(gtk_text_view_get_buffer(GTK_TEXT_VIEW(textViewRightBody))), "changed", G_CALLBACK(onTextChanged), this
+		);
 		_widgets[WIDGET_PAGE_RIGHT_BODY_SCROLLED] = gtkutil::ScrolledFrame(textViewRightBody);
 
 		gtk_table_attach(tablePE, bodyLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
@@ -1284,31 +1284,18 @@ namespace ui
 		return FALSE;
 	}
 
+	void ReadableEditorDialog::onTextChanged(GtkTextBuffer* textbuffer, ReadableEditorDialog* self)
+	{
+		// Update the preview
+		self->storeCurrentPage();
+		self->updateGuiView();
+	}
+
 	gboolean ReadableEditorDialog::onKeyPress(GtkWidget *widget, GdkEventKey* event, ReadableEditorDialog* self)
 	{
 		bool xdWidget = false;
 
-		if (widget == self->_widgets[WIDGET_PAGE_TITLE])
-		{
-			self->storeCurrentPage();
-			self->updateGuiView();
-		}
-		else if (widget == self->_widgets[WIDGET_PAGE_RIGHT_TITLE])
-		{
-			self->storeCurrentPage();
-			self->updateGuiView();
-		}
-		else if (widget == self->_widgets[WIDGET_PAGE_BODY])
-		{
-			self->storeCurrentPage();
-			self->updateGuiView();
-		}
-		else if (widget == self->_widgets[WIDGET_PAGE_RIGHT_BODY])
-		{
-			self->storeCurrentPage();
-			self->updateGuiView();
-		}
-		else if (widget == self->_widgets[WIDGET_NUMPAGES])
+		if (widget == self->_widgets[WIDGET_NUMPAGES])
 		{
 			if (event->keyval != GDK_Escape)
 				return FALSE;

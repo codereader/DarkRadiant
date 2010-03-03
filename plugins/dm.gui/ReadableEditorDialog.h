@@ -146,6 +146,7 @@ private:
 	static gboolean onTwoSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
 	static gboolean onFocusOut(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
 	static gboolean onKeyPress(GtkWidget *widget, GdkEventKey *event, ReadableEditorDialog* self);
+	static void onTextChanged(GtkTextBuffer* textbuffer, ReadableEditorDialog* self);
 
 	// Helper Methods:
 
