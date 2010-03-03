@@ -346,9 +346,41 @@ std::string GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
 	return rv;
 }
 
+const Statement& GuiScript::getStatement(std::size_t index)
+{
+	assert(index < _statements.size());
+	return *_statements[index];
+}
+
 void GuiScript::execute()
 {
-	// TODO
+	while (_ip < _statements.size())
+	{
+		const Statement& st = getStatement(_ip++);
+
+		switch (st.type)
+		{
+		case Statement::ST_NOP:
+			break;
+		case Statement::ST_JMP:
+			_ip = st.jmpDest;
+			break;
+		case Statement::ST_SET:
+			// TODO
+			break;
+		case Statement::ST_TRANSITION:
+		case Statement::ST_IF:
+		case Statement::ST_SET_FOCUS:
+		case Statement::ST_ENDGAME:
+		case Statement::ST_RESET_TIME:
+		case Statement::ST_SHOW_CURSOR:
+		case Statement::ST_RESET_CINEMATICS:
+		case Statement::ST_LOCALSOUND:
+		case Statement::ST_RUNSCRIPT:
+		case Statement::ST_EVALREGS:
+			break;
+		};
+	}
 }
 
 } // namespace

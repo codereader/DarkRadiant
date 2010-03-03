@@ -77,6 +77,8 @@ public:
 	void execute();
 
 private:
+	const Statement& getStatement(std::size_t index);
+
 	// Adds a statement to the compiled list, returns the index of this statement
 	std::size_t pushStatement(const StatementPtr& statement);
 
