@@ -26,13 +26,6 @@ void GuiRenderer::setIgnoreVisibility(bool ignoreVisibility)
 
 void GuiRenderer::render()
 {
-	glViewport(
-		static_cast<GLsizei>(_viewPortTopLeft[0]), 
-		static_cast<GLsizei>(_viewPortTopLeft[1]), 
-		static_cast<GLsizei>(_viewPortBottomRight[0]), 
-		static_cast<GLsizei>(_viewPortBottomRight[1])
-	);
-
 	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
