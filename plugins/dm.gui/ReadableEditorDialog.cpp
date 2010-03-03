@@ -660,8 +660,6 @@ namespace ui
 
 	void ReadableEditorDialog::showPage(std::size_t pageIndex)
 	{
-		// To Do: Update the renderer.
-		
 		// Update CurrentPage Label
 		_currentPageIndex = pageIndex;
 		gtk_label_set_text(GTK_LABEL(_widgets[WIDGET_CURRENT_PAGE]), boost::lexical_cast<std::string>(pageIndex+1).c_str() );
@@ -688,10 +686,24 @@ namespace ui
 				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_ONESIDED_GUI);
 		}
 
-		// Tell the renderer which GUI to display
-		_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
+		// Update the GUI View
+		updateGuiView();
 	}
 
+	void ReadableEditorDialog::updateGuiView()
+	{
+		// Tell the renderer which GUI to display
+		_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
+
+		// Initialise the time of this GUI
+		_guiView->initTime(0);
+
+		// Load data from xdata into the GUI's state variables
+		// TODO
+
+		// Run the first frame
+		_guiView->update(16);
+	}
 
 	void ReadableEditorDialog::storeCurrentPage()
 	{

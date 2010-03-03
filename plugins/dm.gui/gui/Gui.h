@@ -28,6 +28,15 @@ public:
 	const GuiWindowDefPtr& getDesktop() const;
 	void setDesktop(const GuiWindowDefPtr& newDesktop);
 
+	// Sets up the time of the entire GUI (all windowDefs)
+	void initTime(const std::size_t time);
+
+	// "Think" routine, advances all active windowDefs (where notime == false)
+	void update(const std::size_t timestep);
+
+	// Returns a reference to the named windowDef, returns NULL if not found
+	GuiWindowDefPtr findWindowDef(const std::string& name);
+
 	// Takes the given token stream and attempts to construct a GUI object from it
 	// Returns NULL on failure
 	static GuiPtr createFromTokens(parser::DefTokeniser& tokeniser);

@@ -354,15 +354,66 @@ RenderableText& GuiWindowDef::getRenderableText()
 	return _renderableText;
 }
 
-void GuiWindowDef::update(const std::size_t timeStep)
+void GuiWindowDef::update(const std::size_t timeStep, bool updateChildren)
 {
+	if (notime) return; // time is frozen for this windowDef
+
 	std::size_t oldTime = time;
 
 	// Update this windowDef's time
 	time += timeStep;
 
-	// Check events to handle
+	// Check events whose time is within (oldTime..time]
+	for (TimedEventMap::const_iterator i = _timedEvents.lower_bound(oldTime + 1);
+		 i != _timedEvents.end() && i != _timedEvents.upper_bound(time); ++i)
+	{
+		i->second->execute();
+	}
 
+	// FIXME: Check if child windows are affected by a parent windowDef's notime setting
+	if (updateChildren)
+	{
+		for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
+		{
+			(*i)->update(timeStep, updateChildren);
+		}
+	}
 }
 
+void GuiWindowDef::initTime(const std::size_t time, bool updateChildren)
+{
+	this->time = time;
+
+	if (updateChildren)
+	{
+		for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
+		{
+			(*i)->initTime(time, updateChildren);
+		}
+	}
 }
+
+GuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& name)
+{
+	// First look at all direct children
+	for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		if ((*i)->name == name)
+		{
+			return (*i);
+		}
+	}
+
+	// Not found, ask each child to search for the windowDef
+	for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		GuiWindowDefPtr window = (*i)->findWindowDef(name);
+
+		if (window != NULL) return window;
+	}
+
+	// Not found
+	return GuiWindowDefPtr();
+}
+
+} // namespace

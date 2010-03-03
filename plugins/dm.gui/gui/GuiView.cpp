@@ -28,8 +28,28 @@ GuiView::GuiView() :
 
 void GuiView::setGui(const GuiPtr& gui)
 {
-	_gui = gui;
-	_renderer.setGui(gui);
+	// Check for equality
+	if (gui != _gui)
+	{
+		_gui = gui;
+		_renderer.setGui(gui);
+	}
+}
+
+void GuiView::initTime(const std::size_t time)
+{
+	if (_gui != NULL)
+	{
+		_gui->initTime(time);
+	}
+}
+
+void GuiView::update(const std::size_t timestep)
+{
+	if (_gui != NULL)
+	{
+		_gui->update(timestep);
+	}
 }
 
 void GuiView::initialiseView()

@@ -73,6 +73,9 @@ public:
 	// It expects the initial opening brace as first token.
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
 
+	// Start or continue execution of this script
+	void execute();
+
 private:
 	// Adds a statement to the compiled list, returns the index of this statement
 	std::size_t pushStatement(const StatementPtr& statement);
