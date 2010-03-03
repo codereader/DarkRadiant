@@ -3,7 +3,6 @@
 
 #include "ishaders.h"
 #include "math/Vector4.h"
-#include <boost/enable_shared_from_this.hpp>
 
 #include "RenderableText.h"
 
@@ -24,8 +23,7 @@ typedef boost::shared_ptr<GuiScript> GuiScriptPtr;
  * greebo: This is the base class for all windowDef-like objects in a GUI,
  * including windowDef, choiceDef, bindDef, etc.
  */
-class GuiWindowDef :
-	public boost::enable_shared_from_this<GuiWindowDef>
+class GuiWindowDef
 {
 private:
 	// The owning GUI

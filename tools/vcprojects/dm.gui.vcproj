@@ -545,6 +545,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\dm.gui\gui\Variable.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.gui\gui\Variable.h"
 					>
 				</File>

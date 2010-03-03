@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "parser/DefTokeniser.h"
-#include "GuiWindowDef.h"
+#include "Gui.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -364,7 +364,7 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 	{
 		// Is a GUI state variable
 		return VariablePtr(new GuiStateVariable(
-			_owner.getGui().shared_from_this(), 
+			_owner.getGui(), 
 			expr.substr(5)
 		));
 	}
@@ -372,28 +372,29 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 	// Not a gui:: variable, check if a namespace has been specified
 	std::size_t ddPos = expr.find("::");
 
-	GuiWindowDefPtr windowDef;
-	
 	if (ddPos != std::string::npos)
 	{
 		// Retrieve the windowDef name
 		std::string windowDefName = expr.substr(0, ddPos);
 
 		// Look up the windowDef
-		windowDef = _owner.getGui().findWindowDef(windowDefName);
+		GuiWindowDefPtr windowDef = _owner.getGui().findWindowDef(windowDefName);
 
-		if (windowDef == NULL)
+		if (windowDef != NULL)
+		{
+			// Cut off the "<windowDef>::" from the name
+			return VariablePtr(new WindowDefVariable(*windowDef, expr.substr(ddPos+2)));
+		}
+		else
 		{
 			globalWarningStream() << "GUI Script: unknown windowDef " << windowDefName << std::endl;
+			return VariablePtr();
 		}
-
-		// Cut off the "<windowDef>::" from the name
-		return VariablePtr(new WindowDefVariable(windowDef, expr.substr(ddPos+2)));
 	}
 	else
 	{
 		// Use the owner windowDef if no namespace was defined
-		return VariablePtr(new WindowDefVariable(_owner.shared_from_this(), expr));
+		return VariablePtr(new WindowDefVariable(_owner, expr));
 	}
 }
 
@@ -415,6 +416,12 @@ void GuiScript::execute()
 			{
 				// Try to find the target variable
 				VariablePtr v = getVariableFromExpression(st.args[0]);
+				
+				if (v == NULL || !v->assignValueFromString(st.args[1]))
+				{
+					globalWarningStream() << "Cannot assign value " << 
+						st.args[1] << " to variable " << st.args[1] << std::endl;
+				}
 			}
 			break;
 		case Statement::ST_TRANSITION:
