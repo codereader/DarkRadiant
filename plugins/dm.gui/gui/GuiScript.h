@@ -5,6 +5,8 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
+#include "Variable.h"
+
 namespace parser { class DefTokeniser; }
 
 namespace gui
@@ -37,7 +39,7 @@ struct Statement
 	// The statement type
 	Type type;
 
-	typedef std::list<std::string> Arguments;
+	typedef std::vector<std::string> Arguments;
 	Arguments args;
 
 	// The jump destination used by ST_IF and ST_JMP
@@ -77,6 +79,9 @@ public:
 	void execute();
 
 private:
+	// Interprets the given string and returns the target object
+	VariablePtr getVariableFromExpression(const std::string& expr);
+
 	const Statement& getStatement(std::size_t index);
 
 	// Adds a statement to the compiled list, returns the index of this statement

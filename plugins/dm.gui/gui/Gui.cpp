@@ -48,6 +48,8 @@ GuiPtr Gui::createFromTokens(parser::DefTokeniser& tokeniser)
 void Gui::setStateString(const std::string& key, const std::string& value)
 {
 	_state[key] = value;
+
+	// TODO: Handle state variable links to windowDef registers
 }
 
 std::string Gui::getStateString(const std::string& key)

@@ -3,9 +3,9 @@
 
 #include "ishaders.h"
 #include "math/Vector4.h"
+#include <boost/enable_shared_from_this.hpp>
 
 #include "RenderableText.h"
-#include "GuiScript.h"
 
 namespace parser { class DefTokeniser; }
 
@@ -17,11 +17,15 @@ class Gui;
 class GuiWindowDef;
 typedef boost::shared_ptr<GuiWindowDef> GuiWindowDefPtr;
 
+class GuiScript;
+typedef boost::shared_ptr<GuiScript> GuiScriptPtr;
+
 /**
  * greebo: This is the base class for all windowDef-like objects in a GUI,
  * including windowDef, choiceDef, bindDef, etc.
  */
-class GuiWindowDef
+class GuiWindowDef :
+	public boost::enable_shared_from_this<GuiWindowDef>
 {
 private:
 	// The owning GUI
@@ -111,6 +115,9 @@ public:
 public:
 	// Default constructor
 	GuiWindowDef(Gui& owner);
+
+	// Returns the GUI
+	Gui& getGui() const;
 
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
 

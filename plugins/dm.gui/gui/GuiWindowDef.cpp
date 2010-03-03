@@ -11,6 +11,8 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
+#include "GuiScript.h"
+
 namespace gui
 {
 
@@ -37,6 +39,11 @@ GuiWindowDef::GuiWindowDef(Gui& owner) :
 	nowrap(false),
 	time(0)
 {}
+
+Gui& GuiWindowDef::getGui() const
+{
+	return _owner;
+}
 
 // Returns a GUI expression, which can be a number, a string or a formula ("gui::objVisible" == 1).
 std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
