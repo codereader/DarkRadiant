@@ -692,6 +692,8 @@ namespace ui
 
 	void ReadableEditorDialog::updateGuiView()
 	{
+		if (_xData == NULL) return;
+
 		// Tell the renderer which GUI to display
 		_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
 
