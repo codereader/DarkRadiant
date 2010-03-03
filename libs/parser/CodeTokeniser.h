@@ -570,7 +570,7 @@ public:
      */
 	CodeTokeniser(const ArchiveTextFilePtr& file,
 				  const char* delims = " \t\n\v\r", 
-				  const char* keptDelims = "{}(),") :
+				  const char* keptDelims = "{}(),;") :
 		_delims(delims),
 		_keptDelims(keptDelims)
     {

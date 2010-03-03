@@ -61,7 +61,7 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 	try
 	{
 		std::string whiteSpace = std::string(parser::WHITESPACE) + ",";
-		parser::CodeTokeniser tokeniser(file, whiteSpace.c_str(), "{}(),");
+		parser::CodeTokeniser tokeniser(file, whiteSpace.c_str(), "{}(),;");
 
 		return Gui::createFromTokens(tokeniser);
 	}

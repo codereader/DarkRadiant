@@ -81,6 +81,7 @@ private:
 	std::size_t getCurPosition();
 
 	std::string getExpression(parser::DefTokeniser& tokeniser);
+	std::string getIfExpression(parser::DefTokeniser& tokeniser);
 
 	// Reads a "statement", which can be single one or a group (surrounded by curly braces)
 	void parseStatement(parser::DefTokeniser& tokeniser);
