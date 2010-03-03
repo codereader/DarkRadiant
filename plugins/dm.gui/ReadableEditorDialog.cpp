@@ -39,9 +39,7 @@ namespace ui
 		const char* const NO_ENTITY_ERROR = "Cannot run Readable Editor on this selection.\n"
 			"Please select a single XData entity."; 
 
-		const std::string LABEL_PAGE_RELATED("Page related statements:");
-
-		const std::string LABEL_PAGE_OPERATIONS("Editing operations:");
+		const std::string LABEL_PAGE_RELATED("Page Editing:");
 
 		const std::string LABEL_GENERAL_PROPERTIES("General properties:");
 
@@ -68,13 +66,11 @@ namespace ui
 			WIDGET_PAGE_BODY,
 			WIDGET_PAGE_RIGHT_BODY,
 			WIDGET_PAGE_RIGHT_BODY_SCROLLED,
-			WIDGET_SHIFT_RIGHT,
-			WIDGET_SHIFT_LEFT,
-			WIDGET_MENU_SHIFT_RIGHT,
-			WIDGET_MENU_SHIFT_LEFT,
 			WIDGET_MENU_APPEND,
 			WIDGET_MENU_PREPEND,
 			WIDGET_MENU_TOOLS,
+			WIDGET_MENU_INSERT,
+			WIDGET_MENU_DELETE,
 		};
 
 	}
@@ -103,7 +99,6 @@ namespace ui
 		GtkWidget* vboxEP = gtk_vbox_new(FALSE, 6);
 		_widgets[WIDGET_EDIT_PANE] = vboxEP;
 		gtk_box_pack_start(GTK_BOX(vboxEP), createGeneralPropertiesInterface(), FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(vboxEP), createPageOperationsInterface(), FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(vboxEP), createPageRelatedInterface(), TRUE, TRUE, 0);
 
 		// The hbox contains the controls
@@ -280,15 +275,15 @@ namespace ui
 		return vbox;
 	}
 
-	GtkWidget* ReadableEditorDialog::createPageOperationsInterface()
+	GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	{
 		GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
-		// Add a label for page operations
-		GtkWidget* pageOperationsLabel = gtkutil::LeftAlignedLabel(
-			std::string("<span weight=\"bold\">") + LABEL_PAGE_OPERATIONS + "</span>"
+		// Add a label for page related edits and add it to the vbox
+		GtkWidget* pageRelatedLabel = gtkutil::LeftAlignedLabel(
+			std::string("<span weight=\"bold\">") + LABEL_PAGE_RELATED + "</span>"
 			);
-		gtk_box_pack_start(GTK_BOX(vbox), pageOperationsLabel, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), pageRelatedLabel, FALSE, FALSE, 0);
 
 		// Insert Button
 		GtkWidget* insertButton = gtk_button_new_with_label("Insert");
@@ -303,30 +298,6 @@ namespace ui
 		g_signal_connect(
 			G_OBJECT(deleteButton), "clicked", G_CALLBACK(onDelete), this
 			);
-
-		// Shift-buttons
-		GtkWidget* shiftRightButton = gtk_button_new_with_label("Shift");
-		gtk_button_set_image(GTK_BUTTON(shiftRightButton), gtk_image_new_from_stock(GTK_STOCK_MEDIA_FORWARD, GTK_ICON_SIZE_SMALL_TOOLBAR) );
-		g_signal_connect(
-			G_OBJECT(shiftRightButton), "clicked", G_CALLBACK(onShiftRight), this
-			);
-		_widgets[WIDGET_SHIFT_RIGHT] = shiftRightButton;
-		GtkWidget* shiftLeftButton = gtk_button_new_with_label("Shift");
-		gtk_button_set_image(GTK_BUTTON(shiftLeftButton), gtk_image_new_from_stock(GTK_STOCK_MEDIA_REWIND, GTK_ICON_SIZE_SMALL_TOOLBAR) );
-		g_signal_connect(
-			G_OBJECT(shiftLeftButton), "clicked", G_CALLBACK(onShiftLeft), this
-			);
-		_widgets[WIDGET_SHIFT_LEFT] = shiftLeftButton;
-
-		// Add the buttons to an hbox, stuff it into an alignment and add it to the vbox.
-		GtkWidget* hboxEC = gtk_hbox_new(FALSE, 6);
-		gtk_box_pack_start(GTK_BOX(hboxEC),shiftLeftButton,TRUE,TRUE,0);
-		gtk_box_pack_start(GTK_BOX(hboxEC),insertButton,TRUE,TRUE,0);
-		gtk_box_pack_start(GTK_BOX(hboxEC),deleteButton,TRUE,TRUE,0);
-		gtk_box_pack_start(GTK_BOX(hboxEC),shiftRightButton,TRUE,TRUE,0);
-
-		GtkWidget* alignmentEC = gtkutil::LeftAlignment(GTK_WIDGET(hboxEC), 18, 1.0); 
-		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(alignmentEC), FALSE, FALSE, 0);
 
 		// Page Switcher
 		GtkWidget* prevPage = gtk_button_new_with_label("");
@@ -355,31 +326,16 @@ namespace ui
 
 		// Add the elements to an hbox
 		GtkWidget* hboxPS = gtk_hbox_new(FALSE, 6);
+		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(insertButton), TRUE, TRUE, 0);
 		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(firstPage), FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(prevPage), FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(currPageLabel), FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(currPageDisplay), FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(nextPage), FALSE, FALSE, 0);
 		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(LastPage), FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(hboxPS), GTK_WIDGET(deleteButton), TRUE, TRUE, 0);
 
-		// Align the hbox to the center
-		GtkWidget* currPageContainer = gtk_alignment_new(0.5,1,0,0);
-		gtk_container_add(GTK_CONTAINER(currPageContainer), hboxPS);
-
-		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(currPageContainer), FALSE, FALSE, 0);
-
-		return vbox;
-	}
-
-	GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
-	{
-		GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
-
-		// Add a label for page related edits and add it to the vbox
-		GtkWidget* pageRelatedLabel = gtkutil::LeftAlignedLabel(
-			std::string("<span weight=\"bold\">") + LABEL_PAGE_RELATED + "</span>"
-			);
-		gtk_box_pack_start(GTK_BOX(vbox), pageRelatedLabel, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(GTK_WIDGET(hboxPS), 18, 1.0), FALSE, FALSE, 0);
 
 		// Add a gui chooser with a browse-button
 		GtkWidget* guiLabel = gtkutil::LeftAlignedLabel("Gui Definition:");
@@ -478,41 +434,53 @@ namespace ui
 
 	void ReadableEditorDialog::createMenus()
 	{
-		// Shift right Menu
-		GtkWidget* mSR = gtk_menu_new();
+		// Insert menu
+		GtkWidget* mIns = gtk_menu_new();
 
-		GtkWidget* appSR = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
+		GtkWidget* insWhole = gtk_menu_item_new_with_label("Insert whole Page");
 		g_signal_connect(
-			G_OBJECT(appSR), "activate", G_CALLBACK(onMenuAppendShift), this
+			G_OBJECT(insWhole), "activate", G_CALLBACK(onInsertWhole), this
 			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), appSR);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mIns), insWhole);
 
-		GtkWidget* disSR = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
+		GtkWidget* insLeft = gtk_menu_item_new_with_label("Insert on left Side");
 		g_signal_connect(
-			G_OBJECT(disSR), "activate", G_CALLBACK(onMenuDiscardLast), this
+			G_OBJECT(insLeft), "activate", G_CALLBACK(onInsertLeft), this
 			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSR), disSR);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mIns), insLeft);
 
-		gtk_widget_show_all(mSR);
-		_widgets[WIDGET_MENU_SHIFT_RIGHT] = mSR;
-
-		// Shift left Menu
-		GtkWidget* mSL = gtk_menu_new();
-
-		GtkWidget* appSL = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
+		GtkWidget* insRight = gtk_menu_item_new_with_label("Insert on right Side");
 		g_signal_connect(
-			G_OBJECT(appSL), "activate", G_CALLBACK(onMenuAppendShift), this
+			G_OBJECT(insRight), "activate", G_CALLBACK(onInsertRight), this
 			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), appSL);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mIns), insRight);
 
-		GtkWidget* disSl = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Discard Content");
+		gtk_widget_show_all(mIns);
+		_widgets[WIDGET_MENU_INSERT] = mIns;
+
+		// Delete Menu
+		GtkWidget* mDel = gtk_menu_new();
+
+		GtkWidget* delWhole = gtk_menu_item_new_with_label("Delete whole Page");
 		g_signal_connect(
-			G_OBJECT(disSl), "activate", G_CALLBACK(onMenuDiscardFirst), this
+			G_OBJECT(delWhole), "activate", G_CALLBACK(onDeleteWhole), this
 			);
-		gtk_menu_shell_append(GTK_MENU_SHELL(mSL), disSl);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mDel), delWhole);
 
-		gtk_widget_show_all(mSL);
-		_widgets[WIDGET_MENU_SHIFT_LEFT] = mSL;
+		GtkWidget* delLeft = gtk_menu_item_new_with_label("Delete on left Side");
+		g_signal_connect(
+			G_OBJECT(delLeft), "activate", G_CALLBACK(onDeleteLeft), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mDel), delLeft);
+
+		GtkWidget* delRight = gtk_menu_item_new_with_label("Delete on right Side");
+		g_signal_connect(
+			G_OBJECT(delRight), "activate", G_CALLBACK(onDeleteRight), this
+			);
+		gtk_menu_shell_append(GTK_MENU_SHELL(mDel), delRight);
+
+		gtk_widget_show_all(mDel);
+		_widgets[WIDGET_MENU_DELETE] = mDel;
 
 		// Append Menu
 		GtkWidget* mApp = gtk_menu_new();
@@ -674,8 +642,6 @@ namespace ui
 
 	void ReadableEditorDialog::toggleTwoSidedEditing(bool show)
 	{
-		gtk_widget_set_sensitive(_widgets[WIDGET_SHIFT_LEFT], show);
-		gtk_widget_set_sensitive(_widgets[WIDGET_SHIFT_RIGHT], show);
 		if (show)
 		{
 			gtk_widget_show(_widgets[WIDGET_PAGE_RIGHT_BODY_SCROLLED]);
@@ -899,8 +865,7 @@ namespace ui
 		}
 	}
 
-
-	void ReadableEditorDialog::shiftLeft()
+/*	void ReadableEditorDialog::shiftLeft()
 	{
 		storeCurrentPage();
 		for (std::size_t n = 0; n < _xData->getNumPages()-1; n++)
@@ -946,6 +911,99 @@ namespace ui
 		_xData->setPageContent(XData::Body, 0, XData::Left, "");
 
 		showPage(_currentPageIndex);
+	}*/
+
+
+	void ReadableEditorDialog::deleteSide(bool rightSide)
+	{
+		storeCurrentPage();
+		if (!rightSide)
+		{
+			_xData->setPageContent( XData::Title, _currentPageIndex, XData::Left, 
+				_xData->getPageContent(XData::Title, _currentPageIndex, XData::Right)
+				);
+			_xData->setPageContent( XData::Body, _currentPageIndex, XData::Left, 
+				_xData->getPageContent(XData::Body, _currentPageIndex, XData::Right)
+				);	
+		}
+		if (_currentPageIndex < _xData->getNumPages()-1)
+		{
+			_xData->setPageContent( XData::Title, _currentPageIndex, XData::Right, 
+				_xData->getPageContent(XData::Title, _currentPageIndex+1, XData::Left)
+				);
+			_xData->setPageContent( XData::Body, _currentPageIndex, XData::Right, 
+				_xData->getPageContent(XData::Body, _currentPageIndex+1, XData::Left)
+				);
+			for (std::size_t n = _currentPageIndex+1; n < _xData->getNumPages()-1; n++)
+			{
+				_xData->setPageContent(XData::Title, n, XData::Left,
+					_xData->getPageContent(XData::Title, n, XData::Right) );
+				_xData->setPageContent(XData::Title, n, XData::Right,
+					_xData->getPageContent(XData::Title, n+1, XData::Left) );
+				_xData->setPageContent(XData::Body, n, XData::Left,
+					_xData->getPageContent(XData::Body, n, XData::Right) );
+				_xData->setPageContent(XData::Body, n, XData::Right,
+					_xData->getPageContent(XData::Body, n+1, XData::Left) );
+			}
+			_xData->setPageContent(XData::Title, _xData->getNumPages()-1, XData::Left,
+				_xData->getPageContent(XData::Title, _xData->getNumPages()-1, XData::Right) );
+			_xData->setPageContent(XData::Body, _xData->getNumPages()-1, XData::Left,
+				_xData->getPageContent(XData::Body, _xData->getNumPages()-1, XData::Right) );
+		}
+
+		if ( (_xData->getPageContent(XData::Title, _xData->getNumPages()-1, XData::Left) == "") &&
+			(_xData->getPageContent(XData::Body, _xData->getNumPages()-1, XData::Left) == "") )
+		{
+			// The last page has no content anymore, so delete it.
+			gtk_spin_button_set_value(GTK_SPIN_BUTTON(_widgets[WIDGET_NUMPAGES]), _xData->getNumPages()-1);
+		}
+		else
+		{
+			_xData->setPageContent(XData::Title, _xData->getNumPages()-1, XData::Right, "");
+			_xData->setPageContent(XData::Body, _xData->getNumPages()-1, XData::Right, "");
+		}
+
+		showPage(_currentPageIndex);
+	}
+
+	void ReadableEditorDialog::insertSide(bool rightSide)
+	{
+		storeCurrentPage();
+
+		if ( (_xData->getPageContent(XData::Title, _xData->getNumPages()-1, XData::Right) != "") ||
+			(_xData->getPageContent(XData::Body, _xData->getNumPages()-1, XData::Right) != "") )
+		{
+			//Last side has content. Raise numPages before shifting
+			gtk_spin_button_set_value(GTK_SPIN_BUTTON(_widgets[WIDGET_NUMPAGES]), _xData->getNumPages()+1);
+		}
+
+		for (std::size_t n = _xData->getNumPages()-1; n>_currentPageIndex; n--)
+		{
+			_xData->setPageContent(XData::Title, n, XData::Right,
+				_xData->getPageContent(XData::Title, n, XData::Left) );
+			_xData->setPageContent(XData::Title, n, XData::Left,
+				_xData->getPageContent(XData::Title, n-1, XData::Right) );
+			_xData->setPageContent(XData::Body, n, XData::Right,
+				_xData->getPageContent(XData::Body, n, XData::Left) );
+			_xData->setPageContent(XData::Body, n, XData::Left,
+				_xData->getPageContent(XData::Body, n-1, XData::Right) );
+		}
+		if (!rightSide)
+		{
+			_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right,
+				_xData->getPageContent(XData::Title, _currentPageIndex, XData::Left) );
+			_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right,
+				_xData->getPageContent(XData::Body, _currentPageIndex, XData::Left) );
+			_xData->setPageContent(XData::Title, _currentPageIndex, XData::Left, "");
+			_xData->setPageContent(XData::Body, _currentPageIndex, XData::Left, "");
+		}
+		else
+		{
+			_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right, "");
+			_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right, "");
+		}
+
+		showPage(_currentPageIndex);
 	}
 
 
@@ -953,6 +1011,36 @@ namespace ui
 
 //////////////////////////////////////////////////////////////////////////////
 // Callback Methods for Signals:
+
+	void ReadableEditorDialog::onInsertWhole(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->insertPage();
+	}
+
+	void ReadableEditorDialog::onInsertLeft(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->insertSide(false);
+	}
+
+	void ReadableEditorDialog::onInsertRight(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->insertSide(true);
+	}
+
+	void ReadableEditorDialog::onDeleteWhole(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->deletePage();
+	}
+
+	void ReadableEditorDialog::onDeleteLeft(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->deleteSide(false);
+	}
+
+	void ReadableEditorDialog::onDeleteRight(GtkWidget* widget, ReadableEditorDialog* self)
+	{
+		self->deleteSide(true);
+	}
 
 	void ReadableEditorDialog::onCancel(GtkWidget* widget, ReadableEditorDialog* self) 
 	{
@@ -1050,38 +1138,21 @@ namespace ui
 
 	}
 
-	void ReadableEditorDialog::onShiftLeft(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		if ( (self->_xData->getPageContent(XData::Title, 0, XData::Left) != "") 
-			|| (self->_xData->getPageContent(XData::Body, 0, XData::Left) != "") )
-		{
-			//The last page has content. Show the popup menu:
-			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_LEFT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
-		}
-		else
-			self->shiftLeft();
-	}
-
-	void ReadableEditorDialog::onShiftRight(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		if ( (self->_xData->getPageContent(XData::Title, self->_xData->getNumPages()-1, XData::Right) != "") 
-			|| (self->_xData->getPageContent(XData::Body, self->_xData->getNumPages()-1, XData::Right) != "") )
-		{
-			//The last page has content. Show the popup menu:
-			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_SHIFT_RIGHT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
-		}
-		else
-			self->shiftRight();
-	}
 
 	void ReadableEditorDialog::onInsert(GtkWidget* widget, ReadableEditorDialog* self)
 	{
-		self->insertPage();
+		if (self->_xData->getPageLayout() == XData::TwoSided)
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_INSERT]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+		else 
+			self->insertPage();
 	}
 
 	void ReadableEditorDialog::onDelete(GtkWidget* widget, ReadableEditorDialog* self)
 	{
-		self->deletePage();
+		if (self->_xData->getPageLayout() == XData::TwoSided)
+			gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_DELETE]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+		else 
+			self->deletePage();
 	}	
 
 	void ReadableEditorDialog::onValueChanged(GtkWidget* widget, ReadableEditorDialog* self)
@@ -1092,25 +1163,10 @@ namespace ui
 			self->showPage(nNP-1);
 	}
 
-	void ReadableEditorDialog::onMenuAppendShift(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
-		self->shiftRight();
-	}
-
-	void ReadableEditorDialog::onMenuDiscardLast(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->shiftRight();
-	}
-
-	void ReadableEditorDialog::onMenuDiscardFirst(GtkWidget* widget, ReadableEditorDialog* self)
-	{
-		self->shiftLeft();
-	}
-
 	void ReadableEditorDialog::onMenuAppend(GtkWidget* widget, ReadableEditorDialog* self)
 	{
 		gtk_spin_button_set_value( GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), self->_xData->getNumPages()+1 );
+		self->storeCurrentPage();
 		self->showPage(self->_currentPageIndex+1);
 	}
 
