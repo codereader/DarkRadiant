@@ -83,35 +83,57 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	// Acquire the texture number of the active texture
 	if (window->backgroundShader != NULL && (window->matcolor[3] > 0 || _ignoreVisibility))
 	{
-		TexturePtr tex = window->backgroundShader->getEditorImage();
-		glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
+		// Get the diffuse layer
+		const ShaderLayerVector& layers = window->backgroundShader->getAllLayers();
 
-		// Draw the textured quad
-		glColor4dv(window->matcolor);
+		TexturePtr tex;
 
-		// Render background image as opaque if _ignoreVisibility is set to true
-		if (_ignoreVisibility && window->matcolor[3] <= 0)
+		for (ShaderLayerVector::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		{
-			glColor4d(window->matcolor[0], window->matcolor[1], window->matcolor[2], 1);
+			if ((*i)->getType() == ShaderLayer::DIFFUSE)
+			{
+				// Found the diffuse
+				tex = (*i)->getTexture();
+				break; 
+			}
 		}
 
-		glEnable(GL_TEXTURE_2D);
-		glBegin(GL_QUADS);
+		if (tex == NULL)
+		{
+			tex = window->backgroundShader->getEditorImage();
+		}
 
-		glTexCoord2f(0,0);
-		glVertex2d(window->rect[0], window->rect[1]);	// Upper left
+		if (tex != NULL) 
+		{
+			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
-		glTexCoord2f(1,0);
-		glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
+			// Draw the textured quad
+			glColor4dv(window->matcolor);
 
-		glTexCoord2f(1,1);
-		glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
+			// Render background image as opaque if _ignoreVisibility is set to true
+			if (_ignoreVisibility && window->matcolor[3] <= 0)
+			{
+				glColor4d(window->matcolor[0], window->matcolor[1], window->matcolor[2], 1);
+			}
 
-		glTexCoord2f(0,1);
-		glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
+			glEnable(GL_TEXTURE_2D);
+			glBegin(GL_QUADS);
 
-		glEnd();
-		glDisable(GL_TEXTURE_2D);
+			glTexCoord2f(0,0);
+			glVertex2d(window->rect[0], window->rect[1]);	// Upper left
+
+			glTexCoord2f(1,0);
+			glVertex2d(window->rect[0] + window->rect[2], window->rect[1]); // Upper right
+
+			glTexCoord2f(1,1);
+			glVertex2d(window->rect[0] + window->rect[2], window->rect[1] + window->rect[3]); // Lower right
+
+			glTexCoord2f(0,1);
+			glVertex2d(window->rect[0], window->rect[1] + window->rect[3]); // Lower left
+
+			glEnd();
+			glDisable(GL_TEXTURE_2D);
+		}
 	}
 
 	// Render the text
