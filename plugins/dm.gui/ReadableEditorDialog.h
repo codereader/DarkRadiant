@@ -72,7 +72,7 @@ public:
 	void useTwoSidedEditing();
 
 	// Updates the GUI preview (text updates). Public so that XDataSelector and GuiSelector can access it.
-	void updateGuiView(const char* guiPath = NULL, const char* xDataPath = NULL );
+	void updateGuiView(const std::string& guiPath = "", const std::string& xDataPath = "");
 
 protected:
 	virtual void _postShow();

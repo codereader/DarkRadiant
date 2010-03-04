@@ -12,7 +12,7 @@
 
 namespace ui
 {
-
+	
 namespace
 {
 	const std::string WINDOW_TITLE("Choose a Gui Definition...");
@@ -22,12 +22,15 @@ namespace
 }
 
 
-GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog) :
+GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_editorDialog(editorDialog),
-	_name("")
+	_name(""),
+	_oneSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
+	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN))
 {
-	static bool load = fillTrees();
+	// Populate the treestores
+	fillTrees();
 
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -37,57 +40,40 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog) :
 
 	gtk_container_add(GTK_CONTAINER(getWindow()), createInterface());
 
-	// Set the current page and connect the switch-page signal afterwards.
 	gtk_notebook_set_current_page(_notebook, twoSided);
-	g_signal_connect(
-		G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this
-		);
 }
 
-std::string GuiSelector::run(bool twoSided, ReadableEditorDialog* editorDialog)
+std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
 {
 	GuiSelector dialog(twoSided, editorDialog);
 	dialog.show();
 
-	if (dialog._name.empty())
-		return "";
-	return "guis/" + dialog._name;
+	return (dialog._name.empty()) ? "" : "guis/" + dialog._name;
 }
 
-GtkTreeStore* GuiSelector::getOneSidedStore()
+void GuiSelector::fillTrees()
 {
-	static GtkTreeStore* _oneSidedStore = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
-	return _oneSidedStore;
-}
+	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
+	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
-GtkTreeStore* GuiSelector::getTwoSidedStore()
-{
-	static GtkTreeStore* _twoSidedStore = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
-	return _twoSidedStore;
-}
-
-bool GuiSelector::fillTrees()
-{
-	gtkutil::VFSTreePopulator popOne(getOneSidedStore());
-	gtkutil::VFSTreePopulator popTwo(getTwoSidedStore());
-
-	gui::GuiManager::GuiMap m = gui::GuiManager::Instance().getGuiDefinitions();
+	const gui::GuiManager::GuiAppearanceMap& guis = gui::GuiManager::Instance().getGuiAppearanceMap();
 	
-	for (gui::GuiManager::GuiMap::iterator it = m.begin(); it != m.end(); it++)
+	for (gui::GuiManager::GuiAppearanceMap::const_iterator it = guis.begin(); 
+		 it != guis.end(); ++it)
 	{
-		//identify readables and differ between onesided and twosided ones. Add the gui to the according tree.
-		gui::GuiManager::GuiAppearance appearance = gui::GuiManager::Instance().checkGuiAppearance(it->second);
-		if ( appearance == gui::GuiManager::ONE_SIDED_READABLE )
-			popOne.addPath(it->first.substr(it->first.find("/")+1));	//ommit the guis-folder
-		else if (appearance == gui::GuiManager::TWO_SIDED_READABLE)
-			popTwo.addPath(it->first.substr(it->first.find("/")+1));	//ommit the guis-folder
+		if (it->second == gui::ONE_SIDED_READABLE)
+		{
+			popOne.addPath(it->first.substr(it->first.find('/') + 1));	// omit the guis-folder
+		}
+		else if (it->second == gui::TWO_SIDED_READABLE)
+		{
+			popTwo.addPath(it->first.substr(it->first.find('/') + 1));	// omit the guis-folder
+		}
 	}
 
 	GuiInserter inserter;
 	popOne.forEachNode(inserter);
 	popTwo.forEachNode(inserter);
-
-	return true;
 }
 
 GtkWidget* GuiSelector::createInterface()
@@ -96,6 +82,9 @@ GtkWidget* GuiSelector::createInterface()
 
 	// Create the tabs
 	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
+	g_signal_connect(
+		G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this
+		);
 
 	// One-Sided Readables Tab
 	GtkWidget* labelOne = gtk_label_new("One-Sided Readable Guis");
@@ -149,7 +138,7 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 {
 	// Create the treeview
 	GtkTreeView* treeViewOne = GTK_TREE_VIEW(
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(getOneSidedStore()))
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_oneSidedStore))
 		);
 	gtk_tree_view_set_headers_visible(treeViewOne, FALSE);
 
@@ -168,14 +157,14 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 
 	// Set the tree stores to sort on this column
 	gtk_tree_sortable_set_sort_column_id(
-		GTK_TREE_SORTABLE(getOneSidedStore()),
+		GTK_TREE_SORTABLE(_oneSidedStore),
 		NAME_COLUMN,
 		GTK_SORT_ASCENDING
 		);
 
 	// Set the custom sort function
 	gtk_tree_sortable_set_sort_func(
-		GTK_TREE_SORTABLE(getOneSidedStore()),
+		GTK_TREE_SORTABLE(_oneSidedStore),
 		NAME_COLUMN,		// sort column
 		treeViewSortFunc,	// function
 		this,				// userdata
@@ -197,7 +186,7 @@ GtkWidget* GuiSelector::createTwoSidedTreeView()
 {
 	// Create the treeview
 	GtkTreeView* treeViewTwo = GTK_TREE_VIEW(
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(getTwoSidedStore()))
+		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_twoSidedStore))
 		);
 	gtk_tree_view_set_headers_visible(treeViewTwo, FALSE);
 
@@ -216,14 +205,14 @@ GtkWidget* GuiSelector::createTwoSidedTreeView()
 
 	// Set the tree stores to sort on this column
 	gtk_tree_sortable_set_sort_column_id(
-		GTK_TREE_SORTABLE(getTwoSidedStore()),
+		GTK_TREE_SORTABLE(_twoSidedStore),
 		NAME_COLUMN,
 		GTK_SORT_ASCENDING
 		);
 
 	// Set the custom sort function
 	gtk_tree_sortable_set_sort_func(
-		GTK_TREE_SORTABLE(getTwoSidedStore()),
+		GTK_TREE_SORTABLE(_twoSidedStore),
 		NAME_COLUMN,		// sort column
 		treeViewSortFunc,	// function
 		this,				// userdata
@@ -284,14 +273,14 @@ gint GuiSelector::treeViewSortFunc(GtkTreeModel *model,
 
 void GuiSelector::onCancel(GtkWidget* widget, GuiSelector* self)
 {
-	self->_name.clear();
+	self->_name = "";
 	self->destroy();
 }
 
 void GuiSelector::onOk(GtkWidget* widget, GuiSelector* self)
 {	
 	// Check if a gui has been chosen:
-	if (self->_name.empty())
+	if (self->_name == "")
 	{
 		gtkutil::errorDialog("You have selected a folder. Please select a Gui Definition!", GlobalMainFrame().getTopLevelWindow() );
 		return;
@@ -304,21 +293,27 @@ void GuiSelector::onOk(GtkWidget* widget, GuiSelector* self)
 void GuiSelector::onPageSwitch(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, GuiSelector* self)
 {
 	if (page_num == 0)
-		self->_editorDialog->useOneSidedEditing();
+		self->_editorDialog.useOneSidedEditing();
 	else
-		self->_editorDialog->useTwoSidedEditing();
+		self->_editorDialog.useTwoSidedEditing();
 }
 
-void GuiSelector::onSelectionChanged(GtkTreeSelection *treeselection, GuiSelector* self)
+void GuiSelector::onSelectionChanged(GtkTreeSelection* treeselection, GuiSelector* self)
 {
-	if (!gtkutil::TreeModel::getSelectedBoolean(treeselection, IS_FOLDER_COLUMN))
+	GtkTreeModel* model;
+	bool anythingSelected = gtk_tree_selection_get_selected(treeselection, &model, NULL);
+
+	if (anythingSelected && !gtkutil::TreeModel::getSelectedBoolean(treeselection, IS_FOLDER_COLUMN))
 	{
-		self->_name = gtkutil::TreeModel::getSelectedString(treeselection,FULLNAME_COLUMN);
-		std::string guiPath = "guis/" + self->_name ;
-		self->_editorDialog->updateGuiView( guiPath.c_str() );
+		self->_name = gtkutil::TreeModel::getSelectedString(treeselection, FULLNAME_COLUMN);
+		std::string guiPath = "guis/" + self->_name;
+
+		self->_editorDialog.updateGuiView(guiPath.c_str());
 	}
 	else
+	{
 		self->_name.clear();
+	}
 }
 
-} // namespace ui
+} // namespace

@@ -16,6 +16,14 @@ namespace
 	const std::string GUI_EXT("gui");
 }
 
+enum GuiAppearance
+{
+	ONE_SIDED_READABLE,
+	TWO_SIDED_READABLE,
+	NO_READABLE,
+	IMPORT_FAILURE,
+};
+
 class Gui;
 typedef boost::shared_ptr<Gui> GuiPtr;
 
@@ -30,13 +38,7 @@ public:
 	typedef std::map<std::string, GuiPtr> GuiMap;
 	typedef std::vector<std::string> StringList;
 
-	enum GuiAppearance
-	{
-		ONE_SIDED_READABLE,
-		TWO_SIDED_READABLE,
-		NO_READABLE,
-		IMPORT_FAILURE,
-	};
+	typedef std::map<std::string, GuiAppearance> GuiAppearanceMap;
 
 private:
 	// The table of all loaded Gui, sorted by VFS path
@@ -44,21 +46,26 @@ private:
 
 	// A List of all the errors occuring lastly.
 	StringList _errorList;
+	
+	GuiAppearanceMap _guiAppearance;
+
+	bool _guiTypesLoaded;
+
+	GuiManager();
+
 public:
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
 	GuiPtr getGui(const std::string& guiPath);
 
 	// Operator used for callback by refreshGuiDefinitions.
-	void operator() (const std::string& guiPath) { loadGui( GUI_DIR + guiPath ); }
+	void operator() (const std::string& guiPath);
 
-	// Getter for _guis. Throws runtime_error if _guis is empty.
-	const GuiMap& getGuiDefinitions();
+	// Getter for GUI types
+	const GuiAppearanceMap& getGuiAppearanceMap();
 
-	// Checks the appearance of a given guiPath or gui. If an IMPORT_FAIlURE is the case,
-	// a proper error-message is to be found in the last element of getErrorList().
-	const GuiAppearance checkGuiAppearance(const std::string& guiPath);
-	const GuiAppearance checkGuiAppearance(const GuiPtr& gui);
+	// Returns the GUI appearance type for the given GUI path
+	GuiAppearance getGuiAppearance(const std::string& guiPath);
 
 	// Returns the _errorList for use in a GUI.
 	const StringList& getErrorList() { return _errorList; }
@@ -70,10 +77,10 @@ public:
 	typedef const std::string& first_argument_type;
 
 private:
-	GuiPtr loadGui(const std::string& guiPath);
+	// Searches the VFS for all available GUI definitions
+	void buildGuiTypeMap();
 
-	// Retrieves all available GUI definitions and stores them in _guis.
-	const GuiMap& refreshGuiDefinitions();
+	GuiPtr loadGui(const std::string& guiPath);
 };
 
 } // namespace
