@@ -739,7 +739,7 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 	}
 	else
 	{
-		if (!guiPath.empty())
+		if (guiPath.empty())
 		{
 			_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
 		}

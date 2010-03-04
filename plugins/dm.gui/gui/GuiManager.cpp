@@ -21,7 +21,6 @@ void GuiManager::operator() (const std::string& guiPath)
 
 	if (gui == NULL)
 	{
-		_guiAppearance[GUI_DIR + guiPath] = IMPORT_FAILURE;
 		return;
 	}
 
@@ -33,10 +32,6 @@ void GuiManager::operator() (const std::string& guiPath)
 	else if (gui->findWindowDef("leftTitle") != NULL)
 	{
 		_guiAppearance[GUI_DIR + guiPath] = TWO_SIDED_READABLE;
-	}
-	else
-	{
-		_guiAppearance[GUI_DIR + guiPath] = NO_READABLE;
 	}
 }
 

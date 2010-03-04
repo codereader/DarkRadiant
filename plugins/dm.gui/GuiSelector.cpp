@@ -40,7 +40,9 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 
 	gtk_container_add(GTK_CONTAINER(getWindow()), createInterface());
 
+	// Set the current page and connect the switch-page signal afterwards.
 	gtk_notebook_set_current_page(_notebook, twoSided);
+	g_signal_connect(G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this);
 }
 
 std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
@@ -82,9 +84,6 @@ GtkWidget* GuiSelector::createInterface()
 
 	// Create the tabs
 	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
-	g_signal_connect(
-		G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this
-		);
 
 	// One-Sided Readables Tab
 	GtkWidget* labelOne = gtk_label_new("One-Sided Readable Guis");
@@ -93,7 +92,7 @@ GtkWidget* GuiSelector::createInterface()
 		_notebook, 
 		createOneSidedTreeView(), 
 		labelOne
-		);
+	);
 
 	// Two-Sided Readables Tab
 	GtkWidget* labelTwo = gtk_label_new("Two-Sided Readable Guis");
@@ -102,7 +101,7 @@ GtkWidget* GuiSelector::createInterface()
 		_notebook, 
 		createTwoSidedTreeView(), 
 		labelTwo
-		);
+	);
 
 	// Packing
 	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
@@ -139,7 +138,10 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 	// Create the treeview
 	GtkTreeView* treeViewOne = GTK_TREE_VIEW(
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_oneSidedStore))
-		);
+	);
+	// Let the treestore be destroyed along with the treeview
+	g_object_unref(_oneSidedStore);
+
 	gtk_tree_view_set_headers_visible(treeViewOne, FALSE);
 
 	// Add the selection and connect the signal
@@ -147,12 +149,12 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 	g_signal_connect(
 		select, "changed", G_CALLBACK(onSelectionChanged), this
-		);
+	);
 
 	// Single visible column, containing the directory/model name and the icon
 	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
 		"Model Path", NAME_COLUMN, IMAGE_COLUMN
-		);
+	);
 	gtk_tree_view_append_column(treeViewOne, nameCol);				
 
 	// Set the tree stores to sort on this column
@@ -160,7 +162,7 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 		GTK_TREE_SORTABLE(_oneSidedStore),
 		NAME_COLUMN,
 		GTK_SORT_ASCENDING
-		);
+	);
 
 	// Set the custom sort function
 	gtk_tree_sortable_set_sort_func(
@@ -169,7 +171,7 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 		treeViewSortFunc,	// function
 		this,				// userdata
 		NULL				// no destroy notify
-		);
+	);
 
 	// Use the TreeModel's full string search function
 	gtk_tree_view_set_search_equal_func(treeViewOne, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
@@ -187,7 +189,10 @@ GtkWidget* GuiSelector::createTwoSidedTreeView()
 	// Create the treeview
 	GtkTreeView* treeViewTwo = GTK_TREE_VIEW(
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_twoSidedStore))
-		);
+	);
+	// Let the treestore be destroyed along with the treeview
+	g_object_unref(_twoSidedStore);
+
 	gtk_tree_view_set_headers_visible(treeViewTwo, FALSE);
 
 	// Add selection and connect signal
