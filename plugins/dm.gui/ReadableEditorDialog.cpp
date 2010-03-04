@@ -686,11 +686,11 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 		updateGuiView();
 }
 
-void ReadableEditorDialog::updateGuiView(const char* guiPath, const char* xDataPath)
+void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::string& xDataPath)
 {
 	// If the name of an xData object is passed it will be rendered instead of the current
 	// xData object, to enable previewing of XData definitions induced by the XDataSelector.
-	if (xDataPath != NULL)
+	if (!xDataPath.empty())
 	{
 		XData::XDataPtr xd;
 		XData::XDataMap xdMap;
@@ -739,7 +739,7 @@ void ReadableEditorDialog::updateGuiView(const char* guiPath, const char* xDataP
 	}
 	else
 	{
-		if (guiPath == NULL)
+		if (!guiPath.empty())
 		{
 			_guiView->setGui(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])));
 		}
@@ -1139,13 +1139,15 @@ void ReadableEditorDialog::checkGuiLayout()
 {
 	_runningGuiLayoutCheck = true;
 
+	std::string guiName = gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]));
+
 	std::string msg;
-	switch ( gui::GuiManager::Instance().checkGuiAppearance(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]))) )
+	switch ( gui::GuiManager::Instance().getGuiAppearance(guiName) )
 	{
-		case gui::GuiManager::NO_READABLE:
+		case gui::NO_READABLE:
 			msg = "The specified gui definition is not a readable.\n";
 			break;
-		case gui::GuiManager::ONE_SIDED_READABLE:
+		case gui::ONE_SIDED_READABLE:
 			if (_xData->getPageLayout() != XData::OneSided)
 			{
 				msg = "The specified gui definition is not suitable for the currently chosen page-layout.\n";
@@ -1156,7 +1158,7 @@ void ReadableEditorDialog::checkGuiLayout()
 				return;
 			}
 			break;
-		case gui::GuiManager::TWO_SIDED_READABLE:
+		case gui::TWO_SIDED_READABLE:
 			if (_xData->getPageLayout() != XData::TwoSided)
 			{
 				msg = "The specified gui definition is not suitable for the currently chosen page-layout.\n";
@@ -1167,7 +1169,7 @@ void ReadableEditorDialog::checkGuiLayout()
 				return;
 			}
 			break;
-		case gui::GuiManager::IMPORT_FAILURE:
+		case gui::IMPORT_FAILURE:
 			msg = "Failure during import:\n\t"
 				+ gui::GuiManager::Instance().getErrorList()[gui::GuiManager::Instance().getErrorList().size()-1];
 			break;
@@ -1178,7 +1180,7 @@ void ReadableEditorDialog::checkGuiLayout()
 	if (dialog->run() == ui::IDialog::RESULT_YES)
 	{
 		XData::PageLayout layoutBefore = _xData->getPageLayout();
-		std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, this);
+		std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, *this);
 
 		if (!guiName.empty())
 		{
@@ -1189,15 +1191,22 @@ void ReadableEditorDialog::checkGuiLayout()
 		else
 		{
 			if (_xData->getPageLayout() != layoutBefore)
+			{
 				toggleLayout();
+			}
+
 			// User clicked cancel. Use default layout:
 			if (_xData->getPageLayout() == XData::TwoSided)
 			{
 				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_TWOSIDED_GUI);
 			}
 			else
+			{
 				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_ONESIDED_GUI);
+			}
+
 			updateGuiView();
+
 			dialog = GlobalDialogManager().createMessageBox("Switching to default Gui...",
 				"You didn't choose a Gui. Using the default Gui now.", IDialog::MESSAGE_CONFIRM);
 			dialog->run();
@@ -1352,7 +1361,7 @@ void ReadableEditorDialog::onBrowseGui(GtkWidget* widget, ReadableEditorDialog* 
 {
 	XData::PageLayout layoutBefore = self->_xData->getPageLayout();
 	std::string guiDefBefore = gtk_entry_get_text(GTK_ENTRY(self->_widgets[WIDGET_GUI_ENTRY]));
-	std::string guiName = GuiSelector::run(self->_xData->getPageLayout() == XData::TwoSided, self);
+	std::string guiName = GuiSelector::run(self->_xData->getPageLayout() == XData::TwoSided, *self);
 
 	if (!guiName.empty())
 	{

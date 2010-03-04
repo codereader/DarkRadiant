@@ -14,27 +14,27 @@ class GuiSelector :
 	public gtkutil::BlockingTransientWindow
 {
 private:
+	// Reference to the calling ReadableEditorDialog
+	ReadableEditorDialog& _editorDialog;
+
 	// The name that was picked.
 	std::string _name;
 
 	// The notebook holding the tabs for one-sided and two-sided readables.
 	GtkNotebook* _notebook;
 
-	// Static treestores. These are likely not to change during runtime and creating the treestores takes some time...
-	GtkTreeStore* getOneSidedStore();
-	GtkTreeStore* getTwoSidedStore();
+	GtkTreeStore* _oneSidedStore;
+	GtkTreeStore* _twoSidedStore;
 
-	// Pointer to the calling ReadableEditorDialog
-	ReadableEditorDialog* _editorDialog;
 public:
 	// Starts the GuiSelector and returns the name of the selected GUI or an empty string if the user canceled.
 	// The dialog shows the twoSided treeview if twoSided is true.
-	static std::string run(bool twoSided, ReadableEditorDialog* editorDialog);
+	static std::string run(bool twoSided, ReadableEditorDialog& editorDialog);
 
 private:
-	GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog);
+	GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog);
 
-	bool fillTrees();
+	void fillTrees();
 
 	static gint treeViewSortFunc(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data);
 
@@ -49,4 +49,4 @@ private:
 	static void onPageSwitch(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, GuiSelector* self);
 };
 
-} // namespace ui
+} // namespace

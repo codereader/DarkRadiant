@@ -11,42 +11,57 @@
 namespace gui
 {
 
-const GuiManager::GuiMap&  GuiManager::refreshGuiDefinitions()
+GuiManager::GuiManager() :
+	_guiTypesLoaded(false)
+{}
+
+void GuiManager::operator() (const std::string& guiPath)
+{ 
+	GuiPtr gui = loadGui(GUI_DIR + guiPath);
+
+	if (gui == NULL)
+	{
+		_guiAppearance[GUI_DIR + guiPath] = IMPORT_FAILURE;
+		return;
+	}
+
+	// TODO: Find a better way of distinguishing GUIs
+	if (gui->findWindowDef("title") != NULL)
+	{
+		_guiAppearance[GUI_DIR + guiPath] = ONE_SIDED_READABLE;
+	}
+	else if (gui->findWindowDef("leftTitle") != NULL)
+	{
+		_guiAppearance[GUI_DIR + guiPath] = TWO_SIDED_READABLE;
+	}
+	else
+	{
+		_guiAppearance[GUI_DIR + guiPath] = NO_READABLE;
+	}
+}
+
+GuiAppearance GuiManager::getGuiAppearance(const std::string& guiPath)
 {
-	_guis.clear();
-	_errorList.clear();
+	buildGuiTypeMap();
+
+	GuiAppearanceMap::const_iterator i = _guiAppearance.find(guiPath);
+
+	return (i != _guiAppearance.end()) ? i->second : NO_READABLE;
+}
+
+void GuiManager::buildGuiTypeMap()
+{
+	if (_guiTypesLoaded) return;
+
+	_guiTypesLoaded = true;
+
+	_guiAppearance.clear();
+
 	GlobalFileSystem().forEachFile(
 		GUI_DIR,
 		GUI_EXT,
 		makeCallback1(*this),
 		99);
-
-	return _guis;
-}
-
-const GuiManager::GuiMap& GuiManager::getGuiDefinitions()
-{
-	static GuiMap guis = refreshGuiDefinitions();	// Make sure this is only called once.
-	if (_guis.empty())
-		throw std::runtime_error("GuiMap is empty.");
-	return _guis;
-}
-
-const GuiManager::GuiAppearance GuiManager::checkGuiAppearance(const std::string& guiPath)
-{
-	GuiPtr request = getGui(guiPath);
-	if (!request)
-		return IMPORT_FAILURE;
-	return checkGuiAppearance(request);
-}
-
-const GuiManager::GuiAppearance GuiManager::checkGuiAppearance(const GuiPtr& gui)
-{
-	if (gui->findWindowDef("title"))
-		return ONE_SIDED_READABLE;
-	if (gui->findWindowDef("leftTitle"))
-		return TWO_SIDED_READABLE;
-	return NO_READABLE;
 }
 
 GuiPtr GuiManager::getGui(const std::string& guiPath)
@@ -60,6 +75,13 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 
 	// GUI not buffered, try to load afresh
 	return loadGui(guiPath);
+}
+
+const GuiManager::GuiAppearanceMap& GuiManager::getGuiAppearanceMap()
+{
+	buildGuiTypeMap();
+
+	return _guiAppearance;
 }
 
 GuiPtr GuiManager::loadGui(const std::string& guiPath)
