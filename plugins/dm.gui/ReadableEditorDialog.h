@@ -15,7 +15,8 @@ class Entity;
 namespace ui
 {
 
-
+///////////////////////////// ReadableEditorDialog:
+// The main dialog of the Readable Editor, which implements most editing features.
 class ReadableEditorDialog :
 	public gtkutil::BlockingTransientWindow
 {
@@ -54,6 +55,12 @@ private:
 	// Has the XData name been specified?
 	bool _xdNameSpecified;
 
+	// Tells the program whether checkGuiLayout() is already running.
+	bool _runningGuiLayoutCheck;
+
+	// Tells the program whether checkXDataUniqueness is already running.
+	bool _runningXDataUniquenessCheck;
+
 public:
 	// Pass the working entity to the constructor
 	ReadableEditorDialog(Entity* entity);
@@ -91,13 +98,16 @@ private:
 
 	// Updates the page related inputs and the preview renderer. Also adds default guis.
 	// Warning: Contents are overwritten. storeCurrentPage() should be called beforehand.
-	void showPage(std::size_t pageIndex);		//updates _guiView!!!!!!!!!!!!!!!!
+	void showPage(std::size_t pageIndex);
 
 	// Populates the controls with the information in the xdata object. Adds a default snd_page_turn, if not defined.
 	void populateControlsFromXData();
 
 	// Checks whether the chosen XData name already exists. If it does a popup will ask the user whether it should be imported.
 	void checkXDataUniqueness();
+
+	// Checks whether the specified gui definition matches the pagelayout. Returns FALSE on success.
+	void checkGuiLayout();
 
 	// Deleting and inserting of pages.
 	void insertPage();

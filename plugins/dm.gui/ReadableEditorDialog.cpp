@@ -26,6 +26,7 @@
 #include "XdFileChooserDialog.h"
 #include "XDataSelector.h"
 #include "GuiSelector.h"
+#include "gui/GuiManager.h"
 
 namespace ui
 {
@@ -84,7 +85,9 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	_result(RESULT_CANCEL),
 	_entity(entity),
 	_currentPageIndex(0),
-	_xdLoader(new XData::XDataLoader())
+	_xdLoader(new XData::XDataLoader()),
+	_runningGuiLayoutCheck(false),
+	_runningXDataUniquenessCheck(false)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -196,7 +199,7 @@ GtkWidget* ReadableEditorDialog::createGeneralPropertiesInterface()
 	GtkWidget* xdataNameEntry = gtk_entry_new();
 	_widgets[WIDGET_XDATA_NAME] = xdataNameEntry;
 	g_signal_connect(G_OBJECT(xdataNameEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
-	g_signal_connect(G_OBJECT(xdataNameEntry), "focus-out-event", G_CALLBACK(onFocusOut), this);
+	g_signal_connect_after(G_OBJECT(xdataNameEntry), "focus-out-event", G_CALLBACK(onFocusOut), this);
 
 	GtkWidget* xDataNameLabel = gtkutil::LeftAlignedLabel("XData Name:");
 
@@ -320,6 +323,8 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 
 	GtkWidget* guiEntry = gtk_entry_new();
 	_widgets[WIDGET_GUI_ENTRY] = guiEntry;
+	g_signal_connect(G_OBJECT(guiEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
+	g_signal_connect_after(G_OBJECT(guiEntry), "focus-out-event", G_CALLBACK(onFocusOut), this);
 
 	GtkWidget* browseGuiButton = gtk_button_new_with_label("");
 	gtk_button_set_image(GTK_BUTTON(browseGuiButton), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR) );
@@ -360,7 +365,7 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	curRow++;
 
 	// Create "title" label and title-textViews and add them to the second row of the table. Add the key-press-event.
-	GtkWidget* titleLabel = gtkutil::LeftAlignedLabel("Title:");	
+	GtkWidget* titleLabel = gtkutil::LeftAlignedLabel("Title:");
 
 	GtkWidget* textViewTitle = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewTitle), GTK_WRAP_WORD);
@@ -524,8 +529,8 @@ bool ReadableEditorDialog::initControlsFromEntity()
 				return false;
 			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
 				gtkutil::errorDialog(
-					_xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1] + 
-						"\nCreating a new XData definition..." , 
+					_xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1]
+					+ "\nCreating a new XData definition...",
 					GlobalMainFrame().getTopLevelWindow()
 				);
 				break;
@@ -542,7 +547,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	if (nameStartPos != std::string::npos)
 	{
 		// might lead to weird behavior if mapname has not been defined yet.
-		_xdFilename = _xdFilename.substr(nameStartPos, _xdFilename.rfind(".") - nameStartPos);	
+		_xdFilename = _xdFilename.substr(nameStartPos, _xdFilename.rfind(".") - nameStartPos);
 	}
 
 	std::string xdn = "readables/" + _xdFilename + "/<Name_Here>";
@@ -583,14 +588,14 @@ void ReadableEditorDialog::save()
 		switch (_xData->xport( path_, XData::MergeOverwriteExisting))
 		{
 		case XData::OpenFailed: 
-			gtkutil::errorDialog( 
-				"Failed to open " + _xdFilename + " for saving.", 
+			gtkutil::errorDialog(
+				"Failed to open " + _xdFilename + " for saving.",
 				GlobalMainFrame().getTopLevelWindow()
 			);
 			break;
 		case XData::MergeFailed: 
-			gtkutil::errorDialog( 
-				"Merging failed, because the length of the definition to be overwritten could not be retrieved.", 
+			gtkutil::errorDialog(
+				"Merging failed, because the length of the definition to be overwritten could not be retrieved.",
 				GlobalMainFrame().getTopLevelWindow()
 			);
 			break;
@@ -600,8 +605,8 @@ void ReadableEditorDialog::save()
 	}
 	else if (fst == XData::OpenFailed)
 	{
-		gtkutil::errorDialog( 
-			"Failed to open " + _xdFilename + " for saving.", 
+		gtkutil::errorDialog(
+			"Failed to open " + _xdFilename + " for saving.",
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -636,19 +641,15 @@ void ReadableEditorDialog::toggleTwoSidedEditingInterface(bool show)
 
 void ReadableEditorDialog::showPage(std::size_t pageIndex)
 {
+	//Gui Def before:
+	std::string guiBefore = gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]));
+
 	// Update CurrentPage Label
 	_currentPageIndex = pageIndex;
 	gtk_label_set_text(GTK_LABEL(_widgets[WIDGET_CURRENT_PAGE]), sizetToStr(pageIndex+1).c_str());
 
-	// Update page statements textviews from xData
-	setTextViewAndScroll(WIDGET_PAGE_TITLE, _xData->getPageContent(XData::Title, pageIndex, XData::Left));
-	setTextViewAndScroll(WIDGET_PAGE_BODY, _xData->getPageContent(XData::Body, pageIndex, XData::Left));
-
 	if (_xData->getPageLayout() == XData::TwoSided)
 	{
-		setTextViewAndScroll(WIDGET_PAGE_RIGHT_TITLE, _xData->getPageContent(XData::Title, pageIndex, XData::Right));
-		setTextViewAndScroll(WIDGET_PAGE_RIGHT_BODY, _xData->getPageContent(XData::Body, pageIndex, XData::Right));
-
 		// Update Gui statement entry from xData
 		if (!_xData->getGuiPage(pageIndex).empty())
 		{
@@ -658,11 +659,14 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 		{
 			gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_TWOSIDED_GUI);
 		}
+
+		setTextViewAndScroll(WIDGET_PAGE_RIGHT_TITLE, _xData->getPageContent(XData::Title, pageIndex, XData::Right));
+		setTextViewAndScroll(WIDGET_PAGE_RIGHT_BODY, _xData->getPageContent(XData::Body, pageIndex, XData::Right));
 	}
 	else
 	{
 		// Update Gui statement entry from xData
-		if (_xData->getGuiPage(pageIndex) != "")
+		if (!_xData->getGuiPage(pageIndex).empty())
 		{
 			gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), _xData->getGuiPage(pageIndex).c_str());
 		}
@@ -672,8 +676,14 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 		}
 	}
 
-	// Update the GUI View
-	updateGuiView();
+	// Update page statements textviews from xData
+	setTextViewAndScroll(WIDGET_PAGE_TITLE, _xData->getPageContent(XData::Title, pageIndex, XData::Left));
+	setTextViewAndScroll(WIDGET_PAGE_BODY, _xData->getPageContent(XData::Body, pageIndex, XData::Left));
+
+	// Update the GUI View if the gui changed. For the page contents, updateGuiView is called automatically
+	// by onTextChange.
+	if (guiBefore != gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])))
+		updateGuiView();
 }
 
 void ReadableEditorDialog::updateGuiView(const char* guiPath, const char* xDataPath)
@@ -736,7 +746,7 @@ void ReadableEditorDialog::updateGuiView(const char* guiPath, const char* xDataP
 		else
 		{
 			_guiView->setGui(guiPath);
-		}	
+		}
 
 		const gui::GuiPtr& gui = _guiView->getGui();
 
@@ -768,7 +778,7 @@ void ReadableEditorDialog::updateGuiView(const char* guiPath, const char* xDataP
 
 		// Run the first frame
 		gui->update(16);
-	}		
+	}
 
 	_guiView->redraw();
 }
@@ -800,8 +810,8 @@ void ReadableEditorDialog::populateControlsFromXData()
 	std::string sndString = _xData->getSndPageTurn();
 
 	gtk_entry_set_text( 
-		GTK_ENTRY(_widgets[WIDGET_PAGETURN_SND]), 
-		sndString.empty() ? XData::DEFAULT_SNDPAGETURN : sndString.c_str() 
+		GTK_ENTRY(_widgets[WIDGET_PAGETURN_SND]),
+		sndString.empty() ? XData::DEFAULT_SNDPAGETURN : sndString.c_str()
 	);
 
 	if (_xData->getPageLayout() == XData::TwoSided)
@@ -816,9 +826,16 @@ void ReadableEditorDialog::populateControlsFromXData()
 
 void ReadableEditorDialog::checkXDataUniqueness()
 {
+	_runningXDataUniquenessCheck = true;
+
 	std::string xdn = gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]));
 
-	_xData->setName(xdn);	//neccessary to prevent FocusOut be called upon pressing enter in the entry.
+	if (_xData->getName() == xdn)
+	{
+		_runningXDataUniquenessCheck = false;
+		return;
+	}
+
 	_xdLoader->retrieveXdInfo();
 
 	XData::StringVectorMap::const_iterator it = _xdLoader->getDefinitionList().find(xdn);
@@ -827,7 +844,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 	{
 		// The definition already exists. Ask the user whether it should be imported. If not make a different name suggestion.
 		IDialogPtr popup = GlobalDialogManager().createMessageBox(
-			"Import definition?", "The definition " + xdn + " already exists. Should it be imported?", 
+			"Import definition?", "The definition " + xdn + " already exists. Should it be imported?",
 			ui::IDialog::MESSAGE_ASK
 		);
 		
@@ -838,18 +855,19 @@ void ReadableEditorDialog::checkXDataUniqueness()
 			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader))
 			{
 			case XdFileChooserDialog::RESULT_CANCEL:
-				return;
+				break;
 			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
-				message = _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1];
+				message = "Import failed:\n\t" + _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1] + "\n\n";
 				break;
 			default:	//Import success
 				_xdNameSpecified = true;
 				populateControlsFromXData();
+				_runningXDataUniquenessCheck = false;
 				return;
-			}			
+			}
 		}
 
-		// Dialog RESULT_NO or import failed! Make a different name suggestion!
+		// Dialog RESULT_NO, XdFileChooserDialog::RESULT_CANCEL or import failed! Make a different name suggestion!
 		std::string suggestion;
 
 		for (int n = 1; n > 0; n++)
@@ -869,13 +887,16 @@ void ReadableEditorDialog::checkXDataUniqueness()
 
 		popup = GlobalDialogManager().createMessageBox(
 			"XData has been renamed.", 
-			message + "To avoid duplicated XData definitions, the current definition has been renamed to " + suggestion + ".", 
+			message + "To avoid duplicated XData definitions, the current definition has been renamed to " + suggestion + ".",
 			IDialog::MESSAGE_CONFIRM
 		);
 		popup->run();
-
-		_xdNameSpecified = true;
 	}
+	else
+		_xData->setName(xdn);
+
+	_xdNameSpecified = true;
+	_runningXDataUniquenessCheck = false;
 }
 
 void ReadableEditorDialog::insertPage()
@@ -889,11 +910,11 @@ void ReadableEditorDialog::insertPage()
 	{
 		_xData->setGuiPage(_xData->getGuiPage(n - 1), n);
 
-		_xData->setPageContent(XData::Title, n, XData::Left, 
+		_xData->setPageContent(XData::Title, n, XData::Left,
 			_xData->getPageContent(XData::Title, n - 1, XData::Left)
 		);
 
-		_xData->setPageContent(XData::Body, n, XData::Left, 
+		_xData->setPageContent(XData::Body, n, XData::Left,
 			_xData->getPageContent(XData::Body, n - 1, XData::Left)
 		);
 	}
@@ -910,11 +931,11 @@ void ReadableEditorDialog::insertPage()
 		{
 			_xData->setGuiPage(_xData->getGuiPage(n - 1), n);
 
-			_xData->setPageContent(XData::Title, n, XData::Right, 
+			_xData->setPageContent(XData::Title, n, XData::Right,
 				_xData->getPageContent(XData::Title, n - 1, XData::Right)
 			);
 
-			_xData->setPageContent(XData::Body, n, XData::Right, 
+			_xData->setPageContent(XData::Body, n, XData::Right,
 				_xData->getPageContent(XData::Body, n - 1, XData::Right)
 			);
 		}
@@ -947,11 +968,11 @@ void ReadableEditorDialog::deletePage()
 		{
 			_xData->setGuiPage(_xData->getGuiPage(n+1), n);
 
-			_xData->setPageContent(XData::Title, n, XData::Left, 
+			_xData->setPageContent(XData::Title, n, XData::Left,
 				_xData->getPageContent(XData::Title, n+1, XData::Left)
 			);
 
-			_xData->setPageContent(XData::Body, n, XData::Left, 
+			_xData->setPageContent(XData::Body, n, XData::Left,
 				_xData->getPageContent(XData::Body, n+1, XData::Left)
 			);
 		}
@@ -963,11 +984,11 @@ void ReadableEditorDialog::deletePage()
 			{
 				_xData->setGuiPage(_xData->getGuiPage(n+1), n);
 
-				_xData->setPageContent(XData::Title, n, XData::Right, 
+				_xData->setPageContent(XData::Title, n, XData::Right,
 					_xData->getPageContent(XData::Title, n+1, XData::Right)
 				);
 
-				_xData->setPageContent(XData::Body, n, XData::Right, 
+				_xData->setPageContent(XData::Body, n, XData::Right,
 					_xData->getPageContent(XData::Body, n+1, XData::Right)
 				);
 			}
@@ -988,22 +1009,22 @@ void ReadableEditorDialog::deleteSide(bool rightSide)
 
 	if (!rightSide)
 	{
-		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Left, 
+		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Left,
 			_xData->getPageContent(XData::Title, _currentPageIndex, XData::Right)
 		);
 
-		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Left, 
+		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Left,
 			_xData->getPageContent(XData::Body, _currentPageIndex, XData::Right)
-		);	
+		);
 	}
 
 	if (_currentPageIndex < _xData->getNumPages() - 1)
 	{
-		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right, 
+		_xData->setPageContent(XData::Title, _currentPageIndex, XData::Right,
 			_xData->getPageContent(XData::Title, _currentPageIndex + 1, XData::Left)
 		);
 		
-		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right, 
+		_xData->setPageContent(XData::Body, _currentPageIndex, XData::Right,
 			_xData->getPageContent(XData::Body, _currentPageIndex + 1, XData::Left)
 		);
 
@@ -1111,7 +1132,82 @@ void ReadableEditorDialog::toggleLayout()
 	// Convert OneSided XData to TwoSided and vice versa and refresh controls
 	storeXData();
 	_xData->togglePageLayout(_xData);
-	populateControlsFromXData();	
+	populateControlsFromXData();
+}
+
+void ReadableEditorDialog::checkGuiLayout()
+{
+	_runningGuiLayoutCheck = true;
+
+	std::string msg;
+	switch ( gui::GuiManager::Instance().checkGuiAppearance(gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]))) )
+	{
+		case gui::GuiManager::NO_READABLE:
+			msg = "The specified gui definition is not a readable.\n";
+			break;
+		case gui::GuiManager::ONE_SIDED_READABLE:
+			if (_xData->getPageLayout() != XData::OneSided)
+			{
+				msg = "The specified gui definition is not suitable for the currently chosen page-layout.\n";
+			}
+			else
+			{
+				_runningGuiLayoutCheck = false;
+				return;
+			}
+			break;
+		case gui::GuiManager::TWO_SIDED_READABLE:
+			if (_xData->getPageLayout() != XData::TwoSided)
+			{
+				msg = "The specified gui definition is not suitable for the currently chosen page-layout.\n";
+			}
+			else
+			{
+				_runningGuiLayoutCheck = false;
+				return;
+			}
+			break;
+		case gui::GuiManager::IMPORT_FAILURE:
+			msg = "Failure during import:\n\t"
+				+ gui::GuiManager::Instance().getErrorList()[gui::GuiManager::Instance().getErrorList().size()-1];
+			break;
+	}
+
+	IDialogPtr dialog = GlobalDialogManager().createMessageBox("Not a suitable Gui Definition!", msg + "\n\nStart the Gui Browser?", IDialog::MESSAGE_ASK);
+
+	if (dialog->run() == ui::IDialog::RESULT_YES)
+	{
+		XData::PageLayout layoutBefore = _xData->getPageLayout();
+		std::string guiName = GuiSelector::run(_xData->getPageLayout() == XData::TwoSided, this);
+
+		if (!guiName.empty())
+		{
+			gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), guiName.c_str());
+			_runningGuiLayoutCheck = false;
+			return;
+		}
+		else
+		{
+			if (_xData->getPageLayout() != layoutBefore)
+				toggleLayout();
+			// User clicked cancel. Use default layout:
+			if (_xData->getPageLayout() == XData::TwoSided)
+			{
+				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_TWOSIDED_GUI);
+			}
+			else
+				gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), XData::DEFAULT_ONESIDED_GUI);
+			updateGuiView();
+			dialog = GlobalDialogManager().createMessageBox("Switching to default Gui...",
+				"You didn't choose a Gui. Using the default Gui now.", IDialog::MESSAGE_CONFIRM);
+			dialog->run();
+			_runningGuiLayoutCheck = false;
+			return;
+		}
+	}
+	// Entry should hold focus.
+	gtk_widget_grab_focus(_widgets[WIDGET_GUI_ENTRY]);
+	_runningGuiLayoutCheck = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1180,6 +1276,7 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 
 	if (res.empty())
 	{
+		self->updateGuiView();
 		return;
 	}
 	
@@ -1253,6 +1350,8 @@ void ReadableEditorDialog::onLastPage(GtkWidget* widget, ReadableEditorDialog* s
 
 void ReadableEditorDialog::onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self) 
 {
+	XData::PageLayout layoutBefore = self->_xData->getPageLayout();
+	std::string guiDefBefore = gtk_entry_get_text(GTK_ENTRY(self->_widgets[WIDGET_GUI_ENTRY]));
 	std::string guiName = GuiSelector::run(self->_xData->getPageLayout() == XData::TwoSided, self);
 
 	if (!guiName.empty())
@@ -1261,6 +1360,10 @@ void ReadableEditorDialog::onBrowseGui(GtkWidget* widget, ReadableEditorDialog* 
 	}
 	else
 	{
+		if (self->_xData->getPageLayout() != layoutBefore)
+			self->toggleLayout();
+		if (gtk_entry_get_text(GTK_ENTRY(self->_widgets[WIDGET_GUI_ENTRY])) != guiDefBefore)
+			gtk_entry_set_text(GTK_ENTRY(self->_widgets[WIDGET_GUI_ENTRY]), guiDefBefore.c_str());
 		self->updateGuiView();
 	}
 }
@@ -1399,13 +1502,24 @@ gboolean ReadableEditorDialog::onTwoSided(GtkWidget* widget, GdkEventKey* event,
 
 gboolean ReadableEditorDialog::onFocusOut(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self)
 {
-	if (self->_xData->getName() != gtk_entry_get_text(GTK_ENTRY(self->_widgets[WIDGET_XDATA_NAME])))
+	if (widget == self->_widgets[WIDGET_XDATA_NAME])
 	{
-		// Only check uniqueness if the file has not been imported yet.
-		self->checkXDataUniqueness();
+		// Only call checkXDataUniqueness if the method is not running yet.
+		if (!self->_runningXDataUniquenessCheck)
+		{
+			self->checkXDataUniqueness();
+		}
+		return FALSE;
 	}
-
-	return FALSE;
+	else // WIDGET_GUI_ENTRY
+	{
+		// Only call checkGuiLayout() if the method is not yet running
+		if (!self->_runningGuiLayoutCheck)
+		{
+			self->checkGuiLayout();
+		}
+		return FALSE;
+	}
 }
 
 void ReadableEditorDialog::onTextChanged(GtkTextBuffer* textbuffer, ReadableEditorDialog* self)
@@ -1429,8 +1543,9 @@ gboolean ReadableEditorDialog::onKeyPress(GtkWidget *widget, GdkEventKey* event,
 	}
 
 	bool xdWidget = (widget == self->_widgets[WIDGET_XDATA_NAME]);
+	bool guiWidget = (widget == self->_widgets[WIDGET_GUI_ENTRY]);
 
-	if (xdWidget || widget == self->_widgets[WIDGET_READABLE_NAME])
+	if (xdWidget || guiWidget || widget == self->_widgets[WIDGET_READABLE_NAME])
 	{
 		switch (event->keyval)
 		{
@@ -1457,6 +1572,10 @@ gboolean ReadableEditorDialog::onKeyPress(GtkWidget *widget, GdkEventKey* event,
 				if (xdWidget)
 				{
 					self->checkXDataUniqueness();
+				}
+				else if (guiWidget)
+				{
+					self->checkGuiLayout();
 				}
 				return FALSE;
 			default: 
