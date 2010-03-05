@@ -1564,22 +1564,8 @@ void ReadableEditorDialog::onTextChanged(GtkTextBuffer* textbuffer, ReadableEdit
 
 gboolean ReadableEditorDialog::onKeyPress(GtkWidget *widget, GdkEventKey* event, ReadableEditorDialog* self)
 {
-	if (widget == self->_widgets[WIDGET_NUMPAGES])
-	{
-		if (event->keyval != GDK_Escape)
-		{
-			return FALSE;
-		}
-
-		// Restore the old value.
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), static_cast<gdouble>(self->_xData->getNumPages()));
-		return TRUE;
-	}
-
 	bool xdWidget = (widget == self->_widgets[WIDGET_XDATA_NAME]);
-	bool guiWidget = (widget == self->_widgets[WIDGET_GUI_ENTRY]);
-
-	if (xdWidget || guiWidget || widget == self->_widgets[WIDGET_READABLE_NAME])
+	if (xdWidget || widget == self->_widgets[WIDGET_READABLE_NAME])
 	{
 		switch (event->keyval)
 		{
@@ -1607,14 +1593,33 @@ gboolean ReadableEditorDialog::onKeyPress(GtkWidget *widget, GdkEventKey* event,
 				{
 					self->checkXDataUniqueness();
 				}
-				else if (guiWidget)
-				{
-					self->checkGuiLayout();
-				}
 				return FALSE;
 			default: 
 				return FALSE;
 		}
+	}
+
+	if (widget == self->_widgets[WIDGET_NUMPAGES])
+	{
+		if (event->keyval != GDK_Escape)
+		{
+			return FALSE;
+		}
+
+		// Restore the old value.
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(self->_widgets[WIDGET_NUMPAGES]), static_cast<gdouble>(self->_xData->getNumPages()));
+		return TRUE;
+	}
+
+	if (widget == self->_widgets[WIDGET_GUI_ENTRY])
+	{
+		if (event->keyval != GDK_Return && event->keyval != GDK_KP_Enter)
+		{
+			return FALSE;
+		}
+
+		self->checkGuiLayout();
+		return TRUE;
 	}
 
 	return FALSE;
