@@ -41,6 +41,9 @@ public:
 	// The dialog shows the twoSided treeview if twoSided is true.
 	static std::string run(bool twoSided, ReadableEditorDialog& editorDialog);
 
+protected:
+	void _preShow();
+
 private:
 	GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog);
 

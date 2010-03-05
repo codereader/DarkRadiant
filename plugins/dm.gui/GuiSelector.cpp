@@ -33,9 +33,6 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
 	_result(RESULT_CANCELLED)
 {
-	// Populate the treestores
-	fillTrees();
-
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	// Set the default border width in accordance to the HIG
@@ -52,10 +49,27 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 	gtk_widget_set_sensitive(_okButton, FALSE);
 }
 
+void GuiSelector::_preShow()
+{
+	// Call the base class
+	BlockingTransientWindow::_preShow();
+
+	// Populate the treestores
+	fillTrees();
+}
+
 std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
 {
 	GuiSelector dialog(twoSided, editorDialog);
-	dialog.show();
+
+	try
+	{
+		dialog.show();
+	}
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+	{
+		return "";
+	}
 
 	return (dialog._result == RESULT_OK) ? "guis/" + dialog._name : "";
 }

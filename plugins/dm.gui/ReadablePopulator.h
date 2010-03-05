@@ -45,7 +45,7 @@ public:
 		if (_evLimiter.readyForEvent()) 
         {
 			float fraction = static_cast<float>(_count) / _numGuis;
-			_progress.setTextAndFraction(guiPath, fraction);
+			_progress.setTextAndFraction(guiPath.substr(guiPath.rfind('/') + 1), fraction);
 		}
 
 		gui::GuiType type = gui::GuiManager::Instance().getGuiType(guiPath);
