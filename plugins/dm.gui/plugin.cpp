@@ -53,6 +53,9 @@ public:
 			"", // icon
 			"ReadableEditorDialog"
 		);
+
+		// Search the VFS for GUIs
+		gui::GuiManager::Instance().findGuis();
 	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;

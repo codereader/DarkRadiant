@@ -11,88 +11,110 @@
 namespace gui
 {
 
-GuiManager::GuiManager() :
-	_guiTypesLoaded(false)
-{}
-
 void GuiManager::operator() (const std::string& guiPath)
-{ 
-	GuiPtr gui = loadGui(GUI_DIR + guiPath);
+{
+	// Just store the path in the map, for later reference
+	_guis[GUI_DIR + guiPath] = GuiInfo();
+}
 
-	if (gui == NULL)
+void GuiManager::foreachGui(Visitor& visitor)
+{
+	for (GuiInfoMap::const_iterator i = _guis.begin(); i != _guis.end();)
 	{
-		_guiType[GUI_DIR + guiPath] = IMPORT_FAILURE;
-		return;
-	}
-
-	// TODO: Find a better way of distinguishing GUIs
-	if (gui->findWindowDef("title") != NULL)
-	{
-		_guiType[GUI_DIR + guiPath] = ONE_SIDED_READABLE;
-	}
-	else if (gui->findWindowDef("leftTitle") != NULL)
-	{
-		_guiType[GUI_DIR + guiPath] = TWO_SIDED_READABLE;
-	}
-	else
-	{
-		_guiType[GUI_DIR + guiPath] = NO_READABLE;
+		visitor.visit((i++)->first);
 	}
 }
 
 GuiType GuiManager::getGuiType(const std::string& guiPath)
 {
-	buildGuiTypeMap();
+	// Get the GUI (will load the file if necessary)
+	GuiPtr gui = getGui(guiPath);
 
-	GuiTypeMap::const_iterator i = _guiType.find(guiPath);
+	GuiInfoMap::iterator found = _guis.find(guiPath);
 
-	return (i != _guiType.end()) ? i->second : FILE_NOT_FOUND;
+	if (found == _guis.end())
+	{
+		return FILE_NOT_FOUND;
+	}
+
+	// Gui Info found, determine readable type if necessary
+	if (found->second.type == UNDETERMINED)
+	{
+		found->second.type = determineGuiType(found->second.gui);
+	}
+
+	return found->second.type;
 }
 
-void GuiManager::buildGuiTypeMap()
+GuiType GuiManager::determineGuiType(const GuiPtr& gui)
 {
-	if (_guiTypesLoaded) return;
+	// TODO: Find a better way of distinguishing GUIs
+	if (gui->findWindowDef("title") != NULL)
+	{
+		return ONE_SIDED_READABLE;
+	}
+	else if (gui->findWindowDef("leftTitle") != NULL)
+	{
+		return TWO_SIDED_READABLE;
+	}
+	
+	return NO_READABLE;
+}
 
-	_guiTypesLoaded = true;
-
-	_guiType.clear();
-
+void GuiManager::findGuis()
+{
+	// Traverse the file system, using this class as callback
 	GlobalFileSystem().forEachFile(
 		GUI_DIR,
 		GUI_EXT,
 		makeCallback1(*this),
-		99);
+		99
+	);
+
+	globalOutputStream() << "[GuiManager]: Found " << _guis.size() 
+		<< " guis." << std::endl;
 }
 
 GuiPtr GuiManager::getGui(const std::string& guiPath)
 {
-	GuiMap::iterator i = _guis.find(guiPath);
+	GuiInfoMap::iterator i = _guis.find(guiPath);
 
+	// Path existent?
 	if (i != _guis.end())
 	{
-		return i->second;
+		// Found in the map, load if not yet attempted
+		if (i->second.type == NOT_LOADED_YET)
+		{
+			loadGui(guiPath);
+		}
+
+		return i->second.gui;
 	}
 
 	// GUI not buffered, try to load afresh
 	return loadGui(guiPath);
 }
 
-const GuiManager::GuiTypeMap& GuiManager::getGuiTypeMap()
-{
-	buildGuiTypeMap();
-
-	return _guiType;
-}
 
 GuiPtr GuiManager::loadGui(const std::string& guiPath)
 {
+	// Insert a new entry in the map, if necessary
+	std::pair<GuiInfoMap::iterator, bool> result = _guis.insert(
+		GuiInfoMap::value_type(guiPath, GuiInfo())
+	);
+
+	GuiInfo& info = result.first->second;
+
 	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(guiPath);
 
 	if (file == NULL)
 	{
 		std::string errMSG = "Could not open file: " + guiPath + "\n";
+
 		_errorList.push_back(errMSG);
 		globalErrorStream() << errMSG;
+
+		info.type = FILE_NOT_FOUND;
 
 		return GuiPtr();
 	}
@@ -103,11 +125,10 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 		std::string whiteSpace = std::string(parser::WHITESPACE) + ",";
 		parser::CodeTokeniser tokeniser(file, whiteSpace.c_str(), "{}(),;");
 
-		GuiPtr gui = Gui::createFromTokens(tokeniser);
-		if (gui)
-			_guis[guiPath] = gui;
+		info.gui = Gui::createFromTokens(tokeniser);
+		info.type = UNDETERMINED;
 
-		return gui;
+		return info.gui;
 	}
 	catch (parser::ParseException& p)
 	{
@@ -115,6 +136,7 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 		_errorList.push_back(errMSG);
 		globalErrorStream() << errMSG;
 
+		info.type = IMPORT_FAILURE;
 		return GuiPtr();
 	}
 }
