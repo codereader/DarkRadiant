@@ -17,6 +17,11 @@ void GuiManager::operator() (const std::string& guiPath)
 	_guis[GUI_DIR + guiPath] = GuiInfo();
 }
 
+std::size_t GuiManager::getNumGuis() const
+{
+	return _guis.size();
+}
+
 void GuiManager::foreachGui(Visitor& visitor)
 {
 	for (GuiInfoMap::const_iterator i = _guis.begin(); i != _guis.end();)

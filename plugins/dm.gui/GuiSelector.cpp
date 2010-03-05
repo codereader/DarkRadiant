@@ -10,6 +10,8 @@
 #include "gui/GuiManager.h"
 #include "gtkutil/dialog.h"
 
+#include "ReadablePopulator.h"
+
 namespace ui
 {
 	
@@ -58,37 +60,8 @@ void GuiSelector::fillTrees()
 	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
 	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
-	class GuiWalker : 
-		public gui::GuiManager::Visitor
-	{
-	private:
-		gtkutil::VFSTreePopulator& _popOne;
-		gtkutil::VFSTreePopulator& _popTwo;
-
-	public:
-		GuiWalker(gtkutil::VFSTreePopulator& popOne,
-				  gtkutil::VFSTreePopulator& popTwo) :
-			_popOne(popOne),
-			_popTwo(popTwo)
-		{}
-
-		void visit(const std::string& guiPath)
-		{
-			gui::GuiType type = gui::GuiManager::Instance().getGuiType(guiPath);
-
-			if (type == gui::ONE_SIDED_READABLE)
-			{
-				_popOne.addPath(guiPath.substr(guiPath.find('/') + 1));	// omit the guis-folder
-			}
-			else if (type == gui::TWO_SIDED_READABLE)
-			{
-				_popTwo.addPath(guiPath.substr(guiPath.find('/') + 1));	// omit the guis-folder
-			}
-		}
-
-	} _walker(popOne, popTwo);
-
-	gui::GuiManager::Instance().foreachGui(_walker);
+	ReadablePopulator walker(popOne, popTwo);
+	gui::GuiManager::Instance().foreachGui(walker);
 	
 	GuiInserter inserter;
 	popOne.forEachNode(inserter);
