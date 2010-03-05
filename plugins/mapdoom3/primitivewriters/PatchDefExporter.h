@@ -10,14 +10,23 @@ namespace
 {
 	inline void writePatchDouble(const double d, std::ostream& os)
 	{
-		if (isValid(d)) {
-			os << d;
+		if (isValid(d))
+		{
+			if (d == -0.0)
+			{
+				os << 0; // convert -0 to 0
+			}
+			else
+			{
+				os << d;
+			}
 		}
-		else {
+		else
+		{
 			// Is infinity or NaN, write 0
 			os << "0";
 		}
-	} 
+	}
 }
 
 class PatchDefExporter
