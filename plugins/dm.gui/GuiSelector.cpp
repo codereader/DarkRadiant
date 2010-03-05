@@ -58,9 +58,9 @@ void GuiSelector::fillTrees()
 	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
 	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
-	const gui::GuiManager::GuiAppearanceMap& guis = gui::GuiManager::Instance().getGuiAppearanceMap();
+	const gui::GuiManager::GuiTypeMap& guis = gui::GuiManager::Instance().getGuiTypeMap();
 	
-	for (gui::GuiManager::GuiAppearanceMap::const_iterator it = guis.begin(); 
+	for (gui::GuiManager::GuiTypeMap::const_iterator it = guis.begin(); 
 		 it != guis.end(); ++it)
 	{
 		if (it->second == gui::ONE_SIDED_READABLE)

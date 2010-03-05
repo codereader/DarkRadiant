@@ -27,6 +27,7 @@
 #include "XDataSelector.h"
 #include "GuiSelector.h"
 #include "gui/GuiManager.h"
+#include "TextViewInfoDialog.h"
 
 namespace ui
 {
@@ -473,12 +474,16 @@ void ReadableEditorDialog::createMenus()
 	GtkWidget* mTools = gtk_menu_new();
 
 	GtkWidget* impSum = gtkutil::StockIconMenuItem(GTK_STOCK_DND, "Show last XData import summary");
-	g_signal_connect(G_OBJECT(impSum), "activate", G_CALLBACK(onImpSum), this);
+	g_signal_connect(G_OBJECT(impSum), "activate", G_CALLBACK(onXdImpSum), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mTools), impSum);
 
 	GtkWidget* dupDef = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Show duplicated definitions");
 	g_signal_connect(G_OBJECT(dupDef), "activate", G_CALLBACK(onDupDef), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mTools), dupDef);
+
+	GtkWidget* guiImp = gtkutil::StockIconMenuItem(GTK_STOCK_DND, "Show Gui import summary");
+	g_signal_connect(G_OBJECT(guiImp), "activate", G_CALLBACK(onGuiImpSum), this);
+	gtk_menu_shell_append(GTK_MENU_SHELL(mTools), guiImp);
 
 	gtk_widget_show_all(mTools);
 	_widgets[WIDGET_MENU_TOOLS] = mTools;
@@ -1142,15 +1147,15 @@ void ReadableEditorDialog::checkGuiLayout()
 	std::string guiName = gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]));
 
 	std::string msg;
-	switch ( gui::GuiManager::Instance().getGuiAppearance(guiName) )
+	switch ( gui::GuiManager::Instance().getGuiType(guiName) )
 	{
 		case gui::NO_READABLE:
-			msg = "The specified gui definition is not a readable.\n";
+			msg = "The specified gui definition is not a readable.";
 			break;
 		case gui::ONE_SIDED_READABLE:
 			if (_xData->getPageLayout() != XData::OneSided)
 			{
-				msg = "The specified gui definition is not suitable for the currently chosen page-layout.\n";
+				msg = "The specified gui definition is not suitable for the currently chosen page-layout.";
 			}
 			else
 			{
@@ -1161,7 +1166,7 @@ void ReadableEditorDialog::checkGuiLayout()
 		case gui::TWO_SIDED_READABLE:
 			if (_xData->getPageLayout() != XData::TwoSided)
 			{
-				msg = "The specified gui definition is not suitable for the currently chosen page-layout.\n";
+				msg = "The specified gui definition is not suitable for the currently chosen page-layout.";
 			}
 			else
 			{
@@ -1170,8 +1175,10 @@ void ReadableEditorDialog::checkGuiLayout()
 			}
 			break;
 		case gui::IMPORT_FAILURE:
-			msg = "Failure during import:\n\t"
-				+ gui::GuiManager::Instance().getErrorList()[gui::GuiManager::Instance().getErrorList().size()-1];
+			msg = "Failure during import.";
+			break;
+		case gui::FILE_NOT_FOUND:
+			msg = "The specified Definition does not exist.";
 			break;
 	}
 
@@ -1431,26 +1438,45 @@ void ReadableEditorDialog::onToolsClicked(GtkWidget* widget, ReadableEditorDialo
 	gtk_menu_popup(GTK_MENU(self->_widgets[WIDGET_MENU_TOOLS]), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
-void ReadableEditorDialog::onImpSum(GtkWidget* widget, ReadableEditorDialog* self)
+void ReadableEditorDialog::onXdImpSum(GtkWidget* widget, ReadableEditorDialog* self)
 {
 	XData::StringList summary = self->_xdLoader->getImportSummary();
 
-	if (summary.size() == 0)
+	if (summary.empty())
 	{
 		gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GlobalMainFrame().getTopLevelWindow() );
+		return;
 	}
-	else
+
+	std::string sum;
+
+	for (std::size_t n = 0; n < summary.size(); n++)
 	{
-		std::string sum;
-
-		for (std::size_t n = 0; n < summary.size(); n++)
-		{
-			sum += summary[n];
-		}
-
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox("XData import summary", sum, ui::IDialog::MESSAGE_CONFIRM);
-		dialog->run();
+		sum += summary[n];
 	}
+
+	TextViewInfoDialog dialog("XData import summary", sum);
+	dialog.show();
+}
+
+void ReadableEditorDialog::onGuiImpSum(GtkWidget* widget, ReadableEditorDialog* self)
+{
+	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
+	if (errors.empty())
+	{
+		gtkutil::errorDialog("No import summary available. Browse Gui Definitions first.", GlobalMainFrame().getTopLevelWindow() );
+		return;
+	}
+
+	std::string summary;
+	
+	for (std::size_t n = 0; n < errors.size(); n++)
+	{
+		summary += errors[n];
+	}
+
+	TextViewInfoDialog dialog("Gui import summary", summary);
+	dialog.show();
 }
 
 void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* self)
@@ -1488,9 +1514,8 @@ void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* sel
 
 		out += it->second[it->second.size() - 1] + ".\n\n";
 	}
-
-	IDialogPtr dialog = GlobalDialogManager().createMessageBox("Duplicated XData definitions", out, ui::IDialog::MESSAGE_CONFIRM);
-	dialog->run();
+	TextViewInfoDialog dialog("Duplicated XData definitions", out);
+	dialog.show();
 }
 
 

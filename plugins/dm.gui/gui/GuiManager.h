@@ -16,12 +16,13 @@ namespace
 	const std::string GUI_EXT("gui");
 }
 
-enum GuiAppearance
+enum GuiType
 {
 	ONE_SIDED_READABLE,
 	TWO_SIDED_READABLE,
 	NO_READABLE,
 	IMPORT_FAILURE,
+	FILE_NOT_FOUND,
 };
 
 class Gui;
@@ -38,7 +39,7 @@ public:
 	typedef std::map<std::string, GuiPtr> GuiMap;
 	typedef std::vector<std::string> StringList;
 
-	typedef std::map<std::string, GuiAppearance> GuiAppearanceMap;
+	typedef std::map<std::string, GuiType> GuiTypeMap;
 
 private:
 	// The table of all loaded Gui, sorted by VFS path
@@ -47,7 +48,7 @@ private:
 	// A List of all the errors occuring lastly.
 	StringList _errorList;
 	
-	GuiAppearanceMap _guiAppearance;
+	GuiTypeMap _guiType;
 
 	bool _guiTypesLoaded;
 
@@ -62,10 +63,10 @@ public:
 	void operator() (const std::string& guiPath);
 
 	// Getter for GUI types
-	const GuiAppearanceMap& getGuiAppearanceMap();
+	const GuiTypeMap& getGuiTypeMap();
 
 	// Returns the GUI appearance type for the given GUI path
-	GuiAppearance getGuiAppearance(const std::string& guiPath);
+	GuiType getGuiType(const std::string& guiPath);
 
 	// Returns the _errorList for use in a GUI.
 	const StringList& getErrorList() { return _errorList; }

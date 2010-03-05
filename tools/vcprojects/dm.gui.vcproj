@@ -438,6 +438,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.gui\TextViewInfoDialog.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\XData.cpp"
 				>
 			</File>
