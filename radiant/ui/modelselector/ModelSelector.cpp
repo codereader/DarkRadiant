@@ -50,36 +50,14 @@ ModelSelector::ModelSelector()
   _lastSkin(""),
   _populated(false)
 {
-	// Set the tree store to sort on this column
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(_treeStore),
-        NAME_COLUMN,
-        GTK_SORT_ASCENDING
-    );
-
-	// Set the tree store to sort on this column
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(_treeStoreWithSkins),
-        NAME_COLUMN,
-        GTK_SORT_ASCENDING
-    );
-
-	// Set the custom sort function
-	gtk_tree_sortable_set_sort_func(
-		GTK_TREE_SORTABLE(_treeStore),
-		NAME_COLUMN,		// sort column
-		treeViewSortFunc,	// function
-		this,				// userdata
-		NULL				// no destroy notify
+	// Set the tree store's sort behaviour
+	gtkutil::TreeModel::applyFoldersFirstSortFunc(
+		GTK_TREE_MODEL(_treeStore), NAME_COLUMN, IS_FOLDER_COLUMN
 	);
 
-	// Set the custom sort function
-	gtk_tree_sortable_set_sort_func(
-		GTK_TREE_SORTABLE(_treeStoreWithSkins),
-		NAME_COLUMN,		// sort column
-		treeViewSortFunc,	// function
-		this,				// userdata
-		NULL				// no destroy notify
+	// Set the tree store's sort behaviour
+	gtkutil::TreeModel::applyFoldersFirstSortFunc(
+		GTK_TREE_MODEL(_treeStoreWithSkins), NAME_COLUMN, IS_FOLDER_COLUMN
 	);
 
 	// Window properties
@@ -263,19 +241,7 @@ GtkWidget* ModelSelector::createTreeView()
 	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
 		"Model Path", NAME_COLUMN, IMAGE_COLUMN
 	);
-	gtk_tree_view_append_column(_treeView, nameCol);				
-
-    // Set the tree stores to sort on this column
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(_treeStore),
-        NAME_COLUMN,
-        GTK_SORT_ASCENDING
-    );
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(_treeStoreWithSkins),
-        NAME_COLUMN,
-        GTK_SORT_ASCENDING
-    );
+	gtk_tree_view_append_column(_treeView, nameCol);
 
 	// Use the TreeModel's full string search function
 	gtk_tree_view_set_search_equal_func(_treeView, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
@@ -499,47 +465,6 @@ void ModelSelector::callbackCancel(GtkWidget* widget, ModelSelector* self) {
 	self->_lastSkin = "";
 	gtk_main_quit();
 	gtk_widget_hide(self->_widget);
-}
-
-gint ModelSelector::treeViewSortFunc(GtkTreeModel *model, 
-									GtkTreeIter *a, 
-									GtkTreeIter *b, 
-									gpointer user_data)
-{
-	// Check if A or B are folders
-	bool aIsFolder = gtkutil::TreeModel::getBoolean(model, a, IS_FOLDER_COLUMN);
-	bool bIsFolder = gtkutil::TreeModel::getBoolean(model, b, IS_FOLDER_COLUMN);
-
-	if (aIsFolder) {
-		// A is a folder, check if B is as well
-		if (bIsFolder) {
-			// A and B are both folders, compare names
-			std::string aName = gtkutil::TreeModel::getString(model, a, NAME_COLUMN);
-			std::string bName = gtkutil::TreeModel::getString(model, b, NAME_COLUMN);
-
-			// greebo: We're not checking for equality here, shader names are unique
-			return (aName < bName) ? -1 : 1;
-		}
-		else {
-			// A is a folder, B is not, A sorts before
-			return -1;
-		}
-	}
-	else {
-		// A is not a folder, check if B is one
-		if (bIsFolder) {
-			// A is not a folder, B is, so B sorts before A
-			return 1;
-		}
-		else {
-			// Neither A nor B are folders, compare names
-			std::string aName = gtkutil::TreeModel::getString(model, a, NAME_COLUMN);
-			std::string bName = gtkutil::TreeModel::getString(model, b, NAME_COLUMN);
-
-			// greebo: We're not checking for equality here, shader names are unique
-			return (aName < bName) ? -1 : 1;
-		}
-	}
 }
 
 } // namespace ui

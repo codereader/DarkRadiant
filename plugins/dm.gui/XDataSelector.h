@@ -35,8 +35,6 @@ private:
 
 	void fillTree();
 
-	static gint treeViewSortFunc(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data);
-
 	// Helper functions to create GUI components
 	GtkWidget* createTreeView();
 	GtkWidget* createButtons();
