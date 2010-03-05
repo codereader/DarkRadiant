@@ -146,7 +146,7 @@ const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::stri
 	//Initialization:	
 	_guiPageError.clear();
 	_maxPageCount = 0;
-	_maxGuiNumber = -1;
+	_maxGuiNumber = 0;
 	_guiPageDef = "";
 	_numPages = 0;
 	_sndPageTurn = "";

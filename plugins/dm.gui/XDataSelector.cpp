@@ -117,8 +117,6 @@ GtkWidget* XDataSelector::createButtons()
 
 void XDataSelector::onCancel(GtkWidget* widget, XDataSelector* self)
 {
-	self->_result = RESULT_CANCELLED;
-	self->_selection.clear();
 	self->destroy();
 }
 
@@ -144,8 +142,6 @@ void XDataSelector::onSelectionChanged(GtkTreeSelection* treeselection, XDataSel
 	}
 	else
 	{
-		self->_selection.clear();
-
 		gtk_widget_set_sensitive(self->_okButton, FALSE);
 	}
 }

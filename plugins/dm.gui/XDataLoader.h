@@ -143,7 +143,7 @@ private:
 	std::string			_name;
 	StringList			_guiPageError;
 	std::size_t			_maxPageCount;
-	int					_maxGuiNumber;
+	std::size_t			_maxGuiNumber;
 	std::string			_guiPageDef;
 	std::size_t			_numPages;
 	std::string			_sndPageTurn;
