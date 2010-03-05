@@ -26,6 +26,16 @@ private:
 	GtkTreeStore* _oneSidedStore;
 	GtkTreeStore* _twoSidedStore;
 
+	GtkWidget* _okButton;
+
+	enum Result
+	{
+		RESULT_OK,
+		RESULT_CANCELLED,
+	};
+
+	Result _result;
+
 public:
 	// Starts the GuiSelector and returns the name of the selected GUI or an empty string if the user canceled.
 	// The dialog shows the twoSided treeview if twoSided is true.
