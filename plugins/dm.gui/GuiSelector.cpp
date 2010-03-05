@@ -5,6 +5,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/RightAlignment.h"
 
 #include "imainframe.h"
 #include "gui/GuiManager.h"
@@ -29,7 +30,8 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 	_editorDialog(editorDialog),
 	_name(""),
 	_oneSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
-	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN))
+	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
+	_result(RESULT_CANCELLED)
 {
 	// Populate the treestores
 	fillTrees();
@@ -45,6 +47,9 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 	// Set the current page and connect the switch-page signal afterwards.
 	gtk_notebook_set_current_page(_notebook, twoSided);
 	g_signal_connect(G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this);
+
+	// We start with an empty selection, so de-sensitise the OK button
+	gtk_widget_set_sensitive(_okButton, FALSE);
 }
 
 std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
@@ -52,7 +57,7 @@ std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
 	GuiSelector dialog(twoSided, editorDialog);
 	dialog.show();
 
-	return (dialog._name.empty()) ? "" : "guis/" + dialog._name;
+	return (dialog._result == RESULT_OK) ? "guis/" + dialog._name : "";
 }
 
 void GuiSelector::fillTrees()
@@ -102,25 +107,18 @@ GtkWidget* GuiSelector::createInterface()
 
 GtkWidget* GuiSelector::createButtons()
 {
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	g_signal_connect(
-		G_OBJECT(okButton), "clicked", G_CALLBACK(onOk), this
-		);
+	_okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	g_signal_connect(G_OBJECT(_okButton), "clicked", G_CALLBACK(onOk), this);
+
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(
-		G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this
-		);
+	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
 
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
 
-	gtk_box_pack_start(GTK_BOX(hbox), okButton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), _okButton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), cancelButton, FALSE, FALSE, 0);
 
-	// Align the hbox to the center
-	GtkWidget* alignment = gtk_alignment_new(0.5,1,0,0);
-	gtk_container_add(GTK_CONTAINER(alignment), hbox);
-
-	return alignment;
+	return gtkutil::RightAlignment(hbox);
 }
 
 GtkWidget* GuiSelector::createOneSidedTreeView()
@@ -205,18 +203,14 @@ GtkWidget* GuiSelector::createTwoSidedTreeView()
 
 void GuiSelector::onCancel(GtkWidget* widget, GuiSelector* self)
 {
-	self->_name = "";
+	self->_result = RESULT_CANCELLED;
+
 	self->destroy();
 }
 
 void GuiSelector::onOk(GtkWidget* widget, GuiSelector* self)
-{	
-	// Check if a gui has been chosen:
-	if (self->_name == "")
-	{
-		gtkutil::errorDialog("You have selected a folder. Please select a Gui Definition!", GlobalMainFrame().getTopLevelWindow() );
-		return;
-	}
+{
+	self->_result = RESULT_OK;
 
 	// Everything done. Destroy the window!
 	self->destroy();
@@ -241,10 +235,14 @@ void GuiSelector::onSelectionChanged(GtkTreeSelection* treeselection, GuiSelecto
 		std::string guiPath = "guis/" + self->_name;
 
 		self->_editorDialog.updateGuiView(guiPath.c_str());
+
+		gtk_widget_set_sensitive(self->_okButton, TRUE);
 	}
 	else
 	{
 		self->_name.clear();
+
+		gtk_widget_set_sensitive(self->_okButton, FALSE);
 	}
 }
 
