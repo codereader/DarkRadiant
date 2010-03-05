@@ -67,7 +67,8 @@ GtkWidget* XDataSelector::createTreeView()
 	// Create the treeview
 	GtkTreeView* _treeView = GTK_TREE_VIEW(
 		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_store))
-		);
+	);
+	g_object_unref(_store);
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
 
 	// Add the selection and connect the signal

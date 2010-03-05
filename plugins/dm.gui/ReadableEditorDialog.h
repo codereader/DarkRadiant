@@ -141,8 +141,9 @@ private:
 	static void onMenuAppend(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onMenuPrepend(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onToolsClicked(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onImpSum(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onXdImpSum(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onDupDef(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onGuiImpSum(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onInsertWhole(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onInsertLeft(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onInsertRight(GtkWidget* widget, ReadableEditorDialog* self);

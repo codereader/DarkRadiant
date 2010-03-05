@@ -21,27 +21,32 @@ void GuiManager::operator() (const std::string& guiPath)
 
 	if (gui == NULL)
 	{
+		_guiType[GUI_DIR + guiPath] = IMPORT_FAILURE;
 		return;
 	}
 
 	// TODO: Find a better way of distinguishing GUIs
 	if (gui->findWindowDef("title") != NULL)
 	{
-		_guiAppearance[GUI_DIR + guiPath] = ONE_SIDED_READABLE;
+		_guiType[GUI_DIR + guiPath] = ONE_SIDED_READABLE;
 	}
 	else if (gui->findWindowDef("leftTitle") != NULL)
 	{
-		_guiAppearance[GUI_DIR + guiPath] = TWO_SIDED_READABLE;
+		_guiType[GUI_DIR + guiPath] = TWO_SIDED_READABLE;
+	}
+	else
+	{
+		_guiType[GUI_DIR + guiPath] = NO_READABLE;
 	}
 }
 
-GuiAppearance GuiManager::getGuiAppearance(const std::string& guiPath)
+GuiType GuiManager::getGuiType(const std::string& guiPath)
 {
 	buildGuiTypeMap();
 
-	GuiAppearanceMap::const_iterator i = _guiAppearance.find(guiPath);
+	GuiTypeMap::const_iterator i = _guiType.find(guiPath);
 
-	return (i != _guiAppearance.end()) ? i->second : NO_READABLE;
+	return (i != _guiType.end()) ? i->second : FILE_NOT_FOUND;
 }
 
 void GuiManager::buildGuiTypeMap()
@@ -50,7 +55,7 @@ void GuiManager::buildGuiTypeMap()
 
 	_guiTypesLoaded = true;
 
-	_guiAppearance.clear();
+	_guiType.clear();
 
 	GlobalFileSystem().forEachFile(
 		GUI_DIR,
@@ -72,11 +77,11 @@ GuiPtr GuiManager::getGui(const std::string& guiPath)
 	return loadGui(guiPath);
 }
 
-const GuiManager::GuiAppearanceMap& GuiManager::getGuiAppearanceMap()
+const GuiManager::GuiTypeMap& GuiManager::getGuiTypeMap()
 {
 	buildGuiTypeMap();
 
-	return _guiAppearance;
+	return _guiType;
 }
 
 GuiPtr GuiManager::loadGui(const std::string& guiPath)
