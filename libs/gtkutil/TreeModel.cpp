@@ -1,5 +1,6 @@
 #include "TreeModel.h"
 
+#include "pointer.h"
 #include <boost/algorithm/string/find.hpp>
 
 namespace gtkutil
@@ -180,4 +181,77 @@ gboolean TreeModel::SelectionFinder::forEach(
 	}
 }
 
+gint TreeModel::sortFuncFoldersFirst(GtkTreeModel* model, 
+									 GtkTreeIter *a, 
+									 GtkTreeIter *b, 
+									 gpointer isFolderColumn)
+{
+	gint isFolderCol = gpointer_to_int(isFolderColumn);
+
+	GtkSortType sort;
+	gint nameCol = 0;
+	gtk_tree_sortable_get_sort_column_id(GTK_TREE_SORTABLE(model), &nameCol, &sort);
+
+	// Check if A or B are folders
+	bool aIsFolder = getBoolean(model, a, isFolderCol);
+	bool bIsFolder = getBoolean(model, b, isFolderCol);
+
+	if (aIsFolder)
+	{
+		// A is a folder, check if B is as well
+		if (bIsFolder)
+		{
+			// A and B are both folders, compare names
+			std::string aName = getString(model, a, nameCol);
+			std::string bName = getString(model, b, nameCol);
+
+			// greebo: We're not checking for equality here, names should be unique
+			return (aName < bName) ? -1 : 1;
+		}
+		else
+		{
+			// A is a folder, B is not, A sorts before
+			return -1;
+		}
+	}
+	else
+	{
+		// A is not a folder, check if B is one
+		if (bIsFolder)
+		{
+			// A is not a folder, B is, so B sorts before A
+			return 1;
+		}
+		else
+		{
+			// Neither A nor B are folders, compare names
+			std::string aName = getString(model, a, nameCol);
+			std::string bName = getString(model, b, nameCol);
+
+			// greebo: We're not checking for equality here, names should be unique
+			return (aName < bName) ? -1 : 1;
+		}
+	}
 }
+
+void TreeModel::applyFoldersFirstSortFunc(GtkTreeModel* model, 
+										  gint nameCol, gint isFolderColumn)
+{
+	// Set the sort column ID to nameCol
+	gtk_tree_sortable_set_sort_column_id(
+		GTK_TREE_SORTABLE(model),
+		nameCol,
+		GTK_SORT_ASCENDING
+	);
+
+	// Then apply the custom sort functin
+	gtk_tree_sortable_set_sort_func(
+		GTK_TREE_SORTABLE(model),
+		nameCol,							// sort column
+		sortFuncFoldersFirst,				// function
+		gint_to_pointer(isFolderColumn),	// userdata: pointer-encoded "isFolderColumn"
+		NULL								// no destroy notify
+	);
+}
+
+} // namespace gtkutil

@@ -135,12 +135,6 @@ private:
 	static void callbackOK(GtkWidget*, ModelSelector*);
 	static void callbackCancel(GtkWidget*, ModelSelector*);
 
-	// Custom sort function to allow folder-first sort order
-	static gint treeViewSortFunc(GtkTreeModel *model, 
-									GtkTreeIter *a, 
-									GtkTreeIter *b, 
-									gpointer user_data);
-	
 public:
 
 	/** 
