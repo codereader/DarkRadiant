@@ -54,11 +54,11 @@ GuiType GuiManager::getGuiType(const std::string& guiPath)
 GuiType GuiManager::determineGuiType(const GuiPtr& gui)
 {
 	// TODO: Find a better way of distinguishing GUIs
-	if (gui->findWindowDef("title") != NULL)
+	if (gui->findWindowDef("body") != NULL)
 	{
 		return ONE_SIDED_READABLE;
 	}
-	else if (gui->findWindowDef("leftTitle") != NULL)
+	else if (gui->findWindowDef("leftBody") != NULL)
 	{
 		return TWO_SIDED_READABLE;
 	}
