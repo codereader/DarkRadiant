@@ -30,7 +30,7 @@ const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& 
 		if (it == _defMap.end())
 			return reportError("[XDataLoader::importDef] Error: Specified definition " + definitionName + " not found.\n");
 		files = it->second;
-		if (files.size() > 1)				//Definition contained in multiple files.
+		if (files.size() > 1)	//Definition contained in multiple files.
 			reportError("[XData::import] Warning: The requested definition " + definitionName + " exists in multiple files.\n");
 	}
 
@@ -146,7 +146,7 @@ const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::stri
 	//Initialization:	
 	_guiPageError.clear();
 	_maxPageCount = 0;
-	_maxGuiNumber = 0;
+	_maxGuiNumber = -1;
 	_guiPageDef = "";
 	_numPages = 0;
 	_sndPageTurn = "";
@@ -174,7 +174,7 @@ const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::stri
 	}
 
 	// Check if _guiPage-statements for all pages are available.
-	if (_guiPageDef == "")
+	if (_guiPageDef.empty())
 	{
 		reportError("[XDataLoader::import] Warning for definition: " + _name
 			+ ". _guiPage-statement(s) missing. Setting default value...\n");
@@ -185,7 +185,7 @@ const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::stri
 	}
 	for (std::size_t n=0; n<_numPages; n++ )
 	{
-		if (_guiPage[n] == "")
+		if (_guiPage[n].empty())
 			_guiPage[n] = _guiPageDef;
 	}
 
@@ -194,7 +194,7 @@ const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::stri
 	_newXData->setNumPages(_numPages);
 
 	//Use default sndPageTurn if the statement was missing:
-	if (_sndPageTurn == "")
+	if (_sndPageTurn.empty())
 	{
 		_newXData->setSndPageTurn(DEFAULT_SNDPAGETURN);
 		reportError("[XDataLoader::import] Warning for definition: " + _name
@@ -282,6 +282,8 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 			_newXData->setPageContent(Body, PageIndex, side, readContent);	//could throw if PageIndex >= MAX_PAGE_COUNT. Unlikely!
 		else
 			_newXData->setPageContent(Title, PageIndex, side, readContent);
+
+		return true;
 	}
 	//gui_page statement
 	else if (statement.substr(0,8) == "gui_page")
@@ -317,7 +319,9 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		if (guiNumber >= _numPages)
 			_guiPageError.push_back("[XDataLoader::import] Warning for definition: " + defName 
 				+ ". More _guiPage statements, than pages. Discarding statement for Page " + number + ".\n"
-				);
+			);
+
+		return true;
 	}
 	//num_pages statement
 	else if (statement == "num_pages")
@@ -357,6 +361,8 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 				+ ". The specified _numPages statement did not match the amount of pages with content.\n\tnumPages is set to " 
 				+ boost::lexical_cast<std::string>(_numPages) + ".\n");
 		}
+
+		return true;
 	}
 	//snd_page_turn statement
 	else if (statement == "snd_page_turn")
@@ -370,6 +376,8 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		}
 		else
 			_sndPageTurn = content;
+
+		return true;
 	}
 	//import statement
 	else if (statement == "import")
@@ -399,8 +407,14 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 					+ ". Import-statement failed.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
 					);
 		}
+
+		return true;
 	}
-	return true;
+	else if (statement == "precache")
+	{
+		return true;
+	}
+	return false;
 }
 
 const bool XDataLoader::recursiveImport( const std::string& sourceDef, const StringMap& statements, const std::string& defName, StringPairList& importContent)
