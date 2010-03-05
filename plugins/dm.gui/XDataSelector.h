@@ -16,14 +16,24 @@ private:
 	// The tree
 	GtkTreeStore* _store;
 
+	GtkWidget* _okButton;
+
 	// A Map of XData files. Basically just the keyvalues are needed.
 	XData::StringVectorMap _files;
 
 	// The name of the chosen definition
-	std::string _result;
+	std::string _selection;
 
 	// Pointer to the ReadableEditorDialog for updating the guiView.
 	ReadableEditorDialog* _editorDialog;
+
+	enum Result
+	{
+		RESULT_OK,
+		RESULT_CANCELLED,
+	};
+
+	Result _result;
 
 public:
 	// Runs the dialog and returns the name of the chosen definition.
