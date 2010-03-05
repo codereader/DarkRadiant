@@ -28,14 +28,13 @@ namespace
 GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	_editorDialog(editorDialog),
-	_name(""),
 	_oneSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
 	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
 	_result(RESULT_CANCELLED)
 {
+	// Set the windowsize and default border width in accordance to the HIG
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 
@@ -98,8 +97,8 @@ GtkWidget* GuiSelector::createInterface()
 	GtkWidget* labelOne = gtk_label_new("One-Sided Readable Guis");
 	gtk_widget_show_all(labelOne);
 	gtk_notebook_append_page(
-		_notebook, 
-		createOneSidedTreeView(), 
+		_notebook,
+		createOneSidedTreeView(),
 		labelOne
 	);
 
@@ -107,8 +106,8 @@ GtkWidget* GuiSelector::createInterface()
 	GtkWidget* labelTwo = gtk_label_new("Two-Sided Readable Guis");
 	gtk_widget_show_all(labelTwo);
 	gtk_notebook_append_page(
-		_notebook, 
-		createTwoSidedTreeView(), 
+		_notebook,
+		createTwoSidedTreeView(),
 		labelTwo
 	);
 
@@ -155,9 +154,9 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 
 	// Single visible column, containing the directory/model name and the icon
 	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
-		"Model Path", NAME_COLUMN, IMAGE_COLUMN
+		"Gui Path", NAME_COLUMN, IMAGE_COLUMN
 	);
-	gtk_tree_view_append_column(treeViewOne, nameCol);				
+	gtk_tree_view_append_column(treeViewOne, nameCol);
 
 	// Set the tree store's sort behaviour
 	gtkutil::TreeModel::applyFoldersFirstSortFunc(
@@ -191,13 +190,13 @@ GtkWidget* GuiSelector::createTwoSidedTreeView()
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 	g_signal_connect(
 		select, "changed", G_CALLBACK(onSelectionChanged), this
-		);
+	);
 
 	// Single visible column, containing the directory/model name and the icon
 	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
-		"Model Path", NAME_COLUMN, IMAGE_COLUMN
+		"Gui Path", NAME_COLUMN, IMAGE_COLUMN
 		);
-	gtk_tree_view_append_column(treeViewTwo, nameCol);				
+	gtk_tree_view_append_column(treeViewTwo, nameCol);
 
 	// Set the tree store's sort behaviour
 	gtkutil::TreeModel::applyFoldersFirstSortFunc(
@@ -217,8 +216,6 @@ GtkWidget* GuiSelector::createTwoSidedTreeView()
 
 void GuiSelector::onCancel(GtkWidget* widget, GuiSelector* self)
 {
-	self->_result = RESULT_CANCELLED;
-
 	self->destroy();
 }
 
@@ -254,8 +251,6 @@ void GuiSelector::onSelectionChanged(GtkTreeSelection* treeselection, GuiSelecto
 	}
 	else
 	{
-		self->_name.clear();
-
 		gtk_widget_set_sensitive(self->_okButton, FALSE);
 	}
 }
