@@ -85,6 +85,9 @@ public:
 	// Operator used for callback by refreshGuiDefinitions.
 	void operator() (const std::string& guiPath);
 
+	// Returns the number of known GUIs (or GUI paths)
+	std::size_t getNumGuis() const;
+
 	// Traverse all known GUIs using the given Visitor
 	void foreachGui(Visitor& visitor);
 
