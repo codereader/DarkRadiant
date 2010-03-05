@@ -58,21 +58,38 @@ void GuiSelector::fillTrees()
 	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
 	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
-	const gui::GuiManager::GuiTypeMap& guis = gui::GuiManager::Instance().getGuiTypeMap();
-	
-	for (gui::GuiManager::GuiTypeMap::const_iterator it = guis.begin(); 
-		 it != guis.end(); ++it)
+	class GuiWalker : 
+		public gui::GuiManager::Visitor
 	{
-		if (it->second == gui::ONE_SIDED_READABLE)
-		{
-			popOne.addPath(it->first.substr(it->first.find('/') + 1));	// omit the guis-folder
-		}
-		else if (it->second == gui::TWO_SIDED_READABLE)
-		{
-			popTwo.addPath(it->first.substr(it->first.find('/') + 1));	// omit the guis-folder
-		}
-	}
+	private:
+		gtkutil::VFSTreePopulator& _popOne;
+		gtkutil::VFSTreePopulator& _popTwo;
 
+	public:
+		GuiWalker(gtkutil::VFSTreePopulator& popOne,
+				  gtkutil::VFSTreePopulator& popTwo) :
+			_popOne(popOne),
+			_popTwo(popTwo)
+		{}
+
+		void visit(const std::string& guiPath)
+		{
+			gui::GuiType type = gui::GuiManager::Instance().getGuiType(guiPath);
+
+			if (type == gui::ONE_SIDED_READABLE)
+			{
+				_popOne.addPath(guiPath.substr(guiPath.find('/') + 1));	// omit the guis-folder
+			}
+			else if (type == gui::TWO_SIDED_READABLE)
+			{
+				_popTwo.addPath(guiPath.substr(guiPath.find('/') + 1));	// omit the guis-folder
+			}
+		}
+
+	} _walker(popOne, popTwo);
+
+	gui::GuiManager::Instance().foreachGui(_walker);
+	
 	GuiInserter inserter;
 	popOne.forEachNode(inserter);
 	popTwo.forEachNode(inserter);
