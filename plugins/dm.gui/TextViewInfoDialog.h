@@ -30,7 +30,7 @@ public:
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(textView), FALSE);
 		_bfr = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
 
-		gtk_text_buffer_set_text(_bfr, text.c_str(), text.size());
+		gtk_text_buffer_set_text(_bfr, text.c_str(), static_cast<gint>(text.size()));
 
 		// Create the button and connect the signal
 		GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
@@ -50,7 +50,7 @@ public:
 	// Appends the given text to the textview.
 	void add(const std::string& text)
 	{
-		gtk_text_buffer_insert_at_cursor(_bfr, text.c_str(), text.size());
+		gtk_text_buffer_insert_at_cursor(_bfr, text.c_str(), static_cast<gint>(text.size()));
 	}
 
 	static void onOk(GtkWidget* widget, XDataSelector* self)
