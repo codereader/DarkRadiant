@@ -73,14 +73,14 @@ public:
 		gui::GuiManager::Instance().findGuis();
 
 		// Create the Readable Editor Preferences
-		//constructPreferences();
+		constructPreferences();
 	}
 
 	// Adds the preference settings to the prefdialog
 	void constructPreferences()
 	{
 		// Add a page to the given group
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Primitives");
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Readable Editor");
 
 		std::list<std::string> options;
 
