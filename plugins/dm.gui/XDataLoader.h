@@ -41,7 +41,7 @@ public:
 	// Imports a single Definition from the specified file (filename) if defined or all duplicated definitions if only
 	// the definitionName is specified. Returns false if import failed. The import-breaking error-message is the last 
 	// element of _errorList, which can be retrieved by calling getImportSummary() and also stores other errors and warnings.
-	//	-target: Key Value = filename, Mapped Value = XData object.
+	//	-target: Key Value = filepath INCLUDING ModPath(!!), Mapped Value = XData object.
 	const bool importDef(const std::string& definitionName, XDataMap& target, const std::string& filename = "");
 
 //Getters:

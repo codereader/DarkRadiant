@@ -15,6 +15,12 @@ class Entity;
 namespace ui
 {
 
+namespace
+{
+	const std::string RKEY_READABLES_STORAGE_FOLDER = "user/ui/gui/storageFolder";
+	const std::string RKEY_READABLES_CUSTOM_FOLDER = "user/ui/gui/customFolder";
+}
+
 ///////////////////////////// ReadableEditorDialog:
 // The main dialog of the Readable Editor, which implements most editing features.
 class ReadableEditorDialog :
@@ -46,6 +52,9 @@ private:
 	// The filename of the XData definition
 	std::string _xdFilename;
 
+	// The XData filename derived from the map-name.
+	std::string _mapBasedFilename;
+
 	// The xData loader
 	XData::XDataLoaderPtr _xdLoader;
 
@@ -60,6 +69,9 @@ private:
 
 	// Tells the program whether checkXDataUniqueness is already running.
 	bool _runningXDataUniquenessCheck;
+
+	// Tells the exporter whether to use the _mapBasedFilename (true) or not.
+	bool _useDefaultFilename;
 
 public:
 	// Pass the working entity to the constructor
