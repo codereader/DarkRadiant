@@ -74,7 +74,7 @@ GuiType GuiManager::determineGuiType(const GuiPtr& gui)
 
 void GuiManager::findGuis()
 {
-	_guis.clear();
+	clear();
 
 	// Traverse the file system, using this class as callback
 	GlobalFileSystem().forEachFile(
@@ -86,6 +86,12 @@ void GuiManager::findGuis()
 
 	globalOutputStream() << "[GuiManager]: Found " << _guis.size() 
 		<< " guis." << std::endl;
+}
+
+void GuiManager::clear()
+{
+	_guis.clear();
+	_errorList.clear();
 }
 
 GuiPtr GuiManager::getGui(const std::string& guiPath)
