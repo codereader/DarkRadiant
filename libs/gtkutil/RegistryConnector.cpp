@@ -13,7 +13,7 @@
 namespace gtkutil {
 
 void RegistryConnector::addObject(const std::string& key,
-                                  StringSerialisablePtr obj)
+                                  const StringSerialisablePtr& obj)
 {
    assert(_objects.find(key) == _objects.end());
    _objects.insert(ObjectMap::value_type(key, obj));
@@ -22,7 +22,7 @@ void RegistryConnector::addObject(const std::string& key,
    importRegistryValue(obj, key);
 }
 
-void RegistryConnector::importRegistryValue(StringSerialisablePtr obj,
+void RegistryConnector::importRegistryValue(const StringSerialisablePtr& obj,
                                             const std::string& key)
 {
    obj->importFromString(GlobalRegistry().get(key));
