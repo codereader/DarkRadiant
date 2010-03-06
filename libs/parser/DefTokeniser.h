@@ -148,7 +148,40 @@ public:
 						_state = AFTER_CLOSING_QUOTE;
                         continue;
                     }
-                    else {
+					else if (*next == '\\')
+					{
+						// Escape found, check next character
+						++next;
+
+						if (next != end)
+						{
+							if (*next == 'n') // Linebreak
+							{
+								tok += '\n';
+							}
+							else if (*next == 't') // Tab
+							{
+								tok += '\t';
+							}
+							else if (*next == '"') // Quote
+							{
+								tok += '"';
+							}
+							else
+							{
+								// No special escape sequence, add the backslash
+								tok += '\\';
+								// Plus the character itself
+								tok += *next;
+							}
+
+							++next;
+						}
+
+						continue;
+					}
+                    else
+					{
                         tok += *next;
                         ++next;
                         continue;
