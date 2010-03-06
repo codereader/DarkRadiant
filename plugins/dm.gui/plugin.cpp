@@ -50,7 +50,7 @@ public:
 		GlobalUIManager().getMenuManager().add("main/entity",
 			"ReadableEditorDialog", ui::menuItem, 
 			"Readable Editor", // caption
-			"", // icon
+			"book.png", // icon
 			"ReadableEditorDialog"
 		);
 
