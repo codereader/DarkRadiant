@@ -24,8 +24,9 @@ class GuiModule :
 {
 public:
 	// RegisterableModule implementation
-	virtual const std::string& getName() const {
-		static std::string _name("Gui Editing");
+	virtual const std::string& getName() const
+	{
+		static std::string _name("GUI Editing");
 		return _name;
 	}
 	
@@ -93,7 +94,7 @@ public:
 		// Add a page to the given group
 		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Readable Editor");
 
-		std::list<std::string> options;
+		ComboBoxValueList options;
 
 		options.push_back("Mod");
 		options.push_back("Mod Base");
