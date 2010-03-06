@@ -88,7 +88,9 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	_currentPageIndex(0),
 	_xdLoader(new XData::XDataLoader()),
 	_runningGuiLayoutCheck(false),
-	_runningXDataUniquenessCheck(false)
+	_runningXDataUniquenessCheck(false),
+	_xdNameSpecified(false),
+	_useDefaultFilename(true)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -521,6 +523,16 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	// Xdata contents
 	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), _entity->getKeyValue("xdata_contents").c_str());
 
+	// Construct the map-based Filename
+	_mapBasedFilename = GlobalMapModule().getMapName();
+	std::size_t nameStartPos = _mapBasedFilename.rfind("/") + 1;
+	if (nameStartPos != std::string::npos)
+	{
+		_mapBasedFilename = _mapBasedFilename.substr(nameStartPos, _mapBasedFilename.rfind(".") - nameStartPos);
+	}
+	std::string defaultXdName = "readables/" + _mapBasedFilename + "/<Name_Here>";
+	_mapBasedFilename += ".xd";
+
 	// Load xdata
 	if (!_entity->getKeyValue("xdata_contents").empty())
 	{
@@ -541,34 +553,20 @@ bool ReadableEditorDialog::initControlsFromEntity()
 				break;
 			default:	//Import success
 				_xdNameSpecified = true;
+				_useDefaultFilename = false;
 				return true;
 		}
 	}
 
-	//No Xdata definition was defined or failed to import. Use mapname as a filename and create a OneSidedXData-object.
-	_xdFilename = GlobalMapModule().getMapName();
-	std::size_t nameStartPos = _xdFilename.rfind("/") + 1;
-
-	if (nameStartPos != std::string::npos)
-	{
-		// might lead to weird behavior if mapname has not been defined yet.
-		_xdFilename = _xdFilename.substr(nameStartPos, _xdFilename.rfind(".") - nameStartPos);
-	}
-
-	std::string xdn = "readables/" + _xdFilename + "/<Name_Here>";
-
-	_xdNameSpecified = false;
-
+	//No Xdata definition was defined or failed to import. Use default filename and create a OneSidedXData-object
 	if (_entity->getKeyValue("name").find("book") == std::string::npos)
 	{
-		_xData.reset(new XData::OneSidedXData(xdn));
+		_xData.reset(new XData::OneSidedXData(defaultXdName));
 	}
 	else
 	{
-		_xData.reset(new XData::TwoSidedXData(xdn));
+		_xData.reset(new XData::TwoSidedXData(defaultXdName));
 	}
-
-	_xdFilename += ".xd";
 	_xData->setNumPages(1);
 
 	return true;
@@ -582,15 +580,73 @@ void ReadableEditorDialog::save()
 	// Xdata contents
 	_entity->setKeyValue("xdata_contents", gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME])));
 
-	// Save xdata
+	// Current content to XData Object
 	storeXData();
-	std::string path_ = GlobalGameManager().getModPath() + XData::XDATA_DIR + _xdFilename;
 
-	XData::FileStatus fst = _xData->xport(path_, XData::Merge);
+	// Construct the storagepath from Registry keys.
+	std::string storagePath;
+	if (_useDefaultFilename)
+		{switch (GlobalRegistry().getInt(RKEY_READABLES_STORAGE_FOLDER))
+		{
+			case 0: // Use Mod dir
+				storagePath = GlobalGameManager().getModPath();
+				if (storagePath.empty())
+				{
+					// Mod path not defined. Use base Path
+					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
+					gtkutil::errorDialog("Mod path not defined. Using Base path...", GlobalMainFrame().getTopLevelWindow());
+				}
+				storagePath += XData::XDATA_DIR + _mapBasedFilename;
+				break;
+			case 1: // Use Mod Base dir
+				storagePath = GlobalGameManager().getModBasePath();
+				if (storagePath.empty())
+				{
+					// Mod Base Path not defined. Use Mod path or base path successively.
+					storagePath = GlobalGameManager().getModPath();
+					if (storagePath.empty())
+					{
+						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
+						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GlobalMainFrame().getTopLevelWindow());
+						storagePath += XData::XDATA_DIR + _mapBasedFilename;
+						break;
+					}
+					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GlobalMainFrame().getTopLevelWindow());
+				}
+				storagePath += XData::XDATA_DIR + _mapBasedFilename;
+				break;
+			default: // Use custom folder
+				storagePath = GlobalRegistry().get(RKEY_READABLES_CUSTOM_FOLDER);
+				if (storagePath.empty())
+				{
+					// Custom path not defined. Use Mod path or base path successively.
+					storagePath = GlobalGameManager().getModPath();
+					if (storagePath.empty())
+					{
+						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
+						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GlobalMainFrame().getTopLevelWindow());
+						storagePath += XData::XDATA_DIR + _mapBasedFilename;
+						break;
+					}
+					storagePath += XData::XDATA_DIR + _mapBasedFilename;
+					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GlobalMainFrame().getTopLevelWindow());
+					break;
+				}
+				storagePath += "/" + _mapBasedFilename;
+				break;
+		}
+	}
+	else
+	{
+		// We are exporting a previously imported XData definition. Retrieve engine path and append _xdFilename
+		storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + _xdFilename;
+	}
+
+	XData::FileStatus fst = _xData->xport(storagePath, XData::Merge);
 
 	if (fst == XData::DefinitionExists)
 	{
-		switch (_xData->xport( path_, XData::MergeOverwriteExisting))
+		switch (_xData->xport( storagePath, XData::MergeOverwriteExisting))
 		{
 		case XData::OpenFailed: 
 			gtkutil::errorDialog(
@@ -866,6 +922,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 				break;
 			default:	//Import success
 				_xdNameSpecified = true;
+				_useDefaultFilename = false;
 				populateControlsFromXData();
 				_runningXDataUniquenessCheck = false;
 				return;
@@ -886,8 +943,8 @@ void ReadableEditorDialog::checkXDataUniqueness()
 			}
 		}
 
+		// Update entry and XData object. Notify the user about the suggestion.
 		gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), suggestion.c_str());
-
 		_xData->setName(suggestion);
 
 		popup = GlobalDialogManager().createMessageBox(
@@ -898,9 +955,12 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		popup->run();
 	}
 	else
+	{
 		_xData->setName(xdn);
+	}
 
 	_xdNameSpecified = true;
+	_useDefaultFilename = true;
 	_runningXDataUniquenessCheck = false;
 }
 

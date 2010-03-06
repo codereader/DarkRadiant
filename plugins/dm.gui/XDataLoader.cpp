@@ -40,6 +40,7 @@ const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& 
 		// Attempt to open the file in text mode and retrieve DefTokeniser
 		ArchiveTextFilePtr file = 
 			GlobalFileSystem().openTextFile(XDATA_DIR + files[n]);
+
 		if (file == NULL)
 			return reportError("[XDataLoader::importDef] Error: Failed to open file " + files[n] + "\n");
 		std::istream is(&(file->getInputStream()));
@@ -48,7 +49,7 @@ const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& 
 		// Parse the desired definition:
 		while (tok.hasMoreTokens() && !parseXDataDef(tok,definitionName)) {}
 		if (_newXData)
-			target.insert(XDataMap::value_type(files[n],_newXData));
+			target.insert(XDataMap::value_type(file->getModName() + "/" + file->getName(),_newXData));
 		else
 			reportError("[XDataLoader::importDef] Error: Failed to load " + definitionName + " from file " + files[n] + ".\n");
 	}

@@ -96,13 +96,13 @@ public:
 
 		ComboBoxValueList options;
 
-		options.push_back("Mod");
-		options.push_back("Mod Base");
+		options.push_back("Mod/xdata");
+		options.push_back("Mod Base/xdata");
 		options.push_back("Custom Folder");
 
-		page->appendCombo("XData Storage Folder", "user/ui/gui/storageFolder", options);
+		page->appendCombo("XData Storage Folder", ui::RKEY_READABLES_STORAGE_FOLDER, options);
 
-		page->appendPathEntry("Custom Folder", "user/ui/gui/customFolder", true);
+		page->appendPathEntry("Custom Folder", ui::RKEY_READABLES_CUSTOM_FOLDER, true);
 	}
 
 	void shutdownModule()
