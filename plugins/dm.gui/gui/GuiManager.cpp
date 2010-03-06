@@ -14,7 +14,7 @@ namespace gui
 void GuiManager::operator() (const std::string& guiPath)
 {
 	// Just store the path in the map, for later reference
-	_guis[GUI_DIR + guiPath] = GuiInfo();
+	_guis.insert(GuiInfoMap::value_type(GUI_DIR + guiPath,GuiInfo()));
 }
 
 std::size_t GuiManager::getNumGuis() const
@@ -24,9 +24,9 @@ std::size_t GuiManager::getNumGuis() const
 
 void GuiManager::foreachGui(Visitor& visitor)
 {
-	for (GuiInfoMap::const_iterator i = _guis.begin(); i != _guis.end();)
+	for (GuiInfoMap::iterator i = _guis.begin(); i != _guis.end(); i++)
 	{
-		visitor.visit((i++)->first);
+		visitor.visit(i->first, i->second);
 	}
 }
 

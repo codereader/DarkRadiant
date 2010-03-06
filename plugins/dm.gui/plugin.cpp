@@ -9,8 +9,10 @@
 #include "igl.h"
 #include "imap.h"
 #include "igame.h"
+#include "ipreferencesystem.h"
 
 #include "ReadableEditorDialog.h"
+#include "ReadableReloader.h"
 #include "gui/GuiManager.h"
 
 class GuiModule : 
@@ -35,6 +37,7 @@ public:
 			_dependencies.insert(MODULE_OPENGL);
 			_dependencies.insert(MODULE_MAP);
 			_dependencies.insert(MODULE_GAMEMANAGER);
+			_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		}
 
 		return _dependencies;
@@ -47,15 +50,47 @@ public:
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
 		GlobalEventManager().addCommand("ReadableEditorDialog", "ReadableEditorDialog");
 
-		GlobalUIManager().getMenuManager().add("main/entity",
+		IMenuManager& mm = GlobalUIManager().getMenuManager();
+
+		mm.add("main/entity",
 			"ReadableEditorDialog", ui::menuItem, 
 			"Readable Editor", // caption
 			"book.png", // icon
 			"ReadableEditorDialog"
 		);
 
+		GlobalCommandSystem().addCommand("ReloadReadables", ui::ReadableReloader::run);
+		GlobalEventManager().addCommand("ReloadReadables", "ReloadReadables");
+
+		mm.insert("main/file/refreshShaders",
+			"ReloadReadables", ui::menuItem, 
+			"Reload Readables", // caption
+			"book.png", // icon
+			"ReloadReadables"
+		);
+
 		// Search the VFS for GUIs
 		gui::GuiManager::Instance().findGuis();
+
+		// Create the Readable Editor Preferences
+		//constructPreferences();
+	}
+
+	// Adds the preference settings to the prefdialog
+	void constructPreferences()
+	{
+		// Add a page to the given group
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Primitives");
+
+		std::list<std::string> options;
+
+		options.push_back("Mod");
+		options.push_back("Mod Base");
+		options.push_back("Custom Folder");
+
+		page->appendCombo("XData Storage Folder", "user/ui/gui/storageFolder", options);
+
+		page->appendPathEntry("Custom Folder", "user/ui/gui/customFolder", true);
 	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;

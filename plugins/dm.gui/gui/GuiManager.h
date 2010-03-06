@@ -40,18 +40,6 @@ class GuiManager :
 public:
 	typedef std::vector<std::string> StringList;
 
-	typedef std::map<std::string, GuiType> GuiTypeMap;
-
-	// A visitor class used to traverse all known GUIs by path
-	class Visitor
-	{
-	public:
-		virtual ~Visitor() {}
-
-		virtual void visit(const std::string& guiPath) = 0;
-	};
-
-private:
 	struct GuiInfo
 	{
 		// The type of this Gui (NOT_LOADED_YET by default)
@@ -61,15 +49,25 @@ private:
 		GuiPtr gui;		
 
 		GuiInfo() :
-			type(NOT_LOADED_YET)
+		type(NOT_LOADED_YET)
 		{}
 
 		GuiInfo(const GuiPtr& gui_, GuiType type_) :
-			type(type_),
+		type(type_),
 			gui(gui_)
 		{}
 	};
 
+	// A visitor class used to traverse all known GUIs by path
+	class Visitor
+	{
+	public:
+		virtual ~Visitor() {}
+
+		virtual void visit(const std::string& guiPath, GuiInfo& guiInfo) = 0;
+	};
+
+private:
 	// The table of all loaded Gui, sorted by VFS path
 	typedef std::map<std::string, GuiInfo> GuiInfoMap;
 	GuiInfoMap _guis;
