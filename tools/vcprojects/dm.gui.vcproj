@@ -442,6 +442,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.gui\ReadableReloader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.gui\TextViewInfoDialog.h"
 				>
 			</File>
