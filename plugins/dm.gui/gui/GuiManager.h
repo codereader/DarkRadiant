@@ -107,6 +107,9 @@ public:
 	// Searches the VFS for all available GUI definitions
 	void findGuis();
 
+	// Clears all internal objects
+	void clear();
+
 private:
 	GuiType determineGuiType(const GuiPtr& gui);
 

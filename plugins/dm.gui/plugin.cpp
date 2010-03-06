@@ -103,6 +103,11 @@ public:
 
 		page->appendPathEntry("Custom Folder", "user/ui/gui/customFolder", true);
 	}
+
+	void shutdownModule()
+	{
+		gui::GuiManager::Instance().clear();
+	}
 };
 typedef boost::shared_ptr<GuiModule> GuiModulePtr;
 
