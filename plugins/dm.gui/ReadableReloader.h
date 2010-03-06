@@ -22,9 +22,6 @@ namespace ui
 		std::size_t _count;
 		std::size_t _numGuis;
 
-		// Pointer to the GuiManager
-		gui::GuiManager* _manager;
-
 		// Event rate limiter for progress dialog
 		EventRateLimiter _evLimiter;
 
@@ -32,15 +29,14 @@ namespace ui
 		ReadableReloader() :
 			_progress(GlobalMainFrame().getTopLevelWindow(), "Reloading GUIs"),
 			_count(0),
-			_evLimiter(50),
-			_manager(&gui::GuiManager::Instance())
+			_evLimiter(50)
 		{
-			_manager->findGuis();
-			_numGuis = _manager->getNumGuis();
-			_manager->foreachGui(*this);
+			gui::GuiManager::Instance().findGuis();
+			_numGuis = gui::GuiManager::Instance().getNumGuis();
+			gui::GuiManager::Instance().foreachGui(*this);
 		}
 
-		void visit(const std::string& guiPath, gui::GuiManager::GuiInfo& guiInfo)
+		void visit(const std::string& guiPath, const gui::GuiType& guiType)
 		{
 			_count++;
 
@@ -50,10 +46,9 @@ namespace ui
 				_progress.setTextAndFraction(guiPath.substr(guiPath.rfind('/') + 1), fraction);
 			}
 
-			if (guiInfo.type != gui::NOT_LOADED_YET)
+			if (guiType != gui::NOT_LOADED_YET)
 			{
-				guiInfo.type = gui::NOT_LOADED_YET;
-				_manager->getGuiType(guiPath);
+				gui::GuiManager::Instance().reloadGui(guiPath);
 			}
 		}
 
