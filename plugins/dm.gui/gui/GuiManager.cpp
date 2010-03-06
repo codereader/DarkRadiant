@@ -26,8 +26,14 @@ void GuiManager::foreachGui(Visitor& visitor)
 {
 	for (GuiInfoMap::iterator i = _guis.begin(); i != _guis.end(); i++)
 	{
-		visitor.visit(i->first, i->second);
+		visitor.visit(i->first, i->second.type);
 	}
+}
+
+void GuiManager::reloadGui(const std::string& guiPath)
+{
+	GuiPtr gui = loadGui(guiPath);
+	determineGuiType(gui);
 }
 
 GuiType GuiManager::getGuiType(const std::string& guiPath)

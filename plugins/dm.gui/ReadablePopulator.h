@@ -38,7 +38,7 @@ public:
 		_evLimiter(50)
 	{}
 
-	void visit(const std::string& guiPath, gui::GuiManager::GuiInfo& guiInfo)
+	void visit(const std::string& guiPath, const gui::GuiType& guiType)
 	{
 		_count++;
 
@@ -48,7 +48,15 @@ public:
 			_progress.setTextAndFraction(guiPath.substr(guiPath.rfind('/') + 1), fraction);
 		}
 
-		gui::GuiType type = gui::GuiManager::Instance().getGuiType(guiPath);
+		gui::GuiType type;
+		if (guiType == gui::NOT_LOADED_YET || guiType == gui::UNDETERMINED)
+		{
+			type = gui::GuiManager::Instance().getGuiType(guiPath);
+		}
+		else
+		{
+			type = guiType;
+		}
 
 		if (type == gui::ONE_SIDED_READABLE)
 		{

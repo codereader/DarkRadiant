@@ -40,6 +40,16 @@ class GuiManager :
 public:
 	typedef std::vector<std::string> StringList;
 
+	// A visitor class used to traverse all known GUIs by path
+	class Visitor
+	{
+	public:
+		virtual ~Visitor() {}
+
+		virtual void visit(const std::string& guiPath, const GuiType& guiType) = 0;
+	};
+
+private:
 	struct GuiInfo
 	{
 		// The type of this Gui (NOT_LOADED_YET by default)
@@ -58,23 +68,13 @@ public:
 		{}
 	};
 
-	// A visitor class used to traverse all known GUIs by path
-	class Visitor
-	{
-	public:
-		virtual ~Visitor() {}
-
-		virtual void visit(const std::string& guiPath, GuiInfo& guiInfo) = 0;
-	};
-
-private:
 	// The table of all loaded Gui, sorted by VFS path
 	typedef std::map<std::string, GuiInfo> GuiInfoMap;
 	GuiInfoMap _guis;
 
 	// A List of all the errors occuring lastly.
 	StringList _errorList;
-	
+
 public:
 	// Gets a GUI from the given VFS path, parsing it on demand
 	// Returns NULL if the GUI couldn't be found or loaded.
@@ -91,6 +91,9 @@ public:
 
 	// Returns the GUI appearance type for the given GUI path
 	GuiType getGuiType(const std::string& guiPath);
+
+	// Reload the gui
+	void reloadGui(const std::string& guiPath);
 
 	// Returns the _errorList for use in a GUI.
 	const StringList& getErrorList() { return _errorList; }
