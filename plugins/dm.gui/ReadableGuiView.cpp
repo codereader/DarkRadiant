@@ -14,10 +14,12 @@ void ReadableGuiView::setGLViewPort()
 	{
 		width = height * aspectRatio;
 	}
-	else
+	/*else
 	{
 		height = width / aspectRatio;
-	}
+	}//*/
+
+	gtk_widget_set_size_request(_widget, static_cast<gint>(width), -1);
 
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }
@@ -33,6 +35,14 @@ void ReadableGuiView::setGui(const GuiPtr& gui)
 	if (_gui != NULL) 
 	{
 		GuiWindowDefPtr bgWindowDef = _gui->findWindowDef("backgroundImage");
+		if (!bgWindowDef)
+		{
+			bgWindowDef = _gui->findWindowDef("backgroundmulti");
+			if (!bgWindowDef)
+			{
+				bgWindowDef = _gui->findWindowDef("backgroundsingle");
+			}
+		}
 
 		if (bgWindowDef != NULL)
 		{
