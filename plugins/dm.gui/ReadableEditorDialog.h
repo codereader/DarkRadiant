@@ -4,7 +4,7 @@
 #include "icommandsystem.h"
 
 #include "gtkutil/window/BlockingTransientWindow.h"
-#include "gui/GuiView.h"
+#include "ReadableGuiView.h"
 #include <map>
 #include <gtk/gtk.h>
 #include "XDataLoader.h"

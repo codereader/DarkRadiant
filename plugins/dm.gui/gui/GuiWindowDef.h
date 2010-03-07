@@ -142,6 +142,9 @@ public:
 	// Initialises the time of this windowDef and all children
 	void initTime(const std::size_t time, bool updateChildren = true);
 
+	// Prepares renderable objects, to be called by the parent Gui only
+	void pepareRendering(bool prepareChildren = true);
+
 private:
 	Vector4 parseVector4(parser::DefTokeniser& tokeniser);
 	float parseFloat(parser::DefTokeniser& tokeniser);

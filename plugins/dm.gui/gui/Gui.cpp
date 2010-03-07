@@ -87,4 +87,13 @@ GuiWindowDefPtr Gui::findWindowDef(const std::string& name)
 	return (_desktop != NULL) ? _desktop->findWindowDef(name) : GuiWindowDefPtr();
 }
 
+void Gui::pepareRendering()
+{
+	if (_desktop != NULL)
+	{
+		// Recursively prepare child windowDefs
+		_desktop->pepareRendering(true);
+	}
+}
+
 } // namespace
