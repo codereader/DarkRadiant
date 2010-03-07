@@ -74,22 +74,10 @@ void GuiView::initialiseView()
 	glLoadIdentity();
 }
 
-void GuiView::onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, GuiView* self)
+void GuiView::setGLViewPort()
 {
-	// Store the window dimensions for later calculations
-	self->_windowDims = Vector2(allocation->width, allocation->height);
-
-	// Queue an expose event
-	gtk_widget_queue_draw(widget);
-}
-
-void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
-{
-	// Create scoped sentry object to swap the GLWidget's buffers
-	gtkutil::GLWidgetSentry sentry(*self->_glWidget);
-
-	double width = self->_windowDims[0];
-	double height = self->_windowDims[1];
+	double width = _windowDims[0];
+	double height = _windowDims[1];
 	double aspectRatio = static_cast<double>(DEFAULT_WIDTH) / DEFAULT_HEIGHT;
 
 	if (width / height > aspectRatio)
@@ -102,12 +90,39 @@ void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
 	}
 
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
+}
+
+void GuiView::draw()
+{
+	// Prepare the GUI for rendering, like re-compiling texts etc.
+	// This has to be performed before states are initialised
+	_gui->pepareRendering();
+
+	// Create scoped sentry object to swap the GLWidget's buffers
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
+
+	setGLViewPort();
 
 	// Set up the scale
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	self->_renderer.render();
+	_renderer.render();
+}
+
+
+void GuiView::onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, GuiView* self)
+{
+	// Store the window dimensions for later calculations
+	self->_windowDims = Vector2(allocation->width, allocation->height);
+
+	// Queue an expose event
+	gtk_widget_queue_draw(widget);
+}
+
+void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
+{
+	self->draw();
 }
 
 } // namespace

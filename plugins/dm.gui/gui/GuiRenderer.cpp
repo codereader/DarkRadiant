@@ -9,14 +9,20 @@ namespace gui
 {
 
 GuiRenderer::GuiRenderer() :
-	_viewPortTopLeft(0,0),
-	_viewPortBottomRight(640, 480),
+	_areaTopLeft(0,0),
+	_areaBottomRight(640, 480),
 	_ignoreVisibility(false)
 {}
 
 void GuiRenderer::setGui(const GuiPtr& gui)
 {
 	_gui = gui;
+}
+
+void GuiRenderer::setVisibleArea(const Vector2& topLeft, const Vector2& bottomRight)
+{
+	_areaTopLeft = topLeft;
+	_areaBottomRight = bottomRight;
 }
 
 void GuiRenderer::setIgnoreVisibility(bool ignoreVisibility)
@@ -34,10 +40,10 @@ void GuiRenderer::render()
 	glLoadIdentity();
 
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
-	glOrtho(_viewPortTopLeft[0], 	// left 
-		_viewPortBottomRight[0], // right
-		_viewPortBottomRight[1], // bottom 
-		_viewPortTopLeft[1], 	// top 
+	glOrtho(_areaTopLeft[0], 	// left 
+		_areaBottomRight[0], // right
+		_areaBottomRight[1], // bottom 
+		_areaTopLeft[1], 	// top 
 		-1, 1);
 
 	// Tell openGL to draw front and back of the polygons in textured mode

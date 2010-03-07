@@ -50,6 +50,9 @@ public:
 	// Returns a reference to the named windowDef, returns NULL if not found
 	GuiWindowDefPtr findWindowDef(const std::string& name);
 
+	// Called by the GuiRenderer to re-compile text VBOs, etc.
+	void pepareRendering();
+
 	// Takes the given token stream and attempts to construct a GUI object from it
 	// Returns NULL on failure
 	static GuiPtr createFromTokens(parser::DefTokeniser& tokeniser);

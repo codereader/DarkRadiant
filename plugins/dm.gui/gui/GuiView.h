@@ -20,7 +20,7 @@ namespace gui
 class GuiView :
 	public gtkutil::Widget
 {
-private:
+protected:
 	// The top-level widget for packing this into a parent container
 	GtkWidget* _widget;
 
@@ -39,6 +39,8 @@ private:
 public:
 	GuiView();
 
+	virtual ~GuiView() {}
+
 	// Sets the GUI to render (by VFS path)
 	void setGui(const std::string& gui)
 	{
@@ -46,7 +48,7 @@ public:
 	}
 
 	// Sets the GUI to render (can be NULL to clear this view)
-	void setGui(const GuiPtr& gui);
+	virtual void setGui(const GuiPtr& gui);
 
 	// Returns the current GUI (can be NULL)
 	const GuiPtr& getGui();
@@ -66,6 +68,12 @@ protected:
 	{
 		return _widget;
 	}
+
+	// Performs the actual GL setup and drawing
+	virtual void draw();
+
+	// Calculates the visible area
+	virtual void setGLViewPort();
 
 private:
 	static void onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, GuiView* self);

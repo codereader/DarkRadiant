@@ -430,4 +430,17 @@ GuiWindowDefPtr GuiWindowDef::findWindowDef(const std::string& name)
 	return GuiWindowDefPtr();
 }
 
+void GuiWindowDef::pepareRendering(bool prepareChildren)
+{
+	// Triggers a re-compilation of the text VBOs, if necessary
+	getRenderableText();
+
+	if (!prepareChildren) return;
+
+	for (ChildWindows::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		(*i)->pepareRendering(prepareChildren);
+	}
+}
+
 } // namespace

@@ -28,6 +28,7 @@
 #include "GuiSelector.h"
 #include "gui/GuiManager.h"
 #include "TextViewInfoDialog.h"
+#include "ReadableGuiView.h"
 
 namespace ui
 {
@@ -82,7 +83,7 @@ namespace
 // Public and protected methods:
 ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
-	_guiView(new gui::GuiView),
+	_guiView(new gui::ReadableGuiView),
 	_result(RESULT_CANCEL),
 	_entity(entity),
 	_currentPageIndex(0),
