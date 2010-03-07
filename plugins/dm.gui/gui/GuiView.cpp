@@ -94,6 +94,8 @@ void GuiView::setGLViewPort()
 
 void GuiView::draw()
 {
+	if (_gui == NULL) return;
+
 	// Prepare the GUI for rendering, like re-compiling texts etc.
 	// This has to be performed before states are initialised
 	_gui->pepareRendering();
