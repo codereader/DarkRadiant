@@ -537,7 +537,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	if (!_entity->getKeyValue("xdata_contents").empty())
 	{
 		XdFileChooserDialog::Result result = XdFileChooserDialog::import( 
-			_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader
+			_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, this
 		);
 
 		switch (result)
@@ -747,16 +747,16 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 		updateGuiView();
 }
 
-void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::string& xDataPath)
+void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::string& xDataName, const std::string& xDataPath)
 {
 	// If the name of an xData object is passed it will be rendered instead of the current
 	// xData object, to enable previewing of XData definitions induced by the XDataSelector.
-	if (!xDataPath.empty())
+	if (!xDataName.empty())
 	{
 		XData::XDataPtr xd;
 		XData::XDataMap xdMap;
 
-		if (_xdLoader->importDef(xDataPath, xdMap))
+		if (_xdLoader->importDef(xDataName, xdMap, xDataPath))
 		{
 			xd = xdMap.begin()->second;
 			_guiView->setGui(xd->getGuiPage(0));
@@ -913,7 +913,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 
 		if (popup->run() == ui::IDialog::RESULT_YES)
 		{
-			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader))
+			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader, this))
 			{
 			case XdFileChooserDialog::RESULT_CANCEL:
 				break;
@@ -1357,7 +1357,7 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 	}
 	
 	// Import the file:
-	switch (XdFileChooserDialog::import(res, self->_xData, self->_xdFilename, self->_xdLoader))
+	switch (XdFileChooserDialog::import(res, self->_xData, self->_xdFilename, self->_xdLoader, self))
 	{
 		case XdFileChooserDialog::RESULT_IMPORT_FAILED:
 			gtkutil::errorDialog( self->_xdLoader->getImportSummary()[self->_xdLoader->getImportSummary().size()-1]  , GlobalMainFrame().getTopLevelWindow());

@@ -1,5 +1,6 @@
 #include "XDataLoader.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "ReadableEditorDialog.h"
 
 namespace ui
 {
@@ -23,26 +24,30 @@ private:
 	// A container for storing enumerated widgets
 	GtkWidget* _treeview;
 
-	// Gets the selection of the _treeview and stores it in the _fileIterator
-	void storeSelection();
-
 	// Return value
 	Result _result;
 
 	// The chosen filename.
 	std::string _chosenFile;
+
+	// Pointer to the ReadableEditorDialog for updating the guiView.
+	ReadableEditorDialog* _editorDialog;
+
+	// Definition name
+	std::string _defName;
 public:
 
 	// Imports the definition given by defName and stores the result in newXData and the corresponding filename.
 	// If the definition is found in mutliple files an dialog shows up, asking the user which file to use.
-	static Result import(const std::string& defName, XData::XDataPtr& newXData, std::string& filename, XData::XDataLoaderPtr& loader);
+	static Result import(const std::string& defName, XData::XDataPtr& newXData, std::string& filename, XData::XDataLoaderPtr& loader, ReadableEditorDialog* editorDialog);
 
 private:
 	// Private constructor called by run.
-	XdFileChooserDialog(const XData::XDataMap& xdMap);
+	XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog* editorDialog);
 
 	static void onOk(GtkWidget* widget, XdFileChooserDialog* self);
 	static void onCancel(GtkWidget* widget, XdFileChooserDialog* self);
+	static void onSelectionChanged(GtkTreeSelection *treeselection, XdFileChooserDialog* self);
 };
 
 } // namespace ui

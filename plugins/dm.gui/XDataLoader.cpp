@@ -39,7 +39,7 @@ const bool XDataLoader::importDef( const std::string& definitionName, XDataMap& 
 	{
 		// Attempt to open the file in text mode and retrieve DefTokeniser
 		ArchiveTextFilePtr file = 
-			GlobalFileSystem().openTextFile(XDATA_DIR + files[n]);
+			GlobalFileSystem().openTextFile(files[n]);
 
 		if (file == NULL)
 			return reportError("[XDataLoader::importDef] Error: Failed to open file " + files[n] + "\n");
@@ -88,7 +88,7 @@ const bool XDataLoader::import( const std::string& filename, XDataMap& target )
 
 	// Attempt to open the file in text mode and retrieve DefTokeniser
 	ArchiveTextFilePtr file = 
-		GlobalFileSystem().openTextFile(XDATA_DIR + filename);
+		GlobalFileSystem().openTextFile(filename);
 	if (file == NULL)
 		return reportError("[XDataLoader::import] Failed to open file: " + filename + "\n");
 
@@ -442,7 +442,7 @@ const bool XDataLoader::recursiveImport( const std::string& sourceDef, const Str
 
 		//Open the file
 		ArchiveTextFilePtr file = 
-			GlobalFileSystem().openTextFile(XDATA_DIR + it->second[k]);
+			GlobalFileSystem().openTextFile(it->second[k]);
 		if (file == NULL)
 			return reportError(
 				"[XData::import] Error in definition: " + defName
@@ -684,7 +684,7 @@ void XDataLoader::retrieveXdInfo()
 	_duplicatedDefs.clear();
 	//ScopedDebugTimer timer("XData definitions parsed: ");
 	GlobalFileSystem().forEachFile(
-		XDATA_DIR, 
+		XDATA_DIR,
 		XDATA_EXT,
 		makeCallback1(*this),
 		99);
@@ -693,12 +693,12 @@ void XDataLoader::retrieveXdInfo()
 void XDataLoader::operator() (const std::string& filename)
 {
 	// Attempt to open the file in text mode
-	ArchiveTextFilePtr file = 
+	ArchiveTextFilePtr file =
 		GlobalFileSystem().openTextFile(XDATA_DIR + filename);
 
-	if (file != NULL) {		
+	if (file != NULL) {
 		// File is open, so add the file to the _fileSet-set and parse the tokens
-		_fileSet.insert(filename);
+		_fileSet.insert(file->getModName() + "/" + file->getName());
 		try 
 		{
 			std::istream is(&(file->getInputStream()));
@@ -708,15 +708,15 @@ void XDataLoader::operator() (const std::string& filename)
 			{
 				std::string tempstring = tok.nextToken();
 				tok.assertNextToken("{");
-				std::pair<StringVectorMap::iterator,bool> ret = _defMap.insert( StringVectorMap::value_type(tempstring, StringList(1,filename) ) );
+				std::pair<StringVectorMap::iterator,bool> ret = _defMap.insert( StringVectorMap::value_type(tempstring, StringList(1, XDATA_DIR + filename) ) );
 				if (!ret.second)	//Definition already exists.
 				{
-					ret.first->second.push_back(filename);
+					ret.first->second.push_back(XDATA_DIR + filename);
 					std::cerr << "[XDataLoader] The definition " << tempstring << " of the file " << filename << " already exists. It was defined at least once. First in " << ret.first->second[0] << ".\n";
 					//Create an entry in the _duplicatedDefs map with the original file. If entry already exists, insert will fail.
 					std::pair<StringVectorMap::iterator,bool> duplRet = _duplicatedDefs.insert( StringVectorMap::value_type(tempstring, StringList(1,ret.first->second[0]) ) );
 					//The new file is appended to the vector.
-					duplRet.first->second.push_back(filename);						
+					duplRet.first->second.push_back(XDATA_DIR + filename);
 				}
 				jumpOutOfBrackets(tok);
 			}
@@ -727,7 +727,8 @@ void XDataLoader::operator() (const std::string& filename)
 				<< ": " << e.what() << std::endl;
 		}
 	}
-	else {
+	else
+	{
 		std::cerr << "[XDataLoader] Unable to open " << filename << std::endl;
 	}
 }

@@ -15,7 +15,7 @@ namespace
 	const std::string WINDOW_TITLE("Choose a file...");
 }
 
-XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName, XData::XDataPtr& newXData, std::string& filename, XData::XDataLoaderPtr& loader)
+XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName, XData::XDataPtr& newXData, std::string& filename, XData::XDataLoaderPtr& loader, ReadableEditorDialog* editorDialog)
 {
 	// Import the file:
 	XData::XDataMap xdMap;
@@ -25,7 +25,7 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 		{
 			// The requested definition has been defined in multiple files. Use the XdFileChooserDialog to pick a file.
 			// Optimally, the preview renderer would already show the selected definition.
-			XdFileChooserDialog fcDialog(xdMap);
+			XdFileChooserDialog fcDialog(defName, xdMap, editorDialog);
 			fcDialog.show();
 			if (fcDialog._result == RESULT_CANCEL)
 				//User clicked cancel. The window will be destroyed in _postShow()...
@@ -46,8 +46,10 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 	return RESULT_IMPORT_FAILED;
 }
 
-XdFileChooserDialog::XdFileChooserDialog(const XData::XDataMap& xdMap) : 
+XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog* editorDialog) : 
 	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	_editorDialog(editorDialog),
+	_defName(defName),
 	_result(RESULT_CANCEL)
 {
 	// Set the default border width in accordance to the HIG
@@ -79,6 +81,11 @@ XdFileChooserDialog::XdFileChooserDialog(const XData::XDataMap& xdMap) :
 
 	g_object_unref(G_OBJECT(listStore));
 
+	// Connect the selection change signal
+	GtkTreeSelection* select = gtk_tree_view_get_selection ( GTK_TREE_VIEW(_treeview) );
+	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
+	g_signal_connect(select, "changed", G_CALLBACK(onSelectionChanged), this);
+
 	// Create buttons and add them to an hbox:
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -101,19 +108,8 @@ XdFileChooserDialog::XdFileChooserDialog(const XData::XDataMap& xdMap) :
 		);
 }
 
-void XdFileChooserDialog::storeSelection()
-{
-	// Get the treeview selection and create the corresponding _fileIterator
-	GtkTreeSelection *select;
-	select = gtk_tree_view_get_selection ( GTK_TREE_VIEW (_treeview) );
-	gtk_tree_selection_set_mode (select, GTK_SELECTION_SINGLE);
-
-	_chosenFile = gtkutil::TreeModel::getSelectedString(select,0);
-}
-
 void XdFileChooserDialog::onOk(GtkWidget* widget, XdFileChooserDialog* self)
 {
-	self->storeSelection();
 	self->_result = RESULT_OK;
 
 	self->destroy();
@@ -122,6 +118,12 @@ void XdFileChooserDialog::onOk(GtkWidget* widget, XdFileChooserDialog* self)
 void XdFileChooserDialog::onCancel(GtkWidget* widget, XdFileChooserDialog* self)
 {
 	self->destroy();
+}
+
+void XdFileChooserDialog::onSelectionChanged(GtkTreeSelection *treeselection, XdFileChooserDialog* self)
+{
+	self->_chosenFile = gtkutil::TreeModel::getSelectedString(treeselection, 0);
+	self->_editorDialog->updateGuiView("", self->_defName, self->_chosenFile.substr(self->_chosenFile.find("/")+1));
 }
 
 } // namespace ui
