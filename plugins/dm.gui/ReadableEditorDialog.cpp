@@ -1221,6 +1221,7 @@ void ReadableEditorDialog::checkGuiLayout()
 			else
 			{
 				_runningGuiLayoutCheck = false;
+				updateGuiView();
 				return;
 			}
 			break;
@@ -1232,6 +1233,7 @@ void ReadableEditorDialog::checkGuiLayout()
 			else
 			{
 				_runningGuiLayoutCheck = false;
+				updateGuiView();
 				return;
 			}
 			break;
@@ -1254,6 +1256,7 @@ void ReadableEditorDialog::checkGuiLayout()
 		{
 			gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]), guiName.c_str());
 			_runningGuiLayoutCheck = false;
+			updateGuiView();
 			return;
 		}
 		else

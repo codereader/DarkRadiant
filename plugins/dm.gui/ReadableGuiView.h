@@ -16,6 +16,8 @@ class ReadableGuiView :
 protected:
 	Vector2 _bgDims;
 
+	std::vector<std::string> backgroundDefList;
+
 public:
 	virtual void setGui(const GuiPtr& gui);
 
