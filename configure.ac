@@ -48,6 +48,7 @@ AC_SUBST([sr_plugin])
 AC_SUBST([obj_plugin])
 AC_SUBST([difficulty_plugin])
 AC_SUBST([conv_plugin])
+AC_SUBST([gui_plugin])
 
 # Check for required libraries
 
@@ -214,6 +215,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop
                  plugins/eventmanager/Makefile
                  plugins/filetypes/Makefile
                  plugins/filters/Makefile
+                 plugins/fonts/Makefile
                  plugins/grid/Makefile
                  plugins/image/Makefile
                  plugins/mapdoom3/Makefile

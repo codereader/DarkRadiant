@@ -7,6 +7,7 @@ SUBDIRS = eventmanager \
 		  entitylist \
           filetypes \
           filters \
+          fonts \
           grid \
           image \
           mapdoom3 \
@@ -25,4 +26,4 @@ SUBDIRS = eventmanager \
 SUBDIRS += @sound_module@ @script_module@
 
 # Optional plugins
-SUBDIRS += @sr_plugin@ @obj_plugin@ @difficulty_plugin@ @conv_plugin@
+SUBDIRS += @sr_plugin@ @obj_plugin@ @difficulty_plugin@ @conv_plugin@ @gui_plugin@
