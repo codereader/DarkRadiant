@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [1.1.0])
+AC_INIT([darkradiant], [1.1.1])
 AM_INIT_AUTOMAKE
 
 # Save user flags
@@ -42,6 +42,7 @@ then
     obj_plugin="dm.objectives"
     difficulty_plugin="dm.difficulty"
     conv_plugin="dm.conversation"
+    gui_plugin="dm.gui"
 fi
 AC_SUBST([sr_plugin])
 AC_SUBST([obj_plugin])
@@ -231,6 +232,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop
                  plugins/dm.stimresponse/Makefile
                  plugins/dm.objectives/Makefile
                  plugins/dm.difficulty/Makefile
+		 plugins/dm.gui/Makefile
                  plugins/dm.conversation/Makefile])
 
 AC_OUTPUT
