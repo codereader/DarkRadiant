@@ -201,6 +201,7 @@ difficulty_plugin = @difficulty_plugin@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gui_plugin = @gui_plugin@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
@@ -239,11 +240,11 @@ top_srcdir = @top_srcdir@
 
 # Optional plugins
 SUBDIRS = eventmanager archivezip commandsystem eclassmgr eclasstree \
-	entity entitylist filetypes filters grid image mapdoom3 \
+	entity entitylist filetypes filters fonts grid image mapdoom3 \
 	md5model model particles scenegraph shaders skins uimanager \
 	undo vfspk3 xmlregistry @sound_module@ @script_module@ \
 	@sr_plugin@ @obj_plugin@ @difficulty_plugin@ @conv_plugin@ \
-	$(am__empty)
+	@gui_plugin@ $(am__empty)
 all: all-recursive
 
 .SUFFIXES:

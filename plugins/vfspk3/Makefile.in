@@ -207,6 +207,7 @@ difficulty_plugin = @difficulty_plugin@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+gui_plugin = @gui_plugin@
 host = @host@
 host_alias = @host_alias@
 host_cpu = @host_cpu@
