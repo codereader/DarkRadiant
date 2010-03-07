@@ -103,7 +103,7 @@ SerialisableComboBox_Index::SerialisableComboBox_Index()
 
 void SerialisableComboBox_Index::importFromString(const std::string& str)
 {
-   int activeId = boost::lexical_cast<int>(str);
+   int activeId = strToInt(str);
    gtk_combo_box_set_active(GTK_COMBO_BOX(_getWidget()), activeId);
 
    int newId = gtk_combo_box_get_active(GTK_COMBO_BOX(_getWidget()));
@@ -117,9 +117,7 @@ void SerialisableComboBox_Index::importFromString(const std::string& str)
 
 std::string SerialisableComboBox_Index::exportToString() const
 {
-   return boost::lexical_cast<std::string>(
-      gtk_combo_box_get_active(GTK_COMBO_BOX(_getWidget()))
-   );
+	return intToStr(gtk_combo_box_get_active(GTK_COMBO_BOX(_getWidget())));
 }
 
 // SerialisableComboBox_Text

@@ -1,0 +1,7 @@
+; fonts.def : Declares the module parameters for the DLL.
+
+LIBRARY      "FONTS"
+
+EXPORTS
+    ; Explicit exports can go here
+	RegisterModule @1

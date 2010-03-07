@@ -69,6 +69,11 @@ public:
 	 * Returns the root node of this map or NULL if this is an empty map.
 	 */
 	virtual IMapRootNodePtr getRoot() = 0;
+
+	/**
+	* Returns the name of the map.
+	*/
+	virtual std::string getMapName() const = 0;
 };
 typedef boost::shared_ptr<IMap> IMapPtr;
 

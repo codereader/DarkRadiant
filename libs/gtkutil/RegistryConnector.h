@@ -41,7 +41,7 @@ public:
     * StringSerialisablePtr to a serialisable object whose value will be read
     * and written to the key.
     */
-   void addObject(const std::string& key, StringSerialisablePtr obj);
+   void addObject(const std::string& key, const StringSerialisablePtr& obj);
 
 	// Loads all the values from the registry into the connected GtkObjects
 	void importValues();
@@ -52,7 +52,7 @@ public:
 private:
 
    // Load a value from the registry into the StringSerialisable object
-   void importRegistryValue(StringSerialisablePtr obj,
+   void importRegistryValue(const StringSerialisablePtr& obj,
                             const std::string& key);
 
 }; // class RegistryConnector

@@ -94,9 +94,17 @@ public:
 	 */
 	const std::string& getEnginePath() const;
 	
-	/** greebo: Gets the mod path (e.g. ~/.doom3/darkmod/).
+	/**
+	 * greebo: Gets the mod path (e.g. ~/.doom3/gathers/). 
+	 * Returns the mod base path if the mod path itself is empty. 
 	 */
 	const std::string& getModPath() const;
+
+	/** 
+	 * greebo: Returns the mod base path (e.g. ~/.doom3/darkmod/), 
+	 * can be an empty string if fs_game_base is not set.
+	 */
+	const std::string& getModBasePath() const;
 
 	/** greebo: Accessor method for the fs_game parameter
 	 */

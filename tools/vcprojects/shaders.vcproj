@@ -454,10 +454,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\shaders\MissingXMLNodeException.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\shaders\NamedBindable.h"
 				>
 			</File>

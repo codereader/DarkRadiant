@@ -120,6 +120,10 @@
 			<basepath>materials</basepath>
 			<extension>mtr</extension>
 		</shaders>
+		<fonts>
+			<basepath>fonts</basepath>
+			<extension>dat</extension>
+		</fonts>
 	</filesystem>
 	<defaults>
 		<lightShader value="lights/defaultPointLight" />
@@ -141,6 +145,8 @@
 		<nameKey value="name" />
         <speakerMinRadius value="24" />
         <speakerMaxRadius value="32" />
+		<guiSmallFontLimit value="0.15" />
+		<guiMediumFontLimit value="0.30" />
 	</defaults>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />

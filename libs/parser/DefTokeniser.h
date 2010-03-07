@@ -148,7 +148,40 @@ public:
 						_state = AFTER_CLOSING_QUOTE;
                         continue;
                     }
-                    else {
+					else if (*next == '\\')
+					{
+						// Escape found, check next character
+						++next;
+
+						if (next != end)
+						{
+							if (*next == 'n') // Linebreak
+							{
+								tok += '\n';
+							}
+							else if (*next == 't') // Tab
+							{
+								tok += '\t';
+							}
+							else if (*next == '"') // Quote
+							{
+								tok += '"';
+							}
+							else
+							{
+								// No special escape sequence, add the backslash
+								tok += '\\';
+								// Plus the character itself
+								tok += *next;
+							}
+
+							++next;
+						}
+
+						continue;
+					}
+                    else
+					{
                         tok += *next;
                         ++next;
                         continue;
@@ -294,6 +327,7 @@ public:
     
 };
 
+const char* const WHITESPACE = " \t\n\v\r";
 
 /**
  * DefTokeniser abstract base class. This class provides a unified interface to
@@ -305,9 +339,9 @@ public:
  * while default implementations of assertNextToken() and skipTokens() are 
  * provided that make use of the former two methods.
  */
-class DefTokeniser {
+class DefTokeniser
+{
 public:
-
     /**
 	 * Destructor
 	 */
@@ -396,7 +430,7 @@ public:
      * own right.
      */
     BasicDefTokeniser(const ContainerT& str, 
-                      const char* delims = " \t\n\v\r", 
+                      const char* delims = WHITESPACE, 
                       const char* keptDelims = "{}()")
     : _tok(str, DefTokeniserFunc(delims, keptDelims)),
       _tokIter(_tok.begin())
@@ -475,7 +509,7 @@ public:
      * own right.
      */
     BasicDefTokeniser(std::istream& str, 
-                      const char* delims = " \t\n\v\r", 
+                      const char* delims = WHITESPACE, 
                       const char* keptDelims = "{}()")
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
