@@ -166,6 +166,23 @@ public:
 								gpointer vpSelf);
 	
 	}; // class SelectionFinder
+
+	/**
+	 * greebo: Takes care that the given tree model is sorted such that
+	 * folders are listed before "regular" items. 
+	 * 
+	 * @model: The tree model to sort, must implement GtkTreeSortable.
+	 * @nameCol: the column number containing the name
+	 * @isFolderColumn: the column number containing a boolean flag: "is folder"
+	 */
+	static void applyFoldersFirstSortFunc(GtkTreeModel* model, gint nameCol, gint isFolderColumn);
+
+private:
+	// Custom sort function, used by applyFoldersFirstSortFunc
+	static gint sortFuncFoldersFirst(GtkTreeModel *model, 
+									 GtkTreeIter *a, 
+									 GtkTreeIter *b, 
+									 gpointer isFolderColumn);
 };
 
 } // namespace gtkutil

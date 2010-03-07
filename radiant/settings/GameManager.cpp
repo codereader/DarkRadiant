@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "itextstream.h"
+#include "ifiletypes.h"
 #include "ifilesystem.h"
 #include "settings/PreferenceSystem.h"
 #include "ui/prefdialog/PrefDialog.h"
@@ -41,6 +42,7 @@ const StringSet& Manager::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_FILETYPES);
 	}
 
 	return _dependencies;
@@ -71,6 +73,11 @@ const std::string& Manager::getFSGameBase() const {
 const std::string& Manager::getModPath() const {
 	// Return the fs_game path if available
 	return (!_modPath.empty()) ? _modPath : _modBasePath;
+}
+
+const std::string& Manager::getModBasePath() const
+{
+	return _modBasePath;
 }
 
 /** greebo: Returns the current Game.

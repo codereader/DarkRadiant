@@ -20,9 +20,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
@@ -60,12 +60,17 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				AdditionalDependencies="pangowin32-1.0.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib\&quot;"
+				Name="VCLinkerTool"
+				AdditionalDependencies="glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib opengl32.lib glu32.lib pango-1.0.lib pangowin32-1.0.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w32deps\gtk2\lib"
+				ModuleDefinitionFile="$(SolutionDir)\..\..\w32deps\gtkglext\gdk\gdkglext.def"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -75,6 +80,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -82,9 +90,9 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
@@ -122,12 +130,17 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				AdditionalDependencies="pangowin32-1.0.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib\&quot;"
+				Name="VCLinkerTool"
+				AdditionalDependencies="glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib opengl32.lib glu32.lib pango-1.0.lib pangowin32-1.0.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w64deps\gtk2\lib"
+				ModuleDefinitionFile="$(SolutionDir)\..\..\w32deps\gtkglext\gdk\gdkglext.def"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -139,14 +152,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
@@ -184,12 +200,17 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				AdditionalDependencies="pangowin32-1.0.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib\&quot;"
+				Name="VCLinkerTool"
+				AdditionalDependencies="glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib opengl32.lib glu32.lib pango-1.0.lib pangowin32-1.0.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w32deps\gtk2\lib"
+				ModuleDefinitionFile="$(SolutionDir)\..\..\w32deps\gtkglext\gdk\gdkglext.def"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -201,14 +222,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
@@ -246,12 +270,17 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				AdditionalDependencies="pangowin32-1.0.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib\&quot;"
+				Name="VCLinkerTool"
+				AdditionalDependencies="glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib opengl32.lib glu32.lib pango-1.0.lib pangowin32-1.0.lib"
+				AdditionalLibraryDirectories="$(SolutionDir)\..\..\w64deps\gtk2\lib"
+				ModuleDefinitionFile="$(SolutionDir)\..\..\w32deps\gtkglext\gdk\gdkglext.def"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -261,6 +290,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -486,10 +518,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglext-gtk20.def"
-			>
-		</File>
 		<File
 			RelativePath="..\..\..\w32deps\gtkglext\gdk\gdkglext.def"
 			>
