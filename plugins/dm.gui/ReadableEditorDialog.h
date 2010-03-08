@@ -99,6 +99,12 @@ private:
 	// _show_ TwoSided editing-interface.
 	void toggleTwoSidedEditingInterface(bool show);
 
+	// shows the XData import Summary
+	void showXdImportSummary();
+
+	// shows the gui import Summary
+	void showGuiImportSummary();
+
 	// toggles the layout of the xdata object and updates the interface.
 	void toggleLayout();
 
