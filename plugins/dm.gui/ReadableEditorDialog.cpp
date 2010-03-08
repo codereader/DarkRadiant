@@ -1368,9 +1368,11 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 			return;
 		case XdFileChooserDialog::RESULT_OK:
 			self->_xdNameSpecified = true;
+			self->_useDefaultFilename = false;
 			self->populateControlsFromXData();
 			return;
 		default:
+			self->updateGuiView();
 			return;
 	}
 }
