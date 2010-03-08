@@ -228,23 +228,30 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		catch (...)
 		{
 			if (tok != NULL)
+			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ", " 
 					+ statement + " statement. '" + number 
 					+ "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);
+				);
+			}
+			_newXData.reset();
 			return reportError("[XDataLoader::import] Error in definition: " + defName + ", " + statement + " statement. '" 
 				+ number + "' is not a number.\n"
-				);
-		}			
+			);
+		}
 
 		//Read content
 		std::string readContent;
 		if (tok != NULL)
 		{
 			if (!readLines(*tok, readContent))
+			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " 
 					+ statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);
+				);
+			}
 		}
 		else
 			readContent = content;
@@ -296,9 +303,13 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		catch (...)
 		{
 			if (tok != NULL)
+			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ", gui_page statement. '" + number 
 					+ "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);
+				);
+			}
+			_newXData.reset();
 			return reportError("[XDataLoader::import] Error in definition: " + defName + ", gui_page statement. '" + number + "' is not a number.\n");
 		}
 		if (_maxGuiNumber < guiNumber)
@@ -308,9 +319,12 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		if (tok != NULL)
 		{
 			if (!readLines(*tok, _guiPageDef))
+			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement 
 					+ " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);	
+				);
+			}
 		}
 		else 
 			_guiPageDef = content;
@@ -332,15 +346,19 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		{
 			std::string number;
 			if (!readLines(*tok, number))
+			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " 
 					+ statement + " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);
+				);
+			}
 			try { _numPages = boost::lexical_cast<int>(number); }
 			catch(...)
 			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ", num_pages statement. '" + number 
 					+ "' is not a number.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);
+				);
 			}
 		}
 		else
@@ -371,9 +389,12 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		if (tok != NULL)
 		{
 			if (!readLines(*tok, _sndPageTurn))
+			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName + ". Failed to read content of " + statement 
 					+ " statement.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);
+				);
+			}
 		}
 		else
 			_sndPageTurn = content;
@@ -388,25 +409,35 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		StringMap statements;
 
 		if (tok == NULL)	//Only works with def tokeniser.
+		{
+			_newXData.reset();
 			return false;
+		}
 
 		if (!getImportParameters(*tok, statements, SourceDef, defName))
+		{
+			_newXData.reset();
 			return false;
+		}
 
 		retrieveXdInfo();	//refresh defmap. Prevents faulty imports.
 		if (!recursiveImport(SourceDef, statements, defName, importedData))
 		{
 			_errorList[_errorList.size()-1] += "\tTrying to Jump to next XData definition. Might lead to furthers errors.\n";
 			jumpOutOfBrackets(*tok);
+			_newXData.reset();
 			return false;
 		}
 
 		for (std::size_t n=0; n < importedData.size(); n++)
 		{
 			if (!storeContent(importedData[n].first, NULL, defName, importedData[n].second))
+			{
+				_newXData.reset();
 				return reportError(*tok, "[XDataLoader::import] Error in definition: " + defName 
 					+ ". Import-statement failed.\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n"
-					);
+				);
+			}
 		}
 
 		return true;
@@ -415,6 +446,8 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 	{
 		return true;
 	}
+
+	_newXData.reset();
 	return false;
 }
 
