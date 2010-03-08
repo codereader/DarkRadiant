@@ -554,6 +554,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 				{
 					showXdImportSummary();
 				}
+				updateGuiView();
 				break;
 			}
 			default:	//Import success
@@ -775,6 +776,7 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 			{
 				showXdImportSummary();
 			}
+			updateGuiView();
 			return;
 		}
 
@@ -789,6 +791,7 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 			{
 				showGuiImportSummary();
 			}
+			updateGuiView();
 			return;
 		}
 
@@ -838,7 +841,7 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 			{
 				showGuiImportSummary();
 			}
-			gtkutil::errorDialog("Failed to load Gui Definition.", GlobalMainFrame().getTopLevelWindow());
+			updateGuiView();
 			return;
 		}
 
@@ -1438,6 +1441,7 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 			{
 				self->showXdImportSummary();
 			}
+			self->updateGuiView();
 			return;
 		}
 		case XdFileChooserDialog::RESULT_OK:
