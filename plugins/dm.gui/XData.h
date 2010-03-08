@@ -138,7 +138,7 @@ private:
 	const std::string generateXDataDef() const;
 
 	// Returns the length of the current definition. The get-pointer has to be at the beginning of that definition. Returns 0 on Syntax errors.
-	const std::size_t getDefLength(boost::filesystem::fstream& file) const;
+	const std::size_t getDefLength(const std::string& def) const;
 
 	// Returns the definition-name found in the file or "" if multiple definitions where found. 
 	// Used by the xport()-method in the overwrite-command for checking for a DefinitionMatch or MultipleDefinitions.

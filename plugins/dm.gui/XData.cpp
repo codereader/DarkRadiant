@@ -47,15 +47,13 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				boost::filesystem::fstream file(Path, std::ios_base::in);
 				if (!file.is_open())
 					return OpenFailed;
-				file.seekg(_definitionStart);
-				int DefLength = getDefLength(file);
-				if (DefLength == 0)		//If the definitionlength can't be obtained, the merge fails.
-					return MergeFailed;
-				file.seekg(0);
 				std::stringstream ss;
 				ss << file.rdbuf();
-				file.close();
 				std::string OutString = ss.str();
+				file.close();
+				int DefLength = getDefLength(OutString.substr(_definitionStart));
+				if (DefLength == 0)		//If the definitionlength can't be obtained, the merge fails.
+					return MergeFailed;
 				OutString.erase(_definitionStart, DefLength);
 				OutString.insert(_definitionStart, generateXDataDef());
 				file.open(Path, std::ios_base::out | std::ios_base::trunc);
@@ -123,27 +121,33 @@ const std::string XData::generateXDataDef() const
 	return xDataDef.str();
 }
 
-const std::size_t XData::getDefLength(boost::filesystem::fstream& file) const
+const std::size_t XData::getDefLength(const std::string& def) const
 {
-	char ch;
-	int bla;
-	if (file.is_open())
-	while (!file.eof())
+	const char *ch = def.c_str();
+	std::size_t charIndex = 0;
+	while (ch[charIndex] != '\0')
 	{
-		bla = file.tellg();
-		ch = (char)file.get();
-		if (ch == '{')
+		if (ch[++charIndex] == '{')
 		{
 			int BracketCount = 1;
-			while (!file.eof() && BracketCount > 0)
+			while (ch[++charIndex] != '\0' && BracketCount > 0)
 			{
-				ch = (char)file.get();
-				if (ch == '{')
-					BracketCount += 1;
-				else if (ch == '}')
-					BracketCount -= 1;
+				// Move out of brackets
+				if (ch[charIndex] == '{')
+					++BracketCount;
+				else if (ch[charIndex] == '}')
+					--BracketCount;
 			}
-			return ((int)file.tellg() - _definitionStart);
+			if (BracketCount > 0)
+				break;
+			while (ch[charIndex] != '\0')
+			{
+				// The definitionlength also expands over trailing spaces
+				if ( (ch[charIndex] != ' ') && (ch[charIndex] != '\t') && (ch[charIndex] != '\n') )
+					break;
+				++charIndex;
+			}
+			return charIndex;
 		}
 	}
 	return 0;	//no appropriate bracketstructure was found.
