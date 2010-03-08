@@ -14,6 +14,10 @@ void ReadableGuiView::setGLViewPort()
 	{
 		width = height * aspectRatio;
 	}
+	else
+	{
+		height = width / aspectRatio;
+	}
 
 	gtk_widget_set_size_request(_widget, static_cast<gint>(width), -1);
 
