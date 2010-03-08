@@ -1,3 +1,6 @@
+#ifndef TEXT_VIEW_INFO_DIALOG_H
+#define TEXT_VIEW_INFO_DIALOG_H
+
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/ScrolledFrame.h"
 #include <gtk/gtk.h>
@@ -60,3 +63,5 @@ public:
 };
 
 } // namespace
+
+#endif TEXT_VIEW_INFO_DIALOG_H

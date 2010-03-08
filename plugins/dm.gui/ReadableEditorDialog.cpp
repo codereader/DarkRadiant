@@ -546,12 +546,16 @@ bool ReadableEditorDialog::initControlsFromEntity()
 			case XdFileChooserDialog::RESULT_CANCEL:
 				return false;
 			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
-				gtkutil::errorDialog(
-					_xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1]
-					+ "\nCreating a new XData definition...",
-					GlobalMainFrame().getTopLevelWindow()
-				);
+			{
+				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
+					"Failed to import " + _entity->getKeyValue("xdata_contents") + ".\nCreating a new XData definition...\n\nDo you want to open the import summary?",
+					ui::IDialog::MESSAGE_ASK);
+				if (dialog->run() == ui::IDialog::RESULT_YES)
+				{
+					showXdImportSummary();
+				}
 				break;
+			}
 			default:	//Import success
 				_xdNameSpecified = true;
 				_useDefaultFilename = false;
@@ -764,7 +768,13 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 		}
 		else
 		{
-			gtkutil::errorDialog("Failed to import XData definition for Preview.", GlobalMainFrame().getTopLevelWindow());
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
+				"Failed to import " + xDataName + ".\n\nDo you want to open the import summary?",
+				ui::IDialog::MESSAGE_ASK);
+			if (dialog->run() == ui::IDialog::RESULT_YES)
+			{
+				showXdImportSummary();
+			}
 			return;
 		}
 
@@ -772,7 +782,13 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 
 		if (gui == NULL)
 		{
-			gtkutil::errorDialog("Failed to load Gui Definition.", GlobalMainFrame().getTopLevelWindow());
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
+				"Failed to load gui definition " + xd->getGuiPage(0) + ".\n\nDo you want to open the import summary?",
+				ui::IDialog::MESSAGE_ASK);
+			if (dialog->run() == ui::IDialog::RESULT_YES)
+			{
+				showGuiImportSummary();
+			}
 			return;
 		}
 
@@ -814,6 +830,14 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 
 		if (gui == NULL)
 		{
+			std::string nameGui = guiPath.empty() ? gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])) : guiPath;
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
+				"Failed to load gui definition " + nameGui + ".\n\nDo you want to open the import summary?",
+				ui::IDialog::MESSAGE_ASK);
+			if (dialog->run() == ui::IDialog::RESULT_YES)
+			{
+				showGuiImportSummary();
+			}
 			gtkutil::errorDialog("Failed to load Gui Definition.", GlobalMainFrame().getTopLevelWindow());
 			return;
 		}
@@ -919,7 +943,8 @@ void ReadableEditorDialog::checkXDataUniqueness()
 			case XdFileChooserDialog::RESULT_CANCEL:
 				break;
 			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
-				message = "Import failed:\n\t" + _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1] + "\n\n";
+				message = "Import failed:\n\t" + _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1]
+				+ "\n\nConsult the import summary for further information.\n\n";
 				break;
 			default:	//Import success
 				_xdNameSpecified = true;
@@ -1290,6 +1315,47 @@ void ReadableEditorDialog::checkGuiLayout()
 	_runningGuiLayoutCheck = false;
 }
 
+void ReadableEditorDialog::showXdImportSummary()
+{
+	XData::StringList summary = _xdLoader->getImportSummary();
+
+	if (summary.empty())
+	{
+		gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GlobalMainFrame().getTopLevelWindow() );
+		return;
+	}
+
+	std::string sum;
+
+	for (std::size_t n = 0; n < summary.size(); n++)
+	{
+		sum += summary[n];
+	}
+
+	TextViewInfoDialog dialog("XData import summary", sum);
+	dialog.show();
+}
+
+void ReadableEditorDialog::showGuiImportSummary()
+{
+	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
+	if (errors.empty())
+	{
+		gtkutil::errorDialog("No import summary available. Browse Gui Definitions first.", GlobalMainFrame().getTopLevelWindow() );
+		return;
+	}
+
+	std::string summary;
+
+	for (std::size_t n = 0; n < errors.size(); n++)
+	{
+		summary += errors[n];
+	}
+
+	TextViewInfoDialog dialog("Gui import summary", summary);
+	dialog.show();
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // Callback Methods for Signals:
 
@@ -1364,8 +1430,16 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 	switch (XdFileChooserDialog::import(res, self->_xData, self->_xdFilename, self->_xdLoader, self))
 	{
 		case XdFileChooserDialog::RESULT_IMPORT_FAILED:
-			gtkutil::errorDialog( self->_xdLoader->getImportSummary()[self->_xdLoader->getImportSummary().size()-1]  , GlobalMainFrame().getTopLevelWindow());
+		{
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
+				"Failed to import " + res + ".\n\nDo you want to open the import summary?",
+				ui::IDialog::MESSAGE_ASK);
+			if (dialog->run() == ui::IDialog::RESULT_YES)
+			{
+				self->showXdImportSummary();
+			}
 			return;
+		}
 		case XdFileChooserDialog::RESULT_OK:
 			self->_xdNameSpecified = true;
 			self->_useDefaultFilename = false;
@@ -1506,43 +1580,12 @@ void ReadableEditorDialog::onToolsClicked(GtkWidget* widget, ReadableEditorDialo
 
 void ReadableEditorDialog::onXdImpSum(GtkWidget* widget, ReadableEditorDialog* self)
 {
-	XData::StringList summary = self->_xdLoader->getImportSummary();
-
-	if (summary.empty())
-	{
-		gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GlobalMainFrame().getTopLevelWindow() );
-		return;
-	}
-
-	std::string sum;
-
-	for (std::size_t n = 0; n < summary.size(); n++)
-	{
-		sum += summary[n];
-	}
-
-	TextViewInfoDialog dialog("XData import summary", sum);
-	dialog.show();
+	self->showXdImportSummary();
 }
 
 void ReadableEditorDialog::onGuiImpSum(GtkWidget* widget, ReadableEditorDialog* self)
 {
-	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
-	if (errors.empty())
-	{
-		gtkutil::errorDialog("No import summary available. Browse Gui Definitions first.", GlobalMainFrame().getTopLevelWindow() );
-		return;
-	}
-
-	std::string summary;
-	
-	for (std::size_t n = 0; n < errors.size(); n++)
-	{
-		summary += errors[n];
-	}
-
-	TextViewInfoDialog dialog("Gui import summary", summary);
-	dialog.show();
+	self->showGuiImportSummary();
 }
 
 void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* self)
