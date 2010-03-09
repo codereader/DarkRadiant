@@ -26,17 +26,27 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				std::size_t DefPos = String.find(_name);
 				while (DefPos != std::string::npos)	//A name of a XData could be contained in another XData's name. Check that...
 				{
-					char before = String.c_str()[DefPos-1];
-					char after = String.c_str()[DefPos+_name.length()];
-					if ((DefPos == 0 || before == ' ' || before == '\t' || before == '\n') && (DefPos+_name.length() == file.end || after == ' ' || after == '\t' || after == '\n'))	//other delimiters necessary?
+					char before = String[DefPos > 0 ? DefPos-1 : 0];
+					char after = String[DefPos+_name.length() < String.size() ? DefPos+_name.length() : 0];
+					if ((DefPos == 0 || before == ' ' || before == '\t' || before == '\n') && (DefPos+_name.length() == String.size() || after == ' ' || after == '\t' || after == '\n'))	//other delimiters necessary?
 					{
-						_definitionStart = DefPos;
+						_definitionStart = 0;
+						//Definition found. But we want to have it clean, so let's see how many spaces are before the definition begin.
+						while (DefPos > 0)
+						{
+							if (String[--DefPos] != ' ' && String[DefPos] != '\t' && String[DefPos] != '\n')
+							{
+								_definitionStart = DefPos+1;
+								break;
+							}
+						}
+
 						file.close();
 						return DefinitionExists;
 					}
 					DefPos = String.find(_name,DefPos+_name.length());
 				}
-				file << generateXDataDef();
+				file << "\n\n\n" << generateXDataDef();
 				file.close();
 				return AllOk;
 			}
@@ -55,7 +65,10 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				if (DefLength == 0)		//If the definitionlength can't be obtained, the merge fails.
 					return MergeFailed;
 				OutString.erase(_definitionStart, DefLength);
-				OutString.insert(_definitionStart, generateXDataDef());
+				std::string insString = std::string( (_definitionStart != 0) ? "\n\n\n" : "" )		//No new lines in the first line
+					+ generateXDataDef()
+					+ std::string( (_definitionStart == OutString.size()) ? "" : "\n\n\n" );		//No new lines at the end of file
+				OutString.insert(_definitionStart, insString);
 				file.open(Path, std::ios_base::out | std::ios_base::trunc);
 				if (!file.is_open())
 					return OpenFailed;
@@ -116,34 +129,33 @@ const std::string XData::generateXDataDef() const
 	{
 		xDataDef << "\t\"gui_page" << n+1 << "\"\t: \"" << _guiPage[n] << "\"\n";
 	}
-	xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}\n\n\n\n";//*/
+	xDataDef << "\t\"snd_page_turn\"\t: \"" << _sndPageTurn << "\"\n}";//*/
 
 	return xDataDef.str();
 }
 
 const std::size_t XData::getDefLength(const std::string& def) const
 {
-	const char *ch = def.c_str();
 	std::size_t charIndex = 0;
-	while (ch[charIndex] != '\0')
+	while (def[charIndex] != '\0')
 	{
-		if (ch[++charIndex] == '{')
+		if (def[++charIndex] == '{')
 		{
 			int BracketCount = 1;
-			while (ch[++charIndex] != '\0' && BracketCount > 0)
+			while (def[++charIndex] != '\0' && BracketCount > 0)
 			{
 				// Move out of brackets
-				if (ch[charIndex] == '{')
+				if (def[charIndex] == '{')
 					++BracketCount;
-				else if (ch[charIndex] == '}')
+				else if (def[charIndex] == '}')
 					--BracketCount;
 			}
 			if (BracketCount > 0)
 				break;
-			while (ch[charIndex] != '\0')
+			while (def[charIndex] != '\0')
 			{
 				// The definitionlength also expands over trailing spaces
-				if ( (ch[charIndex] != ' ') && (ch[charIndex] != '\t') && (ch[charIndex] != '\n') )
+				if ( (def[charIndex] != ' ') && (def[charIndex] != '\t') && (def[charIndex] != '\n') )
 					break;
 				++charIndex;
 			}
