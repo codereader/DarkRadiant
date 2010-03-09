@@ -12,6 +12,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include "boost/filesystem/fstream.hpp"
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -578,7 +579,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	return true;
 }
 
-void ReadableEditorDialog::save()
+bool ReadableEditorDialog::save()
 {
 	// Name
 	_entity->setKeyValue("inv_name", gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_READABLE_NAME])));
@@ -646,6 +647,15 @@ void ReadableEditorDialog::save()
 	{
 		// We are exporting a previously imported XData definition. Retrieve engine path and append _xdFilename
 		storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + _xdFilename;
+
+		if (!boost::filesystem::exists(storagePath))
+		{
+			// The file does not exist, so we have imported a definition contained inside a PK4.
+			gtkutil::errorDialog("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.\n\n"
+				+ "Please rename your XData definition, so that it is stored under a different filename.", GTK_WINDOW(this->getWindow())
+			);
+			return false;
+		}
 	}
 
 	XData::FileStatus fst = _xData->xport(storagePath, XData::Merge);
@@ -659,15 +669,16 @@ void ReadableEditorDialog::save()
 				"Failed to open " + _xdFilename + " for saving.",
 				GTK_WINDOW(this->getWindow())
 			);
-			break;
+			return false;
 		case XData::MergeFailed: 
 			gtkutil::errorDialog(
 				"Merging failed, because the length of the definition to be overwritten could not be retrieved.",
 				GTK_WINDOW(this->getWindow())
 			);
-			break;
+			return false;
 		default: 
-			break; //success!
+			//success!
+			return true;
 		}
 	}
 	else if (fst == XData::OpenFailed)
@@ -677,6 +688,8 @@ void ReadableEditorDialog::save()
 			GTK_WINDOW(this->getWindow())
 		);
 	}
+
+	return false;
 }
 
 void ReadableEditorDialog::storeXData()
@@ -1412,10 +1425,9 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 	{
 		self->_result = RESULT_OK;
 
-		self->save();
-
-		// Done, just destroy the window
-		self->destroy();
+		if (self->save())
+			// Done, just destroy the window
+			self->destroy();
 	}
 	else
 	{

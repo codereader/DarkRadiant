@@ -94,7 +94,7 @@ protected:
 
 private:
 	// Save all settings on the entity and exports xdata.
-	void save();
+	bool save();
 
 	// Retrieves information from the entity and imports xdata. If the user cancels, the window is destroyed in _postshow
 	bool initControlsFromEntity();
