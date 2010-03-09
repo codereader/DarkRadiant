@@ -47,7 +47,7 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 }
 
 XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog* editorDialog) : 
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GTK_WINDOW(editorDialog->getWindow())),
 	_editorDialog(editorDialog),
 	_defName(defName),
 	_result(RESULT_CANCEL)
@@ -123,7 +123,7 @@ void XdFileChooserDialog::onCancel(GtkWidget* widget, XdFileChooserDialog* self)
 void XdFileChooserDialog::onSelectionChanged(GtkTreeSelection *treeselection, XdFileChooserDialog* self)
 {
 	self->_chosenFile = gtkutil::TreeModel::getSelectedString(treeselection, 0);
-	self->_editorDialog->updateGuiView("", self->_defName, self->_chosenFile.substr(self->_chosenFile.find("/")+1));
+	self->_editorDialog->updateGuiView(GTK_WINDOW(self->getWindow()), "", self->_defName, self->_chosenFile.substr(self->_chosenFile.find("/")+1));
 }
 
 } // namespace ui

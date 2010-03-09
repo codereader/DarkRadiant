@@ -29,10 +29,10 @@ private:
 
 public:
 	ReadablePopulator(gtkutil::VFSTreePopulator& popOne,
-					  gtkutil::VFSTreePopulator& popTwo) :
+					  gtkutil::VFSTreePopulator& popTwo, GtkWindow* parent) :
 		_popOne(popOne),
 		_popTwo(popTwo),
-		_progress(GlobalMainFrame().getTopLevelWindow(), "Analysing GUIs"),
+		_progress(parent, "Analysing GUIs"),
 		_count(0),
 		_numGuis(gui::GuiManager::Instance().getNumGuis()),
 		_evLimiter(50)
