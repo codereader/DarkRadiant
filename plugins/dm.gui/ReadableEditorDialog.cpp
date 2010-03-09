@@ -77,6 +77,7 @@ namespace
 		WIDGET_MENU_INSERT,
 		WIDGET_MENU_DELETE,
 		WIDGET_PANED,
+		WIDGET_TEXTVIEW_TABLE,
 	};
 
 } // namespace
@@ -98,8 +99,6 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
-
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL);
 
 	// Add a vbox for the dialog elements
@@ -354,6 +353,10 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	GtkTable* tablePE = GTK_TABLE(gtk_table_new(4, 3, FALSE));
 	gtk_table_set_row_spacings(tablePE, 6);
 	gtk_table_set_col_spacings(tablePE, 12);
+	gtk_table_set_row_spacing(tablePE, 2, 0);
+	gtk_table_set_col_spacing(tablePE, 2, 0);
+
+	_widgets[WIDGET_TEXTVIEW_TABLE] = GTK_WIDGET(tablePE);
 
 	// Pack it into an alignment and add it to vbox
 	GtkWidget* alignmentTable = gtkutil::LeftAlignment(GTK_WIDGET(tablePE), 18, 1.0);
@@ -743,6 +746,7 @@ void ReadableEditorDialog::toggleTwoSidedEditingInterface(bool show)
 {
 	if (show)
 	{
+		gtk_table_set_col_spacing(GTK_TABLE(_widgets[WIDGET_TEXTVIEW_TABLE]), 1, 12);
 		gtk_widget_show(_widgets[WIDGET_PAGE_RIGHT_BODY_SCROLLED]);
 		gtk_widget_show(_widgets[WIDGET_PAGE_RIGHT_TITLE_SCROLLED]);
 		gtk_widget_show(_widgets[WIDGET_PAGE_LEFT]);
@@ -750,6 +754,7 @@ void ReadableEditorDialog::toggleTwoSidedEditingInterface(bool show)
 	}
 	else
 	{
+		gtk_table_set_col_spacing(GTK_TABLE(_widgets[WIDGET_TEXTVIEW_TABLE]), 1, 0);
 		gtk_widget_hide(_widgets[WIDGET_PAGE_RIGHT_BODY_SCROLLED]);
 		gtk_widget_hide(_widgets[WIDGET_PAGE_RIGHT_TITLE_SCROLLED]);
 		gtk_widget_hide(_widgets[WIDGET_PAGE_LEFT]);
