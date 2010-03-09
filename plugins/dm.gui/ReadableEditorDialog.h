@@ -73,6 +73,9 @@ private:
 	// Tells the exporter whether to use the _mapBasedFilename (true) or not.
 	bool _useDefaultFilename;
 
+	// Prevents saving races.
+	bool _saveInProgress;
+
 public:
 	// Pass the working entity to the constructor
 	ReadableEditorDialog(Entity* entity);
@@ -150,6 +153,7 @@ private:
 	// Callback methods for Signals:
 	static void onCancel(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onSave(GtkWidget* widget, ReadableEditorDialog* self);
+	static void onSaveClose(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onBrowseXd(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self);
 	static void onFirstPage(GtkWidget* widget, ReadableEditorDialog* self);
