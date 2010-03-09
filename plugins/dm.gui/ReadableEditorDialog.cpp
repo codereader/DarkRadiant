@@ -93,7 +93,8 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	_runningGuiLayoutCheck(false),
 	_runningXDataUniquenessCheck(false),
 	_xdNameSpecified(false),
-	_useDefaultFilename(true)
+	_useDefaultFilename(true),
+	_saveInProgress(false)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -1460,8 +1461,6 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 {
 	if (self->_xdNameSpecified)
 	{
-		self->_result = RESULT_OK;
-
 		self->save();
 	}
 	else
@@ -1476,11 +1475,13 @@ void ReadableEditorDialog::onSaveClose(GtkWidget* widget, ReadableEditorDialog* 
 	{
 		if (self->_xdNameSpecified)
 		{
-			self->_result = RESULT_OK;
 
 			if (self->save())
+			{
 				// Done, just destroy the window
+				self->_result = RESULT_OK;
 				self->destroy();
+			}
 		}
 		else
 		{
