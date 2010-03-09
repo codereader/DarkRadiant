@@ -76,6 +76,7 @@ namespace
 		WIDGET_MENU_TOOLS,
 		WIDGET_MENU_INSERT,
 		WIDGET_MENU_DELETE,
+		WIDGET_PANED,
 	};
 
 } // namespace
@@ -101,20 +102,21 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	// Add a vbox for the dialog elements
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
-	// The vbox is split horizontally, left are the controls, right is the preview
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
-
 	// Create the editPane:
 	GtkWidget* vboxEP = gtk_vbox_new(FALSE, 6);
 	_widgets[WIDGET_EDIT_PANE] = vboxEP;
 	gtk_box_pack_start(GTK_BOX(vboxEP), createGeneralPropertiesInterface(), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vboxEP), createPageRelatedInterface(), TRUE, TRUE, 0);
 
-	// The hbox contains the controls
-	gtk_box_pack_start(GTK_BOX(hbox), vboxEP, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::FramedWidget(_guiView->getWidget()), TRUE, TRUE, 0);
+	// The paned contains the controls and the preview
+	GtkPaned* paned = GTK_PANED(gtk_hpaned_new());
+	gtk_paned_pack1(paned, vboxEP, TRUE, FALSE);
+	gtk_paned_pack2(paned, gtkutil::FramedWidget(_guiView->getWidget()), TRUE, FALSE);
 
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+	_widgets[WIDGET_PANED] = GTK_WIDGET(paned);
+
+	// Pack it all into vbox
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(paned), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
 
 	createMenus();
