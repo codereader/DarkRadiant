@@ -99,6 +99,12 @@ private:
 	// Save all settings on the entity and exports xdata.
 	bool save();
 
+	// Constructs the storage path for the current XData definition. Used by save-method and for the window-title.
+	std::string constructStoragePath();
+
+	// Refreshes the window title based on the storagepath.
+	void refreshWindowTitle();
+
 	// Retrieves information from the entity and imports xdata. If the user cancels, the window is destroyed in _postshow
 	bool initControlsFromEntity();
 
