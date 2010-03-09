@@ -566,6 +566,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 			default:	//Import success
 				_xdNameSpecified = true;
 				_useDefaultFilename = false;
+				refreshWindowTitle();
 				return true;
 		}
 	}
@@ -581,6 +582,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	}
 	_xData->setNumPages(1);
 
+	refreshWindowTitle();
 	return true;
 }
 
@@ -597,10 +599,65 @@ bool ReadableEditorDialog::save()
 	// Current content to XData Object
 	storeXData();
 
-	// Construct the storagepath from Registry keys.
+	// Get the storage path and check its validity
+	std::string storagePath = constructStoragePath();
+
+	if (!_useDefaultFilename && !boost::filesystem::exists(storagePath))
+	{
+		// The file does not exist, so we have imported a definition contained inside a PK4.
+		gtkutil::errorDialog("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.\n\n"
+			"Please rename your XData definition, so that it is stored under a different filename.", GTK_WINDOW(this->getWindow())
+			);
+		_saveInProgress = false;
+		return false;
+	}
+
+	// Start exporting
+	XData::FileStatus fst = _xData->xport(storagePath, XData::Merge);
+
+	if (fst == XData::DefinitionExists)
+	{
+		switch (_xData->xport( storagePath, XData::MergeOverwriteExisting))
+		{
+		case XData::OpenFailed: 
+			gtkutil::errorDialog(
+				"Failed to open " + _xdFilename + " for saving.",
+				GTK_WINDOW(this->getWindow())
+			);
+			_saveInProgress = false;
+			return false;
+		case XData::MergeFailed: 
+			gtkutil::errorDialog(
+				"Merging failed, because the length of the definition to be overwritten could not be retrieved.",
+				GTK_WINDOW(this->getWindow())
+			);
+			_saveInProgress = false;
+			return false;
+		default: 
+			//success!
+			_saveInProgress = false;
+			return true;
+		}
+	}
+	else if (fst == XData::OpenFailed)
+	{
+		gtkutil::errorDialog(
+			"Failed to open " + _xdFilename + " for saving.",
+			GTK_WINDOW(this->getWindow())
+		);
+	}
+
+	_saveInProgress = false;
+	return false;
+}
+
+std::string ReadableEditorDialog::constructStoragePath()
+{
+	// Construct the storage path from Registry keys.
 	std::string storagePath;
 	if (_useDefaultFilename)
-		{switch (GlobalRegistry().getInt(RKEY_READABLES_STORAGE_FOLDER))
+	{
+		switch (GlobalRegistry().getInt(RKEY_READABLES_STORAGE_FOLDER))
 		{
 			case 0: // Use Mod dir
 				storagePath = GlobalGameManager().getModPath();
@@ -654,54 +711,18 @@ bool ReadableEditorDialog::save()
 	{
 		// We are exporting a previously imported XData definition. Retrieve engine path and append _xdFilename
 		storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + _xdFilename;
-
-		if (!boost::filesystem::exists(storagePath))
-		{
-			// The file does not exist, so we have imported a definition contained inside a PK4.
-			gtkutil::errorDialog("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.\n\n"
-				"Please rename your XData definition, so that it is stored under a different filename.", GTK_WINDOW(this->getWindow())
-			);
-			_saveInProgress = false;
-			return false;
-		}
 	}
 
-	XData::FileStatus fst = _xData->xport(storagePath, XData::Merge);
+	return storagePath;
+}
 
-	if (fst == XData::DefinitionExists)
-	{
-		switch (_xData->xport( storagePath, XData::MergeOverwriteExisting))
-		{
-		case XData::OpenFailed: 
-			gtkutil::errorDialog(
-				"Failed to open " + _xdFilename + " for saving.",
-				GTK_WINDOW(this->getWindow())
-			);
-			_saveInProgress = false;
-			return false;
-		case XData::MergeFailed: 
-			gtkutil::errorDialog(
-				"Merging failed, because the length of the definition to be overwritten could not be retrieved.",
-				GTK_WINDOW(this->getWindow())
-			);
-			_saveInProgress = false;
-			return false;
-		default: 
-			//success!
-			_saveInProgress = false;
-			return true;
-		}
-	}
-	else if (fst == XData::OpenFailed)
-	{
-		gtkutil::errorDialog(
-			"Failed to open " + _xdFilename + " for saving.",
-			GTK_WINDOW(this->getWindow())
-		);
-	}
+void ReadableEditorDialog::refreshWindowTitle()
+{
+	std::string title = constructStoragePath();
+	title = title.substr( title.find_first_not_of( GlobalRegistry().get(RKEY_ENGINE_PATH) ) );
+	title = "Readable Editor  -  " + title;
 
-	_saveInProgress = false;
-	return false;
+	gtk_window_set_title(GTK_WINDOW(this->getWindow()), title.c_str());
 }
 
 void ReadableEditorDialog::storeXData()
@@ -985,6 +1006,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 				_useDefaultFilename = false;
 				populateControlsFromXData();
 				_runningXDataUniquenessCheck = false;
+				refreshWindowTitle();
 				return;
 			}
 		}
@@ -1022,6 +1044,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 	_xdNameSpecified = true;
 	_useDefaultFilename = true;
 	_runningXDataUniquenessCheck = false;
+	refreshWindowTitle();
 }
 
 void ReadableEditorDialog::insertPage()
@@ -1447,7 +1470,7 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 
 void ReadableEditorDialog::onSaveClose(GtkWidget* widget, ReadableEditorDialog* self) 
 {
-	if (!_saveInProgress)
+	if (!self->_saveInProgress)
 	{
 		if (self->_xdNameSpecified)
 		{
@@ -1496,8 +1519,9 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 			self->_xdNameSpecified = true;
 			self->_useDefaultFilename = false;
 			self->populateControlsFromXData();
+			self->refreshWindowTitle();
 			return;
-		default:
+		default:	// Canceled.
 			self->updateGuiView();
 			return;
 	}
