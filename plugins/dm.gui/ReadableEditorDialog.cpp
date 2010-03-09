@@ -100,6 +100,8 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL);
+
 	// Add a vbox for the dialog elements
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
