@@ -18,7 +18,7 @@ private:
 	GtkTextBuffer* _bfr;
 
 public:
-	TextViewInfoDialog(const std::string& title, const std::string& text ,guint win_width = 650, guint win_height = 500, GtkWindow* parent = NULL) :
+	TextViewInfoDialog(const std::string& title, const std::string& text, GtkWindow* parent = NULL, guint win_width = 650, guint win_height = 500) :
 		gtkutil::BlockingTransientWindow( title,
 			(parent == 0) ? GlobalMainFrame().getTopLevelWindow() : parent
 		)

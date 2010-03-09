@@ -84,7 +84,10 @@ public:
 	void useTwoSidedEditing();
 
 	// Updates the GUI preview (text updates). Public so that XDataSelector and GuiSelector can access it.
-	void updateGuiView(const std::string& guiPath = "", const std::string& xDataName = "", const std::string& xDataPath = "");
+	// Uses the current data in the readable editor for updating or imports XData/guis by the passed strings.
+	// This Method can create error-messages. For that reason a parent window can be specified. If Null the Readable
+	// Editor Dialog is parent.
+	void updateGuiView(GtkWindow* parent = NULL, const std::string& guiPath = "", const std::string& xDataName = "", const std::string& xDataPath = "");
 
 protected:
 	virtual void _postShow();

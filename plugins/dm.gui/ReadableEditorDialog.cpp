@@ -549,7 +549,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 			{
 				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
 					"Failed to import " + _entity->getKeyValue("xdata_contents") + ".\nCreating a new XData definition...\n\nDo you want to open the import summary?",
-					ui::IDialog::MESSAGE_ASK);
+					ui::IDialog::MESSAGE_ASK, GTK_WINDOW(this->getWindow()));
 				if (dialog->run() == ui::IDialog::RESULT_YES)
 				{
 					showXdImportSummary();
@@ -600,7 +600,7 @@ void ReadableEditorDialog::save()
 				{
 					// Mod path not defined. Use base Path
 					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-					gtkutil::errorDialog("Mod path not defined. Using Base path...", GlobalMainFrame().getTopLevelWindow());
+					gtkutil::errorDialog("Mod path not defined. Using Base path...", GTK_WINDOW(this->getWindow()));
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -613,11 +613,11 @@ void ReadableEditorDialog::save()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GlobalMainFrame().getTopLevelWindow());
+						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GTK_WINDOW(this->getWindow()));
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
-					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GlobalMainFrame().getTopLevelWindow());
+					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GTK_WINDOW(this->getWindow()));
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -630,12 +630,12 @@ void ReadableEditorDialog::save()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GlobalMainFrame().getTopLevelWindow());
+						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GTK_WINDOW(this->getWindow()));
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
 					storagePath += XData::XDATA_DIR + _mapBasedFilename;
-					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GlobalMainFrame().getTopLevelWindow());
+					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GTK_WINDOW(this->getWindow()));
 					break;
 				}
 				storagePath += "/" + _mapBasedFilename;
@@ -657,13 +657,13 @@ void ReadableEditorDialog::save()
 		case XData::OpenFailed: 
 			gtkutil::errorDialog(
 				"Failed to open " + _xdFilename + " for saving.",
-				GlobalMainFrame().getTopLevelWindow()
+				GTK_WINDOW(this->getWindow())
 			);
 			break;
 		case XData::MergeFailed: 
 			gtkutil::errorDialog(
 				"Merging failed, because the length of the definition to be overwritten could not be retrieved.",
-				GlobalMainFrame().getTopLevelWindow()
+				GTK_WINDOW(this->getWindow())
 			);
 			break;
 		default: 
@@ -674,7 +674,7 @@ void ReadableEditorDialog::save()
 	{
 		gtkutil::errorDialog(
 			"Failed to open " + _xdFilename + " for saving.",
-			GlobalMainFrame().getTopLevelWindow()
+			GTK_WINDOW(this->getWindow())
 		);
 	}
 }
@@ -753,7 +753,7 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 		updateGuiView();
 }
 
-void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::string& xDataName, const std::string& xDataPath)
+void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& guiPath, const std::string& xDataName, const std::string& xDataPath)
 {
 	// If the name of an xData object is passed it will be rendered instead of the current
 	// xData object, to enable previewing of XData definitions induced by the XDataSelector.
@@ -771,7 +771,9 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 		{
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
 				"Failed to import " + xDataName + ".\n\nDo you want to open the import summary?",
-				ui::IDialog::MESSAGE_ASK);
+				ui::IDialog::MESSAGE_ASK,
+				parent != NULL ? parent : GTK_WINDOW(this->getWindow())
+			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
 				showXdImportSummary();
@@ -786,7 +788,9 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 		{
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
 				"Failed to load gui definition " + xd->getGuiPage(0) + ".\n\nDo you want to open the import summary?",
-				ui::IDialog::MESSAGE_ASK);
+				ui::IDialog::MESSAGE_ASK,
+				parent != NULL ? parent : GTK_WINDOW(this->getWindow())
+			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
 				showGuiImportSummary();
@@ -836,7 +840,9 @@ void ReadableEditorDialog::updateGuiView(const std::string& guiPath, const std::
 			std::string nameGui = guiPath.empty() ? gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])) : guiPath;
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
 				"Failed to load gui definition " + nameGui + ".\n\nDo you want to open the import summary?",
-				ui::IDialog::MESSAGE_ASK);
+				ui::IDialog::MESSAGE_ASK,
+				parent != NULL ? parent : GTK_WINDOW(this->getWindow())
+			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
 				showGuiImportSummary();
@@ -934,7 +940,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		// The definition already exists. Ask the user whether it should be imported. If not make a different name suggestion.
 		IDialogPtr popup = GlobalDialogManager().createMessageBox(
 			"Import definition?", "The definition " + xdn + " already exists. Should it be imported?",
-			ui::IDialog::MESSAGE_ASK
+			ui::IDialog::MESSAGE_ASK, GTK_WINDOW(this->getWindow())
 		);
 		
 		std::string message = "";
@@ -979,7 +985,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		popup = GlobalDialogManager().createMessageBox(
 			"XData has been renamed.", 
 			message + "To avoid duplicated XData definitions, the current definition has been renamed to " + suggestion + ".",
-			IDialog::MESSAGE_CONFIRM
+			IDialog::MESSAGE_CONFIRM, GTK_WINDOW(this->getWindow())
 		);
 		popup->run();
 	}
@@ -1273,7 +1279,8 @@ void ReadableEditorDialog::checkGuiLayout()
 			break;
 	}
 
-	IDialogPtr dialog = GlobalDialogManager().createMessageBox("Not a suitable Gui Definition!", msg + "\n\nStart the Gui Browser?", IDialog::MESSAGE_ASK);
+	IDialogPtr dialog = GlobalDialogManager().createMessageBox("Not a suitable Gui Definition!", msg + "\n\nStart the Gui Browser?",
+		IDialog::MESSAGE_ASK, GTK_WINDOW(this->getWindow()));
 
 	if (dialog->run() == ui::IDialog::RESULT_YES)
 	{
@@ -1307,7 +1314,7 @@ void ReadableEditorDialog::checkGuiLayout()
 			updateGuiView();
 
 			dialog = GlobalDialogManager().createMessageBox("Switching to default Gui...",
-				"You didn't choose a Gui. Using the default Gui now.", IDialog::MESSAGE_CONFIRM);
+				"You didn't choose a Gui. Using the default Gui now.", IDialog::MESSAGE_CONFIRM, GTK_WINDOW(this->getWindow()));
 			dialog->run();
 			_runningGuiLayoutCheck = false;
 			return;
@@ -1324,7 +1331,7 @@ void ReadableEditorDialog::showXdImportSummary()
 
 	if (summary.empty())
 	{
-		gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GlobalMainFrame().getTopLevelWindow() );
+		gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GTK_WINDOW(this->getWindow()) );
 		return;
 	}
 
@@ -1335,7 +1342,7 @@ void ReadableEditorDialog::showXdImportSummary()
 		sum += summary[n];
 	}
 
-	TextViewInfoDialog dialog("XData import summary", sum);
+	TextViewInfoDialog dialog("XData import summary", sum, GTK_WINDOW(this->getWindow()));
 	dialog.show();
 }
 
@@ -1344,7 +1351,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
 	if (errors.empty())
 	{
-		gtkutil::errorDialog("No import summary available. Browse Gui Definitions first.", GlobalMainFrame().getTopLevelWindow() );
+		gtkutil::errorDialog("No import summary available. Browse Gui Definitions first.", GTK_WINDOW(this->getWindow()) );
 		return;
 	}
 
@@ -1355,7 +1362,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 		summary += errors[n];
 	}
 
-	TextViewInfoDialog dialog("Gui import summary", summary);
+	TextViewInfoDialog dialog("Gui import summary", summary, GTK_WINDOW(this->getWindow()));
 	dialog.show();
 }
 
@@ -1412,7 +1419,7 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 	}
 	else
 	{
-		gtkutil::errorDialog("Please specify an XData name first!", GlobalMainFrame().getTopLevelWindow() );
+		gtkutil::errorDialog("Please specify an XData name first!", GTK_WINDOW(self->getWindow()) );
 	}
 }
 
@@ -1436,7 +1443,7 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 		{
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
 				"Failed to import " + res + ".\n\nDo you want to open the import summary?",
-				ui::IDialog::MESSAGE_ASK);
+				ui::IDialog::MESSAGE_ASK, GTK_WINDOW(self->getWindow()));
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
 				self->showXdImportSummary();
@@ -1607,7 +1614,7 @@ void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* sel
 		IDialogPtr dialog = GlobalDialogManager().createMessageBox(
 			"Duplicated XData definitions", 
 			"There are no duplicated definitions!", 
-			ui::IDialog::MESSAGE_CONFIRM
+			ui::IDialog::MESSAGE_CONFIRM, GTK_WINDOW(self->getWindow())
 		);
 
 		dialog->run();
@@ -1627,7 +1634,7 @@ void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* sel
 
 		out += it->second[it->second.size() - 1] + ".\n\n";
 	}
-	TextViewInfoDialog dialog("Duplicated XData definitions", out);
+	TextViewInfoDialog dialog("Duplicated XData definitions", out, GTK_WINDOW(self->getWindow()));
 	dialog.show();
 }
 

@@ -26,7 +26,7 @@ namespace
 
 
 GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GTK_WINDOW(editorDialog.getWindow())),
 	_editorDialog(editorDialog),
 	_oneSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
 	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
@@ -78,7 +78,7 @@ void GuiSelector::fillTrees()
 	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
 	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
-	ReadablePopulator walker(popOne, popTwo);
+	ReadablePopulator walker(popOne, popTwo, GTK_WINDOW(_editorDialog.getWindow()));
 	gui::GuiManager::Instance().foreachGui(walker);
 	
 	GuiInserter inserter;
@@ -245,7 +245,7 @@ void GuiSelector::onSelectionChanged(GtkTreeSelection* treeselection, GuiSelecto
 		self->_name = gtkutil::TreeModel::getSelectedString(treeselection, FULLNAME_COLUMN);
 		std::string guiPath = "guis/" + self->_name;
 
-		self->_editorDialog.updateGuiView(guiPath.c_str());
+		self->_editorDialog.updateGuiView(GTK_WINDOW(self->getWindow()), guiPath.c_str());
 
 		gtk_widget_set_sensitive(self->_okButton, TRUE);
 	}
