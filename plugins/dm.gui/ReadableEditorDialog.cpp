@@ -498,15 +498,20 @@ GtkWidget* ReadableEditorDialog::createButtonPanel()
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	_widgets[WIDGET_SAVEBUTTON] = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+	
+	_widgets[WIDGET_SAVEBUTTON] = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_SAVEBUTTON]), "clicked", G_CALLBACK(onSave), this);
+	
+	GtkWidget* saveCloseButton = gtk_button_new_with_label("Save & Close");
+	gtk_button_set_image(GTK_BUTTON(saveCloseButton), gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_LARGE_TOOLBAR));
+	g_signal_connect(G_OBJECT(saveCloseButton), "clicked", G_CALLBACK(onSaveClose), this);
 
 	GtkWidget* toolsButton = gtk_button_new_with_label("Tools");
-	gtk_button_set_image(GTK_BUTTON(toolsButton), gtk_image_new_from_stock(GTK_STOCK_EXECUTE, GTK_ICON_SIZE_SMALL_TOOLBAR) );
+	gtk_button_set_image(GTK_BUTTON(toolsButton), gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_SMALL_TOOLBAR) );
 	g_signal_connect(G_OBJECT(toolsButton), "clicked", G_CALLBACK(onToolsClicked), this);
 
+	gtk_box_pack_end(GTK_BOX(hbx), saveCloseButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), _widgets[WIDGET_SAVEBUTTON], TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
 	gtk_box_pack_end(GTK_BOX(hbx), toolsButton, TRUE, TRUE, 18);
@@ -581,6 +586,8 @@ bool ReadableEditorDialog::initControlsFromEntity()
 
 bool ReadableEditorDialog::save()
 {
+	_saveInProgress = true;
+
 	// Name
 	_entity->setKeyValue("inv_name", gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_READABLE_NAME])));
 
@@ -652,8 +659,9 @@ bool ReadableEditorDialog::save()
 		{
 			// The file does not exist, so we have imported a definition contained inside a PK4.
 			gtkutil::errorDialog("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.\n\n"
-				+ "Please rename your XData definition, so that it is stored under a different filename.", GTK_WINDOW(this->getWindow())
+				"Please rename your XData definition, so that it is stored under a different filename.", GTK_WINDOW(this->getWindow())
 			);
+			_saveInProgress = false;
 			return false;
 		}
 	}
@@ -669,15 +677,18 @@ bool ReadableEditorDialog::save()
 				"Failed to open " + _xdFilename + " for saving.",
 				GTK_WINDOW(this->getWindow())
 			);
+			_saveInProgress = false;
 			return false;
 		case XData::MergeFailed: 
 			gtkutil::errorDialog(
 				"Merging failed, because the length of the definition to be overwritten could not be retrieved.",
 				GTK_WINDOW(this->getWindow())
 			);
+			_saveInProgress = false;
 			return false;
 		default: 
 			//success!
+			_saveInProgress = false;
 			return true;
 		}
 	}
@@ -689,6 +700,7 @@ bool ReadableEditorDialog::save()
 		);
 	}
 
+	_saveInProgress = false;
 	return false;
 }
 
@@ -1425,13 +1437,30 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 	{
 		self->_result = RESULT_OK;
 
-		if (self->save())
-			// Done, just destroy the window
-			self->destroy();
+		self->save();
 	}
 	else
 	{
 		gtkutil::errorDialog("Please specify an XData name first!", GTK_WINDOW(self->getWindow()) );
+	}
+}
+
+void ReadableEditorDialog::onSaveClose(GtkWidget* widget, ReadableEditorDialog* self) 
+{
+	if (!_saveInProgress)
+	{
+		if (self->_xdNameSpecified)
+		{
+			self->_result = RESULT_OK;
+
+			if (self->save())
+				// Done, just destroy the window
+				self->destroy();
+		}
+		else
+		{
+			gtkutil::errorDialog("Please specify an XData name first!", GTK_WINDOW(self->getWindow()) );
+		}
 	}
 }
 
