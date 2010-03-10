@@ -82,7 +82,7 @@ public:
 
 		mm.insert("main/file/refreshShaders",
 			"ReloadReadables", ui::menuItem, 
-			"Reload Readables", // caption
+			"Reload Readable Guis", // caption
 			"book.png", // icon
 			"ReloadReadables"
 		);

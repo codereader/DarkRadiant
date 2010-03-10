@@ -74,7 +74,7 @@ GuiType GuiManager::determineGuiType(const GuiPtr& gui)
 
 void GuiManager::findGuis()
 {
-	clear();
+	_errorList.clear();
 
 	// Traverse the file system, using this class as callback
 	GlobalFileSystem().forEachFile(
