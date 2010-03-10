@@ -16,7 +16,6 @@ class NullModelNode :
 	public scene::Node, 
 	public SelectionTestable,
 	public Renderable,
-	public Bounded,
 	public ModelNode
 {
 	NullModelPtr _nullModel;

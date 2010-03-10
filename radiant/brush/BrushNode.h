@@ -56,7 +56,6 @@ class BrushNode :
 	public PlaneSelectable,
 	public LightCullable,
 	public Renderable,
-	public Bounded,
 	public Transformable
 {
 	// The actual contained brush (NO reference)

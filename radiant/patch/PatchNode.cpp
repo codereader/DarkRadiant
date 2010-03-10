@@ -38,7 +38,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	PlaneSelectable(other),
 	LightCullable(other),
 	Renderable(other),
-	Bounded(other),
 	Transformable(other),
 	m_dragPlanes(SelectedChangedComponentCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),

@@ -38,6 +38,8 @@ class RootNode :
 	// The namespace this node belongs to
 	INamespacePtr _namespace;
 
+	AABB _emptyAABB;
+
 public:
 	// Constructor, pass the name of the map to it
 	RootNode(const std::string& name);
@@ -76,6 +78,10 @@ public:
 	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
 
+	const AABB& localAABB() const
+	{
+		return _emptyAABB;
+	}
 };
 typedef boost::shared_ptr<RootNode> RootNodePtr;
 

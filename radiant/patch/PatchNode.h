@@ -25,7 +25,6 @@ class PatchNode :
 	public PlaneSelectable,
 	public LightCullable,
 	public Renderable,
-	public Bounded,
 	public Transformable
 {
 	DragPlanes m_dragPlanes;

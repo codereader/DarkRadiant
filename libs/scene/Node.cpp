@@ -290,13 +290,9 @@ void Node::evaluateBounds() const
 
 		_bounds = childBounds();
 
-		const Bounded* bounded = dynamic_cast<const Bounded*>(this);
-
-		if (bounded != NULL) {
-			_bounds.includeAABB(
-			    aabb_for_oriented_aabb_safe(bounded->localAABB(), localToWorld())
-			);
-		}
+		_bounds.includeAABB(
+		    aabb_for_oriented_aabb_safe(localAABB(), localToWorld())
+		);
 
 		_boundsMutex = false;
 		_boundsChanged = false;
