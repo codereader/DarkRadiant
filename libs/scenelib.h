@@ -97,10 +97,6 @@ inline bool Node_isSelected(const scene::INodePtr& node) {
 	return false;
 }
 
-inline BoundedPtr Node_getBounded(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<Bounded>(node);
-}
-
 inline bool Node_isPrimitive(const scene::INodePtr& node)
 {
 	return Node_isBrush(node) || Node_isPatch(node);

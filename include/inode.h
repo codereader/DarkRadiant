@@ -1,6 +1,7 @@
 #ifndef INODE_H_
 #define INODE_H_
 
+#include "Bounded.h"
 #include "ilayer.h"
 
 #include <set>
@@ -73,7 +74,8 @@ public:
  */
 class INode :
 	public Layered,
-	public Filterable
+	public Filterable,
+	public Bounded
 {
 public:
     /**

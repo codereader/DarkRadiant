@@ -39,7 +39,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	PlaneSelectable(other),
 	LightCullable(other),
 	Renderable(other),
-	Bounded(other),
 	Transformable(other),
 	m_brush(*this, other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
 	_selectable(SelectedChangedCaller(*this)),

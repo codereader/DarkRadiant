@@ -19,7 +19,6 @@ class PicoModelNode :
 	public SelectionTestable,
 	public LightCullable,
 	public Renderable,
-	public Bounded,
 	public SkinnedModel
 {
 	// The actual model

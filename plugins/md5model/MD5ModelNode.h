@@ -16,7 +16,6 @@ class MD5ModelNode :
 	public SelectionTestable,
 	public LightCullable,
 	public Renderable,
-	public Bounded,
 	public SkinnedModel
 {
 	MD5ModelPtr _model;

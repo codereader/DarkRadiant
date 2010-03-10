@@ -12,7 +12,16 @@ namespace map {
  */
 class BasicContainer : 
 	public scene::Node
-{};
+{
+private:
+	AABB _emptyAABB;
+
+public:
+	const AABB& localAABB() const
+	{
+		return _emptyAABB;
+	}
+};
 typedef boost::shared_ptr<BasicContainer> BasicContainerPtr;
 
 } // namespace map
