@@ -44,6 +44,16 @@ public:
 	//	-target: Key Value = filepath INCLUDING ModPath(!!), Mapped Value = XData object.
 	const bool importDef(const std::string& definitionName, XDataMap& target, const std::string& filename = "");
 
+	virtual ~XDataLoader()
+	{
+		_defMap.clear();
+		_duplicatedDefs.clear();
+		_fileSet.clear();
+		_errorList.clear();
+		_guiPageError.clear();
+		_guiPage.clear();
+	}
+
 //Getters:
 	// Returns StringVector with errors and warnings of the last import process 
 	// as well as a brief summary in the last element of the vector.
