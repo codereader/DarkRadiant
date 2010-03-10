@@ -17,6 +17,7 @@ class MapInterface :
 {
 public:
 	ScriptSceneNode getWorldSpawn();
+	std::string getMapName();
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
