@@ -190,7 +190,12 @@ public:
 		_name = name;
 		resizeVectors(MAX_PAGE_COUNT);
 	}
-	~OneSidedXData() {}
+	~OneSidedXData()
+	{
+		_guiPage.clear();
+		_pageTitle.clear();
+		_pageBody.clear();
+	}
 };
 typedef boost::shared_ptr<OneSidedXData> OneSidedXDataPtr;
 
@@ -220,7 +225,14 @@ public:
 		_name=name;
 		resizeVectors(MAX_PAGE_COUNT);
 	}
-	~TwoSidedXData() {}
+	~TwoSidedXData()
+	{
+		_pageLeftTitle.clear();
+		_pageLeftBody.clear();
+		_pageRightBody.clear();
+		_pageRightTitle.clear();
+		_guiPage.clear();
+	}
 };
 typedef boost::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
 
