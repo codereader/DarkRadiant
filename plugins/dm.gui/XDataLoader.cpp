@@ -223,7 +223,9 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 
 		//Acquire PageIndex
 		std::size_t PageIndex;
-		char number = statement.c_str()[4];
+		std::size_t numEnd = 4;
+		while (statement[numEnd++] != '_') {}
+		std::string number = statement.substr(4,numEnd-5);
 		try { PageIndex = boost::lexical_cast<int>(number)-1; }
 		catch (...)
 		{
