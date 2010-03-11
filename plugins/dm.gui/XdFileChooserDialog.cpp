@@ -123,7 +123,7 @@ void XdFileChooserDialog::onCancel(GtkWidget* widget, XdFileChooserDialog* self)
 void XdFileChooserDialog::onSelectionChanged(GtkTreeSelection *treeselection, XdFileChooserDialog* self)
 {
 	self->_chosenFile = gtkutil::TreeModel::getSelectedString(treeselection, 0);
-	self->_editorDialog->updateGuiView(GTK_WINDOW(self->getWindow()), "", self->_defName, self->_chosenFile.substr(self->_chosenFile.find("/")+1));
+	//self->_editorDialog->updateGuiView(GTK_WINDOW(self->getWindow()), "", self->_defName, self->_chosenFile.substr(self->_chosenFile.find("/")+1));
 }
 
 } // namespace ui
