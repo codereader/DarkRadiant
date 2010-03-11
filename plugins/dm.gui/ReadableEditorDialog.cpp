@@ -834,7 +834,6 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 			{
 				showXdImportSummary();
 			}
-			updateGuiView();
 			return;
 		}
 
@@ -851,7 +850,6 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 			{
 				showGuiImportSummary();
 			}
-			updateGuiView();
 			return;
 		}
 
@@ -903,7 +901,6 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 			{
 				showGuiImportSummary();
 			}
-			updateGuiView();
 			return;
 		}
 
