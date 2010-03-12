@@ -5,6 +5,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include <gtk/gtk.h>
 #include <string.h>
+#include "imainframe.h"
 
 namespace ui
 {

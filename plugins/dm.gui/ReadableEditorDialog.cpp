@@ -1,9 +1,14 @@
+// Project related
 #include "ReadableEditorDialog.h"
+#include "XdFileChooserDialog.h"
+#include "XDataSelector.h"
+#include "GuiSelector.h"
+#include "gui/GuiManager.h"
+#include "TextViewInfoDialog.h"
+#include "ReadableGuiView.h"
 
-#include "ientity.h"
-#include "iregistry.h"
+// General
 #include "selectionlib.h"
-#include "imainframe.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
@@ -12,24 +17,21 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/StockIconMenuItem.h"
-#include "boost/filesystem/fstream.hpp"
-
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-
+#include "boost/filesystem/fstream.hpp"
 #include "string/string.h"
 
+// Modules
+#include "imainframe.h"
+#include "ientity.h"
+#include "iregistry.h"
 #include "imap.h"
 #include "igame.h"
 #include "idialogmanager.h"
 
-#include "XdFileChooserDialog.h"
-#include "XDataSelector.h"
-#include "GuiSelector.h"
-#include "gui/GuiManager.h"
-#include "TextViewInfoDialog.h"
-#include "ReadableGuiView.h"
+
 
 namespace ui
 {
