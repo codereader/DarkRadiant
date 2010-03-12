@@ -1,21 +1,30 @@
-#include "imodule.h"
-
-#include "ieventmanager.h"
-#include "itextstream.h"
-#include "debugging/debugging.h"
-#include "iuimanager.h"
-#include "ifilesystem.h"
-#include "irender.h"
-#include "iradiant.h"
-#include "igl.h"
-#include "imap.h"
-#include "igame.h"
-#include "ipreferencesystem.h"
-
+// Project related
 #include "ReadableEditorDialog.h"
 #include "ReadableReloader.h"
 #include "gui/GuiManager.h"
+
+// General
+#include "debugging/debugging.h"
 #include <boost/enable_shared_from_this.hpp>
+
+// Modules
+#include "icommandsystem.h"
+#include "ientity.h"
+#include "ieventmanager.h"
+#include "ifilesystem.h"
+#include "ifonts.h"
+#include "igame.h"
+#include "igl.h"
+#include "imainframe.h"
+#include "imap.h"
+#include "ipreferencesystem.h"
+#include "iradiant.h"
+#include "iregistry.h"
+#include "irender.h"
+#include "ishaders.h"
+#include "iuimanager.h"
+#include "iarchive.h"
+
 
 class GuiModule : 
 	public RegisterableModule,
@@ -35,15 +44,22 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_ARCHIVE + "PK4");
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-			_dependencies.insert(MODULE_RENDERSYSTEM);
-			_dependencies.insert(MODULE_OPENGL);
-			_dependencies.insert(MODULE_RADIANT);
-			_dependencies.insert(MODULE_MAP);
+			_dependencies.insert(MODULE_ENTITYCREATOR);
+			_dependencies.insert(MODULE_EVENTMANAGER);
+			_dependencies.insert(MODULE_FONTMANAGER);
 			_dependencies.insert(MODULE_GAMEMANAGER);
+			_dependencies.insert(MODULE_MAINFRAME);
+			_dependencies.insert(MODULE_MAP);
+			_dependencies.insert(MODULE_OPENGL);
 			_dependencies.insert(MODULE_PREFERENCESYSTEM);
+			_dependencies.insert(MODULE_RADIANT);
+			_dependencies.insert(MODULE_RENDERSYSTEM);
+			_dependencies.insert(MODULE_SHADERSYSTEM);
+			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+			_dependencies.insert(MODULE_XMLREGISTRY);
 		}
 
 		return _dependencies;
