@@ -44,9 +44,7 @@ public:
 
 		if (_dependencies.empty())
 		{
-			_dependencies.insert(MODULE_ARCHIVE + "PK4");
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_ENTITYCREATOR);
 			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_FONTMANAGER);
 			_dependencies.insert(MODULE_GAMEMANAGER);
