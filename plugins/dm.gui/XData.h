@@ -188,7 +188,7 @@ public:
 	OneSidedXData(const std::string& name) 
 	{ 
 		_name = name;
-		resizeVectors(MAX_PAGE_COUNT);
+		setNumPages(MAX_PAGE_COUNT);
 	}
 	~OneSidedXData()
 	{
@@ -223,7 +223,7 @@ public:
 	TwoSidedXData(const std::string& name)
 	{ 
 		_name=name;
-		resizeVectors(MAX_PAGE_COUNT);
+		setNumPages(MAX_PAGE_COUNT);
 	}
 	~TwoSidedXData()
 	{

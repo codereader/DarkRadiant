@@ -258,10 +258,21 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		else
 			readContent = content;
 
+		// Check whether readContent actually has content. (There might be space, linebreaks and tabs that can be discarded)
+		bool hasContent = false;
+		for (std::size_t n = 0; n < readContent.size(); n++)
+		{
+			if ( (readContent[n] != ' ') && (readContent[n] != '\t') && (readContent[n] != '\n') )
+			{
+				hasContent = true;
+				break;
+			}
+		}
+
 		//Check PageIndex-Range
 		if (PageIndex >= _numPages )
 		{
-			if (readContent.length() > 1) //_numPages is raised automatically, if a page with content is detected...		//unclean
+			if (hasContent) //_numPages is raised automatically, if a page with content is detected...
 			{
 				_numPages = PageIndex+1;
 				reportError("[XDataLoader::import] Warning for definition: " + defName + ", " + statement 
@@ -278,20 +289,22 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 		}
 
 		//Refresh the _maxPageCount variable if this page has content.
-		if (readContent.length() > 1)		//unclean
+		if (hasContent)
+		{
 			if (_maxPageCount < PageIndex+1)
 				_maxPageCount = PageIndex+1;
 
-		//Write the content into the XData object
-		Side side;
-		if (statement.find("left",6) != std::string::npos)	//Side is discarded on OneSidedXData...
-			side = Left;
-		else
-			side = Right;
-		if (statement.find("body",6) != std::string::npos)
-			_newXData->setPageContent(Body, PageIndex, side, readContent);	//could throw if PageIndex >= MAX_PAGE_COUNT. Unlikely!
-		else
-			_newXData->setPageContent(Title, PageIndex, side, readContent);
+			//Write the content into the XData object
+			Side side;
+			if (statement.find("left",6) != std::string::npos)	//Side is discarded on OneSidedXData...
+				side = Left;
+			else
+				side = Right;
+			if (statement.find("body",6) != std::string::npos)
+				_newXData->setPageContent(Body, PageIndex, side, readContent);	//could throw if PageIndex >= MAX_PAGE_COUNT. Unlikely!
+			else
+				_newXData->setPageContent(Title, PageIndex, side, readContent);
+		}
 
 		return true;
 	}
