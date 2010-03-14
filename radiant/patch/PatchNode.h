@@ -166,5 +166,6 @@ private:
 	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const;
 };
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
+typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
 
 #endif /*PATCHNODE_H_*/

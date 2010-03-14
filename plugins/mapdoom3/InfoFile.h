@@ -24,7 +24,7 @@ private:
 	// The standard list (node is part of layer 0)
 	scene::LayerList _standardLayerList;
 
-	// TRUE if the map info fail was found to be valid
+	// TRUE if the map info file was found to be valid
 	bool _isValid;
 
 	// The internal "iterator" into the NodeToLayerMapping vector

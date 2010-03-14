@@ -17,6 +17,8 @@ typedef struct _GtkObject GtkObject;
 typedef struct _GtkEditable GtkEditable;
 namespace gtkutil { class ControlButton; }
 class Patch;
+class PatchNode;
+typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
 
 namespace ui {
 
@@ -78,8 +80,8 @@ class PatchInspector
 	std::size_t _patchRows;
 	std::size_t _patchCols;
 	
-	// The pointer to the active patch (only non-NULL if there is a single patch selected)
-	Patch* _patch;
+	// The pointer to the active patch node (only non-NULL if there is a single patch selected)
+	PatchNodeWeakPtr _patch;
 	
 	// If this is set to TRUE, the GTK callbacks will be disabled
 	bool _updateActive;
