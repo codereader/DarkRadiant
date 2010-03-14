@@ -51,7 +51,6 @@ PatchInspector::PatchInspector()
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _patchRows(0),
   _patchCols(0),
-  _patch(NULL),
   _updateActive(false)
 {
 	// Set the default border width in accordance to the HIG
@@ -344,7 +343,10 @@ void PatchInspector::update()
 {
 	_updateActive = true;
 	
-	if (_patch != NULL) {
+	PatchNodePtr patch = _patch.lock();
+
+	if (patch != NULL)
+	{
 		// Load the data from the vertex
 		loadControlVertex();
 	}
@@ -352,13 +354,17 @@ void PatchInspector::update()
 	_updateActive = false;
 }
 
-void PatchInspector::loadControlVertex() {
-	if (_patch != NULL) {
+void PatchInspector::loadControlVertex()
+{
+	PatchNodePtr patch = _patch.lock();
+
+	if (patch != NULL)
+	{
 		int row = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
 		int col = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.colCombo)));
 		
 		// Retrieve the controlvertex
-		const PatchControl& ctrl = _patch->ctrlAt(row, col);
+		const PatchControl& ctrl = patch->getPatchInternal().ctrlAt(row, col);
 		
 		_updateActive = true;
 		
@@ -436,7 +442,7 @@ void PatchInspector::rescanSelection()
 	
 	_updateActive = false;
 	
-	_patch = NULL;
+	_patch.reset();
 	_patchRows = 0;
 	_patchCols = 0;
 	
@@ -496,10 +502,11 @@ void PatchInspector::rescanSelection()
 		gtk_widget_set_sensitive(_tesselation.vertLabel, tessIsFixed);
 		gtk_widget_set_sensitive(_tesselation.horizLabel, tessIsFixed);
 		
-		if (_selectionInfo.patchCount == 1) {
-			_patch = &(list[0]->getPatchInternal());
-			_patchRows = _patch->getHeight();
-			_patchCols = _patch->getWidth();
+		if (_selectionInfo.patchCount == 1)
+		{
+			_patch = list[0];
+			_patchRows = list[0]->getPatchInternal().getHeight();
+			_patchCols = list[0]->getPatchInternal().getWidth();
 			
 			for (std::size_t i = 0; i < _patchRows; i++) {
 				gtk_combo_box_append_text(
@@ -533,18 +540,20 @@ void PatchInspector::rescanSelection()
 
 void PatchInspector::emitCoords()
 {
-	if (_patch == NULL) return;
+	PatchNodePtr patch = _patch.lock();
+
+	if (patch == NULL) return;
 
 	// Save the coords into the patch
 	UndoableCommand emitCoordsCmd("patchAdjustControlVertex");
 
-	_patch->undoSave();
+	patch->getPatchInternal().undoSave();
 
 	int row = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.rowCombo)));
 	int col = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.colCombo)));
 	
 	// Retrieve the controlvertex
-	PatchControl& ctrl = _patch->ctrlAt(row, col);
+	PatchControl& ctrl = patch->getPatchInternal().ctrlAt(row, col);
 	
 	ctrl.vertex[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["x"].value)));
 	ctrl.vertex[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["y"].value)));
@@ -553,7 +562,7 @@ void PatchInspector::emitCoords()
 	ctrl.texcoord[0] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["s"].value)));
 	ctrl.texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].value)));
 	
-	_patch->controlPointsChanged();
+	patch->getPatchInternal().controlPointsChanged();
 }
 
 void PatchInspector::emitTesselation() {
