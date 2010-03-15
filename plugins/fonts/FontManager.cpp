@@ -88,7 +88,7 @@ void FontManager::reloadFonts()
 	_curLanguage = "english";
 
 	// Load the DAT files from the VFS
-	std::string path = os::standardPathWithSlash(nlBasePath[0].getContent()) + _curLanguage;
+	std::string path = os::standardPathWithSlash(nlBasePath[0].getContent()) + _curLanguage + "/";
 	std::string extension = nlExt[0].getContent();
 
 	// Instantiate a visitor to traverse the VFS
