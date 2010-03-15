@@ -248,6 +248,8 @@ double RenderableText::getAlignmentCorrection(double lineWidth)
 
 void RenderableText::ensureFont()
 {
+	if (_owner.font.empty()) return; // no font specified
+
 	if (_font != NULL) return; // already realised
 
 	_font = GlobalFontManager().findFontInfo(_owner.font);
