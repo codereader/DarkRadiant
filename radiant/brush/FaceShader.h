@@ -101,7 +101,7 @@ public:
      * \brief
      * Return the Shader for rendering.
      */
-	ShaderPtr getGLShader() const;
+	const ShaderPtr& getGLShader() const;
 
 	ContentsFlagsValue getFlags() const;
 	void setFlags(const ContentsFlagsValue& flags);
