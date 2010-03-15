@@ -134,7 +134,7 @@ void FaceShader::setFlags(const ContentsFlagsValue& flags) {
 	// greebo: old code // ContentsFlagsValue_assignMasked(m_flags, flags);
 }
 
-ShaderPtr FaceShader::getGLShader() const {
+const ShaderPtr& FaceShader::getGLShader() const {
 	return _glShader;
 }
 

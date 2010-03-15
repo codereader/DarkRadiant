@@ -189,17 +189,16 @@ void Face::submitRenderables(RenderableCollector& collector,
                              const Matrix4& localToWorld) const 
 {
     // Get the shader for rendering
-    ShaderPtr glShader = _faceShader.getGLShader();
-    assert(glShader);
+    const ShaderPtr& glShader = _faceShader.getGLShader();
+    assert(glShader != NULL);
 
     // Submit this face to the RenderableCollector only if its shader is not
     // filtered
     assert(glShader->getMaterial());
+
     if (glShader->getMaterial()->isVisible()) 
     {
-        collector.SetState(
-            glShader, RenderableCollector::eFullMaterials
-        );
+        collector.SetState(glShader, RenderableCollector::eFullMaterials);
 		collector.addRenderable(*this, localToWorld);
 	}
 }
