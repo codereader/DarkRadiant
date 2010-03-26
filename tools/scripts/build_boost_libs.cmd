@@ -2,8 +2,8 @@
 rem Launch this file in the boost/ folder.
 
 rem Check if we're in the correct folder
-if not exists libs goto :error
-if not exists boost goto :error
+if not exist libs goto :error
+if not exist boost goto :error
 
 cd libs\filesystem\build
 bjam --toolset=msvc link=static release stage
@@ -18,6 +18,10 @@ bjam --toolset=msvc link=static release stage
 bjam --toolset=msvc link=static debug stage
 
 cd ..\..\..\libs\regex\build
+bjam --toolset=msvc link=static release stage
+bjam --toolset=msvc link=static debug stage
+
+cd ..\..\..\libs\signal\build
 bjam --toolset=msvc link=static release stage
 bjam --toolset=msvc link=static debug stage
 

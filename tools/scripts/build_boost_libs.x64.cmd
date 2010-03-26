@@ -21,6 +21,10 @@ cd ..\..\..\libs\regex\build
 bjam --toolset=msvc address-model=64 link=static release stage
 bjam --toolset=msvc address-model=64 link=static debug stage
 
+cd ..\..\..\libs\signal\build
+bjam --toolset=msvc address-model=64 link=static release stage
+bjam --toolset=msvc address-model=64 link=static debug stage
+
 cd ..\..\..\stage
 start .
 
