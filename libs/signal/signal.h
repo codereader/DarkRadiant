@@ -384,7 +384,7 @@ public:
   }
 };
 
-template<typename FirstArgument, typename SecondArgument, typename ThirdArgument>
+/*template<typename FirstArgument, typename SecondArgument, typename ThirdArgument>
 class Signal3 : public SignalBase< SignalHandler3<FirstArgument, SecondArgument, ThirdArgument> >
 {
   typedef SignalBase< SignalHandler3<FirstArgument, SecondArgument, ThirdArgument> > Base;
@@ -393,6 +393,6 @@ public:
   {
     invokeSignalHandlers(Base::begin(), Base::end(), Functor3Invoke<typename Base::handler_type>(a1, a2, a3));
   }
-};
+};*/
 
 #endif
