@@ -16,6 +16,8 @@
 #include "xyview/GlobalXYWnd.h"
 #include "modulesystem/StaticModule.h"
 
+#include <boost/bind.hpp>
+
 // Initialise the shader pointer
 ShaderPtr RadiantSelectionSystem::_state;
 
@@ -255,7 +257,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 	int delta = isSelected ? +1 : -1;
 	
 	_countPrimitive += delta;
-	_selectionChangedCallbacks(selectable); // legacy
+	_selectionChangedSignal(selectable);
 	
 	_selectionInfo.totalCount += delta;
 	
@@ -298,7 +300,7 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
 	int delta = selectable.isSelected() ? +1 : -1;
 
 	_countComponent += delta;
-	_selectionChangedCallbacks(selectable); // legacy
+	_selectionChangedSignal(selectable);
 	
 	_selectionInfo.totalCount += delta;
 	_selectionInfo.componentCount += delta;
@@ -386,8 +388,9 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 }
 
 // Add a "selection changed" callback
-void RadiantSelectionSystem::addSelectionChangeCallback(const SelectionChangeHandler& handler) {
-	_selectionChangedCallbacks.connectLast(handler);
+void RadiantSelectionSystem::addSelectionChangeCallback(const SelectionChangeCallback& callback)
+{
+	_selectionChangedSignal.push_back(callback);
 }
 
 // Start a move, the current pivot point is saved as a start point
@@ -1029,7 +1032,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 	
 	SetManipulatorMode(eTranslate);
 	pivotChanged();
-	addSelectionChangeCallback(PivotChangedSelectionCaller(*this));
+	addSelectionChangeCallback(boost::bind(&RadiantSelectionSystem::pivotChangedSelection, this, _1));
 	GlobalGrid().addGridChangeCallback(PivotChangedCaller(*this));
 	
 	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
@@ -1053,6 +1056,9 @@ void RadiantSelectionSystem::shutdownModule() {
 
 	GlobalRenderSystem().detachRenderable(*this);
 	GlobalSceneGraph().removeBoundsChangedCallback(_boundsChangedHandler);
+
+	// Disconnect all signal handlers
+	_selectionChangedSignal.clear();
 	
 	destroyStatic();
 }

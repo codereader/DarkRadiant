@@ -96,7 +96,8 @@ private:
 	SelectionListType _selection;
 	SelectionListType _componentSelection;
 
-	Signal1<const Selectable&> _selectionChangedCallbacks;
+	typedef Signal1<const Selectable&> SelectionChangedSignal;
+	SelectionChangedSignal _selectionChangedSignal;
 
 	void ConstructPivot();
 	mutable bool _pivotChanged;
@@ -129,7 +130,6 @@ public:
 	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;
   
   	void pivotChangedSelection(const Selectable& selectable);
-	typedef MemberCaller1<RadiantSelectionSystem, const Selectable&, &RadiantSelectionSystem::pivotChangedSelection> PivotChangedSelectionCaller;
 
 	void addObserver(Observer* observer);
 	void removeObserver(Observer* observer);
@@ -158,7 +158,7 @@ public:
 	void foreachSelected(const Visitor& visitor);
 	void foreachSelectedComponent(const Visitor& visitor);
 	
-	void addSelectionChangeCallback(const SelectionChangeHandler& handler);
+	void addSelectionChangeCallback(const SelectionChangeCallback& callback);
 	
 	void startMove();
 	

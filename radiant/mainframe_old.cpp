@@ -842,6 +842,5 @@ void MainFrame_Construct()
 
   Patch_registerCommands();
 
-  typedef FreeCaller1<const Selectable&, ComponentMode_SelectionChanged> ComponentModeSelectionChangedCaller;
-  GlobalSelectionSystem().addSelectionChangeCallback(ComponentModeSelectionChangedCaller());
+	GlobalSelectionSystem().addSelectionChangeCallback(ComponentMode_SelectionChanged);
 }
