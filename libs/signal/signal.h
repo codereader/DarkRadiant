@@ -85,7 +85,7 @@ public:
 
 	void operator()(FirstArgument arg) const
 	{
-		for (BaseType::const_iterator i = BaseType::begin(); i != BaseType::end(); )
+		for (typename BaseType::const_iterator i = BaseType::begin(); i != BaseType::end(); )
 		{
 			(i++)->second(arg);
 		}
@@ -97,8 +97,8 @@ public:
 	std::size_t connect(const FunctionType& type)
 	{
 		// Prevent duplicates in debug builds
-		std::pair<BaseType::iterator, bool> result = BaseType::insert(
-			BaseType::value_type(_nextHandle++, type)
+		std::pair<typename BaseType::iterator, bool> result = BaseType::insert(
+			typename BaseType::value_type(_nextHandle++, type)
 		);
 
 		return result.first->first;
@@ -110,7 +110,7 @@ public:
 	 */
 	void disconnect(std::size_t handle)
 	{
-		BaseType::iterator found = BaseType::find(handle);
+		typename BaseType::iterator found = BaseType::find(handle);
 		
 		// Force valid calls in debug builds
 		assert(found != BaseType::end());
