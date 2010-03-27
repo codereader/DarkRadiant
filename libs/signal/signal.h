@@ -362,7 +362,7 @@ public:
   }
 };
 
-template<typename FirstArgument>
+/*template<typename FirstArgument>
 class Signal1 : public SignalBase< SignalHandler1<FirstArgument> >
 {
   typedef SignalBase< SignalHandler1<FirstArgument> > Base;
@@ -371,9 +371,25 @@ public:
   {
     invokeSignalHandlers(Base::begin(), Base::end(), Functor1Invoke<typename Base::handler_type>(a1));
   }
+};*/
+
+template<typename FirstArgument>
+class Signal1 :
+	public std::vector<boost::function<void (FirstArgument)> >
+{
+private:
+	typedef std::vector<boost::function<void (FirstArgument)> > BaseType;
+public:
+	void operator()(FirstArgument arg) const
+	{
+		for (typename BaseType::const_iterator i = BaseType::begin(); i != BaseType::end(); ++i)
+		{
+			(*i)(arg);
+		}
+	}
 };
 
-template<typename FirstArgument, typename SecondArgument>
+/*template<typename FirstArgument, typename SecondArgument>
 class Signal2 : public SignalBase< SignalHandler2<FirstArgument, SecondArgument> >
 {
   typedef SignalBase< SignalHandler2<FirstArgument, SecondArgument> > Base;
@@ -382,7 +398,7 @@ public:
   {
     invokeSignalHandlers(Base::begin(), Base::end(), Functor2Invoke<typename Base::handler_type>(a1, a2));
   }
-};
+};*/
 
 /*template<typename FirstArgument, typename SecondArgument, typename ThirdArgument>
 class Signal3 : public SignalBase< SignalHandler3<FirstArgument, SecondArgument, ThirdArgument> >

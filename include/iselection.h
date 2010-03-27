@@ -25,8 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstddef>
 #include "imodule.h"
 #include "inode.h"
-#include "generic/callbackfwd.h"
-#include "signal/signalfwd.h"
+//#include "generic/callbackfwd.h"
+//#include "signal/signalfwd.h"
+#include <boost/function/function_fwd.hpp>
 
 class RenderableCollector;
 class View;
@@ -61,8 +62,7 @@ typedef BasicVector4<double> Vector4;
 class Matrix4;
 typedef Vector4 Quaternion;
 
-typedef Callback1<const Selectable&> SelectionChangeCallback;
-typedef SignalHandler1<const Selectable&> SelectionChangeHandler;
+typedef boost::function<void (const Selectable&)> SelectionChangeCallback;
 
 class SelectionInfo;
 
@@ -182,7 +182,10 @@ public:
      */
     virtual void foreachSelectedComponent(const Visitor& visitor) = 0;
 
-  virtual void addSelectionChangeCallback(const SelectionChangeHandler& handler) = 0;
+	/**
+	 * greebo: Connect a signal handler to get notified about selection changes.
+	 */
+	virtual void addSelectionChangeCallback(const SelectionChangeCallback& callback) = 0;
 
   virtual void NudgeManipulator(const Vector3& nudge, const Vector3& view) = 0;
 
