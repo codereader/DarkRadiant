@@ -42,12 +42,14 @@ std::string Curve::getEntityKeyValue() {
 	return value;
 }
 
-SignalHandlerId Curve::connect(const SignalHandler& curveChanged) {
+std::size_t Curve::connect(const CurveChangedCallback& curveChanged)
+{
 	curveChanged();
-	return _curveChanged.connectLast(curveChanged);
+	return _curveChanged.connect(curveChanged);
 }
 
-void Curve::disconnect(SignalHandlerId id) {
+void Curve::disconnect(std::size_t id)
+{
 	_curveChanged.disconnect(id);
 }
 

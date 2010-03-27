@@ -108,7 +108,7 @@ private:
 
 	bool nothingSelected() const;
 	
-	SignalHandlerId _boundsChangedHandler;
+	std::size_t _boundsChangedHandler;
 
 public:
 

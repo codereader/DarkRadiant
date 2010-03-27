@@ -34,7 +34,7 @@ class Map :
 
 	bool m_modified;
 
-	Signal0 m_mapValidCallbacks;
+	Signal _mapValidCallbacks;
 
 	scene::INodePtr m_world_node; // "classname" "worldspawn" !
 
@@ -147,8 +147,10 @@ public:
 	// Sets the modified status of this map
 	void setModified(bool modifiedFlag);
 	
-	SignalHandlerId addValidCallback(const SignalHandler& handler);
-	void removeValidCallback(SignalHandlerId id);
+	typedef boost::function<void()> MapValidChangedFunc;
+
+	std::size_t addValidCallback(const MapValidChangedFunc& handler);
+	void removeValidCallback(std::size_t id);
 	
 	// Updates the window title of the mainframe
 	void updateTitle();

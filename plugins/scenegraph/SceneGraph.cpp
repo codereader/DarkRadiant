@@ -76,7 +76,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
   
 void SceneGraph::boundsChanged()
 {
-    m_boundsChanged();
+    _boundsChanged();
 }
 
 void SceneGraph::insert(const INodePtr& node)
@@ -110,12 +110,14 @@ void SceneGraph::erase(const INodePtr& node)
 	}
 }
 
-SignalHandlerId SceneGraph::addBoundsChangedCallback(const SignalHandler& boundsChanged) {
-    return m_boundsChanged.connectLast(boundsChanged);
+std::size_t SceneGraph::addBoundsChangedCallback(const BoundsChangedFunc& callback)
+{
+    return _boundsChanged.connect(callback);
 }
 
-void SceneGraph::removeBoundsChangedCallback(SignalHandlerId id) {
-    m_boundsChanged.disconnect(id);
+void SceneGraph::removeBoundsChangedCallback(std::size_t handle)
+{
+    _boundsChanged.disconnect(handle);
 }
 
 void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)

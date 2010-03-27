@@ -80,7 +80,7 @@ private:
 	// The currently active grid size
 	GridSize _activeGridSize;
 	
-	Signal0 _gridChangeCallbacks;
+	Signal _gridChangeCallbacks;
 	
 public:
 	GridManager() :
@@ -150,9 +150,13 @@ public:
 		page->appendCombo("Default Grid Size", RKEY_DEFAULT_GRID_SIZE, getGridList());
 	}
 	
-	void addGridChangeCallback(const SignalHandler& handler) {
-		_gridChangeCallbacks.connectLast(handler);
-		handler();
+	std::size_t addGridChangeCallback(const GridChangedFunc& callback)
+	{
+		std::size_t handle = _gridChangeCallbacks.connect(callback);
+
+		callback();
+
+		return handle;
 	}
 	
 	void gridChangeNotify() {

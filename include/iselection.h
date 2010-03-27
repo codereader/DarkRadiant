@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cstddef>
 #include "imodule.h"
 #include "inode.h"
-//#include "generic/callbackfwd.h"
-//#include "signal/signalfwd.h"
 #include <boost/function/function_fwd.hpp>
 
 class RenderableCollector;

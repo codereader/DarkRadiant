@@ -2,6 +2,7 @@
 #define GRIDITEM_H_
 
 #include "igrid.h"
+#include "generic/callback.h"
 
 class GridItem
 {

@@ -90,7 +90,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtktable.h>
 
 #include "scenelib.h"
-#include "signal/isignal.h"
 #include "os/path.h"
 #include "os/file.h"
 #include "moduleobservers.h"

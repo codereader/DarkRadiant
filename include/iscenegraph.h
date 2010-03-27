@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 #include "inode.h"
 #include "ipath.h"
-#include "signal/signalfwd.h"
+#include <boost/function/function_fwd.hpp>
 
 /**
  * \defgroup scenegraph Scenegraph
@@ -57,6 +57,8 @@ class Graph :
 	public RegisterableModule
 {
 public:
+	typedef boost::function<void ()> BoundsChangedFunc;
+
 	/* greebo: Derive from this class to get notified on scene changes 
 	 */
 	class Observer 
@@ -98,10 +100,12 @@ public:
 	/// \brief Invokes all bounds-changed callbacks. Called when the bounds of any instance in the scene change.
 	/// \todo Move to a separate class.
 	virtual void boundsChanged() = 0;
+
 	/// \brief Add a \p callback to be invoked when the bounds of any instance in the scene change.
-	virtual SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged) = 0;
+	virtual std::size_t addBoundsChangedCallback(const BoundsChangedFunc& callback) = 0;
+
 	/// \brief Remove a \p callback to be invoked when the bounds of any instance in the scene change.
-	virtual void removeBoundsChangedCallback(SignalHandlerId id) = 0;
+	virtual void removeBoundsChangedCallback(std::size_t handle) = 0;
 
 	// A specific node has changed its bounds
 	virtual void nodeBoundsChanged(const scene::INodePtr& node) = 0;
