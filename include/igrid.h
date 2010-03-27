@@ -7,7 +7,7 @@
  */
 
 #include "imodule.h"
-#include "signal/signalfwd.h"
+#include <boost/function/function_fwd.hpp>
 
 enum GridSize {
 	GRID_0125 = -3,
@@ -38,7 +38,8 @@ public:
 	virtual void gridDown() = 0;
 	virtual void gridUp() = 0;
 	
-	virtual void addGridChangeCallback(const SignalHandler& handler) = 0;
+	typedef boost::function<void()> GridChangedFunc;
+	virtual std::size_t addGridChangeCallback(const GridChangedFunc& callback) = 0;
 }; // class IGridManager
 
 // This is the accessor for the grid module

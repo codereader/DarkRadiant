@@ -44,7 +44,7 @@ class SceneGraph :
 	typedef std::list<Graph::Observer*> ObserverList;
 	ObserverList _sceneObservers;
 
-	Signal0 m_boundsChanged;
+	Signal _boundsChanged;
 	
 	// The root-element, the scenegraph starts here
 	scene::INodePtr _root;
@@ -84,8 +84,8 @@ public:
 	void insert(const INodePtr& node);
 	void erase(const INodePtr& node);
 
-	SignalHandlerId addBoundsChangedCallback(const SignalHandler& boundsChanged);
-	void removeBoundsChangedCallback(SignalHandlerId id);
+	std::size_t addBoundsChangedCallback(const BoundsChangedFunc& callback);
+	void removeBoundsChangedCallback(std::size_t handle);
 
 	void nodeBoundsChanged(const scene::INodePtr& node);
 

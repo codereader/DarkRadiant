@@ -52,7 +52,7 @@ class CamWnd :
 	gtkutil::GLWidget m_gl_widget;
 	GtkWindow* _parentWidget;
 
-	SignalHandlerId _mapValidHandle;
+	std::size_t _mapValidHandle;
 
 	Rectangle _dragRectangle;
 

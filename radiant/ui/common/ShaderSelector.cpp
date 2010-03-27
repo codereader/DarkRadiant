@@ -7,7 +7,7 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/GLWidgetSentry.h"
-#include "signal/isignal.h"
+#include "generic/callback.h"
 #include "texturelib.h"
 #include "string/string.h"
 #include "ishaders.h"

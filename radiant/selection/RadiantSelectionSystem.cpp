@@ -390,7 +390,7 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 // Add a "selection changed" callback
 void RadiantSelectionSystem::addSelectionChangeCallback(const SelectionChangeCallback& callback)
 {
-	_selectionChangedSignal.push_back(callback);
+	_selectionChangedSignal.connect(callback);
 }
 
 // Start a move, the current pivot point is saved as a start point
@@ -1057,9 +1057,6 @@ void RadiantSelectionSystem::shutdownModule() {
 	GlobalRenderSystem().detachRenderable(*this);
 	GlobalSceneGraph().removeBoundsChangedCallback(_boundsChangedHandler);
 
-	// Disconnect all signal handlers
-	_selectionChangedSignal.clear();
-	
 	destroyStatic();
 }
 

@@ -185,19 +185,21 @@ void Map::onResourceUnrealise() {
   
 void Map::setValid(bool valid) {
 	m_valid = valid;
-	m_mapValidCallbacks();
+	_mapValidCallbacks();
 }
 
 bool Map::isValid() const {
 	return m_valid;
 }
 
-SignalHandlerId Map::addValidCallback(const SignalHandler& handler) {
-	return m_mapValidCallbacks.connectLast(handler);
+std::size_t Map::addValidCallback(const MapValidChangedFunc& handler)
+{
+	return _mapValidCallbacks.connect(handler);
 }
 
-void Map::removeValidCallback(SignalHandlerId id) {
-	m_mapValidCallbacks.disconnect(id);
+void Map::removeValidCallback(std::size_t id)
+{
+	_mapValidCallbacks.disconnect(id);
 }
 
 void Map::updateTitle() {

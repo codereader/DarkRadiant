@@ -21,6 +21,8 @@ public:
 	// A list of iterators, used for communication with the CurveEditInstance
 	typedef std::vector<ControlPoints::iterator> IteratorList;
 
+	typedef boost::function<void()> CurveChangedCallback;
+
 protected:
 	ControlPoints _controlPoints;
 	ControlPoints _controlPointsTransformed;
@@ -29,15 +31,15 @@ protected:
 	AABB _bounds;
 	
 	Callback _boundsChanged;
-	Signal0 _curveChanged;
+	Signal _curveChanged;
 public:
 	Curve(const Callback& boundsChanged);
 
 	virtual ~Curve() {}
 	
 	// "Curve changed" signal stuff
-	SignalHandlerId connect(const SignalHandler& curveChanged);
-	void disconnect(SignalHandlerId id);
+	std::size_t connect(const CurveChangedCallback& curveChanged);
+	void disconnect(std::size_t id);
 	
 	bool isEmpty() const;
 	

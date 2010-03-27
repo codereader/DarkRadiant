@@ -62,9 +62,9 @@ class Doom3Group
 
 public:
 	CurveNURBS m_curveNURBS;
-	SignalHandlerId m_curveNURBSChanged;
+	std::size_t m_curveNURBSChanged;
 	CurveCatmullRom m_curveCatmullRom;
-	SignalHandlerId m_curveCatmullRomChanged;
+	std::size_t m_curveCatmullRomChanged;
 
 	/** greebo: The constructor takes the Node as argument
 	 * as well as some callbacks for transformation and bounds changes.
