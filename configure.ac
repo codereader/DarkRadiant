@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [1.1.1])
+AC_INIT([darkradiant], [1.2.0])
 AM_INIT_AUTOMAKE
 
 # Save user flags
