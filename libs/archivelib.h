@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iarchive.h"
 #include "stream/filestream.h"
 #include "stream/textfilestream.h"
-#include "memory/allocator.h"
 #include "string/string.h"
 #include "os/path.h"
 

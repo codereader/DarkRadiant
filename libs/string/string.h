@@ -29,8 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <cctype>
 #include <algorithm>
 
-#include "memory/allocator.h"
-
 #include <boost/lexical_cast.hpp>
 
 inline std::string intToStr(int i, const std::string& fallBackValue = "")
