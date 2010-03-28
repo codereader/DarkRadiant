@@ -7,15 +7,13 @@
 #include "backend/OpenGLShader.h"
 #include "LinearLightList.h"
 #include "render/backend/OpenGLStateLess.h"
-#include "generic/reference.h"
 
 class OpenGLState;
 class OpenGLShaderPass;
 
 /* Sorted state map */
 
-typedef ConstReference<OpenGLState> OpenGLStateReference;
-typedef std::map<OpenGLStateReference, 
+typedef std::map<OpenGLState*, 
 				 OpenGLShaderPass*, 
 				 OpenGLStateLess> OpenGLStates;
 
