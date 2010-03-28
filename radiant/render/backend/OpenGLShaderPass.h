@@ -109,6 +109,11 @@ public:
 		return _state;
 	}
 
+	OpenGLState* statePtr()
+	{
+		return &_state;
+	}
+
 	/**
 	 * \brief
      * Render the renderables attached to this shader pass.
