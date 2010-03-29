@@ -10,6 +10,7 @@
 #include "generic/callback.h"
 #include "texturelib.h"
 
+#include <boost/bind.hpp>
 #include <cstdio>
 
 void OpenGLShader::destroy() {
@@ -36,7 +37,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
         if(lights != 0)
         {
           OpenGLStateBucketAdd add(*(*i), renderable, modelview);
-          lights->forEachLight(makeCallback1(add));
+		  lights->forEachLight(boost::bind(&OpenGLStateBucketAdd::visit, &add, _1));
         }
       }
       else

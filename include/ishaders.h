@@ -22,9 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ISHADERS_H)
 #define INCLUDED_ISHADERS_H
 
-#include "generic/callbackfwd.h"
+#include <boost/function/function_fwd.hpp>
 #include "iimage.h"
 #include "imodule.h"
+#include "generic/callback.h"
 
 #include "math/Vector3.h"
 
@@ -205,7 +206,7 @@ public:
 } // namespace shaders
 
 typedef struct _GSList GSList;
-typedef Callback1<const char*> ShaderNameCallback;
+typedef boost::function<void(const std::string&)> ShaderNameCallback;
 
 class ModuleObserver;
 

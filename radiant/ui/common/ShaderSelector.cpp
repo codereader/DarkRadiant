@@ -7,7 +7,6 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/GLWidgetSentry.h"
-#include "generic/callback.h"
 #include "texturelib.h"
 #include "string/string.h"
 #include "ishaders.h"
@@ -23,6 +22,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/bind.hpp>
 
 namespace ui
 {
@@ -140,8 +140,6 @@ namespace {
 	class ShaderNameFunctor 
 	{
 	public:
-		typedef const char* first_argument_type;
-
 		// Interesting texture prefixes
 		ShaderSelector::PrefixList& _prefixes;
 
@@ -168,9 +166,9 @@ namespace {
 			}
 		}
 	
-		// Functor operator
-		void operator() (const char* shaderName) {
-			std::string name = boost::algorithm::to_lower_copy(std::string(shaderName));
+		void visit(const std::string& shaderName)
+		{
+			std::string name = boost::algorithm::to_lower_copy(shaderName);
 			
 			for (ShaderSelector::PrefixList::iterator i = _prefixes.begin();
 				 i != _prefixes.end();
@@ -197,7 +195,7 @@ GtkWidget* ShaderSelector::createTreeView() {
 	gtkutil::VFSTreePopulator populator(store);
 	
 	ShaderNameFunctor func(populator, _prefixes);
-	GlobalMaterialManager().foreachShaderName(makeCallback1(func));
+	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &func, _1));
 	
 	// Now visit the created GtkTreeIters to load the actual data into the tree
 	DataInserter inserter;
