@@ -163,8 +163,6 @@ struct ShaderNameCompareFunctor : public std::binary_function<std::string, std::
 
 struct ShaderNameFunctor {
 	
-	typedef const char* first_argument_type;
-	
 	// TreeStore to populate
 	GtkTreeStore* _store;
 	
@@ -230,7 +228,8 @@ struct ShaderNameFunctor {
 	
 	// Functor operator
 	
-	void operator() (const char* name) {
+	void visit(const std::string& name)
+	{
 		std::string rawName(name);
 		
 		// If the name starts with "textures/", add it to the treestore.
@@ -350,7 +349,7 @@ void MediaBrowser::populate() {
 	
 	// greebo: Add the Other Materials folder and pass TRUE to indicate this is a special one
 	functor.addFolder(OTHER_MATERIALS_FOLDER, true);
-	GlobalMaterialManager().foreachShaderName(makeCallback1(functor));	
+	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 }
 
 /* gtkutil::PopupMenu callbacks */
@@ -360,9 +359,9 @@ void MediaBrowser::_onLoadInTexView() {
 	// may throw an exception if cancelled by user.
 	TextureDirectoryLoader loader(getSelectedName());
 	try {
-		GlobalMaterialManager().foreachShaderName(makeCallback1(loader));
+		GlobalMaterialManager().foreachShaderName(boost::bind(&TextureDirectoryLoader::visit, &loader, _1));
 	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException e) {
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException& e) {
 		// Ignore the error and return from the function normally	
 	}
 }

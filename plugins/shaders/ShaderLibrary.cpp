@@ -134,7 +134,7 @@ void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {
 		 i != _definitions.end(); 
 		 ++i) 
 	{
-		callback(i->first.c_str());
+		callback(i->first);
 	}
 }
 

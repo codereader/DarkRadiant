@@ -623,7 +623,7 @@ public:
 /// \brief Constructs a Callback from a non-const \p functor with zero arguments.
 /// 
 /// \param Functor Must define \c operator()().
-template<typename Functor>
+/*template<typename Functor>
 inline Callback makeCallback(Functor& functor)
 {
   return Callback(MemberCaller<Functor, &Functor::operator()>(functor));
@@ -636,12 +636,12 @@ template<typename Functor>
 inline Callback makeCallback(const Functor& functor)
 {
   return Callback(ConstMemberCaller<Functor, &Functor::operator()>(functor));
-}
+}*/
 
 /// \brief  Constructs a Callback1 from a non-const \p functor with one argument.
 /// 
 /// \param Functor Must define \c first_argument_type and \c operator()(first_argument_type).
-template<typename Functor>
+/*template<typename Functor>
 inline Callback1<typename Functor::first_argument_type> makeCallback1(Functor& functor)
 {
   typedef typename Functor::first_argument_type FirstArgument;
@@ -656,7 +656,7 @@ inline Callback1<typename Functor::first_argument_type> makeCallback1(const Func
 {
   typedef typename Functor::first_argument_type FirstArgument;
   return Callback1<FirstArgument>(ConstMemberCaller1<Functor, FirstArgument, &Functor::operator()>(functor));
-}
+}*/
 
 /*
 typedef Callback1<bool> BoolImportCallback;
