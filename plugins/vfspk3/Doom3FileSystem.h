@@ -73,7 +73,7 @@ public:
 	// Call the specified callback function for each file matching extension
 	// inside basedir.
 	void forEachFile(const std::string& basedir, const std::string& extension,
-		const FileNameCallback& callback, std::size_t depth);
+		Visitor& visitor, std::size_t depth);
 
 	std::string findFile(const std::string& name);
 	std::string findRoot(const std::string& name);

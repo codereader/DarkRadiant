@@ -1,6 +1,7 @@
 #ifndef SHADERFILELOADER_H_
 #define SHADERFILELOADER_H_
 
+#include "ifilesystem.h"
 #include "ShaderTemplate.h"
 
 #include "parser/DefTokeniser.h"
@@ -13,8 +14,10 @@ namespace shaders
 /**
  * VFS functor class which loads material (mtr) files.
  */
-class ShaderFileLoader
+class ShaderFileLoader :
+	public VirtualFileSystem::Visitor
 {
+private:
 	// The base path for the shaders (e.g. "materials/")
 	std::string _basePath;
 	
@@ -27,17 +30,13 @@ private:
 	void parseShaderTable(parser::DefTokeniser& tokeniser);
 	
 public:
-
-	// Required functor typedef
-	typedef const std::string& first_argument_type;
-	
 	// Constructor. Set the basepath to prepend onto shader filenames.
 	ShaderFileLoader(const std::string& path)
 	: _basePath(path)
 	{}
 	
-	// Functor operator
-	void operator() (const std::string& fileName);
+	// FileVisitor implementation
+	void visit(const std::string& filename);
 };
 
 }

@@ -4,6 +4,7 @@
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/ModalProgressDialog.h"
 #include "imainframe.h"
+#include "ifilesystem.h"
 #include "iregistry.h"
 #include "EventRateLimiter.h"
 
@@ -22,7 +23,8 @@ namespace ui
  * Functor object to visit the global VFS and add model paths to a VFS tree
  * populator object.
  */
-class ModelFileFunctor 
+class ModelFileFunctor :
+	public VirtualFileSystem::Visitor
 {
 	// VFSTreePopulators to populate
 	gtkutil::VFSTreePopulator& _populator;
@@ -39,8 +41,6 @@ class ModelFileFunctor
 	
 public:
 	
-	typedef const std::string& first_argument_type;
-
 	// Constructor sets the populator
 	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) : 
 		_populator(pop),
@@ -56,8 +56,8 @@ public:
 		boost::algorithm::split(_allowedExtensions, extensions, boost::algorithm::is_any_of(" "));
 	}
 
-	// Functor operator
-	void operator() (const std::string& file)
+	// VFS::Visitor implementation
+	void visit(const std::string& file)
 	{
 		std::string ext = os::getExtension(file);
 		boost::algorithm::to_lower(ext);

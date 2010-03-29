@@ -15,16 +15,13 @@ namespace particles
 /**
  * Loader class for PRT files.
  */
-class ParticleFileLoader
+class ParticleFileLoader :
+	public VirtualFileSystem::Visitor
 {
 	// ParticlesManager to populate
 	ParticlesManager& _manager;
 	
 public:
-	
-	// Required type
-	typedef const std::string& first_argument_type;
-
 	/**
 	 * Constructor. Set the ParticlesManager to populate.
 	 */
@@ -33,8 +30,8 @@ public:
 	{ }
 	
 	// Functor operator
-	void operator() (const std::string& filename) {
-		
+	void visit(const std::string& filename)
+	{
 		// Attempt to open the file in text mode
 		ArchiveTextFilePtr file = 
 			GlobalFileSystem().openTextFile(PARTICLES_DIR + filename);
@@ -52,10 +49,8 @@ public:
 		}
 		else {
 			std::cerr << "[particles] Unable to open " << filename << std::endl;
-		}
-		
+		}	
 	}
-	
 };
 
 }

@@ -74,11 +74,10 @@ void ShaderFileLoader::parseShaderTable(parser::DefTokeniser& tokeniser)
 	}	
 }
 
-// Functor operator
-void ShaderFileLoader::operator() (const std::string& fileName)
+void ShaderFileLoader::visit(const std::string& filename)
 {
 	// Construct the full VFS path
-	std::string fullPath = _basePath + fileName;
+	std::string fullPath = _basePath + filename;
 	
 	// Open the file
 	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullPath);
@@ -91,6 +90,5 @@ void ShaderFileLoader::operator() (const std::string& fileName)
 		throw std::runtime_error("Unable to read shaderfile: " + fullPath);  	
 	}
 }
-
 
 } // namespace shaders

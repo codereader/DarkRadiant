@@ -5,7 +5,6 @@
 
 #include "ifilesystem.h"
 
-#include "generic/callback.h"
 #include "parser/DefTokeniser.h"
 #include "math/Vector4.h"
 
@@ -126,19 +125,15 @@ const StringSet& ParticlesManager::getDependencies() const {
 	return _dependencies;
 }
 
-void ParticlesManager::initialiseModule(const ApplicationContext& ctx) {
+void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
+{
 	globalOutputStream() << "ParticlesManager::initialiseModule called\n";
 	
 	// Use a ParticleFileLoader to load each file
 	ParticleFileLoader loader(*this);
 
 	ScopedDebugTimer timer("Particle definitions parsed: ");
-	GlobalFileSystem().forEachFile(
-		PARTICLES_DIR, 
-		PARTICLES_EXT,
-		makeCallback1(loader),
-		1
-	);
+	GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, loader, 1);
 }
 
 } // namespace particles

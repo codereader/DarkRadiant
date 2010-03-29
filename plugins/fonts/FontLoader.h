@@ -1,11 +1,14 @@
 #include "ifonts.h"
 
+#include "ifilesystem.h"
+
 namespace fonts
 {
 
 class FontManager;
 
-class FontLoader
+class FontLoader :
+	public VirtualFileSystem::Visitor
 {
 private:
 	// The base path for the shaders (e.g. "materials/")
@@ -21,10 +24,7 @@ public:
 		_manager(manager)
 	{}
 
-	// Required functor typedef
-	typedef const std::string& first_argument_type;
-
-	void operator() (const std::string& fileName);
+	void visit(const std::string& fileName);
 };
 
 } // namespace fonts

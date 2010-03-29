@@ -20,8 +20,6 @@
 #include <sstream>
 #include <GL/glew.h>
 
-#include "generic/callback.h"
-
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -271,7 +269,7 @@ void ModelSelector::populateModels()
 	ModelFileFunctor functor(pop, popSkins);
 	GlobalFileSystem().forEachFile(MODELS_FOLDER, 
 								   "*", 
-								   makeCallback1(functor), 
+								   functor,
 								   0);
 	
 	// Fill in the column data (TRUE = including skins)

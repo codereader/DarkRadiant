@@ -19,16 +19,13 @@ const char* SOUND_FOLDER = "sound/";
 /**
  * Loader class passed to the GlobalFileSystem to load sound files
  */
-class SoundFileLoader
+class SoundFileLoader :
+	public VirtualFileSystem::Visitor
 {
 	// SoundManager to populate
 	SoundManager& _manager;
 	
 public:
-
-	// Required type
-	typedef const std::string& first_argument_type;
-	
 	/**
 	 * Constructor. Set the sound manager reference.
 	 */
@@ -39,11 +36,11 @@ public:
 	/**
 	 * Functor operator.
 	 */
-	void operator() (const std::string& fileName) {
-
+	void visit(const std::string& filename)
+	{
 		// Open the .sndshd file and get its contents as a std::string
 		ArchiveTextFilePtr file = 
-			GlobalFileSystem().openTextFile(SOUND_FOLDER + fileName);
+			GlobalFileSystem().openTextFile(SOUND_FOLDER + filename);
 		
 		// Parse contents of file if it was opened successfully
 		if (file) {
@@ -54,13 +51,13 @@ public:
 				_manager.parseShadersFrom(is, file->getModName());
 			}
 			catch (parser::ParseException ex) {
-				globalErrorStream() << "[sound]: Error while parsing " << fileName <<
+				globalErrorStream() << "[sound]: Error while parsing " << filename <<
 					": " << ex.what() << std::endl;
 			}
 		}
 		else {
 			std::cerr << "[sound] Warning: unable to open \"" 
-					  << fileName << "\"" << std::endl;
+					  << filename << "\"" << std::endl;
 		}
 	}
 };

@@ -4,14 +4,13 @@
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "parser/CodeTokeniser.h"
-#include "generic/callback.h"
 
 #include "Gui.h"
 
 namespace gui
 {
 
-void GuiManager::operator() (const std::string& guiPath)
+void GuiManager::visit(const std::string& guiPath)
 {
 	// Just store the path in the map, for later reference
 	_guis.insert(GuiInfoMap::value_type(GUI_DIR + guiPath, GuiInfo()));
@@ -84,12 +83,7 @@ void GuiManager::findGuis()
 	_errorList.clear();
 
 	// Traverse the file system, using this class as callback
-	GlobalFileSystem().forEachFile(
-		GUI_DIR,
-		GUI_EXT,
-		makeCallback1(*this),
-		99
-	);
+	GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, *this, 99);
 
 	globalOutputStream() << "[GuiManager]: Found " << _guis.size() 
 		<< " guis." << std::endl;

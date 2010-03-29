@@ -8,21 +8,14 @@
 
 namespace script {
 
-// A File visitor used for calls to GlobalFileSystem.foreachFile
-class FileVisitor
-{
-public:
-    virtual ~FileVisitor() {}
-	virtual void visit(const std::string& filename) = 0;
-};
-
 // Scripts will derive from this class
 class FileVisitorWrapper :
-	public FileVisitor,
-	public boost::python::wrapper<FileVisitor>
+	public VirtualFileSystem::Visitor,
+	public boost::python::wrapper<VirtualFileSystem::Visitor>
 {
 public:
-	void visit(const std::string& filename) {
+	void visit(const std::string& filename)
+	{
 		// Wrap this method to python
 		this->get_override("visit")(filename);
 	}
@@ -43,7 +36,7 @@ public:
 
 	// Wrapped methods, see "ifilesystem.h" for documentation
 	void forEachFile(const std::string& basedir, const std::string& extension, 
-					  FileVisitor& visitor, std::size_t depth);
+					  VirtualFileSystem::Visitor& visitor, std::size_t depth);
 
 	int getFileCount(const std::string& filename);
 	std::string findFile(const std::string& name);
