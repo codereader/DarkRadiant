@@ -27,7 +27,8 @@ typedef std::vector<std::pair<std::string, std::string> > StringPairList;
 ///////////////////////////// XDataSelector:
 // Class for importing XData from files and retrieving fileinfos: duplicated definitions,
 // List of all definitions with their corresponding filename.
-class XDataLoader
+class XDataLoader :
+	public VirtualFileSystem::Visitor
 {
 	// Notes:
 	//	-Importer cannot cope with multiple definitions in a single file currently.
@@ -96,10 +97,7 @@ public:
 
 //FileVisitor-related:
 	// Functor operator: Adds all definitions found in the target file to the _defMap. 
-	void operator() (const std::string& filename);
-
-	// Required typedef for the Callback to work.
-	typedef const std::string& first_argument_type;
+	void visit(const std::string& filename);
 
 private:
 	// Issues the ErrorMessage to the cerr console and appends it to the _errorList. Returns always false, so that it can be used after a return statement.

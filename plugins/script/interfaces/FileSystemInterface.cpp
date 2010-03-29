@@ -7,17 +7,13 @@
 namespace script {
 
 void FileSystemInterface::forEachFile(const std::string& basedir, 
-	const std::string& extension, FileVisitor& visitor, std::size_t depth)
+	const std::string& extension, VirtualFileSystem::Visitor& visitor, std::size_t depth)
 {
-	GlobalFileSystem().forEachFile(
-		basedir, 
-		extension, 
-		MemberCaller1<FileVisitor, const std::string&, &FileVisitor::visit>(visitor),
-		depth
-	);
+	GlobalFileSystem().forEachFile(basedir, extension, visitor, depth);
 }
 
-std::string FileSystemInterface::readTextFile(const std::string& filename) {
+std::string FileSystemInterface::readTextFile(const std::string& filename)
+{
 	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(filename);
 
 	if (file == NULL) return "";

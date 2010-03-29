@@ -3,7 +3,6 @@
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
-#include "generic/callback.h"
 
 #include <iostream>
 
@@ -19,7 +18,8 @@ const char* SKINS_FOLDER = "skins/";
  * The functor opens each file and passes the contents (as a string) back to
  * the Doom3SkinCache module for parsing.
  */
-class SkinLoader
+class SkinLoader :
+	public VirtualFileSystem::Visitor
 {
 	// Doom3SkinCache to parse files
 	Doom3SkinCache& _cache;
@@ -35,8 +35,8 @@ public:
 	{}
 	
 	// Functor operator
-	void operator() (const std::string& fileName) {
-
+	void visit(const std::string& fileName)
+	{
 		// Open the .skin file and get its contents as a std::string
 		ArchiveTextFilePtr file = 
 			GlobalFileSystem().openTextFile(SKINS_FOLDER + fileName);
@@ -48,7 +48,7 @@ public:
 			_cache.parseFile(is, fileName);
 		}
 		catch (parser::ParseException e) {
-			std::cout << "[skins]: in " << fileName << ": " << e.what() << "\n";
+			std::cout << "[skins]: in " << fileName << ": " << e.what() << std::endl;
 		}
 	}
 }; 
@@ -62,18 +62,18 @@ void Doom3SkinCache::realise() {
 	if (_realised)
 		return;
 		
-	globalOutputStream() << "[skins] Loading skins.\n"; 
+	globalOutputStream() << "[skins] Loading skins." << std::endl; 
 
 	// Use a functor to traverse the skins directory, catching any parse
 	// exceptions that may be thrown
-	try {
-		SkinLoader ldr(*this);
-		GlobalFileSystem().forEachFile(SKINS_FOLDER, 
-									   "skin",
-									   makeCallback1(ldr));
+	try
+	{
+		SkinLoader loader(*this);
+		GlobalFileSystem().forEachFile(SKINS_FOLDER, "skin", loader);
 	}
-	catch (parser::ParseException e) {
-		std::cout << "[skins]: " << e.what() << "\n";
+	catch (parser::ParseException& e)
+	{
+		std::cout << "[skins]: " << e.what() << std::endl;
 	}
 	
 	// Set the realised flag

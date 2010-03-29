@@ -6,7 +6,6 @@
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "moduleobservers.h"
-#include "generic/callback.h"
 
 #include "Doom3EntityClass.h"
 #include "Doom3ModelDef.h"
@@ -32,7 +31,8 @@ namespace eclass {
  */
 class EClassManager :
     public IEntityClassManager,
-    public VirtualFileSystem::Observer
+    public VirtualFileSystem::Observer,
+	public VirtualFileSystem::Visitor
 {
     // Whether the entity classes have been realised
     bool _realised;
@@ -88,9 +88,8 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);	
 	virtual void shutdownModule();
 	
-	// Functor loading the DEF files (gets called by GlobalFilesystem().foreach()).
-	void loadFile(const std::string& filename);
-	typedef MemberCaller1<EClassManager, const std::string&, &EClassManager::loadFile> LoadFileCaller;
+	// Method loading the DEF files (gets called by GlobalFilesystem().foreach()).
+	void visit(const std::string& filename);
 
 private:
 	// Tries to insert the given eclass, not overwriting existing ones

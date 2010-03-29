@@ -82,13 +82,10 @@ void Doom3ShaderSystem::loadMaterialFiles()
 	std::string extension = nlShaderExt[0].getContent();
 	
 	// Load each file from the global filesystem
-	ShaderFileLoader ldr(sPath);
+	ShaderFileLoader loader(sPath);
 	{
 		ScopedDebugTimer timer("ShaderFiles parsed: ");
-		GlobalFileSystem().forEachFile(sPath, 
-									   extension, 
-									   makeCallback1(ldr), 
-									   0);
+		GlobalFileSystem().forEachFile(sPath, extension, loader, 0);
 	}
 
 	globalOutputStream() << _library->getNumShaders() << " shaders found." << std::endl;

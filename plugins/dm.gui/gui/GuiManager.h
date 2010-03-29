@@ -4,6 +4,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <map>
+#include "ifilesystem.h"
 #include "string/string.h"
 #include <vector>
 
@@ -35,6 +36,7 @@ typedef boost::shared_ptr<Gui> GuiPtr;
  * including parsing the .gui files on demand.
  */
 class GuiManager :
+	public VirtualFileSystem::Visitor,
 	public boost::noncopyable
 {
 public:
@@ -59,11 +61,11 @@ private:
 		GuiPtr gui;		
 
 		GuiInfo() :
-		type(NOT_LOADED_YET)
+			type(NOT_LOADED_YET)
 		{}
 
 		GuiInfo(const GuiPtr& gui_, GuiType type_) :
-		type(type_),
+			type(type_),
 			gui(gui_)
 		{}
 	};
@@ -81,7 +83,7 @@ public:
 	GuiPtr getGui(const std::string& guiPath);
 
 	// Operator used for callback by refreshGuiDefinitions.
-	void operator() (const std::string& guiPath);
+	void visit(const std::string& guiPath);
 
 	// Returns the number of known GUIs (or GUI paths)
 	std::size_t getNumGuis() const;
@@ -100,9 +102,6 @@ public:
 
 	// Provides access to the singleton
 	static GuiManager& Instance();
-
-	// Required typedef for the Callback to work.
-	typedef const std::string& first_argument_type;
 	
 	// Searches the VFS for all available GUI definitions
 	void findGuis();

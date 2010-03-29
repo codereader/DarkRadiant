@@ -3,7 +3,6 @@
 
 #include "ifilesystem.h"
 #include "archivelib.h"
-#include "generic/callback.h"
 #include "parser/DefBlockTokeniser.h"
 
 #include "debugging/ScopedDebugTimer.h"
@@ -125,7 +124,7 @@ const StringSet& SoundManager::getDependencies() const {
 
 void SoundManager::initialiseModule(const ApplicationContext& ctx) 
 {
-	globalOutputStream() << "SoundManager::initialiseModule called\n";
+	globalOutputStream() << "SoundManager::initialiseModule called" << std::endl;
 	// Pass a SoundFileLoader to the filesystem
 	SoundFileLoader loader(*this);
 
@@ -134,7 +133,7 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
 		GlobalFileSystem().forEachFile(
 			SOUND_FOLDER,			// directory 
 			"sndshd", 				// required extension
-			makeCallback1(loader),	// loader callback
+			loader,	// loader callback
 			99						// max depth
 		);
 	}

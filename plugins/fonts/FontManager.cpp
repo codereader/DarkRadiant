@@ -7,7 +7,6 @@
 #include "os/path.h"
 
 #include "xmlutil/MissingXMLNodeException.h"
-#include "generic/callback.h"
 
 #include "FontLoader.h"
 
@@ -93,7 +92,7 @@ void FontManager::reloadFonts()
 
 	// Instantiate a visitor to traverse the VFS
 	FontLoader loader(path, *this);
-	GlobalFileSystem().forEachFile(path, extension, makeCallback1(loader), 2);
+	GlobalFileSystem().forEachFile(path, extension, loader, 2);
 
 	globalOutputStream() << _fonts.size() << " fonts registered." << std::endl;
 }

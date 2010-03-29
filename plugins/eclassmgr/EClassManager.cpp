@@ -113,7 +113,7 @@ void EClassManager::parseDefFiles()
 
 	{
 		ScopedDebugTimer timer("EntityDefs parsed: ");
-		GlobalFileSystem().forEachFile("def/", "def", LoadFileCaller(*this));
+		GlobalFileSystem().forEachFile("def/", "def", *this);
 	}
 }
 
@@ -369,7 +369,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
     }
 }
 
-void EClassManager::loadFile(const std::string& filename)
+void EClassManager::visit(const std::string& filename)
 {
 	const std::string fullname = "def/" + filename;
 
@@ -381,7 +381,7 @@ void EClassManager::loadFile(const std::string& filename)
 		// Parse entity defs from the file
 		parse(file->getInputStream(), file->getModName());
 	}
-		catch (parser::ParseException e) {
+		catch (parser::ParseException& e) {
 			globalErrorStream() << "[eclassmgr] failed to parse " << filename 
 					  << " (" << e.what() << ")" << std::endl;
 	}

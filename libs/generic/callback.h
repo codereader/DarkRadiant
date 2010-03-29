@@ -658,7 +658,7 @@ inline Callback1<typename Functor::first_argument_type> makeCallback1(const Func
   return Callback1<FirstArgument>(ConstMemberCaller1<Functor, FirstArgument, &Functor::operator()>(functor));
 }
 
-
+/*
 typedef Callback1<bool> BoolImportCallback;
 typedef Callback1<const BoolImportCallback&> BoolExportCallback;
 
@@ -672,7 +672,7 @@ typedef Callback1<const char*> StringImportCallback;
 typedef Callback1<const StringImportCallback&> StringExportCallback;
 
 typedef Callback1<std::size_t> SizeImportCallback;
-typedef Callback1<const SizeImportCallback&> SizeExportCallback;
+typedef Callback1<const SizeImportCallback&> SizeExportCallback;*/
 
 
 #endif

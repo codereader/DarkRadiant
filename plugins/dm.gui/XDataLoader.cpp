@@ -1,6 +1,5 @@
 #include "XDataLoader.h"
 
-#include "generic/callback.h"
 #include "iarchive.h"
 #include "boost/lexical_cast.hpp"
 
@@ -731,14 +730,10 @@ void XDataLoader::retrieveXdInfo()
 	_fileSet.clear();
 	_duplicatedDefs.clear();
 	//ScopedDebugTimer timer("XData definitions parsed: ");
-	GlobalFileSystem().forEachFile(
-		XDATA_DIR,
-		XDATA_EXT,
-		makeCallback1(*this),
-		99);
+	GlobalFileSystem().forEachFile(XDATA_DIR, XDATA_EXT, *this, 99);
 }
 
-void XDataLoader::operator() (const std::string& filename)
+void XDataLoader::visit(const std::string& filename)
 {
 	// Attempt to open the file in text mode
 	ArchiveTextFilePtr file =
@@ -769,7 +764,7 @@ void XDataLoader::operator() (const std::string& filename)
 				jumpOutOfBrackets(tok);
 			}
 		}
-		catch (parser::ParseException e) 
+		catch (parser::ParseException& e) 
 		{
 			std::cerr << "[XDataLoader] Failed to parse " << filename
 				<< ": " << e.what() << std::endl;

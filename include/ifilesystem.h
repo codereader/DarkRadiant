@@ -60,6 +60,21 @@ class VirtualFileSystem :
 	public RegisterableModule
 {
 public:
+
+	/**
+	 * Interface for a VFS traversor object.
+	 */
+	class Visitor
+	{
+	public:
+		virtual ~Visitor() {}
+		
+		/**
+		 * Required visit method. Takes the filename is relative
+		 * to the base path passed to the GlobalFileSystem().foreachFile method.
+		 */
+		virtual void visit(const std::string& filename) = 0;
+	};
 	
 	/**
 	 * Interface for VFS observers.
@@ -124,9 +139,12 @@ public:
   /// \deprecated Deprecated.
   virtual void freeFile(void *p) = 0;
 
-  /// \brief Calls \p callback for each file under \p basedir matching \p extension.
-  /// Use "*" as \p extension to match all file extensions.
-  virtual void forEachFile(const std::string& basedir, const std::string& extension, const FileNameCallback& callback, std::size_t depth = 1) = 0;
+	/// \brief Calls \p callback for each file under \p basedir matching \p extension.
+	/// Use "*" as \p extension to match all file extensions.
+	virtual void forEachFile(const std::string& basedir, 
+							 const std::string& extension, 
+							 Visitor& visitor, 
+							 std::size_t depth = 1) = 0;
 
 	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.
 	virtual std::string findFile(const std::string& name) = 0;
