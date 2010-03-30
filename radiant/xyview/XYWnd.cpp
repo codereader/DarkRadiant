@@ -110,7 +110,7 @@ XYWnd::XYWnd(int id) :
 	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
 
 	_validCallbackHandle = GlobalMap().addValidCallback(
-		DeferredDrawOnMapValidChangedCaller(m_deferredDraw)
+		boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw)
 	);
 
 	updateProjection();

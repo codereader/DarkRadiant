@@ -36,16 +36,19 @@ public:
 		m_deferred = false;
 		m_defer = false;
 	}
-};
 
-inline void DeferredDraw_onMapValidChanged(DeferredDraw& self) {
-	if (GlobalMap().isValid()) {
-		self.flush();
+	// Callback target
+	void onMapValidChanged()
+	{
+		if (GlobalMap().isValid())
+		{
+			flush();
+		}
+		else
+		{
+			defer();
+		}
 	}
-	else {
-		self.defer();
-	}
-}
-typedef ReferenceCaller<DeferredDraw, DeferredDraw_onMapValidChanged> DeferredDrawOnMapValidChangedCaller;
+};
 
 #endif /*DEFERREDDRAW_H_*/

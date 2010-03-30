@@ -530,17 +530,17 @@ public:
 /// \dontinclude generic/callback.cpp
 /// \skipline ReferenceCaller example
 /// \until end example
-template<typename Environment, void (*func)(const Environment&)> 
+/*template<typename Environment, void (*func)(const Environment&)> 
 class ConstReferenceCaller : public BindFirstOpaque< Function1<const Environment&, void, func> >
 {
 public:
   ConstReferenceCaller(const Environment& environment) : BindFirstOpaque< Function1<const Environment&, void, func> >(environment)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a non-const Environment reference and a free function which operates on a non-const Environment reference and one other argument.
-template<typename Environment, typename FirstArgument, void (*func)(Environment&, FirstArgument)> 
+/*template<typename Environment, typename FirstArgument, void (*func)(Environment&, FirstArgument)> 
 class ReferenceCaller1 : public BindFirstOpaque1< Function2<Environment&, FirstArgument, void, func> >
 {
 public:
@@ -557,10 +557,10 @@ public:
   ConstReferenceCaller1(const Environment& environment) : BindFirstOpaque1< Function2<const Environment&, FirstArgument, void, func> >(environment)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a non-const Environment pointer and a free function which operates on a non-const Environment pointer.
-template<typename Environment, void (*func)(Environment*)> 
+/*template<typename Environment, void (*func)(Environment*)> 
 class PointerCaller : public BindFirstOpaque< Function1<Environment*, void, func> >
 {
 public:
@@ -577,10 +577,10 @@ public:
   ConstPointerCaller(const Environment* environment) : BindFirstOpaque< Function1<const Environment*, void, func> >(environment)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a non-const Environment pointer and a free function which operates on a non-const Environment pointer and one other argument.
-template<typename Environment, typename FirstArgument, void (*func)(Environment*, FirstArgument)> 
+/*template<typename Environment, typename FirstArgument, void (*func)(Environment*, FirstArgument)> 
 class PointerCaller1 : public BindFirstOpaque1< Function2<Environment*, FirstArgument, void, func> >
 {
 public:
@@ -597,7 +597,7 @@ public:
   ConstPointerCaller1(const Environment* environment) : BindFirstOpaque1< Function2<const Environment*, FirstArgument, void, func> >(environment)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a free function which takes no arguments.
 template<void (*func)()> 
@@ -610,14 +610,14 @@ public:
 };
 
 /// \brief Forms a Callback from a free function which takes a single argument.
-template<typename FirstArgument, void (*func)(FirstArgument)> 
+/*template<typename FirstArgument, void (*func)(FirstArgument)> 
 class FreeCaller1 : public BindFirstOpaque1< Caller1To2< Function1<FirstArgument, void, func> > >
 {
 public:
   FreeCaller1() : BindFirstOpaque1< Caller1To2< Function1<FirstArgument, void, func> > >(0)
   {
   }
-};
+};*/
 
 
 /// \brief Constructs a Callback from a non-const \p functor with zero arguments.
