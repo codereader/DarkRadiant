@@ -273,7 +273,7 @@ CamWnd::CamWnd() :
 	m_sizeHandler = g_signal_connect(G_OBJECT(glWidget), "size_allocate", G_CALLBACK(camera_size_allocate), this);
 	m_exposeHandler = g_signal_connect(G_OBJECT(glWidget), "expose_event", G_CALLBACK(camera_expose), this);
 
-	_mapValidHandle = GlobalMap().addValidCallback(DeferredDrawOnMapValidChangedCaller(m_deferredDraw));
+	_mapValidHandle = GlobalMap().addValidCallback(boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw));
 
 	// Deactivate all commands, just to make sure
 	disableDiscreteMoveEvents();
