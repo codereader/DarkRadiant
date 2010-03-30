@@ -250,7 +250,7 @@ struct ShaderNameFunctor {
 			gtk_tree_store_append(_store, &iter, parentIter);
 			gtk_tree_store_set(_store, &iter, 
 							   DISPLAYNAME_COLUMN, texName.c_str(), 
-							   FULLNAME_COLUMN, name,
+							   FULLNAME_COLUMN, name.c_str(),
 							   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(TEXTURE_ICON),
 							   DIR_FLAG_COLUMN, FALSE,
 							   IS_OTHER_MATERIALS_FOLDER_COLUMN, FALSE,
@@ -361,7 +361,7 @@ void MediaBrowser::_onLoadInTexView() {
 	try {
 		GlobalMaterialManager().foreachShaderName(boost::bind(&TextureDirectoryLoader::visit, &loader, _1));
 	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException& e) {
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException&) {
 		// Ignore the error and return from the function normally	
 	}
 }
