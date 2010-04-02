@@ -8,7 +8,6 @@
 #include "igroupdialog.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "iregistry.h"
 #include "igrid.h"
 #include "ientityinspector.h"
 
@@ -38,10 +37,15 @@
 #include "modulesystem/StaticModule.h"
 #include <boost/bind.hpp>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 	namespace {
 		const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 		const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 		const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
+		const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
 
 		const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
 	}
@@ -104,12 +108,68 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 		boost::bind(&MainFrame::toggleFullscreenCameraView, this, _1)
 	);
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
+
+#ifdef WIN32
+	HMODULE lib = LoadLibrary("dwmapi.dll");
+
+	if (lib != NULL)
+	{
+		void (WINAPI *dwmEnableComposition) (bool) = 
+			(void (WINAPI *) (bool)) GetProcAddress(lib, "DwmEnableComposition");
+
+		if (dwmEnableComposition)
+		{
+			// Add a page for Desktop Composition stuff
+			PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Compatibility");
+
+			page->appendCheckBox("", "Disable Windows Desktop Composition", 
+				RKEY_DISABLE_WIN_DESKTOP_COMP);
+
+			GlobalRegistry().addKeyObserver(this, RKEY_DISABLE_WIN_DESKTOP_COMP);
+		}
+		
+		FreeLibrary(lib);
+	}
+
+	// Load the value and act
+	setDesktopCompositionEnabled(GlobalRegistry().get(RKEY_DISABLE_WIN_DESKTOP_COMP) != "1");
+#endif
 }
 
 void MainFrame::shutdownModule()
 {
 	globalOutputStream() << "MainFrame::shutdownModule called." << std::endl;
 }
+
+void MainFrame::keyChanged(const std::string& changedKey, const std::string& newValue)
+{
+#ifdef WIN32
+	if (changedKey == RKEY_DISABLE_WIN_DESKTOP_COMP)
+	{
+		setDesktopCompositionEnabled(newValue != "1");
+	}
+#endif
+}
+
+#ifdef WIN32
+void MainFrame::setDesktopCompositionEnabled(bool enabled)
+{
+	HMODULE lib = LoadLibrary("dwmapi.dll");
+
+	if (lib != NULL)
+	{
+		void (WINAPI *dwmEnableComposition) (bool) = 
+			(void (WINAPI *) (bool)) GetProcAddress(lib, "DwmEnableComposition");
+
+		if (dwmEnableComposition)
+		{
+			dwmEnableComposition(enabled ? TRUE : FALSE);
+		}
+		
+		FreeLibrary(lib);
+	}
+}
+#endif
 
 void MainFrame::toggleFullscreenCameraView(const cmd::ArgumentList& args)
 {

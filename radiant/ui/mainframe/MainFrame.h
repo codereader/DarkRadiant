@@ -3,13 +3,15 @@
 
 #include "icommandsystem.h"
 #include "imainframe.h"
+#include "iregistry.h"
 #include "imainframelayout.h"
 #include "gtkutil/WindowPosition.h"
 
 namespace ui {
 
 class MainFrame :
-	public IMainFrame
+	public IMainFrame,
+	public RegistryKeyObserver
 {
 	GtkWindow* _window;
 
@@ -38,6 +40,9 @@ public:
 	GtkWidget* getMainContainer();
 
 	void updateAllWindows();
+
+	// RegistryKeyObserver implementation
+	void keyChanged(const std::string& changedKey, const std::string& newValue);
 
 	// Apply the named viewstyle
 	void applyLayout(const std::string& name);
@@ -68,6 +73,11 @@ private:
 	GtkWidget* createMenuBar();
 	
 	static gboolean onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self);
+
+#ifdef WIN32
+	// Enables or disabled desktop composition, Windows-specific
+	void setDesktopCompositionEnabled(bool enabled);
+#endif
 };
 
 } // namespace ui
