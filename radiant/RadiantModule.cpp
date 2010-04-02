@@ -122,7 +122,6 @@ const StringSet& RadiantModule::getDependencies() const {
 	
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
@@ -142,9 +141,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
 	// Reset the node id count
   	scene::Node::resetIds();
   	
-    GlobalFiletypes().addType(
-    	"sound", "wav", FileTypePattern("PCM sound files", "*.wav"));
-
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
     GlobalCamera().construct();
