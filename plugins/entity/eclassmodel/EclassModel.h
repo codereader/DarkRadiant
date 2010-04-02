@@ -15,6 +15,7 @@
 #include "../NameKey.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
+#include "../KeyObserverDelegate.h"
 #include "transformlib.h"
 
 namespace entity {
@@ -39,6 +40,10 @@ class EclassModel :
 	RenderablePivot m_renderOrigin;
 
 	Callback m_transformChanged;
+
+	KeyObserverDelegate _rotationObserver;
+	KeyObserverDelegate _angleObserver;
+	KeyObserverDelegate _modelObserver;
 	
 public:
 	EclassModel(EclassModelNode& owner,
@@ -83,7 +88,6 @@ public:
 	typedef MemberCaller<EclassModel, &EclassModel::rotationChanged> RotationChangedCaller;
 	
 	void modelChanged(const std::string& value);
-	typedef MemberCaller1<EclassModel, const std::string&, &EclassModel::modelChanged> ModelChangedCaller;
 };
 
 } // namespace entity

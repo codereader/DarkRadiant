@@ -12,6 +12,7 @@
 #include "../VertexInstance.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
+#include "../KeyObserverDelegate.h"
 
 namespace entity {
 
@@ -40,6 +41,8 @@ class Doom3GroupNode :
 	mutable bool _updateSkin;
 
 	bool _instantiated;
+
+	KeyObserverDelegate _skinObserver;
 
 	// Private copy constructor, is invoked by clone()
 	Doom3GroupNode(const Doom3GroupNode& other);
@@ -104,7 +107,6 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	void skinChanged(const std::string& value);
-	typedef MemberCaller1<Doom3GroupNode, const std::string&, &Doom3GroupNode::skinChanged> SkinChangedCaller;
 
 	void transformComponents(const Matrix4& matrix);
 

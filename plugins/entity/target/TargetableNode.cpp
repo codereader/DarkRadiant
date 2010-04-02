@@ -36,7 +36,8 @@ void TargetableNode::targetsChanged() {
 }
 
 // Gets called as soon as the "name" keyvalue changes
-void TargetableNode::targetnameChanged(const std::string& name) {
+void TargetableNode::onKeyValueChanged(const std::string& name)
+{
 	// Check if we were registered before
 	if (!_targetName.empty()) {
 		// Old name is not empty
@@ -58,9 +59,10 @@ void TargetableNode::targetnameChanged(const std::string& name) {
 
 // Entity::Observer implementation, gets called on key insert
 void TargetableNode::onKeyInsert(const std::string& key, EntityKeyValue& value) {
-	if (key == "name") {
+	if (key == "name")
+	{
 		// Subscribe to this keyvalue to get notified about "name" changes
-		value.attach(TargetnameChangedCaller(*this));
+		value.attach(*this);
 	}
 }
 
@@ -68,7 +70,7 @@ void TargetableNode::onKeyInsert(const std::string& key, EntityKeyValue& value) 
 void TargetableNode::onKeyErase(const std::string& key, EntityKeyValue& value) {
 	if (key == "name") {
 		// Unsubscribe from this keyvalue
-		value.detach(TargetnameChangedCaller(*this));
+		value.detach(*this);
 	}
 }
 

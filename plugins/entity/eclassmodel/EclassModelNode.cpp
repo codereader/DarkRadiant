@@ -1,12 +1,15 @@
 #include "EclassModelNode.h"
 
+#include <boost/bind.hpp>
+
 namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(*this, Node::TransformChangedCaller(*this)),
 	_updateSkin(true),
-	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
+	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))
 {}
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
@@ -16,7 +19,8 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 				*this, 
 				Node::TransformChangedCaller(*this)),
 	_updateSkin(true),
-	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
+	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))
 {}
 
 EclassModelNode::~EclassModelNode() {
@@ -27,12 +31,12 @@ void EclassModelNode::construct()
 {
 	m_contained.construct();
 
-	addKeyObserver("skin", SkinChangedCaller(*this));
+	addKeyObserver("skin", _skinObserver);
 }
 
 void EclassModelNode::destroy()
 {
-	removeKeyObserver("skin", SkinChangedCaller(*this));
+	removeKeyObserver("skin", _skinObserver);
 }
 
 // Snappable implementation

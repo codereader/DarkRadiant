@@ -13,6 +13,7 @@
 #include "../origin.h"
 #include "../Doom3Entity.h"
 #include "../EntitySettings.h"
+#include "../KeyObserverDelegate.h"
 
 #include "SpeakerRenderables.h"
 
@@ -56,6 +57,10 @@ class Speaker :
 
 	Callback m_transformChanged;
 	Callback m_boundsChanged;
+
+	KeyObserverDelegate _radiusMinObserver;
+	KeyObserverDelegate _radiusMaxObserver;
+	KeyObserverDelegate _shaderObserver;
 
 public:
 	// Constructor
@@ -112,13 +117,8 @@ public:
 	typedef MemberCaller<Speaker, &Speaker::originChanged> OriginChangedCaller;
 
 	void sShaderChanged(const std::string& value);
-	typedef MemberCaller1<Speaker, const std::string&, &Speaker::sShaderChanged> sShaderChangedCaller;
-
 	void sMinChanged(const std::string& value);
-	typedef MemberCaller1<Speaker, const std::string&, &Speaker::sMinChanged> sMinChangedCaller;
-
 	void sMaxChanged(const std::string& value);
-	typedef MemberCaller1<Speaker, const std::string&, &Speaker::sMaxChanged> sMaxChangedCaller;
 };
 
 } // namespace entity

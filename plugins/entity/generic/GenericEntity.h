@@ -12,6 +12,7 @@
 #include "../angle.h"
 #include "../rotation.h"
 #include "../Doom3Entity.h"
+#include "../KeyObserverDelegate.h"
 #include "transformlib.h"
 
 #include "RenderableArrow.h"
@@ -56,6 +57,10 @@ class GenericEntity :
 	// TRUE if this entity's arrow can be rotated in all directions, 
 	// FALSE if the arrow is caught in the xy plane
 	bool _allow3Drotations;
+
+	KeyObserverDelegate _rotationObserver;
+	KeyObserverDelegate _angleObserver;
+
 public:
 	// Constructor
 	GenericEntity(GenericEntityNode& node, 

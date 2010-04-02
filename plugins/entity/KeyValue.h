@@ -16,7 +16,7 @@ class KeyValue :
 	public EntityKeyValue,
 	public UndoSystem::Observer
 {
-	typedef std::vector<KeyObserver> KeyObservers;
+	typedef std::vector<KeyObserver*> KeyObservers;
 	KeyObservers _observers;
 	
 	std::string _value;
@@ -31,11 +31,11 @@ public:
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
 
-	void attach(const KeyObserver& observer);
-	typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::attach> AttachCaller;
+	void attach(KeyObserver& observer);
+	typedef MemberCaller1<EntityKeyValue, KeyObserver&, &EntityKeyValue::attach> AttachCaller;
 	
-	void detach(const KeyObserver& observer);
-	typedef MemberCaller1<EntityKeyValue, const KeyObserver&, &EntityKeyValue::detach> DetachCaller;
+	void detach(KeyObserver& observer);
+	typedef MemberCaller1<EntityKeyValue, KeyObserver&, &EntityKeyValue::detach> DetachCaller;
 	
 	// Accessor method, retrieve the actual value
 	const std::string& get() const;

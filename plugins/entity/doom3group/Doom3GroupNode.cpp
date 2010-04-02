@@ -1,5 +1,6 @@
 #include "Doom3GroupNode.h"
 
+#include <boost/bind.hpp>
 #include "../curve/CurveControlPointFunctors.h"
 
 namespace entity {
@@ -17,7 +18,8 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
 	_updateSkin(true),
-	_instantiated(false)
+	_instantiated(false),
+	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
 {}
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
@@ -41,17 +43,19 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 					  SelectionChangedComponentCaller(*this)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
 	_updateSkin(true),
-	_instantiated(false)
+	_instantiated(false),
+	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
 }
 
-Doom3GroupNode::~Doom3GroupNode() {
+Doom3GroupNode::~Doom3GroupNode()
+{
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
 	m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
 
-	removeKeyObserver("skin", SkinChangedCaller(*this));
+	removeKeyObserver("skin", _skinObserver);
 
 	Callback cb;
 	m_contained.setTransformChanged(cb);
@@ -62,7 +66,7 @@ void Doom3GroupNode::construct()
 	m_contained.construct();
 
 	// Attach the callback as keyobserver for the skin key
-	addKeyObserver("skin", SkinChangedCaller(*this));
+	addKeyObserver("skin", _skinObserver);
 
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
 		CurveEditInstance::CurveChangedCaller(m_curveNURBS)

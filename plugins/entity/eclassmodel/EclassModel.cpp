@@ -3,6 +3,7 @@
 #include "iregistry.h"
 #include "EclassModelNode.h"
 #include "../EntitySettings.h"
+#include <boost/bind.hpp>
 
 namespace entity {
 
@@ -42,22 +43,26 @@ EclassModel::~EclassModel()
 
 void EclassModel::construct()
 {
+	_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
+	_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
+	_modelObserver.setCallback(boost::bind(&EclassModel::modelChanged, this, _1));
+
 	m_rotation.setIdentity();
 
-	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
-	_owner.addKeyObserver("model", ModelChangedCaller(*this));
+	_owner.addKeyObserver("angle", _angleObserver);
+	_owner.addKeyObserver("rotation", _rotationObserver);
+	_owner.addKeyObserver("origin", m_originKey);
+	_owner.addKeyObserver("model", _modelObserver);
 }
 
 void EclassModel::destroy()
 {
 	m_model.modelChanged("");
 
-	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
-	_owner.removeKeyObserver("model", ModelChangedCaller(*this));
+	_owner.removeKeyObserver("angle", _angleObserver);
+	_owner.removeKeyObserver("rotation", _rotationObserver);
+	_owner.removeKeyObserver("origin", m_originKey);
+	_owner.removeKeyObserver("model", _modelObserver);
 }
 
 void EclassModel::updateTransform()

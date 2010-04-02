@@ -1,12 +1,10 @@
 #ifndef _KEY_VALUE_OBSERVER_H_
 #define _KEY_VALUE_OBSERVER_H_
 
-#include <string>
+#include "ientity.h"
 #include <boost/shared_ptr.hpp>
-#include "generic/callback.h"
 
 class INamespace;
-class EntityKeyValue;
 
 namespace entity {
 
@@ -19,8 +17,10 @@ namespace entity {
  * observer relationship needs to be established between the KeyValue 
  * and the Namespace, which is what this class takes care of.
  */
-class KeyValueObserver
+class KeyValueObserver :
+	public KeyObserver
 {
+private:
 	EntityKeyValue& _keyValue;
 
 	// The namespace we're supposed to notify
@@ -37,13 +37,8 @@ public:
 
 	~KeyValueObserver();
 
-	// A callback compatible with the KeyObserver declaration in ientity.h
 	// This gets called when the observed KeyValue changes.
-	void onValueChange(const std::string& newValue);
-
-	// Define the callback, which is compatible to the KeyObserver definition
-	typedef MemberCaller1<KeyValueObserver, 
-		const std::string&, &KeyValueObserver::onValueChange> ValueChangeCallback;
+	void onKeyValueChanged(const std::string& newValue);
 };
 typedef boost::shared_ptr<KeyValueObserver> KeyValueObserverPtr;
 

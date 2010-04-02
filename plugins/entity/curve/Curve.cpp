@@ -146,7 +146,7 @@ void Curve::curveChanged() {
 	_curveChanged();
 }
 
-void Curve::curveKeyChanged(const std::string& value) {
+void Curve::onKeyValueChanged(const std::string& value) {
 	// Try to parse and check for validity
 	if (value.empty() || !parseCurve(value)) {
 		clearCurve();

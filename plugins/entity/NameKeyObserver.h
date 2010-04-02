@@ -1,12 +1,9 @@
 #ifndef _NAME_KEY_OBSERVER_H_
 #define _NAME_KEY_OBSERVER_H_
 
-#include <string>
-#include <boost/shared_ptr.hpp>
-#include "generic/callback.h"
+#include "ientity.h"
 
 class INamespace;
-class EntityKeyValue;
 
 namespace entity {
 
@@ -16,9 +13,11 @@ namespace entity {
  *
  * In Doom3, this is the "name" key only. As soon as such a key
  * changes, this class notifies the namespace about that event.
- */
-class NameKeyObserver
+*/
+class NameKeyObserver :
+	public KeyObserver
 {
+private:
 	EntityKeyValue& _keyValue;
 
 	// The old value, needs to be remembered to notify the namespace
@@ -32,13 +31,8 @@ public:
 
 	~NameKeyObserver();
 
-	// A callback compatible with the KeyObserver declaration in ientity.h
 	// This gets called when the observed KeyValue changes.
-	void onNameChange(const std::string& newValue);
-
-	// Define the callback, which is compatible to the KeyObserver definition
-	typedef MemberCaller1<NameKeyObserver, 
-		const std::string&, &NameKeyObserver::onNameChange> NameChangeCallback;
+	void onKeyValueChanged(const std::string& newValue);
 };
 typedef boost::shared_ptr<NameKeyObserver> NameKeyObserverPtr;
 

@@ -47,7 +47,7 @@ class KeyObserverMap :
 	public Entity::Observer
 {
 	// A map using case-insensitive comparison
-	typedef std::multimap<std::string, KeyObserver, CaseInsensitiveKeyCompare> KeyObservers;
+	typedef std::multimap<std::string, KeyObserver*, CaseInsensitiveKeyCompare> KeyObservers;
 	KeyObservers _keyObservers;
 
 	// The observed entity
@@ -70,9 +70,9 @@ public:
 	 * greebo: This registers a key for observation. As soon as the key gets inserted in the
 	 * entity's spawnargs, the given observer is attached to the entity's keyvalue.
 	 */
-	void insert(const std::string& key, const KeyObserver& observer)
+	void insert(const std::string& key, KeyObserver& observer)
 	{
-		_keyObservers.insert(KeyObservers::value_type(key, observer));
+		_keyObservers.insert(KeyObservers::value_type(key, &observer));
 
 		// Check if the entity already has such a (non-inherited) spawnarg
 		EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key);
@@ -84,16 +84,16 @@ public:
 		}
 
 		// Call the observer right now with the current keyvalue as argument
-		observer(_entity.getKeyValue(key));
+		observer.onKeyValueChanged(_entity.getKeyValue(key));
 	}
 
-	void erase(const std::string& key, const KeyObserver& observer)
+	void erase(const std::string& key, KeyObserver& observer)
 	{
 		for (KeyObservers::iterator i = _keyObservers.find(key); 
 			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
 			 /* in-loop increment */)
 		{
-			if (i->second == observer)
+			if (i->second == &observer)
 			{
 				_keyObservers.erase(i++);
 			}
@@ -110,7 +110,7 @@ public:
 			i != _keyObservers.end(); ++i)
 		{
 			// Call the observer once again with the entity value
-			i->second(_entity.getKeyValue(i->first));
+			i->second->onKeyValueChanged(_entity.getKeyValue(i->first));
 		}
 	}
 	
@@ -121,7 +121,7 @@ public:
 			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
 			 ++i)
 		{
-			value.attach(i->second);
+			value.attach(*i->second);
 		}
 	}
 	
@@ -132,7 +132,7 @@ public:
 			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
 			 ++i)
 		{
-			value.detach(i->second);
+			value.detach(*i->second);
 		}
 	}
 };

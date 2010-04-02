@@ -4,23 +4,27 @@
 
 namespace entity {
 
-const TargetPtr& TargetKey::getTarget() const {
+const TargetPtr& TargetKey::getTarget() const
+{
 	return _target;
 }
 
-void TargetKey::attachToKeyValue(EntityKeyValue& value) {
+void TargetKey::attachToKeyValue(EntityKeyValue& value)
+{
 	// Observe this entity keyvalue
-	value.attach(TargetChangedCaller(*this));
+	value.attach(*this);
 }
 
-void TargetKey::detachFromKeyValue(EntityKeyValue& value) {
+void TargetKey::detachFromKeyValue(EntityKeyValue& value)
+{
 	// Stop observing this KeyValue
-	value.detach(TargetChangedCaller(*this));
+	value.detach(*this);
 }
 
-void TargetKey::targetChanged(const std::string& target) {
+void TargetKey::onKeyValueChanged(const std::string& newValue)
+{
 	// Acquire the Target object (will be created if nonexistent)
-	_target = TargetManager::Instance().getTarget(target);
+	_target = TargetManager::Instance().getTarget(newValue);
 }
 
 } // namespace entity

@@ -15,7 +15,8 @@ namespace entity {
  * 			Both curve types share a set of methods, that's why I though
  * 			it makes sense to move them here.
  */
-class Curve
+class Curve :
+	public KeyObserver
 {
 public:
 	// A list of iterators, used for communication with the CurveEditInstance
@@ -49,8 +50,7 @@ public:
 	virtual void tesselate() = 0;
 	
 	// This gets called when the entity keyvalue changes 
-	void curveKeyChanged(const std::string& value);
-	typedef MemberCaller1<Curve, const std::string&, &Curve::curveKeyChanged> CurveChangedCaller;
+	void onKeyValueChanged(const std::string& value);
 	
 	// Appens <numPoints> elements at the end of the control point list
 	virtual void appendControlPoints(unsigned int numPoints);

@@ -12,16 +12,16 @@ NameKeyObserver::NameKeyObserver(EntityKeyValue& keyValue, INamespace* ns) :
 	assert(_namespace != NULL);
 
 	_oldValue = keyValue.get();
-	_keyValue.attach(NameChangeCallback(*this));
+	_keyValue.attach(*this);
 }
 
-NameKeyObserver::~NameKeyObserver() {
-	_keyValue.detach(NameChangeCallback(*this));
+NameKeyObserver::~NameKeyObserver()
+{
+	_keyValue.detach(*this);
 }
 
-// A callback compatible with the KeyObserver declaration in ientity.h
-// This gets called when the observed KeyValue changes.
-void NameKeyObserver::onNameChange(const std::string& newValue) {
+void NameKeyObserver::onKeyValueChanged(const std::string& newValue)
+{
 	assert(_namespace != NULL);
 
 	if (!newValue.empty()) {
