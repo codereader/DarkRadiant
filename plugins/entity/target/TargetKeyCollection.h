@@ -3,6 +3,7 @@
 
 #include <map>
 #include "TargetKey.h"
+#include "generic/callback.h"
 
 namespace entity {
 

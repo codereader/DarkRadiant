@@ -6,6 +6,7 @@
 
 #include "../EntitySettings.h"
 #include "GenericEntityNode.h"
+#include <boost/bind.hpp>
 
 namespace entity {
 
@@ -146,7 +147,8 @@ void GenericEntity::freezeTransform() {
 	}
 }
 
-void GenericEntity::construct() {
+void GenericEntity::construct()
+{
 	m_aabb_local = m_entity.getEntityClass()->getBounds();
 	m_ray.origin = m_aabb_local.getOrigin();
 	m_ray.direction = Vector3(1, 0, 0);
@@ -154,17 +156,22 @@ void GenericEntity::construct() {
 
 	if (!_allow3Drotations)
 	{
+		_angleObserver.setCallback(boost::bind(&AngleKey::angleChanged, &m_angleKey, _1));
+
 		// Ordinary rotation (2D around z axis), use angle key observer
-		_owner.addKeyObserver("angle", AngleKey::AngleChangedCaller(m_angleKey));
+		_owner.addKeyObserver("angle", _angleObserver);
 	}
 	else
 	{
+		_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
+		_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
+
 		// Full 3D rotations allowed, observe both keys using the rotation key observer
-		_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-		_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+		_owner.addKeyObserver("angle", _angleObserver);
+		_owner.addKeyObserver("rotation", _rotationObserver);
 	}
 
-	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.addKeyObserver("origin", m_originKey);
 }
 
 void GenericEntity::destroy()
@@ -172,16 +179,16 @@ void GenericEntity::destroy()
 	if (!_allow3Drotations)
 	{
 		// Ordinary rotation (2D around z axis), use angle key observer
-		_owner.removeKeyObserver("angle", AngleKey::AngleChangedCaller(m_angleKey));
+		_owner.removeKeyObserver("angle", _angleObserver);
 	}
 	else
 	{
 		// Full 3D rotations allowed, observe both keys using the rotation key observer
-		_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-		_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
+		_owner.removeKeyObserver("angle", _angleObserver);
+		_owner.removeKeyObserver("rotation", _rotationObserver);
 	}
 
-	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.removeKeyObserver("origin", m_originKey);
 }
 
 void GenericEntity::updateTransform()

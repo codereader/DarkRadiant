@@ -22,18 +22,19 @@ void KeyValue::instanceDetach(MapFile* map) {
 	_undo.instanceDetach(map);
 }
 
-void KeyValue::attach(const KeyObserver& observer) {
+void KeyValue::attach(KeyObserver& observer) {
 	// Store the observer
-	_observers.push_back(observer);
+	_observers.push_back(&observer);
 	
 	// Notify the newly inserted observer with the existing value
-	_observers.back()(get());
+	observer.onKeyValueChanged(get());
 }
 
-void KeyValue::detach(const KeyObserver& observer) {
-	observer(_emptyValue);
+void KeyValue::detach(KeyObserver& observer)
+{
+	observer.onKeyValueChanged(_emptyValue);
 	
-	KeyObservers::iterator found = std::find(_observers.begin(), _observers.end(), observer);
+	KeyObservers::iterator found = std::find(_observers.begin(), _observers.end(), &observer);
 	if (found != _observers.end()) {
 		_observers.erase(found);
 	}
@@ -59,7 +60,7 @@ void KeyValue::notify()
 
 	KeyObservers::reverse_iterator i = _observers.rbegin();
 	while(i != _observers.rend()) {
-		(*i++)(value);
+		(*i++)->onKeyValueChanged(value);
 	}
 }
 

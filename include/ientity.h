@@ -26,13 +26,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ipath.h"
 #include "imodule.h"
 #include "inameobserver.h"
-#include "generic/callbackfwd.h"
 
 class IEntityClass;
 typedef boost::shared_ptr<IEntityClass> IEntityClassPtr;
 typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
-typedef Callback1<const std::string&> KeyObserver;
+// Observes a single entity key value and gets notified on change
+class KeyObserver
+{
+public:
+	/**
+	 * This event gets called when the observed keyvalue changes.
+	 * The new value is passed as argument, which can be an empty string.
+	 */
+	virtual void onKeyValueChanged(const std::string& newValue) = 0;
+};
 
 class EntityKeyValue :
 	public NameObserver
@@ -50,8 +58,8 @@ public:
 	/** greebo: Attaches/detaches a callback to get notified about
 	 * 			the key change.
 	 */
-	virtual void attach(const KeyObserver& observer) = 0;
-	virtual void detach(const KeyObserver& observer) = 0;
+	virtual void attach(KeyObserver& observer) = 0;
+	virtual void detach(KeyObserver& observer) = 0;
 };
 typedef boost::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 

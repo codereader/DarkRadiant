@@ -2,7 +2,6 @@
 #define _ENTITY_TARGETKEY_H_
 
 #include "ientity.h"
-#include "generic/callback.h"
 
 #include "Target.h"
 
@@ -19,8 +18,10 @@ namespace entity {
  *
  * Note: Each TargetKey instance can only refer to one Target.
  */ 
-class TargetKey
+class TargetKey :
+	public KeyObserver
 {
+private:
 	// The target this key is pointing to (can be empty)
 	TargetPtr _target;
 public:
@@ -34,9 +35,7 @@ public:
 	void detachFromKeyValue(EntityKeyValue& value);
 
 	// This gets called as soon as the "target" key in the spawnargs changes
-	void targetChanged(const std::string& target);
-	// Shortcut typedef
-	typedef MemberCaller1<TargetKey, const std::string&, &TargetKey::targetChanged> TargetChangedCaller;
+	void onKeyValueChanged(const std::string& newValue);
 };
 
 } // namespace entity

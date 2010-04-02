@@ -462,6 +462,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\entity\KeyObserverDelegate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\entity\KeyObserverMap.h"
 				>
 			</File>

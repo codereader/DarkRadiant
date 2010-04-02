@@ -209,14 +209,12 @@ public:
 		m_rotation.setFromAngleString(value);
 		m_rotationChanged();
 	}
-	typedef MemberCaller1<RotationKey, const std::string&, &RotationKey::angleChanged> AngleChangedCaller;
 
 	void rotationChanged(const std::string& value)
 	{
 		m_rotation.readFromString(value);
 		m_rotationChanged();
 	}
-	typedef MemberCaller1<RotationKey, const std::string&, &RotationKey::rotationChanged> RotationChangedCaller;
 
 	void write(Entity* entity, bool isModel = false) const
 	{

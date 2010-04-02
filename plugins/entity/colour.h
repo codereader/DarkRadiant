@@ -34,8 +34,10 @@ namespace entity
  * greebo: this is a class encapsulating the "_color" spawnarg
  * of entity, observing it and maintaining the corresponding shader.
  */
-class Colour
+class Colour :
+	public KeyObserver
 {
+private:
 	Callback _colourChanged;
 	ShaderPtr _wireShader;
 
@@ -49,7 +51,8 @@ public:
 		captureShader();
 	}
 
-	void colourChanged(const std::string& value)
+	// Called when "_color" keyvalue changes
+	void onKeyValueChanged(const std::string& value)
 	{
 		// Initialise the colour with white, in case the string parse fails
 		m_colour[0] = m_colour[1] = m_colour[2] = 1;
@@ -65,7 +68,6 @@ public:
 		captureShader();
 		_colourChanged();
 	}
-	typedef MemberCaller1<Colour, const std::string&, &Colour::colourChanged> ColourChangedCaller;
 
 	const ShaderPtr& getWireShader() const
 	{

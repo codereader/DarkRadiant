@@ -13,6 +13,7 @@
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
+#include "../KeyObserverDelegate.h"
 #include "scene/TraversableNodeSet.h"
 #include "transformlib.h"
 
@@ -59,6 +60,11 @@ class Doom3Group
 
 	// A matrix transforming local entity coordinates to world coordinates
 	Matrix4 _originToWorld;
+
+	KeyObserverDelegate _rotationObserver;
+	KeyObserverDelegate _angleObserver;
+	KeyObserverDelegate _modelObserver;
+	KeyObserverDelegate _nameObserver;
 
 public:
 	CurveNURBS m_curveNURBS;
@@ -143,10 +149,7 @@ private:
 public:
 
 	void nameChanged(const std::string& value);
-	typedef MemberCaller1<Doom3Group, const std::string&, &Doom3Group::nameChanged> NameChangedCaller;
-
 	void modelChanged(const std::string& value);
-	typedef MemberCaller1<Doom3Group, const std::string&, &Doom3Group::modelChanged> ModelChangedCaller;
 
 	void updateTransform();
 	typedef MemberCaller<Doom3Group, &Doom3Group::updateTransform> UpdateTransformCaller;

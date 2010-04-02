@@ -4,6 +4,7 @@
 #include "igrid.h"
 #include "Doom3LightRadius.h"
 #include "LightShader.h"
+#include <boost/bind.hpp>
 #include "../EntitySettings.h"
 
 #include "LightNode.h"
@@ -123,7 +124,8 @@ Light::~Light()
  * of the key/values are changed. 
  * Note, that the entity key/values are still empty at the point where this method is called.
  */
-void Light::construct() {
+void Light::construct()
+{
 	_colourLightTarget = Vector3(255,255,0);
 	_colourLightUp = Vector3(255,0,255);
 	_colourLightRight = Vector3(255,0,255);
@@ -135,20 +137,35 @@ void Light::construct() {
 	_lightBox.extents = Vector3(8, 8, 8);
 	_originTransformed = ORIGINKEY_IDENTITY;
 
-	_owner.addKeyObserver("_color", Colour::ColourChangedCaller(m_colour));
-	_owner.addKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
+	_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
+	_modelObserver.setCallback(boost::bind(&ModelKey::modelChanged, &_modelKey, _1));
 
-	_owner.addKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	_owner.addKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	_owner.addKeyObserver("light_radius", Doom3LightRadius::LightRadiusChangedCaller(m_doom3Radius));
-	_owner.addKeyObserver("light_center", Doom3LightRadius::LightCenterChangedCaller(m_doom3Radius));
-	_owner.addKeyObserver("light_rotation", Light::LightRotationChangedCaller(*this));
-	_owner.addKeyObserver("light_target", Light::LightTargetChangedCaller(*this));
-	_owner.addKeyObserver("light_up", Light::LightUpChangedCaller(*this));
-	_owner.addKeyObserver("light_right", Light::LightRightChangedCaller(*this));
-	_owner.addKeyObserver("light_start", Light::LightStartChangedCaller(*this));
-	_owner.addKeyObserver("light_end", Light::LightEndChangedCaller(*this));
-	_owner.addKeyObserver("texture", LightShader::ValueChangedCaller(m_shader));
+	_lightRadiusObserver.setCallback(boost::bind(&Doom3LightRadius::lightRadiusChanged, &m_doom3Radius, _1));
+	_lightCenterObserver.setCallback(boost::bind(&Doom3LightRadius::lightCenterChanged, &m_doom3Radius, _1));
+	_lightRotationObserver.setCallback(boost::bind(&Light::lightRotationChanged, this, _1));
+	_lightTargetObserver.setCallback(boost::bind(&Light::lightTargetChanged, this, _1));
+	_lightUpObserver.setCallback(boost::bind(&Light::lightUpChanged, this, _1));
+	_lightRightObserver.setCallback(boost::bind(&Light::lightRightChanged, this, _1));
+	_lightStartObserver.setCallback(boost::bind(&Light::lightStartChanged, this, _1));
+	_lightEndObserver.setCallback(boost::bind(&Light::lightEndChanged, this, _1));
+	_lightTextureObserver.setCallback(boost::bind(&LightShader::valueChanged, &m_shader, _1));
+
+	_owner.addKeyObserver("_color", m_colour);
+	_owner.addKeyObserver("origin", m_originKey);
+
+	_owner.addKeyObserver("angle", _angleObserver);
+	_owner.addKeyObserver("rotation", _rotationObserver);
+	_owner.addKeyObserver("light_radius", _lightRadiusObserver);
+	_owner.addKeyObserver("light_center", _lightCenterObserver);
+	_owner.addKeyObserver("light_rotation", _lightRotationObserver);
+	_owner.addKeyObserver("light_target", _lightTargetObserver);
+	_owner.addKeyObserver("light_up", _lightUpObserver);
+	_owner.addKeyObserver("light_right", _lightRightObserver);
+	_owner.addKeyObserver("light_start", _lightStartObserver);
+	_owner.addKeyObserver("light_end", _lightEndObserver);
+	_owner.addKeyObserver("texture", _lightTextureObserver);
+
 	m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 	m_doom3ProjectionChanged = true;
 
@@ -158,32 +175,33 @@ void Light::construct() {
 	_entity.setIsContainer(true);
 
 	// Load the light colour (might be inherited)
-	m_colour.colourChanged(_entity.getKeyValue("_color"));
+	m_colour.onKeyValueChanged(_entity.getKeyValue("_color"));
 	m_shader.valueChanged(_entity.getKeyValue("texture"));
 
 	// Hook the "model" spawnarg to the ModelKey class
-	_owner.addKeyObserver("model", ModelKey::ModelChangedCaller(_modelKey));
+	_owner.addKeyObserver("model", _modelObserver);
 }
 
 void Light::destroy()
 {
-	_owner.removeKeyObserver("_color", Colour::ColourChangedCaller(m_colour));
-	_owner.removeKeyObserver("origin", OriginKey::OriginChangedCaller(m_originKey));
+	_owner.removeKeyObserver("_color", m_colour);
+	_owner.removeKeyObserver("origin", m_originKey);
 
-	_owner.removeKeyObserver("angle", RotationKey::AngleChangedCaller(m_rotationKey));
-	_owner.removeKeyObserver("rotation", RotationKey::RotationChangedCaller(m_rotationKey));
-	_owner.removeKeyObserver("light_radius", Doom3LightRadius::LightRadiusChangedCaller(m_doom3Radius));
-	_owner.removeKeyObserver("light_center", Doom3LightRadius::LightCenterChangedCaller(m_doom3Radius));
-	_owner.removeKeyObserver("light_rotation", Light::LightRotationChangedCaller(*this));
-	_owner.removeKeyObserver("light_target", Light::LightTargetChangedCaller(*this));
-	_owner.removeKeyObserver("light_up", Light::LightUpChangedCaller(*this));
-	_owner.removeKeyObserver("light_right", Light::LightRightChangedCaller(*this));
-	_owner.removeKeyObserver("light_start", Light::LightStartChangedCaller(*this));
-	_owner.removeKeyObserver("light_end", Light::LightEndChangedCaller(*this));
-	_owner.removeKeyObserver("texture", LightShader::ValueChangedCaller(m_shader));
+	_owner.removeKeyObserver("angle", _angleObserver);
+	_owner.removeKeyObserver("rotation", _rotationObserver);
+
+	_owner.removeKeyObserver("light_radius", _lightRadiusObserver);
+	_owner.removeKeyObserver("light_center", _lightCenterObserver);
+	_owner.removeKeyObserver("light_rotation", _lightRotationObserver);
+	_owner.removeKeyObserver("light_target", _lightTargetObserver);
+	_owner.removeKeyObserver("light_up", _lightUpObserver);
+	_owner.removeKeyObserver("light_right", _lightRightObserver);
+	_owner.removeKeyObserver("light_start", _lightStartObserver);
+	_owner.removeKeyObserver("light_end", _lightEndObserver);
+	_owner.removeKeyObserver("texture", _lightTextureObserver);
 
 	// Hook the "model" spawnarg to the ModelKey class
-	_owner.removeKeyObserver("model", ModelKey::ModelChangedCaller(_modelKey));
+	_owner.removeKeyObserver("model", _modelObserver);
 }
 
 void Light::updateOrigin() {

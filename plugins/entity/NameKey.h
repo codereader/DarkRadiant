@@ -23,14 +23,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_NAMEDENTITY_H
 
 #include "entitylib.h"
-#include "generic/callback.h"
+
 #include "nameable.h"
 #include "Doom3Entity.h"
 
 namespace entity {
 
-class NameKey
+class NameKey :
+	public KeyObserver
 {
+private:
 	// The reference to the spawnarg structure
 	Doom3Entity& m_entity;
 
@@ -42,7 +44,7 @@ public:
 		m_entity(entity)
 	{}
 
-	std::string name() const
+	const std::string& name() const
 	{
 		if (_name.empty()) {
 			return m_entity.getEntityClass()->getName();
@@ -50,11 +52,10 @@ public:
 		return _name;
 	}
 
-	void nameChanged(const std::string& value)
+	void onKeyValueChanged(const std::string& value)
 	{
 		_name = value;
 	}
-	typedef MemberCaller1<NameKey, const std::string&, &NameKey::nameChanged> NameChangedCaller;
 };
 
 class RenderableNameKey : 

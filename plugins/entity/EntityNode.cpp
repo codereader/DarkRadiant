@@ -49,24 +49,24 @@ void EntityNode::construct()
 
 	TargetableNode::construct();
 
-	addKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
+	addKeyObserver("name", _nameKey);
 }
 
 void EntityNode::destruct()
 {
-	removeKeyObserver("name", NameKey::NameChangedCaller(_nameKey));
+	removeKeyObserver("name", _nameKey);
 
 	TargetableNode::destruct();
 
 	_eclass->removeObserver(this);
 }
 
-void EntityNode::addKeyObserver(const std::string& key, const KeyObserver& observer)
+void EntityNode::addKeyObserver(const std::string& key, KeyObserver& observer)
 {
 	_keyObservers.insert(key, observer);
 }
 
-void EntityNode::removeKeyObserver(const std::string& key, const KeyObserver& observer)
+void EntityNode::removeKeyObserver(const std::string& key, KeyObserver& observer)
 {
 	_keyObservers.erase(key, observer);
 }

@@ -20,7 +20,9 @@ namespace entity {
  * the change, so that the name can be associated with a Target object.
  */
 class TargetableNode :
-	public Entity::Observer
+	public Entity::Observer,
+	public KeyObserver,
+	public boost::enable_shared_from_this<TargetableNode>
 {
 	mutable Vertex3f m_position;
 	Doom3Entity& _d3entity;
@@ -45,8 +47,7 @@ public:
 	void targetsChanged();
 
 	// Gets called as soon as the "name" keyvalue changes
-	void targetnameChanged(const std::string& name);
-	typedef MemberCaller1<TargetableNode, const std::string&, &TargetableNode::targetnameChanged> TargetnameChangedCaller;
+	void onKeyValueChanged(const std::string& name);
 
 	// Entity::Observer implementation, gets called on key insert
 	void onKeyInsert(const std::string& key, EntityKeyValue& value);

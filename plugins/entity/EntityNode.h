@@ -87,8 +87,8 @@ public:
 	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	// Adds/removes the keyobserver to/from the KeyObserverMap
-	void addKeyObserver(const std::string& key, const KeyObserver& observer);
-	void removeKeyObserver(const std::string& key, const KeyObserver& observer);
+	void addKeyObserver(const std::string& key, KeyObserver& observer);
+	void removeKeyObserver(const std::string& key, KeyObserver& observer);
 
 	virtual void OnEClassReload();
 
