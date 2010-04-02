@@ -47,8 +47,8 @@ public:
 	virtual ui::IModelPreviewPtr createModelPreview() = 0;
 
 	// Registers/de-registers an event listener class
-	virtual void addEventListener(RadiantEventListenerPtr listener) = 0;
-	virtual void removeEventListener(RadiantEventListenerPtr listener) = 0;
+	virtual void addEventListener(const RadiantEventListenerPtr& listener) = 0;
+	virtual void removeEventListener(const RadiantEventListenerPtr& listener) = 0;
 };
 
 inline IRadiant& GlobalRadiant() {
