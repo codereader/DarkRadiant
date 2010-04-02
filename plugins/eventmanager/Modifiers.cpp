@@ -84,7 +84,7 @@ unsigned int Modifiers::getModifierFlags(const std::string& modifierStr) {
 	}
 }
 
-GdkModifierType Modifiers::getGdkModifierType(const unsigned int& modifierFlags) {
+GdkModifierType Modifiers::getGdkModifierType(const unsigned int modifierFlags) {
 	unsigned int returnValue = 0;
 	
 	if ((modifierFlags & (1 << getModifierBitIndex("CONTROL"))) != 0) {
@@ -114,7 +114,7 @@ int Modifiers::getModifierBitIndex(const std::string& modifierName) {
 }
 
 // Returns a bit field with the according modifier flags set 
-unsigned int Modifiers::getKeyboardFlags(const unsigned int& state) {
+unsigned int Modifiers::getKeyboardFlags(const unsigned int state) {
 	unsigned int returnValue = 0;
 	
 	if ((state & GDK_CONTROL_MASK) != 0) {
@@ -133,7 +133,7 @@ unsigned int Modifiers::getKeyboardFlags(const unsigned int& state) {
 }
 
 // Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL") 
-std::string Modifiers::getModifierStr(const unsigned int& modifierFlags, bool forMenu) {
+std::string Modifiers::getModifierStr(const unsigned int modifierFlags, bool forMenu) {
 	std::string returnValue = "";
 	
 	const std::string controlStr = (forMenu) ? "Ctrl" : "CONTROL";

@@ -168,7 +168,8 @@ IEventPtr EventManager::findEvent(GdkEventKey* event) {
 	}
 }
 
-std::string EventManager::getEventName(IEventPtr event) {
+std::string EventManager::getEventName(const IEventPtr& event)
+{
 	// Try to lookup the given eventptr
 	for (EventMap::iterator i = _events.begin(); i != _events.end(); i++) {
 		if (i->second == event) {
@@ -179,7 +180,7 @@ std::string EventManager::getEventName(IEventPtr event) {
 	return "";
 }
 
-std::string EventManager::getAcceleratorStr(const IEventPtr event, bool forMenu) {
+std::string EventManager::getAcceleratorStr(const IEventPtr& event, bool forMenu) {
 	std::string returnValue = "";
 	
 	IAccelerator& accelerator = findAccelerator(event);
@@ -501,7 +502,7 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor) {
 }
 
 // Tries to locate an accelerator, that is connected to the given command
-IAccelerator& EventManager::findAccelerator(const IEventPtr event) {
+IAccelerator& EventManager::findAccelerator(const IEventPtr& event) {
 	// Cycle through the accelerators and check for matches
 	for (AcceleratorList::iterator i = _accelerators.begin(); i != _accelerators.end(); i++) {
 		if (i->match(event)) {
@@ -515,7 +516,7 @@ IAccelerator& EventManager::findAccelerator(const IEventPtr event) {
 }
 
 // Returns the string representation of the given modifier flags 
-std::string EventManager::getModifierStr(const unsigned int& modifierFlags, bool forMenu) {
+std::string EventManager::getModifierStr(const unsigned int modifierFlags, bool forMenu) {
 	// Pass the call to the modifiers helper class
 	return _modifiers.getModifierStr(modifierFlags, forMenu);
 }
@@ -543,7 +544,10 @@ EventManager::AcceleratorList EventManager::findAccelerator(
 	return findAccelerator(keyVal, modifierFlags);
 }
 
-bool EventManager::duplicateAccelerator(const std::string& key, const std::string& modifiers, IEventPtr event) {
+bool EventManager::duplicateAccelerator(const std::string& key, 
+										const std::string& modifiers, 
+										const IEventPtr& event)
+{
 	AcceleratorList accelList = findAccelerator(key, modifiers);
 	
 	for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); i++) {
@@ -556,8 +560,8 @@ bool EventManager::duplicateAccelerator(const std::string& key, const std::strin
 	return false;
 }
 
-EventManager::AcceleratorList EventManager::findAccelerator(
-	const guint& keyVal, const unsigned int& modifierFlags)
+EventManager::AcceleratorList EventManager::findAccelerator(guint keyVal, 
+															const unsigned int modifierFlags)
 {
 	AcceleratorList returnList;
 	

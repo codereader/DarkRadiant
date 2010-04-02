@@ -21,7 +21,7 @@ public:
 		_listStore(listStore)
 	{}
 
-	void visit(const std::string& eventName, IEventPtr event) {
+	void visit(const std::string& eventName, const IEventPtr& event) {
 		GtkTreeIter iter;
 		
 		// Allocate a new list store element and store its pointer into <iter>

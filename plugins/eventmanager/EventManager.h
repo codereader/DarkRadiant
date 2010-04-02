@@ -80,9 +80,9 @@ public:
 	IEventPtr findEvent(const std::string& name);
 	IEventPtr findEvent(GdkEventKey* event);
 	
-	std::string getEventName(IEventPtr event);
+	std::string getEventName(const IEventPtr& event);
 	
-	std::string getAcceleratorStr(const IEventPtr event, bool forMenu);
+	std::string getAcceleratorStr(const IEventPtr& event, bool forMenu);
 	
 	// Checks if the eventName is already registered and writes to globalOutputStream, if so 
 	bool alreadyRegistered(const std::string& eventName);
@@ -137,10 +137,10 @@ public:
 	void foreachEvent(IEventVisitor& eventVisitor);
 	
 	// Tries to locate an accelerator, that is connected to the given command
-	IAccelerator& findAccelerator(const IEventPtr event);
+	IAccelerator& findAccelerator(const IEventPtr& event);
 
 	// Returns the string representation of the given modifier flags 
-	std::string getModifierStr(const unsigned int& modifierFlags, bool forMenu = false);
+	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
 
 	unsigned int getModifierState();
 
@@ -150,9 +150,9 @@ private:
 
 	AcceleratorList findAccelerator(const std::string& key, const std::string& modifierStr);
 
-	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, IEventPtr event);
+	bool duplicateAccelerator(const std::string& key, const std::string& modifiers, const IEventPtr& event);
 
-	AcceleratorList findAccelerator(const guint& keyVal, const unsigned int& modifierFlags);
+	AcceleratorList findAccelerator(guint keyVal, const unsigned int modifierFlags);
 
 	// Returns the pointer to the accelerator for the given GdkEvent, but convert the key to uppercase before passing it
 	AcceleratorList findAccelerator(GdkEventKey* event);

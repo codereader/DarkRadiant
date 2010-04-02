@@ -63,14 +63,14 @@ public:
 
 	// Return the ObserverEvent type for a given GdkEventButton
 	ui::ObserverEvent getObserverEvent(GdkEventButton* event);
-	ui::ObserverEvent getObserverEvent(const unsigned int& state);
+	ui::ObserverEvent getObserverEvent(const unsigned int state);
 
 	// Return the current XYView event for a GdkEventMotion state or an GdkEventButton
 	ui::XYViewEvent getXYViewEvent(GdkEventButton* event);
-	ui::XYViewEvent getXYViewEvent(const unsigned int& state);
+	ui::XYViewEvent getXYViewEvent(const unsigned int state);
 	
 	bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, GdkEventButton* event);
-	bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int& state);
+	bool stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int state);
 	
 	bool stateMatchesObserverEvent(const ui::ObserverEvent& observerEvent, GdkEventButton* event);
 	
@@ -81,8 +81,8 @@ public:
 	
 	float getCameraStrafeSpeed();
 	float getCameraForwardStrafeFactor();
-	bool strafeActive(unsigned int& state);
-	bool strafeForwardActive(unsigned int& state);
+	bool strafeActive(unsigned int state);
+	bool strafeForwardActive(unsigned int state);
 	
 	// Updates the status text with the according mouse event state
 	void updateStatusText(GdkEventKey* event);
@@ -105,17 +105,17 @@ private:
 	unsigned int getButtonId(const std::string& buttonName);
 	
 	// Translates a GTK event->state bitfield and returns it
-	unsigned int getButtonFlags(const unsigned int& state);
+	unsigned int getButtonFlags(const unsigned int state);
 	
 	// Looks up if the given <button> and <modifierState> matches any conditions
-	ui::XYViewEvent findXYViewEvent(const unsigned int& button, const unsigned int& modifierFlags);
-	ui::ObserverEvent findObserverEvent(const unsigned int& button, const unsigned int& modifierFlags);
-	ui::CamViewEvent findCameraViewEvent(const unsigned int& button, const unsigned int& modifierFlags);
+	ui::XYViewEvent findXYViewEvent(const unsigned int button, const unsigned int modifierFlags);
+	ui::ObserverEvent findObserverEvent(const unsigned int button, const unsigned int modifierFlags);
+	ui::CamViewEvent findCameraViewEvent(const unsigned int button, const unsigned int modifierFlags);
 	
 	// Looks up if the given <button> and <modifierState> and returns true if the given <xyViewEvent> matches
-	bool matchXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int& button, const unsigned int& modifierFlags);
-	bool matchObserverEvent(const ui::ObserverEvent& observerEvent, const unsigned int& button, const unsigned int& modifierFlags);
-	bool matchCameraViewEvent(const ui::CamViewEvent& camViewEvent, const unsigned int& button, const unsigned int& modifierFlags);
+	bool matchXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int button, const unsigned int modifierFlags);
+	bool matchObserverEvent(const ui::ObserverEvent& observerEvent, const unsigned int button, const unsigned int modifierFlags);
+	bool matchCameraViewEvent(const ui::CamViewEvent& camViewEvent, const unsigned int button, const unsigned int modifierFlags);
 }; // class MouseEvents
 
 #endif /*MOUSEEVENTS_H_*/
