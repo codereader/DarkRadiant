@@ -34,17 +34,17 @@ public:
 	
 	unsigned int getModifierFlags(const std::string& modifierStr);
 	
-	GdkModifierType getGdkModifierType(const unsigned int& modifierFlags);
+	GdkModifierType getGdkModifierType(const unsigned int modifierFlags);
 
 	// Returns the bit index of the given modifier name argument ("SHIFT")
 	// @returns: -1, if not matching name is found (warning to globalOutput is written)
 	int getModifierBitIndex(const std::string& modifierName);
 	
 	// Returns a bit field with the according modifier flags set for the given GDK event->state 
-	unsigned int getKeyboardFlags(const unsigned int& state);
+	unsigned int getKeyboardFlags(const unsigned int state);
 	
 	// Returns a string for the given modifier flags set (e.g. "SHIFT+CONTROL") 
-	std::string getModifierStr(const unsigned int& modifierFlags, bool forMenu = false);
+	std::string getModifierStr(const unsigned int modifierFlags, bool forMenu = false);
 	
 	/** greebo: Retrieves the current modifier mask
 	 */

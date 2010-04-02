@@ -26,7 +26,7 @@ class Accelerator :
 
 public:
 	// Construct an accelerator out of the key/modifier plus a command
-	Accelerator(const unsigned int& key, const unsigned int& modifiers, IEventPtr event);
+	Accelerator(const unsigned int key, const unsigned int modifiers, const IEventPtr& event);
 	
 	// Copy Constructor
 	Accelerator(const Accelerator& other);
@@ -35,21 +35,21 @@ public:
 	virtual ~Accelerator() {}
 
 	// Returns true if the key/modifier combination matches this accelerator
-	bool match(const unsigned int& key, const unsigned int& modifiers) const;
+	bool match(const unsigned int key, const unsigned int modifiers) const;
 	
 	// Returns true if the event is attached to this Accelerator
-	bool match(const IEventPtr event) const;
+	bool match(const IEventPtr& event) const;
 
 	// Reads out the interal key/modifier combination of this Accelerator
 	unsigned int getKey() const;
 	unsigned int getModifiers() const;
 
 	// Make the accelerator use this key/modifier
-	void setKey(const unsigned int& key);
-	void setModifiers(const unsigned int& modifiers);
+	void setKey(const unsigned int key);
+	void setModifiers(const unsigned int modifiers);
 
 	// Connect this modifier to the specified command
-	void connectEvent(IEventPtr event);
+	void connectEvent(const IEventPtr& event);
 	
 	// Retrieve the contained event pointer
 	IEventPtr getEvent();

@@ -27,7 +27,7 @@ class SaveEventVisitor :
 	IEventManager* _eventManager;
 	
 public:
-	SaveEventVisitor(const std::string rootKey, IEventManager* eventManager) : 
+	SaveEventVisitor(const std::string& rootKey, IEventManager* eventManager) : 
 		_rootKey(rootKey),
 		_shortcutsNode(NULL),
 		_eventManager(eventManager)
@@ -38,7 +38,7 @@ public:
 		_shortcutsNode = GlobalRegistry().createKey(_rootKey + "/shortcuts");
 	}
 	
-	void visit(const std::string& eventName, IEventPtr event) {
+	void visit(const std::string& eventName, const IEventPtr& event) {
 		// Only export events with non-empty name 
 		if (eventName != "") {
 			// Try to find an accelerator connected to this event

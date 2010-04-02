@@ -303,7 +303,7 @@ void MouseEventManager::loadButtonDefinitions() {
 }
 
 // Retrieves the button from an GdkEventMotion state 
-unsigned int MouseEventManager::getButtonFlags(const unsigned int& state) {
+unsigned int MouseEventManager::getButtonFlags(const unsigned int state) {
 	if ((state & GDK_BUTTON1_MASK) != 0) return 1;
 	if ((state & GDK_BUTTON2_MASK) != 0) return 2;
 	if ((state & GDK_BUTTON3_MASK) != 0) return 3;
@@ -313,7 +313,7 @@ unsigned int MouseEventManager::getButtonFlags(const unsigned int& state) {
 	return 0;
 }
 
-ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int& button, const unsigned int& modifierFlags) {
+ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int button, const unsigned int modifierFlags) {
 	
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
@@ -333,7 +333,7 @@ ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int& butt
 	return ui::camNothing;
 }
 
-ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int& button, const unsigned int& modifierFlags) {
+ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int button, const unsigned int modifierFlags) {
 	
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
@@ -354,7 +354,7 @@ ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int& button, c
 	return ui::xyNothing;
 }
 
-ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int& button, const unsigned int& modifierFlags) {
+ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button, const unsigned int modifierFlags) {
 
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
@@ -390,7 +390,7 @@ ui::XYViewEvent MouseEventManager::getXYViewEvent(GdkEventButton* event) {
 }
 
 // The same as above, just with a state as argument rather than a GdkEventButton
-ui::XYViewEvent MouseEventManager::getXYViewEvent(const unsigned int& state) {
+ui::XYViewEvent MouseEventManager::getXYViewEvent(const unsigned int state) {
 	unsigned int button = getButtonFlags(state);
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(state);
 	
@@ -398,8 +398,8 @@ ui::XYViewEvent MouseEventManager::getXYViewEvent(const unsigned int& state) {
 }
 
 bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent, 
-										 const unsigned int& button, 
-										 const unsigned int& modifierFlags) 
+										 const unsigned int button, 
+										 const unsigned int modifierFlags) 
 {
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
@@ -422,8 +422,8 @@ bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent,
 }
 
 bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEvent, 
-										   const unsigned int& button, 
-										   const unsigned int& modifierFlags) 
+										   const unsigned int button, 
+										   const unsigned int modifierFlags) 
 {
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
@@ -446,8 +446,8 @@ bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEven
 }
 
 bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEvent, 
-											 const unsigned int& button, 
-											 const unsigned int& modifierFlags) 
+											 const unsigned int button, 
+											 const unsigned int modifierFlags) 
 {
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
@@ -474,7 +474,7 @@ bool MouseEventManager::stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEve
 }
 
 // The same as above, just with a state as argument rather than a GdkEventButton
-bool MouseEventManager::stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int& state) {
+bool MouseEventManager::stateMatchesXYViewEvent(const ui::XYViewEvent& xyViewEvent, const unsigned int state) {
 	return matchXYViewEvent(xyViewEvent, getButtonFlags(state), _modifiers.getKeyboardFlags(state));
 }
 
@@ -493,7 +493,7 @@ ui::ObserverEvent MouseEventManager::getObserverEvent(GdkEventButton* event) {
 	return findObserverEvent(button, modifierFlags);
 }
 
-ui::ObserverEvent MouseEventManager::getObserverEvent(const unsigned int& state) {
+ui::ObserverEvent MouseEventManager::getObserverEvent(const unsigned int state) {
 	unsigned int button = getButtonFlags(state);
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(state);
 	
@@ -542,11 +542,11 @@ float MouseEventManager::getCameraForwardStrafeFactor() {
 	return _forwardStrafeFactor;
 }
 
-bool MouseEventManager::strafeActive(unsigned int& state) {
+bool MouseEventManager::strafeActive(unsigned int state) {
 	return ((_modifiers.getKeyboardFlags(state) & _toggleStrafeCondition.modifierFlags) != 0);
 }
 
-bool MouseEventManager::strafeForwardActive(unsigned int& state) {
+bool MouseEventManager::strafeForwardActive(unsigned int state) {
 	return ((_modifiers.getKeyboardFlags(state) & _toggleForwardStrafeCondition.modifierFlags) != 0);
 }
 
