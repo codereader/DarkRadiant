@@ -55,21 +55,25 @@ ui::IModelPreviewPtr RadiantModule::createModelPreview()
 	return ui::IModelPreviewPtr(new ui::ModelPreview);
 }
 
-void RadiantModule::addEventListener(RadiantEventListenerPtr listener) {
+void RadiantModule::addEventListener(const RadiantEventListenerPtr& listener)
+{
 	_eventListeners.insert(RadiantEventListenerWeakPtr(listener));
 }
 	
-void RadiantModule::removeEventListener(RadiantEventListenerPtr listener) {
+void RadiantModule::removeEventListener(const RadiantEventListenerPtr& listener)
+{
 	EventListenerList::iterator found = _eventListeners.find(
 		RadiantEventListenerWeakPtr(listener)
 	);
+
 	if (found != _eventListeners.end()) {
 		_eventListeners.erase(found);
 	}
 }
 	
 // Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
-void RadiantModule::broadcastShutdownEvent() {
+void RadiantModule::broadcastShutdownEvent()
+{
 	for (EventListenerList::iterator i = _eventListeners.begin();
 	     i != _eventListeners.end(); /* in-loop increment */)
 	{
@@ -92,7 +96,8 @@ void RadiantModule::broadcastShutdownEvent() {
 }
 
 // Broadcasts a "startup" event to all the listeners
-void RadiantModule::broadcastStartupEvent() {
+void RadiantModule::broadcastStartupEvent()
+{
 	for (EventListenerList::iterator i = _eventListeners.begin();
 	     i != _eventListeners.end(); /* in-loop increment */)
 	{
@@ -112,21 +117,21 @@ void RadiantModule::broadcastStartupEvent() {
 }
 
 // RegisterableModule implementation
-const std::string& RadiantModule::getName() const {
+const std::string& RadiantModule::getName() const
+{
 	static std::string _name(MODULE_RADIANT);
 	return _name;
 }
 
-const StringSet& RadiantModule::getDependencies() const {
+const StringSet& RadiantModule::getDependencies() const
+{
 	static StringSet _dependencies;
 	
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_ECLASSMANAGER);
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_CLIPPER);
@@ -135,8 +140,9 @@ const StringSet& RadiantModule::getDependencies() const {
 	return _dependencies;
 }
 
-void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "RadiantModule::initialiseModule called.\n";
+void RadiantModule::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << "RadiantModule::initialiseModule called." << std::endl;
 	
 	// Reset the node id count
   	scene::Node::resetIds();
@@ -151,8 +157,9 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx) {
     map::AutoSaver().init();
 }
 
-void RadiantModule::shutdownModule() {
-	globalOutputStream() << "RadiantModule::shutdownModule called.\n";
+void RadiantModule::shutdownModule()
+{
+	globalOutputStream() << "RadiantModule::shutdownModule called." << std::endl;
 	
 	GlobalFileSystem().shutdown();
 

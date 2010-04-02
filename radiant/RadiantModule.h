@@ -38,8 +38,8 @@ class RadiantModule :
 public:
 	ui::IModelPreviewPtr createModelPreview();
 	
-	void addEventListener(RadiantEventListenerPtr listener);
-	void removeEventListener(RadiantEventListenerPtr listener);
+	void addEventListener(const RadiantEventListenerPtr& listener);
+	void removeEventListener(const RadiantEventListenerPtr& listener);
 	
 	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
 	void broadcastShutdownEvent();
