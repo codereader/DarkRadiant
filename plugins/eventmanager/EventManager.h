@@ -93,7 +93,7 @@ public:
 	// Add a command and specify the statement to execute when triggered
 	IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp);
 
-	IEventPtr addKeyEvent(const std::string& name, const Callback& keyUpCallback, const Callback& keyDownCallback);
+	IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback);
 	IEventPtr addWidgetToggle(const std::string& name);
 	IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey);
 	IEventPtr addToggle(const std::string& name, const Callback& onToggled);

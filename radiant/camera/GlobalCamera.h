@@ -4,6 +4,7 @@
 #include <map>
 #include "icamera.h"
 #include "icommandsystem.h"
+#include "ieventmanager.h"
 
 #include "CamWnd.h"
 #include "FloatingCamWnd.h"
@@ -117,23 +118,13 @@ public:
 	void pitchDownDiscrete(const cmd::ArgumentList& args);
 	
 public:
-	void freelookMoveForwardKeyUp();
-	void freelookMoveForwardKeyDown();
-	
-	void freelookMoveBackKeyUp();
-	void freelookMoveBackKeyDown();
-	
-	void freelookMoveLeftKeyUp();
-	void freelookMoveLeftKeyDown();
-	
-	void freelookMoveRightKeyUp();
-	void freelookMoveRightKeyDown();
-	
-	void freelookMoveUpKeyUp();
-	void freelookMoveUpKeyDown();
-	
-	void freelookMoveDownKeyUp();
-	void freelookMoveDownKeyDown();
+	// Callbacks for the named camera KeyEvents 
+	void onFreelookMoveForwardKey(ui::KeyEventType eventType);
+	void onFreelookMoveBackKey(ui::KeyEventType eventType);
+	void onFreelookMoveLeftKey(ui::KeyEventType eventType);
+	void onFreelookMoveRightKey(ui::KeyEventType eventType);
+	void onFreelookMoveUpKey(ui::KeyEventType eventType);
+	void onFreelookMoveDownKey(ui::KeyEventType eventType);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
