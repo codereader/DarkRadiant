@@ -5,6 +5,7 @@
 #include "ieclass.h"
 #include "iscenegraph.h"
 #include "scenelib.h"
+#include <boost/bind.hpp>
 
 class RenderHighlighted :
 	public scene::Graph::Walker
@@ -36,13 +37,12 @@ public:
 			break;
 	    }      
 	}
-  
-	// Callback to allow the render() function to be called by the 
-	// ShaderCache::forEachRenderable() enumeration method.
-	typedef ConstMemberCaller1<RenderHighlighted, 
-							   const Renderable&, 
-							   &RenderHighlighted::render> RenderCaller;
 
+	RenderableCallback getRenderableCallback()
+	{
+		return boost::bind(&RenderHighlighted::render, this, _1);
+	}
+  
 	// scene::Graph::Walker implementation, tells each node to submit its OpenGLRenderables
 	bool visit(const scene::INodePtr& node)
 	{

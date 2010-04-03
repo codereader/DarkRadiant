@@ -211,8 +211,8 @@ void MapPreview::draw() {
 	Node_traverseSubgraph(_root, adaptor);
 	
 	// Submit renderables directly attached to the ShaderCache
-	GlobalRenderSystem().forEachRenderable(
-		RenderHighlighted::RenderCaller(RenderHighlighted(renderer, view)));
+	RenderHighlighted walker(renderer, view);
+	GlobalRenderSystem().forEachRenderable(walker.getRenderableCallback());
 
 	renderer.render(view.modelView, view.projection);
 }
