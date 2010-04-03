@@ -1,16 +1,20 @@
 #ifndef DEFERREDDRAW_H_
 #define DEFERREDDRAW_H_
 
-#include "generic/callbackfwd.h"
+#include <boost/function/function_fwd.hpp>
 #include "map/Map.h"
 
 class DeferredDraw
 {
-	Callback m_draw;
+public:
+	typedef boost::function<void()> DrawCallback;
+
+private:
+	DrawCallback m_draw;
 	bool m_defer;
 	bool m_deferred;
 public:
-	DeferredDraw(const Callback& draw) : 
+	DeferredDraw(const DrawCallback& draw) : 
 		m_draw(draw), 
 		m_defer(false), 
 		m_deferred(false)

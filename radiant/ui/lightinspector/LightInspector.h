@@ -124,8 +124,6 @@ public:
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	/** Toggle the visibility of the dialog instance, constructing it if necessary.
-	 * 
-	 * Note: This is declared static to make it usable as a target for FreeCaller<> stuff. 
 	 */
 	static void toggleInspector(const cmd::ArgumentList& args);
 	

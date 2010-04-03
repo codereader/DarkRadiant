@@ -257,7 +257,7 @@ public:
 	 */
 	void keyChanged(const std::string& key, const std::string& val);
 	
-	/** greebo: Static command targets for use in FreeCaller<> constructions
+	/** greebo: Static command targets
 	 */
 	static void toggle(const cmd::ArgumentList& args);
 	static void texToolGridUp(const cmd::ArgumentList& args);

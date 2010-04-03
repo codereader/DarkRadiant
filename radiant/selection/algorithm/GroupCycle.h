@@ -45,8 +45,7 @@ public:
 	void doCycleForward();
 	void doCycleBackward();
 	
-	// The targets for the according Events (have to be static to allow
-	// them being used in FreeCaller<> templates instead of MemberCallers.
+	// The targets for the according Events 
 	static void cycleBackward(const cmd::ArgumentList& args);
 	static void cycleForward(const cmd::ArgumentList& args);
 	
