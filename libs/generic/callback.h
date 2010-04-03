@@ -309,7 +309,7 @@ typedef Callback0<void> Callback;
 /// \brief Combines a void pointer with a pointer to a function which operates on a void pointer and one other argument. 
 ///
 /// Use with the callback constructors MemberCaller1, ConstMemberCaller1, ReferenceCaller1, ConstReferenceCaller1, PointerCaller1, ConstPointerCaller1 and FreeCaller1.
-template<typename FirstArgument, typename Result>
+/*template<typename FirstArgument, typename Result>
 class Callback1 : public CallbackBase<Result (*)(void*, FirstArgument)>
 {
   typedef CallbackBase<Result (*)(void*, FirstArgument)> Base;
@@ -346,7 +346,7 @@ template<typename Caller>
 inline Callback1<typename Caller::second_argument_type, typename Caller::result_type> makeStatelessCallback1(const Caller& caller)
 {
   return makeCallback1(Caller1To2<Caller>(), 0);
-}
+}*/
 
 
 /// \brief Combines a void pointer with a pointer to a function which operates on a void pointer and two other arguments. 

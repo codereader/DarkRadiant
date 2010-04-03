@@ -53,7 +53,6 @@ public:
 	Doom3Entity(const Doom3Entity& other);
 
 	void importState(const KeyValues& keyValues);
-	typedef MemberCaller1<Doom3Entity, const KeyValues&, &Doom3Entity::importState> UndoImportCaller;
 
     /* Entity implementation */
 	void attachObserver(Observer* observer);

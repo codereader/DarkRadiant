@@ -32,27 +32,22 @@ public:
 	void instanceDetach(MapFile* map);
 
 	void attach(KeyObserver& observer);
-	typedef MemberCaller1<EntityKeyValue, KeyObserver&, &EntityKeyValue::attach> AttachCaller;
-	
 	void detach(KeyObserver& observer);
-	typedef MemberCaller1<EntityKeyValue, KeyObserver&, &EntityKeyValue::detach> DetachCaller;
 	
 	// Accessor method, retrieve the actual value
 	const std::string& get() const;
 	
 	void assign(const std::string& other);
-	typedef MemberCaller1<EntityKeyValue, const std::string&, &EntityKeyValue::assign> AssignCaller;
 
 	void notify();
 
 	void importState(const std::string& string);
-	typedef MemberCaller1<KeyValue, const std::string&, &KeyValue::importState> UndoImportCaller;
 
 	// NameObserver implementation
 	void onNameChange(const std::string& oldName, const std::string& newName);
 
 	// Gets called after a undo/redo operation is fully completed.
-	// This triggers an keyobserver refresh, to allow for reconnection to Namespaces and such.
+	// This triggers a keyobserver refresh, to allow for reconnection to Namespaces and such.
 	void postUndo();
 	void postRedo();
 };

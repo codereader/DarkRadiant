@@ -88,7 +88,6 @@ public:
 	void insert(const Plane3& plane) {
 		_selectedPlanes.insert(plane);
 	}
-	typedef MemberCaller1<SelectedPlaneSet, const Plane3&, &SelectedPlaneSet::insert> InsertCaller;
 
 	bool contains(const Plane3& plane) const {
 		return _selectedPlanes.find(plane) != _selectedPlanes.end();

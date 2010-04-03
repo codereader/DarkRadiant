@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Vector3.h"
 #include "scenelib.h"
-#include "generic/callbackfwd.h"
+#include <boost/function/function_fwd.hpp>
 
 class SelectionIntersection
 {
@@ -301,7 +301,7 @@ inline ComponentSelectionTestablePtr Node_getComponentSelectionTestable(const sc
 }
 
 class Plane3;
-typedef Callback1<const Plane3&> PlaneCallback;
+typedef boost::function<void (const Plane3&)> PlaneCallback;
 
 class SelectedPlanes
 {
