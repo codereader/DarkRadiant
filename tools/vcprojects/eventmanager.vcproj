@@ -470,10 +470,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\eventmanager\Statement.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\eventmanager\Toggle.cpp"
 				>
 			</File>
