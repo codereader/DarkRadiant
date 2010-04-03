@@ -87,9 +87,6 @@ public:
 	// Checks if the eventName is already registered and writes to globalOutputStream, if so 
 	bool alreadyRegistered(const std::string& eventName);
 	
-	// Add the given command to the internal list
-	IEventPtr addCommand(const std::string& name, const Callback& callback, bool reactOnKeyUp);
-
 	// Add a command and specify the statement to execute when triggered
 	IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp);
 

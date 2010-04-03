@@ -1,8 +1,7 @@
-#ifndef EMCOMMAND_H_
-#define EMCOMMAND_H_
+#ifndef EMStatement_H_
+#define EMStatement_H_
 
 #include "ieventmanager.h"
-#include "generic/callback.h"
 
 #include "gtk/gtkmenuitem.h"
 #include "gtk/gtktoolbutton.h"
@@ -11,28 +10,29 @@
 
 #include "Event.h"
 
-/* greebo: A Command is an object that contains a single callback. 
+/* greebo: A Statement is an object that executes a command string when invoked.
  * 
- * Trigger the command via the execute() method (usually done by the associated accelerator).
+ * Trigger the Statement via the execute() method (usually done by the associated accelerator).
  * 
- * Connect the command to a GtkToolButton / GtkButton / GtkMenuItem via the connectWidget method. 
+ * Connect the statement to a GtkToolButton / GtkButton / GtkMenuItem via the connectWidget method. 
  */
-class Command :
+class Statement :
 	public Event
 {
-	// The callback to be performed on execute()
-	Callback _callback;
+private:
+	// The statement to execute
+	std::string _statement;
 
-	// Whether this command reacts on keyup or keydown
+	// Whether this Statement reacts on keyup or keydown
 	bool _reactOnKeyUp;
 
 	typedef std::map<GtkWidget*, gulong> WidgetList;
 	WidgetList _connectedWidgets;
 	
 public:
-	Command(const Callback& callback, bool reactOnKeyUp = false);
+	Statement(const std::string& statement, bool reactOnKeyUp = false);
 
-	virtual ~Command();
+	virtual ~Statement();
 	
 	// Invoke the registered callback
 	virtual void execute();
@@ -41,18 +41,17 @@ public:
 	virtual void keyUp();
 	virtual void keyDown();
 	
-	// Connect the given menuitem/toolbutton to this Command
+	// Connect the given menuitem/toolbutton to this Statement
 	virtual void connectWidget(GtkWidget* widget);
 	
 	virtual bool empty() const;
 	
 private:
-
 	// The static GTK callback methods that can be connected to a ToolButton or a MenuItem
-	static gboolean onButtonPress(GtkButton* button, gpointer data);
-	static gboolean onToolButtonPress(GtkToolButton* toolButton, gpointer data);
-	static gboolean onMenuItemClicked(GtkMenuItem* menuitem, gpointer data);
+	static gboolean onButtonPress(GtkButton* button, Statement* self);
+	static gboolean onToolButtonPress(GtkToolButton* toolButton, Statement* self);
+	static gboolean onMenuItemClicked(GtkMenuItem* menuitem, Statement* self);
 
-}; // class Command
+}; // class Statement
 
-#endif /*EMCOMMAND_H_*/
+#endif /*EMStatement_H_*/

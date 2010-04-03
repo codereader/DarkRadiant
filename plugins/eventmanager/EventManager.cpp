@@ -18,7 +18,6 @@
 #include "xmlutil/Node.h"
 
 #include "Command.h"
-#include "Statement.h"
 #include "Toggle.h"
 #include "WidgetToggle.h"
 #include "RegistryToggle.h"
@@ -215,20 +214,6 @@ bool EventManager::alreadyRegistered(const std::string& eventName) {
 			<< " already registered!" << std::endl;
 		return true;
 	}
-}
-
-// Add the given command to the internal list
-IEventPtr EventManager::addCommand(const std::string& name, const Callback& callback, bool reactOnKeyUp) {
-	
-	if (!alreadyRegistered(name)) {
-		// Add the command to the list
-		_events[name] = IEventPtr(new Command(callback, reactOnKeyUp));
-		
-		// Return the pointer to the newly created event
-		return _events[name];
-	}
-	
-	return _emptyEvent;
 }
 
 // Add the given command to the internal list
