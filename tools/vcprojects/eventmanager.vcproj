@@ -422,14 +422,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\eventmanager\Command.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\eventmanager\Command.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\eventmanager\Event.h"
 				>
 			</File>
@@ -467,6 +459,14 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\eventmanager\SaveEventVisitor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\eventmanager\Statement.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\eventmanager\Statement.h"
 				>
 			</File>
 			<File
