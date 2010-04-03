@@ -351,7 +351,7 @@ inline Callback1<typename Caller::second_argument_type, typename Caller::result_
 
 /// \brief Combines a void pointer with a pointer to a function which operates on a void pointer and two other arguments. 
 ///
-template<typename FirstArgument, typename SecondArgument, typename Result>
+/*template<typename FirstArgument, typename SecondArgument, typename Result>
 class Callback2 : public CallbackBase<Result (*)(void*, FirstArgument, SecondArgument)>
 {
   typedef CallbackBase<Result (*)(void*, FirstArgument, SecondArgument)> Base;
@@ -401,12 +401,12 @@ inline Callback2<
 > makeStatelessCallback2(const Caller& caller)
 {
   return makeCallback2(Caller2To3<Caller>(), 0);
-}
+}*/
 
 
 /// \brief Combines a void pointer with a pointer to a function which operates on a void pointer and three other arguments. 
 ///
-template<typename FirstArgument, typename SecondArgument, typename ThirdArgument, typename Result>
+/*template<typename FirstArgument, typename SecondArgument, typename ThirdArgument, typename Result>
 class Callback3 : public CallbackBase<Result (*)(void*, FirstArgument, SecondArgument, ThirdArgument)>
 {
   typedef CallbackBase<Result (*)(void*, FirstArgument, SecondArgument, ThirdArgument)> Base;
@@ -460,7 +460,7 @@ inline Callback3<
 > makeStatelessCallback3(const Caller& caller)
 {
   return makeCallback3(Caller3To4<Caller>(), 0);
-}
+}*/
 
 
 /// \brief Forms a Callback from a non-const Environment reference and a non-const Environment member-function.
@@ -482,14 +482,14 @@ public:
 /// \dontinclude generic/callback.cpp
 /// \skipline MemberCaller example
 /// \until end example
-template<typename Environment, void (Environment::*member)() const>
+/*template<typename Environment, void (Environment::*member)() const>
 class ConstMemberCaller : public BindFirstOpaque< ConstMember<Environment, void, member> >
 {
 public:
   ConstMemberCaller(const Environment& environment) : BindFirstOpaque< ConstMember<Environment, void, member> >(environment)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a non-const Environment reference and a const Environment member-function which takes one argument.
 template<typename Environment, typename FirstArgument, void (Environment::*member)(FirstArgument)>

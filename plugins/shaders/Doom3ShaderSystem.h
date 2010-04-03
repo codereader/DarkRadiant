@@ -5,7 +5,7 @@
 #include "ifilesystem.h"
 #include "moduleobserver.h"
 
-#include "generic/callback.h"
+#include <boost/function.hpp>
 #include "moduleobservers.h"
 
 #include "ShaderLibrary.h"
@@ -29,7 +29,7 @@ class Doom3ShaderSystem
 	GLTextureManagerPtr _textureManager;
 	
 	// greebo: Legacy callback (points to the TextureBrowser)
-	Callback _activeShadersChangedNotify;
+	boost::function<void()> _activeShadersChangedNotify;
 	
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
@@ -79,7 +79,7 @@ public:
 	MaterialPtr dereferenceActiveShadersIterator();
 	void incrementActiveShadersIterator();
 	
-	void setActiveShadersChangedNotify(const Callback& notify);
+	void setActiveShadersChangedNotify(const boost::function<void()>& notify);
 	
 	// Enable or disable the active shaders callback
 	void setActiveShaderUpdates(bool v) {

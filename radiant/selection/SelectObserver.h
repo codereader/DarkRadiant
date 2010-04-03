@@ -4,7 +4,6 @@
 #include "gdk/gdkevents.h"
 
 #include "iselection.h"
-#include "generic/callback.h"
 #include "windowobserver.h"
 #include "Device.h"
 #include "SelectionBox.h"
@@ -72,9 +71,6 @@ public:
 	
 	// The mouseUp callback: check what has to be done and unconnect self from the calbacks
   	void mouseUp(DeviceVector position);
-  	
-  	typedef MemberCaller1<SelectObserver, DeviceVector, &SelectObserver::mouseMoved> MouseMovedCaller;
-  	typedef MemberCaller1<SelectObserver, DeviceVector, &SelectObserver::mouseUp> MouseUpCaller;
 };
 
 #endif /*SELECTOBSERVER_H_*/

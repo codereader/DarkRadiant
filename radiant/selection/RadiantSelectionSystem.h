@@ -127,7 +127,6 @@ public:
 	typedef MemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::onSceneBoundsChanged> SceneBoundsChangedCaller;
 	
 	void pivotChanged() const;
-	typedef ConstMemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::pivotChanged> PivotChangedCaller;
   
   	void pivotChangedSelection(const Selectable& selectable);
 

@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/function/function_fwd.hpp>
 #include "iimage.h"
 #include "imodule.h"
-#include "generic/callback.h"
 
 #include "math/Vector3.h"
 
@@ -265,7 +264,7 @@ public:
   virtual void incrementActiveShadersIterator() = 0;
 
     // Set the callback to be invoked when the active shaders list has changed
-    virtual void setActiveShadersChangedNotify(const Callback& notify) = 0;
+	virtual void setActiveShadersChangedNotify(const boost::function<void()>& notify) = 0;
 
     /**
      * Enable or disable active shaders updates (for performance).

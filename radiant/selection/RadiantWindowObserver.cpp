@@ -8,6 +8,7 @@
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include <iostream>
+#include <boost/bind.hpp>
 
 SelectionSystemWindowObserver* NewWindowObserver() {
   return new RadiantWindowObserver;
@@ -140,8 +141,8 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 			// This is a manipulation operation, register the callbacks
 			// Note: the mouseDown call in the if clause returned already true, 
 			// so a manipulator could be successfully selected
-			_mouseMotionCallback = MouseEventCallback(ManipulateObserver::MouseMovedCaller(_manipulateObserver));
-			_mouseUpCallback = MouseEventCallback(ManipulateObserver::MouseUpCaller(_manipulateObserver));
+			_mouseMotionCallback = boost::bind(&ManipulateObserver::mouseMoved, &_manipulateObserver, _1);
+			_mouseUpCallback = boost::bind(&ManipulateObserver::mouseUp, &_manipulateObserver, _1);
 			
 			_listenForCancelEvents = true;
 		} 
@@ -149,8 +150,8 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 			// Call the mouseDown method of the selector class, this covers all of the other events
 			_selectObserver.mouseDown(devicePosition);
 
-			_mouseMotionCallback = MouseEventCallback(SelectObserver::MouseMovedCaller(_selectObserver));
-			_mouseUpCallback = MouseEventCallback(SelectObserver::MouseUpCaller(_selectObserver));
+			_mouseMotionCallback = boost::bind(&SelectObserver::mouseMoved, &_selectObserver, _1);
+			_mouseUpCallback = boost::bind(&SelectObserver::mouseUp, &_selectObserver, _1);
 						
 			// greebo: the according actions (toggle face, replace, etc.) are handled in the mouseUp methods.
 		}
@@ -204,15 +205,15 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
 	_listenForCancelEvents = false;
 
 	// Disconnect the mouseMoved and mouseUp callbacks, mouse has been released
-	_mouseMotionCallback = MouseEventCallback();
-	_mouseUpCallback = MouseEventCallback();
+	_mouseMotionCallback.clear();
+	_mouseUpCallback.clear();
 }
 
 void RadiantWindowObserver::onCancel()
 {
 	// Disconnect the mouseMoved and mouseUp callbacks
-	_mouseMotionCallback = MouseEventCallback();
-	_mouseUpCallback = MouseEventCallback();
+	_mouseMotionCallback.clear();
+	_mouseUpCallback.clear();
 	
 	// Stop listening for cancel events
 	_listenForCancelEvents = false;
