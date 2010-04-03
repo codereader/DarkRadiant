@@ -8,7 +8,7 @@ eventmgr_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 eventmgr_la_LDFLAGS = -module -avoid-version \
 					  $(GTK_LIBS) $(GLIB_LIBS) $(XML_LIBS)
 eventmgr_la_SOURCES = Accelerator.cpp \
-                      Command.cpp \
+                      Statement.cpp \
                       EventManager.cpp \
                       Modifiers.cpp \
                       MouseEvents.cpp \

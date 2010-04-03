@@ -17,7 +17,7 @@
 
 #include "xmlutil/Node.h"
 
-#include "Command.h"
+#include "Statement.h"
 #include "Toggle.h"
 #include "WidgetToggle.h"
 #include "RegistryToggle.h"
