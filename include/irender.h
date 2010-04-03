@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_IRENDER_H
 
 #include "imodule.h"
-#include "generic/callbackfwd.h"
 #include <boost/function/function_fwd.hpp>
 
 #include "math/Vector3.h"
@@ -151,7 +150,7 @@ public:
 typedef boost::shared_ptr<LightCullable> LightCullablePtr;
 
 class Renderable;
-typedef Callback1<const Renderable&> RenderableCallback;
+typedef boost::function<void(const Renderable&)> RenderableCallback;
 
 typedef boost::function<void(const RendererLight&)> RendererLightCallback;
 

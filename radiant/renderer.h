@@ -21,8 +21,8 @@ inline void collectRenderablesInScene(RenderableCollector& collector, const Volu
 	GlobalSceneGraph().foreachVisibleNodeInVolume(volume, renderHighlightWalker);
 	
 	// Submit renderables directly attached to the ShaderCache
-	GlobalRenderSystem().forEachRenderable(
-		RenderHighlighted::RenderCaller(RenderHighlighted(collector, volume)));
+	RenderHighlighted walker(collector, volume);
+	GlobalRenderSystem().forEachRenderable(walker.getRenderableCallback());
 }
 
 } // namespace render
