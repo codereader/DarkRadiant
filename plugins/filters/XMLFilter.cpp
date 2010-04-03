@@ -44,10 +44,9 @@ bool XMLFilter::isVisible(const std::string& item, const std::string& name) cons
 }
 
 // The command target
-void XMLFilter::toggle() {
-	// Allocate a reference, otherwise the call to GlobalFilterSystem() will crash
-	bool currentState = GlobalFilterSystem().getFilterState(_name);
-	GlobalFilterSystem().setFilterState(_name, !currentState);
+void XMLFilter::toggle(bool newState)
+{
+	GlobalFilterSystem().setFilterState(_name, newState);
 }
 
 std::string XMLFilter::getEventName() const {

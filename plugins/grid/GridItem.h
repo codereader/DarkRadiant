@@ -2,7 +2,6 @@
 #define GRIDITEM_H_
 
 #include "igrid.h"
-#include "generic/callback.h"
 
 class GridItem
 {
@@ -24,10 +23,10 @@ public:
 	}
 	
 	// The callback that triggers the activation of the gridsize contained in this object 
-	void activate() {
+	void activate(bool newState)
+	{
 		_manager.setGridSize(_gridSize);
 	}
-	typedef MemberCaller<GridItem, &GridItem::activate> ActivateCaller;
 	
 }; // class GridItem
 

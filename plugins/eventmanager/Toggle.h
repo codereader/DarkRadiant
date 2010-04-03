@@ -2,7 +2,7 @@
 #define TOGGLE_H_
 
 #include "ieventmanager.h"
-#include "generic/callback.h"
+#include <boost/function.hpp>
 
 #include "gtk/gtktoggletoolbutton.h"
 #include "gtk/gtktogglebutton.h"
@@ -21,8 +21,9 @@
 class Toggle :
 	public Event
 {
+private:
 	// The callback to be performed on toggle()
-	Callback _callback;
+	ToggleCallback _callback;
 	
 protected:
 	// The list of connected widgets (associates handler IDs)
@@ -35,7 +36,7 @@ protected:
 	bool _toggled;
 	
 public:
-	Toggle(const Callback& callback);
+	Toggle(const ToggleCallback& callback);
 
 	virtual ~Toggle();
 
@@ -66,9 +67,9 @@ public:
 	virtual void toggle();
 
 	// The static GTK callback methods that can be connected to a ToolButton or a MenuItem
-	static gboolean onToggleToolButtonClicked(GtkToggleToolButton* toolButton, gpointer data);
-	static gboolean onToggleButtonClicked(GtkToggleButton* toggleButton, gpointer data);
-	static gboolean onCheckMenuItemClicked(GtkMenuItem* menuitem, gpointer data);
+	static gboolean onToggleToolButtonClicked(GtkToggleToolButton* toolButton, Toggle* self);
+	static gboolean onToggleButtonClicked(GtkToggleButton* toggleButton, Toggle* self);
+	static gboolean onCheckMenuItemClicked(GtkMenuItem* menuitem, Toggle* self);
 
 }; // class Toggle
 

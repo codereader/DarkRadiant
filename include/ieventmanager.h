@@ -9,7 +9,7 @@
 
 #include "imodule.h"
 #include "iselection.h"
-#include "generic/callbackfwd.h"
+#include <boost/function/function_fwd.hpp>
 
 // GTK forward declaration
 typedef struct _GtkObject GtkObject;
@@ -164,6 +164,10 @@ public:
 
 const std::string MODULE_EVENTMANAGER("EventManager");
 
+// The function object invoked when a ToggleEvent is changing states
+// The passed boolean indicates the new toggle state (true = active/toggled)
+typedef boost::function<void(bool)> ToggleCallback;
+
 class IEventManager :
 	public RegisterableModule
 {
@@ -200,7 +204,7 @@ public:
 	virtual IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback) = 0;
 	
 	// Creates a new toggle event that calls the given callback when toggled
-	virtual IEventPtr addToggle(const std::string& name, const Callback& onToggled) = 0;
+	virtual IEventPtr addToggle(const std::string& name, const ToggleCallback& onToggled) = 0;
 	virtual IEventPtr addWidgetToggle(const std::string& name) = 0;
 	virtual IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey) = 0;
 	

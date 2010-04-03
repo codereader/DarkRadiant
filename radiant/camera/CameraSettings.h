@@ -78,7 +78,7 @@ public:
 	void setCubicScale(const int& scale);
 
 	// Enables/disables the cubic clipping
-	void toggleFarClip();
+	void toggleFarClip(bool newState);
 	void setFarClip(bool farClipEnabled);
 
 	// Adds the elements to the "camera" preference page

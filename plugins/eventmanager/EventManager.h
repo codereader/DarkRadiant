@@ -93,7 +93,7 @@ public:
 	IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback);
 	IEventPtr addWidgetToggle(const std::string& name);
 	IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey);
-	IEventPtr addToggle(const std::string& name, const Callback& onToggled);
+	IEventPtr addToggle(const std::string& name, const ToggleCallback& onToggled);
 	
 	void setToggled(const std::string& name, const bool toggled);
 	
