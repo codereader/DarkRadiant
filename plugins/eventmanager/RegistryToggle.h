@@ -4,6 +4,7 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "Toggle.h"
+#include <boost/bind.hpp>
 
 /* greebo: A RegistryToggle is an Toggle Event that changes the value of the
  * attached registry key to "1" / "0" when toggled. The key is stored internally of course. 
@@ -17,13 +18,14 @@ class RegistryToggle :
 	public Toggle,
 	public RegistryKeyObserver
 {
+private:
 	// The attached registrykey
 	const std::string _registryKey;
 	
 public:
 
 	RegistryToggle(const std::string& registryKey) :
-		Toggle(MemberCaller<RegistryToggle, &RegistryToggle::doNothing>(*this)),
+		Toggle(boost::bind(&RegistryToggle::doNothing, this, _1)),
 		_registryKey(registryKey)
 	{
 		// Initialise the current state
@@ -34,9 +36,10 @@ public:
 	}
 
 	// Dummy callback for the Toggle base class, we don't need any callbacks...
-	void doNothing() {}
+	void doNothing(bool) {}
 
-	virtual bool setToggled(const bool toggled) {
+	virtual bool setToggled(const bool toggled)
+	{
 		// Set the registry key, this triggers the keyChanged() method
 		GlobalRegistry().set(_registryKey, toggled ? "1" : "0");
 		
@@ -44,14 +47,16 @@ public:
 	}
 
 	// The RegistryKeyObserver implementation, gets called on key changes
-	void keyChanged(const std::string& key, const std::string& val) {
+	void keyChanged(const std::string& key, const std::string& val)
+	{
 		// Update the internal toggle state according to the key value 
 		_toggled = (val == "1");
 		
 		updateWidgets();
 	}
 	
-	virtual void toggle() {
+	virtual void toggle()
+	{
 		if (_callbackActive) {
 			return;
 		}

@@ -257,8 +257,8 @@ IEventPtr EventManager::addWidgetToggle(const std::string& name) {
 	return _emptyEvent;
 }
 
-IEventPtr EventManager::addRegistryToggle(const std::string& name, const std::string& registryKey) {
-	
+IEventPtr EventManager::addRegistryToggle(const std::string& name, const std::string& registryKey)
+{
 	if (!alreadyRegistered(name)) {
 		// Add the command to the list (implicitly cast the pointer on Event&)  
 		_events[name] = IEventPtr(new RegistryToggle(registryKey));
@@ -270,8 +270,8 @@ IEventPtr EventManager::addRegistryToggle(const std::string& name, const std::st
 	return _emptyEvent;
 }
 
-IEventPtr EventManager::addToggle(const std::string& name, const Callback& onToggled) {
-	
+IEventPtr EventManager::addToggle(const std::string& name, const ToggleCallback& onToggled)
+{
 	if (!alreadyRegistered(name)) {
 		// Add the command to the list (implicitly cast the pointer on Event&)  
 		_events[name] = IEventPtr(new Toggle(onToggled));
@@ -283,7 +283,8 @@ IEventPtr EventManager::addToggle(const std::string& name, const Callback& onTog
 	return _emptyEvent;
 }
 
-void EventManager::setToggled(const std::string& name, const bool toggled) {
+void EventManager::setToggled(const std::string& name, const bool toggled)
+{
 	// Check could be placed here by boost::shared_ptr's dynamic_pointer_cast 
 	if (!findEvent(name)->setToggled(toggled)) {
 		globalWarningStream() << "EventManager: Event " << name 

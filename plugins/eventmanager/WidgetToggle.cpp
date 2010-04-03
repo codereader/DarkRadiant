@@ -1,7 +1,8 @@
 #include "WidgetToggle.h"
+#include <boost/bind.hpp>
 
 WidgetToggle::WidgetToggle() :
-	Toggle(Callback())
+	Toggle(boost::bind(&WidgetToggle::doNothing, this, _1))
 {}
 	
 /* This method only adds the widget to the show/hide list if the widget

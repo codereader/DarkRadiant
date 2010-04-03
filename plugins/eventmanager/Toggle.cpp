@@ -1,6 +1,6 @@
 #include "Toggle.h"
 
-Toggle::Toggle(const Callback& callback) :
+Toggle::Toggle(const ToggleCallback& callback) :
 	_callback(callback),
 	_callbackActive(false),
 	_toggled(false)
@@ -129,8 +129,8 @@ void Toggle::toggle() {
 		// Invert the <toggled> state 
 		_toggled = !_toggled;
 		
-		// Call the connected function
-		_callback();
+		// Call the connected function with the new state
+		_callback(_toggled);
 	}
 	
 	// Update any attached GtkObjects in any case
@@ -138,12 +138,8 @@ void Toggle::toggle() {
 }
 
 // The static GTK callback methods that can be connected to a ToolButton or a MenuItem
-gboolean Toggle::onToggleToolButtonClicked(GtkToggleToolButton* toolButton, gpointer data) {
-	
-	// Cast the passed pointer onto a Toggle class. Note: this may also call a toggle() method
-	// of a derived class.
-	Toggle* self = reinterpret_cast<Toggle*>(data);
-	
+gboolean Toggle::onToggleToolButtonClicked(GtkToggleToolButton* toolButton, Toggle* self)
+{
 	// Check sanity and toggle this item
 	if (self != NULL) {
 		self->toggle();
@@ -152,12 +148,8 @@ gboolean Toggle::onToggleToolButtonClicked(GtkToggleToolButton* toolButton, gpoi
 	return true;
 }
 
-gboolean Toggle::onToggleButtonClicked(GtkToggleButton* toggleButton, gpointer data) {
-	
-	// Cast the passed pointer onto a Toggle class. Note: this may also call a toggle() method
-	// of a derived class.
-	Toggle* self = reinterpret_cast<Toggle*>(data);
-	
+gboolean Toggle::onToggleButtonClicked(GtkToggleButton* toggleButton, Toggle* self)
+{
 	// Check sanity and toggle this item
 	if (self != NULL) {
 		self->toggle();
@@ -166,9 +158,8 @@ gboolean Toggle::onToggleButtonClicked(GtkToggleButton* toggleButton, gpointer d
 	return true;
 }
 
-gboolean Toggle::onCheckMenuItemClicked(GtkMenuItem* menuitem, gpointer data) {
-	Toggle* self = reinterpret_cast<Toggle*>(data);
-	
+gboolean Toggle::onCheckMenuItemClicked(GtkMenuItem* menuitem, Toggle* self)
+{
 	// Check sanity and toggle this item
 	if (self != NULL) {
 		self->toggle();

@@ -74,7 +74,7 @@ public:
 	
 	/** greebo: Gets called when the associated Event is fired. 
 	 */
-	void toggle();
+	void toggle(bool newState);
 
 	// Whether this filter is read-only
 	bool isReadOnly() const;

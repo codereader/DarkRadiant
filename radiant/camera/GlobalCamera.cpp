@@ -52,7 +52,8 @@ void GlobalCameraManager::construct() {
 	// Bind the events to the commands
 	GlobalEventManager().addCommand("CenterView", "CenterView");
 
-	GlobalEventManager().addToggle("ToggleCubicClip", MemberCaller<CameraSettings, &CameraSettings::toggleFarClip>(*getCameraSettings()));
+	GlobalEventManager().addToggle("ToggleCubicClip", 
+		boost::bind(&CameraSettings::toggleFarClip, getCameraSettings(), _1));
 	// Set the default status of the cubic clip
 	GlobalEventManager().setToggled("ToggleCubicClip", getCameraSettings()->farClipEnabled());
 

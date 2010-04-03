@@ -11,7 +11,7 @@
 #include "igame.h"
 #include "ishaders.h"
 
-#include "generic/callback.h"
+#include <boost/bind.hpp>
 
 namespace filters
 {
@@ -90,7 +90,7 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 		// Add the according toggle command to the eventmanager
 		IEventPtr fEvent = GlobalEventManager().addToggle(
 			filter.getEventName(),
-			MemberCaller<XMLFilter, &XMLFilter::toggle>(inserted) 
+			boost::bind(&XMLFilter::toggle, &inserted, _1) 
 		);
 		
 		// If this filter is in our active set, enable it
@@ -264,7 +264,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	// Add the according toggle command to the eventmanager
 	IEventPtr fEvent = GlobalEventManager().addToggle(
 		result.first->second.getEventName(),
-		MemberCaller<XMLFilter, &XMLFilter::toggle>(result.first->second) 
+		boost::bind(&XMLFilter::toggle, &result.first->second, _1) 
 	);
 
 	// Clear the cache, the rules have changed
@@ -356,7 +356,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 		// Add the according toggle command to the eventmanager
 		IEventPtr fEvent = GlobalEventManager().addToggle(
 			result.first->second.getEventName(),
-			MemberCaller<XMLFilter, &XMLFilter::toggle>(result.first->second) 
+			boost::bind(&XMLFilter::toggle, &result.first->second, _1) 
 		);
 
 		if (!fEvent->empty()) {

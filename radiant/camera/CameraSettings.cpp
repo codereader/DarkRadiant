@@ -216,7 +216,8 @@ void CameraSettings::setFarClip(bool farClipEnabled) {
 	GlobalRegistry().set(RKEY_ENABLE_FARCLIP, farClipEnabled ? "1" : "0");
 }
 
-void CameraSettings::toggleFarClip() {
+void CameraSettings::toggleFarClip(bool newState)
+{
 	setFarClip(!_farClipEnabled);
 }
 

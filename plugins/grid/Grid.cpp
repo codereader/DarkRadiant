@@ -124,7 +124,8 @@ public:
 			toggleName += i->first; // Makes "SetGrid" to "SetGrid64", for example
 			GridItem& gridItem = i->second;
 			
-			GlobalEventManager().addToggle(toggleName, GridItem::ActivateCaller(gridItem)); 
+			GlobalEventManager().addToggle(toggleName, 
+				boost::bind(&GridItem::activate, &gridItem, _1)); 
 		}
 		
 		GlobalCommandSystem().addCommand("GridDown", boost::bind(&GridManager::gridDownCmd, this, _1));
