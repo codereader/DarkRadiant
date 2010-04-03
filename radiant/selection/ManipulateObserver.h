@@ -2,7 +2,6 @@
 #define MANIPULATEOBSERVER_H_
 
 #include "gdk/gdkevents.h"
-#include "generic/callbackfwd.h"
 #include "windowobserver.h"
 #include "Device.h"
 #include "RadiantSelectionSystem.h"
@@ -30,9 +29,6 @@ public:
   	
   	// The mouse operation is finished, update the selection and unconnect the callbacks
   	void mouseUp(DeviceVector position);
-  
-  	typedef MemberCaller1<ManipulateObserver, DeviceVector, &ManipulateObserver::mouseMoved> MouseMovedCaller;
-  	typedef MemberCaller1<ManipulateObserver, DeviceVector, &ManipulateObserver::mouseUp> MouseUpCaller;
 };
 
 #endif /*MANIPULATEOBSERVER_H_*/

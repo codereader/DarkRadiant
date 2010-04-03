@@ -2,7 +2,7 @@
 #define DEVICE_H_
 
 #include "math/Vector2.h"
-#include "generic/callback.h"
+#include <boost/function/function_fwd.hpp>
 
 // A vector representing the mouse pointer coordinates
 typedef Vector2 DeviceVector;
@@ -33,6 +33,6 @@ inline DeviceVector device_constrained(DeviceVector device) {
 }
 
 // greebo: The mouseOperations callbacks, should they really be a global?
-typedef Callback1<DeviceVector> MouseEventCallback;
+typedef boost::function<void (const DeviceVector&)> MouseEventCallback;
 
 #endif /*DEVICE_H_*/

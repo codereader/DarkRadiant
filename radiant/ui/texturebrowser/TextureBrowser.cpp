@@ -17,6 +17,7 @@
 #include "ui/mediabrowser/MediaBrowser.h"
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/bind.hpp>
 
 namespace ui {
 
@@ -754,7 +755,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
     );
 	
 	GlobalMaterialManager().setActiveShadersChangedNotify(
-		MemberCaller<TextureBrowser, &TextureBrowser::activeShadersChanged>(*this)
+		boost::bind(&TextureBrowser::activeShadersChanged, this)
 	);
 
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);

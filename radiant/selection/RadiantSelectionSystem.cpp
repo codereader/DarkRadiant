@@ -1033,7 +1033,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 	SetManipulatorMode(eTranslate);
 	pivotChanged();
 	addSelectionChangeCallback(boost::bind(&RadiantSelectionSystem::pivotChangedSelection, this, _1));
-	GlobalGrid().addGridChangeCallback(PivotChangedCaller(*this));
+	GlobalGrid().addGridChangeCallback(boost::bind(&RadiantSelectionSystem::pivotChanged, this));
 	
 	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
 	

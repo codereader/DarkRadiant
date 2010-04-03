@@ -155,7 +155,7 @@ MaterialPtr Doom3ShaderSystem::dereferenceActiveShadersIterator() {
 void Doom3ShaderSystem::incrementActiveShadersIterator() {
 	_library->incrementIterator();
 }
-void Doom3ShaderSystem::setActiveShadersChangedNotify(const Callback& notify) {
+void Doom3ShaderSystem::setActiveShadersChangedNotify(const boost::function<void()>& notify) {
 	_activeShadersChangedNotify = notify;
 }
 
