@@ -516,14 +516,14 @@ public:
 /// \dontinclude generic/callback.cpp
 /// \skipline ReferenceCaller example
 /// \until end example
-template<typename Environment, void (*func)(Environment&)> 
+/*template<typename Environment, void (*func)(Environment&)> 
 class ReferenceCaller : public BindFirstOpaque< Function1<Environment&, void, func> >
 {
 public:
   ReferenceCaller(Environment& environment) : BindFirstOpaque< Function1<Environment&, void, func> >(environment)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a const Environment reference and a free function which operates on a const Environment reference.
 ///
@@ -600,14 +600,14 @@ public:
 };*/
 
 /// \brief Forms a Callback from a free function which takes no arguments.
-template<void (*func)()> 
+/*template<void (*func)()> 
 class FreeCaller : public BindFirstOpaque< Caller0To1< Function0<void, func> > >
 {
 public:
   FreeCaller() : BindFirstOpaque< Caller0To1< Function0<void, func> > >(0)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a free function which takes a single argument.
 /*template<typename FirstArgument, void (*func)(FirstArgument)> 

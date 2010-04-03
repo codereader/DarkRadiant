@@ -129,8 +129,7 @@ public:
 	 */
 	virtual void onRadiantShutdown();
 	
-	/** greebo: The command target compatible with FreeCaller<> to connect
-	 * 			this method to the EventManager.
+	/** greebo: The command target to connect to the EventManager.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
 

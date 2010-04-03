@@ -55,7 +55,7 @@ XYWnd::XYWnd(int id) :
 	_id(id),
 	_glWidget(false, "XYWnd"),
 	m_gl_widget(static_cast<GtkWidget*>(_glWidget)),
-	m_deferredDraw(WidgetQueueDrawCaller(*m_gl_widget)),
+	m_deferredDraw(boost::bind(widget_queue_draw, m_gl_widget)),
 	m_deferred_motion(callbackMouseMotion, this),
 	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
 	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),

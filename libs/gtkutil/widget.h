@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <list>
 #include <gtk/gtkwidget.h>
-#include "generic/callback.h"
 #include "warnings.h"
 #include "itextstream.h"
 
@@ -50,12 +49,10 @@ inline void widget_toggle_visible(GtkWidget* widget)
   widget_set_visible(widget, !widget_is_visible(widget));
 }
 
-inline void widget_queue_draw(GtkWidget& widget)
+inline void widget_queue_draw(GtkWidget* widget)
 {
-  gtk_widget_queue_draw(&widget);
+	gtk_widget_queue_draw(widget);
 }
-typedef ReferenceCaller<GtkWidget, widget_queue_draw> WidgetQueueDrawCaller;
-
 
 inline void widget_make_default(GtkWidget* widget)
 {

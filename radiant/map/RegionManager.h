@@ -19,9 +19,6 @@
  * 				specified file and places six wall/floor/ceiling brushes to
  * 				the file together with an info_player_start entity.
  * 				The info_player_start is placed at the current camera position.  
- * 
- * The static members are used to connect the EntityManager with the 
- * according commands, as the FreeCaller<> stuff needs static functions.
  */
 namespace map {
 
