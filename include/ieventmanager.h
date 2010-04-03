@@ -57,6 +57,15 @@ namespace ui {
 		obsPasteTextureToBrush, // paste texture to all brush faces of the selected brush
 		obsJumpToObject, 		// focuses the cam & xyviews to the clicked object
 	};
+
+	// Enum used for events tracking the key state
+	enum KeyEventType
+	{
+		KeyPressed,
+		KeyReleased,
+	};
+	typedef boost::function<void (KeyEventType)> KeyStateChangeCallback;
+
 } // namespace ui
 
 class IEvent
@@ -190,8 +199,8 @@ public:
 	// Add a command and specify the statement to execute when triggered
 	virtual IEventPtr addCommand(const std::string& name, const std::string& statement, bool reactOnKeyUp = false) = 0;
 	
-	// Creates a new keyevent that calls the given callback when invoked  
-	virtual IEventPtr addKeyEvent(const std::string& name, const Callback& keyUpCallback, const Callback& keyDownCallback) = 0;
+	// Creates a new keyevent that calls the given callback when invoked 
+	virtual IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback) = 0;
 	
 	// Creates a new toggle event that calls the given callback when toggled
 	virtual IEventPtr addToggle(const std::string& name, const Callback& onToggled) = 0;

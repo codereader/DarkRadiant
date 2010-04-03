@@ -2,47 +2,42 @@
 #define KEYEVENT_H_
 
 #include "ieventmanager.h"
-#include "generic/callback.h"
-
-#include "gtk/gtkmenuitem.h"
-#include "gdk/gdk.h"
-
 #include "Event.h"
 
-/* greebo: A KeyEvent is an object that contains a two callbacks, 
- * one for keyUp and one for keyDown events  
+/** 
+ * greebo: A KeyEvent is an object that contains a state change callback, 
+ * for tracking the keyUp and keyDown events.
  */
-
-typedef struct _GtkMenuItem GtkMenuItem;
-
 class KeyEvent :
 	public Event
 {
+private:
 	// The callbacks to be performed on keyDown/keyUp
-	Callback _keyUpCallback;
-	Callback _keyDownCallback;
+	ui::KeyStateChangeCallback _keyStateChangeCallback;
 	
 public:
-	KeyEvent(const Callback& keyUpCallback, const Callback& keyDownCallback) :
-		_keyUpCallback(keyUpCallback),
-		_keyDownCallback(keyDownCallback)
+	KeyEvent(const ui::KeyStateChangeCallback& keyStateChangeCallback) :
+		_keyStateChangeCallback(keyStateChangeCallback)
 	{}
 
-	virtual bool empty() const {
+	virtual bool empty() const
+	{
 		return false;
 	}
 	
-	void keyDown() {
+	void keyDown()
+	{
 		if (_enabled) {
 			// Execute the command on key down event
-			_keyDownCallback();
+			_keyStateChangeCallback(ui::KeyPressed);
 		}
 	}
 	
-	void keyUp() {
+	void keyUp()
+	{
 		if (_enabled) {
 			// Execute the command on key up event
-			_keyUpCallback();
+			_keyStateChangeCallback(ui::KeyReleased);
 		}
 	}
 

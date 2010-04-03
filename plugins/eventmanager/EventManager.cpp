@@ -245,11 +245,12 @@ IEventPtr EventManager::addCommand(const std::string& name, const std::string& s
 	return _emptyEvent;
 }
 
-IEventPtr EventManager::addKeyEvent(const std::string& name, const Callback& keyUpCallback, const Callback& keyDownCallback) {
-	
-	if (!alreadyRegistered(name)) {
+IEventPtr EventManager::addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback)
+{
+	if (!alreadyRegistered(name))
+	{
 		// Add the new keyevent to the list (implicitly cast onto Event&)  
-		_events[name] = IEventPtr(new KeyEvent(keyUpCallback, keyDownCallback));
+		_events[name] = IEventPtr(new KeyEvent(keyStateChangeCallback));
 		
 		// Return the pointer to the newly created event
 		return _events[name];
