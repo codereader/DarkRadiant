@@ -1,11 +1,13 @@
 #include "KeyValue.h"
 
+#include <boost/bind.hpp>
+
 namespace entity {
 
 KeyValue::KeyValue(const std::string& value, const std::string& empty) : 
 	_value(value), 
 	_emptyValue(empty),
-	_undo(_value, UndoImportCaller(*this))
+	_undo(_value, boost::bind(&KeyValue::importState, this, _1))
 {
 	notify();
 }

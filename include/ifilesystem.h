@@ -32,9 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 
 #include "imodule.h"
-#include "generic/callbackfwd.h"
-
-typedef Callback1<const std::string&> FileNameCallback;
 
 class ArchiveFile;
 typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;

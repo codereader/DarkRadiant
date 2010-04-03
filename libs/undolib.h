@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iundo.h"
 #include "mapfile.h"
 #include "warnings.h"
-#include "generic/callback.h"
+#include <boost/function.hpp>
 
 template<typename Copyable>
 class BasicUndoMemento : public UndoMemento
@@ -52,7 +52,7 @@ public:
 template<typename Copyable>
 class ObservedUndoableObject : public Undoable
 {
-  typedef Callback1<const Copyable&> ImportCallback;
+	typedef boost::function<void (const Copyable&)> ImportCallback;
 
   Copyable& m_object;
   ImportCallback m_importCallback;
