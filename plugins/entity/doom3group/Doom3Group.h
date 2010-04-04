@@ -152,13 +152,10 @@ public:
 	void modelChanged(const std::string& value);
 
 	void updateTransform();
-	typedef MemberCaller<Doom3Group, &Doom3Group::updateTransform> UpdateTransformCaller;
 
 	void originChanged();
-	typedef MemberCaller<Doom3Group, &Doom3Group::originChanged> OriginChangedCaller;
 
 	void rotationChanged();
-	typedef MemberCaller<Doom3Group, &Doom3Group::rotationChanged> RotationChangedCaller;
 };
 
 } // namespace entity

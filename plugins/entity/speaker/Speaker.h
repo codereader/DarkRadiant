@@ -111,10 +111,8 @@ public:
 	void updateAABB();
 
 	void updateTransform();
-	typedef MemberCaller<Speaker, &Speaker::updateTransform> UpdateTransformCaller;
 	
 	void originChanged();
-	typedef MemberCaller<Speaker, &Speaker::originChanged> OriginChangedCaller;
 
 	void sShaderChanged(const std::string& value);
 	void sMinChanged(const std::string& value);

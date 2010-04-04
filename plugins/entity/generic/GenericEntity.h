@@ -95,16 +95,10 @@ public:
 	void destroy();
 
 	void updateTransform();
-	typedef MemberCaller<GenericEntity, &GenericEntity::updateTransform> UpdateTransformCaller;
 	
 	void originChanged();
-	typedef MemberCaller<GenericEntity, &GenericEntity::originChanged> OriginChangedCaller;
-	
 	void angleChanged();
-	typedef MemberCaller<GenericEntity, &GenericEntity::angleChanged> AngleChangedCaller;
-
 	void rotationChanged();
-	typedef MemberCaller<GenericEntity, &GenericEntity::rotationChanged> RotationChangedCaller;
 };
 
 } // namespace entity

@@ -76,16 +76,12 @@ public:
 	void destroy();
 
 	void updateTransform();
-	typedef MemberCaller<EclassModel, &EclassModel::updateTransform> UpdateTransformCaller;
 
 	void originChanged();
-	typedef MemberCaller<EclassModel, &EclassModel::originChanged> OriginChangedCaller;
 	
 	void angleChanged();
-	typedef MemberCaller<EclassModel, &EclassModel::angleChanged> AngleChangedCaller;
 	
 	void rotationChanged();
-	typedef MemberCaller<EclassModel, &EclassModel::rotationChanged> RotationChangedCaller;
 	
 	void modelChanged(const std::string& value);
 };

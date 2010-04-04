@@ -25,8 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 
 #include "math/quaternion.h"
-#include "generic/callback.h"
 #include "string/string.h"
+#include <boost/function.hpp>
 
 const float ANGLEKEY_IDENTITY = 0;
 
@@ -47,12 +47,12 @@ inline void write_angle(double angle, Entity* entity)
 
 class AngleKey
 {
-  Callback m_angleChanged;
+	boost::function<void()> m_angleChanged;
 public:
   float m_angle;
 
 
-  AngleKey(const Callback& angleChanged)
+  AngleKey(const boost::function<void()>& angleChanged)
     : m_angleChanged(angleChanged), m_angle(ANGLEKEY_IDENTITY)
   {
   }
