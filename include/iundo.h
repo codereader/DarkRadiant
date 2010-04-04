@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imodule.h"
 #include <cstddef>
-#include "generic/callbackfwd.h"
 
 /* greebo: An UndoMemento has to be allocated on the heap
  * and contains all the information that is needed to describe
