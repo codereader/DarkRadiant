@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 
 #include "math/quaternion.h"
-#include "generic/callback.h"
+#include <boost/function.hpp>
 
 #include "angle.h"
 
@@ -195,12 +195,13 @@ public:
 
 class RotationKey
 {
-	Callback m_rotationChanged;
+private:
+	boost::function<void()> m_rotationChanged;
 public:
 	Float9 m_rotation;
 
 
-	RotationKey(const Callback& rotationChanged) : 
+	RotationKey(const boost::function<void()>& rotationChanged) : 
 		m_rotationChanged(rotationChanged)
 	{}
 
@@ -225,7 +226,7 @@ public:
 		if(euler[0] == 0 && euler[1] == 0 && !isModel)
 		{
 			entity->setKeyValue("rotation", "");
-			write_angle(static_cast<float>(euler[2]), entity);
+			write_angle(euler[2], entity);
 		}
 		else
 		{

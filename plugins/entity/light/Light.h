@@ -172,7 +172,6 @@ public:
 	void updateOrigin();
 
 	void originChanged();
-	typedef MemberCaller<Light, &Light::originChanged> OriginChangedCaller;
 
 	void lightTargetChanged(const std::string& value);
 	void lightUpChanged(const std::string& value);
@@ -183,7 +182,6 @@ public:
 	void writeLightOrigin();
 
 	void rotationChanged();
-	typedef MemberCaller<Light, &Light::rotationChanged> RotationChangedCaller;
 
 	void lightRotationChanged(const std::string& value);
 
