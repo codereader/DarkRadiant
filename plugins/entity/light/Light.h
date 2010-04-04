@@ -175,15 +175,10 @@ public:
 	typedef MemberCaller<Light, &Light::originChanged> OriginChangedCaller;
 
 	void lightTargetChanged(const std::string& value);
-	typedef MemberCaller1<Light, const std::string&, &Light::lightTargetChanged> LightTargetChangedCaller;
 	void lightUpChanged(const std::string& value);
-	typedef MemberCaller1<Light, const std::string&, &Light::lightUpChanged> LightUpChangedCaller;
 	void lightRightChanged(const std::string& value);
-	typedef MemberCaller1<Light, const std::string&, &Light::lightRightChanged> LightRightChangedCaller;
 	void lightStartChanged(const std::string& value);
-	typedef MemberCaller1<Light, const std::string&, &Light::lightStartChanged> LightStartChangedCaller;
 	void lightEndChanged(const std::string& value);
-	typedef MemberCaller1<Light, const std::string&, &Light::lightEndChanged> LightEndChangedCaller;
 
 	void writeLightOrigin();
 
@@ -191,7 +186,6 @@ public:
 	typedef MemberCaller<Light, &Light::rotationChanged> RotationChangedCaller;
 
 	void lightRotationChanged(const std::string& value);
-	typedef MemberCaller1<Light, const std::string&, &Light::lightRotationChanged> LightRotationChangedCaller;
 
 	/**
      * \brief

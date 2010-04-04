@@ -30,9 +30,8 @@ public:
 		}
 		SceneChangeNotify();
 	}
-	typedef MemberCaller1<LightShader, const std::string&, &LightShader::valueChanged> ValueChangedCaller;
 
-	ShaderPtr get() const {
+	const ShaderPtr& get() const {
 		return m_shader;
 	}
 };

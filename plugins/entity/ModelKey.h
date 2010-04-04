@@ -25,7 +25,6 @@ public:
 	// Update the model to the provided keyvalue, this removes the old scene::Node
 	// and inserts the new one after acquiring the model from the cache.
 	void modelChanged(const std::string& value);
-	typedef MemberCaller1<ModelKey, const std::string&, &ModelKey::modelChanged> ModelChangedCaller;
 
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;

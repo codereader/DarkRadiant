@@ -106,7 +106,6 @@ public:
 	scene::INodePtr clone() const;
 
 	void selectedChangedComponent(const Selectable& selectable);
-	typedef MemberCaller1<LightNode, const Selectable&, &LightNode::selectedChangedComponent> SelectedChangedComponentCaller;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;  

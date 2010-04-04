@@ -91,7 +91,6 @@ public:
 	virtual void snapto(float snap);
 
 	void selectionChangedComponent(const Selectable& selectable);
-	typedef MemberCaller1<Doom3GroupNode, const Selectable&, &Doom3GroupNode::selectionChangedComponent> SelectionChangedComponentCaller;
 
 	scene::INodePtr clone() const;
 

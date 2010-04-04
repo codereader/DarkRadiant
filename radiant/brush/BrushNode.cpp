@@ -5,11 +5,12 @@
 #include "iradiant.h"
 #include "icounter.h"
 #include "math/frustum.h"
+#include <boost/bind.hpp>
 
 // Constructor
 BrushNode::BrushNode() :
 	m_brush(*this, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
-	_selectable(SelectedChangedCaller(*this)),
+	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false)
@@ -41,7 +42,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Renderable(other),
 	Transformable(other),
 	m_brush(*this, other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
-	_selectable(SelectedChangedCaller(*this)),
+	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false)
@@ -277,7 +278,7 @@ void BrushNode::reserve(std::size_t size) {
 }
 
 void BrushNode::push_back(Face& face) {
-	m_faceInstances.push_back(FaceInstance(face, SelectedChangedComponentCaller(*this)));
+	m_faceInstances.push_back(FaceInstance(face, boost::bind(&BrushNode::selectedChangedComponent, this, _1)));
 }
 
 void BrushNode::pop_back() {
