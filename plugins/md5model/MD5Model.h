@@ -4,7 +4,6 @@
 #include "imodel.h"
 #include "math/aabb.h"
 #include <vector>
-#include "generic/callbackfwd.h"
 #include "parser/DefTokeniser.h"
 
 #include "MD5Surface.h"
