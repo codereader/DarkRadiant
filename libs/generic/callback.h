@@ -492,14 +492,14 @@ public:
 };*/
 
 /// \brief Forms a Callback from a non-const Environment reference and a const Environment member-function which takes one argument.
-template<typename Environment, typename FirstArgument, void (Environment::*member)(FirstArgument)>
+/*template<typename Environment, typename FirstArgument, void (Environment::*member)(FirstArgument)>
 class MemberCaller1 : public BindFirstOpaque1< Member1<Environment, FirstArgument, void, member> >
 {
 public:
   MemberCaller1(Environment& environment) : BindFirstOpaque1< Member1<Environment, FirstArgument, void, member> >(environment)
   {
   }
-};
+};*/
 
 /// \brief Forms a Callback from a const Environment reference and a const Environment member-function which takes one argument.
 /*template<typename Environment, typename FirstArgument, void (Environment::*member)(FirstArgument) const>

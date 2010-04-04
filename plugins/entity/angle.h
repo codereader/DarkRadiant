@@ -62,7 +62,6 @@ public:
     read_angle(m_angle, value);
     m_angleChanged();
   }
-  typedef MemberCaller1<AngleKey, const std::string&, &AngleKey::angleChanged> AngleChangedCaller;
 
   void write(Entity* entity) const
   {

@@ -3,6 +3,7 @@
 #include "ifilter.h"
 #include "irenderable.h"
 #include "math/frustum.h"
+#include <boost/bind.hpp>
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
@@ -25,14 +26,14 @@ inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicV
 
 FaceInstance::FaceInstance(Face& face, const SelectionChangeCallback& observer) :
 		m_face(&face),
-		m_selectable(SelectedChangedCaller(*this)),
+		m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
 		m_selectableVertices(observer),
 		m_selectableEdges(observer),
 		m_selectionChanged(observer) {}
 
 FaceInstance::FaceInstance(const FaceInstance& other) :
 		m_face(other.m_face),
-		m_selectable(SelectedChangedCaller(*this)),
+		m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
 		m_selectableVertices(other.m_selectableVertices),
 		m_selectableEdges(other.m_selectableEdges),
 		m_selectionChanged(other.m_selectionChanged) {}

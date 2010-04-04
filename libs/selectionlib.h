@@ -24,10 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iselection.h"
 #include "iselectable.h"
-#include "generic/callback.h"
 #include "scenelib.h"
 #include <stdlib.h>
 #include <list>
+#include <boost/bind.hpp>
 
 /** greebo: A structure containing information about the current 
  * Selection. An instance of this is maintained by the 
@@ -162,7 +162,11 @@ public:
         if (select ^ m_selected)
         {
             m_selected = select;
-            m_onchanged(*this);
+
+			if (m_onchanged)
+			{
+				m_onchanged(*this);
+			}
         }
     }
 
@@ -208,19 +212,20 @@ class SelectableNode :
 	public scene::Node,
 	public Selectable
 {
+private:
     // ObservedSelectable to store selection state and invoke callback
 	ObservedSelectable _selectable;
 
 public:
 
 	SelectableNode() :
-		_selectable(SelectedChangedCaller(*this))
+		_selectable(boost::bind(&SelectableNode::selectedChanged, this, _1))
 	{}
 
 	SelectableNode(const SelectableNode& other) :
 		scene::Node(other),
 		Selectable(other),
-		_selectable(SelectedChangedCaller(*this))
+		_selectable(boost::bind(&SelectableNode::selectedChanged, this, _1))
 	{}
 
 	Selectable& getSelectable() {
@@ -242,13 +247,6 @@ public:
         );
 	}
 
-    /**
-     * Callback typedef.
-     */
-	typedef MemberCaller1<
-        SelectableNode, const Selectable&, &SelectableNode::selectedChanged
-    > SelectedChangedCaller;
-  
 	// Selectable implementation
 	virtual void setSelected(bool select) {
 		_selectable.setSelected(select);

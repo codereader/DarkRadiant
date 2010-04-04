@@ -128,10 +128,8 @@ public:
 
 	// The callback for the ObservedSelectable
 	void selectedChanged(const Selectable& selectable);
-	typedef MemberCaller1<BrushNode, const Selectable&, &BrushNode::selectedChanged> SelectedChangedCaller;
 
 	void selectedChangedComponent(const Selectable& selectable);
-	typedef MemberCaller1<BrushNode, const Selectable&, &BrushNode::selectedChangedComponent> SelectedChangedComponentCaller;
 
 	// PlaneSelectable implementation
 	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);

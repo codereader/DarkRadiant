@@ -62,8 +62,6 @@ public:
 		SceneChangeNotify();
 	}
 	
-	typedef MemberCaller1<Doom3LightRadius, const std::string&, &Doom3LightRadius::lightRadiusChanged> LightRadiusChangedCaller;
-
 	/* greebo: This gets called by the keyObserver when the light center value is changed.
 	 * Note: this gets immediately after a new light is constructed as well.
 	 */
@@ -86,8 +84,6 @@ public:
 		// Update the scene graph
 		SceneChangeNotify();
 	}
-	
-	typedef MemberCaller1<Doom3LightRadius, const std::string&, &Doom3LightRadius::lightCenterChanged> LightCenterChangedCaller;
 }; // class Doom3LightRadius
 
 #endif /*DOOM3LIGHTRADIUS_H_*/

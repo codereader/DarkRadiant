@@ -13,10 +13,10 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 		Node::BoundsChangedCaller(*this)
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
-				 SelectionChangedComponentCaller(*this)),
+				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
-					  SelectionChangedComponentCaller(*this)),
-	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
+					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
+	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
 	_updateSkin(true),
 	_instantiated(false),
 	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
@@ -38,10 +38,10 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 		Node::BoundsChangedCaller(*this)
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
-				 SelectionChangedComponentCaller(*this)),
+				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
-					  SelectionChangedComponentCaller(*this)),
-	_originInstance(VertexInstance(m_contained.getOrigin(), SelectionChangedComponentCaller(*this))),
+					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
+	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
 	_updateSkin(true),
 	_instantiated(false),
 	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))

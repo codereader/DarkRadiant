@@ -39,7 +39,6 @@ public:
 	const Face& getFace() const;
 	
 	void selectedChanged(const Selectable& selectable);
-	typedef MemberCaller1<FaceInstance, const Selectable&, &FaceInstance::selectedChanged> SelectedChangedCaller;
 	 
 	bool selectedVertices() const;
 	bool selectedEdges() const;

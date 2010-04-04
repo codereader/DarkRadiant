@@ -7,8 +7,8 @@
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :
-	m_dragPlanes(SelectedChangedComponentCaller(*this)),
-	_selectable(SelectedChangedCaller(*this)),
+	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
+	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	m_patch(*this, 
 			EvaluateTransformCaller(*this), 
@@ -39,8 +39,8 @@ PatchNode::PatchNode(const PatchNode& other) :
 	LightCullable(other),
 	Renderable(other),
 	Transformable(other),
-	m_dragPlanes(SelectedChangedComponentCaller(*this)),
-	_selectable(SelectedChangedCaller(*this)),
+	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
+	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	m_patch(other.m_patch, *this, EvaluateTransformCaller(*this), 
 		    Node::BoundsChangedCaller(*this)), // create the patch out of the <other> one
@@ -66,8 +66,11 @@ void PatchNode::allocate(std::size_t size) {
 	// greebo: Cycle through the patch's control vertices and add them as PatchControlInstance to the vector
 	// The PatchControlInstance constructor takes a pointer to a PatchControl and the SelectionChanged callback
 	// The passed callback points back to this class (the member method selectedChangedComponent() is called).  
-	for(PatchControlIter i = m_patch.begin(); i != m_patch.end(); ++i) {
-		m_ctrl_instances.push_back(PatchControlInstance(&(*i), SelectedChangedComponentCaller(*this)));
+	for(PatchControlIter i = m_patch.begin(); i != m_patch.end(); ++i)
+	{
+		m_ctrl_instances.push_back(
+			PatchControlInstance(&(*i), boost::bind(&PatchNode::selectedChangedComponent, this, _1))
+		);
 	}
 }
 

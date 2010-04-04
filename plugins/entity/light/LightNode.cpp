@@ -1,6 +1,7 @@
 #include "LightNode.h"
 
 #include "../EntitySettings.h"
+#include <boost/bind.hpp>
 
 namespace entity {
 
@@ -12,13 +13,13 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 		   *this,
            Node::TransformChangedCaller(*this), 
            Node::BoundsChangedCaller(*this)),
-	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
-	_lightTargetInstance(VertexInstance(_light.targetTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightUpInstance(VertexInstanceRelative(_light.upTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightStartInstance(VertexInstance(_light.startTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightEndInstance(VertexInstance(_light.endTransformed(), SelectedChangedComponentCaller(*this))),
-	m_dragPlanes(SelectedChangedComponentCaller(*this))
+	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightTargetInstance(VertexInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightUpInstance(VertexInstanceRelative(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightStartInstance(VertexInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightEndInstance(VertexInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));
@@ -32,13 +33,13 @@ LightNode::LightNode(const LightNode& other) :
            _entity,
            Node::TransformChangedCaller(*this), 
            Node::BoundsChangedCaller(*this)),
-	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, SelectedChangedComponentCaller(*this))),
-	_lightTargetInstance(VertexInstance(_light.targetTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightUpInstance(VertexInstanceRelative(_light.upTransformed(), _light.targetTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightStartInstance(VertexInstance(_light.startTransformed(), SelectedChangedComponentCaller(*this))),
-	_lightEndInstance(VertexInstance(_light.endTransformed(), SelectedChangedComponentCaller(*this))),
-	m_dragPlanes(SelectedChangedComponentCaller(*this))
+	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightTargetInstance(VertexInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightUpInstance(VertexInstanceRelative(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightStartInstance(VertexInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightEndInstance(VertexInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
 	_light.setLightChangedCallback(LightChangedCaller(*this));

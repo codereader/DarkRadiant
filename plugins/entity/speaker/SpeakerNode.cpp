@@ -1,6 +1,7 @@
 #include "SpeakerNode.h"
 
 #include "math/frustum.h"
+#include <boost/bind.hpp>
 
 namespace entity {
 
@@ -9,7 +10,7 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	_speaker(*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this)),
-	_dragPlanes(SelectedChangedComponentCaller(*this))
+	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
 
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
@@ -20,7 +21,7 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 		*this, 
 		Node::TransformChangedCaller(*this), 
 		Node::BoundsChangedCaller(*this)),
-	_dragPlanes(SelectedChangedComponentCaller(*this))
+	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
 
 void SpeakerNode::construct()

@@ -119,12 +119,10 @@ public:
 
 	// The callback function that gets called when the attached selectable gets changed
 	void selectedChanged(const Selectable& selectable);
-	typedef MemberCaller1<PatchNode, const Selectable&, &PatchNode::selectedChanged> SelectedChangedCaller;
 
 	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes 
 	// (see ObservedSelectable and PatchControlInstance)
 	void selectedChangedComponent(const Selectable& selectable);
-	typedef MemberCaller1<PatchNode, const Selectable&, &PatchNode::selectedChangedComponent> SelectedChangedComponentCaller;
 
 	// LightCullable implementation
 	bool testLight(const RendererLight& light) const;
