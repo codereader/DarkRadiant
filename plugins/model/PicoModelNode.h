@@ -66,7 +66,6 @@ public:
 	void lightsChanged() {
 		_lightList.lightsChanged();
 	}
-	typedef MemberCaller<PicoModelNode, &PicoModelNode::lightsChanged> LightsChangedCaller;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);

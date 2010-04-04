@@ -101,7 +101,7 @@ private:
 	void construct();
 
 public:
-	Callback m_lightsChanged;
+	boost::function<void()> m_lightsChanged;
 
 	static int m_CycleCapIndex;// = 0;
 	

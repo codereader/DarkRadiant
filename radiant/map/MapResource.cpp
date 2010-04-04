@@ -20,6 +20,7 @@
 #include "stream/textfilestream.h"
 #include "referencecache/NullModelNode.h"
 #include "MapExportInfo.h"
+#include <boost/bind.hpp>
 
 namespace map {
 
@@ -226,7 +227,7 @@ void MapResource::connectMap() {
     MapFilePtr map = Node_getMapFile(_mapRoot);
     if (map != NULL) {
     	// Reroute the changed callback to the onMapChanged() call.
-    	map->setChangedCallback(MapChangedCaller(*this));
+		map->setChangedCallback(boost::bind(&MapResource::onMapChanged, this));
     }
 }
 

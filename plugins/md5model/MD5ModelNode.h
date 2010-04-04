@@ -44,7 +44,6 @@ public:
 	virtual const model::IModel& getIModel() const;
 
 	void lightsChanged();
-	typedef MemberCaller<MD5ModelNode, &MD5ModelNode::lightsChanged> LightsChangedCaller;
 
 	// returns the contained model
 	void setModel(const MD5ModelPtr& model);

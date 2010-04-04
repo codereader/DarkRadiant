@@ -86,7 +86,6 @@ public:
 	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void curveChanged();
-	typedef MemberCaller<CurveEditInstance, &CurveEditInstance::curveChanged> CurveChangedCaller;
 	
 	// As the name states, removes the selected control points
 	void removeSelectedControlPoints();

@@ -64,7 +64,6 @@ public:
 	std::string name() const;
 
 	void lightsChanged();
-	typedef MemberCaller<PatchNode, &PatchNode::lightsChanged> LightsChangedCaller;
 
 	// Bounded implementation
 	const AABB& localAABB() const;
@@ -141,7 +140,6 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	void evaluateTransform();
-	typedef MemberCaller<PatchNode, &PatchNode::evaluateTransform> EvaluateTransformCaller;
 
 protected:
 	// Gets called by the Transformable implementation whenever

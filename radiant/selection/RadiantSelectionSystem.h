@@ -124,7 +124,6 @@ public:
 	void keyChanged(const std::string& key, const std::string& val);
 
 	void onSceneBoundsChanged();
-	typedef MemberCaller<RadiantSelectionSystem, &RadiantSelectionSystem::onSceneBoundsChanged> SceneBoundsChangedCaller;
 	
 	void pivotChanged() const;
   

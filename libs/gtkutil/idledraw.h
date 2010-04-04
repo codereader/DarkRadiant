@@ -54,7 +54,6 @@ public:
       m_handler = g_idle_add(&draw, this);
     }
   }
-  typedef MemberCaller<IdleDraw, &IdleDraw::queueDraw> QueueDrawCaller;
 
   void flush()
   {

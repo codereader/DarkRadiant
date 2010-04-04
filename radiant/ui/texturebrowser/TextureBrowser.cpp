@@ -42,7 +42,7 @@ TextureBrowser::TextureBrowser() :
 	_epsilon(GlobalRegistry().getFloat(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
 	_popupMenu(gtk_menu_new()),
 	m_filter(0),
-	m_filterEntry(TextureBrowserQueueDrawCaller(*this), ClearFilterCaller(*this)),
+	m_filterEntry(Callback(boost::bind(&TextureBrowser::queueDraw, this)), Callback(boost::bind(&TextureBrowser::clearFilter, this))),
 	m_texture_scroll(0),
 	m_heightChanged(true),
 	m_originInvalid(true),

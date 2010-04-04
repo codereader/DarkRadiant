@@ -71,7 +71,6 @@ public:
 	* Don't know exactly what it does, but it seems to notify the shader cache that the light has moved or
 	* something like that.*/ 
 	void lightChanged();
-	typedef MemberCaller<LightNode, &LightNode::lightChanged> LightChangedCaller;
 
 	/* greebo: This snaps the components to the grid.
 	 * 

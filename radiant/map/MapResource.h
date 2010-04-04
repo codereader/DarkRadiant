@@ -75,7 +75,6 @@ public:
   void refresh();
   
 	void onMapChanged();
-	typedef MemberCaller<MapResource, &MapResource::onMapChanged> MapChangedCaller;
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	static bool saveFile(const MapFormat& format, const scene::INodePtr& root, 

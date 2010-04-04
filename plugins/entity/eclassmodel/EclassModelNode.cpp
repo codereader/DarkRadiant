@@ -6,7 +6,7 @@ namespace entity {
 
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_contained(*this, Node::TransformChangedCaller(*this)),
+	m_contained(*this, Callback(boost::bind(&Node::transformChanged, this))),
 	_updateSkin(true),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
 	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))
@@ -17,7 +17,7 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	Snappable(other),
 	m_contained(other.m_contained, 
 				*this, 
-				Node::TransformChangedCaller(*this)),
+				Callback(boost::bind(&Node::transformChanged, this))),
 	_updateSkin(true),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
 	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))

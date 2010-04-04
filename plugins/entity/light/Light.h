@@ -246,7 +246,7 @@ public:
 	mutable Matrix4 m_localPivot;
 	const Matrix4& getLocalPivot() const;
 
-	void setLightChangedCallback(const Callback& callback);
+	void setLightChangedCallback(const boost::function<void()>& callback);
 
     // Is this light projected or omni?
     bool isProjected() const;

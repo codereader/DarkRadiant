@@ -2,6 +2,7 @@
 
 #include "ivolumetest.h"
 #include "imodelcache.h"
+#include <boost/bind.hpp>
 
 namespace md5 {
 
@@ -23,9 +24,9 @@ MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
 {
 	_lightList = &GlobalRenderSystem().attach(*this);
 
-	_model->_lightsChanged = LightsChangedCaller(*this);
+	_model->_lightsChanged = boost::bind(&MD5ModelNode::lightsChanged, this);
 
-	Node::setTransformChangedCallback(LightsChangedCaller(*this));
+	Node::setTransformChangedCallback(boost::function<void()>((boost::bind(&MD5ModelNode::lightsChanged, this))));
 
 	constructRemaps();
 }
