@@ -101,7 +101,6 @@ public:
 	}
 
 	void lightsChanged();
-	typedef MemberCaller<BrushNode, &BrushNode::lightsChanged> LightsChangedCaller;
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
@@ -175,7 +174,6 @@ public:
 	void viewChanged() const;
 
 	void evaluateTransform();
-	typedef MemberCaller<BrushNode, &BrushNode::evaluateTransform> EvaluateTransformCaller;
 
 	void setClipPlane(const Plane3& plane);
 

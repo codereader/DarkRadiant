@@ -11,8 +11,8 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	_light(_entity,
 		   *this,
-           Node::TransformChangedCaller(*this), 
-           Node::BoundsChangedCaller(*this)),
+		   Callback(boost::bind(&scene::Node::transformChanged, this)), 
+		   Callback(boost::bind(&scene::Node::boundsChanged, this))),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
 	_lightTargetInstance(VertexInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
 	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
@@ -22,7 +22,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
-	_light.setLightChangedCallback(LightChangedCaller(*this));
+	_light.setLightChangedCallback(boost::bind(&LightNode::lightChanged, this));
 }
 
 LightNode::LightNode(const LightNode& other) :
@@ -31,8 +31,8 @@ LightNode::LightNode(const LightNode& other) :
 	_light(other._light,
 		   *this,
            _entity,
-           Node::TransformChangedCaller(*this), 
-           Node::BoundsChangedCaller(*this)),
+           Callback(boost::bind(&Node::transformChanged, this)), 
+		   Callback(boost::bind(&Node::boundsChanged, this))),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
 	_lightTargetInstance(VertexInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
 	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
@@ -42,7 +42,7 @@ LightNode::LightNode(const LightNode& other) :
 	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {
 	// greebo: Connect the lightChanged() member method to the "light changed" callback
-	_light.setLightChangedCallback(LightChangedCaller(*this));
+	_light.setLightChangedCallback(Callback(boost::bind(&LightNode::lightChanged, this)));
 }
 
 void LightNode::construct()
@@ -52,7 +52,7 @@ void LightNode::construct()
 
 LightNode::~LightNode()
 {
-	_light.setLightChangedCallback(Callback());
+	_light.setLightChangedCallback(boost::function<void()>());
 }
 
 const Matrix4& LightNode::getLocalPivot() const {

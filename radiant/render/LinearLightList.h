@@ -3,7 +3,7 @@
 
 #include "irender.h"
 #include <list>
-#include "generic/callback.h"
+#include <boost/function/function_fwd.hpp>
 
 namespace render {
 
@@ -12,18 +12,21 @@ typedef std::set<RendererLight*> RendererLights;
 class LinearLightList : 
 	public LightList
 {
+public:
+	typedef boost::function<void()> EvaluateChangedCallback;
+private:
 	LightCullable& m_cullable;
 	RendererLights& m_allLights;
-	Callback m_evaluateChanged;
+	EvaluateChangedCallback m_evaluateChanged;
 
 	typedef std::list<RendererLight*> Lights;
 	mutable Lights m_lights;
 	mutable bool m_lightsChanged;
 public:
-	
+
 	LinearLightList(LightCullable& cullable, 
 					RendererLights& lights,
-					const Callback& evaluateChanged) :
+					const EvaluateChangedCallback& evaluateChanged) :
 		m_cullable(cullable), 
 		m_allLights(lights),
 		m_evaluateChanged(evaluateChanged)
@@ -31,10 +34,12 @@ public:
 		m_lightsChanged = true;
 	}
 	
-	void evaluateLights() const {
+	void evaluateLights() const
+	{
 		m_evaluateChanged();
 		
-		if (m_lightsChanged) {
+		if (m_lightsChanged)
+		{
 			m_lightsChanged = false;
 
 			m_lights.clear();

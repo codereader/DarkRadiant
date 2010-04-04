@@ -9,7 +9,9 @@
 
 // Constructor
 BrushNode::BrushNode() :
-	m_brush(*this, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
+	m_brush(*this, 
+			Callback(boost::bind(&BrushNode::evaluateTransform, this)), 
+			Callback(boost::bind(&Node::boundsChanged, this))),
 	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
@@ -18,9 +20,9 @@ BrushNode::BrushNode() :
 	m_brush.attach(*this); // BrushObserver
 	m_lightList = &GlobalRenderSystem().attach(*this);
 
-	m_brush.m_lightsChanged = LightsChangedCaller(*this);
+	m_brush.m_lightsChanged = boost::bind(&BrushNode::lightsChanged, this);
 
-	Node::setTransformChangedCallback(LightsChangedCaller(*this));
+	Node::setTransformChangedCallback(m_brush.m_lightsChanged);
 }
 
 // Copy Constructor
@@ -41,7 +43,9 @@ BrushNode::BrushNode(const BrushNode& other) :
 	LightCullable(other),
 	Renderable(other),
 	Transformable(other),
-	m_brush(*this, other.m_brush, EvaluateTransformCaller(*this), Node::BoundsChangedCaller(*this)),
+	m_brush(*this, other.m_brush, 
+			Callback(boost::bind(&BrushNode::evaluateTransform, this)), 
+			Callback(boost::bind(&Node::boundsChanged, this))),
 	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),

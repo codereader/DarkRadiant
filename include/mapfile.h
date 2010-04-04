@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <limits>
 
 #include "iscenegraph.h"
-#include "generic/callbackfwd.h"
+#include <boost/function/function_fwd.hpp>
 
 const std::size_t MAPFILE_MAX_CHANGES = std::numeric_limits<std::size_t>::max();
 
@@ -36,7 +36,7 @@ public:
   virtual void save() = 0;
   virtual bool saved() const = 0;
   virtual void changed() = 0;
-  virtual void setChangedCallback(const Callback& changed) = 0;
+  virtual void setChangedCallback(const boost::function<void()>& changed) = 0;
   virtual std::size_t changes() const = 0;
 };
 typedef boost::shared_ptr<MapFile> MapFilePtr;

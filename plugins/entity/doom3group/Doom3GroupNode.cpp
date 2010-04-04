@@ -9,8 +9,8 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
-		Node::TransformChangedCaller(*this),
-		Node::BoundsChangedCaller(*this)
+		Callback(boost::bind(&scene::Node::transformChanged, this)),
+		Callback(boost::bind(&scene::Node::boundsChanged, this))
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
@@ -34,8 +34,8 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	m_contained(
 		other.m_contained,
 		*this, // Pass <this> as Doom3GroupNode&
-		Node::TransformChangedCaller(*this),
-		Node::BoundsChangedCaller(*this)
+		Callback(boost::bind(&scene::Node::transformChanged, this)),
+		Callback(boost::bind(&scene::Node::boundsChanged, this))
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
@@ -69,10 +69,10 @@ void Doom3GroupNode::construct()
 	addKeyObserver("skin", _skinObserver);
 
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
-		CurveEditInstance::CurveChangedCaller(m_curveNURBS)
+		boost::bind(&CurveEditInstance::curveChanged, &m_curveNURBS)
 	);
 	m_contained.m_curveCatmullRomChanged = m_contained.m_curveCatmullRom.connect(
-		CurveEditInstance::CurveChangedCaller(m_curveCatmullRom)
+		boost::bind(&CurveEditInstance::curveChanged, &m_curveCatmullRom)
 	);
 }
 

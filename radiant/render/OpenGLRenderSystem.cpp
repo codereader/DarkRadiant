@@ -7,6 +7,7 @@
 #include "backend/GLProgramFactory.h"
 
 #include <boost/weak_ptr.hpp>
+#include <boost/bind.hpp>
 
 namespace render {
 
@@ -298,8 +299,13 @@ void OpenGLRenderSystem::setLightingEnabled(bool enabled) {
 	setLighting(m_lightingSupported, enabled);
 }
 
-const LightList& OpenGLRenderSystem::attach(LightCullable& cullable) {
-	return (*m_lightLists.insert(LightLists::value_type(&cullable, LinearLightList(cullable, m_lights, EvaluateChangedCaller(*this)))).first).second;
+const LightList& OpenGLRenderSystem::attach(LightCullable& cullable)
+{
+	return m_lightLists.insert(
+		LightLists::value_type(
+			&cullable, 
+			LinearLightList(cullable, m_lights, boost::bind(&OpenGLRenderSystem::evaluateChanged, this)))
+		).first->second;
 }
 
 void OpenGLRenderSystem::detach(LightCullable& cullable) {

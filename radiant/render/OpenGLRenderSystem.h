@@ -93,7 +93,6 @@ public:
 	void lightChanged(RendererLight& light);
 
 	void evaluateChanged();
-	typedef MemberCaller<OpenGLRenderSystem, &OpenGLRenderSystem::evaluateChanged> EvaluateChangedCaller;
 
 	typedef std::set<const Renderable*> Renderables; 
 	Renderables m_renderables;

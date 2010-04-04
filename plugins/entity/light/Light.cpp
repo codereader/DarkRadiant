@@ -703,7 +703,8 @@ const Matrix4& Light::getLocalPivot() const {
 	return m_localPivot;
 }
 
-void Light::setLightChangedCallback(const Callback& callback) {
+void Light::setLightChangedCallback(const boost::function<void()>& callback)
+{
 	m_doom3Radius.m_changed = callback;
 }
 

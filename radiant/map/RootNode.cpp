@@ -45,7 +45,7 @@ void RootNode::changed() {
 	m_changeTracker.changed();
 }
 
-void RootNode::setChangedCallback(const Callback& changed) {
+void RootNode::setChangedCallback(const boost::function<void()>& changed) {
 	m_changeTracker.setChangedCallback(changed);
 }
 

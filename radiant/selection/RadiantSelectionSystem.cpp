@@ -1042,7 +1042,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 	
 	// Connect the bounds changed caller 
 	_boundsChangedHandler =	GlobalSceneGraph().addBoundsChangedCallback(
-		SceneBoundsChangedCaller(*this)
+		boost::bind(&RadiantSelectionSystem::onSceneBoundsChanged, this)
 	);
 
 	GlobalRenderSystem().attachRenderable(*this);

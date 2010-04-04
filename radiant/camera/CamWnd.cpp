@@ -244,8 +244,8 @@ gboolean disable_freelook_button_release(GtkWidget* widget, GdkEventButton* even
 CamWnd::CamWnd() :
 	_id(++_maxId),
 	m_view(true),
-	m_Camera(&m_view, CamWndQueueDraw(*this)),
-	m_cameraview(m_Camera, &m_view, CamWndUpdate(*this)),
+	m_Camera(&m_view, Callback(boost::bind(&CamWnd::queueDraw, this))),
+	m_cameraview(m_Camera, &m_view, Callback(boost::bind(&CamWnd::update, this))),
 	m_drawing(false),
 	m_bFreeMove(false),
 	m_gl_widget(true, "CamWnd"),

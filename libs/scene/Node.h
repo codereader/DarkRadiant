@@ -92,7 +92,6 @@ public:
 	const AABB& childBounds() const;
 
 	void boundsChanged();
-	typedef MemberCaller<Node, &Node::boundsChanged> BoundsChangedCaller;
 
 	/**
 	 * Return the filtered status of this Instance.
@@ -119,7 +118,6 @@ public:
 	void transformChangedLocal();
 
 	void transformChanged();
-	typedef MemberCaller<Node, &Node::transformChanged> TransformChangedCaller;
 
 	void setTransformChangedCallback(const Callback& callback);
 

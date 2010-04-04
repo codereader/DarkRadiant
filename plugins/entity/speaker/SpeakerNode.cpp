@@ -8,8 +8,8 @@ namespace entity {
 SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	_speaker(*this, 
-		Node::TransformChangedCaller(*this), 
-		Node::BoundsChangedCaller(*this)),
+		Callback(boost::bind(&Node::transformChanged, this)), 
+		Callback(boost::bind(&Node::boundsChanged, this))),
 	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
 
@@ -19,8 +19,8 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	SelectionTestable(other),
 	_speaker(other._speaker, 
 		*this, 
-		Node::TransformChangedCaller(*this), 
-		Node::BoundsChangedCaller(*this)),
+		Callback(boost::bind(&Node::transformChanged, this)), 
+		Callback(boost::bind(&Node::boundsChanged, this))),
 	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
 

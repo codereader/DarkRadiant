@@ -115,7 +115,6 @@ public:
 	void update();
   
 	void clearFilter();
-	typedef MemberCaller<TextureBrowser, &TextureBrowser::clearFilter> ClearFilterCaller;
 
 	// RegistryKeyObserver implementation
 	void keyChanged(const std::string& key, const std::string& val);
@@ -132,7 +131,6 @@ public:
 	void destroyWindow();
   
 	void queueDraw();
-	typedef MemberCaller<TextureBrowser, &TextureBrowser::queueDraw> TextureBrowserQueueDrawCaller;
   
 	// Legacy function needed for DeferredAdjustment (TODO!) 
 	static void scrollChanged(void* data, gdouble value);
