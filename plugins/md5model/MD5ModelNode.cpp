@@ -24,9 +24,7 @@ MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
 {
 	_lightList = &GlobalRenderSystem().attach(*this);
 
-	_model->_lightsChanged = boost::bind(&MD5ModelNode::lightsChanged, this);
-
-	Node::setTransformChangedCallback(boost::function<void()>((boost::bind(&MD5ModelNode::lightsChanged, this))));
+	Node::setTransformChangedCallback(Callback((boost::bind(&MD5ModelNode::lightsChanged, this))));
 
 	constructRemaps();
 }

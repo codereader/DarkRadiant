@@ -35,8 +35,6 @@ class MD5Model :
 public:
 	MD5Model();
 
-	Callback _lightsChanged;
-
 	typedef SurfaceList::const_iterator const_iterator;
 
 	// Public iterator-related methods
