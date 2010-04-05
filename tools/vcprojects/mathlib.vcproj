@@ -266,10 +266,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\math\curve.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\math\curve.h"
 			>
 		</File>
@@ -286,10 +282,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\math\line.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\math\line.h"
 			>
 		</File>
@@ -303,10 +295,6 @@
 		</File>
 		<File
 			RelativePath="..\..\libs\math\matrix.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\math\pi.cpp"
 			>
 		</File>
 		<File
