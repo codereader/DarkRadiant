@@ -67,7 +67,8 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state)
 Light::Light(Doom3Entity& entity,
 			 LightNode& owner,
              const Callback& transformChanged,
-             const Callback& boundsChanged) 
+             const Callback& boundsChanged,
+			 const Callback& lightRadiusChanged) 
 :
 	_owner(owner),
 	_entity(entity),
@@ -87,14 +88,17 @@ Light::Light(Doom3Entity& entity,
 	m_useLightRotation(false),
 	m_transformChanged(transformChanged),
 	m_boundsChanged(boundsChanged)
-{}
+{
+	m_doom3Radius.m_changed = lightRadiusChanged;
+}
 
 // Copy Constructor
 Light::Light(const Light& other,
 			 LightNode& owner,
              Doom3Entity& entity,
              const Callback& transformChanged,
-             const Callback& boundsChanged) 
+             const Callback& boundsChanged,
+			 const Callback& lightRadiusChanged) 
 : _owner(owner),
   _entity(entity),
   m_originKey(boost::bind(&Light::originChanged, this)),
@@ -113,7 +117,9 @@ Light::Light(const Light& other,
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
   m_boundsChanged(boundsChanged)
-{}
+{
+	m_doom3Radius.m_changed = lightRadiusChanged;
+}
 
 Light::~Light()
 {
@@ -701,11 +707,6 @@ const Matrix4& Light::getLocalPivot() const {
 	m_localPivot = m_rotation.getMatrix4();
 	m_localPivot.t().getVector3() = _lightBox.origin;
 	return m_localPivot;
-}
-
-void Light::setLightChangedCallback(const boost::function<void()>& callback)
-{
-	m_doom3Radius.m_changed = callback;
 }
 
 // greebo: This returns the AABB of the WHOLE light (this includes the volume and all its selectable vertices)
