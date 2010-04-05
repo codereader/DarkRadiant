@@ -192,7 +192,8 @@ public:
 	Light(Doom3Entity& entity,
 		  LightNode& owner,
           const Callback& transformChanged,
-          const Callback& boundsChanged);
+          const Callback& boundsChanged,
+		  const Callback& lightRadiusChanged);
 	
 	/**
      * \brief
@@ -202,7 +203,8 @@ public:
 		  LightNode& owner,
           Doom3Entity& entity,
           const Callback& transformChanged,
-          const Callback& boundsChanged);
+          const Callback& boundsChanged,
+		  const Callback& lightRadiusChanged);
 
 	~Light();
 	
@@ -245,8 +247,6 @@ public:
 	// note: move this
 	mutable Matrix4 m_localPivot;
 	const Matrix4& getLocalPivot() const;
-
-	void setLightChangedCallback(const boost::function<void()>& callback);
 
     // Is this light projected or omni?
     bool isProjected() const;

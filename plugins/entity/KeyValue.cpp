@@ -13,7 +13,7 @@ KeyValue::KeyValue(const std::string& value, const std::string& empty) :
 }
 
 KeyValue::~KeyValue() {
-	//ASSERT_MESSAGE(_observers.empty(), "KeyValue::~KeyValue: observers still attached");
+	assert(_observers.empty());
 }
 
 void KeyValue::instanceAttach(MapFile* map) {

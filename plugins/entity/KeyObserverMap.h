@@ -95,6 +95,14 @@ public:
 		{
 			if (i->second == &observer)
 			{
+				EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key);
+				
+				if (keyValue != NULL)
+				{
+					// Detach the observer from the actual keyvalue
+					keyValue->detach(observer);
+				}
+
 				_keyObservers.erase(i++);
 			}
 			else
