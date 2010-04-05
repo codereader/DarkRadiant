@@ -451,10 +451,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\idledraw.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\idledraw.h"
 			>
 		</File>
@@ -487,10 +483,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\nonmodal.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\nonmodal.h"
 			>
 		</File>
@@ -512,10 +504,6 @@
 		</File>
 		<File
 			RelativePath="..\..\libs\gtkutil\PathEntry.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\pointer.cpp"
 			>
 		</File>
 		<File
