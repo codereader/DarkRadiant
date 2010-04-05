@@ -29,7 +29,7 @@ class TargetableNode :
 	TargetKeyCollection _targetKeys;
 	mutable RenderableTargetLines _renderableLines;
 
-	// The current name of this entity (used for comparison in "targetNameChanged")
+	// The current name of this entity (used for comparison in "onKeyValueChanged")
 	std::string _targetName;
 
 	// The node we're associated with
@@ -42,9 +42,6 @@ public:
 	void construct();
 	// Disconnect this class from the entity
 	void destruct();
-
-	void setTargetsChanged(const Callback& targetsChanged);
-	void targetsChanged();
 
 	// Gets called as soon as the "name" keyvalue changes
 	void onKeyValueChanged(const std::string& name);

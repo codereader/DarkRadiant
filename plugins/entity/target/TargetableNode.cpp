@@ -27,14 +27,6 @@ void TargetableNode::destruct()
 	_d3entity.detachObserver(this);
 }
 
-void TargetableNode::setTargetsChanged(const Callback& targetsChanged) {
-	_targetKeys.setTargetsChanged(targetsChanged);
-}
-
-void TargetableNode::targetsChanged() {
-	_targetKeys.targetsChanged();
-}
-
 // Gets called as soon as the "name" keyvalue changes
 void TargetableNode::onKeyValueChanged(const std::string& name)
 {

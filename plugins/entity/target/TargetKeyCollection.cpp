@@ -21,14 +21,6 @@ bool TargetKeyCollection::isTargetKey(const std::string& key) {
 	return (boost::algorithm::istarts_with(key, "target"));
 }
 
-void TargetKeyCollection::setTargetsChanged(const Callback& targetsChanged) {
-	_targetsChanged = targetsChanged;
-}
-
-void TargetKeyCollection::targetsChanged() {
-	_targetsChanged();
-}
-
 // Entity::Observer implementation, gets called on key insert
 void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& value) {
 	// ignore non-target keys
@@ -41,8 +33,6 @@ void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& va
 	).first;
 	
 	i->second.attachToKeyValue(value);
-	//value.attach(TargetingEntity::TargetChangedCaller(i->second));
-	targetsChanged();
 }
 
 // Entity::Observer implementation, gets called on key erase
@@ -58,12 +48,9 @@ void TargetKeyCollection::onKeyErase(const std::string& key, EntityKeyValue& val
 	assert(i != _targetKeys.end());
 
 	i->second.detachFromKeyValue(value);
-	//value.detach(TargetingEntity::TargetChangedCaller(i->second));
 
 	// Remove the found element
 	_targetKeys.erase(i);
-
-	targetsChanged();
 }
 
 } // namespace entity
