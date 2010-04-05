@@ -8,8 +8,6 @@
 #include "ieclass.h"
 #include "ientity.h"
 #include "itextstream.h"
-
-#include "generic/callback.h"
 #include "debugging/debugging.h"
 
 #include "ce/ComponentEditorFactory.h"

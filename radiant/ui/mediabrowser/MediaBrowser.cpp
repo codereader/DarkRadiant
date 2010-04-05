@@ -8,7 +8,6 @@
 #include "ishaders.h"
 #include "iregistry.h"
 #include "select.h"
-#include "generic/callback.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/StockIconMenuItem.h"

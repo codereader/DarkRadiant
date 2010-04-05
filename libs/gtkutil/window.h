@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkwindow.h>
 
 #include "debugging/debugging.h"
-#include "generic/callback.h"
 #include "widget.h"
 
 inline gboolean window_focus_in_clear_focus_widget(GtkWidget* widget, GdkEventKey* event, gpointer data)

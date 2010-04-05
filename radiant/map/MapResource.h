@@ -4,7 +4,6 @@
 #include "imapresource.h"
 #include "imapformat.h"
 #include "imodel.h"
-#include "generic/callback.h"
 #include <set>
 #include <boost/utility.hpp>
 

@@ -10,15 +10,12 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
 	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
+	m_lightList(&GlobalRenderSystem().attach(*this)),
 	m_patch(*this, 
 			Callback(boost::bind(&PatchNode::evaluateTransform, this)), 
-			Callback(boost::bind(&Node::boundsChanged, this))), // create the m_patch member with the node parameters
-	m_lightList(NULL)
+			Callback(boost::bind(&Node::boundsChanged, this))) // create the m_patch member with the node parameters
 {
 	m_patch.m_patchDef3 = patchDef3;
-	m_lightList = &GlobalRenderSystem().attach(*this);
-
-	m_patch.m_lightsChanged = boost::bind(&PatchNode::lightsChanged, this);
 
 	Node::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
 }
@@ -42,16 +39,12 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
 	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
+	m_lightList(&GlobalRenderSystem().attach(*this)),
 	m_patch(other.m_patch, 
 			*this, 
 			Callback(boost::bind(&PatchNode::evaluateTransform, this)), 
-			Callback(boost::bind(&Node::boundsChanged, this))), // create the patch out of the <other> one
-	m_lightList(NULL)
+			Callback(boost::bind(&Node::boundsChanged, this))) // create the patch out of the <other> one
 {
-	m_lightList = &GlobalRenderSystem().attach(*this);
-
-	m_patch.m_lightsChanged = boost::bind(&PatchNode::lightsChanged, this);
-
 	Node::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
 }
 

@@ -2,7 +2,6 @@
 #define VECTORLIGHTLIST_H_
 
 #include "irender.h"
-#include "generic/callback.h"
 
 namespace model {
 

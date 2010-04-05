@@ -58,6 +58,7 @@ void EclassModel::construct()
 void EclassModel::destroy()
 {
 	m_model.modelChanged("");
+	m_model.setActive(false); // disable callbacks during destruction
 
 	_owner.removeKeyObserver("angle", _angleObserver);
 	_owner.removeKeyObserver("rotation", _rotationObserver);

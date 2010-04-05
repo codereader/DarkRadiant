@@ -54,7 +54,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ifilesystem.h"
 #include "igame.h"
 
-#include "generic/callback.h"
 #include "string/string.h"
 #include "os/path.h"
 #include "os/dir.h"

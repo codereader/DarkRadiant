@@ -23,7 +23,8 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))
 {}
 
-EclassModelNode::~EclassModelNode() {
+EclassModelNode::~EclassModelNode()
+{
 	destroy();
 }
 

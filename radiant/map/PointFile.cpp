@@ -7,7 +7,6 @@
 #include <fstream>
 #include <iostream>
 
-#include "generic/callback.h"
 #include "gtkutil/dialog.h"
 #include "math/matrix.h"
 #include "math/Vector3.h"

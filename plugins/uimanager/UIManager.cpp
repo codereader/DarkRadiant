@@ -5,7 +5,6 @@
 #include "iradiant.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
-#include "generic/callback.h"
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
 #include "ShutdownListener.h"

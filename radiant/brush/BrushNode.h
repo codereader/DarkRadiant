@@ -58,6 +58,8 @@ class BrushNode :
 	public Renderable,
 	public Transformable
 {
+	const LightList* m_lightList;
+
 	// The actual contained brush (NO reference)
 	Brush m_brush;
 
@@ -80,8 +82,6 @@ class BrushNode :
 	BrushClipPlane m_clipPlane;
 
 	static ShaderPtr m_state_selpoint;
-
-	const LightList* m_lightList;
 	
 public:
 	// Constructor

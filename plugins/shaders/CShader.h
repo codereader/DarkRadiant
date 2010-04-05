@@ -2,7 +2,6 @@
 #define CSHADER_H_
 
 #include "ShaderDefinition.h"
-#include "generic/callback.h"
 #include <boost/shared_ptr.hpp>
 
 namespace shaders {

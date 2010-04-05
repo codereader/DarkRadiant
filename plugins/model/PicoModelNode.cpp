@@ -16,7 +16,7 @@ PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
 	_name(picoModel->getFilename()),
 	_lightList(GlobalRenderSystem().attach(*this))
 {
-	Node::setTransformChangedCallback(Callback(boost::bind(&PicoModelNode::lightsChanged, this)));
+	Node::setTransformChangedCallback(boost::bind(&PicoModelNode::lightsChanged, this));
 
 	// Update the skin
 	skinChanged("");

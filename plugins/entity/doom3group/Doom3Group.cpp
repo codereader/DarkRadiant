@@ -294,6 +294,9 @@ void Doom3Group::construct()
 
 void Doom3Group::destroy()
 {
+	modelChanged("");
+	m_model.setActive(false); // disable callbacks during destruction
+
 	_owner.removeKeyObserver("model", _modelObserver);
 	_owner.removeKeyObserver("origin", m_originKey);
 	_owner.removeKeyObserver("angle", _angleObserver);
