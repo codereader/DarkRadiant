@@ -301,7 +301,8 @@ void TextureBrowser::setOriginY(int newOriginY) {
 	queueDraw();
 }
 
-void TextureBrowser::activeShadersChanged() {
+void TextureBrowser::onActiveShadersChanged()
+{
 	heightChanged();
 	m_originInvalid = true;
 }
@@ -754,9 +755,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
         new gtkutil::GLWidget(false, "TextureBrowser")
     );
 	
-	GlobalMaterialManager().setActiveShadersChangedNotify(
-		boost::bind(&TextureBrowser::activeShadersChanged, this)
-	);
+	GlobalMaterialManager().addActiveShadersObserver(shared_from_this());
 
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
 
@@ -841,8 +840,9 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	return hbox;
 }
 
-void TextureBrowser::destroyWindow() {
-	GlobalMaterialManager().setActiveShadersChangedNotify(Callback());
+void TextureBrowser::destroyWindow()
+{
+	GlobalMaterialManager().removeActiveShadersObserver(shared_from_this());
 
 	_glWidget = gtkutil::GLWidgetPtr();
 }
@@ -887,6 +887,6 @@ void TextureBrowser::update() {
 /** greebo: The accessor method, use this to call non-static TextureBrowser methods
  */
 ui::TextureBrowser& GlobalTextureBrowser() {
-	static ui::TextureBrowser _instance;
-	return _instance;
+	static boost::shared_ptr<ui::TextureBrowser> _instance(new ui::TextureBrowser);
+	return *_instance;
 }

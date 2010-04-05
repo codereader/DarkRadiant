@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/cursor.h"
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
+#include <boost/enable_shared_from_this.hpp>
 
 typedef struct _GtkMenuItem GtkMenuItem;
 
@@ -48,7 +49,9 @@ public:
 };
 
 class TextureBrowser :
-	public RegistryKeyObserver
+	public RegistryKeyObserver,
+	public MaterialManager::ActiveShadersObserver,
+	public boost::enable_shared_from_this<TextureBrowser>
 {
 	int width, height;
 	int originy;
@@ -209,7 +212,7 @@ private:
 
 public:
 	// This gets called by the ShaderSystem
-	void activeShadersChanged();
+	void onActiveShadersChanged();
 
 private:
 	/** greebo: Returns the shader at the given coords.

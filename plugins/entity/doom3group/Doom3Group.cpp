@@ -27,7 +27,6 @@ inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 
 Doom3Group::Doom3Group(
 		Doom3GroupNode& owner,
-		const Callback& transformChanged, 
 		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
@@ -37,7 +36,6 @@ Doom3Group::Doom3Group(
 	m_nameOrigin(0,0,0),
 	m_rotationKey(boost::bind(&Doom3Group::rotationChanged, this)),
 	m_renderOrigin(m_nameOrigin),
-	m_transformChanged(transformChanged),
 	_originToWorld(Matrix4::getIdentity()),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
@@ -47,7 +45,6 @@ Doom3Group::Doom3Group(
 
 Doom3Group::Doom3Group(const Doom3Group& other, 
 		Doom3GroupNode& owner,
-		const Callback& transformChanged, 
 		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
@@ -57,7 +54,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_nameOrigin(other.m_nameOrigin),
 	m_rotationKey(boost::bind(&Doom3Group::rotationChanged, this)),
 	m_renderOrigin(m_nameOrigin),
-	m_transformChanged(transformChanged),
 	_originToWorld(Matrix4::getIdentity()),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
@@ -366,10 +362,6 @@ void Doom3Group::modelChanged(const std::string& value) {
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3Group::setTransformChanged(Callback& callback) {
-	m_transformChanged = callback;
-}
-
 void Doom3Group::updateTransform()
 {
 	_owner.localToParent() = Matrix4::getIdentity();
@@ -381,7 +373,7 @@ void Doom3Group::updateTransform()
 	}
 	
 	// Notify the Node about this transformation change	to update the local2World matrix 
-	m_transformChanged();
+	_owner.transformChanged();
 }
 
 void Doom3Group::translateChildren(const Vector3& childTranslation)

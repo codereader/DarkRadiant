@@ -9,7 +9,6 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(
 		*this, // Pass <this> as Doom3GroupNode&
-		Callback(boost::bind(&scene::Node::transformChanged, this)),
 		Callback(boost::bind(&scene::Node::boundsChanged, this))
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
@@ -34,7 +33,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	m_contained(
 		other.m_contained,
 		*this, // Pass <this> as Doom3GroupNode&
-		Callback(boost::bind(&scene::Node::transformChanged, this)),
 		Callback(boost::bind(&scene::Node::boundsChanged, this))
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
@@ -56,9 +54,6 @@ Doom3GroupNode::~Doom3GroupNode()
 	m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
 
 	removeKeyObserver("skin", _skinObserver);
-
-	Callback cb;
-	m_contained.setTransformChanged(cb);
 }
 
 void Doom3GroupNode::construct()
