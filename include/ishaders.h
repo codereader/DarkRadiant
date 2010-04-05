@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_ISHADERS_H)
 #define INCLUDED_ISHADERS_H
 
-#include <boost/function/function_fwd.hpp>
 #include "iimage.h"
 #include "imodule.h"
 
@@ -263,8 +262,17 @@ public:
   virtual MaterialPtr dereferenceActiveShadersIterator() = 0;
   virtual void incrementActiveShadersIterator() = 0;
 
+	// The observer gets notified when the list of active shaders changes
+	class ActiveShadersObserver
+	{
+	public:
+		virtual void onActiveShadersChanged() = 0;
+	};
+	typedef boost::shared_ptr<ActiveShadersObserver> ActiveShadersObserverPtr;
+
     // Set the callback to be invoked when the active shaders list has changed
-	virtual void setActiveShadersChangedNotify(const boost::function<void()>& notify) = 0;
+	virtual void addActiveShadersObserver(const ActiveShadersObserverPtr& observer) = 0;
+	virtual void removeActiveShadersObserver(const ActiveShadersObserverPtr& observer) = 0;
 
     /**
      * Enable or disable active shaders updates (for performance).

@@ -155,9 +155,6 @@ MaterialPtr Doom3ShaderSystem::dereferenceActiveShadersIterator() {
 void Doom3ShaderSystem::incrementActiveShadersIterator() {
 	_library->incrementIterator();
 }
-void Doom3ShaderSystem::setActiveShadersChangedNotify(const boost::function<void()>& notify) {
-	_activeShadersChangedNotify = notify;
-}
 
 void Doom3ShaderSystem::attach(ModuleObserver& observer) {
 	_observers.attach(observer);
@@ -228,9 +225,26 @@ TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(ShaderLayer::Type t)
     return defaultTex;
 }
 
-void Doom3ShaderSystem::activeShadersChangedNotify() {
+void Doom3ShaderSystem::addActiveShadersObserver(const ActiveShadersObserverPtr& observer)
+{
+	_activeShadersObservers.insert(observer);
+}
+
+void Doom3ShaderSystem::removeActiveShadersObserver(const ActiveShadersObserverPtr& observer)
+{
+	_activeShadersObservers.erase(observer);
+}
+
+void Doom3ShaderSystem::activeShadersChangedNotify()
+{
 	if (_enableActiveUpdates)
-		_activeShadersChangedNotify();
+	{
+		for (Observers::const_iterator i = _activeShadersObservers.begin(); 
+			 i != _activeShadersObservers.end(); )
+		{
+			(*i++)->onActiveShadersChanged();
+		}
+	}
 }
 
 void Doom3ShaderSystem::foreachShader(ShaderVisitor& visitor) {

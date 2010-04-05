@@ -6,17 +6,14 @@ namespace entity {
 
 GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_contained(*this, 
-		Callback(boost::bind(&Node::transformChanged, this)))
+	m_contained(*this)
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	SelectionTestable(other),
-	m_contained(other.m_contained, 
-		*this, 
-		Callback(boost::bind(&Node::transformChanged, this)))
+	m_contained(other.m_contained, *this)
 {}
 
 void GenericEntityNode::construct()

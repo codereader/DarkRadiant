@@ -46,8 +46,6 @@ class Doom3Group
 
 	mutable AABB m_curveBounds;
 
-	Callback m_transformChanged;
-
 	// The value of the "name" key for this Doom3Group.
 	std::string m_name;
 
@@ -76,19 +74,14 @@ public:
 	 * as well as some callbacks for transformation and bounds changes.
 	 */
 	Doom3Group(Doom3GroupNode& owner,
-			   const Callback& transformChanged, 
 			   const Callback& boundsChanged);
 	
 	// Copy constructor
 	Doom3Group(const Doom3Group& other, 
 			   Doom3GroupNode& owner,
-			   const Callback& transformChanged, 
 			   const Callback& boundsChanged);
 	
 	~Doom3Group();
-
-	TransformNode& getTransformNode();
-	const TransformNode& getTransformNode() const;
 
 	const AABB& localAABB() const;
 	

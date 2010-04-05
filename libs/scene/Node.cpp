@@ -376,7 +376,10 @@ void Node::transformChangedLocal() {
 	_boundsChanged = true;
 	_childBoundsChanged = true;
 
-	_transformChangedCallback();
+	if (_transformChangedCallback)
+	{
+		_transformChangedCallback();
+	}
 }
 
 void Node::transformChanged() {

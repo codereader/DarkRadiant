@@ -10,8 +10,7 @@
 
 namespace entity {
 
-GenericEntity::GenericEntity(GenericEntityNode& node, 
-		const Callback& transformChanged) :
+GenericEntity::GenericEntity(GenericEntityNode& node) :
 	_owner(node),
 	m_entity(node._entity),
 	m_originKey(boost::bind(&GenericEntity::originChanged, this)),
@@ -22,13 +21,11 @@ GenericEntity::GenericEntity(GenericEntityNode& node,
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_transformChanged(transformChanged),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
 {}
 
 GenericEntity::GenericEntity(const GenericEntity& other, 
-		GenericEntityNode& node, 
-		const Callback& transformChanged) :
+		GenericEntityNode& node) :
 	_owner(node),
 	m_entity(node._entity),
 	m_originKey(boost::bind(&GenericEntity::originChanged, this)),
@@ -39,7 +36,6 @@ GenericEntity::GenericEntity(const GenericEntity& other,
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	m_transformChanged(transformChanged),
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
 {}
 
@@ -205,7 +201,7 @@ void GenericEntity::updateTransform()
 		m_ray.direction = matrix4_transformed_direction(matrix4_rotation_for_z(degrees_to_radians(m_angle)), Vector3(1, 0, 0));
 	}
 
-	m_transformChanged();
+	_owner.transformChanged();
 }
 
 void GenericEntity::originChanged() {

@@ -25,6 +25,7 @@ class GenericEntity :
 	public Bounded,
 	public Snappable
 {
+private:
 	GenericEntityNode& _owner;
 
 	Doom3Entity& m_entity;
@@ -51,9 +52,6 @@ class GenericEntity :
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
 
-	Callback m_transformChanged;
-	Callback m_evaluateTransform;
-
 	// TRUE if this entity's arrow can be rotated in all directions, 
 	// FALSE if the arrow is caught in the xy plane
 	bool _allow3Drotations;
@@ -63,13 +61,11 @@ class GenericEntity :
 
 public:
 	// Constructor
-	GenericEntity(GenericEntityNode& node, 
-				  const Callback& transformChanged);
+	GenericEntity(GenericEntityNode& node);
 	
 	// Copy constructor
 	GenericEntity(const GenericEntity& other, 
-				  GenericEntityNode& node, 
-				  const Callback& transformChanged);
+				  GenericEntityNode& node);
 
 	~GenericEntity();
 
