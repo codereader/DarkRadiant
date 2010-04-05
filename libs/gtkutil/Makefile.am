@@ -17,10 +17,8 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
-						nonmodal.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
-						idledraw.cpp \
 						window/PersistentTransientWindow.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
@@ -39,5 +37,4 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						SourceView.cpp \
 						window.cpp \
 						clipboard.cpp \
-						FileChooser.cpp \
-						pointer.cpp
+						FileChooser.cpp
