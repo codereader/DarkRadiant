@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include "irender.h"
 
-#include "generic/callback.h"
-
 namespace entity
 {
 
@@ -38,14 +36,12 @@ class Colour :
 	public KeyObserver
 {
 private:
-	Callback _colourChanged;
 	ShaderPtr _wireShader;
 
 public:
 	Vector3 m_colour;
 
-	Colour(const Callback& colourChanged) : 
-		_colourChanged(colourChanged),
+	Colour() :
 		m_colour(1,1,1)
 	{
 		captureShader();
@@ -66,7 +62,6 @@ public:
 		strm >> m_colour.z();
 		
 		captureShader();
-		_colourChanged();
 	}
 
 	const ShaderPtr& getWireShader() const

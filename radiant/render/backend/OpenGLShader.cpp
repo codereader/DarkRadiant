@@ -7,7 +7,6 @@
 #include "ishaders.h"
 #include "ifilter.h"
 #include "irender.h"
-#include "generic/callback.h"
 #include "texturelib.h"
 
 #include <boost/bind.hpp>

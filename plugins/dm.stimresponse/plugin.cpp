@@ -12,7 +12,6 @@
 #include "iundo.h"
 
 #include "scenelib.h"
-#include "generic/callback.h"
 #include "StimResponseEditor.h" 
 
 /**

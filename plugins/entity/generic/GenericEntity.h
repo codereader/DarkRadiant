@@ -6,7 +6,6 @@
 
 #include "math/Vector3.h"
 #include "entitylib.h"
-#include "generic/callback.h"
 
 #include "../origin.h"
 #include "../angle.h"

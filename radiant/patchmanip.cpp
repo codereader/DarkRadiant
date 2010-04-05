@@ -29,8 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ipatch.h"
 
 #include "math/aabb.h"
-#include "generic/callback.h"
-
 #include "gdk/gdkkeysyms.h"
 #include "gtkutil/dialog.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -732,8 +730,6 @@ void bulgePatch(const cmd::ArgumentList& args) {
 	}
 }
 } // namespace patch
-
-#include "generic/callback.h"
 
 void Patch_registerCommands() {
 	// First connect the commands to the code

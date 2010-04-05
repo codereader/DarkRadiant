@@ -9,6 +9,7 @@
 
 // Constructor
 BrushNode::BrushNode() :
+	m_lightList(&GlobalRenderSystem().attach(*this)),
 	m_brush(*this, 
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)), 
 			Callback(boost::bind(&Node::boundsChanged, this))),
@@ -18,11 +19,8 @@ BrushNode::BrushNode() :
 	m_viewChanged(false)
 {
 	m_brush.attach(*this); // BrushObserver
-	m_lightList = &GlobalRenderSystem().attach(*this);
 
-	m_brush.m_lightsChanged = boost::bind(&BrushNode::lightsChanged, this);
-
-	Node::setTransformChangedCallback(m_brush.m_lightsChanged);
+	Node::setTransformChangedCallback(boost::bind(&BrushNode::lightsChanged, this));
 }
 
 // Copy Constructor
@@ -43,6 +41,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	LightCullable(other),
 	Renderable(other),
 	Transformable(other),
+	m_lightList(&GlobalRenderSystem().attach(*this)),
 	m_brush(*this, other.m_brush, 
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)), 
 			Callback(boost::bind(&Node::boundsChanged, this))),
@@ -52,7 +51,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	m_viewChanged(false)
 {
 	m_brush.attach(*this); // BrushObserver
-	m_lightList = &GlobalRenderSystem().attach(*this);
 }
 
 BrushNode::~BrushNode() {

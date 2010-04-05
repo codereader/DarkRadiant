@@ -8,7 +8,6 @@
 #include "icommandsystem.h"
 #include "ieclass.h"
 #include "debugging/debugging.h"
-#include "generic/callback.h"
 
 #include "EClassTree.h"
 

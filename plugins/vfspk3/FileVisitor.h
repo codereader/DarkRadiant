@@ -5,7 +5,6 @@
 #include "iarchive.h"
 
 #include "os/path.h"
-#include "generic/callback.h"
 
 #include <set>
 #include <boost/algorithm/string/case_conv.hpp>

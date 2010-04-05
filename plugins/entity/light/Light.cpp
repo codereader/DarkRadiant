@@ -75,7 +75,6 @@ Light::Light(Doom3Entity& entity,
 	m_originKey(boost::bind(&Light::originChanged, this)),
 	_originTransformed(ORIGINKEY_IDENTITY),
 	m_rotationKey(boost::bind(&Light::rotationChanged, this)),
-	m_colour(Callback()),
 	_modelKey(owner),
 	_renderableRadius(_lightBox.origin),
 	_renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
@@ -104,7 +103,6 @@ Light::Light(const Light& other,
   m_originKey(boost::bind(&Light::originChanged, this)),
   _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(boost::bind(&Light::rotationChanged, this)),
-  m_colour(Callback()),
   _modelKey(owner),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
@@ -190,6 +188,9 @@ void Light::construct()
 
 void Light::destroy()
 {
+	_modelKey.modelChanged("");
+	_modelKey.setActive(false); // disable callbacks during destruction
+
 	_owner.removeKeyObserver("_color", m_colour);
 	_owner.removeKeyObserver("origin", m_originKey);
 

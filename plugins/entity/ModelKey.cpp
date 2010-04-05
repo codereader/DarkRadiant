@@ -6,15 +6,24 @@
 #include <boost/algorithm/string/replace.hpp>
 
 ModelKey::ModelKey(scene::INode& parentNode) : 
-	_parentNode(parentNode)
+	_parentNode(parentNode),
+	_active(true)
 {}
 
 const scene::INodePtr& ModelKey::getNode() const {
 	return _modelNode;
 }
 
+void ModelKey::setActive(bool active)
+{
+	_active = active;
+}
+
 // Update the contained model from the provided keyvalues
-void ModelKey::modelChanged(const std::string& value) {
+void ModelKey::modelChanged(const std::string& value)
+{
+	if (!_active) return; // deactivated during parent node destruction
+
 	// Remove the old model node first
 	if (_modelNode != NULL) {
 		_parentNode.removeChildNode(_modelNode);

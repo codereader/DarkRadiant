@@ -8,6 +8,7 @@
 #include "shaderlib.h"
 
 #include "BrushModule.h"
+#include "BrushNode.h"
 #include "Face.h"
 #include "FixedWinding.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
@@ -152,7 +153,7 @@ void Brush::instanceDetach(MapFile* map)
 void Brush::planeChanged() {
 	m_planeChanged = true;
 	aabbChanged();
-	m_lightsChanged();
+	_owner.lightsChanged();
 }
 
 void Brush::shaderChanged()

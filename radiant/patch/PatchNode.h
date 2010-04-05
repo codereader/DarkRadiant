@@ -39,14 +39,14 @@ class PatchNode :
 	// An array of renderable points
 	mutable RenderablePointVector m_render_selected;
 
+	const LightList* m_lightList;
+
 	Patch m_patch;
 	
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable) 
 	mutable AABB m_aabb_component;
 
 	static ShaderPtr m_state_selpoint;
-
-	const LightList* m_lightList;
 
 public:
 	// Construct a PatchNode with no arguments

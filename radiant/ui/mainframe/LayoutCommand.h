@@ -6,8 +6,6 @@
 #include "icommandsystem.h"
 #include "imainframe.h"
 
-#include "generic/callback.h"
-
 #include <string>
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>

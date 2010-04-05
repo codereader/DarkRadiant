@@ -302,7 +302,7 @@ void Patch::transform(const Matrix4& matrix)
 void Patch::transformChanged()
 {
 	m_transformChanged = true;
-	m_lightsChanged();
+	_node.lightsChanged();
 	_tesselationChanged = true;
 }
 
@@ -1141,7 +1141,7 @@ void Patch::updateAABB()
 		m_aabb_local = aabb;
 		
 		m_boundsChanged();
-		m_lightsChanged();
+		_node.lightsChanged();
 	}
 }
 

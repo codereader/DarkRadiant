@@ -3,7 +3,6 @@
 #include "PropertyEditorFactory.h"
 
 #include "ientity.h"
-#include "generic/callback.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>

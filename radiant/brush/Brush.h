@@ -149,8 +149,6 @@ public:
 		Faces m_faces;
 	};
 	
-	Callback m_lightsChanged;
-	
 	// static data
 	static ShaderPtr m_state_point;
 	// ----

@@ -5,7 +5,6 @@
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 #include "iradiant.h"
-#include "generic/callback.h"
 #include "debugging/debugging.h"
 
 class EntityListModule :

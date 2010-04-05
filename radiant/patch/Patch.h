@@ -101,8 +101,6 @@ private:
 	void construct();
 
 public:
-	boost::function<void()> m_lightsChanged;
-
 	static int m_CycleCapIndex;// = 0;
 	
 	// Constructor

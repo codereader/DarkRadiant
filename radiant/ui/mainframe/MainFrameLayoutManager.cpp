@@ -6,7 +6,6 @@
 #include "imainframe.h"
 #include "icommandsystem.h"
 
-#include "generic/callback.h"
 #include "modulesystem/StaticModule.h"
 
 #include "FloatingLayout.h"
