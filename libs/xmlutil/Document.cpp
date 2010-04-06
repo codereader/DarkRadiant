@@ -1,6 +1,7 @@
 #include "Document.h"
 #include "XPathException.h"
 
+#include <libxml/parser.h>
 #include <libxml/xpath.h>
 
 #include <iostream>

@@ -1,7 +1,9 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-#include <libxml/parser.h>
+// Forward declaration to avoid including the whole libxml2 headers
+typedef struct _xmlNode xmlNode;
+typedef xmlNode *xmlNodePtr;
 
 #include <string>
 #include <vector>
