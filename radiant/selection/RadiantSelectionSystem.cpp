@@ -270,12 +270,10 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 	else {
 		_selectionInfo.entityCount += delta;
 	}
-	
+
 	// If the selectable is selected, add it to the local selection list, otherwise remove it 
 	if (isSelected) {
 		_selection.append(node);
-
-		_requestWorkZoneRecalculation = true;
 	}
 	else {
 		_selection.erase(node);
@@ -290,6 +288,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 	// Schedule an idle callback
 	requestIdleCallback();
 
+	_requestWorkZoneRecalculation = true;
 	_requestSceneGraphChange = true;
 }
 
@@ -308,8 +307,6 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
 	// If the instance got selected, add it to the list, otherwise remove it
 	if (selectable.isSelected()) {
 		_componentSelection.append(node);
-
-		_requestWorkZoneRecalculation = true;
 	}
     else {
 		_componentSelection.erase(node);
@@ -324,6 +321,7 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
 	// Schedule an idle callback
 	requestIdleCallback();
 
+	_requestWorkZoneRecalculation = true;
 	_requestSceneGraphChange = true;
 }
 
@@ -1069,25 +1067,30 @@ void RadiantSelectionSystem::onGtkIdle()
 	{
 		_requestWorkZoneRecalculation = false;
 
-		// Recalculate the workzone based on the current selection
-		BoundsAccumulator walker;
-		foreachSelected(walker);
-
-		AABB bounds = walker.getBounds();
-
-		if (bounds.isValid())
+		// When no items are selected, leave a (valid) workzone alone to allow
+		// for creation of new elements within the bounds of a previous selection
+		if (_selectionInfo.totalCount > 0 || !_workZone.bounds.isValid())
 		{
-			_workZone.max = bounds.origin + bounds.extents;
-			_workZone.min = bounds.origin - bounds.extents;
-		}
-		else
-		{
-			// A zero-sized workzone doesn't make much sense, set to default
-			_workZone.max = Vector3(64,64,64);
-			_workZone.min = Vector3(-64,-64,-64);
-		}
+			// Recalculate the workzone based on the current selection
+			BoundsAccumulator walker;
+			foreachSelected(walker);
 
-		_workZone.bounds = bounds;
+			AABB bounds = walker.getBounds();
+
+			if (bounds.isValid())
+			{
+				_workZone.max = bounds.origin + bounds.extents;
+				_workZone.min = bounds.origin - bounds.extents;
+			}
+			else
+			{
+				// A zero-sized workzone doesn't make much sense, set to default
+				_workZone.max = Vector3(64,64,64);
+				_workZone.min = Vector3(-64,-64,-64);
+			}
+
+			_workZone.bounds = bounds;
+		}
 	}
 
 	// Check if we should notify the scenegraph
