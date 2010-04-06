@@ -55,7 +55,14 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	);
 }
 
-ScreenUpdateBlocker::~ScreenUpdateBlocker() {
+ScreenUpdateBlocker::~ScreenUpdateBlocker()
+{
+	// Process pending events to flush keystroke buffer etc.
+	while (gtk_events_pending())
+	{
+		gtk_main_iteration();
+	}
+
 	// Remove the signal handler again
 	if (_focusHandler != 0) {
 		g_signal_handler_disconnect(G_OBJECT(GlobalMainFrame().getTopLevelWindow()), _focusHandler);
