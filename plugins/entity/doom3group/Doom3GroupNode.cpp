@@ -17,7 +17,6 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
 	_updateSkin(true),
-	_instantiated(false),
 	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
 {}
 
@@ -41,7 +40,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
 	_updateSkin(true),
-	_instantiated(false),
 	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
 {
 	// greebo: Don't call construct() here, this should be invoked by the
@@ -195,9 +193,7 @@ scene::INodePtr Doom3GroupNode::clone() const
 
 void Doom3GroupNode::onInsertIntoScene()
 {
-	_instantiated = true;
-
-	Node::getTraversable().instanceAttach(scene::findMapFile(getSelf()));
+	Node::instanceAttach(scene::findMapFile(getSelf()));
 
 	EntityNode::onInsertIntoScene();
 }
@@ -205,16 +201,12 @@ void Doom3GroupNode::onInsertIntoScene()
 void Doom3GroupNode::onRemoveFromScene()
 {
 	// Call the base class first
-	SelectableNode::onRemoveFromScene();
+	EntityNode::onRemoveFromScene();
 
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);
 
-	_instantiated = false;
-
-	Node::getTraversable().instanceDetach(scene::findMapFile(getSelf()));
-
-	EntityNode::onRemoveFromScene();
+	Node::instanceDetach(scene::findMapFile(getSelf()));
 }
 
 // Snappable implementation

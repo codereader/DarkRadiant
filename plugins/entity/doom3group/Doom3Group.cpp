@@ -381,7 +381,7 @@ void Doom3Group::updateTransform()
 
 void Doom3Group::translateChildren(const Vector3& childTranslation)
 {
-	if (_owner._instantiated)
+	if (_owner.inScene())
 	{
 		ChildTranslator translator(childTranslation);
 		_owner.traverse(translator);
