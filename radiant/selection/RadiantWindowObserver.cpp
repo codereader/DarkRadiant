@@ -229,7 +229,7 @@ gboolean RadiantWindowObserver::onKeyPress(GtkWindow* window,
 	if (!self->_listenForCancelEvents) 
 	{
 		// Not listening, let the event pass through
-		return false;
+		return FALSE;
 	}
 
 	// Check for ESC and call the onCancel method, if found
@@ -238,8 +238,8 @@ gboolean RadiantWindowObserver::onKeyPress(GtkWindow* window,
 		self->onCancel();
 		
 		// Don't pass the key event to the event chain 
-		return true;
+		return TRUE;
 	}
 	
-	return false;
+	return FALSE;
 }

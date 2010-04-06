@@ -212,7 +212,7 @@ void AutoMapSaver::checkSave() {
 			try {
 				saveSnapshot();
 			}
-			catch (boost::filesystem::filesystem_error f) {
+			catch (boost::filesystem::filesystem_error& f) {
 				globalErrorStream() << "AutoSaver::saveSnapshot: " << f.what() << std::endl;
 			}
 		}
