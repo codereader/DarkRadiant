@@ -213,6 +213,7 @@ public:
 void Scene_PatchInvert_Selected(scene::Graph& graph)
 {
   Scene_forEachSelectedPatch(PatchInvertMatrix());
+  SceneChangeNotify();
 }
 
 class PatchRedisperse
