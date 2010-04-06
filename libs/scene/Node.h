@@ -130,6 +130,12 @@ public:
 	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
 
+	// Returns TRUE if this node is inserted in the scene, FALSE otherwise
+	bool inScene() const
+	{
+		return _instantiated;
+	}
+
 	/**
 	 * greebo: Constructs the scene path to this node. This will walk up the
 	 * ancestors until it reaches the top node, so don't expect this to be

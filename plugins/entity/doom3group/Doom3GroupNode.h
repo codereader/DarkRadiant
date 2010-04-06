@@ -40,8 +40,6 @@ class Doom3GroupNode :
 	// TRUE if the skin needs updating
 	mutable bool _updateSkin;
 
-	bool _instantiated;
-
 	KeyObserverDelegate _skinObserver;
 
 	// Private copy constructor, is invoked by clone()
