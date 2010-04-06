@@ -3,7 +3,8 @@
 
 #include "Node.h"
 
-#include <libxml/parser.h>
+typedef struct _xmlDoc xmlDoc;
+typedef xmlDoc *xmlDocPtr;
 
 #include <string>
 

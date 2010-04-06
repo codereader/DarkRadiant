@@ -1,5 +1,7 @@
 #include "Node.h"
 
+#include <libxml/parser.h>
+
 namespace xml
 {
 
