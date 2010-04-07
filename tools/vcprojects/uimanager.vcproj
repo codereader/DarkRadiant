@@ -422,6 +422,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\uimanager\FilterMenu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\uimanager\FilterMenu.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\uimanager\GroupDialog.cpp"
 				>
 			</File>

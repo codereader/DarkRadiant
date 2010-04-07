@@ -1,6 +1,7 @@
 #ifndef _MAP_PREVIEW_WIDGET_H_
 #define _MAP_PREVIEW_WIDGET_H_
 
+#include "ifiltermenu.h"
 #include "gtkutil/GLWidget.h"
 #include "math/matrix.h"
 #include <gtk/gtkwidget.h>
@@ -41,8 +42,8 @@ class MapPreview
 	// Current rotation matrix
 	Matrix4 _rotation;
 
-	// Constructs the filters menu (provides a GtkWidget* operator)
-	ui::FiltersMenu _filtersMenu;
+	// The filters menu 
+	IFilterMenuPtr _filtersMenu;
 
 	// The root node of the scene to be rendered
 	scene::INodePtr _root;

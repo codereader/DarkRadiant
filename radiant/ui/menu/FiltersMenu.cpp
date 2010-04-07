@@ -2,7 +2,6 @@
 
 #include <gtk/gtkwidget.h>
 
-#include "string/string.h"
 #include "ifilter.h"
 #include "iuimanager.h"
 
@@ -15,11 +14,6 @@ namespace ui {
 		const std::string MENU_FILTERS_NAME = "filters";
 		const std::string MENU_PATH = MENU_NAME + "/" + MENU_FILTERS_NAME;
 		const std::string MENU_ICON = "iconFilter16.png";
-
-		// These are used for the general-purpose Filter Menu:
-		const std::string FILTERS_MENU_BAR = "filters";
-		const std::string FILTERS_MENU_FOLDER = "allfilters";
-		const std::string FILTERS_MENU_CAPTION = "_Filters";
 
 		// Local visitor class to populate the filters menu
 		class MenuPopulatingVisitor : 
@@ -48,35 +42,6 @@ namespace ui {
 			}	
 		};
 	}
-
-int FiltersMenu::_counter = 0;
-
-FiltersMenu::FiltersMenu() {
-	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-
-	// Create a unique name for the menu
-	_path = FILTERS_MENU_BAR + intToStr(_counter++);
-
-	// Menu not yet constructed, do it now
-	// Create the menu bar first
-	_menu = menuManager.add("", _path, menuBar, "Filters", "", "");
-	
-	// Create the folder as child of the bar
-	menuManager.add(_path, FILTERS_MENU_FOLDER, 
-					menuFolder, FILTERS_MENU_CAPTION, "", "");
-	
-	// Visit the filters in the FilterSystem to populate the menu
-	MenuPopulatingVisitor visitor(_path + "/" + FILTERS_MENU_FOLDER);
-	GlobalFilterSystem().forEachFilter(visitor);
-}
-
-FiltersMenu::~FiltersMenu() {
-	GlobalUIManager().getMenuManager().remove(_path);
-}
-
-FiltersMenu::operator GtkWidget*() {
-	return _menu;
-}
 
 // Construct GTK widgets
 void FiltersMenu::addItemsToMainMenu()

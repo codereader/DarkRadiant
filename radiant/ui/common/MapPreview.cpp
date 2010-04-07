@@ -1,6 +1,7 @@
 #include "MapPreview.h"
 
 #include "ifilter.h"
+#include "iuimanager.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include <gtk/gtk.h>
@@ -34,7 +35,8 @@ namespace {
 
 MapPreview::MapPreview() :
 	_widget(gtk_frame_new(NULL)),
-	_glWidget(true)
+	_glWidget(true),
+	_filtersMenu(GlobalUIManager().createFilterMenu())
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
@@ -56,7 +58,7 @@ MapPreview::MapPreview() :
 	gtk_box_pack_end(GTK_BOX(vbx), toolHBox, FALSE, FALSE, 0);
 
 	// Create the menu
-	gtk_box_pack_start(GTK_BOX(toolHBox), _filtersMenu, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(toolHBox), _filtersMenu->getMenuBarWidget(), TRUE, TRUE, 0);
 
 	// Pack into a frame and return
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);

@@ -1,6 +1,7 @@
 #ifndef MODELPREVIEW_H_
 #define MODELPREVIEW_H_
 
+#include "ifiltermenu.h"
 #include "imodel.h"
 #include "imodelpreview.h"
 #include "math/matrix.h"
@@ -54,8 +55,8 @@ class ModelPreview :
 	// Current rotation matrix
 	Matrix4 _rotation;
 
-	// Constructs the filters menu (provides a GtkWidget* operator)
-	FiltersMenu _filtersMenu;
+	// The filters menu
+	IFilterMenuPtr _filtersMenu;
 	
 private:
 
