@@ -180,6 +180,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\ifiltermenu.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\ifonts.h"
 			>
 		</File>
