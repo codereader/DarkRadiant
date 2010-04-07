@@ -11,14 +11,16 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "imainframe.h"
+#include "imodelpreview.h"
+#include "imodel.h"
 
+#include <gtk/gtk.h>
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
 #include <vector>
 #include <map>
 #include <sstream>
-#include <GL/glew.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
@@ -30,7 +32,7 @@ namespace ui
 
 ModelSelector::ModelSelector()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _modelPreview(new ModelPreview),
+  _modelPreview(GlobalUIManager().createModelPreview()),
   _treeStore(gtk_tree_store_new(N_COLUMNS, 
   								G_TYPE_STRING,
   								G_TYPE_STRING,
@@ -139,7 +141,7 @@ ModelSelectorPtr& ModelSelector::InstancePtr() {
 void ModelSelector::onRadiantShutdown() {
 	globalOutputStream() << "ModelSelector shutting down.\n";
 
-	_modelPreview = ModelPreviewPtr();
+	_modelPreview.reset();
 }
 
 // Show the dialog and enter recursive main loop

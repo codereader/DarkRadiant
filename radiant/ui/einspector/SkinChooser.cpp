@@ -38,7 +38,7 @@ namespace {
 SkinChooser::SkinChooser()
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
   _lastSkin(""),
-  _preview(new ModelPreview)
+  _preview(GlobalUIManager().createModelPreview())
 {
 	// Set up window
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
@@ -89,7 +89,7 @@ SkinChooserPtr& SkinChooser::InstancePtr() {
 }
 
 // Create the TreeView
-GtkWidget* SkinChooser::createTreeView(gint width) {
+GtkWidget* SkinChooser::createTreeView(int width) {
 	
 	// Create the treestore
 	_treeStore = gtk_tree_store_new(N_COLUMNS, 
@@ -115,12 +115,12 @@ GtkWidget* SkinChooser::createTreeView(gint width) {
 					 this);
 	
 	// Pack treeview into a ScrolledFrame and return
-	gtk_widget_set_size_request(_treeView, width, -1);
+	gtk_widget_set_size_request(_treeView, static_cast<gint>(width), -1);
 	return gtkutil::ScrolledFrame(_treeView);
 }
 
 // Create the model preview
-GtkWidget* SkinChooser::createPreview(gint size) {
+GtkWidget* SkinChooser::createPreview(int size) {
 	_preview->setSize(size);
 	return _preview->getWidget();
 }
@@ -270,10 +270,11 @@ std::string SkinChooser::chooseSkin(const std::string& model,
 	return Instance().showAndBlock(model, prev);	
 }
 
-void SkinChooser::onRadiantShutdown() {
+void SkinChooser::onRadiantShutdown()
+{
 	globalOutputStream() << "SkinChooser shutting down.\n";
 
-	_preview = ModelPreviewPtr();
+	_preview.reset();
 }
 
 /* GTK CALLBACKS */

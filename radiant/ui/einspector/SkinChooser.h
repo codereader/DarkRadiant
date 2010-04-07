@@ -4,11 +4,11 @@
 #include "modelskin.h"
 
 #include "iradiant.h"
-#include "ui/common/ModelPreview.h"
+#include "imodelpreview.h"
 
 #include <gtk/gtkwidget.h>
-#include <gtk/gtktreestore.h>
-#include <gtk/gtktreeselection.h>
+typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 #include <string>
 
@@ -41,7 +41,7 @@ class SkinChooser :
 	std::string _prevSkin;
 
 	// Model preview widget
-	ModelPreviewPtr _preview;
+	IModelPreviewPtr _preview;
 
 private:
 
@@ -49,8 +49,8 @@ private:
 	SkinChooser();
 	
 	// Widget creation functions
-	GtkWidget* createTreeView(gint width);
-	GtkWidget* createPreview(gint size);
+	GtkWidget* createTreeView(int width);
+	GtkWidget* createPreview(int size);
 	GtkWidget* createButtons();
 	
 	// Show the dialog and block until selection is made

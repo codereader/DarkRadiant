@@ -1,5 +1,4 @@
 #include "ModelPreview.h"
-#include "RenderableAABB.h"
 
 #include "gtkutil/GLWidgetSentry.h"
 #include "iuimanager.h"
@@ -8,6 +7,7 @@
 #include "os/path.h"
 #include "math/aabb.h"
 #include "modelskin.h"
+#include "entitylib.h"
 
 #include <gtk/gtk.h>
 #include "iuimanager.h"
@@ -243,8 +243,7 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget,
 		glDisable(GL_TEXTURE_2D);
 		glColor3f(0, 1, 1);
 
-		// Submit the AABB geometry
-		RenderableAABB(aabb).render(RenderInfo());
+		aabb_draw_wire(aabb); // TODO: This seems to have broken (was RenderableAABB before)
 	}
 
 	// Render the actual model.

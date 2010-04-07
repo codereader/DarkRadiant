@@ -3,7 +3,11 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GTK_C
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = uimanager.la
 
-uimanager_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
+uimanager_la_LDFLAGS = -module -avoid-version \
+						$(GTK_LIBS) \
+						$(XML_LIBS) \
+						$(GLEW_LIBS) \
+						$(GL_LIBS)
 uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
 					  $(top_builddir)/libs/xmlutil/libxmlutil.la
 uimanager_la_SOURCES = MenuItem.cpp \
@@ -16,5 +20,6 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
 					   FilterMenu.cpp \
+					   ModelPreview.cpp \
                        MenuManager.cpp
 
