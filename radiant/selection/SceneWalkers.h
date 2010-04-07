@@ -21,7 +21,7 @@ inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
 			return AABB(matrix4_multiplied_by_matrix4(node->localToWorld(), editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
 		}
 		else {
-			return AABB(node->localToWorld().t().getVector3(), Vector3(0, 0, 0));
+			return node->worldAABB();
 		}
 	}
 
