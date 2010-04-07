@@ -3,6 +3,7 @@
 
 #include "iregistry.h"
 #include "imainframe.h"
+#include "iuimanager.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -80,7 +81,7 @@ EntityClassChooser::EntityClassChooser()
   _selection(NULL),
   _okButton(NULL),
   _selectedName(""),
-  _modelPreview(GlobalRadiant().createModelPreview())
+  _modelPreview(GlobalUIManager().createModelPreview())
 {
 	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), mainWindow);

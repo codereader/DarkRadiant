@@ -1684,14 +1684,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\radiant\ui\common\ModelPreview.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\common\ModelPreview.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\radiant\ui\common\ModelPreviewRenderer.h"
 						>
 					</File>

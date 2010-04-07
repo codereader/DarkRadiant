@@ -1,7 +1,7 @@
 #include "AIHeadChooserDialog.h"
 
 #include "imainframe.h"
-#include "iradiant.h"
+#include "iuimanager.h"
 #include "ieclass.h"
 
 #include <gtk/gtk.h>
@@ -55,7 +55,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	);
 
 	// Allocate and setup the preview
-	_preview = GlobalRadiant().createModelPreview();
+	_preview = GlobalUIManager().createModelPreview();
 	assert(_preview != NULL);
 
 	_preview->setSize(gint(rect.width * 0.3f));

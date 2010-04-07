@@ -10,6 +10,7 @@
 #include "ShutdownListener.h"
 #include "debugging/debugging.h"
 #include "FilterMenu.h"
+#include "ModelPreview.h"
 
 namespace ui {
 
@@ -102,6 +103,11 @@ GdkPixbuf* UIManager::getLocalPixbufWithMask(const std::string& fileName) {
 IFilterMenuPtr UIManager::createFilterMenu()
 {
 	return IFilterMenuPtr(new FilterMenu);
+}
+
+IModelPreviewPtr UIManager::createModelPreview()
+{
+	return IModelPreviewPtr(new ModelPreview);
 }
 
 void UIManager::clear()

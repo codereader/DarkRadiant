@@ -11,7 +11,6 @@
 #include <string>
 #include <map>
 #include "gtkutil/GLWidget.h"
-#include "ui/menu/FiltersMenu.h"
 
 namespace ui
 {
@@ -26,6 +25,7 @@ namespace ui
 class ModelPreview :
 	public IModelPreview
 {
+private:
 	// Top-level widget
 	GtkWidget* _widget;
 	
@@ -124,6 +124,6 @@ public:
 };
 typedef boost::shared_ptr<ModelPreview> ModelPreviewPtr;
 
-}
+} // namespace
 
 #endif /*MODELPREVIEW_H_*/

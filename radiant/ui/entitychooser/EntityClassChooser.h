@@ -4,8 +4,8 @@
 #include <gtk/gtk.h>
 #include "iradiant.h"
 #include "ieclass.h"
+#include "imodelpreview.h"
 
-#include "ui/common/ModelPreview.h"
 #include "math/Vector3.h"
 
 namespace {

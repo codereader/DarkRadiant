@@ -36,8 +36,6 @@ class RadiantModule :
 	EventListenerList _eventListeners;
 
 public:
-	ui::IModelPreviewPtr createModelPreview();
-	
 	void addEventListener(const RadiantEventListenerPtr& listener);
 	void removeEventListener(const RadiantEventListenerPtr& listener);
 	

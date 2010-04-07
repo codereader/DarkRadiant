@@ -3,12 +3,16 @@
 
 #include "modelskin.h"
 #include "iradiant.h"
-#include "ui/common/ModelPreview.h"
+#include "iuimanager.h"
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktreestore.h>
-#include <gtk/gtkliststore.h>
-#include <gtk/gtkliststore.h>
+typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkExpander GtkExpander;
+typedef struct _GtkCheckButton GtkCheckButton;
+typedef struct _GtkTreeSelection GtkTreeSelection;
+
 #include "gtkutil/WindowPosition.h"
 
 #include <string>
@@ -66,7 +70,7 @@ private:
 	GtkWidget* _widget;
 
 	// Model preview widget
-	ModelPreviewPtr _modelPreview;
+	IModelPreviewPtr _modelPreview;
 	
 	// Tree store containing model names (one with and one without skins)
 	GtkTreeStore* _treeStore;
