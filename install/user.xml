@@ -134,7 +134,7 @@
 		</views>
 		<showGrid value="1" />
 		<chaseMouse value="1" />
-		<camXYUpdate value="1" />
+		<camXYUpdate value="0" />
 		<solidSelectionBoxes value="0" />
 		<showCrossHairs value="0" />
 		<showEntityAngles value="1" />
