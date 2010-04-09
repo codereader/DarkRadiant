@@ -42,6 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/splash/Splash.h"
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
+#include "settings/LanguageManager.h"
 
 #ifdef _PROFILE
 #include "Profile.h"
@@ -78,12 +79,10 @@ int main (int argc, char* argv[]) {
 	// The settings path is set, start logging now
 	applog::LogFile::create("darkradiant.log");
 
-	g_setenv("LANG", "en_US", TRUE);
+	// Initialise the language based on the settings in the user settings folder
+	// This needs to happen before gtk_init() to set up the environment for GTK
+	language::getLanguageManager().initLanguageFromContext(ctx);
 
-	bindtextdomain(GETTEXT_PACKAGE, (ctx.getApplicationPath() + "i18n").c_str());
-    // set encoding to utf-8 to prevent errors for Windows
-    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-	
 	// Initialise GTK
 	gtk_disable_setlocale();
 	gtk_init(&argc, &argv);
