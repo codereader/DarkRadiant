@@ -1,0 +1,22 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: DarkRadiant\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-04-09 16:37+0100\n"
+"PO-Revision-Date: 2010-04-09 16:38+0100\n"
+"Last-Translator: greebo <greebo@angua.at>\n"
+"Language-Team: The Dark Mod\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-SearchPath-0: ..\\..\\..\\radiant\n"
+"X-Poedit-SearchPath-1: ..\\..\\..\\libs\n"
+"X-Poedit-SearchPath-2: ..\\..\\..\\plugins\n"
+
+#: ..\..\..\radiant/brushmanip.cpp:703
+msgid "Exactly one brush must be selected for this operation."
+msgstr "Für diese Operation muss genau eine Brush ausgewählt sein."
+
