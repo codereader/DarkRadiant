@@ -69,13 +69,18 @@ int main (int argc, char* argv[]) {
 	// Set the stream references for globalOutputStream(), redirect std::cout, etc.
 	applog::initialiseLogStreams();
 
-	// Initialse the context (application path / settings path, is OS-specific)
+	// Initialise the context (application path / settings path, is OS-specific)
 	module::ModuleRegistry::Instance().initialiseContext(argc, argv);
+
+	// Acquire the appplication context ref (shortcut)
+	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 
 	// The settings path is set, start logging now
 	applog::LogFile::create("darkradiant.log");
 
-	bindtextdomain(GETTEXT_PACKAGE, "i18n");
+	g_setenv("LANG", "en_US", TRUE);
+
+	bindtextdomain(GETTEXT_PACKAGE, (ctx.getApplicationPath() + "i18n").c_str());
     // set encoding to utf-8 to prevent errors for Windows
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	
@@ -112,7 +117,6 @@ int main (int argc, char* argv[]) {
         module::Loader::loadModules(PKGLIBDIR);
 #else
         // Load modules from application-relative path
-		const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 		module::Loader::loadModules(ctx.getApplicationPath());
 #endif
 	
