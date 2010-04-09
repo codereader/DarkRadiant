@@ -35,7 +35,7 @@ ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
 	_modulesShutdown(false)
 {
-	globalOutputStream() << "ModuleRegistry instantiated.\n";
+	globalOutputStream() << "ModuleRegistry instantiated." << std::endl;
 }
 
 void ModuleRegistry::unloadModules() {
@@ -70,7 +70,7 @@ void ModuleRegistry::registerModule(RegisterableModulePtr module) {
 		);
 	}
 	
-	globalOutputStream() << "Module registered: " << module->getName().c_str() << "\n";
+	globalOutputStream() << "Module registered: " << module->getName() << std::endl;
 }
 
 // Initialise the module (including dependencies, if necessary)
@@ -125,7 +125,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	// Initialise the module itself, now that the dependencies are ready
 	module->initialiseModule(_context);
 	
-	globalOutputStream() << "=> Module " << name << " initialised.\n";
+	globalOutputStream() << "=> Module " << name << " initialised." << std::endl;
 }
 
 // Initialise all registered modules
@@ -187,7 +187,7 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 	
 	if (returnValue == NULL) {
 		std::cerr << "ModuleRegistry: Warning! Module with name " 
-		          << name << " requested but not found!\n";
+		          << name << " requested but not found!" << std::endl;
 	}
 	
 	return returnValue;

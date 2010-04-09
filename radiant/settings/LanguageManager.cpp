@@ -8,7 +8,6 @@
 #include "i18n.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
-#include "modulesystem/StaticModule.h"
 #include <fstream>
 
 namespace language
@@ -67,7 +66,19 @@ void LanguageManager::keyChanged(const std::string& key, const std::string& valu
 	_curLanguage = value;
 }
 
-void LanguageManager::initLanguageFromContext(const ApplicationContext& ctx)
+void LanguageManager::init(const ApplicationContext& ctx)
+{
+	// Instantiate a new language manager
+	LanguageManagerPtr instancePtr(new LanguageManager);
+
+	// Hand that over to the module registry
+	module::getRegistry().registerModule(instancePtr);
+
+	// Initialise the module manually
+	instancePtr->initFromContext(ctx);
+}
+
+void LanguageManager::initFromContext(const ApplicationContext& ctx)
 {
 	// Initialise these members
 	_languageSettingFile = ctx.getSettingsPath() + LANGUAGE_SETTING_FILE;
@@ -109,15 +120,6 @@ void LanguageManager::saveLanguageSetting(const std::string& language)
 
 	str.flush();
 	str.close();
-}
-
-// This is registering the Language Manager module in the registry before main()
-module::StaticModule<LanguageManager> languageManagerModule;
-
-LanguageManager& getLanguageManager()
-{
-	// Use the above StaticModule class to acquire a reference
-	return *languageManagerModule.getModule();
 }
 
 } // namespace
