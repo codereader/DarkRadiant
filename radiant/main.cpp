@@ -81,7 +81,7 @@ int main (int argc, char* argv[]) {
 
 	// Initialise the language based on the settings in the user settings folder
 	// This needs to happen before gtk_init() to set up the environment for GTK
-	language::getLanguageManager().initLanguageFromContext(ctx);
+	language::LanguageManager().init(ctx);
 
 	// Initialise GTK
 	gtk_disable_setlocale();

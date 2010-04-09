@@ -29,20 +29,19 @@ public:
 	// RegistryKeyObserver implementation
 	void keyChanged(const std::string& key, const std::string& value);
 
-	// Method used to initialise language settings
-	// this is called by main() even before any other modules are loaded
-	void initLanguageFromContext(const ApplicationContext& ctx);
+	// Method used to instantiate and register the module, and load settings
+	// This is called by main() even before any other modules are loaded
+	static void init(const ApplicationContext& ctx);
 
 private:
+	void initFromContext(const ApplicationContext& ctx);
+
 	// Loads the language setting from the .language in the user settings folder
 	std::string loadLanguageSetting();
 
 	// Saves the language setting to the .language in the user settings folder
 	void saveLanguageSetting(const std::string& language);
 };
-
-// Accessor for the above module for use before module load time
-LanguageManager& getLanguageManager();
 
 } // namespace
 
