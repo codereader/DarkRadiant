@@ -18,46 +18,9 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-/*! \mainpage GtkRadiant Documentation Index
-
-\section intro_sec Introduction
-
-This documentation is generated from comments in the source code.
-
-\section links_sec Useful Links
-
-\link include/itextstream.h include/itextstream.h \endlink - Global output and error message streams, similar to std::cout and std::cerr. \n
-
-FileInputStream - similar to std::ifstream (binary mode) \n
-FileOutputStream - similar to std::ofstream (binary mode) \n
-TextFileInputStream - similar to std::ifstream (text mode) \n
-TextFileOutputStream - similar to std::ofstream (text mode) \n
-StringOutputStream - similar to std::stringstream \n
-
-\link string/string.h string/string.h \endlink - C-style string comparison and memory management. \n
-\link os/path.h os/path.h \endlink - Path manipulation for radiant's standard path format \n
-\link os/file.h os/file.h \endlink - OS file-system access. \n
-
-Array - automatic array memory management \n
-
-\link math/matrix.h math/matrix.h \endlink - Matrices \n
-\link math/quaternion.h math/quaternion.h \endlink - Quaternions \n
-\link math/plane.h math/plane.h \endlink - Planes \n
-\link math/aabb.h math/aabb.h \endlink - AABBs \n
-
-Callback MemberCaller FunctionCaller - callbacks similar to using boost::function with boost::bind \n
-
-\link generic/bitfield.h generic/bitfield.h \endlink - Type-safe bitfield \n
-
-DefaultAllocator - Memory allocation using new/delete, compliant with std::allocator interface \n
-
-\link debugging/debugging.h debugging/debugging.h \endlink - Debugging macros \n
-
-*/
-
 #include "main.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
@@ -111,6 +74,10 @@ int main (int argc, char* argv[]) {
 
 	// The settings path is set, start logging now
 	applog::LogFile::create("darkradiant.log");
+
+	bindtextdomain(GETTEXT_PACKAGE, "i18n");
+    // set encoding to utf-8 to prevent errors for Windows
+    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	
 	// Initialise GTK
 	gtk_disable_setlocale();
@@ -118,6 +85,11 @@ int main (int argc, char* argv[]) {
 
     // Initialise GTKGLExt
     gtk_gl_init(&argc, &argv);
+
+	// reset some locale settings back to standard c
+    // this is e.g. needed for parsing float values from textfiles 
+    setlocale(LC_NUMERIC, "C");
+    setlocale(LC_TIME, "C");
 
 	// Now that GTK is ready, activate the Popup Error Handler
 	module::ModuleRegistry::Instance().initErrorHandler();
