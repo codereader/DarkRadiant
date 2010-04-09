@@ -1517,6 +1517,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\settings\LanguageManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\settings\LanguageManager.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\settings\PreferenceSystem.cpp"
 					>
 				</File>
