@@ -88,7 +88,7 @@ void ReloadSkins(const cmd::ArgumentList& args) {
 void ReloadDefs(const cmd::ArgumentList& args)
 {
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Defs");
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Defs"));
 
 	GlobalEntityClassManager().reloadDefs();
 }
