@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-04-10 06:12+0100\n"
-"PO-Revision-Date: 2010-04-10 06:12+0100\n"
+"PO-Revision-Date: 2010-04-10 06:16+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -22,12 +22,12 @@ msgstr "Für diese Operation muss genau eine Brush ausgewählt sein."
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:103
 msgid "Language"
-msgstr ""
+msgstr "Sprache"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:220
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:257
 msgid "English"
-msgstr ""
+msgstr "Englisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:221
 msgid "Abkhazian"
@@ -152,7 +152,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:252
 msgid "German"
-msgstr ""
+msgstr "Deutsch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:253
 msgid "Divehi"
