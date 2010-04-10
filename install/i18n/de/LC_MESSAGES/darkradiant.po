@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-10 06:12+0100\n"
-"PO-Revision-Date: 2010-04-10 06:16+0100\n"
+"POT-Creation-Date: 2010-04-10 19:12+0100\n"
+"PO-Revision-Date: 2010-04-10 19:12+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,14 @@ msgstr ""
 #: ..\..\..\..\radiant/brushmanip.cpp:703
 msgid "Exactly one brush must be selected for this operation."
 msgstr "Für diese Operation muss genau eine Brush ausgewählt sein."
+
+#: ..\..\..\..\radiant/entity.cpp:91
+msgid "Processing..."
+msgstr ""
+
+#: ..\..\..\..\radiant/entity.cpp:91
+msgid "Reloading Defs"
+msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:103
 msgid "Language"
@@ -55,7 +63,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:227
 msgid "Arabic"
-msgstr ""
+msgstr "Arabisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:228
 msgid "Assamese"
@@ -103,7 +111,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:239
 msgid "Tibetan"
-msgstr ""
+msgstr "Tibet"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:240
 msgid "Breton"
@@ -135,7 +143,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:247
 msgid "Czech"
-msgstr ""
+msgstr "Tschechisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:248
 msgid "Chuvash"
@@ -148,7 +156,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:251
 msgid "Danish"
-msgstr ""
+msgstr "Dänisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:252
 msgid "German"
@@ -168,7 +176,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:256
 msgid "Greek"
-msgstr ""
+msgstr "Griechisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:258
 msgid "Esperanto"
@@ -188,15 +196,15 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:262
 msgid "Persian"
-msgstr ""
+msgstr "Persisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:263
 msgid "Fulah"
-msgstr ""
+msgstr "Fulah"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:264
 msgid "Finnish"
-msgstr ""
+msgstr "Finnisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:265
 msgid "Fijian"
@@ -208,7 +216,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:267
 msgid "French"
-msgstr ""
+msgstr "Französisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:268
 msgid "Western Frisian"
@@ -604,7 +612,7 @@ msgstr ""
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:366
 msgid "Albanian"
-msgstr ""
+msgstr "Albanisch"
 
 #: ..\..\..\..\radiant/settings/LanguageManager.cpp:367
 msgid "Serbian"
