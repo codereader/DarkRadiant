@@ -68,7 +68,7 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 eventmgr_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
-am_eventmgr_la_OBJECTS = Accelerator.lo Command.lo EventManager.lo \
+am_eventmgr_la_OBJECTS = Accelerator.lo Statement.lo EventManager.lo \
 	Modifiers.lo MouseEvents.lo Toggle.lo WidgetToggle.lo
 eventmgr_la_OBJECTS = $(am_eventmgr_la_OBJECTS)
 eventmgr_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -251,7 +251,7 @@ eventmgr_la_LDFLAGS = -module -avoid-version \
 					  $(GTK_LIBS) $(GLIB_LIBS) $(XML_LIBS)
 
 eventmgr_la_SOURCES = Accelerator.cpp \
-                      Command.cpp \
+                      Statement.cpp \
                       EventManager.cpp \
                       Modifiers.cpp \
                       MouseEvents.cpp \
@@ -333,10 +333,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Accelerator.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Command.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EventManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Modifiers.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MouseEvents.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Statement.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Toggle.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WidgetToggle.Plo@am__quote@
 
