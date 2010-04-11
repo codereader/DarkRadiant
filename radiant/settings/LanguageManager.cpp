@@ -101,6 +101,8 @@ void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 	// Add Preferences
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Language");
 	page->appendCombo(_("Language"), RKEY_LANGUAGE, langs);
+
+	page->appendLabel(_("<b>Note:</b> You'll need to restart DarkRadiant after changing the language setting."));
 }
 
 void LanguageManager::shutdownModule()
@@ -178,6 +180,8 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
 	// Initialise these members
 	_languageSettingFile = ctx.getSettingsPath() + LANGUAGE_SETTING_FILE;
 	_curLanguage = loadLanguageSetting();
+
+	globalOutputStream() << "Current language setting: " << _curLanguage << std::endl;
 
 #if defined(POSIX) && defined(PKGLIBDIR)
 	_i18nPath = std::string(PKGLIBDIR) + "/i18n/";
