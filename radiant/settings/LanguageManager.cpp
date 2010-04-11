@@ -128,6 +128,12 @@ void LanguageManager::findAvailableLanguages()
 	// Search folder
 	fs::path start(_i18nPath);
 
+	if (!fs::exists(start))
+	{
+		globalWarningStream() << "Cannot find i18n directory, skipping search for language files." << std::endl;
+		return;
+	}
+
 	for (fs::directory_iterator it(start); it != fs::directory_iterator(); ++it)
 	{
 		// Get the candidate
