@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-10 19:12+0100\n"
-"PO-Revision-Date: 2010-04-10 19:12+0100\n"
+"Report-Msgid-Bugs-To: greebo@angua.at\n"
+"POT-Creation-Date: 2010-04-11 08:18+0200\n"
+"PO-Revision-Date: 2010-04-11 08:19+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -16,741 +16,1642 @@ msgstr ""
 "X-Poedit-SearchPath-1: ..\\..\\..\\..\\libs\n"
 "X-Poedit-SearchPath-2: ..\\..\\..\\..\\plugins\n"
 
-#: ..\..\..\..\radiant/brushmanip.cpp:703
+#: ..\..\radiant\brushmanip.cpp:703
 msgid "Exactly one brush must be selected for this operation."
 msgstr "Für diese Operation muss genau eine Brush ausgewählt sein."
 
-#: ..\..\..\..\radiant/entity.cpp:91
+#: ..\..\radiant\entity.cpp:91
 msgid "Processing..."
 msgstr ""
 
-#: ..\..\..\..\radiant/entity.cpp:91
+#: ..\..\radiant\entity.cpp:91
 msgid "Reloading Defs"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:103
+#: ..\..\radiant\settings\LanguageManager.cpp:103
 msgid "Language"
 msgstr "Sprache"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:220
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:257
+#: ..\..\radiant\settings\LanguageManager.cpp:220
+#: ..\..\radiant\settings\LanguageManager.cpp:257
 msgid "English"
 msgstr "Englisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:221
+#: ..\..\radiant\settings\LanguageManager.cpp:221
 msgid "Abkhazian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:222
+#: ..\..\radiant\settings\LanguageManager.cpp:222
 msgid "Avestan"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:223
+#: ..\..\radiant\settings\LanguageManager.cpp:223
 msgid "Afrikaans"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:224
+#: ..\..\radiant\settings\LanguageManager.cpp:224
 msgid "Akan"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:225
+#: ..\..\radiant\settings\LanguageManager.cpp:225
 msgid "Amharic"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:226
+#: ..\..\radiant\settings\LanguageManager.cpp:226
 msgid "Aragonese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:227
+#: ..\..\radiant\settings\LanguageManager.cpp:227
 msgid "Arabic"
 msgstr "Arabisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:228
+#: ..\..\radiant\settings\LanguageManager.cpp:228
 msgid "Assamese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:229
+#: ..\..\radiant\settings\LanguageManager.cpp:229
 msgid "Avaric"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:230
+#: ..\..\radiant\settings\LanguageManager.cpp:230
 msgid "Aymara"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:231
+#: ..\..\radiant\settings\LanguageManager.cpp:231
 msgid "Azerbaijani"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:232
+#: ..\..\radiant\settings\LanguageManager.cpp:232
 msgid "Bashkir"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:233
+#: ..\..\radiant\settings\LanguageManager.cpp:233
 msgid "Belarusian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:234
+#: ..\..\radiant\settings\LanguageManager.cpp:234
 msgid "Bulgarian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:235
+#: ..\..\radiant\settings\LanguageManager.cpp:235
 msgid "Bihari languages"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:236
+#: ..\..\radiant\settings\LanguageManager.cpp:236
 msgid "Bislama"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:237
+#: ..\..\radiant\settings\LanguageManager.cpp:237
 msgid "Bambara"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:238
+#: ..\..\radiant\settings\LanguageManager.cpp:238
 msgid "Bengali"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:239
+#: ..\..\radiant\settings\LanguageManager.cpp:239
 msgid "Tibetan"
 msgstr "Tibet"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:240
+#: ..\..\radiant\settings\LanguageManager.cpp:240
 msgid "Breton"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:241
+#: ..\..\radiant\settings\LanguageManager.cpp:241
 msgid "Bosnian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:242
+#: ..\..\radiant\settings\LanguageManager.cpp:242
 msgid "Catalan"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:243
+#: ..\..\radiant\settings\LanguageManager.cpp:243
 msgid "Chechen"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:244
+#: ..\..\radiant\settings\LanguageManager.cpp:244
 msgid "Chamorro"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:245
+#: ..\..\radiant\settings\LanguageManager.cpp:245
 msgid "Corsican"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:246
+#: ..\..\radiant\settings\LanguageManager.cpp:246
 msgid "Cree"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:247
+#: ..\..\radiant\settings\LanguageManager.cpp:247
 msgid "Czech"
 msgstr "Tschechisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:248
+#: ..\..\radiant\settings\LanguageManager.cpp:248
 msgid "Chuvash"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:249
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:250
+#: ..\..\radiant\settings\LanguageManager.cpp:249
+#: ..\..\radiant\settings\LanguageManager.cpp:250
 msgid "Welsh"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:251
+#: ..\..\radiant\settings\LanguageManager.cpp:251
 msgid "Danish"
 msgstr "Dänisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:252
+#: ..\..\radiant\settings\LanguageManager.cpp:252
 msgid "German"
 msgstr "Deutsch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:253
+#: ..\..\radiant\settings\LanguageManager.cpp:253
 msgid "Divehi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:254
+#: ..\..\radiant\settings\LanguageManager.cpp:254
 msgid "Dzongkha"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:255
+#: ..\..\radiant\settings\LanguageManager.cpp:255
 msgid "Ewe"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:256
+#: ..\..\radiant\settings\LanguageManager.cpp:256
 msgid "Greek"
 msgstr "Griechisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:258
+#: ..\..\radiant\settings\LanguageManager.cpp:258
 msgid "Esperanto"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:259
+#: ..\..\radiant\settings\LanguageManager.cpp:259
 msgid "Spanish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:260
+#: ..\..\radiant\settings\LanguageManager.cpp:260
 msgid "Estonian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:261
+#: ..\..\radiant\settings\LanguageManager.cpp:261
 msgid "Basque"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:262
+#: ..\..\radiant\settings\LanguageManager.cpp:262
 msgid "Persian"
 msgstr "Persisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:263
+#: ..\..\radiant\settings\LanguageManager.cpp:263
 msgid "Fulah"
 msgstr "Fulah"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:264
+#: ..\..\radiant\settings\LanguageManager.cpp:264
 msgid "Finnish"
 msgstr "Finnisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:265
+#: ..\..\radiant\settings\LanguageManager.cpp:265
 msgid "Fijian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:266
+#: ..\..\radiant\settings\LanguageManager.cpp:266
 msgid "Faroese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:267
+#: ..\..\radiant\settings\LanguageManager.cpp:267
 msgid "French"
 msgstr "Französisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:268
+#: ..\..\radiant\settings\LanguageManager.cpp:268
 msgid "Western Frisian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:269
+#: ..\..\radiant\settings\LanguageManager.cpp:269
 msgid "Irish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:270
+#: ..\..\radiant\settings\LanguageManager.cpp:270
 msgid "Gaelic; Scottish Gaelic"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:271
+#: ..\..\radiant\settings\LanguageManager.cpp:271
 msgid "Galician"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:272
+#: ..\..\radiant\settings\LanguageManager.cpp:272
 msgid "Guarani"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:273
+#: ..\..\radiant\settings\LanguageManager.cpp:273
 msgid "Gujarati"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:274
+#: ..\..\radiant\settings\LanguageManager.cpp:274
 msgid "Manx"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:275
+#: ..\..\radiant\settings\LanguageManager.cpp:275
 msgid "Hausa"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:276
+#: ..\..\radiant\settings\LanguageManager.cpp:276
 msgid "Hebrew"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:277
+#: ..\..\radiant\settings\LanguageManager.cpp:277
 msgid "Hindi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:278
+#: ..\..\radiant\settings\LanguageManager.cpp:278
 msgid "Hiri Motu"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:279
+#: ..\..\radiant\settings\LanguageManager.cpp:279
 msgid "Croatian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:280
+#: ..\..\radiant\settings\LanguageManager.cpp:280
 msgid "Haitian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:281
+#: ..\..\radiant\settings\LanguageManager.cpp:281
 msgid "Hungarian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:282
+#: ..\..\radiant\settings\LanguageManager.cpp:282
 msgid "Armenian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:283
+#: ..\..\radiant\settings\LanguageManager.cpp:283
 msgid "Herero"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:284
+#: ..\..\radiant\settings\LanguageManager.cpp:284
 msgid "Interlingua"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:285
+#: ..\..\radiant\settings\LanguageManager.cpp:285
 msgid "Indonesian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:286
+#: ..\..\radiant\settings\LanguageManager.cpp:286
 msgid "Interlingue; Occidental"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:287
+#: ..\..\radiant\settings\LanguageManager.cpp:287
 msgid "Igbo"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:288
+#: ..\..\radiant\settings\LanguageManager.cpp:288
 msgid "Sichuan Yi; Nuosu"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:289
+#: ..\..\radiant\settings\LanguageManager.cpp:289
 msgid "Inupiaq"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:290
+#: ..\..\radiant\settings\LanguageManager.cpp:290
 msgid "Ido"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:291
+#: ..\..\radiant\settings\LanguageManager.cpp:291
 msgid "Icelandic"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:292
+#: ..\..\radiant\settings\LanguageManager.cpp:292
 msgid "Italian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:293
+#: ..\..\radiant\settings\LanguageManager.cpp:293
 msgid "Inuktitut"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:294
+#: ..\..\radiant\settings\LanguageManager.cpp:294
 msgid "Japanese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:295
+#: ..\..\radiant\settings\LanguageManager.cpp:295
 msgid "Javanese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:296
+#: ..\..\radiant\settings\LanguageManager.cpp:296
 msgid "Georgian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:297
+#: ..\..\radiant\settings\LanguageManager.cpp:297
 msgid "Kongo"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:298
+#: ..\..\radiant\settings\LanguageManager.cpp:298
 msgid "Kikuyu"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:299
+#: ..\..\radiant\settings\LanguageManager.cpp:299
 msgid "Kuanyama"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:300
+#: ..\..\radiant\settings\LanguageManager.cpp:300
 msgid "Kazakh"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:301
+#: ..\..\radiant\settings\LanguageManager.cpp:301
 msgid "Kalaallisut; Greenlandic"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:302
+#: ..\..\radiant\settings\LanguageManager.cpp:302
 msgid "Central Khmer"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:303
+#: ..\..\radiant\settings\LanguageManager.cpp:303
 msgid "Kannada"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:304
+#: ..\..\radiant\settings\LanguageManager.cpp:304
 msgid "Korean"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:305
+#: ..\..\radiant\settings\LanguageManager.cpp:305
 msgid "Kanuri"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:306
+#: ..\..\radiant\settings\LanguageManager.cpp:306
 msgid "Kashmiri"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:307
+#: ..\..\radiant\settings\LanguageManager.cpp:307
 msgid "Kurdish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:308
+#: ..\..\radiant\settings\LanguageManager.cpp:308
 msgid "Komi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:309
+#: ..\..\radiant\settings\LanguageManager.cpp:309
 msgid "Cornish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:310
+#: ..\..\radiant\settings\LanguageManager.cpp:310
 msgid "Kirghiz"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:311
+#: ..\..\radiant\settings\LanguageManager.cpp:311
 msgid "Latin"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:312
+#: ..\..\radiant\settings\LanguageManager.cpp:312
 msgid "Luxembourgish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:313
+#: ..\..\radiant\settings\LanguageManager.cpp:313
 msgid "Ganda"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:314
+#: ..\..\radiant\settings\LanguageManager.cpp:314
 msgid "Limburgan"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:315
+#: ..\..\radiant\settings\LanguageManager.cpp:315
 msgid "Lingala"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:316
+#: ..\..\radiant\settings\LanguageManager.cpp:316
 msgid "Lao"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:317
+#: ..\..\radiant\settings\LanguageManager.cpp:317
 msgid "Lithuanian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:318
+#: ..\..\radiant\settings\LanguageManager.cpp:318
 msgid "Luba-Katanga"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:319
+#: ..\..\radiant\settings\LanguageManager.cpp:319
 msgid "Latvian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:320
+#: ..\..\radiant\settings\LanguageManager.cpp:320
 msgid "Malagasy"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:321
+#: ..\..\radiant\settings\LanguageManager.cpp:321
 msgid "Marshallese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:322
+#: ..\..\radiant\settings\LanguageManager.cpp:322
 msgid "Maori"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:323
+#: ..\..\radiant\settings\LanguageManager.cpp:323
 msgid "Macedonian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:324
+#: ..\..\radiant\settings\LanguageManager.cpp:324
 msgid "Malayalam"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:325
+#: ..\..\radiant\settings\LanguageManager.cpp:325
 msgid "Mongolian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:326
+#: ..\..\radiant\settings\LanguageManager.cpp:326
 msgid "Marathi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:327
+#: ..\..\radiant\settings\LanguageManager.cpp:327
 msgid "Malay"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:328
+#: ..\..\radiant\settings\LanguageManager.cpp:328
 msgid "Maltese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:329
+#: ..\..\radiant\settings\LanguageManager.cpp:329
 msgid "Burmese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:330
+#: ..\..\radiant\settings\LanguageManager.cpp:330
 msgid "Nauru"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:331
+#: ..\..\radiant\settings\LanguageManager.cpp:331
 msgid "Ndebele, North"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:332
+#: ..\..\radiant\settings\LanguageManager.cpp:332
 msgid "Nepali"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:333
+#: ..\..\radiant\settings\LanguageManager.cpp:333
 msgid "Ndonga"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:334
+#: ..\..\radiant\settings\LanguageManager.cpp:334
 msgid "Dutch"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:335
+#: ..\..\radiant\settings\LanguageManager.cpp:335
 msgid "Norwegian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:336
+#: ..\..\radiant\settings\LanguageManager.cpp:336
 msgid "Ndebele, South"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:337
+#: ..\..\radiant\settings\LanguageManager.cpp:337
 msgid "Navajo"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:338
+#: ..\..\radiant\settings\LanguageManager.cpp:338
 msgid "Chichewa"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:339
+#: ..\..\radiant\settings\LanguageManager.cpp:339
 msgid "Occitan"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:340
+#: ..\..\radiant\settings\LanguageManager.cpp:340
 msgid "Ojibwa"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:341
+#: ..\..\radiant\settings\LanguageManager.cpp:341
 msgid "Oromo"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:342
+#: ..\..\radiant\settings\LanguageManager.cpp:342
 msgid "Oriya"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:343
+#: ..\..\radiant\settings\LanguageManager.cpp:343
 msgid "Ossetian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:344
+#: ..\..\radiant\settings\LanguageManager.cpp:344
 msgid "Panjabi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:345
+#: ..\..\radiant\settings\LanguageManager.cpp:345
 msgid "Pali"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:346
+#: ..\..\radiant\settings\LanguageManager.cpp:346
 msgid "Polish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:347
+#: ..\..\radiant\settings\LanguageManager.cpp:347
 msgid "Pushto"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:348
+#: ..\..\radiant\settings\LanguageManager.cpp:348
 msgid "Portuguese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:349
+#: ..\..\radiant\settings\LanguageManager.cpp:349
 msgid "Quechua"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:350
+#: ..\..\radiant\settings\LanguageManager.cpp:350
 msgid "Romansh"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:351
+#: ..\..\radiant\settings\LanguageManager.cpp:351
 msgid "Rundi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:352
+#: ..\..\radiant\settings\LanguageManager.cpp:352
 msgid "Romanian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:353
+#: ..\..\radiant\settings\LanguageManager.cpp:353
 msgid "Russian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:354
+#: ..\..\radiant\settings\LanguageManager.cpp:354
 msgid "Kinyarwanda"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:355
+#: ..\..\radiant\settings\LanguageManager.cpp:355
 msgid "Sanskrit"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:356
+#: ..\..\radiant\settings\LanguageManager.cpp:356
 msgid "Sardinian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:357
+#: ..\..\radiant\settings\LanguageManager.cpp:357
 msgid "Sindhi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:358
+#: ..\..\radiant\settings\LanguageManager.cpp:358
 msgid "Northern Sami"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:359
+#: ..\..\radiant\settings\LanguageManager.cpp:359
 msgid "Sango"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:360
+#: ..\..\radiant\settings\LanguageManager.cpp:360
 msgid "Sinhala"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:361
+#: ..\..\radiant\settings\LanguageManager.cpp:361
 msgid "Slovak"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:362
+#: ..\..\radiant\settings\LanguageManager.cpp:362
 msgid "Slovenian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:363
+#: ..\..\radiant\settings\LanguageManager.cpp:363
 msgid "Samoan"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:364
+#: ..\..\radiant\settings\LanguageManager.cpp:364
 msgid "Shona"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:365
+#: ..\..\radiant\settings\LanguageManager.cpp:365
 msgid "Somali"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:366
+#: ..\..\radiant\settings\LanguageManager.cpp:366
 msgid "Albanian"
 msgstr "Albanisch"
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:367
+#: ..\..\radiant\settings\LanguageManager.cpp:367
 msgid "Serbian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:368
+#: ..\..\radiant\settings\LanguageManager.cpp:368
 msgid "Swati"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:369
+#: ..\..\radiant\settings\LanguageManager.cpp:369
 msgid "Sotho, Southern"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:370
+#: ..\..\radiant\settings\LanguageManager.cpp:370
 msgid "Sundanese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:371
+#: ..\..\radiant\settings\LanguageManager.cpp:371
 msgid "Swedish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:372
+#: ..\..\radiant\settings\LanguageManager.cpp:372
 msgid "Swahili"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:373
+#: ..\..\radiant\settings\LanguageManager.cpp:373
 msgid "Tamil"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:374
+#: ..\..\radiant\settings\LanguageManager.cpp:374
 msgid "Telugu"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:375
+#: ..\..\radiant\settings\LanguageManager.cpp:375
 msgid "Tajik"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:376
+#: ..\..\radiant\settings\LanguageManager.cpp:376
 msgid "Thai"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:377
+#: ..\..\radiant\settings\LanguageManager.cpp:377
 msgid "Tigrinya"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:378
+#: ..\..\radiant\settings\LanguageManager.cpp:378
 msgid "Turkmen"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:379
+#: ..\..\radiant\settings\LanguageManager.cpp:379
 msgid "Tagalog"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:380
+#: ..\..\radiant\settings\LanguageManager.cpp:380
 msgid "Tswana"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:381
+#: ..\..\radiant\settings\LanguageManager.cpp:381
 msgid "Tonga"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:382
+#: ..\..\radiant\settings\LanguageManager.cpp:382
 msgid "Turkish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:383
+#: ..\..\radiant\settings\LanguageManager.cpp:383
 msgid "Tsonga"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:384
+#: ..\..\radiant\settings\LanguageManager.cpp:384
 msgid "Tatar"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:385
+#: ..\..\radiant\settings\LanguageManager.cpp:385
 msgid "Twi"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:386
+#: ..\..\radiant\settings\LanguageManager.cpp:386
 msgid "Tahitian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:387
+#: ..\..\radiant\settings\LanguageManager.cpp:387
 msgid "Uighur"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:388
+#: ..\..\radiant\settings\LanguageManager.cpp:388
 msgid "Ukrainian"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:389
+#: ..\..\radiant\settings\LanguageManager.cpp:389
 msgid "Urdu"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:390
+#: ..\..\radiant\settings\LanguageManager.cpp:390
 msgid "Uzbek"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:391
+#: ..\..\radiant\settings\LanguageManager.cpp:391
 msgid "Venda"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:392
+#: ..\..\radiant\settings\LanguageManager.cpp:392
 msgid "Vietnamese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:393
+#: ..\..\radiant\settings\LanguageManager.cpp:393
 msgid "Volapuek"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:394
+#: ..\..\radiant\settings\LanguageManager.cpp:394
 msgid "Walloon"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:395
+#: ..\..\radiant\settings\LanguageManager.cpp:395
 msgid "Wolof"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:396
+#: ..\..\radiant\settings\LanguageManager.cpp:396
 msgid "Xhosa"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:397
+#: ..\..\radiant\settings\LanguageManager.cpp:397
 msgid "Yiddish"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:398
+#: ..\..\radiant\settings\LanguageManager.cpp:398
 msgid "Yoruba"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:399
+#: ..\..\radiant\settings\LanguageManager.cpp:399
 msgid "Zhuang"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:400
+#: ..\..\radiant\settings\LanguageManager.cpp:400
 msgid "Chinese"
 msgstr ""
 
-#: ..\..\..\..\radiant/settings/LanguageManager.cpp:401
+#: ..\..\radiant\settings\LanguageManager.cpp:401
 msgid "Zulu"
+msgstr ""
+
+#: xml_file_content.cpp:1
+msgid "_File"
+msgstr ""
+
+#: xml_file_content.cpp:2
+msgid "_New Map"
+msgstr ""
+
+#: xml_file_content.cpp:3
+msgid "_Open..."
+msgstr ""
+
+#: xml_file_content.cpp:4
+msgid "_Import map..."
+msgstr ""
+
+#: xml_file_content.cpp:5
+msgid "Import _prefab..."
+msgstr ""
+
+#: xml_file_content.cpp:6
+msgid "_Save"
+msgstr ""
+
+#: xml_file_content.cpp:7
+msgid "Save _as..."
+msgstr ""
+
+#: xml_file_content.cpp:8
+msgid "Save _copy as..."
+msgstr ""
+
+#: xml_file_content.cpp:9
+msgid "_Save selected as Map..."
+msgstr ""
+
+#: xml_file_content.cpp:10
+msgid "_Save selected as prefab..."
+msgstr ""
+
+#: xml_file_content.cpp:11
+msgid "Save selected as Collision Model..."
+msgstr ""
+
+#: xml_file_content.cpp:12
+msgid "Save _region..."
+msgstr ""
+
+#: xml_file_content.cpp:13
+msgid "_Reload Models"
+msgstr ""
+
+#: xml_file_content.cpp:14
+msgid "Reload Selected Models"
+msgstr ""
+
+#: xml_file_content.cpp:15
+msgid "Reload S_kins"
+msgstr ""
+
+#: xml_file_content.cpp:16
+msgid "Reload Shaders"
+msgstr ""
+
+#: xml_file_content.cpp:17
+msgid "Reload Defs"
+msgstr ""
+
+#: xml_file_content.cpp:18
+msgid "Select _Game..."
+msgstr ""
+
+#: xml_file_content.cpp:19
+msgid "_Pointfile"
+msgstr ""
+
+#: xml_file_content.cpp:20
+msgid "E_xit"
+msgstr ""
+
+#: xml_file_content.cpp:21
+msgid "_Edit"
+msgstr ""
+
+#: xml_file_content.cpp:22
+msgid "_Undo"
+msgstr ""
+
+#: xml_file_content.cpp:23
+msgid "_Redo"
+msgstr ""
+
+#: xml_file_content.cpp:24
+msgid "_Copy"
+msgstr ""
+
+#: xml_file_content.cpp:25
+msgid "_Paste"
+msgstr ""
+
+#: xml_file_content.cpp:26
+msgid "Paste to Camera"
+msgstr ""
+
+#: xml_file_content.cpp:27
+msgid "_Duplicate"
+msgstr ""
+
+#: xml_file_content.cpp:28
+msgid "D_elete"
+msgstr ""
+
+#: xml_file_content.cpp:29
+msgid "Rep_arent Primitives"
+msgstr ""
+
+#: xml_file_content.cpp:30
+msgid "Reparent Primitives to _Worldspawn"
+msgstr ""
+
+#: xml_file_content.cpp:31
+msgid "Merge selected Entities"
+msgstr ""
+
+#: xml_file_content.cpp:32
+msgid "Copy Shader"
+msgstr ""
+
+#: xml_file_content.cpp:33
+msgid "Paste Shader"
+msgstr ""
+
+#: xml_file_content.cpp:34
+msgid "Paste Shader (Natural)"
+msgstr ""
+
+#: xml_file_content.cpp:35
+msgid "C_lear selection"
+msgstr ""
+
+#: xml_file_content.cpp:36
+msgid "_Invert selection"
+msgstr ""
+
+#: xml_file_content.cpp:37
+msgid "Select complete t_all"
+msgstr ""
+
+#: xml_file_content.cpp:38
+msgid "Select i_nside"
+msgstr ""
+
+#: xml_file_content.cpp:39
+msgid "Select _touching"
+msgstr ""
+
+#: xml_file_content.cpp:40
+msgid "Select Children"
+msgstr ""
+
+#: xml_file_content.cpp:41
+msgid "Expand selection to all Siblings"
+msgstr ""
+
+#: xml_file_content.cpp:42
+msgid "Select all of type"
+msgstr ""
+
+#: xml_file_content.cpp:43
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: xml_file_content.cpp:44
+msgid "Pre_ferences"
+msgstr ""
+
+#: xml_file_content.cpp:45
+msgid "V_iew"
+msgstr ""
+
+#: xml_file_content.cpp:46
+msgid "New XY view"
+msgstr ""
+
+#: xml_file_content.cpp:47
+msgid "Camera View"
+msgstr ""
+
+#: xml_file_content.cpp:48
+msgid "Layers"
+msgstr ""
+
+#: xml_file_content.cpp:49
+msgid "Console View"
+msgstr ""
+
+#: xml_file_content.cpp:50
+msgid "Texture Browser"
+msgstr ""
+
+#: xml_file_content.cpp:51
+msgid "Media Browser"
+msgstr ""
+
+#: xml_file_content.cpp:52
+msgid "Entity Inspector"
+msgstr ""
+
+#: xml_file_content.cpp:53
+msgid "_Light Inspector"
+msgstr ""
+
+#: xml_file_content.cpp:54
+msgid "_Surface Inspector"
+msgstr ""
+
+#: xml_file_content.cpp:55
+msgid "_Patch Inspector"
+msgstr ""
+
+#: xml_file_content.cpp:56
+msgid "_Texture Tool"
+msgstr ""
+
+#: xml_file_content.cpp:57
+msgid "Entity List"
+msgstr ""
+
+#: xml_file_content.cpp:58
+msgid "Camera"
+msgstr ""
+
+#: xml_file_content.cpp:59
+msgid "_Center"
+msgstr ""
+
+#: xml_file_content.cpp:60
+msgid "_Up Floor"
+msgstr ""
+
+#: xml_file_content.cpp:61
+msgid "_Down Floor"
+msgstr ""
+
+#: xml_file_content.cpp:62
+msgid "Far Clip Plane In"
+msgstr ""
+
+#: xml_file_content.cpp:63
+msgid "Far Clip Plane Out"
+msgstr ""
+
+#: xml_file_content.cpp:64
+msgid "Next leak spot"
+msgstr ""
+
+#: xml_file_content.cpp:65
+msgid "Previous leak spot"
+msgstr ""
+
+#: xml_file_content.cpp:66
+msgid "Orthographic"
+msgstr ""
+
+#: xml_file_content.cpp:67
+msgid "Next (XY, XZ, YZ)"
+msgstr ""
+
+#: xml_file_content.cpp:68
+msgid "XY (Top)"
+msgstr ""
+
+#: xml_file_content.cpp:69
+msgid "YZ"
+msgstr ""
+
+#: xml_file_content.cpp:70
+msgid "XZ"
+msgstr ""
+
+#: xml_file_content.cpp:71
+msgid "_XY 100%"
+msgstr ""
+
+#: xml_file_content.cpp:72
+msgid "_XY Zoom In"
+msgstr ""
+
+#: xml_file_content.cpp:73
+msgid "_XY Zoom Out"
+msgstr ""
+
+#: xml_file_content.cpp:74
+msgid "Show"
+msgstr ""
+
+#: xml_file_content.cpp:75
+msgid "Show _Angles"
+msgstr ""
+
+#: xml_file_content.cpp:76
+msgid "Show _Names"
+msgstr ""
+
+#: xml_file_content.cpp:77
+msgid "Show Blocks"
+msgstr ""
+
+#: xml_file_content.cpp:78
+msgid "Show C_oordinates"
+msgstr ""
+
+#: xml_file_content.cpp:79
+msgid "Show Window Outline"
+msgstr ""
+
+#: xml_file_content.cpp:80
+msgid "Show Axes"
+msgstr ""
+
+#: xml_file_content.cpp:81
+msgid "Show Workzone"
+msgstr ""
+
+#: xml_file_content.cpp:82
+msgid "Show size info"
+msgstr ""
+
+#: xml_file_content.cpp:83
+msgid "Hide/Show"
+msgstr ""
+
+#: xml_file_content.cpp:84
+msgid "Hide Selected"
+msgstr ""
+
+#: xml_file_content.cpp:85
+msgid "Hide Deselected"
+msgstr ""
+
+#: xml_file_content.cpp:86
+msgid "Show hidden"
+msgstr ""
+
+#: xml_file_content.cpp:87
+msgid "Region"
+msgstr ""
+
+#: xml_file_content.cpp:88
+msgid "_Switch off"
+msgstr ""
+
+#: xml_file_content.cpp:89
+msgid "Set from _XY view"
+msgstr ""
+
+#: xml_file_content.cpp:90
+msgid "Set from _Brush"
+msgstr ""
+
+#: xml_file_content.cpp:91
+msgid "Set from Se_lection"
+msgstr ""
+
+#: xml_file_content.cpp:92
+msgid "Colours..."
+msgstr ""
+
+#: xml_file_content.cpp:93
+msgid "Background Image..."
+msgstr ""
+
+#: xml_file_content.cpp:94
+msgid "Mo_dify"
+msgstr ""
+
+#: xml_file_content.cpp:95
+msgid "Components"
+msgstr ""
+
+#: xml_file_content.cpp:96
+msgid "_Edges"
+msgstr ""
+
+#: xml_file_content.cpp:97
+msgid "_Vertices"
+msgstr ""
+
+#: xml_file_content.cpp:98
+msgid "_Faces"
+msgstr ""
+
+#: xml_file_content.cpp:99
+msgid "En_tities"
+msgstr ""
+
+#: xml_file_content.cpp:100
+msgid "Nudge"
+msgstr ""
+
+#: xml_file_content.cpp:101
+msgid "Nudge Left"
+msgstr ""
+
+#: xml_file_content.cpp:102
+msgid "Nudge Right"
+msgstr ""
+
+#: xml_file_content.cpp:103
+msgid "Nudge Up"
+msgstr ""
+
+#: xml_file_content.cpp:104
+msgid "Nudge Down"
+msgstr ""
+
+#: xml_file_content.cpp:105
+msgid "Rotate"
+msgstr ""
+
+#: xml_file_content.cpp:106
+msgid "Rotate X"
+msgstr ""
+
+#: xml_file_content.cpp:107
+msgid "Rotate Y"
+msgstr ""
+
+#: xml_file_content.cpp:108
+msgid "Rotate Z"
+msgstr ""
+
+#: xml_file_content.cpp:109
+msgid "Mirror"
+msgstr ""
+
+#: xml_file_content.cpp:110
+msgid "Mirror _X"
+msgstr ""
+
+#: xml_file_content.cpp:111
+msgid "Mirror _Y"
+msgstr ""
+
+#: xml_file_content.cpp:112
+msgid "Mirror _Z"
+msgstr ""
+
+#: xml_file_content.cpp:113
+msgid "Free Model Rotation"
+msgstr ""
+
+#: xml_file_content.cpp:114
+msgid "Rotate and scale..."
+msgstr ""
+
+#: xml_file_content.cpp:115
+msgid "_Grid"
+msgstr ""
+
+#: xml_file_content.cpp:116
+msgid "Snap selected to grid"
+msgstr ""
+
+#: xml_file_content.cpp:117
+msgid "Grid0.125"
+msgstr ""
+
+#: xml_file_content.cpp:118
+msgid "Grid0.25"
+msgstr ""
+
+#: xml_file_content.cpp:119
+msgid "Grid0.5"
+msgstr ""
+
+#: xml_file_content.cpp:120
+msgid "Grid1"
+msgstr ""
+
+#: xml_file_content.cpp:121
+msgid "Grid2"
+msgstr ""
+
+#: xml_file_content.cpp:122
+msgid "Grid4"
+msgstr ""
+
+#: xml_file_content.cpp:123
+msgid "Grid8"
+msgstr ""
+
+#: xml_file_content.cpp:124
+msgid "Grid16"
+msgstr ""
+
+#: xml_file_content.cpp:125
+msgid "Grid32"
+msgstr ""
+
+#: xml_file_content.cpp:126
+msgid "Grid64"
+msgstr ""
+
+#: xml_file_content.cpp:127
+msgid "Grid128"
+msgstr ""
+
+#: xml_file_content.cpp:128
+msgid "Grid256"
+msgstr ""
+
+#: xml_file_content.cpp:129
+msgid "M_ap"
+msgstr ""
+
+#: xml_file_content.cpp:130
+msgid "Find brush..."
+msgstr ""
+
+#: xml_file_content.cpp:131
+msgid "Map info..."
+msgstr ""
+
+#: xml_file_content.cpp:132
+msgid "E_ntity"
+msgstr ""
+
+#: xml_file_content.cpp:133
+msgid "_Revert group to worldspawn"
+msgstr ""
+
+#: xml_file_content.cpp:134
+msgid "_Connect selected entities"
+msgstr ""
+
+#: xml_file_content.cpp:135
+msgid "_Bind selected entities"
+msgstr ""
+
+#: xml_file_content.cpp:136
+msgid "B_rush"
+msgstr ""
+
+#: xml_file_content.cpp:137
+msgid "Prism..."
+msgstr ""
+
+#: xml_file_content.cpp:138
+msgid "Cone..."
+msgstr ""
+
+#: xml_file_content.cpp:139
+msgid "Sphere..."
+msgstr ""
+
+#: xml_file_content.cpp:140
+msgid "CSG"
+msgstr ""
+
+#: xml_file_content.cpp:141
+msgid "Make _Hollow"
+msgstr ""
+
+#: xml_file_content.cpp:142
+msgid "Make _Room"
+msgstr ""
+
+#: xml_file_content.cpp:143
+msgid "CSG _Subtract"
+msgstr ""
+
+#: xml_file_content.cpp:144
+msgid "CSG _Merge"
+msgstr ""
+
+#: xml_file_content.cpp:145
+#: xml_file_content.cpp:12
+msgid "Clipper"
+msgstr ""
+
+#: xml_file_content.cpp:146
+msgid "Clip Selection"
+msgstr ""
+
+#: xml_file_content.cpp:147
+msgid "Split Selection"
+msgstr ""
+
+#: xml_file_content.cpp:148
+msgid "Flip Clip Orientation"
+msgstr ""
+
+#: xml_file_content.cpp:149
+msgid "Texture lock"
+msgstr ""
+
+#: xml_file_content.cpp:150
+msgid "Create Decal Patches"
+msgstr ""
+
+#: xml_file_content.cpp:151
+msgid "Make Visportal"
+msgstr ""
+
+#: xml_file_content.cpp:152
+msgid "_Patch"
+msgstr ""
+
+#: xml_file_content.cpp:153
+msgid "Create Simple Patch Mesh"
+msgstr ""
+
+#: xml_file_content.cpp:154
+msgid "Create End cap"
+msgstr ""
+
+#: xml_file_content.cpp:155
+msgid "Create Bevel"
+msgstr ""
+
+#: xml_file_content.cpp:156
+msgid "Create Cone"
+msgstr ""
+
+#: xml_file_content.cpp:157
+msgid "Create Cylinder"
+msgstr ""
+
+#: xml_file_content.cpp:158
+msgid "More cylinders"
+msgstr ""
+
+#: xml_file_content.cpp:159
+msgid "Create Dense Cylinder"
+msgstr ""
+
+#: xml_file_content.cpp:160
+msgid "Create Very Dense Cylinder"
+msgstr ""
+
+#: xml_file_content.cpp:161
+msgid "Create Square Cylinder"
+msgstr ""
+
+#: xml_file_content.cpp:162
+msgid "Insert"
+msgstr ""
+
+#: xml_file_content.cpp:163
+msgid "Insert 2 Columns at the beginning"
+msgstr ""
+
+#: xml_file_content.cpp:164
+msgid "Insert 2 Columns at the end"
+msgstr ""
+
+#: xml_file_content.cpp:165
+msgid "Insert 2 Rows at the beginning"
+msgstr ""
+
+#: xml_file_content.cpp:166
+msgid "Insert 2 Rows at the end"
+msgstr ""
+
+#: xml_file_content.cpp:167
+msgid "Append"
+msgstr ""
+
+#: xml_file_content.cpp:168
+msgid "Append 2 columns at the beginning"
+msgstr ""
+
+#: xml_file_content.cpp:169
+msgid "Append 2 columns at the end"
+msgstr ""
+
+#: xml_file_content.cpp:170
+msgid "Append 2 rows at the beginning"
+msgstr ""
+
+#: xml_file_content.cpp:171
+msgid "Append 2 rows at the end"
+msgstr ""
+
+#: xml_file_content.cpp:172
+msgid "Delete"
+msgstr ""
+
+#: xml_file_content.cpp:173
+msgid "Delete 2 columns from the beginning"
+msgstr ""
+
+#: xml_file_content.cpp:174
+msgid "Delete 2 columns from the end"
+msgstr ""
+
+#: xml_file_content.cpp:175
+msgid "Delete 2 rows from the beginning"
+msgstr ""
+
+#: xml_file_content.cpp:176
+msgid "Delete 2 rows from the end"
+msgstr ""
+
+#: xml_file_content.cpp:177
+msgid "Matrix"
+msgstr ""
+
+#: xml_file_content.cpp:178
+msgid "Invert"
+msgstr ""
+
+#: xml_file_content.cpp:179
+msgid "Re-disperse"
+msgstr ""
+
+#: xml_file_content.cpp:180
+msgid "Rows"
+msgstr ""
+
+#: xml_file_content.cpp:181
+msgid "Columns"
+msgstr ""
+
+#: xml_file_content.cpp:182
+msgid "Transpose"
+msgstr ""
+
+#: xml_file_content.cpp:183
+msgid "Thicken Selected Patches"
+msgstr ""
+
+#: xml_file_content.cpp:184
+msgid "Cap Selection"
+msgstr ""
+
+#: xml_file_content.cpp:185
+msgid "Cycle Cap Texture"
+msgstr ""
+
+#: xml_file_content.cpp:186
+msgid "Stitch Patch Textures"
+msgstr ""
+
+#: xml_file_content.cpp:187
+msgid "Bulge patch"
+msgstr ""
+
+#: xml_file_content.cpp:188
+msgid "_Curve"
+msgstr ""
+
+#: xml_file_content.cpp:189
+msgid "Create NURBS Curve"
+msgstr ""
+
+#: xml_file_content.cpp:190
+msgid "Create CatmullRom Curve"
+msgstr ""
+
+#: xml_file_content.cpp:191
+msgid "Convert NURBS <-> CatmullRom"
+msgstr ""
+
+#: xml_file_content.cpp:192
+msgid "Append Curve Control Point"
+msgstr ""
+
+#: xml_file_content.cpp:193
+msgid "Insert Curve Control Points"
+msgstr ""
+
+#: xml_file_content.cpp:194
+msgid "Remove Curve Control Points"
+msgstr ""
+
+#: xml_file_content.cpp:195
+msgid "_Help"
+msgstr ""
+
+#: xml_file_content.cpp:196
+msgid "_About"
+msgstr ""
+
+#: xml_file_content.cpp:1
+msgid "Texture Background"
+msgstr ""
+
+#: xml_file_content.cpp:2
+msgid "Grid Background"
+msgstr ""
+
+#: xml_file_content.cpp:3
+msgid "Grid Major"
+msgstr ""
+
+#: xml_file_content.cpp:4
+msgid "Grid Minor"
+msgstr ""
+
+#: xml_file_content.cpp:5
+msgid "Grid Text"
+msgstr ""
+
+#: xml_file_content.cpp:6
+msgid "Grid Block"
+msgstr ""
+
+#: xml_file_content.cpp:7
+msgid "Brushes"
+msgstr ""
+
+#: xml_file_content.cpp:8
+msgid "Entities (default)"
+msgstr ""
+
+#: xml_file_content.cpp:9
+msgid "Camera Background"
+msgstr ""
+
+#: xml_file_content.cpp:10
+msgid "Selected Brush"
+msgstr "Ausgewählte Brush"
+
+#: xml_file_content.cpp:11
+msgid "Selected Brush (Camera)"
+msgstr ""
+
+#: xml_file_content.cpp:13
+msgid "Active View Name"
+msgstr ""
+
+#: xml_file_content.cpp:14
+msgid "X-Axis"
+msgstr "X-Achse"
+
+#: xml_file_content.cpp:15
+msgid "Y-Axis"
+msgstr "Y-Achse"
+
+#: xml_file_content.cpp:16
+msgid "Z-Axis"
+msgstr "Z-Achse"
+
+#: xml_file_content.cpp:17
+msgid "Workzone"
+msgstr ""
+
+#: xml_file_content.cpp:18
+msgid "Camera Icon"
+msgstr ""
+
+#: xml_file_content.cpp:19
+msgid "Brush Size Info"
+msgstr ""
+
+#: xml_file_content.cpp:20
+msgid "Light Volumes"
+msgstr ""
+
+#: xml_file_content.cpp:21
+msgid "Brush Vertices"
+msgstr ""
+
+#: xml_file_content.cpp:22
+msgid "Patch Inner Vertex"
+msgstr ""
+
+#: xml_file_content.cpp:23
+msgid "Patch Corner Vertex"
+msgstr ""
+
+#: xml_file_content.cpp:24
+msgid "Light Vertices (deselected)"
+msgstr ""
+
+#: xml_file_content.cpp:25
+msgid "Light Vertices (selected)"
+msgstr ""
+
+#: xml_file_content.cpp:26
+msgid "Light Vertices (normal)"
+msgstr ""
+
+#: xml_file_content.cpp:27
+msgid "Light Start/End (selected)"
+msgstr ""
+
+#: xml_file_content.cpp:28
+msgid "Light Start/End (deselected)"
+msgstr ""
+
+#: xml_file_content.cpp:29
+msgid "XYView Crosshairs"
+msgstr ""
+
+#: xml_file_content.cpp:30
+msgid "Drag-Selection Box"
 msgstr ""
 
