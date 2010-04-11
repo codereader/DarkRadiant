@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entity.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "ientity.h"
