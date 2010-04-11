@@ -32,3 +32,11 @@ commands_DATA = $(top_srcdir)/install/scripts/commands/*.py
 sourceviewerdir = $(pkglibdir)/sourceviewer
 sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
 
+# Install POT template
+languagedir = $(pkglibdir)/i18n
+language_DATA = $(top_srcdir)/install/i18n/*.pot
+
+# Install German language module
+languagededir = $(pkglibdir)/i18n/de/LC_MESSAGES
+languagede_DATA = $(top_srcdir)/install/i18n/de/LC_MESSAGES/*.mo
+

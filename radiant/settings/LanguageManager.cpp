@@ -179,7 +179,11 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
 	_languageSettingFile = ctx.getSettingsPath() + LANGUAGE_SETTING_FILE;
 	_curLanguage = loadLanguageSetting();
 
+#if defined(POSIX) && defined(PKGLIBDIR)
+	_i18nPath = std::string(PKGLIBDIR) + "/i18n/";
+#else
 	_i18nPath = os::standardPathWithSlash(ctx.getApplicationPath() + "i18n");
+#endif
 	
 	// Set the LANG environment. As GLIB/GTK+ (in Win32) is using its own C runtime, we need
 	// to call their GLIB setenv function for the environment variable to take effect.
