@@ -1,5 +1,6 @@
 #include "LayerControl.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "iradiant.h"
 #include "ieventmanager.h"
@@ -59,10 +60,10 @@ LayerControl::LayerControl(int layerID) :
 
 	// Enable the tooltips group for the help mouseover texts
 	gtk_tooltips_enable(_tooltips);
-	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_LABEL_BUTTON], "Click to select all in layer, hold SHIFT to deselect", "");
-	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_RENAME_BUTTON], "Rename this layer", "");
-	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_DELETE_BUTTON], "Delete this layer", "");
-	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_TOGGLE], "Toggle layer visibility", "");
+	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_LABEL_BUTTON], _("Click to select all in layer, hold SHIFT to deselect"), "");
+	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_RENAME_BUTTON], _("Rename this layer"), "");
+	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_DELETE_BUTTON], _("Delete this layer"), "");
+	gtk_tooltips_set_tip(_tooltips, _widgets[WIDGET_TOGGLE], _("Toggle layer visibility"), "");
 
 	// Read the status from the Layer
 	update();
@@ -118,13 +119,13 @@ void LayerControl::onToggle(GtkToggleButton* togglebutton, LayerControl* self) {
 void LayerControl::onDelete(GtkWidget* button, LayerControl* self)
 {
 	// Ask the about the deletion
-	std::string msg = "Do you really want to delete this layer?\n<b>" + 
-		scene::getLayerSystem().getLayerName(self->_layerID) + "</b>";
+	std::string msg = _("Do you really want to delete this layer?");
+	msg += "\n<b>" + scene::getLayerSystem().getLayerName(self->_layerID) + "</b>";
 
 	GtkWindow* topLevel = GTK_WINDOW(gtk_widget_get_toplevel(button));
 
 	IDialogPtr box = GlobalDialogManager().createMessageBox(
-		"Confirm Layer Deletion", msg, IDialog::MESSAGE_ASK, topLevel
+		_("Confirm Layer Deletion"), msg, IDialog::MESSAGE_ASK, topLevel
 	);
 
 	if (box->run() == IDialog::RESULT_YES)
@@ -146,8 +147,8 @@ void LayerControl::onRename(GtkWidget* button, LayerControl* self) {
 
 		try {
 			newLayerName = gtkutil::textEntryDialog(
-				"Rename Layer", 
-				"Enter new Layer Name", 
+				_("Rename Layer"), 
+				_("Enter new Layer Name"), 
 				scene::getLayerSystem().getLayerName(self->_layerID),
 				GTK_WINDOW(topLevel)
 			);
@@ -166,7 +167,7 @@ void LayerControl::onRename(GtkWidget* button, LayerControl* self) {
 		}
 		else {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog("Could not rename layer, please try again.", GTK_WINDOW(topLevel));
+			gtkutil::errorDialog(_("Could not rename layer, please try again."), GTK_WINDOW(topLevel));
 			continue; 
 		}
 	}
