@@ -2,6 +2,7 @@
 #include "LightTextureChooser.h"
 #include "PropertyEditorFactory.h"
 
+#include "i18n.h"
 #include "ientity.h"
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -25,7 +26,7 @@ TexturePropertyEditor::TexturePropertyEditor(Entity* entity,
 	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
 
 	// Create the browse button	
-	GtkWidget* browseButton = gtk_button_new_with_label("Choose texture...");
+	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose texture..."));
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),
 		gtk_image_new_from_pixbuf(

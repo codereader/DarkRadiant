@@ -1,6 +1,7 @@
 #include "ClassnamePropertyEditor.h"
 #include "PropertyEditorFactory.h"
 
+#include "i18n.h"
 #include "ientity.h"
 #include "iundo.h"
 #include "selection/algorithm/Entity.h"
@@ -24,7 +25,7 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(Entity* entity,
 	
 	// Browse button
 	GtkWidget* browseButton = gtk_button_new_with_label(
-		"Choose entity class..."
+		_("Choose entity class...")
 	);
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),

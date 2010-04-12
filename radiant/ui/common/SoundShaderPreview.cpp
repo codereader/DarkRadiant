@@ -1,5 +1,6 @@
 #include "SoundShaderPreview.h"
 
+#include "i18n.h"
 #include "isound.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
@@ -27,7 +28,7 @@ SoundShaderPreview::SoundShaderPreview() :
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_treeView),
-		gtkutil::TextColumn("Sound Files", FILENAME_COL)
+		gtkutil::TextColumn(_("Sound Files"), FILENAME_COL)
 	);
 	
 	// Point the TreeSelection to this treeview
@@ -147,7 +148,7 @@ void SoundShaderPreview::onPlay(GtkButton* button, SoundShaderPreview* self) {
 		if (!GlobalSoundManager().playSound(selectedFile)) {
 			gtk_label_set_markup(
 				GTK_LABEL(self->_statusLabel), 
-				"<b>Error:</b> File not found."
+				_("<b>Error:</b> File not found.")
 			);
 		}
 	}
