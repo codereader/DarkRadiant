@@ -7,7 +7,9 @@
 #include <gtk/gtkwidget.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "i18n.h"
 #include "idialogmanager.h"
+#include <boost/format.hpp>
 
 namespace ui {
 
@@ -70,9 +72,10 @@ gboolean ShortcutChooser::onShortcutKeyPress(GtkWidget* widget, GdkEventKey* eve
 	IEventPtr foundEvent = GlobalEventManager().findEvent(event);
 	
 	// Only display the note if any event was found and it's not the "self" event
-	if (!foundEvent->empty() && foundEvent != self->_event) {
-		statusText = "Note: This is already assigned to: <b>";
-		statusText += GlobalEventManager().getEventName(foundEvent) + "</b>";
+	if (!foundEvent->empty() && foundEvent != self->_event)
+	{
+		statusText = (boost::format(_("Note: This is already assigned to: <b>%s</b>")) %
+					  GlobalEventManager().getEventName(foundEvent)).str();
 	}
 	
 	gtk_label_set_markup(GTK_LABEL(self->_statusWidget), statusText.c_str());
@@ -89,7 +92,7 @@ bool ShortcutChooser::retrieveShortcut(const std::string& commandName) {
 	_event = GlobalEventManager().findEvent(commandName);
 	
 	// The shortcutDialog returns TRUE, if the user clicked on OK
-	if (shortcutDialog("Enter new Shortcut", std::string("<b>") + commandName + "</b>")) {
+	if (shortcutDialog(_("Enter new Shortcut"), std::string("<b>") + commandName + "</b>")) {
 		
 		// Check, if the user has pressed a meaningful key
 		if (_keyval != 0) {
@@ -108,13 +111,14 @@ bool ShortcutChooser::retrieveShortcut(const std::string& commandName) {
 				const std::string foundEventName = GlobalEventManager().getEventName(foundEvent);
 				
 				// Construct the message
-				std::string message("The specified shortcut is already assigned to <b>");
-				message += foundEventName + "</b>\nOverwrite the current setting and assign this shortcut to <b>";
-				message += commandName + "</b> instead?";
+				std::string message = 
+					(boost::format(_("The specified shortcut is already assigned to <b>%s</b>"
+					"\nOverwrite the current setting and assign this shortcut to <b>%s</b> instead?")) % 
+					foundEventName % commandName).str();
 				
 				// Fire up the dialog to ask the user what action to take
 				IDialogPtr popup = GlobalDialogManager().createMessageBox(
-					"Overwrite existing shortcut?", message, ui::IDialog::MESSAGE_ASK);
+					_("Overwrite existing shortcut?"), message, ui::IDialog::MESSAGE_ASK);
 
 				// Only react on "YES"
 				if (popup->run() == ui::IDialog::RESULT_YES)
