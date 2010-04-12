@@ -1,5 +1,6 @@
 #include "EntityChooser.h"
 
+#include "i18n.h"
 #include "inode.h"
 #include "ientity.h"
 #include "imainframe.h"
@@ -103,7 +104,7 @@ void EntityChooser::importFromString(const std::string& str)
 
 std::string EntityChooser::ChooseEntity(const std::string& preSelectedEntity)
 {
-	gtkutil::Dialog dlg("Select Entity", GlobalMainFrame().getTopLevelWindow());
+	gtkutil::Dialog dlg(_("Select Entity"), GlobalMainFrame().getTopLevelWindow());
 
 	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 
