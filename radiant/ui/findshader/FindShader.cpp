@@ -1,5 +1,6 @@
 #include "FindShader.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "iuimanager.h"
@@ -27,12 +28,12 @@ namespace ui {
 	   	
 		const std::string FOLDER_ICON = "folder16.png";
 	   	
-	    const std::string FINDDLG_WINDOW_TITLE = "Find & Replace Shader";
-	    const std::string COUNT_TEXT = " shader(s) replaced.";
+	    const char* const FINDDLG_WINDOW_TITLE = "Find & Replace Shader";
+	    const char* const COUNT_TEXT = "<b>%d</b> shader(s) replaced.";
 	}
 
 FindAndReplaceShader::FindAndReplaceShader() :
-	gtkutil::BlockingTransientWindow(FINDDLG_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	gtkutil::BlockingTransientWindow(_(FINDDLG_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), FINDDLG_DEFAULT_SIZE_X, FINDDLG_DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -137,8 +138,7 @@ void FindAndReplaceShader::performReplace() {
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_selectedOnly)) ? true : false // selected only
 	);
 	
-	const std::string replacedStr = 
-		std::string("<b>") + intToStr(replaced) + "</b>" + COUNT_TEXT;
+	const std::string replacedStr = (boost::format(_(COUNT_TEXT)) % replaced).str();
 	gtk_label_set_markup(GTK_LABEL(_counterLabel), replacedStr.c_str());
 }
 
