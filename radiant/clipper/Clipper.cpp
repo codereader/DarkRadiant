@@ -1,5 +1,6 @@
 #include "Clipper.h"
 
+#include "i18n.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 #include "iundo.h"
@@ -35,10 +36,10 @@ void Clipper::keyChanged(const std::string& key, const std::string& val)
 }
 
 void Clipper::constructPreferences() {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Clipper");
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Clipper"));
 	
-	page->appendCheckBox("", "Clipper tool uses caulk texture", RKEY_CLIPPER_USE_CAULK);
-	page->appendEntry("Caulk shader name", RKEY_CLIPPER_CAULK_SHADER);
+	page->appendCheckBox("", _("Clipper tool uses caulk texture"), RKEY_CLIPPER_USE_CAULK);
+	page->appendEntry(_("Caulk shader name"), RKEY_CLIPPER_CAULK_SHADER);
 }
 
 EViewType Clipper::getViewType() const {
