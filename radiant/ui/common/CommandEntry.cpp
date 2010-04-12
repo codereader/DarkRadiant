@@ -1,5 +1,6 @@
 #include "CommandEntry.h"
 
+#include "i18n.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
 
@@ -19,7 +20,7 @@ CommandEntry::CommandEntry() :
 	_entry(gtk_entry_new()),
 	_curHistoryIndex(0)
 {
-	GtkWidget* goButton = gtk_button_new_with_label("Go");
+	GtkWidget* goButton = gtk_button_new_with_label(_("Go"));
 	g_signal_connect(G_OBJECT(goButton), "clicked", G_CALLBACK(onCmdEntryActivate), this);
 
 	// Pack the widget sinto the hbox
