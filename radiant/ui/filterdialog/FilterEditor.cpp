@@ -14,13 +14,13 @@ namespace ui {
 	namespace {
 		const int DEFAULT_SIZE_X = 550;
 	    const int DEFAULT_SIZE_Y = 350;
-		const char* const WINDOW_TITLE_EDIT = "Edit Filter";
-		const char* const WINDOW_TITLE_VIEW = "View Filter";
+		const char* const WINDOW_TITLE_EDIT = N_("Edit Filter");
+		const char* const WINDOW_TITLE_VIEW = N_("View Filter");
 
 		const char* const RULE_HELP_TEXT = 
-			"Filter rules are applied in the shown order.\n" \
+			N_("Filter rules are applied in the shown order.\n" \
 			"<b>Match</b> is accepting regular expressions.\n" \
-			"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.";
+			"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.");
 
 		enum {
 			COL_INDEX,

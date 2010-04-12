@@ -18,11 +18,11 @@ namespace ui {
 
 	namespace {
 		const std::string RKEY_SHOW_BUILD_TIME = "user/showBuildTime";
-		const char* const CMDLISTDLG_WINDOW_TITLE = "About DarkRadiant";
+		const char* const WINDOW_TITLE = N_("About DarkRadiant");
 	}
 
 AboutDialog::AboutDialog() :
-	BlockingTransientWindow(_(CMDLISTDLG_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
+	BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);

@@ -17,7 +17,7 @@
 namespace scene {
 
 	namespace {
-		const char* const DEFAULT_LAYER_NAME = "Default";
+		const char* const DEFAULT_LAYER_NAME = N_("Default");
 	} 
 
 int LayerSystem::createLayer(const std::string& name, int layerID) {

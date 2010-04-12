@@ -28,8 +28,8 @@ namespace ui {
 	   	
 		const std::string FOLDER_ICON = "folder16.png";
 	   	
-	    const char* const FINDDLG_WINDOW_TITLE = "Find & Replace Shader";
-	    const char* const COUNT_TEXT = "<b>%d</b> shader(s) replaced.";
+	    const char* const FINDDLG_WINDOW_TITLE = N_("Find & Replace Shader");
+	    const char* const COUNT_TEXT = N_("<b>%d</b> shader(s) replaced.");
 	}
 
 FindAndReplaceShader::FindAndReplaceShader() :

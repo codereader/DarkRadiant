@@ -34,7 +34,7 @@
 namespace ui {
 	
 	namespace {
-		const char* const WINDOW_TITLE = "Texture Tool";
+		const char* const WINDOW_TITLE = N_("Texture Tool");
 		
 		const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
 		const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";

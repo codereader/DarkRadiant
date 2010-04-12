@@ -23,7 +23,7 @@ namespace {
 	const char* FOLDER_ICON = "folder16.png";
 	const char* SKIN_ICON = "skin16.png";
 
-	const char* const WINDOW_TITLE("Choose Skin");
+	const char* const WINDOW_TITLE = N_("Choose Skin");
 	
 	// Tree column enum
 	enum {
