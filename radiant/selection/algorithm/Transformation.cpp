@@ -1,5 +1,6 @@
 #include "Transformation.h"
 
+#include "i18n.h"
 #include <string>
 #include <map>
 #include "math/quaternion.h"
@@ -43,7 +44,7 @@ void scaleSelected(const Vector3& scaleXYZ) {
 		GlobalSelectionSystem().scaleSelected(scaleXYZ);
 	}
 	else {
-		gtkutil::errorDialog("Cannot scale by zero value.", GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(_("Cannot scale by zero value."), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

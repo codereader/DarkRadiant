@@ -1,5 +1,6 @@
 #include "ModelCache.h"
 
+#include "i18n.h"
 #include "ifilesystem.h"
 #include "imodel.h"
 #include "ifiletypes.h"
@@ -110,7 +111,7 @@ ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type) {
 		}
 		else {
 			globalErrorStream()	<< "ERROR: Model type incorrectly registered: \""
-								<< moduleName << "\"\n";
+				<< moduleName << "\"" << std::endl;
 		}
 	}
 
@@ -200,7 +201,7 @@ void ModelCache::clear() {
 void ModelCache::refreshModels(const cmd::ArgumentList& args)
 {
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Models");
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
 	
 	// Clear the model cache
 	clear();
@@ -216,7 +217,7 @@ void ModelCache::refreshModels(const cmd::ArgumentList& args)
 void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
 {
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Models");
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
 	
 	// Find all models in the current selection
 	ModelFinder walker;
