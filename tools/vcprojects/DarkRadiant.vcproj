@@ -2537,6 +2537,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\log\GtkLogRedirector.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\log\GtkLogRedirector.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\log\LogDevice.h"
 					>
 				</File>
