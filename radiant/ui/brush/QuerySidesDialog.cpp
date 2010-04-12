@@ -15,7 +15,7 @@ namespace ui
 {
 	namespace
 	{
-		const char* const WINDOW_TITLE = "Enter Number of Sides";
+		const char* const WINDOW_TITLE = N_("Enter Number of Sides");
 	}
 
 QuerySidesDialog::QuerySidesDialog(int numSidesMin, int numSidesMax) :

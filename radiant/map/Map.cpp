@@ -47,7 +47,7 @@
 namespace map {
 	
 	namespace {
-		const char* const MAP_UNNAMED_STRING = "unnamed.map";
+		const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
 		
 		const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";

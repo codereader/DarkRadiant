@@ -12,7 +12,7 @@
 namespace ui {
 	
 	namespace {
-		const char* const LABEL_TITLE = "Choose Shader";
+		const char* const LABEL_TITLE = N_("Choose Shader");
 		const std::string SHADER_PREFIXES = "textures";
 		const int DEFAULT_SIZE_X = 550;
 		const int DEFAULT_SIZE_Y = 500;

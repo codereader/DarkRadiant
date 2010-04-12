@@ -20,7 +20,7 @@ namespace ui {
 		const int CMDLISTDLG_DEFAULT_SIZE_X = 550;
 	    const int CMDLISTDLG_DEFAULT_SIZE_Y = 400;
 	    	    
-	    const char* const CMDLISTDLG_WINDOW_TITLE = "Shortcut List";
+	    const char* const CMDLISTDLG_WINDOW_TITLE = N_("Shortcut List");
 	}
 
 CommandList::CommandList() :
