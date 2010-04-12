@@ -1,23 +1,3 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #include "main.h"
 
 #include "i18n.h"
@@ -108,7 +88,7 @@ int main (int argc, char* argv[]) {
 		// Initialise the Reference in the GlobalModuleRegistry() accessor. 
 		module::RegistryReference::Instance().setRegistry(module::getRegistry());
 	
-		ui::Splash::Instance().setProgressAndText("Searching for Modules", 0.0f);
+		ui::Splash::Instance().setProgressAndText(_("Searching for Modules"), 0.0f);
 	
 		// Invoke the ModuleLoad routine to load the DLLs from modules/ and plugins/
 #if defined(POSIX) && defined(PKGLIBDIR)
@@ -121,15 +101,15 @@ int main (int argc, char* argv[]) {
 	
 		module::getRegistry().initialiseModules();
 	
-		ui::Splash::Instance().setProgressAndText("Creating PrefDialog", 0.85f);
+		ui::Splash::Instance().setProgressAndText(_("Creating Preference Dialog"), 0.85f);
 
 		Radiant_Initialise();
 		
 		// Initialise the mediabrowser
-		ui::Splash::Instance().setProgressAndText("Initialising MediaBrowser", 0.92f);
+		ui::Splash::Instance().setProgressAndText(_("Initialising MediaBrowser"), 0.92f);
 		ui::MediaBrowser::init();
 
-		ui::Splash::Instance().setProgressAndText("Starting MainFrame", 0.95f);
+		ui::Splash::Instance().setProgressAndText(_("Starting MainFrame"), 0.95f);
 
 		// Initialise the mainframe
 		GlobalMainFrame().construct();
@@ -140,7 +120,7 @@ int main (int argc, char* argv[]) {
    		// Update all accelerators, at this point all commands should be setup
    		GlobalUIManager().getMenuManager().updateAccelerators();
 	  
-		ui::Splash::Instance().setProgressAndText("Complete", 1.0f);  
+		ui::Splash::Instance().setProgressAndText(_("Startup Complete"), 1.0f);  
 
 		ui::Splash::Instance().hide();
 

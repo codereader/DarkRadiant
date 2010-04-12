@@ -2,6 +2,7 @@
 
 #include <map>
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "iundo.h"
 #include "igrid.h"
@@ -297,10 +298,10 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 {
 	if (GlobalRegistry().get(RKEY_EMIT_CSG_SUBTRACT_WARNING) == "1")
 	{
-		gtkutil::MessageBox box("This Is Not Dromed Warning", 
-			"Note: be careful when using the CSG tool, as you might end up\n"
+		gtkutil::MessageBox box(_("This Is Not Dromed Warning"), 
+			_("Note: be careful when using the CSG tool, as you might end up\n"
 			"with a unnecessary number of tiny brushes and/or leaks.\n"
-			"This popup will not be shown again.", ui::IDialog::MESSAGE_CONFIRM,
+			"This popup will not be shown again."), ui::IDialog::MESSAGE_CONFIRM,
 			GlobalMainFrame().getTopLevelWindow());
 		
 		box.run();
@@ -313,8 +314,8 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 	
 	if (brushes.empty()) {
-		globalOutputStream() << "CSG Subtract: No brushes selected.\n";
-		gtkutil::errorDialog("CSG Subtract: No brushes selected.", GlobalMainFrame().getTopLevelWindow());
+		globalOutputStream() << _("CSG Subtract: No brushes selected.)") << std::endl;
+		gtkutil::errorDialog(_("CSG Subtract: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
@@ -423,8 +424,8 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 
 	if (brushes.empty()) {
-		globalOutputStream() << "CSG Merge: No brushes selected.\n";
-		gtkutil::errorDialog("CSG Merge: No brushes selected.", GlobalMainFrame().getTopLevelWindow());
+		globalOutputStream() << _("CSG Merge: No brushes selected.") << std::endl;
+		gtkutil::errorDialog(_("CSG Merge: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
