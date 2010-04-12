@@ -1,5 +1,6 @@
 #include "Map.h"
 
+#include "i18n.h"
 #include <ostream>
 #include "itextstream.h"
 #include "iscenegraph.h"
@@ -46,7 +47,7 @@
 namespace map {
 	
 	namespace {
-		const std::string MAP_UNNAMED_STRING = "unnamed.map";
+		const char* const MAP_UNNAMED_STRING = "unnamed.map";
 		
 		const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
 		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
@@ -160,7 +161,7 @@ void Map::onResourceRealise() {
 		}
 
 		// Rename the map to "unnamed" in any case to avoid overwriting the failed map
-		setMapName(MAP_UNNAMED_STRING);
+		setMapName(_(MAP_UNNAMED_STRING));
 	}
 
 	// Take the new node and insert it as map root
@@ -230,7 +231,7 @@ std::string Map::getMapName() const {
 }
 
 bool Map::isUnnamed() const {
-	return m_name == MAP_UNNAMED_STRING;
+	return m_name == _(MAP_UNNAMED_STRING);
 }
 
 void Map::setWorldspawn(scene::INodePtr node) {
@@ -472,7 +473,7 @@ bool Map::save() {
 	_saveInProgress = true;
 	
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", "Saving Map");
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Saving Map"));
 	
 	// Store the camview position into worldspawn
 	saveCameraPosition();
@@ -504,7 +505,7 @@ bool Map::save() {
 }
 
 void Map::createNew() {
-	setMapName(MAP_UNNAMED_STRING);
+	setMapName(_(MAP_UNNAMED_STRING));
 	
 	m_resource = GlobalMapResourceManager().capture(m_name);
 	m_resource->addObserver(*this);
@@ -559,7 +560,7 @@ bool Map::saveDirect(const std::string& filename) {
 	if (_saveInProgress) return false; // safeguard
 
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", path_get_filename_start(filename.c_str()));
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
 	
 	_saveInProgress = true;
 
@@ -579,7 +580,7 @@ bool Map::saveSelected(const std::string& filename) {
 	if (_saveInProgress) return false; // safeguard
 
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", path_get_filename_start(filename.c_str()));
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
 	
 	_saveInProgress = true;
 
@@ -605,8 +606,8 @@ bool Map::askForSave(const std::string& title)
 
 	// Ask the user
 	ui::IDialogPtr msgBox = GlobalDialogManager().createMessageBox(
-		title, "The current map has changed since it was last saved."
-		"\nDo you want to save the current map before continuing?", ui::IDialog::MESSAGE_YESNOCANCEL);
+		title, _("The current map has changed since it was last saved."
+		"\nDo you want to save the current map before continuing?"), ui::IDialog::MESSAGE_YESNOCANCEL);
 
 	ui::IDialog::Result result = msgBox->run();
 	
@@ -638,7 +639,7 @@ bool Map::askForSave(const std::string& title)
 bool Map::saveAs() {
 	if (_saveInProgress) return false; // safeguard
 
-	std::string filename = MapFileManager::getMapFilename(false, "Save Map", "map", getMapName());
+	std::string filename = MapFileManager::getMapFilename(false, _("Save Map"), "map", getMapName());
   
 	if (!filename.empty()) {
 		// Remember the old name, we might need to revert
@@ -672,7 +673,7 @@ bool Map::saveCopyAs() {
 		_lastCopyMapName = getMapName();
 	}
 
-	std::string filename = MapFileManager::getMapFilename(false, "Save Copy As...", "map", _lastCopyMapName);
+	std::string filename = MapFileManager::getMapFilename(false, _("Save Copy As..."), "map", _lastCopyMapName);
 	
 	if (!filename.empty()) {
 		// Remember the last name
@@ -687,7 +688,7 @@ bool Map::saveCopyAs() {
 }
 
 void Map::loadPrefabAt(const Vector3& targetCoords) {
-	std::string filename = MapFileManager::getMapFilename(true, "Load Prefab", "prefab");
+	std::string filename = MapFileManager::getMapFilename(true, _("Load Prefab"), "prefab");
 	
 	if (!filename.empty()) {
 		UndoableCommand undo("loadPrefabAt");
@@ -738,7 +739,7 @@ void Map::registerCommands() {
 
 // Static command targets
 void Map::newMap(const cmd::ArgumentList& args) {
-	if (GlobalMap().askForSave("New Map")) {
+	if (GlobalMap().askForSave(_("New Map"))) {
 		// Turn regioning off when starting a new map
 		GlobalRegion().disable();
 
@@ -748,12 +749,12 @@ void Map::newMap(const cmd::ArgumentList& args) {
 }
 
 void Map::openMap(const cmd::ArgumentList& args) {
-	if (!GlobalMap().askForSave("Open Map"))
+	if (!GlobalMap().askForSave(_("Open Map")))
 		return;
 
 	// Get the map file name to load
 	std::string filename = map::MapFileManager::getMapFilename(true, 
-															   "Open map");
+															   _("Open map"));
 
 	if (!filename.empty()) {
 		GlobalMRU().insert(filename);
@@ -765,7 +766,7 @@ void Map::openMap(const cmd::ArgumentList& args) {
 
 void Map::importMap(const cmd::ArgumentList& args) {
 	std::string filename = map::MapFileManager::getMapFilename(true,
-															   "Import map");
+															   _("Import map"));
 
 	if (!filename.empty()) {
 	    UndoableCommand undo("mapImport");
@@ -789,7 +790,7 @@ void Map::saveMap(const cmd::ArgumentList& args) {
 
 void Map::exportMap(const cmd::ArgumentList& args) {
 	std::string filename = map::MapFileManager::getMapFilename(
-								false, "Export selection");
+								false, _("Export selection"));
 
 	if (!filename.empty()) {
 	    GlobalMap().saveSelected(filename);
@@ -802,7 +803,7 @@ void Map::loadPrefab(const cmd::ArgumentList& args) {
 
 void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args) {
 	std::string filename = 
-		map::MapFileManager::getMapFilename(false, "Save selected as Prefab", "prefab");
+		map::MapFileManager::getMapFilename(false, _("Save selected as Prefab"), "prefab");
 	
 	if (!filename.empty()) {
 	    GlobalMap().saveSelected(filename);
@@ -875,8 +876,9 @@ const StringSet& Map::getDependencies() const {
 	return _dependencies;
 }
 
-void Map::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << getName() << "::initialiseModule called.\n";
+void Map::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 
 	// Register for the startup event
 	_startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);

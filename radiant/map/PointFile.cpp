@@ -1,5 +1,6 @@
 #include "PointFile.h"
 
+#include "i18n.h"
 #include "igl.h"
 #include "iscenegraph.h"
 #include "ieventmanager.h"
@@ -14,6 +15,7 @@
 #include "camera/GlobalCamera.h"
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
+#include <boost/format.hpp>
 
 namespace map {
 
@@ -105,7 +107,8 @@ void PointFile::parse() {
 	// Open the pointfile and get its input stream if possible
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
-		gtkutil::errorDialog("Could not open pointfile:\n\n" + pfName,
+		gtkutil::errorDialog(
+			(boost::format(_("Could not open pointfile: %s")) % pfName).str(),
 			GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
@@ -149,7 +152,7 @@ void PointFile::advance(bool forward) {
 
 	if (forward) {
 		if (_curPos+2 == _points.end())	{
-			globalOutputStream() << "End of pointfile\n";
+			globalOutputStream() << "End of pointfile" << std::endl;
 			return;
 		}
 
@@ -158,7 +161,7 @@ void PointFile::advance(bool forward) {
 	else {
 		// Backward movement
 		if (_curPos == _points.begin()) {
-			globalOutputStream() << "Start of pointfile\n";
+			globalOutputStream() << "Start of pointfile" << std::endl;
 			return;
 		}
 	

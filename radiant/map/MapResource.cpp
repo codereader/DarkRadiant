@@ -1,5 +1,6 @@
 #include "MapResource.h"
 
+#include "i18n.h"
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -21,6 +22,7 @@
 #include "referencecache/NullModelNode.h"
 #include "MapExportInfo.h"
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 
 namespace map {
 
@@ -93,7 +95,7 @@ bool MapResource::save() {
 		);
 		
 		if (format == NULL) {
-			globalErrorStream() << "Could not locate map loader module.\n";
+			globalErrorStream() << "Could not locate map loader module." << std::endl;
 			return false;
 		}
 	
@@ -104,7 +106,7 @@ bool MapResource::save() {
 			if (!saveBackup()) {
 				// angua: if backup creation is not possible, still save the map
 				// but create message in the console
-				globalErrorStream() << "Could not create backup (Map is possibly open in Doom3)\n";
+				globalErrorStream() << "Could not create backup (Map is possibly open in Doom3)" << std::endl;
 				// return false;
 			}
 		}
@@ -117,7 +119,7 @@ bool MapResource::save() {
 			success = saveFile(*format, _mapRoot, map::traverse, fullpath);
 		}
 		else {
-			globalErrorStream() << "Map path is not absolute: " << fullpath << "\n";
+			globalErrorStream() << "Map path is not absolute: " << fullpath << std::endl;
 			success = false;
 		}
 		
@@ -149,9 +151,11 @@ bool MapResource::saveBackup() {
 				&& file_move(fullpath.c_str(), backup.c_str()); // rename current to backup
 		}
 		else {
-			globalErrorStream() << "map path is not writeable: " << fullpath << "\n";
+			globalErrorStream() << "map path is not writeable: " << fullpath << std::endl;
 			// File is write-protected
-			gtkutil::errorDialog(std::string("File is write-protected: ") + fullpath, GlobalMainFrame().getTopLevelWindow());
+			gtkutil::errorDialog(
+				(boost::format(_("File is write-protected: %s")) % fullpath).str(), 
+				GlobalMainFrame().getTopLevelWindow());
 			return false;
 		}
 	}
@@ -325,7 +329,7 @@ scene::INodePtr MapResource::loadMapNode() {
 		}
 	}
 	else {
-		globalErrorStream() << "map path is not fully qualified: " << fullpath << "\n";
+		globalErrorStream() << "map path is not fully qualified: " << fullpath << std::endl;
 	}
 
 	// Return the NULL node on failure
@@ -333,7 +337,7 @@ scene::INodePtr MapResource::loadMapNode() {
 }
 
 bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename) {
-	globalOutputStream() << "Open file " << filename.c_str() << " for read...";
+	globalOutputStream() << "Open file " << filename << " for read...";
 
 	TextFileInputStream file(filename);
 	std::istream mapStream(&file);
@@ -348,7 +352,7 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 	}
 
 	if (!file.failed()) {
-		globalOutputStream() << "success\n";
+		globalOutputStream() << "success" << std::endl;
 
 		// Create an import information structure
 		if (infoFileStream.is_open()) {
@@ -369,7 +373,7 @@ bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const 
 	}
 	else
 	{
-		globalErrorStream() << "failure\n";
+		globalErrorStream() << "failure" << std::endl;
 		return false;
 	}
 }
@@ -383,7 +387,9 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	{
 		// File is write-protected
 		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::errorDialog(std::string("File is write-protected: ") + filename, GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(
+			(boost::format(_("File is write-protected: %s")) % filename).str(), 
+			GlobalMainFrame().getTopLevelWindow());
 		return false;
 	}
 
@@ -400,14 +406,16 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	if (file_exists(auxFilename.c_str()) && !file_writeable(auxFilename.c_str())) {
 		// File is write-protected
 		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::errorDialog(std::string("File is write-protected: ") + auxFilename, GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(
+			(boost::format(_("File is write-protected: %s")) % auxFilename).str(),
+			GlobalMainFrame().getTopLevelWindow());
 		return false;
 	}
 
 	std::ofstream auxfile(auxFilename.c_str());
 
 	if (outfile.is_open() && auxfile.is_open()) {
-	    globalOutputStream() << "success\n";
+		globalOutputStream() << "success" << std::endl;
 
 		map::MapExportInfo exportInfo(outfile, auxfile);
 		exportInfo.traverse = traverse;
@@ -421,7 +429,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	    return true;
 	}
 	else {
-		globalErrorStream() << "failure\n";
+		globalErrorStream() << "failure" << std::endl;
 		return false;
 	}
 }
