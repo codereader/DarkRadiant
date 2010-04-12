@@ -18,8 +18,10 @@ class UniqueNameSet
 public:
 	bool empty() const {
 		// Cycle through all prefixes and see if the postfixset is non-empty, break on first hit
-		for (Names::const_iterator i = _names.begin(); i != _names.end(); i++) {
-			if (!i->second.empty()) {
+		for (Names::const_iterator i = _names.begin(); i != _names.end(); ++i)
+		{
+			if (!i->second.empty())
+			{
 				return false;
 			}
 		}
@@ -176,7 +178,8 @@ public:
 	 */
 	void merge(const UniqueNameSet& other) {
 		// cycle through all foreign names and import them
-		for (Names::const_iterator i = other._names.begin(); i != other._names.end(); i++) {
+		for (Names::const_iterator i = other._names.begin(); i != other._names.end(); ++i)
+		{
 			// Check if the prefix exists already in this set
 			Names::iterator local = _names.find(i->first);
 
